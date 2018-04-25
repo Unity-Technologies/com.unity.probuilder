@@ -28,9 +28,9 @@ namespace UnityEngine.ProBuilder
 			return b is EdgeConnection ? this.face == ((EdgeConnection)b).face : false;
 		}
 
-		public bool Equals(EdgeConnection fc)
+		public bool Equals(EdgeConnection obj)
 		{
-			return this.face == fc.face;
+			return obj != null && this.face == obj.face;
 		}
 
 		public static explicit operator Face(EdgeConnection fc)

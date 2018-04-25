@@ -16,12 +16,12 @@ namespace UnityEngine.ProBuilder
 		/// Require elements to be completely encompassed by the rect selection (Complete) or only touched (Partial).
 		/// Does not apply to vertex picking.
 		/// </summary>
-		public pb_RectSelectMode rectSelectMode;
+		public RectSelectMode rectSelectMode;
 
 		static readonly PickerOptions k_Default = new PickerOptions()
 		{
 			depthTest = true,
-			rectSelectMode = pb_RectSelectMode.Partial,
+			rectSelectMode = RectSelectMode.Partial,
 		};
 
 		public static PickerOptions Default
@@ -111,7 +111,7 @@ namespace UnityEngine.ProBuilder
 			PickerOptions options,
 			float pixelsPerPoint = 1f)
 		{
-			if (options.depthTest && options.rectSelectMode == pb_RectSelectMode.Partial)
+			if (options.depthTest && options.rectSelectMode == RectSelectMode.Partial)
 			{
 				return SelectionPicker.PickFacesInRect(
 					cam,
@@ -141,7 +141,7 @@ namespace UnityEngine.ProBuilder
 					Face face = pb.faces[n];
 
 					// rect select = complete
-					if(options.rectSelectMode == pb_RectSelectMode.Complete)
+					if(options.rectSelectMode == RectSelectMode.Complete)
 					{
 						// face is behind the camera
 						if(screenPoints[face.indices[0]].z < cam.nearClipPlane)
@@ -238,7 +238,7 @@ namespace UnityEngine.ProBuilder
 			PickerOptions options,
 			float pixelsPerPoint = 1f)
 		{
-			if (options.depthTest && options.rectSelectMode == pb_RectSelectMode.Partial)
+			if (options.depthTest && options.rectSelectMode == RectSelectMode.Partial)
 			{
 				return SelectionPicker.PickEdgesInRect(
 					cam,
@@ -275,7 +275,7 @@ namespace UnityEngine.ProBuilder
 
 						switch (options.rectSelectMode)
 						{
-							case pb_RectSelectMode.Complete:
+							case RectSelectMode.Complete:
 							{
 								// if either of the positions are clipped by the camera we cannot possibly select both, skip it
 								if ((a.z < cam.nearClipPlane || b.z < cam.nearClipPlane))
@@ -291,7 +291,7 @@ namespace UnityEngine.ProBuilder
 								break;
 							}
 
-							case pb_RectSelectMode.Partial:
+							case RectSelectMode.Partial:
 							{
 								// partial + depth test is covered earlier
 								if (ProBuilderMath.RectIntersectsLineSegment(rect, a, b))

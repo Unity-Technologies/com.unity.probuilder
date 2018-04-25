@@ -31,9 +31,9 @@ namespace UnityEngine.ProBuilder
 			return b is VertexConnection ? this.face == ((VertexConnection)b).face : false;
 		}
 
-		public bool Equals(VertexConnection vc)
+		public bool Equals(VertexConnection other)
 		{
-			return this.face == vc.face;
+			return other != null && this.face == other.face;
 		}
 
 		public static implicit operator Face(VertexConnection vc)

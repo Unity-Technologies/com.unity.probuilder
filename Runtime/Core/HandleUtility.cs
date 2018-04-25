@@ -37,7 +37,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		public static bool FaceRaycast(Ray InWorldRay, ProBuilderMesh mesh, out RaycastHit hit, HashSet<Face> ignore = null)
 		{
-			return FaceRaycast(InWorldRay, mesh, out hit, Mathf.Infinity, pb_Culling.Front, ignore);
+			return FaceRaycast(InWorldRay, mesh, out hit, Mathf.Infinity, Culling.Front, ignore);
 		}
 
 		/// <summary>
@@ -50,7 +50,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="cullingMode">What sides of triangles does the ray intersect with.</param>
 		/// <param name="ignore">Optional collection of faces to ignore when raycasting.</param>
 		/// <returns>True if the ray intersects with the mesh, false if not.</returns>
-		public static bool FaceRaycast(Ray InWorldRay, ProBuilderMesh mesh, out RaycastHit hit, float distance, pb_Culling cullingMode, HashSet<Face> ignore = null)
+		public static bool FaceRaycast(Ray InWorldRay, ProBuilderMesh mesh, out RaycastHit hit, float distance, Culling cullingMode, HashSet<Face> ignore = null)
 		{
 			// Transform ray into model space
 			InWorldRay.origin 		-= mesh.transform.position;  // Why doesn't worldToLocalMatrix apply translation?
@@ -89,11 +89,11 @@ namespace UnityEngine.ProBuilder
 
 					switch(cullingMode)
 					{
-						case pb_Culling.Front:
+						case Culling.Front:
 							if(dot > 0f) skip = true;
 							break;
 
-						case pb_Culling.Back:
+						case Culling.Back:
 							if(dot < 0f) skip = true;
 							break;
 					}
@@ -134,8 +134,7 @@ namespace UnityEngine.ProBuilder
 			Ray InWorldRay,
 			ProBuilderMesh mesh,
 			out List<RaycastHit> hits,
-			float distance,
-			pb_Culling cullingMode,
+			Culling cullingMode,
 			HashSet<Face> ignore = null)
 		{
 			// Transform ray into model space
@@ -153,10 +152,8 @@ namespace UnityEngine.ProBuilder
 			Vector3 nrm;	// vars used in loop
 			hits = new List<RaycastHit>();
 
-			/**
-			 * Iterate faces, testing for nearest hit to ray origin.  Optionally ignores backfaces.
-			 */
-			for(int CurFace = 0; CurFace < mesh.faces.Length; ++CurFace)
+            // Iterate faces, testing for nearest hit to ray origin.  Optionally ignores backfaces.
+            for (int CurFace = 0; CurFace < mesh.faces.Length; ++CurFace)
 			{
 				if(ignore != null && ignore.Contains(mesh.faces[CurFace]))
 					continue;
@@ -175,21 +172,21 @@ namespace UnityEngine.ProBuilder
 
 						switch(cullingMode)
 						{
-							case pb_Culling.Front:
+							case Culling.Front:
 								dot = Vector3.Dot(InWorldRay.direction, -nrm);
 
 								if(dot > 0f)
-									goto case pb_Culling.FrontBack;
+									goto case Culling.FrontBack;
 								break;
 
-							case pb_Culling.Back:
+							case Culling.Back:
 								dot = Vector3.Dot(InWorldRay.direction, nrm);
 
 								if(dot > 0f)
-									goto case pb_Culling.FrontBack;
+									goto case Culling.FrontBack;
 								break;
 
-							case pb_Culling.FrontBack:
+							case Culling.FrontBack:
 								hits.Add( new RaycastHit(dist,
 															InWorldRay.GetPoint(dist),
 															nrm,
@@ -231,10 +228,10 @@ namespace UnityEngine.ProBuilder
 		/// <param name="distance"></param>
 		/// <param name="cullingMode"></param>
 		/// <returns></returns>
-		public static bool WorldRaycast(Ray InWorldRay, Transform transform, Vector3[] vertices, int[] triangles, out RaycastHit hit, float distance = Mathf.Infinity, pb_Culling cullingMode = pb_Culling.Front)
+		public static bool WorldRaycast(Ray InWorldRay, Transform transform, Vector3[] vertices, int[] triangles, out RaycastHit hit, float distance = Mathf.Infinity)
 		{
 			Ray ray = transform.InverseTransformRay(InWorldRay);
-			return MeshRaycast(ray, vertices, triangles, out hit, distance, cullingMode);
+			return MeshRaycast(ray, vertices, triangles, out hit, distance);
 		}
 
 		/// <summary>
@@ -247,7 +244,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="distance"></param>
 		/// <param name="cullingMode"></param>
 		/// <returns></returns>
-		public static bool MeshRaycast(Ray InRay, Vector3[] vertices, int[] triangles, out RaycastHit hit, float distance = Mathf.Infinity, pb_Culling cullingMode = pb_Culling.Front)
+		public static bool MeshRaycast(Ray InRay, Vector3[] vertices, int[] triangles, out RaycastHit hit, float distance = Mathf.Infinity)
 		{
 			// float dot; 		// vars used in loop
 			float hitDistance = Mathf.Infinity;
@@ -256,10 +253,8 @@ namespace UnityEngine.ProBuilder
 			int hitFace = -1;
 			Vector3 o = InRay.origin, d = InRay.direction;
 
-			/**
-			 * Iterate faces, testing for nearest hit to ray origin.
-			 */
-			for(int CurTri = 0; CurTri < triangles.Length; CurTri += 3)
+            // Iterate faces, testing for nearest hit to ray origin.
+            for (int CurTri = 0; CurTri < triangles.Length; CurTri += 3)
 			{
 				a = vertices[triangles[CurTri+0]];
 				b = vertices[triangles[CurTri+1]];
@@ -298,7 +293,7 @@ namespace UnityEngine.ProBuilder
 
 			RaycastHit hit;
 
-			return HandleUtility.FaceRaycast(ray, pb, out hit, Vector3.Distance(cam.transform.position, worldPoint), pb_Culling.Back);
+			return HandleUtility.FaceRaycast(ray, pb, out hit, Vector3.Distance(cam.transform.position, worldPoint), Culling.Back);
 		}
 
 		/// <summary>

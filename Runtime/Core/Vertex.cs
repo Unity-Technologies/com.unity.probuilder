@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace UnityEngine.ProBuilder
 {
@@ -41,9 +42,9 @@ namespace UnityEngine.ProBuilder
 			hasUv4 = hasAllValues;
 		}
 
-		public override bool Equals(object other)
+		public override bool Equals(object obj)
 		{
-			return other is Vertex && this.Equals(other as Vertex);
+			return obj is Vertex && this.Equals(obj as Vertex);
 		}
 
 		public bool Equals(Vertex other)
@@ -77,25 +78,28 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Copy constructor.
 		/// </summary>
-		/// <param name="v"></param>
-		public Vertex(Vertex v)
+		/// <param name="vertex"></param>
+		public Vertex(Vertex vertex)
 		{
-			this.position 	= v.position;
-			this.hasPosition = v.hasPosition;
-			this.color 		= v.color;
-			this.hasColor 	= v.hasColor;
-			this.uv0 		= v.uv0;
-			this.hasUv0 	= v.hasUv0;
-			this.normal 	= v.normal;
-			this.hasNormal 	= v.hasNormal;
-			this.tangent 	= v.tangent;
-			this.hasTangent = v.hasTangent;
-			this.uv2 		= v.uv2;
-			this.hasUv2 	= v.hasUv2;
-			this.uv3 		= v.uv3;
-			this.hasUv3 	= v.hasUv3;
-			this.uv4 		= v.uv4;
-			this.hasUv4 	= v.hasUv4;
+            if (vertex == null)
+                throw new ArgumentNullException("vertex");
+
+			this.position 	= vertex.position;
+			this.hasPosition = vertex.hasPosition;
+			this.color 		= vertex.color;
+			this.hasColor 	= vertex.hasColor;
+			this.uv0 		= vertex.uv0;
+			this.hasUv0 	= vertex.hasUv0;
+			this.normal 	= vertex.normal;
+			this.hasNormal 	= vertex.hasNormal;
+			this.tangent 	= vertex.tangent;
+			this.hasTangent = vertex.hasTangent;
+			this.uv2 		= vertex.uv2;
+			this.hasUv2 	= vertex.hasUv2;
+			this.uv3 		= vertex.uv3;
+			this.hasUv3 	= vertex.hasUv3;
+			this.uv4 		= vertex.uv4;
+			this.hasUv4 	= vertex.hasUv4;
 		}
 
 		/// <summary>
@@ -117,7 +121,10 @@ namespace UnityEngine.ProBuilder
 		/// <param name="b"></param>
 		public void Add(Vertex b)
 		{
-			this.position	+= b.position;
+            if (b == null)
+                throw new ArgumentNullException("b");
+
+            this.position	+= b.position;
 			this.color		+= b.color;
 			this.normal		+= b.normal;
 			this.tangent	+= b.tangent;
@@ -146,6 +153,9 @@ namespace UnityEngine.ProBuilder
 		/// <param name="b"></param>
 		public void Subtract(Vertex b)
 		{
+            if (b == null)
+                throw new ArgumentNullException("b");
+
 			this.position	-= b.position;
 			this.color		-= b.color;
 			this.normal		-= b.normal;
@@ -242,29 +252,32 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Creates a new array of pb_Vertex with the provide pb_Object data.
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="indices"></param>
 		/// <returns></returns>
-		public static Vertex[] GetVertices(ProBuilderMesh pb, IList<int> indices = null)
+		public static Vertex[] GetVertices(ProBuilderMesh mesh, IList<int> indices = null)
 		{
-			int meshVertexCount = pb.vertexCount;
-			int vertexCount = indices != null ? indices.Count : pb.vertexCount;
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+            int meshVertexCount = mesh.vertexCount;
+			int vertexCount = indices != null ? indices.Count : mesh.vertexCount;
 
 			Vertex[] v = new Vertex[vertexCount];
 
-			Vector3[] positions = pb.positions;
-			Color[] colors 		= pb.colors;
-			Vector2[] uv0s 		= pb.uv;
+			Vector3[] positions = mesh.positions;
+			Color[] colors 		= mesh.colors;
+			Vector2[] uv0s 		= mesh.uv;
 
-			Vector3[] normals 	= pb.mesh.normals;
-			Vector4[] tangents 	= pb.mesh.tangents;
-			Vector2[] uv2s 		= pb.mesh.uv2;
+			Vector3[] normals 	= mesh.mesh.normals;
+			Vector4[] tangents 	= mesh.mesh.tangents;
+			Vector2[] uv2s 		= mesh.mesh.uv2;
 
 			List<Vector4> uv3s = new List<Vector4>();
 			List<Vector4> uv4s = new List<Vector4>();
 
-			pb.GetUVs(2, uv3s);
-			pb.GetUVs(3, uv4s);
+			mesh.GetUVs(2, uv3s);
+			mesh.GetUVs(3, uv4s);
 
 			bool _hasPositions	= positions != null && positions.Count() == meshVertexCount;
 			bool _hasColors		= colors != null 	&& colors.Count() == meshVertexCount;
@@ -404,7 +417,10 @@ namespace UnityEngine.ProBuilder
 										out List<Vector4> uv4,
 										AttributeType attributes)
 		{
-			int vc = vertices.Count;
+            if (vertices == null)
+                throw new ArgumentNullException("vertices");
+
+            int vc = vertices.Count;
 
 			bool hasPosition = ((attributes & AttributeType.Position) == AttributeType.Position);
 			bool hasColor = ((attributes & AttributeType.Color) == AttributeType.Color);
@@ -440,10 +456,16 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Replace mesh values with vertex array. Mesh is cleared during this function, so be sure to set the triangles after calling.
 		/// </summary>
-		/// <param name="m"></param>
+		/// <param name="mesh"></param>
 		/// <param name="vertices"></param>
-		public static void SetMesh(Mesh m, IList<Vertex> vertices)
+		public static void SetMesh(Mesh mesh, IList<Vertex> vertices)
 		{
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+            if (vertices == null)
+                throw new ArgumentNullException("vertices");
+
 			Vector3[] positions	= null;
  			Color[] colors		= null;
  			Vector2[] uv0s		= null;
@@ -462,19 +484,19 @@ namespace UnityEngine.ProBuilder
 								out uv3s,
 								out uv4s);
 
-			m.Clear();
+			mesh.Clear();
 
 			Vertex first = vertices[0];
 
-			if(first.hasPosition)	m.vertices = positions;
-			if(first.hasColor)		m.colors = colors;
-			if(first.hasUv0)		m.uv = uv0s;
-			if(first.hasNormal)		m.normals = normals;
-			if(first.hasTangent)	m.tangents = tangents;
-			if(first.hasUv2)		m.uv2 = uv2s;
+			if(first.hasPosition)	mesh.vertices = positions;
+			if(first.hasColor)		mesh.colors = colors;
+			if(first.hasUv0)		mesh.uv = uv0s;
+			if(first.hasNormal)		mesh.normals = normals;
+			if(first.hasTangent)	mesh.tangents = tangents;
+			if(first.hasUv2)		mesh.uv2 = uv2s;
 #if !UNITY_4_7 && !UNITY_5_0
-			if(first.hasUv3)		if(uv3s != null) m.SetUVs(2, uv3s);
-			if(first.hasUv4)		if(uv4s != null) m.SetUVs(3, uv4s);
+			if(first.hasUv3)		if(uv3s != null) mesh.SetUVs(2, uv3s);
+			if(first.hasUv4)		if(uv4s != null) mesh.SetUVs(3, uv4s);
 #endif
 		}
 
@@ -486,7 +508,10 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		public static Vertex Average(IList<Vertex> vertices, IList<int> indices = null)
 		{
-			Vertex v = new Vertex();
+            if (vertices == null)
+                throw new ArgumentNullException("vertices");
+
+            Vertex v = new Vertex();
 
 			int vertexCount = indices != null ? indices.Count : vertices.Count;
 
@@ -552,6 +577,9 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		public static Vertex Mix(Vertex x, Vertex y, float a)
 		{
+            if (x == null || y == null)
+                throw new ArgumentNullException("x", "Mix does accept null vertices.");
+
 			float i = 1f - a;
 
 			Vertex v = new Vertex();

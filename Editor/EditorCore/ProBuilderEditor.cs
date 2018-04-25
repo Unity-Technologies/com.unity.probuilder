@@ -699,7 +699,7 @@ namespace UnityEditor.ProBuilder
 				List<RaycastHit> hits;
 				Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
 
-				if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, bestObj, out hits, Mathf.Infinity, pb_Culling.FrontBack))
+				if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, bestObj, out hits, Mathf.Infinity, Culling.FrontBack))
 				{
 					Camera cam = SceneView.lastActiveSceneView.camera;
 
@@ -795,7 +795,7 @@ namespace UnityEditor.ProBuilder
 						pb,
 						out hit,
 						Mathf.Infinity,
-						selectHiddenEnabled ? pb_Culling.FrontBack : pb_Culling.Front))
+						selectHiddenEnabled ? Culling.FrontBack : Culling.Front))
 					{
 						face = pb.faces[hit.face];
 					}
@@ -1058,7 +1058,7 @@ namespace UnityEditor.ProBuilder
 			var pickingOptions = new PickerOptions()
 			{
 				depthTest = !selectHidden,
-				rectSelectMode = PreferencesInternal.GetEnum<pb_RectSelectMode>(PreferenceKeys.pbRectSelectMode)
+				rectSelectMode = PreferencesInternal.GetEnum<RectSelectMode>(PreferenceKeys.pbRectSelectMode)
 			};
 
 			switch (selectionMode)

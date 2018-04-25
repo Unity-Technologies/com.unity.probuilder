@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections;
@@ -8,7 +9,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// Functions for generating mesh attributes and various other mesh utilities.
 	/// </summary>
-	public class MeshUtility
+	public static class MeshUtility
 	{
 		/// <summary>
 		/// Set a mesh to use individual triangle topology.
@@ -17,13 +18,16 @@ namespace UnityEngine.ProBuilder
 		/// <returns>A pb_Vertex array of the per-triangle vertices.</returns>
 		public static Vertex[] GeneratePerTriangleMesh(Mesh mesh)
 		{
-			Vertex[] vertices 	= Vertex.GetVertices(mesh);
-			int smc 				= mesh.subMeshCount;
-			Vertex[] tv 			= new Vertex[mesh.triangles.Length];
-			int[][] triangles 		= new int[smc][];
-			int triIndex 			= 0;
+            if (mesh == null)
+                throw new System.ArgumentNullException("mesh");
 
-			for(int s = 0; s < smc; s++)
+            Vertex[] vertices = Vertex.GetVertices(mesh);
+            int smc = mesh.subMeshCount;
+            Vertex[] tv = new Vertex[mesh.triangles.Length];
+            int[][] triangles = new int[smc][];
+            int triIndex = 0;
+
+            for (int s = 0; s < smc; s++)
 			{
 				triangles[s] = mesh.GetTriangles(s);
 				int tl = triangles[s].Length;
@@ -48,25 +52,28 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Generate tangents for the mesh.
 		/// </summary>
-		/// <param name="InMesh"></param>
-		public static void GenerateTangent(ref Mesh InMesh)
+		/// <param name="mesh"></param>
+		public static void GenerateTangent(Mesh mesh)
 		{
-			// http://answers.unity3d.com/questions/7789/calculating-tangents-vector4.html
+            if (mesh == null)
+                throw new System.ArgumentNullException("mesh");
 
-			// speed up math by copying the mesh arrays
-			int[] triangles 	= InMesh.triangles;
-			Vector3[] vertices 	= InMesh.vertices;
-			Vector2[] uv 		= InMesh.uv;
-			Vector3[] normals 	= InMesh.normals;
+            // http://answers.unity3d.com/questions/7789/calculating-tangents-vector4.html
 
-			//variable definitions
-			int triangleCount = triangles.Length;
-			int vertexCount = vertices.Length;
+            // speed up math by copying the mesh arrays
+            int[] triangles = mesh.triangles;
+            Vector3[] vertices = mesh.vertices;
+            Vector2[] uv = mesh.uv;
+            Vector3[] normals = mesh.normals;
 
-			Vector3[] tan1 = new Vector3[vertexCount];
-			Vector3[] tan2 = new Vector3[vertexCount];
+            //variable definitions
+            int triangleCount = triangles.Length;
+            int vertexCount = vertices.Length;
 
-			Vector4[] tangents = new Vector4[vertexCount];
+            Vector3[] tan1 = new Vector3[vertexCount];
+            Vector3[] tan2 = new Vector3[vertexCount];
+
+            Vector4[] tangents = new Vector4[vertexCount];
 
 			for (long a = 0; a < triangleCount; a += 3)
 			{
@@ -122,7 +129,7 @@ namespace UnityEngine.ProBuilder
 				tangents[a].w = (Vector3.Dot(Vector3.Cross(n, t), tan2[a]) < 0.0f) ? -1.0f : 1.0f;
 			}
 
-			InMesh.tangents = tangents;
+			mesh.tangents = tangents;
 		}
 
 		/**
@@ -142,15 +149,21 @@ namespace UnityEngine.ProBuilder
 		 */
 		public static void CopyTo(Mesh source, Mesh destination)
 		{
-			Vector3[] v = new Vector3[source.vertices.Length];
-			int[][]   t = new int[source.subMeshCount][];
-			Vector2[] u = new Vector2[source.uv.Length];
-			Vector2[] u2 = new Vector2[source.uv2.Length];
-			Vector4[] tan = new Vector4[source.tangents.Length];
-			Vector3[] n = new Vector3[source.normals.Length];
-			Color32[] c = new Color32[source.colors32.Length];
+            if (source == null)
+                throw new System.ArgumentNullException("source");
 
-			System.Array.Copy(source.vertices, v, v.Length);
+            if (destination == null)
+                throw new System.ArgumentNullException("destination");
+
+            Vector3[] v = new Vector3[source.vertices.Length];
+            int[][] t = new int[source.subMeshCount][];
+            Vector2[] u = new Vector2[source.uv.Length];
+            Vector2[] u2 = new Vector2[source.uv2.Length];
+            Vector4[] tan = new Vector4[source.tangents.Length];
+            Vector3[] n = new Vector3[source.normals.Length];
+            Color32[] c = new Color32[source.colors32.Length];
+
+            System.Array.Copy(source.vertices, v, v.Length);
 
 			for(int i = 0; i < t.Length; i++)
 				t[i] = source.GetTriangles(i);
@@ -178,17 +191,22 @@ namespace UnityEngine.ProBuilder
 			destination.colors32 = c;
 		}
 
-		/**
-		 * Calculate mesh normals.
-		 */
-		public static Vector3[] GenerateNormals(ProBuilderMesh pb)
+        /// <summary>
+        /// Calculate mesh normals. Does not apply smoothing groups (see SmoothNormals).
+        /// </summary>
+        /// <param name="mesh"></param>
+        /// <returns>A new array of the vertex normals.</returns>
+        public static Vector3[] GenerateNormals(ProBuilderMesh mesh)
 		{
-			int vertexCount = pb.vertexCount;
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+            int vertexCount = mesh.vertexCount;
 			Vector3[] perTriangleNormal = new Vector3[vertexCount];
-			Vector3[] vertices = pb.positions;
+			Vector3[] vertices = mesh.positions;
 			Vector3[] normals = new Vector3[vertexCount];
 			int[] perTriangleAvg = new int[vertexCount];
-			Face[] faces = pb.faces;
+			Face[] faces = mesh.faces;
 
 			for(int find = 0; find < faces.Length; find++)
 			{
@@ -228,16 +246,21 @@ namespace UnityEngine.ProBuilder
 			return normals;
 		}
 
-		/**
-		 * Apply smoothing groups to a set of per-face normals.
-		 */
-		public static void SmoothNormals(ProBuilderMesh pb, ref Vector3[] normals)
+        /// <summary>
+        /// Apply smoothing groups to a set of per-face normals.
+        /// </summary>
+        /// <param name="mesh"></param>
+        /// <param name="normals"></param>
+        public static void SmoothNormals(ProBuilderMesh mesh, ref Vector3[] normals)
 		{
+            if (mesh == null)
+                throw new System.ArgumentNullException("mesh");
+
 			// average the soft edge faces
-			int vertexCount = pb.vertexCount;
+			int vertexCount = mesh.vertexCount;
 			int[] smoothGroup = new int[vertexCount];
-			IntArray[] sharedIndices = pb.sharedIndices;
-			Face[] faces = pb.faces;
+			IntArray[] sharedIndices = mesh.sharedIndices;
+			Face[] faces = mesh.faces;
 			int smoothGroupMax = 24;
 
 			// Create a lookup of each triangles smoothing group.
@@ -252,14 +275,12 @@ namespace UnityEngine.ProBuilder
 				}
 			}
 
-			Vector3[] averages 	= new Vector3[smoothGroupMax];
-			float[] counts 		= new float[smoothGroupMax];
+            Vector3[] averages = new Vector3[smoothGroupMax];
+            float[] counts = new float[smoothGroupMax];
 
-			/**
-			 * For each sharedIndices group (individual vertex), find vertices that are in the same smoothing
-			 * group and average their normals.
-			 */
-			for(int i = 0; i < sharedIndices.Length; i++)
+            // For each sharedIndices group (individual vertex), find vertices that are in the same smoothing
+            // group and average their normals.
+            for (int i = 0; i < sharedIndices.Length; i++)
 			{
 				for(int n = 0; n < smoothGroupMax; n++)
 				{
@@ -302,13 +323,21 @@ namespace UnityEngine.ProBuilder
 			}
 		}
 
-		/**
-		 * Get a mesh attribute from either the MeshFilter.sharedMesh or the
-		 * MeshRenderer.additionalVertexStreams mesh. If returned array does not
-		 * match the vertex count NULL is returned.
-		 */
-		public static T GetMeshAttribute<T>(GameObject go, System.Func<Mesh, T> attributeGetter) where T : IList
+        /// <summary>
+        /// Get a mesh attribute from either the MeshFilter.sharedMesh or the MeshRenderer.additionalVertexStreams mesh.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="go"></param>
+        /// <param name="attributeGetter"></param>
+        /// <returns>If returned array does not match the vertex count NULL is returned.</returns>
+        public static T GetMeshAttribute<T>(GameObject go, System.Func<Mesh, T> attributeGetter) where T : IList
 		{
+            if (go == null)
+                throw new System.ArgumentNullException("go");
+
+            if (attributeGetter == null)
+                throw new System.ArgumentNullException("attributeGetter");
+
 			MeshFilter mf = go.GetComponent<MeshFilter>();
 			Mesh mesh = mf != null ? mf.sharedMesh : null;
 			T res = default(T);
@@ -335,14 +364,19 @@ namespace UnityEngine.ProBuilder
 			return res != null && res.Count == vertexCount ? res : default(T);
 		}
 
-		/**
-		 * Return a detailed account of the mesh.
-		 */
-		public static string Print(Mesh m)
+        /// <summary>
+        /// Print a detailed string summary of the mesh attributes.
+        /// </summary>
+        /// <param name="mesh"></param>
+        /// <returns></returns>
+		public static string Print(Mesh mesh)
 		{
+            if (mesh == null)
+                throw new System.ArgumentNullException("mesh");
+
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-			sb.AppendLine(string.Format("vertices: {0}\ntriangles: {1}\nsubmeshes: {2}", m.vertexCount, m.triangles.Length, m.subMeshCount));
+			sb.AppendLine(string.Format("vertices: {0}\ntriangles: {1}\nsubmeshes: {2}", mesh.vertexCount, mesh.triangles.Length, mesh.subMeshCount));
 
 			sb.AppendLine(string.Format("     {0,-28}{7,-16}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}",
 				"Positions",
@@ -354,39 +388,39 @@ namespace UnityEngine.ProBuilder
 				"UV4",
 				"Position Hash"));
 
-			Vector3[] positions = m.vertices;
-			Color[] colors 		= m.colors;
-			Vector4[] tangents 	= m.tangents;
+			Vector3[] positions = mesh.vertices;
+			Color[] colors 		= mesh.colors;
+			Vector4[] tangents 	= mesh.tangents;
 
 			List<Vector4> uv0 	= new List<Vector4>();
-			Vector2[] uv2 		= m.uv2;
+			Vector2[] uv2 		= mesh.uv2;
 			List<Vector4> uv3 	= new List<Vector4>();
 			List<Vector4> uv4 	= new List<Vector4>();
 
 			#if !UNITY_4_7 && !UNITY_5_0
-			m.GetUVs(0, uv0);
-			m.GetUVs(2, uv3);
-			m.GetUVs(3, uv4);
+			mesh.GetUVs(0, uv0);
+			mesh.GetUVs(2, uv3);
+			mesh.GetUVs(3, uv4);
 			#else
 			uv0 = m.uv.Cast<Vector4>().ToList();
 			#endif
 
-			if( positions != null && positions.Count() != m.vertexCount)
+			if( positions != null && positions.Count() != mesh.vertexCount)
 				positions = null;
-			if( colors != null && colors.Count() != m.vertexCount)
+			if( colors != null && colors.Count() != mesh.vertexCount)
 				colors = null;
-			if( tangents != null && tangents.Count() != m.vertexCount)
+			if( tangents != null && tangents.Count() != mesh.vertexCount)
 				tangents = null;
-			if( uv0 != null && uv0.Count() != m.vertexCount)
+			if( uv0 != null && uv0.Count() != mesh.vertexCount)
 				uv0 = null;
-			if( uv2 != null && uv2.Count() != m.vertexCount)
+			if( uv2 != null && uv2.Count() != mesh.vertexCount)
 				uv2 = null;
-			if( uv3 != null && uv3.Count() != m.vertexCount)
+			if( uv3 != null && uv3.Count() != mesh.vertexCount)
 				uv3 = null;
-			if( uv4 != null && uv4.Count() != m.vertexCount)
+			if( uv4 != null && uv4.Count() != mesh.vertexCount)
 				uv4 = null;
 
-			for(int i = 0; i < m.vertexCount; i ++)
+			for(int i = 0; i < mesh.vertexCount; i ++)
 			{
 				sb.AppendLine(string.Format("{7,-5}{0,-28}{8,-16}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}",
 					positions == null 	? "null" : string.Format("{0:F3}, {1:F3}, {2:F3}", positions[i].x, positions[i].y, positions[i].z),
@@ -400,8 +434,8 @@ namespace UnityEngine.ProBuilder
 					VectorHash.GetHashCode(positions[i])));
 			}
 
-			for(int i = 0; i < m.triangles.Length; i+=3)
-				sb.AppendLine(string.Format("{0}, {1}, {2}", m.triangles[i], m.triangles[i+1], m.triangles[i+2]));
+			for(int i = 0; i < mesh.triangles.Length; i+=3)
+				sb.AppendLine(string.Format("{0}, {1}, {2}", mesh.triangles[i], mesh.triangles[i+1], mesh.triangles[i+2]));
 
 			return sb.ToString();
 		}

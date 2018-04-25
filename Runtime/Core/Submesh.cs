@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace UnityEngine.ProBuilder
@@ -44,6 +45,9 @@ namespace UnityEngine.ProBuilder
 		/// <param name="material"></param>
 		public Submesh(Mesh mesh, int subMeshIndex, Material material)
 		{
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
 			this.indices = mesh.GetIndices(subMeshIndex);
 			this.topology = mesh.GetTopology(subMeshIndex);
 			this.material = material;

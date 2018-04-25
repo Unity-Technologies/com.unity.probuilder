@@ -862,12 +862,6 @@ namespace UnityEngine.ProBuilder
 			return pb;
 		}
 
-		[System.Obsolete]
-		public static ProBuilderMesh PlaneGenerator(float _width, float _height, int widthCuts, int heightCuts, Axis axis, bool smooth)
-		{
-			return PlaneGenerator(_width, _height, widthCuts, heightCuts, axis);
-		}
-
 		/// <summary>
 		/// Create a new plane shape.
 		/// </summary>
@@ -877,11 +871,8 @@ namespace UnityEngine.ProBuilder
 		/// <param name="heightCuts">Divisions on the Y axis.</param>
 		/// <param name="axis">The axis to build the plane on. Ex: ProBuilder.Axis.Up is a plane with a normal of Vector3.up.</param>
 		/// <returns></returns>
-		public static ProBuilderMesh PlaneGenerator(float _width, float _height, int widthCuts, int heightCuts, Axis axis)
+		public static ProBuilderMesh PlaneGenerator(float width, float height, int widthCuts, int heightCuts, Axis axis)
 		{
-			float width = _width;
-			float height = _height;
-
 			int w = widthCuts+1;
 			int h = heightCuts+1;
 

@@ -37,11 +37,14 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Get the first available unused smoothing group.
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <returns></returns>
-		public static int GetUnusedSmoothingGroup(ProBuilderMesh pb)
+		public static int GetUnusedSmoothingGroup(ProBuilderMesh mesh)
 		{
-			return GetNextUnusedSmoothingGroup(smoothRangeMin, new HashSet<int>(pb.faces.Select(x => x.smoothingGroup)));
+            if (mesh == null)
+                throw new System.ArgumentNullException("mesh");
+
+            return GetNextUnusedSmoothingGroup(smoothRangeMin, new HashSet<int>(mesh.faces.Select(x => x.smoothingGroup)));
 		}
 
 		/// <summary>
@@ -76,14 +79,17 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Group together adjacent faces with normal differences less than angleThreshold (in degrees).
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="faces"></param>
 		/// <param name="angleThreshold"></param>
 		/// <param name="normals"></param>
-		public static void ApplySmoothingGroups(ProBuilderMesh pb, IEnumerable<Face> faces, float angleThreshold, Vector3[] normals = null)
+		public static void ApplySmoothingGroups(ProBuilderMesh mesh, IEnumerable<Face> faces, float angleThreshold, Vector3[] normals = null)
 		{
-			// Reset the selected faces to no smoothing group
-			bool anySmoothed = false;
+            if (mesh == null || faces == null)
+                throw new System.ArgumentNullException("mesh");
+
+            // Reset the selected faces to no smoothing group
+            bool anySmoothed = false;
 
 			foreach(Face face in faces)
 			{
@@ -98,15 +104,15 @@ namespace UnityEngine.ProBuilder
 			if(normals == null)
 			{
 				if(anySmoothed)
-					pb.mesh.normals = null;
-				normals = pb.GetNormals();
+					mesh.mesh.normals = null;
+				normals = mesh.GetNormals();
 			}
 
 			float threshold = Mathf.Abs(Mathf.Cos(Mathf.Clamp(angleThreshold, 0f, 89.999f) * Mathf.Deg2Rad));
-			HashSet<int> used = new HashSet<int>(pb.faces.Select(x => x.smoothingGroup));
+			HashSet<int> used = new HashSet<int>(mesh.faces.Select(x => x.smoothingGroup));
 			int group = GetNextUnusedSmoothingGroup(1, used);
 			HashSet<Face> processed = new HashSet<Face>();
-			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb, faces, true);
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh, faces, true);
 
 			foreach(WingedEdge wing in wings)
 			{

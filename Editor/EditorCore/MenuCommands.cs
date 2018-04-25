@@ -1531,8 +1531,7 @@ namespace UnityEditor.ProBuilder
 
 			if(filled > 0)
 			{
-				res.status = Status.Success;
-				res.notification = filled > 1 ? string.Format("Filled {0} Holes", filled) : "Fill Hole";
+                res = new ActionResult(Status.Success, filled > 1 ? string.Format("Filled {0} Holes", filled) : "Fill Hole");
 			}
 
 			return res;

@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.Serialization;
+using System;
 
 namespace UnityEngine.ProBuilder
 {
@@ -651,7 +652,10 @@ namespace UnityEngine.ProBuilder
 		/// <param name="applyMesh"></param>
 		public void SetVertices(IList<Vertex> vertices, bool applyMesh = false)
 		{
-			Vector3[] position;
+            if (vertices == null)
+                throw new ArgumentNullException("vertices");
+
+            Vector3[] position;
 			Color[] color;
 			Vector2[] uv0;
 			Vector3[] normal;
@@ -847,9 +851,8 @@ namespace UnityEngine.ProBuilder
 
 			m.uv2 = null;
 
-			Submesh[] submeshes;
-
-			m.subMeshCount = Face.GetMeshIndices(faces, out submeshes, preferredTopology);
+			Submesh[] submeshes = Face.GetMeshIndices(faces, preferredTopology);
+            m.subMeshCount = submeshes.Length;
 
 			for (int i = 0; i < m.subMeshCount; i++)
 #if UNITY_5_5_OR_NEWER
@@ -1178,21 +1181,6 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Set the material on all faces. Call ToMesh() and Refresh() after to force these changes to take effect.
-		/// </summary>
-		/// <param name="facesToApply"></param>
-		/// <param name="mat"></param>
-		public void SetFaceMaterial(Face[] facesToApply, Material mat)
-		{
-#if PROTOTYPE
-			GetComponent<MeshRenderer>().sharedMaterials = new Material[1] { mat };
-	#else
-			for (int i = 0; i < facesToApply.Length; i++)
-				facesToApply[i].material = mat;
-#endif
-		}
-
-		/// <summary>
 		/// Set mesh UV2.
 		/// </summary>
 		/// <remarks>
@@ -1260,7 +1248,7 @@ namespace UnityEngine.ProBuilder
 			if (m_Tangents != null && m_Tangents.Length == vertexCount)
 				m.tangents = m_Tangents;
 			else
-				MeshUtility.GenerateTangent(ref m);
+				MeshUtility.GenerateTangent(m);
 		}
 	}
 }

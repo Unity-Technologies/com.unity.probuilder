@@ -10,7 +10,7 @@ namespace UnityEngine.ProBuilder
 	/// This exists only as a stub for the ProGrids defined attribute.
 	/// </remarks>
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-	class ProGridsNoSnapAttribute : Attribute
+	sealed class ProGridsNoSnapAttribute : Attribute
 	{
 	}
 
@@ -21,7 +21,7 @@ namespace UnityEngine.ProBuilder
 	/// This exists only as a stub for the ProGrids defined attribute.
 	/// </remarks>
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-	class ProGridsConditionalSnapAttribute : Attribute
+	sealed class ProGridsConditionalSnapAttribute : Attribute
 	{
 	}
 }

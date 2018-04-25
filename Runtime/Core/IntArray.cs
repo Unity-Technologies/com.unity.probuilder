@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using System.Linq;
 using System.Text;
 
@@ -15,7 +16,7 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// An array of vertex indices that are coincident.
 		/// </summary>
-		public int[] array;
+		internal int[] array;
 
 		/// <summary>
 		/// Convert the array to a list.
@@ -32,7 +33,9 @@ namespace UnityEngine.ProBuilder
 		/// <param name="intArray"></param>
 		public IntArray(int[] intArray)
 		{
-			array = intArray;
+            if (intArray == null)
+                throw new ArgumentNullException("intArray");
+            array = intArray;
 		}
 
 		/// <summary>
@@ -41,6 +44,8 @@ namespace UnityEngine.ProBuilder
 		/// <param name="intArray"></param>
 		public IntArray(IntArray intArray)
 		{
+            if (intArray == null)
+                throw new ArgumentNullException("intArray");
 			array = new int[intArray.length];
 			System.Array.Copy(intArray.array, array, array.Length);
 		}
@@ -70,7 +75,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		public static implicit operator int[](IntArray intArr)
 		{
-			return intArr.array;
+			return intArr != null ? intArr.array : null;
 		}
 
 		/// <summary>
@@ -101,17 +106,20 @@ namespace UnityEngine.ProBuilder
 		/// Remove any arrays that are null or empty.
 		/// </summary>
 		/// <param name="val"></param>
-		public static void RemoveEmptyOrNull(ref IntArray[] val)
+		public static void RemoveEmptyOrNull(ref IntArray[] array)
 		{
+            if (array == null)
+                throw new ArgumentNullException("array");
+
 			List<IntArray> valid = new List<IntArray>();
 
-			foreach(var par in val)
+			foreach(var par in array)
 			{
 				if(par != null && !par.IsEmpty())
 					valid.Add(par);
 			}
 
-			val = valid.ToArray();
+            array = valid.ToArray();
 		}
 	}
 }

@@ -48,7 +48,7 @@ namespace UnityEditor.ProBuilder
 
 			if (colors.Count > 0)
 			{
-				target.colors = colors;
+				target.FromList(colors);
 				UnityEditor.EditorUtility.SetDirty(target);
 			}
 		}

@@ -46,16 +46,16 @@ namespace UnityEngine.ProBuilder
 		public const string DEFAULT_LOG_PATH = "ProBuilderLog.txt";
 
 		// Retain a stack of previous log levels.
-		static Stack<LogLevel> m_logStack = new Stack<LogLevel>();
+		static Stack<LogLevel> s_logStack = new Stack<LogLevel>();
 
 		// Current log level.
-		static LogLevel m_LogLevel = LogLevel.All;
+		static LogLevel s_LogLevel = LogLevel.All;
 
 		// Where to write log strings.
-		static LogOutput m_Output = LogOutput.Console;
+		static LogOutput s_Output = LogOutput.Console;
 
 		// Path to the log file.
-		static string m_LogFilePath = DEFAULT_LOG_PATH;
+		static string s_LogFilePath = DEFAULT_LOG_PATH;
 
 		/// <summary>
 		/// Push the current log level in the stack. See also PopLogLevel.
@@ -63,8 +63,8 @@ namespace UnityEngine.ProBuilder
 		/// <param name="level"></param>
 		public static void PushLogLevel(LogLevel level)
 		{
-			m_logStack.Push(m_LogLevel);
-			m_LogLevel = level;
+			s_logStack.Push(s_LogLevel);
+			s_LogLevel = level;
 		}
 
 		/// <summary>
@@ -72,7 +72,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public static void PopLogLevel()
 		{
-			m_LogLevel = m_logStack.Pop();
+			s_LogLevel = s_logStack.Pop();
 		}
 
 		/// <summary>
@@ -81,7 +81,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="level"></param>
 		public static void SetLogLevel(LogLevel level)
 		{
-			m_LogLevel = level;
+			s_LogLevel = level;
 		}
 
 		/// <summary>
@@ -91,7 +91,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="output"></param>
 		public static void SetOutput(LogOutput output)
 		{
-			m_Output = output;
+			s_Output = output;
 		}
 
 		/// <summary>
@@ -100,7 +100,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="path"></param>
 		public static void SetLogFile(string path)
 		{
-			m_LogFilePath = path;
+			s_LogFilePath = path;
 		}
 
 		/// <summary>
@@ -146,7 +146,7 @@ namespace UnityEngine.ProBuilder
 
 		public static void Info(string message)
 		{
-			if( (m_LogLevel & LogLevel.Info) > 0 )
+			if( (s_LogLevel & LogLevel.Info) > 0 )
 				DoPrint(message, LogType.Log);
 		}
 
@@ -162,7 +162,7 @@ namespace UnityEngine.ProBuilder
 
 		public static void Warning(string message)
 		{
-			if( (m_LogLevel & LogLevel.Warning) > 0 )
+			if( (s_LogLevel & LogLevel.Warning) > 0 )
 				DoPrint(message, LogType.Warning);
 		}
 
@@ -178,7 +178,7 @@ namespace UnityEngine.ProBuilder
 
 		public static void Error(string message)
 		{
-			if( (m_LogLevel & LogLevel.Error) > 0 )
+			if( (s_LogLevel & LogLevel.Error) > 0 )
 				DoPrint(message, LogType.Error);
 		}
 
@@ -197,11 +197,11 @@ namespace UnityEngine.ProBuilder
 
 		static void DoPrint(string message, LogType type)
 		{
-			if((m_Output & LogOutput.Console) > 0)
+			if((s_Output & LogOutput.Console) > 0)
 				PrintToConsole(message, type);
 
-			if((m_Output & LogOutput.File) > 0)
-				PrintToFile(message, m_LogFilePath);
+			if((s_Output & LogOutput.File) > 0)
+				PrintToFile(message, s_LogFilePath);
 		}
 
 		/// <summary>
@@ -254,8 +254,8 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public static void ClearLogFile()
 		{
-			if (File.Exists(m_LogFilePath))
-				File.Delete(m_LogFilePath);
+			if (File.Exists(s_LogFilePath))
+				File.Delete(s_LogFilePath);
 		}
 
 		/// <summary>
@@ -281,5 +281,10 @@ namespace UnityEngine.ProBuilder
 				UnityEngine.Debug.Log(message);
 		}
 
+        internal static void NotNull<T>(T obj, string message)
+        {
+            if (obj == null)
+                throw new ArgumentNullException(message);
+        }
 	}
 }

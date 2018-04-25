@@ -46,19 +46,19 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public WingedEdge opposite { get; private set; }
 
-		public bool Equals(WingedEdge b)
+		public bool Equals(WingedEdge other)
 		{
-			return b != null && edge.local.Equals(b.edge.local);
+			return other != null && edge.local.Equals(other.edge.local);
 		}
 
-		public override bool Equals(System.Object b)
+		public override bool Equals(System.Object obj)
 		{
-			WingedEdge be = b as WingedEdge;
+			WingedEdge be = obj as WingedEdge;
 
 			if(be != null && this.Equals(be))
 				return true;
 
-			if(b is Edge && this.edge.local.Equals((Edge) b))
+			if(obj is Edge && this.edge.local.Equals((Edge) obj))
 				return true;
 
 			return true;
@@ -213,6 +213,9 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		public static List<Edge> SortEdgesByAdjacency(Face face)
 		{
+            if (face == null || face.edges == null)
+                throw new ArgumentNullException("face");
+
 			// grab perimeter edges
 			List<Edge> edges = new List<Edge>(face.edges);
 
@@ -226,6 +229,9 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		public static List<Edge> SortEdgesByAdjacency(List<Edge> edges)
 		{
+            if (edges == null)
+                throw new ArgumentNullException("edges");
+
 			for(int i = 1; i < edges.Count; i++)
 			{
 				int want = edges[i - 1].y;
@@ -251,6 +257,9 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		public static Dictionary<int, List<WingedEdge>> GetSpokes(List<WingedEdge> wings)
 		{
+            if (wings == null)
+                throw new ArgumentNullException("wings");
+
 			Dictionary<int, List<WingedEdge>> spokes = new Dictionary<int, List<WingedEdge>>();
 			List<WingedEdge> l = null;
 
@@ -291,25 +300,31 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Create a new list of WingedEdge values for a ProBuilder mesh.
 		/// </summary>
-		/// <param name="pb">The mesh from which faces will read.</param>
+		/// <param name="mesh">The mesh from which faces will read.</param>
 		/// <param name="oneWingPerFace">Optionally restrict the list to only include one WingedEdge per-face.</param>
 		/// <returns></returns>
-		public static List<WingedEdge> GetWingedEdges(ProBuilderMesh pb, bool oneWingPerFace = false)
+		public static List<WingedEdge> GetWingedEdges(ProBuilderMesh mesh, bool oneWingPerFace = false)
 		{
-			return GetWingedEdges(pb, pb.faces, oneWingPerFace);
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+			return GetWingedEdges(mesh, mesh.faces, oneWingPerFace);
 		}
 
 		/// <summary>
 		/// Create a new list of WingedEdge values for a ProBuilder mesh.
 		/// </summary>
-		/// <param name="pb">Target ProBuilderMesh.</param>
+		/// <param name="mesh">Target ProBuilderMesh.</param>
 		/// <param name="faces">Which faces to include in the WingedEdge list.</param>
 		/// <param name="oneWingPerFace">If `oneWingPerFace` is true the returned list will contain a single winged edge per-face (but still point to all edges).</param>
 		/// <param name="sharedIndexLookup">If passed, this will skip generating a shared indices dictionary, which can be an expensive operation. This is useful when doing more than one mesh operation and you have already generated a current shared index dictionary.</param>
 		/// <returns></returns>
-		public static List<WingedEdge> GetWingedEdges(ProBuilderMesh pb, IEnumerable<Face> faces, bool oneWingPerFace = false, Dictionary<int, int> sharedIndexLookup = null)
+		public static List<WingedEdge> GetWingedEdges(ProBuilderMesh mesh, IEnumerable<Face> faces, bool oneWingPerFace = false, Dictionary<int, int> sharedIndexLookup = null)
 		{
-			Dictionary<int, int> lookup = sharedIndexLookup == null ? pb.sharedIndices.ToDictionary() : sharedIndexLookup;
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+			Dictionary<int, int> lookup = sharedIndexLookup == null ? mesh.sharedIndices.ToDictionary() : sharedIndexLookup;
 			IEnumerable<Face> distinct = faces.Distinct();
 
 			List<WingedEdge> winged = new List<WingedEdge>();

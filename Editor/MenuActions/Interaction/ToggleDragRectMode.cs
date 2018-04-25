@@ -9,12 +9,12 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	class ToggleDragRectMode : MenuAction
 	{
-		pb_RectSelectMode mode
+		RectSelectMode mode
 		{
 			get
 			{
-				return (pb_RectSelectMode) PreferencesInternal.GetInt(PreferenceKeys.pbRectSelectMode,
-					(int) pb_RectSelectMode.Partial);
+				return (RectSelectMode) PreferencesInternal.GetInt(PreferenceKeys.pbRectSelectMode,
+					(int) RectSelectMode.Partial);
 			}
 
 			set { PreferencesInternal.SetInt(PreferenceKeys.pbRectSelectMode, (int) value); }
@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			get
 			{
-				return mode == pb_RectSelectMode.Complete
+				return mode == RectSelectMode.Complete
 					? IconUtility.GetIcon("Toolbar/Selection_Rect_Complete")
 					: IconUtility.GetIcon("Toolbar/Selection_Rect_Intersect", IconSkin.Pro);
 			}
@@ -40,13 +40,13 @@ namespace UnityEditor.ProBuilder.Actions
 			"Sets whether or not a mesh element (edge or face) needs to be completely encompassed by a drag to be selected.\n\nThe default value is Intersect, meaning if any part of the elemnent is touched by the drag rectangle it will be selected."
 		);
 
-		public override string menuTitle { get { return mode == pb_RectSelectMode.Complete ? "Rect: Complete" : "Rect: Intersect"; } }
+		public override string menuTitle { get { return mode == RectSelectMode.Complete ? "Rect: Complete" : "Rect: Intersect"; } }
 
 		public override ActionResult DoAction()
 		{
 			mode = InternalUtility.NextEnumValue(mode);
 			return new ActionResult(Status.Success,
-				"Set Drag Select\n" + (mode == pb_RectSelectMode.Complete ? "Complete" : "Intersect"));
+				"Set Drag Select\n" + (mode == RectSelectMode.Complete ? "Complete" : "Intersect"));
 		}
 
 		public override bool IsEnabled()

@@ -10,10 +10,11 @@ namespace UnityEngine.ProBuilder
 	[System.Serializable]
 	public struct Edge : System.IEquatable<Edge>
 	{
-		/// <summary>
-		/// A set of vertex indices that form an edge.
-		/// </summary>
-		public int x, y;
+        /// <summary>
+        /// A set of vertex indices that form an edge.
+        /// </summary>
+        public int x { get; set; }
+        public int y { get; set; }
 
 		/// <summary>
 		/// An empty edge is defined as -1, -1.
@@ -45,14 +46,14 @@ namespace UnityEngine.ProBuilder
 			return "[" + x + ", " + y + "]";
 		}
 
-		public bool Equals(Edge edge)
+		public bool Equals(Edge other)
 		{
-			return (x == edge.x && y == edge.y) || (x == edge.y && y == edge.x);
+			return (x == other.x && y == other.y) || (x == other.y && y == other.x);
 		}
 
-		public override bool Equals(System.Object b)
+		public override bool Equals(System.Object obj)
 		{
-			return b is Edge && this.Equals((Edge) b);
+			return obj is Edge && this.Equals((Edge) obj);
 		}
 
 		public override int GetHashCode()
@@ -99,6 +100,16 @@ namespace UnityEngine.ProBuilder
 			return !(a == b);
 		}
 
+        public static Edge Add(Edge a, Edge b)
+        {
+            return a + b;
+        }
+
+        public static Edge Subtract(Edge a, Edge b)
+        {
+            return a - b;
+        }
+
 		/// <summary>
 		/// Convert an edge to an array.
 		/// </summary>
@@ -117,6 +128,8 @@ namespace UnityEngine.ProBuilder
 		/// <returns>True if edges are perceptually equal (that is, they point to the same common indices).</returns>
 		public bool Equals(Edge b, Dictionary<int, int> lookup)
 		{
+            if (lookup == null)
+                return Equals(b);
 			int x0 = lookup[x], y0 = lookup[y], x1 = lookup[b.x], y1 = lookup[b.y];
 			return (x0 == x1 && y0 == y1) || (x0 == y1 && y0 == x1);
 		}

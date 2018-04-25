@@ -1,25 +1,28 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 using System.Text;
 using System.Linq;
 
 namespace UnityEngine.ProBuilder
 {
 	/// <summary>
-	/// Utilities and extension methods for pb_IntArray.
+	/// Utilities and extension methods for IntArray.
 	/// </summary>
 	public static class IntArrayUtility
 	{
 		/// <summary>
-		/// Convert a pb_IntArray[] to a jagged int array.
+		/// Convert a IntArray[] to a jagged int array.
 		/// </summary>
-		/// <param name="val"></param>
+		/// <param name="array"></param>
 		/// <returns>Returns a jagged int array.</returns>
-		public static int[][] ToArray(this IntArray[] val)
+		public static int[][] ToArray(this IntArray[] array)
 		{
-			int[][] arr = new int[val.Length][];
+            if (array == null)
+                throw new ArgumentNullException("array");
+			int[][] arr = new int[array.Length][];
 			for(int i = 0; i < arr.Length; i++)
-				arr[i] = val[i].array;
+				arr[i] = array[i].array;
 			return arr;
 		}
 
@@ -36,7 +39,10 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		public static Dictionary<int, int> ToDictionary(this IntArray[] array)
 		{
-			Dictionary<int, int> dic = new Dictionary<int, int>();
+            if (array == null)
+                throw new ArgumentNullException("array");
+
+            Dictionary<int, int> dic = new Dictionary<int, int>();
 
 			for(int i = 0; i < array.Length; i++)
 			{
@@ -49,7 +55,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Convert a dictionary back to pb_IntArray[]
+		/// Convert a dictionary back to IntArray[]
 		/// </summary>
 		/// <param name="lookup"></param>
 		/// <returns></returns>
@@ -87,33 +93,37 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Convert a jagged int array to a pb_IntArray.
+		/// Convert a jagged int array to an IntArray.
 		/// </summary>
-		/// <param name="val"></param>
+		/// <param name="array"></param>
 		/// <returns></returns>
-		public static IntArray[] ToPbIntArray(this int[][] val)
+		public static IntArray[] ToPbIntArray(this int[][] array)
 		{
-			IntArray[] arr = new IntArray[val.Length];
+            if (array == null)
+                throw new ArgumentNullException("array");
+			IntArray[] arr = new IntArray[array.Length];
 			for(int i = 0; i < arr.Length; i++)
-				arr[i] = (IntArray)val[i];
+				arr[i] = (IntArray)array[i];
 			return arr;
 		}
 
 		/// <summary>
-		/// Convert a jagged int array to a pb_IntArray.
+		/// Convert a jagged int array to an IntArray.
 		/// </summary>
-		/// <param name="val"></param>
+		/// <param name="list"></param>
 		/// <returns></returns>
-		public static IntArray[] ToPbIntArray(this List<List<int>> val)
+		public static IntArray[] ToPbIntArray(this List<List<int>> list)
 		{
-			IntArray[] arr = new IntArray[val.Count];
+            if (list == null)
+                throw new ArgumentNullException("list");
+			IntArray[] arr = new IntArray[list.Count];
 			for(int i = 0; i < arr.Length; i++)
-				arr[i] = (IntArray)val[i].ToArray();
+				arr[i] = (IntArray)list[i].ToArray();
 			return arr;
 		}
 
 		/// <summary>
-		/// Scans an array of pb_IntArray and returns the index of that int[] that holds the index
+		/// Scans an array of IntArray and returns the index of that int[] that holds the index
 		/// </summary>
 		/// <remarks>Aids in removing duplicate vertex indices.</remarks>
 		/// <param name="intArray"></param>
@@ -136,31 +146,34 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Returns all indices given a spattering of triangles.  Guaranteed to be all inclusive and distinct.
 		/// </summary>
-		/// <param name="pbIntArr"></param>
+		/// <param name="intArray"></param>
 		/// <param name="indices"></param>
 		/// <returns></returns>
-		public static List<int> AllIndicesWithValues(this IntArray[] pbIntArr, IList<int> indices)
+		public static List<int> AllIndicesWithValues(this IntArray[] intArray, IList<int> indices)
 		{
-			int[] universal = pbIntArr.GetCommonIndices(indices).ToArray();
+            if (intArray == null)
+                throw new ArgumentNullException("intArray");
 
+			int[] universal = intArray.GetCommonIndices(indices).ToArray();
 			List<int> shared = new List<int>();
 
 			for(int i = 0; i < universal.Length; i++)
-			{
-				shared.AddRange(pbIntArr[universal[i]].array);
-			}
+				shared.AddRange(intArray[universal[i]].array);
 
 			return shared;
 		}
 
-		public static List<int> AllIndicesWithValues(this IntArray[] pbIntArr, Dictionary<int, int> lookup, IList<int> indices)
+		public static List<int> AllIndicesWithValues(this IntArray[] intArray, Dictionary<int, int> lookup, IList<int> indices)
 		{
-			int[] universal = GetCommonIndices(lookup, indices).ToArray();
+            if (intArray == null)
+                throw new ArgumentNullException("intArray");
+
+            int[] universal = GetCommonIndices(lookup, indices).ToArray();
 
 			List<int> shared = new List<int>();
 
 			for(int i = 0; i < universal.Length; i++)
-				shared.AddRange(pbIntArr[universal[i]].array);
+				shared.AddRange(intArray[universal[i]].array);
 
 			return shared;
 		}
@@ -223,22 +236,25 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Cycles through a mesh and returns a pb_IntArray[] of vertex indices that point to the same point in world space.
+		/// Cycles through a mesh and returns a IntArray[] of vertex indices that point to the same point in world space.
 		/// </summary>
-		/// <param name="v"></param>
+		/// <param name="positions"></param>
 		/// <returns></returns>
-		public static IntArray[] ExtractSharedIndices(Vector3[] v)
+		public static IntArray[] ExtractSharedIndices(Vector3[] positions)
 		{
+            if (positions == null)
+                throw new ArgumentNullException("positions");
+
 			Dictionary<IntVec3, List<int>> sorted = new Dictionary<IntVec3, List<int>>();
 
 			List<int> ind;
 
-			for(int i = 0; i < v.Length; i++)
+			for(int i = 0; i < positions.Length; i++)
 			{
-				if( sorted.TryGetValue(v[i], out ind) )
+				if( sorted.TryGetValue(positions[i], out ind) )
 					ind.Add(i);
 				else
-					sorted.Add(new IntVec3(v[i]), new List<int>() { i });
+					sorted.Add(new IntVec3(positions[i]), new List<int>() { i });
 			}
 
 			IntArray[] share = new IntArray[sorted.Count];
@@ -299,7 +315,7 @@ namespace UnityEngine.ProBuilder
 			}
 
 			sharedIndices = rebuild.Add( new IntArray(newSharedIndex.ToArray()) );
-			// SetSharedIndices( rebuild.Add( new pb_IntArray(newSharedIndex.ToArray()) ) );
+			// SetSharedIndices( rebuild.Add( new IntArray(newSharedIndex.ToArray()) ) );
 
 			return sharedIndices.Length-1;
 		}

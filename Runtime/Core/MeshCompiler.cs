@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Linq;
+using System;
 using System.Collections.Generic;
 using System.Collections;
 
@@ -10,52 +11,57 @@ namespace UnityEngine.ProBuilder
 	/// </summary>
 	public static class MeshCompiler
 	{
-		/// <summary>
-		/// Compile a UnityEngine::Mesh from a pb_Object.
-		/// </summary>
-		/// <param name="pb">The mesh source.</param>
-		/// <param name="target">Destination UnityEngine.Mesh.</param>
-		/// <param name="materials">The resulting material array from the compiled faces array.</param>
-		/// <param name="preferredTopology">If specified, the function will try to create topology matching the reqested format (and falling back on triangles where necessary).</param>
-		public static void Compile(ProBuilderMesh pb, ref Mesh target, out Material[] materials, MeshTopology preferredTopology = MeshTopology.Triangles)
-		{
-			target.Clear();
+        /// <summary>
+        /// Compile a UnityEngine::Mesh from a pb_Object.
+        /// </summary>
+        /// <param name="pb">The mesh source.</param>
+        /// <param name="target">Destination UnityEngine.Mesh.</param>
+        /// <param name="preferredTopology">If specified, the function will try to create topology matching the reqested format (and falling back on triangles where necessary).</param>
+        /// <returns>The resulting material array from the compiled faces array.</returns>
+        public static Material[] Compile(ProBuilderMesh pb, Mesh target, MeshTopology preferredTopology = MeshTopology.Triangles)
+        {
+            if (pb == null)
+                throw new ArgumentNullException("pb");
 
-			target.vertices = pb.positions;
-			target.uv = GetUVs(pb);
+            if (target == null)
+                throw new ArgumentNullException("target");
+
+            target.Clear();
+
+            target.vertices = pb.positions;
+            target.uv = GetUVs(pb);
 #if UNITY_5_3_OR_NEWER
-			if (pb.hasUv3) target.SetUVs(2, pb.uv3);
-			if (pb.hasUv4) target.SetUVs(3, pb.uv4);
+            if (pb.hasUv3) target.SetUVs(2, pb.uv3);
+            if (pb.hasUv4) target.SetUVs(3, pb.uv4);
 #endif
-			Vector3[] normals = MeshUtility.GenerateNormals(pb);
-			MeshUtility.SmoothNormals(pb, ref normals);
-			target.normals = normals;
-			MeshUtility.GenerateTangent(ref target);
-			if (pb.colors != null && pb.colors.Length == target.vertexCount)
-				target.colors = pb.colors;
+            Vector3[] normals = MeshUtility.GenerateNormals(pb);
+            MeshUtility.SmoothNormals(pb, ref normals);
+            target.normals = normals;
+            MeshUtility.GenerateTangent(target);
+            if (pb.colors != null && pb.colors.Length == target.vertexCount)
+                target.colors = pb.colors;
 
-			Submesh[] submeshes;
+            var submeshes = Face.GetMeshIndices(pb.faces, preferredTopology);
+            target.subMeshCount = submeshes.Length;
 
-			target.subMeshCount = Face.GetMeshIndices(pb.faces, out submeshes, preferredTopology);
-
-			for (int i = 0; i < target.subMeshCount; i++)
+            for (int i = 0; i < target.subMeshCount; i++)
 #if UNITY_5_5_OR_NEWER
-				target.SetIndices(submeshes[i].indices, submeshes[i].topology, i, false);
+                target.SetIndices(submeshes[i].indices, submeshes[i].topology, i, false);
 #else
-				target.SetIndices(submeshes[i].indices, submeshes[i].topology, i);
+        		target.SetIndices(submeshes[i].indices, submeshes[i].topology, i);
 #endif
 
-			target.name = string.Format("pb_Mesh{0}", pb.id);
+            target.name = string.Format("pb_Mesh{0}", pb.id);
 
-			materials = submeshes.Select(x => x.material).ToArray();
-		}
+            return submeshes.Select(x => x.material).ToArray();
+        }
 
-		/// <summary>
-		/// Create UV0 channel and return it.
-		/// </summary>
-		/// <param name="pb"></param>
-		/// <returns></returns>
-		internal static Vector2[] GetUVs(ProBuilderMesh pb)
+        /// <summary>
+        /// Create UV0 channel and return it.
+        /// </summary>
+        /// <param name="pb"></param>
+        /// <returns></returns>
+        internal static Vector2[] GetUVs(ProBuilderMesh pb)
 		{
 			int n = -2;
 			Dictionary<int, List<Face>> textureGroups = new Dictionary<int, List<Face>>();
@@ -109,25 +115,28 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Merge coincident vertices where possible, optimizing the vertex count of a UnityEngine.Mesh.
 		/// </summary>
-		/// <param name="m">The mesh to optimize.</param>
+		/// <param name="mesh">The mesh to optimize.</param>
 		/// <param name="vertices">
 		/// If provided these values are used in place of extracting attributes from the Mesh.
 		/// This is a performance optimization for when this array already exists. If not provided this array will be
 		/// automatically generated for you.
 		/// </param>
-		public static void CollapseSharedVertices(Mesh m, Vertex[] vertices = null)
+		public static void CollapseSharedVertices(Mesh mesh, Vertex[] vertices = null)
 		{
-			if (vertices == null)
-				vertices = Vertex.GetVertices(m);
+            if (mesh == null)
+                throw new System.ArgumentNullException("mesh");
 
-			int smc = m.subMeshCount;
+			if (vertices == null)
+				vertices = Vertex.GetVertices(mesh);
+
+			int smc = mesh.subMeshCount;
 			List<Dictionary<Vertex, int>> sub_vertices = new List<Dictionary<Vertex, int>>();
 			int[][] tris = new int[smc][];
 			int subIndex = 0;
 
 			for (int i = 0; i < smc; ++i)
 			{
-				tris[i] = m.GetTriangles(i);
+				tris[i] = mesh.GetTriangles(i);
 				Dictionary<Vertex, int> new_vertices = new Dictionary<Vertex, int>();
 
 				for (int n = 0; n < tris[i].Length; n++)
@@ -151,10 +160,10 @@ namespace UnityEngine.ProBuilder
 			}
 
 			Vertex[] collapsed = sub_vertices.SelectMany(x => x.Keys).ToArray();
-			Vertex.SetMesh(m, collapsed);
-			m.subMeshCount = smc;
+			Vertex.SetMesh(mesh, collapsed);
+			mesh.subMeshCount = smc;
 			for (int i = 0; i < smc; i++)
-				m.SetTriangles(tris[i], i);
+				mesh.SetTriangles(tris[i], i);
 		}
 	}
 }

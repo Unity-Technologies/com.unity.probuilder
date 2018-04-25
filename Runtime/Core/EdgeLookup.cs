@@ -12,12 +12,12 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Local edges point to an index in the vertices array.
 		/// </summary>
-		public Edge local;
+		public Edge local { get; set; }
 
 		/// <summary>
 		/// Commmon edges point to the vertex index in the sharedIndices array.
 		/// </summary>
-		public Edge common;
+		public Edge common { get; set; }
 
 		/// <summary>
 		/// Create an edge lookup from a common and local edge.
@@ -46,16 +46,16 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Compares each EdgeLookup common edge (does not take into account local edge differences).
 		/// </summary>
-		/// <param name="b"></param>
+		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(EdgeLookup b)
+		public bool Equals(EdgeLookup other)
 		{
-			return common.Equals(ReferenceEquals(b, null) ? Edge.Empty : b.common);
+			return common.Equals(ReferenceEquals(other, null) ? Edge.Empty : other.common);
 		}
 
-		public override bool Equals(object b)
+		public override bool Equals(object obj)
 		{
-			EdgeLookup be = b as EdgeLookup;
+			EdgeLookup be = obj as EdgeLookup;
 			return be != null && common.Equals(be.common);
 		}
 
@@ -90,6 +90,8 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		public static HashSet<EdgeLookup> GetEdgeLookupHashSet(IEnumerable<Edge> edges, Dictionary<int, int> lookup)
 		{
+            if (lookup == null || edges == null)
+                return null;
 			var hash = new HashSet<EdgeLookup>();
 			foreach (var local in edges)
 				hash.Add(new EdgeLookup(new Edge(lookup[local.x], lookup[local.y]), local));

@@ -52,17 +52,17 @@ namespace UnityEngine.ProBuilder
 			switch(projectionAxis)
 			{
 				case ProjectionAxis.X:
-				case ProjectionAxis.X_Negative:
+				case ProjectionAxis.XNegative:
 					vec = Vector3.up;
 					break;
 
 				case ProjectionAxis.Y:
-				case ProjectionAxis.Y_Negative:
+				case ProjectionAxis.YNegative:
 					vec = Vector3.forward;
 					break;
 
 				case ProjectionAxis.Z:
-				case ProjectionAxis.Z_Negative:
+				case ProjectionAxis.ZNegative:
 					vec = Vector3.up;
 					break;
 			}
@@ -101,17 +101,17 @@ namespace UnityEngine.ProBuilder
 			switch(projectionAxis)
 			{
 				case ProjectionAxis.X:
-				case ProjectionAxis.X_Negative:
+				case ProjectionAxis.XNegative:
 					vec = Vector3.up;
 					break;
 
 				case ProjectionAxis.Y:
-				case ProjectionAxis.Y_Negative:
+				case ProjectionAxis.YNegative:
 					vec = Vector3.forward;
 					break;
 
 				case ProjectionAxis.Z:
-				case ProjectionAxis.Z_Negative:
+				case ProjectionAxis.ZNegative:
 					vec = Vector3.up;
 					break;
 
@@ -202,13 +202,13 @@ namespace UnityEngine.ProBuilder
 				case ProjectionAxis.Z:
 					return Vector3.forward;
 
-				case ProjectionAxis.X_Negative:
+				case ProjectionAxis.XNegative:
 					return -Vector3.right;
 
-				case ProjectionAxis.Y_Negative:
+				case ProjectionAxis.YNegative:
 					return -Vector3.up;
 
-				case ProjectionAxis.Z_Negative:
+				case ProjectionAxis.ZNegative:
 					return -Vector3.forward;
 
 				default:
@@ -225,14 +225,14 @@ namespace UnityEngine.ProBuilder
 		{
 			if(Mathf.Abs(plane.x) > Mathf.Abs(plane.y) && Mathf.Abs(plane.x) > Mathf.Abs(plane.z))
 			{
-				return plane.x > 0 ? ProjectionAxis.X : ProjectionAxis.X_Negative;
+				return plane.x > 0 ? ProjectionAxis.X : ProjectionAxis.XNegative;
 			}
 			else
 			{
 				if(Mathf.Abs(plane.y) > Mathf.Abs(plane.z))
-					return plane.y > 0 ? ProjectionAxis.Y : ProjectionAxis.Y_Negative;
+					return plane.y > 0 ? ProjectionAxis.Y : ProjectionAxis.YNegative;
 				else
-					return plane.z > 0 ? ProjectionAxis.Z : ProjectionAxis.Z_Negative;
+					return plane.z > 0 ? ProjectionAxis.Z : ProjectionAxis.ZNegative;
 			}
 		}
 

@@ -52,7 +52,7 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// If this face has had it's UV coordinates done by hand, don't update them with the auto unwrap crowd.
 		/// </summary>
-		public bool manualUV;
+		public bool manualUV { get; set; }
 
 		/// <summary>
 		/// UV element group. Used by the UV editor to group faces.
@@ -62,14 +62,14 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// What texture group this face belongs to. Used when projecting auto UVs.
 		/// </summary>
-		public int textureGroup = -1;
+		public int textureGroup { get; set; }
 
 		/// <summary>
 		/// Return a reference to the triangle indices that make up this face.
 		/// </summary>
 		public int[] indices
 		{
-			get { return m_Indices; }
+			get { return m_Indices; } 
 		}
 
 		/// <summary>
@@ -150,17 +150,19 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Deep copy constructor.
 		/// </summary>
-		/// <param name="face"></param>
-		public Face(Face face)
+		/// <param name="other"></param>
+		public Face(Face other)
 		{
-			m_Indices = new int[face.indices.Length];
-			System.Array.Copy(face.indices, m_Indices, face.indices.Length);
-			m_Uv = new AutoUnwrapSettings(face.uv);
-			m_Material = face.material;
-			m_SmoothingGroup = face.smoothingGroup;
-			textureGroup = face.textureGroup;
-			elementGroup = face.elementGroup;
-			manualUV = face.manualUV;
+            if (other == null)
+                throw new ArgumentNullException("other");
+            m_Indices = new int[other.indices.Length];
+			System.Array.Copy(other.indices, m_Indices, other.indices.Length);
+			m_Uv = new AutoUnwrapSettings(other.uv);
+			m_Material = other.material;
+			m_SmoothingGroup = other.smoothingGroup;
+			textureGroup = other.textureGroup;
+			elementGroup = other.elementGroup;
+			manualUV = other.manualUV;
 
 			RebuildCaches();
 		}
@@ -171,7 +173,9 @@ namespace UnityEngine.ProBuilder
 		/// <param name="other"></param>
 		public void CopyFrom(Face other)
 		{
-			int len = other.indices == null ? 0 : other.indices.Length;
+            if (other == null)
+                throw new ArgumentNullException("other");
+            int len = other.indices == null ? 0 : other.indices.Length;
 			m_Indices = new int[len];
 			System.Array.Copy(other.indices, m_Indices, len);
 			m_SmoothingGroup = other.smoothingGroup;
@@ -218,11 +222,11 @@ namespace UnityEngine.ProBuilder
 			RebuildCaches();
 		}
 
-		/// <summary>
-		/// Add offset to each value in the indices array.
-		/// </summary>
-		/// <param name="offset"></param>
-		public void ShiftIndices(int offset)
+        /// <summary>
+        /// Add offset to each value in the indices array.
+        /// </summary>
+        /// <param name="offset"></param>
+        public void ShiftIndices(int offset)
 		{
 			for(int i = 0; i <m_Indices.Length; i++)
 				m_Indices[i] += offset;
@@ -354,46 +358,15 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Attempts to create quad, or on failing just return the triangle indices.
+		/// Convert a 2 triangle face to a quad representation.
 		/// </summary>
-		/// <param name="quadOrTris"></param>
-		/// <returns></returns>
-		public MeshTopology ToQuadOrTriangles(out int[] quadOrTris)
-		{
-			if(ToQuad(out quadOrTris))
-				return MeshTopology.Quads;
-
-			int len = indices == null ? 0 : System.Math.Max(0, indices.Length);
-			quadOrTris = new int[len];
-			System.Array.Copy(indices, quadOrTris, len);
-			return MeshTopology.Triangles;
-		}
-
-		/// <summary>
-		/// Convert a 2 triangle face to a quad representation. If face does not contain exactly 6 indices this function returns null.
-		/// </summary>
-		/// <returns></returns>
+		/// <returns>A quad (4 indices), or null if indices are not able to be represented as a quad.</returns>
 		public int[] ToQuad()
 		{
-			int[] quad;
-			ToQuad(out quad);
-			return quad;
-		}
+            if (indices == null || indices.Length != 6)
+                return null;
 
-		/// <summary>
-		/// Convert a 2 triangle face to a quad representation. If face does not contain exactly 6 indices this function returns null.
-		/// </summary>
-		/// <param name="quad"></param>
-		/// <returns></returns>
-		public bool ToQuad(out int[] quad)
-		{
-			if(indices == null || indices.Length != 6)
-			{
-				quad = null;
-				return false;
-			}
-
-			quad = new int[4] { edges[0].x, edges[0].y, -1, -1 };
+			int[] quad = new int[4] { edges[0].x, edges[0].y, -1, -1 };
 
 			if(edges[1].x == quad[1])
 				quad[2] = edges[1].y;
@@ -409,21 +382,23 @@ namespace UnityEngine.ProBuilder
 			else if(edges[3].x == quad[2])
 				quad[3] = edges[3].y;
 
-			return true;
+			return quad;
 		}
 
 		/// <summary>
 		/// Create submeshes from a set of faces. Currently only Quads and Triangles are supported.
 		/// </summary>
 		/// <param name="faces"></param>
-		/// <param name="submeshes"></param>
 		/// <param name="preferredTopology"></param>
-		/// <returns>The number of submeshes created.</returns>
+		/// <returns>An array of Submeshes.</returns>
 		/// <exception cref="NotImplementedException"></exception>
-		public static int GetMeshIndices(Face[] faces, out Submesh[] submeshes, MeshTopology preferredTopology = MeshTopology.Triangles)
+		public static Submesh[] GetMeshIndices(Face[] faces, MeshTopology preferredTopology = MeshTopology.Triangles)
 		{
 			if(preferredTopology != MeshTopology.Triangles && preferredTopology != MeshTopology.Quads)
 				throw new System.NotImplementedException("Currently only Quads and Triangles are supported.");
+
+            if (faces == null)
+                throw new ArgumentNullException("faces");
 
 			bool wantsQuads = preferredTopology == MeshTopology.Quads;
 
@@ -444,7 +419,7 @@ namespace UnityEngine.ProBuilder
 
 				int[] res;
 
-				if(wantsQuads && face.ToQuad(out res))
+				if(wantsQuads && (res = face.ToQuad()) != null)
 				{
 					if(quads.TryGetValue(material, out polys))
 						polys.AddRange(res);
@@ -461,7 +436,7 @@ namespace UnityEngine.ProBuilder
 			}
 
 			int submeshCount = (quads != null ? quads.Count : 0) + tris.Count;
-			submeshes = new Submesh[submeshCount];
+			var submeshes = new Submesh[submeshCount];
 			int ii = 0;
 
 			if(quads != null)
@@ -473,7 +448,7 @@ namespace UnityEngine.ProBuilder
 			foreach(var kvp in tris)
 				submeshes[ii++] = new Submesh(kvp.Key, MeshTopology.Triangles, kvp.Value.ToArray());
 
-			return submeshCount;
+			return submeshes;
 		}
 
 		public override string ToString()

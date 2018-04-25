@@ -147,7 +147,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 		public void PickEdges_DepthTestOff_RectSelectPartial()
 		{
 			Setup();
-			var edges = TestEdgePick(new PickerOptions() { depthTest = false, rectSelectMode = pb_RectSelectMode.Partial });
+			var edges = TestEdgePick(new PickerOptions() { depthTest = false, rectSelectMode = RectSelectMode.Partial });
 			Assert.IsNotNull(edges, "Selection is null");
 			var selection = edges.FirstOrDefault();
 			Assert.IsNotNull(selection, "Selection is null");
@@ -166,7 +166,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 		public void PickEdges_DepthTestOn_RectSelectPartial()
 		{
 			Setup();
-			var edges = TestEdgePick(new PickerOptions() { depthTest = true, rectSelectMode = pb_RectSelectMode.Partial });
+			var edges = TestEdgePick(new PickerOptions() { depthTest = true, rectSelectMode = RectSelectMode.Partial });
 			var selection = edges.FirstOrDefault();
 			Assert.IsNotNull(selection);
 			HashSet<Edge> selectedElements = selection.Value;
@@ -180,7 +180,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 		public void PickEdges_DepthTestOff_RectSelectComplete()
 		{
 			Setup();
-			var edges = TestEdgePick(new PickerOptions() { depthTest = false, rectSelectMode = pb_RectSelectMode.Complete });
+			var edges = TestEdgePick(new PickerOptions() { depthTest = false, rectSelectMode = RectSelectMode.Complete });
 			Assert.IsNotNull(edges, "Selection is null");
 			var selection = edges.FirstOrDefault();
 			Assert.IsNotNull(selection, "Selection is null");
@@ -199,7 +199,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 		public void PickEdges_DepthTestOn_RectSelectComplete()
 		{
 			Setup();
-			var edges = TestEdgePick(new PickerOptions() { depthTest = true, rectSelectMode = pb_RectSelectMode.Complete });
+			var edges = TestEdgePick(new PickerOptions() { depthTest = true, rectSelectMode = RectSelectMode.Complete });
 			var selection = edges.FirstOrDefault();
 			Assert.IsNotNull(selection);
 			HashSet<Edge> selectedElements = selection.Value;
@@ -213,7 +213,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 		public void PickFaces_DepthTestOff_RectSelectPartial()
 		{
 			Setup();
-			var faces = TestFacePick(new PickerOptions() { depthTest = false, rectSelectMode = pb_RectSelectMode.Partial });
+			var faces = TestFacePick(new PickerOptions() { depthTest = false, rectSelectMode = RectSelectMode.Partial });
 			Assert.IsNotNull(faces, "Selection is null");
 			var selection = faces.FirstOrDefault();
 			Assert.IsNotNull(selection, "Selection is null");
@@ -227,7 +227,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 		public void PickFaces_DepthTestOn_RectSelectPartial()
 		{
 			Setup();
-			var faces = TestFacePick(new PickerOptions() { depthTest = true, rectSelectMode = pb_RectSelectMode.Partial });
+			var faces = TestFacePick(new PickerOptions() { depthTest = true, rectSelectMode = RectSelectMode.Partial });
 			Assert.IsNotNull(faces, "Face pick returned null");
 			var selection = faces.FirstOrDefault();
 			Assert.IsNotNull(selection);
@@ -242,7 +242,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 		public void PickFaces_DepthTestOff_RectSelectComplete()
 		{
 			Setup();
-			var faces = TestFacePick(new PickerOptions() { depthTest = false, rectSelectMode = pb_RectSelectMode.Complete });
+			var faces = TestFacePick(new PickerOptions() { depthTest = false, rectSelectMode = RectSelectMode.Complete });
 			Assert.IsNotNull(faces, "Selection is null");
 			var selection = faces.FirstOrDefault();
 			Assert.IsNotNull(selection, "Selection is null");
@@ -256,7 +256,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 		public void PickFaces_DepthTestOn_RectSelectComplete()
 		{
 			Setup();
-			var faces = TestFacePick(new PickerOptions() { depthTest = true, rectSelectMode = pb_RectSelectMode.Complete });
+			var faces = TestFacePick(new PickerOptions() { depthTest = true, rectSelectMode = RectSelectMode.Complete });
 			var selection = faces.FirstOrDefault();
 			Assert.IsNotNull(selection);
 			HashSet<Face> selectedElements = selection.Value;

@@ -76,15 +76,15 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Projects on -x axis.
 		/// </summary>
-		X_Negative,
+		XNegative,
 		/// <summary>
 		/// Projects on -y axis.
 		/// </summary>
-		Y_Negative,
+		YNegative,
 		/// <summary>
 		/// Projects on -z axis.
 		/// </summary>
-		Z_Negative
+		ZNegative
 	}
 
 	/// <summary>
@@ -169,28 +169,8 @@ namespace UnityEngine.ProBuilder
 		CounterClockwise
 	};
 
-	/// <summary>
-	/// Describes different culling options.
-	/// </summary>
-	[System.Obsolete("use pb_Culling")]
-	public enum Culling
-	{
-		/// <summary>
-		/// Back faces are culled.
-		/// </summary>
-		Back = 0x0,
-		/// <summary>
-		/// Front faces are culled.
-		/// </summary>
-		Front = 0x1,
-		/// <summary>
-		/// Both faces are culled.
-		/// </summary>
-		FrontBack = 0x2
-	}
-
 	[System.Flags]
-	public enum pb_Culling
+	public enum Culling
 	{
 		None = 0 << 0,
 		Back = 1 << 0,
@@ -198,7 +178,7 @@ namespace UnityEngine.ProBuilder
 		FrontBack = Front | Back,
 	}
 
-	public enum pb_RectSelectMode
+	public enum RectSelectMode
 	{
 		Partial,
 		Complete
