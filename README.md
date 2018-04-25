@@ -121,6 +121,7 @@ In addition to a tag, the version number needs to be set in the following places
 
 Once a build is verified with a [QA Report](https://drive.google.com/drive/u/0/folders/1neI43BrzpTmyHvE5Qe5TN8YVHTOp-5Dd) and cleared for release, modify the `package.json` file to omit the pre-release information (ex, `-f.0`) and tag the commit with a `vMajor.Minor.Patch`.
 
+- [QA Report](https://docs.google.com/document/d/1uGJV1Wkij_fqB_TeCAUDYoYoSiU1IryoKrjtzPRxN4g/edit)
 
 ## Building Older Versions
 
