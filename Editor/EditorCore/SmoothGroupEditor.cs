@@ -65,7 +65,7 @@ namespace UnityEditor.ProBuilder
 			{
 				groups.Clear();
 
-				foreach (Face face in pb.faces)
+				foreach (Face face in pb.facesInternal)
 				{
 					List<Face> affected;
 
@@ -104,7 +104,7 @@ namespace UnityEditor.ProBuilder
 				}
 
 				previewMesh.Clear();
-				previewMesh.vertices = pb.positions;
+				previewMesh.vertices = pb.positionsInternal;
 				previewMesh.colors32 = colors;
 				previewMesh.triangles = indices.ToArray();
 			}
@@ -673,9 +673,9 @@ namespace UnityEditor.ProBuilder
 
 			if( (Event.current.modifiers & EventModifiers.Shift) == EventModifiers.Shift ||
 				(Event.current.modifiers & EventModifiers.Control) == EventModifiers.Control )
-				pb.SetSelectedFaces(pb.faces.Where(x => groups.Contains(x.smoothingGroup) || pb.SelectedFaces.Contains(x)));
+				pb.SetSelectedFaces(pb.facesInternal.Where(x => groups.Contains(x.smoothingGroup) || pb.SelectedFaces.Contains(x)));
 			else
-				pb.SetSelectedFaces(pb.faces.Where(x => groups.Contains(x.smoothingGroup)));
+				pb.SetSelectedFaces(pb.facesInternal.Where(x => groups.Contains(x.smoothingGroup)));
 			ProBuilderEditor.Refresh();
 		}
 
@@ -683,7 +683,7 @@ namespace UnityEditor.ProBuilder
 		{
 			UndoUtility.RecordObject(pb, "Set Smoothing Group");
 
-			foreach (Face face in pb.SelectedFaceCount < 1 ? pb.faces : pb.SelectedFaces)
+			foreach (Face face in pb.SelectedFaceCount < 1 ? pb.facesInternal : pb.SelectedFaces)
 				face.smoothingGroup = index;
 
 			// todo pb.Rebuild

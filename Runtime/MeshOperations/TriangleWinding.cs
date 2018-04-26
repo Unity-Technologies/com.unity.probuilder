@@ -151,10 +151,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			                                 faces[0].elementGroup,
 			                                 faces[0].manualUV);
 
-			Face[] rebuiltFaces = new Face[pb.faces.Length - faces.Length + 1];
+			Face[] rebuiltFaces = new Face[pb.facesInternal.Length - faces.Length + 1];
 
 			int n = 0;
-			foreach(Face f in pb.faces)
+			foreach(Face f in pb.facesInternal)
 			{
 				if(System.Array.IndexOf(faces, f) < 0)
 				{
@@ -171,7 +171,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			for(int i = 0; i < mergedFace.indices.Length; i++)
 			{
-				int sharedIndex = pb.sharedIndices.IndexOf(mergedFace.indices[i]);
+				int sharedIndex = pb.sharedIndicesInternal.IndexOf(mergedFace.indices[i]);
 
 				if(shared.ContainsKey(sharedIndex))
 				{

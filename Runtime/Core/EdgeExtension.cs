@@ -60,8 +60,8 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		public static bool ValidateEdge(ProBuilderMesh pb, Edge edge, out SimpleTuple<Face, Edge> validEdge)
 		{
-			Face[] faces = pb.faces;
-			IntArray[] sharedIndices = pb.sharedIndices;
+			Face[] faces = pb.facesInternal;
+			IntArray[] sharedIndices = pb.sharedIndicesInternal;
 
 			Edge universal = new Edge(sharedIndices.IndexOf(edge.x), sharedIndices.IndexOf(edge.y));
 

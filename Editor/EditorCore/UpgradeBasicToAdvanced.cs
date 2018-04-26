@@ -53,7 +53,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 				var mat = pb.gameObject.GetComponent<MeshRenderer>().sharedMaterial;
 
-				foreach(var face in pb.faces)
+				foreach(var face in pb.facesInternal)
 					face.material = mat;
 
 				pb.ToMesh();

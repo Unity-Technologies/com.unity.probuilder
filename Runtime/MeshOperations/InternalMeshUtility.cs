@@ -67,11 +67,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		public static void FreezeScaleTransform(this ProBuilderMesh pb)
 		{
-			Vector3[] v = pb.positions;
-			for(int i = 0; i < v.Length; i++)
+			Vector3[] v = pb.positionsInternal;
+
+			for(var i = 0; i < v.Length; i++)
 				v[i] = Vector3.Scale(v[i], pb.transform.localScale);
 
-			pb.SetVertices(v);
 			pb.transform.localScale = new Vector3(1f, 1f, 1f);
 		}
 
@@ -113,15 +113,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				return false;
 
 			IntArray[] sharedIndices = pb.GetSharedIndices();
-			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
+			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
 
 			int vertexCount = pb.vertexCount;
-			Vector3[] localVerts = pb.positions;
+			Vector3[] localVerts = pb.positionsInternal;
 			bool extrudeAsGroup = method != ExtrudeMethod.IndividualFaces;
 
 			Edge[][] perimeterEdges = extrudeAsGroup ? new Edge[1][] { ElementSelection.GetPerimeterEdges(lookup, faces).ToArray() } : faces.Select(x => x.edges).ToArray();
 
-			if(perimeterEdges == null || perimeterEdges.Length < 1 || (extrudeAsGroup && perimeterEdges[0].Length < 3))
+			if(perimeterEdges.Length < 1 || (extrudeAsGroup && perimeterEdges[0].Length < 3))
 			{
 				Debug.LogWarning("No perimeter edges found.  Try deselecting and reselecting this object and trying again.");
 				return false;
@@ -164,7 +164,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			List<Face> append_face = new List<Face>();
 			List<int[]> append_shared = new List<int[]>();
 
-			/// build out new faces around edges
+			// build out new faces around edges
 
 			for(int i = 0; i < perimeterEdges.Length; i++)
 			{
@@ -222,10 +222,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 					append_color.Add( new Color[]
 						{
-							pb.colors[ edge.x ],
-							pb.colors[ edge.y ],
-							pb.colors[ edge.x ],
-							pb.colors[ edge.y ]
+							pb.colorsInternal[ edge.x ],
+							pb.colorsInternal[ edge.y ],
+							pb.colorsInternal[ edge.x ],
+							pb.colorsInternal[ edge.y ]
 						});
 
 					append_uv.Add( new Vector2[4] );
@@ -265,7 +265,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			IntArray[] si = pb.sharedIndices;	// leave the sharedIndices copy alone since we need the un-altered version later
+			IntArray[] si = pb.sharedIndicesInternal;	// leave the sharedIndices copy alone since we need the un-altered version later
 			Dictionary<int, int> welds = si.ToDictionary();
 
 			// Weld side-wall top vertices together, both grouped and non-grouped need this.
@@ -285,7 +285,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			localVerts = pb.positions;
+			localVerts = pb.positionsInternal;
 
 			// Remove smoothing and texture group flags
 			foreach(Face f in faces)
@@ -320,9 +320,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 			else
-			/**
-			 * If extruding as separate faces, weld each face to the tops of the bridging faces
-			 */
+			// If extruding as separate faces, weld each face to the tops of the bridging faces
 			{
 				for(int i = 0; i < edgeFaces.Length; i++)
 				{
@@ -380,7 +378,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			pb.SetSharedIndices(si);
-			pb.SetVertices(localVerts);
 
 			List<Face> allModified = new List<Face>(appendedFaces);
 			allModified.AddRange(faces);
@@ -433,8 +430,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		public static List<Face> DetachFaces(this ProBuilderMesh pb, IEnumerable<Face> faces)
 		{
 			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
-			int sharedIndicesOffset = pb.sharedIndices.Length;
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			int sharedIndicesOffset = pb.sharedIndicesInternal.Length;
+			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
 
 			List<FaceRebuildData> detached = new List<FaceRebuildData>();
 
@@ -502,7 +499,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					}
 				}
 
-				foreach(Face face in pb.faces)
+				foreach(Face face in pb.facesInternal)
 				{
 					if(face.edges.IndexOf(a, lookup) >= 0 && face.edges.IndexOf(b, lookup) >= 0)
 					{
@@ -511,7 +508,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					}
 				}
 
-				Vector3[] verts = pb.positions;
+				Vector3[] verts = pb.positionsInternal;
 				Vector3[] v;
 				Color[] c;
 				int[] s;
@@ -546,52 +543,52 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					if(axbx)
 					{
 						v[0] = verts[a.x];
-						c[0] = pb.colors[a.x];
+						c[0] = pb.colorsInternal[a.x];
 						s[0] = sharedIndices.IndexOf(a.x);
 						v[1] = verts[a.y];
-						c[1] = pb.colors[a.y];
+						c[1] = pb.colorsInternal[a.y];
 						s[1] = sharedIndices.IndexOf(a.y);
 						v[2] = verts[b.y];
-						c[2] = pb.colors[b.y];
+						c[2] = pb.colorsInternal[b.y];
 						s[2] = sharedIndices.IndexOf(b.y);
 					}
 					else
 					if(axby)
 					{
 						v[0] = verts[a.x];
-						c[0] = pb.colors[a.x];
+						c[0] = pb.colorsInternal[a.x];
 						s[0] = sharedIndices.IndexOf(a.x);
 						v[1] = verts[a.y];
-						c[1] = pb.colors[a.y];
+						c[1] = pb.colorsInternal[a.y];
 						s[1] = sharedIndices.IndexOf(a.y);
 						v[2] = verts[b.x];
-						c[2] = pb.colors[b.x];
+						c[2] = pb.colorsInternal[b.x];
 						s[2] = sharedIndices.IndexOf(b.x);
 					}
 					else
 					if(aybx)
 					{
 						v[0] = verts[a.y];
-						c[0] = pb.colors[a.y];
+						c[0] = pb.colorsInternal[a.y];
 						s[0] = sharedIndices.IndexOf(a.y);
 						v[1] = verts[a.x];
-						c[1] = pb.colors[a.x];
+						c[1] = pb.colorsInternal[a.x];
 						s[1] = sharedIndices.IndexOf(a.x);
 						v[2] = verts[b.y];
-						c[2] = pb.colors[b.y];
+						c[2] = pb.colorsInternal[b.y];
 						s[2] = sharedIndices.IndexOf(b.y);
 					}
 					else
 					if(ayby)
 					{
 						v[0] = verts[a.y];
-						c[0] = pb.colors[a.y];
+						c[0] = pb.colorsInternal[a.y];
 						s[0] = sharedIndices.IndexOf(a.y);
 						v[1] = verts[a.x];
-						c[1] = pb.colors[a.x];
+						c[1] = pb.colorsInternal[a.x];
 						s[1] = sharedIndices.IndexOf(a.x);
 						v[2] = verts[b.x];
-						c[2] = pb.colors[b.x];
+						c[2] = pb.colorsInternal[b.x];
 						s[2] = sharedIndices.IndexOf(b.x);
 					}
 
@@ -612,10 +609,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				s = new int[4]; // shared indices index to add to
 
 				v[0] = verts[a.x];
-				c[0] = pb.colors[a.x];
+				c[0] = pb.colorsInternal[a.x];
 				s[0] = sharedIndices.IndexOf(a.x);
 				v[1] = verts[a.y];
-				c[1] = pb.colors[a.y];
+				c[1] = pb.colorsInternal[a.y];
 				s[1] = sharedIndices.IndexOf(a.y);
 
 				Vector3 nrm = Vector3.Cross( verts[b.x]-verts[a.x], verts[a.y]-verts[a.x] ).normalized;
@@ -627,19 +624,19 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				if(!intersects)
 				{
 					v[2] = verts[b.x];
-					c[2] = pb.colors[b.x];
+					c[2] = pb.colorsInternal[b.x];
 					s[2] = sharedIndices.IndexOf(b.x);
 					v[3] = verts[b.y];
-					c[3] = pb.colors[b.y];
+					c[3] = pb.colorsInternal[b.y];
 					s[3] = sharedIndices.IndexOf(b.y);
 				}
 				else
 				{
 					v[2] = verts[b.y];
-					c[2] = pb.colors[b.y];
+					c[2] = pb.colorsInternal[b.y];
 					s[2] = sharedIndices.IndexOf(b.y);
 					v[3] = verts[b.x];
-					c[3] = pb.colors[b.x];
+					c[3] = pb.colorsInternal[b.x];
 					s[3] = sharedIndices.IndexOf(b.x);
 				}
 
@@ -681,16 +678,16 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				v.AddRange(pb.VerticesInWorldSpace());
 
 				// UVs
-				u.AddRange(pb.uv);
+				u.AddRange(pb.texturesInternal);
 
 				// Colors
-				c.AddRange(pb.colors);
+				c.AddRange(pb.colorsInternal);
 
 				// Faces
-				Face[] faces = new Face[pb.faces.Length];
+				Face[] faces = new Face[pb.facesInternal.Length];
 				for(int i = 0; i < faces.Length; i++)
 				{
-					faces[i] = new Face(pb.faces[i]);
+					faces[i] = new Face(pb.facesInternal[i]);
 					faces[i].manualUV = true;
 					faces[i].ShiftIndices(vertexCount);
 					faces[i].RebuildCaches();
@@ -733,13 +730,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			combined = go.AddComponent<ProBuilderMesh>();
 
-			combined.SetVertices(v.ToArray());
-			combined.SetUV(u.ToArray());
+			combined.SetPositions(v.ToArray());
+			combined.SetUVs(u.ToArray());
 			combined.SetColors(c.ToArray());
 			combined.SetFaces(f.ToArray());
 
-			combined.SetSharedIndices( s.ToArray() ?? IntArrayUtility.ExtractSharedIndices(v.ToArray()) );
-			combined.SetSharedIndicesUV( suv.ToArray() ?? new IntArray[0] {});
+			combined.sharedIndicesInternal = s.ToArray();
+			combined.SetSharedIndicesUV(suv.ToArray());
 			combined.ToMesh();
 			combined.CenterPivot( pbs[0].transform.position );
 			combined.Refresh();
@@ -845,14 +842,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			GameObject go = (GameObject)GameObject.Instantiate(t.gameObject);
+			GameObject go = (GameObject) Object.Instantiate(t.gameObject);
 			go.GetComponent<MeshFilter>().sharedMesh = null;
 
 			ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
 			pb.GeometryWithVerticesFaces(verts.ToArray(), faces.ToArray());
 
-			pb.SetColors(cols.ToArray());
-			pb.SetUV(uvs.ToArray());
+			pb.colorsInternal = cols.ToArray();
+			pb.SetUVs(uvs.ToArray());
 
 			pb.gameObject.name = t.name;
 
@@ -874,115 +871,115 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="preserveFaces"></param>
 		/// <returns></returns>
 		public static bool ResetPbObjectWithMeshFilter(ProBuilderMesh pb, bool preserveFaces)
-	{
-		MeshFilter mf = pb.gameObject.GetComponent<MeshFilter>();
-
-		if(mf == null || mf.sharedMesh == null)
 		{
-			Log.Error(pb.name + " does not have a mesh or Mesh Filter component.");
-			return false;
-		}
+			MeshFilter mf = pb.gameObject.GetComponent<MeshFilter>();
 
-		Mesh m = mf.sharedMesh;
-
-		int vertexCount 		= m.vertexCount;
-		Vector3[] m_vertices 	= MeshUtility.GetMeshAttribute<Vector3[]>(pb.gameObject, x => x.vertices);
-		Color[] m_colors 		= MeshUtility.GetMeshAttribute<Color[]>(pb.gameObject, x => x.colors);
-		Vector2[] m_uvs 		= MeshUtility.GetMeshAttribute<Vector2[]>(pb.gameObject, x => x.uv);
-
-		List<Vector3> verts 	= preserveFaces ? new List<Vector3>(m.vertices) : new List<Vector3>();
-		List<Color> cols 		= preserveFaces ? new List<Color>(m.colors) : new List<Color>();
-		List<Vector2> uvs 		= preserveFaces ? new List<Vector2>(m.uv) : new List<Vector2>();
-		List<Face> faces 	= new List<Face>();
-
-		MeshRenderer mr = pb.gameObject.GetComponent<MeshRenderer>();
-		if(mr == null) mr = pb.gameObject.AddComponent<MeshRenderer>();
-
-		Material[] sharedMaterials = mr.sharedMaterials;
-		int mat_length = sharedMaterials.Length;
-
-		for(int n = 0; n < m.subMeshCount; n++)
-		{
-			int[] tris = m.GetTriangles(n);
-			for(int i = 0; i < tris.Length; i+=3)
+			if(mf == null || mf.sharedMesh == null)
 			{
-				int index = -1;
-				if(preserveFaces)
-				{
-					for(int j = 0; j < faces.Count; j++)
-					{
-						if(	faces[j].distinctIndices.Contains(tris[i+0]) ||
-							faces[j].distinctIndices.Contains(tris[i+1]) ||
-							faces[j].distinctIndices.Contains(tris[i+2]))
-						{
-							index = j;
-							break;
-						}
-					}
-				}
+				Log.Error(pb.name + " does not have a mesh or Mesh Filter component.");
+				return false;
+			}
 
-				if(index > -1 && preserveFaces)
-				{
-					int len = faces[index].indices.Length;
-					int[] arr = new int[len + 3];
-					System.Array.Copy(faces[index].indices, 0, arr, 0, len);
-					arr[len+0] = tris[i+0];
-					arr[len+1] = tris[i+1];
-					arr[len+2] = tris[i+2];
-					faces[index].SetIndices(arr);
-					faces[index].RebuildCaches();
-				}
-				else
-				{
-					int[] faceTris;
+			Mesh m = mf.sharedMesh;
 
+			int vertexCount 		= m.vertexCount;
+			Vector3[] m_vertices 	= MeshUtility.GetMeshAttribute<Vector3[]>(pb.gameObject, x => x.vertices);
+			Color[] m_colors 		= MeshUtility.GetMeshAttribute<Color[]>(pb.gameObject, x => x.colors);
+			Vector2[] m_uvs 		= MeshUtility.GetMeshAttribute<Vector2[]>(pb.gameObject, x => x.uv);
+
+			List<Vector3> verts 	= preserveFaces ? new List<Vector3>(m.vertices) : new List<Vector3>();
+			List<Color> cols 		= preserveFaces ? new List<Color>(m.colors) : new List<Color>();
+			List<Vector2> uvs 		= preserveFaces ? new List<Vector2>(m.uv) : new List<Vector2>();
+			List<Face> faces 	= new List<Face>();
+
+			MeshRenderer mr = pb.gameObject.GetComponent<MeshRenderer>();
+			if(mr == null) mr = pb.gameObject.AddComponent<MeshRenderer>();
+
+			Material[] sharedMaterials = mr.sharedMaterials;
+			int mat_length = sharedMaterials.Length;
+
+			for(int n = 0; n < m.subMeshCount; n++)
+			{
+				int[] tris = m.GetTriangles(n);
+				for(int i = 0; i < tris.Length; i+=3)
+				{
+					int index = -1;
 					if(preserveFaces)
 					{
-						faceTris = new int[3]
+						for(int j = 0; j < faces.Count; j++)
 						{
-							tris[i+0],
-							tris[i+1],
-							tris[i+2]
-						};
+							if(	faces[j].distinctIndices.Contains(tris[i+0]) ||
+								faces[j].distinctIndices.Contains(tris[i+1]) ||
+								faces[j].distinctIndices.Contains(tris[i+2]))
+							{
+								index = j;
+								break;
+							}
+						}
+					}
+
+					if(index > -1 && preserveFaces)
+					{
+						int len = faces[index].indices.Length;
+						int[] arr = new int[len + 3];
+						System.Array.Copy(faces[index].indices, 0, arr, 0, len);
+						arr[len+0] = tris[i+0];
+						arr[len+1] = tris[i+1];
+						arr[len+2] = tris[i+2];
+						faces[index].SetIndices(arr);
+						faces[index].RebuildCaches();
 					}
 					else
 					{
-						verts.Add(m_vertices[tris[i+0]]);
-						verts.Add(m_vertices[tris[i+1]]);
-						verts.Add(m_vertices[tris[i+2]]);
+						int[] faceTris;
 
-						cols.Add(m_colors != null && m_colors.Length == vertexCount ? m_colors[tris[i+0]] : Color.white);
-						cols.Add(m_colors != null && m_colors.Length == vertexCount ? m_colors[tris[i+1]] : Color.white);
-						cols.Add(m_colors != null && m_colors.Length == vertexCount ? m_colors[tris[i+2]] : Color.white);
+						if(preserveFaces)
+						{
+							faceTris = new int[3]
+							{
+								tris[i+0],
+								tris[i+1],
+								tris[i+2]
+							};
+						}
+						else
+						{
+							verts.Add(m_vertices[tris[i+0]]);
+							verts.Add(m_vertices[tris[i+1]]);
+							verts.Add(m_vertices[tris[i+2]]);
 
-						uvs.Add(m_uvs[tris[i+0]]);
-						uvs.Add(m_uvs[tris[i+1]]);
-						uvs.Add(m_uvs[tris[i+2]]);
+							cols.Add(m_colors != null && m_colors.Length == vertexCount ? m_colors[tris[i+0]] : Color.white);
+							cols.Add(m_colors != null && m_colors.Length == vertexCount ? m_colors[tris[i+1]] : Color.white);
+							cols.Add(m_colors != null && m_colors.Length == vertexCount ? m_colors[tris[i+2]] : Color.white);
 
-						faceTris = new int[3] { i+0, i+1, i+2 };
+							uvs.Add(m_uvs[tris[i+0]]);
+							uvs.Add(m_uvs[tris[i+1]]);
+							uvs.Add(m_uvs[tris[i+2]]);
+
+							faceTris = new int[3] { i+0, i+1, i+2 };
+						}
+
+						faces.Add(
+							new Face(
+								faceTris,
+								sharedMaterials[n >= mat_length ? mat_length - 1 : n],
+								new AutoUnwrapSettings(),
+								0,		// smoothing group
+								-1,		// texture group
+								-1,		// element group
+								true 	// manualUV
+							));
 					}
-
-					faces.Add(
-						new Face(
-							faceTris,
-							sharedMaterials[n >= mat_length ? mat_length - 1 : n],
-							new AutoUnwrapSettings(),
-							0,		// smoothing group
-							-1,		// texture group
-							-1,		// element group
-							true 	// manualUV
-						));
 				}
 			}
+
+			pb.positionsInternal = verts.ToArray();
+			pb.texturesInternal = uvs.ToArray();
+			pb.facesInternal = faces.ToArray();
+			pb.sharedIndicesInternal = IntArrayUtility.ExtractSharedIndices(verts.ToArray());
+			pb.colorsInternal = cols.ToArray();
+
+			return true;
 		}
-
-		pb.SetVertices(verts.ToArray());
-		pb.SetUV(uvs.ToArray());
-		pb.SetFaces(faces.ToArray());
-		pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(verts.ToArray()));
-		pb.SetColors(cols.ToArray());
-
-		return true;
-	}
 	}
 }

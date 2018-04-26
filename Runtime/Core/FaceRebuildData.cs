@@ -42,16 +42,16 @@ namespace UnityEngine.ProBuilder
 			Dictionary<int, int> lookup = null,
 			Dictionary<int, int> lookupUV = null)
 		{
-			List<Face> _faces = faces == null ? new List<Face>(pb.faces) : faces;
+			List<Face> _faces = faces == null ? new List<Face>(pb.facesInternal) : faces;
 
 			if(vertices == null)
 				vertices = new List<Vertex>( Vertex.GetVertices(pb) );
 
 			if(lookup == null)
-				lookup = pb.sharedIndices.ToDictionary();
+				lookup = pb.sharedIndicesInternal.ToDictionary();
 
 			if(lookupUV == null)
-				lookupUV = pb.sharedIndicesUV != null ? pb.sharedIndicesUV.ToDictionary() : null;
+				lookupUV = pb.sharedIndicesUVInternal != null ? pb.sharedIndicesUVInternal.ToDictionary() : null;
 
 			FaceRebuildData.Apply(newFaces, vertices, _faces, lookup, lookupUV);
 

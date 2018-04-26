@@ -19,9 +19,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		public static int[] RemoveUnusedVertices(this ProBuilderMesh pb)
 		{
 			List<int> del = new List<int>();
-			HashSet<int> tris = new HashSet<int>(Face.AllTriangles(pb.faces));
+			HashSet<int> tris = new HashSet<int>(Face.AllTriangles(pb.facesInternal));
 
-			for(int i = 0; i < pb.positions.Length; i++)
+			for(int i = 0; i < pb.positionsInternal.Length; i++)
 				if(!tris.Contains(i))
 					del.Add(i);
 
@@ -56,7 +56,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			for(int i = 0; i < originalVertexCount; i++)
 				offset[i] = InternalUtility.NearestIndexPriorToValue(sorted, i) + 1;
 
-			foreach(Face face in pb.faces)
+			foreach(Face face in pb.facesInternal)
 			{
 				int[] indices = face.indices;
 
@@ -67,8 +67,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			// remove from sharedIndices & shift to account for deletions
-			IEnumerable<KeyValuePair<int, int>> common = pb.sharedIndices.ToDictionary().Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
-			IEnumerable<KeyValuePair<int, int>> commonUV = pb.sharedIndicesUV.ToDictionary().Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
+			IEnumerable<KeyValuePair<int, int>> common = pb.sharedIndicesInternal.ToDictionary().Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
+			IEnumerable<KeyValuePair<int, int>> commonUV = pb.sharedIndicesUVInternal.ToDictionary().Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
 
 			pb.SetVertices(vertices);
 			pb.SetSharedIndices(common);

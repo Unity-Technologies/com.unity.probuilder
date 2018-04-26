@@ -25,7 +25,7 @@ namespace UnityEngine.ProBuilder
 		internal static Vector2[] PlanarProject(ProBuilderMesh pb, Face face)
 		{
 			Vector3 normal = ProBuilderMath.Normal(pb, face);
-			return PlanarProject(pb.positions, normal, VectorToProjectionAxis(normal), face.indices);
+			return PlanarProject(pb.positionsInternal, normal, VectorToProjectionAxis(normal), face.indices);
 		}
 
 		internal static Vector2[] PlanarProject(IList<Vertex> vertices, IList<int> indices)

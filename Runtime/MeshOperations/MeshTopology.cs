@@ -25,7 +25,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		public static ActionResult ToTriangles(this ProBuilderMesh pb, IList<Face> faces, out Face[] newFaces)
 		{
 			List<Vertex> vertices = new List<Vertex>( Vertex.GetVertices(pb) );
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
 
 			List<FaceRebuildData> rebuild = new List<FaceRebuildData>();
 

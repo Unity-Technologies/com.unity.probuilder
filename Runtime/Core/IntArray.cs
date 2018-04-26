@@ -35,7 +35,9 @@ namespace UnityEngine.ProBuilder
 		{
             if (intArray == null)
                 throw new ArgumentNullException("intArray");
-            array = intArray;
+            int len = intArray.Length;
+            array = new int[len];
+            Array.Copy(intArray, array, len);
 		}
 
 		/// <summary>

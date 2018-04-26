@@ -24,7 +24,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 			{
 				foreach (var pb in (IEnumerable<ProBuilderMesh>) shapes)
 				{
-					var face = pb.faces.FirstOrDefault();
+					var face = pb.facesInternal.FirstOrDefault();
 					pb.DeleteFace(face);
 					pb.ToMesh();
 					pb.Refresh();
@@ -46,7 +46,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 			{
 				foreach (var pb in (IEnumerable<ProBuilderMesh>) shapes)
 				{
-					var face = pb.faces[s_Random.Next(0, pb.faceCount)];
+					var face = pb.facesInternal[s_Random.Next(0, pb.faceCount)];
 					int vertexCount = pb.vertexCount;
 					int faceVertexCount = face.distinctIndices.Length;
 					pb.DeleteFace(face);
@@ -66,7 +66,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 			{
 				foreach (var pb in (IEnumerable<ProBuilderMesh>) shapes)
 				{
-					pb.DeleteFaces(pb.faces);
+					pb.DeleteFaces(pb.facesInternal);
 					pb.ToMesh();
 					pb.Refresh();
 					TestUtility.AssertMeshAttributesValid(pb.mesh);

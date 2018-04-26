@@ -75,7 +75,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				Color[] mesh_colors = pb.colors;
+				Color[] mesh_colors = pb.colorsInternal;
 
 				if(mesh_colors == null || mesh_colors.Length != pb.vertexCount)
 					continue;
@@ -90,13 +90,13 @@ namespace UnityEditor.ProBuilder.Actions
 
 			foreach(ProBuilderMesh pb in pool)
 			{
-				Color[] mesh_colors = pb.colors;
+				Color[] mesh_colors = pb.colorsInternal;
 
 				if(mesh_colors == null || mesh_colors.Length != pb.vertexCount)
 					continue;
 
 				List<Face> matches = new List<Face>();
-				Face[] faces = pb.faces;
+				Face[] faces = pb.facesInternal;
 
 				for(int i = 0; i < faces.Length; i++)
 				{

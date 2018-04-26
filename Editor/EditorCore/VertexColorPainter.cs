@@ -462,7 +462,7 @@ namespace UnityEditor.ProBuilder
 				{
 					if (!hovering.ContainsKey(pb))
 					{
-						hovering.Add(pb, pb.colors ?? new Color[pb.vertexCount]);
+						hovering.Add(pb, pb.colorsInternal ?? new Color[pb.vertexCount]);
 					}
 					else
 					{
@@ -487,7 +487,7 @@ namespace UnityEditor.ProBuilder
 
 						Color[] colors = pb.mesh.colors;
 
-						int[][] sharedIndices = pb.sharedIndices.ToArray();
+						int[][] sharedIndices = pb.sharedIndicesInternal.ToArray();
 
 						// wrapped in try/catch because a script reload can cause the mesh
 						// to re-unwrap itself in some crazy configuration, throwing off the
@@ -496,7 +496,7 @@ namespace UnityEditor.ProBuilder
 						{
 							for (int i = 0; i < sharedIndices.Length; i++)
 							{
-								float dist = Vector3.Distance(hit.point, pb.positions[sharedIndices[i][0]]);
+								float dist = Vector3.Distance(hit.point, pb.positionsInternal[sharedIndices[i][0]]);
 
 								if (dist < brushSize)
 								{

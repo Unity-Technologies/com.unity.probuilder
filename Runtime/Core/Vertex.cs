@@ -262,9 +262,9 @@ namespace UnityEngine.ProBuilder
 
 			Vertex[] v = new Vertex[vertexCount];
 
-			Vector3[] positions = mesh.positions;
-			Color[] colors 		= mesh.colors;
-			Vector2[] uv0s 		= mesh.uv;
+			Vector3[] positions = mesh.positionsInternal;
+			Color[] colors 		= mesh.colorsInternal;
+			Vector2[] uv0s 		= mesh.texturesInternal;
 
 			Vector3[] normals 	= mesh.mesh.normals;
 			Vector4[] tangents 	= mesh.mesh.tangents;
@@ -387,23 +387,23 @@ namespace UnityEngine.ProBuilder
 			GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4, AttributeType.All);
 		}
 
-		/// <summary>
-		/// Allocate and fill all mesh arrays.  This method will fill all arrays, regardless of whether
-		/// or not real data populates the values (check with hasPosition, hasNormal, etc). If you are using
-		/// this function to rebuild a mesh use SetMesh instead, as that method handles setting null
-		/// arrays where appropriate for you.
-		/// </summary>
-		/// <param name="vertices"></param>
-		/// <param name="position"></param>
-		/// <param name="color"></param>
-		/// <param name="uv0"></param>
-		/// <param name="normal"></param>
-		/// <param name="tangent"></param>
-		/// <param name="uv2"></param>
-		/// <param name="uv3"></param>
-		/// <param name="uv4"></param>
-		/// <param name="attributes"></param>
-		public static void GetArrays(	IList<Vertex> vertices,
+        /// <summary>
+        /// Allocate and fill all mesh arrays.  This method will fill all arrays, regardless of whether
+        /// or not real data populates the values (check with hasPosition, hasNormal, etc). If you are using
+        /// this function to rebuild a mesh use SetMesh instead, as that method handles setting null
+        /// arrays where appropriate for you.
+        /// </summary>
+        /// <param name="vertices"></param>
+        /// <param name="position"></param>
+        /// <param name="color"></param>
+        /// <param name="uv0"></param>
+        /// <param name="normal"></param>
+        /// <param name="tangent"></param>
+        /// <param name="uv2"></param>
+        /// <param name="uv3"></param>
+        /// <param name="uv4"></param>
+        /// <param name="attributes"></param>
+        public static void GetArrays(	IList<Vertex> vertices,
 										out Vector3[] position,
 										out Color[] color,
 										out Vector2[] uv0,
@@ -437,7 +437,7 @@ namespace UnityEngine.ProBuilder
             uv2 = hasUv2 ? new Vector2[vc] : null;
             uv3 = hasUv3 ? new List<Vector4>(vc) : null;
             uv4 = hasUv4 ? new List<Vector4>(vc) : null;
-#pragma warning disable 1062
+
             for (int i = 0; i < vc; i++)
             {
                 if (hasPosition) position[i] = vertices[i].position;
@@ -449,7 +449,6 @@ namespace UnityEngine.ProBuilder
                 if (hasUv3) uv3.Add(vertices[i].uv3);
                 if (hasUv4) uv4.Add(vertices[i].uv4);
             }
-#pragma warning restore 1062
         }
 
 		/// <summary>

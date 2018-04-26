@@ -23,7 +23,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 			{
 				foreach (var pb in (IEnumerable<ProBuilderMesh>) shapes)
 				{
-					pb.Extrude(pb.faces, ExtrudeMethod.FaceNormal, .5f);
+					pb.Extrude(pb.facesInternal, ExtrudeMethod.FaceNormal, .5f);
 					pb.ToMesh();
 					pb.Refresh();
 					LogAssert.NoUnexpectedReceived();
@@ -45,7 +45,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 				foreach (var pb in (IEnumerable<ProBuilderMesh>) shapes)
 				{
 					int vertexCountBeforeExtrude = pb.vertexCount;
-					pb.Extrude(pb.faces, ExtrudeMethod.IndividualFaces, .5f);
+					pb.Extrude(pb.facesInternal, ExtrudeMethod.IndividualFaces, .5f);
 					pb.ToMesh();
 					pb.Refresh();
 					LogAssert.NoUnexpectedReceived();
@@ -67,7 +67,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 			{
 				foreach (var pb in (IEnumerable<ProBuilderMesh>) shapes)
 				{
-					pb.Extrude(pb.faces, ExtrudeMethod.VertexNormal, .5f);
+					pb.Extrude(pb.facesInternal, ExtrudeMethod.VertexNormal, .5f);
 					pb.ToMesh();
 					pb.Refresh();
 					LogAssert.NoUnexpectedReceived();
@@ -88,7 +88,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 				foreach (var pb in (IEnumerable<ProBuilderMesh>) shapes)
 				{
 					int initialVertexCount = pb.vertexCount;
-					UnityEngine.ProBuilder.Face face = pb.faces[m_Random.Next(0, pb.faces.Length)];
+					UnityEngine.ProBuilder.Face face = pb.facesInternal[m_Random.Next(0, pb.facesInternal.Length)];
 					pb.Extrude(new UnityEngine.ProBuilder.Face[] {face}, method, 1f);
 					pb.ToMesh();
 					pb.Refresh();
@@ -146,7 +146,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 				foreach (ProBuilderMesh pb in shapes)
 				{
 					int initialVertexCount = pb.vertexCount;
-					UnityEngine.ProBuilder.Face face = pb.faces[m_Random.Next(0, pb.faces.Length)];
+					UnityEngine.ProBuilder.Face face = pb.facesInternal[m_Random.Next(0, pb.facesInternal.Length)];
 					pb.Extrude(new UnityEngine.ProBuilder.Face[] {face}, ExtrudeMethod.FaceNormal, 1f);
 					pb.ToMesh();
 					pb.Refresh();

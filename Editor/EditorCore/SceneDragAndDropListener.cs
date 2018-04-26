@@ -105,8 +105,8 @@ namespace UnityEditor.ProBuilder
 
 					if (s_IsFaceDragAndDropOverrideEnabled)
 					{
-						s_PreviewMesh.vertices = mesh.positions;
-						Vector2[] uvs = mesh.uv;
+						s_PreviewMesh.vertices = mesh.positionsInternal;
+						Vector2[] uvs = mesh.texturesInternal;
 						if(uvs != null && uvs.Length == mesh.vertexCount)
 							s_PreviewMesh.uv = uvs;
 						s_PreviewMesh.triangles = Face.AllTriangles(mesh.SelectedFaces);
@@ -173,7 +173,7 @@ namespace UnityEditor.ProBuilder
 							var mr = s_CurrentPreview.GetComponent<MeshRenderer>();
 							Material hoveredMaterial = mr == null ? null : mr.sharedMaterials[s_PreviewSubmesh];
 
-							foreach (var face in s_CurrentPreview.faces)
+							foreach (var face in s_CurrentPreview.facesInternal)
 							{
 								if (hoveredMaterial == null || face.material == hoveredMaterial)
 									face.material = draggedMaterial;

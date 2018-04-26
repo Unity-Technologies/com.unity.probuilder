@@ -44,7 +44,7 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 throw new System.ArgumentNullException("mesh");
 
-            return GetNextUnusedSmoothingGroup(smoothRangeMin, new HashSet<int>(mesh.faces.Select(x => x.smoothingGroup)));
+            return GetNextUnusedSmoothingGroup(smoothRangeMin, new HashSet<int>(mesh.facesInternal.Select(x => x.smoothingGroup)));
 		}
 
 		/// <summary>
@@ -109,7 +109,7 @@ namespace UnityEngine.ProBuilder
 			}
 
 			float threshold = Mathf.Abs(Mathf.Cos(Mathf.Clamp(angleThreshold, 0f, 89.999f) * Mathf.Deg2Rad));
-			HashSet<int> used = new HashSet<int>(mesh.faces.Select(x => x.smoothingGroup));
+			HashSet<int> used = new HashSet<int>(mesh.facesInternal.Select(x => x.smoothingGroup));
 			int group = GetNextUnusedSmoothingGroup(1, used);
 			HashSet<Face> processed = new HashSet<Face>();
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh, faces, true);

@@ -51,9 +51,9 @@ namespace UnityEditor.ProBuilder
 
 			int modelCount = models.Count();
 
-			Vector3[] positions = models.SelectMany(x => x.positions).ToArray();
+			Vector3[] positions = models.SelectMany(x => x.positionsInternal).ToArray();
 			Vector3[] normals = models.SelectMany(x => x.mesh.normals).ToArray();
-			Color[] colors = models.SelectMany(x => x.colors).ToArray();
+			Color[] colors = models.SelectMany(x => x.colorsInternal).ToArray();
 
 			List<int[]> faces = new List<int[]>(modelCount);
 			int vertexOffset = 0;
@@ -64,13 +64,13 @@ namespace UnityEditor.ProBuilder
 
 				if(options.ngons)
 				{
-					indices = pb.faces.Select(y => options.quads ? (y.ToQuad() ?? y.indices) : y.indices).ToList();
+					indices = pb.facesInternal.Select(y => options.quads ? (y.ToQuad() ?? y.indices) : y.indices).ToList();
 				}
 				else
 				{
 					indices = new List<int[]>();
 
-					foreach(Face	face in pb.faces)
+					foreach(Face	face in pb.facesInternal)
 					{
 						if(options.quads)
 						{

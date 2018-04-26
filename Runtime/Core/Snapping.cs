@@ -60,7 +60,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="snap"></param>
 		public static void SnapVertices(ProBuilderMesh pb, IList<int> indices, Vector3 snap)
 		{
-			Vector3[] verts = pb.positions;
+			Vector3[] verts = pb.positionsInternal;
 			for(int n = 0; n < indices.Count; n++)
 				verts[indices[n]] = pb.transform.InverseTransformPoint(SnapValue(pb.transform.TransformPoint(verts[indices[n]]), snap));
 		}

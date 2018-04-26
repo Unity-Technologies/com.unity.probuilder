@@ -369,7 +369,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				Face[] faces = pb.SelectedFaceCount > 0 ? pb.SelectedFaces : pb.faces;
+				Face[] faces = pb.SelectedFaceCount > 0 ? pb.SelectedFaces : pb.facesInternal;
 				foreach (var face in faces)
 					face.material = mat;
 				OnFaceChanged(pb);

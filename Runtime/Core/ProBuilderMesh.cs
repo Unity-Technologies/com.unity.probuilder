@@ -3,177 +3,430 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.Serialization;
 using System;
+using System.Collections.ObjectModel;
 
 namespace UnityEngine.ProBuilder
 {
-	/// <summary>
-	/// ProBuilder mesh class. Stores all the information necessary to create a UnityEngine.Mesh.
-	/// </summary>
-	[AddComponentMenu("")]
-	[DisallowMultipleComponent]
-	[RequireComponent(typeof(MeshFilter))]
-	[RequireComponent(typeof(MeshRenderer))]
-	[ExecuteInEditMode]
-	public class ProBuilderMesh : MonoBehaviour
-	{
-		[SerializeField]
-		[FormerlySerializedAs("_quads")]
-		Face[] m_Faces;
+    /// <summary>
+    /// ProBuilder mesh class. Stores all the information necessary to create a UnityEngine.Mesh.
+    /// </summary>
+    [AddComponentMenu("")]
+    [DisallowMultipleComponent]
+    [RequireComponent(typeof(MeshFilter))]
+    [RequireComponent(typeof(MeshRenderer))]
+    [ExecuteInEditMode]
+    public class ProBuilderMesh : MonoBehaviour
+    {
+#region Fields, Properties, and Events
+        [SerializeField]
+        [FormerlySerializedAs("_quads")]
+        Face[] m_Faces;
 
-		[SerializeField]
-		[FormerlySerializedAs("_sharedIndices")]
-		IntArray[] m_SharedIndices;
+        [SerializeField]
+        [FormerlySerializedAs("_sharedIndices")]
+        IntArray[] m_SharedIndices;
 
-		[SerializeField]
-		[FormerlySerializedAs("_vertices")]
-		Vector3[] m_Positions;
+        [SerializeField]
+        [FormerlySerializedAs("_vertices")]
+        Vector3[] m_Positions;
 
-		[SerializeField]
-		[FormerlySerializedAs("_uv")]
-		Vector2[] m_Textures0;
+        [SerializeField]
+        [FormerlySerializedAs("_uv")]
+        Vector2[] m_Textures0;
 
-		[SerializeField]
-		[FormerlySerializedAs("_uv3")]
-		List<Vector4> m_Textures3;
+        [SerializeField]
+        [FormerlySerializedAs("_uv3")]
+        List<Vector4> m_Textures3;
 
-		[SerializeField]
-		[FormerlySerializedAs("_uv4")]
-		List<Vector4> m_Textures4;
+        [SerializeField]
+        [FormerlySerializedAs("_uv4")]
+        List<Vector4> m_Textures4;
 
-		[SerializeField]
-		[FormerlySerializedAs("_tangents")]
-		Vector4[] m_Tangents;
+        [SerializeField]
+        [FormerlySerializedAs("_tangents")]
+        Vector4[] m_Tangents;
 
-		[SerializeField]
-		[FormerlySerializedAs("_sharedIndicesUV ")]
-		IntArray[] m_SharedIndicesUv = new IntArray[0];
+        [SerializeField]
+        [FormerlySerializedAs("_sharedIndicesUV ")]
+        IntArray[] m_SharedIndicesUV = new IntArray[0];
 
-		[SerializeField]
-		[FormerlySerializedAs("_colors")]
-		Color[] m_Colors;
+        [SerializeField]
+        [FormerlySerializedAs("_colors")]
+        Color[] m_Colors;
 
-		/// <summary>
-		/// If "Meshes are Assets" feature is enabled, this is used to relate pb_Objects to stored meshes.
-		/// </summary>
-		[SerializeField]
-		internal string assetGuid;
+	    /// <summary>
+	    /// If false, ProBuilder will automatically create and scale colliders.
+	    /// </summary>
+	    public bool userCollisions { get; set; }
 
-		/// <summary>
-		/// If false, ProBuilder will automatically create and scale colliders.
-		/// </summary>
-		public bool userCollisions { get; set; }
+	    [SerializeField]
+	    bool m_IsSelectable = true;
 
-		[SerializeField]
-		bool m_IsSelectable = true;
+	    /// <summary>
+	    /// If false mesh elements will not be selectable.
+	    /// </summary>
+	    public bool isSelectable
+	    {
+		    get { return m_IsSelectable; }
+		    set { m_IsSelectable = value; }
+	    }
 
-		/// <summary>
-		/// If false mesh elements will not be selectable.
-		/// </summary>
-		public bool isSelectable
-		{
-			get { return m_IsSelectable; }
-			set { m_IsSelectable = value; }
-		}
+	    /// <summary>
+	    /// UV2 generation parameters.
+	    /// </summary>
+	    public UnwrapParamaters unwrapParameters { get; set; }
 
-		/// <summary>
-		/// UV2 generation parameters.
-		/// </summary>
-		public UnwrapParamaters unwrapParameters { get; set; }
+	    [FormerlySerializedAs("dontDestroyMeshOnDelete")]
+	    [SerializeField]
+	    bool m_PreserveMeshAssetOnDestroy;
 
-		[FormerlySerializedAs("dontDestroyMeshOnDelete")]
-		[SerializeField]
-		bool m_PreserveMeshAssetOnDestroy;
+        /// <summary>
+        /// If "Meshes are Assets" feature is enabled, this is used to relate pb_Objects to stored meshes.
+        /// </summary>
+        [SerializeField]
+        internal string assetGuid;
 
-		/// <summary>
-		/// Usually when you delete a pb_Object you want to also clean up the mesh asset.
-		/// However, there are situations you'd want to keep the mesh around, like when stripping probuilder scripts.
-		/// </summary>
-		public bool preserveMeshAssetOnDestroy
-		{
-			get { return m_PreserveMeshAssetOnDestroy; }
-			set { m_PreserveMeshAssetOnDestroy = value; }
-		}
+        /// <summary>
+        /// Usually when you delete a pb_Object you want to also clean up the mesh asset.
+        /// However, there are situations you'd want to keep the mesh around, like when stripping probuilder scripts.
+        /// </summary>
+        public bool preserveMeshAssetOnDestroy
+        {
+            get { return m_PreserveMeshAssetOnDestroy; }
+            set { m_PreserveMeshAssetOnDestroy = value; }
+        }
 
-		/// <summary>
-		/// If onDestroyObject has a subscriber ProBuilder will invoke it instead of cleaning up unused meshes by itself.
-		/// </summary>
-		public static event Action<ProBuilderMesh> onDestroyObject;
+        /// <summary>
+        /// Get a reference to the faces array on this mesh.
+        /// </summary>
+        internal Face[] facesInternal
+        {
+            get { return m_Faces; }
+            set { m_Faces = value; }
+        }
 
-		internal static event Action<ProBuilderMesh> onElementSelectionChanged;
+        public ReadOnlyCollection<Face> faces
+        {
+            get { return new ReadOnlyCollection<Face>(m_Faces); }
+        }
 
-		/// <summary>
-		/// Convenience property for getting the mesh from the MeshFilter component.
-		/// </summary>
-		internal Mesh mesh
-		{
-			get { return GetComponent<MeshFilter>().sharedMesh; }
-			set { gameObject.GetComponent<MeshFilter>().sharedMesh = value; }
-		}
+        public void SetFaces(Face[] array)
+        {
+            if (array == null)
+                throw new ArgumentNullException("array");
+            int len = array.Length;
+            m_Faces = new Face[len];
+            Array.Copy(array, m_Faces, len);
+        }
 
-		/// <summary>
-		/// Get a reference to the faces array on this mesh.
-		/// </summary>
-		public Face[] faces
-		{
-			get { return m_Faces; }
-		}
+	    internal IntArray[] sharedIndicesInternal
+	    {
+		    get { return m_SharedIndices; }
+		    set { m_SharedIndices = value; }
+	    }
 
-		/// <summary>
-		/// Get a reference to the shared indices array.
-		/// Also called common vertices.
-		/// </summary>
-		public IntArray[] sharedIndices
-		{
-			get { return m_SharedIndices; }
-		}
+	    public ReadOnlyCollection<IntArray> sharedIndices
+	    {
+		    get { return new ReadOnlyCollection<IntArray>(m_SharedIndices); }
+	    }
 
-		/// <summary>
-		/// Get a reference to the shared uv indices array.
-		/// </summary>
-		public IntArray[] sharedIndicesUV
-		{
-			get { return m_SharedIndicesUv; }
-		}
+	    public IntArray[] GetSharedIndices()
+	    {
+		    int len = m_SharedIndices.Length;
+		    IntArray[] copy = new IntArray[len];
+		    for(var i = 0; i < len; i++)
+			    copy[i] = new IntArray(m_SharedIndices[i]);
+		    return copy;
+	    }
 
-		/// <summary>
-		/// Get a unique id for this pb_Object. Not guaranteed to be persistent.
-		/// </summary>
-		public int id
-		{
-			get { return gameObject.GetInstanceID(); }
-		}
+	    public void SetSharedIndices(IntArray[] indices)
+	    {
+		    if (indices == null)
+			    throw new ArgumentNullException("indices");
+		    int len = indices.Length;
+		    m_SharedIndices = new IntArray[len];
+		    for (var i = 0; i < len; i++)
+			    m_SharedIndicesUV[i] = new IntArray(indices[i]);
+	    }
 
-		/// <summary>
-		/// Get a reference to the positions array.
-		/// </summary>
-		/// <remarks>
-		/// The stored vertex positions array is not guaranteed to match the Unity mesh vertices array.
-		/// </remarks>
-		public Vector3[] positions
-		{
-			get { return m_Positions; }
-		}
+	    public void SetSharedIndices(IEnumerable<KeyValuePair<int, int>> indices)
+	    {
+		    if (indices == null)
+			    throw new ArgumentNullException("indices");
+		    m_SharedIndices = IntArrayUtility.ToSharedIndices(indices);
+	    }
 
-		/// <summary>
-		/// Get a reference to the colors array.
-		/// </summary>
-		public Color[] colors
+	    /// <summary>
+        /// Get a reference to the shared uv indices array.
+        /// </summary>
+        internal IntArray[] sharedIndicesUVInternal
+        {
+            get { return m_SharedIndicesUV; }
+            set { m_SharedIndicesUV = value; }
+        }
+
+        /// <summary>
+        /// Returns a copy of the sharedIndicesUV array.
+        /// </summary>
+        /// <returns></returns>
+        public IntArray[] GetSharedIndicesUV()
+        {
+            int sil = m_SharedIndicesUV.Length;
+            IntArray[] sharedIndicesCopy = new IntArray[sil];
+            for (int i = 0; i < sil; i++)
+                sharedIndicesCopy[i] = m_SharedIndicesUV[i];
+            return sharedIndicesCopy;
+        }
+
+        internal void SetSharedIndicesUV(IntArray[] indices)
+        {
+            if (indices == null)
+                throw new ArgumentNullException("indices");
+            int len = indices.Length;
+            m_SharedIndicesUV = new IntArray[len];
+            for (int i = 0; i < len; i++)
+                m_SharedIndicesUV[i] = new IntArray(indices[i]);
+        }
+
+        internal void SetSharedIndicesUV(IEnumerable<KeyValuePair<int, int>> indices)
+        {
+            if (indices == null)
+                throw new ArgumentNullException("indices");
+            m_SharedIndicesUV = IntArrayUtility.ToSharedIndices(indices);
+        }
+
+        /// <summary>
+        /// Get a reference to the positions array.
+        /// </summary>
+        /// <remarks>
+        /// The stored vertex positions array is not guaranteed to match the Unity mesh vertices array.
+        /// </remarks>
+        internal Vector3[] positionsInternal
+        {
+            get { return m_Positions; }
+            set { m_Positions = value; }
+        }
+
+        public ReadOnlyCollection<Vector3> positions
+        {
+            get { return new ReadOnlyCollection<Vector3>(m_Positions); }
+        }
+
+        public void SetPositions(Vector3[] array)
+        {
+            if (array == null)
+                throw new ArgumentNullException("array");
+            int len = array.Length;
+            m_Positions = new Vector3[len];
+            Array.Copy(array, m_Positions, len);
+        }
+
+        /// <summary>
+        /// Set the vertex element arrays on this pb_Object. By default this function does not apply these values to the mesh.  An optional parameter `applyMesh` will apply elements to the mesh - note that this should only be used when the mesh is in its original state, not optimized (meaning it won't affect triangles which can be modified by Optimize).
+        /// </summary>
+        /// <param name="vertices"></param>
+        /// <param name="applyMesh"></param>
+        public void SetVertices(IList<Vertex> vertices, bool applyMesh = false)
+        {
+            if (vertices == null)
+                throw new ArgumentNullException("vertices");
+
+            Vector3[] position;
+            Color[] color;
+            Vector3[] normal;
+            Vector4[] tangent;
+            Vector2[] uv0;
+            Vector2[] uv2;
+            List<Vector4> uv3;
+            List<Vector4> uv4;
+
+            Vertex.GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
+
+            m_Positions = position;
+            m_Colors = color;
+            m_Tangents = tangent;
+            m_Textures0 = uv0;
+            m_Textures3 = uv3;
+            m_Textures4 = uv4;
+
+            if (applyMesh)
+            {
+                Mesh m = mesh;
+
+                Vertex first = vertices[0];
+
+                if (first.hasPosition) m.vertices = position;
+                if (first.hasColor) m.colors = color;
+                if (first.hasUv0) m.uv = uv0;
+                if (first.hasNormal) m.normals = normal;
+                if (first.hasTangent) m.tangents = tangent;
+                if (first.hasUv2) m.uv2 = uv2;
+#if !UNITY_4_7 && !UNITY_5_0
+                if (first.hasUv3) if (uv3 != null) m.SetUVs(2, uv3);
+                if (first.hasUv4) if (uv4 != null) m.SetUVs(3, uv4);
+#endif
+            }
+        }
+
+	    /// <summary>
+	    /// pb_Object doesn't store normals, so this function either:
+	    ///		1. Copies them from the MeshFilter.sharedMesh (if vertex count matches the pb_Object::vertexCount)
+	    ///		2. Calculates a new set of normals and returns.
+	    /// </summary>
+	    /// <returns></returns>
+	    public Vector3[] GetNormals()
+	    {
+		    // If mesh isn't optimized try to return a copy from the compiled mesh
+		    if (mesh.vertexCount == vertexCount)
+			    return mesh.normals;
+
+		    return MeshUtility.CalculateNormals(this);
+	    }
+
+        /// <summary>
+        /// Get a reference to the colors array.
+        /// </summary>
+        internal Color[] colorsInternal
 		{
 			get { return m_Colors; }
+			set { m_Colors = value; }
 		}
 
-		/// <summary>
-		/// Get a reference to the last generated UVs for this object.
-		/// </summary>
-		public Vector2[] uv
+        public ReadOnlyCollection<Color> colors
+        {
+            get { return new ReadOnlyCollection<Color>(m_Colors); }
+        }
+
+        public void SetColors(Color[] array)
+        {
+            if (array == null)
+                throw new ArgumentNullException("array");
+            int len = array.Length;
+            if (len != vertexCount)
+                throw new ArgumentOutOfRangeException("array", "Array length must match vertex count.");
+            m_Colors = new Color[len];
+            Array.Copy(array, m_Colors, len);
+        }
+
+	    public ReadOnlyCollection<Vector4> tangents
+	    {
+		    get { return new ReadOnlyCollection<Vector4>(m_Tangents); }
+	    }
+
+        /// <summary>
+        /// Set the tangent array on this mesh.
+        /// </summary>
+        /// <param name="array"></param>
+        public void SetTangents(Vector4[] array)
+        {
+	        if (array == null)
+		        throw new ArgumentNullException("array");
+	        int vc = vertexCount;
+	        if (array.Length != vc)
+		        throw new ArgumentOutOfRangeException("array", "Tangent array length must match vertex count");
+	        m_Tangents = new Vector4[vc];
+	        Array.Copy(array, m_Tangents, vc);
+        }
+
+        /// <summary>
+        /// Get a reference to uv0 channel.
+        /// </summary>
+        internal Vector2[] texturesInternal
 		{
 			get { return m_Textures0; }
+			set { m_Textures0 = value; }
 		}
 
-		/// <summary>
-		/// True if this mesh has a valid UV2 channel.
-		/// </summary>
-		public bool hasUv2
+	    public void SetUVs(Vector2[] uvs)
+	    {
+		    if(uvs == null)
+			    throw new ArgumentNullException("uvs");
+		    int vc = vertexCount;
+		    if(uvs.Length != vc)
+			    throw new ArgumentOutOfRangeException("uvs");
+		    m_Textures0 = new Vector2[vc];
+		    Array.Copy(uvs, m_Textures0, vc);
+	    }
+
+        /// <summary>
+        ///	Copy values in UV channel to uvs.
+        ///	channel is zero indexed.
+        ///		mesh.uv0/1 = 0
+        ///		mesh.uv2 = 1
+        ///		mesh.uv3 = 2
+        ///		mesh.uv4 = 3
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <param name="uvs"></param>
+        public void GetUVs(int channel, List<Vector4> uvs)
+        {
+            if (uvs == null)
+                throw new ArgumentNullException("uvs");
+
+            uvs.Clear();
+
+            switch (channel)
+            {
+                case 0:
+                default:
+                    for (int i = 0; i < vertexCount; i++)
+                        uvs.Add((Vector4)m_Textures0[i]);
+                    break;
+
+                case 1:
+                    if (mesh != null && mesh.uv2 != null)
+                    {
+                        Vector2[] uv2 = mesh.uv2;
+                        for (int i = 0; i < uv2.Length; i++)
+                            uvs.Add((Vector4)uv2[i]);
+                    }
+                    break;
+
+                case 2:
+                    if (m_Textures3 != null)
+                        uvs.AddRange(m_Textures3);
+                    break;
+
+                case 3:
+                    if (m_Textures4 != null)
+                        uvs.AddRange(m_Textures4);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Sets the UVs on channel.
+        /// </summary>
+        /// <remarks>Does not apply to mesh (use Refresh to reflect changes after application).</remarks>
+        /// <param name="channel"></param>
+        /// <param name="uvs"></param>
+        public void SetUVs(int channel, List<Vector4> uvs)
+        {
+            switch (channel)
+            {
+                case 1:
+                    mesh.uv2 = uvs.Cast<Vector2>().ToArray();
+                    break;
+
+                case 2:
+                    m_Textures3 = uvs;
+                    break;
+
+                case 3:
+                    m_Textures4 = uvs;
+                    break;
+
+                case 0:
+                default:
+                    m_Textures0 = uvs.Cast<Vector2>().ToArray();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// True if this mesh has a valid UV2 channel.
+        /// </summary>
+        public bool hasUv2
 		{
 			get { return mesh.uv2 != null && mesh.uv2.Length == vertexCount; }
 		}
@@ -192,22 +445,6 @@ namespace UnityEngine.ProBuilder
 		public bool hasUv4
 		{
 			get { return m_Textures4 != null && m_Textures4.Count == vertexCount; }
-		}
-
-		/// <summary>
-		/// Get the UV3 list for this mesh.
-		/// </summary>
-		public List<Vector4> uv3
-		{
-			get { return m_Textures3; }
-		}
-
-		/// <summary>
-		/// Get the UV4 list for this mesh.
-		/// </summary>
-		public List<Vector4> uv4
-		{
-			get { return m_Textures4; }
 		}
 
 		/// <summary>
@@ -235,7 +472,33 @@ namespace UnityEngine.ProBuilder
 			get { return m_Faces == null ? 0 : m_Faces.Sum(x => x.indices.Length); }
 		}
 
-		/// <summary>
+	    /// <summary>
+	    /// If onDestroyObject has a subscriber ProBuilder will invoke it instead of cleaning up unused meshes by itself.
+	    /// </summary>
+	    public static event Action<ProBuilderMesh> onDestroyObject;
+
+	    internal static event Action<ProBuilderMesh> onElementSelectionChanged;
+
+	    /// <summary>
+	    /// Convenience property for getting the mesh from the MeshFilter component.
+	    /// </summary>
+	    internal Mesh mesh
+	    {
+		    get { return GetComponent<MeshFilter>().sharedMesh; }
+		    set { gameObject.GetComponent<MeshFilter>().sharedMesh = value; }
+	    }
+
+	    /// <summary>
+	    /// Get a unique id for this pb_Object. Not guaranteed to be persistent.
+	    /// </summary>
+	    public int id
+	    {
+		    get { return gameObject.GetInstanceID(); }
+	    }
+#endregion
+
+#region Initialize and Destroy
+	    /// <summary>
 		/// Reset all the attribute arrays on this object.
 		/// </summary>
 		public void Clear()
@@ -249,60 +512,9 @@ namespace UnityEngine.ProBuilder
 			m_Textures4 = null;
 			m_Tangents = null;
 			m_SharedIndices = new IntArray[0];
-			m_SharedIndicesUv = null;
+			m_SharedIndicesUV = null;
 			m_Colors = null;
 			SetSelectedTriangles(null);
-		}
-
-		/// <summary>
-		/// pb_Object doesn't store normals, so this function either:
-		///		1. Copies them from the MeshFilter.sharedMesh (if vertex count matches the pb_Object::vertexCount)
-		///		2. Calculates a new set of normals and returns.
-		/// </summary>
-		/// <returns></returns>
-		public Vector3[] GetNormals()
-		{
-			// If mesh isn't optimized try to return a copy from the compiled mesh
-			if (mesh.vertexCount == vertexCount)
-				return mesh.normals;
-
-			return MeshUtility.CalculateNormals(this);
-		}
-
-		/// <summary>
-		/// Returns a copy of the sharedIndices array.
-		/// </summary>
-		/// <returns></returns>
-		public IntArray[] GetSharedIndices()
-		{
-			int sil = m_SharedIndices.Length;
-			IntArray[] sharedIndicesCopy = new IntArray[sil];
-			for (int i = 0; i < sil; i++)
-			{
-				int[] arr = new int[m_SharedIndices[i].length];
-				System.Array.Copy(m_SharedIndices[i].array, arr, arr.Length);
-				sharedIndicesCopy[i] = new IntArray(arr);
-			}
-
-			return sharedIndicesCopy;
-		}
-
-		/// <summary>
-		/// Returns a copy of the sharedIndicesUV array.
-		/// </summary>
-		/// <returns></returns>
-		public IntArray[] GetSharedIndicesUV()
-		{
-			int sil = m_SharedIndicesUv.Length;
-			IntArray[] sharedIndicesCopy = new IntArray[sil];
-			for (int i = 0; i < sil; i++)
-			{
-				int[] arr = new int[m_SharedIndicesUv[i].length];
-				System.Array.Copy(m_SharedIndicesUv[i].array, arr, arr.Length);
-				sharedIndicesCopy[i] = new IntArray(arr);
-			}
-
-			return sharedIndicesCopy;
 		}
 
 		void Awake()
@@ -393,13 +605,15 @@ namespace UnityEngine.ProBuilder
 			pb.GeometryWithVerticesFaces(v, f);
 			return pb;
 		}
+#endregion
 
+#region Selection
 		/// <summary>
 		/// Get a copy of the selected face array.
 		/// </summary>
 		public Face[] SelectedFaces
 		{
-			get { return InternalUtility.ValuesWithIndices(this.faces, m_selectedFaces); }
+			get { return InternalUtility.ValuesWithIndices(this.facesInternal, m_selectedFaces); }
 		}
 
 		/// <summary>
@@ -452,7 +666,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="face"></param>
 		internal void AddToFaceSelection(Face face)
 		{
-			int index = System.Array.IndexOf(this.faces, face);
+			int index = System.Array.IndexOf(this.facesInternal, face);
 
 			if (index > -1)
 				SetSelectedFaces(m_selectedFaces.Add(index));
@@ -463,7 +677,7 @@ namespace UnityEngine.ProBuilder
 			List<int> indices = new List<int>();
 			foreach (Face f in selected)
 			{
-				int index = System.Array.IndexOf(this.faces, f);
+				int index = System.Array.IndexOf(this.facesInternal, f);
 				if (index > -1)
 					indices.Add(index);
 			}
@@ -473,7 +687,7 @@ namespace UnityEngine.ProBuilder
 		internal void SetSelectedFaces(IEnumerable<int> selected)
 		{
 			m_selectedFaces = selected.ToArray();
-			m_selectedTriangles = m_selectedFaces.SelectMany(x => faces[x].distinctIndices).ToArray();
+			m_selectedTriangles = m_selectedFaces.SelectMany(x => facesInternal[x].distinctIndices).ToArray();
 
 			// Copy the edges- otherwise Unity's Undo does unholy things to the actual edges reference
 			// @todo test this now that pb_Edge is a struct
@@ -526,7 +740,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="face"></param>
 		internal void RemoveFromFaceSelection(Face face)
 		{
-			int indx = System.Array.IndexOf(this.faces, face);
+			int indx = System.Array.IndexOf(this.facesInternal, face);
 
 			if (indx > -1)
 				SetSelectedFaces(m_selectedFaces.Remove(indx));
@@ -543,70 +757,6 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Sets the internal vertex cache, but does NOT rebuild the mesh.vertices array. Usually you'll want to call ToMesh() immediately following this.
-		/// </summary>
-		/// <param name="v"></param>
-		public void SetVertices(Vector3[] v)
-		{
-			m_Positions = v;
-		}
-
-		/// <summary>
-		/// Set the vertex element arrays on this pb_Object. By default this function does not apply these values to the mesh.  An optional parameter `applyMesh` will apply elements to the mesh - note that this should only be used when the mesh is in its original state, not optimized (meaning it won't affect triangles which can be modified by Optimize).
-		/// </summary>
-		/// <param name="vertices"></param>
-		/// <param name="applyMesh"></param>
-		public void SetVertices(IList<Vertex> vertices, bool applyMesh = false)
-		{
-            if (vertices == null)
-                throw new ArgumentNullException("vertices");
-
-            Vector3[] position;
-			Color[] color;
-			Vector2[] uv0;
-			Vector3[] normal;
-			Vector4[] tangent;
-			Vector2[] uv2;
-			List<Vector4> uv3;
-			List<Vector4> uv4;
-
-			Vertex.GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
-
-			SetVertices(position);
-			SetColors(color);
-			SetUV(uv0);
-			if (uv3 != null) m_Textures3 = uv3;
-			if (uv4 != null) m_Textures4 = uv4;
-
-			if (applyMesh)
-			{
-				Mesh m = mesh;
-
-				Vertex first = vertices[0];
-
-				if (first.hasPosition) m.vertices = position;
-				if (first.hasColor) m.colors = color;
-				if (first.hasUv0) m.uv = uv0;
-				if (first.hasNormal) m.normals = normal;
-				if (first.hasTangent) m.tangents = tangent;
-				if (first.hasUv2) m.uv2 = uv2;
-#if !UNITY_4_7 && !UNITY_5_0
-				if (first.hasUv3) if (uv3 != null) m.SetUVs(2, uv3);
-				if (first.hasUv4) if (uv4 != null) m.SetUVs(3, uv4);
-#endif
-			}
-		}
-
-		/// <summary>
-		/// Set the UV0 array. Must match vertexCount.
-		/// </summary>
-		/// <param name="uvs"></param>
-		public void SetUV(Vector2[] uvs)
-		{
-			m_Textures0 = uvs;
-		}
-
-		/// <summary>
 		/// Set the internal face array with the passed pb_Face array.
 		/// </summary>
 		/// <param name="newFaces"></param>
@@ -614,44 +764,18 @@ namespace UnityEngine.ProBuilder
 		{
 			m_Faces = newFaces.Where(x => x != null).ToArray();
 
-			if (m_Faces.Length != faces.Count())
-				Log.Warning("SetFaces() pruned " + (faces.Count() - m_Faces.Length) + " null faces from this object.");
+			if (m_Faces.Length != facesInternal.Count())
+				Log.Warning("SetFaces() pruned " + (facesInternal.Count() - m_Faces.Length) + " null faces from this object.");
 		}
+#endregion
 
-		/// <summary>
-		/// Sets the internal sharedIndices array reference.
-		/// </summary>
-		/// <param name="si"></param>
-		public void SetSharedIndices(IntArray[] si)
-		{
-			m_SharedIndices = si;
-		}
-
-		/// <summary>
-		/// Set the sharedIndices array with a dictionary.
-		/// </summary>
-		/// <param name="si"></param>
-		public void SetSharedIndices(IEnumerable<KeyValuePair<int, int>> si)
-		{
-			m_SharedIndices = IntArrayUtility.ToSharedIndices(si);
-		}
-
-		internal void SetSharedIndicesUV(IntArray[] si)
-		{
-			m_SharedIndicesUv = si;
-		}
-
-		internal void SetSharedIndicesUV(IEnumerable<KeyValuePair<int, int>> si)
-		{
-			m_SharedIndicesUv = IntArrayUtility.ToSharedIndices(si);
-		}
-
-		void GeometryWithPoints(Vector3[] v)
+#region Mesh Building
+		void GeometryWithPoints(Vector3[] positions)
 		{
 			// Wrap in faces
-			Face[] f = new Face[v.Length / 4];
+			Face[] f = new Face[positions.Length / 4];
 
-			for (int i = 0; i < v.Length; i += 4)
+			for (int i = 0; i < positions.Length; i += 4)
 			{
 				f[i / 4] = new Face(new int[6]
 					{
@@ -666,12 +790,10 @@ namespace UnityEngine.ProBuilder
 					false);
 			}
 
-			SetVertices(v);
-			SetUV(new Vector2[v.Length]);
-			SetColors(InternalUtility.FilledArray<Color>(Color.white, v.Length));
-
+            Clear();
+            SetPositions(positions);
 			SetFaces(f);
-			SetSharedIndices(IntArrayUtility.ExtractSharedIndices(v));
+			SetSharedIndices(IntArrayUtility.ExtractSharedIndices(positions));
 
 			ToMesh();
 			Refresh();
@@ -681,15 +803,17 @@ namespace UnityEngine.ProBuilder
 		/// Initialize the mesh with vertex positions and faces.
 		/// </summary>
 		/// <remarks>Rebuilds the sharedIndex array and uniqueIndex array each time called.</remarks>
-		/// <param name="v">Vertex positions array.</param>
+		/// <param name="vertices">Vertex positions array.</param>
 		/// <param name="f">Faces array.</param>
-		public void GeometryWithVerticesFaces(Vector3[] v, Face[] f)
+		public void GeometryWithVerticesFaces(Vector3[] vertices, Face[] f)
 		{
-			SetVertices(v);
-			SetUV(new Vector2[v.Length]);
+            if (vertices == null)
+                throw new ArgumentNullException("vertices");
 
+            Clear();
+            SetPositions(vertices);
 			SetFaces(f);
-			SetSharedIndices(IntArrayUtility.ExtractSharedIndices(v));
+			SetSharedIndices(IntArrayUtility.ExtractSharedIndices(vertices));
 
 			ToMesh();
 			Refresh();
@@ -757,7 +881,7 @@ namespace UnityEngine.ProBuilder
 
 			m.uv2 = null;
 
-			Submesh[] submeshes = Face.GetMeshIndices(faces, preferredTopology);
+			Submesh[] submeshes = Face.GetMeshIndices(facesInternal, preferredTopology);
             m.subMeshCount = submeshes.Length;
 
 			for (int i = 0; i < m.subMeshCount; i++)
@@ -793,13 +917,13 @@ namespace UnityEngine.ProBuilder
 
 			Vector3[] v = new Vector3[vertexCount];
 			System.Array.Copy(m_Positions, v, vertexCount);
-			SetVertices(v);
+            SetPositions(v);
 
 			if (m_Textures0 != null && m_Textures0.Length == vertexCount)
 			{
 				Vector2[] u = new Vector2[vertexCount];
 				System.Array.Copy(m_Textures0, u, vertexCount);
-				SetUV(u);
+                m_Textures0 = u;
 			}
 
 			mesh = new Mesh();
@@ -887,7 +1011,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		internal int GetUnusedTextureGroup(int i = 1)
 		{
-			while (System.Array.Exists(faces, element => element.textureGroup == i))
+			while (System.Array.Exists(facesInternal, element => element.textureGroup == i))
 				i++;
 
 			return i;
@@ -901,82 +1025,10 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		internal int UnusedElementGroup(int i = 1)
 		{
-			while (System.Array.Exists(faces, element => element.elementGroup == i))
+			while (System.Array.Exists(facesInternal, element => element.elementGroup == i))
 				i++;
 
 			return i;
-		}
-
-		/// <summary>
-		///	Copy values in UV channel to uvs.
-		///	channel is zero indexed.
-		///		mesh.uv0/1 = 0
-		///		mesh.uv2 = 1
-		///		mesh.uv3 = 2
-		///		mesh.uv4 = 3
-		/// </summary>
-		/// <param name="channel"></param>
-		/// <param name="uvs"></param>
-		public void GetUVs(int channel, List<Vector4> uvs)
-		{
-			uvs.Clear();
-
-			switch (channel)
-			{
-				case 0:
-				default:
-					for (int i = 0; i < vertexCount; i++)
-						uvs.Add((Vector4) m_Textures0[i]);
-					break;
-
-				case 1:
-					if (mesh != null && mesh.uv2 != null)
-					{
-						Vector2[] uv2 = mesh.uv2;
-						for (int i = 0; i < uv2.Length; i++)
-							uvs.Add((Vector4) uv2[i]);
-					}
-					break;
-
-				case 2:
-					if (m_Textures3 != null)
-						uvs.AddRange(m_Textures3);
-					break;
-
-				case 3:
-					if (m_Textures4 != null)
-						uvs.AddRange(m_Textures4);
-					break;
-			}
-		}
-
-		/// <summary>
-		/// Sets the UVs on channel.
-		/// </summary>
-		/// <remarks>Does not apply to mesh (use Refresh to reflect changes after application).</remarks>
-		/// <param name="channel"></param>
-		/// <param name="uvs"></param>
-		public void SetUVs(int channel, List<Vector4> uvs)
-		{
-			switch (channel)
-			{
-				case 1:
-					mesh.uv2 = uvs.Cast<Vector2>().ToArray();
-					break;
-
-				case 2:
-					m_Textures3 = uvs;
-					break;
-
-				case 3:
-					m_Textures4 = uvs;
-					break;
-
-				case 0:
-				default:
-					m_Textures0 = uvs.Cast<Vector2>().ToArray();
-					break;
-			}
 		}
 
 		/// <summary>
@@ -984,7 +1036,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		void RefreshUV()
 		{
-			RefreshUV(faces);
+			RefreshUV(facesInternal);
 		}
 
 		/// <summary>
@@ -1009,11 +1061,11 @@ namespace UnityEngine.ProBuilder
 				}
 				else
 				{
-					foreach (Face f in this.faces)
+					foreach (Face f in this.facesInternal)
 						f.manualUV = false;
 
 					// this necessitates rebuilding ALL the face uvs, so make sure we do that.
-					facesToRefresh = this.faces;
+					facesToRefresh = this.facesInternal;
 
 					newUVs = new Vector2[vertexCount];
 				}
@@ -1039,9 +1091,9 @@ namespace UnityEngine.ProBuilder
 			}
 
 			// Add any non-selected faces in texture groups to the update list
-			if (this.faces.Length != facesToRefresh.Count())
+			if (this.facesInternal.Length != facesToRefresh.Count())
 			{
-				foreach (Face f in this.faces)
+				foreach (Face f in this.facesInternal)
 				{
 					if (f.manualUV)
 						continue;
@@ -1068,7 +1120,7 @@ namespace UnityEngine.ProBuilder
 				if (kvp.Value[0].uv.useWorldSpace)
 					UnwrappingUtility.PlanarMap2(world, newUVs, indices, kvp.Value[0].uv, transform.TransformDirection(nrm));
 				else
-					UnwrappingUtility.PlanarMap2(positions, newUVs, indices, kvp.Value[0].uv, nrm);
+					UnwrappingUtility.PlanarMap2(positionsInternal, newUVs, indices, kvp.Value[0].uv, nrm);
 
 				// Apply UVs to array, and update the localPivot and localSize caches.
 				Vector2 pivot = kvp.Value[0].uv.localPivot;
@@ -1080,10 +1132,8 @@ namespace UnityEngine.ProBuilder
 			m_Textures0 = newUVs;
 			mesh.uv = newUVs;
 
-#if UNITY_5_3_OR_NEWER
-			if (hasUv3) mesh.SetUVs(2, uv3);
-			if (hasUv4) mesh.SetUVs(3, uv4);
-#endif
+			if (hasUv3) mesh.SetUVs(2, m_Textures3);
+			if (hasUv4) mesh.SetUVs(3, m_Textures4);
 		}
 
 		/// <summary>
@@ -1109,15 +1159,6 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Set the internal color array.
-		/// </summary>
-		/// <param name="colors"></param>
-		public void SetColors(Color[] colors)
-		{
-			m_Colors = colors != null && colors.Length == vertexCount ? colors : InternalUtility.FilledArray<Color>(Color.white, vertexCount);
-		}
-
-		/// <summary>
 		/// Set a faces vertices to a color.
 		/// </summary>
 		/// <param name="face"></param>
@@ -1134,15 +1175,6 @@ namespace UnityEngine.ProBuilder
 				m_Colors[i] = color;
 		}
 
-		/// <summary>
-		/// Set the tangent array on this mesh.
-		/// </summary>
-		/// <param name="tangents"></param>
-		public void SetTangents(Vector4[] tangents)
-		{
-			m_Tangents = tangents;
-		}
-
 		void RefreshNormals()
 		{
 			GetComponent<MeshFilter>().sharedMesh.normals = MeshUtility.CalculateNormals(this);
@@ -1157,5 +1189,6 @@ namespace UnityEngine.ProBuilder
 			else
 				MeshUtility.GenerateTangent(m);
 		}
-	}
+#endregion
+    }
 }

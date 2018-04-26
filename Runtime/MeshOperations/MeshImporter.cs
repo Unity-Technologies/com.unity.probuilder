@@ -179,14 +179,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			m_Mesh.Clear();
 			m_Mesh.SetVertices(m_Vertices);
 			m_Mesh.SetFaces(faces);
-			m_Mesh.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(m_Mesh.positions));
+			m_Mesh.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(m_Mesh.positionsInternal));
 			m_Mesh.SetSharedIndicesUV(new IntArray[0]);
 
 			HashSet<Face> processed = new HashSet<Face>();
 
 			if(importSettings.quads)
 			{
-				List<WingedEdge> wings = WingedEdge.GetWingedEdges(m_Mesh, m_Mesh.faces, true);
+				List<WingedEdge> wings = WingedEdge.GetWingedEdges(m_Mesh, m_Mesh.facesInternal, true);
 
 				// build a lookup of the strength of edge connections between triangle faces
 				Dictionary<EdgeLookup, float> connections = new Dictionary<EdgeLookup, float>();
@@ -244,9 +244,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			if(importSettings.smoothing)
 			{
-				Smoothing.ApplySmoothingGroups(m_Mesh, m_Mesh.faces, importSettings.smoothingThreshold, m_Vertices.Select(x => x.normal).ToArray());
+				Smoothing.ApplySmoothingGroups(m_Mesh, m_Mesh.facesInternal, importSettings.smoothingThreshold, m_Vertices.Select(x => x.normal).ToArray());
 				// After smoothing has been applied go back and weld coincident vertices created by MergePairs.
-				MergeElements.CollapseCoincidentVertices(m_Mesh, m_Mesh.faces);
+				MergeElements.CollapseCoincidentVertices(m_Mesh, m_Mesh.facesInternal);
 			}
 
 			return false;

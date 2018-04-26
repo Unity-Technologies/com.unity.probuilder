@@ -210,8 +210,8 @@ namespace UnityEditor.ProBuilder
 
 							for (int j = 0, c = selection[i].SelectedEdgeCount; j < c; j++)
 							{
-								GL.Vertex(pb.positions[edges[j].x]);
-								GL.Vertex(pb.positions[edges[j].y]);
+								GL.Vertex(pb.positionsInternal[edges[j].x]);
+								GL.Vertex(pb.positionsInternal[edges[j].y]);
 							}
 
 							EditorHandleUtility.EndDrawingLines();
@@ -310,7 +310,7 @@ namespace UnityEditor.ProBuilder
 			ren.transform = pb.transform;
 			ren.material = s_FaceMaterial;
 			ren.mesh.Clear();
-			ren.mesh.vertices = pb.positions;
+			ren.mesh.vertices = pb.positionsInternal;
 			ren.mesh.triangles = Face.AllTriangles(pb.SelectedFaces);
 
 			return ren;
@@ -326,16 +326,16 @@ namespace UnityEditor.ProBuilder
 		{
 			ushort maxBillboardCount = ushort.MaxValue / 4;
 
-			int billboardCount = pb.sharedIndices.Length;
+			int billboardCount = pb.sharedIndicesInternal.Length;
 
 			if(billboardCount > maxBillboardCount)
 				billboardCount = maxBillboardCount;
 
-			Vector3[] v = new Vector3[pb.sharedIndices.Length];
+			Vector3[] v = new Vector3[pb.sharedIndicesInternal.Length];
 			HashSet<int> selected = new HashSet<int>(IntArrayUtility.GetCommonIndices(lookup, pb.SelectedTriangles));
 
 			for(int i = 0; i < billboardCount; i++)
-				v[i] = pb.positions[pb.sharedIndices[i][0]];
+				v[i] = pb.positionsInternal[pb.sharedIndicesInternal[i][0]];
 
 			Vector3[] 	t_billboards 		= new Vector3[billboardCount*4];
 			Vector3[] 	t_nrm 				= new Vector3[billboardCount*4];
@@ -425,7 +425,7 @@ namespace UnityEditor.ProBuilder
 			int faceCount = pb.faceCount;
 
 			for (int i = 0; i < faceCount; i++)
-				edgeCount += pb.faces[i].edges.Length;
+				edgeCount += pb.facesInternal[i].edges.Length;
 
 			int elementCount = System.Math.Min(edgeCount, ushort.MaxValue / 2 - 1);
 			int[] tris = new int[ elementCount * 2 ];
@@ -434,9 +434,9 @@ namespace UnityEditor.ProBuilder
 
 			for(int i = 0; i < faceCount && edgeIndex < elementCount; i++)
 			{
-				for (int n = 0; n < pb.faces[i].edges.Length && edgeIndex < elementCount; n++)
+				for (int n = 0; n < pb.facesInternal[i].edges.Length && edgeIndex < elementCount; n++)
 				{
-					var edge = pb.faces[i].edges[n];
+					var edge = pb.facesInternal[i].edges[n];
 
 					int positionIndex = edgeIndex * 2;
 
@@ -453,7 +453,7 @@ namespace UnityEditor.ProBuilder
 			ren.transform = pb.transform;
 			ren.mesh.Clear();
 			ren.mesh.name = "pb_ElementGraphics::WireframeMesh";
-			ren.mesh.vertices = pb.positions;
+			ren.mesh.vertices = pb.positionsInternal;
 			ren.mesh.subMeshCount = 1;
 			ren.mesh.SetIndices(tris, MeshTopology.Lines, 0);
 
@@ -466,9 +466,9 @@ namespace UnityEditor.ProBuilder
 		/// <param name="pb"></param>
 		static Renderable BuildVertexPoints(ProBuilderMesh pb)
 		{
-			int[] indices = new int[pb.sharedIndices.Length];
-			for (int i = 0; i < pb.sharedIndices.Length; i++)
-				indices[i] = pb.sharedIndices[i][0];
+			int[] indices = new int[pb.sharedIndicesInternal.Length];
+			for (int i = 0; i < pb.sharedIndicesInternal.Length; i++)
+				indices[i] = pb.sharedIndicesInternal[i][0];
 			return BuildVertexPoints(pb, indices);
 		}
 
@@ -484,7 +484,7 @@ namespace UnityEditor.ProBuilder
 			var mesh = renderable.mesh;
 			mesh.Clear();
 			mesh.name = "pb_ElementGraphics::PointMesh";
-			mesh.vertices = pb.positions;
+			mesh.vertices = pb.positionsInternal;
 			mesh.subMeshCount = 1;
 			mesh.SetIndices(indices, MeshTopology.Points, 0);
 			return renderable;

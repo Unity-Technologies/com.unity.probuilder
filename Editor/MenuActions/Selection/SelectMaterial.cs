@@ -80,7 +80,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			foreach(ProBuilderMesh pb in restrictToSelection ? selection : Object.FindObjectsOfType<ProBuilderMesh>())
 			{
-				IEnumerable<Face> matches = pb.faces.Where(x => sel.Contains(x.material));
+				IEnumerable<Face> matches = pb.facesInternal.Where(x => sel.Contains(x.material));
 
 				if(matches.Count() > 0)
 				{

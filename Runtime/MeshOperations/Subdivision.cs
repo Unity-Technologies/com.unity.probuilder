@@ -19,7 +19,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		public static ActionResult Subdivide(this ProBuilderMesh pb)
 		{
 			Face[] ignore;
-			return pb.Subdivide(pb.faces, out ignore);
+			return pb.Subdivide(pb.facesInternal, out ignore);
 		}
 
 		/// <summary>

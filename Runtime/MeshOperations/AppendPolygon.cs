@@ -19,7 +19,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns></returns>
 		public static ActionResult CreatePolygon(this ProBuilderMesh pb, IList<int> indices, bool unordered, out Face face)
 		{
-			IntArray[] sharedIndices = pb.sharedIndices;
+			IntArray[] sharedIndices = pb.sharedIndicesInternal;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 			HashSet<int> common = IntArrayUtility.GetCommonIndices(lookup, indices);
 			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
@@ -36,7 +36,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			if(data != null)
 			{
 				data.sharedIndices = common.ToList();
-				List<Face> faces = new List<Face>(pb.faces);
+				List<Face> faces = new List<Face>(pb.facesInternal);
 				FaceRebuildData.Apply(new FaceRebuildData[] { data }, vertices, faces, lookup, null);
 				pb.SetVertices(vertices);
 				pb.SetFaces(faces.ToArray());
@@ -93,9 +93,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				if(ProBuilderMath.PolygonArea(vertices, indices) < Mathf.Epsilon )
 				{
-					pb.SetVertices(new Vector3[0]);
-					pb.SetFaces(new Face[0]);
-					pb.SetSharedIndices(new IntArray[0]);
+					pb.Clear();
 					Log.PopLogLevel();
 					return new ActionResult(Status.Failure, "Polygon Area < Epsilon");
 				}
@@ -103,17 +101,17 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				pb.Clear();
 				pb.GeometryWithVerticesFaces(vertices, new Face[] { new Face(indices) });
 
-				Vector3 nrm = ProBuilderMath.Normal(pb, pb.faces[0]);
+				Vector3 nrm = ProBuilderMath.Normal(pb, pb.facesInternal[0]);
 
 				if(Vector3.Dot(Vector3.up, nrm) > 0f)
-					pb.faces[0].ReverseIndices();
+					pb.facesInternal[0].ReverseIndices();
 
-				pb.DuplicateAndFlip(pb.faces);
+				pb.DuplicateAndFlip(pb.facesInternal);
 
-				pb.Extrude(new Face[] { pb.faces[1] }, ExtrudeMethod.IndividualFaces, extrude);
+				pb.Extrude(new Face[] { pb.facesInternal[1] }, ExtrudeMethod.IndividualFaces, extrude);
 
 				if((extrude < 0f && !flipNormals) || (extrude > 0f && flipNormals))
-					pb.ReverseWindingOrder(pb.faces);
+					pb.ReverseWindingOrder(pb.facesInternal);
 
 				pb.ToMesh();
 				pb.Refresh();
@@ -188,7 +186,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns></returns>
 		internal static List<List<Edge>> FindHoles(ProBuilderMesh pb, IList<int> indices)
 		{
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
 			HashSet<int> common = IntArrayUtility.GetCommonIndices(lookup, indices);
 			List<List<Edge>> holes = new List<List<Edge>>();
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);

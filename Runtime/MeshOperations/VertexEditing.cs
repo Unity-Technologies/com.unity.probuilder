@@ -30,8 +30,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			Vertex cen = collapseToFirst ? vertices[indices[0]] : Vertex.Average(vertices, indices);
 
-			IntArray[] sharedIndices = pb.sharedIndices;
-			IntArray[] sharedIndicesUV = pb.sharedIndicesUV;
+			IntArray[] sharedIndices = pb.sharedIndicesInternal;
+			IntArray[] sharedIndicesUV = pb.sharedIndicesUVInternal;
 
 			int newIndex = IntArrayUtility.MergeSharedIndices(ref sharedIndices, indices);
 			IntArrayUtility.MergeSharedIndices(ref sharedIndicesUV, indices);
@@ -77,9 +77,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns></returns>
 		public static bool SplitCommonVertices(this ProBuilderMesh pb, int[] indices)
 		{
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
 
-			IntArray[] sharedIndices = pb.sharedIndices;
+			IntArray[] sharedIndices = pb.sharedIndicesInternal;
 
 			List<int> usedIndex = new List<int>();
 			List<int> splits = new List<int>();
@@ -123,7 +123,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		public static void SplitVertices(this ProBuilderMesh pb, IEnumerable<int> indices)
 		{
 			// ToDictionary always sets the universal indices in ascending order from 0+.
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
 			int max = lookup.Count();
 			foreach(int i in indices)
 				lookup[i] = ++max;
@@ -148,9 +148,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			List<Vertex> vertices = Vertex.GetVertices(pb).ToList();
-			List<Face> faces = new List<Face>( pb.faces );
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
-			Dictionary<int, int> lookupUV = pb.sharedIndicesUV == null ? null : pb.sharedIndicesUV.ToDictionary();
+			List<Face> faces = new List<Face>( pb.facesInternal );
+			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
+			Dictionary<int, int> lookupUV = pb.sharedIndicesUVInternal == null ? null : pb.sharedIndicesUVInternal.ToDictionary();
 
 			List<Edge> wound = WingedEdge.SortEdgesByAdjacency(face);
 
@@ -282,8 +282,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				return new ActionResult(Status.Failure, "New edge vertex count is less than 1 or greater than 512.");
 
 			List<Vertex> vertices 		= new List<Vertex>(Vertex.GetVertices(pb));
-			Dictionary<int, int> lookup 	= pb.sharedIndices.ToDictionary();
-			Dictionary<int, int> lookupUV	= pb.sharedIndicesUV.ToDictionary();
+			Dictionary<int, int> lookup 	= pb.sharedIndicesInternal.ToDictionary();
+			Dictionary<int, int> lookupUV	= pb.sharedIndicesUVInternal.ToDictionary();
 			List<int> indicesToDelete		= new List<int>();
 			Edge[] commonEdges	 		= EdgeExtension.GetUniversalEdges(edges.ToArray(), lookup);
 			List<Edge> distinctEdges 	= commonEdges.Distinct().ToList();
@@ -295,7 +295,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			foreach(Edge edge in distinctEdges)
 			{
-				Edge localEdge = EdgeExtension.GetLocalEdgeFast(edge, pb.sharedIndices);
+				Edge localEdge = EdgeExtension.GetLocalEdgeFast(edge, pb.sharedIndicesInternal);
 
 				// Generate the new vertices that will be inserted on this edge
 				List<Vertex> verticesToAppend = new List<Vertex>(count);
@@ -419,7 +419,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		public static ActionResult WeldVertices(this ProBuilderMesh pb, int[] indices, float neighborRadius, out int[] welds)
 		{
 			Vertex[] vertices = Vertex.GetVertices(pb);
-			IntArray[] sharedIndices = pb.sharedIndices;
+			IntArray[] sharedIndices = pb.sharedIndicesInternal;
 
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 			HashSet<int> common = IntArrayUtility.GetCommonIndices(lookup, indices);

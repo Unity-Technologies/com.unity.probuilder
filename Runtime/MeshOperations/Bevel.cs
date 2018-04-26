@@ -23,7 +23,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		{
 			createdFaces = null;
 
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
 			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
 			List<EdgeLookup> m_edges = EdgeLookup.GetEdgeLookup(edges, lookup).Distinct().ToList();
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
@@ -143,10 +143,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			FaceRebuildData.Apply(appendFaces, pb, vertices);
 			int removed = pb.DeleteFaces(sorted.Keys).Length;
 			pb.SetSharedIndicesUV(new IntArray[0]);
-			pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.positions));
+			pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.positionsInternal));
 
 			// @todo don't rebuild sharedindices, keep 'em cached
-			IntArray[] sharedIndices = pb.sharedIndices;
+			IntArray[] sharedIndices = pb.sharedIndicesInternal;
 			lookup = sharedIndices.ToDictionary();
 			List<HashSet<int>> holesCommonIndices = new List<HashSet<int>>();
 
@@ -201,7 +201,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			FaceRebuildData.Apply(holeFaces, pb, vertices);
-			pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.positions));
+			pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.positionsInternal));
 
 			// go through new faces and conform hole normals
 			// get a hash of just the adjacent and bridge faces

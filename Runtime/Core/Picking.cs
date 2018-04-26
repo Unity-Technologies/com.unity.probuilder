@@ -99,9 +99,9 @@ namespace UnityEngine.ProBuilder
 				if(!pb.isSelectable)
 					continue;
 
-				IntArray[] sharedIndices = pb.sharedIndices;
+				IntArray[] sharedIndices = pb.sharedIndicesInternal;
 				HashSet<int> inRect = new HashSet<int>();
-				Vector3[] positions = pb.positions;
+				Vector3[] positions = pb.positionsInternal;
 				var trs = pb.transform;
 				float pixelHeight = cam.pixelHeight;
 
@@ -161,15 +161,15 @@ namespace UnityEngine.ProBuilder
 
 				HashSet<Face> selectedFaces = new HashSet<Face>();
 				Transform trs = pb.transform;
-				Vector3[] positions = pb.positions;
+				Vector3[] positions = pb.positionsInternal;
 				Vector3[] screenPoints = new Vector3[pb.vertexCount];
 
 				for(int nn = 0; nn < pb.vertexCount; nn++)
 					screenPoints[nn] = cam.ScreenToGuiPoint(cam.WorldToScreenPoint(trs.TransformPoint(positions[nn])), pixelsPerPoint);
 
-				for(int n = 0; n < pb.faces.Length; n++)
+				for(int n = 0; n < pb.facesInternal.Length; n++)
 				{
-					Face face = pb.faces[n];
+					Face face = pb.facesInternal[n];
 
 					// rect select = complete
 					if(options.rectSelectMode == RectSelectMode.Complete)
@@ -292,14 +292,14 @@ namespace UnityEngine.ProBuilder
 
 				for (int i = 0, fc = pb.faceCount; i < fc; i++)
 				{
-					var edges = pb.faces[i].edges;
+					var edges = pb.facesInternal[i].edges;
 
 					for (int n = 0, ec = edges.Length; n < ec; n++)
 					{
 						var edge = edges[n];
 
-						var posA = trs.TransformPoint(pb.positions[edge.x]);
-						var posB = trs.TransformPoint(pb.positions[edge.y]);
+						var posA = trs.TransformPoint(pb.positionsInternal[edge.x]);
+						var posB = trs.TransformPoint(pb.positionsInternal[edge.y]);
 
 						Vector3 a = cam.ScreenToGuiPoint(cam.WorldToScreenPoint(posA), pixelsPerPoint);
 						Vector3 b = cam.ScreenToGuiPoint(cam.WorldToScreenPoint(posB), pixelsPerPoint);

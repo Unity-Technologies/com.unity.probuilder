@@ -149,7 +149,7 @@ namespace UnityEngine.ProBuilder
 				}
 				else
 				{
-					target.SetVertices(positions);
+					target.SetPositions(positions);
 					target.ToMesh();
 					target.Refresh(RefreshMask.UV | RefreshMask.Colors | RefreshMask.Normals | RefreshMask.Tangents);
 				}

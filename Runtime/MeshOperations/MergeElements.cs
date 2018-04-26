@@ -36,7 +36,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				remove.Add(right);
 			}
 
-			List<Face> faces = target.faces.Where(x => !remove.Contains(x)).ToList();
+			List<Face> faces = target.facesInternal.Where(x => !remove.Contains(x)).ToList();
 			faces.AddRange(add);
 			target.SetFaces(faces.ToArray());
 
@@ -73,13 +73,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				first.elementGroup,
 				first.manualUV);
 
-			Face[] rebuiltFaces = new Face[target.faces.Length - mergedCount + 1];
+			Face[] rebuiltFaces = new Face[target.facesInternal.Length - mergedCount + 1];
 
 			int n = 0;
 
 			HashSet<Face> skip = new HashSet<Face>(faces);
 
-			foreach(Face f in target.faces)
+			foreach(Face f in target.facesInternal)
 			{
 				if(!skip.Contains(f))
 					rebuiltFaces[n++] = f;
@@ -102,7 +102,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="faces"></param>
 		internal static void CollapseCoincidentVertices(ProBuilderMesh pb, IEnumerable<Face> faces)
 		{
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
 			Dictionary<int, int> matches = new Dictionary<int, int>();
 
 			foreach(Face face in faces)

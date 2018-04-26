@@ -132,10 +132,10 @@ namespace UnityEditor.ProBuilder
 				pb.transform.rotation = Quaternion.identity;
 				pb.transform.localScale = Vector3.one;
 
-				foreach(Face face in pb.faces)
+				foreach(Face face in pb.facesInternal)
 					face.manualUV = true;
 
-				pb.SetVertices(vertices[i]);
+				pb.SetPositions(vertices[i]);
 
 				pb.ToMesh();
 				pb.Refresh();
@@ -237,7 +237,7 @@ namespace UnityEditor.ProBuilder
 			{
 				Face[] splits = null;
 				selection[i].ToMesh();
-				selection[i].ToTriangles(selection[i].faces, out splits);
+				selection[i].ToTriangles(selection[i].facesInternal, out splits);
 				selection[i].Refresh();
 				selection[i].Optimize();
 			}
@@ -336,7 +336,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selected)
 			{
-				pb.ReverseWindingOrder(pb.faces);
+				pb.ReverseWindingOrder(pb.facesInternal);
 				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
@@ -362,8 +362,8 @@ namespace UnityEditor.ProBuilder
 			{
 				if( pb.SelectedFaceCount < 1 && faceCount < 1 )
 				{
-					pb.ReverseWindingOrder(pb.faces);
-					c += pb.faces.Length;
+					pb.ReverseWindingOrder(pb.facesInternal);
+					c += pb.facesInternal.Length;
 				}
 				else
 				{
@@ -407,7 +407,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				Face[] faces = perFace ? pb.SelectedFaces : pb.faces;
+				Face[] faces = perFace ? pb.SelectedFaces : pb.facesInternal;
 
 				if(faces == null)
 					continue;
@@ -603,7 +603,7 @@ namespace UnityEditor.ProBuilder
 
 				case SelectMode.Edge:
 					sel = selection.Sum(x => x.SelectedEdgeCount);
-					max = selection.Sum(x => x.faces.Sum(y=>y.edges.Length));
+					max = selection.Sum(x => x.facesInternal.Sum(y=>y.edges.Length));
 					break;
 
 				default:
@@ -789,7 +789,7 @@ namespace UnityEditor.ProBuilder
 				case SelectMode.Vertex:
 					foreach(ProBuilderMesh pb in selection)
 					{
-						IntArray[] sharedIndices = pb.sharedIndices;
+						IntArray[] sharedIndices = pb.sharedIndicesInternal;
 						List<int> selSharedIndices = new List<int>();
 
 						foreach(int i in pb.SelectedTriangles)
@@ -810,7 +810,7 @@ namespace UnityEditor.ProBuilder
 				case SelectMode.Face:
 					foreach(ProBuilderMesh pb in selection)
 					{
-						IEnumerable<Face> inverse = pb.faces.Where( x => !pb.SelectedFaces.Contains(x) );
+						IEnumerable<Face> inverse = pb.facesInternal.Where( x => !pb.SelectedFaces.Contains(x) );
 						pb.SetSelectedFaces(inverse.ToArray());
 					}
 					break;
@@ -821,12 +821,12 @@ namespace UnityEditor.ProBuilder
 
 					for(int i = 0; i < selection.Length; i++)
 					{
-						Edge[] universal_selected_edges = EdgeExtension.GetUniversalEdges(selection[i].SelectedEdges, selection[i].sharedIndices).Distinct().ToArray();
+						Edge[] universal_selected_edges = EdgeExtension.GetUniversalEdges(selection[i].SelectedEdges, selection[i].sharedIndicesInternal).Distinct().ToArray();
 						Edge[] inverse_universal = System.Array.FindAll(editor.SelectedUniversalEdges[i], x => !universal_selected_edges.Contains(x));
 						Edge[] inverse = new Edge[inverse_universal.Length];
 
 						for(int n = 0; n < inverse_universal.Length; n++)
-							inverse[n] = new Edge( selection[i].sharedIndices[inverse_universal[n].x][0], selection[i].sharedIndices[inverse_universal[n].y][0] );
+							inverse[n] = new Edge( selection[i].sharedIndicesInternal[inverse_universal[n].x][0], selection[i].sharedIndicesInternal[inverse_universal[n].y][0] );
 
 						selection[i].SetSelectedEdges(inverse);
 					}
@@ -984,7 +984,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				if(pb.SelectedFaceCount == pb.faces.Length)
+				if(pb.SelectedFaceCount == pb.facesInternal.Length)
 				{
 					Debug.LogWarning("Attempting to delete all faces on this mesh...  I'm afraid I can't let you do that.");
 					continue;
@@ -1075,16 +1075,16 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				if(pb.SelectedFaceCount < 1 || pb.SelectedFaceCount == pb.faces.Length)
+				if(pb.SelectedFaceCount < 1 || pb.SelectedFaceCount == pb.facesInternal.Length)
 					continue;
 
 				// work with face indices here 'cause copying breaks the face ref
-				int[] primary = pb.SelectedFaces.Select(x => System.Array.IndexOf((Array) pb.faces, x)).ToArray();
+				int[] primary = pb.SelectedFaces.Select(x => System.Array.IndexOf((Array) pb.facesInternal, x)).ToArray();
 
 				detachedFaceCount += primary.Length;
 
 				List<int> inverse_list = new List<int>();
-				for(int i = 0; i < pb.faces.Length; i++)
+				for(int i = 0; i < pb.facesInternal.Length; i++)
 					if(System.Array.IndexOf(primary, i) < 0)
 						inverse_list.Add(i);
 
@@ -1290,7 +1290,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				weldCount += pb.sharedIndices.Length;
+				weldCount += pb.sharedIndicesInternal.Length;
 
 				if(pb.SelectedTriangles.Length > 1)
 				{
@@ -1316,7 +1316,7 @@ namespace UnityEditor.ProBuilder
 					pb.Optimize();
 				}
 
-				weldCount -= pb.sharedIndices.Length;
+				weldCount -= pb.sharedIndicesInternal.Length;
 			}
 
 			if(editor)
@@ -1372,7 +1372,7 @@ namespace UnityEditor.ProBuilder
 
 				if(pb.SelectedFaces.Length > 0)
 				{
-					IntArray[] sharedIndices = pb.sharedIndices;
+					IntArray[] sharedIndices = pb.sharedIndicesInternal;
 
 					int[] selTrisIndices = new int[pb.SelectedTriangles.Length];
 
@@ -1448,11 +1448,11 @@ namespace UnityEditor.ProBuilder
 			foreach(ProBuilderMesh pb in selection)
 			{
 				bool selectAll = pb.SelectedTriangles == null || pb.SelectedTriangles.Length < 1;
-				int[] indices = selectAll ? Face.AllTriangles(pb.faces) : pb.SelectedTriangles;
+				int[] indices = selectAll ? Face.AllTriangles(pb.facesInternal) : pb.SelectedTriangles;
 
 				pb.ToMesh();
 
-				Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+				Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
 				List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
 				HashSet<int> common = IntArrayUtility.GetCommonIndices(lookup, indices);
 				List<List<WingedEdge>> holes = AppendPolygon.FindHoles(wings, common);

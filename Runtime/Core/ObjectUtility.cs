@@ -23,7 +23,7 @@ namespace UnityEngine.ProBuilder
 
 			int len = mesh.vertexCount;
 			Vector3[] worldPoints = new Vector3[len];
-			Vector3[] localPoints = mesh.positions;
+			Vector3[] localPoints = mesh.positionsInternal;
 
 			for(int i = 0; i < len; i++)
 				worldPoints[i] = mesh.transform.TransformPoint(localPoints[i]);
@@ -42,7 +42,7 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            Vector3[] worldPoints = mesh.positions.ValuesWithIndices(indices);
+            Vector3[] worldPoints = mesh.positionsInternal.ValuesWithIndices(indices);
 
 			for(int i = 0; i < worldPoints.Length; i++)
 				worldPoints[i] = mesh.transform.TransformPoint(worldPoints[i]);
@@ -79,13 +79,13 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentNullException("mesh");
 
             int i = 0;
-			int[] indices = lookup != null ? mesh.sharedIndices.AllIndicesWithValues(lookup, selectedTriangles).ToArray() : mesh.sharedIndices.AllIndicesWithValues(selectedTriangles).ToArray();
+			int[] indices = lookup != null ? mesh.sharedIndicesInternal.AllIndicesWithValues(lookup, selectedTriangles).ToArray() : mesh.sharedIndicesInternal.AllIndicesWithValues(selectedTriangles).ToArray();
 
 			Matrix4x4 w2l = mesh.transform.worldToLocalMatrix;
 
 			Vector3 localOffset = w2l * offset;
 
-			Vector3[] verts = mesh.positions;
+			Vector3[] verts = mesh.positionsInternal;
 
 			// Snaps to world grid
 			if(Mathf.Abs(snapValue) > Mathf.Epsilon)
@@ -107,7 +107,7 @@ namespace UnityEngine.ProBuilder
 			}
 
 			// don't bother calling a full ToMesh() here because we know for certain that the _vertices and msh.vertices arrays are equal in length
-			mesh.SetVertices(verts);
+			mesh.SetPositions(verts);
 			mesh.mesh.vertices = verts;
 		}
 
@@ -123,14 +123,13 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentNullException("mesh");
 
             int i = 0;
-			int[] indices = mesh.sharedIndices.AllIndicesWithValues(selectedTriangles).ToArray();
+			int[] indices = mesh.sharedIndicesInternal.AllIndicesWithValues(selectedTriangles).ToArray();
 
-			Vector3[] verts = mesh.positions;
+			Vector3[] verts = mesh.positionsInternal;
 			for(i = 0; i < indices.Length; i++)
 				verts[indices[i]] += offset;
 
 			// don't bother calling a full ToMesh() here because we know for certain that the _vertices and msh.vertices arrays are equal in length
-			mesh.SetVertices(verts);
 			mesh.mesh.vertices = verts;
 		}
 
@@ -147,13 +146,13 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            Vector3[] v = mesh.positions;
-			int[] array = mesh.sharedIndices[sharedIndex].array;
+            Vector3[] v = mesh.positionsInternal;
+			int[] array = mesh.sharedIndicesInternal[sharedIndex].array;
 
 			for(int i = 0; i < array.Length; i++)
 				v[array[i]] = position;
 
-			mesh.SetVertices(v);
+			mesh.SetPositions(v);
 			mesh.mesh.vertices = v;
 		}
 
@@ -169,7 +168,7 @@ namespace UnityEngine.ProBuilder
 		{
 			Vertex[] vertices = Vertex.GetVertices(pb);
 
-			int[] array = pb.sharedIndices[sharedIndex].array;
+			int[] array = pb.sharedIndicesInternal[sharedIndex].array;
 
 			for(int i = 0; i < array.Length; i++)
 				vertices[array[i]] = vertex;
@@ -189,10 +188,10 @@ namespace UnityEngine.ProBuilder
 			if(mesh == null || tri == null)
 				throw new ArgumentNullException("mesh");
 
-			for(int i = 0; i < mesh.faces.Length; i++)
+			for(int i = 0; i < mesh.facesInternal.Length; i++)
 			{
-				if(	mesh.faces[i].Contains(tri) )
-					return mesh.faces[i];
+				if(	mesh.facesInternal[i].Contains(tri) )
+					return mesh.facesInternal[i];
 			}
 
 			return null;
@@ -209,9 +208,9 @@ namespace UnityEngine.ProBuilder
 			if(mesh == null || tri == null)
 				throw new ArgumentNullException("mesh");
 
-			for(int i = 0; i < mesh.faces.Length; i++)
+			for(int i = 0; i < mesh.facesInternal.Length; i++)
 			{
-				if(	mesh.faces[i].Contains(tri) )
+				if(	mesh.facesInternal[i].Contains(tri) )
 				{
 					return i;
 				}

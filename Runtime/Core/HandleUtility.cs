@@ -57,7 +57,7 @@ namespace UnityEngine.ProBuilder
 			worldRay.origin = mesh.transform.worldToLocalMatrix * worldRay.origin;
 			worldRay.direction = mesh.transform.worldToLocalMatrix * worldRay.direction;
 
-			Vector3[] vertices = mesh.positions;
+			Vector3[] vertices = mesh.positionsInternal;
 
 			float dist = 0f;
 			Vector3 point = Vector3.zero;
@@ -69,12 +69,12 @@ namespace UnityEngine.ProBuilder
 			Vector3 OutNrm = Vector3.zero;
 
 			// Iterate faces, testing for nearest hit to ray origin. Optionally ignores backfaces.
-			for(int CurFace = 0; CurFace < mesh.faces.Length; ++CurFace)
+			for(int CurFace = 0; CurFace < mesh.facesInternal.Length; ++CurFace)
 			{
-				if(ignore != null && ignore.Contains(mesh.faces[CurFace]))
+				if(ignore != null && ignore.Contains(mesh.facesInternal[CurFace]))
 					continue;
 
-				int[] Indices = mesh.faces[CurFace].indices;
+				int[] Indices = mesh.facesInternal[CurFace].indices;
 
 				for(int CurTriangle = 0; CurTriangle < Indices.Length; CurTriangle += 3)
 				{
@@ -143,7 +143,7 @@ namespace UnityEngine.ProBuilder
 			InWorldRay.origin 		= mesh.transform.worldToLocalMatrix * InWorldRay.origin;
 			InWorldRay.direction 	= mesh.transform.worldToLocalMatrix * InWorldRay.direction;
 
-			Vector3[] vertices = mesh.positions;
+			Vector3[] vertices = mesh.positionsInternal;
 
 			float dist = 0f;
 			Vector3 point = Vector3.zero;
@@ -153,12 +153,12 @@ namespace UnityEngine.ProBuilder
 			hits = new List<RaycastHit>();
 
             // Iterate faces, testing for nearest hit to ray origin.  Optionally ignores backfaces.
-            for (int CurFace = 0; CurFace < mesh.faces.Length; ++CurFace)
+            for (int CurFace = 0; CurFace < mesh.facesInternal.Length; ++CurFace)
 			{
-				if(ignore != null && ignore.Contains(mesh.faces[CurFace]))
+				if(ignore != null && ignore.Contains(mesh.facesInternal[CurFace]))
 					continue;
 
-				int[] Indices = mesh.faces[CurFace].indices;
+				int[] Indices = mesh.facesInternal[CurFace].indices;
 
 				for(int CurTriangle = 0; CurTriangle < Indices.Length; CurTriangle += 3)
 				{
@@ -310,7 +310,7 @@ namespace UnityEngine.ProBuilder
 			int len = face.distinctIndices.Length;
 
 			for(int i = 0;i < len; i++)
-				point += pb.positions[face.distinctIndices[i]];
+				point += pb.positionsInternal[face.distinctIndices[i]];
 
 			point *= (1f/len);
 

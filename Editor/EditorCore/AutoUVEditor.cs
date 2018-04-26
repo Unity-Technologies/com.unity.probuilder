@@ -236,7 +236,7 @@ namespace UnityEditor.ProBuilder
 			if(GUILayout.Button(new GUIContent("Select Texture Group", "Selects all faces contained in this texture group."), GUILayout.MaxWidth(width)))
 			{
 				for(int i = 0; i < selection.Length; i++)
-					selection[i].SetSelectedFaces( System.Array.FindAll(selection[i].faces, x => x.textureGroup == textureGroup) );
+					selection[i].SetSelectedFaces( System.Array.FindAll(selection[i].facesInternal, x => x.textureGroup == textureGroup) );
 
 				ProBuilderEditor.instance.UpdateSelection();
 			}

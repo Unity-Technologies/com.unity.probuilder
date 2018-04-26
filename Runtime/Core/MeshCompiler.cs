@@ -28,18 +28,31 @@ namespace UnityEngine.ProBuilder
 
             target.Clear();
 
-            target.vertices = pb.positions;
-            target.uv = GetUVs(pb);
-#if UNITY_5_3_OR_NEWER
-            if (pb.hasUv3) target.SetUVs(2, pb.uv3);
-            if (pb.hasUv4) target.SetUVs(3, pb.uv4);
-#endif
-            target.normals = MeshUtility.CalculateNormals(pb);
-            MeshUtility.GenerateTangent(target);
-            if (pb.colors != null && pb.colors.Length == target.vertexCount)
-                target.colors = pb.colors;
+            target.vertices = pb.positionsInternal;
+            target.uv = pb.texturesInternal;
 
-            var submeshes = Face.GetMeshIndices(pb.faces, preferredTopology);
+            if (pb.hasUv3)
+            {
+                List<Vector4> uvChannel = new List<Vector4>();
+                pb.GetUVs(2, uvChannel);
+                target.SetUVs(2, uvChannel);
+            }
+
+            if (pb.hasUv4)
+            {
+                List<Vector4> uvChannel = new List<Vector4>();
+                pb.GetUVs(3, uvChannel);
+                target.SetUVs(3, uvChannel);
+            }
+
+            target.normals = MeshUtility.CalculateNormals(pb);
+
+            MeshUtility.GenerateTangent(target);
+
+            if (pb.colorsInternal != null && pb.colorsInternal.Length == target.vertexCount)
+                target.colors = pb.colorsInternal;
+
+            var submeshes = Face.GetMeshIndices(pb.facesInternal, preferredTopology);
             target.subMeshCount = submeshes.Length;
 
             for (int i = 0; i < target.subMeshCount; i++)
@@ -66,7 +79,7 @@ namespace UnityEngine.ProBuilder
 			bool anyWorldSpace = false;
 			List<Face> group;
 
-			foreach (Face f in pb.faces)
+			foreach (Face f in pb.facesInternal)
 			{
 				if (f.uv.useWorldSpace)
 					anyWorldSpace = true;
@@ -83,7 +96,7 @@ namespace UnityEngine.ProBuilder
 			n = 0;
 
 			Vector3[] world = anyWorldSpace ? pb.VerticesInWorldSpace() : null;
-			Vector2[] uvs = pb.uv != null && pb.uv.Length == pb.vertexCount ? pb.uv : new Vector2[pb.vertexCount];
+			Vector2[] uvs = pb.texturesInternal != null && pb.texturesInternal.Length == pb.vertexCount ? pb.texturesInternal : new Vector2[pb.vertexCount];
 
 			foreach (KeyValuePair<int, List<Face>> kvp in textureGroups)
 			{
@@ -91,14 +104,14 @@ namespace UnityEngine.ProBuilder
 				int[] indices = kvp.Value.SelectMany(x => x.distinctIndices).ToArray();
 
 				if (kvp.Value.Count > 1)
-					nrm = Projection.FindBestPlane(pb.positions, indices).normal;
+					nrm = Projection.FindBestPlane(pb.positionsInternal, indices).normal;
 				else
 					nrm = ProBuilderMath.Normal(pb, kvp.Value[0]);
 
 				if (kvp.Value[0].uv.useWorldSpace)
 					UnwrappingUtility.PlanarMap2(world, uvs, indices, kvp.Value[0].uv, pb.transform.TransformDirection(nrm));
 				else
-					UnwrappingUtility.PlanarMap2(pb.positions, uvs, indices, kvp.Value[0].uv, nrm);
+					UnwrappingUtility.PlanarMap2(pb.positionsInternal, uvs, indices, kvp.Value[0].uv, nrm);
 
 				// Apply UVs to array, and update the localPivot and localSize caches.
 				Vector2 pivot = kvp.Value[0].uv.localPivot;

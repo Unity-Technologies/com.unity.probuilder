@@ -134,7 +134,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			// if flipping on an odd number of axes, flip winding order
 			if( (scale.x * scale.y * scale.z) < 0)
-				mirredObject.ReverseWindingOrder(mirredObject.faces);
+				mirredObject.ReverseWindingOrder(mirredObject.facesInternal);
 
 			mirredObject.FreezeScaleTransform();
 			mirredObject.transform.localScale = lScale;

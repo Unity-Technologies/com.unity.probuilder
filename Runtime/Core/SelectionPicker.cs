@@ -439,11 +439,11 @@ namespace UnityEngine.ProBuilder
 				go.name = pb.name + " (Face Depth Test)";
 
 				Mesh m = new Mesh();
-				m.vertices = pb.positions;
-				m.triangles = pb.faces.SelectMany(x => x.indices).ToArray();
+				m.vertices = pb.positionsInternal;
+				m.triangles = pb.facesInternal.SelectMany(x => x.indices).ToArray();
 				Color32[] colors = new Color32[m.vertexCount];
 
-				foreach(Face f in pb.faces)
+				foreach(Face f in pb.facesInternal)
 				{
 					Color32 color = EncodeRGBA(index++);
 					map.Add(DecodeRGBA(color), new SimpleTuple<ProBuilderMesh, Face>(pb, f));
@@ -557,7 +557,7 @@ namespace UnityEngine.ProBuilder
 
 		static Mesh BuildVertexMesh(ProBuilderMesh pb, Dictionary<uint, SimpleTuple<ProBuilderMesh, int>> map, ref uint index)
 		{
-			int length = System.Math.Min(pb.sharedIndices.Length, ushort.MaxValue / 4 - 1);
+			int length = System.Math.Min(pb.sharedIndicesInternal.Length, ushort.MaxValue / 4 - 1);
 
 			Vector3[] 	t_billboards 		= new Vector3[ length * 4 ];
 			Vector2[] 	t_uvs 				= new Vector2[ length * 4 ];
@@ -573,7 +573,7 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < length; i++)
 			{
-				Vector3 v = pb.positions[pb.sharedIndices[i][0]];
+				Vector3 v = pb.positionsInternal[pb.sharedIndicesInternal[i][0]];
 
 				t_billboards[t+0] = v;
 				t_billboards[t+1] = v;
@@ -626,7 +626,7 @@ namespace UnityEngine.ProBuilder
 			int faceCount = pb.faceCount;
 
 			for (int i = 0; i < faceCount; i++)
-				edgeCount += pb.faces[i].edges.Length;
+				edgeCount += pb.facesInternal[i].edges.Length;
 
 			int elementCount = System.Math.Min(edgeCount, ushort.MaxValue / 2 - 1);
 
@@ -638,12 +638,12 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < faceCount && edgeIndex < elementCount; i++)
 			{
-				for (int n = 0; n < pb.faces[i].edges.Length && edgeIndex < elementCount; n++)
+				for (int n = 0; n < pb.facesInternal[i].edges.Length && edgeIndex < elementCount; n++)
 				{
-					var edge = pb.faces[i].edges[n];
+					var edge = pb.facesInternal[i].edges[n];
 
-					Vector3 a = pb.positions[edge.x];
-					Vector3 b = pb.positions[edge.y];
+					Vector3 a = pb.positionsInternal[edge.x];
+					Vector3 b = pb.positionsInternal[edge.y];
 					int positionIndex = edgeIndex * 2;
 
 					positions[positionIndex + 0] = a;

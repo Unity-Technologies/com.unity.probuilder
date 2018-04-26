@@ -1240,26 +1240,18 @@ namespace UnityEngine.ProBuilder
 
 			Vector3[] v = new Vector3[k_IcosphereTriangles.Length];
 
-			/**
-			 * Regular Icosahedron - 12 vertices, 20 faces.
-			 */
-			for(int i = 0; i < k_IcosphereTriangles.Length; i+=3)
+            // Regular Icosahedron - 12 vertices, 20 faces.
+            for (int i = 0; i < k_IcosphereTriangles.Length; i+=3)
 			{
 				v[i+0] = k_IcosphereVertices[ k_IcosphereTriangles[i+0] ].normalized * radius;
 				v[i+1] = k_IcosphereVertices[ k_IcosphereTriangles[i+1] ].normalized * radius;
 				v[i+2] = k_IcosphereVertices[ k_IcosphereTriangles[i+2] ].normalized * radius;
 			}
-
-			/**
-			 * Subdivide
-			 */
-			for(int i = 0; i < subdivisions; i++) {
+            
+            for (int i= 0; i < subdivisions; i++) {
 				v = SubdivideIcosahedron(v, radius);
 			}
-
-			/**
-			 * Wind faces
-			 */
+            
 			Face[] f = new Face[v.Length/3];
 			for(int i = 0; i < v.Length; i+=3) {
 				f[i/3] = new Face( new int[3] { i, i+1, i+2 } );
@@ -1275,8 +1267,7 @@ namespace UnityEngine.ProBuilder
 			GameObject _gameObject = new GameObject();
 			ProBuilderMesh pb = _gameObject.AddComponent<ProBuilderMesh>();
 
-			pb.SetVertices(v);
-			pb.SetUV(new Vector2[v.Length]);
+			pb.SetPositions(v);
 			pb.SetFaces(f);
 
 			if (!weldVertices)
@@ -1285,7 +1276,7 @@ namespace UnityEngine.ProBuilder
 				for (int i = 0; i < si.Length; i++)
 					si[i] = new IntArray(new int[] {i});
 
-				pb.SetSharedIndices(si);
+				pb.sharedIndicesInternal = si;
 			}
 			else
 			{

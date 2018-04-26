@@ -144,10 +144,10 @@ namespace UnityEngine.ProBuilder
 
             int vertexCount = mesh.vertexCount;
 			Vector3[] perTriangleNormal = new Vector3[vertexCount];
-			Vector3[] vertices = mesh.positions;
+			Vector3[] vertices = mesh.positionsInternal;
 			Vector3[] normals = new Vector3[vertexCount];
 			int[] perTriangleAvg = new int[vertexCount];
-			Face[] faces = mesh.faces;
+			Face[] faces = mesh.facesInternal;
 
 			for(int find = 0; find < faces.Length; find++)
 			{
@@ -202,8 +202,8 @@ namespace UnityEngine.ProBuilder
 			// average the soft edge faces
 			int vertexCount = mesh.vertexCount;
 			int[] smoothGroup = new int[vertexCount];
-			IntArray[] sharedIndices = mesh.sharedIndices;
-			Face[] faces = mesh.faces;
+			IntArray[] sharedIndices = mesh.sharedIndicesInternal;
+			Face[] faces = mesh.facesInternal;
 			int smoothGroupMax = 24;
 
 			// Create a lookup of each triangles smoothing group.

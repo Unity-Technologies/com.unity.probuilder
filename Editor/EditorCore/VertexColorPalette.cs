@@ -200,7 +200,7 @@ namespace UnityEditor.ProBuilder
 					case SelectMode.Face:
 						foreach (ProBuilderMesh pb in selection)
 						{
-							Color[] colors = pb.colors;
+							Color[] colors = pb.colorsInternal;
 
 							foreach (int i in pb.SelectedTriangles)
 								colors[i] = col;
@@ -212,9 +212,9 @@ namespace UnityEditor.ProBuilder
 					case SelectMode.Vertex:
 						foreach (ProBuilderMesh pb in selection)
 						{
-							Color[] colors = pb.colors;
+							Color[] colors = pb.colorsInternal;
 
-							foreach (int i in pb.sharedIndices.AllIndicesWithValues(pb.SelectedTriangles))
+							foreach (int i in pb.sharedIndicesInternal.AllIndicesWithValues(pb.SelectedTriangles))
 								colors[i] = col;
 
 							pb.SetColors(colors);
@@ -226,7 +226,7 @@ namespace UnityEditor.ProBuilder
 			{
 				foreach (ProBuilderMesh pb in selection)
 				{
-					foreach (Face face in pb.faces)
+					foreach (Face face in pb.facesInternal)
 						pb.SetFaceColor(face, col);
 				}
 			}

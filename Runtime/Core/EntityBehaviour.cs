@@ -19,7 +19,7 @@ namespace UnityEngine.ProBuilder
 
 			if (pb != null)
 			{
-                foreach(var face in pb.faces)
+                foreach(var face in pb.facesInternal)
     				face.material = material;
 				pb.ToMesh();
 				pb.Refresh();

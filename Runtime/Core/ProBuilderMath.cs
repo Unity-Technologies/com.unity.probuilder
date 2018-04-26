@@ -654,7 +654,7 @@ namespace UnityEngine.ProBuilder
 			if (mesh == null || face == null)
 				throw new ArgumentNullException("mesh");
 
-			var positions = mesh.positions;
+			var positions = mesh.positionsInternal;
 
 			// if the face is just a quad, use the first
 			// triangle normal.
@@ -741,13 +741,13 @@ namespace UnityEngine.ProBuilder
 			long i2 = face.indices[1];
 			long i3 = face.indices[2];
 
-			Vector3 v1 = pb.positions[i1];
-			Vector3 v2 = pb.positions[i2];
-			Vector3 v3 = pb.positions[i3];
+			Vector3 v1 = pb.positionsInternal[i1];
+			Vector3 v2 = pb.positionsInternal[i2];
+			Vector3 v3 = pb.positionsInternal[i3];
 
-			Vector2 w1 = pb.uv[i1];
-			Vector2 w2 = pb.uv[i2];
-			Vector2 w3 = pb.uv[i3];
+			Vector2 w1 = pb.texturesInternal[i1];
+			Vector2 w2 = pb.texturesInternal[i2];
+			Vector2 w3 = pb.texturesInternal[i3];
 
 			float x1 = v2.x - v1.x;
 			float x2 = v3.x - v1.x;

@@ -42,7 +42,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns></returns>
 		public static bool Extrude(this ProBuilderMesh pb, Edge[] edges, float extrudeDistance, bool extrudeAsGroup, bool enableManifoldExtrude, out Edge[] extrudedEdges)
 		{
-			IntArray[] sharedIndices = pb.sharedIndices;
+			IntArray[] sharedIndices = pb.sharedIndicesInternal;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 
 			List<Edge> validEdges = new List<Edge>();
@@ -53,7 +53,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				int faceCount = 0;
 				Face fa = null;
 
-				foreach(Face f in pb.faces)
+				foreach(Face f in pb.facesInternal)
 				{
 					if(f.edges.IndexOf(e, lookup) > -1)
 					{
@@ -78,7 +78,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				return false;
 			}
 
-			Vector3[] localVerts = pb.positions;
+			Vector3[] localVerts = pb.positionsInternal;
 			Vector3[] oNormals = pb.mesh.normals;
 
 			int[] allEdgeIndices = new int[validEdges.Count * 2];
@@ -117,10 +117,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					},
 					new Color[4]
 					{
-						pb.colors[ edge.x ],
-						pb.colors[ edge.y ],
-						pb.colors[ edge.x ],
-						pb.colors[ edge.y ]
+						pb.colorsInternal[ edge.x ],
+						pb.colorsInternal[ edge.y ],
+						pb.colorsInternal[ edge.x ],
+						pb.colorsInternal[ edge.y ]
 					},
 					new Vector2[4],
 					new Face( new int[6] {2, 1, 0, 2, 3, 1 }, face.material, new AutoUnwrapSettings(), 0, -1, -1, false ),
@@ -132,7 +132,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				extrudedIndices.Add(new Edge(y_sharedIndex, newFace.indices[4]));
 			}
 
-			sharedIndices = pb.sharedIndices;
+			sharedIndices = pb.sharedIndicesInternal;
 
 			// merge extruded vertex indices with each other
 			if(extrudeAsGroup)
@@ -156,7 +156,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			pb.SetSharedIndices(sharedIndices);
 
-			foreach(Face f in pb.faces)
+			foreach(Face f in pb.facesInternal)
 				f.RebuildCaches();
 
 			extrudedEdges = newEdges.ToArray();
@@ -175,12 +175,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				return false;
 
 			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
-			int sharedIndexMax = pb.sharedIndices.Length;
+			int sharedIndexMax = pb.sharedIndicesInternal.Length;
 			int sharedIndexOffset = 0;
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
-			Dictionary<int, int> lookupUV = pb.sharedIndicesUV.ToDictionary();
+			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
+			Dictionary<int, int> lookupUV = pb.sharedIndicesUVInternal.ToDictionary();
 
-			List<Face> newFaces = new List<Face>(pb.faces);
+			List<Face> newFaces = new List<Face>(pb.facesInternal);
 			Dictionary<int, int> used = new Dictionary<int, int>();
 
 			foreach(Face face in faces)
@@ -270,12 +270,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				return false;
 
 			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
-			int sharedIndexMax = pb.sharedIndices.Length;
+			int sharedIndexMax = pb.sharedIndicesInternal.Length;
 			int sharedIndexOffset = 0;
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
-			Dictionary<int, int> lookupUV = pb.sharedIndicesUV.ToDictionary();
+			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
+			Dictionary<int, int> lookupUV = pb.sharedIndicesUVInternal.ToDictionary();
 
-			List<Face> newFaces = new List<Face>(pb.faces);
+			List<Face> newFaces = new List<Face>(pb.facesInternal);
 			// old triangle index -> old shared index
 			Dictionary<int, int> oldSharedMap = new Dictionary<int, int>();
 			// old shared index -> new shared index

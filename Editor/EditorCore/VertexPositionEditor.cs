@@ -79,13 +79,13 @@ namespace UnityEditor.ProBuilder
 
 				if(selection.TryGetValue(pb, out sel))
 				{
-					sel.lookup = pb.sharedIndices.ToDictionary();
+					sel.lookup = pb.sharedIndicesInternal.ToDictionary();
 					sel.common = IntArrayUtility.GetCommonIndices(sel.lookup, pb.SelectedTriangles);
 					res.Add(pb, sel);
 				}
 				else
 				{
-					res.Add(pb, new VertexEditorSelection(pb.sharedIndices.ToDictionary(), true, pb.SelectedTriangles));
+					res.Add(pb, new VertexEditorSelection(pb.sharedIndicesInternal.ToDictionary(), true, pb.SelectedTriangles));
 				}
 			}
 
@@ -174,7 +174,7 @@ namespace UnityEditor.ProBuilder
 
 							GUILayout.Label(u.ToString(), GUILayout.MinWidth(32), GUILayout.MaxWidth(32));
 
-							Vector3 v = pb.positions[pb.sharedIndices[u][0]];
+							Vector3 v = pb.positionsInternal[pb.sharedIndicesInternal[u][0]];
 
 							if(worldSpace) v = transform.TransformPoint(v);
 
@@ -229,11 +229,11 @@ namespace UnityEditor.ProBuilder
 				if(!sel.isVisible)
 					continue;
 
-				Vector3[] vertices = pb.positions;
+				Vector3[] vertices = pb.positionsInternal;
 
 				foreach(int i in sel.common)
 				{
-					int[] indices = pb.sharedIndices[i];
+					int[] indices = pb.sharedIndicesInternal[i];
 
 					Vector3 point = pb.transform.TransformPoint(vertices[indices[0]]);
 

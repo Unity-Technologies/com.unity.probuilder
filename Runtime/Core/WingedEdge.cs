@@ -313,7 +313,7 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			return GetWingedEdges(mesh, mesh.faces, oneWingPerFace);
+			return GetWingedEdges(mesh, mesh.facesInternal, oneWingPerFace);
 		}
 
 		/// <summary>
@@ -329,7 +329,7 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			Dictionary<int, int> lookup = sharedIndexLookup == null ? mesh.sharedIndices.ToDictionary() : sharedIndexLookup;
+			Dictionary<int, int> lookup = sharedIndexLookup == null ? mesh.sharedIndicesInternal.ToDictionary() : sharedIndexLookup;
 			IEnumerable<Face> distinct = faces.Distinct();
 
 			List<WingedEdge> winged = new List<WingedEdge>();

@@ -194,7 +194,7 @@ namespace UnityEditor.ProBuilder
 			{
 				if(selection[0].SelectedTriangles.Length < 256)
 				{
-					GUILayout.Label("Faces: [" + selection[0].SelectedFaceCount + "/" + selection[0].faces.Length + "]  ");
+					GUILayout.Label("Faces: [" + selection[0].SelectedFaceCount + "/" + selection[0].facesInternal.Length + "]  ");
 					GUILayout.Label("Edges: [" + selection[0].SelectedEdges.Length + "]  " + selection[0].SelectedEdges.ToString(", "));
 					GUILayout.Label("Triangles: [" + selection[0].SelectedTriangles.Length + "]  " + selection[0].SelectedTriangles.ToString(", "));
 				}
@@ -230,14 +230,14 @@ namespace UnityEditor.ProBuilder
 							{
 								if(m == null)
 								{
-									GUILayout.Label("" + pb.positions.ToString("\n"));
+									GUILayout.Label("" + pb.positionsInternal.ToString("\n"));
 								}
 								else
 								{
 									GUILayout.BeginVertical();
 									for(int i = 0; i < m.subMeshCount; i++)
 									{
-										GUILayout.Label("Mat: " + ren.sharedMaterials[i].name + "\n" + pb.positions.ValuesWithIndices( m.GetTriangles(i) ).ToString("\n") + "\n");
+										GUILayout.Label("Mat: " + ren.sharedMaterials[i].name + "\n" + pb.positionsInternal.ValuesWithIndices( m.GetTriangles(i) ).ToString("\n") + "\n");
 									}
 									GUILayout.EndVertical();
 								}
@@ -258,7 +258,7 @@ namespace UnityEditor.ProBuilder
 							{
 								if(m == null)
 								{
-									GUILayout.Label("Faces: " + pb.faces.Length);
+									GUILayout.Label("Faces: " + pb.facesInternal.Length);
 								}
 								else
 								{
@@ -294,14 +294,14 @@ namespace UnityEditor.ProBuilder
 					{
 						GUILayout.BeginHorizontal();
 							GUILayout.Space(24);
-							pv.showColors = EditorGUILayout.Foldout(pv.showColors, "colors: " + (pb.colors != null ? pb.colors.Length : 0).ToString());
+							pv.showColors = EditorGUILayout.Foldout(pv.showColors, "colors: " + (pb.colorsInternal != null ? pb.colorsInternal.Length : 0).ToString());
 						GUILayout.EndHorizontal();
 
 						GUILayout.BeginHorizontal();
 						GUILayout.Space(48);
 							if(pv.showColors)
 							{
-								GUILayout.Label("" + pb.colors.ToString("\n"));
+								GUILayout.Label("" + pb.colorsInternal.ToString("\n"));
 							}
 						GUILayout.EndHorizontal();
 					}
@@ -310,13 +310,13 @@ namespace UnityEditor.ProBuilder
 					{
 						GUILayout.BeginHorizontal();
 							GUILayout.Space(24);
-							pv.showUv = EditorGUILayout.Foldout(pv.showUv, "UVs: " + pb.uv.Length);
+							pv.showUv = EditorGUILayout.Foldout(pv.showUv, "UVs: " + pb.texturesInternal.Length);
 						GUILayout.EndHorizontal();
 
 						GUILayout.BeginHorizontal();
 						GUILayout.Space(48);
 							if(pv.showUv)
-								GUILayout.Label("" + pb.uv.ToString("\n"));
+								GUILayout.Label("" + pb.texturesInternal.ToString("\n"));
 						GUILayout.EndHorizontal();
 					}
 
@@ -360,11 +360,11 @@ namespace UnityEditor.ProBuilder
 							if(pv.showSharedUV)
 							{
 								GUILayout.BeginVertical();
-								for(int i = 0; i < pb.sharedIndicesUV.Length; i++)
+								for(int i = 0; i < pb.sharedIndicesUVInternal.Length; i++)
 								{
-									if(GUILayout.Button("" + pb.sharedIndicesUV[i].array.ToString(", "), EditorStyles.label))
+									if(GUILayout.Button("" + pb.sharedIndicesUVInternal[i].array.ToString(", "), EditorStyles.label))
 									{
-										pb.SetSelectedTriangles(pb.sharedIndicesUV[i]);
+										pb.SetSelectedTriangles(pb.sharedIndicesUVInternal[i]);
 
 										if(ProBuilderEditor.instance)
 										{
@@ -389,7 +389,7 @@ namespace UnityEditor.ProBuilder
 						GUILayout.BeginHorizontal();
 						GUILayout.Space(48);
 							if(pv.showSharedTris)
-								GUILayout.Label("" + pb.sharedIndices.ToString("\n"));
+								GUILayout.Label("" + pb.sharedIndicesInternal.ToString("\n"));
 						GUILayout.EndHorizontal();
 					}
 				}
@@ -425,9 +425,9 @@ namespace UnityEditor.ProBuilder
 
 		void DrawTriangleInfo(ProBuilderMesh pb)
 		{
-			IntArray[] sharedIndices = pb.sharedIndices;
+			IntArray[] sharedIndices = pb.sharedIndicesInternal;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
-			Vector3[] vertices = pb.positions;
+			Vector3[] vertices = pb.positionsInternal;
 			Camera cam = SceneView.lastActiveSceneView.camera;
 
 			HashSet<int> common = new HashSet<int>();
@@ -484,8 +484,8 @@ namespace UnityEditor.ProBuilder
 
 		void DrawEdgeInfo(ProBuilderMesh pb)
 		{
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
-			Edge[] source = selectedOnly ? pb.SelectedEdges : pb.faces.SelectMany(x => x.edges).ToArray();
+			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
+			Edge[] source = selectedOnly ? pb.SelectedEdges : pb.facesInternal.SelectMany(x => x.edges).ToArray();
 			IEnumerable<EdgeLookup> edges = EdgeLookup.GetEdgeLookup(source, lookup);
 			Camera cam = SceneView.lastActiveSceneView.camera;
 
@@ -493,7 +493,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(EdgeLookup edge in edges)
 			{
-				Vector3 point = pb.transform.TransformPoint((pb.positions[edge.local.x] + pb.positions[edge.local.y])/ 2f);
+				Vector3 point = pb.transform.TransformPoint((pb.positionsInternal[edge.local.x] + pb.positionsInternal[edge.local.y])/ 2f);
 
 				if( testOcclusion && UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, pb, point) )
 					continue;
@@ -519,15 +519,15 @@ namespace UnityEditor.ProBuilder
 
 		void DrawFaceInfo(ProBuilderMesh pb)
 		{
-			Face[] faces = selectedOnly ? pb.SelectedFaces : pb.faces;
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			Face[] faces = selectedOnly ? pb.SelectedFaces : pb.facesInternal;
+			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
 			Camera cam = SceneView.lastActiveSceneView.camera;
 
 			int labelCount = 0;
 
 			foreach(Face f in faces)
 			{
-				Vector3 point = pb.transform.TransformPoint( ProBuilderMath.Average(pb.positions, f.distinctIndices) );
+				Vector3 point = pb.transform.TransformPoint( ProBuilderMath.Average(pb.positionsInternal, f.distinctIndices) );
 
 				if( testOcclusion && UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, pb, point) )
 					continue;

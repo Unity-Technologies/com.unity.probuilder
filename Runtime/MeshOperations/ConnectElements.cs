@@ -76,19 +76,19 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns>An action result indicating the status of the operation.</returns>
 		public static ActionResult Connect(this ProBuilderMesh pb, IList<int> indices, out int[] newVertices)
 		{
-			int sharedIndexOffset = pb.sharedIndices.Length;
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			int sharedIndexOffset = pb.sharedIndicesInternal.Length;
+			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
 
 			HashSet<int> distinct = new HashSet<int>(indices.Select(x=>lookup[x]));
 			HashSet<int> affected = new HashSet<int>();
 
 			foreach(int i in distinct)
-				affected.UnionWith(pb.sharedIndices[i].array);
+				affected.UnionWith(pb.sharedIndicesInternal[i].array);
 
 			Dictionary<Face, List<int>> splits = new Dictionary<Face, List<int>>();
 			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
 
-			foreach(Face face in pb.faces)
+			foreach(Face face in pb.facesInternal)
 			{
 				int[] faceIndices = face.distinctIndices;
 
@@ -101,7 +101,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			List<ConnectFaceRebuildData> appendFaces = new List<ConnectFaceRebuildData>();
 			List<Face> successfulSplits = new List<Face>();
-			HashSet<int> usedTextureGroups = new HashSet<int>(pb.faces.Select(x => x.textureGroup));
+			HashSet<int> usedTextureGroups = new HashSet<int>(pb.facesInternal.Select(x => x.textureGroup));
 			int newTextureGroupIndex = 1;
 
 			foreach(KeyValuePair<Face, List<int>> split in splits)
@@ -141,7 +141,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			pb.SetSharedIndicesUV(new IntArray[0]);
 			int removedVertexCount = pb.DeleteFaces(successfulSplits).Length;
 
-			lookup = pb.sharedIndices.ToDictionary();
+			lookup = pb.sharedIndicesInternal.ToDictionary();
 
 			HashSet<int> newVertexIndices = new HashSet<int>();
 
@@ -149,7 +149,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				for(int n = 0; n < appendFaces[i].newVertexIndices.Count; n++)
 					newVertexIndices.Add( lookup[appendFaces[i].newVertexIndices[n] + (appendFaces[i].faceRebuildData.Offset() - removedVertexCount)] );
 
-			newVertices = newVertexIndices.Select(x => pb.sharedIndices[x][0]).ToArray();
+			newVertices = newVertexIndices.Select(x => pb.sharedIndicesInternal[x][0]).ToArray();
 
 			pb.ToMesh();
 
@@ -176,8 +176,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			bool returnEdges = false,
 			HashSet<Face> faceMask = null)
 		{
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
-			Dictionary<int, int> lookupUV = pb.sharedIndicesUV != null ? pb.sharedIndicesUV.ToDictionary() : null;
+			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
+			Dictionary<int, int> lookupUV = pb.sharedIndicesUVInternal != null ? pb.sharedIndicesUVInternal.ToDictionary() : null;
 			HashSet<EdgeLookup> distinctEdges = new HashSet<EdgeLookup>(EdgeLookup.GetEdgeLookup(edges, lookup));
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
 
@@ -225,7 +225,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			// just the faces that where connected with > 1 edge
 			List<Face> connectedFaces = new List<Face>();
 
-			HashSet<int> usedTextureGroups = new HashSet<int>(pb.faces.Select(x => x.textureGroup));
+			HashSet<int> usedTextureGroups = new HashSet<int>(pb.facesInternal.Select(x => x.textureGroup));
 			int newTextureGroupIndex = 1;
 
 			// do the splits
@@ -286,7 +286,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			pb.SetSharedIndicesUV(new IntArray[0]);
 			int removedVertexCount = pb.DeleteFaces(affected.Keys).Length;
-			pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.positions));
+			pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.positionsInternal));
 			pb.ToMesh();
 
 			// figure out where the new edges where inserted
@@ -299,7 +299,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					for(int i = 0; i < results[n].newVertexIndices.Count; i++)
 						appendedIndices.Add( ( results[n].newVertexIndices[i] + results[n].faceRebuildData.Offset() ) - removedVertexCount );
 
-				Dictionary<int, int> lup = pb.sharedIndices.ToDictionary();
+				Dictionary<int, int> lup = pb.sharedIndicesInternal.ToDictionary();
 				IEnumerable<Edge> newEdges = results.SelectMany(x => x.faceRebuildData.face.edges).Where(x => appendedIndices.Contains(x.x) && appendedIndices.Contains(x.y));
 				IEnumerable<EdgeLookup> distNewEdges = EdgeLookup.GetEdgeLookup(newEdges, lup);
 

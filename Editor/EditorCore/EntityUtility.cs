@@ -70,7 +70,7 @@ namespace UnityEditor.ProBuilder
 			    et == EntityType.Collider)
 			{
 				ProBuilderMesh pb = target.GetComponent<ProBuilderMesh>();
-				foreach(var face in pb.faces)
+				foreach(var face in pb.facesInternal)
 					face.material = BuiltinMaterials.DefaultMaterial;
 				pb.ToMesh();
 				pb.Refresh();
@@ -88,7 +88,7 @@ namespace UnityEditor.ProBuilder
 			    et == EntityType.Collider)
 			{
 				ProBuilderMesh pb = target.GetComponent<ProBuilderMesh>();
-				foreach(var face in pb.faces)
+				foreach(var face in pb.facesInternal)
 					face.material = BuiltinMaterials.DefaultMaterial;
 
 				pb.ToMesh();
@@ -100,7 +100,7 @@ namespace UnityEditor.ProBuilder
 		static void SetTrigger(GameObject target)
 		{
 			ProBuilderMesh pb = target.GetComponent<ProBuilderMesh>();
-			foreach(var face in pb.faces)
+			foreach(var face in pb.facesInternal)
 				face.material = BuiltinMaterials.TriggerMaterial;
 			SetIsTrigger(true, target);
 			SetEditorFlags((StaticEditorFlags) 0, target);
@@ -113,7 +113,7 @@ namespace UnityEditor.ProBuilder
 		static void SetCollider(GameObject target)
 		{
 			ProBuilderMesh pb = target.GetComponent<ProBuilderMesh>();
-			foreach(var face in pb.faces)
+			foreach(var face in pb.facesInternal)
 				face.material = BuiltinMaterials.ColliderMaterial;
 			pb.ToMesh();
 			pb.Refresh();
