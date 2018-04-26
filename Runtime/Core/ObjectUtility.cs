@@ -181,16 +181,18 @@ namespace UnityEngine.ProBuilder
 		/// Find the face which contains a set of triangle indices.
 		/// tri must contain exactly 3 values.
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="tri">int[] composed of three indices.</param>
-		/// <param name="face"></param>
-		/// <returns>True if a matching face was found, false if not.</returns>
-		public static Face FaceWithTriangle(this ProBuilderMesh pb, int[] tri)
+		/// <returns>The matching face, or null if not found.</returns>
+		public static Face FaceWithTriangle(this ProBuilderMesh mesh, int[] tri)
 		{
-			for(int i = 0; i < pb.faces.Length; i++)
+			if(mesh == null || tri == null)
+				throw new ArgumentNullException("mesh");
+
+			for(int i = 0; i < mesh.faces.Length; i++)
 			{
-				if(	pb.faces[i].Contains(tri) )
-					return pb.faces[i];
+				if(	mesh.faces[i].Contains(tri) )
+					return mesh.faces[i];
 			}
 
 			return null;
@@ -199,14 +201,17 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Returns the index of the Face which contains the passed triangle.
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="tri">int[] composed of three indices.</param>
 		/// <returns>The index of face, or -1 if not found.</returns>
-		public static int FaceIndexWithTriangle(this ProBuilderMesh pb, int[] tri)
+		public static int FaceIndexWithTriangle(this ProBuilderMesh mesh, int[] tri)
 		{
-			for(int i = 0; i < pb.faces.Length; i++)
+			if(mesh == null || tri == null)
+				throw new ArgumentNullException("mesh");
+
+			for(int i = 0; i < mesh.faces.Length; i++)
 			{
-				if(	pb.faces[i].Contains(tri) )
+				if(	mesh.faces[i].Contains(tri) )
 				{
 					return i;
 				}

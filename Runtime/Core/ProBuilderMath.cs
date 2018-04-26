@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -643,27 +644,30 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Finds the "best" normal of a face.
+		/// Finds the best matching normal for a face.
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="face"></param>
 		/// <returns></returns>
-		public static Vector3 Normal(ProBuilderMesh pb, Face face)
+		public static Vector3 Normal(ProBuilderMesh mesh, Face face)
 		{
-			Vector3[] _vertices = pb.positions;
+			if (mesh == null || face == null)
+				throw new ArgumentNullException("mesh");
+
+			var positions = mesh.positions;
 
 			// if the face is just a quad, use the first
 			// triangle normal.
 			// otherwise it's not safe to assume that the face
 			// has even generally uniform normals
 			Vector3 nrm = ProBuilderMath.Normal(
-				_vertices[face.indices[0]],
-				_vertices[face.indices[1]],
-				_vertices[face.indices[2]] );
+				positions[face.indices[0]],
+				positions[face.indices[1]],
+				positions[face.indices[2]] );
 
-			if(face.indices.Length > 7)
+			if(face.indices.Length > 6)
 			{
-				Vector3 prj = Projection.FindBestPlane(_vertices, face.distinctIndices).normal;
+				Vector3 prj = Projection.FindBestPlane(positions, face.distinctIndices).normal;
 
 				if(Vector3.Dot(nrm, prj) < 0f)
 				{
@@ -726,7 +730,7 @@ namespace UnityEngine.ProBuilder
 		{
 			if(pb == null || face == null || face.indices.Length < 3)
                 throw new System.ArgumentNullException("pb", "Cannot find normal, tangent, and bitangent for null object, or faces with < 3 indices.");
-            
+
 			var normal = ProBuilderMath.Normal(pb, face);
 
 			Vector3 tan1 = Vector3.zero;
@@ -972,48 +976,56 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Gets the average of a vector array.
 		/// </summary>
-		/// <param name="v">The array</param>
+		/// <param name="array">The array</param>
 		/// <param name="indices">If provided the average is the sum of all points contained in the indices array. If not, the entire v array is used.</param>
 		/// <returns>Average Vector3 of passed vertex array.</returns>
-		public static Vector2 Average(IList<Vector2> v, IList<int> indices = null)
+		public static Vector2 Average(IList<Vector2> array, IList<int> indices = null)
 		{
+			if (array == null)
+				throw new ArgumentNullException("array");
+
 			Vector2 sum = Vector2.zero;
-			float len = indices == null ? v.Count : indices.Count;
+			float len = indices == null ? array.Count : indices.Count;
 
 			if( indices == null )
-				for(int i = 0; i < len; i++) sum += v[i];
+				for(int i = 0; i < len; i++) sum += array[i];
 			else
-				for(int i = 0; i < len; i++) sum += v[indices[i]];
+				for(int i = 0; i < len; i++) sum += array[indices[i]];
+
 			return sum/len;
 		}
 
 		/// <summary>
 		/// Gets the average of a vector array.
 		/// </summary>
-		/// <param name="v">The array</param>
+		/// <param name="array">The array</param>
 		/// <param name="indices">If provided the average is the sum of all points contained in the indices array. If not, the entire v array is used.</param>
 		/// <returns>Average Vector3 of passed vertex array.</returns>
-		public static Vector3 Average(IList<Vector3> v, IList<int> indices = null)
+		public static Vector3 Average(IList<Vector3> array, IList<int> indices = null)
 		{
+			if (array == null)
+				throw new ArgumentNullException("array");
+
 			Vector3 sum = Vector3.zero;
-			float len = indices == null ? v.Count : indices.Count;
+
+			float len = indices == null ? array.Count : indices.Count;
 
 			if( indices == null )
 			{
 				for(int i = 0; i < len; i++)
 				{
-					sum.x += v[i].x;
-					sum.y += v[i].y;
-					sum.z += v[i].z;
+					sum.x += array[i].x;
+					sum.y += array[i].y;
+					sum.z += array[i].z;
 				}
 			}
 			else
 			{
 				for(int i = 0; i < len; i++)
 				{
-					sum.x += v[indices[i]].x;
-					sum.y += v[indices[i]].y;
-					sum.z += v[indices[i]].z;
+					sum.x += array[indices[i]].x;
+					sum.y += array[indices[i]].y;
+					sum.z += array[indices[i]].z;
 				}
 			}
 
@@ -1023,19 +1035,33 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Average a set of vertices.
 		/// </summary>
-		/// <param name="v"></param>
+		/// <param name="list"></param>
 		/// <param name="selector"></param>
 		/// <param name="indices"></param>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		public static Vector3 Average<T>(this IList<T> v, System.Func<T, Vector3> selector, IList<int> indices = null)
+		public static Vector3 Average<T>(this IList<T> list, Func<T, Vector3> selector, IList<int> indices = null)
 		{
+			if (list == null)
+				throw new ArgumentNullException("list");
+
+			if (selector == null)
+				throw new ArgumentNullException("selector");
+
 			Vector3 sum = Vector3.zero;
-			float len = indices == null ? v.Count : indices.Count;
-			if( indices == null )
-				for(int i = 0; i < len; i++) sum += selector(v[i]);
+			float len = indices == null ? list.Count : indices.Count;
+
+			if (indices == null)
+			{
+				for (int i = 0; i < len; i++)
+					sum += selector(list[i]);
+			}
 			else
-				for(int i = 0; i < len; i++) sum += selector(v[indices[i]]);
+			{
+				for (int i = 0; i < len; i++)
+					sum += selector(list[indices[i]]);
+			}
+
 			return sum/len;
 		}
 

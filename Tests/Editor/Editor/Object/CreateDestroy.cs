@@ -32,7 +32,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Object
 			try
 			{
 				Mesh mesh = pb.GetComponent<MeshFilter>().sharedMesh;
-				pb.dontDestroyMeshOnDelete = true;
+				pb.preserveMeshAssetOnDestroy = true;
 				UObject.DestroyImmediate(pb.gameObject);
 				Assert.IsFalse(mesh == null);
 			}

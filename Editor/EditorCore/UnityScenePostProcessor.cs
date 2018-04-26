@@ -68,7 +68,7 @@ namespace UnityEditor.ProBuilder
 				if(!PreferencesInternal.GetBool(PreferenceKeys.pbStripProBuilderOnBuild))
 				   return;
 
-				pb.dontDestroyMeshOnDelete = true;
+				pb.preserveMeshAssetOnDestroy = true;
 
 				Object.DestroyImmediate( pb );
 				Object.DestroyImmediate( entity );

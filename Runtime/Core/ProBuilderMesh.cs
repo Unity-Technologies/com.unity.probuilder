@@ -80,11 +80,19 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public UnwrapParamaters unwrapParameters { get; set; }
 
+		[FormerlySerializedAs("dontDestroyMeshOnDelete")]
+		[SerializeField]
+		bool m_PreserveMeshAssetOnDestroy;
+
 		/// <summary>
 		/// Usually when you delete a pb_Object you want to also clean up the mesh asset.
 		/// However, there are situations you'd want to keep the mesh around, like when stripping probuilder scripts.
 		/// </summary>
-		public bool dontDestroyMeshOnDelete { get; set; }
+		public bool preserveMeshAssetOnDestroy
+		{
+			get { return m_PreserveMeshAssetOnDestroy; }
+			set { m_PreserveMeshAssetOnDestroy = value; }
+		}
 
 		/// <summary>
 		/// If onDestroyObject has a subscriber ProBuilder will invoke it instead of cleaning up unused meshes by itself.
@@ -322,7 +330,7 @@ namespace UnityEngine.ProBuilder
 		{
 			// Time.frameCount is zero when loading scenes in the Editor. It's the only way I could figure to
 			// differentiate between OnDestroy invoked from user delete & editor scene loading.
-			if (!dontDestroyMeshOnDelete &&
+			if (!preserveMeshAssetOnDestroy &&
 			    Application.isEditor &&
 			    !Application.isPlaying &&
 			    Time.frameCount > 0)
@@ -332,38 +340,6 @@ namespace UnityEngine.ProBuilder
 				else
 					GameObject.DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
 			}
-		}
-
-		/// <summary>
-		/// Duplicates and returns the passed pb_Object.
-		/// </summary>
-		/// <param name="mesh"></param>
-		/// <returns></returns>
-        [Obsolete("NO USEY")]
-		public static ProBuilderMesh InitWithObject(ProBuilderMesh mesh)
-		{
-            if (mesh == null)
-                throw new ArgumentNullException("mesh");
-
-			Vector3[] v = new Vector3[mesh.vertexCount];
-			System.Array.Copy(mesh.positions, v, mesh.vertexCount);
-
-			Vector2[] u = new Vector2[mesh.vertexCount];
-			System.Array.Copy(mesh.uv, u, mesh.vertexCount);
-
-			Color[] c = new Color[mesh.vertexCount];
-			System.Array.Copy(mesh.colors, c, mesh.vertexCount);
-
-			Face[] f = new Face[mesh.faces.Length];
-
-			for (int i = 0; i < f.Length; i++)
-				f[i] = new Face(mesh.faces[i]);
-
-			ProBuilderMesh p = CreateInstanceWithElements(v, u, c, f, mesh.GetSharedIndices(), mesh.GetSharedIndicesUV());
-
-			p.gameObject.name = mesh.gameObject.name + "-clone";
-
-			return p;
 		}
 
 		/// <summary>
@@ -395,12 +371,12 @@ namespace UnityEngine.ProBuilder
 				return null;
 			}
 
-			GameObject _gameObject = new GameObject();
-			ProBuilderMesh pb_obj = _gameObject.AddComponent<ProBuilderMesh>();
-			_gameObject.name = "ProBuilder Mesh";
-			pb_obj.GeometryWithPoints(vertices);
+			GameObject go = new GameObject();
+			ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
+			go.name = "ProBuilder Mesh";
+			pb.GeometryWithPoints(vertices);
 
-			return pb_obj;
+			return pb;
 		}
 
 		/// <summary>
@@ -411,82 +387,10 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		public static ProBuilderMesh CreateInstanceWithVerticesFaces(Vector3[] v, Face[] f)
 		{
-			GameObject _gameObject = new GameObject();
-			ProBuilderMesh pb_obj = _gameObject.AddComponent<ProBuilderMesh>();
-			_gameObject.name = "ProBuilder Mesh";
-			pb_obj.GeometryWithVerticesFaces(v, f);
-			return pb_obj;
-		}
-
-		/// <summary>
-		/// Creates a new pb_Object instance with the provided vertices, faces, and sharedIndex information.
-		/// </summary>
-		/// <param name="v"></param>
-		/// <param name="u"></param>
-		/// <param name="c"></param>
-		/// <param name="f"></param>
-		/// <param name="si"></param>
-		/// <param name="si_uv"></param>
-		/// <returns></returns>
-		internal static ProBuilderMesh CreateInstanceWithElements(Vector3[] v, Vector2[] u, Color[] c, Face[] f,
-			IntArray[] si, IntArray[] si_uv)
-		{
-			GameObject _gameObject = new GameObject();
-			ProBuilderMesh pb = _gameObject.AddComponent<ProBuilderMesh>();
-
-			pb.SetVertices(v);
-			pb.SetUV(u);
-			pb.SetColors(c);
-
-			pb.SetSharedIndices(si ?? IntArrayUtility.ExtractSharedIndices(v));
-
-			pb.SetSharedIndicesUV(si_uv ?? new IntArray[0] { });
-
-			pb.SetFaces(f);
-
-			pb.ToMesh();
-			pb.Refresh();
-
-			return pb;
-		}
-
-		/// <summary>
-		/// Creates a new pb_Object instance with the provided vertices, faces, and sharedIndex information.
-		/// </summary>
-		/// <param name="vertices"></param>
-		/// <param name="faces"></param>
-		/// <param name="si">Optional sharedIndices array. If null this value will be generated.</param>
-		/// <returns></returns>
-		public static ProBuilderMesh CreateInstanceWithElements(Vertex[] vertices, Face[] faces, IntArray[] si = null)
-		{
-			GameObject _gameObject = new GameObject();
-			ProBuilderMesh pb = _gameObject.AddComponent<ProBuilderMesh>();
-
-			Vector3[] position;
-			Color[] color;
-			Vector2[] uv0;
-			Vector3[] normal;
-			Vector4[] tangent;
-			Vector2[] uv2;
-			List<Vector4> uv3;
-			List<Vector4> uv4;
-
-			Vertex.GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
-
-			pb.SetVertices(position);
-			pb.SetColors(color);
-			pb.SetUV(uv0);
-			if (uv3 != null) pb.m_Textures3 = uv3;
-			if (uv4 != null) pb.m_Textures4 = uv4;
-
-			pb.SetSharedIndices(si ?? IntArrayUtility.ExtractSharedIndices(position));
-			pb.SetSharedIndicesUV(new IntArray[0] { });
-
-			pb.SetFaces(faces);
-
-			pb.ToMesh();
-			pb.Refresh();
-
+			GameObject go = new GameObject();
+			ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
+			go.name = "ProBuilder Mesh";
+			pb.GeometryWithVerticesFaces(v, f);
 			return pb;
 		}
 

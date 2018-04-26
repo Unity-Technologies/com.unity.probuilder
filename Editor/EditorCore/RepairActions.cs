@@ -58,7 +58,7 @@ namespace UnityEditor.ProBuilder
 			try
 			{
 				GameObject go = pb.gameObject;
-				pb.dontDestroyMeshOnDelete = true;
+				pb.preserveMeshAssetOnDestroy = true;
 				Undo.DestroyObjectImmediate(pb);
 
 				// don't delete pb_Entity here because it won't
