@@ -44,9 +44,9 @@ namespace UnityEngine.ProBuilder
 
             Dictionary<int, int> dic = new Dictionary<int, int>();
 
-			for(int i = 0; i < array.Length; i++)
+			for(var i = 0; i < array.Length; i++)
 			{
-				for(int n = 0; n < array[i].array.Length; n++)
+				for(var n = 0; n < array[i].array.Length; n++)
 					if(!dic.ContainsKey(array[i][n]))
 						dic.Add(array[i][n], i);
 			}

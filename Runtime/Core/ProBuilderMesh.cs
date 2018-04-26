@@ -146,7 +146,7 @@ namespace UnityEngine.ProBuilder
 		    int len = indices.Length;
 		    m_SharedIndices = new IntArray[len];
 		    for (var i = 0; i < len; i++)
-			    m_SharedIndicesUV[i] = new IntArray(indices[i]);
+			    m_SharedIndices[i] = new IntArray(indices[i]);
 	    }
 
 	    public void SetSharedIndices(IEnumerable<KeyValuePair<int, int>> indices)
@@ -173,26 +173,25 @@ namespace UnityEngine.ProBuilder
         {
             int sil = m_SharedIndicesUV.Length;
             IntArray[] sharedIndicesCopy = new IntArray[sil];
-            for (int i = 0; i < sil; i++)
+            for (var i = 0; i < sil; i++)
                 sharedIndicesCopy[i] = m_SharedIndicesUV[i];
             return sharedIndicesCopy;
         }
 
-        internal void SetSharedIndicesUV(IntArray[] indices)
-        {
-            if (indices == null)
-                throw new ArgumentNullException("indices");
-            int len = indices.Length;
-            m_SharedIndicesUV = new IntArray[len];
-            for (int i = 0; i < len; i++)
-                m_SharedIndicesUV[i] = new IntArray(indices[i]);
-        }
+	    internal void SetSharedIndicesUV(IntArray[] indices)
+	    {
+		    int len = indices == null ? 0 : indices.Length;
+		    m_SharedIndicesUV = new IntArray[len];
+		    for (var i = 0; i < len; i++)
+			    m_SharedIndicesUV[i] = new IntArray(indices[i]);
+	    }
 
         internal void SetSharedIndicesUV(IEnumerable<KeyValuePair<int, int>> indices)
         {
-            if (indices == null)
-                throw new ArgumentNullException("indices");
-            m_SharedIndicesUV = IntArrayUtility.ToSharedIndices(indices);
+	        if (indices == null)
+		        m_SharedIndicesUV = null;
+			else
+	            m_SharedIndicesUV = IntArrayUtility.ToSharedIndices(indices);
         }
 
         /// <summary>

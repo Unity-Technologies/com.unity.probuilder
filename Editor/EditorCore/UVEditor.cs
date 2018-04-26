@@ -126,7 +126,7 @@ class UVEditor : EditorWindow
 
 	/// inspected data
 	ProBuilderMesh[] selection;
-	int[][] distinct_indices;
+	int[][] m_DistinctIndicesSelection;
 
 	List<Face[]>[] incompleteTextureGroupsInSelection = new List<Face[]>[0];
 	List<List<Vector2>> incompleteTextureGroupsInSelection_CoordCache = new List<List<Vector2>>();
@@ -142,7 +142,7 @@ class UVEditor : EditorWindow
 	bool eatNextKeyUp = false;
 
 	// The first selected face's material.  Used to draw texture preview in 0,0 - 1,1 space.
-	Material preview_material;
+	Material m_PreviewMaterial;
 
 	Tool tool = Tool.Move;
 	SelectMode selectionMode { get { return editor != null ? editor.selectionMode : SelectMode.Face; } set { if(editor) editor.SetSelectionMode(value); } }
@@ -686,41 +686,20 @@ class UVEditor : EditorWindow
 	{
 		if(selection == null)
 		{
-			distinct_indices = new int[0][];
+			m_DistinctIndicesSelection = new int[0][];
 			return;
 		}
 
-		distinct_indices = new int[selection.Length][];
+		m_DistinctIndicesSelection = new int[selection.Length][];
 
 		// Append shared UV indices to SelectedTriangles array (if necessary)
 		for(int i = 0; i < selection.Length; i++)
 		{
-			if( selection[i].sharedIndicesUVInternal == null )
-				continue;
-
-			// pb_IntArray[] sharedUVs = selection[i].sharedIndicesUV;
-			// Dictionary<int, int> uvLookup = sharedUVs.ToDictionary();
-			// int[] tris = selection[i].SelectedTriangles;
-			// List<int> selectedTris = new List<int>();
-
-			// *
-			//  * Put sewn UVs into the selection if they aren't already.
-
-			// for(int n = 0; n < selectedTris.Count; n++)
-			// {
-			// 	if( uvLookup[selectedTris[n]] > -1 )
-			// 		selectedTris.AddRange((int[])sharedUVs[uvLookup[tris[n]]]);
-			// 	else
-			// 		selectedTris.Add(tris[n]);
-			// }
+			List<int> selectedTris = new List<int>(selection[i].SelectedTriangles);
 
 			IntArray[] sharedUVs = selection[i].sharedIndicesUVInternal;
 
-			List<int> selectedTris = new List<int>(selection[i].SelectedTriangles);
-
-			/**
-			 * Put sewn UVs into the selection if they aren't already.
-			 */
+			// put sewn UVs into the selection if they aren't already
 			if(sharedUVs != null)
 			{
 				foreach(int[] arr in sharedUVs)
@@ -731,7 +710,8 @@ class UVEditor : EditorWindow
 					}
 				}
 			}
-			distinct_indices[i] = selectedTris.Distinct().ToArray();
+
+			m_DistinctIndicesSelection[i] = selectedTris.Distinct().ToArray();
 		}
 	}
 
@@ -1354,7 +1334,7 @@ class UVEditor : EditorWindow
 				ProBuilderMesh pb = selection[n];
 				Vector2[] uvs = UVEditing.GetUVs(pb, channel);
 
-				foreach(int i in distinct_indices[n])
+				foreach(int i in m_DistinctIndicesSelection[n])
 					uvs[i] = newUVPosition - (uvOrigin - uv_origins[n][i]);
 
 				// set uv positions before figuring snap dist stuff
@@ -1368,12 +1348,12 @@ class UVEditor : EditorWindow
 
 				for(int i = 0; i < selection.Length; i++)
 				{
-					Vector2[] sel = InternalUtility.ValuesWithIndices(UVEditing.GetUVs(selection[i], channel), distinct_indices[i]);
+					Vector2[] sel = InternalUtility.ValuesWithIndices(UVEditing.GetUVs(selection[i], channel), m_DistinctIndicesSelection[i]);
 
 					for(int n = 0; n < selection.Length; n++)
 					{
 						Vector2 offset;
-						if( EditorHandleUtility.NearestPointDelta(sel, UVEditing.GetUVs(selection[n], channel), i == n ? distinct_indices[i] : null, MAX_PROXIMITY_SNAP_DIST_UV, out offset) )
+						if( EditorHandleUtility.NearestPointDelta(sel, UVEditing.GetUVs(selection[n], channel), i == n ? m_DistinctIndicesSelection[i] : null, MAX_PROXIMITY_SNAP_DIST_UV, out offset) )
 						{
 							if( EditorHandleUtility.CurrentAxisConstraint.Mask(offset).sqrMagnitude < nearestDelta.sqrMagnitude)
 								nearestDelta = offset;
@@ -1389,7 +1369,7 @@ class UVEditor : EditorWindow
 					{
 						Vector2[] uvs = UVEditing.GetUVs(selection[i], channel);
 
-						foreach(int n in distinct_indices[i])
+						foreach(int n in m_DistinctIndicesSelection[i])
 							uvs[n] += nearestDelta;
 
 						UVEditing.ApplyUVs(selection[i], uvs, channel);
@@ -1444,7 +1424,7 @@ class UVEditor : EditorWindow
 				ProBuilderMesh pb = selection[n];
 				Vector2[] uvs = UVEditing.GetUVs(pb, channel);
 
-				foreach(int i in distinct_indices[n])
+				foreach(int i in m_DistinctIndicesSelection[n])
 					uvs[i] += delta;
 
 				UVEditing.ApplyUVs(pb, uvs, channel);
@@ -1479,7 +1459,7 @@ class UVEditor : EditorWindow
 					ProBuilderMesh pb = selection[n];
 					Vector2[] uvs = UVEditing.GetUVs(pb, channel);
 
-					foreach(int i in distinct_indices[n])
+					foreach(int i in m_DistinctIndicesSelection[n])
 						uvs[i] = uv_origins[n][i].RotateAroundPoint( uvOrigin, uvRotation );
 
 					UVEditing.ApplyUVs(pb, uvs, channel);
@@ -1533,7 +1513,7 @@ class UVEditor : EditorWindow
 					ProBuilderMesh pb = selection[n];
 					Vector2[] uvs = UVEditing.GetUVs(pb, channel);
 
-					foreach(int i in distinct_indices[n])
+					foreach(int i in m_DistinctIndicesSelection[n])
 						uvs[i] = uv_origins[n][i].RotateAroundPoint( uvOrigin, uvRotation );
 
 					UVEditing.ApplyUVs(pb, uvs, channel);
@@ -1586,7 +1566,7 @@ class UVEditor : EditorWindow
 					ProBuilderMesh pb = selection[n];
 					Vector2[] uvs = UVEditing.GetUVs(pb, channel);
 
-					foreach(int i in distinct_indices[n])
+					foreach(int i in m_DistinctIndicesSelection[n])
 					{
 						uvs[i] = uv_origins[n][i].ScaleAroundPoint(uvOrigin, uvScale);
 					}
@@ -1647,7 +1627,7 @@ class UVEditor : EditorWindow
 				ProBuilderMesh pb = selection[n];
 				Vector2[] uvs = UVEditing.GetUVs(pb, channel);
 
-				foreach(int i in distinct_indices[n])
+				foreach(int i in m_DistinctIndicesSelection[n])
 				{
 					uvs[i] = uv_origins[n][i].ScaleAroundPoint(uvOrigin, textureScale);
 				}
@@ -1837,9 +1817,9 @@ class UVEditor : EditorWindow
 		UVRectIdentity.x = UVGraphCenter.x + uvGraphOffset.x;
 		UVRectIdentity.y = UVGraphCenter.y + uvGraphOffset.y - UVRectIdentity.height;
 
-		var texture = GetMainTexture(preview_material);
+		var texture = GetMainTexture(m_PreviewMaterial);
 
-		if(pref_showMaterial && preview_material && texture != null)
+		if(pref_showMaterial && m_PreviewMaterial && texture != null)
 			EditorGUI.DrawPreviewTexture(UVRectIdentity, texture, null, ScaleMode.StretchToFill, 0);
 
 		if( (screenshotStatus != ScreenshotStatus.PrepareCanvas && screenshotStatus != ScreenshotStatus.CanvasReady) || !screenshot_hideGrid)
@@ -2278,9 +2258,10 @@ class UVEditor : EditorWindow
 		}
 	}
 
-	/**
-	 * Returns the bounds of the current selection in UV space
-	 */
+	/// <summary>
+	/// Returns the bounds of the current selection in UV space
+	/// </summary>
+	/// <returns></returns>
 	Bounds2D UVSelectionBounds()
 	{
 		float xMin = 0f, xMax = 0f, yMin = 0f, yMax = 0f;
@@ -2289,7 +2270,7 @@ class UVEditor : EditorWindow
 		{
 			Vector2[] uv = selection[n].texturesInternal;
 
-			foreach(int i in distinct_indices[n])
+			foreach(int i in m_DistinctIndicesSelection[n])
 			{
 				if(first)
 				{
@@ -2474,7 +2455,7 @@ class UVEditor : EditorWindow
 			mode = UVMode.Manual;
 		}
 
-		editor.GetFirstSelectedMaterial(ref preview_material);
+		editor.GetFirstSelectedMaterial(ref m_PreviewMaterial);
 
 		handlePosition = UVSelectionBounds().center - handlePosition_offset;
 	}
@@ -3164,7 +3145,7 @@ class UVEditor : EditorWindow
 		{
 			selection[i].ToMesh();
 
-			selection[i].CollapseUVs(distinct_indices[i]);
+			selection[i].CollapseUVs(m_DistinctIndicesSelection[i]);
 
 			selection[i].Refresh();
 			selection[i].Optimize();
@@ -3190,7 +3171,7 @@ class UVEditor : EditorWindow
 		{
 			selection[i].ToMesh();
 
-			selection[i].SewUVs(distinct_indices[i], weldDistance);
+			selection[i].SewUVs(m_DistinctIndicesSelection[i], weldDistance);
 			RefreshElementGroups(selection[i]);
 
 			selection[i].Refresh();
@@ -3289,12 +3270,12 @@ class UVEditor : EditorWindow
 			selection[i].ToMesh();
 
 			Vector2[] uv = UVEditing.GetUVs(selection[i], channel);
-			Vector2[] uvs = InternalUtility.ValuesWithIndices( uv, distinct_indices[i] );
+			Vector2[] uvs = InternalUtility.ValuesWithIndices( uv, m_DistinctIndicesSelection[i] );
 
 			uvs = UVEditing.FitUVs(uvs);
 
 			for(int n = 0; n < uvs.Length; n++)
-				uv[ distinct_indices[i][n] ] = uvs[n];
+				uv[ m_DistinctIndicesSelection[i][n] ] = uvs[n];
 
 			UVEditing.ApplyUVs(selection[i], uv, channel);
 		}
