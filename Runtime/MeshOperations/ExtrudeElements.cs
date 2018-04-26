@@ -240,9 +240,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				for(int i = 0; i < face.distinctIndices.Length; i++)
 				{
-					vertices[face.distinctIndices[i]].position.x += delta.x;
-					vertices[face.distinctIndices[i]].position.y += delta.y;
-					vertices[face.distinctIndices[i]].position.z += delta.z;
+					vertices[face.distinctIndices[i]].position += delta;
 
 					// Break any UV shared connections
 					if( lookupUV != null && lookupUV.ContainsKey(face.distinctIndices[i]) )
@@ -356,14 +354,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					vertices.Add( null );
 
 					Face bridge = new Face(
-						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 }, 	// indices
-						face.material,													// material
-						new AutoUnwrapSettings(face.uv),												// UV material
-						face.smoothingGroup,											// smoothing group
-						-1,																// texture group
-						-1,																// uv element group
-						false															// manualUV flag
-						);
+						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 }, // indices
+						face.material, // material
+						new AutoUnwrapSettings(face.uv), // UV material
+						face.smoothingGroup, // smoothing group
+						-1, // texture group
+						-1, // uv element group
+						false // manualUV flag
+					);
 
 					newFaces.Add(bridge);
 				}
@@ -395,9 +393,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 						if(extrudeMap.TryGetValue(com, out dir))
 						{
-							dir.item1.x += normal.x;
-							dir.item1.y += normal.y;
-							dir.item1.z += normal.z;
+							dir.item1 += normal;
 							dir.item3.Add(idx);
 						}
 						else
@@ -422,9 +418,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				foreach(int i in kvp.Value.item3)
 				{
-					vertices[i].position.x += direction.x;
-					vertices[i].position.y += direction.y;
-					vertices[i].position.z += direction.z;
+					vertices[i].position += direction;
 				}
 			}
 

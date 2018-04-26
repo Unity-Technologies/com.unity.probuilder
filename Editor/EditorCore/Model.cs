@@ -66,9 +66,9 @@ namespace UnityEditor.ProBuilder
 			mesh.ToMesh(quads ? MeshTopology.Quads : MeshTopology.Triangles);
 			mesh.Refresh(RefreshMask.UV | RefreshMask.Colors | RefreshMask.Normals | RefreshMask.Tangents);
 			this.name = name;
-			this.vertices = Vertex.GetVertices(mesh);
-			Face.GetMeshIndices(mesh.faces, out this.submeshes, quads ? MeshTopology.Quads : MeshTopology.Triangles);
-			this.matrix = mesh.transform.localToWorldMatrix;
+			vertices = Vertex.GetVertices(mesh);
+			submeshes = Face.GetMeshIndices(mesh.faces, quads ? MeshTopology.Quads : MeshTopology.Triangles);
+			matrix = mesh.transform.localToWorldMatrix;
 			mesh.ToMesh(MeshTopology.Triangles);
 			mesh.Refresh();
 			mesh.Optimize();

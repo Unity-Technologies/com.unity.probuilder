@@ -10,11 +10,8 @@ namespace UnityEngine.ProBuilder
 	[System.Serializable]
 	public struct Edge : System.IEquatable<Edge>
 	{
-        /// <summary>
-        /// A set of vertex indices that form an edge.
-        /// </summary>
-        public int x { get; set; }
-        public int y { get; set; }
+		public int x { get; set; }
+		public int y { get; set; }
 
 		/// <summary>
 		/// An empty edge is defined as -1, -1.

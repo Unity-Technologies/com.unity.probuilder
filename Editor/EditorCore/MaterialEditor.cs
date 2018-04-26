@@ -17,7 +17,7 @@ namespace UnityEditor.ProBuilder
 	{
 		// Reference to pb_Editor instance.
 		static ProBuilderEditor editor { get { return ProBuilderEditor.instance; } }
-		
+
 		// Reference to the currently open pb_Material_Editor
 		public static MaterialEditor instance { get; private set; }
 
@@ -351,7 +351,7 @@ namespace UnityEditor.ProBuilder
 				if(em == (EventModifiers.Control | EventModifiers.Shift))
 				{
 					UndoUtility.RecordObject(pb, "Quick Apply");
-					pb.SetFaceMaterial( new Face[1] { quad }, m_QueuedMaterial);
+					quad.material = m_QueuedMaterial;
 					OnFaceChanged(pb);
 					EditorUtility.ShowNotification("Quick Apply Material");
 					return true;
@@ -369,9 +369,9 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				Face[] faces = pb.SelectedFaces;
-				pb.SetFaceMaterial(faces == null || faces.Length < 1 ? pb.faces : faces, mat);
-
+				Face[] faces = pb.SelectedFaceCount > 0 ? pb.SelectedFaces : pb.faces;
+				foreach (var face in faces)
+					face.material = mat;
 				OnFaceChanged(pb);
 			}
 

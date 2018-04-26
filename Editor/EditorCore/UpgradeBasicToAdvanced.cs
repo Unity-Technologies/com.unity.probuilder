@@ -51,7 +51,10 @@ namespace UnityEditor.ProBuilder.Actions
 						((float)i / all.Length));
 				}
 
-				pb.SetFaceMaterial(pb.faces, pb.gameObject.GetComponent<MeshRenderer>().sharedMaterial);
+				var mat = pb.gameObject.GetComponent<MeshRenderer>().sharedMaterial;
+
+				foreach(var face in pb.faces)
+					face.material = mat;
 
 				pb.ToMesh();
 				pb.Refresh();

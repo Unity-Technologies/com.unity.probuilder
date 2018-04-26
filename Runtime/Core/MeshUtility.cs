@@ -7,7 +7,7 @@ using System.Collections;
 namespace UnityEngine.ProBuilder
 {
 	/// <summary>
-	/// Functions for generating mesh attributes and various other mesh utilities.
+	/// Functions for generating UnityEngine.Mesh attributes and various other mesh utilities.
 	/// </summary>
 	public static class MeshUtility
 	{
@@ -132,71 +132,12 @@ namespace UnityEngine.ProBuilder
 			mesh.tangents = tangents;
 		}
 
-		/**
-		 * \brief Performs a deep copy of a mesh and returns a new mesh object.
-		 * @param _mesh The mesh to copy.
-		 * \returns Copied mesh object.
-		 */
-		public static Mesh DeepCopy(Mesh mesh)
-		{
-			Mesh m = new Mesh();
-			CopyTo(mesh, m);
-			return m;
-		}
-
-		/**
-		 * Copy source mesh values to destination mesh.
-		 */
-		public static void CopyTo(Mesh source, Mesh destination)
-		{
-            if (source == null)
-                throw new System.ArgumentNullException("source");
-
-            if (destination == null)
-                throw new System.ArgumentNullException("destination");
-
-            Vector3[] v = new Vector3[source.vertices.Length];
-            int[][] t = new int[source.subMeshCount][];
-            Vector2[] u = new Vector2[source.uv.Length];
-            Vector2[] u2 = new Vector2[source.uv2.Length];
-            Vector4[] tan = new Vector4[source.tangents.Length];
-            Vector3[] n = new Vector3[source.normals.Length];
-            Color32[] c = new Color32[source.colors32.Length];
-
-            System.Array.Copy(source.vertices, v, v.Length);
-
-			for(int i = 0; i < t.Length; i++)
-				t[i] = source.GetTriangles(i);
-
-			System.Array.Copy(source.uv, u, u.Length);
-			System.Array.Copy(source.uv2, u2, u2.Length);
-			System.Array.Copy(source.normals, n, n.Length);
-			System.Array.Copy(source.tangents, tan, tan.Length);
-			System.Array.Copy(source.colors32, c, c.Length);
-
-			destination.Clear();
-			destination.name = source.name;
-
-			destination.vertices = v;
-
-			destination.subMeshCount = t.Length;
-
-			for(int i = 0; i < t.Length; i++)
-				destination.SetTriangles(t[i], i);
-
-			destination.uv = u;
-			destination.uv2 = u2;
-			destination.tangents = tan;
-			destination.normals = n;
-			destination.colors32 = c;
-		}
-
         /// <summary>
-        /// Calculate mesh normals. Does not apply smoothing groups (see SmoothNormals).
+        /// Calculate mesh normals.
         /// </summary>
         /// <param name="mesh"></param>
         /// <returns>A new array of the vertex normals.</returns>
-        public static Vector3[] GenerateNormals(ProBuilderMesh mesh)
+        public static Vector3[] CalculateHardNormals(ProBuilderMesh mesh)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -247,14 +188,16 @@ namespace UnityEngine.ProBuilder
 		}
 
         /// <summary>
-        /// Apply smoothing groups to a set of per-face normals.
+        /// Calculates the normals for a mesh, taking into account smoothing groups.
         /// </summary>
         /// <param name="mesh"></param>
-        /// <param name="normals"></param>
-        public static void SmoothNormals(ProBuilderMesh mesh, ref Vector3[] normals)
+        /// <returns>A Vector3 array of the mesh normals</returns>
+        public static Vector3[] CalculateNormals(ProBuilderMesh mesh)
 		{
             if (mesh == null)
                 throw new System.ArgumentNullException("mesh");
+
+			Vector3[] normals = CalculateHardNormals(mesh);
 
 			// average the soft edge faces
 			int vertexCount = mesh.vertexCount;
@@ -320,8 +263,74 @@ namespace UnityEngine.ProBuilder
 					normals[index].y = averages[group].y / counts[group];
 					normals[index].z = averages[group].z / counts[group];
 				}
+
 			}
+
+			return normals;
 		}
+
+		/**
+		 * \brief Performs a deep copy of a mesh and returns a new mesh object.
+		 * @param _mesh The mesh to copy.
+		 * \returns Copied mesh object.
+		 */
+		public static Mesh DeepCopy(Mesh mesh)
+		{
+			Mesh m = new Mesh();
+			CopyTo(mesh, m);
+			return m;
+		}
+
+		/// <summary>
+		/// Copy source mesh values to destination mesh.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
+		/// <exception cref="ArgumentNullException"></exception>
+		public static void CopyTo(Mesh source, Mesh destination)
+		{
+            if (source == null)
+                throw new System.ArgumentNullException("source");
+
+            if (destination == null)
+                throw new System.ArgumentNullException("destination");
+
+            Vector3[] v = new Vector3[source.vertices.Length];
+            int[][] t = new int[source.subMeshCount][];
+            Vector2[] u = new Vector2[source.uv.Length];
+            Vector2[] u2 = new Vector2[source.uv2.Length];
+            Vector4[] tan = new Vector4[source.tangents.Length];
+            Vector3[] n = new Vector3[source.normals.Length];
+            Color32[] c = new Color32[source.colors32.Length];
+
+            System.Array.Copy(source.vertices, v, v.Length);
+
+			for(int i = 0; i < t.Length; i++)
+				t[i] = source.GetTriangles(i);
+
+			System.Array.Copy(source.uv, u, u.Length);
+			System.Array.Copy(source.uv2, u2, u2.Length);
+			System.Array.Copy(source.normals, n, n.Length);
+			System.Array.Copy(source.tangents, tan, tan.Length);
+			System.Array.Copy(source.colors32, c, c.Length);
+
+			destination.Clear();
+			destination.name = source.name;
+
+			destination.vertices = v;
+
+			destination.subMeshCount = t.Length;
+
+			for(int i = 0; i < t.Length; i++)
+				destination.SetTriangles(t[i], i);
+
+			destination.uv = u;
+			destination.uv2 = u2;
+			destination.tangents = tan;
+			destination.normals = n;
+			destination.colors32 = c;
+		}
+
 
         /// <summary>
         /// Get a mesh attribute from either the MeshFilter.sharedMesh or the MeshRenderer.additionalVertexStreams mesh.

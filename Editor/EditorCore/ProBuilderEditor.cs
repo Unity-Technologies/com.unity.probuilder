@@ -699,7 +699,7 @@ namespace UnityEditor.ProBuilder
 				List<RaycastHit> hits;
 				Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
 
-				if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, bestObj, out hits, Mathf.Infinity, Culling.FrontBack))
+				if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, bestObj, out hits, Culling.Front))
 				{
 					Camera cam = SceneView.lastActiveSceneView.camera;
 
@@ -2405,14 +2405,14 @@ namespace UnityEditor.ProBuilder
 
 			if (GetFirstSelectedFace(out pb, out face))
 			{
-				Vector3 nrm, bitan, tan;
-				ProBuilderMath.NormalTangentBitangent(pb, face, out nrm, out tan, out bitan);
+				var tup = ProBuilderMath.NormalTangentBitangent(pb, face);
+				Vector3 nrm = tup.item1;
+				Vector3 bitan = tup.item3;
 
 				if (nrm == Vector3.zero || bitan == Vector3.zero)
 				{
 					nrm = Vector3.up;
 					bitan = Vector3.right;
-					tan = Vector3.forward;
 				}
 
 				handleMatrix *= Matrix4x4.TRS(ProBuilderMath.BoundsCenter(pb.positions.ValuesWithIndices(face.distinctIndices)),
@@ -2438,8 +2438,8 @@ namespace UnityEditor.ProBuilder
 						goto case HandleAlignment.Local;
 
 					// use average normal, tangent, and bitangent to calculate rotation relative to local space
-					Vector3 nrm, bitan, tan;
-					ProBuilderMath.NormalTangentBitangent(pb, face, out nrm, out tan, out bitan);
+					var tup = ProBuilderMath.NormalTangentBitangent(pb, face);
+					Vector3 nrm = tup.item1, bitan = tup.item3, tan = tup.item2;
 
 					if (nrm == Vector3.zero || bitan == Vector3.zero)
 					{

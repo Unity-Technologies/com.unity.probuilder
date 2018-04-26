@@ -30,32 +30,32 @@ namespace UnityEngine.ProBuilder
 		/// Returns the index in mesh.faces of the hit face, or -1.  Optionally can ignore
 		/// backfaces.
 		/// </summary>
-		/// <param name="InWorldRay"></param>
+		/// <param name="worldRay"></param>
 		/// <param name="mesh"></param>
 		/// <param name="hit"></param>
 		/// <param name="ignore"></param>
 		/// <returns></returns>
-		public static bool FaceRaycast(Ray InWorldRay, ProBuilderMesh mesh, out RaycastHit hit, HashSet<Face> ignore = null)
+		public static bool FaceRaycast(Ray worldRay, ProBuilderMesh mesh, out RaycastHit hit, HashSet<Face> ignore = null)
 		{
-			return FaceRaycast(InWorldRay, mesh, out hit, Mathf.Infinity, Culling.Front, ignore);
+			return FaceRaycast(worldRay, mesh, out hit, Mathf.Infinity, Culling.Front, ignore);
 		}
 
 		/// <summary>
 		/// Find the nearest face intersected by InWorldRay on this pb_Object.
 		/// </summary>
-		/// <param name="InWorldRay">A ray in world space.</param>
+		/// <param name="worldRay">A ray in world space.</param>
 		/// <param name="mesh">The ProBuilder object to raycast against.</param>
 		/// <param name="hit">If the mesh was intersected, hit contains information about the intersect point.</param>
 		/// <param name="distance">The distance from the ray origin to the intersection point.</param>
 		/// <param name="cullingMode">What sides of triangles does the ray intersect with.</param>
 		/// <param name="ignore">Optional collection of faces to ignore when raycasting.</param>
 		/// <returns>True if the ray intersects with the mesh, false if not.</returns>
-		public static bool FaceRaycast(Ray InWorldRay, ProBuilderMesh mesh, out RaycastHit hit, float distance, Culling cullingMode, HashSet<Face> ignore = null)
+		public static bool FaceRaycast(Ray worldRay, ProBuilderMesh mesh, out RaycastHit hit, float distance, Culling cullingMode, HashSet<Face> ignore = null)
 		{
 			// Transform ray into model space
-			InWorldRay.origin 		-= mesh.transform.position;  // Why doesn't worldToLocalMatrix apply translation?
-			InWorldRay.origin 		= mesh.transform.worldToLocalMatrix * InWorldRay.origin;
-			InWorldRay.direction 	= mesh.transform.worldToLocalMatrix * InWorldRay.direction;
+			worldRay.origin -= mesh.transform.position; // Why doesn't worldToLocalMatrix apply translation?
+			worldRay.origin = mesh.transform.worldToLocalMatrix * worldRay.origin;
+			worldRay.direction = mesh.transform.worldToLocalMatrix * worldRay.direction;
 
 			Vector3[] vertices = mesh.positions;
 
@@ -83,7 +83,7 @@ namespace UnityEngine.ProBuilder
 					Vector3 c = vertices[Indices[CurTriangle+2]];
 
 					nrm = Vector3.Cross(b-a, c-a);
-					dot = Vector3.Dot(InWorldRay.direction, nrm);
+					dot = Vector3.Dot(worldRay.direction, nrm);
 
 					bool skip = false;
 
@@ -98,7 +98,7 @@ namespace UnityEngine.ProBuilder
 							break;
 					}
 
-					if(!skip && ProBuilderMath.RayIntersectsTriangle(InWorldRay, a, b, c, out dist, out point))
+					if(!skip && ProBuilderMath.RayIntersectsTriangle(worldRay, a, b, c, out dist, out point))
 					{
 						if(dist > OutHitPoint || dist > distance)
 							continue;
@@ -113,7 +113,7 @@ namespace UnityEngine.ProBuilder
 			}
 
 			hit = new RaycastHit(OutHitPoint,
-									InWorldRay.GetPoint(OutHitPoint),
+									worldRay.GetPoint(OutHitPoint),
 									OutNrm,
 									OutHitFace);
 

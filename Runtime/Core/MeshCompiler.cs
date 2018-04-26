@@ -34,9 +34,7 @@ namespace UnityEngine.ProBuilder
             if (pb.hasUv3) target.SetUVs(2, pb.uv3);
             if (pb.hasUv4) target.SetUVs(3, pb.uv4);
 #endif
-            Vector3[] normals = MeshUtility.GenerateNormals(pb);
-            MeshUtility.SmoothNormals(pb, ref normals);
-            target.normals = normals;
+            target.normals = MeshUtility.CalculateNormals(pb);
             MeshUtility.GenerateTangent(target);
             if (pb.colors != null && pb.colors.Length == target.vertexCount)
                 target.colors = pb.colors;

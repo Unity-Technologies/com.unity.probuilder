@@ -18,7 +18,8 @@ namespace UnityEngine.ProBuilder
 	/// The ProBuilder edit level.
 	/// </summary>'
 	/// <remarks>Editor only, but necessary for pb_ElementGraphics.</remarks>
-	public enum EditLevel {
+	public enum EditLevel
+	{
 		/// <summary>
 		/// Unity tools are in control.
 		/// </summary>
@@ -34,7 +35,7 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Some other ProBuilder tool has control (vertex painter)
 		/// </summary>
-		Plugin = 4
+		Plugin = 3
 	}
 
 	/// <summary>

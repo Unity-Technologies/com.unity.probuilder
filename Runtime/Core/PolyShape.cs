@@ -23,7 +23,7 @@ namespace UnityEngine.ProBuilder
         ProBuilderMesh m_Mesh;
 
         [SerializeField]
-        List<Vector3> m_Points = new List<Vector3>();
+        internal List<Vector3> m_Points = new List<Vector3>();
 
         [SerializeField]
         float m_Extrude = 0f;
@@ -35,9 +35,15 @@ namespace UnityEngine.ProBuilder
         bool m_FlipNormals;
 
         [SerializeField]
-        bool m_IsOnGrid = true;
+        internal bool isOnGrid = true;
 
-        public float extrude
+	    public List<Vector3> points
+	    {
+		    get { return new List<Vector3>(m_Points); }
+		    set { m_Points = new List<Vector3>(value); }
+	    }
+
+	    public float extrude
         {
             get { return m_Extrude; }
             set { m_Extrude = value; }
@@ -77,7 +83,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		bool IsSnapEnabled()
 		{
-			return m_IsOnGrid;
+			return isOnGrid;
 		}
 	}
 }

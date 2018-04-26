@@ -61,30 +61,37 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// If false, ProBuilder will automatically create and scale colliders.
 		/// </summary>
-		public bool userCollisions = false;
+		public bool userCollisions { get; set; }
+
+		[SerializeField]
+		bool m_IsSelectable = true;
 
 		/// <summary>
-		/// Optional flag - if false the editor will ignore clicks on this object.
+		/// If false mesh elements will not be selectable.
 		/// </summary>
-		public bool isSelectable = true;
+		public bool isSelectable
+		{
+			get { return m_IsSelectable; }
+			set { m_IsSelectable = value; }
+		}
 
 		/// <summary>
 		/// UV2 generation parameters.
 		/// </summary>
-		public UnwrapParamaters unwrapParameters = new UnwrapParamaters();
+		public UnwrapParamaters unwrapParameters { get; set; }
 
 		/// <summary>
 		/// Usually when you delete a pb_Object you want to also clean up the mesh asset.
 		/// However, there are situations you'd want to keep the mesh around, like when stripping probuilder scripts.
 		/// </summary>
-		public bool dontDestroyMeshOnDelete = false;
+		public bool dontDestroyMeshOnDelete { get; set; }
 
 		/// <summary>
 		/// If onDestroyObject has a subscriber ProBuilder will invoke it instead of cleaning up unused meshes by itself.
 		/// </summary>
-		public static event System.Action<ProBuilderMesh> onDestroyObject;
+		public static event Action<ProBuilderMesh> onDestroyObject;
 
-		internal static event System.Action<ProBuilderMesh> onElementSelectionChanged;
+		internal static event Action<ProBuilderMesh> onElementSelectionChanged;
 
 		/// <summary>
 		/// Convenience property for getting the mesh from the MeshFilter component.
@@ -247,20 +254,11 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		public Vector3[] GetNormals()
 		{
-			Vector3[] res = null;
-
 			// If mesh isn't optimized try to return a copy from the compiled mesh
 			if (mesh.vertexCount == vertexCount)
-				res = mesh.normals;
+				return mesh.normals;
 
-			if (res == null || res.Length != vertexCount)
-			{
-				// todo Write pb_MeshUtility.GenerateNormals that handles smoothing groups to avoid 2 separate calls.
-				res = MeshUtility.GenerateNormals(this);
-				MeshUtility.SmoothNormals(this, ref res);
-			}
-
-			return res;
+			return MeshUtility.CalculateNormals(this);
 		}
 
 		/// <summary>
@@ -1243,10 +1241,7 @@ namespace UnityEngine.ProBuilder
 
 		void RefreshNormals()
 		{
-			mesh.RecalculateNormals();
-			Vector3[] normals = mesh.normals;
-			MeshUtility.SmoothNormals(this, ref normals);
-			GetComponent<MeshFilter>().sharedMesh.normals = normals;
+			GetComponent<MeshFilter>().sharedMesh.normals = MeshUtility.CalculateNormals(this);
 		}
 
 		void RefreshTangents()

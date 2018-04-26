@@ -6,7 +6,7 @@ namespace UnityEngine.ProBuilder
 {
 	public struct PickerOptions
 	{
-        /// <summary>
+		/// <summary>
         /// Should depth testing be performed when hit testing elements?
         /// Enable to select only visible elements, disable to select all elements regardless of visibility.
         /// </summary>
@@ -31,14 +31,24 @@ namespace UnityEngine.ProBuilder
 
         public override bool Equals(object obj)
         {
-            if(obj is PickerOptions)
-            {
-                var options = (PickerOptions)obj;
-                return rectSelectMode == options.rectSelectMode
-                    && depthTest == options.depthTest;
-            }
-            return false;
+	        if (!(obj is PickerOptions))
+		        return false;
+
+			return Equals((PickerOptions) obj);
         }
+
+		public bool Equals(PickerOptions other)
+		{
+			return depthTest == other.depthTest && rectSelectMode == other.rectSelectMode;
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				return (depthTest.GetHashCode() * 397) ^ (int) rectSelectMode;
+			}
+		}
 
         public static bool operator ==(PickerOptions a, PickerOptions b)
         {
