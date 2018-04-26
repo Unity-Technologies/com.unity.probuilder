@@ -12,17 +12,20 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Indices making up this submesh. Can be triangles or quads.
 		/// </summary>
-		public int[] indices;
+        [SerializeField]
+		internal int[] m_Indices;
 
 		/// <summary>
 		/// What topology is this submesh?
 		/// </summary>
-		public MeshTopology topology;
+        [SerializeField]
+		internal MeshTopology m_Topology;
 
 		/// <summary>
 		/// What material does this submesh use?
 		/// </summary>
-		public Material material;
+        [SerializeField]
+		internal Material m_Material;
 
 		/// <summary>
 		/// Create new pb_Submesh. Constructor does not copy indices.
@@ -32,9 +35,9 @@ namespace UnityEngine.ProBuilder
 		/// <param name="indices"></param>
 		public Submesh(Material material, MeshTopology topology, int[] indices)
 		{
-			this.indices = indices;
-			this.topology = topology;
-			this.material = material;
+			this.m_Indices = indices;
+			this.m_Topology = topology;
+			this.m_Material = material;
 		}
 
 		/// <summary>
@@ -48,14 +51,14 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			this.indices = mesh.GetIndices(subMeshIndex);
-			this.topology = mesh.GetTopology(subMeshIndex);
-			this.material = material;
+			this.m_Indices = mesh.GetIndices(subMeshIndex);
+			this.m_Topology = mesh.GetTopology(subMeshIndex);
+			this.m_Material = material;
 		}
 
 		public override string ToString()
 		{
-			return string.Format("{0}, {1}, {2}", material != null ? material.name : "null", topology.ToString(), indices != null ? indices.Length.ToString() : "0");
+			return string.Format("{0}, {1}, {2}", m_Material != null ? m_Material.name : "null", m_Topology.ToString(), m_Indices != null ? m_Indices.Length.ToString() : "0");
 		}
 	}
 }

@@ -717,26 +717,17 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Returns the first normal, tangent, and bitangent for this face using the first triangle available for tangent and bitangent.
 		/// </summary>
-		/// <remarks>
-		/// Does not rely on pb.msh for normal or uv information - uses pb.vertices & pb.uv.
-		/// </remarks>
 		/// <param name="pb"></param>
 		/// <param name="face"></param>
 		/// <param name="normal"></param>
 		/// <param name="tangent"></param>
 		/// <param name="bitangent"></param>
-		public static void NormalTangentBitangent(ProBuilderMesh pb, Face face, out Vector3 normal, out Vector3 tangent, out Vector3 bitangent)
+		public static SimpleTuple<Vector3, Vector3, Vector3> NormalTangentBitangent(ProBuilderMesh pb, Face face)
 		{
-			if(face.indices.Length < 3)
-			{
-				Debug.LogWarning("Cannot find normal / tangent / bitangent for face with < 3 indices.");
-				normal = Vector3.zero;
-				tangent = Vector3.zero;
-				bitangent = Vector3.zero;
-				return;
-			}
-
-			normal = ProBuilderMath.Normal(pb, face);
+			if(pb == null || face == null || face.indices.Length < 3)
+                throw new System.ArgumentNullException("pb", "Cannot find normal, tangent, and bitangent for null object, or faces with < 3 indices.");
+            
+			var normal = ProBuilderMath.Normal(pb, face);
 
 			Vector3 tan1 = Vector3.zero;
 			Vector3 tan2 = Vector3.zero;
@@ -784,9 +775,13 @@ namespace UnityEngine.ProBuilder
 
 			tan.w = (Vector3.Dot(Vector3.Cross(n, tan1), tan2) < 0.0f) ? -1.0f : 1.0f;
 
-			tangent = ((Vector3)tan) * tan.w;
-			bitangent = Vector3.Cross(normal, tangent);
-		}
+            Vector3 tangent = ((Vector3)tan) * tan.w;
+
+            return new SimpleTuple<Vector3, Vector3, Vector3>(
+                normal,
+                tangent,
+                Vector3.Cross(normal, tangent));
+        }
 
 		/// <summary>
 		/// Is the direction within epsilon of Up, Down, Left, Right, Forward, or Backwards?
@@ -794,7 +789,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="v"></param>
 		/// <param name="epsilon"></param>
 		/// <returns></returns>
-		internal static bool IsCardinalAxis(Vector3 v, float epsilon = .00001f)
+		internal static bool IsCardinalAxis(Vector3 v, float epsilon = floatEpsilon)
 		{
 			v.Normalize();
 

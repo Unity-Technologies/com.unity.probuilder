@@ -9,8 +9,8 @@ namespace UnityEngine.ProBuilder
 	/// <typeparam name="T2"></typeparam>
 	public class SimpleTuple<T1, T2>
 	{
-		public T1 item1;
-		public T2 item2;
+		public T1 item1 { get; set; }
+		public T2 item2 { get; set; }
 
 		public SimpleTuple() {}
 
@@ -35,9 +35,9 @@ namespace UnityEngine.ProBuilder
 	/// <typeparam name="T3"></typeparam>
 	public class SimpleTuple<T1, T2, T3>
 	{
-		public T1 item1;
-		public T2 item2;
-		public T3 item3;
+		public T1 item1 { get; set; }
+		public T2 item2 { get; set; }
+		public T3 item3 { get; set; }
 
 		public SimpleTuple() {}
 
@@ -64,10 +64,10 @@ namespace UnityEngine.ProBuilder
 	/// <typeparam name="T4"></typeparam>
 	public class SimpleTuple<T1, T2, T3, T4>
 	{
-		public T1 item1;
-		public T2 item2;
-		public T3 item3;
-		public T4 item4;
+		public T1 item1 { get; set; }
+		public T2 item2 { get; set; }
+		public T3 item3 { get; set; }
+		public T4 item4 { get; set; }
 
 		public SimpleTuple() {}
 

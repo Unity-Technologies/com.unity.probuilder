@@ -7,19 +7,17 @@ namespace UnityEngine.ProBuilder
 	/// Element selection mode.
 	/// </summary>
 	/// <remarks>Editor only, but necessary for pb_ElementGraphics.</remarks>
-	[System.Flags]
 	public enum SelectMode
 	{
-		Vertex = 0,
-		Edge = 1,
-		Face = 2
+		Vertex = 0x0,
+		Edge = 0x1,
+		Face = 0x2
 	}
 
 	/// <summary>
 	/// The ProBuilder edit level.
 	/// </summary>'
 	/// <remarks>Editor only, but necessary for pb_ElementGraphics.</remarks>
-	[System.Flags]
 	public enum EditLevel {
 		/// <summary>
 		/// Unity tools are in control.
@@ -207,51 +205,51 @@ namespace UnityEngine.ProBuilder
 		None
 	}
 
-	/// <summary>
-	/// Mesh attributes bitmask.
-	/// </summary>
-	[System.Flags]
-	public enum AttributeType : ushort
-	{
-		/// <summary>
-		/// Vertex positions.
-		/// </summary>
-		Position 	= 0x1,
-		/// <summary>
-		/// Vertex UV.
-		/// </summary>
-		UV0			= 0x2,
-		/// <summary>
-		/// Vertex UV2.
-		/// </summary>
-		UV1			= 0x4,
-		/// <summary>
-		/// Vertex UV3.
-		/// </summary>
-		UV2			= 0x8,
-		/// <summary>
-		/// Vertex UV4.
-		/// </summary>
-		UV3			= 0x10,
-		/// <summary>
-		/// Vertex colors.
-		/// </summary>
-		Color		= 0x20,
-		/// <summary>
-		/// Vertex normals.
-		/// </summary>
-		Normal		= 0x40,
-		/// <summary>
-		/// Vertex tangents.
-		/// </summary>
-		Tangent		= 0x80,
-		/// <summary>
-		/// All ProBuilder stored mesh attributes.
-		/// </summary>
-		All 		= 0xFF
-	};
+    /// <summary>
+    /// Mesh attributes bitmask.
+    /// </summary>
+    [System.Flags]
+    public enum AttributeType
+    {
+        /// <summary>
+        /// Vertex positions.
+        /// </summary>
+        Position = 0x1,
+        /// <summary>
+        /// Vertex UV.
+        /// </summary>
+        UV0 = 0x2,
+        /// <summary>
+        /// Vertex UV2.
+        /// </summary>
+        UV1 = 0x4,
+        /// <summary>
+        /// Vertex UV3.
+        /// </summary>
+        UV2 = 0x8,
+        /// <summary>
+        /// Vertex UV4.
+        /// </summary>
+        UV3 = 0x10,
+        /// <summary>
+        /// Vertex colors.
+        /// </summary>
+        Color = 0x20,
+        /// <summary>
+        /// Vertex normals.
+        /// </summary>
+        Normal = 0x40,
+        /// <summary>
+        /// Vertex tangents.
+        /// </summary>
+        Tangent = 0x80,
+        /// <summary>
+        /// All ProBuilder stored mesh attributes.
+        /// </summary>
+        All = 0xFF
+    };
 
-	enum IndexFormat
+    enum IndexFormat
 	{
 		Local = 0x0,
 		Common = 0x1,
@@ -262,38 +260,32 @@ namespace UnityEngine.ProBuilder
 	/// Selectively refresh mesh attributes in pb_Object::Refresh.
 	/// </summary>
 	[System.Flags]
-	public enum RefreshMask : ushort
+	public enum RefreshMask
 	{
-		All 		= 0xFF,
-		UV 			= 0x1,
-		Colors		= 0x2,
-		Normals 	= 0x4,
-		Tangents 	= 0x8,
-		Collisions	= 0x10
-	};
+        UV = 0x1,
+        Colors = 0x2,
+        Normals = 0x4,
+        Tangents = 0x8,
+        Collisions = 0x10,
+        All = UV | Colors | Normals | Tangents | Collisions
+    };
 
-	/**
-	 *
-	 * 	-
-	 *  - Vertex normal (legacy "As Group")
-	 *	- Face normal (the extrude distance corresponds to distance from face centers)
-	 */
 	/// <summary>
 	/// Different methods of face extrusion.
 	/// </summary>
 	public enum ExtrudeMethod
 	{
-		/// <summary>
-		/// Each face is extruded separately.
-		/// </summary>
-		IndividualFaces	= 0,
-		/// <summary>
-		/// Adjacent faces are merged as a group along the averaged normals.
-		/// </summary>
-		VertexNormal	= 1,
-		/// <summary>
-		/// Adjacent faces are merged as a group, but faces are extruded from each face normal.
-		/// </summary>
-		FaceNormal		= 2
-	}
+        /// <summary>
+        /// Each face is extruded separately.
+        /// </summary>
+        IndividualFaces = 0,
+        /// <summary>
+        /// Adjacent faces are merged as a group along the averaged normals.
+        /// </summary>
+        VertexNormal = 1,
+        /// <summary>
+        /// Adjacent faces are merged as a group, but faces are extruded from each face normal.
+        /// </summary>
+        FaceNormal = 2
+    }
 }

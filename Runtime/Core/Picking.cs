@@ -6,17 +6,17 @@ namespace UnityEngine.ProBuilder
 {
 	public struct PickerOptions
 	{
-		/// <summary>
-		/// Should depth testing be performed when hit testing elements?
-		/// Enable to select only visible elements, disable to select all elements regardless of visibility.
-		/// </summary>
-		public bool depthTest;
+        /// <summary>
+        /// Should depth testing be performed when hit testing elements?
+        /// Enable to select only visible elements, disable to select all elements regardless of visibility.
+        /// </summary>
+        public bool depthTest { get; set; }
 
 		/// <summary>
 		/// Require elements to be completely encompassed by the rect selection (Complete) or only touched (Partial).
 		/// Does not apply to vertex picking.
 		/// </summary>
-		public RectSelectMode rectSelectMode;
+		public RectSelectMode rectSelectMode { get; set; }
 
 		static readonly PickerOptions k_Default = new PickerOptions()
 		{
@@ -28,7 +28,28 @@ namespace UnityEngine.ProBuilder
 		{
 			get { return k_Default; }
 		}
-	}
+
+        public override bool Equals(object obj)
+        {
+            if(obj is PickerOptions)
+            {
+                var options = (PickerOptions)obj;
+                return rectSelectMode == options.rectSelectMode
+                    && depthTest == options.depthTest;
+            }
+            return false;
+        }
+
+        public static bool operator ==(PickerOptions a, PickerOptions b)
+        {
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(PickerOptions a, PickerOptions b)
+        {
+            return !a.Equals(b);
+        }
+    }
 
 	static class Picking
 	{

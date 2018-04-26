@@ -339,27 +339,31 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Duplicates and returns the passed pb_Object.
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <returns></returns>
-		public static ProBuilderMesh InitWithObject(ProBuilderMesh pb)
+        [Obsolete("NO USEY")]
+		public static ProBuilderMesh InitWithObject(ProBuilderMesh mesh)
 		{
-			Vector3[] v = new Vector3[pb.vertexCount];
-			System.Array.Copy(pb.positions, v, pb.vertexCount);
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
 
-			Vector2[] u = new Vector2[pb.vertexCount];
-			System.Array.Copy(pb.uv, u, pb.vertexCount);
+			Vector3[] v = new Vector3[mesh.vertexCount];
+			System.Array.Copy(mesh.positions, v, mesh.vertexCount);
 
-			Color[] c = new Color[pb.vertexCount];
-			System.Array.Copy(pb.colors, c, pb.vertexCount);
+			Vector2[] u = new Vector2[mesh.vertexCount];
+			System.Array.Copy(mesh.uv, u, mesh.vertexCount);
 
-			Face[] f = new Face[pb.faces.Length];
+			Color[] c = new Color[mesh.vertexCount];
+			System.Array.Copy(mesh.colors, c, mesh.vertexCount);
+
+			Face[] f = new Face[mesh.faces.Length];
 
 			for (int i = 0; i < f.Length; i++)
-				f[i] = new Face(pb.faces[i]);
+				f[i] = new Face(mesh.faces[i]);
 
-			ProBuilderMesh p = CreateInstanceWithElements(v, u, c, f, pb.GetSharedIndices(), pb.GetSharedIndicesUV());
+			ProBuilderMesh p = CreateInstanceWithElements(v, u, c, f, mesh.GetSharedIndices(), mesh.GetSharedIndicesUV());
 
-			p.gameObject.name = pb.gameObject.name + "-clone";
+			p.gameObject.name = mesh.gameObject.name + "-clone";
 
 			return p;
 		}
@@ -856,7 +860,7 @@ namespace UnityEngine.ProBuilder
 
 			for (int i = 0; i < m.subMeshCount; i++)
 #if UNITY_5_5_OR_NEWER
-				m.SetIndices(submeshes[i].indices, submeshes[i].topology, i, false);
+				m.SetIndices(submeshes[i].m_Indices, submeshes[i].m_Topology, i, false);
 #else
 				m.SetIndices(submeshes[i].indices, submeshes[i].topology, i);
 #endif
@@ -865,7 +869,7 @@ namespace UnityEngine.ProBuilder
 
 			GetComponent<MeshFilter>().sharedMesh = m;
 #if !PROTOTYPE
-			GetComponent<MeshRenderer>().sharedMaterials = submeshes.Select(x => x.material).ToArray();
+			GetComponent<MeshRenderer>().sharedMaterials = submeshes.Select(x => x.m_Material).ToArray();
 #endif
 		}
 
@@ -1205,10 +1209,10 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Set the internal color array.
 		/// </summary>
-		/// <param name="InColors"></param>
-		public void SetColors(Color[] InColors)
+		/// <param name="colors"></param>
+		public void SetColors(Color[] colors)
 		{
-			m_Colors = InColors.Length == vertexCount ? InColors : InternalUtility.FilledArray<Color>(Color.white, vertexCount);
+			m_Colors = colors != null && colors.Length == vertexCount ? colors : InternalUtility.FilledArray<Color>(Color.white, vertexCount);
 		}
 
 		/// <summary>
@@ -1218,7 +1222,11 @@ namespace UnityEngine.ProBuilder
 		/// <param name="color"></param>
 		public void SetFaceColor(Face face, Color color)
 		{
-			if (m_Colors == null) m_Colors = InternalUtility.FilledArray<Color>(Color.white, vertexCount);
+            if (face == null)
+                throw new ArgumentNullException("face");
+
+			if (m_Colors == null)
+                m_Colors = InternalUtility.FilledArray<Color>(Color.white, vertexCount);
 
 			foreach (int i in face.distinctIndices)
 				m_Colors[i] = color;

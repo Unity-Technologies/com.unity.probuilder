@@ -207,13 +207,13 @@ namespace UnityEditor.ProBuilder
 
 					string materialName = "";
 
-					if(materialMap.TryGetValue(submesh.material, out materialName))
+					if(materialMap.TryGetValue(submesh.m_Material, out materialName))
 						sb.AppendLine(string.Format("usemtl {0}", materialName));
 					else
 						sb.AppendLine(string.Format("usemtl {0}", "null"));
 
-					int[] indices = submesh.indices;
-					int inc = submesh.topology == MeshTopology.Quads ? 4 : 3;
+					int[] indices = submesh.m_Indices;
+					int inc = submesh.m_Topology == MeshTopology.Quads ? 4 : 3;
 
 					for(int ff = 0; ff < indices.Length; ff += inc)
 					{
@@ -280,7 +280,7 @@ namespace UnityEditor.ProBuilder
 			{
 				foreach(Submesh submesh in model.submeshes)
 				{
-					Material material = submesh.material;
+					Material material = submesh.m_Material;
 
 					if(material == null)
 						continue;

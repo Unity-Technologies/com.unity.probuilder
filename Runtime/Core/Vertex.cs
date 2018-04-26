@@ -12,25 +12,25 @@ namespace UnityEngine.ProBuilder
 	/// </summary>
 	public class Vertex : System.IEquatable<Vertex>
 	{
-		public Vector3 position;
-		public Color color;
-		public Vector3 normal;
-		public Vector4 tangent;
-		public Vector2 uv0;
-		public Vector2 uv2;
-		public Vector4 uv3;
-		public Vector4 uv4;
+		public Vector3 position { get; set; }
+		public Color color { get; set; }
+		public Vector3 normal { get; set; }
+		public Vector4 tangent { get; set; }
+		public Vector2 uv0 { get; set; }
+		public Vector2 uv2 { get; set; }
+		public Vector4 uv3 { get; set; }
+		public Vector4 uv4 { get; set; }
 
-		public bool hasPosition	= false;
-		public bool hasColor	= false;
-		public bool hasNormal	= false;
-		public bool hasTangent	= false;
-		public bool hasUv0		= false;
-		public bool hasUv2		= false;
-		public bool hasUv3		= false;
-		public bool hasUv4		= false;
+        public bool hasPosition { get; set; }
+        public bool hasColor { get; set; }
+        public bool hasNormal { get; set; }
+        public bool hasTangent { get; set; }
+        public bool hasUv0 { get; set; }
+        public bool hasUv2 { get; set; }
+        public bool hasUv3 { get; set; }
+        public bool hasUv4 { get; set; }
 
-		public Vertex(bool hasAllValues = false)
+        public Vertex(bool hasAllValues = false)
 		{
 			hasPosition = hasAllValues;
 			hasColor = hasAllValues;
@@ -232,10 +232,7 @@ namespace UnityEngine.ProBuilder
 			position.Normalize();
 			Vector4 color4 = (Vector4) color;
 			color4.Normalize();
-			color.r = color4.x;
-			color.g = color4.y;
-			color.b = color4.z;
-			color.a = color4.w;
+            color = (Color)color4;
 			normal.Normalize();
 			tangent.Normalize();
 			uv0.Normalize();
@@ -421,37 +418,39 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentNullException("vertices");
 
             int vc = vertices.Count;
+            var first = vertices[0];
 
-			bool hasPosition = ((attributes & AttributeType.Position) == AttributeType.Position);
-			bool hasColor = ((attributes & AttributeType.Color) == AttributeType.Color);
-			bool hasUv0 = ((attributes & AttributeType.UV0) == AttributeType.UV0);
-			bool hasNormal = ((attributes & AttributeType.Normal) == AttributeType.Normal);
-			bool hasTangent = ((attributes & AttributeType.Tangent) == AttributeType.Tangent);
-			bool hasUv2 = ((attributes & AttributeType.UV1) == AttributeType.UV1);
-			bool hasUv3 = ((attributes & AttributeType.UV2) == AttributeType.UV2);
-			bool hasUv4 = ((attributes & AttributeType.UV3) == AttributeType.UV3);
+            bool hasPosition = ((attributes & AttributeType.Position) == AttributeType.Position) && first.hasPosition;
+            bool hasColor = ((attributes & AttributeType.Color) == AttributeType.Color) && first.hasColor;
+            bool hasUv0 = ((attributes & AttributeType.UV0) == AttributeType.UV0) && first.hasUv0;
+            bool hasNormal = ((attributes & AttributeType.Normal) == AttributeType.Normal) && first.hasNormal;
+            bool hasTangent = ((attributes & AttributeType.Tangent) == AttributeType.Tangent) && first.hasTangent;
+            bool hasUv2 = ((attributes & AttributeType.UV1) == AttributeType.UV1) && first.hasUv2;
+            bool hasUv3 = ((attributes & AttributeType.UV2) == AttributeType.UV2) && first.hasUv3;
+            bool hasUv4 = ((attributes & AttributeType.UV3) == AttributeType.UV3) && first.hasUv4;
 
-			position 	= hasPosition ? new Vector3[vc] : null;
-			color 		= hasColor ? new Color[vc] : null;
-			uv0 		= hasUv0 ? new Vector2[vc] : null;
-			normal 		= hasNormal ? new Vector3[vc] : null;
-			tangent 	= hasTangent ? new Vector4[vc] : null;
-			uv2 		= hasUv2 ? new Vector2[vc] : null;
-			uv3 		= hasUv3 ? new List<Vector4>(vc) : null;
-			uv4 		= hasUv4 ? new List<Vector4>(vc) : null;
-
-			for(int i = 0; i < vc; i++)
-			{
-				if(hasPosition) 	position[i] = vertices[i].position;
-				if(hasColor) 		color[i] 	= vertices[i].color;
-				if(hasUv0) 			uv0[i] 		= vertices[i].uv0;
-				if(hasNormal) 		normal[i] 	= vertices[i].normal;
-				if(hasTangent) 		tangent[i] 	= vertices[i].tangent;
-				if(hasUv2) 			uv2[i] 		= vertices[i].uv2;
-				if(hasUv3) 			uv3.Add(vertices[i].uv3);
-				if(hasUv4) 			uv4.Add(vertices[i].uv4);
-			}
-		}
+            position = hasPosition ? new Vector3[vc] : null;
+            color = hasColor ? new Color[vc] : null;
+            uv0 = hasUv0 ? new Vector2[vc] : null;
+            normal = hasNormal ? new Vector3[vc] : null;
+            tangent = hasTangent ? new Vector4[vc] : null;
+            uv2 = hasUv2 ? new Vector2[vc] : null;
+            uv3 = hasUv3 ? new List<Vector4>(vc) : null;
+            uv4 = hasUv4 ? new List<Vector4>(vc) : null;
+#pragma warning disable 1062
+            for (int i = 0; i < vc; i++)
+            {
+                if (hasPosition) position[i] = vertices[i].position;
+                if (hasColor) color[i] = vertices[i].color;
+                if (hasUv0) uv0[i] = vertices[i].uv0;
+                if (hasNormal) normal[i] = vertices[i].normal;
+                if (hasTangent) tangent[i] = vertices[i].tangent;
+                if (hasUv2) uv2[i] = vertices[i].uv2;
+                if (hasUv3) uv3.Add(vertices[i].uv3);
+                if (hasUv4) uv4.Add(vertices[i].uv4);
+            }
+#pragma warning restore 1062
+        }
 
 		/// <summary>
 		/// Replace mesh values with vertex array. Mesh is cleared during this function, so be sure to set the triangles after calling.

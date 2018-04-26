@@ -46,14 +46,14 @@ namespace UnityEngine.ProBuilder
 
             for (int i = 0; i < target.subMeshCount; i++)
 #if UNITY_5_5_OR_NEWER
-                target.SetIndices(submeshes[i].indices, submeshes[i].topology, i, false);
+                target.SetIndices(submeshes[i].m_Indices, submeshes[i].m_Topology, i, false);
 #else
         		target.SetIndices(submeshes[i].indices, submeshes[i].topology, i);
 #endif
 
             target.name = string.Format("pb_Mesh{0}", pb.id);
 
-            return submeshes.Select(x => x.material).ToArray();
+            return submeshes.Select(x => x.m_Material).ToArray();
         }
 
         /// <summary>

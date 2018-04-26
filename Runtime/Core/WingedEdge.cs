@@ -19,7 +19,7 @@ namespace UnityEngine.ProBuilder
 	///     |             |
 	///     |             |
 	/// </summary>
-	public class WingedEdge : IEquatable<WingedEdge>, IEnumerable
+	public class WingedEdge : IEquatable<WingedEdge>, IEnumerable<WingedEdge>
 	{
 		/// <summary>
 		/// The local and shared edge that this edge belongs to.
@@ -79,11 +79,16 @@ namespace UnityEngine.ProBuilder
 		    return new WingedEdgeEnumerator(this);
 		}
 
-		/// <summary>
-		/// How many edges are in this sequence.
-		/// </summary>
-		/// <returns></returns>
-		public int Count()
+        IEnumerator<WingedEdge> IEnumerable<WingedEdge>.GetEnumerator()
+        {
+            return (IEnumerator<WingedEdge>) GetEnumerator();
+        }
+
+        /// <summary>
+        /// How many edges are in this sequence.
+        /// </summary>
+        /// <returns></returns>
+        public int Count()
 		{
 			WingedEdge current = this;
 			int count = 0;
@@ -382,5 +387,5 @@ namespace UnityEngine.ProBuilder
 
 			return winged;
 		}
-	}
+    }
 }
