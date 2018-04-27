@@ -26,7 +26,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Object
 				EditorUtility.VerifyMesh(copy);
 				Assert.AreNotEqual(copy, original, "GameObject references are equal");
 				Assert.IsFalse(ReferenceEquals(copy.mesh, original.mesh), "Mesh references are equal");
-				TestUtility.AssertAreEqual(copy.mesh, original.mesh);
+				TestUtility.AssertAreEqual(original.mesh, copy.mesh);
 			}
 			finally
 			{

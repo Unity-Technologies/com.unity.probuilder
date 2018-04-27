@@ -102,6 +102,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
+			mesh.sharedIndicesUVInternal = sharedIndices;
+
 			return true;
 		}
 
@@ -122,6 +124,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			IntArray[] sharedIndices = pb.sharedIndicesUVInternal;
 			IntArrayUtility.MergeSharedIndices(ref sharedIndices, indices);
+			pb.sharedIndicesUVInternal = sharedIndices;
 		}
 
 		/// <summary>

@@ -36,8 +36,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			int newIndex = IntArrayUtility.MergeSharedIndices(ref sharedIndices, indices);
 			IntArrayUtility.MergeSharedIndices(ref sharedIndicesUV, indices);
 
-			pb.SetSharedIndices(sharedIndices);
-			pb.SetSharedIndicesUV(sharedIndicesUV);
+			pb.sharedIndicesInternal = sharedIndices;
+			pb.sharedIndicesUVInternal = sharedIndicesUV;
 
 			pb.SetSharedVertexValues(newIndex, cen);
 

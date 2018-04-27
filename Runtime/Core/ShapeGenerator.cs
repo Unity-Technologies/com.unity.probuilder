@@ -20,7 +20,7 @@ namespace UnityEngine.ProBuilder
 		Cone,
 		Sprite,
 		Arch,
-		Icosahedron,
+		Sphere,
 		Torus
 	}
 
@@ -129,7 +129,7 @@ namespace UnityEngine.ProBuilder
 				pb = PlaneGenerator(1f, 1f, 0, 0, Axis.Up);
 			if (shape == ShapeType.Arch)
 				pb = ArchGenerator(180f, 2f, 1f, 1f, 9, true, true, true, true, true);
-			if (shape == ShapeType.Icosahedron)
+			if (shape == ShapeType.Sphere)
 				pb = IcosahedronGenerator(.5f, 2, true, false);
 			if (shape == ShapeType.Torus)
 				pb = TorusGenerator(12, 16, 1f, .3f, true, 360f, 360f);
@@ -1247,11 +1247,11 @@ namespace UnityEngine.ProBuilder
 				v[i+1] = k_IcosphereVertices[ k_IcosphereTriangles[i+1] ].normalized * radius;
 				v[i+2] = k_IcosphereVertices[ k_IcosphereTriangles[i+2] ].normalized * radius;
 			}
-            
+
             for (int i= 0; i < subdivisions; i++) {
 				v = SubdivideIcosahedron(v, radius);
 			}
-            
+
 			Face[] f = new Face[v.Length/3];
 			for(int i = 0; i < v.Length; i+=3) {
 				f[i/3] = new Face( new int[3] { i, i+1, i+2 } );
@@ -1264,11 +1264,11 @@ namespace UnityEngine.ProBuilder
 					f[i].uv.fill = AutoUnwrapSettings.Fill.Fit;
 			}
 
-			GameObject _gameObject = new GameObject();
-			ProBuilderMesh pb = _gameObject.AddComponent<ProBuilderMesh>();
-
-			pb.SetPositions(v);
-			pb.SetFaces(f);
+			GameObject go = new GameObject();
+			ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
+			pb.Clear();
+			pb.positionsInternal = v;
+			pb.facesInternal = f;
 
 			if (!weldVertices)
 			{
@@ -1280,12 +1280,11 @@ namespace UnityEngine.ProBuilder
 			}
 			else
 			{
-				pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(v));
+				pb.sharedIndicesInternal = IntArrayUtility.ExtractSharedIndices(v);
 			}
 
 			pb.ToMesh();
 			pb.Refresh();
-
 			pb.gameObject.name = "Icosphere";
 
 			return pb;

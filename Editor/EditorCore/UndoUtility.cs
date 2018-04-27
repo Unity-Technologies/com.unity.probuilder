@@ -26,9 +26,11 @@ namespace UnityEditor.ProBuilder
 				pb.Optimize();
 
 				// because undo after subdivide causes verify to fire, the face references aren't the same anymoore - so reset them
-				if( ProBuilderEditor.instance != null && pb.SelectedFaces.Length > 0 )
+				if (ProBuilderEditor.instance != null && pb.SelectedFaces.Length > 0)
+				{
 					pb.SetSelectedFaces(
 						System.Array.FindAll(pb.facesInternal, x => InternalUtility.ContainsMatch(x.distinctIndices, Face.AllTriangles(pb.SelectedFaces))));
+				}
 			}
 
 			ProBuilderEditor.Refresh(true);

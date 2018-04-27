@@ -19,7 +19,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.Shape
 			// Templates/{Asset Type}/{CallingFilePathRelativeToTests}/{MethodName}/{AssetName}.asset
 			// note - pb_DestroyListener will not let pb_Object destroy meshes backed by an asset, so there's no need
 			// to set `dontDestroyOnDelete` in the editor.
-			pb_TestUtility.SaveAssetTemplate(pb.GetComponent<MeshFilter>().sharedMesh, type.ToString());
+			TestUtility.SaveAssetTemplate(pb.GetComponent<MeshFilter>().sharedMesh, type.ToString());
 #else
 
 			try
@@ -104,15 +104,31 @@ namespace UnityEngine.ProBuilder.RuntimeTests.Shape
 		}
 
 		[Test]
-		public static void Icosahedron()
+		public static void Sphere()
 		{
-			CreateBasicAndCompare(ShapeType.Icosahedron);
+			CreateBasicAndCompare(ShapeType.Sphere);
 		}
 
 		[Test]
 		public static void Torus()
 		{
 			CreateBasicAndCompare(ShapeType.Torus);
+		}
+
+		[Test]
+		public static void MeshAttributesAreValidOnInit()
+		{
+			using (var shapes = new TestUtility.BuiltInPrimitives())
+			{
+				foreach (var pb in (IEnumerable<ProBuilderMesh>) shapes)
+				{
+					Assert.NotNull(pb.positionsInternal, pb.name);
+					Assert.NotNull(pb.facesInternal, pb.name);
+					Assert.NotNull(pb.texturesInternal, pb.name);
+					Assert.NotNull(pb.sharedIndicesInternal, pb.name);
+					Assert.NotNull(pb.sharedIndicesUVInternal, pb.name);
+				}
+			}
 		}
 	}
 }

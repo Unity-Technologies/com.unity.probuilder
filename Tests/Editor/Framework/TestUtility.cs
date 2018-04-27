@@ -1,6 +1,4 @@
-﻿//#define PB_CREATE_TEST_MESH_TEMPLATES
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -122,14 +120,14 @@ namespace UnityEngine.ProBuilder.Test
 			mesh.GetUVs(2, uv3s);
 			mesh.GetUVs(3, uv4s);
 
-			bool _hasPositions	= positions != null && positions.Count() == vertexCount;
-			bool _hasColors		= colors != null 	&& colors.Count() == vertexCount;
-			bool _hasNormals	= normals != null 	&& normals.Count() == vertexCount;
-			bool _hasTangents	= tangents != null 	&& tangents.Count() == vertexCount;
-			bool _hasUv0		= uv0s != null 		&& uv0s.Count() == vertexCount;
-			bool _hasUv2		= uv2s != null 		&& uv2s.Count() == vertexCount;
-			bool _hasUv3		= uv3s.Count() == vertexCount;
-			bool _hasUv4		= uv4s.Count() == vertexCount;
+			bool _hasPositions = positions != null && positions.Count() == vertexCount;
+			bool _hasColors = colors != null && colors.Count() == vertexCount;
+			bool _hasNormals = normals != null && normals.Count() == vertexCount;
+			bool _hasTangents = tangents != null && tangents.Count() == vertexCount;
+			bool _hasUv0 = uv0s != null && uv0s.Count() == vertexCount;
+			bool _hasUv2 = uv2s != null && uv2s.Count() == vertexCount;
+			bool _hasUv3 = uv3s.Count() == vertexCount;
+			bool _hasUv4 = uv4s.Count() == vertexCount;
 
 			for(int i = 0; i < vertexCount; i++)
 			{
@@ -198,35 +196,39 @@ namespace UnityEngine.ProBuilder.Test
 		/// <summary>
 		/// Compare two meshes for value-wise equality.
 		/// </summary>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
+		/// <param name="expected"></param>
+		/// <param name="result"></param>
 		/// <returns></returns>
-		public static bool AssertAreEqual(Mesh left, Mesh right)
+		public static bool AssertAreEqual(Mesh expected, Mesh result)
 		{
-			int vertexCount = left.vertexCount;
-			int subMeshCount = left.subMeshCount;
+			int vertexCount = expected.vertexCount;
+			int subMeshCount = expected.subMeshCount;
 
-			Assert.AreEqual(vertexCount, right.vertexCount);
-			Assert.AreEqual(subMeshCount, right.subMeshCount);
+			Assert.AreEqual(vertexCount, result.vertexCount);
+			Assert.AreEqual(subMeshCount, result.subMeshCount);
 
-			Vertex[] leftVertices = Vertex.GetVertices(left);
-			Vertex[] rightVertices = Vertex.GetVertices(right);
+			Vertex[] leftVertices = Vertex.GetVertices(expected);
+			Vertex[] rightVertices = Vertex.GetVertices(result);
 
 			for (int i = 0; i < vertexCount; i++)
+			{
+				if(!leftVertices[i].Equals(rightVertices[i]))
+					Debug.Log("Expected\n" + leftVertices[i].ToString("F5") + "\n---\nReceived:\n" + rightVertices[i].ToString("F5"));
 				Assert.AreEqual(leftVertices[i], rightVertices[i]);
+			}
 
 			List<int> leftIndices = new List<int>();
 			List<int> rightIndices = new List<int>();
 
 			for (int i = 0; i < subMeshCount; i++)
 			{
-				uint indexCount = left.GetIndexCount(i);
+				uint indexCount = expected.GetIndexCount(i);
 
-				Assert.AreEqual(left.GetTopology(i), right.GetTopology(i));
-				Assert.AreEqual(indexCount, right.GetIndexCount(i));
+				Assert.AreEqual(expected.GetTopology(i), result.GetTopology(i));
+				Assert.AreEqual(indexCount, result.GetIndexCount(i));
 
-				left.GetIndices(leftIndices, i);
-				right.GetIndices(rightIndices, i);
+				expected.GetIndices(leftIndices, i);
+				result.GetIndices(rightIndices, i);
 
 				for(int n = 0; n < indexCount; n++)
 					Assert.AreEqual(leftIndices[n], rightIndices[n]);
@@ -306,10 +308,8 @@ namespace UnityEngine.ProBuilder.Test
 		/// </summary>
 		/// <param name="asset"></param>
 		/// <param name="path"></param>
-		[Conditional("PB_CREATE_TEST_MESH_TEMPLATES")]
 		static void SaveAssetTemplateAtPath<T>(T asset, string path, bool overwrite = true) where T : UObject
 		{
-
 			if (!path.EndsWith(".asset"))
 				path += ".asset";
 

@@ -29,10 +29,10 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 					LogAssert.NoUnexpectedReceived();
 					TestUtility.AssertMeshAttributesValid(pb.mesh);
 #if PB_CREATE_TEST_MESH_TEMPLATES
-					pb_TestUtility.SaveAssetTemplate(pb.msh, pb.name);
+					TestUtility.SaveAssetTemplate(pb.mesh, pb.name);
 #endif
 					Mesh template = TestUtility.GetAssetTemplate<Mesh>(pb.name);
-					TestUtility.AssertAreEqual(pb.mesh, template);
+					TestUtility.AssertAreEqual(template, pb.mesh);
 				}
 			}
 		}
@@ -52,10 +52,10 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 					Assert.AreNotEqual(vertexCountBeforeExtrude, pb.vertexCount);
 					TestUtility.AssertMeshAttributesValid(pb.mesh);
 #if PB_CREATE_TEST_MESH_TEMPLATES
-					pb_TestUtility.SaveAssetTemplate(pb.msh, pb.name);
+					TestUtility.SaveAssetTemplate(pb.mesh, pb.name);
 #endif
 					Mesh template = TestUtility.GetAssetTemplate<Mesh>(pb.name);
-					TestUtility.AssertAreEqual(pb.mesh, template);
+					TestUtility.AssertAreEqual(template, pb.mesh);
 				}
 			}
 		}
@@ -73,10 +73,10 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 					LogAssert.NoUnexpectedReceived();
 					TestUtility.AssertMeshAttributesValid(pb.mesh);
 #if PB_CREATE_TEST_MESH_TEMPLATES
-					pb_TestUtility.SaveAssetTemplate(pb.msh, pb.name);
+					TestUtility.SaveAssetTemplate(pb.mesh, pb.name);
 #endif
 					Mesh template = TestUtility.GetAssetTemplate<Mesh>(pb.name);
-					TestUtility.AssertAreEqual(pb.mesh, template);
+					TestUtility.AssertAreEqual(template, pb.mesh);
 				}
 			}
 		}
@@ -95,7 +95,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 					LogAssert.NoUnexpectedReceived();
 					TestUtility.AssertMeshAttributesValid(pb.mesh);
 #if PB_CREATE_TEST_MESH_TEMPLATES
-					pb_TestUtility.SaveAssetTemplate(pb.msh, pb.name);
+					TestUtility.SaveAssetTemplate(pb.mesh, pb.name);
 #endif
 					Assert.AreEqual(initialVertexCount + face.edges.Length * 4, pb.vertexCount);
 				}

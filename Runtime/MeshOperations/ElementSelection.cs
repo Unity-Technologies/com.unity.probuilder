@@ -8,134 +8,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
 {
 	public static partial class ElementSelection
 	{
-		/// <summary>
-		/// Returns all faces that share an edge with originFace.  If calling multiple times, use the variation that accepts a dictionary lookup to  save to the cost of generating it each call.
-		/// </summary>
-		/// <param name="pb"></param>
-		/// <param name="originFace"></param>
-		/// <param name="lookup"></param>
-		/// <param name="mask"></param>
-		/// <returns></returns>
-		internal static List<Face> GetNeighborFaces(ProBuilderMesh pb, Face originFace, Dictionary<int, int> lookup = null, IEnumerable<Face> mask = null)
-		{
-			if(lookup == null)
-				lookup = pb.sharedIndicesInternal.ToDictionary();
-
-			List<Face> faces = new List<Face>();
-
-			HashSet<Edge> sharedEdges = new HashSet<Edge>();
-
-			for(int i = 0; i < originFace.edges.Length; i++)
-			{
-				sharedEdges.Add(new Edge(lookup[originFace.edges[i].x], lookup[originFace.edges[i].y]));
-			}
-
-			Edge edge_s = new Edge(-1,-1);
-
-			for(int i = 0; i < pb.facesInternal.Length; i++)
-			{
-				foreach(Edge edge in pb.facesInternal[i].edges)
-				{
-					edge_s.x = lookup[edge.x];
-					edge_s.y = lookup[edge.y];
-
-					bool contains = sharedEdges.Contains(edge_s);
-
-					if( contains && (mask == null || !mask.Contains(pb.facesInternal[i])) )
-					{
-
-						faces.Add(pb.facesInternal[i]);
-						break;
-					}
-				}
-			}
-
-			return faces;
-		}
-
-		/**
-		 * Generates a Dictionary where each face is a key, and its value is a list of all faces adjacent.
-		 */
-		internal static Dictionary<Face, List<Face>> GenerateNeighborLookup(ProBuilderMesh pb, IList<Face> InFaces)
-		{
-			Dictionary<int, int> sharedLookup = pb.sharedIndicesInternal.ToDictionary();
-			Dictionary<Face, List<Face>> faceLookup = new Dictionary<Face, List<Face>>();
-
-			IList<Face> faces = InFaces;
-			int faceCount = faces.Count();
-			List<Face> list;
-
-			HashSet<Edge>[] universal = new HashSet<Edge>[faceCount];
-
-			for(int i = 0; i < faceCount; i++)
-				universal[i] = new HashSet<Edge>(EdgeExtension.GetUniversalEdges(faces[i].edges, sharedLookup));
-
-			for(int i = 0; i < faceCount-1; i++)
-			{
-				if( !faceLookup.ContainsKey(faces[i]) )
-					faceLookup.Add(faces[i], new List<Face>());
-
-				for(int n = i+1; n < faceCount; n++)
-				{
-					bool overlaps = universal[i].Overlaps(universal[n]);
-
-					if( overlaps )
-					{
-						faceLookup[faces[i]].Add(faces[n]);
-
-						if( faceLookup.TryGetValue(faces[n], out list) )
-							list.Add(faces[i]);
-						else
-							faceLookup.Add(faces[n], new List<Face>() {faces[i]});
-					}
-				}
-			}
-
-			return faceLookup;
-		}
-
-		/**
-		 * \brief Returns faces that share an edge with any of @c selFcaes.
-		 */
-		internal static Face[] GetNeighborFaces(ProBuilderMesh pb, Dictionary<int, int> sharedIndicesLookup, Face[] selFaces)
-		{
-			List<Face> perimeterFaces = new List<Face>();
-
-			Edge[] perimeterEdges = GetPerimeterEdges(sharedIndicesLookup, selFaces).ToArray();
-			Edge[] universalEdges = new Edge[perimeterEdges.Length];
-
-			for(int i = 0; i < perimeterEdges.Length; i++)
-				universalEdges[i] = new Edge( sharedIndicesLookup[perimeterEdges[i].x],
-												 sharedIndicesLookup[perimeterEdges[i].y]);
-
-			Edge edge_u = new Edge(-1, -1);
-
-			HashSet<Face> skip = new HashSet<Face>(selFaces);
-
-			foreach(Face face in pb.facesInternal)
-			{
-				if(skip.Contains(face))
-				{
-					skip.Remove(face);
-					continue;
-				}
-
-				foreach(Edge edge in face.edges)
-				{
-					edge_u.x = sharedIndicesLookup[edge.x];
-					edge_u.y = sharedIndicesLookup[edge.y];
-
-					if(Enumerable.Contains(universalEdges, edge_u))
-					{
-						perimeterFaces.Add(face);
-						break;
-					}
-				}
-			}
-
-			return perimeterFaces.ToArray();
-		}
-
 		/**
 		 *	Returns a list of pb_Tuple<pb_Face, pb_Edge> where each face is connected to the passed edge.
 		 */
@@ -168,80 +40,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			return faces;
 		}
 
-		// todo update this and ^ this with faster variation below
-		internal static Face[] GetNeighborFaces(ProBuilderMesh pb, Edge[] edges)
-		{
-			List<Face> faces = new List<Face>();
-			Dictionary<int, int> sharedIndices = pb.sharedIndicesInternal.ToDictionary();
-			foreach(Face f in pb.facesInternal)
-			{
-				foreach(Edge e in edges)
-					if(f.edges.IndexOf(e, sharedIndices) > -1)
-						faces.Add(f);
-			}
-
-			return faces.Distinct().ToArray();
-		}
-
-		static List<Face>[][] GetNeighborFacesJagged(ProBuilderMesh pb, Edge[][] selEdges)
-		{
-			int len = selEdges.Length;
-
-			List<Face>[][] faces = new List<Face>[len][];
-			for(int j = 0; j < len; j++)
-			{
-				faces[j] = new List<Face>[selEdges[j].Length];
-				for(int i = 0; i < selEdges[j].Length; i++)
-					faces[j][i] = new List<Face>();
-			}
-
-			IntArray[] sharedIndices = pb.sharedIndicesInternal;
-
-			Edge[][] sharedEdges = new Edge[len][];
-			for(int i = 0; i < len; i++)
-				sharedEdges[i] = EdgeExtension.GetUniversalEdges(selEdges[i], sharedIndices).Distinct().ToArray();
-
-			for(int i = 0; i < pb.facesInternal.Length; i++)
-			{
-				Edge[] faceEdges = EdgeExtension.GetUniversalEdges(pb.facesInternal[i].edges, sharedIndices).Distinct().ToArray();
-
-				for(int j = 0; j < len; j++)
-				{
-					int ind = -1;
-					for(int t = 0; t < sharedEdges[j].Length; t++)
-					{
-						if(Enumerable.Contains(faceEdges, sharedEdges[j][t]))
-						{
-							ind = t;
-							break;
-						}
-					}
-
-					if(ind > -1)
-						faces[j][ind].Add(pb.facesInternal[i]);
-				}
-			}
-
-			return faces;
-		}
-
-		/**
-		 *	Returns all faces connected to the passed vertex index.
-		 */
-		internal static List<Face> GetNeighborFaces(ProBuilderMesh pb, int index)
-		{
-			List<Face> faces = new List<Face>();
-			IntArray[] sharedIndices = pb.sharedIndicesInternal;
-			int i = sharedIndices.IndexOf(index);
-
-			foreach(Face f in pb.facesInternal)
-			{
-				if(f.distinctIndices.ContainsMatch((int[])sharedIndices[i]))
-					faces.Add(f);
-			}
-			return faces;
-		}
-
 		/// <summary>
 		/// Gets all faces connected to each index taking into account shared vertices.
 		/// </summary>
@@ -263,7 +61,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				for(int n = 0; n < dist.Length; n++)
 				{
-					if( shared.Contains(lookup[dist[n]]))
+					if(shared.Contains(lookup[dist[n]]))
 					{
 						neighboring.Add(pb.facesInternal[i]);
 						break;
@@ -274,9 +72,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			return neighboring;
 		}
 
-		/**
-		 * Returns a unique array of Edges connected to the passed vertex indices.
-		 */
+		/// <summary>
+		/// Returns a unique array of Edges connected to the passed vertex indices.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="indices"></param>
+		/// <returns></returns>
 		internal static Edge[] GetConnectedEdges(ProBuilderMesh pb, int[] indices)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
@@ -306,17 +107,23 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			return connectedEdges.ToArray();
 		}
 
-		/**
-		 * Get all edges that are on the perimeter of this face group selection.
-		 */
+		/// <summary>
+		/// Get all edges that are on the perimeter of this face group selection.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="faces"></param>
+		/// <returns></returns>
 		internal static IEnumerable<Edge> GetPerimeterEdges(ProBuilderMesh pb, IEnumerable<Face> faces)
 		{
 			return GetPerimeterEdges(pb.sharedIndicesInternal.ToDictionary(), faces);
 		}
 
-		/**
-		 * Get all edges that are on the perimeter of this face group selection.
-		 */
+		/// <summary>
+		/// Get all edges that are on the perimeter of this face group selection.
+		/// </summary>
+		/// <param name="sharedIndicesLookup"></param>
+		/// <param name="faces"></param>
+		/// <returns></returns>
 		internal static IEnumerable<Edge> GetPerimeterEdges(Dictionary<int, int> sharedIndicesLookup, IEnumerable<Face> faces)
 		{
 			List<Edge> faceEdges = faces.SelectMany(x => x.edges).ToList();	// actual edges
@@ -339,11 +146,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			return dup.Where(x => x.Value.Count < 2).Select(x => x.Value[0]);
 		}
 
-		/**
-		 * Returns the indices of perimeter edges in a given element group.
-		 * todo - to speed this up, we could just use the distinct in GetUniversalEdges() - but that would
-		 * break this method's usefullness in other situations.
-		 */
+		/// <summary>
+		/// Returns the indices of perimeter edges in a given element group.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="edges"></param>
+		/// <returns></returns>
 		internal static int[] GetPerimeterEdges(ProBuilderMesh pb, Edge[] edges)
 		{
 			if(edges.Length == EdgeExtension.AllEdges(pb.facesInternal).Length || edges.Length < 3)
@@ -378,9 +186,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			return perimeter.Count != edges.Length ? perimeter.ToArray() : new int[] {};
 		}
 
-		/**
-		 * Returns an array of faces where each face has at least one non-shared edge.
-		 */
+		/// <summary>
+		/// Returns an array of faces where each face has at least one non-shared edge.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="faces"></param>
+		/// <returns></returns>
 		internal static IEnumerable<Face> GetPerimeterFaces(ProBuilderMesh pb, IEnumerable<Face> faces)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
@@ -407,9 +218,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			return sharedEdges.Where(x => x.Value.Count < 2).Select(x => x.Value[0]).Distinct();
 		}
 
-		/**
-		 * Returns the indices of perimeter vertices in selection.
-		 */
+		/// <summary>
+		/// Returns the indices of perimeter vertices in selection.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="indices"></param>
+		/// <param name="universal_edges_all"></param>
+		/// <returns></returns>
 		internal static int[] GetPerimeterVertices(ProBuilderMesh pb, int[] indices, Edge[] universal_edges_all)
 		{
 			int len = indices.Length;
@@ -443,7 +258,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			return perimeter.Count < len ? perimeter.ToArray() : new int[] {};
 		}
 
-		private static WingedEdge EdgeRingNext(WingedEdge edge)
+		static WingedEdge EdgeRingNext(WingedEdge edge)
 		{
 			if(edge == null)
 				return null;
@@ -469,9 +284,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			return next;
 		}
 
-		/**
-		 * Iterates through face edges and builds a list using the opposite edge.
-		 */
+		/// <summary>
+		/// Iterates through face edges and builds a list using the opposite edge.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="edges"></param>
+		/// <returns></returns>
 		internal static IEnumerable<Edge> GetEdgeRing(ProBuilderMesh pb, Edge[] edges)
 		{
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
@@ -517,14 +335,19 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			return used.Select(x => x.local);
 		}
 
-		/**
-		 * Attempts to find edges along an Edge loop.
-		 *
-		 * 	http://wiki.blender.org/index.php/Doc:2.4/Manual/Modeling/Meshes/Selecting/Edges says:
-		 * 	First check to see if the selected element connects to only 3 other edges.
-		 * 	If the edge in question has already been added to the list, the selection ends.
-		 * 	Of the 3 edges that connect to the current edge, the ones that share a face with the current edge are eliminated and the remaining edge is added to the list and is made the current edge.
-		 */
+		/// <summary>
+		/// Attempts to find edges along an Edge loop.
+		///
+		/// http://wiki.blender.org/index.php/Doc:2.4/Manual/Modeling/Meshes/Selecting/Edges says:
+		/// First check to see if the selected element connects to only 3 other edges.
+		/// If the edge in question has already been added to the list, the selection ends.
+		/// Of the 3 edges that connect to the current edge, the ones that share a face with the current edge are eliminated
+		/// and the remaining edge is added to the list and is made the current edge.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="edges"></param>
+		/// <param name="loop"></param>
+		/// <returns></returns>
 		internal static bool GetEdgeLoop(ProBuilderMesh pb, Edge[] edges, out Edge[] loop)
 		{
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
@@ -586,10 +409,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				return null;
 		}
 
-		/**
-		 * Return all edges connected to @wing with @sharedIndex as the pivot point.  The first entry in the list is always
-		 * the queried wing.
-		 */
+		/// <summary>
+		/// Return all edges connected to @wing with @sharedIndex as the pivot point. The first entry in the list is always the queried wing.
+		/// </summary>
+		/// <param name="wing"></param>
+		/// <param name="sharedIndex"></param>
+		/// <param name="allowHoles"></param>
+		/// <returns></returns>
 		internal static List<WingedEdge> GetSpokes(WingedEdge wing, int sharedIndex, bool allowHoles = false)
 		{
 			List<WingedEdge> spokes = new List<WingedEdge>();

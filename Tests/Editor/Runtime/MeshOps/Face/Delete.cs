@@ -29,12 +29,12 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 					pb.ToMesh();
 					pb.Refresh();
 #if PB_CREATE_TEST_MESH_TEMPLATES
-					pb_TestUtility.SaveAssetTemplate(pb.msh, pb.name);
+					TestUtility.SaveAssetTemplate(pb.mesh, pb.name);
 #endif
 					TestUtility.AssertMeshAttributesValid(pb.mesh);
 					var template = TestUtility.GetAssetTemplate<Mesh>(pb.name);
 					Assert.IsNotNull(template);
-					TestUtility.AssertAreEqual(pb.mesh, template);
+					TestUtility.AssertAreEqual(template, pb.mesh);
 				}
 			}
 		}

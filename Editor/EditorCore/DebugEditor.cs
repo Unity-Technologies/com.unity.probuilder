@@ -21,16 +21,15 @@ namespace UnityEditor.ProBuilder
 		float elementOffset = .01f;
 		float faceInfoOffset = .05f;
 
-		const int MAX_SCENE_LABELS = 64;
-
+		const int k_MaxSceneLabels = 64;
 		static readonly Color SplitterColor = new Color(.3f, .3f, .3f, .75f);
-
 		static ProBuilderEditor editor { get { return ProBuilderEditor.instance; } }
+		SceneViewLineRenderer m_LineRenderer;
 
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Debug/ProBuilder Debug Window", false, PreferenceKeys.menuRepair)]
 		public static void MenuSceneViewDebug()
 		{
-			EditorWindow.GetWindow<DebugEditor>();
+			GetWindow<DebugEditor>();
 		}
 
 		void OnEnable()
@@ -43,13 +42,14 @@ namespace UnityEditor.ProBuilder
 			SceneView.onSceneGUIDelegate -= OnSceneGUI;
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
 			ProBuilderEditor.OnSelectionUpdate += OnSelectionUpdate;
-			ProBuilderEditor.OnVertexMovementFinish += OnSelectionUpdate;		}
+			ProBuilderEditor.OnVertexMovementFinish += OnSelectionUpdate;
+
+			m_LineRenderer = new SceneViewLineRenderer();
+		}
 
 		void OnDisable()
 		{
-			if(SceneViewLineRenderer.Valid())
-				SceneViewLineRenderer.instance.Clear();
-
+			m_LineRenderer.Dispose();
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 			ProBuilderEditor.OnSelectionUpdate -= OnSelectionUpdate;
 			ProBuilderEditor.OnVertexMovementFinish -= OnSelectionUpdate;
@@ -59,7 +59,7 @@ namespace UnityEditor.ProBuilder
 		{
 			try
 			{
-				SceneViewLineRenderer.instance.Clear();
+				m_LineRenderer.Clear();
 
 				foreach(ProBuilderMesh pb in selection)
 					DrawElements(pb);
@@ -478,7 +478,7 @@ namespace UnityEditor.ProBuilder
 
 				UI.EditorGUIUtility.SceneLabel(sb.ToString(), cen);
 
-				if(++labelCount > MAX_SCENE_LABELS) break;
+				if(++labelCount > k_MaxSceneLabels) break;
 			}
 		}
 
@@ -513,7 +513,7 @@ namespace UnityEditor.ProBuilder
 						break;
 				}
 
-				if(++labelCount > MAX_SCENE_LABELS) break;
+				if(++labelCount > k_MaxSceneLabels) break;
 			}
 		}
 
@@ -606,7 +606,7 @@ namespace UnityEditor.ProBuilder
 				UI.EditorGUIUtility.SceneLabel(sb.ToString(), cen);
 				Handles.EndGUI();
 
-				if(++labelCount > MAX_SCENE_LABELS) break;
+				if(++labelCount > k_MaxSceneLabels) break;
 			}
 		}
 
@@ -620,7 +620,7 @@ namespace UnityEditor.ProBuilder
 		 */
 		void DrawElements(ProBuilderMesh pb)
 		{
-			SceneViewLineRenderer.instance.Clear();
+			m_LineRenderer.Clear();
 
 			if( selectedOnly && pb.vertexCount != pb.mesh.vertices.Length || elementLength <= 0f)
 				return;
@@ -654,7 +654,7 @@ namespace UnityEditor.ProBuilder
 				n += 6;
 			}
 
-			SceneViewLineRenderer.instance.AddLineSegments(segments, ElementColors);
+			m_LineRenderer.AddLineSegments(segments, ElementColors);
 		}
 	}
 }

@@ -154,7 +154,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			pb.SetSharedIndices(sharedIndices);
+			pb.sharedIndicesInternal = sharedIndices;
 
 			foreach(Face f in pb.facesInternal)
 				f.RebuildCaches();

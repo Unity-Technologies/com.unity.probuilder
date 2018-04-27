@@ -89,7 +89,7 @@ namespace UnityEngine.ProBuilder
 				}
 			}
 
-			return shared.ToPbIntArray();
+			return shared.ToIntArray();
 		}
 
 		/// <summary>
@@ -97,7 +97,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="array"></param>
 		/// <returns></returns>
-		public static IntArray[] ToPbIntArray(this int[][] array)
+		public static IntArray[] ToIntArray(this int[][] array)
 		{
             if (array == null)
                 throw new ArgumentNullException("array");
@@ -112,7 +112,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="list"></param>
 		/// <returns></returns>
-		public static IntArray[] ToPbIntArray(this List<List<int>> list)
+		public static IntArray[] ToIntArray(this List<List<int>> list)
 		{
             if (list == null)
                 throw new ArgumentNullException("list");
@@ -399,21 +399,28 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Removes the specified indices from the array, and shifts all values down to account for removal in the vertex array.  Only use when deleting faces or vertices.
+		/// Removes the specified indices from the array, and shifts all values down to account for removal in the vertex array.
+		/// Only use when deleting faces or vertices.
 		/// </summary>
 		/// <remarks>For general moving around and modification of shared index array, use #RemoveValuesAtIndex.</remarks>
 		/// <param name="sharedIndices"></param>
-		/// <param name="remove"></param>
-		internal static void RemoveValuesAndShift(ref IntArray[] sharedIndices, IEnumerable<int> remove)
+		/// <param name="indexesToRemove"></param>
+		internal static void RemoveValuesAndShift(ref IntArray[] sharedIndices, IEnumerable<int> indexesToRemove)
 		{
+			if(sharedIndices == null)
+				throw new ArgumentNullException("sharedIndices");
+
+			if(indexesToRemove == null)
+				throw new ArgumentNullException("indexesToRemove");
+
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 
-			foreach(int i in remove)
+			foreach(int i in indexesToRemove)
 				lookup[i] = -1;
 
 			sharedIndices = ToSharedIndices(lookup.Where(x => x.Value > -1));
 
-			List<int> removed_values = new List<int>(remove);
+			List<int> removed_values = new List<int>(indexesToRemove);
 
 			removed_values.Sort();
 

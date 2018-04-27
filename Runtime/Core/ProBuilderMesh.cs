@@ -48,7 +48,7 @@ namespace UnityEngine.ProBuilder
 
         [SerializeField]
         [FormerlySerializedAs("_sharedIndicesUV ")]
-        IntArray[] m_SharedIndicesUV = new IntArray[0];
+        IntArray[] m_SharedIndicesUV;
 
         [SerializeField]
         [FormerlySerializedAs("_colors")]
@@ -189,7 +189,7 @@ namespace UnityEngine.ProBuilder
         internal void SetSharedIndicesUV(IEnumerable<KeyValuePair<int, int>> indices)
         {
 	        if (indices == null)
-		        m_SharedIndicesUV = null;
+		        m_SharedIndicesUV = new IntArray[0];
 			else
 	            m_SharedIndicesUV = IntArrayUtility.ToSharedIndices(indices);
         }
@@ -511,7 +511,7 @@ namespace UnityEngine.ProBuilder
 			m_Textures4 = null;
 			m_Tangents = null;
 			m_SharedIndices = new IntArray[0];
-			m_SharedIndicesUV = null;
+			m_SharedIndicesUV = new IntArray[0];
 			m_Colors = null;
 			SetSelectedTriangles(null);
 		}
@@ -792,7 +792,7 @@ namespace UnityEngine.ProBuilder
             Clear();
             SetPositions(positions);
 			SetFaces(f);
-			SetSharedIndices(IntArrayUtility.ExtractSharedIndices(positions));
+			m_SharedIndices = IntArrayUtility.ExtractSharedIndices(positions);
 
 			ToMesh();
 			Refresh();

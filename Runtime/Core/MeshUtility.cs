@@ -149,15 +149,16 @@ namespace UnityEngine.ProBuilder
 			int[] perTriangleAvg = new int[vertexCount];
 			Face[] faces = mesh.facesInternal;
 
-			for(int find = 0; find < faces.Length; find++)
+			for(int faceIndex = 0, faceCount = faces.Length; faceIndex < faceCount; faceIndex++)
 			{
-				int[] indices = faces[find].indices;
+				int[] indices = faces[faceIndex].indices;
 
-				for(int tri = 0; tri < indices.Length; tri += 3)
+				for(var tri = 0; tri < indices.Length; tri += 3)
 				{
 					int a = indices[tri], b = indices[tri + 1], c = indices[tri + 2];
 
 					Vector3 cross = ProBuilderMath.Normal(vertices[a], vertices[b], vertices[c]);
+					cross.Normalize();
 
 					perTriangleNormal[a].x += cross.x;
 					perTriangleNormal[b].x += cross.x;
@@ -177,11 +178,11 @@ namespace UnityEngine.ProBuilder
 				}
 			}
 
-			for(int i = 0; i < vertexCount; i++)
+			for(var i = 0; i < vertexCount; i++)
 			{
-				normals[i].x = perTriangleNormal[i].x * (float) perTriangleAvg[i];
-				normals[i].y = perTriangleNormal[i].y * (float) perTriangleAvg[i];
-				normals[i].z = perTriangleNormal[i].z * (float) perTriangleAvg[i];
+				normals[i].x = perTriangleNormal[i].x / perTriangleAvg[i];
+				normals[i].y = perTriangleNormal[i].y / perTriangleAvg[i];
+				normals[i].z = perTriangleNormal[i].z / perTriangleAvg[i];
 			}
 
 			return normals;
@@ -195,7 +196,7 @@ namespace UnityEngine.ProBuilder
         public static Vector3[] CalculateNormals(ProBuilderMesh mesh)
 		{
             if (mesh == null)
-                throw new System.ArgumentNullException("mesh");
+                throw new ArgumentNullException("mesh");
 
 			Vector3[] normals = CalculateHardNormals(mesh);
 
@@ -207,7 +208,7 @@ namespace UnityEngine.ProBuilder
 			int smoothGroupMax = 24;
 
 			// Create a lookup of each triangles smoothing group.
-			foreach(Face face in faces)
+			foreach(var face in faces)
 			{
 				foreach(int tri in face.distinctIndices)
 				{
@@ -223,9 +224,9 @@ namespace UnityEngine.ProBuilder
 
             // For each sharedIndices group (individual vertex), find vertices that are in the same smoothing
             // group and average their normals.
-            for (int i = 0; i < sharedIndices.Length; i++)
+            for (var i = 0; i < sharedIndices.Length; i++)
 			{
-				for(int n = 0; n < smoothGroupMax; n++)
+				for(var n = 0; n < smoothGroupMax; n++)
 				{
 					averages[n].x = 0f;
 					averages[n].y = 0f;
@@ -233,7 +234,7 @@ namespace UnityEngine.ProBuilder
 					counts[n] = 0f;
 				}
 
-				for(int n = 0; n < sharedIndices[i].array.Length; n++)
+				for(var n = 0; n < sharedIndices[i].array.Length; n++)
 				{
 					int index = sharedIndices[i].array[n];
 					int group = smoothGroup[index];
@@ -262,6 +263,8 @@ namespace UnityEngine.ProBuilder
 					normals[index].x = averages[group].x / counts[group];
 					normals[index].y = averages[group].y / counts[group];
 					normals[index].z = averages[group].z / counts[group];
+
+					normals[index].Normalize();
 				}
 
 			}
@@ -381,38 +384,35 @@ namespace UnityEngine.ProBuilder
 		public static string Print(Mesh mesh)
 		{
             if (mesh == null)
-                throw new System.ArgumentNullException("mesh");
+                throw new ArgumentNullException("mesh");
 
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
 			sb.AppendLine(string.Format("vertices: {0}\ntriangles: {1}\nsubmeshes: {2}", mesh.vertexCount, mesh.triangles.Length, mesh.subMeshCount));
 
-			sb.AppendLine(string.Format("     {0,-28}{7,-16}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}",
+			sb.AppendLine(string.Format("     {0,-28}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}{7,-28}",
 				"Positions",
+				"Normals",
 				"Colors",
 				"Tangents",
 				"UV0",
 				"UV2",
 				"UV3",
-				"UV4",
-				"Position Hash"));
+				"UV4"));
 
 			Vector3[] positions = mesh.vertices;
-			Color[] colors 		= mesh.colors;
-			Vector4[] tangents 	= mesh.tangents;
+			Vector3[] normals = mesh.normals;
+			Color[] colors = mesh.colors;
+			Vector4[] tangents = mesh.tangents;
 
-			List<Vector4> uv0 	= new List<Vector4>();
-			Vector2[] uv2 		= mesh.uv2;
-			List<Vector4> uv3 	= new List<Vector4>();
-			List<Vector4> uv4 	= new List<Vector4>();
+			List<Vector4> uv0 = new List<Vector4>();
+			Vector2[] uv2 = mesh.uv2;
+			List<Vector4> uv3 = new List<Vector4>();
+			List<Vector4> uv4 = new List<Vector4>();
 
-			#if !UNITY_4_7 && !UNITY_5_0
 			mesh.GetUVs(0, uv0);
 			mesh.GetUVs(2, uv3);
 			mesh.GetUVs(3, uv4);
-			#else
-			uv0 = m.uv.Cast<Vector4>().ToList();
-			#endif
 
 			if( positions != null && positions.Count() != mesh.vertexCount)
 				positions = null;
@@ -420,27 +420,27 @@ namespace UnityEngine.ProBuilder
 				colors = null;
 			if( tangents != null && tangents.Count() != mesh.vertexCount)
 				tangents = null;
-			if( uv0 != null && uv0.Count() != mesh.vertexCount)
+			if( uv0.Count() != mesh.vertexCount)
 				uv0 = null;
-			if( uv2 != null && uv2.Count() != mesh.vertexCount)
+			if( uv2.Count() != mesh.vertexCount)
 				uv2 = null;
-			if( uv3 != null && uv3.Count() != mesh.vertexCount)
+			if( uv3.Count() != mesh.vertexCount)
 				uv3 = null;
-			if( uv4 != null && uv4.Count() != mesh.vertexCount)
+			if( uv4.Count() != mesh.vertexCount)
 				uv4 = null;
 
-			for(int i = 0; i < mesh.vertexCount; i ++)
+			for(int i = 0, c = mesh.vertexCount; i < c; i ++)
 			{
-				sb.AppendLine(string.Format("{7,-5}{0,-28}{8,-16}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}",
+				sb.AppendLine(string.Format("{8,-5}{0,-28}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}{7,-28}",
 					positions == null 	? "null" : string.Format("{0:F3}, {1:F3}, {2:F3}", positions[i].x, positions[i].y, positions[i].z),
+					normals == null 	? "null" : string.Format("{0:F3}, {1:F3}, {2:F3}", normals[i].x, normals[i].y, normals[i].z),
 					colors == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", colors[i].r, colors[i].g, colors[i].b, colors[i].a),
 					tangents == null 	? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", tangents[i].x, tangents[i].y, tangents[i].z, tangents[i].w),
 					uv0 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv0[i].x, uv0[i].y, uv0[i].z, uv0[i].w),
 					uv2 == null 		? "null" : string.Format("{0:F2}, {1:F2}", uv2[i].x, uv2[i].y),
 					uv3 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv3[i].x, uv3[i].y, uv3[i].z, uv3[i].w),
 					uv4 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv4[i].x, uv4[i].y, uv4[i].z, uv4[i].w),
-					i,
-					VectorHash.GetHashCode(positions[i])));
+					i));
 			}
 
 			for(int i = 0; i < mesh.triangles.Length; i+=3)

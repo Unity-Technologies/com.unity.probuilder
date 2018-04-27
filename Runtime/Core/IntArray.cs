@@ -10,12 +10,13 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// Defines associations between vertex indices that are coincident.
 	/// </summary>
-	[System.Serializable]
+	[Serializable]
 	public class IntArray
 	{
 		/// <summary>
 		/// An array of vertex indices that are coincident.
 		/// </summary>
+		[SerializeField]
 		internal int[] array;
 
 		/// <summary>
@@ -107,7 +108,7 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Remove any arrays that are null or empty.
 		/// </summary>
-		/// <param name="val"></param>
+		/// <param name="array"></param>
 		public static void RemoveEmptyOrNull(ref IntArray[] array)
 		{
             if (array == null)

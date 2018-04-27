@@ -1,22 +1,19 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using UnityEditor;
 
 namespace UnityEngine.ProBuilder
 {
 	/// <summary>
-	/// Renders lines to the scene view.  Handles material and mesh generation and management.
+	/// Renders lines to the scene view. Handles material and mesh generation and management.
 	/// </summary>
-	/// <remarks>For general purpose rendering to the sceneview, use pb_MeshRenderer.</remarks>
-	[ExecuteInEditMode]
-	[AddComponentMenu("")]
-	class SceneViewLineRenderer : MonoBehaviourSingleton<SceneViewLineRenderer>
+	class SceneViewLineRenderer : IDisposable
 	{
-		// HideFlags.DontSaveInEditor isn't exposed for whatever reason, so do the bit math on ints and just cast to HideFlags.
-		// HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.NotEditable
-		HideFlags SceneCameraHideFlags = (HideFlags) (1 | 4 | 8);
-
 		ObjectPool<Mesh> m_Pool;
+		bool m_IsDisposed;
 
 		static Mesh MeshConstructor()
 		{
@@ -26,44 +23,40 @@ namespace UnityEngine.ProBuilder
 			return m;
 		}
 
-		[HideInInspector]
 		public List<Mesh> gizmos = new List<Mesh>();
-
-		[HideInInspector]
 		public Material mat;
 
-		public override void OnEnable()
+		public SceneViewLineRenderer()
 		{
-			base.OnEnable();
 			m_Pool = new ObjectPool<Mesh>(1, 8, MeshConstructor, null);
-		}
-
-		void OnDisable()
-		{
-			m_Pool.Empty();
-		}
-
-		public override void Awake()
-		{
-			base.Awake();
-
-			gameObject.hideFlags = HideFlags.HideAndDontSave;
-
 			mat = new Material(Shader.Find("ProBuilder/UnlitVertexColor"));
 			mat.name = "pb_LineRenderer_Material";
 			mat.SetColor("_Color", Color.white);
 			mat.hideFlags = PreferenceKeys.k_EditorHideFlags;
+			SceneView.onSceneGUIDelegate += Render;
 		}
 
-		void OnDestroy()
+		~SceneViewLineRenderer()
 		{
+			Dispose();
+		}
+
+		public void Dispose()
+		{
+			if (m_IsDisposed)
+				return;
+
+			SceneView.onSceneGUIDelegate -= Render;
+			m_IsDisposed = true;
+			m_Pool.Empty();
+
 			foreach(Mesh m in gizmos)
 			{
 				if(m != null)
-					DestroyImmediate(m);
+					Object.DestroyImmediate(m);
 			}
 
-			DestroyImmediate(mat);
+			Object.DestroyImmediate(mat);
 		}
 
 		public void AddLineSegments(Vector3[] segments, Color[] colors)
@@ -105,9 +98,9 @@ namespace UnityEngine.ProBuilder
 			gizmos.Add(m);
 		}
 
-		/**
-		 * Clear the queue of line segments to render.
-		 */
+		/// <summary>
+		/// Clear the queue of line segments to render.
+		/// </summary>
 		public void Clear()
 		{
 			for(int i = 0; i < gizmos.Count; i++)
@@ -116,19 +109,13 @@ namespace UnityEngine.ProBuilder
 			gizmos.Clear();
 		}
 
-		void OnRenderObject()
+		public void Render(SceneView view)
 		{
-			// instead of relying on 'SceneCamera' string comparison, check if the hideflags match.
-			// this could probably even just check for one bit match, since chances are that any
-			// game view camera isn't going to have hideflags set.
-			if( mat == null || (Camera.current.gameObject.hideFlags & SceneCameraHideFlags) != SceneCameraHideFlags || Camera.current.name != "SceneCamera" )
-				return;
-
 			mat.SetPass(0);
 
-			for(int i = 0; i < gizmos.Count && gizmos[i] != null; i++) {
+			for(int i = 0; i < gizmos.Count && gizmos[i] != null; i++)
 				Graphics.DrawMeshNow(gizmos[i], Vector3.zero, Quaternion.identity, 0);
-			}
 		}
+
 	}
 }

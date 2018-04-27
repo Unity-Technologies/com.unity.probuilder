@@ -1,14 +1,10 @@
 ﻿using System.Globalization;
 using System.Linq;
-using System.Reflection.Emit;
 using UnityEngine;
-using UnityEditor.ProBuilder;
 using NUnit.Framework;
 using System.Threading;
 using Parabox.STL;
-using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Test;
-using UnityEngine.Windows;
 
 namespace UnityEngine.ProBuilder.EditorTests.Export
 {

@@ -140,6 +140,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			pb.SetColors(colors.ToArray());
 			pb.SetUVs(uvs.ToArray());
 			pb.SetFaces(faces.ToArray());
+			pb.sharedIndicesInternal = sharedIndices;
 
 			return appendedFaces;
 		}
@@ -221,7 +222,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			for(int i = 0; i < faces.Length; i++)
 				faces[i] = pb.facesInternal[faceIndices[i]];
 
-			List<int> indicesToRemove = faces.SelectMany(x => x.distinctIndices).Distinct().ToList(); // pb_Face.AllTrianglesDistinct(faces);
+			List<int> indicesToRemove = faces.SelectMany(x => x.distinctIndices).Distinct().ToList();
 			indicesToRemove.Sort();
 
 			int vertexCount = pb.positionsInternal.Length;
@@ -233,32 +234,33 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			Dictionary<int, int> shiftmap = new Dictionary<int, int>();
 
-			for(int i = 0;  i < vertexCount; i++)
+			for(var i = 0;  i < vertexCount; i++)
 				shiftmap.Add(i, InternalUtility.NearestIndexPriorToValue<int>(indicesToRemove, i) + 1);
 
 			// shift all other face indices down to account for moved vertex positions
-			for(int i = 0; i < nFaces.Length; i++)
+			for(var i = 0; i < nFaces.Length; i++)
 			{
 				int[] tris = nFaces[i].indices;
 
-				for(int n = 0; n < tris.Length; n++)
+				for(var n = 0; n < tris.Length; n++)
 					tris[n] -= shiftmap[tris[n]];
 
 				nFaces[i].SetIndices(tris);
 			}
-
 
 			// shift all other face indices in the shared index array down to account for moved vertex positions
 			IntArray[] si = pb.sharedIndicesInternal;
 			IntArray[] si_uv = pb.sharedIndicesUVInternal;
 
 			IntArrayUtility.RemoveValuesAndShift(ref si, indicesToRemove);
-			IntArrayUtility.RemoveValuesAndShift(ref si_uv, indicesToRemove);
+			if(si_uv != null) IntArrayUtility.RemoveValuesAndShift(ref si_uv, indicesToRemove);
 
-			pb.SetPositions(verts);
-			pb.SetColors(cols);
-			pb.SetUVs(uvs);
-			pb.SetFaces(nFaces);
+			pb.sharedIndicesInternal = si;
+			pb.sharedIndicesUVInternal = si_uv;
+			pb.positionsInternal = verts;
+			pb.colorsInternal = cols;
+			pb.texturesInternal = uvs;
+			pb.facesInternal = nFaces;
 
 			int[] array = indicesToRemove.ToArray();
 
