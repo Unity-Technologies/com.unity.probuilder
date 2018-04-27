@@ -4,91 +4,133 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Linq;
 using UnityEngine.Serialization;
+using System.Collections.ObjectModel;
 
 namespace UnityEngine.ProBuilder
 {
-	/// <summary>
-	/// A face is composed of a set of triangles, and a material.
-	/// </summary>
-	[Serializable]
-	public class Face
-	{
-		[FormerlySerializedAs("_indices")]
-		[SerializeField]
-		int[] m_Indices;
+    /// <summary>
+    /// A face is composed of a set of triangles, and a material.
+    /// </summary>
+    [Serializable]
+    public class Face
+    {
+        [FormerlySerializedAs("_indices")]
+        [SerializeField]
+        int[] m_Indices;
 
-		[FormerlySerializedAs("_distinctIndices")]
-		[SerializeField]
-		int[] m_DistinctIndices;
+        [FormerlySerializedAs("_distinctIndices")]
+        [SerializeField]
+        int[] m_DistinctIndices;
 
-		/// <summary>
-		/// A cache of the calculated #pb_Edge edges for this face. Call RebuildCaches to update.
-		/// </summary>
-		[SerializeField]
-		[FormerlySerializedAs("_edges")]
-		Edge[] m_Edges;
+        /// <summary>
+        /// A cache of the calculated #pb_Edge edges for this face.
+        /// </summary>
+        [SerializeField]
+        [FormerlySerializedAs("_edges")]
+        Edge[] m_Edges;
 
-		/// <summary>
-		/// Adjacent faces sharing this smoothingGroup will have their abutting edge normals averaged.
-		/// </summary>
-		[SerializeField]
-		[FormerlySerializedAs("_smoothingGroup")]
-		int m_SmoothingGroup;
+        /// <summary>
+        /// Adjacent faces sharing this smoothingGroup will have their abutting edge normals averaged.
+        /// </summary>
+        [SerializeField]
+        [FormerlySerializedAs("_smoothingGroup")]
+        int m_SmoothingGroup;
 
-		/// <summary>
-		/// If manualUV is false, these parameters determine how this face's vertices are projected to 2d space.
-		/// </summary>
-		[SerializeField]
-		[FormerlySerializedAs("_uv")]
-		AutoUnwrapSettings m_Uv;
+        /// <summary>
+        /// If manualUV is false, these parameters determine how this face's vertices are projected to 2d space.
+        /// </summary>
+        [SerializeField]
+        [FormerlySerializedAs("_uv")]
+        AutoUnwrapSettings m_Uv;
 
-		/// <summary>
-		/// What material does this face use.
-		/// </summary>
-		[SerializeField]
-		[FormerlySerializedAs("_mat")]
-		Material m_Material;
+        /// <summary>
+        /// What material does this face use.
+        /// </summary>
+        [SerializeField]
+        [FormerlySerializedAs("_mat")]
+        Material m_Material;
 
-		/// <summary>
-		/// If this face has had it's UV coordinates done by hand, don't update them with the auto unwrap crowd.
-		/// </summary>
-		public bool manualUV { get; set; }
+        /// <summary>
+        /// If this face has had it's UV coordinates done by hand, don't update them with the auto unwrap crowd.
+        /// </summary>
+        public bool manualUV { get; set; }
 
-		/// <summary>
-		/// UV element group. Used by the UV editor to group faces.
-		/// </summary>
-		internal int elementGroup;
+        /// <summary>
+        /// UV element group. Used by the UV editor to group faces.
+        /// </summary>
+        [SerializeField]
+        internal int elementGroup;
 
-		/// <summary>
-		/// What texture group this face belongs to. Used when projecting auto UVs.
-		/// </summary>
-		public int textureGroup { get; set; }
+        /// <summary>
+        /// What texture group this face belongs to. Used when projecting auto UVs.
+        /// </summary>
+        public int textureGroup { get; set; }
 
-		/// <summary>
-		/// Return a reference to the triangle indices that make up this face.
-		/// </summary>
-		public int[] indices
-		{
-			get { return m_Indices; } 
-		}
+        /// <summary>
+        /// Return a reference to the triangle indices that make up this face.
+        /// </summary>
+        internal int[] indices
+        {
+            get { return m_Indices; }
+	        set
+	        {
+		        m_Indices = value;
+		        InvalidateCache();
+	        }
+        }
 
-		/// <summary>
-		/// Returns a reference to the cached distinct indices (each vertex index is only referenced once in distinctIndices).
-		/// </summary>
-		public int[] distinctIndices
-		{
-			get { return m_DistinctIndices == null ? CacheDistinctIndices() : m_DistinctIndices; }
-		}
+        /// <summary>
+        /// The triangle indices that make up this face.
+        /// </summary>
+        public ReadOnlyCollection<int> indexes
+        {
+            get { return new ReadOnlyCollection<int>(m_Indices); }
+        }
 
-		/// <summary>
-		/// A reference to the border edges that make up this face.
-		/// </summary>
-		public Edge[] edges
-		{
-			get { return m_Edges == null ? CacheEdges() : m_Edges; }
-		}
+        /// <summary>
+        /// Set the triangles that compose this face.
+        /// </summary>
+        /// <param name="array"></param>
+        public void SetIndexes(int[] array)
+        {
+            if (array == null)
+                throw new ArgumentNullException("array");
+            int len = array.Length;
+            m_Indices = new int[len];
+            Array.Copy(array, m_Indices, len);
+	        InvalidateCache();
+        }
 
-		/// <summary>
+        /// <summary>
+        /// Returns a reference to the cached distinct indices (each vertex index is only referenced once in distinctIndices).
+        /// </summary>
+        internal int[] distinctIndices
+        {
+            get { return m_DistinctIndices == null ? CacheDistinctIndices() : m_DistinctIndices; }
+        }
+
+        /// <summary>
+        /// A cached collection of the vertex indices that the indexes array references, made distinct.
+        /// </summary>
+        public ReadOnlyCollection<int> distinctIndexes
+        {
+            get { return new ReadOnlyCollection<int>(distinctIndices); }
+        }
+
+	    /// <summary>
+	    /// A reference to the border edges that make up this face.
+	    /// </summary>
+	    public Edge[] edgesInternal
+	    {
+		    get { return m_Edges == null ? CacheEdges() : m_Edges; }
+	    }
+
+	    public ReadOnlyCollection<Edge> edges
+	    {
+		    get { return new ReadOnlyCollection<Edge>(edgesInternal); }
+	    }
+
+	    /// <summary>
 		/// What smoothing group this face belongs to, if any. This is used to calculate vertex normals.
 		/// </summary>
 		public int smoothingGroup
@@ -126,25 +168,28 @@ namespace UnityEngine.ProBuilder
 
 		public Face() {}
 
-		public Face(int[] i)
+		public Face(int[] array)
 		{
-			SetIndices(i);
+			SetIndexes(array);
 			m_Uv = new AutoUnwrapSettings();
 			m_Material = BuiltinMaterials.DefaultMaterial;
 			m_SmoothingGroup = Smoothing.smoothingGroupNone;
 			textureGroup = -1;
 			elementGroup = 0;
+			m_Edges = null;
+			m_DistinctIndices = null;
 		}
 
-		public Face(int[] i, Material m, AutoUnwrapSettings u, int smoothingGroup, int textureGroup, int elementGroup, bool manualUV)
+		[Obsolete]
+		public Face(int[] triangles, Material m, AutoUnwrapSettings u, int smoothing, int texture, int element, bool manualUVs)
 		{
-			this.SetIndices(i);
-			this.m_Uv = new AutoUnwrapSettings(u);
-			this.m_Material = m;
-			this.m_SmoothingGroup = smoothingGroup;
-			this.textureGroup = textureGroup;
-			this.elementGroup = elementGroup;
-			this.manualUV = manualUV;
+			SetIndexes(triangles);
+			m_Uv = new AutoUnwrapSettings(u);
+			m_Material = m;
+			m_SmoothingGroup = smoothing;
+			textureGroup = texture;
+			elementGroup = element;
+			manualUV = manualUVs;
 		}
 
 		/// <summary>
@@ -163,8 +208,8 @@ namespace UnityEngine.ProBuilder
 			textureGroup = other.textureGroup;
 			elementGroup = other.elementGroup;
 			manualUV = other.manualUV;
-
-			RebuildCaches();
+			m_Edges = null;
+			m_DistinctIndices = null;
 		}
 
 		/// <summary>
@@ -183,7 +228,6 @@ namespace UnityEngine.ProBuilder
 			m_Material = other.material;
 			manualUV = other.manualUV;
 			elementGroup = other.elementGroup;
-			RebuildCaches();
 		}
 
 		/// <summary>
@@ -195,98 +239,11 @@ namespace UnityEngine.ProBuilder
 			return indices.Length > 2;
 		}
 
-		/// <summary>
-		/// Return all edges, including non-perimeter ones.
-		/// </summary>
-		/// <returns></returns>
-		public Edge[] GetAllEdges()
-		{
-			Edge[] edges = new Edge[indices.Length];
-
-			for(int i = 0; i < indices.Length; i+=3)
-			{
-				edges[i  ] = new Edge(indices[i+0], indices[i+1]);
-				edges[i+1] = new Edge(indices[i+1], indices[i+2]);
-				edges[i+2] = new Edge(indices[i+2], indices[i+0]);
-			}
-			return edges;
-		}
-
-		/// <summary>
-		/// Sets this face's indices to a new value.
-		/// </summary>
-		/// <param name="i"></param>
-		public void SetIndices(int[] i)
-		{
-			m_Indices = i;
-			RebuildCaches();
-		}
-
-        /// <summary>
-        /// Add offset to each value in the indices array.
-        /// </summary>
-        /// <param name="offset"></param>
-        public void ShiftIndices(int offset)
-		{
-			for(int i = 0; i <m_Indices.Length; i++)
-				m_Indices[i] += offset;
-		}
-
-		/// <summary>
-		/// Returns the smallest value in the indices array.
-		/// </summary>
-		/// <returns></returns>
-		public int SmallestIndexValue()
-		{
-			int smallest = m_Indices[0];
-			for(int i = 0; i < m_Indices.Length; i++)
-			{
-				if(m_Indices[i] < smallest)
-					smallest = m_Indices[i];
-			}
-			return smallest;
-		}
-
-		/// <summary>
-		/// Shifts all triangles to be zero indexed.
-		/// Ex:
-		/// new pb_Face(3,4,5).ShiftIndicesToZero();
-		/// Sets the pb_Face index array to 0,1,2
-		/// </summary>
-		public void ShiftIndicesToZero()
-		{
-			int offset = SmallestIndexValue();
-
-			for(int i = 0; i < indices.Length; i++)
-				m_Indices[i] -= offset;
-
-			for(int i = 0; i < m_DistinctIndices.Length; i++)
-				m_DistinctIndices[i] -= offset;
-
-			for(int i = 0; i < m_Edges.Length; i++)
-			{
-				m_Edges[i].x -= offset;
-				m_Edges[i].y -= offset;
-			}
-		}
-
-		/// <summary>
-		/// Reverse the winding order of this face.
-		/// </summary>
-		public void ReverseIndices()
-		{
-			System.Array.Reverse(m_Indices);
-			RebuildCaches();
-		}
-
-		/// <summary>
-		/// Rebuilds all property caches on pb_Face.
-		/// </summary>
-		public void RebuildCaches()
-		{
-			CacheDistinctIndices();
-			CacheEdges();
-		}
+		internal void InvalidateCache()
+	    {
+		    m_Edges = null;
+		    m_DistinctIndices = null;
+	    }
 
 		Edge[] CacheEdges()
 		{
@@ -308,9 +265,7 @@ namespace UnityEngine.ProBuilder
 			}
 
 			dist.ExceptWith(dup);
-
 			m_Edges = dist.ToArray();
-
 			return m_Edges;
 		}
 
@@ -318,9 +273,7 @@ namespace UnityEngine.ProBuilder
 		{
 			if(m_Indices == null)
 				return null;
-
-			m_DistinctIndices = new HashSet<int>(m_Indices).ToArray();
-
+			m_DistinctIndices = m_Indices.Distinct().ToArray();
 			return distinctIndices;
 		}
 
@@ -366,21 +319,21 @@ namespace UnityEngine.ProBuilder
             if (indices == null || indices.Length != 6)
                 return null;
 
-			int[] quad = new int[4] { edges[0].x, edges[0].y, -1, -1 };
+			int[] quad = new int[4] { edgesInternal[0].x, edgesInternal[0].y, -1, -1 };
 
-			if(edges[1].x == quad[1])
-				quad[2] = edges[1].y;
-			else if(edges[2].x == quad[1])
-				quad[2] = edges[2].y;
-			else if(edges[3].x == quad[1])
-				quad[2] = edges[3].y;
+			if(edgesInternal[1].x == quad[1])
+				quad[2] = edgesInternal[1].y;
+			else if(edgesInternal[2].x == quad[1])
+				quad[2] = edgesInternal[2].y;
+			else if(edgesInternal[3].x == quad[1])
+				quad[2] = edgesInternal[3].y;
 
-			if(edges[1].x == quad[2])
-				quad[3] = edges[1].y;
-			else if(edges[2].x == quad[2])
-				quad[3] = edges[2].y;
-			else if(edges[3].x == quad[2])
-				quad[3] = edges[3].y;
+			if(edgesInternal[1].x == quad[2])
+				quad[3] = edgesInternal[1].y;
+			else if(edgesInternal[2].x == quad[2])
+				quad[3] = edgesInternal[2].y;
+			else if(edgesInternal[3].x == quad[2])
+				quad[3] = edgesInternal[3].y;
 
 			return quad;
 		}

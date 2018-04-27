@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder
 		{
 			// this exists to force update preferences when updating packages
 			var stored = new VersionInfo(PreferencesInternal.GetString(PreferenceKeys.pbEditorPrefVersion)).MajorMinorPatch;
-			var current = Version.current.MajorMinorPatch;
+			var current = Version.currentInfo.MajorMinorPatch;
 
 			if (!stored.Equals(current))
 			{

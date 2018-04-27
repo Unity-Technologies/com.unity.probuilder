@@ -109,7 +109,7 @@ namespace UnityEngine.ProBuilder
 		/// Remove any arrays that are null or empty.
 		/// </summary>
 		/// <param name="array"></param>
-		public static void RemoveEmptyOrNull(ref IntArray[] array)
+		public static IntArray[] RemoveEmptyOrNull(IntArray[] array)
 		{
             if (array == null)
                 throw new ArgumentNullException("array");
@@ -122,7 +122,7 @@ namespace UnityEngine.ProBuilder
 					valid.Add(par);
 			}
 
-            array = valid.ToArray();
+            return valid.ToArray();
 		}
 	}
 }

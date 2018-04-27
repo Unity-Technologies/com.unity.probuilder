@@ -425,7 +425,7 @@ namespace UnityEditor.ProBuilder
 			int faceCount = pb.faceCount;
 
 			for (int i = 0; i < faceCount; i++)
-				edgeCount += pb.facesInternal[i].edges.Length;
+				edgeCount += pb.facesInternal[i].edgesInternal.Length;
 
 			int elementCount = System.Math.Min(edgeCount, ushort.MaxValue / 2 - 1);
 			int[] tris = new int[ elementCount * 2 ];
@@ -434,9 +434,9 @@ namespace UnityEditor.ProBuilder
 
 			for(int i = 0; i < faceCount && edgeIndex < elementCount; i++)
 			{
-				for (int n = 0; n < pb.facesInternal[i].edges.Length && edgeIndex < elementCount; n++)
+				for (int n = 0; n < pb.facesInternal[i].edgesInternal.Length && edgeIndex < elementCount; n++)
 				{
-					var edge = pb.facesInternal[i].edges[n];
+					var edge = pb.facesInternal[i].edgesInternal[n];
 
 					int positionIndex = edgeIndex * 2;
 

@@ -382,7 +382,7 @@ namespace ProBuilder.AssetUtility
 			foreach (UnityEngine.Object o in AssetDatabase.LoadAllAssetsAtPath(assetPath))
 			{
 				string g;
-				long file;
+				int file;
 
 				if (o != null && AssetDatabase.TryGetGUIDAndLocalFileIdentifier(o, out g, out file))
 					ids.Add(new AssetId(o, file.ToString(), g.ToString(), assetPath));

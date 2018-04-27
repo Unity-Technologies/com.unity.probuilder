@@ -63,7 +63,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			face.ShiftIndicesToZero();
 			face.ShiftIndices(vertexCount);
-			face.RebuildCaches();
 
 			faces.Add(face);
 
@@ -109,7 +108,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				appendedFaces[i].ShiftIndicesToZero();
 				appendedFaces[i].ShiftIndices(vc);
-				appendedFaces[i].RebuildCaches();
 				faces.Add(appendedFaces[i]);
 
 				if(appendedSharedIndices != null && appendedVertices[i].Length != appendedSharedIndices[i].Length)
@@ -180,7 +178,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				for(int i = 0; i < len; i++)
 					data.face.indices[i] = map[data.face.indices[i]];
 
-				data.face.ReverseIndices();
+				data.face.InvalidateCache();
 				rebuild.Add(data);
 			}
 
@@ -245,7 +243,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				for(var n = 0; n < tris.Length; n++)
 					tris[n] -= shiftmap[tris[n]];
 
-				nFaces[i].SetIndices(tris);
+				nFaces[i].indices = tris;
 			}
 
 			// shift all other face indices in the shared index array down to account for moved vertex positions
@@ -323,8 +321,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				if(tris.Count > 0)
 				{
-					face.SetIndices(tris.ToArray());
-					face.RebuildCaches();
+					face.indices = tris.ToArray();
 					m_RebuiltFaces.Add(face);
 				}
 			}

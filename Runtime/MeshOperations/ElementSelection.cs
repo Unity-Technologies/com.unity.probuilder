@@ -23,7 +23,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			for(int i = 0; i < pb.facesInternal.Length; i++)
 			{
-				Edge[] edges = pb.facesInternal[i].edges;
+				Edge[] edges = pb.facesInternal[i].edgesInternal;
 				for(int n = 0; n < edges.Length; n++)
 				{
 					e.x = edges[n].x;
@@ -126,7 +126,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns></returns>
 		internal static IEnumerable<Edge> GetPerimeterEdges(Dictionary<int, int> sharedIndicesLookup, IEnumerable<Face> faces)
 		{
-			List<Edge> faceEdges = faces.SelectMany(x => x.edges).ToList();	// actual edges
+			List<Edge> faceEdges = faces.SelectMany(x => x.edgesInternal).ToList();	// actual edges
 			int edgeCount = faceEdges.Count;
 
 			// translate all face edges to universal edges
@@ -204,7 +204,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			foreach(Face face in faces)
 			{
-				foreach(Edge e in face.edges)
+				foreach(Edge e in face.edgesInternal)
 				{
 					Edge edge = new Edge( lookup[e.x], lookup[e.y]);
 

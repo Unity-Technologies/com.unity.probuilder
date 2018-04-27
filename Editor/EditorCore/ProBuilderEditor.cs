@@ -699,7 +699,7 @@ namespace UnityEditor.ProBuilder
 				List<RaycastHit> hits;
 				Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
 
-				if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, bestObj, out hits, Culling.Front))
+				if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, bestObj, out hits, CullingMode.Front))
 				{
 					Camera cam = SceneView.lastActiveSceneView.camera;
 
@@ -716,7 +716,7 @@ namespace UnityEditor.ProBuilder
 						if (UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, bestObj, bestObj.transform.TransformPoint(hits[i].point)))
 							continue;
 
-						foreach (Edge edge in bestObj.facesInternal[hits[i].face].edges)
+						foreach (Edge edge in bestObj.facesInternal[hits[i].face].edgesInternal)
 						{
 							float d = HandleUtility.DistancePointLine(hits[i].point, v[edge.x], v[edge.y]);
 
@@ -795,7 +795,7 @@ namespace UnityEditor.ProBuilder
 						pb,
 						out hit,
 						Mathf.Infinity,
-						selectHiddenEnabled ? Culling.FrontBack : Culling.Front))
+						selectHiddenEnabled ? CullingMode.FrontBack : CullingMode.Front))
 					{
 						face = pb.facesInternal[hit.face];
 					}
@@ -2403,9 +2403,9 @@ namespace UnityEditor.ProBuilder
 
 			if (GetFirstSelectedFace(out pb, out face))
 			{
-				var tup = ProBuilderMath.NormalTangentBitangent(pb, face);
-				Vector3 nrm = tup.item1;
-				Vector3 bitan = tup.item3;
+				var normals = ProBuilderMath.NormalTangentBitangent(pb, face);
+				var nrm = normals.normal;
+				var bitan = normals.bitangent;
 
 				if (nrm == Vector3.zero || bitan == Vector3.zero)
 				{
@@ -2437,13 +2437,12 @@ namespace UnityEditor.ProBuilder
 
 					// use average normal, tangent, and bitangent to calculate rotation relative to local space
 					var tup = ProBuilderMath.NormalTangentBitangent(pb, face);
-					Vector3 nrm = tup.item1, bitan = tup.item3, tan = tup.item2;
+					Vector3 nrm = tup.normal, bitan = tup.bitangent;
 
 					if (nrm == Vector3.zero || bitan == Vector3.zero)
 					{
 						nrm = Vector3.up;
 						bitan = Vector3.right;
-						tan = Vector3.forward;
 					}
 
 					handleRotation = localRot * Quaternion.LookRotation(nrm, bitan);

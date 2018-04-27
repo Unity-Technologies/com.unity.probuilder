@@ -55,7 +55,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				foreach(Face f in pb.facesInternal)
 				{
-					if(f.edges.IndexOf(e, lookup) > -1)
+					if(f.edgesInternal.IndexOf(e, lookup) > -1)
 					{
 						fa = f;
 
@@ -156,8 +156,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			pb.sharedIndicesInternal = sharedIndices;
 
+			// todo Should only need to invalidate caches on affected faces
 			foreach(Face f in pb.facesInternal)
-				f.RebuildCaches();
+				f.InvalidateCache();
 
 			extrudedEdges = newEdges.ToArray();
 			return true;
@@ -189,7 +190,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				face.textureGroup = -1;
 
 				Vector3 delta = ProBuilderMath.Normal(pb, face) * distance;
-				Edge[] edges = face.edges;
+				Edge[] edges = face.edgesInternal;
 
 				used.Clear();
 
@@ -463,7 +464,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			foreach(Face face in faces)
 			{
-				foreach(Edge edge in face.edges)
+				foreach(Edge edge in face.edgesInternal)
 				{
 					EdgeLookup e = new EdgeLookup(lookup[edge.x], lookup[edge.y], edge.x, edge.y);
 

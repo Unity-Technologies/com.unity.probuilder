@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityScript.Lang;
 
 namespace UnityEngine.ProBuilder
 {
@@ -481,8 +482,12 @@ namespace UnityEngine.ProBuilder
 					vertices[i].Scale(flip);
 				}
 
-				foreach(Face f in faces)
-					f.ReverseIndices();
+				foreach (Face f in faces)
+				{
+					int[] indices = f.indices;
+					System.Array.Reverse(indices);
+					f.indices = indices;
+				}
 			}
 
 			ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithVerticesFaces(vertices, faces);

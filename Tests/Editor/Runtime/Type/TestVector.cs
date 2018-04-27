@@ -109,7 +109,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.Type
 			// reference
 			Assert.IsFalse(a == b);
 			Assert.IsFalse(a == c);
-			Assert.IsFalse(a == d);
+			Assert.IsTrue(a == d);
 
 			// hash
 			Assert.IsFalse(a.GetHashCode() == b.GetHashCode());

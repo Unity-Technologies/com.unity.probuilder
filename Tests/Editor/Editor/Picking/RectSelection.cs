@@ -155,7 +155,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 			Assert.Greater(selectedElements.Count, 0);
 
 			Dictionary<int, int> commonLookup = selection.Key.sharedIndicesInternal.ToDictionary();
-			var allEdges = EdgeLookup.GetEdgeLookupHashSet(selection.Key.facesInternal.SelectMany(x => x.edges), commonLookup);
+			var allEdges = EdgeLookup.GetEdgeLookupHashSet(selection.Key.facesInternal.SelectMany(x => x.edgesInternal), commonLookup);
 			var selectedEdges = EdgeLookup.GetEdgeLookupHashSet(selectedElements, commonLookup);
 			Assert.AreEqual(allEdges.Count, selectedEdges.Count);
 
@@ -171,7 +171,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 			Assert.IsNotNull(selection);
 			HashSet<Edge> selectedElements = selection.Value;
 			Assert.Greater(selectedElements.Count, 0);
-			Assert.Less(selectedElements.Count, selection.Key.facesInternal.Sum(x=>x.edges.Length));
+			Assert.Less(selectedElements.Count, selection.Key.facesInternal.Sum(x=>x.edgesInternal.Length));
 
 			Cleanup();
 		}
@@ -188,7 +188,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 			Assert.Greater(selectedElements.Count, 0);
 
 			Dictionary<int, int> commonLookup = selection.Key.sharedIndicesInternal.ToDictionary();
-			var allEdges = EdgeLookup.GetEdgeLookupHashSet(selection.Key.facesInternal.SelectMany(x => x.edges), commonLookup);
+			var allEdges = EdgeLookup.GetEdgeLookupHashSet(selection.Key.facesInternal.SelectMany(x => x.edgesInternal), commonLookup);
 			var selectedEdges = EdgeLookup.GetEdgeLookupHashSet(selectedElements, commonLookup);
 			Assert.AreEqual(allEdges.Count, selectedEdges.Count);
 
@@ -204,7 +204,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 			Assert.IsNotNull(selection);
 			HashSet<Edge> selectedElements = selection.Value;
 			Assert.Greater(selectedElements.Count, 0);
-			Assert.Less(selectedElements.Count, selection.Key.facesInternal.Sum(x=>x.edges.Length));
+			Assert.Less(selectedElements.Count, selection.Key.facesInternal.Sum(x=>x.edgesInternal.Length));
 
 			Cleanup();
 		}

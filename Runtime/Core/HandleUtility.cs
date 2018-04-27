@@ -37,7 +37,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		public static bool FaceRaycast(Ray worldRay, ProBuilderMesh mesh, out RaycastHit hit, HashSet<Face> ignore = null)
 		{
-			return FaceRaycast(worldRay, mesh, out hit, Mathf.Infinity, Culling.Front, ignore);
+			return FaceRaycast(worldRay, mesh, out hit, Mathf.Infinity, CullingMode.Front, ignore);
 		}
 
 		/// <summary>
@@ -50,7 +50,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="cullingMode">What sides of triangles does the ray intersect with.</param>
 		/// <param name="ignore">Optional collection of faces to ignore when raycasting.</param>
 		/// <returns>True if the ray intersects with the mesh, false if not.</returns>
-		public static bool FaceRaycast(Ray worldRay, ProBuilderMesh mesh, out RaycastHit hit, float distance, Culling cullingMode, HashSet<Face> ignore = null)
+		public static bool FaceRaycast(Ray worldRay, ProBuilderMesh mesh, out RaycastHit hit, float distance, CullingMode cullingMode, HashSet<Face> ignore = null)
 		{
 			// Transform ray into model space
 			worldRay.origin -= mesh.transform.position; // Why doesn't worldToLocalMatrix apply translation?
@@ -63,8 +63,8 @@ namespace UnityEngine.ProBuilder
 			Vector3 point = Vector3.zero;
 
 			float OutHitPoint = Mathf.Infinity;
-			float dot; 		// vars used in loop
-			Vector3 nrm;	// vars used in loop
+			float dot;
+			Vector3 nrm;
 			int OutHitFace = -1;
 			Vector3 OutNrm = Vector3.zero;
 
@@ -89,11 +89,11 @@ namespace UnityEngine.ProBuilder
 
 					switch(cullingMode)
 					{
-						case Culling.Front:
+						case CullingMode.Front:
 							if(dot > 0f) skip = true;
 							break;
 
-						case Culling.Back:
+						case CullingMode.Back:
 							if(dot < 0f) skip = true;
 							break;
 					}
@@ -134,7 +134,7 @@ namespace UnityEngine.ProBuilder
 			Ray InWorldRay,
 			ProBuilderMesh mesh,
 			out List<RaycastHit> hits,
-			Culling cullingMode,
+			CullingMode cullingMode,
 			HashSet<Face> ignore = null)
 		{
 			// Transform ray into model space
@@ -172,21 +172,21 @@ namespace UnityEngine.ProBuilder
 
 						switch(cullingMode)
 						{
-							case Culling.Front:
+							case CullingMode.Front:
 								dot = Vector3.Dot(InWorldRay.direction, -nrm);
 
 								if(dot > 0f)
-									goto case Culling.FrontBack;
+									goto case CullingMode.FrontBack;
 								break;
 
-							case Culling.Back:
+							case CullingMode.Back:
 								dot = Vector3.Dot(InWorldRay.direction, nrm);
 
 								if(dot > 0f)
-									goto case Culling.FrontBack;
+									goto case CullingMode.FrontBack;
 								break;
 
-							case Culling.FrontBack:
+							case CullingMode.FrontBack:
 								hits.Add( new RaycastHit(dist,
 															InWorldRay.GetPoint(dist),
 															nrm,
@@ -293,7 +293,7 @@ namespace UnityEngine.ProBuilder
 
 			RaycastHit hit;
 
-			return HandleUtility.FaceRaycast(ray, pb, out hit, Vector3.Distance(cam.transform.position, worldPoint), Culling.Back);
+			return HandleUtility.FaceRaycast(ray, pb, out hit, Vector3.Distance(cam.transform.position, worldPoint), CullingMode.Back);
 		}
 
 		/// <summary>

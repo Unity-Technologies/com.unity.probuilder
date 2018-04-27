@@ -62,7 +62,7 @@ namespace UnityEditor.ProBuilder
 
 		internal static void ValidateVersion()
 		{
-			string currentVersionString = Version.current.ToString(k_AboutPrefFormat);
+			string currentVersionString = Version.currentInfo.ToString(k_AboutPrefFormat);
 			bool isNewVersion = PreferencesInternal.GetString(k_AboutWindowVersionPref).Equals(currentVersionString);
 			PreferencesInternal.SetString(k_AboutWindowVersionPref, currentVersionString, PreferenceLocation.Global);
 
@@ -262,7 +262,7 @@ namespace UnityEditor.ProBuilder
 			EditorGUILayout.EndScrollView();
 
 			GUILayout.BeginHorizontal();
-			GUILayout.Label(Version.current.ToString());
+			GUILayout.Label(Version.currentInfo.ToString());
 
 			GUILayout.FlexibleSpace();
 

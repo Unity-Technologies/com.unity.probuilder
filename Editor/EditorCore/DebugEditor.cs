@@ -485,7 +485,7 @@ namespace UnityEditor.ProBuilder
 		void DrawEdgeInfo(ProBuilderMesh pb)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
-			Edge[] source = selectedOnly ? pb.SelectedEdges : pb.facesInternal.SelectMany(x => x.edges).ToArray();
+			Edge[] source = selectedOnly ? pb.SelectedEdges : pb.facesInternal.SelectMany(x => x.edgesInternal).ToArray();
 			IEnumerable<EdgeLookup> edges = EdgeLookup.GetEdgeLookup(source, lookup);
 			Camera cam = SceneView.lastActiveSceneView.camera;
 

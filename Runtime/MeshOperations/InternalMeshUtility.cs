@@ -119,7 +119,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Vector3[] localVerts = pb.positionsInternal;
 			bool extrudeAsGroup = method != ExtrudeMethod.IndividualFaces;
 
-			Edge[][] perimeterEdges = extrudeAsGroup ? new Edge[1][] { ElementSelection.GetPerimeterEdges(lookup, faces).ToArray() } : faces.Select(x => x.edges).ToArray();
+			Edge[][] perimeterEdges = extrudeAsGroup ? new Edge[1][] { ElementSelection.GetPerimeterEdges(lookup, faces).ToArray() } : faces.Select(x => x.edgesInternal).ToArray();
 
 			if(perimeterEdges.Length < 1 || (extrudeAsGroup && perimeterEdges[0].Length < 3))
 			{
@@ -142,7 +142,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					// gets the faces associated with each perimeter edge
 					foreach(Face face in faces)
 					{
-						if(face.edges.Contains(perimeterEdges[i][n]))
+						if(face.edgesInternal.Contains(perimeterEdges[i][n]))
 						{
 							edgeFaces[i][n] = face;
 							break;
@@ -391,7 +391,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					sources.Remove(wing.face);
 
 					foreach(WingedEdge w in wing)
-						Normals.ConformOppositeNormal(w);
+						Topology.ConformOppositeNormal(w);
 				}
 			}
 
@@ -463,7 +463,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					}
 				}
 
-				data.face.SetIndices(indices.ToArray());
+				data.face.indices = indices.ToArray();
 				detached.Add(data);
 			}
 
@@ -501,7 +501,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				foreach(Face face in pb.facesInternal)
 				{
-					if(face.edges.IndexOf(a, lookup) >= 0 && face.edges.IndexOf(b, lookup) >= 0)
+					if(face.edgesInternal.IndexOf(a, lookup) >= 0 && face.edgesInternal.IndexOf(b, lookup) >= 0)
 					{
 						Debug.LogWarning("Face already exists between these two edges!");
 						return false;
@@ -690,7 +690,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					faces[i] = new Face(pb.facesInternal[i]);
 					faces[i].manualUV = true;
 					faces[i].ShiftIndices(vertexCount);
-					faces[i].RebuildCaches();
 				}
 				f.AddRange(faces);
 
@@ -795,8 +794,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						arr[len+0] = tris[i+0];
 						arr[len+1] = tris[i+1];
 						arr[len+2] = tris[i+2];
-						faces[index].SetIndices(arr);
-						faces[index].RebuildCaches();
+						faces[index].indices = arr;
 					}
 					else
 					{
@@ -926,8 +924,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						arr[len+0] = tris[i+0];
 						arr[len+1] = tris[i+1];
 						arr[len+2] = tris[i+2];
-						faces[index].SetIndices(arr);
-						faces[index].RebuildCaches();
+						faces[index].indices = arr;
 					}
 					else
 					{

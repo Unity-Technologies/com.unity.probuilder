@@ -33,7 +33,7 @@ namespace UnityEngine.ProBuilder
 	/// <typeparam name="T1"></typeparam>
 	/// <typeparam name="T2"></typeparam>
 	/// <typeparam name="T3"></typeparam>
-	public class SimpleTuple<T1, T2, T3>
+	internal class SimpleTuple<T1, T2, T3>
 	{
 		public T1 item1 { get; set; }
 		public T2 item2 { get; set; }
@@ -62,7 +62,7 @@ namespace UnityEngine.ProBuilder
 	/// <typeparam name="T2"></typeparam>
 	/// <typeparam name="T3"></typeparam>
 	/// <typeparam name="T4"></typeparam>
-	public class SimpleTuple<T1, T2, T3, T4>
+	internal class SimpleTuple<T1, T2, T3, T4>
 	{
 		public T1 item1 { get; set; }
 		public T2 item2 { get; set; }

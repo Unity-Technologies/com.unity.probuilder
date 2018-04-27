@@ -1063,10 +1063,10 @@ class UVEditor : EditorWindow
 
 						for(int n = 0; n < pb.facesInternal.Length; n++)
 						{
-							for(int p = 0; p < pb.facesInternal[n].edges.Length; p++)
+							for(int p = 0; p < pb.facesInternal[n].edgesInternal.Length; p++)
 							{
-								x = uv[pb.facesInternal[n].edges[p].x];
-								y = uv[pb.facesInternal[n].edges[p].y];
+								x = uv[pb.facesInternal[n].edgesInternal[p].x];
+								y = uv[pb.facesInternal[n].edgesInternal[p].y];
 
 								dist = ProBuilderMath.DistancePointLineSegment(mpos, x, y);
 
@@ -1097,7 +1097,7 @@ class UVEditor : EditorWindow
 
 						for(int n = 0; n < selection[i].facesInternal.Length; n++)
 						{
-							if( ProBuilderMath.PointInPolygon(uv, mpos, selection[i].facesInternal[n].edges.AllTriangles()) )
+							if( ProBuilderMath.PointInPolygon(uv, mpos, selection[i].facesInternal[n].edgesInternal.AllTriangles()) )
 							{
 								nearestElement.objectIndex = i;
 								nearestElement.elementIndex = n;
@@ -1160,7 +1160,7 @@ class UVEditor : EditorWindow
 				{
 					ProBuilderMesh pb = selection[nearestElement.objectIndex];
 
-					Edge edge = pb.facesInternal[nearestElement.elementIndex].edges[nearestElement.elementSubIndex];
+					Edge edge = pb.facesInternal[nearestElement.elementIndex].edgesInternal[nearestElement.elementSubIndex];
 					int ind = pb.SelectedEdges.IndexOf(edge, pb.sharedIndicesInternal.ToDictionary());
 
 					if( ind > -1 )
@@ -1180,7 +1180,7 @@ class UVEditor : EditorWindow
 
 					for(int n = 0; n < selection[i].facesInternal.Length; n++)
 					{
-						if( ProBuilderMath.PointInPolygon(selection[i].texturesInternal, mpos, selection[i].facesInternal[n].edges.AllTriangles()) )
+						if( ProBuilderMath.PointInPolygon(selection[i].texturesInternal, mpos, selection[i].facesInternal[n].edgesInternal.AllTriangles()) )
 						{
 							if( selectedFaces.Contains(selection[i].facesInternal[n]) )
 								selectedFaces.Remove(selection[i].facesInternal[n]);
@@ -1947,7 +1947,7 @@ class UVEditor : EditorWindow
 					{
 						Face face = pb.facesInternal[n];
 
-						foreach(Edge edge in face.edges)
+						foreach(Edge edge in face.edgesInternal)
 						{
 							x = UVToGUIPoint(uv[edge.x]);
 							y = UVToGUIPoint(uv[edge.y]);
@@ -2040,7 +2040,7 @@ class UVEditor : EditorWindow
 						GL.Color(Color.red);
 						if(nearestElement.valid && nearestElement.elementSubIndex > -1 && !modifyingUVs)
 						{
-							Edge edge = selection[nearestElement.objectIndex].facesInternal[nearestElement.elementIndex].edges[nearestElement.elementSubIndex];
+							Edge edge = selection[nearestElement.objectIndex].facesInternal[nearestElement.elementIndex].edgesInternal[nearestElement.elementSubIndex];
 							GL.Vertex( UVToGUIPoint(selection[nearestElement.objectIndex].texturesInternal[edge.x]) );
 							GL.Vertex( UVToGUIPoint(selection[nearestElement.objectIndex].texturesInternal[edge.y]) );
 						}
@@ -2368,9 +2368,9 @@ class UVEditor : EditorWindow
 
 						for(int n = 0; n < pb.facesInternal.Length; n++)
 						{
-							for(int p = 0; p < pb.facesInternal[n].edges.Length; p++)
+							for(int p = 0; p < pb.facesInternal[n].edgesInternal.Length; p++)
 							{
-								Edge edge = pb.facesInternal[n].edges[p];
+								Edge edge = pb.facesInternal[n].edgesInternal[p];
 
 								if( dragBounds.IntersectsLineSegment( mshUV[edge.x], mshUV[edge.y]) )
 								{

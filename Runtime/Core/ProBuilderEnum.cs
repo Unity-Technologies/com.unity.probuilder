@@ -169,7 +169,7 @@ namespace UnityEngine.ProBuilder
 	};
 
 	[System.Flags]
-	public enum Culling
+	public enum CullingMode
 	{
 		None = 0 << 0,
 		Back = 1 << 0,
@@ -210,7 +210,7 @@ namespace UnityEngine.ProBuilder
     /// Mesh attributes bitmask.
     /// </summary>
     [System.Flags]
-    public enum AttributeType
+    public enum Attributes
     {
         /// <summary>
         /// Vertex positions.
@@ -258,16 +258,34 @@ namespace UnityEngine.ProBuilder
 	};
 
 	/// <summary>
-	/// Selectively refresh mesh attributes in pb_Object::Refresh.
+	/// Selectively rebuild and apply mesh attributes to the UnityEngine.Mesh asset.
 	/// </summary>
 	[System.Flags]
 	public enum RefreshMask
 	{
+        /// <summary>
+        /// UV1 channel will be rebuilt.
+        /// </summary>
         UV = 0x1,
+        /// <summary>
+        /// Colors will be rebuilt.
+        /// </summary>
         Colors = 0x2,
+        /// <summary>
+        /// Normals will be recalculated and applied.
+        /// </summary>
         Normals = 0x4,
+        /// <summary>
+        /// Tangents will be recalculated and applied.
+        /// </summary>
         Tangents = 0x8,
+        /// <summary>
+        /// If userCollisions is not true, any primitive colliders will be resized to best fit the mesh bounds.
+        /// </summary>
         Collisions = 0x10,
+        /// <summary>
+        /// Refresh all optional mesh attributes.
+        /// </summary>
         All = UV | Colors | Normals | Tangents | Collisions
     };
 

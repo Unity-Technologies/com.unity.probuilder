@@ -55,7 +55,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				FaceRebuildData r = new FaceRebuildData();
 
 				r.face = new Face(face);
-				r.face.SetIndices( new int[] { 0, 1, 2} );
+				r.face.indices = new int[] { 0, 1, 2};
 
 				r.vertices = new List<Vertex>() {
 					vertices[tris[i  ]],

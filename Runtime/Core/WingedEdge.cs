@@ -218,11 +218,11 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		public static List<Edge> SortEdgesByAdjacency(Face face)
 		{
-            if (face == null || face.edges == null)
+            if (face == null || face.edgesInternal == null)
                 throw new ArgumentNullException("face");
 
 			// grab perimeter edges
-			List<Edge> edges = new List<Edge>(face.edges);
+			List<Edge> edges = new List<Edge>(face.edgesInternal);
 
 			return SortEdgesByAdjacency(edges);
 		}

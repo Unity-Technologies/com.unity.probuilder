@@ -35,7 +35,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns>An action result indicating the status of the operation.</returns>
 		public static ActionResult Connect(this ProBuilderMesh pb, IEnumerable<Face> faces, out Face[] subdividedFaces)
 		{
-			IEnumerable<Edge> edges = faces.SelectMany(x => x.edges);
+			IEnumerable<Edge> edges = faces.SelectMany(x => x.edgesInternal);
 			HashSet<Face> mask = new HashSet<Face>(faces);
 			Edge[] empty;
 			return Connect(pb, edges, out subdividedFaces, out empty, true, false, mask);
@@ -243,7 +243,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					Vector3 fn = ProBuilderMath.Normal(c.faceRebuildData.vertices, c.faceRebuildData.face.indices);
 
 					if(Vector3.Dot(nrm, fn) < 0)
-						c.faceRebuildData.face.ReverseIndices();
+						c.faceRebuildData.face.Reverse();
 
 					results.Add( c );
 				}
@@ -269,7 +269,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						Vector3 fn = ProBuilderMath.Normal(c.faceRebuildData.vertices, c.faceRebuildData.face.indices);
 
 						if(Vector3.Dot(nrm, fn) < 0)
-							c.faceRebuildData.face.ReverseIndices();
+							c.faceRebuildData.face.Reverse();
 
 						c.faceRebuildData.face.textureGroup 	= face.textureGroup < 0 ? newTextureGroupIndex : face.textureGroup;
 						c.faceRebuildData.face.uv 				= new AutoUnwrapSettings(face.uv);
@@ -300,7 +300,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						appendedIndices.Add( ( results[n].newVertexIndices[i] + results[n].faceRebuildData.Offset() ) - removedVertexCount );
 
 				Dictionary<int, int> lup = pb.sharedIndicesInternal.ToDictionary();
-				IEnumerable<Edge> newEdges = results.SelectMany(x => x.faceRebuildData.face.edges).Where(x => appendedIndices.Contains(x.x) && appendedIndices.Contains(x.y));
+				IEnumerable<Edge> newEdges = results.SelectMany(x => x.faceRebuildData.face.edgesInternal).Where(x => appendedIndices.Contains(x.x) && appendedIndices.Contains(x.y));
 				IEnumerable<EdgeLookup> distNewEdges = EdgeLookup.GetEdgeLookup(newEdges, lup);
 
 				connections = distNewEdges.Distinct().Select(x => x.local).ToArray();
@@ -522,7 +522,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				Vector3 fn = ProBuilderMath.Normal(n_vertices[i], f.face.indices);
 
 				if(Vector3.Dot(nrm, fn) < 0)
-					f.face.ReverseIndices();
+					f.face.Reverse();
 
 				faces.Add(new ConnectFaceRebuildData(f, n_indices[i]));
 			}
@@ -587,7 +587,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				Vector3 fn = ProBuilderMath.Normal(n_vertices[i], f.face.indices);
 
 				if(Vector3.Dot(nrm, fn) < 0)
-					f.face.ReverseIndices();
+					f.face.Reverse();
 
 				faces.Add(new ConnectFaceRebuildData(f, n_indices[i]));
 			}

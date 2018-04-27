@@ -726,12 +726,12 @@ namespace UnityEngine.ProBuilder
 		/// <param name="normal"></param>
 		/// <param name="tangent"></param>
 		/// <param name="bitangent"></param>
-		public static SimpleTuple<Vector3, Vector3, Vector3> NormalTangentBitangent(ProBuilderMesh pb, Face face)
+		public static Normals NormalTangentBitangent(ProBuilderMesh pb, Face face)
 		{
 			if(pb == null || face == null || face.indices.Length < 3)
                 throw new System.ArgumentNullException("pb", "Cannot find normal, tangent, and bitangent for null object, or faces with < 3 indices.");
 
-			var normal = ProBuilderMath.Normal(pb, face);
+			var nrm = ProBuilderMath.Normal(pb, face);
 
 			Vector3 tan1 = Vector3.zero;
 			Vector3 tan2 = Vector3.zero;
@@ -769,8 +769,7 @@ namespace UnityEngine.ProBuilder
 			tan1 += sdir;
 			tan2 += tdir;
 
-			Vector3 n = normal;
-
+			Vector3 n = nrm;
 			Vector3.OrthoNormalize(ref n, ref tan1);
 
 			tan.x = tan1.x;
@@ -779,12 +778,12 @@ namespace UnityEngine.ProBuilder
 
 			tan.w = (Vector3.Dot(Vector3.Cross(n, tan1), tan2) < 0.0f) ? -1.0f : 1.0f;
 
-            Vector3 tangent = ((Vector3)tan) * tan.w;
-
-            return new SimpleTuple<Vector3, Vector3, Vector3>(
-                normal,
-                tangent,
-                Vector3.Cross(normal, tangent));
+			return new Normals()
+			{
+				normal = nrm,
+				tangent = tan,
+				bitangent = Vector3.Cross(nrm, ((Vector3)tan) * tan.w)
+			};
         }
 
 		/// <summary>

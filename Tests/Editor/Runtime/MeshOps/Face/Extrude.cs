@@ -97,7 +97,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 #if PB_CREATE_TEST_MESH_TEMPLATES
 					TestUtility.SaveAssetTemplate(pb.mesh, pb.name);
 #endif
-					Assert.AreEqual(initialVertexCount + face.edges.Length * 4, pb.vertexCount);
+					Assert.AreEqual(initialVertexCount + face.edgesInternal.Length * 4, pb.vertexCount);
 				}
 			}
 		}
@@ -152,7 +152,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 					pb.Refresh();
 					LogAssert.NoUnexpectedReceived();
 					TestUtility.AssertMeshAttributesValid(pb.mesh);
-					Assert.AreEqual(initialVertexCount + face.edges.Length * 4, pb.vertexCount);
+					Assert.AreEqual(initialVertexCount + face.edgesInternal.Length * 4, pb.vertexCount);
 
 					initialVertexCount = pb.vertexCount;
 					pb.Extrude(new UnityEngine.ProBuilder.Face[] {face}, ExtrudeMethod.VertexNormal, 1f);
@@ -160,7 +160,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 					pb.Refresh();
 					LogAssert.NoUnexpectedReceived();
 					TestUtility.AssertMeshAttributesValid(pb.mesh);
-					Assert.AreEqual(initialVertexCount + face.edges.Length * 4, pb.vertexCount);
+					Assert.AreEqual(initialVertexCount + face.edgesInternal.Length * 4, pb.vertexCount);
 
 					initialVertexCount = pb.vertexCount;
 					pb.Extrude(new UnityEngine.ProBuilder.Face[] {face}, ExtrudeMethod.IndividualFaces, 1f);
@@ -168,7 +168,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 					pb.Refresh();
 					LogAssert.NoUnexpectedReceived();
 					TestUtility.AssertMeshAttributesValid(pb.mesh);
-					Assert.AreEqual(initialVertexCount + face.edges.Length * 4, pb.vertexCount);
+					Assert.AreEqual(initialVertexCount + face.edgesInternal.Length * 4, pb.vertexCount);
 				}
 			}
 		}

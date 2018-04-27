@@ -412,7 +412,7 @@ namespace UnityEditor.ProBuilder
 				if(faces == null)
 					continue;
 
-				res = Normals.ConformNormals(pb, faces);
+				res = Topology.ConformNormals(pb, faces);
 
 				pb.ToMesh();
 				pb.Refresh();
@@ -603,7 +603,7 @@ namespace UnityEditor.ProBuilder
 
 				case SelectMode.Edge:
 					sel = selection.Sum(x => x.SelectedEdgeCount);
-					max = selection.Sum(x => x.facesInternal.Sum(y=>y.edges.Length));
+					max = selection.Sum(x => x.facesInternal.Sum(y=>y.edgesInternal.Length));
 					break;
 
 				default:
@@ -1515,7 +1515,7 @@ namespace UnityEditor.ProBuilder
 							{
 								p.face.material = p.opposite.face.material;
 								p.face.uv = new AutoUnwrapSettings(p.opposite.face.uv);
-								Normals.ConformOppositeNormal(p.opposite);
+								Topology.ConformOppositeNormal(p.opposite);
 								break;
 							}
 						}

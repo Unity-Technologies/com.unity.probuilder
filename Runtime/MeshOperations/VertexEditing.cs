@@ -246,7 +246,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Vector3 newNrm = ProBuilderMath.Normal(pb, newFace);
 
 			if( Vector3.Dot(oldNrm, newNrm) < 0 )
-				newFace.ReverseIndices();
+				newFace.Reverse();
 
 			pb.DeleteFace(face);
 
@@ -367,7 +367,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				List<int> indices;
 
 				if(Triangulation.SortAndTriangulate(projection, out indices))
-					data.face.SetIndices(indices.ToArray());
+					data.face.indices = indices.ToArray();
 				else
 					continue;
 
@@ -385,7 +385,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				vertices.AddRange(data.vertices);
 
-				foreach(Edge e in face.edges)
+				foreach(Edge e in face.edgesInternal)
 				{
 					EdgeLookup el = new EdgeLookup(new Edge(lookup[e.x], lookup[e.y]), e);
 
@@ -614,7 +614,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				if(Vector3.Dot(oldNormal, newNormal) < 0f)
 					triangles.Reverse();
 
-				data.face.SetIndices(triangles.ToArray());
+				data.face.indices = triangles.ToArray();
 
 				return data;
 			}

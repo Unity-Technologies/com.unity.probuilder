@@ -104,6 +104,19 @@ namespace UnityEngine.ProBuilder
 			hasUv4 = vertex.hasUv4;
 		}
 
+        public static bool operator ==(Vertex a, Vertex b)
+        {
+            if(object.ReferenceEquals(a, null) || object.ReferenceEquals(b, null))
+                return false;
+
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(Vertex a, Vertex b)
+        {
+            return !(a == b);
+        }
+
 		/// <summary>
 		/// Addition operator overload passes on to each vector.
 		/// </summary>
@@ -116,7 +129,7 @@ namespace UnityEngine.ProBuilder
 			v.Add(b);
 			return v;
 		}
-
+          
 		/// <summary>
 		/// In-place addition.
 		/// </summary>
@@ -133,7 +146,7 @@ namespace UnityEngine.ProBuilder
 			uv0 += b.uv0;
 			uv2 += b.uv2;
 			uv3 += b.uv3;
-			uv4 += b.uv4;
+            uv4 += b.uv4;
 		}
 
 		/// <summary>
@@ -149,11 +162,24 @@ namespace UnityEngine.ProBuilder
 			return v;
 		}
 
-		/// <summary>
-		/// In-place subtraction.
-		/// </summary>
-		/// <param name="b"></param>
-		public void Subtract(Vertex b)
+        /// <summary>
+        /// Subtract two vertices and return the result.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static Vertex Subtract(Vertex a, Vertex b)
+        {
+            var c = new Vertex(a);
+            c.Subtract(b);
+            return c;
+        }
+
+        /// <summary>
+        /// In-place subtraction.
+        /// </summary>
+        /// <param name="b"></param>
+        public void Subtract(Vertex b)
 		{
 			if (b == null)
 				throw new ArgumentNullException("b");
@@ -478,7 +504,7 @@ namespace UnityEngine.ProBuilder
 			out List<Vector4> uv3,
 			out List<Vector4> uv4)
 		{
-			GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4, AttributeType.All);
+			GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4, Attributes.All);
 		}
 
 		/// <summary>
@@ -507,7 +533,7 @@ namespace UnityEngine.ProBuilder
 			out Vector2[] uv2,
 			out List<Vector4> uv3,
 			out List<Vector4> uv4,
-			AttributeType attributes)
+			Attributes attributes)
 		{
 			if (vertices == null)
 				throw new ArgumentNullException("vertices");
@@ -515,14 +541,14 @@ namespace UnityEngine.ProBuilder
 			int vc = vertices.Count;
 			var first = vertices[0];
 
-			bool hasPosition = ((attributes & AttributeType.Position) == AttributeType.Position) && first.hasPosition;
-			bool hasColor = ((attributes & AttributeType.Color) == AttributeType.Color) && first.hasColor;
-			bool hasUv0 = ((attributes & AttributeType.UV0) == AttributeType.UV0) && first.hasUv0;
-			bool hasNormal = ((attributes & AttributeType.Normal) == AttributeType.Normal) && first.hasNormal;
-			bool hasTangent = ((attributes & AttributeType.Tangent) == AttributeType.Tangent) && first.hasTangent;
-			bool hasUv2 = ((attributes & AttributeType.UV1) == AttributeType.UV1) && first.hasUv2;
-			bool hasUv3 = ((attributes & AttributeType.UV2) == AttributeType.UV2) && first.hasUv3;
-			bool hasUv4 = ((attributes & AttributeType.UV3) == AttributeType.UV3) && first.hasUv4;
+			bool hasPosition = ((attributes & Attributes.Position) == Attributes.Position) && first.hasPosition;
+			bool hasColor = ((attributes & Attributes.Color) == Attributes.Color) && first.hasColor;
+			bool hasUv0 = ((attributes & Attributes.UV0) == Attributes.UV0) && first.hasUv0;
+			bool hasNormal = ((attributes & Attributes.Normal) == Attributes.Normal) && first.hasNormal;
+			bool hasTangent = ((attributes & Attributes.Tangent) == Attributes.Tangent) && first.hasTangent;
+			bool hasUv2 = ((attributes & Attributes.UV1) == Attributes.UV1) && first.hasUv2;
+			bool hasUv3 = ((attributes & Attributes.UV2) == Attributes.UV2) && first.hasUv3;
+			bool hasUv4 = ((attributes & Attributes.UV3) == Attributes.UV3) && first.hasUv4;
 
 			position = hasPosition ? new Vector3[vc] : null;
 			color = hasColor ? new Color[vc] : null;

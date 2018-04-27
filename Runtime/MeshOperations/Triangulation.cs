@@ -119,11 +119,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				indices.Add( d.Points[2].Index );
 			}
 
-			WindingOrder originalWinding = TriangleWinding.GetWindingOrder(points);
+			WindingOrder originalWinding = Topology.GetWindingOrder(points);
 
 			// if the re-triangulated first tri doesn't match the winding order of the original
 			// vertices, flip 'em
-			if( TriangleWinding.GetWindingOrder(new Vector2[3]{
+			if( Topology.GetWindingOrder(new Vector2[3]{
 				points[indices[0]],
 				points[indices[1]],
 				points[indices[2]],

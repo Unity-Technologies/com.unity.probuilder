@@ -92,7 +92,7 @@ namespace UnityEngine.ProBuilder
 		{
 			List<Edge> edges = new List<Edge>();
 			foreach(Face f in faces)
-				edges.AddRange(f.edges);
+				edges.AddRange(f.edgesInternal);
 			return edges.ToArray();
 		}
 

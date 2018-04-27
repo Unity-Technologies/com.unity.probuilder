@@ -319,10 +319,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			// Cache shared indices (we gon' use 'em a lot)
 			Dictionary<int, int> sharedIndices = pb.sharedIndicesInternal.ToDictionary();
 
-			for(int i = 0; i < f1.edges.Length; i++)
+			for(int i = 0; i < f1.edgesInternal.Length; i++)
 			{
 				// find a matching edge
-				int ind = f2.edges.IndexOf(f1.edges[i], sharedIndices);
+				int ind = f2.edgesInternal.IndexOf(f1.edgesInternal[i], sharedIndices);
 				if( ind > -1 )
 				{
 					// First, project the second face
@@ -336,7 +336,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					f1.textureGroup = -1;
 					f2.textureGroup = -1;
 
-					AlignEdges(pb, f1, f2, f1.edges[i], f2.edges[ind], channel);
+					AlignEdges(pb, f1, f2, f1.edgesInternal[i], f2.edgesInternal[ind], channel);
 					return true;
 				}
 			}
@@ -438,9 +438,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			IntArrayUtility.MergeSharedIndices(ref sharedIndicesUV, matchX);
 			IntArrayUtility.MergeSharedIndices(ref sharedIndicesUV, matchY);
 
-			IntArray.RemoveEmptyOrNull(ref sharedIndicesUV);
-
-			pb.SetSharedIndicesUV(sharedIndicesUV);
+			pb.SetSharedIndicesUV(IntArray.RemoveEmptyOrNull(sharedIndicesUV));
 
 			// @todo Update Element Groups here?
 

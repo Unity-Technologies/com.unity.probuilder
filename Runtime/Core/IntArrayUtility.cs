@@ -335,7 +335,7 @@ namespace UnityEngine.ProBuilder
 
 			int[] arr = sharedIndices[oldBIndex].array;
 			sharedIndices[oldBIndex].array = arr.RemoveAt(System.Array.IndexOf(arr, b));
-			IntArray.RemoveEmptyOrNull(ref sharedIndices);
+			sharedIndices = IntArray.RemoveEmptyOrNull(sharedIndices);
 		}
 
 		/// <summary>
@@ -395,7 +395,7 @@ namespace UnityEngine.ProBuilder
 			}
 
 			// Remove empty or null entries caused by shifting around all them indices
-			IntArray.RemoveEmptyOrNull(ref sharedIndices);
+			sharedIndices = IntArray.RemoveEmptyOrNull(sharedIndices);
 		}
 
 		/// <summary>

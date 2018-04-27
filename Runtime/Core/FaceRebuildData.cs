@@ -61,10 +61,14 @@ namespace UnityEngine.ProBuilder
 			pb.SetSharedIndicesUV(lookupUV);
 		}
 
-		/**
-		 *	Shift face rebuild data to appropriate positions and update the vertex, face, and
-		 *	shared indices arrays.
-		 */
+		/// <summary>
+		/// Shift face rebuild data to appropriate positions and update the vertex, face, and shared indices arrays.
+		/// </summary>
+		/// <param name="newFaces"></param>
+		/// <param name="vertices"></param>
+		/// <param name="faces"></param>
+		/// <param name="sharedIndices"></param>
+		/// <param name="sharedIndicesUV"></param>
 		public static void Apply(
 			IEnumerable<FaceRebuildData> newFaces,
 			List<Vertex> vertices,
@@ -94,14 +98,13 @@ namespace UnityEngine.ProBuilder
 				}
 
 				rd._appliedOffset = index;
+				int[] indices = face.indices;
 
-				for(int n = 0; n < face.indices.Length; n++)
-					face.indices[n] += index;
-
-				face.RebuildCaches();
+				for(int n = 0, c = indices.Length; n < c; n++)
+					indices[n] += index;
 
 				index += rd.vertices.Count;
-
+				face.indices = indices;
 				faces.Add(face);
 				vertices.AddRange(rd.vertices);
 			}

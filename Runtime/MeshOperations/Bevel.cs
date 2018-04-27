@@ -230,7 +230,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						{
 							w.face.material = w.opposite.face.material;
 							w.face.uv = new AutoUnwrapSettings(w.opposite.face.uv);
-							Normals.ConformOppositeNormal(w.opposite);
+							Topology.ConformOppositeNormal(w.opposite);
 							break;
 						}
 					}

@@ -63,7 +63,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				for(int i = 0; i < indices.Length; i++)
 					indices[i] -= offset[indices[i]];
 
-				face.RebuildCaches();
+				face.Reverse();
 			}
 
 			// remove from sharedIndices & shift to account for deletions

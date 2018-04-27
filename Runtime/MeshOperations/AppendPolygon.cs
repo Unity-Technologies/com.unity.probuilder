@@ -103,8 +103,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				Vector3 nrm = ProBuilderMath.Normal(pb, pb.facesInternal[0]);
 
-				if(Vector3.Dot(Vector3.up, nrm) > 0f)
-					pb.facesInternal[0].ReverseIndices();
+				if (Vector3.Dot(Vector3.up, nrm) > 0f)
+					pb.facesInternal[0].Reverse();
 
 				pb.DuplicateAndFlip(pb.facesInternal);
 
