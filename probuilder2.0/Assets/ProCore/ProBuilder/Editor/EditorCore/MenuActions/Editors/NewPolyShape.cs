@@ -39,6 +39,7 @@ namespace ProBuilder.Actions
 		{
 			GameObject go = new GameObject();
 			pb_PolyShape poly = go.AddComponent<pb_PolyShape>();
+			poly.material = pb_PreferencesInternal.GetMaterial(pb_Constant.pbDefaultMaterial);
 			pb_Object pb = poly.gameObject.AddComponent<pb_Object>();
 			pb.CreateShapeFromPolygon(poly.points, poly.extrude, poly.flipNormals);
 			pb_EditorUtility.InitObject(pb);
