@@ -180,8 +180,7 @@ namespace UnityEngine.ProBuilder
 			m_DistinctIndices = null;
 		}
 
-		[Obsolete]
-		public Face(int[] triangles, Material m, AutoUnwrapSettings u, int smoothing, int texture, int element, bool manualUVs)
+		internal Face(int[] triangles, Material m, AutoUnwrapSettings u, int smoothing, int texture, int element, bool manualUVs)
 		{
 			SetIndexes(triangles);
 			m_Uv = new AutoUnwrapSettings(u);

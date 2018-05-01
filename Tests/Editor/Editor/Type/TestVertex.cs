@@ -19,7 +19,6 @@ namespace UnityEngine.ProBuilder.EditorTests.Type
 		[Test]
 		public static void ReferenceEquality()
 		{
-			var t = a;
 			var dup = new Vertex(a);
 
 			Assert.AreSame(a, a);

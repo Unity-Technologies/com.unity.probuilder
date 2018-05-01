@@ -11,15 +11,24 @@ namespace UnityEngine.ProBuilder
 		public Vector4 tangent { get; set; }
 		public Vector3 bitangent { get; set; }
 
-        public bool Equals(object obj)
+        public override bool Equals(object obj)
         {
             return obj is Normals && Equals((Normals)obj);
         }
 
-        public bool Equals(Normals other)
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				int hashCode = normal.GetHashCode();
+				hashCode = (hashCode * 397) ^ tangent.GetHashCode();
+				hashCode = (hashCode * 397) ^ bitangent.GetHashCode();
+				return hashCode;
+			}
+		}
+
+		public bool Equals(Normals other)
         {
-            if (object.ReferenceEquals(other, null))
-                return false;
             return ProBuilderMath.Approx3(normal, other.normal) &&
                 ProBuilderMath.Approx3(tangent, other.tangent) &&
                 ProBuilderMath.Approx3(bitangent, other.bitangent);
@@ -27,8 +36,6 @@ namespace UnityEngine.ProBuilder
 
         public static bool operator ==(Normals a, Normals b)
         {
-            if (object.ReferenceEquals(a, null))
-                return false;
             return a.Equals(b);
         }
 
