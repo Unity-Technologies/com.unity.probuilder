@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder.Actions
 					ProBuilderEditor.instance.editLevel != EditLevel.Top &&
 					selection != null &&
 					selection.Length > 0 &&
-					selection.Any(x => x.SelectedFaceCount > 0);
+					selection.Any(x => x.selectedFaceCount > 0);
 		}
 
 		public override bool IsHidden()
@@ -48,7 +48,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			UndoUtility.RecordSelection(selection, "Select Faces with Smoothing Group");
 
-			HashSet<int> selectedSmoothGroups = new HashSet<int>(selection.SelectMany(x => x.SelectedFaces.Select(y => y.smoothingGroup)));
+			HashSet<int> selectedSmoothGroups = new HashSet<int>(selection.SelectMany(x => x.selectedFaces.Select(y => y.smoothingGroup)));
 
 			List<GameObject> newSelection = new List<GameObject>();
 

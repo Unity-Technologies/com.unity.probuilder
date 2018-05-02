@@ -25,7 +25,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return 	ProBuilderEditor.instance != null &&
 					selection != null &&
 					selection.Length > 0 &&
-					selection.Any(x => x.SelectedFaceCount > 1);
+					selection.Any(x => x.selectedFaceCount > 1);
 		}
 
 		public override bool IsHidden()

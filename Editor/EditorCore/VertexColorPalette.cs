@@ -214,7 +214,7 @@ namespace UnityEditor.ProBuilder
 						{
 							Color[] colors = pb.colorsInternal;
 
-							foreach (int i in pb.sharedIndicesInternal.AllIndicesWithValues(pb.SelectedTriangles))
+							foreach (int i in pb.sharedIndicesInternal.AllIndexesWithValues(pb.SelectedTriangles))
 								colors[i] = col;
 
 							pb.SetColors(colors);

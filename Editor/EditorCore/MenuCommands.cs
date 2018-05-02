@@ -71,7 +71,7 @@ namespace UnityEditor.ProBuilder
 			int[][] tri = new int[selection.Length][];
 
 			for(int i = 0; i < tri.Length; i++)
-				tri[i] = selection[i].SelectedTriangles;
+				tri[i] = selection[i].selectedVertices.ToArray();
 
 			return _SetPivot(selection, tri);
 		}
@@ -360,15 +360,15 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
-				if( pb.SelectedFaceCount < 1 && faceCount < 1 )
+				if( pb.selectedFaceCount < 1 && faceCount < 1 )
 				{
 					pb.ReverseWindingOrder(pb.facesInternal);
 					c += pb.facesInternal.Length;
 				}
 				else
 				{
-					pb.ReverseWindingOrder(pb.SelectedFaces);
-					c += pb.SelectedFaceCount;
+					pb.ReverseWindingOrder(pb.selectedFaces);
+					c += pb.selectedFaceCount;
 				}
 
 
@@ -407,7 +407,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				Face[] faces = perFace ? pb.SelectedFaces : pb.facesInternal;
+				Face[] faces = perFace ? pb.selectedFaces : pb.facesInternal;
 
 				if(faces == null)
 					continue;
@@ -467,16 +467,16 @@ namespace UnityEditor.ProBuilder
 
 				if(editor && editor.selectionMode == SelectMode.Edge)
 				{
-					if(pb.SelectedEdges.Length < 1 || (!enforceCurrentSelectionMode && pb.SelectedFaces.Length > 0))
+					if(pb.selectedEdgeCount < 1 || (!enforceCurrentSelectionMode && pb.selectedFaceCount > 0))
 					{
 						success = false;
 					}
 					else
 					{
-						extrudedFaceCount += pb.SelectedEdges.Length;
+						extrudedFaceCount += pb.selectedEdgeCount;
 						Edge[] newEdges;
 
-						success = pb.Extrude(	pb.SelectedEdges,
+						success = pb.Extrude(	pb.selectedEdges.ToArray(),
 												PreferencesInternal.GetFloat(PreferenceKeys.pbExtrudeDistance),
 												PreferencesInternal.GetBool(PreferenceKeys.pbExtrudeAsGroup),
 												PreferencesInternal.GetBool(PreferenceKeys.pbManifoldEdgeExtrusion),
@@ -485,21 +485,21 @@ namespace UnityEditor.ProBuilder
 						if(success)
 							pb.SetSelectedEdges(newEdges);
 						else
-							extrudedFaceCount -= pb.SelectedEdges.Length;
+							extrudedFaceCount -= pb.selectedEdgeCount;
 					}
 
 					pb.ToMesh();
 				}
 
-				if((editor.selectionMode == SelectMode.Face || (!enforceCurrentSelectionMode && !success)) && pb.SelectedFaces.Length > 0)
+				if((editor.selectionMode == SelectMode.Face || (!enforceCurrentSelectionMode && !success)) && pb.selectedFaceCount > 0)
 				{
-					extrudedFaceCount += pb.SelectedFaces.Length;
+					extrudedFaceCount += pb.selectedFaceCount;
 
-					pb.Extrude(	pb.SelectedFaces,
+					pb.Extrude(	pb.selectedFaces,
 								PreferencesInternal.GetEnum<ExtrudeMethod>(PreferenceKeys.pbExtrudeMethod),
 								PreferencesInternal.GetFloat(PreferenceKeys.pbExtrudeDistance));
 
-					pb.SetSelectedFaces(pb.SelectedFaces);
+					pb.SetSelectedFaces(pb.selectedFaces);
 
 					pb.ToMesh();
 				}
@@ -535,9 +535,9 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				if(pb.SelectedEdges.Length == 2)
+				if(pb.selectedEdgeCount == 2)
 				{
-					if(pb.Bridge(pb.SelectedEdges[0], pb.SelectedEdges[1], limitToPerimeterEdges))
+					if(pb.Bridge(pb.selectedEdges[0], pb.selectedEdges[1], limitToPerimeterEdges))
 					{
 						success = true;
 						pb.ToMesh();
@@ -574,7 +574,7 @@ namespace UnityEditor.ProBuilder
 				pb.ToMesh();
 
 				List<Face> faces;
-				res = Bevel.BevelEdges(pb, pb.SelectedEdges, amount, out faces);
+				res = Bevel.BevelEdges(pb, pb.selectedEdges, amount, out faces);
 
 				if(res)
 					pb.SetSelectedFaces(faces);
@@ -597,17 +597,17 @@ namespace UnityEditor.ProBuilder
 			switch(editor.selectionMode)
 			{
 				case SelectMode.Face:
-					sel = selection.Sum(x => x.SelectedFaceCount);
+					sel = selection.Sum(x => x.selectedFaceCount);
 					max = selection.Sum(x => x.faceCount);
 					break;
 
 				case SelectMode.Edge:
-					sel = selection.Sum(x => x.SelectedEdgeCount);
+					sel = selection.Sum(x => x.selectedEdgeCount);
 					max = selection.Sum(x => x.facesInternal.Sum(y=>y.edgesInternal.Length));
 					break;
 
 				default:
-					sel = selection.Sum(x => x.SelectedTriangleCount);
+					sel = selection.Sum(x => x.selectedVertexCount);
 					max = selection.Sum(x => x.triangleCount);
 					break;
 			}
@@ -648,7 +648,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
-				int previousTriCount = pb.SelectedTriangleCount;
+				int previousTriCount = pb.selectedVertexCount;
 
 				switch( editor != null ? editor.selectionMode : (SelectMode)0 )
 				{
@@ -662,7 +662,7 @@ namespace UnityEditor.ProBuilder
 
 					case SelectMode.Face:
 
-						Face[] selectedFaces = pb.SelectedFaces;
+						Face[] selectedFaces = pb.selectedFaces;
 
 						HashSet<Face> sel;
 
@@ -681,7 +681,7 @@ namespace UnityEditor.ProBuilder
 						break;
 				}
 
-				grown += pb.SelectedTriangleCount - previousTriCount;
+				grown += pb.selectedVertexCount - previousTriCount;
 			}
 
 			ProBuilderEditor.Refresh();
@@ -730,16 +730,16 @@ namespace UnityEditor.ProBuilder
 				{
 					case SelectMode.Edge:
 					{
-						int[] perimeter = ElementSelection.GetPerimeterEdges(pb, pb.SelectedEdges);
-						pb.SetSelectedEdges( pb.SelectedEdges.RemoveAt(perimeter) );
+						int[] perimeter = ElementSelection.GetPerimeterEdges(pb, pb.selectedEdges);
+						pb.SetSelectedEdges( pb.selectedEdges.RemoveAt(perimeter) );
 						rc += perimeter != null ? perimeter.Length : 0;
 						break;
 					}
 
 					case SelectMode.Face:
 					{
-						Face[] perimeter = ElementSelection.GetPerimeterFaces(pb, pb.SelectedFaces).ToArray();
-						pb.SetSelectedFaces( pb.SelectedFaces.Except(perimeter).ToArray() );
+						Face[] perimeter = ElementSelection.GetPerimeterFaces(pb, pb.selectedFaces).ToArray();
+						pb.SetSelectedFaces( pb.selectedFaces.Except(perimeter).ToArray() );
 						rc += perimeter != null ? perimeter.Length : 0;
 						break;
 					}
@@ -747,7 +747,7 @@ namespace UnityEditor.ProBuilder
 					case SelectMode.Vertex:
 					{
 						int[] perimeter = ElementSelection.GetPerimeterVertices(pb, pb.SelectedTriangles, editor.SelectedUniversalEdges[i]);
-						pb.SetSelectedTriangles( pb.SelectedTriangles.RemoveAt(perimeter) );
+						pb.SetSelectedVertices( pb.SelectedTriangles.RemoveAt(perimeter) );
 						rc += perimeter != null ? perimeter.Length : 0;
 						break;
 					}
@@ -803,14 +803,14 @@ namespace UnityEditor.ProBuilder
 								inverse.Add(sharedIndices[i][0]);
 						}
 
-						pb.SetSelectedTriangles(inverse.ToArray());
+						pb.SetSelectedVertices(inverse.ToArray());
 					}
 					break;
 
 				case SelectMode.Face:
 					foreach(ProBuilderMesh pb in selection)
 					{
-						IEnumerable<Face> inverse = pb.facesInternal.Where( x => !pb.SelectedFaces.Contains(x) );
+						IEnumerable<Face> inverse = pb.facesInternal.Where( x => !pb.selectedFaces.Contains(x) );
 						pb.SetSelectedFaces(inverse.ToArray());
 					}
 					break;
@@ -821,7 +821,7 @@ namespace UnityEditor.ProBuilder
 
 					for(int i = 0; i < selection.Length; i++)
 					{
-						Edge[] universal_selected_edges = EdgeExtension.GetUniversalEdges(selection[i].SelectedEdges, selection[i].sharedIndicesInternal).Distinct().ToArray();
+						Edge[] universal_selected_edges = EdgeExtension.GetUniversalEdges(selection[i].selectedEdges, selection[i].sharedIndicesInternal).Distinct().ToArray();
 						Edge[] inverse_universal = System.Array.FindAll(editor.SelectedUniversalEdges[i], x => !universal_selected_edges.Contains(x));
 						Edge[] inverse = new Edge[inverse_universal.Length];
 
@@ -866,9 +866,9 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
-				Edge[] edges = ElementSelection.GetEdgeRing(pb, pb.SelectedEdges).ToArray();
+				Edge[] edges = ElementSelection.GetEdgeRing(pb, pb.selectedEdges).ToArray();
 
-				if(edges.Length > pb.SelectedEdges.Length)
+				if(edges.Length > pb.selectedEdgeCount)
 					success = true;
 
 				pb.SetSelectedEdges( edges );
@@ -900,10 +900,10 @@ namespace UnityEditor.ProBuilder
 			foreach(ProBuilderMesh pb in selection)
 			{
 				Edge[] loop;
-				bool success = ElementSelection.GetEdgeLoop(pb, pb.SelectedEdges, out loop);
+				bool success = ElementSelection.GetEdgeLoop(pb, pb.selectedEdges, out loop);
 				if(success)
 				{
-					if(loop.Length > pb.SelectedEdges.Length)
+					if(loop.Length > pb.selectedEdgeCount)
 						foundLoop = true;
 
 					pb.SetSelectedEdges(loop);
@@ -927,7 +927,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach (ProBuilderMesh pb in selection)
 			{
-				HashSet<Face> loop = ElementSelection.GetFaceLoop(pb, pb.SelectedFaces);
+				HashSet<Face> loop = ElementSelection.GetFaceLoop(pb, pb.selectedFaces);
 				pb.SetSelectedFaces(loop);
 			}
 
@@ -942,7 +942,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach (ProBuilderMesh pb in selection)
 			{
-				HashSet<Face> loop = ElementSelection.GetFaceLoop(pb, pb.SelectedFaces, true);
+				HashSet<Face> loop = ElementSelection.GetFaceLoop(pb, pb.selectedFaces, true);
 				pb.SetSelectedFaces(loop);
 			}
 
@@ -957,7 +957,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach (ProBuilderMesh pb in selection)
 			{
-				HashSet<Face> loop = ElementSelection.GetFaceRingAndLoop(pb, pb.SelectedFaces);
+				HashSet<Face> loop = ElementSelection.GetFaceRingAndLoop(pb, pb.selectedFaces);
 				pb.SetSelectedFaces(loop);
 			}
 
@@ -984,14 +984,14 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				if(pb.SelectedFaceCount == pb.facesInternal.Length)
+				if(pb.selectedFaceCount == pb.facesInternal.Length)
 				{
 					Debug.LogWarning("Attempting to delete all faces on this mesh...  I'm afraid I can't let you do that.");
 					continue;
 				}
 
-				pb.DeleteFaces(pb.SelectedFaces);
-				count += pb.SelectedFaceCount;
+				pb.DeleteFaces(pb.selectedFaces);
+				count += pb.selectedFaceCount;
 
 				pb.ToMesh();
 				pb.Refresh();
@@ -1041,13 +1041,13 @@ namespace UnityEditor.ProBuilder
 			foreach(ProBuilderMesh pb in selection)
 			{
 				pb.ToMesh();
-				List<Face> res = pb.DetachFaces(pb.SelectedFaces);
+				List<Face> res = pb.DetachFaces(pb.selectedFaces);
 				pb.Refresh();
 				pb.Optimize();
 
 				pb.SetSelectedFaces(res.ToArray());
 
-				count += pb.SelectedFaceCount;
+				count += pb.selectedFaceCount;
 			}
 
 			if(editor)
@@ -1075,11 +1075,11 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				if(pb.SelectedFaceCount < 1 || pb.SelectedFaceCount == pb.facesInternal.Length)
+				if(pb.selectedFaceCount < 1 || pb.selectedFaceCount == pb.facesInternal.Length)
 					continue;
 
 				// work with face indices here 'cause copying breaks the face ref
-				int[] primary = pb.SelectedFaces.Select(x => System.Array.IndexOf((Array) pb.facesInternal, x)).ToArray();
+				int[] primary = pb.selectedFaces.Select(x => System.Array.IndexOf((Array) pb.facesInternal, x)).ToArray();
 
 				detachedFaceCount += primary.Length;
 
@@ -1164,11 +1164,11 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				if(pb.SelectedFaceCount > 1)
+				if(pb.selectedFaceCount > 1)
 				{
-					success += pb.SelectedFaceCount;
+					success += pb.selectedFaceCount;
 
-					Face face = MergeElements.Merge(pb, pb.SelectedFaces);
+					Face face = MergeElements.Merge(pb, pb.selectedFaces);
 
 					pb.ToMesh();
 					pb.Refresh();
@@ -1201,7 +1201,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				foreach(Face face in pb.SelectedFaces)
+				foreach(Face face in pb.selectedFaces)
 				{
 					if( pb.FlipEdge(face) )
 						success++;
@@ -1254,7 +1254,7 @@ namespace UnityEditor.ProBuilder
 					{
 						int[] removed;
 						pb.RemoveDegenerateTriangles(out removed);
-						pb.SetSelectedTriangles(new int[] { newIndex });
+						pb.SetSelectedVertices(new int[] { newIndex });
 					}
 
 					pb.ToMesh();
@@ -1309,7 +1309,7 @@ namespace UnityEditor.ProBuilder
 							welds = new int[0];	// @todo
 						}
 
-						pb.SetSelectedTriangles(welds ?? new int[0] {});
+						pb.SetSelectedVertices(welds ?? new int[0] {});
 					}
 
 					pb.Refresh();
@@ -1370,7 +1370,7 @@ namespace UnityEditor.ProBuilder
 			{
 				List<int> tris = new List<int>(pb.SelectedTriangles);			// loose verts to split
 
-				if(pb.SelectedFaces.Length > 0)
+				if(pb.selectedFaces.Length > 0)
 				{
 					IntArray[] sharedIndices = pb.sharedIndicesInternal;
 
@@ -1381,7 +1381,7 @@ namespace UnityEditor.ProBuilder
 						selTrisIndices[i] = sharedIndices.IndexOf(pb.SelectedTriangles[i]);
 
 					// cycle through selected faces and remove the tris that compose full faces.
-					foreach(Face face in pb.SelectedFaces)
+					foreach(Face face in pb.selectedFaces)
 					{
 						List<int> faceSharedIndices = new List<int>();
 
@@ -1401,22 +1401,22 @@ namespace UnityEditor.ProBuilder
 				}
 
 				// Now split the faces, and any loose vertices
-				pb.DetachFaces(pb.SelectedFaces);
+				pb.DetachFaces(pb.selectedFaces);
 
 				splitCount += pb.SelectedTriangles.Length;
 				pb.SplitCommonVertices(pb.SelectedTriangles);
 
 				// Reattach detached face vertices (if any are to be had)
-				if(pb.SelectedFaces.Length > 0)
+				if(pb.selectedFaces.Length > 0)
 				{
 					int[] welds;
-					pb.WeldVertices( Face.AllTriangles(pb.SelectedFaces), Mathf.Epsilon, out welds);
+					pb.WeldVertices( Face.AllTriangles(pb.selectedFaces), Mathf.Epsilon, out welds);
 				}
 
 				// And set the selected triangles to the newly split
-				List<int> newTriSelection = new List<int>(Face.AllTriangles(pb.SelectedFaces));
+				List<int> newTriSelection = new List<int>(Face.AllTriangles(pb.selectedFaces));
 				newTriSelection.AddRange(tris);
-				pb.SetSelectedTriangles(newTriSelection.ToArray());
+				pb.SetSelectedVertices(newTriSelection.ToArray());
 
 				pb.ToMesh();
 				pb.Refresh();
@@ -1598,7 +1598,7 @@ namespace UnityEditor.ProBuilder
 				pb.Refresh();
 				pb.Optimize();
 
-				pb.SetSelectedTriangles(new int[0]);
+				pb.SetSelectedVertices(new int[0]);
 			}
 
 			if(editor)
@@ -1626,7 +1626,7 @@ namespace UnityEditor.ProBuilder
 			{
 				List<Edge> newEdgeSelection;
 
-				result = VertexEditing.AppendVerticesToEdge(pb, pb.SelectedEdges, subdivisions, out newEdgeSelection);
+				result = VertexEditing.AppendVerticesToEdge(pb, pb.selectedEdges, subdivisions, out newEdgeSelection);
 
 				if(result.status == Status.Success)
 					pb.SetSelectedEdges(newEdgeSelection);
@@ -1660,9 +1660,9 @@ namespace UnityEditor.ProBuilder
 
 				pb.ToMesh();
 
-				if(pb.Subdivide(pb.SelectedFaces, out faces))
+				if(pb.Subdivide(pb.selectedFaces, out faces))
 				{
-					success += pb.SelectedFaces.Length;
+					success += pb.selectedFaces.Length;
 					pb.SetSelectedFaces(faces);
 
 					pb.Refresh();
@@ -1697,7 +1697,7 @@ namespace UnityEditor.ProBuilder
 			foreach(ProBuilderMesh pb in selection)
 			{
 				Edge[] connections;
-				res = pb.Connect(pb.SelectedEdges, out connections);
+				res = pb.Connect(pb.selectedEdges, out connections);
 				pb.SetSelectedEdges(connections);
 				pb.Refresh();
 				pb.Optimize();
@@ -1729,7 +1729,7 @@ namespace UnityEditor.ProBuilder
 				{
 					pb.Refresh();
 					pb.Optimize();
-					pb.SetSelectedTriangles(splits);
+					pb.SetSelectedVertices(splits);
 				}
 			}
 			ProBuilderEditor.Refresh();
@@ -1753,7 +1753,7 @@ namespace UnityEditor.ProBuilder
 			{
 				Edge[] edges;
 
-				if( pb.Connect(ElementSelection.GetEdgeRing(pb, pb.SelectedEdges), out edges) )
+				if( pb.Connect(ElementSelection.GetEdgeRing(pb, pb.selectedEdges), out edges) )
 				{
 					pb.SetSelectedEdges(edges);
 					pb.ToMesh();

@@ -110,13 +110,11 @@ namespace UnityEngine.ProBuilder
             get { return new ReadOnlyCollection<Face>(m_Faces); }
         }
 
-        public void SetFaces(Face[] array)
+        public void SetFaces(IEnumerable<Face> collection)
         {
-            if (array == null)
-                throw new ArgumentNullException("array");
-            int len = array.Length;
-            m_Faces = new Face[len];
-            Array.Copy(array, m_Faces, len);
+            if (collection == null)
+                throw new ArgumentNullException("collection");
+	        m_Faces = collection.ToArray();
         }
 
 	    internal IntArray[] sharedIndicesInternal
@@ -125,12 +123,12 @@ namespace UnityEngine.ProBuilder
 		    set { m_SharedIndices = value; }
 	    }
 
-	    public ReadOnlyCollection<IntArray> sharedIndices
+	    public ReadOnlyCollection<IntArray> sharedIndexes
 	    {
 		    get { return new ReadOnlyCollection<IntArray>(m_SharedIndices); }
 	    }
 
-	    public IntArray[] GetSharedIndices()
+	    public IntArray[] GetSharedIndexes()
 	    {
 		    int len = m_SharedIndices.Length;
 		    IntArray[] copy = new IntArray[len];
@@ -139,21 +137,21 @@ namespace UnityEngine.ProBuilder
 		    return copy;
 	    }
 
-	    public void SetSharedIndices(IntArray[] indices)
+	    public void SetSharedIndexes(IntArray[] indexes)
 	    {
-		    if (indices == null)
-			    throw new ArgumentNullException("indices");
-		    int len = indices.Length;
+		    if (indexes == null)
+			    throw new ArgumentNullException("indexes");
+		    int len = indexes.Length;
 		    m_SharedIndices = new IntArray[len];
 		    for (var i = 0; i < len; i++)
-			    m_SharedIndices[i] = new IntArray(indices[i]);
+			    m_SharedIndices[i] = new IntArray(indexes[i]);
 	    }
 
-	    public void SetSharedIndices(IEnumerable<KeyValuePair<int, int>> indices)
+	    public void SetSharedIndexes(IEnumerable<KeyValuePair<int, int>> indexes)
 	    {
-		    if (indices == null)
-			    throw new ArgumentNullException("indices");
-		    m_SharedIndices = IntArrayUtility.ToSharedIndices(indices);
+		    if (indexes == null)
+			    throw new ArgumentNullException("indexes");
+		    m_SharedIndices = IntArrayUtility.ToIntArray(indexes);
 	    }
 
 	    /// <summary>
@@ -169,7 +167,7 @@ namespace UnityEngine.ProBuilder
         /// Returns a copy of the sharedIndicesUV array.
         /// </summary>
         /// <returns></returns>
-        public IntArray[] GetSharedIndicesUV()
+        public IntArray[] GetSharedIndexesUV()
         {
             int sil = m_SharedIndicesUV.Length;
             IntArray[] sharedIndicesCopy = new IntArray[sil];
@@ -178,7 +176,7 @@ namespace UnityEngine.ProBuilder
             return sharedIndicesCopy;
         }
 
-	    internal void SetSharedIndicesUV(IntArray[] indices)
+	    internal void SetSharedIndexesUV(IntArray[] indices)
 	    {
 		    int len = indices == null ? 0 : indices.Length;
 		    m_SharedIndicesUV = new IntArray[len];
@@ -186,12 +184,12 @@ namespace UnityEngine.ProBuilder
 			    m_SharedIndicesUV[i] = new IntArray(indices[i]);
 	    }
 
-        internal void SetSharedIndicesUV(IEnumerable<KeyValuePair<int, int>> indices)
+        internal void SetSharedIndexesUV(IEnumerable<KeyValuePair<int, int>> indices)
         {
 	        if (indices == null)
 		        m_SharedIndicesUV = new IntArray[0];
 			else
-	            m_SharedIndicesUV = IntArrayUtility.ToSharedIndices(indices);
+	            m_SharedIndicesUV = IntArrayUtility.ToIntArray(indices);
         }
 
         /// <summary>
@@ -513,7 +511,7 @@ namespace UnityEngine.ProBuilder
 			m_SharedIndices = new IntArray[0];
 			m_SharedIndicesUV = new IntArray[0];
 			m_Colors = null;
-			SetSelectedTriangles(null);
+			ClearSelection();
 		}
 
 		void Awake()
@@ -528,6 +526,8 @@ namespace UnityEngine.ProBuilder
 			    normals.Length != mesh.vertexCount ||
 			    (normals.Length > 0 && normals[0] == Vector3.zero))
 			{
+				Log.Info("Mesh normals broken on play mode start.");
+
 				// means this object is probably just now being instantiated
 				if (m_Positions == null)
 					return;
@@ -607,57 +607,81 @@ namespace UnityEngine.ProBuilder
 #endregion
 
 #region Selection
-		/// <summary>
+
+	    [SerializeField] int[] m_selectedFaces = new int[] { };
+	    [SerializeField] Edge[] m_SelectedEdges = new Edge[] { };
+	    [SerializeField] int[] m_selectedTriangles = new int[] { };
+
+	    /// <summary>
+	    /// Get the number of faces that are currently selected on this object.
+	    /// </summary>
+	    internal int selectedFaceCount
+	    {
+		    get { return m_selectedFaces.Length; }
+	    }
+
+	    /// <summary>
+	    /// Get the number of selected vertex indices.
+	    /// </summary>
+	    internal int selectedVertexCount
+	    {
+		    get { return m_selectedTriangles.Length; }
+	    }
+
+	    /// <summary>
+	    /// Get the number of selected edges.
+	    /// </summary>
+	    internal int selectedEdgeCount
+	    {
+		    get { return m_SelectedEdges.Length; }
+	    }
+
+	    /// <summary>
 		/// Get a copy of the selected face array.
 		/// </summary>
-		public Face[] SelectedFaces
+		internal Face[] GetSelectedFaces()
 		{
-			get { return InternalUtility.ValuesWithIndices(this.facesInternal, m_selectedFaces); }
+			int len = m_selectedFaces.Length;
+			var selected = new Face[len];
+			for (var i = 0; i < len; i++)
+				selected[i] = m_Faces[i];
+			return selected;
 		}
 
-		/// <summary>
-		/// Get the number of faces that are currently selected on this object. Faster than checking SelectedFaces.Length.
-		/// </summary>
-		public int SelectedFaceCount
-		{
-			get { return m_selectedFaces.Length; }
-		}
+	    [Obsolete]
+	    internal Face[] selectedFaces
+	    {
+		    get { return GetSelectedFaces(); }
+	    }
 
-		/// <summary>
-		/// Get the selected vertex indices array.
-		/// </summary>
-		public int[] SelectedTriangles
-		{
-			get { return m_selectedTriangles; }
-		}
+	    /// <summary>
+	    /// A collection of the currently selected faces per-index.
+	    /// </summary>
+	    internal ReadOnlyCollection<int> selectedFaceIndexes
+	    {
+		    get { return new ReadOnlyCollection<int>(m_selectedFaces); }
+	    }
 
-		/// <summary>
-		/// Get the count of selected vertex indices.
-		/// </summary>
-		public int SelectedTriangleCount
-		{
-			get { return m_selectedTriangles.Length; }
-		}
+	    /// <summary>
+	    /// A collection of the currently selected vertices by their index in the positions array.
+	    /// </summary>
+	    internal ReadOnlyCollection<int> selectedVertices
+	    {
+			get { return new ReadOnlyCollection<int>(m_selectedTriangles); }
+	    }
 
-		/// <summary>
-		/// Get the selected edges array.
-		/// </summary>
-		public Edge[] SelectedEdges
-		{
-			get { return m_SelectedEdges; }
-		}
+	    /// <summary>
+	    /// A collection of the currently selected edges.
+	    /// </summary>
+	    internal ReadOnlyCollection<Edge> selectedEdges
+	    {
+		    get { return new ReadOnlyCollection<Edge>(m_SelectedEdges); }
+	    }
 
-		/// <summary>
-		/// Get the count of selected edges.
-		/// </summary>
-		public int SelectedEdgeCount
-		{
-			get { return m_SelectedEdges.Length; }
-		}
-
-		[SerializeField] int[] m_selectedFaces = new int[] { };
-		[SerializeField] Edge[] m_SelectedEdges = new Edge[] { };
-		[SerializeField] int[] m_selectedTriangles = new int[] { };
+	    internal int[] SelectedTriangles
+	    {
+		    get { return m_selectedTriangles; }
+	    }
 
 		/// <summary>
 		/// Adds a face to this pb_Object's selected array.  Also updates the SelectedEdges and SelectedTriangles arrays.
@@ -665,36 +689,28 @@ namespace UnityEngine.ProBuilder
 		/// <param name="face"></param>
 		internal void AddToFaceSelection(Face face)
 		{
-			int index = System.Array.IndexOf(this.facesInternal, face);
-
+			int index = Array.IndexOf(this.facesInternal, face);
 			if (index > -1)
 				SetSelectedFaces(m_selectedFaces.Add(index));
 		}
 
 		internal void SetSelectedFaces(IEnumerable<Face> selected)
 		{
-			List<int> indices = new List<int>();
-			foreach (Face f in selected)
-			{
-				int index = System.Array.IndexOf(this.facesInternal, f);
-				if (index > -1)
-					indices.Add(index);
-			}
-			SetSelectedFaces(indices);
+			SetSelectedFaces(selected != null ? selected.Select(x => Array.IndexOf(facesInternal, x)) : null);
 		}
 
 		internal void SetSelectedFaces(IEnumerable<int> selected)
 		{
-			m_selectedFaces = selected.ToArray();
-			m_selectedTriangles = m_selectedFaces.SelectMany(x => facesInternal[x].distinctIndices).ToArray();
-
-			// Copy the edges- otherwise Unity's Undo does unholy things to the actual edges reference
-			// @todo test this now that pb_Edge is a struct
-			Edge[] edges = EdgeExtension.AllEdges(SelectedFaces);
-			int len = edges.Length;
-			m_SelectedEdges = new Edge[len];
-			for (int i = 0; i < len; i++)
-				m_SelectedEdges[i] = edges[i];
+			if (selected == null)
+			{
+				ClearSelection();
+			}
+			else
+			{
+				m_selectedFaces = selected.ToArray();
+				m_selectedTriangles = m_selectedFaces.SelectMany(x => facesInternal[x].distinctIndices).ToArray();
+				m_SelectedEdges = m_selectedFaces.SelectMany(x => facesInternal[x].edges).ToArray();
+			}
 
 			if (onElementSelectionChanged != null)
 				onElementSelectionChanged(this);
@@ -702,23 +718,30 @@ namespace UnityEngine.ProBuilder
 
 		internal void SetSelectedEdges(IEnumerable<Edge> edges)
 		{
-			m_selectedFaces = new int[0];
-			m_SelectedEdges = edges.ToArray();
-			m_selectedTriangles = m_SelectedEdges.AllTriangles();
+			if (edges == null)
+			{
+				ClearSelection();
+			}
+			else
+			{
+				m_selectedFaces = new int[0];
+				m_SelectedEdges = edges.ToArray();
+				m_selectedTriangles = m_SelectedEdges.AllTriangles();
+			}
 
 			if (onElementSelectionChanged != null)
 				onElementSelectionChanged(this);
 		}
 
 		/// <summary>
-		/// Sets this pb_Object's SelectedTriangles array. Clears SelectedFaces and SelectedEdges arrays.
+		/// Sets the selected vertices array. Clears SelectedFaces and SelectedEdges arrays.
 		/// </summary>
-		/// <param name="tris"></param>
-		internal void SetSelectedTriangles(int[] tris)
+		/// <param name="vertices"></param>
+		internal void SetSelectedVertices(int[] vertices)
 		{
 			m_selectedFaces = new int[0];
 			m_SelectedEdges = new Edge[0];
-			m_selectedTriangles = tris != null ? tris.Distinct().ToArray() : new int[0];
+			m_selectedTriangles = vertices != null ? vertices.Distinct().ToArray() : new int[0];
 
 			if (onElementSelectionChanged != null)
 				onElementSelectionChanged(this);
@@ -739,7 +762,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="face"></param>
 		internal void RemoveFromFaceSelection(Face face)
 		{
-			int indx = System.Array.IndexOf(this.facesInternal, face);
+			int indx = Array.IndexOf(facesInternal, face);
 
 			if (indx > -1)
 				SetSelectedFaces(m_selectedFaces.Remove(indx));
@@ -753,18 +776,6 @@ namespace UnityEngine.ProBuilder
 			m_selectedFaces = new int[0];
 			m_SelectedEdges = new Edge[0];
 			m_selectedTriangles = new int[0];
-		}
-
-		/// <summary>
-		/// Set the internal face array with the passed pb_Face array.
-		/// </summary>
-		/// <param name="newFaces"></param>
-		public void SetFaces(IEnumerable<Face> newFaces)
-		{
-			m_Faces = newFaces.Where(x => x != null).ToArray();
-
-			if (m_Faces.Length != facesInternal.Count())
-				Log.Warning("SetFaces() pruned " + (facesInternal.Count() - m_Faces.Length) + " null faces from this object.");
 		}
 #endregion
 
@@ -792,7 +803,7 @@ namespace UnityEngine.ProBuilder
             Clear();
             SetPositions(positions);
 			SetFaces(f);
-			m_SharedIndices = IntArrayUtility.ExtractSharedIndices(positions);
+			m_SharedIndices = IntArrayUtility.GetSharedIndexesWithPositions(positions);
 
 			ToMesh();
 			Refresh();
@@ -812,7 +823,7 @@ namespace UnityEngine.ProBuilder
             Clear();
             SetPositions(vertices);
 			SetFaces(f);
-			SetSharedIndices(IntArrayUtility.ExtractSharedIndices(vertices));
+			SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(vertices));
 
 			ToMesh();
 			Refresh();
@@ -880,7 +891,7 @@ namespace UnityEngine.ProBuilder
 
 			m.uv2 = null;
 
-			Submesh[] submeshes = Face.GetMeshIndices(facesInternal, preferredTopology);
+			Submesh[] submeshes = Face.GetSubmeshes(facesInternal, preferredTopology);
             m.subMeshCount = submeshes.Length;
 
 			for (int i = 0; i < m.subMeshCount; i++)
@@ -911,7 +922,7 @@ namespace UnityEngine.ProBuilder
 			IntArray[] sv = new IntArray[m_SharedIndices.Length];
 			System.Array.Copy(m_SharedIndices, sv, sv.Length);
 
-			SetSharedIndices(sv);
+			SetSharedIndexes(sv);
 			SetFaces(q);
 
 			Vector3[] v = new Vector3[vertexCount];

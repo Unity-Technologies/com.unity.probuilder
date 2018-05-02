@@ -142,8 +142,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			FaceRebuildData.Apply(appendFaces, pb, vertices);
 			int removed = pb.DeleteFaces(sorted.Keys).Length;
-			pb.SetSharedIndicesUV(new IntArray[0]);
-			pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.positionsInternal));
+			pb.SetSharedIndexesUV(new IntArray[0]);
+			pb.SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(pb.positionsInternal));
 
 			// @todo don't rebuild sharedindices, keep 'em cached
 			IntArray[] sharedIndices = pb.sharedIndicesInternal;
@@ -194,14 +194,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				// if this hole has > 3 indices, it needs a tent pole triangulation, which requires sorting into the perimeter order
 				else
 				{
-					List<int> holePath = WingedEdge.SortCommonIndicesByAdjacency(modified, h);
+					List<int> holePath = WingedEdge.SortCommonIndexesByAdjacency(modified, h);
 					List<Vertex> v = new List<Vertex>( Vertex.GetVertices(pb, holePath.Select(x => sharedIndices[x][0]).ToList()) );
 					holeFaces.AddRange( AppendPolygon.TentCapWithVertices(v) );
 				}
 			}
 
 			FaceRebuildData.Apply(holeFaces, pb, vertices);
-			pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.positionsInternal));
+			pb.SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(pb.positionsInternal));
 
 			// go through new faces and conform hole normals
 			// get a hash of just the adjacent and bridge faces

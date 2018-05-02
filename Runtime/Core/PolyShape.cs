@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Serialization;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace UnityEngine.ProBuilder
 {
@@ -37,11 +39,21 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         internal bool isOnGrid = true;
 
-	    public List<Vector3> points
-	    {
-		    get { return new List<Vector3>(m_Points); }
-		    set { m_Points = new List<Vector3>(value); }
-	    }
+        internal List<Vector3> points
+        {
+            get { return new List<Vector3>(m_Points); }
+            set { m_Points = new List<Vector3>(value); }
+        }
+
+        public ReadOnlyCollection<Vector3> controlPoints
+        {
+            get { return new ReadOnlyCollection<Vector3>(m_Points); }
+        }
+    
+        public void SetControlPoints(IList<Vector3> points)
+        {
+            m_Points = points.ToList();
+        }
 
 	    public float extrude
         {

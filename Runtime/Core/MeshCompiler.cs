@@ -52,7 +52,7 @@ namespace UnityEngine.ProBuilder
             if (pb.colorsInternal != null && pb.colorsInternal.Length == target.vertexCount)
                 target.colors = pb.colorsInternal;
 
-            var submeshes = Face.GetMeshIndices(pb.facesInternal, preferredTopology);
+            var submeshes = Face.GetSubmeshes(pb.facesInternal, preferredTopology);
             target.subMeshCount = submeshes.Length;
 
             for (int i = 0; i < target.subMeshCount; i++)

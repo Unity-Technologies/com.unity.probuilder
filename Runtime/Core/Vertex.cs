@@ -292,15 +292,15 @@ namespace UnityEngine.ProBuilder
 		/// Creates a new array of pb_Vertex with the provide pb_Object data.
 		/// </summary>
 		/// <param name="mesh"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <returns></returns>
-		public static Vertex[] GetVertices(ProBuilderMesh mesh, IList<int> indices = null)
+		public static Vertex[] GetVertices(ProBuilderMesh mesh, IList<int> indexes = null)
 		{
 			if (mesh == null)
 				throw new ArgumentNullException("mesh");
 
 			int meshVertexCount = mesh.vertexCount;
-			int vertexCount = indices != null ? indices.Count : mesh.vertexCount;
+			int vertexCount = indexes != null ? indexes.Count : mesh.vertexCount;
 
 			Vertex[] v = new Vertex[vertexCount];
 
@@ -330,7 +330,7 @@ namespace UnityEngine.ProBuilder
 			for (int i = 0; i < vertexCount; i++)
 			{
 				v[i] = new Vertex();
-				int ind = indices == null ? i : indices[i];
+				int ind = indexes == null ? i : indexes[i];
 
 				if (_hasPositions)
 				{
@@ -627,16 +627,16 @@ namespace UnityEngine.ProBuilder
 		/// Average all vertices to a single vertex.
 		/// </summary>
 		/// <param name="vertices"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <returns></returns>
-		public static Vertex Average(IList<Vertex> vertices, IList<int> indices = null)
+		public static Vertex Average(IList<Vertex> vertices, IList<int> indexes = null)
 		{
 			if (vertices == null)
 				throw new ArgumentNullException("vertices");
 
 			Vertex v = new Vertex();
 
-			int vertexCount = indices != null ? indices.Count : vertices.Count;
+			int vertexCount = indexes != null ? indexes.Count : vertices.Count;
 
 			int normalCount = 0,
 				tangentCount = 0,
@@ -646,7 +646,7 @@ namespace UnityEngine.ProBuilder
 
 			for (int i = 0; i < vertexCount; i++)
 			{
-				int index = indices == null ? i : indices[i];
+				int index = indexes == null ? i : indexes[i];
 
 				v.position += vertices[index].position;
 				v.color += vertices[index].color;

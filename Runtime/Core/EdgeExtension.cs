@@ -16,11 +16,11 @@ namespace UnityEngine.ProBuilder
 		/// <param name="edges"></param>
 		/// <param name="sharedIndicesLookup"></param>
 		/// <returns></returns>
-		public static Edge[] GetUniversalEdges(Edge[] edges, Dictionary<int, int> sharedIndicesLookup)
+		public static Edge[] GetUniversalEdges(IList<Edge> edges, Dictionary<int, int> sharedIndicesLookup)
 		{
-			Edge[] uni = new Edge[edges.Length];
-
-			for(int i = 0; i < edges.Length; i++)
+			int ec = edges.Count;
+			Edge[] uni = new Edge[ec];
+			for(var i = 0; i < ec; i++)
 				uni[i] = new Edge( sharedIndicesLookup[edges[i].x], sharedIndicesLookup[edges[i].y] );
 
 			return uni;
@@ -33,7 +33,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="edges"></param>
 		/// <param name="sharedIndices"></param>
 		/// <returns></returns>
-		public static Edge[] GetUniversalEdges(Edge[] edges, IntArray[] sharedIndices)
+		public static Edge[] GetUniversalEdges(IList<Edge> edges, IList<IntArray> sharedIndices)
 		{
 			return GetUniversalEdges(edges, sharedIndices.ToDictionary());
 		}

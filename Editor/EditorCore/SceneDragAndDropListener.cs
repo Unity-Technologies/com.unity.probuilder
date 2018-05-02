@@ -101,7 +101,7 @@ namespace UnityEditor.ProBuilder
 				if (s_CurrentPreview != null)
 				{
 					s_PreviewMaterial = GetMaterialFromDragReferences(DragAndDrop.objectReferences, false);
-					s_IsFaceDragAndDropOverrideEnabled = isFaceMode && s_PreviewMaterial != null && mesh.SelectedFaceCount > 0;
+					s_IsFaceDragAndDropOverrideEnabled = isFaceMode && s_PreviewMaterial != null && mesh.selectedFaceCount > 0;
 
 					if (s_IsFaceDragAndDropOverrideEnabled)
 					{
@@ -109,7 +109,7 @@ namespace UnityEditor.ProBuilder
 						Vector2[] uvs = mesh.texturesInternal;
 						if(uvs != null && uvs.Length == mesh.vertexCount)
 							s_PreviewMesh.uv = uvs;
-						s_PreviewMesh.triangles = Face.AllTriangles(mesh.SelectedFaces);
+						s_PreviewMesh.triangles = Face.AllTriangles(mesh.selectedFaces);
 					}
 				}
 				else
@@ -161,7 +161,7 @@ namespace UnityEditor.ProBuilder
 
 					if (s_IsFaceDragAndDropOverrideEnabled)
 					{
-						foreach (var face in s_CurrentPreview.SelectedFaces)
+						foreach (var face in s_CurrentPreview.selectedFaces)
 							face.material = s_PreviewMaterial;
 					}
 					else if(s_PreviewSubmesh > -1)

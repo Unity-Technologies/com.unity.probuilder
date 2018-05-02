@@ -110,21 +110,21 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// A cached collection of the vertex indices that the indexes array references, made distinct.
+        /// A collection of the vertex indices that the indexes array references, made distinct.
         /// </summary>
         public ReadOnlyCollection<int> distinctIndexes
         {
             get { return new ReadOnlyCollection<int>(distinctIndices); }
         }
 
-	    /// <summary>
-	    /// A reference to the border edges that make up this face.
-	    /// </summary>
-	    public Edge[] edgesInternal
+	    internal Edge[] edgesInternal
 	    {
 		    get { return m_Edges == null ? CacheEdges() : m_Edges; }
 	    }
-
+    
+        /// <summary>
+        /// Get the perimeter edges that commpose this face.
+        /// </summary>
 	    public ReadOnlyCollection<Edge> edges
 	    {
 		    get { return new ReadOnlyCollection<Edge>(edgesInternal); }
@@ -344,7 +344,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="preferredTopology"></param>
 		/// <returns>An array of Submeshes.</returns>
 		/// <exception cref="NotImplementedException"></exception>
-		public static Submesh[] GetMeshIndices(Face[] faces, MeshTopology preferredTopology = MeshTopology.Triangles)
+		public static Submesh[] GetSubmeshes(IEnumerable<Face> faces, MeshTopology preferredTopology = MeshTopology.Triangles)
 		{
 			if(preferredTopology != MeshTopology.Triangles && preferredTopology != MeshTopology.Quads)
 				throw new System.NotImplementedException("Currently only Quads and Triangles are supported.");
@@ -357,12 +357,8 @@ namespace UnityEngine.ProBuilder
 			Dictionary<Material, List<int>> quads = wantsQuads ? new Dictionary<Material, List<int>>() : null;
 			Dictionary<Material, List<int>> tris = new Dictionary<Material, List<int>>();
 
-			int count = faces == null ? 0 : faces.Length;
-
-			for(int i = 0; i < count; i++)
+            foreach(var face in faces)
 			{
-				Face face = faces[i];
-
 				if(face.indices == null || face.indices.Length < 1)
 					continue;
 

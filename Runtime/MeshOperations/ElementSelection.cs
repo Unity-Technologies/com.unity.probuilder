@@ -152,9 +152,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="edges"></param>
 		/// <returns></returns>
-		internal static int[] GetPerimeterEdges(ProBuilderMesh pb, Edge[] edges)
+		internal static int[] GetPerimeterEdges(ProBuilderMesh pb, IList<Edge> edges)
 		{
-			if(edges.Length == EdgeExtension.AllEdges(pb.facesInternal).Length || edges.Length < 3)
+			int edgeCount = edges != null ? edges.Count : 0;
+
+			if(edgeCount == EdgeExtension.AllEdges(pb.facesInternal).Length || edgeCount < 3)
 				return new int[] {};
 
 			// Figure out how many connections each edge has to other edges in the selection
@@ -183,7 +185,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					perimeter.Add(i);
 			}
 
-			return perimeter.Count != edges.Length ? perimeter.ToArray() : new int[] {};
+			return perimeter.Count != edgeCount ? perimeter.ToArray() : new int[] {};
 		}
 
 		/// <summary>
@@ -290,11 +292,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="edges"></param>
 		/// <returns></returns>
-		internal static IEnumerable<Edge> GetEdgeRing(ProBuilderMesh pb, Edge[] edges)
+		internal static IEnumerable<Edge> GetEdgeRing(ProBuilderMesh pb, IEnumerable<Edge> edges)
 		{
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
-			List<EdgeLookup> edge_lookup = EdgeLookup.GetEdgeLookup(edges, pb.sharedIndicesInternal.ToDictionary()).ToList();
-			edge_lookup.Distinct();
+			List<EdgeLookup> edgeLookup = EdgeLookup.GetEdgeLookup(edges, pb.sharedIndicesInternal.ToDictionary()).ToList();
+			edgeLookup = edgeLookup.Distinct().ToList();
 
 			Dictionary<Edge, WingedEdge> wings_dic = new Dictionary<Edge, WingedEdge>();
 
@@ -304,11 +306,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			HashSet<EdgeLookup> used = new HashSet<EdgeLookup>();
 
-			for(int i = 0; i < edge_lookup.Count; i++)
+			for(int i = 0, c = edgeLookup.Count; i < c; i++)
 			{
 				WingedEdge we;
 
-				if(!wings_dic.TryGetValue(edge_lookup[i].common, out we) || used.Contains(we.edge))
+				if(!wings_dic.TryGetValue(edgeLookup[i].common, out we) || used.Contains(we.edge))
 					continue;
 
 				WingedEdge cur = we;
@@ -348,7 +350,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="edges"></param>
 		/// <param name="loop"></param>
 		/// <returns></returns>
-		internal static bool GetEdgeLoop(ProBuilderMesh pb, Edge[] edges, out Edge[] loop)
+		internal static bool GetEdgeLoop(ProBuilderMesh pb, IEnumerable<Edge> edges, out Edge[] loop)
 		{
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
 			IEnumerable<EdgeLookup> m_edgeLookup = EdgeLookup.GetEdgeLookup(edges, pb.sharedIndicesInternal.ToDictionary());

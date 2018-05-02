@@ -976,20 +976,20 @@ namespace UnityEngine.ProBuilder
 		/// Gets the average of a vector array.
 		/// </summary>
 		/// <param name="array">The array</param>
-		/// <param name="indices">If provided the average is the sum of all points contained in the indices array. If not, the entire v array is used.</param>
+		/// <param name="indexes">If provided the average is the sum of all points contained in the indices array. If not, the entire v array is used.</param>
 		/// <returns>Average Vector3 of passed vertex array.</returns>
-		public static Vector2 Average(IList<Vector2> array, IList<int> indices = null)
+		public static Vector2 Average(IList<Vector2> array, IList<int> indexes = null)
 		{
 			if (array == null)
 				throw new ArgumentNullException("array");
 
 			Vector2 sum = Vector2.zero;
-			float len = indices == null ? array.Count : indices.Count;
+			float len = indexes == null ? array.Count : indexes.Count;
 
-			if( indices == null )
+			if( indexes == null )
 				for(int i = 0; i < len; i++) sum += array[i];
 			else
-				for(int i = 0; i < len; i++) sum += array[indices[i]];
+				for(int i = 0; i < len; i++) sum += array[indexes[i]];
 
 			return sum/len;
 		}
@@ -998,18 +998,18 @@ namespace UnityEngine.ProBuilder
 		/// Gets the average of a vector array.
 		/// </summary>
 		/// <param name="array">The array</param>
-		/// <param name="indices">If provided the average is the sum of all points contained in the indices array. If not, the entire v array is used.</param>
+		/// <param name="indexes">If provided the average is the sum of all points contained in the indices array. If not, the entire v array is used.</param>
 		/// <returns>Average Vector3 of passed vertex array.</returns>
-		public static Vector3 Average(IList<Vector3> array, IList<int> indices = null)
+		public static Vector3 Average(IList<Vector3> array, IList<int> indexes = null)
 		{
 			if (array == null)
 				throw new ArgumentNullException("array");
 
 			Vector3 sum = Vector3.zero;
 
-			float len = indices == null ? array.Count : indices.Count;
+			float len = indexes == null ? array.Count : indexes.Count;
 
-			if( indices == null )
+			if( indexes == null )
 			{
 				for(int i = 0; i < len; i++)
 				{
@@ -1022,9 +1022,9 @@ namespace UnityEngine.ProBuilder
 			{
 				for(int i = 0; i < len; i++)
 				{
-					sum.x += array[indices[i]].x;
-					sum.y += array[indices[i]].y;
-					sum.z += array[indices[i]].z;
+					sum.x += array[indexes[i]].x;
+					sum.y += array[indexes[i]].y;
+					sum.z += array[indexes[i]].z;
 				}
 			}
 
@@ -1036,10 +1036,10 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="list"></param>
 		/// <param name="selector"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		public static Vector3 Average<T>(this IList<T> list, Func<T, Vector3> selector, IList<int> indices = null)
+		public static Vector3 Average<T>(this IList<T> list, Func<T, Vector3> selector, IList<int> indexes = null)
 		{
 			if (list == null)
 				throw new ArgumentNullException("list");
@@ -1048,9 +1048,9 @@ namespace UnityEngine.ProBuilder
 				throw new ArgumentNullException("selector");
 
 			Vector3 sum = Vector3.zero;
-			float len = indices == null ? list.Count : indices.Count;
+			float len = indexes == null ? list.Count : indexes.Count;
 
-			if (indices == null)
+			if (indexes == null)
 			{
 				for (int i = 0; i < len; i++)
 					sum += selector(list[i]);
@@ -1058,7 +1058,7 @@ namespace UnityEngine.ProBuilder
 			else
 			{
 				for (int i = 0; i < len; i++)
-					sum += selector(list[indices[i]]);
+					sum += selector(list[indexes[i]]);
 			}
 
 			return sum/len;

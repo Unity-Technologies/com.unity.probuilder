@@ -40,7 +40,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="enableManifoldExtrude"></param>
 		/// <param name="extrudedEdges"></param>
 		/// <returns></returns>
-		public static bool Extrude(this ProBuilderMesh pb, Edge[] edges, float extrudeDistance, bool extrudeAsGroup, bool enableManifoldExtrude, out Edge[] extrudedEdges)
+		public static bool Extrude(this ProBuilderMesh pb, IEnumerable<Edge> edges, float extrudeDistance, bool extrudeAsGroup, bool enableManifoldExtrude, out Edge[] extrudedEdges)
 		{
 			IntArray[] sharedIndices = pb.sharedIndicesInternal;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
@@ -251,8 +251,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			pb.SetVertices(vertices);
 			pb.SetFaces(newFaces.ToArray());
-			pb.SetSharedIndices(lookup);
-			pb.SetSharedIndicesUV(lookupUV);
+			pb.SetSharedIndexes(lookup);
+			pb.SetSharedIndexesUV(lookupUV);
 
 			return true;
 		}
@@ -428,8 +428,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			pb.SetVertices(vertices);
 			pb.SetFaces(newFaces.ToArray());
-			pb.SetSharedIndices(lookup);
-			pb.SetSharedIndicesUV(lookupUV);
+			pb.SetSharedIndexes(lookup);
+			pb.SetSharedIndexesUV(lookupUV);
 
 			return true;
 		}

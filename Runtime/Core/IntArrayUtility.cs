@@ -37,16 +37,16 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="array"></param>
 		/// <returns></returns>
-		public static Dictionary<int, int> ToDictionary(this IntArray[] array)
+		public static Dictionary<int, int> ToDictionary(this IList<IntArray> array)
 		{
             if (array == null)
                 throw new ArgumentNullException("array");
 
             Dictionary<int, int> dic = new Dictionary<int, int>();
 
-			for(var i = 0; i < array.Length; i++)
+			for(int i = 0, c = array.Count; i < c; i++)
 			{
-				for(var n = 0; n < array[i].array.Length; n++)
+				for(int n = 0,t = array[i].length; n < t; n++)
 					if(!dic.ContainsKey(array[i][n]))
 						dic.Add(array[i][n], i);
 			}
@@ -59,7 +59,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="lookup"></param>
 		/// <returns></returns>
-		public static IntArray[] ToSharedIndices(this IEnumerable<KeyValuePair<int, int>> lookup)
+		public static IntArray[] ToIntArray(this IEnumerable<KeyValuePair<int, int>> lookup)
 		{
 			if(lookup == null)
 				return new IntArray[0];
@@ -147,14 +147,18 @@ namespace UnityEngine.ProBuilder
 		/// Returns all indices given a spattering of triangles.  Guaranteed to be all inclusive and distinct.
 		/// </summary>
 		/// <param name="intArray"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <returns></returns>
-		public static List<int> AllIndicesWithValues(this IntArray[] intArray, IList<int> indices)
+		public static List<int> AllIndexesWithValues(this IntArray[] intArray, IList<int> indexes)
 		{
             if (intArray == null)
                 throw new ArgumentNullException("intArray");
 
-			int[] universal = intArray.GetCommonIndices(indices).ToArray();
+            if (indexes == null)
+                throw new ArgumentNullException("indexes");
+
+			int[] universal = intArray.GetCommonIndices(indexes).ToArray();
+
 			List<int> shared = new List<int>();
 
 			for(int i = 0; i < universal.Length; i++)
@@ -163,12 +167,12 @@ namespace UnityEngine.ProBuilder
 			return shared;
 		}
 
-		public static List<int> AllIndicesWithValues(this IntArray[] intArray, Dictionary<int, int> lookup, IList<int> indices)
+		public static List<int> AllIndexesWithValues(this IntArray[] intArray, Dictionary<int, int> lookup, IList<int> indexes)
 		{
             if (intArray == null)
                 throw new ArgumentNullException("intArray");
 
-            int[] universal = GetCommonIndices(lookup, indices).ToArray();
+            int[] universal = GetCommonIndices(lookup, indexes).ToArray();
 
 			List<int> shared = new List<int>();
 
@@ -240,7 +244,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="positions"></param>
 		/// <returns></returns>
-		public static IntArray[] ExtractSharedIndices(Vector3[] positions)
+		public static IntArray[] GetSharedIndexesWithPositions(Vector3[] positions)
 		{
             if (positions == null)
                 throw new ArgumentNullException("positions");
@@ -418,7 +422,7 @@ namespace UnityEngine.ProBuilder
 			foreach(int i in indexesToRemove)
 				lookup[i] = -1;
 
-			sharedIndices = ToSharedIndices(lookup.Where(x => x.Value > -1));
+			sharedIndices = ToIntArray(lookup.Where(x => x.Value > -1));
 
 			List<int> removed_values = new List<int>(indexesToRemove);
 

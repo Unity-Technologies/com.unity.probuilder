@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder.Actions
 					editLevel == EditLevel.Geometry &&
 					selection != null &&
 					selection.Length > 0 &&
-					selection.Sum(x => x.SelectedFaceCount) > 0;
+					selection.Sum(x => x.selectedFaceCount) > 0;
 		}
 
 		public override bool IsHidden()
@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder.Actions
 			{
 				Face[] triangulatedFaces = null;
 				pb.ToMesh();
-				res = pb.ToTriangles(pb.SelectedFaces, out triangulatedFaces);
+				res = pb.ToTriangles(pb.selectedFaces, out triangulatedFaces);
 				pb.Refresh();
 				pb.Optimize();
 				pb.SetSelectedFaces(triangulatedFaces);

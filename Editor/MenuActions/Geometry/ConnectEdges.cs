@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder.Actions
 					ProBuilderEditor.instance.selectionMode == SelectMode.Edge &&
 					selection != null &&
 					selection.Length > 0 &&
-					selection.Any(x => x.SelectedEdgeCount > 1);
+					selection.Any(x => x.selectedEdgeCount > 1);
 		}
 
 		public override bool IsHidden()

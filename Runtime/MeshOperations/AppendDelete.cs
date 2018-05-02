@@ -61,8 +61,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			System.Array.Copy(pb.texturesInternal, 0, uv0, 0, pb.texturesInternal.Length);
 			System.Array.Copy(u, 0, uv0, pb.texturesInternal.Length, u.Length);
 
-			face.ShiftIndicesToZero();
-			face.ShiftIndices(vertexCount);
+			face.ShiftIndexesToZero();
+			face.ShiftIndexes(vertexCount);
 
 			faces.Add(face);
 
@@ -73,7 +73,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			pb.SetColors(colors);
 			pb.SetUVs(uv0);
 
-			pb.SetSharedIndices(sharedIndices);
+			pb.SetSharedIndexes(sharedIndices);
 			pb.SetFaces(faces.ToArray());
 
 			return face;
@@ -106,8 +106,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				colors.AddRange(appendedColors[i]);
 				uvs.AddRange(appendedUvs[i]);
 
-				appendedFaces[i].ShiftIndicesToZero();
-				appendedFaces[i].ShiftIndices(vc);
+				appendedFaces[i].ShiftIndexesToZero();
+				appendedFaces[i].ShiftIndexes(vc);
 				faces.Add(appendedFaces[i]);
 
 				if(appendedSharedIndices != null && appendedVertices[i].Length != appendedSharedIndices[i].Length)
@@ -327,8 +327,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			pb.SetFaces(m_RebuiltFaces.ToArray());
-			pb.SetSharedIndices(m_RebuiltLookup);
-			pb.SetSharedIndicesUV(m_RebuiltLookupUV);
+			pb.SetSharedIndexes(m_RebuiltLookup);
+			pb.SetSharedIndexesUV(m_RebuiltLookupUV);
 			removed = pb.RemoveUnusedVertices();
 			return removed.Length > 0;
 		}

@@ -1,35 +1,19 @@
-﻿namespace UnityEngine.ProBuilder
+﻿using System;
+
+namespace UnityEngine.ProBuilder
 {
 	public static class FaceUtility
 	{
-		/// <summary>
-		/// Return all edges, including non-perimeter ones.
-		/// </summary>
-		/// <returns></returns>
-		[System.Obsolete]
-		public static Edge[] GetAllEdges(this Face face)
-		{
-			int[] indices = face.indices;
-
-			Edge[] edges = new Edge[indices.Length];
-
-			for (var i = 0; i < indices.Length; i += 3)
-			{
-				edges[i] = new Edge(indices[i + 0], indices[i + 1]);
-				edges[i + 1] = new Edge(indices[i + 1], indices[i + 2]);
-				edges[i + 2] = new Edge(indices[i + 2], indices[i + 0]);
-			}
-
-			return edges;
-		}
-
 		/// <summary>
 		/// Add offset to each value in the indices array.
 		/// </summary>
 		/// <param name="face">Target face to apply the offset to.</param>
 		/// <param name="offset"></param>
-		public static void ShiftIndices(this Face face, int offset)
+		public static void ShiftIndexes(this Face face, int offset)
 		{
+            if (face == null)
+                throw new ArgumentNullException("face");
+
 			int[] indices = face.indices;
 			for (int i = 0, c = indices.Length; i < c; i++)
 				indices[i] += offset;
@@ -54,15 +38,18 @@
 			return smallest;
 		}
 
-		/// <summary>
-		/// Shifts all triangles to be zero indexed.
-		/// Ex:
-		/// new pb_Face(3,4,5).ShiftIndicesToZero();
-		/// Sets the pb_Face index array to 0,1,2
-		/// </summary>
-		public static void ShiftIndicesToZero(this Face face)
+        /// <summary>
+        /// Shifts all triangles to be zero indexed.
+        /// Ex:
+        /// new pb_Face(3,4,5).ShiftIndexesToZero();
+        /// Sets the pb_Face index array to 0,1,2
+        /// </summary>
+        public static void ShiftIndexesToZero(this Face face)
 		{
-			int offset = SmallestIndexValue(face);
+            if (face == null)
+                throw new ArgumentNullException("face");
+
+            int offset = SmallestIndexValue(face);
 			int[] indices = face.indices;
 			int[] distinct = face.distinctIndices;
 			Edge[] edges = face.edgesInternal;
@@ -84,7 +71,10 @@
 
 		public static void Reverse(this Face face)
 		{
-			int[] indices = face.indices;
+            if (face == null)
+                throw new ArgumentNullException("face");
+
+            int[] indices = face.indices;
 			System.Array.Reverse(indices);
 			face.indices = indices;
 		}

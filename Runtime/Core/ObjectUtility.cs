@@ -35,14 +35,14 @@ namespace UnityEngine.ProBuilder
 		/// Returns requested vertices in world space coordinates.
 		/// </summary>
 		/// <param name="mesh"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <returns></returns>
-		public static Vector3[] VerticesInWorldSpace(this ProBuilderMesh mesh, int[] indices)
+		public static Vector3[] VerticesInWorldSpace(this ProBuilderMesh mesh, int[] indexes)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            Vector3[] worldPoints = mesh.positionsInternal.ValuesWithIndices(indices);
+            Vector3[] worldPoints = mesh.positionsInternal.ValuesWithIndices(indexes);
 
 			for(int i = 0; i < worldPoints.Length; i++)
 				worldPoints[i] = mesh.transform.TransformPoint(worldPoints[i]);
@@ -79,7 +79,7 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentNullException("mesh");
 
             int i = 0;
-			int[] indices = lookup != null ? mesh.sharedIndicesInternal.AllIndicesWithValues(lookup, selectedTriangles).ToArray() : mesh.sharedIndicesInternal.AllIndicesWithValues(selectedTriangles).ToArray();
+			int[] indices = lookup != null ? mesh.sharedIndicesInternal.AllIndexesWithValues(lookup, selectedTriangles).ToArray() : mesh.sharedIndicesInternal.AllIndexesWithValues(selectedTriangles).ToArray();
 
 			Matrix4x4 w2l = mesh.transform.worldToLocalMatrix;
 
@@ -123,7 +123,7 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentNullException("mesh");
 
             int i = 0;
-			int[] indices = mesh.sharedIndicesInternal.AllIndicesWithValues(selectedTriangles).ToArray();
+			int[] indices = mesh.sharedIndicesInternal.AllIndexesWithValues(selectedTriangles).ToArray();
 
 			Vector3[] verts = mesh.positionsInternal;
 			for(i = 0; i < indices.Length; i++)

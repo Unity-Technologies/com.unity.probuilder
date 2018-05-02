@@ -41,7 +41,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			pb.SetSharedVertexValues(newIndex, cen);
 
-			int[] mergedSharedIndex = pb.GetSharedIndices()[newIndex].array;
+			int[] mergedSharedIndex = pb.GetSharedIndexes()[newIndex].array;
 
 			int[] removedIndices;
 			pb.RemoveDegenerateTriangles(out removedIndices);
@@ -100,7 +100,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			foreach(int i in splits)
 				IntArrayUtility.AddValueAtIndex(ref sharedIndices, -1, i);
 
-			pb.SetSharedIndices(sharedIndices);
+			pb.SetSharedIndexes(sharedIndices);
 
 			return true;
 		}
@@ -127,7 +127,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			int max = lookup.Count();
 			foreach(int i in indices)
 				lookup[i] = ++max;
-			pb.SetSharedIndices(lookup);
+			pb.SetSharedIndexes(lookup);
 		}
 
 		/// <summary>
@@ -238,8 +238,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			pb.SetVertices(vertices);
 			pb.SetFaces(faces.ToArray());
-			pb.SetSharedIndices(lookup);
-			pb.SetSharedIndicesUV(lookupUV);
+			pb.SetSharedIndexes(lookup);
+			pb.SetSharedIndexesUV(lookupUV);
 
 			// check old normal and make sure this new face is pointing the same direction
 			Vector3 oldNrm = ProBuilderMath.Normal(pb, face);
@@ -371,7 +371,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				else
 					continue;
 
-				data.face.ShiftIndices(vertexCount);
+				data.face.ShiftIndexes(vertexCount);
 				face.CopyFrom(data.face);
 
 				for(int n = 0; n < data.vertices.Count; n++)
@@ -400,8 +400,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			newEdges = appendedEdges.Distinct().Select(x => x.local - delCount).ToList();
 
 			pb.SetVertices(vertices);
-			pb.SetSharedIndices(lookup.ToSharedIndices());
-			pb.SetSharedIndicesUV(lookupUV.ToSharedIndices());
+			pb.SetSharedIndexes(lookup.ToIntArray());
+			pb.SetSharedIndexesUV(lookupUV.ToIntArray());
 			pb.DeleteVerticesWithIndices(indicesToDelete);
 
 			return new ActionResult(Status.Success, "Subdivide Edges");
@@ -520,7 +520,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			pb.SetSharedIndices(lookup);
+			pb.SetSharedIndexes(lookup);
 			pb.SetVertices(vertices);
 			pb.ToMesh();
 

@@ -40,7 +40,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				FaceRebuildData.Apply(new FaceRebuildData[] { data }, vertices, faces, lookup, null);
 				pb.SetVertices(vertices);
 				pb.SetFaces(faces.ToArray());
-				pb.SetSharedIndices(lookup);
+				pb.SetSharedIndexes(lookup);
 				face = data.face;
 
 				return new ActionResult(Status.Success, "Create Polygon");

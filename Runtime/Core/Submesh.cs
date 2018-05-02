@@ -28,16 +28,20 @@ namespace UnityEngine.ProBuilder
 		internal Material m_Material;
 
 		/// <summary>
-		/// Create new pb_Submesh. Constructor does not copy indices.
+		/// Create new pb_Submesh.
 		/// </summary>
 		/// <param name="material"></param>
 		/// <param name="topology"></param>
-		/// <param name="indices"></param>
-		public Submesh(Material material, MeshTopology topology, int[] indices)
+		/// <param name="indexes"></param>
+		public Submesh(Material material, MeshTopology topology, int[] indexes)
 		{
-			this.m_Indices = indices;
-			this.m_Topology = topology;
-			this.m_Material = material;
+            if (indexes == null)
+                throw new ArgumentNullException("indexes");
+            int len = indexes.Length;
+            m_Indices = new int[len];
+            Array.Copy(indexes, m_Indices, len);
+			m_Topology = topology;
+			m_Material = material;
 		}
 
 		/// <summary>

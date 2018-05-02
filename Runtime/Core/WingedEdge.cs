@@ -291,7 +291,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="wings"></param>
 		/// <param name="common"></param>
 		/// <returns></returns>
-		public static List<int> SortCommonIndicesByAdjacency(List<WingedEdge> wings, HashSet<int> common)
+		public static List<int> SortCommonIndexesByAdjacency(List<WingedEdge> wings, HashSet<int> common)
 		{
 			List<Edge> matches = wings.Where(x => common.Contains(x.edge.common.x) && common.Contains(x.edge.common.y)).Select(y => y.edge.common).ToList();
 

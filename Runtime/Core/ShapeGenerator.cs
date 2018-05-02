@@ -1285,7 +1285,7 @@ namespace UnityEngine.ProBuilder
 			}
 			else
 			{
-				pb.sharedIndicesInternal = IntArrayUtility.ExtractSharedIndices(v);
+				pb.sharedIndicesInternal = IntArrayUtility.GetSharedIndexesWithPositions(v);
 			}
 
 			pb.ToMesh();

@@ -137,8 +137,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			FaceRebuildData.Apply( appendFaces.Select(x => x.faceRebuildData), pb, vertices, null, lookup, null );
-			pb.SetSharedIndices(lookup);
-			pb.SetSharedIndicesUV(new IntArray[0]);
+			pb.SetSharedIndexes(lookup);
+			pb.SetSharedIndexesUV(new IntArray[0]);
 			int removedVertexCount = pb.DeleteFaces(successfulSplits).Length;
 
 			lookup = pb.sharedIndicesInternal.ToDictionary();
@@ -284,9 +284,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			FaceRebuildData.Apply(results.Select(x => x.faceRebuildData), pb, vertices, null, lookup, lookupUV);
 
-			pb.SetSharedIndicesUV(new IntArray[0]);
+			pb.SetSharedIndexesUV(new IntArray[0]);
 			int removedVertexCount = pb.DeleteFaces(affected.Keys).Length;
-			pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.positionsInternal));
+			pb.SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(pb.positionsInternal));
 			pb.ToMesh();
 
 			// figure out where the new edges where inserted

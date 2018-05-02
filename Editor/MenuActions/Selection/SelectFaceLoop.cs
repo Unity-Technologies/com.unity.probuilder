@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder.Actions
 			       	ProBuilderEditor.instance.selectionMode == SelectMode.Face &&
 			       	selection != null &&
 			       	selection.Length > 0 &&
-			       	selection.Sum(x => x.SelectedFaceCount) > 0;
+			       	selection.Sum(x => x.selectedFaceCount) > 0;
 		}
 
 		public override bool IsHidden()

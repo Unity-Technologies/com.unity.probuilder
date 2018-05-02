@@ -179,8 +179,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			m_Mesh.Clear();
 			m_Mesh.SetVertices(m_Vertices);
 			m_Mesh.SetFaces(faces);
-			m_Mesh.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(m_Mesh.positionsInternal));
-			m_Mesh.SetSharedIndicesUV(new IntArray[0]);
+			m_Mesh.SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(m_Mesh.positionsInternal));
+			m_Mesh.SetSharedIndexesUV(new IntArray[0]);
 
 			HashSet<Face> processed = new HashSet<Face>();
 

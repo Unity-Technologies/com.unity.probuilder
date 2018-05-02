@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder.Actions
 					ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
 					selection != null &&
 					selection.Length > 0 &&
-					selection.Any(x => x.SelectedEdgeCount > 0);
+					selection.Any(x => x.selectedEdgeCount > 0);
 		}
 
 		public override MenuActionState AltState()

@@ -71,8 +71,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			IEnumerable<KeyValuePair<int, int>> commonUV = pb.sharedIndicesUVInternal.ToDictionary().Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
 
 			pb.SetVertices(vertices);
-			pb.SetSharedIndices(common);
-			pb.SetSharedIndicesUV(commonUV);
+			pb.SetSharedIndexes(common);
+			pb.SetSharedIndexesUV(commonUV);
 		}
 	}
 }

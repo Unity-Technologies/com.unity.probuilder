@@ -126,7 +126,7 @@ namespace UnityEditor.ProBuilder
 
 			GUILayout.EndHorizontal();
 
-			if(selection == null || selection.Count < 1 || !selection.Any(x => x.Key.SelectedTriangleCount > 0))
+			if(selection == null || selection.Count < 1 || !selection.Any(x => x.Key.selectedVertexCount > 0))
 			{
 				GUILayout.FlexibleSpace();
 				GUILayout.Label("Select a ProBuilder Mesh", UI.EditorGUIUtility.CenteredGreyMiniLabel);

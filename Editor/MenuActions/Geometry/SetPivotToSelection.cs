@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return 	ProBuilderEditor.instance != null &&
 					selection != null &&
 					selection.Length > 0 &&
-					selection.Any(x => x.SelectedTriangleCount > 0);
+					selection.Any(x => x.selectedVertexCount > 0);
 		}
 
 		public override bool IsHidden()

@@ -161,7 +161,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			foreach(int i in distInd)
 				IntArrayUtility.AddValueAtIndex(ref sharedIndices, -1, i);
 
-			pb.SetSharedIndicesUV(sharedIndices);
+			pb.SetSharedIndexesUV(sharedIndices);
 
 			return true;
 		}
@@ -438,7 +438,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			IntArrayUtility.MergeSharedIndices(ref sharedIndicesUV, matchX);
 			IntArrayUtility.MergeSharedIndices(ref sharedIndicesUV, matchY);
 
-			pb.SetSharedIndicesUV(IntArray.RemoveEmptyOrNull(sharedIndicesUV));
+			pb.SetSharedIndexesUV(IntArray.RemoveEmptyOrNull(sharedIndicesUV));
 
 			// @todo Update Element Groups here?
 

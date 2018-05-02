@@ -849,7 +849,7 @@ namespace UnityEditor.ProBuilder
 						// Check to see if we've already selected this quad.  If so, remove it from selection cache.
 						UndoUtility.RecordSelection(pickedPb, "Change Face Selection");
 
-						int indx = System.Array.IndexOf(pickedPb.SelectedFaces, pickedFace);
+						int indx = System.Array.IndexOf(pickedPb.selectedFaces, pickedFace);
 
 						if (indx > -1)
 						{
@@ -952,9 +952,9 @@ namespace UnityEditor.ProBuilder
 
 					// If we get a match, check to see if it exists in our selection array already, then add / remove
 					if (indx > -1)
-						pb.SetSelectedTriangles(pb.SelectedTriangles.RemoveAt(indx));
+						pb.SetSelectedVertices(pb.SelectedTriangles.RemoveAt(indx));
 					else
-						pb.SetSelectedTriangles(pb.SelectedTriangles.Add(tri));
+						pb.SetSelectedVertices(pb.SelectedTriangles.Add(tri));
 
 					vpb = pb;
 					return true;
@@ -986,9 +986,9 @@ namespace UnityEditor.ProBuilder
 
 							// If we get a match, check to see if it exists in our selection array already, then add / remove
 							if (indx > -1)
-								pb.SetSelectedTriangles(pb.SelectedTriangles.RemoveAt(indx));
+								pb.SetSelectedVertices(pb.SelectedTriangles.RemoveAt(indx));
 							else
-								pb.SetSelectedTriangles(pb.SelectedTriangles.Add(index));
+								pb.SetSelectedVertices(pb.SelectedTriangles.Add(index));
 
 							vpb = pb;
 							return true;
@@ -1022,14 +1022,14 @@ namespace UnityEditor.ProBuilder
 					if (EdgeExtension.ValidateEdge(pb, nearestEdge, out edge))
 						nearestEdge = edge.item2;
 
-					int ind = pb.SelectedEdges.IndexOf(nearestEdge, pb.sharedIndicesInternal.ToDictionary());
+					int ind = pb.selectedEdges.IndexOf(nearestEdge, pb.sharedIndicesInternal.ToDictionary());
 
 					UndoUtility.RecordSelection(pb, "Change Edge Selection");
 
 					if (ind > -1)
-						pb.SetSelectedEdges(pb.SelectedEdges.RemoveAt(ind));
+						pb.SetSelectedEdges(pb.selectedEdges.ToArray().RemoveAt(ind));
 					else
-						pb.SetSelectedEdges(pb.SelectedEdges.Add(nearestEdge));
+						pb.SetSelectedEdges(pb.selectedEdges.ToArray().Add(nearestEdge));
 
 					return true;
 				}
@@ -1096,7 +1096,7 @@ namespace UnityEditor.ProBuilder
 							common = kvp.Value;
 						}
 
-						kvp.Key.SetSelectedTriangles(common.SelectMany(x => sharedIndices[x].array).ToArray());
+						kvp.Key.SetSelectedVertices(common.SelectMany(x => sharedIndices[x].array).ToArray());
 					}
 
 					UpdateSelection(false);
@@ -1121,7 +1121,7 @@ namespace UnityEditor.ProBuilder
 
 						if (shiftKey || ctrlKey)
 						{
-							current = new HashSet<Face>(kvp.Key.SelectedFaces);
+							current = new HashSet<Face>(kvp.Key.selectedFaces);
 
 							if (dragSelectMode == DragSelectMode.Add)
 								current.UnionWith(kvp.Value);
@@ -1164,7 +1164,7 @@ namespace UnityEditor.ProBuilder
 
 						if (shiftKey || ctrlKey)
 						{
-							current = EdgeLookup.GetEdgeLookupHashSet(pb.SelectedEdges, commonIndices);
+							current = EdgeLookup.GetEdgeLookupHashSet(pb.selectedEdges, commonIndices);
 
 							if (dragSelectMode == DragSelectMode.Add)
 								current.UnionWith(selectedEdges);
@@ -1247,7 +1247,7 @@ namespace UnityEditor.ProBuilder
 					RaycastHit hit;
 					Dictionary<ProBuilderMesh, HashSet<Face>> ignore = new Dictionary<ProBuilderMesh, HashSet<Face>>();
 					foreach (ProBuilderMesh pb in selection)
-						ignore.Add(pb, new HashSet<Face>(pb.SelectedFaces));
+						ignore.Add(pb, new HashSet<Face>(pb.selectedFaces));
 
 					if (EditorHandleUtility.FaceRaycast(m_CurrentEvent.mousePosition, out obj, out hit, ignore))
 					{
@@ -1547,11 +1547,11 @@ namespace UnityEditor.ProBuilder
 				switch (selectionMode)
 				{
 					case SelectMode.Edge:
-						if (pb.SelectedFaceCount > 0)
+						if (pb.selectedFaceCount > 0)
 							goto default;
 
 						Edge[] newEdges;
-						bool success = pb.Extrude(pb.SelectedEdges,
+						bool success = pb.Extrude(pb.selectedEdges,
 							0.0001f,
 							PreferencesInternal.GetBool(PreferenceKeys.pbExtrudeAsGroup),
 							PreferencesInternal.GetBool(PreferenceKeys.pbManifoldEdgeExtrusion),
@@ -1565,13 +1565,13 @@ namespace UnityEditor.ProBuilder
 						break;
 
 					default:
-						int len = pb.SelectedFaces.Length;
+						int len = pb.selectedFaces.Length;
 
 						if (len > 0)
 						{
-							pb.Extrude(pb.SelectedFaces, PreferencesInternal.GetEnum<ExtrudeMethod>(PreferenceKeys.pbExtrudeMethod),
+							pb.Extrude(pb.selectedFaces, PreferencesInternal.GetEnum<ExtrudeMethod>(PreferenceKeys.pbExtrudeMethod),
 								0.0001f);
-							pb.SetSelectedFaces(pb.SelectedFaces);
+							pb.SetSelectedFaces(pb.selectedFaces);
 							ef += len;
 						}
 
@@ -2244,18 +2244,18 @@ namespace UnityEditor.ProBuilder
 //				profiler.Begin("bounds");
 				ProBuilderMesh pb = selection[i];
 
-				if (!boundsInitialized && pb.SelectedTriangleCount > 0)
+				if (!boundsInitialized && pb.selectedVertexCount > 0)
 				{
 					boundsInitialized = true;
 					min = pb.transform.TransformPoint(pb.positionsInternal[pb.SelectedTriangles[0]]);
 					max = min;
 				}
 
-				if (pb.SelectedTriangleCount > 0)
+				if (pb.selectedVertexCount > 0)
 				{
 					var indices = pb.SelectedTriangles;
 
-					for (int n = 0, c = pb.SelectedTriangleCount; n < c; n++)
+					for (int n = 0, c = pb.selectedVertexCount; n < c; n++)
 					{
 						if (used.Add(lookup[indices[n]]))
 						{
@@ -2273,8 +2273,8 @@ namespace UnityEditor.ProBuilder
 				SelectedFacesInEditZone.Add(pb, ElementSelection.GetNeighborFaces(pb, pb.SelectedTriangles, m_SharedIndicesDictionary[i]));
 
 				m_SelectedVertexCount += selection[i].SelectedTriangles.Length;
-				m_SelectedFaceCount += selection[i].SelectedFaceCount;
-				m_SelectedEdgeCount += selection[i].SelectedEdges.Length;
+				m_SelectedFaceCount += selection[i].selectedFaceCount;
+				m_SelectedEdgeCount += selection[i].selectedEdgeCount;
 //				profiler.End();
 			}
 
@@ -2342,7 +2342,7 @@ namespace UnityEditor.ProBuilder
 
 				if (pb == null) continue;
 
-				if (selection[i].SelectedTriangleCount > 0)
+				if (selection[i].selectedVertexCount > 0)
 				{
 					if (!boundsInitialized)
 					{
@@ -2351,16 +2351,16 @@ namespace UnityEditor.ProBuilder
 						max = min;
 					}
 
-					for (int n = 0; n < selection[i].SelectedTriangleCount; n++)
+					for (int n = 0; n < selection[i].selectedVertexCount; n++)
 					{
 						min = Vector3.Min(min, pb.transform.TransformPoint(vertices[indices[n]]));
 						max = Vector3.Max(max, pb.transform.TransformPoint(vertices[indices[n]]));
 					}
 				}
 
-				m_SelectedVertexCount += selection[i].SelectedTriangleCount;
-				m_SelectedFaceCount += selection[i].SelectedFaceCount;
-				m_SelectedEdgeCount += selection[i].SelectedEdges.Length;
+				m_SelectedVertexCount += selection[i].selectedVertexCount;
+				m_SelectedFaceCount += selection[i].selectedFaceCount;
+				m_SelectedEdgeCount += selection[i].selectedEdgeCount;
 			}
 
 			m_HandlePivotWorld = (max + min) / 2f;
@@ -2496,13 +2496,13 @@ namespace UnityEditor.ProBuilder
 			{
 				List<int> alreadyChecked = new List<int>();
 
-				foreach (Face f in pb.SelectedFaces)
+				foreach (Face f in pb.selectedFaces)
 				{
 					int tg = f.textureGroup;
 					if (tg > 0 && !alreadyChecked.Contains(f.textureGroup))
 					{
 						foreach (Face j in pb.facesInternal)
-							if (j != f && j.textureGroup == tg && !pb.SelectedFaces.Contains(j))
+							if (j != f && j.textureGroup == tg && !pb.selectedFaces.Contains(j))
 							{
 								// int i = EditorUtility.DisplayDialogComplex("Mixed Texture Group Selection", "One or more of the faces selected belong to a Texture Group that does not have all it's member faces selected.  To modify, please either add the remaining group faces to the selection, or remove the current face from this smoothing group.", "Add Group to Selection", "Cancel", "Remove From Group");
 								int i = 0;
@@ -2570,8 +2570,8 @@ namespace UnityEditor.ProBuilder
 			{
 				ProBuilderMesh pb = selection[i];
 
-				int[] indices = pb.SelectedTriangleCount > 0
-					? pb.sharedIndicesInternal.AllIndicesWithValues(pb.SelectedTriangles).ToArray()
+				int[] indices = pb.selectedVertexCount > 0
+					? pb.sharedIndicesInternal.AllIndexesWithValues(pb.SelectedTriangles).ToArray()
 					: pb.mesh.triangles;
 
 				Snapping.SnapVertices(pb, indices, Vector3.one * snapVal);
@@ -2688,12 +2688,12 @@ namespace UnityEditor.ProBuilder
 
 			if (selection.Length < 1) return false;
 
-			pb = selection.FirstOrDefault(x => x.SelectedFaceCount > 0);
+			pb = selection.FirstOrDefault(x => x.selectedFaceCount > 0);
 
 			if (pb == null)
 				return false;
 
-			face = pb.SelectedFaces[0];
+			face = pb.selectedFaces[0];
 
 			return true;
 		}
@@ -2707,9 +2707,9 @@ namespace UnityEditor.ProBuilder
 		{
 			for (int i = 0; i < selection.Length; i++)
 			{
-				for (int n = 0; n < selection[i].SelectedFaceCount; n++)
+				for (int n = 0; n < selection[i].selectedFaceCount; n++)
 				{
-					mat = selection[i].SelectedFaces[i].material;
+					mat = selection[i].selectedFaces[i].material;
 
 					if (mat != null)
 						return true;

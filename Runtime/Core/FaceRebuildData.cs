@@ -57,8 +57,8 @@ namespace UnityEngine.ProBuilder
 
 			pb.SetVertices(vertices);
 			pb.SetFaces(_faces.ToArray());
-			pb.SetSharedIndices(lookup);
-			pb.SetSharedIndicesUV(lookupUV);
+			pb.SetSharedIndexes(lookup);
+			pb.SetSharedIndexesUV(lookupUV);
 		}
 
 		/// <summary>

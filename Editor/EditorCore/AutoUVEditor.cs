@@ -247,10 +247,8 @@ namespace UnityEditor.ProBuilder
 
 				for(int i = 0; i < selection.Length; i++)
 				{
-					foreach(Face face in selection[i].SelectedFaces)
-					{
+					foreach(Face face in selection[i].GetSelectedFaces())
 						face.uv = new AutoUnwrapSettings();
-					}
 				}
 
 				ProBuilderEditor.instance.UpdateSelection();
@@ -270,9 +268,7 @@ namespace UnityEditor.ProBuilder
 			return EditorGUI.EndChangeCheck();
 		}
 
-		/**
-		 * Sets the pb_UV list and diff tables.
-		 */
+		// Sets the pb_UV list and diff tables.
 		static void UpdateDiffDictionary(ProBuilderMesh[] selection)
 		{
 			uv_selection.Clear();
@@ -280,7 +276,7 @@ namespace UnityEditor.ProBuilder
 			if(selection == null || selection.Length < 1)
 				return;
 
-			uv_selection = selection.SelectMany(x => x.SelectedFaces).Where(x => !x.manualUV).Select(x => x.uv).ToList();
+			uv_selection = selection.SelectMany(x => x.GetSelectedFaces()).Where(x => !x.manualUV).Select(x => x.uv).ToList();
 
 			// Clear values for each iteration
 			foreach(string key in uv_diff.Keys.ToList())
@@ -304,15 +300,15 @@ namespace UnityEditor.ProBuilder
 					uv_diff["swapUV"] = true;
 				if(u.fill != uv_gui.fill)
 					uv_diff["fill"] = true;
-				if(u.scale.x != uv_gui.scale.x)
+				if(ProBuilderMath.Approx(u.scale.x, uv_gui.scale.x))
 					uv_diff["scalex"] = true;
-				if(u.scale.y != uv_gui.scale.y)
+				if(ProBuilderMath.Approx(u.scale.y, uv_gui.scale.y))
 					uv_diff["scaley"] = true;
-				if(u.offset.x != uv_gui.offset.x)
+				if(ProBuilderMath.Approx(u.offset.x, uv_gui.offset.x))
 					uv_diff["offsetx"] = true;
-				if(u.offset.y != uv_gui.offset.y)
+				if(ProBuilderMath.Approx(u.offset.y, uv_gui.offset.y))
 					uv_diff["offsety"] = true;
-				if(u.rotation != uv_gui.rotation)
+				if(ProBuilderMath.Approx(u.rotation, uv_gui.rotation))
 					uv_diff["rotation"] = true;
 				if(u.anchor != uv_gui.anchor)
 					uv_diff["anchor"] = true;
@@ -323,7 +319,7 @@ namespace UnityEditor.ProBuilder
 				if(uv_diff["manualUV"] && uv_diff["textureGroup"])
 					break;
 
-				Face[] selFaces = pb.SelectedFaces;
+				Face[] selFaces = pb.GetSelectedFaces();
 
 				if(!uv_diff["manualUV"])
 					uv_diff["manualUV"] = System.Array.Exists(selFaces, x => x.manualUV);
@@ -344,7 +340,7 @@ namespace UnityEditor.ProBuilder
 			UndoUtility.RecordSelection(sel, "Flip U");
 			for(int i = 0; i < sel.Length; i++)
 			{
-				foreach(Face q in sel[i].SelectedFaces) {
+				foreach(Face q in sel[i].GetSelectedFaces()) {
 					q.uv.flipU = flipU;
 				}
 			}
@@ -354,7 +350,7 @@ namespace UnityEditor.ProBuilder
 		{
 			UndoUtility.RecordSelection(sel, "Flip V");
 			for(int i = 0; i < sel.Length; i++) {
-				foreach(Face q in sel[i].SelectedFaces) {
+				foreach(Face q in sel[i].GetSelectedFaces()) {
 					q.uv.flipV = flipV;
 				}
 			}
@@ -364,7 +360,7 @@ namespace UnityEditor.ProBuilder
 		{
 			UndoUtility.RecordSelection(sel, "Swap U, V");
 			for(int i = 0; i < sel.Length; i++) {
-				foreach(Face q in sel[i].SelectedFaces) {
+				foreach(Face q in sel[i].GetSelectedFaces()) {
 					q.uv.swapUV = swapUV;
 				}
 			}
@@ -374,7 +370,7 @@ namespace UnityEditor.ProBuilder
 		{
 			UndoUtility.RecordSelection(sel, "Use World Space UVs");
 			for(int i = 0; i < sel.Length; i++) {
-				foreach(Face q in sel[i].SelectedFaces) {
+				foreach(Face q in sel[i].GetSelectedFaces()) {
 					q.uv.useWorldSpace = useWorldSpace;
 				}
 			}
@@ -385,7 +381,7 @@ namespace UnityEditor.ProBuilder
 			UndoUtility.RecordSelection(sel, "Fill UVs");
 			for(int i = 0; i < sel.Length; i++)
 			{
-				foreach(Face q in sel[i].SelectedFaces) {
+				foreach(Face q in sel[i].GetSelectedFaces()) {
 					q.uv.fill = fill;
 				}
 			}
@@ -397,7 +393,7 @@ namespace UnityEditor.ProBuilder
 
 			for(int i = 0; i < sel.Length; i++)
 			{
-				foreach(Face q in sel[i].SelectedFaces)
+				foreach(Face q in sel[i].GetSelectedFaces())
 					q.uv.anchor = anchor;
 			}
 		}
@@ -408,7 +404,7 @@ namespace UnityEditor.ProBuilder
 
 			for(int i = 0; i < sel.Length; i++)
 			{
-				foreach(Face q in sel[i].SelectedFaces) {
+				foreach(Face q in sel[i].GetSelectedFaces()) {
 					switch(axis)
 					{
 						case pb_Axis2d.XY:
@@ -431,7 +427,7 @@ namespace UnityEditor.ProBuilder
 
 			for(int i = 0; i < sel.Length; i++)
 			{
-				foreach(Face q in sel[i].SelectedFaces) {
+				foreach(Face q in sel[i].GetSelectedFaces()) {
 					q.uv.rotation = rot;
 				}
 			}
@@ -443,7 +439,7 @@ namespace UnityEditor.ProBuilder
 
 			for(int i = 0; i < sel.Length; i++)
 			{
-				foreach(Face q in sel[i].SelectedFaces) {
+				foreach(Face q in sel[i].GetSelectedFaces()) {
 					switch(axis)
 					{
 						case pb_Axis2d.XY:
@@ -469,10 +465,10 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				if(pb.SelectedFaceCount < 1)
+				if(pb.selectedFaceCount < 1)
 					continue;
 
-				Face[] faces = pb.SelectedFaces;
+				Face[] faces = pb.GetSelectedFaces();
 				AutoUnwrapSettings cuv = faces[0].uv;
 
 				foreach(Face f in faces)
@@ -486,9 +482,9 @@ namespace UnityEditor.ProBuilder
 
 		private static void TextureGroupSelectedFaces(ProBuilderMesh pb)//, pb_Face face)
 		{
-			if(pb.SelectedFaceCount < 1) return;
+			if(pb.selectedFaceCount < 1) return;
 
-			Face[] faces = pb.SelectedFaces;
+			Face[] faces = pb.GetSelectedFaces();
 
 			AutoUnwrapSettings cont_uv = faces[0].uv;
 

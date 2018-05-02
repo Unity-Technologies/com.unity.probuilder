@@ -73,7 +73,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Object
 
 					Vector3[] normals = pb.GetNormals();
 
-					foreach (var common in pb.sharedIndices)
+					foreach (var common in pb.sharedIndexes)
 					{
 						int[] arr = common;
 						Vector3 nrm = normals[arr[0]];

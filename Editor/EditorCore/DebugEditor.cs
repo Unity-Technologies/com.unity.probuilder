@@ -95,15 +95,15 @@ namespace UnityEditor.ProBuilder
 
 			public ParamView()
 			{
-				this.showObject = true;
-				this.showVertices = false;
-				this.showColors = false;
-				this.showUv = false;
-				this.showUv2 = false;
-				this.showAutoUV = false;
-				this.showSharedUV = false;
-				this.showSharedTris = false;
-				this.showTriangles = false;
+				showObject = true;
+				showVertices = false;
+				showColors = false;
+				showUv = false;
+				showUv2 = false;
+				showAutoUV = false;
+				showSharedUV = false;
+				showSharedTris = false;
+				showTriangles = false;
 			}
 		}
 
@@ -192,11 +192,11 @@ namespace UnityEditor.ProBuilder
 
 			if(selection.Length > 0)
 			{
-				if(selection[0].SelectedTriangles.Length < 256)
+				if(selection[0].selectedVertexCount < 256)
 				{
-					GUILayout.Label("Faces: [" + selection[0].SelectedFaceCount + "/" + selection[0].facesInternal.Length + "]  ");
-					GUILayout.Label("Edges: [" + selection[0].SelectedEdges.Length + "]  " + selection[0].SelectedEdges.ToString(", "));
-					GUILayout.Label("Triangles: [" + selection[0].SelectedTriangles.Length + "]  " + selection[0].SelectedTriangles.ToString(", "));
+					GUILayout.Label("Faces: [" + selection[0].selectedFaceCount + "/" + selection[0].facesInternal.Length + "]  ");
+					GUILayout.Label("Edges: [" + selection[0].selectedEdgeCount + "]");
+					GUILayout.Label("Triangles: [" + selection[0].selectedVertexCount + "]");
 				}
 			}
 
@@ -344,7 +344,7 @@ namespace UnityEditor.ProBuilder
 						GUILayout.BeginHorizontal();
 						GUILayout.Space(48);
 							if(pv.showAutoUV)
-								GUILayout.Label("" + pb.SelectedFaces.Select(x => x.uv).ToArray().ToString("\n"));
+								GUILayout.Label("" + pb.GetSelectedFaces().Select(x => x.uv).ToArray().ToString("\n"));
 						GUILayout.EndHorizontal();
 					}
 
@@ -364,7 +364,7 @@ namespace UnityEditor.ProBuilder
 								{
 									if(GUILayout.Button("" + pb.sharedIndicesUVInternal[i].array.ToString(", "), EditorStyles.label))
 									{
-										pb.SetSelectedTriangles(pb.sharedIndicesUVInternal[i]);
+										pb.SetSelectedVertices(pb.sharedIndicesUVInternal[i]);
 
 										if(ProBuilderEditor.instance)
 										{
@@ -434,7 +434,7 @@ namespace UnityEditor.ProBuilder
 
 			if(selectedOnly)
 			{
-				foreach(int i in pb.SelectedTriangles)
+				foreach(int i in pb.selectedVertices)
 					common.Add(lookup[i]);
 			}
 			else
@@ -485,7 +485,7 @@ namespace UnityEditor.ProBuilder
 		void DrawEdgeInfo(ProBuilderMesh pb)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
-			Edge[] source = selectedOnly ? pb.SelectedEdges : pb.facesInternal.SelectMany(x => x.edgesInternal).ToArray();
+			Edge[] source = selectedOnly ? pb.selectedEdges.ToArray() : pb.facesInternal.SelectMany(x => x.edgesInternal).ToArray();
 			IEnumerable<EdgeLookup> edges = EdgeLookup.GetEdgeLookup(source, lookup);
 			Camera cam = SceneView.lastActiveSceneView.camera;
 
@@ -519,7 +519,7 @@ namespace UnityEditor.ProBuilder
 
 		void DrawFaceInfo(ProBuilderMesh pb)
 		{
-			Face[] faces = selectedOnly ? pb.SelectedFaces : pb.facesInternal;
+			Face[] faces = selectedOnly ? pb.GetSelectedFaces() : pb.facesInternal;
 			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
 			Camera cam = SceneView.lastActiveSceneView.camera;
 
@@ -625,11 +625,12 @@ namespace UnityEditor.ProBuilder
 			if( selectedOnly && pb.vertexCount != pb.mesh.vertices.Length || elementLength <= 0f)
 				return;
 
-			int vertexCount = selectedOnly ? pb.SelectedTriangleCount : pb.mesh.vertexCount;
+			int vertexCount = selectedOnly ? pb.selectedVertexCount : pb.mesh.vertexCount;
 
-			Vector3[] vertices = selectedOnly ? InternalUtility.ValuesWithIndices<Vector3>(pb.mesh.vertices, pb.SelectedTriangles) : pb.mesh.vertices;
-			Vector3[] normals  = selectedOnly ? InternalUtility.ValuesWithIndices<Vector3>(pb.mesh.normals, pb.SelectedTriangles) : pb.mesh.normals;
-			Vector4[] tangents = selectedOnly ? InternalUtility.ValuesWithIndices<Vector4>(pb.mesh.tangents, pb.SelectedTriangles) : pb.mesh.tangents;
+			var indices = pb.selectedVertices.ToArray();
+			Vector3[] vertices = selectedOnly ? InternalUtility.ValuesWithIndices<Vector3>(pb.mesh.vertices, indices) : pb.mesh.vertices;
+			Vector3[] normals  = selectedOnly ? InternalUtility.ValuesWithIndices<Vector3>(pb.mesh.normals, indices) : pb.mesh.normals;
+			Vector4[] tangents = selectedOnly ? InternalUtility.ValuesWithIndices<Vector4>(pb.mesh.tangents, indices) : pb.mesh.tangents;
 
 			Matrix4x4 matrix = pb.transform.localToWorldMatrix;
 

@@ -112,7 +112,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			if(faces == null || faces.Length < 1)
 				return false;
 
-			IntArray[] sharedIndices = pb.GetSharedIndices();
+			IntArray[] sharedIndices = pb.GetSharedIndexes();
 			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
 
 			int vertexCount = pb.vertexCount;
@@ -342,7 +342,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			si = IntArrayUtility.ToSharedIndices(welds);
+			si = IntArrayUtility.ToIntArray(welds);
 
 			pb.SplitUVs(Face.AllTriangles(faces));
 
@@ -377,7 +377,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			pb.SetSharedIndices(si);
+			pb.SetSharedIndexes(si);
 
 			List<Face> allModified = new List<Face>(appendedFaces);
 			allModified.AddRange(faces);
@@ -487,7 +487,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns></returns>
 		public static bool Bridge(this ProBuilderMesh pb, Edge a, Edge b, bool enforcePerimiterEdgesOnly = false)
 			{
-				IntArray[] sharedIndices = pb.GetSharedIndices();
+				IntArray[] sharedIndices = pb.GetSharedIndexes();
 				Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 
 				// Check to see if a face already exists
@@ -689,12 +689,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				{
 					faces[i] = new Face(pb.facesInternal[i]);
 					faces[i].manualUV = true;
-					faces[i].ShiftIndices(vertexCount);
+					faces[i].ShiftIndexes(vertexCount);
 				}
 				f.AddRange(faces);
 
 				// Shared Indices
-				IntArray[] si = pb.GetSharedIndices();
+				IntArray[] si = pb.GetSharedIndexes();
 				for(int i = 0; i < si.Length; i++)
 				{
 					for(int n = 0; n < si[i].length; n++)
@@ -704,7 +704,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				// Shared Indices UV
 				{
-					IntArray[] si_uv = pb.GetSharedIndicesUV();
+					IntArray[] si_uv = pb.GetSharedIndexesUV();
 					for(int i = 0; i < si_uv.Length; i++)
 					{
 						for(int n = 0; n < si_uv[i].length; n++)
@@ -735,7 +735,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			combined.SetFaces(f.ToArray());
 
 			combined.sharedIndicesInternal = s.ToArray();
-			combined.SetSharedIndicesUV(suv.ToArray());
+			combined.SetSharedIndexesUV(suv.ToArray());
 			combined.ToMesh();
 			combined.CenterPivot( pbs[0].transform.position );
 			combined.Refresh();
@@ -973,7 +973,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			pb.positionsInternal = verts.ToArray();
 			pb.texturesInternal = uvs.ToArray();
 			pb.facesInternal = faces.ToArray();
-			pb.sharedIndicesInternal = IntArrayUtility.ExtractSharedIndices(verts.ToArray());
+			pb.sharedIndicesInternal = IntArrayUtility.GetSharedIndexesWithPositions(verts.ToArray());
 			pb.colorsInternal = cols.ToArray();
 
 			return true;

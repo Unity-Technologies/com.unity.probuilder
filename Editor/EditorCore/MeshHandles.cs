@@ -203,12 +203,12 @@ namespace UnityEditor.ProBuilder
 						if (EditorHandleUtility.BeginDrawingLines(Handles.zTest))
 						{
 							ProBuilderMesh pb = selection[i];
-							Edge[] edges = pb.SelectedEdges;
+							Edge[] edges = pb.selectedEdges.ToArray();
 							GL.Color(s_EdgeSelectedColor);
 
 							GL.MultMatrix(pb.transform.localToWorldMatrix);
 
-							for (int j = 0, c = selection[i].SelectedEdgeCount; j < c; j++)
+							for (int j = 0, c = selection[i].selectedEdgeCount; j < c; j++)
 							{
 								GL.Vertex(pb.positionsInternal[edges[j].x]);
 								GL.Vertex(pb.positionsInternal[edges[j].y]);
@@ -311,7 +311,7 @@ namespace UnityEditor.ProBuilder
 			ren.material = s_FaceMaterial;
 			ren.mesh.Clear();
 			ren.mesh.vertices = pb.positionsInternal;
-			ren.mesh.triangles = Face.AllTriangles(pb.SelectedFaces);
+			ren.mesh.triangles = Face.AllTriangles(pb.selectedFaces);
 
 			return ren;
 		}

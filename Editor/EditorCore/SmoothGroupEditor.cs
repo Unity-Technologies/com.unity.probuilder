@@ -80,7 +80,7 @@ namespace UnityEditor.ProBuilder
 			{
 				selected.Clear();
 
-				foreach(Face face in pb.SelectedFaces)
+				foreach(Face face in pb.selectedFaces)
 					selected.Add(face.smoothingGroup);
 			}
 
@@ -552,7 +552,7 @@ namespace UnityEditor.ProBuilder
 
 					if (GUILayout.Button(m_SelectFacesWithSmoothGroupSelectionContent,
 						UI.EditorStyles.buttonStyle))
-						SelectGroups(pb, new HashSet<int>(pb.SelectedFaces.Select(x => x.smoothingGroup)));
+						SelectGroups(pb, new HashSet<int>(pb.selectedFaces.Select(x => x.smoothingGroup)));
 
 					if (GUILayout.Button(m_BreakSmoothingContent,
 						UI.EditorStyles.buttonStyle))
@@ -673,7 +673,7 @@ namespace UnityEditor.ProBuilder
 
 			if( (Event.current.modifiers & EventModifiers.Shift) == EventModifiers.Shift ||
 				(Event.current.modifiers & EventModifiers.Control) == EventModifiers.Control )
-				pb.SetSelectedFaces(pb.facesInternal.Where(x => groups.Contains(x.smoothingGroup) || pb.SelectedFaces.Contains(x)));
+				pb.SetSelectedFaces(pb.facesInternal.Where(x => groups.Contains(x.smoothingGroup) || pb.selectedFaces.Contains(x)));
 			else
 				pb.SetSelectedFaces(pb.facesInternal.Where(x => groups.Contains(x.smoothingGroup)));
 			ProBuilderEditor.Refresh();
@@ -683,7 +683,7 @@ namespace UnityEditor.ProBuilder
 		{
 			UndoUtility.RecordObject(pb, "Set Smoothing Group");
 
-			foreach (Face face in pb.SelectedFaceCount < 1 ? pb.facesInternal : pb.SelectedFaces)
+			foreach (Face face in pb.selectedFaceCount < 1 ? pb.facesInternal : pb.selectedFaces)
 				face.smoothingGroup = index;
 
 			// todo pb.Rebuild
