@@ -6,6 +6,7 @@
 - [Distributing](#distribution)
 - [Building Older Versions](#older-versions)
 - [Build for Asset Store](#asset-store)
+- [Building Docs](#documentation)
 
 # About
 
@@ -138,3 +139,11 @@ Starting with 4.x, ProBuilder is distributed as source code using assembly defin
 If updating the Asset Store version of ProBuilder 2.x, check out a new branch from `v2.9.8f3` and follow the instructions in the readme.
 
 `git checkout v2.9.8f3 -b v2.10-dev`
+
+# Documentation
+
+To build the documentation, install the Pacakge Manager DocTools package to your project.
+
+https://gitlab.internal.unity3d.com/upm-packages/package-ux/package-manager-doctools/tree/master
+
+Then in the Package Manager UI, select the local version of ProBuilder and select "Generate Documentation."
