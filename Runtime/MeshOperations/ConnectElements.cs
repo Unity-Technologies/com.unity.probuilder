@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
+using System;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
@@ -26,69 +27,63 @@ namespace UnityEngine.ProBuilder.MeshOperations
 	/// </summary>
 	public static class ConnectElements
 	{
-		/// <summary>
-		/// Subdivide faces.
-		/// </summary>
-		/// <param name="pb">pb_Object target.</param>
-		/// <param name="faces">The faces to subdivide (more accurately, poke).</param>
-		/// <param name="subdividedFaces">The resulting faces.</param>
-		/// <returns>An action result indicating the status of the operation.</returns>
-		public static ActionResult Connect(this ProBuilderMesh pb, IEnumerable<Face> faces, out Face[] subdividedFaces)
+        /// <summary>
+        /// Subdivide faces.
+        /// </summary>
+        /// <param name="pb">pb_Object target.</param>
+        /// <param name="faces">The faces to subdivide (more accurately, poke).</param>
+        /// <returns>The faces created as a result of inserting new edges.</returns>
+        public static Face[] Connect(this ProBuilderMesh pb, IEnumerable<Face> faces)
 		{
 			IEnumerable<Edge> edges = faces.SelectMany(x => x.edgesInternal);
 			HashSet<Face> mask = new HashSet<Face>(faces);
 			Edge[] empty;
-			return Connect(pb, edges, out subdividedFaces, out empty, true, false, mask);
+            Face[] res;
+			Connect(pb, edges, out res, out empty, true, false, mask);
+            return res;
 		}
 
-		/// <summary>
-		/// Insert new edges connecting a set of edges.
-		/// </summary>
-		/// <param name="pb"></param>
-		/// <param name="edges"></param>
-		/// <param name="faces">The faces created as a result of inserting new edges.</param>
-		/// <returns>A result with the state of the action.</returns>
-		public static ActionResult Connect(this ProBuilderMesh pb, IEnumerable<Edge> edges, out Face[] faces)
+        /// <summary>
+        /// Insert new edges connecting a set of edges.
+        /// </summary>
+        /// <param name="mesh"></param>
+        /// <param name="edges"></param>
+        /// <returns>The faces and edges created as a result of inserting new edges.</returns>
+        public static SimpleTuple<Face[], Edge[]> Connect(this ProBuilderMesh mesh, IEnumerable<Edge> edges)
 		{
 			Edge[] empty;
-			return Connect(pb, edges, out faces, out empty, true, false);
-		}
-
-		/// <summary>
-		/// Insert new edges connecting a set of edges.
-		/// </summary>
-		/// <param name="pb"></param>
-		/// <param name="edges"></param>
-		/// <param name="connections">The edges created as a result of inserting new edges.</param>
-		/// <returns>A result with the state of the action.</returns>
-		public static ActionResult Connect(this ProBuilderMesh pb, IEnumerable<Edge> edges, out Edge[] connections)
-		{
-			Face[] empty;
-			return Connect(pb, edges, out empty, out connections, false, true);
+            Face[] faces;
+			Connect(mesh, edges, out faces, out empty, true, true);
+            return new SimpleTuple<Face[], Edge[]>(faces, empty);
 		}
 
 		/// <summary>
 		/// Connect vertices inserts an edge between a list of indices.
 		/// </summary>
-		/// <param name="pb"></param>
-		/// <param name="indices">A list of indices (corresponding to the pb_Object.vertices array) to connect with new edges.</param>
-		/// <param name="newVertices">A list of newly created vertex indices.</param>
-		/// <returns>An action result indicating the status of the operation.</returns>
-		public static ActionResult Connect(this ProBuilderMesh pb, IList<int> indices, out int[] newVertices)
+		/// <param name="mesh"></param>
+		/// <param name="indexes">A list of indices (corresponding to the pb_Object.vertices array) to connect with new edges.</param>
+		/// <returns>A list of newly created vertex indices.</returns>
+		public static int[] Connect(this ProBuilderMesh mesh, IList<int> indexes)
 		{
-			int sharedIndexOffset = pb.sharedIndicesInternal.Length;
-			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
 
-			HashSet<int> distinct = new HashSet<int>(indices.Select(x=>lookup[x]));
+            if (indexes == null)
+                throw new ArgumentNullException("indexes");
+
+			int sharedIndexOffset = mesh.sharedIndicesInternal.Length;
+			Dictionary<int, int> lookup = mesh.sharedIndicesInternal.ToDictionary();
+
+			HashSet<int> distinct = new HashSet<int>(indexes.Select(x=>lookup[x]));
 			HashSet<int> affected = new HashSet<int>();
 
 			foreach(int i in distinct)
-				affected.UnionWith(pb.sharedIndicesInternal[i].array);
+				affected.UnionWith(mesh.sharedIndicesInternal[i].array);
 
 			Dictionary<Face, List<int>> splits = new Dictionary<Face, List<int>>();
-			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
+			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(mesh));
 
-			foreach(Face face in pb.facesInternal)
+			foreach(Face face in mesh.facesInternal)
 			{
 				int[] faceIndices = face.distinctIndices;
 
@@ -101,7 +96,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			List<ConnectFaceRebuildData> appendFaces = new List<ConnectFaceRebuildData>();
 			List<Face> successfulSplits = new List<Face>();
-			HashSet<int> usedTextureGroups = new HashSet<int>(pb.facesInternal.Select(x => x.textureGroup));
+			HashSet<int> usedTextureGroups = new HashSet<int>(mesh.facesInternal.Select(x => x.textureGroup));
 			int newTextureGroupIndex = 1;
 
 			foreach(KeyValuePair<Face, List<int>> split in splits)
@@ -136,12 +131,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				appendFaces.AddRange(res);
 			}
 
-			FaceRebuildData.Apply( appendFaces.Select(x => x.faceRebuildData), pb, vertices, null, lookup, null );
-			pb.SetSharedIndexes(lookup);
-			pb.SetSharedIndexesUV(new IntArray[0]);
-			int removedVertexCount = pb.DeleteFaces(successfulSplits).Length;
+			FaceRebuildData.Apply( appendFaces.Select(x => x.faceRebuildData), mesh, vertices, null, lookup, null );
+			mesh.SetSharedIndexes(lookup);
+			mesh.SetSharedIndexesUV(new IntArray[0]);
+			int removedVertexCount = mesh.DeleteFaces(successfulSplits).Length;
 
-			lookup = pb.sharedIndicesInternal.ToDictionary();
+			lookup = mesh.sharedIndicesInternal.ToDictionary();
 
 			HashSet<int> newVertexIndices = new HashSet<int>();
 
@@ -149,11 +144,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				for(int n = 0; n < appendFaces[i].newVertexIndices.Count; n++)
 					newVertexIndices.Add( lookup[appendFaces[i].newVertexIndices[n] + (appendFaces[i].faceRebuildData.Offset() - removedVertexCount)] );
 
-			newVertices = newVertexIndices.Select(x => pb.sharedIndicesInternal[x][0]).ToArray();
+			mesh.ToMesh();
 
-			pb.ToMesh();
-
-			return new ActionResult(Status.Success, string.Format("Connected {0} Vertices", distinct.Count));
+            return newVertexIndices.Select(x => mesh.sharedIndicesInternal[x][0]).ToArray();
 		}
 
 		/// <summary>

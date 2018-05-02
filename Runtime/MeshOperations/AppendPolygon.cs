@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
+using System;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
@@ -9,20 +10,22 @@ namespace UnityEngine.ProBuilder.MeshOperations
 	{
 		const int k_MaxHoleIterations = 2048;
 
-		/// <summary>
-		/// Create a new face connecting the vertices selected by indices.
-		/// </summary>
-		/// <param name="pb"></param>
-		/// <param name="indices"></param>
-		/// <param name="unordered"></param>
-		/// <param name="face"></param>
-		/// <returns></returns>
-		public static ActionResult CreatePolygon(this ProBuilderMesh pb, IList<int> indices, bool unordered, out Face face)
+        /// <summary>
+        /// Create a new face connecting the vertices selected by indices.
+        /// </summary>
+        /// <param name="mesh"></param>
+        /// <param name="indexes">The indices of the vertices to join with the new polygon.</param>
+        /// <param name="unordered">Are the indexes in an ordered path (false), or not (true)?</param>
+        /// <returns>The new face created if the action was successfull, null if action failed.</returns>
+        public static Face CreatePolygon(this ProBuilderMesh mesh, IList<int> indexes, bool unordered)
 		{
-			IntArray[] sharedIndices = pb.sharedIndicesInternal;
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+			IntArray[] sharedIndices = mesh.sharedIndicesInternal;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
-			HashSet<int> common = IntArrayUtility.GetCommonIndices(lookup, indices);
-			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
+			HashSet<int> common = IntArrayUtility.GetCommonIndices(lookup, indexes);
+			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(mesh));
 			List<Vertex> appendVertices = new List<Vertex>();
 
 			foreach(int i in common)
@@ -36,22 +39,21 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			if(data != null)
 			{
 				data.sharedIndices = common.ToList();
-				List<Face> faces = new List<Face>(pb.facesInternal);
+				List<Face> faces = new List<Face>(mesh.facesInternal);
 				FaceRebuildData.Apply(new FaceRebuildData[] { data }, vertices, faces, lookup, null);
-				pb.SetVertices(vertices);
-				pb.SetFaces(faces.ToArray());
-				pb.SetSharedIndexes(lookup);
-				face = data.face;
-
-				return new ActionResult(Status.Success, "Create Polygon");
+				mesh.SetVertices(vertices);
+				mesh.SetFaces(faces.ToArray());
+				mesh.SetSharedIndexes(lookup);
+				
+                return data.face;
 			}
-
-			face = null;
 
 			const string insufficientPoints = "Too Few Unique Points Selected";
 			const string badWinding = "Points not ordered correctly";
 
-			return new ActionResult(Status.Failure, unordered ? insufficientPoints : badWinding);
+            Log.Info(unordered ? insufficientPoints : badWinding);
+
+            return null;
 		}
 
 		/// <summary>
@@ -67,18 +69,21 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Rebuild a pb_Object from an ordered set of points.
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="points"></param>
 		/// <param name="extrude"></param>
 		/// <param name="flipNormals"></param>
 		/// <returns></returns>
-		public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh pb, IList<Vector3> points, float extrude, bool flipNormals)
+		public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh mesh, IList<Vector3> points, float extrude, bool flipNormals)
 		{
-			if (points.Count < 3)
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+            if (points == null || points.Count < 3)
 			{
-				pb.Clear();
-				pb.ToMesh();
-				pb.Refresh();
+				mesh.Clear();
+				mesh.ToMesh();
+				mesh.Refresh();
 				return new ActionResult(Status.NoChange, "Too Few Points");
 			}
 
@@ -93,28 +98,28 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				if(ProBuilderMath.PolygonArea(vertices, indices) < Mathf.Epsilon )
 				{
-					pb.Clear();
+					mesh.Clear();
 					Log.PopLogLevel();
 					return new ActionResult(Status.Failure, "Polygon Area < Epsilon");
 				}
 
-				pb.Clear();
-				pb.GeometryWithVerticesFaces(vertices, new Face[] { new Face(indices) });
+				mesh.Clear();
+				mesh.GeometryWithVerticesFaces(vertices, new Face[] { new Face(indices) });
 
-				Vector3 nrm = ProBuilderMath.Normal(pb, pb.facesInternal[0]);
+				Vector3 nrm = ProBuilderMath.Normal(mesh, mesh.facesInternal[0]);
 
 				if (Vector3.Dot(Vector3.up, nrm) > 0f)
-					pb.facesInternal[0].Reverse();
+					mesh.facesInternal[0].Reverse();
 
-				pb.DuplicateAndFlip(pb.facesInternal);
+				mesh.DuplicateAndFlip(mesh.facesInternal);
 
-				pb.Extrude(new Face[] { pb.facesInternal[1] }, ExtrudeMethod.IndividualFaces, extrude);
+				mesh.Extrude(new Face[] { mesh.facesInternal[1] }, ExtrudeMethod.IndividualFaces, extrude);
 
 				if((extrude < 0f && !flipNormals) || (extrude > 0f && flipNormals))
-					pb.ReverseWindingOrder(pb.facesInternal);
+					mesh.ReverseWindingOrder(mesh.facesInternal);
 
-				pb.ToMesh();
-				pb.Refresh();
+				mesh.ToMesh();
+				mesh.Refresh();
 			}
 			else
 			{

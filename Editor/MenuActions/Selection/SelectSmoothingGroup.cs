@@ -48,7 +48,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			UndoUtility.RecordSelection(selection, "Select Faces with Smoothing Group");
 
-			HashSet<int> selectedSmoothGroups = new HashSet<int>(selection.SelectMany(x => x.selectedFaces.Select(y => y.smoothingGroup)));
+			HashSet<int> selectedSmoothGroups = new HashSet<int>(selection.SelectMany(x => x.selectedFacesInternal.Select(y => y.smoothingGroup)));
 
 			List<GameObject> newSelection = new List<GameObject>();
 

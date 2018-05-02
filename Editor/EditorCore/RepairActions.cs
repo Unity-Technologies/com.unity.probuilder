@@ -141,9 +141,8 @@ namespace UnityEditor.ProBuilder
 			{
 				pb.ToMesh();
 
-				int[] rm;
-				pb.RemoveDegenerateTriangles(out rm);
-				count += rm.Length;
+				int[] rm = pb.RemoveDegenerateTriangles();
+				count += rm != null ? rm.Length : 0;
 
 				pb.ToMesh();
 				pb.Refresh();

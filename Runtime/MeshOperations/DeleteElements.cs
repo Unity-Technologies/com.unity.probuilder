@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using System.Linq;
 using UnityEngine.ProBuilder;
 
@@ -14,18 +15,21 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Removes vertices that no face references.
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <returns>A list of deleted vertex indices.</returns>
-		public static int[] RemoveUnusedVertices(this ProBuilderMesh pb)
+		public static int[] RemoveUnusedVertices(this ProBuilderMesh mesh)
 		{
-			List<int> del = new List<int>();
-			HashSet<int> tris = new HashSet<int>(Face.AllTriangles(pb.facesInternal));
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
 
-			for(int i = 0; i < pb.positionsInternal.Length; i++)
+			List<int> del = new List<int>();
+			HashSet<int> tris = new HashSet<int>(Face.AllTriangles(mesh.facesInternal));
+
+			for(int i = 0; i < mesh.positionsInternal.Length; i++)
 				if(!tris.Contains(i))
 					del.Add(i);
 
-			pb.DeleteVerticesWithIndices(del);
+			mesh.DeleteVertices(del);
 
 			return del.ToArray();
 		}
@@ -35,18 +39,21 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// </summary>
 		/// <remarks>This function does not retriangulate the mesh. Ie, you are responsible for ensuring that indices
 		/// deleted by this function are not referenced by any triangles.</remarks>
-		/// <param name="pb"></param>
-		/// <param name="distInd"></param>
-		public static void DeleteVerticesWithIndices(this ProBuilderMesh pb, IEnumerable<int> distInd)
+		/// <param name="mesh"></param>
+		/// <param name="distinctIndexes"></param>
+		public static void DeleteVertices(this ProBuilderMesh mesh, IEnumerable<int> distinctIndexes)
 		{
-			if(distInd == null || distInd.Count() < 1)
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+            if (distinctIndexes == null || distinctIndexes.Count() < 1)
 				return;
 
-			Vertex[] vertices = Vertex.GetVertices(pb);
+			Vertex[] vertices = Vertex.GetVertices(mesh);
 			int originalVertexCount = vertices.Length;
 			int[] offset = new int[originalVertexCount];
 
-			List<int> sorted = new List<int>(distInd);
+			List<int> sorted = new List<int>(distinctIndexes);
 
 			sorted.Sort();
 
@@ -56,7 +63,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			for(int i = 0; i < originalVertexCount; i++)
 				offset[i] = InternalUtility.NearestIndexPriorToValue(sorted, i) + 1;
 
-			foreach(Face face in pb.facesInternal)
+			foreach(Face face in mesh.facesInternal)
 			{
 				int[] indices = face.indices;
 
@@ -67,12 +74,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			// remove from sharedIndices & shift to account for deletions
-			IEnumerable<KeyValuePair<int, int>> common = pb.sharedIndicesInternal.ToDictionary().Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
-			IEnumerable<KeyValuePair<int, int>> commonUV = pb.sharedIndicesUVInternal.ToDictionary().Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
+			IEnumerable<KeyValuePair<int, int>> common = mesh.sharedIndicesInternal.ToDictionary().Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
+			IEnumerable<KeyValuePair<int, int>> commonUV = mesh.sharedIndicesUVInternal.ToDictionary().Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
 
-			pb.SetVertices(vertices);
-			pb.SetSharedIndexes(common);
-			pb.SetSharedIndexesUV(commonUV);
+			mesh.SetVertices(vertices);
+			mesh.SetSharedIndexes(common);
+			mesh.SetSharedIndexesUV(commonUV);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using System.Linq;
 using UnityEngine.ProBuilder;
 
@@ -14,11 +15,17 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Reverse the winding order for each passed pb_Face.
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="faces"></param>
-		public static void ReverseWindingOrder(this ProBuilderMesh pb, Face[] faces)
+		public static void ReverseWindingOrder(this ProBuilderMesh mesh, Face[] faces)
 		{
-			for(int i = 0; i < faces.Length; i++)
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+            if (faces == null)
+                throw new ArgumentNullException("faces");
+
+            for (int i = 0; i < faces.Length; i++)
 				faces[i].Reverse();
 		}
 
@@ -26,18 +33,24 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// Attempt to figure out the winding order the passed face.
 		/// </summary>
 		/// <remarks>May return WindingOrder.Unknown.</remarks>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="face"></param>
 		/// <returns></returns>
-		public static WindingOrder GetWindingOrder(this ProBuilderMesh pb, Face face)
+		public static WindingOrder GetWindingOrder(this ProBuilderMesh mesh, Face face)
 		{
-			Vector2[] p = Projection.PlanarProject(pb, face);
+			Vector2[] p = Projection.PlanarProject(mesh, face);
 			return GetWindingOrder(p);
 		}
 
 		static WindingOrder GetWindingOrder(IList<Vertex> vertices, IList<int> indices)
 		{
-			Vector2[] p = Projection.PlanarProject(vertices, indices);
+            if (vertices == null)
+                throw new ArgumentNullException("vertices");
+
+            if (indices == null)
+                throw new ArgumentNullException("indices");
+
+            Vector2[] p = Projection.PlanarProject(vertices, indices);
 			return GetWindingOrder(p);
 		}
 
@@ -49,7 +62,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns>The winding order if found, WindingOrder.Unknown if not.</returns>
 		public static WindingOrder GetWindingOrder(IList<Vector2> points)
 		{
-			float sum = 0f;
+            if (points == null)
+                throw new ArgumentNullException("points");
+
+            float sum = 0f;
 
 			int len = points.Count;
 
@@ -68,12 +84,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Reverses the orientation of the middle edge in a quad.
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="face"></param>
 		/// <returns></returns>
-		public static bool FlipEdge(this ProBuilderMesh pb, Face face)
+		public static bool FlipEdge(this ProBuilderMesh mesh, Face face)
 		{
-			int[] indices = face.indices;
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+            if (face == null)
+                throw new ArgumentNullException("face");
+
+            int[] indices = face.indices;
 
 			if(indices.Length != 6)
 				return false;
@@ -285,67 +307,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					}
 				}
 			}
-		}
-
-		/// <summary>
-		/// Merge all faces into a single face.
-		/// </summary>
-		/// <param name="pb"></param>
-		/// <param name="faces"></param>
-		/// <returns></returns>
-		[System.Obsolete("Please use pb_MergeFaces.Merge(pb_Object target, IEnumerable<pb_Face> faces)")]
-		public static Face MergeFaces(this ProBuilderMesh pb, Face[] faces)
-		{
-			List<int> collectedIndices = new List<int>(faces[0].indices);
-
-			for(int i = 1; i < faces.Length; i++)
-			{
-				collectedIndices.AddRange(faces[i].indices);
-			}
-
-			Face mergedFace = new Face(collectedIndices.ToArray(),
-			                                 faces[0].material,
-			                                 faces[0].uv,
-			                                 faces[0].smoothingGroup,
-			                                 faces[0].textureGroup,
-			                                 faces[0].elementGroup,
-			                                 faces[0].manualUV);
-
-			Face[] rebuiltFaces = new Face[pb.facesInternal.Length - faces.Length + 1];
-
-			int n = 0;
-			foreach(Face f in pb.facesInternal)
-			{
-				if(System.Array.IndexOf(faces, f) < 0)
-				{
-					rebuiltFaces[n++] = f;
-				}
-			}
-
-			rebuiltFaces[n] = mergedFace;
-
-			pb.SetFaces(rebuiltFaces);
-
-			// merge vertices that are on top of one another now that they share a face
-			Dictionary<int, int> shared = new Dictionary<int, int>();
-
-			for(int i = 0; i < mergedFace.indices.Length; i++)
-			{
-				int sharedIndex = pb.sharedIndicesInternal.IndexOf(mergedFace.indices[i]);
-
-				if(shared.ContainsKey(sharedIndex))
-				{
-					mergedFace.indices[i] = shared[sharedIndex];
-				}
-				else
-				{
-					shared.Add(sharedIndex, mergedFace.indices[i]);
-				}
-			}
-
-			pb.RemoveUnusedVertices();
-
-			return mergedFace;
 		}
 	}
 }

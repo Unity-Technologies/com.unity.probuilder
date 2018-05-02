@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,61 +7,81 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
-	/// <summary>
-	/// Import UnityEngine.Mesh to pb_Object.
-	/// </summary>
-	public class MeshImporter
+    [Serializable]
+    public class MeshImportSettings
+    {
+        [SerializeField]
+        bool m_Quads = true;
+        [SerializeField]
+        bool m_Smoothing = true;
+        [SerializeField]
+        float m_SmoothingThreshold = 1f;
+
+        /// <summary>
+        /// Try to quadrangilize triangle meshes.
+        /// </summary>
+        public bool quads
+        {
+            get { return m_Quads; }
+            set { m_Quads = value; }
+        }
+
+        // Allow ngons when importing meshes. @todo
+        // public bool ngons = false;
+
+        /// <summary>
+        /// Generate smoothing groups based on mesh normals.
+        /// </summary>
+        public bool smoothing
+        {
+            get { return m_Smoothing; }
+            set { m_Smoothing = value; }
+        }
+
+        /// <summary>
+        /// Degree of difference between face normals to allow when determining smoothing groups.
+        /// </summary>
+        public float smoothingAngle
+        {
+            get { return m_SmoothingThreshold; }
+            set { m_SmoothingThreshold = value; }
+        }
+
+        /// <summary>
+        /// Basic mesh import settings. Imports quads, and smoothes faces with a threshold of 1 degree.
+        /// </summary>
+        public static MeshImportSettings Default
+        {
+            get
+            {
+                return new MeshImportSettings()
+                {
+                    m_Quads = true,
+                    m_Smoothing = true,
+                    m_SmoothingThreshold = 1f
+                };
+            }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("quads: {0}\nsmoothing: {1}\nthreshold: {2}",
+                quads,
+                smoothing,
+                smoothingAngle);
+        }
+    }
+
+    /// <summary>
+    /// Import UnityEngine.Mesh to pb_Object.
+    /// </summary>
+    public class MeshImporter
 	{
-		public class Settings
-		{
-			/// <summary>
-			/// Try to quadrangilize triangle meshes.
-			/// </summary>
-			public bool quads = true;
-
-			// Allow ngons when importing meshes. @todo
-			// public bool ngons = false;
-
-			/// <summary>
-			/// Generate smoothing groups based on mesh normals.
-			/// </summary>
-			public bool smoothing = true;
-
-			/// <summary>
-			/// Degree of difference between face normals to allow when determining smoothing groups.
-			/// </summary>
-			public float smoothingThreshold = 1f;
-
-			/// <summary>
-			/// Basic mesh import settings. Imports quads, and smoothes faces with a threshold of 1 degree.
-			/// </summary>
-			public static Settings Default
-			{
-				get
-				{
-					return new Settings()
-					{
-						quads = true,
-						smoothing = true,
-						smoothingThreshold = 1f
-					};
-				}
-			}
-
-			public override string ToString()
-			{
-				return string.Format("quads: {0}\nsmoothing: {1}\nthreshold: {2}",
-					quads,
-					smoothing,
-					smoothingThreshold);
-			}
-		}
-
-		static readonly Settings k_DefaultImportSettings = new Settings()
+		static readonly MeshImportSettings k_DefaultImportSettings = new MeshImportSettings()
 		{
 			quads = true,
 			smoothing = true,
-			smoothingThreshold = 1f
+			smoothingAngle= 1f
 		};
 
 		ProBuilderMesh m_Mesh;
@@ -77,9 +98,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="go"></param>
 		/// <param name="importSettings"></param>
 		/// <returns></returns>
-		public bool Import(GameObject go, Settings importSettings = null)
+		public bool Import(GameObject go, MeshImportSettings importSettings = null)
 		{
-			MeshFilter mf = go.GetComponent<MeshFilter>();
+            if (go == null)
+                throw new ArgumentNullException("go");
+
+            MeshFilter mf = go.GetComponent<MeshFilter>();
 			MeshRenderer mr = go.GetComponent<MeshRenderer>();
 
 			if(mf == null)
@@ -96,9 +120,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="importSettings"></param>
 		/// <returns></returns>
 		/// <exception cref="NotImplementedException">Import only supports triangle and quad mesh topologies.</exception>
-		public bool Import(Mesh originalMesh, Material[] materials, Settings importSettings = null)
+		public bool Import(Mesh originalMesh, Material[] materials, MeshImportSettings importSettings = null)
 		{
-			if(importSettings == null)
+            if (originalMesh == null)
+                throw new ArgumentNullException("originalMesh");
+
+            if (materials == null)
+                throw new ArgumentNullException("materials");
+
+            if (importSettings == null)
 				importSettings = k_DefaultImportSettings;
 
 			// When importing the mesh is always split into triangles with no vertices shared
@@ -244,7 +274,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			if(importSettings.smoothing)
 			{
-				Smoothing.ApplySmoothingGroups(m_Mesh, m_Mesh.facesInternal, importSettings.smoothingThreshold, m_Vertices.Select(x => x.normal).ToArray());
+				Smoothing.ApplySmoothingGroups(m_Mesh, m_Mesh.facesInternal, importSettings.smoothingAngle, m_Vertices.Select(x => x.normal).ToArray());
 				// After smoothing has been applied go back and weld coincident vertices created by MergePairs.
 				MergeElements.CollapseCoincidentVertices(m_Mesh, m_Mesh.facesInternal);
 			}

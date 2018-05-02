@@ -11,17 +11,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
 	/// </summary>
 	static class MeshTopology
 	{
-		/// <summary>
-		/// Convert as many faces as possible to quads.
-		/// </summary>
-		/// <remarks>Not implemented.</remarks>
-		/// <param name="target"></param>
-		/// <returns></returns>
-		public static bool ToQuads(ProBuilderMesh target)
-		{
-			return false;
-		}
-
 		public static ActionResult ToTriangles(this ProBuilderMesh pb, IList<Face> faces, out Face[] newFaces)
 		{
 			List<Vertex> vertices = new List<Vertex>( Vertex.GetVertices(pb) );

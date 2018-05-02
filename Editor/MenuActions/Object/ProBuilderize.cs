@@ -87,11 +87,11 @@ namespace UnityEditor.ProBuilder.Actions
 			IEnumerable<MeshFilter> top = Selection.transforms.Select(x => x.GetComponent<MeshFilter>()).Where(y => y != null);
 			IEnumerable<MeshFilter> all = Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Where(x => x != null);
 
-			MeshImporter.Settings settings = new MeshImporter.Settings()
+			MeshImportSettings settings = new MeshImportSettings()
 			{
 				quads = PreferencesInternal.GetBool("pb_MeshImporter::quads", true),
 				smoothing = PreferencesInternal.GetBool("pb_MeshImporter::smoothing", true),
-				smoothingThreshold = PreferencesInternal.GetFloat("pb_MeshImporter::smoothingThreshold", 1f)
+				smoothingAngle = PreferencesInternal.GetFloat("pb_MeshImporter::smoothingThreshold", 1f)
 			};
 
 			if(top.Count() != all.Count())
@@ -120,11 +120,11 @@ namespace UnityEditor.ProBuilder.Actions
 			IEnumerable<MeshFilter> selected,
 			bool preserveFaces)
 		{
-			return DoProBuilderize(selected, new MeshImporter.Settings()
+			return DoProBuilderize(selected, new MeshImportSettings()
 			{
 				quads = preserveFaces,
 				smoothing = false,
-				smoothingThreshold = 1f
+				smoothingAngle = 1f
 			});
 		}
 
@@ -136,7 +136,7 @@ namespace UnityEditor.ProBuilder.Actions
 		/// <returns></returns>
 		public static ActionResult DoProBuilderize(
 			IEnumerable<MeshFilter> selected,
-			MeshImporter.Settings settings)
+			MeshImportSettings settings)
 		{
 			int i = 0;
 			float count = selected.Count();

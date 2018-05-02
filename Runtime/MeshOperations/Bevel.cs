@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
+using System;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
@@ -14,19 +15,20 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Apply a bevel to a set of edges.
 		/// </summary>
-		/// <param name="pb">Target mesh.</param>
+		/// <param name="mesh">Target mesh.</param>
 		/// <param name="edges">A set of edges to apply bevelling to.</param>
 		/// <param name="amount">A value from 0 (bevel not at all) to 1 (bevel entire face).</param>
 		/// <param name="createdFaces">The resulting faces from the bevel action.</param>
 		/// <returns></returns>
-		public static ActionResult BevelEdges(ProBuilderMesh pb, IList<Edge> edges, float amount, out List<Face> createdFaces)
+		public static List<Face> BevelEdges(ProBuilderMesh mesh, IList<Edge> edges, float amount)
 		{
-			createdFaces = null;
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
 
-			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
-			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
+			Dictionary<int, int> lookup = mesh.sharedIndicesInternal.ToDictionary();
+			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(mesh));
 			List<EdgeLookup> m_edges = EdgeLookup.GetEdgeLookup(edges, lookup).Distinct().ToList();
-			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh);
 			List<FaceRebuildData> appendFaces = new List<FaceRebuildData>();
 
 			Dictionary<Face, List<int>> ignore = new Dictionary<Face, List<int>>();
@@ -61,8 +63,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			if(amount < .001f)
-				return new ActionResult(Status.Canceled, "Bevel Distance > Available Surface");
+            if (amount < .001f)
+            {
+                Log.Info("Bevel Distance > Available Surface");
+                return null;
+            }
 
 			// iterate selected edges and move each leading edge back along it's direction
 			// storing information about adjacent faces in the process
@@ -92,13 +97,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			if(beveled < 1)
 			{
-				createdFaces = null;
-				return new ActionResult(Status.Canceled, "Cannot Bevel Open Edges");
+				Log.Info("Cannot Bevel Open Edges");
+				return null;
 			}
 
 			// grab the "createdFaces" array now so that the selection returned is just the bridged faces
 			// then add holes later
-			createdFaces = new List<Face>(appendFaces.Select(x => x.face));
+			var createdFaces = new List<Face>(appendFaces.Select(x => x.face));
 
 			Dictionary<Face, List<SimpleTuple<WingedEdge, int>>> sorted = new Dictionary<Face, List<SimpleTuple<WingedEdge, int>>>();
 
@@ -140,13 +145,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			FaceRebuildData.Apply(appendFaces, pb, vertices);
-			int removed = pb.DeleteFaces(sorted.Keys).Length;
-			pb.SetSharedIndexesUV(new IntArray[0]);
-			pb.SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(pb.positionsInternal));
+			FaceRebuildData.Apply(appendFaces, mesh, vertices);
+			int removed = mesh.DeleteFaces(sorted.Keys).Length;
+			mesh.SetSharedIndexesUV(new IntArray[0]);
+			mesh.SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(mesh.positionsInternal));
 
 			// @todo don't rebuild sharedindices, keep 'em cached
-			IntArray[] sharedIndices = pb.sharedIndicesInternal;
+			IntArray[] sharedIndices = mesh.sharedIndicesInternal;
 			lookup = sharedIndices.ToDictionary();
 			List<HashSet<int>> holesCommonIndices = new List<HashSet<int>>();
 
@@ -170,10 +175,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				holesCommonIndices.Add(holeCommon);
 			}
 
-			List<WingedEdge> modified = WingedEdge.GetWingedEdges(pb, appendFaces.Select(x => x.face));
+			List<WingedEdge> modified = WingedEdge.GetWingedEdges(mesh, appendFaces.Select(x => x.face));
 
 			// now go through the holes and create faces for them
-			vertices = new List<Vertex>( Vertex.GetVertices(pb) );
+			vertices = new List<Vertex>( Vertex.GetVertices(mesh) );
 
 			List<FaceRebuildData> holeFaces = new List<FaceRebuildData>();
 
@@ -188,20 +193,20 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				// skip sorting the path if it's just a triangle
 				if(h.Count < 4)
 				{
-					List<Vertex> v = new List<Vertex>( Vertex.GetVertices(pb, h.Select(x => sharedIndices[x][0]).ToList()) );
+					List<Vertex> v = new List<Vertex>( Vertex.GetVertices(mesh, h.Select(x => sharedIndices[x][0]).ToList()) );
 					holeFaces.Add(AppendPolygon.FaceWithVertices(v));
 				}
 				// if this hole has > 3 indices, it needs a tent pole triangulation, which requires sorting into the perimeter order
 				else
 				{
 					List<int> holePath = WingedEdge.SortCommonIndexesByAdjacency(modified, h);
-					List<Vertex> v = new List<Vertex>( Vertex.GetVertices(pb, holePath.Select(x => sharedIndices[x][0]).ToList()) );
+					List<Vertex> v = new List<Vertex>( Vertex.GetVertices(mesh, holePath.Select(x => sharedIndices[x][0]).ToList()) );
 					holeFaces.AddRange( AppendPolygon.TentCapWithVertices(v) );
 				}
 			}
 
-			FaceRebuildData.Apply(holeFaces, pb, vertices);
-			pb.SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(pb.positionsInternal));
+			FaceRebuildData.Apply(holeFaces, mesh, vertices);
+			mesh.SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(mesh.positionsInternal));
 
 			// go through new faces and conform hole normals
 			// get a hash of just the adjacent and bridge faces
@@ -211,7 +216,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			// now append filled holes to the full list of added faces
 			appendFaces.AddRange(holeFaces);
 
-			List<WingedEdge> allNewFaceEdges = WingedEdge.GetWingedEdges(pb, appendFaces.Select(x => x.face));
+			List<WingedEdge> allNewFaceEdges = WingedEdge.GetWingedEdges(mesh, appendFaces.Select(x => x.face));
 
 			for(int i = 0; i < allNewFaceEdges.Count && newHoles.Count > 0; i++)
 			{
@@ -237,9 +242,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			pb.ToMesh();
+			mesh.ToMesh();
 
-			return new ActionResult(Status.Success, "Bevel Edges");
+            return createdFaces;
  		}
 
  		static readonly int[] BRIDGE_INDICES_NRM = new int[] { 2, 1, 0 };

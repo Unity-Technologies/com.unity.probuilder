@@ -520,7 +520,7 @@ class UVEditor : EditorWindow
 
 		for(int i = 0; i < len; i++)
 		{
-			incompleteTextureGroupsInSelection[i] = GetIncompleteTextureGroups(selection[i], selection[i].selectedFaces);
+			incompleteTextureGroupsInSelection[i] = GetIncompleteTextureGroups(selection[i], selection[i].selectedFacesInternal);
 
 			if(incompleteTextureGroupsInSelection[i].Count < 1)
 			{
@@ -571,7 +571,7 @@ class UVEditor : EditorWindow
 			if(selection[i].selectedFaceCount > 0)
 			{
 				int fc = selection[i].selectedFaceCount;
-				selection[i].SetSelectedFaces( SelectTextureGroups(selection[i], selection[i].selectedFaces) );
+				selection[i].SetSelectedFaces( SelectTextureGroups(selection[i], selection[i].selectedFacesInternal) );
 
 				// kinda lame... this will cause setSelectedUVsWithSceneView to be called again.
 				if(fc != selection[i].selectedFaceCount)
@@ -620,7 +620,7 @@ class UVEditor : EditorWindow
 					Dictionary<int, List<Face>> textureGroups = new Dictionary<int, List<Face>>();
 
 					int n = -2;
-					foreach(Face face in System.Array.FindAll(pb.selectedFaces, x => !x.manualUV))
+					foreach(Face face in System.Array.FindAll(pb.selectedFacesInternal, x => !x.manualUV))
 					{
 						if(textureGroups.ContainsKey(face.textureGroup))
 							textureGroups[face.textureGroup].Add(face);
@@ -659,7 +659,7 @@ class UVEditor : EditorWindow
 			{
 				if(pb.selectedFaceCount > 0)
 				{
-					foreach(Face face in pb.selectedFaces)
+					foreach(Face face in pb.selectedFacesInternal)
 					{
 						face.textureGroup = -1;
 						face.manualUV = true;
@@ -771,12 +771,12 @@ class UVEditor : EditorWindow
 		else
 		if(e.modifiers == EventModifiers.Control)
 		{
-			int len = pb.selectedFaces == null ? 0 : pb.selectedFaces.Length;
+			int len = pb.selectedFacesInternal == null ? 0 : pb.selectedFacesInternal.Length;
 
 			if(len < 1)
 				return false;
 
-			Face anchor = pb.selectedFaces[len-1];
+			Face anchor = pb.selectedFacesInternal[len-1];
 
 			if(anchor == selectedFace) return false;
 
@@ -1173,7 +1173,7 @@ class UVEditor : EditorWindow
 				bool superBreak = false;
 				for(int i = 0; i < selection.Length; i++)
 				{
-					HashSet<Face> selectedFaces = new HashSet<Face>(selection[i].selectedFaces);
+					HashSet<Face> selectedFaces = new HashSet<Face>(selection[i].selectedFacesInternal);
 
 					for(int n = 0; n < selection[i].facesInternal.Length; n++)
 					{
@@ -1468,7 +1468,7 @@ class UVEditor : EditorWindow
 			{
 				for(int n = 0; n < selection.Length; n++)
 				{
-					Face[] autoFaces = System.Array.FindAll(selection[n].selectedFaces, x => !x.manualUV);
+					Face[] autoFaces = System.Array.FindAll(selection[n].selectedFacesInternal, x => !x.manualUV);
 
 					foreach(Face face in autoFaces)
 						face.uv.rotation += uvRotation - t_uvRotation;
@@ -1522,7 +1522,7 @@ class UVEditor : EditorWindow
 			{
 				for(int n = 0; n < selection.Length; n++)
 				{
-					Face[] autoFaces = System.Array.FindAll(selection[n].selectedFaces, x => !x.manualUV);
+					Face[] autoFaces = System.Array.FindAll(selection[n].selectedFacesInternal, x => !x.manualUV);
 
 					foreach(Face face in autoFaces)
 						face.uv.rotation += delta;
@@ -1580,7 +1580,7 @@ class UVEditor : EditorWindow
 				Vector2 scale = uvScale.DivideBy(t_uvScale);
 				for(int n = 0; n < selection.Length; n++)
 				{
-					Face[] autoFaces = System.Array.FindAll(selection[n].selectedFaces, x => !x.manualUV);
+					Face[] autoFaces = System.Array.FindAll(selection[n].selectedFacesInternal, x => !x.manualUV);
 					foreach(Face face in autoFaces)
 					{
 						face.uv.scale = Vector2.Scale(face.uv.scale, scale);
@@ -1640,7 +1640,7 @@ class UVEditor : EditorWindow
 
 			for(int n = 0; n < selection.Length; n++)
 			{
-				Face[] autoFaces = System.Array.FindAll(selection[n].selectedFaces, x => !x.manualUV);
+				Face[] autoFaces = System.Array.FindAll(selection[n].selectedFacesInternal, x => !x.manualUV);
 				foreach(Face face in autoFaces)
 				{
 					face.uv.scale = Vector2.Scale(face.uv.scale, delta);
@@ -2070,7 +2070,7 @@ class UVEditor : EditorWindow
 						GL.Begin(GL.TRIANGLES);
 						for(int i = 0; i < selection.Length; i++)
 						{
-							foreach(Face face in selection[i].selectedFaces)
+							foreach(Face face in selection[i].selectedFacesInternal)
 							{
 								GL.Color(face.manualUV ? SELECTED_COLOR_MANUAL : SELECTED_COLOR_AUTO);
 
@@ -2385,7 +2385,7 @@ class UVEditor : EditorWindow
 					 */
 					case SelectMode.Face:
 
-						HashSet<Face> selectedFaces = new HashSet<Face>(selection[i].selectedFaces);
+						HashSet<Face> selectedFaces = new HashSet<Face>(selection[i].selectedFacesInternal);
 
 						for(int n = 0; n < pb.facesInternal.Length; n++)
 						{
@@ -2438,7 +2438,7 @@ class UVEditor : EditorWindow
 			// @todo write a more effecient method for this
 			List<bool> manual = new List<bool>();
 			for(int i = 0; i < selection.Length; i++)
-				manual.AddRange( selection[i].selectedFaces.Select(x => x.manualUV).ToList() );
+				manual.AddRange( selection[i].selectedFacesInternal.Select(x => x.manualUV).ToList() );
 			int c = manual.Distinct().Count();
 			if(c > 1)
 				mode = UVMode.Mixed;
@@ -2954,13 +2954,13 @@ class UVEditor : EditorWindow
 
 		for(int i = 0; i < selection.Length; i++)
 		{
-			if(selection[i].selectedFaces.Length > 0)
+			if(selection[i].selectedFacesInternal.Length > 0)
 			{
 				selection[i].ToMesh();	// Remove UV2 modifications
 				UVEditing.SplitUVs(selection[i], selection[i].SelectedTriangles);
-				UVEditing.ProjectFacesAuto(selection[i], selection[i].selectedFaces, channel);
+				UVEditing.ProjectFacesAuto(selection[i], selection[i].selectedFacesInternal, channel);
 
-				foreach(Face f in selection[i].selectedFaces)
+				foreach(Face f in selection[i].selectedFacesInternal)
 					f.manualUV = true;
 
 				RefreshElementGroups(selection[i]);
@@ -3007,9 +3007,9 @@ class UVEditor : EditorWindow
 		{
 			selection[i].ToMesh();
 
-			if(selection[i].selectedFaces.Length > 0)
+			if(selection[i].selectedFacesInternal.Length > 0)
 			{
-				UVEditing.ProjectFacesBox(selection[i], selection[i].selectedFaces, channel);
+				UVEditing.ProjectFacesBox(selection[i], selection[i].selectedFacesInternal, channel);
 				p++;
 			}
 		}
@@ -3099,7 +3099,7 @@ class UVEditor : EditorWindow
 		foreach(ProBuilderMesh pb in selection)
 		{
 			pb.ToMesh();
-			UVEditing.SetAutoUV(pb, pb.selectedFaces, !isManual);
+			UVEditing.SetAutoUV(pb, pb.selectedFacesInternal, !isManual);
 			pb.Refresh();
 			pb.Optimize();
 		}

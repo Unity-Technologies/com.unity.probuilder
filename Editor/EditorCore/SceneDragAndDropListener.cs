@@ -109,7 +109,7 @@ namespace UnityEditor.ProBuilder
 						Vector2[] uvs = mesh.texturesInternal;
 						if(uvs != null && uvs.Length == mesh.vertexCount)
 							s_PreviewMesh.uv = uvs;
-						s_PreviewMesh.triangles = Face.AllTriangles(mesh.selectedFaces);
+						s_PreviewMesh.triangles = Face.AllTriangles(mesh.selectedFacesInternal);
 					}
 				}
 				else
@@ -161,7 +161,7 @@ namespace UnityEditor.ProBuilder
 
 					if (s_IsFaceDragAndDropOverrideEnabled)
 					{
-						foreach (var face in s_CurrentPreview.selectedFaces)
+						foreach (var face in s_CurrentPreview.selectedFacesInternal)
 							face.material = s_PreviewMaterial;
 					}
 					else if(s_PreviewSubmesh > -1)

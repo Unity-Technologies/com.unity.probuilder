@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using System.Linq;
 using UnityEngine.ProBuilder;
 
@@ -9,14 +10,20 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Fetch a face loop.
 		/// </summary>
-		/// <param name="pb">Target pb_Object.</param>
+		/// <param name="mesh">Target pb_Object.</param>
 		/// <param name="faces">The faces to scan for face loops.</param>
 		/// <param name="ring">Toggles between loop and face. Ring and loop are arbritary with faces, so this parameter just toggles between which gets scanned first.</param>
 		/// <returns></returns>
-		public static HashSet<Face> GetFaceLoop(ProBuilderMesh pb, Face[] faces, bool ring = false)
+		public static HashSet<Face> GetFaceLoop(ProBuilderMesh mesh, Face[] faces, bool ring = false)
 		{
-			HashSet<Face> loops = new HashSet<Face>();
-			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+            if (faces == null)
+                throw new ArgumentNullException("faces");
+
+            HashSet<Face> loops = new HashSet<Face>();
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh);
 
 			foreach(Face face in faces)
 				loops.UnionWith(GetFaceLoop(wings, face, ring));
@@ -27,13 +34,19 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Get both a face ring and loop from the selected faces.
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="faces"></param>
 		/// <returns></returns>
-		public static HashSet<Face> GetFaceRingAndLoop(ProBuilderMesh pb, Face[] faces)
+		public static HashSet<Face> GetFaceRingAndLoop(ProBuilderMesh mesh, Face[] faces)
 		{
-			HashSet<Face> loops = new HashSet<Face>();
-			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+            if (faces == null)
+                throw new ArgumentNullException("faces");
+
+            HashSet<Face> loops = new HashSet<Face>();
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh);
 
 			foreach (Face face in faces)
 			{

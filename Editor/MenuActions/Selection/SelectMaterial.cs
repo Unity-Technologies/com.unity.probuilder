@@ -75,7 +75,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			bool restrictToSelection = PreferencesInternal.GetBool("pb_restrictSelectMaterialToCurrentSelection");
 
-			HashSet<Material> sel = new HashSet<Material>(selection.SelectMany(x => x.selectedFaces.Select(y => y.material).Where( z => z != null)));
+			HashSet<Material> sel = new HashSet<Material>(selection.SelectMany(x => x.selectedFacesInternal.Select(y => y.material).Where( z => z != null)));
 			List<GameObject> newSelection = new List<GameObject>();
 
 			foreach(ProBuilderMesh pb in restrictToSelection ? selection : Object.FindObjectsOfType<ProBuilderMesh>())

@@ -847,9 +847,7 @@ namespace UnityEditor.ProBuilder
 					arch_backFaces,
 					arch_endCaps);
 
-				int[] removed;
-
-				pb.RemoveDegenerateTriangles(out removed);
+				pb.RemoveDegenerateTriangles();
 
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 

@@ -1,7 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine.ProBuilder;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
@@ -18,21 +16,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns></returns>
 		public static ActionResult Subdivide(this ProBuilderMesh pb)
 		{
-			Face[] ignore;
-			return pb.Subdivide(pb.facesInternal, out ignore);
+            return pb.Subdivide(pb.facesInternal) != null ? new ActionResult(Status.Success, "Subdivide") : new ActionResult(Status.Failure, "Subdivide Failed");
 		}
 
 		/// <summary>
-		/// Subdivide a pb_Object, optionally restricting to the specified faces.
+		/// Subdivide a mesh, optionally restricting to the specified faces.
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="faces">The faces to be affected by subdivision.</param>
-		/// <param name="subdividedFaces"></param>
-		/// <returns>An result indicating the status of the action.</returns>
-		public static ActionResult Subdivide(this ProBuilderMesh pb, IList<Face> faces, out Face[] subdividedFaces)
+		/// <returns>The faces created as a result of the subdivision.</returns>
+		public static Face[] Subdivide(this ProBuilderMesh pb, IList<Face> faces)
 		{
-			ActionResult res = ConnectElements.Connect(pb, faces, out subdividedFaces);
-			return res;
+			return ConnectElements.Connect(pb, faces);
 		}
 	}
 }

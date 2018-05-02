@@ -33,16 +33,22 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Edge extrusion override
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="messh"></param>
 		/// <param name="edges"></param>
 		/// <param name="extrudeDistance"></param>
 		/// <param name="extrudeAsGroup"></param>
 		/// <param name="enableManifoldExtrude"></param>
 		/// <param name="extrudedEdges"></param>
 		/// <returns></returns>
-		public static bool Extrude(this ProBuilderMesh pb, IEnumerable<Edge> edges, float extrudeDistance, bool extrudeAsGroup, bool enableManifoldExtrude, out Edge[] extrudedEdges)
+		public static Edge[] Extrude(this ProBuilderMesh mesh, IEnumerable<Edge> edges, float extrudeDistance, bool extrudeAsGroup, bool enableManifoldExtrude)
 		{
-			IntArray[] sharedIndices = pb.sharedIndicesInternal;
+            if (mesh == null)
+                throw new System.ArgumentNullException("mesh");
+
+            if (edges == null)
+                throw new System.ArgumentNullException("edges");
+
+            IntArray[] sharedIndices = mesh.sharedIndicesInternal;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 
 			List<Edge> validEdges = new List<Edge>();
@@ -53,7 +59,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				int faceCount = 0;
 				Face fa = null;
 
-				foreach(Face f in pb.facesInternal)
+				foreach(Face f in mesh.facesInternal)
 				{
 					if(f.edgesInternal.IndexOf(e, lookup) > -1)
 					{
@@ -73,13 +79,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			if(validEdges.Count < 1)
-			{
-				extrudedEdges = null;
-				return false;
-			}
+				return null;
 
-			Vector3[] localVerts = pb.positionsInternal;
-			Vector3[] oNormals = pb.mesh.normals;
+			Vector3[] localVerts = mesh.positionsInternal;
+			Vector3[] oNormals = mesh.mesh.normals;
 
 			int[] allEdgeIndices = new int[validEdges.Count * 2];
 			int c = 0;
@@ -101,13 +104,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				Face face = edgeFaces[i];
 
 				// Averages the normals using only vertices that are on the edge
-				Vector3 xnorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndices( sharedIndices[lookup[edge.x]], allEdgeIndices, oNormals ) : ProBuilderMath.Normal(pb, face);
-				Vector3 ynorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndices( sharedIndices[lookup[edge.y]], allEdgeIndices, oNormals ) : ProBuilderMath.Normal(pb, face);
+				Vector3 xnorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndices( sharedIndices[lookup[edge.x]], allEdgeIndices, oNormals ) : ProBuilderMath.Normal(mesh, face);
+				Vector3 ynorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndices( sharedIndices[lookup[edge.y]], allEdgeIndices, oNormals ) : ProBuilderMath.Normal(mesh, face);
 
 				int x_sharedIndex = lookup[edge.x];
 				int y_sharedIndex = lookup[edge.y];
 
-				Face newFace = pb.AppendFace(
+				Face newFace = mesh.AppendFace(
 					new Vector3[4]
 					{
 						localVerts [ edge.x ],
@@ -117,10 +120,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					},
 					new Color[4]
 					{
-						pb.colorsInternal[ edge.x ],
-						pb.colorsInternal[ edge.y ],
-						pb.colorsInternal[ edge.x ],
-						pb.colorsInternal[ edge.y ]
+						mesh.colorsInternal[ edge.x ],
+						mesh.colorsInternal[ edge.y ],
+						mesh.colorsInternal[ edge.x ],
+						mesh.colorsInternal[ edge.y ]
 					},
 					new Vector2[4],
 					new Face( new int[6] {2, 1, 0, 2, 3, 1 }, face.material, new AutoUnwrapSettings(), 0, -1, -1, false ),
@@ -132,7 +135,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				extrudedIndices.Add(new Edge(y_sharedIndex, newFace.indices[4]));
 			}
 
-			sharedIndices = pb.sharedIndicesInternal;
+			sharedIndices = mesh.sharedIndicesInternal;
 
 			// merge extruded vertex indices with each other
 			if(extrudeAsGroup)
@@ -154,14 +157,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			pb.sharedIndicesInternal = sharedIndices;
+			mesh.sharedIndicesInternal = sharedIndices;
 
 			// todo Should only need to invalidate caches on affected faces
-			foreach(Face f in pb.facesInternal)
+			foreach(Face f in mesh.facesInternal)
 				f.InvalidateCache();
 
-			extrudedEdges = newEdges.ToArray();
-			return true;
+			return newEdges.ToArray();
 		}
 		/// <summary>
 		/// Extrude each face in faces individually along it's normal by distance.

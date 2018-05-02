@@ -849,7 +849,7 @@ namespace UnityEditor.ProBuilder
 						// Check to see if we've already selected this quad.  If so, remove it from selection cache.
 						UndoUtility.RecordSelection(pickedPb, "Change Face Selection");
 
-						int indx = System.Array.IndexOf(pickedPb.selectedFaces, pickedFace);
+						int indx = System.Array.IndexOf(pickedPb.selectedFacesInternal, pickedFace);
 
 						if (indx > -1)
 						{
@@ -1121,7 +1121,7 @@ namespace UnityEditor.ProBuilder
 
 						if (shiftKey || ctrlKey)
 						{
-							current = new HashSet<Face>(kvp.Key.selectedFaces);
+							current = new HashSet<Face>(kvp.Key.selectedFacesInternal);
 
 							if (dragSelectMode == DragSelectMode.Add)
 								current.UnionWith(kvp.Value);
@@ -1247,7 +1247,7 @@ namespace UnityEditor.ProBuilder
 					RaycastHit hit;
 					Dictionary<ProBuilderMesh, HashSet<Face>> ignore = new Dictionary<ProBuilderMesh, HashSet<Face>>();
 					foreach (ProBuilderMesh pb in selection)
-						ignore.Add(pb, new HashSet<Face>(pb.selectedFaces));
+						ignore.Add(pb, new HashSet<Face>(pb.selectedFacesInternal));
 
 					if (EditorHandleUtility.FaceRaycast(m_CurrentEvent.mousePosition, out obj, out hit, ignore))
 					{
@@ -1550,14 +1550,12 @@ namespace UnityEditor.ProBuilder
 						if (pb.selectedFaceCount > 0)
 							goto default;
 
-						Edge[] newEdges;
-						bool success = pb.Extrude(pb.selectedEdges,
+						Edge[] newEdges = pb.Extrude(pb.selectedEdges,
 							0.0001f,
 							PreferencesInternal.GetBool(PreferenceKeys.pbExtrudeAsGroup),
-							PreferencesInternal.GetBool(PreferenceKeys.pbManifoldEdgeExtrusion),
-							out newEdges);
+							PreferencesInternal.GetBool(PreferenceKeys.pbManifoldEdgeExtrusion));
 
-						if (success)
+						if (newEdges != null)
 						{
 							ef += newEdges.Length;
 							pb.SetSelectedEdges(newEdges);
@@ -1565,13 +1563,13 @@ namespace UnityEditor.ProBuilder
 						break;
 
 					default:
-						int len = pb.selectedFaces.Length;
+						int len = pb.selectedFacesInternal.Length;
 
 						if (len > 0)
 						{
-							pb.Extrude(pb.selectedFaces, PreferencesInternal.GetEnum<ExtrudeMethod>(PreferenceKeys.pbExtrudeMethod),
+							pb.Extrude(pb.selectedFacesInternal, PreferencesInternal.GetEnum<ExtrudeMethod>(PreferenceKeys.pbExtrudeMethod),
 								0.0001f);
-							pb.SetSelectedFaces(pb.selectedFaces);
+							pb.SetSelectedFaces(pb.selectedFacesInternal);
 							ef += len;
 						}
 
@@ -2496,13 +2494,13 @@ namespace UnityEditor.ProBuilder
 			{
 				List<int> alreadyChecked = new List<int>();
 
-				foreach (Face f in pb.selectedFaces)
+				foreach (Face f in pb.selectedFacesInternal)
 				{
 					int tg = f.textureGroup;
 					if (tg > 0 && !alreadyChecked.Contains(f.textureGroup))
 					{
 						foreach (Face j in pb.facesInternal)
-							if (j != f && j.textureGroup == tg && !pb.selectedFaces.Contains(j))
+							if (j != f && j.textureGroup == tg && !pb.selectedFacesInternal.Contains(j))
 							{
 								// int i = EditorUtility.DisplayDialogComplex("Mixed Texture Group Selection", "One or more of the faces selected belong to a Texture Group that does not have all it's member faces selected.  To modify, please either add the remaining group faces to the selection, or remove the current face from this smoothing group.", "Add Group to Selection", "Cancel", "Remove From Group");
 								int i = 0;
@@ -2693,7 +2691,7 @@ namespace UnityEditor.ProBuilder
 			if (pb == null)
 				return false;
 
-			face = pb.selectedFaces[0];
+			face = pb.selectedFacesInternal[0];
 
 			return true;
 		}
@@ -2709,7 +2707,7 @@ namespace UnityEditor.ProBuilder
 			{
 				for (int n = 0; n < selection[i].selectedFaceCount; n++)
 				{
-					mat = selection[i].selectedFaces[i].material;
+					mat = selection[i].selectedFacesInternal[i].material;
 
 					if (mat != null)
 						return true;

@@ -47,7 +47,7 @@ namespace UnityEditor.ProBuilder
 			       e.editLevel == EditLevel.Geometry &&
 			       selection != null &&
 			       selection.Length > 0 &&
-			       (selection.Any(x => x.selectedEdgeCount > 0) || selection.Any(x => x.selectedFaces.Length > 0));
+			       (selection.Any(x => x.selectedEdgeCount > 0) || selection.Any(x => x.selectedFacesInternal.Length > 0));
 		}
 
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Geometry/Extrude %e", false, PreferenceKeys.menuGeometry + 3)]

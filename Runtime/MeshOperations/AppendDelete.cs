@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
+using System;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
@@ -18,10 +19,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="positions">The new vertex positions to add.</param>
 		/// <param name="colors">The new colors to add (must match positions length).</param>
 		/// <param name="uvs">The new uvs to add (must match positions length).</param>
-		/// <param name="face">A </param>
+		/// <param name="face">A face with the new face triangle indexes. The indices should be 0 indexed.</param>
 		/// <returns></returns>
 		public static Face AppendFace(this ProBuilderMesh pb, Vector3[] positions, Color[] colors, Vector2[] uvs, Face face)
 		{
+            if (positions == null)
+                throw new ArgumentNullException("positions");
 			int[] shared = new int[positions.Length];
 			for(int i = 0; i < positions.Length; i++)
 				shared[i] = -1;
@@ -31,74 +34,101 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Append a new face to the pb_Object using sharedIndex array to set the face indices to sharedIndex groups.
 		/// </summary>
-		/// <param name="pb"></param>
-		/// <param name="v"></param>
-		/// <param name="c"></param>
-		/// <param name="u"></param>
-		/// <param name="face"></param>
+		/// <param name="mesh"></param>
+		/// <param name="positions"></param>
+		/// <param name="colors"></param>
+		/// <param name="uvs"></param>
+		/// <param name="face">A face with the new face triangle indexes. The indices should be 0 indexed.</param>
 		/// <param name="sharedIndex"></param>
 		/// <returns></returns>
-		public static Face AppendFace(this ProBuilderMesh pb, Vector3[] v, Color[] c, Vector2[] u, Face face, int[] sharedIndex)
+		public static Face AppendFace(this ProBuilderMesh mesh, Vector3[] positions, Color[] colors, Vector2[] uvs, Face face, int[] sharedIndexes)
 		{
-			int vertexCount = pb.vertexCount;
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
 
-			Vector3[] positions = new Vector3[vertexCount + v.Length];
-			Color[] colors = new Color[vertexCount + c.Length];
-			Vector2[] uv0 = new Vector2[pb.texturesInternal.Length + u.Length];
+            if (positions == null)
+                throw new ArgumentNullException("positions");
 
-			List<Face> faces = new List<Face>(pb.facesInternal);
-			IntArray[] sharedIndices = pb.sharedIndicesInternal;
+            if (colors == null)
+                throw new ArgumentNullException("colors");
 
-			// copy new vertices
-			System.Array.Copy(pb.positionsInternal, 0, positions, 0, vertexCount);
-			System.Array.Copy(v, 0, positions, vertexCount, v.Length);
+            if (uvs == null)
+                throw new ArgumentNullException("uvs");
 
-			// copy new colors
-			System.Array.Copy(pb.colorsInternal, 0, colors, 0, vertexCount);
-			System.Array.Copy(c, 0, colors, vertexCount, c.Length);
+            if (face == null)
+                throw new ArgumentNullException("face");
 
-			// copy new uvs
-			System.Array.Copy(pb.texturesInternal, 0, uv0, 0, pb.texturesInternal.Length);
-			System.Array.Copy(u, 0, uv0, pb.texturesInternal.Length, u.Length);
+            if (sharedIndexes == null)
+                throw new ArgumentNullException("sharedIndexes");
+
+			int vertexCount = mesh.vertexCount;
+
+			Vector3[] newPositions = new Vector3[vertexCount + positions.Length];
+			Color[] newColors = new Color[vertexCount + colors.Length];
+			Vector2[] newTextures = new Vector2[mesh.texturesInternal.Length + uvs.Length];
+
+			List<Face> faces = new List<Face>(mesh.facesInternal);
+			IntArray[] sharedIndices = mesh.sharedIndicesInternal;
+
+			Array.Copy(mesh.positionsInternal, 0, newPositions, 0, vertexCount);
+			Array.Copy(positions, 0, newPositions, vertexCount, positions.Length);
+			Array.Copy(mesh.colorsInternal, 0, newColors, 0, vertexCount);
+			Array.Copy(colors, 0, newColors, vertexCount, colors.Length);
+			Array.Copy(mesh.texturesInternal, 0, newTextures, 0, mesh.texturesInternal.Length);
+			Array.Copy(uvs, 0, newTextures, mesh.texturesInternal.Length, uvs.Length);
 
 			face.ShiftIndexesToZero();
 			face.ShiftIndexes(vertexCount);
 
 			faces.Add(face);
 
-			for(int i = 0; i < sharedIndex.Length; i++)
-				IntArrayUtility.AddValueAtIndex(ref sharedIndices, sharedIndex[i], i+vertexCount);
+			for(int i = 0; i < sharedIndexes.Length; i++)
+				IntArrayUtility.AddValueAtIndex(ref sharedIndices, sharedIndexes[i], i+vertexCount);
 
-			pb.SetPositions(positions);
-			pb.SetColors(colors);
-			pb.SetUVs(uv0);
-
-			pb.SetSharedIndexes(sharedIndices);
-			pb.SetFaces(faces.ToArray());
+			mesh.SetPositions(newPositions);
+			mesh.SetColors(newColors);
+			mesh.SetUVs(newTextures);
+			mesh.SetSharedIndexes(sharedIndices);
+			mesh.SetFaces(faces.ToArray());
 
 			return face;
 		}
 
 		/// <summary>
-		/// Append a group of new faces to the pb_Object. Significantly faster than calling AppendFace multiple times.
+		/// Append a group of new faces to the mesh. Significantly faster than calling AppendFace multiple times.
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="appendedVertices"></param>
 		/// <param name="appendedColors"></param>
 		/// <param name="appendedUvs"></param>
 		/// <param name="appendedFaces"></param>
-		/// <param name="appendedSharedIndices"></param>
+		/// <param name="appendedSharedIndexes"></param>
 		/// <returns></returns>
-		public static Face[] AppendFaces(this ProBuilderMesh pb, Vector3[][] appendedVertices, Color[][] appendedColors, Vector2[][] appendedUvs, Face[] appendedFaces, int[][] appendedSharedIndices)
+		public static Face[] AppendFaces(this ProBuilderMesh mesh, Vector3[][] appendedVertices, Color[][] appendedColors, Vector2[][] appendedUvs, Face[] appendedFaces, int[][] appendedSharedIndexes)
 		{
-			List<Vector3> vertices = new List<Vector3>(pb.positionsInternal);
-			List<Color> colors = new List<Color>(pb.colorsInternal);
-			List<Vector2> uvs = new List<Vector2>(pb.texturesInternal);
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
 
-			List<Face> faces = new List<Face>(pb.facesInternal);
-			IntArray[] sharedIndices = pb.sharedIndicesInternal;
+            if (appendedVertices == null)
+                throw new ArgumentNullException("appendedVertices");
 
-			int vc = pb.vertexCount;
+            if (appendedColors == null)
+                throw new ArgumentNullException("appendedColors");
+
+            if (appendedUvs == null)
+                throw new ArgumentNullException("appendedUvs");
+
+            if (appendedFaces == null)
+                throw new ArgumentNullException("appendedFaces");
+            
+            List<Vector3> vertices = new List<Vector3>(mesh.positionsInternal);
+			List<Color> colors = new List<Color>(mesh.colorsInternal);
+			List<Vector2> uvs = new List<Vector2>(mesh.texturesInternal);
+
+			List<Face> faces = new List<Face>(mesh.facesInternal);
+			IntArray[] sharedIndices = mesh.sharedIndicesInternal;
+
+			int vc = mesh.vertexCount;
 
 			for(int i = 0; i < appendedFaces.Length; i++)
 			{
@@ -110,17 +140,17 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				appendedFaces[i].ShiftIndexes(vc);
 				faces.Add(appendedFaces[i]);
 
-				if(appendedSharedIndices != null && appendedVertices[i].Length != appendedSharedIndices[i].Length)
+				if(appendedSharedIndexes != null && appendedVertices[i].Length != appendedSharedIndexes[i].Length)
 				{
 					Debug.LogError("Append Face failed because sharedIndex array does not match new vertex array.");
 					return null;
 				}
 
-				if(appendedSharedIndices != null)
+				if(appendedSharedIndexes != null)
 				{
-					for(int j = 0; j < appendedSharedIndices[i].Length; j++)
+					for(int j = 0; j < appendedSharedIndexes[i].Length; j++)
 					{
-						IntArrayUtility.AddValueAtIndex(ref sharedIndices, appendedSharedIndices[i][j], j+vc);
+						IntArrayUtility.AddValueAtIndex(ref sharedIndices, appendedSharedIndexes[i][j], j+vc);
 					}
 				}
 				else
@@ -134,11 +164,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				vc = vertices.Count;
 			}
 
-			pb.SetPositions(vertices.ToArray());
-			pb.SetColors(colors.ToArray());
-			pb.SetUVs(uvs.ToArray());
-			pb.SetFaces(faces.ToArray());
-			pb.sharedIndicesInternal = sharedIndices;
+			mesh.SetPositions(vertices.ToArray());
+			mesh.SetColors(colors.ToArray());
+			mesh.SetUVs(uvs.ToArray());
+			mesh.SetFaces(faces.ToArray());
+			mesh.sharedIndicesInternal = sharedIndices;
 
 			return appendedFaces;
 		}
@@ -146,13 +176,19 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Duplicate and reverse the winding direction for each face.
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="faces"></param>
-		public static void DuplicateAndFlip(this ProBuilderMesh pb, Face[] faces)
+		public static void DuplicateAndFlip(this ProBuilderMesh mesh, Face[] faces)
 		{
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+            if (faces == null)
+                throw new ArgumentNullException("faces");
+
 			List<FaceRebuildData> rebuild = new List<FaceRebuildData>();
-			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
-			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
+			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(mesh));
+			Dictionary<int, int> lookup = mesh.sharedIndicesInternal.ToDictionary();
 
 			foreach(Face face in faces)
 			{
@@ -182,7 +218,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				rebuild.Add(data);
 			}
 
-			FaceRebuildData.Apply(rebuild, pb, vertices, null, lookup, null);
+			FaceRebuildData.Apply(rebuild, mesh, vertices, null, lookup, null);
 		}
 
 		/// <summary>
@@ -210,25 +246,31 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Remove faces from an object by their index in the pb_Object.faces array.
 		/// </summary>
-		/// <param name="pb"></param>
-		/// <param name="faceIndices"></param>
+		/// <param name="mesh"></param>
+		/// <param name="faceIndexes"></param>
 		/// <returns></returns>
-		public static int[] DeleteFaces(this ProBuilderMesh pb, IList<int> faceIndices)
+		public static int[] DeleteFaces(this ProBuilderMesh mesh, IList<int> faceIndexes)
 		{
-			Face[] faces = new Face[faceIndices.Count];
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+            if (faceIndexes == null)
+                throw new ArgumentNullException("faceIndexes");
+
+			Face[] faces = new Face[faceIndexes.Count];
 
 			for(int i = 0; i < faces.Length; i++)
-				faces[i] = pb.facesInternal[faceIndices[i]];
+				faces[i] = mesh.facesInternal[faceIndexes[i]];
 
 			List<int> indicesToRemove = faces.SelectMany(x => x.distinctIndices).Distinct().ToList();
 			indicesToRemove.Sort();
 
-			int vertexCount = pb.positionsInternal.Length;
+			int vertexCount = mesh.positionsInternal.Length;
 
-			Vector3[] verts = pb.positionsInternal.SortedRemoveAt(indicesToRemove);
-			Color[] cols = pb.colorsInternal.SortedRemoveAt(indicesToRemove);
-			Vector2[] uvs = pb.texturesInternal.SortedRemoveAt(indicesToRemove);
-			Face[] nFaces = pb.facesInternal.RemoveAt(faceIndices);
+			Vector3[] verts = mesh.positionsInternal.SortedRemoveAt(indicesToRemove);
+			Color[] cols = mesh.colorsInternal.SortedRemoveAt(indicesToRemove);
+			Vector2[] uvs = mesh.texturesInternal.SortedRemoveAt(indicesToRemove);
+			Face[] nFaces = mesh.facesInternal.RemoveAt(faceIndexes);
 
 			Dictionary<int, int> shiftmap = new Dictionary<int, int>();
 
@@ -247,18 +289,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			// shift all other face indices in the shared index array down to account for moved vertex positions
-			IntArray[] si = pb.sharedIndicesInternal;
-			IntArray[] si_uv = pb.sharedIndicesUVInternal;
+			IntArray[] si = mesh.sharedIndicesInternal;
+			IntArray[] si_uv = mesh.sharedIndicesUVInternal;
 
 			IntArrayUtility.RemoveValuesAndShift(ref si, indicesToRemove);
 			if(si_uv != null) IntArrayUtility.RemoveValuesAndShift(ref si_uv, indicesToRemove);
 
-			pb.sharedIndicesInternal = si;
-			pb.sharedIndicesUVInternal = si_uv;
-			pb.positionsInternal = verts;
-			pb.colorsInternal = cols;
-			pb.texturesInternal = uvs;
-			pb.facesInternal = nFaces;
+			mesh.sharedIndicesInternal = si;
+			mesh.sharedIndicesUVInternal = si_uv;
+			mesh.positionsInternal = verts;
+			mesh.colorsInternal = cols;
+			mesh.texturesInternal = uvs;
+			mesh.facesInternal = nFaces;
 
 			int[] array = indicesToRemove.ToArray();
 
@@ -266,21 +308,24 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Iterates through all triangles in a pb_Object and removes triangles with area <= 0 and tris with indices that point to the same vertex.
+		/// Iterates through all triangles in a mesh and removes triangles with an area less than float.Epsilon, and tris with indices that point to the same vertex.
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="removed"></param>
-		/// <returns>True if Degenerate tris were found, false if no changes.</returns>
-		public static bool RemoveDegenerateTriangles(this ProBuilderMesh pb, out int[] removed)
+		/// <returns>The number of vertices deleted as a result of the degenerate triangle cleanup.</returns>
+		public static int[] RemoveDegenerateTriangles(this ProBuilderMesh mesh)
 		{
-			Dictionary<int, int> m_Lookup = pb.sharedIndicesInternal.ToDictionary();
-			Dictionary<int, int> m_LookupUV = pb.sharedIndicesUVInternal != null ? pb.sharedIndicesUVInternal.ToDictionary() : new Dictionary<int, int>();
-			Vector3[] m_Vertices = pb.positionsInternal;
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+			Dictionary<int, int> m_Lookup = mesh.sharedIndicesInternal.ToDictionary();
+			Dictionary<int, int> m_LookupUV = mesh.sharedIndicesUVInternal != null ? mesh.sharedIndicesUVInternal.ToDictionary() : new Dictionary<int, int>();
+			Vector3[] m_Vertices = mesh.positionsInternal;
 			Dictionary<int, int> m_RebuiltLookup = new Dictionary<int, int>();
 			Dictionary<int, int> m_RebuiltLookupUV = new Dictionary<int, int>();
 			List<Face> m_RebuiltFaces = new List<Face>();
 
-			foreach(Face face in pb.facesInternal)
+			foreach(Face face in mesh.facesInternal)
 			{
 				List<int> tris = new List<int>();
 
@@ -326,11 +371,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			pb.SetFaces(m_RebuiltFaces.ToArray());
-			pb.SetSharedIndexes(m_RebuiltLookup);
-			pb.SetSharedIndexesUV(m_RebuiltLookupUV);
-			removed = pb.RemoveUnusedVertices();
-			return removed.Length > 0;
+			mesh.SetFaces(m_RebuiltFaces.ToArray());
+			mesh.SetSharedIndexes(m_RebuiltLookup);
+			mesh.SetSharedIndexesUV(m_RebuiltLookupUV);
+			return mesh.RemoveUnusedVertices();
 		}
 
 	}

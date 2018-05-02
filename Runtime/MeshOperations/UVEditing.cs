@@ -336,7 +336,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					f1.textureGroup = -1;
 					f2.textureGroup = -1;
 
-					AlignEdges(pb, f1, f2, f1.edgesInternal[i], f2.edgesInternal[ind], channel);
+					AlignEdges(pb, f2, f1.edgesInternal[i], f2.edgesInternal[ind], channel);
 					return true;
 				}
 			}
@@ -345,58 +345,63 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			return false;
 		}
 
-		/**
-		 * move the UVs to where the edges passed meet
-		 */
-		static bool AlignEdges(ProBuilderMesh pb, Face f1, Face f2, Edge edge1, Edge edge2, int channel)
+        /// <summary>
+        /// move the UVs to where the edges passed meet
+        /// </summary>
+        /// <param name="pb"></param>
+        /// <param name="f1"></param>
+        /// <param name="faceToMove"></param>
+        /// <param name="edgeToAlignTo"></param>
+        /// <param name="edgeToBeAligned"></param>
+        /// <param name="channel"></param>
+        /// <returns></returns>
+        static bool AlignEdges(ProBuilderMesh pb, Face faceToMove, Edge edgeToAlignTo, Edge edgeToBeAligned, int channel)
 		{
 			Vector2[] uvs = GetUVs(pb, channel);
 			IntArray[] sharedIndices = pb.sharedIndicesInternal;
 			IntArray[] sharedIndicesUV = pb.sharedIndicesUVInternal;
 
-			/**
-			 * Match each edge vertex to the other
-			 */
-			int[] matchX = new int[2] { edge1.x, -1 };
-			int[] matchY = new int[2] { edge1.y, -1 };
+			// Match each edge vertex to the other
+			int[] matchX = new int[2] { edgeToAlignTo.x, -1 };
+			int[] matchY = new int[2] { edgeToAlignTo.y, -1 };
 
-			int siIndex = sharedIndices.IndexOf(edge1.x);
+			int siIndex = sharedIndices.IndexOf(edgeToAlignTo.x);
 			if(siIndex < 0)
 				return false;
 
-			if(sharedIndices[siIndex].array.Contains(edge2.x))
+			if(sharedIndices[siIndex].array.Contains(edgeToBeAligned.x))
 			{
-				matchX[1] = edge2.x;
-				matchY[1] = edge2.y;
+				matchX[1] = edgeToBeAligned.x;
+				matchY[1] = edgeToBeAligned.y;
 			}
 			else
 			{
-				matchX[1] = edge2.y;
-				matchY[1] = edge2.x;
+				matchX[1] = edgeToBeAligned.y;
+				matchY[1] = edgeToBeAligned.x;
 			}
 
 			// scale face 2 to match the edge size of f1
-			float dist_e1 = Vector2.Distance(uvs[edge1.x], uvs[edge1.y]);
-			float dist_e2 = Vector2.Distance(uvs[edge2.x], uvs[edge2.y]);
+			float dist_e1 = Vector2.Distance(uvs[edgeToAlignTo.x], uvs[edgeToAlignTo.y]);
+			float dist_e2 = Vector2.Distance(uvs[edgeToBeAligned.x], uvs[edgeToBeAligned.y]);
 
 			float scale = dist_e1/dist_e2;
 
 			// doesn't matter what point we scale around because we'll move it in the next step anyways
-			foreach(int i in f2.distinctIndices)
+			foreach(int i in faceToMove.distinctIndices)
 				uvs[i] = uvs[i].ScaleAroundPoint(Vector2.zero, Vector2.one * scale);
 
 			/**
 			 * Figure out where the center of each edge is so that we can move the f2 edge to match f1's origin
 			 */
-			Vector2 f1_center = (uvs[edge1.x] + uvs[edge1.y]) / 2f;
-			Vector2 f2_center = (uvs[edge2.x] + uvs[edge2.y]) / 2f;
+			Vector2 f1_center = (uvs[edgeToAlignTo.x] + uvs[edgeToAlignTo.y]) / 2f;
+			Vector2 f2_center = (uvs[edgeToBeAligned.x] + uvs[edgeToBeAligned.y]) / 2f;
 
 			Vector2 diff = f1_center - f2_center;
 
 			/**
 			 * Move f2 face to where it's matching edge center is on top of f1's center
 			 */
-			foreach(int i in f2.distinctIndices)
+			foreach(int i in faceToMove.distinctIndices)
 				uvs[i] += diff;
 
 			/**
@@ -409,7 +414,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			if(Vector3.Cross(angle1, angle2).z < 0)
 				angle = 360f - angle;
 
-			foreach(int i in f2.distinctIndices)
+			foreach(int i in faceToMove.distinctIndices)
 				uvs[i] = ProBuilderMath.RotateAroundPoint(uvs[i], f1_center, angle);
 
 			float error = Mathf.Abs( Vector2.Distance(uvs[matchX[0]], uvs[matchX[1]]) ) + Mathf.Abs( Vector2.Distance(uvs[matchY[0]], uvs[matchY[1]]) );
@@ -418,7 +423,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			if(error > .02f)
 			{
 				// first try rotating 180 degrees
-				foreach(int i in f2.distinctIndices)
+				foreach(int i in faceToMove.distinctIndices)
 					uvs[i] = ProBuilderMath.RotateAroundPoint(uvs[i], f1_center, 180f);
 
 				float e2 = Mathf.Abs( Vector2.Distance(uvs[matchX[0]], uvs[matchX[1]]) ) + Mathf.Abs( Vector2.Distance(uvs[matchY[0]], uvs[matchY[1]]) );
@@ -427,13 +432,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				else
 				{
 					// flip 'em back around
-					foreach(int i in f2.distinctIndices)
+					foreach(int i in faceToMove.distinctIndices)
 						uvs[i] = ProBuilderMath.RotateAroundPoint(uvs[i], f1_center, 180f);
 				}
 			}
 
 			// If successfully aligned, merge the sharedIndicesUV
-			UVEditing.SplitUVs(pb, f2.distinctIndices);
+			UVEditing.SplitUVs(pb, faceToMove.distinctIndices);
 
 			IntArrayUtility.MergeSharedIndices(ref sharedIndicesUV, matchX);
 			IntArrayUtility.MergeSharedIndices(ref sharedIndicesUV, matchY);

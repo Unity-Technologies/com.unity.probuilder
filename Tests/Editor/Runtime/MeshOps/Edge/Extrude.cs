@@ -29,8 +29,8 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Edge
 				UnityEngine.ProBuilder.Face face = pb.facesInternal[m_Random.Next(0, pb.faceCount)];
 				edges[0] = face.edgesInternal[m_Random.Next(0, face.edgesInternal.Length)];
 				// as group, enable manifold extrude
-				Assert.IsFalse(pb.Extrude(edges, .5f, true, false, out extruded), "Do not allow manifold edge extrude");
-				Assert.IsTrue(pb.Extrude(edges, .5f, true, true, out extruded), "Do allow manifold edge extrude");
+				Assert.IsFalse(pb.Extrude(edges, .5f, true, false) != null, "Do not allow manifold edge extrude");
+				Assert.IsTrue(pb.Extrude(edges, .5f, true, true) != null, "Do allow manifold edge extrude");
 				pb.ToMesh();
 				pb.Refresh();
 				TestUtility.AssertMeshAttributesValid(pb.mesh);
@@ -55,8 +55,8 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Edge
 				for (int i = 0; i < pb.faceCount; i++)
 					edges[i] = pb.facesInternal[i].edgesInternal[m_Random.Next(0, pb.facesInternal[i].edgesInternal.Length)];
 				// as group, enable manifold extrude
-				Assert.IsFalse(pb.Extrude(edges, .5f, true, false, out extruded), "Do not allow manifold edge extrude");
-				Assert.IsTrue(pb.Extrude(edges, .5f, true, true, out extruded), "Do allow manifold edge extrude");
+				Assert.IsFalse(pb.Extrude(edges, .5f, true, false) != null, "Do not allow manifold edge extrude");
+				Assert.IsTrue(pb.Extrude(edges, .5f, true, true) != null, "Do allow manifold edge extrude");
 				pb.ToMesh();
 				pb.Refresh();
 				TestUtility.AssertMeshAttributesValid(pb.mesh);

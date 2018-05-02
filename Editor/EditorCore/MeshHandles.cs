@@ -311,7 +311,7 @@ namespace UnityEditor.ProBuilder
 			ren.material = s_FaceMaterial;
 			ren.mesh.Clear();
 			ren.mesh.vertices = pb.positionsInternal;
-			ren.mesh.triangles = Face.AllTriangles(pb.selectedFaces);
+			ren.mesh.triangles = Face.AllTriangles(pb.selectedFacesInternal);
 
 			return ren;
 		}

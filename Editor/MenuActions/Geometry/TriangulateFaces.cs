@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder.Actions
 			{
 				Face[] triangulatedFaces = null;
 				pb.ToMesh();
-				res = pb.ToTriangles(pb.selectedFaces, out triangulatedFaces);
+				res = pb.ToTriangles(pb.selectedFacesInternal, out triangulatedFaces);
 				pb.Refresh();
 				pb.Optimize();
 				pb.SetSelectedFaces(triangulatedFaces);
