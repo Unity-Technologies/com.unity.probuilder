@@ -11,11 +11,10 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	public static class EditorToolbarLoader
 	{
-		public delegate MenuAction OnLoadActionsDelegate();
-		internal static OnLoadActionsDelegate onLoadMenu;
-		static List<MenuAction> _defaults;
+		internal static System.Func<MenuAction> onLoadMenu;
+		static List<MenuAction> s_Defaults;
 
-		public static void RegisterMenuItem(OnLoadActionsDelegate getMenuAction)
+		public static void RegisterMenuItem(System.Func<MenuAction> getMenuAction)
 		{
 			if(onLoadMenu != null)
 			{
@@ -28,7 +27,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		public static void UnRegisterMenuItem(OnLoadActionsDelegate getMenuAction)
+		public static void UnRegisterMenuItem(System.Func<MenuAction> getMenuAction)
 		{
 			onLoadMenu -= getMenuAction;
 		}
@@ -40,10 +39,10 @@ namespace UnityEditor.ProBuilder
 			if(instance == null)
 			{
 				instance = new T();
-				if(_defaults != null)
-					_defaults.Add(instance);
+				if(s_Defaults != null)
+					s_Defaults.Add(instance);
 				else
-					_defaults = new List<MenuAction>() { instance };
+					s_Defaults = new List<MenuAction>() { instance };
 			}
 
 			return instance;
@@ -51,10 +50,10 @@ namespace UnityEditor.ProBuilder
 
 		internal static List<MenuAction> GetActions(bool forceReload = false)
 		{
-			if(_defaults != null && !forceReload)
-				return _defaults;
+			if(s_Defaults != null && !forceReload)
+				return s_Defaults;
 
-			_defaults = new List<MenuAction>()
+			s_Defaults = new List<MenuAction>()
 			{
 				// tools
 				new Actions.OpenShapeEditor(),
@@ -148,13 +147,13 @@ namespace UnityEditor.ProBuilder
 
 			if(onLoadMenu != null)
 			{
-				foreach(OnLoadActionsDelegate del in onLoadMenu.GetInvocationList())
-					_defaults.Add(del());
+				foreach(System.Func<MenuAction> del in onLoadMenu.GetInvocationList())
+					s_Defaults.Add(del());
 			}
 
-			_defaults.Sort(MenuAction.CompareActionsByGroupAndPriority);
+			s_Defaults.Sort(MenuAction.CompareActionsByGroupAndPriority);
 
-			return _defaults;
+			return s_Defaults;
 		}
 	}
 }

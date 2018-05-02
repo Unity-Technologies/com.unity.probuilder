@@ -24,7 +24,7 @@ namespace UnityEditor.ProBuilder
 		bool m_PlacingPoint = false;
 		int m_SelectedIndex = -2;
 		float m_DistanceFromHeightHandle;
-		static float m_HeightMouseOffset;
+		static float s_HeightMouseOffset;
 		bool m_NextMouseUpAdvancesMode = false;
 		List<GameObject> m_IgnorePick = new List<GameObject>();
 		bool m_IsModifyingVertices = false;
@@ -50,7 +50,7 @@ namespace UnityEditor.ProBuilder
 				return;
 			}
 
-			ProBuilderEditor.AddOnEditLevelChangedListener(OnEditLevelChange);
+			ProBuilderEditor.onEditLevelChanged += OnEditLevelChanged;
 			m_LineMesh = new Mesh();
 			m_LineMaterial = CreateHighlightLineMaterial();
 			Undo.undoRedoPerformed += UndoRedoPerformed;
@@ -64,7 +64,7 @@ namespace UnityEditor.ProBuilder
 
 		void OnDisable()
 		{
-			ProBuilderEditor.RemoveOnEditLevelChangedListener(OnEditLevelChange);
+			ProBuilderEditor.onEditLevelChanged -= OnEditLevelChanged;
 			GameObject.DestroyImmediate(m_LineMesh);
 			GameObject.DestroyImmediate(m_LineMaterial);
 			EditorApplication.update -= Update;
@@ -187,7 +187,7 @@ namespace UnityEditor.ProBuilder
 					Vector3 origin = polygon.transform.TransformPoint(ProBuilderMath.Average(polygon.points));
 					Ray r = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
 					Vector3 p = ProBuilderMath.GetNearestPointRayRay(origin, up, r.origin, r.direction);
-					m_HeightMouseOffset = polygon.extrude -
+					s_HeightMouseOffset = polygon.extrude -
 					                      ProGridsInterface.ProGridsSnap(
 						                      Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p - origin, up)));
 				}
@@ -347,7 +347,7 @@ namespace UnityEditor.ProBuilder
 			DoExistingPointsGUI();
 
 			if(evt.type == EventType.KeyDown)
-				HandleKeyEvent(evt.keyCode, evt.modifiers);
+				HandleKeyEvent(evt.keyCode);
 
 			if( EditorHandleUtility.SceneViewInUse(evt) )
 				return;
@@ -514,7 +514,7 @@ namespace UnityEditor.ProBuilder
 				if(!sceneInUse)
 				{
 					Vector3 p = ProBuilderMath.GetNearestPointRayRay(origin, up, r.origin, r.direction);
-					extrude = ProGridsInterface.ProGridsSnap(m_HeightMouseOffset + Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p-origin, up)));
+					extrude = ProGridsInterface.ProGridsSnap(s_HeightMouseOffset + Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p-origin, up)));
 				}
 
 				Vector3 extrudePoint = origin + (extrude * up);
@@ -616,7 +616,7 @@ namespace UnityEditor.ProBuilder
 					(em & EventModifiers.Command) == EventModifiers.Command;
 		}
 
-		void HandleKeyEvent(KeyCode key, EventModifiers modifier)
+		void HandleKeyEvent(KeyCode key)
 		{
 			switch(key)
 			{
@@ -711,7 +711,7 @@ namespace UnityEditor.ProBuilder
 			return Mathf.Abs(Mathf.Abs(dot) - 1f) < .01f;
 		}
 
-		void OnEditLevelChange(int editLevel)
+		void OnEditLevelChanged(int editLevel)
 		{
 			if( polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None && ((EditLevel)editLevel) != EditLevel.Plugin)
 				polygon.polyEditMode = PolyShape.PolyEditMode.None;

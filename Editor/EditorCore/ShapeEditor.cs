@@ -49,7 +49,7 @@ namespace UnityEditor.ProBuilder
 		Material m_DefaultMaterial = null;
 		Vector2 m_Scroll = Vector2.zero;
 		static readonly Color k_PreviewColor = new Color(.5f, .9f, 1f, .56f);
-		Material s_ShapePreviewMaterial;
+		Material m_ShapePreviewMaterial;
 
 		// toogle for closing the window after shape creation from the prefrences window
 		static bool prefClose
@@ -62,22 +62,22 @@ namespace UnityEditor.ProBuilder
 			m_DefaultMaterial = PreferencesInternal.GetMaterial(PreferenceKeys.pbDefaultMaterial);
 			m_DoInitPreview = true;
 
-			if (s_ShapePreviewMaterial == null)
+			if (m_ShapePreviewMaterial == null)
 			{
-				s_ShapePreviewMaterial = new Material(BuiltinMaterials.DefaultMaterial.shader);
-				s_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
+				m_ShapePreviewMaterial = new Material(BuiltinMaterials.DefaultMaterial.shader);
+				m_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
 
-				if (s_ShapePreviewMaterial.HasProperty("_MainTex"))
-					s_ShapePreviewMaterial.mainTexture = (Texture2D)Resources.Load("Textures/GridBox_Default");
+				if (m_ShapePreviewMaterial.HasProperty("_MainTex"))
+					m_ShapePreviewMaterial.mainTexture = (Texture2D)Resources.Load("Textures/GridBox_Default");
 
-				if (s_ShapePreviewMaterial.HasProperty("_Color"))
-					s_ShapePreviewMaterial.SetColor("_Color", k_PreviewColor);
+				if (m_ShapePreviewMaterial.HasProperty("_Color"))
+					m_ShapePreviewMaterial.SetColor("_Color", k_PreviewColor);
 			}
 		}
 
 		void OnDisable()
 		{
-			DestroyImmediate(s_ShapePreviewMaterial);
+			DestroyImmediate(m_ShapePreviewMaterial);
 		}
 
 		void OnDestroy()
@@ -1140,7 +1140,7 @@ namespace UnityEditor.ProBuilder
 			m_PreviewObject.hideFlags = HideFlags.DontSave;
 
 			m_PreviewObject.GetComponent<MeshFilter>().sharedMesh = m;
-			m_PreviewObject.GetComponent<MeshRenderer>().sharedMaterial = s_ShapePreviewMaterial;
+			m_PreviewObject.GetComponent<MeshRenderer>().sharedMaterial = m_ShapePreviewMaterial;
 
 			Selection.activeTransform = m_PreviewObject.transform;
 		}

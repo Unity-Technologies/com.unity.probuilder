@@ -17,7 +17,7 @@ namespace UnityEditor.ProBuilder.Actions
 		(
 			"Delete Faces",
 			@"Delete all selected faces.",
-			CMD_DELETE
+			keyCommandDelete
 		);
 
 		public override bool IsEnabled()

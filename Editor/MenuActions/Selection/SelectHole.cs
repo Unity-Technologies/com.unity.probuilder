@@ -13,10 +13,10 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_SelectHole", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return m_Tooltip; } }
+		public override TooltipContent tooltip { get { return s_Tooltip; } }
 		public override bool isProOnly { get { return true; } }
 
-		private static readonly TooltipContent m_Tooltip = new TooltipContent
+		private static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Select Holes",
 			"Selects holes on the mesh.\n\nUses the current element selection, or tests the whole mesh if no edges or vertices are selected."

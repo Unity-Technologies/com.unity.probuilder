@@ -8,11 +8,11 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_Smoothing", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return m_Tooltip; } }
+		public override TooltipContent tooltip { get { return s_Tooltip; } }
 		public override string menuTitle { get { return "Smoothing"; } }
 		public override bool isProOnly { get { return true; } }
 		public override int toolbarPriority { get { return 2; } }
-		static readonly TooltipContent m_Tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Smoothing Groups Editor",
 @"Opens the Smoothing Group Editor.

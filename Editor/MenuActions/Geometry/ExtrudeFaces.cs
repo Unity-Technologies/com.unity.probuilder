@@ -35,7 +35,7 @@ namespace UnityEditor.ProBuilder.Actions
 		(
 			"Extrude Faces",
 			"Extrude selected faces, either as a group or individually.\n\nAlt + Click this button to show additional Extrude options.",
-			CMD_SUPER, 'E'
+			keyCommandSuper, 'E'
 		);
 
 		public ExtrudeFaces()

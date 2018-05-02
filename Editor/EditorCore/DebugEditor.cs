@@ -15,7 +15,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Debugging menu items for ProBuilder.
 	/// </summary>
-	class DebugEditor : EditorWindow
+	class DebugEditor : EditorWindow, System.IDisposable
 	{
 		float elementLength = .15f;
 		float elementOffset = .01f;
@@ -41,8 +41,8 @@ namespace UnityEditor.ProBuilder
 
 			SceneView.onSceneGUIDelegate -= OnSceneGUI;
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
-			ProBuilderEditor.OnSelectionUpdate += OnSelectionUpdate;
-			ProBuilderEditor.OnVertexMovementFinish += OnSelectionUpdate;
+			ProBuilderEditor.onSelectionUpdate += OnSelectionUpdate;
+			ProBuilderEditor.onVertexMovementFinish += OnSelectionUpdate;
 
 			m_LineRenderer = new SceneViewLineRenderer();
 		}
@@ -51,8 +51,8 @@ namespace UnityEditor.ProBuilder
 		{
 			m_LineRenderer.Dispose();
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
-			ProBuilderEditor.OnSelectionUpdate -= OnSelectionUpdate;
-			ProBuilderEditor.OnVertexMovementFinish -= OnSelectionUpdate;
+			ProBuilderEditor.onSelectionUpdate -= OnSelectionUpdate;
+			ProBuilderEditor.onVertexMovementFinish -= OnSelectionUpdate;
 		}
 
 		void OnSelectionUpdate(ProBuilderMesh[] selection)
@@ -509,7 +509,11 @@ namespace UnityEditor.ProBuilder
 						UI.EditorGUIUtility.SceneLabel(string.Format("[{0}, {1}]", edge.local.x, edge.local.y), cen);
 						break;
 					case IndexFormat.Both:
-						UI.EditorGUIUtility.SceneLabel(string.Format("local: [{0}, {1}]\ncommon: [{0}, {1}]", edge.local.x, edge.local.y, edge.common.x, edge.common.y), cen);
+						UI.EditorGUIUtility.SceneLabel(string.Format("local: [{0}, {1}]\ncommon: [{2}, {3}]", 
+                            edge.local.x,
+                            edge.local.y,
+                            edge.common.x,
+                            edge.common.y), cen);
 						break;
 				}
 
@@ -657,5 +661,11 @@ namespace UnityEditor.ProBuilder
 
 			m_LineRenderer.AddLineSegments(segments, ElementColors);
 		}
-	}
+
+        public void Dispose()
+        {
+            if (m_LineRenderer != null)
+                m_LineRenderer.Dispose();
+        }
+    }
 }

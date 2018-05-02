@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder.Actions
 		(
 			"Insert Edge Loop",
 			@"Connects all edges in a ring around the object.",
-			CMD_ALT, 'U'
+			keyCommandAlt, 'U'
 		);
 
 		public override bool IsEnabled()

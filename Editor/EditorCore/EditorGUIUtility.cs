@@ -91,41 +91,41 @@ namespace UnityEditor.ProBuilder.UI
 			return _guiContent;
 		}
 
-		static Stack<bool> m_GuiEnabled = new Stack<bool>();
-		static Stack<Color> m_ContentColor = new Stack<Color>();
-		static Stack<Color> m_BackgroundColor = new Stack<Color>();
+		static Stack<bool> s_GuiEnabled = new Stack<bool>();
+		static Stack<Color> s_ContentColor = new Stack<Color>();
+		static Stack<Color> s_BackgroundColor = new Stack<Color>();
 
 		public static void PushGUIEnabled(bool enabled)
 		{
-			m_GuiEnabled.Push(GUI.enabled);
+			s_GuiEnabled.Push(GUI.enabled);
 			GUI.enabled = enabled;
 		}
 
 		public static void PopGUIEnabled()
 		{
-			GUI.enabled = m_GuiEnabled.Pop();
+			GUI.enabled = s_GuiEnabled.Pop();
 		}
 
 		public static void PushGUIContentColor(Color color)
 		{
-			m_ContentColor.Push(GUI.color);
+			s_ContentColor.Push(GUI.color);
 			GUI.contentColor = color;
 		}
 
 		public static void PopGUIContentColor()
 		{
-			GUI.contentColor = m_ContentColor.Pop();
+			GUI.contentColor = s_ContentColor.Pop();
 		}
 
 		public static void PushBackgroundColor(Color color)
 		{
-			m_BackgroundColor.Push(GUI.backgroundColor);
+			s_BackgroundColor.Push(GUI.backgroundColor);
 			GUI.backgroundColor = color;
 		}
 
 		public static void PopBackgroundColor()
 		{
-			GUI.backgroundColor = m_BackgroundColor.Pop();
+			GUI.backgroundColor = s_BackgroundColor.Pop();
 		}
 
 		/**

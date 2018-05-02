@@ -19,7 +19,7 @@ namespace UnityEditor.ProBuilder.Actions
 		(
 			"Connect Vertices",
 			@"Adds edges connecting all selected vertices.",
-			CMD_ALT, 'E'
+			keyCommandAlt, 'E'
 		);
 
 		public override bool IsEnabled()

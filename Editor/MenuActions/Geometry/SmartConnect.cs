@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder.Actions
 		(
 			"Smart Connect",
 			"",
-			CMD_ALT, 'E'
+			keyCommandAlt, 'E'
 		);
 
 		public override bool IsEnabled()

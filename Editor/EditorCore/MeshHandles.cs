@@ -6,7 +6,7 @@ using UnityEditor;
 
 namespace UnityEditor.ProBuilder
 {
-	public static class MeshHandles
+	internal static class MeshHandles
 	{
 		const string k_FaceShader = "Hidden/ProBuilder/FaceHighlight";
 
@@ -163,7 +163,7 @@ namespace UnityEditor.ProBuilder
 			s_VertexMaterial.SetFloat("_Scale", PreferencesInternal.GetFloat(PreferenceKeys.pbVertexHandleSize) * EditorGUIUtility.pixelsPerPoint);
 		}
 
-		public static void DoGUI(EditLevel editLevel, SelectMode selectionMode)
+		public static void DoGUI(SelectMode selectionMode)
 		{
 			if (Event.current.type != EventType.Repaint)
 				return;

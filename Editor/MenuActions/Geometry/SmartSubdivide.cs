@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder.Actions
 		(
 			"Smart Subdivide",
 			"",
-			CMD_ALT, 'S'
+			keyCommandAlt, 'S'
 		);
 
 		public override bool IsEnabled()

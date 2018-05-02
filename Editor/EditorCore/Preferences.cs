@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder
 
 		static bool defaultOpenInDockableWindow;
 		static Material pbDefaultMaterial;
-		static Vector2 m_SettingsScroll = Vector2.zero;
+		static Vector2 s_SettingsScroll = Vector2.zero;
 		static bool pbShowEditorNotifications;
 		static bool pbForceConvex = false;
 		static bool pbForceVertexPivot = true;
@@ -67,7 +67,7 @@ namespace UnityEditor.ProBuilder
 		{
 			LoadPrefs();
 
-			m_SettingsScroll = EditorGUILayout.BeginScrollView(m_SettingsScroll);
+			s_SettingsScroll = EditorGUILayout.BeginScrollView(s_SettingsScroll);
 
 			EditorGUI.BeginChangeCheck();
 

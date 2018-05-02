@@ -20,7 +20,7 @@ namespace UnityEditor.ProBuilder.Actions
 		(
 			"Weld Vertices",
 			@"Searches the current selection for vertices that are within the specified distance of on another and merges them into a single vertex.",
-			CMD_ALT, 'V'
+			keyCommandAlt, 'V'
 		);
 
 		public override bool IsEnabled()

@@ -14,20 +14,25 @@ namespace UnityEditor.ProBuilder
 {
 	public class ProBuilderEditor : EditorWindow
 	{
-		public static event Action<ProBuilderMesh[]> OnSelectionUpdate;
+		public static event Action<ProBuilderMesh[]> onSelectionUpdate;
 
-		// Called when vertex modifications are complete.
-		public static event Action<ProBuilderMesh[]> OnVertexMovementFinish;
+        /// <summary>
+        /// Called when vertex modifications are complete.
+        /// </summary>
+        public static event Action<ProBuilderMesh[]> onVertexMovementFinish;
 
-		// Called immediately prior to beginning vertex modifications. pb_Object will be in un-altered state at this point (meaning ToMesh and Refresh have been called, but not Optimize).
-		public static event Action<ProBuilderMesh[]> OnVertexMovementBegin;
+        /// <summary>
+        /// Called immediately prior to beginning vertex modifications. The ProBuilderMesh will be in un-altered state at this point (meaning ToMesh and Refresh have been called, but not Optimize).
+        /// </summary>
+        public static event Action<ProBuilderMesh[]> onVertexMovementBegin;
 
-		// Toggles for Face, Vertex, and Edge mode.
-		const int k_SelectModeLength = 3;
+        public static event Action<int> onEditLevelChanged;
+        
+        // Toggles for Face, Vertex, and Edge mode.
+        const int k_SelectModeLength = 3;
 
 		GUIContent[] m_EditModeIcons;
 		GUIStyle VertexTranslationInfoStyle;
-		public static Action<int> onEditLevelChanged;
 
 		bool m_ShowSceneInfo = false;
 		bool m_HamSelection = false;
@@ -36,12 +41,11 @@ namespace UnityEditor.ProBuilder
 		bool m_SnapAxisConstraint = true;
 		bool m_SnapEnabled = false;
 		bool m_IsIconGui = false;
-		// Needs to be initialized from an instance, not a static class. Don't move to HandleUtility, you tried that already.
 		MethodInfo findNearestVertex;
 		EditLevel m_PreviousEditLevel;
 		SelectMode m_PreviousSelectMode;
 		HandleAlignment m_PreviousHandleAlignment;
-		public DragSelectMode dragSelectMode = DragSelectMode.Difference;
+        DragSelectMode dragSelectMode;
 		static EditorToolbar s_EditorToolbar = null;
 		Shortcut[] m_Shortcuts;
 		static ProBuilderEditor s_Instance;
@@ -147,22 +151,22 @@ namespace UnityEditor.ProBuilder
 
 		static class SceneStyles
 		{
-			static bool m_Init = false;
-			static GUIStyle m_SelectionRect;
+			static bool s_Init = false;
+			static GUIStyle s_SelectionRect;
 
 			public static GUIStyle selectionRect
 			{
-				get { return m_SelectionRect; }
+				get { return s_SelectionRect; }
 			}
 
 			public static void Init()
 			{
-				if (m_Init)
+				if (s_Init)
 					return;
 
-				m_Init = true;
+				s_Init = true;
 
-				m_SelectionRect = new GUIStyle()
+				s_SelectionRect = new GUIStyle()
 				{
 					normal = new GUIStyleState()
 					{
@@ -173,20 +177,6 @@ namespace UnityEditor.ProBuilder
 					padding = new RectOffset(0,0,0,0)
 				};
 			}
-		}
-
-		/// <summary>
-		/// Subscribe to notifications of edit level changes.
-		/// </summary>
-		/// <param name="listener"></param>
-		public static void AddOnEditLevelChangedListener(System.Action<int> listener)
-		{
-			onEditLevelChanged += listener;
-		}
-
-		public static void RemoveOnEditLevelChangedListener(System.Action<int> listener)
-		{
-			onEditLevelChanged -= listener;
 		}
 
 		public static ProBuilderEditor instance
@@ -254,8 +244,8 @@ namespace UnityEditor.ProBuilder
 
 			MeshHandles.Destroy();
 
-			if (OnSelectionUpdate != null)
-				OnSelectionUpdate(null);
+			if (onSelectionUpdate != null)
+				onSelectionUpdate(null);
 
 			ProGridsInterface.UnsubscribePushToGridEvent(PushToGrid);
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
@@ -455,7 +445,7 @@ namespace UnityEditor.ProBuilder
 			if (m_CurrentEvent.type == EventType.MouseUp && m_CurrentEvent.button == 1 || m_CurrentEvent.type == EventType.Ignore)
 				rightMouseDown = false;
 
-			MeshHandles.DoGUI(editLevel, selectionMode);
+			MeshHandles.DoGUI(selectionMode);
 
 			DrawHandleGUI(sceneView);
 
@@ -2298,8 +2288,8 @@ namespace UnityEditor.ProBuilder
 
 			currentHandleRotation = handleRotation;
 
-			if (OnSelectionUpdate != null)
-				OnSelectionUpdate(selection);
+			if (onSelectionUpdate != null)
+				onSelectionUpdate(selection);
 //			profiler.EndSample();
 
 			UpdateSceneInfo();
@@ -2368,8 +2358,8 @@ namespace UnityEditor.ProBuilder
 			UpdateHandleRotation();
 			currentHandleRotation = handleRotation;
 
-			if (OnSelectionUpdate != null)
-				OnSelectionUpdate(selection);
+			if (onSelectionUpdate != null)
+				onSelectionUpdate(selection);
 
 			UpdateSceneInfo();
 
@@ -2635,8 +2625,8 @@ namespace UnityEditor.ProBuilder
 				pb.Refresh();
 			}
 
-			if (OnVertexMovementBegin != null)
-				OnVertexMovementBegin(selection);
+			if (onVertexMovementBegin != null)
+				onVertexMovementBegin(selection);
 		}
 
 		void OnFinishVertexModification()
@@ -2667,8 +2657,8 @@ namespace UnityEditor.ProBuilder
 				movingVertices = false;
 			}
 
-			if (OnVertexMovementFinish != null)
-				OnVertexMovementFinish(selection);
+			if (onVertexMovementFinish != null)
+				onVertexMovementFinish(selection);
 
 			scaling = false;
 		}

@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Utilities for working in Unity editor: Showing notifications in windows, getting the sceneview, setting EntityTypes, OBJ export, etc.
 	/// </summary>
-	static class EditorUtility
+	public static class EditorUtility
 	{
 		const float k_DefaultNotificationDuration = 1f;
 		static float s_NotificationTimer = 0f;
@@ -32,41 +32,19 @@ namespace UnityEditor.ProBuilder
 		/// <remarks>
 		/// This is only called when an object is initialized in editor. Ie, pb_ShapeGenerator.GenerateCube(Vector3.one) won't fire this callback.
 		/// </remarks>
-		public static event Action<ProBuilderMesh> OnObjectCreated = null;
+		public static event Action<ProBuilderMesh> onObjectCreated = null;
 
 		/// <summary>
-		/// Add a listener to the multicast OnObjectCreated delegate.
-		/// </summary>
-		/// <param name="onProBuilderObjectCreated"></param>
-		public static void AddOnObjectCreatedListener(Action<ProBuilderMesh> onProBuilderObjectCreated)
-		{
-			if(OnObjectCreated == null)
-				OnObjectCreated = onProBuilderObjectCreated;
-			else
-				OnObjectCreated += onProBuilderObjectCreated;
-		}
-
-		/// <summary>
-		/// Remove a listener from the OnObjectCreated delegate.
-		/// </summary>
-		/// <param name="onProBuilderObjectCreated"></param>
-		public static void RemoveOnObjectCreatedListener(Action<ProBuilderMesh> onProBuilderObjectCreated)
-		{
-			if(OnObjectCreated != null)
-				OnObjectCreated -= onProBuilderObjectCreated;
-		}
-
-		/// <summary>
-		/// Set the selected render state for an object.  In Unity 5.4 and lower, this just toggles wireframe on or off.
+		/// Set the selected render state for an object. In Unity 5.4 and lower, this just toggles wireframe on or off.
 		/// </summary>
 		/// <param name="renderer"></param>
 		/// <param name="state"></param>
-		public static void SetSelectionRenderState(Renderer renderer, SelectionRenderState state)
+		internal static void SetSelectionRenderState(Renderer renderer, SelectionRenderState state)
 		{
 			UnityEditor.EditorUtility.SetSelectedRenderState(renderer, (EditorSelectedRenderState) state );
 		}
 
-		public static SelectionRenderState GetSelectionRenderState()
+		internal static SelectionRenderState GetSelectionRenderState()
 		{
 			bool wireframe = false, outline = false;
 
@@ -88,22 +66,25 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Show a timed notification in the SceneView window.
 		/// </summary>
-		/// <param name="notif"></param>
-		public static void ShowNotification(string notif)
+		/// <param name="message"></param>
+		public static void ShowNotification(string message)
 		{
 			SceneView scnview = SceneView.lastActiveSceneView;
 			if(scnview == null)
 				scnview = EditorWindow.GetWindow<SceneView>();
 
-			ShowNotification(scnview, notif);
+			ShowNotification(scnview, message);
 		}
 
-		public static void ShowNotification(EditorWindow window, string notif)
+		public static void ShowNotification(EditorWindow window, string message)
 		{
 			if(PreferencesInternal.HasKey(PreferenceKeys.pbShowEditorNotifications) && !PreferencesInternal.GetBool(PreferenceKeys.pbShowEditorNotifications))
 				return;
 
-			window.ShowNotification(new GUIContent(notif, ""));
+            if (window == null)
+                throw new ArgumentNullException("window");
+
+			window.ShowNotification(new GUIContent(message, ""));
 			window.Repaint();
 
 			if(EditorApplication.update != NotifUpdate)
@@ -116,6 +97,9 @@ namespace UnityEditor.ProBuilder
 
 		public static void RemoveNotification(EditorWindow window)
 		{
+            if (window == null)
+                throw new ArgumentNullException("window");
+
 			EditorApplication.update -= NotifUpdate;
 
 			window.RemoveNotification();
@@ -132,7 +116,7 @@ namespace UnityEditor.ProBuilder
 		}
 
 		[System.Obsolete("Please use pb_Obj.Export")]
-		public static string ExportOBJ(ProBuilderMesh[] pb)
+		internal static string ExportOBJ(ProBuilderMesh[] pb)
 		{
 			return ExportObj.ExportWithFileDialog(pb);
 		}
@@ -140,30 +124,34 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Open a save file dialog, and save the image to that path.
 		 */
-		public static void SaveTexture(Texture2D texture)
+		internal static void SaveTexture(Texture2D texture)
 		{
 			string path = UnityEditor.EditorUtility.SaveFilePanel("Save Image", Application.dataPath, "", "png");
 			SaveTexture(texture, path);
 		}
 
-		/**
-		 * Save an image to the specified path.
-		 */
-		public static void SaveTexture(Texture2D texture, string path)
+        /// <summary>
+        /// Save an image to the specified path.
+        /// </summary>
+        /// <param name="texture"></param>
+        /// <param name="path"></param>
+        /// <returns>True on success, false if operation failed.</returns>
+        internal static bool SaveTexture(Texture2D texture, string path)
 		{
 			byte[] bytes = texture.EncodeToPNG();
 
-			if(path == "") return;
+			if(string.IsNullOrEmpty(path))
+                return false;
 
 			System.IO.File.WriteAllBytes(path, bytes);
-
 			AssetDatabase.Refresh();
+            return true;
 		}
 
 		/**
 		 * Returns true if this object is a prefab instanced in the scene.
 		 */
-		public static bool IsPrefabInstance(GameObject go)
+		internal static bool IsPrefabInstance(GameObject go)
 		{
 			return PrefabUtility.GetPrefabType(go) == PrefabType.PrefabInstance;
 		}
@@ -171,7 +159,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Returns true if this object is a prefab in the Project view.
 		 */
-		public static bool IsPrefabRoot(GameObject go)
+		internal static bool IsPrefabRoot(GameObject go)
 		{
 			return PrefabUtility.GetPrefabType(go) == PrefabType.Prefab;
 		}
@@ -179,19 +167,23 @@ namespace UnityEditor.ProBuilder
 		/**
 		 *	Returns true if Asset Store window is open, false otherwise.
 		 */
-		public static bool AssetStoreWindowIsOpen()
+		internal static bool AssetStoreWindowIsOpen()
 		{
 			return Resources.FindObjectsOfTypeAll<EditorWindow>().Any(x => x.GetType().ToString().Contains("AssetStoreWindow"));
 		}
 
-		/**
-		 * Ensure that this object has a valid mesh reference, and the geometry is
-		 * current.
-		 */
-		public static MeshRebuildReason VerifyMesh(ProBuilderMesh pb)
+		/// <summary>
+		/// Ensure that this object has a valid mesh reference, and the geometry is current.
+		/// </summary>
+		/// <param name="mesh"></param>
+		/// <returns></returns>
+		public static MeshRebuildReason VerifyMesh(ProBuilderMesh mesh)
 		{
-		 	Mesh oldMesh = pb.mesh;
-	 		MeshRebuildReason reason = pb.Verify();
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+		 	Mesh oldMesh = mesh.mesh;
+	 		MeshRebuildReason reason = mesh.Verify();
 			bool meshesAreAssets = PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets);
 
 			if( reason != MeshRebuildReason.None )
@@ -214,17 +206,17 @@ namespace UnityEditor.ProBuilder
 					if(go == null)
 					{
 						// Debug.Log("scene reloaded - false positive.");
-						pb.mesh.name = "pb_Mesh" + pb.id;
+						mesh.mesh.name = "pb_Mesh" + mesh.id;
 					}
 					else
 					{
 						// Debug.Log("duplicate mesh");
 
-						if(!meshesAreAssets || !(EditorUtility.IsPrefabRoot(pb.gameObject) || IsPrefabInstance(pb.gameObject)))
+						if(!meshesAreAssets || !(EditorUtility.IsPrefabRoot(mesh.gameObject) || IsPrefabInstance(mesh.gameObject)))
 						{
 							// deep copy arrays & ToMesh/Refresh
-							pb.MakeUnique();
-							pb.Optimize();
+							mesh.MakeUnique();
+							mesh.Optimize();
 						}
 					}
 				}
@@ -232,16 +224,16 @@ namespace UnityEditor.ProBuilder
 				{
 					// old mesh didn't exist, so this is probably a prefab being instanced
 
-					if(EditorUtility.IsPrefabRoot(pb.gameObject))
-						pb.mesh.hideFlags = (HideFlags) (1 | 2 | 4 | 8);
+					if(EditorUtility.IsPrefabRoot(mesh.gameObject))
+						mesh.mesh.hideFlags = (HideFlags) (1 | 2 | 4 | 8);
 
-					pb.Optimize();
+					mesh.Optimize();
 				}
 			}
 			else
 			{
 				if(meshesAreAssets)
-					EditorMeshUtility.TryCacheMesh(pb);
+					EditorMeshUtility.TryCacheMesh(mesh);
 			}
 
 			return reason;
@@ -253,7 +245,7 @@ namespace UnityEditor.ProBuilder
 		/// <param name="go"></param>
 		/// <param name="flags"></param>
 		/// <returns></returns>
-		public static bool HasStaticFlag(this GameObject go, StaticEditorFlags flags)
+		internal static bool HasStaticFlag(this GameObject go, StaticEditorFlags flags)
 		{
 			return (GameObjectUtility.GetStaticEditorFlags(go) & flags) == flags;
 		}
@@ -262,7 +254,7 @@ namespace UnityEditor.ProBuilder
 		/// Initialize this object with the various editor-only parameters, and invoke the object creation callback.
 		/// </summary>
 		/// <param name="pb"></param>
-		public static void InitObject(ProBuilderMesh pb)
+		internal static void InitObject(ProBuilderMesh pb)
 		{
 			ShadowCastingMode scm = PreferencesInternal.GetEnum<ShadowCastingMode>(PreferenceKeys.pbShadowCastingMode);
 			pb.GetComponent<MeshRenderer>().shadowCastingMode = scm;
@@ -293,12 +285,12 @@ namespace UnityEditor.ProBuilder
 
 			pb.Optimize();
 
-			if( OnObjectCreated != null )
-				OnObjectCreated(pb);
+			if( onObjectCreated != null )
+				onObjectCreated(pb);
 		}
 
 		[System.Obsolete("pb_Entity is deprecated, please use InitObject(pb_Object)")]
-		public static void InitObject(ProBuilderMesh pb, ColliderType colliderType, EntityType entityType)
+		internal static void InitObject(ProBuilderMesh pb, ColliderType colliderType, EntityType entityType)
 		{
 			switch(colliderType)
 			{
@@ -322,7 +314,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Puts the selected gameObject at the pivot point of the SceneView camera.
 		 */
-		public static void ScreenCenter(GameObject _gameObject)
+		internal static void ScreenCenter(GameObject _gameObject)
 		{
 			if(_gameObject == null)
 				return;
@@ -336,7 +328,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Gets the current SceneView's camera's pivot point.
 		 */
-		public static Vector3 ScenePivot()
+		internal static Vector3 ScenePivot()
 		{
 			return GetSceneView().pivot;
 		}
@@ -345,7 +337,7 @@ namespace UnityEditor.ProBuilder
 		 * If pb_Preferences_Internal.say to set pivot to corner and ProGrids or PB pref says snap to grid, do it.
 		 * @param indicesToCenterPivot If any values are passed here, the pivot is set to an average of all vertices at indices.  If null, the first vertex is used as the pivot.
 		 */
-		public static void SetPivotAndSnapWithPref(ProBuilderMesh pb, int[] indicesToCenterPivot)
+		internal static void SetPivotAndSnapWithPref(ProBuilderMesh pb, int[] indicesToCenterPivot)
 		{
 			if(PreferencesInternal.GetBool(PreferenceKeys.pbForceGridPivot))
 				pb.CenterPivot( indicesToCenterPivot == null ? new int[1]{0} : indicesToCenterPivot );
@@ -364,7 +356,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Returns the last active SceneView window, or creates a new one if no last SceneView is found.
 		 */
-		public static SceneView GetSceneView()
+		internal static SceneView GetSceneView()
 		{
 			return SceneView.lastActiveSceneView == null ? EditorWindow.GetWindow<SceneView>() : SceneView.lastActiveSceneView;
 		}
@@ -386,7 +378,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		public static void RegisterOnPreSceneGUIDelegate(SceneView.OnSceneFunc func)
+		internal static void RegisterOnPreSceneGUIDelegate(SceneView.OnSceneFunc func)
 		{
 			var del = onPreSceneGuiDelegate;
 
@@ -396,7 +388,7 @@ namespace UnityEditor.ProBuilder
 				del += func;
 		}
 
-		public static void UnregisterOnPreSceneGUIDelegate(SceneView.OnSceneFunc func)
+		internal static void UnregisterOnPreSceneGUIDelegate(SceneView.OnSceneFunc func)
 		{
 			var del = onPreSceneGuiDelegate;
 
@@ -409,7 +401,7 @@ namespace UnityEditor.ProBuilder
 		 *
 		 *	Alt summary: Do you know this?
 		 */
-		public static bool IsUnix()
+		internal static bool IsUnix()
 		{
 			System.PlatformID platform = System.Environment.OSVersion.Platform;
 			return 	platform == System.PlatformID.MacOSX ||
@@ -420,7 +412,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 *	CreateCachedEditor didn't exist until 5.0, so recreate it's contents if necessary or pass it on.
 		 */
-		public static void CreateCachedEditor<T>(UnityEngine.Object[] targetObjects, ref UnityEditor.Editor previousEditor) where T : UnityEditor.Editor
+		internal static void CreateCachedEditor<T>(UnityEngine.Object[] targetObjects, ref UnityEditor.Editor previousEditor) where T : UnityEditor.Editor
 		{
 			#if UNITY_4_7
 			if (previousEditor != null && pbUtil.IsEqual(previousEditor.targets, targetObjects) )

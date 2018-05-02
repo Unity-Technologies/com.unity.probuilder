@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder.Actions
 		(
 			"Split Vertices",
 			@"Disconnects vertices that share the same position in space so that they may be moved independently of one another.",
-			CMD_ALT, 'X'
+			keyCommandAlt, 'X'
 		);
 
 		public override bool IsEnabled()

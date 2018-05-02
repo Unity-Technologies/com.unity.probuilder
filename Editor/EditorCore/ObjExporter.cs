@@ -60,7 +60,7 @@ namespace UnityEditor.ProBuilder
 		 *
 		 * *http://exocortex.com/blog/extending_wavefront_mtl_to_support_pbr
 		 */
-		static Dictionary<string, string> m_TextureMapKeys = new Dictionary<string, string>
+		static Dictionary<string, string> s_TextureMapKeys = new Dictionary<string, string>
 		{
 			{ "_MainTex", "map_Kd" },
 			{ "_MetallicGlossMap", "map_Pm" },
@@ -334,7 +334,7 @@ namespace UnityEditor.ProBuilder
 
 							string mtlKey = null;
 
-							if(m_TextureMapKeys.TryGetValue(texPropertyName, out mtlKey))
+							if(s_TextureMapKeys.TryGetValue(texPropertyName, out mtlKey))
 							{
 								Vector2 offset = mat.GetTextureOffset(texPropertyName);
 								Vector2 scale  = mat.GetTextureScale(texPropertyName);

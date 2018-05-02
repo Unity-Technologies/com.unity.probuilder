@@ -8,18 +8,18 @@ namespace UnityEditor.ProBuilder.UI
 	/// </summary>
 	static class EditorGUILayout
 	{
-		private static bool m_RowToggle = true;
-		private static readonly Color RowOddColor = new Color(.45f, .45f, .45f, .2f);
-		private static readonly Color RowEvenColor = new Color(.30f, .30f, .30f, .2f);
+		static bool s_RowToggle = true;
+		static readonly Color s_RowOddColor = new Color(.45f, .45f, .45f, .2f);
+		static readonly Color s_RowEvenColor = new Color(.30f, .30f, .30f, .2f);
 
 		public static void BeginRow(int index = -1)
 		{
 			if(index > -1)
-				m_RowToggle = index % 2 == 0;
+				s_RowToggle = index % 2 == 0;
 
-			EditorGUIUtility.PushBackgroundColor(m_RowToggle ? RowEvenColor : RowOddColor);
+			EditorGUIUtility.PushBackgroundColor(s_RowToggle ? s_RowEvenColor : s_RowOddColor);
 			GUILayout.BeginHorizontal(EditorStyles.rowStyle);
-			m_RowToggle = !m_RowToggle;
+			s_RowToggle = !s_RowToggle;
 			EditorGUIUtility.PopBackgroundColor();
 		}
 
@@ -28,10 +28,16 @@ namespace UnityEditor.ProBuilder.UI
 			GUILayout.EndHorizontal();
 		}
 
-		/**
-		 *	An automatically laid out toolbar that returns the index of the selected button. Optionally allows no selection.
-		 */
-		public static int Toolbar(int index, GUIContent[] content, GUIStyle style, bool allowNoSelection = false, params GUILayoutOption[] addlParams)
+        /// <summary>
+        /// An automatically laid out toolbar that returns the index of the selected button. Optionally allows no selection.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="content"></param>
+        /// <param name="style"></param>
+        /// <param name="allowNoSelection"></param>
+        /// <param name="addlParams"></param>
+        /// <returns></returns>
+        public static int Toolbar(int index, GUIContent[] content, GUIStyle style, bool allowNoSelection = false, params GUILayoutOption[] addlParams)
 		{
 			return Toolbar(index, content, style, style, style, allowNoSelection, addlParams);
 		}

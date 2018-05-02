@@ -116,7 +116,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Record object prior to deletion.
 		 */
-		public static void DestroyImmediate(Object obj, string msg)
+		public static void DestroyImmediate(Object obj)
 		{
 			Undo.DestroyObjectImmediate(obj);
 		}

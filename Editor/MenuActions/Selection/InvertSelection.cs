@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder.Actions
 		(
 			"Invert Selection",
 			@"Selects the opposite of the current selection. Eg, all unselected elements will become selected, the current selection will be unselected.",
-			CMD_SUPER, CMD_SHIFT, 'I'
+			keyCommandSuper, keyCommandShift, 'I'
 		);
 
 		public override bool IsEnabled()

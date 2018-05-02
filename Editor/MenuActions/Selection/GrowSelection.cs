@@ -12,15 +12,15 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_Grow", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return m_Tooltip; } }
+		public override TooltipContent tooltip { get { return s_Tooltip; } }
 
-		static readonly TooltipContent m_Tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Grow Selection",
 			@"Adds adjacent elements to the current selection, optionally testing to see if they are within a specified angle.
 
 Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.",
-			CMD_ALT, 'G'
+			keyCommandAlt, 'G'
 		);
 
 		public override bool IsEnabled()

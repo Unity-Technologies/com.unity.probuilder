@@ -42,7 +42,7 @@ namespace UnityEditor.ProBuilder
 				for(int i = 0; i < selected.Length; i++)
 				{
 					if(selected[i] != null)
-						UndoUtility.DestroyImmediate(selected[i].gameObject, "Delete Merged Objects");
+						UndoUtility.DestroyImmediate(selected[i].gameObject);
 				}
 
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Merge Objects");
@@ -193,10 +193,12 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		/**
-		 *	Open the vertex coloring editor as stored by user prefs.
-		 */
-		public static ActionResult MenuOpenVertexColorsEditor2(ProBuilderMesh[] selection)
+        /// <summary>
+        /// Open the vertex coloring editor as stored by user prefs.
+        /// </summary>
+        /// <param name="selection"></param>
+        /// <returns></returns>
+        public static ActionResult MenuOpenVertexColorsEditor2()
 		{
 			switch( PreferencesInternal.GetEnum<VertexColorTool>(PreferenceKeys.pbVertexColorTool) )
 			{

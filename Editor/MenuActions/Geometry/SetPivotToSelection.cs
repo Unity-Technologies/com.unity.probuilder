@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder.Actions
 		(
 			"Set Pivot to Center of Selection",
 			@"Moves the pivot point of each mesh to the average of all selected elements positions.  This means the pivot point moves to where-ever the handle currently is.",
-			CMD_SUPER, 'J'
+			keyCommandSuper, 'J'
 		);
 
 		public override bool IsEnabled()

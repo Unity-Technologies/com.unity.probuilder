@@ -22,7 +22,7 @@ namespace UnityEditor.ProBuilder.Actions
 		(
 			"Subdivide Edges",
 			"Appends evenly spaced new vertices to the selected edges.",
-			CMD_ALT, 'S'
+			keyCommandAlt, 'S'
 		);
 
 		public override bool IsEnabled()

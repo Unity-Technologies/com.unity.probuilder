@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder.Actions
 		(
 			"Bridge Edges",
 			@"Add a new face connecting two edges.",
-			CMD_ALT, 'B'
+			keyCommandAlt, 'B'
 		);
 
 		public override bool IsEnabled()

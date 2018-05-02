@@ -11,15 +11,15 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_Loop", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return m_Tooltip; } }
+		public override TooltipContent tooltip { get { return s_Tooltip; } }
 		public override int toolbarPriority { get { return 1; } }
 		public override bool hasFileMenuEntry { get { return false; } }
 
-		private static readonly TooltipContent m_Tooltip = new TooltipContent
+		private static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Select Edge Loop",
 			"Selects a loop of connected edges.\n\n<b>Shortcut</b>: Double-Click on Edge",
-			CMD_ALT, 'L'
+			keyCommandAlt, 'L'
 		);
 
 		public override bool IsEnabled()

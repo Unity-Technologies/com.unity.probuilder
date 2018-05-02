@@ -20,7 +20,7 @@ namespace UnityEditor.ProBuilder
 	static class IconUtility
 	{
 		static Dictionary<string, Texture2D> s_Icons = new Dictionary<string, Texture2D>();
-		static string m_IconFolderPath = "Content/Icons/";
+		static string s_IconFolderPath = "Content/Icons/";
 
 		/// <summary>
 		/// Load an icon from the ProBuilder/Icons folder. IconName must *not* include the extension or `_Light` mode suffix.
@@ -51,7 +51,7 @@ namespace UnityEditor.ProBuilder
 					// if in light mode:
 					// - do one lap searching for light
 					// - if nothing found, next searching for default
-					string fullPath = string.Format("{0}{1}.png", m_IconFolderPath, i == 0 ? name : iconName);
+					string fullPath = string.Format("{0}{1}.png", s_IconFolderPath, i == 0 ? name : iconName);
 					icon = FileUtil.LoadInternalAsset<Texture2D>(fullPath);
 				} while (!isDarkSkin && ++i < 2 && icon == null);
 

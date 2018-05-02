@@ -46,15 +46,17 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// The title to show in the tooltip window.
 		/// </summary>
-		public string title;
+		public string title { get; set; }
+
 		/// <summary>
 		/// A brief summary of what this menu action does.
 		/// </summary>
-		public string summary;
+		public string summary { get; set; }
+
 		/// <summary>
 		/// The shortcut assigned to this menu item.
 		/// </summary>
-		public string shortcut;
+		public string shortcut { get; set; }
 
 		internal static TooltipContent TempContent = new TooltipContent("", "");
 
@@ -166,14 +168,14 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		public bool Equals(TooltipContent tooltip)
+		public bool Equals(TooltipContent other)
 		{
-			return tooltip.title.Equals(this.title);
+			return other != null && other.title != null && other.title.Equals(this.title);
 		}
 
-		public override bool Equals(System.Object b)
+		public override bool Equals(System.Object obj)
 		{
-			return b is TooltipContent && ((TooltipContent)b).title.Equals(title);
+			return obj is TooltipContent && ((TooltipContent)obj).title.Equals(title);
 		}
 
 		public override int GetHashCode()

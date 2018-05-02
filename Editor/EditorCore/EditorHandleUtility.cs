@@ -39,56 +39,56 @@ namespace UnityEditor.ProBuilder
 		static readonly Color k_HandleColorRotate = new Color(0f, .7f, 0f, .8f);
 		static readonly Color k_HandleColorScale = new Color(.7f, .7f, .7f, .8f);
 
-		static Material m_HandleMaterial = null;
+		static Material s_HandleMaterial = null;
 
 		public static Material handleMaterial
 		{
 			get
 			{
-				if(m_HandleMaterial == null)
-					m_HandleMaterial = (Material) EditorGUIUtility.LoadRequired("SceneView/2DHandleLines.mat");
+				if(s_HandleMaterial == null)
+					s_HandleMaterial = (Material) EditorGUIUtility.LoadRequired("SceneView/2DHandleLines.mat");
 
-				return m_HandleMaterial;
+				return s_HandleMaterial;
 			}
 		}
 
-		static Material m_UnlitVertexColorMaterial = null;
+		static Material s_UnlitVertexColorMaterial = null;
 
 		public static Material unlitVertexColorMaterial
 		{
 			get
 			{
-				if (m_UnlitVertexColorMaterial == null)
+				if (s_UnlitVertexColorMaterial == null)
 				{
 					Shader unlitVertexColorShader = Shader.Find("ProBuilder/UnlitVertexColor");
 
 					if (unlitVertexColorShader == null)
 					{
-						m_UnlitVertexColorMaterial = handleMaterial;
+						s_UnlitVertexColorMaterial = handleMaterial;
 					}
 					else
 					{
-						m_UnlitVertexColorMaterial = new Material(unlitVertexColorShader);
-						m_UnlitVertexColorMaterial.hideFlags = HideFlags.HideAndDontSave;
+						s_UnlitVertexColorMaterial = new Material(unlitVertexColorShader);
+						s_UnlitVertexColorMaterial.hideFlags = HideFlags.HideAndDontSave;
 					}
 				}
 
-				return m_UnlitVertexColorMaterial;
+				return s_UnlitVertexColorMaterial;
 			}
 		}
 
 
-		static Material m_EdgeMaterial = null;
+		static Material s_EdgeMaterial = null;
 
 		public static Material edgeMaterial
 		{
 			get
 			{
-				if(m_EdgeMaterial == null)
-					m_EdgeMaterial = (Material) EditorGUIUtility.LoadRequired("SceneView/HandleLines.mat");
+				if(s_EdgeMaterial == null)
+					s_EdgeMaterial = (Material) EditorGUIUtility.LoadRequired("SceneView/HandleLines.mat");
 					// _edgeMaterial = (Material)EditorGUIUtility.LoadRequired("SceneView/VertexSelectionMaterial.mat");
 
-				return m_EdgeMaterial;
+				return s_EdgeMaterial;
 			}
 		}
 

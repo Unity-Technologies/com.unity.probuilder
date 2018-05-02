@@ -11,10 +11,10 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	public class MenuOption : EditorWindow
 	{
-		[SerializeField] MenuAction.SettingsDelegate onSettingsGUI = null;
-		[SerializeField] MenuAction.SettingsDelegate onSettingsDisable = null;
+        System.Action onSettingsGUI = null;
+        System.Action onSettingsDisable = null;
 
-		internal static MenuOption Show(MenuAction.SettingsDelegate onSettingsGUI, MenuAction.SettingsDelegate onSettingsEnable, MenuAction.SettingsDelegate onSettingsDisable)
+		internal static MenuOption Show(System.Action onSettingsGUI, System.Action onSettingsEnable, System.Action onSettingsDisable)
 		{
 			MenuOption win = EditorWindow.GetWindow<MenuOption>(true, "Options", true);
 			win.hideFlags = HideFlags.HideAndDontSave;

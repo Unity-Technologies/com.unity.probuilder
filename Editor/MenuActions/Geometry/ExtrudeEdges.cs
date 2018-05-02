@@ -20,7 +20,7 @@ namespace UnityEditor.ProBuilder.Actions
 		(
 			"Extrude Edges",
 			@"Adds a new face extending from the currently selected edges.  Edges must have an open side to be extruded.",
-			CMD_SUPER, 'E'
+			keyCommandSuper, 'E'
 		);
 
 		public override bool IsEnabled()

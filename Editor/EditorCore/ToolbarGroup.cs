@@ -68,7 +68,7 @@ namespace UnityEditor.ProBuilder
 			return style;
 		}
 
-		private static Dictionary<string, GUIStyle> m_IconBackgroundStyles = new Dictionary<string, GUIStyle>();
+		private static Dictionary<string, GUIStyle> s_IconBackgroundStyles = new Dictionary<string, GUIStyle>();
 
 		/**
 		 * Where @group corresponds to:
@@ -83,7 +83,7 @@ namespace UnityEditor.ProBuilder
 
 			string groupKey = string.Format("{0}_{1}", group, isHorizontal ? "_horizontal" : "_vertical");
 
-			if(m_IconBackgroundStyles.TryGetValue(groupKey, out style))
+			if(s_IconBackgroundStyles.TryGetValue(groupKey, out style))
 				return style;
 
 			style = CreateBackgroundStyleTemplate();
@@ -95,7 +95,7 @@ namespace UnityEditor.ProBuilder
 			style.active.background = IconUtility.GetIcon(
 				string.Format("Toolbar/Background/{0}_Pressed_{1}", group, isHorizontal ? "Horizontal" : "Vertical"));
 
-			m_IconBackgroundStyles.Add(groupKey, style);
+			s_IconBackgroundStyles.Add(groupKey, style);
 			style.margin = isHorizontal ? new RectOffset(4, 4, 4, 5) : new RectOffset(4, 3, 4, 4);
 			style.padding = isHorizontal ? new RectOffset(3, 3, 6, 3) : new RectOffset(6, 3, 3, 3);
 

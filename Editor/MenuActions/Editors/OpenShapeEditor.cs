@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder.Actions
 		(
 			"New Shape Tool",
 			"Opens the Shape Editor window.\n\nThe Shape Editor is a window that allows you to interactively create new 3d primitves.",
-			CMD_SUPER, CMD_SHIFT, 'K'
+			keyCommandSuper, keyCommandShift, 'K'
 		);
 
 		public override bool IsEnabled()

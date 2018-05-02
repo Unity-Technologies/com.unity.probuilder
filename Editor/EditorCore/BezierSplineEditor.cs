@@ -8,9 +8,9 @@ namespace UnityEditor.ProBuilder
 	[CustomEditor(typeof(BezierShape))]
 	class BezierSplineEditor : Editor
 	{
-		static GUIContent[] m_TangentModeIcons = new GUIContent[3];
+		static GUIContent[] s_TangentModeIcons = new GUIContent[3];
 
-		const float HANDLE_SIZE = .05f;
+		const float k_HandleSize = .05f;
 
 		static Vector3 Vector3_Zero = new Vector3(0f, 0f, 0f);
 		static Vector3 Vector3_Forward = new Vector3(0f, 0f, 1f);
@@ -19,7 +19,7 @@ namespace UnityEditor.ProBuilder
 		static Color bezierPositionHandleColor = new Color(.01f, .8f, .99f, 1f);
 		static Color bezierTangentHandleColor = new Color(.6f, .6f, .6f, .8f);
 
-		static bool m_SnapTangents = true;
+		static bool s_SnapTangents = true;
 
 		[SerializeField]
 		BezierHandle m_currentHandle = new BezierHandle(-1, false);
@@ -168,9 +168,9 @@ namespace UnityEditor.ProBuilder
 
 			Undo.undoRedoPerformed += this.UndoRedoPerformed;
 
-			m_TangentModeIcons[0] = new GUIContent(IconUtility.GetIcon("Toolbar/Bezier_Free"), "Tangent Mode: Free");
-			m_TangentModeIcons[1] = new GUIContent(IconUtility.GetIcon("Toolbar/Bezier_Aligned"), "Tangent Mode: Aligned");
-			m_TangentModeIcons[2] = new GUIContent(IconUtility.GetIcon("Toolbar/Bezier_Mirrored"), "Tangent Mode: Mirrored");
+			s_TangentModeIcons[0] = new GUIContent(IconUtility.GetIcon("Toolbar/Bezier_Free"), "Tangent Mode: Free");
+			s_TangentModeIcons[1] = new GUIContent(IconUtility.GetIcon("Toolbar/Bezier_Aligned"), "Tangent Mode: Aligned");
+			s_TangentModeIcons[2] = new GUIContent(IconUtility.GetIcon("Toolbar/Bezier_Mirrored"), "Tangent Mode: Mirrored");
 
 			if(m_Target != null)
 				SetIsEditing(m_Target.isEditing);
@@ -333,7 +333,7 @@ namespace UnityEditor.ProBuilder
 
 			GUILayout.BeginHorizontal();
 				GUILayout.FlexibleSpace();
-					m_TangentMode = (BezierTangentMode) GUILayout.Toolbar((int)m_TangentMode, m_TangentModeIcons, commandStyle);
+					m_TangentMode = (BezierTangentMode) GUILayout.Toolbar((int)m_TangentMode, s_TangentModeIcons, commandStyle);
 				GUILayout.FlexibleSpace();
 			GUILayout.EndHorizontal();
 
@@ -347,7 +347,7 @@ namespace UnityEditor.ProBuilder
 				UpdateMesh(true);
 
 			if( ProGridsInterface.GetProGridsType() != null )
-				m_SnapTangents = EditorGUILayout.Toggle("Snap Tangents", m_SnapTangents);
+				s_SnapTangents = EditorGUILayout.Toggle("Snap Tangents", s_SnapTangents);
 		}
 
 		void UpdateMesh(bool vertexCountChanged)
@@ -483,7 +483,7 @@ namespace UnityEditor.ProBuilder
 								if(!m_IsMoving)
 									OnBeginVertexModification();
 
-								if(m_SnapTangents)
+								if(s_SnapTangents)
 									point.tangentIn = ProGridsInterface.ProGridsSnap(point.tangentIn);
 
 								point.EnforceTangentMode(BezierTangentDirection.In, m_TangentMode);
@@ -501,7 +501,7 @@ namespace UnityEditor.ProBuilder
 								if(!m_IsMoving)
 									OnBeginVertexModification();
 
-								if(m_SnapTangents)
+								if(s_SnapTangents)
 									point.tangentOut = ProGridsInterface.ProGridsSnap(point.tangentOut);
 
 								point.EnforceTangentMode(BezierTangentDirection.Out, m_TangentMode);
@@ -529,7 +529,7 @@ namespace UnityEditor.ProBuilder
 				BezierPoint point = m_Points[index];
 
 				// Position Handle
-				float size = HandleUtility.GetHandleSize(point.position) * HANDLE_SIZE;
+				float size = HandleUtility.GetHandleSize(point.position) * k_HandleSize;
 				Handles.color = bezierPositionHandleColor;
 
 				if(m_currentHandle == index && !m_currentHandle.isTangent)
@@ -562,7 +562,7 @@ namespace UnityEditor.ProBuilder
 				// Tangent In Handle
 				if(m_CloseLoop || index > 0)
 				{
-					size = HandleUtility.GetHandleSize(point.tangentIn) * HANDLE_SIZE;
+					size = HandleUtility.GetHandleSize(point.tangentIn) * k_HandleSize;
 					Handles.DrawLine(point.position, point.tangentIn);
 
 					if(index == m_currentHandle && m_currentHandle.isTangent && m_currentHandle.tangent == BezierTangentDirection.In)
@@ -585,7 +585,7 @@ namespace UnityEditor.ProBuilder
 						{
 							if(!m_IsMoving)
 								OnBeginVertexModification();
-							point.tangentIn = m_SnapTangents ? ProGridsInterface.ProGridsSnap(prev) : prev;
+							point.tangentIn = s_SnapTangents ? ProGridsInterface.ProGridsSnap(prev) : prev;
 							point.EnforceTangentMode(BezierTangentDirection.In, m_TangentMode);
 						}
 					}
@@ -594,7 +594,7 @@ namespace UnityEditor.ProBuilder
 				// Tangent Out
 				if(m_CloseLoop || index < count - 1)
 				{
-					size = HandleUtility.GetHandleSize(point.tangentOut) * HANDLE_SIZE;
+					size = HandleUtility.GetHandleSize(point.tangentOut) * k_HandleSize;
 					Handles.DrawLine(point.position, point.tangentOut);
 
 					if(index == m_currentHandle && m_currentHandle.isTangent && m_currentHandle.tangent == BezierTangentDirection.Out)
@@ -617,7 +617,7 @@ namespace UnityEditor.ProBuilder
 						{
 							if(!m_IsMoving)
 								OnBeginVertexModification();
-							point.tangentOut = m_SnapTangents ? ProGridsInterface.ProGridsSnap(prev) : prev;
+							point.tangentOut = s_SnapTangents ? ProGridsInterface.ProGridsSnap(prev) : prev;
 							point.EnforceTangentMode(BezierTangentDirection.Out, m_TangentMode);
 						}
 					}

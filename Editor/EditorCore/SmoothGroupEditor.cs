@@ -136,68 +136,68 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		private static Material m_FaceMaterial = null;
+		private static Material s_FaceMaterial = null;
 		private static Material smoothPreviewMaterial
 		{
 			get
 			{
-				if (m_FaceMaterial == null)
+				if (s_FaceMaterial == null)
 				{
-					m_FaceMaterial = new Material(Shader.Find("Hidden/ProBuilder/SmoothingPreview"));
-					m_FaceMaterial.hideFlags = HideFlags.HideAndDontSave;
+					s_FaceMaterial = new Material(Shader.Find("Hidden/ProBuilder/SmoothingPreview"));
+					s_FaceMaterial.hideFlags = HideFlags.HideAndDontSave;
 				}
 
-				return m_FaceMaterial;
+				return s_FaceMaterial;
 			}
 		}
 
-		private static Material m_NormalPreviewMaterial = null;
+		private static Material s_NormalPreviewMaterial = null;
 		private static Material normalPreviewMaterial
 		{
 			get
 			{
-				if (m_NormalPreviewMaterial == null)
-					m_NormalPreviewMaterial = new Material(Shader.Find("Hidden/ProBuilder/NormalPreview"));
-				return m_NormalPreviewMaterial;
+				if (s_NormalPreviewMaterial == null)
+					s_NormalPreviewMaterial = new Material(Shader.Find("Hidden/ProBuilder/NormalPreview"));
+				return s_NormalPreviewMaterial;
 			}
 		}
 
-		private static GUIStyle m_GroupButtonStyle = null;
-		private static GUIStyle m_GroupButtonSelectedStyle = null;
-		private static GUIStyle m_GroupButtonInUseStyle = null;
-		private static GUIStyle m_GroupButtonMixedSelectionStyle = null;
-		private static GUIStyle m_ColorKeyStyle = null;
-		private static GUIStyle m_WordWrappedRichText = null;
+		private static GUIStyle s_GroupButtonStyle = null;
+		private static GUIStyle s_GroupButtonSelectedStyle = null;
+		private static GUIStyle s_GroupButtonInUseStyle = null;
+		private static GUIStyle s_GroupButtonMixedSelectionStyle = null;
+		private static GUIStyle s_ColorKeyStyle = null;
+		private static GUIStyle s_WordWrappedRichText = null;
 
 		private static GUIStyle groupButtonStyle
 		{
 			get
 			{
-				if (m_GroupButtonStyle == null)
+				if (s_GroupButtonStyle == null)
 				{
-					m_GroupButtonStyle = new GUIStyle(GUI.skin.GetStyle("Button"));
-					m_GroupButtonStyle.normal.background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Normal");
-					m_GroupButtonStyle.hover.background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Hover");
-					m_GroupButtonStyle.active.background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Pressed");
+					s_GroupButtonStyle = new GUIStyle(GUI.skin.GetStyle("Button"));
+					s_GroupButtonStyle.normal.background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Normal");
+					s_GroupButtonStyle.hover.background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Hover");
+					s_GroupButtonStyle.active.background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Pressed");
 					Font asap = FileUtil.LoadInternalAsset<Font>("About/Font/Asap-Regular.otf");
 					if (asap != null)
 					{
-						m_GroupButtonStyle.font = asap;
-						m_GroupButtonStyle.fontSize = 12;
-						m_GroupButtonStyle.padding = new RectOffset(2, 2, 2, 2);
+						s_GroupButtonStyle.font = asap;
+						s_GroupButtonStyle.fontSize = 12;
+						s_GroupButtonStyle.padding = new RectOffset(2, 2, 2, 2);
 					}
-					m_GroupButtonStyle.border = new RectOffset(3, 3, 3, 3);
-					m_GroupButtonStyle.margin = new RectOffset(4, 4, 4, 6);
-					m_GroupButtonStyle.alignment = TextAnchor.MiddleCenter;
-					m_GroupButtonStyle.fixedWidth = IconWidth;
-					m_GroupButtonStyle.fixedHeight = IconHeight;
+					s_GroupButtonStyle.border = new RectOffset(3, 3, 3, 3);
+					s_GroupButtonStyle.margin = new RectOffset(4, 4, 4, 6);
+					s_GroupButtonStyle.alignment = TextAnchor.MiddleCenter;
+					s_GroupButtonStyle.fixedWidth = IconWidth;
+					s_GroupButtonStyle.fixedHeight = IconHeight;
 
 					// todo Move text & background colors to a global settings file
-					m_GroupButtonStyle.normal.textColor = EditorGUIUtility.isProSkin ? new Color(.9f, .9f, .9f) : new Color(.3f, .3f, .3f);
-					m_GroupButtonStyle.hover.textColor = EditorGUIUtility.isProSkin ? new Color(.9f, .9f, .9f) : new Color(.3f, .3f, .3f);
-					m_GroupButtonStyle.active.textColor = EditorGUIUtility.isProSkin ? new Color(.9f, .9f, .9f) : new Color(.3f, .3f, .3f);
+					s_GroupButtonStyle.normal.textColor = EditorGUIUtility.isProSkin ? new Color(.9f, .9f, .9f) : new Color(.3f, .3f, .3f);
+					s_GroupButtonStyle.hover.textColor = EditorGUIUtility.isProSkin ? new Color(.9f, .9f, .9f) : new Color(.3f, .3f, .3f);
+					s_GroupButtonStyle.active.textColor = EditorGUIUtility.isProSkin ? new Color(.9f, .9f, .9f) : new Color(.3f, .3f, .3f);
 				}
-				return m_GroupButtonStyle;
+				return s_GroupButtonStyle;
 			}
 		}
 
@@ -205,18 +205,18 @@ namespace UnityEditor.ProBuilder
 		{
 			get
 			{
-				if (m_GroupButtonSelectedStyle == null)
+				if (s_GroupButtonSelectedStyle == null)
 				{
-					m_GroupButtonSelectedStyle = new GUIStyle(groupButtonStyle);
-					m_GroupButtonSelectedStyle.normal.background =
+					s_GroupButtonSelectedStyle = new GUIStyle(groupButtonStyle);
+					s_GroupButtonSelectedStyle.normal.background =
 						IconUtility.GetIcon("Toolbar/Background/RoundedRect_Normal_Blue");
-					m_GroupButtonSelectedStyle.hover.background =
+					s_GroupButtonSelectedStyle.hover.background =
 						IconUtility.GetIcon("Toolbar/Background/RoundedRect_Hover_Blue");
-					m_GroupButtonSelectedStyle.active.background =
+					s_GroupButtonSelectedStyle.active.background =
 						IconUtility.GetIcon("Toolbar/Background/RoundedRect_Pressed_Blue");
 				}
 
-				return m_GroupButtonSelectedStyle;
+				return s_GroupButtonSelectedStyle;
 			}
 		}
 
@@ -224,18 +224,18 @@ namespace UnityEditor.ProBuilder
 		{
 			get
 			{
-				if (m_GroupButtonInUseStyle == null)
+				if (s_GroupButtonInUseStyle == null)
 				{
-					m_GroupButtonInUseStyle = new GUIStyle(groupButtonStyle);
-					m_GroupButtonInUseStyle.normal.background =
+					s_GroupButtonInUseStyle = new GUIStyle(groupButtonStyle);
+					s_GroupButtonInUseStyle.normal.background =
 						IconUtility.GetIcon("Toolbar/Background/RoundedRect_Normal_BlueSteel");
-					m_GroupButtonInUseStyle.hover.background =
+					s_GroupButtonInUseStyle.hover.background =
 						IconUtility.GetIcon("Toolbar/Background/RoundedRect_Hover_BlueSteel");
-					m_GroupButtonInUseStyle.active.background =
+					s_GroupButtonInUseStyle.active.background =
 						IconUtility.GetIcon("Toolbar/Background/RoundedRect_Pressed_BlueSteel");
 				}
 
-				return m_GroupButtonInUseStyle;
+				return s_GroupButtonInUseStyle;
 			}
 		}
 
@@ -243,18 +243,18 @@ namespace UnityEditor.ProBuilder
 		{
 			get
 			{
-				if (m_GroupButtonMixedSelectionStyle == null)
+				if (s_GroupButtonMixedSelectionStyle == null)
 				{
-					m_GroupButtonMixedSelectionStyle = new GUIStyle(groupButtonStyle);
-					m_GroupButtonMixedSelectionStyle.normal.background =
+					s_GroupButtonMixedSelectionStyle = new GUIStyle(groupButtonStyle);
+					s_GroupButtonMixedSelectionStyle.normal.background =
 						IconUtility.GetIcon("Toolbar/Background/RoundedRect_Normal_Orange");
-					m_GroupButtonMixedSelectionStyle.hover.background =
+					s_GroupButtonMixedSelectionStyle.hover.background =
 						IconUtility.GetIcon("Toolbar/Background/RoundedRect_Hover_Orange");
-					m_GroupButtonMixedSelectionStyle.active.background =
+					s_GroupButtonMixedSelectionStyle.active.background =
 						IconUtility.GetIcon("Toolbar/Background/RoundedRect_Pressed_Orange");
 				}
 
-				return m_GroupButtonMixedSelectionStyle;
+				return s_GroupButtonMixedSelectionStyle;
 			}
 		}
 
@@ -262,15 +262,15 @@ namespace UnityEditor.ProBuilder
 		{
 			get
 			{
-				if (m_ColorKeyStyle == null)
+				if (s_ColorKeyStyle == null)
 				{
-					m_ColorKeyStyle = new GUIStyle(groupButtonStyle);
-					m_ColorKeyStyle.fixedWidth = IconWidth;
-					m_ColorKeyStyle.fixedHeight = 3;
-					m_ColorKeyStyle.padding = new RectOffset(4, 4, 0, 4);
-					m_ColorKeyStyle.normal.background = EditorGUIUtility.whiteTexture;
+					s_ColorKeyStyle = new GUIStyle(groupButtonStyle);
+					s_ColorKeyStyle.fixedWidth = IconWidth;
+					s_ColorKeyStyle.fixedHeight = 3;
+					s_ColorKeyStyle.padding = new RectOffset(4, 4, 0, 4);
+					s_ColorKeyStyle.normal.background = EditorGUIUtility.whiteTexture;
 				}
-				return m_ColorKeyStyle;
+				return s_ColorKeyStyle;
 			}
 		}
 
@@ -278,34 +278,34 @@ namespace UnityEditor.ProBuilder
 		{
 			get
 			{
-				if (m_WordWrappedRichText == null)
+				if (s_WordWrappedRichText == null)
 				{
-					m_WordWrappedRichText = new GUIStyle(EditorStyles.wordWrappedLabel);
-					m_WordWrappedRichText.richText = true;
-					m_WordWrappedRichText.alignment = TextAnchor.LowerLeft;
+					s_WordWrappedRichText = new GUIStyle(EditorStyles.wordWrappedLabel);
+					s_WordWrappedRichText.richText = true;
+					s_WordWrappedRichText.alignment = TextAnchor.LowerLeft;
 				}
-				return m_WordWrappedRichText;
+				return s_WordWrappedRichText;
 			}
 		}
 
-		private const int IconWidth = 24;
-		private const int IconHeight = 24;
+		const int IconWidth = 24;
+		const int IconHeight = 24;
 
-		private GUIContent m_GroupKeyContent =
+		GUIContent m_GroupKeyContent =
 			new GUIContent("21", "Smoothing Group.\n\nRight Click to Select all faces matching this group.");
-		private Vector2 m_Scroll = Vector2.zero;
-		private GUIContent m_HelpIcon = null;
-		private GUIContent m_BreakSmoothingContent = null;
-		private GUIContent m_SelectFacesWithSmoothGroupSelectionContent = null;
-		private Dictionary<ProBuilderMesh, SmoothGroupData> m_SmoothGroups = new Dictionary<ProBuilderMesh, SmoothGroupData>();
-		private static bool m_ShowPreview = false;
-		private static bool m_ShowNormals = false;
-		private static bool m_IsMovingVertices = false;
-		private static bool m_ShowHelp = false;
-		private static float m_NormalsSize = 0.1f;
-		private static float m_PreviewOpacity = .5f;
-		private static bool m_PreviewDither = false;
-		private static bool m_ShowSettings = false;
+		Vector2 m_Scroll = Vector2.zero;
+		GUIContent m_HelpIcon = null;
+		GUIContent m_BreakSmoothingContent = null;
+		GUIContent m_SelectFacesWithSmoothGroupSelectionContent = null;
+		Dictionary<ProBuilderMesh, SmoothGroupData> m_SmoothGroups = new Dictionary<ProBuilderMesh, SmoothGroupData>();
+		static bool s_ShowPreview = false;
+		static bool s_ShowNormals = false;
+		static bool s_IsMovingVertices = false;
+		static bool s_ShowHelp = false;
+		static float s_NormalsSize = 0.1f;
+		static float s_PreviewOpacity = .5f;
+		static bool s_PreviewDither = false;
+		static bool s_ShowSettings = false;
 
 		public static void MenuOpenSmoothGroupEditor()
 		{
@@ -325,15 +325,15 @@ namespace UnityEditor.ProBuilder
 			Selection.selectionChanged += OnSelectionChanged;
 			Undo.undoRedoPerformed += OnSelectionChanged;
 			ProBuilderMesh.onElementSelectionChanged += OnElementSelectionChanged;
-			ProBuilderEditor.OnVertexMovementBegin += OnBeginVertexMovement;
-			ProBuilderEditor.OnVertexMovementFinish += OnFinishVertexMovement;
+			ProBuilderEditor.onVertexMovementBegin += OnBeginVertexMovement;
+			ProBuilderEditor.onVertexMovementFinish += OnFinishVertexMovement;
 			this.autoRepaintOnSceneChange = true;
 			m_HelpIcon = new GUIContent(IconUtility.GetIcon("Toolbar/Help"), "Open Documentation");
-			m_ShowPreview = PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_ShowPreview", false);
-			m_ShowNormals = PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_DrawNormals", false);
-			m_NormalsSize = PreferencesInternal.GetFloat("pb_SmoothingGroupEditor::m_NormalsSize", .1f);
-			m_PreviewOpacity = PreferencesInternal.GetFloat("pb_SmoothingGroupEditor::m_PreviewOpacity", .5f);
-			m_PreviewDither = PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_PreviewDither", false);
+			s_ShowPreview = PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_ShowPreview", false);
+			s_ShowNormals = PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_DrawNormals", false);
+			s_NormalsSize = PreferencesInternal.GetFloat("pb_SmoothingGroupEditor::m_NormalsSize", .1f);
+			s_PreviewOpacity = PreferencesInternal.GetFloat("pb_SmoothingGroupEditor::m_PreviewOpacity", .5f);
+			s_PreviewDither = PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_PreviewDither", false);
 			m_BreakSmoothingContent = new GUIContent(IconUtility.GetIcon("Toolbar/Face_BreakSmoothing"),
 				"Clear the selected faces of their smoothing groups");
 			m_SelectFacesWithSmoothGroupSelectionContent = new GUIContent(IconUtility.GetIcon("Toolbar/Selection_SelectBySmoothingGroup"),
@@ -358,12 +358,12 @@ namespace UnityEditor.ProBuilder
 
 		private void OnBeginVertexMovement(ProBuilderMesh[] selection)
 		{
-			m_IsMovingVertices = true;
+			s_IsMovingVertices = true;
 		}
 
 		private void OnFinishVertexMovement(ProBuilderMesh[] selection)
 		{
-			m_IsMovingVertices = false;
+			s_IsMovingVertices = false;
 			OnSelectionChanged();
 		}
 
@@ -411,29 +411,29 @@ namespace UnityEditor.ProBuilder
 			GUILayout.BeginHorizontal(EditorStyles.toolbar);
 
 			if (GUILayout.Button("Settings",
-				m_ShowSettings ? UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
-				m_ShowSettings = !m_ShowSettings;
+				s_ShowSettings ? UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
+				s_ShowSettings = !s_ShowSettings;
 
 			if (GUILayout.Button("Preview",
-				m_ShowPreview ? UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
+				s_ShowPreview ? UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
 			{
-				m_ShowPreview = !m_ShowPreview;
-				PreferencesInternal.SetBool("pb_SmoothingGroupEditor::m_ShowPreview", m_ShowPreview);
+				s_ShowPreview = !s_ShowPreview;
+				PreferencesInternal.SetBool("pb_SmoothingGroupEditor::m_ShowPreview", s_ShowPreview);
 			}
 
 			if (GUILayout.Button("Normals",
-				m_ShowNormals ? UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
+				s_ShowNormals ? UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
 			{
-				m_ShowNormals = !m_ShowNormals;
-				PreferencesInternal.SetBool("pb_SmoothingGroupEditor::m_DrawNormals", m_ShowNormals);
+				s_ShowNormals = !s_ShowNormals;
+				PreferencesInternal.SetBool("pb_SmoothingGroupEditor::m_DrawNormals", s_ShowNormals);
 			}
 
-			if (m_ShowNormals)
+			if (s_ShowNormals)
 			{
 				EditorGUI.BeginChangeCheck();
 
-				m_NormalsSize = GUILayout.HorizontalSlider(
-					m_NormalsSize,
+				s_NormalsSize = GUILayout.HorizontalSlider(
+					s_NormalsSize,
 					.001f,
 					1f,
 					GUILayout.MinWidth(30f),
@@ -441,7 +441,7 @@ namespace UnityEditor.ProBuilder
 
 				if (EditorGUI.EndChangeCheck())
 				{
-					PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_NormalsSize", m_NormalsSize);
+					PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_NormalsSize", s_NormalsSize);
 					foreach (var kvp in m_SmoothGroups)
 						kvp.Value.RebuildNormalsMesh(kvp.Key);
 					SceneView.RepaintAll();
@@ -451,10 +451,10 @@ namespace UnityEditor.ProBuilder
 			GUILayout.FlexibleSpace();
 
 			if(GUILayout.Button(m_HelpIcon, UI.EditorStyles.toolbarHelpIcon))
-				m_ShowHelp = !m_ShowHelp;
+				s_ShowHelp = !s_ShowHelp;
 			GUILayout.EndHorizontal();
 
-			if (m_ShowSettings)
+			if (s_ShowSettings)
 			{
 				GUILayout.BeginVertical(UI.EditorStyles.settingsGroup);
 
@@ -462,15 +462,15 @@ namespace UnityEditor.ProBuilder
 
 				EditorGUI.BeginChangeCheck();
 
-				m_PreviewOpacity = EditorGUILayout.Slider("Preview Opacity", m_PreviewOpacity, .001f, 1f);
-				m_PreviewDither = EditorGUILayout.Toggle("Preview Dither", m_PreviewDither);
+				s_PreviewOpacity = EditorGUILayout.Slider("Preview Opacity", s_PreviewOpacity, .001f, 1f);
+				s_PreviewDither = EditorGUILayout.Toggle("Preview Dither", s_PreviewDither);
 
 				if (EditorGUI.EndChangeCheck())
 				{
-					PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_PreviewOpacity", m_PreviewOpacity);
-					PreferencesInternal.SetBool("pb_SmoothingGroupEditor::m_PreviewDither", m_PreviewDither);
-					smoothPreviewMaterial.SetFloat("_Opacity", m_PreviewOpacity);
-					smoothPreviewMaterial.SetFloat("_Dither", m_PreviewDither ? 1f : 0f);
+					PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_PreviewOpacity", s_PreviewOpacity);
+					PreferencesInternal.SetBool("pb_SmoothingGroupEditor::m_PreviewDither", s_PreviewDither);
+					smoothPreviewMaterial.SetFloat("_Opacity", s_PreviewOpacity);
+					smoothPreviewMaterial.SetFloat("_Dither", s_PreviewDither ? 1f : 0f);
 					SceneView.RepaintAll();
 				}
 
@@ -481,7 +481,7 @@ namespace UnityEditor.ProBuilder
 
 			m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
 
-			if (m_ShowHelp)
+			if (s_ShowHelp)
 			{
 				GUILayout.BeginVertical(UI.EditorStyles.settingsGroup);
 
@@ -577,7 +577,7 @@ namespace UnityEditor.ProBuilder
 								(isMixedSelection ? groupButtonMixedSelectionStyle : groupButtonSelectedStyle) :
 								data.groups.ContainsKey(i) ? groupButtonInUseStyle : groupButtonStyle;
 
-							if (m_ShowPreview && anySmoothGroups)
+							if (s_ShowPreview && anySmoothGroups)
 								GUILayout.BeginVertical(GUILayout.MaxWidth(IconWidth));
 
 							m_GroupKeyContent.text = i.ToString();
@@ -592,7 +592,7 @@ namespace UnityEditor.ProBuilder
 									SetGroup(pb, i);
 							}
 
-							if (m_ShowPreview && anySmoothGroups)
+							if (s_ShowPreview && anySmoothGroups)
 							{
 								GUI.backgroundColor = data.groupColors.ContainsKey(i) ? data.groupColors[i] : Color.clear;
 								GUILayout.Label("", colorKeyStyle);
@@ -635,12 +635,12 @@ namespace UnityEditor.ProBuilder
 
 			Event evt = Event.current;
 
-			if (!m_IsMovingVertices && evt.type == EventType.Repaint)
+			if (!s_IsMovingVertices && evt.type == EventType.Repaint)
 			{
 
 				foreach (var kvp in m_SmoothGroups)
 				{
-					if (m_ShowPreview)
+					if (s_ShowPreview)
 					{
 						Mesh m = kvp.Value.previewMesh;
 
@@ -651,14 +651,14 @@ namespace UnityEditor.ProBuilder
 						}
 					}
 
-					if (m_ShowNormals)
+					if (s_ShowNormals)
 					{
 						Mesh m = kvp.Value.normalsMesh;
 
 						if (m != null)
 						{
 							Transform trs = kvp.Key.transform;
-							normalPreviewMaterial.SetFloat("_Scale", m_NormalsSize * HandleUtility.GetHandleSize(trs.GetComponent<MeshRenderer>().bounds.center));
+							normalPreviewMaterial.SetFloat("_Scale", s_NormalsSize * HandleUtility.GetHandleSize(trs.GetComponent<MeshRenderer>().bounds.center));
 							normalPreviewMaterial.SetPass(0);
 							Graphics.DrawMeshNow(m, trs.localToWorldMatrix);
 						}
@@ -703,10 +703,10 @@ namespace UnityEditor.ProBuilder
 
 		private static Color32 GetDistinctColor(int index)
 		{
-			return m_KellysMaxContrastSet[index % m_KellysMaxContrastSet.Length];
+			return s_KellysMaxContrastSet[index % s_KellysMaxContrastSet.Length];
 		}
 
-		private static readonly Color32[] m_KellysMaxContrastSet = new Color32[]
+		private static readonly Color32[] s_KellysMaxContrastSet = new Color32[]
 		{
 			new Color32(230, 25, 75, 255), 		// Red
 			new Color32(60, 180, 75, 255), 		// Green

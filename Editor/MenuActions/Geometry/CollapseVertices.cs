@@ -20,7 +20,7 @@ namespace UnityEditor.ProBuilder.Actions
 		(
 			"Collapse Vertices",
 			@"Merge all selected vertices into a single vertex, centered at the average of all selected points.",
-			CMD_ALT, 'C'
+			keyCommandAlt, 'C'
 		);
 
 		public override bool IsEnabled()

@@ -13,7 +13,7 @@ namespace UnityEditor.ProBuilder
 		// Older versions of probuilder stored a fixed size array of colors in EditorPrefs.
 		const int k_EditorPrefsColorPaletteCount = 10;
 
-		static VertexColorPalette m_Instance = null;
+		static VertexColorPalette s_Instance = null;
 
 		[SerializeField]
 		ColorPalette m_ColorPalette = null;
@@ -65,7 +65,7 @@ namespace UnityEditor.ProBuilder
 		static ColorPalette GetLastUsedColorPalette()
 		{
 			// serialized copy?
-			ColorPalette palette = m_Instance != null ? m_Instance.m_ColorPalette : null;
+			ColorPalette palette = s_Instance != null ? s_Instance.m_ColorPalette : null;
 
 			if (palette != null)
 				return palette;
@@ -95,7 +95,7 @@ namespace UnityEditor.ProBuilder
 
 		void OnEnable()
 		{
-			m_Instance = this;
+			s_Instance = this;
 			m_ColorPalette = GetLastUsedColorPalette();
 		}
 

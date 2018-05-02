@@ -128,7 +128,7 @@ namespace UnityEditor.ProBuilder
 
 		internal static string[] FindAssets<T>(string pattern) where T : UnityEngine.Object
 		{
-			return AssetDatabase.FindAssets("t:" + typeof(T).ToString());
+			return AssetDatabase.FindAssets("t:" + typeof(T).ToString() + " " + pattern);
 		}
 
 		internal static T[] FindAndLoadAssets<T>() where T : UnityEngine.Object

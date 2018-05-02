@@ -19,7 +19,7 @@ namespace UnityEditor.ProBuilder.Actions
 		(
 			"Connect Edges",
 			"Inserts a new edge connecting the center points of all selected edges.  See also \"Subdivide.\"",
-			CMD_ALT, 'E'
+			keyCommandAlt, 'E'
 		);
 
 		public override bool IsEnabled()

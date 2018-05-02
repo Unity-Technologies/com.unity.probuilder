@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_ProBuilderize", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return m_Tooltip; } }
+		public override TooltipContent tooltip { get { return s_Tooltip; } }
 		public override bool isProOnly { get { return true; } }
 
 		private GUIContent m_QuadsTooltip = new GUIContent("Import Quads", "Create ProBuilder mesh using quads where " +
@@ -27,7 +27,7 @@ namespace UnityEditor.ProBuilder.Actions
 			"smoothing groups any adjacent faces with an adjoining angle difference of less than this value will be " +
 			"grouped together in a smoothing group.");
 
-		private static readonly TooltipContent m_Tooltip = new TooltipContent
+		private static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"ProBuilderize",
 			@"Creates ProBuilder-modifiable objects from meshes."

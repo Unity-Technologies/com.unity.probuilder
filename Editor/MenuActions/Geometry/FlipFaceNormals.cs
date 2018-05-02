@@ -17,7 +17,7 @@ namespace UnityEditor.ProBuilder.Actions
 		(
 			"Flip Face Normals",
 			@"Reverses the direction of all faces in selection.",
-			CMD_ALT, 'N'
+			keyCommandAlt, 'N'
 		);
 
 		public override bool IsEnabled()

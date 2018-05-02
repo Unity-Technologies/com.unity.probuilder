@@ -44,23 +44,26 @@ namespace UnityEditor.ProBuilder
 		/// This also sets the pb_Object to 'Dirty' so that changes are stored.
 		/// </summary>
 		/// <remarks>This is only applicable to Triangle meshes. Ie, Quad meshes are not affected by this function.</remarks>
-		/// <param name="InObject">The pb_Object component to be compiled.</param>
+		/// <param name="mesh">The pb_Object component to be compiled.</param>
 		/// <param name="forceRebuildUV2">If Auto UV2 is off this parameter can be used to force UV2s to be built.</param>
-		public static void Optimize(this ProBuilderMesh InObject, bool forceRebuildUV2 = false)
+		public static void Optimize(this ProBuilderMesh mesh, bool forceRebuildUV2 = false)
 		{
-			Mesh mesh = InObject.mesh;
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
 
-			if(mesh == null || mesh.vertexCount < 1)
+			Mesh umesh = mesh.mesh;
+
+			if(umesh == null || umesh.vertexCount < 1)
 				return;
 
 			bool skipMeshProcessing = false;
 
 			if (onCheckSkipMeshOptimization != null)
-				skipMeshProcessing = onCheckSkipMeshOptimization(InObject);
+				skipMeshProcessing = onCheckSkipMeshOptimization(mesh);
 
 			// @todo Support mesh compression for topologies other than Triangles.
-			for(int i = 0; !skipMeshProcessing && i < mesh.subMeshCount; i++)
-				if(mesh.GetTopology(i) != MeshTopology.Triangles)
+			for(int i = 0; !skipMeshProcessing && i < umesh.subMeshCount; i++)
+				if(umesh.GetTopology(i) != MeshTopology.Triangles)
 					skipMeshProcessing = true;
 
 			bool hasUv2 = false;
@@ -72,18 +75,18 @@ namespace UnityEditor.ProBuilder
 				// if not generating uv2, just collapse vertices.
 				if(!PreferencesInternal.GetBool(PreferenceKeys.pbDisableAutoUV2Generation) || forceRebuildUV2)
 				{
-					Vertex[] vertices = UnityEngine.ProBuilder.MeshUtility.GeneratePerTriangleMesh(mesh);
+					Vertex[] vertices = UnityEngine.ProBuilder.MeshUtility.GeneratePerTriangleMesh(umesh);
 
 					float time = Time.realtimeSinceStartup;
 
-					UnwrapParam unwrap = Lightmapping.GetUnwrapParam(InObject.unwrapParameters);
+					UnwrapParam unwrap = Lightmapping.GetUnwrapParam(mesh.unwrapParameters);
 
-					Vector2[] uv2 = Unwrapping.GeneratePerTriangleUV(mesh, unwrap);
+					Vector2[] uv2 = Unwrapping.GeneratePerTriangleUV(umesh, unwrap);
 
 					// If GenerateUV2() takes longer than 3 seconds (!), show a warning prompting user
 					// to disable auto-uv2 generation.
 					if( (Time.realtimeSinceStartup - time) > 3f )
-						Log.Warning(string.Format("Generate UV2 for \"{0}\" took {1} seconds!  You may want to consider disabling Auto-UV2 generation in the `Preferences > ProBuilder` tab.", InObject.name, (Time.realtimeSinceStartup - time).ToString("F2")));
+						Log.Warning(string.Format("Generate UV2 for \"{0}\" took {1} seconds!  You may want to consider disabling Auto-UV2 generation in the `Preferences > ProBuilder` tab.", mesh.name, (Time.realtimeSinceStartup - time).ToString("F2")));
 
 					if(uv2.Length == vertices.Length)
 					{
@@ -100,24 +103,24 @@ namespace UnityEditor.ProBuilder
 						Log.Warning("Generate UV2 failed - the returned size of UV2 array != mesh.vertexCount");
 					}
 
-					MeshCompiler.CollapseSharedVertices(mesh, vertices);
+					MeshCompiler.CollapseSharedVertices(umesh, vertices);
 				}
 				else
 				{
-					MeshCompiler.CollapseSharedVertices(mesh);
+					MeshCompiler.CollapseSharedVertices(umesh);
 				}
 			}
 
 			if(PreferencesInternal.GetBool(PreferenceKeys.pbManageLightmappingStaticFlag, false))
-				Lightmapping.SetLightmapStaticFlagEnabled(InObject, hasUv2);
+				Lightmapping.SetLightmapStaticFlagEnabled(mesh, hasUv2);
 
 			if(onMeshCompiled != null)
-				onMeshCompiled(InObject, mesh);
+				onMeshCompiled(mesh, umesh);
 
 			if(PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets))
-				TryCacheMesh(InObject);
+				TryCacheMesh(mesh);
 
-			UnityEditor.EditorUtility.SetDirty(InObject);
+			UnityEditor.EditorUtility.SetDirty(mesh);
 		}
 
 		internal static void TryCacheMesh(ProBuilderMesh pb)

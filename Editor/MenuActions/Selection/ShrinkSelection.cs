@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder.Actions
 		(
 			"Shrink Selection",
 			@"Removes elements on the edge of the current selection.",
-			CMD_ALT, CMD_SHIFT, 'G'
+			keyCommandAlt, keyCommandShift, 'G'
 		);
 
 		public override bool IsEnabled()

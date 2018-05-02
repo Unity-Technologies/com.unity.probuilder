@@ -19,7 +19,7 @@ namespace UnityEditor.ProBuilder.Actions
 		(
 			"Subdivide Faces",
 			@"Inserts a new vertex at the center of each selected face and creates a new edge from the center of each perimeter edge to the center vertex.",
-			CMD_ALT, 'S'
+			keyCommandAlt, 'S'
 		);
 
 		public override bool IsEnabled()
