@@ -114,6 +114,9 @@ namespace ProBuilder.EditorCore
 			bool flipNormals = polygon.flipNormals;
 			flipNormals = EditorGUILayout.Toggle("Flip Normals", flipNormals);
 
+			var mat = polygon.material;
+			mat = (Material) EditorGUILayout.ObjectField("Material", mat, typeof(Material), false);
+
 			if (EditorGUI.EndChangeCheck())
 			{
 				if (polygon.polyEditMode == pb_PolyShape.PolyEditMode.None)
@@ -131,6 +134,7 @@ namespace ProBuilder.EditorCore
 
 				polygon.extrude = extrude;
 				polygon.flipNormals = flipNormals;
+				polygon.material = mat;
 
 				RebuildPolyShapeMesh(polygon);
 			}
@@ -291,6 +295,11 @@ namespace ProBuilder.EditorCore
 				pb_Editor.Refresh();
 				return;
 			}
+
+			polygon.GetComponent<MeshRenderer>().sharedMaterial = polygon.material;
+
+			foreach (var face in polygon.GetComponent<pb_Object>().faces)
+				face.material = polygon.material;
 
 			if(vertexCountChanged)
 				polygon.mesh.Optimize();

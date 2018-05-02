@@ -26,6 +26,7 @@ namespace ProBuilder.Core
 		public PolyEditMode polyEditMode = PolyEditMode.None;
 		public bool flipNormals = false;
 		public bool isOnGrid = true;
+		public Material material;
 
 		public pb_Object mesh
 		{

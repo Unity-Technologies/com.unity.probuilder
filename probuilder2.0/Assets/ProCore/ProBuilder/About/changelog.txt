@@ -1,3 +1,13 @@
+# ProBuilder 3.0.7
+
+## Features
+
+- Add a material property to the Poly Shape component.
+
+## Bug Fixes
+
+- Poly Shape creation now respects the user-set default material.
+
 # ProBuilder 3.0.6
 
 ## Bug Fixes
