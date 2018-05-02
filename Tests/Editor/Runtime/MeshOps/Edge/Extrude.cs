@@ -25,7 +25,6 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Edge
 			{
 				int vertexCount = pb.vertexCount;
 				UnityEngine.ProBuilder.Edge[] edges = new UnityEngine.ProBuilder.Edge[1];
-				UnityEngine.ProBuilder.Edge[] extruded;
 				UnityEngine.ProBuilder.Face face = pb.facesInternal[m_Random.Next(0, pb.faceCount)];
 				edges[0] = face.edgesInternal[m_Random.Next(0, face.edgesInternal.Length)];
 				// as group, enable manifold extrude
@@ -51,7 +50,6 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Edge
 			{
 				int vertexCount = pb.vertexCount;
 				UnityEngine.ProBuilder.Edge[] edges = new UnityEngine.ProBuilder.Edge[pb.faceCount];
-				UnityEngine.ProBuilder.Edge[] extruded;
 				for (int i = 0; i < pb.faceCount; i++)
 					edges[i] = pb.facesInternal[i].edgesInternal[m_Random.Next(0, pb.facesInternal[i].edgesInternal.Length)];
 				// as group, enable manifold extrude

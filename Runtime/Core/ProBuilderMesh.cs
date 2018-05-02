@@ -648,7 +648,6 @@ namespace UnityEngine.ProBuilder
 			return selected;
 		}
 
-	    [Obsolete]
 	    internal Face[] selectedFacesInternal
 	    {
 		    get { return GetSelectedFaces(); }

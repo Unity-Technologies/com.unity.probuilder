@@ -367,7 +367,7 @@ namespace UnityEditor.ProBuilder
 				}
 				else
 				{
-					pb.ReverseWindingOrder(pb.selectedFacesInternal);
+					pb.ReverseWindingOrder(pb.GetSelectedFaces());
 					c += pb.selectedFaceCount;
 				}
 
@@ -407,7 +407,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				Face[] faces = perFace ? pb.selectedFacesInternal : pb.facesInternal;
+				Face[] faces = perFace ? pb.GetSelectedFaces() : pb.facesInternal;
 
 				if(faces == null)
 					continue;
@@ -492,13 +492,11 @@ namespace UnityEditor.ProBuilder
 				if((editor.selectionMode == SelectMode.Face || (!enforceCurrentSelectionMode && !success)) && pb.selectedFaceCount > 0)
 				{
 					extrudedFaceCount += pb.selectedFaceCount;
-
-					pb.Extrude(	pb.selectedFacesInternal,
+					var selectedFaces = pb.GetSelectedFaces();
+					pb.Extrude(	selectedFaces,
 								PreferencesInternal.GetEnum<ExtrudeMethod>(PreferenceKeys.pbExtrudeMethod),
 								PreferencesInternal.GetFloat(PreferenceKeys.pbExtrudeDistance));
-
-					pb.SetSelectedFaces(pb.selectedFacesInternal);
-
+					pb.SetSelectedFaces(selectedFaces);
 					pb.ToMesh();
 				}
 
@@ -660,7 +658,7 @@ namespace UnityEditor.ProBuilder
 
 					case SelectMode.Face:
 
-						Face[] selectedFaces = pb.selectedFacesInternal;
+						Face[] selectedFaces = pb.GetSelectedFaces();
 
 						HashSet<Face> sel;
 
@@ -1250,7 +1248,7 @@ namespace UnityEditor.ProBuilder
 
 					if(success)
 					{
-						int[] removed = pb.RemoveDegenerateTriangles();
+						pb.RemoveDegenerateTriangles();
 						pb.SetSelectedVertices(new int[] { newIndex });
 					}
 
@@ -1399,9 +1397,7 @@ namespace UnityEditor.ProBuilder
 
 				// Reattach detached face vertices (if any are to be had)
 				if(pb.selectedFacesInternal.Length > 0)
-				{
-					int[] welds = pb.WeldVertices( Face.AllTriangles(pb.selectedFacesInternal), Mathf.Epsilon);
-				}
+					pb.WeldVertices( Face.AllTriangles(pb.selectedFacesInternal), Mathf.Epsilon);
 
 				// And set the selected triangles to the newly split
 				List<int> newTriSelection = new List<int>(Face.AllTriangles(pb.selectedFacesInternal));
