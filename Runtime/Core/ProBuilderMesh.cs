@@ -656,7 +656,7 @@ namespace UnityEngine.ProBuilder
 			int len = m_selectedFaces.Length;
 			var selected = new Face[len];
 			for (var i = 0; i < len; i++)
-				selected[i] = m_Faces[i];
+				selected[i] = m_Faces[m_selectedFaces[i]];
 			return selected;
 		}
 

@@ -6,7 +6,7 @@ using UnityEditor;
 
 namespace UnityEditor.ProBuilder
 {
-	internal static class MeshHandles
+	static class MeshHandles
 	{
 		const string k_FaceShader = "Hidden/ProBuilder/FaceHighlight";
 
