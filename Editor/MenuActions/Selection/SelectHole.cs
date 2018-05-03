@@ -68,8 +68,8 @@ namespace UnityEditor.ProBuilder.Actions
 
 			foreach (ProBuilderMesh pb in MeshSelection.Top())
 			{
-				bool selectAll = pb.SelectedTriangles == null || pb.SelectedTriangles.Length < 1;
-				int[] indices = selectAll ? Face.AllTriangles(pb.facesInternal) : pb.SelectedTriangles;
+				bool selectAll = pb.selectedTriangles == null || pb.selectedTriangles.Length < 1;
+				int[] indices = selectAll ? Face.AllTriangles(pb.facesInternal) : pb.selectedTriangles;
 
 				List<List<Edge>> holes = AppendPolygon.FindHoles(pb, indices);
 

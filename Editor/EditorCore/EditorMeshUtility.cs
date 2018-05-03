@@ -9,19 +9,6 @@ using UnityEngine.ProBuilder;
 namespace UnityEditor.ProBuilder
 {
 	/// <summary>
-	/// Delegate to be raised when a ProBuilder component is compiled to a UnityEngine mesh.
-	/// </summary>
-	/// <param name="pb"></param>
-	/// <param name="mesh"></param>
-	public delegate void OnMeshCompiled(ProBuilderMesh pb, Mesh mesh);
-
-	/// <summary>
-	/// Delegate raised when a pb_Object is to be optimized (collapses coincident vertices). Return true to override the optimization step, false if ProBuilder should optimize the mesh internally.
-	/// </summary>
-	/// <param name="pb"></param>
-	public delegate bool SkipMeshOptimization(ProBuilderMesh pb);
-
-	/// <summary>
 	/// Mesh editing helper functions that are only available in the Editor.
 	/// </summary>
 	public static class EditorMeshUtility
@@ -32,12 +19,12 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Subscribe to this event to be notified when ProBuilder is going to optimize a mesh (collapsing coincident vertices to a single vertex). Return true to override this process, false to let ProBuilder optimize the mesh.
 		/// </summary>
-		public static event SkipMeshOptimization onCheckSkipMeshOptimization = null;
+		public static event Func<bool, ProBuilderMesh> onCheckSkipMeshOptimization = null;
 
 		/// <summary>
 		/// Callback raised when a pb_Object is built to Unity mesh.
 		/// </summary>
-		public static event OnMeshCompiled onMeshCompiled = null;
+		public static event Action<ProBuilderMesh, Mesh> onMeshCompiled = null;
 
 		/// <summary>
 		/// Optmizes the mesh geometry, and generates a UV2 channel (if automatic lightmap generation is enabled).\

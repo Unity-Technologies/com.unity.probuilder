@@ -199,7 +199,7 @@ namespace UnityEngine.ProBuilder.Test
 		/// <param name="expected"></param>
 		/// <param name="result"></param>
 		/// <returns></returns>
-		public static bool AssertAreEqual(Mesh expected, Mesh result)
+		public static bool AssertAreEqual(Mesh expected, Mesh result, string message = null)
 		{
 			int vertexCount = expected.vertexCount;
 			int subMeshCount = expected.subMeshCount;
@@ -214,7 +214,7 @@ namespace UnityEngine.ProBuilder.Test
 			{
 				if(!leftVertices[i].Equals(rightVertices[i]))
 					Debug.Log("Expected\n" + leftVertices[i].ToString("F5") + "\n---\nReceived:\n" + rightVertices[i].ToString("F5"));
-				Assert.AreEqual(leftVertices[i], rightVertices[i]);
+				Assert.AreEqual(leftVertices[i], rightVertices[i], message);
 			}
 
 			List<int> leftIndices = new List<int>();
@@ -231,7 +231,7 @@ namespace UnityEngine.ProBuilder.Test
 				result.GetIndices(rightIndices, i);
 
 				for(int n = 0; n < indexCount; n++)
-					Assert.AreEqual(leftIndices[n], rightIndices[n]);
+					Assert.AreEqual(leftIndices[n], rightIndices[n], message);
 			}
 
 			return true;

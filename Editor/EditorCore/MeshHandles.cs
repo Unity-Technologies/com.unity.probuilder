@@ -286,7 +286,7 @@ namespace UnityEditor.ProBuilder
 
 						for (int i = 0, c = selection.Length; i < c; i++)
 							s_ActiveRenderables.Add(geometryShadersSupported
-								? BuildVertexPoints(selection[i], selection[i].SelectedTriangles)
+								? BuildVertexPoints(selection[i], selection[i].selectedTriangles)
 								: BuildVertexMesh(selection[i], commonIndicesLookup[i]));
 						break;
 					}
@@ -332,7 +332,7 @@ namespace UnityEditor.ProBuilder
 				billboardCount = maxBillboardCount;
 
 			Vector3[] v = new Vector3[pb.sharedIndicesInternal.Length];
-			HashSet<int> selected = new HashSet<int>(IntArrayUtility.GetCommonIndices(lookup, pb.SelectedTriangles));
+			HashSet<int> selected = new HashSet<int>(IntArrayUtility.GetCommonIndices(lookup, pb.selectedTriangles));
 
 			for(int i = 0; i < billboardCount; i++)
 				v[i] = pb.positionsInternal[pb.sharedIndicesInternal[i][0]];

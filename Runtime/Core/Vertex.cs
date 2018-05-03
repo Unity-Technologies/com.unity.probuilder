@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Collections.ObjectModel;
 using System.Text;
+using UnityEngine.AI;
 
 namespace UnityEngine.ProBuilder
 {
@@ -129,7 +131,7 @@ namespace UnityEngine.ProBuilder
 			v.Add(b);
 			return v;
 		}
-          
+
 		/// <summary>
 		/// In-place addition.
 		/// </summary>
@@ -307,10 +309,9 @@ namespace UnityEngine.ProBuilder
 			Vector3[] positions = mesh.positionsInternal;
 			Color[] colors = mesh.colorsInternal;
 			Vector2[] uv0s = mesh.texturesInternal;
-
-			Vector3[] normals = mesh.mesh.normals;
-			Vector4[] tangents = mesh.mesh.tangents;
-			Vector2[] uv2s = mesh.mesh.uv2;
+			ReadOnlyCollection<Vector4> tangents = mesh.tangents;
+			Vector3[] normals = mesh.GetNormals();
+			Vector2[] uv2s = mesh.mesh != null ? mesh.mesh.uv2 : null;
 
 			List<Vector4> uv3s = new List<Vector4>();
 			List<Vector4> uv4s = new List<Vector4>();
@@ -324,8 +325,8 @@ namespace UnityEngine.ProBuilder
 			bool _hasTangents = tangents != null && tangents.Count() == meshVertexCount;
 			bool _hasUv0 = uv0s != null && uv0s.Count() == meshVertexCount;
 			bool _hasUv2 = uv2s != null && uv2s.Count() == meshVertexCount;
-			bool _hasUv3 = uv3s != null && uv3s.Count() == meshVertexCount;
-			bool _hasUv4 = uv4s != null && uv4s.Count() == meshVertexCount;
+			bool _hasUv3 = uv3s.Count() == meshVertexCount;
+			bool _hasUv4 = uv4s.Count() == meshVertexCount;
 
 			for (int i = 0; i < vertexCount; i++)
 			{

@@ -72,7 +72,7 @@ namespace UnityEditor.ProBuilder
 
 			if (pb == null) return;
 
-			if (pb.SelectedTriangles.Length > 0)
+			if (pb.selectedTriangles.Length > 0)
 			{
 				GUILayout.Space(5);
 
@@ -86,7 +86,7 @@ namespace UnityEditor.ProBuilder
 
 						ipb.ToMesh();
 
-						ipb.TranslateVerticesInWorldSpace(ipb.SelectedTriangles, offset);
+						ipb.TranslateVerticesInWorldSpace(ipb.selectedTriangles, offset);
 
 						ipb.Refresh();
 						ipb.Optimize();
@@ -104,7 +104,7 @@ namespace UnityEditor.ProBuilder
 				pb = (ProBuilderMesh) target;
 
 			return ProBuilderEditor.instance != null &&
-			       InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms).Sum(x => x.SelectedTriangles.Length) > 0;
+			       InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms).Sum(x => x.selectedTriangles.Length) > 0;
 		}
 
 		Bounds OnGetFrameBounds()
@@ -116,9 +116,9 @@ namespace UnityEditor.ProBuilder
 
 			foreach (ProBuilderMesh pbo in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
-				if (pbo.SelectedTriangles.Length < 1) continue;
+				if (pbo.selectedTriangles.Length < 1) continue;
 
-				Vector3[] verts = pbo.VerticesInWorldSpace(pbo.SelectedTriangles);
+				Vector3[] verts = pbo.VerticesInWorldSpace(pbo.selectedTriangles);
 
 				if (!init)
 				{

@@ -37,18 +37,24 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="array"></param>
 		/// <returns></returns>
-		public static Dictionary<int, int> ToDictionary(this IList<IntArray> array)
+		public static Dictionary<int, int> ToDictionary(this IEnumerable<IntArray> array)
 		{
             if (array == null)
                 throw new ArgumentNullException("array");
 
             Dictionary<int, int> dic = new Dictionary<int, int>();
 
-			for(int i = 0, c = array.Count; i < c; i++)
+			int commonIndex = 0;
+
+			foreach (var common in array)
 			{
-				for(int n = 0,t = array[i].length; n < t; n++)
-					if(!dic.ContainsKey(array[i][n]))
-						dic.Add(array[i][n], i);
+				foreach (var index in common.array)
+				{
+					if(!dic.ContainsKey(index))
+						dic.Add(index, commonIndex);
+				}
+
+				commonIndex++;
 			}
 
 			return dic;
@@ -144,12 +150,12 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Returns all indices given a spattering of triangles.  Guaranteed to be all inclusive and distinct.
+		/// Given a list of vertex indexes, return all indices that are coincident.
 		/// </summary>
 		/// <param name="intArray"></param>
 		/// <param name="indexes"></param>
 		/// <returns></returns>
-		public static List<int> AllIndexesWithValues(this IntArray[] intArray, IList<int> indexes)
+		public static List<int> AllIndexesWithValues(this IList<IntArray> intArray, IEnumerable<int> indexes)
 		{
             if (intArray == null)
                 throw new ArgumentNullException("intArray");
@@ -157,17 +163,15 @@ namespace UnityEngine.ProBuilder
             if (indexes == null)
                 throw new ArgumentNullException("indexes");
 
-			int[] universal = intArray.GetCommonIndices(indexes).ToArray();
-
 			List<int> shared = new List<int>();
 
-			for(int i = 0; i < universal.Length; i++)
-				shared.AddRange(intArray[universal[i]].array);
+			foreach (var common in GetCommonIndices(intArray, indexes))
+				shared.AddRange(intArray[common].array);
 
 			return shared;
 		}
 
-		public static List<int> AllIndexesWithValues(this IntArray[] intArray, Dictionary<int, int> lookup, IList<int> indexes)
+		public static List<int> AllIndexesWithValues(this IList<IntArray> intArray, Dictionary<int, int> lookup, IEnumerable<int> indexes)
 		{
             if (intArray == null)
                 throw new ArgumentNullException("intArray");
@@ -208,12 +212,12 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Given triangles, return a distinct list of the indices in the sharedIndices[] array (common index).
 		/// </summary>
-		/// <param name="pbIntArr"></param>
+		/// <param name="array"></param>
 		/// <param name="indices"></param>
 		/// <returns></returns>
-		internal static HashSet<int> GetCommonIndices(this IntArray[] pbIntArr, IEnumerable<int> indices)
+		internal static HashSet<int> GetCommonIndices(this IEnumerable<IntArray> array, IEnumerable<int> indices)
 		{
-			return GetCommonIndices(pbIntArr.ToDictionary(), indices);
+			return GetCommonIndices(array.ToDictionary(), indices);
 		}
 
 		internal static HashSet<int> GetCommonIndices(Dictionary<int, int> lookup, IEnumerable<int> indices)

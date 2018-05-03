@@ -651,11 +651,11 @@ namespace UnityEditor.ProBuilder
 				switch( editor != null ? editor.selectionMode : (SelectMode)0 )
 				{
 					case SelectMode.Vertex:
-						pb.SetSelectedEdges(ElementSelection.GetConnectedEdges(pb, pb.SelectedTriangles));
+						pb.SetSelectedEdges(ElementSelection.GetConnectedEdges(pb, pb.selectedTriangles));
 						break;
 
 					case SelectMode.Edge:
-						pb.SetSelectedEdges(ElementSelection.GetConnectedEdges(pb, pb.SelectedTriangles));
+						pb.SetSelectedEdges(ElementSelection.GetConnectedEdges(pb, pb.selectedTriangles));
 						break;
 
 					case SelectMode.Face:
@@ -741,8 +741,8 @@ namespace UnityEditor.ProBuilder
 
 					case SelectMode.Vertex:
 					{
-						int[] perimeter = ElementSelection.GetPerimeterVertices(pb, pb.SelectedTriangles, editor.selectedUniversalEdges[i]);
-						pb.SetSelectedVertices( pb.SelectedTriangles.RemoveAt(perimeter) );
+						int[] perimeter = ElementSelection.GetPerimeterVertices(pb, pb.selectedTriangles, editor.selectedUniversalEdges[i]);
+						pb.SetSelectedVertices( pb.selectedTriangles.RemoveAt(perimeter) );
 						rc += perimeter != null ? perimeter.Length : 0;
 						break;
 					}
@@ -787,7 +787,7 @@ namespace UnityEditor.ProBuilder
 						IntArray[] sharedIndices = pb.sharedIndicesInternal;
 						List<int> selSharedIndices = new List<int>();
 
-						foreach(int i in pb.SelectedTriangles)
+						foreach(int i in pb.selectedTriangles)
 							selSharedIndices.Add( sharedIndices.IndexOf(i) );
 
 						List<int> inverse = new List<int>();
@@ -1240,9 +1240,9 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				if(pb.SelectedTriangles.Length > 1)
+				if(pb.selectedTriangles.Length > 1)
 				{
-					int newIndex = pb.MergeVertices(pb.SelectedTriangles, collapseToFirst);
+					int newIndex = pb.MergeVertices(pb.selectedTriangles, collapseToFirst);
 					success = newIndex > -1;
 
 					if(success)
@@ -1286,11 +1286,11 @@ namespace UnityEditor.ProBuilder
 			{
 				weldCount += pb.sharedIndicesInternal.Length;
 
-				if(pb.SelectedTriangles.Length > 1)
+				if(pb.selectedTriangles.Length > 1)
 				{
 					pb.ToMesh();
 
-					int[] welds = pb.WeldVertices(pb.SelectedTriangles, weld);
+					int[] welds = pb.WeldVertices(pb.selectedTriangles, weld);
 					res = welds != null ? new ActionResult(Status.Success, "Weld Vertices") : new ActionResult(Status.Failure, "Failed Weld Vertices");
 
 					if(res)
@@ -1356,17 +1356,17 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				List<int> tris = new List<int>(pb.SelectedTriangles);			// loose verts to split
+				List<int> tris = new List<int>(pb.selectedTriangles);			// loose verts to split
 
 				if(pb.selectedFacesInternal.Length > 0)
 				{
 					IntArray[] sharedIndices = pb.sharedIndicesInternal;
 
-					int[] selTrisIndices = new int[pb.SelectedTriangles.Length];
+					int[] selTrisIndices = new int[pb.selectedTriangles.Length];
 
 					// Get sharedIndices index for each vert in selection
-					for(int i = 0; i < pb.SelectedTriangles.Length; i++)
-						selTrisIndices[i] = sharedIndices.IndexOf(pb.SelectedTriangles[i]);
+					for(int i = 0; i < pb.selectedTriangles.Length; i++)
+						selTrisIndices[i] = sharedIndices.IndexOf(pb.selectedTriangles[i]);
 
 					// cycle through selected faces and remove the tris that compose full faces.
 					foreach(Face face in pb.selectedFacesInternal)
@@ -1379,7 +1379,7 @@ namespace UnityEditor.ProBuilder
 						List<int> usedTris = new List<int>();
 						for(int i = 0; i < selTrisIndices.Length; i++)
 							if( faceSharedIndices.Contains(selTrisIndices[i]) )
-								usedTris.Add(pb.SelectedTriangles[i]);
+								usedTris.Add(pb.selectedTriangles[i]);
 
 						// This face *is* composed of selected tris.  Remove these tris from the loose index list
 						foreach(int i in usedTris)
@@ -1391,8 +1391,8 @@ namespace UnityEditor.ProBuilder
 				// Now split the faces, and any loose vertices
 				pb.DetachFaces(pb.selectedFacesInternal);
 
-				splitCount += pb.SelectedTriangles.Length;
-				pb.SplitCommonVertices(pb.SelectedTriangles);
+				splitCount += pb.selectedTriangles.Length;
+				pb.SplitCommonVertices(pb.selectedTriangles);
 
 				// Reattach detached face vertices (if any are to be had)
 				if(pb.selectedFacesInternal.Length > 0)
@@ -1432,8 +1432,8 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				bool selectAll = pb.SelectedTriangles == null || pb.SelectedTriangles.Length < 1;
-				int[] indices = selectAll ? Face.AllTriangles(pb.facesInternal) : pb.SelectedTriangles;
+				bool selectAll = pb.selectedTriangles == null || pb.selectedTriangles.Length < 1;
+				int[] indices = selectAll ? Face.AllTriangles(pb.facesInternal) : pb.selectedTriangles;
 
 				pb.ToMesh();
 
@@ -1674,7 +1674,7 @@ namespace UnityEditor.ProBuilder
 			foreach(ProBuilderMesh pb in selection)
 			{
 				pb.ToMesh();
-				int[] splits = pb.Connect(pb.SelectedTriangles);
+				int[] splits = pb.Connect(pb.selectedTriangles);
 
 				if(splits != null)
 				{

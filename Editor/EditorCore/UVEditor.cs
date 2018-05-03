@@ -695,7 +695,7 @@ class UVEditor : EditorWindow
 		// Append shared UV indices to SelectedTriangles array (if necessary)
 		for(int i = 0; i < selection.Length; i++)
 		{
-			List<int> selectedTris = new List<int>(selection[i].SelectedTriangles);
+			List<int> selectedTris = new List<int>(selection[i].selectedTriangles);
 
 			IntArray[] sharedUVs = selection[i].sharedIndicesUVInternal;
 
@@ -704,7 +704,7 @@ class UVEditor : EditorWindow
 			{
 				foreach(int[] arr in sharedUVs)
 				{
-					if( System.Array.Exists(arr, element => System.Array.IndexOf(selection[i].SelectedTriangles, element) > -1 ) )
+					if( System.Array.Exists(arr, element => System.Array.IndexOf(selection[i].selectedTriangles, element) > -1 ) )
 					{
 						selectedTris.AddRange( arr );
 					}
@@ -1857,7 +1857,7 @@ class UVEditor : EditorWindow
 
 				if(channel < 1)
 				{
-					foreach(int index in selection[i].SelectedTriangles)
+					foreach(int index in selection[i].selectedTriangles)
 					{
 						p = UVToGUIPoint(uv[index]);
 						r.x = p.x - HALF_DOT;
@@ -2336,7 +2336,7 @@ class UVEditor : EditorWindow
 				switch(selectionMode)
 				{
 					case SelectMode.Vertex:
-						List<int> selectedTris = new List<int>(pb.SelectedTriangles);
+						List<int> selectedTris = new List<int>(pb.selectedTriangles);
 
 						for(int j = 0; j < len; j++)
 						{
@@ -2780,7 +2780,7 @@ class UVEditor : EditorWindow
 
 		foreach(ProBuilderMesh pb in selection)
 		{
-			Face[] faces = GetFaces(pb, pb.SelectedTriangles);
+			Face[] faces = GetFaces(pb, pb.selectedTriangles);
 
 			List<int> elementGroups = new List<int>();
 			List<int> textureGroups = new List<int>();
@@ -2848,7 +2848,7 @@ class UVEditor : EditorWindow
 
 		foreach(ProBuilderMesh pb in selection)
 		{
-			Face[] faces = GetFaces(pb, pb.SelectedTriangles);
+			Face[] faces = GetFaces(pb, pb.selectedTriangles);
 			pb.SetSelectedFaces(faces);
 
 			if(editor != null)
@@ -2920,7 +2920,7 @@ class UVEditor : EditorWindow
 	private void FlagSelectedFacesAsManual(ProBuilderMesh pb)
 	{
 		// Mark selected UV faces manualUV flag true
-		foreach(Face f in GetFaces(pb, pb.SelectedTriangles))
+		foreach(Face f in GetFaces(pb, pb.selectedTriangles))
 		{
 			f.textureGroup = -1;
 			f.manualUV = true;
@@ -2957,7 +2957,7 @@ class UVEditor : EditorWindow
 			if(selection[i].selectedFacesInternal.Length > 0)
 			{
 				selection[i].ToMesh();	// Remove UV2 modifications
-				UVEditing.SplitUVs(selection[i], selection[i].SelectedTriangles);
+				UVEditing.SplitUVs(selection[i], selection[i].selectedTriangles);
 				UVEditing.ProjectFacesAuto(selection[i], selection[i].selectedFacesInternal, channel);
 
 				foreach(Face f in selection[i].selectedFacesInternal)
@@ -3049,7 +3049,7 @@ class UVEditor : EditorWindow
 
 			if(selection[i].selectedVertexCount > 0)
 			{
-				UVEditing.ProjectFacesSphere(selection[i], selection[i].SelectedTriangles, channel);
+				UVEditing.ProjectFacesSphere(selection[i], selection[i].selectedTriangles, channel);
 				p++;
 			}
 		}
@@ -3193,7 +3193,7 @@ class UVEditor : EditorWindow
 		{
 			pb.ToMesh();
 
-			pb.SplitUVs(pb.SelectedTriangles);
+			pb.SplitUVs(pb.selectedTriangles);
 			RefreshElementGroups(pb);
 
 			pb.Refresh();
@@ -3219,11 +3219,11 @@ class UVEditor : EditorWindow
 		{
 			selection[i].ToMesh();
 
-			selection[i].SplitUVs(selection[i].SelectedTriangles);
+			selection[i].SplitUVs(selection[i].selectedTriangles);
 
 			Vector2[] uv = channel == 0 ? selection[i].texturesInternal : selection[i].mesh.uv2;
 
-			foreach(int n in selection[i].SelectedTriangles.Distinct())
+			foreach(int n in selection[i].selectedTriangles.Distinct())
 				uv[n] = ProBuilderMath.ReflectPoint(uv[n], center, center + direction);
 
 			UVEditing.ApplyUVs(selection[i], uv, channel);
@@ -3293,7 +3293,7 @@ class UVEditor : EditorWindow
 			var pb = selection[i];
 			Vector2[] uv = UVEditing.GetUVs(pb, channel);
 
-			foreach(int n in selection[i].SelectedTriangles.Distinct())
+			foreach(int n in selection[i].selectedTriangles.Distinct())
 			{
 				uv[n] -= delta;
 			}

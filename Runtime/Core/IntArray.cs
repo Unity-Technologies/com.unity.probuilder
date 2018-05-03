@@ -11,7 +11,7 @@ namespace UnityEngine.ProBuilder
 	/// Defines associations between vertex indices that are coincident.
 	/// </summary>
 	[Serializable]
-	public class IntArray
+	public class IntArray : IEnumerable<int>
 	{
 		/// <summary>
 		/// An array of vertex indices that are coincident.
@@ -91,9 +91,19 @@ namespace UnityEngine.ProBuilder
 			return new IntArray(arr);
 		}
 
+		public IEnumerator<int> GetEnumerator()
+		{
+			return (IEnumerator<int>) array.GetEnumerator();
+		}
+
 		public override string ToString()
 		{
 			return array.ToString(",");
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
 		}
 
 		/// <summary>

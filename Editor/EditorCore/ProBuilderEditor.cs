@@ -148,10 +148,22 @@ namespace UnityEditor.ProBuilder
 		Event m_CurrentEvent;
 
 		internal bool isFloatingWindow { get; private set; }
-		internal EditLevel editLevel { get; private set; }
-		internal SelectMode selectionMode { get; private set; }
-		internal HandleAlignment handleAlignment { get; private set; }
 		internal bool selectHiddenEnabled { get { return m_SelectHiddenEnabled; } }
+
+		/// <summary>
+		/// Get the current EditLevel.
+		/// </summary>
+		public EditLevel editLevel { get; private set; }
+
+		/// <summary>
+		/// Get the current element selection mode.
+		/// </summary>
+		public SelectMode selectionMode { get; private set; }
+
+		/// <summary>
+		/// Get the alignment of the ProBuilder transform gizmo.
+		/// </summary>
+		public HandleAlignment handleAlignment { get; private set; }
 
 		static class SceneStyles
 		{
@@ -943,15 +955,15 @@ namespace UnityEditor.ProBuilder
 				{
 					ProBuilderMesh pb = selection[obj];
 
-					int indx = System.Array.IndexOf(pb.SelectedTriangles, tri);
+					int indx = System.Array.IndexOf(pb.selectedTriangles, tri);
 
 					UndoUtility.RecordSelection(pb, "Change Vertex Selection");
 
 					// If we get a match, check to see if it exists in our selection array already, then add / remove
 					if (indx > -1)
-						pb.SetSelectedVertices(pb.SelectedTriangles.RemoveAt(indx));
+						pb.SetSelectedVertices(pb.selectedTriangles.RemoveAt(indx));
 					else
-						pb.SetSelectedVertices(pb.SelectedTriangles.Add(tri));
+						pb.SetSelectedVertices(pb.selectedTriangles.Add(tri));
 
 					vpb = pb;
 					return true;
@@ -977,15 +989,15 @@ namespace UnityEditor.ProBuilder
 								continue;
 
 							// Check if index is already selected, and if not add it to the pot
-							int indx = System.Array.IndexOf(pb.SelectedTriangles, index);
+							int indx = System.Array.IndexOf(pb.selectedTriangles, index);
 
 							UndoUtility.RecordObject(pb, "Change Vertex Selection");
 
 							// If we get a match, check to see if it exists in our selection array already, then add / remove
 							if (indx > -1)
-								pb.SetSelectedVertices(pb.SelectedTriangles.RemoveAt(indx));
+								pb.SetSelectedVertices(pb.selectedTriangles.RemoveAt(indx));
 							else
-								pb.SetSelectedVertices(pb.SelectedTriangles.Add(index));
+								pb.SetSelectedVertices(pb.selectedTriangles.Add(index));
 
 							vpb = pb;
 							return true;
@@ -1079,7 +1091,7 @@ namespace UnityEditor.ProBuilder
 
 						if (shiftKey || ctrlKey)
 						{
-							common = sharedIndices.GetCommonIndices(kvp.Key.SelectedTriangles);
+							common = sharedIndices.GetCommonIndices(kvp.Key.selectedTriangles);
 
 							if (m_DragSelectMode == DragSelectMode.Add)
 								common.UnionWith(kvp.Value);
@@ -1298,7 +1310,7 @@ namespace UnityEditor.ProBuilder
 
 				for (int i = 0; i < selection.Length; i++)
 				{
-					selection[i].TranslateVerticesInWorldSpace(selection[i].SelectedTriangles, diff, m_SnapEnabled ? m_SnapValue : 0f,
+					selection[i].TranslateVerticesInWorldSpace(selection[i].selectedTriangles, diff, m_SnapEnabled ? m_SnapValue : 0f,
 						m_SnapAxisConstraint, m_SharedIndicesDictionary[i]);
 					selection[i].RefreshUV(selectedFacesInEditZone[selection[i]]);
 					selection[i].Refresh(RefreshMask.Normals);
@@ -1344,7 +1356,7 @@ namespace UnityEditor.ProBuilder
 
 					for (int i = 0; i < selection.Length; i++)
 					{
-						m_VertexPositions[i] = selection[i].positionsInternal.ValuesWithIndices(selection[i].SelectedTriangles);
+						m_VertexPositions[i] = selection[i].positionsInternal.ValuesWithIndices(selection[i].selectedTriangles);
 						m_VertexOffset[i] = ProBuilderMath.Average(m_VertexPositions[i]);
 					}
 				}
@@ -1367,7 +1379,7 @@ namespace UnityEditor.ProBuilder
 					Vector3[] v = selection[i].positionsInternal;
 					IntArray[] sharedIndices = selection[i].sharedIndicesInternal;
 
-					for (int n = 0; n < selection[i].SelectedTriangles.Length; n++)
+					for (int n = 0; n < selection[i].selectedTriangles.Length; n++)
 					{
 						switch (handleAlignment)
 						{
@@ -1392,7 +1404,7 @@ namespace UnityEditor.ProBuilder
 								// re-apply world position offset
 								ver += m_VertexOffset[i];
 
-								int[] array = sharedIndices[m_SharedIndicesDictionary[i][selection[i].SelectedTriangles[n]]].array;
+								int[] array = sharedIndices[m_SharedIndicesDictionary[i][selection[i].selectedTriangles[n]]].array;
 
 								for (int t = 0; t < array.Length; t++)
 									v[array[t]] = ver;
@@ -1411,7 +1423,7 @@ namespace UnityEditor.ProBuilder
 								ver += m_VertexOffset[i];
 								// set vertex in local space on pb-Object
 
-								int[] array = sharedIndices[m_SharedIndicesDictionary[i][selection[i].SelectedTriangles[n]]].array;
+								int[] array = sharedIndices[m_SharedIndicesDictionary[i][selection[i].selectedTriangles[n]]].array;
 
 								for (int t = 0; t < array.Length; t++)
 									v[array[t]] = ver;
@@ -1473,7 +1485,7 @@ namespace UnityEditor.ProBuilder
 					for (int i = 0; i < selection.Length; i++)
 					{
 						Vector3[] vertices = selection[i].positionsInternal;
-						int[] triangles = selection[i].SelectedTriangles;
+						int[] triangles = selection[i].selectedTriangles;
 						m_VertexPositions[i] = new Vector3[triangles.Length];
 
 						for (int nn = 0; nn < triangles.Length; nn++)
@@ -1499,7 +1511,7 @@ namespace UnityEditor.ProBuilder
 					Quaternion lr = hr; // selection[0].transform.localRotation;
 					Quaternion ilr = hri; // Quaternion.Inverse(lr);
 
-					for (int n = 0; n < selection[i].SelectedTriangles.Length; n++)
+					for (int n = 0; n < selection[i].selectedTriangles.Length; n++)
 					{
 						// move vertex to relative origin from center of selection
 						ver = ilr * (m_VertexPositions[i][n] - m_VertexOffset[i]);
@@ -1510,7 +1522,7 @@ namespace UnityEditor.ProBuilder
 						// move vertex back to locally offset position
 						ver = (lr * ver) + m_VertexOffset[i];
 
-						int[] array = sharedIndices[m_SharedIndicesDictionary[i][selection[i].SelectedTriangles[n]]].array;
+						int[] array = sharedIndices[m_SharedIndicesDictionary[i][selection[i].selectedTriangles[n]]].array;
 
 						for (int t = 0; t < array.Length; t++)
 							v[array[t]] = selection[i].transform.InverseTransformPoint(ver);
@@ -2001,9 +2013,9 @@ namespace UnityEditor.ProBuilder
 						{
 							UndoUtility.RecordObjects(new Object[2] { pbo, pbo.transform }, "Set Pivot");
 
-							if (pbo.SelectedTriangles.Length > 0)
+							if (pbo.selectedTriangles.Length > 0)
 							{
-								pbo.CenterPivot(pbo.SelectedTriangles);
+								pbo.CenterPivot(pbo.selectedTriangles);
 							}
 							else
 							{
@@ -2214,13 +2226,13 @@ namespace UnityEditor.ProBuilder
 				if (!boundsInitialized && pb.selectedVertexCount > 0)
 				{
 					boundsInitialized = true;
-					min = pb.transform.TransformPoint(pb.positionsInternal[pb.SelectedTriangles[0]]);
+					min = pb.transform.TransformPoint(pb.positionsInternal[pb.selectedTriangles[0]]);
 					max = min;
 				}
 
 				if (pb.selectedVertexCount > 0)
 				{
-					var indices = pb.SelectedTriangles;
+					var indices = pb.selectedTriangles;
 
 					for (int n = 0, c = pb.selectedVertexCount; n < c; n++)
 					{
@@ -2235,9 +2247,9 @@ namespace UnityEditor.ProBuilder
 					m_SelectedVerticesCommon += used.Count;
 				}
 
-				selectedFacesInEditZone.Add(pb, ElementSelection.GetNeighborFaces(pb, pb.SelectedTriangles, m_SharedIndicesDictionary[i]));
+				selectedFacesInEditZone.Add(pb, ElementSelection.GetNeighborFaces(pb, pb.selectedTriangles, m_SharedIndicesDictionary[i]));
 
-				m_SelectedVertexCount += selection[i].SelectedTriangles.Length;
+				m_SelectedVertexCount += selection[i].selectedTriangles.Length;
 				m_SelectedFaceCount += selection[i].selectedFaceCount;
 				m_SelectedEdgeCount += selection[i].selectedEdgeCount;
 			}
@@ -2282,7 +2294,7 @@ namespace UnityEditor.ProBuilder
 			{
 				ProBuilderMesh pb = selection[i];
 				Vector3[] vertices = pb.positionsInternal;
-				int[] indices = pb.SelectedTriangles;
+				int[] indices = pb.selectedTriangles;
 
 				if (pb == null) continue;
 
@@ -2513,7 +2525,7 @@ namespace UnityEditor.ProBuilder
 				ProBuilderMesh pb = selection[i];
 
 				int[] indices = pb.selectedVertexCount > 0
-					? pb.sharedIndicesInternal.AllIndexesWithValues(pb.SelectedTriangles).ToArray()
+					? pb.sharedIndicesInternal.AllIndexesWithValues(pb.selectedTriangles).ToArray()
 					: pb.mesh.triangles;
 
 				Snapping.SnapVertices(pb, indices, Vector3.one * snapVal);

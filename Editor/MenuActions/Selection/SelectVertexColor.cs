@@ -90,7 +90,7 @@ namespace UnityEditor.ProBuilder.Actions
 				if (mesh_colors == null || mesh_colors.Length != pb.vertexCount)
 					continue;
 
-				foreach (int i in pb.SelectedTriangles)
+				foreach (int i in pb.selectedTriangles)
 					colors.Add(mesh_colors[i]);
 			}
 

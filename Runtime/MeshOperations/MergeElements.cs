@@ -38,7 +38,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			List<Face> faces = target.facesInternal.Where(x => !remove.Contains(x)).ToList();
 			faces.AddRange(add);
-			target.SetFaces(faces.ToArray());
+			target.SetFaces(faces);
 
 			if(collapseCoincidentVertices)
 				CollapseCoincidentVertices(target, add);

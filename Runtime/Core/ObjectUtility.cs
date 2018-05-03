@@ -37,15 +37,17 @@ namespace UnityEngine.ProBuilder
 		/// <param name="mesh"></param>
 		/// <param name="indexes"></param>
 		/// <returns></returns>
-		public static Vector3[] VerticesInWorldSpace(this ProBuilderMesh mesh, int[] indexes)
+		public static Vector3[] VerticesInWorldSpace(this ProBuilderMesh mesh, IList<int> indexes)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            Vector3[] worldPoints = mesh.positionsInternal.ValuesWithIndices(indexes);
+			int count = indexes.Count;
+            var worldPoints = new Vector3[count];
+			var positions = mesh.positions;
 
-			for(int i = 0; i < worldPoints.Length; i++)
-				worldPoints[i] = mesh.transform.TransformPoint(worldPoints[i]);
+			for(var i = 0; i < count; i++)
+				worldPoints[i] = mesh.transform.TransformPoint(positions[indexes[i]]);
 
 			return worldPoints;
 		}
@@ -117,7 +119,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="mesh"></param>
 		/// <param name="selectedTriangles"></param>
 		/// <param name="offset"></param>
-		public static void TranslateVertices(this ProBuilderMesh mesh, int[] selectedTriangles, Vector3 offset)
+		public static void TranslateVertices(this ProBuilderMesh mesh, IEnumerable<int> selectedTriangles, Vector3 offset)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");

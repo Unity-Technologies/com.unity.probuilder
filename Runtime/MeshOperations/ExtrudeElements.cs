@@ -18,7 +18,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="method">How faces are extruded.</param>
 		/// <param name="distance">The distance in Unity units to extrude faces.</param>
 		/// <returns>True on success, false if the action failed.</returns>
-		public static bool Extrude(this ProBuilderMesh pb, Face[] faces, ExtrudeMethod method, float distance)
+		public static bool Extrude(this ProBuilderMesh pb, IEnumerable<Face> faces, ExtrudeMethod method, float distance)
 		{
 			switch(method)
 			{
@@ -172,9 +172,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="faces"></param>
 		/// <param name="distance"></param>
 		/// <returns></returns>
-		static bool ExtrudePerFace(ProBuilderMesh pb, Face[] faces, float distance)
+		static bool ExtrudePerFace(ProBuilderMesh pb, IEnumerable<Face> faces, float distance)
 		{
-			if(faces == null || faces.Length < 1)
+			if(faces == null || !faces.Any())
 				return false;
 
 			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
@@ -267,9 +267,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="compensateAngleVertexDistance"></param>
 		/// <param name="distance"></param>
 		/// <returns></returns>
-		static bool ExtrudeAsGroups(ProBuilderMesh pb, Face[] faces, bool compensateAngleVertexDistance, float distance)
+		static bool ExtrudeAsGroups(ProBuilderMesh pb, IEnumerable<Face> faces, bool compensateAngleVertexDistance, float distance)
 		{
-			if(faces == null || faces.Length < 1)
+			if(faces == null || !faces.Any())
 				return false;
 
 			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));

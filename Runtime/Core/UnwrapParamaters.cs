@@ -37,6 +37,23 @@ namespace UnityEngine.ProBuilder
 		[Range(1f, 75f)]
 		public float areaError = 15f;
 
+		public UnwrapParamaters()
+		{
+			Reset();
+		}
+
+		/// <summary>
+		/// Copy constructor.
+		/// </summary>
+		/// <param name="other"></param>
+		public UnwrapParamaters(UnwrapParamaters other)
+		{
+			hardAngle = other.hardAngle;
+			packMargin = other.packMargin;
+			angleError = other.angleError;
+			areaError = other.areaError;
+		}
+
 		/// <summary>
 		/// Reset the unwrap parameters to default values.
 		/// </summary>
