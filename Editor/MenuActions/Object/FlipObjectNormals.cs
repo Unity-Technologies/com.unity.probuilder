@@ -8,10 +8,25 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	class FlipObjectNormals : MenuAction
 	{
-		public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
-		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_FlipNormals", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
-		public override string menuTitle { get { return "Flip Normals"; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Object; }
+		}
+
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Object_FlipNormals", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return _tooltip; }
+		}
+
+		public override string menuTitle
+		{
+			get { return "Flip Normals"; }
+		}
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
@@ -21,12 +36,12 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	ProBuilderEditor.instance != null && selection != null && selection.Length > 0;
+			return ProBuilderEditor.instance != null && MeshSelection.Top().Length > 0;
 		}
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuFlipObjectNormals(selection);
+			return MenuCommands.MenuFlipObjectNormals(MeshSelection.Top());
 		}
 	}
 }

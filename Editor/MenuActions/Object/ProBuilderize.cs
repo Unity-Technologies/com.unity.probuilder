@@ -14,16 +14,26 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	class ProBuilderize : MenuAction
 	{
-		public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
-		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_ProBuilderize", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return s_Tooltip; } }
-		public override bool isProOnly { get { return true; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Object; }
+		}
 
-		private GUIContent m_QuadsTooltip = new GUIContent("Import Quads", "Create ProBuilder mesh using quads where " +
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Object_ProBuilderize", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return s_Tooltip; }
+		}
+
+		GUIContent m_QuadsTooltip = new GUIContent("Import Quads", "Create ProBuilder mesh using quads where " +
 			"possible instead of triangles.");
-		private GUIContent m_SmoothingTooltip = new GUIContent("Import Smoothing", "Import smoothing groups by " +
+		GUIContent m_SmoothingTooltip = new GUIContent("Import Smoothing", "Import smoothing groups by " +
 			"testing adjacent faces against an angle thresold.");
-		private GUIContent m_SmoothingThresholdTooltip = new GUIContent("Smoothing Threshold", "When importing " +
+		GUIContent m_SmoothingThresholdTooltip = new GUIContent("Smoothing Threshold", "When importing " +
 			"smoothing groups any adjacent faces with an adjoining angle difference of less than this value will be " +
 			"grouped together in a smoothing group.");
 
@@ -37,8 +47,8 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			int meshCount = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Count();
 
-			return	meshCount > 0 &&
-					meshCount != selection.Length;
+			return meshCount > 0 &&
+				meshCount != MeshSelection.Top().Length;
 		}
 
 		public override MenuActionState AltState()
@@ -76,7 +86,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			GUI.enabled = IsEnabled();
 
-			if(GUILayout.Button("ProBuilderize"))
+			if (GUILayout.Button("ProBuilderize"))
 				EditorUtility.ShowNotification(DoAction().notification);
 
 			GUI.enabled = true;
@@ -94,7 +104,7 @@ namespace UnityEditor.ProBuilder.Actions
 				smoothingAngle = PreferencesInternal.GetFloat("pb_MeshImporter::smoothingThreshold", 1f)
 			};
 
-			if(top.Count() != all.Count())
+			if (top.Count() != all.Count())
 			{
 				int result = UnityEditor.EditorUtility.DisplayDialogComplex("ProBuilderize Selection",
 					"ProBuilderize children of selection?",
@@ -102,9 +112,9 @@ namespace UnityEditor.ProBuilder.Actions
 					"No",
 					"Cancel");
 
-				if(result == 0)
+				if (result == 0)
 					return DoProBuilderize(all, settings);
-				else if(result == 1)
+				else if (result == 1)
 					return DoProBuilderize(top, settings);
 				else
 					return ActionResult.UserCanceled;
@@ -141,9 +151,9 @@ namespace UnityEditor.ProBuilder.Actions
 			int i = 0;
 			float count = selected.Count();
 
-			foreach(var mf in selected)
+			foreach (var mf in selected)
 			{
-				if(mf.sharedMesh == null)
+				if (mf.sharedMesh == null)
 					continue;
 
 				GameObject go = mf.gameObject;
@@ -159,7 +169,7 @@ namespace UnityEditor.ProBuilder.Actions
 					// if this was previously a pb_Object, or similarly any other instance asset, destroy it.
 					// if it is backed by saved asset, leave the mesh asset alone but assign a new mesh to the
 					// renderer so that we don't modify the asset.
-					if(string.IsNullOrEmpty(AssetDatabase.GetAssetPath(originalMesh)))
+					if (string.IsNullOrEmpty(AssetDatabase.GetAssetPath(originalMesh)))
 						Undo.DestroyObjectImmediate(originalMesh);
 					else
 						go.GetComponent<MeshFilter>().sharedMesh = new Mesh();
@@ -170,7 +180,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 					i++;
 				}
-				catch(System.Exception e)
+				catch (System.Exception e)
 				{
 					Debug.LogWarning("Failed ProBuilderizing: " + go.name + "\n" + e.ToString());
 				}
@@ -182,7 +192,7 @@ namespace UnityEditor.ProBuilder.Actions
 			MeshSelection.OnSelectionChanged();
 			ProBuilderEditor.Refresh(true);
 
-			if(i < 1)
+			if (i < 1)
 				return new ActionResult(Status.Canceled, "Nothing Selected");
 			else
 				return new ActionResult(Status.Success, "ProBuilderize " + i + (i > 1 ? " Objects" : " Object").ToString());

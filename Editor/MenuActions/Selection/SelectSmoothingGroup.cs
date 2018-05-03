@@ -10,9 +10,20 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	class SelectSmoothingGroup : MenuAction
 	{
-		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_SelectBySmoothingGroup", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return s_Tooltip; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Selection; }
+		}
+
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Selection_SelectBySmoothingGroup", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return s_Tooltip; }
+		}
 
 		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
@@ -22,11 +33,9 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	ProBuilderEditor.instance != null &&
-					ProBuilderEditor.instance.editLevel != EditLevel.Top &&
-					selection != null &&
-					selection.Length > 0 &&
-					selection.Any(x => x.selectedFaceCount > 0);
+			return ProBuilderEditor.instance != null &&
+				ProBuilderEditor.instance.editLevel != EditLevel.Top &&
+				MeshSelection.Top().Any(x => x.selectedFaceCount > 0);
 		}
 
 		public override bool IsHidden()
@@ -36,7 +45,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override MenuActionState AltState()
 		{
-			if(	IsEnabled() &&
+			if (IsEnabled() &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
 				ProBuilderEditor.instance.selectionMode == SelectMode.Face)
 				return MenuActionState.VisibleAndEnabled;
@@ -46,17 +55,17 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			UndoUtility.RecordSelection(selection, "Select Faces with Smoothing Group");
+			UndoUtility.RecordSelection(MeshSelection.Top(), "Select Faces with Smoothing Group");
 
-			HashSet<int> selectedSmoothGroups = new HashSet<int>(selection.SelectMany(x => x.selectedFacesInternal.Select(y => y.smoothingGroup)));
+			HashSet<int> selectedSmoothGroups = new HashSet<int>(MeshSelection.Top().SelectMany(x => x.selectedFacesInternal.Select(y => y.smoothingGroup)));
 
 			List<GameObject> newSelection = new List<GameObject>();
 
-			foreach(ProBuilderMesh pb in selection)
+			foreach (ProBuilderMesh pb in MeshSelection.Top())
 			{
 				IEnumerable<Face> matches = pb.facesInternal.Where(x => selectedSmoothGroups.Contains(x.smoothingGroup));
 
-				if(matches.Count() > 0)
+				if (matches.Count() > 0)
 				{
 					newSelection.Add(pb.gameObject);
 					pb.SetSelectedFaces(matches);
@@ -71,5 +80,3 @@ namespace UnityEditor.ProBuilder.Actions
 		}
 	}
 }
-
-

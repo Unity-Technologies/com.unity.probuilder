@@ -30,7 +30,6 @@ namespace UnityEditor.ProBuilder
         protected const char keyCommandDelete = PreferenceKeys.CMD_DELETE;
 
         static readonly GUIContent AltButtonContent = new GUIContent("+", "");
-        public virtual bool isProOnly { get { return false; } }
 
         protected MenuAction()
         {
@@ -89,7 +88,7 @@ namespace UnityEditor.ProBuilder
 		 *
 		 * Note that unlike `pb_MenuAction.icon` this function caches the result.
 		 */
-        public virtual Texture2D desaturatedIcon
+        protected virtual Texture2D desaturatedIcon
         {
             get
             {
@@ -110,12 +109,12 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-	    protected ProBuilderMesh[] selection
-	    {
-		    get { return MeshSelection.All();  }
-	    }
+//	    protected ProBuilderMesh[] selection
+//	    {
+//		    get { return MeshSelection.All();  }
+//	    }
 
-        // What category this action belongs in.  See pb_ToolbarGroup.
+	    // What category this action belongs in.  See pb_ToolbarGroup.
         public abstract ToolbarGroup group { get; }
         // Optional value influences where in the toolbar this menu item will be placed.
         // 0 is first, 1 is second, -1 is no preference.
@@ -205,11 +204,7 @@ namespace UnityEditor.ProBuilder
         public bool DoButton(bool isHorizontal, bool showOptions, ref Rect optionsRect, params GUILayoutOption[] layoutOptions)
 		{
 			bool wasEnabled = GUI.enabled;
-#if PROTOTYPE
-			bool buttonEnabled = !isProOnly && (ActionState() & MenuActionState.Enabled) == MenuActionState.Enabled;
-#else
 			bool buttonEnabled = (ActionState() & MenuActionState.Enabled) == MenuActionState.Enabled;
-#endif
 
 			GUI.enabled = buttonEnabled;
 

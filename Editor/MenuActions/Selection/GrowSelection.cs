@@ -10,9 +10,20 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	class GrowSelection : MenuAction
 	{
-		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_Grow", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return s_Tooltip; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Selection; }
+		}
+
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Selection_Grow", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return s_Tooltip; }
+		}
 
 		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
@@ -25,18 +36,18 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 
 		public override bool IsEnabled()
 		{
-			return 	ProBuilderEditor.instance != null &&
-					MenuCommands.VerifyGrowSelection(selection);
+			return ProBuilderEditor.instance != null &&
+				MenuCommands.VerifyGrowSelection(MeshSelection.Top());
 		}
 
 		public override bool IsHidden()
 		{
-			return 	editLevel != EditLevel.Geometry;
+			return editLevel != EditLevel.Geometry;
 		}
 
 		public override MenuActionState AltState()
 		{
-			if(	IsEnabled() &&
+			if (IsEnabled() &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
 				ProBuilderEditor.instance.selectionMode == SelectMode.Face)
 				return MenuActionState.VisibleAndEnabled;
@@ -67,7 +78,7 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 
 			GUI.enabled = true;
 
-			if( EditorGUI.EndChangeCheck() )
+			if (EditorGUI.EndChangeCheck())
 			{
 				PreferencesInternal.SetBool(PreferenceKeys.pbGrowSelectionUsingAngle, angleGrow);
 				PreferencesInternal.SetBool(PreferenceKeys.pbGrowSelectionAngleIterative, iterative);
@@ -76,14 +87,13 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 
 			GUILayout.FlexibleSpace();
 
-
-			if(GUILayout.Button("Grow Selection"))
-				MenuCommands.MenuGrowSelection(selection);
+			if (GUILayout.Button("Grow Selection"))
+				MenuCommands.MenuGrowSelection(MeshSelection.Top());
 		}
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuGrowSelection(selection);
+			return MenuCommands.MenuGrowSelection(MeshSelection.Top());
 		}
 	}
 }

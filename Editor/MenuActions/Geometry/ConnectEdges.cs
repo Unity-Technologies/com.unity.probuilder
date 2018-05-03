@@ -12,7 +12,6 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Connect", IconSkin.Pro); } }
 		public override TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return true; } }
 		public override bool hasFileMenuEntry { get { return false; } }
 
 		static readonly TooltipContent _tooltip = new TooltipContent
@@ -24,12 +23,10 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	ProBuilderEditor.instance != null &&
-					ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.instance.selectionMode == SelectMode.Edge &&
-					selection != null &&
-					selection.Length > 0 &&
-					selection.Any(x => x.selectedEdgeCount > 1);
+			return ProBuilderEditor.instance != null &&
+				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
+				ProBuilderEditor.instance.selectionMode == SelectMode.Edge &&
+				MeshSelection.Top().Any(x => x.selectedEdgeCount > 1);
 		}
 
 		public override bool IsHidden()
@@ -42,7 +39,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuConnectEdges(selection);
+			return MenuCommands.MenuConnectEdges(MeshSelection.Top());
 		}
 	}
 }

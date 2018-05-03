@@ -12,50 +12,50 @@ namespace UnityEditor.ProBuilder
 	class TooltipEditor : EditorWindow
 	{
 		static readonly Color BasicBackgroundColor = new Color(.87f, .87f, .87f, 1f);
-		const int POSITION_PADDING = 4;
+		const int k_PositionPadding = 4;
 
-		private static TooltipEditor _instance;
-		private static Rect windowRect = new Rect(0,0,0,0);
+		static TooltipEditor s_Instance;
+		static Rect s_WindowRect = new Rect(0,0,0,0);
 
-		static GUIStyle _proOnlyStyle = null;
+		static GUIStyle s_ProOnlyStyle = null;
 		static GUIStyle proOnlyStyle
 		{
 			get
 			{
-				if(_proOnlyStyle == null)
+				if(s_ProOnlyStyle == null)
 				{
-					_proOnlyStyle = new GUIStyle(EditorStyles.largeLabel);
-					Color c = _proOnlyStyle.normal.textColor;
+					s_ProOnlyStyle = new GUIStyle(EditorStyles.largeLabel);
+					Color c = s_ProOnlyStyle.normal.textColor;
 					c.a = .20f;
-					_proOnlyStyle.normal.textColor = c;
-					_proOnlyStyle.fontStyle = FontStyle.Bold;
-					_proOnlyStyle.alignment = TextAnchor.UpperRight;
-					_proOnlyStyle.fontSize += 22;
-					_proOnlyStyle.padding.top += 1;
-					_proOnlyStyle.padding.right += 4;
+					s_ProOnlyStyle.normal.textColor = c;
+					s_ProOnlyStyle.fontStyle = FontStyle.Bold;
+					s_ProOnlyStyle.alignment = TextAnchor.UpperRight;
+					s_ProOnlyStyle.fontSize += 22;
+					s_ProOnlyStyle.padding.top += 1;
+					s_ProOnlyStyle.padding.right += 4;
 				}
-				return _proOnlyStyle;
+				return s_ProOnlyStyle;
 			}
 		}
 
 		// much like highlander, there can only be one
 		public static TooltipEditor instance()
 		{
-			if(_instance == null)
+			if(s_Instance == null)
 			{
-				_instance = ScriptableObject.CreateInstance<TooltipEditor>();
-				_instance.minSize = Vector2.zero;
-				_instance.maxSize = Vector2.zero;
-				_instance.hideFlags = HideFlags.HideAndDontSave;
-				_instance.ShowPopup();
+				s_Instance = ScriptableObject.CreateInstance<TooltipEditor>();
+				s_Instance.minSize = Vector2.zero;
+				s_Instance.maxSize = Vector2.zero;
+				s_Instance.hideFlags = HideFlags.HideAndDontSave;
+				s_Instance.ShowPopup();
 
-				object parent = ReflectionUtility.GetValue(_instance, _instance.GetType(), "m_Parent");
+				object parent = ReflectionUtility.GetValue(s_Instance, s_Instance.GetType(), "m_Parent");
 				object window = ReflectionUtility.GetValue(parent, parent.GetType(), "window");
 				ReflectionUtility.SetValue(parent, "mouseRayInvisible", true);
 				ReflectionUtility.SetValue(window, "m_DontSaveToLayout", true);
 			}
 
-			return _instance;
+			return s_Instance;
 		}
 
 		// unlike highlander, this will hide
@@ -71,23 +71,18 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		public static void Show(Rect rect, TooltipContent content, bool isProOnly)
+		public static void Show(Rect rect, TooltipContent content)
 		{
-			instance().ShowInternal(rect, content, isProOnly);
+			instance().ShowInternal(rect, content);
 		}
 
-		public void ShowInternal(Rect rect, TooltipContent content, bool isProOnly)
+		public void ShowInternal(Rect rect, TooltipContent content)
 		{
 			this.content = content;
-#if PROTOTYPE
-			this.isProOnly = isProOnly;
-#else
-			this.isProOnly = false;
-#endif
 
 			Vector2 size = content.CalcSize();
 
-			Vector2 p = new Vector2(rect.x + rect.width + POSITION_PADDING, rect.y);
+			Vector2 p = new Vector2(rect.x + rect.width + k_PositionPadding, rect.y);
 			// if(p.x > Screen.width) p.x = rect.x - POSITION_PADDING - size.x;
 
 			this.minSize = size;
@@ -99,30 +94,24 @@ namespace UnityEditor.ProBuilder
 				size.x,
 				size.y);
 
-			windowRect = new Rect(0,0,size.x, size.y);
+			s_WindowRect = new Rect(0,0,size.x, size.y);
 		}
 
 		public TooltipContent content = null;
-		public bool isProOnly = false;
 
 		void OnGUI()
 		{
 			if(!EditorGUIUtility.isProSkin)
 			{
 				GUI.backgroundColor = BasicBackgroundColor;
-				GUI.Box(windowRect, "");
+				GUI.Box(s_WindowRect, "");
 				GUI.backgroundColor = Color.white;
 			}
 
 			if(content == null)
 				return;
 
-#if PROTOTYPE
-			if(isProOnly)
-				GUI.Label(windowRect, "Advanced Only", proOnlyStyle);
-#endif
-
-			content.Draw(isProOnly);
+			content.Draw();
 		}
 	}
 }

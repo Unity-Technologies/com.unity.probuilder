@@ -16,7 +16,6 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ToolbarGroup group { get { return ToolbarGroup.Export; } }
 		public override Texture2D icon { get { return null; } }
 		public override TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return false; } }
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
@@ -26,8 +25,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	selection != null &&
-					selection.Length > 0;
+			return MeshSelection.count > 0;
 		}
 
 		public override bool IsHidden() { return true; }

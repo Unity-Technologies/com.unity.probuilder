@@ -4,6 +4,7 @@ using System.Collections;
 using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
+using System;
 
 namespace UnityEditor.ProBuilder
 {
@@ -18,10 +19,10 @@ namespace UnityEditor.ProBuilder
 		static GUIStyle _titleStyle = null;
 		static GUIStyle _shortcutStyle = null;
 
-		const float MIN_WIDTH = 128;
-		const float MAX_WIDTH = 330;
-		const float MIN_HEIGHT = 0;
-		const float MAX_HEIGHT = 1024;
+		const float k_MinWidth = 128;
+		const float k_MaxWidth = 330;
+		const float k_MinHeight = 0;
+		const float k_MaxHeight = 1024;
 
 		static void InitStyles()
 		{
@@ -101,7 +102,7 @@ namespace UnityEditor.ProBuilder
 		internal Vector2 CalcSize()
 		{
 			const float pad = 8;
-			Vector2 total = new Vector2(MIN_WIDTH, MIN_HEIGHT);
+			Vector2 total = new Vector2(k_MinWidth, k_MinHeight);
 
 			bool hastitle = !string.IsNullOrEmpty(title);
 			bool hasSummary = !string.IsNullOrEmpty(summary);
@@ -125,7 +126,7 @@ namespace UnityEditor.ProBuilder
 				if(!hastitle)
 				{
 					Vector2 sumSize = EditorStyles.wordWrappedLabel.CalcSize(UI.EditorGUIUtility.TempGUIContent(summary));
-					total.x = Mathf.Min(sumSize.x, MAX_WIDTH);
+					total.x = Mathf.Min(sumSize.x, k_MaxWidth);
 				}
 
 				float summaryHeight = EditorStyles.wordWrappedLabel.CalcHeight(UI.EditorGUIUtility.TempGUIContent(summary), total.x);
@@ -141,11 +142,11 @@ namespace UnityEditor.ProBuilder
 			return total;
 		}
 
-		internal void Draw(bool hideShortcutText = false)
+		internal void Draw()
 		{
 			if(!string.IsNullOrEmpty(title))
 			{
-				if(!hideShortcutText && !string.IsNullOrEmpty(shortcut))
+				if(!string.IsNullOrEmpty(shortcut))
 				{
 					GUILayout.BeginHorizontal();
 					GUILayout.Label(title, TitleStyle);
@@ -185,6 +186,8 @@ namespace UnityEditor.ProBuilder
 
 		public static explicit operator string(TooltipContent content)
 		{
+            if (content == null)
+                throw new ArgumentNullException("content");
 			return content.title;
 		}
 
@@ -192,5 +195,15 @@ namespace UnityEditor.ProBuilder
 		{
 			return new TooltipContent(title, "");
 		}
-	}
+
+        public override string ToString()
+        {
+            return title;
+        }
+
+        public static TooltipContent FromString(string title)
+        {
+            return new TooltipContent(title, "");
+        }
+    }
 }

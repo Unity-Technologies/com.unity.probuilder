@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 
@@ -43,7 +42,7 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Register to receive notifications when the object selection changes.
 		/// </summary>
-		public static System.Action onObjectSelectionChanged;
+		public static event System.Action onObjectSelectionChanged;
 
 		/// <summary>
 		/// Allow other scripts to forcibly reload the cached selection.
@@ -70,12 +69,17 @@ namespace UnityEditor.ProBuilder
 		}
 
 		/// <summary>
-		/// Get all selected pb_Object components, including those in children of selected objects.
+		/// Get all selected ProBuilderMesh components, including those in children of selected objects.
 		/// </summary>
 		/// <returns></returns>
 		public static ProBuilderMesh[] All()
 		{
 			return s_DeepSelection;
+		}
+
+		public static int count
+		{
+			get { return Top().Length; }
 		}
 
 		/// <summary>

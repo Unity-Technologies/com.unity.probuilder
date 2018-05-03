@@ -105,7 +105,7 @@ namespace UnityEditor.ProBuilder
 			ShowTooltip(rect, c, scrollOffset);
 		}
 
-		private void ShowTooltip(Rect rect, TooltipContent content, Vector2 scrollOffset, bool isProOnly = false)
+		private void ShowTooltip(Rect rect, TooltipContent content, Vector2 scrollOffset)
 		{
 			Rect buttonRect = new Rect(
 				(window.position.x + rect.x) - scrollOffset.x,
@@ -113,7 +113,7 @@ namespace UnityEditor.ProBuilder
 				rect.width,
 				rect.height);
 
-			TooltipEditor.Show(buttonRect, content, isProOnly);
+			TooltipEditor.Show(buttonRect, content);
 		}
 
 		void Update()
@@ -380,7 +380,7 @@ namespace UnityEditor.ProBuilder
 					if( e.shift || showTooltipTimer )
 					{
 						tooltipShown = true;
-						ShowTooltip(buttonRect, action.tooltip, scroll, action.isProOnly);
+						ShowTooltip(buttonRect, action.tooltip, scroll);
 					}
 
 					hovering = true;

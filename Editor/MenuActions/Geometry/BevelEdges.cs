@@ -15,7 +15,6 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Bevel", IconSkin.Pro); } }
 		public override TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return true; } }
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
@@ -27,9 +26,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return 	ProBuilderEditor.instance != null &&
 					ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
-					selection != null &&
-					selection.Length > 0 &&
-					selection.Any(x => x.selectedEdgeCount > 0);
+					MeshSelection.Top().Any(x => x.selectedEdgeCount > 0);
 		}
 
 		public override MenuActionState AltState()
@@ -68,7 +65,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuBevelEdges(selection);
+			return MenuCommands.MenuBevelEdges(MeshSelection.Top());
 		}
 	}
 }

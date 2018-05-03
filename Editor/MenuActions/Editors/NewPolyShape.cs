@@ -15,7 +15,6 @@ namespace UnityEditor.ProBuilder.Actions
 		public override TooltipContent tooltip { get { return _tooltip; } }
 		public override string menuTitle { get { return "New Poly Shape"; } }
 		public override int toolbarPriority { get { return 1; } }
-		public override bool isProOnly { get { return true; } }
 
 		public NewPolyShape()
 		{}

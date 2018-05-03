@@ -8,10 +8,20 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	class MergeObjects : MenuAction
 	{
-		public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
-		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_Merge", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return true; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Object; }
+		}
+
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Object_Merge", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return _tooltip; }
+		}
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
@@ -21,12 +31,12 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	ProBuilderEditor.instance != null && selection != null && selection.Length > 1;
+			return ProBuilderEditor.instance != null && MeshSelection.Top().Length > 1;
 		}
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuMergeObjects(selection);
+			return MenuCommands.MenuMergeObjects(MeshSelection.Top());
 		}
 	}
 }

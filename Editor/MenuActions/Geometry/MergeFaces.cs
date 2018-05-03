@@ -12,7 +12,6 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_Merge", IconSkin.Pro); } }
 		public override TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return true; } }
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
@@ -22,22 +21,20 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	ProBuilderEditor.instance != null &&
-					selection != null &&
-					selection.Length > 0 &&
-					selection.Any(x => x.selectedFaceCount > 1);
+			return ProBuilderEditor.instance != null &&
+				MeshSelection.Top().Any(x => x.selectedFaceCount > 1);
 		}
 
 		public override bool IsHidden()
 		{
-			return 	ProBuilderEditor.instance == null ||
-					ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
-					ProBuilderEditor.instance.selectionMode != SelectMode.Face;
+			return ProBuilderEditor.instance == null ||
+				ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
+				ProBuilderEditor.instance.selectionMode != SelectMode.Face;
 		}
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuMergeFaces(selection);
+			return MenuCommands.MenuMergeFaces(MeshSelection.Top());
 		}
 	}
 }

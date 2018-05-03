@@ -15,7 +15,6 @@ namespace UnityEditor.ProBuilder.Actions
 		public override string menuTitle { get { return "New Bezier Shape"; } }
 		public override int toolbarPriority { get { return 1; } }
 		private bool m_ExperimentalFeaturesEnabled = false;
-		public override bool isProOnly { get { return true; } }
 
 		public NewBezierShape()
 		{

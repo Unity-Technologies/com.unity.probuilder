@@ -10,7 +10,6 @@ namespace UnityEditor.ProBuilder.Actions
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_Smoothing", IconSkin.Pro); } }
 		public override TooltipContent tooltip { get { return s_Tooltip; } }
 		public override string menuTitle { get { return "Smoothing"; } }
-		public override bool isProOnly { get { return true; } }
 		public override int toolbarPriority { get { return 2; } }
 		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(

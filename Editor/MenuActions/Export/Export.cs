@@ -20,7 +20,6 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_Export", IconSkin.Pro); } }
 		public override TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return false; } }
 		public override bool hasFileMenuEntry { get { return false; } }
 
 		GUIContent gc_ExportFormat = new GUIContent("Export Format", "The type of file to export the current selection as.");

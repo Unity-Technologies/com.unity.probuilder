@@ -11,10 +11,20 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	class SelectHole : MenuAction
 	{
-		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_SelectHole", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return s_Tooltip; } }
-		public override bool isProOnly { get { return true; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Selection; }
+		}
+
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Selection_SelectHole", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return s_Tooltip; }
+		}
 
 		private static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
@@ -24,16 +34,16 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			if(ProBuilderEditor.instance == null)
+			if (ProBuilderEditor.instance == null)
 				return false;
 
-			if(ProBuilderEditor.instance.editLevel != EditLevel.Geometry)
+			if (ProBuilderEditor.instance.editLevel != EditLevel.Geometry)
 				return false;
 
-			if(ProBuilderEditor.instance.selectionMode != SelectMode.Edge && ProBuilderEditor.instance.selectionMode != SelectMode.Vertex)
+			if (ProBuilderEditor.instance.selectionMode != SelectMode.Edge && ProBuilderEditor.instance.selectionMode != SelectMode.Vertex)
 				return false;
 
-			if(selection == null || selection.Length < 1)
+			if (MeshSelection.Top().Length < 1)
 				return false;
 
 			return true;
@@ -41,10 +51,10 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool IsHidden()
 		{
-			if(ProBuilderEditor.instance.editLevel != EditLevel.Geometry)
+			if (ProBuilderEditor.instance.editLevel != EditLevel.Geometry)
 				return true;
 
-			if(ProBuilderEditor.instance.selectionMode != SelectMode.Edge && ProBuilderEditor.instance.selectionMode != SelectMode.Vertex)
+			if (ProBuilderEditor.instance.selectionMode != SelectMode.Edge && ProBuilderEditor.instance.selectionMode != SelectMode.Vertex)
 				return true;
 
 			return false;
@@ -52,11 +62,11 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			UndoUtility.RecordSelection(selection, "Select Hole");
+			UndoUtility.RecordSelection(MeshSelection.Top(), "Select Hole");
 
 			ActionResult res = ActionResult.NoSelection;
 
-			foreach(ProBuilderMesh pb in selection)
+			foreach (ProBuilderMesh pb in MeshSelection.Top())
 			{
 				bool selectAll = pb.SelectedTriangles == null || pb.SelectedTriangles.Length < 1;
 				int[] indices = selectAll ? Face.AllTriangles(pb.facesInternal) : pb.SelectedTriangles;

@@ -12,9 +12,20 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	class SelectMaterial : MenuAction
 	{
-		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_SelectByMaterial", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Selection; }
+		}
+
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Selection_SelectByMaterial", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return _tooltip; }
+		}
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
@@ -26,21 +37,19 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	ProBuilderEditor.instance != null &&
-					ProBuilderEditor.instance.editLevel != EditLevel.Top &&
-					selection != null &&
-					selection.Length > 0 &&
-					selection.Any(x => x.selectedFaceCount > 0);
+			return ProBuilderEditor.instance != null &&
+				ProBuilderEditor.instance.editLevel != EditLevel.Top &&
+				MeshSelection.Top().Any(x => x.selectedFaceCount > 0);
 		}
 
 		public override bool IsHidden()
 		{
-			return 	editLevel != EditLevel.Geometry;
+			return editLevel != EditLevel.Geometry;
 		}
 
 		public override MenuActionState AltState()
 		{
-			if(	IsEnabled() &&
+			if (IsEnabled() &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
 				ProBuilderEditor.instance.selectionMode == SelectMode.Face)
 				return MenuActionState.VisibleAndEnabled;
@@ -57,12 +66,12 @@ namespace UnityEditor.ProBuilder.Actions
 			bool restrictToSelection = PreferencesInternal.GetBool("pb_restrictSelectMaterialToCurrentSelection");
 			restrictToSelection = EditorGUILayout.Toggle(gc_restrictToSelection, restrictToSelection);
 
-			if( EditorGUI.EndChangeCheck() )
+			if (EditorGUI.EndChangeCheck())
 				PreferencesInternal.SetBool("pb_restrictSelectMaterialToCurrentSelection", restrictToSelection);
 
 			GUILayout.FlexibleSpace();
 
-			if(GUILayout.Button("Select Faces with Material"))
+			if (GUILayout.Button("Select Faces with Material"))
 			{
 				DoAction();
 				SceneView.RepaintAll();
@@ -71,18 +80,18 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			UndoUtility.RecordSelection(selection, "Select Faces with Material");
+			UndoUtility.RecordSelection(MeshSelection.Top(), "Select Faces with Material");
 
 			bool restrictToSelection = PreferencesInternal.GetBool("pb_restrictSelectMaterialToCurrentSelection");
 
-			HashSet<Material> sel = new HashSet<Material>(selection.SelectMany(x => x.selectedFacesInternal.Select(y => y.material).Where( z => z != null)));
+			HashSet<Material> sel = new HashSet<Material>(MeshSelection.Top().SelectMany(x => x.selectedFacesInternal.Select(y => y.material).Where(z => z != null)));
 			List<GameObject> newSelection = new List<GameObject>();
 
-			foreach(ProBuilderMesh pb in restrictToSelection ? selection : Object.FindObjectsOfType<ProBuilderMesh>())
+			foreach (ProBuilderMesh pb in restrictToSelection ? MeshSelection.Top() : Object.FindObjectsOfType<ProBuilderMesh>())
 			{
 				IEnumerable<Face> matches = pb.facesInternal.Where(x => sel.Contains(x.material));
 
-				if(matches.Count() > 0)
+				if (matches.Count() > 0)
 				{
 					newSelection.Add(pb.gameObject);
 					pb.SetSelectedFaces(matches);
@@ -97,5 +106,3 @@ namespace UnityEditor.ProBuilder.Actions
 		}
 	}
 }
-
-

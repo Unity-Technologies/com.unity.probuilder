@@ -15,7 +15,6 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_FillHole", IconSkin.Pro); } }
 		public override TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return true; } }
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
@@ -25,18 +24,17 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	ProBuilderEditor.instance != null &&
-					ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.instance.selectionMode != SelectMode.Face &&
-					selection != null &&
-					selection.Length > 0;
+			return ProBuilderEditor.instance != null &&
+				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
+				ProBuilderEditor.instance.selectionMode != SelectMode.Face &&
+				MeshSelection.Top().Length > 0;
 		}
 
 		public override bool IsHidden()
 		{
-			return 	ProBuilderEditor.instance == null ||
-					ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
-					ProBuilderEditor.instance.selectionMode == SelectMode.Face;
+			return ProBuilderEditor.instance == null ||
+				ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
+				ProBuilderEditor.instance.selectionMode == SelectMode.Face;
 
 		}
 
@@ -68,7 +66,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuFillHole(selection);
+			return MenuCommands.MenuFillHole(MeshSelection.Top());
 		}
 	}
 }

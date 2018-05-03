@@ -12,7 +12,6 @@ namespace UnityEditor.ProBuilder.Actions
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_Triangulate", IconSkin.Pro); } }
 		public override TooltipContent tooltip { get { return _tooltip; } }
 		public override string menuTitle { get { return "Triangulate"; } }
-		public override bool isProOnly { get { return true; } }
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
@@ -22,12 +21,12 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	ProBuilderEditor.instance != null && selection != null && selection.Length > 0;
+			return 	ProBuilderEditor.instance != null && MeshSelection.Top().Length > 0;
 		}
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuFacetizeObject(selection);
+			return MenuCommands.MenuFacetizeObject(MeshSelection.Top());
 		}
 	}
 }

@@ -8,9 +8,20 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	class InvertSelection : MenuAction
 	{
-		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_Invert", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Selection; }
+		}
+
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Selection_Invert", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return _tooltip; }
+		}
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
@@ -21,19 +32,19 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	ProBuilderEditor.instance != null && ProBuilderEditor.instance.editLevel != EditLevel.Top && selection != null && selection.Length > 0;
+			return ProBuilderEditor.instance != null
+				&& ProBuilderEditor.instance.editLevel != EditLevel.Top
+				&& MeshSelection.Top().Length > 0;
 		}
 
 		public override bool IsHidden()
 		{
-			return 	editLevel != EditLevel.Geometry;
+			return editLevel != EditLevel.Geometry;
 		}
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuInvertSelection(selection);
+			return MenuCommands.MenuInvertSelection(MeshSelection.Top());
 		}
 	}
 }
-
-

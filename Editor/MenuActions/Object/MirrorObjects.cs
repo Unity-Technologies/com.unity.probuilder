@@ -13,13 +13,24 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	class MirrorObjects : MenuAction
 	{
-		public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
-		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_Mirror", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return true; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Object; }
+		}
+
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Object_Mirror", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return _tooltip; }
+		}
 
 		[System.Flags]
-		private enum MirrorSettings {
+		private enum MirrorSettings
+		{
 			X = 0x1,
 			Y = 0x2,
 			Z = 0x4,
@@ -28,8 +39,8 @@ namespace UnityEditor.ProBuilder.Actions
 
 		MirrorSettings storedScale
 		{
-			get { return (MirrorSettings) PreferencesInternal.GetInt("pbMirrorObjectScale", (int)(0x1 | 0x8)); }
-			set { PreferencesInternal.SetInt("pbMirrorObjectScale", (int) value); }
+			get { return (MirrorSettings)PreferencesInternal.GetInt("pbMirrorObjectScale", (int)(0x1 | 0x8)); }
+			set { PreferencesInternal.SetInt("pbMirrorObjectScale", (int)value); }
 		}
 
 		static readonly TooltipContent _tooltip = new TooltipContent
@@ -40,7 +51,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	ProBuilderEditor.instance != null && selection != null && selection.Length > 0;
+			return ProBuilderEditor.instance != null && MeshSelection.Top().Length > 0;
 		}
 
 		public override MenuActionState AltState()
@@ -92,7 +103,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			List<GameObject> res  = new List<GameObject>();
 
-			foreach(ProBuilderMesh pb in selection)
+			foreach(ProBuilderMesh pb in MeshSelection.Top())
 				res.Add( Mirror(pb, scale, duplicate).gameObject );
 
 			MeshSelection.SetSelection(res);

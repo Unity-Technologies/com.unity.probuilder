@@ -8,10 +8,20 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	class SetCollider : MenuAction
 	{
-		public override ToolbarGroup group { get { return ToolbarGroup.Entity; } }
-		public override Texture2D icon { get { return null; } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return true; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Entity; }
+		}
+
+		public override Texture2D icon
+		{
+			get { return null; }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return _tooltip; }
+		}
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
@@ -21,7 +31,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return ProBuilderEditor.instance != null && selection != null && selection.Length > 0;
+			return ProBuilderEditor.instance != null && MeshSelection.Top().Length > 0;
 		}
 
 		public override ActionResult DoAction()
@@ -53,7 +63,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			int selectionCount = MeshSelection.All().Length;
 
-			if(selectionCount < 1)
+			if (selectionCount < 1)
 				return new ActionResult(Status.NoChange, "Set Collider\nNo objects selected");
 
 			return new ActionResult(Status.Success, "Set Collider\nSet " + selectionCount + " Objects");

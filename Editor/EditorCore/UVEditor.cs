@@ -2572,7 +2572,7 @@ class UVEditor : EditorWindow
 			switch(mode)
 			{
 				case UVMode.Auto:
-					DrawAutoModeUI((int)actionWindowRect.width);
+					DrawAutoModeUI();
 					break;
 
 				case UVMode.Manual:
@@ -2617,7 +2617,7 @@ class UVEditor : EditorWindow
 
 	bool modifyingUVs_AutoPanel = false;
 
-	void DrawAutoModeUI(int width)
+	void DrawAutoModeUI()
 	{
 		if(GUILayout.Button("Convert to Manual", EditorStyles.miniButton))
 			Menu_SetManualUV();
@@ -3317,7 +3317,7 @@ class UVEditor : EditorWindow
 	bool screenshot_transparentBackground;
 	Color screenshot_lineColor = Color.green;
 	Color screenshot_backgroundColor = Color.black;
-	string screenshot_path = "";
+	string screenShotPath = "";
 
 	readonly Color UV_FILL_COLOR = new Color(.192f,.192f,.192f,1f);	///< This is the default background of the UV editor - used to compare bacground pixels when rendering UV template
 
@@ -3339,9 +3339,9 @@ class UVEditor : EditorWindow
 			screenshot_backgroundColor.b += screenshot_backgroundColor.b < .9f ? .1f : -.1f;
 		}
 
-		screenshot_path = UnityEditor.EditorUtility.SaveFilePanel("Save UV Template", Application.dataPath, "", "png");
+		screenShotPath = UnityEditor.EditorUtility.SaveFilePanel("Save UV Template", Application.dataPath, "", "png");
 
-		if(screenshot_path == "")
+		if(string.IsNullOrEmpty(screenShotPath))
 			return;
 
 		screenshotStatus = ScreenshotStatus.Done;
@@ -3498,9 +3498,9 @@ class UVEditor : EditorWindow
 
 	void SaveUVRender()
 	{
-		if(screenshot && screenshot_path != "")
+		if(screenshot && !string.IsNullOrEmpty(screenShotPath))
 		{
-			EditorUtility.SaveTexture(screenshot, screenshot_path);
+			EditorUtility.SaveTexture(screenshot, screenShotPath);
 			DestroyImmediate(screenshot);
 
 			#if PB_DEBUG

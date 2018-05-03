@@ -15,7 +15,6 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Subdivide", IconSkin.Pro); } }
 		public override TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return true; } }
 		public override bool hasFileMenuEntry { get { return false; } }
 
 		static readonly TooltipContent _tooltip = new TooltipContent
@@ -27,12 +26,10 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	ProBuilderEditor.instance != null &&
-					ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.instance.selectionMode == SelectMode.Edge &&
-					selection != null &&
-					selection.Length > 0 &&
-					selection.Any(x => x.selectedEdgeCount > 0);
+			return ProBuilderEditor.instance != null &&
+				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
+				ProBuilderEditor.instance.selectionMode == SelectMode.Edge &&
+				MeshSelection.Top().Any(x => x.selectedEdgeCount > 0);
 		}
 
 		public override MenuActionState AltState()
@@ -50,28 +47,27 @@ namespace UnityEditor.ProBuilder.Actions
 
 			EditorGUILayout.HelpBox("How many vertices to insert on each selected edge.\n\nVertices will be equally spaced between one another and the boundaries of the edge.", MessageType.Info);
 
-			subdivisions = (int) UI.EditorGUIUtility.FreeSlider("Subdivisions", subdivisions, 1, 32);
+			subdivisions = (int)UI.EditorGUIUtility.FreeSlider("Subdivisions", subdivisions, 1, 32);
 
-			if(EditorGUI.EndChangeCheck())
+			if (EditorGUI.EndChangeCheck())
 				PreferencesInternal.SetInt(PreferenceKeys.pbEdgeSubdivisions, subdivisions);
 
 			GUILayout.FlexibleSpace();
 
-			if(GUILayout.Button("Subdivide Edges"))
+			if (GUILayout.Button("Subdivide Edges"))
 				DoAction();
 		}
 
 		public override bool IsHidden()
 		{
-			return 	ProBuilderEditor.instance == null ||
-					ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
-					ProBuilderEditor.instance.selectionMode != SelectMode.Edge;
-
+			return ProBuilderEditor.instance == null ||
+				ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
+				ProBuilderEditor.instance.selectionMode != SelectMode.Edge;
 		}
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuSubdivideEdge(selection);
+			return MenuCommands.MenuSubdivideEdge(MeshSelection.Top());
 		}
 	}
 }
