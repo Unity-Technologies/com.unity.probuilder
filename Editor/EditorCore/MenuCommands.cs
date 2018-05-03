@@ -705,9 +705,6 @@ namespace UnityEditor.ProBuilder
 			return sel > 1 && sel < max;
 		}
 
-		/**
-		 * Shrink selection.
-		 */
 		public static ActionResult MenuShrinkSelection(ProBuilderMesh[] selection)
 		{
 			// @TODO
@@ -738,13 +735,13 @@ namespace UnityEditor.ProBuilder
 					{
 						Face[] perimeter = ElementSelection.GetPerimeterFaces(pb, pb.selectedFacesInternal).ToArray();
 						pb.SetSelectedFaces( pb.selectedFacesInternal.Except(perimeter).ToArray() );
-						rc += perimeter != null ? perimeter.Length : 0;
+						rc += perimeter.Length;
 						break;
 					}
 
 					case SelectMode.Vertex:
 					{
-						int[] perimeter = ElementSelection.GetPerimeterVertices(pb, pb.SelectedTriangles, editor.SelectedUniversalEdges[i]);
+						int[] perimeter = ElementSelection.GetPerimeterVertices(pb, pb.SelectedTriangles, editor.selectedUniversalEdges[i]);
 						pb.SetSelectedVertices( pb.SelectedTriangles.RemoveAt(perimeter) );
 						rc += perimeter != null ? perimeter.Length : 0;
 						break;
@@ -820,7 +817,7 @@ namespace UnityEditor.ProBuilder
 					for(int i = 0; i < selection.Length; i++)
 					{
 						Edge[] universal_selected_edges = EdgeExtension.GetUniversalEdges(selection[i].selectedEdges, selection[i].sharedIndicesInternal).Distinct().ToArray();
-						Edge[] inverse_universal = System.Array.FindAll(editor.SelectedUniversalEdges[i], x => !universal_selected_edges.Contains(x));
+						Edge[] inverse_universal = System.Array.FindAll(editor.selectedUniversalEdges[i], x => !universal_selected_edges.Contains(x));
 						Edge[] inverse = new Edge[inverse_universal.Length];
 
 						for(int n = 0; n < inverse_universal.Length; n++)

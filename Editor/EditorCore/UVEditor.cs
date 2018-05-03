@@ -2637,7 +2637,7 @@ class UVEditor : EditorWindow
 				}
 			}
 
-			foreach(var kvp in editor.SelectedFacesInEditZone)
+			foreach(var kvp in editor.selectedFacesInEditZone)
 				kvp.Key.RefreshUV(kvp.Value);
 
 			RefreshSelectedUVCoordinates();

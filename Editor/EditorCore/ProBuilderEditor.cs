@@ -93,29 +93,30 @@ namespace UnityEditor.ProBuilder
 		GUIContent m_SceneInfo = new GUIContent();
 
 		// Use for delta display
-		Vector3 translateOrigin = Vector3.zero;
-		Vector3 rotateOrigin = Vector3.zero;
-		Vector3 scaleOrigin = Vector3.zero;
+		Vector3 m_TranslateOrigin = Vector3.zero;
+		Vector3 m_RotateOrigin = Vector3.zero;
+		Vector3 m_ScaleOrigin = Vector3.zero;
 
-		Vector3 textureHandle = Vector3.zero;
-		Vector3 previousTextureHandle = Vector3.zero;
-		bool movingPictures;
-		Quaternion textureRotation = Quaternion.identity;
-		Vector3 textureScale = Vector3.one;
-		Rect sceneInfoRect = new Rect(10, 10, 200, 40);
+		Vector3 m_TextureHandlePosition = Vector3.zero;
+		Vector3 m_TextureHandlePositionPrevious = Vector3.zero;
+		bool m_IsMovingTextures;
+		Quaternion m_TextureRotation = Quaternion.identity;
+		Vector3 m_TextureScale = Vector3.one;
+		Rect m_SceneInfoRect = new Rect(10, 10, 200, 40);
 
 		Edge[][] m_UniversalEdges = new Edge[0][];
 		Vector3 m_HandlePivotWorld = Vector3.zero;
 		Dictionary<int, int>[] m_SharedIndicesDictionary = new Dictionary<int, int>[0];
 
-		public Edge[][] SelectedUniversalEdges
+		internal Edge[][] selectedUniversalEdges
 		{
 			get { return m_UniversalEdges; }
 		}
 
-		// faces that need to be refreshed when moving or modifying the actual selection
-		// public pb_Face[][] 	SelectedFacesInEditZone { get; private set; }
-		public Dictionary<ProBuilderMesh, List<Face>> SelectedFacesInEditZone { get; private set; }
+		/// <summary>
+		/// Faces that need to be refreshed when moving or modifying the actual selection
+		/// </summary>
+		public Dictionary<ProBuilderMesh, List<Face>> selectedFacesInEditZone { get; private set; }
 
 		Matrix4x4 handleMatrix = Matrix4x4.identity;
 		Quaternion handleRotation = new Quaternion(0f, 0f, 0f, 1f);
@@ -124,7 +125,8 @@ namespace UnityEditor.ProBuilder
 		static MethodInfo s_ResetOnSceneGUIState = null;
 #endif
 
-		internal ProBuilderMesh[] selection = new ProBuilderMesh[0]; // All selected pb_Objects
+		// All selected pb_Objects
+		internal ProBuilderMesh[] selection = new ProBuilderMesh[0];
 
 		// Sum of all vertices selected
 		int m_SelectedVertexCount;
@@ -138,18 +140,18 @@ namespace UnityEditor.ProBuilder
 		// Sum of all edges sleected
 		int m_SelectedEdgeCount;
 
-		public int selectedVertexCount { get { return m_SelectedVertexCount; } }
-		public int selectedVertexCommonCount { get { return m_SelectedVerticesCommon; } }
-		public int selectedFaceCount { get { return m_SelectedFaceCount; } }
-		public int selectedEdgeCount { get { return m_SelectedEdgeCount; } }
+		internal int selectedVertexCount { get { return m_SelectedVertexCount; } }
+		internal int selectedVertexCommonCount { get { return m_SelectedVerticesCommon; } }
+		internal int selectedFaceCount { get { return m_SelectedFaceCount; } }
+		internal int selectedEdgeCount { get { return m_SelectedEdgeCount; } }
 
 		Event m_CurrentEvent;
 
-		public bool isFloatingWindow { get; private set; }
-		public EditLevel editLevel { get; private set; }
-		public SelectMode selectionMode { get; private set; }
-		public HandleAlignment handleAlignment { get; private set; }
-		public bool selectHiddenEnabled { get { return m_SelectHiddenEnabled; } }
+		internal bool isFloatingWindow { get; private set; }
+		internal EditLevel editLevel { get; private set; }
+		internal SelectMode selectionMode { get; private set; }
+		internal HandleAlignment handleAlignment { get; private set; }
+		internal bool selectHiddenEnabled { get { return m_SelectHiddenEnabled; } }
 
 		static class SceneStyles
 		{
@@ -181,6 +183,9 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
+		/// <summary>
+		/// Get the active ProBuilderEditor window. Null if no instance is open.
+		/// </summary>
 		public static ProBuilderEditor instance
 		{
 			get { return s_Instance; }
@@ -467,7 +472,7 @@ namespace UnityEditor.ProBuilder
 			}
 
 			// Finished moving vertices, scaling, or adjusting uvs
-			if ((m_IsMovingElements || movingPictures) && GUIUtility.hotControl < 1)
+			if ((m_IsMovingElements || m_IsMovingTextures) && GUIUtility.hotControl < 1)
 			{
 				OnFinishVertexModification();
 				UpdateHandleRotation();
@@ -1279,9 +1284,9 @@ namespace UnityEditor.ProBuilder
 
 				if (previouslyMoving == false)
 				{
-					translateOrigin = m_ElementHandleCachedPosition;
-					rotateOrigin = m_HandleRotation.eulerAngles;
-					scaleOrigin = m_HandleScale;
+					m_TranslateOrigin = m_ElementHandleCachedPosition;
+					m_RotateOrigin = m_HandleRotation.eulerAngles;
+					m_ScaleOrigin = m_HandleScale;
 
 					OnBeginVertexMovement();
 
@@ -1295,7 +1300,7 @@ namespace UnityEditor.ProBuilder
 				{
 					selection[i].TranslateVerticesInWorldSpace(selection[i].SelectedTriangles, diff, m_SnapEnabled ? m_SnapValue : 0f,
 						m_SnapAxisConstraint, m_SharedIndicesDictionary[i]);
-					selection[i].RefreshUV(SelectedFacesInEditZone[selection[i]]);
+					selection[i].RefreshUV(selectedFacesInEditZone[selection[i]]);
 					selection[i].Refresh(RefreshMask.Normals);
 					selection[i].mesh.RecalculateBounds();
 				}
@@ -1324,9 +1329,9 @@ namespace UnityEditor.ProBuilder
 				m_IsMovingElements = true;
 				if (previouslyMoving == false)
 				{
-					translateOrigin = m_ElementHandleCachedPosition;
-					rotateOrigin = m_HandleRotation.eulerAngles;
-					scaleOrigin = m_HandleScale;
+					m_TranslateOrigin = m_ElementHandleCachedPosition;
+					m_RotateOrigin = m_HandleRotation.eulerAngles;
+					m_ScaleOrigin = m_HandleScale;
 
 					OnBeginVertexMovement();
 
@@ -1417,7 +1422,7 @@ namespace UnityEditor.ProBuilder
 					}
 
 					selection[i].mesh.vertices = v;
-					selection[i].RefreshUV(SelectedFacesInEditZone[selection[i]]);
+					selection[i].RefreshUV(selectedFacesInEditZone[selection[i]]);
 					selection[i].Refresh(RefreshMask.Normals);
 					selection[i].mesh.RecalculateBounds();
 				}
@@ -1449,9 +1454,9 @@ namespace UnityEditor.ProBuilder
 				{
 					m_IsMovingElements = true;
 
-					translateOrigin = m_ElementHandleCachedPosition;
-					rotateOrigin = m_HandleRotation.eulerAngles;
-					scaleOrigin = m_HandleScale;
+					m_TranslateOrigin = m_ElementHandleCachedPosition;
+					m_RotateOrigin = m_HandleRotation.eulerAngles;
+					m_ScaleOrigin = m_HandleScale;
 
 					hr = m_HandleRotationPrevious;
 					hri = Quaternion.Inverse(m_HandleRotationPrevious);
@@ -1512,7 +1517,7 @@ namespace UnityEditor.ProBuilder
 					}
 
 					selection[i].mesh.vertices = v;
-					selection[i].RefreshUV(SelectedFacesInEditZone[selection[i]]);
+					selection[i].RefreshUV(selectedFacesInEditZone[selection[i]]);
 					selection[i].Refresh(RefreshMask.Normals);
 					selection[i].mesh.RecalculateBounds();
 				}
@@ -1588,28 +1593,28 @@ namespace UnityEditor.ProBuilder
 			UVEditor uvEditor = UVEditor.instance;
 			if (!uvEditor) return;
 
-			Vector3 cached = textureHandle;
+			Vector3 cached = m_TextureHandlePosition;
 
-			textureHandle = Handles.PositionHandle(textureHandle, handleRotation);
+			m_TextureHandlePosition = Handles.PositionHandle(m_TextureHandlePosition, handleRotation);
 
 			if (altClick) return;
 
-			if (textureHandle != cached)
+			if (m_TextureHandlePosition != cached)
 			{
-				cached = Quaternion.Inverse(handleRotation) * textureHandle;
+				cached = Quaternion.Inverse(handleRotation) * m_TextureHandlePosition;
 				cached.y = -cached.y;
 
 				Vector3 lossyScale = selection[0].transform.lossyScale;
 				Vector3 position = cached.DivideBy(lossyScale);
 
-				if (!movingPictures)
+				if (!m_IsMovingTextures)
 				{
-					previousTextureHandle = position;
-					movingPictures = true;
+					m_TextureHandlePositionPrevious = position;
+					m_IsMovingTextures = true;
 				}
 
-				uvEditor.SceneMoveTool(position - previousTextureHandle);
-				previousTextureHandle = position;
+				uvEditor.SceneMoveTool(position - m_TextureHandlePositionPrevious);
+				m_TextureHandlePositionPrevious = position;
 
 				uvEditor.Repaint();
 			}
@@ -1627,16 +1632,16 @@ namespace UnityEditor.ProBuilder
 			Matrix4x4 prev = Handles.matrix;
 			Handles.matrix = handleMatrix;
 
-			Quaternion cached = textureRotation;
+			Quaternion cached = m_TextureRotation;
 
-			textureRotation = Handles.Disc(textureRotation, Vector3.zero, Vector3.forward, size, false, 0f);
+			m_TextureRotation = Handles.Disc(m_TextureRotation, Vector3.zero, Vector3.forward, size, false, 0f);
 
-			if (textureRotation != cached)
+			if (m_TextureRotation != cached)
 			{
-				if (!movingPictures)
-					movingPictures = true;
+				if (!m_IsMovingTextures)
+					m_IsMovingTextures = true;
 
-				uvEditor.SceneRotateTool(-textureRotation.eulerAngles.z);
+				uvEditor.SceneRotateTool(-m_TextureRotation.eulerAngles.z);
 			}
 
 			Handles.matrix = prev;
@@ -1652,17 +1657,17 @@ namespace UnityEditor.ProBuilder
 			Matrix4x4 prev = Handles.matrix;
 			Handles.matrix = handleMatrix;
 
-			Vector3 cached = textureScale;
-			textureScale = Handles.ScaleHandle(textureScale, Vector3.zero, Quaternion.identity, size);
+			Vector3 cached = m_TextureScale;
+			m_TextureScale = Handles.ScaleHandle(m_TextureScale, Vector3.zero, Quaternion.identity, size);
 
 			if (altClick) return;
 
-			if (cached != textureScale)
+			if (cached != m_TextureScale)
 			{
-				if (!movingPictures)
-					movingPictures = true;
+				if (!m_IsMovingTextures)
+					m_IsMovingTextures = true;
 
-				uvEditor.SceneScaleTool(textureScale, cached);
+				uvEditor.SceneScaleTool(m_TextureScale, cached);
 			}
 
 			Handles.matrix = prev;
@@ -1761,9 +1766,9 @@ namespace UnityEditor.ProBuilder
 				{
 					string handleTransformInfo = string.Format(
 						"translate: <b>{0}</b>\nrotate: <b>{1}</b>\nscale: <b>{2}</b>",
-						(m_ElementHandlePosition - translateOrigin).ToString(),
-						(m_HandleRotation.eulerAngles - rotateOrigin).ToString(),
-						(m_HandleScale - scaleOrigin).ToString());
+						(m_ElementHandlePosition - m_TranslateOrigin).ToString(),
+						(m_HandleRotation.eulerAngles - m_RotateOrigin).ToString(),
+						(m_HandleScale - m_ScaleOrigin).ToString());
 
 					var gc = UI.EditorGUIUtility.TempGUIContent(handleTransformInfo);
 					// sceneview screen.height includes the tab and toolbar
@@ -1781,9 +1786,9 @@ namespace UnityEditor.ProBuilder
 				if (m_ShowSceneInfo)
 				{
 					Vector2 size = UI.EditorStyles.sceneTextBox.CalcSize(m_SceneInfo);
-					sceneInfoRect.width = size.x;
-					sceneInfoRect.height = size.y;
-					GUI.Label(sceneInfoRect, m_SceneInfo, UI.EditorStyles.sceneTextBox);
+					m_SceneInfoRect.width = size.x;
+					m_SceneInfoRect.height = size.y;
+					GUI.Label(m_SceneInfoRect, m_SceneInfo, UI.EditorStyles.sceneTextBox);
 				}
 
 				// Enables vertex selection with a mouse click
@@ -2155,40 +2160,25 @@ namespace UnityEditor.ProBuilder
 				onEditLevelChanged((int) editLevel);
 		}
 
-		/**
-		 *	\brief Updates the arrays used to draw GUI elements (both Window and Scene).
-		 *	@selection_vertex should already be populated at this point.  UpdateSelection
-		 *	just removes duplicate indices, and populates the gui arrays for displaying
-		 *	 things like quad faces and vertex billboards.
-		 */
-
 		/// <summary>
 		/// Rebuild the selection caches that help pb_Editor work.
 		/// </summary>
 		/// <param name="forceUpdate">Force update if elements have been added or removed, or the indices have been altered.</param>
 		public void UpdateSelection(bool forceUpdate = true)
 		{
-////			profiler.BeginSample("UpdateSelection()");
-
-//			profiler.BeginSample("CompareSequence");
 			m_SelectedVertexCount = 0;
 			m_SelectedFaceCount = 0;
 			m_SelectedEdgeCount = 0;
 			m_SelectedVerticesCommon = 0;
-
 			ProBuilderMesh[] t_selection = selection;
-
 			selection = InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms);
 
-			if (SelectedFacesInEditZone != null)
-				SelectedFacesInEditZone.Clear();
+			if (selectedFacesInEditZone != null)
+				selectedFacesInEditZone.Clear();
 			else
-				SelectedFacesInEditZone = new Dictionary<ProBuilderMesh, List<Face>>();
+				selectedFacesInEditZone = new Dictionary<ProBuilderMesh, List<Face>>();
 
 			bool selectionEqual = t_selection.SequenceEqual(selection);
-
-//			profiler.EndSample();
-//			profiler.BeginSample("forceUpdate");
 
 			// If the top level selection has changed, update all the heavy cache things
 			// that don't change based on element selction
@@ -2199,30 +2189,14 @@ namespace UnityEditor.ProBuilder
 				// know that these values can be trusted.
 				forceUpdate = true;
 
-//				profiler.BeginSample("alloc pb_Edge[]");
 				m_UniversalEdges = new Edge[selection.Length][];
-//				profiler.EndSample();
-
-//				profiler.BeginSample("alloc dictionary[]");
 				m_SharedIndicesDictionary = new Dictionary<int, int>[selection.Length];
-//				profiler.EndSample();
-
-//				profiler.BeginSample("get caches");
 				for (int i = 0; i < selection.Length; i++)
 				{
-//					profiler.BeginSample("sharedIndices.ToDictionary()");
 					m_SharedIndicesDictionary[i] = selection[i].sharedIndicesInternal.ToDictionary();
-//					profiler.EndSample();
-
-//					profiler.BeginSample("GetUniversalEdges (dictionary)");
 					m_UniversalEdges[i] = EdgeExtension.GetUniversalEdges(EdgeExtension.AllEdges(selection[i].facesInternal), m_SharedIndicesDictionary[i]);
-//					profiler.EndSample();
 				}
-//				profiler.EndSample();
 			}
-
-//			profiler.EndSample();
-//			profiler.BeginSample("get bounds");
 
 			m_HandlePivotWorld = Vector3.zero;
 
@@ -2235,7 +2209,6 @@ namespace UnityEditor.ProBuilder
 				var lookup = m_SharedIndicesDictionary[i];
 				used.Clear();
 
-//				profiler.Begin("bounds");
 				ProBuilderMesh pb = selection[i];
 
 				if (!boundsInitialized && pb.selectedVertexCount > 0)
@@ -2262,45 +2235,23 @@ namespace UnityEditor.ProBuilder
 					m_SelectedVerticesCommon += used.Count;
 				}
 
-//				profiler.End();
-//				profiler.Begin("selected faces in edit zone");
-				SelectedFacesInEditZone.Add(pb, ElementSelection.GetNeighborFaces(pb, pb.SelectedTriangles, m_SharedIndicesDictionary[i]));
+				selectedFacesInEditZone.Add(pb, ElementSelection.GetNeighborFaces(pb, pb.SelectedTriangles, m_SharedIndicesDictionary[i]));
 
 				m_SelectedVertexCount += selection[i].SelectedTriangles.Length;
 				m_SelectedFaceCount += selection[i].selectedFaceCount;
 				m_SelectedEdgeCount += selection[i].selectedEdgeCount;
-//				profiler.End();
 			}
 
 			m_HandlePivotWorld = (max + min) * .5f;
-
-//			profiler.EndSample();
-//			profiler.BeginSample("update graphics");
-
 			MeshHandles.RebuildGraphics(selection, m_SharedIndicesDictionary, editLevel, selectionMode);
-
-//			profiler.EndSample();
-//			profiler.BeginSample("update handlerotation");
-
 			UpdateHandleRotation();
-
-//			profiler.EndSample();
-//			profiler.BeginSample("update texture hadnles");
-
 			UpdateTextureHandles();
-
-//			profiler.EndSample();
-//			profiler.BeginSample("OnSelectionUpdate");
-
 			m_HandleRotation = handleRotation;
 
 			if (onSelectionUpdate != null)
 				onSelectionUpdate(selection);
-//			profiler.EndSample();
 
 			UpdateSceneInfo();
-
-//			profiler.EndSample();
 		}
 
 		void UpdateSceneInfo()
@@ -2320,7 +2271,6 @@ namespace UnityEditor.ProBuilder
 		// Only updates things that absolutely need to be refreshed, and assumes that no selection changes have occured
 		internal void Internal_UpdateSelectionFast()
 		{
-			// profiler.BeginSample("Internal_UpdateSelectionFast");
 			m_SelectedVertexCount = 0;
 			m_SelectedFaceCount = 0;
 			m_SelectedEdgeCount = 0;
@@ -2368,8 +2318,6 @@ namespace UnityEditor.ProBuilder
 				onSelectionUpdate(selection);
 
 			UpdateSceneInfo();
-
-			// profiler.EndSample();
 		}
 
 		public void ClearElementSelection()
@@ -2386,9 +2334,9 @@ namespace UnityEditor.ProBuilder
 			if (selection.Length < 1) return;
 
 			// Reset temp vars
-			textureHandle = m_HandlePivotWorld;
-			textureScale = Vector3.one;
-			textureRotation = Quaternion.identity;
+			m_TextureHandlePosition = m_HandlePivotWorld;
+			m_TextureScale = Vector3.one;
+			m_TextureRotation = Quaternion.identity;
 
 			ProBuilderMesh pb;
 			Face face;
@@ -2581,8 +2529,8 @@ namespace UnityEditor.ProBuilder
 		void ProGridsToolbarOpen(bool menuOpen)
 		{
 			bool active = ProGridsInterface.ProGridsActive();
-			sceneInfoRect.y = active && !menuOpen ? 28 : 10;
-			sceneInfoRect.x = active ? (menuOpen ? 64 : 8) : 10;
+			m_SceneInfoRect.y = active && !menuOpen ? 28 : 10;
+			m_SceneInfoRect.x = active ? (menuOpen ? 64 : 8) : 10;
 		}
 
 		/// <summary>
@@ -2642,14 +2590,14 @@ namespace UnityEditor.ProBuilder
 			m_HandleScale = Vector3.one;
 			m_HandleRotation = handleRotation;
 
-			if (movingPictures)
+			if (m_IsMovingTextures)
 			{
 				if (UVEditor.instance != null)
 					UVEditor.instance.OnFinishUVModification();
 
 				UpdateTextureHandles();
 
-				movingPictures = false;
+				m_IsMovingTextures = false;
 			}
 			else if (m_IsMovingElements)
 			{
