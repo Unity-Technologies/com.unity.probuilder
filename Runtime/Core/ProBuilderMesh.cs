@@ -4,7 +4,6 @@ using System.Linq;
 using UnityEngine.Serialization;
 using System;
 using System.Collections.ObjectModel;
-using FlyingWormConsole3.FullSerializer.Internal;
 
 namespace UnityEngine.ProBuilder
 {
