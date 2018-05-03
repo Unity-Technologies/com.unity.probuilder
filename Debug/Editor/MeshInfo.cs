@@ -6,7 +6,7 @@ using System.Linq;
 using System.IO;
 using MeshUtility = UnityEngine.ProBuilder.MeshUtility;
 
-public class MeshInfo : Editor
+class MeshInfo : Editor
 {
 	[MenuItem("Tools/Debug/ProBuilder/Print Mesh Info")]
 	static void PrintMeshInfo()

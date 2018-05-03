@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
@@ -12,7 +10,7 @@ using UnityEngine.TestTools;
 
 namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Edge
 {
-	public class Extrude
+	static class Extrude
 	{
 		static System.Random m_Random = new System.Random();
 

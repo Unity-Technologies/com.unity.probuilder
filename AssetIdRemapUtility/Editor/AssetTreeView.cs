@@ -11,7 +11,7 @@ using UObject = UnityEngine.Object;
 
 namespace ProBuilder.AssetUtility
 {
-	public class AssetTreeItem : TreeViewItem
+	class AssetTreeItem : TreeViewItem
 	{
 		string m_RelativePath;
 		string m_FullPath;
@@ -99,7 +99,7 @@ namespace ProBuilder.AssetUtility
 		}
 	}
 
-	public class AssetTreeView : TreeView
+	class AssetTreeView : TreeView
 	{
 		string m_RootDirectory = null;
 		GUIContent m_TempContent = new GUIContent();

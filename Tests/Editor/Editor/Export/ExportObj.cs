@@ -12,7 +12,7 @@ using System.Threading;
 
 namespace UnityEngine.ProBuilder.EditorTests.Export
 {
-	public class ExportObj : TemporaryAssetTest
+	class ExportObj : TemporaryAssetTest
 	{
 		[Test]
 		public static void NumbersAreCultureInvariant()

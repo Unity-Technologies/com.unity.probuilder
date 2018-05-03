@@ -10,7 +10,7 @@ using UnityEngine.ProBuilder.Test;
 
 namespace UnityEngine.ProBuilder.EditorTests.Editor
 {
-	public class TestSelectionRenderState
+	static class TestSelectionRenderState
 	{
 		[Test]
 		public static void TestSelectionRenderStateMatchesUnity()

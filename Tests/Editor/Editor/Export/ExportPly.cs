@@ -9,7 +9,7 @@ using UnityEngine.ProBuilder.Test;
 
 namespace UnityEngine.ProBuilder.EditorTests.Export
 {
-	public class ExportPly : TemporaryAssetTest
+	class ExportPly : TemporaryAssetTest
 	{
 		[Test]
 		public static void NumbersAreCultureInvariant()

@@ -7,7 +7,7 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEngine.ProBuilder.RuntimeTests.Type
 {
-	public static class TestHashUtility
+	static class TestHashUtility
 	{
 		public static int GetCollisionsCount<T>(IEnumerable<T> list)
 		{
@@ -26,7 +26,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.Type
 		}
 	}
 
-	public class TestVector
+	static class TestVector
 	{
 		const int TestIterationCount = 512;
 

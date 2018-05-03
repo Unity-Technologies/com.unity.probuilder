@@ -4,12 +4,10 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.Test;
 
 namespace UnityEngine.ProBuilder.RuntimeTests.Type
 {
-	public static class TestEdge
+	static class TestEdge
 	{
 		const int TestIterationCount = 512;
 

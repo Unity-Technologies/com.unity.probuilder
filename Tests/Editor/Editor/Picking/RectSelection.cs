@@ -10,7 +10,7 @@ using UnityEngine.TestTools;
 
 namespace UnityEngine.ProBuilder.EditorTests.Picking
 {
-	public class RectSelection
+	class RectSelection
 	{
 		ProBuilderMesh[] selectables;
 		Camera camera;

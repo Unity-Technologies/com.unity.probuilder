@@ -7,10 +7,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEditor.IMGUI.Controls;
 
-public class pb_SceneExplorer : EditorWindow
+class pb_SceneExplorer : EditorWindow
 {
 	[MenuItem("Window/Scene Explorer")]
-	public static void MenuInitSceneExplorer()
+	static void MenuInitSceneExplorer()
 	{
 		GetWindow<pb_SceneExplorer>(true, "Scene Explorer", true).Show();
 	}

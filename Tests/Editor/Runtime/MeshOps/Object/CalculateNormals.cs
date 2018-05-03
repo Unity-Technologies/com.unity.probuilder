@@ -10,7 +10,7 @@ using UnityEditor.IMGUI.Controls;
 
 namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Object
 {
-	public class CalculateNormals
+	static class CalculateNormals
 	{
 		const float k_NormalCompareEpsilon = .0001f;
 

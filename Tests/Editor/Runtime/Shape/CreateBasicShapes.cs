@@ -8,7 +8,7 @@ using UnityEngine.ProBuilder.Test;
 
 namespace UnityEngine.ProBuilder.RuntimeTests.Shape
 {
-	public class CreateBasicShapes
+	static class CreateBasicShapes
 	{
 		static void CreateBasicAndCompare(ShapeType type)
 		{

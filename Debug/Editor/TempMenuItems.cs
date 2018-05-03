@@ -5,7 +5,7 @@ using System.Linq;
 using System.Diagnostics;
 using UnityEditor.ProBuilder;
 
-public class TempMenuItems : EditorWindow
+class TempMenuItems : EditorWindow
 {
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()

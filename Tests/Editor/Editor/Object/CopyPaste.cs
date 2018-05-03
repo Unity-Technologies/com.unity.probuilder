@@ -11,7 +11,7 @@ using UnityEditor.ProBuilder;
 
 namespace UnityEngine.ProBuilder.EditorTests.Object
 {
-	public class CopyPaste
+	static class CopyPaste
 	{
 		[Test]
 		public static void CopyWithVerifyIsUnique()

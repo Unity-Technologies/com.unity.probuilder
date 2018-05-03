@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-public class ListAssemblyTypes : EditorWindow
+class ListAssemblyTypes : EditorWindow
 {
 	[MenuItem("Window/List Assembly Types")]
 	static void Init()

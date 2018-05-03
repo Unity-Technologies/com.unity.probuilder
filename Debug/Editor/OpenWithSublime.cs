@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ProBuilder.Debug.Editor
 {
-	public static class SublimeEditor
+	static class SublimeEditor
 	{
 #if UNITY_EDITOR_OSX
 		const string k_SublimePath = "/Users/karlh/bin/subl";

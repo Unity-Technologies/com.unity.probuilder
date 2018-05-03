@@ -4,7 +4,7 @@ using System.Collections;
 using System.IO;
 using System.Diagnostics;
 
-public class SublimeProjectEditor : EditorWindow
+class SublimeProjectEditor : EditorWindow
 {
 	string prj_name = "";
 	string prj_path = "";
@@ -39,8 +39,8 @@ public class SublimeProjectEditor : EditorWindow
 	public void OnEnable()
 	{
 		string[] split = Application.dataPath.Split("/"[0]);
-		prj_name = split[split.Length - 2];		
-		prj_exists = SublimeProjectExists() != null; 
+		prj_name = split[split.Length - 2];
+		prj_exists = SublimeProjectExists() != null;
 	}
 
 	public void OnGUI()
@@ -53,7 +53,7 @@ public class SublimeProjectEditor : EditorWindow
 		{
 			EditorGUILayout.HelpBox("Sublime-Project Found!  Creating a new project will overwrite the old if the names clash.", MessageType.Warning);
 		}
-		
+
 		prj_name = EditorGUILayout.TextField("Project Name", prj_name);
 
 		GUILayout.Label("Project Path");

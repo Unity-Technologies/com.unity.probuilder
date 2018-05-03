@@ -12,7 +12,7 @@ using UnityEngine.TestTools;
 
 namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Object
 {
-	public class CenterPivot
+	static class CenterPivot
 	{
 		[Test]
 		public static void DeleteRandomFace()

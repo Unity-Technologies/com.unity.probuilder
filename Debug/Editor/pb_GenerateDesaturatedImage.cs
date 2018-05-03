@@ -6,7 +6,7 @@ namespace UnityEditor.ProBuilder.DebugUtilities
 	/**
 	 * Create desaturated images from an image.
 	 */
-	public class pb_GenerateDesaturatedImage
+	static class pb_GenerateDesaturatedImage
 	{
 		[MenuItem("Tools/Debug/ProBuilder/Create Desaturated Icons")]
 		private static void Init()

@@ -8,7 +8,7 @@ using System;
 
 namespace UnityEngine.ProBuilder.EditorTests.Type
 {
-	public class TestVersionInfo
+	static class TestVersionInfo
 	{
 		static readonly VersionInfo k_VersionA = new VersionInfo(2, 0, 0, 3);
 		static readonly VersionInfo k_VersionB = new VersionInfo(3, 2, 0, 3);

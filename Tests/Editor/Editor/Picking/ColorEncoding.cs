@@ -4,7 +4,7 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEngine.ProBuilder.EditorTests.Picking
 {
-	public class ColorEncoding
+	static class ColorEncoding
 	{
 		static readonly Color32 k_ColorWhite = new Color32(255, 255, 255, 255);
 		const uint k_HexColorWhite = 0x00FFFFFF;

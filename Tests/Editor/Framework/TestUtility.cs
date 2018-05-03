@@ -13,7 +13,7 @@ using UnityEngine.TestTools;
 
 namespace UnityEngine.ProBuilder.Test
 {
-	public abstract class TemporaryAssetTest : IPrebuildSetup, IPostBuildCleanup
+	abstract class TemporaryAssetTest : IPrebuildSetup, IPostBuildCleanup
 	{
 		public void Setup()
 		{
@@ -28,7 +28,7 @@ namespace UnityEngine.ProBuilder.Test
 		}
 	}
 
-	public static class TestUtility
+	static class TestUtility
 	{
 		const string k_TemplatesDirectory = "Packages/com.unity.probuilder/Tests/Editor/Templates/";
 		const string k_TestsDirectory = "Packages/com.unity.probuilder/Tests/Editor/";

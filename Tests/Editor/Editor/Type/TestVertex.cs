@@ -4,7 +4,7 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEngine.ProBuilder.EditorTests.Type
 {
-	public class TestVertex
+	static class TestVertex
 	{
 		static Vertex a = new Vertex()
 		{

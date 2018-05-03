@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-public class OpenConsoleHere : Editor
+class OpenConsoleHere : Editor
 {
 	private const string CONSOLE_PATH = "C:\\Program Files\\ConEmu\\ConEmu64.exe";
 

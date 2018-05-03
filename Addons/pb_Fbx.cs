@@ -16,10 +16,13 @@ using ProBuilder.MeshOperations;
 namespace ProBuilder.Addons.FBX
 {
 	/// <summary>
-	/// ProBuilder-specific Options when exporting FBX files.
+	/// ProBuilder-specific options when exporting FBX files with the Unity FBX Exporter.
 	/// </summary>
-	public class pb_FbxOptions
+	public class FbxOptions
 	{
+		/// <summary>
+		/// Export mesh topology as quads if possible.
+		/// </summary>
 		public bool quads;
 	}
 

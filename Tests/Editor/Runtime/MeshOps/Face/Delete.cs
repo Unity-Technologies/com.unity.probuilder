@@ -13,7 +13,7 @@ using UnityEngine.TestTools;
 
 namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 {
-	public class Delete
+	static class Delete
 	{
 		static System.Random s_Random = new System.Random();
 

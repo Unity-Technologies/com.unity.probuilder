@@ -12,7 +12,7 @@ using UnityEditor;
 
 namespace UnityEngine.ProBuilder.EditorTests.Object
 {
-	public class CreateDestroy
+	static class CreateDestroy
 	{
 		[Test]
 		public static void DestroyDeletesMesh()

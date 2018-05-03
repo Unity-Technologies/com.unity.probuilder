@@ -8,7 +8,7 @@ using UnityEditor.ProBuilder;
 
 namespace UnityEngine.ProBuilder.EditorTests.ProGrids
 {
-	public class ProGridsMethodsExist
+	static class ProGridsMethodsExist
 	{
 		const BindingFlags k_BindingFlagsAll =
 			BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;

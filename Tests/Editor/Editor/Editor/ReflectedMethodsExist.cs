@@ -12,7 +12,7 @@ using HandleUtility = UnityEditor.HandleUtility;
 
 namespace UnityEngine.ProBuilder.EditorTests.Editor
 {
-	public static class ReflectedMethodsExist
+	static class ReflectedMethodsExist
 	{
 		const BindingFlags k_BindingFlagsAll = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 

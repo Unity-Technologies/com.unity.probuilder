@@ -12,7 +12,7 @@ using UnityEngine.TestTools;
 
 namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 {
-	public class Extrude
+	static class Extrude
 	{
 		static System.Random m_Random = new System.Random();
 
