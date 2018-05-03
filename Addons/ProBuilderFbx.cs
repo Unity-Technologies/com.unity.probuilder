@@ -30,11 +30,11 @@ namespace ProBuilder.Addons.FBX
 	/// Provides some additional functionality when the FbxSdk and FbxExporter packages are available in the project.
 	/// </summary>
 	[InitializeOnLoad]
-	static class pb_Fbx
+	static class ProBuilderFbx
 	{
-		private static bool m_FbxIsLoaded = false;
+		static bool s_FbxIsLoaded = false;
 
-		public static bool FbxEnabled { get { return m_FbxIsLoaded; } }
+		public static bool fbxEnabled { get { return s_FbxIsLoaded; } }
 
 #if PROBUILDER_FBX_PLUGIN_ENABLED
 

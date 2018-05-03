@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder
 		"pb_ObjectArray is deprecated. ProBuilder Material Editor now saves material palettes as pb_MaterialArray. You may safely delete this asset.")]
 	[System.Serializable]
 	// ReSharper disable once InconsistentNaming
-	public class pb_ObjectArray : ScriptableObject, IHasDefault
+	class pb_ObjectArray : ScriptableObject, IHasDefault
 	{
 		// Stored as object for backwards compatibility.
 		[SerializeField] public Object[] array;
