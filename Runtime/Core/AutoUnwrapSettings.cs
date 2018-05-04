@@ -89,7 +89,6 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		#pragma warning disable 0618
 		[System.Obsolete("Please use pb_UV.anchor.")]
-		#pragma warning disable 0618
 		public Justify justify { get; set; }
 		#pragma warning restore 0618
 
@@ -111,15 +110,7 @@ namespace UnityEngine.ProBuilder
 
 		public AutoUnwrapSettings()
 		{
-			this.useWorldSpace = false;
-			this.flipU = false;
-			this.flipV = false;
-			this.swapUV = false;
-			this.fill = Fill.Tile;
-			this.scale = new Vector2(1f, 1f);
-			this.offset = new Vector2(0f, 0f);
-			this.rotation = 0f;
-			this.anchor = Anchor.None;
+			Reset();
 		}
 
 		public AutoUnwrapSettings(AutoUnwrapSettings uvs)
@@ -127,15 +118,15 @@ namespace UnityEngine.ProBuilder
             if (uvs == null)
                 return;
 
-			this.useWorldSpace = uvs.useWorldSpace;
-			this.flipU = uvs.flipU;
-			this.flipV = uvs.flipV;
-			this.swapUV = uvs.swapUV;
-			this.fill = uvs.fill;
-			this.scale = uvs.scale;
-			this.offset = uvs.offset;
-			this.rotation = uvs.rotation;
-			this.anchor = uvs.anchor;
+			useWorldSpace = uvs.useWorldSpace;
+			flipU = uvs.flipU;
+			flipV = uvs.flipV;
+			swapUV = uvs.swapUV;
+			fill = uvs.fill;
+			scale = uvs.scale;
+			offset = uvs.offset;
+			rotation = uvs.rotation;
+			anchor = uvs.anchor;
 		}
 
 		/// <summary>
@@ -143,15 +134,15 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public void Reset()
 		{
-			this.useWorldSpace = false;
-			this.flipU = false;
-			this.flipV = false;
-			this.swapUV = false;
-			this.fill = Fill.Tile;
-			this.scale = new Vector2(1f, 1f);
-			this.offset = new Vector2(0f, 0f);
-			this.rotation = 0f;
-			this.anchor = Anchor.LowerLeft;
+			useWorldSpace = false;
+			flipU = false;
+			flipV = false;
+			swapUV = false;
+			fill = Fill.Tile;
+			scale = new Vector2(1f, 1f);
+			offset = new Vector2(0f, 0f);
+			rotation = 0f;
+			anchor = Anchor.LowerLeft;
 		}
 
 		public override string ToString()

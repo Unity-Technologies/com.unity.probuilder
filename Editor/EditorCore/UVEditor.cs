@@ -29,8 +29,6 @@ class UVEditor : EditorWindow
 
 	ProBuilderEditor editor { get { return ProBuilderEditor.instance; } }
 
-	const int WINDOW_HEADER_OFFSET = 48;
-
 	public static UVEditor instance;
 
 	const int LEFT_MOUSE_BUTTON = 0;
@@ -50,11 +48,6 @@ class UVEditor : EditorWindow
 	const float MAX_PROXIMITY_SNAP_DIST_UV = .15f; 		///< The maximum allowable distance magnitude between coords to be considered for proximity snapping (UV coordinates)
 	const float MAX_PROXIMITY_SNAP_DIST_CANVAS = 12f;	///< The maximum allowable distance magnitude between coords to be considered for proximity snapping (Canvas coordinates)
 	const float MIN_DIST_MOUSE_EDGE = 8f;
-
-	const int ACTION_WINDOW_WIDTH_MANUAL = 128;
-	const int ACTION_WINDOW_WIDTH_AUTO = 210;
-	const int ACTION_WINDOW_WIDTH_UV2 = 300;
-	const int ACTION_WINDOW_HEIGHT_UV2 = 150;
 
 	private float pref_gridSnapValue = .0625f;
 
@@ -345,13 +338,13 @@ class UVEditor : EditorWindow
 
 #region GUI Loop
 
+	const int k_UVInspectorWidthMinManual = 100;
+	const int k_UVInspectorWidthMinAuto = 200;
+	const int k_UVInspectorWidth = 210;
+
 	Rect 	graphRect,
 			toolbarRect,
-			actionWindowRect = new Rect(6, 64, 128, 340);
-
-	#if PB_DEBUG
-	Rect buggerRect;
-	#endif
+			actionWindowRect = new Rect(6, 64, k_UVInspectorWidth, 340);
 
 	Vector2 mousePosition_initial;
 
@@ -375,8 +368,8 @@ class UVEditor : EditorWindow
 	{
 		if(screenshotStatus != ScreenshotStatus.Done)
 		{
-			this.minSize = new Vector2(ScreenRect.width, ScreenRect.height);
-			this.maxSize = new Vector2(ScreenRect.width, ScreenRect.height);
+			minSize = new Vector2(ScreenRect.width, ScreenRect.height);
+			maxSize = new Vector2(ScreenRect.width, ScreenRect.height);
 
 			UI.EditorGUIUtility.DrawSolidColor(new Rect(-1, -1, ScreenRect.width + 10, ScreenRect.height + 10), screenshot_backgroundColor);
 
@@ -404,9 +397,7 @@ class UVEditor : EditorWindow
 		ScreenRect.width = this.position.width;
 		ScreenRect.height = this.position.height;
 
-		/**
-		 * if basic skin, manually tint the background
-		 */
+		// if basic skin, manually tint the background
 		if(!EditorGUIUtility.isProSkin)
 		{
 			GUI.backgroundColor = BasicBackgroundColor; //new Color(.13f, .13f, .13f, .7f);
@@ -414,35 +405,19 @@ class UVEditor : EditorWindow
 			GUI.backgroundColor = Color.white;
 		}
 
-		if(this.position.width != screenWidth || this.position.height != screenHeight)
+		if(!ProBuilderMath.Approx(position.width, screenWidth) || !ProBuilderMath.Approx(position.height, screenHeight))
 			OnScreenResize();
 
 		toolbarRect = new Rect(PAD, PAD, this.position.width-PAD*2, 29);
 		graphRect = new Rect(PAD, PAD, this.position.width-PAD*2, this.position.height-PAD*2);
 
-		actionWindowRect.x = (int)Mathf.Clamp(actionWindowRect.x, PAD, this.position.width-PAD-PAD-actionWindowRect.width);
-		actionWindowRect.y = (int)Mathf.Clamp(actionWindowRect.y, PAD, this.position.height-MIN_ACTION_WINDOW_SIZE);
-		actionWindowRect.height = (int)Mathf.Min(this.position.height - actionWindowRect.y - 24, 400);
-
-		if(channel == 0)
-		{
-			switch(mode)
-			{
-				case UVMode.Manual:
-				case UVMode.Mixed:
-					actionWindowRect.width = ACTION_WINDOW_WIDTH_MANUAL;
-					break;
-
-				case UVMode.Auto:
-					actionWindowRect.width = ACTION_WINDOW_WIDTH_AUTO;
-					break;
-			}
-		}
-		else if(channel == 1)
-		{
-			actionWindowRect.width = ACTION_WINDOW_WIDTH_UV2;
-			actionWindowRect.height = ACTION_WINDOW_HEIGHT_UV2;
-		}
+		actionWindowRect.x = (int)Mathf.Clamp(actionWindowRect.x, PAD, position.width-PAD-PAD-actionWindowRect.width);
+		actionWindowRect.y = (int)Mathf.Clamp(actionWindowRect.y, PAD, position.height-MIN_ACTION_WINDOW_SIZE);
+		if (actionWindowRect.y + actionWindowRect.height > position.height)
+			actionWindowRect.height = position.height - actionWindowRect.y - 24;
+		int minWidth = (mode == UVMode.Auto ? k_UVInspectorWidthMinAuto : k_UVInspectorWidthMinManual);
+		if (actionWindowRect.width < minWidth)
+			actionWindowRect.width = minWidth;
 
 		// Mouse drags, canvas movement, etc
 		HandleInput();
@@ -2478,7 +2453,6 @@ class UVEditor : EditorWindow
 		if(	commandStyle == null )
 			commandStyle = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("Command");
 
-
 		/**
 		 * Handle toggles and SelectionMode toggles.
 		 */
@@ -2560,11 +2534,10 @@ class UVEditor : EditorWindow
 	}
 
 	static Rect ActionWindowDragRect = new Rect(0,0,10000,20);
-	static UnityEditor.Editor uv2Editor = null;
+	static Editor uv2Editor = null;
 
 	void DrawActionWindow(int windowIndex)
 	{
-
 		if(channel == 0)
 		{
 			GUILayout.Label("UV Mode: " + mode.ToString(), EditorStyles.boldLabel);
@@ -2576,7 +2549,7 @@ class UVEditor : EditorWindow
 					break;
 
 				case UVMode.Manual:
-					DrawManualModeUI((int)actionWindowRect.width);
+					DrawManualModeUI();
 					break;
 
 				case UVMode.Mixed:
@@ -2624,7 +2597,7 @@ class UVEditor : EditorWindow
 
 		bool isKeyDown = Event.current.type == EventType.KeyDown;
 
-		if( AutoUVEditor.OnGUI(selection, (int)actionWindowRect.width) )
+		if( AutoUVEditor.OnGUI(selection, (int)actionWindowRect.width))
 		{
 			if(!modifyingUVs_AutoPanel)
 			{
@@ -2656,7 +2629,8 @@ class UVEditor : EditorWindow
 	bool tool_weldButton = false;
 
 	Vector2 scroll = Vector2.zero;
-	void DrawManualModeUI(int width)
+
+	void DrawManualModeUI()
 	{
 		GUI.enabled = selectedFaceCount > 0;
 
@@ -2678,17 +2652,6 @@ class UVEditor : EditorWindow
 				Menu_BoxProject();
 
 		GUILayout.EndHorizontal();
-
-		// GUILayout.BeginHorizontal();
-
-		// 	GUI.enabled = selectedUVCount > 0;
-		// 	if(GUILayout.Button("Sphere", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
-		// 		Menu_SphericalProject();
-		// 	GUI.enabled = true;
-
-		// 	GUILayout.FlexibleSpace();
-
-		// GUILayout.EndHorizontal();
 
 		/**
 		 * Selection
@@ -2714,7 +2677,7 @@ class UVEditor : EditorWindow
 			tool_weldButton,
 			Menu_SewUVs,
 			WeldButtonGUI,
-			width,
+			(int) actionWindowRect.width,
 			20,
 			selection);
 
@@ -2743,27 +2706,23 @@ class UVEditor : EditorWindow
 		GUI.enabled = true;
 	}
 
-	/**
-	 * Expose the distance parameter used in Weld operations.
-	 * ProBuilder only.
-	 */
-	const float MIN_WELD_DISTANCE = .001f;
-	private void WeldButtonGUI(int width)
+	const float k_MinimumSewUVDistance = .001f;
+
+	void WeldButtonGUI(int width)
 	{
 		EditorGUI.BeginChangeCheck();
 
 		float weldDistance = PreferencesInternal.GetFloat(PreferenceKeys.pbUVWeldDistance);
 
-		if(weldDistance <= MIN_WELD_DISTANCE)
-			weldDistance = MIN_WELD_DISTANCE;
+		if(weldDistance <= k_MinimumSewUVDistance)
+			weldDistance = k_MinimumSewUVDistance;
 
-		EditorGUIUtility.labelWidth = width - 70;
 		weldDistance = EditorGUILayout.FloatField(new GUIContent("Max", "The maximum distance between two vertices in order to be welded together."), weldDistance);
 
 		if( EditorGUI.EndChangeCheck() )
 		{
-			if(weldDistance < MIN_WELD_DISTANCE)
-				weldDistance = MIN_WELD_DISTANCE;
+			if(weldDistance < k_MinimumSewUVDistance)
+				weldDistance = k_MinimumSewUVDistance;
 			PreferencesInternal.SetFloat(PreferenceKeys.pbUVWeldDistance, weldDistance);
 		}
 	}
