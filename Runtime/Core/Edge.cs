@@ -10,8 +10,8 @@ namespace UnityEngine.ProBuilder
 	[System.Serializable]
 	public struct Edge : System.IEquatable<Edge>
 	{
-		public int x { get; set; }
-		public int y { get; set; }
+		public int x;
+		public int y;
 
 		/// <summary>
 		/// An empty edge is defined as -1, -1.
@@ -50,7 +50,7 @@ namespace UnityEngine.ProBuilder
 
 		public override bool Equals(System.Object obj)
 		{
-			return obj is Edge && this.Equals((Edge) obj);
+			return obj is Edge && Equals((Edge) obj);
 		}
 
 		public override int GetHashCode()

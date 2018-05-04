@@ -18,17 +18,6 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         int[] m_Indices;
 
-        [FormerlySerializedAs("_distinctIndices")]
-        [SerializeField]
-        int[] m_DistinctIndices;
-
-        /// <summary>
-        /// A cache of the calculated #pb_Edge edges for this face.
-        /// </summary>
-        [SerializeField]
-        [FormerlySerializedAs("_edges")]
-        Edge[] m_Edges;
-
         /// <summary>
         /// Adjacent faces sharing this smoothingGroup will have their abutting edge normals averaged.
         /// </summary>
@@ -100,6 +89,10 @@ namespace UnityEngine.ProBuilder
             Array.Copy(array, m_Indices, len);
 	        InvalidateCache();
         }
+
+	    int[] m_DistinctIndices;
+
+	    Edge[] m_Edges;
 
         /// <summary>
         /// Returns a reference to the cached distinct indices (each vertex index is only referenced once in distinctIndices).

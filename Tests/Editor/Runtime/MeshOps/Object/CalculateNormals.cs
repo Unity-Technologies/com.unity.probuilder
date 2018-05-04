@@ -4,9 +4,6 @@ using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder.Test;
-using System.Linq;
-using System.Xml.Schema;
-using UnityEditor.IMGUI.Controls;
 
 namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Object
 {
