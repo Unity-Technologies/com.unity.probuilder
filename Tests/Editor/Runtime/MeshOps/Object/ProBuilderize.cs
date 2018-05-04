@@ -12,23 +12,21 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Object
 	static class ProBuilderize
 	{
 		[Test]
-		[MenuItem("Tools/Do Probuilderize testt")]
-		public static void BuiltInShapesRoundTrip()
+		public static void CubeSurvivesRoundTrip()
 		{
-			using (var shapes = new TestUtility.BuiltInPrimitives())
+			var pb = ShapeGenerator.CubeGenerator(Vector3.one);
+			try
 			{
-				foreach (var pb in (IEnumerable<ProBuilderMesh>)shapes)
-				{
-					pb.ToMesh();
-					pb.Refresh();
-					// no optimization for mesh
-					var dup = new GameObject().AddComponent<ProBuilderMesh>();
-					var importer = new MeshImporter(dup);
-					importer.Import(pb.gameObject);
-					dup.ToMesh();
-					dup.Refresh();
-					TestUtility.AssertAreEqual(pb.mesh, dup.mesh, pb.name);
-				}
+				var dup = new GameObject().AddComponent<ProBuilderMesh>();
+				var importer = new MeshImporter(dup);
+				importer.Import(pb.gameObject);
+				dup.ToMesh();
+				dup.Refresh();
+				TestUtility.AssertAreEqual(pb.mesh, dup.mesh, pb.name);
+			}
+			catch
+			{
+				UnityEngine.Object.DestroyImmediate(pb.gameObject);
 			}
 		}
 	}

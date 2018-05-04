@@ -344,12 +344,13 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         /// <param name="array"></param>
         public void SetTangents(IEnumerable<Vector4> array)
-        {
-	        if (array == null)
-		        throw new ArgumentNullException("array");
-	        if (array.Count() != vertexCount)
+	    {
+		    if (array == null)
+			    m_Tangents = null;
+	        else if (array.Count() != vertexCount)
 		        throw new ArgumentOutOfRangeException("array", "Tangent array length must match vertex count");
-	        m_Tangents = array.ToArray();
+		    else
+		        m_Tangents = array.ToArray();
         }
 
         /// <summary>
@@ -428,11 +429,11 @@ namespace UnityEngine.ProBuilder
             switch (channel)
             {
 	            case 0:
-		            m_Textures0 = uvs != null ? uvs.Cast<Vector2>().ToArray() : null;
+		            m_Textures0 = uvs != null ? uvs.Select(x => (Vector2)x).ToArray() : null;
 		            break;
 
                 case 1:
-                    mesh.uv2 = uvs != null ? uvs.Cast<Vector2>().ToArray() : null;
+                    mesh.uv2 = uvs != null ? uvs.Select(x => (Vector2)x).ToArray() : null;
                     break;
 
                 case 2:
@@ -946,8 +947,8 @@ namespace UnityEngine.ProBuilder
 			List<Vector4> uvs = new List<Vector4>();
 			for (var i = 0; i < k_UVChannelCount; i++)
 			{
-				GetUVs(0, uvs);
-				SetUVs(0, uvs);
+				GetUVs(i, uvs);
+				SetUVs(i, uvs);
 			}
 			SetTangents(tangents);
 			SetColors(colors);
@@ -975,8 +976,8 @@ namespace UnityEngine.ProBuilder
 
 		    for (var i = 0; i < k_UVChannelCount; i++)
 		    {
-			    other.GetUVs(0, uvs);
-			    SetUVs(0, uvs);
+			    other.GetUVs(1, uvs);
+			    SetUVs(1, uvs);
 		    }
 
 			SetTangents(other.tangents);

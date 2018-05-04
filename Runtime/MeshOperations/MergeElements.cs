@@ -118,6 +118,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					else
 						matches.Add(common, face.indices[i]);
 				}
+
+				face.InvalidateCache();
 			}
 
 			pb.RemoveUnusedVertices();

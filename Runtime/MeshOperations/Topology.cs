@@ -146,6 +146,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			else if(mode[5] == 2 && indices[5] != used)
 				indices[5] = i0;
 
+			face.InvalidateCache();
+
 			return true;
 		}
 

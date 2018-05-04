@@ -75,7 +75,7 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentNullException("face");
 
             int[] indices = face.indices;
-			System.Array.Reverse(indices);
+			Array.Reverse(indices);
 			face.indices = indices;
 		}
 	}

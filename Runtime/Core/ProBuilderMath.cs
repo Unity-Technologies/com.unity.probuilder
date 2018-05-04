@@ -660,7 +660,7 @@ namespace UnityEngine.ProBuilder
 			// triangle normal.
 			// otherwise it's not safe to assume that the face
 			// has even generally uniform normals
-			Vector3 nrm = ProBuilderMath.Normal(
+			Vector3 nrm = Normal(
 				positions[face.indices[0]],
 				positions[face.indices[1]],
 				positions[face.indices[2]] );

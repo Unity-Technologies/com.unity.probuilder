@@ -757,19 +757,19 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		{
 			Mesh m = t.GetComponent<MeshFilter>().sharedMesh;
 
-			Vector3[] m_vertices 	= MeshUtility.GetMeshAttribute<Vector3[]>(t.gameObject, x => x.vertices);
-			Color[] m_colors 		= MeshUtility.GetMeshAttribute<Color[]>(t.gameObject, x => x.colors);
-			Vector2[] m_uvs 		= MeshUtility.GetMeshAttribute<Vector2[]>(t.gameObject, x => x.uv);
+			Vector3[] m_vertices = MeshUtility.GetMeshAttribute<Vector3[]>(t.gameObject, x => x.vertices);
+			Color[] m_colors = MeshUtility.GetMeshAttribute<Color[]>(t.gameObject, x => x.colors);
+			Vector2[] m_uvs = MeshUtility.GetMeshAttribute<Vector2[]>(t.gameObject, x => x.uv);
 
 			List<Vector3> verts = preserveFaces ? new List<Vector3>(m.vertices) : new List<Vector3>();
 			List<Color> cols = preserveFaces ? new List<Color>(m.colors) : new List<Color>();
 			List<Vector2> uvs = preserveFaces ? new List<Vector2>(m.uv) : new List<Vector2>();
 			List<Face> faces = new List<Face>();
 
-			for(int n = 0; n < m.subMeshCount; n++)
+			for (int n = 0; n < m.subMeshCount; n++)
 			{
 				int[] tris = m.GetTriangles(n);
-				for(int i = 0; i < tris.Length; i+=3)
+				for (int i = 0; i < tris.Length; i += 3)
 				{
 					int index = -1;
 					if(preserveFaces)

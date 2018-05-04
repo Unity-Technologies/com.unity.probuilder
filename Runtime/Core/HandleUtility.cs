@@ -74,13 +74,13 @@ namespace UnityEngine.ProBuilder
 				if(ignore != null && ignore.Contains(mesh.facesInternal[CurFace]))
 					continue;
 
-				int[] Indices = mesh.facesInternal[CurFace].indices;
+				int[] indices = mesh.facesInternal[CurFace].indices;
 
-				for(int CurTriangle = 0; CurTriangle < Indices.Length; CurTriangle += 3)
+				for(int CurTriangle = 0; CurTriangle < indices.Length; CurTriangle += 3)
 				{
-					Vector3 a = vertices[Indices[CurTriangle+0]];
-					Vector3 b = vertices[Indices[CurTriangle+1]];
-					Vector3 c = vertices[Indices[CurTriangle+2]];
+					Vector3 a = vertices[indices[CurTriangle+0]];
+					Vector3 b = vertices[indices[CurTriangle+1]];
+					Vector3 c = vertices[indices[CurTriangle+2]];
 
 					nrm = Vector3.Cross(b-a, c-a);
 					dot = Vector3.Dot(worldRay.direction, nrm);

@@ -478,16 +478,10 @@ namespace UnityEngine.ProBuilder
 				Vector3 flip = new Vector3(-1f, 1f, 1f);
 
 				for(int i = 0; i < vertices.Length; i++)
-				{
 					vertices[i].Scale(flip);
-				}
 
 				foreach (Face f in faces)
-				{
-					int[] indices = f.indices;
-					System.Array.Reverse(indices);
-					f.indices = indices;
-				}
+					f.Reverse();
 			}
 
 			ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithVerticesFaces(vertices, faces);
