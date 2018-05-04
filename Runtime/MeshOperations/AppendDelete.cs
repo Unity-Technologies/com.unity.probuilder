@@ -120,7 +120,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             if (appendedFaces == null)
                 throw new ArgumentNullException("appendedFaces");
-            
+
             List<Vector3> vertices = new List<Vector3>(mesh.positionsInternal);
 			List<Color> colors = new List<Color>(mesh.colorsInternal);
 			List<Vector2> uvs = new List<Vector2>(mesh.texturesInternal);
@@ -275,7 +275,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Dictionary<int, int> shiftmap = new Dictionary<int, int>();
 
 			for(var i = 0;  i < vertexCount; i++)
-				shiftmap.Add(i, InternalUtility.NearestIndexPriorToValue<int>(indicesToRemove, i) + 1);
+				shiftmap.Add(i, ArrayUtility.NearestIndexPriorToValue<int>(indicesToRemove, i) + 1);
 
 			// shift all other face indices down to account for moved vertex positions
 			for(var i = 0; i < nFaces.Length; i++)

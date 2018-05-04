@@ -380,13 +380,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			List<Vertex> vertices)
 		{
 			List<Edge> perimeter = WingedEdge.SortEdgesByAdjacency(face);
-
 			int splitCount = edges.Count;
 
 			Vertex centroid = Vertex.Average(vertices, face.distinctIndices);
 
-			List<List<Vertex>> n_vertices = InternalUtility.Fill<List<Vertex>>(x => { return new List<Vertex>(); }, splitCount);
-			List<List<int>> n_indices = InternalUtility.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
+			List<List<Vertex>> n_vertices = ArrayUtility.Fill<List<Vertex>>(x => { return new List<Vertex>(); }, splitCount);
+			List<List<int>> n_indices = ArrayUtility.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
 
 			HashSet<Edge> edgesToSplit = new HashSet<Edge>(edges.Select(x => x.edge.local));
 
@@ -537,9 +536,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			int splitCount = indices.Count;
 
-			List<List<Vertex>> n_vertices = InternalUtility.Fill<List<Vertex>>(x => { return new List<Vertex>(); }, splitCount);
-			List<List<int>> n_sharedIndices = InternalUtility.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
-			List<List<int>> n_indices = InternalUtility.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
+			List<List<Vertex>> n_vertices = ArrayUtility.Fill<List<Vertex>>(x => { return new List<Vertex>(); }, splitCount);
+			List<List<int>> n_sharedIndices = ArrayUtility.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
+			List<List<int>> n_indices = ArrayUtility.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
 
 			Vertex center = Vertex.Average(vertices, indices);
 			Vector3 nrm = ProBuilderMath.Normal(vertices, face.indices);

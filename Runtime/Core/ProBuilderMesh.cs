@@ -1210,7 +1210,7 @@ namespace UnityEngine.ProBuilder
 			Mesh m = GetComponent<MeshFilter>().sharedMesh;
 
 			if (m_Colors == null || m_Colors.Length != vertexCount)
-				m_Colors = InternalUtility.FilledArray<Color>(Color.white, vertexCount);
+				m_Colors = ArrayUtility.FilledArray<Color>(Color.white, vertexCount);
 
 			m.colors = m_Colors;
 		}
@@ -1226,7 +1226,7 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentNullException("face");
 
 			if (m_Colors == null)
-                m_Colors = InternalUtility.FilledArray<Color>(Color.white, vertexCount);
+                m_Colors = ArrayUtility.FilledArray<Color>(Color.white, vertexCount);
 
 			foreach (int i in face.distinctIndices)
 				m_Colors[i] = color;

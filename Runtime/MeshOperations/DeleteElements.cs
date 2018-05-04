@@ -46,7 +46,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            if (distinctIndexes == null || distinctIndexes.Count() < 1)
+            if (distinctIndexes == null || !distinctIndexes.Any())
 				return;
 
 			Vertex[] vertices = Vertex.GetVertices(mesh);
@@ -61,7 +61,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			// Add 1 because NearestIndexPriorToValue is 0 indexed.
 			for(int i = 0; i < originalVertexCount; i++)
-				offset[i] = InternalUtility.NearestIndexPriorToValue(sorted, i) + 1;
+				offset[i] = ArrayUtility.NearestIndexPriorToValue(sorted, i) + 1;
 
 			foreach(Face face in mesh.facesInternal)
 			{

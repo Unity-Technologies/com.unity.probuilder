@@ -1345,7 +1345,7 @@ class UVEditor : EditorWindow
 
 				for(int i = 0; i < selection.Length; i++)
 				{
-					Vector2[] sel = InternalUtility.ValuesWithIndices(UVEditing.GetUVs(selection[i], channel), m_DistinctIndicesSelection[i]);
+					Vector2[] sel = UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndices(UVEditing.GetUVs(selection[i], channel), m_DistinctIndicesSelection[i]);
 
 					for(int n = 0; n < selection.Length; n++)
 					{
@@ -2203,7 +2203,7 @@ class UVEditor : EditorWindow
 
 	Bounds2D GetBounds(int i, int f, Vector2[][] array)
 	{
-		return new Bounds2D( InternalUtility.ValuesWithIndices(array[i], selection[i].facesInternal[f].distinctIndices) );
+		return new Bounds2D( UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndices(array[i], selection[i].facesInternal[f].distinctIndices) );
 	}
 
 	/**
@@ -3265,7 +3265,7 @@ class UVEditor : EditorWindow
 			selection[i].ToMesh();
 
 			Vector2[] uv = UVEditing.GetUVs(selection[i], channel);
-			Vector2[] uvs = InternalUtility.ValuesWithIndices( uv, m_DistinctIndicesSelection[i] );
+			Vector2[] uvs = UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndices( uv, m_DistinctIndicesSelection[i] );
 
 			uvs = UVEditing.FitUVs(uvs);
 

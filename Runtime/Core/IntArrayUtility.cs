@@ -436,7 +436,7 @@ namespace UnityEngine.ProBuilder
 			{
 				for(int n = 0; n < sharedIndices[i].length; n++)
 				{
-					int index = InternalUtility.NearestIndexPriorToValue(removed_values, sharedIndices[i][n]);
+					int index = ArrayUtility.NearestIndexPriorToValue(removed_values, sharedIndices[i][n]);
 					// add 1 because index is zero based
 					sharedIndices[i][n] -= index + 1;
 				}

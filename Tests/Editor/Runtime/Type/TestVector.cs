@@ -60,7 +60,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.Type
 		[Test]
 		public static void TestHashCollisions_IVEC3()
 		{
-			IntVec3[] ivec3 = InternalUtility.Fill<IntVec3>(TestIterationCount, (i) => { return (IntVec3) RandVec3(); });
+			IntVec3[] ivec3 = ArrayUtility.Fill<IntVec3>(TestIterationCount, (i) => { return (IntVec3) RandVec3(); });
 			Assert.IsTrue( TestHashUtility.GetCollisionsCount(ivec3) < TestIterationCount * .05f );
 		}
 
@@ -87,7 +87,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.Type
 			IntVec3 c = (IntVec3) new Vector3(a.x, a.y + .001f, a.z);
 			IntVec3 d = (IntVec3) new Vector3(a.x, a.y, a.z);
 
-			IntVec3[] arr = InternalUtility.Fill<IntVec3>(24, (i) => { return i % 2 == 0 ? a : (IntVec3) RandVec3(); });
+			IntVec3[] arr = ArrayUtility.Fill<IntVec3>(24, (i) => { return i % 2 == 0 ? a : (IntVec3) RandVec3(); });
 
 			Assert.IsFalse(a == b);
 			Assert.IsFalse(a == c);

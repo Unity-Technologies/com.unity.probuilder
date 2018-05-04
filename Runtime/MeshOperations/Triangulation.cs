@@ -92,9 +92,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			int index = 0;
 
-			Triangulatable soup = convex ?
-				(Triangulatable) new PointSet(points.Select(x => new TriangulationPoint(x.x, x.y, index++)).ToList()) :
-				(Triangulatable) new Polygon(points.Select(x => new PolygonPoint(x.x, x.y, index++)));
+			Triangulatable soup = convex
+				? new PointSet(points.Select(x => new TriangulationPoint(x.x, x.y, index++)).ToList())
+				: (Triangulatable)new Polygon(points.Select(x => new PolygonPoint(x.x, x.y, index++)));
 
 			try
 			{

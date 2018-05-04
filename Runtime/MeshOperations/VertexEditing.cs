@@ -281,7 +281,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="mesh"></param>
 		/// <param name="edges"></param>
 		/// <param name="count"></param>
-		/// <param name="newEdges"></param>
 		/// <returns></returns>
 		public static List<Edge> AppendVerticesToEdge(this ProBuilderMesh mesh, IList<Edge> edges, int count)
 		{
@@ -331,8 +330,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					if( !modifiedFaces.TryGetValue(face, out data) )
 					{
 						data = new FaceRebuildData();
-						data.face = new Face(null, face.material, new AutoUnwrapSettings(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
-						data.vertices = new List<Vertex>(InternalUtility.ValuesWithIndices(vertices, face.distinctIndices));
+						data.face = new Face(new int[0], face.material, new AutoUnwrapSettings(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
+						data.vertices = new List<Vertex>(ArrayUtility.ValuesWithIndices(vertices, face.distinctIndices));
 						data.sharedIndices = new List<int>();
 						data.sharedIndicesUV = new List<int>();
 

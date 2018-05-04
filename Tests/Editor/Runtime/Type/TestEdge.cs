@@ -21,7 +21,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.Type
 		[Test]
 		public static void TestHashCollisions_EDGE()
 		{
-			Edge[] edge = InternalUtility.Fill<Edge>(TestIterationCount, (i) => { return RandEdge(); });
+			Edge[] edge = ArrayUtility.Fill<Edge>(TestIterationCount, (i) => { return RandEdge(); });
 			Assert.IsTrue(TestHashUtility.GetCollisionsCount(edge) < TestIterationCount * .05f);
 		}
 
@@ -33,7 +33,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.Type
 			Edge c = (Edge) new Edge(a.x + 10, a.x);
 			Edge d = (Edge) new Edge(a.x, a.y);
 
-			Edge[] arr = InternalUtility.Fill<Edge>(24, (i) => { return i % 2 == 0 ? a : (Edge) RandEdge(); });
+			Edge[] arr = ArrayUtility.Fill<Edge>(24, (i) => { return i % 2 == 0 ? a : (Edge) RandEdge(); });
 
 			Assert.IsFalse(a == b, "a == b");
 			Assert.IsFalse(a == c, "a == c");

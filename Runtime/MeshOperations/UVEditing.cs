@@ -117,7 +117,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Vector2[] uvs = pb.texturesInternal;
 
 			// set the shared indices cache to a unique non-used index
-			Vector2 cen = ProBuilderMath.Average(InternalUtility.ValuesWithIndices(uvs, indices) );
+			Vector2 cen = ProBuilderMath.Average(ArrayUtility.ValuesWithIndices(uvs, indices) );
 
 			foreach(int i in indices)
 				uvs[i] = cen;
@@ -184,7 +184,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			nrm /= (float)faces.Length;
 
 			// project uv coordinates
-			Vector2[] uvs = Projection.PlanarProject(InternalUtility.ValuesWithIndices(pb.positionsInternal, ind), nrm);
+			Vector2[] uvs = Projection.PlanarProject(ArrayUtility.ValuesWithIndices(pb.positionsInternal, ind), nrm);
 
 			// re-assign new projected coords back into full uv array
 			Vector2[] rebuiltUVs = GetUVs(pb, channel);
@@ -262,7 +262,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		{
 			foreach(Face f in pb.facesInternal)
 			{
-				if(InternalUtility.ContainsMatch<int>(f.distinctIndices, indices))
+				if(ArrayUtility.ContainsMatch<int>(f.distinctIndices, indices))
 				{
 					f.elementGroup = -1;
 					f.manualUV = true;

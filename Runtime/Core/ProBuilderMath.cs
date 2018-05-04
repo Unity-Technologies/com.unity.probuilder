@@ -723,9 +723,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="face"></param>
-		/// <param name="normal"></param>
-		/// <param name="tangent"></param>
-		/// <param name="bitangent"></param>
+		/// <returns>The normal, bitangent, and tangent for the face.</returns>
 		public static Normals NormalTangentBitangent(ProBuilderMesh pb, Face face)
 		{
 			if(pb == null || face == null || face.indices.Length < 3)

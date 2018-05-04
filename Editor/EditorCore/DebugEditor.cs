@@ -509,7 +509,7 @@ namespace UnityEditor.ProBuilder
 						UI.EditorGUIUtility.SceneLabel(string.Format("[{0}, {1}]", edge.local.x, edge.local.y), cen);
 						break;
 					case IndexFormat.Both:
-						UI.EditorGUIUtility.SceneLabel(string.Format("local: [{0}, {1}]\ncommon: [{2}, {3}]", 
+						UI.EditorGUIUtility.SceneLabel(string.Format("local: [{0}, {1}]\ncommon: [{2}, {3}]",
                             edge.local.x,
                             edge.local.y,
                             edge.common.x,
@@ -632,9 +632,9 @@ namespace UnityEditor.ProBuilder
 			int vertexCount = selectedOnly ? pb.selectedVertexCount : pb.mesh.vertexCount;
 
 			var indices = pb.selectedVertices.ToArray();
-			Vector3[] vertices = selectedOnly ? InternalUtility.ValuesWithIndices<Vector3>(pb.mesh.vertices, indices) : pb.mesh.vertices;
-			Vector3[] normals  = selectedOnly ? InternalUtility.ValuesWithIndices<Vector3>(pb.mesh.normals, indices) : pb.mesh.normals;
-			Vector4[] tangents = selectedOnly ? InternalUtility.ValuesWithIndices<Vector4>(pb.mesh.tangents, indices) : pb.mesh.tangents;
+			Vector3[] vertices = selectedOnly ? UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndices<Vector3>(pb.mesh.vertices, indices) : pb.mesh.vertices;
+			Vector3[] normals  = selectedOnly ? UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndices<Vector3>(pb.mesh.normals, indices) : pb.mesh.normals;
+			Vector4[] tangents = selectedOnly ? UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndices<Vector4>(pb.mesh.tangents, indices) : pb.mesh.tangents;
 
 			Matrix4x4 matrix = pb.transform.localToWorldMatrix;
 

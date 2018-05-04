@@ -220,19 +220,16 @@ namespace UnityEngine.ProBuilder
 		{
             if (face == null || face.edgesInternal == null)
                 throw new ArgumentNullException("face");
-
-			// grab perimeter edges
 			List<Edge> edges = new List<Edge>(face.edgesInternal);
-
-			return SortEdgesByAdjacency(edges);
+			SortEdgesByAdjacency(edges);
+			return edges;
 		}
 
 		/// <summary>
 		/// Sort edges list by adjacency.
 		/// </summary>
-		/// <param name="edges"></param>
-		/// <returns></returns>
-		public static List<Edge> SortEdgesByAdjacency(List<Edge> edges)
+		/// <param name="edges">The edges to sort in-place.</param>
+		public static void SortEdgesByAdjacency(List<Edge> edges)
 		{
             if (edges == null)
                 throw new ArgumentNullException("edges");
@@ -251,8 +248,6 @@ namespace UnityEngine.ProBuilder
 					}
 				}
 			}
-
-			return edges;
 		}
 
 		/// <summary>
@@ -299,7 +294,8 @@ namespace UnityEngine.ProBuilder
 			if(matches.Count != common.Count)
 				return null;
 
-			return SortEdgesByAdjacency(matches).Select(x => x.x).ToList();
+			SortEdgesByAdjacency(matches);
+			return matches.Select(x => x.x).ToList();
 		}
 
 		/// <summary>
