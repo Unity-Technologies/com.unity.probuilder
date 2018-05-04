@@ -110,5 +110,58 @@ namespace UnityEditor.ProBuilder.UI
 
 			return index;
 		}
+
+		class ResizeHandleState
+		{
+			public Vector2 origin;
+			public Rect startingRect;
+		}
+
+		public static Rect DoResizeHandle(Rect rect)
+		{
+			var evt = Event.current;
+
+			Rect resizeWindowRect = new Rect(
+				rect.width - 16,
+				rect.height - 16,
+				16,
+				16);
+
+			int id = GUIUtility.GetControlID("ProBuilderWindowResize".GetHashCode(), FocusType.Passive, rect);
+			HandleUtility.AddControl(id, Vector2.Distance(resizeWindowRect.center, evt.mousePosition));
+			UnityEditor.EditorGUIUtility.AddCursorRect(resizeWindowRect, MouseCursor.ResizeUpLeft);
+
+			if (evt.type == EventType.MouseDown)
+			{
+				if (!resizeWindowRect.Contains(evt.mousePosition))
+					return rect;
+				GUIUtility.hotControl = id;
+				GUI.changed = true;
+				var state = (ResizeHandleState) GUIUtility.GetStateObject(typeof(ResizeHandleState), id);
+				state.origin = evt.mousePosition;
+				state.startingRect = rect;
+				evt.Use();
+			}
+			else if (GUIUtility.hotControl != id)
+			{
+				return rect;
+			}
+			if (evt.type == EventType.MouseUp)
+			{
+				GUIUtility.hotControl = 0;
+				GUI.changed = true;
+				evt.Use();
+			}
+			else if (evt.type == EventType.MouseDrag)
+			{
+				var state = (ResizeHandleState) GUIUtility.GetStateObject(typeof(ResizeHandleState), id);
+				rect.width = state.startingRect.width + (evt.mousePosition.x - state.origin.x);
+				rect.height = state.startingRect.height + (evt.mousePosition.y - state.origin.y);
+				GUI.changed = true;
+				evt.Use();
+			}
+
+			return rect;
+		}
 	}
 }

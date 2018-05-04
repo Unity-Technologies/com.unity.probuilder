@@ -2586,6 +2586,7 @@ class UVEditor : EditorWindow
 		}
 
 		GUI.DragWindow(ActionWindowDragRect);
+		actionWindowRect = UI.EditorGUILayout.DoResizeHandle(actionWindowRect);
 	}
 
 	bool modifyingUVs_AutoPanel = false;
