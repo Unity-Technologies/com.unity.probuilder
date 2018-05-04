@@ -886,7 +886,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Rebuild the mesh positions, uvs, and submeshes. If vertex count matches new positions array the existing attributes are kept, otherwise the mesh is cleared. UV2 is the exception, it is always cleared.
+		/// Rebuild the mesh positions and submeshes. If vertex count matches new positions array the existing attributes are kept, otherwise the mesh is cleared. UV2 is the exception, it is always cleared.
 		/// </summary>
 		/// <param name="preferredTopology">Triangles and Quads are supported.</param>
 		public void ToMesh(MeshTopology preferredTopology)
@@ -902,10 +902,6 @@ namespace UnityEngine.ProBuilder
 				m.Clear();
 
 			m.vertices = m_Positions;
-
-			if (m_Textures0 != null)
-				m.uv = m_Textures0;
-
 			m.uv2 = null;
 
 			Submesh[] submeshes = Face.GetSubmeshes(facesInternal, preferredTopology);
@@ -921,9 +917,7 @@ namespace UnityEngine.ProBuilder
 			m.name = string.Format("pb_Mesh{0}", id);
 
 			GetComponent<MeshFilter>().sharedMesh = m;
-#if !PROTOTYPE
 			GetComponent<MeshRenderer>().sharedMaterials = submeshes.Select(x => x.m_Material).ToArray();
-#endif
 		}
 
 		/// <summary>
@@ -931,30 +925,19 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		internal void MakeUnique()
 		{
-			Face[] q = new Face[m_Faces.Length];
-
-			for (int i = 0; i < q.Length; i++)
-				q[i] = new Face(m_Faces[i]);
-
-			IntArray[] sv = new IntArray[m_SharedIndices.Length];
-			System.Array.Copy(m_SharedIndices, sv, sv.Length);
-
-			SetSharedIndexes(sv);
-			SetFaces(q);
-
-			Vector3[] v = new Vector3[vertexCount];
-			System.Array.Copy(m_Positions, v, vertexCount);
-            SetPositions(v);
-
-			if (m_Textures0 != null && m_Textures0.Length == vertexCount)
+			SetPositions(positions);
+			SetSharedIndexes(sharedIndicesInternal);
+			SetSharedIndexesUV(sharedIndicesUVInternal);
+			SetFaces(faces);
+			List<Vector4> uvs = new List<Vector4>();
+			for (var i = 0; i < k_UVChannelCount; i++)
 			{
-				Vector2[] u = new Vector2[vertexCount];
-				System.Array.Copy(m_Textures0, u, vertexCount);
-                m_Textures0 = u;
+				GetUVs(0, uvs);
+				SetUVs(0, uvs);
 			}
-
+			SetTangents(tangents);
+			SetColors(colors);
 			mesh = new Mesh();
-
 			ToMesh();
 			Refresh();
 		}

@@ -33,12 +33,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Edge extrusion override
 		/// </summary>
-		/// <param name="messh"></param>
+		/// <param name="mesh"></param>
 		/// <param name="edges"></param>
 		/// <param name="extrudeDistance"></param>
 		/// <param name="extrudeAsGroup"></param>
 		/// <param name="enableManifoldExtrude"></param>
-		/// <param name="extrudedEdges"></param>
 		/// <returns></returns>
 		public static Edge[] Extrude(this ProBuilderMesh mesh, IEnumerable<Edge> edges, float extrudeDistance, bool extrudeAsGroup, bool enableManifoldExtrude)
 		{
@@ -165,6 +164,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			return newEdges.ToArray();
 		}
+
 		/// <summary>
 		/// Extrude each face in faces individually along it's normal by distance.
 		/// </summary>
@@ -229,14 +229,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					vertices.Add( yy );
 
 					Face bridge = new Face(
-						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2}, // indices
-						face.material,							// material
-						new AutoUnwrapSettings(face.uv),						// UV material
-						face.smoothingGroup,					// smoothing group
-						-1,										// texture group
-						-1,										// uv element group
-						false									// manualUV flag
-						);
+						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 }, // indices
+						face.material, // material
+						new AutoUnwrapSettings(face.uv), // UV material
+						face.smoothingGroup, // smoothing group
+						-1, // texture group
+						-1, // uv element group
+						false // manualUV flag
+					);
 
 					newFaces.Add(bridge);
 				}
