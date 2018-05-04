@@ -121,7 +121,7 @@ namespace UnityEngine.ProBuilder
 	    {
 		    get { return m_Edges == null ? CacheEdges() : m_Edges; }
 	    }
-    
+
         /// <summary>
         /// Get the perimeter edges that commpose this face.
         /// </summary>
@@ -176,8 +176,6 @@ namespace UnityEngine.ProBuilder
 			m_SmoothingGroup = Smoothing.smoothingGroupNone;
 			textureGroup = -1;
 			elementGroup = 0;
-			m_Edges = null;
-			m_DistinctIndices = null;
 		}
 
 		internal Face(int[] triangles, Material m, AutoUnwrapSettings u, int smoothing, int texture, int element, bool manualUVs)
@@ -197,18 +195,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="other"></param>
 		public Face(Face other)
 		{
-            if (other == null)
-                throw new ArgumentNullException("other");
-            m_Indices = new int[other.indices.Length];
-			System.Array.Copy(other.indices, m_Indices, other.indices.Length);
-			m_Uv = new AutoUnwrapSettings(other.uv);
-			m_Material = other.material;
-			m_SmoothingGroup = other.smoothingGroup;
-			textureGroup = other.textureGroup;
-			elementGroup = other.elementGroup;
-			manualUV = other.manualUV;
-			m_Edges = null;
-			m_DistinctIndices = null;
+			CopyFrom(other);
 		}
 
 		/// <summary>
@@ -219,14 +206,16 @@ namespace UnityEngine.ProBuilder
 		{
             if (other == null)
                 throw new ArgumentNullException("other");
+
             int len = other.indices == null ? 0 : other.indices.Length;
 			m_Indices = new int[len];
-			System.Array.Copy(other.indices, m_Indices, len);
+			Array.Copy(other.indices, m_Indices, len);
 			m_SmoothingGroup = other.smoothingGroup;
 			m_Uv = new AutoUnwrapSettings(other.uv);
 			m_Material = other.material;
 			manualUV = other.manualUV;
 			elementGroup = other.elementGroup;
+			InvalidateCache();
 		}
 
 		/// <summary>
