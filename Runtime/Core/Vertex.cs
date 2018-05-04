@@ -291,7 +291,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Creates a new array of pb_Vertex with the provide pb_Object data.
+		/// Creates a new array of vertices with the provided mesh.
 		/// </summary>
 		/// <param name="mesh"></param>
 		/// <param name="indexes"></param>
@@ -309,7 +309,7 @@ namespace UnityEngine.ProBuilder
 			Vector3[] positions = mesh.positionsInternal;
 			Color[] colors = mesh.colorsInternal;
 			Vector2[] uv0s = mesh.texturesInternal;
-			ReadOnlyCollection<Vector4> tangents = mesh.tangents;
+			Vector4[] tangents = mesh.GetTangents();
 			Vector3[] normals = mesh.GetNormals();
 			Vector2[] uv2s = mesh.mesh != null ? mesh.mesh.uv2 : null;
 

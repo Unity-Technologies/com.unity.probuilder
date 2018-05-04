@@ -277,8 +277,8 @@ namespace UnityEngine.ProBuilder
 		    if (mesh != null && mesh.vertexCount == vertexCount)
 		    {
 			    var nrm = mesh.normals;
-			    if(nrm != null && nrm.Length == vertexCount)
-				    return mesh.normals;
+			    if (nrm != null && nrm.Length == vertexCount)
+				    return nrm;
 		    }
 
 		    return MeshUtility.CalculateNormals(this);
@@ -318,14 +318,28 @@ namespace UnityEngine.ProBuilder
         }
 
 		/// <summary>
-		/// Get the tangents array for this mesh. May be empty.
+		/// Get the user-set tangents array for this mesh. If tangents have not been explictly set, this value will be null.
+		/// To get the generated tangents that are applied to the mesh through Refresh(), use GetTangents().
 		/// </summary>
 	    public ReadOnlyCollection<Vector4> tangents
 	    {
-		    get { return m_Tangents == null ? null : new ReadOnlyCollection<Vector4>(m_Tangents); }
+		    get { return m_Tangents == null || m_Tangents.Length != vertexCount
+			    ? null
+			    : new ReadOnlyCollection<Vector4>(m_Tangents); }
 	    }
 
-        /// <summary>
+	    /// <summary>
+	    /// Get the tangents applied to the mesh. Does not calculate new tangents if non are available (unlike GetNormals()).
+	    /// </summary>
+	    /// <returns></returns>
+	    public Vector4[] GetTangents()
+	    {
+		    if (m_Tangents != null && m_Tangents.Length == vertexCount)
+			    return m_Tangents.ToArray();
+		    return mesh == null ? null : mesh.tangents;
+	    }
+
+	    /// <summary>
         /// Set the tangent array on this mesh.
         /// </summary>
         /// <param name="array"></param>
