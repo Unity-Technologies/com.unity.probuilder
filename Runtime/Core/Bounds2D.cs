@@ -203,10 +203,10 @@ namespace UnityEngine.ProBuilder
 			else
 			{
 				Vector2[] aabb = corners;
-				return( ProBuilderMath.GetLineSegmentIntersect(aabb[0], aabb[1], lineStart, lineEnd) ||
-						ProBuilderMath.GetLineSegmentIntersect(aabb[1], aabb[3], lineStart, lineEnd) ||
-						ProBuilderMath.GetLineSegmentIntersect(aabb[3], aabb[2], lineStart, lineEnd) ||
-						ProBuilderMath.GetLineSegmentIntersect(aabb[2], aabb[0], lineStart, lineEnd) );
+				return( Math.GetLineSegmentIntersect(aabb[0], aabb[1], lineStart, lineEnd) ||
+						Math.GetLineSegmentIntersect(aabb[1], aabb[3], lineStart, lineEnd) ||
+						Math.GetLineSegmentIntersect(aabb[3], aabb[2], lineStart, lineEnd) ||
+						Math.GetLineSegmentIntersect(aabb[2], aabb[0], lineStart, lineEnd) );
 			}
 		}
 

@@ -176,7 +176,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			int min = ProBuilderMath.Min(connections);
+			int min = Math.Min(connections);
 			List<int> perimeter = new List<int>();
 
 			for(int i = 0; i < connections.Length; i++)
@@ -249,7 +249,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			int min = ProBuilderMath.Min(connections);
+			int min = Math.Min(connections);
 			List<int> perimeter = new List<int>();
 			for(int i = 0; i < len; i++)
 			{

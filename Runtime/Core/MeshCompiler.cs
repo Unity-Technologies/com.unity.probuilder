@@ -106,7 +106,7 @@ namespace UnityEngine.ProBuilder
 				if (kvp.Value.Count > 1)
 					nrm = Projection.FindBestPlane(pb.positionsInternal, indices).normal;
 				else
-					nrm = ProBuilderMath.Normal(pb, kvp.Value[0]);
+					nrm = Math.Normal(pb, kvp.Value[0]);
 
 				if (kvp.Value[0].uv.useWorldSpace)
 					UnwrappingUtility.PlanarMap2(world, uvs, indices, kvp.Value[0].uv, pb.transform.TransformDirection(nrm));

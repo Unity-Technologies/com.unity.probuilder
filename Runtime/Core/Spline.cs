@@ -176,7 +176,7 @@ namespace UnityEngine.ProBuilder
 
 				dir = (coming + leaving) * .5f;
 
-				secant = ProBuilderMath.Secant(Vector3.Angle(coming, dir) * Mathf.Deg2Rad);
+				secant = Math.Secant(Vector3.Angle(coming, dir) * Mathf.Deg2Rad);
 			}
 			else
 			{
@@ -190,7 +190,7 @@ namespace UnityEngine.ProBuilder
 
 			dir.Normalize();
 
-			if(ProBuilderMath.Approx3(dir, Vector3.up) || ProBuilderMath.Approx3(dir, Vector3.zero))
+			if(Math.Approx3(dir, Vector3.up) || Math.Approx3(dir, Vector3.zero))
 				return Quaternion.identity;
 
 			return Quaternion.LookRotation(dir);

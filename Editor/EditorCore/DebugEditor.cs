@@ -531,12 +531,12 @@ namespace UnityEditor.ProBuilder
 
 			foreach(Face f in faces)
 			{
-				Vector3 point = pb.transform.TransformPoint( ProBuilderMath.Average(pb.positionsInternal, f.distinctIndices) );
+				Vector3 point = pb.transform.TransformPoint( Math.Average(pb.positionsInternal, f.distinctIndices) );
 
 				if( testOcclusion && UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, pb, point) )
 					continue;
 
-				Vector3 normal = pb.transform.TransformDirection( ProBuilderMath.Normal(pb, f) );
+				Vector3 normal = pb.transform.TransformDirection( Math.Normal(pb, f) );
 
 				StringBuilder sb = new StringBuilder();
 

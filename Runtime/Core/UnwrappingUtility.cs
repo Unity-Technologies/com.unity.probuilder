@@ -89,7 +89,7 @@ namespace UnityEngine.ProBuilder
 
 		static Vector2[] StretchUVs(Vector2[] uvs, int[] indices)
 		{
-			Vector2 scale = ProBuilderMath.LargestVector2(uvs, indices) - ProBuilderMath.SmallestVector2(uvs, indices);
+			Vector2 scale = Math.LargestVector2(uvs, indices) - Math.SmallestVector2(uvs, indices);
 
 			for(int i = 0; i < indices.Length; i++)
 			{
@@ -117,7 +117,7 @@ namespace UnityEngine.ProBuilder
 			int len = indices.Length;
 
 			// shift UVs to zeroed coordinates
-			Vector2 smallestVector2 = ProBuilderMath.SmallestVector2(uvs, indices);
+			Vector2 smallestVector2 = Math.SmallestVector2(uvs, indices);
 
 			int i;
 
@@ -127,7 +127,7 @@ namespace UnityEngine.ProBuilder
 				uvs[indices[i]].y -= smallestVector2.y;
 			}
 
-			float scale = ProBuilderMath.LargestValue( ProBuilderMath.LargestVector2(uvs, indices) );
+			float scale = Math.LargestValue( Math.LargestVector2(uvs, indices) );
 
 			for(i = 0; i < len; i++)
 			{
@@ -146,19 +146,19 @@ namespace UnityEngine.ProBuilder
 			switch(j)
 			{
 				case AutoUnwrapSettings.Justify.Left:
-					amt = new Vector2(ProBuilderMath.SmallestVector2(uvs).x, 0f);
+					amt = new Vector2(Math.SmallestVector2(uvs).x, 0f);
 					break;
 				case AutoUnwrapSettings.Justify.Right:
-					amt = new Vector2(ProBuilderMath.LargestVector2(uvs).x - 1f, 0f);
+					amt = new Vector2(Math.LargestVector2(uvs).x - 1f, 0f);
 					break;
 				case AutoUnwrapSettings.Justify.Top:
-					amt = new Vector2(0f, ProBuilderMath.LargestVector2(uvs).y - 1f);
+					amt = new Vector2(0f, Math.LargestVector2(uvs).y - 1f);
 					break;
 				case AutoUnwrapSettings.Justify.Bottom:
-					amt = new Vector2(0f, ProBuilderMath.SmallestVector2(uvs).y);
+					amt = new Vector2(0f, Math.SmallestVector2(uvs).y);
 					break;
 				case AutoUnwrapSettings.Justify.Center:
-					amt = ProBuilderMath.Average(uvs) - (new Vector2(.5f, .5f));
+					amt = Math.Average(uvs) - (new Vector2(.5f, .5f));
 					break;
 			}
 
@@ -173,8 +173,8 @@ namespace UnityEngine.ProBuilder
 			s_TempVector2.x = 0f;
 			s_TempVector2.y = 0f;
 
-			Vector2 min = ProBuilderMath.SmallestVector2(uvs, indices);
-			Vector2 max = ProBuilderMath.LargestVector2(uvs, indices);
+			Vector2 min = Math.SmallestVector2(uvs, indices);
+			Vector2 max = Math.LargestVector2(uvs, indices);
 
 			if(	anchor == AutoUnwrapSettings.Anchor.UpperLeft || anchor == AutoUnwrapSettings.Anchor.MiddleLeft || anchor == AutoUnwrapSettings.Anchor.LowerLeft )
 				s_TempVector2.x = min.x;

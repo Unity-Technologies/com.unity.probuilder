@@ -314,8 +314,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				return 0f;
 
 			// first check normals
-			Vector3 leftNormal = ProBuilderMath.Normal(m_Vertices[quad[0]].position, m_Vertices[quad[1]].position, m_Vertices[quad[2]].position);
-			Vector3 rightNormal = ProBuilderMath.Normal(m_Vertices[quad[2]].position, m_Vertices[quad[3]].position, m_Vertices[quad[0]].position);
+			Vector3 leftNormal = Math.Normal(m_Vertices[quad[0]].position, m_Vertices[quad[1]].position, m_Vertices[quad[2]].position);
+			Vector3 rightNormal = Math.Normal(m_Vertices[quad[2]].position, m_Vertices[quad[3]].position, m_Vertices[quad[0]].position);
 
 			float score = Vector3.Dot(leftNormal, rightNormal);
 

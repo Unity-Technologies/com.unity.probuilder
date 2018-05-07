@@ -32,20 +32,20 @@ namespace UnityEngine.ProBuilder
 	{
 		static readonly Vector3[] k_IcosphereVertices = new Vector3[12]
 		{
-			new Vector3(-1f,  ProBuilderMath.phi,  0f),
-			new Vector3( 1f,  ProBuilderMath.phi,  0f),
-			new Vector3(-1f, -ProBuilderMath.phi,  0f),
-			new Vector3( 1f, -ProBuilderMath.phi,  0f),
+			new Vector3(-1f,  Math.phi,  0f),
+			new Vector3( 1f,  Math.phi,  0f),
+			new Vector3(-1f, -Math.phi,  0f),
+			new Vector3( 1f, -Math.phi,  0f),
 
-			new Vector3( 0f, -1f,  ProBuilderMath.phi),
-			new Vector3( 0f,  1f,  ProBuilderMath.phi),
-			new Vector3( 0f, -1f, -ProBuilderMath.phi),
-			new Vector3( 0f,  1f, -ProBuilderMath.phi),
+			new Vector3( 0f, -1f,  Math.phi),
+			new Vector3( 0f,  1f,  Math.phi),
+			new Vector3( 0f, -1f, -Math.phi),
+			new Vector3( 0f,  1f, -Math.phi),
 
-			new Vector3(  ProBuilderMath.phi, 0f, -1f),
-			new Vector3(  ProBuilderMath.phi, 0f,  1f),
-			new Vector3( -ProBuilderMath.phi, 0f, -1f),
-			new Vector3( -ProBuilderMath.phi, 0f,  1f)
+			new Vector3(  Math.phi, 0f, -1f),
+			new Vector3(  Math.phi, 0f,  1f),
+			new Vector3( -Math.phi, 0f, -1f),
+			new Vector3( -Math.phi, 0f,  1f)
 		};
 
 		static readonly int[] k_IcosphereTriangles = new int[60]
@@ -962,8 +962,8 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < subdivAxis; i++)
 			{
-				templateOut[i] = ProBuilderMath.PointInCircumference(radius, i*(360f/subdivAxis), Vector2.zero);
-				templateIn[i] = ProBuilderMath.PointInCircumference(radius-thickness, i*(360f/subdivAxis), Vector2.zero);
+				templateOut[i] = Math.PointInCircumference(radius, i*(360f/subdivAxis), Vector2.zero);
+				templateIn[i] = Math.PointInCircumference(radius-thickness, i*(360f/subdivAxis), Vector2.zero);
 			}
 
 			List<Vector3> v = new List<Vector3>();
@@ -1059,7 +1059,7 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < subdivAxis; i++)
 			{
-				Vector2 ct = ProBuilderMath.PointInCircumference(radius, i*(360f/subdivAxis), Vector2.zero);
+				Vector2 ct = Math.PointInCircumference(radius, i*(360f/subdivAxis), Vector2.zero);
 				template[i] = new Vector3(ct.x, 0f, ct.y);
 			}
 
@@ -1112,8 +1112,8 @@ namespace UnityEngine.ProBuilder
 
 			for (int i = 0; i < radialCuts; i++)
 			{
-				templateOut[i] = ProBuilderMath.PointInCircumference(radius, i * (angle / (radialCuts-1)), Vector2.zero);
-				templateIn[i] = ProBuilderMath.PointInCircumference(radius - width, i * (angle / (radialCuts-1)), Vector2.zero);
+				templateOut[i] = Math.PointInCircumference(radius, i * (angle / (radialCuts-1)), Vector2.zero);
+				templateIn[i] = Math.PointInCircumference(radius - width, i * (angle / (radialCuts-1)), Vector2.zero);
 			}
 
 			List<Vector3> v = new List<Vector3>();

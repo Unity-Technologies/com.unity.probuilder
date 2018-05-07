@@ -31,7 +31,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					continue;
 
 				if(checkAngle)
-					srcNormal = ProBuilderMath.Normal(pb, wings[i].face);
+					srcNormal = Math.Normal(pb, wings[i].face);
 
 				foreach(WingedEdge w in wings[i])
 				{
@@ -39,7 +39,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					{
 						if(checkAngle)
 						{
-							Vector3 oppNormal = ProBuilderMath.Normal(pb, w.opposite.face);
+							Vector3 oppNormal = Math.Normal(pb, w.opposite.face);
 
 							if(Vector3.Angle(srcNormal, oppNormal) < maxAngleDiff)
 								neighboring.Add(w.opposite.face);
@@ -74,7 +74,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				{
 					if(maxAngle > 0f)
 					{
-						Vector3 oppNormal = ProBuilderMath.Normal(pb, opp.face);
+						Vector3 oppNormal = Math.Normal(pb, opp.face);
 
 						if(Vector3.Angle(wingNrm, oppNormal) < maxAngle)
 						{
@@ -111,7 +111,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				if(!flood.Contains(wings[i].face) && source.Contains(wings[i].face))
 				{
 					flood.Add(wings[i].face);
-					Flood(pb, wings[i], maxAngleDiff > 0f ? ProBuilderMath.Normal(pb, wings[i].face) : Vector3_Zero, maxAngleDiff, flood);
+					Flood(pb, wings[i], maxAngleDiff > 0f ? Math.Normal(pb, wings[i].face) : Vector3_Zero, maxAngleDiff, flood);
 				}
 			}
 			return flood;

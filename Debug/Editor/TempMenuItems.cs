@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
+using Math = UnityEngine.ProBuilder.Math;
 using Object = System.Object;
 using UObject = UnityEngine.Object;
 
@@ -15,7 +16,7 @@ class TempMenuItems : EditorWindow
 	static void MenuInit()
 	{
 		var mesh = Selection.transforms.GetComponents<ProBuilderMesh>().FirstOrDefault();
-		var tangents = mesh.faces.Select(x => ProBuilderMath.NormalTangentBitangent(mesh, x).tangent).ToArray();
+		var tangents = mesh.faces.Select(x => Math.NormalTangentBitangent(mesh, x).tangent).ToArray();
 		var meshTangents = mesh.mesh.tangents;
 		Debug.Log("mesh tangents: \n" + meshTangents.ToString("\n") + "\n\n---\ncalculated tangents:\n" + tangents.ToString("\n"));
 	}

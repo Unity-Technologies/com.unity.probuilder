@@ -117,7 +117,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Vector2[] uvs = pb.texturesInternal;
 
 			// set the shared indices cache to a unique non-used index
-			Vector2 cen = ProBuilderMath.Average(ArrayUtility.ValuesWithIndices(uvs, indices) );
+			Vector2 cen = Math.Average(ArrayUtility.ValuesWithIndices(uvs, indices) );
 
 			foreach(int i in indices)
 				uvs[i] = cen;
@@ -180,7 +180,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			// get average face normal
 			Vector3 nrm = Vector3.zero;
 			foreach(Face face in faces)
-				nrm += ProBuilderMath.Normal(pb, face);
+				nrm += Math.Normal(pb, face);
 			nrm /= (float)faces.Length;
 
 			// project uv coordinates
@@ -219,7 +219,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			for(int i = 0; i < faces.Length; i++)
 			{
-				Vector3 nrm = ProBuilderMath.Normal(pb, faces[i]);
+				Vector3 nrm = Math.Normal(pb, faces[i]);
 				ProjectionAxis axis = Projection.VectorToProjectionAxis(nrm);
 
 				if(sorted.ContainsKey(axis))
@@ -287,7 +287,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		public static Vector2[] FitUVs(Vector2[] uvs)
 		{
 			// shift UVs to zeroed coordinates
-			Vector2 smallestVector2 = ProBuilderMath.SmallestVector2(uvs);
+			Vector2 smallestVector2 = Math.SmallestVector2(uvs);
 
 			int i;
 			for(i = 0; i < uvs.Length; i++)
@@ -295,7 +295,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				uvs[i] -= smallestVector2;
 			}
 
-			float scale = ProBuilderMath.LargestValue( ProBuilderMath.LargestVector2(uvs) );
+			float scale = Math.LargestValue( Math.LargestVector2(uvs) );
 
 			for(i = 0; i < uvs.Length; i++)
 			{
@@ -415,7 +415,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				angle = 360f - angle;
 
 			foreach(int i in faceToMove.distinctIndices)
-				uvs[i] = ProBuilderMath.RotateAroundPoint(uvs[i], f1_center, angle);
+				uvs[i] = Math.RotateAroundPoint(uvs[i], f1_center, angle);
 
 			float error = Mathf.Abs( Vector2.Distance(uvs[matchX[0]], uvs[matchX[1]]) ) + Mathf.Abs( Vector2.Distance(uvs[matchY[0]], uvs[matchY[1]]) );
 
@@ -424,7 +424,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			{
 				// first try rotating 180 degrees
 				foreach(int i in faceToMove.distinctIndices)
-					uvs[i] = ProBuilderMath.RotateAroundPoint(uvs[i], f1_center, 180f);
+					uvs[i] = Math.RotateAroundPoint(uvs[i], f1_center, 180f);
 
 				float e2 = Mathf.Abs( Vector2.Distance(uvs[matchX[0]], uvs[matchX[1]]) ) + Mathf.Abs( Vector2.Distance(uvs[matchY[0]], uvs[matchY[1]]) );
 				if(e2 < error)
@@ -433,7 +433,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				{
 					// flip 'em back around
 					foreach(int i in faceToMove.distinctIndices)
-						uvs[i] = ProBuilderMath.RotateAroundPoint(uvs[i], f1_center, 180f);
+						uvs[i] = Math.RotateAroundPoint(uvs[i], f1_center, 180f);
 				}
 			}
 
@@ -474,7 +474,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Vector2 target_angle = target[1]-target[0], transform_angle = transformed[1]-transformed[0];
 
 			float angle = Vector2.Angle(target_angle, transform_angle);
-			float dot = Vector2.Dot( ProBuilderMath.Perpendicular(target_angle), transform_angle);
+			float dot = Vector2.Dot( Math.Perpendicular(target_angle), transform_angle);
 
 			if(dot < 0) angle = 360f - angle;
 

@@ -197,7 +197,7 @@ namespace UnityEngine.ProBuilder
 							if(!nope)
 							{
 								if( !options.depthTest ||
-									!HandleUtility.PointIsOccluded(cam, pb, trs.TransformPoint(ProBuilderMath.Average(positions, face.distinctIndices))))
+									!HandleUtility.PointIsOccluded(cam, pb, trs.TransformPoint(Math.Average(positions, face.distinctIndices))))
 								{
 									selectedFaces.Add(face);
 								}
@@ -227,24 +227,24 @@ namespace UnityEngine.ProBuilder
 								Vector2 bl = new Vector2(rect.xMin, rect.yMin);
 								Vector2 br = new Vector2(rect.xMax, rect.yMin);
 
-								overlaps = ProBuilderMath.PointInPolygon(screenPoints, poly, face.edgesInternal, tl);
-								if(!overlaps) overlaps = ProBuilderMath.PointInPolygon(screenPoints, poly, face.edgesInternal, tr);
-								if(!overlaps) overlaps = ProBuilderMath.PointInPolygon(screenPoints, poly, face.edgesInternal, br);
-								if(!overlaps) overlaps = ProBuilderMath.PointInPolygon(screenPoints, poly, face.edgesInternal, bl);
+								overlaps = Math.PointInPolygon(screenPoints, poly, face.edgesInternal, tl);
+								if(!overlaps) overlaps = Math.PointInPolygon(screenPoints, poly, face.edgesInternal, tr);
+								if(!overlaps) overlaps = Math.PointInPolygon(screenPoints, poly, face.edgesInternal, br);
+								if(!overlaps) overlaps = Math.PointInPolygon(screenPoints, poly, face.edgesInternal, bl);
 
 								// if any polygon edge intersects rect
 								for(int nn = 0; nn < face.edgesInternal.Length && !overlaps; nn++)
 								{
-									if( ProBuilderMath.GetLineSegmentIntersect(tr, tl, screenPoints[face.edgesInternal[nn].x], screenPoints[face.edgesInternal[nn].y]) )
+									if( Math.GetLineSegmentIntersect(tr, tl, screenPoints[face.edgesInternal[nn].x], screenPoints[face.edgesInternal[nn].y]) )
 										overlaps = true;
 									else
-									if( ProBuilderMath.GetLineSegmentIntersect(tl, bl, screenPoints[face.edgesInternal[nn].x], screenPoints[face.edgesInternal[nn].y]) )
+									if( Math.GetLineSegmentIntersect(tl, bl, screenPoints[face.edgesInternal[nn].x], screenPoints[face.edgesInternal[nn].y]) )
 										overlaps = true;
 									else
-									if( ProBuilderMath.GetLineSegmentIntersect(bl, br, screenPoints[face.edgesInternal[nn].x], screenPoints[face.edgesInternal[nn].y]) )
+									if( Math.GetLineSegmentIntersect(bl, br, screenPoints[face.edgesInternal[nn].x], screenPoints[face.edgesInternal[nn].y]) )
 										overlaps = true;
 									else
-									if( ProBuilderMath.GetLineSegmentIntersect(br, tl, screenPoints[face.edgesInternal[nn].x], screenPoints[face.edgesInternal[nn].y]) )
+									if( Math.GetLineSegmentIntersect(br, tl, screenPoints[face.edgesInternal[nn].x], screenPoints[face.edgesInternal[nn].y]) )
 										overlaps = true;
 								}
 							}
@@ -325,7 +325,7 @@ namespace UnityEngine.ProBuilder
 							case RectSelectMode.Partial:
 							{
 								// partial + depth test is covered earlier
-								if (ProBuilderMath.RectIntersectsLineSegment(rect, a, b))
+								if (Math.RectIntersectsLineSegment(rect, a, b))
 									selectedEdges.Add(edge);
 
 								break;

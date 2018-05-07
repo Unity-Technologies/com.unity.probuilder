@@ -96,7 +96,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			{
 				int[] indices = triangles.ToArray();
 
-				if(ProBuilderMath.PolygonArea(vertices, indices) < Mathf.Epsilon )
+				if(Math.PolygonArea(vertices, indices) < Mathf.Epsilon )
 				{
 					mesh.Clear();
 					Log.PopLogLevel();
@@ -106,7 +106,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				mesh.Clear();
 				mesh.GeometryWithVerticesFaces(vertices, new Face[] { new Face(indices) });
 
-				Vector3 nrm = ProBuilderMath.Normal(mesh, mesh.facesInternal[0]);
+				Vector3 nrm = Math.Normal(mesh, mesh.facesInternal[0]);
 
 				if (Vector3.Dot(Vector3.up, nrm) > 0f)
 					mesh.facesInternal[0].Reverse();

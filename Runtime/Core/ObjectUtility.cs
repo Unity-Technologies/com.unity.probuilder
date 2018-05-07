@@ -94,7 +94,7 @@ namespace UnityEngine.ProBuilder
 			{
 				Matrix4x4 l2w = mesh.transform.localToWorldMatrix;
 				Vector3 v = Vector3.zero;
-				Vector3 mask = snapAxisOnly ? offset.ToMask(ProBuilderMath.handleEpsilon) : Vector3.one;
+				Vector3 mask = snapAxisOnly ? offset.ToMask(Math.handleEpsilon) : Vector3.one;
 
 				for(i = 0; i < indices.Length; i++)
 				{

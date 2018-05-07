@@ -1035,19 +1035,19 @@ namespace UnityEngine.ProBuilder
 					else if (t == typeof(SphereCollider))
 					{
 						((SphereCollider) c).center = m.bounds.center;
-						((SphereCollider) c).radius = ProBuilderMath.LargestValue(m.bounds.extents);
+						((SphereCollider) c).radius = Math.LargestValue(m.bounds.extents);
 					}
 					else if (t == typeof(CapsuleCollider))
 					{
 						((CapsuleCollider) c).center = m.bounds.center;
 						Vector2 xy = new Vector2(m.bounds.extents.x, m.bounds.extents.z);
-						((CapsuleCollider) c).radius = ProBuilderMath.LargestValue(xy);
+						((CapsuleCollider) c).radius = Math.LargestValue(xy);
 						((CapsuleCollider) c).height = m.bounds.size.y;
 					}
 					else if (t == typeof(WheelCollider))
 					{
 						((WheelCollider) c).center = m.bounds.center;
-						((WheelCollider) c).radius = ProBuilderMath.LargestValue(m.bounds.extents);
+						((WheelCollider) c).radius = Math.LargestValue(m.bounds.extents);
 					}
 					else if (t == typeof(MeshCollider))
 					{
@@ -1170,7 +1170,7 @@ namespace UnityEngine.ProBuilder
 				if (kvp.Value.Count > 1)
 					nrm = Projection.FindBestPlane(m_Positions, indices).normal;
 				else
-					nrm = ProBuilderMath.Normal(this, kvp.Value[0]);
+					nrm = Math.Normal(this, kvp.Value[0]);
 
 				if (kvp.Value[0].uv.useWorldSpace)
 					UnwrappingUtility.PlanarMap2(world, newUVs, indices, kvp.Value[0].uv, transform.TransformDirection(nrm));

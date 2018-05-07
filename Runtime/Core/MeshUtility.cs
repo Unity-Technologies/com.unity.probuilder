@@ -157,7 +157,7 @@ namespace UnityEngine.ProBuilder
 				{
 					int a = indices[tri], b = indices[tri + 1], c = indices[tri + 2];
 
-					Vector3 cross = ProBuilderMath.Normal(vertices[a], vertices[b], vertices[c]);
+					Vector3 cross = Math.Normal(vertices[a], vertices[b], vertices[c]);
 					cross.Normalize();
 
 					perTriangleNormal[a].x += cross.x;

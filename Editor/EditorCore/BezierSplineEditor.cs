@@ -340,8 +340,8 @@ namespace UnityEditor.ProBuilder
 			m_CloseLoop = EditorGUILayout.Toggle("Close Loop", m_CloseLoop);
 			m_Smooth = EditorGUILayout.Toggle("Smooth", m_Smooth);
 			m_Radius = Mathf.Max(.001f, EditorGUILayout.FloatField("Radius", m_Radius));
-			m_Rows = ProBuilderMath.Clamp(EditorGUILayout.IntField("Rows", m_Rows), 3, 512);
-			m_Columns = ProBuilderMath.Clamp(EditorGUILayout.IntField("Columns", m_Columns), 3, 512);
+			m_Rows = Math.Clamp(EditorGUILayout.IntField("Rows", m_Rows), 3, 512);
+			m_Columns = Math.Clamp(EditorGUILayout.IntField("Columns", m_Columns), 3, 512);
 
 			if(EditorGUI.EndChangeCheck())
 				UpdateMesh(true);
@@ -445,7 +445,7 @@ namespace UnityEditor.ProBuilder
 
 						prev = Handles.PositionHandle(prev, Quaternion.identity);
 
-						if(!ProBuilderMath.Approx3(prev, point.position))
+						if(!Math.Approx3(prev, point.position))
 						{
 							if(!m_IsMoving)
 								OnBeginVertexModification();
@@ -547,7 +547,7 @@ namespace UnityEditor.ProBuilder
 						Repaint();
 						SceneView.RepaintAll();
 					}
-					else if(!ProBuilderMath.Approx3(prev, point.position))
+					else if(!Math.Approx3(prev, point.position))
 					{
 						if(!m_IsMoving)
 							OnBeginVertexModification();
@@ -581,7 +581,7 @@ namespace UnityEditor.ProBuilder
 							Repaint();
 							SceneView.RepaintAll();
 						}
-						else if(!ProBuilderMath.Approx3(prev, point.tangentIn))
+						else if(!Math.Approx3(prev, point.tangentIn))
 						{
 							if(!m_IsMoving)
 								OnBeginVertexModification();
@@ -613,7 +613,7 @@ namespace UnityEditor.ProBuilder
 							Repaint();
 							SceneView.RepaintAll();
 						}
-						else if(!ProBuilderMath.Approx3(prev, point.tangentOut))
+						else if(!Math.Approx3(prev, point.tangentOut))
 						{
 							if(!m_IsMoving)
 								OnBeginVertexModification();

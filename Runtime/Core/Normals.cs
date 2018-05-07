@@ -29,9 +29,9 @@ namespace UnityEngine.ProBuilder
 
 		public bool Equals(Normals other)
         {
-            return ProBuilderMath.Approx3(normal, other.normal) &&
-                ProBuilderMath.Approx3(tangent, other.tangent) &&
-                ProBuilderMath.Approx3(bitangent, other.bitangent);
+            return Math.Approx3(normal, other.normal) &&
+                Math.Approx3(tangent, other.tangent) &&
+                Math.Approx3(bitangent, other.bitangent);
         }
 
         public static bool operator ==(Normals a, Normals b)

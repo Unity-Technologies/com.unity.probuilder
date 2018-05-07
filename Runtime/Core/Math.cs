@@ -10,7 +10,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// Commonly used math when working with 3d geometry.
 	/// </summary>
-	public static class ProBuilderMath
+	public static class Math
 	{
 		/// <summary>
 		/// Pi / 2.
@@ -544,23 +544,23 @@ namespace UnityEngine.ProBuilder
 		 											ref float distance,
 		 											ref Vector3 normal)
 		{
-			ProBuilderMath.Subtract(vert0, vert1, ref tv1);
-			ProBuilderMath.Subtract(vert0, vert2, ref tv2);
+			Math.Subtract(vert0, vert1, ref tv1);
+			Math.Subtract(vert0, vert2, ref tv2);
 
-			ProBuilderMath.Cross(dir, tv2, ref tv4);
+			Math.Cross(dir, tv2, ref tv4);
 			float det = Vector3.Dot(tv1, tv4);
 
 			if(det < Mathf.Epsilon)
 				return false;
 
-			ProBuilderMath.Subtract(vert0, origin, ref tv3);
+			Math.Subtract(vert0, origin, ref tv3);
 
 			float u = Vector3.Dot(tv3, tv4);
 
 			if(u < 0f || u > det)
 				return false;
 
-			ProBuilderMath.Cross(tv3, tv1, ref tv4);
+			Math.Cross(tv3, tv1, ref tv4);
 
 			float v = Vector3.Dot(dir, tv4);
 
@@ -568,7 +568,7 @@ namespace UnityEngine.ProBuilder
 				return false;
 
 			distance = Vector3.Dot(tv2, tv4) * (1f / det);
-			ProBuilderMath.Cross(tv1, tv2, ref normal);
+			Math.Cross(tv1, tv2, ref normal);
 
 			return true;
 		}
@@ -729,7 +729,7 @@ namespace UnityEngine.ProBuilder
 			if(pb == null || face == null || face.indices.Length < 3)
                 throw new System.ArgumentNullException("pb", "Cannot find normal, tangent, and bitangent for null object, or faces with < 3 indices.");
 
-			var nrm = ProBuilderMath.Normal(pb, face);
+			var nrm = Math.Normal(pb, face);
 
 			Vector3 tan1 = Vector3.zero;
 			Vector3 tan2 = Vector3.zero;

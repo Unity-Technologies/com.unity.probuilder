@@ -270,8 +270,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
  				vertices[a.common.x == b.common.x ? b.local.y : b.local.x]
  			};
 
- 			Vector3 an = ProBuilderMath.Normal(vertices, left.face.indices);
- 			Vector3 bn = ProBuilderMath.Normal(rf.vertices, BRIDGE_INDICES_NRM);
+ 			Vector3 an = Math.Normal(vertices, left.face.indices);
+ 			Vector3 bn = Math.Normal(rf.vertices, BRIDGE_INDICES_NRM);
 
  			int[] triangles = new int[] { 2, 1, 0, 2, 3, 1 };
 

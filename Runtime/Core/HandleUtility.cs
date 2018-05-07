@@ -98,7 +98,7 @@ namespace UnityEngine.ProBuilder
 							break;
 					}
 
-					if(!skip && ProBuilderMath.RayIntersectsTriangle(worldRay, a, b, c, out dist, out point))
+					if(!skip && Math.RayIntersectsTriangle(worldRay, a, b, c, out dist, out point))
 					{
 						if(dist > OutHitPoint || dist > distance)
 							continue;
@@ -166,7 +166,7 @@ namespace UnityEngine.ProBuilder
 					Vector3 b = vertices[Indices[CurTriangle+1]];
 					Vector3 c = vertices[Indices[CurTriangle+2]];
 
-					if(ProBuilderMath.RayIntersectsTriangle(InWorldRay, a, b, c, out dist, out point))
+					if(Math.RayIntersectsTriangle(InWorldRay, a, b, c, out dist, out point))
 					{
 						nrm = Vector3.Cross(b-a, c-a);
 
@@ -260,7 +260,7 @@ namespace UnityEngine.ProBuilder
 				b = vertices[triangles[CurTri+1]];
 				c = vertices[triangles[CurTri+2]];
 
-				if(ProBuilderMath.RayIntersectsTriangle2(o, d, a, b, c, ref distance, ref hitNormal))
+				if(Math.RayIntersectsTriangle2(o, d, a, b, c, ref distance, ref hitNormal))
 				{
 					hitFace = CurTri / 3;
 					hitDistance = distance;

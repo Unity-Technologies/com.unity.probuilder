@@ -197,7 +197,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					Vector3 v = n_vertices[n].position;
 					Vector3 w = n_vertices[(n + 1) % vc].position;
 
-					float dist = ProBuilderMath.DistancePointLineSegment(p, v, w);
+					float dist = Math.DistancePointLineSegment(p, v, w);
 
 					if(dist < best)
 					{
@@ -251,8 +251,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			mesh.SetSharedIndexesUV(lookupUV);
 
 			// check old normal and make sure this new face is pointing the same direction
-			Vector3 oldNrm = ProBuilderMath.Normal(mesh, face);
-			Vector3 newNrm = ProBuilderMath.Normal(mesh, newFace);
+			Vector3 oldNrm = Math.Normal(mesh, face);
+			Vector3 newNrm = Math.Normal(mesh, newFace);
 
 			if( Vector3.Dot(oldNrm, newNrm) < 0 )
 				newFace.Reverse();
@@ -373,7 +373,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				Face face = dic_face[i];
 				FaceRebuildData data = dic_data[i];
 
-				Vector3 nrm = ProBuilderMath.Normal(mesh, face);
+				Vector3 nrm = Math.Normal(mesh, face);
 				Vector2[] projection = Projection.PlanarProject(data.vertices.Select(x=>x.position).ToArray(), nrm);
 
 				int vertexCount = vertices.Count;
@@ -573,7 +573,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Face face = edgeAndCommonIndex.FirstOrDefault().item1.face;
 			List<Edge> perimeter = WingedEdge.SortEdgesByAdjacency(face);
 			appendedVertices = new Dictionary<int, List<int>>();
-			Vector3 oldNormal = ProBuilderMath.Normal(vertices, face.indices);
+			Vector3 oldNormal = Math.Normal(vertices, face.indices);
 
 			// store local and common index of split points
 			Dictionary<int, int> toSplit = new Dictionary<int, int>();
@@ -629,7 +629,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				data.vertices = n_vertices;
 				data.face = new Face(face);
 
-				Vector3 newNormal = ProBuilderMath.Normal(n_vertices, triangles);
+				Vector3 newNormal = Math.Normal(n_vertices, triangles);
 
 				if(Vector3.Dot(oldNormal, newNormal) < 0f)
 					triangles.Reverse();

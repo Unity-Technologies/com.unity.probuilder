@@ -405,7 +405,7 @@ class UVEditor : EditorWindow
 			GUI.backgroundColor = Color.white;
 		}
 
-		if(!ProBuilderMath.Approx(position.width, screenWidth) || !ProBuilderMath.Approx(position.height, screenHeight))
+		if(!Math.Approx(position.width, screenWidth) || !Math.Approx(position.height, screenHeight))
 			OnScreenResize();
 
 		toolbarRect = new Rect(PAD, PAD, this.position.width-PAD*2, 29);
@@ -1043,7 +1043,7 @@ class UVEditor : EditorWindow
 								x = uv[pb.facesInternal[n].edgesInternal[p].x];
 								y = uv[pb.facesInternal[n].edgesInternal[p].y];
 
-								dist = ProBuilderMath.DistancePointLineSegment(mpos, x, y);
+								dist = Math.DistancePointLineSegment(mpos, x, y);
 
 								if(dist < best)
 								{
@@ -1072,7 +1072,7 @@ class UVEditor : EditorWindow
 
 						for(int n = 0; n < selection[i].facesInternal.Length; n++)
 						{
-							if( ProBuilderMath.PointInPolygon(uv, mpos, selection[i].facesInternal[n].edgesInternal.AllTriangles()) )
+							if( Math.PointInPolygon(uv, mpos, selection[i].facesInternal[n].edgesInternal.AllTriangles()) )
 							{
 								nearestElement.objectIndex = i;
 								nearestElement.elementIndex = n;
@@ -1152,7 +1152,7 @@ class UVEditor : EditorWindow
 
 					for(int n = 0; n < selection[i].facesInternal.Length; n++)
 					{
-						if( ProBuilderMath.PointInPolygon(selection[i].texturesInternal, mpos, selection[i].facesInternal[n].edgesInternal.AllTriangles()) )
+						if( Math.PointInPolygon(selection[i].texturesInternal, mpos, selection[i].facesInternal[n].edgesInternal.AllTriangles()) )
 						{
 							if( selectedFaces.Contains(selection[i].facesInternal[n]) )
 								selectedFaces.Remove(selection[i].facesInternal[n]);
@@ -1232,13 +1232,13 @@ class UVEditor : EditorWindow
 		/**
 		 *	Setting a custom pivot
 		 */
-		if((e.button == RIGHT_MOUSE_BUTTON || (e.alt && e.button == LEFT_MOUSE_BUTTON)) && !ProBuilderMath.Approx2(t_handlePosition, handlePosition, .0001f))
+		if((e.button == RIGHT_MOUSE_BUTTON || (e.alt && e.button == LEFT_MOUSE_BUTTON)) && !Math.Approx2(t_handlePosition, handlePosition, .0001f))
 		{
 			userPivot = true;	// flag the handle as having been user set.
 
 			if(ControlKey)
 			{
-				handlePosition = Snapping.SnapValue(t_handlePosition, (handlePosition-t_handlePosition).ToMask(ProBuilderMath.handleEpsilon) * pref_gridSnapValue);
+				handlePosition = Snapping.SnapValue(t_handlePosition, (handlePosition-t_handlePosition).ToMask(Math.handleEpsilon) * pref_gridSnapValue);
 			}
 			else
 			{
@@ -1281,7 +1281,7 @@ class UVEditor : EditorWindow
 		 * 	Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
 		 *	in OnFinishUVModification, not at real time.
 		 */
-		if( !ProBuilderMath.Approx2(t_handlePosition, handlePosition, ProBuilderMath.handleEpsilon) )
+		if( !Math.Approx2(t_handlePosition, handlePosition, Math.handleEpsilon) )
 		{
 			// Start of move UV operation
 			if(!modifyingUVs)
@@ -1299,7 +1299,7 @@ class UVEditor : EditorWindow
 			Vector2 newUVPosition = t_handlePosition;
 
 			if(ControlKey)
-				newUVPosition = Snapping.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask(ProBuilderMath.handleEpsilon) * pref_gridSnapValue);
+				newUVPosition = Snapping.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask(Math.handleEpsilon) * pref_gridSnapValue);
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1374,7 +1374,7 @@ class UVEditor : EditorWindow
 		 * 	Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
 		 *	in OnFinishUVModification, not at real time.
 		 */
-		if( !ProBuilderMath.Approx2(delta, Vec3_Zero, .000001f) )
+		if( !Math.Approx2(delta, Vec3_Zero, .000001f) )
 		{
 			// Start of move UV operation
 			if(!modifyingUVs)
@@ -1389,7 +1389,7 @@ class UVEditor : EditorWindow
 			handlePosition.y += delta.y;
 
 			if(ControlKey)
-				handlePosition = Snapping.SnapValue(handlePosition, (handlePosition - handlePosition).ToMask(ProBuilderMath.handleEpsilon) * pref_gridSnapValue);
+				handlePosition = Snapping.SnapValue(handlePosition, (handlePosition - handlePosition).ToMask(Math.handleEpsilon) * pref_gridSnapValue);
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1412,7 +1412,7 @@ class UVEditor : EditorWindow
 
 		uvRotation = EditorHandleUtility.RotationHandle2d(0, UVToGUIPoint(handlePosition), uvRotation, 128);
 
-		if(!ProBuilderMath.Approx(uvRotation, t_uvRotation))
+		if(!Math.Approx(uvRotation, t_uvRotation))
 		{
 			if(!modifyingUVs)
 			{
@@ -1520,8 +1520,8 @@ class UVEditor : EditorWindow
 		if(ControlKey)
 			uvScale = Snapping.SnapValue(uvScale, pref_gridSnapValue);
 
-		if(ProBuilderMath.Approx(uvScale.x, 0f, Mathf.Epsilon)) uvScale.x = .0001f;
-		if(ProBuilderMath.Approx(uvScale.y, 0f, Mathf.Epsilon)) uvScale.y = .0001f;
+		if(Math.Approx(uvScale.x, 0f, Mathf.Epsilon)) uvScale.x = .0001f;
+		if(Math.Approx(uvScale.y, 0f, Mathf.Epsilon)) uvScale.y = .0001f;
 
 		if(t_uvScale != uvScale)
 		{
@@ -3184,7 +3184,7 @@ class UVEditor : EditorWindow
 			Vector2[] uv = channel == 0 ? selection[i].texturesInternal : selection[i].mesh.uv2;
 
 			foreach(int n in selection[i].selectedTriangles.Distinct())
-				uv[n] = ProBuilderMath.ReflectPoint(uv[n], center, center + direction);
+				uv[n] = Math.ReflectPoint(uv[n], center, center + direction);
 
 			UVEditing.ApplyUVs(selection[i], uv, channel);
 

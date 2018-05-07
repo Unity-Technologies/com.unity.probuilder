@@ -176,7 +176,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					Face face = edgeFaces[i][n];
 
 					// Averages the normals using only vertices that are on the edge
-					Vector3 nrm = ProBuilderMath.Normal(pb, face);
+					Vector3 nrm = Math.Normal(pb, face);
 
 					Vector3 xnorm = Vector3.zero;
 					Vector3 ynorm = Vector3.zero;
@@ -205,8 +205,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 					if(method == ExtrudeMethod.FaceNormal)
 					{
-						compensatedDistanceX = ProBuilderMath.Secant(Vector3.Angle(nrm, xnorm) * Mathf.Deg2Rad) * extrudeDistance;
-						compensatedDistanceY = ProBuilderMath.Secant(Vector3.Angle(nrm, ynorm) * Mathf.Deg2Rad) * extrudeDistance;
+						compensatedDistanceX = Math.Secant(Vector3.Angle(nrm, xnorm) * Mathf.Deg2Rad) * extrudeDistance;
+						compensatedDistanceY = Math.Secant(Vector3.Angle(nrm, ynorm) * Mathf.Deg2Rad) * extrudeDistance;
 					}
 
 					extrusionPerIndex[edge.x] = xnorm.normalized * compensatedDistanceX;
@@ -358,7 +358,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			foreach(Face f in faces)
 			{
-				Vector3 faceNormal = ProBuilderMath.Normal(localVerts[f.indices[0]], localVerts[f.indices[1]], localVerts[f.indices[2]]);
+				Vector3 faceNormal = Math.Normal(localVerts[f.indices[0]], localVerts[f.indices[1]], localVerts[f.indices[2]]);
 				Vector3 norm = extrudeAsGroup ? Vector3.zero : faceNormal;
 
 				foreach(int ind in f.distinctIndices)
@@ -369,7 +369,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 						if(method == ExtrudeMethod.FaceNormal)
 						{
-							compensatedDistance = ProBuilderMath.Secant(Vector3.Angle(faceNormal, norm) * Mathf.Deg2Rad) * extrudeDistance;
+							compensatedDistance = Math.Secant(Vector3.Angle(faceNormal, norm) * Mathf.Deg2Rad) * extrudeDistance;
 						}
 					}
 
@@ -619,7 +619,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				Vector2[] planed = Projection.PlanarProject( new Vector3[4] {verts[a.x], verts[a.y], verts[b.x], verts[b.y] }, nrm );
 
 				Vector2 ipoint = Vector2.zero;
-				bool intersects = ProBuilderMath.GetLineSegmentIntersect(planed[0], planed[2], planed[1], planed[3], ref ipoint);
+				bool intersects = Math.GetLineSegmentIntersect(planed[0], planed[2], planed[1], planed[3], ref ipoint);
 
 				if(!intersects)
 				{

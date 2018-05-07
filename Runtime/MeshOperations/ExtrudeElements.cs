@@ -103,8 +103,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				Face face = edgeFaces[i];
 
 				// Averages the normals using only vertices that are on the edge
-				Vector3 xnorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndices( sharedIndices[lookup[edge.x]], allEdgeIndices, oNormals ) : ProBuilderMath.Normal(mesh, face);
-				Vector3 ynorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndices( sharedIndices[lookup[edge.y]], allEdgeIndices, oNormals ) : ProBuilderMath.Normal(mesh, face);
+				Vector3 xnorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndices( sharedIndices[lookup[edge.x]], allEdgeIndices, oNormals ) : Math.Normal(mesh, face);
+				Vector3 ynorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndices( sharedIndices[lookup[edge.y]], allEdgeIndices, oNormals ) : Math.Normal(mesh, face);
 
 				int x_sharedIndex = lookup[edge.x];
 				int y_sharedIndex = lookup[edge.y];
@@ -191,7 +191,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				face.smoothingGroup = Smoothing.smoothingGroupNone;
 				face.textureGroup = -1;
 
-				Vector3 delta = ProBuilderMath.Normal(pb, face) * distance;
+				Vector3 delta = Math.Normal(pb, face) * distance;
 				Edge[] edges = face.edgesInternal;
 
 				used.Clear();
@@ -374,7 +374,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					// @todo keep together if possible
 					face.textureGroup = -1;
 
-					Vector3 normal = ProBuilderMath.Normal(pb, face);
+					Vector3 normal = Math.Normal(pb, face);
 
 					for(int i = 0; i < face.distinctIndices.Length; i++)
 					{
@@ -413,7 +413,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				direction.Normalize();
 
 				// If extruding by face normal extend vertices on seams by the hypotenuse
-				float modifier = compensateAngleVertexDistance ? ProBuilderMath.Secant(Vector3.Angle(direction, kvp.Value.item2) * Mathf.Deg2Rad) : 1f;
+				float modifier = compensateAngleVertexDistance ? Math.Secant(Vector3.Angle(direction, kvp.Value.item2) * Mathf.Deg2Rad) : 1f;
 
 				direction.x *= distance * modifier;
 				direction.y *= distance * modifier;

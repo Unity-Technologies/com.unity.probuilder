@@ -8,6 +8,7 @@ using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
 using UnityEngine.ProBuilder.MeshOperations;
+using Math = UnityEngine.ProBuilder.Math;
 using Object = UnityEngine.Object;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 
@@ -1241,7 +1242,7 @@ namespace UnityEditor.ProBuilder
 				// profiler.BeginSample("VertexMoveTool()");
 				Vector3 diff = m_ElementHandlePosition - m_ElementHandleCachedPosition;
 
-				Vector3 mask = diff.ToMask(ProBuilderMath.handleEpsilon);
+				Vector3 mask = diff.ToMask(Math.handleEpsilon);
 
 				if (m_DoSnapToVertex)
 				{
@@ -1357,7 +1358,7 @@ namespace UnityEditor.ProBuilder
 					for (int i = 0; i < selection.Length; i++)
 					{
 						m_VertexPositions[i] = selection[i].positionsInternal.ValuesWithIndices(selection[i].selectedTriangles);
-						m_VertexOffset[i] = ProBuilderMath.Average(m_VertexPositions[i]);
+						m_VertexOffset[i] = Math.Average(m_VertexPositions[i]);
 					}
 				}
 
@@ -1373,7 +1374,7 @@ namespace UnityEditor.ProBuilder
 				for (int i = 0; i < selection.Length; i++)
 				{
 					// get the plane rotation in local space
-					Vector3 nrm = ProBuilderMath.Normal(m_VertexPositions[i]);
+					Vector3 nrm = Math.Normal(m_VertexPositions[i]);
 					Quaternion localRot = Quaternion.LookRotation(nrm == Vector3.zero ? Vector3.forward : nrm, Vector3.up);
 
 					Vector3[] v = selection[i].positionsInternal;
@@ -1494,7 +1495,7 @@ namespace UnityEditor.ProBuilder
 						if (handleAlignment == HandleAlignment.World)
 							m_VertexOffset[i] = m_ElementHandlePosition;
 						else
-							m_VertexOffset[i] = ProBuilderMath.GetBounds(m_VertexPositions[i]).center;
+							m_VertexOffset[i] = Math.GetBounds(m_VertexPositions[i]).center;
 					}
 				}
 
@@ -2357,7 +2358,7 @@ namespace UnityEditor.ProBuilder
 
 			if (GetFirstSelectedFace(out pb, out face))
 			{
-				var normals = ProBuilderMath.NormalTangentBitangent(pb, face);
+				var normals = Math.NormalTangentBitangent(pb, face);
 				var nrm = normals.normal;
 				var bitan = normals.bitangent;
 
@@ -2367,7 +2368,7 @@ namespace UnityEditor.ProBuilder
 					bitan = Vector3.right;
 				}
 
-				handleMatrix *= Matrix4x4.TRS(ProBuilderMath.GetBounds(pb.positionsInternal.ValuesWithIndices(face.distinctIndices)).center,
+				handleMatrix *= Matrix4x4.TRS(Math.GetBounds(pb.positionsInternal.ValuesWithIndices(face.distinctIndices)).center,
 					Quaternion.LookRotation(nrm, bitan), Vector3.one);
 			}
 		}
@@ -2390,7 +2391,7 @@ namespace UnityEditor.ProBuilder
 						goto case HandleAlignment.Local;
 
 					// use average normal, tangent, and bitangent to calculate rotation relative to local space
-					var tup = ProBuilderMath.NormalTangentBitangent(pb, face);
+					var tup = Math.NormalTangentBitangent(pb, face);
 					Vector3 nrm = tup.normal, bitan = tup.bitangent;
 
 					if (nrm == Vector3.zero || bitan == Vector3.zero)

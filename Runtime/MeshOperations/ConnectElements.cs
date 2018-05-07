@@ -227,13 +227,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				Face face = split.Key;
 				List<WingedEdge> targetEdges = split.Value;
 				int inserts = targetEdges.Count;
-				Vector3 nrm = ProBuilderMath.Normal(vertices, face.indices);
+				Vector3 nrm = Math.Normal(vertices, face.indices);
 
 				if(inserts == 1 || (faceMask != null && !faceMask.Contains(face)))
 				{
 					ConnectFaceRebuildData c = InsertVertices(face, targetEdges, vertices);
 
-					Vector3 fn = ProBuilderMath.Normal(c.faceRebuildData.vertices, c.faceRebuildData.face.indices);
+					Vector3 fn = Math.Normal(c.faceRebuildData.vertices, c.faceRebuildData.face.indices);
 
 					if(Vector3.Dot(nrm, fn) < 0)
 						c.faceRebuildData.face.Reverse();
@@ -259,7 +259,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					{
 						connectedFaces.Add(c.faceRebuildData.face);
 
-						Vector3 fn = ProBuilderMath.Normal(c.faceRebuildData.vertices, c.faceRebuildData.face.indices);
+						Vector3 fn = Math.Normal(c.faceRebuildData.vertices, c.faceRebuildData.face.indices);
 
 						if(Vector3.Dot(nrm, fn) < 0)
 							c.faceRebuildData.face.Reverse();
@@ -504,14 +504,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			List<ConnectFaceRebuildData> faces = new List<ConnectFaceRebuildData>();
-			Vector3 nrm = ProBuilderMath.Normal(vertices, face.indices);
+			Vector3 nrm = Math.Normal(vertices, face.indices);
 
 			for(int i = 0; i < n_vertices.Length; i++)
 			{
 				FaceRebuildData f = AppendPolygon.FaceWithVertices(n_vertices[i], false);
 				f.sharedIndices = n_sharedIndices[i];
 
-				Vector3 fn = ProBuilderMath.Normal(n_vertices[i], f.face.indices);
+				Vector3 fn = Math.Normal(n_vertices[i], f.face.indices);
 
 				if(Vector3.Dot(nrm, fn) < 0)
 					f.face.Reverse();
@@ -541,7 +541,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			List<List<int>> n_indices = ArrayUtility.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
 
 			Vertex center = Vertex.Average(vertices, indices);
-			Vector3 nrm = ProBuilderMath.Normal(vertices, face.indices);
+			Vector3 nrm = Math.Normal(vertices, face.indices);
 
 			int index = 0;
 
@@ -576,7 +576,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				FaceRebuildData f = AppendPolygon.FaceWithVertices(n_vertices[i], false);
 				f.sharedIndices = n_sharedIndices[i];
 
-				Vector3 fn = ProBuilderMath.Normal(n_vertices[i], f.face.indices);
+				Vector3 fn = Math.Normal(n_vertices[i], f.face.indices);
 
 				if(Vector3.Dot(nrm, fn) < 0)
 					f.face.Reverse();

@@ -67,7 +67,7 @@ namespace UnityEditor.ProBuilder
 
 				if (positions.Length > 0)
 				{
-					bounds = ProBuilderMath.GetBounds(positions);
+					bounds = Math.GetBounds(positions);
 					return true;
 				}
 			}

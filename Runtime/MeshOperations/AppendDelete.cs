@@ -333,7 +333,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				for(int i = 0; i < ind.Length; i+=3)
 				{
-					float area = ProBuilderMath.TriangleArea(m_Vertices[ind[i+0]], m_Vertices[ind[i+1]], m_Vertices[ind[i+2]]);
+					float area = Math.TriangleArea(m_Vertices[ind[i+0]], m_Vertices[ind[i+1]], m_Vertices[ind[i+2]]);
 
 					if(area > Mathf.Epsilon)
 					{
