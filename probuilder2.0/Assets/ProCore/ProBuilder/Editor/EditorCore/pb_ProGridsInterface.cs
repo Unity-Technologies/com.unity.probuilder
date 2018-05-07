@@ -19,6 +19,8 @@ namespace ProBuilder.EditorCore
 
 		static readonly string[] ProGridsEditorTypeNames = new string[]
 		{
+			"UnityEditor.ProGrids.ProGridsEditor",
+			"ProGrids.Editor.ProGridsEditor",
 			"ProGrids.Editor.ProGridsEditor",
 			"ProGrids.Editor.pg_Editor",
 			"ProGrids.pg_Editor",
@@ -120,24 +122,29 @@ namespace ProBuilder.EditorCore
 		{
 			pivot = Vector3.zero;
 
-			if(!pb_ProGridsInterface.SnapEnabled())
-				return false;
-
-			Type type = GetProGridsType();
-
-			if(type == null)
+			if(!SnapEnabled())
 				return false;
 
 			ScriptableObject pg = GetProGridsInstance();
 
 			if( pg != null )
 			{
-				object o = pb_Reflection.GetValue(pg, type, "pivot");
+				object o = pb_Reflection.GetValue(pg, pg.GetType(), "pivot");
 
 				if(o != null)
 				{
 					pivot = (Vector3) o;
 					return true;
+				}
+				else
+				{
+					var getPivotMethod = pg.GetType().GetMethod("GetPivot");
+
+					if (getPivotMethod != null)
+					{
+						pivot = (Vector3)getPivotMethod.Invoke(pg, null);
+						return true;
+					}
 				}
 			}
 

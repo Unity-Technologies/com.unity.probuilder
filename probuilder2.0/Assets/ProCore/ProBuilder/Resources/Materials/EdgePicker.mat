@@ -4,7 +4,7 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: EdgePicker
   m_Shader: {fileID: 4800000, guid: f95983c5af5c74a4bacdb0d204ab11b1, type: 3}
