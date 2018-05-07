@@ -91,7 +91,6 @@ namespace UnityEditor.ProBuilder
 		Material material;
 
 		// readonly Color wirecolor = new Color(.9f, .9f, .9f, .6f);
-		readonly Color background = new Color(.3f, .3f, .3f, .6f);
 		readonly Color LightWhite = new Color(.6f, .6f, .6f, .5f);
 
 		/// <summary>
@@ -145,17 +144,22 @@ namespace UnityEditor.ProBuilder
 			Vector2 pos = Vector2.right * 20000f;
 			Vector3 a = Vector3.zero, b = Vector3.zero;
 
-			for(int i = 0; i < edges.Length; i += 2)
+			for (int i = 0; i < edges.Length; i += 2)
 			{
-				Vector2 screen = HandleUtility.WorldToGUIPoint( (edges[i] + edges[i+1]) * .5f );
+				Vector2 screen = HandleUtility.WorldToGUIPoint((edges[i] + edges[i + 1]) * .5f);
 
-				if( screen.x < pos.x )
+				if (screen.x < pos.x)
 				{
 					pos = screen;
-					a = edges[i+0];
-					b = edges[i+1];
+					a = edges[i + 0];
+					b = edges[i + 1];
 				}
 			}
+
+			float dist = Vector3.Distance(a, b);
+
+			if(dist < Mathf.Epsilon)
+				return;
 
 			Vector3 left = Vector3.Cross(cam.forward, Vector3.up).normalized * LineDistance();
 
@@ -169,10 +173,8 @@ namespace UnityEditor.ProBuilder
 			b += left;
 
 			Handles.BeginGUI();
-			gc.text = Vector3.Distance(a,b).ToString("F2");
-			pos.x -= EditorStyles.label.CalcSize(gc).x * 2f;
-			DrawSceneLabel(gc, pos);
-
+			pos.x -= UI.EditorStyles.sceneTextBox.CalcSize(gc).x * 2f;
+			DrawSceneLabel(dist.ToString("F2"), pos);
 			Handles.EndGUI();
 		}
 
@@ -214,6 +216,11 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
+			float dist = Vector3.Distance(a, b);
+
+			if(dist < Mathf.Epsilon)
+				return;
+
 			float dot = Vector3.Dot(cam.transform.forward, Vector3.right);
 			float sign = dot < 0f ? -1f : 1f;
 			Vector3 offset = -(Vector3.up + (Vector3.right * sign)).normalized * LineDistance();
@@ -229,13 +236,11 @@ namespace UnityEditor.ProBuilder
 			Handles.DrawLine(a, b);
 
 			Handles.BeginGUI();
-			gc.text = Vector3.Distance(a,b).ToString("F2");
-			pos.y += EditorStyles.label.CalcHeight(gc, 20000);
-			DrawSceneLabel(gc, pos);
+			pos.y += UI.EditorStyles.sceneTextBox.CalcHeight(gc, 20000);
+			DrawSceneLabel(dist.ToString("F2"), pos);
 
 			Handles.EndGUI();
 		}
-
 
 		void DrawWidth(Vector3 cen, Vector3 extents)
 		{
@@ -277,6 +282,10 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
+			float dist = Vector3.Distance(a, b);
+
+			if(dist < Mathf.Epsilon)
+				return;
 			// Vector3 offset = -Vector3.up;
 			// offset = -Vector3.Cross(Vector3.Cross(cam.forward, Vector3.up), cam.forward).normalized * LineDistance();
 
@@ -293,30 +302,19 @@ namespace UnityEditor.ProBuilder
 
 			Handles.color = Color.red;
 			Handles.DrawLine(a, b);
-
 			Handles.BeginGUI();
-			DrawSceneLabel(Vector3.Distance(a,b).ToString("F2"), HandleUtility.WorldToGUIPoint((a + b) * .5f));
+			DrawSceneLabel(dist.ToString("F2"), HandleUtility.WorldToGUIPoint((a + b) * .5f));
 			Handles.EndGUI();
 		}
 
 		GUIContent gc = new GUIContent("", "");
+
 		void DrawSceneLabel(string content, Vector2 position)
 		{
 			gc.text = content;
-			DrawSceneLabel(gc, position);
-		}
-
-		void DrawSceneLabel(GUIContent content, Vector2 position)
-		{
-			float width = EditorStyles.label.CalcSize(content).x;
-			float height = EditorStyles.label.CalcHeight(content, width) + 4;
-
-			UI.EditorGUIUtility.DrawSolidColor( new Rect(position.x-1, position.y, width+2, height-2), background);
-
-			Color old = EditorStyles.label.normal.textColor;
-			EditorStyles.label.normal.textColor = Color.white;
-			GUI.Label( new Rect(position.x, position.y, width, height), content, EditorStyles.label );
-			EditorStyles.label.normal.textColor = old;
+			float width = UI.EditorStyles.sceneTextBox.CalcSize(gc).x;
+			float height = UI.EditorStyles.sceneTextBox.CalcHeight(gc, width);
+			GUI.Label( new Rect(position.x, position.y, width, height), gc, UI.EditorStyles.sceneTextBox);
 		}
 	}
 }
