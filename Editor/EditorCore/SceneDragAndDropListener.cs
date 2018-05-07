@@ -129,6 +129,7 @@ namespace UnityEditor.ProBuilder
 					s_IsSceneViewDragAndDrop = true;
 
 				GameObject go = HandleUtility.PickGameObject(evt.mousePosition, out s_PreviewSubmesh);
+
 				SetMeshPreview(go != null ? go.GetComponent<ProBuilderMesh>() : null);
 
 				if (s_IsFaceDragAndDropOverrideEnabled)
@@ -157,12 +158,18 @@ namespace UnityEditor.ProBuilder
 
 				if (s_CurrentPreview != null)
 				{
-					UndoUtility.RecordObject(s_CurrentPreview, "Set Face Material");
-
 					if (s_IsFaceDragAndDropOverrideEnabled)
 					{
+						UndoUtility.RecordObject(s_CurrentPreview, "Set Face Material");
+
 						foreach (var face in s_CurrentPreview.selectedFacesInternal)
 							face.material = s_PreviewMaterial;
+
+						s_CurrentPreview.ToMesh();
+						s_CurrentPreview.Refresh();
+						s_CurrentPreview.Optimize();
+
+						evt.Use();
 					}
 					else if(s_PreviewSubmesh > -1)
 					{
@@ -170,6 +177,8 @@ namespace UnityEditor.ProBuilder
 
 						if (draggedMaterial != null)
 						{
+							UndoUtility.RecordObject(s_CurrentPreview, "Set Face Material");
+
 							var mr = s_CurrentPreview.GetComponent<MeshRenderer>();
 							Material hoveredMaterial = mr == null ? null : mr.sharedMaterials[s_PreviewSubmesh];
 
@@ -178,14 +187,14 @@ namespace UnityEditor.ProBuilder
 								if (hoveredMaterial == null || face.material == hoveredMaterial)
 									face.material = draggedMaterial;
 							}
+
+							s_CurrentPreview.ToMesh();
+							s_CurrentPreview.Refresh();
+							s_CurrentPreview.Optimize();
+
+							evt.Use();
 						}
 					}
-
-					s_CurrentPreview.ToMesh();
-					s_CurrentPreview.Refresh();
-					s_CurrentPreview.Optimize();
-
-					evt.Use();
 				}
 
 				SetMeshPreview(null);
