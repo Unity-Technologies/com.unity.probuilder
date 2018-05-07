@@ -1,34 +1,47 @@
-# ProBuilder 3.0.7
+# Changelog
 
-## Features
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+
+## [3.0.8] - 0000-00-00
+
+## Bug Fixes
+
+- Fix incompatibility with ProGrids 3.0.1.
+
+## [3.0.7] - 0000-00-00
+
+### Features
 
 - Add a material property to the Poly Shape component.
 
-## Bug Fixes
+### Bug Fixes
 
 - Poly Shape creation now respects the user-set default material.
 
-# ProBuilder 3.0.6
+## [3.0.6] - 0000-00-00
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix upgrade prompt failing to show on version changes.
 
-# ProBuilder 3.0.5
+## [3.0.5] - 0000-00-00
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix About Window opening on every script reload event.
 
-# ProBuilder 3.0.4
+## [3.0.4] - 0000-00-00
 
-## Bug Fixes
+### Bug Fixes
 
 - Use the default material preference for shapes created through the Boolean Editor.
 
-# ProBuilder 3.0.3
+## [3.0.3] - 0000-00-00
 
-## Features
+### Features
 
 - API Examples are now published on [Github](https://github.com/Unity-Technologies/ProBuilder-API-Examples).
 - Expose poly shape creation methods. Add API example.
@@ -37,7 +50,7 @@
 - New options to set unselected and selected edge colors.
 - New option to set edge and wireframe line width (not available on Metal).
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix scene info not updating with selection changes.
 - Fix `Apply Material` only applying to parent gameobjects if children are also selected.
@@ -58,14 +71,14 @@
 - Fix local preferences not loading until restarting the ProBuilder editor.
 - Fix Boolean Editor rendering a white texture filling the entire screen.
 
-## Changes
+### Changes
 
 - Remove update checking.
 - Expose `pb_MeshImporter` class, making "ProBuilderize" action available at runtime.
 
-# ProBuilder 3.0.1-f.0
+## [3.0.1-f.0] - 0000-00-00
 
-## Features
+### Features
 
 - ProBuilder now runs as package manager module.
 - Custom color palettes for Vertex Color Editor.
@@ -76,7 +89,7 @@
 - Add `pb_ShapeGenerator.CreateShape(pb_ShapeType shape)` function to build default primitives without requiring parameters.
 - Add preference to set the static flags for new ProBuilder objects.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix "Select Hidden" preference not matching the state shown in toolbar on launch.
 - Fix Standard Vertex Color shader errors in 2018.1 and up.
@@ -95,27 +108,27 @@
 - Fix Poly Shape editor repainting the scene view more than necessary.
 - Corrected tool-tips for "Clear Smoothing" and "Break Smoothing" buttons.
 
-## Changes
+### Changes
 
 - Move Dimensions Overlay into ProBuilder menu.
 - Move `ProBuilder2.Common` and `ProBuilder2.EditorCommon` namespaces to `ProBuilder.Core` and `ProBuilder.EditorCore`.
 - Move `pb_Object` to ProBuilder.Core namespace.
 
-## Known Issues
+### Known Issues
 
 - "Library already loaded" warning logs when importing Package Manager over Asset Store install.
 - "Cannot create menu item" warnings when importing Package Manager over Asset Store install.
 - Deleting an Asset Store package before importing a Package Manager version does not automatically pop up the Convert To Package Manager editor window.
 - API Examples are not accessible from Package Manager.
 
-## Changes from 3.0.0-f.1
+### Changes from 3.0.0-f.1
 
 - Fix `pb_Fbx` errors when Unity FbxExporter is present in project.
 - Update Package Manager description and display name.
 
-# ProBuilder 2.9.8f2
+## [2.9.8-f.2] - 0000-00-00
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix shader compile errors when targeting mobile platforms.
 - Fix possible overflow in vector hashing functions.
@@ -123,9 +136,9 @@
 - Fix FBX export not including manually unwrapped UVs.
 - Fix toolbar using old icons with basic skin.
 
-# ProBuilder 2.9.7f5
+## [2.9.7-f.5] - 0000-00-00
 
-## Features
+### Features
 
 - Unity 2017.3 beta support.
 - New toolbar icons (Right/Context + Click in Toolbar -> Use Icon Mode).
@@ -135,41 +148,41 @@
 - Newly redesigned `Smooth Groups Editor`.
 - New `Select Face Loop` and `Select Face Ring` actions.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix possible null reference when picking ProBuilder objects.
 - Fix "Select Hole" disappearing instead of showing as disabled.
 - Fix "Extrude Face" disabled icon not matching current mode.
 - Fix Standard Vertex Color shader preventing builds on some platforms when fog is enabled.
 
-## Changes
+### Changes
 
 - Don't show `pb_Lightmapping` warnings by default.
 - Smoothing groups may now extend beyond the 42 provided in the editor. Any smoothing group between 1 and 24, or greater than 42 is treated as a smooth face (currently only accessible in code).
 - Set ProBuilder Standard Vertex Color shader fallback to "Standard."
 
-# ProBuilder 2.9.5f3
+## [2.9.5-f.3] - 0000-00-00
 
-## Features
+### Features
 
 - Deep selection support when clicking faces.
 
-## Bug Fixes
+### Bug Fixes
 
 - Drag select with "Select Hidden: Off" now works consistently in Unity 5.6 and up.
 - Fix automatic lightmapping attempting to update while ProBuilder is modifying geometry.
 
-## Changes
+### Changes
 
 - Unity 4.7 and 5.0 are no longer supported (2.9.4 will continue to be available for these version of Unity).
 
-# ProBuilder 2.9.4f1
+## [2.9.4-f.1] - 0000-00-00
 
-## Features
+### Features
 
 - When a lightmapping finishes baking show a warning if any ProBuilder objects marked as Detail were left out due to missing UV2s.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix single key shortcuts emitting system beep on Mac.
 - Fix vertex movement not respecting snap settings when ProGrids is placed in Plugins folder.
@@ -178,27 +191,27 @@
 - Fix hang on opening context menu with very large projects.
 - Fix Vertex Color Palette not applying colors correctly in vertex mode.
 
-# ProBuilder 2.9.3f0
+## [2.9.3-f.0] - 0000-00-00
 
-## Features
+### Features
 
 - Support exporting quads in OBJ format.
 - Add a context menu item to quickly create material palettes from the current Asset window selection.
 
-## Bug Fixes
+### Bug Fixes
 
 - Use `additionalVertexStreams` mesh attributes where possible when ProBuilderizing.
 - Fix for Windows version sometimes endlessly creating folders when root folder moved from Assets/ProCore.
 
-# ProBuilder 2.9.2f1
+## [2.9.2-f.1] - 0000-00-00
 
-## Bug Fixes
+### Bug Fixes
 
 - Add file stubs for deprecated repair actions to prevent compilation errors when updating.
 
-# ProBuilder 2.9.1f0
+## [2.9.1-f.0] - 0000-00-00
 
-## Features
+### Features
 
 - New PLY model exporter.
 - OBJ export rewritten, now supports:
@@ -209,22 +222,22 @@
 	- PBR maps (http://exocortex.com/blog/extending_wavefront_mtl_to_support_pbr)
 - Improve Mesh Asset export dialog and options.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix ProBuilder preferences sometimes not loading.
 - Fix deprecated method warnings in 2017.1 beta.
 - Fix occasionally flipped UV axis on merged faces.
 - Don't crash if ProBuilder folder has been renamed.
 
-# ProBuilder 2.9.0f3
+## [2.9.0-f.3] - 0000-00-00
 
-## Features
+### Features
 
 - Support for saving and loading custom Material Palettes.
 - ProBuilder now able to store preferences per-project as well as globally.
 - Significantly improve performance of Weld Vertices function.
 
-## Bug Fixes
+### Bug Fixes
 
 - Preferences Window now renders correctly in Unity 5.6 and up.
 - Exit Bezier Shape editing when Esc is pressed.
@@ -232,21 +245,21 @@
 - Fix potentially ambiguous reference to Axis enum in API examples.
 - Fix mesh leak when exporting STL files.
 
-## Changes
+### Changes
 
 - Move pb_Constant into ProBuilder2.Common namespace.
 - Move pb_Lightmapping class in EditorCommon namespace.
 - Improve wording of warning when shortcut preferences are reset.
 
-# ProBuilder 2.8.1f0
+## [2.8.1-f.0] - 0000-00-00
 
-## Features
+### Features
 
 - Improve grid snapping when placing Poly Shapes.
 - Add a callback when a mesh is rebuilt (pb_EditorUtility.AddOnMeshCompiledListener).
 - Remove max width limitation on Material Editor window.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix incorrect UV render scaling on retina and other scaled screens.
 - Fix deprecated warnings on Handles calls in Unity 5.6.
@@ -260,14 +273,14 @@
 - Fix particularly slow function in MergeFaces action.
 - Fix preferences GUI layout.
 
-## Changes
+### Changes
 
 - Start Poly Shape height at 0.
 - First Poly Shape click always sets pivot.
 
-# ProBuilder 2.8.0f1
+## [2.8.0-f.1] - 0000-00-00
 
-## Features
+### Features
 
 - New "Poly Shape" interactive shape.
 - New "Bezier Shape" interactive shape.
@@ -275,7 +288,7 @@
 - Improve default UV layouts for new shapes.
 - Add a shader for reference billboard planes ("ProBuilder/Reference Unlit").
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix material editor applying to child transforms of selection.
 - Fix instantiated objects not getting a UV2 channel when "Auto Generate UV2" is enabled.
@@ -286,13 +299,13 @@
 - Don't spam Console with errors if update check fails to connect (only affects WebPlayer target).
 - Add a more descriptive message to update check if connection fails.
 
-## Changes
+### Changes
 
 - Automatically toggle Detail Entity Type object's lightmapping static flag, preventing broken lightmap atlases.
 
-# ProBuilder 2.7.0f7
+## [2.7.0-f.7] - 0000-00-00
 
-## Features
+### Features
 
 - New redesigned "About" window.
 - New "Check for Updates" window and menu item.
@@ -304,7 +317,7 @@
 - Add repair script to strip and rebuild pb_Object from Unity mesh.
 - Add repair script for rebuilding shared index caches (addressed IndexOutOfRange errors in RefreshNormals function).
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix inconsistent About Window behavior when importing updates.
 - Make face highlight code snippet more robust in Runtime Editing example.
@@ -312,9 +325,9 @@
 - Fix ProBuilder-ize adding pb_Entity multiple times.
 - Apply Quick Offset adjustments to all selected ProBuilder objects.
 
-# ProBuilder 2.6.9f3
+## [2.6.9-f.3] - 0000-00-00
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix vertex handles appearing offset when using an orthographic scene view.
 - Mark KDTree Triangle and pb_Stl as Any Platform in build targets.
@@ -322,14 +335,14 @@
 - Fix compile warnings in Unity 5.6.0b4
 - Use multi-Unity-version compatible shader in Vertex Colors API example.
 
-# ProBuilder 2.6.8f1
+## [2.6.8-f.1] - 0000-00-00
 
-## Features
+### Features
 
 - Add option to restrict Select by Material to the current selection.
 - Add alternate method of specifying torus radius dimensions.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix regression that broke iOS and Android build targets.
 - Fix arch preview shape and built shape sides not matching.
@@ -339,13 +352,13 @@
 - Fix null reference when attempting to bevel open edges.
 - Remove unused and buggy Debug UVs shader.
 
-# ProBuilder 2.6.7f4
+## [2.6.7-f.4] - 0000-00-00
 
-## Features
+### Features
 
 - New face extrusion options to extrude along face normal, vertex normal, or per-face.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix potential drag selection inconsistencies when picking vertices in Unity 5.5.
 - Fix bug where Backspace key in UV Editor with a GUI control focused would incorrectly register as a shortcut.
@@ -357,22 +370,22 @@
 - When flipping a selection of face edges where faces are not quads be specific about the reason for failing.
 - Fix misc. potential hangs when registering ProBuilder objects for Undo.
 
-## Changes
+### Changes
 
 - Make default height segments for cylinder 0.
 - Move some common class files into the Core folder so they're included with the Core lib instead of MeshOps.
 - When grow selection by angle is off force iterative to on.
 
-# ProBuilder 2.6.6f0
+## [2.6.6-f.0] - 0000-00-00
 
-## Features
+### Features
 
 - Unity 5.5 support.
 - Improve readability of Unity version -> ProBuilder package chart.
 - Improve performance of mesh rebuild functions.
 - Add API example showing how to highlight faces based on distance to a point.
 
-## Bug Fixes
+### Bug Fixes
 
 - Don't update mouse edge when not in geometry mode.
 - Fix face and edge previews only rendering a subset of elements on meshes with high vertex counts.
@@ -381,18 +394,18 @@
   Fix some incorrect calls to pbUndo.RecordObjects that could cause Unity to lock up with large meshes.
 - Fix bug where "Export Mesh Asset" would always create an extra folder.
 
-## Changes
+### Changes
 
 - pb_Object.Refresh now accepts a bitmask to enable/disable different component refreshes.
 - Move Create ProBuilder Cube menu item to "GameObject/3D Object/ProBuilder Cube".
 
-# ProBuilder 2.6.5f0
+## [2.6.5-f.0] - 0000-00-00
 
-## Features
+### Features
 
 - Add procedural mesh extrusion example.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix bug where face/vertex picking with hidden selection off and intersect rect would not work in deferred rendering path.
 - Fix bug when "Meshes are Assets" is enabled where exiting play mode would clear the mesh cache.
@@ -402,13 +415,13 @@
 - Fix bug where stripping ProBuilder scripts with "Meshes are Assets" enabled would also delete the cached mesh asset.
 - Fix incorrectly scaling slider control on retina display.
 
-# ProBuilder 2.6.4f1
+## [2.6.4-f.1] - 0000-00-00
 
-## Features
+### Features
 
 - Unity 5.5 Beta compatibility.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix bug where generating UV2 would incorrectly merge incompatible vertices in the optimization function due to vertex references not being unique when returning from GeneratePerTriangleMesh.
 - Add icons for `Drag Selection Mode`.
@@ -423,9 +436,9 @@
 - Fix "Generate Scene UVs" toggle not being respected in `Generate UV2` action
 - Fix bug where drag selecting with shift in subtraction mode with complete rect selection would always deselect the entire selection.
 
-# ProBuilder 2.6.3f4
+## [2.6.3-f.4] - 0000-00-00
 
-## Features
+### Features
 
 - New `Vertex Positions Editor` provides fine-grained control over vertex postions.
 - Add `Anchor` setting for Auto UVs to align faces before user transforms.
@@ -434,7 +447,7 @@
 - Significantly improve editor performance when drag selecting faces and vertices with `Select Hidden: Off`.
 - New alternate drag selection modes: `Add`, `Subtract`, and `Difference` affects how the `Shift` key modifies selection when drag selecting elements.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix bug where using Undo in face selection mode could potentially delete faces on prefabs.
 - Fix import settings on icons.
@@ -444,20 +457,20 @@
 - Fix bug where drag selecting faces would sometimes leave the picker rect visible.
 - Disable Select By Material/Color when no elements are selected.
 
-## Changes
+### Changes
 
 - Use Unity's default UV2 unwrapping parameters since they seem to produce generally better results than the padded params currently in use.
 - New ProBuilder objects instantiate with `ShadowCastingMode.TwoSided` (configurable in Preferences/ProBuilder).
 
-# ProBuilder 2.6.2f0
+## [2.6.2-f.0] - 0000-00-00
 
-## Features
+### Features
 
 - Add STL file export support.
 - Standard Vertex Color shader now compatible with Unity 5.5 beta changes.
 - Add API Example showing how to set custom default UV2 Unwrap Parameters.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix bug where exporting OBJ would sometimes insert "AllFiles" into the file path.
 - Fix drag selecting edges then bridging sometimes using the default material instead of a neighboring one.
@@ -466,9 +479,9 @@
 - Fix bug where `Select Edge Loop` would select too many edges.
 - Don't show missing icon warnings unless in PB_DEBUG mode.
 
-# ProBuilder 2.6.1f0
+## [2.6.1-f.0] - 0000-00-00
 
-## Features
+### Features
 
 - Add `Triangulate Face` action.
 - Add ability to view UV2/3/4 channels in UV Editor.
@@ -479,7 +492,7 @@
 - Add "Select Faces with Material" and "Select Faces with Vertex Color" to the Selection menu.
 - New options icon in toolbar: gear instead of triple lines.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix "About" window showing every changelog ever instead of just the latest.
 - Fix bug in pb_Math.Normal(pb_Face) overload that would potentially return normals facing the wrong direction if fed ngons.
@@ -495,14 +508,14 @@
 - Fix occasionally flipped face normals when connecting edges or vertices on n-gons.
 - When connecting edges weed out any edges that don't connect to anything, preventing accidental edge subdivisions.
 
-## Changes
+### Changes
 
 - Make default angle error for uv2 unwrap a little higher to avoid bad unwraps in some common cases.
 - Move ProBuilder-ize function to menu actions.
 
-# ProBuilder 2.6.0f1
+## [2.6.0-f.1] - 0000-00-00
 
-## Features
+### Features
 
 - Add `Bevel Edges` action.
 - Add `Fill Hole` action to quickly insert a face in a mesh hole (with option to fully select and fill hole or just the selected parts).
@@ -527,7 +540,7 @@
 - Add `Alt-S` shortcut for `Subdivide` action.
 - Add option to `Mirror` action to either duplicate or move the selection when mirroring.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix some instances where modifying a mesh would result in NaN warnings.
 - Fix icosphere audio example scene in ProBuilder Basic.
@@ -565,7 +578,7 @@
 - Lower UV toolbar buttons by 1px when not using the Command GUIStyle since Button style adds 1px padding.
 - When building ProBuilder delete user generated folders so that upgrades don't overwrite them.
 
-## Changes
+### Changes
 
 - Menu toolbar re-arranged for consistency.
 - Remove UV2 generation parameters from pb_Object.
@@ -580,9 +593,9 @@
 - In addition to changing the icon and text, also show a brief explanation of the current handle alignment mode in the tooltip.
 - Move Mirror to object level, making it an action instead of panel popup.
 
-# ProBuilder 2.5.0f0 (r4241)
+## [2.5.0-f.0+r4241] - 0000-00-00
 
-## Features
+### Features
 
 - Toolbar redesign now adapts to both vertical and horizontal layouts (swap between Text and Icons by context clicking in the Inspector).
 - New tooltips show inline documentation and keyboard shortcuts.  Hold `Shift` to instantly view hovered tooltip, and turn off tooltips on hover in Preferences menu.
@@ -594,7 +607,7 @@
 - New Color Mask setting in Vertex Painter Editor enables painting only to specified component.
 - Vector4 UV{3, 4} channels can now be stored in pb_Object (use pb.SetUVs(index, List<Vec4>)).
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix shortcut editor modifier keys not being correctly stored.
 - Fix Freeze Transforms moving objects when selection contains hierarchies of meshes.
@@ -604,62 +617,62 @@
 - When extruding an edge check that the new face winding order is equivalent to the face of the donor edge and flip if necessary.
 - Fix shortcut editor not recognizing all keycode values (notably Alpha0-9).
 
-## Changes
+### Changes
 
 - Remove option to display Mode Toolbar in the Inspector window.
 - ProBuilder2.Math namespace removed, pb_Math now belongs to ProBuilder2.Common.
 
-# ProBuilder 2.4.11f0 (r4081)
+## [2.4.11-f.0+r4081] - 0000-00-00
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix regression in 2.4.10f2 that broke assigning materials in ProBuilder Basic.
 
-## API
+### API
 
 - Add `onEditLevelChanged` delegate to pb_Editor to notify other classes of edit level changes (Polybrush compatibility).
 
-# ProBuilder 2.4.10f2 (r4027)
+## [2.4.10-f.2+r4027] - 0000-00-00
 
-## Features
+### Features
 
 - Shape and Material windows are now dockable (context click in window and select Window/Set {Floating, Dockable}).
 - Add "Snap to Face" shortcut when dragging the move tool (hold 'C' while dragging to snap tool to the nearest face).
 - New ShaderForge compatible Standard Vertex Color shader on ProBuilder default material.
 
-## Bug Fixes
+### Bug Fixes
 
 - Unity 5.4 compatibility.
 - Workaround for Unity crash "Check DisallowAllocation Error"
 - Fix most cases of meshes going completely black when modifying them in any way.
 - Fix NullRef error when scaling a single selected edge.
 
-## Changes
+### Changes
 
 - Remove various `Get{Vertices, UVs, Triangles}` functions from `pb_Object`.  Use `pbUtil.ValuesWithIndices` directly instead.
 - Remove Instantiation API Example (there's nothing special about instantiating ProBuilder meshes anymore).
 
-# ProBuilder 2.4.9f1 (r3978)
+## [2.4.9-f.1+r3978] - 0000-00-00
 
-## Features
+### Features
 
 - New "Flip Edge" tool swaps the direction of a connecting edge in a quad.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix bug where Trigger or Collider entities could remain visible in play mode when using source.
 - Fix slowdowns when inserting edge loops due to undo.
 - Fix missing namespace errors in Unity 5.3.
 - Increase the resolution with which vertex positions are compared to avoid incorrectly merging distinct vertices (often causing trouble when modeling at very small dimensions).
 
-# ProBuilder 2.4.8f1 (r3764)
+## [2.4.8-f.1+r3764] - 0000-00-00
 
-## Features
+### Features
 
 - Enable Set Pivot, Delete, and Vertex Painter in ProBuilder Basic.
 - New Standard Shader with vertex color support (thanks to Unity Forum user @defaxer).
 
-## Bug Fixes
+### Bug Fixes
 
 - Add tooltips for every action in the ProBuilder toolbar.
 - Fix consistent horizontal scrollbar showing in ProBuilder window.
@@ -670,28 +683,28 @@
 - Fix ~10px vertical offset image when rendering UV template in Unity 5.
 - Fix slightly offset image when rendering UV template from docked UV Editor window.
 
-## Changes
+### Changes
 
 - Increase minimum allowed zoom in UV editor.
 - Make warning shown when connecting edges or vertices fails a bit more descriptive.
 - Don't show tangents and bitangents when Show Normals is enabled in the smoothing editor.
 - Prototype becomes ProBuilder Basic.
 
-# ProBuilder 2.4.7f0 (r3664)
+## [2.4.7-f.0+r3664] - 0000-00-00
 
-## Changes
+### Changes
 
 - New upgrade procedure skips complicated Upgrade Kit in favor of a slightly more manual but more reliable approach.  See FAQ or ProBuilder Documentation for more information.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix possible null reference error when working with prefabs that have been duplicated.
 - Additional error checking when stripping pb_Objects from scene added.
 - When ProBuilder-izing objects, ask user whether or not to traverse children.
 
-# ProBuilder 2.4.6f0 (r3616)
+## [2.4.6-f.0+r3616] - 0000-00-00
 
-## Features
+### Features
 
 - Add preference to set default Entity type.
 - Add preference to set dedicated keyboard shortcuts for entering Object, Face, Vertex, and Edge mode.
@@ -699,7 +712,7 @@
 - Add "Batch Upgrade" menu items to Upgrade Kit, allowing users to run one action for an entire project.
 - New GUI slider allows un-clamped input to the float field in Shape Tool.
 
-## Bug Fixes
+### Bug Fixes
 
 - Alt + E shortcut now works with only 2 vertices selected.
 - Fix bug where colliders would be incorrect when instantiating trigger entities.
@@ -716,15 +729,15 @@
 - Fix bug where prefabs would not "Apply" changes to all children equally.
 - Improve performance when editing scenes with many ProBuilder object prefabs.
 
-# ProBuilder 2.4.5p0 (r3531)
+## [2.4.5-p.0+r3531] - 0000-00-00
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix bugs in Copy UV Settings and Quick Apply Material shortcuts.
 
-# ProBuilder 2.4.5f1 (r3519)
+## [2.4.5-f.1+r3519] - 0000-00-00
 
-## Features
+### Features
 
 - New Torus shape.
 - Greatly improve editor performance when working with medium to large meshes.
@@ -736,7 +749,7 @@
 - Improve vertex painter performance with large meshes.
 - Unity 5.2 compatibility.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix bug where reverting a prefab with non-prefab ProBuilder children would throw errors.
 - Fix hangs when performing various actions.
@@ -761,27 +774,27 @@
 - Correctly set element toolbar position when toggling between scene and editor window placement.
 - Re-enable user set vertex handle color preferences.
 
-## Changes
+### Changes
 
 - Move default textures out of resources folder.
 - On pb_Object::Start, call ToMesh before Refresh since Refresh could try to set UVs or Colors to a mesh that has inconsistent vertex counts.
 - Remove most functions accepting a pb_IntArray[] sharedIndex cache and replace with Dictionary versions.
 
-# ProBuilder 2.4.4p1 (r3425)
+## [2.4.4-p.1+r3425] - 0000-00-00
 
-## Features
+### Features
 
 - Add scale shortcut toolbar for Auto UVs.
 - Add Control+Shift+Left-Click when UV editor is open to copy auto UV settings (including texture).
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix errors when building a project with geometry containing null materials.
 - Fix rare null reference error when switching scenes.
 
-# ProBuilder 2.4.4f1 (r3385)
+## [2.4.4-f.1+r3385] - 0000-00-00
 
-## Features
+### Features
 
 - Where possible* indices are now collapsed to share a single vertex.
 - Add context menu to swap between dockable window modes in vertex painter.
@@ -802,7 +815,7 @@
 - Repair Missing Script references is now cancelable.
 - Add option to extrude elements as a group or individual.
 
-## Bug Fixes
+### Bug Fixes
 
 - Improve Flip Normals shortcut selection context handling.
 - Enable Subdivide shortcut in Top mode.
@@ -835,12 +848,12 @@
 - When probuilder-izing objects, perform the action in-place (and add undo support).
 - Catch errors when repairing missing script references on objects with null materials.
 
-## Changes
+### Changes
 
 - Remove dependency on ProCore lib to communicate with ProGrids.
 - Rename scripts to uniformly follow pb_ prefix and pascal case for runtime, underscore case for editor.
 
-## API
+### API
 
 - New `Optimize()` method calls CollapseSharedVertices and GenerateUV2.  Replaces GenerateUV2() in most cases.
 - Move most of remaining scripts into proper namespaces.
@@ -856,42 +869,42 @@
 
 * Vertices must be smoothed, and have the same texture coordinate to qualify for weld.
 
-## f1 Patch Notes
+### f1 Patch Notes
 
 - Fix ProGrids not affecting vertices / faces / edges in Edit mode.
 - Minor tweak to vertex handle color.
 
-# ProBuilder 2.4.3p0 (r3216)
+## [2.4.3-p.0+r3216] - 0000-00-00
 
-## Features
+### Features
 
 - Weld distance now adjustable in UV editor.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix weird arch geometry near caps, noticeable when inserting edge loops.
 - Improve 'Flip Normals' shortcut context awareness.
 
-# ProBuilder 2.4.3f0 (r3202)
+## [2.4.3-f.0+r3202] - 0000-00-00
 
-## Features
+### Features
 
 - Add preference to enable back-face selection.
 
-## Bug Fixes
+### Bug Fixes
 
 - Remove 'here' console log.
 - Fix regression in 2.4.0 that broke Undo when used with ProGrids.
 - Fix 'Look Rotation is Zero' console logs when selecting a face with degenerate triangles.
 - Fix bug where sometimes clicking a face would not register due to a culled face intercepting the raycast.
 
-# ProBuilder 2.4.2f0 (r3202)
+## [2.4.2-f.0+r3202] - 0000-00-00
 
-## Features
+### Features
 
 - New debug window visualizes mesh information in the sceneview.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix regression that broke prefab editing applying to instances.
 - Fix latency in SceneView when selecting elements in the UV window.
@@ -900,14 +913,14 @@
 - Fix bug where texture rotation handle in the scene view would not snap correctly on finishing a UV adjustment.
 - Fix bug where drag selecting edges or faces could select elements behind the scene camera.
 
-# ProBuilder 2.4.1f1 (r3174)
+## [2.4.1-f.1+r3174] - 0000-00-00
 
-## Features
+### Features
 
 - New "Export UV Template" function saves a PNG of your UV maps.
 - Add new preference to show object vertex, face, and triangle count in the scene view (Preferences/Show Scene Info).
 
-## Bug Fixes
+### Bug Fixes
 
 - Edge wireframe no longer renders the material preview wells.
 - Fix performance issues when editing large objects in the UV editor with Auto UVs.
@@ -916,9 +929,9 @@
 - Fix null ref when deleting multiple faces.
 
 
-# ProBuilder 2.4.0f4 (r3132)
+## [2.4.0-f.4+r3132] - 0000-00-00
 
-## Features
+### Features
 
 - Unity 5 support.
 - New wireframe shader overrides Unity default when ProBuilder Editor is open.
@@ -934,7 +947,7 @@
 - New dark background in UV editor for Unity light skin users.
 - Improve performance when selecting objects with large vertex counts.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix crash when a face material is null (defaults to Unity Default-Diffuse).
 - Fix incorrect results when extruding multiple faces sharing a single center vertex (usually seen on the top of a cylinder).
@@ -971,39 +984,37 @@
 - Fix compile errors when building to WebGL target.
 - When creating a mesh asset, ensure that the source object mesh is not referenced by the new mesh asset.
 
-## Changes
+### Changes
 
 - Remove 'NoDraw' feature (necessary for Unity 5 compatiblity).
 
-## Beta
+### Beta
 
 - Rudimentary Boolean tool added - this is very early in development.
-
-## Bug Fixes (since 2.4.0f1)
 
 - Fix issue where "Repair Missing Script References" script could get stuck on prefab instances.
 - Silence cast exception error in pb_Object_Editor.
 
-# ProBuilder 2.3.3f1 (r2970)
+## [2.3.3-f.1+r2970] - 0000-00-00
 
-## Features
+### Features
 
 - Significantly improve performance of Subdivide action.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix incorrect language in Plane generator.
 - Fix bug that resulted in mangled vertices when Welding.
 
-# ProBuilder 2.3.2f2 (r2947)
+## [2.3.2-f.2+r2947] - 0000-00-00
 
-## Features
+### Features
 
 - Add a toggle in pb_Entity to turn off automatic collision generation.
 - Improve UV editor grid logic (now follows camera and resizes at far zoom levels).
 - New PostProcessor automatically strips ProBuilder scripts when building executables (toggle-able in Preferences).
 
-## Bug Fixes
+### Bug Fixes
 
 - Respect ProGrids `X` key shortcut when translating faces.
 - Fix build errors with Static Batching enabled.
@@ -1012,16 +1023,16 @@
 - Pressing 'F' while a single vertex is selected no longer frames the entire object.
 - Vertex colors are now copied when stripping ProBuilder scripts.
 
-# ProBuilder 2.3.1f1 (r2900)
+## [2.3.1-f.1+r2900] - 0000-00-00
 
-## Features
+### Features
 
 - New Vertex Painter tool.
 - New 'Triangulate ProBuilder Object' action for facetized poly-world look.
 - Significantly improve UV editor performance when drawing many elements.
 - ProBuilderize action now preserves UVs.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix error when opening Material Editor after assigning a Substance Material.
 - Fix bug that caused pb_Editor to freeze when editing prefabs made from ProBuilder objects.
@@ -1032,28 +1043,28 @@
 - Fix leaking mesh and material in Face editing mode.
 - Fix install script bug that would incorrectly delete non-ProBuilder files.
 
-## Changes
+### Changes
 
 - Handle position is now calculated as the center of selection bounding box.
 
-## API
+### API
 
 - New 'HueCube.cs' API example script demonstrates changing single vertex colors.
 - New 'pb_SerializableObject' class provides serializable storage for ProBuilder objects.  Add 'pb_Object::InitWithSerializableObject' constructor.
 
-## Beta Notes f1
+### Beta Notes f1
 
 - Fix install script bug that would incorrectly delete non-ProBuilder files.
 
-## Beta Notes f0
+### Beta Notes f0
 
 - New Vertex Painter tool.
 - Fix error when opening Material Editor after assigning a Substance Material.
 - Handle position is now calculated as the center of selection bounding box.
 
-# ProBuilder 2.3.0f14 (r2861)
+## [2.3.0-f.14+r2861] - 0000-00-00
 
-## Features
+### Features
 
 - New UV Editor window.
 - New 'Material Editor' window for quickly applying materials to ProBuilder objects.
@@ -1074,7 +1085,7 @@
 - UV: Merge Auto UV and Manual UV editors to a single ALL POWERFUL editor window.
 - UV: New Box projection UV unwrapping.
 
-## Bug Fixes
+### Bug Fixes
 
 - Editor: Fix bug where toggling NoDraw would sometimes fail.
 - Editor: Fix issue where Undo would sometimes cause actions immediately following to fail with 'Index Out of Range' exceptions.
@@ -1119,7 +1130,7 @@
 - Editor: Fix bug where extruding from faces would not inherit the correct winding order.
 - UV: Retain UV modifications when Subdividing, Connecting, or otherwise noodling around with a face.
 
-## Changes
+### Changes
 
 - 'Top' and 'Geometry' modes become 'Object' and 'Element', respectively.
 - Remove drill-down interface for pb_Object dimensions in favor of just always showing them.
@@ -1130,7 +1141,7 @@
 - Texture Window becomes AutoUV Window, and no longer houses material placement tools (Material Editor window replaces this functionality).
 - Smoothing Editor Normals is now a float field, allowing users to set the size of debugging mesh normal lines.
 
-## API
+### API
 
 - Move all menu and editor commands to pb_Menu_Commands class.
 - Add ProBuilder::Instantiate(GameObject go) overload.
@@ -1147,38 +1158,38 @@
 - Removed most naughty words from the codebase.
 - New pb_MenuCommands class synchronizes behavior between MenuItems and Editor buttons.
 
-## Beta Notes: f14
+### Beta Notes: f14
 
 - Editor: New 'Conform Normals' geometry operation.
 - Editor: Fix bug where extruding from faces would not inherit the correct winding order.
 - API: Add new 'GetWindingOrder(pb_Face face)' extension for pb_Object.
 
-## Beta Notes: f13
+### Beta Notes: f13
 
 - API: TranslateVertices now operates in local space.  Add TranslateVertices_World for backwards compatibility.
 - API: Extrude now optionally outs the appended faces.
 
-## Beta Notes: f12
+### Beta Notes: f12
 
 - Change "Ledge Height" to "Door Height" in Door creation panel.
 - Omit Entity information from instantiated pb_Object's name.
 - Fix bug where duplicate faces could be selected when using Grow Selection without an Angle parameter set.
 
-## Beta Notes: f11
+### Beta Notes: f11
 
 - Fix sometimes incorrect results when selecting UV islands.
 - Show UV popups in UV Editor window.
 
-## Beta Notes: f8
+### Beta Notes: f8
 
 - Fix bug where faces with flipped normals would extrude with incorrect winding order.
 - Merge Entity and Visgroup toggles.
 - 'J' key toggles UV editor open / closed.
 - Visgroup status is now retained during playmode state changes.
 
-# ProBuilder 2.2.5f5
+## [2.2.5-f.5] - 0000-00-00
 
-## Features
+### Features
 
 - Add 'Arch' tool to Shape Creation Panel.
 - New parameters for Door shape generator.
@@ -1187,7 +1198,7 @@
 - New live information update show face movement information.
 - Fancy new install script automatically detects previous installations and forgoes the need for user interaction in most upgrade cases.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix inconsistent Undo for face selection on ProBuilder objects.
 - Clean up Shader warnings on initial import.
@@ -1224,12 +1235,12 @@
 - Fix object incorrectly instantiating off-grid with strange pivot placement.
 - (Beta) Rename AboutWindow to avoid namespace conflicts.
 
-## Changes
+### Changes
 
 - Rename 6by7 root folder to ProCore.
 - New ProCore.dll replaces SixBySeven.dll (shared classes between ProCore products).
 
-## API
+### API
 
 - pb_Object.SelectedTriangles is no longer guaranteed to contain only unique indices.
 - Convert pb_Preferences_Internal::GetEnum<> to use ints instead of strings, modify pb_Editor to match.
@@ -1238,33 +1249,33 @@
 - Move many of ProBuilder's classes to namespaces (ProBuilder2.Common, ProBuilder2.MeshOperations, etc).
 - New ClassesEditing segment of Classes folder contains all non-essential files.  This allows for a single ProBuilderCore.dll that can be redistributed with ProBuilder objects allowing users without ProBuilder to view and load ProBuilder objects.
 
-# ProBuilder 2.2.4f0
+## [2.2.4-f.0] - 0000-00-00
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix 'Null Reference Error' when editing objects at runtime.
 - Fix crash at runtime when ProBuilder object is selected.
 
-# ProBuilder 2.2.3f0
+## [2.2.3-f.0] - 0000-00-00
 
-## Features
+### Features
 
 - New 'Grow Selection Plane' which expands the selected face to nearby faces on the same plane.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix regression where handle tool would not default to Top level editing in Geometry mode when no vertices were selected.
 - Fix bug where colliders would be lost on upgrading PB install.
 - Enable multi-object editing for pb_Entity inspectors.
 
-## API
+### API
 
 - Move and rename pb_Object::MeshWithMesh to pbMeshUtils.DeepCopyMesh.
 - Fix PlaneNormal not returning a normalized vector (yikes!).
 
-# ProBuilder 2.2.2f4
+## [2.2.2-f.4] - 0000-00-00
 
-## Features
+### Features
 
 - New 'Texture Groups' UV setting.  Select faces and group to project seamless UVs.
 - New 'Make Asset' Action allows users to save ProBuilder objects as Mesh objects.
@@ -1280,7 +1291,7 @@
 - New snap to nearest vertex feature.  When moving vertices, hold 'V' to snap handle to nearest vertex.
 - New 'Quick Offset' tool in pb_Object inspector window.  Set a value and immediately move the selected vertices by that amount (thanks to Matt1988 for initially developing this feature).
 
-## Bug Fixes
+### Bug Fixes
 
 - Override Frame selection to focus on only selected vertices (thanks @nickgravelyn for this tip).
 - Fix inconsistent keyboard shortcuts on Mac.
@@ -1301,12 +1312,12 @@
 - Fix bug where pivot would instantiate offset from grid when used in conjunction with ProGrids.
 - Fix bug that broke OBJ export when attempting to export more than one model per session.
 
-## Changes
+### Changes
 
 - Vertex Color shortcuts are now declared in ProBuilderMenuItems, allowing users to edit them without installing Source.
 - Reorganized Menu structure.
 
-## API
+### API
 
 - Selection management at object level is now entirely set in pb_Object, using new SetSelected[Faces, Edges, Triangles].
 - New naming and placement guidelines for Menu items (see pb_Constant).
@@ -1315,9 +1326,9 @@
 - Move most MenuItems to ProBuilder2.Actions namespace (exceptions being Windowed items).
 - New pbUndo class replaces #if > UNITY_4_3 junk.
 
-# ProBuilder 2.2.0f4
+## [2.2.0-f.4] - 0000-00-00
 
-## Features
+### Features
 
 - Update Undo code for Unity 4.3 compatibility (Install Interface will determine the correct package for your Unity version automatically).
 - Add Rotate and Scale tool when editing faces or vertices (accessed by 'E' and 'R' shortcuts, respectively).
@@ -1347,7 +1358,7 @@
 - New 'Force Pivot to Vertex' and 'Force Pivot to Grid' preferences allow for easier grid snapping.
 - New default material for ProBuilder objects.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix system beep on Mac OS when using keyboard shortcuts (this could be a headling feature).
 - Fix bug where detaching or deleting a face wouldn't always reset the _uniqueIndices array, causing bugs in the handle selection code.
@@ -1388,7 +1399,7 @@
 - Fix bug where SceneView would sometimes not refresh on an Undo event.
 - Fix bug where pressing 'W' key in the SceneView Fly mode would lock the camera to forward movement.
 
-## Changes
+### Changes
 
 - In pb_Entity, switch the 'Sphere Collider' option for 'Remove Collider'.
 - Change verbage in Geometry shortcut description.
@@ -1407,7 +1418,7 @@
 - Drag selecting faces now (optional; defaults to true) limits face searching to selected objects.
 - Remove 'Seamless' mode.
 
-## API / Internal
+### API / Internal
 
 - Add get/set for pb_Obect->_sharedIndices.
 - Use ProBuilder.Actions namespace for all non-window requiring functions.
@@ -1426,7 +1437,7 @@
 - New ProBuilder2.Common, ProBuilder2.MeshOperations, and ProBuilder2.Math namespaces.  Partially integrated.
 - New pb_Editor_Enum class and namespace.
 
-## Known issues
+### Known issues
 
 - With Unity 4.3 and up, undoing a Collapse Vertices operation is slow.
 - Merging rotated objects does not account for UV rotation.
@@ -1434,21 +1445,21 @@
 - Unity inserts an additional Undo when selecting a new face on an already selected object.
 - Can't shift-click to deselect edges.
 
-# ProBuilder 2.1.4
+## [2.1.4-f.0] - 0000-00-00
 
-## Features
+### Features
 
 - Notifications are now displayed when a shortcut is recognized.
 - New preview feature in Geometry Interface.  Interactively create and place shapes.
 - Remove dependency on concave MeshCollider for face selection.
 - New MenuItems for opening the Texture Window, and assorted editor commands.
 
-## Changes
+### Changes
 
 - Move GUI folder to Resources, allowing 6by7 root folder to be placed anywhere in Project hierarchy.
 - Decouple collisions from ProBuilder API entirely.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix bug where Mesh.Colors32 property would be lost on duplication.
 - Clamp values in Geometry Interface to sane values.
@@ -1466,25 +1477,25 @@
 - Fix 'Delete Face' notification incorrectly displaying on OSX.
 - Fix merged objects losing collisions.
 
-## API
+### API
 
 - ProBuilder.Shortcut is now pb_Shortcut.
 - Add pb_Upgrade_Utility as a base class for all updating operations.
 
-# ProBuilder 2.1.3
+## [2.1.3] - 0000-00-00
 
-## Features
+### Features
 
 - New Vertex Color Interface.
 - New 'Detach Face' action.
 - New 'Toggle Mover Visibility' button.
 
-## Changes
+### Changes
 
 - pb_Mesh_Extension renamed to pb_Object_Extensions.
 - Transition default shader to Diffuse Vertex Color.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix pb_Object breakage when upgrading to 2.1.2+ from <= 2.1.1.
 - Fix bug where switching to Geometry mode would not always correctly set Tool.current to Tools.None.
@@ -1493,7 +1504,7 @@
 - Fix regression in 2.1.2 that caused non-cube type primitives to lose entity data and mesh information.
 - Fix regression that caused Nodraw Visiblity Toggle to break.
 
-## API
+### API
 
 - Remove unnecessary calls to the mesh reference when accessing vertex information (most notably in UV mapping functions).
 - Cache distinct indices in pb_Face, replacing pb_Face::DistinctIndices() with pb_Face.distinctIndices.
@@ -1501,14 +1512,14 @@
 - Add SetColors32(Color32[] colors) to pb_Object class.
 - Add DetachFace(pb_Face face) to pb_Object class.
 
-## Internal
+### Internal
 
 - Update to SVN 1.7, small adjustments to build scripts.
 - Add shell script to build distributable packages on OSX.
 
-# ProBuilder 2.1.2
+## [2.1.2] - 0000-00-00
 
-## Features
+### Features
 
 - New interface for pb_Entity class in Inspector.
 - Scale transform now supported.
@@ -1516,7 +1527,7 @@
 - New ProBuilder/About window provides more build information.
 - Full prefab support (removes "Create Prefab" button from ProBuilder editor).
 
-## Changes
+### Changes
 
 - Rewrite context tip for Lightmapping button to reflect it's new purpose.
 - Automatically freeze scale transform when applying any change to vertices.
@@ -1525,7 +1536,7 @@
 - Remove face vertex handle information from scene view.
 - Remove install script from package.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix bug where user would be allowed to add multiple collision components to pb_Object.
 - Fix bug where geometry would shift on Undo/Redo incorrectly.
@@ -1536,17 +1547,17 @@
 - Fix incorrecty window sizing in pb_Editor.
 - Fix rare error log when duplicating prefab objects.
 
-## API
+### API
 
 - Add OnVertexMovementFinished event to pb_Editor.
 
-## Internal
+### Internal
 
 - Implement SixBySeven shared library.
 
-# ProBuilder 2.1.1
+## [2.1.1] - 0000-00-00
 
-## Features
+### Features
 
 - Add MirrorTool action.
 - Add Prism primitive.
@@ -1555,7 +1566,7 @@
 - Add dimensions parameter to Prism and Cube in Geometry Interface.
 - Add ability to delete faces (select faces and press backspace)
 
-## Changes
+### Changes
 
 - "Auto NoDraw" becomes "NoDraw Tool", and features a vastly improved interface.
 - Scroll bars added to ProBuilder Preferences panel, allowing for unlimited preference additions.
@@ -1563,7 +1574,7 @@
 - No longer force rename pb_Objects post-initialization.
 - Comment out menu item for Project Wide Nodraw utility, leaving action available for advanced users.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix bug where handles in Seamless editing mode would not draw.
 - Fix bug where selected objects would disappear at runtime.
@@ -1576,21 +1587,21 @@
 - Add overload to TranslateVertices that accepts bool forceDisableSnap.
 - Fix bug in PivotTool that caused vertices to incorrectly be snapped when setting new pivot with snapping enabled.
 
-## API Changes
+### API Changes
 
 - Add pb_Object::InitWithObject
 - Add ProBuilder::CreateObjectWithObject
 - Add pb_Object::GetName
 - Add ProBuilder::CreatePrimitive(ProBuilder.Shape shape)
 
-## Internal
+### Internal
 
 - Add DrawAllFaceNormals to #DEBUG flagged pb_Editor.
 - Update Sublime Extension to version 3.
 
-# ProBuilder 2.1
+## [2.1.0] - 0000-00-00
 
-## Features
+### Features
 
 - Add Smoothing Group support.
 - New face selection graphic system respects depth order + speed boost.
@@ -1601,14 +1612,14 @@
 - Add new "Mover" entity type, which is non-static and allows complete control at runtime.
 - Add support for n-gon faces.
 
-## Changes
+### Changes
 
 - 'World' is now default handle alignment.
 - Update default materials with dedicated textures.
 - Update QuickStart window with more explicit options.
 - Default values for Cylinder are now slightly more sane.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix ProceduralMaterials throwing errors in Texture Editor.
 - Fix rare bug where incorrect vertex indices would be selected in an UpdateSelection() call, throwing a NullReferenceException.
@@ -1641,7 +1652,7 @@
 - Fix bug where cylinder object sometimes initialize with un-even side lengths.
 - Fix bug where on deleting a pb_Object's MeshCollider, ProBuilder would not immediately re-initialize it (prevents common PEBKAC error).
 
-## API
+### API
 
 - Integrate Doxygen (Still a work in progress - feel free to drop by the forums with any questions).
 - Add SharedTrianglesWithFacesExclusive for extracting shared triangle indices exclusive to passed faces.
@@ -1650,13 +1661,13 @@
 - Add OnVertexMovement EventHandler to pb_Object.
 - pb_Object::CreateObjectWithPointsfaces is now pb_Object::CreateObjectWithVerticesFaces.
 
-## Actions
+### Actions
 
 - Update AutoNodraw to cast from all vertices + center point when determining hidden flag.
 - In PivotTool.cs, snap pivot point to grid if no vertices are selected.
 - Refactor EntityType.Brush to EntityType.Detail.
 
-## Internal
+### Internal
 
 - Add pb_Profiler class
 - Add UVee window + ProBuilder specific modifications

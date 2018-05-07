@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using ProBuilder.AssetUtility;
@@ -190,12 +191,19 @@ namespace ProBuilder.EditorCore
 			}
 
 			TextAsset changeText = pb_FileUtil.LoadInternalAsset<TextAsset>("About/changelog.txt");
-
 			string raw = changeText != null ? changeText.text : "";
 
 			if (!string.IsNullOrEmpty(raw))
 			{
-				pb_VersionUtil.FormatChangelog(raw, out m_ChangeLogVersionInfo, out m_ChangeLogRichText);
+				Changelog logs = new Changelog(changeText.text);
+				ChangelogEntry first = logs.entries.First();
+
+				if (first != null)
+				{
+					m_ChangeLogVersionInfo = first.versionInfo;
+					m_ChangeLogRichText = GetRichTextReleaseNotes(first.releaseNotes);
+				}
+
 #if !(DEBUG || DEVELOPMENT || PB_DEBUG)
 				if(!pb_Version.Current.Equals(m_ChangeLogVersionInfo))
 					pb_Log.Info("Changelog version does not match internal version. {0} != {1}",
@@ -273,6 +281,15 @@ namespace ProBuilder.EditorCore
 			GUI.backgroundColor = og;
 
 			GUILayout.Space(6);
+		}
+
+		static string GetRichTextReleaseNotes(string text)
+		{
+			string rich = text;
+			rich = Regex.Replace(rich, "^-", "\u2022", RegexOptions.Multiline);
+			rich = Regex.Replace(rich, @"(?<=^###\\s).*", "<size=16><b>${0}</b></size>", RegexOptions.Multiline);
+			rich = Regex.Replace(rich, @"^###\ ", "", RegexOptions.Multiline);
+			return rich;
 		}
 	}
 }
