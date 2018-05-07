@@ -5,13 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [3.0.8] - 0000-00-00
+## [3.0.8] - 2018-05-07
 
-## Bug Fixes
+### Bug Fixes
 
 - Fix incompatibility with ProGrids 3.0.1.
 
-## [3.0.7] - 0000-00-00
+## [3.0.7] - 2018-04-30
 
 ### Features
 
@@ -21,25 +21,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Poly Shape creation now respects the user-set default material.
 
-## [3.0.6] - 0000-00-00
+## [3.0.6] - 2018-04-19
 
 ### Bug Fixes
 
 - Fix upgrade prompt failing to show on version changes.
 
-## [3.0.5] - 0000-00-00
+## [3.0.5] - 2018-04-16
 
 ### Bug Fixes
 
 - Fix About Window opening on every script reload event.
 
-## [3.0.4] - 0000-00-00
+## [3.0.4] - 2018-04-10
 
 ### Bug Fixes
 
 - Use the default material preference for shapes created through the Boolean Editor.
 
-## [3.0.3] - 0000-00-00
+## [3.0.3] - 2018-04-05
 
 ### Features
 
@@ -76,7 +76,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Remove update checking.
 - Expose `pb_MeshImporter` class, making "ProBuilderize" action available at runtime.
 
-## [3.0.1-f.0] - 0000-00-00
+## [3.0.1-f.0] - 2018-02-12
 
 ### Features
 
@@ -126,7 +126,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix `pb_Fbx` errors when Unity FbxExporter is present in project.
 - Update Package Manager description and display name.
 
-## [2.9.8-f.2] - 0000-00-00
+## [2.9.8-f.2] - 2017-11-01
 
 ### Bug Fixes
 
@@ -136,7 +136,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix FBX export not including manually unwrapped UVs.
 - Fix toolbar using old icons with basic skin.
 
-## [2.9.7-f.5] - 0000-00-00
+## [2.9.7-f.5] - 2017-10-23
 
 ### Features
 
@@ -161,7 +161,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Smoothing groups may now extend beyond the 42 provided in the editor. Any smoothing group between 1 and 24, or greater than 42 is treated as a smooth face (currently only accessible in code).
 - Set ProBuilder Standard Vertex Color shader fallback to "Standard."
 
-## [2.9.5-f.3] - 0000-00-00
+## [2.9.5-f.3] - 2017-08-30
 
 ### Features
 
@@ -176,7 +176,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Unity 4.7 and 5.0 are no longer supported (2.9.4 will continue to be available for these version of Unity).
 
-## [2.9.4-f.1] - 0000-00-00
+## [2.9.4-f.1] - 2017-08-03
 
 ### Features
 
@@ -191,7 +191,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix hang on opening context menu with very large projects.
 - Fix Vertex Color Palette not applying colors correctly in vertex mode.
 
-## [2.9.3-f.0] - 0000-00-00
+## [2.9.3-f.0] - 2017-07-13
 
 ### Features
 
@@ -203,13 +203,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Use `additionalVertexStreams` mesh attributes where possible when ProBuilderizing.
 - Fix for Windows version sometimes endlessly creating folders when root folder moved from Assets/ProCore.
 
-## [2.9.2-f.1] - 0000-00-00
+## [2.9.2-f.1] - 2017-06-22
 
 ### Bug Fixes
 
 - Add file stubs for deprecated repair actions to prevent compilation errors when updating.
 
-## [2.9.1-f.0] - 0000-00-00
+## [2.9.1-f.0] - 2017-06-12
 
 ### Features
 
@@ -229,7 +229,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix occasionally flipped UV axis on merged faces.
 - Don't crash if ProBuilder folder has been renamed.
 
-## [2.9.0-f.3] - 0000-00-00
+## [2.9.0-f.3] - 2017-05-22
 
 ### Features
 
@@ -251,7 +251,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Move pb_Lightmapping class in EditorCommon namespace.
 - Improve wording of warning when shortcut preferences are reset.
 
-## [2.8.1-f.0] - 0000-00-00
+## [2.8.1-f.0] - 2017-04-17
 
 ### Features
 
@@ -278,7 +278,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Start Poly Shape height at 0.
 - First Poly Shape click always sets pivot.
 
-## [2.8.0-f.1] - 0000-00-00
+## [2.8.0-f.1] - 2017-03-29
 
 ### Features
 
@@ -303,7 +303,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Automatically toggle Detail Entity Type object's lightmapping static flag, preventing broken lightmap atlases.
 
-## [2.7.0-f.7] - 0000-00-00
+## [2.7.0-f.7] - 2017-02-24
 
 ### Features
 
@@ -325,7 +325,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix ProBuilder-ize adding pb_Entity multiple times.
 - Apply Quick Offset adjustments to all selected ProBuilder objects.
 
-## [2.6.9-f.3] - 0000-00-00
+## [2.6.9-f.3] - 2017-01-27
 
 ### Bug Fixes
 
@@ -335,7 +335,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix compile warnings in Unity 5.6.0b4
 - Use multi-Unity-version compatible shader in Vertex Colors API example.
 
-## [2.6.8-f.1] - 0000-00-00
+## [2.6.8-f.1] - 2017-01-16
 
 ### Features
 
@@ -352,7 +352,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix null reference when attempting to bevel open edges.
 - Remove unused and buggy Debug UVs shader.
 
-## [2.6.7-f.4] - 0000-00-00
+## [2.6.7-f.4] - 2017-01-09
 
 ### Features
 
@@ -376,7 +376,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Move some common class files into the Core folder so they're included with the Core lib instead of MeshOps.
 - When grow selection by angle is off force iterative to on.
 
-## [2.6.6-f.0] - 0000-00-00
+## [2.6.6-f.0] - 2016-12-09
 
 ### Features
 
@@ -399,7 +399,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - pb_Object.Refresh now accepts a bitmask to enable/disable different component refreshes.
 - Move Create ProBuilder Cube menu item to "GameObject/3D Object/ProBuilder Cube".
 
-## [2.6.5-f.0] - 0000-00-00
+## [2.6.5-f.0] - 2016-11-11
 
 ### Features
 
@@ -415,7 +415,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix bug where stripping ProBuilder scripts with "Meshes are Assets" enabled would also delete the cached mesh asset.
 - Fix incorrectly scaling slider control on retina display.
 
-## [2.6.4-f.1] - 0000-00-00
+## [2.6.4-f.1] - 2016-10-19
 
 ### Features
 
@@ -436,7 +436,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix "Generate Scene UVs" toggle not being respected in `Generate UV2` action
 - Fix bug where drag selecting with shift in subtraction mode with complete rect selection would always deselect the entire selection.
 
-## [2.6.3-f.4] - 0000-00-00
+## [2.6.3-f.4] - 2016-09-23
 
 ### Features
 
@@ -462,7 +462,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Use Unity's default UV2 unwrapping parameters since they seem to produce generally better results than the padded params currently in use.
 - New ProBuilder objects instantiate with `ShadowCastingMode.TwoSided` (configurable in Preferences/ProBuilder).
 
-## [2.6.2-f.0] - 0000-00-00
+## [2.6.2-f.0] - 2016-09-02
 
 ### Features
 
@@ -479,7 +479,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix bug where `Select Edge Loop` would select too many edges.
 - Don't show missing icon warnings unless in PB_DEBUG mode.
 
-## [2.6.1-f.0] - 0000-00-00
+## [2.6.1-f.0] - 2016-08-26
 
 ### Features
 
@@ -513,7 +513,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Make default angle error for uv2 unwrap a little higher to avoid bad unwraps in some common cases.
 - Move ProBuilder-ize function to menu actions.
 
-## [2.6.0-f.1] - 0000-00-00
+## [2.6.0-f.1] - 2016-08-02
 
 ### Features
 
@@ -593,7 +593,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - In addition to changing the icon and text, also show a brief explanation of the current handle alignment mode in the tooltip.
 - Move Mirror to object level, making it an action instead of panel popup.
 
-## [2.5.0-f.0+r4241] - 0000-00-00
+## [2.5.0-f.0+r4241] - 2016-04-07
 
 ### Features
 
