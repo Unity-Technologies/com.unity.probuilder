@@ -12,11 +12,11 @@ namespace UnityEditor.ProBuilder
 	[CustomEditor(typeof(PolyShape))]
 	class PolyShapeEditor : Editor
 	{
-		static Color HANDLE_COLOR = new Color(.8f, .8f, .8f, 1f);
-		static Color HANDLE_GREEN = new Color(.01f, .9f, .3f, 1f);
-		static Color SELECTED_COLOR = new Color(.01f, .8f, .98f, 1f);
-
-		static readonly Vector3 SNAP_MASK = new Vector3(1f, 0f, 1f);
+		static Color k_HandleColor = new Color(.8f, .8f, .8f, 1f);
+		static Color k_HandleColorGreen = new Color(.01f, .9f, .3f, 1f);
+		static Color k_HandleSelectedColor = new Color(.01f, .8f, .98f, 1f);
+		static readonly Vector3 k_SnapMask = new Vector3(1f, 0f, 1f);
+		const float k_HandleSize = .05f;
 
 		Material m_LineMaterial;
 		Mesh m_LineMesh = null;
@@ -374,7 +374,7 @@ namespace UnityEditor.ProBuilder
 					if( m_Plane.Raycast(ray, out hitDistance) )
 					{
 						evt.Use();
-						polygon.points[m_SelectedIndex] = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)), SNAP_MASK);
+						polygon.points[m_SelectedIndex] = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)), k_SnapMask);
 						RebuildPolyShapeMesh(false);
 						SceneView.RepaintAll();
 					}
@@ -411,7 +411,7 @@ namespace UnityEditor.ProBuilder
 						if(polygon.points.Count < 1)
 							polygon.transform.position = polygon.isOnGrid ? ProGridsInterface.ProGridsSnap(hit) : hit;
 
-						Vector3 point = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(hit), SNAP_MASK);
+						Vector3 point = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(hit), k_SnapMask);
 
 						if(polygon.points.Count > 2 && ProBuilderMath.Approx3(polygon.points[0], point))
 						{
@@ -455,7 +455,7 @@ namespace UnityEditor.ProBuilder
 					{
 						Handles.color = Color.green;
 
-						Handles.DotHandleCap(-1, wp, Quaternion.identity, HandleUtility.GetHandleSize(wp) * .05f, evt.type);
+						Handles.DotHandleCap(-1, wp, Quaternion.identity, HandleUtility.GetHandleSize(wp) * k_HandleSize, evt.type);
 
 						if( evt.type == EventType.MouseDown )
 						{
@@ -519,11 +519,11 @@ namespace UnityEditor.ProBuilder
 
 				Vector3 extrudePoint = origin + (extrude * up);
 
-				Handles.color = HANDLE_COLOR;
-				Handles.DotHandleCap(-1, origin, Quaternion.identity, HandleUtility.GetHandleSize(origin) * .05f, evt.type);
-				Handles.color = HANDLE_GREEN;
+				Handles.color = k_HandleColor;
+				Handles.DotHandleCap(-1, origin, Quaternion.identity, HandleUtility.GetHandleSize(origin) * k_HandleSize, evt.type);
+				Handles.color = k_HandleColorGreen;
 				Handles.DrawLine(origin, extrudePoint);
-				Handles.DotHandleCap(-1, extrudePoint, Quaternion.identity, HandleUtility.GetHandleSize(extrudePoint) * .05f, evt.type);
+				Handles.DotHandleCap(-1, extrudePoint, Quaternion.identity, HandleUtility.GetHandleSize(extrudePoint) * k_HandleSize, evt.type);
 				Handles.color = Color.white;
 
 				if( !sceneInUse && polygon.extrude != extrude)
@@ -544,9 +544,9 @@ namespace UnityEditor.ProBuilder
 					center.y += point.y;
 					center.z += point.z;
 
-					float size = HandleUtility.GetHandleSize(point) * .05f;
+					float size = HandleUtility.GetHandleSize(point) * k_HandleSize;
 
-					Handles.color = ii == m_SelectedIndex ? SELECTED_COLOR : HANDLE_COLOR;
+					Handles.color = ii == m_SelectedIndex ? k_HandleSelectedColor : k_HandleColor;
 
 					EditorGUI.BeginChangeCheck();
 
@@ -555,7 +555,7 @@ namespace UnityEditor.ProBuilder
 					if(EditorGUI.EndChangeCheck())
 					{
 						UndoUtility.RecordObject(polygon, "Move Polygon Shape Point");
-						polygon.points[ii] = ProGridsInterface.ProGridsSnap(trs.InverseTransformPoint(point), SNAP_MASK);
+						polygon.points[ii] = ProGridsInterface.ProGridsSnap(trs.InverseTransformPoint(point), k_SnapMask);
 						OnBeginVertexMovement();
 						RebuildPolyShapeMesh(false);
 					}
@@ -590,11 +590,11 @@ namespace UnityEditor.ProBuilder
 
 					EditorGUI.BeginChangeCheck();
 
-					Handles.color = HANDLE_COLOR;
-					Handles.DotHandleCap(-1, center, Quaternion.identity, HandleUtility.GetHandleSize(center) * .05f, evt.type);
+					Handles.color = k_HandleColor;
+					Handles.DotHandleCap(-1, center, Quaternion.identity, HandleUtility.GetHandleSize(center) * k_HandleSize, evt.type);
 					Handles.DrawLine(center, extrude);
-					Handles.color = HANDLE_GREEN;
-					extrude = Handles.Slider(extrude, up, HandleUtility.GetHandleSize(extrude) * .05f, Handles.DotHandleCap, 0f);
+					Handles.color = k_HandleColorGreen;
+					extrude = Handles.Slider(extrude, up, HandleUtility.GetHandleSize(extrude) * k_HandleSize, Handles.DotHandleCap, 0f);
 					Handles.color = Color.white;
 
 					if(EditorGUI.EndChangeCheck())
