@@ -38,7 +38,7 @@
 	],
 	"OnPreBuild":[
 		// get version number with build type marker for pb_VersionInfo
-		{ "Command":"find", "Arguments": [ "$SRC_PB_ROOT/About/changelog.txt", "(?<=# ProBuilder )[0-9a-zA-Z\\.\\-]*" ] },
+		{ "Command":"find", "Arguments": [ "$SRC_PB_ROOT/About/changelog.txt", "(?<=\\[)([0-9]+\\.[0-9]+\\.[0-9]+.*)(?=\\])" ] },
 		// set version info in pb_VersionInfo
 		{ "Command":"replace", "Arguments": [ "$SRC_PB_ROOT/Classes/ClassesCore/pb_Version.cs", "(?<=new pb_VersionInfo\\(\")[0-9a-zA-Z\\-\\.]+", "GetFindVar(0)" ] },
 		// set build date in pb_VersionInfo
