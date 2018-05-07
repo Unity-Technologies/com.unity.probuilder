@@ -1,54 +1,90 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder
 {
-	class DimensionsEditor : ISceneEditor
+	class DimensionsEditor : ScriptableObject
 	{
+		static DimensionsEditor s_Instance;
+
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Dimensions Overlay/Hide", true, PreferenceKeys.menuEditor + 30)]
-		public static bool HideVerify()
+		static bool HideVerify()
 		{
-			return instance != null;
+			return s_Instance != null;
 		}
 
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Dimensions Overlay/Hide", false, PreferenceKeys.menuEditor + 30)]
-		public static void Hide()
+		static void Hide()
 		{
-			instance.Close();
+			if(s_Instance != null)
+				Object.DestroyImmediate(s_Instance);
 		}
 
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Dimensions Overlay/Show", true, PreferenceKeys.menuEditor + 30)]
-		public static bool InitVerify()
+		static bool InitVerify()
 		{
-			return instance == null;
+			return s_Instance == null;
 		}
 
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Dimensions Overlay/Show", false, PreferenceKeys.menuEditor + 30)]
-		public static void Init()
+		static void Init()
 		{
-			Create<DimensionsEditor>();
+			CreateInstance<DimensionsEditor>();
 		}
 
-		public override void OnInitialize()
+		void OnEnable()
 		{
+			s_Instance = this;
 			mesh = new Mesh();
 			material = new Material(Shader.Find("ProBuilder/UnlitVertexColor"));
 			mesh.hideFlags = HideFlags.DontSave;
 			material.hideFlags = HideFlags.DontSave;
+			SceneView.onSceneGUIDelegate += OnSceneGUI;
 		}
 
-		public override void OnDestroy()
+		void OnDisable()
 		{
-			GameObject.DestroyImmediate(mesh);
-			GameObject.DestroyImmediate(material);
+			SceneView.onSceneGUIDelegate -= OnSceneGUI;
+			DestroyImmediate(mesh);
+			DestroyImmediate(material);
 		}
 
-		public override void OnSceneGUI(SceneView scnview)
+		bool GetSelectedBounds(out Bounds bounds)
 		{
-			if( Selection.activeTransform != null && Selection.activeTransform.GetComponent<MeshFilter>() != null)
-				RenderBounds(Selection.activeTransform.GetComponent<MeshFilter>());
+			IEnumerable<MeshRenderer> renderers = Selection.transforms.Where(x => x.GetComponent<MeshRenderer>() != null).Select(x => x.GetComponent<MeshRenderer>());
+
+			if (!renderers.Any())
+			{
+				bounds = new Bounds();
+				return false;
+			}
+
+			if (ProBuilderEditor.instance != null)
+			{
+				Vector3[] positions = MeshSelection.Top().SelectMany(x => x.selectedVertices.Select(y => x.transform.TransformPoint(x.positions[y]))).ToArray();
+
+				if (positions.Length > 0)
+				{
+					bounds = ProBuilderMath.GetBounds(positions);
+					return true;
+				}
+			}
+
+			bounds = renderers.First().bounds;
+
+			foreach(var ren in renderers)
+				bounds.Encapsulate(ren.bounds);
+
+			return true;
+		}
+
+		void OnSceneGUI(SceneView scnview)
+		{
+			Bounds bounds;
+			if(GetSelectedBounds(out bounds))
+				RenderBounds(bounds);
 		}
 
 		Mesh mesh;
@@ -58,16 +94,19 @@ namespace UnityEditor.ProBuilder
 		readonly Color background = new Color(.3f, .3f, .3f, .6f);
 		readonly Color LightWhite = new Color(.6f, .6f, .6f, .5f);
 
-		void RenderBounds(MeshFilter mf)
+		/// <summary>
+		/// Render an axis aligned bounding box in world space.
+		/// </summary>
+		/// <param name="bounds">aabb</param>
+		void RenderBounds(Bounds bounds)
 		{
-			if(!mesh) return;
+			if(!mesh)
+				return;
 
 			// show labels
-			Bounds wb = mf.transform.GetComponent<MeshRenderer>().bounds;
-
-			DrawHeight(wb.center, wb.extents);
-			DrawWidth(wb.center, wb.extents);
-			DrawDepth(wb.center, wb.extents);
+			DrawHeight(bounds.center, bounds.extents);
+			DrawWidth(bounds.center, bounds.extents);
+			DrawDepth(bounds.center, bounds.extents);
 
 		}
 

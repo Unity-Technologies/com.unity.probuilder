@@ -944,30 +944,31 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Creates an AABB with vertices and returns the Center point.
+		/// Creates an AABB with a set of vertices.
 		/// </summary>
-		/// <param name="verts"></param>
+		/// <param name="positions"></param>
 		/// <returns></returns>
-		internal static Vector3 BoundsCenter(Vector3[] verts)
+		internal static Bounds GetBounds(Vector3[] positions)
 		{
-			if( verts.Length < 1 ) return Vector3.zero;
+			if (positions.Length < 1)
+				return default(Bounds);
 
-			Vector3 min = verts[0];
+			Vector3 min = positions[0];
 			Vector3 max = min;
 
-			for(int i = 1; i < verts.Length; i++)
+			for(int i = 1, c = positions.Length; i < c; i++)
 			{
-				min.x = Mathf.Min(verts[i].x, min.x);
-				max.x = Mathf.Max(verts[i].x, max.x);
+				min.x = Mathf.Min(positions[i].x, min.x);
+				max.x = Mathf.Max(positions[i].x, max.x);
 
-				min.y = Mathf.Min(verts[i].y, min.y);
-				max.y = Mathf.Max(verts[i].y, max.y);
+				min.y = Mathf.Min(positions[i].y, min.y);
+				max.y = Mathf.Max(positions[i].y, max.y);
 
-				min.z = Mathf.Min(verts[i].z, min.z);
-				max.z = Mathf.Max(verts[i].z, max.z);
+				min.z = Mathf.Min(positions[i].z, min.z);
+				max.z = Mathf.Max(positions[i].z, max.z);
 			}
 
-			return (min+max) * .5f;
+			return new Bounds((min+max) * .5f, max - min);
 		}
 
 		/// <summary>

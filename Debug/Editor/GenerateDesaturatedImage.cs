@@ -3,13 +3,10 @@ using UnityEngine;
 
 namespace UnityEditor.ProBuilder.DebugUtilities
 {
-	/**
-	 * Create desaturated images from an image.
-	 */
-	static class pb_GenerateDesaturatedImage
+	static class GenerateDesaturatedImage
 	{
 		[MenuItem("Tools/Debug/ProBuilder/Create Desaturated Icons")]
-		private static void Init()
+		static void Init()
 		{
 			foreach (var o in Selection.objects)
 			{

@@ -7,7 +7,7 @@ namespace ProBuilder.Debug.Editor
 	static class SublimeEditor
 	{
 #if UNITY_EDITOR_OSX
-		const string k_SublimePath = "/Users/karlh/bin/subl";
+		const string k_SublimePath = "~/bin/subl";
 	#else
 		const string k_SublimePath = "C:\\Program Files\\Sublime Text 3\\sublime_text.exe";
 #endif

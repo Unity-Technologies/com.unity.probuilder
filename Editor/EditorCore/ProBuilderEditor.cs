@@ -1494,7 +1494,7 @@ namespace UnityEditor.ProBuilder
 						if (handleAlignment == HandleAlignment.World)
 							m_VertexOffset[i] = m_ElementHandlePosition;
 						else
-							m_VertexOffset[i] = ProBuilderMath.BoundsCenter(m_VertexPositions[i]);
+							m_VertexOffset[i] = ProBuilderMath.GetBounds(m_VertexPositions[i]).center;
 					}
 				}
 
@@ -2367,7 +2367,7 @@ namespace UnityEditor.ProBuilder
 					bitan = Vector3.right;
 				}
 
-				handleMatrix *= Matrix4x4.TRS(ProBuilderMath.BoundsCenter(pb.positionsInternal.ValuesWithIndices(face.distinctIndices)),
+				handleMatrix *= Matrix4x4.TRS(ProBuilderMath.GetBounds(pb.positionsInternal.ValuesWithIndices(face.distinctIndices)).center,
 					Quaternion.LookRotation(nrm, bitan), Vector3.one);
 			}
 		}
