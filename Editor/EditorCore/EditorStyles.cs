@@ -114,7 +114,7 @@ namespace UnityEditor.ProBuilder.UI
 				if (s_HeaderLabel == null)
 				{
 					s_HeaderLabel = new GUIStyle(UnityEditor.EditorStyles.boldLabel);
-					Font asap = FileUtil.LoadInternalAsset<Font>("About/Font/Asap-Regular.otf");
+					Font asap = FileUtility.LoadInternalAsset<Font>("About/Font/Asap-Regular.otf");
 					if(asap != null)
 						s_HeaderLabel.font = asap;
 					s_HeaderLabel.alignment = TextAnchor.LowerLeft;

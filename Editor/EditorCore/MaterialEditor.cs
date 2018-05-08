@@ -95,7 +95,7 @@ namespace UnityEditor.ProBuilder
 			get
 			{
 				if(string.IsNullOrEmpty(s_DefaultMaterialPalettePath))
-					s_DefaultMaterialPalettePath = FileUtil.GetLocalDataDirectory() + "/Default Material Palette.asset";
+					s_DefaultMaterialPalettePath = FileUtility.GetLocalDataDirectory() + "/Default Material Palette.asset";
 				return s_DefaultMaterialPalettePath;
 			}
 		}
@@ -134,7 +134,7 @@ namespace UnityEditor.ProBuilder
 						return s_CurrentPalette;
 
 					// No dice - iterate any other pb_MaterialPalette objects in the project (favoring first found)
-					s_CurrentPalette = FileUtil.FindAssetOfType<MaterialPalette>();
+					s_CurrentPalette = FileUtility.FindAssetOfType<MaterialPalette>();
 
 					if (s_CurrentPalette != null)
 						return s_CurrentPalette;
@@ -142,7 +142,7 @@ namespace UnityEditor.ProBuilder
 					// If no existing pb_MaterialPalette objects in project:
 					// - create a new one
 					// - check for the older pb_ObjectArray and copy data to new default
-					s_CurrentPalette = FileUtil.LoadRequired<MaterialPalette>(DefaultMaterialPalettePath);
+					s_CurrentPalette = FileUtility.LoadRequired<MaterialPalette>(DefaultMaterialPalettePath);
 
 					string[] m_LegacyMaterialArrays = AssetDatabase.FindAssets("t:pb_ObjectArray");
 
@@ -265,7 +265,7 @@ namespace UnityEditor.ProBuilder
 				if(m_CurrentPaletteIndex >= m_AvailablePalettes.Length)
 				{
 					string path = AssetDatabase.GenerateUniqueAssetPath("Assets/Material Palette.asset");
-					newPalette = FileUtil.LoadRequired<MaterialPalette>(path);
+					newPalette = FileUtility.LoadRequired<MaterialPalette>(path);
 					EditorGUIUtility.PingObject(newPalette);
 				}
 				else
@@ -402,7 +402,7 @@ namespace UnityEditor.ProBuilder
 		private void RefreshAvailablePalettes()
 		{
 			MaterialPalette cur = CurrentPalette;
-			m_AvailablePalettes = FileUtil.FindAndLoadAssets<MaterialPalette>();
+			m_AvailablePalettes = FileUtility.FindAndLoadAssets<MaterialPalette>();
 			m_AvailablePalettes_Str = m_AvailablePalettes.Select(x => x.name).ToArray();
 			ArrayUtility.Add<string>(ref m_AvailablePalettes_Str, string.Empty);
 			ArrayUtility.Add<string>(ref m_AvailablePalettes_Str, "New Material Palette...");

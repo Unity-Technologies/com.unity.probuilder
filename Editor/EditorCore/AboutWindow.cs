@@ -93,10 +93,10 @@ namespace UnityEditor.ProBuilder
 				// RectOffset(left, right, top, bottom)
 				margin = new RectOffset(12, 12, 12, 12),
 				normal = new GUIStyleState() {
-					background = FileUtil.LoadInternalAsset<Texture2D>("Content/About/Images/Banner_Normal.png")
+					background = FileUtility.LoadInternalAsset<Texture2D>("Content/About/Images/Banner_Normal.png")
 				},
 				hover = new GUIStyleState() {
-					background = FileUtil.LoadInternalAsset<Texture2D>("Content/About/Images/Banner_Hover.png")
+					background = FileUtility.LoadInternalAsset<Texture2D>("Content/About/Images/Banner_Hover.png")
 				},
 			};
 
@@ -106,7 +106,7 @@ namespace UnityEditor.ProBuilder
 				alignment = TextAnchor.MiddleCenter,
 				fontSize = 24,
 				// fontStyle = FontStyle.Bold,
-				font = FileUtil.LoadInternalAsset<Font>("Content/Font/" + k_FontMedium),
+				font = FileUtility.LoadInternalAsset<Font>("Content/Font/" + k_FontMedium),
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? k_FontWhite : k_FontBlack }
 			};
 
@@ -114,7 +114,7 @@ namespace UnityEditor.ProBuilder
 			{
 				margin = new RectOffset(10, 10, 10, 10),
 				fontSize = 14,
-				font = FileUtil.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
+				font = FileUtility.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? k_FontWhite : k_FontBlack }
 			};
 
@@ -123,15 +123,15 @@ namespace UnityEditor.ProBuilder
 				margin = new RectOffset(10, 10, 10, 10),
 				alignment = TextAnchor.MiddleCenter,
 				fontSize = 16,
-				font = FileUtil.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
+				font = FileUtility.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
 				normal = new GUIStyleState() {
 					textColor = k_FontBlueNormal,
-					background = FileUtil.LoadInternalAsset<Texture2D>(
+					background = FileUtility.LoadInternalAsset<Texture2D>(
 						string.Format("Content/About/Images/ScrollBackground_{0}.png", EditorGUIUtility.isProSkin ? "Pro" : "Light"))
 				},
 				hover = new GUIStyleState() {
 					textColor = k_FontBlueHover,
-					background = FileUtil.LoadInternalAsset<Texture2D>(
+					background = FileUtility.LoadInternalAsset<Texture2D>(
 						string.Format("Content/About/Images/ScrollBackground_{0}.png", EditorGUIUtility.isProSkin ? "Pro" : "Light"))
 				}
 			};
@@ -141,16 +141,16 @@ namespace UnityEditor.ProBuilder
 				margin = new RectOffset(10, 10, 10, 10),
 				alignment = TextAnchor.MiddleCenter,
 				fontSize = 16,
-				font = FileUtil.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
+				font = FileUtility.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? k_FontWhite : k_FontBlack }
 			};
 
 			changelogStyle = new GUIStyle()
 			{
 				margin = new RectOffset(10, 10, 10, 10),
-				font = FileUtil.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
+				font = FileUtility.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
 				richText = true,
-				normal = new GUIStyleState() { background = FileUtil.LoadInternalAsset<Texture2D>(
+				normal = new GUIStyleState() { background = FileUtility.LoadInternalAsset<Texture2D>(
 					string.Format("Content/About/Images/ScrollBackground_{0}.png",
 						EditorGUIUtility.isProSkin ? "Pro" : "Light"))
 				}
@@ -159,7 +159,7 @@ namespace UnityEditor.ProBuilder
 			changelogTextStyle = new GUIStyle()
 			{
 				margin = new RectOffset(10, 10, 10, 10),
-				font = FileUtil.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
+				font = FileUtility.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
 				fontSize = 14,
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? k_FontWhite : k_FontBlack },
 				richText = true,
@@ -188,7 +188,7 @@ namespace UnityEditor.ProBuilder
 				maxSize = new Vector2(k_BannerWidth + 24, k_BannerHeight * 2.5f);
 			}
 
-			string changes = System.IO.File.ReadAllText(FileUtil.GetProBuilderInstallDirectory() + "CHANGELOG.md");
+			string changes = System.IO.File.ReadAllText(FileUtility.GetProBuilderInstallDirectory() + "CHANGELOG.md");
 
 			if (!string.IsNullOrEmpty(changes))
 			{
@@ -203,7 +203,7 @@ namespace UnityEditor.ProBuilder
 			}
 			else
 			{
-				Log.Error(FileUtil.GetProBuilderInstallDirectory() + "CHANGELOG.md not found!");
+				Log.Error(FileUtility.GetProBuilderInstallDirectory() + "CHANGELOG.md not found!");
 			}
 		}
 

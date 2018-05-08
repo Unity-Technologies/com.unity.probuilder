@@ -14,7 +14,7 @@ using UObject = UnityEngine.Object;
 namespace UnityEditor.ProBuilder
 {
 	/// <summary>
-	/// Utilities for working in Unity editor: Showing notifications in windows, getting the sceneview, setting EntityTypes, OBJ export, etc.
+	/// Utilities for working in Unity editor.
 	/// </summary>
 	public static class EditorUtility
 	{
@@ -27,10 +27,10 @@ namespace UnityEditor.ProBuilder
 			BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
 		/// <summary>
-		/// Subscribe to this delegate to be notified when a pb_Object has been created and initialized through ProBuilder.
+		/// Subscribe to this delegate to be notified when a new mesh has been created and initialized through ProBuilder.
 		/// </summary>
 		/// <remarks>
-		/// This is only called when an object is initialized in editor. Ie, pb_ShapeGenerator.GenerateCube(Vector3.one) won't fire this callback.
+		/// This is only called when an object is initialized in editor, and created by ProBuilder menu items.
 		/// </remarks>
 		public static event Action<ProBuilderMesh> onObjectCreated = null;
 
@@ -64,9 +64,10 @@ namespace UnityEditor.ProBuilder
 		}
 
 		/// <summary>
-		/// Show a timed notification in the SceneView window.
+		/// Show a timed (1 second) notification in the SceneView window.
 		/// </summary>
-		/// <param name="message"></param>
+		/// <seealso cref="RemoveNotification"/>
+		/// <param name="message">The text to display in the notification.</param>
 		public static void ShowNotification(string message)
 		{
 			SceneView scnview = SceneView.lastActiveSceneView;
@@ -76,6 +77,10 @@ namespace UnityEditor.ProBuilder
 			ShowNotification(scnview, message);
 		}
 
+		/// <inheritdoc cref="ShowNotification(string)"/>
+		/// <param name="window">The <see cref="EditorWindow"/> to display this notification in.</param>
+		/// <param name="message">The text to display in the notification.</param>
+		/// <exception cref="ArgumentNullException"></exception>
 		public static void ShowNotification(EditorWindow window, string message)
 		{
 			if(PreferencesInternal.HasKey(PreferenceKeys.pbShowEditorNotifications) && !PreferencesInternal.GetBool(PreferenceKeys.pbShowEditorNotifications))
@@ -95,6 +100,11 @@ namespace UnityEditor.ProBuilder
 			s_IsNotificationDisplayed = true;
 		}
 
+		/// <summary>
+		/// Remove any currently displaying notifications from an <see cref="UnityEditor.EditorWindow"/>.
+		/// </summary>
+		/// <param name="window">The EditorWindow from which all currently displayed notifications will be removed.</param>
+		/// <exception cref="ArgumentNullException">Thrown if window is null.</exception>
 		public static void RemoveNotification(EditorWindow window)
 		{
             if (window == null)
@@ -113,39 +123,6 @@ namespace UnityEditor.ProBuilder
 				s_IsNotificationDisplayed = false;
 				RemoveNotification(s_NotificationWindow);
 			}
-		}
-
-		[System.Obsolete("Please use pb_Obj.Export")]
-		internal static string ExportOBJ(ProBuilderMesh[] pb)
-		{
-			return ExportObj.ExportWithFileDialog(pb);
-		}
-
-		/**
-		 * Open a save file dialog, and save the image to that path.
-		 */
-		internal static void SaveTexture(Texture2D texture)
-		{
-			string path = UnityEditor.EditorUtility.SaveFilePanel("Save Image", Application.dataPath, "", "png");
-			SaveTexture(texture, path);
-		}
-
-        /// <summary>
-        /// Save an image to the specified path.
-        /// </summary>
-        /// <param name="texture"></param>
-        /// <param name="path"></param>
-        /// <returns>True on success, false if operation failed.</returns>
-        internal static bool SaveTexture(Texture2D texture, string path)
-		{
-			byte[] bytes = texture.EncodeToPNG();
-
-			if(string.IsNullOrEmpty(path))
-                return false;
-
-			System.IO.File.WriteAllBytes(path, bytes);
-			AssetDatabase.Refresh();
-            return true;
 		}
 
 		/**

@@ -3510,7 +3510,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (screenshot && !string.IsNullOrEmpty(screenShotPath))
 			{
-				EditorUtility.SaveTexture(screenshot, screenShotPath);
+				FileUtility.SaveTexture(screenshot, screenShotPath);
 				DestroyImmediate(screenshot);
 
 #if PB_DEBUG

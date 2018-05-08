@@ -22,7 +22,7 @@ namespace UnityEditor.ProBuilder
 		BottomLeft,
 		BottomRight
 	}
-	
+
 	/// <summary>
 	/// How the handle gizmo is oriented with regards to the current element selection.
 	/// </summary>
@@ -35,7 +35,7 @@ namespace UnityEditor.ProBuilder
 	}
 
 	/// <summary>
-	/// When drag selecting elements, how does the shift key modify selection.
+	/// When drag selecting mesh elements, this defines how the Shift key will modify the selection.
 	/// </summary>
 	/// <remarks>Editor only.</remarks>
 	public enum DragSelectMode

@@ -8,7 +8,6 @@ using Parabox.STL;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using EditorUtility = UnityEditor.EditorUtility;
-using FileUtil = UnityEditor.ProBuilder.FileUtil;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -93,8 +92,8 @@ namespace UnityEditor.ProBuilder.Actions
 				try
 				{
 					CopyTextures(textures, directory);
-					FileUtil.WriteAllText(string.Format("{0}/{1}.obj", directory, name), obj);
-					FileUtil.WriteAllText(string.Format("{0}/{1}.mtl", directory, name.Replace(" ", "_")), mat);
+					FileUtility.WriteAllText(string.Format("{0}/{1}.obj", directory, name), obj);
+					FileUtility.WriteAllText(string.Format("{0}/{1}.mtl", directory, name.Replace(" ", "_")), mat);
 				}
 				catch(System.Exception e)
 				{

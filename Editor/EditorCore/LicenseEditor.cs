@@ -14,7 +14,7 @@ namespace UnityEditor.ProBuilder
 
 		void OnEnable()
 		{
-			m_LicenseText = FileUtil.LoadInternalAsset<TextAsset>(k_LicenseTextPath);
+			m_LicenseText = FileUtility.LoadInternalAsset<TextAsset>(k_LicenseTextPath);
 			int charCount = m_LicenseText.text.Length;
 			int stringCount = charCount / k_MaxStringLength + 1;
 			m_LicenseContents = new string[stringCount];

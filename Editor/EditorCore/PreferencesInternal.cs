@@ -107,18 +107,18 @@ namespace UnityEditor.ProBuilder
 
 		static void LoadPreferencesObject()
 		{
-			string preferencesPath = FileUtil.GetLocalDataDirectory() + k_PrefsAssetName;
+			string preferencesPath = FileUtility.GetLocalDataDirectory() + k_PrefsAssetName;
 
 			// First try loading at the local files directory
 			s_Preferences = AssetDatabase.LoadAssetAtPath<PreferenceDictionary>(preferencesPath);
 
 			// If that fails, search the project for a compatible preference object
 			if (s_Preferences == null)
-				s_Preferences = FileUtil.FindAssetOfType<PreferenceDictionary>();
+				s_Preferences = FileUtility.FindAssetOfType<PreferenceDictionary>();
 
 			// If that fails, create a new preferences object at the local data directory
 			if (s_Preferences == null)
-				s_Preferences = FileUtil.LoadRequired<PreferenceDictionary>(preferencesPath);
+				s_Preferences = FileUtility.LoadRequired<PreferenceDictionary>(preferencesPath);
 		}
 
 		/// <summary>

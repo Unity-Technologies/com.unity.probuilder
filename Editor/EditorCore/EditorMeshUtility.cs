@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System;
 using System.IO;
-using System.Collections;
 using System.Linq;
 using UnityEngine.ProBuilder;
 
@@ -17,22 +15,25 @@ namespace UnityEditor.ProBuilder
 		static string k_MeshCacheDirectory = "Assets/ProBuilder Data/ProBuilderMeshCache";
 
 		/// <summary>
-		/// Subscribe to this event to be notified when ProBuilder is going to optimize a mesh (collapsing coincident vertices to a single vertex). Return true to override this process, false to let ProBuilder optimize the mesh.
+		/// Subscribe to this event to be notified when ProBuilder is going to optimize a mesh. Optimization includes collapsing coincident vertices to a single vertex where possible, and generating lightmap UVs).
 		/// </summary>
+		/// <returns>Return true to override this process, false to let ProBuilder optimize the mesh.</returns>
+		/// <seealso cref="Optimize"/>
+		/// <seealso cref="onMeshOptimized"/>
 		public static event Func<bool, ProBuilderMesh> onCheckSkipMeshOptimization = null;
 
 		/// <summary>
-		/// Callback raised when a pb_Object is built to Unity mesh.
+		/// This callback is raised after a ProBuilderMesh has been successfully optimized.
 		/// </summary>
-		public static event Action<ProBuilderMesh, Mesh> onMeshCompiled = null;
+		/// <seealso cref="Optimize"/>
+		public static event Action<ProBuilderMesh, Mesh> onMeshOptimized = null;
 
 		/// <summary>
-		/// Optmizes the mesh geometry, and generates a UV2 channel (if automatic lightmap generation is enabled).\
-		/// This also sets the pb_Object to 'Dirty' so that changes are stored.
+		/// Optmizes the mesh geometry, and generates a UV2 channel (if automatic lightmap generation is enabled).
 		/// </summary>
-		/// <remarks>This is only applicable to Triangle meshes. Ie, Quad meshes are not affected by this function.</remarks>
-		/// <param name="mesh">The pb_Object component to be compiled.</param>
-		/// <param name="forceRebuildUV2">If Auto UV2 is off this parameter can be used to force UV2s to be built.</param>
+		/// <remarks>This is only applicable to meshes with triangle topology. Quad meshes are not affected by this function.</remarks>
+		/// <param name="mesh">The ProBuilder mesh component to be optimized.</param>
+		/// <param name="forceRebuildUV2">If the Auto UV2 preference is disabled this parameter can be used to force UV2s to be built.</param>
 		public static void Optimize(this ProBuilderMesh mesh, bool forceRebuildUV2 = false)
 		{
             if (mesh == null)
@@ -101,8 +102,8 @@ namespace UnityEditor.ProBuilder
 			if(PreferencesInternal.GetBool(PreferenceKeys.pbManageLightmappingStaticFlag, false))
 				Lightmapping.SetLightmapStaticFlagEnabled(mesh, hasUv2);
 
-			if(onMeshCompiled != null)
-				onMeshCompiled(mesh, umesh);
+			if(onMeshOptimized != null)
+				onMeshOptimized(mesh, umesh);
 
 			if(PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets))
 				TryCacheMesh(mesh);
@@ -211,7 +212,7 @@ namespace UnityEditor.ProBuilder
 			{
 				if (initializeIfMissing)
 				{
-					k_MeshCacheDirectory = FileUtil.GetLocalDataDirectory() + "/" + k_MeshCacheDirectoryName;
+					k_MeshCacheDirectory = FileUtility.GetLocalDataDirectory() + "/" + k_MeshCacheDirectoryName;
 					Directory.CreateDirectory(k_MeshCacheDirectory);
 				}
 				else

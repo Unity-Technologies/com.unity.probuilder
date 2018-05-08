@@ -24,14 +24,14 @@ namespace UnityEditor.ProBuilder
 		[MenuItem("Assets/Create/Material Palette")]
 		static void CreateMaterialPalette()
 		{
-			string path = FileUtil.GetSelectedDirectory() + "/Material Palette.asset";
+			string path = FileUtility.GetSelectedDirectory() + "/Material Palette.asset";
 
 			// Only generate unique path if it already exists - otherwise GenerateAssetUniquePath can return empty string
 			// in event of path existing in a directory that is not yet created.
-			if(FileUtil.Exists(path))
+			if(FileUtility.Exists(path))
 				path = AssetDatabase.GenerateUniqueAssetPath(path);
 
-			MaterialPalette newPalette = FileUtil.LoadRequired<MaterialPalette>(path);
+			MaterialPalette newPalette = FileUtility.LoadRequired<MaterialPalette>(path);
 			newPalette.array = Selection.GetFiltered(typeof(Material), SelectionMode.DeepAssets).Cast<Material>().ToArray();
 			UnityEditor.EditorUtility.SetDirty(newPalette);
 			EditorGUIUtility.PingObject(newPalette);

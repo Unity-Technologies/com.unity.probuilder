@@ -52,7 +52,7 @@ namespace UnityEditor.ProBuilder
 					// - do one lap searching for light
 					// - if nothing found, next searching for default
 					string fullPath = string.Format("{0}{1}.png", s_IconFolderPath, i == 0 ? name : iconName);
-					icon = FileUtil.LoadInternalAsset<Texture2D>(fullPath);
+					icon = FileUtility.LoadInternalAsset<Texture2D>(fullPath);
 				} while (!isDarkSkin && ++i < 2 && icon == null);
 
 				s_Icons.Add(name, icon);

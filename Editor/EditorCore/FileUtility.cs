@@ -13,7 +13,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Helper functions for working with files and directories.
 	/// </summary>
-	static class FileUtil
+	static class FileUtility
 	{
 		// ProBuilder folder path.
 		static string s_ProBuilderFolderPath = "Packages/com.unity.probuilder/";
@@ -276,5 +276,24 @@ namespace UnityEditor.ProBuilder
 
 			File.WriteAllText(path, contents);
 		}
+
+		/// <summary>
+		/// Save an image to the specified path.
+		/// </summary>
+		/// <param name="texture"></param>
+		/// <param name="path"></param>
+		/// <returns>True on success, false if operation failed.</returns>
+		internal static bool SaveTexture(Texture2D texture, string path)
+		{
+			byte[] bytes = texture.EncodeToPNG();
+
+			if(string.IsNullOrEmpty(path))
+				return false;
+
+			System.IO.File.WriteAllBytes(path, bytes);
+			AssetDatabase.Refresh();
+			return true;
+		}
+
 	}
 }

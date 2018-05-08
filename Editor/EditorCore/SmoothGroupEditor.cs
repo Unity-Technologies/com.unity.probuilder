@@ -179,7 +179,7 @@ namespace UnityEditor.ProBuilder
 					s_GroupButtonStyle.normal.background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Normal");
 					s_GroupButtonStyle.hover.background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Hover");
 					s_GroupButtonStyle.active.background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Pressed");
-					Font asap = FileUtil.LoadInternalAsset<Font>("About/Font/Asap-Regular.otf");
+					Font asap = FileUtility.LoadInternalAsset<Font>("About/Font/Asap-Regular.otf");
 					if (asap != null)
 					{
 						s_GroupButtonStyle.font = asap;

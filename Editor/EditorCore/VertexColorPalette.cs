@@ -77,7 +77,7 @@ namespace UnityEditor.ProBuilder
 				return palette;
 
 			// any existing palette in project?
-			palette = FileUtil.FindAssetOfType<ColorPalette>();
+			palette = FileUtility.FindAssetOfType<ColorPalette>();
 
 			if(palette != null)
 			{
@@ -86,8 +86,8 @@ namespace UnityEditor.ProBuilder
 			}
 
 			// create new default
-			lastAssignedColorPalette = FileUtil.GetLocalDataDirectory() + "Default Color Palette.asset";
-			palette = FileUtil.LoadRequired<ColorPalette>(lastAssignedColorPalette);
+			lastAssignedColorPalette = FileUtility.GetLocalDataDirectory() + "Default Color Palette.asset";
+			palette = FileUtility.LoadRequired<ColorPalette>(lastAssignedColorPalette);
 			CopyColorsFromEditorPrefs(palette);
 
 			return palette;

@@ -8,7 +8,6 @@ using Parabox.STL;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using EditorUtility = UnityEditor.EditorUtility;
-using FileUtil = UnityEditor.ProBuilder.FileUtil;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -87,7 +86,7 @@ namespace UnityEditor.ProBuilder.Actions
 			{
 				try
 				{
-					FileUtil.WriteAllText(string.Format("{0}/{1}.ply", directory, name), ply);
+					FileUtility.WriteAllText(string.Format("{0}/{1}.ply", directory, name), ply);
 				}
 				catch(System.Exception e)
 				{
