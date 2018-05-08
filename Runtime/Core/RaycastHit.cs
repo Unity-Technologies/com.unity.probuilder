@@ -5,7 +5,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// The results of a raycast against a ProBuilderMesh.
 	/// </summary>
-	class RaycastHit
+	sealed class RaycastHit
 	{
 		public float distance;
 		public Vector3 point;

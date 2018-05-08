@@ -6,7 +6,7 @@ namespace UnityEngine.ProBuilder
 	/// A set of common and local index edges.
 	/// </summary>
 	[System.Obsolete("Use pb_ConnectEdges class directly.")]
-	class EdgeConnection : System.IEquatable<EdgeConnection>
+	sealed class EdgeConnection : System.IEquatable<EdgeConnection>
 	{
 		public EdgeConnection(Face face, List<Edge> edges)
 		{

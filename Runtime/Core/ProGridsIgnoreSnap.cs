@@ -3,6 +3,7 @@ using System;
 
 namespace UnityEngine.ProBuilder
 {
+	/// <inheritdoc />
 	/// <summary>
 	/// ProGridsNoSnapAttribute tells ProGrids to skip snapping on this object.
 	/// </summary>
@@ -14,6 +15,7 @@ namespace UnityEngine.ProBuilder
 	{
 	}
 
+	/// <inheritdoc />
 	/// <summary>
 	/// ProGridsConditionalSnapAttribute tells ProGrids to check IsSnapEnabled function on this object.
 	/// </summary>

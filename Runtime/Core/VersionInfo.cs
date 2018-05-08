@@ -9,7 +9,7 @@ namespace UnityEngine.ProBuilder
 	/// Version information container that is comparable.
 	/// </summary>
 	[Serializable]
-	internal class VersionInfo : IEquatable<VersionInfo>, IComparable<VersionInfo>, IComparable
+	sealed class VersionInfo : IEquatable<VersionInfo>, IComparable<VersionInfo>, IComparable
 	{
 		[SerializeField]
 		int m_Major = -1;

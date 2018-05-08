@@ -5,7 +5,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// A Transform class limited to 2D
 	/// </summary>
-	class Transform2D
+	sealed class Transform2D
 	{
 		/// <summary>
 		/// Position in 2D space.

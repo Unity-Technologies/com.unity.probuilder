@@ -6,7 +6,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// Information required to append a face to a pb_Object.
 	/// </summary>
-	class FaceRebuildData
+	sealed class FaceRebuildData
 	{
 #pragma warning disable 0649
 		// new pb_Face

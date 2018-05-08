@@ -7,7 +7,7 @@ using System.Collections;
 namespace UnityEngine.ProBuilder
 {
 	/// <summary>
-	/// Functions for generating UnityEngine.Mesh attributes and various other mesh utilities.
+	/// Functions for generating mesh attributes and various other mesh utilities.
 	/// </summary>
 	public static class MeshUtility
 	{
@@ -468,11 +468,11 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Get the number of triangles (or quads) this mesh contains.
+		/// Get the number of triangles or quads this mesh contains.
 		/// </summary>
 		/// <param name="m"></param>
 		/// <returns></returns>
-		public static uint GetTriangleCount(Mesh m)
+		public static uint GetPrimitiveCount(Mesh m)
 		{
 			uint sum = 0;
 

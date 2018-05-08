@@ -3,11 +3,12 @@ using System.Collections;
 
 namespace UnityEngine.ProBuilder
 {
+	/// <inheritdoc />
 	/// <summary>
 	/// A mesh / material(s) structure. Mesh is destroyed with this object, materials are not.
 	/// </summary>
 	[System.Serializable]
-	class Renderable : ScriptableObject
+	sealed class Renderable : ScriptableObject
 	{
 		public Mesh mesh;
 		public Material material;

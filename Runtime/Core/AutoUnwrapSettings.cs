@@ -6,7 +6,7 @@ namespace UnityEngine.ProBuilder
 	/// Container for UV mapping parameters per face.
 	/// </summary>
 	[System.Serializable]
-	public class AutoUnwrapSettings
+	public sealed class AutoUnwrapSettings
 	{
 		// Defines the anchor point of UV calculations.
 		[System.Obsolete("See pb_UV.Anchor")]

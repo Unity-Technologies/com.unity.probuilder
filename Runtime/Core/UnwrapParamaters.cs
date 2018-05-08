@@ -6,7 +6,7 @@ namespace UnityEngine.ProBuilder
 	/// Store UV2 unwrapping parameters.
 	/// </summary>
 	[System.Serializable]
-	public class UnwrapParamaters
+	public sealed class UnwrapParamaters
 	{
 		/// <summary>
 		/// Angle between neighbor triangles that will generate seam.

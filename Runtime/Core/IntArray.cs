@@ -7,11 +7,12 @@ using System.Text;
 
 namespace UnityEngine.ProBuilder
 {
+	/// <inheritdoc />
 	/// <summary>
 	/// Defines associations between vertex indices that are coincident.
 	/// </summary>
 	[Serializable]
-	public class IntArray : IEnumerable<int>
+	public sealed class IntArray : IEnumerable<int>
 	{
 		/// <summary>
 		/// An array of vertex indices that are coincident.

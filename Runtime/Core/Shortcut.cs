@@ -7,7 +7,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// ProBuilder shortcuts.
 	/// </summary>
-	class Shortcut
+	sealed class Shortcut
 	{
 		public Shortcut(string a, string d, KeyCode k, EventModifiers e)
 		{

@@ -7,7 +7,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// An edge composed of both the vertex index and common index. Comparisons between pb_EdgeLookup objects are passed to the common edge.
 	/// </summary>
-	public class EdgeLookup : IEquatable<EdgeLookup>
+	public sealed class EdgeLookup : IEquatable<EdgeLookup>
 	{
 		/// <summary>
 		/// Local edges point to an index in the vertices array.

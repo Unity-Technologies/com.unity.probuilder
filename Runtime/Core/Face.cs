@@ -11,7 +11,7 @@ namespace UnityEngine.ProBuilder
     /// A face is composed of a set of triangles, and a material.
     /// </summary>
     [Serializable]
-    public class Face
+    public sealed class Face
     {
         [FormerlySerializedAs("_indices")]
         [SerializeField]

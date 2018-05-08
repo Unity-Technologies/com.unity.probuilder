@@ -9,7 +9,7 @@ namespace UnityEngine.ProBuilder
 	/// <remarks>For backwards compatibility reasons this class remains outside of the ProBuilder2.Common namespace.</remarks>
 	[DisallowMultipleComponent]
 	[AddComponentMenu("")]
-	public class Entity : MonoBehaviour
+	public sealed class Entity : MonoBehaviour
 	{
 		public EntityType entityType { get { return m_EntityType; } }
 

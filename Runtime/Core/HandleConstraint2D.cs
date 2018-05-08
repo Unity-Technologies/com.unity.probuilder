@@ -6,7 +6,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// A class for storing and applying Vector2 masks.
 	/// </summary>
-	class HandleConstraint2D
+	sealed class HandleConstraint2D
 	{
 		public int x, y;
 

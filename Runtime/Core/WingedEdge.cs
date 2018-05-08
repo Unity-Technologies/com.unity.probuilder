@@ -19,7 +19,9 @@ namespace UnityEngine.ProBuilder
 	///     |             |
 	///     |             |
 	/// </summary>
-	public class WingedEdge : IEquatable<WingedEdge>, IEnumerable<WingedEdge>
+	/// <inheritdoc cref="IEquatable{T}" />
+	/// <inheritdoc cref="IEnumerable{T}" />
+	public sealed class WingedEdge : IEquatable<WingedEdge>, IEnumerable<WingedEdge>
 	{
 		/// <summary>
 		/// The local and shared edge that this edge belongs to.
@@ -71,7 +73,7 @@ namespace UnityEngine.ProBuilder
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-		   return (IEnumerator) GetEnumerator();
+		   return GetEnumerator();
 		}
 
 		public WingedEdgeEnumerator GetEnumerator()
@@ -81,7 +83,7 @@ namespace UnityEngine.ProBuilder
 
         IEnumerator<WingedEdge> IEnumerable<WingedEdge>.GetEnumerator()
         {
-            return (IEnumerator<WingedEdge>) GetEnumerator();
+            return GetEnumerator();
         }
 
         /// <summary>

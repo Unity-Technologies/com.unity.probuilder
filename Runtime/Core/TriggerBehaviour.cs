@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace UnityEngine.ProBuilder
 {
@@ -8,7 +6,7 @@ namespace UnityEngine.ProBuilder
 	/// A MonoBehaviour that automatically enables and disables the parent GameObject on exiting and enterin playmode, respectively.
 	/// </summary>
 	[DisallowMultipleComponent]
-	class TriggerBehaviour : EntityBehaviour
+	sealed class TriggerBehaviour : EntityBehaviour
 	{
 		public override void Initialize()
 		{

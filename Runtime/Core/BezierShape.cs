@@ -6,7 +6,7 @@ namespace UnityEngine.ProBuilder
 {
 	[AddComponentMenu("")]
 	[DisallowMultipleComponent]
-	class BezierShape : MonoBehaviour
+	sealed class BezierShape : MonoBehaviour
 	{
 		public List<BezierPoint> points = new List<BezierPoint>();
 		public bool closeLoop = false;

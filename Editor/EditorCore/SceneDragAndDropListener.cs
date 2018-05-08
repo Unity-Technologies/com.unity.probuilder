@@ -1,10 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using UnityEditor;
-using System.Collections;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder.UI;
-using UnityEditor.ProBuilder;
 using UObject = UnityEngine.Object;
 using System.Linq;
 

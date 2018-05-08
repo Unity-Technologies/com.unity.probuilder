@@ -8,14 +8,14 @@ namespace UnityEngine.ProBuilder
 	/// Simple object pool implementation.
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	class ObjectPool<T> where T : Object, new()
+	sealed class ObjectPool<T> where T : Object, new()
 	{
 		public int desiredSize;
 
 		public System.Func<T> constructor;
 		public System.Action<T> destructor;
 
-		private Queue pool = new Queue();	// VS compiler doesn't recognize Queue<T> as existing?
+		Queue pool = new Queue();	// VS compiler doesn't recognize Queue<T> as existing?
 
 		public ObjectPool(int initialSize, int desiredSize, System.Func<T> constructor, System.Action<T> destructor)
 		{

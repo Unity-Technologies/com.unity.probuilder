@@ -16,7 +16,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// Contains information about a ProBuilder action (success, failure, notification, etc)
 	/// </summary>
-	public class ActionResult
+	public sealed class ActionResult
 	{
 		/// <summary>
 		/// State of affairs after the operation.

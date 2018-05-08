@@ -8,7 +8,7 @@ namespace UnityEngine.ProBuilder
 	/// A MonoBehaviour that automatically enables and disables the parent GameObject on exiting and enterin playmode, respectively.
 	/// </summary>
 	[DisallowMultipleComponent]
-	class ColliderBehaviour : EntityBehaviour
+	sealed class ColliderBehaviour : EntityBehaviour
 	{
 		public override void Initialize()
 		{

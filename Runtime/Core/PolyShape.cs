@@ -9,7 +9,7 @@ namespace UnityEngine.ProBuilder
     [AddComponentMenu("")]
     [DisallowMultipleComponent]
     [ProGridsConditionalSnap]
-    public class PolyShape : MonoBehaviour
+    sealed class PolyShape : MonoBehaviour
     {
         /// <summary>
         /// Describes the different input states this tool operates in.
@@ -49,7 +49,7 @@ namespace UnityEngine.ProBuilder
         {
             get { return new ReadOnlyCollection<Vector3>(m_Points); }
         }
-    
+
         public void SetControlPoints(IList<Vector3> points)
         {
             m_Points = points.ToList();

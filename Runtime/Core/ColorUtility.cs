@@ -6,7 +6,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// Hue (0,360), Saturation (0,1), Value (0,1)
 	/// </summary>
-	class HSVColor
+	sealed class HSVColor
 	{
 		public float h, s, v;
 
@@ -48,7 +48,7 @@ namespace UnityEngine.ProBuilder
 	/// XYZ color
 	/// <remarks>http://www.easyrgb.com/index.php?X=MATH&H=07#text7</remarks>
 	/// </summary>
-	class XYZColor
+	sealed class XYZColor
 	{
 		public float x, y, z;
 
@@ -78,7 +78,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// CIE_Lab* color
 	/// </summary>
-	class CIELabColor
+	sealed class CIELabColor
 	{
 		public float L, a, b;
 

@@ -14,7 +14,7 @@ namespace UnityEngine.ProBuilder
 	/// <remarks>A vertex is only required to contain position, all other values are optional.</remarks>
 	/// </summary>
 	/// <inheritdoc cref="IEquatable{T}"/>
-	public class Vertex : IEquatable<Vertex>
+	public sealed class Vertex : IEquatable<Vertex>
 	{
 		public Vector3 position { get; set; }
 		public Color color { get; set; }

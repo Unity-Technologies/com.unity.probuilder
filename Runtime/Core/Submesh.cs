@@ -6,8 +6,8 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// A set of indices and material.
 	/// </summary>
-	[System.Serializable]
-	public class Submesh
+	[Serializable]
+	public sealed class Submesh
 	{
 		/// <summary>
 		/// Indices making up this submesh. Can be triangles or quads.

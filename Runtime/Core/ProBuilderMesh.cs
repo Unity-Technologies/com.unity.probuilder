@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace UnityEngine.ProBuilder
 {
+    /// <inheritdoc />
     /// <summary>
     /// ProBuilder mesh class. Stores all the information necessary to create a UnityEngine.Mesh.
     /// </summary>
@@ -15,7 +16,7 @@ namespace UnityEngine.ProBuilder
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
     [ExecuteInEditMode]
-    public class ProBuilderMesh : MonoBehaviour
+    public sealed class ProBuilderMesh : MonoBehaviour
     {
 	    const int k_UVChannelCount = 4;
 

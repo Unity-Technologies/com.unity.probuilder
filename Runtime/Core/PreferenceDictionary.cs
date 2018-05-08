@@ -8,7 +8,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// Store settings in a project local manner.
 	/// </summary>
-	class PreferenceDictionary :
+	sealed class PreferenceDictionary :
 		ScriptableObject,
 		ISerializationCallbackReceiver,
 		IHasDefault

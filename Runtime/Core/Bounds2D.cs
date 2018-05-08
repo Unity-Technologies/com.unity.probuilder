@@ -7,7 +7,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// Internal bounds class.
 	/// </summary>
-	class Bounds2D
+	sealed class Bounds2D
 	{
 		public Vector2 center = Vector2.zero;
 		[SerializeField] Vector2 m_Size = Vector2.zero;
