@@ -162,6 +162,7 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Get the current @"UnityEngine.ProBuilder.SelectMode".
 		/// </summary>
+		/// <value>The SelectMode currently set.</value>
 		public SelectMode selectionMode { get; private set; }
 
 		/// <summary>

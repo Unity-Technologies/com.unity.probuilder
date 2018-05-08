@@ -10,7 +10,7 @@ namespace UnityEditor.ProBuilder
 {
 	/// <inheritdoc />
 	/// <summary>
-	/// An extended tooltip for use in pb_MenuAction.
+	/// An extended tooltip for use in MenuAction.
 	/// </summary>
 	[Serializable]
 	public sealed class TooltipContent : IEquatable<TooltipContent>
@@ -23,7 +23,6 @@ namespace UnityEditor.ProBuilder
 		const float k_MinWidth = 128;
 		const float k_MaxWidth = 330;
 		const float k_MinHeight = 0;
-		const float k_MaxHeight = 1024;
 
 		static void InitStyles()
 		{
@@ -48,16 +47,25 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// The title to show in the tooltip window.
 		/// </summary>
+		/// <value>
+		/// The header text for this tooltip.
+		/// </value>
 		public string title { get; set; }
 
 		/// <summary>
 		/// A brief summary of what this menu action does.
 		/// </summary>
+		/// <value>
+		/// The body of the summary text.
+		/// </value>
 		public string summary { get; set; }
 
 		/// <summary>
 		/// The shortcut assigned to this menu item.
 		/// </summary>
+		/// <value>
+		/// A text representation of the optional shortcut.
+		/// </value>
 		public string shortcut { get; set; }
 
 		internal static TooltipContent TempContent = new TooltipContent("", "");
@@ -65,9 +73,9 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Create a new tooltip.
 		/// </summary>
-		/// <param name="title"></param>
-		/// <param name="summary"></param>
-		/// <param name="shortcut"></param>
+		/// <param name="title">The header text for this tooltip.</param>
+		/// <param name="summary">The body of the tooltip text. This should be kept brief.</param>
+		/// <param name="shortcut">A set of keys to be displayed as the shortcut for this action.</param>
 		public TooltipContent(string title, string summary, params char[] shortcut) : this(title, summary, "")
 		{
 			if(shortcut != null && shortcut.Length > 0)
@@ -89,6 +97,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
+		/// <inheritdoc cref="TooltipContent"/>
 		public TooltipContent(string title, string summary, string shortcut = "")
 		{
 			this.title = title;

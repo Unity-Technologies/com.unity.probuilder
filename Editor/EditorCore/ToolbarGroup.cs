@@ -4,12 +4,12 @@ using UnityEngine;
 namespace UnityEditor.ProBuilder
 {
 	/// <summary>
-	/// Defines what area of the ProBuilder toolbar a pb_MenuAction should be grouped into.
+	/// Defines what area of the ProBuilder toolbar a MenuAction should be grouped into.
 	/// </summary>
 	public enum ToolbarGroup
 	{
 		/// <summary>
-		/// This is an editor window.
+		/// A tool that opens it's own window. Example, UV Editor, Smoothing Groups, Vertex Color Painter, etc.
 		/// </summary>
 		Tool = 0,
 		/// <summary>
@@ -17,7 +17,7 @@ namespace UnityEditor.ProBuilder
 		/// </summary>
 		Selection = 1,
 		/// <summary>
-		/// This action affects objects (as opposed to elements).
+		/// This action affects objects (as opposed to mesh attributes like vertex or face).
 		/// </summary>
 		Object = 2,
 		/// <summary>
@@ -25,7 +25,7 @@ namespace UnityEditor.ProBuilder
 		/// </summary>
 		Geometry = 3,
 		/// <summary>
-		/// This is an entity toggle.
+		/// An action for creating or modifying @"UnityEngine.ProBuilder.EntityBehaviour" types.
 		/// </summary>
 		Entity = 4,
 		/// <summary>
