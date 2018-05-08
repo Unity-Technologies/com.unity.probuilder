@@ -7,18 +7,24 @@ using UnityEditor;
 namespace UnityEditor.ProBuilder
 {
 	/// <summary>
-	/// Styles used in pb_MenuAction.
+	/// Styles used in MenuAction.
 	/// </summary>
-	public static class MenuActionStyles
+	static class MenuActionStyles
 	{
 		internal static readonly Color TEXT_COLOR_WHITE_NORMAL = new Color(0.82f, 0.82f, 0.82f, 1f);
 		internal static readonly Color TEXT_COLOR_WHITE_HOVER = new Color(0.7f, 0.7f, 0.7f, 1f);
 		internal static readonly Color TEXT_COLOR_WHITE_ACTIVE = new Color(0.5f, 0.5f, 0.5f, 1f);
 
+		static GUIStyle s_ButtonStyleVertical = null;
+		static GUIStyle s_ButtonStyleHorizontal = null;
+		static GUIStyle s_RowStyleVertical = null;
+		static GUIStyle s_RowStyleHorizontal = null;
+		static GUIStyle s_AltButtonStyle = null;
+
 		/// <summary>
 		/// Reset static GUIStyle objects so that they will be re-initialized the next time used.
 		/// </summary>
-		public static void ResetStyles()
+		internal static void ResetStyles()
 		{
 			s_ButtonStyleVertical = null;
 			s_ButtonStyleHorizontal = null;
@@ -26,9 +32,10 @@ namespace UnityEditor.ProBuilder
 			s_AltButtonStyle = null;
 		}
 
-		static GUIStyle s_ButtonStyleVertical = null;
-
-		public static GUIStyle buttonStyleVertical
+		/// <summary>
+		/// Vertical icon button.
+		/// </summary>
+		internal static GUIStyle buttonStyleVertical
 		{
 			get
 			{
@@ -52,9 +59,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		static GUIStyle s_ButtonStyleHorizontal = null;
-
-		public static GUIStyle buttonStyleHorizontal
+		internal static GUIStyle buttonStyleHorizontal
 		{
 			get
 			{
@@ -79,9 +84,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		static GUIStyle s_RowStyleVertical = null;
-
-		public static GUIStyle rowStyleVertical
+		internal static GUIStyle rowStyleVertical
 		{
 			get
 			{
@@ -98,9 +101,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		static GUIStyle s_RowStyleHorizontal = null;
-
-		public static GUIStyle rowStyleHorizontal
+		internal static GUIStyle rowStyleHorizontal
 		{
 			get
 			{
@@ -117,9 +118,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		static GUIStyle s_AltButtonStyle = null;
-
-		public static GUIStyle altButtonStyle
+		internal static GUIStyle altButtonStyle
 		{
 			get
 			{

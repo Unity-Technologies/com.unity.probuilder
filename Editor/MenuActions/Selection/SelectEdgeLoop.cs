@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder.Actions
 			get { return 1; }
 		}
 
-		public override bool hasFileMenuEntry
+		protected override bool hasFileMenuEntry
 		{
 			get { return false; }
 		}

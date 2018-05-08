@@ -11,7 +11,7 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		[SerializeField] int count = 0;
 		[SerializeField] Texture2D[] icons = null;
-		private int handleAlignment { get { return ProBuilderEditor.instance == null ? 0 : (int)ProBuilderEditor.instance.handleAlignment; } }
+		int handleAlignment { get { return ProBuilderEditor.instance == null ? 0 : (int)ProBuilderEditor.instance.handleAlignment; } }
 		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return icons[handleAlignment]; } }
 		public override int toolbarPriority { get { return 0; } }

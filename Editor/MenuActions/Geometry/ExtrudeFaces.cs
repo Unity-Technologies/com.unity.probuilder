@@ -28,7 +28,7 @@ namespace UnityEditor.ProBuilder.Actions
 		}
 
 		public override TooltipContent tooltip { get { return _tooltip; } }
-		public override bool hasFileMenuEntry { get { return false; } }
+		protected override bool hasFileMenuEntry { get { return false; } }
 		[SerializeField] Texture2D[] icons = null;
 
 		static readonly TooltipContent _tooltip = new TooltipContent

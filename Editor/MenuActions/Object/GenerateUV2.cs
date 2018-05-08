@@ -25,7 +25,7 @@ namespace UnityEditor.ProBuilder.Actions
 			get { return _tooltip; }
 		}
 
-		public override bool hasFileMenuEntry
+		protected override bool hasFileMenuEntry
 		{
 			get { return false; }
 		}

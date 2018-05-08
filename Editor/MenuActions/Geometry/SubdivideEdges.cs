@@ -15,7 +15,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Subdivide", IconSkin.Pro); } }
 		public override TooltipContent tooltip { get { return _tooltip; } }
-		public override bool hasFileMenuEntry { get { return false; } }
+		protected override bool hasFileMenuEntry { get { return false; } }
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(

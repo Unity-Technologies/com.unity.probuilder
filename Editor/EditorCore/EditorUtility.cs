@@ -78,7 +78,7 @@ namespace UnityEditor.ProBuilder
 		}
 
 		/// <inheritdoc cref="ShowNotification(string)"/>
-		/// <param name="window">The <see cref="EditorWindow"/> to display this notification in.</param>
+		/// <param name="window">The EditorWindow to display this notification in.</param>
 		/// <param name="message">The text to display in the notification.</param>
 		/// <exception cref="ArgumentNullException"></exception>
 		public static void ShowNotification(EditorWindow window, string message)

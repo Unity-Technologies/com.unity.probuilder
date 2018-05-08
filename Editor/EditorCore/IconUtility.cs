@@ -10,7 +10,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Describes icon styles for pro and basic skin, or default (whatever the editor is currently using).
 	/// </summary>
-	public enum IconSkin
+	enum IconSkin
 	{
 		Default,
 		Light,
