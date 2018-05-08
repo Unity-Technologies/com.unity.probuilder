@@ -6,7 +6,7 @@ using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class SetCollider : MenuAction
+	sealed class SetCollider : MenuAction
 	{
 		public override ToolbarGroup group
 		{

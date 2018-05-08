@@ -11,7 +11,7 @@ using EditorUtility = UnityEditor.EditorUtility;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class ExportAsset : MenuAction
+	sealed class ExportAsset : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Export; } }
 		public override Texture2D icon { get { return null; } }

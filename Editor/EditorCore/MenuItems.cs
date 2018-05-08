@@ -9,7 +9,7 @@ namespace UnityEditor.ProBuilder
 	{
 		const string DOCUMENTATION_URL = "http://procore3d.github.io/probuilder2/";
 
-		private static ProBuilderEditor editor
+		static ProBuilderEditor editor
 		{
 			get { return ProBuilderEditor.instance; }
 		}
@@ -39,7 +39,7 @@ namespace UnityEditor.ProBuilder
 		}
 
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Geometry/Extrude %e", true)]
-		private static bool MenuVerifyExtrude()
+		static bool MenuVerifyExtrude()
 		{
 			ProBuilderEditor e = ProBuilderEditor.instance;
 
@@ -51,7 +51,7 @@ namespace UnityEditor.ProBuilder
 		}
 
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Geometry/Extrude %e", false, PreferenceKeys.menuGeometry + 3)]
-		private static void MenuDoExtrude()
+		static void MenuDoExtrude()
 		{
 			MenuCommands.MenuExtrude(selection, false);
 		}

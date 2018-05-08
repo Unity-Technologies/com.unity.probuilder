@@ -7,7 +7,7 @@ using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class MergeFaces : MenuAction
+	sealed class MergeFaces : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_Merge", IconSkin.Pro); } }

@@ -15,7 +15,8 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Editor utility to generate the pb_EditorToolbarMenuItems class from the classes present in ProBuilder/Editor/MenuActions folder.
 	/// </summary>
-	class GenerateMenuItems : Editor
+	/// <inheritdoc />
+	sealed class GenerateMenuItems : Editor
 	{
 		const string k_GeneratedFilePath = "Assets/ProCore/ProBuilder/Editor/EditorCore/pb_EditorToolbarMenuItems.cs";
 		const string k_MenuActionsFolder = "Assets/ProCore/ProBuilder/Editor/EditorCore/MenuActions/";

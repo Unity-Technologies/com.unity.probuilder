@@ -7,7 +7,7 @@ using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class ConformFaceNormals : MenuAction
+	sealed class ConformFaceNormals : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_ConformNormals", IconSkin.Pro); } }

@@ -6,7 +6,7 @@ using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class FreezeTransform : MenuAction
+	sealed class FreezeTransform : MenuAction
 	{
 		public override ToolbarGroup group
 		{

@@ -6,10 +6,11 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
+	/// <inheritdoc />
 	/// <summary>
 	/// Tooltip window implementation.
 	/// </summary>
-	class TooltipEditor : EditorWindow
+	sealed class TooltipEditor : EditorWindow
 	{
 		static readonly Color BasicBackgroundColor = new Color(.87f, .87f, .87f, 1f);
 		const int k_PositionPadding = 4;

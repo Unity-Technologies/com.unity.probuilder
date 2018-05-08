@@ -5,7 +5,7 @@ using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class SelectFaceLoop : MenuAction
+	sealed class SelectFaceLoop : MenuAction
 	{
 		public override ToolbarGroup group
 		{

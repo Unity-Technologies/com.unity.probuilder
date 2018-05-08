@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class ConformObjectNormals : MenuAction
+	sealed class ConformObjectNormals : MenuAction
 	{
 		public override ToolbarGroup group
 		{

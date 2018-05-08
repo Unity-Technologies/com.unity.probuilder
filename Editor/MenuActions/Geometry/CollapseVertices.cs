@@ -9,7 +9,7 @@ using EditorStyles = UnityEditor.EditorStyles;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class CollapseVertices : MenuAction
+	sealed class CollapseVertices : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Vert_Collapse", IconSkin.Pro); } }

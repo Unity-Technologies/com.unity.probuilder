@@ -9,7 +9,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Responsible for loading menu actions in to the pb_Toolbar.
 	/// </summary>
-	public static class EditorToolbarLoader
+	static class EditorToolbarLoader
 	{
 		internal static System.Func<MenuAction> onLoadMenu;
 		static List<MenuAction> s_Defaults;

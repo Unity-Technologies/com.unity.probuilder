@@ -9,7 +9,7 @@ using UnityEditor.ProBuilder.UI;
 namespace UnityEditor.ProBuilder
 {
 	[System.Serializable]
-	class EditorToolbar : ScriptableObject
+	sealed class EditorToolbar : ScriptableObject
 	{
 		public EditorWindow window;
 

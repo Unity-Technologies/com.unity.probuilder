@@ -5,10 +5,11 @@ using UnityEngine;
 
 namespace UnityEditor.ProBuilder
 {
+	/// <inheritdoc />
 	/// <summary>
 	/// Popup window in UV editor with the "Render UV Template" options.
 	/// </summary>
-	class UVRenderOptions : EditorWindow
+	sealed class UVRenderOptions : EditorWindow
 	{
 		const string PREF_IMAGESIZE = "pb_UVTemplate_imageSize";
 		const string PREF_LINECOLOR = "pb_UVTemplate_lineColor";

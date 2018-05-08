@@ -7,7 +7,7 @@ using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class SubdivideFaces : MenuAction
+	sealed class SubdivideFaces : MenuAction
 	{
 		public override ToolbarGroup group
 		{

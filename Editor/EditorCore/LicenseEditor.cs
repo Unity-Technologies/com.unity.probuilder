@@ -4,7 +4,7 @@ using System;
 
 namespace UnityEditor.ProBuilder
 {
-	class LicenseEditor : EditorWindow
+	sealed class LicenseEditor : EditorWindow
 	{
 		const string k_LicenseTextPath = "ThirdPartyLicenses.txt";
 		const int k_MaxStringLength = 60000;

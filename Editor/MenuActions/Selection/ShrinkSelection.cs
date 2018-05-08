@@ -6,7 +6,7 @@ using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class ShrinkSelection : MenuAction
+	sealed class ShrinkSelection : MenuAction
 	{
 		public override ToolbarGroup group
 		{

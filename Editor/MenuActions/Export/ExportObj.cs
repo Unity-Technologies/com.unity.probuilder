@@ -12,7 +12,7 @@ using FileUtil = UnityEditor.ProBuilder.FileUtil;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class ExportObj : MenuAction
+	sealed class ExportObj : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Export; } }
 		public override Texture2D icon { get { return null; } }

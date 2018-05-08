@@ -8,7 +8,7 @@ using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class NewPolyShape : MenuAction
+	sealed class NewPolyShape : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/NewPolyShape", IconSkin.Pro); } }

@@ -12,7 +12,7 @@ using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class ProBuilderize : MenuAction
+	sealed class ProBuilderize : MenuAction
 	{
 		public override ToolbarGroup group
 		{

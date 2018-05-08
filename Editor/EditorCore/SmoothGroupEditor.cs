@@ -11,7 +11,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Smoothing groups editor window.
 	/// </summary>
-	class SmoothGroupEditor : EditorWindow
+	sealed class SmoothGroupEditor : EditorWindow
 	{
 		class SmoothGroupData
 		{

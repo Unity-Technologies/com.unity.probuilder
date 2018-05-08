@@ -8,7 +8,7 @@ namespace UnityEditor.ProBuilder
 {
 	[CustomEditor(typeof(Entity))]
 	[CanEditMultipleObjects]
-	class EntityEditor : UnityEditor.Editor
+	sealed class EntityEditor : Editor
 	{
 		Entity ent;
 		ProBuilderMesh pb;

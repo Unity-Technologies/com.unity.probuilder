@@ -7,7 +7,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Asset post processor for ProBuilder icons.
 	/// </summary>
-	class IconImporter : AssetPostprocessor
+	sealed class IconImporter : AssetPostprocessor
 	{
 		/// <summary>
 		/// Automatically set the importer settings for ProBuilder icons.

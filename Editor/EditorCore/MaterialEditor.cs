@@ -13,7 +13,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Assign materials to faces and objects.
 	/// </summary>
-	class MaterialEditor : EditorWindow
+	sealed class MaterialEditor : EditorWindow
 	{
 		// Reference to pb_Editor instance.
 		static ProBuilderEditor editor { get { return ProBuilderEditor.instance; } }

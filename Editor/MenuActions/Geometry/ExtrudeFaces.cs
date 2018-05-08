@@ -9,7 +9,7 @@ using EditorStyles = UnityEditor.EditorStyles;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class ExtrudeFaces : MenuAction
+	sealed class ExtrudeFaces : MenuAction
 	{
 		private ExtrudeMethod m_ExtrudeMethod;
 

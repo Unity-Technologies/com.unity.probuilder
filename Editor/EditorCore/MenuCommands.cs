@@ -9,10 +9,11 @@ using Object = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder
 {
+	/// <inheritdoc />
 	/// <summary>
 	/// Contains Menu commands for most ProBuilder operations. Will also attempt to Update the pb_Editor.
 	/// </summary>
-	class MenuCommands : UnityEditor.Editor
+	sealed class MenuCommands : UnityEditor.Editor
 	{
 		private static ProBuilderEditor editor { get { return ProBuilderEditor.instance; } }
 

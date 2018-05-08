@@ -8,7 +8,7 @@ using EditorStyles = UnityEditor.EditorStyles;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class GrowSelection : MenuAction
+	sealed class GrowSelection : MenuAction
 	{
 		public override ToolbarGroup group
 		{

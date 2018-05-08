@@ -22,7 +22,6 @@ namespace UnityEditor.ProBuilder
         };
 
         public const string probuilderMenuPath = "Tools/ProBuilder/";
-
         protected const char keyCommandSuper = PreferenceKeys.CMD_SUPER;
         protected const char keyCommandShift = PreferenceKeys.CMD_SHIFT;
         protected const char keyCommandOption = PreferenceKeys.CMD_OPTION;

@@ -9,12 +9,13 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
+	/// <inheritdoc />
 	/// <summary>
 	/// Custom editor for pb_Object type.
 	/// </summary>
 	[CustomEditor(typeof(ProBuilderMesh))]
 	[CanEditMultipleObjects]
-	class ProBuilderMeshEditor : Editor
+	sealed class ProBuilderMeshEditor : Editor
 	{
 		public delegate void OnGetFrameBoundsDelegate();
 

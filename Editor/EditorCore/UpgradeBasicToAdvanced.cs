@@ -11,7 +11,7 @@ namespace UnityEditor.ProBuilder.Actions
 	/// <summary>
 	/// Menu interface for applying materials to pb_Object after upgrading from Basic to Advanced.
 	/// </summary>
-	class UpgradeBasicToAdvanced : Editor
+	sealed class UpgradeBasicToAdvanced : Editor
 	{
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Repair/Upgrade Scene to Advanced", false, PreferenceKeys.menuRepair + 10)]
 		public static void MenuUpgradeSceneAdvanced()

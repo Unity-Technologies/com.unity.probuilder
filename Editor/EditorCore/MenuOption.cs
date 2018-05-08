@@ -6,10 +6,11 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
+	/// <inheritdoc />
 	/// <summary>
 	/// Options menu window container. Do not instantiate this yourself, the toolbar will handle opening option windows.
 	/// </summary>
-	public class MenuOption : EditorWindow
+	public sealed class MenuOption : EditorWindow
 	{
         System.Action onSettingsGUI = null;
         System.Action onSettingsDisable = null;

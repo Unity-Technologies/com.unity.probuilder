@@ -6,7 +6,7 @@ using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class InvertSelection : MenuAction
+	sealed class InvertSelection : MenuAction
 	{
 		public override ToolbarGroup group
 		{

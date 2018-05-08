@@ -7,7 +7,7 @@ using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class ToggleSelectBackFaces : MenuAction
+	sealed class ToggleSelectBackFaces : MenuAction
 	{
 		bool isEnabled { get { return PreferencesInternal.GetBool(PreferenceKeys.pbEnableBackfaceSelection); } }
 

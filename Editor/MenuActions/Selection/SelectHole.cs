@@ -9,7 +9,7 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class SelectHole : MenuAction
+	sealed class SelectHole : MenuAction
 	{
 		public override ToolbarGroup group
 		{

@@ -9,7 +9,7 @@ using EditorStyles = UnityEditor.EditorStyles;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class WeldVertices : MenuAction
+	sealed class WeldVertices : MenuAction
 	{
 		public override ToolbarGroup group
 		{

@@ -7,7 +7,7 @@ using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class NewBezierShape : MenuAction
+	sealed class NewBezierShape : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/NewBezierSpline", IconSkin.Pro); } }

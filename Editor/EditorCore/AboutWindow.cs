@@ -19,7 +19,7 @@ namespace UnityEditor.ProBuilder
 		}
 	}
 
-	class AboutWindow : EditorWindow
+	sealed class AboutWindow : EditorWindow
 	{
 		static readonly GUIContent k_LearnContent = new GUIContent("Learn ProBuilder", "Documentation");
 		static readonly GUIContent k_ForumLinkContent = new GUIContent("Support Forum", "ProCore Support Forum");

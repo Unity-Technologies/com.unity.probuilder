@@ -5,7 +5,7 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class TriangulateFaces : MenuAction
+	sealed class TriangulateFaces : MenuAction
 	{
 		public override ToolbarGroup group
 		{

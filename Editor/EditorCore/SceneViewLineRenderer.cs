@@ -7,10 +7,11 @@ using UnityEditor;
 
 namespace UnityEngine.ProBuilder
 {
+	/// <inheritdoc />
 	/// <summary>
 	/// Renders lines to the scene view. Handles material and mesh generation and management.
 	/// </summary>
-	class SceneViewLineRenderer : IDisposable
+	sealed class SceneViewLineRenderer : IDisposable
 	{
 		ObjectPool<Mesh> m_Pool;
 		bool m_IsDisposed;

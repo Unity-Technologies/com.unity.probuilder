@@ -8,7 +8,7 @@ using ColorUtility = UnityEngine.ProBuilder.ColorUtility;
 
 namespace UnityEditor.ProBuilder
 {
-	class VertexColorPalette : EditorWindow
+	sealed class VertexColorPalette : EditorWindow
 	{
 		// Older versions of probuilder stored a fixed size array of colors in EditorPrefs.
 		const int k_EditorPrefsColorPaletteCount = 10;

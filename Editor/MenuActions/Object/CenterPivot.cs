@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class CenterPivot : MenuAction
+	sealed class CenterPivot : MenuAction
 	{
 		public override ToolbarGroup group
 		{

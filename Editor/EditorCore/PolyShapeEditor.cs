@@ -10,7 +10,7 @@ using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 namespace UnityEditor.ProBuilder
 {
 	[CustomEditor(typeof(PolyShape))]
-	class PolyShapeEditor : Editor
+	sealed class PolyShapeEditor : Editor
 	{
 		static Color k_HandleColor = new Color(.8f, .8f, .8f, 1f);
 		static Color k_HandleColorGreen = new Color(.01f, .9f, .3f, 1f);

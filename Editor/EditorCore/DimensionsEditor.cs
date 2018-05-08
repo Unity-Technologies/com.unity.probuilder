@@ -5,7 +5,7 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-	class DimensionsEditor : ScriptableObject
+	sealed class DimensionsEditor : ScriptableObject
 	{
 		static DimensionsEditor s_Instance;
 

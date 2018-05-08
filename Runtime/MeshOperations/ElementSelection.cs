@@ -1,16 +1,21 @@
 using UnityEngine;
 using System.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
-	public static partial class ElementSelection
+	public static class ElementSelection
 	{
-		/**
-		 *	Returns a list of pb_Tuple<pb_Face, pb_Edge> where each face is connected to the passed edge.
-		 */
+		/// <summary>
+		/// Returns a list of <![CDATA[SimpleTuple<Face, Edge>]]> where each face is connected to the passed edge.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="edge"></param>
+		/// <param name="lookup"></param>
+		/// <returns></returns>
 		internal static List<SimpleTuple<Face, Edge>> GetNeighborFaces(ProBuilderMesh pb, Edge edge, Dictionary<int, int> lookup = null)
 		{
 			if(lookup == null)
@@ -110,12 +115,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Get all edges that are on the perimeter of this face group selection.
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="faces"></param>
 		/// <returns></returns>
-		internal static IEnumerable<Edge> GetPerimeterEdges(ProBuilderMesh pb, IEnumerable<Face> faces)
+		public static IEnumerable<Edge> GetPerimeterEdges(ProBuilderMesh mesh, IEnumerable<Face> faces)
 		{
-			return GetPerimeterEdges(pb.sharedIndicesInternal.ToDictionary(), faces);
+			return GetPerimeterEdges(mesh.sharedIndicesInternal.ToDictionary(), faces);
 		}
 
 		/// <summary>
@@ -149,18 +154,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Returns the indices of perimeter edges in a given element group.
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="edges"></param>
 		/// <returns></returns>
-		internal static int[] GetPerimeterEdges(ProBuilderMesh pb, IList<Edge> edges)
+		internal static int[] GetPerimeterEdges(ProBuilderMesh mesh, IList<Edge> edges)
 		{
 			int edgeCount = edges != null ? edges.Count : 0;
 
-			if(edgeCount == EdgeExtension.AllEdges(pb.facesInternal).Length || edgeCount < 3)
+			if(edgeCount == EdgeExtension.AllEdges(mesh.facesInternal).Length || edgeCount < 3)
 				return new int[] {};
 
 			// Figure out how many connections each edge has to other edges in the selection
-			Edge[] universal = EdgeExtension.GetUniversalEdges(edges, pb.sharedIndicesInternal.ToDictionary());
+			Edge[] universal = EdgeExtension.GetUniversalEdges(edges, mesh.sharedIndicesInternal.ToDictionary());
 			int[] connections = new int[universal.Length];
 
 			for(int i = 0; i < universal.Length - 1; i++)
@@ -457,6 +462,214 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			spokes.AddRange(fragment);
 
 			return spokes;
+		}
+
+		/// <summary>
+		/// Grow `faces` to include any face touching the perimeter.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="faces"></param>
+		/// <param name="maxAngleDiff"></param>
+		/// <returns></returns>
+		public static HashSet<Face> GrowSelection(ProBuilderMesh pb, IList<Face> faces, float maxAngleDiff = -1f)
+		{
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb, true);
+			HashSet<Face> source = new HashSet<Face>(faces);
+			HashSet<Face> neighboring = new HashSet<Face>();
+
+			Vector3 srcNormal = Vector3.zero;
+			bool checkAngle = maxAngleDiff > 0f;
+
+			for(int i = 0; i < wings.Count; i++)
+			{
+				if(!source.Contains(wings[i].face))
+					continue;
+
+				if(checkAngle)
+					srcNormal = Math.Normal(pb, wings[i].face);
+
+				foreach(WingedEdge w in wings[i])
+				{
+					if(w.opposite != null && !source.Contains(w.opposite.face))
+					{
+						if(checkAngle)
+						{
+							Vector3 oppNormal = Math.Normal(pb, w.opposite.face);
+
+							if(Vector3.Angle(srcNormal, oppNormal) < maxAngleDiff)
+								neighboring.Add(w.opposite.face);
+						}
+						else
+						{
+							neighboring.Add(w.opposite.face);
+						}
+					}
+				}
+			}
+
+			return neighboring;
+		}
+
+		static readonly Vector3 Vector3_Zero = new Vector3(0f, 0f, 0f);
+
+		internal static void Flood(WingedEdge wing, HashSet<Face> selection)
+		{
+			Flood(null, wing, Vector3_Zero, -1f, selection);
+		}
+
+		internal static void Flood(ProBuilderMesh pb, WingedEdge wing, Vector3 wingNrm, float maxAngle, HashSet<Face> selection)
+		{
+			WingedEdge next = wing;
+
+			do
+			{
+				WingedEdge opp = next.opposite;
+
+				if(opp != null && !selection.Contains(opp.face))
+				{
+					if(maxAngle > 0f)
+					{
+						Vector3 oppNormal = Math.Normal(pb, opp.face);
+
+						if(Vector3.Angle(wingNrm, oppNormal) < maxAngle)
+						{
+							if( selection.Add(opp.face) )
+								Flood(pb, opp, oppNormal, maxAngle, selection);
+						}
+					}
+					else
+					{
+						if( selection.Add(opp.face) )
+							Flood(pb, opp, wingNrm, maxAngle, selection);
+					}
+				}
+
+				next = next.next;
+			} while(next != wing);
+		}
+
+		/// <summary>
+		/// Returns all adjacent faces as far as can be bridged within an angle.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="faces"></param>
+		/// <param name="maxAngleDiff"></param>
+		/// <returns></returns>
+		public static HashSet<Face> FloodSelection(ProBuilderMesh pb, IList<Face> faces, float maxAngleDiff)
+		{
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb, true);
+			HashSet<Face> source = new HashSet<Face>(faces);
+			HashSet<Face> flood = new HashSet<Face>();
+
+			for(int i = 0; i < wings.Count; i++)
+			{
+				if(!flood.Contains(wings[i].face) && source.Contains(wings[i].face))
+				{
+					flood.Add(wings[i].face);
+					Flood(pb, wings[i], maxAngleDiff > 0f ? Math.Normal(pb, wings[i].face) : Vector3_Zero, maxAngleDiff, flood);
+				}
+			}
+			return flood;
+		}
+
+		/// <summary>
+		/// Fetch a face loop.
+		/// </summary>
+		/// <param name="mesh">Target pb_Object.</param>
+		/// <param name="faces">The faces to scan for face loops.</param>
+		/// <param name="ring">Toggles between loop and face. Ring and loop are arbritary with faces, so this parameter just toggles between which gets scanned first.</param>
+		/// <returns></returns>
+		public static HashSet<Face> GetFaceLoop(ProBuilderMesh mesh, Face[] faces, bool ring = false)
+		{
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+            if (faces == null)
+                throw new ArgumentNullException("faces");
+
+            HashSet<Face> loops = new HashSet<Face>();
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh);
+
+			foreach(Face face in faces)
+				loops.UnionWith(GetFaceLoop(wings, face, ring));
+
+			return loops;
+		}
+
+		/// <summary>
+		/// Get both a face ring and loop from the selected faces.
+		/// </summary>
+		/// <param name="mesh"></param>
+		/// <param name="faces"></param>
+		/// <returns></returns>
+		public static HashSet<Face> GetFaceRingAndLoop(ProBuilderMesh mesh, Face[] faces)
+		{
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+            if (faces == null)
+                throw new ArgumentNullException("faces");
+
+            HashSet<Face> loops = new HashSet<Face>();
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh);
+
+			foreach (Face face in faces)
+			{
+				loops.UnionWith(GetFaceLoop(wings, face, true));
+				loops.UnionWith(GetFaceLoop(wings, face, false));
+			}
+
+			return loops;
+		}
+
+		/// <summary>
+		/// Get a face loop or ring from a set of winged edges.
+		/// </summary>
+		/// <param name="wings"></param>
+		/// <param name="face"></param>
+		/// <param name="ring"></param>
+		/// <returns></returns>
+		static HashSet<Face> GetFaceLoop(List<WingedEdge> wings, Face face, bool ring)
+		{
+			HashSet<Face> loop = new HashSet<Face>();
+
+			if(face == null)
+				return loop;
+
+			WingedEdge start = wings.FirstOrDefault(x => x.face == face);
+
+			if(start == null)
+				return loop;
+
+			if(ring)
+				start = start.next ?? start.previous;
+
+			for (int i = 0; i < 2; i++)
+			{
+				WingedEdge cur = start;
+
+				if (i == 1)
+				{
+					if(start.opposite != null && start.opposite.face != null)
+						cur = start.opposite;
+					else
+						break;
+				}
+
+				do
+				{
+					if (!loop.Add(cur.face))
+						break;
+
+					if (cur.Count() != 4)
+						break;
+
+					// count == 4 assures us next.next is valid, but opposite can still be null
+					cur = cur.next.next.opposite;
+				} while (cur != null && cur.face != null);
+			}
+
+			return loop;
 		}
 	}
 }

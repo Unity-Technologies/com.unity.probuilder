@@ -6,7 +6,7 @@ using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class MergeObjects : MenuAction
+	sealed class MergeObjects : MenuAction
 	{
 		public override ToolbarGroup group
 		{

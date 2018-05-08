@@ -8,7 +8,7 @@ using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class SelectSmoothingGroup : MenuAction
+	sealed class SelectSmoothingGroup : MenuAction
 	{
 		public override ToolbarGroup group
 		{

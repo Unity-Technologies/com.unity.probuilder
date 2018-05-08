@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEngine.Assertions;
 using Object = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder

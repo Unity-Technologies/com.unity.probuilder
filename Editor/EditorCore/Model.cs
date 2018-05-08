@@ -8,7 +8,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// A mesh, material and optional transform matrix combination.
 	/// </summary>
-	class Model
+	sealed class Model
 	{
 		// The name of this model.
 		public string name;

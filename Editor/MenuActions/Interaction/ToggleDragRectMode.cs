@@ -7,7 +7,7 @@ using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class ToggleDragRectMode : MenuAction
+	sealed class ToggleDragRectMode : MenuAction
 	{
 		RectSelectMode mode
 		{

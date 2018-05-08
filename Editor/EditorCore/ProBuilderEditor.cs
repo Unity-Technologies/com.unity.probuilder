@@ -14,7 +14,7 @@ using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 
 namespace UnityEditor.ProBuilder
 {
-	public class ProBuilderEditor : EditorWindow
+	public sealed class ProBuilderEditor : EditorWindow
 	{
 		/// <summary>
 		/// Raised any time the ProBuilder editor refreshes the selection. This is called every frame when interacting with mesh elements, and after any mesh operation.

@@ -6,7 +6,7 @@ using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class TriangulateObject : MenuAction
+	sealed class TriangulateObject : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_Triangulate", IconSkin.Pro); } }

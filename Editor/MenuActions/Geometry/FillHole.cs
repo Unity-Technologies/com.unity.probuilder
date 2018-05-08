@@ -10,7 +10,7 @@ using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class FillHole : MenuAction
+	sealed class FillHole : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_FillHole", IconSkin.Pro); } }

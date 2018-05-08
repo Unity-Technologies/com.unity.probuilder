@@ -8,11 +8,12 @@ using System;
 
 namespace UnityEditor.ProBuilder
 {
+	/// <inheritdoc />
 	/// <summary>
 	/// An extended tooltip for use in pb_MenuAction.
 	/// </summary>
-	[System.Serializable]
-	public class TooltipContent : System.IEquatable<TooltipContent>
+	[Serializable]
+	public sealed class TooltipContent : IEquatable<TooltipContent>
 	{
 		static GUIStyle TitleStyle { get { if(_titleStyle == null) InitStyles(); return _titleStyle; } }
 		static GUIStyle ShortcutStyle { get { if(_shortcutStyle == null) InitStyles(); return _shortcutStyle; } }

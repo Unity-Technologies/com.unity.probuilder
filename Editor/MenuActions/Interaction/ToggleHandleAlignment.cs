@@ -7,7 +7,7 @@ using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class ToggleHandleAlignment : MenuAction
+	sealed class ToggleHandleAlignment : MenuAction
 	{
 		[SerializeField] int count = 0;
 		[SerializeField] Texture2D[] icons = null;

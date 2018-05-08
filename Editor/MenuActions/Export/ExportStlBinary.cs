@@ -8,7 +8,7 @@ using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class ExportStlBinary : MenuAction
+	sealed class ExportStlBinary : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Export; } }
 		public override Texture2D icon { get { return null; } }

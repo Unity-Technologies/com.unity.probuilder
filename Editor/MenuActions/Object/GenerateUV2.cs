@@ -8,7 +8,7 @@ using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class GenerateUV2 : MenuAction
+	sealed class GenerateUV2 : MenuAction
 	{
 		public override ToolbarGroup group
 		{

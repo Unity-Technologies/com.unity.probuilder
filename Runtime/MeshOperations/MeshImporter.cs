@@ -8,7 +8,7 @@ using UnityEngine.ProBuilder;
 namespace UnityEngine.ProBuilder.MeshOperations
 {
     [Serializable]
-    public class MeshImportSettings
+    public sealed class MeshImportSettings
     {
         [SerializeField]
         bool m_Quads = true;
@@ -75,7 +75,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
     /// <summary>
     /// Import UnityEngine.Mesh to pb_Object.
     /// </summary>
-    public class MeshImporter
+    public sealed class MeshImporter
 	{
 		static readonly MeshImportSettings k_DefaultImportSettings = new MeshImportSettings()
 		{

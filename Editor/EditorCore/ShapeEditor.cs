@@ -11,7 +11,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Shape creation panel implementation.
 	/// </summary>
-	class ShapeEditor : EditorWindow
+	sealed class ShapeEditor : EditorWindow
 	{
 		enum ShapeType
 		{

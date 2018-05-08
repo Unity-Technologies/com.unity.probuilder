@@ -11,7 +11,7 @@ using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 
 namespace UnityEditor.ProBuilder
 {
-	class VertexColorPainter : EditorWindow
+	sealed class VertexColorPainter : EditorWindow
 	{
 		public static void MenuOpenWindow()
 		{

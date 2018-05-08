@@ -10,7 +10,7 @@ using EditorStyles = UnityEditor.EditorStyles;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class SelectMaterial : MenuAction
+	sealed class SelectMaterial : MenuAction
 	{
 		public override ToolbarGroup group
 		{

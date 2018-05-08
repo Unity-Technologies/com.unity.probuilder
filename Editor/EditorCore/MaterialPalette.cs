@@ -7,9 +7,11 @@ using UnityEngine.ProBuilder;
 namespace UnityEditor.ProBuilder
 {
 	/// <summary>
-	/// A serializable object that stores an array of materials. Used by pb_MaterialEditor.
+	/// A serializable object that stores an array of materials. Used by MaterialEditor.
 	/// </summary>
-	class MaterialPalette : ScriptableObject, IHasDefault
+	/// <inheritdoc cref="UnityEngine.ScriptableObject"/>
+	/// <inheritdoc cref="IHasDefault"/>
+	sealed class MaterialPalette : ScriptableObject, IHasDefault
 	{
 		[MenuItem("Assets/Create/Material Palette", true)]
 		static bool VerifyCreateMaterialPalette()

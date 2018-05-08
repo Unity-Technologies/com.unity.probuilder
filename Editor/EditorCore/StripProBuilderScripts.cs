@@ -12,7 +12,7 @@ namespace UnityEditor.ProBuilder.Actions
 	/// Menu items for stripping ProBuilder scripts from GameObjects.
 	/// </summary>
 	/// @TODO MOVE TO ACTIONS
-	class StripProBuilderScripts : Editor
+	sealed class StripProBuilderScripts : Editor
 	{
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip All ProBuilder Scripts in Scene")]
 		public static void StripAllScenes()

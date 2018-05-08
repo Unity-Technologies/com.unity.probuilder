@@ -3,7 +3,7 @@
 namespace UnityEditor.ProBuilder
 {
 	[AttributeUsage(AttributeTargets.Class)]
-	public class ProBuilderMenuActionAttribute : Attribute
+	public sealed class ProBuilderMenuActionAttribute : Attribute
 	{
 	}
 }

@@ -7,7 +7,7 @@ using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class SetTrigger : MenuAction
+	sealed class SetTrigger : MenuAction
 	{
 		public override ToolbarGroup group
 		{

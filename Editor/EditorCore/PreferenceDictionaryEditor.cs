@@ -7,7 +7,7 @@ using UnityEditor.IMGUI.Controls;
 namespace UnityEditor.ProBuilder
 {
 	[CustomEditor(typeof(PreferenceDictionary))]
-	class PreferenceDictionaryEditor : UnityEditor.Editor
+	sealed class PreferenceDictionaryEditor : UnityEditor.Editor
 	{
 		PreferenceDictionary m_Preferences = null;
 		Vector2 m_Scroll = Vector2.zero;

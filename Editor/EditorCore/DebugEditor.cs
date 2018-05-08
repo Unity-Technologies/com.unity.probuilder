@@ -2,20 +2,19 @@
 
 using UnityEditor;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder.UI;
-using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
 	/// <summary>
 	/// Debugging menu items for ProBuilder.
 	/// </summary>
-	class DebugEditor : EditorWindow, System.IDisposable
+	/// <inheritdoc cref="EditorWindow"/>
+	/// <inheritdoc cref="System.IDisposable"/>
+	sealed class DebugEditor : EditorWindow, System.IDisposable
 	{
 		float elementLength = .15f;
 		float elementOffset = .01f;

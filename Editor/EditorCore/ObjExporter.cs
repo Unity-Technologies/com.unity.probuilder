@@ -13,7 +13,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// A set of options used when exporting OBJ models.
 	/// </summary>
-	class ObjOptions
+	sealed class ObjOptions
 	{
 		// Coordinate system to use when exporting. Unity is left handed where most other
 		// applications are right handed.

@@ -10,7 +10,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 	/// <summary>
 	/// Store face rebuild data with indices to mark which vertices are new.
 	/// </summary>
-	class ConnectFaceRebuildData
+	sealed class ConnectFaceRebuildData
 	{
 		public FaceRebuildData faceRebuildData;
 		public List<int> newVertexIndices;

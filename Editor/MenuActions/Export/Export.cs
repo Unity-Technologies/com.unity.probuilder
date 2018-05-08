@@ -15,7 +15,7 @@ namespace UnityEditor.ProBuilder.Actions
 	/**
 	 *	Menu item and options for exporting meshes.
 	 */
-	class Export : MenuAction
+	sealed class Export : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_Export", IconSkin.Pro); } }

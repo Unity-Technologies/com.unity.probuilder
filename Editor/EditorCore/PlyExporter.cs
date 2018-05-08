@@ -11,7 +11,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Export options for Ply format.
 	/// </summary>
-	class PlyOptions
+	sealed class PlyOptions
 	{
 		// Should the mesh be exported with a right handed coordinate system?
 		public bool isRightHanded = true;

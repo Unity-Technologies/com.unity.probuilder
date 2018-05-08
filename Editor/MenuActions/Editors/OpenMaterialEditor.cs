@@ -7,7 +7,7 @@ using MaterialEditor = UnityEditor.ProBuilder.MaterialEditor;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class OpenMaterialEditor : MenuAction
+	sealed class OpenMaterialEditor : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_Materials", IconSkin.Pro); } }

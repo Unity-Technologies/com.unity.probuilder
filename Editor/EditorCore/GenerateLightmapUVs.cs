@@ -10,8 +10,8 @@ namespace UnityEditor.ProBuilder.Actions
 	/// <summary>
 	/// Menu items for generating UV2s for selected or scene pb_Object meshes.
 	/// </summary>
-	/// @todo I THINK THIS IS OBSOLETE - action -> GenerateUV2s
-	class GenerateLightmapUVs : Editor
+	/// <inheritdoc />
+	sealed class GenerateLightmapUVs : Editor
 	{
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Generate UV2 - Selection", true, PreferenceKeys.menuActions + 20)]
 		public static bool VerifyGenerateUV2Selection()

@@ -11,7 +11,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// A simple line-item editor for vertex positions.
 	/// </summary>
-	class VertexPositionEditor : EditorWindow
+	sealed class VertexPositionEditor : EditorWindow
 	{
 		const int MAX_SCENE_LABELS = 100;
 

@@ -6,7 +6,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Editor window for accessing boolean functionality.
 	/// </summary>
-	class BooleanEditor : EditorWindow
+	sealed class BooleanEditor : EditorWindow
 	{
 		enum BooleanOp
 		{

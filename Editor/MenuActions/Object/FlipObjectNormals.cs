@@ -6,7 +6,7 @@ using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class FlipObjectNormals : MenuAction
+	sealed 	class FlipObjectNormals : MenuAction
 	{
 		public override ToolbarGroup group
 		{

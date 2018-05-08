@@ -7,7 +7,7 @@ using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class SelectEdgeLoop : MenuAction
+	sealed class SelectEdgeLoop : MenuAction
 	{
 		public override ToolbarGroup group
 		{

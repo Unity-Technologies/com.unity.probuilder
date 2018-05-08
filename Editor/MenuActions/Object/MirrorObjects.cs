@@ -11,7 +11,7 @@ using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class MirrorObjects : MenuAction
+	sealed class MirrorObjects : MenuAction
 	{
 		public override ToolbarGroup group
 		{

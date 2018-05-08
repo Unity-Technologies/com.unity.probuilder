@@ -7,7 +7,7 @@ using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class ToggleDragSelectionMode : MenuAction
+	sealed class ToggleDragSelectionMode : MenuAction
 	{
 		DragSelectMode dragSelectMode
 		{

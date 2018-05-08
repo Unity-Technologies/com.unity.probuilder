@@ -6,7 +6,7 @@ using UnityEditor.ProBuilder.UI;
 namespace UnityEditor.ProBuilder
 {
 	[CustomEditor(typeof(BezierShape))]
-	class BezierSplineEditor : Editor
+	sealed class BezierSplineEditor : Editor
 	{
 		static GUIContent[] s_TangentModeIcons = new GUIContent[3];
 

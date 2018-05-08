@@ -12,7 +12,7 @@ using Object = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	class ExportStlAscii : MenuAction
+	sealed class ExportStlAscii : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Export; } }
 		public override Texture2D icon { get { return null; } }
