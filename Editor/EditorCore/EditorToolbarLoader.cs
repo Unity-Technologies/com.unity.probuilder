@@ -1,8 +1,10 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using Actions = UnityEditor.ProBuilder.Actions;
 using System.Linq;
+using System.Reflection;
 
 namespace UnityEditor.ProBuilder
 {
@@ -11,26 +13,7 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	static class EditorToolbarLoader
 	{
-		internal static System.Func<MenuAction> onLoadMenu;
-		static List<MenuAction> s_Defaults;
-
-		public static void RegisterMenuItem(System.Func<MenuAction> getMenuAction)
-		{
-			if(onLoadMenu != null)
-			{
-				onLoadMenu -= getMenuAction;
-				onLoadMenu += getMenuAction;
-			}
-			else
-			{
-				onLoadMenu = getMenuAction;
-			}
-		}
-
-		public static void UnRegisterMenuItem(System.Func<MenuAction> getMenuAction)
-		{
-			onLoadMenu -= getMenuAction;
-		}
+		static List<MenuAction> s_LoadedMenuActions;
 
 		public static T GetInstance<T>() where T : MenuAction, new()
 		{
@@ -39,10 +22,10 @@ namespace UnityEditor.ProBuilder
 			if(instance == null)
 			{
 				instance = new T();
-				if(s_Defaults != null)
-					s_Defaults.Add(instance);
+				if(s_LoadedMenuActions != null)
+					s_LoadedMenuActions.Add(instance);
 				else
-					s_Defaults = new List<MenuAction>() { instance };
+					s_LoadedMenuActions = new List<MenuAction>() { instance };
 			}
 
 			return instance;
@@ -50,10 +33,10 @@ namespace UnityEditor.ProBuilder
 
 		internal static List<MenuAction> GetActions(bool forceReload = false)
 		{
-			if(s_Defaults != null && !forceReload)
-				return s_Defaults;
+			if(s_LoadedMenuActions != null && !forceReload)
+				return s_LoadedMenuActions;
 
-			s_Defaults = new List<MenuAction>()
+			s_LoadedMenuActions = new List<MenuAction>()
 			{
 				// tools
 				new Actions.OpenShapeEditor(),
@@ -145,15 +128,40 @@ namespace UnityEditor.ProBuilder
 
 			};
 
-			if(onLoadMenu != null)
+			SearchForMenuAttributes(s_LoadedMenuActions);
+
+			s_LoadedMenuActions.Sort(MenuAction.CompareActionsByGroupAndPriority);
+
+			return s_LoadedMenuActions;
+		}
+
+		static void SearchForMenuAttributes(List<MenuAction> list)
+		{
+			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 			{
-				foreach(System.Func<MenuAction> del in onLoadMenu.GetInvocationList())
-					s_Defaults.Add(del());
+				var menuActionTypes = assembly.GetTypes().Where(x =>
+				{
+					if(!typeof(MenuAction).IsAssignableFrom(x)
+						|| x.IsAbstract
+						|| !Attribute.IsDefined(x, typeof(ProBuilderMenuActionAttribute)))
+						return false;
+
+					var constructors = x.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+
+					if (!constructors.Any(y => y.GetParameters().Length < 1))
+					{
+						Log.Error("{0} type does not contain a parameterless constructor. Only parameterless constructors are invoked with creating MenuItem instances.", x.ToString());
+						return false;
+					}
+
+					if (constructors.Any(z => z.GetParameters().Length > 0))
+						Log.Warning("{0} type contains a non-parameterless constructor. Only parameterless constructors are invoked with creating MenuItem instances.", x.ToString());
+
+					return true;
+				});
+
+				list.AddRange(menuActionTypes.Select(x => (MenuAction)Activator.CreateInstance(x)));
 			}
-
-			s_Defaults.Sort(MenuAction.CompareActionsByGroupAndPriority);
-
-			return s_Defaults;
 		}
 	}
 }
