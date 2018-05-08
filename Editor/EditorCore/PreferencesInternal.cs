@@ -8,7 +8,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Where a preference is stored. Can be per-project or global.
 	/// </summary>
-	public enum PreferenceLocation
+	enum PreferenceLocation
 	{
 		/// <summary>
 		/// Stored per-project.

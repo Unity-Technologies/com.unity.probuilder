@@ -196,7 +196,7 @@ namespace UnityEditor.ProBuilder
 									pb.RefreshUV( ProBuilderEditor.instance.selectedFacesInEditZone[pb] );
 									pb.Refresh(RefreshMask.Normals);
 									pb.mesh.RecalculateBounds();
-									ProBuilderEditor.instance.UpdateSelection();
+									ProBuilderEditor.Refresh();
 								}
 							}
 							index++;

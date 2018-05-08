@@ -52,7 +52,7 @@ namespace UnityEditor.ProBuilder
 			}
 
 			if(editor)
-				editor.UpdateSelection();
+				ProBuilderEditor.Refresh();
 
 			return new ActionResult(Status.Success, "Merged Objects");
 		}
@@ -106,7 +106,7 @@ namespace UnityEditor.ProBuilder
 			SceneView.RepaintAll();
 
 			if(editor != null)
-				editor.UpdateSelection();
+				ProBuilderEditor.Refresh();
 
 			return new ActionResult(Status.Success, "Set Pivot");
 		}
@@ -245,7 +245,7 @@ namespace UnityEditor.ProBuilder
 				selection[i].Optimize();
 			}
 
-			editor.UpdateSelection();
+			ProBuilderEditor.Refresh();
 
 			return new ActionResult(Status.Success, "Triangulate " + selection.Length + (selection.Length > 1 ? " Objects" : " Object"));
 		}
@@ -508,7 +508,7 @@ namespace UnityEditor.ProBuilder
 			}
 
 			if(editor != null)
-				editor.UpdateSelection();
+				ProBuilderEditor.Refresh();
 
 			SceneView.RepaintAll();
 
@@ -751,8 +751,7 @@ namespace UnityEditor.ProBuilder
 
 			}
 
-			if(editor)
-				editor.UpdateSelection(false);
+			ProBuilderEditor.Refresh(false);
 
 			if( rc > 0 )
 				return new ActionResult(Status.Success, "Shrink Selection");
@@ -870,8 +869,7 @@ namespace UnityEditor.ProBuilder
 				pb.SetSelectedEdges( edges );
 			}
 
-			if(editor)
-				editor.UpdateSelection(false);
+			ProBuilderEditor.Refresh(false);
 
 			SceneView.RepaintAll();
 
@@ -906,8 +904,7 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
-			if(editor)
-				editor.UpdateSelection(false);
+			ProBuilderEditor.Refresh(false);
 
 			SceneView.RepaintAll();
 
@@ -997,7 +994,7 @@ namespace UnityEditor.ProBuilder
 			if(editor)
 			{
 				editor.ClearElementSelection();
-				editor.UpdateSelection();
+				ProBuilderEditor.Refresh();
 			}
 
 			if(count > 0)
@@ -1047,7 +1044,7 @@ namespace UnityEditor.ProBuilder
 			}
 
 			if(editor)
-				editor.UpdateSelection();
+				ProBuilderEditor.Refresh();
 
 			if(count > 0)
 				return new ActionResult(Status.Success, "Detach " + count + (count > 1 ? " Faces" : " Face"));
@@ -1132,7 +1129,7 @@ namespace UnityEditor.ProBuilder
 			if(editor)
 			{
 				MeshSelection.SetSelection(detached.ToArray());
-				editor.UpdateSelection();
+				ProBuilderEditor.Refresh();
 			}
 
 			if(detachedFaceCount > 0)
@@ -1175,7 +1172,7 @@ namespace UnityEditor.ProBuilder
 			}
 
 			if(editor)
-				editor.UpdateSelection();
+				ProBuilderEditor.Refresh();
 
 			if(success > 0)
 				return new ActionResult(Status.Success, "Merged " + success + " Faces");
@@ -1211,7 +1208,7 @@ namespace UnityEditor.ProBuilder
 			}
 
 			if(editor)
-				editor.UpdateSelection();
+				ProBuilderEditor.Refresh();
 
 			if(success > 0)
 				return new ActionResult(Status.Success, "Flipped " + success + " Edges");
@@ -1260,7 +1257,7 @@ namespace UnityEditor.ProBuilder
 
 
 			if(editor)
-				editor.UpdateSelection();
+				ProBuilderEditor.Refresh();
 
 			if(success)
 				return new ActionResult(Status.Success, "Collapse Vertices");
@@ -1312,8 +1309,7 @@ namespace UnityEditor.ProBuilder
 				weldCount -= pb.sharedIndicesInternal.Length;
 			}
 
-			if(editor)
-				editor.UpdateSelection(true);
+			ProBuilderEditor.Refresh();
 
 			if(res && weldCount > 0)
 				return new ActionResult(Status.Success, "Weld " + weldCount + (weldCount > 1 ? " Vertices" : " Vertex"));
@@ -1552,8 +1548,7 @@ namespace UnityEditor.ProBuilder
 				pb.SetSelectedVertices(new int[0]);
 			}
 
-			if(editor)
-				editor.UpdateSelection(true);
+			ProBuilderEditor.Refresh();
 
 			return new ActionResult(Status.Success, "Subdivide " + selection.Length + " Objects");
 		}
@@ -1626,8 +1621,7 @@ namespace UnityEditor.ProBuilder
 
 			if(success > 0)
 			{
-				if(editor)
-					editor.UpdateSelection(true);
+				ProBuilderEditor.Refresh();
 
 				return new ActionResult(Status.Success, "Subdivide " + success + ((success > 1) ? " faces" : " face"));
 			}
@@ -1720,8 +1714,7 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
-			if(editor)
-				editor.UpdateSelection(true);
+			ProBuilderEditor.Refresh();
 
 			if(success > 0)
 				return new ActionResult(Status.Success, "Insert Edge Loop");

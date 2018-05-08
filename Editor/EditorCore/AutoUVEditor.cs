@@ -216,7 +216,7 @@ namespace UnityEditor.ProBuilder
 				for(int i = 0; i < selection.Length; i++)
 					TextureGroupSelectedFaces(selection[i]);
 
-				ProBuilderEditor.instance.UpdateSelection();
+				ProBuilderEditor.Refresh();
 			}
 
 			if(GUILayout.Button(new GUIContent("Break Selected Groups", "This resets all the selected face Texture Groups.")))
@@ -234,7 +234,7 @@ namespace UnityEditor.ProBuilder
 
 				m_AutoUVSettingsDiff["textureGroup"] = false;
 
-				ProBuilderEditor.instance.UpdateSelection();
+				ProBuilderEditor.Refresh();
 			}
 
 			/* Select all in current texture group */
@@ -243,7 +243,7 @@ namespace UnityEditor.ProBuilder
 				for(int i = 0; i < selection.Length; i++)
 					selection[i].SetSelectedFaces( System.Array.FindAll(selection[i].facesInternal, x => x.textureGroup == textureGroup) );
 
-				ProBuilderEditor.instance.UpdateSelection();
+				ProBuilderEditor.Refresh();
 			}
 
 			if(GUILayout.Button(new GUIContent("Reset UVs", "Reset UV projection parameters.")))
@@ -256,7 +256,7 @@ namespace UnityEditor.ProBuilder
 						face.uv = new AutoUnwrapSettings();
 				}
 
-				ProBuilderEditor.instance.UpdateSelection();
+				ProBuilderEditor.Refresh();
 			}
 
 

@@ -61,8 +61,7 @@ namespace UnityEditor.ProBuilder.Actions
 			UnityEditor.EditorUtility.ClearProgressBar();
 			UnityEditor.EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "Successfully stripped out all ProBuilder components.", "Okay");
 
-			if(ProBuilderEditor.instance)
-				ProBuilderEditor.instance.UpdateSelection();
+			ProBuilderEditor.Refresh();
 		}
 
 

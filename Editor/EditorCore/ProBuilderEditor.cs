@@ -14,6 +14,9 @@ using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 
 namespace UnityEditor.ProBuilder
 {
+	/// <summary>
+	/// Manages the ProBuilder toolbar window and tool mode.
+	/// </summary>
 	public sealed class ProBuilderEditor : EditorWindow
 	{
 		/// <summary>
@@ -27,7 +30,7 @@ namespace UnityEditor.ProBuilder
         public static event Action<ProBuilderMesh[]> onVertexMovementFinish;
 
         /// <summary>
-        /// Called immediately prior to beginning vertex modifications. The ProBuilderMesh will be in un-altered state at this point (meaning ToMesh and Refresh have been called, but not Optimize).
+        /// Called immediately prior to beginning vertex modifications. The ProBuilderMesh will be in un-altered state at this point (meaning ProBuilderMesh.ToMesh and ProBuilderMesh.Refresh have been called, but not Optimize).
         /// </summary>
         public static event Action<ProBuilderMesh[]> onVertexMovementBegin;
 
@@ -152,18 +155,19 @@ namespace UnityEditor.ProBuilder
 		internal bool selectHiddenEnabled { get { return m_SelectHiddenEnabled; } }
 
 		/// <summary>
-		/// Get the current EditLevel.
+		/// Get the current @"UnityEngine.ProBuilder.EditLevel".
 		/// </summary>
 		public EditLevel editLevel { get; private set; }
 
 		/// <summary>
-		/// Get the current element selection mode.
+		/// Get the current @"UnityEngine.ProBuilder.SelectMode".
 		/// </summary>
 		public SelectMode selectionMode { get; private set; }
 
 		/// <summary>
 		/// Get the alignment of the ProBuilder transform gizmo.
 		/// </summary>
+		/// <seealso cref="HandleAlignment"/>
 		public HandleAlignment handleAlignment { get; private set; }
 
 		static class SceneStyles
@@ -204,18 +208,13 @@ namespace UnityEditor.ProBuilder
 			get { return s_Instance; }
 		}
 
-		/// <summary>
-		/// Open the pb_Editor window with whatever dockable status is preference-d.
-		/// </summary>
-		/// <returns></returns>
-		public static ProBuilderEditor MenuOpenWindow()
+		internal static void MenuOpenWindow()
 		{
 			ProBuilderEditor editor = (ProBuilderEditor) EditorWindow.GetWindow(typeof(ProBuilderEditor),
 				!PreferencesInternal.GetBool(PreferenceKeys.pbDefaultOpenInDockableWindow), PreferenceKeys.pluginTitle,
 				true); // open as floating window
 			// would be nice if editorwindow's showMode was exposed
 			editor.isFloatingWindow = !PreferencesInternal.GetBool(PreferenceKeys.pbDefaultOpenInDockableWindow);
-			return editor;
 		}
 
 		internal void OnEnable()
@@ -343,10 +342,14 @@ namespace UnityEditor.ProBuilder
 			};
 		}
 
-		public static void Refresh(bool force = true)
+		/// <summary>
+		/// Rebuild the mesh wireframe and selection caches.
+		/// </summary>
+		/// <param name="vertexCountChanged">An optional parameter that allows Refresh to skip some more expensive calculations when rebuilding caches if the vertex count and face layout has not changed.</param>
+		public static void Refresh(bool vertexCountChanged = true)
 		{
 			if (instance != null)
-				instance.UpdateSelection(force);
+				instance.UpdateSelection(vertexCountChanged);
 		}
 
 		void OnGUI()
@@ -469,7 +472,7 @@ namespace UnityEditor.ProBuilder
 
 			DrawHandleGUI(sceneView);
 
-			if (!m_IsRightMouseDown && getKeyUp != KeyCode.None)
+			if (!m_IsRightMouseDown && (m_CurrentEvent.type == EventType.KeyUp ? m_CurrentEvent.keyCode : KeyCode.None) != KeyCode.None)
 			{
 				if (ShortcutCheck(m_CurrentEvent))
 				{
@@ -540,7 +543,7 @@ namespace UnityEditor.ProBuilder
 				return;
 			}
 
-			// altClick || Tools.current == Tool.View || GUIUtility.hotControl > 0 || middleClick
+			// m_CurrentEvent.alt || Tools.current == Tool.View || GUIUtility.hotControl > 0 || middleClick
 			// Tools.viewTool == ViewTool.FPS || Tools.viewTool == ViewTool.Orbit
 			if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent) || m_CurrentEvent.isKey || selection == null ||
 			    selection.Length < 1)
@@ -558,7 +561,7 @@ namespace UnityEditor.ProBuilder
 			if (m_SelectedVertexCount > 0)
 				Tools.current = Tool.None;
 
-			if (leftClick)
+			if (m_CurrentEvent.type == EventType.MouseDown)
 			{
 				// double clicking object
 				if (m_CurrentEvent.clickCount > 1)
@@ -572,7 +575,7 @@ namespace UnityEditor.ProBuilder
 				m_IsReadyForMouseDrag = true;
 			}
 
-			if (mouseDrag && m_IsReadyForMouseDrag)
+			if (m_CurrentEvent.type == EventType.MouseDrag && m_IsReadyForMouseDrag)
 			{
 				if(!m_IsDragging)
 					sceneView.Repaint();
@@ -580,7 +583,7 @@ namespace UnityEditor.ProBuilder
 				m_IsDragging = true;
 			}
 
-			if (ignore)
+			if (m_CurrentEvent.type == EventType.Ignore)
 			{
 				if (m_IsDragging)
 				{
@@ -593,7 +596,7 @@ namespace UnityEditor.ProBuilder
 					m_WasDoubleClick = false;
 			}
 
-			if (leftClickUp)
+			if (m_CurrentEvent.type == EventType.MouseUp)
 			{
 				if (m_WasDoubleClick)
 				{
@@ -775,7 +778,7 @@ namespace UnityEditor.ProBuilder
 				return pb;
 			}
 
-			if (!shiftKey && !ctrlKey)
+			if (!m_CurrentEvent.shift && !(m_CurrentEvent.command || m_CurrentEvent.control))
 				MeshSelection.SetSelection((GameObject) null);
 
 			GameObject pickedGo = null;
@@ -904,7 +907,7 @@ namespace UnityEditor.ProBuilder
 
 		bool VertexClickCheck(out ProBuilderMesh vpb)
 		{
-			if (!shiftKey && !ctrlKey)
+			if (!m_CurrentEvent.shift && !(m_CurrentEvent.command || m_CurrentEvent.control))
 				ClearElementSelection();
 
 			Camera cam = SceneView.lastActiveSceneView.camera;
@@ -1013,7 +1016,7 @@ namespace UnityEditor.ProBuilder
 
 		bool EdgeClickCheck(out ProBuilderMesh pb)
 		{
-			if (!shiftKey && !ctrlKey)
+			if (!m_CurrentEvent.shift && !(m_CurrentEvent.command || m_CurrentEvent.control))
 			{
 				// don't call ClearElementSelection b/c that also removes
 				// nearestEdge info
@@ -1048,7 +1051,7 @@ namespace UnityEditor.ProBuilder
 			}
 			else
 			{
-				if (!shiftKey && !ctrlKey)
+				if (!m_CurrentEvent.shift && !(m_CurrentEvent.command || m_CurrentEvent.control))
 					ClearElementSelection();
 
 				pb = null;
@@ -1075,7 +1078,7 @@ namespace UnityEditor.ProBuilder
 			{
 				case SelectMode.Vertex:
 				{
-					if (!shiftKey && !ctrlKey)
+					if (!m_CurrentEvent.shift && !(m_CurrentEvent.command || m_CurrentEvent.control))
 						ClearElementSelection();
 
 					Dictionary<ProBuilderMesh, HashSet<int>> selected = Picking.PickVerticesInRect(
@@ -1090,7 +1093,7 @@ namespace UnityEditor.ProBuilder
 						IntArray[] sharedIndices = kvp.Key.sharedIndicesInternal;
 						HashSet<int> common;
 
-						if (shiftKey || ctrlKey)
+						if (m_CurrentEvent.shift || (m_CurrentEvent.command || m_CurrentEvent.control))
 						{
 							common = sharedIndices.GetCommonIndices(kvp.Key.selectedTriangles);
 
@@ -1115,7 +1118,7 @@ namespace UnityEditor.ProBuilder
 
 				case SelectMode.Face:
 				{
-					if (!shiftKey && !ctrlKey)
+					if (!m_CurrentEvent.shift && !(m_CurrentEvent.command || m_CurrentEvent.control))
 						ClearElementSelection();
 
 					Dictionary<ProBuilderMesh, HashSet<Face>> selected = Picking.PickFacesInRect(
@@ -1129,7 +1132,7 @@ namespace UnityEditor.ProBuilder
 					{
 						HashSet<Face> current;
 
-						if (shiftKey || ctrlKey)
+						if (m_CurrentEvent.shift || (m_CurrentEvent.command || m_CurrentEvent.control))
 						{
 							current = new HashSet<Face>(kvp.Key.selectedFacesInternal);
 
@@ -1154,7 +1157,7 @@ namespace UnityEditor.ProBuilder
 
 				case SelectMode.Edge:
 				{
-					if (!shiftKey && !ctrlKey)
+					if (!m_CurrentEvent.shift && !(m_CurrentEvent.command || m_CurrentEvent.control))
 						ClearElementSelection();
 
 					var selected = Picking.PickEdgesInRect(
@@ -1172,7 +1175,7 @@ namespace UnityEditor.ProBuilder
 
 						HashSet<EdgeLookup> current;
 
-						if (shiftKey || ctrlKey)
+						if (m_CurrentEvent.shift || (m_CurrentEvent.command || m_CurrentEvent.control))
 						{
 							current = EdgeLookup.GetEdgeLookupHashSet(pb.selectedEdges, commonIndices);
 
@@ -1211,11 +1214,11 @@ namespace UnityEditor.ProBuilder
 			// if not, behave regularly (clear selection if shift isn't held)
 			if (editLevel == EditLevel.Geometry && selectionMode == SelectMode.Vertex)
 			{
-				if (!shiftKey && m_SelectedVertexCount > 0) return;
+				if (!m_CurrentEvent.shift && m_SelectedVertexCount > 0) return;
 			}
 			else
 			{
-				if (!shiftKey) MeshSelection.ClearElementAndObjectSelection();
+				if (!m_CurrentEvent.shift) MeshSelection.ClearElementAndObjectSelection();
 			}
 
 			// scan for new selected objects
@@ -1232,7 +1235,7 @@ namespace UnityEditor.ProBuilder
 
 			m_ElementHandlePosition = Handles.PositionHandle(m_ElementHandlePosition, handleRotation);
 
-			if (altClick)
+			if (m_CurrentEvent.alt)
 				return;
 
 			bool previouslyMoving = m_IsMovingElements;
@@ -1333,7 +1336,7 @@ namespace UnityEditor.ProBuilder
 			m_HandleScale = Handles.ScaleHandle(m_HandleScale, m_ElementHandlePosition, handleRotation,
 				HandleUtility.GetHandleSize(m_ElementHandlePosition));
 
-			if (altClick) return;
+			if (m_CurrentEvent.alt) return;
 
 			bool previouslyMoving = m_IsMovingElements;
 
@@ -1451,7 +1454,7 @@ namespace UnityEditor.ProBuilder
 
 			m_HandleRotationPrevious = m_HandleRotation;
 
-			if (altClick)
+			if (m_CurrentEvent.alt)
 				Handles.RotationHandle(m_HandleRotation, m_ElementHandlePosition);
 			else
 				m_HandleRotation = Handles.RotationHandle(m_HandleRotation, m_ElementHandlePosition);
@@ -1610,7 +1613,7 @@ namespace UnityEditor.ProBuilder
 
 			m_TextureHandlePosition = Handles.PositionHandle(m_TextureHandlePosition, handleRotation);
 
-			if (altClick) return;
+			if (m_CurrentEvent.alt) return;
 
 			if (m_TextureHandlePosition != cached)
 			{
@@ -1640,7 +1643,7 @@ namespace UnityEditor.ProBuilder
 
 			float size = HandleUtility.GetHandleSize(m_HandlePivotWorld);
 
-			if (altClick) return;
+			if (m_CurrentEvent.alt) return;
 
 			Matrix4x4 prev = Handles.matrix;
 			Handles.matrix = handleMatrix;
@@ -1673,7 +1676,7 @@ namespace UnityEditor.ProBuilder
 			Vector3 cached = m_TextureScale;
 			m_TextureScale = Handles.ScaleHandle(m_TextureScale, Vector3.zero, Quaternion.identity, size);
 
-			if (altClick) return;
+			if (m_CurrentEvent.alt) return;
 
 			if (cached != m_TextureScale)
 			{
@@ -2093,9 +2096,10 @@ namespace UnityEditor.ProBuilder
 		}
 
 		/// <summary>
-		/// Sets the current selection mode @SelectMode to the mode value.
+		/// Sets what mesh attributes are editable in the scene.
 		/// </summary>
-		/// <param name="mode"></param>
+		/// <seealso cref="UnityEngine.ProBuilder.SelectMode"/>
+		/// <param name="mode">The @"UnityEngine.ProBuilder.SelectMode" to engage.</param>
 		public void SetSelectionMode(SelectMode mode)
 		{
 			selectionMode = mode;
@@ -2116,15 +2120,15 @@ namespace UnityEditor.ProBuilder
 		}
 
 		/// <summary>
-		/// Changes the current Editor level - switches between Object, Sub-object, and Texture (hidden).
+		/// Set the @"UnityEngine.ProBuilder.EditLevel".
 		/// </summary>
-		/// <param name="el"></param>
-		public void SetEditLevel(EditLevel el)
+		/// <param name="editMode">The new EditLevel to engage.</param>
+		public void SetEditLevel(EditLevel editMode)
 		{
 			m_PreviousEditLevel = editLevel;
-			editLevel = el;
+			editLevel = editMode;
 
-			switch (el)
+			switch (editMode)
 			{
 				case EditLevel.Top:
 					ClearElementSelection();
@@ -2158,13 +2162,11 @@ namespace UnityEditor.ProBuilder
 			}
 
 
-#if !PROTOTYPE
-			if (m_PreviousEditLevel == EditLevel.Texture && el != EditLevel.Texture)
+			if (m_PreviousEditLevel == EditLevel.Texture && editMode != EditLevel.Texture)
 			{
 				SetSelectionMode(m_PreviousSelectMode);
 				SetHandleAlignment(m_PreviousHandleAlignment);
 			}
-#endif
 
 			if (editLevel != EditLevel.Texture)
 				PreferencesInternal.SetInt(PreferenceKeys.pbDefaultEditLevel, (int) editLevel);
@@ -2174,10 +2176,10 @@ namespace UnityEditor.ProBuilder
 		}
 
 		/// <summary>
-		/// Rebuild the selection caches that help pb_Editor work.
+		/// Rebuild the wireframe selection caches.
 		/// </summary>
-		/// <param name="forceUpdate">Force update if elements have been added or removed, or the indices have been altered.</param>
-		public void UpdateSelection(bool forceUpdate = true)
+		/// <param name="forceUpdate">Force update if mesh attributes have been added or removed, or the face indices have been altered.</param>
+		void UpdateSelection(bool forceUpdate = true)
 		{
 			m_SelectedVertexCount = 0;
 			m_SelectedFaceCount = 0;
@@ -2274,7 +2276,7 @@ namespace UnityEditor.ProBuilder
 				MeshSelection.totalFaceCount,
 				MeshSelection.totalTriangleCountCompiled,
 				MeshSelection.totalCommonVertexCount,
-				MeshSelection.totalVertexCountCompiled,
+				MeshSelection.totalVertexCountOptimized,
 				m_SelectedFaceCount,
 				m_SelectedEdgeCount,
 				m_SelectedVerticesCommon,
@@ -2333,7 +2335,7 @@ namespace UnityEditor.ProBuilder
 			UpdateSceneInfo();
 		}
 
-		public void ClearElementSelection()
+		internal void ClearElementSelection()
 		{
 			foreach (ProBuilderMesh pb in selection)
 				pb.ClearSelection();
@@ -2670,57 +2672,6 @@ namespace UnityEditor.ProBuilder
 			}
 
 			return false;
-		}
-
-		// Handy calls -- currentEvent must be set, so only call in the OnGUI loop!
-		bool altClick
-		{
-			get { return (m_CurrentEvent.alt); }
-		}
-
-		bool leftClick
-		{
-			get { return (m_CurrentEvent.type == EventType.MouseDown); }
-		}
-
-		bool leftClickUp
-		{
-			get { return (m_CurrentEvent.type == EventType.MouseUp); }
-		}
-
-		bool contextClick
-		{
-			get { return (m_CurrentEvent.type == EventType.ContextClick); }
-		}
-
-		bool mouseDrag
-		{
-			get { return (m_CurrentEvent.type == EventType.MouseDrag); }
-		}
-
-		bool ignore
-		{
-			get { return m_CurrentEvent.type == EventType.Ignore; }
-		}
-
-		bool rightClick
-		{
-			get { return (m_CurrentEvent.type == EventType.ContextClick); }
-		}
-
-		bool shiftKey
-		{
-			get { return m_CurrentEvent.shift; }
-		}
-
-		bool ctrlKey
-		{
-			get { return m_CurrentEvent.command || m_CurrentEvent.control; }
-		}
-
-		KeyCode getKeyUp
-		{
-			get { return m_CurrentEvent.type == EventType.KeyUp ? m_CurrentEvent.keyCode : KeyCode.None; }
 		}
 	}
 }

@@ -15,25 +15,24 @@ namespace UnityEngine.ProBuilder
 	}
 
 	/// <summary>
-	/// The ProBuilder edit level.
+	/// Defines what the current tool interacts with in the scene view.
 	/// </summary>'
-	/// <remarks>Editor only, but necessary for pb_ElementGraphics.</remarks>
 	public enum EditLevel
 	{
 		/// <summary>
-		/// Unity tools are in control.
+		/// The transform tools interact with GameObjects.
 		/// </summary>
 		Top = 0,
 		/// <summary>
-		/// Geometry editing (faces, edges, vertices)
+		/// The current tool interacts with mesh geometry (faces, edges, vertices).
 		/// </summary>
 		Geometry = 1,
 		/// <summary>
-		/// UV editing.
+		/// Tools are affecting mesh UVs. This corresponds to UVEditor in-scene editing.
 		/// </summary>
 		Texture = 2,
 		/// <summary>
-		/// Some other ProBuilder tool has control (vertex painter)
+		/// A custom ProBuilder tool mode is engaged.
 		/// </summary>
 		Plugin = 3
 	}

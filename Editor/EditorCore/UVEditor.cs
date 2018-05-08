@@ -587,7 +587,7 @@ namespace UnityEditor.ProBuilder
 			{
 				/// UpdateSelection clears handlePosition
 				Vector2 storedHandlePosition = handlePosition;
-				editor.UpdateSelection();
+				ProBuilderEditor.Refresh();
 				SetHandlePosition(storedHandlePosition, true);
 			}
 
@@ -804,8 +804,7 @@ namespace UnityEditor.ProBuilder
 
 					EditorUtility.ShowNotification("Autostitch");
 
-					if (editor != null)
-						editor.UpdateSelection(false);
+					ProBuilderEditor.Refresh(false);
 
 					Repaint();
 				}
@@ -1209,7 +1208,7 @@ namespace UnityEditor.ProBuilder
 
 			if (editor)
 			{
-				editor.UpdateSelection(false);
+				ProBuilderEditor.Refresh(false);
 				SceneView.RepaintAll();
 			}
 			else
@@ -2447,7 +2446,7 @@ namespace UnityEditor.ProBuilder
 							break;
 					}
 
-					editor.UpdateSelection(false);
+					ProBuilderEditor.Refresh(false);
 					SceneView.RepaintAll();
 				}
 			}
@@ -2804,9 +2803,7 @@ namespace UnityEditor.ProBuilder
 					(!x.manualUV && x.textureGroup > 0 && textureGroups.Contains(x.textureGroup)));
 
 				pb.SetSelectedFaces(faces.Union(matches).ToArray());
-
-				if (editor != null)
-					editor.UpdateSelection(false);
+				ProBuilderEditor.Refresh(false);
 			}
 		}
 
@@ -2856,9 +2853,7 @@ namespace UnityEditor.ProBuilder
 			{
 				Face[] faces = GetFaces(pb, pb.selectedTriangles);
 				pb.SetSelectedFaces(faces);
-
-				if (editor != null)
-					editor.UpdateSelection(false);
+				ProBuilderEditor.Refresh(false);
 			}
 		}
 

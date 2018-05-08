@@ -93,8 +93,7 @@ namespace UnityEditor.ProBuilder
 						ipb.Optimize();
 					}
 
-					if (editor != null)
-						editor.UpdateSelection();
+					ProBuilderEditor.Refresh();
 				}
 			}
 		}

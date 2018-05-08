@@ -367,7 +367,7 @@ namespace UnityEditor.ProBuilder
 
 										if(ProBuilderEditor.instance)
 										{
-											ProBuilderEditor.instance.UpdateSelection();
+											ProBuilderEditor.Refresh();
 											SceneView.RepaintAll();
 										}
 									}
