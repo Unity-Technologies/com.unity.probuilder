@@ -167,23 +167,47 @@ namespace UnityEngine.ProBuilder
 		CounterClockwise
 	};
 
+	/// <summary>
+	/// A flag which sets the triangle culling mode.
+	/// </summary>
 	[System.Flags]
 	public enum CullingMode
 	{
+		/// <summary>
+		/// Both front and back faces are rendered.
+		/// </summary>
 		None = 0 << 0,
+		/// <summary>
+		/// Back faces are culled.
+		/// </summary>
 		Back = 1 << 0,
+		/// <summary>
+		/// Front faces are culled.
+		/// </summary>
 		Front = 1 << 1,
+		/// <summary>
+		/// Both front and back faces are culled.
+		/// </summary>
 		FrontBack = Front | Back,
 	}
 
+	/// <summary>
+	/// Defines the behavior of drag selection in the scene view for mesh elements.
+	/// </summary>
 	public enum RectSelectMode
 	{
+		/// <summary>
+		/// Any mesh element touching the drag rectangle is selected.
+		/// </summary>
 		Partial,
+		/// <summary>
+		/// Mesh elements must be completely enveloped by the drag rect to be selected.
+		/// </summary>
 		Complete
 	}
 
 	/// <summary>
-	/// If pb_Object.Verify() rebuilds the mesh this describes the reasoning.
+	/// Describes why a @"UnityEngine.ProBuilder.ProBuilderMesh" is considered to be out of sync with it's UnityEngine.MeshFilter component.
 	/// </summary>
 	public enum MeshRebuildReason
 	{
@@ -192,15 +216,17 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		Null,
 		/// <summary>
-		/// The UnityEngine mesh id did not match the stored pb_Object id.
+		/// The UnityEngine mesh id did not match the stored id.
 		/// </summary>
+		/// <remarks>This is only used in editor.</remarks>
 		InstanceIDMismatch,
 		/// <summary>
 		/// The mesh was not rebuilt, but is missing the UV2 channel.
 		/// </summary>
+		/// <remarks>This is only used in editor.</remarks>
 		Lightmap,
 		/// <summary>
-		/// The mesh was not rebuilt.
+		/// The mesh is in sync.
 		/// </summary>
 		None
 	}
@@ -209,7 +235,7 @@ namespace UnityEngine.ProBuilder
     /// Mesh attributes bitmask.
     /// </summary>
     [System.Flags]
-    public enum Attributes
+    public enum MeshAttributes
     {
         /// <summary>
         /// Vertex positions.

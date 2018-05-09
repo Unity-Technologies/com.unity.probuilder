@@ -112,12 +112,6 @@ namespace UnityEngine.ProBuilder
 					UnwrappingUtility.PlanarMap2(world, uvs, indices, kvp.Value[0].uv, pb.transform.TransformDirection(nrm));
 				else
 					UnwrappingUtility.PlanarMap2(pb.positionsInternal, uvs, indices, kvp.Value[0].uv, nrm);
-
-				// Apply UVs to array, and update the localPivot and localSize caches.
-				Vector2 pivot = kvp.Value[0].uv.localPivot;
-
-				foreach (Face f in kvp.Value)
-					f.uv.localPivot = pivot;
 			}
 
 			return uvs;

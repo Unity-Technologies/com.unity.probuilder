@@ -1,27 +1,58 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using JetBrains.Rider.Unity.Editor.NonUnity;
+using UnityEngine.Serialization;
 
 namespace UnityEngine.ProBuilder
 {
+	/// <inheritdoc cref="UnityEngine.ScriptableObject"/>
+	/// <inheritdoc cref="IHasDefault"/>
 	/// <summary>
 	/// A set of colors for use in the color palette editor.
 	/// </summary>
-	[System.Serializable]
+	[Serializable]
 	public sealed class ColorPalette : ScriptableObject, IHasDefault
 	{
-		/// <summary>
+		/// <value>
 		/// The currently selected color.
-		/// </summary>
+		/// </value>
 		public Color current { get; set; }
 
-		/// <summary>
-		/// All colors in this palette.
-		/// </summary>
-		public List<Color> colors { get; private set; }
+		[FormerlySerializedAs("colors")]
+		[SerializeField]
+		List<Color> m_Colors;
 
+		/// <value>
+		/// The colors present in this palette.
+		/// </value>
+		public ReadOnlyCollection<Color> colors
+		{
+			get { return new ReadOnlyCollection<Color>(m_Colors); }
+		}
+
+		/// <summary>
+		/// Set the colors in this palette.
+		/// </summary>
+		/// <param name="colors"></param>
+		/// <exception cref="ArgumentNullException">Thrown when the colors argument is null.</exception>
+		public void SetColors(IEnumerable<Color> colors)
+		{
+			if(colors == null)
+				throw new ArgumentNullException("colors");
+
+			m_Colors = colors.ToList();
+		}
+
+		/// <inheritdoc />
+		/// <summary>
+		/// Reset the colors property to a collection of default values.
+		/// </summary>
 		public void SetDefaultValues()
 		{
-			colors = new List<Color>()
+			m_Colors = new List<Color>()
 			{
 				new Color(0.000f, 0.122f, 0.247f, 1f),
 				new Color(0.000f, 0.455f, 0.851f, 1f),
@@ -43,39 +74,23 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Copy this color palettes values to a new color palette.
+		/// Access the colors in this palette by index.
 		/// </summary>
-		/// <param name="target"></param>
-		public void CopyTo(ColorPalette target)
-		{
-            if(target != null)
-    			target.colors = new List<Color>(colors);
-		}
-
-		public static implicit operator List<Color>(ColorPalette palette)
-		{
-			return palette != null ? palette.colors : null;
-		}
-
-        public List<Color> ToList()
-        {
-            return new List<Color>(colors);
-        }
-
-        public void FromList(List<Color> colors)
-        {
-            colors = new List<Color>(colors);
-        }
-
+		/// <seealso cref="Count"/>
+		/// <param name="i">The index to access.</param>
+		/// <returns>The color at index i.</returns>
 		public Color this[int i]
 		{
-			get { return colors[i]; }
-			set { colors[i] = value; }
+			get { return m_Colors[i]; }
+			set { m_Colors[i] = value; }
 		}
 
+		/// <value>
+		/// Return the number of colors in this palette.
+		/// </value>
 		public int Count
 		{
-			get { return colors.Count; }
+			get { return m_Colors.Count; }
 		}
 	}
 }

@@ -3,108 +3,124 @@ using UnityEngine;
 namespace UnityEngine.ProBuilder
 {
 	/// <summary>
-	/// Container for UV mapping parameters per face.
+	/// A collection of settings describing how to project UV coordinates for a @"UnityEngine.ProBuilder.Face".
 	/// </summary>
 	[System.Serializable]
 	public sealed class AutoUnwrapSettings
 	{
-		// Defines the anchor point of UV calculations.
-		[System.Obsolete("See pb_UV.Anchor")]
-		public enum Justify
-		{
-			Right,
-			Left,
-			Top,
-			Center,
-			Bottom,
-			None
-		}
-
 		/// <summary>
 		/// The point from which UV transform operations will be performed.
+		/// <br />
+		/// After the initial projection into 2d space, UVs will be translated to the anchor position. Next, the offset and rotation are applied, followed by the various other settings.
 		/// </summary>
 		public enum Anchor
 		{
+			/// <summary>
+			/// The top left bound of the projected UVs is aligned with UV coordinate {0, 1}.
+			/// </summary>
 			UpperLeft,
+			/// <summary>
+			/// The center top bound of the projected UVs is aligned with UV coordinate {.5, 1}.
+			/// </summary>
 			UpperCenter,
+			/// <summary>
+			/// The right top bound of the projected UVs is aligned with UV coordinate {1, 1}.
+			/// </summary>
 			UpperRight,
+			/// <summary>
+			/// The middle left bound of the projected UVs is aligned with UV coordinate {0, .5}.
+			/// </summary>
 			MiddleLeft,
+			/// <summary>
+			/// The center bounding point of the projected UVs is aligned with UV coordinate {.5, .5}.
+			/// </summary>
 			MiddleCenter,
+			/// <summary>
+			/// The middle right bound of the projected UVs is aligned with UV coordinate {1, .5}.
+			/// </summary>
 			MiddleRight,
+			/// <summary>
+			/// The lower left bound of the projected UVs is aligned with UV coordinate {0, 0}.
+			/// </summary>
 			LowerLeft,
+			/// <summary>
+			/// The lower center bound of the projected UVs is aligned with UV coordinate {.5, 0}.
+			/// </summary>
 			LowerCenter,
+			/// <summary>
+			/// The lower right bound of the projected UVs is aligned with UV coordinate {1, 0}.
+			/// </summary>
 			LowerRight,
+			/// <summary>
+			/// UVs are not aligned following projection.
+			/// </summary>
 			None
 		}
 
 		/// <summary>
-		/// Fill mode.
+		/// Describes how the projected UV bounds are optionally stretched to fill normalized coordinate space.
 		/// </summary>
 		public enum Fill
 		{
+			/// <summary>
+			/// UV bounds are resized to fit within a 1 unit square while retaining original aspect ratio.
+			/// </summary>
 			Fit,
+			/// <summary>
+			/// UV bounds are not resized.
+			/// </summary>
 			Tile,
+			/// <summary>
+			/// UV bounds are resized to fit within a 1 unit square, not retaining aspect ratio.
+			/// </summary>
 			Stretch
 		}
 
+		/// <summary>
+		/// By default, UVs are project in local (or model) coordinates. Enable useWorldSpace to transform vertex positions into world space for UV projection.
+		/// </summary>
 		public bool useWorldSpace { get; set; }
 
 		/// <summary>
-		/// If true, UV coordinates are calculated using world points instead of local.
+		/// When enabled UV coordinates will be inverted horizontally.
 		/// </summary>
 		public bool flipU { get; set; }
 
 		/// <summary>
-		/// If true, the U value will be inverted.
+		/// When enabled UV coordinates will be inverted vertically.
 		/// </summary>
 		public bool flipV { get; set; }
 
 		/// <summary>
-		/// If true, the V value will be inverted.
+		/// When enabled the coordinates will have their U and V parameters exchanged.
 		/// </summary>
+		/// <example>
+		/// {U, V} becomes {V, U}
+		/// </example>
 		public bool swapUV { get; set; }
 
 		/// <summary>
-		/// If true, U and V values will switched.
+		/// The @"UnityEngine.ProBuilder.AutoUnwrapSettings.Fill" mode.
 		/// </summary>
 		public Fill fill { get; set; }
 
 		/// <summary>
-		/// Which Fill mode to use.
+		/// Coordinates are multiplied by this value after projection and anchor settings.
 		/// </summary>
 		public Vector2 scale { get; set; }
 
 		/// <summary>
-		/// The scale to be applied to U and V coordinates.
+		/// Added to UV coordinates after projection and anchor settings.
 		/// </summary>
 		public Vector2 offset { get; set; }
 
 		/// <summary>
-		/// The offset to be applied to the UV coordinates.
+		/// An amount in degrees that UV coordinates are to be rotated clockwise.
 		/// </summary>
 		public float rotation { get; set; }
 
 		/// <summary>
-		/// Rotates UV coordinates.
-		/// </summary>
-		#pragma warning disable 0618
-		[System.Obsolete("Please use pb_UV.anchor.")]
-		public Justify justify { get; set; }
-		#pragma warning restore 0618
-
-		/// <summary>
-		/// Aligns UVs to the edges or center.
-		/// </summary>
-		public Vector2 localPivot { get; set; }
-
-		/// <summary>
-		/// The center point of the mapped UVs prior to offset application.
-		/// </summary>
-		[System.Obsolete("localPivot and localSize are no longer stored.")]
-		public Vector2 localSize { get; set; }
-
-		/// <summary>
-		/// The size of the mapped UVs prior to modifications.
+		/// The starting point from which UV transform operations will be performed.
 		/// </summary>
 		public Anchor anchor { get; set; }
 
@@ -113,24 +129,28 @@ namespace UnityEngine.ProBuilder
 			Reset();
 		}
 
-		public AutoUnwrapSettings(AutoUnwrapSettings uvs)
+		/// <summary>
+		/// A copy constructor.
+		/// </summary>
+		/// <param name="unwrapSettings">The settings to copy to this new instance.</param>
+		public AutoUnwrapSettings(AutoUnwrapSettings unwrapSettings)
 		{
-            if (uvs == null)
+            if (unwrapSettings == null)
                 return;
 
-			useWorldSpace = uvs.useWorldSpace;
-			flipU = uvs.flipU;
-			flipV = uvs.flipV;
-			swapUV = uvs.swapUV;
-			fill = uvs.fill;
-			scale = uvs.scale;
-			offset = uvs.offset;
-			rotation = uvs.rotation;
-			anchor = uvs.anchor;
+			useWorldSpace = unwrapSettings.useWorldSpace;
+			flipU = unwrapSettings.flipU;
+			flipV = unwrapSettings.flipV;
+			swapUV = unwrapSettings.swapUV;
+			fill = unwrapSettings.fill;
+			scale = unwrapSettings.scale;
+			offset = unwrapSettings.offset;
+			rotation = unwrapSettings.rotation;
+			anchor = unwrapSettings.anchor;
 		}
 
 		/// <summary>
-		/// Reset all UV parameters to default values.
+		/// Resets all parameters to default values.
 		/// </summary>
 		public void Reset()
 		{
@@ -156,8 +176,7 @@ namespace UnityEngine.ProBuilder
 				"Anchor: " + anchor + "\n" +
 				"Scale: " + scale + "\n" +
 				"Offset: " + offset + "\n" +
-				"Rotation: " + rotation + "\n" +
-				"Pivot: " + localPivot + "\n";
+				"Rotation: " + rotation;
 			return str;
 		}
 	}

@@ -7,9 +7,21 @@ namespace UnityEngine.ProBuilder
 	/// </summary>
 	public enum Status
 	{
+		/// <summary>
+		/// The action was a success.
+		/// </summary>
 		Success,
+		/// <summary>
+		/// A critical failure prevented the action from running.
+		/// </summary>
 		Failure,
+		/// <summary>
+		/// The action was not completed due to invalid parameters.
+		/// </summary>
 		Canceled,
+		/// <summary>
+		/// The action was not run because there was no meaningful action to be made.
+		/// </summary>
 		NoChange
 	}
 
@@ -31,8 +43,8 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Create a new ActionResult.
 		/// </summary>
-		/// <param name="status"></param>
-		/// <param name="notification"></param>
+		/// <param name="status">State of affairs after an action.</param>
+		/// <param name="notification">A short summary of the action performed.</param>
 		public ActionResult(Status status, string notification)
 		{
 			this.status = status;
@@ -59,23 +71,28 @@ namespace UnityEngine.ProBuilder
             return success ? ActionResult.Success : new ActionResult(Status.Failure, "Failure");
         }
 
-        /// <summary>
-        /// Generic "Success" action result with no notification text.
-        /// </summary>
-        public static ActionResult Success { get { return new ActionResult(Status.Success, ""); } }
+		/// <summary>
+		/// Generic "Success" action result with no notification text.
+		/// </summary>
+		public static ActionResult Success
+		{
+			get { return new ActionResult(Status.Success, ""); }
+		}
 
 		/// <summary>
 		/// Generic "No Selection" action result with "Nothing Selected" notification.
 		/// </summary>
-		public static ActionResult NoSelection { get {
-			return new ActionResult(Status.Canceled, "Nothing Selected");
-		} }
+		public static ActionResult NoSelection
+		{
+			get { return new ActionResult(Status.Canceled, "Nothing Selected"); }
+		}
 
 		/// <summary>
 		/// Generic "Canceled" action result with "User Canceled" notification.
 		/// </summary>
-		public static ActionResult UserCanceled { get {
-			return new ActionResult(Status.Canceled, "User Canceled");
-		} }
+		public static ActionResult UserCanceled
+		{
+			get { return new ActionResult(Status.Canceled, "User Canceled"); }
+		}
 	}
 }

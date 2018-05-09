@@ -10,19 +10,26 @@ namespace UnityEngine.ProBuilder
 	[System.Serializable]
 	public struct Edge : System.IEquatable<Edge>
 	{
+		/// <value>
+		/// An index corresponding to a mesh vertex array.
+		/// </value>
 		public int x;
+
+		/// <value>
+		/// An index corresponding to a mesh vertex array.
+		/// </value>
 		public int y;
 
-		/// <summary>
+		/// <value>
 		/// An empty edge is defined as -1, -1.
-		/// </summary>
+		/// </value>
 		public static readonly Edge Empty = new Edge(-1, -1);
 
 		/// <summary>
 		/// Create a new edge from two vertex indices.
 		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
+		/// <param name="x">An index corresponding to a mesh vertex array.</param>
+		/// <param name="y">An index corresponding to a mesh vertex array.</param>
 		public Edge(int x, int y)
 		{
 			this.x = x;
@@ -97,11 +104,29 @@ namespace UnityEngine.ProBuilder
 			return !(a == b);
 		}
 
+		/// <summary>
+		/// Add two edges index values.
+		/// </summary>
+		/// <example>
+		/// {0, 1} + {4, 5} = {5, 6}
+		/// </example>
+		/// <param name="a">Left edge parameter.</param>
+		/// <param name="b">Right edge parameter.</param>
+		/// <returns>The sum of a + b.</returns>
         public static Edge Add(Edge a, Edge b)
         {
             return a + b;
         }
 
+		/// <summary>
+		/// Subtract edge b from a.
+		/// </summary>
+		/// <example>
+		/// Subtract( {7, 10}, {4, 5} ) = {3, 5}
+		/// </example>
+		/// <param name="a">The edge to subtract from.</param>
+		/// <param name="b">The value to subtract.</param>
+		/// <returns>The sum of a - b.</returns>
         public static Edge Subtract(Edge a, Edge b)
         {
             return a - b;
@@ -151,13 +176,6 @@ namespace UnityEngine.ProBuilder
 			return (x == b.x || y == b.x || x == b.y || y == b.x);
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Generally you should be using the Dictionary overload of this function instead.</remarks>
-		/// <param name="a"></param>
-		/// <param name="sharedIndices"></param>
-		/// <returns></returns>
 		internal bool Contains(int a, IntArray[] sharedIndices)
 		{
 			// @todo optimize

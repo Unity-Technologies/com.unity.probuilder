@@ -7,6 +7,9 @@ using System.Reflection;
 
 namespace UnityEngine.ProBuilder
 {
+	/// <summary>
+	/// Access the built-in materials that ProBuilder uses.
+	/// </summary>
 	public static class BuiltinMaterials
 	{
 		static Shader s_SelectionPickerShader;
@@ -32,7 +35,10 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Default ProBuilder material.
+		/// The default ProBuilder material.
+		/// <br />
+		/// <br />
+		/// When using the Scriptable Render Pipeline this returns the default material for that pipeline.
 		/// </summary>
 		public static Material DefaultMaterial
 		{

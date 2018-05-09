@@ -505,7 +505,7 @@ namespace UnityEngine.ProBuilder
 			out List<Vector4> uv3,
 			out List<Vector4> uv4)
 		{
-			GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4, Attributes.All);
+			GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4, MeshAttributes.All);
 		}
 
 		/// <summary>
@@ -534,7 +534,7 @@ namespace UnityEngine.ProBuilder
 			out Vector2[] uv2,
 			out List<Vector4> uv3,
 			out List<Vector4> uv4,
-			Attributes attributes)
+			MeshAttributes attributes)
 		{
 			if (vertices == null)
 				throw new ArgumentNullException("vertices");
@@ -542,14 +542,14 @@ namespace UnityEngine.ProBuilder
 			int vc = vertices.Count;
 			var first = vertices[0];
 
-			bool hasPosition = ((attributes & Attributes.Position) == Attributes.Position) && first.hasPosition;
-			bool hasColor = ((attributes & Attributes.Color) == Attributes.Color) && first.hasColor;
-			bool hasUv0 = ((attributes & Attributes.UV0) == Attributes.UV0) && first.hasUv0;
-			bool hasNormal = ((attributes & Attributes.Normal) == Attributes.Normal) && first.hasNormal;
-			bool hasTangent = ((attributes & Attributes.Tangent) == Attributes.Tangent) && first.hasTangent;
-			bool hasUv2 = ((attributes & Attributes.UV1) == Attributes.UV1) && first.hasUv2;
-			bool hasUv3 = ((attributes & Attributes.UV2) == Attributes.UV2) && first.hasUv3;
-			bool hasUv4 = ((attributes & Attributes.UV3) == Attributes.UV3) && first.hasUv4;
+			bool hasPosition = ((attributes & MeshAttributes.Position) == MeshAttributes.Position) && first.hasPosition;
+			bool hasColor = ((attributes & MeshAttributes.Color) == MeshAttributes.Color) && first.hasColor;
+			bool hasUv0 = ((attributes & MeshAttributes.UV0) == MeshAttributes.UV0) && first.hasUv0;
+			bool hasNormal = ((attributes & MeshAttributes.Normal) == MeshAttributes.Normal) && first.hasNormal;
+			bool hasTangent = ((attributes & MeshAttributes.Tangent) == MeshAttributes.Tangent) && first.hasTangent;
+			bool hasUv2 = ((attributes & MeshAttributes.UV1) == MeshAttributes.UV1) && first.hasUv2;
+			bool hasUv3 = ((attributes & MeshAttributes.UV2) == MeshAttributes.UV2) && first.hasUv3;
+			bool hasUv4 = ((attributes & MeshAttributes.UV3) == MeshAttributes.UV3) && first.hasUv4;
 
 			position = hasPosition ? new Vector3[vc] : null;
 			color = hasColor ? new Color[vc] : null;

@@ -77,9 +77,6 @@ namespace UnityEngine.ProBuilder
 				}
 			}
 
-
-			uvSettings.localPivot = Bounds2D.Center(uvs, indices);
-
 			for(int i = 0; i < indices.Length; i++)
 			{
 				uvs[indices[i]].x -= uvSettings.offset.x;
@@ -138,37 +135,7 @@ namespace UnityEngine.ProBuilder
 			return uvs;
 		}
 
-		[System.Obsolete("See ApplyAnchor().")]
-		private static Vector2[] JustifyUVs(Vector2[] uvs, AutoUnwrapSettings.Justify j)
-		{
-			Vector2 amt = new Vector2(0f, 0f);
-
-			switch(j)
-			{
-				case AutoUnwrapSettings.Justify.Left:
-					amt = new Vector2(Math.SmallestVector2(uvs).x, 0f);
-					break;
-				case AutoUnwrapSettings.Justify.Right:
-					amt = new Vector2(Math.LargestVector2(uvs).x - 1f, 0f);
-					break;
-				case AutoUnwrapSettings.Justify.Top:
-					amt = new Vector2(0f, Math.LargestVector2(uvs).y - 1f);
-					break;
-				case AutoUnwrapSettings.Justify.Bottom:
-					amt = new Vector2(0f, Math.SmallestVector2(uvs).y);
-					break;
-				case AutoUnwrapSettings.Justify.Center:
-					amt = Math.Average(uvs) - (new Vector2(.5f, .5f));
-					break;
-			}
-
-			for(int i = 0; i < uvs.Length; i++)
-				uvs[i] -= amt;
-
-			return uvs;
-		}
-
-		private static void ApplyUVAnchor(Vector2[] uvs, int[] indices, AutoUnwrapSettings.Anchor anchor)
+		static void ApplyUVAnchor(Vector2[] uvs, int[] indices, AutoUnwrapSettings.Anchor anchor)
 		{
 			s_TempVector2.x = 0f;
 			s_TempVector2.y = 0f;

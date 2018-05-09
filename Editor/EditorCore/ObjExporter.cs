@@ -144,8 +144,8 @@ namespace UnityEditor.ProBuilder
 				List<Vector4> uv3;
 				List<Vector4> uv4;
 
-				Attributes attribs = Attributes.Position | Attributes.Normal | Attributes.UV0;
-				if(options.vertexColors) attribs = attribs | Attributes.Color;
+				MeshAttributes attribs = MeshAttributes.Position | MeshAttributes.Normal | MeshAttributes.UV0;
+				if(options.vertexColors) attribs = attribs | MeshAttributes.Color;
 				Vertex.GetArrays(model.vertices, out positions, out colors, out textures0, out normals, out tangent, out uv2, out uv3, out uv4, attribs);
 
 				// Can skip this entirely if handedness matches Unity & not applying transforms.

@@ -266,28 +266,6 @@ namespace UnityEditor.ProBuilder
 				onObjectCreated(pb);
 		}
 
-		[System.Obsolete("pb_Entity is deprecated, please use InitObject(pb_Object)")]
-		internal static void InitObject(ProBuilderMesh pb, ColliderType colliderType, EntityType entityType)
-		{
-			switch(colliderType)
-			{
-				case ColliderType.BoxCollider:
-					pb.gameObject.AddComponent<BoxCollider>();
-				break;
-
-				case ColliderType.MeshCollider:
-					pb.gameObject.AddComponent<MeshCollider>().convex = PreferencesInternal.HasKey(PreferenceKeys.pbForceConvex) ? PreferencesInternal.GetBool(PreferenceKeys.pbForceConvex) : false;
-					break;
-			}
-
-			ShadowCastingMode scm = PreferencesInternal.GetEnum<ShadowCastingMode>(PreferenceKeys.pbShadowCastingMode);
-			pb.GetComponent<MeshRenderer>().shadowCastingMode = scm;
-
-			EntityUtility.SetEntityType(entityType, pb.gameObject);
-			ScreenCenter( pb.gameObject );
-			pb.Optimize();
-		}
-
 		/**
 		 * Puts the selected gameObject at the pivot point of the SceneView camera.
 		 */
