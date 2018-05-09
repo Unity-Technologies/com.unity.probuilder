@@ -7,8 +7,19 @@ namespace UnityEngine.ProBuilder
 	/// </summary>
 	public struct Normals : IEquatable<Normals>
 	{
+		/// <value>
+		/// A unit normal.
+		/// </value>
 		public Vector3 normal { get; set; }
+
+		/// <value>
+		/// A unit tangent.
+		/// </value>
 		public Vector4 tangent { get; set; }
+
+		/// <value>
+		/// A unit bitangent (sometimes called binormal).
+		/// </value>
 		public Vector3 bitangent { get; set; }
 
         public override bool Equals(object obj)
@@ -20,9 +31,9 @@ namespace UnityEngine.ProBuilder
 		{
 			unchecked
 			{
-				int hashCode = normal.GetHashCode();
-				hashCode = (hashCode * 397) ^ tangent.GetHashCode();
-				hashCode = (hashCode * 397) ^ bitangent.GetHashCode();
+				int hashCode = VectorHash.GetHashCode(normal);
+				hashCode = (hashCode * 397) ^ VectorHash.GetHashCode(tangent);
+				hashCode = (hashCode * 397) ^ VectorHash.GetHashCode(bitangent);
 				return hashCode;
 			}
 		}

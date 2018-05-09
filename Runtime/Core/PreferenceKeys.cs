@@ -6,7 +6,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// A collection of constant values the ProBuilder uses regularly.
 	/// </summary>
-	public static class PreferenceKeys
+	static class PreferenceKeys
 	{
 		/// <summary>
 		/// The product name ("ProBuilder" or "ProBuilder Basic" depending on assembly definition).

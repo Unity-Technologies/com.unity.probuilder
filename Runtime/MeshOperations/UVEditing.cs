@@ -133,7 +133,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="indices"></param>
 		/// <returns></returns>
-		public static bool SplitUVs(this ProBuilderMesh pb, int[] indices)
+		public static bool SplitUVs(this ProBuilderMesh pb, IEnumerable<int> indices)
 		{
 			IntArray[] sharedIndices = pb.sharedIndicesUVInternal;
 
@@ -500,7 +500,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			{
 				faces = System.Array.FindAll(faces, x => x.manualUV).ToArray();	// only operate on faces that were previously manual
 
-				pb.SplitUVs( Face.AllTriangles(faces) );
+				pb.SplitUVs( faces.SelectMany(x => x.ToTriangles()) );
 
 				Vector2[][] uv_origins = new Vector2[faces.Length][];
 				for(int i = 0; i < faces.Length; i++)

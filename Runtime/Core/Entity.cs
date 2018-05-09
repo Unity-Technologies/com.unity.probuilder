@@ -6,10 +6,9 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// Provides some additional functionality to GameObjects, like managing visiblity and colliders.
 	/// </summary>
-	/// <remarks>For backwards compatibility reasons this class remains outside of the ProBuilder2.Common namespace.</remarks>
 	[DisallowMultipleComponent]
 	[AddComponentMenu("")]
-	public sealed class Entity : MonoBehaviour
+	sealed class Entity : MonoBehaviour
 	{
 		public EntityType entityType { get { return m_EntityType; } }
 

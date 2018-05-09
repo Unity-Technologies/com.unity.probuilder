@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
 {
@@ -8,7 +9,7 @@ namespace UnityEngine.ProBuilder
 		/// Add offset to each value in the indices array.
 		/// </summary>
 		/// <param name="face">Target face to apply the offset to.</param>
-		/// <param name="offset"></param>
+		/// <param name="offset">The value to add to each index.</param>
 		public static void ShiftIndexes(this Face face, int offset)
 		{
             if (face == null)
@@ -21,15 +22,15 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Returns the smallest value in the indices array.
+		/// Find the smallest value in the triangles array.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>The smallest value in the indices array.</returns>
 		static int SmallestIndexValue(this Face face)
 		{
 			int[] indices = face.indices;
 			int smallest = indices[0];
 
-			for (int i = 0; i < indices.Length; i++)
+			for (int i = 1; i < indices.Length; i++)
 			{
 				if (indices[i] < smallest)
 					smallest = indices[i];
@@ -39,11 +40,15 @@ namespace UnityEngine.ProBuilder
 		}
 
         /// <summary>
-        /// Shifts all triangles to be zero indexed.
-        /// Ex:
-        /// new pb_Face(3,4,5).ShiftIndexesToZero();
-        /// Sets the pb_Face index array to 0,1,2
+        /// Finds the smallest value in the indices array, then offsets by subtracting that value from each index.
         /// </summary>
+        /// <example>
+        /// ```
+        /// // sets the indices array to `{0, 1, 2}`.
+        /// new pb_Face(3,4,5).ShiftIndexesToZero();
+        /// ```
+        /// </example>
+        /// <param name="face">The face that will have it's triangle array offset.</param>
         public static void ShiftIndexesToZero(this Face face)
 		{
             if (face == null)

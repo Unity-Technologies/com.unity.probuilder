@@ -487,7 +487,7 @@ namespace UnityEditor.ProBuilder
 
 						Color[] colors = pb.mesh.colors;
 
-						int[][] sharedIndices = pb.sharedIndicesInternal.ToArray();
+						var sharedIndices = pb.sharedIndicesInternal;
 
 						// wrapped in try/catch because a script reload can cause the mesh
 						// to re-unwrap itself in some crazy configuration, throwing off the
@@ -500,7 +500,7 @@ namespace UnityEditor.ProBuilder
 
 								if (dist < brushSize)
 								{
-									for (int n = 0; n < sharedIndices[i].Length; n++)
+									for (int n = 0; n < sharedIndices[i].length; n++)
 									{
 										colors[sharedIndices[i][n]] = Lerp(hovering[pb][sharedIndices[i][n]], color,
 											(1f - (dist / brushSize)) * brushOpacity, colorMask);

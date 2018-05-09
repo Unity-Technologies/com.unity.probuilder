@@ -10,6 +10,9 @@ namespace UnityEngine.ProBuilder
 	/// <inheritdoc />
 	/// <summary>
 	/// Defines associations between vertex indices that are coincident.
+	/// <br />
+	/// <br />
+	/// Coincident vertices are vertices that despite sharing the same coordinate position, are separate entries in the vertex array.
 	/// </summary>
 	[Serializable]
 	public sealed class IntArray : IEnumerable<int>
@@ -30,9 +33,9 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Create a new pb_IntArray from an array.
+		/// Create a new IntArray from an int array.
 		/// </summary>
-		/// <param name="intArray"></param>
+		/// <param name="intArray">The array to copy.</param>
 		public IntArray(int[] intArray)
 		{
             if (intArray == null)
@@ -45,7 +48,7 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Copy constructor.
 		/// </summary>
-		/// <param name="intArray"></param>
+		/// <param name="intArray">The array to copy.</param>
 		public IntArray(IntArray intArray)
 		{
             if (intArray == null)
@@ -55,18 +58,18 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Indexer.
+		/// Index accessor.
 		/// </summary>
-		/// <param name="i"></param>
+		/// <param name="i">The index to access.</param>
 		public int this[int i]
 		{
 			get { return array[i]; }
 			set { array[i] = value; }
 		}
 
-		/// <summary>
-		/// Returns the number of indices contained in this array.
-		/// </summary>
+		/// <value>
+		/// Returns the number of values contained in this array.
+		/// </value>
 		public int length
 		{
 			get { return array.Length; }
@@ -83,13 +86,13 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Implicit conversion from int[] to pb_IntArray.
+		/// Explicit conversion from int[] to pb_IntArray.
 		/// </summary>
-		/// <param name="arr"></param>
-		/// <returns></returns>
-		public static explicit operator IntArray(int[] arr)
+		/// <param name="array"></param>
+		/// <returns>A new IntArray copy off array.</returns>
+		public static explicit operator IntArray(int[] array)
 		{
-			return new IntArray(arr);
+			return new IntArray(array);
 		}
 
 		public IEnumerator<int> GetEnumerator()
@@ -97,20 +100,20 @@ namespace UnityEngine.ProBuilder
 			return (IEnumerator<int>) array.GetEnumerator();
 		}
 
-		public override string ToString()
-		{
-			return array.ToString(",");
-		}
-
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();
 		}
 
+		public override string ToString()
+		{
+			return array.ToString(",");
+		}
+
 		/// <summary>
-		/// Test if this array is null or contains no indices.
+		/// Test if this array is null or empty.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>True if the array is null or empty, false otherwise.</returns>
 		public bool IsEmpty()
 		{
 			return (array == null || array.Length < 1);
@@ -119,7 +122,8 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Remove any arrays that are null or empty.
 		/// </summary>
-		/// <param name="array"></param>
+		/// <param name="array">The IntArray[] to scan for null or empty entries.</param>
+		/// <returns>A new IntArray[] with no null or empty entries</returns>
 		public static IntArray[] RemoveEmptyOrNull(IntArray[] array)
 		{
             if (array == null)

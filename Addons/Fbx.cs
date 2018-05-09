@@ -13,7 +13,7 @@ using ProBuilder.EditorCore;
 using ProBuilder.MeshOperations;
 #endif
 
-namespace ProBuilder.Addons.FBX
+namespace UnityEngine.ProBuilder.Addons.FBX
 {
 	/// <summary>
 	/// ProBuilder-specific options when exporting FBX files with the Unity FBX Exporter.

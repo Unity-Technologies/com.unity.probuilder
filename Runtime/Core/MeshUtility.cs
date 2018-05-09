@@ -12,10 +12,10 @@ namespace UnityEngine.ProBuilder
 	public static class MeshUtility
 	{
 		/// <summary>
-		/// Set a mesh to use individual triangle topology.
+		/// Create an array of @"UnityEngine.ProBuilder.Vertex" values that are ordered as individual triangles.
 		/// </summary>
 		/// <param name="mesh">The mesh to extract vertices from.</param>
-		/// <returns>A pb_Vertex array of the per-triangle vertices.</returns>
+		/// <returns>A @"UnityEngine.ProBuilder.Vertex" array of the per-triangle vertices.</returns>
 		public static Vertex[] GeneratePerTriangleMesh(Mesh mesh)
 		{
             if (mesh == null)
@@ -50,9 +50,9 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Generate tangents for the mesh.
+		/// Generate tangents and apply them.
 		/// </summary>
-		/// <param name="mesh"></param>
+		/// <param name="mesh">The UnityEngine.Mesh mesh target.</param>
 		public static void GenerateTangent(Mesh mesh)
 		{
             if (mesh == null)
@@ -133,10 +133,11 @@ namespace UnityEngine.ProBuilder
 		}
 
         /// <summary>
-        /// Calculate mesh normals.
+        /// Calculate mesh normals without taking into account smoothing groups.
         /// </summary>
-        /// <param name="mesh"></param>
+        /// <param name="mesh">The target mesh.</param>
         /// <returns>A new array of the vertex normals.</returns>
+        /// <seealso cref="CalculateNormals"/>
         public static Vector3[] CalculateHardNormals(ProBuilderMesh mesh)
 		{
             if (mesh == null)
@@ -191,7 +192,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Calculates the normals for a mesh, taking into account smoothing groups.
         /// </summary>
-        /// <param name="mesh"></param>
+        /// <param name="mesh">The target mesh.</param>
         /// <returns>A Vector3 array of the mesh normals</returns>
         public static Vector3[] CalculateNormals(ProBuilderMesh mesh)
 		{
@@ -272,24 +273,24 @@ namespace UnityEngine.ProBuilder
 			return normals;
 		}
 
-		/**
-		 * \brief Performs a deep copy of a mesh and returns a new mesh object.
-		 * @param _mesh The mesh to copy.
-		 * \returns Copied mesh object.
-		 */
-		public static Mesh DeepCopy(Mesh mesh)
+		/// <summary>
+		/// Performs a deep copy of a mesh and returns a new mesh object.
+		/// </summary>
+		/// <param name="source">The source mesh.</param>
+		/// <returns>A new UnityEngine.Mesh object with the same values as source.</returns>
+		public static Mesh DeepCopy(Mesh source)
 		{
 			Mesh m = new Mesh();
-			CopyTo(mesh, m);
+			CopyTo(source, m);
 			return m;
 		}
 
 		/// <summary>
 		/// Copy source mesh values to destination mesh.
 		/// </summary>
-		/// <param name="source"></param>
-		/// <param name="destination"></param>
-		/// <exception cref="ArgumentNullException"></exception>
+		/// <param name="source">The mesh from which to copy attributes.</param>
+		/// <param name="destination">The destination mesh to copy attribute values to.</param>
+		/// <exception cref="ArgumentNullException">Throws if source or destination is null.</exception>
 		public static void CopyTo(Mesh source, Mesh destination)
 		{
             if (source == null)
@@ -334,23 +335,22 @@ namespace UnityEngine.ProBuilder
 			destination.colors32 = c;
 		}
 
-
         /// <summary>
-        /// Get a mesh attribute from either the MeshFilter.sharedMesh or the MeshRenderer.additionalVertexStreams mesh.
+        /// Get a mesh attribute from either the MeshFilter.sharedMesh or the MeshRenderer.additionalVertexStreams mesh. The additional vertex stream mesh has priority.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="go"></param>
-        /// <param name="attributeGetter"></param>
-        /// <returns>If returned array does not match the vertex count NULL is returned.</returns>
-        public static T GetMeshAttribute<T>(GameObject go, System.Func<Mesh, T> attributeGetter) where T : IList
+        /// <typeparam name="T">The type of the attribute to fetch.</typeparam>
+        /// <param name="gameObject">The GameObject with the MeshFilter and (optional) MeshRenderer to search for mesh attributes.</param>
+        /// <param name="attributeGetter">The function used to extract mesh attribute.</param>
+        /// <returns>A List of the mesh attribute values from the Additional Vertex Streams mesh if it exists and contains the attribute, or the MeshFilter.sharedMesh attribute values.</returns>
+        public static T GetMeshAttribute<T>(GameObject gameObject, Func<Mesh, T> attributeGetter) where T : IList
 		{
-            if (go == null)
-                throw new System.ArgumentNullException("go");
+            if (gameObject == null)
+                throw new System.ArgumentNullException("gameObject");
 
             if (attributeGetter == null)
                 throw new System.ArgumentNullException("attributeGetter");
 
-			MeshFilter mf = go.GetComponent<MeshFilter>();
+			MeshFilter mf = gameObject.GetComponent<MeshFilter>();
 			Mesh mesh = mf != null ? mf.sharedMesh : null;
 			T res = default(T);
 
@@ -360,7 +360,7 @@ namespace UnityEngine.ProBuilder
 			int vertexCount = mesh.vertexCount;
 
 #if !UNITY_4_6 && !UNITY_4_7
-			MeshRenderer renderer = go.GetComponent<MeshRenderer>();
+			MeshRenderer renderer = gameObject.GetComponent<MeshRenderer>();
 			Mesh vertexStream = renderer != null ? renderer.additionalVertexStreams : null;
 
 			if(vertexStream != null)
@@ -452,42 +452,203 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Get the number of indices this mesh contains.
 		/// </summary>
-		/// <param name="m"></param>
-		/// <returns></returns>
-		public static uint GetIndexCount(Mesh m)
+		/// <param name="mesh">The source mesh to sum submesh index counts from.</param>
+		/// <returns>The count of all indices contained within this meshes submeshes.</returns>
+		public static uint GetIndexCount(Mesh mesh)
 		{
 			uint sum = 0;
 
-			if (m == null)
+			if (mesh == null)
 				return sum;
 
-			for (int i = 0, c = m.subMeshCount; i < c; i++)
-				sum += m.GetIndexCount(i);
+			for (int i = 0, c = mesh.subMeshCount; i < c; i++)
+				sum += mesh.GetIndexCount(i);
 
 			return sum;
 		}
 
 		/// <summary>
-		/// Get the number of triangles or quads this mesh contains.
+		/// Get the number of triangles or quads this mesh contains. Other mesh topologies are not considered.
 		/// </summary>
-		/// <param name="m"></param>
-		/// <returns></returns>
-		public static uint GetPrimitiveCount(Mesh m)
+		/// <param name="mesh">The source mesh to sum submesh primitive counts from.</param>
+		/// <returns>The count of all triangles or quads contained within this meshes submeshes.</returns>
+		public static uint GetPrimitiveCount(Mesh mesh)
 		{
 			uint sum = 0;
 
-			if (m == null)
+			if (mesh == null)
 				return sum;
 
-			for (int i = 0, c = m.subMeshCount; i < c; i++)
+			for (int i = 0, c = mesh.subMeshCount; i < c; i++)
 			{
-				if(m.GetTopology(i) == MeshTopology.Triangles)
-					sum += m.GetIndexCount(i) / 3;
-				else if(m.GetTopology(i) == MeshTopology.Quads)
-					sum += m.GetIndexCount(i) / 4;
+				if(mesh.GetTopology(i) == MeshTopology.Triangles)
+					sum += mesh.GetIndexCount(i) / 3;
+				else if(mesh.GetTopology(i) == MeshTopology.Quads)
+					sum += mesh.GetIndexCount(i) / 4;
 			}
 
 			return sum;
+		}
+
+		/// <summary>
+        /// Compile a UnityEngine.Mesh from a ProBuilderMesh.
+        /// </summary>
+        /// <param name="probuilderMesh">The mesh source.</param>
+        /// <param name="targetMesh">Destination UnityEngine.Mesh.</param>
+        /// <param name="preferredTopology">If specified, the function will try to create topology matching the reqested format (and falling back on triangles where necessary).</param>
+        /// <returns>The resulting material array from the compiled faces array. This is suitable to assign to the MeshRenderer.sharedMaterials property.</returns>
+        public static Material[] Compile(ProBuilderMesh probuilderMesh, Mesh targetMesh, MeshTopology preferredTopology = MeshTopology.Triangles)
+        {
+            if (probuilderMesh == null)
+                throw new ArgumentNullException("probuilderMesh");
+
+            if (targetMesh == null)
+                throw new ArgumentNullException("targetMesh");
+
+            targetMesh.Clear();
+
+            targetMesh.vertices = probuilderMesh.positionsInternal;
+            targetMesh.uv = probuilderMesh.texturesInternal;
+
+            if (probuilderMesh.hasUv3)
+            {
+                List<Vector4> uvChannel = new List<Vector4>();
+                probuilderMesh.GetUVs(2, uvChannel);
+                targetMesh.SetUVs(2, uvChannel);
+            }
+
+            if (probuilderMesh.hasUv4)
+            {
+                List<Vector4> uvChannel = new List<Vector4>();
+                probuilderMesh.GetUVs(3, uvChannel);
+                targetMesh.SetUVs(3, uvChannel);
+            }
+
+            targetMesh.normals = MeshUtility.CalculateNormals(probuilderMesh);
+
+            MeshUtility.GenerateTangent(targetMesh);
+
+            if (probuilderMesh.colorsInternal != null && probuilderMesh.colorsInternal.Length == targetMesh.vertexCount)
+                targetMesh.colors = probuilderMesh.colorsInternal;
+
+            var submeshes = Face.GetSubmeshes(probuilderMesh.facesInternal, preferredTopology);
+            targetMesh.subMeshCount = submeshes.Length;
+
+            for (int i = 0; i < targetMesh.subMeshCount; i++)
+#if UNITY_5_5_OR_NEWER
+                targetMesh.SetIndices(submeshes[i].m_Indices, submeshes[i].m_Topology, i, false);
+#else
+        		target.SetIndices(submeshes[i].indices, submeshes[i].topology, i);
+#endif
+
+            targetMesh.name = string.Format("pb_Mesh{0}", probuilderMesh.id);
+
+            return submeshes.Select(x => x.m_Material).ToArray();
+        }
+
+        /// <summary>
+        /// Create a new UV channel and return it using each @"UnityEngine.ProBuilder.Face" @"UnityEngine.ProBuilder.AutoUnwrapSettings" property.
+        /// </summary>
+        /// <param name="mesh">The target mesh.</param>
+        /// <returns>A new array of texture coordinates.</returns>
+        internal static Vector2[] GetUVs(ProBuilderMesh mesh)
+		{
+			int n = -2;
+			Dictionary<int, List<Face>> textureGroups = new Dictionary<int, List<Face>>();
+			bool anyWorldSpace = false;
+			List<Face> group;
+
+			foreach (Face f in mesh.facesInternal)
+			{
+				if (f.uv.useWorldSpace)
+					anyWorldSpace = true;
+
+				if (f == null || f.manualUV)
+					continue;
+
+				if (f.textureGroup > 0 && textureGroups.TryGetValue(f.textureGroup, out group))
+					group.Add(f);
+				else
+					textureGroups.Add(f.textureGroup > 0 ? f.textureGroup : n--, new List<Face>() { f });
+			}
+
+			n = 0;
+
+			Vector3[] world = anyWorldSpace ? mesh.VerticesInWorldSpace() : null;
+			Vector2[] uvs = mesh.texturesInternal != null && mesh.texturesInternal.Length == mesh.vertexCount ? mesh.texturesInternal : new Vector2[mesh.vertexCount];
+
+			foreach (KeyValuePair<int, List<Face>> kvp in textureGroups)
+			{
+				Vector3 nrm;
+				int[] indices = kvp.Value.SelectMany(x => x.distinctIndices).ToArray();
+
+				if (kvp.Value.Count > 1)
+					nrm = Projection.FindBestPlane(mesh.positionsInternal, indices).normal;
+				else
+					nrm = Math.Normal(mesh, kvp.Value[0]);
+
+				if (kvp.Value[0].uv.useWorldSpace)
+					UnwrappingUtility.PlanarMap2(world, uvs, indices, kvp.Value[0].uv, mesh.transform.TransformDirection(nrm));
+				else
+					UnwrappingUtility.PlanarMap2(mesh.positionsInternal, uvs, indices, kvp.Value[0].uv, nrm);
+			}
+
+			return uvs;
+		}
+
+		/// <summary>
+		/// Merge coincident vertices where possible, optimizing the vertex count of a UnityEngine.Mesh.
+		/// </summary>
+		/// <param name="mesh">The mesh to optimize.</param>
+		/// <param name="vertices">
+		/// If provided these values are used in place of extracting attributes from the Mesh.
+		/// <br />
+		/// This is a performance optimization for when this array already exists. If not provided this array will be
+		/// automatically generated for you.
+		/// </param>
+		public static void CollapseSharedVertices(Mesh mesh, Vertex[] vertices = null)
+		{
+            if (mesh == null)
+                throw new System.ArgumentNullException("mesh");
+
+			if (vertices == null)
+				vertices = Vertex.GetVertices(mesh);
+
+			int smc = mesh.subMeshCount;
+			List<Dictionary<Vertex, int>> sub_vertices = new List<Dictionary<Vertex, int>>();
+			int[][] tris = new int[smc][];
+			int subIndex = 0;
+
+			for (int i = 0; i < smc; ++i)
+			{
+				tris[i] = mesh.GetTriangles(i);
+				Dictionary<Vertex, int> new_vertices = new Dictionary<Vertex, int>();
+
+				for (int n = 0; n < tris[i].Length; n++)
+				{
+					Vertex v = vertices[tris[i][n]];
+					int index;
+
+					if (new_vertices.TryGetValue(v, out index))
+					{
+						tris[i][n] = index;
+					}
+					else
+					{
+						tris[i][n] = subIndex;
+						new_vertices.Add(v, subIndex);
+						subIndex++;
+					}
+				}
+
+				sub_vertices.Add(new_vertices);
+			}
+
+			Vertex[] collapsed = sub_vertices.SelectMany(x => x.Keys).ToArray();
+			Vertex.SetMesh(mesh, collapsed);
+			mesh.subMeshCount = smc;
+			for (int i = 0; i < smc; i++)
+				mesh.SetTriangles(tris[i], i);
 		}
 	}
 }

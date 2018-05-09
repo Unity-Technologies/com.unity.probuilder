@@ -430,7 +430,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="indexes">The vertex indices to be scanned for inclusion. To weld the entire object for example, pass pb.faces.SelectMany(x => x.indices).</param>
         /// <param name="neighborRadius">The minimum distance from another vertex to be considered within welding distance.</param>
         /// <returns>The indices of any new vertices created by a weld.</returns>
-        public static int[] WeldVertices(this ProBuilderMesh mesh, int[] indexes, float neighborRadius)
+        public static int[] WeldVertices(this ProBuilderMesh mesh, IEnumerable<int> indexes, float neighborRadius)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");

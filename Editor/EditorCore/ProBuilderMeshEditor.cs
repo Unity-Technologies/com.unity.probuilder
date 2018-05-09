@@ -73,7 +73,7 @@ namespace UnityEditor.ProBuilder
 
 			if (pb == null) return;
 
-			if (pb.selectedTriangles.Length > 0)
+			if (pb.selectedIndicesInternal.Length > 0)
 			{
 				GUILayout.Space(5);
 
@@ -87,7 +87,7 @@ namespace UnityEditor.ProBuilder
 
 						ipb.ToMesh();
 
-						ipb.TranslateVerticesInWorldSpace(ipb.selectedTriangles, offset);
+						ipb.TranslateVerticesInWorldSpace(ipb.selectedIndicesInternal, offset);
 
 						ipb.Refresh();
 						ipb.Optimize();
@@ -104,7 +104,7 @@ namespace UnityEditor.ProBuilder
 				pb = (ProBuilderMesh) target;
 
 			return ProBuilderEditor.instance != null &&
-			       InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms).Sum(x => x.selectedTriangles.Length) > 0;
+			       InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms).Sum(x => x.selectedIndicesInternal.Length) > 0;
 		}
 
 		Bounds OnGetFrameBounds()
@@ -114,29 +114,35 @@ namespace UnityEditor.ProBuilder
 			Vector3 min = Vector3.zero, max = Vector3.zero;
 			bool init = false;
 
-			foreach (ProBuilderMesh pbo in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
+			foreach (ProBuilderMesh mesh in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
-				if (pbo.selectedTriangles.Length < 1) continue;
+				int[] tris = mesh.selectedIndicesInternal;
 
-				Vector3[] verts = pbo.VerticesInWorldSpace(pbo.selectedTriangles);
+				if (tris == null || tris.Length < 1)
+					continue;
+
+				Vector3[] verts = mesh.positionsInternal;
+				var trs = mesh.transform;
 
 				if (!init)
 				{
 					init = true;
-					min = verts[0];
-					max = verts[0];
+					min = trs.TransformPoint(verts[tris[0]]);
+					max = trs.TransformPoint(verts[tris[0]]);
 				}
 
-				for (int i = 0; i < verts.Length; i++)
+				for (int i = 0, c = tris.Length; i < c; i++)
 				{
-					min.x = Mathf.Min(verts[i].x, min.x);
-					max.x = Mathf.Max(verts[i].x, max.x);
+					Vector3 p = trs.TransformPoint(verts[tris[i]]);
 
-					min.y = Mathf.Min(verts[i].y, min.y);
-					max.y = Mathf.Max(verts[i].y, max.y);
+					min.x = Mathf.Min(p.x, min.x);
+					max.x = Mathf.Max(p.x, max.x);
 
-					min.z = Mathf.Min(verts[i].z, min.z);
-					max.z = Mathf.Max(verts[i].z, max.z);
+					min.y = Mathf.Min(p.y, min.y);
+					max.y = Mathf.Max(p.y, max.y);
+
+					min.z = Mathf.Min(p.z, min.z);
+					max.z = Mathf.Max(p.z, max.z);
 				}
 			}
 

@@ -7,15 +7,15 @@ using System.Linq;
 namespace UnityEngine.ProBuilder
 {
 	/// <summary>
-	/// General functions for modifying pb_Object.
+	/// A set of commonly used functions for modifying mesh positions.
 	/// </summary>
-	public static class ObjectUtility
+	public static class MeshPositions
 	{
 		/// <summary>
 		/// Get a copy of a mesh positions array transformed into world coordinates.
 		/// </summary>
-		/// <param name="mesh"></param>
-		/// <returns>A Vector3[] containing all vertex points in world space.</returns>
+		/// <param name="mesh">The source mesh.</param>
+		/// <returns>An array containing all vertex positions in world space.</returns>
 		public static Vector3[] VerticesInWorldSpace(this ProBuilderMesh mesh)
 		{
             if (mesh == null)
@@ -32,31 +32,12 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Returns requested vertices in world space coordinates.
-		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="indexes"></param>
-		/// <returns></returns>
-		public static Vector3[] VerticesInWorldSpace(this ProBuilderMesh mesh, IList<int> indexes)
-		{
-            if (mesh == null)
-                throw new ArgumentNullException("mesh");
-
-			int count = indexes.Count;
-            var worldPoints = new Vector3[count];
-			var positions = mesh.positions;
-
-			for(var i = 0; i < count; i++)
-				worldPoints[i] = mesh.transform.TransformPoint(positions[indexes[i]]);
-
-			return worldPoints;
-		}
-
-		/// <summary>
 		/// Translate a set of vertices with a world space offset.
+		/// <br />
+		/// Unlike most other mesh operations, this function applies the mesh positions to both ProBuilderMesh and the UnityEngine.Mesh.
 		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="selectedTriangles">A distinct set of indices to apply an offset to.</param>
+		/// <param name="mesh">The mesh to be affected.</param>
+		/// <param name="selectedTriangles">A set of triangles pointing to the vertex positions that are to be affected.</param>
 		/// <param name="offset">The offset to apply in world coordinates.</param>
 		public static void TranslateVerticesInWorldSpace(this ProBuilderMesh mesh, int[] selectedTriangles, Vector3 offset)
 		{
@@ -68,6 +49,8 @@ namespace UnityEngine.ProBuilder
 
 		/// <summary>
 		/// Translate a set of vertices with a world space offset.
+		/// <br />
+		/// Unlike most other mesh operations, this function applies the mesh positions to both ProBuilderMesh and the UnityEngine.Mesh.
 		/// </summary>
 		/// <param name="mesh"></param>
 		/// <param name="selectedTriangles">A distinct list of vertex indices.</param>
@@ -75,7 +58,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="snapValue">If > 0 snap each vertex to the nearest on-grid point in world space.</param>
 		/// <param name="snapAxisOnly">If true vertices will only be snapped along the active axis.</param>
 		/// <param name="lookup">A shared index lookup table.  Can pass NULL to have this automatically calculated.</param>
-		public static void TranslateVerticesInWorldSpace(this ProBuilderMesh mesh, int[] selectedTriangles, Vector3 offset, float snapValue, bool snapAxisOnly, Dictionary<int, int> lookup)
+		internal static void TranslateVerticesInWorldSpace(this ProBuilderMesh mesh, int[] selectedTriangles, Vector3 offset, float snapValue, bool snapAxisOnly, Dictionary<int, int> lookup)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -114,21 +97,23 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Translate a set of vertices with an offset provided in local coordinates.
+		/// Translate a set of vertices with an offset provided in local (model) coordinates.
+		/// <br />
+		/// Unlike most other mesh operations, this function applies the mesh positions to both ProBuilderMesh and the UnityEngine.Mesh.
 		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="selectedTriangles"></param>
+		/// <param name="mesh">The mesh to be affected.</param>
+		/// <param name="selectedTriangles">A set of triangles pointing to the vertex positions that are to be affected.</param>
 		/// <param name="offset"></param>
 		public static void TranslateVertices(this ProBuilderMesh mesh, IEnumerable<int> selectedTriangles, Vector3 offset)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            int i = 0;
 			int[] indices = mesh.sharedIndicesInternal.AllIndexesWithValues(selectedTriangles).ToArray();
 
 			Vector3[] verts = mesh.positionsInternal;
-			for(i = 0; i < indices.Length; i++)
+
+			for(int i = 0, c = indices.Length; i < c; i++)
 				verts[indices[i]] += offset;
 
 			// don't bother calling a full ToMesh() here because we know for certain that the _vertices and msh.vertices arrays are equal in length
@@ -138,11 +123,12 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Given a shared vertex index (index of the triangle in the sharedIndices array), move all vertices to new position.
 		/// Position is in model space coordinates.
+		/// <br /><br />
+		/// Use @"UnityEngine.ProBuilder.sharedIndexes" and @"UnityEngine.ProBuilder.IntArrayUtility.IndexOf"  to get a shared (or common) index.
 		/// </summary>
-		/// <remarks>Use pb.sharedIndices.IndexOf(triangle) to get sharedIndex.</remarks>
-		/// <param name="mesh"></param>
-		/// <param name="sharedIndex"></param>
-		/// <param name="position"></param>
+		/// <param name="mesh">The target mesh.</param>
+		/// <param name="sharedIndex">The shared (or common) index to set the vertex position of.</param>
+		/// <param name="position">The new position in model coordinates.</param>
 		public static void SetSharedVertexPosition(this ProBuilderMesh mesh, int sharedIndex, Vector3 position)
 		{
             if (mesh == null)
@@ -159,14 +145,14 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Given a shared vertex index (index of the triangle in the sharedIndices array), move all vertices to new position.
-		/// Vertex values are in model space coordinates.
+		/// Set a collection of mesh attributes with a Vertex.
+		/// <br /><br />
+		/// Use @"UnityEngine.ProBuilder.sharedIndexes" and @"UnityEngine.ProBuilder.IntArrayUtility.IndexOf"  to get a shared (or common) index.
 		/// </summary>
-		/// <remarks>Use pb.sharedIndices.IndexOf(triangle) to get sharedIndex.</remarks>
 		/// <param name="pb"></param>
 		/// <param name="sharedIndex"></param>
 		/// <param name="vertex"></param>
-		public static void SetSharedVertexValues(this ProBuilderMesh pb, int sharedIndex, Vertex vertex)
+		internal static void SetSharedVertexValues(this ProBuilderMesh pb, int sharedIndex, Vertex vertex)
 		{
 			Vertex[] vertices = Vertex.GetVertices(pb);
 
@@ -176,49 +162,6 @@ namespace UnityEngine.ProBuilder
 				vertices[array[i]] = vertex;
 
 			pb.SetVertices(vertices);
-		}
-
-		/// <summary>
-		/// Find the face which contains a set of triangle indices.
-		/// tri must contain exactly 3 values.
-		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="tri">int[] composed of three indices.</param>
-		/// <returns>The matching face, or null if not found.</returns>
-		public static Face FaceWithTriangle(this ProBuilderMesh mesh, int[] tri)
-		{
-			if(mesh == null || tri == null)
-				throw new ArgumentNullException("mesh");
-
-			for(int i = 0; i < mesh.facesInternal.Length; i++)
-			{
-				if(	mesh.facesInternal[i].Contains(tri) )
-					return mesh.facesInternal[i];
-			}
-
-			return null;
-		}
-
-		/// <summary>
-		/// Returns the index of the Face which contains the passed triangle.
-		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="tri">int[] composed of three indices.</param>
-		/// <returns>The index of face, or -1 if not found.</returns>
-		public static int FaceIndexWithTriangle(this ProBuilderMesh mesh, int[] tri)
-		{
-			if(mesh == null || tri == null)
-				throw new ArgumentNullException("mesh");
-
-			for(int i = 0; i < mesh.facesInternal.Length; i++)
-			{
-				if(	mesh.facesInternal[i].Contains(tri) )
-				{
-					return i;
-				}
-			}
-
-			return -1;
 		}
 	}
 }

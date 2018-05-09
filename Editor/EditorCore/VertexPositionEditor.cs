@@ -80,12 +80,12 @@ namespace UnityEditor.ProBuilder
 				if(selection.TryGetValue(pb, out sel))
 				{
 					sel.lookup = pb.sharedIndicesInternal.ToDictionary();
-					sel.common = IntArrayUtility.GetCommonIndices(sel.lookup, pb.selectedTriangles);
+					sel.common = IntArrayUtility.GetCommonIndices(sel.lookup, pb.selectedIndicesInternal);
 					res.Add(pb, sel);
 				}
 				else
 				{
-					res.Add(pb, new VertexEditorSelection(pb.sharedIndicesInternal.ToDictionary(), true, pb.selectedTriangles));
+					res.Add(pb, new VertexEditorSelection(pb.sharedIndicesInternal.ToDictionary(), true, pb.selectedIndicesInternal));
 				}
 			}
 

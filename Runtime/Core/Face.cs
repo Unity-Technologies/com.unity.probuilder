@@ -9,9 +9,14 @@ namespace UnityEngine.ProBuilder
 {
     /// <summary>
     /// A face is composed of a set of triangles, and a material.
+    /// <br />
+    /// <br />
+    /// Triangle indices may point to the same vertex index as long as the vertices are unique to the face. Ie, every vertex that a face references should only be used by that face's indices. To associate vertices that share common attributes (usually position), use the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" property.
+    /// <br />
+    /// ProBuilder automatically manages condensing common vertices in the @"UnityEditor.EditorMeshUtility.Optimize" function.
     /// </summary>
     [Serializable]
-    public sealed class Face
+    public sealed class Face : ITriangulatable
     {
         [FormerlySerializedAs("_indices")]
         [SerializeField]
@@ -38,25 +43,25 @@ namespace UnityEngine.ProBuilder
         [FormerlySerializedAs("_mat")]
         Material m_Material;
 
-        /// <summary>
+        /// <value>
         /// If this face has had it's UV coordinates done by hand, don't update them with the auto unwrap crowd.
-        /// </summary>
+        /// </value>
         public bool manualUV { get; set; }
 
-        /// <summary>
+        /// <value>
         /// UV element group. Used by the UV editor to group faces.
-        /// </summary>
+        /// </value>
         [SerializeField]
         internal int elementGroup;
 
-        /// <summary>
+        /// <value>
         /// What texture group this face belongs to. Used when projecting auto UVs.
-        /// </summary>
+        /// </value>
         public int textureGroup { get; set; }
 
-        /// <summary>
+        /// <value>
         /// Return a reference to the triangle indices that make up this face.
-        /// </summary>
+        /// </value>
         internal int[] indices
         {
             get { return m_Indices; }
@@ -67,9 +72,9 @@ namespace UnityEngine.ProBuilder
 	        }
         }
 
-        /// <summary>
+        /// <value>
         /// The triangle indices that make up this face.
-        /// </summary>
+        /// </value>
         public ReadOnlyCollection<int> indexes
         {
             get { return new ReadOnlyCollection<int>(m_Indices); }
@@ -78,7 +83,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Set the triangles that compose this face.
         /// </summary>
-        /// <param name="array"></param>
+        /// <param name="array">The new triangle array.</param>
         public void SetIndexes(int[] array)
         {
             if (array == null)
@@ -93,17 +98,17 @@ namespace UnityEngine.ProBuilder
 
 	    Edge[] m_Edges;
 
-        /// <summary>
+        /// <value>
         /// Returns a reference to the cached distinct indices (each vertex index is only referenced once in distinctIndices).
-        /// </summary>
+        /// </value>
         internal int[] distinctIndices
         {
             get { return m_DistinctIndices == null ? CacheDistinctIndices() : m_DistinctIndices; }
         }
 
-        /// <summary>
+        /// <value>
         /// A collection of the vertex indices that the indexes array references, made distinct.
-        /// </summary>
+        /// </value>
         public ReadOnlyCollection<int> distinctIndexes
         {
             get { return new ReadOnlyCollection<int>(distinctIndices); }
@@ -114,35 +119,35 @@ namespace UnityEngine.ProBuilder
 		    get { return m_Edges == null ? CacheEdges() : m_Edges; }
 	    }
 
-        /// <summary>
+        /// <value>
         /// Get the perimeter edges that commpose this face.
-        /// </summary>
+        /// </value>
 	    public ReadOnlyCollection<Edge> edges
 	    {
 		    get { return new ReadOnlyCollection<Edge>(edgesInternal); }
 	    }
 
-	    /// <summary>
+	    /// <value>
 		/// What smoothing group this face belongs to, if any. This is used to calculate vertex normals.
-		/// </summary>
+		/// </value>
 		public int smoothingGroup
 		{
 			get { return m_SmoothingGroup; }
 			set { m_SmoothingGroup = value; }
 		}
 
-		/// <summary>
+		/// <value>
 		/// Get the material that face uses.
-		/// </summary>
+		/// </value>
 		public Material material
 		{
 			get { return m_Material; }
 			set { m_Material = value; }
 		}
 
-		/// <summary>
+		/// <value>
 		/// A reference to the Auto UV mapping parameters.
-		/// </summary>
+		/// </value>
 		public AutoUnwrapSettings uv
 		{
 			get { return m_Uv; }
@@ -158,8 +163,15 @@ namespace UnityEngine.ProBuilder
 			get { return indices[i]; }
 		}
 
+	    /// <summary>
+	    /// Default constructor creates a face with an empty triangles array.
+	    /// </summary>
 		public Face() {}
 
+		/// <summary>
+		/// Initialize a Face with a set of triangles and default values.
+		/// </summary>
+		/// <param name="array">The new triangles array.</param>
 		public Face(int[] array)
 		{
 			SetIndexes(array);
@@ -184,7 +196,7 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Deep copy constructor.
 		/// </summary>
-		/// <param name="other"></param>
+		/// <param name="other">The Face from which to copy properties.</param>
 		public Face(Face other)
 		{
 			CopyFrom(other);
@@ -193,7 +205,7 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Copies values from other to this face.
 		/// </summary>
-		/// <param name="other"></param>
+		/// <param name="other">The Face from which to copy properties.</param>
 		public void CopyFrom(Face other)
 		{
             if (other == null)
@@ -213,7 +225,7 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Check if this face has more than 2 indices.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>True if this Face contains at least one valid triangle.</returns>
 		public bool IsValid()
 		{
 			return indices.Length > 2;
@@ -258,37 +270,33 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Test if the face contains a triangle.
+		/// Test if a triangle is contained within the triangles array of this face.
 		/// </summary>
-		/// <param name="triangle"></param>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <param name="c"></param>
 		/// <returns></returns>
-		public bool Contains(int[] triangle)
+	    public bool Contains(int a, int b, int c)
 		{
-			for(int i = 0; i < indices.Length; i+=3)
+			for (int i = 0, cnt = indices.Length; i < cnt; i += 3)
 			{
-				if(	triangle.Contains(indices[i+0]) &&
-					triangle.Contains(indices[i+1]) &&
-					triangle.Contains(indices[i+2]) )
+				if (a == indices[i + 0]
+					&& b == indices[i + 1]
+					&& c == indices[i + 2])
 					return true;
 			}
 
 			return false;
 		}
 
-		/// <summary>
-		/// Returns all triangles contained within the #pb_Face array.
-		/// </summary>
-		/// <param name="q"></param>
-		/// <returns></returns>
-		internal static int[] AllTriangles(Face[] q)
-		{
-			List<int> all = new List<int>(q.Length * 6);
-
-			foreach(Face quad in q)
-				all.AddRange(quad.indices);
-
-			return all.ToArray();
-		}
+	    /// <inheritdoc cref="ITriangulatable"/>
+	    public int[] ToTriangles()
+	    {
+		    int len = indices.Length;
+		    int[] copy = new int[len];
+		    Array.Copy(indices, copy, len);
+		    return copy;
+	    }
 
 		/// <summary>
 		/// Convert a 2 triangle face to a quad representation.

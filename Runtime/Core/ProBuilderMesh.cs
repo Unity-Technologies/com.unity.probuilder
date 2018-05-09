@@ -7,10 +7,6 @@ using System.Collections.ObjectModel;
 
 namespace UnityEngine.ProBuilder
 {
-    /// <inheritdoc />
-    /// <summary>
-    /// ProBuilder mesh class. Stores all the information necessary to create a UnityEngine.Mesh.
-    /// </summary>
     [AddComponentMenu("")]
     [DisallowMultipleComponent]
     [RequireComponent(typeof(MeshFilter))]
@@ -57,42 +53,42 @@ namespace UnityEngine.ProBuilder
         [FormerlySerializedAs("_colors")]
         Color[] m_Colors;
 
-	    /// <summary>
+	    /// <value>
 	    /// If false, ProBuilder will automatically create and scale colliders.
-	    /// </summary>
+	    /// </value>
 	    public bool userCollisions { get; set; }
 
 	    [SerializeField]
 	    bool m_IsSelectable = true;
 
-	    /// <summary>
+	    /// <value>
 	    /// If false mesh elements will not be selectable.
-	    /// </summary>
+	    /// </value>
 	    public bool isSelectable
 	    {
 		    get { return m_IsSelectable; }
 		    set { m_IsSelectable = value; }
 	    }
 
-	    /// <summary>
+	    /// <value>
 	    /// UV2 generation parameters.
-	    /// </summary>
+	    /// </value>
 	    public UnwrapParamaters unwrapParameters { get; set; }
 
 	    [FormerlySerializedAs("dontDestroyMeshOnDelete")]
 	    [SerializeField]
 	    bool m_PreserveMeshAssetOnDestroy;
 
-        /// <summary>
+        /// <value>
         /// If "Meshes are Assets" feature is enabled, this is used to relate pb_Objects to stored meshes.
-        /// </summary>
+        /// </value>
         [SerializeField]
         internal string assetGuid;
 
-        /// <summary>
+        /// <value>
         /// Usually when you delete a pb_Object you want to also clean up the mesh asset.
         /// However, there are situations you'd want to keep the mesh around, like when stripping probuilder scripts.
-        /// </summary>
+        /// </value>
         public bool preserveMeshAssetOnDestroy
         {
             get { return m_PreserveMeshAssetOnDestroy; }
@@ -101,25 +97,34 @@ namespace UnityEngine.ProBuilder
 #endregion
 
 #region Properties
-        /// <summary>
-        /// Get a reference to the faces array on this mesh.
-        /// </summary>
-        internal Face[] facesInternal
+
+	    internal Face[] facesInternal
         {
             get { return m_Faces; }
             set { m_Faces = value; }
         }
 
+	    /// <summary>
+	    /// Meshes are composed of vertices and faces. Faces primarily contain triangles and material information. With these components, ProBuilder will compile a mesh.
+	    /// </summary>
+	    /// <value>
+	    /// A collection of the @"UnityEngine.ProBuilder.Face"'s that make up this mesh.
+	    /// </value>
         public ReadOnlyCollection<Face> faces
         {
             get { return new ReadOnlyCollection<Face>(m_Faces); }
         }
 
-        public void SetFaces(IEnumerable<Face> collection)
+	    /// <summary>
+	    /// Set the internal faces array.
+	    /// </summary>
+	    /// <param name="faces">The new faces array.</param>
+	    /// <exception cref="ArgumentNullException">Thrown if faces is null.</exception>
+        public void SetFaces(IEnumerable<Face> faces)
         {
-            if (collection == null)
-                throw new ArgumentNullException("collection");
-	        m_Faces = collection.ToArray();
+            if (faces == null)
+                throw new ArgumentNullException("faces");
+	        m_Faces = faces.ToArray();
         }
 
 	    internal IntArray[] sharedIndicesInternal
@@ -128,11 +133,21 @@ namespace UnityEngine.ProBuilder
 		    set { m_SharedIndices = value; }
 	    }
 
+	    /// <summary>
+	    /// ProBuilder makes the assumption that no @"UnityEngine.ProBuilder.Face" references a vertex used by another. However, we need a way to associate vertices in the editor for many operations. These vertices are usually called coincident, or shared vertices. ProBuilder manages these associations with the sharedIndexes array. Each array contains a list of triangles that point to vertices considered to be coincident. When ProBuilder compiles a UnityEngine.Mesh from the ProBuilderMesh, these vertices will be condensed to a single vertex where possible.
+	    /// </summary>
+	    /// <value>
+	    /// The shared (or common) index array for this mesh.
+	    /// </value>
 	    public ReadOnlyCollection<IntArray> sharedIndexes
 	    {
 		    get { return new ReadOnlyCollection<IntArray>(m_SharedIndices); }
 	    }
 
+	    /// <value>
+	    /// Get a copy of the shared (or common) index array for this mesh.
+	    /// </value>
+	    /// <seealso cref="sharedIndexes"/>
 	    public IntArray[] GetSharedIndexes()
 	    {
 		    int len = m_SharedIndices.Length;
@@ -142,6 +157,13 @@ namespace UnityEngine.ProBuilder
 		    return copy;
 	    }
 
+	    /// <summary>
+	    /// Set the sharedIndexes array for this mesh.
+	    /// </summary>
+	    /// <param name="indexes">
+	    /// The new sharedIndexes array.
+	    /// </param>
+	    /// <seealso cref="sharedIndexes"/>
 	    public void SetSharedIndexes(IntArray[] indexes)
 	    {
 		    if (indexes == null)
@@ -152,6 +174,14 @@ namespace UnityEngine.ProBuilder
 			    m_SharedIndices[i] = new IntArray(indexes[i]);
 	    }
 
+	    /// <summary>
+	    /// Set the sharedIndexes array for this mesh with a lookup dictionary.
+	    /// </summary>
+	    /// <param name="indexes">
+	    /// The new sharedIndexes array.
+	    /// </param>
+	    /// <seealso cref="sharedIndexes"/>
+	    /// <seealso cref="IntArrayUtility.ToDictionary"/>
 	    public void SetSharedIndexes(IEnumerable<KeyValuePair<int, int>> indexes)
 	    {
 		    if (indexes == null)
@@ -159,20 +189,13 @@ namespace UnityEngine.ProBuilder
 		    m_SharedIndices = IntArrayUtility.ToIntArray(indexes);
 	    }
 
-	    /// <summary>
-        /// Get a reference to the shared uv indices array.
-        /// </summary>
         internal IntArray[] sharedIndicesUVInternal
         {
             get { return m_SharedIndicesUV; }
             set { m_SharedIndicesUV = value; }
         }
 
-        /// <summary>
-        /// Returns a copy of the sharedIndicesUV array.
-        /// </summary>
-        /// <returns></returns>
-        public IntArray[] GetSharedIndexesUV()
+        internal IntArray[] GetSharedIndexesUV()
         {
             int sil = m_SharedIndicesUV.Length;
             IntArray[] sharedIndicesCopy = new IntArray[sil];
@@ -197,24 +220,26 @@ namespace UnityEngine.ProBuilder
 	            m_SharedIndicesUV = IntArrayUtility.ToIntArray(indices);
         }
 
-        /// <summary>
-        /// Get a reference to the positions array.
-        /// </summary>
-        /// <remarks>
-        /// The stored vertex positions array is not guaranteed to match the Unity mesh vertices array.
-        /// </remarks>
         internal Vector3[] positionsInternal
         {
             get { return m_Positions; }
             set { m_Positions = value; }
         }
 
+	    /// <value>
+	    /// The vertex positions that make up this mesh.
+	    /// </value>
         public ReadOnlyCollection<Vector3> positions
         {
             get { return new ReadOnlyCollection<Vector3>(m_Positions); }
         }
 
-        public void SetPositions(IEnumerable<Vector3> array)
+		/// <summary>
+		/// Set the vertex positions for this mesh.
+		/// </summary>
+		/// <param name="array">The new positions array.</param>
+		/// <exception cref="ArgumentNullException">Thrown if array is null.</exception>
+	    public void SetPositions(IEnumerable<Vector3> array)
         {
             if (array == null)
                 throw new ArgumentNullException("array");
@@ -222,10 +247,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Set the vertex element arrays on this pb_Object. By default this function does not apply these values to the mesh.  An optional parameter `applyMesh` will apply elements to the mesh - note that this should only be used when the mesh is in its original state, not optimized (meaning it won't affect triangles which can be modified by Optimize).
+        /// Set the vertex element arrays on this mesh.
         /// </summary>
-        /// <param name="vertices"></param>
-        /// <param name="applyMesh"></param>
+        /// <param name="vertices">The new vertex array.</param>
+        /// <param name="applyMesh">An optional parameter that will apply elements to the MeshFilter.sharedMesh. Note that this should only be used when the mesh is in its original state, not optimized (meaning it won't affect triangles which can be modified by Optimize).</param>
         public void SetVertices(IList<Vertex> vertices, bool applyMesh = false)
         {
             if (vertices == null)
@@ -267,11 +292,11 @@ namespace UnityEngine.ProBuilder
         }
 
 	    /// <summary>
-	    /// pb_Object doesn't store normals, so this function either:
-	    ///		1. Copies them from the MeshFilter.sharedMesh (if vertex count matches the pb_Object::vertexCount)
-	    ///		2. Calculates a new set of normals and returns.
+	    /// ProBuilderMesh doesn't store normals, so this function will either:
+	    ///		1. Copy them from the MeshFilter.sharedMesh (if vertex count matches the @"UnityEngine.ProBuilder.ProBuilderMesh.vertexCount")
+	    ///		2. Calculate a new set of normals using @"UnityEngine.ProBuilder.MeshUtility.CalculateNormals".
 	    /// </summary>
-	    /// <returns></returns>
+	    /// <returns>An array of vertex normals.</returns>
 	    public Vector3[] GetNormals()
 	    {
 		    // If mesh isn't optimized try to return a copy from the compiled mesh
@@ -285,18 +310,15 @@ namespace UnityEngine.ProBuilder
 		    return MeshUtility.CalculateNormals(this);
 	    }
 
-        /// <summary>
-        /// Get a reference to the colors array.
-        /// </summary>
         internal Color[] colorsInternal
 		{
 			get { return m_Colors; }
 			set { m_Colors = value; }
 		}
 
-		/// <summary>
+		/// <value>
 		/// Get the vertex colors array for this mesh.
-		/// </summary>
+		/// </value>
 	    public ReadOnlyCollection<Color> colors
         {
             get { return m_Colors != null ? new ReadOnlyCollection<Color>(m_Colors) : null; }
@@ -306,8 +328,8 @@ namespace UnityEngine.ProBuilder
 	    /// Set the colors array for this mesh. Colors size must match vertex count.
 	    /// </summary>
 	    /// <param name="array"></param>
-	    /// <exception cref="ArgumentNullException"></exception>
-	    /// <exception cref="ArgumentOutOfRangeException"></exception>
+	    /// <exception cref="ArgumentNullException">Thrown if array is null.</exception>
+	    /// <exception cref="ArgumentOutOfRangeException">Thrown if array.Length does not equal @"UnityEngine.ProBuilder.ProBuilderMesh.vertexCount".</exception>
         public void SetColors(IEnumerable<Color> array)
         {
             if (array == null)
@@ -318,10 +340,12 @@ namespace UnityEngine.ProBuilder
 	        m_Colors = array.ToArray();
         }
 
-		/// <summary>
+		/// <value>
 		/// Get the user-set tangents array for this mesh. If tangents have not been explictly set, this value will be null.
+		/// </value>
+		/// <remarks>
 		/// To get the generated tangents that are applied to the mesh through Refresh(), use GetTangents().
-		/// </summary>
+		/// </remarks>
 	    public ReadOnlyCollection<Vector4> tangents
 	    {
 		    get { return m_Tangents == null || m_Tangents.Length != vertexCount
@@ -330,9 +354,9 @@ namespace UnityEngine.ProBuilder
 	    }
 
 	    /// <summary>
-	    /// Get the tangents applied to the mesh. Does not calculate new tangents if non are available (unlike GetNormals()).
+	    /// Get the tangents applied to the mesh. Does not calculate new tangents if none are available (unlike GetNormals()).
 	    /// </summary>
-	    /// <returns></returns>
+	    /// <returns>The tangents applied to the MeshFilter.sharedMesh. If the tangents array length does not match the vertex count, null is returned.</returns>
 	    public Vector4[] GetTangents()
 	    {
 		    if (m_Tangents != null && m_Tangents.Length == vertexCount)
@@ -341,9 +365,9 @@ namespace UnityEngine.ProBuilder
 	    }
 
 	    /// <summary>
-        /// Set the tangent array on this mesh.
+        /// Set the tangent array on this mesh. The length must match vertexCount.
         /// </summary>
-        /// <param name="array"></param>
+        /// <param name="array">The new tangents array.</param>
         public void SetTangents(IEnumerable<Vector4> array)
 	    {
 		    if (array == null)
@@ -354,15 +378,18 @@ namespace UnityEngine.ProBuilder
 		        m_Tangents = array.ToArray();
         }
 
-        /// <summary>
-        /// Get a reference to uv0 channel.
-        /// </summary>
         internal Vector2[] texturesInternal
 		{
 			get { return m_Textures0; }
 			set { m_Textures0 = value; }
 		}
 
+	    /// <summary>
+	    /// Set the UV channel array.
+	    /// </summary>
+	    /// <param name="uvs">The new UV array.</param>
+	    /// <exception cref="ArgumentNullException">Thrown if uvs is null.</exception>
+	    /// <exception cref="ArgumentOutOfRangeException">Thrown if uvs length does not match the vertex count.</exception>
 	    public void SetUVs(Vector2[] uvs)
 	    {
 		    if(uvs == null)
@@ -375,19 +402,17 @@ namespace UnityEngine.ProBuilder
 	    }
 
         /// <summary>
-        ///	Copy values in UV channel to uvs.
-        ///	channel is zero indexed.
-        ///		mesh.uv0/1 = 0
-        ///		mesh.uv2 = 1
-        ///		mesh.uv3 = 2
-        ///		mesh.uv4 = 3
+        ///	Copy values in a UV channel to uvs.
         /// </summary>
-        /// <param name="channel"></param>
-        /// <param name="uvs"></param>
+        /// <param name="channel">The index of the UV channel to fetch values from. The valid range is `{0, 1, 2, 3}`.</param>
+        /// <param name="uvs">A list that will be cleared and populated with the UVs copied from this mesh.</param>
         public void GetUVs(int channel, List<Vector4> uvs)
         {
             if (uvs == null)
                 throw new ArgumentNullException("uvs");
+
+	        if(channel < 0 || channel > 3)
+		        throw new ArgumentOutOfRangeException("channel");
 
             uvs.Clear();
 
@@ -423,8 +448,8 @@ namespace UnityEngine.ProBuilder
         /// Set the mesh UVs per-channel. Channels 0 and 1 are cast to Vector2, where channels 2 and 3 are kept Vector4.
         /// </summary>
         /// <remarks>Does not apply to mesh (use Refresh to reflect changes after application).</remarks>
-        /// <param name="channel"></param>
-        /// <param name="uvs"></param>
+        /// <param name="channel">The index of the UV channel to fetch values from. The valid range is `{0, 1, 2, 3}`.</param>
+        /// <param name="uvs">The new UV values.</param>
         public void SetUVs(int channel, List<Vector4> uvs)
         {
             switch (channel)
@@ -447,58 +472,58 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <summary>
+        /// <value>
         /// True if this mesh has a valid UV2 channel.
-        /// </summary>
+        /// </value>
         public bool hasUv2
 		{
 			get { return mesh.uv2 != null && mesh.uv2.Length == vertexCount; }
 		}
 
-		/// <summary>
+		/// <value>
 		/// True if this mesh has a valid UV3 channel.
-		/// </summary>
+		/// </value>
 		public bool hasUv3
 		{
 			get { return m_Textures3 != null && m_Textures3.Count == vertexCount; }
 		}
 
-		/// <summary>
+		/// <value>
 		/// True if this mesh has a valid UV4 channel.
-		/// </summary>
+		/// </value>
 		public bool hasUv4
 		{
 			get { return m_Textures4 != null && m_Textures4.Count == vertexCount; }
 		}
 
-		/// <summary>
+		/// <value>
 		/// How many faces does this mesh have?
-		/// </summary>
+		/// </value>
 		public int faceCount
 		{
 			get { return m_Faces == null ? 0 : m_Faces.Length; }
 		}
 
-		/// <summary>
+		/// <value>
 		/// How many vertices are in the positions array.
-		/// </summary>
+		/// </value>
 		public int vertexCount
 		{
 			get { return m_Positions == null ? 0 : m_Positions.Length; }
 		}
 
-		/// <summary>
+		/// <value>
 		/// How many triangle indices make up this mesh.
-		/// </summary>
+		/// </value>
 		/// <remarks>This calls Linq Sum on the faces array. Cache this value if you're accessing it frequently.</remarks>
 		public int triangleCount
 		{
 			get { return m_Faces == null ? 0 : m_Faces.Sum(x => x.indices.Length); }
 		}
 
-	    /// <summary>
+	    /// <value>
 	    /// If onDestroyObject has a subscriber ProBuilder will invoke it instead of cleaning up unused meshes by itself.
-	    /// </summary>
+	    /// </value>
 	    public static event Action<ProBuilderMesh> onDestroyObject;
 
 	    internal static event Action<ProBuilderMesh> onElementSelectionChanged;
@@ -512,10 +537,7 @@ namespace UnityEngine.ProBuilder
 		    set { gameObject.GetComponent<MeshFilter>().sharedMesh = value; }
 	    }
 
-	    /// <summary>
-	    /// Get a unique id for this pb_Object. Not guaranteed to be persistent.
-	    /// </summary>
-	    public int id
+	    internal int id
 	    {
 		    get { return gameObject.GetInstanceID(); }
 	    }
@@ -704,7 +726,7 @@ namespace UnityEngine.ProBuilder
 		    get { return new ReadOnlyCollection<Edge>(m_SelectedEdges); }
 	    }
 
-	    internal int[] selectedTriangles
+	    internal int[] selectedIndicesInternal
 	    {
 		    get { return m_selectedTriangles; }
 	    }

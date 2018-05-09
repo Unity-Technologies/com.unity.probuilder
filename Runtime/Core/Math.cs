@@ -8,38 +8,38 @@ using System.Linq;
 namespace UnityEngine.ProBuilder
 {
 	/// <summary>
-	/// Commonly used math when working with 3d geometry.
+	/// A collection of math functions that are useful when working with 3d meshes.
 	/// </summary>
 	public static class Math
 	{
-		/// <summary>
+		/// <value>
 		/// Pi / 2.
-		/// </summary>
+		/// </value>
 		public const float phi = 1.618033988749895f;
 
 		/// <summary>
 		/// ProBuilder epsilon constant.
 		/// </summary>
-		public const float floatEpsilon = float.Epsilon;
+		const float floatEpsilon = float.Epsilon;
 
 		/// <summary>
 		/// Epsilon to use when comparing vertex positions for equality.
 		/// </summary>
-		public const float floatCompareEpsilon = .0001f;
+		const float floatCompareEpsilon = .0001f;
 
 		/// <summary>
 		/// The minimum distance a handle must move on an axis before considering that axis as engaged.
 		/// </summary>
-		public const float handleEpsilon = .0001f;
+		internal const float handleEpsilon = .0001f;
 
 		/// <summary>
 		/// Get a point on the circumference of a circle.
 		/// </summary>
-		/// <param name="radius"></param>
-		/// <param name="angleInDegrees"></param>
+		/// <param name="radius">The radius of the circle.</param>
+		/// <param name="angleInDegrees">Where along the circle should the point be projected. Angle is in degrees.</param>
 		/// <param name="origin"></param>
 		/// <returns></returns>
-		public static Vector2 PointInCircumference(float radius, float angleInDegrees, Vector2 origin)
+		internal static Vector2 PointInCircumference(float radius, float angleInDegrees, Vector2 origin)
 		{
 			// Convert from degrees to radians via multiplication by PI/180
 			float x = (float)(radius * Mathf.Cos( Mathf.Deg2Rad * angleInDegrees)) + origin.x;
@@ -57,20 +57,20 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		internal static Vector3 PointInSphere(float radius, float latitudeAngle, float longitudeAngle)
 		{
-			float x = (float)(radius * Mathf.Cos( Mathf.Deg2Rad * latitudeAngle) * Mathf.Sin( Mathf.Deg2Rad * longitudeAngle));
-			float y = (float)(radius * Mathf.Sin( Mathf.Deg2Rad * latitudeAngle) * Mathf.Sin( Mathf.Deg2Rad * longitudeAngle));
-			float z = (float)(radius * Mathf.Cos( Mathf.Deg2Rad * longitudeAngle));
+			float x = (radius * Mathf.Cos( Mathf.Deg2Rad * latitudeAngle) * Mathf.Sin( Mathf.Deg2Rad * longitudeAngle));
+			float y = (radius * Mathf.Sin( Mathf.Deg2Rad * latitudeAngle) * Mathf.Sin( Mathf.Deg2Rad * longitudeAngle));
+			float z = (radius * Mathf.Cos( Mathf.Deg2Rad * longitudeAngle));
 
 			return new Vector3(x, y, z);
 		}
 
 		/// <summary>
-		/// Returns the signed angle from a to b.
+		/// Find the signed angle from direction a to direction b.
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <returns></returns>
-		public static float SignedAngle(Vector2 a, Vector2 b)
+		/// <param name="a">The direction from which to rotate.</param>
+		/// <param name="b">The direction to rotate towards.</param>
+		/// <returns>A signed angle in degrees from direction a to direction b.</returns>
+		internal static float SignedAngle(Vector2 a, Vector2 b)
 		{
 			float t = Vector2.Angle(a, b);
 			if( b.x - a.x < 0 )
@@ -79,10 +79,10 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Squared distance between two points. (b - a).sqrMagnitude.
+		/// Squared distance between two points. This is the same as `(b - a).sqrMagnitude`.
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="a">First point.</param>
+		/// <param name="b">Second point.</param>
 		/// <returns></returns>
 		public static float SqrDistance(Vector3 a, Vector3 b)
 		{
@@ -96,10 +96,10 @@ namespace UnityEngine.ProBuilder
 		/// Get the area of a triangle.
 		/// </summary>
 		/// <remarks>http://www.iquilezles.org/blog/?p=1579</remarks>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="z"></param>
-		/// <returns></returns>
+		/// <param name="x">First vertex position of the triangle.</param>
+		/// <param name="y">Second vertex position of the triangle.</param>
+		/// <param name="z">Third vertex position of the triangle.</param>
+		/// <returns>The area of the triangle.</returns>
 		public static float TriangleArea(Vector3 x, Vector3 y, Vector3 z)
 		{
 			float 	a = SqrDistance(x, y),
@@ -189,100 +189,104 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Return the perpindicular direction to a unit vector.
+		/// Return a perpindicular direction to a unit vector.
 		/// </summary>
-		/// <param name="a"></param>
-		/// <returns>Normalized perpindular direction.</returns>
+		/// <param name="a">The original direction.</param>
+		/// <returns>A normalized perpindular direction.</returns>
 		public static Vector2 Perpendicular(Vector2 a)
 		{
 			return new Vector2(-a.y, a.x).normalized;
 		}
 
 		/// <summary>
-		/// Reflects a point @point across line @a -> @b
+		/// Reflects a point across a line segment.
 		/// </summary>
-		/// <param name="point"></param>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <returns></returns>
-		public static Vector2 ReflectPoint(Vector2 point, Vector2 a, Vector2 b)
+		/// <param name="point">The point to reflect.</param>
+		/// <param name="lineStart">First point of the line segment.</param>
+		/// <param name="lineEnd">Second point of the line segment.</param>
+		/// <returns>The reflected point.</returns>
+		public static Vector2 ReflectPoint(Vector2 point, Vector2 lineStart, Vector2 lineEnd)
 		{
-			Vector2 line = b-a;
+			Vector2 line = lineEnd-lineStart;
 			Vector2 perp = new Vector2(-line.y, line.x);	// skip normalize
 
-			float dist = Mathf.Sin( Vector2.Angle(line, point-a) * Mathf.Deg2Rad ) * Vector2.Distance(point, a);
+			float dist = Mathf.Sin( Vector2.Angle(line, point-lineStart) * Mathf.Deg2Rad ) * Vector2.Distance(point, lineStart);
 
-			return point + perp * (dist * 2f) * (Vector2.Dot(point-a, perp) > 0 ? -1f : 1f);
+			return point + perp * (dist * 2f) * (Vector2.Dot(point-lineStart, perp) > 0 ? -1f : 1f);
 		}
 
 		/// <summary>
 		/// Get the distance between a point and a finite line segment.
 		/// </summary>
 		/// <remarks>http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment</remarks>
-		/// <param name="p">The point.</param>
-		/// <param name="v">Line start.</param>
-		/// <param name="w">Line end.</param>
-		/// <returns></returns>
-		public static float DistancePointLineSegment(Vector2 p, Vector2 v, Vector2 w)
+		/// <param name="point">The point.</param>
+		/// <param name="lineStart">Line start.</param>
+		/// <param name="lineEnd">Line end.</param>
+		/// <returns>The distance from point to the nearest point on a line segment.</returns>
+		public static float DistancePointLineSegment(Vector2 point, Vector2 lineStart, Vector2 lineEnd)
 		{
 			// Return minimum distance between line segment vw and point p
-			float l2 = ((v.x - w.x)*(v.x - w.x)) + ((v.y - w.y)*(v.y - w.y));  // i.e. |w-v|^2 -  avoid a sqrt
+			float l2 = ((lineStart.x - lineEnd.x)*(lineStart.x - lineEnd.x)) + ((lineStart.y - lineEnd.y)*(lineStart.y - lineEnd.y));  // i.e. |w-v|^2 -  avoid a sqrt
 
-			if (l2 == 0.0f) return Vector2.Distance(p, v);   // v == w case
+			if (l2 == 0.0f) return Vector2.Distance(point, lineStart);   // v == w case
 
 			// Consider the line extending the segment, parameterized as v + t (w - v).
 			// We find projection of point p onto the line.
 			// It falls where t = [(p-v) . (w-v)] / |w-v|^2
-			float t = Vector2.Dot(p - v, w - v) / l2;
+			float t = Vector2.Dot(point - lineStart, lineEnd - lineStart) / l2;
 
 			if (t < 0.0)
-				return Vector2.Distance(p, v);       		// Beyond the 'v' end of the segment
+				return Vector2.Distance(point, lineStart);       		// Beyond the 'v' end of the segment
 			else if (t > 1.0)
-				return Vector2.Distance(p, w);  			// Beyond the 'w' end of the segment
+				return Vector2.Distance(point, lineEnd);  			// Beyond the 'w' end of the segment
 
-			Vector2 projection = v + t * (w - v);  	// Projection falls on the segment
+			Vector2 projection = lineStart + t * (lineEnd - lineStart);  	// Projection falls on the segment
 
-			return Vector2.Distance(p, projection);
+			return Vector2.Distance(point, projection);
 		}
 
 		/// <summary>
 		/// Get the distance between a point and a finite line segment.
 		/// </summary>
-		/// <param name="p">Point.</param>
-		/// <param name="v">Line start.</param>
-		/// <param name="w">Line end.</param>
-		/// <returns></returns>
-		public static float DistancePointLineSegment(Vector3 p, Vector3 v, Vector3 w)
+		/// <remarks>http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment</remarks>
+		/// <param name="point">The point.</param>
+		/// <param name="lineStart">Line start.</param>
+		/// <param name="lineEnd">Line end.</param>
+		/// <returns>The distance from point to the nearest point on a line segment.</returns>
+		public static float DistancePointLineSegment(Vector3 point, Vector3 lineStart, Vector3 lineEnd)
 		{
 			// Return minimum distance between line segment vw and point p
-			float l2 = ((v.x - w.x)*(v.x - w.x)) + ((v.y - w.y)*(v.y - w.y)) + ((v.z - w.z)*(v.z - w.z));  // i.e. |w-v|^2 -  avoid a sqrt
+			float l2 = ((lineStart.x - lineEnd.x)*(lineStart.x - lineEnd.x)) + ((lineStart.y - lineEnd.y)*(lineStart.y - lineEnd.y)) + ((lineStart.z - lineEnd.z)*(lineStart.z - lineEnd.z));  // i.e. |w-v|^2 -  avoid a sqrt
 
-			if (l2 == 0.0f) return Vector3.Distance(p, v);   // v == w case
+			if (l2 == 0.0f) return Vector3.Distance(point, lineStart);   // v == w case
 
 			// Consider the line extending the segment, parameterized as v + t (w - v).
 			// We find projection of point p onto the line.
 			// It falls where t = [(p-v) . (w-v)] / |w-v|^2
-			float t = Vector3.Dot(p - v, w - v) / l2;
+			float t = Vector3.Dot(point - lineStart, lineEnd - lineStart) / l2;
 
 			if (t < 0.0)
-				return Vector3.Distance(p, v);       		// Beyond the 'v' end of the segment
+				return Vector3.Distance(point, lineStart);       		// Beyond the 'v' end of the segment
 			else if (t > 1.0)
-				return Vector3.Distance(p, w);  			// Beyond the 'w' end of the segment
+				return Vector3.Distance(point, lineEnd);  			// Beyond the 'w' end of the segment
 
-			Vector3 projection = v + t * (w - v);  	// Projection falls on the segment
+			Vector3 projection = lineStart + t * (lineEnd - lineStart);  	// Projection falls on the segment
 
-			return Vector3.Distance(p, projection);
+			return Vector3.Distance(point, projection);
 		}
 
 		/// <summary>
-		/// Calculate the nearest point on ray A to ray B.
+		/// Calculate the nearest point between two rays.
 		/// </summary>
-		/// <param name="ao">First ray origin.</param>
-		/// <param name="ad">First ray direction.</param>
-		/// <param name="bo">Second ray origin.</param>
-		/// <param name="bd">Second ray direction.</param>
+		/// <param name="a">First ray.</param>
+		/// <param name="b">Second ray.</param>
 		/// <returns></returns>
-		public static Vector3 GetNearestPointRayRay(Vector3 ao, Vector3 ad, Vector3 bo, Vector3 bd)
+		public static Vector3 GetNearestPointRayRay(Ray a, Ray b)
+		{
+			return GetNearestPointRayRay(a.origin, a.direction, b.origin, b.direction);
+		}
+
+		internal static Vector3 GetNearestPointRayRay(Vector3 ao, Vector3 ad, Vector3 bo, Vector3 bd)
 		{
 			// ray doesn't do parallel
 			if(ad == bd)
@@ -448,7 +452,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Test if a raycast intersects a triangle.
+		/// Test if a raycast intersects a triangle. Does not test for culling.
 		/// </summary>
 		/// <remarks>
 		/// http://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
@@ -574,21 +578,24 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Return the secant of radian `x` ( `1f / cos(x)` ).
+		/// Return the secant of a radian.
+		/// Equivalent to: `1f / cos(x)`.
 		/// </summary>
-		/// <param name="x"></param>
-		/// <returns></returns>
+		/// <param name="x">The radian to calculate the secant of.</param>
+		/// <returns>The secant of radian x.</returns>
 		public static float Secant(float x)
 		{
 			return 1f / Mathf.Cos(x);
 		}
 
 		/// <summary>
-		/// Calculate the unit vector normal of 3 points:  B-A x C-A
+		/// Calculate the unit vector normal of 3 points.
+		/// <br />
+		/// Equivalent to: `B-A x C-A`
 		/// </summary>
-		/// <param name="p0"></param>
-		/// <param name="p1"></param>
-		/// <param name="p2"></param>
+		/// <param name="p0">First point of the triangle.</param>
+		/// <param name="p1">Second point of the triangle.</param>
+		/// <param name="p2">Third point of the triangle.</param>
 		/// <returns></returns>
 		public static Vector3 Normal(Vector3 p0, Vector3 p1, Vector3 p2)
 		{
@@ -644,11 +651,11 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Finds the best matching normal for a face.
+		/// Finds the best normal for a face.
 		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="face"></param>
-		/// <returns></returns>
+		/// <param name="mesh">The mesh that the target face belongs to.</param>
+		/// <param name="face">The face to calculate a normal for.</param>
+		/// <returns>A normal that most closely matches the face orientation in model corrdinates.</returns>
 		public static Vector3 Normal(ProBuilderMesh mesh, Face face)
 		{
 			if (mesh == null || face == null)
@@ -692,7 +699,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="p"></param>
 		/// <returns></returns>
-		public static Vector3 Normal(IList<Vector3> p)
+		internal static Vector3 Normal(IList<Vector3> p)
 		{
 			if(p == null || p.Count < 3)
 				return Vector3.zero;
@@ -708,28 +715,29 @@ namespace UnityEngine.ProBuilder
 				nrm.Normalize();
 				return nrm;
 			}
-			else
-			{
-				Vector3 cross = Vector3.Cross(p[1] - p[0], p[2] - p[0]);
-				if (cross.magnitude < Mathf.Epsilon)
-					return new Vector3(0f, 0f, 0f); // bad triangle
-				else
-					return cross.normalized;
-			}
+			Vector3 cross = Vector3.Cross(p[1] - p[0], p[2] - p[0]);
+
+			if (cross.magnitude < Mathf.Epsilon)
+				return new Vector3(0f, 0f, 0f); // bad triangle
+
+			return cross.normalized;
 		}
 
 		/// <summary>
 		/// Returns the first normal, tangent, and bitangent for this face using the first triangle available for tangent and bitangent.
 		/// </summary>
-		/// <param name="pb"></param>
-		/// <param name="face"></param>
+		/// <param name="mesh">The mesh that the target face belongs to.</param>
+		/// <param name="face">The face to calculate normal information for.</param>
 		/// <returns>The normal, bitangent, and tangent for the face.</returns>
-		public static Normals NormalTangentBitangent(ProBuilderMesh pb, Face face)
+		public static Normals NormalTangentBitangent(ProBuilderMesh mesh, Face face)
 		{
-			if(pb == null || face == null || face.indices.Length < 3)
-                throw new System.ArgumentNullException("pb", "Cannot find normal, tangent, and bitangent for null object, or faces with < 3 indices.");
+			if(mesh == null || face == null || face.indices.Length < 3)
+                throw new System.ArgumentNullException("mesh", "Cannot find normal, tangent, and bitangent for null object, or faces with < 3 indices.");
 
-			var nrm = Math.Normal(pb, face);
+			if(mesh.texturesInternal == null || mesh.texturesInternal.Length != mesh.vertexCount)
+				throw new ArgumentException("Mesh textures[0] channel is not present, cannot calculate tangents.");
+
+			var nrm = Math.Normal(mesh, face);
 
 			Vector3 tan1 = Vector3.zero;
 			Vector3 tan2 = Vector3.zero;
@@ -739,13 +747,13 @@ namespace UnityEngine.ProBuilder
 			long i2 = face.indices[1];
 			long i3 = face.indices[2];
 
-			Vector3 v1 = pb.positionsInternal[i1];
-			Vector3 v2 = pb.positionsInternal[i2];
-			Vector3 v3 = pb.positionsInternal[i3];
+			Vector3 v1 = mesh.positionsInternal[i1];
+			Vector3 v2 = mesh.positionsInternal[i2];
+			Vector3 v3 = mesh.positionsInternal[i3];
 
-			Vector2 w1 = pb.texturesInternal[i1];
-			Vector2 w2 = pb.texturesInternal[i2];
-			Vector2 w3 = pb.texturesInternal[i3];
+			Vector2 w1 = mesh.texturesInternal[i1];
+			Vector2 w2 = mesh.texturesInternal[i2];
+			Vector2 w3 = mesh.texturesInternal[i3];
 
 			float x1 = v2.x - v1.x;
 			float x2 = v3.x - v1.x;
@@ -977,7 +985,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="array">The array</param>
 		/// <param name="indexes">If provided the average is the sum of all points contained in the indices array. If not, the entire v array is used.</param>
 		/// <returns>Average Vector3 of passed vertex array.</returns>
-		public static Vector2 Average(IList<Vector2> array, IList<int> indexes = null)
+		internal static Vector2 Average(IList<Vector2> array, IList<int> indexes = null)
 		{
 			if (array == null)
 				throw new ArgumentNullException("array");
@@ -999,7 +1007,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="array">The array</param>
 		/// <param name="indexes">If provided the average is the sum of all points contained in the indices array. If not, the entire v array is used.</param>
 		/// <returns>Average Vector3 of passed vertex array.</returns>
-		public static Vector3 Average(IList<Vector3> array, IList<int> indexes = null)
+		internal static Vector3 Average(IList<Vector3> array, IList<int> indexes = null)
 		{
 			if (array == null)
 				throw new ArgumentNullException("array");
@@ -1086,57 +1094,58 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Compares 2 vector2 objects, allowing for a margin of error.
+		/// Compares two Vector2 values component-wise, allowing for a margin of error.
 		/// </summary>
-		/// <param name="v"></param>
-		/// <param name="b"></param>
-		/// <param name="delta"></param>
-		/// <returns></returns>
-		public static bool Approx2(this Vector2 v, Vector2 b, float delta = floatCompareEpsilon)
+		/// <param name="a">First Vector2 value.</param>
+		/// <param name="b">Second Vector2 value.</param>
+		/// <param name="delta">The maximum difference between components allowed.</param>
+		/// <returns>True if a and b components are respectively within delta distance of one another.</returns>
+		public static bool Approx2(this Vector2 a, Vector2 b, float delta = floatCompareEpsilon)
 		{
 			return
-				Mathf.Abs(v.x - b.x) < delta &&
-				Mathf.Abs(v.y - b.y) < delta;
+				Mathf.Abs(a.x - b.x) < delta &&
+				Mathf.Abs(a.y - b.y) < delta;
 		}
 
 		/// <summary>
-		/// Compares 2 vector3 objects, allowing for a margin of error.
+		/// Compares two Vector3 values component-wise, allowing for a margin of error.
 		/// </summary>
-		/// <param name="v"></param>
-		/// <param name="b"></param>
-		/// <param name="delta"></param>
-		/// <returns></returns>
-		public static bool Approx3(this Vector3 v, Vector3 b, float delta = floatCompareEpsilon)
+		/// <param name="a">First Vector3 value.</param>
+		/// <param name="b">Second Vector3 value.</param>
+		/// <param name="delta">The maximum difference between components allowed.</param>
+		/// <returns>True if a and b components are respectively within delta distance of one another.</returns>
+		public static bool Approx3(this Vector3 a, Vector3 b, float delta = floatCompareEpsilon)
 		{
 			return
-				Mathf.Abs(v.x - b.x) < delta &&
-				Mathf.Abs(v.y - b.y) < delta &&
-				Mathf.Abs(v.z - b.z) < delta;
+				Mathf.Abs(a.x - b.x) < delta &&
+				Mathf.Abs(a.y - b.y) < delta &&
+				Mathf.Abs(a.z - b.z) < delta;
 		}
 
 		/// <summary>
-		/// Compares 2 vector4 objects, allowing for a margin of error.
+		/// Compares two Vector4 values component-wise, allowing for a margin of error.
 		/// </summary>
-		/// <param name="v"></param>
-		/// <param name="b"></param>
-		/// <param name="delta"></param>
-		/// <returns></returns>
-		public static bool Approx4(this Vector4 v, Vector4 b, float delta = floatCompareEpsilon)
+		/// <param name="a">First Vector4 value.</param>
+		/// <param name="b">Second Vector4 value.</param>
+		/// <param name="delta">The maximum difference between components allowed.</param>
+		/// <returns>True if a and b components are respectively within delta distance of one another.</returns>
+
+		public static bool Approx4(this Vector4 a, Vector4 b, float delta = floatCompareEpsilon)
 		{
 			return
-				Mathf.Abs(v.x - b.x) < delta &&
-				Mathf.Abs(v.y - b.y) < delta &&
-				Mathf.Abs(v.z - b.z) < delta &&
-				Mathf.Abs(v.w - b.w) < delta;
+				Mathf.Abs(a.x - b.x) < delta &&
+				Mathf.Abs(a.y - b.y) < delta &&
+				Mathf.Abs(a.z - b.z) < delta &&
+				Mathf.Abs(a.w - b.w) < delta;
 		}
 
 		/// <summary>
-		/// Compares 2 color objects, allowing for a margin of error.
+		/// Compares two Color values component-wise, allowing for a margin of error.
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <param name="delta"></param>
-		/// <returns></returns>
+		/// <param name="a">First Color value.</param>
+		/// <param name="b">Second Color value.</param>
+		/// <param name="delta">The maximum difference between components allowed.</param>
+		/// <returns>True if a and b components are respectively within delta distance of one another.</returns>
 		internal static bool ApproxC(this Color a, Color b, float delta = floatCompareEpsilon)
 		{
 			return 	Mathf.Abs(a.r - b.r) < delta &&
@@ -1146,12 +1155,13 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Compares float values, allowing for a margin of error.
+		/// Compares two float values component-wise, allowing for a margin of error.
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <param name="delta"></param>
-		/// <returns></returns>
+		/// <param name="a">First float value.</param>
+		/// <param name="b">Second float value.</param>
+		/// <param name="delta">The maximum difference between components allowed.</param>
+		/// <returns>True if a and b components are respectively within delta distance of one another.</returns>
+
 		internal static bool Approx(this float a, float b, float delta = floatCompareEpsilon)
 		{
 			return Mathf.Abs(b - a) < Mathf.Abs(delta);
@@ -1178,12 +1188,12 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Clamp int to range.
+		/// Clamp a int to a range.
 		/// </summary>
-		/// <param name="value"></param>
-		/// <param name="lowerBound"></param>
-		/// <param name="upperBound"></param>
-		/// <returns></returns>
+		/// <param name="value">The value to clamp.</param>
+		/// <param name="lowerBound">The lowest value that the clamped value can be.</param>
+		/// <param name="upperBound">The highest value that the clamped value can be.</param>
+		/// <returns>A value clamped with the range of lowerBound and upperBound.</returns>
 		public static int Clamp(int value, int lowerBound, int upperBound)
 		{
 			return value < lowerBound ? lowerBound : value > upperBound ? upperBound : value;

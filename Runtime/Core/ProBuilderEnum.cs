@@ -40,7 +40,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// Determines what GameObject flags this object will have.
 	/// </summary>
-	public enum EntityType {
+	enum EntityType {
 		Detail,
 		Occluder,
 		Trigger,
@@ -315,7 +315,7 @@ namespace UnityEngine.ProBuilder
     };
 
 	/// <summary>
-	/// Different methods of face extrusion.
+	/// Describes the different methods of face extrusion.
 	/// </summary>
 	public enum ExtrudeMethod
 	{

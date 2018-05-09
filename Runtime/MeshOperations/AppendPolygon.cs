@@ -44,7 +44,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				mesh.SetVertices(vertices);
 				mesh.SetFaces(faces.ToArray());
 				mesh.SetSharedIndexes(lookup);
-				
+
                 return data.face;
 			}
 
@@ -189,7 +189,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="indices"></param>
 		/// <returns></returns>
-		internal static List<List<Edge>> FindHoles(ProBuilderMesh pb, IList<int> indices)
+		internal static List<List<Edge>> FindHoles(ProBuilderMesh pb, IEnumerable<int> indices)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
 			HashSet<int> common = IntArrayUtility.GetCommonIndices(lookup, indices);

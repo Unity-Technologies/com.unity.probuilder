@@ -695,7 +695,7 @@ namespace UnityEditor.ProBuilder
 			// Append shared UV indices to SelectedTriangles array (if necessary)
 			for (int i = 0; i < selection.Length; i++)
 			{
-				List<int> selectedTris = new List<int>(selection[i].selectedTriangles);
+				List<int> selectedTris = new List<int>(selection[i].selectedIndicesInternal);
 
 				IntArray[] sharedUVs = selection[i].sharedIndicesUVInternal;
 
@@ -704,7 +704,7 @@ namespace UnityEditor.ProBuilder
 				{
 					foreach (int[] arr in sharedUVs)
 					{
-						if (System.Array.Exists(arr, element => System.Array.IndexOf(selection[i].selectedTriangles, element) > -1))
+						if (System.Array.Exists(arr, element => System.Array.IndexOf(selection[i].selectedIndicesInternal, element) > -1))
 						{
 							selectedTris.AddRange(arr);
 						}
@@ -1866,7 +1866,7 @@ namespace UnityEditor.ProBuilder
 
 					if (channel < 1)
 					{
-						foreach (int index in selection[i].selectedTriangles)
+						foreach (int index in selection[i].selectedIndicesInternal)
 						{
 							p = UVToGUIPoint(uv[index]);
 							r.x = p.x - HALF_DOT;
@@ -2354,7 +2354,7 @@ namespace UnityEditor.ProBuilder
 					switch (selectionMode)
 					{
 						case SelectMode.Vertex:
-							List<int> selectedTris = new List<int>(pb.selectedTriangles);
+							List<int> selectedTris = new List<int>(pb.selectedIndicesInternal);
 
 							for (int j = 0; j < len; j++)
 							{
@@ -2785,7 +2785,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach (ProBuilderMesh pb in selection)
 			{
-				Face[] faces = GetFaces(pb, pb.selectedTriangles);
+				Face[] faces = GetFaces(pb, pb.selectedIndicesInternal);
 
 				List<int> elementGroups = new List<int>();
 				List<int> textureGroups = new List<int>();
@@ -2851,7 +2851,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach (ProBuilderMesh pb in selection)
 			{
-				Face[] faces = GetFaces(pb, pb.selectedTriangles);
+				Face[] faces = GetFaces(pb, pb.selectedIndicesInternal);
 				pb.SetSelectedFaces(faces);
 				ProBuilderEditor.Refresh(false);
 			}
@@ -2921,7 +2921,7 @@ namespace UnityEditor.ProBuilder
 		private void FlagSelectedFacesAsManual(ProBuilderMesh pb)
 		{
 			// Mark selected UV faces manualUV flag true
-			foreach (Face f in GetFaces(pb, pb.selectedTriangles))
+			foreach (Face f in GetFaces(pb, pb.selectedIndicesInternal))
 			{
 				f.textureGroup = -1;
 				f.manualUV = true;
@@ -2959,7 +2959,7 @@ namespace UnityEditor.ProBuilder
 				if (selection[i].selectedFacesInternal.Length > 0)
 				{
 					selection[i].ToMesh(); // Remove UV2 modifications
-					UVEditing.SplitUVs(selection[i], selection[i].selectedTriangles);
+					UVEditing.SplitUVs(selection[i], selection[i].selectedIndicesInternal);
 					UVEditing.ProjectFacesAuto(selection[i], selection[i].selectedFacesInternal, channel);
 
 					foreach (Face f in selection[i].selectedFacesInternal)
@@ -3050,7 +3050,7 @@ namespace UnityEditor.ProBuilder
 
 				if (selection[i].selectedVertexCount > 0)
 				{
-					UVEditing.ProjectFacesSphere(selection[i], selection[i].selectedTriangles, channel);
+					UVEditing.ProjectFacesSphere(selection[i], selection[i].selectedIndicesInternal, channel);
 					p++;
 				}
 			}
@@ -3194,7 +3194,7 @@ namespace UnityEditor.ProBuilder
 			{
 				pb.ToMesh();
 
-				pb.SplitUVs(pb.selectedTriangles);
+				pb.SplitUVs(pb.selectedIndicesInternal);
 				RefreshElementGroups(pb);
 
 				pb.Refresh();
@@ -3220,11 +3220,11 @@ namespace UnityEditor.ProBuilder
 			{
 				selection[i].ToMesh();
 
-				selection[i].SplitUVs(selection[i].selectedTriangles);
+				selection[i].SplitUVs(selection[i].selectedIndicesInternal);
 
 				Vector2[] uv = channel == 0 ? selection[i].texturesInternal : selection[i].mesh.uv2;
 
-				foreach (int n in selection[i].selectedTriangles.Distinct())
+				foreach (int n in selection[i].selectedIndicesInternal.Distinct())
 					uv[n] = Math.ReflectPoint(uv[n], center, center + direction);
 
 				UVEditing.ApplyUVs(selection[i], uv, channel);
@@ -3294,7 +3294,7 @@ namespace UnityEditor.ProBuilder
 				var pb = selection[i];
 				Vector2[] uv = UVEditing.GetUVs(pb, channel);
 
-				foreach (int n in selection[i].selectedTriangles.Distinct())
+				foreach (int n in selection[i].selectedIndicesInternal.Distinct())
 				{
 					uv[n] -= delta;
 				}

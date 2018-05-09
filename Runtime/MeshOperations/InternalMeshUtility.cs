@@ -24,12 +24,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			if(indices != null && indices.Length > 0)
 			{
-				Vector3[] verts = pb.VerticesInWorldSpace(indices);
+				Vector3[] positions = pb.positionsInternal;
 
-				foreach (Vector3 v in verts)
-					center += v;
+				foreach (int i in indices)
+					center += positions[i];
 
-				center /= (float)verts.Length;
+				center = pb.transform.TransformPoint(center / (float) indices.Length);
 			}
 			else
 			{
@@ -344,7 +344,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			si = IntArrayUtility.ToIntArray(welds);
 
-			pb.SplitUVs(Face.AllTriangles(faces));
+			pb.SplitUVs(faces.SelectMany(x => x.ToTriangles()));
 
 			/**
 			 * Move the inside faces to the top of the extrusion

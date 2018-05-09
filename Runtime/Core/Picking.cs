@@ -4,18 +4,23 @@ using UnityEngine;
 
 namespace UnityEngine.ProBuilder
 {
-	public struct PickerOptions
+	/// <summary>
+	/// A collection of settings defining how mesh element picking behaves.
+	/// </summary>
+	struct PickerOptions
 	{
-		/// <summary>
+		/// <value>
         /// Should depth testing be performed when hit testing elements?
         /// Enable to select only visible elements, disable to select all elements regardless of visibility.
-        /// </summary>
+        /// </value>
         public bool depthTest { get; set; }
 
-		/// <summary>
+		/// <value>
 		/// Require elements to be completely encompassed by the rect selection (Complete) or only touched (Partial).
+		/// </value>
+		/// <remarks>
 		/// Does not apply to vertex picking.
-		/// </summary>
+		/// </remarks>
 		public RectSelectMode rectSelectMode { get; set; }
 
 		static readonly PickerOptions k_Default = new PickerOptions()
@@ -24,6 +29,9 @@ namespace UnityEngine.ProBuilder
 			rectSelectMode = RectSelectMode.Partial,
 		};
 
+		/// <value>
+		/// A set of options with default values.
+		/// </value>
 		public static PickerOptions Default
 		{
 			get { return k_Default; }

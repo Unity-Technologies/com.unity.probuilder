@@ -7,36 +7,25 @@ using System.Linq;
 namespace UnityEngine.ProBuilder
 {
 	/// <summary>
-	/// Utilities and extension methods for IntArray.
+	/// Utilities and extension methods for working with @"UnityEngine.ProBuilder.IntArray".
 	/// </summary>
 	public static class IntArrayUtility
 	{
 		/// <summary>
-		/// Convert a IntArray[] to a jagged int array.
+		/// Returns a dictionary where Key is equal to triangle index, and Value is equal to the @"UnityEngine.ProBuilder.sharedIndexes" index.
+		/// <br /><br />
+		/// In this way you can quickly check which indices are sharing a vertex.
 		/// </summary>
-		/// <param name="array"></param>
-		/// <returns>Returns a jagged int array.</returns>
-		public static int[][] ToArray(this IntArray[] array)
-		{
-            if (array == null)
-                throw new ArgumentNullException("array");
-			int[][] arr = new int[array.Length][];
-			for(int i = 0; i < arr.Length; i++)
-				arr[i] = array[i].array;
-			return arr;
-		}
-
-		/// <summary>
-		/// Returns a dictionary where Key is equal to triangle index, and Value
-		/// is equal to the sharedIndices index.  In this way you can quickly check
-		/// which indices are sharing a vertex.  Ex:
+		/// <example>
+		/// ```
 		/// if(dictionary[triangles[0]] == dictionary[triangles[4]])
 		///		Debug.Log("Triangles at mesh.triangles[0] and mesh.triangles[4] share a vertex");
 		///	else
 		///		Debug.Log("Triangles at mesh.triangles[0] and mesh.triangles[4] do not share a vertex");
-		/// </summary>
-		/// <param name="array"></param>
-		/// <returns></returns>
+		/// ```
+		/// </example>
+		/// <param name="array">The array to convert.</param>
+		/// <returns>A dictionary that can be used to quickly look up the common index of a triangle.</returns>
 		public static Dictionary<int, int> ToDictionary(this IEnumerable<IntArray> array)
 		{
             if (array == null)
@@ -61,10 +50,10 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Convert a dictionary back to IntArray[]
+		/// Convert a lookup dictionary (<see cref="ToDictionary"/>) back to @"UnityEngine.ProBuilder.IntArray"[].
 		/// </summary>
-		/// <param name="lookup"></param>
-		/// <returns></returns>
+		/// <param name="lookup">A Dictionary where Key corresponds to a vertex index, and Value to a common index.</param>
+		/// <returns>A new IntArray[] converted from the lookup dictionary.</returns>
 		public static IntArray[] ToIntArray(this IEnumerable<KeyValuePair<int, int>> lookup)
 		{
 			if(lookup == null)
@@ -98,27 +87,7 @@ namespace UnityEngine.ProBuilder
 			return shared.ToIntArray();
 		}
 
-		/// <summary>
-		/// Convert a jagged int array to an IntArray.
-		/// </summary>
-		/// <param name="array"></param>
-		/// <returns></returns>
-		public static IntArray[] ToIntArray(this int[][] array)
-		{
-            if (array == null)
-                throw new ArgumentNullException("array");
-			IntArray[] arr = new IntArray[array.Length];
-			for(int i = 0; i < arr.Length; i++)
-				arr[i] = (IntArray)array[i];
-			return arr;
-		}
-
-		/// <summary>
-		/// Convert a jagged int array to an IntArray.
-		/// </summary>
-		/// <param name="list"></param>
-		/// <returns></returns>
-		public static IntArray[] ToIntArray(this List<List<int>> list)
+		static IntArray[] ToIntArray(this List<List<int>> list)
 		{
             if (list == null)
                 throw new ArgumentNullException("list");
@@ -129,12 +98,12 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Scans an array of IntArray and returns the index of that int[] that holds the index
+		/// Find the index of a vertex index (triangle) in an IntArray[]. The index returned is called the common index, or shared index in some cases.
 		/// </summary>
 		/// <remarks>Aids in removing duplicate vertex indices.</remarks>
-		/// <param name="intArray"></param>
-		/// <param name="index"></param>
-		/// <returns></returns>
+		/// <param name="intArray">The IntArray[] to search for a triangle value in.</param>
+		/// <param name="index">The local index, or triangle to scan for. Local indices point correspond to the mesh vertices array.</param>
+		/// <returns>The common (or shared) index.</returns>
 		public static int IndexOf(this IntArray[] intArray, int index)
 		{
 			if(intArray == null) return -1;
@@ -150,11 +119,11 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Given a list of vertex indexes, return all indices that are coincident.
+		/// Given a list of vertex indexes (local), return all indices that are coincident.
 		/// </summary>
-		/// <param name="intArray"></param>
-		/// <param name="indexes"></param>
-		/// <returns></returns>
+		/// <param name="intArray">The shared index arrays. See @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes".</param>
+		/// <param name="indexes">A collection of the vertex indices to include.</param>
+		/// <returns>A comprehensive list of all indices that are coincident with any of the indices in the indexes argument.</returns>
 		public static List<int> AllIndexesWithValues(this IList<IntArray> intArray, IEnumerable<int> indexes)
 		{
             if (intArray == null)
@@ -171,7 +140,7 @@ namespace UnityEngine.ProBuilder
 			return shared;
 		}
 
-		public static List<int> AllIndexesWithValues(this IList<IntArray> intArray, Dictionary<int, int> lookup, IEnumerable<int> indexes)
+		internal static List<int> AllIndexesWithValues(this IList<IntArray> intArray, Dictionary<int, int> lookup, IEnumerable<int> indexes)
 		{
             if (intArray == null)
                 throw new ArgumentNullException("intArray");
@@ -244,10 +213,20 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Cycles through a mesh and returns a IntArray[] of vertex indices that point to the same point in world space.
+		/// Cycles through a mesh and returns an IntArray[] of vertex indices that point to the same point in world space.
+		/// <br />
+		/// This is how many ProBuiilder shapes define coincident vertices on creation.
 		/// </summary>
-		/// <param name="positions"></param>
-		/// <returns></returns>
+		/// <example>
+		/// ```
+		/// <![CDATA[var mesh = gameObject.AdComponent<ProBuilderMesh>();]]>
+		/// mesh.SetPositions(myNewPositions);
+		/// mesh.SetFaces(myNewFaces);
+		/// mesh.SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(myNewPositions));
+		/// ```
+		/// </example>
+		/// <param name="positions">A collection of Vector3 positions to be tested for equality.</param>
+		/// <returns>A new IntArray[] where each contained array is a list of indices that are sharing the same position.</returns>
 		public static IntArray[] GetSharedIndexesWithPositions(Vector3[] positions)
 		{
             if (positions == null)
