@@ -1,16 +1,16 @@
 namespace UnityEngine.ProBuilder
 {
 	/// <summary>
-	/// The versioning information for this ProBuilder install.
+	/// Information about this build of ProBuilder.
 	/// </summary>
 	public static class Version
 	{
-		internal static readonly VersionInfo currentInfo = new VersionInfo("4.0.0-preview.1", "en-US: 03/29/2018");
+		internal static readonly SemVer currentInfo = new SemVer("4.0.0-preview.1", "en-US: 03/29/2018");
 
 		/// <summary>
 		/// Get the current version.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>The current version string in semantic version format.</returns>
 		public static string current
 		{
             get { return currentInfo.ToString(); }

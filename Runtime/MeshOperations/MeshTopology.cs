@@ -30,7 +30,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			newFaces = rebuild.Select(x => x.face).ToArray();
 
-			return new ActionResult(Status.Success, string.Format("Triangulated {0} {1}", faces.Count, faces.Count < 2 ? "Face" : "Faces"));
+			return new ActionResult(ActionResult.Status.Success, string.Format("Triangulated {0} {1}", faces.Count, faces.Count < 2 ? "Face" : "Faces"));
 		}
 
 		static List<FaceRebuildData> BreakFaceIntoTris(Face face, List<Vertex> vertices, Dictionary<int, int> lookup)

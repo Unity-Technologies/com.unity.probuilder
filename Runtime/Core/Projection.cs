@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Linq;	// List.Reverse
+using System.Linq;
 using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
@@ -12,11 +12,11 @@ namespace UnityEngine.ProBuilder
 		static Vector3 s_UAxis = Vector3.zero, s_VAxis = Vector3.zero;
 
 		/// <summary>
-		/// Maps an array of 3d points to 2d space given the vertices' normal.
+		/// Project a collection of 3d positions to a 2d plane.
 		/// </summary>
 		/// <param name="verts">A collection of positions to project based on a direction.</param>
-		/// <param name="planeNormal"></param>
-		/// <returns></returns>
+		/// <param name="planeNormal">The normal to project points from.</param>
+		/// <returns>The verts array projected into 2d coordinates.</returns>
 		public static Vector2[] PlanarProject(IEnumerable<Vector3> verts, Vector3 planeNormal)
 		{
 			return PlanarProject(verts.ToArray(), planeNormal, VectorToProjectionAxis(planeNormal));
@@ -288,24 +288,24 @@ namespace UnityEngine.ProBuilder
 		/// Find a plane that best fits a set of 3d points.
 		/// </summary>
 		/// <remarks>http://www.ilikebigbits.com/blog/2015/3/2/plane-from-points</remarks>
-		/// <param name="points"></param>
-		/// <param name="indices"></param>
-		/// <returns></returns>
-		internal static Plane FindBestPlane(Vector3[] points, int[] indices = null)
+		/// <param name="points">The points to find a plane for. Order does not matter.</param>
+		/// <param name="indexes">If provided, only the vertices referenced by the indexes array will be considered.</param>
+		/// <returns>A plane that best matches the layout of the points array.</returns>
+		public static Plane FindBestPlane(Vector3[] points, int[] indexes = null)
 		{
 			float 	xx = 0f, xy = 0f, xz = 0f,
 					yy = 0f, yz = 0f, zz = 0f;
 
-			bool ind = indices != null && indices.Length > 0;
-			int len = ind ? indices.Length : points.Length;
+			bool ind = indexes != null && indexes.Length > 0;
+			int len = ind ? indexes.Length : points.Length;
 
 			Vector3 c = Vector3.zero, n = Vector3.zero;
 
 			for(int i = 0; i < len; i++)
 			{
-				c.x += points[ind ? indices[i] : i].x;
-				c.y += points[ind ? indices[i] : i].y;
-				c.z += points[ind ? indices[i] : i].z;
+				c.x += points[ind ? indexes[i] : i].x;
+				c.y += points[ind ? indexes[i] : i].y;
+				c.z += points[ind ? indexes[i] : i].z;
 			}
 
 			c.x /= (float) len;
@@ -314,7 +314,7 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < len; i++)
 			{
-				Vector3 r = points[ ind ? indices[i] : i ] - c;
+				Vector3 r = points[ ind ? indexes[i] : i ] - c;
 
 				xx += r.x * r.x;
 				xy += r.x * r.y;

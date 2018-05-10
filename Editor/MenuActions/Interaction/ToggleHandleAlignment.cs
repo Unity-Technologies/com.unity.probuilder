@@ -67,7 +67,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			ProBuilderEditor.instance.SetHandleAlignment( (HandleAlignment)current );
 			ProBuilderEditor.instance.LoadPrefs();
-			return new ActionResult(Status.Success, "Set Handle Alignment\n" + ((HandleAlignment)current).ToString());
+			return new ActionResult(ActionResult.Status.Success, "Set Handle Alignment\n" + ((HandleAlignment)current).ToString());
 		}
 
 		public override bool IsEnabled()

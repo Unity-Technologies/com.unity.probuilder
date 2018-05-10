@@ -5,40 +5,40 @@ using System.Collections.Generic;
 namespace UnityEngine.ProBuilder
 {
 	/// <summary>
-	/// Utilities for working with smoothing groups and hard / soft edges.
+	/// Utilities for working with smoothing groups. Smoothing groups are how ProBuilder defines hard and soft edges.
 	/// </summary>
 	public static class Smoothing
 	{
-		/// <summary>
+		/// <value>
 		/// Faces with smoothingGroup = 0 are hard edges. Historically negative values were sometimes also written as hard edges.
-		/// </summary>
+		/// </value>
 		public const int smoothingGroupNone = 0;
 
-		/// <summary>
+		/// <value>
 		/// Smoothing groups 1-24 are smooth.
-		/// </summary>
+		/// </value>
 		public const int smoothRangeMin = 1;
 
-		/// <summary>
+		/// <value>
 		/// Smoothing groups 1-24 are smooth.
-		/// </summary>
+		/// </value>
 		public const int smoothRangeMax = 24;
 
-		/// <summary>
-		/// Smoothing groups 25-42 are hard. Note that this is obsolete, and generally hard faces should be marked SMOOTHING_GROUP_NONE.
-		/// </summary>
+		/// <value>
+		/// Smoothing groups 25-42 are hard. Note that this is obsolete, and generally hard faces should be marked smoothingGroupNone.
+		/// </value>
 		public const int hardRangeMin = 25;
 
-		/// <summary>
-		/// Smoothing groups 25-42 are hard. Note that this is soon to be obsolete, and generally hard faces should be marked SMOOTHING_GROUP_NONE.
-		/// </summary>
+		/// <value>
+		/// Smoothing groups 25-42 are hard. Note that this is soon to be obsolete, and generally hard faces should be marked smoothingGroupNone.
+		/// </value>
 		public const int hardRangeMax = 42;
 
 		/// <summary>
 		/// Get the first available unused smoothing group.
 		/// </summary>
-		/// <param name="mesh"></param>
-		/// <returns></returns>
+		/// <param name="mesh">The target mesh.</param>
+		/// <returns>An unused smoothing group.</returns>
 		public static int GetUnusedSmoothingGroup(ProBuilderMesh mesh)
 		{
             if (mesh == null)
@@ -48,7 +48,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Get the first available smooth group after start.
+		/// Get the first available smooth group after a specified index.
 		/// </summary>
 		/// <param name="start"></param>
 		/// <param name="used"></param>
@@ -67,23 +67,27 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Is the smooth group index considered smooth?
+		/// Is the smooth group value considered smooth?
 		/// </summary>
-		/// <param name="index"></param>
-		/// <returns></returns>
+		/// <param name="index">The smoothing group to test.</param>
+		/// <returns>True if the smoothing group value is smoothed, false if not.</returns>
 		public static bool IsSmooth(int index)
 		{
 			return (index > smoothingGroupNone && (index < hardRangeMin || index > hardRangeMax));
 		}
 
 		/// <summary>
-		/// Group together adjacent faces with normal differences less than angleThreshold (in degrees).
+		/// Generate smooothing groups for a set of faces by comparing adjacent faces with normal differences less than angleThreshold (in degrees).
 		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="faces"></param>
-		/// <param name="angleThreshold"></param>
-		/// <param name="normals"></param>
-		public static void ApplySmoothingGroups(ProBuilderMesh mesh, IEnumerable<Face> faces, float angleThreshold, Vector3[] normals = null)
+		/// <param name="mesh">The source mesh.</param>
+		/// <param name="faces">Faces to be considered for smoothing.</param>
+		/// <param name="angleThreshold">The maximum angle difference in degrees between adjacent face normals for the shared edge to be considered smooth.</param>
+		public static void ApplySmoothingGroups(ProBuilderMesh mesh, IEnumerable<Face> faces, float angleThreshold)
+		{
+			ApplySmoothingGroups(mesh, faces, angleThreshold, null);
+		}
+
+		internal static void ApplySmoothingGroups(ProBuilderMesh mesh, IEnumerable<Face> faces, float angleThreshold, Vector3[] normals)
 		{
             if (mesh == null || faces == null)
                 throw new System.ArgumentNullException("mesh");

@@ -32,7 +32,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ActionResult DoAction()
 		{
 			VertexPositionEditor.MenuOpenVertexEditor();
-			return new ActionResult(Status.Success, "Open Vertex Editor Window");
+			return new ActionResult(ActionResult.Status.Success, "Open Vertex Editor Window");
 		}
 	}
 }

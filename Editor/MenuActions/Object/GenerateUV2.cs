@@ -125,7 +125,7 @@ namespace UnityEditor.ProBuilder.Actions
 			UnityEditor.EditorUtility.ClearProgressBar();
 
 			int l = selected.Length;
-			return new ActionResult(Status.Success, "Generate UV2\n" + (l > 1 ? string.Format("for {0} objects", l) : string.Format("for {0} object", l)));
+			return new ActionResult(ActionResult.Status.Success, "Generate UV2\n" + (l > 1 ? string.Format("for {0} objects", l) : string.Format("for {0} object", l)));
 		}
 	}
 }

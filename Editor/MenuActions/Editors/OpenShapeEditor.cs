@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ActionResult DoAction()
 		{
 			ShapeEditor.MenuOpenShapeCreator();
-			return new ActionResult(Status.Success, "Open Shape Tool");
+			return new ActionResult(ActionResult.Status.Success, "Open Shape Tool");
 		}
 	}
 }

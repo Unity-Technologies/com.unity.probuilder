@@ -11,29 +11,90 @@ namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// Holds information about a single vertex, and provides methods for averaging between many.
-	/// <remarks>A vertex is only required to contain position, all other values are optional.</remarks>
+	/// <remarks>All values are optional. Where not present a default value will be substituted if necessary.</remarks>
 	/// </summary>
 	/// <inheritdoc cref="IEquatable{T}"/>
 	public sealed class Vertex : IEquatable<Vertex>
 	{
+		/// <value>
+		/// The position in model space.
+		/// </value>
+		/// <seealso cref="ProBuilderMesh.positions"/>
 		public Vector3 position { get; set; }
+		/// <value>
+		/// Vertex color.
+		/// </value>
+		/// <seealso cref="ProBuilderMesh.colors"/>
 		public Color color { get; set; }
+		/// <value>
+		/// Unit vector normal.
+		/// </value>
+		/// <seealso cref="ProBuilderMesh.GetNormals"/>
 		public Vector3 normal { get; set; }
+		/// <value>
+		/// Vertex tangent (sometimes called binormal).
+		/// </value>
+		/// <seealso cref="ProBuilderMesh.tangents"/>
 		public Vector4 tangent { get; set; }
+		/// <value>
+		/// UV 0 channel. Also called textures.
+		/// </value>
+		/// <seealso cref="ProBuilderMesh.textures"/>
+		/// <seealso cref="ProBuilderMesh.GetUVs"/>
 		public Vector2 uv0 { get; set; }
+		/// <value>
+		/// UV 2 channel.
+		/// </value>
+		/// <seealso cref="ProBuilderMesh.GetUVs"/>
 		public Vector2 uv2 { get; set; }
+		/// <value>
+		/// UV 3 channel.
+		/// </value>
+		/// <seealso cref="ProBuilderMesh.GetUVs"/>
 		public Vector4 uv3 { get; set; }
+		/// <value>
+		/// UV 4 channel.
+		/// </value>
+		/// <seealso cref="ProBuilderMesh.GetUVs"/>
 		public Vector4 uv4 { get; set; }
 
+		/// <value>
+		/// Does this vertex have a valid position value?
+		/// </value>
 		public bool hasPosition { get; set; }
+		/// <value>
+		/// Does this vertex have a valid color value?
+		/// </value>
 		public bool hasColor { get; set; }
+		/// <value>
+		/// Does this vertex have a valid normal value?
+		/// </value>
 		public bool hasNormal { get; set; }
+		/// <value>
+		/// Does this vertex have a valid tangent value?
+		/// </value>
 		public bool hasTangent { get; set; }
+		/// <value>
+		/// Does this vertex have a valid UV 0 value?
+		/// </value>
 		public bool hasUv0 { get; set; }
+		/// <value>
+		/// Does this vertex have a valid UV 2 value?
+		/// </value>
 		public bool hasUv2 { get; set; }
+		/// <value>
+		/// Does this vertex have a valid UV 3 value?
+		/// </value>
 		public bool hasUv3 { get; set; }
+		/// <value>
+		/// Does this vertex have a valid UV 4 value?
+		/// </value>
 		public bool hasUv4 { get; set; }
 
+		/// <summary>
+		/// Initialize a Vertex with no values.
+		/// </summary>
+		/// <param name="hasAllValues"></param>
 		public Vertex(bool hasAllValues = false)
 		{
 			hasPosition = hasAllValues;

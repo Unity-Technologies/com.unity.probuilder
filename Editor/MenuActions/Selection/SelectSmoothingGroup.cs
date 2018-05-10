@@ -76,7 +76,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			ProBuilderEditor.Refresh();
 
-			return new ActionResult(Status.Success, "Select Faces with Smoothing Group");
+			return new ActionResult(ActionResult.Status.Success, "Select Faces with Smoothing Group");
 		}
 	}
 }

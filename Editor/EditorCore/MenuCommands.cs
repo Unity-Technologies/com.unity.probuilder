@@ -27,7 +27,7 @@ namespace UnityEditor.ProBuilder
 		public static ActionResult MenuMergeObjects(ProBuilderMesh[] selected)
 		{
 			if(selected.Length < 2)
-				return new ActionResult(Status.Canceled, "Must Select 2+ Objects");
+				return new ActionResult(ActionResult.Status.Canceled, "Must Select 2+ Objects");
 
 			ProBuilderMesh pb = null;
 
@@ -54,7 +54,7 @@ namespace UnityEditor.ProBuilder
 			if(editor)
 				ProBuilderEditor.Refresh();
 
-			return new ActionResult(Status.Success, "Merged Objects");
+			return new ActionResult(ActionResult.Status.Success, "Merged Objects");
 		}
 #endif
 
@@ -108,7 +108,7 @@ namespace UnityEditor.ProBuilder
 			if(editor != null)
 				ProBuilderEditor.Refresh();
 
-			return new ActionResult(Status.Success, "Set Pivot");
+			return new ActionResult(ActionResult.Status.Success, "Set Pivot");
 		}
 
 		public static ActionResult MenuFreezeTransforms(ProBuilderMesh[] selection)
@@ -147,7 +147,7 @@ namespace UnityEditor.ProBuilder
 
 			SceneView.RepaintAll();
 
-			return new ActionResult(Status.Success, "Freeze Transforms");
+			return new ActionResult(ActionResult.Status.Success, "Freeze Transforms");
 		}
 
 		/// <summary>
@@ -174,7 +174,7 @@ namespace UnityEditor.ProBuilder
 				pb.Optimize();
 			}
 
-			return new ActionResult(Status.Success, "Set " + entityType);
+			return new ActionResult(ActionResult.Status.Success, "Set " + entityType);
 		}
 
 		/**
@@ -212,7 +212,7 @@ namespace UnityEditor.ProBuilder
 					break;
 			}
 
-			return new ActionResult(Status.Success, "Open Vertex Colors Editor");
+			return new ActionResult(ActionResult.Status.Success, "Open Vertex Colors Editor");
 		}
 
 		public static void VertexColorsGUI(int width)
@@ -247,7 +247,7 @@ namespace UnityEditor.ProBuilder
 
 			ProBuilderEditor.Refresh();
 
-			return new ActionResult(Status.Success, "Triangulate " + selection.Length + (selection.Length > 1 ? " Objects" : " Object"));
+			return new ActionResult(ActionResult.Status.Success, "Triangulate " + selection.Length + (selection.Length > 1 ? " Objects" : " Object"));
 		}
 
 		enum BooleanOperation
@@ -260,7 +260,7 @@ namespace UnityEditor.ProBuilder
 		static ActionResult MenuBooleanOperation(BooleanOperation operation, ProBuilderMesh lhs, ProBuilderMesh rhs)
 		{
 			if(lhs == null || rhs == null)
-				return new ActionResult(Status.Failure, "Must Select 2 Objects");
+				return new ActionResult(ActionResult.Status.Failure, "Must Select 2 Objects");
 
 			string op_string = operation == BooleanOperation.Union ? "Union" : (operation == BooleanOperation.Subtract ? "Subtract" : "Intersect");
 
@@ -295,7 +295,7 @@ namespace UnityEditor.ProBuilder
 
 			Selection.objects = new Object[] { pb.gameObject };
 
-			return new ActionResult(Status.Success, op_string);
+			return new ActionResult(ActionResult.Status.Success, op_string);
 		}
 
 		/**
@@ -345,7 +345,7 @@ namespace UnityEditor.ProBuilder
 				pb.Optimize();
 			}
 
-			return new ActionResult(Status.Success, "Flip Object Normals");
+			return new ActionResult(ActionResult.Status.Success, "Flip Object Normals");
 		}
 
 		/**
@@ -381,9 +381,9 @@ namespace UnityEditor.ProBuilder
 			}
 
 			if(c > 0)
-				return new ActionResult(Status.Success, "Flip " + c + (c > 1 ? " Face Normals" : " Face Normal"));
+				return new ActionResult(ActionResult.Status.Success, "Flip " + c + (c > 1 ? " Face Normals" : " Face Normal"));
 			else
-				return new ActionResult(Status.Canceled, "Flip Normals\nNo Faces Selected");
+				return new ActionResult(ActionResult.Status.Canceled, "Flip Normals\nNo Faces Selected");
 		}
 
 		/**
@@ -513,9 +513,9 @@ namespace UnityEditor.ProBuilder
 			SceneView.RepaintAll();
 
 			if( extrudedFaceCount > 0 )
-				return new ActionResult(Status.Success, "Extrude");
+				return new ActionResult(ActionResult.Status.Success, "Extrude");
 			else
-				return new ActionResult(Status.Canceled, "Extrude\nEmpty Selection");
+				return new ActionResult(ActionResult.Status.Canceled, "Extrude\nEmpty Selection");
 		}
 
 #if !PROTOTYPE
@@ -549,12 +549,12 @@ namespace UnityEditor.ProBuilder
 			if(success)
 			{
 				ProBuilderEditor.Refresh();
-				return new ActionResult(Status.Success, "Bridge Edges");
+				return new ActionResult(ActionResult.Status.Success, "Bridge Edges");
 			}
 			else
 			{
 				Debug.LogWarning("Failed Bridge Edges.  Bridge Edges requires that only 2 edges be selected, and they must both only have one connecting face (non-manifold).");
-				return new ActionResult(Status.Failure, "Bridge Edges requires that only 2 edges be selected, and they must both only have one connecting face (non-manifold).");
+				return new ActionResult(ActionResult.Status.Failure, "Bridge Edges requires that only 2 edges be selected, and they must both only have one connecting face (non-manifold).");
 			}
 		}
 
@@ -573,7 +573,7 @@ namespace UnityEditor.ProBuilder
 				pb.ToMesh();
 
 				List<Face> faces = Bevel.BevelEdges(pb, pb.selectedEdges, amount);
-				res = faces != null ? new ActionResult(Status.Success, "Bevel Edges") : new ActionResult(Status.Failure, "Failed Bevel Edges");
+				res = faces != null ? new ActionResult(ActionResult.Status.Success, "Bevel Edges") : new ActionResult(ActionResult.Status.Failure, "Failed Bevel Edges");
 
 				if(res)
 					pb.SetSelectedFaces(faces);
@@ -687,9 +687,9 @@ namespace UnityEditor.ProBuilder
 			SceneView.RepaintAll();
 
 			if(grown > 0)
-				return new ActionResult(Status.Success, "Grow Selection");
+				return new ActionResult(ActionResult.Status.Success, "Grow Selection");
 			else
-				return new ActionResult(Status.Failure, "Nothing to Grow");
+				return new ActionResult(ActionResult.Status.Failure, "Nothing to Grow");
 		}
 
 		public static bool VerifyShrinkSelection(ProBuilderMesh[] selection)
@@ -710,7 +710,7 @@ namespace UnityEditor.ProBuilder
 		{
 			// @TODO
 			if(editor == null)
-				return new ActionResult(Status.Canceled, "ProBuilder Editor Not Open!");
+				return new ActionResult(ActionResult.Status.Canceled, "ProBuilder Editor Not Open!");
 			else if (selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
 
@@ -754,9 +754,9 @@ namespace UnityEditor.ProBuilder
 			ProBuilderEditor.Refresh(false);
 
 			if( rc > 0 )
-				return new ActionResult(Status.Success, "Shrink Selection");
+				return new ActionResult(ActionResult.Status.Success, "Shrink Selection");
 			else
-				return new ActionResult(Status.Canceled, "Nothing to Shrink");
+				return new ActionResult(ActionResult.Status.Canceled, "Nothing to Shrink");
 		}
 
 		public static bool VerifyInvertSelection(ProBuilderMesh[] selection)
@@ -831,7 +831,7 @@ namespace UnityEditor.ProBuilder
 			ProBuilderEditor.Refresh();
 			SceneView.RepaintAll();
 
-			return new ActionResult(Status.Success, "Invert Selection");
+			return new ActionResult(ActionResult.Status.Success, "Invert Selection");
 		}
 
 		public static bool VerifyEdgeRingLoop(ProBuilderMesh[] selection)
@@ -874,9 +874,9 @@ namespace UnityEditor.ProBuilder
 			SceneView.RepaintAll();
 
 			if(success)
-				return new ActionResult(Status.Success, "Select Edge Ring");
+				return new ActionResult(ActionResult.Status.Success, "Select Edge Ring");
 			else
-				return new ActionResult(Status.Failure, "Nothing to Ring");
+				return new ActionResult(ActionResult.Status.Failure, "Nothing to Ring");
 		}
 
 		/**
@@ -909,9 +909,9 @@ namespace UnityEditor.ProBuilder
 			SceneView.RepaintAll();
 
 			if(foundLoop)
-				return new ActionResult(Status.Success, "Select Edge Loop");
+				return new ActionResult(ActionResult.Status.Success, "Select Edge Loop");
 			else
-				return new ActionResult(Status.Failure, "Nothing to Loop");
+				return new ActionResult(ActionResult.Status.Failure, "Nothing to Loop");
 		}
 
 		public static ActionResult MenuLoopFaces(ProBuilderMesh[] selection)
@@ -926,7 +926,7 @@ namespace UnityEditor.ProBuilder
 
 			ProBuilderEditor.Refresh();
 
-			return new ActionResult(Status.Success, "Select Face Loop");
+			return new ActionResult(ActionResult.Status.Success, "Select Face Loop");
 		}
 
 		public static ActionResult MenuRingFaces(ProBuilderMesh[] selection)
@@ -941,7 +941,7 @@ namespace UnityEditor.ProBuilder
 
 			ProBuilderEditor.Refresh();
 
-			return new ActionResult(Status.Success, "Select Face Ring");
+			return new ActionResult(ActionResult.Status.Success, "Select Face Ring");
 		}
 
 		public static ActionResult MenuRingAndLoopFaces(ProBuilderMesh[] selection)
@@ -956,7 +956,7 @@ namespace UnityEditor.ProBuilder
 
 			ProBuilderEditor.Refresh();
 
-			return new ActionResult(Status.Success, "Select Face Ring and Loop");
+			return new ActionResult(ActionResult.Status.Success, "Select Face Ring and Loop");
 		}
 #endregion
 
@@ -998,9 +998,9 @@ namespace UnityEditor.ProBuilder
 			}
 
 			if(count > 0)
-				return new ActionResult(Status.Success, "Delete " + count + " Faces");
+				return new ActionResult(ActionResult.Status.Success, "Delete " + count + " Faces");
 			else
-				return new ActionResult(Status.Failure, "No Faces Selected");
+				return new ActionResult(ActionResult.Status.Failure, "No Faces Selected");
 		}
 
 #if !PROTOTYPE
@@ -1047,9 +1047,9 @@ namespace UnityEditor.ProBuilder
 				ProBuilderEditor.Refresh();
 
 			if(count > 0)
-				return new ActionResult(Status.Success, "Detach " + count + (count > 1 ? " Faces" : " Face"));
+				return new ActionResult(ActionResult.Status.Success, "Detach " + count + (count > 1 ? " Faces" : " Face"));
 			else
-				return new ActionResult(Status.Success, "Detach Faces");
+				return new ActionResult(ActionResult.Status.Success, "Detach Faces");
 		}
 
 		/**
@@ -1133,9 +1133,9 @@ namespace UnityEditor.ProBuilder
 			}
 
 			if(detachedFaceCount > 0)
-				return new ActionResult(Status.Success, "Detach " + detachedFaceCount + " faces to new Object");
+				return new ActionResult(ActionResult.Status.Success, "Detach " + detachedFaceCount + " faces to new Object");
 			else
-				return new ActionResult(Status.Failure, "No Faces Selected");
+				return new ActionResult(ActionResult.Status.Failure, "No Faces Selected");
 		}
 
 #endif
@@ -1175,9 +1175,9 @@ namespace UnityEditor.ProBuilder
 				ProBuilderEditor.Refresh();
 
 			if(success > 0)
-				return new ActionResult(Status.Success, "Merged " + success + " Faces");
+				return new ActionResult(ActionResult.Status.Success, "Merged " + success + " Faces");
 			else
-				return new ActionResult(Status.Failure, "Merge Faces\nNo Faces Selected");
+				return new ActionResult(ActionResult.Status.Failure, "Merge Faces\nNo Faces Selected");
 		}
 
 		/**
@@ -1211,9 +1211,9 @@ namespace UnityEditor.ProBuilder
 				ProBuilderEditor.Refresh();
 
 			if(success > 0)
-				return new ActionResult(Status.Success, "Flipped " + success + " Edges");
+				return new ActionResult(ActionResult.Status.Success, "Flipped " + success + " Edges");
 			else
-				return new ActionResult(Status.Failure, string.Format("Flip Edges\n{0}", attempts > 0 ? "Faces Must Be Quads" : "No Faces Selected"));
+				return new ActionResult(ActionResult.Status.Failure, string.Format("Flip Edges\n{0}", attempts > 0 ? "Faces Must Be Quads" : "No Faces Selected"));
 		}
 #endregion
 
@@ -1260,9 +1260,9 @@ namespace UnityEditor.ProBuilder
 				ProBuilderEditor.Refresh();
 
 			if(success)
-				return new ActionResult(Status.Success, "Collapse Vertices");
+				return new ActionResult(ActionResult.Status.Success, "Collapse Vertices");
 			else
-				return new ActionResult(Status.Failure, "Collapse Vertices\nNo Vertices Selected");
+				return new ActionResult(ActionResult.Status.Failure, "Collapse Vertices\nNo Vertices Selected");
 		}
 
 		/**
@@ -1289,7 +1289,7 @@ namespace UnityEditor.ProBuilder
 					pb.ToMesh();
 
 					int[] welds = pb.WeldVertices(pb.selectedIndicesInternal, weld);
-					res = welds != null ? new ActionResult(Status.Success, "Weld Vertices") : new ActionResult(Status.Failure, "Failed Weld Vertices");
+					res = welds != null ? new ActionResult(ActionResult.Status.Success, "Weld Vertices") : new ActionResult(ActionResult.Status.Failure, "Failed Weld Vertices");
 
 					if(res)
 					{
@@ -1312,9 +1312,9 @@ namespace UnityEditor.ProBuilder
 			ProBuilderEditor.Refresh();
 
 			if(res && weldCount > 0)
-				return new ActionResult(Status.Success, "Weld " + weldCount + (weldCount > 1 ? " Vertices" : " Vertex"));
+				return new ActionResult(ActionResult.Status.Success, "Weld " + weldCount + (weldCount > 1 ? " Vertices" : " Vertex"));
 			else
-				return new ActionResult(Status.Failure, "Nothing to Weld");
+				return new ActionResult(ActionResult.Status.Failure, "Nothing to Weld");
 		}
 
 		const float k_MinWeldDistance = .0001f;
@@ -1408,9 +1408,9 @@ namespace UnityEditor.ProBuilder
 			ProBuilderEditor.Refresh();
 
 			if(splitCount > 0)
-				return new ActionResult(Status.Success, "Split " + splitCount + (splitCount > 1 ? " Vertices" : " Vertex"));
+				return new ActionResult(ActionResult.Status.Success, "Split " + splitCount + (splitCount > 1 ? " Vertices" : " Vertex"));
 			else
-				return new ActionResult(Status.Failure, "Split Vertices\nInsuffient Vertices Selected");
+				return new ActionResult(ActionResult.Status.Failure, "Split Vertices\nInsuffient Vertices Selected");
 		}
 
 		/**
@@ -1423,7 +1423,7 @@ namespace UnityEditor.ProBuilder
 
 			UndoUtility.RecordSelection(selection, "Fill Hole");
 
-			ActionResult res = new ActionResult(Status.NoChange, "No Holes Found");
+			ActionResult res = new ActionResult(ActionResult.Status.NoChange, "No Holes Found");
 			int filled = 0;
 			bool wholePath = PreferencesInternal.GetBool(PreferenceKeys.pbFillHoleSelectsEntirePath);
 
@@ -1511,7 +1511,7 @@ namespace UnityEditor.ProBuilder
 			ProBuilderEditor.Refresh();
 
 			if(filled > 0)
-                res = new ActionResult(Status.Success, filled > 1 ? string.Format("Filled {0} Holes", filled) : "Fill Hole");
+                res = new ActionResult(ActionResult.Status.Success, filled > 1 ? string.Format("Filled {0} Holes", filled) : "Fill Hole");
 			return res;
 		}
 #endif
@@ -1550,7 +1550,7 @@ namespace UnityEditor.ProBuilder
 
 			ProBuilderEditor.Refresh();
 
-			return new ActionResult(Status.Success, "Subdivide " + selection.Length + " Objects");
+			return new ActionResult(ActionResult.Status.Success, "Subdivide " + selection.Length + " Objects");
 		}
 
 		/**
@@ -1578,11 +1578,11 @@ namespace UnityEditor.ProBuilder
 					pb.ToMesh();
 					pb.Refresh();
 					pb.Optimize();
-					result = new ActionResult(Status.Success, "Subdivide Edge");
+					result = new ActionResult(ActionResult.Status.Success, "Subdivide Edge");
 				}
 				else
 				{
-					result = new ActionResult(Status.Failure, "Failed Subdivide Edge");
+					result = new ActionResult(ActionResult.Status.Failure, "Failed Subdivide Edge");
 				}
 			}
 
@@ -1623,12 +1623,12 @@ namespace UnityEditor.ProBuilder
 			{
 				ProBuilderEditor.Refresh();
 
-				return new ActionResult(Status.Success, "Subdivide " + success + ((success > 1) ? " faces" : " face"));
+				return new ActionResult(ActionResult.Status.Success, "Subdivide " + success + ((success > 1) ? " faces" : " face"));
 			}
 			else
 			{
 				Debug.LogWarning("Subdivide faces failed - did you not have any faces selected?");
-				return new ActionResult(Status.Failure, "Subdivide Faces\nNo faces selected");
+				return new ActionResult(ActionResult.Status.Failure, "Subdivide Faces\nNo faces selected");
 			}
 		}
 
@@ -1648,7 +1648,7 @@ namespace UnityEditor.ProBuilder
 					pb.Refresh();
 					pb.Optimize();
 
-					res = new ActionResult(Status.Success, "Connected " + connections.Length + " Edges");
+					res = new ActionResult(ActionResult.Status.Success, "Connected " + connections.Length + " Edges");
 				}
 			}
 
@@ -1676,11 +1676,11 @@ namespace UnityEditor.ProBuilder
 					pb.Refresh();
 					pb.Optimize();
 					pb.SetSelectedVertices(splits);
-					res = new ActionResult(Status.Success, "Connect Edges");
+					res = new ActionResult(ActionResult.Status.Success, "Connect Edges");
 				}
 				else
 				{
-					res = new ActionResult(Status.Failure, "Failed Connecting Edges");
+					res = new ActionResult(ActionResult.Status.Failure, "Failed Connecting Edges");
 				}
 			}
 			ProBuilderEditor.Refresh();
@@ -1717,9 +1717,9 @@ namespace UnityEditor.ProBuilder
 			ProBuilderEditor.Refresh();
 
 			if(success > 0)
-				return new ActionResult(Status.Success, "Insert Edge Loop");
+				return new ActionResult(ActionResult.Status.Success, "Insert Edge Loop");
 			else
-				return new ActionResult(Status.Success, "Insert Edge Loop");
+				return new ActionResult(ActionResult.Status.Success, "Insert Edge Loop");
 		}
 
 #endif

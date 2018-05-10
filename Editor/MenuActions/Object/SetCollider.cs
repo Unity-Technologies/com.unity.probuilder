@@ -64,9 +64,9 @@ namespace UnityEditor.ProBuilder.Actions
 			int selectionCount = MeshSelection.All().Length;
 
 			if (selectionCount < 1)
-				return new ActionResult(Status.NoChange, "Set Collider\nNo objects selected");
+				return new ActionResult(ActionResult.Status.NoChange, "Set Collider\nNo objects selected");
 
-			return new ActionResult(Status.Success, "Set Collider\nSet " + selectionCount + " Objects");
+			return new ActionResult(ActionResult.Status.Success, "Set Collider\nSet " + selectionCount + " Objects");
 		}
 	}
 }

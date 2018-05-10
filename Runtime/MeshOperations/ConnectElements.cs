@@ -308,7 +308,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			else
 				addedFaces = null;
 
-			return new ActionResult(Status.Success, string.Format("Connected {0} Edges", results.Count / 2));
+			return new ActionResult(ActionResult.Status.Success, string.Format("Connected {0} Edges", results.Count / 2));
 		}
 
 		/// <summary>

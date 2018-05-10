@@ -27,7 +27,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ActionResult DoAction()
 		{
 			MaterialEditor.MenuOpenMaterialEditor();
-			return new ActionResult(Status.Success, "Open Materials Window");
+			return new ActionResult(ActionResult.Status.Success, "Open Materials Window");
 		}
 	}
 }

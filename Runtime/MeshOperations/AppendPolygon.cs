@@ -84,7 +84,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				mesh.Clear();
 				mesh.ToMesh();
 				mesh.Refresh();
-				return new ActionResult(Status.NoChange, "Too Few Points");
+				return new ActionResult(ActionResult.Status.NoChange, "Too Few Points");
 			}
 
 			Vector3[] vertices = points.ToArray();
@@ -100,7 +100,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				{
 					mesh.Clear();
 					Log.PopLogLevel();
-					return new ActionResult(Status.Failure, "Polygon Area < Epsilon");
+					return new ActionResult(ActionResult.Status.Failure, "Polygon Area < Epsilon");
 				}
 
 				mesh.Clear();
@@ -124,12 +124,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			else
 			{
 				Log.PopLogLevel();
-				return new ActionResult(Status.Failure, "Failed Triangulating Points");
+				return new ActionResult(ActionResult.Status.Failure, "Failed Triangulating Points");
 			}
 
 			Log.PopLogLevel();
 
-			return new ActionResult(Status.Success, "Create Polygon Shape");
+			return new ActionResult(ActionResult.Status.Success, "Create Polygon Shape");
 		}
 
 		/// <summary>

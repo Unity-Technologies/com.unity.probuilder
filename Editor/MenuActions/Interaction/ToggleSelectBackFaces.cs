@@ -42,7 +42,7 @@ The default value is <b>On</b>.
 			bool backFaceEnabled = PreferencesInternal.GetBool(PreferenceKeys.pbEnableBackfaceSelection);
 			PreferencesInternal.SetBool(PreferenceKeys.pbEnableBackfaceSelection, !backFaceEnabled);
 			ProBuilderEditor.instance.LoadPrefs();
-			return new ActionResult(Status.Success, "Set Hidden Element Selection\n" + (!backFaceEnabled ? "On" : "Off") );
+			return new ActionResult(ActionResult.Status.Success, "Set Hidden Element Selection\n" + (!backFaceEnabled ? "On" : "Off") );
 		}
 
 		public override bool IsEnabled()

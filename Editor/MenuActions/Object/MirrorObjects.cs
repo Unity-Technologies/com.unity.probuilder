@@ -111,8 +111,8 @@ namespace UnityEditor.ProBuilder.Actions
 			ProBuilderEditor.Refresh();
 
 			return res.Count > 0 ?
-				new ActionResult(Status.Success, string.Format("Mirror {0} {1}", res.Count, res.Count > 1 ? "Objects" : "Object")) :
-				new ActionResult(Status.NoChange, "No Objects Selected");
+				new ActionResult(ActionResult.Status.Success, string.Format("Mirror {0} {1}", res.Count, res.Count > 1 ? "Objects" : "Object")) :
+				new ActionResult(ActionResult.Status.NoChange, "No Objects Selected");
 		}
 
 		/**

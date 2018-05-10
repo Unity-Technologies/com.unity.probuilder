@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
 {
+	/// <summary>
+	/// Static helper functions for working with @"UnityEngine.ProBuilder.Face" type.
+	/// </summary>
 	public static class FaceUtility
 	{
 		/// <summary>

@@ -741,10 +741,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			combined.Refresh();
 
 			// refresh donors since deleting the children of the instantiated object could cause them to lose references
-			foreach(ProBuilderMesh pb in pbs)
-				pb.Verify();
+			 foreach (ProBuilderMesh pb in pbs)
+				 pb.Rebuild();
 
-			return true;
+			 return true;
 		 }
 
 		/// <summary>

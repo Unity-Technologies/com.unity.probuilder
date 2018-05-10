@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace UnityEngine.ProBuilder
@@ -9,55 +11,54 @@ namespace UnityEngine.ProBuilder
 	[Serializable]
 	public sealed class Submesh
 	{
-		/// <summary>
+		/// <value>
 		/// Indices making up this submesh. Can be triangles or quads.
-		/// </summary>
+		/// </value>
         [SerializeField]
 		internal int[] m_Indices;
 
-		/// <summary>
+		/// <value>
 		/// What topology is this submesh?
-		/// </summary>
+		/// </value>
         [SerializeField]
 		internal MeshTopology m_Topology;
 
-		/// <summary>
+		/// <value>
 		/// What material does this submesh use?
-		/// </summary>
+		/// </value>
         [SerializeField]
 		internal Material m_Material;
 
 		/// <summary>
-		/// Create new pb_Submesh.
+		/// Create new Submesh.
 		/// </summary>
-		/// <param name="material"></param>
-		/// <param name="topology"></param>
-		/// <param name="indexes"></param>
-		public Submesh(Material material, MeshTopology topology, int[] indexes)
+		/// <param name="material">The material that this submesh renders with.</param>
+		/// <param name="topology">What topology is this submesh. ProBuilder only recognizes Triangles and Quads.</param>
+		/// <param name="indexes">The triangles or quads.</param>
+		public Submesh(Material material, MeshTopology topology, IEnumerable<int> indexes)
 		{
             if (indexes == null)
                 throw new ArgumentNullException("indexes");
-            int len = indexes.Length;
-            m_Indices = new int[len];
-            Array.Copy(indexes, m_Indices, len);
+
+			m_Indices = indexes.ToArray();
 			m_Topology = topology;
 			m_Material = material;
 		}
 
 		/// <summary>
-		/// Create new pb_Submesh from a mesh, submesh index and material.
+		/// Create new Submesh from a mesh, submesh index, and material.
 		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="subMeshIndex"></param>
-		/// <param name="material"></param>
+		/// <param name="mesh">The source mesh.</param>
+		/// <param name="subMeshIndex">Which submesh to read from.</param>
+		/// <param name="material">The material this submesh should render with.</param>
 		public Submesh(Mesh mesh, int subMeshIndex, Material material)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			this.m_Indices = mesh.GetIndices(subMeshIndex);
-			this.m_Topology = mesh.GetTopology(subMeshIndex);
-			this.m_Material = material;
+			m_Indices = mesh.GetIndices(subMeshIndex);
+			m_Topology = mesh.GetTopology(subMeshIndex);
+			m_Material = material;
 		}
 
 		public override string ToString()

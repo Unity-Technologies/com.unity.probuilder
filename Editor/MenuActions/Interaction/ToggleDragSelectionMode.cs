@@ -52,7 +52,7 @@ namespace UnityEditor.ProBuilder.Actions
 			int mode = (int) dragSelectMode;
 			dragSelectMode = (DragSelectMode) ((mode + 1) % 3);
 			ProBuilderEditor.instance.LoadPrefs();
-			return new ActionResult(Status.Success, "Set Shift Drag Mode\n" + dragSelectMode);
+			return new ActionResult(ActionResult.Status.Success, "Set Shift Drag Mode\n" + dragSelectMode);
 		}
 
 		public override bool IsEnabled()

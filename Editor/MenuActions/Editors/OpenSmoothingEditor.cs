@@ -29,7 +29,7 @@ ProBuilder decides which edges should be smoothed by checking for neighboring fa
 		public override ActionResult DoAction()
 		{
 			SmoothGroupEditor.MenuOpenSmoothGroupEditor();
-			return new ActionResult(Status.Success, "Open Smoothing Groups Editor");
+			return new ActionResult(ActionResult.Status.Success, "Open Smoothing Groups Editor");
 		}
 	}
 }

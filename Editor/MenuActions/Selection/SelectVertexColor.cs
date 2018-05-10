@@ -133,7 +133,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			ProBuilderEditor.Refresh();
 
-			return new ActionResult(Status.Success, "Select Faces with Vertex Colors");
+			return new ActionResult(ActionResult.Status.Success, "Select Faces with Vertex Colors");
 		}
 	}
 }

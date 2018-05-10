@@ -3157,7 +3157,7 @@ namespace UnityEditor.ProBuilder
 			if (channel == 1)
 			{
 				EditorUtility.ShowNotification(this, "Invalid UV2 Operation");
-				return new ActionResult(Status.Canceled, "Invalid UV2 Operation");
+				return new ActionResult(ActionResult.Status.Canceled, "Invalid UV2 Operation");
 			}
 
 			float weldDistance = PreferencesInternal.GetFloat(PreferenceKeys.pbUVWeldDistance);
@@ -3177,7 +3177,7 @@ namespace UnityEditor.ProBuilder
 			RefreshSelectedUVCoordinates();
 
 			EditorUtility.ShowNotification(this, "Weld UVs");
-			return new ActionResult(Status.Success, "Invalid UV2 Operation");
+			return new ActionResult(ActionResult.Status.Success, "Invalid UV2 Operation");
 		}
 
 		public void Menu_SplitUVs()

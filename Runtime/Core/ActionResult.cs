@@ -3,33 +3,33 @@ using UnityEngine;
 namespace UnityEngine.ProBuilder
 {
 	/// <summary>
-	/// Describes the results of a pb_Action.
-	/// </summary>
-	public enum Status
-	{
-		/// <summary>
-		/// The action was a success.
-		/// </summary>
-		Success,
-		/// <summary>
-		/// A critical failure prevented the action from running.
-		/// </summary>
-		Failure,
-		/// <summary>
-		/// The action was not completed due to invalid parameters.
-		/// </summary>
-		Canceled,
-		/// <summary>
-		/// The action was not run because there was no meaningful action to be made.
-		/// </summary>
-		NoChange
-	}
-
-	/// <summary>
 	/// Contains information about a ProBuilder action (success, failure, notification, etc)
 	/// </summary>
 	public sealed class ActionResult
 	{
+		/// <summary>
+		/// Describes the results of an action.
+		/// </summary>
+		public enum Status
+		{
+			/// <summary>
+			/// The action was a success.
+			/// </summary>
+			Success,
+			/// <summary>
+			/// A critical failure prevented the action from running.
+			/// </summary>
+			Failure,
+			/// <summary>
+			/// The action was not completed due to invalid parameters.
+			/// </summary>
+			Canceled,
+			/// <summary>
+			/// The action was not run because there was no meaningful action to be made.
+			/// </summary>
+			NoChange
+		}
+
 		/// <summary>
 		/// State of affairs after the operation.
 		/// </summary>
@@ -45,7 +45,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="status">State of affairs after an action.</param>
 		/// <param name="notification">A short summary of the action performed.</param>
-		public ActionResult(Status status, string notification)
+		public ActionResult(ActionResult.Status status, string notification)
 		{
 			this.status = status;
 			this.notification = notification;
@@ -68,7 +68,7 @@ namespace UnityEngine.ProBuilder
 
         public static bool FromBool(bool success)
         {
-            return success ? ActionResult.Success : new ActionResult(Status.Failure, "Failure");
+            return success ? ActionResult.Success : new ActionResult(ActionResult.Status.Failure, "Failure");
         }
 
 		/// <summary>
@@ -76,7 +76,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public static ActionResult Success
 		{
-			get { return new ActionResult(Status.Success, ""); }
+			get { return new ActionResult(ActionResult.Status.Success, ""); }
 		}
 
 		/// <summary>
@@ -84,7 +84,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public static ActionResult NoSelection
 		{
-			get { return new ActionResult(Status.Canceled, "Nothing Selected"); }
+			get { return new ActionResult(ActionResult.Status.Canceled, "Nothing Selected"); }
 		}
 
 		/// <summary>
@@ -92,7 +92,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public static ActionResult UserCanceled
 		{
-			get { return new ActionResult(Status.Canceled, "User Canceled"); }
+			get { return new ActionResult(ActionResult.Status.Canceled, "User Canceled"); }
 		}
 	}
 }

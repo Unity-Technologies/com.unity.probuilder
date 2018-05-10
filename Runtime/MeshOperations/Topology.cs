@@ -194,9 +194,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			if(count > 0)
-				return new ActionResult(Status.Success, count > 1 ? string.Format("Flipped {0} faces", count) : "Flipped 1 face");
+				return new ActionResult(ActionResult.Status.Success, count > 1 ? string.Format("Flipped {0} faces", count) : "Flipped 1 face");
 			else
-				return new ActionResult(Status.NoChange, "Faces Uniform");
+				return new ActionResult(ActionResult.Status.NoChange, "Faces Uniform");
 		}
 
 		static void GetWindingFlags(WingedEdge edge, bool flag, Dictionary<Face, bool> flags)
@@ -230,7 +230,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		internal static ActionResult ConformOppositeNormal(WingedEdge source)
 		{
 			if(source == null || source.opposite == null)
-				return new ActionResult(Status.Failure, "Source edge does not share an edge with another face.");
+				return new ActionResult(ActionResult.Status.Failure, "Source edge does not share an edge with another face.");
 
 			Edge cea = GetCommonEdgeInWindingOrder(source);
 			Edge ceb = GetCommonEdgeInWindingOrder(source.opposite);
@@ -239,10 +239,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			{
 				source.opposite.face.Reverse();
 
-				return new ActionResult(Status.Success, "Reversed target face winding order.");
+				return new ActionResult(ActionResult.Status.Success, "Reversed target face winding order.");
 			}
 
-			return new ActionResult(Status.NoChange, "Faces already unified.");
+			return new ActionResult(ActionResult.Status.NoChange, "Faces already unified.");
 		}
 
 		/// <summary>

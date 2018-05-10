@@ -35,9 +35,9 @@ namespace UnityEditor.ProBuilder.Actions
 			string res = ExportWithFileDialog(MeshSelection.Top());
 
 			if( string.IsNullOrEmpty(res) )
-				return new ActionResult(Status.Canceled, "User Canceled");
+				return new ActionResult(ActionResult.Status.Canceled, "User Canceled");
 			else
-				return new ActionResult(Status.Success, "Export PLY");
+				return new ActionResult(ActionResult.Status.Success, "Export PLY");
 		}
 
 		/**

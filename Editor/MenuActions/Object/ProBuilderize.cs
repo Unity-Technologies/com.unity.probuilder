@@ -193,9 +193,9 @@ namespace UnityEditor.ProBuilder.Actions
 			ProBuilderEditor.Refresh(true);
 
 			if (i < 1)
-				return new ActionResult(Status.Canceled, "Nothing Selected");
+				return new ActionResult(ActionResult.Status.Canceled, "Nothing Selected");
 			else
-				return new ActionResult(Status.Success, "ProBuilderize " + i + (i > 1 ? " Objects" : " Object").ToString());
+				return new ActionResult(ActionResult.Status.Success, "ProBuilderize " + i + (i > 1 ? " Objects" : " Object").ToString());
 		}
 	}
 }

@@ -62,7 +62,7 @@ namespace UnityEngine.ProBuilder
 	    bool m_IsSelectable = true;
 
 	    /// <value>
-	    /// If false mesh elements will not be selectable.
+	    /// If false mesh elements will not be selectable. This is used by @"UnityEditor.ProBuilder.ProBuilderEditor".
 	    /// </value>
 	    public bool isSelectable
 	    {
@@ -110,6 +110,7 @@ namespace UnityEngine.ProBuilder
 	    /// <value>
 	    /// A collection of the @"UnityEngine.ProBuilder.Face"'s that make up this mesh.
 	    /// </value>
+	    /// <seealso cref="SetFaces"/>
         public ReadOnlyCollection<Face> faces
         {
             get { return new ReadOnlyCollection<Face>(m_Faces); }
@@ -139,6 +140,7 @@ namespace UnityEngine.ProBuilder
 	    /// <value>
 	    /// The shared (or common) index array for this mesh.
 	    /// </value>
+	    /// <seealso cref="SetSharedIndexes(UnityEngine.ProBuilder.IntArray[])"/>
 	    public ReadOnlyCollection<IntArray> sharedIndexes
 	    {
 		    get { return new ReadOnlyCollection<IntArray>(m_SharedIndices); }
@@ -229,6 +231,7 @@ namespace UnityEngine.ProBuilder
 	    /// <value>
 	    /// The vertex positions that make up this mesh.
 	    /// </value>
+	    /// <seealso cref="SetPositions"/>
         public ReadOnlyCollection<Vector3> positions
         {
             get { return new ReadOnlyCollection<Vector3>(m_Positions); }
@@ -297,6 +300,7 @@ namespace UnityEngine.ProBuilder
 	    ///		2. Calculate a new set of normals using @"UnityEngine.ProBuilder.MeshUtility.CalculateNormals".
 	    /// </summary>
 	    /// <returns>An array of vertex normals.</returns>
+	    /// <seealso cref="UnityEngine.ProBuilder.MeshUtility.CalculateNormals"/>
 	    public Vector3[] GetNormals()
 	    {
 		    // If mesh isn't optimized try to return a copy from the compiled mesh
@@ -319,6 +323,7 @@ namespace UnityEngine.ProBuilder
 		/// <value>
 		/// Get the vertex colors array for this mesh.
 		/// </value>
+		/// <seealso cref="SetColors"/>
 	    public ReadOnlyCollection<Color> colors
         {
             get { return m_Colors != null ? new ReadOnlyCollection<Color>(m_Colors) : null; }
@@ -346,6 +351,8 @@ namespace UnityEngine.ProBuilder
 		/// <remarks>
 		/// To get the generated tangents that are applied to the mesh through Refresh(), use GetTangents().
 		/// </remarks>
+		/// <seealso cref="SetTangents"/>
+		/// <seealso cref="GetTangents"/>
 	    public ReadOnlyCollection<Vector4> tangents
 	    {
 		    get { return m_Tangents == null || m_Tangents.Length != vertexCount
@@ -383,6 +390,16 @@ namespace UnityEngine.ProBuilder
 			get { return m_Textures0; }
 			set { m_Textures0 = value; }
 		}
+
+	    /// <value>
+	    /// The UV0 channel. Null if not present.
+	    /// </value>
+	    /// <seealso cref="SetUVs(Vector2[])"/>
+	    /// <seealso cref="GetUVs"/>
+	    public ReadOnlyCollection<Vector2> textures
+	    {
+		    get { return m_Textures0 != null ? new ReadOnlyCollection<Vector2>(m_Textures0) : null; }
+	    }
 
 	    /// <summary>
 	    /// Set the UV channel array.
@@ -472,26 +489,17 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// True if this mesh has a valid UV2 channel.
-        /// </value>
-        public bool hasUv2
+        internal bool hasUv2
 		{
 			get { return mesh.uv2 != null && mesh.uv2.Length == vertexCount; }
 		}
 
-		/// <value>
-		/// True if this mesh has a valid UV3 channel.
-		/// </value>
-		public bool hasUv3
+	    internal bool hasUv3
 		{
 			get { return m_Textures3 != null && m_Textures3.Count == vertexCount; }
 		}
 
-		/// <value>
-		/// True if this mesh has a valid UV4 channel.
-		/// </value>
-		public bool hasUv4
+	    internal bool hasUv4
 		{
 			get { return m_Textures4 != null && m_Textures4.Count == vertexCount; }
 		}
@@ -521,12 +529,22 @@ namespace UnityEngine.ProBuilder
 			get { return m_Faces == null ? 0 : m_Faces.Sum(x => x.indices.Length); }
 		}
 
+	    /// <summary>
+	    /// In the editor, when a ProBuilderMesh is destroyed it will also destroy the MeshFilter.sharedMesh that is found with the parent GameObject. You may override this behaviour by subscribing to onDestroyObject.
+	    /// </summary>
 	    /// <value>
 	    /// If onDestroyObject has a subscriber ProBuilder will invoke it instead of cleaning up unused meshes by itself.
 	    /// </value>
+	    /// <seealso cref="preserveMeshAssetOnDestroy"/>
 	    public static event Action<ProBuilderMesh> onDestroyObject;
 
-	    internal static event Action<ProBuilderMesh> onElementSelectionChanged;
+	    /// <value>
+	    /// Invoked when the element selection changes on any ProBuilderMesh.
+	    /// </value>
+	    /// <seealso cref="SetSelectedFaces"/>
+	    /// <seealso cref="SetSelectedVertices"/>
+	    /// <seealso cref="SetSelectedEdges"/>
+	    public static event Action<ProBuilderMesh> onElementSelectionChanged;
 
 	    /// <summary>
 	    /// Convenience property for getting the mesh from the MeshFilter component.
@@ -563,28 +581,28 @@ namespace UnityEngine.ProBuilder
 			ClearSelection();
 		}
 
-		void Awake()
-		{
-			if (GetComponent<MeshRenderer>().isPartOfStaticBatch)
-				return;
-
-			// Absolutely no idea why normals sometimes go haywire
-			Vector3[] normals = mesh != null ? mesh.normals : null;
-
-			if (normals == null ||
-			    normals.Length != mesh.vertexCount ||
-			    (normals.Length > 0 && normals[0] == Vector3.zero))
-			{
-				Log.Info("Mesh normals broken on play mode start.");
-
-				// means this object is probably just now being instantiated
-				if (m_Positions == null)
-					return;
-
-				ToMesh();
-				Refresh();
-			}
-		}
+//		void Awake()
+//		{
+//			if (GetComponent<MeshRenderer>().isPartOfStaticBatch)
+//				return;
+//
+//			// Absolutely no idea why normals sometimes go haywire
+//			Vector3[] normals = mesh != null ? mesh.normals : null;
+//
+//			if (normals == null ||
+//			    normals.Length != mesh.vertexCount ||
+//			    (normals.Length > 0 && normals[0] == Vector3.zero))
+//			{
+//				Log.Info("Mesh normals broken on play mode start.");
+//
+//				// means this object is probably just now being instantiated
+//				if (m_Positions == null)
+//					return;
+//
+//				ToMesh();
+//				Refresh();
+//			}
+//		}
 
 		void OnDestroy()
 		{
@@ -598,7 +616,7 @@ namespace UnityEngine.ProBuilder
 				if (onDestroyObject != null)
 					onDestroyObject(this);
 				else
-					GameObject.DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
+					DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
 			}
 		}
 
@@ -640,17 +658,17 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Creates a new pb_Object with passed vertex positions array and pb_Face array. Allows for a great deal of control when constructing geometry.
+		/// Create a new GameObject with a ProBuilderMesh component, MeshFilter, and MeshRenderer, then initializes the ProBuilderMesh with a set of positions and faces.
 		/// </summary>
-		/// <param name="v">Vertex positions array.</param>
-		/// <param name="f">Faces array.</param>
+		/// <param name="vertices">Vertex positions array.</param>
+		/// <param name="faces">Faces array.</param>
 		/// <returns></returns>
-		public static ProBuilderMesh CreateInstanceWithVerticesFaces(Vector3[] v, Face[] f)
+		public static ProBuilderMesh CreateInstanceWithVerticesFaces(IEnumerable<Vector3> vertices, IEnumerable<Face> faces)
 		{
 			GameObject go = new GameObject();
 			ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
 			go.name = "ProBuilder Mesh";
-			pb.GeometryWithVerticesFaces(v, f);
+			pb.GeometryWithVerticesFaces(vertices, faces);
 			return pb;
 		}
 #endregion
@@ -661,25 +679,25 @@ namespace UnityEngine.ProBuilder
 	    [SerializeField] Edge[] m_SelectedEdges = new Edge[] { };
 	    [SerializeField] int[] m_selectedTriangles = new int[] { };
 
-	    /// <summary>
+	    /// <value>
 	    /// Get the number of faces that are currently selected on this object.
-	    /// </summary>
+	    /// </value>
 	    public int selectedFaceCount
 	    {
 		    get { return m_selectedFaces.Length; }
 	    }
 
-	    /// <summary>
+	    /// <value>
 	    /// Get the number of selected vertex indices.
-	    /// </summary>
+	    /// </value>
 	    public int selectedVertexCount
 	    {
 		    get { return m_selectedTriangles.Length; }
 	    }
 
-	    /// <summary>
+	    /// <value>
 	    /// Get the number of selected edges.
-	    /// </summary>
+	    /// </value>
 	    public int selectedEdgeCount
 	    {
 		    get { return m_SelectedEdges.Length; }
@@ -702,25 +720,25 @@ namespace UnityEngine.ProBuilder
 		    get { return GetSelectedFaces(); }
 	    }
 
-	    /// <summary>
-	    /// A collection of the currently selected faces per-index.
-	    /// </summary>
+	    /// <value>
+	    /// A collection of the currently selected faces by their index in the @"UnityEngine.ProBuilder.ProBuilderMesh.faces" array.
+	    /// </value>
 	    public ReadOnlyCollection<int> selectedFaceIndexes
 	    {
 		    get { return new ReadOnlyCollection<int>(m_selectedFaces); }
 	    }
 
-	    /// <summary>
-	    /// A collection of the currently selected vertices by their index in the positions array.
-	    /// </summary>
+	    /// <value>
+	    /// A collection of the currently selected vertices by their index in the @"UnityEngine.ProBuilder.ProBuilderMesh.positions" array.
+	    /// </value>
 	    public ReadOnlyCollection<int> selectedVertices
 	    {
 			get { return new ReadOnlyCollection<int>(m_selectedTriangles); }
 	    }
 
-	    /// <summary>
+	    /// <value>
 	    /// A collection of the currently selected edges.
-	    /// </summary>
+	    /// </value>
 	    public ReadOnlyCollection<Edge> selectedEdges
 	    {
 		    get { return new ReadOnlyCollection<Edge>(m_SelectedEdges); }
@@ -731,10 +749,6 @@ namespace UnityEngine.ProBuilder
 		    get { return m_selectedTriangles; }
 	    }
 
-		/// <summary>
-		/// Adds a face to this pb_Object's selected array.  Also updates the SelectedEdges and SelectedTriangles arrays.
-		/// </summary>
-		/// <param name="face"></param>
 		internal void AddToFaceSelection(Face face)
 		{
 			int index = Array.IndexOf(this.facesInternal, face);
@@ -745,7 +759,7 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Set the face selection for this mesh. Also sets the vertex and edge selection to match.
 		/// </summary>
-		/// <param name="selected"></param>
+		/// <param name="selected">The new face selection.</param>
 	    public void SetSelectedFaces(IEnumerable<Face> selected)
 		{
 			SetSelectedFaces(selected != null ? selected.Select(x => Array.IndexOf(facesInternal, x)) : null);
@@ -771,8 +785,8 @@ namespace UnityEngine.ProBuilder
 	    /// <summary>
 	    /// Set the edge selection for this mesh. Also sets the face and vertex selection to match.
 	    /// </summary>
-	    /// <param name="edges"></param>
-		internal void SetSelectedEdges(IEnumerable<Edge> edges)
+	    /// <param name="edges">The new edge selection.</param>
+		public void SetSelectedEdges(IEnumerable<Edge> edges)
 		{
 			if (edges == null)
 			{
@@ -792,7 +806,7 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Sets the selected vertices array. Clears SelectedFaces and SelectedEdges arrays.
 		/// </summary>
-		/// <param name="vertices"></param>
+		/// <param name="vertices">The new vertex selection.</param>
 		public void SetSelectedVertices(int[] vertices)
 		{
 			m_selectedFaces = new int[0];
@@ -866,9 +880,8 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Initialize the mesh with vertex positions and faces.
+		/// Clear all mesh attributes and reinitialize with new positions and face collections.
 		/// </summary>
-		/// <remarks>Rebuilds the sharedIndex array and uniqueIndex array each time called.</remarks>
 		/// <param name="vertices">Vertex positions array.</param>
 		/// <param name="faces">Faces array.</param>
 		public void GeometryWithVerticesFaces(IEnumerable<Vector3> vertices, IEnumerable<Face> faces)
@@ -885,41 +898,41 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Checks if the mesh component is lost or does not match _vertices, and if so attempt to rebuild. returns True if object is okay, false if a rebuild was necessary and you now need to regenerate UV2.
+		/// Ensure that the UnityEngine.Mesh is in sync with the ProBuilderMesh.
 		/// </summary>
-		/// <returns></returns>
-		public MeshRebuildReason Verify()
+		/// <returns>A flag describing the state of the synchronicity between the MeshFilter.sharedMesh and ProBuilderMesh components.</returns>
+		public MeshSyncState Verify()
 		{
 			if (mesh == null)
-			{
-				// attempt reconstruction
-				try
-				{
-					ToMesh();
-					Refresh();
-				}
-				catch (System.Exception e)
-				{
-					Log.Error("Failed rebuilding null pb_Object. Cached mesh attributes are invalid or missing.\n" + e.ToString());
-				}
-
-				return MeshRebuildReason.Null;
-			}
+				return MeshSyncState.Null;
 
 			int meshNo;
+
 			int.TryParse(mesh.name.Replace("pb_Mesh", ""), out meshNo);
 
 			if (meshNo != id)
-				return MeshRebuildReason.InstanceIDMismatch;
+				return MeshSyncState.InstanceIDMismatch;
 
-			return mesh.uv2 == null ? MeshRebuildReason.Lightmap : MeshRebuildReason.None;
+			return mesh.uv2 == null ? MeshSyncState.Lightmap : MeshSyncState.None;
 		}
 
+	    /// <summary>
+	    /// Wraps ToMesh and Refresh in a single call.
+	    /// </summary>
+	    /// <seealso cref="ToMesh()"/>
+	    /// <seealso cref="Refresh"/>
+	    public void Rebuild()
+	    {
+		    ToMesh();
+		    Refresh();
+	    }
+
 		/// <summary>
-		/// Rebuild the mesh positions, uvs, and submeshes. If vertex count matches new positions array the existing attributes are kept, otherwise the mesh is cleared. UV2 is the exception, it is always cleared.
+		/// Rebuild the mesh positions and submeshes. If vertex count matches new positions array the existing attributes are kept, otherwise the mesh is cleared. UV2 is the exception, it is always cleared.
 		/// </summary>
 		public void ToMesh()
 		{
+			// ReSharper disable once IntroduceOptionalParameters.Global
 			ToMesh(MeshTopology.Triangles);
 		}
 
@@ -1014,7 +1027,7 @@ namespace UnityEngine.ProBuilder
 		/// Recalculates mesh attributes: normals, collisions, UVs, tangents, and colors.
 		/// </summary>
 		/// <param name="mask">
-		/// Optionally pass a mask to define what components are updated (UV and Collisions are expensive to rebuild, and can usually be deferred til completion of task).
+		/// Optionally pass a mask to define what components are updated (UV and collisions are expensive to rebuild, and can usually be deferred til completion of task).
 		/// </param>
 		public void Refresh(RefreshMask mask = RefreshMask.All)
 		{
@@ -1035,9 +1048,6 @@ namespace UnityEngine.ProBuilder
 				RefreshCollisions();
 		}
 
-		/// <summary>
-		/// Rebuild the collider for this mesh.
-		/// </summary>
 		void RefreshCollisions()
 		{
 			Mesh m = mesh;
@@ -1208,18 +1218,6 @@ namespace UnityEngine.ProBuilder
 			if (hasUv4) mesh.SetUVs(3, m_Textures4);
 		}
 
-		/// <summary>
-		/// Set mesh UV2.
-		/// </summary>
-		/// <remarks>
-		/// Applies directly to UnityEngine mesh.
-		/// </remarks>
-		/// <param name="v"></param>
-		public void SetUV2(Vector2[] v)
-		{
-			GetComponent<MeshFilter>().sharedMesh.uv2 = v;
-		}
-
 		void RefreshColors()
 		{
 			Mesh m = GetComponent<MeshFilter>().sharedMesh;
@@ -1231,10 +1229,10 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Set a faces vertices to a color.
+		/// Set the vertex colors for a @"UnityEngine.ProBuilder.Face".
 		/// </summary>
-		/// <param name="face"></param>
-		/// <param name="color"></param>
+		/// <param name="face">The target face.</param>
+		/// <param name="color">The color to set this face's referenced vertices to.</param>
 		public void SetFaceColor(Face face, Color color)
 		{
             if (face == null)

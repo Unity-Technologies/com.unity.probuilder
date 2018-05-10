@@ -9,7 +9,7 @@ namespace UnityEngine.ProBuilder
 	/// Version information container that is comparable.
 	/// </summary>
 	[Serializable]
-	sealed class VersionInfo : IEquatable<VersionInfo>, IComparable<VersionInfo>, IComparable
+	sealed class SemVer : IEquatable<SemVer>, IComparable<SemVer>, IComparable
 	{
 		[SerializeField]
 		int m_Major = -1;
@@ -43,20 +43,20 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Get a new version info with just the major, minor, and patch values.
 		/// </summary>
-		public VersionInfo MajorMinorPatch
+		public SemVer MajorMinorPatch
 		{
-			get { return new VersionInfo(major, minor, patch); }
+			get { return new SemVer(major, minor, patch); }
 		}
 
 		public const string DefaultStringFormat = "M.m.p-t.b";
 
-		public VersionInfo()
+		public SemVer()
 		{
 		}
 
-		public VersionInfo(string formatted, string date = null)
+		public SemVer(string formatted, string date = null)
 		{
-			VersionInfo parsed;
+			SemVer parsed;
 
 			m_Metadata = formatted;
 			m_Date = date;
@@ -78,7 +78,7 @@ namespace UnityEngine.ProBuilder
 #endif
 		}
 
-		public VersionInfo(int major, int minor, int patch, int build = -1, string type = "", string date = "", string metadata = "")
+		public SemVer(int major, int minor, int patch, int build = -1, string type = "", string date = "", string metadata = "")
 		{
 			m_Major = major;
 			m_Minor = minor;
@@ -98,7 +98,7 @@ namespace UnityEngine.ProBuilder
 
 		public override bool Equals(object o)
 		{
-			return o is VersionInfo && this.Equals((VersionInfo) o);
+			return o is SemVer && this.Equals((SemVer) o);
 		}
 
 		public override int GetHashCode()
@@ -124,7 +124,7 @@ namespace UnityEngine.ProBuilder
 			return hash;
 		}
 
-		public bool Equals(VersionInfo version)
+		public bool Equals(SemVer version)
 		{
 			if (object.ReferenceEquals(version, null))
 				return false;
@@ -151,7 +151,7 @@ namespace UnityEngine.ProBuilder
 
 		public int CompareTo(object obj)
 		{
-			return CompareTo(obj as VersionInfo);
+			return CompareTo(obj as SemVer);
 		}
 
 		static int WrapNoValue(int value)
@@ -159,7 +159,7 @@ namespace UnityEngine.ProBuilder
 			return value < 0 ? int.MaxValue : value;
 		}
 
-		public int CompareTo(VersionInfo version)
+		public int CompareTo(SemVer version)
 		{
 			const int GREATER = 1;
 			const int EVEN = 0;
@@ -198,25 +198,25 @@ namespace UnityEngine.ProBuilder
 			return EVEN;
 		}
 
-		public static bool operator ==(VersionInfo left, VersionInfo right)
+		public static bool operator ==(SemVer left, SemVer right)
 		{
 			if (object.ReferenceEquals(left, null))
 				return object.ReferenceEquals(right, null);
 
 			return left.Equals(right);
 		}
-		public static bool operator !=(VersionInfo left, VersionInfo right)
+		public static bool operator !=(SemVer left, SemVer right)
 		{
 			return !(left == right);
 		}
-		public static bool operator <(VersionInfo left, VersionInfo right)
+		public static bool operator <(SemVer left, SemVer right)
 		{
 			if (object.ReferenceEquals(left, null))
 				return !object.ReferenceEquals(right, null);
 
 			return left.CompareTo(right) < 0;
 		}
-		public static bool operator >(VersionInfo left, VersionInfo right)
+		public static bool operator >(SemVer left, SemVer right)
 		{
 			// null < null still equals false
 			if (object.ReferenceEquals(left, null))
@@ -291,9 +291,9 @@ namespace UnityEngine.ProBuilder
 		/// <param name="input"></param>
 		/// <param name="version"></param>
 		/// <returns></returns>
-		public static bool TryGetVersionInfo(string input, out VersionInfo version)
+		public static bool TryGetVersionInfo(string input, out SemVer version)
 		{
-			version = new VersionInfo();
+			version = new SemVer();
 			bool ret = false;
 
 			const string k_MajorMinorPatchRegex = "^([0-9]+\\.[0-9]+\\.[0-9]+)";

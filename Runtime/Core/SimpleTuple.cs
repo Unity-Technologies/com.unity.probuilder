@@ -5,8 +5,8 @@ namespace UnityEngine.ProBuilder
 	/// A bare-bones Tuple class. Holds 2 items, does not implement equality, comparison, or anything else.
 	/// <remarks>Unlike System.Tuple, SimpleTuple is a class.</remarks>
 	/// </summary>
-	/// <typeparam name="T1"></typeparam>
-	/// <typeparam name="T2"></typeparam>
+	/// <typeparam name="T1">First element.</typeparam>
+	/// <typeparam name="T2">Second element.</typeparam>
 	public sealed class SimpleTuple<T1, T2>
 	{
 		public T1 item1 { get; set; }

@@ -9,7 +9,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// A set of commonly used functions for modifying mesh positions.
 	/// </summary>
-	public static class MeshPositions
+	public static class VertexPositioning
 	{
 		/// <summary>
 		/// Get a copy of a mesh positions array transformed into world coordinates.
@@ -124,7 +124,7 @@ namespace UnityEngine.ProBuilder
 		/// Given a shared vertex index (index of the triangle in the sharedIndices array), move all vertices to new position.
 		/// Position is in model space coordinates.
 		/// <br /><br />
-		/// Use @"UnityEngine.ProBuilder.sharedIndexes" and @"UnityEngine.ProBuilder.IntArrayUtility.IndexOf"  to get a shared (or common) index.
+		/// Use @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" and IntArrayUtility.IndexOf to get a shared (or common) index.
 		/// </summary>
 		/// <param name="mesh">The target mesh.</param>
 		/// <param name="sharedIndex">The shared (or common) index to set the vertex position of.</param>
@@ -147,7 +147,7 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Set a collection of mesh attributes with a Vertex.
 		/// <br /><br />
-		/// Use @"UnityEngine.ProBuilder.sharedIndexes" and @"UnityEngine.ProBuilder.IntArrayUtility.IndexOf"  to get a shared (or common) index.
+		/// Use @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" and IntArrayUtility.IndexOf to get a shared (or common) index.
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="sharedIndex"></param>

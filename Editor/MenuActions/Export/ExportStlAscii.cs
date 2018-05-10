@@ -34,9 +34,9 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ActionResult DoAction()
 		{
 			if(!string.IsNullOrEmpty(ExportWithFileDialog(Selection.gameObjects, FileType.Ascii)))
-				return new ActionResult(Status.Success, "Export STL");
+				return new ActionResult(ActionResult.Status.Success, "Export STL");
 			else
-				return new ActionResult(Status.Canceled, "User Canceled");
+				return new ActionResult(ActionResult.Status.Canceled, "User Canceled");
 		}
 
 		public static string ExportWithFileDialog(GameObject[] gameObjects, FileType type)

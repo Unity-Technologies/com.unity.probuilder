@@ -16,7 +16,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns></returns>
 		public static ActionResult Subdivide(this ProBuilderMesh pb)
 		{
-            return pb.Subdivide(pb.facesInternal) != null ? new ActionResult(Status.Success, "Subdivide") : new ActionResult(Status.Failure, "Subdivide Failed");
+            return pb.Subdivide(pb.facesInternal) != null ? new ActionResult(ActionResult.Status.Success, "Subdivide") : new ActionResult(ActionResult.Status.Failure, "Subdivide Failed");
 		}
 
 		/// <summary>

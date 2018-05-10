@@ -49,7 +49,7 @@ namespace UnityEditor.ProBuilder.Actions
 			UndoUtility.RegisterCreatedObjectUndo(go, "Create Bezier Shape");
 			bezier.isEditing = true;
 
-			return new ActionResult(Status.Success, "Create Bezier Shape");
+			return new ActionResult(ActionResult.Status.Success, "Create Bezier Shape");
 		}
 	}
 }

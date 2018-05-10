@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ActionResult DoAction()
 		{
 			mode = InternalUtility.NextEnumValue(mode);
-			return new ActionResult(Status.Success,
+			return new ActionResult(ActionResult.Status.Success,
 				"Set Drag Select\n" + (mode == RectSelectMode.Complete ? "Complete" : "Intersect"));
 		}
 

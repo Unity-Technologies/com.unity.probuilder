@@ -73,7 +73,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 				List<List<Edge>> holes = AppendPolygon.FindHoles(pb, indices);
 
-				res = new ActionResult(Status.Success, holes.Count > 0 ? string.Format("{0} holes found", holes.Count) : "No Holes in Selection");
+				res = new ActionResult(ActionResult.Status.Success, holes.Count > 0 ? string.Format("{0} holes found", holes.Count) : "No Holes in Selection");
 
 				pb.SetSelectedEdges(holes.SelectMany(x => x));
 			}

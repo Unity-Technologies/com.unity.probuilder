@@ -6,11 +6,19 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// Element selection mode.
 	/// </summary>
-	/// <remarks>Editor only, but necessary for pb_ElementGraphics.</remarks>
 	public enum SelectMode
 	{
+		/// <summary>
+		/// Vertices are selectable.
+		/// </summary>
 		Vertex = 0x0,
+		/// <summary>
+		/// Edges are selectable.
+		/// </summary>
 		Edge = 0x1,
+		/// <summary>
+		/// Faces are selectable.
+		/// </summary>
 		Face = 0x2
 	}
 
@@ -154,9 +162,10 @@ namespace UnityEngine.ProBuilder
 	}
 
 	/// <summary>
-	/// Describes methods of sorting 2d vertices.
+	/// Describes methods of sorting points in 2d space.
 	/// </summary>
-	public enum SortMethod {
+	public enum SortMethod
+	{
 		/// <summary>
 		/// Order the vertices clockwise.
 		/// </summary>
@@ -209,19 +218,19 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// Describes why a @"UnityEngine.ProBuilder.ProBuilderMesh" is considered to be out of sync with it's UnityEngine.MeshFilter component.
 	/// </summary>
-	public enum MeshRebuildReason
+	public enum MeshSyncState
 	{
 		/// <summary>
-		/// The UnityEngine mesh was null.
+		/// The MeshFilter mesh is null.
 		/// </summary>
 		Null,
 		/// <summary>
-		/// The UnityEngine mesh id did not match the stored id.
+		/// The MeshFilter mesh is not owned by the ProBuilderMesh component. Use @"UnityEngine.ProBuilder.ProBuilderMesh.MakeUnique" to remedy.
 		/// </summary>
 		/// <remarks>This is only used in editor.</remarks>
 		InstanceIDMismatch,
 		/// <summary>
-		/// The mesh was not rebuilt, but is missing the UV2 channel.
+		/// The mesh is valid, but does not have a UV2 channel.
 		/// </summary>
 		/// <remarks>This is only used in editor.</remarks>
 		Lightmap,
@@ -285,11 +294,12 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// Selectively rebuild and apply mesh attributes to the UnityEngine.Mesh asset.
 	/// </summary>
+	/// <seealso cref="ProBuilderMesh.Refresh"/>
 	[System.Flags]
 	public enum RefreshMask
 	{
         /// <summary>
-        /// UV1 channel will be rebuilt.
+        /// Textures channel will be rebuilt.
         /// </summary>
         UV = 0x1,
         /// <summary>

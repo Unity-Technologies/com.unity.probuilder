@@ -34,7 +34,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ActionResult DoAction()
 		{
 			MenuCommands.MenuOpenVertexColorsEditor();
-			return new ActionResult(Status.Success, "Open Vertex Color Window");
+			return new ActionResult(ActionResult.Status.Success, "Open Vertex Color Window");
 		}
 
 		public override void OnSettingsGUI()

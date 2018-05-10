@@ -288,7 +288,7 @@ namespace UnityEditor.ProBuilder
 
 			DrawPolyLine(polygon.points);
 
-			if(polygon.polyEditMode == PolyShape.PolyEditMode.Path || polygon.CreateShapeFromPolygon().status != Status.Success)
+			if(polygon.polyEditMode == PolyShape.PolyEditMode.Path || polygon.CreateShapeFromPolygon().status != ActionResult.Status.Success)
 			{
 				ProBuilderEditor.Refresh();
 				return;

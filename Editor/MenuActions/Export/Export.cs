@@ -219,7 +219,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			if(meshes == null || meshes.Count() < 1)
 			{
-				return new ActionResult(Status.Canceled, "No Meshes Selected");
+				return new ActionResult(ActionResult.Status.Canceled, "No Meshes Selected");
 			}
 			else if(m_ExportFormat == ExportFormat.Obj)
 			{
@@ -254,7 +254,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			if( string.IsNullOrEmpty(res) )
 			{
-				return new ActionResult(Status.Canceled, "User Canceled");
+				return new ActionResult(ActionResult.Status.Canceled, "User Canceled");
 			}
 			else
 			{
@@ -267,7 +267,7 @@ namespace UnityEditor.ProBuilder.Actions
 						EditorGUIUtility.PingObject(o);
 				}
 
-				return new ActionResult(Status.Success, "Export " + m_ExportFormat);
+				return new ActionResult(ActionResult.Status.Success, "Export " + m_ExportFormat);
 			}
 		}
 	}

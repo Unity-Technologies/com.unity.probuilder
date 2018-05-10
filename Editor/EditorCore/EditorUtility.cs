@@ -154,17 +154,22 @@ namespace UnityEditor.ProBuilder
 		/// </summary>
 		/// <param name="mesh"></param>
 		/// <returns></returns>
-		public static MeshRebuildReason VerifyMesh(ProBuilderMesh mesh)
+		public static MeshSyncState VerifyMesh(ProBuilderMesh mesh)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
 		 	Mesh oldMesh = mesh.mesh;
-	 		MeshRebuildReason reason = mesh.Verify();
+	 		MeshSyncState reason = mesh.Verify();
 			bool meshesAreAssets = PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets);
 
-			if( reason != MeshRebuildReason.None )
+			if( reason != MeshSyncState.None )
 			{
+				if (reason == MeshSyncState.Null)
+				{
+					mesh.Rebuild();
+				}
+				else
 				/**
 				 * If the mesh ID doesn't match the gameObject Id, it could mean two things -
 				 * 1. The object was just duplicated, and then made unique

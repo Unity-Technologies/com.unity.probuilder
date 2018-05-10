@@ -51,7 +51,7 @@ namespace UnityEditor.ProBuilder.Actions
 			if(ProGridsInterface.GetPivot(out pivot))
 				go.transform.position = pivot;
 
-			return new ActionResult(Status.Success, "Create Poly Shape");
+			return new ActionResult(ActionResult.Status.Success, "Create Poly Shape");
 		}
 	}
 }

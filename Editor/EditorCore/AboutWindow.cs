@@ -47,7 +47,7 @@ namespace UnityEditor.ProBuilder
 		public static readonly Color k_FontBlueHover = HexToColor(0x008BEF);
 
 		const string k_ProductName = PreferenceKeys.pluginTitle;
-		VersionInfo m_ChangeLogVersionInfo;
+		SemVer m_ChangeLogVersionInfo;
 		string m_ChangeLogRichText = "";
 
 		internal static GUIStyle bannerStyle,
@@ -279,7 +279,7 @@ namespace UnityEditor.ProBuilder
 		/// <param name="version"></param>
 		/// <param name="formattedChangelog"></param>
 		/// <returns></returns>
-		public static bool FormatChangelog(string raw, out VersionInfo version, out string formattedChangelog)
+		public static bool FormatChangelog(string raw, out SemVer version, out string formattedChangelog)
 		{
 			bool success = true;
 
@@ -288,7 +288,7 @@ namespace UnityEditor.ProBuilder
 			string firstChangelogEntryLine = split.Length > 1 ? split[1] : "";
 			// get the version info
 			Match versionMatch = Regex.Match(firstChangelogEntryLine, @"(?<=^ProBuilder\s).[0-9]*\.[0-9]*\.[0-9]*[A-Z|a-z|\-]*\.[0-9]*");
-			success = VersionInfo.TryGetVersionInfo(versionMatch.Success ? versionMatch.Value : firstChangelogEntryLine.Split('\n')[0], out version);
+			success = SemVer.TryGetVersionInfo(versionMatch.Success ? versionMatch.Value : firstChangelogEntryLine.Split('\n')[0], out version);
 
 			try
 			{

@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ActionResult DoAction()
 		{
 			UVEditor.MenuOpenUVEditor();
-			return new ActionResult(Status.Success, "Open UV Window");
+			return new ActionResult(ActionResult.Status.Success, "Open UV Window");
 		}
 	}
 }
