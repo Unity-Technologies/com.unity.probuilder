@@ -79,10 +79,7 @@ namespace UnityEditor.ProBuilder
 					if(uv2.Length == vertices.Length)
 					{
 						for(int i = 0; i < uv2.Length; i++)
-						{
 							vertices[i].uv2 = uv2[i];
-							vertices[i].hasUv2 = true;
-						}
 
 						hasUv2 = true;
 					}

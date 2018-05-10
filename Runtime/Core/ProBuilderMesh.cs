@@ -283,14 +283,14 @@ namespace UnityEngine.ProBuilder
 
                 Vertex first = vertices[0];
 
-                if (first.hasPosition) m.vertices = position;
-                if (first.hasColor) m.colors = color;
-                if (first.hasUv0) m.uv = uv0;
-                if (first.hasNormal) m.normals = normal;
-                if (first.hasTangent) m.tangents = tangent;
-                if (first.hasUv2) m.uv2 = uv2;
-                if (first.hasUv3) if (uv3 != null) m.SetUVs(2, uv3);
-                if (first.hasUv4) if (uv4 != null) m.SetUVs(3, uv4);
+                if (first.HasAttribute(MeshAttributes.Position)) m.vertices = position;
+                if (first.HasAttribute(MeshAttributes.Color)) m.colors = color;
+                if (first.HasAttribute(MeshAttributes.UV0)) m.uv = uv0;
+                if (first.HasAttribute(MeshAttributes.Normal)) m.normals = normal;
+                if (first.HasAttribute(MeshAttributes.Tangent)) m.tangents = tangent;
+                if (first.HasAttribute(MeshAttributes.UV1)) m.uv2 = uv2;
+                if (first.HasAttribute(MeshAttributes.UV2)) if (uv3 != null) m.SetUVs(2, uv3);
+                if (first.HasAttribute(MeshAttributes.UV3)) if (uv4 != null) m.SetUVs(3, uv4);
             }
         }
 

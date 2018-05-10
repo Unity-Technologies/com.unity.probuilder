@@ -15,12 +15,18 @@ namespace UnityEngine.ProBuilder
 		WingedEdge m_Start = null;
 		WingedEdge m_Current = null;
 
+		/// <inheritdoc />
 		public WingedEdgeEnumerator(WingedEdge start)
 		{
 			m_Start = start;
 			m_Current = null;
 		}
 
+		/// <summary>
+		/// Move the current value to the next WingedEdge.
+		/// </summary>
+		/// <returns>True if next is valid, false if not.</returns>
+		/// <inheritdoc />
 		public bool MoveNext()
 		{
 			if (m_Current == null)
@@ -34,11 +40,13 @@ namespace UnityEngine.ProBuilder
 			return ReferenceEquals(m_Current, m_Start);
 		}
 
+		/// <inheritdoc />
 		public void Reset()
 		{
 			m_Current = null;
 		}
 
+		/// <inheritdoc />
 		public WingedEdge Current
 		{
 			get
@@ -54,11 +62,13 @@ namespace UnityEngine.ProBuilder
 			}
 		}
 
+		/// <inheritdoc />
 		object IEnumerator.Current
 		{
 			get { return Current; }
 		}
 
+		/// <inheritdoc />
 		public void Dispose() { }
 	}
 }

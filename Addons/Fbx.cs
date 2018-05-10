@@ -18,7 +18,7 @@ namespace UnityEngine.ProBuilder.Addons.FBX
 	/// <summary>
 	/// ProBuilder-specific options when exporting FBX files with the Unity FBX Exporter.
 	/// </summary>
-	public class FbxOptions
+	class FbxOptions
 	{
 		/// <summary>
 		/// Export mesh topology as quads if possible.

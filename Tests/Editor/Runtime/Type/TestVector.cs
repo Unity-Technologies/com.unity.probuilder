@@ -45,7 +45,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.Type
 
 		static Vertex RandVertex()
 		{
-			Vertex v = new Vertex(true);
+			Vertex v = new Vertex();
 			v.position = RandVec3();
 			v.color = new Color(RandFlt(), RandFlt(), RandFlt(), RandFlt());
 			v.normal = RandVec3();

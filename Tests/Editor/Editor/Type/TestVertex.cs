@@ -17,6 +17,28 @@ namespace UnityEngine.ProBuilder.EditorTests.Type
 		};
 
 		[Test]
+		public static void AttributesAreInitializedMissing()
+		{
+			var x = new Vertex()
+			{
+				normal = Vector3.up
+			};
+
+			Assert.IsTrue(x.HasAttribute(MeshAttributes.Normal));
+			Assert.IsFalse(x.HasAttribute(MeshAttributes.Position));
+			Assert.IsFalse(x.HasAttribute(MeshAttributes.Tangent));
+		}
+
+		[Test]
+		public static void AssignedAttributesAreStored()
+		{
+			var x = new Vertex();
+			Assert.IsFalse(x.HasAttribute(MeshAttributes.Position));
+			x.position = Vector3.one;
+			Assert.IsTrue(x.HasAttribute(MeshAttributes.Position));
+		}
+
+		[Test]
 		public static void ReferenceEquality()
 		{
 			var dup = new Vertex(a);

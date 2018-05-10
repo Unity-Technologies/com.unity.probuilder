@@ -374,7 +374,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				FaceRebuildData data = dic_data[i];
 
 				Vector3 nrm = Math.Normal(mesh, face);
-				Vector2[] projection = Projection.PlanarProject(data.vertices.Select(x=>x.position).ToArray(), nrm);
+				Vector2[] projection = Projection.PlanarProject(data.vertices.Select(x => x.position).ToArray(), nrm);
 
 				int vertexCount = vertices.Count;
 
