@@ -7,19 +7,24 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
-    [Serializable]
+    /// <summary>
+    /// A collection of settings used when importing models to the ProBuilderMesh component.
+    /// </summary>
+	[Serializable]
     public sealed class MeshImportSettings
     {
         [SerializeField]
         bool m_Quads = true;
+
         [SerializeField]
         bool m_Smoothing = true;
+
         [SerializeField]
         float m_SmoothingThreshold = 1f;
 
-        /// <summary>
+        /// <value>
         /// Try to quadrangilize triangle meshes.
-        /// </summary>
+        /// </value>
         public bool quads
         {
             get { return m_Quads; }
@@ -29,27 +34,27 @@ namespace UnityEngine.ProBuilder.MeshOperations
         // Allow ngons when importing meshes. @todo
         // public bool ngons = false;
 
-        /// <summary>
+        /// <value>
         /// Generate smoothing groups based on mesh normals.
-        /// </summary>
+        /// </value>
         public bool smoothing
         {
             get { return m_Smoothing; }
             set { m_Smoothing = value; }
         }
 
-        /// <summary>
+        /// <value>
         /// Degree of difference between face normals to allow when determining smoothing groups.
-        /// </summary>
+        /// </value>
         public float smoothingAngle
         {
             get { return m_SmoothingThreshold; }
             set { m_SmoothingThreshold = value; }
         }
 
-        /// <summary>
+        /// <value>
         /// Basic mesh import settings. Imports quads, and smoothes faces with a threshold of 1 degree.
-        /// </summary>
+        /// </value>
         public static MeshImportSettings Default
         {
             get
@@ -73,7 +78,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
     }
 
     /// <summary>
-    /// Import UnityEngine.Mesh to pb_Object.
+    /// Responsible for importing UnityEngine.Mesh data to a ProBuilderMesh component.
     /// </summary>
     public sealed class MeshImporter
 	{
@@ -87,38 +92,45 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		ProBuilderMesh m_Mesh;
 		Vertex[] m_Vertices;
 
+		/// <summary>
+		/// Create a new MeshImporter instance.
+		/// </summary>
+		/// <param name="target">The ProBuilderMesh component that will be initialized with the imported mesh attributes.</param>
 		public MeshImporter(ProBuilderMesh target)
 		{
 			m_Mesh = target;
 		}
 
 		/// <summary>
-		/// Import a pb_Object from MeshFilter and MeshRenderer.
+		/// Import mesh data from a GameObject's MeshFilter.sharedMesh and MeshRenderer.sharedMaterials.
 		/// </summary>
-		/// <param name="go"></param>
-		/// <param name="importSettings"></param>
-		/// <returns></returns>
-		public bool Import(GameObject go, MeshImportSettings importSettings = null)
+		/// <param name="gameObject">The GameObject to search for MeshFilter and MeshRenderer data.</param>
+		/// <param name="importSettings">Optional settings parameter defines import customization properties.</param>
+		/// <returns>True if the mesh data was successfully translated to the ProBuilderMesh target, false if something went wrong.</returns>
+		public bool Import(GameObject gameObject, MeshImportSettings importSettings = null)
 		{
-            if (go == null)
-                throw new ArgumentNullException("go");
+            if (gameObject == null)
+                throw new ArgumentNullException("gameObject");
 
-            MeshFilter mf = go.GetComponent<MeshFilter>();
-			MeshRenderer mr = go.GetComponent<MeshRenderer>();
+            MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
+			MeshRenderer mr = gameObject.GetComponent<MeshRenderer>();
 
-			if(mf == null)
+			if (meshFilter == null || meshFilter.sharedMesh == null)
+			{
+				Log.Error("GameObject does not contain a valid MeshFilter or sharedMesh.");
 				return false;
+			}
 
-			return Import(mf.sharedMesh, mr ? mr.sharedMaterials : null, importSettings);
+			return Import(meshFilter.sharedMesh, mr ? mr.sharedMaterials : null, importSettings);
 		}
 
 		/// <summary>
-		/// Import a mesh onto an empty pb_Object.
+		/// Import mesh data from a GameObject's MeshFilter.sharedMesh and MeshRenderer.sharedMaterials.
 		/// </summary>
-		/// <param name="originalMesh"></param>
-		/// <param name="materials"></param>
-		/// <param name="importSettings"></param>
-		/// <returns></returns>
+		/// <param name="originalMesh">The UnityEngine.Mesh to extract attributes from.</param>
+		/// <param name="materials">The materials array corresponding to the originalMesh submeshes.</param>
+		/// <param name="importSettings">Optional settings parameter defines import customization properties.</param>
+		/// <returns>True if the mesh data was successfully translated to the ProBuilderMesh target, false if something went wrong.</returns>
 		/// <exception cref="NotImplementedException">Import only supports triangle and quad mesh topologies.</exception>
 		public bool Import(Mesh originalMesh, Material[] materials, MeshImportSettings importSettings = null)
 		{

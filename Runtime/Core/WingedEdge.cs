@@ -8,7 +8,9 @@ namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// A winged-edge data structure holds references to an edge, the previous and next edge in it's triangle, it's connected face, and the opposite edge (common).
-	/// ```
+	/// </summary>
+	/// <example>
+	///  ```
 	/// .       /   (face)    /
 	/// . prev /             / next
 	/// .     /    edge     /
@@ -19,7 +21,7 @@ namespace UnityEngine.ProBuilder
 	/// .    |             |
 	/// .    |             |
 	/// ```
-	/// </summary>
+	/// </example>
 	/// <inheritdoc cref="IEquatable{T}" />
 	/// <inheritdoc cref="IEnumerable{T}" />
 	public sealed class WingedEdge : IEquatable<WingedEdge>, IEnumerable<WingedEdge>

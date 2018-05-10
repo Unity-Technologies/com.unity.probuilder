@@ -28,26 +28,26 @@ namespace UnityEngine.ProBuilder.MeshOperations
 	public static class ConnectElements
 	{
         /// <summary>
-        /// Subdivide faces.
+        /// Insert new edges from the center of each edge on a face to a new vertex in the center of the face.
         /// </summary>
-        /// <param name="pb">pb_Object target.</param>
-        /// <param name="faces">The faces to subdivide (more accurately, poke).</param>
+        /// <param name="mesh">Target mesh.</param>
+        /// <param name="faces">The faces to poke.</param>
         /// <returns>The faces created as a result of inserting new edges.</returns>
-        public static Face[] Connect(this ProBuilderMesh pb, IEnumerable<Face> faces)
+        public static Face[] Connect(this ProBuilderMesh mesh, IEnumerable<Face> faces)
 		{
 			IEnumerable<Edge> edges = faces.SelectMany(x => x.edgesInternal);
 			HashSet<Face> mask = new HashSet<Face>(faces);
 			Edge[] empty;
             Face[] res;
-			Connect(pb, edges, out res, out empty, true, false, mask);
+			Connect(mesh, edges, out res, out empty, true, false, mask);
             return res;
 		}
 
         /// <summary>
-        /// Insert new edges connecting a set of edges.
+        /// Insert new edges connecting a set of edges. If a face contains more than 2 edges to be connected, a new vertex is inserted at the center of the face and each edge is connected to the center point.
         /// </summary>
-        /// <param name="mesh"></param>
-        /// <param name="edges"></param>
+        /// <param name="mesh">The target mesh.</param>
+        /// <param name="edges">A list of edges to connect.</param>
         /// <returns>The faces and edges created as a result of inserting new edges.</returns>
         public static SimpleTuple<Face[], Edge[]> Connect(this ProBuilderMesh mesh, IEnumerable<Edge> edges)
 		{
@@ -58,10 +58,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Connect vertices inserts an edge between a list of indices.
+		/// Inserts edges connecting a list of indexes.
 		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="indexes">A list of indices (corresponding to the pb_Object.vertices array) to connect with new edges.</param>
+		/// <param name="mesh">The target mesh.</param>
+		/// <param name="indexes">A list of indices (corresponding to the @"UnityEngine.ProBuilder.ProBuilderMesh.positions" array) to connect with new edges.</param>
 		/// <returns>A list of newly created vertex indices.</returns>
 		public static int[] Connect(this ProBuilderMesh mesh, IList<int> indexes)
 		{
@@ -360,7 +360,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			for(int i = 0; i < n_vertices.Length; i++)
 			{
-				FaceRebuildData f = AppendPolygon.FaceWithVertices(n_vertices[i], false);
+				FaceRebuildData f = AppendElements.FaceWithVertices(n_vertices[i], false);
 				faces.Add(new ConnectFaceRebuildData(f, n_indices[i]));
 			}
 
@@ -420,7 +420,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			for(int i = 0; i < n_vertices.Count; i++)
 			{
-				FaceRebuildData f = AppendPolygon.FaceWithVertices(n_vertices[i], false);
+				FaceRebuildData f = AppendElements.FaceWithVertices(n_vertices[i], false);
 				faces.Add(new ConnectFaceRebuildData(f, n_indices[i]));
 			}
 
@@ -445,7 +445,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			FaceRebuildData res = AppendPolygon.FaceWithVertices(n_vertices, false);
+			FaceRebuildData res = AppendElements.FaceWithVertices(n_vertices, false);
 
 			res.face.textureGroup 	= face.textureGroup;
 			res.face.uv 			= new AutoUnwrapSettings(face.uv);
@@ -508,7 +508,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			for(int i = 0; i < n_vertices.Length; i++)
 			{
-				FaceRebuildData f = AppendPolygon.FaceWithVertices(n_vertices[i], false);
+				FaceRebuildData f = AppendElements.FaceWithVertices(n_vertices[i], false);
 				f.sharedIndices = n_sharedIndices[i];
 
 				Vector3 fn = Math.Normal(n_vertices[i], f.face.indices);
@@ -573,7 +573,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				if(n_vertices[i].Count < 3)
 					continue;
 
-				FaceRebuildData f = AppendPolygon.FaceWithVertices(n_vertices[i], false);
+				FaceRebuildData f = AppendElements.FaceWithVertices(n_vertices[i], false);
 				f.sharedIndices = n_sharedIndices[i];
 
 				Vector3 fn = Math.Normal(n_vertices[i], f.face.indices);

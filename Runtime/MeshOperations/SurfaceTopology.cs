@@ -1,41 +1,82 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System;
 using System.Linq;
 using UnityEngine.ProBuilder;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
 	/// <summary>
-	/// Functions for working with surface topology.
+	/// Utilities for working with triangle and quad primitives.
 	/// </summary>
-	public static class Topology
+	public static class SurfaceTopology
 	{
 		/// <summary>
-		/// Reverse the winding order for each passed pb_Face.
+		/// Convert a selection of faces from n-gons to triangles.
+		/// <br />
+		/// If a face is successfully converted to triangles, each new triangle is created as a separate face and the original face is deleted.
 		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="faces"></param>
-		public static void ReverseWindingOrder(this ProBuilderMesh mesh, Face[] faces)
+		/// <param name="mesh">The target mesh.</param>
+		/// <param name="faces">The faces to convert from quads to triangles.</param>
+		/// <returns>Any new triangle faces created by breaking faces into individual triangles.</returns>
+		public static Face[] ToTriangles(this ProBuilderMesh mesh, IList<Face> faces)
 		{
-            if (mesh == null)
-                throw new ArgumentNullException("mesh");
+			List<Vertex> vertices = new List<Vertex>( Vertex.GetVertices(mesh) );
+			Dictionary<int, int> lookup = mesh.sharedIndicesInternal.ToDictionary();
 
-            if (faces == null)
-                throw new ArgumentNullException("faces");
+			List<FaceRebuildData> rebuild = new List<FaceRebuildData>();
 
-            for (int i = 0; i < faces.Length; i++)
-				faces[i].Reverse();
+			foreach(Face face in faces)
+			{
+				List<FaceRebuildData> res = BreakFaceIntoTris(face, vertices, lookup);
+				rebuild.AddRange(res);
+			}
+
+			FaceRebuildData.Apply(rebuild, mesh, vertices, null, lookup, null);
+			mesh.DeleteFaces(faces);
+			mesh.ToMesh();
+
+			return rebuild.Select(x => x.face).ToArray();
+		}
+
+		static List<FaceRebuildData> BreakFaceIntoTris(Face face, List<Vertex> vertices, Dictionary<int, int> lookup)
+		{
+			int[] tris = face.indices;
+			int triCount = tris.Length;
+			List<FaceRebuildData> rebuild = new List<FaceRebuildData>(triCount / 3);
+
+			for(int i = 0; i < triCount; i += 3)
+			{
+				FaceRebuildData r = new FaceRebuildData();
+
+				r.face = new Face(face);
+				r.face.indices = new int[] { 0, 1, 2};
+
+				r.vertices = new List<Vertex>() {
+					vertices[tris[i  ]],
+					vertices[tris[i+1]],
+					vertices[tris[i+2]]
+				};
+
+				r.sharedIndices = new List<int>() {
+					lookup[tris[i  ]],
+					lookup[tris[i+1]],
+					lookup[tris[i+2]]
+				};
+
+				rebuild.Add(r);
+			}
+
+			return rebuild;
 		}
 
 		/// <summary>
-		/// Attempt to figure out the winding order the passed face.
+		/// Attempt to extract the winding order for a face.
 		/// </summary>
-		/// <remarks>May return WindingOrder.Unknown.</remarks>
-		/// <param name="mesh"></param>
-		/// <param name="face"></param>
-		/// <returns></returns>
+		/// <param name="mesh">The source mesh.</param>
+		/// <param name="face">The face to test.</param>
+		/// <returns>The winding order if successfull, unknown if not.</returns>
 		public static WindingOrder GetWindingOrder(this ProBuilderMesh mesh, Face face)
 		{
 			Vector2[] p = Projection.PlanarProject(mesh, face);
@@ -58,7 +99,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// Return the winding order of a set of ordered points.
 		/// </summary>
 		/// <remarks>http://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order</remarks>
-		/// <param name="points">A set of unordered indices.</param>
+		/// <param name="points">A path of points in 2d space.</param>
 		/// <returns>The winding order if found, WindingOrder.Unknown if not.</returns>
 		public static WindingOrder GetWindingOrder(IList<Vector2> points)
 		{
@@ -83,10 +124,16 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 		/// <summary>
 		/// Reverses the orientation of the middle edge in a quad.
+		/// ```
+		/// .  _____        _____
+		/// . |\    |      |    /|
+		/// . |  \  |  =>  |  /  |
+		/// . |____\|      |/____|
+		/// ```
 		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="face"></param>
-		/// <returns></returns>
+		/// <param name="mesh">The mesh that face belongs to.</param>
+		/// <param name="face">The target face.</param>
+		/// <returns>True if successful, false if not. Operation will fail if face does not contain two triangles with exactly 2 shared vertices.</returns>
 		public static bool FlipEdge(this ProBuilderMesh mesh, Face face)
 		{
             if (mesh == null)
@@ -152,15 +199,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Conform groups of adjacent faces.  This function supports multiple islands of interconnected faces, but it
-		/// may not unify each island the same way.
+		/// Ensure that all adjacent face normals are pointing in a uniform direction. This function supports multiple islands of connected faces, but it may not unify each island the same way.
 		/// </summary>
-		/// <param name="pb"></param>
-		/// <param name="faces"></param>
-		/// <returns></returns>
-		public static ActionResult ConformNormals(this ProBuilderMesh pb, IList<Face> faces)
+		/// <param name="mesh">The mesh that the faces belong to.</param>
+		/// <param name="faces">The faces to make uniform.</param>
+		/// <returns>The state of the action.</returns>
+		public static ActionResult ConformNormals(this ProBuilderMesh mesh, IEnumerable<Face> faces)
 		{
-			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb, faces);
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh, faces);
 			HashSet<Face> used = new HashSet<Face>();
 			int count = 0;
 
@@ -312,3 +358,4 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 	}
 }
+

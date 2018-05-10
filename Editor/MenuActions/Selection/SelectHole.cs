@@ -71,7 +71,7 @@ namespace UnityEditor.ProBuilder.Actions
 				bool selectAll = pb.selectedIndicesInternal == null || pb.selectedIndicesInternal.Length < 1;
 				IEnumerable<int> indices = selectAll ? pb.facesInternal.SelectMany(x => x.ToTriangles()) : pb.selectedIndicesInternal;
 
-				List<List<Edge>> holes = AppendPolygon.FindHoles(pb, indices);
+				List<List<Edge>> holes = ElementSelection.FindHoles(pb, indices);
 
 				res = new ActionResult(ActionResult.Status.Success, holes.Count > 0 ? string.Format("{0} holes found", holes.Count) : "No Holes in Selection");
 

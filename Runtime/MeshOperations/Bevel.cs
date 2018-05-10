@@ -18,8 +18,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="mesh">Target mesh.</param>
 		/// <param name="edges">A set of edges to apply bevelling to.</param>
 		/// <param name="amount">A value from 0 (bevel not at all) to 1 (bevel entire face).</param>
-		/// <param name="createdFaces">The resulting faces from the bevel action.</param>
-		/// <returns></returns>
+		/// <returns>The new faces created to form the bevel.</returns>
 		public static List<Face> BevelEdges(ProBuilderMesh mesh, IList<Edge> edges, float amount)
 		{
             if (mesh == null)
@@ -194,14 +193,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				if(h.Count < 4)
 				{
 					List<Vertex> v = new List<Vertex>( Vertex.GetVertices(mesh, h.Select(x => sharedIndices[x][0]).ToList()) );
-					holeFaces.Add(AppendPolygon.FaceWithVertices(v));
+					holeFaces.Add(AppendElements.FaceWithVertices(v));
 				}
 				// if this hole has > 3 indices, it needs a tent pole triangulation, which requires sorting into the perimeter order
 				else
 				{
 					List<int> holePath = WingedEdge.SortCommonIndexesByAdjacency(modified, h);
 					List<Vertex> v = new List<Vertex>( Vertex.GetVertices(mesh, holePath.Select(x => sharedIndices[x][0]).ToList()) );
-					holeFaces.AddRange( AppendPolygon.TentCapWithVertices(v) );
+					holeFaces.AddRange( AppendElements.TentCapWithVertices(v) );
 				}
 			}
 
@@ -235,7 +234,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						{
 							w.face.material = w.opposite.face.material;
 							w.face.uv = new AutoUnwrapSettings(w.opposite.face.uv);
-							Topology.ConformOppositeNormal(w.opposite);
+							SurfaceTopology.ConformOppositeNormal(w.opposite);
 							break;
 						}
 					}

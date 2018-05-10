@@ -9,6 +9,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 {
 	public static class ElementSelection
 	{
+		const int k_MaxHoleIterations = 2048;
+
 		/// <summary>
 		/// Returns a list of <![CDATA[SimpleTuple<Face, Edge>]]> where each face is connected to the passed edge.
 		/// </summary>
@@ -115,21 +117,23 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Get all edges that are on the perimeter of this face group selection.
 		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="faces"></param>
-		/// <returns></returns>
+		/// <param name="mesh">The source mesh.</param>
+		/// <param name="faces">The faces to search for perimeter edge path.</param>
+		/// <returns>A list of the edges on the perimeter of each group of adjacent faces.</returns>
 		public static IEnumerable<Edge> GetPerimeterEdges(ProBuilderMesh mesh, IEnumerable<Face> faces)
 		{
-			return GetPerimeterEdges(mesh.sharedIndicesInternal.ToDictionary(), faces);
+			return GetPerimeterEdges(faces, mesh.sharedIndicesInternal.ToDictionary());
 		}
 
 		/// <summary>
 		/// Get all edges that are on the perimeter of this face group selection.
 		/// </summary>
-		/// <param name="sharedIndicesLookup"></param>
-		/// <param name="faces"></param>
-		/// <returns></returns>
-		internal static IEnumerable<Edge> GetPerimeterEdges(Dictionary<int, int> sharedIndicesLookup, IEnumerable<Face> faces)
+		/// <param name="sharedIndexesDictionary">A common index lookup dictionary.</param>
+		/// <param name="faces">The faces to search for perimeter edge path.</param>
+		/// <returns>A list of the edges on the perimeter of each group of adjacent faces.</returns>
+		/// <seealso cref="ProBuilderMesh.sharedIndexes"/>
+		/// <seealso cref="IntArrayUtility.ToDictionary"/>
+		public static IEnumerable<Edge> GetPerimeterEdges(IEnumerable<Face> faces, Dictionary<int, int> sharedIndexesDictionary)
 		{
 			List<Edge> faceEdges = faces.SelectMany(x => x.edgesInternal).ToList();	// actual edges
 			int edgeCount = faceEdges.Count;
@@ -140,7 +144,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			for(int i = 0; i < edgeCount; i++)
 			{
-				Edge uni = new Edge( sharedIndicesLookup[faceEdges[i].x], sharedIndicesLookup[faceEdges[i].y] );
+				Edge uni = new Edge( sharedIndexesDictionary[faceEdges[i].x], sharedIndexesDictionary[faceEdges[i].y] );
 
 				if( dup.TryGetValue(uni, out list) )
 					list.Add(faceEdges[i]);
@@ -465,15 +469,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Grow `faces` to include any face touching the perimeter.
+		/// Grow faces to include any face touching the perimeter edges.
 		/// </summary>
-		/// <param name="pb"></param>
-		/// <param name="faces"></param>
-		/// <param name="maxAngleDiff"></param>
-		/// <returns></returns>
-		public static HashSet<Face> GrowSelection(ProBuilderMesh pb, IList<Face> faces, float maxAngleDiff = -1f)
+		/// <param name="mesh">The source mesh.</param>
+		/// <param name="faces">The faces to grow out from.</param>
+		/// <param name="maxAngleDiff">If provided, adjacent faces must have a normal that is within maxAngleDiff (in degrees) difference of the perimeter face.</param>
+		/// <returns>The original faces selection, plus any new faces added as a result the grow operation.</returns>
+		public static HashSet<Face> GrowSelection(ProBuilderMesh mesh, IEnumerable<Face> faces, float maxAngleDiff = -1f)
 		{
-			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb, true);
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh, true);
 			HashSet<Face> source = new HashSet<Face>(faces);
 			HashSet<Face> neighboring = new HashSet<Face>();
 
@@ -486,7 +490,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					continue;
 
 				if(checkAngle)
-					srcNormal = Math.Normal(pb, wings[i].face);
+					srcNormal = Math.Normal(mesh, wings[i].face);
 
 				foreach(WingedEdge w in wings[i])
 				{
@@ -494,7 +498,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					{
 						if(checkAngle)
 						{
-							Vector3 oppNormal = Math.Normal(pb, w.opposite.face);
+							Vector3 oppNormal = Math.Normal(mesh, w.opposite.face);
 
 							if(Vector3.Angle(srcNormal, oppNormal) < maxAngleDiff)
 								neighboring.Add(w.opposite.face);
@@ -549,15 +553,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Returns all adjacent faces as far as can be bridged within an angle.
+		/// Recursively add all faces touching any of the selected faces.
 		/// </summary>
-		/// <param name="pb"></param>
-		/// <param name="faces"></param>
-		/// <param name="maxAngleDiff"></param>
+		/// <param name="mesh">The source mesh.</param>
+		/// <param name="faces">The starting faces.</param>
+		/// <param name="maxAngleDiff">Faces must have a normal that is within maxAngleDiff (in degrees) difference of the perimeter face to be added to the collection.</param>
 		/// <returns></returns>
-		public static HashSet<Face> FloodSelection(ProBuilderMesh pb, IList<Face> faces, float maxAngleDiff)
+		public static HashSet<Face> FloodSelection(ProBuilderMesh mesh, IList<Face> faces, float maxAngleDiff)
 		{
-			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb, true);
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh, true);
 			HashSet<Face> source = new HashSet<Face>(faces);
 			HashSet<Face> flood = new HashSet<Face>();
 
@@ -566,7 +570,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				if(!flood.Contains(wings[i].face) && source.Contains(wings[i].face))
 				{
 					flood.Add(wings[i].face);
-					Flood(pb, wings[i], maxAngleDiff > 0f ? Math.Normal(pb, wings[i].face) : Vector3_Zero, maxAngleDiff, flood);
+					Flood(mesh, wings[i], maxAngleDiff > 0f ? Math.Normal(mesh, wings[i].face) : Vector3_Zero, maxAngleDiff, flood);
 				}
 			}
 			return flood;
@@ -575,10 +579,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Fetch a face loop.
 		/// </summary>
-		/// <param name="mesh">Target pb_Object.</param>
-		/// <param name="faces">The faces to scan for face loops.</param>
-		/// <param name="ring">Toggles between loop and face. Ring and loop are arbritary with faces, so this parameter just toggles between which gets scanned first.</param>
-		/// <returns></returns>
+		/// <param name="mesh">The source mesh.</param>
+		/// <param name="faces">The faces to scan for loops.</param>
+		/// <param name="ring">Toggles between loop and ring. Ring and loop are arbritary with faces, so this parameter just toggles between which gets scanned first.</param>
+		/// <returns>A collection of faces gathered by extending a ring or loop,</returns>
 		public static HashSet<Face> GetFaceLoop(ProBuilderMesh mesh, Face[] faces, bool ring = false)
 		{
             if (mesh == null)
@@ -599,9 +603,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Get both a face ring and loop from the selected faces.
 		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="faces"></param>
-		/// <returns></returns>
+		/// <param name="mesh">The source mesh.</param>
+		/// <param name="faces">The faces to scan for ring and loops.</param>
+		/// <returns>A collection of faces gathered by extending in a ring and loop,</returns>
 		public static HashSet<Face> GetFaceRingAndLoop(ProBuilderMesh mesh, Face[] faces)
 		{
             if (mesh == null)
@@ -670,6 +674,147 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			return loop;
+		}
+
+		/// <summary>
+		/// Find any holes touching one of the passed vertex indices.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="indices"></param>
+		/// <returns></returns>
+		internal static List<List<Edge>> FindHoles(ProBuilderMesh pb, IEnumerable<int> indices)
+		{
+			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
+			HashSet<int> common = IntArrayUtility.GetCommonIndices(lookup, indices);
+			List<List<Edge>> holes = new List<List<Edge>>();
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
+
+			foreach(List<WingedEdge> hole in FindHoles(wings, common))
+				holes.Add( hole.Select(x => x.edge.local).ToList() );
+
+			return holes;
+		}
+
+		/// <summary>
+		/// Find any holes touching one of the passed common indices.
+		/// </summary>
+		/// <param name="wings"></param>
+		/// <param name="common"></param>
+		/// <returns></returns>
+		internal static List<List<WingedEdge>> FindHoles(List<WingedEdge> wings, HashSet<int> common)
+		{
+			HashSet<WingedEdge> used = new HashSet<WingedEdge>();
+			List<List<WingedEdge>> holes = new List<List<WingedEdge>>();
+
+			for(int i = 0; i < wings.Count; i++)
+			{
+				WingedEdge c = wings[i];
+
+				// if this edge has been added to a hole already, or the edge isn't in the approved list of indices,
+				// or if there's an opposite face, this edge doesn't belong to a hole.  move along.
+				if(c.opposite != null || used.Contains(c) || !(common.Contains(c.edge.common.x) || common.Contains(c.edge.common.y)))
+					continue;
+
+				List<WingedEdge> hole = new List<WingedEdge>();
+				WingedEdge it = c;
+				int ind = it.edge.common.x;
+
+				int counter = 0;
+
+				while(it != null && counter++ < k_MaxHoleIterations)
+				{
+					used.Add(it);
+					hole.Add(it);
+
+					ind = it.edge.common.x == ind ? it.edge.common.y : it.edge.common.x;
+					it = FindNextEdgeInHole(it, ind);
+
+					if(it == c)
+						break;
+				}
+
+				List<SimpleTuple<int, int>> splits = new List<SimpleTuple<int, int>>();
+
+				// check previous wings for y == x (closed loop).
+				for(int n = 0; n < hole.Count; n++)
+				{
+					WingedEdge wing = hole[n];
+
+					for(int p = n - 1; p > -1; p--)
+					{
+						if( wing.edge.common.y == hole[p].edge.common.x )
+						{
+							splits.Add( new SimpleTuple<int, int>(p, n) );
+							break;
+						}
+					}
+				}
+
+				// create new lists from each segment
+				// holes paths are nested, with holes
+				// possibly split between multiple nested
+				// holes
+				//
+				//	[2, 0]                                     [5, 3]
+				// 	[0, 9]                                     [3, 11]
+				// 	[9, 10]                                    [11, 10]
+				// 		[10, 7]                                    [10, 2]
+				// 			[7, 6]             or with split   	    [2, 0]
+				// 			[6, 1]             nesting ->   	    [0, 9]
+				// 			[1, 4]                             	    [9, 10]
+				// 			[4, 7]	<- (y == x)                [10, 7]
+				// 		[7, 8]                                 	    [7, 6]
+				// 		[8, 5]                                 	    [6, 1]
+				// 		[5, 3]                                 	    [1, 4]
+				// 		[3, 11]                                	    [4, 7]
+				// 		[11, 10]	<- (y == x)                [7, 8]
+				// [10, 2] 			<- (y == x)                [8, 5]
+				//
+				// paths may also contain multiple segments non-tiered
+
+				int splitCount = splits.Count;
+
+				splits.Sort( (x, y) => x.item1.CompareTo(y.item1) );
+
+				int[] shift = new int[splitCount];
+
+				// Debug.Log(hole.ToString("\n") + "\n" + splits.ToString("\n"));
+
+				for(int n = splitCount - 1; n > -1; n--)
+				{
+					int x = splits[n].item1, y = splits[n].item2 - shift[n];
+					int range = (y - x) + 1;
+
+					List<WingedEdge> section = hole.GetRange(x, range);
+
+					hole.RemoveRange(x, range);
+
+					for(int m = n - 1; m > -1; m--)
+						if(splits[m].item2 > splits[n].item2)
+							shift[m] += range;
+
+					// verify that this path has at least one index that was asked for
+					if(splitCount < 2 || section.Any(w => common.Contains(w.edge.common.x)) || section.Any(w => common.Contains(w.edge.common.y)))
+						holes.Add( section );
+				}
+			}
+
+			return holes;
+		}
+
+		static WingedEdge FindNextEdgeInHole(WingedEdge wing, int common)
+		{
+			WingedEdge next = wing.GetAdjacentEdgeWithCommonIndex(common);
+			int counter = 0;
+			while(next != null && next != wing && counter++ < k_MaxHoleIterations)
+			{
+				if(next.opposite == null)
+					return next;
+
+				next = next.opposite.GetAdjacentEdgeWithCommonIndex(common);
+			}
+
+			return null;
 		}
 	}
 }

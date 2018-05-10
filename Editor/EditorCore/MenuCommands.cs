@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using MeshOps = UnityEngine.ProBuilder.MeshOperations;
 using Object = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder
@@ -238,9 +239,8 @@ namespace UnityEditor.ProBuilder
 
 			for(int i = 0; i < selection.Length; i++)
 			{
-				Face[] splits = null;
 				selection[i].ToMesh();
-				selection[i].ToTriangles(selection[i].facesInternal, out splits);
+				Face[] splits = selection[i].ToTriangles(selection[i].facesInternal);
 				selection[i].Refresh();
 				selection[i].Optimize();
 			}
@@ -339,7 +339,8 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selected)
 			{
-				pb.ReverseWindingOrder(pb.facesInternal);
+				foreach(var face in pb.facesInternal)
+					face.Reverse();
 				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
@@ -365,12 +366,16 @@ namespace UnityEditor.ProBuilder
 			{
 				if( pb.selectedFaceCount < 1 && faceCount < 1 )
 				{
-					pb.ReverseWindingOrder(pb.facesInternal);
+					foreach(var face in pb.facesInternal)
+						face.Reverse();
+
 					c += pb.facesInternal.Length;
 				}
 				else
 				{
-					pb.ReverseWindingOrder(pb.GetSelectedFaces());
+					foreach(var face in pb.GetSelectedFaces())
+						face.Reverse();
+
 					c += pb.selectedFaceCount;
 				}
 
@@ -415,7 +420,7 @@ namespace UnityEditor.ProBuilder
 				if(faces == null)
 					continue;
 
-				res = Topology.ConformNormals(pb, faces);
+				res = UnityEngine.ProBuilder.MeshOperations.SurfaceTopology.ConformNormals(pb, faces);
 
 				pb.ToMesh();
 				pb.Refresh();
@@ -536,7 +541,7 @@ namespace UnityEditor.ProBuilder
 			{
 				if(pb.selectedEdgeCount == 2)
 				{
-					if(pb.Bridge(pb.selectedEdges[0], pb.selectedEdges[1], limitToPerimeterEdges))
+					if(pb.Bridge(pb.selectedEdges[0], pb.selectedEdges[1], limitToPerimeterEdges) != null)
 					{
 						success = true;
 						pb.ToMesh();
@@ -1437,7 +1442,7 @@ namespace UnityEditor.ProBuilder
 				Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
 				List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
 				HashSet<int> common = IntArrayUtility.GetCommonIndices(lookup, indices);
-				List<List<WingedEdge>> holes = AppendPolygon.FindHoles(wings, common);
+				List<List<WingedEdge>> holes = ElementSelection.FindHoles(wings, common);
 
 				HashSet<Face> faces = new HashSet<Face>();
 				List<Face> adjacent = new List<Face>();
@@ -1457,14 +1462,14 @@ namespace UnityEditor.ProBuilder
 							continue;
 
 						holeIndices = hole.Select(x => x.edge.local.x).ToList();
-						face = AppendPolygon.CreatePolygon(pb, holeIndices, false);
+						face = AppendElements.CreatePolygon(pb, holeIndices, false);
 						adjacent.AddRange(hole.Select(x => x.face));
 					}
 					else
 					{
 						IEnumerable<WingedEdge> selected = hole.Where(x => common.Contains(x.edge.common.x));
 						holeIndices = selected.Select(x => x.edge.local.x).ToList();
-						face = AppendPolygon.CreatePolygon(pb, holeIndices, true);
+						face = AppendElements.CreatePolygon(pb, holeIndices, true);
 
 						if(res)
 							adjacent.AddRange(selected.Select(x => x.face));
@@ -1496,7 +1501,7 @@ namespace UnityEditor.ProBuilder
 							{
 								p.face.material = p.opposite.face.material;
 								p.face.uv = new AutoUnwrapSettings(p.opposite.face.uv);
-								Topology.ConformOppositeNormal(p.opposite);
+								MeshOps.SurfaceTopology.ConformOppositeNormal(p.opposite);
 								break;
 							}
 						}

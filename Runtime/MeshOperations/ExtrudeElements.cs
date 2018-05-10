@@ -11,35 +11,35 @@ namespace UnityEngine.ProBuilder.MeshOperations
 	public static class ExtrudeElements
 	{
 		/// <summary>
-		/// Extrude faces using method and distance.
+		/// Extrude a collection of faces.
 		/// </summary>
-		/// <param name="pb">Target pb_Object.</param>
+		/// <param name="mesh">The source mesh.</param>
 		/// <param name="faces">The faces to extrude.</param>
-		/// <param name="method">How faces are extruded.</param>
-		/// <param name="distance">The distance in Unity units to extrude faces.</param>
+		/// <param name="method">Describes how faces are extruded.</param>
+		/// <param name="distance">The distance to extrude faces.</param>
 		/// <returns>True on success, false if the action failed.</returns>
-		public static bool Extrude(this ProBuilderMesh pb, IEnumerable<Face> faces, ExtrudeMethod method, float distance)
+		public static bool Extrude(this ProBuilderMesh mesh, IEnumerable<Face> faces, ExtrudeMethod method, float distance)
 		{
 			switch(method)
 			{
 				case ExtrudeMethod.IndividualFaces:
-					return ExtrudePerFace(pb, faces, distance);
+					return ExtrudePerFace(mesh, faces, distance);
 
 				default:
-					return ExtrudeAsGroups(pb, faces, method == ExtrudeMethod.FaceNormal, distance);
+					return ExtrudeAsGroups(mesh, faces, method == ExtrudeMethod.FaceNormal, distance);
 			}
 		}
 
 		/// <summary>
-		/// Edge extrusion override
+		/// Extrude a collection of edges.
 		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="edges"></param>
-		/// <param name="extrudeDistance"></param>
-		/// <param name="extrudeAsGroup"></param>
-		/// <param name="enableManifoldExtrude"></param>
-		/// <returns></returns>
-		public static Edge[] Extrude(this ProBuilderMesh mesh, IEnumerable<Edge> edges, float extrudeDistance, bool extrudeAsGroup, bool enableManifoldExtrude)
+		/// <param name="mesh">The source mesh.</param>
+		/// <param name="edges">The edges to extrude.</param>
+		/// <param name="distance">The distance to extrude.</param>
+		/// <param name="extrudeAsGroup">If true adjacent edges will be extruded retaining a shared vertex, if false the shared vertex will be split.</param>
+		/// <param name="enableManifoldExtrude">Pass true to allow this function to extrude manifold edges, false to disallow.</param>
+		/// <returns>The extruded edges.</returns>
+		public static Edge[] Extrude(this ProBuilderMesh mesh, IEnumerable<Edge> edges, float distance, bool extrudeAsGroup, bool enableManifoldExtrude)
 		{
             if (mesh == null)
                 throw new System.ArgumentNullException("mesh");
@@ -114,8 +114,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					{
 						localVerts [ edge.x ],
 						localVerts [ edge.y ],
-						localVerts [ edge.x ] + xnorm.normalized * extrudeDistance,
-						localVerts [ edge.y ] + ynorm.normalized * extrudeDistance
+						localVerts [ edge.x ] + xnorm.normalized * distance,
+						localVerts [ edge.y ] + ynorm.normalized * distance
 					},
 					new Color[4]
 					{
@@ -163,6 +163,60 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				f.InvalidateCache();
 
 			return newEdges.ToArray();
+		}
+
+		/// <summary>
+		/// Split any shared vertices so that this face may be moved independently of the main object.
+		/// </summary>
+		/// <param name="mesh">The source mesh.</param>
+		/// <param name="faces">The faces to split from the mesh.</param>
+		/// <returns>The faces created forming the detached face group.</returns>
+		public static List<Face> DetachFaces(this ProBuilderMesh mesh, IEnumerable<Face> faces)
+		{
+			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(mesh));
+			int sharedIndicesOffset = mesh.sharedIndicesInternal.Length;
+			Dictionary<int, int> lookup = mesh.sharedIndicesInternal.ToDictionary();
+
+			List<FaceRebuildData> detached = new List<FaceRebuildData>();
+
+			foreach(Face face in faces)
+			{
+				FaceRebuildData data = new FaceRebuildData();
+				data.vertices = new List<Vertex>();
+				data.sharedIndices = new List<int>();
+				data.face = new Face(face);
+
+				Dictionary<int, int> match = new Dictionary<int, int>();
+				int[] indices = new int[face.indices.Length];
+
+				for(int i = 0; i < face.indices.Length; i++)
+				{
+					int local;
+
+					if( match.TryGetValue(face.indices[i], out local) )
+					{
+						indices[i] = local;
+					}
+					else
+					{
+						local = data.vertices.Count;
+						indices[i] = local;
+						match.Add(face.indices[i], local);
+						data.vertices.Add(vertices[face.indices[i]]);
+						data.sharedIndices.Add(lookup[face.indices[i]] + sharedIndicesOffset);
+					}
+				}
+
+				data.face.indices = indices.ToArray();
+				detached.Add(data);
+			}
+
+			FaceRebuildData.Apply(detached, mesh, vertices, null, lookup);
+			mesh.DeleteFaces(faces);
+
+			mesh.ToMesh();
+
+			return detached.Select(x => x.face).ToList();
 		}
 
 		/// <summary>

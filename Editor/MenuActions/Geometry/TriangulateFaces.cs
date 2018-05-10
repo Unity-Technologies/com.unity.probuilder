@@ -49,12 +49,12 @@ namespace UnityEditor.ProBuilder.Actions
 
 			foreach (ProBuilderMesh pb in MeshSelection.Top())
 			{
-				Face[] triangulatedFaces = null;
 				pb.ToMesh();
-				res = pb.ToTriangles(pb.selectedFacesInternal, out triangulatedFaces);
+				Face[] triangulatedFaces = pb.ToTriangles(pb.selectedFacesInternal);
 				pb.Refresh();
 				pb.Optimize();
 				pb.SetSelectedFaces(triangulatedFaces);
+				res = new ActionResult(ActionResult.Status.Success, string.Format("Triangulated {0} {1}", triangulatedFaces.Length, triangulatedFaces.Length < 2 ? "Face" : "Faces"));
 			}
 
 			ProBuilderEditor.Refresh();

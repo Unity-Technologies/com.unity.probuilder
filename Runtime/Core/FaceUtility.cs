@@ -77,6 +77,11 @@ namespace UnityEngine.ProBuilder
 			face.InvalidateCache();
 		}
 
+		/// <summary>
+		/// Reverse the order of the triangle array. This has the effect of reversing the direction that this face renders.
+		/// </summary>
+		/// <param name="face">The target face.</param>
+		/// <exception cref="ArgumentNullException"></exception>
 		public static void Reverse(this Face face)
 		{
             if (face == null)
