@@ -7,6 +7,9 @@ using System.Collections.ObjectModel;
 
 namespace UnityEngine.ProBuilder
 {
+	/// <summary>
+	/// This component is responsible for storing all the data necessary for editing and compiling UnityEngine.Mesh objects.
+	/// </summary>
     [AddComponentMenu("")]
     [DisallowMultipleComponent]
     [RequireComponent(typeof(MeshFilter))]
