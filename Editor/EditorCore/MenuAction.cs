@@ -36,38 +36,38 @@ namespace UnityEditor.ProBuilder
             VisibleAndEnabled = 0x3
         };
 
-	    /// <summary>
+	    /// <value>
 	    /// Path to the ProBuilder menu category.
-	    /// </summary>
+	    /// </value>
 	    /// <remarks>
 	    /// Use this where you wish to add a top level menu item.
 	    /// </remarks>
         public const string probuilderMenuPath = "Tools/ProBuilder/";
 
-	    /// <summary>
+	    /// <value>
 	    /// The unicode character for the control key symbol on Windows, or command key on macOS.
-	    /// </summary>
+	    /// </value>
         protected const char keyCommandSuper = PreferenceKeys.CMD_SUPER;
 
-	    /// <summary>
+	    /// <value>
 	    /// The unicode character for the shift key symbol.
-	    /// </summary>
+	    /// </value>
 	    protected const char keyCommandShift = PreferenceKeys.CMD_SHIFT;
 
-	    /// <summary>
+	    /// <value>
 	    /// The unicode character for the option key symbol on macOS.
-	    /// </summary>
+	    /// </value>
 	    /// <seealso cref="keyCommandAlt"/>
         protected const char keyCommandOption = PreferenceKeys.CMD_OPTION;
 
-	    /// <summary>
+	    /// <value>
 	    /// The unicode character for the alt key symbol on Windows.
-	    /// </summary>
+	    /// </value>
         protected const char keyCommandAlt = PreferenceKeys.CMD_ALT;
 
-	    /// <summary>
+	    /// <value>
 	    /// The unicode character for the delete key symbol.
-	    /// </summary>
+	    /// </value>
         protected const char keyCommandDelete = PreferenceKeys.CMD_DELETE;
 
         static readonly GUIContent AltButtonContent = new GUIContent("+", "");
@@ -121,14 +121,14 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-	    /// <summary>
+	    /// <value>
 	    /// Get the <see cref="EditLevel"/> as set by the currently open <see cref="ProBuilderEditor"/>.
-	    /// </summary>
+	    /// </value>
         protected static EditLevel editLevel { get { return ProBuilderEditor.instance ? ProBuilderEditor.instance.editLevel : EditLevel.Top; } }
 
-	    /// <summary>
+	    /// <value>
 	    /// Get the <see cref="SelectMode"/> as set by the currently open <see cref="ProBuilderEditor"/>.
-	    /// </summary>
+	    /// </value>
         protected static SelectMode selectionMode { get { return ProBuilderEditor.instance ? ProBuilderEditor.instance.selectionMode : SelectMode.Face; } }
 
         Texture2D m_DesaturatedIcon = null;
@@ -160,43 +160,43 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-	    /// <summary>
+	    /// <value>
 	    /// What category this action belongs in.
-	    /// </summary>
+	    /// </value>
         public abstract ToolbarGroup group { get; }
 
-	    /// <summary>
+	    /// <value>
 	    /// Optional value influences where in the toolbar this menu item will be placed.
         /// <remarks>
         /// 0 is first, 1 is second, -1 is no preference.
 	    /// </remarks>
-	    /// </summary>
+	    /// </value>
 	    public virtual int toolbarPriority { get { return -1; } }
 
-	    /// <summary>
+	    /// <value>
 	    /// The icon to be displayed for this action.
-	    /// </summary>
+	    /// </value>
 	    /// <remarks>
 	    /// Not used when toolbar is in text mode.
 	    /// </remarks>
 	    public abstract Texture2D icon { get; }
 
-	    /// <summary>
+	    /// <value>
 	    /// The contents to display for this menu action's tooltip.
-	    /// </summary>
+	    /// </value>
 	    public abstract TooltipContent tooltip { get; }
 
-		/// <summary>
+		/// <value>
 		/// Optional override for the action title displayed in the toolbar button.
-		/// </summary>
+		/// </value>
 		/// <remarks>
 		/// If unimplemented the tooltip title is used.
 		/// </remarks>
 	    public virtual string menuTitle { get { return tooltip.title; } }
 
-		/// <summary>
-		/// True if this class should have an entry built into the hardware menu.
-		/// </summary>
+		/// <value>
+		/// True if this class should have an entry built into the hardware menu. This is not implemented for custom actions.
+		/// </value>
 	    protected virtual bool hasFileMenuEntry { get { return true; } }
 
 		/// <summary>
@@ -342,7 +342,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		protected virtual bool DoAltButton(params GUILayoutOption[] options)
+		bool DoAltButton(params GUILayoutOption[] options)
 		{
 			return GUILayout.Button(AltButtonContent, MenuActionStyles.altButtonStyle, options);
 		}

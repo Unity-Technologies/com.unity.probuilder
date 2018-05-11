@@ -97,7 +97,12 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		/// <inheritdoc cref="TooltipContent"/>
+		/// <summary>
+		/// Create a new tooltip.
+		/// </summary>
+		/// <param name="title">The header text for this tooltip.</param>
+		/// <param name="summary">The body of the tooltip text. This should be kept brief.</param>
+		/// <param name="shortcut">A set of keys to be displayed as the shortcut for this action.</param>
 		public TooltipContent(string title, string summary, string shortcut = "")
 		{
 			this.title = title;
@@ -179,12 +184,22 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
+		/// <summary>
+		/// Equality check is performed by comparing the title property of each tooltip.
+		/// </summary>
+		/// <param name="other">The ToolTip content to compare.</param>
+		/// <returns>True if title is the same, false otherwise.</returns>
 		public bool Equals(TooltipContent other)
 		{
 			return other != null && other.title != null && other.title.Equals(this.title);
 		}
 
-		public override bool Equals(System.Object obj)
+		/// <summary>
+		/// Equality check is performed by comparing the title property of each tooltip.
+		/// </summary>
+		/// <param name="obj">The ToolTip content to compare.</param>
+		/// <returns>True if title is the same, false otherwise.</returns>
+		public override bool Equals(object obj)
 		{
 			return obj is TooltipContent && ((TooltipContent)obj).title.Equals(title);
 		}
@@ -194,6 +209,12 @@ namespace UnityEditor.ProBuilder
 			return title.GetHashCode();
 		}
 
+		/// <summary>
+		/// Convert a tooltip to a string.
+		/// </summary>
+		/// <param name="content">The Tooltip to convert.</param>
+		/// <returns>The title of content.</returns>
+		/// <exception cref="ArgumentNullException">content is null.</exception>
 		public static explicit operator string(TooltipContent content)
 		{
             if (content == null)
@@ -201,16 +222,30 @@ namespace UnityEditor.ProBuilder
 			return content.title;
 		}
 
+		/// <summary>
+		/// Create a Tooltip with a title.
+		/// </summary>
+		/// <param name="title">The title to apply to the new Tooltip.</param>
+		/// <returns>A new Tooltip with title and no content.</returns>
 		public static explicit operator TooltipContent(string title)
 		{
 			return new TooltipContent(title, "");
 		}
 
+		/// <summary>
+		/// Convert a Tooltip to a string.
+		/// </summary>
+		/// <returns>The title of the Tooltip.</returns>
         public override string ToString()
         {
             return title;
         }
 
+		/// <summary>
+		/// Create a new tooltip with title.
+		/// </summary>
+		/// <param name="title">The title to apply to the new Tooltip.</param>
+		/// <returns>A new Tooltip with title and no content.</returns>
         public static TooltipContent FromString(string title)
         {
             return new TooltipContent(title, "");

@@ -558,7 +558,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="mesh">The source mesh.</param>
 		/// <param name="faces">The starting faces.</param>
 		/// <param name="maxAngleDiff">Faces must have a normal that is within maxAngleDiff (in degrees) difference of the perimeter face to be added to the collection.</param>
-		/// <returns></returns>
+		/// <returns>A collection of faces that are connected by shared edges to the original faces.</returns>
 		public static HashSet<Face> FloodSelection(ProBuilderMesh mesh, IList<Face> faces, float maxAngleDiff)
 		{
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh, true);

@@ -8,7 +8,7 @@ using System;
 namespace UnityEngine.ProBuilder.MeshOperations
 {
 	/// <summary>
-	/// Functions for appending or deleting faces from meshes.
+	/// Functions for appending elements to meshes.
 	/// </summary>
 	public static class AppendElements
 	{
@@ -390,7 +390,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Insert a face between two edges.
 		/// </summary>
-		/// <param name="mesh"></param>
+		/// <param name="mesh">The source mesh.</param>
 		/// <param name="a">First edge.</param>
 		/// <param name="b">Second edge</param>
 		/// <param name="enforcePerimiterEdgesOnly">If true, this function will not create a face bridging manifold edges.</param>
@@ -555,5 +555,288 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				new Face( new int[6] {2, 1, 0, 2, 3, 1 }, mat, uvs, 0, -1, -1, false ),
 				s);
 		}
+
+		/// <summary>
+		/// Add a set of points to a face and retriangulate. Points are added to the nearest edge.
+		/// </summary>
+		/// <param name="mesh">The source mesh.</param>
+		/// <param name="face">The face to append points to.</param>
+		/// <param name="points">Points to added to the face.</param>
+		/// <returns>The face created by appending the points.</returns>
+		public static Face AppendVerticesToFace(this ProBuilderMesh mesh, Face face, Vector3[] points)
+		{
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+            if (face == null || !face.IsValid())
+                throw new ArgumentNullException("face");
+
+            if (points == null)
+                throw new ArgumentNullException("points");
+
+            List<Vertex> vertices = Vertex.GetVertices(mesh).ToList();
+            List<Face> faces = new List<Face>(mesh.facesInternal);
+            Dictionary<int, int> lookup = mesh.sharedIndicesInternal.ToDictionary();
+            Dictionary<int, int> lookupUV = mesh.sharedIndicesUVInternal == null ? null : mesh.sharedIndicesUVInternal.ToDictionary();
+
+            List<Edge> wound = WingedEdge.SortEdgesByAdjacency(face);
+
+            List<Vertex> n_vertices = new List<Vertex>();
+            List<int> n_shared = new List<int>();
+            List<int> n_sharedUV = lookupUV != null ? new List<int>() : null;
+
+            for (int i = 0; i < wound.Count; i++)
+			{
+				n_vertices.Add(vertices[wound[i].x]);
+				n_shared.Add(lookup[wound[i].x]);
+
+				if(lookupUV != null)
+				{
+					int uv;
+
+					if(lookupUV.TryGetValue(wound[i].x, out uv))
+						n_sharedUV.Add(uv);
+					else
+						n_sharedUV.Add(-1);
+				}
+			}
+
+			// now insert the new points on the nearest edge
+			for(int i = 0; i < points.Length; i++)
+			{
+				int index = -1;
+				float best = Mathf.Infinity;
+				Vector3 p = points[i];
+				int vc = n_vertices.Count;
+
+				for(int n = 0; n < vc; n++)
+				{
+					Vector3 v = n_vertices[n].position;
+					Vector3 w = n_vertices[(n + 1) % vc].position;
+
+					float dist = Math.DistancePointLineSegment(p, v, w);
+
+					if(dist < best)
+					{
+						best = dist;
+						index = n;
+					}
+				}
+
+				Vertex left = n_vertices[index], right = n_vertices[(index+1) % vc];
+
+				float x = (p - left.position).sqrMagnitude;
+				float y = (p - right.position).sqrMagnitude;
+
+				Vertex insert = Vertex.Mix(left, right, x / (x + y));
+
+				n_vertices.Insert((index + 1) % vc, insert);
+				n_shared.Insert((index + 1) % vc, -1);
+				if(n_sharedUV != null) n_sharedUV.Insert((index + 1) % vc, -1);
+			}
+
+			List<int> triangles;
+
+			try
+			{
+				Triangulation.TriangulateVertices(n_vertices, out triangles, false);
+			}
+			catch
+			{
+				Debug.Log("Failed triangulating face after appending vertices.");
+				return null;
+			}
+
+			FaceRebuildData data = new FaceRebuildData();
+
+			data.face = new Face(triangles.ToArray(), face.material, new AutoUnwrapSettings(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
+			data.vertices 			= n_vertices;
+			data.sharedIndices 		= n_shared;
+			data.sharedIndicesUV 	= n_sharedUV;
+
+			FaceRebuildData.Apply(	new List<FaceRebuildData>() { data },
+										vertices,
+										faces,
+										lookup,
+										lookupUV);
+
+			var newFace = data.face;
+
+			mesh.SetVertices(vertices);
+			mesh.SetFaces(faces.ToArray());
+			mesh.SetSharedIndexes(lookup);
+			mesh.SetSharedIndexesUV(lookupUV);
+
+			// check old normal and make sure this new face is pointing the same direction
+			Vector3 oldNrm = Math.Normal(mesh, face);
+			Vector3 newNrm = Math.Normal(mesh, newFace);
+
+			if( Vector3.Dot(oldNrm, newNrm) < 0 )
+				newFace.Reverse();
+
+			mesh.DeleteFace(face);
+
+			return newFace;
+		}
+
+		/// <summary>
+		/// Insert a number of new points to an edge. Points are evenly spaced out along the edge.
+		/// </summary>
+		/// <param name="mesh">The source mesh.</param>
+		/// <param name="edge">The edge to split with points.</param>
+		/// <param name="count">The number of new points to insert. Must be greater than 0.</param>
+		/// <returns>The new edges created by inserting points.</returns>
+		public static List<Edge> AppendVerticesToEdge(this ProBuilderMesh mesh, Edge edge, int count)
+		{
+			return AppendVerticesToEdge(mesh, new Edge[] { edge }, count);
+		}
+
+		/// <summary>
+		/// Insert a number of new points to each edge. Points are evenly spaced out along the edge.
+		/// </summary>
+		/// <param name="mesh">The source mesh.</param>
+		/// <param name="edges">The edges to split with points.</param>
+		/// <param name="count">The number of new points to insert. Must be greater than 0.</param>
+		/// <returns>The new edges created by inserting points.</returns>
+		public static List<Edge> AppendVerticesToEdge(this ProBuilderMesh mesh, IList<Edge> edges, int count)
+		{
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+            if (edges == null)
+                throw new ArgumentNullException("edges");
+
+            if (count < 1 || count > 512)
+            {
+                Log.Error("New edge vertex count is less than 1 or greater than 512.");
+                return null;
+            }
+
+            List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(mesh));
+            Dictionary<int, int> lookup = mesh.sharedIndicesInternal.ToDictionary();
+            Dictionary<int, int> lookupUV = mesh.sharedIndicesUVInternal.ToDictionary();
+            List<int> indicesToDelete = new List<int>();
+            Edge[] commonEdges = EdgeExtension.GetUniversalEdges(edges.ToArray(), lookup);
+            List<Edge> distinctEdges = commonEdges.Distinct().ToList();
+
+            Dictionary<Face, FaceRebuildData> modifiedFaces = new Dictionary<Face, FaceRebuildData>();
+
+			int originalSharedIndicesCount = lookup.Count();
+			int sharedIndicesCount = originalSharedIndicesCount;
+
+			foreach(Edge edge in distinctEdges)
+			{
+				Edge localEdge = EdgeExtension.GetLocalEdgeFast(edge, mesh.sharedIndicesInternal);
+
+				// Generate the new vertices that will be inserted on this edge
+				List<Vertex> verticesToAppend = new List<Vertex>(count);
+
+				for(int i = 0; i < count; i++)
+					verticesToAppend.Add(Vertex.Mix(vertices[localEdge.x], vertices[localEdge.y], (i+1)/((float)count + 1)));
+
+				List<SimpleTuple<Face, Edge>> adjacentFaces = ElementSelection.GetNeighborFaces(mesh, localEdge);
+
+				// foreach face attached to common edge, append vertices
+				foreach(SimpleTuple<Face, Edge> tup in adjacentFaces)
+				{
+					Face face = tup.item1;
+
+					FaceRebuildData data;
+
+					if( !modifiedFaces.TryGetValue(face, out data) )
+					{
+						data = new FaceRebuildData();
+						data.face = new Face(new int[0], face.material, new AutoUnwrapSettings(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
+						data.vertices = new List<Vertex>(ArrayUtility.ValuesWithIndices(vertices, face.distinctIndices));
+						data.sharedIndices = new List<int>();
+						data.sharedIndicesUV = new List<int>();
+
+						foreach(int i in face.distinctIndices)
+						{
+							int shared;
+
+							if(lookup.TryGetValue(i, out shared))
+								data.sharedIndices.Add(shared);
+
+							if(lookupUV.TryGetValue(i, out shared))
+								data.sharedIndicesUV.Add(shared);
+						}
+
+						indicesToDelete.AddRange(face.distinctIndices);
+
+						modifiedFaces.Add(face, data);
+					}
+
+					data.vertices.AddRange(verticesToAppend);
+
+					for(int i = 0; i < count; i++)
+					{
+						data.sharedIndices.Add(sharedIndicesCount + i);
+						data.sharedIndicesUV.Add(-1);
+					}
+				}
+
+				sharedIndicesCount += count;
+			}
+
+			// now apply the changes
+			List<Face> dic_face = modifiedFaces.Keys.ToList();
+			List<FaceRebuildData> dic_data = modifiedFaces.Values.ToList();
+			List<EdgeLookup> appendedEdges = new List<EdgeLookup>();
+
+			for(int i = 0; i < dic_face.Count; i++)
+			{
+				Face face = dic_face[i];
+				FaceRebuildData data = dic_data[i];
+
+				Vector3 nrm = Math.Normal(mesh, face);
+				Vector2[] projection = Projection.PlanarProject(data.vertices.Select(x => x.position).ToArray(), nrm);
+
+				int vertexCount = vertices.Count;
+
+				// triangulate and set new face indices to end of current vertex list
+				List<int> indices;
+
+				if(Triangulation.SortAndTriangulate(projection, out indices))
+					data.face.indices = indices.ToArray();
+				else
+					continue;
+
+				data.face.ShiftIndexes(vertexCount);
+				face.CopyFrom(data.face);
+
+				for(int n = 0; n < data.vertices.Count; n++)
+					lookup.Add(vertexCount + n, data.sharedIndices[n]);
+
+				if(data.sharedIndicesUV.Count == data.vertices.Count)
+				{
+					for(int n = 0; n < data.vertices.Count; n++)
+						lookupUV.Add(vertexCount + n, data.sharedIndicesUV[n]);
+				}
+
+				vertices.AddRange(data.vertices);
+
+				foreach(Edge e in face.edgesInternal)
+				{
+					EdgeLookup el = new EdgeLookup(new Edge(lookup[e.x], lookup[e.y]), e);
+
+					if(el.common.x >= originalSharedIndicesCount || el.common.y >= originalSharedIndicesCount)
+						appendedEdges.Add(el);
+				}
+			}
+
+			indicesToDelete = indicesToDelete.Distinct().ToList();
+			int delCount = indicesToDelete.Count;
+
+			var newEdges = appendedEdges.Distinct().Select(x => x.local - delCount).ToList();
+
+			mesh.SetVertices(vertices);
+			mesh.SetSharedIndexes(lookup.ToIntArray());
+			mesh.SetSharedIndexesUV(lookupUV.ToIntArray());
+			mesh.DeleteVertices(indicesToDelete);
+
+            return newEdges;
+		}
+
 	}
 }

@@ -1101,7 +1101,7 @@ namespace UnityEditor.ProBuilder
 						GameObject.DestroyImmediate(copy.transform.GetChild(i).gameObject);
 
 					foreach(ProBuilderMesh pb_child in pb.transform.GetComponentsInChildren<ProBuilderMesh>())
-						EditorUtility.VerifyMesh(pb_child);
+						EditorUtility.EnsureMeshSyncState(pb_child);
 				}
 
 				Undo.RegisterCreatedObjectUndo(copy.gameObject, "Detach Selection");
@@ -1394,7 +1394,7 @@ namespace UnityEditor.ProBuilder
 				pb.DetachFaces(pb.selectedFacesInternal);
 
 				splitCount += pb.selectedIndicesInternal.Length;
-				pb.SplitCommonVertices(pb.selectedIndicesInternal);
+				pb.SplitVertices(pb.selectedIndicesInternal);
 
 				// Reattach detached face vertices (if any are to be had)
 				if(pb.selectedFacesInternal.Length > 0)
@@ -1575,7 +1575,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				List<Edge> newEdgeSelection = VertexEditing.AppendVerticesToEdge(pb, pb.selectedEdges, subdivisions);
+				List<Edge> newEdgeSelection = AppendElements.AppendVerticesToEdge(pb, pb.selectedEdges, subdivisions);
 
 				if (newEdgeSelection != null)
 				{

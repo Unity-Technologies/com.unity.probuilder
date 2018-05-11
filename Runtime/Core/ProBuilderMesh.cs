@@ -86,7 +86,7 @@ namespace UnityEngine.ProBuilder
         internal string assetGuid;
 
         /// <value>
-        /// Usually when you delete a pb_Object you want to also clean up the mesh asset.
+        /// In the editor, when you delete a ProBuilderMesh you usually also want to destroy the mesh asset.
         /// However, there are situations you'd want to keep the mesh around, like when stripping probuilder scripts.
         /// </value>
         public bool preserveMeshAssetOnDestroy

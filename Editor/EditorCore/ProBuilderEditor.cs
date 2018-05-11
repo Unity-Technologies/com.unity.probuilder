@@ -19,24 +19,24 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	public sealed class ProBuilderEditor : EditorWindow
 	{
-		/// <summary>
+		/// <value>
 		/// Raised any time the ProBuilder editor refreshes the selection. This is called every frame when interacting with mesh elements, and after any mesh operation.
-		/// </summary>
+		/// </value>
 		public static event Action<ProBuilderMesh[]> onSelectionUpdate;
 
-        /// <summary>
+        /// <value>
         /// Called when vertex modifications are complete.
-        /// </summary>
+        /// </value>
         public static event Action<ProBuilderMesh[]> onVertexMovementFinish;
 
-        /// <summary>
+        /// <value>
         /// Called immediately prior to beginning vertex modifications. The ProBuilderMesh will be in un-altered state at this point (meaning ProBuilderMesh.ToMesh and ProBuilderMesh.Refresh have been called, but not Optimize).
-        /// </summary>
+        /// </value>
         public static event Action<ProBuilderMesh[]> onVertexMovementBegin;
 
-		/// <summary>
+		/// <value>
 		/// Raised when the EditLevel is changed.
-		/// </summary>
+		/// </value>
         public static event Action<int> onEditLevelChanged;
 
         // Toggles for Face, Vertex, and Edge mode.
@@ -154,9 +154,9 @@ namespace UnityEditor.ProBuilder
 		internal bool isFloatingWindow { get; private set; }
 		internal bool selectHiddenEnabled { get { return m_SelectHiddenEnabled; } }
 
-		/// <summary>
+		/// <value>
 		/// Get the current @"UnityEngine.ProBuilder.EditLevel".
-		/// </summary>
+		/// </value>
 		public EditLevel editLevel { get; private set; }
 
 		/// <summary>
@@ -201,9 +201,9 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		/// <summary>
+		/// <value>
 		/// Get the active ProBuilderEditor window. Null if no instance is open.
-		/// </summary>
+		/// </value>
 		public static ProBuilderEditor instance
 		{
 			get { return s_Instance; }

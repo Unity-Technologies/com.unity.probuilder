@@ -17,14 +17,16 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Subscribe to this event to be notified when ProBuilder is going to optimize a mesh. Optimization includes collapsing coincident vertices to a single vertex where possible, and generating lightmap UVs).
 		/// </summary>
-		/// <returns>Return true to override this process, false to let ProBuilder optimize the mesh.</returns>
+		/// <value>
+		/// Return true to override this process, false to let ProBuilder optimize the mesh.
+		/// </value>
 		/// <seealso cref="Optimize"/>
 		/// <seealso cref="onMeshOptimized"/>
 		public static event Func<bool, ProBuilderMesh> onCheckSkipMeshOptimization = null;
 
-		/// <summary>
+		/// <value>
 		/// This callback is raised after a ProBuilderMesh has been successfully optimized.
-		/// </summary>
+		/// </value>
 		/// <seealso cref="Optimize"/>
 		public static event Action<ProBuilderMesh, Mesh> onMeshOptimized = null;
 

@@ -157,6 +157,11 @@ namespace UnityEngine.ProBuilder
 			}
 		}
 
+		/// <summary>
+		/// Find if a vertex attribute has been set.
+		/// </summary>
+		/// <param name="attribute">The attribute or attributes to test for.</param>
+		/// <returns>True if this vertex has the specified attributes set, false if they are default values.</returns>
 		public bool HasAttribute(MeshAttributes attribute)
 		{
 			return (m_Attributes & attribute) == attribute;
@@ -248,7 +253,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Creates a new hashcode from position, uv0, and normal since those are the values most likely to be different.
+		/// Creates a new hashcode from position, uv0, and normal.
 		/// </summary>
 		/// <returns>A hashcode for this object.</returns>
 		public override int GetHashCode()
@@ -290,6 +295,7 @@ namespace UnityEngine.ProBuilder
 			hasUV4 = vertex.hasUV4;
 		}
 
+		/// <inheritdoc cref="Vertex.Equals(Vertex)"/>
         public static bool operator ==(Vertex a, Vertex b)
         {
             if(object.ReferenceEquals(a, null) || object.ReferenceEquals(b, null))
@@ -298,6 +304,12 @@ namespace UnityEngine.ProBuilder
             return a.Equals(b);
         }
 
+		/// <summary>
+		/// Test for inequality.
+		/// </summary>
+		/// <param name="a">Left parameter.</param>
+		/// <param name="b">Right parameter.</param>
+		/// <returns>True if a does not equal b.</returns>
         public static bool operator !=(Vertex a, Vertex b)
         {
             return !(a == b);
@@ -732,14 +744,14 @@ namespace UnityEngine.ProBuilder
 		/// </remarks>
 		/// <seealso cref="SetMesh"/>
 		/// <param name="vertices">The source vertices.</param>
-		/// <param name="position">A new array of the vertex position values.</param>
-		/// <param name="color">A new array of the vertex color values.</param>
-		/// <param name="uv0">A new array of the vertex uv0 values.</param>
-		/// <param name="normal">A new array of the vertex normal values.</param>
-		/// <param name="tangent">A new array of the vertex tangent values.</param>
-		/// <param name="uv2">A new array of the vertex uv2 values.</param>
-		/// <param name="uv3">A new array of the vertex uv3 values.</param>
-		/// <param name="uv4">A new array of the vertex uv4 values.</param>
+		/// <param name="position">A new array of the vertex position values if requested by the attributes parameter, or null.</param>
+		/// <param name="color">A new array of the vertex color values if requested by the attributes parameter, or null.</param>
+		/// <param name="uv0">A new array of the vertex uv0 values if requested by the attributes parameter, or null.</param>
+		/// <param name="normal">A new array of the vertex normal values if requested by the attributes parameter, or null.</param>
+		/// <param name="tangent">A new array of the vertex tangent values if requested by the attributes parameter, or null.</param>
+		/// <param name="uv2">A new array of the vertex uv2 values if requested by the attributes parameter, or null.</param>
+		/// <param name="uv3">A new array of the vertex uv3 values if requested by the attributes parameter, or null.</param>
+		/// <param name="uv4">A new array of the vertex uv4 values if requested by the attributes parameter, or null.</param>
 		/// <param name="attributes">A flag with the MeshAttributes requested.</param>
 		/// <seealso cref="HasAttribute"/>
 		public static void GetArrays(

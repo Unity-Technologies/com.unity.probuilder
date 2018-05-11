@@ -39,9 +39,9 @@ namespace UnityEditor.ProBuilder
 			OnSelectionChanged();
 		}
 
-		/// <summary>
-		/// Register to receive notifications when the object selection changes.
-		/// </summary>
+		/// <value>
+		/// Receive notifications when the object selection changes.
+		/// </value>
 		public static event System.Action onObjectSelectionChanged;
 
 		internal static void OnSelectionChanged()
@@ -74,46 +74,45 @@ namespace UnityEditor.ProBuilder
 			return s_DeepSelection;
 		}
 
-		/// <summary>
+		/// <value>
 		/// How many ProBuilderMesh components are currently selected. Corresponds to the length of Top.
-		/// </summary>
+		/// </value>
 		public static int count
 		{
 			get { return Top().Length; }
 		}
 
-		/// <summary>
+		/// <value>
 		/// Get the sum of all pb_Object vertex counts in the selection.
-		/// </summary>
+		/// </value>
 		/// <remarks>
 		/// This is the ProBuilderMesh.vertexCount, not UnityEngine.Mesh.vertexCount. To get the optimized mesh vertex count,
 		/// see `totalVertexCountCompiled` for the vertex count as is rendered in the scene.
 		/// </remarks>
 		public static int totalVertexCount { get { RebuildElementCounts(); return s_TotalVertexCount; } }
 
-		/// <summary>
+		/// <value>
 		/// Get the sum of all pb_Object common vertex counts in the selection.
-		/// </summary>
+		/// </value>
 		/// <remarks>
 		/// This is the pb_Object.sharedIndices, not UnityEngine.Mesh.vertexCount. To get the optimized mesh vertex count,
 		/// see `totalVertexCountOptimized` for the vertex count as is rendered in the scene.
 		/// </remarks>
 		public static int totalCommonVertexCount { get { RebuildElementCounts(); return s_TotalCommonVertexCount; } }
 
-		/// <summary>
+		/// <value>
 		/// Get the sum of all selected ProBuilder mesh vertex counts. This value reflects the actual vertex count per UnityEngine.Mesh.
-		/// </summary>
+		/// </value>
 		public static int totalVertexCountOptimized { get { RebuildElementCounts(); return s_TotalVertexCountCompiled; } }
 
-		/// <summary>
+		/// <value>
 		/// Sum of all selected ProBuilderMesh face counts.
-		/// </summary>
+		/// </value>
 		public static int totalFaceCount { get { RebuildElementCounts(); return s_TotalFaceCount; } }
 
-		/// <summary>
-		/// Get the sum of all selected ProBuilder compiled mesh triangle counts (3 indices make up a triangle, or 4
-		/// indices if topology is quad).
-		/// </summary>
+		/// <value>
+		/// Get the sum of all selected ProBuilder compiled mesh triangle counts (3 indices make up a triangle, or 4 indices if topology is quad).
+		/// </value>
 		public static int totalTriangleCountCompiled { get { RebuildElementCounts(); return s_TotalTriangleCountCompiled; } }
 
 		static void RebuildElementCounts()

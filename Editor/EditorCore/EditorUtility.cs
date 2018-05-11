@@ -26,9 +26,9 @@ namespace UnityEditor.ProBuilder
 		const BindingFlags k_BindingFlagsAll =
 			BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
-		/// <summary>
+		/// <value>
 		/// Subscribe to this delegate to be notified when a new mesh has been created and initialized through ProBuilder.
-		/// </summary>
+		/// </value>
 		/// <remarks>
 		/// This is only called when an object is initialized in editor, and created by ProBuilder menu items.
 		/// </remarks>
@@ -66,8 +66,8 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Show a timed (1 second) notification in the SceneView window.
 		/// </summary>
-		/// <seealso cref="RemoveNotification"/>
 		/// <param name="message">The text to display in the notification.</param>
+		/// <seealso cref="RemoveNotification"/>
 		public static void ShowNotification(string message)
 		{
 			SceneView scnview = SceneView.lastActiveSceneView;
@@ -80,7 +80,7 @@ namespace UnityEditor.ProBuilder
 		/// <inheritdoc cref="ShowNotification(string)"/>
 		/// <param name="window">The EditorWindow to display this notification in.</param>
 		/// <param name="message">The text to display in the notification.</param>
-		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentNullException">Window is null.</exception>
 		public static void ShowNotification(EditorWindow window, string message)
 		{
 			if(PreferencesInternal.HasKey(PreferenceKeys.pbShowEditorNotifications) && !PreferencesInternal.GetBool(PreferenceKeys.pbShowEditorNotifications))
@@ -150,11 +150,11 @@ namespace UnityEditor.ProBuilder
 		}
 
 		/// <summary>
-		/// Ensure that this object has a valid mesh reference, and the geometry is current.
+		/// Ensure that this object has a valid mesh reference, and the geometry is current. If it is not valid, this function will attempt to repair the sync state.
 		/// </summary>
-		/// <param name="mesh"></param>
-		/// <returns></returns>
-		public static MeshSyncState VerifyMesh(ProBuilderMesh mesh)
+		/// <param name="mesh">The component to test.</param>
+		/// <seealso cref="ProBuilderMesh.Verify"/>
+		public static void EnsureMeshSyncState(ProBuilderMesh mesh)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -217,8 +217,6 @@ namespace UnityEditor.ProBuilder
 				if(meshesAreAssets)
 					EditorMeshUtility.TryCacheMesh(mesh);
 			}
-
-			return reason;
 		}
 
 		/// <summary>

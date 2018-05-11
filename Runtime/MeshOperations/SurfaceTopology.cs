@@ -124,12 +124,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 		/// <summary>
 		/// Reverses the orientation of the middle edge in a quad.
+		/// <![CDATA[
 		/// ```
 		/// .  _____        _____
 		/// . |\    |      |    /|
 		/// . |  \  |  =>  |  /  |
 		/// . |____\|      |/____|
 		/// ```
+		/// ]]>
 		/// </summary>
 		/// <param name="mesh">The mesh that face belongs to.</param>
 		/// <param name="face">The target face.</param>

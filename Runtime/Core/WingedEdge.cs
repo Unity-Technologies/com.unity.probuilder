@@ -61,8 +61,12 @@ namespace UnityEngine.ProBuilder
 			return other != null && edge.local.Equals(other.edge.local);
 		}
 
-		/// <inheritdoc cref="Equals(UnityEngine.ProBuilder.WingedEdge)"/>
-		public override bool Equals(System.Object obj)
+		/// <summary>
+		/// Equality comparision tests for local edge equality, disregarding other values.
+		/// </summary>
+		/// <param name="obj">The WingedEdge to compare against.</param>
+		/// <returns>True if the local edges are equal, false if not.</returns>
+		public override bool Equals(object obj)
 		{
 			WingedEdge be = obj as WingedEdge;
 
@@ -75,13 +79,20 @@ namespace UnityEngine.ProBuilder
 			return true;
 		}
 
-		/// <inheritdoc />
+		/// <summary>
+		/// Get a hash code for this edge.
+		/// </summary>
+		/// <returns>WingedEdge comparison only considers the local edge. As such, this returns the local edge hashcode.</returns>
 		public override int GetHashCode()
 		{
 			return edge.local.GetHashCode();
 		}
 
 		/// <inheritdoc />
+		/// <summary>
+		/// Enumerator walks the edge by querying the next property.
+		/// </summary>
+		/// <returns>A new WingedEdgeEnumerator.</returns>
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 		   return GetEnumerator();
@@ -96,6 +107,11 @@ namespace UnityEngine.ProBuilder
 		    return new WingedEdgeEnumerator(this);
 		}
 
+		/// <inheritdoc />
+		/// <summary>
+		/// Enumerator walks the edge by querying the next property.
+		/// </summary>
+		/// <returns>A new WingedEdgeEnumerator.</returns>
         IEnumerator<WingedEdge> IEnumerable<WingedEdge>.GetEnumerator()
         {
             return GetEnumerator();
@@ -119,6 +135,7 @@ namespace UnityEngine.ProBuilder
 			return count;
 		}
 
+		/// <returns>A string representation of the properties contained within this object.</returns>
 		public override string ToString()
 		{
 			return string.Format("Common: {0}\nLocal: {1}\nOpposite: {2}\nFace: {3}",

@@ -10,7 +10,7 @@ using KdTree.Math;
 namespace UnityEngine.ProBuilder.MeshOperations
 {
 	/// <summary>
-	/// Methods for collapsing, splitting, and appending vertices.
+	/// Methods for merging and splitting common (or shared) vertices.
 	/// </summary>
 	public static class VertexEditing
 	{
@@ -67,62 +67,25 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Creates separate entries in sharedIndices cache for all passed indices, and all indices in the shared array they belong to.
+		/// Split the vertices referenced by edge from their shared indexes so that each vertex moves independently.
 		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="indexes">A set of local indices to split into separate groups.</param>
-		/// <returns></returns>
-		public static bool SplitCommonVertices(this ProBuilderMesh mesh, int[] indexes)
-		{
-            if (mesh == null)
-                throw new ArgumentNullException("mesh");
-
-            if (indexes == null)
-                throw new ArgumentNullException("indexes");
-
-            Dictionary<int, int> lookup = mesh.sharedIndicesInternal.ToDictionary();
-
-			IntArray[] sharedIndices = mesh.sharedIndicesInternal;
-
-			List<int> usedIndex = new List<int>();
-			List<int> splits = new List<int>();
-
-			for(int i = 0, c = indexes.Length; i < c; i++)
-			{
-				int universal = lookup[indexes[i]];
-
-				if(!usedIndex.Contains(universal))
-				{
-					usedIndex.Add(universal);
-					splits.AddRange(sharedIndices[universal].array);
-				}
-			}
-
-			IntArrayUtility.RemoveValues(ref sharedIndices, splits.ToArray());
-
-			foreach(int i in splits)
-				IntArrayUtility.AddValueAtIndex(ref sharedIndices, -1, i);
-
-			mesh.SetSharedIndexes(sharedIndices);
-
-			return true;
-		}
-
-		/// <summary>
-		/// Split individual local indices from their common groups.
-		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="edge"></param>
+		/// <remarks>
+		/// This is equivalent to calling `SplitVertices(mesh, new int[] { edge.x, edge.y });`.
+		/// </remarks>
+		/// <param name="mesh">The source mesh.</param>
+		/// <param name="edge">The edge to query for vertex indices.</param>
+		/// <seealso cref="SplitVertices(UnityEngine.ProBuilder.ProBuilderMesh, IEnumerable{int})"/>
 		public static void SplitVertices(this ProBuilderMesh mesh, Edge edge)
 		{
 			SplitVertices(mesh, new int[] { edge.x, edge.y });
 		}
 
 		/// <summary>
-		/// Split individual indices from their common groups.
+		/// Split vertices from their shared indexes so that each vertex moves independently.
 		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="vertices"></param>
+		/// <param name="mesh">The source mesh.</param>
+		/// <param name="vertices">A list of vertex indices to split.</param>
+		/// <seealso cref="UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes"/>
 		public static void SplitVertices(this ProBuilderMesh mesh, IEnumerable<int> vertices)
 		{
             if (mesh == null)
@@ -139,292 +102,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			mesh.SetSharedIndexes(lookup);
 		}
 
-		/// <summary>
-		/// Given a face and a point, this will add a vertex to the pb_Object and retriangulate the face.
-		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="face"></param>
-		/// <param name="points"></param>
-		/// <returns>The face created by appending the points.</returns>
-		public static Face AppendVerticesToFace(this ProBuilderMesh mesh, Face face, Vector3[] points)
-		{
-            if (mesh == null)
-                throw new ArgumentNullException("mesh");
-
-            if (face == null || !face.IsValid())
-                throw new ArgumentNullException("face");
-
-            if (points == null)
-                throw new ArgumentNullException("points");
-
-            List<Vertex> vertices = Vertex.GetVertices(mesh).ToList();
-            List<Face> faces = new List<Face>(mesh.facesInternal);
-            Dictionary<int, int> lookup = mesh.sharedIndicesInternal.ToDictionary();
-            Dictionary<int, int> lookupUV = mesh.sharedIndicesUVInternal == null ? null : mesh.sharedIndicesUVInternal.ToDictionary();
-
-            List<Edge> wound = WingedEdge.SortEdgesByAdjacency(face);
-
-            List<Vertex> n_vertices = new List<Vertex>();
-            List<int> n_shared = new List<int>();
-            List<int> n_sharedUV = lookupUV != null ? new List<int>() : null;
-
-            for (int i = 0; i < wound.Count; i++)
-			{
-				n_vertices.Add(vertices[wound[i].x]);
-				n_shared.Add(lookup[wound[i].x]);
-
-				if(lookupUV != null)
-				{
-					int uv;
-
-					if(lookupUV.TryGetValue(wound[i].x, out uv))
-						n_sharedUV.Add(uv);
-					else
-						n_sharedUV.Add(-1);
-				}
-			}
-
-			// now insert the new points on the nearest edge
-			for(int i = 0; i < points.Length; i++)
-			{
-				int index = -1;
-				float best = Mathf.Infinity;
-				Vector3 p = points[i];
-				int vc = n_vertices.Count;
-
-				for(int n = 0; n < vc; n++)
-				{
-					Vector3 v = n_vertices[n].position;
-					Vector3 w = n_vertices[(n + 1) % vc].position;
-
-					float dist = Math.DistancePointLineSegment(p, v, w);
-
-					if(dist < best)
-					{
-						best = dist;
-						index = n;
-					}
-				}
-
-				Vertex left = n_vertices[index], right = n_vertices[(index+1) % vc];
-
-				float x = (p - left.position).sqrMagnitude;
-				float y = (p - right.position).sqrMagnitude;
-
-				Vertex insert = Vertex.Mix(left, right, x / (x + y));
-
-				n_vertices.Insert((index + 1) % vc, insert);
-				n_shared.Insert((index + 1) % vc, -1);
-				if(n_sharedUV != null) n_sharedUV.Insert((index + 1) % vc, -1);
-			}
-
-			List<int> triangles;
-
-			try
-			{
-				Triangulation.TriangulateVertices(n_vertices, out triangles, false);
-			}
-			catch
-			{
-				Debug.Log("Failed triangulating face after appending vertices.");
-				return null;
-			}
-
-			FaceRebuildData data = new FaceRebuildData();
-
-			data.face = new Face(triangles.ToArray(), face.material, new AutoUnwrapSettings(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
-			data.vertices 			= n_vertices;
-			data.sharedIndices 		= n_shared;
-			data.sharedIndicesUV 	= n_sharedUV;
-
-			FaceRebuildData.Apply(	new List<FaceRebuildData>() { data },
-										vertices,
-										faces,
-										lookup,
-										lookupUV);
-
-			var newFace = data.face;
-
-			mesh.SetVertices(vertices);
-			mesh.SetFaces(faces.ToArray());
-			mesh.SetSharedIndexes(lookup);
-			mesh.SetSharedIndexesUV(lookupUV);
-
-			// check old normal and make sure this new face is pointing the same direction
-			Vector3 oldNrm = Math.Normal(mesh, face);
-			Vector3 newNrm = Math.Normal(mesh, newFace);
-
-			if( Vector3.Dot(oldNrm, newNrm) < 0 )
-				newFace.Reverse();
-
-			mesh.DeleteFace(face);
-
-			return newFace;
-		}
-
-		/// <summary>
-		/// Appends count number of vertices to an edge.
-		/// </summary>
-		/// <param name="pb"></param>
-		/// <param name="edge"></param>
-		/// <param name="count"></param>
-		/// <param name="newEdges"></param>
-		/// <returns></returns>
-		public static List<Edge> AppendVerticesToEdge(this ProBuilderMesh pb, Edge edge, int count)
-		{
-			return AppendVerticesToEdge(pb, new Edge[] { edge }, count);
-		}
-
-		/// <summary>
-		/// Appends count number of vertices to an edge.
-		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="edges"></param>
-		/// <param name="count"></param>
-		/// <returns></returns>
-		public static List<Edge> AppendVerticesToEdge(this ProBuilderMesh mesh, IList<Edge> edges, int count)
-		{
-            if (mesh == null)
-                throw new ArgumentNullException("mesh");
-
-            if (edges == null)
-                throw new ArgumentNullException("edges");
-
-            if (count < 1 || count > 512)
-            {
-                Log.Info("New edge vertex count is less than 1 or greater than 512.");
-                return null;
-            }
-
-            List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(mesh));
-            Dictionary<int, int> lookup = mesh.sharedIndicesInternal.ToDictionary();
-            Dictionary<int, int> lookupUV = mesh.sharedIndicesUVInternal.ToDictionary();
-            List<int> indicesToDelete = new List<int>();
-            Edge[] commonEdges = EdgeExtension.GetUniversalEdges(edges.ToArray(), lookup);
-            List<Edge> distinctEdges = commonEdges.Distinct().ToList();
-
-            Dictionary<Face, FaceRebuildData> modifiedFaces = new Dictionary<Face, FaceRebuildData>();
-
-			int originalSharedIndicesCount = lookup.Count();
-			int sharedIndicesCount = originalSharedIndicesCount;
-
-			foreach(Edge edge in distinctEdges)
-			{
-				Edge localEdge = EdgeExtension.GetLocalEdgeFast(edge, mesh.sharedIndicesInternal);
-
-				// Generate the new vertices that will be inserted on this edge
-				List<Vertex> verticesToAppend = new List<Vertex>(count);
-
-				for(int i = 0; i < count; i++)
-					verticesToAppend.Add(Vertex.Mix(vertices[localEdge.x], vertices[localEdge.y], (i+1)/((float)count + 1)));
-
-				List<SimpleTuple<Face, Edge>> adjacentFaces = ElementSelection.GetNeighborFaces(mesh, localEdge);
-
-				// foreach face attached to common edge, append vertices
-				foreach(SimpleTuple<Face, Edge> tup in adjacentFaces)
-				{
-					Face face = tup.item1;
-
-					FaceRebuildData data;
-
-					if( !modifiedFaces.TryGetValue(face, out data) )
-					{
-						data = new FaceRebuildData();
-						data.face = new Face(new int[0], face.material, new AutoUnwrapSettings(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
-						data.vertices = new List<Vertex>(ArrayUtility.ValuesWithIndices(vertices, face.distinctIndices));
-						data.sharedIndices = new List<int>();
-						data.sharedIndicesUV = new List<int>();
-
-						foreach(int i in face.distinctIndices)
-						{
-							int shared;
-
-							if(lookup.TryGetValue(i, out shared))
-								data.sharedIndices.Add(shared);
-
-							if(lookupUV.TryGetValue(i, out shared))
-								data.sharedIndicesUV.Add(shared);
-						}
-
-						indicesToDelete.AddRange(face.distinctIndices);
-
-						modifiedFaces.Add(face, data);
-					}
-
-					data.vertices.AddRange(verticesToAppend);
-
-					for(int i = 0; i < count; i++)
-					{
-						data.sharedIndices.Add(sharedIndicesCount + i);
-						data.sharedIndicesUV.Add(-1);
-					}
-				}
-
-				sharedIndicesCount += count;
-			}
-
-			// now apply the changes
-			List<Face> dic_face = modifiedFaces.Keys.ToList();
-			List<FaceRebuildData> dic_data = modifiedFaces.Values.ToList();
-			List<EdgeLookup> appendedEdges = new List<EdgeLookup>();
-
-			for(int i = 0; i < dic_face.Count; i++)
-			{
-				Face face = dic_face[i];
-				FaceRebuildData data = dic_data[i];
-
-				Vector3 nrm = Math.Normal(mesh, face);
-				Vector2[] projection = Projection.PlanarProject(data.vertices.Select(x => x.position).ToArray(), nrm);
-
-				int vertexCount = vertices.Count;
-
-				// triangulate and set new face indices to end of current vertex list
-				List<int> indices;
-
-				if(Triangulation.SortAndTriangulate(projection, out indices))
-					data.face.indices = indices.ToArray();
-				else
-					continue;
-
-				data.face.ShiftIndexes(vertexCount);
-				face.CopyFrom(data.face);
-
-				for(int n = 0; n < data.vertices.Count; n++)
-					lookup.Add(vertexCount + n, data.sharedIndices[n]);
-
-				if(data.sharedIndicesUV.Count == data.vertices.Count)
-				{
-					for(int n = 0; n < data.vertices.Count; n++)
-						lookupUV.Add(vertexCount + n, data.sharedIndicesUV[n]);
-				}
-
-				vertices.AddRange(data.vertices);
-
-				foreach(Edge e in face.edgesInternal)
-				{
-					EdgeLookup el = new EdgeLookup(new Edge(lookup[e.x], lookup[e.y]), e);
-
-					if(el.common.x >= originalSharedIndicesCount || el.common.y >= originalSharedIndicesCount)
-						appendedEdges.Add(el);
-				}
-			}
-
-			indicesToDelete = indicesToDelete.Distinct().ToList();
-			int delCount = indicesToDelete.Count;
-
-			var newEdges = appendedEdges.Distinct().Select(x => x.local - delCount).ToList();
-
-			mesh.SetVertices(vertices);
-			mesh.SetSharedIndexes(lookup.ToIntArray());
-			mesh.SetSharedIndexesUV(lookupUV.ToIntArray());
-			mesh.DeleteVertices(indicesToDelete);
-
-            return newEdges;
-		}
-
         /// <summary>
-        /// Similar to Merge vertices, expect that this method only collapses vertices within a specified distance of
-        /// one another (typically Mathf.Epsilon is used).
+        /// Similar to Merge vertices, expect that this method only collapses vertices within a specified distance of one another (typically Mathf.Epsilon is used).
         /// </summary>
         /// <param name="mesh">Target pb_Object.</param>
         /// <param name="indexes">The vertex indices to be scanned for inclusion. To weld the entire object for example, pass pb.faces.SelectMany(x => x.indices).</param>
