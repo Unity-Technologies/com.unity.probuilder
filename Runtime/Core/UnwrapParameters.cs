@@ -6,7 +6,7 @@ namespace UnityEngine.ProBuilder
 	/// Store UV2 unwrapping parameters.
 	/// </summary>
 	[System.Serializable]
-	public sealed class UnwrapParamaters
+	public sealed class UnwrapParameters
 	{
 		/// <value>
 		/// Angle between neighbor triangles that will generate seam.
@@ -37,7 +37,7 @@ namespace UnityEngine.ProBuilder
 		[Range(1f, 75f)]
 		public float areaError = 15f;
 
-		public UnwrapParamaters()
+		public UnwrapParameters()
 		{
 			Reset();
 		}
@@ -46,7 +46,7 @@ namespace UnityEngine.ProBuilder
 		/// Copy constructor.
 		/// </summary>
 		/// <param name="other">The UnwrapParameters to copy properties from.</param>
-		public UnwrapParamaters(UnwrapParamaters other)
+		public UnwrapParameters(UnwrapParameters other)
 		{
 			hardAngle = other.hardAngle;
 			packMargin = other.packMargin;

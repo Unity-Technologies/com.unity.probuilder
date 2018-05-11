@@ -68,7 +68,7 @@ namespace UnityEditor.ProBuilder
 		 *	Get the UnwrapParam values from a pb_UnwrapParameters object.
 		 *	Not in pb_UnwrapParameters because UnwrapParam is an Editor class.
 		 */
-		public static UnwrapParam GetUnwrapParam(UnwrapParamaters parameters)
+		public static UnwrapParam GetUnwrapParam(UnwrapParameters parameters)
 		{
 			UnwrapParam param;
 			UnwrapParam.SetDefaults(out param);

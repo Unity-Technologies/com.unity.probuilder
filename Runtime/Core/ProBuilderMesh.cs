@@ -76,7 +76,7 @@ namespace UnityEngine.ProBuilder
 	    /// <value>
 	    /// UV2 generation parameters.
 	    /// </value>
-	    public UnwrapParamaters unwrapParameters { get; set; }
+	    public UnwrapParameters unwrapParameters { get; set; }
 
 	    [FormerlySerializedAs("dontDestroyMeshOnDelete")]
 	    [SerializeField]
@@ -1023,7 +1023,7 @@ namespace UnityEngine.ProBuilder
 		    SetColors(other.colors);
 		    userCollisions = other.userCollisions;
 		    isSelectable = other.isSelectable;
-		    unwrapParameters = new UnwrapParamaters(other.unwrapParameters);
+		    unwrapParameters = new UnwrapParameters(other.unwrapParameters);
 	    }
 
 		/// <summary>
