@@ -1135,15 +1135,15 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Create a new arch shape.
 		/// </summary>
-		/// <param name="angle">Amount of a circle the arch takes up</param>
-		/// <param name="radius">Distance from origin to furthest extent of geometry</param>
-		/// <param name="width">Distance from arch top to inner radius</param>
-		/// <param name="depth">Depth of arch blocks</param>
-		/// <param name="radialCuts">How many blocks compose the arch</param>
-		/// <param name="insideFaces">Render inside faces toggle</param>
-		/// <param name="outsideFaces">Render outside faces toggle</param>
-		/// <param name="frontFaces">Render front faces toggle</param>
-		/// <param name="backFaces">Render back faces toggle</param>
+		/// <param name="angle">Amount of a circle the arch takes up.</param>
+		/// <param name="radius">Distance from origin to furthest extent of geometry.</param>
+		/// <param name="width">Distance from arch top to inner radius.</param>
+		/// <param name="depth">Depth of arch blocks.</param>
+		/// <param name="radialCuts">How many blocks compose the arch.</param>
+		/// <param name="insideFaces">Render inside faces toggle.</param>
+		/// <param name="outsideFaces">Render outside faces toggle.</param>
+		/// <param name="frontFaces">Render front faces toggle.</param>
+		/// <param name="backFaces">Render back faces toggle.</param>
 		/// <param name="endCaps">If true the faces capping the ends of this arch will be included. Does not apply if radius is 360 degrees.</param>
 		/// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
 		public static ProBuilderMesh ArchGenerator(float angle, float radius, float width, float depth, int radialCuts, bool insideFaces, bool outsideFaces, bool frontFaces, bool backFaces, bool endCaps)
