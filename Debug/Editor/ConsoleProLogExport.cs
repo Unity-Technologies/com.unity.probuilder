@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if CONSOLE_PRO_ENABLED
+using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using FlyingWormConsole3;
@@ -155,3 +156,4 @@ static class ConsoleProExtensions
 		}
 	}
 }
+#endif

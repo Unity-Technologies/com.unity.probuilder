@@ -23,7 +23,9 @@ namespace UnityEngine.ProBuilder.Addons.FBX
 		/// <summary>
 		/// Export mesh topology as quads if possible.
 		/// </summary>
+		#pragma warning disable 649
 		public bool quads;
+		#pragma warning restore 649
 	}
 
 	/// <summary>

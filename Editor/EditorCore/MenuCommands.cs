@@ -240,7 +240,7 @@ namespace UnityEditor.ProBuilder
 			for(int i = 0; i < selection.Length; i++)
 			{
 				selection[i].ToMesh();
-				Face[] splits = selection[i].ToTriangles(selection[i].facesInternal);
+				selection[i].ToTriangles(selection[i].facesInternal);
 				selection[i].Refresh();
 				selection[i].Optimize();
 			}

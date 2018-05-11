@@ -3,7 +3,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using JetBrains.Rider.Unity.Editor.NonUnity;
 using UnityEngine.Serialization;
 
 namespace UnityEngine.ProBuilder
