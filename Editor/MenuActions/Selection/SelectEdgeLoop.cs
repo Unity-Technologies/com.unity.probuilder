@@ -1,47 +1,64 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
 using System.Linq;
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class SelectEdgeLoop : pb_MenuAction
+	sealed class SelectEdgeLoop : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_Loop", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return m_Tooltip; } }
-		public override int toolbarPriority { get { return 1; } }
-		public override bool hasFileMenuEntry { get { return false; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Selection; }
+		}
 
-		private static readonly pb_TooltipContent m_Tooltip = new pb_TooltipContent
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Selection_Loop", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return s_Tooltip; }
+		}
+
+		public override int toolbarPriority
+		{
+			get { return 1; }
+		}
+
+		protected override bool hasFileMenuEntry
+		{
+			get { return false; }
+		}
+
+		private static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Select Edge Loop",
 			"Selects a loop of connected edges.\n\n<b>Shortcut</b>: Double-Click on Edge",
-			CMD_ALT, 'L'
+			keyCommandAlt, 'L'
 		);
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null &&
-					pb_Editor.instance.editLevel == EditLevel.Geometry &&
-					pb_Editor.instance.selectionMode == SelectMode.Edge &&
-					selection != null &&
-					selection.Length > 0 &&
-					selection.Sum(x => x.SelectedEdgeCount) > 0;
+			return ProBuilderEditor.instance != null &&
+				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
+				ProBuilderEditor.instance.selectionMode == SelectMode.Edge &&
+				MeshSelection.Top().Sum(x => x.selectedEdgeCount) > 0;
 		}
 
 		public override bool IsHidden()
 		{
-			return 	pb_Editor.instance == null ||
-					pb_Editor.instance.editLevel != EditLevel.Geometry ||
-					pb_Editor.instance.selectionMode != SelectMode.Edge;
+			return ProBuilderEditor.instance == null ||
+				ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
+				ProBuilderEditor.instance.selectionMode != SelectMode.Edge;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
-			return pb_MenuCommands.MenuLoopSelection(selection);
+			return MenuCommands.MenuLoopSelection(MeshSelection.Top());
 		}
 	}
 }

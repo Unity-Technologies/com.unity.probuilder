@@ -2,11 +2,11 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace Parabox.CSG
 {
-	class CSG_Node
+	sealed class CSG_Node
 	{
 		public List<CSG_Polygon> polygons;
 

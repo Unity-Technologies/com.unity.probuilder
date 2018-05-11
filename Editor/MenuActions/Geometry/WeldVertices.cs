@@ -1,42 +1,51 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
 using System.Linq;
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
+using EditorGUILayout = UnityEditor.EditorGUILayout;
+using EditorStyles = UnityEditor.EditorStyles;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class WeldVertices : pb_MenuAction
+	sealed class WeldVertices : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Vert_Weld", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return true; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Geometry; }
+		}
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Vert_Weld", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return _tooltip; }
+		}
+
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Weld Vertices",
 			@"Searches the current selection for vertices that are within the specified distance of on another and merges them into a single vertex.",
-			CMD_ALT, 'V'
+			keyCommandAlt, 'V'
 		);
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null &&
-					pb_Editor.instance.editLevel == EditLevel.Geometry &&
-					pb_Editor.instance.selectionMode == SelectMode.Vertex &&
-					selection != null &&
-					selection.Length > 0 &&
-					selection.Any(x => x.SelectedTriangleCount > 1);
+			return ProBuilderEditor.instance != null &&
+				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
+				ProBuilderEditor.instance.selectionMode == SelectMode.Vertex &&
+				MeshSelection.Top().Any(x => x.selectedVertexCount > 1);
 		}
 
 		public override bool IsHidden()
 		{
-			return 	pb_Editor.instance == null ||
-					pb_Editor.instance.editLevel != EditLevel.Geometry ||
-					pb_Editor.instance.selectionMode != SelectMode.Vertex;
-
+			return ProBuilderEditor.instance == null ||
+				ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
+				ProBuilderEditor.instance.selectionMode != SelectMode.Vertex;
 		}
 
 		public override MenuActionState AltState()
@@ -53,29 +62,29 @@ namespace ProBuilder.Actions
 
 			EditorGUI.BeginChangeCheck();
 
-			float weldDistance = pb_PreferencesInternal.GetFloat(pb_Constant.pbWeldDistance);
+			float weldDistance = PreferencesInternal.GetFloat(PreferenceKeys.pbWeldDistance);
 
-			if(weldDistance <= MIN_WELD_DISTANCE)
+			if (weldDistance <= MIN_WELD_DISTANCE)
 				weldDistance = MIN_WELD_DISTANCE;
 
 			weldDistance = EditorGUILayout.FloatField(gc_weldDistance, weldDistance);
 
-			if( EditorGUI.EndChangeCheck() )
+			if (EditorGUI.EndChangeCheck())
 			{
-				if(weldDistance < MIN_WELD_DISTANCE)
+				if (weldDistance < MIN_WELD_DISTANCE)
 					weldDistance = MIN_WELD_DISTANCE;
-				pb_PreferencesInternal.SetFloat(pb_Constant.pbWeldDistance, weldDistance);
+				PreferencesInternal.SetFloat(PreferenceKeys.pbWeldDistance, weldDistance);
 			}
 
 			GUILayout.FlexibleSpace();
 
-			if(GUILayout.Button("Weld Vertices"))
+			if (GUILayout.Button("Weld Vertices"))
 				DoAction();
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
-			return pb_MenuCommands.MenuWeldVertices(selection);
+			return MenuCommands.MenuWeldVertices(MeshSelection.Top());
 		}
 	}
 }

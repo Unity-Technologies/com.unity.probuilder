@@ -4,20 +4,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
-using ProBuilder.Core;
-using ProBuilder.Test;
+using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Test;
 using UnityEngine.TestTools;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
 using UnityEditor;
 
-namespace ProBuilder.EditorTests.Object
+namespace UnityEngine.ProBuilder.EditorTests.Object
 {
-	public class CreateDestroy
+	static class CreateDestroy
 	{
 		[Test]
 		public static void DestroyDeletesMesh()
 		{
-			var pb = pb_ShapeGenerator.CreateShape(pb_ShapeType.Cube);
+			var pb = ShapeGenerator.CreateShape(ShapeType.Cube);
 			Mesh mesh = pb.GetComponent<MeshFilter>().sharedMesh;
 			UObject.DestroyImmediate(pb.gameObject);
 			// IsNull doesn't work due to c#/c++ goofiness
@@ -27,12 +27,12 @@ namespace ProBuilder.EditorTests.Object
 		[Test]
 		public static void DestroyWithNoDeleteFlagPreservesMesh()
 		{
-			var pb = pb_ShapeGenerator.CreateShape(pb_ShapeType.Cube);
+			var pb = ShapeGenerator.CreateShape(ShapeType.Cube);
 
 			try
 			{
 				Mesh mesh = pb.GetComponent<MeshFilter>().sharedMesh;
-				pb.dontDestroyMeshOnDelete = true;
+				pb.preserveMeshAssetOnDestroy = true;
 				UObject.DestroyImmediate(pb.gameObject);
 				Assert.IsFalse(mesh == null);
 			}
@@ -46,8 +46,8 @@ namespace ProBuilder.EditorTests.Object
 		[Test]
 		public static void DestroyDoesNotDeleteMeshBackByAsset()
 		{
-			var pb = pb_ShapeGenerator.CreateShape(pb_ShapeType.Cube);
-			string path = pb_TestUtility.SaveAssetTemporary<Mesh>(pb.msh);
+			var pb = ShapeGenerator.CreateShape(ShapeType.Cube);
+			string path = TestUtility.SaveAssetTemporary<Mesh>(pb.mesh);
 			Mesh mesh = pb.GetComponent<MeshFilter>().sharedMesh;
 			UObject.DestroyImmediate(pb.gameObject);
 			Assert.IsFalse(mesh == null);

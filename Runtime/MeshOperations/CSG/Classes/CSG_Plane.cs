@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace Parabox.CSG
 {
@@ -9,7 +9,7 @@ namespace Parabox.CSG
 	/// Represents a plane in 3d space.
 	/// <remarks>Does not include position.</remarks>
 	/// </summary>
-	class CSG_Plane
+	sealed class CSG_Plane
 	{
 		public Vector3 normal;
 		public float w;

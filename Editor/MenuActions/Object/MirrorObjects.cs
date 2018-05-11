@@ -1,22 +1,36 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
-using ProBuilder.MeshOperations;
-using ProBuilder.Interface;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
+using UnityEditor.ProBuilder.UI;
+using EditorGUILayout = UnityEditor.EditorGUILayout;
+using EditorStyles = UnityEditor.EditorStyles;
+using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class MirrorObjects : pb_MenuAction
+	sealed class MirrorObjects : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Object; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Object_Mirror", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return true; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Object; }
+		}
+
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Object_Mirror", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return _tooltip; }
+		}
 
 		[System.Flags]
-		private enum MirrorSettings {
+		private enum MirrorSettings
+		{
 			X = 0x1,
 			Y = 0x2,
 			Z = 0x4,
@@ -25,11 +39,11 @@ namespace ProBuilder.Actions
 
 		MirrorSettings storedScale
 		{
-			get { return (MirrorSettings) pb_PreferencesInternal.GetInt("pbMirrorObjectScale", (int)(0x1 | 0x8)); }
-			set { pb_PreferencesInternal.SetInt("pbMirrorObjectScale", (int) value); }
+			get { return (MirrorSettings)PreferencesInternal.GetInt("pbMirrorObjectScale", (int)(0x1 | 0x8)); }
+			set { PreferencesInternal.SetInt("pbMirrorObjectScale", (int)value); }
 		}
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Mirror Objects",
 			@"Mirroring objects will duplicate an flip objects on the specified axes."
@@ -37,7 +51,7 @@ namespace ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null && selection != null && selection.Length > 0;
+			return ProBuilderEditor.instance != null && MeshSelection.Top().Length > 0;
 		}
 
 		public override MenuActionState AltState()
@@ -75,10 +89,10 @@ namespace ProBuilder.Actions
 			GUILayout.FlexibleSpace();
 
 			if(GUILayout.Button("Mirror"))
-				pb_EditorUtility.ShowNotification( DoAction().notification );
+				EditorUtility.ShowNotification( DoAction().notification );
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			Vector3 scale = new Vector3(
 				(storedScale & MirrorSettings.X) > 0 ? -1f : 1f,
@@ -89,16 +103,16 @@ namespace ProBuilder.Actions
 
 			List<GameObject> res  = new List<GameObject>();
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in MeshSelection.Top())
 				res.Add( Mirror(pb, scale, duplicate).gameObject );
 
-			pb_Selection.SetSelection(res);
+			MeshSelection.SetSelection(res);
 
-			pb_Editor.Refresh();
+			ProBuilderEditor.Refresh();
 
 			return res.Count > 0 ?
-				new pb_ActionResult(Status.Success, string.Format("Mirror {0} {1}", res.Count, res.Count > 1 ? "Objects" : "Object")) :
-				new pb_ActionResult(Status.NoChange, "No Objects Selected");
+				new ActionResult(ActionResult.Status.Success, string.Format("Mirror {0} {1}", res.Count, res.Count > 1 ? "Objects" : "Object")) :
+				new ActionResult(ActionResult.Status.NoChange, "No Objects Selected");
 		}
 
 		/**
@@ -108,13 +122,13 @@ namespace ProBuilder.Actions
 		 *	\returns The newly duplicated pb_Object.
 		 *	\sa ProBuilder.Axis
 		 */
-		public static pb_Object Mirror(pb_Object pb, Vector3 scale, bool duplicate = true)
+		public static ProBuilderMesh Mirror(ProBuilderMesh pb, Vector3 scale, bool duplicate = true)
 		{
-			pb_Object mirredObject;
+			ProBuilderMesh mirredObject;
 
 			if (duplicate)
 			{
-				mirredObject = Object.Instantiate(pb.gameObject, pb.transform.parent, false).GetComponent<pb_Object>();
+				mirredObject = Object.Instantiate(pb.gameObject, pb.transform.parent, false).GetComponent<ProBuilderMesh>();
 				mirredObject.MakeUnique();
 				mirredObject.transform.parent = pb.transform.parent;
 				mirredObject.transform.localRotation = pb.transform.localRotation;
@@ -122,7 +136,7 @@ namespace ProBuilder.Actions
 			}
 			else
 			{
-				pb_Undo.RecordObject(pb, "Mirror");
+				UndoUtility.RecordObject(pb, "Mirror");
 				mirredObject = pb;
 			}
 
@@ -130,8 +144,11 @@ namespace ProBuilder.Actions
 			mirredObject.transform.localScale = scale;
 
 			// if flipping on an odd number of axes, flip winding order
-			if( (scale.x * scale.y * scale.z) < 0)
-				mirredObject.ReverseWindingOrder(mirredObject.faces);
+			if ((scale.x * scale.y * scale.z) < 0)
+			{
+				foreach(var face in mirredObject.facesInternal)
+					face.Reverse();
+			}
 
 			mirredObject.FreezeScaleTransform();
 			mirredObject.transform.localScale = lScale;

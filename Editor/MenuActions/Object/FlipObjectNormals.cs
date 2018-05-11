@@ -1,19 +1,34 @@
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class FlipObjectNormals : pb_MenuAction
+	sealed 	class FlipObjectNormals : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Object; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Object_FlipNormals", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
-		public override string menuTitle { get { return "Flip Normals"; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Object; }
+		}
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Object_FlipNormals", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return _tooltip; }
+		}
+
+		public override string menuTitle
+		{
+			get { return "Flip Normals"; }
+		}
+
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Flip Object Normals",
 			@"Reverse the direction of all faces on the selected objects."
@@ -21,12 +36,12 @@ namespace ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null && selection != null && selection.Length > 0;
+			return ProBuilderEditor.instance != null && MeshSelection.Top().Length > 0;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
-			return pb_MenuCommands.MenuFlipObjectNormals(selection);
+			return MenuCommands.MenuFlipObjectNormals(MeshSelection.Top());
 		}
 	}
 }

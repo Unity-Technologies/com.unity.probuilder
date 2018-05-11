@@ -1,20 +1,20 @@
 ﻿using System.Globalization;
 using System.Linq;
 using UnityEngine;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
 using NUnit.Framework;
 using System.Threading;
-using ProBuilder.Core;
-using ProBuilder.Test;
+using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Test;
 
-namespace ProBuilder.EditorTests.Export
+namespace UnityEngine.ProBuilder.EditorTests.Export
 {
-	public class ExportPly : pb_TemporaryAssetTest
+	class ExportPly : TemporaryAssetTest
 	{
 		[Test]
 		public static void NumbersAreCultureInvariant()
 		{
-			var cube = pb_ShapeGenerator.CreateShape(pb_ShapeType.Cube);
+			var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
 			var current = Thread.CurrentThread.CurrentCulture;
 
 			try
@@ -23,7 +23,7 @@ namespace ProBuilder.EditorTests.Export
 
 				string ply;
 
-				if (pb_Ply.Export(new pb_Object[] { cube }, out ply))
+				if (PlyExporter.Export(new ProBuilderMesh[] { cube }, out ply))
 				{
 					Assert.IsFalse(ply.Any(x => x.Equals(',')));
 				}

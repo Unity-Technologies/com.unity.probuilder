@@ -1,18 +1,19 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using System.Text;
 using System.Linq;
 using System.IO;
+using MeshUtility = UnityEngine.ProBuilder.MeshUtility;
 
-public class MeshInfo : Editor
+class MeshInfo : Editor
 {
 	[MenuItem("Tools/Debug/ProBuilder/Print Mesh Info")]
 	static void PrintMeshInfo()
 	{
 		foreach(MeshFilter mf in Selection.transforms.Select(x => x.GetComponent<MeshFilter>()))
 			if(mf.sharedMesh != null)
-				Debug.Log(pb_MeshUtility.Print(mf.sharedMesh));
+				Debug.Log(MeshUtility.Print(mf.sharedMesh));
 	}
 
 	[MenuItem("Tools/Debug/ProBuilder/Open Mesh Info")]
@@ -21,7 +22,7 @@ public class MeshInfo : Editor
 		foreach(MeshFilter mf in Selection.transforms.Select(x => x.GetComponent<MeshFilter>()))
 		{
 			if(mf.sharedMesh != null)
-				System.Diagnostics.Process.Start(WriteTempFile(pb_MeshUtility.Print(mf.sharedMesh)));
+				System.Diagnostics.Process.Start(WriteTempFile(MeshUtility.Print(mf.sharedMesh)));
 		}
 	}
 

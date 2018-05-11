@@ -1,48 +1,45 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
 using System.Linq;
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class ConnectEdges : pb_MenuAction
+	sealed class ConnectEdges : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Edge_Connect", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return true; } }
-		public override bool hasFileMenuEntry { get { return false; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
+		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Connect", IconSkin.Pro); } }
+		public override TooltipContent tooltip { get { return _tooltip; } }
+		protected override bool hasFileMenuEntry { get { return false; } }
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Connect Edges",
 			"Inserts a new edge connecting the center points of all selected edges.  See also \"Subdivide.\"",
-			CMD_ALT, 'E'
+			keyCommandAlt, 'E'
 		);
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null &&
-					pb_Editor.instance.editLevel == EditLevel.Geometry &&
-					pb_Editor.instance.selectionMode == SelectMode.Edge &&
-					selection != null &&
-					selection.Length > 0 &&
-					selection.Any(x => x.SelectedEdgeCount > 1);
+			return ProBuilderEditor.instance != null &&
+				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
+				ProBuilderEditor.instance.selectionMode == SelectMode.Edge &&
+				MeshSelection.Top().Any(x => x.selectedEdgeCount > 1);
 		}
 
 		public override bool IsHidden()
 		{
-			return 	pb_Editor.instance == null ||
-					pb_Editor.instance.editLevel != EditLevel.Geometry ||
-					pb_Editor.instance.selectionMode != SelectMode.Edge;
+			return 	ProBuilderEditor.instance == null ||
+					ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
+					ProBuilderEditor.instance.selectionMode != SelectMode.Edge;
 
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
-			return pb_MenuCommands.MenuConnectEdges(selection);
+			return MenuCommands.MenuConnectEdges(MeshSelection.Top());
 		}
 	}
 }

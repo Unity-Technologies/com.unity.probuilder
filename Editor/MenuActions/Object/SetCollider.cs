@@ -1,19 +1,29 @@
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class SetCollider : pb_MenuAction
+	sealed class SetCollider : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Entity; } }
-		public override Texture2D icon { get { return null; } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return true; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Entity; }
+		}
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		public override Texture2D icon
+		{
+			get { return null; }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return _tooltip; }
+		}
+
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Set Collider",
 			"Apply the Collider material and adds a mesh collider (if no collider is present). The MeshRenderer will be automatically turned off on entering play mode."
@@ -21,21 +31,21 @@ namespace ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return pb_Editor.instance != null && selection != null && selection.Length > 0;
+			return ProBuilderEditor.instance != null && MeshSelection.Top().Length > 0;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
-			foreach (pb_Object pb in pb_Selection.All())
+			foreach (ProBuilderMesh pb in MeshSelection.All())
 			{
-				var existing = pb.GetComponents<pb_EntityBehaviour>();
+				var existing = pb.GetComponents<EntityBehaviour>();
 
 				// For now just nuke any existing entity types (since there are only two). In the future we should be
 				// smarter about conflicting entity types.
 				for (int i = 0, c = existing.Length; i < c; i++)
 					Undo.DestroyObjectImmediate(existing[i]);
 
-				var entity = pb.GetComponent<pb_Entity>();
+				var entity = pb.GetComponent<Entity>();
 
 				if (entity != null)
 					Undo.DestroyObjectImmediate(entity);
@@ -46,17 +56,17 @@ namespace ProBuilder.Actions
 				if (!pb.GetComponent<Renderer>())
 					Undo.AddComponent<MeshRenderer>(pb.gameObject);
 
-				pb_Undo.RegisterCompleteObjectUndo(pb, "Set Collider");
+				UndoUtility.RegisterCompleteObjectUndo(pb, "Set Collider");
 
-				Undo.AddComponent<pb_ColliderBehaviour>(pb.gameObject).Initialize();
+				Undo.AddComponent<ColliderBehaviour>(pb.gameObject).Initialize();
 			}
 
-			int selectionCount = pb_Selection.All().Length;
+			int selectionCount = MeshSelection.All().Length;
 
-			if(selectionCount < 1)
-				return new pb_ActionResult(Status.NoChange, "Set Collider\nNo objects selected");
+			if (selectionCount < 1)
+				return new ActionResult(ActionResult.Status.NoChange, "Set Collider\nNo objects selected");
 
-			return new pb_ActionResult(Status.Success, "Set Collider\nSet " + selectionCount + " Objects");
+			return new ActionResult(ActionResult.Status.Success, "Set Collider\nSet " + selectionCount + " Objects");
 		}
 	}
 }

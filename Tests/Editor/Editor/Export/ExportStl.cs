@@ -1,25 +1,21 @@
 ﻿using System.Globalization;
 using System.Linq;
-using System.Reflection.Emit;
 using UnityEngine;
-using ProBuilder.EditorCore;
 using NUnit.Framework;
 using System.Threading;
 using Parabox.STL;
-using ProBuilder.Core;
-using ProBuilder.Test;
-using UnityEngine.Windows;
+using UnityEngine.ProBuilder.Test;
 
-namespace ProBuilder.EditorTests.Export
+namespace UnityEngine.ProBuilder.EditorTests.Export
 {
-	public class ExportStl : pb_TemporaryAssetTest
+	class ExportStl : TemporaryAssetTest
 	{
 		[Test]
 		public static void NumbersAreCultureInvariant()
 		{
 			var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			var current = Thread.CurrentThread.CurrentCulture;
-			string path = pb_TestUtility.TemporarySavedAssetsDirectory + "/ExportStl.stl";
+			string path = TestUtility.TemporarySavedAssetsDirectory + "/ExportStl.stl";
 
 			try
 			{

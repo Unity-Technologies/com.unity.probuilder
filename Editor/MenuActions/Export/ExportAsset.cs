@@ -1,23 +1,23 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using System.Collections.Generic;
 using Parabox.STL;
 using System.IO;
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
+using EditorUtility = UnityEditor.EditorUtility;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class ExportAsset : pb_MenuAction
+	sealed class ExportAsset : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Export; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Export; } }
 		public override Texture2D icon { get { return null; } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return false; } }
+		public override TooltipContent tooltip { get { return _tooltip; } }
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Export Asset",
 			"Export a Unity mesh asset file."
@@ -25,22 +25,21 @@ namespace ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	selection != null &&
-					selection.Length > 0;
+			return MeshSelection.count > 0;
 		}
 
 		public override bool IsHidden() { return true; }
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
-			ExportWithFileDialog( pb_Selection.Top() );
-			return new pb_ActionResult(Status.Success, "Make Asset & Prefab");
+			ExportWithFileDialog( MeshSelection.Top() );
+			return new ActionResult(ActionResult.Status.Success, "Make Asset & Prefab");
 		}
 
 		/**
 		 *	Export meshes to a Unity asset.
 		 */
-		public static string ExportWithFileDialog(IEnumerable<pb_Object> meshes)
+		public static string ExportWithFileDialog(IEnumerable<ProBuilderMesh> meshes)
 		{
 			if(meshes == null || meshes.Count() < 1)
 				return "";
@@ -49,20 +48,20 @@ namespace ProBuilder.Actions
 
 			if(meshes.Count() < 2)
 			{
-				pb_Object first = meshes.FirstOrDefault();
+				ProBuilderMesh first = meshes.FirstOrDefault();
 
 				if(first == null)
 					return res;
 
 				string name = first != null ? first.name : "Mesh";
-				string path = EditorUtility.SaveFilePanel("Export to Asset", "Assets", name, "prefab");
+				string path = UnityEditor.EditorUtility.SaveFilePanel("Export to Asset", "Assets", name, "prefab");
 
 				if(string.IsNullOrEmpty(path))
 					return null;
 
 				string directory = Path.GetDirectoryName(path);
 				name = Path.GetFileNameWithoutExtension(path);
-				string meshPath = string.Format("{0}/{1}.asset", directory, first.msh.name);
+				string meshPath = string.Format("{0}/{1}.asset", directory, first.mesh.name);
 				string prefabPath = string.Format("{0}/{1}.prefab", directory, first.name);
 
 				// If a file dialog was presented that means the user has already been asked to overwrite.
@@ -76,12 +75,12 @@ namespace ProBuilder.Actions
 			}
 			else
 			{
-				string path = EditorUtility.SaveFolderPanel("Export to Asset", "Assets", "");
+				string path = UnityEditor.EditorUtility.SaveFolderPanel("Export to Asset", "Assets", "");
 
 				if(string.IsNullOrEmpty(path) || !Directory.Exists(path))
 					return null;
 
-				foreach(pb_Object pb in meshes)
+				foreach(ProBuilderMesh pb in meshes)
 					res = DoExport(string.Format("{0}/{1}.asset", path, pb.name), pb);
 			}
 
@@ -90,7 +89,7 @@ namespace ProBuilder.Actions
 			return res;
 		}
 
-		private static string DoExport(string path, pb_Object pb)
+		private static string DoExport(string path, ProBuilderMesh pb)
 		{
 			string directory = Path.GetDirectoryName(path);
 			string name = Path.GetFileNameWithoutExtension(path);
@@ -100,9 +99,9 @@ namespace ProBuilder.Actions
 			pb.Refresh();
 			pb.Optimize();
 
-			string meshPath = AssetDatabase.GenerateUniqueAssetPath(string.Format("{0}/{1}.asset", relativeDirectory, pb.msh.name));
+			string meshPath = AssetDatabase.GenerateUniqueAssetPath(string.Format("{0}/{1}.asset", relativeDirectory, pb.mesh.name));
 
-			AssetDatabase.CreateAsset(pb.msh, meshPath);
+			AssetDatabase.CreateAsset(pb.mesh, meshPath);
 
 			pb.MakeUnique();
 

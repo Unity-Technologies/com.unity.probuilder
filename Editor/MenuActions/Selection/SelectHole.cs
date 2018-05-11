@@ -1,22 +1,32 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using System.Collections.Generic;
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
-using ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class SelectHole : pb_MenuAction
+	sealed class SelectHole : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_SelectHole", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return m_Tooltip; } }
-		public override bool isProOnly { get { return true; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Selection; }
+		}
 
-		private static readonly pb_TooltipContent m_Tooltip = new pb_TooltipContent
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Selection_SelectHole", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return s_Tooltip; }
+		}
+
+		private static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Select Holes",
 			"Selects holes on the mesh.\n\nUses the current element selection, or tests the whole mesh if no edges or vertices are selected."
@@ -24,16 +34,16 @@ namespace ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			if(pb_Editor.instance == null)
+			if (ProBuilderEditor.instance == null)
 				return false;
 
-			if(pb_Editor.instance.editLevel != EditLevel.Geometry)
+			if (ProBuilderEditor.instance.editLevel != EditLevel.Geometry)
 				return false;
 
-			if(pb_Editor.instance.selectionMode != SelectMode.Edge && pb_Editor.instance.selectionMode != SelectMode.Vertex)
+			if (ProBuilderEditor.instance.selectionMode != SelectMode.Edge && ProBuilderEditor.instance.selectionMode != SelectMode.Vertex)
 				return false;
 
-			if(selection == null || selection.Length < 1)
+			if (MeshSelection.Top().Length < 1)
 				return false;
 
 			return true;
@@ -41,34 +51,34 @@ namespace ProBuilder.Actions
 
 		public override bool IsHidden()
 		{
-			if(pb_Editor.instance.editLevel != EditLevel.Geometry)
+			if (ProBuilderEditor.instance.editLevel != EditLevel.Geometry)
 				return true;
 
-			if(pb_Editor.instance.selectionMode != SelectMode.Edge && pb_Editor.instance.selectionMode != SelectMode.Vertex)
+			if (ProBuilderEditor.instance.selectionMode != SelectMode.Edge && ProBuilderEditor.instance.selectionMode != SelectMode.Vertex)
 				return true;
 
 			return false;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
-			pb_Undo.RecordSelection(selection, "Select Hole");
+			UndoUtility.RecordSelection(MeshSelection.Top(), "Select Hole");
 
-			pb_ActionResult res = pb_ActionResult.NoSelection;
+			ActionResult res = ActionResult.NoSelection;
 
-			foreach(pb_Object pb in selection)
+			foreach (ProBuilderMesh pb in MeshSelection.Top())
 			{
-				bool selectAll = pb.SelectedTriangles == null || pb.SelectedTriangles.Length < 1;
-				int[] indices = selectAll ? pb_Face.AllTriangles(pb.faces) : pb.SelectedTriangles;
+				bool selectAll = pb.selectedIndicesInternal == null || pb.selectedIndicesInternal.Length < 1;
+				IEnumerable<int> indices = selectAll ? pb.facesInternal.SelectMany(x => x.ToTriangles()) : pb.selectedIndicesInternal;
 
-				List<List<pb_Edge>> holes = pb_AppendPolygon.FindHoles(pb, indices);
+				List<List<Edge>> holes = ElementSelection.FindHoles(pb, indices);
 
-				res = new pb_ActionResult(Status.Success, holes.Count > 0 ? string.Format("{0} holes found", holes.Count) : "No Holes in Selection");
+				res = new ActionResult(ActionResult.Status.Success, holes.Count > 0 ? string.Format("{0} holes found", holes.Count) : "No Holes in Selection");
 
 				pb.SetSelectedEdges(holes.SelectMany(x => x));
 			}
 
-			pb_Editor.Refresh();
+			ProBuilderEditor.Refresh();
 
 			return res;
 		}

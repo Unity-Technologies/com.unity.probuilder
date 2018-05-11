@@ -6,7 +6,7 @@ namespace Parabox.CSG
 	/// <summary>
 	/// Representation of a mesh in CSG terms.  Contains methods for translating to and from UnityEngine.Mesh.
 	/// </summary>
-	class CSG_Model
+	sealed class CSG_Model
 	{
 		public List<CSG_Vertex> vertices;
 		public List<int> indices;

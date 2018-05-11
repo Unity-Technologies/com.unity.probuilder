@@ -3,15 +3,16 @@ using UnityEditor;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using System;
-using ProBuilder.EditorCore;
-using ProBuilder.Test;
+using UnityEditor.ProBuilder;
+using UnityEngine.ProBuilder.Test;
 using System.Reflection;
+using HandleUtility = UnityEditor.HandleUtility;
 
-namespace ProBuilder.EditorTests.Editor
+namespace UnityEngine.ProBuilder.EditorTests.Editor
 {
-	public static class ReflectedMethodsExist
+	static class ReflectedMethodsExist
 	{
 		const BindingFlags k_BindingFlagsAll = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
@@ -35,7 +36,7 @@ namespace ProBuilder.EditorTests.Editor
 		[Test]
 		public static void ApplyWireMaterial()
 		{
-			var m_ApplyWireMaterial = typeof(HandleUtility).GetMethod(
+			var m_ApplyWireMaterial = typeof(UnityEditor.HandleUtility).GetMethod(
 				"ApplyWireMaterial",
 				BindingFlags.Static | BindingFlags.NonPublic,
 				null,

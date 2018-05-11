@@ -3,14 +3,14 @@ using UnityEditor;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using System;
-using ProBuilder.EditorCore;
-using ProBuilder.Test;
+using UnityEditor.ProBuilder;
+using UnityEngine.ProBuilder.Test;
 
-namespace ProBuilder.EditorTests.Editor
+namespace UnityEngine.ProBuilder.EditorTests.Editor
 {
-	public class TestSelectionRenderState
+	static class TestSelectionRenderState
 	{
 		[Test]
 		public static void TestSelectionRenderStateMatchesUnity()

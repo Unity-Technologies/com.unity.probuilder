@@ -1,20 +1,28 @@
 using UnityEngine;
-using UnityEditor;
-using ProBuilder.Interface;
 using System.Linq;
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
-using ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class TriangulateFaces : pb_MenuAction
+	sealed class TriangulateFaces : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Face_Triangulate", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Geometry; }
+		}
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Face_Triangulate", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return _tooltip; }
+		}
+
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Triangulate Faces",
 			"Break all selected faces down to triangles."
@@ -22,36 +30,34 @@ namespace ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null &&
-					editLevel == EditLevel.Geometry &&
-					selection != null &&
-					selection.Length > 0 &&
-					selection.Sum(x => x.SelectedFaceCount) > 0;
+			return ProBuilderEditor.instance != null &&
+				editLevel == EditLevel.Geometry &&
+				MeshSelection.Top().Sum(x => x.selectedFaceCount) > 0;
 		}
 
 		public override bool IsHidden()
 		{
-			return 	editLevel != EditLevel.Geometry ||
-					(pb_PreferencesInternal.GetBool(pb_Constant.pbElementSelectIsHamFisted) && selectionMode != SelectMode.Face);
+			return editLevel != EditLevel.Geometry ||
+				(PreferencesInternal.GetBool(PreferenceKeys.pbElementSelectIsHamFisted) && selectionMode != SelectMode.Face);
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
-			pb_ActionResult res = pb_ActionResult.NoSelection;
+			ActionResult res = ActionResult.NoSelection;
 
-			pb_Undo.RecordSelection(selection, "Triangulate Faces");
+			UndoUtility.RecordSelection(MeshSelection.Top(), "Triangulate Faces");
 
-			foreach(pb_Object pb in selection)
+			foreach (ProBuilderMesh pb in MeshSelection.Top())
 			{
-				pb_Face[] triangulatedFaces = null;
 				pb.ToMesh();
-				res = pb.ToTriangles(pb.SelectedFaces, out triangulatedFaces);
+				Face[] triangulatedFaces = pb.ToTriangles(pb.selectedFacesInternal);
 				pb.Refresh();
 				pb.Optimize();
 				pb.SetSelectedFaces(triangulatedFaces);
+				res = new ActionResult(ActionResult.Status.Success, string.Format("Triangulated {0} {1}", triangulatedFaces.Length, triangulatedFaces.Length < 2 ? "Face" : "Faces"));
 			}
 
-			pb_Editor.Refresh();
+			ProBuilderEditor.Refresh();
 
 			return res;
 		}

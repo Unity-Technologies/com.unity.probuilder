@@ -1,8 +1,8 @@
 using UnityEngine;
 using System.Collections;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
-namespace ProBuilder.EditorCore
+namespace UnityEditor.ProBuilder
 {
 	/**
 	 *	Used to store arrays of materials. Made obsolete by pb_MaterialArray.
@@ -17,7 +17,8 @@ namespace ProBuilder.EditorCore
 	[System.Obsolete(
 		"pb_ObjectArray is deprecated. ProBuilder Material Editor now saves material palettes as pb_MaterialArray. You may safely delete this asset.")]
 	[System.Serializable]
-	public class pb_ObjectArray : ScriptableObject, pb_IHasDefault
+	// ReSharper disable once InconsistentNaming
+	sealed class pb_ObjectArray : ScriptableObject, IHasDefault
 	{
 		// Stored as object for backwards compatibility.
 		[SerializeField] public Object[] array;
@@ -52,7 +53,7 @@ namespace ProBuilder.EditorCore
 		{
 			array = new Material[10]
 			{
-				pb_Constant.DefaultMaterial,
+				PreferenceKeys.DefaultMaterial,
 				null,
 				null,
 				null,

@@ -4,29 +4,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
-using ProBuilder.Core;
-using ProBuilder.Test;
+using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Test;
 using UnityEngine.TestTools;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
 
-namespace ProBuilder.EditorTests.Object
+namespace UnityEngine.ProBuilder.EditorTests.Object
 {
-	public class CopyPaste
+	static class CopyPaste
 	{
 		[Test]
 		public static void CopyWithVerifyIsUnique()
 		{
-			var original = pb_ShapeGenerator.CreateShape(pb_ShapeType.Cube);
+			var original = ShapeGenerator.CreateShape(ShapeType.Cube);
 			original.Optimize();
 
 			var copy = UObject.Instantiate(original);
 
 			try
 			{
-				pb_EditorUtility.VerifyMesh(copy);
+				EditorUtility.EnsureMeshSyncState(copy);
 				Assert.AreNotEqual(copy, original, "GameObject references are equal");
-				Assert.IsFalse(ReferenceEquals(copy.msh, original.msh), "Mesh references are equal");
-				pb_TestUtility.AssertAreEqual(copy.msh, original.msh);
+				Assert.IsFalse(ReferenceEquals(copy.mesh, original.mesh), "Mesh references are equal");
+				TestUtility.AssertAreEqual(original.mesh, copy.mesh);
 			}
 			finally
 			{
@@ -38,13 +38,13 @@ namespace ProBuilder.EditorTests.Object
 		[Test]
 		public static void CopyReferencesOriginalMesh()
 		{
-			var original = pb_ShapeGenerator.CreateShape(pb_ShapeType.Cube);
+			var original = ShapeGenerator.CreateShape(ShapeType.Cube);
 			var copy = UObject.Instantiate(original);
 
 			try
 			{
 				Assert.AreNotEqual(copy, original, "GameObject references are equal");
-				Assert.IsTrue(ReferenceEquals(copy.msh, original.msh), "Mesh references are equal");
+				Assert.IsTrue(ReferenceEquals(copy.mesh, original.mesh), "Mesh references are equal");
 			}
 			finally
 			{

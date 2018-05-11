@@ -3,32 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using NUnit.Framework;
-using ProBuilder.Core;
-using ProBuilder.Test;
+using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Test;
 
-namespace ProBuilder.RuntimeTests.Shape
+namespace UnityEngine.ProBuilder.RuntimeTests.Shape
 {
-	public class CreateBasicShapes
+	static class CreateBasicShapes
 	{
-		static void CreateBasicAndCompare(pb_ShapeType type)
+		static void CreateBasicAndCompare(ShapeType type)
 		{
-			pb_Object pb = pb_ShapeGenerator.CreateShape(type);
+			ProBuilderMesh pb = ShapeGenerator.CreateShape(type);
 
 #if PB_CREATE_TEST_MESH_TEMPLATES
 			// save a template mesh. the mesh is saved in a the Templates folder with the path extracted from:
 			// Templates/{Asset Type}/{CallingFilePathRelativeToTests}/{MethodName}/{AssetName}.asset
 			// note - pb_DestroyListener will not let pb_Object destroy meshes backed by an asset, so there's no need
 			// to set `dontDestroyOnDelete` in the editor.
-			pb_TestUtility.SaveAssetTemplate(pb.GetComponent<MeshFilter>().sharedMesh, type.ToString());
+			TestUtility.SaveAssetTemplate(pb.GetComponent<MeshFilter>().sharedMesh, type.ToString());
 #else
 
 			try
 			{
 				Assert.IsNotNull(pb, type.ToString());
-				pb_TestUtility.AssertMeshAttributesValid(pb.msh);
+				TestUtility.AssertMeshAttributesValid(pb.mesh);
 				// Loads an asset by name from the template path. See also pb_TestUtility.GetTemplatePath
-				Mesh template = pb_TestUtility.GetAssetTemplate<Mesh>(type.ToString());
-				Assert.IsTrue(pb_TestUtility.AssertAreEqual(template, pb.msh), type.ToString() + " value-wise mesh comparison");
+				Mesh template = TestUtility.GetAssetTemplate<Mesh>(type.ToString());
+				Assert.IsTrue(TestUtility.AssertAreEqual(template, pb.mesh), type.ToString() + " value-wise mesh comparison");
 			}
 			finally
 			{
@@ -40,79 +40,95 @@ namespace ProBuilder.RuntimeTests.Shape
 		[Test]
 		public static void Cube()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Cube);
+			CreateBasicAndCompare(ShapeType.Cube);
 		}
 
 		[Test]
 		public static void Stair()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Stair);
+			CreateBasicAndCompare(ShapeType.Stair);
 		}
 
 		[Test]
 		public static void CurvedStair()
 		{
-			CreateBasicAndCompare(pb_ShapeType.CurvedStair);
+			CreateBasicAndCompare(ShapeType.CurvedStair);
 		}
 
 		[Test]
 		public static void Prism()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Prism);
+			CreateBasicAndCompare(ShapeType.Prism);
 		}
 
 		[Test]
 		public static void Cylinder()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Cylinder);
+			CreateBasicAndCompare(ShapeType.Cylinder);
 		}
 
 		[Test]
 		public static void Plane()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Plane);
+			CreateBasicAndCompare(ShapeType.Plane);
 		}
 
 		[Test]
 		public static void Door()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Door);
+			CreateBasicAndCompare(ShapeType.Door);
 		}
 
 		[Test]
 		public static void Pipe()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Pipe);
+			CreateBasicAndCompare(ShapeType.Pipe);
 		}
 
 		[Test]
 		public static void Cone()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Cone);
+			CreateBasicAndCompare(ShapeType.Cone);
 		}
 
 		[Test]
 		public static void Sprite()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Sprite);
+			CreateBasicAndCompare(ShapeType.Sprite);
 		}
 
 		[Test]
 		public static void Arch()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Arch);
+			CreateBasicAndCompare(ShapeType.Arch);
 		}
 
 		[Test]
-		public static void Icosahedron()
+		public static void Sphere()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Icosahedron);
+			CreateBasicAndCompare(ShapeType.Sphere);
 		}
 
 		[Test]
 		public static void Torus()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Torus);
+			CreateBasicAndCompare(ShapeType.Torus);
+		}
+
+		[Test]
+		public static void MeshAttributesAreValidOnInit()
+		{
+			using (var shapes = new TestUtility.BuiltInPrimitives())
+			{
+				foreach (var pb in (IEnumerable<ProBuilderMesh>) shapes)
+				{
+					Assert.NotNull(pb.positionsInternal, pb.name);
+					Assert.NotNull(pb.facesInternal, pb.name);
+					Assert.NotNull(pb.texturesInternal, pb.name);
+					Assert.NotNull(pb.sharedIndicesInternal, pb.name);
+					Assert.NotNull(pb.sharedIndicesUVInternal, pb.name);
+				}
+			}
 		}
 	}
 }

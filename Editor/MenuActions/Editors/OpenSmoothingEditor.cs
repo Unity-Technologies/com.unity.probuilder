@@ -1,18 +1,17 @@
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
 using UnityEngine;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class OpenSmoothingEditor : pb_MenuAction
+	sealed class OpenSmoothingEditor : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Tool; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Panel_Smoothing", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return m_Tooltip; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
+		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_Smoothing", IconSkin.Pro); } }
+		public override TooltipContent tooltip { get { return s_Tooltip; } }
 		public override string menuTitle { get { return "Smoothing"; } }
-		public override bool isProOnly { get { return true; } }
 		public override int toolbarPriority { get { return 2; } }
-		static readonly pb_TooltipContent m_Tooltip = new pb_TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Smoothing Groups Editor",
 @"Opens the Smoothing Group Editor.
@@ -24,13 +23,13 @@ ProBuilder decides which edges should be smoothed by checking for neighboring fa
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null;
+			return 	ProBuilderEditor.instance != null;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
-			pb_SmoothGroupEditor.MenuOpenSmoothGroupEditor();
-			return new pb_ActionResult(Status.Success, "Open Smoothing Groups Editor");
+			SmoothGroupEditor.MenuOpenSmoothGroupEditor();
+			return new ActionResult(ActionResult.Status.Success, "Open Smoothing Groups Editor");
 		}
 	}
 }

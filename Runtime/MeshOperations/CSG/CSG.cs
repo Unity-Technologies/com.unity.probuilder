@@ -16,14 +16,14 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace Parabox.CSG
 {
 	/// <summary>
 	/// Base class for CSG operations.  Contains GameObject level methods for Subtraction, Intersection, and Union operations. The GameObjects passed to these functions will not be modified.
 	/// </summary>
-	class CSG
+	sealed class CSG
 	{
 		// Tolerance used by `splitPolygon()` to decide if a point is on the plane.
 		public const float EPSILON = 0.00001f;

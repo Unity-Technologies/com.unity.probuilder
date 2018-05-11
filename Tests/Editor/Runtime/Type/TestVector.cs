@@ -3,11 +3,11 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
-namespace ProBuilder.RuntimeTests.Type
+namespace UnityEngine.ProBuilder.RuntimeTests.Type
 {
-	public static class TestHashUtility
+	static class TestHashUtility
 	{
 		public static int GetCollisionsCount<T>(IEnumerable<T> list)
 		{
@@ -26,7 +26,7 @@ namespace ProBuilder.RuntimeTests.Type
 		}
 	}
 
-	public class TestVector
+	static class TestVector
 	{
 		const int TestIterationCount = 512;
 
@@ -43,9 +43,9 @@ namespace ProBuilder.RuntimeTests.Type
 			return UnityEngine.Random.Range(0f, 100f) * .001f;
 		}
 
-		static pb_Vertex RandVertex()
+		static Vertex RandVertex()
 		{
-			pb_Vertex v = new pb_Vertex(true);
+			Vertex v = new Vertex();
 			v.position = RandVec3();
 			v.color = new Color(RandFlt(), RandFlt(), RandFlt(), RandFlt());
 			v.normal = RandVec3();
@@ -60,7 +60,7 @@ namespace ProBuilder.RuntimeTests.Type
 		[Test]
 		public static void TestHashCollisions_IVEC3()
 		{
-			pb_IntVec3[] ivec3 = pb_Util.Fill<pb_IntVec3>(TestIterationCount, (i) => { return (pb_IntVec3) RandVec3(); });
+			IntVec3[] ivec3 = ArrayUtility.Fill<IntVec3>(TestIterationCount, (i) => { return (IntVec3) RandVec3(); });
 			Assert.IsTrue( TestHashUtility.GetCollisionsCount(ivec3) < TestIterationCount * .05f );
 		}
 
@@ -73,21 +73,21 @@ namespace ProBuilder.RuntimeTests.Type
 			Vector3 nan = new Vector3(float.NaN, 0f, 0f);
 
 			// mostly checking that GetHashCode doesn't throw an error when converting bad float values
-			Assert.AreEqual(pb_Vector.GetHashCode(over), 1499503, "Over");
-			Assert.AreEqual(pb_Vector.GetHashCode(under), 2147303674, "Under");
-			Assert.AreNotEqual(pb_Vector.GetHashCode(inf), 0, "Inf");
-			Assert.AreNotEqual(pb_Vector.GetHashCode(nan), 0, "NaN");
+			Assert.AreEqual(VectorHash.GetHashCode(over), 1499503, "Over");
+			Assert.AreEqual(VectorHash.GetHashCode(under), 2147303674, "Under");
+			Assert.AreNotEqual(VectorHash.GetHashCode(inf), 0, "Inf");
+			Assert.AreNotEqual(VectorHash.GetHashCode(nan), 0, "NaN");
 		}
 
 		[Test]
 		public static void TestComparison_IVEC3()
 		{
-			pb_IntVec3 a = (pb_IntVec3) RandVec3();
-			pb_IntVec3 b = (pb_IntVec3) (a.vec * 2.3f);
-			pb_IntVec3 c = (pb_IntVec3) new Vector3(a.x, a.y + .001f, a.z);
-			pb_IntVec3 d = (pb_IntVec3) new Vector3(a.x, a.y, a.z);
+			IntVec3 a = (IntVec3) RandVec3();
+			IntVec3 b = (IntVec3) (a.vec * 2.3f);
+			IntVec3 c = (IntVec3) new Vector3(a.x, a.y + .001f, a.z);
+			IntVec3 d = (IntVec3) new Vector3(a.x, a.y, a.z);
 
-			pb_IntVec3[] arr = pb_Util.Fill<pb_IntVec3>(24, (i) => { return i % 2 == 0 ? a : (pb_IntVec3) RandVec3(); });
+			IntVec3[] arr = ArrayUtility.Fill<IntVec3>(24, (i) => { return i % 2 == 0 ? a : (IntVec3) RandVec3(); });
 
 			Assert.IsFalse(a == b);
 			Assert.IsFalse(a == c);
@@ -101,15 +101,15 @@ namespace ProBuilder.RuntimeTests.Type
 		[Test]
 		public static void TestComparison_VERTEX()
 		{
-			pb_Vertex a = RandVertex();
-			pb_Vertex b = RandVertex();
-			pb_Vertex c = RandVertex();
-			pb_Vertex d = new pb_Vertex(a);
+			Vertex a = RandVertex();
+			Vertex b = RandVertex();
+			Vertex c = RandVertex();
+			Vertex d = new Vertex(a);
 
 			// reference
 			Assert.IsFalse(a == b);
 			Assert.IsFalse(a == c);
-			Assert.IsFalse(a == d);
+			Assert.IsTrue(a == d);
 
 			// hash
 			Assert.IsFalse(a.GetHashCode() == b.GetHashCode());

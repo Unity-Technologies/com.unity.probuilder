@@ -15,7 +15,7 @@ namespace Parabox
 	 *	symlinks.
 	 */
 	[InitializeOnLoad]
-	public static class SymlinkUtility
+	static class SymlinkUtility
 	{
 		// FileAttributes that match a junction folder.
 		const FileAttributes k_FolderSymlinkAttributes = FileAttributes.Directory | FileAttributes.ReparsePoint;

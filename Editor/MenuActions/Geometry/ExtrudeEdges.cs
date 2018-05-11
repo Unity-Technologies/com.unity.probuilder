@@ -1,42 +1,41 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
 using System.Linq;
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
+using EditorGUILayout = UnityEditor.EditorGUILayout;
+using EditorStyles = UnityEditor.EditorStyles;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class ExtrudeEdges : pb_MenuAction
+	sealed class ExtrudeEdges : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Edge_Extrude", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
-		public override bool hasFileMenuEntry { get { return false; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
+		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Extrude", IconSkin.Pro); } }
+		public override TooltipContent tooltip { get { return _tooltip; } }
+		protected override bool hasFileMenuEntry { get { return false; } }
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Extrude Edges",
 			@"Adds a new face extending from the currently selected edges.  Edges must have an open side to be extruded.",
-			CMD_SUPER, 'E'
+			keyCommandSuper, 'E'
 		);
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null &&
-					pb_Editor.instance.editLevel == EditLevel.Geometry &&
-					pb_Editor.instance.selectionMode == SelectMode.Edge &&
-					selection != null &&
-					selection.Length > 0 &&
-					selection.Any(x => x.SelectedEdgeCount > 0);
+			return ProBuilderEditor.instance != null &&
+				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
+				ProBuilderEditor.instance.selectionMode == SelectMode.Edge &&
+				MeshSelection.Top().Any(x => x.selectedEdgeCount > 0);
 		}
 
 		public override bool IsHidden()
 		{
-			return 	pb_Editor.instance == null ||
-					pb_Editor.instance.editLevel != EditLevel.Geometry ||
-					pb_Editor.instance.selectionMode != SelectMode.Edge;
-
+			return ProBuilderEditor.instance == null ||
+				ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
+				ProBuilderEditor.instance.selectionMode != SelectMode.Edge;
 		}
 
 		public override MenuActionState AltState()
@@ -50,9 +49,9 @@ namespace ProBuilder.Actions
 
 			EditorGUILayout.HelpBox("Extrude Amount determines how far an edge will be moved along it's normal when extruding.  This value can be negative.\n\nExtrude as Group determines whether or not adjacent faces stay attached to one another when extruding.", MessageType.Info);
 
-			float extrudeAmount = pb_PreferencesInternal.HasKey(pb_Constant.pbExtrudeDistance) ? pb_PreferencesInternal.GetFloat(pb_Constant.pbExtrudeDistance) : .5f;
-			bool extrudeAsGroup = pb_PreferencesInternal.GetBool(pb_Constant.pbExtrudeAsGroup);
-			bool manifoldEdgeExtrusion = pb_PreferencesInternal.GetBool(pb_Constant.pbManifoldEdgeExtrusion);
+			float extrudeAmount = PreferencesInternal.HasKey(PreferenceKeys.pbExtrudeDistance) ? PreferencesInternal.GetFloat(PreferenceKeys.pbExtrudeDistance) : .5f;
+			bool extrudeAsGroup = PreferencesInternal.GetBool(PreferenceKeys.pbExtrudeAsGroup);
+			bool manifoldEdgeExtrusion = PreferencesInternal.GetBool(PreferenceKeys.pbManifoldEdgeExtrusion);
 
 			EditorGUI.BeginChangeCheck();
 
@@ -63,9 +62,9 @@ namespace ProBuilder.Actions
 
 			if(EditorGUI.EndChangeCheck())
 			{
-				pb_PreferencesInternal.SetFloat(pb_Constant.pbExtrudeDistance, extrudeAmount);
-				pb_PreferencesInternal.SetBool(pb_Constant.pbExtrudeAsGroup, extrudeAsGroup);
-				pb_PreferencesInternal.SetBool(pb_Constant.pbManifoldEdgeExtrusion, manifoldEdgeExtrusion);
+				PreferencesInternal.SetFloat(PreferenceKeys.pbExtrudeDistance, extrudeAmount);
+				PreferencesInternal.SetBool(PreferenceKeys.pbExtrudeAsGroup, extrudeAsGroup);
+				PreferencesInternal.SetBool(PreferenceKeys.pbManifoldEdgeExtrusion, manifoldEdgeExtrusion);
 			}
 
 			GUILayout.FlexibleSpace();
@@ -74,9 +73,9 @@ namespace ProBuilder.Actions
 				DoAction();
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
-			return pb_MenuCommands.MenuExtrude(selection, true);
+			return MenuCommands.MenuExtrude(MeshSelection.Top(), true);
 		}
 	}
 }

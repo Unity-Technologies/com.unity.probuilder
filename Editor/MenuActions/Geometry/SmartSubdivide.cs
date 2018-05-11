@@ -1,34 +1,42 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
 using System.Linq;
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class SmartSubdivide : pb_MenuAction
+	sealed class SmartSubdivide : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return null; } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return true; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Geometry; }
+		}
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		public override Texture2D icon
+		{
+			get { return null; }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return _tooltip; }
+		}
+
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Smart Subdivide",
 			"",
-			CMD_ALT, 'S'
+			keyCommandAlt, 'S'
 		);
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null &&
-					pb_Editor.instance.editLevel == EditLevel.Geometry &&
-					pb_Editor.instance.selectionMode != SelectMode.Vertex &&
-					selection != null &&
-					selection.Length > 0 &&
-					selection.Any(x => x.SelectedEdgeCount > 0);
+			return ProBuilderEditor.instance != null &&
+				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
+				ProBuilderEditor.instance.selectionMode != SelectMode.Vertex &&
+				MeshSelection.Top().Any(x => x.selectedEdgeCount > 0);
 		}
 
 		public override bool IsHidden()
@@ -36,15 +44,15 @@ namespace ProBuilder.Actions
 			return true;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
-			switch(pb_Editor.instance.selectionMode)
+			switch (ProBuilderEditor.instance.selectionMode)
 			{
 				case SelectMode.Edge:
-					return pb_MenuCommands.MenuSubdivideEdge(selection);
+					return MenuCommands.MenuSubdivideEdge(MeshSelection.Top());
 
 				default:
-					return pb_MenuCommands.MenuSubdivideFace(selection);
+					return MenuCommands.MenuSubdivideFace(MeshSelection.Top());
 			}
 		}
 	}

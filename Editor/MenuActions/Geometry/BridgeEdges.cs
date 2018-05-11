@@ -1,47 +1,44 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
 using System.Linq;
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class BridgeEdges : pb_MenuAction
+	sealed class BridgeEdges : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Edge_Bridge", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return true; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
+		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Bridge", IconSkin.Pro); } }
+		public override TooltipContent tooltip { get { return _tooltip; } }
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Bridge Edges",
 			@"Add a new face connecting two edges.",
-			CMD_ALT, 'B'
+			keyCommandAlt, 'B'
 		);
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null &&
-					pb_Editor.instance.editLevel == EditLevel.Geometry &&
-					pb_Editor.instance.selectionMode == SelectMode.Edge &&
-					selection != null &&
-					selection.Length > 0 &&
-					selection.Any(x => x.SelectedEdgeCount == 2);
+			return 	ProBuilderEditor.instance != null &&
+					ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
+					ProBuilderEditor.instance.selectionMode == SelectMode.Edge &&
+					MeshSelection.Top().Any(x => x.selectedEdgeCount == 2);
 		}
 
 		public override bool IsHidden()
 		{
-			return 	pb_Editor.instance == null ||
-					pb_Editor.instance.editLevel != EditLevel.Geometry ||
-					pb_Editor.instance.selectionMode != SelectMode.Edge;
+			return 	ProBuilderEditor.instance == null ||
+					ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
+					ProBuilderEditor.instance.selectionMode != SelectMode.Edge;
 
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
-			return pb_MenuCommands.MenuBridgeEdges(selection);
+			return MenuCommands.MenuBridgeEdges(MeshSelection.Top());
 		}
 	}
 }

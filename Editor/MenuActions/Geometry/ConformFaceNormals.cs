@@ -1,20 +1,20 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
 using System.Linq;
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class ConformFaceNormals : pb_MenuAction
+	sealed class ConformFaceNormals : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Face_ConformNormals", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
+		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_ConformNormals", IconSkin.Pro); } }
+		public override TooltipContent tooltip { get { return _tooltip; } }
 		public override string menuTitle { get { return "Conform Normals"; } }
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Conform Face Normals",
 			@"Orients all selected faces to face the same direction."
@@ -22,22 +22,20 @@ namespace ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null &&
-					selection != null &&
-					selection.Length > 0 &&
-					selection.Any(x => x.SelectedFaceCount > 1);
+			return 	ProBuilderEditor.instance != null &&
+				MeshSelection.Top().Any(x => x.selectedFaceCount > 1);
 		}
 
 		public override bool IsHidden()
 		{
-			return 	pb_Editor.instance == null ||
-					pb_Editor.instance.editLevel != EditLevel.Geometry ||
-					pb_Editor.instance.selectionMode != SelectMode.Face;
+			return 	ProBuilderEditor.instance == null ||
+					ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
+					ProBuilderEditor.instance.selectionMode != SelectMode.Face;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
-			return pb_MenuCommands.MenuConformNormals(selection);
+			return MenuCommands.MenuConformNormals(MeshSelection.Top());
 		}
 	}
 }

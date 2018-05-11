@@ -1,66 +1,66 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
-using ProBuilder.Interface;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
+using UnityEditor.ProBuilder.UI;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class ToggleDragRectMode : pb_MenuAction
+	sealed class ToggleDragRectMode : MenuAction
 	{
-		pb_RectSelectMode mode
+		RectSelectMode mode
 		{
 			get
 			{
-				return (pb_RectSelectMode) pb_PreferencesInternal.GetInt(pb_Constant.pbRectSelectMode,
-					(int) pb_RectSelectMode.Partial);
+				return (RectSelectMode) PreferencesInternal.GetInt(PreferenceKeys.pbRectSelectMode,
+					(int) RectSelectMode.Partial);
 			}
 
-			set { pb_PreferencesInternal.SetInt(pb_Constant.pbRectSelectMode, (int) value); }
+			set { PreferencesInternal.SetInt(PreferenceKeys.pbRectSelectMode, (int) value); }
 		}
 
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
 
 		public override Texture2D icon
 		{
 			get
 			{
-				return mode == pb_RectSelectMode.Complete
-					? pb_IconUtility.GetIcon("Toolbar/Selection_Rect_Complete")
-					: pb_IconUtility.GetIcon("Toolbar/Selection_Rect_Intersect", IconSkin.Pro);
+				return mode == RectSelectMode.Complete
+					? IconUtility.GetIcon("Toolbar/Selection_Rect_Complete")
+					: IconUtility.GetIcon("Toolbar/Selection_Rect_Intersect", IconSkin.Pro);
 			}
 		}
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override TooltipContent tooltip { get { return _tooltip; } }
 		public override int toolbarPriority { get { return 0; } }
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Set Drag Rect Mode",
 			"Sets whether or not a mesh element (edge or face) needs to be completely encompassed by a drag to be selected.\n\nThe default value is Intersect, meaning if any part of the elemnent is touched by the drag rectangle it will be selected."
 		);
 
-		public override string menuTitle { get { return mode == pb_RectSelectMode.Complete ? "Rect: Complete" : "Rect: Intersect"; } }
+		public override string menuTitle { get { return mode == RectSelectMode.Complete ? "Rect: Complete" : "Rect: Intersect"; } }
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
-			mode = pb_Util.NextEnumValue(mode);
-			return new pb_ActionResult(Status.Success,
-				"Set Drag Select\n" + (mode == pb_RectSelectMode.Complete ? "Complete" : "Intersect"));
+			mode = InternalUtility.NextEnumValue(mode);
+			return new ActionResult(ActionResult.Status.Success,
+				"Set Drag Select\n" + (mode == RectSelectMode.Complete ? "Complete" : "Intersect"));
 		}
 
 		public override bool IsEnabled()
 		{
-			return pb_Editor.instance != null &&
-			       pb_Editor.instance.editLevel == EditLevel.Geometry &&
-			       pb_Editor.instance.selectionMode != SelectMode.Vertex;
+			return ProBuilderEditor.instance != null &&
+			       ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
+			       ProBuilderEditor.instance.selectionMode != SelectMode.Vertex;
 		}
 
 		public override bool IsHidden()
 		{
-			return 	pb_Editor.instance == null ||
-					pb_Editor.instance.editLevel != EditLevel.Geometry ||
-			       	pb_Editor.instance.selectionMode == SelectMode.Vertex;
+			return 	ProBuilderEditor.instance == null ||
+					ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
+			       	ProBuilderEditor.instance.selectionMode == SelectMode.Vertex;
 		}
 	}
 }

@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 using UnityEditorInternal;
 using UObject = UnityEngine.Object;
 
-public static class ConsoleProExtensions
+static class ConsoleProExtensions
 {
 	static readonly GUIContent gc_OpenInTextEditor = new GUIContent("Open In Text Editor", "Open a composite of the selected logs in the preferred text editor.");
 	static readonly GUIContent gc_OpenEachInTextEditor = new GUIContent("Open Each In Text Editor", "Open each the selected logs in the preferred text editor.");
@@ -123,8 +123,8 @@ public static class ConsoleProExtensions
 				? inEntry.stackEntries.FirstOrDefault()
 				: null;
 
-		string filePath = consoleEntry.fileName;
-		int lineNum = consoleEntry.lineNumber;
+		string filePath = consoleEntry != null ? consoleEntry.fileName : "";
+		int lineNum = consoleEntry != null ? consoleEntry.lineNumber : -1;
 
 		if (string.IsNullOrEmpty(filePath) || filePath == "None")
 			return;

@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using NUnit.Framework;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
-namespace ProBuilder.EditorTests.Picking
+namespace UnityEngine.ProBuilder.EditorTests.Picking
 {
-	public class ColorEncoding
+	static class ColorEncoding
 	{
 		static readonly Color32 k_ColorWhite = new Color32(255, 255, 255, 255);
 		const uint k_HexColorWhite = 0x00FFFFFF;
@@ -30,93 +30,93 @@ namespace ProBuilder.EditorTests.Picking
 		[Test]
 		public static void TestDecode_WHITE()
 		{
-			Assert.AreEqual( pb_SelectionPicker.DecodeRGBA(k_ColorWhite), k_HexColorWhite );
+			Assert.AreEqual( SelectionPicker.DecodeRGBA(k_ColorWhite), k_HexColorWhite );
 		}
 
 		[Test]
 		public static void TestDecode_BLACK()
 		{
-			Assert.AreEqual( pb_SelectionPicker.DecodeRGBA(k_ColorBlack), k_HexColorBlack );
+			Assert.AreEqual( SelectionPicker.DecodeRGBA(k_ColorBlack), k_HexColorBlack );
 		}
 
 		[Test]
 		public static void TestDecode_MIDDLE()
 		{
-			Assert.AreEqual( pb_SelectionPicker.DecodeRGBA(k_ColorMiddle), k_HexColorMiddle );
+			Assert.AreEqual( SelectionPicker.DecodeRGBA(k_ColorMiddle), k_HexColorMiddle );
 		}
 
 		[Test]
 		public static void TestDecode_RED()
 		{
-			Assert.AreEqual( pb_SelectionPicker.DecodeRGBA(k_ColorRed), k_HexColorRed );
+			Assert.AreEqual( SelectionPicker.DecodeRGBA(k_ColorRed), k_HexColorRed );
 		}
 
 		[Test]
 		public static void TestDecode_PINK()
 		{
-			Assert.AreEqual( pb_SelectionPicker.DecodeRGBA(k_ColorPink), k_HexColorPink );
+			Assert.AreEqual( SelectionPicker.DecodeRGBA(k_ColorPink), k_HexColorPink );
 		}
 
 		[Test]
 		public static void TestDecode_OFFPINK()
 		{
-			Assert.AreEqual( pb_SelectionPicker.DecodeRGBA(k_ColorOffPink), k_HexColorOffPink );
+			Assert.AreEqual( SelectionPicker.DecodeRGBA(k_ColorOffPink), k_HexColorOffPink );
 		}
 
 		[Test]
 		public static void TestDecode_GRAY()
 		{
-			Assert.AreEqual( pb_SelectionPicker.DecodeRGBA(k_ColorGray), k_HexColorGray );
+			Assert.AreEqual( SelectionPicker.DecodeRGBA(k_ColorGray), k_HexColorGray );
 		}
 
 		[Test]
 		public static void TestEncode_WHITE()
 		{
-			Assert.AreEqual( pb_SelectionPicker.EncodeRGBA(k_HexColorWhite), k_ColorWhite );
+			Assert.AreEqual( SelectionPicker.EncodeRGBA(k_HexColorWhite), k_ColorWhite );
 		}
 
 		[Test]
 		public static void TestEncode_BLACK()
 		{
-			Assert.AreEqual( pb_SelectionPicker.EncodeRGBA(k_HexColorBlack), k_ColorBlack );
+			Assert.AreEqual( SelectionPicker.EncodeRGBA(k_HexColorBlack), k_ColorBlack );
 		}
 
 		[Test]
 		public static void TestEncode_MIDDLE()
 		{
-			Assert.AreEqual( pb_SelectionPicker.EncodeRGBA(k_HexColorMiddle), k_ColorMiddle );
+			Assert.AreEqual( SelectionPicker.EncodeRGBA(k_HexColorMiddle), k_ColorMiddle );
 		}
 
 		[Test]
 		public static void TestEncode_RED()
 		{
-			Assert.AreEqual( pb_SelectionPicker.EncodeRGBA(k_HexColorRed), k_ColorRed );
+			Assert.AreEqual( SelectionPicker.EncodeRGBA(k_HexColorRed), k_ColorRed );
 		}
 
 		[Test]
 		public static void TestEncode_PINK()
 		{
-			Assert.AreEqual( pb_SelectionPicker.EncodeRGBA(k_HexColorPink), k_ColorPink );
+			Assert.AreEqual( SelectionPicker.EncodeRGBA(k_HexColorPink), k_ColorPink );
 		}
 
 		[Test]
 		public static void TestEncode_OFFPINK()
 		{
-			Assert.AreEqual( pb_SelectionPicker.EncodeRGBA(k_HexColorOffPink), k_ColorOffPink );
+			Assert.AreEqual( SelectionPicker.EncodeRGBA(k_HexColorOffPink), k_ColorOffPink );
 		}
 
 		[Test]
 		public static void TestEncode_GRAY()
 		{
-			Assert.AreEqual( pb_SelectionPicker.EncodeRGBA(k_HexColorGray), k_ColorGray );
+			Assert.AreEqual( SelectionPicker.EncodeRGBA(k_HexColorGray), k_ColorGray );
 		}
 
 		[Test]
 		public static void TestOffByOne_WHITE()
 		{
 			unchecked {
-				Assert.AreNotEqual( pb_SelectionPicker.DecodeRGBA(k_ColorWhite), k_HexColorWhite + 1 );
-				Assert.AreNotEqual( pb_SelectionPicker.DecodeRGBA(k_ColorWhite), k_HexColorWhite - 1 );
+				Assert.AreNotEqual( SelectionPicker.DecodeRGBA(k_ColorWhite), k_HexColorWhite + 1 );
+				Assert.AreNotEqual( SelectionPicker.DecodeRGBA(k_ColorWhite), k_HexColorWhite - 1 );
 			}
 		}
 
@@ -124,8 +124,8 @@ namespace ProBuilder.EditorTests.Picking
 		public static void TestOffByOne_BLACK()
 		{
 			unchecked {
-				Assert.AreNotEqual( pb_SelectionPicker.DecodeRGBA(k_ColorBlack), k_HexColorBlack + 1 );
-				Assert.AreNotEqual( pb_SelectionPicker.DecodeRGBA(k_ColorBlack), k_HexColorBlack - 1 );
+				Assert.AreNotEqual( SelectionPicker.DecodeRGBA(k_ColorBlack), k_HexColorBlack + 1 );
+				Assert.AreNotEqual( SelectionPicker.DecodeRGBA(k_ColorBlack), k_HexColorBlack - 1 );
 			}
 		}
 
@@ -133,8 +133,8 @@ namespace ProBuilder.EditorTests.Picking
 		public static void TestOffByOne_MIDDLE()
 		{
 			unchecked {
-				Assert.AreNotEqual( pb_SelectionPicker.DecodeRGBA(k_ColorMiddle), k_HexColorMiddle + 1 );
-				Assert.AreNotEqual( pb_SelectionPicker.DecodeRGBA(k_ColorMiddle), k_HexColorMiddle - 1 );
+				Assert.AreNotEqual( SelectionPicker.DecodeRGBA(k_ColorMiddle), k_HexColorMiddle + 1 );
+				Assert.AreNotEqual( SelectionPicker.DecodeRGBA(k_ColorMiddle), k_HexColorMiddle - 1 );
 			}
 		}
 
@@ -142,8 +142,8 @@ namespace ProBuilder.EditorTests.Picking
 		public static void TestOffByOne_RED()
 		{
 			unchecked {
-				Assert.AreNotEqual( pb_SelectionPicker.DecodeRGBA(k_ColorRed), k_HexColorRed + 1 );
-				Assert.AreNotEqual( pb_SelectionPicker.DecodeRGBA(k_ColorRed), k_HexColorRed - 1 );
+				Assert.AreNotEqual( SelectionPicker.DecodeRGBA(k_ColorRed), k_HexColorRed + 1 );
+				Assert.AreNotEqual( SelectionPicker.DecodeRGBA(k_ColorRed), k_HexColorRed - 1 );
 			}
 		}
 
@@ -151,8 +151,8 @@ namespace ProBuilder.EditorTests.Picking
 		public static void TestOffByOne_PINK()
 		{
 			unchecked {
-				Assert.AreNotEqual( pb_SelectionPicker.DecodeRGBA(k_ColorPink), k_HexColorPink + 1 );
-				Assert.AreNotEqual( pb_SelectionPicker.DecodeRGBA(k_ColorPink), k_HexColorPink - 1 );
+				Assert.AreNotEqual( SelectionPicker.DecodeRGBA(k_ColorPink), k_HexColorPink + 1 );
+				Assert.AreNotEqual( SelectionPicker.DecodeRGBA(k_ColorPink), k_HexColorPink - 1 );
 			}
 		}
 
@@ -160,8 +160,8 @@ namespace ProBuilder.EditorTests.Picking
 		public static void TestOffByOne_OFFPINK()
 		{
 			unchecked {
-				Assert.AreNotEqual( pb_SelectionPicker.DecodeRGBA(k_ColorOffPink), k_HexColorOffPink + 1 );
-				Assert.AreNotEqual( pb_SelectionPicker.DecodeRGBA(k_ColorOffPink), k_HexColorOffPink - 1 );
+				Assert.AreNotEqual( SelectionPicker.DecodeRGBA(k_ColorOffPink), k_HexColorOffPink + 1 );
+				Assert.AreNotEqual( SelectionPicker.DecodeRGBA(k_ColorOffPink), k_HexColorOffPink - 1 );
 			}
 		}
 
@@ -169,8 +169,8 @@ namespace ProBuilder.EditorTests.Picking
 		public static void TestOffByOne_GRAY()
 		{
 			unchecked {
-				Assert.AreNotEqual( pb_SelectionPicker.DecodeRGBA(k_ColorGray), k_HexColorGray + 1 );
-				Assert.AreNotEqual( pb_SelectionPicker.DecodeRGBA(k_ColorGray), k_HexColorGray - 1 );
+				Assert.AreNotEqual( SelectionPicker.DecodeRGBA(k_ColorGray), k_HexColorGray + 1 );
+				Assert.AreNotEqual( SelectionPicker.DecodeRGBA(k_ColorGray), k_HexColorGray - 1 );
 			}
 		}
 

@@ -1,42 +1,55 @@
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
+using EditorGUILayout = UnityEditor.EditorGUILayout;
+using EditorStyles = UnityEditor.EditorStyles;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class GrowSelection : pb_MenuAction
+	sealed class GrowSelection : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_Grow", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return m_Tooltip; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Selection; }
+		}
 
-		static readonly pb_TooltipContent m_Tooltip = new pb_TooltipContent
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Selection_Grow", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return s_Tooltip; }
+		}
+
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Grow Selection",
 			@"Adds adjacent elements to the current selection, optionally testing to see if they are within a specified angle.
 
 Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.",
-			CMD_ALT, 'G'
+			keyCommandAlt, 'G'
 		);
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null &&
-					pb_MenuCommands.VerifyGrowSelection(selection);
+			return ProBuilderEditor.instance != null &&
+				MenuCommands.VerifyGrowSelection(MeshSelection.Top());
 		}
 
 		public override bool IsHidden()
 		{
-			return 	editLevel != EditLevel.Geometry;
+			return editLevel != EditLevel.Geometry;
 		}
 
 		public override MenuActionState AltState()
 		{
-			if(	IsEnabled() &&
-				pb_Editor.instance.editLevel == EditLevel.Geometry &&
-				pb_Editor.instance.selectionMode == SelectMode.Face)
+			if (IsEnabled() &&
+				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
+				ProBuilderEditor.instance.selectionMode == SelectMode.Face)
 				return MenuActionState.VisibleAndEnabled;
 
 			return MenuActionState.Hidden;
@@ -46,12 +59,12 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 		{
 			GUILayout.Label("Grow Selection Options", EditorStyles.boldLabel);
 
-			bool angleGrow = pb_PreferencesInternal.GetBool(pb_Constant.pbGrowSelectionUsingAngle);
+			bool angleGrow = PreferencesInternal.GetBool(PreferenceKeys.pbGrowSelectionUsingAngle);
 
 			EditorGUI.BeginChangeCheck();
 
 			angleGrow = EditorGUILayout.Toggle("Restrict to Angle", angleGrow);
-			float angleVal = pb_PreferencesInternal.GetFloat(pb_Constant.pbGrowSelectionAngle);
+			float angleVal = PreferencesInternal.GetFloat(PreferenceKeys.pbGrowSelectionAngle);
 
 			GUI.enabled = angleGrow;
 
@@ -59,29 +72,28 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 
 			GUI.enabled = angleGrow;
 
-			bool iterative = angleGrow ? pb_PreferencesInternal.GetBool(pb_Constant.pbGrowSelectionAngleIterative) : true;
+			bool iterative = angleGrow ? PreferencesInternal.GetBool(PreferenceKeys.pbGrowSelectionAngleIterative) : true;
 
 			iterative = EditorGUILayout.Toggle("Iterative", iterative);
 
 			GUI.enabled = true;
 
-			if( EditorGUI.EndChangeCheck() )
+			if (EditorGUI.EndChangeCheck())
 			{
-				pb_PreferencesInternal.SetBool(pb_Constant.pbGrowSelectionUsingAngle, angleGrow);
-				pb_PreferencesInternal.SetBool(pb_Constant.pbGrowSelectionAngleIterative, iterative);
-				pb_PreferencesInternal.SetFloat(pb_Constant.pbGrowSelectionAngle, angleVal);
+				PreferencesInternal.SetBool(PreferenceKeys.pbGrowSelectionUsingAngle, angleGrow);
+				PreferencesInternal.SetBool(PreferenceKeys.pbGrowSelectionAngleIterative, iterative);
+				PreferencesInternal.SetFloat(PreferenceKeys.pbGrowSelectionAngle, angleVal);
 			}
 
 			GUILayout.FlexibleSpace();
 
-
-			if(GUILayout.Button("Grow Selection"))
-				pb_MenuCommands.MenuGrowSelection(selection);
+			if (GUILayout.Button("Grow Selection"))
+				MenuCommands.MenuGrowSelection(MeshSelection.Top());
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
-			return pb_MenuCommands.MenuGrowSelection(selection);
+			return MenuCommands.MenuGrowSelection(MeshSelection.Top());
 		}
 	}
 }

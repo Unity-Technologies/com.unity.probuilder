@@ -1,35 +1,35 @@
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
-using ProBuilder.Interface;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
+using UnityEditor.ProBuilder.UI;
+using EditorGUILayout = UnityEditor.EditorGUILayout;
+using EditorGUIUtility = UnityEditor.ProBuilder.UI.EditorGUIUtility;
+using EditorStyles = UnityEditor.EditorStyles;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class SubdivideEdges : pb_MenuAction
+	sealed class SubdivideEdges : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Edge_Subdivide", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return true; } }
-		public override bool hasFileMenuEntry { get { return false; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
+		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Subdivide", IconSkin.Pro); } }
+		public override TooltipContent tooltip { get { return _tooltip; } }
+		protected override bool hasFileMenuEntry { get { return false; } }
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Subdivide Edges",
 			"Appends evenly spaced new vertices to the selected edges.",
-			CMD_ALT, 'S'
+			keyCommandAlt, 'S'
 		);
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null &&
-					pb_Editor.instance.editLevel == EditLevel.Geometry &&
-					pb_Editor.instance.selectionMode == SelectMode.Edge &&
-					selection != null &&
-					selection.Length > 0 &&
-					selection.Any(x => x.SelectedEdgeCount > 0);
+			return ProBuilderEditor.instance != null &&
+				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
+				ProBuilderEditor.instance.selectionMode == SelectMode.Edge &&
+				MeshSelection.Top().Any(x => x.selectedEdgeCount > 0);
 		}
 
 		public override MenuActionState AltState()
@@ -41,34 +41,33 @@ namespace ProBuilder.Actions
 		{
 			GUILayout.Label("Subdivide Edge Settings", EditorStyles.boldLabel);
 
-			int subdivisions = pb_PreferencesInternal.GetInt(pb_Constant.pbEdgeSubdivisions, 1);
+			int subdivisions = PreferencesInternal.GetInt(PreferenceKeys.pbEdgeSubdivisions, 1);
 
 			EditorGUI.BeginChangeCheck();
 
 			EditorGUILayout.HelpBox("How many vertices to insert on each selected edge.\n\nVertices will be equally spaced between one another and the boundaries of the edge.", MessageType.Info);
 
-			subdivisions = (int) pb_EditorGUIUtility.FreeSlider("Subdivisions", subdivisions, 1, 32);
+			subdivisions = (int)UI.EditorGUIUtility.FreeSlider("Subdivisions", subdivisions, 1, 32);
 
-			if(EditorGUI.EndChangeCheck())
-				pb_PreferencesInternal.SetInt(pb_Constant.pbEdgeSubdivisions, subdivisions);
+			if (EditorGUI.EndChangeCheck())
+				PreferencesInternal.SetInt(PreferenceKeys.pbEdgeSubdivisions, subdivisions);
 
 			GUILayout.FlexibleSpace();
 
-			if(GUILayout.Button("Subdivide Edges"))
+			if (GUILayout.Button("Subdivide Edges"))
 				DoAction();
 		}
 
 		public override bool IsHidden()
 		{
-			return 	pb_Editor.instance == null ||
-					pb_Editor.instance.editLevel != EditLevel.Geometry ||
-					pb_Editor.instance.selectionMode != SelectMode.Edge;
-
+			return ProBuilderEditor.instance == null ||
+				ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
+				ProBuilderEditor.instance.selectionMode != SelectMode.Edge;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
-			return pb_MenuCommands.MenuSubdivideEdge(selection);
+			return MenuCommands.MenuSubdivideEdge(MeshSelection.Top());
 		}
 	}
 }

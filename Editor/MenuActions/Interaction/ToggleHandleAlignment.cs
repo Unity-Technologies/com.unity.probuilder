@@ -1,22 +1,22 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
-using ProBuilder.Interface;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
+using UnityEditor.ProBuilder.UI;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class ToggleHandleAlignment : pb_MenuAction
+	sealed class ToggleHandleAlignment : MenuAction
 	{
 		[SerializeField] int count = 0;
 		[SerializeField] Texture2D[] icons = null;
-		private int handleAlignment { get { return pb_Editor.instance == null ? 0 : (int)pb_Editor.instance.handleAlignment; } }
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
+		int handleAlignment { get { return ProBuilderEditor.instance == null ? 0 : (int)ProBuilderEditor.instance.handleAlignment; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return icons[handleAlignment]; } }
 		public override int toolbarPriority { get { return 0; } }
 
-		public override pb_TooltipContent tooltip
+		public override TooltipContent tooltip
 		{
 			get
 			{
@@ -29,17 +29,17 @@ namespace ProBuilder.Actions
 			}
 		}
 
-		static readonly pb_TooltipContent _tooltip_world = new pb_TooltipContent(
+		static readonly TooltipContent _tooltip_world = new TooltipContent(
 			"Set Handle Alignment",
 			"Toggles the coordinate space that the transform gizmo is rendered in.\n\nCurrent: World (handle is always the same)",
 			'P');
 
-		static readonly pb_TooltipContent _tooltip_local = new pb_TooltipContent(
+		static readonly TooltipContent _tooltip_local = new TooltipContent(
 			"Set Handle Alignment",
 			"Toggles the coordinate space that the transform gizmo is rendered in.\n\nCurrent: Local (handle is relative to the GameObject selection)",
 			'P');
 
-		static readonly pb_TooltipContent _tooltip_plane = new pb_TooltipContent(
+		static readonly TooltipContent _tooltip_plane = new TooltipContent(
 			"Set Handle Alignment",
 			"Toggles the coordinate space that the transform gizmo is rendered in.\n\nCurrent: Plane (handle is relative to the element selection)",
 			'P');
@@ -50,29 +50,29 @@ namespace ProBuilder.Actions
 		{
 			icons = new Texture2D[]
 			{
-				pb_IconUtility.GetIcon("Toolbar/HandleAlign_World", IconSkin.Pro),
-				pb_IconUtility.GetIcon("Toolbar/HandleAlign_Local", IconSkin.Pro),
-				pb_IconUtility.GetIcon("Toolbar/HandleAlign_Plane", IconSkin.Pro),
+				IconUtility.GetIcon("Toolbar/HandleAlign_World", IconSkin.Pro),
+				IconUtility.GetIcon("Toolbar/HandleAlign_Local", IconSkin.Pro),
+				IconUtility.GetIcon("Toolbar/HandleAlign_Plane", IconSkin.Pro),
 			};
 
 			this.count = icons.Length;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			int current = handleAlignment + 1;
 
 			if(current >= count)
 				current = 0;
 
-			pb_Editor.instance.SetHandleAlignment( (HandleAlignment)current );
-			pb_Editor.instance.LoadPrefs();
-			return new pb_ActionResult(Status.Success, "Set Handle Alignment\n" + ((HandleAlignment)current).ToString());
+			ProBuilderEditor.instance.SetHandleAlignment( (HandleAlignment)current );
+			ProBuilderEditor.instance.LoadPrefs();
+			return new ActionResult(ActionResult.Status.Success, "Set Handle Alignment\n" + ((HandleAlignment)current).ToString());
 		}
 
 		public override bool IsEnabled()
 		{
-			return pb_Editor.instance != null;
+			return ProBuilderEditor.instance != null;
 		}
 	}
 }

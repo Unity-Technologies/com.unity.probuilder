@@ -1,21 +1,35 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
+using EditorGUILayout = UnityEditor.EditorGUILayout;
+using EditorStyles = UnityEditor.EditorStyles;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class SelectVertexColor : pb_MenuAction
+	sealed class SelectVertexColor : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_SelectByVertexColor", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Selection; }
+		}
+
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Selection_SelectByVertexColor", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return _tooltip; }
+		}
+
 		GUIContent gc_restrictToSelection = new GUIContent("Current Selection", "Optionally restrict the matches to only those faces on currently selected objects.");
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Select by Colors",
 			"Selects all faces matching the selected vertex colors."
@@ -23,21 +37,19 @@ namespace ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null &&
-					pb_Editor.instance.editLevel != EditLevel.Top &&
-					selection != null &&
-					selection.Length > 0 &&
-					selection.Any(x => x.SelectedTriangleCount > 0);
+			return ProBuilderEditor.instance != null &&
+				ProBuilderEditor.instance.editLevel != EditLevel.Top &&
+				MeshSelection.Top().Any(x => x.selectedVertexCount > 0);
 		}
 
 		public override bool IsHidden()
 		{
-			return 	editLevel != EditLevel.Geometry;
+			return editLevel != EditLevel.Geometry;
 		}
 
 		public override MenuActionState AltState()
 		{
-			if(	IsEnabled() && pb_Editor.instance.editLevel == EditLevel.Geometry )
+			if (IsEnabled() && ProBuilderEditor.instance.editLevel == EditLevel.Geometry)
 				return MenuActionState.VisibleAndEnabled;
 
 			return MenuActionState.Visible;
@@ -47,62 +59,62 @@ namespace ProBuilder.Actions
 		{
 			GUILayout.Label("Select by Vertex Color Options", EditorStyles.boldLabel);
 
-			bool restrictToSelection = pb_PreferencesInternal.GetBool("pb_restrictSelectColorToCurrentSelection");
+			bool restrictToSelection = PreferencesInternal.GetBool("pb_restrictSelectColorToCurrentSelection");
 
 			EditorGUI.BeginChangeCheck();
 
 			restrictToSelection = EditorGUILayout.Toggle(gc_restrictToSelection, restrictToSelection);
 
-			if( EditorGUI.EndChangeCheck() )
-				pb_PreferencesInternal.SetBool("pb_restrictSelectColorToCurrentSelection", restrictToSelection);
+			if (EditorGUI.EndChangeCheck())
+				PreferencesInternal.SetBool("pb_restrictSelectColorToCurrentSelection", restrictToSelection);
 
 			GUILayout.FlexibleSpace();
 
-			if(GUILayout.Button("Select Vertex Color"))
+			if (GUILayout.Button("Select Vertex Color"))
 			{
 				DoAction();
 				SceneView.RepaintAll();
 			}
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
-			pb_Undo.RecordSelection(selection, "Select Faces with Vertex Colors");
+			UndoUtility.RecordSelection(MeshSelection.Top(), "Select Faces with Vertex Colors");
 
 			HashSet<Color32> colors = new HashSet<Color32>();
 
-			foreach(pb_Object pb in selection)
+			foreach (ProBuilderMesh pb in MeshSelection.Top())
 			{
-				Color[] mesh_colors = pb.colors;
+				Color[] mesh_colors = pb.colorsInternal;
 
-				if(mesh_colors == null || mesh_colors.Length != pb.vertexCount)
+				if (mesh_colors == null || mesh_colors.Length != pb.vertexCount)
 					continue;
 
-				foreach(int i in pb.SelectedTriangles)
+				foreach (int i in pb.selectedIndicesInternal)
 					colors.Add(mesh_colors[i]);
 			}
 
 			List<GameObject> newSelection = new List<GameObject>();
-			bool selectionOnly = pb_PreferencesInternal.GetBool("pb_restrictSelectColorToCurrentSelection");
-			pb_Object[] pool = selectionOnly ? selection : Object.FindObjectsOfType<pb_Object>();
+			bool selectionOnly = PreferencesInternal.GetBool("pb_restrictSelectColorToCurrentSelection");
+			ProBuilderMesh[] pool = selectionOnly ? MeshSelection.Top() : Object.FindObjectsOfType<ProBuilderMesh>();
 
-			foreach(pb_Object pb in pool)
+			foreach (ProBuilderMesh pb in pool)
 			{
-				Color[] mesh_colors = pb.colors;
+				Color[] mesh_colors = pb.colorsInternal;
 
-				if(mesh_colors == null || mesh_colors.Length != pb.vertexCount)
+				if (mesh_colors == null || mesh_colors.Length != pb.vertexCount)
 					continue;
 
-				List<pb_Face> matches = new List<pb_Face>();
-				pb_Face[] faces = pb.faces;
+				List<Face> matches = new List<Face>();
+				Face[] faces = pb.facesInternal;
 
-				for(int i = 0; i < faces.Length; i++)
+				for (int i = 0; i < faces.Length; i++)
 				{
 					int[] tris = faces[i].distinctIndices;
 
-					for(int n = 0; n < tris.Length; n++)
+					for (int n = 0; n < tris.Length; n++)
 					{
-						if( colors.Contains((Color32)mesh_colors[tris[n]]) )
+						if (colors.Contains((Color32)mesh_colors[tris[n]]))
 						{
 							matches.Add(faces[i]);
 							break;
@@ -110,7 +122,7 @@ namespace ProBuilder.Actions
 					}
 				}
 
-				if(matches.Count > 0)
+				if (matches.Count > 0)
 				{
 					newSelection.Add(pb.gameObject);
 					pb.SetSelectedFaces(matches);
@@ -119,10 +131,9 @@ namespace ProBuilder.Actions
 
 			Selection.objects = newSelection.ToArray();
 
-			pb_Editor.Refresh();
+			ProBuilderEditor.Refresh();
 
-			return new pb_ActionResult(Status.Success, "Select Faces with Vertex Colors");
+			return new ActionResult(ActionResult.Status.Success, "Select Faces with Vertex Colors");
 		}
 	}
 }
-

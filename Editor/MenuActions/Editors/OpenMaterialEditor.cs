@@ -1,19 +1,19 @@
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
+using MaterialEditor = UnityEditor.ProBuilder.MaterialEditor;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
-	class OpenMaterialEditor : pb_MenuAction
+	sealed class OpenMaterialEditor : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Tool; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Panel_Materials", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return true; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
+		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_Materials", IconSkin.Pro); } }
+		public override TooltipContent tooltip { get { return _tooltip; } }
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Material Editor",
 			"Opens the Material Editor window.\n\nThe Material Editor window applies materials to selected faces or objects."
@@ -21,13 +21,13 @@ namespace ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null;
+			return 	ProBuilderEditor.instance != null;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
-			pb_MaterialEditor.MenuOpenMaterialEditor();
-			return new pb_ActionResult(Status.Success, "Open Materials Window");
+			MaterialEditor.MenuOpenMaterialEditor();
+			return new ActionResult(ActionResult.Status.Success, "Open Materials Window");
 		}
 	}
 }
