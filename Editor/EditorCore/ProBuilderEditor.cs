@@ -93,6 +93,8 @@ namespace UnityEditor.ProBuilder
 		Vector3[] m_VertexOffset;
 		Quaternion m_HandleRotationPrevious = Quaternion.identity;
 		Quaternion m_HandleRotation = Quaternion.identity;
+		Quaternion m_RotationInitial;
+		Quaternion m_RotationInitialInverse;
 
 		GUIContent m_SceneInfo = new GUIContent();
 
@@ -1460,12 +1462,8 @@ namespace UnityEditor.ProBuilder
 			else
 				m_HandleRotation = Handles.RotationHandle(m_HandleRotation, m_ElementHandlePosition);
 
-
 			if (m_HandleRotation != m_HandleRotationPrevious)
 			{
-				// handle rotation, handle rotation inverse
-				Quaternion hr = Quaternion.identity, hri = Quaternion.identity;
-
 				// profiler.BeginSample("Rotate");
 				if (!m_IsMovingElements)
 				{
@@ -1475,8 +1473,8 @@ namespace UnityEditor.ProBuilder
 					m_RotateOrigin = m_HandleRotation.eulerAngles;
 					m_ScaleOrigin = m_HandleScale;
 
-					hr = m_HandleRotationPrevious;
-					hri = Quaternion.Inverse(m_HandleRotationPrevious);
+					m_RotationInitial = m_HandleRotationPrevious;
+					m_RotationInitialInverse = Quaternion.Inverse(m_HandleRotationPrevious);
 
 					OnBeginVertexMovement();
 
@@ -1504,7 +1502,7 @@ namespace UnityEditor.ProBuilder
 				}
 
 				// profiler.BeginSample("Calc Matrix");
-				Quaternion transformedRotation = hri * m_HandleRotation;
+				Quaternion transformedRotation = m_RotationInitialInverse * m_HandleRotation;
 
 				// profiler.BeginSample("matrix mult");
 				Vector3 ver; // resulting vertex from modification
@@ -1513,8 +1511,8 @@ namespace UnityEditor.ProBuilder
 					Vector3[] v = selection[i].positionsInternal;
 					IntArray[] sharedIndices = selection[i].sharedIndicesInternal;
 
-					Quaternion lr = hr; // selection[0].transform.localRotation;
-					Quaternion ilr = hri; // Quaternion.Inverse(lr);
+					Quaternion lr = m_RotationInitial; // selection[0].transform.localRotation;
+					Quaternion ilr = m_RotationInitialInverse; // Quaternion.Inverse(lr);
 
 					for (int n = 0; n < selection[i].selectedIndicesInternal.Length; n++)
 					{
