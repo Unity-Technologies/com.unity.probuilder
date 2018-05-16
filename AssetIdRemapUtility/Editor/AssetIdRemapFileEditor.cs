@@ -238,9 +238,6 @@ namespace ProBuilder.AssetUtility
 				didChange = true;
 			}
 
-			if(didChange)
-				GUI.FocusControl(null);
-
 			return didChange ? value = value.Replace("\\", "/").Replace(Application.dataPath, "Assets") : value;
 		}
 
@@ -343,11 +340,22 @@ namespace ProBuilder.AssetUtility
 		/// Collect asset identifier information from all files in a directory.
 		/// </summary>
 		/// <param name="directory"></param>
-		static List<AssetId> GetAssetIdentifiersInDirectory(string directory, string[] directoryIgnoreFilter = null)
+		/// <param name="directoryIgnoreFilter"></param>
+		static List<AssetId> GetAssetIdentifiersInDirectory(string directory, string[] directoryIgnoreFilter)
 		{
 			List<AssetId> ids = new List<AssetId>();
-
 			string unixPath = directory.Replace("\\", "/");
+			string packageAbsolutePath = null;
+			string packageRelativePath = null;
+
+			if(directory.StartsWith("Packages/"))
+			{
+				// +1 because we want the trailing "/" to be with the packageRelativePath
+				var en = unixPath.IndexOf("/", "Packages/".Length, StringComparison.InvariantCulture) + 1;
+				packageRelativePath = unixPath.Substring(0, en);
+				var targetPathRelative = unixPath.Substring(en, unixPath.Length - en);
+				packageAbsolutePath = Path.GetFullPath(unixPath).Replace("\\", "/").Replace(targetPathRelative, "");
+			}
 
 			if (directoryIgnoreFilter != null && directoryIgnoreFilter.Any(x => unixPath.Contains(x)))
 				return ids;
@@ -358,6 +366,10 @@ namespace ProBuilder.AssetUtility
 					continue;
 
 				string localPath = file.Replace("\\", "/").Replace(Application.dataPath, "Assets");
+
+				if (!string.IsNullOrEmpty(packageAbsolutePath))
+					localPath = localPath.Replace(packageAbsolutePath, packageRelativePath);
+
 				ids.AddRange(GetAssetIdentifiers(localPath));
 			}
 
@@ -366,7 +378,11 @@ namespace ProBuilder.AssetUtility
 				if (Path.GetDirectoryName(dir).StartsWith("."))
 					continue;
 
-				ids.AddRange(GetAssetIdentifiersInDirectory(dir, directoryIgnoreFilter));
+				string path = !string.IsNullOrEmpty(packageAbsolutePath)
+					? dir.Replace("\\", "/").Replace(packageAbsolutePath, packageRelativePath)
+					: dir;
+
+				ids.AddRange(GetAssetIdentifiersInDirectory(path, directoryIgnoreFilter));
 			}
 
 			return ids;
