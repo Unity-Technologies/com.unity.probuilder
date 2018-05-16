@@ -385,72 +385,51 @@ namespace ProBuilder.AssetUtility
 			if (!assetType.Equals(other.assetType))
 				return false;
 
-			if (IsMonoScript())
-			{
-				// would be better to compare assemblies, but that's not possible when going from src to dll
-				// however this at least catches the case where a type exists in both a runtime and Editor dll
-				if (m_IsEditorScript == other.m_IsEditorScript)
-				{
-					// ideally we'd do a scan and find the closest match based on local path, but for now it's a
-					// relatively controlled environment and we can deal with duplicate names on an as-needed basis
-
-					// left namespace, left type, etc
-					string ln, rn, lt, rt;
-
-					if (GetNamespaceAndType(m_MonoScriptClass, out ln, out lt) &&
-					    GetNamespaceAndType(other.m_MonoScriptClass, out rn, out rt))
-					{
-						if (!string.IsNullOrEmpty(ln))
-						{
-							// remapped left namespace
-							string lrn;
-
-							// if left namespace existed check for a remap, otherwise compare and return
-							if (namespaceRemap != null && namespaceRemap.TryGetValue(ln, out lrn))
-							{
-								if (lrn.Equals(rn) && lt.Equals(rt))
-									return true;
-							}
-							else
-							{
-								return ln.Equals(rn) && lt.Equals(rt);
-							}
-						}
-						else
-						{
-							// left didn't have a namespace to begin with, so check against name only
-							return lt.Equals(rt);
-						}
-					}
-				}
-			}
-			else
-			{
+//			if (IsMonoScript())
+//			{
+//				// would be better to compare assemblies, but that's not possible when going from src to dll
+//				// however this at least catches the case where a type exists in both a runtime and Editor dll
+//				if (m_IsEditorScript == other.m_IsEditorScript)
+//				{
+//					// ideally we'd do a scan and find the closest match based on local path, but for now it's a
+//					// relatively controlled environment and we can deal with duplicate names on an as-needed basis
+//
+//					// left namespace, left type, etc
+//					string ln, rn, lt, rt;
+//
+//					if (GetNamespaceAndType(m_MonoScriptClass, out ln, out lt) &&
+//					    GetNamespaceAndType(other.m_MonoScriptClass, out rn, out rt))
+//					{
+//						if (!string.IsNullOrEmpty(ln))
+//						{
+//							// remapped left namespace
+//							string lrn;
+//
+//							// if left namespace existed check for a remap, otherwise compare and return
+//							if (namespaceRemap != null && namespaceRemap.TryGetValue(ln, out lrn))
+//							{
+//								if (lrn.Equals(rn) && lt.Equals(rt))
+//									return true;
+//							}
+//							else
+//							{
+//								return ln.Equals(rn) && lt.Equals(rt);
+//							}
+//						}
+//						else
+//						{
+//							// left didn't have a namespace to begin with, so check against name only
+//							return lt.Equals(rt);
+//						}
+//					}
+//				}
+//			}
+//			else
+//			{
 				return localPath.Equals(other.localPath);
-			}
+//			}
 
-			return false;
-		}
-
-		public bool AssetEquals(UObject obj)
-		{
-			string path = AssetDatabase.GetAssetPath(obj);
-
-			if (string.IsNullOrEmpty(path))
-				return false;
-
-			string assetGuid = AssetDatabase.AssetPathToGUID(path);
-
-			return m_Guid.Equals(assetGuid) &&
-			       GetUObjectTypeString(obj).Equals(m_Type);
-		}
-
-		public bool AssetEquals(string assetPath)
-		{
-			string otherGuid = AssetDatabase.AssetPathToGUID(assetPath);
-
-			return m_Guid.Equals(otherGuid) &&
-				GetUObjectTypeString(AssetDatabase.LoadAssetAtPath<UObject>(assetPath)).Equals(m_Type);
+//			return false;
 		}
 
 		/// <summary>
