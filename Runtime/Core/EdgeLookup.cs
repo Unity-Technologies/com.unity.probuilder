@@ -55,7 +55,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns>True if the common edges are equal, false if not.</returns>
 		public bool Equals(EdgeLookup other)
 		{
-			return !ReferenceEquals(other, null) && other.common.Equals(common);
+			return other.common.Equals(common);
 		}
 
 		/// <summary>
@@ -65,7 +65,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns>True if the common edges are equal, false if not.</returns>
 		public override bool Equals(object obj)
 		{
-			return Equals((EdgeLookup)obj);
+			return !ReferenceEquals(obj, null) && Equals((EdgeLookup)obj);
 		}
 
 		public override int GetHashCode()
