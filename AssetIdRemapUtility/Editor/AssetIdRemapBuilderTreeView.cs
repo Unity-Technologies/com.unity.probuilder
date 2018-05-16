@@ -7,7 +7,7 @@ using UnityEditor.IMGUI.Controls;
 
 namespace ProBuilder.AssetUtility
 {
-	class AssetIdRemapTreeView : TreeView
+	class AssetIdRemapBuilderTreeView : TreeView
 	{
 		AssetIdRemapObject m_RemapObject = null;
 		const float k_RowHeight = 20f;
@@ -21,7 +21,7 @@ namespace ProBuilder.AssetUtility
 			set { m_RemapObject = value; }
 		}
 
-		public AssetIdRemapTreeView(TreeViewState state, MultiColumnHeader header) : base(state, header)
+		public AssetIdRemapBuilderTreeView(TreeViewState state, MultiColumnHeader header) : base(state, header)
 		{
 			rowHeight = 20f;
 			showAlternatingRowBackgrounds = true;
@@ -109,18 +109,34 @@ namespace ProBuilder.AssetUtility
 			if (tup == null || tup.depth > 0)
 				return false;
 
-			Regex pattern = new Regex(search);
-
 			var o = m_RemapObject[tup.index];
 
-			return pattern.IsMatch(o.source.localPath) ||
-			       pattern.IsMatch(o.source.guid) ||
-			       pattern.IsMatch(o.source.fileId) ||
-			       pattern.IsMatch(o.source.type) ||
-			       pattern.IsMatch(o.destination.localPath) ||
-			       pattern.IsMatch(o.destination.guid) ||
-			       pattern.IsMatch(o.destination.fileId) ||
-			       pattern.IsMatch(o.destination.type);
+			try
+			{
+				Regex pattern = new Regex(search);
+
+				return pattern.IsMatch(o.source.localPath) ||
+					pattern.IsMatch(o.source.guid) ||
+					pattern.IsMatch(o.source.fileId) ||
+					pattern.IsMatch(o.source.type) ||
+					pattern.IsMatch(o.destination.localPath) ||
+					pattern.IsMatch(o.destination.guid) ||
+					pattern.IsMatch(o.destination.fileId) ||
+					pattern.IsMatch(o.destination.type);
+			}
+			catch
+			{
+				return o.source.localPath.Contains(search) ||
+					o.source.guid.Contains(search) ||
+					o.source.fileId.Contains(search) ||
+					o.source.type.Contains(search) ||
+					o.destination.localPath.Contains(search) ||
+					o.destination.guid.Contains(search) ||
+					o.destination.fileId.Contains(search) ||
+					o.destination.type.Contains(search);
+			}
+
+
 		}
 
 		protected override void ContextClicked()

@@ -14,7 +14,7 @@ namespace ProBuilder.AssetUtility
 	/// <summary>
 	/// Utility class for creating GUID remap files.
 	/// </summary>
-	class AssetIdRemapFileEditor : EditorWindow
+	class AssetIdRemapBuilderEditor : EditorWindow
 	{
 		const string k_RemapFilePath = "AssetIdRemap.json";
 		const string k_NamespaceRemapFilePath = "NamespaceRemap.json";
@@ -55,13 +55,13 @@ namespace ProBuilder.AssetUtility
 		[SerializeField] MultiColumnHeaderState m_MultiColumnHeaderState;
 
 		MultiColumnHeader m_MultiColumnHeader;
-		AssetIdRemapTreeView m_TreeView;
+		AssetIdRemapBuilderTreeView m_TreeView;
 		SearchField m_SearchField;
 
 		[MenuItem("Tools/GUID Remap Editor")]
 		static void MenuOpenGuidEditor()
 		{
-			GetWindow<AssetIdRemapFileEditor>(true, "GUID Remap Editor", true);
+			GetWindow<AssetIdRemapBuilderEditor>(true, "GUID Remap Editor", true);
 		}
 
 		static class Styles
@@ -104,7 +104,7 @@ namespace ProBuilder.AssetUtility
 
 			m_MultiColumnHeader = new MultiColumnHeader(m_MultiColumnHeaderState);
 			m_MultiColumnHeader.ResizeToFit();
-			m_TreeView = new AssetIdRemapTreeView(m_TreeViewState, m_MultiColumnHeader);
+			m_TreeView = new AssetIdRemapBuilderTreeView(m_TreeViewState, m_MultiColumnHeader);
 			m_TreeView.remapObject = GetGuidRemapObject();
 			m_TreeView.Reload();
 
