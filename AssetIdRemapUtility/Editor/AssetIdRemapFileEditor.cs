@@ -354,7 +354,9 @@ namespace ProBuilder.AssetUtility
 				var en = unixPath.IndexOf("/", "Packages/".Length, StringComparison.InvariantCulture) + 1;
 				packageRelativePath = unixPath.Substring(0, en);
 				var targetPathRelative = unixPath.Substring(en, unixPath.Length - en);
-				packageAbsolutePath = Path.GetFullPath(unixPath).Replace("\\", "/").Replace(targetPathRelative, "");
+				packageAbsolutePath = Path.GetFullPath(unixPath).Replace("\\", "/");
+				if(!string.IsNullOrEmpty(targetPathRelative))
+					packageAbsolutePath = packageAbsolutePath.Replace(targetPathRelative, "");
 			}
 
 			if (directoryIgnoreFilter != null && directoryIgnoreFilter.Any(x => unixPath.Contains(x)))
