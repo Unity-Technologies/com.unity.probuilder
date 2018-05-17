@@ -12,7 +12,7 @@ namespace UnityEngine.ProBuilder
 	/// </summary>
 	/// <seealso cref="UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes"/>
 	/// <seealso cref="UnityEngine.ProBuilder.Edge"/>
-	public sealed class EdgeLookup : IEquatable<EdgeLookup>
+	public struct EdgeLookup : IEquatable<EdgeLookup>
 	{
 		/// <value>
 		/// Local edges point to an index in the vertices array.
@@ -55,7 +55,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns>True if the common edges are equal, false if not.</returns>
 		public bool Equals(EdgeLookup other)
 		{
-			return common.Equals(ReferenceEquals(other, null) ? Edge.Empty : other.common);
+			return other.common.Equals(common);
 		}
 
 		/// <summary>
@@ -65,8 +65,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns>True if the common edges are equal, false if not.</returns>
 		public override bool Equals(object obj)
 		{
-			EdgeLookup be = obj as EdgeLookup;
-			return be != null && common.Equals(be.common);
+			return !ReferenceEquals(obj, null) && Equals((EdgeLookup)obj);
 		}
 
 		public override int GetHashCode()
@@ -80,7 +79,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return string.Format("({0}, {1})", common.x, common.y);
+			return string.Format("Common: ({0}, {1}), local: ({2}, {3})", common.x, common.y, local.x, local.y);
 		}
 
 		/// <summary>

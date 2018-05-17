@@ -58,7 +58,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns>True if the local edges are equal, false if not.</returns>
 		public bool Equals(WingedEdge other)
 		{
-			return other != null && edge.local.Equals(other.edge.local);
+			return !ReferenceEquals(other, null) && edge.local.Equals(other.edge.local);
 		}
 
 		/// <summary>
@@ -76,7 +76,7 @@ namespace UnityEngine.ProBuilder
 			if(obj is Edge && this.edge.local.Equals((Edge) obj))
 				return true;
 
-			return true;
+			return false;
 		}
 
 		/// <summary>
