@@ -146,7 +146,7 @@ namespace ProBuilder.AssetUtility
 				map.Add(new AssetIdentifierTuple(new AssetId(s.source), new AssetId(d)));
 
 			map.RemoveAll(src.Contains);
-			map.RemoveAll(dst.Contains);
+			map.RemoveAll(x => dst.Contains(x) && !AssetId.IsValid(x.source));
 		}
 
 		public void Combine(AssetIdentifierTuple left, AssetIdentifierTuple right)

@@ -189,15 +189,6 @@ namespace ProBuilder.AssetUtility
 
 			if (selected.Count > 0)
 			{
-				if (evt.type == EventType.KeyDown)
-				{
-					if ((evt.modifiers & EventModifiers.Control) > 0 && evt.keyCode == KeyCode.L)
-					{
-						evt.Use();
-						SetFocus();
-					}
-				}
-
 				if (evt.type == EventType.ValidateCommand)
 				{
 					if (evt.commandName.Equals("SoftDelete"))
