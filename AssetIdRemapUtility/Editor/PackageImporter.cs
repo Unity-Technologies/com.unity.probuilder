@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace ProBuilder.AssetUtility
+namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 {
 	class PackageImporter : AssetPostprocessor
 	{
@@ -15,14 +16,12 @@ namespace ProBuilder.AssetUtility
 			"4df21bd079886d84699ca7be1316c7a7"  // ProBuilderEditor
 		};
 
-#pragma warning disable 414
 		static readonly string[] k_PackageManagerInstallGuids = new string[]
 		{
 			"4f0627da958b4bb78c260446066f065f", // Core
 			"9b27d8419276465b80eb88c8799432a1", // Mesh Ops
 			"e98d45d69e2c4936a7382af00fd45e58", // Editor
 		};
-#pragma warning restore 414
 
 		const string k_PackageManagerEditorCore = "e98d45d69e2c4936a7382af00fd45e58";
 		const string k_AssetStoreEditorCore = "4df21bd079886d84699ca7be1316c7a7";
@@ -78,7 +77,8 @@ namespace ProBuilder.AssetUtility
 		internal static bool IsPreUpmProBuilderInProject()
 		{
 			// easiest check, are any of the dlls from asset store present
-			if (AreAnyAssetsAreLoaded(k_AssetStoreInstallGuids))
+			if (AreAnyAssetsAreLoaded(k_AssetStoreInstallGuids)
+				|| AreAnyAssetsAreLoaded(k_PackageManagerInstallGuids))
 				return true;
 
 			// next check if the source version is in the project
@@ -139,6 +139,11 @@ namespace ProBuilder.AssetUtility
 				return (bool) isVersionGreaterThanOrEqualTo.Invoke(null, new object[] {2, 10, 0});
 
 			return false;
+		}
+
+		internal static bool IsProBuilder4OrGreaterLoaded()
+		{
+			return AppDomain.CurrentDomain.GetAssemblies().Any(x => x.ToString().Contains("Unity.ProBuilder"));
 		}
 	}
 }

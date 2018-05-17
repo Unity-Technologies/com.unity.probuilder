@@ -1,6 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-#if PROBUILDER_DLL
-[assembly: InternalsVisibleTo("ProBuilderEditor")]
-#else
+
 [assembly: InternalsVisibleTo("Unity.ProBuilder.Editor")]
-#endif
+[assembly: InternalsVisibleTo("Unity.ProBuilder.Debug.Editor")]

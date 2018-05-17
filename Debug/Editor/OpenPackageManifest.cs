@@ -1,6 +1,6 @@
 ﻿using UnityEditor;
 
-namespace ProBuilder.Debug.Editor
+namespace UnityEngine.ProBuilder.Debug.Editor
 {
 	static class OpenPackageManifest
 	{

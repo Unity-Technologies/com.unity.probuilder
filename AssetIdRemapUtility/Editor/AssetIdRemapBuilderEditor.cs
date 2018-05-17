@@ -9,7 +9,7 @@ using UnityEditor;
 using UObject = UnityEngine.Object;
 using UnityEditor.IMGUI.Controls;
 
-namespace ProBuilder.AssetUtility
+namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 {
 	/// <summary>
 	/// Utility class for creating GUID remap files.
@@ -157,7 +157,7 @@ namespace ProBuilder.AssetUtility
 
 			if (GUILayout.Button("Save", EditorStyles.toolbarButton))
 				Save();
-			
+
 			GUI.enabled = true;
 
 			GUILayout.EndHorizontal();

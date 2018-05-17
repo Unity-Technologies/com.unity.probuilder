@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEditor;
 using UObject = UnityEngine.Object;
 
-namespace ProBuilder.AssetUtility
+namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 {
 	[Serializable]
 	class AssetIdentifierTuple

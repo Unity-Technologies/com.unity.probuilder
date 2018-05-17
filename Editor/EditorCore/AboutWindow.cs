@@ -2,14 +2,11 @@ using UnityEngine;
 using UnityEditor;
 using System.Text;
 using System.Text.RegularExpressions;
-using ProBuilder.AssetUtility;
+using UnityEngine.ProBuilder.AssetIdRemapUtility;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-	/// <summary>
-	/// Used to pop up the window on import.
-	/// </summary>
 	[InitializeOnLoad]
 	static class AboutWindowSetup
 	{

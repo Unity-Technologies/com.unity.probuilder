@@ -9,7 +9,7 @@ using UnityEditor.VersionControl;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 
-namespace ProBuilder.AssetUtility
+namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 {
 	class AssetTreeItem : TreeViewItem
 	{

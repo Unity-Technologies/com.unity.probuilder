@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace ProBuilder.Debug.Editor
+namespace UnityEngine.ProBuilder.Debug.Editor
 {
 	static class SublimeEditor
 	{
