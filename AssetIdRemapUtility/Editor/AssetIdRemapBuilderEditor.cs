@@ -53,6 +53,7 @@ namespace ProBuilder.AssetUtility
 
 		[SerializeField] TreeViewState m_TreeViewState;
 		[SerializeField] MultiColumnHeaderState m_MultiColumnHeaderState;
+		[SerializeField] bool m_DetailsExpanded;
 
 		MultiColumnHeader m_MultiColumnHeader;
 		AssetIdRemapBuilderTreeView m_TreeView;
@@ -61,7 +62,8 @@ namespace ProBuilder.AssetUtility
 		[MenuItem("Tools/GUID Remap Editor")]
 		static void MenuOpenGuidEditor()
 		{
-			GetWindow<AssetIdRemapBuilderEditor>(true, "GUID Remap Editor", true);
+			var win = GetWindow<AssetIdRemapBuilderEditor>(true, "GUID Remap Editor", true);
+			win.m_DetailsExpanded = true;
 		}
 
 		static class Styles
@@ -111,6 +113,15 @@ namespace ProBuilder.AssetUtility
 			m_SearchField = new SearchField();
 		}
 
+		void OnDestroy()
+		{
+			if (m_TreeView.isDirty)
+			{
+				if (EditorUtility.DisplayDialog("Unsaved Changes", "There are unsaved changes to the remap file. Save these changes?", "Save", "Discard"))
+					Save();
+			}
+		}
+
 		string GetRemapFilePath()
 		{
 			if (m_RemapTextAsset != null)
@@ -118,9 +129,20 @@ namespace ProBuilder.AssetUtility
 			return remapFilePath;
 		}
 
+		void Save()
+		{
+			File.WriteAllText(GetRemapFilePath(), JsonUtility.ToJson(m_TreeView.remapObject, true));
+			AssetDatabase.ImportAsset(GetRemapFilePath());
+			EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<TextAsset>(GetRemapFilePath()));
+			m_TreeView.isDirty = false;
+		}
+
 		void OnGUI()
 		{
 			GUILayout.BeginHorizontal(EditorStyles.toolbar);
+
+			if (GUILayout.Button(m_DetailsExpanded ? "Hide" : "Show", EditorStyles.toolbarButton))
+				m_DetailsExpanded = !m_DetailsExpanded;
 
 			GUILayout.FlexibleSpace();
 
@@ -134,51 +156,50 @@ namespace ProBuilder.AssetUtility
 				m_TreeView.isDirty = false;
 			}
 
-			if(GUILayout.Button("Save", EditorStyles.toolbarButton))
-			{
-				File.WriteAllText(GetRemapFilePath(), JsonUtility.ToJson(m_TreeView.remapObject, true));
-				AssetDatabase.ImportAsset(GetRemapFilePath());
-				EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<TextAsset>(GetRemapFilePath()));
-				m_TreeView.isDirty = false;
-			}
+			if (GUILayout.Button("Save", EditorStyles.toolbarButton))
+				Save();
+			
 			GUI.enabled = true;
 
 			GUILayout.EndHorizontal();
 
-			EditorGUI.BeginChangeCheck();
-
-			m_RemapTextAsset = (TextAsset) EditorGUILayout.ObjectField("Remap", m_RemapTextAsset, typeof(TextAsset), false);
-			m_NamespaceRemapTextAsset = (TextAsset) EditorGUILayout.ObjectField("Namespace", m_NamespaceRemapTextAsset, typeof(TextAsset), false);
-			m_DoClean = EditorGUILayout.Toggle(m_DoCleanGuiContent, m_DoClean);
-
-			if (EditorGUI.EndChangeCheck())
+			if (m_DetailsExpanded)
 			{
-				m_TreeView.remapObject = null;
-				m_TreeView.remapObject = GetGuidRemapObject();
-				m_TreeView.Reload();
-				Repaint();
+				EditorGUI.BeginChangeCheck();
+
+				m_RemapTextAsset = (TextAsset)EditorGUILayout.ObjectField("Remap", m_RemapTextAsset, typeof(TextAsset), false);
+				m_NamespaceRemapTextAsset = (TextAsset)EditorGUILayout.ObjectField("Namespace", m_NamespaceRemapTextAsset, typeof(TextAsset), false);
+				m_DoClean = EditorGUILayout.Toggle(m_DoCleanGuiContent, m_DoClean);
+
+				if (EditorGUI.EndChangeCheck())
+				{
+					m_TreeView.remapObject = null;
+					m_TreeView.remapObject = GetGuidRemapObject();
+					m_TreeView.Reload();
+					Repaint();
+				}
+
+				EditorGUILayout.BeginVertical(Styles.container);
+				GUILayout.Label("Package Directories", EditorStyles.boldLabel);
+				EditorGUILayout.BeginVertical(Styles.container);
+				m_SourceDirectory = DoDirectoryField("Source", m_SourceDirectory);
+
+				EditorGUI.BeginChangeCheck();
+				if (GUILayout.Button("Collect Source (Old) Asset Identifiers"))
+					GetRemapSource(m_SourceDirectory, m_DoClean);
+
+				EditorGUILayout.EndVertical();
+				EditorGUILayout.BeginVertical(Styles.container);
+				m_DestinationDirectory = DoDirectoryField("Destination", m_DestinationDirectory);
+
+				if (GUILayout.Button("Collect Destination (New) Asset Identifiers"))
+					GetRemapDestination(m_DestinationDirectory, m_DoClean);
+				if (EditorGUI.EndChangeCheck())
+					m_TreeView.Reload();
+
+				EditorGUILayout.EndVertical();
+				EditorGUILayout.EndVertical();
 			}
-
-			EditorGUILayout.BeginVertical(Styles.container);
-			GUILayout.Label("Package Directories", EditorStyles.boldLabel);
-			EditorGUILayout.BeginVertical(Styles.container);
-			m_SourceDirectory = DoDirectoryField("Source", m_SourceDirectory);
-
-			EditorGUI.BeginChangeCheck();
-			if (GUILayout.Button("Collect Source (Old) Asset Identifiers"))
-				GetRemapSource(m_SourceDirectory, m_DoClean);
-
-			EditorGUILayout.EndVertical();
-			EditorGUILayout.BeginVertical(Styles.container);
-			m_DestinationDirectory = DoDirectoryField("Destination", m_DestinationDirectory);
-
-			if (GUILayout.Button("Collect Destination (New) Asset Identifiers"))
-				GetRemapDestination(m_DestinationDirectory, m_DoClean);
-			if(EditorGUI.EndChangeCheck())
-				m_TreeView.Reload();
-
-			EditorGUILayout.EndVertical();
-			EditorGUILayout.EndVertical();
 
 			GUILayout.BeginHorizontal();
 			GUILayout.Label("Asset Id Mapping", EditorStyles.boldLabel);
@@ -203,6 +224,7 @@ namespace ProBuilder.AssetUtility
 
 				menu.ShowAsContext();
 			}
+
 			GUILayout.EndHorizontal();
 
 			Rect last = GUILayoutUtility.GetLastRect();

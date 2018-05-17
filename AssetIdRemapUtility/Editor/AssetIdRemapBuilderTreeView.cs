@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEditor;
@@ -21,7 +22,8 @@ namespace ProBuilder.AssetUtility
 			set { m_RemapObject = value; }
 		}
 
-		public AssetIdRemapBuilderTreeView(TreeViewState state, MultiColumnHeader header) : base(state, header)
+		public AssetIdRemapBuilderTreeView(TreeViewState state, MultiColumnHeader header)
+			: base(state, header)
 		{
 			rowHeight = 20f;
 			showAlternatingRowBackgrounds = true;
@@ -55,11 +57,11 @@ namespace ProBuilder.AssetUtility
 			rowHeight = hasSearch ? k_RowHeightSearching : k_RowHeight;
 		}
 
-		protected override void RowGUI (RowGUIArgs args)
+		protected override void RowGUI(RowGUIArgs args)
 		{
 			StringTupleTreeElement item = args.item as StringTupleTreeElement;
 
-			for (int i = 0; i < args.GetNumVisibleColumns (); ++i)
+			for (int i = 0; i < args.GetNumVisibleColumns(); ++i)
 			{
 				CellGUI(args.GetCellRect(i), item, i, ref args);
 			}
@@ -74,10 +76,10 @@ namespace ProBuilder.AssetUtility
 				AssetId id = visibleColumn == 0 ? m_RemapObject[item.index].source : m_RemapObject[item.index].destination;
 
 				m_CellContents.text = "<b>Name: </b>" + id.name +
-				        "\n<b>Path: </b>" + id.localPath +
-				        "\n<b>Guid: </b>" + id.guid +
-				        "\n<b>FileId: </b>" + id.fileId +
-				        "\n<b>Type: </b>" + id.type;
+					"\n<b>Path: </b>" + id.localPath +
+					"\n<b>Guid: </b>" + id.guid +
+					"\n<b>FileId: </b>" + id.fileId +
+					"\n<b>Type: </b>" + id.type;
 			}
 			else
 			{
@@ -143,6 +145,16 @@ namespace ProBuilder.AssetUtility
 		{
 			GenericMenu menu = new GenericMenu();
 
+			menu.AddItem(new GUIContent("Combine", ""), false, () =>
+			{
+				m_RemapObject.Merge(GetAssetIdSelection());
+				isDirty = true;
+				Reload();
+				SetSelection(new int[] {});
+			});
+
+			menu.AddSeparator("");
+
 			menu.AddItem(new GUIContent("Compare", ""), false, () =>
 			{
 				IList<int> selected = GetSelection();
@@ -155,7 +167,7 @@ namespace ProBuilder.AssetUtility
 					{
 						AssetId left = m_RemapObject[a.index].source;
 						AssetId right = m_RemapObject[b.index].destination;
-						Debug.Log( left.AssetEquals2(right).ToString() );
+						Debug.Log(left.AssetEquals2(right).ToString());
 						return;
 					}
 				}
@@ -163,32 +175,42 @@ namespace ProBuilder.AssetUtility
 				Debug.Log("Compare requires exactly two items be selected.");
 			});
 
-			menu.AddSeparator("");
+			menu.ShowAsContext();
+		}
 
-			menu.AddItem(new GUIContent("Combine", ""), false, () =>
+		IEnumerable<AssetIdentifierTuple> GetAssetIdSelection()
+		{
+			return GetSelection().Select(x => m_RemapObject[((StringTupleTreeElement)FindItem(x, rootItem)).index]);
+		}
+
+		protected override void CommandEventHandling()
+		{
+			var evt = Event.current;
+
+			var selected = GetSelection();
+
+			if (selected.Count > 0)
 			{
-				IList<int> selected = GetSelection();
-				if (selected.Count == 2)
+				if (evt.type == EventType.ValidateCommand)
 				{
-					StringTupleTreeElement a = FindItem(selected[0], rootItem) as StringTupleTreeElement;
-					StringTupleTreeElement b = FindItem(selected[1], rootItem) as StringTupleTreeElement;
-
-					if (a != null && b != null)
+					if (evt.commandName.Equals("SoftDelete"))
+						evt.Use();
+				}
+				else if (evt.type == EventType.ExecuteCommand)
+				{
+					if (evt.commandName.Equals("SoftDelete")
+						&& EditorUtility.DisplayDialog("Delete", "Delete Selected Entries?", "Delete", "Cancel"))
 					{
-						var left = m_RemapObject[a.index];
-						var right = m_RemapObject[b.index];
-						m_RemapObject.Combine(left, right);
-
+						m_RemapObject.Delete(GetAssetIdSelection());
+						evt.Use();
 						Reload();
 						isDirty = true;
-						return;
+						SetSelection(new int[] {});
 					}
 				}
+			}
 
-				Debug.Log("Combine requires exactly two items be selected.");
-			});
-
-			menu.ShowAsContext();
+			base.CommandEventHandling();
 		}
 	}
 

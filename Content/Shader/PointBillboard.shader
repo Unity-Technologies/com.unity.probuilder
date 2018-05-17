@@ -83,18 +83,11 @@
 				{
 					GS_INPUT output = (GS_INPUT)0;
 
-#if UNITY_VERSION > 550
 					output.pos = float4(UnityObjectToViewPos(v.vertex.xyz), 1);
-#else
-					output.pos = mul(UNITY_MATRIX_MV, v.vertex);
-#endif
 					output.pos.xyz *= lerp(.98, .95, ORTHO);
-
 					output.pos = mul(UNITY_MATRIX_P, output.pos);
-
 					// convert clip -> ndc -> screen, build billboards in geo shader, then screen -> ndc -> clip
 					output.pos = ClipToScreen(output.pos);
-
 					output.color = v.color;
 
 					return output;

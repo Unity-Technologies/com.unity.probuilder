@@ -54,7 +54,7 @@ namespace UnityEngine.ProBuilder
 					}
 					else
 					{
-						s_DefaultMaterial = (Material)Resources.Load("Materials/Default_Prototype", typeof(Material));
+						s_DefaultMaterial = (Material)Resources.Load("Materials/ProBuilderDefault", typeof(Material));
 
 						if (s_DefaultMaterial == null || !s_DefaultMaterial.shader.isSupported)
 							s_DefaultMaterial = UnityDefaultDiffuse;

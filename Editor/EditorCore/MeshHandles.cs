@@ -14,7 +14,7 @@ namespace UnityEditor.ProBuilder
 		const string k_EdgeShader = "Hidden/ProBuilder/FaceHighlight";
 
 		// used when gpu doesn't support geometry shaders (metal, for example)
-		const string k_VertexShader = "Hidden/ProBuilder/pb_VertexShader";
+		const string k_VertexShader = "Hidden/ProBuilder/VertexShader";
 
 		// geometry shader expands lines to billboards
 		const string k_LineBillboardShader = "Hidden/ProBuilder/LineBillboard";

@@ -115,6 +115,32 @@ namespace ProBuilder.AssetUtility
 			map = map.Where(x => AssetId.IsValid(x.source) || AssetId.IsValid(x.destination)).ToList();
 		}
 
+		public void Delete(IEnumerable<AssetIdentifierTuple> entries)
+		{
+			map.RemoveAll(entries.Contains);
+		}
+
+		public void Merge(IEnumerable<AssetIdentifierTuple> entries)
+		{
+			var arr = entries as AssetIdentifierTuple[] ?? entries.ToArray();
+			var src = arr.Where(x => AssetId.IsValid(x.source) && !AssetId.IsValid(x.destination));
+			var dst = arr.Where(x => AssetId.IsValid(x.destination));
+
+			if (dst.Count() != 1)
+			{
+				Debug.LogError("Merging AssetId entries requires only one valid destination entry be selected.");
+				return;
+			}
+
+			var d = dst.First().destination;
+
+			foreach(var s in src)
+				map.Add(new AssetIdentifierTuple(new AssetId(s.source), new AssetId(d)));
+
+			map.RemoveAll(src.Contains);
+			map.RemoveAll(dst.Contains);
+		}
+
 		public void Combine(AssetIdentifierTuple left, AssetIdentifierTuple right)
 		{
 			AssetIdentifierTuple res = new AssetIdentifierTuple();
