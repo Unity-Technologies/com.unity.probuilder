@@ -423,7 +423,7 @@ namespace ProBuilder.AssetUtility
 
 						if (string.IsNullOrEmpty(m_DeprecatedProBuilderDirectory))
 						{
-							Debug.LogWarning("Canceling ProBuilder Asset Store to Package Manager conversion. You may start this process again at any time by accessing the Tools>ProBuilder>Repair>Convert to Package Manager menu item.");
+							UnityEngine.Debug.LogWarning("Canceling ProBuilder Asset Store to Package Manager conversion. You may start this process again at any time by accessing the Tools>ProBuilder>Repair>Convert to Package Manager menu item.");
 							EditorApplication.delayCall += Close;
 							break;
 						}
@@ -447,7 +447,7 @@ namespace ProBuilder.AssetUtility
 				}
 				else if (res == k_DialogCancel)
 				{
-					Debug.LogWarning("Canceling ProBuilder Asset Store to Package Manager conversion. You may start this process again at any time by accessing the Tools>ProBuilder>Repair>Convert to Package Manager menu item.");
+					UnityEngine.Debug.LogWarning("Canceling ProBuilder Asset Store to Package Manager conversion. You may start this process again at any time by accessing the Tools>ProBuilder>Repair>Convert to Package Manager menu item.");
 					EditorApplication.delayCall += Close;
 				}
 			}

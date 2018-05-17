@@ -36,7 +36,6 @@ namespace ProBuilder.AssetUtility
 			"ProBuilder/API Examples",
 			"ProBuilder/Data",
 			"ProBuilder/Icons",
-			"ProBuilder/Material",
 			"ProBuilder/Upgrade",
 		};
 
@@ -284,7 +283,7 @@ namespace ProBuilder.AssetUtility
 			{
 				id.SetPathRelativeTo(localDirectory);
 
-				if (map.Any(x => x.source != null && x.source.AssetEquals(id)))
+				if (map.Any(x => x.source != null && x.source.Equals(id)))
 					continue;
 
 				// the only time where a destination can exist with a null source is when a single destination is in the

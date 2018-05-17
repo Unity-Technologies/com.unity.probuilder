@@ -165,7 +165,7 @@ namespace ProBuilder.AssetUtility
 					{
 						AssetId left = m_RemapObject[a.index].source;
 						AssetId right = m_RemapObject[b.index].destination;
-						Debug.Log(left.AssetEquals2(right).ToString());
+						UnityEngine.Debug.Log(left.AssetEquals2(right).ToString());
 						return;
 					}
 				}
