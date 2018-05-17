@@ -122,9 +122,17 @@ namespace ProBuilder.AssetUtility
 
 		public void Merge(IEnumerable<AssetIdentifierTuple> entries)
 		{
+			var types = entries.SelectMany(x => new [] { x.source.assetType, x.destination.assetType });
+
+			if (types.Where(x => !string.IsNullOrEmpty(x)).Distinct().Count() > 1)
+			{
+				Debug.LogError("Attempting to map entries of multiple types! This is not allowed.");
+				return;
+			}
+
 			var arr = entries as AssetIdentifierTuple[] ?? entries.ToArray();
-			var src = arr.Where(x => AssetId.IsValid(x.source) && !AssetId.IsValid(x.destination));
-			var dst = arr.Where(x => AssetId.IsValid(x.destination));
+			var src = arr.Where(x => AssetId.IsValid(x.source) && !AssetId.IsValid(x.destination)).ToArray();
+			var dst = arr.Where(x => AssetId.IsValid(x.destination)).ToArray();
 
 			if (dst.Count() != 1)
 			{

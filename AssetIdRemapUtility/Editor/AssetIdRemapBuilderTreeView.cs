@@ -79,7 +79,7 @@ namespace ProBuilder.AssetUtility
 					"\n<b>Path: </b>" + id.localPath +
 					"\n<b>Guid: </b>" + id.guid +
 					"\n<b>FileId: </b>" + id.fileId +
-					"\n<b>Type: </b>" + id.type;
+					"\n<b>Type: </b>" + id.type + (string.IsNullOrEmpty(id.assetType) ? "" : " (" + id.assetType + ")");
 			}
 			else
 			{
@@ -137,8 +137,6 @@ namespace ProBuilder.AssetUtility
 					o.destination.fileId.Contains(search) ||
 					o.destination.type.Contains(search);
 			}
-
-
 		}
 
 		protected override void ContextClicked()
@@ -191,10 +189,20 @@ namespace ProBuilder.AssetUtility
 
 			if (selected.Count > 0)
 			{
+				if (evt.type == EventType.KeyDown)
+				{
+					if ((evt.modifiers & EventModifiers.Control) > 0 && evt.keyCode == KeyCode.L)
+					{
+						evt.Use();
+						SetFocus();
+					}
+				}
+
 				if (evt.type == EventType.ValidateCommand)
 				{
 					if (evt.commandName.Equals("SoftDelete"))
 						evt.Use();
+
 				}
 				else if (evt.type == EventType.ExecuteCommand)
 				{
