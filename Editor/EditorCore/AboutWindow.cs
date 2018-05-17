@@ -46,13 +46,95 @@ namespace UnityEditor.ProBuilder
 		string m_ChangeLogRichText = "";
 		SemVer m_ChangeLogVersionInfo;
 
-		internal static GUIStyle bannerStyle,
-								header1Style,
-								versionInfoStyle,
-								linkStyle,
-								separatorStyle,
-								changelogStyle,
-								changelogTextStyle;
+		static class Styles
+		{
+			public static GUIStyle bannerStyle;
+			public static GUIStyle header1Style;
+			public static GUIStyle linkStyle;
+			public static GUIStyle separatorStyle;
+			public static GUIStyle changelogStyle;
+			public static GUIStyle changelogTextStyle;
+
+			static bool s_IsInitialized;
+
+			public static void Init()
+			{
+				if (s_IsInitialized)
+					return;
+
+				s_IsInitialized = true;
+
+				bannerStyle = new GUIStyle()
+				{
+					// RectOffset(left, right, top, bottom)
+					margin = new RectOffset(12, 12, 12, 12),
+					normal = new GUIStyleState() {
+						background = FileUtility.LoadInternalAsset<Texture2D>("Content/About/Images/Banner_Normal.png")
+					},
+					hover = new GUIStyleState() {
+						background = FileUtility.LoadInternalAsset<Texture2D>("Content/About/Images/Banner_Hover.png")
+					},
+				};
+
+				header1Style = new GUIStyle()
+				{
+					margin = new RectOffset(10, 10, 10, 10),
+					alignment = TextAnchor.MiddleCenter,
+					fontSize = 24,
+					// fontStyle = FontStyle.Bold,
+					font = FileUtility.LoadInternalAsset<Font>("Content/Font/" + k_FontMedium),
+					normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? k_FontWhite : k_FontBlack }
+				};
+
+				linkStyle = new GUIStyle()
+				{
+					margin = new RectOffset(10, 10, 10, 10),
+					alignment = TextAnchor.MiddleCenter,
+					fontSize = 16,
+					font = FileUtility.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
+					normal = new GUIStyleState() {
+						textColor = k_FontBlueNormal,
+						background = FileUtility.LoadInternalAsset<Texture2D>(
+							string.Format("Content/About/Images/ScrollBackground_{0}.png", EditorGUIUtility.isProSkin ? "Pro" : "Light"))
+					},
+					hover = new GUIStyleState() {
+						textColor = k_FontBlueHover,
+						background = FileUtility.LoadInternalAsset<Texture2D>(
+							string.Format("Content/About/Images/ScrollBackground_{0}.png", EditorGUIUtility.isProSkin ? "Pro" : "Light"))
+					}
+				};
+
+				separatorStyle = new GUIStyle()
+				{
+					margin = new RectOffset(10, 10, 10, 10),
+					alignment = TextAnchor.MiddleCenter,
+					fontSize = 16,
+					font = FileUtility.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
+					normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? k_FontWhite : k_FontBlack }
+				};
+
+				changelogStyle = new GUIStyle()
+				{
+					margin = new RectOffset(10, 10, 10, 10),
+					font = FileUtility.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
+					richText = true,
+					normal = new GUIStyleState() { background = FileUtility.LoadInternalAsset<Texture2D>(
+						string.Format("Content/About/Images/ScrollBackground_{0}.png",
+							EditorGUIUtility.isProSkin ? "Pro" : "Light"))
+					}
+				};
+
+				changelogTextStyle = new GUIStyle()
+				{
+					margin = new RectOffset(10, 10, 10, 10),
+					font = FileUtility.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
+					fontSize = 14,
+					normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? k_FontWhite : k_FontBlack },
+					richText = true,
+					wordWrap = true
+				};
+			}
+		}
 
 		Vector2 scroll = Vector2.zero;
 
@@ -82,93 +164,11 @@ namespace UnityEditor.ProBuilder
 								1f);
 		}
 
-		internal static void InitGuiStyles()
-		{
-			bannerStyle = new GUIStyle()
-			{
-				// RectOffset(left, right, top, bottom)
-				margin = new RectOffset(12, 12, 12, 12),
-				normal = new GUIStyleState() {
-					background = FileUtility.LoadInternalAsset<Texture2D>("Content/About/Images/Banner_Normal.png")
-				},
-				hover = new GUIStyleState() {
-					background = FileUtility.LoadInternalAsset<Texture2D>("Content/About/Images/Banner_Hover.png")
-				},
-			};
-
-			header1Style = new GUIStyle()
-			{
-				margin = new RectOffset(10, 10, 10, 10),
-				alignment = TextAnchor.MiddleCenter,
-				fontSize = 24,
-				// fontStyle = FontStyle.Bold,
-				font = FileUtility.LoadInternalAsset<Font>("Content/Font/" + k_FontMedium),
-				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? k_FontWhite : k_FontBlack }
-			};
-
-			versionInfoStyle = new GUIStyle()
-			{
-				margin = new RectOffset(10, 10, 10, 10),
-				fontSize = 14,
-				fontStyle = FontStyle.Bold,
-				font = FileUtility.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
-				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? k_FontWhite : k_FontBlack }
-			};
-
-			linkStyle = new GUIStyle()
-			{
-				margin = new RectOffset(10, 10, 10, 10),
-				alignment = TextAnchor.MiddleCenter,
-				fontSize = 16,
-				font = FileUtility.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
-				normal = new GUIStyleState() {
-					textColor = k_FontBlueNormal,
-					background = FileUtility.LoadInternalAsset<Texture2D>(
-						string.Format("Content/About/Images/ScrollBackground_{0}.png", EditorGUIUtility.isProSkin ? "Pro" : "Light"))
-				},
-				hover = new GUIStyleState() {
-					textColor = k_FontBlueHover,
-					background = FileUtility.LoadInternalAsset<Texture2D>(
-						string.Format("Content/About/Images/ScrollBackground_{0}.png", EditorGUIUtility.isProSkin ? "Pro" : "Light"))
-				}
-			};
-
-			separatorStyle = new GUIStyle()
-			{
-				margin = new RectOffset(10, 10, 10, 10),
-				alignment = TextAnchor.MiddleCenter,
-				fontSize = 16,
-				font = FileUtility.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
-				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? k_FontWhite : k_FontBlack }
-			};
-
-			changelogStyle = new GUIStyle()
-			{
-				margin = new RectOffset(10, 10, 10, 10),
-				font = FileUtility.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
-				richText = true,
-				normal = new GUIStyleState() { background = FileUtility.LoadInternalAsset<Texture2D>(
-					string.Format("Content/About/Images/ScrollBackground_{0}.png",
-						EditorGUIUtility.isProSkin ? "Pro" : "Light"))
-				}
-			};
-
-			changelogTextStyle = new GUIStyle()
-			{
-				margin = new RectOffset(10, 10, 10, 10),
-				font = FileUtility.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
-				fontSize = 14,
-				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? k_FontWhite : k_FontBlack },
-				richText = true,
-				wordWrap = true
-			};
-		}
-
 		void OnEnable()
 		{
-			InitGuiStyles();
+			Styles.Init();
 
-			Texture2D banner = bannerStyle.normal.background;
+			Texture2D banner = Styles.bannerStyle.normal.background;
 
 			if(banner == null)
 			{
@@ -177,8 +177,8 @@ namespace UnityEditor.ProBuilder
 			}
 			else
 			{
-				bannerStyle.fixedWidth = k_BannerWidth;
-				bannerStyle.fixedHeight = k_BannerHeight;
+				Styles.bannerStyle.fixedWidth = k_BannerWidth;
+				Styles.bannerStyle.fixedHeight = k_BannerHeight;
 
 				wantsMouseMove = true;
 				minSize = new Vector2(k_BannerWidth + 24, k_BannerHeight * 2.5f);
@@ -207,7 +207,7 @@ namespace UnityEditor.ProBuilder
 
 		void OnGUI()
 		{
-			if (bannerStyle.normal.background == null)
+			if (Styles.bannerStyle.normal.background == null)
 			{
 				GUILayout.Label("Could Not Load About Window", EditorStyles.centeredGreyMiniLabel, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
 				return;
@@ -217,30 +217,30 @@ namespace UnityEditor.ProBuilder
 
 			Vector2 mousePosition = evt.mousePosition;
 
-			if( GUILayout.Button(k_BannerContent, bannerStyle) )
+			if( GUILayout.Button(k_BannerContent, Styles.bannerStyle) )
 				Application.OpenURL(k_VideoUrl);
 
 			if(GUILayoutUtility.GetLastRect().Contains(mousePosition))
 				Repaint();
 
-			GUILayout.BeginVertical(changelogStyle);
+			GUILayout.BeginVertical(Styles.changelogStyle);
 
-			GUILayout.Label(k_ProductName, header1Style);
+			GUILayout.Label(k_ProductName + " " + m_ChangeLogVersionInfo.ToString("M.m.p"), Styles.header1Style);
 
 			GUILayout.BeginHorizontal();
 				GUILayout.FlexibleSpace();
 
-				if(GUILayout.Button(k_LearnContent, linkStyle))
+				if(GUILayout.Button(k_LearnContent, Styles.linkStyle))
 					Application.OpenURL(k_LearnUrl);
 
-				GUILayout.Label("|", separatorStyle);
+				GUILayout.Label("|", Styles.separatorStyle);
 
-				if(GUILayout.Button(k_ForumLinkContent, linkStyle))
+				if(GUILayout.Button(k_ForumLinkContent, Styles.linkStyle))
 					Application.OpenURL(k_SupportUrl);
 
-				GUILayout.Label("|", separatorStyle);
+				GUILayout.Label("|", Styles.separatorStyle);
 
-				if(GUILayout.Button(k_ApiExamplesContent, linkStyle))
+				if(GUILayout.Button(k_ApiExamplesContent, Styles.linkStyle))
 					Application.OpenURL(k_ApiExamplesLink);
 				GUILayout.FlexibleSpace();
 			GUILayout.EndHorizontal();
@@ -251,9 +251,8 @@ namespace UnityEditor.ProBuilder
 			GUILayout.EndVertical();
 
 			// always bold the first line (cause it's the version info stuff)
-			scroll = EditorGUILayout.BeginScrollView(scroll, changelogStyle);
-			GUILayout.Label("ProBuilder " + m_ChangeLogVersionInfo.ToString("M.m.p"), versionInfoStyle);
-			GUILayout.Label(m_ChangeLogRichText, changelogTextStyle);
+			scroll = EditorGUILayout.BeginScrollView(scroll, Styles.changelogStyle);
+			GUILayout.Label(m_ChangeLogRichText, Styles.changelogTextStyle);
 			EditorGUILayout.EndScrollView();
 
 			GUILayout.BeginHorizontal();
