@@ -12,7 +12,7 @@ namespace UnityEngine.ProBuilder
     /// <br />
     /// Triangle indices may point to the same vertex index as long as the vertices are unique to the face. Ie, every vertex that a face references should only be used by that face's indices. To associate vertices that share common attributes (usually position), use the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" property.
     /// <br />
-    /// ProBuilder automatically manages condensing common vertices in the @"UnityEditor.ProBuilder.EditorMeshUtility.Optimize" function.
+    /// ProBuilder automatically manages condensing common vertices in the EditorMeshUtility.Optimize function.
     /// </summary>
     [Serializable]
     public sealed class Face : ITriangulatable
