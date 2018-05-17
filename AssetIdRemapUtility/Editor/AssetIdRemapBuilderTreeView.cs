@@ -115,16 +115,22 @@ namespace ProBuilder.AssetUtility
 
 			try
 			{
-				Regex pattern = new Regex(search);
+				var patterns = search.Split(new[] { "\\&" }, StringSplitOptions.None).Select(x => new Regex(x));
 
-				return pattern.IsMatch(o.source.localPath) ||
-					pattern.IsMatch(o.source.guid) ||
-					pattern.IsMatch(o.source.fileId) ||
-					pattern.IsMatch(o.source.type) ||
-					pattern.IsMatch(o.destination.localPath) ||
-					pattern.IsMatch(o.destination.guid) ||
-					pattern.IsMatch(o.destination.fileId) ||
-					pattern.IsMatch(o.destination.type);
+				foreach (var pattern in patterns)
+				{
+					if (!(pattern.IsMatch(o.source.localPath) ||
+						pattern.IsMatch(o.source.guid) ||
+						pattern.IsMatch(o.source.fileId) ||
+						pattern.IsMatch(o.source.type) ||
+						pattern.IsMatch(o.destination.localPath) ||
+						pattern.IsMatch(o.destination.guid) ||
+						pattern.IsMatch(o.destination.fileId) ||
+						pattern.IsMatch(o.destination.type)))
+						return false;
+				}
+
+				return true;
 			}
 			catch
 			{
