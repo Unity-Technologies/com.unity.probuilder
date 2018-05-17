@@ -71,10 +71,10 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 		}
 
 		/// <summary>
-		/// Check if any pre-3.0 ProBuilder package is present in the project
+		/// Check if any pre-4.0 ProBuilder package is present in the project
 		/// </summary>
 		/// <returns></returns>
-		internal static bool IsPreUpmProBuilderInProject()
+		internal static bool IsPreProBuilder4InProject()
 		{
 			// easiest check, are any of the dlls from asset store present
 			if (AreAnyAssetsAreLoaded(k_AssetStoreInstallGuids)
@@ -120,25 +120,6 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 			}
 
 			return found;
-		}
-
-		internal static bool IsUpmProBuilderLoaded()
-		{
-			if (IsEditorPluginEnabled(k_PackageManagerEditorCore))
-				return true;
-
-			Type versionUtilType = FindType("ProBuilder.EditorCore.pb_VersionUtil");
-
-			if (versionUtilType == null)
-				return false;
-
-			MethodInfo isVersionGreaterThanOrEqualTo = versionUtilType.GetMethod("IsGreaterThanOrEqualTo",
-				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-
-			if (isVersionGreaterThanOrEqualTo != null)
-				return (bool) isVersionGreaterThanOrEqualTo.Invoke(null, new object[] {2, 10, 0});
-
-			return false;
 		}
 
 		internal static bool IsProBuilder4OrGreaterLoaded()

@@ -380,7 +380,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 			if (ProjectContainsOldAssetIds())
 				state |= ConversionReadyState.DeprecatedAssetIdsFound;
 
-			if (PackageImporter.IsPreUpmProBuilderInProject())
+			if (PackageImporter.IsPreProBuilder4InProject())
 				state |= ConversionReadyState.AssetStoreInstallFound;
 
 			if(state == ConversionReadyState.Ready && PackageImporter.IsProBuilder4OrGreaterLoaded())
@@ -398,7 +398,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 
 		void ResetAssetsToDelete()
 		{
-			m_DeprecatedProBuilderFound = PackageImporter.IsPreUpmProBuilderInProject();
+			m_DeprecatedProBuilderFound = PackageImporter.IsPreProBuilder4InProject();
 
 			if (m_DeprecatedProBuilderFound && !ValidatePreUpmProBuilderRoot(m_DeprecatedProBuilderDirectory))
 				m_DeprecatedProBuilderDirectory = FindAssetStoreProBuilderInstall();
