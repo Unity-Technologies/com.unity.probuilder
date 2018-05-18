@@ -18,7 +18,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 
-namespace Parabox.CSG
+namespace UnityEngine.ProBuilder.Experimental.CSG
 {
 	/// <summary>
 	/// Base class for CSG operations.  Contains GameObject level methods for Subtraction, Intersection, and Union operations. The GameObjects passed to these functions will not be modified.

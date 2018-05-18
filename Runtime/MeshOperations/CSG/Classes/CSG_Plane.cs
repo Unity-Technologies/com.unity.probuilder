@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using UnityEngine.ProBuilder;
 
-namespace Parabox.CSG
+namespace UnityEngine.ProBuilder.Experimental.CSG
 {
 	/// <summary>
 	/// Represents a plane in 3d space.
