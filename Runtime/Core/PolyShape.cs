@@ -24,21 +24,26 @@ namespace UnityEngine.ProBuilder
 
         ProBuilderMesh m_Mesh;
 
+		[FormerlySerializedAs("points")]
         [SerializeField]
         internal List<Vector3> m_Points = new List<Vector3>();
 
+		[FormerlySerializedAs("extrude")]
         [SerializeField]
         float m_Extrude = 0f;
 
+		[FormerlySerializedAs("polyEditMode")]
         [SerializeField]
         PolyEditMode m_EditMode;
 
+		[FormerlySerializedAs("flipNormals")]
         [SerializeField]
         bool m_FlipNormals;
 
         [SerializeField]
         internal bool isOnGrid = true;
 
+		[FormerlySerializedAs("material")]
 	    [SerializeField]
 	    Material m_Material;
 
