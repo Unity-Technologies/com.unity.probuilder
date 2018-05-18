@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [4.0.0-preview.3] - 2018-05-18
+
+### Changes from preview.2
+
+- Fix licenses path in About window.
+- Don't import Tests and Documentation with package.
+- Fix Poly Shape not upgrading properties from 2.x and 3.x installs.
+- Fix deprecated GUIDs not being found.
+
 ## [4.0.0-preview.2] - 2018-05-18
 
 ### Changes from preview.1
