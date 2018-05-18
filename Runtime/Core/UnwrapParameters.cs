@@ -48,6 +48,9 @@ namespace UnityEngine.ProBuilder
 		/// <param name="other">The UnwrapParameters to copy properties from.</param>
 		public UnwrapParameters(UnwrapParameters other)
 		{
+            if (other == null)
+                throw new System.ArgumentNullException("other");
+
 			hardAngle = other.hardAngle;
 			packMargin = other.packMargin;
 			angleError = other.angleError;

@@ -20,10 +20,10 @@ namespace UnityEditor.ProBuilder
 			get { return ProBuilderEditor.instance; }
 		}
 
-		static AutoUnwrapSettings m_AutoUVSettings = new AutoUnwrapSettings();
+		static AutoUnwrapSettings s_AutoUVSettings = new AutoUnwrapSettings();
 		static int textureGroup = -1;
-		static List<AutoUnwrapSettings> m_AutoUVSettingsInSelection = new List<AutoUnwrapSettings>();
-		static Dictionary<string, bool> m_AutoUVSettingsDiff = new Dictionary<string, bool>()
+		static List<AutoUnwrapSettings> s_AutoUVSettingsInSelection = new List<AutoUnwrapSettings>();
+		static Dictionary<string, bool> s_AutoUVSettingsDiff = new Dictionary<string, bool>()
 		{
 			{ "projectionAxis", false },
 			{ "useWorldSpace", false },
@@ -48,7 +48,7 @@ namespace UnityEditor.ProBuilder
 			Y
 		}
 
-		static Vector2 m_ScrollPosition;
+		static Vector2 s_ScrollPosition;
 
 #endregion
 
@@ -64,7 +64,7 @@ namespace UnityEditor.ProBuilder
 		{
 			UpdateDiffDictionary(selection);
 
-			m_ScrollPosition = EditorGUILayout.BeginScrollView(m_ScrollPosition);
+			s_ScrollPosition = EditorGUILayout.BeginScrollView(s_ScrollPosition);
 
 			int tempInt = -1;
 			float tempFloat = 0f;
@@ -79,21 +79,21 @@ namespace UnityEditor.ProBuilder
 			GUILayout.Label("Tiling & Alignment", EditorStyles.boldLabel);
 
 			GUILayout.BeginHorizontal();
-				tempInt = (int)m_AutoUVSettings.fill;
-				EditorGUI.showMixedValue = m_AutoUVSettingsDiff["fill"];
+				tempInt = (int)s_AutoUVSettings.fill;
+				EditorGUI.showMixedValue = s_AutoUVSettingsDiff["fill"];
 				GUILayout.Label("Fill Mode", GUILayout.MaxWidth(80), GUILayout.MinWidth(80));
-				m_AutoUVSettings.fill = (AutoUnwrapSettings.Fill)EditorGUILayout.EnumPopup(m_AutoUVSettings.fill);
-				if(tempInt != (int)m_AutoUVSettings.fill) SetFill(m_AutoUVSettings.fill, selection);
+				s_AutoUVSettings.fill = (AutoUnwrapSettings.Fill)EditorGUILayout.EnumPopup(s_AutoUVSettings.fill);
+				if(tempInt != (int)s_AutoUVSettings.fill) SetFill(s_AutoUVSettings.fill, selection);
 			GUILayout.EndHorizontal();
 
 			GUILayout.BeginHorizontal();
 				bool enabled = GUI.enabled;
-				GUI.enabled = !m_AutoUVSettings.useWorldSpace;
-				tempInt = (int) m_AutoUVSettings.anchor;
-				EditorGUI.showMixedValue = m_AutoUVSettingsDiff["anchor"];
+				GUI.enabled = !s_AutoUVSettings.useWorldSpace;
+				tempInt = (int) s_AutoUVSettings.anchor;
+				EditorGUI.showMixedValue = s_AutoUVSettingsDiff["anchor"];
 				GUILayout.Label("Anchor", GUILayout.MaxWidth(80), GUILayout.MinWidth(80));
-				m_AutoUVSettings.anchor = (AutoUnwrapSettings.Anchor) EditorGUILayout.EnumPopup(m_AutoUVSettings.anchor);
-				if(tempInt != (int)m_AutoUVSettings.anchor) SetAnchor(m_AutoUVSettings.anchor, selection);
+				s_AutoUVSettings.anchor = (AutoUnwrapSettings.Anchor) EditorGUILayout.EnumPopup(s_AutoUVSettings.anchor);
+				if(tempInt != (int)s_AutoUVSettings.anchor) SetAnchor(s_AutoUVSettings.anchor, selection);
 				GUI.enabled = enabled;
 			GUILayout.EndHorizontal();
 
@@ -106,18 +106,18 @@ namespace UnityEditor.ProBuilder
 			/**
 			 * Offset
 			 */
-			EditorGUI.showMixedValue = m_AutoUVSettingsDiff["offsetx"] || m_AutoUVSettingsDiff["offsety"];
-			tempVec2 = m_AutoUVSettings.offset;
+			EditorGUI.showMixedValue = s_AutoUVSettingsDiff["offsetx"] || s_AutoUVSettingsDiff["offsety"];
+			tempVec2 = s_AutoUVSettings.offset;
 			UnityEngine.GUI.SetNextControlName("offset");
-			m_AutoUVSettings.offset = EditorGUILayout.Vector2Field("Offset", m_AutoUVSettings.offset, GUILayout.MaxWidth(width));
-			if(tempVec2.x != m_AutoUVSettings.offset.x) { SetOffset(m_AutoUVSettings.offset, Axis2D.X, selection); }
-			if(tempVec2.y != m_AutoUVSettings.offset.y) { SetOffset(m_AutoUVSettings.offset, Axis2D.Y, selection); }
+			s_AutoUVSettings.offset = EditorGUILayout.Vector2Field("Offset", s_AutoUVSettings.offset, GUILayout.MaxWidth(width));
+			if(tempVec2.x != s_AutoUVSettings.offset.x) { SetOffset(s_AutoUVSettings.offset, Axis2D.X, selection); }
+			if(tempVec2.y != s_AutoUVSettings.offset.y) { SetOffset(s_AutoUVSettings.offset, Axis2D.Y, selection); }
 
 			/**
 			 * Rotation
 			 */
-			tempFloat = m_AutoUVSettings.rotation;
-			EditorGUI.showMixedValue = m_AutoUVSettingsDiff["rotation"];
+			tempFloat = s_AutoUVSettings.rotation;
+			EditorGUI.showMixedValue = s_AutoUVSettingsDiff["rotation"];
 			GUILayout.Label(new GUIContent("Rotation", "Rotation around the center of face UV bounds."), GUILayout.MaxWidth(width-64));
 			UnityEngine.GUI.SetNextControlName("rotation");
 			EditorGUI.BeginChangeCheck();
@@ -128,16 +128,16 @@ namespace UnityEditor.ProBuilder
 			/**
 			 * Scale
 			 */
-			EditorGUI.showMixedValue = m_AutoUVSettingsDiff["scalex"] || m_AutoUVSettingsDiff["scaley"];
-			tempVec2 = m_AutoUVSettings.scale;
+			EditorGUI.showMixedValue = s_AutoUVSettingsDiff["scalex"] || s_AutoUVSettingsDiff["scaley"];
+			tempVec2 = s_AutoUVSettings.scale;
 			UnityEngine.GUI.SetNextControlName("scale");
 			EditorGUI.BeginChangeCheck();
-			m_AutoUVSettings.scale = EditorGUILayout.Vector2Field("Tiling", m_AutoUVSettings.scale, GUILayout.MaxWidth(width));
+			s_AutoUVSettings.scale = EditorGUILayout.Vector2Field("Tiling", s_AutoUVSettings.scale, GUILayout.MaxWidth(width));
 
 			if(EditorGUI.EndChangeCheck())
 			{
-				if(tempVec2.x != m_AutoUVSettings.scale.x) { SetScale(m_AutoUVSettings.scale, Axis2D.X, selection); }
-				if(tempVec2.y != m_AutoUVSettings.scale.y) { SetScale(m_AutoUVSettings.scale, Axis2D.Y, selection); }
+				if(tempVec2.x != s_AutoUVSettings.scale.x) { SetScale(s_AutoUVSettings.scale, Axis2D.X, selection); }
+				if(tempVec2.y != s_AutoUVSettings.scale.y) { SetScale(s_AutoUVSettings.scale, Axis2D.Y, selection); }
 			}
 
 			// Draw tiling shortcuts
@@ -161,10 +161,10 @@ namespace UnityEditor.ProBuilder
 			 */
 			GUILayout.Label("Special", EditorStyles.boldLabel);
 
-			tempBool = m_AutoUVSettings.useWorldSpace;
-			EditorGUI.showMixedValue = m_AutoUVSettingsDiff["useWorldSpace"];
-			m_AutoUVSettings.useWorldSpace = EditorGUILayout.Toggle("World Space", m_AutoUVSettings.useWorldSpace);
-			if(m_AutoUVSettings.useWorldSpace != tempBool) SetUseWorldSpace(m_AutoUVSettings.useWorldSpace, selection);
+			tempBool = s_AutoUVSettings.useWorldSpace;
+			EditorGUI.showMixedValue = s_AutoUVSettingsDiff["useWorldSpace"];
+			s_AutoUVSettings.useWorldSpace = EditorGUILayout.Toggle("World Space", s_AutoUVSettings.useWorldSpace);
+			if(s_AutoUVSettings.useWorldSpace != tempBool) SetUseWorldSpace(s_AutoUVSettings.useWorldSpace, selection);
 
 			UnityEngine.GUI.backgroundColor = PreferenceKeys.proBuilderLightGray;
 			UI.EditorGUIUtility.DrawSeparator(1);
@@ -172,21 +172,21 @@ namespace UnityEditor.ProBuilder
 
 
 			// Flip U
-			tempBool = m_AutoUVSettings.flipU;
-			EditorGUI.showMixedValue = m_AutoUVSettingsDiff["flipU"];
-			m_AutoUVSettings.flipU = EditorGUILayout.Toggle("Flip U", m_AutoUVSettings.flipU);
-			if(tempBool != m_AutoUVSettings.flipU) SetFlipU(m_AutoUVSettings.flipU, selection);
+			tempBool = s_AutoUVSettings.flipU;
+			EditorGUI.showMixedValue = s_AutoUVSettingsDiff["flipU"];
+			s_AutoUVSettings.flipU = EditorGUILayout.Toggle("Flip U", s_AutoUVSettings.flipU);
+			if(tempBool != s_AutoUVSettings.flipU) SetFlipU(s_AutoUVSettings.flipU, selection);
 
 			// Flip V
-			tempBool = m_AutoUVSettings.flipV;
-			EditorGUI.showMixedValue = m_AutoUVSettingsDiff["flipV"];
-			m_AutoUVSettings.flipV = EditorGUILayout.Toggle("Flip V", m_AutoUVSettings.flipV);
-			if(tempBool != m_AutoUVSettings.flipV) SetFlipV(m_AutoUVSettings.flipV, selection);
+			tempBool = s_AutoUVSettings.flipV;
+			EditorGUI.showMixedValue = s_AutoUVSettingsDiff["flipV"];
+			s_AutoUVSettings.flipV = EditorGUILayout.Toggle("Flip V", s_AutoUVSettings.flipV);
+			if(tempBool != s_AutoUVSettings.flipV) SetFlipV(s_AutoUVSettings.flipV, selection);
 
-			tempBool = m_AutoUVSettings.swapUV;
-			EditorGUI.showMixedValue = m_AutoUVSettingsDiff["swapUV"];
-			m_AutoUVSettings.swapUV = EditorGUILayout.Toggle("Swap U/V", m_AutoUVSettings.swapUV);
-			if(tempBool != m_AutoUVSettings.swapUV) SetSwapUV(m_AutoUVSettings.swapUV, selection);
+			tempBool = s_AutoUVSettings.swapUV;
+			EditorGUI.showMixedValue = s_AutoUVSettingsDiff["swapUV"];
+			s_AutoUVSettings.swapUV = EditorGUILayout.Toggle("Swap U/V", s_AutoUVSettings.swapUV);
+			if(tempBool != s_AutoUVSettings.swapUV) SetSwapUV(s_AutoUVSettings.swapUV, selection);
 
 			/**
 			 * Texture Groups
@@ -194,7 +194,7 @@ namespace UnityEditor.ProBuilder
 			GUILayout.Label("Texture Groups", EditorStyles.boldLabel);
 
 			tempInt = textureGroup;
-			EditorGUI.showMixedValue = m_AutoUVSettingsDiff["textureGroup"];
+			EditorGUI.showMixedValue = s_AutoUVSettingsDiff["textureGroup"];
 
 			UnityEngine.GUI.SetNextControlName("textureGroup");
 			textureGroup = UI.EditorGUIUtility.IntFieldConstrained(new GUIContent("Texture Group", "Faces in a texture group will be UV mapped as a group, just as though you had selected these faces and used the \"Planar Project\" action"), textureGroup, (int) width);
@@ -208,7 +208,7 @@ namespace UnityEditor.ProBuilder
 
 				SceneView.RepaintAll();
 
-				m_AutoUVSettingsDiff["textureGroup"] = false;
+				s_AutoUVSettingsDiff["textureGroup"] = false;
 			}
 
 			if(GUILayout.Button(new GUIContent("Group Selected Faces", "This sets all selected faces to share a texture group.  What that means is that the UVs on these faces will all be projected as though they are a single plane.  Ideal candidates for texture groups are floors with multiple faces, walls with edge loops, flat surfaces, etc.")))
@@ -232,7 +232,7 @@ namespace UnityEditor.ProBuilder
 
 				SceneView.RepaintAll();
 
-				m_AutoUVSettingsDiff["textureGroup"] = false;
+				s_AutoUVSettingsDiff["textureGroup"] = false;
 
 				ProBuilderEditor.Refresh();
 			}
@@ -275,64 +275,64 @@ namespace UnityEditor.ProBuilder
 
 		static void UpdateDiffDictionary(ProBuilderMesh[] selection)
 		{
-			m_AutoUVSettingsInSelection.Clear();
+			s_AutoUVSettingsInSelection.Clear();
 
 			if(selection == null || selection.Length < 1)
 				return;
 
-			m_AutoUVSettingsInSelection = selection.SelectMany(x => x.GetSelectedFaces()).Where(x => !x.manualUV).Select(x => x.uv).ToList();
+			s_AutoUVSettingsInSelection = selection.SelectMany(x => x.GetSelectedFaces()).Where(x => !x.manualUV).Select(x => x.uv).ToList();
 
 			// Clear values for each iteration
-			foreach(string key in m_AutoUVSettingsDiff.Keys.ToList())
-				m_AutoUVSettingsDiff[key] = false;
+			foreach(string key in s_AutoUVSettingsDiff.Keys.ToList())
+				s_AutoUVSettingsDiff[key] = false;
 
-			if(m_AutoUVSettingsInSelection.Count < 1) return;
+			if(s_AutoUVSettingsInSelection.Count < 1) return;
 
-			m_AutoUVSettings = new AutoUnwrapSettings(m_AutoUVSettingsInSelection[0]);
+			s_AutoUVSettings = new AutoUnwrapSettings(s_AutoUVSettingsInSelection[0]);
 
-			foreach(AutoUnwrapSettings u in m_AutoUVSettingsInSelection)
+			foreach(AutoUnwrapSettings u in s_AutoUVSettingsInSelection)
 			{
 				// if(u.projectionAxis != m_AutoUVSettings.projectionAxis)
 				// 	m_AutoUVSettingsDiff["projectionAxis"] = true;
-				if(u.useWorldSpace != m_AutoUVSettings.useWorldSpace)
-					m_AutoUVSettingsDiff["useWorldSpace"] = true;
-				if(u.flipU != m_AutoUVSettings.flipU)
-					m_AutoUVSettingsDiff["flipU"] = true;
-				if(u.flipV != m_AutoUVSettings.flipV)
-					m_AutoUVSettingsDiff["flipV"] = true;
-				if(u.swapUV != m_AutoUVSettings.swapUV)
-					m_AutoUVSettingsDiff["swapUV"] = true;
-				if(u.fill != m_AutoUVSettings.fill)
-					m_AutoUVSettingsDiff["fill"] = true;
-				if(!Math.Approx(u.scale.x, m_AutoUVSettings.scale.x))
-					m_AutoUVSettingsDiff["scalex"] = true;
-				if(!Math.Approx(u.scale.y, m_AutoUVSettings.scale.y))
-					m_AutoUVSettingsDiff["scaley"] = true;
-				if(!Math.Approx(u.offset.x, m_AutoUVSettings.offset.x))
-					m_AutoUVSettingsDiff["offsetx"] = true;
-				if(!Math.Approx(u.offset.y, m_AutoUVSettings.offset.y))
-					m_AutoUVSettingsDiff["offsety"] = true;
-				if(!Math.Approx(u.rotation, m_AutoUVSettings.rotation))
-					m_AutoUVSettingsDiff["rotation"] = true;
-				if(u.anchor != m_AutoUVSettings.anchor)
-					m_AutoUVSettingsDiff["anchor"] = true;
+				if(u.useWorldSpace != s_AutoUVSettings.useWorldSpace)
+					s_AutoUVSettingsDiff["useWorldSpace"] = true;
+				if(u.flipU != s_AutoUVSettings.flipU)
+					s_AutoUVSettingsDiff["flipU"] = true;
+				if(u.flipV != s_AutoUVSettings.flipV)
+					s_AutoUVSettingsDiff["flipV"] = true;
+				if(u.swapUV != s_AutoUVSettings.swapUV)
+					s_AutoUVSettingsDiff["swapUV"] = true;
+				if(u.fill != s_AutoUVSettings.fill)
+					s_AutoUVSettingsDiff["fill"] = true;
+				if(!Math.Approx(u.scale.x, s_AutoUVSettings.scale.x))
+					s_AutoUVSettingsDiff["scalex"] = true;
+				if(!Math.Approx(u.scale.y, s_AutoUVSettings.scale.y))
+					s_AutoUVSettingsDiff["scaley"] = true;
+				if(!Math.Approx(u.offset.x, s_AutoUVSettings.offset.x))
+					s_AutoUVSettingsDiff["offsetx"] = true;
+				if(!Math.Approx(u.offset.y, s_AutoUVSettings.offset.y))
+					s_AutoUVSettingsDiff["offsety"] = true;
+				if(!Math.Approx(u.rotation, s_AutoUVSettings.rotation))
+					s_AutoUVSettingsDiff["rotation"] = true;
+				if(u.anchor != s_AutoUVSettings.anchor)
+					s_AutoUVSettingsDiff["anchor"] = true;
 			}
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				if(m_AutoUVSettingsDiff["manualUV"] && m_AutoUVSettingsDiff["textureGroup"])
+				if(s_AutoUVSettingsDiff["manualUV"] && s_AutoUVSettingsDiff["textureGroup"])
 					break;
 
 				Face[] selFaces = pb.GetSelectedFaces();
 
-				if(!m_AutoUVSettingsDiff["manualUV"])
-					m_AutoUVSettingsDiff["manualUV"] = System.Array.Exists(selFaces, x => x.manualUV);
+				if(!s_AutoUVSettingsDiff["manualUV"])
+					s_AutoUVSettingsDiff["manualUV"] = System.Array.Exists(selFaces, x => x.manualUV);
 
 				List<int> texGroups = selFaces.Select(x => x.textureGroup).Distinct().ToList();
 				textureGroup = texGroups.FirstOrDefault(x => x > -1);
 
-				if(!m_AutoUVSettingsDiff["textureGroup"])
-					m_AutoUVSettingsDiff["textureGroup"] = texGroups.Count() > 1;
+				if(!s_AutoUVSettingsDiff["textureGroup"])
+					s_AutoUVSettingsDiff["textureGroup"] = texGroups.Count() > 1;
 			}
 		}
 #endregion

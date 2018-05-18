@@ -296,6 +296,9 @@ namespace UnityEngine.ProBuilder
 			float 	xx = 0f, xy = 0f, xz = 0f,
 					yy = 0f, yz = 0f, zz = 0f;
 
+            if (points == null)
+                throw new System.ArgumentNullException("points");
+
 			bool ind = indexes != null && indexes.Length > 0;
 			int len = ind ? indexes.Length : points.Length;
 

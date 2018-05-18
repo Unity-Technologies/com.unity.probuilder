@@ -420,6 +420,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns>The new face, or null of the action failed.</returns>
 		public static Face Bridge(this ProBuilderMesh mesh, Edge a, Edge b, bool enforcePerimiterEdgesOnly = false)
 		{
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
 			IntArray[] sharedIndices = mesh.GetSharedIndexes();
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 

@@ -12,7 +12,10 @@
 		/// <param name="indexes">The indexes of the positions to average to find the new pivot.</param>
 		public static void CenterPivot(this ProBuilderMesh mesh, int[] indexes)
 		{
-			Vector3 center = Vector3.zero;
+            if (mesh == null)
+                throw new System.ArgumentNullException("mesh");
+
+            Vector3 center = Vector3.zero;
 
 			if(indexes != null && indexes.Length > 0)
 			{
@@ -44,7 +47,10 @@
 		/// <param name="worldPosition">The new transform position.</param>
 		public static void CenterPivot(this ProBuilderMesh mesh, Vector3 worldPosition)
 		{
-			Vector3 offset = mesh.transform.position - worldPosition;
+            if (mesh == null)
+                throw new System.ArgumentNullException("mesh");
+
+            Vector3 offset = mesh.transform.position - worldPosition;
 			mesh.transform.position = worldPosition;
 			mesh.ToMesh();
 			mesh.TranslateVerticesInWorldSpace(mesh.mesh.triangles, offset);
@@ -57,7 +63,10 @@
 		/// <param name="mesh">The target mesh.</param>
 		public static void FreezeScaleTransform(this ProBuilderMesh mesh)
 		{
-			Vector3[] v = mesh.positionsInternal;
+            if (mesh == null)
+                throw new System.ArgumentNullException("mesh");
+
+            Vector3[] v = mesh.positionsInternal;
 
 			for(var i = 0; i < v.Length; i++)
 				v[i] = Vector3.Scale(v[i], mesh.transform.localScale);

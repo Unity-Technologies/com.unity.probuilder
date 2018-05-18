@@ -173,6 +173,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns>The faces created forming the detached face group.</returns>
 		public static List<Face> DetachFaces(this ProBuilderMesh mesh, IEnumerable<Face> faces)
 		{
+            if (mesh == null)
+                throw new System.ArgumentNullException("mesh");
+
+            if (faces == null)
+                throw new System.ArgumentNullException("faces");
+
 			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(mesh));
 			int sharedIndicesOffset = mesh.sharedIndicesInternal.Length;
 			Dictionary<int, int> lookup = mesh.sharedIndicesInternal.ToDictionary();
