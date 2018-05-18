@@ -14,7 +14,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 	/// <summary>
 	/// Utility class for creating GUID remap files.
 	/// </summary>
-	class AssetIdRemapBuilderEditor : EditorWindow
+	sealed class AssetIdRemapBuilderEditor : EditorWindow
 	{
 		const string k_RemapFilePath = "AssetIdRemap.json";
 		const string k_NamespaceRemapFilePath = "NamespaceRemap.json";
@@ -39,8 +39,6 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 			"ProBuilder/Upgrade",
 		};
 
-		static GUIContent m_DoCleanGuiContent = new GUIContent("Clean", "If enabled both Source and Destination actions" +
-		                                                                " will clear the remap file and start from scratch.");
 		static GUIContent m_SourceGuiContent = new GUIContent("Source", "The old GUID and FileId.");
 		static GUIContent m_DestinationGuiContent = new GUIContent("Destination", "The new GUID and FileId.");
 
@@ -48,7 +46,6 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 		[SerializeField] TextAsset m_NamespaceRemapTextAsset = null;
 		[SerializeField] string m_SourceDirectory;
 		[SerializeField] string m_DestinationDirectory;
-		[SerializeField] bool m_DoClean = false;
 
 		[SerializeField] TreeViewState m_TreeViewState;
 		[SerializeField] MultiColumnHeaderState m_MultiColumnHeaderState;
@@ -168,8 +165,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 
 				m_RemapTextAsset = (TextAsset)EditorGUILayout.ObjectField("Remap", m_RemapTextAsset, typeof(TextAsset), false);
 				m_NamespaceRemapTextAsset = (TextAsset)EditorGUILayout.ObjectField("Namespace", m_NamespaceRemapTextAsset, typeof(TextAsset), false);
-				m_DoClean = EditorGUILayout.Toggle(m_DoCleanGuiContent, m_DoClean);
-
+			
 				if (EditorGUI.EndChangeCheck())
 				{
 					m_TreeView.remapObject = null;
@@ -185,14 +181,15 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 
 				EditorGUI.BeginChangeCheck();
 				if (GUILayout.Button("Collect Source (Old) Asset Identifiers"))
-					GetRemapSource(m_SourceDirectory, m_DoClean);
+					GetRemapSource(m_SourceDirectory);
 
 				EditorGUILayout.EndVertical();
 				EditorGUILayout.BeginVertical(Styles.container);
 				m_DestinationDirectory = DoDirectoryField("Destination", m_DestinationDirectory);
 
 				if (GUILayout.Button("Collect Destination (New) Asset Identifiers"))
-					GetRemapDestination(m_DestinationDirectory, m_DoClean);
+					GetRemapDestination(m_DestinationDirectory);
+
 				if (EditorGUI.EndChangeCheck())
 					m_TreeView.Reload();
 
@@ -262,7 +259,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 			return didChange ? value = value.Replace("\\", "/").Replace(Application.dataPath, "Assets") : value;
 		}
 
-		void GetRemapSource(string directory, bool clean = false)
+		void GetRemapSource(string directory)
 		{
 			if (string.IsNullOrEmpty(directory) || !Directory.Exists(directory))
 			{
@@ -270,7 +267,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 				return;
 			}
 
-			var remapObject = GetGuidRemapObject(clean);
+			var remapObject = GetGuidRemapObject();
 
 			string localDirectory = directory.Replace("\\", "/").Replace(Application.dataPath, "Assets") + "/";
 
@@ -292,7 +289,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 					map.FirstOrDefault(x =>
 					{
 						return x.destination != null &&
-						       x.destination.AssetEquals(id, remapObject.namespaceMap);
+						       x.destination.AssetEquals(id);
 					});
 
 				if (matchingDestination != null)
@@ -311,7 +308,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 			m_TreeView.isDirty = true;
 		}
 
-		void GetRemapDestination(string directory, bool clean = false)
+		void GetRemapDestination(string directory)
 		{
 			if (string.IsNullOrEmpty(directory) || !Directory.Exists(directory))
 			{
@@ -319,7 +316,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 				return;
 			}
 
-			var remapObject = GetGuidRemapObject(clean);
+			var remapObject = GetGuidRemapObject();
 
 			if (!string.IsNullOrEmpty(remapObject.destinationDirectory))
 			{
@@ -341,7 +338,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 				id.SetPathRelativeTo(localDirectory);
 
 				IEnumerable<AssetIdentifierTuple> matchingSources =
-					map.Where(x => x.source != null && x.source.AssetEquals(id, remapObject.namespaceMap));
+					map.Where(x => x.source != null && x.source.AssetEquals(id));
 
 				if (matchingSources.Any())
 				{
@@ -434,7 +431,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 		/// Load a remap json file from a relative path (Assets/MyRemapFile.json).
 		/// </summary>
 		/// <returns>A GuidRemapObject from the path, or if not found, a new GuidRemapObject</returns>
-		AssetIdRemapObject GetGuidRemapObject(bool clean = false)
+		AssetIdRemapObject GetGuidRemapObject()
 		{
 			var remapObject = m_TreeView.remapObject;
 
@@ -444,20 +441,10 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 			if(m_RemapTextAsset == null)
 				m_RemapTextAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(remapFilePath);
 
-			if(m_NamespaceRemapTextAsset == null)
-				m_NamespaceRemapTextAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(namespaceRemapFilePath);
-
 			remapObject = new AssetIdRemapObject();
 
-			if (clean || m_RemapTextAsset == null)
-			{
-				if (m_NamespaceRemapTextAsset != null)
-					remapObject.namespaceMap = JsonUtility.FromJson<NamespaceRemapObject>(m_NamespaceRemapTextAsset.text);
-			}
-			else
-			{
+			if (m_RemapTextAsset != null)
 				JsonUtility.FromJsonOverwrite(m_RemapTextAsset.text, remapObject);
-			}
 
 			return remapObject;
 		}

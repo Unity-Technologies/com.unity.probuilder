@@ -4,9 +4,6 @@
         "Packages/com.unity.probuilder/"
     ],
     "destinationDirectory": "Packages/com.unity.probuilder/",
-    "namespaceMap": {
-        "m_Map": []
-    },
     "map": [
         {
             "source": {

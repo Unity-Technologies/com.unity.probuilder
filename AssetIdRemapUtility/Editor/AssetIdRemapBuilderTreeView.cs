@@ -8,7 +8,7 @@ using UnityEditor.IMGUI.Controls;
 
 namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 {
-	class AssetIdRemapBuilderTreeView : TreeView
+	sealed class AssetIdRemapBuilderTreeView : TreeView
 	{
 		AssetIdRemapObject m_RemapObject = null;
 		const float k_RowHeight = 20f;
@@ -156,29 +156,6 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 				Reload();
 				SetSelection(new int[] {});
 			});
-
-			menu.AddSeparator("");
-
-			menu.AddItem(new GUIContent("Compare", ""), false, () =>
-			{
-				IList<int> selected = GetSelection();
-				if (selected.Count == 2)
-				{
-					StringTupleTreeElement a = FindItem(selected[0], rootItem) as StringTupleTreeElement;
-					StringTupleTreeElement b = FindItem(selected[1], rootItem) as StringTupleTreeElement;
-
-					if (a != null && b != null)
-					{
-						AssetId left = m_RemapObject[a.index].source;
-						AssetId right = m_RemapObject[b.index].destination;
-						UnityEngine.Debug.Log(left.AssetEquals2(right).ToString());
-						return;
-					}
-				}
-
-				Debug.Log("Compare requires exactly two items be selected.");
-			});
-
 			menu.ShowAsContext();
 		}
 

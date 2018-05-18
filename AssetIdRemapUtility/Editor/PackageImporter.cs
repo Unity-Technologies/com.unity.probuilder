@@ -1,14 +1,18 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
 namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 {
-	class PackageImporter : AssetPostprocessor
+	static class PackageImporter
 	{
+		const string k_PackageManagerEditorCore = "e98d45d69e2c4936a7382af00fd45e58";
+		const string k_AssetStoreEditorCore = "4df21bd079886d84699ca7be1316c7a7";
+		const string k_ProBuilder2CoreGUID = "0472bdc8d6d15384d98f22ee34302f9c";
+		const string k_ProBuilder3CoreGUID = "4f0627da958b4bb78c260446066f065f";
+
 		static readonly string[] k_AssetStoreInstallGuids = new string[]
 		{
 			"0472bdc8d6d15384d98f22ee34302f9c", // ProBuilderCore
@@ -22,9 +26,6 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 			"9b27d8419276465b80eb88c8799432a1", // Mesh Ops
 			"e98d45d69e2c4936a7382af00fd45e58", // Editor
 		};
-
-		const string k_PackageManagerEditorCore = "e98d45d69e2c4936a7382af00fd45e58";
-		const string k_AssetStoreEditorCore = "4df21bd079886d84699ca7be1316c7a7";
 
 		internal static string EditorCorePackageManager { get { return k_PackageManagerEditorCore; } }
 		internal static string EditorCoreAssetStore { get { return k_AssetStoreEditorCore; } }
@@ -70,56 +71,43 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 			return false;
 		}
 
-		/// <summary>
-		/// Check if any pre-4.0 ProBuilder package is present in the project
-		/// </summary>
-		/// <returns></returns>
-		internal static bool IsPreProBuilder4InProject()
+		static bool FileContainsString(string path, string search)
 		{
-			// easiest check, are any of the dlls from asset store present
-			if (AreAnyAssetsAreLoaded(k_AssetStoreInstallGuids)
-				|| AreAnyAssetsAreLoaded(k_PackageManagerInstallGuids))
-				return true;
-
-			// next check if the source version is in the project
-			string[] pbObjectMonoScripts = Directory.GetFiles("Assets", "pb_Object.cs", SearchOption.AllDirectories);
-
-			foreach (var pbScriptPath in pbObjectMonoScripts)
+			using(var sr = new StringReader(path))
 			{
-				if (pbScriptPath.EndsWith(".cs"))
+				while (sr.Peek() > -1)
 				{
-					MonoScript ms = AssetDatabase.LoadAssetAtPath<MonoScript>(pbScriptPath);
+					var line = sr.ReadLine();
 
-					if (ms != null)
-					{
-						Type type = ms.GetClass();
-						// pre-3.0 didn't have ProBuilder.Core namespace
-						return type.ToString().Equals("pb_Object");
-					}
+					if (line.Contains(search))
+						return true;
 				}
 			}
 
 			return false;
 		}
 
-		static Type FindType(string typeName)
+		internal static bool DoesProjectContainDeprecatedGUIDs()
 		{
-			// First try the current assembly
-			Type found = Type.GetType(typeName);
+			foreach (var file in Directory.GetFiles("Assets", "*.unity", SearchOption.AllDirectories))
+				if (FileContainsString(file, k_ProBuilder2CoreGUID) || FileContainsString(file, k_ProBuilder3CoreGUID))
+					return true;
 
-			// Then scan the loaded assemblies
-			if (found == null)
-			{
-				foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-				{
-					found = assembly.GetType(typeName);
+			foreach (var file in Directory.GetFiles("Assets", "*.prefab", SearchOption.AllDirectories))
+				if (FileContainsString(file, k_ProBuilder2CoreGUID) || FileContainsString(file, k_ProBuilder3CoreGUID))
+					return true;
 
-					if (found != null)
-						break;
-				}
-			}
+			return false;
+		}
 
-			return found;
+		/// <summary>
+		/// Check if any pre-4.0 ProBuilder package is present in the project
+		/// </summary>
+		/// <returns></returns>
+		internal static bool IsPreProBuilder4InProject()
+		{
+			return AreAnyAssetsAreLoaded(k_AssetStoreInstallGuids)
+				|| AreAnyAssetsAreLoaded(k_PackageManagerInstallGuids);
 		}
 
 		internal static bool IsProBuilder4OrGreaterLoaded()

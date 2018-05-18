@@ -144,11 +144,11 @@ namespace UnityEditor.ProBuilder
 			bool isNewVersion = PreferencesInternal.GetString(k_AboutWindowVersionPref).Equals(currentVersionString);
 			PreferencesInternal.SetString(k_AboutWindowVersionPref, currentVersionString, PreferenceLocation.Global);
 
-			if (isNewVersion && PackageImporter.IsPreProBuilder4InProject())
+			if (isNewVersion && PackageImporter.IsPreProBuilder4InProject() || PackageImporter.DoesProjectContainDeprecatedGUIDs())
 				if (UnityEditor.EditorUtility.DisplayDialog("Conflicting ProBuilder Install in Project",
 					"The Asset Store version of ProBuilder is incompatible with Package Manager. Would you like to convert your project to the Package Manager version of ProBuilder?\n\nIf you choose \"No\" this dialog may be accessed again at any time through the \"Tools/ProBuilder/Repair/Convert to Package Manager\" menu item.",
 					"Yes", "No"))
-					EditorApplication.delayCall += AssetIdRemapUtility.OpenConversionEditor;
+					EditorApplication.delayCall += AssetIdRemapEditor.OpenConversionEditor;
 		}
 
 		public static void Init()

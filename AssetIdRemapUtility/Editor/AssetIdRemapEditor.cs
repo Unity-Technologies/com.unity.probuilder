@@ -11,8 +11,10 @@ using UObject = UnityEngine.Object;
 
 namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 {
-	class AssetIdRemapUtility : EditorWindow
+	sealed class AssetIdRemapEditor : EditorWindow
 	{
+		const string k_ProBuilder2DllName = "ProBuilderCore-Unity5.dll";
+		const string k_ProBuilder3DllName = "ProBuilderCore.dll";
 		const string k_ConversionLogPath = "Temp/ProBuilderConversionLog.txt";
 
 		static readonly string[] k_RemapFilePaths = new string[]
@@ -160,7 +162,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 		[MenuItem("Tools/ProBuilder/Repair/Convert to Package Manager")]
 		internal static void OpenConversionEditor()
 		{
-			GetWindow<AssetIdRemapUtility>(true, "Package Manager Conversion Utility", true);
+			GetWindow<AssetIdRemapEditor>(true, "Package Manager Conversion Utility", true);
 		}
 
 		void OnEnable()
@@ -400,11 +402,11 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 		{
 			m_DeprecatedProBuilderFound = PackageImporter.IsPreProBuilder4InProject();
 
-			if (m_DeprecatedProBuilderFound && !ValidatePreUpmProBuilderRoot(m_DeprecatedProBuilderDirectory))
+			if (m_DeprecatedProBuilderFound && !ValidateAssetStoreProBuilderRoot(m_DeprecatedProBuilderDirectory))
 				m_DeprecatedProBuilderDirectory = FindAssetStoreProBuilderInstall();
 
 			// If still no old folder found (and PackageImporter tells us one exists), ask the user to point it out
-			if (m_DeprecatedProBuilderFound && !ValidatePreUpmProBuilderRoot(m_DeprecatedProBuilderDirectory))
+			if (m_DeprecatedProBuilderFound && !ValidateAssetStoreProBuilderRoot(m_DeprecatedProBuilderDirectory))
 			{
 				int res = EditorUtility.DisplayDialogComplex(
 					"Could Not Find Existing ProBuilder Directory",
@@ -430,7 +432,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 							break;
 						}
 
-						if (ValidatePreUpmProBuilderRoot(m_DeprecatedProBuilderDirectory))
+						if (ValidateAssetStoreProBuilderRoot(m_DeprecatedProBuilderDirectory))
 						{
 							// got a good directory, continue with process
 							break;
@@ -654,15 +656,18 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 		{
 			if (m_RemapFile == null)
 				return false;
-			AssetIdRemapObject remapObject = new AssetIdRemapObject();
-			JsonUtility.FromJsonOverwrite(m_RemapFile.text, remapObject);
-			return remapObject.map.Any(x => x.source.ExistsInProject());
+
+			// todo this should only check with the loaded remap file, but for now it's hard-coded
+			return PackageImporter.IsPreProBuilder4InProject();
+
+//			AssetIdRemapObject remapObject = new AssetIdRemapObject();
+//			JsonUtility.FromJsonOverwrite(m_RemapFile.text, remapObject);
+//			return remapObject.map.Any(x => x.source.ExistsInProject());
 		}
 
 		static string FindAssetStoreProBuilderInstall()
 		{
 			string[] matches = Directory.GetDirectories("Assets", "ProBuilder", SearchOption.AllDirectories);
-			string bestMatch = null;
 
 			foreach (var match in matches)
 			{
@@ -670,12 +675,9 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 
 				if (ValidateAssetStoreProBuilderRoot(dir))
 					return dir;
-
-				if (ValidatePreUpmProBuilderRoot(dir))
-					bestMatch = dir;
 			}
 
-			return bestMatch;
+			return null;
 		}
 
 		/// <summary>
@@ -688,31 +690,6 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 			return !string.IsNullOrEmpty(dir) &&
 			       File.Exists(dir + "/Classes/ProBuilderCore-Unity5.dll") &&
 			       File.Exists(dir + "/Editor/ProBuilderEditor-Unity5.dll");
-		}
-
-		/// <summary>
-		/// Is the selected folder a ProBuilder version of any install source prior to packman update?
-		/// </summary>
-		/// <param name="dir"></param>
-		/// <returns></returns>
-		static bool ValidatePreUpmProBuilderRoot(string dir)
-		{
-			bool isProBuilderRoot = !string.IsNullOrEmpty(dir) &&
-			       Directory.Exists(dir + "/Classes") &&
-			       (File.Exists(dir + "/Classes/ProBuilderCore-Unity5.dll")
-			        || File.Exists(dir + "/Classes/ClassesCore/pb_Object.cs")) &&
-			       Directory.Exists(dir + "/Editor") &&
-			       (File.Exists(dir + "/Editor/ProBuilderEditor-Unity5.dll")
-			        || File.Exists(dir + "/Editor/ProBuilderEditor.dll"));
-
-			if (!isProBuilderRoot)
-				return false;
-
-			string[] assetIdRemapSource = Directory.GetFiles(dir, "AssetId.cs", SearchOption.AllDirectories);
-			string[] assetIdRemapDll = Directory.GetFiles(dir, "AssetIdRemapUtility.dll", SearchOption.AllDirectories);
-
-			// don't let user mark the newly imported upm install for deletion
-			return assetIdRemapSource.Length <= 0 && assetIdRemapDll.Length <= 0;
 		}
 
 		ConversionReadyState ValidateAssetStoreRemoval()
