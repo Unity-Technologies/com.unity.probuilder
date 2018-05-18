@@ -1,4 +1,4 @@
-﻿#if DEBUG && UNITY_2018_2_OR_NEWER
+﻿#if PROBUILDER_DEBUG && UNITY_2018_2_OR_NEWER
 
 using System;
 using System.Collections.Generic;
@@ -165,7 +165,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 
 				m_RemapTextAsset = (TextAsset)EditorGUILayout.ObjectField("Remap", m_RemapTextAsset, typeof(TextAsset), false);
 				m_NamespaceRemapTextAsset = (TextAsset)EditorGUILayout.ObjectField("Namespace", m_NamespaceRemapTextAsset, typeof(TextAsset), false);
-			
+
 				if (EditorGUI.EndChangeCheck())
 				{
 					m_TreeView.remapObject = null;

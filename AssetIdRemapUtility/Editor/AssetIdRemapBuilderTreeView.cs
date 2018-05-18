@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if PROBUILDER_DEBUG
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -215,3 +217,4 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 		}
 	}
 }
+#endif
