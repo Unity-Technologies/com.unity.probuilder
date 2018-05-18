@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -73,13 +74,11 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 
 		static bool FileContainsString(string path, string search)
 		{
-			using(var sr = new StringReader(path))
+			using(var sr = new StreamReader(path))
 			{
 				while (sr.Peek() > -1)
 				{
-					var line = sr.ReadLine();
-
-					if (line.Contains(search))
+					if (sr.ReadLine().Contains(search))
 						return true;
 				}
 			}

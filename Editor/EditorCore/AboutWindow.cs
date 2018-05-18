@@ -1,8 +1,10 @@
+using System;
 using System.Linq;
 using UnityEngine;
 using System.Text.RegularExpressions;
 using UnityEngine.ProBuilder.AssetIdRemapUtility;
 using UnityEngine.ProBuilder;
+using Version = UnityEngine.ProBuilder.Version;
 
 namespace UnityEditor.ProBuilder
 {
@@ -141,10 +143,10 @@ namespace UnityEditor.ProBuilder
 		internal static void ValidateVersion()
 		{
 			string currentVersionString = Version.currentInfo.ToString(k_AboutPrefFormat);
-			bool isNewVersion = PreferencesInternal.GetString(k_AboutWindowVersionPref).Equals(currentVersionString);
+			bool isNewVersion = !PreferencesInternal.GetString(k_AboutWindowVersionPref).Equals(currentVersionString, StringComparison.OrdinalIgnoreCase);
 			PreferencesInternal.SetString(k_AboutWindowVersionPref, currentVersionString, PreferenceLocation.Global);
 
-			if (isNewVersion && PackageImporter.IsPreProBuilder4InProject() || PackageImporter.DoesProjectContainDeprecatedGUIDs())
+			if (isNewVersion && (PackageImporter.IsPreProBuilder4InProject() || PackageImporter.DoesProjectContainDeprecatedGUIDs()))
 				if (UnityEditor.EditorUtility.DisplayDialog("Conflicting ProBuilder Install in Project",
 					"The Asset Store version of ProBuilder is incompatible with Package Manager. Would you like to convert your project to the Package Manager version of ProBuilder?\n\nIf you choose \"No\" this dialog may be accessed again at any time through the \"Tools/ProBuilder/Repair/Convert to Package Manager\" menu item.",
 					"Yes", "No"))

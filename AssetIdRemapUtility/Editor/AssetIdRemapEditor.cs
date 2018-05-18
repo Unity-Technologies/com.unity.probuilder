@@ -573,6 +573,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 			log.Append(successes);
 
 			PackageImporter.Reimport(PackageImporter.EditorCorePackageManager);
+			AssetDatabase.Refresh();
 		}
 
 		static bool DoAssetIdentifierRemap(string path, IEnumerable<AssetIdentifierTuple> map, out int modified, bool remapSourceGuid = false)
@@ -654,15 +655,8 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 
 		bool ProjectContainsOldAssetIds()
 		{
-			if (m_RemapFile == null)
-				return false;
-
 			// todo this should only check with the loaded remap file, but for now it's hard-coded
-			return PackageImporter.IsPreProBuilder4InProject();
-
-//			AssetIdRemapObject remapObject = new AssetIdRemapObject();
-//			JsonUtility.FromJsonOverwrite(m_RemapFile.text, remapObject);
-//			return remapObject.map.Any(x => x.source.ExistsInProject());
+			return PackageImporter.IsPreProBuilder4InProject() || PackageImporter.DoesProjectContainDeprecatedGUIDs();
 		}
 
 		static string FindAssetStoreProBuilderInstall()
