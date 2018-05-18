@@ -16,9 +16,6 @@ namespace UnityEditor.ProBuilder.Actions
 		public override string menuTitle { get { return "New Poly Shape"; } }
 		public override int toolbarPriority { get { return 1; } }
 
-		public NewPolyShape()
-		{}
-
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"New Polygon Shape",
@@ -40,7 +37,7 @@ namespace UnityEditor.ProBuilder.Actions
 			GameObject go = new GameObject();
 			PolyShape poly = go.AddComponent<PolyShape>();
 			ProBuilderMesh pb = poly.gameObject.AddComponent<ProBuilderMesh>();
-			pb.CreateShapeFromPolygon(poly.points, poly.extrude, poly.flipNormals);
+			pb.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals);
 			EditorUtility.InitObject(pb);
 			MeshSelection.SetSelection(go);
 			UndoUtility.RegisterCreatedObjectUndo(go, "Create Poly Shape");

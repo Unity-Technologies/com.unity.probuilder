@@ -39,11 +39,8 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         internal bool isOnGrid = true;
 
-        internal List<Vector3> points
-        {
-            get { return new List<Vector3>(m_Points); }
-            set { m_Points = new List<Vector3>(value); }
-        }
+	    [SerializeField]
+	    Material m_Material;
 
         public ReadOnlyCollection<Vector3> controlPoints
         {
@@ -73,7 +70,13 @@ namespace UnityEngine.ProBuilder
             set { m_FlipNormals = value; }
         }
 
-        public ProBuilderMesh mesh
+	    public Material material
+	    {
+		    get { return m_Material; }
+		    set { m_Material = value; }
+	    }
+
+	    public ProBuilderMesh mesh
 		{
 			get
 			{

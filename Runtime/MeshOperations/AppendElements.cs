@@ -216,7 +216,27 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns>An action result indicating the status of the operation.</returns>
 		internal static ActionResult CreateShapeFromPolygon(this PolyShape poly)
 		{
-			return poly.mesh.CreateShapeFromPolygon(poly.points, poly.extrude, poly.flipNormals);
+			var mesh = poly.mesh;
+			var material = poly.material;
+
+			if (material == null)
+			{
+				var renderer = poly.GetComponent<MeshRenderer>();
+				material = renderer.sharedMaterial;
+			}
+
+			var res = mesh.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals);
+
+			if (material != null)
+			{
+				foreach (var face in mesh.faces)
+					face.material = material;
+
+				// no need to do a ToMesh and Refresh here because we know every face is set to the same material
+				poly.GetComponent<MeshRenderer>().sharedMaterial = material;
+			}
+
+			return res;
 		}
 
 		/// <summary>
@@ -377,10 +397,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					data.sharedIndices.Add(lookup[face.indices[i]]);
 				}
 
-				for(int i = 0; i < len; i++)
-					data.face.indices[i] = map[data.face.indices[i]];
+				int[] tris = new int[len];
 
-				data.face.InvalidateCache();
+				for(var i = 0; i < len; i++)
+					tris[len - (i+1)] = map[data.face[i]];
+
+				data.face.SetIndexes(tris);
+
 				rebuild.Add(data);
 			}
 
