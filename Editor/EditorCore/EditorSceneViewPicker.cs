@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.ProBuilder;
@@ -25,7 +26,7 @@ namespace UnityEditor.ProBuilder
 		public RectSelectMode rectSelectMode;
 	}
 
-	class SceneSelection
+	class SceneSelection : IEquatable<SceneSelection>
 	{
 		public GameObject gameObject;
 		public ProBuilderMesh mesh;
@@ -33,7 +34,7 @@ namespace UnityEditor.ProBuilder
 		public Edge edge;
 		public Face face;
 
-		public SceneSelection(GameObject gameObject)
+		public SceneSelection(GameObject gameObject = null)
 		{
 			this.gameObject = gameObject;
 		}
@@ -61,12 +62,84 @@ namespace UnityEditor.ProBuilder
 			edge = Edge.Empty;
 			this.face = face;
 		}
+
+		public void Clear()
+		{
+			gameObject = null;
+			mesh = null;
+			face = null;
+			edge = Edge.Empty;
+			vertex = -1;
+		}
+
+		public void CopyTo(SceneSelection dst)
+		{
+			dst.gameObject = gameObject;
+			dst.mesh = mesh;
+			dst.face = face;
+			dst.edge = edge;
+			dst.vertex = vertex;
+		}
+
+		public override string ToString()
+		{
+			var sb = new System.Text.StringBuilder();
+			sb.AppendLine("GameObject: " + (gameObject != null ? gameObject.name : null));
+			sb.AppendLine("ProBuilderMesh: " + (mesh != null ? mesh.name : null));
+			sb.AppendLine("Face: " + (face != null ? face.ToString() : null));
+			sb.AppendLine("Edge: " + edge.ToString());
+			sb.AppendLine("Vertex: " + vertex);
+			return sb.ToString();
+		}
+
+		public bool Equals(SceneSelection other)
+		{
+			if (ReferenceEquals(null, other)) return false;
+			if (ReferenceEquals(this, other)) return true;
+			return Equals(gameObject, other.gameObject)
+				&& Equals(mesh, other.mesh)
+				&& vertex == other.vertex
+				&& edge.Equals(other.edge)
+				&& Equals(face, other.face);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != this.GetType()) return false;
+			return Equals((SceneSelection)obj);
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				int hashCode = (gameObject != null ? gameObject.GetHashCode() : 0);
+				hashCode = (hashCode * 397) ^ (mesh != null ? mesh.GetHashCode() : 0);
+				hashCode = (hashCode * 397) ^ vertex;
+				hashCode = (hashCode * 397) ^ edge.GetHashCode();
+				hashCode = (hashCode * 397) ^ (face != null ? face.GetHashCode() : 0);
+				return hashCode;
+			}
+		}
+
+		public static bool operator ==(SceneSelection left, SceneSelection right)
+		{
+			return Equals(left, right);
+		}
+
+		public static bool operator !=(SceneSelection left, SceneSelection right)
+		{
+			return !Equals(left, right);
+		}
 	}
 
 	static class EditorSceneViewPicker
 	{
 		static int s_DeepSelectionPrevious = 0x0;
-		static Rect s_MouseClickRect = new Rect(0f, 0f, 20, 20);
+		static SceneSelection s_Selection = new SceneSelection();
+		const bool k_AllowUnselectedObjects = false;
 
 		public static ProBuilderMesh DoMouseClick(Event evt, SelectMode selectionMode, ScenePickerPreferences pickerPreferences)
 		{
@@ -75,20 +148,31 @@ namespace UnityEditor.ProBuilder
 			if (!appendModifier)
 				MeshSelection.SetSelection((GameObject) null);
 
-			var selection = MouseRayHitTest(evt.mousePosition, selectionMode, pickerPreferences, evt.clickCount > 1 ? -1 : 0);
-
-			if (selection == null)
+			if (!MouseRayHitTest(evt.mousePosition, selectionMode, pickerPreferences, s_Selection, evt.clickCount > 1 ? -1 : 0))
 				return null;
 
-			MeshSelection.AddToSelection(selection.gameObject);
+			evt.Use();
 
-			if (selection.mesh != null)
+			MeshSelection.AddToSelection(s_Selection.gameObject);
+
+			if (s_Selection.mesh != null)
 			{
-				var mesh = selection.mesh;
+				var mesh = s_Selection.mesh;
 
-				if (selection.face != null)
+				if (s_Selection.face != null)
 				{
-					var ind = mesh.faces.IndexOf(selection.face);
+					// Check for other editor mouse shortcuts first (todo proper event handling for mouse shortcuts)
+					MaterialEditor matEditor = MaterialEditor.instance;
+
+					if (matEditor != null && matEditor.ClickShortcutCheck(Event.current.modifiers, mesh, s_Selection.face))
+						return null;
+
+					UVEditor uvEditor = UVEditor.instance;
+
+					if (uvEditor != null && uvEditor.ClickShortcutCheck(mesh, s_Selection.face))
+						return null;
+
+					var ind = mesh.faces.IndexOf(s_Selection.face);
 					var sel = mesh.selectedFaceIndexes.IndexOf(ind);
 
 					UndoUtility.RecordSelection(mesh, "Select Face");
@@ -98,28 +182,27 @@ namespace UnityEditor.ProBuilder
 					else
 						mesh.AddToFaceSelection(ind);
 				}
-				else if(selection.edge != Edge.Empty)
+				else if(s_Selection.edge != Edge.Empty)
 				{
-					int ind = mesh.selectedEdges.IndexOf(selection.edge, mesh.sharedIndicesInternal.ToDictionary());
+					int ind = mesh.selectedEdges.IndexOf(s_Selection.edge, mesh.sharedIndicesInternal.ToDictionary());
 
 					UndoUtility.RecordSelection(mesh, "Select Edge");
 
 					if (ind > -1)
 						mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().RemoveAt(ind));
 					else
-						mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().Add(selection.edge));
-
+						mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().Add(s_Selection.edge));
 				}
-				else if (selection.vertex > -1)
+				else if (s_Selection.vertex > -1)
 				{
-					int ind = System.Array.IndexOf(mesh.selectedIndicesInternal, selection.vertex);
+					int ind = Array.IndexOf(mesh.selectedIndicesInternal, s_Selection.vertex);
 
 					UndoUtility.RecordSelection(mesh, "Select Vertex");
 
 					if (ind > -1)
 						mesh.SetSelectedVertices(mesh.selectedIndicesInternal.RemoveAt(ind));
 					else
-						mesh.SetSelectedVertices(mesh.selectedIndicesInternal.Add(selection.vertex));
+						mesh.SetSelectedVertices(mesh.selectedIndicesInternal.Add(s_Selection.vertex));
 				}
 
 				return mesh;
@@ -128,253 +211,8 @@ namespace UnityEditor.ProBuilder
 			return null;
 		}
 
-		// Returns the pb_Object modified by this action.  If no action taken, or action is eaten by texture window, return null.
-		// A pb_Object is returned because double click actions need to know what the last selected pb_Object was.
-		// If deepClickOffset is specified, the object + deepClickOffset in the deep select stack will be returned (instead of next).
-		public static SceneSelection MouseRayHitTest(Vector3 mousePosition, SelectMode selectionMode, ScenePickerPreferences pickerOptions, int deepClickOffset = 0)
-		{
-			// Since Edge or Vertex selection may be valid even if clicking off a gameObject, check them
-			// first. If no hits, move on to face selection or object change.
-			SceneSelection selected;
-
-			if ( (selectionMode == SelectMode.Edge && (selected = EdgeClickCheck(mousePosition, pickerOptions)) != null)
-				|| (selectionMode == SelectMode.Vertex && (selected = VertexClickCheck(mousePosition, pickerOptions)) != null))
-				return selected;
-
-			return FaceClickCheck(mousePosition, pickerOptions, deepClickOffset);
-		}
-
-		internal static SceneSelection FaceClickCheck(Vector3 mousePosition, ScenePickerPreferences pickerOptions, int deepClickOffset = 0)
-		{
-			GameObject pickedGo = null;
-			ProBuilderMesh pickedPb = null;
-			Face pickedFace = null;
-			int newHash = 0;
-			List<GameObject> picked = EditorHandleUtility.GetAllOverlapping(mousePosition);
-			EventModifiers em = Event.current.modifiers;
-
-			// If any event modifiers are engaged don't cycle the deep click
-			int pickedCount = em != EventModifiers.None ? System.Math.Min(1, picked.Count) : picked.Count;
-
-			for (int i = 0, next = 0; i < pickedCount; i++)
-			{
-				GameObject go = picked[i];
-				var mesh = go.GetComponent<ProBuilderMesh>();
-				Face face = null;
-
-				if (mesh != null)
-				{
-					Ray ray = UHandleUtility.GUIPointToWorldRay(mousePosition);
-					RaycastHit hit;
-
-					if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray,
-						mesh,
-						out hit,
-						Mathf.Infinity,
-						pickerOptions.cullMode))
-					{
-						face = mesh.facesInternal[hit.face];
-					}
-				}
-
-				// pb_Face doesn't define GetHashCode, meaning it falls to object.GetHashCode (reference comparison)
-				int hash = face == null ? go.GetHashCode() : face.GetHashCode();
-
-				if (s_DeepSelectionPrevious == hash)
-					next = (i + (1 + deepClickOffset)) % pickedCount;
-
-				if (next == i)
-				{
-					pickedGo = go;
-					pickedPb = mesh;
-					pickedFace = face;
-
-					newHash = hash;
-
-					// a prior hash was matched, this is the next. if
-					// it's just the first iteration don't break (but do
-					// set the default).
-					if (next != 0)
-						break;
-				}
-			}
-
-			s_DeepSelectionPrevious = newHash;
-
-			if (pickedGo != null)
-			{
-				Event.current.Use();
-
-				if (pickedPb != null)
-				{
-					if (pickedPb.isSelectable)
-					{
-						MeshSelection.AddToSelection(pickedGo);
-
-						// Check for other editor mouse shortcuts first
-						MaterialEditor matEditor = MaterialEditor.instance;
-						if (matEditor != null && matEditor.ClickShortcutCheck(Event.current.modifiers, pickedPb, pickedFace))
-							return null;
-
-						UVEditor uvEditor = UVEditor.instance;
-						if (uvEditor != null && uvEditor.ClickShortcutCheck(pickedPb, pickedFace))
-							return null;
-
-						return new SceneSelection(pickedPb, pickedFace);
-					}
-
-					return null;
-				}
-
-				if (!PreferencesInternal.GetBool(PreferenceKeys.pbPBOSelectionOnly))
-				{
-					// If clicked off a pb_Object but onto another gameobject, set the selection
-					// and dip out.
-					return new SceneSelection(pickedGo);
-				}
-
-				// clicked on something that isn't allowed at all (ex, pboSelectionOnly on and clicked a camera)
-				return null;
-			}
-
-			return null;
-		}
-
-		internal static SceneSelection VertexClickCheck(Vector3 mousePosition, ScenePickerPreferences pickerOptions)
-		{
-			Camera cam = SceneView.lastActiveSceneView.camera;
-			var nearest = new List<SimpleTuple<float, Vector3, ProBuilderMesh, int>>();
-			var selection = MeshSelection.Top();
-			float minAllowableDistance = pickerOptions.maxPointerDistance * pickerOptions.maxPointerDistance;
-
-			for (int i = 0; i < selection.Length; i++)
-			{
-				ProBuilderMesh pb = selection[i];
-
-				if (!pb.isSelectable)
-					continue;
-
-				var positions = pb.positionsInternal;
-				var common = pb.sharedIndicesInternal;
-
-				for (int n = 0, c = common.Length; n < c; n++)
-				{
-					int index = common[n][0];
-					Vector3 v = pb.transform.TransformPoint(positions[index]);
-					Vector3 p = UHandleUtility.WorldToGUIPoint(v);
-
-					float dist = (p - mousePosition).sqrMagnitude;
-
-					if (dist < minAllowableDistance)
-						nearest.Add(new SimpleTuple<float, Vector3, ProBuilderMesh, int>(dist, v, pb, index));
-				}
-			}
-
-			nearest.Sort((x, y) => x.item1.CompareTo(y.item1));
-
-			for (int i = 0; i < nearest.Count; i++)
-			{
-				if (!UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, nearest[i].item3, nearest[i].item2))
-					return new SceneSelection(nearest[i].item3, nearest[i].item4);
-			}
-
-			return null;
-		}
-
-		public static SceneSelection EdgeClickCheck(Vector3 mousePosition, ScenePickerPreferences pickerPrefs)
-		{
-			var selection = MeshSelection.Top();
-
-			if (selection.Length < 1)
-				return null;
-
-			GameObject go = UHandleUtility.PickGameObject(mousePosition, false);
-			ProBuilderMesh nearestMesh = go != null ? go.GetComponent<ProBuilderMesh>() : null;
-			Edge nearestEdge = Edge.Empty;
-
-			// If mouse isn't over a pb object, it still may be near enough to an edge.
-			if (nearestMesh == null)
-			{
-				float bestDistance = pickerPrefs.maxPointerDistance;
-
-				foreach (var mesh in selection)
-				{
-					var trs = mesh.transform;
-					var positions = mesh.positionsInternal;
-
-					foreach (var face in mesh.faces)
-					{
-						foreach (var edge in face.edges)
-						{
-							int x = edge.x;
-							int y = edge.y;
-
-							float d = UHandleUtility.DistanceToLine(
-								trs.TransformPoint(positions[x]),
-								trs.TransformPoint(positions[y]));
-
-							if (d < bestDistance)
-							{
-								nearestMesh = mesh;
-								nearestEdge = new Edge(x, y);
-								bestDistance = d;
-							}
-						}
-					}
-				}
-			}
-			else
-			{
-				// Test culling
-				List<RaycastHit> hits;
-				Ray ray = UHandleUtility.GUIPointToWorldRay(mousePosition);
-
-				if (PHandleUtility.FaceRaycast(ray, nearestMesh, out hits, CullingMode.Back))
-				{
-					Camera cam = SceneView.lastActiveSceneView.camera;
-
-					// Sort from nearest hit to farthest
-					hits.Sort((x, y) => x.distance.CompareTo(y.distance));
-
-					// Find the nearest edge in the hit faces
-
-					float bestDistance = Mathf.Infinity;
-					Vector3[] v = nearestMesh.positionsInternal;
-
-					for (int i = 0; i < hits.Count; i++)
-					{
-						if (UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, nearestMesh, nearestMesh.transform.TransformPoint(hits[i].point)))
-							continue;
-
-						foreach (Edge edge in nearestMesh.facesInternal[hits[i].face].edgesInternal)
-						{
-							float d = UHandleUtility.DistancePointLine(hits[i].point, v[edge.x], v[edge.y]);
-
-							if (d < bestDistance)
-							{
-								bestDistance = d;
-								nearestEdge = edge;
-							}
-						}
-
-						if (Vector3.Dot(ray.direction, nearestMesh.transform.TransformDirection(hits[i].normal)) < 0f)
-							break;
-					}
-
-					if (nearestEdge.IsValid() &&
-						UHandleUtility.DistanceToLine(nearestMesh.transform.TransformPoint(v[nearestEdge.x]),
-							nearestMesh.transform.TransformPoint(v[nearestEdge.y])) >
-						pickerPrefs.maxPointerDistance)
-						nearestEdge = Edge.Empty;
-				}
-			}
-
-			return nearestMesh != null && nearestEdge != Edge.Empty ? new SceneSelection(nearestMesh, nearestEdge) : null;
-		}
-
 		public static void DoMouseDrag(Rect mouseDragRect, SelectMode selectionMode, ScenePickerPreferences scenePickerPreferences)
 		{
-
 			var pickingOptions = new PickerOptions()
 			{
 				depthTest = scenePickerPreferences.cullMode == CullingMode.Back,
@@ -511,6 +349,273 @@ namespace UnityEditor.ProBuilder
 
 			ProBuilderEditor.Refresh(false);
 			SceneView.RepaintAll();
+		}
+
+		// Get the object & mesh selection that the mouse is currently nearest.
+		// A ProBuilderMesh is returned because double click actions need to know what the last selected pb_Object was.
+		// If deepClickOffset is specified, the object + deepClickOffset in the deep select stack will be returned (instead of next).
+		internal static bool MouseRayHitTest(
+			Vector3 mousePosition,
+			SelectMode selectionMode,
+			ScenePickerPreferences pickerOptions,
+			SceneSelection selection,
+			int deepClickOffset = 0)
+		{
+			if (selectionMode == SelectMode.Edge)
+				return EdgeRaycast(mousePosition, pickerOptions, selection);
+
+			if (selectionMode == SelectMode.Vertex)
+				return VertexRaycast(mousePosition, pickerOptions, selection);
+
+			return FaceRaycast(mousePosition, pickerOptions, selection, deepClickOffset);
+		}
+
+		static bool FaceRaycast(Vector3 mousePosition, ScenePickerPreferences pickerOptions, SceneSelection selection, int deepClickOffset = 0)
+		{
+			GameObject pickedGo = null;
+			ProBuilderMesh pickedPb = null;
+			Face pickedFace = null;
+			int newHash = 0;
+			List<GameObject> picked = EditorHandleUtility.GetAllOverlapping(mousePosition);
+			EventModifiers em = Event.current.modifiers;
+			selection.Clear();
+
+			// If any event modifiers are engaged don't cycle the deep click
+			int pickedCount = em != EventModifiers.None ? System.Math.Min(1, picked.Count) : picked.Count;
+
+			for (int i = 0, next = 0; i < pickedCount; i++)
+			{
+				GameObject go = picked[i];
+
+				var mesh = go.GetComponent<ProBuilderMesh>();
+				Face face = null;
+
+				if (mesh != null && (k_AllowUnselectedObjects || MeshSelection.Top().Contains(mesh)))
+				{
+					Ray ray = UHandleUtility.GUIPointToWorldRay(mousePosition);
+					RaycastHit hit;
+
+					if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray,
+						mesh,
+						out hit,
+						Mathf.Infinity,
+						pickerOptions.cullMode))
+					{
+						face = mesh.facesInternal[hit.face];
+					}
+				}
+
+				// pb_Face doesn't define GetHashCode, meaning it falls to object.GetHashCode (reference comparison)
+				int hash = face == null ? go.GetHashCode() : face.GetHashCode();
+
+				if (s_DeepSelectionPrevious == hash)
+					next = (i + (1 + deepClickOffset)) % pickedCount;
+
+				if (next == i)
+				{
+					pickedGo = go;
+					pickedPb = mesh;
+					pickedFace = face;
+
+					newHash = hash;
+
+					// a prior hash was matched, this is the next. if
+					// it's just the first iteration don't break (but do
+					// set the default).
+					if (next != 0)
+						break;
+				}
+			}
+
+			s_DeepSelectionPrevious = newHash;
+
+			if (pickedGo != null)
+			{
+				Event.current.Use();
+
+				if (pickedPb != null)
+				{
+					if (pickedPb.isSelectable)
+					{
+						selection.gameObject = pickedGo;
+						selection.mesh = pickedPb;
+						selection.face = pickedFace;
+
+						return true;
+					}
+				}
+
+				if (!PreferencesInternal.GetBool(PreferenceKeys.pbPBOSelectionOnly))
+				{
+					// If clicked off a pb_Object but onto another gameobject, set the selection
+					// and dip out.
+					selection.gameObject = pickedGo;
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		static bool VertexRaycast(Vector3 mousePosition, ScenePickerPreferences pickerOptions, SceneSelection selection)
+		{
+			Camera cam = SceneView.lastActiveSceneView.camera;
+			var nearest = new List<SimpleTuple<float, Vector3, ProBuilderMesh, int>>();
+			selection.Clear();
+			selection.gameObject = HandleUtility.PickGameObject(mousePosition, false);
+
+			foreach(var mesh in MeshSelection.Top())
+			{
+				if (!mesh.isSelectable)
+					continue;
+
+				var positions = mesh.positionsInternal;
+				var vert = GetNearestVertex(mesh, mousePosition);
+				if (vert.item1 < pickerOptions.maxPointerDistance)
+					nearest.Add(new SimpleTuple<float, Vector3, ProBuilderMesh, int>(vert.item1, positions[vert.item2], mesh, vert.item2));
+			}
+
+			if (selection.gameObject != null)
+			{
+				var mesh = selection.gameObject.GetComponent<ProBuilderMesh>();
+
+				if (mesh != null && mesh.isSelectable && (k_AllowUnselectedObjects || MeshSelection.Top().Contains(mesh)))
+				{
+					var positions = mesh.positionsInternal;
+					var vert = GetNearestVertex(mesh, mousePosition);
+					if (vert.item1 < pickerOptions.maxPointerDistance)
+						nearest.Add(new SimpleTuple<float, Vector3, ProBuilderMesh, int>(vert.item1, positions[vert.item2], mesh, vert.item2));
+				}
+			}
+
+			nearest.Sort((x, y) => x.item1.CompareTo(y.item1));
+
+			for (int i = 0; i < nearest.Count; i++)
+			{
+				if (!UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, nearest[i].item3, nearest[i].item2))
+				{
+					selection.gameObject = nearest[i].item3.gameObject;
+					selection.mesh = nearest[i].item3;
+					selection.vertex = nearest[i].item4;
+					return true;
+				}
+			}
+
+
+			return selection.gameObject != null;
+		}
+
+		static SimpleTuple<float, int> GetNearestVertex(ProBuilderMesh mesh, Vector3 mousePosition)
+		{
+			var positions = mesh.positionsInternal;
+			var common = mesh.sharedIndicesInternal;
+			var best = new SimpleTuple<float, int>(Mathf.Infinity, -1);
+
+			for (int n = 0, c = common.Length; n < c; n++)
+			{
+				int index = common[n][0];
+				Vector3 v = mesh.transform.TransformPoint(positions[index]);
+				Vector3 p = UHandleUtility.WorldToGUIPoint(v);
+
+				float dist = (p - mousePosition).sqrMagnitude;
+
+				if (dist < best.item1)
+				{
+					best.item1 = dist;
+					best.item2 = index;
+				}
+			}
+
+			best.item1 /= best.item1;
+
+			return best;
+		}
+
+		static bool EdgeRaycast(Vector3 mousePosition, ScenePickerPreferences pickerPrefs, SceneSelection selection)
+		{
+			selection.Clear();
+			selection.gameObject = UHandleUtility.PickGameObject(mousePosition, false);
+			ProBuilderMesh hoveredMesh = selection.gameObject != null ? selection.gameObject.GetComponent<ProBuilderMesh>() : null;
+
+			// If mouse isn't over a pb object, it still may be near enough to an edge.
+			if (hoveredMesh == null)
+			{
+				float bestDistance = pickerPrefs.maxPointerDistance;
+
+				foreach (var mesh in MeshSelection.Top())
+				{
+					var trs = mesh.transform;
+					var positions = mesh.positionsInternal;
+
+					foreach (var face in mesh.faces)
+					{
+						foreach (var edge in face.edges)
+						{
+							int x = edge.x;
+							int y = edge.y;
+
+							float d = UHandleUtility.DistanceToLine(
+								trs.TransformPoint(positions[x]),
+								trs.TransformPoint(positions[y]));
+
+							if (d < bestDistance)
+							{
+								selection.mesh = mesh;
+								selection.edge = new Edge(x, y);
+								bestDistance = d;
+							}
+						}
+					}
+				}
+			}
+			else if(k_AllowUnselectedObjects || MeshSelection.Top().Contains(hoveredMesh))
+			{
+				// Test culling
+				List<RaycastHit> hits;
+				Ray ray = UHandleUtility.GUIPointToWorldRay(mousePosition);
+
+				if (PHandleUtility.FaceRaycast(ray, hoveredMesh, out hits, CullingMode.Back))
+				{
+					Camera cam = SceneView.lastActiveSceneView.camera;
+
+					// Sort from nearest hit to farthest
+					hits.Sort((x, y) => x.distance.CompareTo(y.distance));
+
+					// Find the nearest edge in the hit faces
+
+					float bestDistance = Mathf.Infinity;
+					Vector3[] v = hoveredMesh.positionsInternal;
+
+					for (int i = 0; i < hits.Count; i++)
+					{
+						if (UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, hoveredMesh, hoveredMesh.transform.TransformPoint(hits[i].point)))
+							continue;
+
+						foreach (Edge edge in hoveredMesh.facesInternal[hits[i].face].edgesInternal)
+						{
+							float d = UHandleUtility.DistancePointLine(hits[i].point, v[edge.x], v[edge.y]);
+
+							if (d < bestDistance)
+							{
+								bestDistance = d;
+								selection.mesh = hoveredMesh;
+								selection.edge = edge;
+							}
+						}
+
+						if (Vector3.Dot(ray.direction, hoveredMesh.transform.TransformDirection(hits[i].normal)) < 0f)
+							break;
+					}
+
+					if (selection.edge.IsValid() &&
+						UHandleUtility.DistanceToLine(hoveredMesh.transform.TransformPoint(v[selection.edge.x]),
+							hoveredMesh.transform.TransformPoint(v[selection.edge.y])) >
+						pickerPrefs.maxPointerDistance)
+						selection.edge = Edge.Empty;
+				}
+			}
+
+			return selection.gameObject != null;
 		}
 	}
 }

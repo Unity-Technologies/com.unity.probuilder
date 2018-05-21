@@ -8,8 +8,11 @@ namespace UnityEditor.ProBuilder
 {
 	static class MeshHandles
 	{
-		const string k_FaceShader = "Hidden/ProBuilder/FaceHighlight";
 
+		static bool s_GeometryShadersSupported;
+		static bool s_EnableFaceDither = false;
+
+		const string k_FaceShader = "Hidden/ProBuilder/FaceHighlight";
 		// used when gpu doesn't support geometry shaders (metal, for example)
 		const string k_EdgeShader = "Hidden/ProBuilder/FaceHighlight";
 
@@ -21,9 +24,6 @@ namespace UnityEditor.ProBuilder
 
 		// geometry shader expands points to billboards
 		const string k_PointBillboardShader = "Hidden/ProBuilder/PointBillboard";
-
-		static bool s_GeometryShadersSupported;
-		static bool s_EnableFaceDither = false;
 
 		static Material s_FaceMaterial;
 		static Material s_VertexMaterial;
@@ -41,9 +41,39 @@ namespace UnityEditor.ProBuilder
 		static Color s_VertexSelectedColor;
 		static Color s_VertexUnselectedColor;
 
+		public static Color faceSelectedColor
+		{
+			get { return s_FaceSelectedColor; }
+		}
+
+		public static Color wireframeColor
+		{
+			get { return s_WireframeColor; }
+		}
+
 		public static Color preselectionColor
 		{
 			get { return s_PreselectionColor; }
+		}
+
+		public static Color edgeSelectedColor
+		{
+			get { return s_EdgeSelectedColor; }
+		}
+
+		public static Color edgeUnselectedColor
+		{
+			get { return s_EdgeUnselectedColor; }
+		}
+
+		public static Color vertexSelectedColor
+		{
+			get { return s_VertexSelectedColor; }
+		}
+
+		public static Color vertexUnselectedColor
+		{
+			get { return s_VertexUnselectedColor; }
 		}
 
 		const HideFlags k_MeshHideFlags = (HideFlags) (1 | 2 | 4 | 8);
@@ -58,6 +88,11 @@ namespace UnityEditor.ProBuilder
 		public static bool geometryShadersSupported
 		{
 			get { return s_GeometryShadersSupported; }
+		}
+
+		public static Material faceMaterial
+		{
+			get { return s_FaceMaterial; }
 		}
 
 		public static Material lineMaterial
@@ -151,7 +186,6 @@ namespace UnityEditor.ProBuilder
 			}
 
 			s_WireframeMaterial.SetColor("_Color", s_WireframeColor);
-			s_FaceMaterial.SetColor("_Color", s_FaceSelectedColor);
 			s_FaceMaterial.SetFloat("_Dither", s_EnableFaceDither ? 1f : 0f);
 
 			if (geometryShadersSupported)
@@ -187,6 +221,8 @@ namespace UnityEditor.ProBuilder
 				}
 				else if (selectionMode == SelectMode.Face)
 				{
+					s_FaceMaterial.SetColor("_Color", s_FaceSelectedColor);
+
 					foreach(var r in s_ActiveRenderables)
 						r.Render();
 				}

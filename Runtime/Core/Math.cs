@@ -215,6 +215,11 @@ namespace UnityEngine.ProBuilder
 			return point + perp * (dist * 2f) * (Vector2.Dot(point-lineStart, perp) > 0 ? -1f : 1f);
 		}
 
+		internal static float SqrDistanceRayPoint(Ray ray, Vector3 point)
+		{
+			return Vector3.Cross(ray.direction, point - ray.origin).sqrMagnitude;
+		}
+
 		/// <summary>
 		/// Get the distance between a point and a finite line segment.
 		/// </summary>

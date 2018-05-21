@@ -64,8 +64,9 @@ namespace UnityEditor.ProBuilder
 		SceneToolbarLocation m_SceneToolbarLocation;
 		GUIStyle m_CommandStyle;
 		Rect m_ElementModeToolbarRect = new Rect(3, 6, 128, 24);
-		SimpleTuple<PMesh, Edge> m_NearestEdge = new SimpleTuple<ProBuilderMesh, Edge>();
 
+		SceneSelection m_Hovering = new SceneSelection();
+		SceneSelection m_HoveringPrevious = new SceneSelection();
 		ScenePickerPreferences m_ScenePickerPreferences;
 
 		Tool m_CurrentTool = Tool.Move;
@@ -506,9 +507,13 @@ namespace UnityEditor.ProBuilder
 			}
 
 			// Check mouse position in scene and determine if we should highlight something
-			// todo
-//			if (m_CurrentEvent.type == EventType.MouseMove && editLevel == EditLevel.Geometry)
-//				UpdateMouse(m_CurrentEvent.mousePosition);
+			if (m_CurrentEvent.type == EventType.MouseMove && editLevel == EditLevel.Geometry)
+			{
+				m_Hovering.CopyTo(m_HoveringPrevious);
+				EditorSceneViewPicker.MouseRayHitTest(m_CurrentEvent.mousePosition, selectionMode, m_ScenePickerPreferences, m_Hovering);
+				if(!m_Hovering.Equals(m_HoveringPrevious))
+					SceneView.RepaintAll();
+			}
 
 			if (Tools.current != Tool.None && Tools.current != m_CurrentTool)
 				SetTool_Internal(Tools.current);
@@ -1136,27 +1141,10 @@ namespace UnityEditor.ProBuilder
 			if (sceneView != SceneView.lastActiveSceneView)
 				return;
 
-			// Draw nearest edge
-			if (m_CurrentEvent.type == EventType.Repaint &&
-			    editLevel != EditLevel.Top &&
-			    editLevel != EditLevel.Plugin)
-			{
-				if (m_NearestEdge.item1 != null && m_NearestEdge.item2.IsValid())
-				{
-					if (EditorHandleUtility.BeginDrawingLines(Handles.zTest))
-					{
-						MeshHandles.lineMaterial.SetColor("_Color", Color.white);
-						GL.Color(MeshHandles.preselectionColor);
-
-						GL.MultMatrix(m_NearestEdge.item1.transform.localToWorldMatrix);
-
-						GL.Vertex(m_NearestEdge.item1.positionsInternal[m_NearestEdge.item2.x]);
-						GL.Vertex(m_NearestEdge.item1.positionsInternal[m_NearestEdge.item2.y]);
-
-						EditorHandleUtility.EndDrawingLines();
-					}
-				}
-			}
+			if (m_CurrentEvent.type == EventType.Repaint
+				&& m_Hovering != null
+				&& editLevel == EditLevel.Geometry)
+				EditorHandleUtility.DrawSceneSelection(m_Hovering);
 
 			using (new HandleGUI())
 			{
@@ -1775,8 +1763,7 @@ namespace UnityEditor.ProBuilder
 			foreach (ProBuilderMesh pb in selection)
 				pb.ClearSelection();
 
-			m_NearestEdge.item2 = Edge.Empty;
-			m_NearestEdge.item1 = null;
+			m_Hovering.Clear();
 		}
 
 		void UpdateTextureHandles()
@@ -1928,9 +1915,7 @@ namespace UnityEditor.ProBuilder
 
 		void OnObjectSelectionChanged()
 		{
-			m_NearestEdge.item2 = Edge.Empty;
-			m_NearestEdge.item1 = null;
-
+			m_Hovering.Clear();
 			UpdateSelection(false);
 			HideSelectedWireframe();
 		}

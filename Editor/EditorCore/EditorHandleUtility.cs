@@ -85,7 +85,6 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-
 		static Material s_EdgeMaterial = null;
 
 		public static Material edgeMaterial
@@ -677,6 +676,67 @@ namespace UnityEditor.ProBuilder
 		{
 			GL.End();
 			GL.PopMatrix();
+		}
+
+		internal static void DrawSceneSelection(SceneSelection selection)
+		{
+			var mesh = selection.mesh;
+
+			if (mesh == null)
+				return;
+
+			var positions = mesh.positionsInternal;
+
+			// Draw nearest edge
+			if (selection.face != null)
+			{
+				MeshHandles.faceMaterial.SetColor("_Color", MeshHandles.preselectionColor);
+
+				if (!MeshHandles.faceMaterial.SetPass(0))
+					return;
+
+				GL.PushMatrix();
+				GL.Begin(GL.TRIANGLES);
+				GL.MultMatrix(mesh.transform.localToWorldMatrix);
+
+				var face = selection.face;
+				var ind = face.indices;
+				
+				for (int i = 0, c = ind.Length; i < c; i += 3)
+				{
+					GL.Vertex(positions[ind[i]]);
+					GL.Vertex(positions[ind[i+1]]);
+					GL.Vertex(positions[ind[i+2]]);
+				}
+
+				GL.End();
+				GL.PopMatrix();
+			}
+			else if (selection.edge != Edge.Empty)
+			{
+				if (BeginDrawingLines(Handles.zTest))
+				{
+					MeshHandles.lineMaterial.SetColor("_Color", Color.white);
+					GL.Color(MeshHandles.preselectionColor);
+
+					GL.MultMatrix(mesh.transform.localToWorldMatrix);
+					GL.Vertex(positions[selection.edge.x]);
+					GL.Vertex(positions[selection.edge.y]);
+
+					EndDrawingLines();
+				}
+			}
+			else if (selection.vertex > -1)
+			{
+				// todo
+				var size = .25f / (PreferencesInternal.GetFloat(PreferenceKeys.pbVertexHandleSize) * EditorGUIUtility.pixelsPerPoint);
+
+				using (new Handles.DrawingScope(MeshHandles.preselectionColor, mesh.transform.localToWorldMatrix))
+				{
+					var pos = positions[selection.vertex];
+					Handles.DotHandleCap(-1, pos, Quaternion.identity, HandleUtility.GetHandleSize(pos) * size, Event.current.type);
+				}
+			}
 		}
 	}
 }

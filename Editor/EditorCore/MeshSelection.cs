@@ -139,14 +139,10 @@ namespace UnityEditor.ProBuilder
 		{
 			if(t == null || Selection.objects.Contains(t))
 				return;
-
 			Object[] temp = new Object[Selection.objects.Length + 1];
-
 			temp[0] = t;
-
 			for(int i = 1; i < temp.Length; i++)
 				temp[i] = Selection.objects[i-1];
-
 			Selection.objects = temp;
 		}
 
@@ -169,7 +165,6 @@ namespace UnityEditor.ProBuilder
 		internal static void SetSelection(IList<GameObject> newSelection)
 		{
 			UndoUtility.RecordSelection(selection, "Change Selection");
-
 			ClearElementAndObjectSelection();
 
 			// if the previous tool was set to none, use Tool.Move
