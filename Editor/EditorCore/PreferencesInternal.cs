@@ -55,7 +55,7 @@ namespace UnityEditor.ProBuilder
 		{
 			{ PreferenceKeys.pbGrowSelectionAngle, 42f },
 			{ PreferenceKeys.pbExtrudeDistance, .5f },
-			{ PreferenceKeys.pbWeldDistance, Mathf.Epsilon },
+			{ PreferenceKeys.pbWeldDistance, .001f },
 			{ PreferenceKeys.pbUVGridSnapValue, .125f },
 			{ PreferenceKeys.pbUVWeldDistance, .01f },
 			{ PreferenceKeys.pbBevelAmount, .05f },

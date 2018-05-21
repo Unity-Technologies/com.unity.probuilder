@@ -17,7 +17,10 @@ namespace UnityEditor.ProBuilder.Actions
 					(int) RectSelectMode.Partial);
 			}
 
-			set { PreferencesInternal.SetInt(PreferenceKeys.pbRectSelectMode, (int) value); }
+			set
+			{
+				PreferencesInternal.SetInt(PreferenceKeys.pbRectSelectMode, (int) value);
+			}
 		}
 
 		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
@@ -45,6 +48,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ActionResult DoAction()
 		{
 			mode = InternalUtility.NextEnumValue(mode);
+			ProBuilderEditor.instance.LoadPrefs();
 			return new ActionResult(ActionResult.Status.Success,
 				"Set Drag Select\n" + (mode == RectSelectMode.Complete ? "Complete" : "Intersect"));
 		}

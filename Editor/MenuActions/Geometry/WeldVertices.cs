@@ -54,7 +54,7 @@ namespace UnityEditor.ProBuilder.Actions
 		}
 
 		static readonly GUIContent gc_weldDistance = new GUIContent("Weld Distance", "The maximum distance between two vertices in order to be welded together.");
-		const float MIN_WELD_DISTANCE = .00001f;
+		const float k_MinWeldDistance = .00001f;
 
 		public override void OnSettingsGUI()
 		{
@@ -64,15 +64,15 @@ namespace UnityEditor.ProBuilder.Actions
 
 			float weldDistance = PreferencesInternal.GetFloat(PreferenceKeys.pbWeldDistance);
 
-			if (weldDistance <= MIN_WELD_DISTANCE)
-				weldDistance = MIN_WELD_DISTANCE;
+			if (weldDistance <= k_MinWeldDistance)
+				weldDistance = k_MinWeldDistance;
 
 			weldDistance = EditorGUILayout.FloatField(gc_weldDistance, weldDistance);
 
 			if (EditorGUI.EndChangeCheck())
 			{
-				if (weldDistance < MIN_WELD_DISTANCE)
-					weldDistance = MIN_WELD_DISTANCE;
+				if (weldDistance < k_MinWeldDistance)
+					weldDistance = k_MinWeldDistance;
 				PreferencesInternal.SetFloat(PreferenceKeys.pbWeldDistance, weldDistance);
 			}
 
