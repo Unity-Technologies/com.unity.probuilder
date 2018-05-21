@@ -29,15 +29,15 @@ namespace UnityEngine.ProBuilder
 		/// <inheritdoc />
 		public bool MoveNext()
 		{
-			if (m_Current == null)
+			if (ReferenceEquals(m_Current, null))
 			{
 				m_Current = m_Start;
-				return m_Current != null;
+				return !ReferenceEquals(m_Current, null);
 			}
 
 			m_Current = m_Current.next;
 
-			return ReferenceEquals(m_Current, m_Start);
+			return !ReferenceEquals(m_Current, null) && !ReferenceEquals(m_Current, m_Start);
 		}
 
 		/// <inheritdoc />
