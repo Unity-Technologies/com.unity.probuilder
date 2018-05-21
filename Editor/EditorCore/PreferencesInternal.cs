@@ -73,7 +73,7 @@ namespace UnityEditor.ProBuilder
 			{ PreferenceKeys.pbVertexColorTool, (int) VertexColorTool.Painter },
 			{ PreferenceKeys.pbToolbarLocation, (int) SceneToolbarLocation.UpperCenter },
 			{ PreferenceKeys.pbDefaultEntity, (int) EntityType.Detail },
-			{ PreferenceKeys.pbDragSelectMode, (int) DragSelectMode.Difference },
+			{ PreferenceKeys.pbDragSelectMode, (int) SelectionModifierBehavior.Difference },
 			{ PreferenceKeys.pbExtrudeMethod, (int) ExtrudeMethod.VertexNormal },
 			{ PreferenceKeys.pbShadowCastingMode, (int) ShadowCastingMode.TwoSided },
 		};

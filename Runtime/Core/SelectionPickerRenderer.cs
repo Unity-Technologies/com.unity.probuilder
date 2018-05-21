@@ -8,9 +8,9 @@ using UObject = UnityEngine.Object;
 namespace UnityEngine.ProBuilder
 {
 	/// <summary>
-	/// Functions for picking elements in a view.
+	/// Functions for picking elements in a view by rendering a picker texture and testing pixels.
 	/// </summary>
-	static class SelectionPicker
+	static class SelectionPickerRenderer
 	{
 		const string k_FacePickerOcclusionTintUniform = "_Tint";
 		static readonly Color k_Blackf = new Color(0f, 0f, 0f, 1f);
@@ -105,7 +105,7 @@ namespace UnityEngine.ProBuilder
 					rectImg.Add(pix[y * imageWidth + x]);
 #endif
 
-					uint v = SelectionPicker.DecodeRGBA( pix[y * imageWidth + x] );
+					uint v = SelectionPickerRenderer.DecodeRGBA( pix[y * imageWidth + x] );
 
 					if( used.Add(v) && map.TryGetValue(v, out hit) )
 					{

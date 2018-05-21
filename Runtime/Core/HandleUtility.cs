@@ -37,7 +37,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		public static bool FaceRaycast(Ray worldRay, ProBuilderMesh mesh, out RaycastHit hit, HashSet<Face> ignore = null)
 		{
-			return FaceRaycast(worldRay, mesh, out hit, Mathf.Infinity, CullingMode.Front, ignore);
+			return FaceRaycast(worldRay, mesh, out hit, Mathf.Infinity, CullingMode.Back, ignore);
 		}
 
 		/// <summary>
@@ -47,7 +47,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="mesh">The ProBuilder object to raycast against.</param>
 		/// <param name="hit">If the mesh was intersected, hit contains information about the intersect point.</param>
 		/// <param name="distance">The distance from the ray origin to the intersection point.</param>
-		/// <param name="cullingMode">What sides of triangles does the ray intersect with.</param>
+		/// <param name="cullingMode">Which sides of a face are culled when hit testing. Default is back faces are culled.</param>
 		/// <param name="ignore">Optional collection of faces to ignore when raycasting.</param>
 		/// <returns>True if the ray intersects with the mesh, false if not.</returns>
 		public static bool FaceRaycast(Ray worldRay, ProBuilderMesh mesh, out RaycastHit hit, float distance, CullingMode cullingMode, HashSet<Face> ignore = null)
@@ -59,12 +59,8 @@ namespace UnityEngine.ProBuilder
 
 			Vector3[] vertices = mesh.positionsInternal;
 
-			float dist = 0f;
-			Vector3 point = Vector3.zero;
-
+			Vector3 point;
 			float OutHitPoint = Mathf.Infinity;
-			float dot;
-			Vector3 nrm;
 			int OutHitFace = -1;
 			Vector3 OutNrm = Vector3.zero;
 
@@ -82,21 +78,23 @@ namespace UnityEngine.ProBuilder
 					Vector3 b = vertices[indices[CurTriangle+1]];
 					Vector3 c = vertices[indices[CurTriangle+2]];
 
-					nrm = Vector3.Cross(b-a, c-a);
-					dot = Vector3.Dot(worldRay.direction, nrm);
+					Vector3 nrm = Vector3.Cross(b-a, c-a);
+					float dot = Vector3.Dot(worldRay.direction, nrm);
 
 					bool skip = false;
 
 					switch(cullingMode)
 					{
 						case CullingMode.Front:
-							if(dot > 0f) skip = true;
+							if(dot < 0f) skip = true;
 							break;
 
 						case CullingMode.Back:
-							if(dot < 0f) skip = true;
+							if(dot > 0f) skip = true;
 							break;
 					}
+
+					var dist = 0f;
 
 					if(!skip && Math.RayIntersectsTriangle(worldRay, a, b, c, out dist, out point))
 					{
@@ -106,8 +104,6 @@ namespace UnityEngine.ProBuilder
 						OutNrm = nrm;
 						OutHitFace = CurFace;
 						OutHitPoint = dist;
-
-						continue;
 					}
 				}
 			}
@@ -126,7 +122,6 @@ namespace UnityEngine.ProBuilder
 		/// <param name="InWorldRay">A ray in world space.</param>
 		/// <param name="mesh">The ProBuilder object to raycast against.</param>
 		/// <param name="hits">If the mesh was intersected, hits contains all intersection point RaycastHit information.</param>
-		/// <param name="distance">The distance from the ray origin to the intersection point.</param>
 		/// <param name="cullingMode">What sides of triangles does the ray intersect with.</param>
 		/// <param name="ignore">Optional collection of faces to ignore when raycasting.</param>
 		/// <returns>True if the ray intersects with the mesh, false if not.</returns>
@@ -173,7 +168,7 @@ namespace UnityEngine.ProBuilder
 						switch(cullingMode)
 						{
 							case CullingMode.Front:
-								dot = Vector3.Dot(InWorldRay.direction, -nrm);
+								dot = Vector3.Dot(InWorldRay.direction, nrm);
 
 								if(dot > 0f)
 									goto case CullingMode.FrontBack;
@@ -182,7 +177,7 @@ namespace UnityEngine.ProBuilder
 							case CullingMode.Back:
 								dot = Vector3.Dot(InWorldRay.direction, nrm);
 
-								if(dot > 0f)
+								if(dot < 0f)
 									goto case CullingMode.FrontBack;
 								break;
 
@@ -242,7 +237,6 @@ namespace UnityEngine.ProBuilder
 		/// <param name="triangles"></param>
 		/// <param name="hit"></param>
 		/// <param name="distance"></param>
-		/// <param name="cullingMode"></param>
 		/// <returns></returns>
 		public static bool MeshRaycast(Ray InRay, Vector3[] vertices, int[] triangles, out RaycastHit hit, float distance = Mathf.Infinity)
 		{
@@ -293,7 +287,7 @@ namespace UnityEngine.ProBuilder
 
 			RaycastHit hit;
 
-			return HandleUtility.FaceRaycast(ray, pb, out hit, Vector3.Distance(cam.transform.position, worldPoint), CullingMode.Back);
+			return FaceRaycast(ray, pb, out hit, Vector3.Distance(cam.transform.position, worldPoint), CullingMode.Front);
 		}
 
 		/// <summary>

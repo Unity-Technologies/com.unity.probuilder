@@ -21,9 +21,17 @@ namespace UnityEditor.ProBuilder
 			return 	e.alt
 					|| Tools.current == Tool.View
 					|| GUIUtility.hotControl > 0
-					|| (e.isMouse ? e.button > 1 : false)
+					|| (e.isMouse && e.button > 0)
 					|| Tools.viewTool == ViewTool.FPS
 					|| Tools.viewTool == ViewTool.Orbit;
+		}
+
+		public static bool IsAppendModifier(EventModifiers em)
+		{
+			return 	(em & EventModifiers.Shift) == EventModifiers.Shift ||
+				(em & EventModifiers.Control) == EventModifiers.Control ||
+				(em & EventModifiers.Alt) == EventModifiers.Alt ||
+				(em & EventModifiers.Command) == EventModifiers.Command;
 		}
 
 		const int HANDLE_PADDING = 8;

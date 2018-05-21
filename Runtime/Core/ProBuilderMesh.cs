@@ -759,6 +759,12 @@ namespace UnityEngine.ProBuilder
 				SetSelectedFaces(m_selectedFaces.Add(index));
 		}
 
+		internal void AddToFaceSelection(int index)
+		{
+			if (index > -1)
+				SetSelectedFaces(m_selectedFaces.Add(index));
+		}
+
 		/// <summary>
 		/// Set the face selection for this mesh. Also sets the vertex and edge selection to match.
 		/// </summary>

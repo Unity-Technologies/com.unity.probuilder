@@ -493,7 +493,7 @@ namespace UnityEditor.ProBuilder
 			if(!used &&
 				(	evt.type == EventType.MouseDown &&
 					evt.button == 0 &&
-					!IsAppendModifier(evt.modifiers)
+					!EditorHandleUtility.IsAppendModifier(evt.modifiers)
 				)
 			)
 			{
@@ -503,7 +503,7 @@ namespace UnityEditor.ProBuilder
 
 			if(polygon.polyEditMode == PolyShape.PolyEditMode.Height)
 			{
-				if(!used && evt.type == EventType.MouseUp && evt.button == 0 && !IsAppendModifier(evt.modifiers))
+				if(!used && evt.type == EventType.MouseUp && evt.button == 0 && !EditorHandleUtility.IsAppendModifier(evt.modifiers))
 					SetPolyEditMode(PolyShape.PolyEditMode.Edit);
 
 				bool sceneInUse = EditorHandleUtility.SceneViewInUse(evt);
@@ -608,14 +608,6 @@ namespace UnityEditor.ProBuilder
 					}
 				}
 			}
-		}
-
-		bool IsAppendModifier(EventModifiers em)
-		{
-			return 	(em & EventModifiers.Shift) == EventModifiers.Shift ||
-					(em & EventModifiers.Control) == EventModifiers.Control ||
-					(em & EventModifiers.Alt) == EventModifiers.Alt ||
-					(em & EventModifiers.Command) == EventModifiers.Command;
 		}
 
 		void HandleKeyEvent(KeyCode key)

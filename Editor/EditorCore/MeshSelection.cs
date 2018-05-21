@@ -35,8 +35,8 @@ namespace UnityEditor.ProBuilder
 
 		static MeshSelection()
 		{
-			Selection.selectionChanged += OnSelectionChanged;
-			OnSelectionChanged();
+			Selection.selectionChanged += OnObjectSelectionChanged;
+			OnObjectSelectionChanged();
 		}
 
 		/// <value>
@@ -44,7 +44,7 @@ namespace UnityEditor.ProBuilder
 		/// </value>
 		public static event System.Action onObjectSelectionChanged;
 
-		internal static void OnSelectionChanged()
+		internal static void OnObjectSelectionChanged()
 		{
 			// GameObjects returns both parent and child when both are selected, where transforms only returns the top-most
 			// transform.
