@@ -816,7 +816,7 @@ namespace UnityEngine.ProBuilder
 		/// Sets the selected vertices array. Clears SelectedFaces and SelectedEdges arrays.
 		/// </summary>
 		/// <param name="vertices">The new vertex selection.</param>
-		public void SetSelectedVertices(int[] vertices)
+		public void SetSelectedVertices(IEnumerable<int> vertices)
 		{
 			m_selectedFaces = new int[0];
 			m_SelectedEdges = new Edge[0];

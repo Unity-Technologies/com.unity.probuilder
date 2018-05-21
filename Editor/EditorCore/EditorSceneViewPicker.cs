@@ -17,10 +17,12 @@ namespace UnityEditor.ProBuilder
 		public const float maxPointerDistancePrecise = 12f;
 		public const CullingMode defaultCullingMode = CullingMode.Back;
 		public const SelectionModifierBehavior defaultSelectionModifierBehavior = SelectionModifierBehavior.Difference;
+		public const RectSelectMode defaultRectSelectionMode = RectSelectMode.Partial;
 
 		public float maxPointerDistance;
 		public CullingMode cullMode;
 		public SelectionModifierBehavior selectionModifierBehavior;
+		public RectSelectMode rectSelectMode;
 	}
 
 	class SceneSelection
@@ -370,174 +372,145 @@ namespace UnityEditor.ProBuilder
 			return nearestMesh != null && nearestEdge != Edge.Empty ? new SceneSelection(nearestMesh, nearestEdge) : null;
 		}
 
-		public static void DragCheck()
-		{}
-//		{
-//			SceneView sceneView = SceneView.lastActiveSceneView;
-//			Camera cam = sceneView.camera;
-//
-//			UndoUtility.RecordSelection(selection, "Drag Select");
-//			bool selectHidden = selectHiddenEnabled;
-//
-//			var pickingOptions = new PickerOptions()
-//			{
-//				depthTest = !selectHidden,
-//				rectSelectMode = PreferencesInternal.GetEnum<RectSelectMode>(PreferenceKeys.pbRectSelectMode)
-//			};
-//
-//			switch (selectionMode)
-//			{
-//				case SelectMode.Vertex:
-//				{
-//					if (!m_CurrentEvent.shift && !(m_CurrentEvent.command || m_CurrentEvent.control))
-//						ClearElementSelection();
-//
-//					Dictionary<ProBuilderMesh, HashSet<int>> selected = Picking.PickVerticesInRect(
-//						SceneView.lastActiveSceneView.camera,
-//						m_MouseDragRect,
-//						selection,
-//						pickingOptions,
-//						EditorGUIUtility.pixelsPerPoint);
-//
-//					foreach (var kvp in selected)
-//					{
-//						IntArray[] sharedIndices = kvp.Key.sharedIndicesInternal;
-//						HashSet<int> common;
-//
-//						if (m_CurrentEvent.shift || (m_CurrentEvent.command || m_CurrentEvent.control))
-//						{
-//							common = sharedIndices.GetCommonIndices(kvp.Key.selectedIndicesInternal);
-//
-//							if (m_DragSelectMode == DragSelectMode.Add)
-//								common.UnionWith(kvp.Value);
-//							else if (m_DragSelectMode == DragSelectMode.Subtract)
-//								common.RemoveWhere(x => kvp.Value.Contains(x));
-//							else if (m_DragSelectMode == DragSelectMode.Difference)
-//								common.SymmetricExceptWith(kvp.Value);
-//						}
-//						else
-//						{
-//							common = kvp.Value;
-//						}
-//
-//						kvp.Key.SetSelectedVertices(common.SelectMany(x => sharedIndices[x].array).ToArray());
-//					}
-//
-//					ProBuilderEditor.Refresh(false);
-//				}
-//					break;
-//
-//				case SelectMode.Face:
-//				{
-//					if (!m_CurrentEvent.shift && !(m_CurrentEvent.command || m_CurrentEvent.control))
-//						ClearElementSelection();
-//
-//					Dictionary<ProBuilderMesh, HashSet<Face>> selected = Picking.PickFacesInRect(
-//						SceneView.lastActiveSceneView.camera,
-//						m_MouseDragRect,
-//						selection,
-//						pickingOptions,
-//						EditorGUIUtility.pixelsPerPoint);
-//
-//					foreach (var kvp in selected)
-//					{
-//						HashSet<Face> current;
-//
-//						if (m_CurrentEvent.shift || (m_CurrentEvent.command || m_CurrentEvent.control))
-//						{
-//							current = new HashSet<Face>(kvp.Key.selectedFacesInternal);
-//
-//							if (m_DragSelectMode == DragSelectMode.Add)
-//								current.UnionWith(kvp.Value);
-//							else if (m_DragSelectMode == DragSelectMode.Subtract)
-//								current.RemoveWhere(x => kvp.Value.Contains(x));
-//							else if (m_DragSelectMode == DragSelectMode.Difference)
-//								current.SymmetricExceptWith(kvp.Value);
-//						}
-//						else
-//						{
-//							current = kvp.Value;
-//						}
-//
-//						kvp.Key.SetSelectedFaces(current);
-//					}
-//
-//					ProBuilderEditor.Refresh(false);
-//				}
-//					break;
-//
-//				case SelectMode.Edge:
-//				{
-//					if (!m_CurrentEvent.shift && !(m_CurrentEvent.command || m_CurrentEvent.control))
-//						ClearElementSelection();
-//
-//					var selected = Picking.PickEdgesInRect(
-//						SceneView.lastActiveSceneView.camera,
-//						m_MouseDragRect,
-//						selection,
-//						pickingOptions,
-//						EditorGUIUtility.pixelsPerPoint);
-//
-//					foreach (var kvp in selected)
-//					{
-//						ProBuilderMesh pb = kvp.Key;
-//						Dictionary<int, int> commonIndices = pb.sharedIndicesInternal.ToDictionary();
-//						HashSet<EdgeLookup> selectedEdges = EdgeLookup.GetEdgeLookupHashSet(kvp.Value, commonIndices);
-//
-//						HashSet<EdgeLookup> current;
-//
-//						if (m_CurrentEvent.shift || (m_CurrentEvent.command || m_CurrentEvent.control))
-//						{
-//							current = EdgeLookup.GetEdgeLookupHashSet(pb.selectedEdges, commonIndices);
-//
-//							if (m_DragSelectMode == DragSelectMode.Add)
-//								current.UnionWith(selectedEdges);
-//							else if (m_DragSelectMode == DragSelectMode.Subtract)
-//								current.RemoveWhere(x => selectedEdges.Contains(x));
-//							else if (m_DragSelectMode == DragSelectMode.Difference)
-//								current.SymmetricExceptWith(selectedEdges);
-//						}
-//						else
-//						{
-//							current = selectedEdges;
-//						}
-//
-//						pb.SetSelectedEdges(current.Select(x => x.local));
-//					}
-//
-//					ProBuilderEditor.Refresh(false);
-//				}
-//					break;
-//
-//				default:
-//					DragObjectCheck();
-//					break;
-//			}
-//
-//			SceneView.RepaintAll();
-//		}
-//
-//		// Emulates the usual Unity drag to select objects functionality
-//		public static void DragObjectCheck()
-//		{
-//			// if we're in vertex selection mode, only add to selection if shift key is held,
-//			// and don't clear the selection if shift isn't held.
-//			// if not, behave regularly (clear selection if shift isn't held)
-//			if (editLevel == EditLevel.Geometry && selectionMode == SelectMode.Vertex)
-//			{
-//				if (!m_CurrentEvent.shift && m_SelectedVertexCount > 0) return;
-//			}
-//			else
-//			{
-//				if (!m_CurrentEvent.shift) MeshSelection.ClearElementAndObjectSelection();
-//			}
-//
-//			// scan for new selected objects
-//			// if mode based, don't allow selection of non-probuilder objects
-//			foreach (ProBuilderMesh g in HandleUtility.PickRectObjects(m_MouseDragRect).GetComponents<ProBuilderMesh>())
-//				if (!Selection.Contains(g.gameObject))
-//					MeshSelection.AddToSelection(g.gameObject);
-//		}
+		public static void DoMouseDrag(Rect mouseDragRect, SelectMode selectionMode, ScenePickerPreferences scenePickerPreferences)
+		{
 
+			var pickingOptions = new PickerOptions()
+			{
+				depthTest = scenePickerPreferences.cullMode == CullingMode.Back,
+				rectSelectMode = scenePickerPreferences.rectSelectMode
+			};
+
+			var selection = MeshSelection.Top();
+			UndoUtility.RecordSelection(selection, "Drag Select");
+			bool isAppendModifier = EditorHandleUtility.IsAppendModifier(Event.current.modifiers);
+
+			if (!isAppendModifier)
+				MeshSelection.ClearElementSelection();
+
+			bool elementsInDragRect = false;
+
+			switch (selectionMode)
+			{
+				case SelectMode.Vertex:
+				{
+					Dictionary<ProBuilderMesh, HashSet<int>> selected = Picking.PickVerticesInRect(
+						SceneView.lastActiveSceneView.camera,
+						mouseDragRect,
+						selection,
+						pickingOptions,
+						EditorGUIUtility.pixelsPerPoint);
+
+					foreach (var kvp in selected)
+					{
+						IntArray[] sharedIndices = kvp.Key.sharedIndicesInternal;
+						HashSet<int> common;
+
+						if (isAppendModifier)
+						{
+							common = sharedIndices.GetCommonIndices(kvp.Key.selectedIndicesInternal);
+
+							if (scenePickerPreferences.selectionModifierBehavior  == SelectionModifierBehavior.Add)
+								common.UnionWith(kvp.Value);
+							else if (scenePickerPreferences.selectionModifierBehavior  == SelectionModifierBehavior.Subtract)
+								common.RemoveWhere(x => kvp.Value.Contains(x));
+							else if (scenePickerPreferences.selectionModifierBehavior  == SelectionModifierBehavior.Difference)
+								common.SymmetricExceptWith(kvp.Value);
+						}
+						else
+						{
+							common = kvp.Value;
+						}
+
+						elementsInDragRect = kvp.Value.Any();
+						kvp.Key.SetSelectedVertices(common.SelectMany(x => sharedIndices[x].array));
+					}
+
+					break;
+				}
+
+				case SelectMode.Face:
+				{
+					Dictionary<ProBuilderMesh, HashSet<Face>> selected = Picking.PickFacesInRect(
+						SceneView.lastActiveSceneView.camera,
+						mouseDragRect,
+						selection,
+						pickingOptions,
+						EditorGUIUtility.pixelsPerPoint);
+
+					foreach (var kvp in selected)
+					{
+						HashSet<Face> current;
+
+						if (isAppendModifier)
+						{
+							current = new HashSet<Face>(kvp.Key.selectedFacesInternal);
+
+							if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Add)
+								current.UnionWith(kvp.Value);
+							else if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Subtract)
+								current.RemoveWhere(x => kvp.Value.Contains(x));
+							else if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Difference)
+								current.SymmetricExceptWith(kvp.Value);
+						}
+						else
+						{
+							current = kvp.Value;
+						}
+
+						elementsInDragRect = kvp.Value.Any();
+						kvp.Key.SetSelectedFaces(current);
+					}
+
+					break;
+				}
+
+				case SelectMode.Edge:
+				{
+					var selected = Picking.PickEdgesInRect(
+						SceneView.lastActiveSceneView.camera,
+						mouseDragRect,
+						selection,
+						pickingOptions,
+						EditorGUIUtility.pixelsPerPoint);
+
+					foreach (var kvp in selected)
+					{
+						ProBuilderMesh pb = kvp.Key;
+						Dictionary<int, int> commonIndices = pb.sharedIndicesInternal.ToDictionary();
+						HashSet<EdgeLookup> selectedEdges = EdgeLookup.GetEdgeLookupHashSet(kvp.Value, commonIndices);
+						HashSet<EdgeLookup> current;
+
+						if (isAppendModifier)
+						{
+							current = EdgeLookup.GetEdgeLookupHashSet(pb.selectedEdges, commonIndices);
+
+							if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Add)
+								current.UnionWith(selectedEdges);
+							else if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Subtract)
+								current.RemoveWhere(x => selectedEdges.Contains(x));
+							else if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Difference)
+								current.SymmetricExceptWith(selectedEdges);
+						}
+						else
+						{
+							current = selectedEdges;
+						}
+
+						elementsInDragRect = kvp.Value.Any();
+						pb.SetSelectedEdges(current.Select(x => x.local));
+					}
+
+					break;
+				}
+			}
+
+			// if nothing was selected in the drag rect, clear the object selection too
+			if(!elementsInDragRect && !isAppendModifier)
+				MeshSelection.ClearElementAndObjectSelection();
+
+			ProBuilderEditor.Refresh(false);
+			SceneView.RepaintAll();
+		}
 	}
 }

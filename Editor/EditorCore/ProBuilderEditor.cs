@@ -301,7 +301,8 @@ namespace UnityEditor.ProBuilder
 			{
 				maxPointerDistance = m_HamSelection ? ScenePickerPreferences.maxPointerDistanceFuzzy : ScenePickerPreferences.maxPointerDistancePrecise,
 				cullMode = selectHiddenFaces ? CullingMode.None : CullingMode.Back,
-				selectionModifierBehavior = selectModifierBehavior
+				selectionModifierBehavior = selectModifierBehavior,
+				rectSelectMode = PreferencesInternal.GetEnum<RectSelectMode>(PreferenceKeys.pbRectSelectMode)
 			};
 			// ---
 
@@ -599,7 +600,7 @@ namespace UnityEditor.ProBuilder
 				{
 					m_IsReadyForMouseDrag = false;
 					m_IsDragging = false;
-					EditorSceneViewPicker.DragCheck();
+					EditorSceneViewPicker.DoMouseDrag(m_MouseDragRect, selectionMode, m_ScenePickerPreferences);
 				}
 
 				if (m_WasDoubleClick)
@@ -631,7 +632,7 @@ namespace UnityEditor.ProBuilder
 						if (UVEditor.instance)
 							UVEditor.instance.ResetUserPivot();
 
-						EditorSceneViewPicker.DragCheck();
+						EditorSceneViewPicker.DoMouseDrag(m_MouseDragRect, selectionMode, m_ScenePickerPreferences);
 					}
 				}
 			}
