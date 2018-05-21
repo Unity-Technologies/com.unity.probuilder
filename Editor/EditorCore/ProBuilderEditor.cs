@@ -511,7 +511,7 @@ namespace UnityEditor.ProBuilder
 			{
 				m_Hovering.CopyTo(m_HoveringPrevious);
 				EditorSceneViewPicker.MouseRayHitTest(m_CurrentEvent.mousePosition, selectionMode, m_ScenePickerPreferences, m_Hovering);
-				if(!m_Hovering.Equals(m_HoveringPrevious))
+				if (!m_Hovering.Equals(m_HoveringPrevious))
 					SceneView.RepaintAll();
 			}
 
