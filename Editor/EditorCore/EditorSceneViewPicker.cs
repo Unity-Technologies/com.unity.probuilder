@@ -534,12 +534,13 @@ namespace UnityEditor.ProBuilder
 
 				if (tup.item2.IsValid() && tup.item1 < pickerPrefs.maxPointerDistance)
 				{
-					// if it's in the selection, count it towards the nearest edge. if not, treat this is a fallback.
-					if (hoveredIsInSelection)
-						bestDistance = tup.item1;
-
+					selection.gameObject = hoveredMesh.gameObject;
 					selection.mesh = hoveredMesh;
 					selection.edge = tup.item2;
+
+					// if it's in the selection, it automatically wins as best. if not, treat this is a fallback.
+					if (hoveredIsInSelection)
+						return true;
 				}
 			}
 

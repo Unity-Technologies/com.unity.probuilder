@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Rendering;
-using UnityEditor.ProBuilder;
 using System.Linq;
 using UnityEngine.ProBuilder;
 
@@ -31,25 +30,26 @@ namespace UnityEditor.ProBuilder
 		static Material pbDefaultMaterial;
 		static Vector2 s_SettingsScroll = Vector2.zero;
 		static bool pbShowEditorNotifications;
-		static bool pbForceConvex = false;
-		static bool pbForceVertexPivot = true;
-		static bool pbForceGridPivot = true;
+		static bool pbForceConvex;
+		static bool pbForceVertexPivot;
+		static bool pbForceGridPivot;
 		static bool pbPerimeterEdgeBridgeOnly;
 		static bool pbPBOSelectionOnly;
-		static bool pbCloseShapeWindow = false;
-		static bool pbUVEditorFloating = true;
-		static bool pbStripProBuilderOnBuild = true;
-		static bool pbDisableAutoUV2Generation = false;
-		static bool pbShowSceneInfo = false;
-		static bool pbUniqueModeShortcuts = false;
-		static bool pbIconGUI = false;
-		static bool pbShiftOnlyTooltips = false;
-		static bool pbMeshesAreAssets = false;
-		static bool pbElementSelectIsHamFisted = false;
-		static bool pbEnableExperimental = false;
+		static bool pbCloseShapeWindow;
+		static bool pbUVEditorFloating;
+		static bool pbStripProBuilderOnBuild;
+		static bool pbDisableAutoUV2Generation;
+		static bool pbShowSceneInfo;
+		static bool pbUniqueModeShortcuts;
+		static bool pbIconGUI;
+		static bool pbShiftOnlyTooltips;
+		static bool pbMeshesAreAssets;
+		static bool pbElementSelectIsHamFisted;
+		static bool pbEnableExperimental;
+		static bool pbShowPreselectionHighlight;
 
-		static bool showMissingLightmapUvWarning = false;
-		static bool pbManageLightmappingStaticFlag = false;
+		static bool showMissingLightmapUvWarning;
+		static bool pbManageLightmappingStaticFlag;
 		static ShadowCastingMode pbShadowCastingMode = ShadowCastingMode.On;
 
 		static StaticEditorFlags pbDefaultStaticFlags = (StaticEditorFlags) 0xFFFF;
@@ -141,6 +141,7 @@ namespace UnityEditor.ProBuilder
 			 */
 			GUILayout.Label("Handles & Colors", EditorStyles.boldLabel);
 
+			pbShowPreselectionHighlight = EditorGUILayout.Toggle("Show Preselection Highlight", pbShowPreselectionHighlight);
 			pbUseUnityColors = EditorGUILayout.Toggle("Use Unity Colors", pbUseUnityColors);
 
 			if (!pbUseUnityColors)
@@ -353,6 +354,7 @@ namespace UnityEditor.ProBuilder
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbManageLightmappingStaticFlag);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbShadowCastingMode);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbDefaultStaticFlags);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbShowPreselectionHighlight);
 			}
 
 			s_PrefsLoaded = false;
@@ -451,6 +453,7 @@ namespace UnityEditor.ProBuilder
 			pbEnableExperimental = PreferencesInternal.GetBool(PreferenceKeys.pbEnableExperimental);
 			showMissingLightmapUvWarning = PreferencesInternal.GetBool(PreferenceKeys.pbShowMissingLightmapUvWarning, false);
 			pbManageLightmappingStaticFlag = PreferencesInternal.GetBool(PreferenceKeys.pbManageLightmappingStaticFlag, false);
+			pbShowPreselectionHighlight = PreferencesInternal.GetBool(PreferenceKeys.pbShowPreselectionHighlight);
 
 			pbUseUnityColors = PreferencesInternal.GetBool(PreferenceKeys.pbUseUnityColors);
 			pbLineHandleSize = PreferencesInternal.GetFloat(PreferenceKeys.pbLineHandleSize);
@@ -473,7 +476,6 @@ namespace UnityEditor.ProBuilder
 			pbDefaultStaticFlags = PreferencesInternal.GetEnum<StaticEditorFlags>(PreferenceKeys.pbDefaultStaticFlags);
 
 			pbDefaultMaterial = PreferencesInternal.GetMaterial(PreferenceKeys.pbDefaultMaterial);
-
 			defaultShortcuts = PreferencesInternal.GetShortcuts().ToArray();
 		}
 
@@ -519,6 +521,7 @@ namespace UnityEditor.ProBuilder
 			PreferencesInternal.SetBool(PreferenceKeys.pbEnableExperimental, pbEnableExperimental, PreferenceLocation.Global);
 			PreferencesInternal.SetBool(PreferenceKeys.pbShowMissingLightmapUvWarning, showMissingLightmapUvWarning, PreferenceLocation.Global);
 			PreferencesInternal.SetBool(PreferenceKeys.pbManageLightmappingStaticFlag, pbManageLightmappingStaticFlag, PreferenceLocation.Global);
+			PreferencesInternal.SetBool(PreferenceKeys.pbShowPreselectionHighlight, pbShowPreselectionHighlight, PreferenceLocation.Global);
 			PreferencesInternal.SetFloat(PreferenceKeys.pbUVGridSnapValue, pbUVGridSnapValue, PreferenceLocation.Global);
 
 			if (ProBuilderEditor.instance != null)

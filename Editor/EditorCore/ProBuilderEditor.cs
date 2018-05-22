@@ -68,6 +68,7 @@ namespace UnityEditor.ProBuilder
 		SceneSelection m_Hovering = new SceneSelection();
 		SceneSelection m_HoveringPrevious = new SceneSelection();
 		ScenePickerPreferences m_ScenePickerPreferences;
+		bool m_ShowPreselectionHighlight;
 
 		Tool m_CurrentTool = Tool.Move;
 		Vector2 m_InitialMousePosition;
@@ -292,6 +293,7 @@ namespace UnityEditor.ProBuilder
 			selectionMode = PreferencesInternal.GetEnum<SelectMode>(PreferenceKeys.pbDefaultSelectionMode);
 			handleAlignment = PreferencesInternal.GetEnum<HandleAlignment>(PreferenceKeys.pbHandleAlignment);
 			m_ShowSceneInfo = PreferencesInternal.GetBool(PreferenceKeys.pbShowSceneInfo);
+			m_ShowPreselectionHighlight = PreferencesInternal.GetBool(PreferenceKeys.pbShowPreselectionHighlight);
 
 			// ---
 			m_HamSelection = PreferencesInternal.GetBool(PreferenceKeys.pbElementSelectIsHamFisted);
@@ -507,7 +509,9 @@ namespace UnityEditor.ProBuilder
 			}
 
 			// Check mouse position in scene and determine if we should highlight something
-			if (m_CurrentEvent.type == EventType.MouseMove && editLevel == EditLevel.Geometry)
+			if (m_ShowPreselectionHighlight
+				&& m_CurrentEvent.type == EventType.MouseMove
+				&& editLevel == EditLevel.Geometry)
 			{
 				m_Hovering.CopyTo(m_HoveringPrevious);
 				EditorSceneViewPicker.MouseRayHitTest(m_CurrentEvent.mousePosition, selectionMode, m_ScenePickerPreferences, m_Hovering);
