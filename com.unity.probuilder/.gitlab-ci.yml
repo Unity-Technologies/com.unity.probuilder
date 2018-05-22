@@ -8,5 +8,6 @@ push_to_packman_staging:
   only:
     - tags
   script:
+    - cd com.unity.probuilder
     - curl -u $USER_NAME:$API_KEY https://staging-packages.unity.com/auth > .npmrc
     - npm publish
