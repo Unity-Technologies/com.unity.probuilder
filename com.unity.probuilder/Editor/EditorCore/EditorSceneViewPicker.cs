@@ -547,17 +547,17 @@ namespace UnityEditor.ProBuilder
 			var hoveredMesh = selection.gameObject != null ? selection.gameObject.GetComponent<ProBuilderMesh>() : null;
 
 			float bestDistance = pickerPrefs.maxPointerDistance;
-			bool hoveredIsInSelection = false;
+			bool hoveredIsInSelection = MeshSelection.Top().Contains(hoveredMesh);
 
-			if(hoveredMesh != null && (allowUnselected || (hoveredIsInSelection = MeshSelection.Top().Contains(hoveredMesh))))
+			if(hoveredMesh != null && (allowUnselected || hoveredIsInSelection))
 			{
 				var tup = GetNearestEdgeOnMesh(hoveredMesh, mousePosition);
 
-				if (tup.item2.IsValid() && tup.item1 < pickerPrefs.maxPointerDistance)
+				if (tup.edge.IsValid() && tup.distance < pickerPrefs.maxPointerDistance)
 				{
 					selection.gameObject = hoveredMesh.gameObject;
 					selection.mesh = hoveredMesh;
-					selection.edge = tup.item2;
+					selection.edge = tup.edge;
 
 					// if it's in the selection, it automatically wins as best. if not, treat this is a fallback.
 					if (hoveredIsInSelection)
@@ -595,54 +595,68 @@ namespace UnityEditor.ProBuilder
 			return selection.gameObject != null;
 		}
 
-		static SimpleTuple<float, Edge> GetNearestEdgeOnMesh(ProBuilderMesh mesh, Vector3 mousePosition)
+		static SimpleTuple<Face, Vector3> s_DualCullModeRaycastBackFace = new SimpleTuple<Face, Vector3>();
+		static SimpleTuple<Face, Vector3> s_DualCullModeRaycastFrontFace = new SimpleTuple<Face, Vector3>();
+
+		struct EdgeAndDistance
 		{
-			// Test culling
-			List<RaycastHit> hits;
+			public Edge edge;
+			public float distance;
+		}
+
+		static EdgeAndDistance GetNearestEdgeOnMesh(ProBuilderMesh mesh, Vector3 mousePosition)
+		{
 			Ray ray = UHandleUtility.GUIPointToWorldRay(mousePosition);
-			var res = new SimpleTuple<float, Edge>()
+
+			var res = new EdgeAndDistance()
 			{
-				item1 = Mathf.Infinity,
-				item2 = Edge.Empty
+				edge = Edge.Empty,
+				distance = Mathf.Infinity
 			};
 
-			if (PHandleUtility.FaceRaycast(ray, mesh, out hits, CullingMode.Back))
+			// get the nearest hit face and point for both cull mode front and back, then prefer the result that is nearest the camera.
+			if (PHandleUtility.FaceRaycastBothCullModes(ray, mesh, s_DualCullModeRaycastBackFace, s_DualCullModeRaycastFrontFace))
 			{
-				Camera cam = SceneView.lastActiveSceneView.camera;
-
-				// Sort from nearest hit to farthest
-				hits.Sort((x, y) => x.distance.CompareTo(y.distance));
-
-				// Find the nearest edge in the hit faces
-
-				float bestDistance = Mathf.Infinity;
 				Vector3[] v = mesh.positionsInternal;
 
-				for (int i = 0; i < hits.Count; i++)
+				if (s_DualCullModeRaycastBackFace.item1 != null)
 				{
-					if (UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, mesh, mesh.transform.TransformPoint(hits[i].point)))
-						continue;
-
-					foreach (Edge edge in mesh.facesInternal[hits[i].face].edgesInternal)
+					foreach (var edge in s_DualCullModeRaycastBackFace.item1.edgesInternal)
 					{
-						float d = UHandleUtility.DistancePointLine(hits[i].point, v[edge.x], v[edge.y]);
+						float d = UHandleUtility.DistancePointLine(s_DualCullModeRaycastBackFace.item2, v[edge.x], v[edge.y]);
 
-						if (d < bestDistance)
+						if (d < res.distance)
 						{
-							bestDistance = d;
-							res.item1 = bestDistance;
-							res.item2 = edge;
+							res.edge = edge;
+							res.distance = d;
 						}
 					}
-
-					if (Vector3.Dot(ray.direction, mesh.transform.TransformDirection(hits[i].normal)) < 0f)
-						break;
 				}
 
-				if (res.item2.IsValid())
-					res.item1 = UHandleUtility.DistanceToLine(
-						mesh.transform.TransformPoint(v[res.item2.x]),
-						mesh.transform.TransformPoint(v[res.item2.y]));
+				if (s_DualCullModeRaycastFrontFace.item1 != null)
+				{
+					var a = UHandleUtility.WorldToGUIPointWithDepth(mesh.transform.TransformPoint(s_DualCullModeRaycastBackFace.item2));
+					var b = UHandleUtility.WorldToGUIPointWithDepth(mesh.transform.TransformPoint(s_DualCullModeRaycastFrontFace.item2));
+
+					if (b.z < a.z)
+					{
+						foreach (var edge in s_DualCullModeRaycastFrontFace.item1.edgesInternal)
+						{
+							float d = UHandleUtility.DistancePointLine(s_DualCullModeRaycastFrontFace.item2, v[edge.x], v[edge.y]);
+
+							if (d < res.distance)
+							{
+								res.edge = edge;
+								res.distance = d;
+							}
+						}
+					}
+				}
+
+				if (res.edge.IsValid())
+					res.distance = UHandleUtility.DistanceToLine(
+						mesh.transform.TransformPoint(v[res.edge.x]),
+						mesh.transform.TransformPoint(v[res.edge.y]));
 
 			}
 
