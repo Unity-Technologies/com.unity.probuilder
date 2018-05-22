@@ -93,8 +93,10 @@ namespace UnityEngine.ProBuilder
 	        InvalidateCache();
         }
 
+	    [NonSerialized]
 	    int[] m_DistinctIndices;
 
+	    [NonSerialized]
 	    Edge[] m_Edges;
 
         /// <value>
