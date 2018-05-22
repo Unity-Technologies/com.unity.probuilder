@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [4.0.0-preview.5] - 2018-05-22
+
+### Changes from preview.4
+
+- Add pre-selection highlight for vertices and faces.
+- Add option to disable pre-selection highlight.
+- Several minor bug fixes to element picking edge cases.
+- Move Tests and Documentation out of package directory, improving import speeds.
+- Face selection highlight is now rendered with both front and back faces.
+- Fix regression where some face properties could be restored as non-null and empty after a domain reload.
+- Fix `Export Asset` not generating UV2 in some cases.
+
 ## [4.0.0-preview.4] - 2018-05-18
 
 ### Changes from preview.3
