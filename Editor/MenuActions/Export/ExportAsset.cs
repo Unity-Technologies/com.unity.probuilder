@@ -36,12 +36,14 @@ namespace UnityEditor.ProBuilder.Actions
 			return new ActionResult(ActionResult.Status.Success, "Make Asset & Prefab");
 		}
 
-		/**
-		 *	Export meshes to a Unity asset.
-		 */
+		/// <summary>
+		/// Export meshes to a Unity asset.
+		/// </summary>
+		/// <param name="meshes"></param>
+		/// <returns></returns>
 		public static string ExportWithFileDialog(IEnumerable<ProBuilderMesh> meshes)
 		{
-			if(meshes == null || meshes.Count() < 1)
+			if(meshes == null || !meshes.Any())
 				return "";
 
 			string res = null;
@@ -97,7 +99,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			pb.ToMesh();
 			pb.Refresh();
-			pb.Optimize();
+			pb.Optimize(true);
 
 			string meshPath = AssetDatabase.GenerateUniqueAssetPath(string.Format("{0}/{1}.asset", relativeDirectory, pb.mesh.name));
 
