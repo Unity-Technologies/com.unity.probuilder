@@ -50,7 +50,7 @@ namespace UnityEditor.ProBuilder
 	/// When drag selecting mesh elements, this defines how the Shift key will modify the selection.
 	/// </summary>
 	/// <remarks>Editor only.</remarks>
-	public enum DragSelectMode
+	public enum SelectionModifierBehavior
 	{
 		/// <summary>
 		/// Always add to the selection.

@@ -9,18 +9,18 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	sealed class ToggleDragSelectionMode : MenuAction
 	{
-		DragSelectMode dragSelectMode
+		SelectionModifierBehavior SelectionModifierBehavior
 		{
-			get { return PreferencesInternal.GetEnum<DragSelectMode>(PreferenceKeys.pbDragSelectMode); }
+			get { return PreferencesInternal.GetEnum<SelectionModifierBehavior>(PreferenceKeys.pbDragSelectMode); }
 			set { PreferencesInternal.SetInt(PreferenceKeys.pbDragSelectMode, (int) value); }
 		}
 
 		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
 		public override Texture2D icon {
 			get {
-				if(dragSelectMode == DragSelectMode.Add)
+				if(SelectionModifierBehavior == SelectionModifierBehavior.Add)
 					return IconUtility.GetIcon("Toolbar/Selection_ShiftAdd", IconSkin.Pro);
-				else if(dragSelectMode == DragSelectMode.Subtract)
+				else if(SelectionModifierBehavior == SelectionModifierBehavior.Subtract)
 					return IconUtility.GetIcon("Toolbar/Selection_ShiftSubtract", IconSkin.Pro);
 				else
 					return IconUtility.GetIcon("Toolbar/Selection_ShiftDifference", IconSkin.Pro);
@@ -43,16 +43,17 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			get
 			{
-				return string.Format("Shift: {0}", dragSelectMode);
+				return string.Format("Shift: {0}", SelectionModifierBehavior);
 			}
 		}
 
 		public override ActionResult DoAction()
 		{
-			int mode = (int) dragSelectMode;
-			dragSelectMode = (DragSelectMode) ((mode + 1) % 3);
+			int mode = (int) SelectionModifierBehavior;
+			int len = System.Enum.GetValues(typeof(SelectionModifierBehavior)).Length;
+			SelectionModifierBehavior = (SelectionModifierBehavior) ((mode + 1) % len);
 			ProBuilderEditor.instance.LoadPrefs();
-			return new ActionResult(ActionResult.Status.Success, "Set Shift Drag Mode\n" + dragSelectMode);
+			return new ActionResult(ActionResult.Status.Success, "Set Shift Drag Mode\n" + SelectionModifierBehavior);
 		}
 
 		public override bool IsEnabled()

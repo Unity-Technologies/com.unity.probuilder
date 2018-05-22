@@ -49,13 +49,14 @@ namespace UnityEditor.ProBuilder
 			{ PreferenceKeys.pbEnableExperimental, false },
 			{ PreferenceKeys.pbMeshesAreAssets, false },
 			{ PreferenceKeys.pbSelectedFaceDither, true },
+			{ PreferenceKeys.pbShowPreselectionHighlight, true },
 		};
 
 		static Dictionary<string, float> s_FloatDefaults = new Dictionary<string, float>()
 		{
 			{ PreferenceKeys.pbGrowSelectionAngle, 42f },
 			{ PreferenceKeys.pbExtrudeDistance, .5f },
-			{ PreferenceKeys.pbWeldDistance, Mathf.Epsilon },
+			{ PreferenceKeys.pbWeldDistance, .001f },
 			{ PreferenceKeys.pbUVGridSnapValue, .125f },
 			{ PreferenceKeys.pbUVWeldDistance, .01f },
 			{ PreferenceKeys.pbBevelAmount, .05f },
@@ -73,7 +74,7 @@ namespace UnityEditor.ProBuilder
 			{ PreferenceKeys.pbVertexColorTool, (int) VertexColorTool.Painter },
 			{ PreferenceKeys.pbToolbarLocation, (int) SceneToolbarLocation.UpperCenter },
 			{ PreferenceKeys.pbDefaultEntity, (int) EntityType.Detail },
-			{ PreferenceKeys.pbDragSelectMode, (int) DragSelectMode.Difference },
+			{ PreferenceKeys.pbDragSelectMode, (int) SelectionModifierBehavior.Difference },
 			{ PreferenceKeys.pbExtrudeMethod, (int) ExtrudeMethod.VertexNormal },
 			{ PreferenceKeys.pbShadowCastingMode, (int) ShadowCastingMode.TwoSided },
 		};

@@ -65,34 +65,22 @@ namespace UnityEngine.ProBuilder
 		internal const string pbPBOSelectionOnly = "pbPBOSelectionOnly";
 		internal const string pbCloseShapeWindow = "pbCloseShapeWindow";
 		internal const string pbUVEditorFloating = "pbUVEditorFloating";
-		/// <summary>
-		/// Toggles the UV editor material preview
-		/// </summary>
 		internal const string pbUVMaterialPreview = "pbUVMaterialPreview";
-		/// <summary>
-		/// Turns on or off the SceneView toolbar.
-		/// </summary>
 		[System.Obsolete]
 		internal const string pbShowSceneToolbar = "pbShowSceneToolbar";
 		internal const string pbNormalizeUVsOnPlanarProjection = "pbNormalizeUVsOnPlanarProjection";
-
 		internal const string pbStripProBuilderOnBuild = "pbStripProBuilderOnBuild";
 		internal const string pbDisableAutoUV2Generation = "pbDisableAutoUV2Generation";
 		internal const string pbShowSceneInfo = "pbShowSceneInfo";
 		internal const string pbEnableBackfaceSelection = "pbEnableBackfaceSelection";
 		internal const string pbVertexPaletteDockable = "pbVertexPaletteDockable";
-		/// <summary>
-		/// When extruding, if this is true all faces that share an edge will be extruded as a group.  If false, each face is extruded separately.
-		/// </summary>
 		internal const string pbExtrudeAsGroup = "pbExtrudeAsGroup";
-
 		/// <summary>
 		/// Toggles the edit level and selection mode shortcuts between:
 		/// - 'G' = Toggle edit level, 'J, K, L' Vert, Edge, Face
 		/// - 'G, J, K, L' = Object, Vert, Edge, Face modes
 		/// </summary>
 		internal const string pbUniqueModeShortcuts = "pbUniqueModeShortcuts";
-
 		internal const string pbMaterialEditorFloating = "pbMaterialEditorFloating";
 		internal const string pbShapeWindowFloating = "pbShapeWindowFloating";
 		internal const string pbIconGUI = "pbIconGUI";
@@ -104,13 +92,12 @@ namespace UnityEngine.ProBuilder
 		internal const string pbElementSelectIsHamFisted = "pbElementSelectIsHamFisted";
 		internal const string pbFillHoleSelectsEntirePath = "pbFillHoleSelectsEntirePath";
 		internal const string pbDetachToNewObject = "pbDetachToNewObject";
-
 		[System.Obsolete("Use pb_MeshImporter::quads")]
 		internal const string pbPreserveFaces = "pbPreserveFaces";
-
 		/// When drag selecting faces or edges, does the entire element have to be encompassed?
 		[System.Obsolete("Use pbRectSelectMode")]
 		internal const string pbDragSelectWholeElement = "pbDragSelectWholeElement";
+		internal const string pbShowPreselectionHighlight = "pbShowPreselectionHighlight";
 
 		/// <summary>
 		/// When drag selecting elements does the entire element need to be encompassed or just touched by the rect.

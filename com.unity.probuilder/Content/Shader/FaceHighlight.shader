@@ -12,7 +12,7 @@ Shader "Hidden/ProBuilder/FaceHighlight"
 		Lighting Off
 		ZTest LEqual
 		ZWrite On
-		Cull Back
+		Cull Off
 		Blend SrcAlpha OneMinusSrcAlpha
 
 		Pass

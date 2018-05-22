@@ -759,6 +759,12 @@ namespace UnityEngine.ProBuilder
 				SetSelectedFaces(m_selectedFaces.Add(index));
 		}
 
+		internal void AddToFaceSelection(int index)
+		{
+			if (index > -1)
+				SetSelectedFaces(m_selectedFaces.Add(index));
+		}
+
 		/// <summary>
 		/// Set the face selection for this mesh. Also sets the vertex and edge selection to match.
 		/// </summary>
@@ -810,7 +816,7 @@ namespace UnityEngine.ProBuilder
 		/// Sets the selected vertices array. Clears SelectedFaces and SelectedEdges arrays.
 		/// </summary>
 		/// <param name="vertices">The new vertex selection.</param>
-		public void SetSelectedVertices(int[] vertices)
+		public void SetSelectedVertices(IEnumerable<int> vertices)
 		{
 			m_selectedFaces = new int[0];
 			m_SelectedEdges = new Edge[0];

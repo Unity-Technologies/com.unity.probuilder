@@ -21,9 +21,17 @@ namespace UnityEditor.ProBuilder
 			return 	e.alt
 					|| Tools.current == Tool.View
 					|| GUIUtility.hotControl > 0
-					|| (e.isMouse ? e.button > 1 : false)
+					|| (e.isMouse && e.button > 0)
 					|| Tools.viewTool == ViewTool.FPS
 					|| Tools.viewTool == ViewTool.Orbit;
+		}
+
+		public static bool IsAppendModifier(EventModifiers em)
+		{
+			return 	(em & EventModifiers.Shift) == EventModifiers.Shift ||
+				(em & EventModifiers.Control) == EventModifiers.Control ||
+				(em & EventModifiers.Alt) == EventModifiers.Alt ||
+				(em & EventModifiers.Command) == EventModifiers.Command;
 		}
 
 		const int HANDLE_PADDING = 8;
@@ -76,7 +84,6 @@ namespace UnityEditor.ProBuilder
 				return s_UnlitVertexColorMaterial;
 			}
 		}
-
 
 		static Material s_EdgeMaterial = null;
 
@@ -407,32 +414,22 @@ namespace UnityEditor.ProBuilder
 			return UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, pb, out hit, ignore[pb]);
 		}
 
-		/**
-		 * Return all GameObjects under the mousePosition.
-		 * Note - only available from Unity 5.3+. Prior versions return first GameObject always.
-		 */
-		internal static List<GameObject> GetAllOverlapping(Vector2 mousePosition)
+		internal static void GetAllOverlapping(Vector2 mousePosition, List<GameObject> list)
 		{
-#if UNITY_4 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
-			return new List<GameObject>() { HandleUtility.PickGameObject(mousePosition, false) };
-#else
-			List<GameObject> intersecting = new List<GameObject>();
+			list.Clear();
 
 			GameObject nearestGameObject = null;
 
 			do
 			{
-				nearestGameObject = HandleUtility.PickGameObject(mousePosition, false, intersecting.ToArray());
+				nearestGameObject = HandleUtility.PickGameObject(mousePosition, false, list.ToArray());
 
 				if(nearestGameObject != null)
-					intersecting.Add(nearestGameObject);
+					list.Add(nearestGameObject);
 				else
 					break;
 			}
 			while( nearestGameObject != null );
-
-			return intersecting;
-#endif
 		}
 
 		/**
@@ -669,6 +666,67 @@ namespace UnityEditor.ProBuilder
 		{
 			GL.End();
 			GL.PopMatrix();
+		}
+
+		internal static void DrawSceneSelection(SceneSelection selection)
+		{
+			var mesh = selection.mesh;
+
+			if (mesh == null)
+				return;
+
+			var positions = mesh.positionsInternal;
+
+			// Draw nearest edge
+			if (selection.face != null)
+			{
+				MeshHandles.faceMaterial.SetColor("_Color", MeshHandles.preselectionColor);
+
+				if (!MeshHandles.faceMaterial.SetPass(0))
+					return;
+
+				GL.PushMatrix();
+				GL.Begin(GL.TRIANGLES);
+				GL.MultMatrix(mesh.transform.localToWorldMatrix);
+
+				var face = selection.face;
+				var ind = face.indices;
+
+				for (int i = 0, c = ind.Length; i < c; i += 3)
+				{
+					GL.Vertex(positions[ind[i]]);
+					GL.Vertex(positions[ind[i+1]]);
+					GL.Vertex(positions[ind[i+2]]);
+				}
+
+				GL.End();
+				GL.PopMatrix();
+			}
+			else if (selection.edge != Edge.Empty)
+			{
+				if (BeginDrawingLines(Handles.zTest))
+				{
+					MeshHandles.lineMaterial.SetColor("_Color", Color.white);
+					GL.Color(MeshHandles.preselectionColor);
+
+					GL.MultMatrix(mesh.transform.localToWorldMatrix);
+					GL.Vertex(positions[selection.edge.x]);
+					GL.Vertex(positions[selection.edge.y]);
+
+					EndDrawingLines();
+				}
+			}
+			else if (selection.vertex > -1)
+			{
+				// todo
+				var size = .25f / (PreferencesInternal.GetFloat(PreferenceKeys.pbVertexHandleSize) * EditorGUIUtility.pixelsPerPoint);
+
+				using (new Handles.DrawingScope(MeshHandles.preselectionColor, mesh.transform.localToWorldMatrix))
+				{
+					var pos = positions[selection.vertex];
+					Handles.DotHandleCap(-1, pos, Quaternion.identity, HandleUtility.GetHandleSize(pos) * size, Event.current.type);
+				}
+			}
 		}
 	}
 }

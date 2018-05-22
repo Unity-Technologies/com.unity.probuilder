@@ -89,7 +89,7 @@ namespace UnityEngine.ProBuilder
 		{
 			if (options.depthTest)
 			{
-				return SelectionPicker.PickVerticesInRect(
+				return SelectionPickerRenderer.PickVerticesInRect(
 					cam,
 					rect,
 					selectable,
@@ -152,7 +152,7 @@ namespace UnityEngine.ProBuilder
 		{
 			if (options.depthTest && options.rectSelectMode == RectSelectMode.Partial)
 			{
-				return SelectionPicker.PickFacesInRect(
+				return SelectionPickerRenderer.PickFacesInRect(
 					cam,
 					rect,
 					selectable,
@@ -279,7 +279,7 @@ namespace UnityEngine.ProBuilder
 		{
 			if (options.depthTest && options.rectSelectMode == RectSelectMode.Partial)
 			{
-				return SelectionPicker.PickEdgesInRect(
+				return SelectionPickerRenderer.PickEdgesInRect(
 					cam,
 					rect,
 					selectable,

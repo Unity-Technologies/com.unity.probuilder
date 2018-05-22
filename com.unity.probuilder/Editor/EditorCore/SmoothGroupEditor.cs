@@ -338,7 +338,7 @@ namespace UnityEditor.ProBuilder
 				"Clear the selected faces of their smoothing groups");
 			m_SelectFacesWithSmoothGroupSelectionContent = new GUIContent(IconUtility.GetIcon("Toolbar/Selection_SelectBySmoothingGroup"),
 				"Expand the face selection by selecting all faces matching the currently selected face groups");
-			MeshSelection.OnSelectionChanged();
+			MeshSelection.OnObjectSelectionChanged();
 			OnSelectionChanged();
 		}
 

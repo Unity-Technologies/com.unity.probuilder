@@ -8,6 +8,7 @@ using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.SceneManagement;
 using Math = UnityEngine.ProBuilder.Math;
 using Object = UnityEngine.Object;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
@@ -41,12 +42,9 @@ namespace UnityEditor.ProBuilder
 
         // Toggles for Face, Vertex, and Edge mode.
         const int k_SelectModeLength = 3;
-		const float k_MaxEdgeSelectDistanceHam = 128;
-		const float k_MaxEdgeSelectDistanceCtx = 12;
 
 		static EditorToolbar s_EditorToolbar;
 		static ProBuilderEditor s_Instance;
-		static int s_DeepSelectionPrevious = 0x0;
 
 		GUIContent[] m_EditModeIcons;
 		GUIStyle VertexTranslationInfoStyle;
@@ -62,16 +60,16 @@ namespace UnityEditor.ProBuilder
 		EditLevel m_PreviousEditLevel;
 		SelectMode m_PreviousSelectMode;
 		HandleAlignment m_PreviousHandleAlignment;
-        DragSelectMode m_DragSelectMode;
 		Shortcut[] m_Shortcuts;
 		SceneToolbarLocation m_SceneToolbarLocation;
 		GUIStyle m_CommandStyle;
 		Rect m_ElementModeToolbarRect = new Rect(3, 6, 128, 24);
-		bool m_SelectHiddenEnabled;
-		SimpleTuple<PMesh, Edge> m_NearestEdge = new SimpleTuple<ProBuilderMesh, Edge>();
 
-		// the mouse vertex selection box
-		Rect m_MouseClickRect = new Rect(0, 0, 0, 0);
+		SceneSelection m_Hovering = new SceneSelection();
+		SceneSelection m_HoveringPrevious = new SceneSelection();
+		ScenePickerPreferences m_ScenePickerPreferences;
+		bool m_ShowPreselectionHighlight;
+
 		Tool m_CurrentTool = Tool.Move;
 		Vector2 m_InitialMousePosition;
 		Rect m_MouseDragRect;
@@ -154,7 +152,7 @@ namespace UnityEditor.ProBuilder
 		Event m_CurrentEvent;
 
 		internal bool isFloatingWindow { get; private set; }
-		internal bool selectHiddenEnabled { get { return m_SelectHiddenEnabled; } }
+		internal bool selectHiddenEnabled { get { return m_ScenePickerPreferences.cullMode == CullingMode.None; } }
 
 		/// <value>
 		/// Get the current @"UnityEngine.ProBuilder.EditLevel".
@@ -295,8 +293,21 @@ namespace UnityEditor.ProBuilder
 			selectionMode = PreferencesInternal.GetEnum<SelectMode>(PreferenceKeys.pbDefaultSelectionMode);
 			handleAlignment = PreferencesInternal.GetEnum<HandleAlignment>(PreferenceKeys.pbHandleAlignment);
 			m_ShowSceneInfo = PreferencesInternal.GetBool(PreferenceKeys.pbShowSceneInfo);
+			m_ShowPreselectionHighlight = PreferencesInternal.GetBool(PreferenceKeys.pbShowPreselectionHighlight);
+
+			// ---
 			m_HamSelection = PreferencesInternal.GetBool(PreferenceKeys.pbElementSelectIsHamFisted);
-			m_SelectHiddenEnabled = PreferencesInternal.GetBool(PreferenceKeys.pbEnableBackfaceSelection);
+			bool selectHiddenFaces = PreferencesInternal.GetBool(PreferenceKeys.pbEnableBackfaceSelection);
+			SelectionModifierBehavior selectModifierBehavior = PreferencesInternal.GetEnum<SelectionModifierBehavior>(PreferenceKeys.pbDragSelectMode);
+
+			m_ScenePickerPreferences = new ScenePickerPreferences()
+			{
+				maxPointerDistance = m_HamSelection ? ScenePickerPreferences.maxPointerDistanceFuzzy : ScenePickerPreferences.maxPointerDistancePrecise,
+				cullMode = selectHiddenFaces ? CullingMode.None : CullingMode.Back,
+				selectionModifierBehavior = selectModifierBehavior,
+				rectSelectMode = PreferencesInternal.GetEnum<RectSelectMode>(PreferenceKeys.pbRectSelectMode)
+			};
+			// ---
 
 			m_SnapEnabled = ProGridsInterface.SnapEnabled();
 			m_SnapValue = ProGridsInterface.SnapValue();
@@ -306,7 +317,6 @@ namespace UnityEditor.ProBuilder
 
 			m_SceneToolbarLocation = PreferencesInternal.GetEnum<SceneToolbarLocation>(PreferenceKeys.pbToolbarLocation);
 			m_IsIconGui = PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI);
-			m_DragSelectMode = PreferencesInternal.GetEnum<DragSelectMode>(PreferenceKeys.pbDragSelectMode);
 		}
 
 		void InitGUI()
@@ -499,8 +509,15 @@ namespace UnityEditor.ProBuilder
 			}
 
 			// Check mouse position in scene and determine if we should highlight something
-			if (m_CurrentEvent.type == EventType.MouseMove && editLevel == EditLevel.Geometry)
-				UpdateMouse(m_CurrentEvent.mousePosition);
+			if (m_ShowPreselectionHighlight
+				&& m_CurrentEvent.type == EventType.MouseMove
+				&& editLevel == EditLevel.Geometry)
+			{
+				m_Hovering.CopyTo(m_HoveringPrevious);
+				EditorSceneViewPicker.MouseRayHitTest(m_CurrentEvent.mousePosition, selectionMode, m_ScenePickerPreferences, m_Hovering);
+				if (!m_Hovering.Equals(m_HoveringPrevious))
+					SceneView.RepaintAll();
+			}
 
 			if (Tools.current != Tool.None && Tools.current != m_CurrentTool)
 				SetTool_Internal(Tools.current);
@@ -592,7 +609,7 @@ namespace UnityEditor.ProBuilder
 				{
 					m_IsReadyForMouseDrag = false;
 					m_IsDragging = false;
-					DragCheck();
+					EditorSceneViewPicker.DoMouseDrag(m_MouseDragRect, selectionMode, m_ScenePickerPreferences);
 				}
 
 				if (m_WasDoubleClick)
@@ -612,7 +629,9 @@ namespace UnityEditor.ProBuilder
 						if (UVEditor.instance)
 							UVEditor.instance.ResetUserPivot();
 
-						RaycastCheck(m_CurrentEvent.mousePosition);
+						EditorSceneViewPicker.DoMouseClick(m_CurrentEvent, selectionMode, m_ScenePickerPreferences);
+						UpdateSelection();
+						SceneView.RepaintAll();
 					}
 					else
 					{
@@ -622,7 +641,7 @@ namespace UnityEditor.ProBuilder
 						if (UVEditor.instance)
 							UVEditor.instance.ResetUserPivot();
 
-						DragCheck();
+						EditorSceneViewPicker.DoMouseDrag(m_MouseDragRect, selectionMode, m_ScenePickerPreferences);
 					}
 				}
 			}
@@ -630,9 +649,9 @@ namespace UnityEditor.ProBuilder
 
 		void DoubleClick(Event e)
 		{
-			ProBuilderMesh pb = RaycastCheck(e.mousePosition, -1);
+			var mesh = EditorSceneViewPicker.DoMouseClick(m_CurrentEvent, selectionMode, m_ScenePickerPreferences);
 
-			if (pb != null)
+			if (mesh != null)
 			{
 				if (selectionMode == SelectMode.Edge)
 				{
@@ -651,584 +670,17 @@ namespace UnityEditor.ProBuilder
 					else if (e.shift)
 						MenuCommands.MenuLoopFaces(selection);
 					else
-						pb.SetSelectedFaces(pb.facesInternal);
+						mesh.SetSelectedFaces(mesh.facesInternal);
 				}
 				else
 				{
-					pb.SetSelectedFaces(pb.facesInternal);
+					mesh.SetSelectedFaces(mesh.facesInternal);
 				}
 
 				UpdateSelection(false);
 				SceneView.RepaintAll();
 				m_WasDoubleClick = true;
 			}
-		}
-
-		/// <summary>
-		/// If in Edge mode, finds the nearest Edge to the mouse
-		/// </summary>
-		/// <param name="mousePosition"></param>
-		void UpdateMouse(Vector3 mousePosition)
-		{
-			if (selection.Length < 1 || selectionMode != SelectMode.Edge)
-				return;
-
-			GameObject go = HandleUtility.PickGameObject(mousePosition, false);
-
-			Edge bestEdge = Edge.Empty;
-			ProBuilderMesh bestObj = go == null ? null : go.GetComponent<ProBuilderMesh>();
-
-			if (bestObj != null && !selection.Contains(bestObj))
-				bestObj = null;
-
-			// If mouse isn't over a pb object, it still may be near enough to an edge.
-			if (bestObj == null)
-			{
-				float bestDistance = m_HamSelection ? k_MaxEdgeSelectDistanceHam : k_MaxEdgeSelectDistanceCtx;
-
-				for (int i = 0; i < m_UniversalEdges.Length; i++)
-				{
-					var pb = selection[i];
-					var edges = m_UniversalEdges[i];
-
-					for (int j = 0; j < edges.Length; j++)
-					{
-						int x = selection[i].sharedIndicesInternal[edges[j].x][0];
-						int y = selection[i].sharedIndicesInternal[edges[j].y][0];
-
-						float d = HandleUtility.DistanceToLine(
-							pb.transform.TransformPoint(pb.positionsInternal[x]),
-							pb.transform.TransformPoint(pb.positionsInternal[y]));
-
-						if (d < bestDistance)
-						{
-							bestObj = selection[i];
-							bestEdge = new Edge(x, y);
-							bestDistance = d;
-						}
-					}
-				}
-			}
-			else
-			{
-				// Test culling
-				List<RaycastHit> hits;
-				Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
-
-				if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, bestObj, out hits, CullingMode.Front))
-				{
-					Camera cam = SceneView.lastActiveSceneView.camera;
-
-					// Sort from nearest hit to farthest
-					hits.Sort((x, y) => x.distance.CompareTo(y.distance));
-
-					// Find the nearest edge in the hit faces
-
-					float bestDistance = Mathf.Infinity;
-					Vector3[] v = bestObj.positionsInternal;
-
-					for (int i = 0; i < hits.Count; i++)
-					{
-						if (UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, bestObj, bestObj.transform.TransformPoint(hits[i].point)))
-							continue;
-
-						foreach (Edge edge in bestObj.facesInternal[hits[i].face].edgesInternal)
-						{
-							float d = HandleUtility.DistancePointLine(hits[i].point, v[edge.x], v[edge.y]);
-
-							if (d < bestDistance)
-							{
-								bestDistance = d;
-								bestEdge = edge;
-							}
-						}
-
-						if (Vector3.Dot(ray.direction, bestObj.transform.TransformDirection(hits[i].normal)) < 0f)
-							break;
-					}
-
-					if (bestEdge.IsValid() &&
-					    HandleUtility.DistanceToLine(bestObj.transform.TransformPoint(v[bestEdge.x]),
-						    bestObj.transform.TransformPoint(v[bestEdge.y])) >
-					    (m_HamSelection ? k_MaxEdgeSelectDistanceHam : k_MaxEdgeSelectDistanceCtx))
-						bestEdge = Edge.Empty;
-				}
-			}
-
-			if (bestEdge != m_NearestEdge.item2 || bestObj != m_NearestEdge.item1)
-			{
-				m_NearestEdge.item2 = bestEdge;
-				m_NearestEdge.item1 = bestObj;
-
-				SceneView.RepaintAll();
-			}
-		}
-
-		// Returns the pb_Object modified by this action.  If no action taken, or action is eaten by texture window, return null.
-		// A pb_Object is returned because double click actions need to know what the last selected pb_Object was.
-		// If deepClickOffset is specified, the object + deepClickOffset in the deep select stack will be returned (instead of next).
-		ProBuilderMesh RaycastCheck(Vector3 mousePosition, int deepClickOffset = 0)
-		{
-			ProBuilderMesh pb = null;
-
-			// Since Edge or Vertex selection may be valid even if clicking off a gameObject, check them
-			// first. If no hits, move on to face selection or object change.
-			if ((selectionMode == SelectMode.Edge && EdgeClickCheck(out pb)) ||
-			    (selectionMode == SelectMode.Vertex && VertexClickCheck(out pb)))
-			{
-				UpdateSelection(false);
-				SceneView.RepaintAll();
-				return pb;
-			}
-
-			if (!m_CurrentEvent.shift && !(m_CurrentEvent.command || m_CurrentEvent.control))
-				MeshSelection.SetSelection((GameObject) null);
-
-			GameObject pickedGo = null;
-			ProBuilderMesh pickedPb = null;
-			Face pickedFace = null;
-			int newHash = 0;
-
-			List<GameObject> picked = EditorHandleUtility.GetAllOverlapping(mousePosition);
-
-			EventModifiers em = Event.current.modifiers;
-
-			// If any event modifiers are engaged don't cycle the deep click
-			int pickedCount = em != EventModifiers.None ? System.Math.Min(1, picked.Count) : picked.Count;
-
-			for (int i = 0, next = 0; i < pickedCount; i++)
-			{
-				GameObject go = picked[i];
-				pb = go.GetComponent<ProBuilderMesh>();
-				Face face = null;
-
-				if (pb != null)
-				{
-					Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
-					RaycastHit hit;
-
-					if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray,
-						pb,
-						out hit,
-						Mathf.Infinity,
-						selectHiddenEnabled ? CullingMode.FrontBack : CullingMode.Front))
-					{
-						face = pb.facesInternal[hit.face];
-					}
-				}
-
-				// pb_Face doesn't define GetHashCode, meaning it falls to object.GetHashCode (reference comparison)
-				int hash = face == null ? go.GetHashCode() : face.GetHashCode();
-
-				if (s_DeepSelectionPrevious == hash)
-					next = (i + (1 + deepClickOffset)) % pickedCount;
-
-				if (next == i)
-				{
-					pickedGo = go;
-					pickedPb = pb;
-					pickedFace = face;
-
-					newHash = hash;
-
-					// a prior hash was matched, this is the next. if
-					// it's just the first iteration don't break (but do
-					// set the default).
-					if (next != 0)
-						break;
-				}
-			}
-
-			s_DeepSelectionPrevious = newHash;
-
-			if (pickedGo != null)
-			{
-				Event.current.Use();
-
-				if (pickedPb != null)
-				{
-					if (pickedPb.isSelectable)
-					{
-						MeshSelection.AddToSelection(pickedGo);
-
-#if !PROTOTYPE
-						// Check for other editor mouse shortcuts first
-						MaterialEditor matEditor = MaterialEditor.instance;
-						if (matEditor != null && matEditor.ClickShortcutCheck(Event.current.modifiers, pickedPb, pickedFace))
-							return pickedPb;
-
-						UVEditor uvEditor = UVEditor.instance;
-						if (uvEditor != null && uvEditor.ClickShortcutCheck(pickedPb, pickedFace))
-							return pickedPb;
-#endif
-
-						// Check to see if we've already selected this quad.  If so, remove it from selection cache.
-						UndoUtility.RecordSelection(pickedPb, "Change Face Selection");
-
-						int indx = System.Array.IndexOf(pickedPb.selectedFacesInternal, pickedFace);
-
-						if (indx > -1)
-						{
-							pickedPb.RemoveFromFaceSelectionAtIndex(indx);
-						}
-						else
-						{
-							pickedPb.AddToFaceSelection(pickedFace);
-						}
-					}
-					else
-					{
-						return null;
-					}
-				}
-				else if (!PreferencesInternal.GetBool(PreferenceKeys.pbPBOSelectionOnly))
-				{
-					// If clicked off a pb_Object but onto another gameobject, set the selection
-					// and dip out.
-					MeshSelection.SetSelection(pickedGo);
-					return null;
-				}
-				else
-				{
-					// clicked on something that isn't allowed at all (ex, pboSelectionOnly on and clicked a camera)
-					return null;
-				}
-			}
-			else
-			{
-				UpdateSelection(true);
-				return null;
-			}
-
-			// OnSelectionChange will also call UpdateSelection, but this needs to remain
-			// because it catches element selection changes.
-			UpdateSelection(false);
-			SceneView.RepaintAll();
-
-			return pickedPb;
-		}
-
-		bool VertexClickCheck(out ProBuilderMesh vpb)
-		{
-			if (!m_CurrentEvent.shift && !(m_CurrentEvent.command || m_CurrentEvent.control))
-				ClearElementSelection();
-
-			Camera cam = SceneView.lastActiveSceneView.camera;
-			List<SimpleTuple<float, Vector3, int, int>> nearest = new List<SimpleTuple<float, Vector3, int, int>>();
-
-			// this could be much faster by raycasting against the mesh and doing a 3d space
-			// distance check first
-
-			if (m_HamSelection)
-			{
-				const float minAllowableDistance = k_MaxEdgeSelectDistanceHam * k_MaxEdgeSelectDistanceHam;
-				int obj = -1, tri = -1;
-				Vector2 mousePosition = m_CurrentEvent.mousePosition;
-
-				for (int i = 0; i < selection.Length; i++)
-				{
-					ProBuilderMesh pb = selection[i];
-
-					if (!pb.isSelectable)
-						continue;
-
-					for (int n = 0, c = pb.sharedIndicesInternal.Length; n < c; n++)
-					{
-						int index = pb.sharedIndicesInternal[n][0];
-						Vector3 v = pb.transform.TransformPoint(pb.positionsInternal[index]);
-						Vector2 p = HandleUtility.WorldToGUIPoint(v);
-
-						float dist = (p - mousePosition).sqrMagnitude;
-
-						if (dist < minAllowableDistance)
-							nearest.Add(new SimpleTuple<float, Vector3, int, int>(dist, v, i, index));
-					}
-				}
-
-				nearest.Sort((x, y) => x.item1.CompareTo(y.item1));
-
-				for (int i = 0; i < nearest.Count; i++)
-				{
-					obj = nearest[i].item3;
-
-					if (!UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, selection[obj], nearest[i].item2))
-					{
-						tri = nearest[i].item4;
-						break;
-					}
-				}
-
-				if (obj > -1 && tri > -1)
-				{
-					ProBuilderMesh pb = selection[obj];
-
-					int indx = System.Array.IndexOf(pb.selectedIndicesInternal, tri);
-
-					UndoUtility.RecordSelection(pb, "Change Vertex Selection");
-
-					// If we get a match, check to see if it exists in our selection array already, then add / remove
-					if (indx > -1)
-						pb.SetSelectedVertices(pb.selectedIndicesInternal.RemoveAt(indx));
-					else
-						pb.SetSelectedVertices(pb.selectedIndicesInternal.Add(tri));
-
-					vpb = pb;
-					return true;
-				}
-			}
-			else
-			{
-				for (int i = 0; i < selection.Length; i++)
-				{
-					ProBuilderMesh pb = selection[i];
-
-					if (!pb.isSelectable)
-						continue;
-
-					for (int n = 0, c = pb.sharedIndicesInternal.Length; n < c; n++)
-					{
-						int index = pb.sharedIndicesInternal[n][0];
-						Vector3 v = pb.transform.TransformPoint(pb.positionsInternal[index]);
-
-						if (m_MouseClickRect.Contains(HandleUtility.WorldToGUIPoint(v)))
-						{
-							if (UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, pb, v))
-								continue;
-
-							// Check if index is already selected, and if not add it to the pot
-							int indx = System.Array.IndexOf(pb.selectedIndicesInternal, index);
-
-							UndoUtility.RecordObject(pb, "Change Vertex Selection");
-
-							// If we get a match, check to see if it exists in our selection array already, then add / remove
-							if (indx > -1)
-								pb.SetSelectedVertices(pb.selectedIndicesInternal.RemoveAt(indx));
-							else
-								pb.SetSelectedVertices(pb.selectedIndicesInternal.Add(index));
-
-							vpb = pb;
-							return true;
-						}
-					}
-				}
-			}
-
-			vpb = null;
-			return false;
-		}
-
-		bool EdgeClickCheck(out ProBuilderMesh pb)
-		{
-			if (!m_CurrentEvent.shift && !(m_CurrentEvent.command || m_CurrentEvent.control))
-			{
-				// don't call ClearElementSelection b/c that also removes
-				// nearestEdge info
-				foreach (ProBuilderMesh p in selection)
-					p.ClearSelection();
-			}
-
-			if (m_NearestEdge.item1 != null)
-			{
-				pb = m_NearestEdge.item1;
-
-				if (m_NearestEdge.item2.IsValid())
-				{
-					SimpleTuple<Face, Edge> edge;
-
-					if (EdgeExtension.ValidateEdge(pb, m_NearestEdge.item2, out edge))
-						m_NearestEdge.item2 = edge.item2;
-
-					int ind = pb.selectedEdges.IndexOf(m_NearestEdge.item2, pb.sharedIndicesInternal.ToDictionary());
-
-					UndoUtility.RecordSelection(pb, "Change Edge Selection");
-
-					if (ind > -1)
-						pb.SetSelectedEdges(pb.selectedEdges.ToArray().RemoveAt(ind));
-					else
-						pb.SetSelectedEdges(pb.selectedEdges.ToArray().Add(m_NearestEdge.item2));
-
-					return true;
-				}
-
-				return false;
-			}
-			else
-			{
-				if (!m_CurrentEvent.shift && !(m_CurrentEvent.command || m_CurrentEvent.control))
-					ClearElementSelection();
-
-				pb = null;
-
-				return false;
-			}
-		}
-
-		void DragCheck()
-		{
-			SceneView sceneView = SceneView.lastActiveSceneView;
-			Camera cam = sceneView.camera;
-
-			UndoUtility.RecordSelection(selection, "Drag Select");
-			bool selectHidden = selectHiddenEnabled;
-
-			var pickingOptions = new PickerOptions()
-			{
-				depthTest = !selectHidden,
-				rectSelectMode = PreferencesInternal.GetEnum<RectSelectMode>(PreferenceKeys.pbRectSelectMode)
-			};
-
-			switch (selectionMode)
-			{
-				case SelectMode.Vertex:
-				{
-					if (!m_CurrentEvent.shift && !(m_CurrentEvent.command || m_CurrentEvent.control))
-						ClearElementSelection();
-
-					Dictionary<ProBuilderMesh, HashSet<int>> selected = Picking.PickVerticesInRect(
-						SceneView.lastActiveSceneView.camera,
-						m_MouseDragRect,
-						selection,
-						pickingOptions,
-						EditorGUIUtility.pixelsPerPoint);
-
-					foreach (var kvp in selected)
-					{
-						IntArray[] sharedIndices = kvp.Key.sharedIndicesInternal;
-						HashSet<int> common;
-
-						if (m_CurrentEvent.shift || (m_CurrentEvent.command || m_CurrentEvent.control))
-						{
-							common = sharedIndices.GetCommonIndices(kvp.Key.selectedIndicesInternal);
-
-							if (m_DragSelectMode == DragSelectMode.Add)
-								common.UnionWith(kvp.Value);
-							else if (m_DragSelectMode == DragSelectMode.Subtract)
-								common.RemoveWhere(x => kvp.Value.Contains(x));
-							else if (m_DragSelectMode == DragSelectMode.Difference)
-								common.SymmetricExceptWith(kvp.Value);
-						}
-						else
-						{
-							common = kvp.Value;
-						}
-
-						kvp.Key.SetSelectedVertices(common.SelectMany(x => sharedIndices[x].array).ToArray());
-					}
-
-					UpdateSelection(false);
-				}
-					break;
-
-				case SelectMode.Face:
-				{
-					if (!m_CurrentEvent.shift && !(m_CurrentEvent.command || m_CurrentEvent.control))
-						ClearElementSelection();
-
-					Dictionary<ProBuilderMesh, HashSet<Face>> selected = Picking.PickFacesInRect(
-						SceneView.lastActiveSceneView.camera,
-						m_MouseDragRect,
-						selection,
-						pickingOptions,
-						EditorGUIUtility.pixelsPerPoint);
-
-					foreach (var kvp in selected)
-					{
-						HashSet<Face> current;
-
-						if (m_CurrentEvent.shift || (m_CurrentEvent.command || m_CurrentEvent.control))
-						{
-							current = new HashSet<Face>(kvp.Key.selectedFacesInternal);
-
-							if (m_DragSelectMode == DragSelectMode.Add)
-								current.UnionWith(kvp.Value);
-							else if (m_DragSelectMode == DragSelectMode.Subtract)
-								current.RemoveWhere(x => kvp.Value.Contains(x));
-							else if (m_DragSelectMode == DragSelectMode.Difference)
-								current.SymmetricExceptWith(kvp.Value);
-						}
-						else
-						{
-							current = kvp.Value;
-						}
-
-						kvp.Key.SetSelectedFaces(current);
-					}
-
-					UpdateSelection(false);
-				}
-					break;
-
-				case SelectMode.Edge:
-				{
-					if (!m_CurrentEvent.shift && !(m_CurrentEvent.command || m_CurrentEvent.control))
-						ClearElementSelection();
-
-					var selected = Picking.PickEdgesInRect(
-						SceneView.lastActiveSceneView.camera,
-						m_MouseDragRect,
-						selection,
-						pickingOptions,
-						EditorGUIUtility.pixelsPerPoint);
-
-					foreach (var kvp in selected)
-					{
-						ProBuilderMesh pb = kvp.Key;
-						Dictionary<int, int> commonIndices = pb.sharedIndicesInternal.ToDictionary();
-						HashSet<EdgeLookup> selectedEdges = EdgeLookup.GetEdgeLookupHashSet(kvp.Value, commonIndices);
-
-						HashSet<EdgeLookup> current;
-
-						if (m_CurrentEvent.shift || (m_CurrentEvent.command || m_CurrentEvent.control))
-						{
-							current = EdgeLookup.GetEdgeLookupHashSet(pb.selectedEdges, commonIndices);
-
-							if (m_DragSelectMode == DragSelectMode.Add)
-								current.UnionWith(selectedEdges);
-							else if (m_DragSelectMode == DragSelectMode.Subtract)
-								current.RemoveWhere(x => selectedEdges.Contains(x));
-							else if (m_DragSelectMode == DragSelectMode.Difference)
-								current.SymmetricExceptWith(selectedEdges);
-						}
-						else
-						{
-							current = selectedEdges;
-						}
-
-						pb.SetSelectedEdges(current.Select(x => x.local));
-					}
-
-					UpdateSelection(false);
-				}
-					break;
-
-				default:
-					DragObjectCheck();
-					break;
-			}
-
-			SceneView.RepaintAll();
-		}
-
-		// Emulates the usual Unity drag to select objects functionality
-		void DragObjectCheck()
-		{
-			// if we're in vertex selection mode, only add to selection if shift key is held,
-			// and don't clear the selection if shift isn't held.
-			// if not, behave regularly (clear selection if shift isn't held)
-			if (editLevel == EditLevel.Geometry && selectionMode == SelectMode.Vertex)
-			{
-				if (!m_CurrentEvent.shift && m_SelectedVertexCount > 0) return;
-			}
-			else
-			{
-				if (!m_CurrentEvent.shift) MeshSelection.ClearElementAndObjectSelection();
-			}
-
-			// scan for new selected objects
-			// if mode based, don't allow selection of non-probuilder objects
-			foreach (ProBuilderMesh g in HandleUtility.PickRectObjects(m_MouseDragRect).GetComponents<ProBuilderMesh>())
-				if (!Selection.Contains(g.gameObject))
-					MeshSelection.AddToSelection(g.gameObject);
 		}
 
 		void VertexMoveTool()
@@ -1620,16 +1072,16 @@ namespace UnityEditor.ProBuilder
 				cached.y = -cached.y;
 
 				Vector3 lossyScale = selection[0].transform.lossyScale;
-				Vector3 position = cached.DivideBy(lossyScale);
+				Vector3 pos = cached.DivideBy(lossyScale);
 
 				if (!m_IsMovingTextures)
 				{
-					m_TextureHandlePositionPrevious = position;
+					m_TextureHandlePositionPrevious = pos;
 					m_IsMovingTextures = true;
 				}
 
-				uvEditor.SceneMoveTool(position - m_TextureHandlePositionPrevious);
-				m_TextureHandlePositionPrevious = position;
+				uvEditor.SceneMoveTool(pos - m_TextureHandlePositionPrevious);
+				m_TextureHandlePositionPrevious = pos;
 
 				uvEditor.Repaint();
 			}
@@ -1693,27 +1145,10 @@ namespace UnityEditor.ProBuilder
 			if (sceneView != SceneView.lastActiveSceneView)
 				return;
 
-			// Draw nearest edge
-			if (m_CurrentEvent.type == EventType.Repaint &&
-			    editLevel != EditLevel.Top &&
-			    editLevel != EditLevel.Plugin)
-			{
-				if (m_NearestEdge.item1 != null && m_NearestEdge.item2.IsValid())
-				{
-					if (EditorHandleUtility.BeginDrawingLines(Handles.zTest))
-					{
-						MeshHandles.lineMaterial.SetColor("_Color", Color.white);
-						GL.Color(MeshHandles.preselectionColor);
-
-						GL.MultMatrix(m_NearestEdge.item1.transform.localToWorldMatrix);
-
-						GL.Vertex(m_NearestEdge.item1.positionsInternal[m_NearestEdge.item2.x]);
-						GL.Vertex(m_NearestEdge.item1.positionsInternal[m_NearestEdge.item2.y]);
-
-						EditorHandleUtility.EndDrawingLines();
-					}
-				}
-			}
+			if (m_CurrentEvent.type == EventType.Repaint
+				&& m_Hovering != null
+				&& editLevel == EditLevel.Geometry)
+				EditorHandleUtility.DrawSceneSelection(m_Hovering);
 
 			using (new HandleGUI())
 			{
@@ -1805,12 +1240,6 @@ namespace UnityEditor.ProBuilder
 					m_SceneInfoRect.height = size.y;
 					GUI.Label(m_SceneInfoRect, m_SceneInfo, UI.EditorStyles.sceneTextBox);
 				}
-
-				// Enables vertex selection with a mouse click
-				if (editLevel == EditLevel.Geometry && !m_IsDragging && selectionMode == SelectMode.Vertex)
-					m_MouseClickRect = new Rect(m_CurrentEvent.mousePosition.x - 10, m_CurrentEvent.mousePosition.y - 10, 20, 20);
-				else
-					m_MouseClickRect = PreferenceKeys.RectZero;
 
 				if (m_IsDragging)
 				{
@@ -2198,7 +1627,6 @@ namespace UnityEditor.ProBuilder
 			// that don't change based on element selction
 			if (forceUpdate || !selectionEqual)
 			{
-
 				// If updating due to inequal selections, set the forceUpdate to true so some of the functions below
 				// know that these values can be trusted.
 				forceUpdate = true;
@@ -2339,8 +1767,7 @@ namespace UnityEditor.ProBuilder
 			foreach (ProBuilderMesh pb in selection)
 				pb.ClearSelection();
 
-			m_NearestEdge.item2 = Edge.Empty;
-			m_NearestEdge.item1 = null;
+			m_Hovering.Clear();
 		}
 
 		void UpdateTextureHandles()
@@ -2492,9 +1919,7 @@ namespace UnityEditor.ProBuilder
 
 		void OnObjectSelectionChanged()
 		{
-			m_NearestEdge.item2 = Edge.Empty;
-			m_NearestEdge.item1 = null;
-
+			m_Hovering.Clear();
 			UpdateSelection(false);
 			HideSelectedWireframe();
 		}

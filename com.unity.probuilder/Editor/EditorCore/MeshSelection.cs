@@ -35,8 +35,8 @@ namespace UnityEditor.ProBuilder
 
 		static MeshSelection()
 		{
-			Selection.selectionChanged += OnSelectionChanged;
-			OnSelectionChanged();
+			Selection.selectionChanged += OnObjectSelectionChanged;
+			OnObjectSelectionChanged();
 		}
 
 		/// <value>
@@ -44,7 +44,7 @@ namespace UnityEditor.ProBuilder
 		/// </value>
 		public static event System.Action onObjectSelectionChanged;
 
-		internal static void OnSelectionChanged()
+		internal static void OnObjectSelectionChanged()
 		{
 			// GameObjects returns both parent and child when both are selected, where transforms only returns the top-most
 			// transform.
@@ -139,14 +139,10 @@ namespace UnityEditor.ProBuilder
 		{
 			if(t == null || Selection.objects.Contains(t))
 				return;
-
 			Object[] temp = new Object[Selection.objects.Length + 1];
-
 			temp[0] = t;
-
 			for(int i = 1; i < temp.Length; i++)
 				temp[i] = Selection.objects[i-1];
-
 			Selection.objects = temp;
 		}
 
@@ -169,7 +165,6 @@ namespace UnityEditor.ProBuilder
 		internal static void SetSelection(IList<GameObject> newSelection)
 		{
 			UndoUtility.RecordSelection(selection, "Change Selection");
-
 			ClearElementAndObjectSelection();
 
 			// if the previous tool was set to none, use Tool.Move
