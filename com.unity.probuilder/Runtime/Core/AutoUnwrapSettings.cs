@@ -162,7 +162,7 @@ namespace UnityEngine.ProBuilder
 			scale = new Vector2(1f, 1f);
 			offset = new Vector2(0f, 0f);
 			rotation = 0f;
-			anchor = Anchor.LowerLeft;
+			anchor = Anchor.None;
 		}
 
 		public override string ToString()

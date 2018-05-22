@@ -52,6 +52,14 @@ namespace UnityEngine.ProBuilder
 
 		public SemVer()
 		{
+
+			m_Major = 0;
+			m_Minor = 0;
+			m_Patch = 0;
+			m_Build = -1;
+			m_Type = null;
+			m_Date = null;
+			m_Metadata = null;
 		}
 
 		public SemVer(string formatted, string date = null)
@@ -347,8 +355,6 @@ namespace UnityEngine.ProBuilder
 
 				if (preReleaseVersion.Success)
 					version.m_Type = preReleaseVersion.Value;
-				else
-					version.m_Type = "";
 
 				var preReleaseBuild = Regex.Match(input, k_VersionBuildRegex);
 				version.m_Build = preReleaseBuild.Success ? GetBuildNumber(preReleaseBuild.Value) : -1;

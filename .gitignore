@@ -5,3 +5,11 @@ com.unity.probuilder/Documentation/ApiDocs/**
 *.DS_Store
 com.unity.probuilder/.npmrc
 com.unity.probuilder/*.sublime-workspace*
+
+TestProjects/*/Library*
+TestProjects/*/Temp*
+TestProjects/*/obj*
+TestProjects/*/.idea
+TestProjects/*/*.csproj
+TestProjects/*/*.sln.DotSettings.user
+TestProjects/*/*.sln
