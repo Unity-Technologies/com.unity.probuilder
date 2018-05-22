@@ -523,88 +523,108 @@ namespace UnityEditor.ProBuilder
 		{
 			selection.Clear();
 			selection.gameObject = UHandleUtility.PickGameObject(mousePosition, false);
-			ProBuilderMesh hoveredMesh = selection.gameObject != null ? selection.gameObject.GetComponent<ProBuilderMesh>() : null;
+			var hoveredMesh = selection.gameObject != null ? selection.gameObject.GetComponent<ProBuilderMesh>() : null;
 
-			// If mouse isn't over a pb object, it still may be near enough to an edge.
-			if (hoveredMesh == null)
+			float bestDistance = pickerPrefs.maxPointerDistance;
+			bool hoveredIsInSelection = false;
+
+			if(hoveredMesh != null && (allowUnselected || (hoveredIsInSelection = MeshSelection.Top().Contains(hoveredMesh))))
 			{
-				float bestDistance = pickerPrefs.maxPointerDistance;
+				var tup = GetNearestEdgeOnMesh(hoveredMesh, mousePosition);
 
-				foreach (var mesh in MeshSelection.Top())
+				if (tup.item2.IsValid() && tup.item1 < pickerPrefs.maxPointerDistance)
 				{
-					var trs = mesh.transform;
-					var positions = mesh.positionsInternal;
+					// if it's in the selection, count it towards the nearest edge. if not, treat this is a fallback.
+					if (hoveredIsInSelection)
+						bestDistance = tup.item1;
 
-					foreach (var face in mesh.faces)
-					{
-						foreach (var edge in face.edges)
-						{
-							int x = edge.x;
-							int y = edge.y;
-
-							float d = UHandleUtility.DistanceToLine(
-								trs.TransformPoint(positions[x]),
-								trs.TransformPoint(positions[y]));
-
-							if (d < bestDistance)
-							{
-								selection.gameObject = mesh.gameObject;
-								selection.mesh = mesh;
-								selection.edge = new Edge(x, y);
-								bestDistance = d;
-							}
-						}
-					}
+					selection.mesh = hoveredMesh;
+					selection.edge = tup.item2;
 				}
 			}
-			else if(allowUnselected || MeshSelection.Top().Contains(hoveredMesh))
+
+			foreach (var mesh in MeshSelection.Top())
 			{
-				// Test culling
-				List<RaycastHit> hits;
-				Ray ray = UHandleUtility.GUIPointToWorldRay(mousePosition);
+				var trs = mesh.transform;
+				var positions = mesh.positionsInternal;
 
-				if (PHandleUtility.FaceRaycast(ray, hoveredMesh, out hits, CullingMode.Back))
+				foreach (var face in mesh.facesInternal)
 				{
-					Camera cam = SceneView.lastActiveSceneView.camera;
-
-					// Sort from nearest hit to farthest
-					hits.Sort((x, y) => x.distance.CompareTo(y.distance));
-
-					// Find the nearest edge in the hit faces
-
-					float bestDistance = Mathf.Infinity;
-					Vector3[] v = hoveredMesh.positionsInternal;
-
-					for (int i = 0; i < hits.Count; i++)
+					foreach (var edge in face.edges)
 					{
-						if (UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, hoveredMesh, hoveredMesh.transform.TransformPoint(hits[i].point)))
-							continue;
+						int x = edge.x;
+						int y = edge.y;
 
-						foreach (Edge edge in hoveredMesh.facesInternal[hits[i].face].edgesInternal)
+						float d = UHandleUtility.DistanceToLine(
+							trs.TransformPoint(positions[x]),
+							trs.TransformPoint(positions[y]));
+
+						if (d < bestDistance)
 						{
-							float d = UHandleUtility.DistancePointLine(hits[i].point, v[edge.x], v[edge.y]);
-
-							if (d < bestDistance)
-							{
-								bestDistance = d;
-								selection.mesh = hoveredMesh;
-								selection.edge = edge;
-							}
+							selection.gameObject = mesh.gameObject;
+							selection.mesh = mesh;
+							selection.edge = new Edge(x, y);
+							bestDistance = d;
 						}
-
-						if (Vector3.Dot(ray.direction, hoveredMesh.transform.TransformDirection(hits[i].normal)) < 0f)
-							break;
 					}
-
-					if (selection.edge.IsValid() &&
-						UHandleUtility.DistanceToLine(hoveredMesh.transform.TransformPoint(v[selection.edge.x]),
-							hoveredMesh.transform.TransformPoint(v[selection.edge.y])) >
-						pickerPrefs.maxPointerDistance)
-						selection.edge = Edge.Empty;
 				}
 			}
 
 			return selection.gameObject != null;
+		}
+
+		static SimpleTuple<float, Edge> GetNearestEdgeOnMesh(ProBuilderMesh mesh, Vector3 mousePosition)
+		{
+			// Test culling
+			List<RaycastHit> hits;
+			Ray ray = UHandleUtility.GUIPointToWorldRay(mousePosition);
+			var res = new SimpleTuple<float, Edge>()
+			{
+				item1 = Mathf.Infinity,
+				item2 = Edge.Empty
+			};
+
+			if (PHandleUtility.FaceRaycast(ray, mesh, out hits, CullingMode.Back))
+			{
+				Camera cam = SceneView.lastActiveSceneView.camera;
+
+				// Sort from nearest hit to farthest
+				hits.Sort((x, y) => x.distance.CompareTo(y.distance));
+
+				// Find the nearest edge in the hit faces
+
+				float bestDistance = Mathf.Infinity;
+				Vector3[] v = mesh.positionsInternal;
+
+				for (int i = 0; i < hits.Count; i++)
+				{
+					if (UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, mesh, mesh.transform.TransformPoint(hits[i].point)))
+						continue;
+
+					foreach (Edge edge in mesh.facesInternal[hits[i].face].edgesInternal)
+					{
+						float d = UHandleUtility.DistancePointLine(hits[i].point, v[edge.x], v[edge.y]);
+
+						if (d < bestDistance)
+						{
+							bestDistance = d;
+							res.item1 = bestDistance;
+							res.item2 = edge;
+						}
+					}
+
+					if (Vector3.Dot(ray.direction, mesh.transform.TransformDirection(hits[i].normal)) < 0f)
+						break;
+				}
+
+				if (res.item2.IsValid())
+					res.item1 = UHandleUtility.DistanceToLine(
+						mesh.transform.TransformPoint(v[res.item2.x]),
+						mesh.transform.TransformPoint(v[res.item2.y]));
+
+			}
+
+			return res;
 		}
 	}
 }
