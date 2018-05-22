@@ -1,4 +1,4 @@
-#if DEBUG
+#if PROBUILDER_DEBUG
 
 using UnityEngine;
 using UnityEditor;
