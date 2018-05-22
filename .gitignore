@@ -1,7 +1,7 @@
-docs~/site
-artifacts/**
-build/**
-Documentation/ApiDocs/**
-.DS_Store
-.npmrc
-*.sublime-workspace*
+com.unity.probuilder/docs~/site
+com.unity.probuilder/artifacts/**
+com.unity.probuilder/build/**
+com.unity.probuilder/Documentation/ApiDocs/**
+*.DS_Store
+com.unity.probuilder/.npmrc
+com.unity.probuilder/*.sublime-workspace*
