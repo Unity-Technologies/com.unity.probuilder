@@ -15,6 +15,8 @@ namespace UnityEditor.ProBuilder.Actions
 			set { PreferencesInternal.SetInt(PreferenceKeys.pbDragSelectMode, (int) value); }
 		}
 
+		const int k_SelectionModifierBehaviourLength = 3;
+
 		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
 		public override Texture2D icon {
 			get {
@@ -50,7 +52,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ActionResult DoAction()
 		{
 			int mode = (int) SelectionModifierBehavior;
-			SelectionModifierBehavior = (SelectionModifierBehavior) ((mode + 1) % 3);
+			SelectionModifierBehavior = (SelectionModifierBehavior) ((mode + 1) % k_SelectionModifierBehaviourLength);
 			ProBuilderEditor.instance.LoadPrefs();
 			return new ActionResult(ActionResult.Status.Success, "Set Shift Drag Mode\n" + SelectionModifierBehavior);
 		}
