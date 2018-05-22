@@ -7,6 +7,7 @@ using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using MeshOps = UnityEngine.ProBuilder.MeshOperations;
 using Object = UnityEngine.Object;
+using UnityEngine.ProBuilder.Experimental.CSG;
 
 namespace UnityEditor.ProBuilder
 {
@@ -273,15 +274,15 @@ namespace UnityEditor.ProBuilder
 			switch(operation)
 			{
 				case BooleanOperation.Union:
-					c = Parabox.CSG.CSG.Union(lhs.gameObject, rhs.gameObject);
+					c = CSG.Union(lhs.gameObject, rhs.gameObject);
 					break;
 
 				case BooleanOperation.Subtract:
-					c = Parabox.CSG.CSG.Subtract(lhs.gameObject, rhs.gameObject);
+					c = CSG.Subtract(lhs.gameObject, rhs.gameObject);
 					break;
 
 				default:
-					c = Parabox.CSG.CSG.Intersect(lhs.gameObject, rhs.gameObject);
+					c = CSG.Intersect(lhs.gameObject, rhs.gameObject);
 					break;
 			}
 

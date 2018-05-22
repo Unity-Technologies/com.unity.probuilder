@@ -9,18 +9,17 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 
-namespace ProBuilder.AssetUtility
+namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 {
-	class AssetIdRemapUtility : EditorWindow
+	sealed class AssetIdRemapEditor : EditorWindow
 	{
+		const string k_ProBuilder2DllName = "ProBuilderCore-Unity5.dll";
+		const string k_ProBuilder3DllName = "ProBuilderCore.dll";
 		const string k_ConversionLogPath = "Temp/ProBuilderConversionLog.txt";
 
 		static readonly string[] k_RemapFilePaths = new string[]
 		{
-			"unitypackagemanager/com.unity.probuilder/ProBuilder/Upgrade/AssetIdRemap.json",
-			"packages/com.unity.probuilder/ProBuilder/Upgrade/AssetIdRemap.json",
-			"Assets/ProBuilder/Upgrade/AssetIdRemap.json",
-			"Assets/ProCore/ProBuilder/Upgrade/AssetIdRemap.json",
+			"Packages/com.unity.probuilder/Content/Upgrade/AssetIdRemap-4_0_0.json"
 		};
 
 		static readonly string[] k_AssetExtensionsToRemap = new string[]
@@ -163,7 +162,7 @@ namespace ProBuilder.AssetUtility
 		[MenuItem("Tools/ProBuilder/Repair/Convert to Package Manager")]
 		internal static void OpenConversionEditor()
 		{
-			GetWindow<AssetIdRemapUtility>(true, "Package Manager Conversion Utility", true);
+			GetWindow<AssetIdRemapEditor>(true, "Package Manager Conversion Utility", true);
 		}
 
 		void OnEnable()
@@ -172,6 +171,11 @@ namespace ProBuilder.AssetUtility
 
 			for(int i = 0, c = k_RemapFilePaths.Length; m_RemapFile == null && i < c; i++)
 				m_RemapFile = AssetDatabase.LoadAssetAtPath<TextAsset>(k_RemapFilePaths[i]);
+
+			if (m_RemapFile == null)
+			{
+				Debug.LogWarning("Could not find a valid asset id remap file!");
+			}
 
 			if (m_TreeViewState == null)
 				m_TreeViewState = new TreeViewState();
@@ -378,10 +382,10 @@ namespace ProBuilder.AssetUtility
 			if (ProjectContainsOldAssetIds())
 				state |= ConversionReadyState.DeprecatedAssetIdsFound;
 
-			if (PackageImporter.IsPreUpmProBuilderInProject())
+			if (PackageImporter.IsPreProBuilder4InProject())
 				state |= ConversionReadyState.AssetStoreInstallFound;
 
-			if(state == ConversionReadyState.Ready && PackageImporter.IsUpmProBuilderLoaded())
+			if(state == ConversionReadyState.Ready && PackageImporter.IsProBuilder4OrGreaterLoaded())
 				return ConversionReadyState.NoActionRequired;
 
 			state |= ValidateProjectTextSerialized();
@@ -396,13 +400,13 @@ namespace ProBuilder.AssetUtility
 
 		void ResetAssetsToDelete()
 		{
-			m_DeprecatedProBuilderFound = PackageImporter.IsPreUpmProBuilderInProject();
+			m_DeprecatedProBuilderFound = PackageImporter.IsPreProBuilder4InProject();
 
-			if (m_DeprecatedProBuilderFound && !ValidatePreUpmProBuilderRoot(m_DeprecatedProBuilderDirectory))
+			if (m_DeprecatedProBuilderFound && !ValidateAssetStoreProBuilderRoot(m_DeprecatedProBuilderDirectory))
 				m_DeprecatedProBuilderDirectory = FindAssetStoreProBuilderInstall();
 
 			// If still no old folder found (and PackageImporter tells us one exists), ask the user to point it out
-			if (m_DeprecatedProBuilderFound && !ValidatePreUpmProBuilderRoot(m_DeprecatedProBuilderDirectory))
+			if (m_DeprecatedProBuilderFound && !ValidateAssetStoreProBuilderRoot(m_DeprecatedProBuilderDirectory))
 			{
 				int res = EditorUtility.DisplayDialogComplex(
 					"Could Not Find Existing ProBuilder Directory",
@@ -423,12 +427,12 @@ namespace ProBuilder.AssetUtility
 
 						if (string.IsNullOrEmpty(m_DeprecatedProBuilderDirectory))
 						{
-							Debug.LogWarning("Canceling ProBuilder Asset Store to Package Manager conversion. You may start this process again at any time by accessing the Tools>ProBuilder>Repair>Convert to Package Manager menu item.");
+							UnityEngine.Debug.LogWarning("Canceling ProBuilder Asset Store to Package Manager conversion. You may start this process again at any time by accessing the Tools>ProBuilder>Repair>Convert to Package Manager menu item.");
 							EditorApplication.delayCall += Close;
 							break;
 						}
 
-						if (ValidatePreUpmProBuilderRoot(m_DeprecatedProBuilderDirectory))
+						if (ValidateAssetStoreProBuilderRoot(m_DeprecatedProBuilderDirectory))
 						{
 							// got a good directory, continue with process
 							break;
@@ -447,7 +451,7 @@ namespace ProBuilder.AssetUtility
 				}
 				else if (res == k_DialogCancel)
 				{
-					Debug.LogWarning("Canceling ProBuilder Asset Store to Package Manager conversion. You may start this process again at any time by accessing the Tools>ProBuilder>Repair>Convert to Package Manager menu item.");
+					UnityEngine.Debug.LogWarning("Canceling ProBuilder Asset Store to Package Manager conversion. You may start this process again at any time by accessing the Tools>ProBuilder>Repair>Convert to Package Manager menu item.");
 					EditorApplication.delayCall += Close;
 				}
 			}
@@ -569,6 +573,7 @@ namespace ProBuilder.AssetUtility
 			log.Append(successes);
 
 			PackageImporter.Reimport(PackageImporter.EditorCorePackageManager);
+			AssetDatabase.Refresh();
 		}
 
 		static bool DoAssetIdentifierRemap(string path, IEnumerable<AssetIdentifierTuple> map, out int modified, bool remapSourceGuid = false)
@@ -650,17 +655,13 @@ namespace ProBuilder.AssetUtility
 
 		bool ProjectContainsOldAssetIds()
 		{
-			if (m_RemapFile == null)
-				return false;
-			AssetIdRemapObject remapObject = new AssetIdRemapObject();
-			JsonUtility.FromJsonOverwrite(m_RemapFile.text, remapObject);
-			return remapObject.map.Any(x => x.source.ExistsInProject());
+			// todo this should only check with the loaded remap file, but for now it's hard-coded
+			return PackageImporter.IsPreProBuilder4InProject() || PackageImporter.DoesProjectContainDeprecatedGUIDs();
 		}
 
 		static string FindAssetStoreProBuilderInstall()
 		{
 			string[] matches = Directory.GetDirectories("Assets", "ProBuilder", SearchOption.AllDirectories);
-			string bestMatch = null;
 
 			foreach (var match in matches)
 			{
@@ -668,12 +669,9 @@ namespace ProBuilder.AssetUtility
 
 				if (ValidateAssetStoreProBuilderRoot(dir))
 					return dir;
-
-				if (ValidatePreUpmProBuilderRoot(dir))
-					bestMatch = dir;
 			}
 
-			return bestMatch;
+			return null;
 		}
 
 		/// <summary>
@@ -686,31 +684,6 @@ namespace ProBuilder.AssetUtility
 			return !string.IsNullOrEmpty(dir) &&
 			       File.Exists(dir + "/Classes/ProBuilderCore-Unity5.dll") &&
 			       File.Exists(dir + "/Editor/ProBuilderEditor-Unity5.dll");
-		}
-
-		/// <summary>
-		/// Is the selected folder a ProBuilder version of any install source prior to packman update?
-		/// </summary>
-		/// <param name="dir"></param>
-		/// <returns></returns>
-		static bool ValidatePreUpmProBuilderRoot(string dir)
-		{
-			bool isProBuilderRoot = !string.IsNullOrEmpty(dir) &&
-			       Directory.Exists(dir + "/Classes") &&
-			       (File.Exists(dir + "/Classes/ProBuilderCore-Unity5.dll")
-			        || File.Exists(dir + "/Classes/ClassesCore/pb_Object.cs")) &&
-			       Directory.Exists(dir + "/Editor") &&
-			       (File.Exists(dir + "/Editor/ProBuilderEditor-Unity5.dll")
-			        || File.Exists(dir + "/Editor/ProBuilderEditor.dll"));
-
-			if (!isProBuilderRoot)
-				return false;
-
-			string[] assetIdRemapSource = Directory.GetFiles(dir, "AssetId.cs", SearchOption.AllDirectories);
-			string[] assetIdRemapDll = Directory.GetFiles(dir, "AssetIdRemapUtility.dll", SearchOption.AllDirectories);
-
-			// don't let user mark the newly imported upm install for deletion
-			return assetIdRemapSource.Length <= 0 && assetIdRemapDll.Length <= 0;
 		}
 
 		ConversionReadyState ValidateAssetStoreRemoval()

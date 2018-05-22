@@ -122,6 +122,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns>A list of the edges on the perimeter of each group of adjacent faces.</returns>
 		public static IEnumerable<Edge> GetPerimeterEdges(ProBuilderMesh mesh, IEnumerable<Face> faces)
 		{
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
 			return GetPerimeterEdges(faces, mesh.sharedIndicesInternal.ToDictionary());
 		}
 
@@ -135,7 +137,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <seealso cref="IntArrayUtility.ToDictionary"/>
 		public static IEnumerable<Edge> GetPerimeterEdges(IEnumerable<Face> faces, Dictionary<int, int> sharedIndexesDictionary)
 		{
-			List<Edge> faceEdges = faces.SelectMany(x => x.edgesInternal).ToList();	// actual edges
+            if (faces == null)
+                throw new ArgumentNullException("faces");
+
+            if (sharedIndexesDictionary == null)
+                throw new ArgumentNullException("sharedIndexesDictionary");
+
+            List<Edge> faceEdges = faces.SelectMany(x => x.edgesInternal).ToList();	// actual edges
 			int edgeCount = faceEdges.Count;
 
 			// translate all face edges to universal edges

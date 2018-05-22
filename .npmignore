@@ -1,6 +1,8 @@
 artifacts/**
 build/**
-Documentation/ApiDocs/**
+Documentation~/ApiDocs/**
+Tests/
+Tests.meta
 .DS_Store
 .npmrc
 .npmignore

@@ -1,12 +1,16 @@
-﻿using System;
+﻿#if PROBUILDER_DEBUG
+
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 
-namespace ProBuilder.AssetUtility
+namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 {
-	class AssetIdRemapTreeView : TreeView
+	sealed class AssetIdRemapBuilderTreeView : TreeView
 	{
 		AssetIdRemapObject m_RemapObject = null;
 		const float k_RowHeight = 20f;
@@ -20,7 +24,8 @@ namespace ProBuilder.AssetUtility
 			set { m_RemapObject = value; }
 		}
 
-		public AssetIdRemapTreeView(TreeViewState state, MultiColumnHeader header) : base(state, header)
+		public AssetIdRemapBuilderTreeView(TreeViewState state, MultiColumnHeader header)
+			: base(state, header)
 		{
 			rowHeight = 20f;
 			showAlternatingRowBackgrounds = true;
@@ -54,11 +59,11 @@ namespace ProBuilder.AssetUtility
 			rowHeight = hasSearch ? k_RowHeightSearching : k_RowHeight;
 		}
 
-		protected override void RowGUI (RowGUIArgs args)
+		protected override void RowGUI(RowGUIArgs args)
 		{
 			StringTupleTreeElement item = args.item as StringTupleTreeElement;
 
-			for (int i = 0; i < args.GetNumVisibleColumns (); ++i)
+			for (int i = 0; i < args.GetNumVisibleColumns(); ++i)
 			{
 				CellGUI(args.GetCellRect(i), item, i, ref args);
 			}
@@ -73,10 +78,10 @@ namespace ProBuilder.AssetUtility
 				AssetId id = visibleColumn == 0 ? m_RemapObject[item.index].source : m_RemapObject[item.index].destination;
 
 				m_CellContents.text = "<b>Name: </b>" + id.name +
-				        "\n<b>Path: </b>" + id.localPath +
-				        "\n<b>Guid: </b>" + id.guid +
-				        "\n<b>FileId: </b>" + id.fileId +
-				        "\n<b>Type: </b>" + id.type;
+					"\n<b>Path: </b>" + id.localPath +
+					"\n<b>Guid: </b>" + id.guid +
+					"\n<b>FileId: </b>" + id.fileId +
+					"\n<b>Type: </b>" + id.type + (string.IsNullOrEmpty(id.assetType) ? "" : " (" + id.assetType + ")");
 			}
 			else
 			{
@@ -110,66 +115,86 @@ namespace ProBuilder.AssetUtility
 
 			var o = m_RemapObject[tup.index];
 
-			return o.source.localPath.Contains(search) ||
-			       o.source.guid.Contains(search) ||
-			       o.source.fileId.Contains(search) ||
-			       o.source.type.Contains(search) ||
-			       o.destination.localPath.Contains(search) ||
-			       o.destination.guid.Contains(search) ||
-			       o.destination.fileId.Contains(search) ||
-			       o.destination.type.Contains(search);
+			try
+			{
+				var patterns = search.Split(new[] { "\\&" }, StringSplitOptions.None).Select(x => new Regex(x));
+
+				foreach (var pattern in patterns)
+				{
+					if (!(pattern.IsMatch(o.source.localPath) ||
+						pattern.IsMatch(o.source.guid) ||
+						pattern.IsMatch(o.source.fileId) ||
+						pattern.IsMatch(o.source.type) ||
+						pattern.IsMatch(o.destination.localPath) ||
+						pattern.IsMatch(o.destination.guid) ||
+						pattern.IsMatch(o.destination.fileId) ||
+						pattern.IsMatch(o.destination.type)))
+						return false;
+				}
+
+				return true;
+			}
+			catch
+			{
+				return o.source.localPath.Contains(search) ||
+					o.source.guid.Contains(search) ||
+					o.source.fileId.Contains(search) ||
+					o.source.type.Contains(search) ||
+					o.destination.localPath.Contains(search) ||
+					o.destination.guid.Contains(search) ||
+					o.destination.fileId.Contains(search) ||
+					o.destination.type.Contains(search);
+			}
 		}
 
 		protected override void ContextClicked()
 		{
 			GenericMenu menu = new GenericMenu();
 
-			menu.AddItem(new GUIContent("Compare", ""), false, () =>
-			{
-				IList<int> selected = GetSelection();
-				if (selected.Count == 2)
-				{
-					StringTupleTreeElement a = FindItem(selected[0], rootItem) as StringTupleTreeElement;
-					StringTupleTreeElement b = FindItem(selected[1], rootItem) as StringTupleTreeElement;
-
-					if (a != null && b != null)
-					{
-						AssetId left = m_RemapObject[a.index].source;
-						AssetId right = m_RemapObject[b.index].destination;
-						Debug.Log( left.AssetEquals2(right).ToString() );
-						return;
-					}
-				}
-
-				Debug.Log("Compare requires exactly two items be selected.");
-			});
-
-			menu.AddSeparator("");
-
 			menu.AddItem(new GUIContent("Combine", ""), false, () =>
 			{
-				IList<int> selected = GetSelection();
-				if (selected.Count == 2)
+				m_RemapObject.Merge(GetAssetIdSelection());
+				isDirty = true;
+				Reload();
+				SetSelection(new int[] {});
+			});
+			menu.ShowAsContext();
+		}
+
+		IEnumerable<AssetIdentifierTuple> GetAssetIdSelection()
+		{
+			return GetSelection().Select(x => m_RemapObject[((StringTupleTreeElement)FindItem(x, rootItem)).index]);
+		}
+
+		protected override void CommandEventHandling()
+		{
+			var evt = Event.current;
+
+			var selected = GetSelection();
+
+			if (selected.Count > 0)
+			{
+				if (evt.type == EventType.ValidateCommand)
 				{
-					StringTupleTreeElement a = FindItem(selected[0], rootItem) as StringTupleTreeElement;
-					StringTupleTreeElement b = FindItem(selected[1], rootItem) as StringTupleTreeElement;
+					if (evt.commandName.Equals("SoftDelete"))
+						evt.Use();
 
-					if (a != null && b != null)
+				}
+				else if (evt.type == EventType.ExecuteCommand)
+				{
+					if (evt.commandName.Equals("SoftDelete")
+						&& EditorUtility.DisplayDialog("Delete", "Delete Selected Entries?", "Delete", "Cancel"))
 					{
-						var left = m_RemapObject[a.index];
-						var right = m_RemapObject[b.index];
-						m_RemapObject.Combine(left, right);
-
+						m_RemapObject.Delete(GetAssetIdSelection());
+						evt.Use();
 						Reload();
 						isDirty = true;
-						return;
+						SetSelection(new int[] {});
 					}
 				}
+			}
 
-				Debug.Log("Combine requires exactly two items be selected.");
-			});
-
-			menu.ShowAsContext();
+			base.CommandEventHandling();
 		}
 	}
 
@@ -192,3 +217,4 @@ namespace ProBuilder.AssetUtility
 		}
 	}
 }
+#endif

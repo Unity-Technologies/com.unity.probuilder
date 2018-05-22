@@ -3,11 +3,13 @@
     "references": [
         "Unity.ProBuilder.Core",
         "Unity.ProBuilder.MeshOperations",
-        "Unity.ProBuilder.Editor"
+        "Unity.ProBuilder.Editor",
+        "Unity.ProBuilder.AssetIdRemapUtility"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
     ],
-    "excludePlatforms": []
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Parabox.CSG
+namespace UnityEngine.ProBuilder.Experimental.CSG
 {
 	/// <summary>
 	/// Represents a single mesh vertex.

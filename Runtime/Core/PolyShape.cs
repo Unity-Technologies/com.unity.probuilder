@@ -24,26 +24,28 @@ namespace UnityEngine.ProBuilder
 
         ProBuilderMesh m_Mesh;
 
+		[FormerlySerializedAs("points")]
         [SerializeField]
         internal List<Vector3> m_Points = new List<Vector3>();
 
+		[FormerlySerializedAs("extrude")]
         [SerializeField]
         float m_Extrude = 0f;
 
+		[FormerlySerializedAs("polyEditMode")]
         [SerializeField]
         PolyEditMode m_EditMode;
 
+		[FormerlySerializedAs("flipNormals")]
         [SerializeField]
         bool m_FlipNormals;
 
         [SerializeField]
         internal bool isOnGrid = true;
 
-        internal List<Vector3> points
-        {
-            get { return new List<Vector3>(m_Points); }
-            set { m_Points = new List<Vector3>(value); }
-        }
+		[FormerlySerializedAs("material")]
+	    [SerializeField]
+	    Material m_Material;
 
         public ReadOnlyCollection<Vector3> controlPoints
         {
@@ -73,7 +75,13 @@ namespace UnityEngine.ProBuilder
             set { m_FlipNormals = value; }
         }
 
-        public ProBuilderMesh mesh
+	    public Material material
+	    {
+		    get { return m_Material; }
+		    set { m_Material = value; }
+	    }
+
+	    public ProBuilderMesh mesh
 		{
 			get
 			{

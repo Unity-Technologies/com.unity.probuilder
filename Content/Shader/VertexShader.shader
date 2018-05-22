@@ -1,4 +1,4 @@
-﻿Shader "Hidden/ProBuilder/pb_VertexShader"
+﻿Shader "Hidden/ProBuilder/VertexShader"
 {
 	Properties
 	{

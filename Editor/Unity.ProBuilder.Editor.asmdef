@@ -3,7 +3,7 @@
     "references": [
         "Unity.ProBuilder.Core",
         "Unity.ProBuilder.MeshOperations",
-        "Unity.AssetIdRemapUtility.Editor"
+        "Unity.ProBuilder.AssetIdRemapUtility"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [

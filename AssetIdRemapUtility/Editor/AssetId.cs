@@ -6,10 +6,10 @@ using UnityEngine;
 using UnityEditor;
 using UObject = UnityEngine.Object;
 
-namespace ProBuilder.AssetUtility
+namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 {
 	[Serializable]
-	class AssetIdentifierTuple
+	sealed class AssetIdentifierTuple
 	{
 		public AssetId source;
 		public AssetId destination;
@@ -48,33 +48,6 @@ namespace ProBuilder.AssetUtility
 		}
 	}
 
-	[Serializable]
-	class NamespaceRemapObject : ISerializationCallbackReceiver
-	{
-		[NonSerialized]
-		public Dictionary<string, string> map = new Dictionary<string, string>();
-
-		public bool TryGetValue(string key, out string value)
-		{
-			return map.TryGetValue(key, out value);
-		}
-
-		// serialize as key value pair to make json easier to read
-		[SerializeField]
-		StringTuple[] m_Map;
-
-		public void OnBeforeSerialize()
-		{
-			m_Map = map.Select(x => new StringTuple(x.Key, x.Value)).ToArray();
-		}
-
-		public void OnAfterDeserialize()
-		{
-			for (int i = 0, c = m_Map.Length; i < c; i++)
-				map.Add(m_Map[i].key, m_Map[i].value);
-		}
-	}
-
 	enum Origin
 	{
 		Source,
@@ -86,7 +59,6 @@ namespace ProBuilder.AssetUtility
 	{
 		public List<string> sourceDirectory = new List<string>();
 		public string destinationDirectory = null;
-		public NamespaceRemapObject namespaceMap = null;
 		public List<AssetIdentifierTuple> map = new List<AssetIdentifierTuple>();
 
 		public AssetIdentifierTuple this[int i]
@@ -115,38 +87,38 @@ namespace ProBuilder.AssetUtility
 			map = map.Where(x => AssetId.IsValid(x.source) || AssetId.IsValid(x.destination)).ToList();
 		}
 
-		public void Combine(AssetIdentifierTuple left, AssetIdentifierTuple right)
+		public void Delete(IEnumerable<AssetIdentifierTuple> entries)
 		{
-			AssetIdentifierTuple res = new AssetIdentifierTuple();
+			map.RemoveAll(entries.Contains);
+		}
 
-			if (AssetId.IsValid(left.source) && AssetId.IsValid(right.destination))
+		public void Merge(IEnumerable<AssetIdentifierTuple> entries)
+		{
+			var types = entries.SelectMany(x => new [] { x.source.assetType, x.destination.assetType });
+
+			if (types.Where(x => !string.IsNullOrEmpty(x)).Distinct().Count() > 1)
 			{
-				res.source = new AssetId(left.source);
-				res.destination = new AssetId(right.destination);
-			}
-			else if (AssetId.IsValid(left.destination) && AssetId.IsValid(right.source))
-			{
-				res.source = new AssetId(right.source);
-				res.destination = new AssetId(left.destination);
-			}
-			else
-			{
+				Debug.LogError("Attempting to map entries of multiple types! This is not allowed.");
 				return;
 			}
 
-			// duplicate, don't add
-			if (res.AssetEquals(left) || res.AssetEquals(right))
+			var arr = entries as AssetIdentifierTuple[] ?? entries.ToArray();
+			var src = arr.Where(x => AssetId.IsValid(x.source) && !AssetId.IsValid(x.destination)).ToArray();
+			var dst = arr.Where(x => AssetId.IsValid(x.destination)).ToArray();
+
+			if (dst.Count() != 1)
+			{
+				Debug.LogError("Merging AssetId entries requires only one valid destination entry be selected.");
 				return;
+			}
 
-			// if combine was successful, remove partial entries
-			if (AssetId.IsValid(left.source) != AssetId.IsValid(left.destination))
-				map.Remove(left);
+			var d = dst.First().destination;
 
-			if (AssetId.IsValid(right.source) != AssetId.IsValid(right.destination))
-				map.Remove(right);
+			foreach(var s in src)
+				map.Add(new AssetIdentifierTuple(new AssetId(s.source), new AssetId(d)));
 
-			// add the new
-			map.Add(res);
+			map.RemoveAll(src.Contains);
+			map.RemoveAll(x => dst.Contains(x) && !AssetId.IsValid(x.source));
 		}
 	}
 
@@ -228,7 +200,9 @@ namespace ProBuilder.AssetUtility
 		// the remaining properties are only relevant to monoscript files
 		AssetType m_InternalType = AssetType.Unknown;
 		string m_MonoScriptClass = null;
+		#pragma warning disable 414
 		bool m_IsEditorScript = false;
+		#pragma warning restore 414
 
 		public AssetId()
 		{
@@ -380,77 +354,12 @@ namespace ProBuilder.AssetUtility
 			return true;
 		}
 
-		public bool AssetEquals(AssetId other, NamespaceRemapObject namespaceRemap = null)
+		public bool AssetEquals(AssetId other)
 		{
 			if (!assetType.Equals(other.assetType))
 				return false;
 
-			if (IsMonoScript())
-			{
-				// would be better to compare assemblies, but that's not possible when going from src to dll
-				// however this at least catches the case where a type exists in both a runtime and Editor dll
-				if (m_IsEditorScript == other.m_IsEditorScript)
-				{
-					// ideally we'd do a scan and find the closest match based on local path, but for now it's a
-					// relatively controlled environment and we can deal with duplicate names on an as-needed basis
-
-					// left namespace, left type, etc
-					string ln, rn, lt, rt;
-
-					if (GetNamespaceAndType(m_MonoScriptClass, out ln, out lt) &&
-					    GetNamespaceAndType(other.m_MonoScriptClass, out rn, out rt))
-					{
-						if (!string.IsNullOrEmpty(ln))
-						{
-							// remapped left namespace
-							string lrn;
-
-							// if left namespace existed check for a remap, otherwise compare and return
-							if (namespaceRemap != null && namespaceRemap.TryGetValue(ln, out lrn))
-							{
-								if (lrn.Equals(rn) && lt.Equals(rt))
-									return true;
-							}
-							else
-							{
-								return ln.Equals(rn) && lt.Equals(rt);
-							}
-						}
-						else
-						{
-							// left didn't have a namespace to begin with, so check against name only
-							return lt.Equals(rt);
-						}
-					}
-				}
-			}
-			else
-			{
-				return localPath.Equals(other.localPath);
-			}
-
-			return false;
-		}
-
-		public bool AssetEquals(UObject obj)
-		{
-			string path = AssetDatabase.GetAssetPath(obj);
-
-			if (string.IsNullOrEmpty(path))
-				return false;
-
-			string assetGuid = AssetDatabase.AssetPathToGUID(path);
-
-			return m_Guid.Equals(assetGuid) &&
-			       GetUObjectTypeString(obj).Equals(m_Type);
-		}
-
-		public bool AssetEquals(string assetPath)
-		{
-			string otherGuid = AssetDatabase.AssetPathToGUID(assetPath);
-
-			return m_Guid.Equals(otherGuid) &&
-				GetUObjectTypeString(AssetDatabase.LoadAssetAtPath<UObject>(assetPath)).Equals(m_Type);
+			return localPath.Equals(other.localPath);
 		}
 
 		/// <summary>
@@ -466,73 +375,6 @@ namespace ProBuilder.AssetUtility
 			if (assetObj == null)
 				return false;
 			return m_Type.Equals(GetUObjectTypeString(assetObj));
-		}
-
-		internal bool AssetEquals2(AssetId other, NamespaceRemapObject namespaceRemap = null)
-		{
-			if (!assetType.Equals(other.assetType))
-			{
-				Debug.Log("AssetType != AssetType");
-				return false;
-			}
-
-			if (IsMonoScript())
-			{
-				// would be better to compare assemblies, but that's not possible when going from src to dll
-				// however this at least catches the case where a type exists in both a runtime and Editor dll
-				if (m_IsEditorScript == other.m_IsEditorScript)
-				{
-					// ideally we'd do a scan and find the closest match based on local path, but for now it's a
-					// relatively controlled environment and we can deal with duplicate names on an as-needed basis
-
-					// left namespace, left type, etc
-					string ln, rn, lt, rt;
-
-					if (GetNamespaceAndType(m_MonoScriptClass, out ln, out lt) &&
-					    GetNamespaceAndType(other.m_MonoScriptClass, out rn, out rt))
-					{
-						if (!string.IsNullOrEmpty(ln))
-						{
-							// remapped left namespace
-							string lrn;
-
-							// if left namespace existed check for a remap, otherwise compare and return
-							if (namespaceRemap != null && namespaceRemap.TryGetValue(ln, out lrn))
-							{
-								Debug.Log("remapped -> " + lrn + "::" + lt + " == " + rn + "::" + rt);
-								if (lrn.Equals(rn) && lt.Equals(rt))
-									return true;
-							}
-							else
-							{
-								Debug.Log("non-remapped -> " + ln + "::" + lt + " == " + rn + "::" + rt);
-								return ln.Equals(rn) && lt.Equals(rt);
-							}
-						}
-						else
-						{
-							// left didn't have a namespace to begin with, so check against name only
-							Debug.Log("type compare (" + lt + " == " + rt + ")");
-							return lt.Equals(rt);
-						}
-					}
-					else
-					{
-						Debug.Log("Couldn't get namespace");
-					}
-				}
-				else
-				{
-					Debug.Log("IsEditorScript compare");
-				}
-			}
-			else
-			{
-				Debug.Log("localPath compare (" + localPath + " == " + other.localPath + ")");
-				return localPath.Equals(other.localPath);
-			}
-
-			return false;
 		}
 	}
 }

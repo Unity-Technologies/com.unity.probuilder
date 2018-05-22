@@ -6,7 +6,7 @@ namespace UnityEditor.ProBuilder
 {
 	sealed class LicenseEditor : EditorWindow
 	{
-		const string k_LicenseTextPath = "ThirdPartyLicenses.txt";
+		const string k_LicenseTextPath = "Third Party Notices.md";
 		const int k_MaxStringLength = 60000;
 		TextAsset m_LicenseText;
 		string[] m_LicenseContents;
@@ -29,6 +29,9 @@ namespace UnityEditor.ProBuilder
 
 		void OnGUI()
 		{
+			if (m_LicenseContents == null)
+				return;
+
 			m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
 
 			for(int i = 0, c = m_LicenseContents.Length; i < c; i++)

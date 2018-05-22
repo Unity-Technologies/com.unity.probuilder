@@ -78,7 +78,7 @@ namespace UnityEngine.ProBuilder
 #endif
 		}
 
-		public SemVer(int major, int minor, int patch, int build = -1, string type = "", string date = "", string metadata = "")
+		public SemVer(int major, int minor, int patch, int build = -1, string type = null, string date = null, string metadata = null)
 		{
 			m_Major = major;
 			m_Minor = minor;
@@ -86,7 +86,7 @@ namespace UnityEngine.ProBuilder
 			m_Build = build;
 			m_Type = type;
 			m_Metadata = metadata;
-			m_Date = string.IsNullOrEmpty(date) ? DateTime.Now.ToString("en-US: MM/dd/yyyy") : date;
+			m_Date = date;
 		}
 
 		public bool IsValid()
@@ -278,9 +278,35 @@ namespace UnityEngine.ProBuilder
 			return sb.ToString();
 		}
 
+		/// <summary>
+		/// Returns a string with all the information that this version contains, including date.
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
-			return ToString(DefaultStringFormat);
+			var sb = new StringBuilder();
+
+			sb.Append(ToString("M.m.p"));
+
+			if (!string.IsNullOrEmpty(m_Type))
+			{
+				sb.Append("-");
+				sb.Append(m_Type);
+
+				if (m_Build > -1)
+				{
+					sb.Append(".");
+					sb.Append(m_Build.ToString());
+				}
+			}
+
+			if (!string.IsNullOrEmpty(m_Date))
+			{
+				sb.Append(" ");
+				sb.Append(m_Date);
+			}
+
+			return sb.ToString();
 		}
 
 		/// <summary>

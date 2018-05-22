@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Parabox.CSG
+namespace UnityEngine.ProBuilder.Experimental.CSG
 {
 	/// <summary>
 	/// Representation of a mesh in CSG terms.  Contains methods for translating to and from UnityEngine.Mesh.

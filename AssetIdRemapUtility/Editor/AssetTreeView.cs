@@ -9,9 +9,9 @@ using UnityEditor.VersionControl;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 
-namespace ProBuilder.AssetUtility
+namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 {
-	class AssetTreeItem : TreeViewItem
+	sealed class AssetTreeItem : TreeViewItem
 	{
 		string m_RelativePath;
 		string m_FullPath;

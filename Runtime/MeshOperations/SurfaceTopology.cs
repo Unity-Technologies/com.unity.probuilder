@@ -22,7 +22,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns>Any new triangle faces created by breaking faces into individual triangles.</returns>
 		public static Face[] ToTriangles(this ProBuilderMesh mesh, IList<Face> faces)
 		{
-			List<Vertex> vertices = new List<Vertex>( Vertex.GetVertices(mesh) );
+            if (mesh == null)
+                throw new System.ArgumentNullException("mesh");
+
+            if (faces == null)
+                throw new System.ArgumentNullException("faces");
+
+            List<Vertex> vertices = new List<Vertex>( Vertex.GetVertices(mesh) );
 			Dictionary<int, int> lookup = mesh.sharedIndicesInternal.ToDictionary();
 
 			List<FaceRebuildData> rebuild = new List<FaceRebuildData>();

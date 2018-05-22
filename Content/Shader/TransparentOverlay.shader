@@ -1,4 +1,4 @@
-﻿Shader "Hidden/ProBuilder/pb_TransparentOverlay"
+﻿Shader "Hidden/ProBuilder/TransparentOverlay"
 {
 	Properties
 	{
