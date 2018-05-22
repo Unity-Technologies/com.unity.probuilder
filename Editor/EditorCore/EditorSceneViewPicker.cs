@@ -147,8 +147,20 @@ namespace UnityEditor.ProBuilder
 			if (!appendModifier)
 				MeshSelection.SetSelection((GameObject) null);
 
-			if (!MouseRayHitTest(evt.mousePosition, selectionMode, pickerPreferences, s_Selection, true, evt.clickCount > 1 ? -1 : 0))
+			if (selectionMode == SelectMode.Edge)
+			{
+				if (!EdgeRaycast(evt.mousePosition, pickerPreferences, true, s_Selection))
+					return null;
+			}
+			else if (selectionMode == SelectMode.Vertex)
+			{
+				if (!VertexRaycast(evt.mousePosition, pickerPreferences, true, s_Selection))
+					return null;
+			}
+			else if (!FaceRaycast(evt.mousePosition, pickerPreferences, true, s_Selection, evt.clickCount > 1 ? -1 : 0, false))
+			{
 				return null;
+			}
 
 			evt.Use();
 
@@ -358,8 +370,7 @@ namespace UnityEditor.ProBuilder
 			SelectMode selectionMode,
 			ScenePickerPreferences pickerOptions,
 			SceneSelection selection,
-			bool allowUnselected = false,
-			int deepClickOffset = 0)
+			bool allowUnselected = false)
 		{
 			if (selectionMode == SelectMode.Edge)
 				return EdgeRaycast(mousePosition, pickerOptions, allowUnselected, selection);
@@ -367,26 +378,35 @@ namespace UnityEditor.ProBuilder
 			if (selectionMode == SelectMode.Vertex)
 				return VertexRaycast(mousePosition, pickerOptions, allowUnselected, selection);
 
-			return FaceRaycast(mousePosition, pickerOptions, allowUnselected, selection, deepClickOffset);
+			return FaceRaycast(mousePosition, pickerOptions, allowUnselected, selection, 0, true);
 		}
 
-		static bool FaceRaycast(Vector3 mousePosition, ScenePickerPreferences pickerOptions, bool allowUnselected, SceneSelection selection, int deepClickOffset = 0)
+		static List<GameObject> s_OverlappingGameObjects = new List<GameObject>();
+
+		static bool FaceRaycast(Vector3 mousePosition,
+			ScenePickerPreferences pickerOptions,
+			bool allowUnselected,
+			SceneSelection selection,
+			int deepClickOffset = 0,
+			bool isPreview = true)
 		{
 			GameObject pickedGo = null;
 			ProBuilderMesh pickedPb = null;
 			Face pickedFace = null;
+
 			int newHash = 0;
-			List<GameObject> picked = EditorHandleUtility.GetAllOverlapping(mousePosition);
+			EditorHandleUtility.GetAllOverlapping(mousePosition, s_OverlappingGameObjects);
 			EventModifiers em = Event.current.modifiers;
 			selection.Clear();
 
 			// If any event modifiers are engaged don't cycle the deep click
-			int pickedCount = em != EventModifiers.None ? System.Math.Min(1, picked.Count) : picked.Count;
+			int pickedCount = (isPreview || em != EventModifiers.None)
+				? System.Math.Min(1, s_OverlappingGameObjects.Count)
+				: s_OverlappingGameObjects.Count;
 
 			for (int i = 0, next = 0; i < pickedCount; i++)
 			{
-				GameObject go = picked[i];
-
+				var go = s_OverlappingGameObjects[i];
 				var mesh = go.GetComponent<ProBuilderMesh>();
 				Face face = null;
 
@@ -427,7 +447,8 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
-			s_DeepSelectionPrevious = newHash;
+			if(!isPreview)
+				s_DeepSelectionPrevious = newHash;
 
 			if (pickedGo != null)
 			{

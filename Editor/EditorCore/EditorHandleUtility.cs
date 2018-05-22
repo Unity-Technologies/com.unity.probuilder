@@ -414,32 +414,22 @@ namespace UnityEditor.ProBuilder
 			return UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, pb, out hit, ignore[pb]);
 		}
 
-		/**
-		 * Return all GameObjects under the mousePosition.
-		 * Note - only available from Unity 5.3+. Prior versions return first GameObject always.
-		 */
-		internal static List<GameObject> GetAllOverlapping(Vector2 mousePosition)
+		internal static void GetAllOverlapping(Vector2 mousePosition, List<GameObject> list)
 		{
-#if UNITY_4 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
-			return new List<GameObject>() { HandleUtility.PickGameObject(mousePosition, false) };
-#else
-			List<GameObject> intersecting = new List<GameObject>();
+			list.Clear();
 
 			GameObject nearestGameObject = null;
 
 			do
 			{
-				nearestGameObject = HandleUtility.PickGameObject(mousePosition, false, intersecting.ToArray());
+				nearestGameObject = HandleUtility.PickGameObject(mousePosition, false, list.ToArray());
 
 				if(nearestGameObject != null)
-					intersecting.Add(nearestGameObject);
+					list.Add(nearestGameObject);
 				else
 					break;
 			}
 			while( nearestGameObject != null );
-
-			return intersecting;
-#endif
 		}
 
 		/**
@@ -701,7 +691,7 @@ namespace UnityEditor.ProBuilder
 
 				var face = selection.face;
 				var ind = face.indices;
-				
+
 				for (int i = 0, c = ind.Length; i < c; i += 3)
 				{
 					GL.Vertex(positions[ind[i]]);
