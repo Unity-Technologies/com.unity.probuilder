@@ -69,6 +69,9 @@ namespace UnityEngine.ProBuilder
         }
     }
 
+	/// <summary>
+	/// Functions for picking mesh elements in a view. Can either render a texture to test, or cast a ray. Prefer this over calling SelectionPickerRenderer directly.
+	/// </summary>
 	static class Picking
 	{
 		/// <summary>
