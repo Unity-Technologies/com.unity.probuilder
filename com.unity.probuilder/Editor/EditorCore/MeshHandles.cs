@@ -207,8 +207,11 @@ namespace UnityEditor.ProBuilder
 			s_VertexMaterial.SetColor("_Color", s_VertexUnselectedColor);
 			s_LineMaterial.SetColor("_Color", s_EdgeUnselectedColor);
 
-			foreach (var r in s_WireframeRenderables)
-				r.Render();
+			if (s_WireframeMaterial.SetPass(0))
+			{
+				foreach (var r in s_WireframeRenderables)
+					r.DrawMeshNow(0);
+			}
 
 			// don't render overlays when drag and drop is active so that the user can see the material preview
 			if (!SceneDragAndDropListener.IsDragging())
@@ -216,15 +219,22 @@ namespace UnityEditor.ProBuilder
 				if (selectionMode == SelectMode.Vertex)
 				{
 					s_VertexMaterial.SetColor("_Color", s_VertexSelectedColor);
-					foreach(var r in s_ActiveRenderables)
-						r.Render();
+
+					if (s_VertexMaterial.SetPass(0))
+					{
+						foreach(var r in s_ActiveRenderables)
+							r.DrawMeshNow(0);
+					}
 				}
 				else if (selectionMode == SelectMode.Face)
 				{
 					s_FaceMaterial.SetColor("_Color", s_FaceSelectedColor);
 
-					foreach(var r in s_ActiveRenderables)
-						r.Render();
+					if (s_FaceMaterial.SetPass(0))
+					{
+						foreach(var r in s_ActiveRenderables)
+							r.DrawMeshNow(0);
+					}
 				}
 				else if (selectionMode == SelectMode.Edge)
 				{
@@ -234,28 +244,35 @@ namespace UnityEditor.ProBuilder
 
 					lineMaterial.SetColor("_Color", Color.white);
 
-					for (int i = 0; i < selection.Length; i++)
+					if (EditorHandleUtility.BeginDrawingLines(Handles.zTest))
 					{
-						if (EditorHandleUtility.BeginDrawingLines(Handles.zTest))
-						{
-							ProBuilderMesh pb = selection[i];
-							Edge[] edges = pb.selectedEdges.ToArray();
-							GL.Color(s_EdgeSelectedColor);
+						// we only want to set the material pass once, so call begin drawing to get the materials set
+						// up but then manually push/pop the matrices to avoid calling BeginDrawingLines multiple times
+						EditorHandleUtility.EndDrawingLines();
 
-							GL.MultMatrix(pb.transform.localToWorldMatrix);
+						GL.Begin(GL.LINES);
+
+						for (int i = 0; i < selection.Length; i++)
+						{
+
+							ProBuilderMesh mesh = selection[i];
+							var positions = mesh.positionsInternal;
+							var edges = mesh.selectedEdgesInternal;
+
+							GL.Color(s_EdgeSelectedColor);
+							GL.PushMatrix();
+							GL.MultMatrix(mesh.transform.localToWorldMatrix);
 
 							for (int j = 0, c = selection[i].selectedEdgeCount; j < c; j++)
 							{
-								GL.Vertex(pb.positionsInternal[edges[j].x]);
-								GL.Vertex(pb.positionsInternal[edges[j].y]);
+								GL.Vertex(positions[edges[j].x]);
+								GL.Vertex(positions[edges[j].y]);
 							}
 
-							EditorHandleUtility.EndDrawingLines();
+							GL.PopMatrix();
 						}
-						else
-						{
-							break;
-						}
+
+						GL.End();
 					}
 
 					Handles.lighting = true;

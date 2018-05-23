@@ -747,6 +747,11 @@ namespace UnityEngine.ProBuilder
 		    get { return new ReadOnlyCollection<Edge>(m_SelectedEdges); }
 	    }
 
+	    internal Edge[] selectedEdgesInternal
+	    {
+		    get { return m_SelectedEdges; }
+	    }
+
 	    internal int[] selectedIndicesInternal
 	    {
 		    get { return m_selectedTriangles; }

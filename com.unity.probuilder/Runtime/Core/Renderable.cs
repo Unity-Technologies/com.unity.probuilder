@@ -60,13 +60,17 @@ namespace UnityEngine.ProBuilder
 			if (mesh == null)
 				return;
 
-			for (int n = 0, c = mesh.subMeshCount; n < c; n++)
-			{
-				if (material == null || !material.SetPass(0))
-					continue;
+			if (material == null || !material.SetPass(0))
+				return;
 
-				Graphics.DrawMeshNow(mesh, transform != null ? transform.localToWorldMatrix : Matrix4x4.identity, n);
-			}
+			// this is pointless because there's only one material
+			for (int n = 0, c = mesh.subMeshCount; n < c; n++)
+				DrawMeshNow(n);
+		}
+
+		public void DrawMeshNow(int submeshIndex)
+		{
+			Graphics.DrawMeshNow(mesh, transform != null ? transform.localToWorldMatrix : Matrix4x4.identity, submeshIndex);
 		}
 	}
 }
