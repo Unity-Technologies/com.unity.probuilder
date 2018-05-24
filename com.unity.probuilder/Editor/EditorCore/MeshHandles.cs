@@ -250,29 +250,26 @@ namespace UnityEditor.ProBuilder
 						// up but then manually push/pop the matrices to avoid calling BeginDrawingLines multiple times
 						EditorHandleUtility.EndDrawingLines();
 
-						GL.Begin(GL.LINES);
-
 						for (int i = 0; i < selection.Length; i++)
 						{
-
 							ProBuilderMesh mesh = selection[i];
 							var positions = mesh.positionsInternal;
 							var edges = mesh.selectedEdgesInternal;
 
-							GL.Color(s_EdgeSelectedColor);
 							GL.PushMatrix();
 							GL.MultMatrix(mesh.transform.localToWorldMatrix);
 
+							GL.Begin(GL.LINES);
+							GL.Color(s_EdgeSelectedColor);
 							for (int j = 0, c = selection[i].selectedEdgeCount; j < c; j++)
 							{
 								GL.Vertex(positions[edges[j].x]);
 								GL.Vertex(positions[edges[j].y]);
 							}
+							GL.End();
 
 							GL.PopMatrix();
 						}
-
-						GL.End();
 					}
 
 					Handles.lighting = true;
