@@ -158,7 +158,7 @@ namespace UnityEditor.ProBuilder
 
 			pbVertexHandleSize = EditorGUILayout.Slider("Vertex Size", pbVertexHandleSize, 1f, 10f);
 
-			bool geoLine = MeshHandles.geometryShadersSupported;
+			bool geoLine = BuiltinMaterials.geometryShadersSupported;
 			GUI.enabled = geoLine;
 			pbLineHandleSize = EditorGUILayout.Slider("Line Size", geoLine ? pbLineHandleSize : 0f, 0f, 3f);
 			pbWireframeSize = EditorGUILayout.Slider("Wireframe Size", geoLine ? pbWireframeSize : 0f, 0f, 3f);
@@ -525,10 +525,7 @@ namespace UnityEditor.ProBuilder
 			PreferencesInternal.SetFloat(PreferenceKeys.pbUVGridSnapValue, pbUVGridSnapValue, PreferenceLocation.Global);
 
 			if (ProBuilderEditor.instance != null)
-			{
-				MeshHandles.Destroy();
 				ProBuilderEditor.instance.OnEnable();
-			}
 
 			SceneView.RepaintAll();
 		}

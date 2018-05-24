@@ -876,7 +876,7 @@ namespace UnityEngine.ProBuilder
 						i + 0, i + 1, i + 2,
 						i + 1, i + 3, i + 2
 					},
-					BuiltinMaterials.DefaultMaterial,
+					BuiltinMaterials.defaultMaterial,
 					new AutoUnwrapSettings(),
 					0,
 					-1,

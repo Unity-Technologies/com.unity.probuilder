@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "com.unity.probuilder": "file:C:\\Users\\karlh\\procore\\probuilder\\com.unity.probuilder",
     "com.unity.progrids": "3.0.2-preview"
   }
 }

@@ -52,7 +52,7 @@ namespace UnityEditor.ProBuilder
 			this.submeshes = new Submesh[mesh.subMeshCount];
 			int matCount = materials != null ? materials.Length : 0;
 			for(int subMeshIndex = 0; subMeshIndex < mesh.subMeshCount; subMeshIndex++)
-				submeshes[subMeshIndex] = new Submesh(mesh, subMeshIndex, matCount > 0 ? materials[subMeshIndex % matCount] : BuiltinMaterials.DefaultMaterial);
+				submeshes[subMeshIndex] = new Submesh(mesh, subMeshIndex, matCount > 0 ? materials[subMeshIndex % matCount] : BuiltinMaterials.defaultMaterial);
 		}
 
 		/// <summary>
