@@ -66,7 +66,7 @@ namespace UnityEditor.ProBuilder
 		 */
 		public static ActionResult MenuCenterPivot(ProBuilderMesh[] selection)
 		{
-			return _SetPivot(selection, null);
+			return SetPivotInternal(selection, null);
 		}
 
 		public static ActionResult MenuSetPivot(ProBuilderMesh[] selection)
@@ -76,10 +76,10 @@ namespace UnityEditor.ProBuilder
 			for(int i = 0; i < tri.Length; i++)
 				tri[i] = selection[i].selectedVertices.ToArray();
 
-			return _SetPivot(selection, tri);
+			return SetPivotInternal(selection, tri);
 		}
 
-		private static ActionResult _SetPivot(ProBuilderMesh[] selection, int[][] triangles = null)
+		static ActionResult SetPivotInternal(ProBuilderMesh[] selection, int[][] triangles = null)
 		{
 			if(selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;

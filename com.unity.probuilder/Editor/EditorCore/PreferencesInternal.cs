@@ -49,7 +49,7 @@ namespace UnityEditor.ProBuilder
 			{ PreferenceKeys.pbEnableExperimental, false },
 			{ PreferenceKeys.pbMeshesAreAssets, false },
 			{ PreferenceKeys.pbSelectedFaceDither, true },
-			{ PreferenceKeys.pbShowPreselectionHighlight, true },
+			{ PreferenceKeys.pbShowPreselectionHighlight, false },
 		};
 
 		static Dictionary<string, float> s_FloatDefaults = new Dictionary<string, float>()
