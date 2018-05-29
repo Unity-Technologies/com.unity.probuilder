@@ -6,6 +6,7 @@ namespace UnityEngine.ProBuilder
 {
 	[AddComponentMenu("")]
 	[DisallowMultipleComponent]
+	[RequireComponent(typeof(ProBuilderMesh))]
 	sealed class BezierShape : MonoBehaviour
 	{
 		public List<BezierPoint> points = new List<BezierPoint>();
@@ -50,6 +51,9 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public void Refresh()
 		{
+			var mr = GetComponent<MeshRenderer>();
+			var mat = mr != null ? mr.sharedMaterial : null;
+
 			if (points.Count < 2)
 			{
 				mesh.Clear();
@@ -60,6 +64,14 @@ namespace UnityEngine.ProBuilder
 			{
 				ProBuilderMesh m = mesh;
 				Spline.Extrude(points, radius, columns, rows, closeLoop, smooth, ref m);
+			}
+
+			if(mat != null)
+			{
+				foreach (var face in mesh.facesInternal)
+					face.material = mat;
+
+				mr.sharedMaterial = mat;
 			}
 		}
 	}

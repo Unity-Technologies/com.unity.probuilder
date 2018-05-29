@@ -40,11 +40,11 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ActionResult DoAction()
 		{
 			GameObject go = new GameObject();
-			BezierShape bezier = go.AddComponent<BezierShape>();
+			var bezier = go.AddComponent<BezierShape>();
+			go.GetComponent<MeshRenderer>().sharedMaterial = PreferencesInternal.GetMaterial(PreferenceKeys.pbDefaultMaterial);
 			bezier.Init();
-			ProBuilderMesh pb = bezier.gameObject.AddComponent<ProBuilderMesh>();
 			bezier.Refresh();
-			EditorUtility.InitObject(pb);
+			EditorUtility.InitObject(bezier.GetComponent<ProBuilderMesh>());
 			MeshSelection.SetSelection(go);
 			UndoUtility.RegisterCreatedObjectUndo(go, "Create Bezier Shape");
 			bezier.isEditing = true;
