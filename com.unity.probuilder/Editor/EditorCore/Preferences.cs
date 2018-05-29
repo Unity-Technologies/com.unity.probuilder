@@ -416,8 +416,8 @@ namespace UnityEditor.ProBuilder
 			// EnumMaskField returns a bit-mask where the flags correspond to the indices of the enum, not the enum values,
 			// so this isn't technically correct.
 #if UNITY_2017_3_OR_NEWER
-			EventModifiers em = (EventModifiers) defaultShortcuts[s_ShortcutIndex].modifiers;
-			defaultShortcuts[s_ShortcutIndex].modifiers = (EventModifiers) EditorGUILayout.EnumFlagsField(em);
+			EventModifiers em = (EventModifiers) defaultShortcuts[s_ShortcutIndex].eventModifiers;
+			defaultShortcuts[s_ShortcutIndex].eventModifiers = (EventModifiers) EditorGUILayout.EnumFlagsField(em);
 #else
 			EventModifiers em = (EventModifiers) (((int)defaultShortcuts[shortcutIndex].eventModifiers) * 2);
 			em = (EventModifiers)EditorGUILayout.EnumMaskField(em);

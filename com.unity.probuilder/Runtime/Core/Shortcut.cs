@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
@@ -14,13 +13,13 @@ namespace UnityEngine.ProBuilder
 			action = a;
 			description = d;
 			key = k;
-			modifiers = e;
+			eventModifiers = e;
 		}
 
 		public string action;
 		public string description;
 		public KeyCode key;
-		public EventModifiers modifiers;
+		public EventModifiers eventModifiers;
 
 		public Shortcut(string str)
 		{
@@ -37,7 +36,7 @@ namespace UnityEngine.ProBuilder
 					key = (KeyCode)t;
 
 				if(int.TryParse(split[3], out t))
-					modifiers = (EventModifiers)t;
+					eventModifiers = (EventModifiers)t;
 			}
 			catch
 			{
@@ -47,14 +46,14 @@ namespace UnityEngine.ProBuilder
 
 		public bool Matches(KeyCode key, EventModifiers modifiers)
 		{
-			return this.key == key && this.modifiers == modifiers;
+			return this.key == key && this.eventModifiers == modifiers;
 		}
 
 		public static int IndexOf(Shortcut[] shortcuts, KeyCode k, EventModifiers e)
 		{
 			for(int i = 0; i < shortcuts.Length; i++)
 			{
-				if(shortcuts[i].key == k && shortcuts[i].modifiers == e)
+				if(shortcuts[i].key == k && shortcuts[i].eventModifiers == e)
 					return i;
 			}
 			return -1;
@@ -103,7 +102,7 @@ namespace UnityEngine.ProBuilder
 
 		public override string ToString()
 		{
-			return string.Format("{0}: {1}, {2} ({3})", action, key.ToString(), modifiers.ToString(), (int)modifiers);
+			return string.Format("{0}: {1}, {2} ({3})", action, key.ToString(), eventModifiers.ToString(), (int)eventModifiers);
 		}
 
 		public string Serialize()
@@ -111,7 +110,7 @@ namespace UnityEngine.ProBuilder
 			// lazy sanitize action and description action, description, and key
 			action = action.Replace("-", " ").Replace("*", "");
 			description = description.Replace("-", " ").Replace("*", "");
-			string val = action + "-" + description + "-" + (int)key + "-" + (int)modifiers;
+			string val = action + "-" + description + "-" + (int)key + "-" + (int)eventModifiers;
 			return val;
 		}
 
