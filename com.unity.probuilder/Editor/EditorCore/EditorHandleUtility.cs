@@ -391,6 +391,14 @@ namespace UnityEditor.ProBuilder
 			while( nearestGameObject != null );
 		}
 
+		internal static void GetHovered(Vector2 mousePosition, List<GameObject> list)
+		{
+			list.Clear();
+			var go = HandleUtility.PickGameObject(mousePosition, false);
+			if (go != null)
+				list.Add(go);
+		}
+
 		/**
 		 * Given two Vector2[] arrays, find the nearest two points within maxDelta and return the difference in offset.
 		 * @param points First Vector2[] array.

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Resources;
 using UnityEditor;
 using UnityEditor.ProBuilder;
 using UnityEngine;
@@ -395,16 +396,18 @@ namespace UnityEditor.ProBuilder
 			Face pickedFace = null;
 
 			int newHash = 0;
-			EditorHandleUtility.GetAllOverlapping(mousePosition, s_OverlappingGameObjects);
-			EventModifiers em = Event.current.modifiers;
-			selection.Clear();
 
 			// If any event modifiers are engaged don't cycle the deep click
-			int pickedCount = (isPreview || em != EventModifiers.None)
-				? System.Math.Min(1, s_OverlappingGameObjects.Count)
-				: s_OverlappingGameObjects.Count;
+			EventModifiers em = Event.current.modifiers;
 
-			for (int i = 0, next = 0; i < pickedCount; i++)
+			if(isPreview || em != EventModifiers.None)
+				EditorHandleUtility.GetHovered(mousePosition, s_OverlappingGameObjects);
+			else
+				EditorHandleUtility.GetAllOverlapping(mousePosition, s_OverlappingGameObjects);
+
+			selection.Clear();
+
+			for (int i = 0, next = 0, pickedCount = s_OverlappingGameObjects.Count; i < pickedCount; i++)
 			{
 				var go = s_OverlappingGameObjects[i];
 				var mesh = go.GetComponent<ProBuilderMesh>();
@@ -486,27 +489,40 @@ namespace UnityEditor.ProBuilder
 			selection.gameObject = HandleUtility.PickGameObject(mousePosition, false);
 			float maxDistance = pickerOptions.maxPointerDistance * pickerOptions.maxPointerDistance;
 
-			foreach(var mesh in MeshSelection.Top())
-			{
-				if (!mesh.isSelectable)
-					continue;
-
-				GetNearestVertices(mesh, mousePosition, nearest, maxDistance);
-			}
-
 			if (selection.gameObject != null)
 			{
 				var mesh = selection.gameObject.GetComponent<ProBuilderMesh>();
 
-				if (mesh != null && mesh.isSelectable && (allowUnselected || MeshSelection.Top().Contains(mesh)))
+				if (mesh != null && mesh.isSelectable)
+				{
+					if(MeshSelection.Top().Contains(mesh))
+						GetNearestVertices(mesh, mousePosition, nearest, maxDistance);
+					else if (allowUnselected)
+						nearest.Add(new SimpleTuple<float, Vector3, ProBuilderMesh, int>(Mathf.Infinity, Vector3.zero, mesh, -1));
+				}
+			}
+
+			if(selection.mesh == null)
+			{
+				foreach (var mesh in MeshSelection.Top())
+				{
+					if (!mesh.isSelectable)
+						continue;
 					GetNearestVertices(mesh, mousePosition, nearest, maxDistance);
+				}
 			}
 
 			nearest.Sort((x, y) => x.item1.CompareTo(y.item1));
 
 			for (int i = 0; i < nearest.Count; i++)
 			{
-				if (!UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, nearest[i].item3, nearest[i].item2))
+				if (nearest[i].item4 < 0)
+				{
+					selection.gameObject = nearest[i].item3.gameObject;
+					selection.mesh = nearest[i].item3;
+					selection.vertex = -1;
+				}
+				else if (!UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, nearest[i].item3, nearest[i].item2))
 				{
 					selection.gameObject = nearest[i].item3.gameObject;
 					selection.mesh = nearest[i].item3;

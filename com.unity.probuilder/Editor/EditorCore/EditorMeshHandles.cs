@@ -23,7 +23,7 @@ namespace UnityEditor.ProBuilder
 		Dictionary<ProBuilderMesh, MeshHandle> m_VertHandles;
 		Dictionary<ProBuilderMesh, MeshHandle> m_EdgeHandles;
 
-		static readonly Color k_VertexUnselectedDefault = new Color(.4f, .4f, .4f, 1f);
+		static readonly Color k_VertexUnselectedDefault = new Color(.7f, .7f, .7f, 1f);
 		static readonly Color k_WireframeDefault = new Color(94.0f / 255.0f, 119.0f / 255.0f, 155.0f / 255.0f, 1f);
 
 		static Color s_FaceSelectedColor;
