@@ -12,9 +12,6 @@ using EditorStyles = UnityEditor.EditorStyles;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	/**
-	 *	Menu item and options for exporting meshes.
-	 */
 	sealed class Export : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
@@ -33,25 +30,25 @@ namespace UnityEditor.ProBuilder.Actions
 		GUIContent gc_ObjQuads = new GUIContent("Export Quads", "Where possible, faces will be exported as quads instead of triangles. Note that this can result in a larger exported mesh (ProBuilder will not merge shared vertices with this option enabled).");
 
 		// Options for each export format
-		private bool m_ExportRecursive;
-		private bool m_ExportAsGroup;
+		bool m_ExportRecursive;
+		bool m_ExportAsGroup;
 
 		// obj specific
-		private bool m_ObjExportRightHanded;
-		private bool m_ObjExportCopyTextures;
-		private bool m_ObjApplyTransform;
-		private bool m_ObjExportVertexColors;
-		private bool m_ObjTextureOffsetScale;
-		private bool m_ObjQuads;
+		bool m_ObjExportRightHanded;
+		bool m_ObjExportCopyTextures;
+		bool m_ObjApplyTransform;
+		bool m_ObjExportVertexColors;
+		bool m_ObjTextureOffsetScale;
+		bool m_ObjQuads;
 
 		// stl specific
-		private Parabox.STL.FileType m_StlExportFormat = Parabox.STL.FileType.Ascii;
+		FileType m_StlExportFormat = FileType.Ascii;
 
 		// ply specific
-		private bool m_PlyExportIsRightHanded;
-		private bool m_PlyApplyTransform;
-		private bool m_PlyQuads;
-		private bool m_PlyNGons;
+		bool m_PlyExportIsRightHanded;
+		bool m_PlyApplyTransform;
+		bool m_PlyQuads;
+		bool m_PlyNGons;
 
 		public enum ExportFormat
 		{
@@ -61,9 +58,9 @@ namespace UnityEditor.ProBuilder.Actions
 			Asset
 		}
 
-		const ExportFormat DefaultFormat = ExportFormat.Obj;
+		const ExportFormat k_DefaultFormat = ExportFormat.Obj;
 
-		private ExportFormat m_ExportFormat = DefaultFormat;
+		ExportFormat m_ExportFormat = k_DefaultFormat;
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
@@ -73,7 +70,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public Export()
 		{
-			m_ExportFormat = (ExportFormat) PreferencesInternal.GetInt("pbDefaultExportFormat", (int) DefaultFormat);
+			m_ExportFormat = (ExportFormat) PreferencesInternal.GetInt("pbDefaultExportFormat", (int) k_DefaultFormat);
 
 			// Recursively select meshes in selection (ie, use GetComponentsInChildren).
 			m_ExportRecursive = PreferencesInternal.GetBool("pbExportRecursive", false);
@@ -142,7 +139,7 @@ namespace UnityEditor.ProBuilder.Actions
 				DoAction();
 		}
 
-		private void ObjExportOptions()
+		void ObjExportOptions()
 		{
 			EditorGUI.BeginChangeCheck();
 
@@ -253,22 +250,17 @@ namespace UnityEditor.ProBuilder.Actions
 			}
 
 			if( string.IsNullOrEmpty(res) )
-			{
 				return new ActionResult(ActionResult.Status.Canceled, "User Canceled");
-			}
-			else
-			{
-				if(res.Contains(Application.dataPath))
-				{
-					AssetDatabase.Refresh();
-					string projectPath = string.Format("Assets{0}", res.Replace(Application.dataPath, ""));
-					Object o = AssetDatabase.LoadAssetAtPath<GameObject>(projectPath);
-					if(o != null)
-						EditorGUIUtility.PingObject(o);
-				}
 
-				return new ActionResult(ActionResult.Status.Success, "Export " + m_ExportFormat);
+			if(res.Replace("\\", "/").Contains(Application.dataPath.Replace("\\", "/")))
+			{
+				string projectPath = string.Format("Assets{0}", res.Replace(Application.dataPath, ""));
+				Object o = AssetDatabase.LoadAssetAtPath<GameObject>(projectPath);
+				if(o != null)
+					EditorGUIUtility.PingObject(o);
 			}
+
+			return new ActionResult(ActionResult.Status.Success, "Export " + m_ExportFormat);
 		}
 	}
 }
