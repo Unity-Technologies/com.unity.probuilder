@@ -10,19 +10,30 @@ namespace UnityEngine.ProBuilder
 	/// <br />
 	/// This is useful when comparing vertex indices that are coincident. Coincident vertices are defined as vertices that are share the same coordinate space, but are separate values in the vertex array. ProBuilder tracks these coincident values in the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" array. A "common" (also called "shared") index is the index of a vertex in the sharedIndexes array.
 	/// </summary>
-	/// <seealso cref="UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes"/>
-	/// <seealso cref="UnityEngine.ProBuilder.Edge"/>
+	/// <seealso cref="P:UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" />
+	/// <seealso cref="T:UnityEngine.ProBuilder.Edge" />
 	public struct EdgeLookup : IEquatable<EdgeLookup>
 	{
+		Edge m_Local;
+		Edge m_Common;
+
 		/// <value>
 		/// Local edges point to an index in the vertices array.
 		/// </value>
-		public Edge local { get; set; }
+		public Edge local
+		{
+			get { return m_Local; }
+			set { m_Local = value; }
+		}
 
 		/// <value>
 		/// Commmon edges point to the vertex index in the sharedIndices array.
 		/// </value>
-		public Edge common { get; set; }
+		public Edge common
+		{
+			get { return m_Common; }
+			set { m_Common = value; }
+		}
 
 		/// <summary>
 		/// Create an edge lookup from a common and local edge.
@@ -31,8 +42,8 @@ namespace UnityEngine.ProBuilder
 		/// <param name="local">An edge composed of vertex indexes (corresponds to mesh vertex arrays).</param>
 		public EdgeLookup(Edge common, Edge local)
 		{
-			this.common = common;
-			this.local = local;
+			m_Common = common;
+			m_Local = local;
 		}
 
 		/// <summary>
@@ -44,8 +55,8 @@ namespace UnityEngine.ProBuilder
 		/// <param name="y">Local edge y.</param>
 		public EdgeLookup(int cx, int cy, int x, int y)
 		{
-			common = new Edge(cx, cy);
-			local = new Edge(x, y);
+			m_Common = new Edge(cx, cy);
+			m_Local = new Edge(x, y);
 		}
 
 		/// <summary>
