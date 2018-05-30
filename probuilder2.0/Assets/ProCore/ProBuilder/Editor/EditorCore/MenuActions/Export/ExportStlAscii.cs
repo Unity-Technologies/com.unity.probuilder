@@ -33,11 +33,11 @@ namespace ProBuilder.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			if (!string.IsNullOrEmpty(ExportWithFileDialog(Selection.gameObjects, FileType.Ascii)))
-				return new pb_ActionResult(Status.Success, "Export STL");
+			if (string.IsNullOrEmpty(ExportWithFileDialog(Selection.gameObjects, FileType.Ascii)))
+				return new pb_ActionResult(Status.Canceled, "User Canceled");
 
 			AssetDatabase.Refresh();
-			return new pb_ActionResult(Status.Canceled, "User Canceled");
+			return new pb_ActionResult(Status.Success, "Export STL");
 		}
 
 		public static string ExportWithFileDialog(GameObject[] gameObjects, FileType type)
