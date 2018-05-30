@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder
 {
@@ -705,8 +704,6 @@ namespace UnityEditor.ProBuilder
 		{
 			m_IsMoving = false;
 			Lightmapping.PopGIWorkflowMode();
-			m_CurrentObject.ToMesh();
-			m_CurrentObject.Refresh();
 			m_CurrentObject.Optimize();
 			ProBuilderEditor.Refresh();
 		}

@@ -40,7 +40,7 @@ namespace UnityEngine.ProBuilder
 		/// <br />
 		/// When using the Scriptable Render Pipeline this returns the default material for that pipeline.
 		/// </summary>
-		public static Material DefaultMaterial
+		public static Material 	DefaultMaterial
 		{
 			get
 			{
