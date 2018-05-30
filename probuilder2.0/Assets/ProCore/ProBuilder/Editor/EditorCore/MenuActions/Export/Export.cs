@@ -251,22 +251,17 @@ namespace ProBuilder.Actions
 			}
 
 			if( string.IsNullOrEmpty(res) )
-			{
 				return new pb_ActionResult(Status.Canceled, "User Canceled");
-			}
-			else
+			
+			if(res.Replace("\\", "/").Contains(Application.dataPath.Replace("\\", "/")))
 			{
-				if(res.Contains(Application.dataPath))
-				{
-					AssetDatabase.Refresh();
-					string projectPath = string.Format("Assets{0}", res.Replace(Application.dataPath, ""));
-					Object o = AssetDatabase.LoadAssetAtPath<GameObject>(projectPath);
-					if(o != null)
-						EditorGUIUtility.PingObject(o);
-				}
-
-				return new pb_ActionResult(Status.Success, "Export " + m_ExportFormat);
+				string projectPath = string.Format("Assets{0}", res.Replace(Application.dataPath, ""));
+				Object o = AssetDatabase.LoadAssetAtPath<GameObject>(projectPath);
+				if(o != null)
+					EditorGUIUtility.PingObject(o);
 			}
+
+			return new pb_ActionResult(Status.Success, "Export " + m_ExportFormat);
 		}
 	}
 }
