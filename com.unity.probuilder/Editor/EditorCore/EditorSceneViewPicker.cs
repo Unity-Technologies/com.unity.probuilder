@@ -136,10 +136,20 @@ namespace UnityEditor.ProBuilder
 		}
 	}
 
+	struct VertexPickerEntry
+	{
+		public ProBuilderMesh mesh;
+		public int vertex;
+		public float screenDistance;
+		public Vector3 worldPosition;
+	}
+
 	static class EditorSceneViewPicker
 	{
 		static int s_DeepSelectionPrevious = 0x0;
 		static SceneSelection s_Selection = new SceneSelection();
+		static List<VertexPickerEntry> s_NearestVertices = new List<VertexPickerEntry>();
+		static List<GameObject> s_OverlappingGameObjects = new List<GameObject>();
 
 		public static ProBuilderMesh DoMouseClick(Event evt, SelectMode selectionMode, ScenePickerPreferences pickerPreferences)
 		{
@@ -382,8 +392,6 @@ namespace UnityEditor.ProBuilder
 			return FaceRaycast(mousePosition, pickerOptions, allowUnselected, selection, 0, true);
 		}
 
-		static List<GameObject> s_OverlappingGameObjects = new List<GameObject>();
-
 		static bool FaceRaycast(Vector3 mousePosition,
 			ScenePickerPreferences pickerOptions,
 			bool allowUnselected,
@@ -484,8 +492,8 @@ namespace UnityEditor.ProBuilder
 		static bool VertexRaycast(Vector3 mousePosition, ScenePickerPreferences pickerOptions, bool allowUnselected, SceneSelection selection)
 		{
 			Camera cam = SceneView.lastActiveSceneView.camera;
-			var nearest = new List<SimpleTuple<float, Vector3, ProBuilderMesh, int>>();
 			selection.Clear();
+			s_NearestVertices.Clear();
 			selection.gameObject = HandleUtility.PickGameObject(mousePosition, false);
 			float maxDistance = pickerOptions.maxPointerDistance * pickerOptions.maxPointerDistance;
 
@@ -496,9 +504,15 @@ namespace UnityEditor.ProBuilder
 				if (mesh != null && mesh.isSelectable)
 				{
 					if(MeshSelection.Top().Contains(mesh))
-						GetNearestVertices(mesh, mousePosition, nearest, maxDistance);
+						GetNearestVertices(mesh, mousePosition, s_NearestVertices, maxDistance);
 					else if (allowUnselected)
-						nearest.Add(new SimpleTuple<float, Vector3, ProBuilderMesh, int>(Mathf.Infinity, Vector3.zero, mesh, -1));
+						s_NearestVertices.Add(new VertexPickerEntry()
+						{
+							screenDistance = Mathf.Infinity,
+							worldPosition = Vector3.zero,
+							mesh = mesh,
+							vertex = -1
+						});
 				}
 			}
 
@@ -508,25 +522,25 @@ namespace UnityEditor.ProBuilder
 				{
 					if (!mesh.isSelectable)
 						continue;
-					GetNearestVertices(mesh, mousePosition, nearest, maxDistance);
+					GetNearestVertices(mesh, mousePosition, s_NearestVertices, maxDistance);
 				}
 			}
 
-			nearest.Sort((x, y) => x.item1.CompareTo(y.item1));
+			s_NearestVertices.Sort((x, y) => x.screenDistance.CompareTo(y.screenDistance));
 
-			for (int i = 0; i < nearest.Count; i++)
+			for (int i = 0; i < s_NearestVertices.Count; i++)
 			{
-				if (nearest[i].item4 < 0)
+				if (s_NearestVertices[i].vertex < 0)
 				{
-					selection.gameObject = nearest[i].item3.gameObject;
-					selection.mesh = nearest[i].item3;
+					selection.gameObject = s_NearestVertices[i].mesh.gameObject;
+					selection.mesh = s_NearestVertices[i].mesh;
 					selection.vertex = -1;
 				}
-				else if (!UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, nearest[i].item3, nearest[i].item2))
+				else if (!UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, s_NearestVertices[i].mesh, s_NearestVertices[i].worldPosition))
 				{
-					selection.gameObject = nearest[i].item3.gameObject;
-					selection.mesh = nearest[i].item3;
-					selection.vertex = nearest[i].item4;
+					selection.gameObject = s_NearestVertices[i].mesh.gameObject;
+					selection.mesh = s_NearestVertices[i].mesh;
+					selection.vertex = s_NearestVertices[i].vertex;
 					return true;
 				}
 			}
@@ -534,7 +548,7 @@ namespace UnityEditor.ProBuilder
 			return selection.gameObject != null;
 		}
 
-		static void GetNearestVertices(ProBuilderMesh mesh, Vector3 mousePosition, List<SimpleTuple<float, Vector3, ProBuilderMesh, int>> list, float maxDistance)
+		static void GetNearestVertices(ProBuilderMesh mesh, Vector3 mousePosition, List<VertexPickerEntry> list, float maxDistance)
 		{
 			var positions = mesh.positionsInternal;
 			var common = mesh.sharedIndicesInternal;
@@ -548,11 +562,13 @@ namespace UnityEditor.ProBuilder
 				float dist = (p - mousePosition).sqrMagnitude;
 
 				if (dist < maxDistance)
-					list.Add(new SimpleTuple<float, Vector3, ProBuilderMesh, int>(
-						dist,
-						v,
-						mesh,
-						index));
+					list.Add(new VertexPickerEntry()
+					{
+						mesh = mesh,
+						screenDistance = dist,
+						worldPosition = v,
+						vertex = index
+					});
 			}
 		}
 
