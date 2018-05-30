@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEditor;
 using ProBuilder.Interface;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using Parabox.STL;
 using ProBuilder.Core;
 using ProBuilder.EditorCore;
+using Object = UnityEngine.Object;
 
 namespace ProBuilder.Actions
 {
@@ -252,8 +254,8 @@ namespace ProBuilder.Actions
 
 			if( string.IsNullOrEmpty(res) )
 				return new pb_ActionResult(Status.Canceled, "User Canceled");
-			
-			if(res.Replace("\\", "/").Contains(Application.dataPath.Replace("\\", "/")))
+
+			if(res.Replace("\\", "/").IndexOf(Application.dataPath.Replace("\\", "/"), StringComparison.InvariantCultureIgnoreCase) > -1)
 			{
 				string projectPath = string.Format("Assets{0}", res.Replace(Application.dataPath, ""));
 				Object o = AssetDatabase.LoadAssetAtPath<GameObject>(projectPath);
