@@ -34,10 +34,11 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			string res = ExportWithFileDialog(MeshSelection.Top());
 
-			if( string.IsNullOrEmpty(res) )
+			if (string.IsNullOrEmpty(res))
 				return new ActionResult(ActionResult.Status.Canceled, "User Canceled");
-			else
-				return new ActionResult(ActionResult.Status.Success, "Export PLY");
+
+			AssetDatabase.Refresh();
+			return new ActionResult(ActionResult.Status.Success, "Export PLY");
 		}
 
 		/**
@@ -75,7 +76,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return res;
 		}
 
-		private static string DoExport(string path, IEnumerable<ProBuilderMesh> models, PlyOptions options)
+		static string DoExport(string path, IEnumerable<ProBuilderMesh> models, PlyOptions options)
 		{
 			string name = Path.GetFileNameWithoutExtension(path);
 			string directory = Path.GetDirectoryName(path);
