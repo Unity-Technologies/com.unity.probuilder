@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.ProBuilder.UI;
@@ -9,6 +10,7 @@ using UnityEditor.ProBuilder;
 using EditorGUILayout = UnityEditor.EditorGUILayout;
 using EditorGUIUtility = UnityEditor.EditorGUIUtility;
 using EditorStyles = UnityEditor.EditorStyles;
+using Object = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -252,7 +254,7 @@ namespace UnityEditor.ProBuilder.Actions
 			if( string.IsNullOrEmpty(res) )
 				return new ActionResult(ActionResult.Status.Canceled, "User Canceled");
 
-			if(res.Replace("\\", "/").Contains(Application.dataPath.Replace("\\", "/")))
+			if(res.Replace("\\", "/").IndexOf(Application.dataPath.Replace("\\", "/"), StringComparison.InvariantCultureIgnoreCase) > -1)
 			{
 				string projectPath = string.Format("Assets{0}", res.Replace(Application.dataPath, ""));
 				Object o = AssetDatabase.LoadAssetAtPath<GameObject>(projectPath);
