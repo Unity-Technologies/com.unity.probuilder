@@ -157,15 +157,22 @@ namespace ProBuilder.EditorCore
 
 				if (s_CurrentPreview != null)
 				{
-					pb_Undo.RecordObject(s_CurrentPreview, "Set Face Material");
-
 					if (s_IsFaceDragAndDropOverrideEnabled)
 					{
+						pb_Undo.RecordObject(s_CurrentPreview, "Set Face Material");
+
 						foreach (var face in s_CurrentPreview.SelectedFaces)
 							face.material = s_PreviewMaterial;
+
+						s_CurrentPreview.ToMesh();
+						s_CurrentPreview.Refresh();
+						s_CurrentPreview.Optimize();
+						evt.Use();
 					}
 					else if(s_PreviewSubmesh > -1)
 					{
+						pb_Undo.RecordObject(s_CurrentPreview, "Set Face Material");
+						
 						Material draggedMaterial = GetMaterialFromDragReferences(DragAndDrop.objectReferences, true);
 
 						if (draggedMaterial != null)
@@ -178,14 +185,13 @@ namespace ProBuilder.EditorCore
 								if (hoveredMaterial == null || face.material == hoveredMaterial)
 									face.material = draggedMaterial;
 							}
+
+							s_CurrentPreview.ToMesh();
+							s_CurrentPreview.Refresh();
+							s_CurrentPreview.Optimize();
+							evt.Use();
 						}
 					}
-
-					s_CurrentPreview.ToMesh();
-					s_CurrentPreview.Refresh();
-					s_CurrentPreview.Optimize();
-
-					evt.Use();
 				}
 
 				SetMeshPreview(null);
