@@ -34,10 +34,11 @@ namespace ProBuilder.Actions
 		{
 			string res = ExportWithFileDialog(pb_Selection.Top());
 
-			if( string.IsNullOrEmpty(res) )
+			if (string.IsNullOrEmpty(res))
 				return new pb_ActionResult(Status.Canceled, "User Canceled");
-			else
-				return new pb_ActionResult(Status.Success, "Export PLY");
+			
+			AssetDatabase.Refresh();
+			return new pb_ActionResult(Status.Success, "Export PLY");
 		}
 
 		/**

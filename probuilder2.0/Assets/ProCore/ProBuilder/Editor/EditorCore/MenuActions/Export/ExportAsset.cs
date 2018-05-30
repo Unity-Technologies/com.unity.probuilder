@@ -34,6 +34,7 @@ namespace ProBuilder.Actions
 		public override pb_ActionResult DoAction()
 		{
 			ExportWithFileDialog( pb_Selection.Top() );
+			AssetDatabase.Refresh();
 			return new pb_ActionResult(Status.Success, "Make Asset & Prefab");
 		}
 
@@ -84,8 +85,6 @@ namespace ProBuilder.Actions
 				foreach(pb_Object pb in meshes)
 					res = DoExport(string.Format("{0}/{1}.asset", path, pb.name), pb);
 			}
-
-			AssetDatabase.Refresh();
 
 			return res;
 		}
