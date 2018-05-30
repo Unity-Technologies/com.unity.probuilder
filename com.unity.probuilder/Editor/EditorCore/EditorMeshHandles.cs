@@ -87,6 +87,14 @@ namespace UnityEditor.ProBuilder
 			m_EdgeHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
 			m_VertHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
 
+			var lineShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.lineShader : BuiltinMaterials.wireShader;
+			var vertShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.pointShader : BuiltinMaterials.dotShader;
+
+			m_EdgeMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::LineMaterial");
+			m_WireMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::WireMaterial");
+			m_VertMaterial = CreateMaterial(Shader.Find(vertShader), "ProBuilder::VertexMaterial");
+			m_FaceMaterial = CreateMaterial(Shader.Find(BuiltinMaterials.faceShader), "ProBuilder::FaceMaterial");
+
 			ReloadPreferences();
 		}
 
@@ -139,14 +147,6 @@ namespace UnityEditor.ProBuilder
 
 				s_PreselectionColor = PreferencesInternal.GetColor(PreferenceKeys.pbPreselectionColor);
 			}
-
-			var lineShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.lineShader : BuiltinMaterials.wireShader;
-			var vertShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.pointShader : BuiltinMaterials.dotShader;
-
-			m_EdgeMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::LineMaterial");
-			m_WireMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::WireMaterial");
-			m_VertMaterial = CreateMaterial(Shader.Find(vertShader), "ProBuilder::VertexMaterial");
-			m_FaceMaterial = CreateMaterial(Shader.Find(BuiltinMaterials.faceShader), "ProBuilder::FaceMaterial");
 
 			m_WireMaterial.SetColor("_Color", s_WireframeColor);
 			m_FaceMaterial.SetFloat("_Dither", s_EnableFaceDither ? 1f : 0f);
