@@ -141,7 +141,6 @@ namespace UnityEditor.ProBuilder
 			 */
 			GUILayout.Label("Handles & Colors", EditorStyles.boldLabel);
 
-			pbShowPreselectionHighlight = EditorGUILayout.Toggle("Show Preselection Highlight", pbShowPreselectionHighlight);
 			pbUseUnityColors = EditorGUILayout.Toggle("Use Unity Colors", pbUseUnityColors);
 
 			if (!pbUseUnityColors)
@@ -220,11 +219,14 @@ namespace UnityEditor.ProBuilder
 				new GUIContent("Experimental Features",
 					"Enables some experimental new features that we're trying out.  These may be incomplete or buggy, so please exercise caution when making use of this functionality!"),
 				pbEnableExperimental);
+
 			pbMeshesAreAssets =
 				EditorGUILayout.Toggle(
 					new GUIContent("Meshes Are Assets",
 						"Experimental!  Instead of storing mesh data in the scene, this toggle creates a Mesh cache in the Project that ProBuilder will use."),
 					pbMeshesAreAssets);
+			
+			pbShowPreselectionHighlight = EditorGUILayout.Toggle("Show Preselection Highlight", pbShowPreselectionHighlight);
 
 			GUILayout.Space(4);
 

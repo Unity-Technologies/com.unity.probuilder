@@ -238,7 +238,7 @@ namespace UnityEditor.ProBuilder
 		{
 			ShadowCastingMode scm = PreferencesInternal.GetEnum<ShadowCastingMode>(PreferenceKeys.pbShadowCastingMode);
 			pb.GetComponent<MeshRenderer>().shadowCastingMode = scm;
-			ScreenCenter( pb.gameObject );
+			ScreenCenter(pb.gameObject);
 
 			var flags = PreferencesInternal.HasKey(PreferenceKeys.pbDefaultStaticFlags)
 				? PreferencesInternal.GetEnum<StaticEditorFlags>(PreferenceKeys.pbDefaultStaticFlags)
