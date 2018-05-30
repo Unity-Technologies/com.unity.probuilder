@@ -84,6 +84,16 @@ namespace UnityEngine.ProBuilder
 			return common.GetHashCode();
 		}
 
+        public static bool operator ==(EdgeLookup a, EdgeLookup b)
+        {
+            return Equals(a, b);
+        }
+        
+        public static bool operator !=(EdgeLookup a, EdgeLookup b)
+        {
+            return !Equals(a, b);
+        }
+
 		/// <summary>
 		/// Returns a string representation of the common edge property.
 		/// </summary>
