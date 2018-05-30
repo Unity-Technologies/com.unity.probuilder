@@ -73,10 +73,18 @@ namespace UnityEngine.ProBuilder
 		    set { m_IsSelectable = value; }
 	    }
 
+	    [FormerlySerializedAs("unwrapParameters")]
+	    [SerializeField]
+	    UnwrapParameters m_UnwrapParameters;
+
 	    /// <value>
 	    /// UV2 generation parameters.
 	    /// </value>
-	    public UnwrapParameters unwrapParameters { get; set; }
+	    public UnwrapParameters unwrapParameters
+	    {
+		    get { return m_UnwrapParameters; }
+		    set { m_UnwrapParameters = value; }
+	    }
 
 	    [FormerlySerializedAs("dontDestroyMeshOnDelete")]
 	    [SerializeField]

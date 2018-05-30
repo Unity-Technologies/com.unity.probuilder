@@ -2622,8 +2622,8 @@ namespace UnityEditor.ProBuilder
 
 				if (GUILayout.Button("Rebuild Selected UV2"))
 				{
-					foreach (ProBuilderMesh pb in selection)
-						pb.Optimize(true);
+					foreach (var mesh in selection)
+						mesh.Optimize(true);
 				}
 
 				GUILayout.Space(5);
