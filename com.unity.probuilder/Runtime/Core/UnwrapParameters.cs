@@ -23,10 +23,11 @@ namespace UnityEngine.ProBuilder
 		public float packMargin = 4f;
 
 		/// <value>
-		/// Measured in percents. Angle error measures deviation of UV angles from geometry angles. Area error measures deviation of UV triangles area from geometry triangles if they were uniformly scaled.
+		/// Measured in percents. Angle error measures deviation of UV angles from geometry angles. Area error measures
+		/// deviation of UV triangles area from geometry triangles if they were uniformly scaled.
 		/// </value>
-		[Tooltip(
-			"Measured in percents. Angle error measures deviation of UV angles from geometry angles. Area error measures deviation of UV triangles area from geometry triangles if they were uniformly scaled.")]
+		[Tooltip("Measured in percents. Angle error measures deviation of UV angles from geometry angles. Area error "
+			+ "measures deviation of UV triangles area from geometry triangles if they were uniformly scaled.")]
 		[Range(1f, 75f)]
 		public float angleError = 8f;
 
@@ -66,6 +67,15 @@ namespace UnityEngine.ProBuilder
 			packMargin = 4f;
 			angleError = 8f;
 			areaError = 15f;
+		}
+
+		public override string ToString()
+		{
+			return string.Format("hardAngle: {0}\npackMargin: {1}\nangleError: {2}\nareaError: {3}",
+				hardAngle,
+				packMargin,
+				angleError,
+				areaError);
 		}
 	}
 }

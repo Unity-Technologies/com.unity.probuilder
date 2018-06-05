@@ -635,10 +635,11 @@ namespace UnityEditor.ProBuilder
 
 				if (s_DualCullModeRaycastFrontFace.item1 != null)
 				{
-					var a = UHandleUtility.WorldToGUIPointWithDepth(mesh.transform.TransformPoint(s_DualCullModeRaycastBackFace.item2));
-					var b = UHandleUtility.WorldToGUIPointWithDepth(mesh.transform.TransformPoint(s_DualCullModeRaycastFrontFace.item2));
+					var a = mesh.transform.TransformPoint(s_DualCullModeRaycastBackFace.item2);
+					var b = mesh.transform.TransformPoint(s_DualCullModeRaycastFrontFace.item2);
+					var c = SceneView.lastActiveSceneView.camera.transform.position;
 
-					if (b.z < a.z)
+					if (Vector3.Distance(c, b) < Vector3.Distance(c, a))
 					{
 						foreach (var edge in s_DualCullModeRaycastFrontFace.item1.edgesInternal)
 						{
