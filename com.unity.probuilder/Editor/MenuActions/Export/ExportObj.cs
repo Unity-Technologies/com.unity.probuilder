@@ -34,10 +34,11 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			string res = ExportWithFileDialog(MeshSelection.Top());
 
-			if( string.IsNullOrEmpty(res) )
+			if (string.IsNullOrEmpty(res))
 				return new ActionResult(ActionResult.Status.Canceled, "User Canceled");
-			else
-				return new ActionResult(ActionResult.Status.Success, "Export OBJ");
+
+			AssetDatabase.Refresh();
+			return new ActionResult(ActionResult.Status.Success, "Export OBJ");
 		}
 
 		/**
@@ -45,7 +46,7 @@ namespace UnityEditor.ProBuilder.Actions
 		 */
 		public static string ExportWithFileDialog(IEnumerable<ProBuilderMesh> meshes, bool asGroup = true, bool allowQuads = true, ObjOptions options = null)
 		{
-			if(meshes == null || meshes.Count() < 1)
+			if(meshes == null || !meshes.Any())
 				return null;
 
 			IEnumerable<Model> models = allowQuads
@@ -79,7 +80,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return res;
 		}
 
-		private static string DoExport(string path, IEnumerable<Model> models, ObjOptions options)
+		static string DoExport(string path, IEnumerable<Model> models, ObjOptions options)
 		{
 			string name = Path.GetFileNameWithoutExtension(path);
 			string directory = Path.GetDirectoryName(path);

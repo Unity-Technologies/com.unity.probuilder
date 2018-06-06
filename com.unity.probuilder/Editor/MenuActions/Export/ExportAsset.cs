@@ -33,6 +33,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ActionResult DoAction()
 		{
 			ExportWithFileDialog( MeshSelection.Top() );
+			AssetDatabase.Refresh();
 			return new ActionResult(ActionResult.Status.Success, "Make Asset & Prefab");
 		}
 
@@ -86,12 +87,10 @@ namespace UnityEditor.ProBuilder.Actions
 					res = DoExport(string.Format("{0}/{1}.asset", path, pb.name), pb);
 			}
 
-			AssetDatabase.Refresh();
-
 			return res;
 		}
 
-		private static string DoExport(string path, ProBuilderMesh pb)
+		static string DoExport(string path, ProBuilderMesh pb)
 		{
 			string directory = Path.GetDirectoryName(path);
 			string name = Path.GetFileNameWithoutExtension(path);
