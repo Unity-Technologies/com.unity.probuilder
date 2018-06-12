@@ -50,7 +50,7 @@ namespace UnityEditor.ProBuilder
 				return;
 			}
 
-			ProBuilderEditor.onEditLevelChanged += OnEditLevelChanged;
+			ProBuilderEditor.editLevelChanged += OnEditLevelChanged;
 			m_LineMesh = new Mesh();
 			m_LineMaterial = CreateHighlightLineMaterial();
 			Undo.undoRedoPerformed += UndoRedoPerformed;
@@ -64,7 +64,7 @@ namespace UnityEditor.ProBuilder
 
 		void OnDisable()
 		{
-			ProBuilderEditor.onEditLevelChanged -= OnEditLevelChanged;
+			ProBuilderEditor.editLevelChanged -= OnEditLevelChanged;
 			GameObject.DestroyImmediate(m_LineMesh);
 			GameObject.DestroyImmediate(m_LineMaterial);
 			EditorApplication.update -= Update;

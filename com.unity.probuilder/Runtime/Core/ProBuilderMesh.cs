@@ -555,7 +555,7 @@ namespace UnityEngine.ProBuilder
 	    /// <seealso cref="SetSelectedFaces"/>
 	    /// <seealso cref="SetSelectedVertices"/>
 	    /// <seealso cref="SetSelectedEdges"/>
-	    public static event Action<ProBuilderMesh> onElementSelectionChanged;
+	    public static event Action<ProBuilderMesh> elementSelectionChanged;
 
 	    /// <summary>
 	    /// Convenience property for getting the mesh from the MeshFilter component.
@@ -795,8 +795,8 @@ namespace UnityEngine.ProBuilder
 				m_SelectedEdges = m_selectedFaces.SelectMany(x => facesInternal[x].edges).ToArray();
 			}
 
-			if (onElementSelectionChanged != null)
-				onElementSelectionChanged(this);
+			if (elementSelectionChanged != null)
+				elementSelectionChanged(this);
 		}
 
 	    /// <summary>
@@ -816,8 +816,8 @@ namespace UnityEngine.ProBuilder
 				m_selectedTriangles = m_SelectedEdges.AllTriangles();
 			}
 
-			if (onElementSelectionChanged != null)
-				onElementSelectionChanged(this);
+			if (elementSelectionChanged != null)
+				elementSelectionChanged(this);
 		}
 
 		/// <summary>
@@ -830,8 +830,8 @@ namespace UnityEngine.ProBuilder
 			m_SelectedEdges = new Edge[0];
 			m_selectedTriangles = vertices != null ? vertices.Distinct().ToArray() : new int[0];
 
-			if (onElementSelectionChanged != null)
-				onElementSelectionChanged(this);
+			if (elementSelectionChanged != null)
+				elementSelectionChanged(this);
 		}
 
 		/// <summary>

@@ -283,7 +283,7 @@ namespace UnityEditor.ProBuilder
 			this.wantsMouseMove = true;
 			this.autoRepaintOnSceneChange = true;
 
-			ProBuilderEditor.onSelectionUpdate += OnSelectionUpdate;
+			ProBuilderEditor.meshElementsUpdated += OnSelectionUpdate;
 			if (editor != null) OnSelectionUpdate(editor.selection);
 
 			instance = this;
@@ -305,7 +305,7 @@ namespace UnityEditor.ProBuilder
 				editor.PopEditLevel();
 
 			// EditorApplication.delayCall -= this.Close;							// not sure if this is necessary?
-			ProBuilderEditor.onSelectionUpdate -= OnSelectionUpdate;
+			ProBuilderEditor.meshElementsUpdated -= OnSelectionUpdate;
 			ProBuilderMeshEditor.OnGetFrameBoundsEvent -= OnGetFrameBoundsEvent;
 		}
 

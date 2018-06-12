@@ -324,9 +324,9 @@ namespace UnityEditor.ProBuilder
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
 			Selection.selectionChanged += OnSelectionChanged;
 			Undo.undoRedoPerformed += OnSelectionChanged;
-			ProBuilderMesh.onElementSelectionChanged += OnElementSelectionChanged;
-			ProBuilderEditor.onVertexMovementBegin += OnBeginVertexMovement;
-			ProBuilderEditor.onVertexMovementFinish += OnFinishVertexMovement;
+			ProBuilderMesh.elementSelectionChanged += OnElementSelectionChanged;
+			ProBuilderEditor.meshElementsBeginEditing += OnBeginVertexMovement;
+			ProBuilderEditor.meshElementsFinishEditing += OnFinishVertexMovement;
 			this.autoRepaintOnSceneChange = true;
 			m_HelpIcon = new GUIContent(IconUtility.GetIcon("Toolbar/Help"), "Open Documentation");
 			s_ShowPreview = PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_ShowPreview", false);
@@ -347,7 +347,7 @@ namespace UnityEditor.ProBuilder
 			SceneView.onSceneGUIDelegate -= OnSceneGUI;
 			Selection.selectionChanged -= OnSelectionChanged;
 			Undo.undoRedoPerformed -= OnSelectionChanged;
-			ProBuilderMesh.onElementSelectionChanged -= OnElementSelectionChanged;
+			ProBuilderMesh.elementSelectionChanged -= OnElementSelectionChanged;
 			m_SmoothGroups.Clear();
 		}
 

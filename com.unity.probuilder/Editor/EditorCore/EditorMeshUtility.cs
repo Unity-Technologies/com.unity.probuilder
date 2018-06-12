@@ -21,14 +21,14 @@ namespace UnityEditor.ProBuilder
 		/// Return true to override this process, false to let ProBuilder optimize the mesh.
 		/// </value>
 		/// <seealso cref="Optimize"/>
-		/// <seealso cref="onMeshOptimized"/>
+		/// <seealso cref="meshOptimized"/>
 		public static event Func<bool, ProBuilderMesh> onCheckSkipMeshOptimization = null;
 
 		/// <value>
 		/// This callback is raised after a ProBuilderMesh has been successfully optimized.
 		/// </value>
 		/// <seealso cref="Optimize"/>
-		public static event Action<ProBuilderMesh, Mesh> onMeshOptimized = null;
+		public static event Action<ProBuilderMesh, Mesh> meshOptimized = null;
 
 		/// <summary>
 		/// Optmizes the mesh geometry, and generates a UV2 channel (if automatic lightmap generation is enabled).
@@ -100,8 +100,8 @@ namespace UnityEditor.ProBuilder
 			if(PreferencesInternal.GetBool(PreferenceKeys.pbManageLightmappingStaticFlag, false))
 				Lightmapping.SetLightmapStaticFlagEnabled(mesh, hasUv2);
 
-			if(onMeshOptimized != null)
-				onMeshOptimized(mesh, umesh);
+			if(meshOptimized != null)
+				meshOptimized(mesh, umesh);
 
 			if(PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets))
 				TryCacheMesh(mesh);

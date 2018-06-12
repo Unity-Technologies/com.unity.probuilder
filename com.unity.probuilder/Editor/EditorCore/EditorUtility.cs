@@ -32,7 +32,7 @@ namespace UnityEditor.ProBuilder
 		/// <remarks>
 		/// This is only called when an object is initialized in editor, and created by ProBuilder menu items.
 		/// </remarks>
-		public static event Action<ProBuilderMesh> onObjectCreated = null;
+		public static event Action<ProBuilderMesh> meshCreated = null;
 
 		/// <summary>
 		/// Set the selected render state for an object. In Unity 5.4 and lower, this just toggles wireframe on or off.
@@ -265,8 +265,8 @@ namespace UnityEditor.ProBuilder
 
 			pb.Optimize();
 
-			if( onObjectCreated != null )
-				onObjectCreated(pb);
+			if( meshCreated != null )
+				meshCreated(pb);
 		}
 
 		/**

@@ -23,22 +23,22 @@ namespace UnityEditor.ProBuilder
 		/// <value>
 		/// Raised any time the ProBuilder editor refreshes the selection. This is called every frame when interacting with mesh elements, and after any mesh operation.
 		/// </value>
-		public static event Action<ProBuilderMesh[]> onSelectionUpdate;
+		public static event Action<ProBuilderMesh[]> meshElementsUpdated;
 
         /// <value>
         /// Called when vertex modifications are complete.
         /// </value>
-        public static event Action<ProBuilderMesh[]> onVertexMovementFinish;
+        public static event Action<ProBuilderMesh[]> meshElementsFinishEditing;
 
         /// <value>
         /// Called immediately prior to beginning vertex modifications. The ProBuilderMesh will be in un-altered state at this point (meaning ProBuilderMesh.ToMesh and ProBuilderMesh.Refresh have been called, but not Optimize).
         /// </value>
-        public static event Action<ProBuilderMesh[]> onVertexMovementBegin;
+        public static event Action<ProBuilderMesh[]> meshElementsBeginEditing;
 
 		/// <value>
 		/// Raised when the EditLevel is changed.
 		/// </value>
-        public static event Action<int> onEditLevelChanged;
+        public static event Action<int> editLevelChanged;
 
         // Toggles for Face, Vertex, and Edge mode.
         const int k_SelectModeLength = 3;
@@ -247,8 +247,8 @@ namespace UnityEditor.ProBuilder
 			m_FindNearestVertex = typeof(HandleUtility).GetMethod("FindNearestVertex",
 				BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
 
-			if (onEditLevelChanged != null)
-				onEditLevelChanged((int) editLevel);
+			if (editLevelChanged != null)
+				editLevelChanged((int) editLevel);
 		}
 
 		void OnDisable()
@@ -264,8 +264,8 @@ namespace UnityEditor.ProBuilder
 
 			MeshHandles.Destroy();
 
-			if (onSelectionUpdate != null)
-				onSelectionUpdate(null);
+			if (meshElementsUpdated != null)
+				meshElementsUpdated(null);
 
 			ProGridsInterface.UnsubscribePushToGridEvent(PushToGrid);
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
@@ -1599,8 +1599,8 @@ namespace UnityEditor.ProBuilder
 			if (editLevel != EditLevel.Texture)
 				PreferencesInternal.SetInt(PreferenceKeys.pbDefaultEditLevel, (int) editLevel);
 
-			if (onEditLevelChanged != null)
-				onEditLevelChanged((int) editLevel);
+			if (editLevelChanged != null)
+				editLevelChanged((int) editLevel);
 		}
 
 		/// <summary>
@@ -1690,8 +1690,8 @@ namespace UnityEditor.ProBuilder
 			UpdateTextureHandles();
 			m_HandleRotation = handleRotation;
 
-			if (onSelectionUpdate != null)
-				onSelectionUpdate(selection);
+			if (meshElementsUpdated != null)
+				meshElementsUpdated(selection);
 
 			UpdateSceneInfo();
 		}
@@ -1756,8 +1756,8 @@ namespace UnityEditor.ProBuilder
 			UpdateHandleRotation();
 			m_HandleRotation = handleRotation;
 
-			if (onSelectionUpdate != null)
-				onSelectionUpdate(selection);
+			if (meshElementsUpdated != null)
+				meshElementsUpdated(selection);
 
 			UpdateSceneInfo();
 		}
@@ -2018,8 +2018,8 @@ namespace UnityEditor.ProBuilder
 				pb.Refresh();
 			}
 
-			if (onVertexMovementBegin != null)
-				onVertexMovementBegin(selection);
+			if (meshElementsBeginEditing != null)
+				meshElementsBeginEditing(selection);
 		}
 
 		void OnFinishVertexModification()
@@ -2050,8 +2050,8 @@ namespace UnityEditor.ProBuilder
 				m_IsMovingElements = false;
 			}
 
-			if (onVertexMovementFinish != null)
-				onVertexMovementFinish(selection);
+			if (meshElementsFinishEditing != null)
+				meshElementsFinishEditing(selection);
 		}
 
 		/// <summary>
