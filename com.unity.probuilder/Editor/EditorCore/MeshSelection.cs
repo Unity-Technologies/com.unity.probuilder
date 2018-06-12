@@ -42,7 +42,7 @@ namespace UnityEditor.ProBuilder
 		/// <value>
 		/// Receive notifications when the object selection changes.
 		/// </value>
-		public static event System.Action onObjectSelectionChanged;
+		public static event System.Action objectSelectionChanged;
 
 		internal static void OnObjectSelectionChanged()
 		{
@@ -52,8 +52,8 @@ namespace UnityEditor.ProBuilder
 			s_DeepSelection = Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<ProBuilderMesh>()).ToArray();
 			s_ElementCountCacheIsDirty = true;
 
-			if (onObjectSelectionChanged != null)
-				onObjectSelectionChanged();
+			if (objectSelectionChanged != null)
+				objectSelectionChanged();
 		}
 
 		/// <summary>
@@ -202,8 +202,8 @@ namespace UnityEditor.ProBuilder
 			{
 				ProBuilderEditor.instance.ClearElementSelection();
 				s_ElementCountCacheIsDirty = true;
-				if (onObjectSelectionChanged != null)
-					onObjectSelectionChanged();
+				if (objectSelectionChanged != null)
+					objectSelectionChanged();
 			}
 		}
 
