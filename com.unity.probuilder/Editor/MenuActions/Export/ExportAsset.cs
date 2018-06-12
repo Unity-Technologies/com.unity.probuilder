@@ -32,7 +32,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			ExportWithFileDialog( MeshSelection.Top() );
+			ExportWithFileDialog( MeshSelection.TopInternal() );
 			AssetDatabase.Refresh();
 			return new ActionResult(ActionResult.Status.Success, "Make Asset & Prefab");
 		}

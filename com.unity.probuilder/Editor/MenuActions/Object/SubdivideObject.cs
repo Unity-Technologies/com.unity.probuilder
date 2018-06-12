@@ -31,12 +31,12 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return ProBuilderEditor.instance != null && MeshSelection.Top().Length > 0;
+			return ProBuilderEditor.instance != null && MeshSelection.TopInternal().Length > 0;
 		}
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuSubdivide(MeshSelection.Top());
+			return MenuCommands.MenuSubdivide(MeshSelection.TopInternal());
 		}
 	}
 }

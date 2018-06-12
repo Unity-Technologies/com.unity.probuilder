@@ -214,7 +214,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			string res = null;
 
-			IEnumerable<ProBuilderMesh> meshes = m_ExportRecursive ? MeshSelection.All() : MeshSelection.Top();
+			IEnumerable<ProBuilderMesh> meshes = m_ExportRecursive ? MeshSelection.All() : MeshSelection.TopInternal();
 
 			if(meshes == null || meshes.Count() < 1)
 			{

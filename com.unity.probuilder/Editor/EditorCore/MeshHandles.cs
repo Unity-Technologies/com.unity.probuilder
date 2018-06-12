@@ -230,7 +230,7 @@ namespace UnityEditor.ProBuilder
 				{
 					Handles.lighting = false;
 
-					var selection = MeshSelection.Top();
+					var selection = MeshSelection.TopInternal();
 
 					lineMaterial.SetColor("_Color", Color.white);
 

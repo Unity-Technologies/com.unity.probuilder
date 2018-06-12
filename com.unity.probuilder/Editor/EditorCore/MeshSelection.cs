@@ -60,7 +60,12 @@ namespace UnityEditor.ProBuilder
 		/// Get all selected ProBuilderMesh components. Corresponds to <![CDATA[Selection.gameObjects.Select(x => x.GetComponent<ProBuilderMesh>().Where(y => y != null);]]>.
 		/// </summary>
 		/// <returns>An array of the currently selected ProBuilderMesh components. Does not include children of selected objects.</returns>
-		public static ProBuilderMesh[] Top()
+		public static IEnumerable<ProBuilderMesh> Top()
+		{
+			return s_TopSelection;
+		}
+
+		internal static ProBuilderMesh[] TopInternal()
 		{
 			return s_TopSelection;
 		}
@@ -69,7 +74,7 @@ namespace UnityEditor.ProBuilder
 		/// Get all selected ProBuilderMesh components, including those in children of selected objects.
 		/// </summary>
 		/// <returns>All selected ProBuilderMesh components, including those in children of selected objects.</returns>
-		public static ProBuilderMesh[] All()
+		public static IEnumerable<ProBuilderMesh> All()
 		{
 			return s_DeepSelection;
 		}
@@ -79,7 +84,7 @@ namespace UnityEditor.ProBuilder
 		/// </value>
 		public static int count
 		{
-			get { return Top().Length; }
+			get { return TopInternal().Length; }
 		}
 
 		/// <value>
@@ -122,11 +127,11 @@ namespace UnityEditor.ProBuilder
 
 			try
 			{
-				s_TotalVertexCount = Top().Sum(x => x.vertexCount);
-				s_TotalCommonVertexCount = Top().Sum(x => x.sharedIndicesInternal.Length);
-				s_TotalVertexCountCompiled = Top().Sum(x => x.mesh == null ? 0 : x.mesh.vertexCount);
-				s_TotalFaceCount = Top().Sum(x => x.faceCount);
-				s_TotalTriangleCountCompiled = Top().Sum(x => (int) UnityEngine.ProBuilder.MeshUtility.GetPrimitiveCount(x.mesh));
+				s_TotalVertexCount = TopInternal().Sum(x => x.vertexCount);
+				s_TotalCommonVertexCount = TopInternal().Sum(x => x.sharedIndicesInternal.Length);
+				s_TotalVertexCountCompiled = TopInternal().Sum(x => x.mesh == null ? 0 : x.mesh.vertexCount);
+				s_TotalFaceCount = TopInternal().Sum(x => x.faceCount);
+				s_TotalTriangleCountCompiled = TopInternal().Sum(x => (int) UnityEngine.ProBuilder.MeshUtility.GetPrimitiveCount(x.mesh));
 				s_ElementCountCacheIsDirty = false;
 			}
 			catch

@@ -53,7 +53,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override bool IsEnabled()
 		{
 			if (generateUV2PerObject)
-				return MeshSelection.Top().Length > 0;
+				return MeshSelection.TopInternal().Length > 0;
 
 			return true;
 		}
@@ -78,7 +78,7 @@ namespace UnityEditor.ProBuilder.Actions
 			if (EditorGUI.EndChangeCheck())
 				disableAutoUV2Generation = !enableAutoUV2;
 
-			EditorUtility.CreateCachedEditor<UnwrapParametersEditor>(MeshSelection.Top(), ref uv2Editor);
+			EditorUtility.CreateCachedEditor<UnwrapParametersEditor>(MeshSelection.TopInternal(), ref uv2Editor);
 
 			if (uv2Editor != null)
 			{
@@ -94,7 +94,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			ProBuilderMesh[] selected = generateUV2PerObject ? MeshSelection.Top() : GameObject.FindObjectsOfType<ProBuilderMesh>();
+			ProBuilderMesh[] selected = generateUV2PerObject ? MeshSelection.TopInternal() : GameObject.FindObjectsOfType<ProBuilderMesh>();
 			return DoGenerateUV2(selected);
 		}
 

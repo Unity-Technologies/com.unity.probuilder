@@ -230,7 +230,7 @@ namespace UnityEditor.ProBuilder
 				rectSelectMode = scenePickerPreferences.rectSelectMode
 			};
 
-			var selection = MeshSelection.Top();
+			var selection = MeshSelection.TopInternal();
 			UndoUtility.RecordSelection(selection, "Drag Select");
 			bool isAppendModifier = EditorHandleUtility.IsAppendModifier(Event.current.modifiers);
 
@@ -410,7 +410,7 @@ namespace UnityEditor.ProBuilder
 				var mesh = go.GetComponent<ProBuilderMesh>();
 				Face face = null;
 
-				if (mesh != null && (allowUnselected || MeshSelection.Top().Contains(mesh)))
+				if (mesh != null && (allowUnselected || MeshSelection.TopInternal().Contains(mesh)))
 				{
 					Ray ray = UHandleUtility.GUIPointToWorldRay(mousePosition);
 					RaycastHit hit;
@@ -486,7 +486,7 @@ namespace UnityEditor.ProBuilder
 			selection.gameObject = HandleUtility.PickGameObject(mousePosition, false);
 			float maxDistance = pickerOptions.maxPointerDistance * pickerOptions.maxPointerDistance;
 
-			foreach(var mesh in MeshSelection.Top())
+			foreach(var mesh in MeshSelection.TopInternal())
 			{
 				if (!mesh.isSelectable)
 					continue;
@@ -498,7 +498,7 @@ namespace UnityEditor.ProBuilder
 			{
 				var mesh = selection.gameObject.GetComponent<ProBuilderMesh>();
 
-				if (mesh != null && mesh.isSelectable && (allowUnselected || MeshSelection.Top().Contains(mesh)))
+				if (mesh != null && mesh.isSelectable && (allowUnselected || MeshSelection.TopInternal().Contains(mesh)))
 					GetNearestVertices(mesh, mousePosition, nearest, maxDistance);
 			}
 
@@ -547,7 +547,7 @@ namespace UnityEditor.ProBuilder
 			var hoveredMesh = selection.gameObject != null ? selection.gameObject.GetComponent<ProBuilderMesh>() : null;
 
 			float bestDistance = pickerPrefs.maxPointerDistance;
-			bool hoveredIsInSelection = MeshSelection.Top().Contains(hoveredMesh);
+			bool hoveredIsInSelection = MeshSelection.TopInternal().Contains(hoveredMesh);
 
 			if(hoveredMesh != null && (allowUnselected || hoveredIsInSelection))
 			{
@@ -565,7 +565,7 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
-			foreach (var mesh in MeshSelection.Top())
+			foreach (var mesh in MeshSelection.TopInternal())
 			{
 				var trs = mesh.transform;
 				var positions = mesh.positionsInternal;

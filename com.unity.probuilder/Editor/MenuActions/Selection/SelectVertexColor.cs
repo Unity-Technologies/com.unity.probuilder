@@ -39,7 +39,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return ProBuilderEditor.instance != null &&
 				ProBuilderEditor.instance.editLevel != EditLevel.Top &&
-				MeshSelection.Top().Any(x => x.selectedVertexCount > 0);
+				MeshSelection.TopInternal().Any(x => x.selectedVertexCount > 0);
 		}
 
 		public override bool IsHidden()
@@ -79,11 +79,11 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			UndoUtility.RecordSelection(MeshSelection.Top(), "Select Faces with Vertex Colors");
+			UndoUtility.RecordSelection(MeshSelection.TopInternal(), "Select Faces with Vertex Colors");
 
 			HashSet<Color32> colors = new HashSet<Color32>();
 
-			foreach (ProBuilderMesh pb in MeshSelection.Top())
+			foreach (ProBuilderMesh pb in MeshSelection.TopInternal())
 			{
 				Color[] mesh_colors = pb.colorsInternal;
 
@@ -96,7 +96,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			List<GameObject> newSelection = new List<GameObject>();
 			bool selectionOnly = PreferencesInternal.GetBool("pb_restrictSelectColorToCurrentSelection");
-			ProBuilderMesh[] pool = selectionOnly ? MeshSelection.Top() : Object.FindObjectsOfType<ProBuilderMesh>();
+			ProBuilderMesh[] pool = selectionOnly ? MeshSelection.TopInternal() : Object.FindObjectsOfType<ProBuilderMesh>();
 
 			foreach (ProBuilderMesh pb in pool)
 			{

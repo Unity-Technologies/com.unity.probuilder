@@ -22,7 +22,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override bool IsEnabled()
 		{
 			return ProBuilderEditor.instance != null &&
-				MeshSelection.Top().Any(x => x.selectedFaceCount > 1);
+				MeshSelection.TopInternal().Any(x => x.selectedFaceCount > 1);
 		}
 
 		public override bool IsHidden()
@@ -34,7 +34,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuMergeFaces(MeshSelection.Top());
+			return MenuCommands.MenuMergeFaces(MeshSelection.TopInternal());
 		}
 	}
 }

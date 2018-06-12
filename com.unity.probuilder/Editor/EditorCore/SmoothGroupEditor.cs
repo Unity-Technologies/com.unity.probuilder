@@ -371,7 +371,7 @@ namespace UnityEditor.ProBuilder
 		{
 			m_SmoothGroups.Clear();
 
-			foreach (ProBuilderMesh pb in MeshSelection.Top())
+			foreach (ProBuilderMesh pb in MeshSelection.TopInternal())
 				m_SmoothGroups.Add(pb, new SmoothGroupData(pb));
 
 			this.Repaint();

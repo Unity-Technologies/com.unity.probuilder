@@ -32,7 +32,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return ProBuilderEditor.instance != null &&
 				editLevel == EditLevel.Geometry &&
-				MeshSelection.Top().Sum(x => x.selectedFaceCount) > 0;
+				MeshSelection.TopInternal().Sum(x => x.selectedFaceCount) > 0;
 		}
 
 		public override bool IsHidden()
@@ -45,9 +45,9 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			ActionResult res = ActionResult.NoSelection;
 
-			UndoUtility.RecordSelection(MeshSelection.Top(), "Triangulate Faces");
+			UndoUtility.RecordSelection(MeshSelection.TopInternal(), "Triangulate Faces");
 
-			foreach (ProBuilderMesh pb in MeshSelection.Top())
+			foreach (ProBuilderMesh pb in MeshSelection.TopInternal())
 			{
 				pb.ToMesh();
 				Face[] triangulatedFaces = pb.ToTriangles(pb.selectedFacesInternal);

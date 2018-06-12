@@ -48,7 +48,7 @@ namespace UnityEditor.ProBuilder.Actions
 			int meshCount = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Count();
 
 			return meshCount > 0 &&
-				meshCount != MeshSelection.Top().Length;
+				meshCount != MeshSelection.TopInternal().Length;
 		}
 
 		public override MenuActionState AltState()

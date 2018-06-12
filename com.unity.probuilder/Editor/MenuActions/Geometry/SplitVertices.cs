@@ -25,7 +25,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return ProBuilderEditor.instance != null &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
 				ProBuilderEditor.instance.selectionMode == SelectMode.Vertex &&
-				MeshSelection.Top().Any(x => x.selectedVertexCount > 0);
+				MeshSelection.TopInternal().Any(x => x.selectedVertexCount > 0);
 		}
 
 		public override bool IsHidden()
@@ -37,7 +37,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuSplitVertices(MeshSelection.Top());
+			return MenuCommands.MenuSplitVertices(MeshSelection.TopInternal());
 		}
 	}
 }

@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return 	ProBuilderEditor.instance != null &&
 					ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
-					MeshSelection.Top().Any(x => x.selectedEdgeCount > 0);
+					MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
 		}
 
 		public override MenuActionState AltState()
@@ -65,7 +65,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuBevelEdges(MeshSelection.Top());
+			return MenuCommands.MenuBevelEdges(MeshSelection.TopInternal());
 		}
 	}
 }
