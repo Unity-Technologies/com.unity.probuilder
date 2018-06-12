@@ -133,15 +133,6 @@ namespace UnityEngine.ProBuilder
         }
 
 		/// <summary>
-		/// Convert an edge to an array.
-		/// </summary>
-		/// <returns>A new array composed of x and y.</returns>
-		public int[] ToArray()
-		{
-			return new int[2] { a, b };
-		}
-
-		/// <summary>
 		/// Compares edges and takes shared triangles into account.
 		/// </summary>
 		/// <param name="b">The edge to compare against</param>
