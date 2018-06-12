@@ -686,9 +686,12 @@ namespace UnityEngine.ProBuilder
 
 #region Selection
 
-	    [SerializeField] int[] m_selectedFaces = new int[] { };
-	    [SerializeField] Edge[] m_SelectedEdges = new Edge[] { };
-	    [SerializeField] int[] m_selectedTriangles = new int[] { };
+	    [SerializeField]
+	    int[] m_selectedFaces = new int[] { };
+	    [SerializeField]
+	    Edge[] m_SelectedEdges = new Edge[] { };
+	    [SerializeField]
+	    int[] m_selectedTriangles = new int[] { };
 
 	    /// <value>
 	    /// Get the number of faces that are currently selected on this object.
