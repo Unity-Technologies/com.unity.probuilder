@@ -120,7 +120,7 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Faces that need to be refreshed when moving or modifying the actual selection
 		/// </summary>
-		public Dictionary<ProBuilderMesh, List<Face>> selectedFacesInEditZone { get; private set; }
+		internal Dictionary<ProBuilderMesh, List<Face>> selectedFacesInEditZone { get; private set; }
 
 		Matrix4x4 handleMatrix = Matrix4x4.identity;
 		Quaternion handleRotation = new Quaternion(0f, 0f, 0f, 1f);
