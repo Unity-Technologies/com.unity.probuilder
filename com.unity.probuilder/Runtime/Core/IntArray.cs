@@ -12,7 +12,7 @@ namespace UnityEngine.ProBuilder
 	/// Defines associations between vertex indices that are coincident.
 	/// <br />
 	/// <br />
-	/// Coincident vertices are vertices that despite sharing the same coordinate position, are separate entries in the vertex array.
+	/// Coincident vertexes are vertexes that despite sharing the same coordinate position, are separate entries in the vertex array.
 	/// </summary>
 	[Serializable]
 	public sealed class IntArray : IEnumerable<int>

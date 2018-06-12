@@ -83,7 +83,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="options">Culling options.</param>
 		/// <param name="pixelsPerPoint">Scale the render texture to match rect coordinates. Generally you'll just pass in EditorGUIUtility.pointsPerPixel.</param>
 		/// <returns>A dictionary of pb_Object and sharedIndices that are in the selection rect. To get triangle indices access the pb.sharedIndices[index] array.</returns>
-		public static Dictionary<ProBuilderMesh, HashSet<int>> PickVerticesInRect(
+		public static Dictionary<ProBuilderMesh, HashSet<int>> PickVertexesInRect(
 			Camera cam,
 			Rect rect,
 			IList<ProBuilderMesh> selectable,

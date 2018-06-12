@@ -749,7 +749,7 @@ namespace UnityEditor.ProBuilder
 					case SelectMode.Vertex:
 					{
 						int[] perimeter = ElementSelection.GetPerimeterVertices(pb, pb.selectedIndicesInternal, editor.selectedUniversalEdges[i]);
-						pb.SetSelectedVertices( pb.selectedIndicesInternal.RemoveAt(perimeter) );
+						pb.SetSelectedVertexes( pb.selectedIndicesInternal.RemoveAt(perimeter) );
 						rc += perimeter != null ? perimeter.Length : 0;
 						break;
 					}
@@ -804,7 +804,7 @@ namespace UnityEditor.ProBuilder
 								inverse.Add(sharedIndices[i][0]);
 						}
 
-						pb.SetSelectedVertices(inverse.ToArray());
+						pb.SetSelectedVertexes(inverse.ToArray());
 					}
 					break;
 
@@ -1252,7 +1252,7 @@ namespace UnityEditor.ProBuilder
 					if(success)
 					{
 						pb.RemoveDegenerateTriangles();
-						pb.SetSelectedVertices(new int[] { newIndex });
+						pb.SetSelectedVertexes(new int[] { newIndex });
 					}
 
 					pb.ToMesh();
@@ -1305,7 +1305,7 @@ namespace UnityEditor.ProBuilder
 							welds = new int[0];	// @todo
 						}
 
-						pb.SetSelectedVertices(welds ?? new int[0] {});
+						pb.SetSelectedVertexes(welds ?? new int[0] {});
 					}
 
 					pb.Refresh();
@@ -1404,7 +1404,7 @@ namespace UnityEditor.ProBuilder
 				// And set the selected triangles to the newly split
 				List<int> newTriSelection = new List<int>(pb.selectedFacesInternal.SelectMany(x => x.ToTriangles()));
 				newTriSelection.AddRange(tris);
-				pb.SetSelectedVertices(newTriSelection.ToArray());
+				pb.SetSelectedVertexes(newTriSelection.ToArray());
 
 				pb.ToMesh();
 				pb.Refresh();
@@ -1551,7 +1551,7 @@ namespace UnityEditor.ProBuilder
 				pb.Refresh();
 				pb.Optimize();
 
-				pb.SetSelectedVertices(new int[0]);
+				pb.SetSelectedVertexes(new int[0]);
 			}
 
 			ProBuilderEditor.Refresh();
@@ -1681,7 +1681,7 @@ namespace UnityEditor.ProBuilder
 				{
 					pb.Refresh();
 					pb.Optimize();
-					pb.SetSelectedVertices(splits);
+					pb.SetSelectedVertexes(splits);
 					res = new ActionResult(ActionResult.Status.Success, "Connect Edges");
 				}
 				else

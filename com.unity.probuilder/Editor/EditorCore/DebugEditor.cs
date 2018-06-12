@@ -363,7 +363,7 @@ namespace UnityEditor.ProBuilder
 								{
 									if(GUILayout.Button("" + pb.sharedIndicesUVInternal[i].array.ToString(", "), EditorStyles.label))
 									{
-										pb.SetSelectedVertices(pb.sharedIndicesUVInternal[i]);
+										pb.SetSelectedVertexes(pb.sharedIndicesUVInternal[i]);
 
 										if(ProBuilderEditor.instance)
 										{

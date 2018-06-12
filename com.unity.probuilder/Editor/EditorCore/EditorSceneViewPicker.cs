@@ -211,9 +211,9 @@ namespace UnityEditor.ProBuilder
 					UndoUtility.RecordSelection(mesh, "Select Vertex");
 
 					if (ind > -1)
-						mesh.SetSelectedVertices(mesh.selectedIndicesInternal.RemoveAt(ind));
+						mesh.SetSelectedVertexes(mesh.selectedIndicesInternal.RemoveAt(ind));
 					else
-						mesh.SetSelectedVertices(mesh.selectedIndicesInternal.Add(s_Selection.vertex));
+						mesh.SetSelectedVertexes(mesh.selectedIndicesInternal.Add(s_Selection.vertex));
 				}
 
 				return mesh;
@@ -243,7 +243,7 @@ namespace UnityEditor.ProBuilder
 			{
 				case SelectMode.Vertex:
 				{
-					Dictionary<ProBuilderMesh, HashSet<int>> selected = Picking.PickVerticesInRect(
+					Dictionary<ProBuilderMesh, HashSet<int>> selected = Picking.PickVertexesInRect(
 						SceneView.lastActiveSceneView.camera,
 						mouseDragRect,
 						selection,
@@ -272,7 +272,7 @@ namespace UnityEditor.ProBuilder
 						}
 
 						elementsInDragRect = kvp.Value.Any();
-						kvp.Key.SetSelectedVertices(common.SelectMany(x => sharedIndices[x].array));
+						kvp.Key.SetSelectedVertexes(common.SelectMany(x => sharedIndices[x].array));
 					}
 
 					break;
@@ -491,7 +491,7 @@ namespace UnityEditor.ProBuilder
 				if (!mesh.isSelectable)
 					continue;
 
-				GetNearestVertices(mesh, mousePosition, nearest, maxDistance);
+				GetNearestVertexes(mesh, mousePosition, nearest, maxDistance);
 			}
 
 			if (selection.gameObject != null)
@@ -499,7 +499,7 @@ namespace UnityEditor.ProBuilder
 				var mesh = selection.gameObject.GetComponent<ProBuilderMesh>();
 
 				if (mesh != null && mesh.isSelectable && (allowUnselected || MeshSelection.TopInternal().Contains(mesh)))
-					GetNearestVertices(mesh, mousePosition, nearest, maxDistance);
+					GetNearestVertexes(mesh, mousePosition, nearest, maxDistance);
 			}
 
 			nearest.Sort((x, y) => x.item1.CompareTo(y.item1));
@@ -518,7 +518,7 @@ namespace UnityEditor.ProBuilder
 			return selection.gameObject != null;
 		}
 
-		static void GetNearestVertices(ProBuilderMesh mesh, Vector3 mousePosition, List<SimpleTuple<float, Vector3, ProBuilderMesh, int>> list, float maxDistance)
+		static void GetNearestVertexes(ProBuilderMesh mesh, Vector3 mousePosition, List<SimpleTuple<float, Vector3, ProBuilderMesh, int>> list, float maxDistance)
 		{
 			var positions = mesh.positionsInternal;
 			var common = mesh.sharedIndicesInternal;

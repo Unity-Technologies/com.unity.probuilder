@@ -104,7 +104,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="mesh">The mesh to be affected.</param>
 		/// <param name="selectedTriangles">A set of triangles pointing to the vertex positions that are to be affected.</param>
 		/// <param name="offset"></param>
-		public static void TranslateVertices(this ProBuilderMesh mesh, IEnumerable<int> selectedTriangles, Vector3 offset)
+		public static void TranslateVertexes(this ProBuilderMesh mesh, IEnumerable<int> selectedTriangles, Vector3 offset)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");

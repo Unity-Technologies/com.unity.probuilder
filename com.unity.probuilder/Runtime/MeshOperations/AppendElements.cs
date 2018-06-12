@@ -88,79 +88,84 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// Append a group of new faces to the mesh. Significantly faster than calling AppendFace multiple times.
 		/// </summary>
 		/// <param name="mesh">The source mesh to append new faces to.</param>
-		/// <param name="appendedVertices">An array of position arrays, where indices correspond to the appendedFaces parameter.</param>
-		/// <param name="appendedColors">An array of colors arrays, where indices correspond to the appendedFaces parameter.</param>
-		/// <param name="appendedUvs">An array of uvs arrays, where indices correspond to the appendedFaces parameter.</param>
-		/// <param name="appendedFaces">An array of faces arrays, where indices correspond to the appendedFaces parameter.</param>
-		/// <param name="appendedSharedIndexes">An optional mapping of each new vertice's common index. Common index refers to a triangle's index in the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" array.</param>
+		/// <param name="positions">An array of position arrays, where indices correspond to the appendedFaces parameter.</param>
+		/// <param name="colors">An array of colors arrays, where indices correspond to the appendedFaces parameter.</param>
+		/// <param name="uvs">An array of uvs arrays, where indices correspond to the appendedFaces parameter.</param>
+		/// <param name="faces">An array of faces arrays, which contain the triangle winding information for each new face. Face index values are 0 indexed.</param>
+		/// <param name="sharedIndexes">An optional mapping of each new vertex's common index. Common index refers to a triangle's index in the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" array. If this value is provided, it must contain entries for each vertex position. Ex, if there are 4 vertices in this face, there must be shared index entries for { 0, 1, 2, 3 }.</param>
 		/// <returns>An array of the new faces that where successfully appended to the mesh.</returns>
-		public static Face[] AppendFaces(this ProBuilderMesh mesh, Vector3[][] appendedVertices, Color[][] appendedColors, Vector2[][] appendedUvs, Face[] appendedFaces, int[][] appendedSharedIndexes)
+		public static Face[] AppendFaces(
+			this ProBuilderMesh mesh,
+			Vector3[][] positions,
+			Color[][] colors,
+			Vector2[][] uvs,
+			Face[] faces,
+			int[][] sharedIndexes)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            if (appendedVertices == null)
-                throw new ArgumentNullException("appendedVertices");
+            if (positions == null)
+                throw new ArgumentNullException("positions");
 
-            if (appendedColors == null)
-                throw new ArgumentNullException("appendedColors");
+            if (colors == null)
+                throw new ArgumentNullException("colors");
 
-            if (appendedUvs == null)
-                throw new ArgumentNullException("appendedUvs");
+            if (uvs == null)
+                throw new ArgumentNullException("uvs");
 
-            if (appendedFaces == null)
-                throw new ArgumentNullException("appendedFaces");
+            if (faces == null)
+                throw new ArgumentNullException("faces");
 
-            List<Vector3> vertices = new List<Vector3>(mesh.positionsInternal);
-			List<Color> colors = new List<Color>(mesh.colorsInternal);
-			List<Vector2> uvs = new List<Vector2>(mesh.texturesInternal);
-
-			List<Face> faces = new List<Face>(mesh.facesInternal);
+            var newPositions = new List<Vector3>(mesh.positionsInternal);
+			var newColors = new List<Color>(mesh.colorsInternal);
+			var newTextures = new List<Vector2>(mesh.texturesInternal);
+			var newFaces = new List<Face>(mesh.facesInternal);
 			IntArray[] sharedIndices = mesh.sharedIndicesInternal;
 
 			int vc = mesh.vertexCount;
 
-			for(int i = 0; i < appendedFaces.Length; i++)
+			for(int i = 0; i < faces.Length; i++)
 			{
-				vertices.AddRange(appendedVertices[i]);
-				colors.AddRange(appendedColors[i]);
-				uvs.AddRange(appendedUvs[i]);
+				newPositions.AddRange(positions[i]);
+				newColors.AddRange(colors[i]);
+				newTextures.AddRange(uvs[i]);
 
-				appendedFaces[i].ShiftIndexesToZero();
-				appendedFaces[i].ShiftIndexes(vc);
-				faces.Add(appendedFaces[i]);
+				faces[i].ShiftIndexesToZero();
+				faces[i].ShiftIndexes(vc);
+				newFaces.Add(faces[i]);
 
-				if(appendedSharedIndexes != null && appendedVertices[i].Length != appendedSharedIndexes[i].Length)
+				if(sharedIndexes != null && positions[i].Length != sharedIndexes[i].Length)
 				{
 					Debug.LogError("Append Face failed because sharedIndex array does not match new vertex array.");
 					return null;
 				}
 
-				if(appendedSharedIndexes != null)
+				if(sharedIndexes != null)
 				{
-					for(int j = 0; j < appendedSharedIndexes[i].Length; j++)
+					for(int j = 0; j < sharedIndexes[i].Length; j++)
 					{
-						IntArrayUtility.AddValueAtIndex(ref sharedIndices, appendedSharedIndexes[i][j], j+vc);
+						IntArrayUtility.AddValueAtIndex(ref sharedIndices, sharedIndexes[i][j], j+vc);
 					}
 				}
 				else
 				{
-					for(int j = 0; j < appendedVertices[i].Length; j++)
+					for(int j = 0; j < positions[i].Length; j++)
 					{
 						IntArrayUtility.AddValueAtIndex(ref sharedIndices, -1, j+vc);
 					}
 				}
 
-				vc = vertices.Count;
+				vc = newPositions.Count;
 			}
 
-			mesh.SetPositions(vertices.ToArray());
-			mesh.SetColors(colors.ToArray());
-			mesh.SetUVs(uvs.ToArray());
-			mesh.SetFaces(faces.ToArray());
+			mesh.SetPositions(newPositions.ToArray());
+			mesh.SetColors(newColors.ToArray());
+			mesh.SetUVs(newTextures.ToArray());
+			mesh.SetFaces(newFaces.ToArray());
 			mesh.sharedIndicesInternal = sharedIndices;
 
-			return appendedFaces;
+			return faces;
 		}
 
 	    /// <summary>

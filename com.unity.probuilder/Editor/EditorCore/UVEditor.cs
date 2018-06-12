@@ -2373,7 +2373,7 @@ namespace UnityEditor.ProBuilder
 								}
 							}
 
-							pb.SetSelectedVertices(selectedTris.ToArray());
+							pb.SetSelectedVertexes(selectedTris.ToArray());
 							break;
 
 						case SelectMode.Edge:
@@ -2568,7 +2568,7 @@ namespace UnityEditor.ProBuilder
 				if (t_channel == 0)
 				{
 					foreach (ProBuilderMesh pb in selection)
-						pb.SetSelectedVertices(new int[0] { });
+						pb.SetSelectedVertexes(new int[0] { });
 				}
 
 				RefreshUVCoordinates();

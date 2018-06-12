@@ -553,7 +553,7 @@ namespace UnityEngine.ProBuilder
 	    /// Invoked when the element selection changes on any ProBuilderMesh.
 	    /// </value>
 	    /// <seealso cref="SetSelectedFaces"/>
-	    /// <seealso cref="SetSelectedVertices"/>
+	    /// <seealso cref="SetSelectedVertexes"/>
 	    /// <seealso cref="SetSelectedEdges"/>
 	    public static event Action<ProBuilderMesh> elementSelectionChanged;
 
@@ -674,7 +674,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="vertices">Vertex positions array.</param>
 		/// <param name="faces">Faces array.</param>
 		/// <returns></returns>
-		public static ProBuilderMesh CreateInstanceWithVerticesFaces(IEnumerable<Vector3> vertices, IEnumerable<Face> faces)
+		public static ProBuilderMesh CreateInstanceWithVertexesFaces(IEnumerable<Vector3> vertices, IEnumerable<Face> faces)
 		{
 			GameObject go = new GameObject();
 			ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
@@ -824,7 +824,7 @@ namespace UnityEngine.ProBuilder
 		/// Sets the selected vertices array. Clears SelectedFaces and SelectedEdges arrays.
 		/// </summary>
 		/// <param name="vertices">The new vertex selection.</param>
-		public void SetSelectedVertices(IEnumerable<int> vertices)
+		public void SetSelectedVertexes(IEnumerable<int> vertices)
 		{
 			m_selectedFaces = new int[0];
 			m_SelectedEdges = new Edge[0];
