@@ -6,14 +6,14 @@ using System.Collections.Generic;
 
 class CsProjectPostProcessor : AssetPostprocessor
 {
-	static readonly string[] k_AddlProjects = new string[]
+	static readonly string[,] k_AddlProjects = new string[2,2]
 	{
 #if UNITY_EDITOR_WIN
-		@"..\..\unity\tools\Projects\CSharp\UnityEngine.csproj",
-		@"..\..\unity\tools\Projects\CSharp\UnityEditor.csproj",
+		{ @"..\..\unity\tools\Projects\CSharp\UnityEngine.csproj", "414FBAF2-1014-415F-9B26-A8C2D1CB2201" },
+		{ @"..\..\unity\tools\Projects\CSharp\UnityEditor.csproj", "8329E01A-E504-4500-8D04-059C9BD10068" },
 #else
-		@"../../unity/tools/Projects/CSharp/UnityEngine.csproj",
-		@"../../unity/tools/Projects/CSharp/UnityEditor.csproj",
+		{ @"../../unity/tools/Projects/CSharp/UnityEngine.csproj", "414FBAF2-1014-415F-9B26-A8C2D1CB2201" },
+		{ @"../../unity/tools/Projects/CSharp/UnityEditor.csproj", "8329E01A-E504-4500-8D04-059C9BD10068" },
 #endif
 	};
 
@@ -25,12 +25,9 @@ class CsProjectPostProcessor : AssetPostprocessor
 
 	static void AppendProjects(string sln)
 	{
-		Debug.Log("yo");
-
 		var sr = new StringReader(File.ReadAllText(sln));
 		var sb = new StringBuilder();
 		string slnGuid = "";
-		var prjGuid = new List<string>();
 
 		while (sr.Peek() > -1)
 		{
@@ -42,13 +39,14 @@ class CsProjectPostProcessor : AssetPostprocessor
 			// end of projects
 			if (line.Equals("Global"))
 			{
-				foreach (var prj in k_AddlProjects)
+				for(int i = 0, c = k_AddlProjects.Length; i < c; i++)
 				{
-					var name = Path.GetFileNameWithoutExtension(prj);
-					var guid = System.Guid.NewGuid().ToString().ToUpper();
-					sb.AppendLine(string.Format("Project(\"{{{0}}}\") = \"{1}\", \"{2}\", \"{{{3}}}\"", slnGuid, name, prj, guid));
+					var proj = k_AddlProjects[i, 0];
+					var name = Path.GetFileNameWithoutExtension(k_AddlProjects[i, 0]);
+					var guid = Path.GetFileNameWithoutExtension(k_AddlProjects[i, 1]);
+
+					sb.AppendLine(string.Format("Project(\"{{{0}}}\") = \"{1}\", \"{2}\", \"{{{3}}}\"", slnGuid, name, proj, guid));
 					sb.AppendLine("EndProject");
-					prjGuid.Add(guid);
 				}
 			}
 
@@ -56,12 +54,14 @@ class CsProjectPostProcessor : AssetPostprocessor
 
 			if (line.Contains("GlobalSection(ProjectConfigurationPlatforms)"))
 			{
-				foreach (var g in prjGuid)
+				for(int i = 0, c = k_AddlProjects.Length; i < c; i++)
 				{
-					sb.AppendLine(string.Format("\t\t{{{0}}}.Debug|Any CPU.ActiveCfg = Debug|Any CPU", g));
-					sb.AppendLine(string.Format("\t\t{{{0}}}.Debug|Any CPU.Build.0 = Debug|Any CPU", g));
-					sb.AppendLine(string.Format("\t\t{{{0}}}.Release|Any CPU.ActiveCfg = Release|Any CPU", g));
-					sb.AppendLine(string.Format("\t\t{{{0}}}.Release|Any CPU.Build.0 = Release|Any CPU", g));
+					var guid = k_AddlProjects[i, 1];
+
+					sb.AppendLine(string.Format("\t\t{{{0}}}.Debug|Any CPU.ActiveCfg = Debug|Any CPU", guid));
+					sb.AppendLine(string.Format("\t\t{{{0}}}.Debug|Any CPU.Build.0 = Debug|Any CPU", guid));
+					sb.AppendLine(string.Format("\t\t{{{0}}}.Release|Any CPU.ActiveCfg = Release|Any CPU", guid));
+					sb.AppendLine(string.Format("\t\t{{{0}}}.Release|Any CPU.Build.0 = Release|Any CPU", guid));
 				}
 			}
 		}
