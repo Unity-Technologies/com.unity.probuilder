@@ -12,10 +12,8 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// Access the built-in materials that ProBuilder uses.
 	/// </summary>
-	[InitializeOnLoad]
 	public static class BuiltinMaterials
 	{
-		[NonSerialized]
 		static bool s_IsInitialized;
 
 		internal const string faceShader = "Hidden/ProBuilder/FaceHighlight";
@@ -36,12 +34,7 @@ namespace UnityEngine.ProBuilder
 		static Material s_UnityDefaultDiffuse;
 		static Material s_UnlitVertexColorMaterial;
 
-		static BuiltinMaterials()
-		{
-			Initialize();
-		}
-
-		public static void Initialize()
+		static void Init()
 		{
 			if (s_IsInitialized)
 				return;
@@ -85,7 +78,7 @@ namespace UnityEngine.ProBuilder
 				s_EdgePickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/EdgePicker"));
 			}
 
-			s_UnlitVertexColorMaterial = (Material)Resources.Load("Materials/UnlitVertexColor", typeof(Material));
+			s_UnlitVertexColorMaterial = (Material) Resources.Load("Materials/UnlitVertexColor", typeof(Material));
 		}
 
 		/// <summary>
@@ -93,7 +86,11 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public static bool geometryShadersSupported
 		{
-			get { return s_GeometryShadersSupported; }
+			get
+			{
+				Init();
+				return s_GeometryShadersSupported;
+			}
 		}
 
 		/// <summary>
@@ -104,7 +101,9 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public static Material defaultMaterial
 		{
-			get{
+			get
+			{
+				Init();
 				return s_DefaultMaterial;
 			}
 		}
@@ -116,6 +115,7 @@ namespace UnityEngine.ProBuilder
 		{
 			get
 			{
+				Init();
 				return s_SelectionPickerShader;
 			}
 		}
@@ -127,6 +127,7 @@ namespace UnityEngine.ProBuilder
 		{
 			get
 			{
+				Init();
 				return s_FacePickerMaterial;
 			}
 		}
@@ -138,6 +139,7 @@ namespace UnityEngine.ProBuilder
 		{
 			get
 			{
+				Init();
 				return s_VertexPickerMaterial;
 			}
 		}
@@ -149,6 +151,7 @@ namespace UnityEngine.ProBuilder
 		{
 			get
 			{
+				Init();
 				return s_EdgePickerMaterial;
 			}
 		}
@@ -158,7 +161,11 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		internal static Material triggerMaterial
 		{
-			get { return (Material)Resources.Load("Materials/Trigger", typeof(Material)); }
+			get
+			{
+				Init();
+				return (Material) Resources.Load("Materials/Trigger", typeof(Material));
+			}
 		}
 
 		/// <summary>
@@ -166,7 +173,11 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		internal static Material colliderMaterial
 		{
-			get { return (Material)Resources.Load("Materials/Collider", typeof(Material)); }
+			get
+			{
+				Init();
+				return (Material) Resources.Load("Materials/Collider", typeof(Material));
+			}
 		}
 
 		/// <summary>
@@ -175,7 +186,11 @@ namespace UnityEngine.ProBuilder
 		[Obsolete("NoDraw is no longer supported.")]
 		internal static Material noDrawMaterial
 		{
-			get { return (Material)Resources.Load("Materials/NoDraw", typeof(Material)); }
+			get
+			{
+				Init();
+				return (Material) Resources.Load("Materials/NoDraw", typeof(Material));
+			}
 		}
 
 		/// <summary>
@@ -183,9 +198,12 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		internal static Material GetLegacyDiffuse()
 		{
+			Init();
+			
 			if (s_UnityDefaultDiffuse == null)
 			{
-				var mi = typeof(Material).GetMethod("GetDefaultMaterial", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+				var mi = typeof(Material).GetMethod("GetDefaultMaterial",
+					BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
 
 				if (mi != null)
 					s_UnityDefaultDiffuse = mi.Invoke(null, null) as Material;
@@ -208,6 +226,7 @@ namespace UnityEngine.ProBuilder
 		{
 			get
 			{
+				Init();
 				return s_UnlitVertexColorMaterial;
 			}
 		}
