@@ -73,10 +73,9 @@ namespace UnityEditor.ProBuilder
 
 					Vector2[] uv2 = Unwrapping.GeneratePerTriangleUV(umesh, unwrap);
 
-					// If GenerateUV2() takes longer than 3 seconds (!), show a warning prompting user
-					// to disable auto-uv2 generation.
+					// If GenerateUV2() takes longer than 3 seconds (!), show a warning prompting user to disable auto-uv2 generation.
 					if( (Time.realtimeSinceStartup - time) > 3f )
-						Log.Warning(string.Format("Generate UV2 for \"{0}\" took {1} seconds!  You may want to consider disabling Auto-UV2 generation in the `Preferences > ProBuilder` tab.", mesh.name, (Time.realtimeSinceStartup - time).ToString("F2")));
+						Log.Warning(string.Format("Generate UV2 for \"{0}\" took {1} seconds! You may want to consider disabling Auto-UV2 generation in the `Preferences > ProBuilder` tab.", mesh.name, (Time.realtimeSinceStartup - time).ToString("F2")));
 
 					if(uv2.Length == vertices.Length)
 					{

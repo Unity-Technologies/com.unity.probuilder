@@ -16,7 +16,8 @@ class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d", false, 1000)]
 	static void MenuInit()
 	{
-		Debug.Log(PackageImporter.IsProBuilder4OrGreaterLoaded());
+//		string line = "Project(\"{{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}}\") = \"Unity.ProBuilder.Core\", \"Unity.ProBuilder.Core.csproj\", \"{{6F2174E9-C5F0-35CF-D3E6-CC3E9C7CE31C}}\"";
+
 	}
 
 	public static void SaveMeshTemplate(Mesh mesh)

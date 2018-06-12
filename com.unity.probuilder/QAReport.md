@@ -9,19 +9,19 @@ Test strategy & current info for ProBuilder.
 
 | | |
 |--|--|
-| QA Test Results | [ProBuilder QA Sheet](https://docs.google.com/spreadsheets/d/1B4cszFPbVvRvUDm2hqoyWaf98MHkB_TLQhCYtM2E9Bs/edit#gid=1764739309) |
-| Known Bugs | [ProBuilder Issue Tracker on Github](https://github.com/procore3d/probuilder2/issues) |
+|Test Rail | [ProBuilder TestRail Suite](https://qatestrail.hq.unity3d.com/index.php?/suites/view/1335&group_by=cases:section_id&group_order=asc) |
+| QA Test Results | [ProBuilder Test Rail Results](https://qatestrail.hq.unity3d.com/index.php?/suites/runs/1335) |
+| Known Bugs | [Favro - World Building Collection](https://favro.com/organization/c564ede4ed3337f7b17986b6/5458f34f10ce252532bf6d1e) |
 | Planning | [Favro - World Building Collection](https://favro.com/organization/c564ede4ed3337f7b17986b6/5458f34f10ce252532bf6d1e) |
 
 ## Test Strategy
 
 **Manual Testing**
 
-1. Create a new Unity project, install ProBuilder (see readme for instructions).
-1. Test any items that are new or modified in this release (`Tools/ProBuilder/About` will list new features).
-1. Open the [ProBuilder QA Sheet](https://docs.google.com/a/unity3d.com/spreadsheets/d/1B4cszFPbVvRvUDm2hqoyWaf98MHkB_TLQhCYtM2E9Bs/edit?usp=sharing), and create a new duplicate named "ProBuilder 3.0.0-f.0" (substituting for the current version).
-1. Rename "Trunk" column to the Unity version tested against (or if testing a backport use of the existing columns).
-1. Test each item in the "Test in a New Project" section, and mark results (see "Legend" notes in the QA Sheet).
+1. Run test via TestRails: [ProBuilder TestRail](https://qatestrail.hq.unity3d.com/index.php?/suites/view/1335&group_by=cases:section_id&group_order=asc)
+2. Open the [ProBuilder QA Report Google Drive Folder](https://drive.google.com/drive/u/0/folders/1neI43BrzpTmyHvE5Qe5TN8YVHTOp-5Dd)
+3. Duplicate the "QA Report Template" document, and update it with the new info and results
+4. If QA passed, submit and request publishing via the [Package Publishing Form](https://docs.google.com/forms/d/e/1FAIpQLSdSIRO6s6_gM-BxXbDtdzIej-Hhk-3n68xSyC2sM8tp7413mw/viewform)
 
 **Unit Tests**
 

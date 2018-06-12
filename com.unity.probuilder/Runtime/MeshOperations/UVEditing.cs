@@ -1,9 +1,11 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEngine.Rendering;
+using UnityEngine.XR.WSA.Input;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
@@ -15,49 +17,68 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Get a reference to the mesh UV array at index.
 		/// </summary>
-		/// <param name="pb"></param>
-		/// <param name="channel"></param>
+		/// <param name="mesh"></param>
+		/// <param name="channel">The zero-indexed UV channel.</param>
 		/// <returns></returns>
-		internal static Vector2[] GetUVs(ProBuilderMesh pb, int channel)
+		internal static Vector2[] GetUVs(ProBuilderMesh mesh, int channel)
 		{
 			switch(channel)
 			{
 				case 1:
 				{
-					Mesh m = pb.mesh;
+					Mesh m = mesh.mesh;
 					if(m == null)
 						return null;
-					return pb.mesh.uv2;
+					return mesh.mesh.uv2;
 				}
 
 				case 2:
 				case 3:
 				{
-					throw new System.NotImplementedException();
+					if (channel == 2 ? mesh.hasUv3 : mesh.hasUv4)
+					{
+						List<Vector4> uvs = new List<Vector4>();
+						mesh.GetUVs(channel, uvs);
+						return uvs.Select(x => (Vector2)x).ToArray();
+					}
+
+					return null;
 				}
 
 				default:
-					return pb.texturesInternal;
+					return mesh.texturesInternal;
 			}
 		}
 
 		/// <summary>
 		/// Sets an array to the appropriate UV channel, but don't refresh the Mesh.
 		/// </summary>
-		///
-		internal static void ApplyUVs(ProBuilderMesh pb, Vector2[] uvs, int channel, bool applyToMesh = true)
+		internal static void ApplyUVs(ProBuilderMesh mesh, Vector2[] uvs, int channel, bool applyToMesh = true)
 		{
 			switch(channel)
 			{
 				case 0:
-					pb.texturesInternal = uvs;
-					if(pb.mesh != null)
-						pb.mesh.uv = uvs;
+					mesh.texturesInternal = uvs;
+					if(applyToMesh && mesh.mesh != null)
+						mesh.mesh.uv = uvs;
 					break;
 
 				case 1:
-					if(applyToMesh && pb.mesh != null)
-						pb.mesh.uv2 = uvs;
+					if(applyToMesh && mesh.mesh != null)
+						mesh.mesh.uv2 = uvs;
+					break;
+
+				case 2:
+				case 3:
+					int vc = mesh.vertexCount;
+					if(vc != uvs.Length)
+						throw new IndexOutOfRangeException("uvs");
+					List<Vector4> list = new List<Vector4>(vc);
+					for (int i = 0; i < vc; i++)
+						list.Add(uvs[i]);
+					mesh.SetUVs(channel, list);
+					if (applyToMesh && mesh.mesh != null)
+						mesh.mesh.SetUVs(channel, list);
 					break;
 			}
 		}

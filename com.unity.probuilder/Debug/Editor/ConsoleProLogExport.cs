@@ -8,8 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using UnityEditorInternal;
 using UObject = UnityEngine.Object;
+using JetBrains.Rider.Unity.Editor;
 
 static class ConsoleProExtensions
 {
@@ -141,7 +141,8 @@ static class ConsoleProExtensions
 
 			if (scriptObj != null)
 			{
-				AssetDatabase.OpenAsset(scriptObj, lineNum);
+//				AssetDatabase.OpenAsset(scriptObj, lineNum);
+				OpenRider(originalFilePath, lineNum);
 				return;
 			}
 		}
@@ -152,8 +153,21 @@ static class ConsoleProExtensions
 		if (File.Exists(originalFilePath))
 		{
 			originalFilePath = originalFilePath.Replace("/", "" + Path.DirectorySeparatorChar);
-			InternalEditorUtility.OpenFileAtLineExternal(originalFilePath, lineNum);
+//			InternalEditorUtility.OpenFileAtLineExternal(originalFilePath, lineNum);
+			OpenRider(originalFilePath, lineNum);
 		}
+	}
+
+	public static void OpenRider(string file, int line, string sln = null)
+	{
+		if (sln == null || !File.Exists(sln))
+		{
+			var dir = new DirectoryInfo(Application.dataPath).Parent;
+			var prj = dir.Name;
+			sln = dir + "/" + prj + ".sln";
+		}
+
+		PluginEntryPoint.CallRider(string.Format("{0}{1}{0} --line {2} {0}{3}{0}", "\"", sln, line, Path.GetFullPath(file)));
 	}
 }
 #endif
