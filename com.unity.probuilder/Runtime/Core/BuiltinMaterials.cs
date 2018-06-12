@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UObject = UnityEngine.Object;
 using UnityEngine.Rendering;
 using System.Reflection;
+using UnityEditor;
 
 namespace UnityEngine.ProBuilder
 {
@@ -12,7 +14,18 @@ namespace UnityEngine.ProBuilder
 	/// </summary>
 	public static class BuiltinMaterials
 	{
+		static bool s_IsInitialized;
+
+		internal const string faceShader = "Hidden/ProBuilder/FaceHighlight";
+		internal const string lineShader = "Hidden/ProBuilder/LineBillboard";
+		internal const string pointShader = "Hidden/ProBuilder/PointBillboard";
+		// used when gpu doesn't support geometry shaders (metal, for example)
+		internal const string wireShader = "Hidden/ProBuilder/FaceHighlight";
+		internal const string dotShader = "Hidden/ProBuilder/VertexShader";
+
 		static Shader s_SelectionPickerShader;
+
+		static bool s_GeometryShadersSupported;
 
 		static Material s_DefaultMaterial;
 		static Material s_FacePickerMaterial;
@@ -21,16 +34,62 @@ namespace UnityEngine.ProBuilder
 		static Material s_UnityDefaultDiffuse;
 		static Material s_UnlitVertexColorMaterial;
 
+		static void Init()
+		{
+			if (s_IsInitialized)
+				return;
+
+			s_IsInitialized = true;
+
+			var geo = Shader.Find(lineShader);
+			s_GeometryShadersSupported = geo.isSupported;
+
+			// ProBuilder default
+			if (GraphicsSettings.renderPipelineAsset != null)
+			{
+				s_DefaultMaterial = GraphicsSettings.renderPipelineAsset.GetDefaultMaterial();
+			}
+			else
+			{
+				s_DefaultMaterial = (Material)Resources.Load("Materials/ProBuilderDefault", typeof(Material));
+
+				if (s_DefaultMaterial == null || !s_DefaultMaterial.shader.isSupported)
+					s_DefaultMaterial = GetLegacyDiffuse();
+			}
+
+			// SelectionPicker shader
+			s_SelectionPickerShader = (Shader)Shader.Find("Hidden/ProBuilder/SelectionPicker");
+
+			if ((s_FacePickerMaterial = Resources.Load<Material>("Materials/FacePicker")) == null)
+			{
+				Log.Error("FacePicker material not loaded... please re-install ProBuilder to fix this error.");
+				s_FacePickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/FacePicker"));
+			}
+
+			if ((s_VertexPickerMaterial = Resources.Load<Material>("Materials/VertexPicker")) == null)
+			{
+				Log.Error("VertexPicker material not loaded... please re-install ProBuilder to fix this error.");
+				s_VertexPickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/VertexPicker"));
+			}
+
+			if ((s_EdgePickerMaterial = Resources.Load<Material>("Materials/EdgePicker")) == null)
+			{
+				Log.Error("EdgePicker material not loaded... please re-install ProBuilder to fix this error.");
+				s_EdgePickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/EdgePicker"));
+			}
+
+			s_UnlitVertexColorMaterial = (Material) Resources.Load("Materials/UnlitVertexColor", typeof(Material));
+		}
+
 		/// <summary>
-		/// Shader used in selection picking functions.
+		/// Does this platform support geometry shaders?
 		/// </summary>
-		internal static Shader SelectionPickerShader
+		public static bool geometryShadersSupported
 		{
 			get
 			{
-				if (s_SelectionPickerShader == null)
-					s_SelectionPickerShader = (Shader)Shader.Find("Hidden/ProBuilder/SelectionPicker");
-				return s_SelectionPickerShader;
+				Init();
+				return s_GeometryShadersSupported;
 			}
 		}
 
@@ -40,51 +99,35 @@ namespace UnityEngine.ProBuilder
 		/// <br />
 		/// When using the Scriptable Render Pipeline this returns the default material for that pipeline.
 		/// </summary>
-		public static Material 	DefaultMaterial
+		public static Material defaultMaterial
 		{
 			get
 			{
-				if (s_DefaultMaterial == null)
-				{
-					var pipe = GraphicsSettings.renderPipelineAsset;
-
-					if (pipe != null)
-					{
-						s_DefaultMaterial = pipe.GetDefaultMaterial();
-					}
-					else
-					{
-						s_DefaultMaterial = (Material)Resources.Load("Materials/ProBuilderDefault", typeof(Material));
-
-						if (s_DefaultMaterial == null || !s_DefaultMaterial.shader.isSupported)
-							s_DefaultMaterial = UnityDefaultDiffuse;
-					}
-				}
-
+				Init();
 				return s_DefaultMaterial;
+			}
+		}
+
+		/// <summary>
+		/// Shader used in selection picking functions.
+		/// </summary>
+		internal static Shader selectionPickerShader
+		{
+			get
+			{
+				Init();
+				return s_SelectionPickerShader;
 			}
 		}
 
 		/// <summary>
 		/// Material used for face picking functions.
 		/// </summary>
-		internal static Material FacePickerMaterial
+		internal static Material facePickerMaterial
 		{
 			get
 			{
-				if (s_FacePickerMaterial == null)
-				{
-					var facePickerShader = Shader.Find("Hidden/ProBuilder/FacePicker");
-
-					if (facePickerShader == null)
-						Log.Error("pb_FacePicker.shader not found! Re-import ProBuilder to fix.");
-
-					if (s_FacePickerMaterial == null)
-						s_FacePickerMaterial = new Material(facePickerShader);
-					else
-						s_FacePickerMaterial.shader = facePickerShader;
-				}
-
+				Init();
 				return s_FacePickerMaterial;
 			}
 		}
@@ -92,25 +135,11 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Material used for vertex picking functions.
 		/// </summary>
-		internal static Material VertexPickerMaterial
+		internal static Material vertexPickerMaterial
 		{
 			get
 			{
-				if (s_VertexPickerMaterial == null)
-				{
-					s_VertexPickerMaterial = Resources.Load<Material>("Materials/VertexPicker");
-
-					var vertexPickerShader = Shader.Find("Hidden/ProBuilder/VertexPicker");
-
-					if (vertexPickerShader == null)
-						Log.Error("pb_VertexPicker.shader not found! Re-import ProBuilder to fix.");
-
-					if (s_VertexPickerMaterial == null)
-						s_VertexPickerMaterial = new Material(vertexPickerShader);
-					else
-						s_VertexPickerMaterial.shader = vertexPickerShader;
-				}
-
+				Init();
 				return s_VertexPickerMaterial;
 			}
 		}
@@ -118,25 +147,11 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Material used for edge picking functions.
 		/// </summary>
-		internal static Material EdgePickerMaterial
+		internal static Material edgePickerMaterial
 		{
 			get
 			{
-				if (s_EdgePickerMaterial == null)
-				{
-					s_EdgePickerMaterial = Resources.Load<Material>("Materials/EdgePicker");
-
-					var edgePickerShader = Shader.Find("Hidden/ProBuilder/EdgePicker");
-
-					if (edgePickerShader == null)
-						Log.Error("pb_EdgePicker.shader not found! Re-import ProBuilder to fix.");
-
-					if (s_EdgePickerMaterial == null)
-						s_EdgePickerMaterial = new Material(edgePickerShader);
-					else
-						s_EdgePickerMaterial.shader = edgePickerShader;
-				}
-
+				Init();
 				return s_EdgePickerMaterial;
 			}
 		}
@@ -144,64 +159,74 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// The ProBuilder "Trigger" entity type material.
 		/// </summary>
-		internal static Material TriggerMaterial
+		internal static Material triggerMaterial
 		{
-			get { return (Material)Resources.Load("Materials/Trigger", typeof(Material)); }
+			get
+			{
+				Init();
+				return (Material) Resources.Load("Materials/Trigger", typeof(Material));
+			}
 		}
 
 		/// <summary>
 		/// The ProBuilder "Collider" entity type material.
 		/// </summary>
-		internal static Material ColliderMaterial
+		internal static Material colliderMaterial
 		{
-			get { return (Material)Resources.Load("Materials/Collider", typeof(Material)); }
+			get
+			{
+				Init();
+				return (Material) Resources.Load("Materials/Collider", typeof(Material));
+			}
 		}
 
 		/// <summary>
 		/// The ProBuilder "NoDraw" material. Faces with this material are hidden when the game is played.
 		/// </summary>
 		[Obsolete("NoDraw is no longer supported.")]
-		internal static Material NoDrawMaterial
+		internal static Material noDrawMaterial
 		{
-			get { return (Material)Resources.Load("Materials/NoDraw", typeof(Material)); }
+			get
+			{
+				Init();
+				return (Material) Resources.Load("Materials/NoDraw", typeof(Material));
+			}
 		}
 
 		/// <summary>
 		/// Default Unity diffuse material.
 		/// </summary>
-		internal static Material UnityDefaultDiffuse
+		internal static Material GetLegacyDiffuse()
 		{
-			get
+			Init();
+			
+			if (s_UnityDefaultDiffuse == null)
 			{
+				var mi = typeof(Material).GetMethod("GetDefaultMaterial",
+					BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+
+				if (mi != null)
+					s_UnityDefaultDiffuse = mi.Invoke(null, null) as Material;
+
 				if (s_UnityDefaultDiffuse == null)
 				{
-					var mi = typeof(Material).GetMethod("GetDefaultMaterial", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
-
-					if (mi != null)
-						s_UnityDefaultDiffuse = mi.Invoke(null, null) as Material;
-
-					if (s_UnityDefaultDiffuse == null)
-					{
-						var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-						s_UnityDefaultDiffuse = go.GetComponent<MeshRenderer>().sharedMaterial;
-						UnityEngine.Object.DestroyImmediate(go);
-					}
+					var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+					s_UnityDefaultDiffuse = go.GetComponent<MeshRenderer>().sharedMaterial;
+					UnityEngine.Object.DestroyImmediate(go);
 				}
-
-				return s_UnityDefaultDiffuse;
 			}
+
+			return s_UnityDefaultDiffuse;
 		}
 
 		/// <summary>
 		/// An unlit vertex color material.
 		/// </summary>
-		internal static Material UnlitVertexColor
+		internal static Material unlitVertexColor
 		{
 			get
 			{
-				if (s_UnlitVertexColorMaterial == null)
-					s_UnlitVertexColorMaterial = (Material)Resources.Load("Materials/UnlitVertexColor", typeof(Material));
-
+				Init();
 				return s_UnlitVertexColorMaterial;
 			}
 		}

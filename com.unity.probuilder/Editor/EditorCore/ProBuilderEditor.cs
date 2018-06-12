@@ -45,6 +45,7 @@ namespace UnityEditor.ProBuilder
 
 		static EditorToolbar s_EditorToolbar;
 		static ProBuilderEditor s_Instance;
+		EditorMeshHandles m_EditorMeshHandles;
 
 		GUIContent[] m_EditModeIcons;
 		GUIStyle VertexTranslationInfoStyle;
@@ -222,7 +223,10 @@ namespace UnityEditor.ProBuilder
 		{
 			s_Instance = this;
 
-			MeshHandles.Initialize();
+			if (m_EditorMeshHandles != null)
+				m_EditorMeshHandles.Dispose();
+
+			m_EditorMeshHandles = new EditorMeshHandles();
 
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 			SceneView.onSceneGUIDelegate += this.OnSceneGUI;
@@ -262,7 +266,7 @@ namespace UnityEditor.ProBuilder
 
 			UpdateSelection();
 
-			MeshHandles.Destroy();
+			m_EditorMeshHandles.Dispose();
 
 			if (onSelectionUpdate != null)
 				onSelectionUpdate(null);
@@ -481,7 +485,8 @@ namespace UnityEditor.ProBuilder
 			if (m_CurrentEvent.type == EventType.MouseUp && m_CurrentEvent.button == 1 || m_CurrentEvent.type == EventType.Ignore)
 				m_IsRightMouseDown = false;
 
-			MeshHandles.DoGUI(selectionMode);
+			if(editLevel != EditLevel.Top)
+				m_EditorMeshHandles.DrawSceneHandles(selectionMode);
 
 			DrawHandleGUI(sceneView);
 
@@ -1148,7 +1153,7 @@ namespace UnityEditor.ProBuilder
 			if (m_CurrentEvent.type == EventType.Repaint
 				&& m_Hovering != null
 				&& editLevel == EditLevel.Geometry)
-				EditorHandleUtility.DrawSceneSelection(m_Hovering);
+				m_EditorMeshHandles.DrawSceneSelection(m_Hovering);
 
 			using (new HandleGUI())
 			{
@@ -1685,7 +1690,7 @@ namespace UnityEditor.ProBuilder
 			}
 
 			m_HandlePivotWorld = (max + min) * .5f;
-			MeshHandles.RebuildGraphics(selection, m_SharedIndicesDictionary, editLevel, selectionMode);
+
 			UpdateHandleRotation();
 			UpdateTextureHandles();
 			m_HandleRotation = handleRotation;
@@ -1694,6 +1699,9 @@ namespace UnityEditor.ProBuilder
 				onSelectionUpdate(selection);
 
 			UpdateSceneInfo();
+
+			// todo
+			m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.Top(), selectionMode);
 		}
 
 		void UpdateSceneInfo()
@@ -1751,8 +1759,6 @@ namespace UnityEditor.ProBuilder
 
 			m_HandlePivotWorld = (max + min) / 2f;
 
-			MeshHandles.RebuildGraphics(selection, m_SharedIndicesDictionary, editLevel, selectionMode);
-
 			UpdateHandleRotation();
 			m_HandleRotation = handleRotation;
 
@@ -1760,6 +1766,9 @@ namespace UnityEditor.ProBuilder
 				onSelectionUpdate(selection);
 
 			UpdateSceneInfo();
+
+			// todo
+			m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.Top(), selectionMode);
 		}
 
 		internal void ClearElementSelection()

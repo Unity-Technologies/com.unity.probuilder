@@ -449,7 +449,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Color[] c;
 			int[] s;
 			AutoUnwrapSettings uvs = new AutoUnwrapSettings();
-			Material mat = BuiltinMaterials.DefaultMaterial;
+			Material mat = BuiltinMaterials.defaultMaterial;
 
 			// Get material and UV stuff from the first edge face
 			SimpleTuple<Face, Edge> faceAndEdge = null;

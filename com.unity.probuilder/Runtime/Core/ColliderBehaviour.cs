@@ -16,7 +16,7 @@ namespace UnityEngine.ProBuilder
 			if (!collision)
 				collision = gameObject.AddComponent<MeshCollider>();
 			collision.isTrigger = false;
-			SetMaterial(BuiltinMaterials.ColliderMaterial);
+			SetMaterial(BuiltinMaterials.colliderMaterial);
 		}
 
 		public override void OnEnterPlayMode()

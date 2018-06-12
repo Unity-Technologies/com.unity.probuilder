@@ -22,7 +22,7 @@ namespace UnityEngine.ProBuilder
 
 			collision.isTrigger = true;
 
-			SetMaterial(BuiltinMaterials.TriggerMaterial);
+			SetMaterial(BuiltinMaterials.triggerMaterial);
 		}
 
 		public override void OnEnterPlayMode()

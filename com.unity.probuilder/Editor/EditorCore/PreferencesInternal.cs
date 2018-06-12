@@ -286,18 +286,18 @@ namespace UnityEditor.ProBuilder
 					if(EditorPrefs.HasKey(key))
 					{
 						if(EditorPrefs.GetString(key) == "Default-Diffuse")
-							return BuiltinMaterials.UnityDefaultDiffuse;
+							return BuiltinMaterials.GetLegacyDiffuse();
 
 						mat = (Material) AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString(key), typeof(Material));
 					}
 					break;
 
 				default:
-					return BuiltinMaterials.DefaultMaterial;
+					return BuiltinMaterials.defaultMaterial;
 			}
 
 			if(!mat)
-				mat = BuiltinMaterials.DefaultMaterial;
+				mat = BuiltinMaterials.defaultMaterial;
 
 			return mat;
 		}
