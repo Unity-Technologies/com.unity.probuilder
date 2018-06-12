@@ -68,7 +68,7 @@ namespace UnityEditor.ProBuilder
 		/// </summary>
 		/// <param name="message">The text to display in the notification.</param>
 		/// <seealso cref="RemoveNotification"/>
-		public static void ShowNotification(string message)
+		internal static void ShowNotification(string message)
 		{
 			SceneView scnview = SceneView.lastActiveSceneView;
 			if(scnview == null)
@@ -81,7 +81,7 @@ namespace UnityEditor.ProBuilder
 		/// <param name="window">The EditorWindow to display this notification in.</param>
 		/// <param name="message">The text to display in the notification.</param>
 		/// <exception cref="ArgumentNullException">Window is null.</exception>
-		public static void ShowNotification(EditorWindow window, string message)
+		internal static void ShowNotification(EditorWindow window, string message)
 		{
 			if(PreferencesInternal.HasKey(PreferenceKeys.pbShowEditorNotifications) && !PreferencesInternal.GetBool(PreferenceKeys.pbShowEditorNotifications))
 				return;
@@ -105,7 +105,7 @@ namespace UnityEditor.ProBuilder
 		/// </summary>
 		/// <param name="window">The EditorWindow from which all currently displayed notifications will be removed.</param>
 		/// <exception cref="ArgumentNullException">Thrown if window is null.</exception>
-		public static void RemoveNotification(EditorWindow window)
+		internal static void RemoveNotification(EditorWindow window)
 		{
             if (window == null)
                 throw new ArgumentNullException("window");
