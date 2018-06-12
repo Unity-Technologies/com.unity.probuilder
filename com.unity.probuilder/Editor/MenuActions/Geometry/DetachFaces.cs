@@ -31,7 +31,7 @@ namespace UnityEditor.ProBuilder.Actions
 					(PreferencesInternal.GetBool(PreferenceKeys.pbElementSelectIsHamFisted) && selectionMode != SelectMode.Face);
 		}
 
-		public override MenuActionState OptionsMenuState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}
@@ -42,7 +42,7 @@ namespace UnityEditor.ProBuilder.Actions
 			Submesh
 		};
 
-		public override void OnSettingsGUI()
+		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("Detach Face Settings", EditorStyles.boldLabel);
 

@@ -22,7 +22,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon(GetExtrudeIconString(m_ExtrudeMethod), IconSkin.Pro); } }
-		protected override Texture2D desaturatedIcon
+		protected override Texture2D disabledIcon
 		{
 			get { return IconUtility.GetIcon(string.Format("{0}_disabled", GetExtrudeIconString(m_ExtrudeMethod)), IconSkin.Pro); }
 		}
@@ -60,12 +60,12 @@ namespace UnityEditor.ProBuilder.Actions
 				(PreferencesInternal.GetBool(PreferenceKeys.pbElementSelectIsHamFisted) && selectionMode != SelectMode.Face);
 		}
 
-		public override MenuActionState OptionsMenuState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}
 
-		public override void OnSettingsGUI()
+		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("Extrude Settings", EditorStyles.boldLabel);
 

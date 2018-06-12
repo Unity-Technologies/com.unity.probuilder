@@ -45,7 +45,7 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 			return editLevel != EditLevel.Geometry;
 		}
 
-		public override MenuActionState OptionsMenuState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			if (IsEnabled() &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
@@ -55,7 +55,7 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 			return MenuActionState.Hidden;
 		}
 
-		public override void OnSettingsGUI()
+		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("Grow Selection Options", EditorStyles.boldLabel);
 

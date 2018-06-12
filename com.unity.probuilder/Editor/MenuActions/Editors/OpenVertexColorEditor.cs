@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return ProBuilderEditor.instance != null;
 		}
 
-		public override MenuActionState OptionsMenuState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}
@@ -37,7 +37,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return new ActionResult(ActionResult.Status.Success, "Open Vertex Color Window");
 		}
 
-		public override void OnSettingsGUI()
+		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("Vertex Color Editor", EditorStyles.boldLabel);
 

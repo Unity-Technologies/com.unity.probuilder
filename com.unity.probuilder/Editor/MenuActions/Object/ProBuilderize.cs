@@ -51,12 +51,12 @@ namespace UnityEditor.ProBuilder.Actions
 				meshCount != MeshSelection.TopInternal().Length;
 		}
 
-		public override MenuActionState OptionsMenuState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}
 
-		public override void OnSettingsGUI()
+		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("ProBuilderize Options", EditorStyles.boldLabel);
 

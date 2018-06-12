@@ -47,7 +47,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return editLevel != EditLevel.Geometry;
 		}
 
-		public override MenuActionState OptionsMenuState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			if (IsEnabled() && ProBuilderEditor.instance.editLevel == EditLevel.Geometry)
 				return MenuActionState.VisibleAndEnabled;
@@ -55,7 +55,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return MenuActionState.Visible;
 		}
 
-		public override void OnSettingsGUI()
+		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("Select by Vertex Color Options", EditorStyles.boldLabel);
 

@@ -58,12 +58,12 @@ namespace UnityEditor.ProBuilder.Actions
 			return true;
 		}
 
-		public override MenuActionState OptionsMenuState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}
 
-		public override void OnSettingsGUI()
+		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("Generate UV2 Options", EditorStyles.boldLabel);
 

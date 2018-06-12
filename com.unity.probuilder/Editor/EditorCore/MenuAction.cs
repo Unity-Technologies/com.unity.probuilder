@@ -139,7 +139,7 @@ namespace UnityEditor.ProBuilder
 	    /// <remarks>
 	    /// Note that unlike <see cref="icon"> this function caches the result.
 	    /// </remarks>
-        protected virtual Texture2D desaturatedIcon
+        protected virtual Texture2D disabledIcon
         {
             get
             {
@@ -231,7 +231,7 @@ namespace UnityEditor.ProBuilder
 	    /// Get a flag indicating the visibility and enabled state of an extra options menu modifier for this action.
 	    /// </summary>
 	    /// <returns>A flag specifying whether an options icon should be displayed for this action button. If your action implements some etra options, you must also implement OnSettingsGUI.</returns>
-        public virtual MenuActionState OptionsMenuState() { return MenuActionState.Hidden; }
+	    protected virtual MenuActionState OptionsMenuState() { return MenuActionState.Hidden; }
 
 		/// <summary>
 		/// Perform whatever action this menu item is supposed to do. You are resposible for implementing Undo.
@@ -247,17 +247,17 @@ namespace UnityEditor.ProBuilder
 	    /// <summary>
 	    /// Implement the extra settings GUI for your action in this method.
 	    /// </summary>
-        public virtual void OnSettingsGUI() { }
+        protected virtual void OnSettingsGUI() { }
 
 	    /// <summary>
 	    /// Called when the settings window is opened.
 	    /// </summary>
-        public virtual void OnSettingsEnable() { }
+	    protected virtual void OnSettingsEnable() { }
 
 		/// <summary>
 		/// Called when the settings window is closed.
 		/// </summary>
-	    public virtual void OnSettingsDisable() { }
+		protected virtual void OnSettingsDisable() { }
 
         protected bool isIconMode { get; set; }
 
@@ -280,7 +280,7 @@ namespace UnityEditor.ProBuilder
 
 			if(isIconMode)
 			{
-				if( GUILayout.Button(buttonEnabled || !desaturatedIcon ? icon : desaturatedIcon, ToolbarGroupUtility.GetStyle(group, isHorizontal), layoutOptions) )
+				if( GUILayout.Button(buttonEnabled || !disabledIcon ? icon : disabledIcon, ToolbarGroupUtility.GetStyle(group, isHorizontal), layoutOptions) )
 				{
 					if(showOptions && (OptionsMenuState() & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
 					{

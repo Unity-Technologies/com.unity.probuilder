@@ -32,12 +32,12 @@ namespace UnityEditor.ProBuilder.Actions
 				MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
 		}
 
-		public override MenuActionState OptionsMenuState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}
 
-		public override void OnSettingsGUI()
+		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("Subdivide Edge Settings", EditorStyles.boldLabel);
 

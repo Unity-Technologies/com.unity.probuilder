@@ -48,7 +48,7 @@ namespace UnityEditor.ProBuilder.Actions
 				ProBuilderEditor.instance.selectionMode != SelectMode.Vertex;
 		}
 
-		public override MenuActionState OptionsMenuState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}
@@ -56,7 +56,7 @@ namespace UnityEditor.ProBuilder.Actions
 		static readonly GUIContent gc_weldDistance = new GUIContent("Weld Distance", "The maximum distance between two vertices in order to be welded together.");
 		const float k_MinWeldDistance = .00001f;
 
-		public override void OnSettingsGUI()
+		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("Weld Settings", EditorStyles.boldLabel);
 

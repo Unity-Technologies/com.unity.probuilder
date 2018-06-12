@@ -54,12 +54,12 @@ namespace UnityEditor.ProBuilder.Actions
 			return ProBuilderEditor.instance != null && MeshSelection.TopInternal().Length > 0;
 		}
 
-		public override MenuActionState OptionsMenuState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}
 
-		public override void OnSettingsGUI()
+		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("Mirror Settings", EditorStyles.boldLabel);
 

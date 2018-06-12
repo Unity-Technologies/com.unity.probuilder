@@ -103,12 +103,12 @@ namespace UnityEditor.ProBuilder.Actions
 			return Selection.gameObjects != null && Selection.gameObjects.Length > 0;
 		}
 
-		public override MenuActionState OptionsMenuState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}
 
-		public override void OnSettingsGUI()
+		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("Export Settings", EditorStyles.boldLabel);
 

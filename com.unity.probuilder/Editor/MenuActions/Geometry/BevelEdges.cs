@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder.Actions
 					MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
 		}
 
-		public override MenuActionState OptionsMenuState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}
@@ -41,7 +41,7 @@ namespace UnityEditor.ProBuilder.Actions
 					(selectionMode & (SelectMode.Face | SelectMode.Edge)) == 0;
 		}
 
-		public override void OnSettingsGUI()
+		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("Bevel Edge Settings", EditorStyles.boldLabel);
 
