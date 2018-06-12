@@ -47,7 +47,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return editLevel != EditLevel.Geometry;
 		}
 
-		public override MenuActionState AltState()
+		public override MenuActionState OptionsMenuState()
 		{
 			if (IsEnabled() &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&

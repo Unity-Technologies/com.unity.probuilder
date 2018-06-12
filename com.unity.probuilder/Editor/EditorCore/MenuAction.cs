@@ -231,7 +231,7 @@ namespace UnityEditor.ProBuilder
 	    /// Get a flag indicating the visibility and enabled state of an extra options menu modifier for this action.
 	    /// </summary>
 	    /// <returns>A flag specifying whether an options icon should be displayed for this action button. If your action implements some etra options, you must also implement OnSettingsGUI.</returns>
-        public virtual MenuActionState AltState() { return MenuActionState.Hidden; }
+        public virtual MenuActionState OptionsMenuState() { return MenuActionState.Hidden; }
 
 		/// <summary>
 		/// Perform whatever action this menu item is supposed to do. You are resposible for implementing Undo.
@@ -282,7 +282,7 @@ namespace UnityEditor.ProBuilder
 			{
 				if( GUILayout.Button(buttonEnabled || !desaturatedIcon ? icon : desaturatedIcon, ToolbarGroupUtility.GetStyle(group, isHorizontal), layoutOptions) )
 				{
-					if(showOptions && (AltState() & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
+					if(showOptions && (OptionsMenuState() & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
 					{
 						DoAlt();
 					}
@@ -293,7 +293,7 @@ namespace UnityEditor.ProBuilder
 					}
 				}
 
-				if((AltState() & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
+				if((OptionsMenuState() & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
 				{
 					Rect r = GUILayoutUtility.GetLastRect();
 					r.x = r.x + r.width - 16;
@@ -323,7 +323,7 @@ namespace UnityEditor.ProBuilder
 						ActionResult res = DoAction();
 						EditorUtility.ShowNotification(res.notification);
 					}
-					MenuActionState altState = AltState();
+					MenuActionState altState = OptionsMenuState();
 
 					if( (altState & MenuActionState.Visible) == MenuActionState.Visible )
 					{

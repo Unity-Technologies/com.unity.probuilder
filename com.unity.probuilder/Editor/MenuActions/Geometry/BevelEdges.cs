@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder.Actions
 					MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
 		}
 
-		public override MenuActionState AltState()
+		public override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}

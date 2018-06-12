@@ -103,7 +103,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return Selection.gameObjects != null && Selection.gameObjects.Length > 0;
 		}
 
-		public override MenuActionState AltState()
+		public override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}

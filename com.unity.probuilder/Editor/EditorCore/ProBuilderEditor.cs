@@ -358,11 +358,11 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Rebuild the mesh wireframe and selection caches.
 		/// </summary>
-		/// <param name="vertexCountChanged">An optional parameter that allows Refresh to skip some more expensive calculations when rebuilding caches if the vertex count and face layout has not changed.</param>
-		public static void Refresh(bool vertexCountChanged = true)
+		/// <param name="vertexCountMayHaveChanged">An optional parameter that allows Refresh to skip some more expensive calculations when rebuilding caches if the vertex count and face layout has not changed.</param>
+		public static void Refresh(bool vertexCountMayHaveChanged = true)
 		{
 			if (instance != null)
-				instance.UpdateSelection(vertexCountChanged);
+				instance.UpdateSelection(vertexCountMayHaveChanged);
 		}
 
 		void OnGUI()

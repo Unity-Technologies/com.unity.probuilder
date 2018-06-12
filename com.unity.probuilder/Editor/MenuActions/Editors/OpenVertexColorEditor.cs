@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return ProBuilderEditor.instance != null;
 		}
 
-		public override MenuActionState AltState()
+		public override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}

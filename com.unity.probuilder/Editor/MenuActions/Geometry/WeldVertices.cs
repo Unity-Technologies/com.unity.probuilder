@@ -48,7 +48,7 @@ namespace UnityEditor.ProBuilder.Actions
 				ProBuilderEditor.instance.selectionMode != SelectMode.Vertex;
 		}
 
-		public override MenuActionState AltState()
+		public override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}

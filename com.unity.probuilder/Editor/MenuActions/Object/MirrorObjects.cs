@@ -54,7 +54,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return ProBuilderEditor.instance != null && MeshSelection.TopInternal().Length > 0;
 		}
 
-		public override MenuActionState AltState()
+		public override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}
