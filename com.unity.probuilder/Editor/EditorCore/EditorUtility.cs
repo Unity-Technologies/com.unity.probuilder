@@ -154,7 +154,7 @@ namespace UnityEditor.ProBuilder
 		/// </summary>
 		/// <param name="mesh">The component to test.</param>
 		/// <seealso cref="ProBuilderMesh.Verify"/>
-		public static void EnsureMeshSyncState(ProBuilderMesh mesh)
+		public static void SynchronizeWithMeshFilter(ProBuilderMesh mesh)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");

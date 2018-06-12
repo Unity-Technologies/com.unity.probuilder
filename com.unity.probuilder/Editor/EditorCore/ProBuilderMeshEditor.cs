@@ -48,7 +48,7 @@ namespace UnityEditor.ProBuilder
 			// If Verify returns false, that means the mesh was rebuilt - so generate UV2 again
 
 			foreach (ProBuilderMesh selpb in Selection.transforms.GetComponents<ProBuilderMesh>())
-				EditorUtility.EnsureMeshSyncState(selpb);
+				EditorUtility.SynchronizeWithMeshFilter(selpb);
 		}
 
 		public override void OnInspectorGUI()

@@ -39,7 +39,7 @@ class CsProjectPostProcessor : AssetPostprocessor
 			// end of projects
 			if (line.Equals("Global"))
 			{
-				for(int i = 0, c = k_AddlProjects.Length; i < c; i++)
+				for(int i = 0, c = k_AddlProjects.GetLength(0); i < c; i++)
 				{
 					var proj = k_AddlProjects[i, 0];
 					var name = Path.GetFileNameWithoutExtension(k_AddlProjects[i, 0]);
@@ -54,7 +54,7 @@ class CsProjectPostProcessor : AssetPostprocessor
 
 			if (line.Contains("GlobalSection(ProjectConfigurationPlatforms)"))
 			{
-				for(int i = 0, c = k_AddlProjects.Length; i < c; i++)
+				for(int i = 0, c = k_AddlProjects.GetLength(0); i < c; i++)
 				{
 					var guid = k_AddlProjects[i, 1];
 

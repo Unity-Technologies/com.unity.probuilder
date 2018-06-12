@@ -59,7 +59,7 @@ namespace UnityEditor.ProBuilder
 				foreach(ProBuilderMesh pb in Selection.transforms.GetComponents<ProBuilderMesh>())
 				{
 					if(!meshesAreAssets)
-						EditorUtility.EnsureMeshSyncState(pb);
+						EditorUtility.SynchronizeWithMeshFilter(pb);
 				}
 
 				ProBuilderEditor.Refresh();

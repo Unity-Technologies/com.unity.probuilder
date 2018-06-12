@@ -1102,7 +1102,7 @@ namespace UnityEditor.ProBuilder
 						GameObject.DestroyImmediate(copy.transform.GetChild(i).gameObject);
 
 					foreach(ProBuilderMesh pb_child in pb.transform.GetComponentsInChildren<ProBuilderMesh>())
-						EditorUtility.EnsureMeshSyncState(pb_child);
+						EditorUtility.SynchronizeWithMeshFilter(pb_child);
 				}
 
 				Undo.RegisterCreatedObjectUndo(copy.gameObject, "Detach Selection");

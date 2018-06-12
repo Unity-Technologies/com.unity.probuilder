@@ -42,33 +42,33 @@ namespace UnityEditor.ProBuilder
 	    /// <remarks>
 	    /// Use this where you wish to add a top level menu item.
 	    /// </remarks>
-        public const string probuilderMenuPath = "Tools/ProBuilder/";
+        internal const string probuilderMenuPath = "Tools/ProBuilder/";
 
 	    /// <value>
 	    /// The unicode character for the control key symbol on Windows, or command key on macOS.
 	    /// </value>
-        protected const char keyCommandSuper = PreferenceKeys.CMD_SUPER;
+        internal const char keyCommandSuper = PreferenceKeys.CMD_SUPER;
 
 	    /// <value>
 	    /// The unicode character for the shift key symbol.
 	    /// </value>
-	    protected const char keyCommandShift = PreferenceKeys.CMD_SHIFT;
+	    internal const char keyCommandShift = PreferenceKeys.CMD_SHIFT;
 
 	    /// <value>
 	    /// The unicode character for the option key symbol on macOS.
 	    /// </value>
 	    /// <seealso cref="keyCommandAlt"/>
-        protected const char keyCommandOption = PreferenceKeys.CMD_OPTION;
+        internal const char keyCommandOption = PreferenceKeys.CMD_OPTION;
 
 	    /// <value>
 	    /// The unicode character for the alt key symbol on Windows.
 	    /// </value>
-        protected const char keyCommandAlt = PreferenceKeys.CMD_ALT;
+        internal const char keyCommandAlt = PreferenceKeys.CMD_ALT;
 
 	    /// <value>
 	    /// The unicode character for the delete key symbol.
 	    /// </value>
-        protected const char keyCommandDelete = PreferenceKeys.CMD_DELETE;
+        internal const char keyCommandDelete = PreferenceKeys.CMD_DELETE;
 
         static readonly GUIContent AltButtonContent = new GUIContent("+", "");
 
