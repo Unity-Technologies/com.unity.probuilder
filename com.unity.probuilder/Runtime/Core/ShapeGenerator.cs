@@ -421,7 +421,10 @@ namespace UnityEngine.ProBuilder
 				uvRotation %= 360f;
 				if(uvRotation < 0f)
 					uvRotation = 360f + uvRotation;
-				faces[t+1].uv.rotation = uvRotation;
+
+				var uv = faces[t + 1].uv;
+				uv.rotation = uvRotation;
+				faces[t + 1].uv = uv;
 
 				v += noInnerSide ? 7 : 8;
 				t += 2;
@@ -430,8 +433,8 @@ namespace UnityEngine.ProBuilder
 			// sides
 			if(buildSides)
 			{
-				/// first step is special case - only needs a quad, but all other steps need
-				/// a quad and tri.
+				// first step is special case - only needs a quad, but all other steps need
+				// a quad and tri.
 				float x = noInnerSide ? innerRadius + stairWidth : innerRadius;;
 
 				for(int side = (noInnerSide ? 1 : 0); side < 2; side++)
@@ -470,7 +473,7 @@ namespace UnityEngine.ProBuilder
 						v += 4;
 						sv += 4;
 
-						/// that connecting triangle
+						// that connecting triangle
 						if(i > 0)
 						{
 							sides_f[st-1].textureGroup = (side * steps) + i;
@@ -1300,8 +1303,12 @@ namespace UnityEngine.ProBuilder
 
 			if (!manualUvs)
 			{
-				for(int i = 0; i < f.Length; i++)
-					f[i].uv.fill = AutoUnwrapSettings.Fill.Fit;
+				for (int i = 0; i < f.Length; i++)
+				{
+					var uv = f[i].uv;
+					uv.fill = AutoUnwrapSettings.Fill.Fit;
+					f[i].uv = uv;
+				}
 			}
 
 			GameObject go = new GameObject();

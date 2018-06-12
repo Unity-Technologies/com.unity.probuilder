@@ -540,11 +540,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				{
 					Transform2D transform = MatchCoordinates(pb.texturesInternal.ValuesWithIndices(faces[i].distinctIndices), uv_origins[i]);
 
-					faces[i].uv.offset = -transform.position;
-					faces[i].uv.rotation = transform.rotation;
+					var uv = faces[i].uv;
+					uv.offset = -transform.position;
+					uv.rotation = transform.rotation;
 
 					if( Mathf.Abs(transform.scale.sqrMagnitude - 2f) > .1f )
-						faces[i].uv.scale = transform.scale;
+						uv.scale = transform.scale;
+					
+					faces[i].uv = uv;
 				}
 			}
 			else

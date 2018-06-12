@@ -615,9 +615,7 @@ namespace UnityEditor.ProBuilder
 				{
 					if (pb.selectedFaceCount > 0)
 					{
-						/**
-						 * Sort faces into texture groups for re-projection
-						 */
+						// Sort faces into texture groups for re-projection
 						Dictionary<int, List<Face>> textureGroups = new Dictionary<int, List<Face>>();
 
 						int n = -2;
@@ -634,16 +632,24 @@ namespace UnityEditor.ProBuilder
 							if (tool == Tool.Move)
 							{
 								foreach (Face face in kvp.Value)
-									face.uv.offset -= handlePosition - handlePosition_origin;
+								{
+									var uv = face.uv;
+									uv.offset -= handlePosition - handlePosition_origin;
+									face.uv = uv;
+								}
 							}
 							else if (tool == Tool.Rotate)
 							{
 								foreach (Face face in kvp.Value)
 								{
-									if (face.uv.rotation > 360f)
-										face.uv.rotation = face.uv.rotation % 360f;
-									else if (face.uv.rotation < 0f)
-										face.uv.rotation = 360f + (face.uv.rotation % 360f);
+									var uv = face.uv;
+
+									if (uv.rotation > 360f)
+										uv.rotation = uv.rotation % 360f;
+									else if (uv.rotation < 0f)
+										uv.rotation = 360f + (uv.rotation % 360f);
+
+									face.uv = uv;
 								}
 							}
 						}
@@ -1477,7 +1483,11 @@ namespace UnityEditor.ProBuilder
 						Face[] autoFaces = System.Array.FindAll(selection[n].selectedFacesInternal, x => !x.manualUV);
 
 						foreach (Face face in autoFaces)
-							face.uv.rotation += uvRotation - t_uvRotation;
+						{
+							var uv = face.uv;
+							uv.rotation += uvRotation - t_uvRotation;
+							face.uv = uv;
+						}
 
 						selection[n].RefreshUV(autoFaces);
 					}
@@ -1531,7 +1541,11 @@ namespace UnityEditor.ProBuilder
 						Face[] autoFaces = System.Array.FindAll(selection[n].selectedFacesInternal, x => !x.manualUV);
 
 						foreach (Face face in autoFaces)
-							face.uv.rotation += delta;
+						{
+							var uv = face.uv;
+							uv.rotation += delta;
+							face.uv = uv;
+						}
 
 						selection[n].RefreshUV(autoFaces);
 					}
@@ -1591,7 +1605,9 @@ namespace UnityEditor.ProBuilder
 						Face[] autoFaces = System.Array.FindAll(selection[n].selectedFacesInternal, x => !x.manualUV);
 						foreach (Face face in autoFaces)
 						{
-							face.uv.scale = Vector2.Scale(face.uv.scale, scale);
+							var uv = face.uv;
+							uv.scale = Vector2.Scale(face.uv.scale, scale);
+							face.uv = uv;
 						}
 
 						selection[n].RefreshUV(autoFaces);
@@ -1651,7 +1667,9 @@ namespace UnityEditor.ProBuilder
 					Face[] autoFaces = System.Array.FindAll(selection[n].selectedFacesInternal, x => !x.manualUV);
 					foreach (Face face in autoFaces)
 					{
-						face.uv.scale = Vector2.Scale(face.uv.scale, delta);
+						var uv = face.uv;
+						uv.scale = Vector2.Scale(face.uv.scale, delta);
+						face.uv = uv;
 					}
 
 					selection[n].RefreshUV(autoFaces);
