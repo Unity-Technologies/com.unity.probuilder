@@ -469,68 +469,68 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			// Bridge will form a triangle
-			if( a.Contains(b.x, sharedIndices) || a.Contains(b.y, sharedIndices) )
+			if( a.Contains(b.a, sharedIndices) || a.Contains(b.b, sharedIndices) )
 			{
 				v = new Vector3[3];
 				c = new Color[3];
 				s = new int[3];
 
-				bool axbx = System.Array.IndexOf(sharedIndices[sharedIndices.IndexOf(a.x)], b.x) > -1;
-				bool axby = System.Array.IndexOf(sharedIndices[sharedIndices.IndexOf(a.x)], b.y) > -1;
+				bool axbx = System.Array.IndexOf(sharedIndices[sharedIndices.IndexOf(a.a)], b.a) > -1;
+				bool axby = System.Array.IndexOf(sharedIndices[sharedIndices.IndexOf(a.a)], b.b) > -1;
 
-				bool aybx = System.Array.IndexOf(sharedIndices[sharedIndices.IndexOf(a.y)], b.x) > -1;
-				bool ayby = System.Array.IndexOf(sharedIndices[sharedIndices.IndexOf(a.y)], b.y) > -1;
+				bool aybx = System.Array.IndexOf(sharedIndices[sharedIndices.IndexOf(a.b)], b.a) > -1;
+				bool ayby = System.Array.IndexOf(sharedIndices[sharedIndices.IndexOf(a.b)], b.b) > -1;
 
 				if(axbx)
 				{
-					v[0] = verts[a.x];
-					c[0] = mesh.colorsInternal[a.x];
-					s[0] = sharedIndices.IndexOf(a.x);
-					v[1] = verts[a.y];
-					c[1] = mesh.colorsInternal[a.y];
-					s[1] = sharedIndices.IndexOf(a.y);
-					v[2] = verts[b.y];
-					c[2] = mesh.colorsInternal[b.y];
-					s[2] = sharedIndices.IndexOf(b.y);
+					v[0] = verts[a.a];
+					c[0] = mesh.colorsInternal[a.a];
+					s[0] = sharedIndices.IndexOf(a.a);
+					v[1] = verts[a.b];
+					c[1] = mesh.colorsInternal[a.b];
+					s[1] = sharedIndices.IndexOf(a.b);
+					v[2] = verts[b.b];
+					c[2] = mesh.colorsInternal[b.b];
+					s[2] = sharedIndices.IndexOf(b.b);
 				}
 				else
 				if(axby)
 				{
-					v[0] = verts[a.x];
-					c[0] = mesh.colorsInternal[a.x];
-					s[0] = sharedIndices.IndexOf(a.x);
-					v[1] = verts[a.y];
-					c[1] = mesh.colorsInternal[a.y];
-					s[1] = sharedIndices.IndexOf(a.y);
-					v[2] = verts[b.x];
-					c[2] = mesh.colorsInternal[b.x];
-					s[2] = sharedIndices.IndexOf(b.x);
+					v[0] = verts[a.a];
+					c[0] = mesh.colorsInternal[a.a];
+					s[0] = sharedIndices.IndexOf(a.a);
+					v[1] = verts[a.b];
+					c[1] = mesh.colorsInternal[a.b];
+					s[1] = sharedIndices.IndexOf(a.b);
+					v[2] = verts[b.a];
+					c[2] = mesh.colorsInternal[b.a];
+					s[2] = sharedIndices.IndexOf(b.a);
 				}
 				else
 				if(aybx)
 				{
-					v[0] = verts[a.y];
-					c[0] = mesh.colorsInternal[a.y];
-					s[0] = sharedIndices.IndexOf(a.y);
-					v[1] = verts[a.x];
-					c[1] = mesh.colorsInternal[a.x];
-					s[1] = sharedIndices.IndexOf(a.x);
-					v[2] = verts[b.y];
-					c[2] = mesh.colorsInternal[b.y];
-					s[2] = sharedIndices.IndexOf(b.y);
+					v[0] = verts[a.b];
+					c[0] = mesh.colorsInternal[a.b];
+					s[0] = sharedIndices.IndexOf(a.b);
+					v[1] = verts[a.a];
+					c[1] = mesh.colorsInternal[a.a];
+					s[1] = sharedIndices.IndexOf(a.a);
+					v[2] = verts[b.b];
+					c[2] = mesh.colorsInternal[b.b];
+					s[2] = sharedIndices.IndexOf(b.b);
 				}
 				else
 				if(ayby)
 				{
-					v[0] = verts[a.y];
-					c[0] = mesh.colorsInternal[a.y];
-					s[0] = sharedIndices.IndexOf(a.y);
-					v[1] = verts[a.x];
-					c[1] = mesh.colorsInternal[a.x];
-					s[1] = sharedIndices.IndexOf(a.x);
-					v[2] = verts[b.x];
-					c[2] = mesh.colorsInternal[b.x];
-					s[2] = sharedIndices.IndexOf(b.x);
+					v[0] = verts[a.b];
+					c[0] = mesh.colorsInternal[a.b];
+					s[0] = sharedIndices.IndexOf(a.b);
+					v[1] = verts[a.a];
+					c[1] = mesh.colorsInternal[a.a];
+					s[1] = sharedIndices.IndexOf(a.a);
+					v[2] = verts[b.a];
+					c[2] = mesh.colorsInternal[b.a];
+					s[2] = sharedIndices.IndexOf(b.a);
 				}
 
 				return mesh.AppendFace(
@@ -547,36 +547,36 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			c = new Color[4];
 			s = new int[4]; // shared indices index to add to
 
-			v[0] = verts[a.x];
-			c[0] = mesh.colorsInternal[a.x];
-			s[0] = sharedIndices.IndexOf(a.x);
-			v[1] = verts[a.y];
-			c[1] = mesh.colorsInternal[a.y];
-			s[1] = sharedIndices.IndexOf(a.y);
+			v[0] = verts[a.a];
+			c[0] = mesh.colorsInternal[a.a];
+			s[0] = sharedIndices.IndexOf(a.a);
+			v[1] = verts[a.b];
+			c[1] = mesh.colorsInternal[a.b];
+			s[1] = sharedIndices.IndexOf(a.b);
 
-			Vector3 nrm = Vector3.Cross( verts[b.x]-verts[a.x], verts[a.y]-verts[a.x] ).normalized;
-			Vector2[] planed = Projection.PlanarProject( new Vector3[4] {verts[a.x], verts[a.y], verts[b.x], verts[b.y] }, nrm );
+			Vector3 nrm = Vector3.Cross( verts[b.a]-verts[a.a], verts[a.b]-verts[a.a] ).normalized;
+			Vector2[] planed = Projection.PlanarProject( new Vector3[4] {verts[a.a], verts[a.b], verts[b.a], verts[b.b] }, nrm );
 
 			Vector2 ipoint = Vector2.zero;
 			bool intersects = Math.GetLineSegmentIntersect(planed[0], planed[2], planed[1], planed[3], ref ipoint);
 
 			if(!intersects)
 			{
-				v[2] = verts[b.x];
-				c[2] = mesh.colorsInternal[b.x];
-				s[2] = sharedIndices.IndexOf(b.x);
-				v[3] = verts[b.y];
-				c[3] = mesh.colorsInternal[b.y];
-				s[3] = sharedIndices.IndexOf(b.y);
+				v[2] = verts[b.a];
+				c[2] = mesh.colorsInternal[b.a];
+				s[2] = sharedIndices.IndexOf(b.a);
+				v[3] = verts[b.b];
+				c[3] = mesh.colorsInternal[b.b];
+				s[3] = sharedIndices.IndexOf(b.b);
 			}
 			else
 			{
-				v[2] = verts[b.y];
-				c[2] = mesh.colorsInternal[b.y];
-				s[2] = sharedIndices.IndexOf(b.y);
-				v[3] = verts[b.x];
-				c[3] = mesh.colorsInternal[b.x];
-				s[3] = sharedIndices.IndexOf(b.x);
+				v[2] = verts[b.b];
+				c[2] = mesh.colorsInternal[b.b];
+				s[2] = sharedIndices.IndexOf(b.b);
+				v[3] = verts[b.a];
+				c[3] = mesh.colorsInternal[b.a];
+				s[3] = sharedIndices.IndexOf(b.a);
 			}
 
 			return mesh.AppendFace(
@@ -618,14 +618,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             for (int i = 0; i < wound.Count; i++)
 			{
-				n_vertices.Add(vertices[wound[i].x]);
-				n_shared.Add(lookup[wound[i].x]);
+				n_vertices.Add(vertices[wound[i].a]);
+				n_shared.Add(lookup[wound[i].a]);
 
 				if(lookupUV != null)
 				{
 					int uv;
 
-					if(lookupUV.TryGetValue(wound[i].x, out uv))
+					if(lookupUV.TryGetValue(wound[i].a, out uv))
 						n_sharedUV.Add(uv);
 					else
 						n_sharedUV.Add(-1);
@@ -763,7 +763,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				List<Vertex> verticesToAppend = new List<Vertex>(count);
 
 				for(int i = 0; i < count; i++)
-					verticesToAppend.Add(Vertex.Mix(vertices[localEdge.x], vertices[localEdge.y], (i+1)/((float)count + 1)));
+					verticesToAppend.Add(Vertex.Mix(vertices[localEdge.a], vertices[localEdge.b], (i+1)/((float)count + 1)));
 
 				List<SimpleTuple<Face, Edge>> adjacentFaces = ElementSelection.GetNeighborFaces(mesh, localEdge);
 
@@ -849,9 +849,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				foreach(Edge e in face.edgesInternal)
 				{
-					EdgeLookup el = new EdgeLookup(new Edge(lookup[e.x], lookup[e.y]), e);
+					EdgeLookup el = new EdgeLookup(new Edge(lookup[e.a], lookup[e.b]), e);
 
-					if(el.common.x >= originalSharedIndicesCount || el.common.y >= originalSharedIndicesCount)
+					if(el.common.a >= originalSharedIndicesCount || el.common.b >= originalSharedIndicesCount)
 						appendedEdges.Add(el);
 				}
 			}

@@ -165,10 +165,10 @@ namespace UnityEngine.ProBuilder
 
 		static bool IsSoftEdge(Vector3[] normals, EdgeLookup left, EdgeLookup right, float threshold)
 		{
-			Vector3 lx = normals[left.local.x];
-			Vector3 ly = normals[left.local.y];
-			Vector3 rx = normals[right.common.x == left.common.x ? right.local.x : right.local.y];
-			Vector3 ry = normals[right.common.y == left.common.y ? right.local.y : right.local.x];
+			Vector3 lx = normals[left.local.a];
+			Vector3 ly = normals[left.local.b];
+			Vector3 rx = normals[right.common.a == left.common.a ? right.local.a : right.local.b];
+			Vector3 ry = normals[right.common.b == left.common.b ? right.local.b : right.local.a];
 			lx.Normalize();
 			ly.Normalize();
 			rx.Normalize();

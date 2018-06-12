@@ -70,8 +70,8 @@ namespace UnityEngine.ProBuilder
 
 			for (int i = 0; i < edges.Length; i++)
 			{
-				edges[i].x -= offset;
-				edges[i].y -= offset;
+				edges[i].a -= offset;
+				edges[i].b -= offset;
 			}
 
 			face.InvalidateCache();

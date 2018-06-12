@@ -642,8 +642,8 @@ namespace UnityEngine.ProBuilder
 				{
 					var edge = pb.facesInternal[i].edgesInternal[n];
 
-					Vector3 a = pb.positionsInternal[edge.x];
-					Vector3 b = pb.positionsInternal[edge.y];
+					Vector3 a = pb.positionsInternal[edge.a];
+					Vector3 b = pb.positionsInternal[edge.b];
 					int positionIndex = edgeIndex * 2;
 
 					positions[positionIndex + 0] = a;

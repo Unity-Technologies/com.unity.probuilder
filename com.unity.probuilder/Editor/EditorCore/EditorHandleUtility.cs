@@ -710,8 +710,8 @@ namespace UnityEditor.ProBuilder
 					GL.Color(MeshHandles.preselectionColor);
 
 					GL.MultMatrix(mesh.transform.localToWorldMatrix);
-					GL.Vertex(positions[selection.edge.x]);
-					GL.Vertex(positions[selection.edge.y]);
+					GL.Vertex(positions[selection.edge.a]);
+					GL.Vertex(positions[selection.edge.b]);
 
 					EndDrawingLines();
 				}

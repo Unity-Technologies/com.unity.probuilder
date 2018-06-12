@@ -574,8 +574,8 @@ namespace UnityEditor.ProBuilder
 				{
 					foreach (var edge in face.edges)
 					{
-						int x = edge.x;
-						int y = edge.y;
+						int x = edge.a;
+						int y = edge.b;
 
 						float d = UHandleUtility.DistanceToLine(
 							trs.TransformPoint(positions[x]),
@@ -623,7 +623,7 @@ namespace UnityEditor.ProBuilder
 				{
 					foreach (var edge in s_DualCullModeRaycastBackFace.item1.edgesInternal)
 					{
-						float d = UHandleUtility.DistancePointLine(s_DualCullModeRaycastBackFace.item2, v[edge.x], v[edge.y]);
+						float d = UHandleUtility.DistancePointLine(s_DualCullModeRaycastBackFace.item2, v[edge.a], v[edge.b]);
 
 						if (d < res.distance)
 						{
@@ -643,7 +643,7 @@ namespace UnityEditor.ProBuilder
 					{
 						foreach (var edge in s_DualCullModeRaycastFrontFace.item1.edgesInternal)
 						{
-							float d = UHandleUtility.DistancePointLine(s_DualCullModeRaycastFrontFace.item2, v[edge.x], v[edge.y]);
+							float d = UHandleUtility.DistancePointLine(s_DualCullModeRaycastFrontFace.item2, v[edge.a], v[edge.b]);
 
 							if (d < res.distance)
 							{
@@ -656,8 +656,8 @@ namespace UnityEditor.ProBuilder
 
 				if (res.edge.IsValid())
 					res.distance = UHandleUtility.DistanceToLine(
-						mesh.transform.TransformPoint(v[res.edge.x]),
-						mesh.transform.TransformPoint(v[res.edge.y]));
+						mesh.transform.TransformPoint(v[res.edge.a]),
+						mesh.transform.TransformPoint(v[res.edge.b]));
 
 			}
 

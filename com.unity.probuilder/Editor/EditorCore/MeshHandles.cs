@@ -246,8 +246,8 @@ namespace UnityEditor.ProBuilder
 
 							for (int j = 0, c = selection[i].selectedEdgeCount; j < c; j++)
 							{
-								GL.Vertex(pb.positionsInternal[edges[j].x]);
-								GL.Vertex(pb.positionsInternal[edges[j].y]);
+								GL.Vertex(pb.positionsInternal[edges[j].a]);
+								GL.Vertex(pb.positionsInternal[edges[j].b]);
 							}
 
 							EditorHandleUtility.EndDrawingLines();
@@ -476,8 +476,8 @@ namespace UnityEditor.ProBuilder
 
 					int positionIndex = edgeIndex * 2;
 
-					tris[positionIndex + 0] = edge.x;
-					tris[positionIndex + 1] = edge.y;
+					tris[positionIndex + 0] = edge.a;
+					tris[positionIndex + 1] = edge.b;
 
 					edgeIndex++;
 				}

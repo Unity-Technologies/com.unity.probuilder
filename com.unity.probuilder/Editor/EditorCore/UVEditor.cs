@@ -1071,8 +1071,8 @@ namespace UnityEditor.ProBuilder
 							{
 								for (int p = 0; p < pb.facesInternal[n].edgesInternal.Length; p++)
 								{
-									x = uv[pb.facesInternal[n].edgesInternal[p].x];
-									y = uv[pb.facesInternal[n].edgesInternal[p].y];
+									x = uv[pb.facesInternal[n].edgesInternal[p].a];
+									y = uv[pb.facesInternal[n].edgesInternal[p].b];
 
 									dist = Math.DistancePointLineSegment(mpos, x, y);
 
@@ -1974,8 +1974,8 @@ namespace UnityEditor.ProBuilder
 
 							foreach (Edge edge in face.edgesInternal)
 							{
-								x = UVToGUIPoint(uv[edge.x]);
-								y = UVToGUIPoint(uv[edge.y]);
+								x = UVToGUIPoint(uv[edge.a]);
+								y = UVToGUIPoint(uv[edge.b]);
 
 								GL.Vertex3(x.x, x.y, 0f);
 								GL.Vertex3(y.x, y.y, 0f);
@@ -2040,8 +2040,8 @@ namespace UnityEditor.ProBuilder
 						{
 							foreach (Edge edge in pb.selectedEdges)
 							{
-								x = UVToGUIPoint(uv[edge.x]);
-								y = UVToGUIPoint(uv[edge.y]);
+								x = UVToGUIPoint(uv[edge.a]);
+								y = UVToGUIPoint(uv[edge.b]);
 
 								GL.Vertex3(x.x, x.y, 0f);
 								GL.Vertex3(y.x, y.y, 0f);
@@ -2065,8 +2065,8 @@ namespace UnityEditor.ProBuilder
 							if (nearestElement.valid && nearestElement.elementSubIndex > -1 && !modifyingUVs)
 							{
 								Edge edge = selection[nearestElement.objectIndex].facesInternal[nearestElement.elementIndex].edgesInternal[nearestElement.elementSubIndex];
-								GL.Vertex(UVToGUIPoint(selection[nearestElement.objectIndex].texturesInternal[edge.x]));
-								GL.Vertex(UVToGUIPoint(selection[nearestElement.objectIndex].texturesInternal[edge.y]));
+								GL.Vertex(UVToGUIPoint(selection[nearestElement.objectIndex].texturesInternal[edge.a]));
+								GL.Vertex(UVToGUIPoint(selection[nearestElement.objectIndex].texturesInternal[edge.b]));
 							}
 
 							GL.End();
@@ -2403,7 +2403,7 @@ namespace UnityEditor.ProBuilder
 								{
 									Edge edge = pb.facesInternal[n].edgesInternal[p];
 
-									if (dragBounds.IntersectsLineSegment(mshUV[edge.x], mshUV[edge.y]))
+									if (dragBounds.IntersectsLineSegment(mshUV[edge.a], mshUV[edge.b]))
 									{
 										if (!selectedEdges.Contains(edge))
 											selectedEdges.Add(edge);

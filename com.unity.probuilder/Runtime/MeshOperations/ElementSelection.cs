@@ -25,7 +25,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			List<SimpleTuple<Face, Edge>> faces = new List<SimpleTuple<Face, Edge>>();
 
-			Edge uni = new Edge(lookup[edge.x], lookup[edge.y]);
+			Edge uni = new Edge(lookup[edge.a], lookup[edge.b]);
 			Edge e = new Edge(0,0);
 
 			for(int i = 0; i < pb.facesInternal.Length; i++)
@@ -33,11 +33,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				Edge[] edges = pb.facesInternal[i].edgesInternal;
 				for(int n = 0; n < edges.Length; n++)
 				{
-					e.x = edges[n].x;
-					e.y = edges[n].y;
+					e.a = edges[n].a;
+					e.b = edges[n].b;
 
-					if( (uni.x == lookup[e.x] && uni.y == lookup[e.y]) ||
-						(uni.x == lookup[e.y] && uni.y == lookup[e.x]))
+					if( (uni.a == lookup[e.a] && uni.b == lookup[e.b]) ||
+						(uni.a == lookup[e.b] && uni.b == lookup[e.a]))
 					{
 						faces.Add(new SimpleTuple<Face, Edge>(pb.facesInternal[i], edges[n]));
 						break;
@@ -102,9 +102,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			for(int i = 0; i < edges.Length; i++)
 			{
-				Edge key = new Edge(lookup[edges[i].x], lookup[edges[i].y]);
+				Edge key = new Edge(lookup[edges[i].a], lookup[edges[i].b]);
 
-				if( shared.Contains(key.x) || shared.Contains(key.y) && !used.Contains(uni) )
+				if( shared.Contains(key.a) || shared.Contains(key.b) && !used.Contains(uni) )
 				{
 					connectedEdges.Add(edges[i]);
 					used.Add(key);
@@ -152,7 +152,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			for(int i = 0; i < edgeCount; i++)
 			{
-				Edge uni = new Edge( sharedIndexesDictionary[faceEdges[i].x], sharedIndexesDictionary[faceEdges[i].y] );
+				Edge uni = new Edge( sharedIndexesDictionary[faceEdges[i].a], sharedIndexesDictionary[faceEdges[i].b] );
 
 				if( dup.TryGetValue(uni, out list) )
 					list.Add(faceEdges[i]);
@@ -184,8 +184,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			{
 				for(int n = i+1; n < universal.Length; n++)
 				{
-					if( universal[i].x == universal[n].x || universal[i].x == universal[n].y ||
-						universal[i].y == universal[n].x || universal[i].y == universal[n].y )
+					if( universal[i].a == universal[n].a || universal[i].a == universal[n].b ||
+						universal[i].b == universal[n].a || universal[i].b == universal[n].b )
 					{
 						connections[i]++;
 						connections[n]++;
@@ -225,7 +225,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			{
 				foreach(Edge e in face.edgesInternal)
 				{
-					Edge edge = new Edge( lookup[e.x], lookup[e.y]);
+					Edge edge = new Edge( lookup[e.a], lookup[e.b]);
 
 					if( sharedEdges.ContainsKey(edge) )
 						sharedEdges[edge].Add(face);
@@ -379,11 +379,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				if(used.Contains(wings[i].edge) || !sources.Contains(wings[i].edge))
 					continue;
 
-				bool completeLoop = GetEdgeLoopInternal(wings[i], wings[i].edge.common.y, used);
+				bool completeLoop = GetEdgeLoopInternal(wings[i], wings[i].edge.common.b, used);
 
 				// loop didn't close
 				if(!completeLoop)
-					GetEdgeLoopInternal(wings[i], wings[i].edge.common.x, used);
+					GetEdgeLoopInternal(wings[i], wings[i].edge.common.a, used);
 			}
 
 			loop = used.Select(x => x.local).ToArray();
@@ -407,7 +407,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				if(spokes != null && spokes.Count == 4)
 				{
 					cur = spokes[2];
-					ind = cur.edge.common.x == ind ? cur.edge.common.y : cur.edge.common.x;
+					ind = cur.edge.common.a == ind ? cur.edge.common.b : cur.edge.common.a;
 				}
 			} while(cur != null && !used.Contains(cur.edge));
 
@@ -720,12 +720,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				// if this edge has been added to a hole already, or the edge isn't in the approved list of indices,
 				// or if there's an opposite face, this edge doesn't belong to a hole.  move along.
-				if(c.opposite != null || used.Contains(c) || !(common.Contains(c.edge.common.x) || common.Contains(c.edge.common.y)))
+				if(c.opposite != null || used.Contains(c) || !(common.Contains(c.edge.common.a) || common.Contains(c.edge.common.b)))
 					continue;
 
 				List<WingedEdge> hole = new List<WingedEdge>();
 				WingedEdge it = c;
-				int ind = it.edge.common.x;
+				int ind = it.edge.common.a;
 
 				int counter = 0;
 
@@ -734,7 +734,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					used.Add(it);
 					hole.Add(it);
 
-					ind = it.edge.common.x == ind ? it.edge.common.y : it.edge.common.x;
+					ind = it.edge.common.a == ind ? it.edge.common.b : it.edge.common.a;
 					it = FindNextEdgeInHole(it, ind);
 
 					if(it == c)
@@ -750,7 +750,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 					for(int p = n - 1; p > -1; p--)
 					{
-						if( wing.edge.common.y == hole[p].edge.common.x )
+						if( wing.edge.common.b == hole[p].edge.common.a )
 						{
 							splits.Add( new SimpleTuple<int, int>(p, n) );
 							break;
@@ -802,7 +802,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 							shift[m] += range;
 
 					// verify that this path has at least one index that was asked for
-					if(splitCount < 2 || section.Any(w => common.Contains(w.edge.common.x)) || section.Any(w => common.Contains(w.edge.common.y)))
+					if(splitCount < 2 || section.Any(w => common.Contains(w.edge.common.a)) || section.Any(w => common.Contains(w.edge.common.b)))
 						holes.Add( section );
 				}
 			}

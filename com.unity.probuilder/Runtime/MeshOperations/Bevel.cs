@@ -43,21 +43,21 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			foreach(EdgeLookup e in m_edges)
 			{
-				if(tested_common.Add(e.common.x))
+				if(tested_common.Add(e.common.a))
 				{
-					foreach(WingedEdge w in spokes[e.common.x])
+					foreach(WingedEdge w in spokes[e.common.a])
 					{
 						Edge le = w.edge.local;
-						amount = Mathf.Min( Vector3.Distance(vertices[le.x].position, vertices[le.y].position) - .001f, amount );
+						amount = Mathf.Min( Vector3.Distance(vertices[le.a].position, vertices[le.b].position) - .001f, amount );
 					}
 				}
 
-				if(tested_common.Add(e.common.y))
+				if(tested_common.Add(e.common.b))
 				{
-					foreach(WingedEdge w in spokes[e.common.y])
+					foreach(WingedEdge w in spokes[e.common.b])
 					{
 						Edge le = w.edge.local;
-						amount = Mathf.Min( Vector3.Distance(vertices[le.x].position, vertices[le.y].position) - .001f, amount );
+						amount = Mathf.Min( Vector3.Distance(vertices[le.a].position, vertices[le.b].position) - .001f, amount );
 					}
 				}
 			}
@@ -79,14 +79,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				beveled++;
 
-				ignore.AddOrAppend(we.face, we.edge.common.x);
-				ignore.AddOrAppend(we.face, we.edge.common.y);
-				ignore.AddOrAppend(we.opposite.face, we.edge.common.x);
-				ignore.AddOrAppend(we.opposite.face, we.edge.common.y);
+				ignore.AddOrAppend(we.face, we.edge.common.a);
+				ignore.AddOrAppend(we.face, we.edge.common.b);
+				ignore.AddOrAppend(we.opposite.face, we.edge.common.a);
+				ignore.AddOrAppend(we.opposite.face, we.edge.common.b);
 
 				// after initial slides go back and split indirect triangles at the intersecting index into two vertices
-				slide.Add(we.edge.common.x);
-				slide.Add(we.edge.common.y);
+				slide.Add(we.edge.common.a);
+				slide.Add(we.edge.common.b);
 
 				SlideEdge(vertices, we, amount);
 				SlideEdge(vertices, we.opposite, amount);
@@ -263,10 +263,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
  			rf.vertices = new List<Vertex>()
  			{
- 				vertices[a.local.x],
- 				vertices[a.local.y],
- 				vertices[a.common.x == b.common.x ? b.local.x : b.local.y],
- 				vertices[a.common.x == b.common.x ? b.local.y : b.local.x]
+ 				vertices[a.local.a],
+ 				vertices[a.local.b],
+ 				vertices[a.common.a == b.common.a ? b.local.a : b.local.b],
+ 				vertices[a.common.a == b.common.a ? b.local.b : b.local.a]
  			};
 
  			Vector3 an = Math.Normal(vertices, left.face.indices);
@@ -288,8 +288,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
  			faces.Add(rf);
 
- 			holes.AddOrAppend(a.common.x, new SimpleTuple<FaceRebuildData, List<int>>(rf, new List<int>() { 0, 2 }));
- 			holes.AddOrAppend(a.common.y, new SimpleTuple<FaceRebuildData, List<int>>(rf, new List<int>() { 1, 3 }));
+ 			holes.AddOrAppend(a.common.a, new SimpleTuple<FaceRebuildData, List<int>>(rf, new List<int>() { 0, 2 }));
+ 			holes.AddOrAppend(a.common.b, new SimpleTuple<FaceRebuildData, List<int>>(rf, new List<int>() { 1, 3 }));
 
  			return faces;
  		}
@@ -299,33 +299,33 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			we.face.manualUV = true;
 			we.face.textureGroup = -1;
 
-			Edge slide_x = GetLeadingEdge(we, we.edge.common.x);
-			Edge slide_y = GetLeadingEdge(we, we.edge.common.y);
+			Edge slide_x = GetLeadingEdge(we, we.edge.common.a);
+			Edge slide_y = GetLeadingEdge(we, we.edge.common.b);
 
 			if(!slide_x.IsValid() || !slide_y.IsValid())
 				return;
 
-			Vertex x = (vertices[slide_x.x] - vertices[slide_x.y]);
+			Vertex x = (vertices[slide_x.a] - vertices[slide_x.b]);
 			x.Normalize();
 
-			Vertex y = (vertices[slide_y.x] - vertices[slide_y.y]);
+			Vertex y = (vertices[slide_y.a] - vertices[slide_y.b]);
 			y.Normalize();
 
 			// need the pb_Vertex value to be modified, not reassigned in this array (which += does)
-			vertices[we.edge.local.x].Add(x * amount);
-			vertices[we.edge.local.y].Add(y * amount);
+			vertices[we.edge.local.a].Add(x * amount);
+			vertices[we.edge.local.b].Add(y * amount);
 		}
 
 		static Edge GetLeadingEdge(WingedEdge wing, int common)
 		{
-			if(wing.previous.edge.common.x == common)
-				return new Edge(wing.previous.edge.local.y, wing.previous.edge.local.x);
-			else if(wing.previous.edge.common.y == common)
-				return new Edge(wing.previous.edge.local.x, wing.previous.edge.local.y);
-			else if(wing.next.edge.common.x == common)
-				return new Edge(wing.next.edge.local.y, wing.next.edge.local.x);
-			else if(wing.next.edge.common.y == common)
-				return new Edge(wing.next.edge.local.x, wing.next.edge.local.y);
+			if(wing.previous.edge.common.a == common)
+				return new Edge(wing.previous.edge.local.b, wing.previous.edge.local.a);
+			else if(wing.previous.edge.common.b == common)
+				return new Edge(wing.previous.edge.local.a, wing.previous.edge.local.b);
+			else if(wing.next.edge.common.a == common)
+				return new Edge(wing.next.edge.local.b, wing.next.edge.local.a);
+			else if(wing.next.edge.common.b == common)
+				return new Edge(wing.next.edge.local.a, wing.next.edge.local.b);
 
 			return Edge.Empty;
 		}

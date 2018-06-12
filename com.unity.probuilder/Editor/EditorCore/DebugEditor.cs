@@ -492,7 +492,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(EdgeLookup edge in edges)
 			{
-				Vector3 point = pb.transform.TransformPoint((pb.positionsInternal[edge.local.x] + pb.positionsInternal[edge.local.y])/ 2f);
+				Vector3 point = pb.transform.TransformPoint((pb.positionsInternal[edge.local.a] + pb.positionsInternal[edge.local.b])/ 2f);
 
 				if( testOcclusion && UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, pb, point) )
 					continue;
@@ -502,17 +502,17 @@ namespace UnityEditor.ProBuilder
 				switch(edgeIndexFormat)
 				{
 					case IndexFormat.Common:
-						UI.EditorGUIUtility.SceneLabel(string.Format("[{0}, {1}]", edge.common.x, edge.common.y), cen);
+						UI.EditorGUIUtility.SceneLabel(string.Format("[{0}, {1}]", edge.common.a, edge.common.b), cen);
 						break;
 					case IndexFormat.Local:
-						UI.EditorGUIUtility.SceneLabel(string.Format("[{0}, {1}]", edge.local.x, edge.local.y), cen);
+						UI.EditorGUIUtility.SceneLabel(string.Format("[{0}, {1}]", edge.local.a, edge.local.b), cen);
 						break;
 					case IndexFormat.Both:
 						UI.EditorGUIUtility.SceneLabel(string.Format("local: [{0}, {1}]\ncommon: [{2}, {3}]",
-                            edge.local.x,
-                            edge.local.y,
-                            edge.common.x,
-                            edge.common.y), cen);
+                            edge.local.a,
+                            edge.local.b,
+                            edge.common.a,
+                            edge.common.b), cen);
 						break;
 				}
 

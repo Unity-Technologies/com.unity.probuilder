@@ -293,7 +293,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						appendedIndices.Add( ( results[n].newVertexIndices[i] + results[n].faceRebuildData.Offset() ) - removedVertexCount );
 
 				Dictionary<int, int> lup = pb.sharedIndicesInternal.ToDictionary();
-				IEnumerable<Edge> newEdges = results.SelectMany(x => x.faceRebuildData.face.edgesInternal).Where(x => appendedIndices.Contains(x.x) && appendedIndices.Contains(x.y));
+				IEnumerable<Edge> newEdges = results.SelectMany(x => x.faceRebuildData.face.edgesInternal).Where(x => appendedIndices.Contains(x.a) && appendedIndices.Contains(x.b));
 				IEnumerable<EdgeLookup> distNewEdges = EdgeLookup.GetEdgeLookup(newEdges, lup);
 
 				connections = distNewEdges.Distinct().Select(x => x.local).ToArray();
@@ -342,11 +342,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			// creates two new polygon perimeter lines by stepping the current face perimeter and inserting new vertices where edges match
 			for(int i = 0; i < perimeter.Count; i++)
 			{
-				n_vertices[index % 2].Add(vertices[perimeter[i].x]);
+				n_vertices[index % 2].Add(vertices[perimeter[i].a]);
 
 				if(perimeter[i].Equals(a.edge.local) || perimeter[i].Equals(b.edge.local))
 				{
-					Vertex mix = Vertex.Mix(vertices[perimeter[i].x], vertices[perimeter[i].y], .5f);
+					Vertex mix = Vertex.Mix(vertices[perimeter[i].a], vertices[perimeter[i].b], .5f);
 
 					n_indices[index % 2].Add(n_vertices[index % 2].Count);
 					n_vertices[index % 2].Add(mix);
@@ -394,11 +394,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			// creates two new polygon perimeter lines by stepping the current face perimeter and inserting new vertices where edges match
 			for(int i = 0; i < perimeter.Count; i++)
 			{
-				n_vertices[index % splitCount].Add(vertices[perimeter[i].x]);
+				n_vertices[index % splitCount].Add(vertices[perimeter[i].a]);
 
 				if( edgesToSplit.Contains(perimeter[i]) )
 				{
-					Vertex mix = Vertex.Mix(vertices[perimeter[i].x], vertices[perimeter[i].y], .5f);
+					Vertex mix = Vertex.Mix(vertices[perimeter[i].a], vertices[perimeter[i].b], .5f);
 
 					// split current poly line
 					n_indices[index].Add(n_vertices[index].Count);
@@ -436,12 +436,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			for(int i = 0; i < perimeter.Count; i++)
 			{
-				n_vertices.Add(vertices[perimeter[i].x]);
+				n_vertices.Add(vertices[perimeter[i].a]);
 
 				if(affected.Contains(perimeter[i]))
 				{
 					newVertexIndices.Add(n_vertices.Count);
-					n_vertices.Add(Vertex.Mix(vertices[perimeter[i].x], vertices[perimeter[i].y], .5f));
+					n_vertices.Add(Vertex.Mix(vertices[perimeter[i].a], vertices[perimeter[i].b], .5f));
 				}
 			}
 
@@ -488,7 +488,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				if(perimeter[i].Contains(a) && perimeter[i].Contains(b))
 					return null;
 
-				int cur = perimeter[i].x;
+				int cur = perimeter[i].a;
 
 				n_vertices[index].Add(vertices[cur]);
 				n_sharedIndices[index].Add(lookup[cur]);
@@ -547,7 +547,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			for(int i = 0; i < perimeter.Count; i++)
 			{
-				int cur = perimeter[i].x;
+				int cur = perimeter[i].a;
 
 				n_vertices[index].Add(vertices[cur]);
 				n_sharedIndices[index].Add(lookup[cur]);

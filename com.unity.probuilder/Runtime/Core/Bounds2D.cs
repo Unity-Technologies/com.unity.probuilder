@@ -87,22 +87,22 @@ namespace UnityEngine.ProBuilder
 
 			if(points.Length > 0 && edges.Length > 0)
 			{
-				xMin = points[edges[0].x].x;
-				yMin = points[edges[0].x].y;
+				xMin = points[edges[0].a].x;
+				yMin = points[edges[0].a].y;
 				xMax = xMin;
 				yMax = yMin;
 
 				for(int i = 0; i < edges.Length; i++)
 				{
-					xMin = Mathf.Min(xMin, points[edges[i].x].x);
-					xMin = Mathf.Min(xMin, points[edges[i].y].x);
-					yMin = Mathf.Min(yMin, points[edges[i].x].y);
-					yMin = Mathf.Min(yMin, points[edges[i].y].y);
+					xMin = Mathf.Min(xMin, points[edges[i].a].x);
+					xMin = Mathf.Min(xMin, points[edges[i].b].x);
+					yMin = Mathf.Min(yMin, points[edges[i].a].y);
+					yMin = Mathf.Min(yMin, points[edges[i].b].y);
 
-					xMax = Mathf.Max(xMax, points[edges[i].x].x);
-					xMax = Mathf.Max(xMax, points[edges[i].y].x);
-					yMax = Mathf.Max(yMax, points[edges[i].x].y);
-					yMax = Mathf.Max(yMax, points[edges[i].y].y);
+					xMax = Mathf.Max(xMax, points[edges[i].a].x);
+					xMax = Mathf.Max(xMax, points[edges[i].b].x);
+					yMax = Mathf.Max(yMax, points[edges[i].a].y);
+					yMax = Mathf.Max(yMax, points[edges[i].b].y);
 				}
 			}
 
@@ -124,22 +124,22 @@ namespace UnityEngine.ProBuilder
 
 			if(points.Length > 0 && edges.Length > 0)
 			{
-				xMin = points[edges[0].x].x;
-				yMin = points[edges[0].x].y;
+				xMin = points[edges[0].a].x;
+				yMin = points[edges[0].a].y;
 				xMax = xMin;
 				yMax = yMin;
 
 				for(int i = 0; i < edges.Length; i++)
 				{
-					xMin = Mathf.Min(xMin, points[edges[i].x].x);
-					xMin = Mathf.Min(xMin, points[edges[i].y].x);
-					yMin = Mathf.Min(yMin, points[edges[i].x].y);
-					yMin = Mathf.Min(yMin, points[edges[i].y].y);
+					xMin = Mathf.Min(xMin, points[edges[i].a].x);
+					xMin = Mathf.Min(xMin, points[edges[i].b].x);
+					yMin = Mathf.Min(yMin, points[edges[i].a].y);
+					yMin = Mathf.Min(yMin, points[edges[i].b].y);
 
-					xMax = Mathf.Max(xMax, points[edges[i].x].x);
-					xMax = Mathf.Max(xMax, points[edges[i].y].x);
-					yMax = Mathf.Max(yMax, points[edges[i].x].y);
-					yMax = Mathf.Max(yMax, points[edges[i].y].y);
+					xMax = Mathf.Max(xMax, points[edges[i].a].x);
+					xMax = Mathf.Max(xMax, points[edges[i].b].x);
+					yMax = Mathf.Max(yMax, points[edges[i].a].y);
+					yMax = Mathf.Max(yMax, points[edges[i].b].y);
 				}
 			}
 

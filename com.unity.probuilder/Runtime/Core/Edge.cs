@@ -13,12 +13,12 @@ namespace UnityEngine.ProBuilder
 		/// <value>
 		/// An index corresponding to a mesh vertex array.
 		/// </value>
-		public int x;
+		public int a;
 
 		/// <value>
 		/// An index corresponding to a mesh vertex array.
 		/// </value>
-		public int y;
+		public int b;
 
 		/// <value>
 		/// An empty edge is defined as -1, -1.
@@ -28,12 +28,12 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Create a new edge from two vertex indices.
 		/// </summary>
-		/// <param name="x">An index corresponding to a mesh vertex array.</param>
-		/// <param name="y">An index corresponding to a mesh vertex array.</param>
-		public Edge(int x, int y)
+		/// <param name="a">An index corresponding to a mesh vertex array.</param>
+		/// <param name="b">An index corresponding to a mesh vertex array.</param>
+		public Edge(int a, int b)
 		{
-			this.x = x;
-			this.y = y;
+			this.a = a;
+			this.b = b;
 		}
 
 		/// <summary>
@@ -42,17 +42,17 @@ namespace UnityEngine.ProBuilder
 		/// <returns>True if x and y are both greater than -1.</returns>
 		public bool IsValid()
 		{
-			return x > -1 && y > -1 && x != y;
+			return a > -1 && b > -1 && a != b;
 		}
 
 		public override string ToString()
 		{
-			return "[" + x + ", " + y + "]";
+			return "[" + a + ", " + b + "]";
 		}
 
 		public bool Equals(Edge other)
 		{
-			return (x == other.x && y == other.y) || (x == other.y && y == other.x);
+			return (a == other.a && b == other.b) || (a == other.b && b == other.a);
 		}
 
 		public override bool Equals(System.Object obj)
@@ -67,8 +67,8 @@ namespace UnityEngine.ProBuilder
 
 			unchecked
 			{
-				hash = hash * 29 + (x < y ? x : y);
-				hash = hash * 29 + (x < y ? y : x);
+				hash = hash * 29 + (a < b ? a : b);
+				hash = hash * 29 + (a < b ? b : a);
 			}
 
 			return hash;
@@ -76,22 +76,22 @@ namespace UnityEngine.ProBuilder
 
 		public static Edge operator +(Edge a, Edge b)
 		{
-			return new Edge(a.x + b.x, a.y + b.y);
+			return new Edge(a.a + b.a, a.b + b.b);
 		}
 
 		public static Edge operator -(Edge a, Edge b)
 		{
-			return new Edge(a.x - b.x, a.y - b.y);
+			return new Edge(a.a - b.a, a.b - b.b);
 		}
 
 		public static Edge operator +(Edge a, int b)
 		{
-			return new Edge(a.x + b, a.y + b);
+			return new Edge(a.a + b, a.b + b);
 		}
 
 		public static Edge operator -(Edge a, int b)
 		{
-			return new Edge(a.x - b, a.y - b);
+			return new Edge(a.a - b, a.b - b);
 		}
 
 		public static bool operator ==(Edge a, Edge b)
@@ -138,7 +138,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns>A new array composed of x and y.</returns>
 		public int[] ToArray()
 		{
-			return new int[2] { x, y };
+			return new int[2] { a, b };
 		}
 
 		/// <summary>
@@ -152,7 +152,7 @@ namespace UnityEngine.ProBuilder
 		{
             if (lookup == null)
                 return Equals(b);
-			int x0 = lookup[x], y0 = lookup[y], x1 = lookup[b.x], y1 = lookup[b.y];
+			int x0 = lookup[a], y0 = lookup[this.b], x1 = lookup[b.a], y1 = lookup[b.b];
 			return (x0 == x1 && y0 == y1) || (x0 == y1 && y0 == x1);
 		}
 
@@ -163,7 +163,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns>True if x or y is equal to a. False if not.</returns>
 		public bool Contains(int a)
 		{
-			return (x == a || y == a);
+			return (this.a == a || b == a);
 		}
 
 		/// <summary>
@@ -173,14 +173,14 @@ namespace UnityEngine.ProBuilder
 		/// <returns>True if x or y matches either b.x or b.y.</returns>
 		public bool Contains(Edge b)
 		{
-			return (x == b.x || y == b.x || x == b.y || y == b.x);
+			return (a == b.a || this.b == b.a || a == b.b || this.b == b.a);
 		}
 
 		internal bool Contains(int a, IntArray[] sharedIndices)
 		{
 			// @todo optimize
 			int ind = sharedIndices.IndexOf(a);
-			return ( System.Array.IndexOf(sharedIndices[ind], x) > -1 || System.Array.IndexOf(sharedIndices[ind], y) > -1);
+			return ( System.Array.IndexOf(sharedIndices[ind], this.a) > -1 || System.Array.IndexOf(sharedIndices[ind], b) > -1);
 		}
 	}
 }

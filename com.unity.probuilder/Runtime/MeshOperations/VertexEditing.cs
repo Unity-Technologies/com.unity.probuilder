@@ -77,7 +77,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <seealso cref="SplitVertices(UnityEngine.ProBuilder.ProBuilderMesh, IEnumerable{int})"/>
 		public static void SplitVertices(this ProBuilderMesh mesh, Edge edge)
 		{
-			SplitVertices(mesh, new int[] { edge.x, edge.y });
+			SplitVertices(mesh, new int[] { edge.a, edge.b });
 		}
 
 		/// <summary>
@@ -259,10 +259,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			foreach(SimpleTuple<WingedEdge, int> v in edgeAndCommonIndex)
 			{
-				if( v.item2 == v.item1.edge.common.x)
-					toSplit.Add(v.item1.edge.local.x, v.item2);
+				if( v.item2 == v.item1.edge.common.a)
+					toSplit.Add(v.item1.edge.local.a, v.item2);
 				else
-					toSplit.Add(v.item1.edge.local.y, v.item2);
+					toSplit.Add(v.item1.edge.local.b, v.item2);
 			}
 
 			int pc = perimeter.Count;
@@ -270,15 +270,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			for(int i = 0; i < pc; i++)
 			{
-				int index = perimeter[i].y;
+				int index = perimeter[i].b;
 
 				// split this index into two
 				if(toSplit.ContainsKey(index))
 				{
 					// a --- b --- c
-					Vertex a = vertices[perimeter[i].x];
-					Vertex b = vertices[perimeter[i].y];
-					Vertex c = vertices[perimeter[(i+1) % pc].y];
+					Vertex a = vertices[perimeter[i].a];
+					Vertex b = vertices[perimeter[i].b];
+					Vertex c = vertices[perimeter[(i+1) % pc].b];
 
 					Vertex leading_dir = a - b;
 					Vertex following_dir = c - b;
@@ -323,10 +323,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 		static Edge AlignEdgeWithDirection(EdgeLookup edge, int commonIndex)
 		{
-			if(edge.common.x == commonIndex)
-				return new Edge(edge.local.x, edge.local.y);
+			if(edge.common.a == commonIndex)
+				return new Edge(edge.local.a, edge.local.b);
 			else
-				return new Edge(edge.local.y, edge.local.x);
+				return new Edge(edge.local.b, edge.local.a);
 		}
 	}
 }

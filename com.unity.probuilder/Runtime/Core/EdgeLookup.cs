@@ -100,7 +100,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return string.Format("Common: ({0}, {1}), local: ({2}, {3})", common.x, common.y, local.x, local.y);
+			return string.Format("Common: ({0}, {1}), local: ({2}, {3})", common.a, common.b, local.a, local.b);
 		}
 
 		/// <summary>
@@ -111,7 +111,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns>A set of EdgeLookup edges.</returns>
 		public static IEnumerable<EdgeLookup> GetEdgeLookup(IEnumerable<Edge> edges, Dictionary<int, int> lookup)
 		{
-			return edges.Select(x => new EdgeLookup(new Edge(lookup[x.x], lookup[x.y]), x));
+			return edges.Select(x => new EdgeLookup(new Edge(lookup[x.a], lookup[x.b]), x));
 		}
 
 		/// <summary>
@@ -126,7 +126,7 @@ namespace UnityEngine.ProBuilder
                 return null;
 			var hash = new HashSet<EdgeLookup>();
 			foreach (var local in edges)
-				hash.Add(new EdgeLookup(new Edge(lookup[local.x], lookup[local.y]), local));
+				hash.Add(new EdgeLookup(new Edge(lookup[local.a], lookup[local.b]), local));
 			return hash;
 		}
 	}

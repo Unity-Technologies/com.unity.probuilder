@@ -268,7 +268,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					Edge cea = GetCommonEdgeInWindingOrder(next);
 					Edge ceb = GetCommonEdgeInWindingOrder(opp);
 
-					GetWindingFlags(opp, cea.x == ceb.x ? !flag : flag, flags);
+					GetWindingFlags(opp, cea.a == ceb.a ? !flag : flag, flags);
 				}
 
 				next = next.next;
@@ -289,7 +289,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Edge cea = GetCommonEdgeInWindingOrder(source);
 			Edge ceb = GetCommonEdgeInWindingOrder(source.opposite);
 
-			if( cea.x == ceb.x )
+			if( cea.a == ceb.a )
 			{
 				source.opposite.face.Reverse();
 
@@ -314,18 +314,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				Edge e = wing.edge.local;
 				int a = indices[i], b = indices[i+1], c = indices[i+2];
 
-				if(e.x == a && e.y == b)
+				if(e.a == a && e.b == b)
 					return wing.edge.common;
-				else if(e.x == b && e.y == a)
-					return new Edge(wing.edge.common.y, wing.edge.common.x);
-				else if(e.x == b && e.y == c)
+				else if(e.a == b && e.b == a)
+					return new Edge(wing.edge.common.b, wing.edge.common.a);
+				else if(e.a == b && e.b == c)
 					return wing.edge.common;
-				else if(e.x == c && e.y == b)
-					return new Edge(wing.edge.common.y, wing.edge.common.x);
-				else if(e.x == c && e.y == a)
+				else if(e.a == c && e.b == b)
+					return new Edge(wing.edge.common.b, wing.edge.common.a);
+				else if(e.a == c && e.b == a)
 					return wing.edge.common;
-				else if(e.x == a && e.y == c)
-					return new Edge(wing.edge.common.y, wing.edge.common.x);
+				else if(e.a == a && e.b == c)
+					return new Edge(wing.edge.common.b, wing.edge.common.a);
 			}
 
 			return Edge.Empty;
@@ -356,7 +356,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 					if(src.Equals(tar))
 					{
-						if(src.x == tar.x)
+						if(src.a == tar.a)
 							target.Reverse();
 
 						superBreak = true;

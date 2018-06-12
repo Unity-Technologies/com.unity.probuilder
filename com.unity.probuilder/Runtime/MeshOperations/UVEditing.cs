@@ -383,27 +383,27 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			IntArray[] sharedIndicesUV = pb.sharedIndicesUVInternal;
 
 			// Match each edge vertex to the other
-			int[] matchX = new int[2] { edgeToAlignTo.x, -1 };
-			int[] matchY = new int[2] { edgeToAlignTo.y, -1 };
+			int[] matchX = new int[2] { edgeToAlignTo.a, -1 };
+			int[] matchY = new int[2] { edgeToAlignTo.b, -1 };
 
-			int siIndex = sharedIndices.IndexOf(edgeToAlignTo.x);
+			int siIndex = sharedIndices.IndexOf(edgeToAlignTo.a);
 			if(siIndex < 0)
 				return false;
 
-			if(sharedIndices[siIndex].array.Contains(edgeToBeAligned.x))
+			if(sharedIndices[siIndex].array.Contains(edgeToBeAligned.a))
 			{
-				matchX[1] = edgeToBeAligned.x;
-				matchY[1] = edgeToBeAligned.y;
+				matchX[1] = edgeToBeAligned.a;
+				matchY[1] = edgeToBeAligned.b;
 			}
 			else
 			{
-				matchX[1] = edgeToBeAligned.y;
-				matchY[1] = edgeToBeAligned.x;
+				matchX[1] = edgeToBeAligned.b;
+				matchY[1] = edgeToBeAligned.a;
 			}
 
 			// scale face 2 to match the edge size of f1
-			float dist_e1 = Vector2.Distance(uvs[edgeToAlignTo.x], uvs[edgeToAlignTo.y]);
-			float dist_e2 = Vector2.Distance(uvs[edgeToBeAligned.x], uvs[edgeToBeAligned.y]);
+			float dist_e1 = Vector2.Distance(uvs[edgeToAlignTo.a], uvs[edgeToAlignTo.b]);
+			float dist_e2 = Vector2.Distance(uvs[edgeToBeAligned.a], uvs[edgeToBeAligned.b]);
 
 			float scale = dist_e1/dist_e2;
 
@@ -414,8 +414,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			/**
 			 * Figure out where the center of each edge is so that we can move the f2 edge to match f1's origin
 			 */
-			Vector2 f1_center = (uvs[edgeToAlignTo.x] + uvs[edgeToAlignTo.y]) / 2f;
-			Vector2 f2_center = (uvs[edgeToBeAligned.x] + uvs[edgeToBeAligned.y]) / 2f;
+			Vector2 f1_center = (uvs[edgeToAlignTo.a] + uvs[edgeToAlignTo.b]) / 2f;
+			Vector2 f2_center = (uvs[edgeToBeAligned.a] + uvs[edgeToBeAligned.b]) / 2f;
 
 			Vector2 diff = f1_center - f2_center;
 
@@ -546,7 +546,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 					if( Mathf.Abs(transform.scale.sqrMagnitude - 2f) > .1f )
 						uv.scale = transform.scale;
-					
+
 					faces[i].uv = uv;
 				}
 			}

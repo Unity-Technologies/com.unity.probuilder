@@ -87,8 +87,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			int c = 0;
 			for(int i = 0; i < validEdges.Count; i++)
 			{
-				allEdgeIndices[c++] = validEdges[i].x;
-				allEdgeIndices[c++] = validEdges[i].y;
+				allEdgeIndices[c++] = validEdges[i].a;
+				allEdgeIndices[c++] = validEdges[i].b;
 			}
 
 			List<Edge> extrudedIndices = new List<Edge>();
@@ -103,26 +103,26 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				Face face = edgeFaces[i];
 
 				// Averages the normals using only vertices that are on the edge
-				Vector3 xnorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndices( sharedIndices[lookup[edge.x]], allEdgeIndices, oNormals ) : Math.Normal(mesh, face);
-				Vector3 ynorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndices( sharedIndices[lookup[edge.y]], allEdgeIndices, oNormals ) : Math.Normal(mesh, face);
+				Vector3 xnorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndices( sharedIndices[lookup[edge.a]], allEdgeIndices, oNormals ) : Math.Normal(mesh, face);
+				Vector3 ynorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndices( sharedIndices[lookup[edge.b]], allEdgeIndices, oNormals ) : Math.Normal(mesh, face);
 
-				int x_sharedIndex = lookup[edge.x];
-				int y_sharedIndex = lookup[edge.y];
+				int x_sharedIndex = lookup[edge.a];
+				int y_sharedIndex = lookup[edge.b];
 
 				Face newFace = mesh.AppendFace(
 					new Vector3[4]
 					{
-						localVerts [ edge.x ],
-						localVerts [ edge.y ],
-						localVerts [ edge.x ] + xnorm.normalized * distance,
-						localVerts [ edge.y ] + ynorm.normalized * distance
+						localVerts [ edge.a ],
+						localVerts [ edge.b ],
+						localVerts [ edge.a ] + xnorm.normalized * distance,
+						localVerts [ edge.b ] + ynorm.normalized * distance
 					},
 					new Color[4]
 					{
-						mesh.colorsInternal[ edge.x ],
-						mesh.colorsInternal[ edge.y ],
-						mesh.colorsInternal[ edge.x ],
-						mesh.colorsInternal[ edge.y ]
+						mesh.colorsInternal[ edge.a ],
+						mesh.colorsInternal[ edge.b ],
+						mesh.colorsInternal[ edge.a ],
+						mesh.colorsInternal[ edge.b ]
 					},
 					new Vector2[4],
 					new Face( new int[6] {2, 1, 0, 2, 3, 1 }, face.material, new AutoUnwrapSettings(), 0, -1, -1, false ),
@@ -141,15 +141,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			{
 				for(int i = 0; i < extrudedIndices.Count; i++)
 				{
-					int val = extrudedIndices[i].x;
+					int val = extrudedIndices[i].a;
 					for(int n = 0; n < extrudedIndices.Count; n++)
 					{
 						if(n == i)
 							continue;
 
-						if(extrudedIndices[n].x == val)
+						if(extrudedIndices[n].a == val)
 						{
-							IntArrayUtility.MergeSharedIndices(ref sharedIndices, extrudedIndices[n].y, extrudedIndices[i].y);
+							IntArrayUtility.MergeSharedIndices(ref sharedIndices, extrudedIndices[n].b, extrudedIndices[i].b);
 							break;
 						}
 					}
@@ -259,7 +259,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				for(int i = 0; i < edges.Length; i++)
 				{
 					int vc = vertices.Count;
-					int x = edges[i].x, y = edges[i].y;
+					int x = edges[i].a, y = edges[i].b;
 
 					if( !used.ContainsKey(x) )
 					{
@@ -365,7 +365,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					Face face = edgeAndFace.Value;
 
 					int vc = vertices.Count;
-					int x = edge.local.x, y = edge.local.y;
+					int x = edge.local.a, y = edge.local.b;
 
 					if( !oldSharedMap.ContainsKey(x) )
 					{
@@ -528,7 +528,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			{
 				foreach(Edge edge in face.edgesInternal)
 				{
-					EdgeLookup e = new EdgeLookup(lookup[edge.x], lookup[edge.y], edge.x, edge.y);
+					EdgeLookup e = new EdgeLookup(lookup[edge.a], lookup[edge.b], edge.a, edge.b);
 
 					if(!used.Add(e))
 					{

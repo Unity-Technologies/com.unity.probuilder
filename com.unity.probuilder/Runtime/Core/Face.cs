@@ -308,21 +308,21 @@ namespace UnityEngine.ProBuilder
             if (indices == null || indices.Length != 6)
                 return null;
 
-			int[] quad = new int[4] { edgesInternal[0].x, edgesInternal[0].y, -1, -1 };
+			int[] quad = new int[4] { edgesInternal[0].a, edgesInternal[0].b, -1, -1 };
 
-			if(edgesInternal[1].x == quad[1])
-				quad[2] = edgesInternal[1].y;
-			else if(edgesInternal[2].x == quad[1])
-				quad[2] = edgesInternal[2].y;
-			else if(edgesInternal[3].x == quad[1])
-				quad[2] = edgesInternal[3].y;
+			if(edgesInternal[1].a == quad[1])
+				quad[2] = edgesInternal[1].b;
+			else if(edgesInternal[2].a == quad[1])
+				quad[2] = edgesInternal[2].b;
+			else if(edgesInternal[3].a == quad[1])
+				quad[2] = edgesInternal[3].b;
 
-			if(edgesInternal[1].x == quad[2])
-				quad[3] = edgesInternal[1].y;
-			else if(edgesInternal[2].x == quad[2])
-				quad[3] = edgesInternal[2].y;
-			else if(edgesInternal[3].x == quad[2])
-				quad[3] = edgesInternal[3].y;
+			if(edgesInternal[1].a == quad[2])
+				quad[3] = edgesInternal[1].b;
+			else if(edgesInternal[2].a == quad[2])
+				quad[3] = edgesInternal[2].b;
+			else if(edgesInternal[3].a == quad[2])
+				quad[3] = edgesInternal[3].b;
 
 			return quad;
 		}

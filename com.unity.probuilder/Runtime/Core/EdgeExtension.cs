@@ -21,7 +21,7 @@ namespace UnityEngine.ProBuilder
 			int ec = edges.Count;
 			Edge[] uni = new Edge[ec];
 			for(var i = 0; i < ec; i++)
-				uni[i] = new Edge( sharedIndicesLookup[edges[i].x], sharedIndicesLookup[edges[i].y] );
+				uni[i] = new Edge( sharedIndicesLookup[edges[i].a], sharedIndicesLookup[edges[i].b] );
 
 			return uni;
 		}
@@ -46,7 +46,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		internal static Edge GetLocalEdgeFast(Edge edge, IntArray[] sharedIndices)
 		{
-			return new Edge(sharedIndices[edge.x][0], sharedIndices[edge.y][0]);
+			return new Edge(sharedIndices[edge.a][0], sharedIndices[edge.b][0]);
 		}
 
 		/// <summary>
@@ -63,13 +63,13 @@ namespace UnityEngine.ProBuilder
 			Face[] faces = pb.facesInternal;
 			IntArray[] sharedIndices = pb.sharedIndicesInternal;
 
-			Edge universal = new Edge(sharedIndices.IndexOf(edge.x), sharedIndices.IndexOf(edge.y));
+			Edge universal = new Edge(sharedIndices.IndexOf(edge.a), sharedIndices.IndexOf(edge.b));
 
 			int dist_x = -1, dist_y = -1, shared_x = -1, shared_y = -1;
 			for(int i = 0; i < faces.Length; i++)
 			{
-				if( faces[i].distinctIndices.ContainsMatch(sharedIndices[universal.x].array, out dist_x, out shared_x) &&
-					faces[i].distinctIndices.ContainsMatch(sharedIndices[universal.y].array, out dist_y, out shared_y) )
+				if( faces[i].distinctIndices.ContainsMatch(sharedIndices[universal.a].array, out dist_x, out shared_x) &&
+					faces[i].distinctIndices.ContainsMatch(sharedIndices[universal.b].array, out dist_y, out shared_y) )
 				{
 					int x = faces[i].distinctIndices[dist_x];
 					int y = faces[i].distinctIndices[dist_y];
@@ -121,7 +121,7 @@ namespace UnityEngine.ProBuilder
 		{
 			for(int i = 0; i < edges.Length; i++)
 			{
-				if( (x == edges[i].x && y == edges[i].y) || (x == edges[i].y && y == edges[i].x) )
+				if( (x == edges[i].a && y == edges[i].b) || (x == edges[i].b && y == edges[i].a) )
 					return true;
 			}
 
@@ -146,8 +146,8 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < edges.Length; i++)
 			{
-				arr[n++] = edges[i].x;
-				arr[n++] = edges[i].y;
+				arr[n++] = edges[i].a;
+				arr[n++] = edges[i].b;
 			}
 			return arr;
 		}
@@ -158,8 +158,8 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < edges.Count; i++)
 			{
-				arr.Add(edges[i].x);
-				arr.Add(edges[i].y);
+				arr.Add(edges[i].a);
+				arr.Add(edges[i].b);
 			}
 			return arr;
 		}

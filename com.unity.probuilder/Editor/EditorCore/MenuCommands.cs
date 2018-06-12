@@ -827,7 +827,7 @@ namespace UnityEditor.ProBuilder
 						Edge[] inverse = new Edge[inverse_universal.Length];
 
 						for(int n = 0; n < inverse_universal.Length; n++)
-							inverse[n] = new Edge( selection[i].sharedIndicesInternal[inverse_universal[n].x][0], selection[i].sharedIndicesInternal[inverse_universal[n].y][0] );
+							inverse[n] = new Edge( selection[i].sharedIndicesInternal[inverse_universal[n].a][0], selection[i].sharedIndicesInternal[inverse_universal[n].b][0] );
 
 						selection[i].SetSelectedEdges(inverse);
 					}
@@ -1458,18 +1458,18 @@ namespace UnityEditor.ProBuilder
 						// if selecting whole path and in edge mode, make sure the path contains
 						// at least one complete edge from the selection.
 						if(	editor.selectionMode == SelectMode.Edge &&
-							!hole.Any(x => common.Contains(x.edge.common.x) &&
-							common.Contains(x.edge.common.y)))
+							!hole.Any(x => common.Contains(x.edge.common.a) &&
+							common.Contains(x.edge.common.b)))
 							continue;
 
-						holeIndices = hole.Select(x => x.edge.local.x).ToList();
+						holeIndices = hole.Select(x => x.edge.local.a).ToList();
 						face = AppendElements.CreatePolygon(pb, holeIndices, false);
 						adjacent.AddRange(hole.Select(x => x.face));
 					}
 					else
 					{
-						IEnumerable<WingedEdge> selected = hole.Where(x => common.Contains(x.edge.common.x));
-						holeIndices = selected.Select(x => x.edge.local.x).ToList();
+						IEnumerable<WingedEdge> selected = hole.Where(x => common.Contains(x.edge.common.a));
+						holeIndices = selected.Select(x => x.edge.local.a).ToList();
 						face = AppendElements.CreatePolygon(pb, holeIndices, true);
 
 						if(res)
