@@ -88,7 +88,7 @@ namespace UnityEditor.ProBuilder
 		}
 
 		/// <value>
-		/// Get the sum of all pb_Object vertex counts in the selection.
+		/// Get the number of all selected vertices across the selected ProBuilder meshes.
 		/// </value>
 		/// <remarks>
 		/// This is the ProBuilderMesh.vertexCount, not UnityEngine.Mesh.vertexCount. To get the optimized mesh vertex count,
@@ -97,18 +97,11 @@ namespace UnityEditor.ProBuilder
 		public static int totalVertexCount { get { RebuildElementCounts(); return s_TotalVertexCount; } }
 
 		/// <value>
-		/// Get the sum of all pb_Object common vertex counts in the selection.
+		/// Get the number of all selected vertices across the selected ProBuilder meshes, excluding coincident duplicates.
 		/// </value>
-		/// <remarks>
-		/// This is the pb_Object.sharedIndices, not UnityEngine.Mesh.vertexCount. To get the optimized mesh vertex count,
-		/// see `totalVertexCountOptimized` for the vertex count as is rendered in the scene.
-		/// </remarks>
 		public static int totalCommonVertexCount { get { RebuildElementCounts(); return s_TotalCommonVertexCount; } }
 
-		/// <value>
-		/// Get the sum of all selected ProBuilder mesh vertex counts. This value reflects the actual vertex count per UnityEngine.Mesh.
-		/// </value>
-		public static int totalVertexCountOptimized { get { RebuildElementCounts(); return s_TotalVertexCountCompiled; } }
+		internal static int totalVertexCountOptimized { get { RebuildElementCounts(); return s_TotalVertexCountCompiled; } }
 
 		/// <value>
 		/// Sum of all selected ProBuilderMesh face counts.

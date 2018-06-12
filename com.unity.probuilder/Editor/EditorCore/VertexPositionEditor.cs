@@ -48,7 +48,7 @@ namespace UnityEditor.ProBuilder
 			EVEN = EditorGUIUtility.isProSkin ? new Color(.18f, .18f, .18f, 1f) : new Color(.85f, .85f, .85f, 1f);
 			ODD = EditorGUIUtility.isProSkin ? new Color(.15f, .15f, .15f, 1f) : new Color(.80f, .80f, .80f, 1f);
 
-			ProBuilderEditor.meshElementsUpdated += OnSelectionUpdate;
+			ProBuilderEditor.selectionUpdated += OnSelectionUpdate;
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
 
 			if(ProBuilderEditor.instance != null)
@@ -57,7 +57,7 @@ namespace UnityEditor.ProBuilder
 
 		void OnDisable()
 		{
-			ProBuilderEditor.meshElementsUpdated -= OnSelectionUpdate;
+			ProBuilderEditor.selectionUpdated -= OnSelectionUpdate;
 			SceneView.onSceneGUIDelegate -= OnSceneGUI;
 		}
 

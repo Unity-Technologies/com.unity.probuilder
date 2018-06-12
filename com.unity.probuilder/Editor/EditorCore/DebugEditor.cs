@@ -40,8 +40,8 @@ namespace UnityEditor.ProBuilder
 
 			SceneView.onSceneGUIDelegate -= OnSceneGUI;
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
-			ProBuilderEditor.meshElementsUpdated += OnSelectionUpdate;
-			ProBuilderEditor.meshElementsFinishEditing += OnSelectionUpdate;
+			ProBuilderEditor.selectionUpdated += OnSelectionUpdate;
+			ProBuilderEditor.afterMeshModification += OnSelectionUpdate;
 
 			m_LineRenderer = new SceneViewLineRenderer();
 		}
@@ -50,8 +50,8 @@ namespace UnityEditor.ProBuilder
 		{
 			m_LineRenderer.Dispose();
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
-			ProBuilderEditor.meshElementsUpdated -= OnSelectionUpdate;
-			ProBuilderEditor.meshElementsFinishEditing -= OnSelectionUpdate;
+			ProBuilderEditor.selectionUpdated -= OnSelectionUpdate;
+			ProBuilderEditor.afterMeshModification -= OnSelectionUpdate;
 		}
 
 		void OnSelectionUpdate(ProBuilderMesh[] selection)

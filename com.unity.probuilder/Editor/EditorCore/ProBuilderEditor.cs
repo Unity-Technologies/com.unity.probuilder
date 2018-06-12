@@ -23,17 +23,17 @@ namespace UnityEditor.ProBuilder
 		/// <value>
 		/// Raised any time the ProBuilder editor refreshes the selection. This is called every frame when interacting with mesh elements, and after any mesh operation.
 		/// </value>
-		public static event Action<ProBuilderMesh[]> meshElementsUpdated;
+		public static event Action<ProBuilderMesh[]> selectionUpdated;
 
         /// <value>
         /// Called when vertex modifications are complete.
         /// </value>
-        public static event Action<ProBuilderMesh[]> meshElementsFinishEditing;
+        public static event Action<ProBuilderMesh[]> afterMeshModification;
 
         /// <value>
         /// Called immediately prior to beginning vertex modifications. The ProBuilderMesh will be in un-altered state at this point (meaning ProBuilderMesh.ToMesh and ProBuilderMesh.Refresh have been called, but not Optimize).
         /// </value>
-        public static event Action<ProBuilderMesh[]> meshElementsBeginEditing;
+        public static event Action<ProBuilderMesh[]> beforeMeshModification;
 
 		/// <value>
 		/// Raised when the EditLevel is changed.
@@ -232,7 +232,7 @@ namespace UnityEditor.ProBuilder
 
 			ProGridsToolbarOpen(ProGridsInterface.SceneToolbarIsExtended());
 
-			MeshSelection.onObjectSelectionChanged += OnObjectSelectionChanged;
+			MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
 
 #if !UNITY_2018_2_OR_NEWER
 			s_ResetOnSceneGUIState = typeof(SceneView).GetMethod("ResetOnSceneGUIState", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -264,13 +264,13 @@ namespace UnityEditor.ProBuilder
 
 			MeshHandles.Destroy();
 
-			if (meshElementsUpdated != null)
-				meshElementsUpdated(null);
+			if (selectionUpdated != null)
+				selectionUpdated(null);
 
 			ProGridsInterface.UnsubscribePushToGridEvent(PushToGrid);
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 			PreferencesInternal.SetInt(PreferenceKeys.pbHandleAlignment, (int) handleAlignment);
-			MeshSelection.onObjectSelectionChanged -= OnObjectSelectionChanged;
+			MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
 
 			// re-enable unity wireframe
 			// todo set wireframe override in pb_Selection, no pb_Editor
@@ -1690,8 +1690,8 @@ namespace UnityEditor.ProBuilder
 			UpdateTextureHandles();
 			m_HandleRotation = handleRotation;
 
-			if (meshElementsUpdated != null)
-				meshElementsUpdated(selection);
+			if (selectionUpdated != null)
+				selectionUpdated(selection);
 
 			UpdateSceneInfo();
 		}
@@ -1756,8 +1756,8 @@ namespace UnityEditor.ProBuilder
 			UpdateHandleRotation();
 			m_HandleRotation = handleRotation;
 
-			if (meshElementsUpdated != null)
-				meshElementsUpdated(selection);
+			if (selectionUpdated != null)
+				selectionUpdated(selection);
 
 			UpdateSceneInfo();
 		}
@@ -2018,8 +2018,8 @@ namespace UnityEditor.ProBuilder
 				pb.Refresh();
 			}
 
-			if (meshElementsBeginEditing != null)
-				meshElementsBeginEditing(selection);
+			if (beforeMeshModification != null)
+				beforeMeshModification(selection);
 		}
 
 		void OnFinishVertexModification()
@@ -2050,8 +2050,8 @@ namespace UnityEditor.ProBuilder
 				m_IsMovingElements = false;
 			}
 
-			if (meshElementsFinishEditing != null)
-				meshElementsFinishEditing(selection);
+			if (afterMeshModification != null)
+				afterMeshModification(selection);
 		}
 
 		/// <summary>
