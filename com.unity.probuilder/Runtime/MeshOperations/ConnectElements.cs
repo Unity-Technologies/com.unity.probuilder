@@ -62,7 +62,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="mesh">The target mesh.</param>
 		/// <param name="indexes">A list of indices (corresponding to the @"UnityEngine.ProBuilder.ProBuilderMesh.positions" array) to connect with new edges.</param>
-		/// <returns>A list of newly created vertex indices.</returns>
+		/// <returns>Because this function may modify the ordering of the positions array, a new array containing the equivalent values of the passed connected indexes is returned.</returns>
 		public static int[] Connect(this ProBuilderMesh mesh, IList<int> indexes)
 		{
             if (mesh == null)

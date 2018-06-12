@@ -173,7 +173,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="indexes">The indices of the vertices to join with the new polygon.</param>
-        /// <param name="unordered">Are the indexes in an ordered path (false), or not (true)?</param>
+        /// <param name="unordered">Are the indexes in an ordered path (false), or not (true)? If indexes are not ordered this function will treat the polygon as a convex shape. Ordered paths will be triangulated allowing concave shapes.</param>
         /// <returns>The new face created if the action was successfull, null if action failed.</returns>
         public static Face CreatePolygon(this ProBuilderMesh mesh, IList<int> indexes, bool unordered)
 		{

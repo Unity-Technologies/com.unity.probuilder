@@ -52,22 +52,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
             set { m_SmoothingThreshold = value; }
         }
 
-        /// <value>
-        /// Basic mesh import settings. Imports quads, and smoothes faces with a threshold of 1 degree.
-        /// </value>
-        public static MeshImportSettings Default
-        {
-            get
-            {
-                return new MeshImportSettings()
-                {
-                    m_Quads = true,
-                    m_Smoothing = true,
-                    m_SmoothingThreshold = 1f
-                };
-            }
-        }
-
         public override string ToString()
         {
             return string.Format("quads: {0}\nsmoothing: {1}\nthreshold: {2}",
@@ -107,7 +91,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="gameObject">The GameObject to search for MeshFilter and MeshRenderer data.</param>
 		/// <param name="importSettings">Optional settings parameter defines import customization properties.</param>
 		/// <returns>True if the mesh data was successfully translated to the ProBuilderMesh target, false if something went wrong.</returns>
-		public bool Import(GameObject gameObject, MeshImportSettings importSettings = null)
+		internal bool Import(GameObject gameObject, MeshImportSettings importSettings = null)
 		{
             if (gameObject == null)
                 throw new ArgumentNullException("gameObject");
@@ -131,7 +115,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="materials">The materials array corresponding to the originalMesh submeshes.</param>
 		/// <param name="importSettings">Optional settings parameter defines import customization properties.</param>
 		/// <returns>True if the mesh data was successfully translated to the ProBuilderMesh target, false if something went wrong.</returns>
-		/// <exception cref="NotImplementedException">Import only supports triangle and quad mesh topologies.</exception>
+		/// <exception cref="NotSupportedException">Import only supports triangle and quad mesh topologies.</exception>
 		public bool Import(Mesh originalMesh, Material[] materials, MeshImportSettings importSettings = null)
 		{
             if (originalMesh == null)
@@ -212,7 +196,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					break;
 
 					default:
-						throw new System.NotImplementedException("ProBuilder only supports importing triangle and quad meshes.");
+						throw new System.NotSupportedException("ProBuilder only supports importing triangle and quad meshes.");
 				}
 			}
 
