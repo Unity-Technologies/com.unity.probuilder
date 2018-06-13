@@ -24,7 +24,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			Dictionary<int, int> lookup = mesh.sharedIndicesInternal.ToDictionary();
+			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
 			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(mesh));
 			List<EdgeLookup> m_edges = EdgeLookup.GetEdgeLookup(edges, lookup).Distinct().ToList();
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh);
@@ -150,7 +150,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			mesh.SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(mesh.positionsInternal));
 
 			// @todo don't rebuild sharedindices, keep 'em cached
-			IntArray[] sharedIndices = mesh.sharedIndicesInternal;
+			IntArray[] sharedIndices = mesh.sharedIndexesInternal;
 			lookup = sharedIndices.ToDictionary();
 			List<HashSet<int>> holesCommonIndices = new List<HashSet<int>>();
 
@@ -269,7 +269,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
  				vertices[a.common.a == b.common.a ? b.local.b : b.local.a]
  			};
 
- 			Vector3 an = Math.Normal(vertices, left.face.indices);
+ 			Vector3 an = Math.Normal(vertices, left.face.indexesInternal);
  			Vector3 bn = Math.Normal(rf.vertices, BRIDGE_INDICES_NRM);
 
  			int[] triangles = new int[] { 2, 1, 0, 2, 3, 1 };

@@ -9,7 +9,7 @@ namespace UnityEngine.ProBuilder
 {
 	/// <inheritdoc />
 	/// <summary>
-	/// Defines associations between vertex indices that are coincident.
+	/// Defines associations between vertex indexes that are coincident.
 	/// <br />
 	/// <br />
 	/// Coincident vertexes are vertexes that despite sharing the same coordinate position, are separate entries in the vertex array.
@@ -18,7 +18,7 @@ namespace UnityEngine.ProBuilder
 	public sealed class IntArray : IEnumerable<int>
 	{
 		/// <summary>
-		/// An array of vertex indices that are coincident.
+		/// An array of vertex indexes that are coincident.
 		/// </summary>
 		[SerializeField]
 		internal int[] array;

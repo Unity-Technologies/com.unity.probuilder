@@ -56,13 +56,13 @@ namespace UnityEngine.ProBuilder
 		/// Snap all vertices to an increment of @snapValue in world space.
 		/// </summary>
 		/// <param name="pb"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <param name="snap"></param>
-		public static void SnapVertices(ProBuilderMesh pb, IList<int> indices, Vector3 snap)
+		public static void SnapVertices(ProBuilderMesh pb, IList<int> indexes, Vector3 snap)
 		{
 			Vector3[] verts = pb.positionsInternal;
-			for(int n = 0; n < indices.Count; n++)
-				verts[indices[n]] = pb.transform.InverseTransformPoint(SnapValue(pb.transform.TransformPoint(verts[indices[n]]), snap));
+			for(int n = 0; n < indexes.Count; n++)
+				verts[indexes[n]] = pb.transform.InverseTransformPoint(SnapValue(pb.transform.TransformPoint(verts[indexes[n]]), snap));
 		}
 	}
 }

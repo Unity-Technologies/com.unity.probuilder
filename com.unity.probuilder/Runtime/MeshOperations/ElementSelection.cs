@@ -21,7 +21,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		internal static List<SimpleTuple<Face, Edge>> GetNeighborFaces(ProBuilderMesh pb, Edge edge, Dictionary<int, int> lookup = null)
 		{
 			if(lookup == null)
-				lookup = pb.sharedIndicesInternal.ToDictionary();
+				lookup = pb.sharedIndexesInternal.ToDictionary();
 
 			List<SimpleTuple<Face, Edge>> faces = new List<SimpleTuple<Face, Edge>>();
 
@@ -64,7 +64,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			for(int i = 0; i < pb.facesInternal.Length; i++)
 			{
-				int[] dist = pb.facesInternal[i].distinctIndices;
+				int[] dist = pb.facesInternal[i].distinctIndexesInternal;
 
 				for(int n = 0; n < dist.Length; n++)
 				{
@@ -87,7 +87,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns></returns>
 		internal static Edge[] GetConnectedEdges(ProBuilderMesh pb, int[] indices)
 		{
-			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
+			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
 
 			List<Edge> connectedEdges = new List<Edge>();
 
@@ -124,7 +124,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
-			return GetPerimeterEdges(faces, mesh.sharedIndicesInternal.ToDictionary());
+			return GetPerimeterEdges(faces, mesh.sharedIndexesInternal.ToDictionary());
 		}
 
 		/// <summary>
@@ -177,7 +177,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				return new int[] {};
 
 			// Figure out how many connections each edge has to other edges in the selection
-			Edge[] universal = EdgeExtension.GetUniversalEdges(edges, mesh.sharedIndicesInternal.ToDictionary());
+			Edge[] universal = EdgeExtension.GetUniversalEdges(edges, mesh.sharedIndexesInternal.ToDictionary());
 			int[] connections = new int[universal.Length];
 
 			for(int i = 0; i < universal.Length - 1; i++)
@@ -213,7 +213,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns></returns>
 		internal static IEnumerable<Face> GetPerimeterFaces(ProBuilderMesh pb, IEnumerable<Face> faces)
 		{
-			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
+			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
 			Dictionary<Edge, List<Face>> sharedEdges = new Dictionary<Edge, List<Face>>();
 
 			/**
@@ -247,7 +247,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		internal static int[] GetPerimeterVertices(ProBuilderMesh pb, int[] indices, Edge[] universal_edges_all)
 		{
 			int len = indices.Length;
-			IntArray[] sharedIndices = pb.sharedIndicesInternal;
+			IntArray[] sharedIndices = pb.sharedIndexesInternal;
 			int[] universal = new int[len];
 
 			for(int i = 0; i < len; i++)
@@ -312,7 +312,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		internal static IEnumerable<Edge> GetEdgeRing(ProBuilderMesh pb, IEnumerable<Edge> edges)
 		{
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
-			List<EdgeLookup> edgeLookup = EdgeLookup.GetEdgeLookup(edges, pb.sharedIndicesInternal.ToDictionary()).ToList();
+			List<EdgeLookup> edgeLookup = EdgeLookup.GetEdgeLookup(edges, pb.sharedIndexesInternal.ToDictionary()).ToList();
 			edgeLookup = edgeLookup.Distinct().ToList();
 
 			Dictionary<Edge, WingedEdge> wings_dic = new Dictionary<Edge, WingedEdge>();
@@ -370,7 +370,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		internal static bool GetEdgeLoop(ProBuilderMesh pb, IEnumerable<Edge> edges, out Edge[] loop)
 		{
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
-			IEnumerable<EdgeLookup> m_edgeLookup = EdgeLookup.GetEdgeLookup(edges, pb.sharedIndicesInternal.ToDictionary());
+			IEnumerable<EdgeLookup> m_edgeLookup = EdgeLookup.GetEdgeLookup(edges, pb.sharedIndexesInternal.ToDictionary());
 			HashSet<EdgeLookup> sources = new HashSet<EdgeLookup>(m_edgeLookup);
 			HashSet<EdgeLookup> used = new HashSet<EdgeLookup>();
 
@@ -692,8 +692,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns></returns>
 		internal static List<List<Edge>> FindHoles(ProBuilderMesh pb, IEnumerable<int> indices)
 		{
-			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
-			HashSet<int> common = IntArrayUtility.GetCommonIndices(lookup, indices);
+			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
+			HashSet<int> common = IntArrayUtility.GetCommonIndexes(lookup, indices);
 			List<List<Edge>> holes = new List<List<Edge>>();
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
 

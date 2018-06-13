@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace UnityEngine.ProBuilder
 {
 	/// <summary>
-	/// An edge connecting two vertices. May point to an index in the vertices or the sharedIndices array (local / common in ProBuilder terminology).
+	/// An edge connecting two vertices. May point to an index in the vertices or the sharedIndexes array (local / common in ProBuilder terminology).
 	/// </summary>
 	[System.Serializable]
 	public struct Edge : System.IEquatable<Edge>
@@ -26,7 +26,7 @@ namespace UnityEngine.ProBuilder
 		public static readonly Edge Empty = new Edge(-1, -1);
 
 		/// <summary>
-		/// Create a new edge from two vertex indices.
+		/// Create a new edge from two vertex indexes.
 		/// </summary>
 		/// <param name="a">An index corresponding to a mesh vertex array.</param>
 		/// <param name="b">An index corresponding to a mesh vertex array.</param>
@@ -37,7 +37,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Test if this edge points to valid vertex indices.
+		/// Test if this edge points to valid vertex indexes.
 		/// </summary>
 		/// <returns>True if x and y are both greater than -1.</returns>
 		public bool IsValid()
@@ -55,7 +55,7 @@ namespace UnityEngine.ProBuilder
 			return (a == other.a && b == other.b) || (a == other.b && b == other.a);
 		}
 
-		public override bool Equals(System.Object obj)
+		public override bool Equals(object obj)
 		{
 			return obj is Edge && Equals((Edge) obj);
 		}
@@ -135,42 +135,42 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Compares edges and takes shared triangles into account.
 		/// </summary>
-		/// <param name="b">The edge to compare against</param>
-		/// <param name="lookup">A common vertex indices lookup dictionary. See pb_IntArray for more information.</param>
-		/// <remarks>Generally you just pass pb.sharedIndices.ToDictionary() to lookup, but it's more effecient to do it once and reuse that dictionary if possible.</remarks>
-		/// <returns>True if edges are perceptually equal (that is, they point to the same common indices).</returns>
-		public bool Equals(Edge b, Dictionary<int, int> lookup)
+		/// <param name="other">The edge to compare against.</param>
+		/// <param name="lookup">A common vertex indexes lookup dictionary. See pb_IntArray for more information.</param>
+		/// <remarks>Generally you just pass ProBuilderMesh.sharedIndexes.ToDictionary() to lookup, but it's more efficient to do it once and reuse that dictionary if possible.</remarks>
+		/// <returns>True if edges are perceptually equal (that is, they point to the same common indexes).</returns>
+		public bool Equals(Edge other, Dictionary<int, int> lookup)
 		{
             if (lookup == null)
-                return Equals(b);
-			int x0 = lookup[a], y0 = lookup[this.b], x1 = lookup[b.a], y1 = lookup[b.b];
+                return Equals(other);
+			int x0 = lookup[a], y0 = lookup[b], x1 = lookup[other.a], y1 = lookup[other.b];
 			return (x0 == x1 && y0 == y1) || (x0 == y1 && y0 == x1);
 		}
 
 		/// <summary>
 		/// Does this edge contain an index?
 		/// </summary>
-		/// <param name="a">The index to compare against x and y.</param>
+		/// <param name="index">The index to compare against x and y.</param>
 		/// <returns>True if x or y is equal to a. False if not.</returns>
-		public bool Contains(int a)
+		public bool Contains(int index)
 		{
-			return (this.a == a || b == a);
+			return (a == index || b == index);
 		}
 
 		/// <summary>
 		/// Does this edge have any matching index to edge b?
 		/// </summary>
-		/// <param name="b">The edge to compare against.</param>
+		/// <param name="other">The edge to compare against.</param>
 		/// <returns>True if x or y matches either b.x or b.y.</returns>
-		public bool Contains(Edge b)
+		public bool Contains(Edge other)
 		{
-			return (a == b.a || this.b == b.a || a == b.b || this.b == b.a);
+			return (a == other.a || b == other.a || a == other.b || b == other.a);
 		}
 
-		internal bool Contains(int a, IntArray[] sharedIndices)
+		internal bool Contains(int index, IntArray[] sharedIndices)
 		{
 			// @todo optimize
-			int ind = sharedIndices.IndexOf(a);
+			int ind = sharedIndices.IndexOf(index);
 			return ( System.Array.IndexOf(sharedIndices[ind], this.a) > -1 || System.Array.IndexOf(sharedIndices[ind], b) > -1);
 		}
 	}

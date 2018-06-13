@@ -16,7 +16,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Averages shared normals with the mask of all (indices contained in perimeter edge)
 		/// </summary>
-		internal static Vector3 AverageNormalWithIndices(int[] shared, int[] all, Vector3[] norm )
+		internal static Vector3 AverageNormalWithIndexes(int[] shared, int[] all, Vector3[] norm )
 		{
 			Vector3 n = Vector3.zero;
 			int count = 0;
@@ -115,7 +115,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			combined.SetColors(c.ToArray());
 			combined.SetFaces(f.ToArray());
 
-			combined.sharedIndicesInternal = s.ToArray();
+			combined.sharedIndexesInternal = s.ToArray();
 			combined.SetSharedIndexesUV(suv.ToArray());
 			combined.ToMesh();
 			combined.CenterPivot( pbs[0].transform.position );
@@ -157,9 +157,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					{
 						for(int j = 0; j < faces.Count; j++)
 						{
-							if(	faces[j].distinctIndices.Contains(tris[i+0]) ||
-								faces[j].distinctIndices.Contains(tris[i+1]) ||
-								faces[j].distinctIndices.Contains(tris[i+2]))
+							if(	faces[j].distinctIndexesInternal.Contains(tris[i+0]) ||
+								faces[j].distinctIndexesInternal.Contains(tris[i+1]) ||
+								faces[j].distinctIndexesInternal.Contains(tris[i+2]))
 							{
 								index = j;
 								break;
@@ -169,13 +169,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 					if(index > -1 && preserveFaces)
 					{
-						int len = faces[index].indices.Length;
+						int len = faces[index].indexesInternal.Length;
 						int[] arr = new int[len + 3];
-						System.Array.Copy(faces[index].indices, 0, arr, 0, len);
+						System.Array.Copy(faces[index].indexesInternal, 0, arr, 0, len);
 						arr[len+0] = tris[i+0];
 						arr[len+1] = tris[i+1];
 						arr[len+2] = tris[i+2];
-						faces[index].indices = arr;
+						faces[index].indexesInternal = arr;
 					}
 					else
 					{
@@ -287,9 +287,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					{
 						for(int j = 0; j < faces.Count; j++)
 						{
-							if(	faces[j].distinctIndices.Contains(tris[i+0]) ||
-								faces[j].distinctIndices.Contains(tris[i+1]) ||
-								faces[j].distinctIndices.Contains(tris[i+2]))
+							if(	faces[j].distinctIndexesInternal.Contains(tris[i+0]) ||
+								faces[j].distinctIndexesInternal.Contains(tris[i+1]) ||
+								faces[j].distinctIndexesInternal.Contains(tris[i+2]))
 							{
 								index = j;
 								break;
@@ -299,13 +299,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 					if(index > -1 && preserveFaces)
 					{
-						int len = faces[index].indices.Length;
+						int len = faces[index].indexesInternal.Length;
 						int[] arr = new int[len + 3];
-						System.Array.Copy(faces[index].indices, 0, arr, 0, len);
+						System.Array.Copy(faces[index].indexesInternal, 0, arr, 0, len);
 						arr[len+0] = tris[i+0];
 						arr[len+1] = tris[i+1];
 						arr[len+2] = tris[i+2];
-						faces[index].indices = arr;
+						faces[index].indexesInternal = arr;
 					}
 					else
 					{
@@ -354,7 +354,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			pb.positionsInternal = verts.ToArray();
 			pb.texturesInternal = uvs.ToArray();
 			pb.facesInternal = faces.ToArray();
-			pb.sharedIndicesInternal = IntArrayUtility.GetSharedIndexesWithPositions(verts.ToArray());
+			pb.sharedIndexesInternal = IntArrayUtility.GetSharedIndexesWithPositions(verts.ToArray());
 			pb.colorsInternal = cols.ToArray();
 
 			return true;

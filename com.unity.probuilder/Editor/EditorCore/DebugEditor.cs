@@ -236,7 +236,7 @@ namespace UnityEditor.ProBuilder
 									GUILayout.BeginVertical();
 									for(int i = 0; i < m.subMeshCount; i++)
 									{
-										GUILayout.Label("Mat: " + ren.sharedMaterials[i].name + "\n" + pb.positionsInternal.ValuesWithIndices( m.GetTriangles(i) ).ToString("\n") + "\n");
+										GUILayout.Label("Mat: " + ren.sharedMaterials[i].name + "\n" + pb.positionsInternal.ValuesWithIndexes( m.GetTriangles(i) ).ToString("\n") + "\n");
 									}
 									GUILayout.EndVertical();
 								}
@@ -359,11 +359,11 @@ namespace UnityEditor.ProBuilder
 							if(pv.showSharedUV)
 							{
 								GUILayout.BeginVertical();
-								for(int i = 0; i < pb.sharedIndicesUVInternal.Length; i++)
+								for(int i = 0; i < pb.sharedIndexesUVInternal.Length; i++)
 								{
-									if(GUILayout.Button("" + pb.sharedIndicesUVInternal[i].array.ToString(", "), EditorStyles.label))
+									if(GUILayout.Button("" + pb.sharedIndexesUVInternal[i].array.ToString(", "), EditorStyles.label))
 									{
-										pb.SetSelectedVertexes(pb.sharedIndicesUVInternal[i]);
+										pb.SetSelectedVertexes(pb.sharedIndexesUVInternal[i]);
 
 										if(ProBuilderEditor.instance)
 										{
@@ -388,7 +388,7 @@ namespace UnityEditor.ProBuilder
 						GUILayout.BeginHorizontal();
 						GUILayout.Space(48);
 							if(pv.showSharedTris)
-								GUILayout.Label("" + pb.sharedIndicesInternal.ToString("\n"));
+								GUILayout.Label("" + pb.sharedIndexesInternal.ToString("\n"));
 						GUILayout.EndHorizontal();
 					}
 				}
@@ -424,7 +424,7 @@ namespace UnityEditor.ProBuilder
 
 		void DrawTriangleInfo(ProBuilderMesh pb)
 		{
-			IntArray[] sharedIndices = pb.sharedIndicesInternal;
+			IntArray[] sharedIndices = pb.sharedIndexesInternal;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 			Vector3[] vertices = pb.positionsInternal;
 			Camera cam = SceneView.lastActiveSceneView.camera;
@@ -483,7 +483,7 @@ namespace UnityEditor.ProBuilder
 
 		void DrawEdgeInfo(ProBuilderMesh pb)
 		{
-			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
+			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
 			Edge[] source = selectedOnly ? pb.selectedEdges.ToArray() : pb.facesInternal.SelectMany(x => x.edgesInternal).ToArray();
 			IEnumerable<EdgeLookup> edges = EdgeLookup.GetEdgeLookup(source, lookup);
 			Camera cam = SceneView.lastActiveSceneView.camera;
@@ -523,14 +523,14 @@ namespace UnityEditor.ProBuilder
 		void DrawFaceInfo(ProBuilderMesh pb)
 		{
 			Face[] faces = selectedOnly ? pb.GetSelectedFaces() : pb.facesInternal;
-			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
+			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
 			Camera cam = SceneView.lastActiveSceneView.camera;
 
 			int labelCount = 0;
 
 			foreach(Face f in faces)
 			{
-				Vector3 point = pb.transform.TransformPoint( Math.Average(pb.positionsInternal, f.distinctIndices) );
+				Vector3 point = pb.transform.TransformPoint( Math.Average(pb.positionsInternal, f.distinctIndexesInternal) );
 
 				if( testOcclusion && UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, pb, point) )
 					continue;
@@ -543,14 +543,14 @@ namespace UnityEditor.ProBuilder
 				{
 					if(faceIndexFormat == IndexFormat.Both) sb.Append("local: ");
 
-					for(int i = 0; i < f.indices.Length; i+=3)
+					for(int i = 0; i < f.indexesInternal.Length; i+=3)
 					{
 						sb.Append("[");
-						sb.Append(f.indices[i+0]);
+						sb.Append(f.indexesInternal[i+0]);
 						sb.Append(", ");
-						sb.Append(f.indices[i+1]);
+						sb.Append(f.indexesInternal[i+1]);
 						sb.Append(", ");
-						sb.Append(f.indices[i+2]);
+						sb.Append(f.indexesInternal[i+2]);
 						sb.Append("] ");
 					}
 				}
@@ -562,14 +562,14 @@ namespace UnityEditor.ProBuilder
 				{
 					if(faceIndexFormat == IndexFormat.Both) sb.Append("common: ");
 
-					for(int i = 0; i < f.indices.Length; i+=3)
+					for(int i = 0; i < f.indexesInternal.Length; i+=3)
 					{
 						sb.Append("[");
-						sb.Append(lookup[f.indices[i+0]]);
+						sb.Append(lookup[f.indexesInternal[i+0]]);
 						sb.Append(", ");
-						sb.Append(lookup[f.indices[i+1]]);
+						sb.Append(lookup[f.indexesInternal[i+1]]);
 						sb.Append(", ");
-						sb.Append(lookup[f.indices[i+2]]);
+						sb.Append(lookup[f.indexesInternal[i+2]]);
 						sb.Append("] ");
 					}
 				}
@@ -631,9 +631,9 @@ namespace UnityEditor.ProBuilder
 			int vertexCount = selectedOnly ? pb.selectedVertexCount : pb.mesh.vertexCount;
 
 			var indices = pb.selectedVertices.ToArray();
-			Vector3[] vertices = selectedOnly ? UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndices<Vector3>(pb.mesh.vertices, indices) : pb.mesh.vertices;
-			Vector3[] normals  = selectedOnly ? UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndices<Vector3>(pb.mesh.normals, indices) : pb.mesh.normals;
-			Vector4[] tangents = selectedOnly ? UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndices<Vector4>(pb.mesh.tangents, indices) : pb.mesh.tangents;
+			Vector3[] vertices = selectedOnly ? UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndexes<Vector3>(pb.mesh.vertices, indices) : pb.mesh.vertices;
+			Vector3[] normals  = selectedOnly ? UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndexes<Vector3>(pb.mesh.normals, indices) : pb.mesh.normals;
+			Vector4[] tangents = selectedOnly ? UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndexes<Vector4>(pb.mesh.tangents, indices) : pb.mesh.tangents;
 
 			Matrix4x4 matrix = pb.transform.localToWorldMatrix;
 

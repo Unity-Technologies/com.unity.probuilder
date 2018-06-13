@@ -487,22 +487,22 @@ namespace UnityEditor.ProBuilder
 
 						Color[] colors = pb.mesh.colors;
 
-						var sharedIndices = pb.sharedIndicesInternal;
+						var sharedIndexes = pb.sharedIndexesInternal;
 
 						// wrapped in try/catch because a script reload can cause the mesh
 						// to re-unwrap itself in some crazy configuration, throwing off the
 						// vertex count sync.
 						try
 						{
-							for (int i = 0; i < sharedIndices.Length; i++)
+							for (int i = 0; i < sharedIndexes.Length; i++)
 							{
-								float dist = Vector3.Distance(hit.point, pb.positionsInternal[sharedIndices[i][0]]);
+								float dist = Vector3.Distance(hit.point, pb.positionsInternal[sharedIndexes[i][0]]);
 
 								if (dist < brushSize)
 								{
-									for (int n = 0; n < sharedIndices[i].length; n++)
+									for (int n = 0; n < sharedIndexes[i].length; n++)
 									{
-										colors[sharedIndices[i][n]] = Lerp(hovering[pb][sharedIndices[i][n]], color,
+										colors[sharedIndexes[i][n]] = Lerp(hovering[pb][sharedIndexes[i][n]], color,
 											(1f - (dist / brushSize)) * brushOpacity, colorMask);
 									}
 								}

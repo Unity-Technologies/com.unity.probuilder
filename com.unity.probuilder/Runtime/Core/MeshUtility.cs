@@ -152,7 +152,7 @@ namespace UnityEngine.ProBuilder
 
 			for(int faceIndex = 0, faceCount = faces.Length; faceIndex < faceCount; faceIndex++)
 			{
-				int[] indices = faces[faceIndex].indices;
+				int[] indices = faces[faceIndex].indexesInternal;
 
 				for(var tri = 0; tri < indices.Length; tri += 3)
 				{
@@ -204,14 +204,14 @@ namespace UnityEngine.ProBuilder
 			// average the soft edge faces
 			int vertexCount = mesh.vertexCount;
 			int[] smoothGroup = new int[vertexCount];
-			IntArray[] sharedIndices = mesh.sharedIndicesInternal;
+			IntArray[] sharedIndices = mesh.sharedIndexesInternal;
 			Face[] faces = mesh.facesInternal;
 			int smoothGroupMax = 24;
 
 			// Create a lookup of each triangles smoothing group.
 			foreach(var face in faces)
 			{
-				foreach(int tri in face.distinctIndices)
+				foreach(int tri in face.distinctIndexesInternal)
 				{
 					smoothGroup[tri] = face.smoothingGroup;
 
@@ -580,7 +580,7 @@ namespace UnityEngine.ProBuilder
 			foreach (KeyValuePair<int, List<Face>> kvp in textureGroups)
 			{
 				Vector3 nrm;
-				int[] indices = kvp.Value.SelectMany(x => x.distinctIndices).ToArray();
+				int[] indices = kvp.Value.SelectMany(x => x.distinctIndexesInternal).ToArray();
 
 				if (kvp.Value.Count > 1)
 					nrm = Projection.FindBestPlane(mesh.positionsInternal, indices).normal;

@@ -65,7 +65,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			foreach(Face face in mesh.facesInternal)
 			{
-				int[] indices = face.indices;
+				int[] indices = face.indexesInternal;
 
 				for(int i = 0; i < indices.Length; i++)
 					indices[i] -= offset[indices[i]];
@@ -74,8 +74,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			// remove from sharedIndices & shift to account for deletions
-			IEnumerable<KeyValuePair<int, int>> common = mesh.sharedIndicesInternal.ToDictionary().Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
-			IEnumerable<KeyValuePair<int, int>> commonUV = mesh.sharedIndicesUVInternal.ToDictionary().Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
+			IEnumerable<KeyValuePair<int, int>> common = mesh.sharedIndexesInternal.ToDictionary().Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
+			IEnumerable<KeyValuePair<int, int>> commonUV = mesh.sharedIndexesUVInternal.ToDictionary().Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
 
 			mesh.SetVertices(vertices);
 			mesh.SetSharedIndexes(common);
@@ -123,7 +123,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			for(int i = 0; i < faces.Length; i++)
 				faces[i] = mesh.facesInternal[faceIndexes[i]];
 
-			List<int> indicesToRemove = faces.SelectMany(x => x.distinctIndices).Distinct().ToList();
+			List<int> indicesToRemove = faces.SelectMany(x => x.distinctIndexesInternal).Distinct().ToList();
 			indicesToRemove.Sort();
 
 			int vertexCount = mesh.positionsInternal.Length;
@@ -141,23 +141,23 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			// shift all other face indices down to account for moved vertex positions
 			for(var i = 0; i < nFaces.Length; i++)
 			{
-				int[] tris = nFaces[i].indices;
+				int[] tris = nFaces[i].indexesInternal;
 
 				for(var n = 0; n < tris.Length; n++)
 					tris[n] -= shiftmap[tris[n]];
 
-				nFaces[i].indices = tris;
+				nFaces[i].indexesInternal = tris;
 			}
 
 			// shift all other face indices in the shared index array down to account for moved vertex positions
-			IntArray[] si = mesh.sharedIndicesInternal;
-			IntArray[] si_uv = mesh.sharedIndicesUVInternal;
+			IntArray[] si = mesh.sharedIndexesInternal;
+			IntArray[] si_uv = mesh.sharedIndexesUVInternal;
 
 			IntArrayUtility.RemoveValuesAndShift(ref si, indicesToRemove);
 			if(si_uv != null) IntArrayUtility.RemoveValuesAndShift(ref si_uv, indicesToRemove);
 
-			mesh.sharedIndicesInternal = si;
-			mesh.sharedIndicesUVInternal = si_uv;
+			mesh.sharedIndexesInternal = si;
+			mesh.sharedIndexesUVInternal = si_uv;
 			mesh.positionsInternal = verts;
 			mesh.colorsInternal = cols;
 			mesh.texturesInternal = uvs;
@@ -178,8 +178,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			Dictionary<int, int> m_Lookup = mesh.sharedIndicesInternal.ToDictionary();
-			Dictionary<int, int> m_LookupUV = mesh.sharedIndicesUVInternal != null ? mesh.sharedIndicesUVInternal.ToDictionary() : new Dictionary<int, int>();
+			Dictionary<int, int> m_Lookup = mesh.sharedIndexesInternal.ToDictionary();
+			Dictionary<int, int> m_LookupUV = mesh.sharedIndexesUVInternal != null ? mesh.sharedIndexesUVInternal.ToDictionary() : new Dictionary<int, int>();
 			Vector3[] m_Vertices = mesh.positionsInternal;
 			Dictionary<int, int> m_RebuiltLookup = new Dictionary<int, int>();
 			Dictionary<int, int> m_RebuiltLookupUV = new Dictionary<int, int>();
@@ -189,7 +189,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			{
 				List<int> tris = new List<int>();
 
-				int[] ind = face.indices;
+				int[] ind = face.indexesInternal;
 
 				for(int i = 0; i < ind.Length; i+=3)
 				{
@@ -226,7 +226,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				if(tris.Count > 0)
 				{
-					face.indices = tris.ToArray();
+					face.indexesInternal = tris.ToArray();
 					m_RebuiltFaces.Add(face);
 				}
 			}

@@ -14,7 +14,7 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Returns a dictionary where Key is equal to triangle index, and Value is equal to the @"UnityEngine.ProBuilder.sharedIndexes" index.
 		/// <br /><br />
-		/// In this way you can quickly check which indices are sharing a vertex.
+		/// In this way you can quickly check which indexes are sharing a vertex.
 		/// </summary>
 		/// <example>
 		/// ```
@@ -100,9 +100,9 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Find the index of a vertex index (triangle) in an IntArray[]. The index returned is called the common index, or shared index in some cases.
 		/// </summary>
-		/// <remarks>Aids in removing duplicate vertex indices.</remarks>
+		/// <remarks>Aids in removing duplicate vertex indexes.</remarks>
 		/// <param name="intArray">The IntArray[] to search for a triangle value in.</param>
-		/// <param name="index">The local index, or triangle to scan for. Local indices point correspond to the mesh vertices array.</param>
+		/// <param name="index">The local index, or triangle to scan for. Local indexes correspond to the mesh positions array.</param>
 		/// <returns>The common (or shared) index.</returns>
 		public static int IndexOf(this IntArray[] intArray, int index)
 		{
@@ -119,11 +119,11 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Given a list of vertex indexes (local), return all indices that are coincident.
+		/// Given a list of vertex indexes (local), return all indexes that are coincident.
 		/// </summary>
 		/// <param name="intArray">The shared index arrays. See @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes".</param>
-		/// <param name="indexes">A collection of the vertex indices to include.</param>
-		/// <returns>A comprehensive list of all indices that are coincident with any of the indices in the indexes argument.</returns>
+		/// <param name="indexes">A collection of the vertex indexes to include.</param>
+		/// <returns>A comprehensive list of all indexesindexesindexesindexes that are coincident with any of the indexes in the indexes argument.</returns>
 		public static List<int> AllIndexesWithValues(this IList<IntArray> intArray, IEnumerable<int> indexes)
 		{
             if (intArray == null)
@@ -134,7 +134,7 @@ namespace UnityEngine.ProBuilder
 
 			List<int> shared = new List<int>();
 
-			foreach (var common in GetCommonIndices(intArray, indexes))
+			foreach (var common in GetCommonIndexes(intArray, indexes))
 				shared.AddRange(intArray[common].array);
 
 			return shared;
@@ -145,7 +145,7 @@ namespace UnityEngine.ProBuilder
             if (intArray == null)
                 throw new ArgumentNullException("intArray");
 
-            int[] universal = GetCommonIndices(lookup, indexes).ToArray();
+            int[] universal = GetCommonIndexes(lookup, indexes).ToArray();
 
 			List<int> shared = new List<int>();
 
@@ -156,64 +156,28 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Given triangles, this returns a distinct array containing the first value of each sharedIndex array entry.
-		/// </summary>
-		/// <param name="pbIntArr"></param>
-		/// <param name="indices"></param>
-		/// <returns></returns>
-		internal static List<int> UniqueIndicesWithValues(this IntArray[] pbIntArr, IList<int> indices)
-		{
-			Dictionary<int, int> lookup = pbIntArr.ToDictionary();
-
-			HashSet<int> shared = new HashSet<int>();
-
-			foreach(int tri in indices)
-				shared.Add(lookup[tri]);
-
-			List<int> unique = new List<int>();
-
-			foreach(int i in shared)
-				unique.Add(pbIntArr[i][0]);
-
-			return unique;
-		}
-
-		/// <summary>
-		/// Given triangles, return a distinct list of the indices in the sharedIndices[] array (common index).
+		/// Given triangles, return a distinct list of the indexes in the shared indexes array (common index).
 		/// </summary>
 		/// <param name="array"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <returns></returns>
-		internal static HashSet<int> GetCommonIndices(this IEnumerable<IntArray> array, IEnumerable<int> indices)
+		internal static HashSet<int> GetCommonIndexes(this IEnumerable<IntArray> array, IEnumerable<int> indexes)
 		{
-			return GetCommonIndices(array.ToDictionary(), indices);
+			return GetCommonIndexes(array.ToDictionary(), indexes);
 		}
 
-		internal static HashSet<int> GetCommonIndices(Dictionary<int, int> lookup, IEnumerable<int> indices)
+		internal static HashSet<int> GetCommonIndexes(Dictionary<int, int> lookup, IEnumerable<int> indexes)
 		{
 			HashSet<int> common = new HashSet<int>();
 
-			foreach(int i in indices)
+			foreach(int i in indexes)
 				common.Add( lookup[i] );
 
 			return common;
 		}
 
 		/// <summary>
-		/// Convert a list of common indices (indices of a group in the sharedIndices array) to actual triangle indices.
-		/// Only returns the first index in a common index array.
-		/// </summary>
-		/// <param name="pbIntArr"></param>
-		/// <param name="common"></param>
-		/// <returns></returns>
-		[System.Obsolete]
-		internal static IEnumerable<int> GetIndicesWithCommon(this IntArray[] pbIntArr, IEnumerable<int> common)
-		{
-			return common.Select(x => pbIntArr[x][0]);
-		}
-
-		/// <summary>
-		/// Cycles through a mesh and returns an IntArray[] of vertex indices that point to the same point in world space.
+		/// Cycles through a mesh and returns an IntArray[] of vertex indexes that point to the same point in world space.
 		/// <br />
 		/// This is how many ProBuiilder shapes define coincident vertices on creation.
 		/// </summary>
@@ -226,7 +190,7 @@ namespace UnityEngine.ProBuilder
 		/// ```
 		/// </example>
 		/// <param name="positions">A collection of Vector3 positions to be tested for equality.</param>
-		/// <returns>A new IntArray[] where each contained array is a list of indices that are sharing the same position.</returns>
+		/// <returns>A new IntArray[] where each contained array is a list of indexes that are sharing the same position.</returns>
 		public static IntArray[] GetSharedIndexesWithPositions(Vector3[] positions)
 		{
             if (positions == null)
@@ -254,170 +218,126 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Associates all passed indices with a single shared index. Does not perfrom any additional operations to repair triangle structure or vertex placement.
+		/// Associates all passed indexes with a single shared index. Does not perfrom any additional operations to repair triangle structure or vertex placement.
 		/// </summary>
-		/// <param name="sharedIndices"></param>
-		/// <param name="indices"></param>
+		/// <param name="sharedIndexes"></param>
+		/// <param name="indexes"></param>
 		/// <returns></returns>
-		internal static int MergeSharedIndices(ref IntArray[] sharedIndices, int[] indices)
+		internal static int MergeSharedIndexes(ref IntArray[] sharedIndexes, int[] indexes)
 		{
-			if(indices.Length < 2) return -1;
-			if(sharedIndices == null)
+			if(indexes.Length < 2) return -1;
+			if(sharedIndexes == null)
 			{
-				sharedIndices = new IntArray[1] { (IntArray)indices };
+				sharedIndexes = new IntArray[1] { (IntArray)indexes };
 				return 0;
 			}
 
 			List<int> used = new List<int>();
 			List<int> newSharedIndex = new List<int>();
 
-			// Create a new int[] composed of all indices in shared selection
-			for(int i = 0; i < indices.Length; i++)
+			// Create a new int[] composed of all indexes in shared selection
+			for(int i = 0; i < indexes.Length; i++)
 			{
-				int si = sharedIndices.IndexOf(indices[i]);
+				int si = sharedIndexes.IndexOf(indexes[i]);
 				if(!used.Contains(si))
 				{
 					if( si > -1 )
 					{
-						newSharedIndex.AddRange( sharedIndices[si].array );
+						newSharedIndex.AddRange( sharedIndexes[si].array );
 						used.Add(si);
 					}
 					else
 					{
-						newSharedIndex.Add( indices[i] );
+						newSharedIndex.Add( indexes[i] );
 					}
 
 				}
 			}
 
 			// Now remove the old entries
-			int rebuiltSharedIndexLength = sharedIndices.Length - used.Count;
+			int rebuiltSharedIndexLength = sharedIndexes.Length - used.Count;
 			IntArray[] rebuild = new IntArray[rebuiltSharedIndexLength];
 
 			int n = 0;
-			for(int i = 0; i < sharedIndices.Length; i++)
+			for(int i = 0; i < sharedIndexes.Length; i++)
 			{
 				if(!used.Contains(i))
-					rebuild[n++] = sharedIndices[i];
+					rebuild[n++] = sharedIndexes[i];
 			}
 
-			sharedIndices = rebuild.Add( new IntArray(newSharedIndex.ToArray()) );
-			// SetSharedIndices( rebuild.Add( new IntArray(newSharedIndex.ToArray()) ) );
+			sharedIndexes = rebuild.Add( new IntArray(newSharedIndex.ToArray()) );
 
-			return sharedIndices.Length-1;
+			return sharedIndexes.Length-1;
 		}
 
 		/// <summary>
-		/// Associates indices with a single shared index.  Does not perfrom any additional operations to repair triangle structure or vertex placement.
+		/// Associates indexes with a single shared index.  Does not perfrom any additional operations to repair triangle structure or vertex placement.
 		/// </summary>
-		/// <param name="sharedIndices"></param>
+		/// <param name="sharedIndexes"></param>
 		/// <param name="a"></param>
 		/// <param name="b"></param>
-		internal static void MergeSharedIndices(ref IntArray[] sharedIndices, int a, int b)
+		internal static void MergeSharedIndexes(ref IntArray[] sharedIndexes, int a, int b)
 		{
-			int aIndex = sharedIndices.IndexOf(a);
-			int oldBIndex = sharedIndices.IndexOf(b);
+			int aIndex = sharedIndexes.IndexOf(a);
+			int oldBIndex = sharedIndexes.IndexOf(b);
 
-			IntArrayUtility.AddValueAtIndex(ref sharedIndices, aIndex, b);
+			IntArrayUtility.AddValueAtIndex(ref sharedIndexes, aIndex, b);
 
-			int[] arr = sharedIndices[oldBIndex].array;
-			sharedIndices[oldBIndex].array = arr.RemoveAt(System.Array.IndexOf(arr, b));
-			sharedIndices = IntArray.RemoveEmptyOrNull(sharedIndices);
+			int[] arr = sharedIndexes[oldBIndex].array;
+			sharedIndexes[oldBIndex].array = arr.RemoveAt(System.Array.IndexOf(arr, b));
+			sharedIndexes = IntArray.RemoveEmptyOrNull(sharedIndexes);
 		}
 
 		/// <summary>
 		/// Add a value to the array at index.
 		/// </summary>
-		/// <param name="sharedIndices"></param>
+		/// <param name="sharedIndexes"></param>
 		/// <param name="sharedIndex"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		internal static int AddValueAtIndex(ref IntArray[] sharedIndices, int sharedIndex, int value)
+		internal static int AddValueAtIndex(ref IntArray[] sharedIndexes, int sharedIndex, int value)
 		{
 			if(sharedIndex > -1)
-				sharedIndices[sharedIndex].array = sharedIndices[sharedIndex].array.Add(value);
+				sharedIndexes[sharedIndex].array = sharedIndexes[sharedIndex].array.Add(value);
 			else
-				sharedIndices = (IntArray[])sharedIndices.Add( new IntArray(new int[]{value}) );
+				sharedIndexes = (IntArray[])sharedIndexes.Add( new IntArray(new int[]{value}) );
 
-			return sharedIndex > -1 ? sharedIndex : sharedIndices.Length-1;
+			return sharedIndex > -1 ? sharedIndex : sharedIndexes.Length-1;
 		}
 
 		/// <summary>
-		/// Adds a range of values to the array at index.
-		/// </summary>
-		/// <param name="sharedIndices"></param>
-		/// <param name="sharedIndex"></param>
-		/// <param name="indices"></param>
-		/// <returns></returns>
-		internal static int AddRangeAtIndex(ref IntArray[] sharedIndices, int sharedIndex, int[] indices)
-		{
-			if(sharedIndex > -1)
-				sharedIndices[sharedIndex].array = sharedIndices[sharedIndex].array.AddRange(indices);
-			else
-				sharedIndices = (IntArray[])sharedIndices.Add( new IntArray(indices) );
-
-			return sharedIndex > -1 ? sharedIndex : sharedIndices.Length-1;
-		}
-
-		/// <summary>
-		/// Removes all passed values from the sharedIndices jagged array
-		/// </summary>
-		/// <remarks>
-		/// Does NOT perform any index shifting to account for removed vertices. Use RemoveValuesAndShift for that purpose.
-		/// </remarks>
-		/// <param name="sharedIndices"></param>
-		/// <param name="remove"></param>
-		internal static void RemoveValues(ref IntArray[] sharedIndices, int[] remove)
-		{
-			// remove face indices from all shared indices caches
-			for(int i = 0; i < sharedIndices.Length; i++)
-			{
-				for(int n = 0; n < remove.Length; n++)
-				{
-					int ind = System.Array.IndexOf(sharedIndices[i], remove[n]);
-
-					if(ind > -1)
-						sharedIndices[i].array = sharedIndices[i].array.RemoveAt(ind);
-				}
-			}
-
-			// Remove empty or null entries caused by shifting around all them indices
-			sharedIndices = IntArray.RemoveEmptyOrNull(sharedIndices);
-		}
-
-		/// <summary>
-		/// Removes the specified indices from the array, and shifts all values down to account for removal in the vertex array.
+		/// Removes the specified indexes from the array, and shifts all values down to account for removal in the vertex array.
 		/// Only use when deleting faces or vertices.
 		/// </summary>
 		/// <remarks>For general moving around and modification of shared index array, use #RemoveValuesAtIndex.</remarks>
-		/// <param name="sharedIndices"></param>
+		/// <param name="sharedIndexes"></param>
 		/// <param name="indexesToRemove"></param>
-		internal static void RemoveValuesAndShift(ref IntArray[] sharedIndices, IEnumerable<int> indexesToRemove)
+		internal static void RemoveValuesAndShift(ref IntArray[] sharedIndexes, IEnumerable<int> indexesToRemove)
 		{
-			if(sharedIndices == null)
-				throw new ArgumentNullException("sharedIndices");
+			if(sharedIndexes == null)
+				throw new ArgumentNullException("sharedIndexes");
 
 			if(indexesToRemove == null)
 				throw new ArgumentNullException("indexesToRemove");
 
-			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
+			Dictionary<int, int> lookup = sharedIndexes.ToDictionary();
 
 			foreach(int i in indexesToRemove)
 				lookup[i] = -1;
 
-			sharedIndices = ToIntArray(lookup.Where(x => x.Value > -1));
+			sharedIndexes = ToIntArray(lookup.Where(x => x.Value > -1));
 
 			List<int> removed_values = new List<int>(indexesToRemove);
 
 			removed_values.Sort();
 
-			for(int i = 0; i < sharedIndices.Length; i++)
+			for(int i = 0; i < sharedIndexes.Length; i++)
 			{
-				for(int n = 0; n < sharedIndices[i].length; n++)
+				for(int n = 0; n < sharedIndexes[i].length; n++)
 				{
-					int index = ArrayUtility.NearestIndexPriorToValue(removed_values, sharedIndices[i][n]);
+					int index = ArrayUtility.NearestIndexPriorToValue(removed_values, sharedIndexes[i][n]);
 					// add 1 because index is zero based
-					sharedIndices[i][n] -= index + 1;
+					sharedIndexes[i][n] -= index + 1;
 				}
 			}
 

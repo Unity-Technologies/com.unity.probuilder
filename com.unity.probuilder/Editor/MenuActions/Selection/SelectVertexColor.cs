@@ -90,7 +90,7 @@ namespace UnityEditor.ProBuilder.Actions
 				if (mesh_colors == null || mesh_colors.Length != pb.vertexCount)
 					continue;
 
-				foreach (int i in pb.selectedIndicesInternal)
+				foreach (int i in pb.selectedIndexesInternal)
 					colors.Add(mesh_colors[i]);
 			}
 
@@ -110,7 +110,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 				for (int i = 0; i < faces.Length; i++)
 				{
-					int[] tris = faces[i].distinctIndices;
+					int[] tris = faces[i].distinctIndexesInternal;
 
 					for (int n = 0; n < tris.Length; n++)
 					{

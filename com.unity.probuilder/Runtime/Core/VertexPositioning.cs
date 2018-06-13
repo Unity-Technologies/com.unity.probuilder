@@ -64,7 +64,7 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentNullException("mesh");
 
             int i = 0;
-			int[] indices = lookup != null ? mesh.sharedIndicesInternal.AllIndexesWithValues(lookup, selectedTriangles).ToArray() : mesh.sharedIndicesInternal.AllIndexesWithValues(selectedTriangles).ToArray();
+			int[] indices = lookup != null ? mesh.sharedIndexesInternal.AllIndexesWithValues(lookup, selectedTriangles).ToArray() : mesh.sharedIndexesInternal.AllIndexesWithValues(selectedTriangles).ToArray();
 
 			Matrix4x4 w2l = mesh.transform.worldToLocalMatrix;
 
@@ -109,7 +109,7 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			int[] indices = mesh.sharedIndicesInternal.AllIndexesWithValues(selectedTriangles).ToArray();
+			int[] indices = mesh.sharedIndexesInternal.AllIndexesWithValues(selectedTriangles).ToArray();
 
 			Vector3[] verts = mesh.positionsInternal;
 
@@ -135,7 +135,7 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentNullException("mesh");
 
             Vector3[] v = mesh.positionsInternal;
-			int[] array = mesh.sharedIndicesInternal[sharedIndex].array;
+			int[] array = mesh.sharedIndexesInternal[sharedIndex].array;
 
 			for(int i = 0; i < array.Length; i++)
 				v[array[i]] = position;
@@ -156,7 +156,7 @@ namespace UnityEngine.ProBuilder
 		{
 			Vertex[] vertices = Vertex.GetVertices(pb);
 
-			int[] array = pb.sharedIndicesInternal[sharedIndex].array;
+			int[] array = pb.sharedIndexesInternal[sharedIndex].array;
 
 			for(int i = 0; i < array.Length; i++)
 				vertices[array[i]] = vertex;

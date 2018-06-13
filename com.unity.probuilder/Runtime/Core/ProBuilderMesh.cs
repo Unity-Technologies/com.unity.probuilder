@@ -26,7 +26,7 @@ namespace UnityEngine.ProBuilder
 
         [SerializeField]
         [FormerlySerializedAs("_sharedIndices")]
-        IntArray[] m_SharedIndices;
+        IntArray[] m_SharedIndexes;
 
         [SerializeField]
         [FormerlySerializedAs("_vertices")]
@@ -50,7 +50,7 @@ namespace UnityEngine.ProBuilder
 
         [SerializeField]
         [FormerlySerializedAs("_sharedIndicesUV ")]
-        IntArray[] m_SharedIndicesUV;
+        IntArray[] m_SharedIndexesUV;
 
         [SerializeField]
         [FormerlySerializedAs("_colors")]
@@ -139,10 +139,10 @@ namespace UnityEngine.ProBuilder
 	        m_Faces = faces.ToArray();
         }
 
-	    internal IntArray[] sharedIndicesInternal
+	    internal IntArray[] sharedIndexesInternal
 	    {
-		    get { return m_SharedIndices; }
-		    set { m_SharedIndices = value; }
+		    get { return m_SharedIndexes; }
+		    set { m_SharedIndexes = value; }
 	    }
 
 	    /// <summary>
@@ -154,7 +154,7 @@ namespace UnityEngine.ProBuilder
 	    /// <seealso cref="SetSharedIndexes(UnityEngine.ProBuilder.IntArray[])"/>
 	    public ReadOnlyCollection<IntArray> sharedIndexes
 	    {
-		    get { return new ReadOnlyCollection<IntArray>(m_SharedIndices); }
+		    get { return new ReadOnlyCollection<IntArray>(m_SharedIndexes); }
 	    }
 
 	    /// <value>
@@ -163,10 +163,10 @@ namespace UnityEngine.ProBuilder
 	    /// <seealso cref="sharedIndexes"/>
 	    public IntArray[] GetSharedIndexes()
 	    {
-		    int len = m_SharedIndices.Length;
+		    int len = m_SharedIndexes.Length;
 		    IntArray[] copy = new IntArray[len];
 		    for(var i = 0; i < len; i++)
-			    copy[i] = new IntArray(m_SharedIndices[i]);
+			    copy[i] = new IntArray(m_SharedIndexes[i]);
 		    return copy;
 	    }
 
@@ -182,9 +182,9 @@ namespace UnityEngine.ProBuilder
 		    if (indexes == null)
 			    throw new ArgumentNullException("indexes");
 		    int len = indexes.Length;
-		    m_SharedIndices = new IntArray[len];
+		    m_SharedIndexes = new IntArray[len];
 		    for (var i = 0; i < len; i++)
-			    m_SharedIndices[i] = new IntArray(indexes[i]);
+			    m_SharedIndexes[i] = new IntArray(indexes[i]);
 	    }
 
 	    /// <summary>
@@ -199,38 +199,38 @@ namespace UnityEngine.ProBuilder
 	    {
 		    if (indexes == null)
 			    throw new ArgumentNullException("indexes");
-		    m_SharedIndices = IntArrayUtility.ToIntArray(indexes);
+		    m_SharedIndexes = IntArrayUtility.ToIntArray(indexes);
 	    }
 
-        internal IntArray[] sharedIndicesUVInternal
+        internal IntArray[] sharedIndexesUVInternal
         {
-            get { return m_SharedIndicesUV; }
-            set { m_SharedIndicesUV = value; }
+            get { return m_SharedIndexesUV; }
+            set { m_SharedIndexesUV = value; }
         }
 
         internal IntArray[] GetSharedIndexesUV()
         {
-            int sil = m_SharedIndicesUV.Length;
-            IntArray[] sharedIndicesCopy = new IntArray[sil];
+            int sil = m_SharedIndexesUV.Length;
+            IntArray[] sharedIndexesCopy = new IntArray[sil];
             for (var i = 0; i < sil; i++)
-                sharedIndicesCopy[i] = m_SharedIndicesUV[i];
-            return sharedIndicesCopy;
+                sharedIndexesCopy[i] = m_SharedIndexesUV[i];
+            return sharedIndexesCopy;
         }
 
-	    internal void SetSharedIndexesUV(IntArray[] indices)
+	    internal void SetSharedIndexesUV(IntArray[] indexes)
 	    {
-		    int len = indices == null ? 0 : indices.Length;
-		    m_SharedIndicesUV = new IntArray[len];
+		    int len = indexes == null ? 0 : indexes.Length;
+		    m_SharedIndexesUV = new IntArray[len];
 		    for (var i = 0; i < len; i++)
-			    m_SharedIndicesUV[i] = new IntArray(indices[i]);
+			    m_SharedIndexesUV[i] = new IntArray(indexes[i]);
 	    }
 
-        internal void SetSharedIndexesUV(IEnumerable<KeyValuePair<int, int>> indices)
+        internal void SetSharedIndexesUV(IEnumerable<KeyValuePair<int, int>> indexes)
         {
-	        if (indices == null)
-		        m_SharedIndicesUV = new IntArray[0];
+	        if (indexes == null)
+		        m_SharedIndexesUV = new IntArray[0];
 			else
-	            m_SharedIndicesUV = IntArrayUtility.ToIntArray(indices);
+	            m_SharedIndexesUV = IntArrayUtility.ToIntArray(indexes);
         }
 
         internal Vector3[] positionsInternal
@@ -532,12 +532,19 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <value>
-		/// How many triangle indices make up this mesh.
+		/// How many vertex indexes make up this mesh.
 		/// </value>
-		/// <remarks>This calls Linq Sum on the faces array. Cache this value if you're accessing it frequently.</remarks>
+		public int indexCount
+		{
+			get { return m_Faces == null ? 0 : m_Faces.Sum(x => x.indexesInternal.Length); }
+		}
+
+		/// <value>
+		/// How many triangles make up this mesh.
+		/// </value>
 		public int triangleCount
 		{
-			get { return m_Faces == null ? 0 : m_Faces.Sum(x => x.indices.Length); }
+			get { return m_Faces == null ? 0 : m_Faces.Sum(x => x.indexesInternal.Length) / 3; }
 		}
 
 	    /// <summary>
@@ -586,8 +593,8 @@ namespace UnityEngine.ProBuilder
 			m_Textures3 = null;
 			m_Textures4 = null;
 			m_Tangents = null;
-			m_SharedIndices = new IntArray[0];
-			m_SharedIndicesUV = new IntArray[0];
+			m_SharedIndexes = new IntArray[0];
+			m_SharedIndexesUV = new IntArray[0];
 			m_Colors = null;
 			ClearSelection();
 		}
@@ -699,7 +706,7 @@ namespace UnityEngine.ProBuilder
 	    }
 
 	    /// <value>
-	    /// Get the number of selected vertex indices.
+	    /// Get the number of selected vertex indexes.
 	    /// </value>
 	    public int selectedVertexCount
 	    {
@@ -755,7 +762,7 @@ namespace UnityEngine.ProBuilder
 		    get { return new ReadOnlyCollection<Edge>(m_SelectedEdges); }
 	    }
 
-	    internal int[] selectedIndicesInternal
+	    internal int[] selectedIndexesInternal
 	    {
 		    get { return m_selectedTriangles; }
 	    }
@@ -791,7 +798,7 @@ namespace UnityEngine.ProBuilder
 			else
 			{
 				m_selectedFaces = selected.ToArray();
-				m_selectedTriangles = m_selectedFaces.SelectMany(x => facesInternal[x].distinctIndices).ToArray();
+				m_selectedTriangles = m_selectedFaces.SelectMany(x => facesInternal[x].distinctIndexesInternal).ToArray();
 				m_SelectedEdges = m_selectedFaces.SelectMany(x => facesInternal[x].edges).ToArray();
 			}
 
@@ -890,7 +897,7 @@ namespace UnityEngine.ProBuilder
             Clear();
             SetPositions(vertices);
 			SetFaces(f);
-			m_SharedIndices = IntArrayUtility.GetSharedIndexesWithPositions(vertices);
+			m_SharedIndexes = IntArrayUtility.GetSharedIndexesWithPositions(vertices);
 
 			ToMesh();
 			Refresh();
@@ -994,8 +1001,8 @@ namespace UnityEngine.ProBuilder
 		internal void MakeUnique()
 		{
 			SetPositions(positions);
-			SetSharedIndexes(sharedIndicesInternal);
-			SetSharedIndexesUV(sharedIndicesUVInternal);
+			SetSharedIndexes(sharedIndexesInternal);
+			SetSharedIndexesUV(sharedIndexesUVInternal);
 			SetFaces(faces);
 			List<Vector4> uvs = new List<Vector4>();
 			for (var i = 0; i < k_UVChannelCount; i++)
@@ -1021,8 +1028,8 @@ namespace UnityEngine.ProBuilder
 
 		    Clear();
 			SetPositions(other.positions);
-		    SetSharedIndexes(other.sharedIndicesInternal);
-		    SetSharedIndexesUV(other.sharedIndicesUVInternal);
+		    SetSharedIndexes(other.sharedIndexesInternal);
+		    SetSharedIndexesUV(other.sharedIndexesUVInternal);
 		    SetFaces(other.faces);
 
 		    List<Vector4> uvs = new List<Vector4>();
@@ -1215,17 +1222,17 @@ namespace UnityEngine.ProBuilder
 			foreach (KeyValuePair<int, List<Face>> kvp in textureGroups)
 			{
 				Vector3 nrm;
-				int[] indices = kvp.Value.SelectMany(x => x.distinctIndices).ToArray();
+				int[] indexes = kvp.Value.SelectMany(x => x.distinctIndexesInternal).ToArray();
 
 				if (kvp.Value.Count > 1)
-					nrm = Projection.FindBestPlane(m_Positions, indices).normal;
+					nrm = Projection.FindBestPlane(m_Positions, indexes).normal;
 				else
 					nrm = Math.Normal(this, kvp.Value[0]);
 
 				if (kvp.Value[0].uv.useWorldSpace)
-					UnwrappingUtility.PlanarMap2(world, newUVs, indices, kvp.Value[0].uv, transform.TransformDirection(nrm));
+					UnwrappingUtility.PlanarMap2(world, newUVs, indexes, kvp.Value[0].uv, transform.TransformDirection(nrm));
 				else
-					UnwrappingUtility.PlanarMap2(positionsInternal, newUVs, indices, kvp.Value[0].uv, nrm);
+					UnwrappingUtility.PlanarMap2(positionsInternal, newUVs, indexes, kvp.Value[0].uv, nrm);
 			}
 
 			m_Textures0 = newUVs;
@@ -1258,7 +1265,7 @@ namespace UnityEngine.ProBuilder
 			if (m_Colors == null)
                 m_Colors = ArrayUtility.FilledArray<Color>(Color.white, vertexCount);
 
-			foreach (int i in face.distinctIndices)
+			foreach (int i in face.distinctIndexesInternal)
 				m_Colors[i] = color;
 		}
 

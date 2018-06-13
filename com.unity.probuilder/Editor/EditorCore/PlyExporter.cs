@@ -64,7 +64,7 @@ namespace UnityEditor.ProBuilder
 
 				if(options.ngons)
 				{
-					indices = pb.facesInternal.Select(y => options.quads ? (y.ToQuad() ?? y.indices) : y.indices).ToList();
+					indices = pb.facesInternal.Select(y => options.quads ? (y.ToQuad() ?? y.indexesInternal) : y.indexesInternal).ToList();
 				}
 				else
 				{
@@ -83,11 +83,11 @@ namespace UnityEditor.ProBuilder
 							}
 						}
 
-						for(int i = 0; i < face.indices.Length; i += 3)
+						for(int i = 0; i < face.indexesInternal.Length; i += 3)
 							indices.Add(new int[] {
-								face.indices[i+0],
-								face.indices[i+1],
-								face.indices[i+2] });
+								face.indexesInternal[i+0],
+								face.indexesInternal[i+1],
+								face.indexesInternal[i+2] });
 					}
 				}
 

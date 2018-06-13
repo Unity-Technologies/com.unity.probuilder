@@ -48,10 +48,10 @@ namespace UnityEngine.ProBuilder
 				vertices = new List<Vertex>( Vertex.GetVertices(pb) );
 
 			if(lookup == null)
-				lookup = pb.sharedIndicesInternal.ToDictionary();
+				lookup = pb.sharedIndexesInternal.ToDictionary();
 
 			if(lookupUV == null)
-				lookupUV = pb.sharedIndicesUVInternal != null ? pb.sharedIndicesUVInternal.ToDictionary() : null;
+				lookupUV = pb.sharedIndexesUVInternal != null ? pb.sharedIndexesUVInternal.ToDictionary() : null;
 
 			FaceRebuildData.Apply(newFaces, vertices, _faces, lookup, lookupUV);
 
@@ -98,13 +98,13 @@ namespace UnityEngine.ProBuilder
 				}
 
 				rd._appliedOffset = index;
-				int[] indices = face.indices;
+				int[] indices = face.indexesInternal;
 
 				for(int n = 0, c = indices.Length; n < c; n++)
 					indices[n] += index;
 
 				index += rd.vertices.Count;
-				face.indices = indices;
+				face.indexesInternal = indices;
 				faces.Add(face);
 				vertices.AddRange(rd.vertices);
 			}

@@ -225,7 +225,7 @@ namespace UnityEditor.ProBuilder
 					new GUIContent("Meshes Are Assets",
 						"Experimental!  Instead of storing mesh data in the scene, this toggle creates a Mesh cache in the Project that ProBuilder will use."),
 					pbMeshesAreAssets);
-			
+
 			pbShowPreselectionHighlight = EditorGUILayout.Toggle("Show Preselection Highlight", pbShowPreselectionHighlight);
 
 			GUILayout.Space(4);
@@ -415,7 +415,7 @@ namespace UnityEditor.ProBuilder
 			defaultShortcuts[s_ShortcutIndex].key = key;
 
 			GUILayout.Label("Modifiers", EditorStyles.boldLabel);
-			// EnumMaskField returns a bit-mask where the flags correspond to the indices of the enum, not the enum values,
+			// EnumMaskField returns a bit-mask where the flags correspond to the indexes of the enum, not the enum values,
 			// so this isn't technically correct.
 #if UNITY_2017_3_OR_NEWER
 			EventModifiers em = (EventModifiers) defaultShortcuts[s_ShortcutIndex].eventModifiers;

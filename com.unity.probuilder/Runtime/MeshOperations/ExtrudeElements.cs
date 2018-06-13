@@ -47,8 +47,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (edges == null)
                 throw new System.ArgumentNullException("edges");
 
-            IntArray[] sharedIndices = mesh.sharedIndicesInternal;
-			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
+            IntArray[] sharedIndexes = mesh.sharedIndexesInternal;
+			Dictionary<int, int> lookup = sharedIndexes.ToDictionary();
 
 			List<Edge> validEdges = new List<Edge>();
 			List<Face> edgeFaces = new List<Face>();
@@ -103,8 +103,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				Face face = edgeFaces[i];
 
 				// Averages the normals using only vertices that are on the edge
-				Vector3 xnorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndices( sharedIndices[lookup[edge.a]], allEdgeIndices, oNormals ) : Math.Normal(mesh, face);
-				Vector3 ynorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndices( sharedIndices[lookup[edge.b]], allEdgeIndices, oNormals ) : Math.Normal(mesh, face);
+				Vector3 xnorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndexes( sharedIndexes[lookup[edge.a]], allEdgeIndices, oNormals ) : Math.Normal(mesh, face);
+				Vector3 ynorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndexes( sharedIndexes[lookup[edge.b]], allEdgeIndices, oNormals ) : Math.Normal(mesh, face);
 
 				int x_sharedIndex = lookup[edge.a];
 				int y_sharedIndex = lookup[edge.b];
@@ -128,13 +128,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					new Face( new int[6] {2, 1, 0, 2, 3, 1 }, face.material, new AutoUnwrapSettings(), 0, -1, -1, false ),
 					new int[4] { x_sharedIndex, y_sharedIndex, -1, -1 });
 
-				newEdges.Add(new Edge(newFace.indices[3], newFace.indices[4]));
+				newEdges.Add(new Edge(newFace.indexesInternal[3], newFace.indexesInternal[4]));
 
-				extrudedIndices.Add(new Edge(x_sharedIndex, newFace.indices[3]));
-				extrudedIndices.Add(new Edge(y_sharedIndex, newFace.indices[4]));
+				extrudedIndices.Add(new Edge(x_sharedIndex, newFace.indexesInternal[3]));
+				extrudedIndices.Add(new Edge(y_sharedIndex, newFace.indexesInternal[4]));
 			}
 
-			sharedIndices = mesh.sharedIndicesInternal;
+			sharedIndexes = mesh.sharedIndexesInternal;
 
 			// merge extruded vertex indices with each other
 			if(extrudeAsGroup)
@@ -149,14 +149,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 						if(extrudedIndices[n].a == val)
 						{
-							IntArrayUtility.MergeSharedIndices(ref sharedIndices, extrudedIndices[n].b, extrudedIndices[i].b);
+							IntArrayUtility.MergeSharedIndexes(ref sharedIndexes, extrudedIndices[n].b, extrudedIndices[i].b);
 							break;
 						}
 					}
 				}
 			}
 
-			mesh.sharedIndicesInternal = sharedIndices;
+			mesh.sharedIndexesInternal = sharedIndexes;
 
 			// todo Should only need to invalidate caches on affected faces
 			foreach(Face f in mesh.facesInternal)
@@ -180,8 +180,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 throw new System.ArgumentNullException("faces");
 
 			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(mesh));
-			int sharedIndicesOffset = mesh.sharedIndicesInternal.Length;
-			Dictionary<int, int> lookup = mesh.sharedIndicesInternal.ToDictionary();
+			int sharedIndexOffset = mesh.sharedIndexesInternal.Length;
+			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
 
 			List<FaceRebuildData> detached = new List<FaceRebuildData>();
 
@@ -193,13 +193,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				data.face = new Face(face);
 
 				Dictionary<int, int> match = new Dictionary<int, int>();
-				int[] indices = new int[face.indices.Length];
+				int[] indices = new int[face.indexesInternal.Length];
 
-				for(int i = 0; i < face.indices.Length; i++)
+				for(int i = 0; i < face.indexesInternal.Length; i++)
 				{
 					int local;
 
-					if( match.TryGetValue(face.indices[i], out local) )
+					if( match.TryGetValue(face.indexesInternal[i], out local) )
 					{
 						indices[i] = local;
 					}
@@ -207,13 +207,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					{
 						local = data.vertices.Count;
 						indices[i] = local;
-						match.Add(face.indices[i], local);
-						data.vertices.Add(vertices[face.indices[i]]);
-						data.sharedIndices.Add(lookup[face.indices[i]] + sharedIndicesOffset);
+						match.Add(face.indexesInternal[i], local);
+						data.vertices.Add(vertices[face.indexesInternal[i]]);
+						data.sharedIndices.Add(lookup[face.indexesInternal[i]] + sharedIndexOffset);
 					}
 				}
 
-				data.face.indices = indices.ToArray();
+				data.face.indexesInternal = indices.ToArray();
 				detached.Add(data);
 			}
 
@@ -238,10 +238,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				return false;
 
 			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
-			int sharedIndexMax = pb.sharedIndicesInternal.Length;
+			int sharedIndexMax = pb.sharedIndexesInternal.Length;
 			int sharedIndexOffset = 0;
-			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
-			Dictionary<int, int> lookupUV = pb.sharedIndicesUVInternal.ToDictionary();
+			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
+			Dictionary<int, int> lookupUV = pb.sharedIndexesUVInternal.ToDictionary();
 
 			List<Face> newFaces = new List<Face>(pb.facesInternal);
 			Dictionary<int, int> used = new Dictionary<int, int>();
@@ -301,13 +301,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					newFaces.Add(bridge);
 				}
 
-				for(int i = 0; i < face.distinctIndices.Length; i++)
+				for(int i = 0; i < face.distinctIndexesInternal.Length; i++)
 				{
-					vertices[face.distinctIndices[i]].position += delta;
+					vertices[face.distinctIndexesInternal[i]].position += delta;
 
 					// Break any UV shared connections
-					if( lookupUV != null && lookupUV.ContainsKey(face.distinctIndices[i]) )
-						lookupUV.Remove(face.distinctIndices[i]);
+					if( lookupUV != null && lookupUV.ContainsKey(face.distinctIndexesInternal[i]) )
+						lookupUV.Remove(face.distinctIndexesInternal[i]);
 				}
 			}
 
@@ -333,10 +333,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				return false;
 
 			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
-			int sharedIndexMax = pb.sharedIndicesInternal.Length;
+			int sharedIndexMax = pb.sharedIndexesInternal.Length;
 			int sharedIndexOffset = 0;
-			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
-			Dictionary<int, int> lookupUV = pb.sharedIndicesUVInternal.ToDictionary();
+			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
+			Dictionary<int, int> lookupUV = pb.sharedIndexesUVInternal.ToDictionary();
 
 			List<Face> newFaces = new List<Face>(pb.facesInternal);
 			// old triangle index -> old shared index
@@ -436,9 +436,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 					Vector3 normal = Math.Normal(pb, face);
 
-					for(int i = 0; i < face.distinctIndices.Length; i++)
+					for(int i = 0; i < face.distinctIndexesInternal.Length; i++)
 					{
-						int idx = face.distinctIndices[i];
+						int idx = face.distinctIndexesInternal[i];
 
 						// If this vertex is on the perimeter but not part of a perimeter edge
 						// move the sharedIndex to match it's new value.
@@ -448,8 +448,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						int com = lookup[idx];
 
 						// Break any UV shared connections
-						if( lookupUV != null && lookupUV.ContainsKey(face.distinctIndices[i]) )
-							lookupUV.Remove(face.distinctIndices[i]);
+						if( lookupUV != null && lookupUV.ContainsKey(face.distinctIndexesInternal[i]) )
+							lookupUV.Remove(face.distinctIndexesInternal[i]);
 
 						// add the normal to the list of normals for this shared vertex
 						SimpleTuple<Vector3, Vector3, List<int>> dir = null;

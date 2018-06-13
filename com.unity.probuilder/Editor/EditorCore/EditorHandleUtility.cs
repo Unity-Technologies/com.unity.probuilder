@@ -690,7 +690,7 @@ namespace UnityEditor.ProBuilder
 				GL.MultMatrix(mesh.transform.localToWorldMatrix);
 
 				var face = selection.face;
-				var ind = face.indices;
+				var ind = face.indexesInternal;
 
 				for (int i = 0, c = ind.Length; i < c; i += 3)
 				{

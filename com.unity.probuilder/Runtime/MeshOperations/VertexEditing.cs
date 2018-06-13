@@ -36,14 +36,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			Vertex cen = collapseToFirst ? vertices[indexes[0]] : Vertex.Average(vertices, indexes);
 
-			IntArray[] sharedIndices = mesh.sharedIndicesInternal;
-			IntArray[] sharedIndicesUV = mesh.sharedIndicesUVInternal;
+			IntArray[] sharedIndices = mesh.sharedIndexesInternal;
+			IntArray[] sharedIndicesUV = mesh.sharedIndexesUVInternal;
 
-			int newIndex = IntArrayUtility.MergeSharedIndices(ref sharedIndices, indexes);
-			IntArrayUtility.MergeSharedIndices(ref sharedIndicesUV, indexes);
+			int newIndex = IntArrayUtility.MergeSharedIndexes(ref sharedIndices, indexes);
+			IntArrayUtility.MergeSharedIndexes(ref sharedIndicesUV, indexes);
 
-			mesh.sharedIndicesInternal = sharedIndices;
-			mesh.sharedIndicesUVInternal = sharedIndicesUV;
+			mesh.sharedIndexesInternal = sharedIndices;
+			mesh.sharedIndexesUVInternal = sharedIndicesUV;
 
 			mesh.SetSharedVertexValues(newIndex, cen);
 
@@ -95,7 +95,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 throw new ArgumentNullException("vertices");
 
             // ToDictionary always sets the universal indices in ascending order from 0+.
-            Dictionary<int, int> lookup = mesh.sharedIndicesInternal.ToDictionary();
+            Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
 			int max = lookup.Count();
 			foreach(int i in vertices)
 				lookup[i] = ++max;
@@ -118,10 +118,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 throw new ArgumentNullException("indexes");
 
             Vertex[] vertices = Vertex.GetVertices(mesh);
-			IntArray[] sharedIndices = mesh.sharedIndicesInternal;
+			IntArray[] sharedIndices = mesh.sharedIndexesInternal;
 
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
-			HashSet<int> common = IntArrayUtility.GetCommonIndices(lookup, indexes);
+			HashSet<int> common = IntArrayUtility.GetCommonIndexes(lookup, indexes);
 			int vertexCount = common.Count;
 
 			// Make assumption that there will rarely be a time when a single weld encompasses more than 32 vertices.
@@ -252,7 +252,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Face face = edgeAndCommonIndex.FirstOrDefault().item1.face;
 			List<Edge> perimeter = WingedEdge.SortEdgesByAdjacency(face);
 			appendedVertices = new Dictionary<int, List<int>>();
-			Vector3 oldNormal = Math.Normal(vertices, face.indices);
+			Vector3 oldNormal = Math.Normal(vertices, face.indexesInternal);
 
 			// store local and common index of split points
 			Dictionary<int, int> toSplit = new Dictionary<int, int>();
@@ -313,7 +313,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				if(Vector3.Dot(oldNormal, newNormal) < 0f)
 					triangles.Reverse();
 
-				data.face.indices = triangles.ToArray();
+				data.face.indexesInternal = triangles.ToArray();
 
 				return data;
 			}

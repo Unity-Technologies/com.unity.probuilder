@@ -322,7 +322,7 @@ namespace UnityEditor.ProBuilder
 
 						for (int i = 0, c = selection.Length; i < c; i++)
 							s_ActiveRenderables.Add(geometryShadersSupported
-								? BuildVertexPoints(selection[i], selection[i].selectedIndicesInternal)
+								? BuildVertexPoints(selection[i], selection[i].selectedIndexesInternal)
 								: BuildVertexMesh(selection[i], commonIndicesLookup[i]));
 						break;
 					}
@@ -362,16 +362,16 @@ namespace UnityEditor.ProBuilder
 		{
 			ushort maxBillboardCount = ushort.MaxValue / 4;
 
-			int billboardCount = pb.sharedIndicesInternal.Length;
+			int billboardCount = pb.sharedIndexesInternal.Length;
 
 			if(billboardCount > maxBillboardCount)
 				billboardCount = maxBillboardCount;
 
-			Vector3[] v = new Vector3[pb.sharedIndicesInternal.Length];
-			HashSet<int> selected = new HashSet<int>(IntArrayUtility.GetCommonIndices(lookup, pb.selectedIndicesInternal));
+			Vector3[] v = new Vector3[pb.sharedIndexesInternal.Length];
+			HashSet<int> selected = new HashSet<int>(IntArrayUtility.GetCommonIndexes(lookup, pb.selectedIndexesInternal));
 
 			for(int i = 0; i < billboardCount; i++)
-				v[i] = pb.positionsInternal[pb.sharedIndicesInternal[i][0]];
+				v[i] = pb.positionsInternal[pb.sharedIndexesInternal[i][0]];
 
 			Vector3[] 	t_billboards 		= new Vector3[billboardCount*4];
 			Vector3[] 	t_nrm 				= new Vector3[billboardCount*4];
@@ -502,9 +502,9 @@ namespace UnityEditor.ProBuilder
 		/// <param name="pb"></param>
 		static Renderable BuildVertexPoints(ProBuilderMesh pb)
 		{
-			int[] indices = new int[pb.sharedIndicesInternal.Length];
-			for (int i = 0; i < pb.sharedIndicesInternal.Length; i++)
-				indices[i] = pb.sharedIndicesInternal[i][0];
+			int[] indices = new int[pb.sharedIndexesInternal.Length];
+			for (int i = 0; i < pb.sharedIndexesInternal.Length; i++)
+				indices[i] = pb.sharedIndexesInternal[i][0];
 			return BuildVertexPoints(pb, indices);
 		}
 

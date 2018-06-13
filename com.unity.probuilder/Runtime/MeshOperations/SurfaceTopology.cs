@@ -29,7 +29,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 throw new System.ArgumentNullException("faces");
 
             List<Vertex> vertices = new List<Vertex>( Vertex.GetVertices(mesh) );
-			Dictionary<int, int> lookup = mesh.sharedIndicesInternal.ToDictionary();
+			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
 
 			List<FaceRebuildData> rebuild = new List<FaceRebuildData>();
 
@@ -48,7 +48,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 		static List<FaceRebuildData> BreakFaceIntoTris(Face face, List<Vertex> vertices, Dictionary<int, int> lookup)
 		{
-			int[] tris = face.indices;
+			int[] tris = face.indexesInternal;
 			int triCount = tris.Length;
 			List<FaceRebuildData> rebuild = new List<FaceRebuildData>(triCount / 3);
 
@@ -57,7 +57,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				FaceRebuildData r = new FaceRebuildData();
 
 				r.face = new Face(face);
-				r.face.indices = new int[] { 0, 1, 2};
+				r.face.indexesInternal = new int[] { 0, 1, 2};
 
 				r.vertices = new List<Vertex>() {
 					vertices[tris[i  ]],
@@ -150,7 +150,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (face == null)
                 throw new ArgumentNullException("face");
 
-            int[] indices = face.indices;
+            int[] indices = face.indexesInternal;
 
 			if(indices.Length != 6)
 				return false;
@@ -306,7 +306,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns></returns>
 		static Edge GetCommonEdgeInWindingOrder(WingedEdge wing)
 		{
-			int[] indices = wing.face.indices;
+			int[] indices = wing.face.indexesInternal;
 			int len = indices.Length;
 
 			for(int i = 0; i < len; i += 3)

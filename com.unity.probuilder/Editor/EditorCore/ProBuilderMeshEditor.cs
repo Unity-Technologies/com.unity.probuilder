@@ -73,7 +73,7 @@ namespace UnityEditor.ProBuilder
 
 			if (pb == null) return;
 
-			if (pb.selectedIndicesInternal.Length > 0)
+			if (pb.selectedIndexesInternal.Length > 0)
 			{
 				GUILayout.Space(5);
 
@@ -87,7 +87,7 @@ namespace UnityEditor.ProBuilder
 
 						ipb.ToMesh();
 
-						ipb.TranslateVerticesInWorldSpace(ipb.selectedIndicesInternal, offset);
+						ipb.TranslateVerticesInWorldSpace(ipb.selectedIndexesInternal, offset);
 
 						ipb.Refresh();
 						ipb.Optimize();
@@ -104,7 +104,7 @@ namespace UnityEditor.ProBuilder
 				pb = (ProBuilderMesh) target;
 
 			return ProBuilderEditor.instance != null &&
-			       InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms).Sum(x => x.selectedIndicesInternal.Length) > 0;
+			       InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms).Sum(x => x.selectedIndexesInternal.Length) > 0;
 		}
 
 		Bounds OnGetFrameBounds()
@@ -116,7 +116,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach (ProBuilderMesh mesh in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
-				int[] tris = mesh.selectedIndicesInternal;
+				int[] tris = mesh.selectedIndexesInternal;
 
 				if (tris == null || tris.Length < 1)
 					continue;

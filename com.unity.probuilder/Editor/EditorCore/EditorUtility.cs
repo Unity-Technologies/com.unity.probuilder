@@ -291,24 +291,25 @@ namespace UnityEditor.ProBuilder
 			return GetSceneView().pivot;
 		}
 
-		/**
-		 * If pb_Preferences_Internal.say to set pivot to corner and ProGrids or PB pref says snap to grid, do it.
-		 * @param indicesToCenterPivot If any values are passed here, the pivot is set to an average of all vertices at indices.  If null, the first vertex is used as the pivot.
-		 */
-		internal static void SetPivotAndSnapWithPref(ProBuilderMesh pb, int[] indicesToCenterPivot)
+		/// <summary>
+		/// Set the pivot point of a mesh.
+		/// </summary>
+		/// <param name="mesh"></param>
+		/// <param name="vertexes">If any values are passed here, the pivot is set to an average of all vertexes at indexes. If null, the first vertex is used as the pivot.</param>
+		internal static void SetPivotAndSnapWithPref(ProBuilderMesh mesh, int[] vertexes)
 		{
 			if(PreferencesInternal.GetBool(PreferenceKeys.pbForceGridPivot))
-				pb.CenterPivot( indicesToCenterPivot == null ? new int[1]{0} : indicesToCenterPivot );
+				mesh.CenterPivot( vertexes == null ? new int[1]{0} : vertexes );
 			else
-				pb.CenterPivot(indicesToCenterPivot);
+				mesh.CenterPivot(vertexes);
 
 			if(ProGridsInterface.SnapEnabled())
-				pb.transform.position = Snapping.SnapValue(pb.transform.position, ProGridsInterface.SnapValue());
+				mesh.transform.position = Snapping.SnapValue(mesh.transform.position, ProGridsInterface.SnapValue());
 			else
 			if(PreferencesInternal.GetBool(PreferenceKeys.pbForceVertexPivot))
-				pb.transform.position = Snapping.SnapValue(pb.transform.position, 1f);
+				mesh.transform.position = Snapping.SnapValue(mesh.transform.position, 1f);
 
-			pb.Optimize();
+			mesh.Optimize();
 		}
 
 		/**

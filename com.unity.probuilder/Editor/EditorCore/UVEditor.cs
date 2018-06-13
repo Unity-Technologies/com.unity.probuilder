@@ -134,7 +134,7 @@ namespace UnityEditor.ProBuilder
 
 		/// inspected data
 		ProBuilderMesh[] selection;
-		int[][] m_DistinctIndicesSelection;
+		int[][] m_DistinctIndexesSelection;
 
 		List<Face[]>[] incompleteTextureGroupsInSelection = new List<Face[]>[0];
 		List<List<Vector2>> incompleteTextureGroupsInSelection_CoordCache = new List<List<Vector2>>();
@@ -541,7 +541,7 @@ namespace UnityEditor.ProBuilder
 						List<Vector2> coords = new List<Vector2>();
 
 						foreach (Face face in incomplete_group)
-							coords.Add(Bounds2D.Center(pb.texturesInternal.ValuesWithIndices(face.distinctIndices)));
+							coords.Add(Bounds2D.Center(pb.texturesInternal.ValuesWithIndexes(face.distinctIndexesInternal)));
 
 						coords.Insert(0, Bounds2D.Center(coords.ToArray()));
 
@@ -692,32 +692,32 @@ namespace UnityEditor.ProBuilder
 		{
 			if (selection == null)
 			{
-				m_DistinctIndicesSelection = new int[0][];
+				m_DistinctIndexesSelection = new int[0][];
 				return;
 			}
 
-			m_DistinctIndicesSelection = new int[selection.Length][];
+			m_DistinctIndexesSelection = new int[selection.Length][];
 
-			// Append shared UV indices to SelectedTriangles array (if necessary)
+			// Append shared UV indexes to SelectedTriangles array (if necessary)
 			for (int i = 0; i < selection.Length; i++)
 			{
-				List<int> selectedTris = new List<int>(selection[i].selectedIndicesInternal);
+				List<int> selectedTris = new List<int>(selection[i].selectedIndexesInternal);
 
-				IntArray[] sharedUVs = selection[i].sharedIndicesUVInternal;
+				IntArray[] sharedUVs = selection[i].sharedIndexesUVInternal;
 
 				// put sewn UVs into the selection if they aren't already
 				if (sharedUVs != null)
 				{
 					foreach (int[] arr in sharedUVs)
 					{
-						if (System.Array.Exists(arr, element => System.Array.IndexOf(selection[i].selectedIndicesInternal, element) > -1))
+						if (System.Array.Exists(arr, element => System.Array.IndexOf(selection[i].selectedIndexesInternal, element) > -1))
 						{
 							selectedTris.AddRange(arr);
 						}
 					}
 				}
 
-				m_DistinctIndicesSelection[i] = selectedTris.Distinct().ToArray();
+				m_DistinctIndexesSelection[i] = selectedTris.Distinct().ToArray();
 			}
 		}
 
@@ -1167,7 +1167,7 @@ namespace UnityEditor.ProBuilder
 						ProBuilderMesh pb = selection[nearestElement.objectIndex];
 
 						Edge edge = pb.facesInternal[nearestElement.elementIndex].edgesInternal[nearestElement.elementSubIndex];
-						int ind = pb.selectedEdges.IndexOf(edge, pb.sharedIndicesInternal.ToDictionary());
+						int ind = pb.selectedEdges.IndexOf(edge, pb.sharedIndexesInternal.ToDictionary());
 
 						if (ind > -1)
 							pb.SetSelectedEdges(pb.selectedEdges.ToArray().RemoveAt(ind));
@@ -1343,7 +1343,7 @@ namespace UnityEditor.ProBuilder
 					ProBuilderMesh pb = selection[n];
 					Vector2[] uvs = UVEditing.GetUVs(pb, channel);
 
-					foreach (int i in m_DistinctIndicesSelection[n])
+					foreach (int i in m_DistinctIndexesSelection[n])
 						uvs[i] = newUVPosition - (uvOrigin - uv_origins[n][i]);
 
 					// set uv positions before figuring snap dist stuff
@@ -1357,12 +1357,12 @@ namespace UnityEditor.ProBuilder
 
 					for (int i = 0; i < selection.Length; i++)
 					{
-						Vector2[] sel = UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndices(UVEditing.GetUVs(selection[i], channel), m_DistinctIndicesSelection[i]);
+						Vector2[] sel = UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndexes(UVEditing.GetUVs(selection[i], channel), m_DistinctIndexesSelection[i]);
 
 						for (int n = 0; n < selection.Length; n++)
 						{
 							Vector2 offset;
-							if (EditorHandleUtility.NearestPointDelta(sel, UVEditing.GetUVs(selection[n], channel), i == n ? m_DistinctIndicesSelection[i] : null, MAX_PROXIMITY_SNAP_DIST_UV, out offset))
+							if (EditorHandleUtility.NearestPointDelta(sel, UVEditing.GetUVs(selection[n], channel), i == n ? m_DistinctIndexesSelection[i] : null, MAX_PROXIMITY_SNAP_DIST_UV, out offset))
 							{
 								if (EditorHandleUtility.CurrentAxisConstraint.Mask(offset).sqrMagnitude < nearestDelta.sqrMagnitude)
 									nearestDelta = offset;
@@ -1378,7 +1378,7 @@ namespace UnityEditor.ProBuilder
 						{
 							Vector2[] uvs = UVEditing.GetUVs(selection[i], channel);
 
-							foreach (int n in m_DistinctIndicesSelection[i])
+							foreach (int n in m_DistinctIndexesSelection[i])
 								uvs[n] += nearestDelta;
 
 							UVEditing.ApplyUVs(selection[i], uvs, channel);
@@ -1433,7 +1433,7 @@ namespace UnityEditor.ProBuilder
 					ProBuilderMesh pb = selection[n];
 					Vector2[] uvs = UVEditing.GetUVs(pb, channel);
 
-					foreach (int i in m_DistinctIndicesSelection[n])
+					foreach (int i in m_DistinctIndexesSelection[n])
 						uvs[i] += delta;
 
 					UVEditing.ApplyUVs(pb, uvs, channel);
@@ -1468,7 +1468,7 @@ namespace UnityEditor.ProBuilder
 						ProBuilderMesh pb = selection[n];
 						Vector2[] uvs = UVEditing.GetUVs(pb, channel);
 
-						foreach (int i in m_DistinctIndicesSelection[n])
+						foreach (int i in m_DistinctIndexesSelection[n])
 							uvs[i] = uv_origins[n][i].RotateAroundPoint(uvOrigin, uvRotation);
 
 						UVEditing.ApplyUVs(pb, uvs, channel);
@@ -1526,7 +1526,7 @@ namespace UnityEditor.ProBuilder
 						ProBuilderMesh pb = selection[n];
 						Vector2[] uvs = UVEditing.GetUVs(pb, channel);
 
-						foreach (int i in m_DistinctIndicesSelection[n])
+						foreach (int i in m_DistinctIndexesSelection[n])
 							uvs[i] = uv_origins[n][i].RotateAroundPoint(uvOrigin, uvRotation);
 
 						UVEditing.ApplyUVs(pb, uvs, channel);
@@ -1585,7 +1585,7 @@ namespace UnityEditor.ProBuilder
 						ProBuilderMesh pb = selection[n];
 						Vector2[] uvs = UVEditing.GetUVs(pb, channel);
 
-						foreach (int i in m_DistinctIndicesSelection[n])
+						foreach (int i in m_DistinctIndexesSelection[n])
 						{
 							uvs[i] = uv_origins[n][i].ScaleAroundPoint(uvOrigin, uvScale);
 						}
@@ -1648,7 +1648,7 @@ namespace UnityEditor.ProBuilder
 					ProBuilderMesh pb = selection[n];
 					Vector2[] uvs = UVEditing.GetUVs(pb, channel);
 
-					foreach (int i in m_DistinctIndicesSelection[n])
+					foreach (int i in m_DistinctIndexesSelection[n])
 					{
 						uvs[i] = uv_origins[n][i].ScaleAroundPoint(uvOrigin, textureScale);
 					}
@@ -1884,7 +1884,7 @@ namespace UnityEditor.ProBuilder
 
 					if (channel < 1)
 					{
-						foreach (int index in selection[i].selectedIndicesInternal)
+						foreach (int index in selection[i].selectedIndexesInternal)
 						{
 							p = UVToGUIPoint(uv[index]);
 							r.x = p.x - HALF_DOT;
@@ -2082,7 +2082,7 @@ namespace UnityEditor.ProBuilder
 								GL.Begin(GL.TRIANGLES);
 
 								GL.Color(selection[nearestElement.objectIndex].facesInternal[nearestElement.elementIndex].manualUV ? HOVER_COLOR_MANUAL : HOVER_COLOR_AUTO);
-								int[] tris = selection[nearestElement.objectIndex].facesInternal[nearestElement.elementIndex].indices;
+								int[] tris = selection[nearestElement.objectIndex].facesInternal[nearestElement.elementIndex].indexesInternal;
 
 								for (int i = 0; i < tris.Length; i += 3)
 								{
@@ -2104,7 +2104,7 @@ namespace UnityEditor.ProBuilder
 								{
 									GL.Color(face.manualUV ? SELECTED_COLOR_MANUAL : SELECTED_COLOR_AUTO);
 
-									int[] tris = face.indices;
+									int[] tris = face.indexesInternal;
 
 									for (int n = 0; n < tris.Length; n += 3)
 									{
@@ -2236,7 +2236,7 @@ namespace UnityEditor.ProBuilder
 
 		Bounds2D GetBounds(int i, int f, Vector2[][] array)
 		{
-			return new Bounds2D(UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndices(array[i], selection[i].facesInternal[f].distinctIndices));
+			return new Bounds2D(UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndexes(array[i], selection[i].facesInternal[f].distinctIndexesInternal));
 		}
 
 		/**
@@ -2298,7 +2298,7 @@ namespace UnityEditor.ProBuilder
 			{
 				Vector2[] uv = selection[n].texturesInternal;
 
-				foreach (int i in m_DistinctIndicesSelection[n])
+				foreach (int i in m_DistinctIndexesSelection[n])
 				{
 					if (first)
 					{
@@ -2372,7 +2372,7 @@ namespace UnityEditor.ProBuilder
 					switch (selectionMode)
 					{
 						case SelectMode.Vertex:
-							List<int> selectedTris = new List<int>(pb.selectedIndicesInternal);
+							List<int> selectedTris = new List<int>(pb.selectedIndexesInternal);
 
 							for (int j = 0; j < len; j++)
 							{
@@ -2427,13 +2427,13 @@ namespace UnityEditor.ProBuilder
 							{
 								Face face = pb.facesInternal[n];
 
-								int[] distinctIndices = pb.facesInternal[n].distinctIndices;
+								int[] distinctIndexes = pb.facesInternal[n].distinctIndexesInternal;
 
 								bool allPointsContained = true;
 
-								for (int t = 0; t < distinctIndices.Length; t++)
+								for (int t = 0; t < distinctIndexes.Length; t++)
 								{
-									if (!dragBounds.ContainsPoint(mshUV[distinctIndices[t]]))
+									if (!dragBounds.ContainsPoint(mshUV[distinctIndexes[t]]))
 									{
 										allPointsContained = false;
 										break;
@@ -2795,7 +2795,7 @@ namespace UnityEditor.ProBuilder
 		#region UV Selection
 
 		/**
-		 * Given selected tris, return an array of all indices attached to face
+		 * Given selected tris, return an array of all indexes attached to face
 		 */
 		private void SelectUVShell()
 		{
@@ -2803,7 +2803,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach (ProBuilderMesh pb in selection)
 			{
-				Face[] faces = GetFaces(pb, pb.selectedIndicesInternal);
+				Face[] faces = GetFaces(pb, pb.selectedIndexesInternal);
 
 				List<int> elementGroups = new List<int>();
 				List<int> textureGroups = new List<int>();
@@ -2861,7 +2861,7 @@ namespace UnityEditor.ProBuilder
 		}
 
 		/**
-		 * Sets the SceneView and UV selection to include any faces with currently selected indices.
+		 * Sets the SceneView and UV selection to include any faces with currently selected indexes.
 		 */
 		private void SelectUVFace()
 		{
@@ -2869,7 +2869,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach (ProBuilderMesh pb in selection)
 			{
-				Face[] faces = GetFaces(pb, pb.selectedIndicesInternal);
+				Face[] faces = GetFaces(pb, pb.selectedIndexesInternal);
 				pb.SetSelectedFaces(faces);
 				ProBuilderEditor.Refresh(false);
 			}
@@ -2885,7 +2885,7 @@ namespace UnityEditor.ProBuilder
 			foreach (Face f in pb.facesInternal)
 				f.elementGroup = -1;
 
-			IntArray[] sharedUVs = pb.sharedIndicesUVInternal;
+			IntArray[] sharedUVs = pb.sharedIndexesUVInternal;
 
 			int eg = 0;
 			foreach (IntArray pint in sharedUVs)
@@ -2913,16 +2913,16 @@ namespace UnityEditor.ProBuilder
 		}
 
 		/**
-		 * Get all faces that contain any of the passed vertex indices.
+		 * Get all faces that contain any of the passed vertex indexes.
 		 */
-		private Face[] GetFaces(ProBuilderMesh pb, int[] indices)
+		Face[] GetFaces(ProBuilderMesh pb, int[] indexes)
 		{
 			List<Face> faces = new List<Face>();
 			foreach (Face f in pb.facesInternal)
 			{
-				foreach (int i in f.distinctIndices)
+				foreach (int i in f.distinctIndexesInternal)
 				{
-					if (System.Array.IndexOf(indices, i) > -1)
+					if (System.Array.IndexOf(indexes, i) > -1)
 					{
 						faces.Add(f);
 						break;
@@ -2933,23 +2933,25 @@ namespace UnityEditor.ProBuilder
 			return faces.Distinct().ToArray();
 		}
 
-		/**
-		 * Finds all faces attached to the current selection and marks the faces as having been manually modified.
-		 */
-		private void FlagSelectedFacesAsManual(ProBuilderMesh pb)
+		/// <summary>
+		/// Finds all faces attached to the current selection and marks the faces as having been manually modified.
+		/// </summary>
+		/// <param name="mesh"></param>
+		void FlagSelectedFacesAsManual(ProBuilderMesh mesh)
 		{
 			// Mark selected UV faces manualUV flag true
-			foreach (Face f in GetFaces(pb, pb.selectedIndicesInternal))
+			foreach (Face f in GetFaces(mesh, mesh.selectedIndexesInternal))
 			{
 				f.textureGroup = -1;
 				f.manualUV = true;
 			}
 		}
 
-		/**
-		 * Creates a copy of each msh.uv array in a jagged array, and stores the average of all points.
-		 */
-		private void CopySelectionUVs(out Vector2[][] uvCopy)
+		/// <summary>
+		/// Creates a copy of each msh.uv array in a jagged array, and stores the average of all points.
+		/// </summary>
+		/// <param name="uvCopy"></param>
+		void CopySelectionUVs(out Vector2[][] uvCopy)
 		{
 			uvCopy = new Vector2[selection.Length][];
 			for (int i = 0; i < selection.Length; i++)
@@ -2977,7 +2979,7 @@ namespace UnityEditor.ProBuilder
 				if (selection[i].selectedFacesInternal.Length > 0)
 				{
 					selection[i].ToMesh(); // Remove UV2 modifications
-					UVEditing.SplitUVs(selection[i], selection[i].selectedIndicesInternal);
+					UVEditing.SplitUVs(selection[i], selection[i].selectedIndexesInternal);
 					UVEditing.ProjectFacesAuto(selection[i], selection[i].selectedFacesInternal, channel);
 
 					foreach (Face f in selection[i].selectedFacesInternal)
@@ -3055,7 +3057,7 @@ namespace UnityEditor.ProBuilder
 		}
 
 		/**
-		 * Spherically project all selected indices in selection.
+		 * Spherically project all selected indexes in selection.
 		 */
 		public void Menu_SphericalProject()
 		{
@@ -3068,7 +3070,7 @@ namespace UnityEditor.ProBuilder
 
 				if (selection[i].selectedVertexCount > 0)
 				{
-					UVEditing.ProjectFacesSphere(selection[i], selection[i].selectedIndicesInternal, channel);
+					UVEditing.ProjectFacesSphere(selection[i], selection[i].selectedIndexesInternal, channel);
 					p++;
 				}
 			}
@@ -3159,7 +3161,7 @@ namespace UnityEditor.ProBuilder
 			{
 				selection[i].ToMesh();
 
-				selection[i].CollapseUVs(m_DistinctIndicesSelection[i]);
+				selection[i].CollapseUVs(m_DistinctIndexesSelection[i]);
 
 				selection[i].Refresh();
 				selection[i].Optimize();
@@ -3185,7 +3187,7 @@ namespace UnityEditor.ProBuilder
 			{
 				selection[i].ToMesh();
 
-				selection[i].SewUVs(m_DistinctIndicesSelection[i], weldDistance);
+				selection[i].SewUVs(m_DistinctIndexesSelection[i], weldDistance);
 				RefreshElementGroups(selection[i]);
 
 				selection[i].Refresh();
@@ -3212,7 +3214,7 @@ namespace UnityEditor.ProBuilder
 			{
 				pb.ToMesh();
 
-				pb.SplitUVs(pb.selectedIndicesInternal);
+				pb.SplitUVs(pb.selectedIndexesInternal);
 				RefreshElementGroups(pb);
 
 				pb.Refresh();
@@ -3238,11 +3240,11 @@ namespace UnityEditor.ProBuilder
 			{
 				selection[i].ToMesh();
 
-				selection[i].SplitUVs(selection[i].selectedIndicesInternal);
+				selection[i].SplitUVs(selection[i].selectedIndexesInternal);
 
 				Vector2[] uv = channel == 0 ? selection[i].texturesInternal : selection[i].mesh.uv2;
 
-				foreach (int n in selection[i].selectedIndicesInternal.Distinct())
+				foreach (int n in selection[i].selectedIndexesInternal.Distinct())
 					uv[n] = Math.ReflectPoint(uv[n], center, center + direction);
 
 				UVEditing.ApplyUVs(selection[i], uv, channel);
@@ -3284,12 +3286,12 @@ namespace UnityEditor.ProBuilder
 				selection[i].ToMesh();
 
 				Vector2[] uv = UVEditing.GetUVs(selection[i], channel);
-				Vector2[] uvs = UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndices(uv, m_DistinctIndicesSelection[i]);
+				Vector2[] uvs = UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndexes(uv, m_DistinctIndexesSelection[i]);
 
 				uvs = UVEditing.FitUVs(uvs);
 
 				for (int n = 0; n < uvs.Length; n++)
-					uv[m_DistinctIndicesSelection[i][n]] = uvs[n];
+					uv[m_DistinctIndexesSelection[i][n]] = uvs[n];
 
 				UVEditing.ApplyUVs(selection[i], uv, channel);
 			}
@@ -3312,7 +3314,7 @@ namespace UnityEditor.ProBuilder
 				var pb = selection[i];
 				Vector2[] uv = UVEditing.GetUVs(pb, channel);
 
-				foreach (int n in selection[i].selectedIndicesInternal.Distinct())
+				foreach (int n in selection[i].selectedIndexesInternal.Distinct())
 				{
 					uv[n] -= delta;
 				}

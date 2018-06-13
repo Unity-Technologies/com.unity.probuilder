@@ -58,7 +58,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Vector2[] newTextures = new Vector2[mesh.texturesInternal.Length + uvs.Length];
 
 			List<Face> faces = new List<Face>(mesh.facesInternal);
-			IntArray[] sharedIndices = mesh.sharedIndicesInternal;
+			IntArray[] sharedIndices = mesh.sharedIndexesInternal;
 
 			Array.Copy(mesh.positionsInternal, 0, newPositions, 0, vertexCount);
 			Array.Copy(positions, 0, newPositions, vertexCount, positions.Length);
@@ -121,7 +121,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			var newColors = new List<Color>(mesh.colorsInternal);
 			var newTextures = new List<Vector2>(mesh.texturesInternal);
 			var newFaces = new List<Face>(mesh.facesInternal);
-			IntArray[] sharedIndices = mesh.sharedIndicesInternal;
+			IntArray[] sharedIndices = mesh.sharedIndexesInternal;
 
 			int vc = mesh.vertexCount;
 
@@ -163,7 +163,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			mesh.SetColors(newColors.ToArray());
 			mesh.SetUVs(newTextures.ToArray());
 			mesh.SetFaces(newFaces.ToArray());
-			mesh.sharedIndicesInternal = sharedIndices;
+			mesh.sharedIndexesInternal = sharedIndices;
 
 			return faces;
 		}
@@ -180,9 +180,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			IntArray[] sharedIndices = mesh.sharedIndicesInternal;
+			IntArray[] sharedIndices = mesh.sharedIndexesInternal;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
-			HashSet<int> common = IntArrayUtility.GetCommonIndices(lookup, indexes);
+			HashSet<int> common = IntArrayUtility.GetCommonIndexes(lookup, indexes);
 			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(mesh));
 			List<Vertex> appendVertices = new List<Vertex>();
 
@@ -379,7 +379,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			List<FaceRebuildData> rebuild = new List<FaceRebuildData>();
 			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(mesh));
-			Dictionary<int, int> lookup = mesh.sharedIndicesInternal.ToDictionary();
+			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
 
 			foreach(Face face in faces)
 			{
@@ -390,16 +390,16 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				data.sharedIndices = new List<int>();
 
 				Dictionary<int, int> map = new Dictionary<int, int>();
-				int len = data.face.indices.Length;
+				int len = data.face.indexesInternal.Length;
 
 				for(int i = 0; i < len; i++)
 				{
-					if(map.ContainsKey(face.indices[i]))
+					if(map.ContainsKey(face.indexesInternal[i]))
 						continue;
 
-					map.Add(face.indices[i], map.Count);
-					data.vertices.Add(vertices[face.indices[i]]);
-					data.sharedIndices.Add(lookup[face.indices[i]]);
+					map.Add(face.indexesInternal[i], map.Count);
+					data.vertices.Add(vertices[face.indexesInternal[i]]);
+					data.sharedIndices.Add(lookup[face.indexesInternal[i]]);
 				}
 
 				int[] tris = new int[len];
@@ -607,8 +607,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             List<Vertex> vertices = Vertex.GetVertices(mesh).ToList();
             List<Face> faces = new List<Face>(mesh.facesInternal);
-            Dictionary<int, int> lookup = mesh.sharedIndicesInternal.ToDictionary();
-            Dictionary<int, int> lookupUV = mesh.sharedIndicesUVInternal == null ? null : mesh.sharedIndicesUVInternal.ToDictionary();
+            Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
+            Dictionary<int, int> lookupUV = mesh.sharedIndexesUVInternal == null ? null : mesh.sharedIndexesUVInternal.ToDictionary();
 
             List<Edge> wound = WingedEdge.SortEdgesByAdjacency(face);
 
@@ -744,8 +744,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
             }
 
             List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(mesh));
-            Dictionary<int, int> lookup = mesh.sharedIndicesInternal.ToDictionary();
-            Dictionary<int, int> lookupUV = mesh.sharedIndicesUVInternal.ToDictionary();
+            Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
+            Dictionary<int, int> lookupUV = mesh.sharedIndexesUVInternal.ToDictionary();
             List<int> indicesToDelete = new List<int>();
             Edge[] commonEdges = EdgeExtension.GetUniversalEdges(edges.ToArray(), lookup);
             List<Edge> distinctEdges = commonEdges.Distinct().ToList();
@@ -757,7 +757,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			foreach(Edge edge in distinctEdges)
 			{
-				Edge localEdge = EdgeExtension.GetLocalEdgeFast(edge, mesh.sharedIndicesInternal);
+				Edge localEdge = EdgeExtension.GetLocalEdgeFast(edge, mesh.sharedIndexesInternal);
 
 				// Generate the new vertices that will be inserted on this edge
 				List<Vertex> verticesToAppend = new List<Vertex>(count);
@@ -778,11 +778,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					{
 						data = new FaceRebuildData();
 						data.face = new Face(new int[0], face.material, new AutoUnwrapSettings(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
-						data.vertices = new List<Vertex>(ArrayUtility.ValuesWithIndices(vertices, face.distinctIndices));
+						data.vertices = new List<Vertex>(ArrayUtility.ValuesWithIndexes(vertices, face.distinctIndexesInternal));
 						data.sharedIndices = new List<int>();
 						data.sharedIndicesUV = new List<int>();
 
-						foreach(int i in face.distinctIndices)
+						foreach(int i in face.distinctIndexesInternal)
 						{
 							int shared;
 
@@ -793,7 +793,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 								data.sharedIndicesUV.Add(shared);
 						}
 
-						indicesToDelete.AddRange(face.distinctIndices);
+						indicesToDelete.AddRange(face.distinctIndexesInternal);
 
 						modifiedFaces.Add(face, data);
 					}
@@ -829,7 +829,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				List<int> indices;
 
 				if(Triangulation.SortAndTriangulate(projection, out indices))
-					data.face.indices = indices.ToArray();
+					data.face.indexesInternal = indices.ToArray();
 				else
 					continue;
 

@@ -1274,10 +1274,10 @@ namespace UnityEngine.ProBuilder
 		/// </remarks>
 		/// <param name="radius">The radius of the sphere.</param>
 		/// <param name="subdivisions">How many subdivisions to perform.</param>
-		/// <param name="weldVertices">If false this function will not extract shared indices. This is useful when showing a preview, where speed of generation is more important than making the shape editable.</param>
+		/// <param name="weldVertexes">If false this function will not extract shared indexes. This is useful when showing a preview, where speed of generation is more important than making the shape editable.</param>
 		/// <param name="manualUvs">For performance reasons faces on icospheres are marked as manual UVs. Pass false to this parameter to force auto unwrapped UVs.</param>
 		/// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-		public static ProBuilderMesh IcosahedronGenerator(float radius, int subdivisions, bool weldVertices = true, bool manualUvs = true)
+		public static ProBuilderMesh IcosahedronGenerator(float radius, int subdivisions, bool weldVertexes = true, bool manualUvs = true)
 		{
 			// http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
 
@@ -1317,17 +1317,17 @@ namespace UnityEngine.ProBuilder
 			pb.positionsInternal = v;
 			pb.facesInternal = f;
 
-			if (!weldVertices)
+			if (!weldVertexes)
 			{
 				IntArray[] si = new IntArray[v.Length];
 				for (int i = 0; i < si.Length; i++)
 					si[i] = new IntArray(new int[] {i});
 
-				pb.sharedIndicesInternal = si;
+				pb.sharedIndexesInternal = si;
 			}
 			else
 			{
-				pb.sharedIndicesInternal = IntArrayUtility.GetSharedIndexesWithPositions(v);
+				pb.sharedIndexesInternal = IntArrayUtility.GetSharedIndexesWithPositions(v);
 			}
 
 			pb.ToMesh();

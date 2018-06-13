@@ -84,9 +84,9 @@ namespace UnityEditor.ProBuilder
 					selected.Add(face.smoothingGroup);
 			}
 
-			public void RebuildPreviewMesh(ProBuilderMesh pb)
+			void RebuildPreviewMesh(ProBuilderMesh pb)
 			{
-				List<int> indices = new List<int>();
+				List<int> indexes = new List<int>();
 				Color32[] colors = new Color32[pb.vertexCount];
 				groupColors.Clear();
 
@@ -96,8 +96,8 @@ namespace UnityEditor.ProBuilder
 					{
 						Color32 color = GetDistinctColor(smoothGroup.Key);
 						groupColors.Add(smoothGroup.Key, color);
-						var groupIndices = smoothGroup.Value.SelectMany(y => y.indices);
-						indices.AddRange(groupIndices);
+						var groupIndices = smoothGroup.Value.SelectMany(y => y.indexesInternal);
+						indexes.AddRange(groupIndices);
 						foreach (int i in groupIndices)
 							colors[i] = color;
 					}
@@ -106,7 +106,7 @@ namespace UnityEditor.ProBuilder
 				previewMesh.Clear();
 				previewMesh.vertices = pb.positionsInternal;
 				previewMesh.colors32 = colors;
-				previewMesh.triangles = indices.ToArray();
+				previewMesh.triangles = indexes.ToArray();
 			}
 
 			public void RebuildNormalsMesh(ProBuilderMesh pb)
@@ -117,7 +117,7 @@ namespace UnityEditor.ProBuilder
 				int vertexCount = System.Math.Min(ushort.MaxValue / 2, pb.mesh.vertexCount);
 				Vector3[] positions = new Vector3[vertexCount * 2];
 				Vector4[] tangents = new Vector4[vertexCount * 2];
-				int[] indices = new int[vertexCount * 2];
+				int[] indexes = new int[vertexCount * 2];
 				for (int i = 0; i < vertexCount; i++)
 				{
 					int a = i*2, b = i*2+1;
@@ -126,13 +126,13 @@ namespace UnityEditor.ProBuilder
 					positions[b] = srcPositions[i];
 					tangents[a] = new Vector4(srcNormals[i].x, srcNormals[i].y, srcNormals[i].z, 0f);
 					tangents[b] = new Vector4(srcNormals[i].x, srcNormals[i].y, srcNormals[i].z, 1f);
-					indices[a] = a;
-					indices[b] = b;
+					indexes[a] = a;
+					indexes[b] = b;
 				}
 				normalsMesh.vertices = positions;
 				normalsMesh.tangents = tangents;
 				normalsMesh.subMeshCount = 1;
-				normalsMesh.SetIndices(indices, MeshTopology.Lines, 0);
+				normalsMesh.SetIndices(indexes, MeshTopology.Lines, 0);
 			}
 		}
 

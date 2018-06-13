@@ -26,11 +26,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			{
 				Face left = pair.item1;
 				Face right = pair.item2;
-				int leftLength = left.indices.Length;
-				int rightLength = right.indices.Length;
+				int leftLength = left.indexesInternal.Length;
+				int rightLength = right.indexesInternal.Length;
 				int[] indices = new int[leftLength + rightLength];
-				System.Array.Copy(left.indices, 0, indices, 0, leftLength);
-				System.Array.Copy(right.indices, 0, indices, leftLength, rightLength);
+				System.Array.Copy(left.indexesInternal, 0, indices, 0, leftLength);
+				System.Array.Copy(right.indexesInternal, 0, indices, leftLength, rightLength);
 				add.Add(new Face(indices, left.material, left.uv, left.smoothingGroup, left.textureGroup, left.elementGroup, left.manualUV));
 				remove.Add(left);
 				remove.Add(right);
@@ -65,7 +65,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			Face first = faces.First();
 
-			Face mergedFace = new Face(faces.SelectMany(x => x.indices).ToArray(),
+			Face mergedFace = new Face(faces.SelectMany(x => x.indexesInternal).ToArray(),
 				first.material,
 				first.uv,
 				first.smoothingGroup,
@@ -102,21 +102,21 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="faces"></param>
 		internal static void CollapseCoincidentVertices(ProBuilderMesh pb, IEnumerable<Face> faces)
 		{
-			Dictionary<int, int> lookup = pb.sharedIndicesInternal.ToDictionary();
+			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
 			Dictionary<int, int> matches = new Dictionary<int, int>();
 
 			foreach(Face face in faces)
 			{
 				matches.Clear();
 
-				for(int i = 0; i < face.indices.Length; i++)
+				for(int i = 0; i < face.indexesInternal.Length; i++)
 				{
-					int common = lookup[face.indices[i]];
+					int common = lookup[face.indexesInternal[i]];
 
 					if(matches.ContainsKey(common))
-						face.indices[i] = matches[common];
+						face.indexesInternal[i] = matches[common];
 					else
-						matches.Add(common, face.indices[i]);
+						matches.Add(common, face.indexesInternal[i]);
 				}
 
 				face.InvalidateCache();

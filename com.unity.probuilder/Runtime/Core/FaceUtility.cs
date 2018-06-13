@@ -9,7 +9,7 @@ namespace UnityEngine.ProBuilder
 	public static class FaceUtility
 	{
 		/// <summary>
-		/// Add offset to each value in the indices array.
+		/// Add offset to each value in the indexes array.
 		/// </summary>
 		/// <param name="face">Target face to apply the offset to.</param>
 		/// <param name="offset">The value to add to each index.</param>
@@ -18,36 +18,36 @@ namespace UnityEngine.ProBuilder
             if (face == null)
                 throw new ArgumentNullException("face");
 
-			int[] indices = face.indices;
-			for (int i = 0, c = indices.Length; i < c; i++)
-				indices[i] += offset;
+			int[] indexes = face.indexesInternal;
+			for (int i = 0, c = indexes.Length; i < c; i++)
+				indexes[i] += offset;
 			face.InvalidateCache();
 		}
 
 		/// <summary>
 		/// Find the smallest value in the triangles array.
 		/// </summary>
-		/// <returns>The smallest value in the indices array.</returns>
+		/// <returns>The smallest value in the indexes array.</returns>
 		static int SmallestIndexValue(this Face face)
 		{
-			int[] indices = face.indices;
-			int smallest = indices[0];
+			int[] indexes = face.indexesInternal;
+			int smallest = indexes[0];
 
-			for (int i = 1; i < indices.Length; i++)
+			for (int i = 1; i < indexes.Length; i++)
 			{
-				if (indices[i] < smallest)
-					smallest = indices[i];
+				if (indexes[i] < smallest)
+					smallest = indexes[i];
 			}
 
 			return smallest;
 		}
 
         /// <summary>
-        /// Finds the smallest value in the indices array, then offsets by subtracting that value from each index.
+        /// Finds the smallest value in the indexes array, then offsets by subtracting that value from each index.
         /// </summary>
         /// <example>
         /// ```
-        /// // sets the indices array to `{0, 1, 2}`.
+        /// // sets the indexes array to `{0, 1, 2}`.
         /// new pb_Face(3,4,5).ShiftIndexesToZero();
         /// ```
         /// </example>
@@ -58,12 +58,12 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentNullException("face");
 
             int offset = SmallestIndexValue(face);
-			int[] indices = face.indices;
-			int[] distinct = face.distinctIndices;
+			int[] indexes = face.indexesInternal;
+			int[] distinct = face.distinctIndexesInternal;
 			Edge[] edges = face.edgesInternal;
 
-			for (int i = 0; i < indices.Length; i++)
-				indices[i] -= offset;
+			for (int i = 0; i < indexes.Length; i++)
+				indexes[i] -= offset;
 
 			for (int i = 0; i < distinct.Length; i++)
 				distinct[i] -= offset;
@@ -87,9 +87,9 @@ namespace UnityEngine.ProBuilder
             if (face == null)
                 throw new ArgumentNullException("face");
 
-            int[] indices = face.indices;
-			Array.Reverse(indices);
-			face.indices = indices;
+            int[] indexes = face.indexesInternal;
+			Array.Reverse(indexes);
+			face.indexesInternal = indexes;
 		}
 	}
 }

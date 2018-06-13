@@ -25,7 +25,7 @@ namespace UnityEditor.ProBuilder
 			{
 				this.lookup = lookup;
 				this.isVisible = visible;
-				this.common = IntArrayUtility.GetCommonIndices(lookup, indices);
+				this.common = IntArrayUtility.GetCommonIndexes(lookup, indices);
 			}
 		}
 
@@ -79,13 +79,13 @@ namespace UnityEditor.ProBuilder
 
 				if(selection.TryGetValue(pb, out sel))
 				{
-					sel.lookup = pb.sharedIndicesInternal.ToDictionary();
-					sel.common = IntArrayUtility.GetCommonIndices(sel.lookup, pb.selectedIndicesInternal);
+					sel.lookup = pb.sharedIndexesInternal.ToDictionary();
+					sel.common = IntArrayUtility.GetCommonIndexes(sel.lookup, pb.selectedIndexesInternal);
 					res.Add(pb, sel);
 				}
 				else
 				{
-					res.Add(pb, new VertexEditorSelection(pb.sharedIndicesInternal.ToDictionary(), true, pb.selectedIndicesInternal));
+					res.Add(pb, new VertexEditorSelection(pb.sharedIndexesInternal.ToDictionary(), true, pb.selectedIndexesInternal));
 				}
 			}
 
@@ -174,7 +174,7 @@ namespace UnityEditor.ProBuilder
 
 							GUILayout.Label(u.ToString(), GUILayout.MinWidth(32), GUILayout.MaxWidth(32));
 
-							Vector3 v = pb.positionsInternal[pb.sharedIndicesInternal[u][0]];
+							Vector3 v = pb.positionsInternal[pb.sharedIndexesInternal[u][0]];
 
 							if(worldSpace) v = transform.TransformPoint(v);
 
@@ -233,7 +233,7 @@ namespace UnityEditor.ProBuilder
 
 				foreach(int i in sel.common)
 				{
-					int[] indices = pb.sharedIndicesInternal[i];
+					int[] indices = pb.sharedIndexesInternal[i];
 
 					Vector3 point = pb.transform.TransformPoint(vertices[indices[0]]);
 

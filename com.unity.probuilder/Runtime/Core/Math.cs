@@ -673,13 +673,13 @@ namespace UnityEngine.ProBuilder
 			// otherwise it's not safe to assume that the face
 			// has even generally uniform normals
 			Vector3 nrm = Normal(
-				positions[face.indices[0]],
-				positions[face.indices[1]],
-				positions[face.indices[2]] );
+				positions[face.indexesInternal[0]],
+				positions[face.indexesInternal[1]],
+				positions[face.indexesInternal[2]] );
 
-			if(face.indices.Length > 6)
+			if(face.indexesInternal.Length > 6)
 			{
-				Vector3 prj = Projection.FindBestPlane(positions, face.distinctIndices).normal;
+				Vector3 prj = Projection.FindBestPlane(positions, face.distinctIndexesInternal).normal;
 
 				if(Vector3.Dot(nrm, prj) < 0f)
 				{
@@ -736,7 +736,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns>The normal, bitangent, and tangent for the face.</returns>
 		public static Normals NormalTangentBitangent(ProBuilderMesh mesh, Face face)
 		{
-			if(mesh == null || face == null || face.indices.Length < 3)
+			if(mesh == null || face == null || face.indexesInternal.Length < 3)
                 throw new System.ArgumentNullException("mesh", "Cannot find normal, tangent, and bitangent for null object, or faces with < 3 indices.");
 
 			if(mesh.texturesInternal == null || mesh.texturesInternal.Length != mesh.vertexCount)
@@ -748,9 +748,9 @@ namespace UnityEngine.ProBuilder
 			Vector3 tan2 = Vector3.zero;
 			Vector4 tan = new Vector4(0f,0f,0f,1f);
 
-			long i1 = face.indices[0];
-			long i2 = face.indices[1];
-			long i3 = face.indices[2];
+			long i1 = face.indexesInternal[0];
+			long i2 = face.indexesInternal[1];
+			long i3 = face.indexesInternal[2];
 
 			Vector3 v1 = mesh.positionsInternal[i1];
 			Vector3 v2 = mesh.positionsInternal[i2];

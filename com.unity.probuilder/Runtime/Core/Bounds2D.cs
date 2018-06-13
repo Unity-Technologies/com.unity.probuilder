@@ -67,10 +67,10 @@ namespace UnityEngine.ProBuilder
 		/// Create bounds from a set of 2d points.
 		/// </summary>
 		/// <param name="points"></param>
-		/// <param name="indices"></param>
-		public Bounds2D(Vector2[] points, int[] indices)
+		/// <param name="indexes"></param>
+		public Bounds2D(Vector2[] points, int[] indexes)
 		{
-			SetWithPoints(points, indices);
+			SetWithPoints(points, indexes);
 		}
 
 		/// <summary>
@@ -285,25 +285,25 @@ namespace UnityEngine.ProBuilder
 		/// Set this bounds center and size to encapsulate points.
 		/// </summary>
 		/// <param name="points"></param>
-		/// <param name="indices"></param>
-		public void SetWithPoints(IList<Vector2> points, IList<int> indices)
+		/// <param name="indexes"></param>
+		public void SetWithPoints(IList<Vector2> points, IList<int> indexes)
 		{
 			float 	xMin = 0f,
 					xMax = 0f,
 					yMin = 0f,
 					yMax = 0f;
 
-			if(points.Count > 0 && indices.Count > 0)
+			if(points.Count > 0 && indexes.Count > 0)
 			{
-				xMin = points[indices[0]].x;
-				yMin = points[indices[0]].y;
+				xMin = points[indexes[0]].x;
+				yMin = points[indexes[0]].y;
 				xMax = xMin;
 				yMax = yMin;
 
-				for(int i = 1; i < indices.Count; i++)
+				for(int i = 1; i < indexes.Count; i++)
 				{
-					float x = points[indices[i]].x;
-					float y = points[indices[i]].y;
+					float x = points[indexes[i]].x;
+					float y = points[indexes[i]].y;
 
 					if(x < xMin) xMin = x;
 					if(x > xMax) xMax = x;
@@ -364,26 +364,26 @@ namespace UnityEngine.ProBuilder
 		/// to only the points up to length in array.
 		/// </summary>
 		/// <param name="points"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <returns></returns>
-		public static Vector2 Center(Vector2[] points, int[] indices)
+		public static Vector2 Center(Vector2[] points, int[] indexes)
 		{
 			float 	xMin = 0f,
 					xMax = 0f,
 					yMin = 0f,
 					yMax = 0f;
 
-			int size = indices.Length;
+			int size = indexes.Length;
 
-			xMin = points[indices[0]].x;
-			yMin = points[indices[0]].y;
+			xMin = points[indexes[0]].x;
+			yMin = points[indexes[0]].y;
 			xMax = xMin;
 			yMax = yMin;
 
 			for(int i = 1; i < size; i++)
 			{
-				float x = points[indices[i]].x;
-				float y = points[indices[i]].y;
+				float x = points[indexes[i]].x;
+				float y = points[indexes[i]].y;
 
 				if(x < xMin) xMin = x;
 				if(x > xMax) xMax = x;

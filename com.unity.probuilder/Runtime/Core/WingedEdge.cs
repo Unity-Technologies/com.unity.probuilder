@@ -285,7 +285,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Get a dictionary of common indices and all WingedEdge values touching the index.
+		/// Get a dictionary of common indexes and all WingedEdge values touching the index.
 		/// </summary>
 		/// <param name="wings">The wings to search for spokes.</param>
 		/// <returns>A dictionary where each key is a common index with a list of each winged edge touching it.</returns>
@@ -314,12 +314,12 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Given a set of winged edges and list of common indices, attempt to create a complete path of indices where each is connected by edge.
+		/// Given a set of winged edges and list of common indexes, attempt to create a complete path of indexes where each is connected by edge.
 		/// <br />
 		/// May be clockwise or counter-clockwise ordered, or null if no path is found.
 		/// </summary>
 		/// <param name="wings">The wings to be sorted.</param>
-		/// <param name="common">The common indices to be sorted.</param>
+		/// <param name="common">The common indexes to be sorted.</param>
 		/// <returns></returns>
 		internal static List<int> SortCommonIndexesByAdjacency(List<WingedEdge> wings, HashSet<int> common)
 		{
@@ -353,14 +353,14 @@ namespace UnityEngine.ProBuilder
 		/// <param name="mesh">Target ProBuilderMesh.</param>
 		/// <param name="faces">Which faces to include in the WingedEdge list.</param>
 		/// <param name="oneWingPerFace">If `oneWingPerFace` is true the returned list will contain a single winged edge per-face (but still point to all edges).</param>
-		/// <param name="sharedIndexLookup">If passed, this will skip generating a shared indices dictionary, which can be an expensive operation. This is useful when doing more than one mesh operation and you have already generated a current shared index dictionary.</param>
+		/// <param name="sharedIndexLookup">If passed, this will skip generating a shared indexes dictionary, which can be an expensive operation. This is useful when doing more than one mesh operation and you have already generated a current shared index dictionary.</param>
 		/// <returns>A new list of WingedEdge values gathered from faces.</returns>
 		public static List<WingedEdge> GetWingedEdges(ProBuilderMesh mesh, IEnumerable<Face> faces, bool oneWingPerFace = false, Dictionary<int, int> sharedIndexLookup = null)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			Dictionary<int, int> lookup = sharedIndexLookup == null ? mesh.sharedIndicesInternal.ToDictionary() : sharedIndexLookup;
+			Dictionary<int, int> lookup = sharedIndexLookup == null ? mesh.sharedIndexesInternal.ToDictionary() : sharedIndexLookup;
 			IEnumerable<Face> distinct = faces.Distinct();
 
 			List<WingedEdge> winged = new List<WingedEdge>();
