@@ -92,7 +92,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="colors">An array of colors arrays, where indices correspond to the appendedFaces parameter.</param>
 		/// <param name="uvs">An array of uvs arrays, where indices correspond to the appendedFaces parameter.</param>
 		/// <param name="faces">An array of faces arrays, which contain the triangle winding information for each new face. Face index values are 0 indexed.</param>
-		/// <param name="sharedIndexes">An optional mapping of each new vertex's common index. Common index refers to a triangle's index in the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" array. If this value is provided, it must contain entries for each vertex position. Ex, if there are 4 vertices in this face, there must be shared index entries for { 0, 1, 2, 3 }.</param>
+		/// <param name="sharedIndexes">An optional mapping of each new vertex's common index. Common index refers to a triangle's index in the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" array. If this value is provided, it must contain entries for each vertex position. Ex, if there are 4 vertexes in this face, there must be shared index entries for { 0, 1, 2, 3 }.</param>
 		/// <returns>An array of the new faces that where successfully appended to the mesh.</returns>
 		public static Face[] AppendFaces(
 			this ProBuilderMesh mesh,
@@ -169,10 +169,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 	    /// <summary>
-        /// Create a new face connecting existing vertices.
+        /// Create a new face connecting existing vertexes.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
-        /// <param name="indexes">The indices of the vertices to join with the new polygon.</param>
+        /// <param name="indexes">The indices of the vertexes to join with the new polygon.</param>
         /// <param name="unordered">Are the indexes in an ordered path (false), or not (true)? If indexes are not ordered this function will treat the polygon as a convex shape. Ordered paths will be triangulated allowing concave shapes.</param>
         /// <returns>The new face created if the action was successfull, null if action failed.</returns>
         public static Face CreatePolygon(this ProBuilderMesh mesh, IList<int> indexes, bool unordered)
@@ -183,23 +183,23 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			IntArray[] sharedIndices = mesh.sharedIndexesInternal;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 			HashSet<int> common = IntArrayUtility.GetCommonIndexes(lookup, indexes);
-			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertexes(mesh));
-			List<Vertex> appendVertices = new List<Vertex>();
+			List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(mesh));
+			List<Vertex> appendVertexes = new List<Vertex>();
 
 			foreach(int i in common)
 			{
 				int index = sharedIndices[i][0];
-				appendVertices.Add(new Vertex(vertices[index]));
+				appendVertexes.Add(new Vertex(vertexes[index]));
 			}
 
-			FaceRebuildData data = FaceWithVertices(appendVertices, unordered);
+			FaceRebuildData data = FaceWithVertexes(appendVertexes, unordered);
 
 			if(data != null)
 			{
 				data.sharedIndices = common.ToList();
 				List<Face> faces = new List<Face>(mesh.facesInternal);
-				FaceRebuildData.Apply(new FaceRebuildData[] { data }, vertices, faces, lookup, null);
-				mesh.SetVertexes(vertices);
+				FaceRebuildData.Apply(new FaceRebuildData[] { data }, vertexes, faces, lookup, null);
+				mesh.SetVertexes(vertexes);
 				mesh.SetFaces(faces.ToArray());
 				mesh.SetSharedIndexes(lookup);
 
@@ -265,16 +265,16 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				return new ActionResult(ActionResult.Status.NoChange, "Too Few Points");
 			}
 
-			Vector3[] vertices = points.ToArray();
+			Vector3[] vertexes = points.ToArray();
 			List<int> triangles;
 
 			Log.PushLogLevel(LogLevel.Error);
 
-			if(Triangulation.TriangulateVertices(vertices, out triangles, false))
+			if(Triangulation.TriangulateVertexes(vertexes, out triangles, false))
 			{
 				int[] indices = triangles.ToArray();
 
-				if(Math.PolygonArea(vertices, indices) < Mathf.Epsilon )
+				if(Math.PolygonArea(vertexes, indices) < Mathf.Epsilon )
 				{
 					mesh.Clear();
 					Log.PopLogLevel();
@@ -282,7 +282,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 
 				mesh.Clear();
-				mesh.GeometryWithVertexesFaces(vertices, new Face[] { new Face(indices) });
+				mesh.GeometryWithVertexesFaces(vertexes, new Face[] { new Face(indices) });
 
 				Vector3 nrm = Math.Normal(mesh, mesh.facesInternal[0]);
 
@@ -314,19 +314,19 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Create a new face given a set of unordered vertices (or ordered, if unordered param is set to false).
+		/// Create a new face given a set of unordered vertexes (or ordered, if unordered param is set to false).
 		/// </summary>
-		/// <param name="vertices"></param>
+		/// <param name="vertexes"></param>
 		/// <param name="unordered"></param>
 		/// <returns></returns>
-		internal static FaceRebuildData FaceWithVertices(List<Vertex> vertices, bool unordered = true)
+		internal static FaceRebuildData FaceWithVertexes(List<Vertex> vertexes, bool unordered = true)
 		{
 			List<int> triangles;
 
-			if(Triangulation.TriangulateVertices(vertices, out triangles, unordered))
+			if(Triangulation.TriangulateVertexes(vertexes, out triangles, unordered))
 			{
 				FaceRebuildData data = new FaceRebuildData();
-				data.vertexes = vertices;
+				data.vertexes = vertexes;
 				data.face = new Face(triangles.ToArray());
 				return data;
 			}
@@ -335,11 +335,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Given a path of vertices, inserts a new vertex in the center inserts triangles along the path.
+		/// Given a path of vertexes, inserts a new vertex in the center inserts triangles along the path.
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
-		internal static List<FaceRebuildData> TentCapWithVertices(List<Vertex> path)
+		internal static List<FaceRebuildData> TentCapWithVertexes(List<Vertex> path)
 		{
 			int count = path.Count;
 			Vertex center = Vertex.Average(path);
@@ -347,7 +347,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			for(int i = 0; i < count; i++)
 			{
-				List<Vertex> vertices = new List<Vertex>()
+				List<Vertex> vertexes = new List<Vertex>()
 				{
 					path[i],
 					center,
@@ -355,7 +355,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				};
 
 				FaceRebuildData data = new FaceRebuildData();
-				data.vertexes = vertices;
+				data.vertexes = vertexes;
 				data.face = new Face(new int[] {0 , 1, 2});
 
 				faces.Add(data);
@@ -378,7 +378,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 throw new ArgumentNullException("faces");
 
 			List<FaceRebuildData> rebuild = new List<FaceRebuildData>();
-			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertexes(mesh));
+			List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(mesh));
 			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
 
 			foreach(Face face in faces)
@@ -398,7 +398,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						continue;
 
 					map.Add(face.indexesInternal[i], map.Count);
-					data.vertexes.Add(vertices[face.indexesInternal[i]]);
+					data.vertexes.Add(vertexes[face.indexesInternal[i]]);
 					data.sharedIndices.Add(lookup[face.indexesInternal[i]]);
 				}
 
@@ -412,7 +412,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				rebuild.Add(data);
 			}
 
-			FaceRebuildData.Apply(rebuild, mesh, vertices, null, lookup, null);
+			FaceRebuildData.Apply(rebuild, mesh, vertexes, null, lookup, null);
 		}
 
 		/// <summary>
@@ -594,7 +594,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="face">The face to append points to.</param>
 		/// <param name="points">Points to added to the face.</param>
 		/// <returns>The face created by appending the points.</returns>
-		public static Face AppendVerticesToFace(this ProBuilderMesh mesh, Face face, Vector3[] points)
+		public static Face AppendVertexesToFace(this ProBuilderMesh mesh, Face face, Vector3[] points)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -605,7 +605,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (points == null)
                 throw new ArgumentNullException("points");
 
-            List<Vertex> vertices = Vertex.GetVertexes(mesh).ToList();
+            List<Vertex> vertexes = Vertex.GetVertexes(mesh).ToList();
             List<Face> faces = new List<Face>(mesh.facesInternal);
             Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
             Dictionary<int, int> lookupUV = mesh.sharedIndexesUVInternal == null ? null : mesh.sharedIndexesUVInternal.ToDictionary();
@@ -618,7 +618,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             for (int i = 0; i < wound.Count; i++)
 			{
-				n_vertices.Add(vertices[wound[i].a]);
+				n_vertices.Add(vertexes[wound[i].a]);
 				n_shared.Add(lookup[wound[i].a]);
 
 				if(lookupUV != null)
@@ -670,7 +670,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			try
 			{
-				Triangulation.TriangulateVertices(n_vertices, out triangles, false);
+				Triangulation.TriangulateVertexes(n_vertices, out triangles, false);
 			}
 			catch
 			{
@@ -686,14 +686,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			data.sharedIndicesUV 	= n_sharedUV;
 
 			FaceRebuildData.Apply(	new List<FaceRebuildData>() { data },
-										vertices,
+										vertexes,
 										faces,
 										lookup,
 										lookupUV);
 
 			var newFace = data.face;
 
-			mesh.SetVertexes(vertices);
+			mesh.SetVertexes(vertexes);
 			mesh.SetFaces(faces.ToArray());
 			mesh.SetSharedIndexes(lookup);
 			mesh.SetSharedIndexesUV(lookupUV);
@@ -717,9 +717,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="edge">The edge to split with points.</param>
 		/// <param name="count">The number of new points to insert. Must be greater than 0.</param>
 		/// <returns>The new edges created by inserting points.</returns>
-		public static List<Edge> AppendVerticesToEdge(this ProBuilderMesh mesh, Edge edge, int count)
+		public static List<Edge> AppendVertexesToEdge(this ProBuilderMesh mesh, Edge edge, int count)
 		{
-			return AppendVerticesToEdge(mesh, new Edge[] { edge }, count);
+			return AppendVertexesToEdge(mesh, new Edge[] { edge }, count);
 		}
 
 		/// <summary>
@@ -729,7 +729,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="edges">The edges to split with points.</param>
 		/// <param name="count">The number of new points to insert. Must be greater than 0.</param>
 		/// <returns>The new edges created by inserting points.</returns>
-		public static List<Edge> AppendVerticesToEdge(this ProBuilderMesh mesh, IList<Edge> edges, int count)
+		public static List<Edge> AppendVertexesToEdge(this ProBuilderMesh mesh, IList<Edge> edges, int count)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -743,7 +743,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 return null;
             }
 
-            List<Vertex> vertices = new List<Vertex>(Vertex.GetVertexes(mesh));
+            List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(mesh));
             Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
             Dictionary<int, int> lookupUV = mesh.sharedIndexesUVInternal.ToDictionary();
             List<int> indicesToDelete = new List<int>();
@@ -763,7 +763,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				List<Vertex> verticesToAppend = new List<Vertex>(count);
 
 				for(int i = 0; i < count; i++)
-					verticesToAppend.Add(Vertex.Mix(vertices[localEdge.a], vertices[localEdge.b], (i+1)/((float)count + 1)));
+					verticesToAppend.Add(Vertex.Mix(vertexes[localEdge.a], vertexes[localEdge.b], (i+1)/((float)count + 1)));
 
 				List<SimpleTuple<Face, Edge>> adjacentFaces = ElementSelection.GetNeighborFaces(mesh, localEdge);
 
@@ -778,7 +778,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					{
 						data = new FaceRebuildData();
 						data.face = new Face(new int[0], face.material, new AutoUnwrapSettings(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
-						data.vertexes = new List<Vertex>(ArrayUtility.ValuesWithIndexes(vertices, face.distinctIndexesInternal));
+						data.vertexes = new List<Vertex>(ArrayUtility.ValuesWithIndexes(vertexes, face.distinctIndexesInternal));
 						data.sharedIndices = new List<int>();
 						data.sharedIndicesUV = new List<int>();
 
@@ -823,7 +823,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				Vector3 nrm = Math.Normal(mesh, face);
 				Vector2[] projection = Projection.PlanarProject(data.vertexes.Select(x => x.position).ToArray(), nrm);
 
-				int vertexCount = vertices.Count;
+				int vertexCount = vertexes.Count;
 
 				// triangulate and set new face indices to end of current vertex list
 				List<int> indices;
@@ -845,7 +845,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						lookupUV.Add(vertexCount + n, data.sharedIndicesUV[n]);
 				}
 
-				vertices.AddRange(data.vertexes);
+				vertexes.AddRange(data.vertexes);
 
 				foreach(Edge e in face.edgesInternal)
 				{
@@ -861,10 +861,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			var newEdges = appendedEdges.Distinct().Select(x => x.local - delCount).ToList();
 
-			mesh.SetVertexes(vertices);
+			mesh.SetVertexes(vertexes);
 			mesh.SetSharedIndexes(lookup.ToIntArray());
 			mesh.SetSharedIndexesUV(lookupUV.ToIntArray());
-			mesh.DeleteVertices(indicesToDelete);
+			mesh.DeleteVertexes(indicesToDelete);
 
             return newEdges;
 		}

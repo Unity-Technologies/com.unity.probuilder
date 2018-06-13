@@ -9,7 +9,7 @@ using EditorStyles = UnityEditor.EditorStyles;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	sealed class CollapseVertices : MenuAction
+	sealed class CollapseVertexes : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Vert_Collapse", IconSkin.Pro); } }
@@ -17,8 +17,8 @@ namespace UnityEditor.ProBuilder.Actions
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
-			"Collapse Vertices",
-			@"Merge all selected vertices into a single vertex, centered at the average of all selected points.",
+			"Collapse Vertexes",
+			@"Merge all selected vertexes into a single vertex, centered at the average of all selected points.",
 			keyCommandAlt, 'C'
 		);
 
@@ -45,9 +45,9 @@ namespace UnityEditor.ProBuilder.Actions
 
 		protected override void OnSettingsGUI()
 		{
-			GUILayout.Label("Collapse Vertices Settings", EditorStyles.boldLabel);
+			GUILayout.Label("Collapse Vertexes Settings", EditorStyles.boldLabel);
 
-			EditorGUILayout.HelpBox("Collapse To First setting decides where the collapsed vertex will be placed.\n\nIf True, the new vertex will be placed at the position of the first selected vertex.  If false, the new vertex is placed at the average position of all selected vertices.", MessageType.Info);
+			EditorGUILayout.HelpBox("Collapse To First setting decides where the collapsed vertex will be placed.\n\nIf True, the new vertex will be placed at the position of the first selected vertex.  If false, the new vertex is placed at the average position of all selected vertexes.", MessageType.Info);
 
 			bool collapseToFirst = PreferencesInternal.GetBool(PreferenceKeys.pbCollapseVertexToFirst);
 
@@ -60,13 +60,13 @@ namespace UnityEditor.ProBuilder.Actions
 
 			GUILayout.FlexibleSpace();
 
-			if(GUILayout.Button("Collapse Vertices"))
+			if(GUILayout.Button("Collapse Vertexes"))
 				DoAction();
 		}
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuCollapseVertices(MeshSelection.TopInternal());
+			return MenuCommands.MenuCollapseVertexes(MeshSelection.TopInternal());
 		}
 	}
 }

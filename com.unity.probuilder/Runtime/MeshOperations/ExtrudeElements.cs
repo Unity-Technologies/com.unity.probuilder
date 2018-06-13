@@ -345,7 +345,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Dictionary<int, int> newSharedMap = new Dictionary<int, int>();
 			// bridge face extruded edges, maps vertex index to new extruded vertex position
 			Dictionary<int, int> delayPosition = new Dictionary<int, int>();
-			// used to average the direction of vertices shared by perimeter edges
+			// used to average the direction of vertexes shared by perimeter edges
 			// key[shared index], value[normal count, normal sum]
 			Dictionary<int, SimpleTuple<Vector3, Vector3, List<int>>> extrudeMap = new Dictionary<int, SimpleTuple<Vector3, Vector3,List<int>>>();
 
@@ -472,7 +472,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				Vector3 direction = (kvp.Value.item1 / kvp.Value.item3.Count);
 				direction.Normalize();
 
-				// If extruding by face normal extend vertices on seams by the hypotenuse
+				// If extruding by face normal extend vertexes on seams by the hypotenuse
 				float modifier = compensateAngleVertexDistance ? Math.Secant(Vector3.Angle(direction, kvp.Value.item2) * Mathf.Deg2Rad) : 1f;
 
 				direction.x *= distance * modifier;

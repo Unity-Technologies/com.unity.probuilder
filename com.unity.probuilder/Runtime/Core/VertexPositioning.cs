@@ -48,7 +48,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Translate a set of vertices with a world space offset.
+		/// Translate a set of vertexes with a world space offset.
 		/// <br />
 		/// Unlike most other mesh operations, this function applies the mesh positions to both ProBuilderMesh and the UnityEngine.Mesh.
 		/// </summary>
@@ -56,7 +56,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="selectedTriangles">A distinct list of vertex indices.</param>
 		/// <param name="offset">The direction and magnitude to translate selectedTriangles, in world space.</param>
 		/// <param name="snapValue">If > 0 snap each vertex to the nearest on-grid point in world space.</param>
-		/// <param name="snapAxisOnly">If true vertices will only be snapped along the active axis.</param>
+		/// <param name="snapAxisOnly">If true vertexes will only be snapped along the active axis.</param>
 		/// <param name="lookup">A shared index lookup table.  Can pass NULL to have this automatically calculated.</param>
 		internal static void TranslateVertexesInWorldSpace(this ProBuilderMesh mesh, int[] selectedTriangles, Vector3 offset, float snapValue, bool snapAxisOnly, Dictionary<int, int> lookup)
 		{
@@ -91,13 +91,13 @@ namespace UnityEngine.ProBuilder
 					verts[indices[i]] += localOffset;
 			}
 
-			// don't bother calling a full ToMesh() here because we know for certain that the _vertices and msh.vertices arrays are equal in length
+			// don't bother calling a full ToMesh() here because we know for certain that the vertexes and msh.vertices arrays are equal in length
 			mesh.SetPositions(verts);
 			mesh.mesh.vertices = verts;
 		}
 
 		/// <summary>
-		/// Translate a set of vertices with an offset provided in local (model) coordinates.
+		/// Translate a set of vertexes with an offset provided in local (model) coordinates.
 		/// <br />
 		/// Unlike most other mesh operations, this function applies the mesh positions to both ProBuilderMesh and the UnityEngine.Mesh.
 		/// </summary>
@@ -116,12 +116,12 @@ namespace UnityEngine.ProBuilder
 			for(int i = 0, c = indices.Length; i < c; i++)
 				verts[indices[i]] += offset;
 
-			// don't bother calling a full ToMesh() here because we know for certain that the _vertices and msh.vertices arrays are equal in length
+			// don't bother calling a full ToMesh() here because we know for certain that the vertexes and msh.vertices arrays are equal in length
 			mesh.mesh.vertices = verts;
 		}
 
 		/// <summary>
-		/// Given a shared vertex index (index of the triangle in the sharedIndices array), move all vertices to new position.
+		/// Given a shared vertex index (index of the triangle in the sharedIndices array), move all vertexes to new position.
 		/// Position is in model space coordinates.
 		/// <br /><br />
 		/// Use @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" and IntArrayUtility.IndexOf to get a shared (or common) index.
@@ -154,14 +154,14 @@ namespace UnityEngine.ProBuilder
 		/// <param name="vertex"></param>
 		internal static void SetSharedVertexValues(this ProBuilderMesh pb, int sharedIndex, Vertex vertex)
 		{
-			Vertex[] vertices = Vertex.GetVertexes(pb);
+			Vertex[] vertexes = Vertex.GetVertexes(pb);
 
 			int[] array = pb.sharedIndexesInternal[sharedIndex].array;
 
 			for(int i = 0; i < array.Length; i++)
-				vertices[array[i]] = vertex;
+				vertexes[array[i]] = vertex;
 
-			pb.SetVertexes(vertices);
+			pb.SetVertexes(vertexes);
 		}
 	}
 }

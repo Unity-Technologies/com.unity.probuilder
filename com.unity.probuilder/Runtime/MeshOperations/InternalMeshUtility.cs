@@ -134,7 +134,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="t"></param>
 		/// <param name="preserveFaces"></param>
 		/// <returns></returns>
-		public static ProBuilderMesh CreatePbObjectWithTransform(Transform t, bool preserveFaces)
+		public static ProBuilderMesh CreateMeshWithTransform(Transform t, bool preserveFaces)
 		{
 			Mesh m = t.GetComponent<MeshFilter>().sharedMesh;
 

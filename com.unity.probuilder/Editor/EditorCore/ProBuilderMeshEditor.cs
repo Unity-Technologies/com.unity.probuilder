@@ -83,7 +83,7 @@ namespace UnityEditor.ProBuilder
 				{
 					foreach (ProBuilderMesh ipb in Selection.transforms.GetComponents<ProBuilderMesh>())
 					{
-						UndoUtility.RecordObject(ipb, "Offset Vertices");
+						UndoUtility.RecordObject(ipb, "Offset Vertexes");
 
 						ipb.ToMesh();
 

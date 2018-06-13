@@ -894,10 +894,7 @@ namespace UnityEditor.ProBuilder
 				ProBuilderMesh pb = ShapeGenerator.IcosahedronGenerator(ico_radius, ico_subdivisions);
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
-				// // To keep the preview snappy, shared indexes aren't built in IcosahadreonGenerator
-				// int[] welds;
-				// pb.WeldVertices(pb_Face.AllTriangles(pb.faces), Mathf.Epsilon, out welds);
-
+				// To keep the preview snappy, shared indexes aren't built in IcosahadreonGenerator
 				UVEditing.ProjectFacesBox(pb, pb.facesInternal);
 
 				for(int i = 0; i < pb.facesInternal.Length; i++)

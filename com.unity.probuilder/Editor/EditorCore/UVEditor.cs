@@ -555,7 +555,7 @@ namespace UnityEditor.ProBuilder
 
 		/**
 		 * Automatically select textureGroup buddies, and copy origins of all UVs.
-		 * Also resets the mesh to PB data, removing vertices appended by
+		 * Also resets the mesh to PB data, removing vertexes appended by
 		 * UV2 generation.
 		 */
 		internal void OnBeginUVModification()
@@ -1861,7 +1861,7 @@ namespace UnityEditor.ProBuilder
 			r.width = DOT_SIZE;
 			r.height = DOT_SIZE;
 
-			// Draw all vertices if in vertex mode
+			// Draw all vertexes if in vertex mode
 			if (selectionMode == SelectMode.Vertex && screenshotStatus == ScreenshotStatus.Done)
 			{
 				for (int i = 0; i < selection.Length; i++)
@@ -2736,7 +2736,7 @@ namespace UnityEditor.ProBuilder
 
 			GUI.enabled = selectedUVCount > 1;
 
-			tool_weldButton = UI.EditorGUIUtility.ToolSettingsGUI("Weld", "Merge selected vertices that are within a specified distance of one another.",
+			tool_weldButton = UI.EditorGUIUtility.ToolSettingsGUI("Weld", "Merge selected vertexes that are within a specified distance of one another.",
 				tool_weldButton,
 				Menu_SewUVs,
 				WeldButtonGUI,
@@ -2780,7 +2780,7 @@ namespace UnityEditor.ProBuilder
 			if (weldDistance <= k_MinimumSewUVDistance)
 				weldDistance = k_MinimumSewUVDistance;
 
-			weldDistance = EditorGUILayout.FloatField(new GUIContent("Max", "The maximum distance between two vertices in order to be welded together."), weldDistance);
+			weldDistance = EditorGUILayout.FloatField(new GUIContent("Max", "The maximum distance between two vertexes in order to be welded together."), weldDistance);
 
 			if (EditorGUI.EndChangeCheck())
 			{

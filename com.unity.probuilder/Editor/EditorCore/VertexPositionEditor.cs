@@ -229,13 +229,13 @@ namespace UnityEditor.ProBuilder
 				if(!sel.isVisible)
 					continue;
 
-				Vector3[] vertices = pb.positionsInternal;
+				Vector3[] positions = pb.positionsInternal;
 
 				foreach(int i in sel.common)
 				{
 					int[] indices = pb.sharedIndexesInternal[i];
 
-					Vector3 point = pb.transform.TransformPoint(vertices[indices[0]]);
+					Vector3 point = pb.transform.TransformPoint(positions[indices[0]]);
 
 					Vector2 cen = HandleUtility.WorldToGUIPoint(point);
 

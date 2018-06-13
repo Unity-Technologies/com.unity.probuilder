@@ -15,7 +15,7 @@ namespace UnityEditor.ProBuilder
 		static string k_MeshCacheDirectory = "Assets/ProBuilder Data/ProBuilderMeshCache";
 
 		/// <summary>
-		/// Subscribe to this event to be notified when ProBuilder is going to optimize a mesh. Optimization includes collapsing coincident vertices to a single vertex where possible, and generating lightmap UVs).
+		/// Subscribe to this event to be notified when ProBuilder is going to optimize a mesh. Optimization includes collapsing coincident vertexes to a single vertex where possible, and generating lightmap UVs).
 		/// </summary>
 		/// <value>
 		/// Return true to override this process, false to let ProBuilder optimize the mesh.
@@ -62,10 +62,10 @@ namespace UnityEditor.ProBuilder
 			{
 				// if generating UV2, the process is to manually split the mesh into individual triangles,
 				// generate uv2, then re-assemble with vertex collapsing where possible.
-				// if not generating uv2, just collapse vertices.
+				// if not generating uv2, just collapse vertexes.
 				if(!PreferencesInternal.GetBool(PreferenceKeys.pbDisableAutoUV2Generation) || forceRebuildUV2)
 				{
-					Vertex[] vertices = UnityEngine.ProBuilder.MeshUtility.GeneratePerTriangleMesh(umesh);
+					Vertex[] vertexes = UnityEngine.ProBuilder.MeshUtility.GeneratePerTriangleMesh(umesh);
 
 					float time = Time.realtimeSinceStartup;
 
@@ -77,10 +77,10 @@ namespace UnityEditor.ProBuilder
 					if( (Time.realtimeSinceStartup - time) > 3f )
 						Log.Warning(string.Format("Generate UV2 for \"{0}\" took {1} seconds! You may want to consider disabling Auto-UV2 generation in the `Preferences > ProBuilder` tab.", mesh.name, (Time.realtimeSinceStartup - time).ToString("F2")));
 
-					if(uv2.Length == vertices.Length)
+					if(uv2.Length == vertexes.Length)
 					{
 						for(int i = 0; i < uv2.Length; i++)
-							vertices[i].uv2 = uv2[i];
+							vertexes[i].uv2 = uv2[i];
 
 						hasUv2 = true;
 					}
@@ -89,7 +89,7 @@ namespace UnityEditor.ProBuilder
 						Log.Warning("Generate UV2 failed - the returned size of UV2 array != mesh.vertexCount");
 					}
 
-					UnityEngine.ProBuilder.MeshUtility.CollapseSharedVertexes(umesh, vertices);
+					UnityEngine.ProBuilder.MeshUtility.CollapseSharedVertexes(umesh, vertexes);
 				}
 				else
 				{

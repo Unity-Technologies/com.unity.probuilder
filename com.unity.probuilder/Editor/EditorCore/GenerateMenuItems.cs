@@ -1,3 +1,5 @@
+#define PROBUILDER_DEBUG
+
 #if PROBUILDER_DEBUG
 
 using UnityEngine;
@@ -18,8 +20,8 @@ namespace UnityEditor.ProBuilder
 	/// <inheritdoc />
 	sealed class GenerateMenuItems : Editor
 	{
-		const string k_GeneratedFilePath = "Assets/ProCore/ProBuilder/Editor/EditorCore/pb_EditorToolbarMenuItems.cs";
-		const string k_MenuActionsFolder = "Assets/ProCore/ProBuilder/Editor/EditorCore/MenuActions/";
+		const string k_GeneratedFilePath = "Packages/com.unity.probuilder/Editor/EditorCore/EditorToolbarMenuItems.cs";
+		const string k_MenuActionsFolder = "Packages/com.unity.probuilder/Editor/MenuActions/";
 
 		static readonly HashSet<string> IgnoreActions = new HashSet<string>()
 		{
@@ -28,12 +30,12 @@ namespace UnityEditor.ProBuilder
 
 		static readonly Dictionary<string, string> MenuPriorityLookup = new Dictionary<string, string>()
 		{
-			{"Editors", "pb_Constant.MENU_EDITOR + 1"},
-			{"Object", "pb_Constant.MENU_GEOMETRY + 2"},
-			{"Geometry", "pb_Constant.MENU_GEOMETRY + 3"},
-			{"Interaction", "pb_Constant.MENU_SELECTION + 1"},
-			{"Selection", "pb_Constant.MENU_SELECTION + 0"},
-			{"Export", "pb_Constant.MENU_EXPORT + 0"}
+			{"Editors", "PreferenceKeys.menuEditor + 1"},
+			{"Object", "PreferenceKeys.menuGeometry + 2"},
+			{"Geometry", "PreferenceKeys.menuGeometry + 3"},
+			{"Interaction", "PreferenceKeys.menuSelection + 1"},
+			{"Selection", "PreferenceKeys.menuSelection + 0"},
+			{"Export", "PreferenceKeys.menuExport + 0"}
 		};
 
 		[MenuItem("Tools/Debug/ProBuilder/Rebuild Menu Items", false, 800)]
@@ -58,20 +60,15 @@ namespace UnityEditor.ProBuilder
 
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Core;
-using ProBuilder.Actions;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder.Actions;
 using System.Collections.Generic;
 
-namespace ProBuilder.EditorCore
+namespace UnityEditor.ProBuilder
 {
-	static class pb_EditorToolbarMenuItems
+	static class EditorToolbarMenuItem
 	{
-
-#if PROTOTYPE
-		const string PB_MENU_PREFIX = ""Tools/ProBuilder Basic/"";
-#else
 		const string PB_MENU_PREFIX = ""Tools/ProBuilder/"";
-#endif
 ");
 			foreach (string action in actions)
 			{
@@ -107,7 +104,7 @@ namespace ProBuilder.EditorCore
 
 			try
 			{
-				o = System.Activator.CreateInstance(System.Type.GetType("ProBuilder.Actions." + class_name));
+				o = System.Activator.CreateInstance(System.Type.GetType("UnityEditor.ProBuilder.Actions." + class_name));
 			}
 			catch
 			{
@@ -116,7 +113,7 @@ namespace ProBuilder.EditorCore
 				return "";
 			}
 
-			PropertyInfo hasMenuEntryProperty = typeof(MenuAction).GetProperty("hasFileMenuEntry");
+			PropertyInfo hasMenuEntryProperty = typeof(MenuAction).GetProperty("hasFileMenuEntry", BindingFlags.NonPublic | BindingFlags.Instance);
 
 			if ((bool) hasMenuEntryProperty.GetValue(o, null) == false)
 				return "";
@@ -141,7 +138,7 @@ namespace ProBuilder.EditorCore
 
 			sb.Append("\t\t\t");
 			sb.Append(class_name);
-			sb.Append(" instance = pb_EditorToolbarLoader.GetInstance<");
+			sb.Append(" instance = EditorToolbarLoader.GetInstance<");
 			sb.Append(class_name);
 			sb.AppendLine(">();");
 			sb.AppendLine(@"
@@ -174,11 +171,11 @@ namespace ProBuilder.EditorCore
 
 			sb.Append("\t\t\t");
 			sb.Append(class_name);
-			sb.Append(" instance = pb_EditorToolbarLoader.GetInstance<");
+			sb.Append(" instance = EditorToolbarLoader.GetInstance<");
 			sb.Append(class_name);
 			sb.AppendLine(">();");
 			sb.AppendLine("\t\t\tif(instance != null)");
-			sb.AppendLine("\t\t\t\tpb_EditorUtility.ShowNotification(instance.DoAction().notification);");
+			sb.AppendLine("\t\t\t\tUnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);");
 			sb.AppendLine("\t\t}");
 
 			return sb.ToString();

@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder
 		}
 
 		/**
-		 *	Tests if any pb_Object in the selection has more than 512 vertices, and if so records the entire object
+		 *	Tests if any pb_Object in the selection has more than 512 vertexes, and if so records the entire object
 		 * 	instead of diffing the serialized object (which is very slow for large arrays).
 		 */
 		public static void RecordSelection(ProBuilderMesh[] pb, string msg)

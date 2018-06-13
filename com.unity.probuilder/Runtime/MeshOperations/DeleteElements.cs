@@ -17,7 +17,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="mesh">The source mesh.</param>
 		/// <returns>A list of deleted vertex indices.</returns>
-		public static int[] RemoveUnusedVertices(this ProBuilderMesh mesh)
+		public static int[] RemoveUnusedVertexes(this ProBuilderMesh mesh)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -29,7 +29,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				if(!tris.Contains(i))
 					del.Add(i);
 
-			mesh.DeleteVertices(del);
+			mesh.DeleteVertexes(del);
 
 			return del.ToArray();
 		}
@@ -41,7 +41,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// deleted by this function are not referenced by any triangles.</remarks>
 		/// <param name="mesh">The source mesh.</param>
 		/// <param name="distinctIndexes">A list of vertices to delete. Note that this must not contain duplicates.</param>
-		public static void DeleteVertices(this ProBuilderMesh mesh, IEnumerable<int> distinctIndexes)
+		public static void DeleteVertexes(this ProBuilderMesh mesh, IEnumerable<int> distinctIndexes)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -234,7 +234,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			mesh.SetFaces(m_RebuiltFaces.ToArray());
 			mesh.SetSharedIndexes(m_RebuiltLookup);
 			mesh.SetSharedIndexesUV(m_RebuiltLookupUV);
-			return mesh.RemoveUnusedVertices();
+			return mesh.RemoveUnusedVertexes();
 		}
 
 	}

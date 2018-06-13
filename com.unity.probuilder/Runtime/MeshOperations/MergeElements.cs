@@ -15,9 +15,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="target"></param>
 		/// <param name="pairs"></param>
-		/// <param name="collapseCoincidentVertices"></param>
+		/// <param name="collapseCoincidentVertexes"></param>
 		/// <returns></returns>
-		public static List<Face> MergePairs(ProBuilderMesh target, IEnumerable<SimpleTuple<Face, Face>> pairs, bool collapseCoincidentVertices = true)
+		public static List<Face> MergePairs(ProBuilderMesh target, IEnumerable<SimpleTuple<Face, Face>> pairs, bool collapseCoincidentVertexes = true)
 		{
 			HashSet<Face> remove = new HashSet<Face>();
 			List<Face> add = new List<Face>();
@@ -40,8 +40,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			faces.AddRange(add);
 			target.SetFaces(faces);
 
-			if(collapseCoincidentVertices)
-				CollapseCoincidentVertices(target, add);
+			if(collapseCoincidentVertexes)
+				CollapseCoincidentVertexes(target, add);
 
 			return add;
 		}
@@ -50,8 +50,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// Merge a collection of faces to a single face. This function does not
 		///	perform any sanity checks, it just merges faces. It's the caller's
 		///	responsibility to make sure that the input is valid.
-		///	In addition to merging faces this method also removes duplicate vertices
-		///	created as a result of merging previously common vertices.
+		///	In addition to merging faces this method also removes duplicate vertexes
+		///	created as a result of merging previously common vertexes.
 		/// </summary>
 		/// <param name="target"></param>
 		/// <param name="faces"></param>
@@ -89,18 +89,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			target.SetFaces(rebuiltFaces);
 
-			CollapseCoincidentVertices(target, new Face[] { mergedFace });
+			CollapseCoincidentVertexes(target, new Face[] { mergedFace });
 
 			return mergedFace;
 		}
 
 		/// <summary>
-		/// Condense co-incident vertex positions per-face. Vertices must already be marked as shared in the sharedIndices
+		/// Condense co-incident vertex positions per-face. vertexes must already be marked as shared in the sharedIndices
 		/// array to be considered. This method is really only useful after merging faces.
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="faces"></param>
-		internal static void CollapseCoincidentVertices(ProBuilderMesh pb, IEnumerable<Face> faces)
+		internal static void CollapseCoincidentVertexes(ProBuilderMesh pb, IEnumerable<Face> faces)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
 			Dictionary<int, int> matches = new Dictionary<int, int>();
@@ -122,7 +122,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				face.InvalidateCache();
 			}
 
-			pb.RemoveUnusedVertices();
+			pb.RemoveUnusedVertexes();
 		}
 	}
 }

@@ -193,14 +193,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				if(h.Count < 4)
 				{
 					List<Vertex> v = new List<Vertex>( Vertex.GetVertexes(mesh, h.Select(x => sharedIndices[x][0]).ToList()) );
-					holeFaces.Add(AppendElements.FaceWithVertices(v));
+					holeFaces.Add(AppendElements.FaceWithVertexes(v));
 				}
 				// if this hole has > 3 indices, it needs a tent pole triangulation, which requires sorting into the perimeter order
 				else
 				{
 					List<int> holePath = WingedEdge.SortCommonIndexesByAdjacency(modified, h);
 					List<Vertex> v = new List<Vertex>( Vertex.GetVertexes(mesh, holePath.Select(x => sharedIndices[x][0]).ToList()) );
-					holeFaces.AddRange( AppendElements.TentCapWithVertices(v) );
+					holeFaces.AddRange( AppendElements.TentCapWithVertexes(v) );
 				}
 			}
 

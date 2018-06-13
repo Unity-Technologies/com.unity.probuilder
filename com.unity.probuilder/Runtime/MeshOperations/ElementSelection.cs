@@ -48,7 +48,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Gets all faces connected to each index taking into account shared vertices.
+		/// Gets all faces connected to each index taking into account shared vertexes.
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="indices"></param>
@@ -238,13 +238,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Returns the indices of perimeter vertices in selection.
+		/// Returns the indices of perimeter vertexes in selection.
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="indices"></param>
 		/// <param name="universal_edges_all"></param>
 		/// <returns></returns>
-		internal static int[] GetPerimeterVertices(ProBuilderMesh pb, int[] indices, Edge[] universal_edges_all)
+		internal static int[] GetPerimeterVertexes(ProBuilderMesh pb, int[] indices, Edge[] universal_edges_all)
 		{
 			int len = indices.Length;
 			IntArray[] sharedIndices = pb.sharedIndexesInternal;

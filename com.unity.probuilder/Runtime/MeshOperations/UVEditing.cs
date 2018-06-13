@@ -189,41 +189,41 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 		/// <summary>
 		/// Projects UVs on all passed faces, automatically updating the sharedIndicesUV table as required (only associates
-		/// vertices that share a seam).
+		/// vertexes that share a seam).
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="faces"></param>
 		/// <param name="channel"></param>
-		internal static void ProjectFacesAuto(ProBuilderMesh pb, Face[] faces, int channel)
+		internal static void ProjectFacesAuto(ProBuilderMesh mesh, Face[] faces, int channel)
 		{
 			int[] ind = faces.SelectMany(x => x.distinctIndexesInternal).ToArray();
 
 			// get average face normal
 			Vector3 nrm = Vector3.zero;
 			foreach(Face face in faces)
-				nrm += Math.Normal(pb, face);
+				nrm += Math.Normal(mesh, face);
 			nrm /= (float)faces.Length;
 
 			// project uv coordinates
-			Vector2[] uvs = Projection.PlanarProject(ArrayUtility.ValuesWithIndexes(pb.positionsInternal, ind), nrm);
+			Vector2[] uvs = Projection.PlanarProject(ArrayUtility.ValuesWithIndexes(mesh.positionsInternal, ind), nrm);
 
 			// re-assign new projected coords back into full uv array
-			Vector2[] rebuiltUVs = GetUVs(pb, channel);
+			Vector2[] rebuiltUVs = GetUVs(mesh, channel);
 
 			for(int i = 0; i < ind.Length; i++)
 				rebuiltUVs[ind[i]] = uvs[i];
 
 			// and set the msh uv array using the new coordintaes
-			ApplyUVs(pb, rebuiltUVs, channel);
+			ApplyUVs(mesh, rebuiltUVs, channel);
 
 			// now go trhough and set all adjacent face groups to use matching element groups
 			foreach(Face f in faces)
 			{
 				f.elementGroup = -1;
-				SplitUVs(pb, f.distinctIndexesInternal);
+				SplitUVs(mesh, f.distinctIndexesInternal);
 			}
 
-			pb.SewUVs(faces.SelectMany(x => x.distinctIndexesInternal).ToArray(), .001f);
+			mesh.SewUVs(faces.SelectMany(x => x.distinctIndexesInternal).ToArray(), .001f);
 		}
 
 		/// <summary>
@@ -350,7 +350,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					UVEditing.ProjectFacesAuto(pb, new Face[] { f2 }, channel);
 
 					// Use the first first projected as the starting point
-					// and match the vertices
+					// and match the vertexes
 					f1.manualUV = true;
 					f2.manualUV = true;
 

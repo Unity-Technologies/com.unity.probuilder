@@ -299,7 +299,7 @@ namespace UnityEditor.ProBuilder
 			if (helpFoldout)
 			{
 				EditorGUILayout.HelpBox(
-					@"If you're not seeing anything happen on your ProBuilder object, make sure that you're using a shader that supports vertex colors.  The ProBuilder default material provides support for colored vertices, and the included `Diffuse Texture Blend` material supports blending multiple textures together.  You can use the shaders from either of these on new Materials that you create to enable vertex color support.",
+					@"If you're not seeing anything happen on your ProBuilder object, make sure that you're using a shader that supports vertex colors.  The ProBuilder default material provides support for colored vertexes, and the included `Diffuse Texture Blend` material supports blending multiple textures together.  You can use the shaders from either of these on new Materials that you create to enable vertex color support.",
 					MessageType.Info);
 
 				if (GUILayout.Button("Show me the Vertex Color Shader"))
@@ -555,7 +555,7 @@ namespace UnityEditor.ProBuilder
 			Handles.color = Color.white;
 
 			// This prevents us from selecting other objects in the scene,
-			// and allows for the selection of faces / vertices.
+			// and allows for the selection of faces / vertexes.
 			int controlID = GUIUtility.GetControlID(FocusType.Passive);
 			HandleUtility.AddDefaultControl(controlID);
 
