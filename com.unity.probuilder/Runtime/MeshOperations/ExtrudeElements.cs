@@ -102,7 +102,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				Edge edge = validEdges[i];
 				Face face = edgeFaces[i];
 
-				// Averages the normals using only vertices that are on the edge
+				// Averages the normals using only vertexes that are on the edge
 				Vector3 xnorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndexes( sharedIndexes[lookup[edge.a]], allEdgeIndices, oNormals ) : Math.Normal(mesh, face);
 				Vector3 ynorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndexes( sharedIndexes[lookup[edge.b]], allEdgeIndices, oNormals ) : Math.Normal(mesh, face);
 
@@ -166,7 +166,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Split any shared vertices so that this face may be moved independently of the main object.
+		/// Split any shared vertexes so that this face may be moved independently of the main object.
 		/// </summary>
 		/// <param name="mesh">The source mesh.</param>
 		/// <param name="faces">The faces to split from the mesh.</param>
@@ -179,7 +179,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (faces == null)
                 throw new System.ArgumentNullException("faces");
 
-			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(mesh));
+			List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(mesh));
 			int sharedIndexOffset = mesh.sharedIndexesInternal.Length;
 			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
 
@@ -188,7 +188,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			foreach(Face face in faces)
 			{
 				FaceRebuildData data = new FaceRebuildData();
-				data.vertices = new List<Vertex>();
+				data.vertexes = new List<Vertex>();
 				data.sharedIndices = new List<int>();
 				data.face = new Face(face);
 
@@ -205,10 +205,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					}
 					else
 					{
-						local = data.vertices.Count;
+						local = data.vertexes.Count;
 						indices[i] = local;
 						match.Add(face.indexesInternal[i], local);
-						data.vertices.Add(vertices[face.indexesInternal[i]]);
+						data.vertexes.Add(vertexes[face.indexesInternal[i]]);
 						data.sharedIndices.Add(lookup[face.indexesInternal[i]] + sharedIndexOffset);
 					}
 				}
@@ -217,7 +217,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				detached.Add(data);
 			}
 
-			FaceRebuildData.Apply(detached, mesh, vertices, null, lookup);
+			FaceRebuildData.Apply(detached, mesh, vertexes, null, lookup);
 			mesh.DeleteFaces(faces);
 
 			mesh.ToMesh();
@@ -237,7 +237,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			if(faces == null || !faces.Any())
 				return false;
 
-			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
+			List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(pb));
 			int sharedIndexMax = pb.sharedIndexesInternal.Length;
 			int sharedIndexOffset = 0;
 			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
@@ -258,7 +258,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				for(int i = 0; i < edges.Length; i++)
 				{
-					int vc = vertices.Count;
+					int vc = vertexes.Count;
 					int x = edges[i].a, y = edges[i].b;
 
 					if( !used.ContainsKey(x) )
@@ -278,15 +278,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					lookup.Add(vc + 2, lookup[x]);
 					lookup.Add(vc + 3, lookup[y]);
 
-					Vertex xx = new Vertex(vertices[x]), yy = new Vertex(vertices[y]);
+					Vertex xx = new Vertex(vertexes[x]), yy = new Vertex(vertexes[y]);
 					xx.position += delta;
 					yy.position += delta;
 
-					vertices.Add( new Vertex(vertices[x]) );
-					vertices.Add( new Vertex(vertices[y]) );
+					vertexes.Add( new Vertex(vertexes[x]) );
+					vertexes.Add( new Vertex(vertexes[y]) );
 
-					vertices.Add( xx );
-					vertices.Add( yy );
+					vertexes.Add( xx );
+					vertexes.Add( yy );
 
 					Face bridge = new Face(
 						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 }, // indices
@@ -303,7 +303,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				for(int i = 0; i < face.distinctIndexesInternal.Length; i++)
 				{
-					vertices[face.distinctIndexesInternal[i]].position += delta;
+					vertexes[face.distinctIndexesInternal[i]].position += delta;
 
 					// Break any UV shared connections
 					if( lookupUV != null && lookupUV.ContainsKey(face.distinctIndexesInternal[i]) )
@@ -311,7 +311,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			pb.SetVertices(vertices);
+			pb.SetVertexes(vertexes);
 			pb.SetFaces(newFaces.ToArray());
 			pb.SetSharedIndexes(lookup);
 			pb.SetSharedIndexesUV(lookupUV);
@@ -332,7 +332,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			if(faces == null || !faces.Any())
 				return false;
 
-			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
+			List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(pb));
 			int sharedIndexMax = pb.sharedIndexesInternal.Length;
 			int sharedIndexOffset = 0;
 			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
@@ -364,7 +364,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					EdgeLookup edge = edgeAndFace.Key;
 					Face face = edgeAndFace.Value;
 
-					int vc = vertices.Count;
+					int vc = vertexes.Count;
 					int x = edge.local.a, y = edge.local.b;
 
 					if( !oldSharedMap.ContainsKey(x) )
@@ -409,12 +409,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					delayPosition.Add(vc + 2, x);
 					delayPosition.Add(vc + 3, y);
 
-					vertices.Add( new Vertex(vertices[x]) );
-					vertices.Add( new Vertex(vertices[y]) );
+					vertexes.Add( new Vertex(vertexes[x]) );
+					vertexes.Add( new Vertex(vertexes[y]) );
 
 					// extruded edge will be positioned later
-					vertices.Add( null );
-					vertices.Add( null );
+					vertexes.Add( null );
+					vertexes.Add( null );
 
 					Face bridge = new Face(
 						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 }, // indices
@@ -481,14 +481,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				foreach(int i in kvp.Value.item3)
 				{
-					vertices[i].position += direction;
+					vertexes[i].position += direction;
 				}
 			}
 
 			foreach(var kvp in delayPosition)
-				vertices[kvp.Key] = new Vertex(vertices[kvp.Value]);
+				vertexes[kvp.Key] = new Vertex(vertexes[kvp.Value]);
 
-			pb.SetVertices(vertices);
+			pb.SetVertexes(vertexes);
 			pb.SetFaces(newFaces.ToArray());
 			pb.SetSharedIndexes(lookup);
 			pb.SetSharedIndexesUV(lookupUV);

@@ -49,7 +49,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (distinctIndexes == null || !distinctIndexes.Any())
 				return;
 
-			Vertex[] vertices = Vertex.GetVertices(mesh);
+			Vertex[] vertices = Vertex.GetVertexes(mesh);
 			int originalVertexCount = vertices.Length;
 			int[] offset = new int[originalVertexCount];
 
@@ -77,7 +77,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			IEnumerable<KeyValuePair<int, int>> common = mesh.sharedIndexesInternal.ToDictionary().Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
 			IEnumerable<KeyValuePair<int, int>> commonUV = mesh.sharedIndexesUVInternal.ToDictionary().Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
 
-			mesh.SetVertices(vertices);
+			mesh.SetVertexes(vertices);
 			mesh.SetSharedIndexes(common);
 			mesh.SetSharedIndexesUV(commonUV);
 		}

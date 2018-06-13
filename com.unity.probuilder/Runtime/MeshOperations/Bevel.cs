@@ -25,7 +25,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 throw new ArgumentNullException("mesh");
 
 			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
-			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(mesh));
+			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertexes(mesh));
 			List<EdgeLookup> m_edges = EdgeLookup.GetEdgeLookup(edges, lookup).Distinct().ToList();
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh);
 			List<FaceRebuildData> appendFaces = new List<FaceRebuildData>();
@@ -177,7 +177,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			List<WingedEdge> modified = WingedEdge.GetWingedEdges(mesh, appendFaces.Select(x => x.face));
 
 			// now go through the holes and create faces for them
-			vertices = new List<Vertex>( Vertex.GetVertices(mesh) );
+			vertices = new List<Vertex>( Vertex.GetVertexes(mesh) );
 
 			List<FaceRebuildData> holeFaces = new List<FaceRebuildData>();
 
@@ -192,14 +192,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				// skip sorting the path if it's just a triangle
 				if(h.Count < 4)
 				{
-					List<Vertex> v = new List<Vertex>( Vertex.GetVertices(mesh, h.Select(x => sharedIndices[x][0]).ToList()) );
+					List<Vertex> v = new List<Vertex>( Vertex.GetVertexes(mesh, h.Select(x => sharedIndices[x][0]).ToList()) );
 					holeFaces.Add(AppendElements.FaceWithVertices(v));
 				}
 				// if this hole has > 3 indices, it needs a tent pole triangulation, which requires sorting into the perimeter order
 				else
 				{
 					List<int> holePath = WingedEdge.SortCommonIndexesByAdjacency(modified, h);
-					List<Vertex> v = new List<Vertex>( Vertex.GetVertices(mesh, holePath.Select(x => sharedIndices[x][0]).ToList()) );
+					List<Vertex> v = new List<Vertex>( Vertex.GetVertexes(mesh, holePath.Select(x => sharedIndices[x][0]).ToList()) );
 					holeFaces.AddRange( AppendElements.TentCapWithVertices(v) );
 				}
 			}
@@ -261,7 +261,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
  			EdgeLookup a = left.edge;
  			EdgeLookup b = right.edge;
 
- 			rf.vertices = new List<Vertex>()
+ 			rf.vertexes = new List<Vertex>()
  			{
  				vertices[a.local.a],
  				vertices[a.local.b],
@@ -270,7 +270,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
  			};
 
  			Vector3 an = Math.Normal(vertices, left.face.indexesInternal);
- 			Vector3 bn = Math.Normal(rf.vertices, BRIDGE_INDICES_NRM);
+ 			Vector3 bn = Math.Normal(rf.vertexes, BRIDGE_INDICES_NRM);
 
  			int[] triangles = new int[] { 2, 1, 0, 2, 3, 1 };
 

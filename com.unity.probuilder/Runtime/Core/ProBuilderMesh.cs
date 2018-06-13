@@ -116,7 +116,7 @@ namespace UnityEngine.ProBuilder
         }
 
 	    /// <summary>
-	    /// Meshes are composed of vertices and faces. Faces primarily contain triangles and material information. With these components, ProBuilder will compile a mesh.
+	    /// Meshes are composed of vertexes and faces. Faces primarily contain triangles and material information. With these components, ProBuilder will compile a mesh.
 	    /// </summary>
 	    /// <value>
 	    /// A collection of the @"UnityEngine.ProBuilder.Face"'s that make up this mesh.
@@ -146,7 +146,7 @@ namespace UnityEngine.ProBuilder
 	    }
 
 	    /// <summary>
-	    /// ProBuilder makes the assumption that no @"UnityEngine.ProBuilder.Face" references a vertex used by another. However, we need a way to associate vertices in the editor for many operations. These vertices are usually called coincident, or shared vertices. ProBuilder manages these associations with the sharedIndexes array. Each array contains a list of triangles that point to vertices considered to be coincident. When ProBuilder compiles a UnityEngine.Mesh from the ProBuilderMesh, these vertices will be condensed to a single vertex where possible.
+	    /// ProBuilder makes the assumption that no @"UnityEngine.ProBuilder.Face" references a vertex used by another. However, we need a way to associate vertexes in the editor for many operations. These vertexes are usually called coincident, or shared vertices. ProBuilder manages these associations with the sharedIndexes array. Each array contains a list of triangles that point to vertices considered to be coincident. When ProBuilder compiles a UnityEngine.Mesh from the ProBuilderMesh, these vertices will be condensed to a single vertex where possible.
 	    /// </summary>
 	    /// <value>
 	    /// The shared (or common) index array for this mesh.
@@ -263,12 +263,12 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Set the vertex element arrays on this mesh.
         /// </summary>
-        /// <param name="vertices">The new vertex array.</param>
+        /// <param name="vertexes">The new vertex array.</param>
         /// <param name="applyMesh">An optional parameter that will apply elements to the MeshFilter.sharedMesh. Note that this should only be used when the mesh is in its original state, not optimized (meaning it won't affect triangles which can be modified by Optimize).</param>
-        public void SetVertices(IList<Vertex> vertices, bool applyMesh = false)
+        public void SetVertexes(IList<Vertex> vertexes, bool applyMesh = false)
         {
-            if (vertices == null)
-                throw new ArgumentNullException("vertices");
+            if (vertexes == null)
+                throw new ArgumentNullException("vertexes");
 
             Vector3[] position;
             Color[] color;
@@ -279,7 +279,7 @@ namespace UnityEngine.ProBuilder
             List<Vector4> uv3;
             List<Vector4> uv4;
 
-            Vertex.GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
+            Vertex.GetArrays(vertexes, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
 
             m_Positions = position;
             m_Colors = color;
@@ -290,18 +290,18 @@ namespace UnityEngine.ProBuilder
 
             if (applyMesh)
             {
-                Mesh m = mesh;
+                Mesh umesh = mesh;
 
-                Vertex first = vertices[0];
+                Vertex first = vertexes[0];
 
-                if (first.HasAttribute(MeshAttributes.Position)) m.vertices = position;
-                if (first.HasAttribute(MeshAttributes.Color)) m.colors = color;
-                if (first.HasAttribute(MeshAttributes.UV0)) m.uv = uv0;
-                if (first.HasAttribute(MeshAttributes.Normal)) m.normals = normal;
-                if (first.HasAttribute(MeshAttributes.Tangent)) m.tangents = tangent;
-                if (first.HasAttribute(MeshAttributes.UV1)) m.uv2 = uv2;
-                if (first.HasAttribute(MeshAttributes.UV2)) if (uv3 != null) m.SetUVs(2, uv3);
-                if (first.HasAttribute(MeshAttributes.UV3)) if (uv4 != null) m.SetUVs(3, uv4);
+                if (first.HasAttribute(MeshAttributes.Position)) umesh.vertices = position;
+                if (first.HasAttribute(MeshAttributes.Color)) umesh.colors = color;
+                if (first.HasAttribute(MeshAttributes.UV0)) umesh.uv = uv0;
+                if (first.HasAttribute(MeshAttributes.Normal)) umesh.normals = normal;
+                if (first.HasAttribute(MeshAttributes.Tangent)) umesh.tangents = tangent;
+                if (first.HasAttribute(MeshAttributes.UV1)) umesh.uv2 = uv2;
+                if (first.HasAttribute(MeshAttributes.UV2)) if (uv3 != null) umesh.SetUVs(2, uv3);
+                if (first.HasAttribute(MeshAttributes.UV3)) if (uv4 != null) umesh.SetUVs(3, uv4);
             }
         }
 
@@ -524,7 +524,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <value>
-		/// How many vertices are in the positions array.
+		/// How many vertexes are in the positions array.
 		/// </value>
 		public int vertexCount
 		{
@@ -585,7 +585,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public void Clear()
 		{
-			// various editor tools expect faces & vertices to always be valid.
+			// various editor tools expect faces & vertexes to always be valid.
 			// ideally we'd null everything here, but that would break a lot of existing code.
 			m_Faces = new Face[0];
 			m_Positions = new Vector3[0];
@@ -638,39 +638,18 @@ namespace UnityEngine.ProBuilder
 			}
 		}
 
-		/// <summary>
-		///	Creates a new #pb_Object using passed vertices to construct geometry.
-		///	Typically you would not call this directly, as the #ProBuilder class contains
-		///	a wrapper for this purpose.
-		///	@param vertices A vertex array (Vector3[]) containing the points to be used in
-		///	the construction of the #pb_Object.  Vertices must be wound in counter-clockise
-		///	order.  Triangles will be wound in vertex groups of 4, with the winding order
-		///	0,1,2 1,3,2.  Ex:
-		///	\code{.cs}
-		///	// Creates a pb_Object plane
-		///	pb_Object.CreateInstanceWithPoints(new Vector3[4]{
-		///		new Vector3(-.5f, -.5f, 0f),
-		///		new Vector3(.5f, -.5f, 0f),
-		///		new Vector3(-.5f, .5f, 0f),
-		///		new Vector3(.5f, .5f, 0f)
-		///		});
-		///
-		///	\endcode
-		/// </summary>
-		/// <param name="vertices"></param>
-		/// <returns>The resulting #pb_Object.</returns>
-		internal static ProBuilderMesh CreateInstanceWithPoints(Vector3[] vertices)
+		internal static ProBuilderMesh CreateInstanceWithPoints(Vector3[] positions)
 		{
-			if (vertices.Length % 4 != 0)
+			if (positions.Length % 4 != 0)
 			{
-				Log.Warning("Invalid Geometry.  Make sure vertices in are pairs of 4 (faces).");
+				Log.Warning("Invalid Geometry. Make sure vertexes in are pairs of 4 (faces).");
 				return null;
 			}
 
 			GameObject go = new GameObject();
 			ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
 			go.name = "ProBuilder Mesh";
-			pb.GeometryWithPoints(vertices);
+			pb.GeometryWithPoints(positions);
 
 			return pb;
 		}
@@ -678,15 +657,15 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Create a new GameObject with a ProBuilderMesh component, MeshFilter, and MeshRenderer, then initializes the ProBuilderMesh with a set of positions and faces.
 		/// </summary>
-		/// <param name="vertices">Vertex positions array.</param>
+		/// <param name="positions">Vertex positions array.</param>
 		/// <param name="faces">Faces array.</param>
 		/// <returns></returns>
-		public static ProBuilderMesh CreateInstanceWithVertexesFaces(IEnumerable<Vector3> vertices, IEnumerable<Face> faces)
+		public static ProBuilderMesh CreateInstanceWithVertexesFaces(IEnumerable<Vector3> positions, IEnumerable<Face> faces)
 		{
 			GameObject go = new GameObject();
 			ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
 			go.name = "ProBuilder Mesh";
-			pb.GeometryWithVerticesFaces(vertices, faces);
+			pb.GeometryWithVertexesFaces(positions, faces);
 			return pb;
 		}
 #endregion
@@ -747,9 +726,9 @@ namespace UnityEngine.ProBuilder
 	    }
 
 	    /// <value>
-	    /// A collection of the currently selected vertices by their index in the @"UnityEngine.ProBuilder.ProBuilderMesh.positions" array.
+	    /// A collection of the currently selected vertexes by their index in the @"UnityEngine.ProBuilder.ProBuilderMesh.positions" array.
 	    /// </value>
-	    public ReadOnlyCollection<int> selectedVertices
+	    public ReadOnlyCollection<int> selectedVertexes
 	    {
 			get { return new ReadOnlyCollection<int>(m_selectedTriangles); }
 	    }
@@ -828,14 +807,14 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Sets the selected vertices array. Clears SelectedFaces and SelectedEdges arrays.
+		/// Sets the selected vertexes array. Clears SelectedFaces and SelectedEdges arrays.
 		/// </summary>
-		/// <param name="vertices">The new vertex selection.</param>
-		public void SetSelectedVertexes(IEnumerable<int> vertices)
+		/// <param name="vertexes">The new vertex selection.</param>
+		public void SetSelectedVertexes(IEnumerable<int> vertexes)
 		{
 			m_selectedFaces = new int[0];
 			m_SelectedEdges = new Edge[0];
-			m_selectedTriangles = vertices != null ? vertices.Distinct().ToArray() : new int[0];
+			m_selectedTriangles = vertexes != null ? vertexes.Distinct().ToArray() : new int[0];
 
 			if (elementSelectionChanged != null)
 				elementSelectionChanged(this);
@@ -874,12 +853,12 @@ namespace UnityEngine.ProBuilder
 #endregion
 
 #region Mesh Building
-		void GeometryWithPoints(Vector3[] vertices)
+		void GeometryWithPoints(Vector3[] points)
 		{
 			// Wrap in faces
-			Face[] f = new Face[vertices.Length / 4];
+			Face[] f = new Face[points.Length / 4];
 
-			for (int i = 0; i < vertices.Length; i += 4)
+			for (int i = 0; i < points.Length; i += 4)
 			{
 				f[i / 4] = new Face(new int[6]
 					{
@@ -895,9 +874,9 @@ namespace UnityEngine.ProBuilder
 			}
 
             Clear();
-            SetPositions(vertices);
+            SetPositions(points);
 			SetFaces(f);
-			m_SharedIndexes = IntArrayUtility.GetSharedIndexesWithPositions(vertices);
+			m_SharedIndexes = IntArrayUtility.GetSharedIndexesWithPositions(points);
 
 			ToMesh();
 			Refresh();
@@ -906,15 +885,15 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Clear all mesh attributes and reinitialize with new positions and face collections.
 		/// </summary>
-		/// <param name="vertices">Vertex positions array.</param>
+		/// <param name="vertexes">Vertex positions array.</param>
 		/// <param name="faces">Faces array.</param>
-		public void GeometryWithVerticesFaces(IEnumerable<Vector3> vertices, IEnumerable<Face> faces)
+		public void GeometryWithVertexesFaces(IEnumerable<Vector3> vertexes, IEnumerable<Face> faces)
 		{
-            if (vertices == null)
-                throw new ArgumentNullException("vertices");
+            if (vertexes == null)
+                throw new ArgumentNullException("vertexes");
 
             Clear();
-            m_Positions = vertices.ToArray();
+            m_Positions = vertexes.ToArray();
 			m_Faces = faces.ToArray();
 			SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(m_Positions));
 			ToMesh();
@@ -1217,7 +1196,7 @@ namespace UnityEngine.ProBuilder
 
 			n = 0;
 
-			Vector3[] world = anyWorldSpace ? this.VerticesInWorldSpace() : null;
+			Vector3[] world = anyWorldSpace ? this.VertexesInWorldSpace() : null;
 
 			foreach (KeyValuePair<int, List<Face>> kvp in textureGroups)
 			{
@@ -1256,7 +1235,7 @@ namespace UnityEngine.ProBuilder
 		/// Set the vertex colors for a @"UnityEngine.ProBuilder.Face".
 		/// </summary>
 		/// <param name="face">The target face.</param>
-		/// <param name="color">The color to set this face's referenced vertices to.</param>
+		/// <param name="color">The color to set this face's referenced vertexes to.</param>
 		public void SetFaceColor(Face face, Color color)
 		{
             if (face == null)

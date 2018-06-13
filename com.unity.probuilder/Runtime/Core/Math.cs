@@ -112,15 +112,15 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Returns the Area of a polygon.
 		/// </summary>
-		/// <param name="vertices"></param>
+		/// <param name="vertexes"></param>
 		/// <param name="indices"></param>
 		/// <returns></returns>
-		internal static float PolygonArea(Vector3[] vertices, int[] indices)
+		internal static float PolygonArea(Vector3[] vertexes, int[] indices)
 		{
 			float area = 0f;
 
 			for(int i = 0; i < indices.Length; i += 3)
-				area += TriangleArea(vertices[indices[i]], vertices[indices[i+1]], vertices[indices[i+2]]);
+				area += TriangleArea(vertexes[indices[i]], vertexes[indices[i+1]], vertexes[indices[i+2]]);
 
 			return area;
 		}
@@ -627,16 +627,16 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Calculate the normal of a set of vertices. If indices is null or not divisible by 3, the first 3 positions are used.  If indices is valid, an average of each set of 3 is taken.
+		/// Calculate the normal of a set of vertexes. If indices is null or not divisible by 3, the first 3 positions are used.  If indices is valid, an average of each set of 3 is taken.
 		/// </summary>
-		/// <param name="vertices"></param>
+		/// <param name="vertexes"></param>
 		/// <param name="indices"></param>
 		/// <returns></returns>
-		internal static Vector3 Normal(IList<Vertex> vertices, IList<int> indices = null)
+		internal static Vector3 Normal(IList<Vertex> vertexes, IList<int> indices = null)
 		{
 			if(indices == null || indices.Count % 3 != 0)
 			{
-				Vector3 cross = Vector3.Cross(vertices[1].position - vertices[0].position, vertices[2].position - vertices[0].position);
+				Vector3 cross = Vector3.Cross(vertexes[1].position - vertexes[0].position, vertexes[2].position - vertexes[0].position);
 				cross.Normalize();
 				return cross;
 			}
@@ -646,7 +646,7 @@ namespace UnityEngine.ProBuilder
 				Vector3 nrm = Vector3.zero;
 
 				for(int i = 0; i < len; i += 3)
-					nrm += Normal(vertices[indices[i]].position, vertices[indices[i+1]].position, vertices[indices[i+2]].position);
+					nrm += Normal(vertexes[indices[i]].position, vertexes[indices[i+1]].position, vertexes[indices[i+2]].position);
 
 				nrm /= (len/3f);
 				nrm.Normalize();
@@ -957,7 +957,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Creates an AABB with a set of vertices.
+		/// Creates an AABB with a set of vertexes.
 		/// </summary>
 		/// <param name="positions"></param>
 		/// <returns></returns>
@@ -1044,7 +1044,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Average a set of vertices.
+		/// Average a set of vertexes.
 		/// </summary>
 		/// <param name="list"></param>
 		/// <param name="selector"></param>

@@ -28,7 +28,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (faces == null)
                 throw new System.ArgumentNullException("faces");
 
-            List<Vertex> vertices = new List<Vertex>( Vertex.GetVertices(mesh) );
+            List<Vertex> vertices = new List<Vertex>( Vertex.GetVertexes(mesh) );
 			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
 
 			List<FaceRebuildData> rebuild = new List<FaceRebuildData>();
@@ -59,7 +59,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				r.face = new Face(face);
 				r.face.indexesInternal = new int[] { 0, 1, 2};
 
-				r.vertices = new List<Vertex>() {
+				r.vertexes = new List<Vertex>() {
 					vertices[tris[i  ]],
 					vertices[tris[i+1]],
 					vertices[tris[i+2]]

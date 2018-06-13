@@ -89,11 +89,11 @@ namespace UnityEditor.ProBuilder
 						Log.Warning("Generate UV2 failed - the returned size of UV2 array != mesh.vertexCount");
 					}
 
-					UnityEngine.ProBuilder.MeshUtility.CollapseSharedVertices(umesh, vertices);
+					UnityEngine.ProBuilder.MeshUtility.CollapseSharedVertexes(umesh, vertices);
 				}
 				else
 				{
-					UnityEngine.ProBuilder.MeshUtility.CollapseSharedVertices(umesh);
+					UnityEngine.ProBuilder.MeshUtility.CollapseSharedVertexes(umesh);
 				}
 			}
 

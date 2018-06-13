@@ -433,7 +433,7 @@ namespace UnityEditor.ProBuilder
 
 			if(selectedOnly)
 			{
-				foreach(int i in pb.selectedVertices)
+				foreach(int i in pb.selectedVertexes)
 					common.Add(lookup[i]);
 			}
 			else
@@ -630,7 +630,7 @@ namespace UnityEditor.ProBuilder
 
 			int vertexCount = selectedOnly ? pb.selectedVertexCount : pb.mesh.vertexCount;
 
-			var indices = pb.selectedVertices.ToArray();
+			var indices = pb.selectedVertexes.ToArray();
 			Vector3[] vertices = selectedOnly ? UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndexes<Vector3>(pb.mesh.vertices, indices) : pb.mesh.vertices;
 			Vector3[] normals  = selectedOnly ? UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndexes<Vector3>(pb.mesh.normals, indices) : pb.mesh.normals;
 			Vector4[] tangents = selectedOnly ? UnityEngine.ProBuilder.ArrayUtility.ValuesWithIndexes<Vector4>(pb.mesh.tangents, indices) : pb.mesh.tangents;

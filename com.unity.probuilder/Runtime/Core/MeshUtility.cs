@@ -14,14 +14,14 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Create an array of @"UnityEngine.ProBuilder.Vertex" values that are ordered as individual triangles.
 		/// </summary>
-		/// <param name="mesh">The mesh to extract vertices from.</param>
-		/// <returns>A @"UnityEngine.ProBuilder.Vertex" array of the per-triangle vertices.</returns>
+		/// <param name="mesh">The mesh to extract vertexes from.</param>
+		/// <returns>A @"UnityEngine.ProBuilder.Vertex" array of the per-triangle vertexes.</returns>
 		public static Vertex[] GeneratePerTriangleMesh(Mesh mesh)
 		{
             if (mesh == null)
                 throw new System.ArgumentNullException("mesh");
 
-            Vertex[] vertices = Vertex.GetVertices(mesh);
+            Vertex[] vertexes = Vertex.GetVertexes(mesh);
             int smc = mesh.subMeshCount;
             Vertex[] tv = new Vertex[mesh.triangles.Length];
             int[][] triangles = new int[smc][];
@@ -34,7 +34,7 @@ namespace UnityEngine.ProBuilder
 
 				for(int i = 0; i < tl; i++)
 				{
-					tv[triIndex++] = new Vertex( vertices[triangles[s][i]] );
+					tv[triIndex++] = new Vertex( vertexes[triangles[s][i]] );
 					triangles[s][i] = triIndex - 1;
 				}
 			}
@@ -62,13 +62,13 @@ namespace UnityEngine.ProBuilder
 
             // speed up math by copying the mesh arrays
             int[] triangles = mesh.triangles;
-            Vector3[] vertices = mesh.vertices;
+            Vector3[] vertexes = mesh.vertices;
             Vector2[] uv = mesh.uv;
             Vector3[] normals = mesh.normals;
 
             //variable definitions
             int triangleCount = triangles.Length;
-            int vertexCount = vertices.Length;
+            int vertexCount = vertexes.Length;
 
             Vector3[] tan1 = new Vector3[vertexCount];
             Vector3[] tan2 = new Vector3[vertexCount];
@@ -81,9 +81,9 @@ namespace UnityEngine.ProBuilder
 				long i2 = triangles[a + 1];
 				long i3 = triangles[a + 2];
 
-				Vector3 v1 = vertices[i1];
-				Vector3 v2 = vertices[i2];
-				Vector3 v3 = vertices[i3];
+				Vector3 v1 = vertexes[i1];
+				Vector3 v2 = vertexes[i2];
+				Vector3 v3 = vertexes[i3];
 
 				Vector2 w1 = uv[i1];
 				Vector2 w2 = uv[i2];
@@ -145,7 +145,7 @@ namespace UnityEngine.ProBuilder
 
             int vertexCount = mesh.vertexCount;
 			Vector3[] perTriangleNormal = new Vector3[vertexCount];
-			Vector3[] vertices = mesh.positionsInternal;
+			Vector3[] vertexes = mesh.positionsInternal;
 			Vector3[] normals = new Vector3[vertexCount];
 			int[] perTriangleAvg = new int[vertexCount];
 			Face[] faces = mesh.facesInternal;
@@ -158,7 +158,7 @@ namespace UnityEngine.ProBuilder
 				{
 					int a = indices[tri], b = indices[tri + 1], c = indices[tri + 2];
 
-					Vector3 cross = Math.Normal(vertices[a], vertices[b], vertices[c]);
+					Vector3 cross = Math.Normal(vertexes[a], vertexes[b], vertexes[c]);
 					cross.Normalize();
 
 					perTriangleNormal[a].x += cross.x;
@@ -223,7 +223,7 @@ namespace UnityEngine.ProBuilder
             Vector3[] averages = new Vector3[smoothGroupMax];
             float[] counts = new float[smoothGroupMax];
 
-            // For each sharedIndices group (individual vertex), find vertices that are in the same smoothing
+            // For each sharedIndices group (individual vertex), find vertexes that are in the same smoothing
             // group and average their normals.
             for (var i = 0; i < sharedIndices.Length; i++)
 			{
@@ -388,7 +388,7 @@ namespace UnityEngine.ProBuilder
 
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-			sb.AppendLine(string.Format("vertices: {0}\ntriangles: {1}\nsubmeshes: {2}", mesh.vertexCount, mesh.triangles.Length, mesh.subMeshCount));
+			sb.AppendLine(string.Format("vertexes: {0}\ntriangles: {1}\nsubmeshes: {2}", mesh.vertexCount, mesh.triangles.Length, mesh.subMeshCount));
 
 			sb.AppendLine(string.Format("     {0,-28}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}{7,-28}",
 				"Positions",
@@ -574,7 +574,7 @@ namespace UnityEngine.ProBuilder
 
 			n = 0;
 
-			Vector3[] world = anyWorldSpace ? mesh.VerticesInWorldSpace() : null;
+			Vector3[] world = anyWorldSpace ? mesh.VertexesInWorldSpace() : null;
 			Vector2[] uvs = mesh.texturesInternal != null && mesh.texturesInternal.Length == mesh.vertexCount ? mesh.texturesInternal : new Vector2[mesh.vertexCount];
 
 			foreach (KeyValuePair<int, List<Face>> kvp in textureGroups)
@@ -597,25 +597,25 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Merge coincident vertices where possible, optimizing the vertex count of a UnityEngine.Mesh.
+		/// Merge coincident vertexes where possible, optimizing the vertex count of a UnityEngine.Mesh.
 		/// </summary>
 		/// <param name="mesh">The mesh to optimize.</param>
-		/// <param name="vertices">
+		/// <param name="vertexes">
 		/// If provided these values are used in place of extracting attributes from the Mesh.
 		/// <br />
 		/// This is a performance optimization for when this array already exists. If not provided this array will be
 		/// automatically generated for you.
 		/// </param>
-		public static void CollapseSharedVertices(Mesh mesh, Vertex[] vertices = null)
+		public static void CollapseSharedVertexes(Mesh mesh, Vertex[] vertexes = null)
 		{
             if (mesh == null)
                 throw new System.ArgumentNullException("mesh");
 
-			if (vertices == null)
-				vertices = Vertex.GetVertices(mesh);
+			if (vertexes == null)
+				vertexes = Vertex.GetVertexes(mesh);
 
 			int smc = mesh.subMeshCount;
-			List<Dictionary<Vertex, int>> sub_vertices = new List<Dictionary<Vertex, int>>();
+			List<Dictionary<Vertex, int>> subVertexes = new List<Dictionary<Vertex, int>>();
 			int[][] tris = new int[smc][];
 			int subIndex = 0;
 
@@ -626,7 +626,7 @@ namespace UnityEngine.ProBuilder
 
 				for (int n = 0; n < tris[i].Length; n++)
 				{
-					Vertex v = vertices[tris[i][n]];
+					Vertex v = vertexes[tris[i][n]];
 					int index;
 
 					if (new_vertices.TryGetValue(v, out index))
@@ -641,10 +641,10 @@ namespace UnityEngine.ProBuilder
 					}
 				}
 
-				sub_vertices.Add(new_vertices);
+				subVertexes.Add(new_vertices);
 			}
 
-			Vertex[] collapsed = sub_vertices.SelectMany(x => x.Keys).ToArray();
+			Vertex[] collapsed = subVertexes.SelectMany(x => x.Keys).ToArray();
 			Vertex.SetMesh(mesh, collapsed);
 			mesh.subMeshCount = smc;
 			for (int i = 0; i < smc; i++)

@@ -11,11 +11,11 @@ namespace UnityEngine.ProBuilder
 #pragma warning disable 0649
 		// new pb_Face
 		public Face face;
-		// new vertices (all vertices required to rebuild, not just new)
-		public List<Vertex> vertices;
-		// shared indices pointers (must match vertices length)
+		// new vertexes (all vertexes required to rebuild, not just new)
+		public List<Vertex> vertexes;
+		// shared indices pointers (must match vertexes length)
 		public List<int> sharedIndices;
-		// shared UV indices pointers (must match vertices length)
+		// shared UV indices pointers (must match vertexes length)
 		public List<int> sharedIndicesUV;
 		// The offset applied to this face via Apply() call.
 		private int _appliedOffset = 0;
@@ -31,21 +31,21 @@ namespace UnityEngine.ProBuilder
 
 		public override string ToString()
 		{
-			return string.Format("{0}\n{1}", vertices.ToString(", "), sharedIndices.ToString(", "));
+			return string.Format("{0}\n{1}", vertexes.ToString(", "), sharedIndices.ToString(", "));
 		}
 
 		public static void Apply(
 			IEnumerable<FaceRebuildData> newFaces,
 			ProBuilderMesh pb,
-			List<Vertex> vertices = null,
+			List<Vertex> vertexes = null,
 			List<Face> faces = null,
 			Dictionary<int, int> lookup = null,
 			Dictionary<int, int> lookupUV = null)
 		{
 			List<Face> _faces = faces == null ? new List<Face>(pb.facesInternal) : faces;
 
-			if(vertices == null)
-				vertices = new List<Vertex>( Vertex.GetVertices(pb) );
+			if(vertexes == null)
+				vertexes = new List<Vertex>( Vertex.GetVertexes(pb) );
 
 			if(lookup == null)
 				lookup = pb.sharedIndexesInternal.ToDictionary();
@@ -53,9 +53,9 @@ namespace UnityEngine.ProBuilder
 			if(lookupUV == null)
 				lookupUV = pb.sharedIndexesUVInternal != null ? pb.sharedIndexesUVInternal.ToDictionary() : null;
 
-			FaceRebuildData.Apply(newFaces, vertices, _faces, lookup, lookupUV);
+			FaceRebuildData.Apply(newFaces, vertexes, _faces, lookup, lookupUV);
 
-			pb.SetVertices(vertices);
+			pb.SetVertexes(vertexes);
 			pb.SetFaces(_faces.ToArray());
 			pb.SetSharedIndexes(lookup);
 			pb.SetSharedIndexesUV(lookupUV);
@@ -65,23 +65,23 @@ namespace UnityEngine.ProBuilder
 		/// Shift face rebuild data to appropriate positions and update the vertex, face, and shared indices arrays.
 		/// </summary>
 		/// <param name="newFaces"></param>
-		/// <param name="vertices"></param>
+		/// <param name="vertexes"></param>
 		/// <param name="faces"></param>
 		/// <param name="sharedIndices"></param>
 		/// <param name="sharedIndicesUV"></param>
 		public static void Apply(
 			IEnumerable<FaceRebuildData> newFaces,
-			List<Vertex> vertices,
+			List<Vertex> vertexes,
 			List<Face> faces,
 			Dictionary<int, int> sharedIndices,
 			Dictionary<int, int> sharedIndicesUV = null)
 		{
-			int index = vertices.Count;
+			int index = vertexes.Count;
 
 			foreach(FaceRebuildData rd in newFaces)
 			{
 				Face face = rd.face;
-				int faceVertexCount = rd.vertices.Count;
+				int faceVertexCount = rd.vertexes.Count;
 
 				bool hasSharedIndices 	= sharedIndices != null && rd.sharedIndices != null && rd.sharedIndices.Count == faceVertexCount;
 				bool hasSharedIndicesUV = sharedIndicesUV != null && rd.sharedIndicesUV != null && rd.sharedIndicesUV.Count == faceVertexCount;
@@ -103,10 +103,10 @@ namespace UnityEngine.ProBuilder
 				for(int n = 0, c = indices.Length; n < c; n++)
 					indices[n] += index;
 
-				index += rd.vertices.Count;
+				index += rd.vertexes.Count;
 				face.indexesInternal = indices;
 				faces.Add(face);
-				vertices.AddRange(rd.vertices);
+				vertexes.AddRange(rd.vertexes);
 			}
 		}
 	}

@@ -146,7 +146,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="renderTextureWidth"></param>
 		/// <param name="renderTextureHeight"></param>
 		/// <returns>A dictionary of pb_Object selected vertex indexes.</returns>
-		public static Dictionary<ProBuilderMesh, HashSet<int>> PickVerticesInRect(
+		public static Dictionary<ProBuilderMesh, HashSet<int>> PickVertexesInRect(
 			Camera camera,
 			Rect pickerRect,
 			IList<ProBuilderMesh> selection,
@@ -473,7 +473,7 @@ namespace UnityEngine.ProBuilder
 			map = new Dictionary<uint, SimpleTuple<ProBuilderMesh, int>>();
 
 			// don't start at 0 because that means one vertex would be black, matching
-			// the color used to cull hidden vertices.
+			// the color used to cull hidden vertexes.
 			uint index = 0x02;
 			int selectionCount = selection.Count;
 			pickerObjects = new GameObject[selectionCount];

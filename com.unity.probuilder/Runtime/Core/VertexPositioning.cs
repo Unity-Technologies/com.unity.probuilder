@@ -16,7 +16,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="mesh">The source mesh.</param>
 		/// <returns>An array containing all vertex positions in world space.</returns>
-		public static Vector3[] VerticesInWorldSpace(this ProBuilderMesh mesh)
+		public static Vector3[] VertexesInWorldSpace(this ProBuilderMesh mesh)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -32,19 +32,19 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Translate a set of vertices with a world space offset.
+		/// Translate a set of vertexes with a world space offset.
 		/// <br />
 		/// Unlike most other mesh operations, this function applies the mesh positions to both ProBuilderMesh and the UnityEngine.Mesh.
 		/// </summary>
 		/// <param name="mesh">The mesh to be affected.</param>
 		/// <param name="selectedTriangles">A set of triangles pointing to the vertex positions that are to be affected.</param>
 		/// <param name="offset">The offset to apply in world coordinates.</param>
-		public static void TranslateVerticesInWorldSpace(this ProBuilderMesh mesh, int[] selectedTriangles, Vector3 offset)
+		public static void TranslateVertexesInWorldSpace(this ProBuilderMesh mesh, int[] selectedTriangles, Vector3 offset)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            mesh.TranslateVerticesInWorldSpace(selectedTriangles, offset, 0f, false, null);
+            mesh.TranslateVertexesInWorldSpace(selectedTriangles, offset, 0f, false, null);
 		}
 
 		/// <summary>
@@ -58,7 +58,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="snapValue">If > 0 snap each vertex to the nearest on-grid point in world space.</param>
 		/// <param name="snapAxisOnly">If true vertices will only be snapped along the active axis.</param>
 		/// <param name="lookup">A shared index lookup table.  Can pass NULL to have this automatically calculated.</param>
-		internal static void TranslateVerticesInWorldSpace(this ProBuilderMesh mesh, int[] selectedTriangles, Vector3 offset, float snapValue, bool snapAxisOnly, Dictionary<int, int> lookup)
+		internal static void TranslateVertexesInWorldSpace(this ProBuilderMesh mesh, int[] selectedTriangles, Vector3 offset, float snapValue, bool snapAxisOnly, Dictionary<int, int> lookup)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -154,14 +154,14 @@ namespace UnityEngine.ProBuilder
 		/// <param name="vertex"></param>
 		internal static void SetSharedVertexValues(this ProBuilderMesh pb, int sharedIndex, Vertex vertex)
 		{
-			Vertex[] vertices = Vertex.GetVertices(pb);
+			Vertex[] vertices = Vertex.GetVertexes(pb);
 
 			int[] array = pb.sharedIndexesInternal[sharedIndex].array;
 
 			for(int i = 0; i < array.Length; i++)
 				vertices[array[i]] = vertex;
 
-			pb.SetVertices(vertices);
+			pb.SetVertexes(vertices);
 		}
 	}
 }

@@ -206,7 +206,7 @@ namespace UnityEngine.ProBuilder
 			InWorldRay.origin 		= mesh.transform.worldToLocalMatrix * InWorldRay.origin;
 			InWorldRay.direction 	= mesh.transform.worldToLocalMatrix * InWorldRay.direction;
 
-			Vector3[] vertices = mesh.positionsInternal;
+			Vector3[] vertexes = mesh.positionsInternal;
 
 			hits = new List<RaycastHit>();
 
@@ -220,13 +220,13 @@ namespace UnityEngine.ProBuilder
 
 				for(int CurTriangle = 0; CurTriangle < indexes.Length; CurTriangle += 3)
 				{
-					Vector3 a = vertices[indexes[CurTriangle+0]];
-					Vector3 b = vertices[indexes[CurTriangle+1]];
-					Vector3 c = vertices[indexes[CurTriangle+2]];
+					Vector3 a = vertexes[indexes[CurTriangle+0]];
+					Vector3 b = vertexes[indexes[CurTriangle+1]];
+					Vector3 c = vertexes[indexes[CurTriangle+2]];
 
 					var dist = 0f;
 					Vector3 point;
-					
+
 					if(Math.RayIntersectsTriangle(InWorldRay, a, b, c, out dist, out point))
 					{
 						Vector3 nrm = Vector3.Cross(b-a, c-a);
@@ -284,28 +284,28 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="InWorldRay"></param>
 		/// <param name="transform"></param>
-		/// <param name="vertices"></param>
+		/// <param name="vertexes"></param>
 		/// <param name="triangles"></param>
 		/// <param name="hit"></param>
 		/// <param name="distance"></param>
 		/// <param name="cullingMode"></param>
 		/// <returns></returns>
-		public static bool WorldRaycast(Ray InWorldRay, Transform transform, Vector3[] vertices, int[] triangles, out RaycastHit hit, float distance = Mathf.Infinity)
+		public static bool WorldRaycast(Ray InWorldRay, Transform transform, Vector3[] vertexes, int[] triangles, out RaycastHit hit, float distance = Mathf.Infinity)
 		{
 			Ray ray = transform.InverseTransformRay(InWorldRay);
-			return MeshRaycast(ray, vertices, triangles, out hit, distance);
+			return MeshRaycast(ray, vertexes, triangles, out hit, distance);
 		}
 
 		/// <summary>
 		/// Cast a ray (in model space) against a mesh.
 		/// </summary>
 		/// <param name="InRay"></param>
-		/// <param name="vertices"></param>
+		/// <param name="mesh"></param>
 		/// <param name="triangles"></param>
 		/// <param name="hit"></param>
 		/// <param name="distance"></param>
 		/// <returns></returns>
-		public static bool MeshRaycast(Ray InRay, Vector3[] vertices, int[] triangles, out RaycastHit hit, float distance = Mathf.Infinity)
+		public static bool MeshRaycast(Ray InRay, Vector3[] mesh, int[] triangles, out RaycastHit hit, float distance = Mathf.Infinity)
 		{
 			// float dot; 		// vars used in loop
 			float hitDistance = Mathf.Infinity;
@@ -317,9 +317,9 @@ namespace UnityEngine.ProBuilder
             // Iterate faces, testing for nearest hit to ray origin.
             for (int CurTri = 0; CurTri < triangles.Length; CurTri += 3)
 			{
-				a = vertices[triangles[CurTri+0]];
-				b = vertices[triangles[CurTri+1]];
-				c = vertices[triangles[CurTri+2]];
+				a = mesh[triangles[CurTri+0]];
+				b = mesh[triangles[CurTri+1]];
+				c = mesh[triangles[CurTri+2]];
 
 				if(Math.RayIntersectsTriangle2(o, d, a, b, c, ref distance, ref hitNormal))
 				{

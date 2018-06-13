@@ -47,7 +47,7 @@ namespace UnityEditor.ProBuilder
 		public Model(string name, Mesh mesh, Material[] materials, Matrix4x4 matrix)
 		{
 			this.name = name;
-			this.vertices = Vertex.GetVertices(mesh);
+			this.vertices = Vertex.GetVertexes(mesh);
 			this.matrix = matrix;
 			this.submeshes = new Submesh[mesh.subMeshCount];
 			int matCount = materials != null ? materials.Length : 0;
@@ -66,7 +66,7 @@ namespace UnityEditor.ProBuilder
 			mesh.ToMesh(quads ? MeshTopology.Quads : MeshTopology.Triangles);
 			mesh.Refresh(RefreshMask.UV | RefreshMask.Colors | RefreshMask.Normals | RefreshMask.Tangents);
 			this.name = name;
-			vertices = Vertex.GetVertices(mesh);
+			vertices = Vertex.GetVertexes(mesh);
 			submeshes = Face.GetSubmeshes(mesh.facesInternal, quads ? MeshTopology.Quads : MeshTopology.Triangles);
 			matrix = mesh.transform.localToWorldMatrix;
 			mesh.ToMesh(MeshTopology.Triangles);

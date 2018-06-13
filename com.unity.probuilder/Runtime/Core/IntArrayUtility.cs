@@ -179,7 +179,7 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Cycles through a mesh and returns an IntArray[] of vertex indexes that point to the same point in world space.
 		/// <br />
-		/// This is how many ProBuiilder shapes define coincident vertices on creation.
+		/// This is how many ProBuiilder shapes define coincident vertexes on creation.
 		/// </summary>
 		/// <example>
 		/// ```
@@ -307,7 +307,7 @@ namespace UnityEngine.ProBuilder
 
 		/// <summary>
 		/// Removes the specified indexes from the array, and shifts all values down to account for removal in the vertex array.
-		/// Only use when deleting faces or vertices.
+		/// Only use when deleting faces or vertexes.
 		/// </summary>
 		/// <remarks>For general moving around and modification of shared index array, use #RemoveValuesAtIndex.</remarks>
 		/// <param name="sharedIndexes"></param>

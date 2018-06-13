@@ -36,7 +36,7 @@
 			mesh.transform.position = center;
 
 			mesh.ToMesh();
-			mesh.TranslateVerticesInWorldSpace(mesh.mesh.triangles, dir);
+			mesh.TranslateVertexesInWorldSpace(mesh.mesh.triangles, dir);
 			mesh.Refresh();
 		}
 
@@ -53,7 +53,7 @@
             Vector3 offset = mesh.transform.position - worldPosition;
 			mesh.transform.position = worldPosition;
 			mesh.ToMesh();
-			mesh.TranslateVerticesInWorldSpace(mesh.mesh.triangles, offset);
+			mesh.TranslateVertexesInWorldSpace(mesh.mesh.triangles, offset);
 			mesh.Refresh();
 		}
 

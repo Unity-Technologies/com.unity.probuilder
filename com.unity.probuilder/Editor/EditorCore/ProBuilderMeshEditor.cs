@@ -87,7 +87,7 @@ namespace UnityEditor.ProBuilder
 
 						ipb.ToMesh();
 
-						ipb.TranslateVerticesInWorldSpace(ipb.selectedIndexesInternal, offset);
+						ipb.TranslateVertexesInWorldSpace(ipb.selectedIndexesInternal, offset);
 
 						ipb.Refresh();
 						ipb.Optimize();

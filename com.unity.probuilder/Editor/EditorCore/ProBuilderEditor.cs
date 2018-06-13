@@ -769,7 +769,7 @@ namespace UnityEditor.ProBuilder
 
 				for (int i = 0; i < selection.Length; i++)
 				{
-					selection[i].TranslateVerticesInWorldSpace(selection[i].selectedIndexesInternal, diff, m_SnapEnabled ? m_SnapValue : 0f,
+					selection[i].TranslateVertexesInWorldSpace(selection[i].selectedIndexesInternal, diff, m_SnapEnabled ? m_SnapValue : 0f,
 						m_SnapAxisConstraint, m_SharedIndexesDictionary[i]);
 					selection[i].RefreshUV(selectedFacesInEditZone[selection[i]]);
 					selection[i].Refresh(RefreshMask.Normals);
@@ -1955,7 +1955,7 @@ namespace UnityEditor.ProBuilder
 					? pb.sharedIndexesInternal.AllIndexesWithValues(pb.selectedIndexesInternal).ToArray()
 					: pb.mesh.triangles;
 
-				Snapping.SnapVertices(pb, indexes, Vector3.one * snapVal);
+				Snapping.SnapVertexes(pb, indexes, Vector3.one * snapVal);
 
 				pb.ToMesh();
 				pb.Refresh();

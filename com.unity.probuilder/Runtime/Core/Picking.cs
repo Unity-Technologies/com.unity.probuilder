@@ -92,7 +92,7 @@ namespace UnityEngine.ProBuilder
 		{
 			if (options.depthTest)
 			{
-				return SelectionPickerRenderer.PickVerticesInRect(
+				return SelectionPickerRenderer.PickVertexesInRect(
 					cam,
 					rect,
 					selectable,

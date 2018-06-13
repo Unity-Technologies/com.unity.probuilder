@@ -74,7 +74,7 @@ namespace UnityEditor.ProBuilder
 			int[][] tri = new int[selection.Length][];
 
 			for(int i = 0; i < tri.Length; i++)
-				tri[i] = selection[i].selectedVertices.ToArray();
+				tri[i] = selection[i].selectedVertexes.ToArray();
 
 			return SetPivotInternal(selection, tri);
 		}
@@ -125,7 +125,7 @@ namespace UnityEditor.ProBuilder
 			Vector3[][] vertices = new Vector3[selection.Length][];
 
 			for(int i = 0; i < selection.Length; i++)
-				vertices[i] = selection[i].VerticesInWorldSpace();
+				vertices[i] = selection[i].VertexesInWorldSpace();
 
 			for(int i = 0; i < selection.Length; i++)
 			{

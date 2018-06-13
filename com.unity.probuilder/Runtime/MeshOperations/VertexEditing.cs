@@ -32,7 +32,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (indexes == null)
                 throw new ArgumentNullException("indexes");
 
-            Vertex[] vertices = Vertex.GetVertices(mesh);
+            Vertex[] vertices = Vertex.GetVertexes(mesh);
 
 			Vertex cen = collapseToFirst ? vertices[indexes[0]] : Vertex.Average(vertices, indexes);
 
@@ -117,7 +117,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (indexes == null)
                 throw new ArgumentNullException("indexes");
 
-            Vertex[] vertices = Vertex.GetVertices(mesh);
+            Vertex[] vertices = Vertex.GetVertexes(mesh);
 			IntArray[] sharedIndices = mesh.sharedIndexesInternal;
 
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
@@ -220,7 +220,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			mesh.SetSharedIndexes(lookup);
-			mesh.SetVertices(vertices);
+			mesh.SetVertexes(vertices);
 			mesh.ToMesh();
             return welds;
 		}
@@ -305,7 +305,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			if( Triangulation.TriangulateVertices(n_vertices, out triangles, false) )
 			{
 				FaceRebuildData data = new FaceRebuildData();
-				data.vertices = n_vertices;
+				data.vertexes = n_vertices;
 				data.face = new Face(face);
 
 				Vector3 newNormal = Math.Normal(n_vertices, triangles);
