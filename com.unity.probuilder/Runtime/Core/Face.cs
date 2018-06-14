@@ -347,5 +347,62 @@ namespace UnityEngine.ProBuilder
 
 			return sb.ToString();
 		}
+
+	    /// <summary>
+		/// Add offset to each value in the indexes array.
+		/// </summary>
+		/// <param name="offset">The value to add to each index.</param>
+		public void ShiftIndexes(int offset)
+		{
+			for (int i = 0, c = m_Indexes.Length; i < c; i++)
+				m_Indexes[i] += offset;
+
+			InvalidateCache();
+		}
+
+		/// <summary>
+		/// Find the smallest value in the triangles array.
+		/// </summary>
+		/// <returns>The smallest value in the indexes array.</returns>
+		int SmallestIndexValue()
+		{
+			int smallest = m_Indexes[0];
+
+			for (int i = 1; i < m_Indexes.Length; i++)
+			{
+				if (m_Indexes[i] < smallest)
+					smallest = m_Indexes[i];
+			}
+
+			return smallest;
+		}
+
+        /// <summary>
+        /// Finds the smallest value in the indexes array, then offsets by subtracting that value from each index.
+        /// </summary>
+        /// <example>
+        /// ```
+        /// // sets the indexes array to `{0, 1, 2}`.
+        /// new Face(3,4,5).ShiftIndexesToZero();
+        /// ```
+        /// </example>
+        public void ShiftIndexesToZero()
+		{
+            int offset = SmallestIndexValue();
+
+			for (int i = 0; i < m_Indexes.Length; i++)
+				m_Indexes[i] -= offset;
+
+			InvalidateCache();
+		}
+
+		/// <summary>
+		/// Reverse the order of the triangle array. This has the effect of reversing the direction that this face renders.
+		/// </summary>
+		public void Reverse()
+		{
+			Array.Reverse(m_Indexes);
+			InvalidateCache();
+		}
 	}
 }
