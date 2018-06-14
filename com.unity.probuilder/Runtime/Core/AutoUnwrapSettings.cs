@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace UnityEngine.ProBuilder
 {
@@ -6,7 +7,7 @@ namespace UnityEngine.ProBuilder
 	/// A collection of settings describing how to project UV coordinates for a @"UnityEngine.ProBuilder.Face".
 	/// </summary>
 	[System.Serializable]
-	public sealed class AutoUnwrapSettings
+	public struct AutoUnwrapSettings
 	{
 		/// <summary>
 		/// The point from which UV transform operations will be performed.
@@ -76,20 +77,68 @@ namespace UnityEngine.ProBuilder
 			Stretch
 		}
 
+		[SerializeField]
+		[FormerlySerializedAs("useWorldSpace")]
+		bool m_UseWorldSpace;
+
+		[SerializeField]
+		[FormerlySerializedAs("flipU")]
+		bool m_FlipU;
+
+		[SerializeField]
+		[FormerlySerializedAs("flipV")]
+		bool m_FlipV;
+
+		[SerializeField]
+		[FormerlySerializedAs("swapUV")]
+		bool m_SwapUV;
+
+		[SerializeField]
+		[FormerlySerializedAs("fill")]
+		Fill m_Fill;
+
+		[SerializeField]
+		[FormerlySerializedAs("scale")]
+		Vector2 m_Scale;
+
+		[SerializeField]
+		[FormerlySerializedAs("offset")]
+		Vector2 m_Offset;
+
+		[SerializeField]
+		[FormerlySerializedAs("rotation")]
+		float m_Rotation;
+
+		[SerializeField]
+		[FormerlySerializedAs("anchor")]
+		Anchor m_Anchor;
+
 		/// <summary>
 		/// By default, UVs are project in local (or model) coordinates. Enable useWorldSpace to transform vertex positions into world space for UV projection.
 		/// </summary>
-		public bool useWorldSpace { get; set; }
+		public bool useWorldSpace
+		{
+			get { return m_UseWorldSpace; }
+			set { m_UseWorldSpace = value; }
+		}
 
 		/// <summary>
 		/// When enabled UV coordinates will be inverted horizontally.
 		/// </summary>
-		public bool flipU { get; set; }
+		public bool flipU
+		{
+			get { return m_FlipU; }
+			set { m_FlipU = value; }
+		}
 
 		/// <summary>
 		/// When enabled UV coordinates will be inverted vertically.
 		/// </summary>
-		public bool flipV { get; set; }
+		public bool flipV
+		{
+			get { return m_FlipV; }
+			set { m_FlipV = value; }
+		}
 
 		/// <summary>
 		/// When enabled the coordinates will have their U and V parameters exchanged.
@@ -97,36 +146,55 @@ namespace UnityEngine.ProBuilder
 		/// <example>
 		/// {U, V} becomes {V, U}
 		/// </example>
-		public bool swapUV { get; set; }
+		public bool swapUV
+		{
+			get { return m_SwapUV; }
+			set { m_SwapUV = value; }
+		}
 
 		/// <summary>
 		/// The @"UnityEngine.ProBuilder.AutoUnwrapSettings.Fill" mode.
 		/// </summary>
-		public Fill fill { get; set; }
+		public Fill fill
+		{
+			get { return m_Fill; }
+			set { m_Fill = value; }
+		}
 
 		/// <summary>
 		/// Coordinates are multiplied by this value after projection and anchor settings.
 		/// </summary>
-		public Vector2 scale { get; set; }
+		public Vector2 scale
+		{
+			get { return m_Scale; }
+			set { m_Scale = value; }
+		}
 
 		/// <summary>
 		/// Added to UV coordinates after projection and anchor settings.
 		/// </summary>
-		public Vector2 offset { get; set; }
+		public Vector2 offset
+		{
+			get { return m_Offset; }
+			set { m_Offset = value; }
+		}
 
 		/// <summary>
 		/// An amount in degrees that UV coordinates are to be rotated clockwise.
 		/// </summary>
-		public float rotation { get; set; }
+		public float rotation
+		{
+			get { return m_Rotation; }
+			set { m_Rotation = value; }
+		}
 
 		/// <summary>
 		/// The starting point from which UV transform operations will be performed.
 		/// </summary>
-		public Anchor anchor { get; set; }
-
-		public AutoUnwrapSettings()
+		public Anchor anchor
 		{
-			Reset();
+			get { return m_Anchor; }
+			set { m_Anchor = value; }
 		}
 
 		/// <summary>
@@ -135,18 +203,15 @@ namespace UnityEngine.ProBuilder
 		/// <param name="unwrapSettings">The settings to copy to this new instance.</param>
 		public AutoUnwrapSettings(AutoUnwrapSettings unwrapSettings)
 		{
-            if (unwrapSettings == null)
-                return;
-
-			useWorldSpace = unwrapSettings.useWorldSpace;
-			flipU = unwrapSettings.flipU;
-			flipV = unwrapSettings.flipV;
-			swapUV = unwrapSettings.swapUV;
-			fill = unwrapSettings.fill;
-			scale = unwrapSettings.scale;
-			offset = unwrapSettings.offset;
-			rotation = unwrapSettings.rotation;
-			anchor = unwrapSettings.anchor;
+			m_UseWorldSpace = unwrapSettings.useWorldSpace;
+			m_FlipU = unwrapSettings.flipU;
+			m_FlipV = unwrapSettings.flipV;
+			m_SwapUV = unwrapSettings.swapUV;
+			m_Fill = unwrapSettings.fill;
+			m_Scale = unwrapSettings.scale;
+			m_Offset = unwrapSettings.offset;
+			m_Rotation = unwrapSettings.rotation;
+			m_Anchor = unwrapSettings.anchor;
 		}
 
 		/// <summary>

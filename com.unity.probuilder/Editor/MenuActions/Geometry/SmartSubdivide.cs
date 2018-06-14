@@ -36,7 +36,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return ProBuilderEditor.instance != null &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
 				ProBuilderEditor.instance.selectionMode != SelectMode.Vertex &&
-				MeshSelection.Top().Any(x => x.selectedEdgeCount > 0);
+				MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
 		}
 
 		public override bool IsHidden()
@@ -49,10 +49,10 @@ namespace UnityEditor.ProBuilder.Actions
 			switch (ProBuilderEditor.instance.selectionMode)
 			{
 				case SelectMode.Edge:
-					return MenuCommands.MenuSubdivideEdge(MeshSelection.Top());
+					return MenuCommands.MenuSubdivideEdge(MeshSelection.TopInternal());
 
 				default:
-					return MenuCommands.MenuSubdivideFace(MeshSelection.Top());
+					return MenuCommands.MenuSubdivideFace(MeshSelection.TopInternal());
 			}
 		}
 	}

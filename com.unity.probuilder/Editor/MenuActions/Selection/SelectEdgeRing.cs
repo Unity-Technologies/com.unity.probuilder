@@ -46,7 +46,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return ProBuilderEditor.instance != null &&
 				editLevel == EditLevel.Geometry &&
 				selectionMode == SelectMode.Edge &&
-				MeshSelection.Top().Sum(x => x.selectedEdgeCount) > 0;
+				MeshSelection.TopInternal().Sum(x => x.selectedEdgeCount) > 0;
 		}
 
 		public override bool IsHidden()
@@ -58,7 +58,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuRingSelection(MeshSelection.Top());
+			return MenuCommands.MenuRingSelection(MeshSelection.TopInternal());
 		}
 	}
 }

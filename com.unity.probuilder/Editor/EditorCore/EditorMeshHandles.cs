@@ -253,9 +253,9 @@ namespace UnityEditor.ProBuilder
 				GL.MultMatrix(mesh.transform.localToWorldMatrix);
 
 				var face = selection.face;
-				var ind = face.indices;
+				var ind = face.indexes;
 
-				for (int i = 0, c = ind.Length; i < c; i += 3)
+				for (int i = 0, c = ind.Count; i < c; i += 3)
 				{
 					GL.Vertex(positions[ind[i]]);
 					GL.Vertex(positions[ind[i+1]]);
@@ -273,8 +273,8 @@ namespace UnityEditor.ProBuilder
 					GL.Color(preselectionColor);
 
 					GL.MultMatrix(mesh.transform.localToWorldMatrix);
-					GL.Vertex(positions[selection.edge.x]);
-					GL.Vertex(positions[selection.edge.y]);
+					GL.Vertex(positions[selection.edge.a]);
+					GL.Vertex(positions[selection.edge.b]);
 
 					EndDrawingLines();
 				}
@@ -360,14 +360,14 @@ namespace UnityEditor.ProBuilder
 						RebuildMeshHandle(mesh, m_VertexHandles, (x,y) =>
 						{
 							s_VertexList.Clear();
-							for (int i = 0, c = mesh.sharedIndicesInternal.Length; i < c; i++)
-								s_VertexList.Add(mesh.sharedIndicesInternal[i][0]);
+							for (int i = 0, c = mesh.sharedIndexesInternal.Length; i < c; i++)
+								s_VertexList.Add(mesh.sharedIndexesInternal[i][0]);
 							MeshHandles.CreateVertexMesh(x, y, s_VertexList);
 						});
 
 						RebuildMeshHandle(mesh, m_VertHandles, (x,y) =>
 						{
-							MeshHandles.CreateVertexMesh(x, y, x.selectedIndicesInternal);
+							MeshHandles.CreateVertexMesh(x, y, x.selectedIndexesInternal);
 						});
 						break;
 					}

@@ -102,7 +102,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			for(int i = 0; i < indices.Length; i++)
 				si[i] = -(i+1);
 
-			IntArray[] sharedIndices = mesh.sharedIndicesUVInternal;
+			IntArray[] sharedIndices = mesh.sharedIndexesUVInternal;
 
 			for(int i = 0; i < indices.Length-1; i++)
 			{
@@ -116,14 +116,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						Vector3 cen = (uvs[indices[i]] + uvs[indices[n]]) / 2f;
 						uvs[indices[i]] = cen;
 						uvs[indices[n]] = cen;
-						int newIndex = IntArrayUtility.MergeSharedIndices(ref sharedIndices, new int[2] {indices[i], indices[n]});
+						int newIndex = IntArrayUtility.MergeSharedIndexes(ref sharedIndices, new int[2] {indices[i], indices[n]});
 						si[i] = newIndex;
 						si[n] = newIndex;
 					}
 				}
 			}
 
-			mesh.sharedIndicesUVInternal = sharedIndices;
+			mesh.sharedIndexesUVInternal = sharedIndices;
 
 			return true;
 		}
@@ -138,14 +138,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Vector2[] uvs = pb.texturesInternal;
 
 			// set the shared indices cache to a unique non-used index
-			Vector2 cen = Math.Average(ArrayUtility.ValuesWithIndices(uvs, indices) );
+			Vector2 cen = Math.Average(ArrayUtility.ValuesWithIndexes(uvs, indices) );
 
 			foreach(int i in indices)
 				uvs[i] = cen;
 
-			IntArray[] sharedIndices = pb.sharedIndicesUVInternal;
-			IntArrayUtility.MergeSharedIndices(ref sharedIndices, indices);
-			pb.sharedIndicesUVInternal = sharedIndices;
+			IntArray[] sharedIndices = pb.sharedIndexesUVInternal;
+			IntArrayUtility.MergeSharedIndexes(ref sharedIndices, indices);
+			pb.sharedIndexesUVInternal = sharedIndices;
 		}
 
 		/// <summary>
@@ -156,7 +156,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns></returns>
 		public static bool SplitUVs(this ProBuilderMesh pb, IEnumerable<int> indices)
 		{
-			IntArray[] sharedIndices = pb.sharedIndicesUVInternal;
+			IntArray[] sharedIndices = pb.sharedIndexesUVInternal;
 
 			if( sharedIndices == null )
 				return false;
@@ -189,41 +189,41 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 		/// <summary>
 		/// Projects UVs on all passed faces, automatically updating the sharedIndicesUV table as required (only associates
-		/// vertices that share a seam).
+		/// vertexes that share a seam).
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="faces"></param>
 		/// <param name="channel"></param>
-		internal static void ProjectFacesAuto(ProBuilderMesh pb, Face[] faces, int channel)
+		internal static void ProjectFacesAuto(ProBuilderMesh mesh, Face[] faces, int channel)
 		{
-			int[] ind = faces.SelectMany(x => x.distinctIndices).ToArray();
+			int[] ind = faces.SelectMany(x => x.distinctIndexesInternal).ToArray();
 
 			// get average face normal
 			Vector3 nrm = Vector3.zero;
 			foreach(Face face in faces)
-				nrm += Math.Normal(pb, face);
+				nrm += Math.Normal(mesh, face);
 			nrm /= (float)faces.Length;
 
 			// project uv coordinates
-			Vector2[] uvs = Projection.PlanarProject(ArrayUtility.ValuesWithIndices(pb.positionsInternal, ind), nrm);
+			Vector2[] uvs = Projection.PlanarProject(ArrayUtility.ValuesWithIndexes(mesh.positionsInternal, ind), nrm);
 
 			// re-assign new projected coords back into full uv array
-			Vector2[] rebuiltUVs = GetUVs(pb, channel);
+			Vector2[] rebuiltUVs = GetUVs(mesh, channel);
 
 			for(int i = 0; i < ind.Length; i++)
 				rebuiltUVs[ind[i]] = uvs[i];
 
 			// and set the msh uv array using the new coordintaes
-			ApplyUVs(pb, rebuiltUVs, channel);
+			ApplyUVs(mesh, rebuiltUVs, channel);
 
 			// now go trhough and set all adjacent face groups to use matching element groups
 			foreach(Face f in faces)
 			{
 				f.elementGroup = -1;
-				SplitUVs(pb, f.distinctIndices);
+				SplitUVs(mesh, f.distinctIndexesInternal);
 			}
 
-			pb.SewUVs(faces.SelectMany(x => x.distinctIndices).ToArray(), .001f);
+			mesh.SewUVs(faces.SelectMany(x => x.distinctIndexesInternal).ToArray(), .001f);
 		}
 
 		/// <summary>
@@ -259,9 +259,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			foreach(KeyValuePair<ProjectionAxis, List<Face>> kvp in sorted)
 			{
-				int[] distinct = kvp.Value.SelectMany(x => x.distinctIndices).ToArray();
+				int[] distinct = kvp.Value.SelectMany(x => x.distinctIndexesInternal).ToArray();
 
-				Vector2[] uvs = Projection.PlanarProject( pb.positionsInternal.ValuesWithIndices(distinct), Projection.ProjectionAxisToVector(kvp.Key), kvp.Key );
+				Vector2[] uvs = Projection.PlanarProject( pb.positionsInternal.ValuesWithIndexes(distinct), Projection.ProjectionAxisToVector(kvp.Key), kvp.Key );
 
 				for(int n = 0; n < distinct.Length; n++)
 					uv[distinct[n]] = uvs[n];
@@ -283,7 +283,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		{
 			foreach(Face f in pb.facesInternal)
 			{
-				if(ArrayUtility.ContainsMatch<int>(f.distinctIndices, indices))
+				if(ArrayUtility.ContainsMatch<int>(f.distinctIndexesInternal, indices))
 				{
 					f.elementGroup = -1;
 					f.manualUV = true;
@@ -338,7 +338,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		public static bool AutoStitch(ProBuilderMesh pb, Face f1, Face f2, int channel)
 		{
 			// Cache shared indices (we gon' use 'em a lot)
-			Dictionary<int, int> sharedIndices = pb.sharedIndicesInternal.ToDictionary();
+			Dictionary<int, int> sharedIndices = pb.sharedIndexesInternal.ToDictionary();
 
 			for(int i = 0; i < f1.edgesInternal.Length; i++)
 			{
@@ -350,7 +350,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					UVEditing.ProjectFacesAuto(pb, new Face[] { f2 }, channel);
 
 					// Use the first first projected as the starting point
-					// and match the vertices
+					// and match the vertexes
 					f1.manualUV = true;
 					f2.manualUV = true;
 
@@ -379,50 +379,50 @@ namespace UnityEngine.ProBuilder.MeshOperations
         static bool AlignEdges(ProBuilderMesh pb, Face faceToMove, Edge edgeToAlignTo, Edge edgeToBeAligned, int channel)
 		{
 			Vector2[] uvs = GetUVs(pb, channel);
-			IntArray[] sharedIndices = pb.sharedIndicesInternal;
-			IntArray[] sharedIndicesUV = pb.sharedIndicesUVInternal;
+			IntArray[] sharedIndices = pb.sharedIndexesInternal;
+			IntArray[] sharedIndicesUV = pb.sharedIndexesUVInternal;
 
 			// Match each edge vertex to the other
-			int[] matchX = new int[2] { edgeToAlignTo.x, -1 };
-			int[] matchY = new int[2] { edgeToAlignTo.y, -1 };
+			int[] matchX = new int[2] { edgeToAlignTo.a, -1 };
+			int[] matchY = new int[2] { edgeToAlignTo.b, -1 };
 
-			int siIndex = sharedIndices.IndexOf(edgeToAlignTo.x);
+			int siIndex = sharedIndices.IndexOf(edgeToAlignTo.a);
 			if(siIndex < 0)
 				return false;
 
-			if(sharedIndices[siIndex].array.Contains(edgeToBeAligned.x))
+			if(sharedIndices[siIndex].array.Contains(edgeToBeAligned.a))
 			{
-				matchX[1] = edgeToBeAligned.x;
-				matchY[1] = edgeToBeAligned.y;
+				matchX[1] = edgeToBeAligned.a;
+				matchY[1] = edgeToBeAligned.b;
 			}
 			else
 			{
-				matchX[1] = edgeToBeAligned.y;
-				matchY[1] = edgeToBeAligned.x;
+				matchX[1] = edgeToBeAligned.b;
+				matchY[1] = edgeToBeAligned.a;
 			}
 
 			// scale face 2 to match the edge size of f1
-			float dist_e1 = Vector2.Distance(uvs[edgeToAlignTo.x], uvs[edgeToAlignTo.y]);
-			float dist_e2 = Vector2.Distance(uvs[edgeToBeAligned.x], uvs[edgeToBeAligned.y]);
+			float dist_e1 = Vector2.Distance(uvs[edgeToAlignTo.a], uvs[edgeToAlignTo.b]);
+			float dist_e2 = Vector2.Distance(uvs[edgeToBeAligned.a], uvs[edgeToBeAligned.b]);
 
 			float scale = dist_e1/dist_e2;
 
 			// doesn't matter what point we scale around because we'll move it in the next step anyways
-			foreach(int i in faceToMove.distinctIndices)
+			foreach(int i in faceToMove.distinctIndexesInternal)
 				uvs[i] = uvs[i].ScaleAroundPoint(Vector2.zero, Vector2.one * scale);
 
 			/**
 			 * Figure out where the center of each edge is so that we can move the f2 edge to match f1's origin
 			 */
-			Vector2 f1_center = (uvs[edgeToAlignTo.x] + uvs[edgeToAlignTo.y]) / 2f;
-			Vector2 f2_center = (uvs[edgeToBeAligned.x] + uvs[edgeToBeAligned.y]) / 2f;
+			Vector2 f1_center = (uvs[edgeToAlignTo.a] + uvs[edgeToAlignTo.b]) / 2f;
+			Vector2 f2_center = (uvs[edgeToBeAligned.a] + uvs[edgeToBeAligned.b]) / 2f;
 
 			Vector2 diff = f1_center - f2_center;
 
 			/**
 			 * Move f2 face to where it's matching edge center is on top of f1's center
 			 */
-			foreach(int i in faceToMove.distinctIndices)
+			foreach(int i in faceToMove.distinctIndexesInternal)
 				uvs[i] += diff;
 
 			/**
@@ -435,7 +435,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			if(Vector3.Cross(angle1, angle2).z < 0)
 				angle = 360f - angle;
 
-			foreach(int i in faceToMove.distinctIndices)
+			foreach(int i in faceToMove.distinctIndexesInternal)
 				uvs[i] = Math.RotateAroundPoint(uvs[i], f1_center, angle);
 
 			float error = Mathf.Abs( Vector2.Distance(uvs[matchX[0]], uvs[matchX[1]]) ) + Mathf.Abs( Vector2.Distance(uvs[matchY[0]], uvs[matchY[1]]) );
@@ -444,7 +444,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			if(error > .02f)
 			{
 				// first try rotating 180 degrees
-				foreach(int i in faceToMove.distinctIndices)
+				foreach(int i in faceToMove.distinctIndexesInternal)
 					uvs[i] = Math.RotateAroundPoint(uvs[i], f1_center, 180f);
 
 				float e2 = Mathf.Abs( Vector2.Distance(uvs[matchX[0]], uvs[matchX[1]]) ) + Mathf.Abs( Vector2.Distance(uvs[matchY[0]], uvs[matchY[1]]) );
@@ -453,16 +453,16 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				else
 				{
 					// flip 'em back around
-					foreach(int i in faceToMove.distinctIndices)
+					foreach(int i in faceToMove.distinctIndexesInternal)
 						uvs[i] = Math.RotateAroundPoint(uvs[i], f1_center, 180f);
 				}
 			}
 
 			// If successfully aligned, merge the sharedIndicesUV
-			UVEditing.SplitUVs(pb, faceToMove.distinctIndices);
+			UVEditing.SplitUVs(pb, faceToMove.distinctIndexesInternal);
 
-			IntArrayUtility.MergeSharedIndices(ref sharedIndicesUV, matchX);
-			IntArrayUtility.MergeSharedIndices(ref sharedIndicesUV, matchY);
+			IntArrayUtility.MergeSharedIndexes(ref sharedIndicesUV, matchX);
+			IntArrayUtility.MergeSharedIndexes(ref sharedIndicesUV, matchY);
 
 			pb.SetSharedIndexesUV(IntArray.RemoveEmptyOrNull(sharedIndicesUV));
 
@@ -525,7 +525,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				Vector2[][] uv_origins = new Vector2[faces.Length][];
 				for(int i = 0; i < faces.Length; i++)
-					uv_origins[i] = pb.texturesInternal.ValuesWithIndices(faces[i].distinctIndices);
+					uv_origins[i] = pb.texturesInternal.ValuesWithIndexes(faces[i].distinctIndexesInternal);
 
 				for(int f = 0; f < faces.Length; f++)
 				{
@@ -538,13 +538,16 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				for(int i = 0; i < faces.Length; i++)
 				{
-					Transform2D transform = MatchCoordinates(pb.texturesInternal.ValuesWithIndices(faces[i].distinctIndices), uv_origins[i]);
+					Transform2D transform = MatchCoordinates(pb.texturesInternal.ValuesWithIndexes(faces[i].distinctIndexesInternal), uv_origins[i]);
 
-					faces[i].uv.offset = -transform.position;
-					faces[i].uv.rotation = transform.rotation;
+					var uv = faces[i].uv;
+					uv.offset = -transform.position;
+					uv.rotation = transform.rotation;
 
 					if( Mathf.Abs(transform.scale.sqrMagnitude - 2f) > .1f )
-						faces[i].uv.scale = transform.scale;
+						uv.scale = transform.scale;
+
+					faces[i].uv = uv;
 				}
 			}
 			else

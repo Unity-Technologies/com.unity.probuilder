@@ -15,33 +15,7 @@ namespace UnityEngine.ProBuilder
 	/// </summary>
 	static class InternalUtility
 	{
-		/**
-		 *	\brief Returns all components present in an array of GameObjects.  Deep search.
-		 *	@param _gameObjects GameObject array to search for specified components.
-		 *	Generic method.  Usage ex.
-		 *	\code{cs}
-		 *	GameObject[] gos = new GameObject[10];
-		 *	for(int i = 0; i < gos.Length; i++)
-		 *	{
-		 *		// Create 10 new pb_Objects
-		 *		gos[i] = ProBuilder.CreatePrimitive(ProBuilder.Shape.Cube).gameObject;
-		 *
-		 *		// Line them up nicely
-		 *		gos[i].transform.position = new Vector3((i * 2) - (gos.Length/2), 0f, 0f);
-		 *	}
-		 *
-		 *	// Get all pb_Objects from GameObject array
-		 *	pb_Object[] pb = gos.GetComponents<pb_Object>();
-		 *
-		 *	// Now do move their vertices up or down some random amount
-		 *	for(int i = 0; i < pb.Length; i++)
-		 *	{
-		 *		pb.TranslateVertices(new Vector3(0f, Randome.Range(-3f, 3f), 0f));
-		 *	}
-		 *	\endcode
-		 *	\sa GetComponents<Transform[]>()
-		 *	\returns Array of T.
-		 */
+		// todo Change to shallow search
 		public static T[] GetComponents<T>(this IEnumerable<GameObject> gameObjects) where T : Component
 		{
 			List<T> c = new List<T>();
@@ -50,44 +24,13 @@ namespace UnityEngine.ProBuilder
 			return c.ToArray();
 		}
 
-		/**
-		 *	\brief Returns all components present in a given GameObject.  Conducts a deep search.
-		 *	@param _gameObject GameObject to search for specified components.
-		 *	\returns Array of T.
-		 */
+		// @todo
 		public static T[] GetComponents<T>(GameObject go) where T : Component
 		{
 			return go.transform.GetComponentsInChildren<T>();
 		}
 
-		/**
-		 *	\brief Returns all components present in a Transform array.  Deep search.
-		 *	@param _transforms Transform array to search for specified components.
-		 *	Generic method.  Usage ex.
-		 *	\code{cs}
-		 *	Transform[] t_arr = new Transform[10];
-		 *	for(int i = 0; i < gos.Length; i++)
-		 *	{
-		 *		// Create 10 new pb_Objects
-		 *		t_arr[i] = ProBuilder.CreatePrimitive(ProBuilder.Shape.Cube).transform;
-		 *
-		 *
-		 *		// Line them up nicely
-		 *		t_arr[i].position = new Vector3((i * 2) - (gos.Length/2), 0f, 0f);
-		 *	}
-		 *
-		 *	// Get all pb_Objects from GameObject array
-		 *	pb_Object[] pb = t_arr.GetComponents<pb_Object>();
-		 *
-		 *	// Now do move their vertices up or down some random amount
-		 *	for(int i = 0; i < pb.Length; i++)
-		 *	{
-		 *		pb.TranslateVertices(new Vector3(0f, Randome.Range(-3f, 3f), 0f));
-		 *	}
-		 *
-		 *	\endcode
-		 *	\returns Array of T.
-		 */
+		// @todo
 		public static T[] GetComponents<T>(this IEnumerable<Transform> transforms) where T : Component
 		{
 			List<T> c = new List<T>();

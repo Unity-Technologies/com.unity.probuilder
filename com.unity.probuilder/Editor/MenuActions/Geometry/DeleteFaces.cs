@@ -24,7 +24,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return ProBuilderEditor.instance != null &&
 				editLevel == EditLevel.Geometry &&
-				MeshSelection.Top().Sum(x => x.selectedFaceCount) > 0;
+				MeshSelection.TopInternal().Sum(x => x.selectedFaceCount) > 0;
 		}
 
 		public override bool IsHidden()
@@ -35,7 +35,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuDeleteFace(MeshSelection.Top());
+			return MenuCommands.MenuDeleteFace(MeshSelection.TopInternal());
 		}
 	}
 }

@@ -148,7 +148,7 @@ namespace UnityEditor.ProBuilder
 	{
 		static int s_DeepSelectionPrevious = 0x0;
 		static SceneSelection s_Selection = new SceneSelection();
-		static List<VertexPickerEntry> s_NearestVertices = new List<VertexPickerEntry>();
+		static List<VertexPickerEntry> s_NearestVertexes = new List<VertexPickerEntry>();
 		static List<GameObject> s_OverlappingGameObjects = new List<GameObject>();
 
 		public static ProBuilderMesh DoMouseClick(Event evt, SelectMode selectionMode, ScenePickerPreferences pickerPreferences)
@@ -206,7 +206,7 @@ namespace UnityEditor.ProBuilder
 				}
 				else if(s_Selection.edge != Edge.Empty)
 				{
-					int ind = mesh.selectedEdges.IndexOf(s_Selection.edge, mesh.sharedIndicesInternal.ToDictionary());
+					int ind = mesh.selectedEdges.IndexOf(s_Selection.edge, mesh.sharedIndexesInternal.ToDictionary());
 
 					UndoUtility.RecordSelection(mesh, "Select Edge");
 
@@ -217,14 +217,14 @@ namespace UnityEditor.ProBuilder
 				}
 				else if (s_Selection.vertex > -1)
 				{
-					int ind = Array.IndexOf(mesh.selectedIndicesInternal, s_Selection.vertex);
+					int ind = Array.IndexOf(mesh.selectedIndexesInternal, s_Selection.vertex);
 
 					UndoUtility.RecordSelection(mesh, "Select Vertex");
 
 					if (ind > -1)
-						mesh.SetSelectedVertices(mesh.selectedIndicesInternal.RemoveAt(ind));
+						mesh.SetSelectedVertexes(mesh.selectedIndexesInternal.RemoveAt(ind));
 					else
-						mesh.SetSelectedVertices(mesh.selectedIndicesInternal.Add(s_Selection.vertex));
+						mesh.SetSelectedVertexes(mesh.selectedIndexesInternal.Add(s_Selection.vertex));
 				}
 
 				return mesh;
@@ -241,7 +241,7 @@ namespace UnityEditor.ProBuilder
 				rectSelectMode = scenePickerPreferences.rectSelectMode
 			};
 
-			var selection = MeshSelection.Top();
+			var selection = MeshSelection.TopInternal();
 			UndoUtility.RecordSelection(selection, "Drag Select");
 			bool isAppendModifier = EditorHandleUtility.IsAppendModifier(Event.current.modifiers);
 
@@ -254,7 +254,7 @@ namespace UnityEditor.ProBuilder
 			{
 				case SelectMode.Vertex:
 				{
-					Dictionary<ProBuilderMesh, HashSet<int>> selected = Picking.PickVerticesInRect(
+					Dictionary<ProBuilderMesh, HashSet<int>> selected = Picking.PickVertexesInRect(
 						SceneView.lastActiveSceneView.camera,
 						mouseDragRect,
 						selection,
@@ -263,12 +263,12 @@ namespace UnityEditor.ProBuilder
 
 					foreach (var kvp in selected)
 					{
-						IntArray[] sharedIndices = kvp.Key.sharedIndicesInternal;
+						IntArray[] sharedIndexes = kvp.Key.sharedIndexesInternal;
 						HashSet<int> common;
 
 						if (isAppendModifier)
 						{
-							common = sharedIndices.GetCommonIndices(kvp.Key.selectedIndicesInternal);
+							common = sharedIndexes.GetCommonIndexes(kvp.Key.selectedIndexesInternal);
 
 							if (scenePickerPreferences.selectionModifierBehavior  == SelectionModifierBehavior.Add)
 								common.UnionWith(kvp.Value);
@@ -283,7 +283,7 @@ namespace UnityEditor.ProBuilder
 						}
 
 						elementsInDragRect = kvp.Value.Any();
-						kvp.Key.SetSelectedVertices(common.SelectMany(x => sharedIndices[x].array));
+						kvp.Key.SetSelectedVertexes(common.SelectMany(x => sharedIndexes[x].array));
 					}
 
 					break;
@@ -337,13 +337,13 @@ namespace UnityEditor.ProBuilder
 					foreach (var kvp in selected)
 					{
 						ProBuilderMesh pb = kvp.Key;
-						Dictionary<int, int> commonIndices = pb.sharedIndicesInternal.ToDictionary();
-						HashSet<EdgeLookup> selectedEdges = EdgeLookup.GetEdgeLookupHashSet(kvp.Value, commonIndices);
+						Dictionary<int, int> common = pb.sharedIndexesInternal.ToDictionary();
+						HashSet<EdgeLookup> selectedEdges = EdgeLookup.GetEdgeLookupHashSet(kvp.Value, common);
 						HashSet<EdgeLookup> current;
 
 						if (isAppendModifier)
 						{
-							current = EdgeLookup.GetEdgeLookupHashSet(pb.selectedEdges, commonIndices);
+							current = EdgeLookup.GetEdgeLookupHashSet(pb.selectedEdges, common);
 
 							if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Add)
 								current.UnionWith(selectedEdges);
@@ -421,7 +421,7 @@ namespace UnityEditor.ProBuilder
 				var mesh = go.GetComponent<ProBuilderMesh>();
 				Face face = null;
 
-				if (mesh != null && (allowUnselected || MeshSelection.Top().Contains(mesh)))
+				if (mesh != null && (allowUnselected || MeshSelection.TopInternal().Contains(mesh)))
 				{
 					Ray ray = UHandleUtility.GUIPointToWorldRay(mousePosition);
 					RaycastHit hit;
@@ -493,7 +493,7 @@ namespace UnityEditor.ProBuilder
 		{
 			Camera cam = SceneView.lastActiveSceneView.camera;
 			selection.Clear();
-			s_NearestVertices.Clear();
+			s_NearestVertexes.Clear();
 			selection.gameObject = HandleUtility.PickGameObject(mousePosition, false);
 			float maxDistance = pickerOptions.maxPointerDistance * pickerOptions.maxPointerDistance;
 
@@ -504,9 +504,9 @@ namespace UnityEditor.ProBuilder
 				if (mesh != null && mesh.isSelectable)
 				{
 					if(MeshSelection.Top().Contains(mesh))
-						GetNearestVertices(mesh, mousePosition, s_NearestVertices, maxDistance);
+						GetNearestVertexes(mesh, mousePosition, s_NearestVertexes, maxDistance);
 					else if (allowUnselected)
-						s_NearestVertices.Add(new VertexPickerEntry()
+						s_NearestVertexes.Add(new VertexPickerEntry()
 						{
 							screenDistance = Mathf.Infinity,
 							worldPosition = Vector3.zero,
@@ -522,25 +522,25 @@ namespace UnityEditor.ProBuilder
 				{
 					if (!mesh.isSelectable)
 						continue;
-					GetNearestVertices(mesh, mousePosition, s_NearestVertices, maxDistance);
+					GetNearestVertexes(mesh, mousePosition, s_NearestVertexes, maxDistance);
 				}
 			}
 
-			s_NearestVertices.Sort((x, y) => x.screenDistance.CompareTo(y.screenDistance));
+			s_NearestVertexes.Sort((x, y) => x.screenDistance.CompareTo(y.screenDistance));
 
-			for (int i = 0; i < s_NearestVertices.Count; i++)
+			for (int i = 0; i < s_NearestVertexes.Count; i++)
 			{
-				if (s_NearestVertices[i].vertex < 0)
+				if (s_NearestVertexes[i].vertex < 0)
 				{
-					selection.gameObject = s_NearestVertices[i].mesh.gameObject;
-					selection.mesh = s_NearestVertices[i].mesh;
+					selection.gameObject = s_NearestVertexes[i].mesh.gameObject;
+					selection.mesh = s_NearestVertexes[i].mesh;
 					selection.vertex = -1;
 				}
-				else if (!UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, s_NearestVertices[i].mesh, s_NearestVertices[i].worldPosition))
+				else if (!UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, s_NearestVertexes[i].mesh, s_NearestVertexes[i].worldPosition))
 				{
-					selection.gameObject = s_NearestVertices[i].mesh.gameObject;
-					selection.mesh = s_NearestVertices[i].mesh;
-					selection.vertex = s_NearestVertices[i].vertex;
+					selection.gameObject = s_NearestVertexes[i].mesh.gameObject;
+					selection.mesh = s_NearestVertexes[i].mesh;
+					selection.vertex = s_NearestVertexes[i].vertex;
 					return true;
 				}
 			}
@@ -548,10 +548,10 @@ namespace UnityEditor.ProBuilder
 			return selection.gameObject != null;
 		}
 
-		static void GetNearestVertices(ProBuilderMesh mesh, Vector3 mousePosition, List<VertexPickerEntry> list, float maxDistance)
+		static void GetNearestVertexes(ProBuilderMesh mesh, Vector3 mousePosition, List<VertexPickerEntry> list, float maxDistance)
 		{
 			var positions = mesh.positionsInternal;
-			var common = mesh.sharedIndicesInternal;
+			var common = mesh.sharedIndexesInternal;
 
 			for (int n = 0, c = common.Length; n < c; n++)
 			{
@@ -579,7 +579,7 @@ namespace UnityEditor.ProBuilder
 			var hoveredMesh = selection.gameObject != null ? selection.gameObject.GetComponent<ProBuilderMesh>() : null;
 
 			float bestDistance = pickerPrefs.maxPointerDistance;
-			bool hoveredIsInSelection = MeshSelection.Top().Contains(hoveredMesh);
+			bool hoveredIsInSelection = MeshSelection.TopInternal().Contains(hoveredMesh);
 
 			if(hoveredMesh != null && (allowUnselected || hoveredIsInSelection))
 			{
@@ -597,7 +597,7 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
-			foreach (var mesh in MeshSelection.Top())
+			foreach (var mesh in MeshSelection.TopInternal())
 			{
 				var trs = mesh.transform;
 				var positions = mesh.positionsInternal;
@@ -606,8 +606,8 @@ namespace UnityEditor.ProBuilder
 				{
 					foreach (var edge in face.edges)
 					{
-						int x = edge.x;
-						int y = edge.y;
+						int x = edge.a;
+						int y = edge.b;
 
 						float d = UHandleUtility.DistanceToLine(
 							trs.TransformPoint(positions[x]),
@@ -655,7 +655,7 @@ namespace UnityEditor.ProBuilder
 				{
 					foreach (var edge in s_DualCullModeRaycastBackFace.item1.edgesInternal)
 					{
-						float d = UHandleUtility.DistancePointLine(s_DualCullModeRaycastBackFace.item2, v[edge.x], v[edge.y]);
+						float d = UHandleUtility.DistancePointLine(s_DualCullModeRaycastBackFace.item2, v[edge.a], v[edge.b]);
 
 						if (d < res.distance)
 						{
@@ -675,7 +675,7 @@ namespace UnityEditor.ProBuilder
 					{
 						foreach (var edge in s_DualCullModeRaycastFrontFace.item1.edgesInternal)
 						{
-							float d = UHandleUtility.DistancePointLine(s_DualCullModeRaycastFrontFace.item2, v[edge.x], v[edge.y]);
+							float d = UHandleUtility.DistancePointLine(s_DualCullModeRaycastFrontFace.item2, v[edge.a], v[edge.b]);
 
 							if (d < res.distance)
 							{
@@ -688,8 +688,8 @@ namespace UnityEditor.ProBuilder
 
 				if (res.edge.IsValid())
 					res.distance = UHandleUtility.DistanceToLine(
-						mesh.transform.TransformPoint(v[res.edge.x]),
-						mesh.transform.TransformPoint(v[res.edge.y]));
+						mesh.transform.TransformPoint(v[res.edge.a]),
+						mesh.transform.TransformPoint(v[res.edge.b]));
 
 			}
 

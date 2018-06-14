@@ -894,10 +894,7 @@ namespace UnityEditor.ProBuilder
 				ProBuilderMesh pb = ShapeGenerator.IcosahedronGenerator(ico_radius, ico_subdivisions);
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
-				// // To keep the preview snappy, shared indices aren't built in IcosahadreonGenerator
-				// int[] welds;
-				// pb.WeldVertices(pb_Face.AllTriangles(pb.faces), Mathf.Epsilon, out welds);
-
+				// To keep the preview snappy, shared indexes aren't built in IcosahadreonGenerator
 				UVEditing.ProjectFacesBox(pb, pb.facesInternal);
 
 				for(int i = 0; i < pb.facesInternal.Length; i++)
@@ -1026,7 +1023,7 @@ namespace UnityEditor.ProBuilder
 		void CustomGUI()
 		{
 			GUILayout.Label("Custom Geometry", EditorStyles.boldLabel);
-			EditorGUILayout.HelpBox("Vertices must be wound in faces, and counter-clockwise.\n(Think horizontally reversed Z)", MessageType.Info);
+			EditorGUILayout.HelpBox("Vertexes must be wound in faces, and counter-clockwise.\n(Think horizontally reversed Z)", MessageType.Info);
 
 			scrollbar = GUILayout.BeginScrollView(scrollbar);
 				verts = EditorGUILayout.TextArea(verts, GUILayout.MinHeight(160));
@@ -1085,12 +1082,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		void SetPreviewObject(ProBuilderMesh pb)
-		{
-			SetPreviewObject(pb, null);
-		}
-
-		void SetPreviewObject(ProBuilderMesh pb, int[] indicesToCenterPivotOn)
+		void SetPreviewObject(ProBuilderMesh pb, int[] vertexes = null)
 		{
 			pb.isSelectable = false;
 
@@ -1108,7 +1100,7 @@ namespace UnityEditor.ProBuilder
 			m_PreviewObject = pb.gameObject;
 
 			if(PreferencesInternal.GetBool(PreferenceKeys.pbForceGridPivot))
-				pb.CenterPivot(indicesToCenterPivotOn == null ? new int[1]{0} : indicesToCenterPivotOn);
+				pb.CenterPivot(vertexes == null ? new int[1]{0} : vertexes);
 
 			if(prevTransform)
 			{

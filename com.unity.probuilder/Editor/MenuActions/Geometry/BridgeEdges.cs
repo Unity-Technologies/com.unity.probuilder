@@ -25,7 +25,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return 	ProBuilderEditor.instance != null &&
 					ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
 					ProBuilderEditor.instance.selectionMode == SelectMode.Edge &&
-					MeshSelection.Top().Any(x => x.selectedEdgeCount == 2);
+					MeshSelection.TopInternal().Any(x => x.selectedEdgeCount == 2);
 		}
 
 		public override bool IsHidden()
@@ -38,7 +38,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuBridgeEdges(MeshSelection.Top());
+			return MenuCommands.MenuBridgeEdges(MeshSelection.TopInternal());
 		}
 	}
 }

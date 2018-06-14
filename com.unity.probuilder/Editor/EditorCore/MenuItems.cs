@@ -64,9 +64,9 @@ namespace UnityEditor.ProBuilder
 				return false;
 
 			if (editor.selectionMode == SelectMode.Edge)
-				return MeshSelection.Top().Any(x => x.selectedEdgeCount > 0);
+				return MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
 			else if (editor.selectionMode == SelectMode.Face)
-				return MeshSelection.Top().Any(x => x.selectedFaceCount > 0);
+				return MeshSelection.TopInternal().Any(x => x.selectedFaceCount > 0);
 			return false;
 		}
 

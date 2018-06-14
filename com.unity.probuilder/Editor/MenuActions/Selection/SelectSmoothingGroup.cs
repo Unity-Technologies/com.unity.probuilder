@@ -35,7 +35,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return ProBuilderEditor.instance != null &&
 				ProBuilderEditor.instance.editLevel != EditLevel.Top &&
-				MeshSelection.Top().Any(x => x.selectedFaceCount > 0);
+				MeshSelection.TopInternal().Any(x => x.selectedFaceCount > 0);
 		}
 
 		public override bool IsHidden()
@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return true;
 		}
 
-		public override MenuActionState AltState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			if (IsEnabled() &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
@@ -55,13 +55,13 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			UndoUtility.RecordSelection(MeshSelection.Top(), "Select Faces with Smoothing Group");
+			UndoUtility.RecordSelection(MeshSelection.TopInternal(), "Select Faces with Smoothing Group");
 
-			HashSet<int> selectedSmoothGroups = new HashSet<int>(MeshSelection.Top().SelectMany(x => x.selectedFacesInternal.Select(y => y.smoothingGroup)));
+			HashSet<int> selectedSmoothGroups = new HashSet<int>(MeshSelection.TopInternal().SelectMany(x => x.selectedFacesInternal.Select(y => y.smoothingGroup)));
 
 			List<GameObject> newSelection = new List<GameObject>();
 
-			foreach (ProBuilderMesh pb in MeshSelection.Top())
+			foreach (ProBuilderMesh pb in MeshSelection.TopInternal())
 			{
 				IEnumerable<Face> matches = pb.facesInternal.Where(x => selectedSmoothGroups.Contains(x.smoothingGroup));
 

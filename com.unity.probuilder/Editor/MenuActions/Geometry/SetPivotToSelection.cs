@@ -24,7 +24,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override bool IsEnabled()
 		{
 			return ProBuilderEditor.instance != null &&
-				MeshSelection.Top().Any(x => x.selectedVertexCount > 0);
+				MeshSelection.TopInternal().Any(x => x.selectedVertexCount > 0);
 		}
 
 		public override bool IsHidden()
@@ -34,7 +34,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuSetPivot(MeshSelection.Top());
+			return MenuCommands.MenuSetPivot(MeshSelection.TopInternal());
 		}
 	}
 }

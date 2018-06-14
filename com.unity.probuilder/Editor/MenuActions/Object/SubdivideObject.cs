@@ -26,17 +26,17 @@ namespace UnityEditor.ProBuilder.Actions
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Subdivide Object",
-			"Increase the number of edges and vertices on this object by creating 4 new quads in every face."
+			"Increase the number of edges and vertexes on this object by creating 4 new quads in every face."
 		);
 
 		public override bool IsEnabled()
 		{
-			return ProBuilderEditor.instance != null && MeshSelection.Top().Length > 0;
+			return ProBuilderEditor.instance != null && MeshSelection.TopInternal().Length > 0;
 		}
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuSubdivide(MeshSelection.Top());
+			return MenuCommands.MenuSubdivide(MeshSelection.TopInternal());
 		}
 	}
 }

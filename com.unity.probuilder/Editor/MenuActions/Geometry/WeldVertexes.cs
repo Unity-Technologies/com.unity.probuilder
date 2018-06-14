@@ -9,7 +9,7 @@ using EditorStyles = UnityEditor.EditorStyles;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	sealed class WeldVertices : MenuAction
+	sealed class WeldVertexes : MenuAction
 	{
 		public override ToolbarGroup group
 		{
@@ -28,8 +28,8 @@ namespace UnityEditor.ProBuilder.Actions
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
-			"Weld Vertices",
-			@"Searches the current selection for vertices that are within the specified distance of on another and merges them into a single vertex.",
+			"Weld Vertexes",
+			@"Searches the current selection for vertexes that are within the specified distance of on another and merges them into a single vertex.",
 			keyCommandAlt, 'V'
 		);
 
@@ -38,7 +38,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return ProBuilderEditor.instance != null &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
 				ProBuilderEditor.instance.selectionMode == SelectMode.Vertex &&
-				MeshSelection.Top().Any(x => x.selectedVertexCount > 1);
+				MeshSelection.TopInternal().Any(x => x.selectedVertexCount > 1);
 		}
 
 		public override bool IsHidden()
@@ -48,15 +48,15 @@ namespace UnityEditor.ProBuilder.Actions
 				ProBuilderEditor.instance.selectionMode != SelectMode.Vertex;
 		}
 
-		public override MenuActionState AltState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}
 
-		static readonly GUIContent gc_weldDistance = new GUIContent("Weld Distance", "The maximum distance between two vertices in order to be welded together.");
+		static readonly GUIContent gc_weldDistance = new GUIContent("Weld Distance", "The maximum distance between two vertexes in order to be welded together.");
 		const float k_MinWeldDistance = .00001f;
 
-		public override void OnSettingsGUI()
+		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("Weld Settings", EditorStyles.boldLabel);
 
@@ -78,13 +78,13 @@ namespace UnityEditor.ProBuilder.Actions
 
 			GUILayout.FlexibleSpace();
 
-			if (GUILayout.Button("Weld Vertices"))
+			if (GUILayout.Button("Weld Vertexes"))
 				DoAction();
 		}
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuWeldVertices(MeshSelection.Top());
+			return MenuCommands.MenuWeldVertexes(MeshSelection.TopInternal());
 		}
 	}
 }

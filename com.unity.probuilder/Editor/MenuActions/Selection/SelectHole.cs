@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder.Actions
 			if (ProBuilderEditor.instance.selectionMode != SelectMode.Edge && ProBuilderEditor.instance.selectionMode != SelectMode.Vertex)
 				return false;
 
-			if (MeshSelection.Top().Length < 1)
+			if (MeshSelection.TopInternal().Length < 1)
 				return false;
 
 			return true;
@@ -62,14 +62,14 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			UndoUtility.RecordSelection(MeshSelection.Top(), "Select Hole");
+			UndoUtility.RecordSelection(MeshSelection.TopInternal(), "Select Hole");
 
 			ActionResult res = ActionResult.NoSelection;
 
-			foreach (ProBuilderMesh pb in MeshSelection.Top())
+			foreach (ProBuilderMesh pb in MeshSelection.TopInternal())
 			{
-				bool selectAll = pb.selectedIndicesInternal == null || pb.selectedIndicesInternal.Length < 1;
-				IEnumerable<int> indices = selectAll ? pb.facesInternal.SelectMany(x => x.ToTriangles()) : pb.selectedIndicesInternal;
+				bool selectAll = pb.selectedIndexesInternal == null || pb.selectedIndexesInternal.Length < 1;
+				IEnumerable<int> indices = selectAll ? pb.facesInternal.SelectMany(x => x.ToTriangles()) : pb.selectedIndexesInternal;
 
 				List<List<Edge>> holes = ElementSelection.FindHoles(pb, indices);
 

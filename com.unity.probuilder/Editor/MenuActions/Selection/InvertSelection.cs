@@ -34,7 +34,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return ProBuilderEditor.instance != null
 				&& ProBuilderEditor.instance.editLevel != EditLevel.Top
-				&& MeshSelection.Top().Length > 0;
+				&& MeshSelection.TopInternal().Length > 0;
 		}
 
 		public override bool IsHidden()
@@ -44,7 +44,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuInvertSelection(MeshSelection.Top());
+			return MenuCommands.MenuInvertSelection(MeshSelection.TopInternal());
 		}
 	}
 }

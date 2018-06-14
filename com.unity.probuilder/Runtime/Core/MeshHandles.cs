@@ -39,8 +39,8 @@ namespace UnityEngine.ProBuilder
 
 					int positionIndex = edgeIndex * 2;
 
-					tris[positionIndex + 0] = edge.x;
-					tris[positionIndex + 1] = edge.y;
+					tris[positionIndex + 0] = edge.a;
+					tris[positionIndex + 1] = edge.b;
 
 					edgeIndex++;
 				}
@@ -63,8 +63,8 @@ namespace UnityEngine.ProBuilder
 				var edge = edges[n];
 				var ind = n * 2;
 
-				indices[ind + 0] = edge.x;
-				indices[ind + 1] = edge.y;
+				indices[ind + 0] = edge.a;
+				indices[ind + 1] = edge.b;
 			}
 
 			target.Clear();
@@ -93,7 +93,7 @@ namespace UnityEngine.ProBuilder
 		{
 			const ushort k_MaxPointCount = ushort.MaxValue / 4;
 
-			int billboardCount = mesh.sharedIndicesInternal.Length;
+			int billboardCount = mesh.sharedIndexesInternal.Length;
 
 			if (billboardCount > k_MaxPointCount)
 				billboardCount = k_MaxPointCount;

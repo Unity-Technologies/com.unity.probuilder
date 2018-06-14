@@ -84,9 +84,9 @@ namespace UnityEditor.ProBuilder
 					selected.Add(face.smoothingGroup);
 			}
 
-			public void RebuildPreviewMesh(ProBuilderMesh pb)
+			void RebuildPreviewMesh(ProBuilderMesh pb)
 			{
-				List<int> indices = new List<int>();
+				List<int> indexes = new List<int>();
 				Color32[] colors = new Color32[pb.vertexCount];
 				groupColors.Clear();
 
@@ -96,8 +96,8 @@ namespace UnityEditor.ProBuilder
 					{
 						Color32 color = GetDistinctColor(smoothGroup.Key);
 						groupColors.Add(smoothGroup.Key, color);
-						var groupIndices = smoothGroup.Value.SelectMany(y => y.indices);
-						indices.AddRange(groupIndices);
+						var groupIndices = smoothGroup.Value.SelectMany(y => y.indexesInternal);
+						indexes.AddRange(groupIndices);
 						foreach (int i in groupIndices)
 							colors[i] = color;
 					}
@@ -106,7 +106,7 @@ namespace UnityEditor.ProBuilder
 				previewMesh.Clear();
 				previewMesh.vertices = pb.positionsInternal;
 				previewMesh.colors32 = colors;
-				previewMesh.triangles = indices.ToArray();
+				previewMesh.triangles = indexes.ToArray();
 			}
 
 			public void RebuildNormalsMesh(ProBuilderMesh pb)
@@ -117,7 +117,7 @@ namespace UnityEditor.ProBuilder
 				int vertexCount = System.Math.Min(ushort.MaxValue / 2, pb.mesh.vertexCount);
 				Vector3[] positions = new Vector3[vertexCount * 2];
 				Vector4[] tangents = new Vector4[vertexCount * 2];
-				int[] indices = new int[vertexCount * 2];
+				int[] indexes = new int[vertexCount * 2];
 				for (int i = 0; i < vertexCount; i++)
 				{
 					int a = i*2, b = i*2+1;
@@ -126,13 +126,13 @@ namespace UnityEditor.ProBuilder
 					positions[b] = srcPositions[i];
 					tangents[a] = new Vector4(srcNormals[i].x, srcNormals[i].y, srcNormals[i].z, 0f);
 					tangents[b] = new Vector4(srcNormals[i].x, srcNormals[i].y, srcNormals[i].z, 1f);
-					indices[a] = a;
-					indices[b] = b;
+					indexes[a] = a;
+					indexes[b] = b;
 				}
 				normalsMesh.vertices = positions;
 				normalsMesh.tangents = tangents;
 				normalsMesh.subMeshCount = 1;
-				normalsMesh.SetIndices(indices, MeshTopology.Lines, 0);
+				normalsMesh.SetIndices(indexes, MeshTopology.Lines, 0);
 			}
 		}
 
@@ -300,7 +300,7 @@ namespace UnityEditor.ProBuilder
 		Dictionary<ProBuilderMesh, SmoothGroupData> m_SmoothGroups = new Dictionary<ProBuilderMesh, SmoothGroupData>();
 		static bool s_ShowPreview = false;
 		static bool s_ShowNormals = false;
-		static bool s_IsMovingVertices = false;
+		static bool s_IsMovingVertexes = false;
 		static bool s_ShowHelp = false;
 		static float s_NormalsSize = 0.1f;
 		static float s_PreviewOpacity = .5f;
@@ -324,9 +324,9 @@ namespace UnityEditor.ProBuilder
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
 			Selection.selectionChanged += OnSelectionChanged;
 			Undo.undoRedoPerformed += OnSelectionChanged;
-			ProBuilderMesh.onElementSelectionChanged += OnElementSelectionChanged;
-			ProBuilderEditor.onVertexMovementBegin += OnBeginVertexMovement;
-			ProBuilderEditor.onVertexMovementFinish += OnFinishVertexMovement;
+			ProBuilderMesh.elementSelectionChanged += OnElementSelectionChanged;
+			ProBuilderEditor.beforeMeshModification += OnBeginVertexMovement;
+			ProBuilderEditor.afterMeshModification += OnFinishVertexMovement;
 			this.autoRepaintOnSceneChange = true;
 			m_HelpIcon = new GUIContent(IconUtility.GetIcon("Toolbar/Help"), "Open Documentation");
 			s_ShowPreview = PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_ShowPreview", false);
@@ -347,7 +347,7 @@ namespace UnityEditor.ProBuilder
 			SceneView.onSceneGUIDelegate -= OnSceneGUI;
 			Selection.selectionChanged -= OnSelectionChanged;
 			Undo.undoRedoPerformed -= OnSelectionChanged;
-			ProBuilderMesh.onElementSelectionChanged -= OnElementSelectionChanged;
+			ProBuilderMesh.elementSelectionChanged -= OnElementSelectionChanged;
 			m_SmoothGroups.Clear();
 		}
 
@@ -358,12 +358,12 @@ namespace UnityEditor.ProBuilder
 
 		private void OnBeginVertexMovement(ProBuilderMesh[] selection)
 		{
-			s_IsMovingVertices = true;
+			s_IsMovingVertexes = true;
 		}
 
 		private void OnFinishVertexMovement(ProBuilderMesh[] selection)
 		{
-			s_IsMovingVertices = false;
+			s_IsMovingVertexes = false;
 			OnSelectionChanged();
 		}
 
@@ -371,7 +371,7 @@ namespace UnityEditor.ProBuilder
 		{
 			m_SmoothGroups.Clear();
 
-			foreach (ProBuilderMesh pb in MeshSelection.Top())
+			foreach (ProBuilderMesh pb in MeshSelection.TopInternal())
 				m_SmoothGroups.Add(pb, new SmoothGroupData(pb));
 
 			this.Repaint();
@@ -635,7 +635,7 @@ namespace UnityEditor.ProBuilder
 
 			Event evt = Event.current;
 
-			if (!s_IsMovingVertices && evt.type == EventType.Repaint)
+			if (!s_IsMovingVertexes && evt.type == EventType.Repaint)
 			{
 
 				foreach (var kvp in m_SmoothGroups)

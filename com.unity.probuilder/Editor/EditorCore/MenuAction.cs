@@ -42,33 +42,33 @@ namespace UnityEditor.ProBuilder
 	    /// <remarks>
 	    /// Use this where you wish to add a top level menu item.
 	    /// </remarks>
-        public const string probuilderMenuPath = "Tools/ProBuilder/";
+        internal const string probuilderMenuPath = "Tools/ProBuilder/";
 
 	    /// <value>
 	    /// The unicode character for the control key symbol on Windows, or command key on macOS.
 	    /// </value>
-        protected const char keyCommandSuper = PreferenceKeys.CMD_SUPER;
+        internal const char keyCommandSuper = PreferenceKeys.CMD_SUPER;
 
 	    /// <value>
 	    /// The unicode character for the shift key symbol.
 	    /// </value>
-	    protected const char keyCommandShift = PreferenceKeys.CMD_SHIFT;
+	    internal const char keyCommandShift = PreferenceKeys.CMD_SHIFT;
 
 	    /// <value>
 	    /// The unicode character for the option key symbol on macOS.
 	    /// </value>
 	    /// <seealso cref="keyCommandAlt"/>
-        protected const char keyCommandOption = PreferenceKeys.CMD_OPTION;
+        internal const char keyCommandOption = PreferenceKeys.CMD_OPTION;
 
 	    /// <value>
 	    /// The unicode character for the alt key symbol on Windows.
 	    /// </value>
-        protected const char keyCommandAlt = PreferenceKeys.CMD_ALT;
+        internal const char keyCommandAlt = PreferenceKeys.CMD_ALT;
 
 	    /// <value>
 	    /// The unicode character for the delete key symbol.
 	    /// </value>
-        protected const char keyCommandDelete = PreferenceKeys.CMD_DELETE;
+        internal const char keyCommandDelete = PreferenceKeys.CMD_DELETE;
 
         static readonly GUIContent AltButtonContent = new GUIContent("+", "");
 
@@ -139,7 +139,7 @@ namespace UnityEditor.ProBuilder
 	    /// <remarks>
 	    /// Note that unlike <see cref="icon"> this function caches the result.
 	    /// </remarks>
-        protected virtual Texture2D desaturatedIcon
+        protected virtual Texture2D disabledIcon
         {
             get
             {
@@ -231,7 +231,7 @@ namespace UnityEditor.ProBuilder
 	    /// Get a flag indicating the visibility and enabled state of an extra options menu modifier for this action.
 	    /// </summary>
 	    /// <returns>A flag specifying whether an options icon should be displayed for this action button. If your action implements some etra options, you must also implement OnSettingsGUI.</returns>
-        public virtual MenuActionState AltState() { return MenuActionState.Hidden; }
+	    protected virtual MenuActionState OptionsMenuState() { return MenuActionState.Hidden; }
 
 		/// <summary>
 		/// Perform whatever action this menu item is supposed to do. You are resposible for implementing Undo.
@@ -247,17 +247,17 @@ namespace UnityEditor.ProBuilder
 	    /// <summary>
 	    /// Implement the extra settings GUI for your action in this method.
 	    /// </summary>
-        public virtual void OnSettingsGUI() { }
+        protected virtual void OnSettingsGUI() { }
 
 	    /// <summary>
 	    /// Called when the settings window is opened.
 	    /// </summary>
-        public virtual void OnSettingsEnable() { }
+	    protected virtual void OnSettingsEnable() { }
 
 		/// <summary>
 		/// Called when the settings window is closed.
 		/// </summary>
-	    public virtual void OnSettingsDisable() { }
+		protected virtual void OnSettingsDisable() { }
 
         protected bool isIconMode { get; set; }
 
@@ -280,9 +280,9 @@ namespace UnityEditor.ProBuilder
 
 			if(isIconMode)
 			{
-				if( GUILayout.Button(buttonEnabled || !desaturatedIcon ? icon : desaturatedIcon, ToolbarGroupUtility.GetStyle(group, isHorizontal), layoutOptions) )
+				if( GUILayout.Button(buttonEnabled || !disabledIcon ? icon : disabledIcon, ToolbarGroupUtility.GetStyle(group, isHorizontal), layoutOptions) )
 				{
-					if(showOptions && (AltState() & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
+					if(showOptions && (OptionsMenuState() & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
 					{
 						DoAlt();
 					}
@@ -293,7 +293,7 @@ namespace UnityEditor.ProBuilder
 					}
 				}
 
-				if((AltState() & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
+				if((OptionsMenuState() & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
 				{
 					Rect r = GUILayoutUtility.GetLastRect();
 					r.x = r.x + r.width - 16;
@@ -323,7 +323,7 @@ namespace UnityEditor.ProBuilder
 						ActionResult res = DoAction();
 						EditorUtility.ShowNotification(res.notification);
 					}
-					MenuActionState altState = AltState();
+					MenuActionState altState = OptionsMenuState();
 
 					if( (altState & MenuActionState.Visible) == MenuActionState.Visible )
 					{

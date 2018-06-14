@@ -75,15 +75,15 @@ namespace UnityEngine.ProBuilder
 	static class Picking
 	{
 		/// <summary>
-		/// Pick the vertex indices contained within a rect.
+		/// Pick the vertex indexes contained within a rect.
 		/// </summary>
 		/// <param name="cam"></param>
 		/// <param name="rect">Rect is in GUI space, where 0,0 is top left of screen, width = cam.pixelWidth / pointsPerPixel.</param>
 		/// <param name="selectable">The objects to hit test.</param>
 		/// <param name="options">Culling options.</param>
 		/// <param name="pixelsPerPoint">Scale the render texture to match rect coordinates. Generally you'll just pass in EditorGUIUtility.pointsPerPixel.</param>
-		/// <returns>A dictionary of pb_Object and sharedIndices that are in the selection rect. To get triangle indices access the pb.sharedIndices[index] array.</returns>
-		public static Dictionary<ProBuilderMesh, HashSet<int>> PickVerticesInRect(
+		/// <returns>A dictionary of ProBuilderMesh and sharedIndexes that are in the selection rect. To get triangle indices access the pb.sharedIndices[index] array.</returns>
+		public static Dictionary<ProBuilderMesh, HashSet<int>> PickVertexesInRect(
 			Camera cam,
 			Rect rect,
 			IList<ProBuilderMesh> selectable,
@@ -92,7 +92,7 @@ namespace UnityEngine.ProBuilder
 		{
 			if (options.depthTest)
 			{
-				return SelectionPickerRenderer.PickVerticesInRect(
+				return SelectionPickerRenderer.PickVertexesInRect(
 					cam,
 					rect,
 					selectable,
@@ -110,15 +110,15 @@ namespace UnityEngine.ProBuilder
 				if(!pb.isSelectable)
 					continue;
 
-				IntArray[] sharedIndices = pb.sharedIndicesInternal;
+				IntArray[] sharedIndexes = pb.sharedIndexesInternal;
 				HashSet<int> inRect = new HashSet<int>();
 				Vector3[] positions = pb.positionsInternal;
 				var trs = pb.transform;
 				float pixelHeight = cam.pixelHeight;
 
-				for(int n = 0; n < sharedIndices.Length; n++)
+				for(int n = 0; n < sharedIndexes.Length; n++)
 				{
-					Vector3 v = trs.TransformPoint(positions[sharedIndices[n][0]]);
+					Vector3 v = trs.TransformPoint(positions[sharedIndexes[n][0]]);
 					Vector3 p = cam.WorldToScreenPoint(v);
 
 					if (p.z < cam.nearClipPlane)
@@ -186,17 +186,17 @@ namespace UnityEngine.ProBuilder
 					if(options.rectSelectMode == RectSelectMode.Complete)
 					{
 						// face is behind the camera
-						if(screenPoints[face.indices[0]].z < cam.nearClipPlane)
+						if(screenPoints[face.indexesInternal[0]].z < cam.nearClipPlane)
 							continue;
 
 						// only check the first index per quad, and if it checks out, then check every other point
-						if(rect.Contains(screenPoints[face.indices[0]]))
+						if(rect.Contains(screenPoints[face.indexesInternal[0]]))
 						{
 							bool nope = false;
 
-							for(int q = 1; q < face.distinctIndices.Length; q++)
+							for(int q = 1; q < face.distinctIndexesInternal.Length; q++)
 							{
-								int index = face.distinctIndices[q];
+								int index = face.distinctIndexesInternal[q];
 
 								if(screenPoints[index].z < cam.nearClipPlane || !rect.Contains(screenPoints[index]))
 								{
@@ -208,7 +208,7 @@ namespace UnityEngine.ProBuilder
 							if(!nope)
 							{
 								if( !options.depthTest ||
-									!HandleUtility.PointIsOccluded(cam, pb, trs.TransformPoint(Math.Average(positions, face.distinctIndices))))
+									!HandleUtility.PointIsOccluded(cam, pb, trs.TransformPoint(Math.Average(positions, face.distinctIndexesInternal))))
 								{
 									selectedFaces.Add(face);
 								}
@@ -224,9 +224,9 @@ namespace UnityEngine.ProBuilder
 						if( poly.Intersects(rect) )
 						{
 							// if rect contains one point of polygon, it overlaps
-							for (int nn = 0; nn < face.distinctIndices.Length && !overlaps; nn++)
+							for (int nn = 0; nn < face.distinctIndexesInternal.Length && !overlaps; nn++)
 							{
-								Vector3 p = screenPoints[face.distinctIndices[nn]];
+								Vector3 p = screenPoints[face.distinctIndexesInternal[nn]];
 								overlaps = p.z > cam.nearClipPlane && rect.Contains(p);
 							}
 
@@ -246,16 +246,16 @@ namespace UnityEngine.ProBuilder
 								// if any polygon edge intersects rect
 								for(int nn = 0; nn < face.edgesInternal.Length && !overlaps; nn++)
 								{
-									if( Math.GetLineSegmentIntersect(tr, tl, screenPoints[face.edgesInternal[nn].x], screenPoints[face.edgesInternal[nn].y]) )
+									if( Math.GetLineSegmentIntersect(tr, tl, screenPoints[face.edgesInternal[nn].a], screenPoints[face.edgesInternal[nn].b]) )
 										overlaps = true;
 									else
-									if( Math.GetLineSegmentIntersect(tl, bl, screenPoints[face.edgesInternal[nn].x], screenPoints[face.edgesInternal[nn].y]) )
+									if( Math.GetLineSegmentIntersect(tl, bl, screenPoints[face.edgesInternal[nn].a], screenPoints[face.edgesInternal[nn].b]) )
 										overlaps = true;
 									else
-									if( Math.GetLineSegmentIntersect(bl, br, screenPoints[face.edgesInternal[nn].x], screenPoints[face.edgesInternal[nn].y]) )
+									if( Math.GetLineSegmentIntersect(bl, br, screenPoints[face.edgesInternal[nn].a], screenPoints[face.edgesInternal[nn].b]) )
 										overlaps = true;
 									else
-									if( Math.GetLineSegmentIntersect(br, tl, screenPoints[face.edgesInternal[nn].x], screenPoints[face.edgesInternal[nn].y]) )
+									if( Math.GetLineSegmentIntersect(br, tl, screenPoints[face.edgesInternal[nn].a], screenPoints[face.edgesInternal[nn].b]) )
 										overlaps = true;
 								}
 							}
@@ -309,8 +309,8 @@ namespace UnityEngine.ProBuilder
 					{
 						var edge = edges[n];
 
-						var posA = trs.TransformPoint(pb.positionsInternal[edge.x]);
-						var posB = trs.TransformPoint(pb.positionsInternal[edge.y]);
+						var posA = trs.TransformPoint(pb.positionsInternal[edge.a]);
+						var posB = trs.TransformPoint(pb.positionsInternal[edge.b]);
 
 						Vector3 a = cam.ScreenToGuiPoint(cam.WorldToScreenPoint(posA), pixelsPerPoint);
 						Vector3 b = cam.ScreenToGuiPoint(cam.WorldToScreenPoint(posB), pixelsPerPoint);

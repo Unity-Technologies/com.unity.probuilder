@@ -42,7 +42,7 @@ namespace UnityEditor.ProBuilder
 		/// <value>
 		/// Receive notifications when the object selection changes.
 		/// </value>
-		public static event System.Action onObjectSelectionChanged;
+		public static event System.Action objectSelectionChanged;
 
 		internal static void OnObjectSelectionChanged()
 		{
@@ -52,15 +52,20 @@ namespace UnityEditor.ProBuilder
 			s_DeepSelection = Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<ProBuilderMesh>()).ToArray();
 			s_ElementCountCacheIsDirty = true;
 
-			if (onObjectSelectionChanged != null)
-				onObjectSelectionChanged();
+			if (objectSelectionChanged != null)
+				objectSelectionChanged();
 		}
 
 		/// <summary>
 		/// Get all selected ProBuilderMesh components. Corresponds to <![CDATA[Selection.gameObjects.Select(x => x.GetComponent<ProBuilderMesh>().Where(y => y != null);]]>.
 		/// </summary>
 		/// <returns>An array of the currently selected ProBuilderMesh components. Does not include children of selected objects.</returns>
-		public static ProBuilderMesh[] Top()
+		public static IEnumerable<ProBuilderMesh> Top()
+		{
+			return s_TopSelection;
+		}
+
+		internal static ProBuilderMesh[] TopInternal()
 		{
 			return s_TopSelection;
 		}
@@ -69,7 +74,7 @@ namespace UnityEditor.ProBuilder
 		/// Get all selected ProBuilderMesh components, including those in children of selected objects.
 		/// </summary>
 		/// <returns>All selected ProBuilderMesh components, including those in children of selected objects.</returns>
-		public static ProBuilderMesh[] All()
+		public static IEnumerable<ProBuilderMesh> All()
 		{
 			return s_DeepSelection;
 		}
@@ -79,11 +84,11 @@ namespace UnityEditor.ProBuilder
 		/// </value>
 		public static int count
 		{
-			get { return Top().Length; }
+			get { return TopInternal().Length; }
 		}
 
 		/// <value>
-		/// Get the sum of all pb_Object vertex counts in the selection.
+		/// Get the number of all selected vertexes across the selected ProBuilder meshes.
 		/// </value>
 		/// <remarks>
 		/// This is the ProBuilderMesh.vertexCount, not UnityEngine.Mesh.vertexCount. To get the optimized mesh vertex count,
@@ -92,18 +97,11 @@ namespace UnityEditor.ProBuilder
 		public static int totalVertexCount { get { RebuildElementCounts(); return s_TotalVertexCount; } }
 
 		/// <value>
-		/// Get the sum of all pb_Object common vertex counts in the selection.
+		/// Get the number of all selected vertexes across the selected ProBuilder meshes, excluding coincident duplicates.
 		/// </value>
-		/// <remarks>
-		/// This is the pb_Object.sharedIndices, not UnityEngine.Mesh.vertexCount. To get the optimized mesh vertex count,
-		/// see `totalVertexCountOptimized` for the vertex count as is rendered in the scene.
-		/// </remarks>
 		public static int totalCommonVertexCount { get { RebuildElementCounts(); return s_TotalCommonVertexCount; } }
 
-		/// <value>
-		/// Get the sum of all selected ProBuilder mesh vertex counts. This value reflects the actual vertex count per UnityEngine.Mesh.
-		/// </value>
-		public static int totalVertexCountOptimized { get { RebuildElementCounts(); return s_TotalVertexCountCompiled; } }
+		internal static int totalVertexCountOptimized { get { RebuildElementCounts(); return s_TotalVertexCountCompiled; } }
 
 		/// <value>
 		/// Sum of all selected ProBuilderMesh face counts.
@@ -111,7 +109,7 @@ namespace UnityEditor.ProBuilder
 		public static int totalFaceCount { get { RebuildElementCounts(); return s_TotalFaceCount; } }
 
 		/// <value>
-		/// Get the sum of all selected ProBuilder compiled mesh triangle counts (3 indices make up a triangle, or 4 indices if topology is quad).
+		/// Get the sum of all selected ProBuilder compiled mesh triangle counts (3 indexes make up a triangle, or 4 indexes if topology is quad).
 		/// </value>
 		public static int totalTriangleCountCompiled { get { RebuildElementCounts(); return s_TotalTriangleCountCompiled; } }
 
@@ -122,11 +120,11 @@ namespace UnityEditor.ProBuilder
 
 			try
 			{
-				s_TotalVertexCount = Top().Sum(x => x.vertexCount);
-				s_TotalCommonVertexCount = Top().Sum(x => x.sharedIndicesInternal.Length);
-				s_TotalVertexCountCompiled = Top().Sum(x => x.mesh == null ? 0 : x.mesh.vertexCount);
-				s_TotalFaceCount = Top().Sum(x => x.faceCount);
-				s_TotalTriangleCountCompiled = Top().Sum(x => (int) UnityEngine.ProBuilder.MeshUtility.GetPrimitiveCount(x.mesh));
+				s_TotalVertexCount = TopInternal().Sum(x => x.vertexCount);
+				s_TotalCommonVertexCount = TopInternal().Sum(x => x.sharedIndexesInternal.Length);
+				s_TotalVertexCountCompiled = TopInternal().Sum(x => x.mesh == null ? 0 : x.mesh.vertexCount);
+				s_TotalFaceCount = TopInternal().Sum(x => x.faceCount);
+				s_TotalTriangleCountCompiled = TopInternal().Sum(x => (int) UnityEngine.ProBuilder.MeshUtility.GetPrimitiveCount(x.mesh));
 				s_ElementCountCacheIsDirty = false;
 			}
 			catch
@@ -197,8 +195,8 @@ namespace UnityEditor.ProBuilder
 			{
 				ProBuilderEditor.instance.ClearElementSelection();
 				s_ElementCountCacheIsDirty = true;
-				if (onObjectSelectionChanged != null)
-					onObjectSelectionChanged();
+				if (objectSelectionChanged != null)
+					objectSelectionChanged();
 			}
 		}
 

@@ -11,46 +11,46 @@ namespace UnityEngine.ProBuilder
 	static class EdgeExtension
 	{
 		/// <summary>
-		/// Returns new edges where each edge is composed not of vertex indices, but rather the index in pb.sharedIndices of each vertex.
+		/// Returns new edges where each edge is composed not of vertex indexes, but rather the index in ProBuilderMesh.sharedIndexes of each vertex.
 		/// </summary>
 		/// <param name="edges"></param>
-		/// <param name="sharedIndicesLookup"></param>
+		/// <param name="sharedIndexesLookup"></param>
 		/// <returns></returns>
-		public static Edge[] GetUniversalEdges(IList<Edge> edges, Dictionary<int, int> sharedIndicesLookup)
+		public static Edge[] GetUniversalEdges(IList<Edge> edges, Dictionary<int, int> sharedIndexesLookup)
 		{
 			int ec = edges.Count;
 			Edge[] uni = new Edge[ec];
 			for(var i = 0; i < ec; i++)
-				uni[i] = new Edge( sharedIndicesLookup[edges[i].x], sharedIndicesLookup[edges[i].y] );
+				uni[i] = new Edge( sharedIndexesLookup[edges[i].a], sharedIndexesLookup[edges[i].b] );
 
 			return uni;
 		}
 
 		/// <summary>
-		/// Returns new edges where each edge is composed not of vertex indices, but rather the index in pb.sharedIndices of each vertex.
+		/// Returns new edges where each edge is composed not of vertex indexes, but rather the index in ProBuilderMesh.sharedIndexes of each vertex.
 		/// </summary>
-		/// <remarks>For performance reasons, where possible you should favor using the overload that accepts a shared indices dictionary.</remarks>
+		/// <remarks>For performance reasons, where possible you should favor using the overload that accepts a shared indexes dictionary.</remarks>
 		/// <param name="edges"></param>
-		/// <param name="sharedIndices"></param>
+		/// <param name="sharedIndexes"></param>
 		/// <returns></returns>
-		public static Edge[] GetUniversalEdges(IList<Edge> edges, IList<IntArray> sharedIndices)
+		public static Edge[] GetUniversalEdges(IList<Edge> edges, IList<IntArray> sharedIndexes)
 		{
-			return GetUniversalEdges(edges, sharedIndices.ToDictionary());
+			return GetUniversalEdges(edges, sharedIndexes.ToDictionary());
 		}
 
 		/// <summary>
-		/// Converts a universal edge to local.  Does *not* guarantee that edges will be valid (indices belong to the same face and edge).
+		/// Converts a universal edge to local.  Does *not* guarantee that edges will be valid (indexes belong to the same face and edge).
 		/// </summary>
 		/// <param name="edge"></param>
-		/// <param name="sharedIndices"></param>
+		/// <param name="sharedIndexes"></param>
 		/// <returns></returns>
-		internal static Edge GetLocalEdgeFast(Edge edge, IntArray[] sharedIndices)
+		internal static Edge GetLocalEdgeFast(Edge edge, IntArray[] sharedIndexes)
 		{
-			return new Edge(sharedIndices[edge.x][0], sharedIndices[edge.y][0]);
+			return new Edge(sharedIndexes[edge.a][0], sharedIndexes[edge.b][0]);
 		}
 
 		/// <summary>
-		/// Given a local edge, this guarantees that both indices belong to the same face.
+		/// Given a local edge, this guarantees that both indexes belong to the same face.
 		/// Note that this will only return the first valid edge found - there will usually
 		/// be multiple matches (well, 2 if your geometry is sane).
 		/// </summary>
@@ -61,18 +61,22 @@ namespace UnityEngine.ProBuilder
 		public static bool ValidateEdge(ProBuilderMesh pb, Edge edge, out SimpleTuple<Face, Edge> validEdge)
 		{
 			Face[] faces = pb.facesInternal;
-			IntArray[] sharedIndices = pb.sharedIndicesInternal;
+			IntArray[] sharedIndexes = pb.sharedIndexesInternal;
 
-			Edge universal = new Edge(sharedIndices.IndexOf(edge.x), sharedIndices.IndexOf(edge.y));
+			Edge universal = new Edge(sharedIndexes.IndexOf(edge.a), sharedIndexes.IndexOf(edge.b));
 
-			int dist_x = -1, dist_y = -1, shared_x = -1, shared_y = -1;
+			int dist_x = -1,
+			 	dist_y = -1,
+			  	shared_x = -1,
+			   	shared_y = -1;
+
 			for(int i = 0; i < faces.Length; i++)
 			{
-				if( faces[i].distinctIndices.ContainsMatch(sharedIndices[universal.x].array, out dist_x, out shared_x) &&
-					faces[i].distinctIndices.ContainsMatch(sharedIndices[universal.y].array, out dist_y, out shared_y) )
+				if( faces[i].distinctIndexesInternal.ContainsMatch(sharedIndexes[universal.a].array, out dist_x, out shared_x) &&
+					faces[i].distinctIndexesInternal.ContainsMatch(sharedIndexes[universal.b].array, out dist_y, out shared_y) )
 				{
-					int x = faces[i].distinctIndices[dist_x];
-					int y = faces[i].distinctIndices[dist_y];
+					int x = faces[i].distinctIndexesInternal[dist_x];
+					int y = faces[i].distinctIndexesInternal[dist_y];
 
 					validEdge = new SimpleTuple<Face, Edge>(faces[i], new Edge(x, y));
 					return true;
@@ -97,7 +101,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Fast contains. Doesn't account for shared indices
+		/// Fast contains. Doesn't account for shared indexes
 		/// </summary>
 		internal static bool Contains(this Edge[] edges, Edge edge)
 		{
@@ -111,7 +115,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Fast contains. Doesn't account for shared indices
+		/// Fast contains. Doesn't account for shared indexes
 		/// </summary>
 		/// <param name="edges"></param>
 		/// <param name="x"></param>
@@ -121,7 +125,7 @@ namespace UnityEngine.ProBuilder
 		{
 			for(int i = 0; i < edges.Length; i++)
 			{
-				if( (x == edges[i].x && y == edges[i].y) || (x == edges[i].y && y == edges[i].x) )
+				if( (x == edges[i].a && y == edges[i].b) || (x == edges[i].b && y == edges[i].a) )
 					return true;
 			}
 
@@ -146,8 +150,8 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < edges.Length; i++)
 			{
-				arr[n++] = edges[i].x;
-				arr[n++] = edges[i].y;
+				arr[n++] = edges[i].a;
+				arr[n++] = edges[i].b;
 			}
 			return arr;
 		}
@@ -158,8 +162,8 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < edges.Count; i++)
 			{
-				arr.Add(edges[i].x);
-				arr.Add(edges[i].y);
+				arr.Add(edges[i].a);
+				arr.Add(edges[i].b);
 			}
 			return arr;
 		}

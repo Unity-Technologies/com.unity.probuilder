@@ -342,10 +342,13 @@ namespace UnityEditor.ProBuilder
 		private static void SetFlipU(bool flipU, ProBuilderMesh[] sel)
 		{
 			UndoUtility.RecordSelection(sel, "Flip U");
-			for(int i = 0; i < sel.Length; i++)
+			for (int i = 0; i < sel.Length; i++)
 			{
-				foreach(Face q in sel[i].GetSelectedFaces()) {
-					q.uv.flipU = flipU;
+				foreach (Face q in sel[i].GetSelectedFaces())
+				{
+					var uv = q.uv;
+					uv.flipU = flipU;
+					q.uv = uv;
 				}
 			}
 		}
@@ -353,9 +356,13 @@ namespace UnityEditor.ProBuilder
 		private static void SetFlipV(bool flipV, ProBuilderMesh[] sel)
 		{
 			UndoUtility.RecordSelection(sel, "Flip V");
-			for(int i = 0; i < sel.Length; i++) {
-				foreach(Face q in sel[i].GetSelectedFaces()) {
-					q.uv.flipV = flipV;
+			for (int i = 0; i < sel.Length; i++)
+			{
+				foreach (Face q in sel[i].GetSelectedFaces())
+				{
+					var uv = q.uv;
+					uv.flipV = flipV;
+					q.uv = uv;
 				}
 			}
 		}
@@ -363,9 +370,13 @@ namespace UnityEditor.ProBuilder
 		private static void SetSwapUV(bool swapUV, ProBuilderMesh[] sel)
 		{
 			UndoUtility.RecordSelection(sel, "Swap U, V");
-			for(int i = 0; i < sel.Length; i++) {
-				foreach(Face q in sel[i].GetSelectedFaces()) {
-					q.uv.swapUV = swapUV;
+			for (int i = 0; i < sel.Length; i++)
+			{
+				foreach (Face q in sel[i].GetSelectedFaces())
+				{
+					var uv = q.uv;
+					uv.swapUV = swapUV;
+					q.uv = uv;
 				}
 			}
 		}
@@ -373,9 +384,13 @@ namespace UnityEditor.ProBuilder
 		private static void SetUseWorldSpace(bool useWorldSpace, ProBuilderMesh[] sel)
 		{
 			UndoUtility.RecordSelection(sel, "Use World Space UVs");
-			for(int i = 0; i < sel.Length; i++) {
-				foreach(Face q in sel[i].GetSelectedFaces()) {
-					q.uv.useWorldSpace = useWorldSpace;
+			for (int i = 0; i < sel.Length; i++)
+			{
+				foreach (Face q in sel[i].GetSelectedFaces())
+				{
+					var uv = q.uv;
+					uv.useWorldSpace = useWorldSpace;
+					q.uv = uv;
 				}
 			}
 		}
@@ -383,10 +398,13 @@ namespace UnityEditor.ProBuilder
 		private static void SetFill(AutoUnwrapSettings.Fill fill, ProBuilderMesh[] sel)
 		{
 			UndoUtility.RecordSelection(sel, "Fill UVs");
-			for(int i = 0; i < sel.Length; i++)
+			for (int i = 0; i < sel.Length; i++)
 			{
-				foreach(Face q in sel[i].GetSelectedFaces()) {
-					q.uv.fill = fill;
+				foreach (Face q in sel[i].GetSelectedFaces())
+				{
+					var uv = q.uv;
+					uv.fill = fill;
+					q.uv = uv;
 				}
 			}
 		}
@@ -397,8 +415,12 @@ namespace UnityEditor.ProBuilder
 
 			for(int i = 0; i < sel.Length; i++)
 			{
-				foreach(Face q in sel[i].GetSelectedFaces())
-					q.uv.anchor = anchor;
+				foreach (Face q in sel[i].GetSelectedFaces())
+				{
+					var uv = q.uv;
+					uv.anchor = anchor;
+					q.uv = uv;
+				}
 			}
 		}
 
@@ -408,18 +430,31 @@ namespace UnityEditor.ProBuilder
 
 			for(int i = 0; i < sel.Length; i++)
 			{
-				foreach(Face q in sel[i].GetSelectedFaces()) {
-					switch(axis)
+				foreach (Face q in sel[i].GetSelectedFaces())
+				{
+					switch (axis)
 					{
 						case Axis2D.XY:
-							q.uv.offset = offset;
+						{
+							var uv = q.uv;
+							uv.offset = offset;
+							q.uv = uv;
 							break;
+						}
 						case Axis2D.X:
-							q.uv.offset = new Vector2(offset.x, q.uv.offset.y);
+						{
+							var uv = q.uv;
+							uv.offset = new Vector2(offset.x, q.uv.offset.y);
+							q.uv = uv;
 							break;
+						}
 						case Axis2D.Y:
-							q.uv.offset = new Vector2(q.uv.offset.x, offset.y);
+						{
+							var uv = q.uv;
+							uv.offset = new Vector2(q.uv.offset.x, offset.y);
+							q.uv = uv;
 							break;
+						}
 					}
 				}
 			}
@@ -429,10 +464,13 @@ namespace UnityEditor.ProBuilder
 		{
 			UndoUtility.RecordSelection(sel, "Rotate UVs");
 
-			for(int i = 0; i < sel.Length; i++)
+			for (int i = 0; i < sel.Length; i++)
 			{
-				foreach(Face q in sel[i].GetSelectedFaces()) {
-					q.uv.rotation = rot;
+				foreach (Face q in sel[i].GetSelectedFaces())
+				{
+					var uv = q.uv;
+					uv.rotation = rot;
+					q.uv = uv;
 				}
 			}
 		}
@@ -441,20 +479,33 @@ namespace UnityEditor.ProBuilder
 		{
 			UndoUtility.RecordSelection(sel, "Scale UVs");
 
-			for(int i = 0; i < sel.Length; i++)
+			for (int i = 0; i < sel.Length; i++)
 			{
-				foreach(Face q in sel[i].GetSelectedFaces()) {
-					switch(axis)
+				foreach (Face q in sel[i].GetSelectedFaces())
+				{
+					switch (axis)
 					{
 						case Axis2D.XY:
-							q.uv.scale = scale;
+						{
+							var uv = q.uv;
+							uv.scale = scale;
+							q.uv = uv;
 							break;
+						}
 						case Axis2D.X:
-							q.uv.scale = new Vector2(scale.x, q.uv.scale.y);
+						{
+							var uv = q.uv;
+							uv.scale = new Vector2(scale.x, q.uv.scale.y);
+							q.uv = uv;
 							break;
+						}
 						case Axis2D.Y:
-							q.uv.scale = new Vector2(q.uv.scale.x, scale.y);
+						{
+							var uv = q.uv;
+							uv.scale = new Vector2(q.uv.scale.x, scale.y);
+							q.uv = uv;
 							break;
+						}
 					}
 				}
 			}

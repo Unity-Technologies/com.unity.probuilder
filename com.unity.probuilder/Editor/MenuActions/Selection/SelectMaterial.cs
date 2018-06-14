@@ -39,7 +39,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return ProBuilderEditor.instance != null &&
 				ProBuilderEditor.instance.editLevel != EditLevel.Top &&
-				MeshSelection.Top().Any(x => x.selectedFaceCount > 0);
+				MeshSelection.TopInternal().Any(x => x.selectedFaceCount > 0);
 		}
 
 		public override bool IsHidden()
@@ -47,7 +47,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return editLevel != EditLevel.Geometry;
 		}
 
-		public override MenuActionState AltState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			if (IsEnabled() &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
@@ -57,7 +57,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return MenuActionState.Visible;
 		}
 
-		public override void OnSettingsGUI()
+		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("Select Material Options", EditorStyles.boldLabel);
 
@@ -80,14 +80,14 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			UndoUtility.RecordSelection(MeshSelection.Top(), "Select Faces with Material");
+			UndoUtility.RecordSelection(MeshSelection.TopInternal(), "Select Faces with Material");
 
 			bool restrictToSelection = PreferencesInternal.GetBool("pb_restrictSelectMaterialToCurrentSelection");
 
-			HashSet<Material> sel = new HashSet<Material>(MeshSelection.Top().SelectMany(x => x.selectedFacesInternal.Select(y => y.material).Where(z => z != null)));
+			HashSet<Material> sel = new HashSet<Material>(MeshSelection.TopInternal().SelectMany(x => x.selectedFacesInternal.Select(y => y.material).Where(z => z != null)));
 			List<GameObject> newSelection = new List<GameObject>();
 
-			foreach (ProBuilderMesh pb in restrictToSelection ? MeshSelection.Top() : Object.FindObjectsOfType<ProBuilderMesh>())
+			foreach (ProBuilderMesh pb in restrictToSelection ? MeshSelection.TopInternal() : Object.FindObjectsOfType<ProBuilderMesh>())
 			{
 				IEnumerable<Face> matches = pb.facesInternal.Where(x => sel.Contains(x.material));
 

@@ -48,15 +48,15 @@ namespace UnityEditor.ProBuilder.Actions
 			int meshCount = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Count();
 
 			return meshCount > 0 &&
-				meshCount != MeshSelection.Top().Length;
+				meshCount != MeshSelection.TopInternal().Length;
 		}
 
-		public override MenuActionState AltState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}
 
-		public override void OnSettingsGUI()
+		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("ProBuilderize Options", EditorStyles.boldLabel);
 

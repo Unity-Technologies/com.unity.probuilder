@@ -20,7 +20,7 @@ namespace UnityEditor.ProBuilder.Actions
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Subdivide Edges",
-			"Appends evenly spaced new vertices to the selected edges.",
+			"Appends evenly spaced new vertexes to the selected edges.",
 			keyCommandAlt, 'S'
 		);
 
@@ -29,15 +29,15 @@ namespace UnityEditor.ProBuilder.Actions
 			return ProBuilderEditor.instance != null &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
 				ProBuilderEditor.instance.selectionMode == SelectMode.Edge &&
-				MeshSelection.Top().Any(x => x.selectedEdgeCount > 0);
+				MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
 		}
 
-		public override MenuActionState AltState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}
 
-		public override void OnSettingsGUI()
+		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("Subdivide Edge Settings", EditorStyles.boldLabel);
 
@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			EditorGUI.BeginChangeCheck();
 
-			EditorGUILayout.HelpBox("How many vertices to insert on each selected edge.\n\nVertices will be equally spaced between one another and the boundaries of the edge.", MessageType.Info);
+			EditorGUILayout.HelpBox("How many vertexes to insert on each selected edge.\n\nVertexes will be equally spaced between one another and the boundaries of the edge.", MessageType.Info);
 
 			subdivisions = (int)UI.EditorGUIUtility.FreeSlider("Subdivisions", subdivisions, 1, 32);
 
@@ -67,7 +67,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuSubdivideEdge(MeshSelection.Top());
+			return MenuCommands.MenuSubdivideEdge(MeshSelection.TopInternal());
 		}
 	}
 }

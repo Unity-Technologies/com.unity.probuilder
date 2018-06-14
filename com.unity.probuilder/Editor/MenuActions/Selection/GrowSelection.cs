@@ -37,7 +37,7 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 		public override bool IsEnabled()
 		{
 			return ProBuilderEditor.instance != null &&
-				MenuCommands.VerifyGrowSelection(MeshSelection.Top());
+				MenuCommands.VerifyGrowSelection(MeshSelection.TopInternal());
 		}
 
 		public override bool IsHidden()
@@ -45,7 +45,7 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 			return editLevel != EditLevel.Geometry;
 		}
 
-		public override MenuActionState AltState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			if (IsEnabled() &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
@@ -55,7 +55,7 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 			return MenuActionState.Hidden;
 		}
 
-		public override void OnSettingsGUI()
+		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("Grow Selection Options", EditorStyles.boldLabel);
 
@@ -88,12 +88,12 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 			GUILayout.FlexibleSpace();
 
 			if (GUILayout.Button("Grow Selection"))
-				MenuCommands.MenuGrowSelection(MeshSelection.Top());
+				MenuCommands.MenuGrowSelection(MeshSelection.TopInternal());
 		}
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuGrowSelection(MeshSelection.Top());
+			return MenuCommands.MenuGrowSelection(MeshSelection.TopInternal());
 		}
 	}
 }

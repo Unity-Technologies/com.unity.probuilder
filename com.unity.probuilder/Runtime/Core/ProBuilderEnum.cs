@@ -9,7 +9,7 @@ namespace UnityEngine.ProBuilder
 	public enum SelectMode
 	{
 		/// <summary>
-		/// Vertices are selectable.
+		/// Vertexes are selectable.
 		/// </summary>
 		Vertex = 0x0,
 		/// <summary>
@@ -32,7 +32,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		Top = 0,
 		/// <summary>
-		/// The current tool interacts with mesh geometry (faces, edges, vertices).
+		/// The current tool interacts with mesh geometry (faces, edges, vertexes).
 		/// </summary>
 		Geometry = 1,
 		/// <summary>
@@ -167,11 +167,11 @@ namespace UnityEngine.ProBuilder
 	public enum SortMethod
 	{
 		/// <summary>
-		/// Order the vertices clockwise.
+		/// Order the vertexes clockwise.
 		/// </summary>
 		Clockwise,
 		/// <summary>
-		/// Order the vertices counter-clockwise.
+		/// Order the vertexes counter-clockwise.
 		/// </summary>
 		CounterClockwise
 	};

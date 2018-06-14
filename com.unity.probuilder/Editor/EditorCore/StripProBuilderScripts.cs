@@ -79,7 +79,7 @@ namespace UnityEditor.ProBuilder.Actions
 				if( PrefabUtility.GetPrefabType(go) == PrefabType.Prefab )
 					return;
 
-				EditorUtility.EnsureMeshSyncState(pb);
+				EditorUtility.SynchronizeWithMeshFilter(pb);
 
 				if(pb.mesh == null)
 				{

@@ -13,7 +13,7 @@ namespace UnityEngine.ProBuilder
 	/// A set of colors for use in the color palette editor.
 	/// </summary>
 	[Serializable]
-	public sealed class ColorPalette : ScriptableObject, IHasDefault
+	sealed class ColorPalette : ScriptableObject, IHasDefault
 	{
 		/// <value>
 		/// The currently selected color.

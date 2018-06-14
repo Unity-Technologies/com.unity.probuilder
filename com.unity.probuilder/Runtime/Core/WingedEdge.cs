@@ -196,32 +196,32 @@ namespace UnityEngine.ProBuilder
 				if(dup[i] < 1)
 					edges[qi++] = all[i];
 
-			int[] quad = new int[4] { edges[0].local.x, edges[0].local.y, -1, -1 };
+			int[] quad = new int[4] { edges[0].local.a, edges[0].local.b, -1, -1 };
 
-			int c1 = edges[0].common.y, c2 = -1;
+			int c1 = edges[0].common.b, c2 = -1;
 
-			if(edges[1].common.x == c1)
+			if(edges[1].common.a == c1)
 			{
-				quad[2] = edges[1].local.y;
-				c2 = edges[1].common.y;
+				quad[2] = edges[1].local.b;
+				c2 = edges[1].common.b;
 			}
-			else if(edges[2].common.x == c1)
+			else if(edges[2].common.a == c1)
 			{
-				quad[2] = edges[2].local.y;
-				c2 = edges[2].common.y;
+				quad[2] = edges[2].local.b;
+				c2 = edges[2].common.b;
 			}
-			else if(edges[3].common.x == c1)
+			else if(edges[3].common.a == c1)
 			{
-				quad[2] = edges[3].local.y;
-				c2 = edges[3].common.y;
+				quad[2] = edges[3].local.b;
+				c2 = edges[3].common.b;
 			}
 
-			if(edges[1].common.x == c2)
-				quad[3] = edges[1].local.y;
-			else if(edges[2].common.x == c2)
-				quad[3] = edges[2].local.y;
-			else if(edges[3].common.x == c2)
-				quad[3] = edges[3].local.y;
+			if(edges[1].common.a == c2)
+				quad[3] = edges[1].local.b;
+			else if(edges[2].common.a == c2)
+				quad[3] = edges[2].local.b;
+			else if(edges[3].common.a == c2)
+				quad[3] = edges[3].local.b;
 
 			if (quad[2] == -1 || quad[3] == -1)
 				return null;
@@ -270,11 +270,11 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 1; i < edges.Count; i++)
 			{
-				int want = edges[i - 1].y;
+				int want = edges[i - 1].b;
 
 				for(int n = i + 1; n < edges.Count; n++)
 				{
-					if(edges[n].x == want || edges[n].y == want)
+					if(edges[n].a == want || edges[n].b == want)
 					{
 						Edge swap = edges[n];
 						edges[n] = edges[i];
@@ -285,7 +285,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Get a dictionary of common indices and all WingedEdge values touching the index.
+		/// Get a dictionary of common indexes and all WingedEdge values touching the index.
 		/// </summary>
 		/// <param name="wings">The wings to search for spokes.</param>
 		/// <returns>A dictionary where each key is a common index with a list of each winged edge touching it.</returns>
@@ -299,38 +299,38 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < wings.Count; i++)
 			{
-				if(spokes.TryGetValue(wings[i].edge.common.x, out l))
+				if(spokes.TryGetValue(wings[i].edge.common.a, out l))
 					l.Add(wings[i]);
 				else
-					spokes.Add(wings[i].edge.common.x, new List<WingedEdge>() { wings[i] });
+					spokes.Add(wings[i].edge.common.a, new List<WingedEdge>() { wings[i] });
 
-				if(spokes.TryGetValue(wings[i].edge.common.y, out l))
+				if(spokes.TryGetValue(wings[i].edge.common.b, out l))
 					l.Add(wings[i]);
 				else
-					spokes.Add(wings[i].edge.common.y, new List<WingedEdge>() { wings[i] });
+					spokes.Add(wings[i].edge.common.b, new List<WingedEdge>() { wings[i] });
 			}
 
 			return spokes;
 		}
 
 		/// <summary>
-		/// Given a set of winged edges and list of common indices, attempt to create a complete path of indices where each is connected by edge.
+		/// Given a set of winged edges and list of common indexes, attempt to create a complete path of indexes where each is connected by edge.
 		/// <br />
 		/// May be clockwise or counter-clockwise ordered, or null if no path is found.
 		/// </summary>
 		/// <param name="wings">The wings to be sorted.</param>
-		/// <param name="common">The common indices to be sorted.</param>
+		/// <param name="common">The common indexes to be sorted.</param>
 		/// <returns></returns>
 		internal static List<int> SortCommonIndexesByAdjacency(List<WingedEdge> wings, HashSet<int> common)
 		{
-			List<Edge> matches = wings.Where(x => common.Contains(x.edge.common.x) && common.Contains(x.edge.common.y)).Select(y => y.edge.common).ToList();
+			List<Edge> matches = wings.Where(x => common.Contains(x.edge.common.a) && common.Contains(x.edge.common.b)).Select(y => y.edge.common).ToList();
 
 			// if edge count != index count there isn't a full perimeter
 			if(matches.Count != common.Count)
 				return null;
 
 			SortEdgesByAdjacency(matches);
-			return matches.Select(x => x.x).ToList();
+			return matches.Select(x => x.a).ToList();
 		}
 
 		/// <summary>
@@ -353,14 +353,14 @@ namespace UnityEngine.ProBuilder
 		/// <param name="mesh">Target ProBuilderMesh.</param>
 		/// <param name="faces">Which faces to include in the WingedEdge list.</param>
 		/// <param name="oneWingPerFace">If `oneWingPerFace` is true the returned list will contain a single winged edge per-face (but still point to all edges).</param>
-		/// <param name="sharedIndexLookup">If passed, this will skip generating a shared indices dictionary, which can be an expensive operation. This is useful when doing more than one mesh operation and you have already generated a current shared index dictionary.</param>
+		/// <param name="sharedIndexLookup">If passed, this will skip generating a shared indexes dictionary, which can be an expensive operation. This is useful when doing more than one mesh operation and you have already generated a current shared index dictionary.</param>
 		/// <returns>A new list of WingedEdge values gathered from faces.</returns>
 		public static List<WingedEdge> GetWingedEdges(ProBuilderMesh mesh, IEnumerable<Face> faces, bool oneWingPerFace = false, Dictionary<int, int> sharedIndexLookup = null)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			Dictionary<int, int> lookup = sharedIndexLookup == null ? mesh.sharedIndicesInternal.ToDictionary() : sharedIndexLookup;
+			Dictionary<int, int> lookup = sharedIndexLookup == null ? mesh.sharedIndexesInternal.ToDictionary() : sharedIndexLookup;
 			IEnumerable<Face> distinct = faces.Distinct();
 
 			List<WingedEdge> winged = new List<WingedEdge>();
@@ -378,7 +378,7 @@ namespace UnityEngine.ProBuilder
 					Edge e = edges[n];
 
 					WingedEdge w = new WingedEdge();
-					w.edge = new EdgeLookup(lookup[e.x], lookup[e.y], e.x, e.y);
+					w.edge = new EdgeLookup(lookup[e.a], lookup[e.b], e.a, e.b);
 					w.face = f;
 					if(n < 1) first = w;
 

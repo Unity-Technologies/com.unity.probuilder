@@ -7,7 +7,7 @@ using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	sealed class ConnectVertices : MenuAction
+	sealed class ConnectVertexes : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Vert_Connect", IconSkin.Pro); } }
@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return 	ProBuilderEditor.instance != null &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
 				ProBuilderEditor.instance.selectionMode == SelectMode.Vertex &&
-				MeshSelection.Top().Any(x => x.selectedVertexCount > 1);
+				MeshSelection.TopInternal().Any(x => x.selectedVertexCount > 1);
 		}
 
 		public override bool IsHidden()
@@ -39,7 +39,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuConnectVertices(MeshSelection.Top());
+			return MenuCommands.MenuConnectVertices(MeshSelection.TopInternal());
 		}
 	}
 }

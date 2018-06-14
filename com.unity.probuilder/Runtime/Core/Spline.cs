@@ -145,7 +145,7 @@ namespace UnityEngine.ProBuilder
 			{
 				if(faces != null)
 				{
-					target.GeometryWithVerticesFaces(positions, faces);
+					target.GeometryWithVertexesFaces(positions, faces);
 				}
 				else
 				{
@@ -156,7 +156,7 @@ namespace UnityEngine.ProBuilder
 			}
 			else
 			{
-				target = ProBuilderMesh.CreateInstanceWithVerticesFaces(positions, faces);
+				target = ProBuilderMesh.CreateInstanceWithVertexesFaces(positions, faces);
 			}
 		}
 

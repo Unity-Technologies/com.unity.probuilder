@@ -27,7 +27,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return ProBuilderEditor.instance != null &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
 				ProBuilderEditor.instance.selectionMode != SelectMode.Face &&
-				MeshSelection.Top().Length > 0;
+				MeshSelection.TopInternal().Length > 0;
 		}
 
 		public override bool IsHidden()
@@ -38,12 +38,12 @@ namespace UnityEditor.ProBuilder.Actions
 
 		}
 
-		public override MenuActionState AltState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}
 
-		public override void OnSettingsGUI()
+		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("Fill Hole Settings", EditorStyles.boldLabel);
 
@@ -66,7 +66,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuFillHole(MeshSelection.Top());
+			return MenuCommands.MenuFillHole(MeshSelection.TopInternal());
 		}
 	}
 }

@@ -25,19 +25,19 @@ namespace UnityEngine.ProBuilder
 		internal static Vector2[] PlanarProject(ProBuilderMesh pb, Face face)
 		{
 			Vector3 normal = Math.Normal(pb, face);
-			return PlanarProject(pb.positionsInternal, normal, VectorToProjectionAxis(normal), face.indices);
+			return PlanarProject(pb.positionsInternal, normal, VectorToProjectionAxis(normal), face.indexesInternal);
 		}
 
-		internal static Vector2[] PlanarProject(IList<Vertex> vertices, IList<int> indices)
+		internal static Vector2[] PlanarProject(IList<Vertex> vertexes, IList<int> indices)
 		{
 			int len = indices.Count;
 
 			Vector3[] v = new Vector3[len];
 
 			for(int i = 0; i < len; i++)
-				v[i] = vertices[indices[i]].position;
+				v[i] = vertexes[indices[i]].position;
 
-			Vector3 normal = Math.Normal(vertices, indices);
+			Vector3 normal = Math.Normal(vertexes, indices);
 			ProjectionAxis axis = VectorToProjectionAxis(normal);
 
 			return PlanarProject(v, normal, axis, null);
@@ -68,7 +68,7 @@ namespace UnityEngine.ProBuilder
 			}
 
 			/**
-			 *	Assign vertices to UV coordinates
+			 *	Assign vertexes to UV coordinates
 			 */
 			Vector3 uAxis, vAxis;
 
@@ -139,16 +139,16 @@ namespace UnityEngine.ProBuilder
 			}
 		}
 
-		internal static Vector2[] SphericalProject(IList<Vector3> vertices, IList<int> indices = null)
+		internal static Vector2[] SphericalProject(IList<Vector3> vertexes, IList<int> indices = null)
 		{
-			int len = indices == null ? vertices.Count : indices.Count;
+			int len = indices == null ? vertexes.Count : indices.Count;
 			Vector2[] uv = new Vector2[len];
-			Vector3 cen = Math.Average(vertices, indices);
+			Vector3 cen = Math.Average(vertexes, indices);
 
 			for(int i = 0; i < len; i++)
 			{
 				int indx = indices == null ? i : indices[i];
-				Vector3 p = (vertices[indx] - cen);
+				Vector3 p = (vertexes[indx] - cen);
 				p.Normalize();
 				uv[i].x = .5f + (Mathf.Atan2(p.z, p.x) / (2f * Mathf.PI));
 				uv[i].y = .5f - (Mathf.Asin(p.y) / Mathf.PI);
@@ -289,7 +289,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <remarks>http://www.ilikebigbits.com/blog/2015/3/2/plane-from-points</remarks>
 		/// <param name="points">The points to find a plane for. Order does not matter.</param>
-		/// <param name="indexes">If provided, only the vertices referenced by the indexes array will be considered.</param>
+		/// <param name="indexes">If provided, only the vertexes referenced by the indexes array will be considered.</param>
 		/// <returns>A plane that best matches the layout of the points array.</returns>
 		public static Plane FindBestPlane(Vector3[] points, int[] indexes = null)
 		{

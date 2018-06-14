@@ -109,12 +109,12 @@ namespace UnityEditor.ProBuilder
 				new Actions.SubdivideEdges(),
 
 				// Vertex
-				new Actions.CollapseVertices(),
-				new Actions.WeldVertices(),
-				new Actions.ConnectVertices(),
+				new Actions.CollapseVertexes(),
+				new Actions.WeldVertexes(),
+				new Actions.ConnectVertexes(),
 				new Actions.FillHole(),
 				// new Actions.CreatePolygon(),
-				new Actions.SplitVertices(),
+				new Actions.SplitVertexes(),
 
 				// Entity
 #if ENABLE_ENTITY_TYPES

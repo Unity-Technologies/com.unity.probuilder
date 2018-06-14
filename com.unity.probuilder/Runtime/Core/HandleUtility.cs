@@ -70,13 +70,13 @@ namespace UnityEngine.ProBuilder
 				if(ignore != null && ignore.Contains(faces[i]))
 					continue;
 
-				int[] indices = mesh.facesInternal[i].indices;
+				int[] indexes = mesh.facesInternal[i].indexesInternal;
 
-				for(int j = 0, ic = indices.Length; j < ic; j += 3)
+				for(int j = 0, ic = indexes.Length; j < ic; j += 3)
 				{
-					Vector3 a = positions[indices[j+0]];
-					Vector3 b = positions[indices[j+1]];
-					Vector3 c = positions[indices[j+2]];
+					Vector3 a = positions[indexes[j+0]];
+					Vector3 b = positions[indexes[j+1]];
+					Vector3 c = positions[indexes[j+2]];
 
 					Vector3 nrm = Vector3.Cross(b-a, c-a);
 					float dot = Vector3.Dot(worldRay.direction, nrm);
@@ -136,13 +136,13 @@ namespace UnityEngine.ProBuilder
 			// Iterate faces, testing for nearest hit to ray origin. Optionally ignores backfaces.
 			for(int i = 0, fc = faces.Length; i < fc; ++i)
 			{
-				int[] indices = mesh.facesInternal[i].indices;
+				int[] indexes = mesh.facesInternal[i].indexesInternal;
 
-				for(int j = 0, ic = indices.Length; j < ic; j += 3)
+				for(int j = 0, ic = indexes.Length; j < ic; j += 3)
 				{
-					Vector3 a = positions[indices[j+0]];
-					Vector3 b = positions[indices[j+1]];
-					Vector3 c = positions[indices[j+2]];
+					Vector3 a = positions[indexes[j+0]];
+					Vector3 b = positions[indexes[j+1]];
+					Vector3 c = positions[indexes[j+2]];
 
 					float dist;
 					Vector3 point;
@@ -206,13 +206,8 @@ namespace UnityEngine.ProBuilder
 			InWorldRay.origin 		= mesh.transform.worldToLocalMatrix * InWorldRay.origin;
 			InWorldRay.direction 	= mesh.transform.worldToLocalMatrix * InWorldRay.direction;
 
-			Vector3[] vertices = mesh.positionsInternal;
+			Vector3[] vertexes = mesh.positionsInternal;
 
-			float dist = 0f;
-			Vector3 point = Vector3.zero;
-
-			float dot; // vars used in loop
-			Vector3 nrm;	// vars used in loop
 			hits = new List<RaycastHit>();
 
             // Iterate faces, testing for nearest hit to ray origin.  Optionally ignores backfaces.
@@ -221,18 +216,22 @@ namespace UnityEngine.ProBuilder
 				if(ignore != null && ignore.Contains(mesh.facesInternal[CurFace]))
 					continue;
 
-				int[] Indices = mesh.facesInternal[CurFace].indices;
+				int[] indexes = mesh.facesInternal[CurFace].indexesInternal;
 
-				for(int CurTriangle = 0; CurTriangle < Indices.Length; CurTriangle += 3)
+				for(int CurTriangle = 0; CurTriangle < indexes.Length; CurTriangle += 3)
 				{
-					Vector3 a = vertices[Indices[CurTriangle+0]];
-					Vector3 b = vertices[Indices[CurTriangle+1]];
-					Vector3 c = vertices[Indices[CurTriangle+2]];
+					Vector3 a = vertexes[indexes[CurTriangle+0]];
+					Vector3 b = vertexes[indexes[CurTriangle+1]];
+					Vector3 c = vertexes[indexes[CurTriangle+2]];
+
+					var dist = 0f;
+					Vector3 point;
 
 					if(Math.RayIntersectsTriangle(InWorldRay, a, b, c, out dist, out point))
 					{
-						nrm = Vector3.Cross(b-a, c-a);
+						Vector3 nrm = Vector3.Cross(b-a, c-a);
 
+						float dot; // vars used in loop
 						switch(cullingMode)
 						{
 							case CullingMode.Front:
@@ -285,28 +284,28 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="InWorldRay"></param>
 		/// <param name="transform"></param>
-		/// <param name="vertices"></param>
+		/// <param name="vertexes"></param>
 		/// <param name="triangles"></param>
 		/// <param name="hit"></param>
 		/// <param name="distance"></param>
 		/// <param name="cullingMode"></param>
 		/// <returns></returns>
-		public static bool WorldRaycast(Ray InWorldRay, Transform transform, Vector3[] vertices, int[] triangles, out RaycastHit hit, float distance = Mathf.Infinity)
+		public static bool WorldRaycast(Ray InWorldRay, Transform transform, Vector3[] vertexes, int[] triangles, out RaycastHit hit, float distance = Mathf.Infinity)
 		{
 			Ray ray = transform.InverseTransformRay(InWorldRay);
-			return MeshRaycast(ray, vertices, triangles, out hit, distance);
+			return MeshRaycast(ray, vertexes, triangles, out hit, distance);
 		}
 
 		/// <summary>
 		/// Cast a ray (in model space) against a mesh.
 		/// </summary>
 		/// <param name="InRay"></param>
-		/// <param name="vertices"></param>
+		/// <param name="mesh"></param>
 		/// <param name="triangles"></param>
 		/// <param name="hit"></param>
 		/// <param name="distance"></param>
 		/// <returns></returns>
-		public static bool MeshRaycast(Ray InRay, Vector3[] vertices, int[] triangles, out RaycastHit hit, float distance = Mathf.Infinity)
+		public static bool MeshRaycast(Ray InRay, Vector3[] mesh, int[] triangles, out RaycastHit hit, float distance = Mathf.Infinity)
 		{
 			// float dot; 		// vars used in loop
 			float hitDistance = Mathf.Infinity;
@@ -318,9 +317,9 @@ namespace UnityEngine.ProBuilder
             // Iterate faces, testing for nearest hit to ray origin.
             for (int CurTri = 0; CurTri < triangles.Length; CurTri += 3)
 			{
-				a = vertices[triangles[CurTri+0]];
-				b = vertices[triangles[CurTri+1]];
-				c = vertices[triangles[CurTri+2]];
+				a = mesh[triangles[CurTri+0]];
+				b = mesh[triangles[CurTri+1]];
+				c = mesh[triangles[CurTri+2]];
 
 				if(Math.RayIntersectsTriangle2(o, d, a, b, c, ref distance, ref hitNormal))
 				{
@@ -369,10 +368,10 @@ namespace UnityEngine.ProBuilder
 		internal static bool IsOccluded(Camera cam, ProBuilderMesh pb, Face face)
 		{
 			Vector3 point = Vector3.zero;
-			int len = face.distinctIndices.Length;
+			int len = face.distinctIndexesInternal.Length;
 
 			for(int i = 0;i < len; i++)
-				point += pb.positionsInternal[face.distinctIndices[i]];
+				point += pb.positionsInternal[face.distinctIndexesInternal[i]];
 
 			point *= (1f/len);
 

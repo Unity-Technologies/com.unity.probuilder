@@ -28,7 +28,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return ProBuilderEditor.instance != null &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
 				ProBuilderEditor.instance.selectionMode == SelectMode.Edge &&
-				MeshSelection.Top().Any(x => x.selectedEdgeCount > 0);
+				MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
 		}
 
 		public override bool IsHidden()
@@ -38,12 +38,12 @@ namespace UnityEditor.ProBuilder.Actions
 				ProBuilderEditor.instance.selectionMode != SelectMode.Edge;
 		}
 
-		public override MenuActionState AltState()
+		protected override MenuActionState OptionsMenuState()
 		{
 			return MenuActionState.VisibleAndEnabled;
 		}
 
-		public override void OnSettingsGUI()
+		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("Extrude Settings", EditorStyles.boldLabel);
 
@@ -75,7 +75,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuExtrude(MeshSelection.Top(), true);
+			return MenuCommands.MenuExtrude(MeshSelection.TopInternal(), true);
 		}
 	}
 }

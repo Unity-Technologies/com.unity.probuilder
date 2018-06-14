@@ -33,7 +33,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override bool IsEnabled()
 		{
 			return ProBuilderEditor.instance != null &&
-				MenuCommands.VerifyShrinkSelection(MeshSelection.Top());
+				MenuCommands.VerifyShrinkSelection(MeshSelection.TopInternal());
 		}
 
 		public override bool IsHidden()
@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuShrinkSelection(MeshSelection.Top());
+			return MenuCommands.MenuShrinkSelection(MeshSelection.TopInternal());
 		}
 	}
 }
