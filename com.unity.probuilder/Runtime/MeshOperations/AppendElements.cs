@@ -599,7 +599,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            if (face == null || !face.IsValid())
+            if (face == null)
                 throw new ArgumentNullException("face");
 
             if (points == null)

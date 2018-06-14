@@ -66,6 +66,10 @@ namespace UnityEngine.ProBuilder
             get { return m_Indexes; }
 	        set
 	        {
+		        if(m_Indexes == null)
+			        throw new ArgumentNullException("value");
+		        if(m_Indexes.Length % 3 != 0)
+			        throw new ArgumentException("Face indexes must be a multiple of 3.");
 		        m_Indexes = value;
 		        InvalidateCache();
 	        }
@@ -87,7 +91,12 @@ namespace UnityEngine.ProBuilder
         {
             if (array == null)
                 throw new ArgumentNullException("array");
+
             int len = array.Length;
+
+	        if(len % 3 != 0)
+		        throw new ArgumentException("Face indexes must be a multiple of 3.");
+
             m_Indexes = new int[len];
             Array.Copy(array, m_Indexes, len);
 	        InvalidateCache();
@@ -212,7 +221,7 @@ namespace UnityEngine.ProBuilder
             if (other == null)
                 throw new ArgumentNullException("other");
 
-            int len = other.indexesInternal == null ? 0 : other.indexesInternal.Length;
+            int len = other.indexesInternal.Length;
 			m_Indexes = new int[len];
 			Array.Copy(other.indexesInternal, m_Indexes, len);
 			m_SmoothingGroup = other.smoothingGroup;
@@ -221,15 +230,6 @@ namespace UnityEngine.ProBuilder
 			manualUV = other.manualUV;
 			elementGroup = other.elementGroup;
 			InvalidateCache();
-		}
-
-		/// <summary>
-		/// Check if this face has more than 2 indexes.
-		/// </summary>
-		/// <returns>True if this Face contains at least one valid triangle.</returns>
-		public bool IsValid()
-		{
-			return indexesInternal.Length > 2;
 		}
 
 		internal void InvalidateCache()
@@ -329,10 +329,6 @@ namespace UnityEngine.ProBuilder
 
 		public override string ToString()
 		{
-			// shouldn't ever be the case
-			if(indexesInternal.Length % 3 != 0)
-				return "Index count is not a multiple of 3.";
-
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
 			for(int i = 0; i < indexesInternal.Length; i += 3)
