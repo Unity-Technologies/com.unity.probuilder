@@ -71,7 +71,6 @@ namespace UnityEditor.ProBuilder
 			{ PreferenceKeys.pbDefaultSelectionMode, 0 },
 			{ PreferenceKeys.pbHandleAlignment, 0 },
 			{ PreferenceKeys.pbDefaultCollider, (int) ColliderType.MeshCollider },
-			{ PreferenceKeys.pbVertexColorTool, (int) VertexColorTool.Painter },
 			{ PreferenceKeys.pbToolbarLocation, (int) SceneToolbarLocation.UpperCenter },
 			{ PreferenceKeys.pbDefaultEntity, (int) EntityType.Detail },
 			{ PreferenceKeys.pbDragSelectMode, (int) SelectionModifierBehavior.Difference },

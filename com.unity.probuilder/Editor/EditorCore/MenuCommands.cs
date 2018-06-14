@@ -179,57 +179,10 @@ namespace UnityEditor.ProBuilder
 			return new ActionResult(ActionResult.Status.Success, "Set " + entityType);
 		}
 
-		/**
-		 *	Open the vertex color editor (palette or painter) based on prefs.
-		 */
 		public static void MenuOpenVertexColorsEditor()
 		{
-			switch( PreferencesInternal.GetEnum<VertexColorTool>(PreferenceKeys.pbVertexColorTool) )
-			{
-				case VertexColorTool.Palette:
-					VertexColorPalette.MenuOpenWindow();
-					break;
-
-				default:
-					VertexColorPainter.MenuOpenWindow();
-					break;
-			}
+			VertexColorPalette.MenuOpenWindow();
 		}
-
-        /// <summary>
-        /// Open the vertex coloring editor as stored by user prefs.
-        /// </summary>
-        /// <param name="selection"></param>
-        /// <returns></returns>
-        public static ActionResult MenuOpenVertexColorsEditor2()
-		{
-			switch( PreferencesInternal.GetEnum<VertexColorTool>(PreferenceKeys.pbVertexColorTool) )
-			{
-				case VertexColorTool.Palette:
-					VertexColorPalette.MenuOpenWindow();
-					break;
-
-				default:
-					VertexColorPainter.MenuOpenWindow();
-					break;
-			}
-
-			return new ActionResult(ActionResult.Status.Success, "Open Vertex Colors Editor");
-		}
-
-		public static void VertexColorsGUI(int width)
-		{
-			VertexColorTool tool = PreferencesInternal.GetEnum<VertexColorTool>(PreferenceKeys.pbVertexColorTool);
-			VertexColorTool prev = tool;
-
-			GUILayout.Label("Color Editor");
-
-			tool = (VertexColorTool) EditorGUILayout.EnumPopup("", tool, GUILayout.MaxWidth(width-14));
-
-			if(prev != tool)
-				PreferencesInternal.SetInt(PreferenceKeys.pbVertexColorTool, (int)tool);
-		}
-#if !PROTOTYPE
 
 		public static ActionResult MenuFacetizeObject(ProBuilderMesh[] selection)
 		{
@@ -322,8 +275,6 @@ namespace UnityEditor.ProBuilder
 		{
 			return MenuBooleanOperation(BooleanOperation.Intersect, lhs, rhs);
 		}
-#endif
-
 #endregion
 
 #region Normals
