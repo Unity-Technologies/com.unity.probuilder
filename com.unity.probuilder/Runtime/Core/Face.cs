@@ -290,7 +290,6 @@ namespace UnityEngine.ProBuilder
 			return false;
 		}
 
-	    /// <inheritdoc cref="ITriangulatable"/>
 	    public int[] ToTriangles()
 	    {
 		    int len = indexesInternal.Length;
