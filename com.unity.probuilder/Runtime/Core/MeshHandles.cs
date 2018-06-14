@@ -56,40 +56,40 @@ namespace UnityEngine.ProBuilder
 		internal static void CreateEdgeMesh(ProBuilderMesh mesh, Mesh target, Edge[] edges)
 		{
 			int edgeCount = System.Math.Min(edges.Length, ushort.MaxValue / 2 - 1);
-			int[] indices = new int[ edgeCount * 2 ];
+			int[] indexes = new int[ edgeCount * 2 ];
 
 			for (int n = 0; n < edgeCount; n++)
 			{
 				var edge = edges[n];
 				var ind = n * 2;
 
-				indices[ind + 0] = edge.a;
-				indices[ind + 1] = edge.b;
+				indexes[ind + 0] = edge.a;
+				indexes[ind + 1] = edge.b;
 			}
 
 			target.Clear();
 			target.name = "ProBuilder::EdgeMesh" + target.GetInstanceID();
 			target.vertices = mesh.positionsInternal;
 			target.subMeshCount = 1;
-			target.SetIndices(indices, MeshTopology.Lines, 0);
+			target.SetIndices(indexes, MeshTopology.Lines, 0);
 		}
 
 		/// <summary>
-		/// Populate a rendereble's mesh with a spattering of vertices representing both selected and not selected.
+		/// Populate a rendereble's mesh with a spattering of vertexes representing both selected and not selected.
 		/// </summary>
 		/// <param name="mesh"></param>
 		/// <param name="target"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <returns></returns>
-		internal static void CreateVertexMesh(ProBuilderMesh mesh, Mesh target, IList<int> indices)
+		internal static void CreateVertexMesh(ProBuilderMesh mesh, Mesh target, IList<int> indexes)
 		{
 			if (BuiltinMaterials.geometryShadersSupported)
-				BuildVertexMeshInternal(mesh, target, indices);
+				BuildVertexMeshInternal(mesh, target, indexes);
 			else
-				BuildVertexMeshLegacy(mesh, target, indices);
+				BuildVertexMeshLegacy(mesh, target, indexes);
 		}
 
-		internal static void BuildVertexMeshLegacy(ProBuilderMesh mesh, Mesh target, IList<int> indices)
+		internal static void BuildVertexMeshLegacy(ProBuilderMesh mesh, Mesh target, IList<int> indexes)
 		{
 			const ushort k_MaxPointCount = ushort.MaxValue / 4;
 
@@ -114,10 +114,10 @@ namespace UnityEngine.ProBuilder
 
 			for (int i = 0; i < billboardCount; i++)
 			{
-				t_billboards[t + 0] = positions[indices[i]];
-				t_billboards[t + 1] = positions[indices[i]];
-				t_billboards[t + 2] = positions[indices[i]];
-				t_billboards[t + 3] = positions[indices[i]];
+				t_billboards[t + 0] = positions[indexes[i]];
+				t_billboards[t + 1] = positions[indexes[i]];
+				t_billboards[t + 2] = positions[indexes[i]];
+				t_billboards[t + 3] = positions[indexes[i]];
 
 				t_uvs[t + 0] = Vector3.zero;
 				t_uvs[t + 1] = Vector3.right;
@@ -154,18 +154,18 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Draw a set of vertices.
+		/// Draw a set of vertexes.
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="target"></param>
-		/// <param name="indices"></param>
-		static void BuildVertexMeshInternal(ProBuilderMesh pb, Mesh target, IList<int> indices)
+		/// <param name="indexes"></param>
+		static void BuildVertexMeshInternal(ProBuilderMesh pb, Mesh target, IList<int> indexes)
 		{
 			target.Clear();
 			target.name = "pb_ElementGraphics::PointMesh";
 			target.vertices = pb.positionsInternal;
 			target.subMeshCount = 1;
-			target.SetIndices(indices as int[] ?? indices.ToArray(), MeshTopology.Points, 0);
+			target.SetIndices(indexes as int[] ?? indexes.ToArray(), MeshTopology.Points, 0);
 		}
 	}
 }

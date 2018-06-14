@@ -167,11 +167,11 @@ namespace UnityEngine.ProBuilder
 			return (a == other.a || b == other.a || a == other.b || b == other.a);
 		}
 
-		internal bool Contains(int index, IntArray[] sharedIndices)
+		internal bool Contains(int index, IntArray[] sharedIndexes)
 		{
 			// @todo optimize
-			int ind = sharedIndices.IndexOf(index);
-			return ( System.Array.IndexOf(sharedIndices[ind], this.a) > -1 || System.Array.IndexOf(sharedIndices[ind], b) > -1);
+			int ind = sharedIndexes.IndexOf(index);
+			return ( System.Array.IndexOf(sharedIndexes[ind], this.a) > -1 || System.Array.IndexOf(sharedIndexes[ind], b) > -1);
 		}
 	}
 }

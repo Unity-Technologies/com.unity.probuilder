@@ -25,7 +25,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 throw new ArgumentNullException("mesh");
 
 			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
-			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertexes(mesh));
+			List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(mesh));
 			List<EdgeLookup> m_edges = EdgeLookup.GetEdgeLookup(edges, lookup).Distinct().ToList();
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh);
 			List<FaceRebuildData> appendFaces = new List<FaceRebuildData>();
@@ -48,7 +48,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					foreach(WingedEdge w in spokes[e.common.a])
 					{
 						Edge le = w.edge.local;
-						amount = Mathf.Min( Vector3.Distance(vertices[le.a].position, vertices[le.b].position) - .001f, amount );
+						amount = Mathf.Min( Vector3.Distance(vertexes[le.a].position, vertexes[le.b].position) - .001f, amount );
 					}
 				}
 
@@ -57,7 +57,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					foreach(WingedEdge w in spokes[e.common.b])
 					{
 						Edge le = w.edge.local;
-						amount = Mathf.Min( Vector3.Distance(vertices[le.a].position, vertices[le.b].position) - .001f, amount );
+						amount = Mathf.Min( Vector3.Distance(vertexes[le.a].position, vertexes[le.b].position) - .001f, amount );
 					}
 				}
 			}
@@ -84,14 +84,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				ignore.AddOrAppend(we.opposite.face, we.edge.common.a);
 				ignore.AddOrAppend(we.opposite.face, we.edge.common.b);
 
-				// after initial slides go back and split indirect triangles at the intersecting index into two vertices
+				// after initial slides go back and split indirect triangles at the intersecting index into two vertexes
 				slide.Add(we.edge.common.a);
 				slide.Add(we.edge.common.b);
 
-				SlideEdge(vertices, we, amount);
-				SlideEdge(vertices, we.opposite, amount);
+				SlideEdge(vertexes, we, amount);
+				SlideEdge(vertexes, we.opposite, amount);
 
-				appendFaces.AddRange( GetBridgeFaces(vertices, we, we.opposite, holes) );
+				appendFaces.AddRange( GetBridgeFaces(vertexes, we, we.opposite, holes) );
 			}
 
 			if(beveled < 1)
@@ -126,17 +126,17 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			// now go through those sorted faces and apply the vertex exploding, keeping track of any holes created
 			foreach(KeyValuePair<Face, List<SimpleTuple<WingedEdge, int>>> kvp in sorted)
 			{
-				// common index & list of vertices it was split into
-				Dictionary<int, List<int>> appendedVertices;
+				// common index & list of vertexes it was split into
+				Dictionary<int, List<int>> appended;
 
-				FaceRebuildData f = VertexEditing.ExplodeVertex(vertices, kvp.Value, amount, out appendedVertices);
+				FaceRebuildData f = VertexEditing.ExplodeVertex(vertexes, kvp.Value, amount, out appended);
 
 				if(f == null)
 					continue;
 
 				appendFaces.Add(f);
 
-				foreach(var apv in appendedVertices)
+				foreach(var apv in appended)
 				{
 					// organize holes by new face so that later we can compare the winding of the new face to the hole face
 					// holes are sorted by key: common index value: face, vertex list
@@ -144,20 +144,20 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			FaceRebuildData.Apply(appendFaces, mesh, vertices);
+			FaceRebuildData.Apply(appendFaces, mesh, vertexes);
 			int removed = mesh.DeleteFaces(sorted.Keys).Length;
 			mesh.SetSharedIndexesUV(new IntArray[0]);
 			mesh.SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(mesh.positionsInternal));
 
-			// @todo don't rebuild sharedindices, keep 'em cached
-			IntArray[] sharedIndices = mesh.sharedIndexesInternal;
-			lookup = sharedIndices.ToDictionary();
-			List<HashSet<int>> holesCommonIndices = new List<HashSet<int>>();
+			// @todo don't rebuild indexes, keep 'em cached
+			IntArray[] sharedIndexes = mesh.sharedIndexesInternal;
+			lookup = sharedIndexes.ToDictionary();
+			List<HashSet<int>> holesCommonIndexes = new List<HashSet<int>>();
 
-			// offset the indices of holes and cull any potential holes that are less than 3 indices (not a hole :)
+			// offset the indexes of holes and cull any potential holes that are less than 3 indexes (not a hole :)
 			foreach(KeyValuePair<int, List<SimpleTuple<FaceRebuildData, List<int>>>> hole in holes)
 			{
-				// less than 3 indices in hole path; ain't a hole
+				// less than 3 indexes in hole path; ain't a hole
 				if(hole.Value.Sum(x => x.item2.Count) < 3)
 					continue;
 
@@ -171,19 +171,19 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						holeCommon.Add(lookup[path.item2[i] + offset]);
 				}
 
-				holesCommonIndices.Add(holeCommon);
+				holesCommonIndexes.Add(holeCommon);
 			}
 
 			List<WingedEdge> modified = WingedEdge.GetWingedEdges(mesh, appendFaces.Select(x => x.face));
 
 			// now go through the holes and create faces for them
-			vertices = new List<Vertex>( Vertex.GetVertexes(mesh) );
+			vertexes = new List<Vertex>( Vertex.GetVertexes(mesh) );
 
 			List<FaceRebuildData> holeFaces = new List<FaceRebuildData>();
 
-			foreach(HashSet<int> h in holesCommonIndices)
+			foreach(HashSet<int> h in holesCommonIndexes)
 			{
-				// even if a set of hole indices made it past the initial culling, the distinct part
+				// even if a set of hole indexes made it past the initial culling, the distinct part
 				// may have reduced the index count
 				if(h.Count < 3)
 				{
@@ -192,19 +192,19 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				// skip sorting the path if it's just a triangle
 				if(h.Count < 4)
 				{
-					List<Vertex> v = new List<Vertex>( Vertex.GetVertexes(mesh, h.Select(x => sharedIndices[x][0]).ToList()) );
+					List<Vertex> v = new List<Vertex>( Vertex.GetVertexes(mesh, h.Select(x => sharedIndexes[x][0]).ToList()) );
 					holeFaces.Add(AppendElements.FaceWithVertexes(v));
 				}
-				// if this hole has > 3 indices, it needs a tent pole triangulation, which requires sorting into the perimeter order
+				// if this hole has > 3 indexes, it needs a tent pole triangulation, which requires sorting into the perimeter order
 				else
 				{
 					List<int> holePath = WingedEdge.SortCommonIndexesByAdjacency(modified, h);
-					List<Vertex> v = new List<Vertex>( Vertex.GetVertexes(mesh, holePath.Select(x => sharedIndices[x][0]).ToList()) );
+					List<Vertex> v = new List<Vertex>( Vertex.GetVertexes(mesh, holePath.Select(x => sharedIndexes[x][0]).ToList()) );
 					holeFaces.AddRange( AppendElements.TentCapWithVertexes(v) );
 				}
 			}
 
-			FaceRebuildData.Apply(holeFaces, mesh, vertices);
+			FaceRebuildData.Apply(holeFaces, mesh, vertexes);
 			mesh.SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(mesh.positionsInternal));
 
 			// go through new faces and conform hole normals
@@ -246,10 +246,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
             return createdFaces;
  		}
 
- 		static readonly int[] BRIDGE_INDICES_NRM = new int[] { 2, 1, 0 };
+ 		static readonly int[] k_BridgeIndexesTri = new int[] { 2, 1, 0 };
 
  		static List<FaceRebuildData> GetBridgeFaces(
- 			IList<Vertex> vertices,
+ 			IList<Vertex> vertexes,
  			WingedEdge left,
  			WingedEdge right,
  			Dictionary<int, List<SimpleTuple<FaceRebuildData, List<int>>>> holes)
@@ -263,14 +263,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
  			rf.vertexes = new List<Vertex>()
  			{
- 				vertices[a.local.a],
- 				vertices[a.local.b],
- 				vertices[a.common.a == b.common.a ? b.local.a : b.local.b],
- 				vertices[a.common.a == b.common.a ? b.local.b : b.local.a]
+ 				vertexes[a.local.a],
+ 				vertexes[a.local.b],
+ 				vertexes[a.common.a == b.common.a ? b.local.a : b.local.b],
+ 				vertexes[a.common.a == b.common.a ? b.local.b : b.local.a]
  			};
 
- 			Vector3 an = Math.Normal(vertices, left.face.indexesInternal);
- 			Vector3 bn = Math.Normal(rf.vertexes, BRIDGE_INDICES_NRM);
+ 			Vector3 an = Math.Normal(vertexes, left.face.indexesInternal);
+ 			Vector3 bn = Math.Normal(rf.vertexes, k_BridgeIndexesTri);
 
  			int[] triangles = new int[] { 2, 1, 0, 2, 3, 1 };
 
@@ -294,7 +294,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
  			return faces;
  		}
 
- 		static void SlideEdge(IList<Vertex> vertices, WingedEdge we, float amount)
+ 		static void SlideEdge(IList<Vertex> vertexes, WingedEdge we, float amount)
  		{
 			we.face.manualUV = true;
 			we.face.textureGroup = -1;
@@ -305,15 +305,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			if(!slide_x.IsValid() || !slide_y.IsValid())
 				return;
 
-			Vertex x = (vertices[slide_x.a] - vertices[slide_x.b]);
+			Vertex x = (vertexes[slide_x.a] - vertexes[slide_x.b]);
 			x.Normalize();
 
-			Vertex y = (vertices[slide_y.a] - vertices[slide_y.b]);
+			Vertex y = (vertexes[slide_y.a] - vertexes[slide_y.b]);
 			y.Normalize();
 
 			// need the pb_Vertex value to be modified, not reassigned in this array (which += does)
-			vertices[we.edge.local.a].Add(x * amount);
-			vertices[we.edge.local.b].Add(y * amount);
+			vertexes[we.edge.local.a].Add(x * amount);
+			vertexes[we.edge.local.b].Add(y * amount);
 		}
 
 		static Edge GetLeadingEdge(WingedEdge wing, int common)

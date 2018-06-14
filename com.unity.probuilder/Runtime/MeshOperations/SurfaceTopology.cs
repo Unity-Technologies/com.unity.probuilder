@@ -28,25 +28,25 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (faces == null)
                 throw new System.ArgumentNullException("faces");
 
-            List<Vertex> vertices = new List<Vertex>( Vertex.GetVertexes(mesh) );
+            List<Vertex> vertexes = new List<Vertex>( Vertex.GetVertexes(mesh) );
 			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
 
 			List<FaceRebuildData> rebuild = new List<FaceRebuildData>();
 
 			foreach(Face face in faces)
 			{
-				List<FaceRebuildData> res = BreakFaceIntoTris(face, vertices, lookup);
+				List<FaceRebuildData> res = BreakFaceIntoTris(face, vertexes, lookup);
 				rebuild.AddRange(res);
 			}
 
-			FaceRebuildData.Apply(rebuild, mesh, vertices, null, lookup, null);
+			FaceRebuildData.Apply(rebuild, mesh, vertexes, null, lookup, null);
 			mesh.DeleteFaces(faces);
 			mesh.ToMesh();
 
 			return rebuild.Select(x => x.face).ToArray();
 		}
 
-		static List<FaceRebuildData> BreakFaceIntoTris(Face face, List<Vertex> vertices, Dictionary<int, int> lookup)
+		static List<FaceRebuildData> BreakFaceIntoTris(Face face, List<Vertex> vertexes, Dictionary<int, int> lookup)
 		{
 			int[] tris = face.indexesInternal;
 			int triCount = tris.Length;
@@ -60,12 +60,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				r.face.indexesInternal = new int[] { 0, 1, 2};
 
 				r.vertexes = new List<Vertex>() {
-					vertices[tris[i  ]],
-					vertices[tris[i+1]],
-					vertices[tris[i+2]]
+					vertexes[tris[i  ]],
+					vertexes[tris[i+1]],
+					vertexes[tris[i+2]]
 				};
 
-				r.sharedIndices = new List<int>() {
+				r.sharedIndexes = new List<int>() {
 					lookup[tris[i  ]],
 					lookup[tris[i+1]],
 					lookup[tris[i+2]]
@@ -89,15 +89,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			return GetWindingOrder(p);
 		}
 
-		static WindingOrder GetWindingOrder(IList<Vertex> vertices, IList<int> indices)
+		static WindingOrder GetWindingOrder(IList<Vertex> vertexes, IList<int> indexes)
 		{
-            if (vertices == null)
-                throw new ArgumentNullException("vertices");
+            if (vertexes == null)
+                throw new ArgumentNullException("vertexes");
 
-            if (indices == null)
-                throw new ArgumentNullException("indices");
+            if (indexes == null)
+                throw new ArgumentNullException("indexes");
 
-            Vector2[] p = Projection.PlanarProject(vertices, indices);
+            Vector2[] p = Projection.PlanarProject(vertexes, indexes);
 			return GetWindingOrder(p);
 		}
 
@@ -141,7 +141,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="mesh">The mesh that face belongs to.</param>
 		/// <param name="face">The target face.</param>
-		/// <returns>True if successful, false if not. Operation will fail if face does not contain two triangles with exactly 2 shared vertices.</returns>
+		/// <returns>True if successful, false if not. Operation will fail if face does not contain two triangles with exactly 2 shared vertexes.</returns>
 		public static bool FlipEdge(this ProBuilderMesh mesh, Face face)
 		{
             if (mesh == null)
@@ -150,18 +150,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (face == null)
                 throw new ArgumentNullException("face");
 
-            int[] indices = face.indexesInternal;
+            int[] indexes = face.indexesInternal;
 
-			if(indices.Length != 6)
+			if(indexes.Length != 6)
 				return false;
 
-			int[] mode = ArrayUtility.FilledArray<int>(1, indices.Length);
+			int[] mode = ArrayUtility.FilledArray<int>(1, indexes.Length);
 
-			for(int x = 0; x < indices.Length - 1; x++)
+			for(int x = 0; x < indexes.Length - 1; x++)
 			{
-				for(int y = x+1; y < indices.Length; y++)
+				for(int y = x+1; y < indexes.Length; y++)
 				{
-					if(indices[x] == indices[y])
+					if(indexes[x] == indexes[y])
 					{
 						mode[x]++;
 						mode[y]++;
@@ -173,33 +173,33 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				mode[3] + mode[4] + mode[5] != 5 )
 				return false;
 
-			int i0 = indices[ mode[0] == 1 ? 0 : mode[1] == 1 ? 1 : 2 ];
-			int i1 = indices[ mode[3] == 1 ? 3 : mode[4] == 1 ? 4 : 5 ];
+			int i0 = indexes[ mode[0] == 1 ? 0 : mode[1] == 1 ? 1 : 2 ];
+			int i1 = indexes[ mode[3] == 1 ? 3 : mode[4] == 1 ? 4 : 5 ];
 
 			int used = -1;
 
 			if(mode[0] == 2)
 			{
-				used = indices[0];
-				indices[0] =  i1;
+				used = indexes[0];
+				indexes[0] =  i1;
 			}
 			else if(mode[1] == 2)
 			{
-				used = indices[1];
-				indices[1] = i1;
+				used = indexes[1];
+				indexes[1] = i1;
 			}
 			else if(mode[2] == 2)
 			{
-				used = indices[2];
-				indices[2] = i1;
+				used = indexes[2];
+				indexes[2] = i1;
 			}
 
-			if(mode[3] == 2 && indices[3] != used)
-				indices[3] = i0;
-			else if(mode[4] == 2 && indices[4] != used)
-				indices[4] = i0;
-			else if(mode[5] == 2 && indices[5] != used)
-				indices[5] = i0;
+			if(mode[3] == 2 && indexes[3] != used)
+				indexes[3] = i0;
+			else if(mode[4] == 2 && indexes[4] != used)
+				indexes[4] = i0;
+			else if(mode[5] == 2 && indexes[5] != used)
+				indexes[5] = i0;
 
 			face.InvalidateCache();
 
@@ -300,19 +300,19 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Iterate a face and return a new common edge where the edge indices are true to the triangle winding order.
+		/// Iterate a face and return a new common edge where the edge indexes are true to the triangle winding order.
 		/// </summary>
 		/// <param name="wing"></param>
 		/// <returns></returns>
 		static Edge GetCommonEdgeInWindingOrder(WingedEdge wing)
 		{
-			int[] indices = wing.face.indexesInternal;
-			int len = indices.Length;
+			int[] indexes = wing.face.indexesInternal;
+			int len = indexes.Length;
 
 			for(int i = 0; i < len; i += 3)
 			{
 				Edge e = wing.edge.local;
-				int a = indices[i], b = indices[i+1], c = indices[i+2];
+				int a = indexes[i], b = indexes[i+1], c = indexes[i+2];
 
 				if(e.a == a && e.b == b)
 					return wing.edge.common;

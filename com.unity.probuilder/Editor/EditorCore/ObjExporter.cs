@@ -212,28 +212,28 @@ namespace UnityEditor.ProBuilder
 					else
 						sb.AppendLine(string.Format("usemtl {0}", "null"));
 
-					int[] indices = submesh.m_Indices;
+					int[] indexes = submesh.m_Indexes;
 					int inc = submesh.m_Topology == MeshTopology.Quads ? 4 : 3;
 
-					for(int ff = 0; ff < indices.Length; ff += inc)
+					for(int ff = 0; ff < indexes.Length; ff += inc)
 					{
 						if(inc == 4)
 						{
 							if(reverseWinding)
 							{
 								sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2} {3}/{3}/{3}",
-									indices[ff + 3] + triangleOffset,
-									indices[ff + 2] + triangleOffset,
-									indices[ff + 1] + triangleOffset,
-									indices[ff + 0] + triangleOffset));
+									indexes[ff + 3] + triangleOffset,
+									indexes[ff + 2] + triangleOffset,
+									indexes[ff + 1] + triangleOffset,
+									indexes[ff + 0] + triangleOffset));
 							}
 							else
 							{
 								sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2} {3}/{3}/{3}",
-									indices[ff + 0] + triangleOffset,
-									indices[ff + 1] + triangleOffset,
-									indices[ff + 2] + triangleOffset,
-									indices[ff + 3] + triangleOffset));
+									indexes[ff + 0] + triangleOffset,
+									indexes[ff + 1] + triangleOffset,
+									indexes[ff + 2] + triangleOffset,
+									indexes[ff + 3] + triangleOffset));
 							}
 						}
 						else
@@ -241,16 +241,16 @@ namespace UnityEditor.ProBuilder
 							if(reverseWinding)
 							{
 								sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}",
-									indices[ff + 2] + triangleOffset,
-									indices[ff + 1] + triangleOffset,
-									indices[ff + 0] + triangleOffset));
+									indexes[ff + 2] + triangleOffset,
+									indexes[ff + 1] + triangleOffset,
+									indexes[ff + 0] + triangleOffset));
 							}
 							else
 							{
 								sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}",
-									indices[ff + 0] + triangleOffset,
-									indices[ff + 1] + triangleOffset,
-									indices[ff + 2] + triangleOffset));
+									indexes[ff + 0] + triangleOffset,
+									indexes[ff + 1] + triangleOffset,
+									indexes[ff + 2] + triangleOffset));
 							}
 						}
 					}

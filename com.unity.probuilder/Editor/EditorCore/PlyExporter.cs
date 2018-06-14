@@ -60,15 +60,15 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in models)
 			{
-				List<int[]> indices = null;
+				List<int[]> indexes = null;
 
 				if(options.ngons)
 				{
-					indices = pb.facesInternal.Select(y => options.quads ? (y.ToQuad() ?? y.indexesInternal) : y.indexesInternal).ToList();
+					indexes = pb.facesInternal.Select(y => options.quads ? (y.ToQuad() ?? y.indexesInternal) : y.indexesInternal).ToList();
 				}
 				else
 				{
-					indices = new List<int[]>();
+					indexes = new List<int[]>();
 
 					foreach(Face	face in pb.facesInternal)
 					{
@@ -78,20 +78,20 @@ namespace UnityEditor.ProBuilder
 
 							if(quad != null)
 							{
-								indices.Add(quad);
+								indexes.Add(quad);
 								continue;
 							}
 						}
 
 						for(int i = 0; i < face.indexesInternal.Length; i += 3)
-							indices.Add(new int[] {
+							indexes.Add(new int[] {
 								face.indexesInternal[i+0],
 								face.indexesInternal[i+1],
 								face.indexesInternal[i+2] });
 					}
 				}
 
-				foreach(int[] face in indices)
+				foreach(int[] face in indexes)
 					for(int y = 0; y < face.Length; y++)
 						face[y] += vertexOffset;
 
@@ -108,7 +108,7 @@ namespace UnityEditor.ProBuilder
 						normals[i] = trs.TransformDirection(normals[i]);
 				}
 
-				faces.AddRange(indices);
+				faces.AddRange(indexes);
 			}
 
 			bool res = Export(positions, faces.ToArray(), out contents, normals, colors, options.isRightHanded);

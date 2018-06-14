@@ -37,14 +37,14 @@ namespace UnityEngine.ProBuilder
 		/// Unlike most other mesh operations, this function applies the mesh positions to both ProBuilderMesh and the UnityEngine.Mesh.
 		/// </summary>
 		/// <param name="mesh">The mesh to be affected.</param>
-		/// <param name="selectedTriangles">A set of triangles pointing to the vertex positions that are to be affected.</param>
+		/// <param name="indexes">A set of triangles pointing to the vertex positions that are to be affected.</param>
 		/// <param name="offset">The offset to apply in world coordinates.</param>
-		public static void TranslateVertexesInWorldSpace(this ProBuilderMesh mesh, int[] selectedTriangles, Vector3 offset)
+		public static void TranslateVertexesInWorldSpace(this ProBuilderMesh mesh, int[] indexes, Vector3 offset)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            mesh.TranslateVertexesInWorldSpace(selectedTriangles, offset, 0f, false, null);
+            mesh.TranslateVertexesInWorldSpace(indexes, offset, 0f, false, null);
 		}
 
 		/// <summary>
@@ -53,18 +53,18 @@ namespace UnityEngine.ProBuilder
 		/// Unlike most other mesh operations, this function applies the mesh positions to both ProBuilderMesh and the UnityEngine.Mesh.
 		/// </summary>
 		/// <param name="mesh"></param>
-		/// <param name="selectedTriangles">A distinct list of vertex indices.</param>
+		/// <param name="indexes">A distinct list of vertex indexes.</param>
 		/// <param name="offset">The direction and magnitude to translate selectedTriangles, in world space.</param>
 		/// <param name="snapValue">If > 0 snap each vertex to the nearest on-grid point in world space.</param>
 		/// <param name="snapAxisOnly">If true vertexes will only be snapped along the active axis.</param>
 		/// <param name="lookup">A shared index lookup table.  Can pass NULL to have this automatically calculated.</param>
-		internal static void TranslateVertexesInWorldSpace(this ProBuilderMesh mesh, int[] selectedTriangles, Vector3 offset, float snapValue, bool snapAxisOnly, Dictionary<int, int> lookup)
+		internal static void TranslateVertexesInWorldSpace(this ProBuilderMesh mesh, int[] indexes, Vector3 offset, float snapValue, bool snapAxisOnly, Dictionary<int, int> lookup)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
             int i = 0;
-			int[] indices = lookup != null ? mesh.sharedIndexesInternal.AllIndexesWithValues(lookup, selectedTriangles).ToArray() : mesh.sharedIndexesInternal.AllIndexesWithValues(selectedTriangles).ToArray();
+			int[] distinct = lookup != null ? mesh.sharedIndexesInternal.AllIndexesWithValues(lookup, indexes).ToArray() : mesh.sharedIndexesInternal.AllIndexesWithValues(indexes).ToArray();
 
 			Matrix4x4 w2l = mesh.transform.worldToLocalMatrix;
 
@@ -76,22 +76,21 @@ namespace UnityEngine.ProBuilder
 			if(Mathf.Abs(snapValue) > Mathf.Epsilon)
 			{
 				Matrix4x4 l2w = mesh.transform.localToWorldMatrix;
-				Vector3 v = Vector3.zero;
 				Vector3 mask = snapAxisOnly ? offset.ToMask(Math.handleEpsilon) : Vector3.one;
 
-				for(i = 0; i < indices.Length; i++)
+				for(i = 0; i < distinct.Length; i++)
 				{
-					v = l2w.MultiplyPoint3x4(verts[indices[i]] + localOffset);
-					verts[indices[i]] = w2l.MultiplyPoint3x4( Snapping.SnapValue(v, snapValue * mask) );
+					var v = l2w.MultiplyPoint3x4(verts[distinct[i]] + localOffset);
+					verts[distinct[i]] = w2l.MultiplyPoint3x4( Snapping.SnapValue(v, snapValue * mask) );
 				}
 			}
 			else
 			{
-				for(i = 0; i < indices.Length; i++)
-					verts[indices[i]] += localOffset;
+				for(i = 0; i < distinct.Length; i++)
+					verts[distinct[i]] += localOffset;
 			}
 
-			// don't bother calling a full ToMesh() here because we know for certain that the vertexes and msh.vertices arrays are equal in length
+			// don't bother calling a full ToMesh() here because we know for certain that the vertexes and msh.vertexes arrays are equal in length
 			mesh.SetPositions(verts);
 			mesh.mesh.vertices = verts;
 		}
@@ -102,26 +101,26 @@ namespace UnityEngine.ProBuilder
 		/// Unlike most other mesh operations, this function applies the mesh positions to both ProBuilderMesh and the UnityEngine.Mesh.
 		/// </summary>
 		/// <param name="mesh">The mesh to be affected.</param>
-		/// <param name="selectedTriangles">A set of triangles pointing to the vertex positions that are to be affected.</param>
+		/// <param name="indexes">A set of triangles pointing to the vertex positions that are to be affected.</param>
 		/// <param name="offset"></param>
-		public static void TranslateVertexes(this ProBuilderMesh mesh, IEnumerable<int> selectedTriangles, Vector3 offset)
+		public static void TranslateVertexes(this ProBuilderMesh mesh, IEnumerable<int> indexes, Vector3 offset)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			int[] indices = mesh.sharedIndexesInternal.AllIndexesWithValues(selectedTriangles).ToArray();
+			int[] all = mesh.sharedIndexesInternal.AllIndexesWithValues(indexes).ToArray();
 
 			Vector3[] verts = mesh.positionsInternal;
 
-			for(int i = 0, c = indices.Length; i < c; i++)
-				verts[indices[i]] += offset;
+			for(int i = 0, c = all.Length; i < c; i++)
+				verts[all[i]] += offset;
 
 			// don't bother calling a full ToMesh() here because we know for certain that the vertexes and msh.vertices arrays are equal in length
 			mesh.mesh.vertices = verts;
 		}
 
 		/// <summary>
-		/// Given a shared vertex index (index of the triangle in the sharedIndices array), move all vertexes to new position.
+		/// Given a shared vertex index (index of the triangle in the sharedIndexes array), move all vertexes to new position.
 		/// Position is in model space coordinates.
 		/// <br /><br />
 		/// Use @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" and IntArrayUtility.IndexOf to get a shared (or common) index.
