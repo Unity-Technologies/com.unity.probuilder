@@ -10,7 +10,7 @@ namespace UnityEngine.ProBuilder
     /// <summary>
     /// A face is composed of a set of triangles, and a material.
     /// <br />
-    /// Triangle indexes may point to the same vertex index as long as the vertexes are unique to the face. Ie, every vertex that a face references should only be used by that face's indexes. To associate vertexes that share common attributes (usually position), use the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" property.
+    /// Triangle indexes may point to the same vertex index as long as the vertexes are unique to the face. Ie, every vertex that a face references should only be used by that face's indices. To associate vertexes that share common attributes (usually position), use the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" property.
     /// <br />
     /// ProBuilder automatically manages condensing common vertexes in the EditorMeshUtility.Optimize function.
     /// </summary>
@@ -298,14 +298,23 @@ namespace UnityEngine.ProBuilder
 		    return copy;
 	    }
 
+	    /// <summary>
+	    /// Is this face representable as quad?
+	    /// </summary>
+	    /// <returns></returns>
+	    public bool IsQuad()
+	    {
+		    return edgesInternal != null && edgesInternal.Length == 4;
+	    }
+
 		/// <summary>
 		/// Convert a 2 triangle face to a quad representation.
 		/// </summary>
 		/// <returns>A quad (4 indexes), or null if indexes are not able to be represented as a quad.</returns>
 		public int[] ToQuad()
 		{
-            if (indexesInternal == null || indexesInternal.Length != 6)
-                return null;
+			if(!IsQuad())
+				throw new InvalidOperationException("Face is not representable as a quad. Use Face.IsQuad to check for validity.");
 
 			int[] quad = new int[4] { edgesInternal[0].a, edgesInternal[0].b, -1, -1 };
 
@@ -313,7 +322,7 @@ namespace UnityEngine.ProBuilder
 				quad[2] = edgesInternal[1].b;
 			else if(edgesInternal[2].a == quad[1])
 				quad[2] = edgesInternal[2].b;
-			else if(edgesInternal[3].a == quad[1])
+			else if (edgesInternal[3].a == quad[1])
 				quad[2] = edgesInternal[3].b;
 
 			if(edgesInternal[1].a == quad[2])
@@ -354,10 +363,11 @@ namespace UnityEngine.ProBuilder
 				Material material = face.material ?? BuiltinMaterials.defaultMaterial;
 				List<int> polys = null;
 
-				int[] res;
 
-				if(wantsQuads && (res = face.ToQuad()) != null)
+				if(wantsQuads && face.IsQuad())
 				{
+					int[] res = face.ToQuad();
+
 					if(quads.TryGetValue(material, out polys))
 						polys.AddRange(res);
 					else
