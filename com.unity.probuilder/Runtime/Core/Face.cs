@@ -177,7 +177,7 @@ namespace UnityEngine.ProBuilder
 		{
 			SetIndexes(array);
 			m_Uv = new AutoUnwrapSettings();
-			m_Material = BuiltinMaterials.DefaultMaterial;
+			m_Material = BuiltinMaterials.defaultMaterial;
 			m_SmoothingGroup = Smoothing.smoothingGroupNone;
 			textureGroup = -1;
 			elementGroup = 0;
@@ -352,7 +352,7 @@ namespace UnityEngine.ProBuilder
 				if(face.indexesInternal == null || face.indexesInternal.Length < 1)
 					continue;
 
-				Material material = face.material ?? BuiltinMaterials.DefaultMaterial;
+				Material material = face.material ?? BuiltinMaterials.defaultMaterial;
 				List<int> polys = null;
 
 				int[] res;

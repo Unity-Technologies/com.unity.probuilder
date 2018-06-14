@@ -672,9 +672,12 @@ namespace UnityEngine.ProBuilder
 
 #region Selection
 
-	    [SerializeField] int[] m_selectedFaces = new int[] { };
-	    [SerializeField] Edge[] m_SelectedEdges = new Edge[] { };
-	    [SerializeField] int[] m_selectedTriangles = new int[] { };
+	    [SerializeField]
+	    int[] m_selectedFaces = new int[] { };
+	    [SerializeField]
+	    Edge[] m_SelectedEdges = new Edge[] { };
+	    [SerializeField]
+	    int[] m_selectedTriangles = new int[] { };
 
 	    /// <value>
 	    /// Get the number of faces that are currently selected on this object.
@@ -741,7 +744,12 @@ namespace UnityEngine.ProBuilder
 		    get { return new ReadOnlyCollection<Edge>(m_SelectedEdges); }
 	    }
 
-	    internal int[] selectedIndexesInternal
+	    internal Edge[] selectedEdgesInternal
+	    {
+		    get { return m_SelectedEdges; }
+	    }
+
+	internal int[] selectedIndexesInternal
 	    {
 		    get { return m_selectedTriangles; }
 	    }
@@ -865,7 +873,7 @@ namespace UnityEngine.ProBuilder
 						i + 0, i + 1, i + 2,
 						i + 1, i + 3, i + 2
 					},
-					BuiltinMaterials.DefaultMaterial,
+					BuiltinMaterials.defaultMaterial,
 					new AutoUnwrapSettings(),
 					0,
 					-1,

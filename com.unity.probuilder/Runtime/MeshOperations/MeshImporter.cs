@@ -141,7 +141,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			for(int subMeshIndex = 0; subMeshIndex < originalMesh.subMeshCount; subMeshIndex++)
 			{
-				Material material = materialCount > 0 ? materials[subMeshIndex % materialCount] : BuiltinMaterials.DefaultMaterial;
+				Material material = materialCount > 0 ? materials[subMeshIndex % materialCount] : BuiltinMaterials.defaultMaterial;
 
 				switch(originalMesh.GetTopology(subMeshIndex))
 				{

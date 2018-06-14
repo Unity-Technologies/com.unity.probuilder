@@ -64,7 +64,7 @@ namespace UnityEditor.ProBuilder
 
 			if (m_ShapePreviewMaterial == null)
 			{
-				m_ShapePreviewMaterial = new Material(BuiltinMaterials.DefaultMaterial.shader);
+				m_ShapePreviewMaterial = new Material(BuiltinMaterials.defaultMaterial.shader);
 				m_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
 
 				if (m_ShapePreviewMaterial.HasProperty("_MainTex"))

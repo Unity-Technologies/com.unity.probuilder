@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityScript.Lang;
 
 namespace UnityEngine.ProBuilder
 {
@@ -704,7 +703,7 @@ namespace UnityEngine.ProBuilder
 
 					faces[f++] = new Face(
 						new int[6]{ zero, one, two, one, three, two },
-						BuiltinMaterials.DefaultMaterial,
+						BuiltinMaterials.defaultMaterial,
 						new AutoUnwrapSettings(),
 						smoothing,
 						-1,

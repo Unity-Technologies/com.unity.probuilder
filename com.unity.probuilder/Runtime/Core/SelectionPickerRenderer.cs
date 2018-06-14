@@ -324,9 +324,9 @@ namespace UnityEngine.ProBuilder
 		{
 			var pickerObjects = GenerateFacePickingObjects(selection, out map);
 
-			BuiltinMaterials.FacePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Whitef);
+			BuiltinMaterials.facePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Whitef);
 
-			Texture2D tex = RenderWithReplacementShader(camera, BuiltinMaterials.SelectionPickerShader, "ProBuilderPicker", width, height);
+			Texture2D tex = RenderWithReplacementShader(camera, BuiltinMaterials.selectionPickerShader, "ProBuilderPicker", width, height);
 
 			foreach(GameObject go in pickerObjects)
 			{
@@ -359,9 +359,9 @@ namespace UnityEngine.ProBuilder
 
 			GenerateVertexPickingObjects(selection, doDepthTest, out map, out depthObjects, out pickerObjects);
 
-			BuiltinMaterials.FacePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Blackf);
+			BuiltinMaterials.facePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Blackf);
 
-			Texture2D tex = RenderWithReplacementShader(camera, BuiltinMaterials.SelectionPickerShader, "ProBuilderPicker", width, height);
+			Texture2D tex = RenderWithReplacementShader(camera, BuiltinMaterials.selectionPickerShader, "ProBuilderPicker", width, height);
 
 			for(int i = 0, c = pickerObjects.Length; i < c; i++)
 			{
@@ -401,9 +401,9 @@ namespace UnityEngine.ProBuilder
 			GameObject[] depthObjects, pickerObjects;
 			GenerateEdgePickingObjects(selection, doDepthTest, out map, out depthObjects, out pickerObjects);
 
-			BuiltinMaterials.FacePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Blackf);
+			BuiltinMaterials.facePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Blackf);
 
-			Texture2D tex = RenderWithReplacementShader(camera, BuiltinMaterials.SelectionPickerShader, "ProBuilderPicker", width, height);
+			Texture2D tex = RenderWithReplacementShader(camera, BuiltinMaterials.selectionPickerShader, "ProBuilderPicker", width, height);
 
 			for(int i = 0, c = pickerObjects.Length; i < c; i++)
 			{
@@ -455,7 +455,7 @@ namespace UnityEngine.ProBuilder
 				m.colors32 = colors;
 
 				go.AddComponent<MeshFilter>().sharedMesh = m;
-				go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.FacePickerMaterial;
+				go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.facePickerMaterial;
 
 				pickerObjects[i] = go;
 			}
@@ -485,7 +485,7 @@ namespace UnityEngine.ProBuilder
 				GameObject go = InternalUtility.EmptyGameObjectWithTransform(pb.transform);
 				go.name = pb.name + "  (Vertex Billboards)";
 				go.AddComponent<MeshFilter>().sharedMesh = BuildVertexMesh(pb, map, ref index);
-				go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.VertexPickerMaterial;
+				go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.vertexPickerMaterial;
 				pickerObjects[i] = go;
 			}
 
@@ -500,7 +500,7 @@ namespace UnityEngine.ProBuilder
 					GameObject go = InternalUtility.EmptyGameObjectWithTransform(pb.transform);
 					go.name = pb.name + "  (Depth Mask)";
 					go.AddComponent<MeshFilter>().sharedMesh = pb.mesh;
-					go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.FacePickerMaterial;
+					go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.facePickerMaterial;
 					depthObjects[i] = go;
 				}
 			}
@@ -530,7 +530,7 @@ namespace UnityEngine.ProBuilder
 				GameObject go = InternalUtility.EmptyGameObjectWithTransform(pb.transform);
 				go.name = pb.name + "  (Edge Billboards)";
 				go.AddComponent<MeshFilter>().sharedMesh = BuildEdgeMesh(pb, map, ref index);
-				go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.EdgePickerMaterial;
+				go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.edgePickerMaterial;
 				pickerObjects[i] = go;
 			}
 
@@ -545,7 +545,7 @@ namespace UnityEngine.ProBuilder
 					GameObject go = InternalUtility.EmptyGameObjectWithTransform(pb.transform);
 					go.name = pb.name + "  (Depth Mask)";
 					go.AddComponent<MeshFilter>().sharedMesh = pb.mesh;
-					go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.FacePickerMaterial;
+					go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.facePickerMaterial;
 					depthObjects[i] = go;
 				}
 			}

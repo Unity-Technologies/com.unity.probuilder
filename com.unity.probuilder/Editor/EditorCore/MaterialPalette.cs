@@ -53,7 +53,7 @@ namespace UnityEditor.ProBuilder
 		public void SetDefaultValues()
 		{
 			array = new Material[10] {
-				BuiltinMaterials.DefaultMaterial,
+				BuiltinMaterials.defaultMaterial,
 				null,
 				null,
 				null,
