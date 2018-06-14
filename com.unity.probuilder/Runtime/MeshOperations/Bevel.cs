@@ -280,7 +280,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
  			rf.face = new Face(
  				triangles,
  				left.face.material,
- 				new AutoUnwrapSettings(),
+ 				AutoUnwrapSettings.tile,
  				-1,
  				-1,
  				-1,

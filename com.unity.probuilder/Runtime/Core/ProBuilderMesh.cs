@@ -874,7 +874,7 @@ namespace UnityEngine.ProBuilder
 						i + 1, i + 3, i + 2
 					},
 					BuiltinMaterials.defaultMaterial,
-					new AutoUnwrapSettings(),
+					AutoUnwrapSettings.tile,
 					0,
 					-1,
 					-1,

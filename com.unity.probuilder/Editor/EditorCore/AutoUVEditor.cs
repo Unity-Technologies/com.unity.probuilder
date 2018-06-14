@@ -20,7 +20,7 @@ namespace UnityEditor.ProBuilder
 			get { return ProBuilderEditor.instance; }
 		}
 
-		static AutoUnwrapSettings s_AutoUVSettings = new AutoUnwrapSettings();
+		static AutoUnwrapSettings s_AutoUVSettings = AutoUnwrapSettings.tile;
 		static int textureGroup = -1;
 		static List<AutoUnwrapSettings> s_AutoUVSettingsInSelection = new List<AutoUnwrapSettings>();
 		static Dictionary<string, bool> s_AutoUVSettingsDiff = new Dictionary<string, bool>()
@@ -253,7 +253,7 @@ namespace UnityEditor.ProBuilder
 				for(int i = 0; i < selection.Length; i++)
 				{
 					foreach(Face face in selection[i].GetSelectedFaces())
-						face.uv = new AutoUnwrapSettings();
+						face.uv = AutoUnwrapSettings.tile;
 				}
 
 				ProBuilderEditor.Refresh();

@@ -154,7 +154,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 							faces.Add(new Face(
 								new int[] { vertexIndex, vertexIndex + 1, vertexIndex + 2 },
 								material,
-								new AutoUnwrapSettings(),
+								AutoUnwrapSettings.tile,
 								Smoothing.smoothingGroupNone,
 								-1,
 								-1,
@@ -179,7 +179,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 								vertexIndex    , vertexIndex + 1, vertexIndex + 2,
 								vertexIndex + 1, vertexIndex + 2, vertexIndex + 3 },
 								material,
-								new AutoUnwrapSettings(),
+								AutoUnwrapSettings.tile,
 								Smoothing.smoothingGroupNone,
 								-1,
 								-1,
