@@ -1313,25 +1313,25 @@ namespace UnityEditor.ProBuilder
 
 				if(pb.selectedFacesInternal.Length > 0)
 				{
-					IntArray[] sharedIndices = pb.sharedIndexesInternal;
+					IntArray[] sharedIndexes = pb.sharedIndexesInternal;
 
-					int[] selTrisIndices = new int[pb.selectedIndexesInternal.Length];
+					int[] selectedIndexes = new int[pb.selectedIndexesInternal.Length];
 
-					// Get sharedIndices index for each vert in selection
+					// Get shared index index for each vert in selection
 					for(int i = 0; i < pb.selectedIndexesInternal.Length; i++)
-						selTrisIndices[i] = sharedIndices.IndexOf(pb.selectedIndexesInternal[i]);
+						selectedIndexes[i] = sharedIndexes.IndexOf(pb.selectedIndexesInternal[i]);
 
 					// cycle through selected faces and remove the tris that compose full faces.
 					foreach(Face face in pb.selectedFacesInternal)
 					{
-						List<int> faceSharedIndices = new List<int>();
+						List<int> faceSharedIndexes = new List<int>();
 
 						for(int j = 0; j < face.distinctIndexesInternal.Length; j++)
-							faceSharedIndices.Add( sharedIndices.IndexOf(face.distinctIndexesInternal[j]) );
+							faceSharedIndexes.Add( sharedIndexes.IndexOf(face.distinctIndexesInternal[j]) );
 
 						List<int> usedTris = new List<int>();
-						for(int i = 0; i < selTrisIndices.Length; i++)
-							if( faceSharedIndices.Contains(selTrisIndices[i]) )
+						for(int i = 0; i < selectedIndexes.Length; i++)
+							if( faceSharedIndexes.Contains(selectedIndexes[i]) )
 								usedTris.Add(pb.selectedIndexesInternal[i]);
 
 						// This face *is* composed of selected tris.  Remove these tris from the loose index list
@@ -1386,13 +1386,13 @@ namespace UnityEditor.ProBuilder
 			foreach(ProBuilderMesh pb in selection)
 			{
 				bool selectAll = pb.selectedIndexesInternal == null || pb.selectedIndexesInternal.Length < 1;
-				IEnumerable<int> indices = selectAll ? pb.facesInternal.SelectMany(x => x.ToTriangles()) : pb.selectedIndexesInternal;
+				IEnumerable<int> indexes = selectAll ? pb.facesInternal.SelectMany(x => x.ToTriangles()) : pb.selectedIndexesInternal;
 
 				pb.ToMesh();
 
 				Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
 				List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
-				HashSet<int> common = IntArrayUtility.GetCommonIndexes(lookup, indices);
+				HashSet<int> common = IntArrayUtility.GetCommonIndexes(lookup, indexes);
 				List<List<WingedEdge>> holes = ElementSelection.FindHoles(wings, common);
 
 				HashSet<Face> faces = new HashSet<Face>();
@@ -1400,7 +1400,7 @@ namespace UnityEditor.ProBuilder
 
 				foreach(List<WingedEdge> hole in holes)
 				{
-					List<int> holeIndices;
+					List<int> holeIndexes;
 					Face face;
 
 					if(wholePath)
@@ -1412,15 +1412,15 @@ namespace UnityEditor.ProBuilder
 							common.Contains(x.edge.common.b)))
 							continue;
 
-						holeIndices = hole.Select(x => x.edge.local.a).ToList();
-						face = AppendElements.CreatePolygon(pb, holeIndices, false);
+						holeIndexes = hole.Select(x => x.edge.local.a).ToList();
+						face = AppendElements.CreatePolygon(pb, holeIndexes, false);
 						adjacent.AddRange(hole.Select(x => x.face));
 					}
 					else
 					{
 						IEnumerable<WingedEdge> selected = hole.Where(x => common.Contains(x.edge.common.a));
-						holeIndices = selected.Select(x => x.edge.local.a).ToList();
-						face = AppendElements.CreatePolygon(pb, holeIndices, true);
+						holeIndexes = selected.Select(x => x.edge.local.a).ToList();
+						face = AppendElements.CreatePolygon(pb, holeIndexes, true);
 
 						if(res)
 							adjacent.AddRange(selected.Select(x => x.face));

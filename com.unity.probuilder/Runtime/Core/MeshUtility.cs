@@ -152,11 +152,11 @@ namespace UnityEngine.ProBuilder
 
 			for(int faceIndex = 0, faceCount = faces.Length; faceIndex < faceCount; faceIndex++)
 			{
-				int[] indices = faces[faceIndex].indexesInternal;
+				int[] indexes = faces[faceIndex].indexesInternal;
 
-				for(var tri = 0; tri < indices.Length; tri += 3)
+				for(var tri = 0; tri < indexes.Length; tri += 3)
 				{
-					int a = indices[tri], b = indices[tri + 1], c = indices[tri + 2];
+					int a = indexes[tri], b = indexes[tri + 1], c = indexes[tri + 2];
 
 					Vector3 cross = Math.Normal(vertexes[a], vertexes[b], vertexes[c]);
 					cross.Normalize();
@@ -204,7 +204,7 @@ namespace UnityEngine.ProBuilder
 			// average the soft edge faces
 			int vertexCount = mesh.vertexCount;
 			int[] smoothGroup = new int[vertexCount];
-			IntArray[] sharedIndices = mesh.sharedIndexesInternal;
+			IntArray[] sharedIndexes = mesh.sharedIndexesInternal;
 			Face[] faces = mesh.facesInternal;
 			int smoothGroupMax = 24;
 
@@ -223,9 +223,9 @@ namespace UnityEngine.ProBuilder
             Vector3[] averages = new Vector3[smoothGroupMax];
             float[] counts = new float[smoothGroupMax];
 
-            // For each sharedIndices group (individual vertex), find vertexes that are in the same smoothing
+            // For each sharedIndexes group (individual vertex), find vertexes that are in the same smoothing
             // group and average their normals.
-            for (var i = 0; i < sharedIndices.Length; i++)
+            for (var i = 0; i < sharedIndexes.Length; i++)
 			{
 				for(var n = 0; n < smoothGroupMax; n++)
 				{
@@ -235,9 +235,9 @@ namespace UnityEngine.ProBuilder
 					counts[n] = 0f;
 				}
 
-				for(var n = 0; n < sharedIndices[i].array.Length; n++)
+				for(var n = 0; n < sharedIndexes[i].array.Length; n++)
 				{
-					int index = sharedIndices[i].array[n];
+					int index = sharedIndexes[i].array[n];
 					int group = smoothGroup[index];
 
 					// Ideally this should only continue on group == NONE, but historically negative values have also
@@ -252,9 +252,9 @@ namespace UnityEngine.ProBuilder
 					counts[group] += 1f;
 				}
 
-				for(int n = 0; n < sharedIndices[i].array.Length; n++)
+				for(int n = 0; n < sharedIndexes[i].array.Length; n++)
 				{
-					int index = sharedIndices[i].array[n];
+					int index = sharedIndexes[i].array[n];
 					int group = smoothGroup[index];
 
 					if( group <= Smoothing.smoothingGroupNone ||
@@ -450,10 +450,10 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Get the number of indices this mesh contains.
+		/// Get the number of indexes this mesh contains.
 		/// </summary>
 		/// <param name="mesh">The source mesh to sum submesh index counts from.</param>
-		/// <returns>The count of all indices contained within this meshes submeshes.</returns>
+		/// <returns>The count of all indexes contained within this meshes submeshes.</returns>
 		public static uint GetIndexCount(Mesh mesh)
 		{
 			uint sum = 0;
@@ -535,11 +535,7 @@ namespace UnityEngine.ProBuilder
             targetMesh.subMeshCount = submeshes.Length;
 
             for (int i = 0; i < targetMesh.subMeshCount; i++)
-#if UNITY_5_5_OR_NEWER
-                targetMesh.SetIndices(submeshes[i].m_Indices, submeshes[i].m_Topology, i, false);
-#else
-        		target.SetIndices(submeshes[i].indices, submeshes[i].topology, i);
-#endif
+                targetMesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
 
             targetMesh.name = string.Format("pb_Mesh{0}", probuilderMesh.id);
 
@@ -580,17 +576,17 @@ namespace UnityEngine.ProBuilder
 			foreach (KeyValuePair<int, List<Face>> kvp in textureGroups)
 			{
 				Vector3 nrm;
-				int[] indices = kvp.Value.SelectMany(x => x.distinctIndexesInternal).ToArray();
+				int[] indexes = kvp.Value.SelectMany(x => x.distinctIndexesInternal).ToArray();
 
 				if (kvp.Value.Count > 1)
-					nrm = Projection.FindBestPlane(mesh.positionsInternal, indices).normal;
+					nrm = Projection.FindBestPlane(mesh.positionsInternal, indexes).normal;
 				else
 					nrm = Math.Normal(mesh, kvp.Value[0]);
 
 				if (kvp.Value[0].uv.useWorldSpace)
-					UnwrappingUtility.PlanarMap2(world, uvs, indices, kvp.Value[0].uv, mesh.transform.TransformDirection(nrm));
+					UnwrappingUtility.PlanarMap2(world, uvs, indexes, kvp.Value[0].uv, mesh.transform.TransformDirection(nrm));
 				else
-					UnwrappingUtility.PlanarMap2(mesh.positionsInternal, uvs, indices, kvp.Value[0].uv, nrm);
+					UnwrappingUtility.PlanarMap2(mesh.positionsInternal, uvs, indexes, kvp.Value[0].uv, nrm);
 			}
 
 			return uvs;

@@ -82,7 +82,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="selectable">The objects to hit test.</param>
 		/// <param name="options">Culling options.</param>
 		/// <param name="pixelsPerPoint">Scale the render texture to match rect coordinates. Generally you'll just pass in EditorGUIUtility.pointsPerPixel.</param>
-		/// <returns>A dictionary of ProBuilderMesh and sharedIndexes that are in the selection rect. To get triangle indices access the pb.sharedIndices[index] array.</returns>
+		/// <returns>A dictionary of ProBuilderMesh and sharedIndexes that are in the selection rect. To get triangle indexes access the pb.sharedIndexes[index] array.</returns>
 		public static Dictionary<ProBuilderMesh, HashSet<int>> PickVertexesInRect(
 			Camera cam,
 			Rect rect,

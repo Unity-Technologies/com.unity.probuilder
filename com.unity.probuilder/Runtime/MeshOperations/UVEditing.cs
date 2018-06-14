@@ -87,43 +87,43 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// Sews (welds) a UV seam using delta to determine which UVs are close enough to be merged.
 		/// </summary>
 		/// <param name="mesh"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <param name="delta"></param>
 		/// <returns></returns>
-		public static bool SewUVs(this ProBuilderMesh mesh, int[] indices, float delta)
+		public static bool SewUVs(this ProBuilderMesh mesh, int[] indexes, float delta)
 		{
-			int[] si = new int[indices.Length];
+			int[] si = new int[indexes.Length];
 			Vector2[] uvs = mesh.texturesInternal;
 
 			if(uvs == null || uvs.Length != mesh.vertexCount)
 				uvs = new Vector2[mesh.vertexCount];
 
-			// set the shared indices cache to a unique non-used index
-			for(int i = 0; i < indices.Length; i++)
+			// set the shared indexes cache to a unique non-used index
+			for(int i = 0; i < indexes.Length; i++)
 				si[i] = -(i+1);
 
-			IntArray[] sharedIndices = mesh.sharedIndexesUVInternal;
+			IntArray[] sharedIndexes = mesh.sharedIndexesUVInternal;
 
-			for(int i = 0; i < indices.Length-1; i++)
+			for(int i = 0; i < indexes.Length-1; i++)
 			{
-				for(int n = i+1; n < indices.Length; n++)
+				for(int n = i+1; n < indexes.Length; n++)
 				{
 					if(si[i] == si[n])
 						continue;	// they already share a vertex
 
-					if(Vector2.Distance(uvs[indices[i]], uvs[indices[n]]) < delta)
+					if(Vector2.Distance(uvs[indexes[i]], uvs[indexes[n]]) < delta)
 					{
-						Vector3 cen = (uvs[indices[i]] + uvs[indices[n]]) / 2f;
-						uvs[indices[i]] = cen;
-						uvs[indices[n]] = cen;
-						int newIndex = IntArrayUtility.MergeSharedIndexes(ref sharedIndices, new int[2] {indices[i], indices[n]});
+						Vector3 cen = (uvs[indexes[i]] + uvs[indexes[n]]) / 2f;
+						uvs[indexes[i]] = cen;
+						uvs[indexes[n]] = cen;
+						int newIndex = IntArrayUtility.MergeSharedIndexes(ref sharedIndexes, new int[2] {indexes[i], indexes[n]});
 						si[i] = newIndex;
 						si[n] = newIndex;
 					}
 				}
 			}
 
-			mesh.sharedIndexesUVInternal = sharedIndices;
+			mesh.sharedIndexesUVInternal = sharedIndexes;
 
 			return true;
 		}
@@ -132,63 +132,63 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// Similar to Sew, except Collapse just flattens all UVs to the center point no matter the distance.
 		/// </summary>
 		/// <param name="pb"></param>
-		/// <param name="indices"></param>
-		public static void CollapseUVs(this ProBuilderMesh pb, int[] indices)
+		/// <param name="indexes"></param>
+		public static void CollapseUVs(this ProBuilderMesh pb, int[] indexes)
 		{
 			Vector2[] uvs = pb.texturesInternal;
 
-			// set the shared indices cache to a unique non-used index
-			Vector2 cen = Math.Average(ArrayUtility.ValuesWithIndexes(uvs, indices) );
+			// set the shared indexes cache to a unique non-used index
+			Vector2 cen = Math.Average(ArrayUtility.ValuesWithIndexes(uvs, indexes) );
 
-			foreach(int i in indices)
+			foreach(int i in indexes)
 				uvs[i] = cen;
 
-			IntArray[] sharedIndices = pb.sharedIndexesUVInternal;
-			IntArrayUtility.MergeSharedIndexes(ref sharedIndices, indices);
-			pb.sharedIndexesUVInternal = sharedIndices;
+			IntArray[] sharedIndexes = pb.sharedIndexesUVInternal;
+			IntArrayUtility.MergeSharedIndexes(ref sharedIndexes, indexes);
+			pb.sharedIndexesUVInternal = sharedIndexes;
 		}
 
 		/// <summary>
-		/// Creates separate entries in sharedIndices cache for all passed indices. If indices are not present in pb_IntArray[], don't do anything with them.
+		/// Creates separate entries in shared indexes cache for all passed indexes. If indexes are not present in pb_IntArray[], don't do anything with them.
 		/// </summary>
 		/// <param name="pb"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <returns></returns>
-		public static bool SplitUVs(this ProBuilderMesh pb, IEnumerable<int> indices)
+		public static bool SplitUVs(this ProBuilderMesh pb, IEnumerable<int> indexes)
 		{
-			IntArray[] sharedIndices = pb.sharedIndexesUVInternal;
+			IntArray[] sharedIndexes = pb.sharedIndexesUVInternal;
 
-			if( sharedIndices == null )
+			if (sharedIndexes == null)
 				return false;
 
-			List<int> distInd = indices.Distinct().ToList();
+			List<int> distInd = indexes.Distinct().ToList();
 
 			/**
-			 * remove indices from sharedIndices
+			 * remove indexes from sharedIndexes
 			 */
-			for(int i = 0; i < distInd.Count; i++)
+			for (int i = 0; i < distInd.Count; i++)
 			{
-				int index = sharedIndices.IndexOf(distInd[i]);
+				int index = sharedIndexes.IndexOf(distInd[i]);
 
-				if(index < 0) continue;
+				if (index < 0) continue;
 
 				// can't use ArrayUtility.RemoveAt on account of it being Editor only
-				sharedIndices[index].array = sharedIndices[index].array.Remove(distInd[i]);
+				sharedIndexes[index].array = sharedIndexes[index].array.Remove(distInd[i]);
 			}
 
 			/**
 			 * and add 'em back in as loners
 			 */
-			foreach(int i in distInd)
-				IntArrayUtility.AddValueAtIndex(ref sharedIndices, -1, i);
+			foreach (int i in distInd)
+				IntArrayUtility.AddValueAtIndex(ref sharedIndexes, -1, i);
 
-			pb.SetSharedIndexesUV(sharedIndices);
+			pb.SetSharedIndexesUV(sharedIndexes);
 
 			return true;
 		}
 
 		/// <summary>
-		/// Projects UVs on all passed faces, automatically updating the sharedIndicesUV table as required (only associates
+		/// Projects UVs on all passed faces, automatically updating the sharedIndexesUV table as required (only associates
 		/// vertexes that share a seam).
 		/// </summary>
 		/// <param name="mesh"></param>
@@ -252,7 +252,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					sorted.Add(axis, new List<Face>() { faces[i] });
 				}
 
-				// clean up UV stuff - no shared UV indices and remove element group
+				// clean up UV stuff - no shared UV indexes and remove element group
 				faces[i].elementGroup = -1;
 				faces[i].manualUV = true;
 			}
@@ -277,26 +277,26 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// Projects UVs for each face using the closest normal on a sphere.
 		/// </summary>
 		/// <param name="pb"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <param name="channel"></param>
-		public static void ProjectFacesSphere(ProBuilderMesh pb, int[] indices, int channel = 0)
+		public static void ProjectFacesSphere(ProBuilderMesh pb, int[] indexes, int channel = 0)
 		{
 			foreach(Face f in pb.facesInternal)
 			{
-				if(ArrayUtility.ContainsMatch<int>(f.distinctIndexesInternal, indices))
+				if(ArrayUtility.ContainsMatch<int>(f.distinctIndexesInternal, indexes))
 				{
 					f.elementGroup = -1;
 					f.manualUV = true;
 				}
 			}
 
-			SplitUVs(pb, indices);
+			SplitUVs(pb, indexes);
 
-			Vector2[] projected = Projection.SphericalProject(pb.positionsInternal, indices);
+			Vector2[] projected = Projection.SphericalProject(pb.positionsInternal, indexes);
 			Vector2[] uv = GetUVs(pb, channel);
 
-			for(int i = 0; i < indices.Length; i++)
-				uv[indices[i]] = projected[i];
+			for(int i = 0; i < indexes.Length; i++)
+				uv[indexes[i]] = projected[i];
 
 			/* and set the msh uv array using the new coordintaes */
 			ApplyUVs(pb, uv, channel);
@@ -337,13 +337,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns></returns>
 		public static bool AutoStitch(ProBuilderMesh pb, Face f1, Face f2, int channel)
 		{
-			// Cache shared indices (we gon' use 'em a lot)
-			Dictionary<int, int> sharedIndices = pb.sharedIndexesInternal.ToDictionary();
+			// Cache shared indexes (we gon' use 'em a lot)
+			Dictionary<int, int> sharedIndexes = pb.sharedIndexesInternal.ToDictionary();
 
 			for(int i = 0; i < f1.edgesInternal.Length; i++)
 			{
 				// find a matching edge
-				int ind = f2.edgesInternal.IndexOf(f1.edgesInternal[i], sharedIndices);
+				int ind = f2.edgesInternal.IndexOf(f1.edgesInternal[i], sharedIndexes);
 				if( ind > -1 )
 				{
 					// First, project the second face
@@ -370,7 +370,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// move the UVs to where the edges passed meet
         /// </summary>
         /// <param name="pb"></param>
-        /// <param name="f1"></param>
         /// <param name="faceToMove"></param>
         /// <param name="edgeToAlignTo"></param>
         /// <param name="edgeToBeAligned"></param>
@@ -379,18 +378,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
         static bool AlignEdges(ProBuilderMesh pb, Face faceToMove, Edge edgeToAlignTo, Edge edgeToBeAligned, int channel)
 		{
 			Vector2[] uvs = GetUVs(pb, channel);
-			IntArray[] sharedIndices = pb.sharedIndexesInternal;
-			IntArray[] sharedIndicesUV = pb.sharedIndexesUVInternal;
+			IntArray[] sharedIndexes = pb.sharedIndexesInternal;
+			IntArray[] sharedIndexesUV = pb.sharedIndexesUVInternal;
 
 			// Match each edge vertex to the other
 			int[] matchX = new int[2] { edgeToAlignTo.a, -1 };
 			int[] matchY = new int[2] { edgeToAlignTo.b, -1 };
 
-			int siIndex = sharedIndices.IndexOf(edgeToAlignTo.a);
+			int siIndex = sharedIndexes.IndexOf(edgeToAlignTo.a);
 			if(siIndex < 0)
 				return false;
 
-			if(sharedIndices[siIndex].array.Contains(edgeToBeAligned.a))
+			if(sharedIndexes[siIndex].array.Contains(edgeToBeAligned.a))
 			{
 				matchX[1] = edgeToBeAligned.a;
 				matchY[1] = edgeToBeAligned.b;
@@ -458,13 +457,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			// If successfully aligned, merge the sharedIndicesUV
+			// If successfully aligned, merge the sharedIndexesUV
 			UVEditing.SplitUVs(pb, faceToMove.distinctIndexesInternal);
 
-			IntArrayUtility.MergeSharedIndexes(ref sharedIndicesUV, matchX);
-			IntArrayUtility.MergeSharedIndexes(ref sharedIndicesUV, matchY);
+			IntArrayUtility.MergeSharedIndexes(ref sharedIndexesUV, matchX);
+			IntArrayUtility.MergeSharedIndexes(ref sharedIndexesUV, matchY);
 
-			pb.SetSharedIndexesUV(IntArray.RemoveEmptyOrNull(sharedIndicesUV));
+			pb.SetSharedIndexesUV(IntArray.RemoveEmptyOrNull(sharedIndexesUV));
 
 			// @todo Update Element Groups here?
 

@@ -15,13 +15,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 	public static class VertexEditing
 	{
         /// <summary>
-        /// Collapses all passed indices to a single shared index.
+        /// Collapses all passed indexes to a single shared index.
         /// </summary>
         /// <remarks>
         /// Retains vertex normals.
         /// </remarks>
         /// <param name="mesh">Target mesh.</param>
-        /// <param name="indexes">The indices to merge to a single shared vertex.</param>
+        /// <param name="indexes">The indexes to merge to a single shared vertex.</param>
         /// <param name="collapseToFirst">If true, instead of merging all vertexes to the average position, the vertexes will be collapsed onto the first vertex position.</param>
         /// <returns>The first available local index created as a result of the merge. -1 if action is unsuccessfull.</returns>
         public static int MergeVertexes(this ProBuilderMesh mesh, int[] indexes, bool collapseToFirst = false)
@@ -36,31 +36,31 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			Vertex cen = collapseToFirst ? vertexes[indexes[0]] : Vertex.Average(vertexes, indexes);
 
-			IntArray[] sharedIndices = mesh.sharedIndexesInternal;
-			IntArray[] sharedIndicesUV = mesh.sharedIndexesUVInternal;
+			IntArray[] sharedIndexes = mesh.sharedIndexesInternal;
+			IntArray[] sharedIndexesUV = mesh.sharedIndexesUVInternal;
 
-			int newIndex = IntArrayUtility.MergeSharedIndexes(ref sharedIndices, indexes);
-			IntArrayUtility.MergeSharedIndexes(ref sharedIndicesUV, indexes);
+			int newIndex = IntArrayUtility.MergeSharedIndexes(ref sharedIndexes, indexes);
+			IntArrayUtility.MergeSharedIndexes(ref sharedIndexesUV, indexes);
 
-			mesh.sharedIndexesInternal = sharedIndices;
-			mesh.sharedIndexesUVInternal = sharedIndicesUV;
+			mesh.sharedIndexesInternal = sharedIndexes;
+			mesh.sharedIndexesUVInternal = sharedIndexesUV;
 
 			mesh.SetSharedVertexValues(newIndex, cen);
 
 			int[] mergedSharedIndex = mesh.GetSharedIndexes()[newIndex].array;
 
-			int[] removedIndices = mesh.RemoveDegenerateTriangles();
+			int[] removedIndexes = mesh.RemoveDegenerateTriangles();
 
 			// get a non-deleted index to work with
 			int ind = -1;
 			for(int i = 0; i < mergedSharedIndex.Length; i++)
-				if(!removedIndices.Contains(mergedSharedIndex[i]))
+				if(!removedIndexes.Contains(mergedSharedIndex[i]))
 					ind = mergedSharedIndex[i];
 
 			int res = ind;
 
-			for(int i = 0; i < removedIndices.Length; i++)
-				if(ind > removedIndices[i])
+			for(int i = 0; i < removedIndexes.Length; i++)
+				if(ind > removedIndexes[i])
 					res--;
 
             return res;
@@ -73,7 +73,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// This is equivalent to calling `SplitVertexes(mesh, new int[] { edge.x, edge.y });`.
 		/// </remarks>
 		/// <param name="mesh">The source mesh.</param>
-		/// <param name="edge">The edge to query for vertex indices.</param>
+		/// <param name="edge">The edge to query for vertex indexes.</param>
 		/// <seealso cref="SplitVertexes(UnityEngine.ProBuilder.ProBuilderMesh,System.Collections.Generic.IEnumerable{int})"/>
 		public static void SplitVertexes(this ProBuilderMesh mesh, Edge edge)
 		{
@@ -84,7 +84,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// Split vertexes from their shared indexes so that each vertex moves independently.
 		/// </summary>
 		/// <param name="mesh">The source mesh.</param>
-		/// <param name="vertexes">A list of vertex indices to split.</param>
+		/// <param name="vertexes">A list of vertex indexes to split.</param>
 		/// <seealso cref="UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes"/>
 		public static void SplitVertexes(this ProBuilderMesh mesh, IEnumerable<int> vertexes)
 		{
@@ -94,7 +94,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (vertexes == null)
                 throw new ArgumentNullException("vertexes");
 
-            // ToDictionary always sets the universal indices in ascending order from 0+.
+            // ToDictionary always sets the universal indexes in ascending order from 0+.
             Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
 			int max = lookup.Count();
 			foreach(int i in vertexes)
@@ -106,9 +106,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// Similar to Merge vertexes, expect that this method only collapses vertexes within a specified distance of one another (typically Mathf.Epsilon is used).
         /// </summary>
         /// <param name="mesh">Target pb_Object.</param>
-        /// <param name="indexes">The vertex indices to be scanned for inclusion. To weld the entire object for example, pass pb.faces.SelectMany(x => x.indices).</param>
+        /// <param name="indexes">The vertex indexes to be scanned for inclusion. To weld the entire object for example, pass pb.faces.SelectMany(x => x.indexes).</param>
         /// <param name="neighborRadius">The minimum distance from another vertex to be considered within welding distance.</param>
-        /// <returns>The indices of any new vertexes created by a weld.</returns>
+        /// <returns>The indexes of any new vertexes created by a weld.</returns>
         public static int[] WeldVertexes(this ProBuilderMesh mesh, IEnumerable<int> indexes, float neighborRadius)
 		{
             if (mesh == null)
@@ -118,9 +118,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 throw new ArgumentNullException("indexes");
 
             Vertex[] vertexes = Vertex.GetVertexes(mesh);
-			IntArray[] sharedIndices = mesh.sharedIndexesInternal;
+			IntArray[] sharedIndexes = mesh.sharedIndexesInternal;
 
-			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
+			Dictionary<int, int> lookup = sharedIndexes.ToDictionary();
 			HashSet<int> common = IntArrayUtility.GetCommonIndexes(lookup, indexes);
 			int vertexCount = common.Count;
 
@@ -135,14 +135,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			foreach(int i in common)
 			{
-				Vector3 v = vertexes[sharedIndices[i][0]].position;
+				Vector3 v = vertexes[sharedIndexes[i][0]].position;
 				tree.Add( new float[] { v.x, v.y, v.z }, i );
 			}
 
 			float[] point = new float[3] { 0, 0, 0 };
 			Dictionary<int, int> remapped = new Dictionary<int, int>();
 			Dictionary<int, Vector3> averages = new Dictionary<int, Vector3>();
-			int index = sharedIndices.Length;
+			int index = sharedIndexes.Length;
 
 			foreach(int commonIndex in common)
 			{
@@ -150,7 +150,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				if(remapped.ContainsKey(commonIndex))
 					continue;
 
-				Vector3 v = vertexes[sharedIndices[commonIndex][0]].position;
+				Vector3 v = vertexes[sharedIndexes[commonIndex][0]].position;
 
 				point[0] = v.x;
 				point[1] = v.y;
@@ -208,7 +208,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			foreach(var kvp in remapped)
 			{
-				int[] tris = sharedIndices[kvp.Key];
+				int[] tris = sharedIndexes[kvp.Key];
 
 				welds[n++] = tris[0];
 
@@ -230,7 +230,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		///	This method does not perform any input validation, so make sure edgeAndCommonIndex is distinct and all winged edges belong
 		///	to the same face.
 		///<pre>
-		///	`appendedVertexes` is common index and a list of the new face indices it was split into.
+		///	`appendedVertexes` is common index and a list of the new face indexes it was split into.
 		///
 		///	_ _ _ _          _ _ _
 		///	|              /

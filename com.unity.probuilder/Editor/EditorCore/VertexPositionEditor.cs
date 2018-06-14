@@ -21,11 +21,11 @@ namespace UnityEditor.ProBuilder
 			public bool isVisible = false;
 			public IEnumerable<int> common;
 
-			public VertexEditorSelection(Dictionary<int, int> lookup, bool visible, int[] indices)
+			public VertexEditorSelection(Dictionary<int, int> lookup, bool visible, int[] indexes)
 			{
 				this.lookup = lookup;
 				this.isVisible = visible;
-				this.common = IntArrayUtility.GetCommonIndexes(lookup, indices);
+				this.common = IntArrayUtility.GetCommonIndexes(lookup, indexes);
 			}
 		}
 
@@ -233,9 +233,9 @@ namespace UnityEditor.ProBuilder
 
 				foreach(int i in sel.common)
 				{
-					int[] indices = pb.sharedIndexesInternal[i];
+					int[] indexes = pb.sharedIndexesInternal[i];
 
-					Vector3 point = pb.transform.TransformPoint(positions[indices[0]]);
+					Vector3 point = pb.transform.TransformPoint(positions[indexes[0]]);
 
 					Vector2 cen = HandleUtility.WorldToGUIPoint(point);
 

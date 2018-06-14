@@ -113,14 +113,14 @@ namespace UnityEngine.ProBuilder
 		/// Returns the Area of a polygon.
 		/// </summary>
 		/// <param name="vertexes"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <returns></returns>
-		internal static float PolygonArea(Vector3[] vertexes, int[] indices)
+		internal static float PolygonArea(Vector3[] vertexes, int[] indexes)
 		{
 			float area = 0f;
 
-			for(int i = 0; i < indices.Length; i += 3)
-				area += TriangleArea(vertexes[indices[i]], vertexes[indices[i+1]], vertexes[indices[i+2]]);
+			for(int i = 0; i < indexes.Length; i += 3)
+				area += TriangleArea(vertexes[indexes[i]], vertexes[indexes[i+1]], vertexes[indexes[i+2]]);
 
 			return area;
 		}
@@ -356,19 +356,19 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="polygon">A series of individual edges composing a polygon.  polygon length *must* be divisible by 2.</param>
 		/// <param name="point"></param>
-		/// <param name="indices">If present these indices make up the border of polygon. If not, polygon is assumed to be in correct order.</param>
+		/// <param name="indexes">If present these indexes make up the border of polygon. If not, polygon is assumed to be in correct order.</param>
 		/// <returns>True if the polygon contains point. False otherwise.</returns>
-		internal static bool PointInPolygon(Vector2[] polygon, Vector2 point, int[] indices = null)
+		internal static bool PointInPolygon(Vector2[] polygon, Vector2 point, int[] indexes = null)
 		{
-			int len = indices != null ? indices.Length : polygon.Length;
+			int len = indexes != null ? indexes.Length : polygon.Length;
 
 			if(len % 2 != 0)
 			{
-				Debug.LogError("PointInPolygon requires polygon indices be divisible by 2!");
+				Debug.LogError("PointInPolygon requires polygon indexes be divisible by 2!");
 				return false;
 			}
 
-			Bounds2D bounds = new Bounds2D(polygon, indices);
+			Bounds2D bounds = new Bounds2D(polygon, indexes);
 
 			if(bounds.ContainsPoint(point))
 			{
@@ -377,8 +377,8 @@ namespace UnityEngine.ProBuilder
 
 				for(int i = 0; i < len; i += 2)
 				{
-					int a = indices != null ? indices[i] : i;
-					int b = indices != null ? indices[i + 1] : i + 1;
+					int a = indexes != null ? indexes[i] : i;
+					int b = indexes != null ? indexes[i + 1] : i + 1;
 
 					if( GetLineSegmentIntersect(rayStart, point, polygon[a], polygon[b]) )
 						collisions++;
@@ -627,14 +627,14 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Calculate the normal of a set of vertexes. If indices is null or not divisible by 3, the first 3 positions are used.  If indices is valid, an average of each set of 3 is taken.
+		/// Calculate the normal of a set of vertexes. If indexes is null or not divisible by 3, the first 3 positions are used.  If indexes is valid, an average of each set of 3 is taken.
 		/// </summary>
 		/// <param name="vertexes"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <returns></returns>
-		internal static Vector3 Normal(IList<Vertex> vertexes, IList<int> indices = null)
+		internal static Vector3 Normal(IList<Vertex> vertexes, IList<int> indexes = null)
 		{
-			if(indices == null || indices.Count % 3 != 0)
+			if(indexes == null || indexes.Count % 3 != 0)
 			{
 				Vector3 cross = Vector3.Cross(vertexes[1].position - vertexes[0].position, vertexes[2].position - vertexes[0].position);
 				cross.Normalize();
@@ -642,11 +642,11 @@ namespace UnityEngine.ProBuilder
 			}
 			else
 			{
-				int len = indices.Count;
+				int len = indexes.Count;
 				Vector3 nrm = Vector3.zero;
 
 				for(int i = 0; i < len; i += 3)
-					nrm += Normal(vertexes[indices[i]].position, vertexes[indices[i+1]].position, vertexes[indices[i+2]].position);
+					nrm += Normal(vertexes[indexes[i]].position, vertexes[indexes[i+1]].position, vertexes[indexes[i+2]].position);
 
 				nrm /= (len/3f);
 				nrm.Normalize();
@@ -737,7 +737,7 @@ namespace UnityEngine.ProBuilder
 		public static Normals NormalTangentBitangent(ProBuilderMesh mesh, Face face)
 		{
 			if(mesh == null || face == null || face.indexesInternal.Length < 3)
-                throw new System.ArgumentNullException("mesh", "Cannot find normal, tangent, and bitangent for null object, or faces with < 3 indices.");
+                throw new System.ArgumentNullException("mesh", "Cannot find normal, tangent, and bitangent for null object, or faces with < 3 indexes.");
 
 			if(mesh.texturesInternal == null || mesh.texturesInternal.Length != mesh.vertexCount)
 				throw new ArgumentException("Mesh textures[0] channel is not present, cannot calculate tangents.");
@@ -910,19 +910,19 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// The smallest X and Y value found in an array of Vector2.  May or may not belong to the same Vector2.
+		/// The smallest X and Y value found in an array of Vector2. May or may not belong to the same Vector2.
 		/// </summary>
 		/// <param name="v"></param>
-		/// <param name="indices">Indices of v array to test.</param>
+		/// <param name="indexes">Indexes of v array to test.</param>
 		/// <returns></returns>
-		internal static Vector2 SmallestVector2(Vector2[] v, int[] indices)
+		internal static Vector2 SmallestVector2(Vector2[] v, int[] indexes)
 		{
-			int len = indices.Length;
-			Vector2 l = v[indices[0]];
+			int len = indexes.Length;
+			Vector2 l = v[indexes[0]];
 			for(int i = 0; i < len; i++)
 			{
-				if(v[indices[i]].x < l.x) l.x = v[indices[i]].x;
-				if(v[indices[i]].y < l.y) l.y = v[indices[i]].y;
+				if(v[indexes[i]].x < l.x) l.x = v[indexes[i]].x;
+				if(v[indexes[i]].y < l.y) l.y = v[indexes[i]].y;
 			}
 			return l;
 		}
@@ -944,14 +944,14 @@ namespace UnityEngine.ProBuilder
 			return l;
 		}
 
-		internal static Vector2 LargestVector2(Vector2[] v, int[] indices)
+		internal static Vector2 LargestVector2(Vector2[] v, int[] indexes)
 		{
-			int len = indices.Length;
-			Vector2 l = v[indices[0]];
+			int len = indexes.Length;
+			Vector2 l = v[indexes[0]];
 			for(int i = 0; i < len; i++)
 			{
-				if(v[indices[i]].x > l.x) l.x = v[indices[i]].x;
-				if(v[indices[i]].y > l.y) l.y = v[indices[i]].y;
+				if(v[indexes[i]].x > l.x) l.x = v[indexes[i]].x;
+				if(v[indexes[i]].y > l.y) l.y = v[indexes[i]].y;
 			}
 			return l;
 		}
@@ -988,7 +988,7 @@ namespace UnityEngine.ProBuilder
 		/// Gets the average of a vector array.
 		/// </summary>
 		/// <param name="array">The array</param>
-		/// <param name="indexes">If provided the average is the sum of all points contained in the indices array. If not, the entire v array is used.</param>
+		/// <param name="indexes">If provided the average is the sum of all points contained in the indexes array. If not, the entire v array is used.</param>
 		/// <returns>Average Vector3 of passed vertex array.</returns>
 		internal static Vector2 Average(IList<Vector2> array, IList<int> indexes = null)
 		{
@@ -1010,7 +1010,7 @@ namespace UnityEngine.ProBuilder
 		/// Gets the average of a vector array.
 		/// </summary>
 		/// <param name="array">The array</param>
-		/// <param name="indexes">If provided the average is the sum of all points contained in the indices array. If not, the entire v array is used.</param>
+		/// <param name="indexes">If provided the average is the sum of all points contained in the indexes array. If not, the entire v array is used.</param>
 		/// <returns>Average Vector3 of passed vertex array.</returns>
 		internal static Vector3 Average(IList<Vector3> array, IList<int> indexes = null)
 		{
@@ -1076,25 +1076,25 @@ namespace UnityEngine.ProBuilder
 			return sum/len;
 		}
 
-		internal static Vector4 Average(IList<Vector4> v, IList<int> indices = null)
+		internal static Vector4 Average(IList<Vector4> v, IList<int> indexes = null)
 		{
 			Vector4 sum = Vector4.zero;
-			float len = indices == null ? v.Count : indices.Count;
-			if( indices == null )
+			float len = indexes == null ? v.Count : indexes.Count;
+			if( indexes == null )
 				for(int i = 0; i < len; i++) sum += v[i];
 			else
-				for(int i = 0; i < len; i++) sum += v[indices[i]];
+				for(int i = 0; i < len; i++) sum += v[indexes[i]];
 			return sum/len;
 		}
 
-		internal static Color Average(IList<Color> c, IList<int> indices = null)
+		internal static Color Average(IList<Color> c, IList<int> indexes = null)
 		{
 			Color sum = c[0];
-			float len = indices == null ? c.Count : indices.Count;
-			if( indices == null )
+			float len = indexes == null ? c.Count : indexes.Count;
+			if( indexes == null )
 				for(int i = 1; i < len; i++) sum += c[i];
 			else
-				for(int i = 1; i < len; i++) sum += c[indices[i]];
+				for(int i = 1; i < len; i++) sum += c[indexes[i]];
 			return sum/len;
 		}
 

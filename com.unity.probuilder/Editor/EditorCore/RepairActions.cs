@@ -82,23 +82,23 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Repair/Rebuild Shared Indices Cache", true, PreferenceKeys.menuRepair)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Repair/Rebuild Shared Indexes Cache", true, PreferenceKeys.menuRepair)]
 		static bool VertifyRebuildMeshes()
 		{
 			return InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms).Length > 0;
 		}
 
-		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Repair/Rebuild Shared Indices Cache", false, PreferenceKeys.menuRepair)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Repair/Rebuild Shared Indexes Cache", false, PreferenceKeys.menuRepair)]
 		public static void DoRebuildMeshes()
 		{
-			RebuildSharedIndices( InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms) );
+			RebuildSharedIndexes( InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms) );
 		}
 
 		/// <summary>
 		/// Rebuild targets if they can't be refreshed.
 		/// </summary>
 		/// <param name="targets"></param>
-		static void RebuildSharedIndices(ProBuilderMesh[] targets)
+		static void RebuildSharedIndexes(ProBuilderMesh[] targets)
 		{
 			StringBuilder sb = new StringBuilder();
 
@@ -106,7 +106,7 @@ namespace UnityEditor.ProBuilder
 			{
 				UnityEditor.EditorUtility.DisplayProgressBar(
 					"Refreshing ProBuilder Objects",
-					"Reshaping pb_Object " + targets[i].id + ".",
+					"Rebuilding mesh " + targets[i].id + ".",
 					((float)i / targets.Length));
 
 				ProBuilderMesh pb = targets[i];
@@ -121,7 +121,7 @@ namespace UnityEditor.ProBuilder
 				}
 				catch(System.Exception e)
 				{
-					sb.AppendLine("Failed rebuilding " + pb.name + " shared indices cache.\n" + e.ToString());
+					sb.AppendLine("Failed rebuilding " + pb.name + " shared indexes cache.\n" + e.ToString());
 				}
 			}
 

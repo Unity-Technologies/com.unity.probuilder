@@ -14,7 +14,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 	static class InternalMeshUtility
 	{
 		/// <summary>
-		/// Averages shared normals with the mask of all (indices contained in perimeter edge)
+		/// Averages shared normals with the mask of all (indexes contained in perimeter edge)
 		/// </summary>
 		internal static Vector3 AverageNormalWithIndexes(int[] shared, int[] all, Vector3[] norm )
 		{
@@ -74,7 +74,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 				f.AddRange(faces);
 
-				// Shared Indices
+				// Shared indexes
 				IntArray[] si = pb.GetSharedIndexes();
 				for(int i = 0; i < si.Length; i++)
 				{
@@ -83,7 +83,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 				s.AddRange(si);
 
-				// Shared Indices UV
+				// Shared indexes UV
 				{
 					IntArray[] si_uv = pb.GetSharedIndexesUV();
 					for(int i = 0; i < si_uv.Length; i++)

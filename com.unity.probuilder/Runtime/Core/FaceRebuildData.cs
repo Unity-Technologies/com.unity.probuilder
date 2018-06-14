@@ -13,10 +13,10 @@ namespace UnityEngine.ProBuilder
 		public Face face;
 		// new vertexes (all vertexes required to rebuild, not just new)
 		public List<Vertex> vertexes;
-		// shared indices pointers (must match vertexes length)
-		public List<int> sharedIndices;
-		// shared UV indices pointers (must match vertexes length)
-		public List<int> sharedIndicesUV;
+		// shared indexes pointers (must match vertexes length)
+		public List<int> sharedIndexes;
+		// shared UV indexes pointers (must match vertexes length)
+		public List<int> sharedIndexesUV;
 		// The offset applied to this face via Apply() call.
 		private int _appliedOffset = 0;
 #pragma warning restore 0649
@@ -31,7 +31,7 @@ namespace UnityEngine.ProBuilder
 
 		public override string ToString()
 		{
-			return string.Format("{0}\n{1}", vertexes.ToString(", "), sharedIndices.ToString(", "));
+			return string.Format("{0}\n{1}", vertexes.ToString(", "), sharedIndexes.ToString(", "));
 		}
 
 		public static void Apply(
@@ -62,19 +62,19 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Shift face rebuild data to appropriate positions and update the vertex, face, and shared indices arrays.
+		/// Shift face rebuild data to appropriate positions and update the vertex, face, and shared indexes arrays.
 		/// </summary>
 		/// <param name="newFaces"></param>
 		/// <param name="vertexes"></param>
 		/// <param name="faces"></param>
-		/// <param name="sharedIndices"></param>
-		/// <param name="sharedIndicesUV"></param>
+		/// <param name="sharedIndexes"></param>
+		/// <param name="sharedIndexesUV"></param>
 		public static void Apply(
 			IEnumerable<FaceRebuildData> newFaces,
 			List<Vertex> vertexes,
 			List<Face> faces,
-			Dictionary<int, int> sharedIndices,
-			Dictionary<int, int> sharedIndicesUV = null)
+			Dictionary<int, int> sharedIndexes,
+			Dictionary<int, int> sharedIndexesUV = null)
 		{
 			int index = vertexes.Count;
 
@@ -83,28 +83,28 @@ namespace UnityEngine.ProBuilder
 				Face face = rd.face;
 				int faceVertexCount = rd.vertexes.Count;
 
-				bool hasSharedIndices 	= sharedIndices != null && rd.sharedIndices != null && rd.sharedIndices.Count == faceVertexCount;
-				bool hasSharedIndicesUV = sharedIndicesUV != null && rd.sharedIndicesUV != null && rd.sharedIndicesUV.Count == faceVertexCount;
+				bool hasSharedIndexes = sharedIndexes != null && rd.sharedIndexes != null && rd.sharedIndexes.Count == faceVertexCount;
+				bool hasSharedIndexesUV = sharedIndexesUV != null && rd.sharedIndexesUV != null && rd.sharedIndexesUV.Count == faceVertexCount;
 
 				for(int n = 0; n < faceVertexCount; n++)
 				{
 					int localIndex = n;
 
-					if(sharedIndices != null)
-						sharedIndices.Add(localIndex + index, hasSharedIndices ? rd.sharedIndices[localIndex] : -1);
+					if(sharedIndexes != null)
+						sharedIndexes.Add(localIndex + index, hasSharedIndexes ? rd.sharedIndexes[localIndex] : -1);
 
-					if(sharedIndicesUV != null)
-						sharedIndicesUV.Add(localIndex + index, hasSharedIndicesUV ? rd.sharedIndicesUV[localIndex] : -1);
+					if(sharedIndexesUV != null)
+						sharedIndexesUV.Add(localIndex + index, hasSharedIndexesUV ? rd.sharedIndexesUV[localIndex] : -1);
 				}
 
 				rd._appliedOffset = index;
-				int[] indices = face.indexesInternal;
+				int[] faceIndexes = face.indexesInternal;
 
-				for(int n = 0, c = indices.Length; n < c; n++)
-					indices[n] += index;
+				for(int n = 0, c = faceIndexes.Length; n < c; n++)
+					faceIndexes[n] += index;
 
 				index += rd.vertexes.Count;
-				face.indexesInternal = indices;
+				face.indexesInternal = faceIndexes;
 				faces.Add(face);
 				vertexes.AddRange(rd.vertexes);
 			}

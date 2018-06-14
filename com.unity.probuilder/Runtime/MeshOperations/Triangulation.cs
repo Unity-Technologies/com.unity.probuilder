@@ -14,13 +14,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 	{
 		/// <summary>
 		/// Given a set of points this method will format the points into a boundary contour and triangulate, returning
-		/// a set of indices that corresponds to the original ordering.
+		/// a set of indexes that corresponds to the original ordering.
 		/// </summary>
 		/// <param name="points"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <param name="convex"></param>
 		/// <returns></returns>
-		public static bool SortAndTriangulate(IList<Vector2> points, out List<int> indices, bool convex = false)
+		public static bool SortAndTriangulate(IList<Vector2> points, out List<int> indexes, bool convex = false)
 		{
 			IList<Vector2> sorted = Projection.Sort(points, SortMethod.CounterClockwise);
 
@@ -29,11 +29,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			for(int i = 0; i < sorted.Count; i++)
 				map.Add(i, points.IndexOf(sorted[i]));
 
-			if(!Triangulate(sorted, out indices, convex))
+			if(!Triangulate(sorted, out indexes, convex))
 				return false;
 
-			for(int i = 0; i < indices.Count; i++)
-				indices[i] = map[indices[i]];
+			for(int i = 0; i < indexes.Count; i++)
+				indexes[i] = map[indexes[i]];
 
 			return true;
 		}
@@ -80,15 +80,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Given a set of points ordered counter-clockwise along a contour, return triangle indices.
+		/// Given a set of points ordered counter-clockwise along a contour, return triangle indexes.
 		/// </summary>
 		/// <param name="points"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <param name="convex">Triangulation may optionally be set to convex, which will result in some a convex shape.</param>
 		/// <returns></returns>
-		public static bool Triangulate(IList<Vector2> points, out List<int> indices, bool convex = false)
+		public static bool Triangulate(IList<Vector2> points, out List<int> indexes, bool convex = false)
 		{
-			indices = new List<int>();
+			indexes = new List<int>();
 
 			int index = 0;
 
@@ -114,9 +114,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					return false;
 				}
 
-				indices.Add( d.Points[0].Index );
-				indices.Add( d.Points[1].Index );
-				indices.Add( d.Points[2].Index );
+				indexes.Add( d.Points[0].Index );
+				indexes.Add( d.Points[1].Index );
+				indexes.Add( d.Points[2].Index );
 			}
 
 			WindingOrder originalWinding = SurfaceTopology.GetWindingOrder(points);
@@ -124,11 +124,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			// if the re-triangulated first tri doesn't match the winding order of the original
 			// vertexes, flip 'em
 			if( SurfaceTopology.GetWindingOrder(new Vector2[3]{
-				points[indices[0]],
-				points[indices[1]],
-				points[indices[2]],
+				points[indexes[0]],
+				points[indexes[1]],
+				points[indexes[2]],
 				}) != originalWinding)
-				indices.Reverse();
+				indexes.Reverse();
 
 			return true;
 		}

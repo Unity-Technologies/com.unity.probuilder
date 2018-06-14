@@ -28,24 +28,24 @@ namespace UnityEngine.ProBuilder
 			return PlanarProject(pb.positionsInternal, normal, VectorToProjectionAxis(normal), face.indexesInternal);
 		}
 
-		internal static Vector2[] PlanarProject(IList<Vertex> vertexes, IList<int> indices)
+		internal static Vector2[] PlanarProject(IList<Vertex> vertexes, IList<int> indexes)
 		{
-			int len = indices.Count;
+			int len = indexes.Count;
 
 			Vector3[] v = new Vector3[len];
 
 			for(int i = 0; i < len; i++)
-				v[i] = vertexes[indices[i]].position;
+				v[i] = vertexes[indexes[i]].position;
 
-			Vector3 normal = Math.Normal(vertexes, indices);
+			Vector3 normal = Math.Normal(vertexes, indexes);
 			ProjectionAxis axis = VectorToProjectionAxis(normal);
 
 			return PlanarProject(v, normal, axis, null);
 		}
 
-		internal static Vector2[] PlanarProject(Vector3[] verts, Vector3 planeNormal, ProjectionAxis projectionAxis, int[] indices = null)
+		internal static Vector2[] PlanarProject(Vector3[] verts, Vector3 planeNormal, ProjectionAxis projectionAxis, int[] indexes = null)
 		{
-			int len = indices == null || indices.Length < 1 ? verts.Length : indices.Length;
+			int len = indexes == null || indexes.Length < 1 ? verts.Length : indexes.Length;
 			Vector2[] uvs = new Vector2[len];
 			Vector3 vec = Vector3.zero;
 
@@ -82,7 +82,7 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < len; i++)
 			{
-				int x = indices != null ? indices[i] : i;
+				int x = indexes != null ? indexes[i] : i;
 				float u, v;
 
 				u = Vector3.Dot(uAxis, verts[x]);
@@ -94,7 +94,7 @@ namespace UnityEngine.ProBuilder
 			return uvs;
 		}
 
-		internal static void PlanarProject(Vector3[] verts, Vector2[] uvs, int[] indices, Vector3 planeNormal, ProjectionAxis projectionAxis)
+		internal static void PlanarProject(Vector3[] verts, Vector2[] uvs, int[] indexes, Vector3 planeNormal, ProjectionAxis projectionAxis)
 		{
 			Vector3 vec;
 
@@ -128,26 +128,26 @@ namespace UnityEngine.ProBuilder
 			Math.Cross(s_UAxis, planeNormal, ref s_VAxis.x, ref s_VAxis.y, ref s_VAxis.z);
 			s_VAxis.Normalize();
 
-			int len = indices.Length;
+			int len = indexes.Length;
 
 			for(int i = 0; i < len; i++)
 			{
-				int x = indices[i];
+				int x = indexes[i];
 
 				uvs[x].x = Vector3.Dot(s_UAxis, verts[x]);
 				uvs[x].y = Vector3.Dot(s_VAxis, verts[x]);
 			}
 		}
 
-		internal static Vector2[] SphericalProject(IList<Vector3> vertexes, IList<int> indices = null)
+		internal static Vector2[] SphericalProject(IList<Vector3> vertexes, IList<int> indexes = null)
 		{
-			int len = indices == null ? vertexes.Count : indices.Count;
+			int len = indexes == null ? vertexes.Count : indexes.Count;
 			Vector2[] uv = new Vector2[len];
-			Vector3 cen = Math.Average(vertexes, indices);
+			Vector3 cen = Math.Average(vertexes, indexes);
 
 			for(int i = 0; i < len; i++)
 			{
-				int indx = indices == null ? i : indices[i];
+				int indx = indexes == null ? i : indexes[i];
 				Vector3 p = (vertexes[indx] - cen);
 				p.Normalize();
 				uv[i].x = .5f + (Mathf.Atan2(p.z, p.x) / (2f * Mathf.PI));
@@ -242,21 +242,21 @@ namespace UnityEngine.ProBuilder
 		/// <remarks>http://www.ilikebigbits.com/blog/2015/3/2/plane-from-points</remarks>
 		/// <param name="points"></param>
 		/// <param name="selector"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		internal static Plane FindBestPlane<T>(IList<T> points, System.Func<T, Vector3> selector, IList<int> indices = null)
+		internal static Plane FindBestPlane<T>(IList<T> points, System.Func<T, Vector3> selector, IList<int> indexes = null)
 		{
 			float 	xx = 0f, xy = 0f, xz = 0f,
 					yy = 0f, yz = 0f, zz = 0f;
 
-			bool ind = indices != null && indices.Count > 0;
-			int len = ind ? indices.Count : points.Count;
-			Vector3 c = Math.Average(points, selector, indices);
+			bool ind = indexes != null && indexes.Count > 0;
+			int len = ind ? indexes.Count : points.Count;
+			Vector3 c = Math.Average(points, selector, indexes);
 
 			for(int i = 0; i < len; i++)
 			{
-				Vector3 r = selector(points[ ind ? indices[i] : i ]) - c;
+				Vector3 r = selector(points[ ind ? indexes[i] : i ]) - c;
 
 				xx += r.x * r.x;
 				xy += r.x * r.y;

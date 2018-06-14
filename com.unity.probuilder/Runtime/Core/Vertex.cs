@@ -520,7 +520,7 @@ namespace UnityEngine.ProBuilder
 		/// Creates a new array of vertexes with values from a @"UnityEngine.ProBuilder.ProBuilderMesh" component.
 		/// </summary>
 		/// <param name="mesh">The source mesh.</param>
-		/// <param name="indexes">An optional list of indices pointing to the mesh attribute indexes to include in the returned Vertex array.</param>
+		/// <param name="indexes">An optional list of indexes pointing to the mesh attribute indexes to include in the returned Vertex array.</param>
 		/// <returns>An array of vertexes.</returns>
 		public static Vertex[] GetVertexes(ProBuilderMesh mesh, IList<int> indexes = null)
 		{
