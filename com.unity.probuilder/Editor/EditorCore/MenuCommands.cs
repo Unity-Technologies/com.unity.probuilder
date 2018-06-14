@@ -1349,10 +1349,10 @@ namespace UnityEditor.ProBuilder
 
 				// Reattach detached face vertexes (if any are to be had)
 				if(pb.selectedFacesInternal.Length > 0)
-					pb.WeldVertexes(pb.selectedFacesInternal.SelectMany(x => x.ToTriangles()), Mathf.Epsilon);
+					pb.WeldVertexes(pb.selectedFacesInternal.SelectMany(x => x.indexes), Mathf.Epsilon);
 
 				// And set the selected triangles to the newly split
-				List<int> newTriSelection = new List<int>(pb.selectedFacesInternal.SelectMany(x => x.ToTriangles()));
+				List<int> newTriSelection = new List<int>(pb.selectedFacesInternal.SelectMany(x => x.indexes));
 				newTriSelection.AddRange(tris);
 				pb.SetSelectedVertexes(newTriSelection.ToArray());
 
@@ -1386,7 +1386,7 @@ namespace UnityEditor.ProBuilder
 			foreach(ProBuilderMesh pb in selection)
 			{
 				bool selectAll = pb.selectedIndexesInternal == null || pb.selectedIndexesInternal.Length < 1;
-				IEnumerable<int> indexes = selectAll ? pb.facesInternal.SelectMany(x => x.ToTriangles()) : pb.selectedIndexesInternal;
+				IEnumerable<int> indexes = selectAll ? pb.facesInternal.SelectMany(x => x.indexes) : pb.selectedIndexesInternal;
 
 				pb.ToMesh();
 

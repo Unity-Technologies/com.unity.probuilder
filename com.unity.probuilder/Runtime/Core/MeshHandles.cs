@@ -15,7 +15,7 @@ namespace UnityEngine.ProBuilder
 		{
 			target.Clear();
 			target.vertices = mesh.positionsInternal;
-			target.triangles = mesh.selectedFacesInternal.SelectMany(x => x.ToTriangles()).ToArray();
+			target.triangles = mesh.selectedFacesInternal.SelectMany(x => x.indexes).ToArray();
 		}
 
 		internal static void CreateEdgeMesh(ProBuilderMesh mesh, Mesh target)

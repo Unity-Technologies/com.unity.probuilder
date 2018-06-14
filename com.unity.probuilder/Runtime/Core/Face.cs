@@ -290,14 +290,6 @@ namespace UnityEngine.ProBuilder
 			return false;
 		}
 
-	    public int[] ToTriangles()
-	    {
-		    int len = indexesInternal.Length;
-		    int[] copy = new int[len];
-		    Array.Copy(indexesInternal, copy, len);
-		    return copy;
-	    }
-
 	    /// <summary>
 	    /// Is this face representable as quad?
 	    /// </summary>

@@ -520,7 +520,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			{
 				faces = System.Array.FindAll(faces, x => x.manualUV).ToArray();	// only operate on faces that were previously manual
 
-				pb.SplitUVs( faces.SelectMany(x => x.ToTriangles()) );
+				pb.SplitUVs( faces.SelectMany(x => x.indexes) );
 
 				Vector2[][] uv_origins = new Vector2[faces.Length][];
 				for(int i = 0; i < faces.Length; i++)
@@ -529,7 +529,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				for(int f = 0; f < faces.Length; f++)
 				{
 					faces[f].uv.Reset();
-					faces[f].manualUV = !auto;
+					faces[f].manualUV = false;
 					faces[f].elementGroup = -1;
 				}
 
@@ -554,7 +554,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				foreach(Face f in faces)
 				{
 					f.textureGroup = -1;
-					f.manualUV = !auto;
+					f.manualUV = true;
 				}
 			}
 		}
