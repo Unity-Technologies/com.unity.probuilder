@@ -558,29 +558,5 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 		}
-
-		/**
-		 * Iterates through uvs and returns the nearest Vector2 to pos.  If uvs lenght is < 1, return pos.
-		 */
-		public static Vector2 NearestVector2(Vector2 pos, Vector2[] uvs)
-		{
-			if(uvs.Length < 1) return pos;
-
-			Vector2 nearest = uvs[0];
-			float best = Vector2.Distance(pos, nearest);
-
-			for(int i = 1; i < uvs.Length; i++)
-			{
-				float dist = Vector2.Distance(pos, uvs[i]);
-
-				if(dist < best)
-				{
-					best = dist;
-					nearest = uvs[i];
-				}
-			}
-
-			return nearest;
-		}
 	}
 }

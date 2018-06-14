@@ -327,69 +327,6 @@ namespace UnityEngine.ProBuilder
 			return quad;
 		}
 
-		/// <summary>
-		/// Create submeshes from a set of faces. Currently only Quads and Triangles are supported.
-		/// </summary>
-		/// <param name="faces"></param>
-		/// <param name="preferredTopology"></param>
-		/// <returns>An array of Submeshes.</returns>
-		/// <exception cref="NotImplementedException"></exception>
-		public static Submesh[] GetSubmeshes(IEnumerable<Face> faces, MeshTopology preferredTopology = MeshTopology.Triangles)
-		{
-			if(preferredTopology != MeshTopology.Triangles && preferredTopology != MeshTopology.Quads)
-				throw new System.NotImplementedException("Currently only Quads and Triangles are supported.");
-
-            if (faces == null)
-                throw new ArgumentNullException("faces");
-
-			bool wantsQuads = preferredTopology == MeshTopology.Quads;
-
-			Dictionary<Material, List<int>> quads = wantsQuads ? new Dictionary<Material, List<int>>() : null;
-			Dictionary<Material, List<int>> tris = new Dictionary<Material, List<int>>();
-
-            foreach(var face in faces)
-			{
-				if(face.indexesInternal == null || face.indexesInternal.Length < 1)
-					continue;
-
-				Material material = face.material ?? BuiltinMaterials.defaultMaterial;
-				List<int> polys = null;
-
-
-				if(wantsQuads && face.IsQuad())
-				{
-					int[] res = face.ToQuad();
-
-					if(quads.TryGetValue(material, out polys))
-						polys.AddRange(res);
-					else
-						quads.Add(material, new List<int>(res));
-				}
-				else
-				{
-					if(tris.TryGetValue(material, out polys))
-						polys.AddRange(face.indexesInternal);
-					else
-						tris.Add(material, new List<int>(face.indexesInternal));
-				}
-			}
-
-			int submeshCount = (quads != null ? quads.Count : 0) + tris.Count;
-			var submeshes = new Submesh[submeshCount];
-			int ii = 0;
-
-			if(quads != null)
-			{
-				foreach(var kvp in quads)
-					submeshes[ii++] = new Submesh(kvp.Key, MeshTopology.Quads, kvp.Value.ToArray());
-			}
-
-			foreach(var kvp in tris)
-				submeshes[ii++] = new Submesh(kvp.Key, MeshTopology.Triangles, kvp.Value.ToArray());
-
-			return submeshes;
-		}
-
 		public override string ToString()
 		{
 			// shouldn't ever be the case
