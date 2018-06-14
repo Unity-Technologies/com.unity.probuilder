@@ -75,7 +75,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Populate a rendereble's mesh with a spattering of vertices representing both selected and not selected.
+		/// Populate a rendereble's mesh with a spattering of vertexes representing both selected and not selected.
 		/// </summary>
 		/// <param name="mesh"></param>
 		/// <param name="target"></param>
@@ -154,7 +154,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Draw a set of vertices.
+		/// Draw a set of vertexes.
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="target"></param>

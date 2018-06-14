@@ -91,7 +91,7 @@ namespace UnityEngine.ProBuilder
 					verts[indices[i]] += localOffset;
 			}
 
-			// don't bother calling a full ToMesh() here because we know for certain that the vertexes and msh.vertices arrays are equal in length
+			// don't bother calling a full ToMesh() here because we know for certain that the vertexes and msh.vertexes arrays are equal in length
 			mesh.SetPositions(verts);
 			mesh.mesh.vertices = verts;
 		}

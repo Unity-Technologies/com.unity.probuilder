@@ -612,13 +612,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             List<Edge> wound = WingedEdge.SortEdgesByAdjacency(face);
 
-            List<Vertex> n_vertices = new List<Vertex>();
+            List<Vertex> n_vertexes = new List<Vertex>();
             List<int> n_shared = new List<int>();
             List<int> n_sharedUV = lookupUV != null ? new List<int>() : null;
 
             for (int i = 0; i < wound.Count; i++)
 			{
-				n_vertices.Add(vertexes[wound[i].a]);
+				n_vertexes.Add(vertexes[wound[i].a]);
 				n_shared.Add(lookup[wound[i].a]);
 
 				if(lookupUV != null)
@@ -638,12 +638,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				int index = -1;
 				float best = Mathf.Infinity;
 				Vector3 p = points[i];
-				int vc = n_vertices.Count;
+				int vc = n_vertexes.Count;
 
 				for(int n = 0; n < vc; n++)
 				{
-					Vector3 v = n_vertices[n].position;
-					Vector3 w = n_vertices[(n + 1) % vc].position;
+					Vector3 v = n_vertexes[n].position;
+					Vector3 w = n_vertexes[(n + 1) % vc].position;
 
 					float dist = Math.DistancePointLineSegment(p, v, w);
 
@@ -654,14 +654,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					}
 				}
 
-				Vertex left = n_vertices[index], right = n_vertices[(index+1) % vc];
+				Vertex left = n_vertexes[index], right = n_vertexes[(index+1) % vc];
 
 				float x = (p - left.position).sqrMagnitude;
 				float y = (p - right.position).sqrMagnitude;
 
 				Vertex insert = Vertex.Mix(left, right, x / (x + y));
 
-				n_vertices.Insert((index + 1) % vc, insert);
+				n_vertexes.Insert((index + 1) % vc, insert);
 				n_shared.Insert((index + 1) % vc, -1);
 				if(n_sharedUV != null) n_sharedUV.Insert((index + 1) % vc, -1);
 			}
@@ -670,7 +670,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			try
 			{
-				Triangulation.TriangulateVertexes(n_vertices, out triangles, false);
+				Triangulation.TriangulateVertexes(n_vertexes, out triangles, false);
 			}
 			catch
 			{
@@ -681,7 +681,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			FaceRebuildData data = new FaceRebuildData();
 
 			data.face = new Face(triangles.ToArray(), face.material, new AutoUnwrapSettings(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
-			data.vertexes 			= n_vertices;
+			data.vertexes 			= n_vertexes;
 			data.sharedIndices 		= n_shared;
 			data.sharedIndicesUV 	= n_sharedUV;
 
@@ -759,11 +759,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			{
 				Edge localEdge = EdgeExtension.GetLocalEdgeFast(edge, mesh.sharedIndexesInternal);
 
-				// Generate the new vertices that will be inserted on this edge
-				List<Vertex> verticesToAppend = new List<Vertex>(count);
+				// Generate the new vertexes that will be inserted on this edge
+				List<Vertex> vertexesToAppend = new List<Vertex>(count);
 
 				for(int i = 0; i < count; i++)
-					verticesToAppend.Add(Vertex.Mix(vertexes[localEdge.a], vertexes[localEdge.b], (i+1)/((float)count + 1)));
+					vertexesToAppend.Add(Vertex.Mix(vertexes[localEdge.a], vertexes[localEdge.b], (i+1)/((float)count + 1)));
 
 				List<SimpleTuple<Face, Edge>> adjacentFaces = ElementSelection.GetNeighborFaces(mesh, localEdge);
 
@@ -798,7 +798,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						modifiedFaces.Add(face, data);
 					}
 
-					data.vertexes.AddRange(verticesToAppend);
+					data.vertexes.AddRange(vertexesToAppend);
 
 					for(int i = 0; i < count; i++)
 					{

@@ -622,26 +622,26 @@ namespace UnityEngine.ProBuilder
 			for (int i = 0; i < smc; ++i)
 			{
 				tris[i] = mesh.GetTriangles(i);
-				Dictionary<Vertex, int> new_vertices = new Dictionary<Vertex, int>();
+				Dictionary<Vertex, int> newVertexes = new Dictionary<Vertex, int>();
 
 				for (int n = 0; n < tris[i].Length; n++)
 				{
 					Vertex v = vertexes[tris[i][n]];
 					int index;
 
-					if (new_vertices.TryGetValue(v, out index))
+					if (newVertexes.TryGetValue(v, out index))
 					{
 						tris[i][n] = index;
 					}
 					else
 					{
 						tris[i][n] = subIndex;
-						new_vertices.Add(v, subIndex);
+						newVertexes.Add(v, subIndex);
 						subIndex++;
 					}
 				}
 
-				subVertexes.Add(new_vertices);
+				subVertexes.Add(newVertexes);
 			}
 
 			Vertex[] collapsed = subVertexes.SelectMany(x => x.Keys).ToArray();

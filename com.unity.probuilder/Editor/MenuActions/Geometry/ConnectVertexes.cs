@@ -16,8 +16,8 @@ namespace UnityEditor.ProBuilder.Actions
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
-			"Connect Vertices",
-			@"Adds edges connecting all selected vertices.",
+			"Connect Vertexes",
+			@"Adds edges connecting all selected vertexes.",
 			keyCommandAlt, 'E'
 		);
 
@@ -39,7 +39,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuConnectVertices(MeshSelection.TopInternal());
+			return MenuCommands.MenuConnectVertexes(MeshSelection.TopInternal());
 		}
 	}
 }

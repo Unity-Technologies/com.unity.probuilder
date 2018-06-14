@@ -1219,7 +1219,7 @@ namespace UnityEditor.ProBuilder
 			if(success)
 				return new ActionResult(ActionResult.Status.Success, "Collapse Vertexes");
 			else
-				return new ActionResult(ActionResult.Status.Failure, "Collapse Vertexes\nNo Vertices Selected");
+				return new ActionResult(ActionResult.Status.Failure, "Collapse Vertexes\nNo Vertexes Selected");
 		}
 
 		/**
@@ -1347,7 +1347,7 @@ namespace UnityEditor.ProBuilder
 				splitCount += pb.selectedIndexesInternal.Length;
 				pb.SplitVertexes(pb.selectedIndexesInternal);
 
-				// Reattach detached face vertices (if any are to be had)
+				// Reattach detached face vertexes (if any are to be had)
 				if(pb.selectedFacesInternal.Length > 0)
 					pb.WeldVertexes(pb.selectedFacesInternal.SelectMany(x => x.ToTriangles()), Mathf.Epsilon);
 
@@ -1364,9 +1364,9 @@ namespace UnityEditor.ProBuilder
 			ProBuilderEditor.Refresh();
 
 			if(splitCount > 0)
-				return new ActionResult(ActionResult.Status.Success, "Split " + splitCount + (splitCount > 1 ? " Vertices" : " Vertex"));
+				return new ActionResult(ActionResult.Status.Success, "Split " + splitCount + (splitCount > 1 ? " Vertexes" : " Vertex"));
 			else
-				return new ActionResult(ActionResult.Status.Failure, "Split Vertices\nInsuffient Vertices Selected");
+				return new ActionResult(ActionResult.Status.Failure, "Split Vertexes\nInsuffient Vertexes Selected");
 		}
 
 		/**
@@ -1613,14 +1613,14 @@ namespace UnityEditor.ProBuilder
 		}
 
 		/**
-		 * Connects all currently selected vertices.
+		 * Connects all currently selected vertexes.
 		 * ProBuilder only.
 		 */
-		public static ActionResult MenuConnectVertices(ProBuilderMesh[] selection)
+		public static ActionResult MenuConnectVertexes(ProBuilderMesh[] selection)
 		{
 			ActionResult res = ActionResult.NoSelection;
 
-			UndoUtility.RegisterCompleteObjectUndo(selection, "Connect Vertices");
+			UndoUtility.RegisterCompleteObjectUndo(selection, "Connect Vertexes");
 
 			foreach(ProBuilderMesh pb in selection)
 			{
