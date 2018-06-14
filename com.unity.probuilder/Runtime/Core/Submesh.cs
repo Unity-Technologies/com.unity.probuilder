@@ -6,16 +6,16 @@ using UnityEngine;
 namespace UnityEngine.ProBuilder
 {
 	/// <summary>
-	/// A set of indices and material.
+	/// A set of indexes and material.
 	/// </summary>
 	[Serializable]
 	public sealed class Submesh
 	{
 		/// <value>
-		/// Indices making up this submesh. Can be triangles or quads.
+		/// Indexes making up this submesh. Can be triangles or quads.
 		/// </value>
         [SerializeField]
-		internal int[] m_Indices;
+		internal int[] m_Indexes;
 
 		/// <value>
 		/// What topology is this submesh?
@@ -40,7 +40,7 @@ namespace UnityEngine.ProBuilder
             if (indexes == null)
                 throw new ArgumentNullException("indexes");
 
-			m_Indices = indexes.ToArray();
+			m_Indexes = indexes.ToArray();
 			m_Topology = topology;
 			m_Material = material;
 		}
@@ -56,14 +56,14 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			m_Indices = mesh.GetIndices(subMeshIndex);
+			m_Indexes = mesh.GetIndices(subMeshIndex);
 			m_Topology = mesh.GetTopology(subMeshIndex);
 			m_Material = material;
 		}
 
 		public override string ToString()
 		{
-			return string.Format("{0}, {1}, {2}", m_Material != null ? m_Material.name : "null", m_Topology.ToString(), m_Indices != null ? m_Indices.Length.ToString() : "0");
+			return string.Format("{0}, {1}, {2}", m_Material != null ? m_Material.name : "null", m_Topology.ToString(), m_Indexes != null ? m_Indexes.Length.ToString() : "0");
 		}
 	}
 }

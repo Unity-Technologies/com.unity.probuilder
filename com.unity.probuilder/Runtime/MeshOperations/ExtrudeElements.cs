@@ -83,15 +83,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Vector3[] localVerts = mesh.positionsInternal;
 			Vector3[] oNormals = mesh.mesh.normals;
 
-			int[] allEdgeIndices = new int[validEdges.Count * 2];
+			int[] allEdgeIndexes = new int[validEdges.Count * 2];
 			int c = 0;
 			for(int i = 0; i < validEdges.Count; i++)
 			{
-				allEdgeIndices[c++] = validEdges[i].a;
-				allEdgeIndices[c++] = validEdges[i].b;
+				allEdgeIndexes[c++] = validEdges[i].a;
+				allEdgeIndexes[c++] = validEdges[i].b;
 			}
 
-			List<Edge> extrudedIndices = new List<Edge>();
+			List<Edge> extrudedIndexes = new List<Edge>();
 			// used to set the editor selection to the newly created edges
 			List<Edge> newEdges = new List<Edge>();
 
@@ -103,8 +103,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				Face face = edgeFaces[i];
 
 				// Averages the normals using only vertexes that are on the edge
-				Vector3 xnorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndexes( sharedIndexes[lookup[edge.a]], allEdgeIndices, oNormals ) : Math.Normal(mesh, face);
-				Vector3 ynorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndexes( sharedIndexes[lookup[edge.b]], allEdgeIndices, oNormals ) : Math.Normal(mesh, face);
+				Vector3 xnorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndexes( sharedIndexes[lookup[edge.a]], allEdgeIndexes, oNormals ) : Math.Normal(mesh, face);
+				Vector3 ynorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndexes( sharedIndexes[lookup[edge.b]], allEdgeIndexes, oNormals ) : Math.Normal(mesh, face);
 
 				int x_sharedIndex = lookup[edge.a];
 				int y_sharedIndex = lookup[edge.b];
@@ -130,26 +130,26 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				newEdges.Add(new Edge(newFace.indexesInternal[3], newFace.indexesInternal[4]));
 
-				extrudedIndices.Add(new Edge(x_sharedIndex, newFace.indexesInternal[3]));
-				extrudedIndices.Add(new Edge(y_sharedIndex, newFace.indexesInternal[4]));
+				extrudedIndexes.Add(new Edge(x_sharedIndex, newFace.indexesInternal[3]));
+				extrudedIndexes.Add(new Edge(y_sharedIndex, newFace.indexesInternal[4]));
 			}
 
 			sharedIndexes = mesh.sharedIndexesInternal;
 
-			// merge extruded vertex indices with each other
+			// merge extruded vertex indexes with each other
 			if(extrudeAsGroup)
 			{
-				for(int i = 0; i < extrudedIndices.Count; i++)
+				for(int i = 0; i < extrudedIndexes.Count; i++)
 				{
-					int val = extrudedIndices[i].a;
-					for(int n = 0; n < extrudedIndices.Count; n++)
+					int val = extrudedIndexes[i].a;
+					for(int n = 0; n < extrudedIndexes.Count; n++)
 					{
 						if(n == i)
 							continue;
 
-						if(extrudedIndices[n].a == val)
+						if(extrudedIndexes[n].a == val)
 						{
-							IntArrayUtility.MergeSharedIndexes(ref sharedIndexes, extrudedIndices[n].b, extrudedIndices[i].b);
+							IntArrayUtility.MergeSharedIndexes(ref sharedIndexes, extrudedIndexes[n].b, extrudedIndexes[i].b);
 							break;
 						}
 					}
@@ -189,11 +189,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			{
 				FaceRebuildData data = new FaceRebuildData();
 				data.vertexes = new List<Vertex>();
-				data.sharedIndices = new List<int>();
+				data.sharedIndexes = new List<int>();
 				data.face = new Face(face);
 
 				Dictionary<int, int> match = new Dictionary<int, int>();
-				int[] indices = new int[face.indexesInternal.Length];
+				int[] indexes = new int[face.indexesInternal.Length];
 
 				for(int i = 0; i < face.indexesInternal.Length; i++)
 				{
@@ -201,19 +201,19 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 					if( match.TryGetValue(face.indexesInternal[i], out local) )
 					{
-						indices[i] = local;
+						indexes[i] = local;
 					}
 					else
 					{
 						local = data.vertexes.Count;
-						indices[i] = local;
+						indexes[i] = local;
 						match.Add(face.indexesInternal[i], local);
 						data.vertexes.Add(vertexes[face.indexesInternal[i]]);
-						data.sharedIndices.Add(lookup[face.indexesInternal[i]] + sharedIndexOffset);
+						data.sharedIndexes.Add(lookup[face.indexesInternal[i]] + sharedIndexOffset);
 					}
 				}
 
-				data.face.indexesInternal = indices.ToArray();
+				data.face.indexesInternal = indexes.ToArray();
 				detached.Add(data);
 			}
 
@@ -289,7 +289,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					vertexes.Add( yy );
 
 					Face bridge = new Face(
-						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 }, // indices
+						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 }, // indexes
 						face.material, // material
 						new AutoUnwrapSettings(face.uv), // UV material
 						face.smoothingGroup, // smoothing group
@@ -417,7 +417,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					vertexes.Add( null );
 
 					Face bridge = new Face(
-						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 }, // indices
+						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 }, // indexes
 						face.material, // material
 						new AutoUnwrapSettings(face.uv), // UV material
 						face.smoothingGroup, // smoothing group

@@ -1611,7 +1611,7 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Rebuild the wireframe selection caches.
 		/// </summary>
-		/// <param name="forceUpdate">Force update if mesh attributes have been added or removed, or the face indices have been altered.</param>
+		/// <param name="forceUpdate">Force update if mesh attributes have been added or removed, or the face indexes have been altered.</param>
 		void UpdateSelection(bool forceUpdate = true)
 		{
 			m_SelectedVertexCount = 0;

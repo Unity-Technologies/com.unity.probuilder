@@ -146,7 +146,7 @@ namespace UnityEngine.ProBuilder
 	    }
 
 	    /// <summary>
-	    /// ProBuilder makes the assumption that no @"UnityEngine.ProBuilder.Face" references a vertex used by another. However, we need a way to associate vertexes in the editor for many operations. These vertexes are usually called coincident, or shared vertices. ProBuilder manages these associations with the sharedIndexes array. Each array contains a list of triangles that point to vertices considered to be coincident. When ProBuilder compiles a UnityEngine.Mesh from the ProBuilderMesh, these vertices will be condensed to a single vertex where possible.
+	    /// ProBuilder makes the assumption that no @"UnityEngine.ProBuilder.Face" references a vertex used by another. However, we need a way to associate vertexes in the editor for many operations. These vertexes are usually called coincident, or shared vertexes. ProBuilder manages these associations with the sharedIndexes array. Each array contains a list of triangles that point to vertices considered to be coincident. When ProBuilder compiles a UnityEngine.Mesh from the ProBuilderMesh, these vertices will be condensed to a single vertex where possible.
 	    /// </summary>
 	    /// <value>
 	    /// The shared (or common) index array for this mesh.
@@ -970,11 +970,7 @@ namespace UnityEngine.ProBuilder
             m.subMeshCount = submeshes.Length;
 
 			for (int i = 0; i < m.subMeshCount; i++)
-#if UNITY_5_5_OR_NEWER
-				m.SetIndices(submeshes[i].m_Indices, submeshes[i].m_Topology, i, false);
-#else
-				m.SetIndices(submeshes[i].indices, submeshes[i].topology, i);
-#endif
+				m.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
 
 			m.name = string.Format("pb_Mesh{0}", id);
 

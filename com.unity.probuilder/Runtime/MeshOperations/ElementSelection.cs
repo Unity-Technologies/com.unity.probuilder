@@ -51,15 +51,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// Gets all faces connected to each index taking into account shared vertexes.
 		/// </summary>
 		/// <param name="pb"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <param name="lookup"></param>
 		/// <returns></returns>
-		internal static List<Face> GetNeighborFaces(ProBuilderMesh pb, int[] indices, Dictionary<int, int> lookup)
+		internal static List<Face> GetNeighborFaces(ProBuilderMesh pb, int[] indexes, Dictionary<int, int> lookup)
 		{
 			List<Face> neighboring = new List<Face>();
 			HashSet<int> shared = new HashSet<int>();
 
-			foreach(int tri in indices)
+			foreach(int tri in indexes)
 				shared.Add(lookup[tri]);
 
 			for(int i = 0; i < pb.facesInternal.Length; i++)
@@ -80,20 +80,20 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Returns a unique array of Edges connected to the passed vertex indices.
+		/// Returns a unique array of Edges connected to the passed vertex indexes.
 		/// </summary>
 		/// <param name="pb"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <returns></returns>
-		internal static Edge[] GetConnectedEdges(ProBuilderMesh pb, int[] indices)
+		internal static Edge[] GetConnectedEdges(ProBuilderMesh pb, int[] indexes)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
 
 			List<Edge> connectedEdges = new List<Edge>();
 
 			HashSet<int> shared = new HashSet<int>();
-			for(int i = 0; i < indices.Length; i++)
-				shared.Add(lookup[indices[i]]);
+			for(int i = 0; i < indexes.Length; i++)
+				shared.Add(lookup[indexes[i]]);
 
 			Edge[] edges = EdgeExtension.AllEdges(pb.facesInternal);
 			HashSet<Edge> used = new HashSet<Edge>();
@@ -164,7 +164,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Returns the indices of perimeter edges in a given element group.
+		/// Returns the indexes of perimeter edges in a given element group.
 		/// </summary>
 		/// <param name="mesh"></param>
 		/// <param name="edges"></param>
@@ -238,25 +238,25 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Returns the indices of perimeter vertexes in selection.
+		/// Returns the indexes of perimeter vertexes in selection.
 		/// </summary>
 		/// <param name="pb"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <param name="universal_edges_all"></param>
 		/// <returns></returns>
-		internal static int[] GetPerimeterVertexes(ProBuilderMesh pb, int[] indices, Edge[] universal_edges_all)
+		internal static int[] GetPerimeterVertexes(ProBuilderMesh pb, int[] indexes, Edge[] universal_edges_all)
 		{
-			int len = indices.Length;
-			IntArray[] sharedIndices = pb.sharedIndexesInternal;
+			int len = indexes.Length;
+			IntArray[] sharedIndexes = pb.sharedIndexesInternal;
 			int[] universal = new int[len];
 
 			for(int i = 0; i < len; i++)
-				universal[i] = sharedIndices.IndexOf(indices[i]);
+				universal[i] = sharedIndexes.IndexOf(indexes[i]);
 
-			int[] connections = new int[indices.Length];
-			for(int i = 0; i < indices.Length - 1; i++)
+			int[] connections = new int[indexes.Length];
+			for(int i = 0; i < indexes.Length - 1; i++)
 			{
-				for(int n = i+1; n < indices.Length; n++)
+				for(int n = i+1; n < indexes.Length; n++)
 				{
 					if(universal_edges_all.Contains(universal[i], universal[n]))
 					{
@@ -685,15 +685,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Find any holes touching one of the passed vertex indices.
+		/// Find any holes touching one of the passed vertex indexes.
 		/// </summary>
 		/// <param name="pb"></param>
-		/// <param name="indices"></param>
+		/// <param name="indexes"></param>
 		/// <returns></returns>
-		internal static List<List<Edge>> FindHoles(ProBuilderMesh pb, IEnumerable<int> indices)
+		internal static List<List<Edge>> FindHoles(ProBuilderMesh pb, IEnumerable<int> indexes)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
-			HashSet<int> common = IntArrayUtility.GetCommonIndexes(lookup, indices);
+			HashSet<int> common = IntArrayUtility.GetCommonIndexes(lookup, indexes);
 			List<List<Edge>> holes = new List<List<Edge>>();
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
 
@@ -704,7 +704,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Find any holes touching one of the passed common indices.
+		/// Find any holes touching one of the passed common indexes.
 		/// </summary>
 		/// <param name="wings"></param>
 		/// <param name="common"></param>
@@ -718,7 +718,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			{
 				WingedEdge c = wings[i];
 
-				// if this edge has been added to a hole already, or the edge isn't in the approved list of indices,
+				// if this edge has been added to a hole already, or the edge isn't in the approved list of indexes,
 				// or if there's an opposite face, this edge doesn't belong to a hole.  move along.
 				if(c.opposite != null || used.Contains(c) || !(common.Contains(c.edge.common.a) || common.Contains(c.edge.common.b)))
 					continue;

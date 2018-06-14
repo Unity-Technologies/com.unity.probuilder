@@ -10,7 +10,7 @@ namespace UnityEngine.ProBuilder
     /// <summary>
     /// A face is composed of a set of triangles, and a material.
     /// <br />
-    /// Triangle indexes may point to the same vertex index as long as the vertexes are unique to the face. Ie, every vertex that a face references should only be used by that face's indices. To associate vertexes that share common attributes (usually position), use the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" property.
+    /// Triangle indexes may point to the same vertex index as long as the vertexes are unique to the face. Ie, every vertex that a face references should only be used by that face's indexes. To associate vertexes that share common attributes (usually position), use the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" property.
     /// <br />
     /// ProBuilder automatically manages condensing common vertexes in the EditorMeshUtility.Optimize function.
     /// </summary>
@@ -156,7 +156,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Accesses the indices array.
+		/// Accesses the indexes array.
 		/// </summary>
 		/// <param name="i"></param>
 		public int this[int i]
@@ -224,7 +224,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Check if this face has more than 2 indices.
+		/// Check if this face has more than 2 indexes.
 		/// </summary>
 		/// <returns>True if this Face contains at least one valid triangle.</returns>
 		public bool IsValid()
@@ -301,7 +301,7 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Convert a 2 triangle face to a quad representation.
 		/// </summary>
-		/// <returns>A quad (4 indices), or null if indices are not able to be represented as a quad.</returns>
+		/// <returns>A quad (4 indexes), or null if indexes are not able to be represented as a quad.</returns>
 		public int[] ToQuad()
 		{
             if (indexesInternal == null || indexesInternal.Length != 6)

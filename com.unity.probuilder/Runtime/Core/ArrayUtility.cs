@@ -91,7 +91,7 @@ namespace UnityEngine.ProBuilder
 			{
 				if(n < indexeSortedCount && sorted[n] == i)
 				{
-					// handle duplicate indices
+					// handle duplicate indexes
 					while(n < indexeSortedCount && sorted[n] == i)
 						n++;
 

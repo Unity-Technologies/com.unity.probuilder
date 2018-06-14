@@ -11,7 +11,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 	static class MergeElements
 	{
 		/// <summary>
-		/// Merge each pair of faces to a single face. Indices are combined, but otherwise the properties of the first face in the pair take precedence. Returns a list of the new faces created.
+		/// Merge each pair of faces to a single face. Indexes are combined, but otherwise the properties of the first face in the pair take precedence. Returns a list of the new faces created.
 		/// </summary>
 		/// <param name="target"></param>
 		/// <param name="pairs"></param>
@@ -28,10 +28,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				Face right = pair.item2;
 				int leftLength = left.indexesInternal.Length;
 				int rightLength = right.indexesInternal.Length;
-				int[] indices = new int[leftLength + rightLength];
-				System.Array.Copy(left.indexesInternal, 0, indices, 0, leftLength);
-				System.Array.Copy(right.indexesInternal, 0, indices, leftLength, rightLength);
-				add.Add(new Face(indices, left.material, left.uv, left.smoothingGroup, left.textureGroup, left.elementGroup, left.manualUV));
+				int[] indexes = new int[leftLength + rightLength];
+				System.Array.Copy(left.indexesInternal, 0, indexes, 0, leftLength);
+				System.Array.Copy(right.indexesInternal, 0, indexes, leftLength, rightLength);
+				add.Add(new Face(indexes, left.material, left.uv, left.smoothingGroup, left.textureGroup, left.elementGroup, left.manualUV));
 				remove.Add(left);
 				remove.Add(right);
 			}
@@ -95,14 +95,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Condense co-incident vertex positions per-face. vertexes must already be marked as shared in the sharedIndices
+		/// Condense co-incident vertex positions per-face. vertexes must already be marked as shared in the sharedIndexes
 		/// array to be considered. This method is really only useful after merging faces.
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="faces"></param>
-		internal static void CollapseCoincidentVertexes(ProBuilderMesh pb, IEnumerable<Face> faces)
+		internal static void CollapseCoincidentVertexes(ProBuilderMesh mesh, IEnumerable<Face> faces)
 		{
-			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
+			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
 			Dictionary<int, int> matches = new Dictionary<int, int>();
 
 			foreach(Face face in faces)
@@ -122,7 +122,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				face.InvalidateCache();
 			}
 
-			pb.RemoveUnusedVertexes();
+			mesh.RemoveUnusedVertexes();
 		}
 	}
 }

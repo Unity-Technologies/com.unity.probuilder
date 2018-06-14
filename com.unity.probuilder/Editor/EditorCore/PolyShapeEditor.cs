@@ -669,7 +669,7 @@ namespace UnityEditor.ProBuilder
 
 			Vector3[] ver = new Vector3[vc];
 			Vector2[] uvs = new Vector2[vc];
-			int[] indices = new int[vc];
+			int[] indexes = new int[vc];
 			int cnt = points.Count;
 			float distance = 0f;
 
@@ -683,14 +683,14 @@ namespace UnityEditor.ProBuilder
 
 				ver[i] = points[i % cnt];
 				uvs[i] = new Vector2(distance, 1f);
-				indices[i] = i;
+				indexes[i] = i;
 			}
 
 			m_LineMesh.Clear();
 			m_LineMesh.name = "Poly Shape Guide";
 			m_LineMesh.vertices = ver;
 			m_LineMesh.uv = uvs;
-			m_LineMesh.SetIndices(indices, MeshTopology.LineStrip, 0);
+			m_LineMesh.SetIndices(indexes, MeshTopology.LineStrip, 0);
 			m_LineMaterial.SetFloat("_LineDistance", distance);
 		}
 

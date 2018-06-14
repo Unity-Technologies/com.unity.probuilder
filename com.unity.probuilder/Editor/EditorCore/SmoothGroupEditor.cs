@@ -96,9 +96,9 @@ namespace UnityEditor.ProBuilder
 					{
 						Color32 color = GetDistinctColor(smoothGroup.Key);
 						groupColors.Add(smoothGroup.Key, color);
-						var groupIndices = smoothGroup.Value.SelectMany(y => y.indexesInternal);
-						indexes.AddRange(groupIndices);
-						foreach (int i in groupIndices)
+						var groupIndexes = smoothGroup.Value.SelectMany(y => y.indexesInternal);
+						indexes.AddRange(groupIndexes);
+						foreach (int i in groupIndexes)
 							colors[i] = color;
 					}
 				}

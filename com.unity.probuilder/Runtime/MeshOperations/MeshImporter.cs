@@ -134,7 +134,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			List<Vertex> splitVertexes = new List<Vertex>();
 			List<Face> faces = new List<Face>();
 
-			// Fill in Faces array with just the position indices. In the next step we'll
+			// Fill in Faces array with just the position indexes. In the next step we'll
 			// figure out smoothing groups & merging
 			int vertexIndex = 0;
 			int materialCount = materials != null ? materials.Length : 0;
@@ -147,9 +147,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				{
 					case UnityEngine.MeshTopology.Triangles:
 					{
-						int[] indices = originalMesh.GetIndices(subMeshIndex);
+						int[] indexes = originalMesh.GetIndices(subMeshIndex);
 
-						for(int tri = 0; tri < indices.Length; tri += 3)
+						for(int tri = 0; tri < indexes.Length; tri += 3)
 						{
 							faces.Add(new Face(
 								new int[] { vertexIndex, vertexIndex + 1, vertexIndex + 2 },
@@ -160,9 +160,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 								-1,
 								true));
 
-							splitVertexes.Add(sourceVertexes[indices[tri  ]]);
-							splitVertexes.Add(sourceVertexes[indices[tri+1]]);
-							splitVertexes.Add(sourceVertexes[indices[tri+2]]);
+							splitVertexes.Add(sourceVertexes[indexes[tri  ]]);
+							splitVertexes.Add(sourceVertexes[indexes[tri+1]]);
+							splitVertexes.Add(sourceVertexes[indexes[tri+2]]);
 
 							vertexIndex += 3;
 						}
@@ -171,9 +171,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 					case UnityEngine.MeshTopology.Quads:
 					{
-						int[] indices = originalMesh.GetIndices(subMeshIndex);
+						int[] indexes = originalMesh.GetIndices(subMeshIndex);
 
-						for(int quad = 0; quad < indices.Length; quad += 4)
+						for(int quad = 0; quad < indexes.Length; quad += 4)
 						{
 							faces.Add(new Face(new int[] {
 								vertexIndex    , vertexIndex + 1, vertexIndex + 2,
@@ -185,10 +185,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 								-1,
 								true));
 
-							splitVertexes.Add(sourceVertexes[indices[quad  ]]);
-							splitVertexes.Add(sourceVertexes[indices[quad+1]]);
-							splitVertexes.Add(sourceVertexes[indices[quad+2]]);
-							splitVertexes.Add(sourceVertexes[indices[quad+3]]);
+							splitVertexes.Add(sourceVertexes[indexes[quad  ]]);
+							splitVertexes.Add(sourceVertexes[indexes[quad+1]]);
+							splitVertexes.Add(sourceVertexes[indexes[quad+2]]);
+							splitVertexes.Add(sourceVertexes[indexes[quad+3]]);
 
 							vertexIndex += 4;
 						}
