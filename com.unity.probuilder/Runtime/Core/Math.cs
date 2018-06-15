@@ -172,33 +172,6 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Return the perpindicular direction to a 2d line `Perpendicular(b - y)`
-		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <returns>A normalized perpindicular direction.</returns>
-		internal static Vector2 Perpendicular(Vector2 a, Vector2 b)
-		{
-			float x = a.x;
-			float y = a.y;
-
-			float x2 = b.x;
-			float y2 = b.y;
-
-			return new Vector2( -(y2-y), x2-x ).normalized;
-		}
-
-		/// <summary>
-		/// Return a perpindicular direction to a unit vector.
-		/// </summary>
-		/// <param name="a">The original direction.</param>
-		/// <returns>A normalized perpindular direction.</returns>
-		public static Vector2 Perpendicular(Vector2 a)
-		{
-			return new Vector2(-a.y, a.x).normalized;
-		}
-
-		/// <summary>
 		/// Reflects a point across a line segment.
 		/// </summary>
 		/// <param name="point">The point to reflect.</param>

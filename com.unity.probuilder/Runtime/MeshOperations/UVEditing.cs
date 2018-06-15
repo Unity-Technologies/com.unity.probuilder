@@ -494,7 +494,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Vector2 target_angle = target[1]-target[0], transform_angle = transformed[1]-transformed[0];
 
 			float angle = Vector2.Angle(target_angle, transform_angle);
-			float dot = Vector2.Dot( Math.Perpendicular(target_angle), transform_angle);
+			float dot = Vector2.Dot( Vector2.Perpendicular(target_angle), transform_angle);
 
 			if(dot < 0) angle = 360f - angle;
 
