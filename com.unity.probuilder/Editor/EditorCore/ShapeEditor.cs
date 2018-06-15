@@ -1084,7 +1084,7 @@ namespace UnityEditor.ProBuilder
 
 		void SetPreviewObject(ProBuilderMesh pb, int[] vertexes = null)
 		{
-			pb.isSelectable = false;
+			pb.selectable = false;
 
 			m_DoInitPreview = false;
 			bool prevTransform = false;

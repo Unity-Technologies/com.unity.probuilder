@@ -61,18 +61,6 @@ namespace UnityEngine.ProBuilder
 	    /// </value>
 	    public bool userCollisions { get; set; }
 
-	    [SerializeField]
-	    bool m_IsSelectable = true;
-
-	    /// <value>
-	    /// If false mesh elements will not be selectable. This is used by @"UnityEditor.ProBuilder.ProBuilderEditor".
-	    /// </value>
-	    public bool isSelectable
-	    {
-		    get { return m_IsSelectable; }
-		    set { m_IsSelectable = value; }
-	    }
-
 	    [FormerlySerializedAs("unwrapParameters")]
 	    [SerializeField]
 	    UnwrapParameters m_UnwrapParameters;

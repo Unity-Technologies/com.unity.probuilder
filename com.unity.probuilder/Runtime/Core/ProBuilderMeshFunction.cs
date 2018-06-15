@@ -238,7 +238,7 @@ namespace UnityEngine.ProBuilder
 			SetTangents(other.tangents);
 		    SetColors(other.colors);
 		    userCollisions = other.userCollisions;
-		    isSelectable = other.isSelectable;
+		    selectable = other.selectable;
 		    unwrapParameters = new UnwrapParameters(other.unwrapParameters);
 	    }
 

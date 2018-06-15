@@ -467,7 +467,7 @@ namespace UnityEditor.ProBuilder
 
 				if (pickedPb != null)
 				{
-					if (pickedPb.isSelectable)
+					if (pickedPb.selectable)
 					{
 						selection.gameObject = pickedGo;
 						selection.mesh = pickedPb;
@@ -501,7 +501,7 @@ namespace UnityEditor.ProBuilder
 			{
 				var mesh = selection.gameObject.GetComponent<ProBuilderMesh>();
 
-				if (mesh != null && mesh.isSelectable)
+				if (mesh != null && mesh.selectable)
 				{
 					if(MeshSelection.Top().Contains(mesh))
 						GetNearestVertexes(mesh, mousePosition, s_NearestVertexes, maxDistance);
@@ -520,7 +520,7 @@ namespace UnityEditor.ProBuilder
 			{
 				foreach (var mesh in MeshSelection.Top())
 				{
-					if (!mesh.isSelectable)
+					if (!mesh.selectable)
 						continue;
 					GetNearestVertexes(mesh, mousePosition, s_NearestVertexes, maxDistance);
 				}
