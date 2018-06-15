@@ -17,7 +17,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Object
 		public static void CopyWithVerifyIsUnique()
 		{
 			var original = ShapeGenerator.CreateShape(ShapeType.Cube);
-			original.Optimize();
+			original.Optimize(true);
 
 			var copy = UObject.Instantiate(original);
 

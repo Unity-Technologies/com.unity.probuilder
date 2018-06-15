@@ -347,8 +347,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
 			Dictionary<int, int> lookupUV = pb.sharedIndexesUVInternal.ToDictionary();
 
-			Face[] newFaces = new Face[faces.Sum(x=>x.edges.Count)];
-			int newFaceIndex = 0;
+			List<Face> newFaces = new List<Face>();
 			// old triangle index -> old shared index
 			Dictionary<int, int> oldSharedMap = new Dictionary<int, int>();
 			// old shared index -> new shared index
@@ -436,7 +435,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						false // manualUV flag
 					);
 
-					newFaces[newFaceIndex++] = bridge;
+					newFaces.Add(bridge);
 				}
 
 				foreach(Face face in group)
@@ -501,15 +500,16 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			pb.SetVertexes(vertexes);
 
 			var fc = pb.faceCount;
-			var nc = newFaces.Length;
+			var nc = newFaces.Count;
 			var appended = new Face[fc + nc];
 			Array.Copy(pb.facesInternal, 0, appended, 0, fc);
-			Array.Copy(newFaces, 0, appended, fc, nc);
+			for (int i = fc, c = fc + nc; i < c; i++)
+				appended[i] = newFaces[i - fc];
 			pb.SetFaces(appended);
 			pb.SetSharedIndexes(lookup);
 			pb.SetSharedIndexesUV(lookupUV);
 
-			return newFaces;
+			return newFaces.ToArray();
 		}
 
 		static List<HashSet<Face>> GetFaceGroups(List<WingedEdge> wings)

@@ -168,6 +168,7 @@ namespace UnityEditor.ProBuilder
 				if (reason == MeshSyncState.Null)
 				{
 					mesh.Rebuild();
+					mesh.Optimize();
 				}
 				else
 				/**
