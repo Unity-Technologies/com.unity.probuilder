@@ -12,7 +12,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// Access the built-in materials that ProBuilder uses.
 	/// </summary>
-	public static class BuiltinMaterials
+	static class BuiltinMaterials
 	{
 		static bool s_IsInitialized;
 
@@ -199,7 +199,7 @@ namespace UnityEngine.ProBuilder
 		internal static Material GetLegacyDiffuse()
 		{
 			Init();
-			
+
 			if (s_UnityDefaultDiffuse == null)
 			{
 				var mi = typeof(Material).GetMethod("GetDefaultMaterial",
