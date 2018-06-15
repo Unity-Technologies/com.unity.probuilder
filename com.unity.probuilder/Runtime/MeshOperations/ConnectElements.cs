@@ -279,7 +279,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			pb.SetSharedIndexesUV(new IntArray[0]);
 			int removedVertexCount = pb.DeleteFaces(affected.Keys).Length;
-			pb.SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(pb.positionsInternal));
+			pb.sharedIndexes = IntArrayUtility.GetSharedIndexesWithPositions(pb.positionsInternal);
 			pb.ToMesh();
 
 			// figure out where the new edges where inserted

@@ -75,11 +75,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			for(int i = 0; i < common.Length; i++)
 				IntArrayUtility.AddValueAtIndex(ref sharedIndexes, common[i], i+vertexCount);
 
-			mesh.SetPositions(newPositions);
-			mesh.SetColors(newColors);
-			mesh.SetUVs(newTextures);
-			mesh.SetSharedIndexes(sharedIndexes);
-			mesh.SetFaces(faces.ToArray());
+			mesh.positions = newPositions;
+			mesh.colors = newColors;
+			mesh.textures = newTextures;
+			mesh.sharedIndexes = sharedIndexes;
+			mesh.faces = faces;
 
 			return face;
 		}
@@ -92,7 +92,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="colors">An array of colors arrays, where indexes correspond to the appendedFaces parameter.</param>
 		/// <param name="uvs">An array of uvs arrays, where indexes correspond to the appendedFaces parameter.</param>
 		/// <param name="faces">An array of faces arrays, which contain the triangle winding information for each new face. Face index values are 0 indexed.</param>
-		/// <param name="sharedIndexes">An optional mapping of each new vertex's common index. Common index refers to a triangle's index in the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" array. If this value is provided, it must contain entries for each vertex position. Ex, if there are 4 vertexes in this face, there must be shared index entries for { 0, 1, 2, 3 }.</param>
+		/// <param name="shared">An optional mapping of each new vertex's common index. Common index refers to a triangle's index in the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" array. If this value is provided, it must contain entries for each vertex position. Ex, if there are 4 vertexes in this face, there must be shared index entries for { 0, 1, 2, 3 }.</param>
 		/// <returns>An array of the new faces that where successfully appended to the mesh.</returns>
 		public static Face[] AppendFaces(
 			this ProBuilderMesh mesh,
@@ -159,10 +159,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				vc = newPositions.Count;
 			}
 
-			mesh.SetPositions(newPositions.ToArray());
-			mesh.SetColors(newColors.ToArray());
-			mesh.SetUVs(newTextures.ToArray());
-			mesh.SetFaces(newFaces.ToArray());
+			mesh.positions = newPositions;
+			mesh.colors = newColors;
+			mesh.textures = newTextures;
+			mesh.faces = newFaces;
 			mesh.sharedIndexesInternal = sharedIndexes;
 
 			return faces;
@@ -200,7 +200,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				List<Face> faces = new List<Face>(mesh.facesInternal);
 				FaceRebuildData.Apply(new FaceRebuildData[] { data }, vertexes, faces, lookup, null);
 				mesh.SetVertexes(vertexes);
-				mesh.SetFaces(faces.ToArray());
+				mesh.faces = faces;
 				mesh.SetSharedIndexes(lookup);
 
                 return data.face;
@@ -694,7 +694,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			var newFace = data.face;
 
 			mesh.SetVertexes(vertexes);
-			mesh.SetFaces(faces.ToArray());
+			mesh.faces = faces;
 			mesh.SetSharedIndexes(lookup);
 			mesh.SetSharedIndexesUV(lookupUV);
 
@@ -862,7 +862,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			var newEdges = appendedEdges.Distinct().Select(x => x.local - delCount).ToList();
 
 			mesh.SetVertexes(vertexes);
-			mesh.SetSharedIndexes(lookup.ToIntArray());
+			mesh.sharedIndexes = lookup.ToIntArray();
 			mesh.SetSharedIndexesUV(lookupUV.ToIntArray());
 			mesh.DeleteVertexes(indexesToDelete);
 

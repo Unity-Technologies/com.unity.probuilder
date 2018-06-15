@@ -205,7 +205,7 @@ namespace UnityEditor.ProBuilder
 							foreach (int i in pb.selectedIndexesInternal)
 								colors[i] = col;
 
-							pb.SetColors(colors);
+							pb.colors = colors;
 						}
 						break;
 					case SelectMode.Edge:
@@ -217,7 +217,7 @@ namespace UnityEditor.ProBuilder
 							foreach (int i in pb.sharedIndexesInternal.AllIndexesWithValues(pb.selectedIndexesInternal))
 								colors[i] = col;
 
-							pb.SetColors(colors);
+							pb.colors = colors;
 						}
 						break;
 				}

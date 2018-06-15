@@ -138,7 +138,7 @@ namespace UnityEditor.ProBuilder
 				foreach(Face face in pb.facesInternal)
 					face.manualUV = true;
 
-				pb.SetPositions(positions[i]);
+				pb.positions = positions[i];
 
 				pb.ToMesh();
 				pb.Refresh();

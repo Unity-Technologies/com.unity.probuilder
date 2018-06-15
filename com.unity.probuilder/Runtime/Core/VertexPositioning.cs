@@ -91,7 +91,7 @@ namespace UnityEngine.ProBuilder
 			}
 
 			// don't bother calling a full ToMesh() here because we know for certain that the vertexes and msh.vertexes arrays are equal in length
-			mesh.SetPositions(verts);
+			mesh.positions = verts;
 			mesh.mesh.vertices = verts;
 		}
 
@@ -139,7 +139,7 @@ namespace UnityEngine.ProBuilder
 			for(int i = 0; i < array.Length; i++)
 				v[array[i]] = position;
 
-			mesh.SetPositions(v);
+			mesh.positions = v;
 			mesh.mesh.vertices = v;
 		}
 

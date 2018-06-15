@@ -1,4 +1,4 @@
-using UnityEngine;
+	using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.Serialization;
@@ -105,23 +105,16 @@ namespace UnityEngine.ProBuilder
 	    /// <value>
 	    /// A collection of the @"UnityEngine.ProBuilder.Face"'s that make up this mesh.
 	    /// </value>
-	    /// <seealso cref="SetFaces"/>
-        public ReadOnlyCollection<Face> faces
-        {
-            get { return new ReadOnlyCollection<Face>(m_Faces); }
-        }
-
-	    /// <summary>
-	    /// Set the internal faces array.
-	    /// </summary>
-	    /// <param name="faces">The new faces array.</param>
-	    /// <exception cref="ArgumentNullException">Thrown if faces is null.</exception>
-        public void SetFaces(IEnumerable<Face> faces)
-        {
-            if (faces == null)
-                throw new ArgumentNullException("faces");
-	        m_Faces = faces.ToArray();
-        }
+	    public IEnumerable<Face> faces
+	    {
+		    get { return new ReadOnlyCollection<Face>(m_Faces); }
+		    set
+		    {
+			    if (value == null)
+				    throw new ArgumentNullException("value");
+			    m_Faces = value.ToArray();
+		    }
+	    }
 
 	    internal IntArray[] sharedIndexesInternal
 	    {
@@ -135,10 +128,20 @@ namespace UnityEngine.ProBuilder
 	    /// <value>
 	    /// The shared (or common) index array for this mesh.
 	    /// </value>
-	    /// <seealso cref="SetSharedIndexes(UnityEngine.ProBuilder.IntArray[])"/>
-	    public ReadOnlyCollection<IntArray> sharedIndexes
+	    public IEnumerable<IntArray> sharedIndexes
 	    {
 		    get { return new ReadOnlyCollection<IntArray>(m_SharedIndexes); }
+
+		    set
+		    {
+			    if (value == null)
+				    throw new ArgumentNullException("value");
+			    var indexes = value.ToArray();
+			    int len = indexes.Length;
+			    m_SharedIndexes = new IntArray[len];
+			    for (var i = 0; i < len; i++)
+				    m_SharedIndexes[i] = new IntArray(indexes[i]);
+		    }
 	    }
 
 	    /// <value>
@@ -152,23 +155,6 @@ namespace UnityEngine.ProBuilder
 		    for(var i = 0; i < len; i++)
 			    copy[i] = new IntArray(m_SharedIndexes[i]);
 		    return copy;
-	    }
-
-	    /// <summary>
-	    /// Set the sharedIndexes array for this mesh.
-	    /// </summary>
-	    /// <param name="indexes">
-	    /// The new sharedIndexes array.
-	    /// </param>
-	    /// <seealso cref="sharedIndexes"/>
-	    public void SetSharedIndexes(IntArray[] indexes)
-	    {
-		    if (indexes == null)
-			    throw new ArgumentNullException("indexes");
-		    int len = indexes.Length;
-		    m_SharedIndexes = new IntArray[len];
-		    for (var i = 0; i < len; i++)
-			    m_SharedIndexes[i] = new IntArray(indexes[i]);
 	    }
 
 	    /// <summary>
@@ -226,22 +212,15 @@ namespace UnityEngine.ProBuilder
 	    /// <value>
 	    /// The vertex positions that make up this mesh.
 	    /// </value>
-	    /// <seealso cref="SetPositions"/>
-        public ReadOnlyCollection<Vector3> positions
+        public IEnumerable<Vector3> positions
         {
             get { return new ReadOnlyCollection<Vector3>(m_Positions); }
-        }
-
-		/// <summary>
-		/// Set the vertex positions for this mesh.
-		/// </summary>
-		/// <param name="array">The new positions array.</param>
-		/// <exception cref="ArgumentNullException">Thrown if array is null.</exception>
-	    public void SetPositions(IEnumerable<Vector3> array)
-        {
-            if (array == null)
-                throw new ArgumentNullException("array");
-	        m_Positions = array.ToArray();
+		    set
+		    {
+			    if (value == null)
+				    throw new ArgumentNullException("value");
+			    m_Positions = value.ToArray();
+		    }
         }
 
         /// <summary>
@@ -316,28 +295,20 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <value>
-		/// Get the vertex colors array for this mesh.
+		/// Vertex colors array for this mesh. When setting, the value must match the length of positions.
 		/// </value>
-		/// <seealso cref="SetColors"/>
-	    public ReadOnlyCollection<Color> colors
+	    public IEnumerable<Color> colors
         {
             get { return m_Colors != null ? new ReadOnlyCollection<Color>(m_Colors) : null; }
-        }
 
-	    /// <summary>
-	    /// Set the colors array for this mesh. Colors size must match vertex count.
-	    /// </summary>
-	    /// <param name="array"></param>
-	    /// <exception cref="ArgumentNullException">Thrown if array is null.</exception>
-	    /// <exception cref="ArgumentOutOfRangeException">Thrown if array.Length does not equal @"UnityEngine.ProBuilder.ProBuilderMesh.vertexCount".</exception>
-        public void SetColors(IEnumerable<Color> array)
-        {
-            if (array == null)
-                throw new ArgumentNullException("array");
-            int len = array.Count();
-            if (len != vertexCount)
-                throw new ArgumentOutOfRangeException("array", "Array length must match vertex count.");
-	        m_Colors = array.ToArray();
+			set
+			{
+				if (value == null)
+					m_Colors = null;
+				if (value.Count() != vertexCount)
+					throw new ArgumentOutOfRangeException("value", "Array length must match vertex count.");
+				m_Colors = value.ToArray();
+			}
         }
 
 		/// <value>
@@ -346,13 +317,25 @@ namespace UnityEngine.ProBuilder
 		/// <remarks>
 		/// To get the generated tangents that are applied to the mesh through Refresh(), use GetTangents().
 		/// </remarks>
-		/// <seealso cref="SetTangents"/>
 		/// <seealso cref="GetTangents"/>
-	    public ReadOnlyCollection<Vector4> tangents
+	    public IEnumerable<Vector4> tangents
 	    {
-		    get { return m_Tangents == null || m_Tangents.Length != vertexCount
-			    ? null
-			    : new ReadOnlyCollection<Vector4>(m_Tangents); }
+			get
+			{
+				return m_Tangents == null || m_Tangents.Length != vertexCount
+					? null
+					: new ReadOnlyCollection<Vector4>(m_Tangents);
+			}
+
+			set
+			{
+				if (value == null)
+					m_Tangents = null;
+				else if (value.Count() != vertexCount)
+					throw new ArgumentOutOfRangeException("value", "Tangent array length must match vertex count");
+				else
+					m_Tangents = value.ToArray();
+			}
 	    }
 
 	    /// <summary>
@@ -366,20 +349,6 @@ namespace UnityEngine.ProBuilder
 		    return mesh == null ? null : mesh.tangents;
 	    }
 
-	    /// <summary>
-        /// Set the tangent array on this mesh. The length must match vertexCount.
-        /// </summary>
-        /// <param name="array">The new tangents array.</param>
-        public void SetTangents(IEnumerable<Vector4> array)
-	    {
-		    if (array == null)
-			    m_Tangents = null;
-	        else if (array.Count() != vertexCount)
-		        throw new ArgumentOutOfRangeException("array", "Tangent array length must match vertex count");
-		    else
-		        m_Tangents = array.ToArray();
-        }
-
         internal Vector2[] texturesInternal
 		{
 			get { return m_Textures0; }
@@ -389,28 +358,18 @@ namespace UnityEngine.ProBuilder
 	    /// <value>
 	    /// The UV0 channel. Null if not present.
 	    /// </value>
-	    /// <seealso cref="SetUVs(Vector2[])"/>
 	    /// <seealso cref="GetUVs"/>
-	    public ReadOnlyCollection<Vector2> textures
+	    public IEnumerable<Vector2> textures
 	    {
 		    get { return m_Textures0 != null ? new ReadOnlyCollection<Vector2>(m_Textures0) : null; }
-	    }
-
-	    /// <summary>
-	    /// Set the UV channel array.
-	    /// </summary>
-	    /// <param name="uvs">The new UV array.</param>
-	    /// <exception cref="ArgumentNullException">Thrown if uvs is null.</exception>
-	    /// <exception cref="ArgumentOutOfRangeException">Thrown if uvs length does not match the vertex count.</exception>
-	    public void SetUVs(Vector2[] uvs)
-	    {
-		    if(uvs == null)
-			    throw new ArgumentNullException("uvs");
-		    int vc = vertexCount;
-		    if(uvs.Length != vc)
-			    throw new ArgumentOutOfRangeException("uvs");
-		    m_Textures0 = new Vector2[vc];
-		    Array.Copy(uvs, m_Textures0, vc);
+		    set
+		    {
+			    if (value == null)
+				    m_Textures0 = null;
+			    else if(value.Count() != vertexCount)
+				    throw new ArgumentOutOfRangeException("value");
+			    m_Textures0 = value.ToArray();
+		    }
 	    }
 
         /// <summary>

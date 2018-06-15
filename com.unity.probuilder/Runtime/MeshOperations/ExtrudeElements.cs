@@ -321,7 +321,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			var appended = new Face[fc + nc];
 			Array.Copy(pb.facesInternal, 0, appended, 0, fc);
 			Array.Copy(newFaces, 0, appended, fc, nc);
-			pb.SetFaces(appended);
+			pb.faces = appended;
 			pb.SetSharedIndexes(lookup);
 			pb.SetSharedIndexesUV(lookupUV);
 
@@ -505,7 +505,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Array.Copy(pb.facesInternal, 0, appended, 0, fc);
 			for (int i = fc, c = fc + nc; i < c; i++)
 				appended[i] = newFaces[i - fc];
-			pb.SetFaces(appended);
+			pb.faces = appended;
 			pb.SetSharedIndexes(lookup);
 			pb.SetSharedIndexesUV(lookupUV);
 

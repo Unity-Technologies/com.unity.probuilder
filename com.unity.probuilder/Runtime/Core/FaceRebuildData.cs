@@ -56,7 +56,7 @@ namespace UnityEngine.ProBuilder
 			FaceRebuildData.Apply(newFaces, vertexes, _faces, lookup, lookupUV);
 
 			pb.SetVertexes(vertexes);
-			pb.SetFaces(_faces.ToArray());
+			pb.faces = _faces;
 			pb.SetSharedIndexes(lookup);
 			pb.SetSharedIndexesUV(lookupUV);
 		}

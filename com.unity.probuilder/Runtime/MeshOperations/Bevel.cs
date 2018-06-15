@@ -147,7 +147,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			FaceRebuildData.Apply(appendFaces, mesh, vertexes);
 			int removed = mesh.DeleteFaces(sorted.Keys).Length;
 			mesh.SetSharedIndexesUV(new IntArray[0]);
-			mesh.SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(mesh.positionsInternal));
+			mesh.sharedIndexes = IntArrayUtility.GetSharedIndexesWithPositions(mesh.positionsInternal);
 
 			// @todo don't rebuild indexes, keep 'em cached
 			IntArray[] sharedIndexes = mesh.sharedIndexesInternal;
@@ -205,7 +205,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			FaceRebuildData.Apply(holeFaces, mesh, vertexes);
-			mesh.SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(mesh.positionsInternal));
+			mesh.sharedIndexes = IntArrayUtility.GetSharedIndexesWithPositions(mesh.positionsInternal);
 
 			// go through new faces and conform hole normals
 			// get a hash of just the adjacent and bridge faces

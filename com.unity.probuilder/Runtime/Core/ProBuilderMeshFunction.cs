@@ -94,8 +94,8 @@ namespace UnityEngine.ProBuilder
 			}
 
             Clear();
-            SetPositions(points);
-			SetFaces(f);
+            positions = points;
+			m_Faces = f;
 			m_SharedIndexes = IntArrayUtility.GetSharedIndexesWithPositions(points);
 
 			ToMesh();
@@ -115,7 +115,7 @@ namespace UnityEngine.ProBuilder
             Clear();
             m_Positions = vertexes.ToArray();
 			m_Faces = faces.ToArray();
-			SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(m_Positions));
+			m_SharedIndexes = IntArrayUtility.GetSharedIndexesWithPositions(m_Positions);
 			ToMesh();
 			Refresh();
 		}
@@ -167,18 +167,18 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		internal void MakeUnique()
 		{
-			SetPositions(positions);
-			SetSharedIndexes(sharedIndexesInternal);
+			positions = positions;
+			sharedIndexes = sharedIndexesInternal;
 			SetSharedIndexesUV(sharedIndexesUVInternal);
-			SetFaces(faces);
+			faces = faces.Select(x => new Face(x));
 			List<Vector4> uvs = new List<Vector4>();
 			for (var i = 0; i < k_UVChannelCount; i++)
 			{
 				GetUVs(i, uvs);
 				SetUVs(i, uvs);
 			}
-			SetTangents(tangents);
-			SetColors(colors);
+			tangents = tangents;
+			colors = colors;
 			mesh = new Mesh();
 			ToMesh();
 			Refresh();
@@ -194,10 +194,10 @@ namespace UnityEngine.ProBuilder
 				throw new ArgumentNullException("other");
 
 		    Clear();
-			SetPositions(other.positions);
-		    SetSharedIndexes(other.sharedIndexesInternal);
+			positions = other.positions;
+		    sharedIndexes = other.sharedIndexesInternal;
 		    SetSharedIndexesUV(other.sharedIndexesUVInternal);
-		    SetFaces(other.faces);
+		    faces = other.faces.Select(x => new Face(x));
 
 		    List<Vector4> uvs = new List<Vector4>();
 
@@ -207,8 +207,8 @@ namespace UnityEngine.ProBuilder
 			    SetUVs(1, uvs);
 		    }
 
-			SetTangents(other.tangents);
-		    SetColors(other.colors);
+			tangents = other.tangents;
+		    colors = other.colors;
 		    userCollisions = other.userCollisions;
 		    selectable = other.selectable;
 		    unwrapParameters = new UnwrapParameters(other.unwrapParameters);
@@ -412,10 +412,6 @@ namespace UnityEngine.ProBuilder
 		void RefreshColors()
 		{
 			Mesh m = GetComponent<MeshFilter>().sharedMesh;
-
-			if (m_Colors == null || m_Colors.Length != vertexCount)
-				m_Colors = ArrayUtility.FilledArray<Color>(Color.white, vertexCount);
-
 			m.colors = m_Colors;
 		}
 

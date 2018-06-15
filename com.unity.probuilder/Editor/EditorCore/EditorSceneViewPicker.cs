@@ -194,7 +194,8 @@ namespace UnityEditor.ProBuilder
 					if (uvEditor != null && uvEditor.ClickShortcutCheck(mesh, s_Selection.face))
 						return null;
 
-					var ind = mesh.faces.IndexOf(s_Selection.face);
+					var faces = mesh.faces as Face[] ?? mesh.faces.ToArray();
+					var ind = Array.IndexOf<Face>(faces, s_Selection.face);
 					var sel = mesh.selectedFaceIndexes.IndexOf(ind);
 
 					UndoUtility.RecordSelection(mesh, "Select Face");

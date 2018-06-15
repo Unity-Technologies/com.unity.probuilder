@@ -231,7 +231,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			mesh.SetFaces(m_RebuiltFaces.ToArray());
+			mesh.faces = m_RebuiltFaces;
 			mesh.SetSharedIndexes(m_RebuiltLookup);
 			mesh.SetSharedIndexesUV(m_RebuiltLookupUV);
 			return mesh.RemoveUnusedVertexes();
