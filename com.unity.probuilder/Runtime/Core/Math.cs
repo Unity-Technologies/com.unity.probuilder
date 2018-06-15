@@ -1105,7 +1105,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="b">Second Vector2 value.</param>
 		/// <param name="delta">The maximum difference between components allowed.</param>
 		/// <returns>True if a and b components are respectively within delta distance of one another.</returns>
-		public static bool Approx2(this Vector2 a, Vector2 b, float delta = floatCompareEpsilon)
+		internal static bool Approx2(this Vector2 a, Vector2 b, float delta = floatCompareEpsilon)
 		{
 			return
 				Mathf.Abs(a.x - b.x) < delta &&
@@ -1119,7 +1119,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="b">Second Vector3 value.</param>
 		/// <param name="delta">The maximum difference between components allowed.</param>
 		/// <returns>True if a and b components are respectively within delta distance of one another.</returns>
-		public static bool Approx3(this Vector3 a, Vector3 b, float delta = floatCompareEpsilon)
+		internal static bool Approx3(this Vector3 a, Vector3 b, float delta = floatCompareEpsilon)
 		{
 			return
 				Mathf.Abs(a.x - b.x) < delta &&
@@ -1135,7 +1135,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="delta">The maximum difference between components allowed.</param>
 		/// <returns>True if a and b components are respectively within delta distance of one another.</returns>
 
-		public static bool Approx4(this Vector4 a, Vector4 b, float delta = floatCompareEpsilon)
+		internal static bool Approx4(this Vector4 a, Vector4 b, float delta = floatCompareEpsilon)
 		{
 			return
 				Mathf.Abs(a.x - b.x) < delta &&
