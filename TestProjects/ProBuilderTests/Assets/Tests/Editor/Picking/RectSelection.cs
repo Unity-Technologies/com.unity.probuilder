@@ -49,7 +49,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 				selectionRect.width /= EditorGUIUtility.pixelsPerPoint;
 				selectionRect.height /= EditorGUIUtility.pixelsPerPoint;
 
-				var vertices = UnityEngine.ProBuilder.Picking.PickVerticesInRect(
+				var vertices = UnityEngine.ProBuilder.Picking.PickVertexesInRect(
 					camera,
 					selectionRect,
 					selectables,
@@ -126,7 +126,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 			var selection = vertices.FirstOrDefault();
 			Assert.IsNotNull(selection);
 			HashSet<int> selectedElements = selection.Value;
-			Assert.Less(selectedElements.Count, selection.Key.sharedIndicesInternal.Length);
+			Assert.Less(selectedElements.Count, selection.Key.sharedIndexesInternal.Length);
 			Assert.Greater(selectedElements.Count, 0);
 			Cleanup();
 		}
@@ -139,7 +139,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 			var selection = vertices.FirstOrDefault();
 			Assert.IsNotNull(selection);
 			HashSet<int> selectedElements = selection.Value;
-			Assert.AreEqual(selectedElements.Count, selection.Key.sharedIndicesInternal.Length);
+			Assert.AreEqual(selectedElements.Count, selection.Key.sharedIndexesInternal.Length);
 			Cleanup();
 		}
 
@@ -154,7 +154,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 			HashSet<Edge> selectedElements = selection.Value;
 			Assert.Greater(selectedElements.Count, 0);
 
-			Dictionary<int, int> commonLookup = selection.Key.sharedIndicesInternal.ToDictionary();
+			Dictionary<int, int> commonLookup = selection.Key.sharedIndexesInternal.ToDictionary();
 			var allEdges = EdgeLookup.GetEdgeLookupHashSet(selection.Key.facesInternal.SelectMany(x => x.edgesInternal), commonLookup);
 			var selectedEdges = EdgeLookup.GetEdgeLookupHashSet(selectedElements, commonLookup);
 			Assert.AreEqual(allEdges.Count, selectedEdges.Count);
@@ -187,7 +187,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 			HashSet<Edge> selectedElements = selection.Value;
 			Assert.Greater(selectedElements.Count, 0);
 
-			Dictionary<int, int> commonLookup = selection.Key.sharedIndicesInternal.ToDictionary();
+			Dictionary<int, int> commonLookup = selection.Key.sharedIndexesInternal.ToDictionary();
 			var allEdges = EdgeLookup.GetEdgeLookupHashSet(selection.Key.facesInternal.SelectMany(x => x.edgesInternal), commonLookup);
 			var selectedEdges = EdgeLookup.GetEdgeLookupHashSet(selectedElements, commonLookup);
 			Assert.AreEqual(allEdges.Count, selectedEdges.Count);

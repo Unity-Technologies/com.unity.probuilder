@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="method">Describes how faces are extruded.</param>
 		/// <param name="distance">The distance to extrude faces.</param>
 		/// <returns>True on success, false if the action failed.</returns>
-		public static bool Extrude(this ProBuilderMesh mesh, IEnumerable<Face> faces, ExtrudeMethod method, float distance)
+		public static Face[] Extrude(this ProBuilderMesh mesh, IEnumerable<Face> faces, ExtrudeMethod method, float distance)
 		{
 			switch(method)
 			{
@@ -232,21 +233,23 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="faces"></param>
 		/// <param name="distance"></param>
 		/// <returns></returns>
-		static bool ExtrudePerFace(ProBuilderMesh pb, IEnumerable<Face> faces, float distance)
+		static Face[] ExtrudePerFace(ProBuilderMesh pb, IEnumerable<Face> faces, float distance)
 		{
-			if(faces == null || !faces.Any())
-				return false;
+			Face[] faceArray = faces as Face[] ?? faces.ToArray();
+
+			if(!faceArray.Any())
+				return null;
 
 			List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(pb));
 			int sharedIndexMax = pb.sharedIndexesInternal.Length;
 			int sharedIndexOffset = 0;
+			int faceIndex = 0;
 			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
 			Dictionary<int, int> lookupUV = pb.sharedIndexesUVInternal.ToDictionary();
-
-			List<Face> newFaces = new List<Face>(pb.facesInternal);
 			Dictionary<int, int> used = new Dictionary<int, int>();
+			Face[] newFaces = new Face[faceArray.Sum(x => x.edges.Count)];
 
-			foreach(Face face in faces)
+			foreach(Face face in faceArray)
 			{
 				face.smoothingGroup = Smoothing.smoothingGroupNone;
 				face.textureGroup = -1;
@@ -289,16 +292,16 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					vertexes.Add( yy );
 
 					Face bridge = new Face(
-						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 }, // indexes
-						face.material, // material
-						new AutoUnwrapSettings(face.uv), // UV material
-						face.smoothingGroup, // smoothing group
-						-1, // texture group
-						-1, // uv element group
-						false // manualUV flag
+						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 },
+						face.material,
+						new AutoUnwrapSettings(face.uv),
+						face.smoothingGroup,
+						-1,
+						-1,
+						false
 					);
 
-					newFaces.Add(bridge);
+					newFaces[faceIndex++] = bridge;
 				}
 
 				for(int i = 0; i < face.distinctIndexesInternal.Length; i++)
@@ -312,11 +315,17 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			pb.SetVertexes(vertexes);
-			pb.SetFaces(newFaces.ToArray());
+
+			var fc = pb.faceCount;
+			var nc = newFaces.Length;
+			var appended = new Face[fc + nc];
+			Array.Copy(pb.facesInternal, 0, appended, 0, fc);
+			Array.Copy(newFaces, 0, appended, fc, nc);
+			pb.SetFaces(appended);
 			pb.SetSharedIndexes(lookup);
 			pb.SetSharedIndexesUV(lookupUV);
 
-			return true;
+			return newFaces;
 		}
 
 		/// <summary>
@@ -327,10 +336,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="compensateAngleVertexDistance"></param>
 		/// <param name="distance"></param>
 		/// <returns></returns>
-		static bool ExtrudeAsGroups(ProBuilderMesh pb, IEnumerable<Face> faces, bool compensateAngleVertexDistance, float distance)
+		static Face[] ExtrudeAsGroups(ProBuilderMesh pb, IEnumerable<Face> faces, bool compensateAngleVertexDistance, float distance)
 		{
 			if(faces == null || !faces.Any())
-				return false;
+				return null;
 
 			List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(pb));
 			int sharedIndexMax = pb.sharedIndexesInternal.Length;
@@ -338,7 +347,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
 			Dictionary<int, int> lookupUV = pb.sharedIndexesUVInternal.ToDictionary();
 
-			List<Face> newFaces = new List<Face>(pb.facesInternal);
+			Face[] newFaces = new Face[faces.Sum(x=>x.edges.Count)];
+			int newFaceIndex = 0;
 			// old triangle index -> old shared index
 			Dictionary<int, int> oldSharedMap = new Dictionary<int, int>();
 			// old shared index -> new shared index
@@ -426,7 +436,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						false // manualUV flag
 					);
 
-					newFaces.Add(bridge);
+					newFaces[newFaceIndex++] = bridge;
 				}
 
 				foreach(Face face in group)
@@ -489,11 +499,17 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				vertexes[kvp.Key] = new Vertex(vertexes[kvp.Value]);
 
 			pb.SetVertexes(vertexes);
-			pb.SetFaces(newFaces.ToArray());
+
+			var fc = pb.faceCount;
+			var nc = newFaces.Length;
+			var appended = new Face[fc + nc];
+			Array.Copy(pb.facesInternal, 0, appended, 0, fc);
+			Array.Copy(newFaces, 0, appended, fc, nc);
+			pb.SetFaces(appended);
 			pb.SetSharedIndexes(lookup);
 			pb.SetSharedIndexesUV(lookupUV);
 
-			return true;
+			return newFaces;
 		}
 
 		static List<HashSet<Face>> GetFaceGroups(List<WingedEdge> wings)
