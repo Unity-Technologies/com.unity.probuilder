@@ -15,3 +15,5 @@ TestProjects/*/*.sln.DotSettings.user
 TestProjects/*/*.sln
 TestProjects/*/Assets/Debug
 TestProjects/*/Assets/Debug.meta
+TestProjects/*/Assets/ProBuilder\ Data
+TestProjects/*/Assets/ProBuilder\ Data.meta
