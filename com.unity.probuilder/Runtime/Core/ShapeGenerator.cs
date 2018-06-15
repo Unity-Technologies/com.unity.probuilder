@@ -1417,35 +1417,36 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Create a torus mesh.
 		/// </summary>
-		/// <param name="InRows">The number of horizontal divisions.</param>
-		/// <param name="InColumns">The number of vertical divisions.</param>
-		/// <param name="InRadius">The distance from center to the inner bound of geometry.</param>
-		/// <param name="InTubeRadius">The distance from center to the outer bound of geometry.</param>
-		/// <param name="InSmooth">True marks all faces as one smoothing group, false does not.</param>
-		/// <param name="InHorizontalCircumference">The circumference of the horizontal in degrees.</param>
-		/// <param name="InVerticalCircumference">The circumference of the vertical geometry in degrees.</param>
+		/// <param name="rows">The number of horizontal divisions.</param>
+		/// <param name="columns">The number of vertical divisions.</param>
+		/// <param name="innerRadius">The distance from center to the inner bound of geometry.</param>
+		/// <param name="outerRadius">The distance from center to the outer bound of geometry.</param>
+		/// <param name="smooth">True marks all faces as one smoothing group, false does not.</param>
+		/// <param name="horizontalCircumference">The circumference of the horizontal in degrees.</param>
+		/// <param name="verticalCircumference">The circumference of the vertical geometry in degrees.</param>
+		/// <param name="manualUvs">A torus shape does not unwrap textures well using automatic UVs. To disable this feature and instead use manual UVs, pass true.</param>
 		/// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-		public static ProBuilderMesh GenerateTorus(int InRows, int InColumns, float InRadius, float InTubeRadius, bool InSmooth, float InHorizontalCircumference, float InVerticalCircumference, bool manualUvs = false)
+		public static ProBuilderMesh GenerateTorus(int rows, int columns, float innerRadius, float outerRadius, bool smooth, float horizontalCircumference, float verticalCircumference, bool manualUvs = false)
 		{
-			int rows 	= (int) Mathf.Clamp( InRows + 1, 4, 128 );
-			int columns = (int) Mathf.Clamp( InColumns + 1, 4, 128 );
-			float radius = Mathf.Clamp(InRadius, .01f, 2048f);
-			float tubeRadius = Mathf.Clamp(InTubeRadius, .01f, radius - .001f);
-			radius -= tubeRadius;
-			float horizontalCircumference = Mathf.Clamp(InHorizontalCircumference, .01f, 360f);
-			float verticalCircumference = Mathf.Clamp(InVerticalCircumference, .01f, 360f);
+			int clampedRows = (int)Mathf.Clamp(rows + 1, 4, 128);
+			int clampedColumns = (int)Mathf.Clamp(columns + 1, 4, 128);
+			float clampedRadius = Mathf.Clamp(innerRadius, .01f, 2048f);
+			float clampedTubeRadius = Mathf.Clamp(outerRadius, .01f, clampedRadius - .001f);
+			clampedRadius -= clampedTubeRadius;
+			float clampedHorizontalCircumference = Mathf.Clamp(horizontalCircumference, .01f, 360f);
+			float clampedVerticalCircumference = Mathf.Clamp(verticalCircumference, .01f, 360f);
 
 			List<Vector3> vertexes = new List<Vector3>();
 
-			int col = columns - 1;
+			int col = clampedColumns - 1;
 
-			Vector3[] cir = GetCirclePoints(rows, tubeRadius, verticalCircumference, Quaternion.Euler(Vector3.up * 0f * horizontalCircumference), radius);
+			Vector3[] cir = GetCirclePoints(clampedRows, clampedTubeRadius, clampedVerticalCircumference, Quaternion.Euler(Vector3.up * 0f * clampedHorizontalCircumference), clampedRadius);
 
-			for(int i = 1; i < columns; i++)
+			for(int i = 1; i < clampedColumns; i++)
 			{
 				vertexes.AddRange(cir);
-				Quaternion rotation = Quaternion.Euler(Vector3.up * ((i/(float)col) * horizontalCircumference));
-				cir = GetCirclePoints(rows, tubeRadius, verticalCircumference, rotation, radius);
+				Quaternion rotation = Quaternion.Euler(Vector3.up * ((i/(float)col) * clampedHorizontalCircumference));
+				cir = GetCirclePoints(clampedRows, clampedTubeRadius, clampedVerticalCircumference, rotation, clampedRadius);
 				vertexes.AddRange(cir);
 			}
 
@@ -1454,18 +1455,18 @@ namespace UnityEngine.ProBuilder
 			int fc = 0;
 
 			// faces
-			for(int i = 0; i < (columns-1) * 2; i += 2)
+			for(int i = 0; i < (clampedColumns-1) * 2; i += 2)
 			{
-				for(int n = 0; n < rows-1; n++)
+				for(int n = 0; n < clampedRows-1; n++)
 				{
-					int a = (i+0) * ((rows-1) * 2) + (n * 2);
-					int b = (i+1) * ((rows-1) * 2) + (n * 2);
+					int a = (i+0) * ((clampedRows-1) * 2) + (n * 2);
+					int b = (i+1) * ((clampedRows-1) * 2) + (n * 2);
 
-					int c = (i+0) * ((rows-1) * 2) + (n * 2) + 1;
-					int d = (i+1) * ((rows-1) * 2) + (n * 2) + 1;
+					int c = (i+0) * ((clampedRows-1) * 2) + (n * 2) + 1;
+					int d = (i+1) * ((clampedRows-1) * 2) + (n * 2) + 1;
 
 					faces.Add( new Face(new int[] { a, b, c, b, d, c } ) );
-					faces[fc].smoothingGroup = InSmooth ? 1 : -1;
+					faces[fc].smoothingGroup = smooth ? 1 : -1;
 					faces[fc].manualUV = manualUvs;
 
 					fc++;
