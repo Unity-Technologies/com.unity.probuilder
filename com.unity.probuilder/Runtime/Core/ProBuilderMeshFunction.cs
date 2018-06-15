@@ -69,7 +69,7 @@ namespace UnityEngine.ProBuilder
 			GameObject go = new GameObject();
 			ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
 			go.name = "ProBuilder Mesh";
-			pb.GeometryWithVertexesFaces(positions, faces);
+			pb.RebuildWithPositionsAndFaces(positions, faces);
 			return pb;
 		}
 
@@ -107,7 +107,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="vertexes">Vertex positions array.</param>
 		/// <param name="faces">Faces array.</param>
-		public void GeometryWithVertexesFaces(IEnumerable<Vector3> vertexes, IEnumerable<Face> faces)
+		public void RebuildWithPositionsAndFaces(IEnumerable<Vector3> vertexes, IEnumerable<Face> faces)
 		{
             if (vertexes == null)
                 throw new ArgumentNullException("vertexes");

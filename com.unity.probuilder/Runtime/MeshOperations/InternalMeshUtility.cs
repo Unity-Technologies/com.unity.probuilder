@@ -225,7 +225,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			go.GetComponent<MeshFilter>().sharedMesh = null;
 
 			ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
-			pb.GeometryWithVertexesFaces(verts.ToArray(), faces.ToArray());
+			pb.RebuildWithPositionsAndFaces(verts.ToArray(), faces.ToArray());
 
 			pb.colorsInternal = cols.ToArray();
 			pb.SetUVs(uvs.ToArray());
