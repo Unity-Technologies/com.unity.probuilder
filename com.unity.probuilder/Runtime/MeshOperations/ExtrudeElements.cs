@@ -18,7 +18,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="faces">The faces to extrude.</param>
 		/// <param name="method">Describes how faces are extruded.</param>
 		/// <param name="distance">The distance to extrude faces.</param>
-		/// <returns>True on success, false if the action failed.</returns>
+		/// <returns>An array of the faces created as a result of the extrusion. Null if the faces paramater is null or empty.</returns>
 		public static Face[] Extrude(this ProBuilderMesh mesh, IEnumerable<Face> faces, ExtrudeMethod method, float distance)
 		{
 			switch(method)
@@ -39,7 +39,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="distance">The distance to extrude.</param>
 		/// <param name="extrudeAsGroup">If true adjacent edges will be extruded retaining a shared vertex, if false the shared vertex will be split.</param>
 		/// <param name="enableManifoldExtrude">Pass true to allow this function to extrude manifold edges, false to disallow.</param>
-		/// <returns>The extruded edges.</returns>
+		/// <returns>The extruded edges, or null if the action failed due to manifold check or an empty edges parameter.</returns>
 		public static Edge[] Extrude(this ProBuilderMesh mesh, IEnumerable<Edge> edges, float distance, bool extrudeAsGroup, bool enableManifoldExtrude)
 		{
             if (mesh == null)
