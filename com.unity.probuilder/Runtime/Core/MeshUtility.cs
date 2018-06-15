@@ -12,14 +12,14 @@ namespace UnityEngine.ProBuilder
 	public static class MeshUtility
 	{
 		/// <summary>
-		/// Create an array of @"UnityEngine.ProBuilder.Vertex" values that are ordered as individual triangles.
+		/// Create an array of @"UnityEngine.ProBuilder.Vertex" values that are ordered as individual triangles. This modifies the source mesh to match the new individual triangles format.
 		/// </summary>
-		/// <param name="mesh">The mesh to extract vertexes from.</param>
+		/// <param name="mesh">The mesh to extract vertexes from, and apply per-triangle topology to.</param>
 		/// <returns>A @"UnityEngine.ProBuilder.Vertex" array of the per-triangle vertexes.</returns>
-		public static Vertex[] GeneratePerTriangleMesh(Mesh mesh)
+		internal static Vertex[] GeneratePerTriangleMesh(Mesh mesh)
 		{
             if (mesh == null)
-                throw new System.ArgumentNullException("mesh");
+                throw new ArgumentNullException("mesh");
 
             Vertex[] vertexes = Vertex.GetVertexes(mesh);
             int smc = mesh.subMeshCount;
