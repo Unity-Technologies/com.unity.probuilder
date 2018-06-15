@@ -244,28 +244,32 @@ namespace UnityEngine.ProBuilder
     /// Mesh attributes bitmask.
     /// </summary>
     [System.Flags]
-    public enum MeshAttributes
+    public enum MeshArrays
     {
         /// <summary>
         /// Vertex positions.
         /// </summary>
         Position = 0x1,
         /// <summary>
-        /// Vertex UV.
+        /// First UV channel.
         /// </summary>
-        UV0 = 0x2,
+        Texture0 = 0x2,
         /// <summary>
-        /// Vertex UV2.
+        /// Second UV channel. Commonly called UV2 or Lightmap UVs in Unity terms.
         /// </summary>
-        UV1 = 0x4,
+        Texture1 = 0x4,
         /// <summary>
-        /// Vertex UV3.
+        /// Second UV channel. Commonly called UV2 or Lightmap UVs in Unity terms.
         /// </summary>
-        UV2 = 0x8,
+        Lightmap = 0x4,
+        /// <summary>
+        /// Third UV channel.
+        /// </summary>
+        Texture2 = 0x8,
         /// <summary>
         /// Vertex UV4.
         /// </summary>
-        UV3 = 0x10,
+        Texture3 = 0x10,
         /// <summary>
         /// Vertex colors.
         /// </summary>

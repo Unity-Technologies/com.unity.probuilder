@@ -17,8 +17,8 @@ namespace UnityEngine.ProBuilder
 			m_Faces = new Face[0];
 			m_Positions = new Vector3[0];
 			m_Textures0 = new Vector2[0];
+			m_Textures2 = null;
 			m_Textures3 = null;
-			m_Textures4 = null;
 			m_Tangents = null;
 			m_SharedIndexes = new IntArray[0];
 			m_SharedIndexesUV = new IntArray[0];
@@ -405,8 +405,8 @@ namespace UnityEngine.ProBuilder
 			m_Textures0 = newUVs;
 			mesh.uv = newUVs;
 
-			if (hasUv3) mesh.SetUVs(2, m_Textures3);
-			if (hasUv4) mesh.SetUVs(3, m_Textures4);
+			if (HasArray(MeshArrays.Texture2)) mesh.SetUVs(2, m_Textures2);
+			if (HasArray(MeshArrays.Texture3)) mesh.SetUVs(3, m_Textures3);
 		}
 
 		void RefreshColors()

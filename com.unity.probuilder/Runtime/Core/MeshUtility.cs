@@ -369,14 +369,14 @@ namespace UnityEngine.ProBuilder
             targetMesh.vertices = probuilderMesh.positionsInternal;
             targetMesh.uv = probuilderMesh.texturesInternal;
 
-            if (probuilderMesh.hasUv3)
+            if (probuilderMesh.HasArray(MeshArrays.Texture2))
             {
                 List<Vector4> uvChannel = new List<Vector4>();
                 probuilderMesh.GetUVs(2, uvChannel);
                 targetMesh.SetUVs(2, uvChannel);
             }
 
-            if (probuilderMesh.hasUv4)
+            if (probuilderMesh.HasArray(MeshArrays.Texture3))
             {
                 List<Vector4> uvChannel = new List<Vector4>();
                 probuilderMesh.GetUVs(3, uvChannel);

@@ -24,18 +24,18 @@ namespace UnityEngine.ProBuilder.EditorTests.Type
 				normal = Vector3.up
 			};
 
-			Assert.IsTrue(x.HasAttribute(MeshAttributes.Normal));
-			Assert.IsFalse(x.HasAttribute(MeshAttributes.Position));
-			Assert.IsFalse(x.HasAttribute(MeshAttributes.Tangent));
+			Assert.IsTrue(x.HasAttribute(MeshArrays.Normal));
+			Assert.IsFalse(x.HasAttribute(MeshArrays.Position));
+			Assert.IsFalse(x.HasAttribute(MeshArrays.Tangent));
 		}
 
 		[Test]
 		public static void AssignedAttributesAreStored()
 		{
 			var x = new Vertex();
-			Assert.IsFalse(x.HasAttribute(MeshAttributes.Position));
+			Assert.IsFalse(x.HasAttribute(MeshArrays.Position));
 			x.position = Vector3.one;
-			Assert.IsTrue(x.HasAttribute(MeshAttributes.Position));
+			Assert.IsTrue(x.HasAttribute(MeshArrays.Position));
 		}
 
 		[Test]

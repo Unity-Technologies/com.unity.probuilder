@@ -37,23 +37,42 @@ namespace UnityEngine.ProBuilder
 
         [SerializeField]
         [FormerlySerializedAs("_uv3")]
-        List<Vector4> m_Textures3;
+        List<Vector4> m_Textures2;
 
         [SerializeField]
         [FormerlySerializedAs("_uv4")]
-        List<Vector4> m_Textures4;
+        List<Vector4> m_Textures3;
 
         [SerializeField]
         [FormerlySerializedAs("_tangents")]
         Vector4[] m_Tangents;
 
         [SerializeField]
-        [FormerlySerializedAs("_sharedIndicesUV ")]
+        [FormerlySerializedAs("_sharedIndicesUV")]
         IntArray[] m_SharedIndexesUV;
 
         [SerializeField]
         [FormerlySerializedAs("_colors")]
         Color[] m_Colors;
+
+	    public bool HasArray(MeshArrays channels)
+	    {
+		    bool missing = false;
+
+		    int vc = vertexCount;
+
+		    var m_Textures1 = mesh != null ? mesh.uv2 : null;
+
+		    missing |= (channels & MeshArrays.Position) == MeshArrays.Position && m_Positions == null;
+			missing |= (channels & MeshArrays.Texture0) == MeshArrays.Texture0 && (m_Textures0 == null || m_Textures0.Length != vc);
+			missing |= (channels & MeshArrays.Texture1) == MeshArrays.Texture1 && (m_Textures1 == null || m_Textures1.Length != vc);
+			missing |= (channels & MeshArrays.Texture2) == MeshArrays.Texture2 && (m_Textures2 == null || m_Textures2.Count != vc);
+		    missing |= (channels & MeshArrays.Texture3) == MeshArrays.Texture3 && (m_Textures3 == null || m_Textures3.Count != vc);
+			missing |= (channels & MeshArrays.Color) == MeshArrays.Color && (m_Colors == null || m_Colors.Length != vc);
+			missing |= (channels & MeshArrays.Tangent) == MeshArrays.Tangent && (m_Tangents == null || m_Tangents.Length != vc);
+
+		    return !missing;
+	    }
 
 	    /// <value>
 	    /// If false, ProBuilder will automatically create and scale colliders.
@@ -248,8 +267,8 @@ namespace UnityEngine.ProBuilder
             m_Colors = color;
             m_Tangents = tangent;
             m_Textures0 = uv0;
-            m_Textures3 = uv3;
-            m_Textures4 = uv4;
+            m_Textures2 = uv3;
+            m_Textures3 = uv4;
 
             if (applyMesh)
             {
@@ -257,14 +276,14 @@ namespace UnityEngine.ProBuilder
 
                 Vertex first = vertexes[0];
 
-                if (first.HasAttribute(MeshAttributes.Position)) umesh.vertices = position;
-                if (first.HasAttribute(MeshAttributes.Color)) umesh.colors = color;
-                if (first.HasAttribute(MeshAttributes.UV0)) umesh.uv = uv0;
-                if (first.HasAttribute(MeshAttributes.Normal)) umesh.normals = normal;
-                if (first.HasAttribute(MeshAttributes.Tangent)) umesh.tangents = tangent;
-                if (first.HasAttribute(MeshAttributes.UV1)) umesh.uv2 = uv2;
-                if (first.HasAttribute(MeshAttributes.UV2)) if (uv3 != null) umesh.SetUVs(2, uv3);
-                if (first.HasAttribute(MeshAttributes.UV3)) if (uv4 != null) umesh.SetUVs(3, uv4);
+                if (first.HasAttribute(MeshArrays.Position)) umesh.vertices = position;
+                if (first.HasAttribute(MeshArrays.Color)) umesh.colors = color;
+                if (first.HasAttribute(MeshArrays.Texture0)) umesh.uv = uv0;
+                if (first.HasAttribute(MeshArrays.Normal)) umesh.normals = normal;
+                if (first.HasAttribute(MeshArrays.Tangent)) umesh.tangents = tangent;
+                if (first.HasAttribute(MeshArrays.Texture1)) umesh.uv2 = uv2;
+                if (first.HasAttribute(MeshArrays.Texture2)) if (uv3 != null) umesh.SetUVs(2, uv3);
+                if (first.HasAttribute(MeshArrays.Texture3)) if (uv4 != null) umesh.SetUVs(3, uv4);
             }
         }
 
@@ -305,9 +324,10 @@ namespace UnityEngine.ProBuilder
 			{
 				if (value == null)
 					m_Colors = null;
-				if (value.Count() != vertexCount)
+				else if (value.Count() != vertexCount)
 					throw new ArgumentOutOfRangeException("value", "Array length must match vertex count.");
-				m_Colors = value.ToArray();
+				else
+					m_Colors = value.ToArray();
 			}
         }
 
@@ -368,7 +388,8 @@ namespace UnityEngine.ProBuilder
 				    m_Textures0 = null;
 			    else if(value.Count() != vertexCount)
 				    throw new ArgumentOutOfRangeException("value");
-			    m_Textures0 = value.ToArray();
+			    else
+				    m_Textures0 = value.ToArray();
 		    }
 	    }
 
@@ -404,13 +425,13 @@ namespace UnityEngine.ProBuilder
                     break;
 
                 case 2:
-                    if (m_Textures3 != null)
-                        uvs.AddRange(m_Textures3);
+                    if (m_Textures2 != null)
+                        uvs.AddRange(m_Textures2);
                     break;
 
                 case 3:
-                    if (m_Textures4 != null)
-                        uvs.AddRange(m_Textures4);
+                    if (m_Textures3 != null)
+                        uvs.AddRange(m_Textures3);
                     break;
             }
         }
@@ -434,29 +455,14 @@ namespace UnityEngine.ProBuilder
                     break;
 
                 case 2:
-                    m_Textures3 = uvs != null ? new List<Vector4>(uvs) : null;
+                    m_Textures2 = uvs != null ? new List<Vector4>(uvs) : null;
                     break;
 
                 case 3:
-                    m_Textures4 = uvs != null ? new List<Vector4>(uvs) : null;
+                    m_Textures3 = uvs != null ? new List<Vector4>(uvs) : null;
                     break;
             }
         }
-
-        internal bool hasUv2
-		{
-			get { return mesh.uv2 != null && mesh.uv2.Length == vertexCount; }
-		}
-
-	    internal bool hasUv3
-		{
-			get { return m_Textures3 != null && m_Textures3.Count == vertexCount; }
-		}
-
-	    internal bool hasUv4
-		{
-			get { return m_Textures4 != null && m_Textures4.Count == vertexCount; }
-		}
 
 		/// <value>
 		/// How many faces does this mesh have?

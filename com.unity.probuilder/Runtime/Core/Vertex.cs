@@ -41,7 +41,7 @@ namespace UnityEngine.ProBuilder
 		Vector4 m_UV4;
 
 		[SerializeField]
-		MeshAttributes m_Attributes;
+		MeshArrays m_Attributes;
 
 		/// <value>
 		/// The position in model space.
@@ -161,57 +161,57 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="attribute">The attribute or attributes to test for.</param>
 		/// <returns>True if this vertex has the specified attributes set, false if they are default values.</returns>
-		public bool HasAttribute(MeshAttributes attribute)
+		public bool HasAttribute(MeshArrays attribute)
 		{
 			return (m_Attributes & attribute) == attribute;
 		}
 
 		bool hasPosition
 		{
-			get { return (m_Attributes & MeshAttributes.Position) == MeshAttributes.Position; }
-			set { m_Attributes = value ? (m_Attributes | MeshAttributes.Position) : (m_Attributes & ~(MeshAttributes.Position)); }
+			get { return (m_Attributes & MeshArrays.Position) == MeshArrays.Position; }
+			set { m_Attributes = value ? (m_Attributes | MeshArrays.Position) : (m_Attributes & ~(MeshArrays.Position)); }
 		}
 
 		bool hasColor
 		{
-			get { return (m_Attributes & MeshAttributes.Color) == MeshAttributes.Color; }
-			set { m_Attributes = value ? (m_Attributes | MeshAttributes.Color) : (m_Attributes & ~(MeshAttributes.Color)); }
+			get { return (m_Attributes & MeshArrays.Color) == MeshArrays.Color; }
+			set { m_Attributes = value ? (m_Attributes | MeshArrays.Color) : (m_Attributes & ~(MeshArrays.Color)); }
 		}
 
 		bool hasNormal
 		{
-			get { return (m_Attributes & MeshAttributes.Normal) == MeshAttributes.Normal; }
-			set { m_Attributes = value ? (m_Attributes | MeshAttributes.Normal) : (m_Attributes & ~(MeshAttributes.Normal)); }
+			get { return (m_Attributes & MeshArrays.Normal) == MeshArrays.Normal; }
+			set { m_Attributes = value ? (m_Attributes | MeshArrays.Normal) : (m_Attributes & ~(MeshArrays.Normal)); }
 		}
 
 		bool hasTangent
 		{
-			get { return (m_Attributes & MeshAttributes.Tangent) == MeshAttributes.Tangent; }
-			set { m_Attributes = value ? (m_Attributes | MeshAttributes.Tangent) : (m_Attributes & ~(MeshAttributes.Tangent)); }
+			get { return (m_Attributes & MeshArrays.Tangent) == MeshArrays.Tangent; }
+			set { m_Attributes = value ? (m_Attributes | MeshArrays.Tangent) : (m_Attributes & ~(MeshArrays.Tangent)); }
 		}
 
 		bool hasUV0
 		{
-			get { return (m_Attributes & MeshAttributes.UV0) == MeshAttributes.UV0; }
-			set { m_Attributes = value ? (m_Attributes | MeshAttributes.UV0) : (m_Attributes & ~(MeshAttributes.UV0)); }
+			get { return (m_Attributes & MeshArrays.Texture0) == MeshArrays.Texture0; }
+			set { m_Attributes = value ? (m_Attributes | MeshArrays.Texture0) : (m_Attributes & ~(MeshArrays.Texture0)); }
 		}
 
 		bool hasUV2
 		{
-			get { return (m_Attributes & MeshAttributes.UV1) == MeshAttributes.UV1; }
-			set { m_Attributes = value ? (m_Attributes | MeshAttributes.UV1) : (m_Attributes & ~(MeshAttributes.UV1)); }
+			get { return (m_Attributes & MeshArrays.Texture1) == MeshArrays.Texture1; }
+			set { m_Attributes = value ? (m_Attributes | MeshArrays.Texture1) : (m_Attributes & ~(MeshArrays.Texture1)); }
 		}
 
 		bool hasUV3
 		{
-			get { return (m_Attributes & MeshAttributes.UV2) == MeshAttributes.UV2; }
-			set { m_Attributes = value ? (m_Attributes | MeshAttributes.UV2) : (m_Attributes & ~(MeshAttributes.UV2)); }
+			get { return (m_Attributes & MeshArrays.Texture2) == MeshArrays.Texture2; }
+			set { m_Attributes = value ? (m_Attributes | MeshArrays.Texture2) : (m_Attributes & ~(MeshArrays.Texture2)); }
 		}
 
 		bool hasUV4
 		{
-			get { return (m_Attributes & MeshAttributes.UV3) == MeshAttributes.UV3; }
-			set { m_Attributes = value ? (m_Attributes | MeshAttributes.UV3) : (m_Attributes & ~(MeshAttributes.UV3)); }
+			get { return (m_Attributes & MeshArrays.Texture3) == MeshArrays.Texture3; }
+			set { m_Attributes = value ? (m_Attributes | MeshArrays.Texture3) : (m_Attributes & ~(MeshArrays.Texture3)); }
 		}
 
 		/// <summary>
@@ -732,7 +732,7 @@ namespace UnityEngine.ProBuilder
 			out List<Vector4> uv3,
 			out List<Vector4> uv4)
 		{
-			GetArrays(vertexes, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4, MeshAttributes.All);
+			GetArrays(vertexes, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4, MeshArrays.All);
 		}
 
 		/// <summary>
@@ -763,7 +763,7 @@ namespace UnityEngine.ProBuilder
 			out Vector2[] uv2,
 			out List<Vector4> uv3,
 			out List<Vector4> uv4,
-			MeshAttributes attributes)
+			MeshArrays attributes)
 		{
 			if (vertexes == null)
 				throw new ArgumentNullException("vertexes");
@@ -771,14 +771,14 @@ namespace UnityEngine.ProBuilder
 			int vc = vertexes.Count;
 			var first = vertexes[0];
 
-			bool hasPosition = ((attributes & MeshAttributes.Position) == MeshAttributes.Position) && first.hasPosition;
-			bool hasColor = ((attributes & MeshAttributes.Color) == MeshAttributes.Color) && first.hasColor;
-			bool hasUv0 = ((attributes & MeshAttributes.UV0) == MeshAttributes.UV0) && first.hasUV0;
-			bool hasNormal = ((attributes & MeshAttributes.Normal) == MeshAttributes.Normal) && first.hasNormal;
-			bool hasTangent = ((attributes & MeshAttributes.Tangent) == MeshAttributes.Tangent) && first.hasTangent;
-			bool hasUv2 = ((attributes & MeshAttributes.UV1) == MeshAttributes.UV1) && first.hasUV2;
-			bool hasUv3 = ((attributes & MeshAttributes.UV2) == MeshAttributes.UV2) && first.hasUV3;
-			bool hasUv4 = ((attributes & MeshAttributes.UV3) == MeshAttributes.UV3) && first.hasUV4;
+			bool hasPosition = ((attributes & MeshArrays.Position) == MeshArrays.Position) && first.hasPosition;
+			bool hasColor = ((attributes & MeshArrays.Color) == MeshArrays.Color) && first.hasColor;
+			bool hasUv0 = ((attributes & MeshArrays.Texture0) == MeshArrays.Texture0) && first.hasUV0;
+			bool hasNormal = ((attributes & MeshArrays.Normal) == MeshArrays.Normal) && first.hasNormal;
+			bool hasTangent = ((attributes & MeshArrays.Tangent) == MeshArrays.Tangent) && first.hasTangent;
+			bool hasUv2 = ((attributes & MeshArrays.Texture1) == MeshArrays.Texture1) && first.hasUV2;
+			bool hasUv3 = ((attributes & MeshArrays.Texture2) == MeshArrays.Texture2) && first.hasUV3;
+			bool hasUv4 = ((attributes & MeshArrays.Texture3) == MeshArrays.Texture3) && first.hasUV4;
 
 			position = hasPosition ? new Vector3[vc] : null;
 			color = hasColor ? new Color[vc] : null;
