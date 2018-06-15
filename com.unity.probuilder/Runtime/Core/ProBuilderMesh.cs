@@ -554,7 +554,7 @@ namespace UnityEngine.ProBuilder
 	    /// If onDestroyObject has a subscriber ProBuilder will invoke it instead of cleaning up unused meshes by itself.
 	    /// </value>
 	    /// <seealso cref="preserveMeshAssetOnDestroy"/>
-	    public static event Action<ProBuilderMesh> onDestroyObject;
+	    public static event Action<ProBuilderMesh> meshWillBeDestroyed;
 
 	    /// <value>
 	    /// Invoked when the element selection changes on any ProBuilderMesh.

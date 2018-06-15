@@ -11,8 +11,8 @@ namespace UnityEditor.ProBuilder
 	{
 		static DestroyListener()
 		{
-			ProBuilderMesh.onDestroyObject -= OnDestroyObject;
-			ProBuilderMesh.onDestroyObject += OnDestroyObject;
+			ProBuilderMesh.meshWillBeDestroyed -= OnDestroyObject;
+			ProBuilderMesh.meshWillBeDestroyed += OnDestroyObject;
 		}
 
 		static void OnDestroyObject(ProBuilderMesh pb)

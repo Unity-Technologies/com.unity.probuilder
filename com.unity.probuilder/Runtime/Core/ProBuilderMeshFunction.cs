@@ -35,8 +35,8 @@ namespace UnityEngine.ProBuilder
 			    !Application.isPlaying &&
 			    Time.frameCount > 0)
 			{
-				if (onDestroyObject != null)
-					onDestroyObject(this);
+				if (meshWillBeDestroyed != null)
+					meshWillBeDestroyed(this);
 				else
 					DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
 			}
