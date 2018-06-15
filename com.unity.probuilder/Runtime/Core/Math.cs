@@ -707,7 +707,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="mesh">The mesh that the target face belongs to.</param>
 		/// <param name="face">The face to calculate normal information for.</param>
 		/// <returns>The normal, bitangent, and tangent for the face.</returns>
-		public static Normals NormalTangentBitangent(ProBuilderMesh mesh, Face face)
+		public static Normal NormalTangentBitangent(ProBuilderMesh mesh, Face face)
 		{
 			if(mesh == null || face == null || face.indexesInternal.Length < 3)
                 throw new System.ArgumentNullException("mesh", "Cannot find normal, tangent, and bitangent for null object, or faces with < 3 indexes.");
@@ -762,7 +762,7 @@ namespace UnityEngine.ProBuilder
 
 			tan.w = (Vector3.Dot(Vector3.Cross(n, tan1), tan2) < 0.0f) ? -1.0f : 1.0f;
 
-			return new Normals()
+			return new Normal()
 			{
 				normal = nrm,
 				tangent = tan,
