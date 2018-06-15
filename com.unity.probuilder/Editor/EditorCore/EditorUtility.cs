@@ -153,14 +153,14 @@ namespace UnityEditor.ProBuilder
 		/// Ensure that this object has a valid mesh reference, and the geometry is current. If it is not valid, this function will attempt to repair the sync state.
 		/// </summary>
 		/// <param name="mesh">The component to test.</param>
-		/// <seealso cref="ProBuilderMesh.Verify"/>
+		/// <seealso cref="ProBuilderMesh.meshSyncState"/>
 		public static void SynchronizeWithMeshFilter(ProBuilderMesh mesh)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
 		 	Mesh oldMesh = mesh.mesh;
-	 		MeshSyncState reason = mesh.Verify();
+	 		MeshSyncState reason = mesh.meshSyncState;
 			bool meshesAreAssets = PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets);
 
 			if( reason != MeshSyncState.None )

@@ -19,7 +19,6 @@ namespace UnityEngine.ProBuilder
     {
 	    const int k_UVChannelCount = 4;
 
-#region Serialized Fields and Properties
         [SerializeField]
         [FormerlySerializedAs("_quads")]
         Face[] m_Faces;
@@ -93,9 +92,6 @@ namespace UnityEngine.ProBuilder
             get { return m_PreserveMeshAssetOnDestroy; }
             set { m_PreserveMeshAssetOnDestroy = value; }
         }
-#endregion
-
-#region Properties
 
 	    internal Face[] facesInternal
         {
@@ -565,6 +561,27 @@ namespace UnityEngine.ProBuilder
 	    {
 		    get { return gameObject.GetInstanceID(); }
 	    }
-#endregion
+
+	    /// <summary>
+	    /// Ensure that the UnityEngine.Mesh is in sync with the ProBuilderMesh.
+	    /// </summary>
+	    /// <returns>A flag describing the state of the synchronicity between the MeshFilter.sharedMesh and ProBuilderMesh components.</returns>
+	    public MeshSyncState meshSyncState
+	    {
+		    get
+		    {
+			    if (mesh == null)
+				    return MeshSyncState.Null;
+
+			    int meshNo;
+
+			    int.TryParse(mesh.name.Replace("pb_Mesh", ""), out meshNo);
+
+			    if (meshNo != id)
+				    return MeshSyncState.InstanceIDMismatch;
+
+			    return mesh.uv2 == null ? MeshSyncState.Lightmap : MeshSyncState.None;
+		    }
+	    }
     }
 }

@@ -120,25 +120,6 @@ namespace UnityEngine.ProBuilder
 			Refresh();
 		}
 
-		/// <summary>
-		/// Ensure that the UnityEngine.Mesh is in sync with the ProBuilderMesh.
-		/// </summary>
-		/// <returns>A flag describing the state of the synchronicity between the MeshFilter.sharedMesh and ProBuilderMesh components.</returns>
-		public MeshSyncState Verify()
-		{
-			if (mesh == null)
-				return MeshSyncState.Null;
-
-			int meshNo;
-
-			int.TryParse(mesh.name.Replace("pb_Mesh", ""), out meshNo);
-
-			if (meshNo != id)
-				return MeshSyncState.InstanceIDMismatch;
-
-			return mesh.uv2 == null ? MeshSyncState.Lightmap : MeshSyncState.None;
-		}
-
 	    /// <summary>
 	    /// Wraps ToMesh and Refresh in a single call.
 	    /// </summary>
