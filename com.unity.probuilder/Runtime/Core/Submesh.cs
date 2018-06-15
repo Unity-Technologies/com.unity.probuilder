@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
 
@@ -11,23 +12,41 @@ namespace UnityEngine.ProBuilder
 	[Serializable]
 	public sealed class Submesh
 	{
-		/// <value>
-		/// Indexes making up this submesh. Can be triangles or quads.
-		/// </value>
         [SerializeField]
 		internal int[] m_Indexes;
 
-		/// <value>
-		/// What topology is this submesh?
-		/// </value>
         [SerializeField]
 		internal MeshTopology m_Topology;
+
+        [SerializeField]
+		internal Material m_Material;
+
+		/// <value>
+		/// Indexes making up this submesh. Can be triangles or quads, check with topology.
+		/// </value>
+		public IEnumerable<int> indexes
+		{
+			get { return new ReadOnlyCollection<int>(m_Indexes); }
+			set { m_Indexes = value.ToArray(); }
+		}
+
+		/// <value>
+		/// What is the topology (triangles, quads) of this submesh?
+		/// </value>
+		public MeshTopology topology
+		{
+			get { return m_Topology; }
+			set { m_Topology = value; }
+		}
 
 		/// <value>
 		/// What material does this submesh use?
 		/// </value>
-        [SerializeField]
-		internal Material m_Material;
+		public Material material
+		{
+			get { return m_Material; }
+			set { m_Material = value; }
+		}
 
 		/// <summary>
 		/// Create new Submesh.
