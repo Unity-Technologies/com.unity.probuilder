@@ -134,17 +134,8 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Rebuild the mesh positions and submeshes. If vertex count matches new positions array the existing attributes are kept, otherwise the mesh is cleared. UV2 is the exception, it is always cleared.
 		/// </summary>
-		public void ToMesh()
-		{
-			// ReSharper disable once IntroduceOptionalParameters.Global
-			ToMesh(MeshTopology.Triangles);
-		}
-
-		/// <summary>
-		/// Rebuild the mesh positions and submeshes. If vertex count matches new positions array the existing attributes are kept, otherwise the mesh is cleared. UV2 is the exception, it is always cleared.
-		/// </summary>
 		/// <param name="preferredTopology">Triangles and Quads are supported.</param>
-		public void ToMesh(MeshTopology preferredTopology)
+		public void ToMesh(MeshTopology preferredTopology = MeshTopology.Triangles)
 		{
 			Mesh m = mesh;
 
