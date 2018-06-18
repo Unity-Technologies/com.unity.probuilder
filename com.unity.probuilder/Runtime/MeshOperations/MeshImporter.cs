@@ -130,7 +130,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			// When importing the mesh is always split into triangles with no vertexes shared
 			// between faces. In a later step co-incident vertexes are collapsed (eg, before
 			// leaving the Import function).
-			Vertex[] sourceVertexes = Vertex.GetVertexes(originalMesh);
+			Vertex[] sourceVertexes = originalMesh.GetVertexes();
 			List<Vertex> splitVertexes = new List<Vertex>();
 			List<Face> faces = new List<Face>();
 

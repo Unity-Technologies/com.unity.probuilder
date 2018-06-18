@@ -153,7 +153,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="vertex"></param>
 		internal static void SetSharedVertexValues(this ProBuilderMesh pb, int sharedIndex, Vertex vertex)
 		{
-			Vertex[] vertexes = Vertex.GetVertexes(pb);
+			Vertex[] vertexes = pb.GetVertexes();
 
 			int[] array = pb.sharedIndexesInternal[sharedIndex].array;
 

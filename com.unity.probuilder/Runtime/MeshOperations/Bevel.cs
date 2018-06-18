@@ -25,7 +25,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 throw new ArgumentNullException("mesh");
 
 			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
-			List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(mesh));
+			List<Vertex> vertexes = new List<Vertex>(mesh.GetVertexes());
 			List<EdgeLookup> m_edges = EdgeLookup.GetEdgeLookup(edges, lookup).Distinct().ToList();
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh);
 			List<FaceRebuildData> appendFaces = new List<FaceRebuildData>();
@@ -177,7 +177,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			List<WingedEdge> modified = WingedEdge.GetWingedEdges(mesh, appendFaces.Select(x => x.face));
 
 			// now go through the holes and create faces for them
-			vertexes = new List<Vertex>( Vertex.GetVertexes(mesh) );
+			vertexes = new List<Vertex>( mesh.GetVertexes() );
 
 			List<FaceRebuildData> holeFaces = new List<FaceRebuildData>();
 
@@ -192,14 +192,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				// skip sorting the path if it's just a triangle
 				if(h.Count < 4)
 				{
-					List<Vertex> v = new List<Vertex>( Vertex.GetVertexes(mesh, h.Select(x => sharedIndexes[x][0]).ToList()) );
+					List<Vertex> v = new List<Vertex>( mesh.GetVertexes(h.Select(x => sharedIndexes[x][0]).ToList()) );
 					holeFaces.Add(AppendElements.FaceWithVertexes(v));
 				}
 				// if this hole has > 3 indexes, it needs a tent pole triangulation, which requires sorting into the perimeter order
 				else
 				{
 					List<int> holePath = WingedEdge.SortCommonIndexesByAdjacency(modified, h);
-					List<Vertex> v = new List<Vertex>( Vertex.GetVertexes(mesh, holePath.Select(x => sharedIndexes[x][0]).ToList()) );
+					List<Vertex> v = new List<Vertex>( mesh.GetVertexes(holePath.Select(x => sharedIndexes[x][0]).ToList()) );
 					holeFaces.AddRange( AppendElements.TentCapWithVertexes(v) );
 				}
 			}

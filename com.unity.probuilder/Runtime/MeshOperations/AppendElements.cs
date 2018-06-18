@@ -186,7 +186,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			IntArray[] sharedIndexes = mesh.sharedIndexesInternal;
 			Dictionary<int, int> lookup = sharedIndexes.ToDictionary();
 			HashSet<int> common = IntArrayUtility.GetCommonIndexes(lookup, indexes);
-			List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(mesh));
+			List<Vertex> vertexes = new List<Vertex>(mesh.GetVertexes());
 			List<Vertex> appendVertexes = new List<Vertex>();
 
 			foreach(int i in common)
@@ -381,7 +381,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 throw new ArgumentNullException("faces");
 
 			List<FaceRebuildData> rebuild = new List<FaceRebuildData>();
-			List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(mesh));
+			List<Vertex> vertexes = new List<Vertex>(mesh.GetVertexes());
 			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
 
 			foreach(Face face in faces)
@@ -610,7 +610,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (points == null)
                 throw new ArgumentNullException("points");
 
-            List<Vertex> vertexes = Vertex.GetVertexes(mesh).ToList();
+            List<Vertex> vertexes = mesh.GetVertexes().ToList();
             List<Face> faces = new List<Face>(mesh.facesInternal);
             Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
             Dictionary<int, int> lookupUV = mesh.sharedIndexesUVInternal == null ? null : mesh.sharedIndexesUVInternal.ToDictionary();
@@ -748,7 +748,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 return null;
             }
 
-            List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(mesh));
+            List<Vertex> vertexes = new List<Vertex>(mesh.GetVertexes());
             Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
             Dictionary<int, int> lookupUV = mesh.sharedIndexesUVInternal.ToDictionary();
             List<int> indexesToDelete = new List<int>();

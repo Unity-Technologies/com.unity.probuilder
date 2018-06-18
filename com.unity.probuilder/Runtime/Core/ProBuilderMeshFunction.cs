@@ -174,7 +174,7 @@ namespace UnityEngine.ProBuilder
 
 			// set a new UnityEngine.Mesh instance
 			mesh = new Mesh();
-			
+
 			ToMesh();
 			Refresh();
 		}
@@ -573,7 +573,6 @@ namespace UnityEngine.ProBuilder
 
 			return normals;
 		}
-
 	}
 }
 

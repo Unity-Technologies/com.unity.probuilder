@@ -46,7 +46,7 @@ namespace UnityEngine.ProBuilder
 				faces = new List<Face>(pb.facesInternal);
 
 			if(vertexes == null)
-				vertexes = new List<Vertex>( Vertex.GetVertexes(pb) );
+				vertexes = new List<Vertex>( pb.GetVertexes() );
 
 			if(lookup == null)
 				lookup = pb.sharedIndexesInternal.ToDictionary();

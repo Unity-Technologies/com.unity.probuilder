@@ -81,7 +81,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				affected.UnionWith(mesh.sharedIndexesInternal[i].array);
 
 			Dictionary<Face, List<int>> splits = new Dictionary<Face, List<int>>();
-			List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(mesh));
+			List<Vertex> vertexes = new List<Vertex>(mesh.GetVertexes());
 
 			foreach(Face face in mesh.facesInternal)
 			{
@@ -213,7 +213,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				affected.Add(kvp.Key, kvp.Value);
 			}
 
-			List<Vertex> vertexes = new List<Vertex>( Vertex.GetVertexes(pb) );
+			List<Vertex> vertexes = new List<Vertex>( pb.GetVertexes() );
 			List<ConnectFaceRebuildData> results = new List<ConnectFaceRebuildData>();
 			// just the faces that where connected with > 1 edge
 			List<Face> connectedFaces = new List<Face>();

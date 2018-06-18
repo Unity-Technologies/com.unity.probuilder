@@ -28,7 +28,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (faces == null)
                 throw new System.ArgumentNullException("faces");
 
-            List<Vertex> vertexes = new List<Vertex>( Vertex.GetVertexes(mesh) );
+            List<Vertex> vertexes = new List<Vertex>( mesh.GetVertexes() );
 			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
 
 			List<FaceRebuildData> rebuild = new List<FaceRebuildData>();

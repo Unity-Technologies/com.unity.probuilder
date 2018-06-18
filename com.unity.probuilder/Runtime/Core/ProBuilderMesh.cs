@@ -247,7 +247,75 @@ namespace UnityEngine.ProBuilder
 		    }
         }
 
-        /// <summary>
+		/// <summary>
+		/// Creates a new array of vertexes with values from a @"UnityEngine.ProBuilder.ProBuilderMesh" component.
+		/// </summary>
+		/// <param name="indexes">An optional list of indexes pointing to the mesh attribute indexes to include in the returned Vertex array.</param>
+		/// <returns>An array of vertexes.</returns>
+		public Vertex[] GetVertexes(IList<int> indexes = null)
+		{
+			int meshVertexCount = vertexCount;
+			int vc = indexes != null ? indexes.Count : vertexCount;
+
+			Vertex[] v = new Vertex[vc];
+
+			Vector3[] positions = positionsInternal;
+			Color[] colors = colorsInternal;
+			Vector2[] uv0s = texturesInternal;
+			Vector4[] tangents = GetTangents();
+			Vector3[] normals = GetNormals();
+			Vector2[] uv2s = mesh != null ? mesh.uv2 : null;
+
+			List<Vector4> uv3s = new List<Vector4>();
+			List<Vector4> uv4s = new List<Vector4>();
+
+			GetUVs(2, uv3s);
+			GetUVs(3, uv4s);
+
+			bool _hasPositions = positions != null && positions.Count() == meshVertexCount;
+			bool _hasColors = colors != null && colors.Count() == meshVertexCount;
+			bool _hasNormals = normals != null && normals.Count() == meshVertexCount;
+			bool _hasTangents = tangents != null && tangents.Count() == meshVertexCount;
+			bool _hasUv0 = uv0s != null && uv0s.Count() == meshVertexCount;
+			bool _hasUv2 = uv2s != null && uv2s.Count() == meshVertexCount;
+			bool _hasUv3 = uv3s.Count() == meshVertexCount;
+			bool _hasUv4 = uv4s.Count() == meshVertexCount;
+
+			for (int i = 0; i < vc; i++)
+			{
+				v[i] = new Vertex();
+
+				int ind = indexes == null ? i : indexes[i];
+
+				if (_hasPositions)
+					v[i].position = positions[ind];
+
+				if (_hasColors)
+					v[i].color = colors[ind];
+
+				if (_hasNormals)
+					v[i].normal = normals[ind];
+
+				if (_hasTangents)
+					v[i].tangent = tangents[ind];
+
+				if (_hasUv0)
+					v[i].uv0 = uv0s[ind];
+
+				if (_hasUv2)
+					v[i].uv2 = uv2s[ind];
+
+				if (_hasUv3)
+					v[i].uv3 = uv3s[ind];
+
+				if (_hasUv4)
+					v[i].uv4 = uv4s[ind];
+			}
+
+			return v;
+		}
+
+	    /// <summary>
         /// Set the vertex element arrays on this mesh.
         /// </summary>
         /// <param name="vertexes">The new vertex array.</param>

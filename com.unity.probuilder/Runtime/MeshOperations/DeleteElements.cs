@@ -49,7 +49,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (distinctIndexes == null || !distinctIndexes.Any())
 				return;
 
-			Vertex[] vertexes = Vertex.GetVertexes(mesh);
+			Vertex[] vertexes = mesh.GetVertexes();
 			int originalVertexCount = vertexes.Length;
 			int[] offset = new int[originalVertexCount];
 
@@ -129,7 +129,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			int vertexCount = mesh.positionsInternal.Length;
 
 			Face[] nFaces = mesh.facesInternal.RemoveAt(faceIndexes);
-			var vertexes = Vertex.GetVertexes(mesh).SortedRemoveAt(indexesToRemove);
+			var vertexes = mesh.GetVertexes().SortedRemoveAt(indexesToRemove);
 
 			Dictionary<int, int> shiftmap = new Dictionary<int, int>();
 
@@ -152,7 +152,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			IntArray[] si_uv = mesh.sharedIndexesUVInternal;
 
 			IntArrayUtility.RemoveValuesAndShift(ref si, indexesToRemove);
-			
+
 			if (si_uv != null)
 				IntArrayUtility.RemoveValuesAndShift(ref si_uv, indexesToRemove);
 

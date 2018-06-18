@@ -182,7 +182,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (faces == null)
                 throw new System.ArgumentNullException("faces");
 
-			List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(mesh));
+			List<Vertex> vertexes = new List<Vertex>(mesh.GetVertexes());
 			int sharedIndexOffset = mesh.sharedIndexesInternal.Length;
 			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
 
@@ -242,7 +242,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			if(!faceArray.Any())
 				return null;
 
-			List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(pb));
+			List<Vertex> vertexes = new List<Vertex>(pb.GetVertexes());
 			int sharedIndexMax = pb.sharedIndexesInternal.Length;
 			int sharedIndexOffset = 0;
 			int faceIndex = 0;
@@ -343,7 +343,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			if(faces == null || !faces.Any())
 				return null;
 
-			List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(pb));
+			List<Vertex> vertexes = new List<Vertex>(pb.GetVertexes());
 			int sharedIndexMax = pb.sharedIndexesInternal.Length;
 			int sharedIndexOffset = 0;
 			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();

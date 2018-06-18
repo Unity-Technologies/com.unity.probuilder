@@ -32,7 +32,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (indexes == null)
                 throw new ArgumentNullException("indexes");
 
-            Vertex[] vertexes = Vertex.GetVertexes(mesh);
+            Vertex[] vertexes = mesh.GetVertexes();
 
 			Vertex cen = collapseToFirst ? vertexes[indexes[0]] : Vertex.Average(vertexes, indexes);
 
@@ -117,7 +117,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (indexes == null)
                 throw new ArgumentNullException("indexes");
 
-            Vertex[] vertexes = Vertex.GetVertexes(mesh);
+            Vertex[] vertexes = mesh.GetVertexes();
 			IntArray[] sharedIndexes = mesh.sharedIndexesInternal;
 
 			Dictionary<int, int> lookup = sharedIndexes.ToDictionary();

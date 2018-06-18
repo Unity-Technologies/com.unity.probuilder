@@ -21,7 +21,7 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            Vertex[] vertexes = Vertex.GetVertexes(mesh);
+            Vertex[] vertexes = mesh.GetVertexes();
             int smc = mesh.subMeshCount;
             Vertex[] tv = new Vertex[mesh.triangles.Length];
             int[][] triangles = new int[smc][];
@@ -452,6 +452,71 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
+		/// Creates a new array of vertexes with values from a UnityEngine.Mesh.
+		/// </summary>
+		/// <param name="mesh">The source mesh.</param>
+		/// <returns>An array of vertexes.</returns>
+		public static Vertex[] GetVertexes(this Mesh mesh)
+		{
+			if (mesh == null)
+				return null;
+
+			int vertexCount = mesh.vertexCount;
+			Vertex[] v = new Vertex[vertexCount];
+
+			Vector3[] positions = mesh.vertices;
+			Color[] colors = mesh.colors;
+			Vector3[] normals = mesh.normals;
+			Vector4[] tangents = mesh.tangents;
+			Vector2[] uv0s = mesh.uv;
+			Vector2[] uv2s = mesh.uv2;
+			List<Vector4> uv3s = new List<Vector4>();
+			List<Vector4> uv4s = new List<Vector4>();
+			mesh.GetUVs(2, uv3s);
+			mesh.GetUVs(3, uv4s);
+
+			bool _hasPositions = positions != null && positions.Count() == vertexCount;
+			bool _hasColors = colors != null && colors.Count() == vertexCount;
+			bool _hasNormals = normals != null && normals.Count() == vertexCount;
+			bool _hasTangents = tangents != null && tangents.Count() == vertexCount;
+			bool _hasUv0 = uv0s != null && uv0s.Count() == vertexCount;
+			bool _hasUv2 = uv2s != null && uv2s.Count() == vertexCount;
+			bool _hasUv3 = uv3s.Count() == vertexCount;
+			bool _hasUv4 = uv4s.Count() == vertexCount;
+
+			for (int i = 0; i < vertexCount; i++)
+			{
+				v[i] = new Vertex();
+
+				if (_hasPositions)
+					v[i].position = positions[i];
+
+				if (_hasColors)
+					v[i].color = colors[i];
+
+				if (_hasNormals)
+					v[i].normal = normals[i];
+
+				if (_hasTangents)
+					v[i].tangent = tangents[i];
+
+				if (_hasUv0)
+					v[i].uv0 = uv0s[i];
+
+				if (_hasUv2)
+					v[i].uv2 = uv2s[i];
+
+				if (_hasUv3)
+					v[i].uv3 = uv3s[i];
+
+				if (_hasUv4)
+					v[i].uv4 = uv4s[i];
+			}
+
+			return v;
+		}
+
+		/// <summary>
 		/// Merge coincident vertexes where possible, optimizing the vertex count of a UnityEngine.Mesh.
 		/// </summary>
 		/// <param name="mesh">The mesh to optimize.</param>
@@ -467,7 +532,7 @@ namespace UnityEngine.ProBuilder
                 throw new System.ArgumentNullException("mesh");
 
 			if (vertexes == null)
-				vertexes = Vertex.GetVertexes(mesh);
+				vertexes = mesh.GetVertexes();
 
 			int smc = mesh.subMeshCount;
 			List<Dictionary<Vertex, int>> subVertexes = new List<Dictionary<Vertex, int>>();
