@@ -520,7 +520,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			{
 				faces = System.Array.FindAll(faces, x => x.manualUV).ToArray();	// only operate on faces that were previously manual
 
-				pb.SplitUVs( faces.SelectMany(x => x.ToTriangles()) );
+				pb.SplitUVs( faces.SelectMany(x => x.indexes) );
 
 				Vector2[][] uv_origins = new Vector2[faces.Length][];
 				for(int i = 0; i < faces.Length; i++)
@@ -529,7 +529,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				for(int f = 0; f < faces.Length; f++)
 				{
 					faces[f].uv.Reset();
-					faces[f].manualUV = !auto;
+					faces[f].manualUV = false;
 					faces[f].elementGroup = -1;
 				}
 
@@ -554,33 +554,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				foreach(Face f in faces)
 				{
 					f.textureGroup = -1;
-					f.manualUV = !auto;
+					f.manualUV = true;
 				}
 			}
-		}
-
-		/**
-		 * Iterates through uvs and returns the nearest Vector2 to pos.  If uvs lenght is < 1, return pos.
-		 */
-		public static Vector2 NearestVector2(Vector2 pos, Vector2[] uvs)
-		{
-			if(uvs.Length < 1) return pos;
-
-			Vector2 nearest = uvs[0];
-			float best = Vector2.Distance(pos, nearest);
-
-			for(int i = 1; i < uvs.Length; i++)
-			{
-				float dist = Vector2.Distance(pos, uvs[i]);
-
-				if(dist < best)
-				{
-					best = dist;
-					nearest = uvs[i];
-				}
-			}
-
-			return nearest;
 		}
 	}
 }

@@ -65,5 +65,67 @@ namespace UnityEngine.ProBuilder
 		{
 			return string.Format("{0}, {1}, {2}", m_Material != null ? m_Material.name : "null", m_Topology.ToString(), m_Indexes != null ? m_Indexes.Length.ToString() : "0");
 		}
+
+		/// <summary>
+		/// Create submeshes from a set of faces. Currently only Quads and Triangles are supported.
+		/// </summary>
+		/// <param name="faces">The faces to be included in the resulting submeshes. This method handles groups submeshes by comparing the material property of each face.</param>
+		/// <param name="preferredTopology">Should the resulting submeshes be in quads or triangles. Note that quads are not guaranteed; ie, some faces may not be able to be represented in quad format and will fall back on triangles.</param>
+		/// <returns>An array of Submeshes.</returns>
+		/// <exception cref="NotImplementedException">Thrown in the event that a MeshTopology other than Quads or Triangles is passed.</exception>
+		public static Submesh[] GetSubmeshes(IEnumerable<Face> faces, MeshTopology preferredTopology = MeshTopology.Triangles)
+		{
+			if(preferredTopology != MeshTopology.Triangles && preferredTopology != MeshTopology.Quads)
+				throw new System.NotImplementedException("Currently only Quads and Triangles are supported.");
+
+            if (faces == null)
+                throw new ArgumentNullException("faces");
+
+			bool wantsQuads = preferredTopology == MeshTopology.Quads;
+
+			Dictionary<Material, List<int>> quads = wantsQuads ? new Dictionary<Material, List<int>>() : null;
+			Dictionary<Material, List<int>> tris = new Dictionary<Material, List<int>>();
+
+            foreach(var face in faces)
+			{
+				if(face.indexesInternal == null || face.indexesInternal.Length < 1)
+					continue;
+
+				Material material = face.material != null ? face.material : BuiltinMaterials.defaultMaterial;
+				List<int> polys = null;
+
+				if(wantsQuads && face.IsQuad())
+				{
+					int[] res = face.ToQuad();
+
+					if(quads.TryGetValue(material, out polys))
+						polys.AddRange(res);
+					else
+						quads.Add(material, new List<int>(res));
+				}
+				else
+				{
+					if(tris.TryGetValue(material, out polys))
+						polys.AddRange(face.indexesInternal);
+					else
+						tris.Add(material, new List<int>(face.indexesInternal));
+				}
+			}
+
+			int submeshCount = (quads != null ? quads.Count : 0) + tris.Count;
+			var submeshes = new Submesh[submeshCount];
+			int ii = 0;
+
+			if(quads != null)
+			{
+				foreach(var kvp in quads)
+					submeshes[ii++] = new Submesh(kvp.Key, MeshTopology.Quads, kvp.Value.ToArray());
+			}
+
+			foreach(var kvp in tris)
+				submeshes[ii++] = new Submesh(kvp.Key, MeshTopology.Triangles, kvp.Value.ToArray());
+
+			return submeshes;
+		}
 	}
 }

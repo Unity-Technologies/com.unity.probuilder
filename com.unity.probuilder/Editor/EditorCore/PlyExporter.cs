@@ -64,23 +64,18 @@ namespace UnityEditor.ProBuilder
 
 				if(options.ngons)
 				{
-					indexes = pb.facesInternal.Select(y => options.quads ? (y.ToQuad() ?? y.indexesInternal) : y.indexesInternal).ToList();
+					indexes = pb.facesInternal.Select(y => options.quads ? ( y.IsQuad() ? y.ToQuad() : y.indexesInternal) : y.indexesInternal).ToList();
 				}
 				else
 				{
 					indexes = new List<int[]>();
 
-					foreach(Face	face in pb.facesInternal)
+					foreach(Face face in pb.facesInternal)
 					{
-						if(options.quads)
+						if(options.quads && face.IsQuad())
 						{
-							int[] quad = face.ToQuad();
-
-							if(quad != null)
-							{
-								indexes.Add(quad);
-								continue;
-							}
+							indexes.Add(face.ToQuad());
+							continue;
 						}
 
 						for(int i = 0; i < face.indexesInternal.Length; i += 3)

@@ -23,7 +23,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 throw new ArgumentNullException("mesh");
 
 			List<int> del = new List<int>();
-			HashSet<int> tris = new HashSet<int>(mesh.facesInternal.SelectMany(x => x.ToTriangles()));
+			HashSet<int> tris = new HashSet<int>(mesh.facesInternal.SelectMany(x => x.indexes));
 
 			for(int i = 0; i < mesh.positionsInternal.Length; i++)
 				if(!tris.Contains(i))

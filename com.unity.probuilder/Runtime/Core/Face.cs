@@ -10,7 +10,7 @@ namespace UnityEngine.ProBuilder
     /// <summary>
     /// A face is composed of a set of triangles, and a material.
     /// <br />
-    /// Triangle indexes may point to the same vertex index as long as the vertexes are unique to the face. Ie, every vertex that a face references should only be used by that face's indexes. To associate vertexes that share common attributes (usually position), use the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" property.
+    /// Triangle indexes may point to the same vertex index as long as the vertexes are unique to the face. Ie, every vertex that a face references should only be used by that face's indices. To associate vertexes that share common attributes (usually position), use the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" property.
     /// <br />
     /// ProBuilder automatically manages condensing common vertexes in the EditorMeshUtility.Optimize function.
     /// </summary>
@@ -66,6 +66,10 @@ namespace UnityEngine.ProBuilder
             get { return m_Indexes; }
 	        set
 	        {
+		        if(m_Indexes == null)
+			        throw new ArgumentNullException("value");
+		        if(m_Indexes.Length % 3 != 0)
+			        throw new ArgumentException("Face indexes must be a multiple of 3.");
 		        m_Indexes = value;
 		        InvalidateCache();
 	        }
@@ -87,7 +91,12 @@ namespace UnityEngine.ProBuilder
         {
             if (array == null)
                 throw new ArgumentNullException("array");
+
             int len = array.Length;
+
+	        if(len % 3 != 0)
+		        throw new ArgumentException("Face indexes must be a multiple of 3.");
+
             m_Indexes = new int[len];
             Array.Copy(array, m_Indexes, len);
 	        InvalidateCache();
@@ -212,7 +221,7 @@ namespace UnityEngine.ProBuilder
             if (other == null)
                 throw new ArgumentNullException("other");
 
-            int len = other.indexesInternal == null ? 0 : other.indexesInternal.Length;
+            int len = other.indexesInternal.Length;
 			m_Indexes = new int[len];
 			Array.Copy(other.indexesInternal, m_Indexes, len);
 			m_SmoothingGroup = other.smoothingGroup;
@@ -221,15 +230,6 @@ namespace UnityEngine.ProBuilder
 			manualUV = other.manualUV;
 			elementGroup = other.elementGroup;
 			InvalidateCache();
-		}
-
-		/// <summary>
-		/// Check if this face has more than 2 indexes.
-		/// </summary>
-		/// <returns>True if this Face contains at least one valid triangle.</returns>
-		public bool IsValid()
-		{
-			return indexesInternal.Length > 2;
 		}
 
 		internal void InvalidateCache()
@@ -290,13 +290,13 @@ namespace UnityEngine.ProBuilder
 			return false;
 		}
 
-	    /// <inheritdoc cref="ITriangulatable"/>
-	    public int[] ToTriangles()
+	    /// <summary>
+	    /// Is this face representable as quad?
+	    /// </summary>
+	    /// <returns></returns>
+	    public bool IsQuad()
 	    {
-		    int len = indexesInternal.Length;
-		    int[] copy = new int[len];
-		    Array.Copy(indexesInternal, copy, len);
-		    return copy;
+		    return edgesInternal != null && edgesInternal.Length == 4;
 	    }
 
 		/// <summary>
@@ -305,8 +305,8 @@ namespace UnityEngine.ProBuilder
 		/// <returns>A quad (4 indexes), or null if indexes are not able to be represented as a quad.</returns>
 		public int[] ToQuad()
 		{
-            if (indexesInternal == null || indexesInternal.Length != 6)
-                return null;
+			if(!IsQuad())
+				throw new InvalidOperationException("Face is not representable as a quad. Use Face.IsQuad to check for validity.");
 
 			int[] quad = new int[4] { edgesInternal[0].a, edgesInternal[0].b, -1, -1 };
 
@@ -314,7 +314,7 @@ namespace UnityEngine.ProBuilder
 				quad[2] = edgesInternal[1].b;
 			else if(edgesInternal[2].a == quad[1])
 				quad[2] = edgesInternal[2].b;
-			else if(edgesInternal[3].a == quad[1])
+			else if (edgesInternal[3].a == quad[1])
 				quad[2] = edgesInternal[3].b;
 
 			if(edgesInternal[1].a == quad[2])
@@ -327,74 +327,8 @@ namespace UnityEngine.ProBuilder
 			return quad;
 		}
 
-		/// <summary>
-		/// Create submeshes from a set of faces. Currently only Quads and Triangles are supported.
-		/// </summary>
-		/// <param name="faces"></param>
-		/// <param name="preferredTopology"></param>
-		/// <returns>An array of Submeshes.</returns>
-		/// <exception cref="NotImplementedException"></exception>
-		public static Submesh[] GetSubmeshes(IEnumerable<Face> faces, MeshTopology preferredTopology = MeshTopology.Triangles)
-		{
-			if(preferredTopology != MeshTopology.Triangles && preferredTopology != MeshTopology.Quads)
-				throw new System.NotImplementedException("Currently only Quads and Triangles are supported.");
-
-            if (faces == null)
-                throw new ArgumentNullException("faces");
-
-			bool wantsQuads = preferredTopology == MeshTopology.Quads;
-
-			Dictionary<Material, List<int>> quads = wantsQuads ? new Dictionary<Material, List<int>>() : null;
-			Dictionary<Material, List<int>> tris = new Dictionary<Material, List<int>>();
-
-            foreach(var face in faces)
-			{
-				if(face.indexesInternal == null || face.indexesInternal.Length < 1)
-					continue;
-
-				Material material = face.material ?? BuiltinMaterials.defaultMaterial;
-				List<int> polys = null;
-
-				int[] res;
-
-				if(wantsQuads && (res = face.ToQuad()) != null)
-				{
-					if(quads.TryGetValue(material, out polys))
-						polys.AddRange(res);
-					else
-						quads.Add(material, new List<int>(res));
-				}
-				else
-				{
-					if(tris.TryGetValue(material, out polys))
-						polys.AddRange(face.indexesInternal);
-					else
-						tris.Add(material, new List<int>(face.indexesInternal));
-				}
-			}
-
-			int submeshCount = (quads != null ? quads.Count : 0) + tris.Count;
-			var submeshes = new Submesh[submeshCount];
-			int ii = 0;
-
-			if(quads != null)
-			{
-				foreach(var kvp in quads)
-					submeshes[ii++] = new Submesh(kvp.Key, MeshTopology.Quads, kvp.Value.ToArray());
-			}
-
-			foreach(var kvp in tris)
-				submeshes[ii++] = new Submesh(kvp.Key, MeshTopology.Triangles, kvp.Value.ToArray());
-
-			return submeshes;
-		}
-
 		public override string ToString()
 		{
-			// shouldn't ever be the case
-			if(indexesInternal.Length % 3 != 0)
-				return "Index count is not a multiple of 3.";
-
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
 			for(int i = 0; i < indexesInternal.Length; i += 3)
@@ -412,6 +346,63 @@ namespace UnityEngine.ProBuilder
 			}
 
 			return sb.ToString();
+		}
+
+	    /// <summary>
+		/// Add offset to each value in the indexes array.
+		/// </summary>
+		/// <param name="offset">The value to add to each index.</param>
+		public void ShiftIndexes(int offset)
+		{
+			for (int i = 0, c = m_Indexes.Length; i < c; i++)
+				m_Indexes[i] += offset;
+
+			InvalidateCache();
+		}
+
+		/// <summary>
+		/// Find the smallest value in the triangles array.
+		/// </summary>
+		/// <returns>The smallest value in the indexes array.</returns>
+		int SmallestIndexValue()
+		{
+			int smallest = m_Indexes[0];
+
+			for (int i = 1; i < m_Indexes.Length; i++)
+			{
+				if (m_Indexes[i] < smallest)
+					smallest = m_Indexes[i];
+			}
+
+			return smallest;
+		}
+
+        /// <summary>
+        /// Finds the smallest value in the indexes array, then offsets by subtracting that value from each index.
+        /// </summary>
+        /// <example>
+        /// ```
+        /// // sets the indexes array to `{0, 1, 2}`.
+        /// new Face(3,4,5).ShiftIndexesToZero();
+        /// ```
+        /// </example>
+        public void ShiftIndexesToZero()
+		{
+            int offset = SmallestIndexValue();
+
+			for (int i = 0; i < m_Indexes.Length; i++)
+				m_Indexes[i] -= offset;
+
+			InvalidateCache();
+		}
+
+		/// <summary>
+		/// Reverse the order of the triangle array. This has the effect of reversing the direction that this face renders.
+		/// </summary>
+		public void Reverse()
+		{
+			Array.Reverse(m_Indexes);
+			InvalidateCache();
 		}
 	}
 }

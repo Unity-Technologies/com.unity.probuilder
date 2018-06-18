@@ -14,16 +14,6 @@ namespace UnityEditor.ProBuilder
 		const string k_MeshCacheDirectoryName = "ProBuilderMeshCache";
 		static string k_MeshCacheDirectory = "Assets/ProBuilder Data/ProBuilderMeshCache";
 
-		/// <summary>
-		/// Subscribe to this event to be notified when ProBuilder is going to optimize a mesh. Optimization includes collapsing coincident vertexes to a single vertex where possible, and generating lightmap UVs).
-		/// </summary>
-		/// <value>
-		/// Return true to override this process, false to let ProBuilder optimize the mesh.
-		/// </value>
-		/// <seealso cref="Optimize"/>
-		/// <seealso cref="meshOptimized"/>
-		public static event Func<bool, ProBuilderMesh> onCheckSkipMeshOptimization = null;
-
 		/// <value>
 		/// This callback is raised after a ProBuilderMesh has been successfully optimized.
 		/// </value>
@@ -47,9 +37,6 @@ namespace UnityEditor.ProBuilder
 				return;
 
 			bool skipMeshProcessing = false;
-
-			if (onCheckSkipMeshOptimization != null)
-				skipMeshProcessing = onCheckSkipMeshOptimization(mesh);
 
 			// @todo Support mesh compression for topologies other than Triangles.
 			for(int i = 0; !skipMeshProcessing && i < umesh.subMeshCount; i++)

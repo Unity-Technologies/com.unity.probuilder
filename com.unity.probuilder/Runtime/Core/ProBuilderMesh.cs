@@ -966,7 +966,7 @@ namespace UnityEngine.ProBuilder
 			m.vertices = m_Positions;
 			m.uv2 = null;
 
-			Submesh[] submeshes = Face.GetSubmeshes(facesInternal, preferredTopology);
+			Submesh[] submeshes = Submesh.GetSubmeshes(facesInternal, preferredTopology);
             m.subMeshCount = submeshes.Length;
 
 			for (int i = 0; i < m.subMeshCount; i++)

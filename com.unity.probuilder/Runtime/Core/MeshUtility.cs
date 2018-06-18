@@ -531,7 +531,7 @@ namespace UnityEngine.ProBuilder
             if (probuilderMesh.colorsInternal != null && probuilderMesh.colorsInternal.Length == targetMesh.vertexCount)
                 targetMesh.colors = probuilderMesh.colorsInternal;
 
-            var submeshes = Face.GetSubmeshes(probuilderMesh.facesInternal, preferredTopology);
+            var submeshes = Submesh.GetSubmeshes(probuilderMesh.facesInternal, preferredTopology);
             targetMesh.subMeshCount = submeshes.Length;
 
             for (int i = 0; i < targetMesh.subMeshCount; i++)

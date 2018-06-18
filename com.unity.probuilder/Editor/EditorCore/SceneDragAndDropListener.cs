@@ -105,7 +105,7 @@ namespace UnityEditor.ProBuilder
 						Vector2[] uvs = mesh.texturesInternal;
 						if(uvs != null && uvs.Length == mesh.vertexCount)
 							s_PreviewMesh.uv = uvs;
-						s_PreviewMesh.triangles = mesh.selectedFacesInternal.SelectMany(x => x.ToTriangles()).ToArray();
+						s_PreviewMesh.triangles = mesh.selectedFacesInternal.SelectMany(x => x.indexes).ToArray();
 					}
 				}
 				else
