@@ -207,8 +207,8 @@ namespace UnityEngine.ProBuilder.Test
 			Assert.AreEqual(vertexCount, result.vertexCount);
 			Assert.AreEqual(subMeshCount, result.subMeshCount);
 
-			Vertex[] leftVertices = Vertex.GetVertices(expected);
-			Vertex[] rightVertices = Vertex.GetVertices(result);
+			Vertex[] leftVertices = Vertex.GetVertexes(expected);
+			Vertex[] rightVertices = Vertex.GetVertexes(result);
 
 			for (int i = 0; i < vertexCount; i++)
 			{

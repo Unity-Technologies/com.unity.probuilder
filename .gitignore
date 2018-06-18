@@ -13,3 +13,5 @@ TestProjects/*/.idea
 TestProjects/*/*.csproj
 TestProjects/*/*.sln.DotSettings.user
 TestProjects/*/*.sln
+TestProjects/*/Assets/Debug
+TestProjects/*/Assets/Debug.meta

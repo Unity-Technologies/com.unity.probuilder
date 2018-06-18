@@ -453,7 +453,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Vector3[] v;
 			Color[] c;
 			int[] s;
-			AutoUnwrapSettings uvs = new AutoUnwrapSettings();
+			AutoUnwrapSettings uvs = AutoUnwrapSettings.tile;
 			Material mat = BuiltinMaterials.defaultMaterial;
 
 			// Get material and UV stuff from the first edge face

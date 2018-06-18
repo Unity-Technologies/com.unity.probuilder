@@ -17,13 +17,14 @@ namespace UnityEngine.ProBuilder.EditorTests.Object
 		public static void CopyWithVerifyIsUnique()
 		{
 			var original = ShapeGenerator.CreateShape(ShapeType.Cube);
-			original.Optimize();
-
 			var copy = UObject.Instantiate(original);
 
 			try
 			{
-				EditorUtility.EnsureMeshSyncState(copy);
+				// optimize after instantiate because Instantiate runs mesh through serialization, introducing tiny rounding
+				// errors in some fields. by comparing the results post-serialization we get a more accurate diff
+				original.Optimize(true);
+				EditorUtility.SynchronizeWithMeshFilter(copy);
 				Assert.AreNotEqual(copy, original, "GameObject references are equal");
 				Assert.IsFalse(ReferenceEquals(copy.mesh, original.mesh), "Mesh references are equal");
 				TestUtility.AssertAreEqual(original.mesh, copy.mesh);

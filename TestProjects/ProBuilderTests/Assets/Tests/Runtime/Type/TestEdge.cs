@@ -30,8 +30,8 @@ namespace UnityEngine.ProBuilder.RuntimeTests.Type
 		{
 			Edge a = (Edge) RandEdge();
 			Edge b = (Edge) (a + 20);
-			Edge c = (Edge) new Edge(a.x + 10, a.x);
-			Edge d = (Edge) new Edge(a.x, a.y);
+			Edge c = (Edge) new Edge(a.a + 10, a.a);
+			Edge d = (Edge) new Edge(a.a, a.b);
 
 			Edge[] arr = ArrayUtility.Fill<Edge>(24, (i) => { return i % 2 == 0 ? a : (Edge) RandEdge(); });
 

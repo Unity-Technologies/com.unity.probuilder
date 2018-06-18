@@ -215,6 +215,47 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
+		/// Get a set of unwrap parameters that tiles UVs.
+		/// </summary>
+		public static AutoUnwrapSettings tile
+		{
+			get
+			{
+				var res = new AutoUnwrapSettings();
+				res.Reset();
+				return res;
+			}
+		}
+
+		/// <summary>
+		/// Get a set of unwrap parameters that strectches the face texture to fill a normalized coordinate space, maintaining th aspect ratio.
+		/// </summary>
+		public static AutoUnwrapSettings fit
+		{
+			get
+			{
+				var res = new AutoUnwrapSettings();
+				res.Reset();
+				res.fill = Fill.Fit;
+				return res;
+			}
+		}
+
+		/// <summary>
+		/// Get a set of unwrap parameters that strectches the face texture to fill a normalized coordinate space, disregarding the aspect ratio.
+		/// </summary>
+		public static AutoUnwrapSettings stretch
+		{
+			get
+			{
+				var res = new AutoUnwrapSettings();
+				res.Reset();
+				res.fill = Fill.Stretch;
+				return res;
+			}
+		}
+
+		/// <summary>
 		/// Resets all parameters to default values.
 		/// </summary>
 		public void Reset()

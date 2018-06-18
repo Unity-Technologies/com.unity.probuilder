@@ -704,7 +704,7 @@ namespace UnityEngine.ProBuilder
 					faces[f++] = new Face(
 						new int[6]{ zero, one, two, one, three, two },
 						BuiltinMaterials.defaultMaterial,
-						new AutoUnwrapSettings(),
+						AutoUnwrapSettings.tile,
 						smoothing,
 						-1,
 						-1,

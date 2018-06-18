@@ -172,33 +172,6 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Return the perpindicular direction to a 2d line `Perpendicular(b - y)`
-		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <returns>A normalized perpindicular direction.</returns>
-		internal static Vector2 Perpendicular(Vector2 a, Vector2 b)
-		{
-			float x = a.x;
-			float y = a.y;
-
-			float x2 = b.x;
-			float y2 = b.y;
-
-			return new Vector2( -(y2-y), x2-x ).normalized;
-		}
-
-		/// <summary>
-		/// Return a perpindicular direction to a unit vector.
-		/// </summary>
-		/// <param name="a">The original direction.</param>
-		/// <returns>A normalized perpindular direction.</returns>
-		public static Vector2 Perpendicular(Vector2 a)
-		{
-			return new Vector2(-a.y, a.x).normalized;
-		}
-
-		/// <summary>
 		/// Reflects a point across a line segment.
 		/// </summary>
 		/// <param name="point">The point to reflect.</param>
@@ -1105,7 +1078,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="b">Second Vector2 value.</param>
 		/// <param name="delta">The maximum difference between components allowed.</param>
 		/// <returns>True if a and b components are respectively within delta distance of one another.</returns>
-		public static bool Approx2(this Vector2 a, Vector2 b, float delta = floatCompareEpsilon)
+		internal static bool Approx2(this Vector2 a, Vector2 b, float delta = floatCompareEpsilon)
 		{
 			return
 				Mathf.Abs(a.x - b.x) < delta &&
@@ -1119,7 +1092,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="b">Second Vector3 value.</param>
 		/// <param name="delta">The maximum difference between components allowed.</param>
 		/// <returns>True if a and b components are respectively within delta distance of one another.</returns>
-		public static bool Approx3(this Vector3 a, Vector3 b, float delta = floatCompareEpsilon)
+		internal static bool Approx3(this Vector3 a, Vector3 b, float delta = floatCompareEpsilon)
 		{
 			return
 				Mathf.Abs(a.x - b.x) < delta &&
@@ -1135,7 +1108,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="delta">The maximum difference between components allowed.</param>
 		/// <returns>True if a and b components are respectively within delta distance of one another.</returns>
 
-		public static bool Approx4(this Vector4 a, Vector4 b, float delta = floatCompareEpsilon)
+		internal static bool Approx4(this Vector4 a, Vector4 b, float delta = floatCompareEpsilon)
 		{
 			return
 				Mathf.Abs(a.x - b.x) < delta &&

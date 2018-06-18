@@ -48,7 +48,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 				{
 					var face = pb.facesInternal[s_Random.Next(0, pb.faceCount)];
 					int vertexCount = pb.vertexCount;
-					int faceVertexCount = face.distinctIndices.Length;
+					int faceVertexCount = face.distinctIndexes.Count;
 					pb.DeleteFace(face);
 					pb.ToMesh();
 					pb.Refresh();

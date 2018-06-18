@@ -185,7 +185,7 @@ namespace UnityEngine.ProBuilder
 		public Face(int[] array)
 		{
 			SetIndexes(array);
-			m_Uv = new AutoUnwrapSettings();
+			m_Uv = AutoUnwrapSettings.tile;
 			m_Material = BuiltinMaterials.defaultMaterial;
 			m_SmoothingGroup = Smoothing.smoothingGroupNone;
 			textureGroup = -1;
