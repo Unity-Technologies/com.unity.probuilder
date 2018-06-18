@@ -287,14 +287,22 @@ namespace UnityEngine.ProBuilder
             {
                 Mesh umesh = mesh;
 
-                if (first.HasArrays(MeshArrays.Position)) umesh.vertices = position;
-                if (first.HasArrays(MeshArrays.Color)) umesh.colors = color;
-                if (first.HasArrays(MeshArrays.Texture0)) umesh.uv = uv0;
-                if (first.HasArrays(MeshArrays.Normal)) umesh.normals = normal;
-                if (first.HasArrays(MeshArrays.Tangent)) umesh.tangents = tangent;
-                if (first.HasArrays(MeshArrays.Texture1)) umesh.uv2 = uv2;
-                if (first.HasArrays(MeshArrays.Texture2)) if (uv3 != null) umesh.SetUVs(2, uv3);
-                if (first.HasArrays(MeshArrays.Texture3)) if (uv4 != null) umesh.SetUVs(3, uv4);
+	            if (first.HasArrays(MeshArrays.Position))
+		            umesh.vertices = position;
+	            if (first.HasArrays(MeshArrays.Color))
+		            umesh.colors = color;
+	            if (first.HasArrays(MeshArrays.Texture0))
+		            umesh.uv = uv0;
+	            if (first.HasArrays(MeshArrays.Normal))
+		            umesh.normals = normal;
+	            if (first.HasArrays(MeshArrays.Tangent))
+		            umesh.tangents = tangent;
+	            if (first.HasArrays(MeshArrays.Texture1))
+		            umesh.uv2 = uv2;
+	            if (first.HasArrays(MeshArrays.Texture2))
+		            umesh.SetUVs(2, uv3);
+	            if (first.HasArrays(MeshArrays.Texture3))
+		            umesh.SetUVs(3, uv4);
             }
         }
 
