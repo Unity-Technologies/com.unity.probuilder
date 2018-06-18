@@ -154,7 +154,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 			HashSet<Edge> selectedElements = selection.Value;
 			Assert.Greater(selectedElements.Count, 0);
 
-			Dictionary<int, int> commonLookup = selection.Key.sharedIndexesInternal.ToDictionary();
+			Dictionary<int, int> commonLookup = selection.Key.sharedVertexLookup;
 			var allEdges = EdgeLookup.GetEdgeLookupHashSet(selection.Key.facesInternal.SelectMany(x => x.edgesInternal), commonLookup);
 			var selectedEdges = EdgeLookup.GetEdgeLookupHashSet(selectedElements, commonLookup);
 			Assert.AreEqual(allEdges.Count, selectedEdges.Count);
@@ -187,7 +187,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 			HashSet<Edge> selectedElements = selection.Value;
 			Assert.Greater(selectedElements.Count, 0);
 
-			Dictionary<int, int> commonLookup = selection.Key.sharedIndexesInternal.ToDictionary();
+			Dictionary<int, int> commonLookup = selection.Key.sharedVertexLookup;
 			var allEdges = EdgeLookup.GetEdgeLookupHashSet(selection.Key.facesInternal.SelectMany(x => x.edgesInternal), commonLookup);
 			var selectedEdges = EdgeLookup.GetEdgeLookupHashSet(selectedElements, commonLookup);
 			Assert.AreEqual(allEdges.Count, selectedEdges.Count);

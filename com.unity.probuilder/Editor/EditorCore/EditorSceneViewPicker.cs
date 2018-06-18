@@ -207,7 +207,7 @@ namespace UnityEditor.ProBuilder
 				}
 				else if(s_Selection.edge != Edge.Empty)
 				{
-					int ind = mesh.selectedEdges.IndexOf(s_Selection.edge, mesh.sharedIndexesInternal.ToDictionary());
+					int ind = mesh.IndexOf(mesh.selectedEdges, s_Selection.edge);
 
 					UndoUtility.RecordSelection(mesh, "Select Edge");
 
@@ -264,12 +264,13 @@ namespace UnityEditor.ProBuilder
 
 					foreach (var kvp in selected)
 					{
-						IntArray[] sharedIndexes = kvp.Key.sharedIndexesInternal;
+						var mesh = kvp.Key;
+						SharedVertex[] sharedIndexes = mesh.sharedVertexesInternal;
 						HashSet<int> common;
 
 						if (isAppendModifier)
 						{
-							common = sharedIndexes.GetCommonIndexes(kvp.Key.selectedIndexesInternal);
+							common = mesh.GetSharedVertexHandles(mesh.selectedIndexesInternal);
 
 							if (scenePickerPreferences.selectionModifierBehavior  == SelectionModifierBehavior.Add)
 								common.UnionWith(kvp.Value);
@@ -284,7 +285,7 @@ namespace UnityEditor.ProBuilder
 						}
 
 						elementsInDragRect = kvp.Value.Any();
-						kvp.Key.SetSelectedVertexes(common.SelectMany(x => sharedIndexes[x].array));
+						mesh.SetSelectedVertexes(common.SelectMany(x => sharedIndexes[x]));
 					}
 
 					break;
@@ -337,14 +338,14 @@ namespace UnityEditor.ProBuilder
 
 					foreach (var kvp in selected)
 					{
-						ProBuilderMesh pb = kvp.Key;
-						Dictionary<int, int> common = pb.sharedIndexesInternal.ToDictionary();
+						ProBuilderMesh mesh = kvp.Key;
+						Dictionary<int, int> common = mesh.sharedVertexLookup;
 						HashSet<EdgeLookup> selectedEdges = EdgeLookup.GetEdgeLookupHashSet(kvp.Value, common);
 						HashSet<EdgeLookup> current;
 
 						if (isAppendModifier)
 						{
-							current = EdgeLookup.GetEdgeLookupHashSet(pb.selectedEdges, common);
+							current = EdgeLookup.GetEdgeLookupHashSet(mesh.selectedEdges, common);
 
 							if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Add)
 								current.UnionWith(selectedEdges);
@@ -359,7 +360,7 @@ namespace UnityEditor.ProBuilder
 						}
 
 						elementsInDragRect = kvp.Value.Any();
-						pb.SetSelectedEdges(current.Select(x => x.local));
+						mesh.SetSelectedEdges(current.Select(x => x.local));
 					}
 
 					break;
@@ -552,7 +553,7 @@ namespace UnityEditor.ProBuilder
 		static void GetNearestVertexes(ProBuilderMesh mesh, Vector3 mousePosition, List<VertexPickerEntry> list, float maxDistance)
 		{
 			var positions = mesh.positionsInternal;
-			var common = mesh.sharedIndexesInternal;
+			var common = mesh.sharedVertexesInternal;
 
 			for (int n = 0, c = common.Length; n < c; n++)
 			{

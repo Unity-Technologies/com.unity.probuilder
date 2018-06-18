@@ -703,14 +703,14 @@ namespace UnityEditor.ProBuilder
 			{
 				List<int> selectedTris = new List<int>(selection[i].selectedIndexesInternal);
 
-				IntArray[] sharedUVs = selection[i].sharedIndexesUVInternal;
+				SharedVertex[] sharedUVs = selection[i].sharedTextures;
 
 				// put sewn UVs into the selection if they aren't already
 				if (sharedUVs != null)
 				{
-					foreach (int[] arr in sharedUVs)
+					foreach (var arr in sharedUVs)
 					{
-						if (System.Array.Exists(arr, element => System.Array.IndexOf(selection[i].selectedIndexesInternal, element) > -1))
+						if (System.Array.Exists(arr.arrayInternal, element => System.Array.IndexOf(selection[i].selectedIndexesInternal, element) > -1))
 						{
 							selectedTris.AddRange(arr);
 						}
@@ -1164,15 +1164,15 @@ namespace UnityEditor.ProBuilder
 				case SelectMode.Edge:
 					if (nearestElement.valid)
 					{
-						ProBuilderMesh pb = selection[nearestElement.objectIndex];
+						ProBuilderMesh mesh = selection[nearestElement.objectIndex];
 
-						Edge edge = pb.facesInternal[nearestElement.elementIndex].edgesInternal[nearestElement.elementSubIndex];
-						int ind = pb.selectedEdges.IndexOf(edge, pb.sharedIndexesInternal.ToDictionary());
+						Edge edge = mesh.facesInternal[nearestElement.elementIndex].edgesInternal[nearestElement.elementSubIndex];
+						int ind = mesh.IndexOf(mesh.selectedEdges, edge);
 
 						if (ind > -1)
-							pb.SetSelectedEdges(pb.selectedEdges.ToArray().RemoveAt(ind));
+							mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().RemoveAt(ind));
 						else
-							pb.SetSelectedEdges(pb.selectedEdges.ToArray().Add(edge));
+							mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().Add(edge));
 					}
 
 					break;
@@ -2885,14 +2885,14 @@ namespace UnityEditor.ProBuilder
 			foreach (Face f in pb.facesInternal)
 				f.elementGroup = -1;
 
-			IntArray[] sharedUVs = pb.sharedIndexesUVInternal;
+			SharedVertex[] sharedUVs = pb.sharedTextures;
 
 			int eg = 0;
-			foreach (IntArray pint in sharedUVs)
+			foreach (SharedVertex sharedVertex in sharedUVs)
 			{
-				if (pint.array.Length < 2) continue;
+				if (sharedVertex.arrayInternal.Length < 2) continue;
 
-				Face[] faces = GetFaces(pb, pint);
+				Face[] faces = GetFaces(pb, sharedVertex);
 
 				int cur = pb.UnusedElementGroup(eg++);
 
@@ -2915,14 +2915,15 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Get all faces that contain any of the passed vertex indexes.
 		 */
-		Face[] GetFaces(ProBuilderMesh pb, int[] indexes)
+		Face[] GetFaces(ProBuilderMesh pb, IEnumerable<int> indexes)
 		{
 			List<Face> faces = new List<Face>();
+
 			foreach (Face f in pb.facesInternal)
 			{
 				foreach (int i in f.distinctIndexesInternal)
 				{
-					if (System.Array.IndexOf(indexes, i) > -1)
+					if (indexes.Contains(i))
 					{
 						faces.Add(f);
 						break;

@@ -353,42 +353,41 @@ namespace UnityEngine.ProBuilder
 		/// <param name="mesh">Target ProBuilderMesh.</param>
 		/// <param name="faces">Which faces to include in the WingedEdge list.</param>
 		/// <param name="oneWingPerFace">If `oneWingPerFace` is true the returned list will contain a single winged edge per-face (but still point to all edges).</param>
-		/// <param name="sharedIndexLookup">If passed, this will skip generating a shared indexes dictionary, which can be an expensive operation. This is useful when doing more than one mesh operation and you have already generated a current shared index dictionary.</param>
 		/// <returns>A new list of WingedEdge values gathered from faces.</returns>
-		public static List<WingedEdge> GetWingedEdges(ProBuilderMesh mesh, IEnumerable<Face> faces, bool oneWingPerFace = false, Dictionary<int, int> sharedIndexLookup = null)
+		public static List<WingedEdge> GetWingedEdges(ProBuilderMesh mesh, IEnumerable<Face> faces, bool oneWingPerFace = false)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			Dictionary<int, int> lookup = sharedIndexLookup == null ? mesh.sharedIndexesInternal.ToDictionary() : sharedIndexLookup;
+			var lookup = mesh.sharedVertexLookup;
 			IEnumerable<Face> distinct = faces.Distinct();
 
 			List<WingedEdge> winged = new List<WingedEdge>();
 			Dictionary<Edge, WingedEdge> opposites = new Dictionary<Edge, WingedEdge>();
-			int index = 0;
 
-			foreach(Face f in distinct)
+			foreach (Face f in distinct)
 			{
 				List<Edge> edges = SortEdgesByAdjacency(f);
 				int edgeLength = edges.Count;
 				WingedEdge first = null, prev = null;
 
-				for(int n = 0; n < edgeLength; n++)
+				for (int n = 0; n < edgeLength; n++)
 				{
 					Edge e = edges[n];
 
 					WingedEdge w = new WingedEdge();
 					w.edge = new EdgeLookup(lookup[e.a], lookup[e.b], e.a, e.b);
 					w.face = f;
-					if(n < 1) first = w;
+					if (n < 1)
+						first = w;
 
-					if(n > 0)
+					if (n > 0)
 					{
 						w.previous = prev;
 						prev.next = w;
 					}
 
-					if(n == edgeLength - 1)
+					if (n == edgeLength - 1)
 					{
 						w.next = first;
 						first.previous = w;
@@ -398,7 +397,7 @@ namespace UnityEngine.ProBuilder
 
 					WingedEdge opp;
 
-					if( opposites.TryGetValue(w.edge.common, out opp) )
+					if (opposites.TryGetValue(w.edge.common, out opp))
 					{
 						opp.opposite = w;
 						w.opposite = opp;
@@ -406,14 +405,12 @@ namespace UnityEngine.ProBuilder
 					else
 					{
 						w.opposite = null;
-						opposites.Add(w.edge.common, w );
+						opposites.Add(w.edge.common, w);
 					}
 
-					if(!oneWingPerFace || n < 1)
+					if (!oneWingPerFace || n < 1)
 						winged.Add(w);
 				}
-
-				index += edgeLength;
 			}
 
 			return winged;

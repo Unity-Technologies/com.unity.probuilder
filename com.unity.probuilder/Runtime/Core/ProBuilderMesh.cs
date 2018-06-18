@@ -25,7 +25,17 @@ namespace UnityEngine.ProBuilder
 
         [SerializeField]
         [FormerlySerializedAs("_sharedIndices")]
-        IntArray[] m_SharedIndexes;
+        SharedVertex[] m_SharedVertexes;
+
+	    [NonSerialized]
+	    Dictionary<int, int> m_SharedVertexLookup;
+
+	    [SerializeField]
+	    [FormerlySerializedAs("_sharedIndicesUV")]
+	    SharedVertex[] m_SharedTextures;
+
+	    [NonSerialized]
+	    Dictionary<int, int> m_SharedTextureLookup;
 
         [SerializeField]
         [FormerlySerializedAs("_vertices")]
@@ -47,11 +57,7 @@ namespace UnityEngine.ProBuilder
         [FormerlySerializedAs("_tangents")]
         Vector4[] m_Tangents;
 
-        [SerializeField]
-        [FormerlySerializedAs("_sharedIndicesUV")]
-        IntArray[] m_SharedIndexesUV;
-
-        [SerializeField]
+		[SerializeField]
         [FormerlySerializedAs("_colors")]
         Color[] m_Colors;
 
@@ -140,10 +146,29 @@ namespace UnityEngine.ProBuilder
 		    }
 	    }
 
-	    internal IntArray[] sharedIndexesInternal
+	    void InvalidateSharedVertexLookup()
 	    {
-		    get { return m_SharedIndexes; }
-		    set { m_SharedIndexes = value; }
+		    if(m_SharedVertexLookup == null)
+			    m_SharedVertexLookup = new Dictionary<int, int>();
+		    m_SharedVertexLookup.Clear();
+	    }
+
+	    void InvalidateSharedVertexUVLookup()
+	    {
+		    if(m_SharedTextureLookup == null)
+			    m_SharedTextureLookup = new Dictionary<int, int>();
+		    m_SharedTextureLookup.Clear();
+	    }
+
+	    internal SharedVertex[] sharedVertexesInternal
+	    {
+		    get { return m_SharedVertexes; }
+
+		    set
+		    {
+			    m_SharedVertexes = value;
+			    InvalidateSharedVertexLookup();
+		    }
 	    }
 
 	    /// <summary>
@@ -152,32 +177,48 @@ namespace UnityEngine.ProBuilder
 	    /// <value>
 	    /// The shared (or common) index array for this mesh.
 	    /// </value>
-	    public IEnumerable<IntArray> sharedIndexes
+	    public IEnumerable<SharedVertex> sharedVertexes
 	    {
-		    get { return new ReadOnlyCollection<IntArray>(m_SharedIndexes); }
+		    get { return new ReadOnlyCollection<SharedVertex>(m_SharedVertexes); }
 
 		    set
 		    {
 			    if (value == null)
 				    throw new ArgumentNullException("value");
+
 			    var indexes = value.ToArray();
 			    int len = indexes.Length;
-			    m_SharedIndexes = new IntArray[len];
+			    m_SharedVertexes = new SharedVertex[len];
+
 			    for (var i = 0; i < len; i++)
-				    m_SharedIndexes[i] = new IntArray(indexes[i]);
+				    m_SharedVertexes[i] = new SharedVertex(indexes[i]);
+
+			    InvalidateSharedVertexLookup();
+		    }
+	    }
+
+	    public Dictionary<int, int> sharedVertexLookup
+	    {
+		    get
+		    {
+			    if (m_SharedVertexLookup == null)
+				    m_SharedVertexLookup = new Dictionary<int, int>();
+			    if (!m_SharedVertexLookup.Any())
+				    SharedVertex.GetSharedVertexLookup(m_SharedVertexes, m_SharedVertexLookup);
+			    return m_SharedVertexLookup;
 		    }
 	    }
 
 	    /// <value>
 	    /// Get a copy of the shared (or common) index array for this mesh.
 	    /// </value>
-	    /// <seealso cref="sharedIndexes"/>
-	    public IntArray[] GetSharedIndexes()
+	    /// <seealso cref="sharedVertexes"/>
+	    public SharedVertex[] GetSharedIndexes()
 	    {
-		    int len = m_SharedIndexes.Length;
-		    IntArray[] copy = new IntArray[len];
+		    int len = m_SharedVertexes.Length;
+		    SharedVertex[] copy = new SharedVertex[len];
 		    for(var i = 0; i < len; i++)
-			    copy[i] = new IntArray(m_SharedIndexes[i]);
+			    copy[i] = new SharedVertex(m_SharedVertexes[i]);
 		    return copy;
 	    }
 
@@ -187,45 +228,56 @@ namespace UnityEngine.ProBuilder
 	    /// <param name="indexes">
 	    /// The new sharedIndexes array.
 	    /// </param>
-	    /// <seealso cref="sharedIndexes"/>
-	    /// <seealso cref="IntArrayUtility.ToDictionary"/>
-	    public void SetSharedIndexes(IEnumerable<KeyValuePair<int, int>> indexes)
+	    /// <seealso cref="sharedVertexes"/>
+	    public void SetSharedVertexes(IEnumerable<KeyValuePair<int, int>> indexes)
 	    {
 		    if (indexes == null)
 			    throw new ArgumentNullException("indexes");
-		    m_SharedIndexes = IntArrayUtility.ToIntArray(indexes);
+		    m_SharedVertexes = SharedVertexesUtility.ToSharedVertexes(indexes);
+		    m_SharedVertexLookup = indexes.ToDictionary(x => x.Key, y => y.Key);
 	    }
 
-        internal IntArray[] sharedIndexesUVInternal
-        {
-            get { return m_SharedIndexesUV; }
-            set { m_SharedIndexesUV = value; }
-        }
-
-        internal IntArray[] GetSharedIndexesUV()
-        {
-            int sil = m_SharedIndexesUV.Length;
-            IntArray[] sharedIndexesCopy = new IntArray[sil];
-            for (var i = 0; i < sil; i++)
-                sharedIndexesCopy[i] = m_SharedIndexesUV[i];
-            return sharedIndexesCopy;
-        }
-
-	    internal void SetSharedIndexesUV(IntArray[] indexes)
+	    internal SharedVertex[] sharedTextures
 	    {
-		    int len = indexes == null ? 0 : indexes.Length;
-		    m_SharedIndexesUV = new IntArray[len];
-		    for (var i = 0; i < len; i++)
-			    m_SharedIndexesUV[i] = new IntArray(indexes[i]);
+		    get { return m_SharedTextures; }
+		    set { m_SharedTextures = value; }
 	    }
 
-        internal void SetSharedIndexesUV(IEnumerable<KeyValuePair<int, int>> indexes)
-        {
-	        if (indexes == null)
-		        m_SharedIndexesUV = new IntArray[0];
-			else
-	            m_SharedIndexesUV = IntArrayUtility.ToIntArray(indexes);
-        }
+	    internal Dictionary<int, int> sharedTextureLookup
+	    {
+		    get
+		    {
+			    if (m_SharedTextureLookup == null)
+				    m_SharedTextureLookup = new Dictionary<int, int>();
+
+			    if (!m_SharedTextureLookup.Any())
+			    {
+				    if (m_SharedTextures == null)
+					    m_SharedTextureLookup.Clear();
+				    else
+					    SharedVertex.GetSharedVertexLookup(m_SharedTextures, m_SharedTextureLookup);
+			    }
+
+			    return m_SharedTextureLookup;
+		    }
+	    }
+
+	    internal SharedVertex[] GetSharedIndexesUV()
+	    {
+		    int len = m_SharedTextures.Length;
+		    SharedVertex[] copy = new SharedVertex[len];
+		    for(var i = 0; i < len; i++)
+			    copy[i] = new SharedVertex(m_SharedTextures[i]);
+		    return copy;
+	    }
+
+	    internal void SetSharedTextures(IEnumerable<KeyValuePair<int, int>> indexes)
+	    {
+		    if (indexes == null)
+			    throw new ArgumentNullException("indexes");
+		    m_SharedTextures = SharedVertexesUtility.ToSharedVertexes(indexes);
+		    InvalidateSharedVertexUVLookup();
+	    }
 
         internal Vector3[] positionsInternal
         {

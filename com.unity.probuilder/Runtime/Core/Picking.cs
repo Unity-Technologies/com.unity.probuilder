@@ -110,7 +110,7 @@ namespace UnityEngine.ProBuilder
 				if(!pb.selectable)
 					continue;
 
-				IntArray[] sharedIndexes = pb.sharedIndexesInternal;
+				SharedVertex[] sharedIndexes = pb.sharedVertexesInternal;
 				HashSet<int> inRect = new HashSet<int>();
 				Vector3[] positions = pb.positionsInternal;
 				var trs = pb.transform;

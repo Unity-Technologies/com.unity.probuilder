@@ -93,7 +93,7 @@ namespace UnityEngine.ProBuilder
 		{
 			const ushort k_MaxPointCount = ushort.MaxValue / 4;
 
-			int billboardCount = mesh.sharedIndexesInternal.Length;
+			int billboardCount = mesh.sharedVertexesInternal.Length;
 
 			if (billboardCount > k_MaxPointCount)
 				billboardCount = k_MaxPointCount;

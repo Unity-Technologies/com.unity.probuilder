@@ -29,7 +29,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 throw new System.ArgumentNullException("faces");
 
             List<Vertex> vertexes = new List<Vertex>( mesh.GetVertexes() );
-			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
+			Dictionary<int, int> lookup = mesh.sharedVertexLookup;
 
 			List<FaceRebuildData> rebuild = new List<FaceRebuildData>();
 

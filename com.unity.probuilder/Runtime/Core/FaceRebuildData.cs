@@ -36,30 +36,30 @@ namespace UnityEngine.ProBuilder
 
 		public static void Apply(
 			IEnumerable<FaceRebuildData> newFaces,
-			ProBuilderMesh pb,
+			ProBuilderMesh mesh,
 			List<Vertex> vertexes = null,
 			List<Face> faces = null,
 			Dictionary<int, int> lookup = null,
 			Dictionary<int, int> lookupUV = null)
 		{
 			if (faces == null)
-				faces = new List<Face>(pb.facesInternal);
+				faces = new List<Face>(mesh.facesInternal);
 
 			if(vertexes == null)
-				vertexes = new List<Vertex>( pb.GetVertexes() );
+				vertexes = new List<Vertex>( mesh.GetVertexes() );
 
-			if(lookup == null)
-				lookup = pb.sharedIndexesInternal.ToDictionary();
+			if(lookup == null && mesh.sharedVertexesInternal != null)
+				SharedVertex.GetSharedVertexLookup(mesh.sharedVertexesInternal, lookup);
 
-			if(lookupUV == null)
-				lookupUV = pb.sharedIndexesUVInternal != null ? pb.sharedIndexesUVInternal.ToDictionary() : null;
+			if(lookupUV == null && mesh.sharedTextures != null)
+				SharedVertex.GetSharedVertexLookup(mesh.sharedTextures, lookupUV);
 
 			Apply(newFaces, vertexes, faces, lookup, lookupUV);
 
-			pb.SetVertexes(vertexes);
-			pb.faces = faces;
-			pb.SetSharedIndexes(lookup);
-			pb.SetSharedIndexesUV(lookupUV);
+			mesh.SetVertexes(vertexes);
+			mesh.faces = faces;
+			mesh.SetSharedVertexes(lookup);
+			mesh.SetSharedTextures(lookupUV);
 		}
 
 		/// <summary>

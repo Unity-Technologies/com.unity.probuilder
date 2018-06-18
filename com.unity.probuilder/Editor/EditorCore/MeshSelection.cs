@@ -121,7 +121,7 @@ namespace UnityEditor.ProBuilder
 			try
 			{
 				s_TotalVertexCount = TopInternal().Sum(x => x.vertexCount);
-				s_TotalCommonVertexCount = TopInternal().Sum(x => x.sharedIndexesInternal.Length);
+				s_TotalCommonVertexCount = TopInternal().Sum(x => x.sharedVertexesInternal.Length);
 				s_TotalVertexCountCompiled = TopInternal().Sum(x => x.mesh == null ? 0 : x.mesh.vertexCount);
 				s_TotalFaceCount = TopInternal().Sum(x => x.faceCount);
 				s_TotalTriangleCountCompiled = TopInternal().Sum(x => (int) UnityEngine.ProBuilder.MeshUtility.GetPrimitiveCount(x.mesh));

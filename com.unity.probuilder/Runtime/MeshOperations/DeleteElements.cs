@@ -74,12 +74,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			// remove from sharedIndexes & shift to account for deletions
-			IEnumerable<KeyValuePair<int, int>> common = mesh.sharedIndexesInternal.ToDictionary().Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
-			IEnumerable<KeyValuePair<int, int>> commonUV = mesh.sharedIndexesUVInternal.ToDictionary().Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
+			var common = mesh.sharedVertexLookup.Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
+			var commonUV = mesh.sharedTextureLookup.Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
 
 			mesh.SetVertexes(vertexes);
-			mesh.SetSharedIndexes(common);
-			mesh.SetSharedIndexesUV(commonUV);
+			mesh.SetSharedVertexes(common);
+			mesh.SetSharedTextures(commonUV);
 		}
 
 		/// <summary>
@@ -147,18 +147,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				nFaces[i].indexesInternal = tris;
 			}
 
-			// shift all other face indexes in the shared index array down to account for moved vertex positions
-			IntArray[] si = mesh.sharedIndexesInternal;
-			IntArray[] si_uv = mesh.sharedIndexesUVInternal;
-
-			IntArrayUtility.RemoveValuesAndShift(ref si, indexesToRemove);
-
-			if (si_uv != null)
-				IntArrayUtility.RemoveValuesAndShift(ref si_uv, indexesToRemove);
-
 			mesh.SetVertexes(vertexes);
-			mesh.sharedIndexesInternal = si;
-			mesh.sharedIndexesUVInternal = si_uv;
+			mesh.RemoveFromSharedVertexes(indexesToRemove);
+			mesh.RemoveFromSharedTextures(indexesToRemove);
 			mesh.facesInternal = nFaces;
 			int[] array = indexesToRemove.ToArray();
 
@@ -175,8 +166,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			Dictionary<int, int> m_Lookup = mesh.sharedIndexesInternal.ToDictionary();
-			Dictionary<int, int> m_LookupUV = mesh.sharedIndexesUVInternal != null ? mesh.sharedIndexesUVInternal.ToDictionary() : new Dictionary<int, int>();
+			Dictionary<int, int> m_Lookup = mesh.sharedVertexLookup;
+			Dictionary<int, int> m_LookupUV = mesh.sharedTextureLookup;
 			Vector3[] m_Positions = mesh.positionsInternal;
 			Dictionary<int, int> m_RebuiltLookup = new Dictionary<int, int>();
 			Dictionary<int, int> m_RebuiltLookupUV = new Dictionary<int, int>();
@@ -229,8 +220,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			mesh.faces = m_RebuiltFaces;
-			mesh.SetSharedIndexes(m_RebuiltLookup);
-			mesh.SetSharedIndexesUV(m_RebuiltLookupUV);
+			mesh.SetSharedVertexes(m_RebuiltLookup);
+			mesh.SetSharedTextures(m_RebuiltLookupUV);
 			return mesh.RemoveUnusedVertexes();
 		}
 

@@ -113,7 +113,7 @@ namespace UnityEditor.ProBuilder
 
 				try
 				{
-					pb.sharedIndexes = IntArrayUtility.GetSharedIndexesWithPositions(pb.positionsInternal);
+					pb.sharedVertexes = SharedVertexesUtility.GetSharedIndexesWithPositions(pb.positionsInternal);
 
 					pb.ToMesh();
 					pb.Refresh();

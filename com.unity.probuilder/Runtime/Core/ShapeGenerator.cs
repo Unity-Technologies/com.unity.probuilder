@@ -315,7 +315,7 @@ namespace UnityEngine.ProBuilder
 				faces = faces.Add(new Face(new int[] {v+0, v+1, v+2, v+1, v+3, v+2}));
 			}
 
-			ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithVertexesFaces(vertexes, faces);
+			ProBuilderMesh pb = ProBuilderMesh.Create(vertexes, faces);
 			pb.gameObject.name = "Stairs";
 
 			return pb;
@@ -527,7 +527,7 @@ namespace UnityEngine.ProBuilder
 					f.Reverse();
 			}
 
-			ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithVertexesFaces(positions, faces);
+			ProBuilderMesh pb = ProBuilderMesh.Create(positions, faces);
 
 			pb.gameObject.name = "Stairs";
 
@@ -744,7 +744,7 @@ namespace UnityEngine.ProBuilder
 				ind += 3;
 			}
 
-			ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithVertexesFaces(verts, faces);
+			ProBuilderMesh pb = ProBuilderMesh.Create(verts, faces);
 			pb.gameObject.name = "Cylinder";
 			return pb;
 		}
@@ -803,7 +803,7 @@ namespace UnityEngine.ProBuilder
 				new Face(new int[6]{14, 15, 16, 15, 17, 16})
 			};
 
-			ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithVertexesFaces(v, f);
+			ProBuilderMesh pb = ProBuilderMesh.Create(v, f);
 			pb.gameObject.name = "Prism";
 			return pb;
 		}
@@ -982,7 +982,7 @@ namespace UnityEngine.ProBuilder
 					break;
 			}
 
-			ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithVertexesFaces(v, f);
+			ProBuilderMesh pb = ProBuilderMesh.Create(v, f);
 			pb.gameObject.name = "Plane";
 			return pb;
 		}
@@ -1129,7 +1129,7 @@ namespace UnityEngine.ProBuilder
 				f.Add( new Face( new int[3] {i+3,i+4,i+5} ) );
 			}
 
-			ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithVertexesFaces(v.ToArray(), f.ToArray());
+			ProBuilderMesh pb = ProBuilderMesh.Create(v.ToArray(), f.ToArray());
 			pb.gameObject.name = "Cone";
 			return pb;
 		}
@@ -1318,15 +1318,15 @@ namespace UnityEngine.ProBuilder
 
 			if (!weldVertexes)
 			{
-				IntArray[] si = new IntArray[v.Length];
+				SharedVertex[] si = new SharedVertex[v.Length];
 				for (int i = 0; i < si.Length; i++)
-					si[i] = new IntArray(new int[] {i});
+					si[i] = new SharedVertex(new int[] {i});
 
-				pb.sharedIndexesInternal = si;
+				pb.sharedVertexesInternal = si;
 			}
 			else
 			{
-				pb.sharedIndexesInternal = IntArrayUtility.GetSharedIndexesWithPositions(v);
+				pb.sharedVertexesInternal = SharedVertexesUtility.GetSharedIndexesWithPositions(v);
 			}
 
 			pb.ToMesh();
@@ -1472,7 +1472,7 @@ namespace UnityEngine.ProBuilder
 				}
 			}
 
-			ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithVertexesFaces(vertexes.ToArray(), faces.ToArray());
+			ProBuilderMesh pb = ProBuilderMesh.Create(vertexes.ToArray(), faces.ToArray());
 			pb.gameObject.name = "Torus";
 
 			return pb;

@@ -199,18 +199,19 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/**
-		 * True if any value is present in both arrays, setting index_a and index_b to the index in the
-		 * array of each match.
+		 * True if any value is present in both arrays, setting index_a and index_b to the index in the array of each match.
 		 */
 		public static bool ContainsMatch<T>(this T[] a, T[] b, out int index_a, out int index_b)
 		{
 			index_b = -1;
-			for(index_a = 0; index_a < a.Length; index_a++)
+			for (index_a = 0; index_a < a.Length; index_a++)
 			{
-				index_b = System.Array.IndexOf(b, a[index_a]);
-				if(index_b > -1) return true;//ind;
+				index_b = Array.IndexOf(b, a[index_a]);
+				if (index_b > -1)
+					return true; //ind;
 			}
-			return false;// ind;
+
+			return false; // ind;
 		}
 
 		/**

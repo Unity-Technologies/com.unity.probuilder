@@ -31,15 +31,17 @@ namespace UnityEditor.ProBuilder
 			if(selected.Length < 2)
 				return new ActionResult(ActionResult.Status.Canceled, "Must Select 2+ Objects");
 
-			ProBuilderMesh pb = null;
+			ProBuilderMesh[] res = null;
 
-			if( InternalMeshUtility.CombineObjects(selected, out pb) )
+			if( (res = InternalMeshUtility.CombineObjects(selected)) != null )
 			{
-//				pb_EntityUtility.SetEntityType(selected[0].GetComponent<pb_Entity>().entityType, pb.gameObject);
-
-				pb.Optimize();
-
-				pb.gameObject.name = "pb-MergedObject" + pb.id;
+				foreach (var mesh in res)
+				{
+					mesh.Optimize();
+					mesh.gameObject.name = "pb-MergedObject" + mesh.id;
+					UndoUtility.RegisterCreatedObjectUndo(mesh.gameObject, "Merge Objects");
+					Selection.objects = res;
+				}
 
 				// Delete donor objects
 				for(int i = 0; i < selected.Length; i++)
@@ -47,10 +49,6 @@ namespace UnityEditor.ProBuilder
 					if(selected[i] != null)
 						UndoUtility.DestroyImmediate(selected[i].gameObject);
 				}
-
-				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Merge Objects");
-
-				Selection.activeTransform = pb.transform;
 			}
 
 			if(editor)
@@ -739,13 +737,13 @@ namespace UnityEditor.ProBuilder
 			switch( editor != null ? editor.selectionMode : (SelectMode)0 )
 			{
 				case SelectMode.Vertex:
-					foreach(ProBuilderMesh pb in selection)
+					foreach(var mesh in selection)
 					{
-						IntArray[] sharedIndexes = pb.sharedIndexesInternal;
+						SharedVertex[] sharedIndexes = mesh.sharedVertexesInternal;
 						List<int> selectedSharedIndexes = new List<int>();
 
-						foreach(int i in pb.selectedIndexesInternal)
-							selectedSharedIndexes.Add( sharedIndexes.IndexOf(i) );
+						foreach (int i in mesh.selectedIndexesInternal)
+							selectedSharedIndexes.Add(mesh.GetSharedVertexHandle(i));
 
 						List<int> inverse = new List<int>();
 
@@ -755,15 +753,15 @@ namespace UnityEditor.ProBuilder
 								inverse.Add(sharedIndexes[i][0]);
 						}
 
-						pb.SetSelectedVertexes(inverse.ToArray());
+						mesh.SetSelectedVertexes(inverse.ToArray());
 					}
 					break;
 
 				case SelectMode.Face:
-					foreach(ProBuilderMesh pb in selection)
+					foreach(var mesh in selection)
 					{
-						IEnumerable<Face> inverse = pb.facesInternal.Where( x => !pb.selectedFacesInternal.Contains(x) );
-						pb.SetSelectedFaces(inverse.ToArray());
+						IEnumerable<Face> inverse = mesh.facesInternal.Where( x => !mesh.selectedFacesInternal.Contains(x) );
+						mesh.SetSelectedFaces(inverse.ToArray());
 					}
 					break;
 
@@ -773,12 +771,12 @@ namespace UnityEditor.ProBuilder
 
 					for(int i = 0; i < selection.Length; i++)
 					{
-						Edge[] universal_selected_edges = EdgeExtension.GetUniversalEdges(selection[i].selectedEdges, selection[i].sharedIndexesInternal).Distinct().ToArray();
-						Edge[] inverse_universal = System.Array.FindAll(editor.selectedUniversalEdges[i], x => !universal_selected_edges.Contains(x));
+						var universal_selected_edges = EdgeExtension.GetSharedVertexHandleEdges(selection[i], selection[i].selectedEdges).Distinct();
+						Edge[] inverse_universal = Array.FindAll(editor.selectedUniversalEdges[i], x => !universal_selected_edges.Contains(x));
 						Edge[] inverse = new Edge[inverse_universal.Length];
 
 						for(int n = 0; n < inverse_universal.Length; n++)
-							inverse[n] = new Edge( selection[i].sharedIndexesInternal[inverse_universal[n].a][0], selection[i].sharedIndexesInternal[inverse_universal[n].b][0] );
+							inverse[n] = new Edge( selection[i].sharedVertexesInternal[inverse_universal[n].a][0], selection[i].sharedVertexesInternal[inverse_universal[n].b][0] );
 
 						selection[i].SetSelectedEdges(inverse);
 					}
@@ -1238,7 +1236,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(ProBuilderMesh pb in selection)
 			{
-				weldCount += pb.sharedIndexesInternal.Length;
+				weldCount += pb.sharedVertexesInternal.Length;
 
 				if(pb.selectedIndexesInternal.Length > 1)
 				{
@@ -1262,7 +1260,7 @@ namespace UnityEditor.ProBuilder
 					pb.Optimize();
 				}
 
-				weldCount -= pb.sharedIndexesInternal.Length;
+				weldCount -= pb.sharedVertexesInternal.Length;
 			}
 
 			ProBuilderEditor.Refresh();
@@ -1307,58 +1305,59 @@ namespace UnityEditor.ProBuilder
 			int splitCount = 0;
 			UndoUtility.RecordSelection(selection, "Split Vertexes");
 
-			foreach(ProBuilderMesh pb in selection)
+			foreach(ProBuilderMesh mesh in selection)
 			{
-				List<int> tris = new List<int>(pb.selectedIndexesInternal);			// loose verts to split
+				// loose verts to split
+				List<int> tris = new List<int>(mesh.selectedIndexesInternal);
 
-				if(pb.selectedFacesInternal.Length > 0)
+				if (mesh.selectedFacesInternal.Length > 0)
 				{
-					IntArray[] sharedIndexes = pb.sharedIndexesInternal;
+					SharedVertex[] sharedIndexes = mesh.sharedVertexesInternal;
 
-					int[] selectedIndexes = new int[pb.selectedIndexesInternal.Length];
+					int[] selectedIndexes = new int[mesh.selectedIndexesInternal.Length];
 
 					// Get shared index index for each vert in selection
-					for(int i = 0; i < pb.selectedIndexesInternal.Length; i++)
-						selectedIndexes[i] = sharedIndexes.IndexOf(pb.selectedIndexesInternal[i]);
+					for (int i = 0; i < mesh.selectedIndexesInternal.Length; i++)
+						selectedIndexes[i] = mesh.GetSharedVertexHandle(mesh.selectedIndexesInternal[i]);
 
 					// cycle through selected faces and remove the tris that compose full faces.
-					foreach(Face face in pb.selectedFacesInternal)
+					foreach (Face face in mesh.selectedFacesInternal)
 					{
 						List<int> faceSharedIndexes = new List<int>();
 
-						for(int j = 0; j < face.distinctIndexesInternal.Length; j++)
-							faceSharedIndexes.Add( sharedIndexes.IndexOf(face.distinctIndexesInternal[j]) );
+						for (int j = 0; j < face.distinctIndexesInternal.Length; j++)
+							faceSharedIndexes.Add(mesh.GetSharedVertexHandle(face.distinctIndexesInternal[j]));
 
 						List<int> usedTris = new List<int>();
-						for(int i = 0; i < selectedIndexes.Length; i++)
-							if( faceSharedIndexes.Contains(selectedIndexes[i]) )
-								usedTris.Add(pb.selectedIndexesInternal[i]);
+						for (int i = 0; i < selectedIndexes.Length; i++)
+							if (faceSharedIndexes.Contains(selectedIndexes[i]))
+								usedTris.Add(mesh.selectedIndexesInternal[i]);
 
 						// This face *is* composed of selected tris.  Remove these tris from the loose index list
-						foreach(int i in usedTris)
-							if(tris.Contains(i))
+						foreach (int i in usedTris)
+							if (tris.Contains(i))
 								tris.Remove(i);
 					}
 				}
 
 				// Now split the faces, and any loose vertexes
-				pb.DetachFaces(pb.selectedFacesInternal);
+				mesh.DetachFaces(mesh.selectedFacesInternal);
 
-				splitCount += pb.selectedIndexesInternal.Length;
-				pb.SplitVertexes(pb.selectedIndexesInternal);
+				splitCount += mesh.selectedIndexesInternal.Length;
+				mesh.SplitVertexes(mesh.selectedIndexesInternal);
 
 				// Reattach detached face vertexes (if any are to be had)
-				if(pb.selectedFacesInternal.Length > 0)
-					pb.WeldVertexes(pb.selectedFacesInternal.SelectMany(x => x.indexes), Mathf.Epsilon);
+				if(mesh.selectedFacesInternal.Length > 0)
+					mesh.WeldVertexes(mesh.selectedFacesInternal.SelectMany(x => x.indexes), Mathf.Epsilon);
 
 				// And set the selected triangles to the newly split
-				List<int> newTriSelection = new List<int>(pb.selectedFacesInternal.SelectMany(x => x.indexes));
+				List<int> newTriSelection = new List<int>(mesh.selectedFacesInternal.SelectMany(x => x.indexes));
 				newTriSelection.AddRange(tris);
-				pb.SetSelectedVertexes(newTriSelection.ToArray());
+				mesh.SetSelectedVertexes(newTriSelection.ToArray());
 
-				pb.ToMesh();
-				pb.Refresh();
-				pb.Optimize();
+				mesh.ToMesh();
+				mesh.Refresh();
+				mesh.Optimize();
 			}
 
 			ProBuilderEditor.Refresh();
@@ -1383,16 +1382,15 @@ namespace UnityEditor.ProBuilder
 			int filled = 0;
 			bool wholePath = PreferencesInternal.GetBool(PreferenceKeys.pbFillHoleSelectsEntirePath);
 
-			foreach(ProBuilderMesh pb in selection)
+			foreach(ProBuilderMesh mesh in selection)
 			{
-				bool selectAll = pb.selectedIndexesInternal == null || pb.selectedIndexesInternal.Length < 1;
-				IEnumerable<int> indexes = selectAll ? pb.facesInternal.SelectMany(x => x.indexes) : pb.selectedIndexesInternal;
+				bool selectAll = mesh.selectedIndexesInternal == null || mesh.selectedIndexesInternal.Length < 1;
+				IEnumerable<int> indexes = selectAll ? mesh.facesInternal.SelectMany(x => x.indexes) : mesh.selectedIndexesInternal;
 
-				pb.ToMesh();
+				mesh.ToMesh();
 
-				Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
-				List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
-				HashSet<int> common = IntArrayUtility.GetCommonIndexes(lookup, indexes);
+				List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh);
+				HashSet<int> common = mesh.GetSharedVertexHandles(indexes);
 				List<List<WingedEdge>> holes = ElementSelection.FindHoles(wings, common);
 
 				HashSet<Face> faces = new HashSet<Face>();
@@ -1413,14 +1411,14 @@ namespace UnityEditor.ProBuilder
 							continue;
 
 						holeIndexes = hole.Select(x => x.edge.local.a).ToList();
-						face = AppendElements.CreatePolygon(pb, holeIndexes, false);
+						face = AppendElements.CreatePolygon(mesh, holeIndexes, false);
 						adjacent.AddRange(hole.Select(x => x.face));
 					}
 					else
 					{
 						IEnumerable<WingedEdge> selected = hole.Where(x => common.Contains(x.edge.common.a));
 						holeIndexes = selected.Select(x => x.edge.local.a).ToList();
-						face = AppendElements.CreatePolygon(pb, holeIndexes, true);
+						face = AppendElements.CreatePolygon(mesh, holeIndexes, true);
 
 						if(res)
 							adjacent.AddRange(selected.Select(x => x.face));
@@ -1434,9 +1432,9 @@ namespace UnityEditor.ProBuilder
 					}
 				}
 
-				pb.SetSelectedFaces(faces);
+				mesh.SetSelectedFaces(faces);
 
-				wings = WingedEdge.GetWingedEdges(pb, adjacent);
+				wings = WingedEdge.GetWingedEdges(mesh, adjacent);
 
 				// make sure the appended faces match the first adjacent face found
 				// both in winding and face properties
@@ -1459,9 +1457,9 @@ namespace UnityEditor.ProBuilder
 					}
 				}
 
-				pb.ToMesh();
-				pb.Refresh();
-				pb.Optimize();
+				mesh.ToMesh();
+				mesh.Refresh();
+				mesh.Optimize();
 			}
 
 			ProBuilderEditor.Refresh();

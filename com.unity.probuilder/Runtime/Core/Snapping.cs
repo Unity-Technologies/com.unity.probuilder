@@ -58,11 +58,12 @@ namespace UnityEngine.ProBuilder
 		/// <param name="mesh"></param>
 		/// <param name="indexes"></param>
 		/// <param name="snap"></param>
-		public static void SnapVertexes(ProBuilderMesh mesh, IList<int> indexes, Vector3 snap)
+		public static void SnapVertexes(ProBuilderMesh mesh, IEnumerable<int> indexes, Vector3 snap)
 		{
 			Vector3[] verts = mesh.positionsInternal;
-			for(int n = 0; n < indexes.Count; n++)
-				verts[indexes[n]] = mesh.transform.InverseTransformPoint(SnapValue(mesh.transform.TransformPoint(verts[indexes[n]]), snap));
+
+			foreach(var v in indexes)
+				verts[v] = mesh.transform.InverseTransformPoint(SnapValue(mesh.transform.TransformPoint(verts[v]), snap));
 		}
 	}
 }

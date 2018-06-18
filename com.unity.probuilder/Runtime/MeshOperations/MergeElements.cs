@@ -102,7 +102,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="faces"></param>
 		internal static void CollapseCoincidentVertexes(ProBuilderMesh mesh, IEnumerable<Face> faces)
 		{
-			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
+			Dictionary<int, int> lookup = mesh.sharedVertexLookup;
 			Dictionary<int, int> matches = new Dictionary<int, int>();
 
 			foreach(Face face in faces)

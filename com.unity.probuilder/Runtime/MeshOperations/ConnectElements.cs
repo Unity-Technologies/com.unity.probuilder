@@ -71,14 +71,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (indexes == null)
                 throw new ArgumentNullException("indexes");
 
-			int sharedIndexOffset = mesh.sharedIndexesInternal.Length;
-			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
+			int sharedIndexOffset = mesh.sharedVertexesInternal.Length;
+			Dictionary<int, int> lookup = mesh.sharedVertexLookup;
 
 			HashSet<int> distinct = new HashSet<int>(indexes.Select(x=>lookup[x]));
 			HashSet<int> affected = new HashSet<int>();
 
 			foreach(int i in distinct)
-				affected.UnionWith(mesh.sharedIndexesInternal[i].array);
+				affected.UnionWith(mesh.sharedVertexesInternal[i].arrayInternal);
 
 			Dictionary<Face, List<int>> splits = new Dictionary<Face, List<int>>();
 			List<Vertex> vertexes = new List<Vertex>(mesh.GetVertexes());
@@ -132,11 +132,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			FaceRebuildData.Apply( appendFaces.Select(x => x.faceRebuildData), mesh, vertexes, null, lookup, null );
-			mesh.SetSharedIndexes(lookup);
-			mesh.SetSharedIndexesUV(new IntArray[0]);
+			mesh.SetSharedVertexes(lookup);
+			mesh.sharedTextures = new SharedVertex[0];
 			int removedVertexCount = mesh.DeleteFaces(successfulSplits).Length;
 
-			lookup = mesh.sharedIndexesInternal.ToDictionary();
+			lookup = mesh.sharedVertexLookup;
 
 			HashSet<int> newVertexIndexes = new HashSet<int>();
 
@@ -146,7 +146,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			mesh.ToMesh();
 
-            return newVertexIndexes.Select(x => mesh.sharedIndexesInternal[x][0]).ToArray();
+            return newVertexIndexes.Select(x => mesh.sharedVertexesInternal[x][0]).ToArray();
 		}
 
 		/// <summary>
@@ -169,8 +169,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			bool returnEdges = false,
 			HashSet<Face> faceMask = null)
 		{
-			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
-			Dictionary<int, int> lookupUV = pb.sharedIndexesUVInternal != null ? pb.sharedIndexesUVInternal.ToDictionary() : null;
+			Dictionary<int, int> lookup = pb.sharedVertexLookup;
+			Dictionary<int, int> lookupUV = pb.sharedTextureLookup;
 			HashSet<EdgeLookup> distinctEdges = new HashSet<EdgeLookup>(EdgeLookup.GetEdgeLookup(edges, lookup));
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
 
@@ -277,9 +277,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			FaceRebuildData.Apply(results.Select(x => x.faceRebuildData), pb, vertexes, null, lookup, lookupUV);
 
-			pb.SetSharedIndexesUV(new IntArray[0]);
+			pb.sharedTextures = new SharedVertex[0];
 			int removedVertexCount = pb.DeleteFaces(affected.Keys).Length;
-			pb.sharedIndexes = IntArrayUtility.GetSharedIndexesWithPositions(pb.positionsInternal);
+			pb.sharedVertexes = SharedVertexesUtility.GetSharedIndexesWithPositions(pb.positionsInternal);
 			pb.ToMesh();
 
 			// figure out where the new edges where inserted
@@ -292,7 +292,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					for(int i = 0; i < results[n].newVertexIndexes.Count; i++)
 						appended.Add( ( results[n].newVertexIndexes[i] + results[n].faceRebuildData.Offset() ) - removedVertexCount );
 
-				Dictionary<int, int> lup = pb.sharedIndexesInternal.ToDictionary();
+				Dictionary<int, int> lup = pb.sharedVertexLookup;
 				IEnumerable<Edge> newEdges = results.SelectMany(x => x.faceRebuildData.face.edgesInternal).Where(x => appended.Contains(x.a) && appended.Contains(x.b));
 				IEnumerable<EdgeLookup> distNewEdges = EdgeLookup.GetEdgeLookup(newEdges, lup);
 

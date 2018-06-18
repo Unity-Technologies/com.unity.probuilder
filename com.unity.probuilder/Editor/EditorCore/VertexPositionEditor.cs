@@ -17,15 +17,13 @@ namespace UnityEditor.ProBuilder
 
 		class VertexEditorSelection
 		{
-			public Dictionary<int, int> lookup;
 			public bool isVisible = false;
 			public IEnumerable<int> common;
 
-			public VertexEditorSelection(Dictionary<int, int> lookup, bool visible, int[] indexes)
+			public VertexEditorSelection(ProBuilderMesh mesh, bool visible, IEnumerable<int> indexes)
 			{
-				this.lookup = lookup;
 				this.isVisible = visible;
-				this.common = IntArrayUtility.GetCommonIndexes(lookup, indexes);
+				this.common = mesh.GetCoincidentVertexes(indexes);
 			}
 		}
 
@@ -71,21 +69,20 @@ namespace UnityEditor.ProBuilder
 				return;
 			}
 
-			Dictionary<ProBuilderMesh, VertexEditorSelection> res = new Dictionary<ProBuilderMesh, VertexEditorSelection>();
+			var res = new Dictionary<ProBuilderMesh, VertexEditorSelection>();
 
-			foreach(ProBuilderMesh pb in newSelection)
+			foreach(var mesh in newSelection)
 			{
 				VertexEditorSelection sel;
 
-				if(selection.TryGetValue(pb, out sel))
+				if(selection.TryGetValue(mesh, out sel))
 				{
-					sel.lookup = pb.sharedIndexesInternal.ToDictionary();
-					sel.common = IntArrayUtility.GetCommonIndexes(sel.lookup, pb.selectedIndexesInternal);
-					res.Add(pb, sel);
+					sel.common = mesh.GetCoincidentVertexes(mesh.selectedIndexesInternal);
+					res.Add(mesh, sel);
 				}
 				else
 				{
-					res.Add(pb, new VertexEditorSelection(pb.sharedIndexesInternal.ToDictionary(), true, pb.selectedIndexesInternal));
+					res.Add(mesh, new VertexEditorSelection(mesh, true, mesh.selectedIndexesInternal));
 				}
 			}
 
@@ -174,7 +171,7 @@ namespace UnityEditor.ProBuilder
 
 							GUILayout.Label(u.ToString(), GUILayout.MinWidth(32), GUILayout.MaxWidth(32));
 
-							Vector3 v = pb.positionsInternal[pb.sharedIndexesInternal[u][0]];
+							Vector3 v = pb.positionsInternal[pb.sharedVertexesInternal[u][0]];
 
 							if(worldSpace) v = transform.TransformPoint(v);
 
@@ -233,7 +230,7 @@ namespace UnityEditor.ProBuilder
 
 				foreach(int i in sel.common)
 				{
-					int[] indexes = pb.sharedIndexesInternal[i];
+					var indexes = pb.sharedVertexesInternal[i];
 
 					Vector3 point = pb.transform.TransformPoint(positions[indexes[0]]);
 

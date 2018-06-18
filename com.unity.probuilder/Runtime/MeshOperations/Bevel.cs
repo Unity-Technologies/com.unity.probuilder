@@ -24,7 +24,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
+			Dictionary<int, int> lookup = mesh.sharedVertexLookup;
 			List<Vertex> vertexes = new List<Vertex>(mesh.GetVertexes());
 			List<EdgeLookup> m_edges = EdgeLookup.GetEdgeLookup(edges, lookup).Distinct().ToList();
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh);
@@ -146,12 +146,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			FaceRebuildData.Apply(appendFaces, mesh, vertexes);
 			int removed = mesh.DeleteFaces(sorted.Keys).Length;
-			mesh.SetSharedIndexesUV(new IntArray[0]);
-			mesh.sharedIndexes = IntArrayUtility.GetSharedIndexesWithPositions(mesh.positionsInternal);
+			mesh.sharedTextures = new SharedVertex[0];
+			mesh.sharedVertexes = SharedVertexesUtility.GetSharedIndexesWithPositions(mesh.positionsInternal);
 
 			// @todo don't rebuild indexes, keep 'em cached
-			IntArray[] sharedIndexes = mesh.sharedIndexesInternal;
-			lookup = sharedIndexes.ToDictionary();
+			SharedVertex[] sharedIndexes = mesh.sharedVertexesInternal;
+			lookup = mesh.sharedVertexLookup;
 			List<HashSet<int>> holesCommonIndexes = new List<HashSet<int>>();
 
 			// offset the indexes of holes and cull any potential holes that are less than 3 indexes (not a hole :)
@@ -205,7 +205,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			FaceRebuildData.Apply(holeFaces, mesh, vertexes);
-			mesh.sharedIndexes = IntArrayUtility.GetSharedIndexesWithPositions(mesh.positionsInternal);
+			mesh.sharedVertexes = SharedVertexesUtility.GetSharedIndexesWithPositions(mesh.positionsInternal);
 
 			// go through new faces and conform hole normals
 			// get a hash of just the adjacent and bridge faces
