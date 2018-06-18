@@ -167,26 +167,14 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		internal void MakeUnique()
 		{
-			positions = positions;
+			// deep copy arrays of reference types
 			sharedIndexes = sharedIndexesInternal;
 			SetSharedIndexesUV(sharedIndexesUVInternal);
 			faces = faces.Select(x => new Face(x));
 
-			List<Vector4> uvs = new List<Vector4>();
-
-			for (var i = 0; i < k_UVChannelCount; i++)
-			{
-				GetUVs(i, uvs);
-				SetUVs(i, uvs);
-			}
-
-			if(HasArrays(MeshArrays.Tangent))
-				tangents = tangents;
-
-			if(HasArrays(MeshArrays.Color))
-				colors = colors;
-
+			// set a new UnityEngine.Mesh instance
 			mesh = new Mesh();
+			
 			ToMesh();
 			Refresh();
 		}
