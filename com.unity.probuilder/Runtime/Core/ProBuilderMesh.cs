@@ -307,11 +307,11 @@ namespace UnityEngine.ProBuilder
 		    return CalculateNormals();
 	    }
 
-        internal Color[] colorsInternal
-		{
-			get { return m_Colors; }
-			set { m_Colors = value; }
-		}
+	    internal Color[] colorsInternal
+	    {
+		    get { return m_Colors; }
+		    set { m_Colors = value; }
+	    }
 
 		/// <value>
 		/// Vertex colors array for this mesh. When setting, the value must match the length of positions.
@@ -330,6 +330,17 @@ namespace UnityEngine.ProBuilder
 					m_Colors = value.ToArray();
 			}
         }
+
+	    /// <summary>
+	    /// Get an array of Color values from the mesh.
+	    /// </summary>
+	    /// <returns>The colors array for this mesh. If mesh does not contain colors, a new array is returned filled with the default value (Color.white).</returns>
+	    public Color[] GetColors()
+	    {
+		    if (HasArray(MeshArrays.Color))
+			    return colors.ToArray();
+		    return ArrayUtility.Fill(Color.white, vertexCount);
+	    }
 
 		/// <value>
 		/// Get the user-set tangents array for this mesh. If tangents have not been explictly set, this value will be null.

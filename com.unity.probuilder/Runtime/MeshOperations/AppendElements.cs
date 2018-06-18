@@ -60,14 +60,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			if (mc || fc)
 			{
-				Array.Copy(mc ? mesh.colorsInternal : ArrayUtility.FilledArray(Color.white, vertexCount), 0, newColors, 0, vertexCount);
-				Array.Copy(fc ? colors : ArrayUtility.FilledArray(Color.white, faceVertexCount), 0, newColors, vertexCount, colors.Length);
+				Array.Copy(mc ? mesh.colorsInternal : ArrayUtility.Fill(Color.white, vertexCount), 0, newColors, 0, vertexCount);
+				Array.Copy(fc ? colors : ArrayUtility.Fill(Color.white, faceVertexCount), 0, newColors, vertexCount, colors.Length);
 			}
 
 			if (mt || ft)
 			{
-				Array.Copy(mt ? mesh.texturesInternal : ArrayUtility.FilledArray(Vector2.zero, vertexCount), 0, newTextures, 0, vertexCount);
-				Array.Copy(ft ? uvs : ArrayUtility.FilledArray(Vector2.zero, faceVertexCount), 0, newTextures, mesh.texturesInternal.Length, faceVertexCount);
+				Array.Copy(mt ? mesh.texturesInternal : ArrayUtility.Fill(Vector2.zero, vertexCount), 0, newTextures, 0, vertexCount);
+				Array.Copy(ft ? uvs : ArrayUtility.Fill(Vector2.zero, faceVertexCount), 0, newTextures, mesh.texturesInternal.Length, faceVertexCount);
 			}
 
 			face.ShiftIndexesToZero();

@@ -622,7 +622,6 @@ namespace UnityEngine.ProBuilder
 				points[i] = Vector3.Scale(k_CubeVertexes[k_CubeTriangles[i]], size);
 
 			ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(points);
-
 			pb.gameObject.name = "Cube";
 			return pb;
 		}

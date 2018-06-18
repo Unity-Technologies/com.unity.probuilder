@@ -167,11 +167,6 @@ namespace UnityEngine.ProBuilder
 			return 0;
 		}
 
-		public static T[] Fill<T>(T val, int length)
-		{
-			return FilledArray<T>(val, length);
-		}
-
 		public static List<T> Fill<T>(System.Func<int, T> ctor, int length)
 		{
 			List<T> list = new List<T>(length);
@@ -180,7 +175,7 @@ namespace UnityEngine.ProBuilder
 			return list;
 		}
 
-		public static T[] FilledArray<T>(T val, int length)
+		public static T[] Fill<T>(T val, int length)
 		{
 			T[] arr = new T[length];
 			for(int i = 0; i < length; i++) {

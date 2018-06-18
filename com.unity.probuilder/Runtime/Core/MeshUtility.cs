@@ -387,7 +387,7 @@ namespace UnityEngine.ProBuilder
 
             MeshUtility.GenerateTangent(targetMesh);
 
-            if (probuilderMesh.colorsInternal != null && probuilderMesh.colorsInternal.Length == targetMesh.vertexCount)
+            if (probuilderMesh.HasArray(MeshArrays.Color))
                 targetMesh.colors = probuilderMesh.colorsInternal;
 
             var submeshes = Submesh.GetSubmeshes(probuilderMesh.facesInternal, preferredTopology);

@@ -171,14 +171,21 @@ namespace UnityEngine.ProBuilder
 			sharedIndexes = sharedIndexesInternal;
 			SetSharedIndexesUV(sharedIndexesUVInternal);
 			faces = faces.Select(x => new Face(x));
+
 			List<Vector4> uvs = new List<Vector4>();
+
 			for (var i = 0; i < k_UVChannelCount; i++)
 			{
 				GetUVs(i, uvs);
 				SetUVs(i, uvs);
 			}
-			tangents = tangents;
-			colors = colors;
+
+			if(HasArray(MeshArrays.Tangent))
+				tangents = tangents;
+
+			if(HasArray(MeshArrays.Color))
+				colors = colors;
+
 			mesh = new Mesh();
 			ToMesh();
 			Refresh();
@@ -426,7 +433,7 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentNullException("face");
 
 			if (m_Colors == null)
-                m_Colors = ArrayUtility.FilledArray<Color>(Color.white, vertexCount);
+                m_Colors = ArrayUtility.Fill<Color>(Color.white, vertexCount);
 
 			foreach (int i in face.distinctIndexesInternal)
 				m_Colors[i] = color;
