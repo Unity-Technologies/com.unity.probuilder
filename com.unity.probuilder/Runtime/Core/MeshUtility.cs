@@ -369,14 +369,14 @@ namespace UnityEngine.ProBuilder
             targetMesh.vertices = probuilderMesh.positionsInternal;
             targetMesh.uv = probuilderMesh.texturesInternal;
 
-            if (probuilderMesh.HasArray(MeshArrays.Texture2))
+            if (probuilderMesh.HasArrays(MeshArrays.Texture2))
             {
                 List<Vector4> uvChannel = new List<Vector4>();
                 probuilderMesh.GetUVs(2, uvChannel);
                 targetMesh.SetUVs(2, uvChannel);
             }
 
-            if (probuilderMesh.HasArray(MeshArrays.Texture3))
+            if (probuilderMesh.HasArrays(MeshArrays.Texture3))
             {
                 List<Vector4> uvChannel = new List<Vector4>();
                 probuilderMesh.GetUVs(3, uvChannel);
@@ -387,7 +387,7 @@ namespace UnityEngine.ProBuilder
 
             MeshUtility.GenerateTangent(targetMesh);
 
-            if (probuilderMesh.HasArray(MeshArrays.Color))
+            if (probuilderMesh.HasArrays(MeshArrays.Color))
                 targetMesh.colors = probuilderMesh.colorsInternal;
 
             var submeshes = Submesh.GetSubmeshes(probuilderMesh.facesInternal, preferredTopology);

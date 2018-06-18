@@ -55,25 +55,6 @@ namespace UnityEngine.ProBuilder
         [FormerlySerializedAs("_colors")]
         Color[] m_Colors;
 
-	    public bool HasArray(MeshArrays channels)
-	    {
-		    bool missing = false;
-
-		    int vc = vertexCount;
-
-		    var m_Textures1 = mesh != null ? mesh.uv2 : null;
-
-		    missing |= (channels & MeshArrays.Position) == MeshArrays.Position && m_Positions == null;
-			missing |= (channels & MeshArrays.Texture0) == MeshArrays.Texture0 && (m_Textures0 == null || m_Textures0.Length != vc);
-			missing |= (channels & MeshArrays.Texture1) == MeshArrays.Texture1 && (m_Textures1 == null || m_Textures1.Length != vc);
-			missing |= (channels & MeshArrays.Texture2) == MeshArrays.Texture2 && (m_Textures2 == null || m_Textures2.Count != vc);
-		    missing |= (channels & MeshArrays.Texture3) == MeshArrays.Texture3 && (m_Textures3 == null || m_Textures3.Count != vc);
-			missing |= (channels & MeshArrays.Color) == MeshArrays.Color && (m_Colors == null || m_Colors.Length != vc);
-			missing |= (channels & MeshArrays.Tangent) == MeshArrays.Tangent && (m_Tangents == null || m_Tangents.Length != vc);
-
-		    return !missing;
-	    }
-
 	    /// <value>
 	    /// If false, ProBuilder will automatically create and scale colliders.
 	    /// </value>
@@ -111,6 +92,30 @@ namespace UnityEngine.ProBuilder
             get { return m_PreserveMeshAssetOnDestroy; }
             set { m_PreserveMeshAssetOnDestroy = value; }
         }
+
+	    /// <summary>
+	    /// Check if the mesh contains the requested arrays.
+	    /// </summary>
+	    /// <param name="channels">A flag containing the array types that a ProBuilder mesh stores.</param>
+	    /// <returns>True if all arrays in the flag are present, false if not.</returns>
+	    public bool HasArrays(MeshArrays channels)
+	    {
+		    bool missing = false;
+
+		    int vc = vertexCount;
+
+		    var m_Textures1 = mesh != null ? mesh.uv2 : null;
+
+		    missing |= (channels & MeshArrays.Position) == MeshArrays.Position && m_Positions == null;
+		    missing |= (channels & MeshArrays.Texture0) == MeshArrays.Texture0 && (m_Textures0 == null || m_Textures0.Length != vc);
+		    missing |= (channels & MeshArrays.Texture1) == MeshArrays.Texture1 && (m_Textures1 == null || m_Textures1.Length != vc);
+		    missing |= (channels & MeshArrays.Texture2) == MeshArrays.Texture2 && (m_Textures2 == null || m_Textures2.Count != vc);
+		    missing |= (channels & MeshArrays.Texture3) == MeshArrays.Texture3 && (m_Textures3 == null || m_Textures3.Count != vc);
+		    missing |= (channels & MeshArrays.Color) == MeshArrays.Color && (m_Colors == null || m_Colors.Length != vc);
+		    missing |= (channels & MeshArrays.Tangent) == MeshArrays.Tangent && (m_Tangents == null || m_Tangents.Length != vc);
+
+		    return !missing;
+	    }
 
 	    internal Face[] facesInternal
         {
@@ -252,16 +257,24 @@ namespace UnityEngine.ProBuilder
             if (vertexes == null)
                 throw new ArgumentNullException("vertexes");
 
-            Vector3[] position;
-            Color[] color;
-            Vector3[] normal;
-            Vector4[] tangent;
-            Vector2[] uv0;
-            Vector2[] uv2;
-            List<Vector4> uv3;
-            List<Vector4> uv4;
+	        var first = vertexes.FirstOrDefault();
 
-            Vertex.GetArrays(vertexes, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
+	        if (first == null || !first.HasArrays(MeshArrays.Position))
+	        {
+		        Clear();
+		        return;
+	        }
+
+	        Vector3[] position;
+	        Color[] color;
+	        Vector3[] normal;
+	        Vector4[] tangent;
+	        Vector2[] uv0;
+	        Vector2[] uv2;
+	        List<Vector4> uv3;
+	        List<Vector4> uv4;
+
+	        Vertex.GetArrays(vertexes, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
 
             m_Positions = position;
             m_Colors = color;
@@ -274,16 +287,14 @@ namespace UnityEngine.ProBuilder
             {
                 Mesh umesh = mesh;
 
-                Vertex first = vertexes[0];
-
-                if (first.HasAttribute(MeshArrays.Position)) umesh.vertices = position;
-                if (first.HasAttribute(MeshArrays.Color)) umesh.colors = color;
-                if (first.HasAttribute(MeshArrays.Texture0)) umesh.uv = uv0;
-                if (first.HasAttribute(MeshArrays.Normal)) umesh.normals = normal;
-                if (first.HasAttribute(MeshArrays.Tangent)) umesh.tangents = tangent;
-                if (first.HasAttribute(MeshArrays.Texture1)) umesh.uv2 = uv2;
-                if (first.HasAttribute(MeshArrays.Texture2)) if (uv3 != null) umesh.SetUVs(2, uv3);
-                if (first.HasAttribute(MeshArrays.Texture3)) if (uv4 != null) umesh.SetUVs(3, uv4);
+                if (first.HasArrays(MeshArrays.Position)) umesh.vertices = position;
+                if (first.HasArrays(MeshArrays.Color)) umesh.colors = color;
+                if (first.HasArrays(MeshArrays.Texture0)) umesh.uv = uv0;
+                if (first.HasArrays(MeshArrays.Normal)) umesh.normals = normal;
+                if (first.HasArrays(MeshArrays.Tangent)) umesh.tangents = tangent;
+                if (first.HasArrays(MeshArrays.Texture1)) umesh.uv2 = uv2;
+                if (first.HasArrays(MeshArrays.Texture2)) if (uv3 != null) umesh.SetUVs(2, uv3);
+                if (first.HasArrays(MeshArrays.Texture3)) if (uv4 != null) umesh.SetUVs(3, uv4);
             }
         }
 
@@ -337,7 +348,7 @@ namespace UnityEngine.ProBuilder
 	    /// <returns>The colors array for this mesh. If mesh does not contain colors, a new array is returned filled with the default value (Color.white).</returns>
 	    public Color[] GetColors()
 	    {
-		    if (HasArray(MeshArrays.Color))
+		    if (HasArrays(MeshArrays.Color))
 			    return colors.ToArray();
 		    return ArrayUtility.Fill(Color.white, vertexCount);
 	    }

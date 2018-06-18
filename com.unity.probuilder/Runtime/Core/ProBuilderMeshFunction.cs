@@ -123,7 +123,7 @@ namespace UnityEngine.ProBuilder
 	    /// <summary>
 	    /// Wraps ToMesh and Refresh in a single call.
 	    /// </summary>
-	    /// <seealso cref="ToMesh()"/>
+	    /// <seealso cref="ToMesh"/>
 	    /// <seealso cref="Refresh"/>
 	    public void Rebuild()
 	    {
@@ -180,10 +180,10 @@ namespace UnityEngine.ProBuilder
 				SetUVs(i, uvs);
 			}
 
-			if(HasArray(MeshArrays.Tangent))
+			if(HasArrays(MeshArrays.Tangent))
 				tangents = tangents;
 
-			if(HasArray(MeshArrays.Color))
+			if(HasArrays(MeshArrays.Color))
 				colors = colors;
 
 			mesh = new Mesh();
@@ -412,8 +412,8 @@ namespace UnityEngine.ProBuilder
 			m_Textures0 = newUVs;
 			mesh.uv = newUVs;
 
-			if (HasArray(MeshArrays.Texture2)) mesh.SetUVs(2, m_Textures2);
-			if (HasArray(MeshArrays.Texture3)) mesh.SetUVs(3, m_Textures3);
+			if (HasArrays(MeshArrays.Texture2)) mesh.SetUVs(2, m_Textures2);
+			if (HasArrays(MeshArrays.Texture3)) mesh.SetUVs(3, m_Textures3);
 		}
 
 		void RefreshColors()

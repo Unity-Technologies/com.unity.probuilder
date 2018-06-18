@@ -161,7 +161,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="attribute">The attribute or attributes to test for.</param>
 		/// <returns>True if this vertex has the specified attributes set, false if they are default values.</returns>
-		public bool HasAttribute(MeshArrays attribute)
+		public bool HasArrays(MeshArrays attribute)
 		{
 			return (m_Attributes & attribute) == attribute;
 		}
@@ -296,7 +296,10 @@ namespace UnityEngine.ProBuilder
 
 		/// <inheritdoc cref="Vertex.Equals(Vertex)"/>
         public static bool operator ==(Vertex a, Vertex b)
-        {
+		{
+			if (ReferenceEquals(a, b))
+				return true;
+			
             if(object.ReferenceEquals(a, null) || object.ReferenceEquals(b, null))
                 return false;
 
@@ -752,7 +755,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="uv3">A new array of the vertex uv3 values if requested by the attributes parameter, or null.</param>
 		/// <param name="uv4">A new array of the vertex uv4 values if requested by the attributes parameter, or null.</param>
 		/// <param name="attributes">A flag with the MeshAttributes requested.</param>
-		/// <seealso cref="HasAttribute"/>
+		/// <seealso cref="HasArrays"/>
 		public static void GetArrays(
 			IList<Vertex> vertexes,
 			out Vector3[] position,
@@ -769,7 +772,7 @@ namespace UnityEngine.ProBuilder
 				throw new ArgumentNullException("vertexes");
 
 			int vc = vertexes.Count;
-			var first = vertexes[0];
+			var first = vc < 1 ? new Vertex() : vertexes[0];
 
 			bool hasPosition = ((attributes & MeshArrays.Position) == MeshArrays.Position) && first.hasPosition;
 			bool hasColor = ((attributes & MeshArrays.Color) == MeshArrays.Color) && first.hasColor;

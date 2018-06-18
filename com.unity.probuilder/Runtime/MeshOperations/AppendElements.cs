@@ -43,9 +43,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			int vertexCount = mesh.vertexCount;
 
-			var mc = mesh.HasArray(MeshArrays.Color);
+			var mc = mesh.HasArrays(MeshArrays.Color);
 			var fc = colors != null;
-			var mt = mesh.HasArray(MeshArrays.Texture0);
+			var mt = mesh.HasArrays(MeshArrays.Texture0);
 			var ft = uvs != null;
 
 			Vector3[] newPositions = new Vector3[vertexCount + faceVertexCount];
@@ -453,7 +453,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			Vector3[] positions = mesh.positionsInternal;
-			Color[] colors = mesh.HasArray(MeshArrays.Color) ? mesh.colorsInternal : null;
+			Color[] colors = mesh.HasArrays(MeshArrays.Color) ? mesh.colorsInternal : null;
 
 			Vector3[] v;
 			Color[] c;
