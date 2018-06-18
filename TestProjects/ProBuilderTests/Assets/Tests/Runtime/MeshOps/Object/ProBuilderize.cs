@@ -14,7 +14,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Object
 		[Test]
 		public static void CubeSurvivesRoundTrip()
 		{
-			var pb = ShapeGenerator.CubeGenerator(Vector3.one);
+			var pb = ShapeGenerator.GenerateCube(Vector3.one);
 			try
 			{
 				var dup = new GameObject().AddComponent<ProBuilderMesh>();

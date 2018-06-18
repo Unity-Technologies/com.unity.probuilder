@@ -149,38 +149,38 @@ namespace UnityEngine.ProBuilder
 			ProBuilderMesh pb = null;
 
 			if(shape == ShapeType.Cube)
-				pb = CubeGenerator(Vector3.one);
+				pb = GenerateCube(Vector3.one);
 			if (shape == ShapeType.Stair)
-				pb = StairGenerator(new Vector3(2f, 2.5f, 4f), 6, true);
+				pb = GenerateStair(new Vector3(2f, 2.5f, 4f), 6, true);
 			if (shape == ShapeType.CurvedStair)
-				pb = CurvedStairGenerator(2f, 2.5f, 2f, 180f, 8, true);
+				pb = GenerateCurvedStair(2f, 2.5f, 2f, 180f, 8, true);
 			if (shape == ShapeType.Prism)
-				pb = PrismGenerator(Vector3.one);
+				pb = GeneratePrism(Vector3.one);
 			if(shape == ShapeType.Cylinder)
-				pb = CylinderGenerator(8, 1f, 2f, 2);
+				pb = GenerateCylinder(8, 1f, 2f, 2);
 			if (shape == ShapeType.Plane)
-				pb = PlaneGenerator(5f, 5f, 5, 5, Axis.Up);
+				pb = GeneratePlane(5f, 5f, 5, 5, Axis.Up);
 			if (shape == ShapeType.Door)
-				pb = DoorGenerator(3f, 2.5f, .5f, .75f, 1f);
+				pb = GenerateDoor(3f, 2.5f, .5f, .75f, 1f);
 			if(shape == ShapeType.Pipe)
-				pb = PipeGenerator(1f, 2f, .25f, 8, 2);
+				pb = GeneratePipe(1f, 2f, .25f, 8, 2);
 			if (shape == ShapeType.Cone)
-				pb = ConeGenerator(.5f, 1f, 8);
+				pb = GenerateCone(.5f, 1f, 8);
 			if (shape == ShapeType.Sprite)
-				pb = PlaneGenerator(1f, 1f, 0, 0, Axis.Up);
+				pb = GeneratePlane(1f, 1f, 0, 0, Axis.Up);
 			if (shape == ShapeType.Arch)
-				pb = ArchGenerator(180f, 2f, 1f, 1f, 9, true, true, true, true, true);
+				pb = GenerateArch(180f, 2f, 1f, 1f, 9, true, true, true, true, true);
 			if (shape == ShapeType.Sphere)
-				pb = IcosahedronGenerator(.5f, 2, true, false);
+				pb = GenerateIcosahedron(.5f, 2, true, false);
 			if (shape == ShapeType.Torus)
-				pb = TorusGenerator(12, 16, 1f, .3f, true, 360f, 360f);
+				pb = GenerateTorus(12, 16, 1f, .3f, true, 360f, 360f);
 
 			if (pb == null)
 			{
 #if DEBUG
 				Log.Error(shape.ToString() + " type has no default!");
 #endif
-				pb = CubeGenerator(Vector3.one);
+				pb = GenerateCube(Vector3.one);
 			}
 
 			pb.gameObject.name = shape.ToString();
@@ -195,7 +195,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="steps">How many steps does the stairset have.</param>
 		/// <param name="buildSides">If true, build the side and back walls. If false, only the stair top and connecting planes will be built.</param>
 		/// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-		public static ProBuilderMesh StairGenerator(Vector3 size, int steps, bool buildSides)
+		public static ProBuilderMesh GenerateStair(Vector3 size, int steps, bool buildSides)
 		{
 			// 4 vertexes per quad, 2 quads per step.
 			Vector3[] vertexes = new Vector3[4 * steps * 2];
@@ -331,7 +331,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="steps">How many steps this stair set contains.</param>
 		/// <param name="buildSides">If true, build the side and back walls. If false, only the stair top and connecting planes will be built.</param>
 		/// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-		public static ProBuilderMesh CurvedStairGenerator(float stairWidth, float height, float innerRadius, float circumference, int steps, bool buildSides)
+		public static ProBuilderMesh GenerateCurvedStair(float stairWidth, float height, float innerRadius, float circumference, int steps, bool buildSides)
 		{
 			bool noInnerSide = innerRadius < Mathf.Epsilon;
 
@@ -545,7 +545,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="generateBack">If true, a back face to the stairwell will be appended.</param>
 		/// <param name="platformsOnly">If true, only the front face and tops of the stairwell will be built.  Nice for when a staircase is embedded between geometry.</param>
 		/// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-		internal static ProBuilderMesh StairGenerator(int steps, float width, float height, float depth, bool sidesGoToFloor, bool generateBack, bool platformsOnly)
+		internal static ProBuilderMesh GenerateStair(int steps, float width, float height, float depth, bool sidesGoToFloor, bool generateBack, bool platformsOnly)
 		{
 			int i = 0;
 
@@ -614,7 +614,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="size">The bounds of the new cube.</param>
 		/// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-		public static ProBuilderMesh CubeGenerator(Vector3 size)
+		public static ProBuilderMesh GenerateCube(Vector3 size)
 		{
 			Vector3[] points = new Vector3[k_CubeTriangles.Length];
 
@@ -636,7 +636,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="heightCuts">The amount of divisions to create on the horizontal axis.</param>
 		/// <param name="smoothing"></param>
 		/// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-		public static ProBuilderMesh CylinderGenerator(int axisDivisions, float radius, float height, int heightCuts, int smoothing = -1)
+		public static ProBuilderMesh GenerateCylinder(int axisDivisions, float radius, float height, int heightCuts, int smoothing = -1)
 		{
 			if(axisDivisions % 2 != 0)
 				axisDivisions++;
@@ -755,7 +755,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="size">Scale to apply to the shape.</param>
 		/// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-		public static ProBuilderMesh PrismGenerator(Vector3 size)
+		public static ProBuilderMesh GeneratePrism(Vector3 size)
 		{
 			size.y *= 2f;
 
@@ -818,7 +818,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="legWidth">The width of each leg on both sides of the door</param>
 		/// <param name="depth">The distance between the front and back faces of the door object</param>
 		/// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-		public static ProBuilderMesh DoorGenerator(float totalWidth, float totalHeight, float ledgeHeight, float legWidth, float depth)
+		public static ProBuilderMesh GenerateDoor(float totalWidth, float totalHeight, float ledgeHeight, float legWidth, float depth)
 		{
 
 		  float xLegCoord = totalWidth/2f;
@@ -914,7 +914,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="heightCuts">Divisions on the Y axis.</param>
 		/// <param name="axis">The axis to build the plane on. Ex: ProBuilder.Axis.Up is a plane with a normal of Vector3.up.</param>
 		/// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-		public static ProBuilderMesh PlaneGenerator(float width, float height, int widthCuts, int heightCuts, Axis axis)
+		public static ProBuilderMesh GeneratePlane(float width, float height, int widthCuts, int heightCuts, Axis axis)
 		{
 			int w = widthCuts+1;
 			int h = heightCuts+1;
@@ -997,7 +997,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="subdivAxis">How many subdivisions on the axis.</param>
 		/// <param name="subdivHeight">How many subdivisions on the Y axis.</param>
 		/// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-		public static ProBuilderMesh PipeGenerator(float radius, float height, float thickness, int subdivAxis, int subdivHeight)
+		public static ProBuilderMesh GeneratePipe(float radius, float height, float thickness, int subdivAxis, int subdivHeight)
 		{
 
 			// template is outer ring - radius refers to outer ring always
@@ -1096,7 +1096,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="height">How tall the cone will be.</param>
 		/// <param name="subdivAxis">How many subdivisions on the axis.</param>
 		/// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-		public static ProBuilderMesh ConeGenerator(float radius, float height, int subdivAxis)
+		public static ProBuilderMesh GenerateCone(float radius, float height, int subdivAxis)
 		{
 			// template is outer ring - radius refers to outer ring always
 			Vector3[] template = new Vector3[subdivAxis];
@@ -1149,7 +1149,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="backFaces">Render back faces toggle.</param>
 		/// <param name="endCaps">If true the faces capping the ends of this arch will be included. Does not apply if radius is 360 degrees.</param>
 		/// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-		public static ProBuilderMesh ArchGenerator(float angle, float radius, float width, float depth, int radialCuts, bool insideFaces, bool outsideFaces, bool frontFaces, bool backFaces, bool endCaps)
+		public static ProBuilderMesh GenerateArch(float angle, float radius, float width, float depth, int radialCuts, bool insideFaces, bool outsideFaces, bool frontFaces, bool backFaces, bool endCaps)
 		{
 			Vector2[] templateOut = new Vector2[radialCuts];
 			Vector2[] templateIn = new Vector2[radialCuts];
@@ -1277,7 +1277,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="weldVertexes">If false this function will not extract shared indexes. This is useful when showing a preview, where speed of generation is more important than making the shape editable.</param>
 		/// <param name="manualUvs">For performance reasons faces on icospheres are marked as manual UVs. Pass false to this parameter to force auto unwrapped UVs.</param>
 		/// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-		public static ProBuilderMesh IcosahedronGenerator(float radius, int subdivisions, bool weldVertexes = true, bool manualUvs = true)
+		public static ProBuilderMesh GenerateIcosahedron(float radius, int subdivisions, bool weldVertexes = true, bool manualUvs = true)
 		{
 			// http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
 
@@ -1425,7 +1425,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="InHorizontalCircumference">The circumference of the horizontal in degrees.</param>
 		/// <param name="InVerticalCircumference">The circumference of the vertical geometry in degrees.</param>
 		/// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-		public static ProBuilderMesh TorusGenerator(int InRows, int InColumns, float InRadius, float InTubeRadius, bool InSmooth, float InHorizontalCircumference, float InVerticalCircumference, bool manualUvs = false)
+		public static ProBuilderMesh GenerateTorus(int InRows, int InColumns, float InRadius, float InTubeRadius, bool InSmooth, float InHorizontalCircumference, float InVerticalCircumference, bool manualUvs = false)
 		{
 			int rows 	= (int) Mathf.Clamp( InRows + 1, 4, 128 );
 			int columns = (int) Mathf.Clamp( InColumns + 1, 4, 128 );

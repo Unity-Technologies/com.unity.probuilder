@@ -19,7 +19,6 @@ namespace UnityEngine.ProBuilder
     {
 	    const int k_UVChannelCount = 4;
 
-#region Serialized Fields and Properties
         [SerializeField]
         [FormerlySerializedAs("_quads")]
         Face[] m_Faces;
@@ -61,18 +60,6 @@ namespace UnityEngine.ProBuilder
 	    /// </value>
 	    public bool userCollisions { get; set; }
 
-	    [SerializeField]
-	    bool m_IsSelectable = true;
-
-	    /// <value>
-	    /// If false mesh elements will not be selectable. This is used by @"UnityEditor.ProBuilder.ProBuilderEditor".
-	    /// </value>
-	    public bool isSelectable
-	    {
-		    get { return m_IsSelectable; }
-		    set { m_IsSelectable = value; }
-	    }
-
 	    [FormerlySerializedAs("unwrapParameters")]
 	    [SerializeField]
 	    UnwrapParameters m_UnwrapParameters;
@@ -105,9 +92,6 @@ namespace UnityEngine.ProBuilder
             get { return m_PreserveMeshAssetOnDestroy; }
             set { m_PreserveMeshAssetOnDestroy = value; }
         }
-#endregion
-
-#region Properties
 
 	    internal Face[] facesInternal
         {
@@ -554,7 +538,7 @@ namespace UnityEngine.ProBuilder
 	    /// If onDestroyObject has a subscriber ProBuilder will invoke it instead of cleaning up unused meshes by itself.
 	    /// </value>
 	    /// <seealso cref="preserveMeshAssetOnDestroy"/>
-	    public static event Action<ProBuilderMesh> onDestroyObject;
+	    public static event Action<ProBuilderMesh> meshWillBeDestroyed;
 
 	    /// <value>
 	    /// Invoked when the element selection changes on any ProBuilderMesh.
@@ -577,6 +561,27 @@ namespace UnityEngine.ProBuilder
 	    {
 		    get { return gameObject.GetInstanceID(); }
 	    }
-#endregion
+
+	    /// <summary>
+	    /// Ensure that the UnityEngine.Mesh is in sync with the ProBuilderMesh.
+	    /// </summary>
+	    /// <returns>A flag describing the state of the synchronicity between the MeshFilter.sharedMesh and ProBuilderMesh components.</returns>
+	    public MeshSyncState meshSyncState
+	    {
+		    get
+		    {
+			    if (mesh == null)
+				    return MeshSyncState.Null;
+
+			    int meshNo;
+
+			    int.TryParse(mesh.name.Replace("pb_Mesh", ""), out meshNo);
+
+			    if (meshNo != id)
+				    return MeshSyncState.InstanceIDMismatch;
+
+			    return mesh.uv2 == null ? MeshSyncState.Lightmap : MeshSyncState.None;
+		    }
+	    }
     }
 }

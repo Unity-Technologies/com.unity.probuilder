@@ -138,9 +138,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		{
 			Mesh m = t.GetComponent<MeshFilter>().sharedMesh;
 
-			Vector3[] m_vertexes = MeshUtility.GetMeshAttribute<Vector3[]>(t.gameObject, x => x.vertices);
-			Color[] m_colors = MeshUtility.GetMeshAttribute<Color[]>(t.gameObject, x => x.colors);
-			Vector2[] m_uvs = MeshUtility.GetMeshAttribute<Vector2[]>(t.gameObject, x => x.uv);
+			Vector3[] m_vertexes = MeshUtility.GetMeshChannel<Vector3[]>(t.gameObject, x => x.vertices);
+			Color[] m_colors = MeshUtility.GetMeshChannel<Color[]>(t.gameObject, x => x.colors);
+			Vector2[] m_uvs = MeshUtility.GetMeshChannel<Vector2[]>(t.gameObject, x => x.uv);
 
 			List<Vector3> verts = preserveFaces ? new List<Vector3>(m.vertices) : new List<Vector3>();
 			List<Color> cols = preserveFaces ? new List<Color>(m.colors) : new List<Color>();
@@ -225,7 +225,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			go.GetComponent<MeshFilter>().sharedMesh = null;
 
 			ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
-			pb.GeometryWithVertexesFaces(verts.ToArray(), faces.ToArray());
+			pb.RebuildWithPositionsAndFaces(verts.ToArray(), faces.ToArray());
 
 			pb.colorsInternal = cols.ToArray();
 			pb.SetUVs(uvs.ToArray());
@@ -262,9 +262,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Mesh m = mf.sharedMesh;
 
 			int vertexCount = m.vertexCount;
-			Vector3[] m_positions = MeshUtility.GetMeshAttribute<Vector3[]>(pb.gameObject, x => x.vertices);
-			Color[] m_colors = MeshUtility.GetMeshAttribute<Color[]>(pb.gameObject, x => x.colors);
-			Vector2[] m_uvs = MeshUtility.GetMeshAttribute<Vector2[]>(pb.gameObject, x => x.uv);
+			Vector3[] m_positions = MeshUtility.GetMeshChannel<Vector3[]>(pb.gameObject, x => x.vertices);
+			Color[] m_colors = MeshUtility.GetMeshChannel<Color[]>(pb.gameObject, x => x.colors);
+			Vector2[] m_uvs = MeshUtility.GetMeshChannel<Vector2[]>(pb.gameObject, x => x.uv);
 
 			List<Vector3> verts = preserveFaces ? new List<Vector3>(m.vertices) : new List<Vector3>();
 			List<Color> cols = preserveFaces ? new List<Color>(m.colors) : new List<Color>();

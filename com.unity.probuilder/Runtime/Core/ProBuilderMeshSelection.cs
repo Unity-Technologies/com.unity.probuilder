@@ -9,11 +9,25 @@ namespace UnityEngine.ProBuilder
 	public sealed partial class ProBuilderMesh
 	{
 		[SerializeField]
+		bool m_IsSelectable = true;
+
+		[SerializeField]
 		int[] m_selectedFaces = new int[] { };
+
 		[SerializeField]
 		Edge[] m_SelectedEdges = new Edge[] { };
+		
 		[SerializeField]
 		int[] m_selectedTriangles = new int[] { };
+
+		/// <value>
+		/// If false mesh elements will not be selectable. This is used by @"UnityEditor.ProBuilder.ProBuilderEditor".
+		/// </value>
+		public bool selectable
+		{
+			get { return m_IsSelectable; }
+			set { m_IsSelectable = value; }
+		}
 
 		/// <value>
 		/// Get the number of faces that are currently selected on this object.

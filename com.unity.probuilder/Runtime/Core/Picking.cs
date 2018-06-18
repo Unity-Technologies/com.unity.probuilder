@@ -107,7 +107,7 @@ namespace UnityEngine.ProBuilder
 
 			foreach(var pb in selectable)
 			{
-				if(!pb.isSelectable)
+				if(!pb.selectable)
 					continue;
 
 				IntArray[] sharedIndexes = pb.sharedIndexesInternal;
@@ -167,7 +167,7 @@ namespace UnityEngine.ProBuilder
 
 			foreach(var pb in selectable)
 			{
-				if (!pb.isSelectable)
+				if (!pb.selectable)
 					continue;
 
 				HashSet<Face> selectedFaces = new HashSet<Face>();
@@ -295,7 +295,7 @@ namespace UnityEngine.ProBuilder
 
 			foreach (var pb in selectable)
 			{
-				if (!pb.isSelectable)
+				if (!pb.selectable)
 					continue;
 
 				Transform trs = pb.transform;

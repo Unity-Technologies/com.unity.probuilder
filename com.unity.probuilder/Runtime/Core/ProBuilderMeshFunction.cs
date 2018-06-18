@@ -35,8 +35,8 @@ namespace UnityEngine.ProBuilder
 			    !Application.isPlaying &&
 			    Time.frameCount > 0)
 			{
-				if (onDestroyObject != null)
-					onDestroyObject(this);
+				if (meshWillBeDestroyed != null)
+					meshWillBeDestroyed(this);
 				else
 					DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
 			}
@@ -69,7 +69,7 @@ namespace UnityEngine.ProBuilder
 			GameObject go = new GameObject();
 			ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
 			go.name = "ProBuilder Mesh";
-			pb.GeometryWithVertexesFaces(positions, faces);
+			pb.RebuildWithPositionsAndFaces(positions, faces);
 			return pb;
 		}
 
@@ -107,7 +107,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="vertexes">Vertex positions array.</param>
 		/// <param name="faces">Faces array.</param>
-		public void GeometryWithVertexesFaces(IEnumerable<Vector3> vertexes, IEnumerable<Face> faces)
+		public void RebuildWithPositionsAndFaces(IEnumerable<Vector3> vertexes, IEnumerable<Face> faces)
 		{
             if (vertexes == null)
                 throw new ArgumentNullException("vertexes");
@@ -118,25 +118,6 @@ namespace UnityEngine.ProBuilder
 			SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(m_Positions));
 			ToMesh();
 			Refresh();
-		}
-
-		/// <summary>
-		/// Ensure that the UnityEngine.Mesh is in sync with the ProBuilderMesh.
-		/// </summary>
-		/// <returns>A flag describing the state of the synchronicity between the MeshFilter.sharedMesh and ProBuilderMesh components.</returns>
-		public MeshSyncState Verify()
-		{
-			if (mesh == null)
-				return MeshSyncState.Null;
-
-			int meshNo;
-
-			int.TryParse(mesh.name.Replace("pb_Mesh", ""), out meshNo);
-
-			if (meshNo != id)
-				return MeshSyncState.InstanceIDMismatch;
-
-			return mesh.uv2 == null ? MeshSyncState.Lightmap : MeshSyncState.None;
 		}
 
 	    /// <summary>
@@ -153,17 +134,8 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Rebuild the mesh positions and submeshes. If vertex count matches new positions array the existing attributes are kept, otherwise the mesh is cleared. UV2 is the exception, it is always cleared.
 		/// </summary>
-		public void ToMesh()
-		{
-			// ReSharper disable once IntroduceOptionalParameters.Global
-			ToMesh(MeshTopology.Triangles);
-		}
-
-		/// <summary>
-		/// Rebuild the mesh positions and submeshes. If vertex count matches new positions array the existing attributes are kept, otherwise the mesh is cleared. UV2 is the exception, it is always cleared.
-		/// </summary>
 		/// <param name="preferredTopology">Triangles and Quads are supported.</param>
-		public void ToMesh(MeshTopology preferredTopology)
+		public void ToMesh(MeshTopology preferredTopology = MeshTopology.Triangles)
 		{
 			Mesh m = mesh;
 
@@ -238,7 +210,7 @@ namespace UnityEngine.ProBuilder
 			SetTangents(other.tangents);
 		    SetColors(other.colors);
 		    userCollisions = other.userCollisions;
-		    isSelectable = other.isSelectable;
+		    selectable = other.selectable;
 		    unwrapParameters = new UnwrapParameters(other.unwrapParameters);
 	    }
 

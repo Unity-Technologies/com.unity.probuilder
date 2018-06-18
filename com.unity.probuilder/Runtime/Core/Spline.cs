@@ -145,7 +145,7 @@ namespace UnityEngine.ProBuilder
 			{
 				if(faces != null)
 				{
-					target.GeometryWithVertexesFaces(positions, faces);
+					target.RebuildWithPositionsAndFaces(positions, faces);
 				}
 				else
 				{

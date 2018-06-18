@@ -201,7 +201,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="gameObject">The GameObject with the MeshFilter and (optional) MeshRenderer to search for mesh attributes.</param>
         /// <param name="attributeGetter">The function used to extract mesh attribute.</param>
         /// <returns>A List of the mesh attribute values from the Additional Vertex Streams mesh if it exists and contains the attribute, or the MeshFilter.sharedMesh attribute values.</returns>
-        public static T GetMeshAttribute<T>(GameObject gameObject, Func<Mesh, T> attributeGetter) where T : IList
+        internal static T GetMeshChannel<T>(GameObject gameObject, Func<Mesh, T> attributeGetter) where T : IList
 		{
             if (gameObject == null)
                 throw new System.ArgumentNullException("gameObject");

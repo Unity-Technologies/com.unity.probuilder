@@ -282,7 +282,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 
 				mesh.Clear();
-				mesh.GeometryWithVertexesFaces(vertexes, new Face[] { new Face(indexes) });
+				mesh.RebuildWithPositionsAndFaces(vertexes, new Face[] { new Face(indexes) });
 
 				Vector3 nrm = Math.Normal(mesh, mesh.facesInternal[0]);
 

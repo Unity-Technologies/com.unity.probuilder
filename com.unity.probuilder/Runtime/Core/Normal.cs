@@ -5,7 +5,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// A container for normal, tangent, and bitangent values.
 	/// </summary>
-	public struct Normals : IEquatable<Normals>
+	public struct Normal : IEquatable<Normal>
 	{
 		/// <value>
 		/// A unit normal.
@@ -24,7 +24,7 @@ namespace UnityEngine.ProBuilder
 
         public override bool Equals(object obj)
         {
-            return obj is Normals && Equals((Normals)obj);
+            return obj is Normal && Equals((Normal)obj);
         }
 
 		public override int GetHashCode()
@@ -38,19 +38,19 @@ namespace UnityEngine.ProBuilder
 			}
 		}
 
-		public bool Equals(Normals other)
+		public bool Equals(Normal other)
         {
             return Math.Approx3(normal, other.normal) &&
                 Math.Approx3(tangent, other.tangent) &&
                 Math.Approx3(bitangent, other.bitangent);
         }
 
-        public static bool operator ==(Normals a, Normals b)
+        public static bool operator ==(Normal a, Normal b)
         {
             return a.Equals(b);
         }
 
-        public static bool operator !=(Normals a, Normals b)
+        public static bool operator !=(Normal a, Normal b)
         {
             return !(a == b);
         }
