@@ -182,7 +182,7 @@ namespace UnityEditor.ProBuilder
 			VertexColorPalette.MenuOpenWindow();
 		}
 
-		public static ActionResult MenuFacetizeObject(ProBuilderMesh[] selection)
+		public static ActionResult MenuTriangulateObject(ProBuilderMesh[] selection)
 		{
 			if(!editor || selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -195,6 +195,7 @@ namespace UnityEditor.ProBuilder
 				selection[i].ToTriangles(selection[i].facesInternal);
 				selection[i].Refresh();
 				selection[i].Optimize();
+				selection[i].ClearSelection();
 			}
 
 			ProBuilderEditor.Refresh();

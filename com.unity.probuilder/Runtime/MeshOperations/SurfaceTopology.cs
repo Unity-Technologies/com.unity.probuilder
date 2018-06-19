@@ -39,7 +39,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				rebuild.AddRange(res);
 			}
 
-			FaceRebuildData.Apply(rebuild, mesh, vertexes, null, lookup, null);
+			FaceRebuildData.Apply(rebuild, mesh, vertexes, null);
 			mesh.DeleteFaces(faces);
 			mesh.ToMesh();
 

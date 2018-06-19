@@ -405,7 +405,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				rebuild.Add(data);
 			}
 
-			FaceRebuildData.Apply(rebuild, mesh, vertexes, null, lookup, null);
+			FaceRebuildData.Apply(rebuild, mesh, vertexes);
 		}
 
 		/// <summary>

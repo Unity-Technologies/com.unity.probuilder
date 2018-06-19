@@ -221,7 +221,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				detached.Add(data);
 			}
 
-			FaceRebuildData.Apply(detached, mesh, vertexes, null, lookup);
+			FaceRebuildData.Apply(detached, mesh, vertexes);
 			mesh.DeleteFaces(faces);
 
 			mesh.ToMesh();

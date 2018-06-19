@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -38,9 +39,7 @@ namespace UnityEngine.ProBuilder
 			IEnumerable<FaceRebuildData> newFaces,
 			ProBuilderMesh mesh,
 			List<Vertex> vertexes = null,
-			List<Face> faces = null,
-			Dictionary<int, int> lookup = null,
-			Dictionary<int, int> lookupUV = null)
+			List<Face> faces = null)
 		{
 			if (faces == null)
 				faces = new List<Face>(mesh.facesInternal);
@@ -48,11 +47,8 @@ namespace UnityEngine.ProBuilder
 			if(vertexes == null)
 				vertexes = new List<Vertex>( mesh.GetVertexes() );
 
-			if(lookup == null && mesh.sharedVertexesInternal != null)
-				SharedVertex.GetSharedVertexLookup(mesh.sharedVertexesInternal, lookup);
-
-			if(lookupUV == null && mesh.sharedTextures != null)
-				SharedVertex.GetSharedVertexLookup(mesh.sharedTextures, lookupUV);
+			var lookup = mesh.sharedVertexLookup;
+			var lookupUV = mesh.sharedTextureLookup;
 
 			Apply(newFaces, vertexes, faces, lookup, lookupUV);
 
@@ -68,14 +64,14 @@ namespace UnityEngine.ProBuilder
 		/// <param name="newFaces"></param>
 		/// <param name="vertexes"></param>
 		/// <param name="faces"></param>
-		/// <param name="sharedIndexes"></param>
-		/// <param name="sharedIndexesUV"></param>
+		/// <param name="sharedVertexLookup"></param>
+		/// <param name="sharedTextureLookup"></param>
 		public static void Apply(
 			IEnumerable<FaceRebuildData> newFaces,
 			List<Vertex> vertexes,
 			List<Face> faces,
-			Dictionary<int, int> sharedIndexes,
-			Dictionary<int, int> sharedIndexesUV = null)
+			Dictionary<int, int> sharedVertexLookup,
+			Dictionary<int, int> sharedTextureLookup = null)
 		{
 			int index = vertexes.Count;
 
@@ -84,18 +80,18 @@ namespace UnityEngine.ProBuilder
 				Face face = rd.face;
 				int faceVertexCount = rd.vertexes.Count;
 
-				bool hasSharedIndexes = sharedIndexes != null && rd.sharedIndexes != null && rd.sharedIndexes.Count == faceVertexCount;
-				bool hasSharedIndexesUV = sharedIndexesUV != null && rd.sharedIndexesUV != null && rd.sharedIndexesUV.Count == faceVertexCount;
+				bool hasSharedIndexes = sharedVertexLookup != null && rd.sharedIndexes != null && rd.sharedIndexes.Count == faceVertexCount;
+				bool hasSharedIndexesUV = sharedTextureLookup != null && rd.sharedIndexesUV != null && rd.sharedIndexesUV.Count == faceVertexCount;
 
 				for(int n = 0; n < faceVertexCount; n++)
 				{
 					int localIndex = n;
 
-					if(sharedIndexes != null)
-						sharedIndexes.Add(localIndex + index, hasSharedIndexes ? rd.sharedIndexes[localIndex] : -1);
+					if(sharedVertexLookup != null)
+						sharedVertexLookup.Add(localIndex + index, hasSharedIndexes ? rd.sharedIndexes[localIndex] : -1);
 
-					if(sharedIndexesUV != null)
-						sharedIndexesUV.Add(localIndex + index, hasSharedIndexesUV ? rd.sharedIndexesUV[localIndex] : -1);
+					if (sharedTextureLookup != null && hasSharedIndexesUV)
+						sharedTextureLookup.Add(localIndex + index, rd.sharedIndexesUV[localIndex]);
 				}
 
 				rd._appliedOffset = index;

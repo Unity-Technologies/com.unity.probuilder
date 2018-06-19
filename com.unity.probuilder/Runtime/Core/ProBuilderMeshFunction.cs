@@ -560,6 +560,9 @@ namespace UnityEngine.ProBuilder
 					counts[n] = 0f;
 				}
 
+				var hold = sharedVertexes;
+				var tmp = sharedVertexLookup;
+
 				for (var n = 0; n < si[i].Count; n++)
 				{
 					int index = si[i][n];
@@ -702,18 +705,12 @@ namespace UnityEngine.ProBuilder
 
 		public void RemoveFromSharedVertexes(IEnumerable<int> vertexes)
 		{
-			var lookup = sharedVertexLookup;
-			foreach (var v in vertexes)
-				lookup.Remove(v);
-			SetSharedVertexes(lookup);
+			sharedVertexesInternal = SharedVertexesUtility.RemoveAndShift(sharedVertexLookup, vertexes);
 		}
 
 		public void RemoveFromSharedTextures(IEnumerable<int> vertexes)
 		{
-			var lookup = sharedTextureLookup;
-			foreach (var v in vertexes)
-				lookup.Remove(v);
-			SetSharedTextures(lookup);
+			sharedVertexesInternal = SharedVertexesUtility.RemoveAndShift(sharedVertexLookup, vertexes);
 		}
 	}
 }

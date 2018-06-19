@@ -148,8 +148,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			mesh.SetVertexes(vertexes);
-			mesh.RemoveFromSharedVertexes(indexesToRemove);
-			mesh.RemoveFromSharedTextures(indexesToRemove);
+			mesh.sharedVertexesInternal = SharedVertexesUtility.SortedRemoveAndShift(mesh.sharedVertexLookup, indexesToRemove);
+			mesh.sharedTextures = SharedVertexesUtility.SortedRemoveAndShift(mesh.sharedTextureLookup, indexesToRemove);
 			mesh.facesInternal = nFaces;
 			int[] array = indexesToRemove.ToArray();
 

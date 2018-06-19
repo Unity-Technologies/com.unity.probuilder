@@ -240,7 +240,11 @@ namespace UnityEngine.ProBuilder
 	    internal SharedVertex[] sharedTextures
 	    {
 		    get { return m_SharedTextures; }
-		    set { m_SharedTextures = value; }
+		    set
+		    {
+			    m_SharedTextures = value;
+			    InvalidateSharedTextureLookup();
+		    }
 	    }
 
 	    internal Dictionary<int, int> sharedTextureLookup

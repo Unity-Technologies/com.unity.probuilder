@@ -131,11 +131,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				appendFaces.AddRange(res);
 			}
 
-			FaceRebuildData.Apply( appendFaces.Select(x => x.faceRebuildData), mesh, vertexes, null, lookup, null );
-			mesh.SetSharedVertexes(lookup);
-			mesh.sharedTextures = new SharedVertex[0];
+			FaceRebuildData.Apply( appendFaces.Select(x => x.faceRebuildData), mesh, vertexes, null );
 			int removedVertexCount = mesh.DeleteFaces(successfulSplits).Length;
-
 			lookup = mesh.sharedVertexLookup;
 
 			HashSet<int> newVertexIndexes = new HashSet<int>();
@@ -275,7 +272,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			FaceRebuildData.Apply(results.Select(x => x.faceRebuildData), pb, vertexes, null, lookup, lookupUV);
+			FaceRebuildData.Apply(results.Select(x => x.faceRebuildData), pb, vertexes, null);
 
 			pb.sharedTextures = new SharedVertex[0];
 			int removedVertexCount = pb.DeleteFaces(affected.Keys).Length;

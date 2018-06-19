@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
@@ -12,6 +14,7 @@ namespace UnityEditor.ProBuilder
 			set { PreferencesInternal.SetBool("ProBuilderDebugEditor::utilityWindow", value); }
 		}
 
+		static Dictionary<string, bool> s_Expanded = new Dictionary<string, bool>();
 		Vector2 m_Scroll = Vector2.zero;
 
 		[MenuItem("Tools/ProBuilder/Debug/Debug Window")]
@@ -22,12 +25,17 @@ namespace UnityEditor.ProBuilder
 
 		void OnEnable()
 		{
-			MeshSelection.objectSelectionChanged += Repaint;
+			MeshSelection.objectSelectionChanged += OnSelectionChanged;
 		}
 
 		void OnDisable()
 		{
-			MeshSelection.objectSelectionChanged -= Repaint;
+			MeshSelection.objectSelectionChanged -= OnSelectionChanged;
+		}
+
+		void OnSelectionChanged()
+		{
+			Repaint();
 		}
 
 		void OnGUI()
@@ -50,18 +58,51 @@ namespace UnityEditor.ProBuilder
 		void DoMeshInfo(ProBuilderMesh mesh)
 		{
 			DoSharedVertexesInfo(mesh);
+			DoSharedTexturesInfo(mesh);
+		}
+
+		static void BeginSectionHeader(ProBuilderMesh mesh, string field)
+		{
+			GUILayout.BeginHorizontal(EditorStyles.toolbar);
+			var mi = typeof(ProBuilderMesh).GetField(field, BindingFlags.Instance | BindingFlags.NonPublic);
+			var id = GetPropertyId(mesh, mi.Name);
+			if (!s_Expanded.ContainsKey(id))
+				s_Expanded.Add(id, true);
+			s_Expanded[id] = EditorGUILayout.Foldout(s_Expanded[id], mi.MemberType + " " + mi.Name);
+			GUILayout.FlexibleSpace();
+		}
+
+		static void EndSectionHeader()
+		{
+			GUILayout.EndHorizontal();
+		}
+
+		static string GetPropertyId(ProBuilderMesh mesh, string property)
+		{
+			return string.Format("{0}.{1}", mesh.GetInstanceID(), property);
 		}
 
 		void DoSharedVertexesInfo(ProBuilderMesh mesh)
 		{
-			GUILayout.BeginHorizontal(EditorStyles.toolbar);
-			EditorGUILayout.Foldout(true, "SharedVertex[] m_SharedVertexes");
-			GUILayout.FlexibleSpace();
+			BeginSectionHeader(mesh, "m_SharedVertexes");
 			if(GUILayout.Button("Invalidate Cache", EditorStyles.toolbarButton))
 				mesh.InvalidateSharedVertexLookup();
 			GUILayout.EndHorizontal();
 
 			var sharedVertexes = mesh.sharedVertexesInternal;
+
+			for (int i = 0; i < sharedVertexes.Length; i++)
+				GUILayout.Label(sharedVertexes[i].ToString(", "));
+		}
+
+		void DoSharedTexturesInfo(ProBuilderMesh mesh)
+		{
+			BeginSectionHeader(mesh, "m_SharedTextures");
+			if(GUILayout.Button("Invalidate Cache", EditorStyles.toolbarButton))
+				mesh.InvalidateSharedTextureLookup();
+			GUILayout.EndHorizontal();
+
+			var sharedVertexes = mesh.sharedTextures;
 
 			for (int i = 0; i < sharedVertexes.Length; i++)
 				GUILayout.Label(sharedVertexes[i].ToString(", "));

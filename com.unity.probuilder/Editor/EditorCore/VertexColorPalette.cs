@@ -200,7 +200,7 @@ namespace UnityEditor.ProBuilder
 					case SelectMode.Face:
 						foreach (ProBuilderMesh mesh in selection)
 						{
-							Color[] colors = mesh.colorsInternal;
+							Color[] colors = mesh.GetColors();
 
 							foreach (int i in mesh.selectedIndexesInternal)
 								colors[i] = col;
@@ -212,7 +212,7 @@ namespace UnityEditor.ProBuilder
 					case SelectMode.Vertex:
 						foreach (var mesh in selection)
 						{
-							Color[] colors = mesh.colorsInternal;
+							Color[] colors = mesh.GetColors();
 
 							foreach (int i in mesh.GetCoincidentVertexes(mesh.selectedIndexesInternal))
 								colors[i] = col;
