@@ -319,6 +319,11 @@ namespace UnityEditor.ProBuilder
 					RenderWithColor(m_VertHandles, m_VertMaterial, s_VertexSelectedColor);
 					break;
 				}
+				default:
+				{
+					RenderWithColor(m_WireHandles, m_WireMaterial, s_WireframeColor);
+					break;
+				}
 			}
 		}
 
