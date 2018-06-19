@@ -662,14 +662,16 @@ namespace UnityEngine.ProBuilder
 
 		public void GetCoincidentVertexes(int vertex, List<int> coincident)
 		{
-			if (vertex < 0 || vertex >= m_SharedVertexes.Length)
+			int common;
+
+			if (vertex < 0 || !sharedVertexLookup.TryGetValue(vertex, out common))
                 throw new ArgumentOutOfRangeException("vertex");
 
 			if (coincident == null)
                 throw new ArgumentNullException("coincident");
 
 			coincident.Clear();
-			coincident.AddRange(m_SharedVertexes[sharedVertexLookup[vertex]]);
+			coincident.AddRange(m_SharedVertexes[common]);
 		}
 
 		public void SetVertexesCoincident(IEnumerable<int> vertexes)

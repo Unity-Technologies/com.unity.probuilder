@@ -892,6 +892,7 @@ namespace UnityEditor.ProBuilder
 								ver += m_VertexOffset[i];
 								// set vertex in local space on pb-Object
 
+								int idx = mesh.selectedIndexesInternal[n];
 								mesh.GetCoincidentVertexes(mesh.selectedIndexesInternal[n], coincident);
 
 								for (int t = 0, c = coincident.Count; t < c; t++)

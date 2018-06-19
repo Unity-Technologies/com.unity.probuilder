@@ -12,6 +12,8 @@ namespace UnityEditor.ProBuilder
 			set { PreferencesInternal.SetBool("ProBuilderDebugEditor::utilityWindow", value); }
 		}
 
+		Vector2 m_Scroll = Vector2.zero;
+
 		[MenuItem("Tools/ProBuilder/Debug/Debug Window")]
 		static void Init()
 		{
@@ -35,15 +37,18 @@ namespace UnityEditor.ProBuilder
 			if (evt.type == EventType.ContextClick)
 				DoContextClick();
 
+			m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
+
 			foreach (var mesh in MeshSelection.Top())
 			{
 				DoMeshInfo(mesh);
 			}
+
+			EditorGUILayout.EndScrollView();
 		}
 
 		void DoMeshInfo(ProBuilderMesh mesh)
 		{
-
 			DoSharedVertexesInfo(mesh);
 		}
 

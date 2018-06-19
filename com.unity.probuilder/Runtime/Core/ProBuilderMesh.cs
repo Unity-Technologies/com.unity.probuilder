@@ -148,7 +148,6 @@ namespace UnityEngine.ProBuilder
 
 	    internal void InvalidateSharedVertexLookup()
 	    {
-		    Debug.Log("InvalidateSharedVertexLookup");
 		    if(m_SharedVertexLookup == null)
 			    m_SharedVertexLookup = new Dictionary<int, int>();
 		    m_SharedVertexLookup.Clear();
