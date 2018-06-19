@@ -1153,7 +1153,16 @@ namespace UnityEditor.ProBuilder
 			if (m_CurrentEvent.type == EventType.Repaint
 				&& m_Hovering != null
 				&& editLevel == EditLevel.Geometry)
-				m_EditorMeshHandles.DrawSceneSelection(m_Hovering);
+			{
+				try
+				{
+					m_EditorMeshHandles.DrawSceneSelection(m_Hovering);
+				}
+				catch
+				{
+					; // this happens on undo, when c++ object is destroyed but c# side thinks it's still alive
+				}
+			}
 
 			using (new HandleGUI())
 			{
@@ -1700,8 +1709,15 @@ namespace UnityEditor.ProBuilder
 
 			UpdateSceneInfo();
 
-			// todo
-			m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.Top(), selectionMode);
+			try
+			{
+				m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.Top(), selectionMode);
+			}
+			catch
+			{
+				// happens on undo when c++ object is gone but c# isn't in the know
+				m_EditorMeshHandles.ClearHandles();
+			}
 		}
 
 		void UpdateSceneInfo()
