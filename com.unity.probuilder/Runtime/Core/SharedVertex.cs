@@ -65,7 +65,7 @@ namespace UnityEngine.ProBuilder
 
 		public IEnumerator<int> GetEnumerator()
 		{
-			return (IEnumerator<int>)m_Indexes.GetEnumerator();
+			return ((IEnumerable<int>) m_Indexes).GetEnumerator();
 		}
 
 		public override string ToString()

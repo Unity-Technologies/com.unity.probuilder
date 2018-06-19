@@ -7,6 +7,16 @@ namespace UnityEngine.ProBuilder
 {
 	public sealed partial class ProBuilderMesh
 	{
+		public void OnBeforeSerialize()
+		{
+		}
+
+		public void OnAfterDeserialize()
+		{
+			// Used in the Editor after Undo
+			InvalidateSharedVertexLookup();
+		}
+
 		/// <summary>
 		/// Reset all the attribute arrays on this object.
 		/// </summary>

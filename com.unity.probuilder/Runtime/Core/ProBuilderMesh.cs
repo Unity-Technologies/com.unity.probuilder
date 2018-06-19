@@ -15,7 +15,7 @@ namespace UnityEngine.ProBuilder
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
     [ExecuteInEditMode]
-    public sealed partial class ProBuilderMesh : MonoBehaviour
+    public sealed partial class ProBuilderMesh : MonoBehaviour, ISerializationCallbackReceiver
     {
 	    const int k_UVChannelCount = 4;
 
@@ -146,14 +146,15 @@ namespace UnityEngine.ProBuilder
 		    }
 	    }
 
-	    void InvalidateSharedVertexLookup()
+	    internal void InvalidateSharedVertexLookup()
 	    {
+		    Debug.Log("InvalidateSharedVertexLookup");
 		    if(m_SharedVertexLookup == null)
 			    m_SharedVertexLookup = new Dictionary<int, int>();
 		    m_SharedVertexLookup.Clear();
 	    }
 
-	    void InvalidateSharedVertexUVLookup()
+	    internal void InvalidateSharedTextureLookup()
 	    {
 		    if(m_SharedTextureLookup == null)
 			    m_SharedTextureLookup = new Dictionary<int, int>();
@@ -234,7 +235,7 @@ namespace UnityEngine.ProBuilder
 		    if (indexes == null)
 			    throw new ArgumentNullException("indexes");
 		    m_SharedVertexes = SharedVertexesUtility.ToSharedVertexes(indexes);
-		    m_SharedVertexLookup = indexes.ToDictionary(x => x.Key, y => y.Key);
+		    InvalidateSharedVertexLookup();
 	    }
 
 	    internal SharedVertex[] sharedTextures
@@ -262,21 +263,12 @@ namespace UnityEngine.ProBuilder
 		    }
 	    }
 
-	    internal SharedVertex[] GetSharedIndexesUV()
-	    {
-		    int len = m_SharedTextures.Length;
-		    SharedVertex[] copy = new SharedVertex[len];
-		    for(var i = 0; i < len; i++)
-			    copy[i] = new SharedVertex(m_SharedTextures[i]);
-		    return copy;
-	    }
-
 	    internal void SetSharedTextures(IEnumerable<KeyValuePair<int, int>> indexes)
 	    {
 		    if (indexes == null)
 			    throw new ArgumentNullException("indexes");
 		    m_SharedTextures = SharedVertexesUtility.ToSharedVertexes(indexes);
-		    InvalidateSharedVertexUVLookup();
+		    InvalidateSharedTextureLookup();
 	    }
 
         internal Vector3[] positionsInternal
