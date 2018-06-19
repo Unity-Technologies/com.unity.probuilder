@@ -126,7 +126,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 			var selection = vertices.FirstOrDefault();
 			Assert.IsNotNull(selection);
 			HashSet<int> selectedElements = selection.Value;
-			Assert.Less(selectedElements.Count, selection.Key.sharedIndexesInternal.Length);
+			Assert.Less(selectedElements.Count, selection.Key.sharedVertexes.Count());
 			Assert.Greater(selectedElements.Count, 0);
 			Cleanup();
 		}
@@ -139,7 +139,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 			var selection = vertices.FirstOrDefault();
 			Assert.IsNotNull(selection);
 			HashSet<int> selectedElements = selection.Value;
-			Assert.AreEqual(selectedElements.Count, selection.Key.sharedIndexesInternal.Length);
+			Assert.AreEqual(selectedElements.Count, selection.Key.sharedVertexes.Count());
 			Cleanup();
 		}
 
