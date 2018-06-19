@@ -105,10 +105,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				{
 					int a, b;
 
-					if (!lookup.TryGetValue(lookup[indexes[i]], out a))
+					if (!lookup.TryGetValue(indexes[i], out a))
 						lookup.Add(indexes[i], a = lookup.Count());
 
-					if (!lookup.TryGetValue(lookup[indexes[n]], out b))
+					if (!lookup.TryGetValue(indexes[n], out b))
 						lookup.Add(indexes[n], b = lookup.Count());
 
 					if(a == b)
@@ -117,14 +117,16 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					if(Vector2.Distance(uvs[indexes[i]], uvs[indexes[n]]) < delta)
 					{
 						Vector3 cen = (uvs[indexes[i]] + uvs[indexes[n]]) / 2f;
+
 						uvs[indexes[i]] = cen;
 						uvs[indexes[n]] = cen;
 
-						foreach(var kvp in lookup)
-						{
-							if (kvp.Value == b)
-								lookup[kvp.Key] = a;
-						}
+						// ToArray prevents delayed execution of linq actions, which cause trouble when modifying the
+						// dictionary values
+						var merge = lookup.Where(x => x.Value == b).Select(y => y.Key).ToArray();
+
+						foreach (var key in merge)
+							lookup[key] = a;
 					}
 				}
 			}
