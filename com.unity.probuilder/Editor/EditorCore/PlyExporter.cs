@@ -52,8 +52,8 @@ namespace UnityEditor.ProBuilder
 			int modelCount = models.Count();
 
 			Vector3[] positions = models.SelectMany(x => x.positionsInternal).ToArray();
-			Vector3[] normals = models.SelectMany(x => x.mesh.normals).ToArray();
-			Color[] colors = models.SelectMany(x => x.colorsInternal).ToArray();
+			Vector3[] normals = models.SelectMany(x => x.GetNormals()).ToArray();
+			Color[] colors = models.SelectMany(x => x.GetColors()).ToArray();
 
 			List<int[]> faces = new List<int[]>(modelCount);
 			int vertexOffset = 0;

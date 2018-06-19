@@ -38,7 +38,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			List<Face> faces = target.facesInternal.Where(x => !remove.Contains(x)).ToList();
 			faces.AddRange(add);
-			target.SetFaces(faces);
+			target.faces = faces;
 
 			if(collapseCoincidentVertexes)
 				CollapseCoincidentVertexes(target, add);
@@ -87,7 +87,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			rebuiltFaces[n] = mergedFace;
 
-			target.SetFaces(rebuiltFaces);
+			target.faces = rebuiltFaces;
 
 			CollapseCoincidentVertexes(target, new Face[] { mergedFace });
 

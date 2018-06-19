@@ -24,18 +24,18 @@ namespace UnityEngine.ProBuilder.EditorTests.Type
 				normal = Vector3.up
 			};
 
-			Assert.IsTrue(x.HasAttribute(MeshAttributes.Normal));
-			Assert.IsFalse(x.HasAttribute(MeshAttributes.Position));
-			Assert.IsFalse(x.HasAttribute(MeshAttributes.Tangent));
+			Assert.IsTrue(x.HasArrays(MeshArrays.Normal));
+			Assert.IsFalse(x.HasArrays(MeshArrays.Position));
+			Assert.IsFalse(x.HasArrays(MeshArrays.Tangent));
 		}
 
 		[Test]
 		public static void AssignedAttributesAreStored()
 		{
 			var x = new Vertex();
-			Assert.IsFalse(x.HasAttribute(MeshAttributes.Position));
+			Assert.IsFalse(x.HasArrays(MeshArrays.Position));
 			x.position = Vector3.one;
-			Assert.IsTrue(x.HasAttribute(MeshAttributes.Position));
+			Assert.IsTrue(x.HasArrays(MeshArrays.Position));
 		}
 
 		[Test]
@@ -46,6 +46,14 @@ namespace UnityEngine.ProBuilder.EditorTests.Type
 			Assert.AreSame(a, a);
 			Assert.AreNotSame(a, dup);
 			Assert.AreEqual(a, dup);
+		}
+
+		[Test]
+		public static void NullCheck()
+		{
+			Vertex a = null;
+			Assert.AreEqual(a, null);
+			Assert.IsTrue(a == null, "==");
 		}
 
 		[Test]

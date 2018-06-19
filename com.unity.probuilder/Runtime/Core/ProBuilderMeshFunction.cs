@@ -17,8 +17,8 @@ namespace UnityEngine.ProBuilder
 			m_Faces = new Face[0];
 			m_Positions = new Vector3[0];
 			m_Textures0 = new Vector2[0];
+			m_Textures2 = null;
 			m_Textures3 = null;
-			m_Textures4 = null;
 			m_Tangents = null;
 			m_SharedIndexes = new IntArray[0];
 			m_SharedIndexesUV = new IntArray[0];
@@ -94,8 +94,8 @@ namespace UnityEngine.ProBuilder
 			}
 
             Clear();
-            SetPositions(points);
-			SetFaces(f);
+            positions = points;
+			m_Faces = f;
 			m_SharedIndexes = IntArrayUtility.GetSharedIndexesWithPositions(points);
 
 			ToMesh();
@@ -115,7 +115,7 @@ namespace UnityEngine.ProBuilder
             Clear();
             m_Positions = vertexes.ToArray();
 			m_Faces = faces.ToArray();
-			SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(m_Positions));
+			m_SharedIndexes = IntArrayUtility.GetSharedIndexesWithPositions(m_Positions);
 			ToMesh();
 			Refresh();
 		}
@@ -123,7 +123,7 @@ namespace UnityEngine.ProBuilder
 	    /// <summary>
 	    /// Wraps ToMesh and Refresh in a single call.
 	    /// </summary>
-	    /// <seealso cref="ToMesh()"/>
+	    /// <seealso cref="ToMesh"/>
 	    /// <seealso cref="Refresh"/>
 	    public void Rebuild()
 	    {
@@ -167,19 +167,14 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		internal void MakeUnique()
 		{
-			SetPositions(positions);
-			SetSharedIndexes(sharedIndexesInternal);
+			// deep copy arrays of reference types
+			sharedIndexes = sharedIndexesInternal;
 			SetSharedIndexesUV(sharedIndexesUVInternal);
-			SetFaces(faces);
-			List<Vector4> uvs = new List<Vector4>();
-			for (var i = 0; i < k_UVChannelCount; i++)
-			{
-				GetUVs(i, uvs);
-				SetUVs(i, uvs);
-			}
-			SetTangents(tangents);
-			SetColors(colors);
+			faces = faces.Select(x => new Face(x));
+
+			// set a new UnityEngine.Mesh instance
 			mesh = new Mesh();
+			
 			ToMesh();
 			Refresh();
 		}
@@ -194,10 +189,10 @@ namespace UnityEngine.ProBuilder
 				throw new ArgumentNullException("other");
 
 		    Clear();
-			SetPositions(other.positions);
-		    SetSharedIndexes(other.sharedIndexesInternal);
+			positions = other.positions;
+		    sharedIndexes = other.sharedIndexesInternal;
 		    SetSharedIndexesUV(other.sharedIndexesUVInternal);
-		    SetFaces(other.faces);
+		    faces = other.faces.Select(x => new Face(x));
 
 		    List<Vector4> uvs = new List<Vector4>();
 
@@ -207,8 +202,8 @@ namespace UnityEngine.ProBuilder
 			    SetUVs(1, uvs);
 		    }
 
-			SetTangents(other.tangents);
-		    SetColors(other.colors);
+			tangents = other.tangents;
+		    colors = other.colors;
 		    userCollisions = other.userCollisions;
 		    selectable = other.selectable;
 		    unwrapParameters = new UnwrapParameters(other.unwrapParameters);
@@ -405,17 +400,13 @@ namespace UnityEngine.ProBuilder
 			m_Textures0 = newUVs;
 			mesh.uv = newUVs;
 
-			if (hasUv3) mesh.SetUVs(2, m_Textures3);
-			if (hasUv4) mesh.SetUVs(3, m_Textures4);
+			if (HasArrays(MeshArrays.Texture2)) mesh.SetUVs(2, m_Textures2);
+			if (HasArrays(MeshArrays.Texture3)) mesh.SetUVs(3, m_Textures3);
 		}
 
 		void RefreshColors()
 		{
 			Mesh m = GetComponent<MeshFilter>().sharedMesh;
-
-			if (m_Colors == null || m_Colors.Length != vertexCount)
-				m_Colors = ArrayUtility.FilledArray<Color>(Color.white, vertexCount);
-
 			m.colors = m_Colors;
 		}
 
@@ -430,7 +421,7 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentNullException("face");
 
 			if (m_Colors == null)
-                m_Colors = ArrayUtility.FilledArray<Color>(Color.white, vertexCount);
+                m_Colors = ArrayUtility.Fill<Color>(Color.white, vertexCount);
 
 			foreach (int i in face.distinctIndexesInternal)
 				m_Colors[i] = color;

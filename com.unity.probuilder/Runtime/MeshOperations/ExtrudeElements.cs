@@ -43,10 +43,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		public static Edge[] Extrude(this ProBuilderMesh mesh, IEnumerable<Edge> edges, float distance, bool extrudeAsGroup, bool enableManifoldExtrude)
 		{
             if (mesh == null)
-                throw new System.ArgumentNullException("mesh");
+                throw new ArgumentNullException("mesh");
 
             if (edges == null)
-                throw new System.ArgumentNullException("edges");
+                throw new ArgumentNullException("edges");
 
             IntArray[] sharedIndexes = mesh.sharedIndexesInternal;
 			Dictionary<int, int> lookup = sharedIndexes.ToDictionary();
@@ -95,9 +95,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			List<Edge> extrudedIndexes = new List<Edge>();
 			// used to set the editor selection to the newly created edges
 			List<Edge> newEdges = new List<Edge>();
+			bool hasColors = mesh.HasArrays(MeshArrays.Color);
 
 			// build out new faces around validEdges
-
 			for(int i = 0; i < validEdges.Count; i++)
 			{
 				Edge edge = validEdges[i];
@@ -116,17 +116,19 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						localVerts [ edge.a ],
 						localVerts [ edge.b ],
 						localVerts [ edge.a ] + xnorm.normalized * distance,
-						localVerts [ edge.b ] + ynorm.normalized * distance
+						localVerts[edge.b] + ynorm.normalized * distance
 					},
-					new Color[4]
-					{
-						mesh.colorsInternal[ edge.a ],
-						mesh.colorsInternal[ edge.b ],
-						mesh.colorsInternal[ edge.a ],
-						mesh.colorsInternal[ edge.b ]
-					},
+					hasColors
+						? new Color[4]
+						{
+							mesh.colorsInternal[edge.a],
+							mesh.colorsInternal[edge.b],
+							mesh.colorsInternal[edge.a],
+							mesh.colorsInternal[edge.b]
+						}
+						: null,
 					new Vector2[4],
-					new Face( new int[6] {2, 1, 0, 2, 3, 1 }, face.material, AutoUnwrapSettings.tile, 0, -1, -1, false ),
+					new Face(new int[6] { 2, 1, 0, 2, 3, 1 }, face.material, AutoUnwrapSettings.tile, 0, -1, -1, false ),
 					new int[4] { x_sharedIndex, y_sharedIndex, -1, -1 });
 
 				newEdges.Add(new Edge(newFace.indexesInternal[3], newFace.indexesInternal[4]));
@@ -321,7 +323,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			var appended = new Face[fc + nc];
 			Array.Copy(pb.facesInternal, 0, appended, 0, fc);
 			Array.Copy(newFaces, 0, appended, fc, nc);
-			pb.SetFaces(appended);
+			pb.faces = appended;
 			pb.SetSharedIndexes(lookup);
 			pb.SetSharedIndexesUV(lookupUV);
 
@@ -505,7 +507,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Array.Copy(pb.facesInternal, 0, appended, 0, fc);
 			for (int i = fc, c = fc + nc; i < c; i++)
 				appended[i] = newFaces[i - fc];
-			pb.SetFaces(appended);
+			pb.faces = appended;
 			pb.SetSharedIndexes(lookup);
 			pb.SetSharedIndexesUV(lookupUV);
 

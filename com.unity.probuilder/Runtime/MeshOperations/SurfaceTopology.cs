@@ -155,7 +155,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			if(indexes.Length != 6)
 				return false;
 
-			int[] mode = ArrayUtility.FilledArray<int>(1, indexes.Length);
+			int[] mode = ArrayUtility.Fill<int>(1, indexes.Length);
 
 			for(int x = 0; x < indexes.Length - 1; x++)
 			{

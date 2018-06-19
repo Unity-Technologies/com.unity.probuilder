@@ -110,10 +110,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			combined = go.AddComponent<ProBuilderMesh>();
 
-			combined.SetPositions(v.ToArray());
-			combined.SetUVs(u.ToArray());
-			combined.SetColors(c.ToArray());
-			combined.SetFaces(f.ToArray());
+			combined.positions = v;
+			combined.textures = u;
+			combined.colors = c;
+			combined.faces = f;
 
 			combined.sharedIndexesInternal = s.ToArray();
 			combined.SetSharedIndexesUV(suv.ToArray());
@@ -228,7 +228,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			pb.RebuildWithPositionsAndFaces(verts.ToArray(), faces.ToArray());
 
 			pb.colorsInternal = cols.ToArray();
-			pb.SetUVs(uvs.ToArray());
+			pb.textures = uvs;
 
 			pb.gameObject.name = t.name;
 

@@ -35,7 +35,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				case 2:
 				case 3:
 				{
-					if (channel == 2 ? mesh.hasUv3 : mesh.hasUv4)
+					if (channel == 2 ? mesh.HasArrays(MeshArrays.Texture2) : mesh.HasArrays(MeshArrays.Texture3))
 					{
 						List<Vector4> uvs = new List<Vector4>();
 						mesh.GetUVs(channel, uvs);

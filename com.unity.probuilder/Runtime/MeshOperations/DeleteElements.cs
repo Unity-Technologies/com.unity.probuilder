@@ -128,10 +128,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			int vertexCount = mesh.positionsInternal.Length;
 
-			Vector3[] verts = mesh.positionsInternal.SortedRemoveAt(indexesToRemove);
-			Color[] cols = mesh.colorsInternal.SortedRemoveAt(indexesToRemove);
-			Vector2[] uvs = mesh.texturesInternal.SortedRemoveAt(indexesToRemove);
 			Face[] nFaces = mesh.facesInternal.RemoveAt(faceIndexes);
+			var vertexes = Vertex.GetVertexes(mesh).SortedRemoveAt(indexesToRemove);
 
 			Dictionary<int, int> shiftmap = new Dictionary<int, int>();
 
@@ -154,15 +152,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			IntArray[] si_uv = mesh.sharedIndexesUVInternal;
 
 			IntArrayUtility.RemoveValuesAndShift(ref si, indexesToRemove);
-			if(si_uv != null) IntArrayUtility.RemoveValuesAndShift(ref si_uv, indexesToRemove);
+			
+			if (si_uv != null)
+				IntArrayUtility.RemoveValuesAndShift(ref si_uv, indexesToRemove);
 
+			mesh.SetVertexes(vertexes);
 			mesh.sharedIndexesInternal = si;
 			mesh.sharedIndexesUVInternal = si_uv;
-			mesh.positionsInternal = verts;
-			mesh.colorsInternal = cols;
-			mesh.texturesInternal = uvs;
 			mesh.facesInternal = nFaces;
-
 			int[] array = indexesToRemove.ToArray();
 
 			return array;
@@ -231,7 +228,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			mesh.SetFaces(m_RebuiltFaces.ToArray());
+			mesh.faces = m_RebuiltFaces;
 			mesh.SetSharedIndexes(m_RebuiltLookup);
 			mesh.SetSharedIndexesUV(m_RebuiltLookupUV);
 			return mesh.RemoveUnusedVertexes();

@@ -21,16 +21,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="uvs">The new uvs to add (must match positions length).</param>
 		/// <param name="face">A face with the new triangle indexes. The indexes should be 0 indexed.</param>
 		/// <returns>The new face as referenced on the mesh.</returns>
-		public static Face AppendFace(this ProBuilderMesh mesh, Vector3[] positions, Color[] colors, Vector2[] uvs, Face face)
-		{
-            if (positions == null)
-                throw new ArgumentNullException("positions");
-			int[] shared = new int[positions.Length];
-			for(int i = 0; i < positions.Length; i++)
-				shared[i] = -1;
-			return mesh.AppendFace(positions, colors, uvs, face, shared);
-		}
-
 		internal static Face AppendFace(this ProBuilderMesh mesh, Vector3[] positions, Color[] colors, Vector2[] uvs, Face face, int[] common)
 		{
             if (mesh == null)
@@ -39,33 +29,46 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (positions == null)
                 throw new ArgumentNullException("positions");
 
-            if (colors == null)
-                throw new ArgumentNullException("colors");
-
-            if (uvs == null)
-                throw new ArgumentNullException("uvs");
-
             if (face == null)
                 throw new ArgumentNullException("face");
 
-            if (common == null)
-                throw new ArgumentNullException("common");
+			int faceVertexCount = positions.Length;
+
+			if (common == null)
+			{
+				common = new int[faceVertexCount];
+				for(int i = 0; i < faceVertexCount; i++)
+					common[i] = -1;
+			}
 
 			int vertexCount = mesh.vertexCount;
 
-			Vector3[] newPositions = new Vector3[vertexCount + positions.Length];
-			Color[] newColors = new Color[vertexCount + colors.Length];
-			Vector2[] newTextures = new Vector2[mesh.texturesInternal.Length + uvs.Length];
+			var mc = mesh.HasArrays(MeshArrays.Color);
+			var fc = colors != null;
+			var mt = mesh.HasArrays(MeshArrays.Texture0);
+			var ft = uvs != null;
+
+			Vector3[] newPositions = new Vector3[vertexCount + faceVertexCount];
+			Color[] newColors = (mc || fc) ? new Color[vertexCount + faceVertexCount] : null;
+			Vector2[] newTextures = (mt || ft) ? new Vector2[vertexCount + faceVertexCount] : null;
 
 			List<Face> faces = new List<Face>(mesh.facesInternal);
 			IntArray[] sharedIndexes = mesh.sharedIndexesInternal;
 
 			Array.Copy(mesh.positionsInternal, 0, newPositions, 0, vertexCount);
-			Array.Copy(positions, 0, newPositions, vertexCount, positions.Length);
-			Array.Copy(mesh.colorsInternal, 0, newColors, 0, vertexCount);
-			Array.Copy(colors, 0, newColors, vertexCount, colors.Length);
-			Array.Copy(mesh.texturesInternal, 0, newTextures, 0, mesh.texturesInternal.Length);
-			Array.Copy(uvs, 0, newTextures, mesh.texturesInternal.Length, uvs.Length);
+			Array.Copy(positions, 0, newPositions, vertexCount, faceVertexCount);
+
+			if (mc || fc)
+			{
+				Array.Copy(mc ? mesh.colorsInternal : ArrayUtility.Fill(Color.white, vertexCount), 0, newColors, 0, vertexCount);
+				Array.Copy(fc ? colors : ArrayUtility.Fill(Color.white, faceVertexCount), 0, newColors, vertexCount, colors.Length);
+			}
+
+			if (mt || ft)
+			{
+				Array.Copy(mt ? mesh.texturesInternal : ArrayUtility.Fill(Vector2.zero, vertexCount), 0, newTextures, 0, vertexCount);
+				Array.Copy(ft ? uvs : ArrayUtility.Fill(Vector2.zero, faceVertexCount), 0, newTextures, mesh.texturesInternal.Length, faceVertexCount);
+			}
 
 			face.ShiftIndexesToZero();
 			face.ShiftIndexes(vertexCount);
@@ -75,11 +78,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			for(int i = 0; i < common.Length; i++)
 				IntArrayUtility.AddValueAtIndex(ref sharedIndexes, common[i], i+vertexCount);
 
-			mesh.SetPositions(newPositions);
-			mesh.SetColors(newColors);
-			mesh.SetUVs(newTextures);
-			mesh.SetSharedIndexes(sharedIndexes);
-			mesh.SetFaces(faces.ToArray());
+			mesh.positions = newPositions;
+			mesh.colors = newColors;
+			mesh.textures = newTextures;
+			mesh.sharedIndexes = sharedIndexes;
+			mesh.faces = faces;
 
 			return face;
 		}
@@ -92,7 +95,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="colors">An array of colors arrays, where indexes correspond to the appendedFaces parameter.</param>
 		/// <param name="uvs">An array of uvs arrays, where indexes correspond to the appendedFaces parameter.</param>
 		/// <param name="faces">An array of faces arrays, which contain the triangle winding information for each new face. Face index values are 0 indexed.</param>
-		/// <param name="sharedIndexes">An optional mapping of each new vertex's common index. Common index refers to a triangle's index in the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" array. If this value is provided, it must contain entries for each vertex position. Ex, if there are 4 vertexes in this face, there must be shared index entries for { 0, 1, 2, 3 }.</param>
+		/// <param name="shared">An optional mapping of each new vertex's common index. Common index refers to a triangle's index in the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" array. If this value is provided, it must contain entries for each vertex position. Ex, if there are 4 vertexes in this face, there must be shared index entries for { 0, 1, 2, 3 }.</param>
 		/// <returns>An array of the new faces that where successfully appended to the mesh.</returns>
 		public static Face[] AppendFaces(
 			this ProBuilderMesh mesh,
@@ -159,10 +162,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				vc = newPositions.Count;
 			}
 
-			mesh.SetPositions(newPositions.ToArray());
-			mesh.SetColors(newColors.ToArray());
-			mesh.SetUVs(newTextures.ToArray());
-			mesh.SetFaces(newFaces.ToArray());
+			mesh.positions = newPositions;
+			mesh.colors = newColors;
+			mesh.textures = newTextures;
+			mesh.faces = newFaces;
 			mesh.sharedIndexesInternal = sharedIndexes;
 
 			return faces;
@@ -200,7 +203,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				List<Face> faces = new List<Face>(mesh.facesInternal);
 				FaceRebuildData.Apply(new FaceRebuildData[] { data }, vertexes, faces, lookup, null);
 				mesh.SetVertexes(vertexes);
-				mesh.SetFaces(faces.ToArray());
+				mesh.faces = faces;
 				mesh.SetSharedIndexes(lookup);
 
                 return data.face;
@@ -449,7 +452,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			Vector3[] verts = mesh.positionsInternal;
+			Vector3[] positions = mesh.positionsInternal;
+			Color[] colors = mesh.HasArrays(MeshArrays.Color) ? mesh.colorsInternal : null;
+
 			Vector3[] v;
 			Color[] c;
 			int[] s;
@@ -483,59 +488,59 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				if(axbx)
 				{
-					v[0] = verts[a.a];
-					c[0] = mesh.colorsInternal[a.a];
+					v[0] = positions[a.a];
+					if(colors != null) c[0] = colors[a.a];
 					s[0] = sharedIndexes.IndexOf(a.a);
-					v[1] = verts[a.b];
-					c[1] = mesh.colorsInternal[a.b];
+					v[1] = positions[a.b];
+					if(colors != null) c[1] = colors[a.b];
 					s[1] = sharedIndexes.IndexOf(a.b);
-					v[2] = verts[b.b];
-					c[2] = mesh.colorsInternal[b.b];
+					v[2] = positions[b.b];
+					if(colors != null) c[2] = colors[b.b];
 					s[2] = sharedIndexes.IndexOf(b.b);
 				}
 				else
 				if(axby)
 				{
-					v[0] = verts[a.a];
-					c[0] = mesh.colorsInternal[a.a];
+					v[0] = positions[a.a];
+					if(colors != null) c[0] = colors[a.a];
 					s[0] = sharedIndexes.IndexOf(a.a);
-					v[1] = verts[a.b];
-					c[1] = mesh.colorsInternal[a.b];
+					v[1] = positions[a.b];
+					if(colors != null) c[1] = colors[a.b];
 					s[1] = sharedIndexes.IndexOf(a.b);
-					v[2] = verts[b.a];
-					c[2] = mesh.colorsInternal[b.a];
+					v[2] = positions[b.a];
+					if(colors != null) c[2] = colors[b.a];
 					s[2] = sharedIndexes.IndexOf(b.a);
 				}
 				else
 				if(aybx)
 				{
-					v[0] = verts[a.b];
-					c[0] = mesh.colorsInternal[a.b];
+					v[0] = positions[a.b];
+					if(colors != null) c[0] = colors[a.b];
 					s[0] = sharedIndexes.IndexOf(a.b);
-					v[1] = verts[a.a];
-					c[1] = mesh.colorsInternal[a.a];
+					v[1] = positions[a.a];
+					if(colors != null) c[1] = colors[a.a];
 					s[1] = sharedIndexes.IndexOf(a.a);
-					v[2] = verts[b.b];
-					c[2] = mesh.colorsInternal[b.b];
+					v[2] = positions[b.b];
+					if(colors != null) c[2] = colors[b.b];
 					s[2] = sharedIndexes.IndexOf(b.b);
 				}
 				else
 				if(ayby)
 				{
-					v[0] = verts[a.b];
-					c[0] = mesh.colorsInternal[a.b];
+					v[0] = positions[a.b];
+					if(colors != null) c[0] = colors[a.b];
 					s[0] = sharedIndexes.IndexOf(a.b);
-					v[1] = verts[a.a];
-					c[1] = mesh.colorsInternal[a.a];
+					v[1] = positions[a.a];
+					if(colors != null) c[1] = colors[a.a];
 					s[1] = sharedIndexes.IndexOf(a.a);
-					v[2] = verts[b.a];
-					c[2] = mesh.colorsInternal[b.a];
+					v[2] = positions[b.a];
+					if(colors != null) c[2] = colors[b.a];
 					s[2] = sharedIndexes.IndexOf(b.a);
 				}
 
 				return mesh.AppendFace(
 					v,
-					c,
+					colors != null ? c : null,
 					new Vector2[v.Length],
 					new Face( axbx || axby ? new int[3] {2, 1, 0} : new int[3] {0, 1, 2}, mat, uvs, 0, -1, -1, false ),
 					s);;
@@ -547,34 +552,34 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			c = new Color[4];
 			s = new int[4]; // shared indexes index to add to
 
-			v[0] = verts[a.a];
+			v[0] = positions[a.a];
 			c[0] = mesh.colorsInternal[a.a];
 			s[0] = sharedIndexes.IndexOf(a.a);
-			v[1] = verts[a.b];
+			v[1] = positions[a.b];
 			c[1] = mesh.colorsInternal[a.b];
 			s[1] = sharedIndexes.IndexOf(a.b);
 
-			Vector3 nrm = Vector3.Cross( verts[b.a]-verts[a.a], verts[a.b]-verts[a.a] ).normalized;
-			Vector2[] planed = Projection.PlanarProject( new Vector3[4] {verts[a.a], verts[a.b], verts[b.a], verts[b.b] }, nrm );
+			Vector3 nrm = Vector3.Cross( positions[b.a]-positions[a.a], positions[a.b]-positions[a.a] ).normalized;
+			Vector2[] planed = Projection.PlanarProject( new Vector3[4] {positions[a.a], positions[a.b], positions[b.a], positions[b.b] }, nrm );
 
 			Vector2 ipoint = Vector2.zero;
 			bool intersects = Math.GetLineSegmentIntersect(planed[0], planed[2], planed[1], planed[3], ref ipoint);
 
 			if(!intersects)
 			{
-				v[2] = verts[b.a];
+				v[2] = positions[b.a];
 				c[2] = mesh.colorsInternal[b.a];
 				s[2] = sharedIndexes.IndexOf(b.a);
-				v[3] = verts[b.b];
+				v[3] = positions[b.b];
 				c[3] = mesh.colorsInternal[b.b];
 				s[3] = sharedIndexes.IndexOf(b.b);
 			}
 			else
 			{
-				v[2] = verts[b.b];
+				v[2] = positions[b.b];
 				c[2] = mesh.colorsInternal[b.b];
 				s[2] = sharedIndexes.IndexOf(b.b);
-				v[3] = verts[b.a];
+				v[3] = positions[b.a];
 				c[3] = mesh.colorsInternal[b.a];
 				s[3] = sharedIndexes.IndexOf(b.a);
 			}
@@ -694,7 +699,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			var newFace = data.face;
 
 			mesh.SetVertexes(vertexes);
-			mesh.SetFaces(faces.ToArray());
+			mesh.faces = faces;
 			mesh.SetSharedIndexes(lookup);
 			mesh.SetSharedIndexesUV(lookupUV);
 
@@ -862,7 +867,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			var newEdges = appendedEdges.Distinct().Select(x => x.local - delCount).ToList();
 
 			mesh.SetVertexes(vertexes);
-			mesh.SetSharedIndexes(lookup.ToIntArray());
+			mesh.sharedIndexes = lookup.ToIntArray();
 			mesh.SetSharedIndexesUV(lookupUV.ToIntArray());
 			mesh.DeleteVertexes(indexesToDelete);
 

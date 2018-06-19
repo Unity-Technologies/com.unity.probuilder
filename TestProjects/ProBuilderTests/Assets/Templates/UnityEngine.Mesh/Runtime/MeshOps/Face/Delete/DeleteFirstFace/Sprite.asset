@@ -145,3 +145,7 @@ Mesh:
   m_MeshMetrics[0]: 1
   m_MeshMetrics[1]: 1
   m_MeshOptimized: 0
+  m_StreamData:
+    offset: 0
+    size: 0
+    path: 

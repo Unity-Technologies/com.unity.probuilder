@@ -204,8 +204,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			m_Mesh.Clear();
 			m_Mesh.SetVertexes(m_Vertexes);
-			m_Mesh.SetFaces(faces);
-			m_Mesh.SetSharedIndexes(IntArrayUtility.GetSharedIndexesWithPositions(m_Mesh.positionsInternal));
+			m_Mesh.faces = faces;
+			m_Mesh.sharedIndexes = IntArrayUtility.GetSharedIndexesWithPositions(m_Mesh.positionsInternal);
 			m_Mesh.SetSharedIndexesUV(new IntArray[0]);
 
 			HashSet<Face> processed = new HashSet<Face>();

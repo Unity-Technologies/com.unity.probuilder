@@ -63,7 +63,15 @@ namespace UnityEditor.ProBuilder
 
 			if (ProBuilderEditor.instance != null)
 			{
-				Vector3[] positions = MeshSelection.TopInternal().SelectMany(x => x.selectedVertexes.Select(y => x.transform.TransformPoint(x.positions[y]))).ToArray();
+				Vector3[] positions = MeshSelection.TopInternal().SelectMany(x =>
+				{
+					var p = x.positions.ToArray();
+
+					return x.selectedVertexes.Select(y =>
+					{
+						return x.transform.TransformPoint(p[y]);
+					});
+				}).ToArray();
 
 				if (positions.Length > 0)
 				{

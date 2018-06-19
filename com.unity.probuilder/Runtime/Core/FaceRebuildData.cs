@@ -42,7 +42,8 @@ namespace UnityEngine.ProBuilder
 			Dictionary<int, int> lookup = null,
 			Dictionary<int, int> lookupUV = null)
 		{
-			List<Face> _faces = faces == null ? new List<Face>(pb.facesInternal) : faces;
+			if (faces == null)
+				faces = new List<Face>(pb.facesInternal);
 
 			if(vertexes == null)
 				vertexes = new List<Vertex>( Vertex.GetVertexes(pb) );
@@ -53,10 +54,10 @@ namespace UnityEngine.ProBuilder
 			if(lookupUV == null)
 				lookupUV = pb.sharedIndexesUVInternal != null ? pb.sharedIndexesUVInternal.ToDictionary() : null;
 
-			FaceRebuildData.Apply(newFaces, vertexes, _faces, lookup, lookupUV);
+			Apply(newFaces, vertexes, faces, lookup, lookupUV);
 
 			pb.SetVertexes(vertexes);
-			pb.SetFaces(_faces.ToArray());
+			pb.faces = faces;
 			pb.SetSharedIndexes(lookup);
 			pb.SetSharedIndexesUV(lookupUV);
 		}
