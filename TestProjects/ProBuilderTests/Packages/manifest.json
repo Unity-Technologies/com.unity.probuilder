@@ -38,6 +38,11 @@
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0",
     "com.unity.probuilder":"file:../../../com.unity.probuilder",
+    "com.unity.probuilder.tests":"file:../../../com.unity.probuilder.tests",
     "com.unity.progrids": "3.0.2-preview"
-  }
+  },
+  "testables": [
+    "com.unity.probuilder",
+    "com.unity.probuilder.tests"
+  ]
 }

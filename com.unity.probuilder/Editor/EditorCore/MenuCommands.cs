@@ -1313,13 +1313,11 @@ namespace UnityEditor.ProBuilder
 
 				if (mesh.selectedFacesInternal.Length > 0)
 				{
-					SharedVertex[] sharedIndexes = mesh.sharedVertexesInternal;
-
-					int[] selectedIndexes = new int[mesh.selectedIndexesInternal.Length];
+					int[] sharedVertexHandles = new int[mesh.selectedIndexesInternal.Length];
 
 					// Get shared index index for each vert in selection
 					for (int i = 0; i < mesh.selectedIndexesInternal.Length; i++)
-						selectedIndexes[i] = mesh.GetSharedVertexHandle(mesh.selectedIndexesInternal[i]);
+						sharedVertexHandles[i] = mesh.GetSharedVertexHandle(mesh.selectedIndexesInternal[i]);
 
 					// cycle through selected faces and remove the tris that compose full faces.
 					foreach (Face face in mesh.selectedFacesInternal)
@@ -1330,8 +1328,8 @@ namespace UnityEditor.ProBuilder
 							faceSharedIndexes.Add(mesh.GetSharedVertexHandle(face.distinctIndexesInternal[j]));
 
 						List<int> usedTris = new List<int>();
-						for (int i = 0; i < selectedIndexes.Length; i++)
-							if (faceSharedIndexes.Contains(selectedIndexes[i]))
+						for (int i = 0; i < sharedVertexHandles.Length; i++)
+							if (faceSharedIndexes.Contains(sharedVertexHandles[i]))
 								usedTris.Add(mesh.selectedIndexesInternal[i]);
 
 						// This face *is* composed of selected tris.  Remove these tris from the loose index list

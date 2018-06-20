@@ -476,8 +476,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				bool axbx = Array.IndexOf(sharedIndexes[mesh.GetSharedVertexHandle(a.a)].arrayInternal, b.a) > -1;
 				bool axby = Array.IndexOf(sharedIndexes[mesh.GetSharedVertexHandle(a.a)].arrayInternal, b.b) > -1;
 
-				bool aybx = System.Array.IndexOf(sharedIndexes[mesh.GetSharedVertexHandle(a.b)].arrayInternal, b.a) > -1;
-				bool ayby = System.Array.IndexOf(sharedIndexes[mesh.GetSharedVertexHandle(a.b)].arrayInternal, b.b) > -1;
+				bool aybx = Array.IndexOf(sharedIndexes[mesh.GetSharedVertexHandle(a.b)].arrayInternal, b.a) > -1;
+				bool ayby = Array.IndexOf(sharedIndexes[mesh.GetSharedVertexHandle(a.b)].arrayInternal, b.b) > -1;
 
 				if(axbx)
 				{
