@@ -135,7 +135,7 @@ namespace UnityEngine.ProBuilder
 	    /// <value>
 	    /// A collection of the @"UnityEngine.ProBuilder.Face"'s that make up this mesh.
 	    /// </value>
-	    public IEnumerable<Face> faces
+	    public IList<Face> faces
 	    {
 		    get { return new ReadOnlyCollection<Face>(m_Faces); }
 		    set
@@ -177,7 +177,7 @@ namespace UnityEngine.ProBuilder
 	    /// <value>
 	    /// The shared (or common) index array for this mesh.
 	    /// </value>
-	    public IEnumerable<SharedVertex> sharedVertexes
+	    public IList<SharedVertex> sharedVertexes
 	    {
 		    get { return new ReadOnlyCollection<SharedVertex>(m_SharedVertexes); }
 
@@ -283,7 +283,7 @@ namespace UnityEngine.ProBuilder
 	    /// <value>
 	    /// The vertex positions that make up this mesh.
 	    /// </value>
-        public IEnumerable<Vector3> positions
+        public IList<Vector3> positions
         {
             get { return new ReadOnlyCollection<Vector3>(m_Positions); }
 		    set
@@ -450,7 +450,7 @@ namespace UnityEngine.ProBuilder
 		/// <value>
 		/// Vertex colors array for this mesh. When setting, the value must match the length of positions.
 		/// </value>
-	    public IEnumerable<Color> colors
+	    public IList<Color> colors
         {
             get { return m_Colors != null ? new ReadOnlyCollection<Color>(m_Colors) : null; }
 
@@ -483,7 +483,7 @@ namespace UnityEngine.ProBuilder
 		/// To get the generated tangents that are applied to the mesh through Refresh(), use GetTangents().
 		/// </remarks>
 		/// <seealso cref="GetTangents"/>
-	    public IEnumerable<Vector4> tangents
+	    public IList<Vector4> tangents
 	    {
 			get
 			{
@@ -524,7 +524,7 @@ namespace UnityEngine.ProBuilder
 	    /// The UV0 channel. Null if not present.
 	    /// </value>
 	    /// <seealso cref="GetUVs"/>
-	    public IEnumerable<Vector2> textures
+	    public IList<Vector2> textures
 	    {
 		    get { return m_Textures0 != null ? new ReadOnlyCollection<Vector2>(m_Textures0) : null; }
 		    set

@@ -192,7 +192,7 @@ namespace UnityEngine.ProBuilder
 			// deep copy arrays of reference types
 			sharedVertexes = sharedVertexesInternal;
 			SetSharedTextures(sharedTextureLookup);
-			faces = faces.Select(x => new Face(x));
+			facesInternal = faces.Select(x => new Face(x)).ToArray();
 
 			// set a new UnityEngine.Mesh instance
 			mesh = new Mesh();
@@ -214,7 +214,7 @@ namespace UnityEngine.ProBuilder
 			positions = other.positions;
 			sharedVertexes = other.sharedVertexesInternal;
 			SetSharedTextures(other.sharedTextureLookup);
-			faces = other.faces.Select(x => new Face(x));
+			facesInternal = other.faces.Select(x => new Face(x)).ToArray();
 
 			List<Vector4> uvs = new List<Vector4>();
 
