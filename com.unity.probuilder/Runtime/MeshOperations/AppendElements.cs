@@ -424,7 +424,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			SharedVertex[] sharedIndexes = mesh.GetSharedIndexes();
+			SharedVertex[] sharedVertexes = mesh.sharedVertexesInternal;
 			Dictionary<int, int> lookup = mesh.sharedVertexLookup;
 
 			// Check to see if a face already exists
@@ -473,11 +473,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				c = new Color[3];
 				s = new int[3];
 
-				bool axbx = Array.IndexOf(sharedIndexes[mesh.GetSharedVertexHandle(a.a)].arrayInternal, b.a) > -1;
-				bool axby = Array.IndexOf(sharedIndexes[mesh.GetSharedVertexHandle(a.a)].arrayInternal, b.b) > -1;
+				bool axbx = Array.IndexOf(sharedVertexes[mesh.GetSharedVertexHandle(a.a)].arrayInternal, b.a) > -1;
+				bool axby = Array.IndexOf(sharedVertexes[mesh.GetSharedVertexHandle(a.a)].arrayInternal, b.b) > -1;
 
-				bool aybx = System.Array.IndexOf(sharedIndexes[mesh.GetSharedVertexHandle(a.b)].arrayInternal, b.a) > -1;
-				bool ayby = System.Array.IndexOf(sharedIndexes[mesh.GetSharedVertexHandle(a.b)].arrayInternal, b.b) > -1;
+				bool aybx = System.Array.IndexOf(sharedVertexes[mesh.GetSharedVertexHandle(a.b)].arrayInternal, b.a) > -1;
+				bool ayby = System.Array.IndexOf(sharedVertexes[mesh.GetSharedVertexHandle(a.b)].arrayInternal, b.b) > -1;
 
 				if(axbx)
 				{

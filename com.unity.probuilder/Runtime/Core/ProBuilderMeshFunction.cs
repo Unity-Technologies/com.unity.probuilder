@@ -7,6 +7,7 @@ namespace UnityEngine.ProBuilder
 {
 	public sealed partial class ProBuilderMesh
 	{
+#if UNITY_EDITOR
 		public void OnBeforeSerialize()
 		{
 		}
@@ -15,7 +16,9 @@ namespace UnityEngine.ProBuilder
 		{
 			// Used in the Editor after Undo
 			InvalidateSharedVertexLookup();
+			InvalidateSharedTextureLookup();
 		}
+#endif
 
 		/// <summary>
 		/// Reset all the attribute arrays on this object.
@@ -118,7 +121,7 @@ namespace UnityEngine.ProBuilder
 			Clear();
 			positions = points;
 			m_Faces = f;
-			m_SharedVertexes = SharedVertexesUtility.GetSharedIndexesWithPositions(points);
+			m_SharedVertexes = SharedVertex.GetSharedVertexesWithPositions(points);
 
 			ToMesh();
 			Refresh();
@@ -137,7 +140,7 @@ namespace UnityEngine.ProBuilder
 			Clear();
 			m_Positions = vertexes.ToArray();
 			m_Faces = faces.ToArray();
-			m_SharedVertexes = SharedVertexesUtility.GetSharedIndexesWithPositions(m_Positions);
+			m_SharedVertexes = SharedVertex.GetSharedVertexesWithPositions(m_Positions);
 			ToMesh();
 			Refresh();
 		}
@@ -606,7 +609,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <remarks>Aids in removing duplicate vertex indexes.</remarks>
 		/// <returns>The common (or shared) index.</returns>
-		public int GetSharedVertexHandle(int vertex)
+		internal int GetSharedVertexHandle(int vertex)
 		{
 			int res;
 
@@ -623,7 +626,7 @@ namespace UnityEngine.ProBuilder
 			throw new ArgumentOutOfRangeException("vertex");
 		}
 
-		public HashSet<int> GetSharedVertexHandles(IEnumerable<int> vertexes)
+		internal HashSet<int> GetSharedVertexHandles(IEnumerable<int> vertexes)
 		{
 			var lookup = sharedVertexLookup;
 			HashSet<int> common = new HashSet<int>();
@@ -632,6 +635,12 @@ namespace UnityEngine.ProBuilder
 			return common;
 		}
 
+		/// <summary>
+		/// Get a list of vertexes that are coincident to any of the vertexes in the passed vertexes parameter.
+		/// </summary>
+		/// <param name="vertexes">A collection of indexes relative to the mesh positions.</param>
+		/// <returns>A list of all vertexes that share a position with any of the passed vertexes.</returns>
+		/// <exception cref="ArgumentNullException">The vertexes parameter may not be null.</exception>
 		public List<int> GetCoincidentVertexes(IEnumerable<int> vertexes)
 		{
 			if (vertexes == null)
@@ -642,6 +651,12 @@ namespace UnityEngine.ProBuilder
 			return shared;
 		}
 
+		/// <summary>
+		/// Populate a list of vertexes that are coincident to any of the vertexes in the passed vertexes parameter.
+		/// </summary>
+		/// <param name="vertexes">A collection of indexes relative to the mesh positions.</param>
+		/// <param name="coincident">A list to be cleared and populated with any vertexes that are coincident.</param>
+		/// <exception cref="ArgumentNullException">The vertexes and coincident parameters may not be null.</exception>
 		public void GetCoincidentVertexes(IEnumerable<int> vertexes, List<int> coincident)
 		{
 			if (vertexes == null)
@@ -663,39 +678,47 @@ namespace UnityEngine.ProBuilder
 			}
 		}
 
+		/// <summary>
+		/// Populate a list with all the vertexes that are coincident to the requested vertex.
+		/// </summary>
+		/// <param name="vertex">An index relative to a positions array.</param>
+		/// <param name="coincident">A list to be populated with all coincident vertexes.</param>
+		/// <exception cref="ArgumentNullException">The coincident list may not be null.</exception>
+		/// <exception cref="ArgumentOutOfRangeException">The SharedVertex[] does not contain an entry for the requested vertex.</exception>
 		public void GetCoincidentVertexes(int vertex, List<int> coincident)
 		{
+			if (coincident == null)
+				throw new ArgumentNullException("coincident");
+
 			int common;
 
-			if (vertex < 0 || !sharedVertexLookup.TryGetValue(vertex, out common))
+			if (!sharedVertexLookup.TryGetValue(vertex, out common))
                 throw new ArgumentOutOfRangeException("vertex");
-
-			if (coincident == null)
-                throw new ArgumentNullException("coincident");
 
 			coincident.Clear();
 			coincident.AddRange(m_SharedVertexes[common]);
 		}
 
+		/// <summary>
+		/// Sets the passed vertexes as being considered coincident by the ProBuilderMesh.
+		/// </summary>
+		/// <remarks>
+		/// Note that it is up to the caller to ensure that the passed vertexes are indeed sharing a position.
+		/// </remarks>
+		/// <param name="vertexes">A list of vertexes to be associated as coincident.</param>
 		public void SetVertexesCoincident(IEnumerable<int> vertexes)
 		{
-			var lookup = sharedVertexLookup;
-			int index = lookup.Count;
-			foreach (var v in vertexes)
-				lookup[v] = index;
-			SetSharedVertexes(lookup);
+			SharedVertex.SetCoincident(sharedVertexLookup, vertexes);
+			SetSharedVertexes(sharedVertexLookup);
 		}
 
 		internal void SetTexturesCoincident(IEnumerable<int> vertexes)
 		{
-			var lookup = sharedTextureLookup;
-			int index = lookup.Count;
-			foreach (var v in vertexes)
-				lookup[v] = index;
-			SetSharedTextures(lookup);
+			SharedVertex.SetCoincident(sharedTextureLookup, vertexes);
+			SetSharedTextures(sharedTextureLookup);
 		}
 
-		public void AddToSharedVertex(int sharedVertexHandle, int vertex)
+		internal void AddToSharedVertex(int sharedVertexHandle, int vertex)
 		{
 			if(sharedVertexHandle < 0 || sharedVertexHandle >= m_SharedVertexes.Length)
 				throw new ArgumentOutOfRangeException("sharedVertexHandle");
@@ -704,23 +727,13 @@ namespace UnityEngine.ProBuilder
 			InvalidateSharedVertexLookup();
 		}
 
-		public void AddSharedVertex(SharedVertex vertex)
+		internal void AddSharedVertex(SharedVertex vertex)
 		{
 			if (vertex == null)
 				throw new ArgumentNullException("vertex");
 
 			m_SharedVertexes = m_SharedVertexes.Add(vertex);
 			InvalidateSharedVertexLookup();
-		}
-
-		public void RemoveFromSharedVertexes(IEnumerable<int> vertexes)
-		{
-			sharedVertexesInternal = SharedVertexesUtility.RemoveAndShift(sharedVertexLookup, vertexes);
-		}
-
-		public void RemoveFromSharedTextures(IEnumerable<int> vertexes)
-		{
-			sharedVertexesInternal = SharedVertexesUtility.RemoveAndShift(sharedVertexLookup, vertexes);
 		}
 	}
 }

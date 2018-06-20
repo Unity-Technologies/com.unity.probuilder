@@ -394,7 +394,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			pb.positionsInternal = verts.ToArray();
 			pb.texturesInternal = uvs.ToArray();
 			pb.facesInternal = faces.ToArray();
-			pb.sharedVertexesInternal = SharedVertexesUtility.GetSharedIndexesWithPositions(verts.ToArray());
+			pb.sharedVertexesInternal = SharedVertex.GetSharedVertexesWithPositions(verts.ToArray());
 			pb.colorsInternal = cols.ToArray();
 
 			return true;

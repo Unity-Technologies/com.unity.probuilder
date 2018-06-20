@@ -1,4 +1,4 @@
-	using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.Serialization;
@@ -186,18 +186,16 @@ namespace UnityEngine.ProBuilder
 			    if (value == null)
 				    throw new ArgumentNullException("value");
 
-			    var indexes = value.ToArray();
-			    int len = indexes.Length;
+			    int len = value.Count;
 			    m_SharedVertexes = new SharedVertex[len];
-
 			    for (var i = 0; i < len; i++)
-				    m_SharedVertexes[i] = new SharedVertex(indexes[i]);
+				    m_SharedVertexes[i] = new SharedVertex(value[i]);
 
 			    InvalidateSharedVertexLookup();
 		    }
 	    }
 
-	    public Dictionary<int, int> sharedVertexLookup
+	    internal Dictionary<int, int> sharedVertexLookup
 	    {
 		    get
 		    {
@@ -209,19 +207,6 @@ namespace UnityEngine.ProBuilder
 		    }
 	    }
 
-	    /// <value>
-	    /// Get a copy of the shared (or common) index array for this mesh.
-	    /// </value>
-	    /// <seealso cref="sharedVertexes"/>
-	    public SharedVertex[] GetSharedIndexes()
-	    {
-		    int len = m_SharedVertexes.Length;
-		    SharedVertex[] copy = new SharedVertex[len];
-		    for(var i = 0; i < len; i++)
-			    copy[i] = new SharedVertex(m_SharedVertexes[i]);
-		    return copy;
-	    }
-
 	    /// <summary>
 	    /// Set the sharedIndexes array for this mesh with a lookup dictionary.
 	    /// </summary>
@@ -229,11 +214,11 @@ namespace UnityEngine.ProBuilder
 	    /// The new sharedIndexes array.
 	    /// </param>
 	    /// <seealso cref="sharedVertexes"/>
-	    public void SetSharedVertexes(IEnumerable<KeyValuePair<int, int>> indexes)
+	    internal void SetSharedVertexes(IEnumerable<KeyValuePair<int, int>> indexes)
 	    {
 		    if (indexes == null)
 			    throw new ArgumentNullException("indexes");
-		    m_SharedVertexes = SharedVertexesUtility.ToSharedVertexes(indexes);
+		    m_SharedVertexes = SharedVertex.ToSharedVertexes(indexes);
 		    InvalidateSharedVertexLookup();
 	    }
 
@@ -270,7 +255,7 @@ namespace UnityEngine.ProBuilder
 	    {
 		    if (indexes == null)
 			    throw new ArgumentNullException("indexes");
-		    m_SharedTextures = SharedVertexesUtility.ToSharedVertexes(indexes);
+		    m_SharedTextures = SharedVertex.ToSharedVertexes(indexes);
 		    InvalidateSharedTextureLookup();
 	    }
 
