@@ -19,3 +19,5 @@ TestProjects/*/Assets/ProBuilder\ Data
 TestProjects/*/Assets/ProBuilder\ Data.meta
 TestProjects/*/Assets/*.rsp
 TestProjects/*/Assets/*.rsp.meta
+
+TestProjects/ProBuilderTests/Assets/test\.unity

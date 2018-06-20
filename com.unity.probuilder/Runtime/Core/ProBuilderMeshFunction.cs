@@ -615,12 +615,12 @@ namespace UnityEngine.ProBuilder
 
 			for (int i = 0; i < m_SharedVertexes.Length; i++)
 			{
-				for(int n = 0, c = m_SharedVertexes[i].Count; i < c; i++)
+				for(int n = 0, c = m_SharedVertexes[i].Count; n < c; n++)
 					if (m_SharedVertexes[i][n] == vertex)
 						return i;
 			}
 
-			return -1;
+			throw new ArgumentOutOfRangeException("vertex");
 		}
 
 		public HashSet<int> GetSharedVertexHandles(IEnumerable<int> vertexes)
@@ -686,7 +686,7 @@ namespace UnityEngine.ProBuilder
 			SetSharedVertexes(lookup);
 		}
 
-		public void SetTexturesCoincident(IEnumerable<int> vertexes)
+		internal void SetTexturesCoincident(IEnumerable<int> vertexes)
 		{
 			var lookup = sharedTextureLookup;
 			int index = lookup.Count;
@@ -701,6 +701,16 @@ namespace UnityEngine.ProBuilder
 				throw new ArgumentOutOfRangeException("sharedVertexHandle");
 
 			m_SharedVertexes[sharedVertexHandle].Add(vertex);
+			InvalidateSharedVertexLookup();
+		}
+
+		public void AddSharedVertex(SharedVertex vertex)
+		{
+			if (vertex == null)
+				throw new ArgumentNullException("vertex");
+
+			m_SharedVertexes = m_SharedVertexes.Add(vertex);
+			InvalidateSharedVertexLookup();
 		}
 
 		public void RemoveFromSharedVertexes(IEnumerable<int> vertexes)

@@ -49,7 +49,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 throw new ArgumentNullException("edges");
 
             SharedVertex[] sharedIndexes = mesh.sharedVertexesInternal;
-			Dictionary<int, int> lookup = mesh.sharedVertexLookup;
 
 			List<Edge> validEdges = new List<Edge>();
 			List<Face> edgeFaces = new List<Face>();
@@ -104,11 +103,16 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				Face face = edgeFaces[i];
 
 				// Averages the normals using only vertexes that are on the edge
-				Vector3 xnorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndexes( sharedIndexes[lookup[edge.a]], allEdgeIndexes, oNormals ) : Math.Normal(mesh, face);
-				Vector3 ynorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndexes( sharedIndexes[lookup[edge.b]], allEdgeIndexes, oNormals ) : Math.Normal(mesh, face);
+				Vector3 xnorm = extrudeAsGroup
+					? InternalMeshUtility.AverageNormalWithIndexes(sharedIndexes[mesh.GetSharedVertexHandle(edge.a)], allEdgeIndexes, oNormals)
+					: Math.Normal(mesh, face);
 
-				int x_sharedIndex = lookup[edge.a];
-				int y_sharedIndex = lookup[edge.b];
+				Vector3 ynorm = extrudeAsGroup
+					? InternalMeshUtility.AverageNormalWithIndexes(sharedIndexes[mesh.GetSharedVertexHandle(edge.b)], allEdgeIndexes, oNormals)
+					: Math.Normal(mesh, face);
+
+				int x_sharedIndex = mesh.GetSharedVertexHandle(edge.a);
+				int y_sharedIndex = mesh.GetSharedVertexHandle(edge.b);
 
 				Face newFace = mesh.AppendFace(
 					new Vector3[4]

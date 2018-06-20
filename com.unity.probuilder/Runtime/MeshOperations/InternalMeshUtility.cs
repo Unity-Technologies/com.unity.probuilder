@@ -7,11 +7,6 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
-	// Utilities for working with pb_Object meshes.  The operations here only operate on the
-	// element caches in pb_Object- they do not affect the UnityEngine.Mesh.  You should call
-	// ToMesh() prior to invoking these methods, then Refresh() & optionally Optimize() post.
-	//
-	// The general purpose pb_MeshOps and pb_VertexOps classes are being phased out in favor of classes specific to one purpose
 	static class InternalMeshUtility
 	{
 		/// <summary>

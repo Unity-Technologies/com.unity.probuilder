@@ -20,6 +20,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="colors">The new colors to add (must match positions length).</param>
 		/// <param name="uvs">The new uvs to add (must match positions length).</param>
 		/// <param name="face">A face with the new triangle indexes. The indexes should be 0 indexed.</param>
+		/// <param name="common"></param>
 		/// <returns>The new face as referenced on the mesh.</returns>
 		internal static Face AppendFace(this ProBuilderMesh mesh, Vector3[] positions, Color[] colors, Vector2[] uvs, Face face, int[] common)
 		{
@@ -53,8 +54,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Vector2[] newTextures = (mt || ft) ? new Vector2[vertexCount + faceVertexCount] : null;
 
 			List<Face> faces = new List<Face>(mesh.facesInternal);
-			SharedVertex[] sharedIndexes = mesh.sharedVertexesInternal;
-
 			Array.Copy(mesh.positionsInternal, 0, newPositions, 0, vertexCount);
 			Array.Copy(positions, 0, newPositions, vertexCount, faceVertexCount);
 
@@ -75,13 +74,17 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			faces.Add(face);
 
-			for(int i = 0; i < common.Length; i++)
-				mesh.AddToSharedVertex(common[i], i + vertexCount);
+			for (int i = 0; i < common.Length; i++)
+			{
+				if (common[i] < 0)
+					mesh.AddSharedVertex(new SharedVertex(new int[] { i + vertexCount }));
+				else
+					mesh.AddToSharedVertex(common[i], i + vertexCount);
+			}
 
 			mesh.positions = newPositions;
 			mesh.colors = newColors;
 			mesh.textures = newTextures;
-			mesh.sharedVertexes = sharedIndexes;
 			mesh.faces = faces;
 
 			return face;
