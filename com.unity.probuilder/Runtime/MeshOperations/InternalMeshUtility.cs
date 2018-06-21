@@ -28,12 +28,93 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			return (n / (float)count);
 		}
 
+		static ProBuilderMesh CreateMeshFromSplit(List<Vertex> vertexes,
+			List<Face> faces,
+			Dictionary<int, int> sharedVertexLookup,
+			Dictionary<int, int> sharedTextureLookup,
+			Dictionary<int, int> remap)
+		{
+			// finalize mesh
+			var sv = new Dictionary<int, int>();
+			var st = new Dictionary<int, int>();
+
+			foreach (var f in faces)
+			{
+				for (int i = 0, c = f.indexesInternal.Length; i < c; i++)
+					f.indexesInternal[i] = remap[f.indexesInternal[i]];
+
+				f.InvalidateCache();
+			}
+
+			foreach (var kvp in remap)
+			{
+				int v;
+
+				if(sharedVertexLookup.TryGetValue(kvp.Key, out v))
+					sv.Add(kvp.Value, v);
+
+				if(sharedTextureLookup.TryGetValue(kvp.Key, out v))
+					st.Add(kvp.Value, v);
+			}
+
+			return ProBuilderMesh.Create(vertexes, faces, SharedVertex.ToSharedVertexes(sv), st.Any() ? SharedVertex.ToSharedVertexes(st) : null);
+		}
+
 		/// <summary>
-		/// Given an array of "donors", this method returns a merged pb_Object.
+		/// Break a ProBuilder mesh into multiple meshes if it's vertex count is greater than maxVertexCount.
+		/// </summary>
+		/// <returns></returns>
+		internal static List<ProBuilderMesh> SplitByMaxVertexCount(IList<Vertex> vertexes, IList<Face> faces, IList<SharedVertex> sharedVertexes, IList<SharedVertex> sharedTextures, uint maxVertexCount = ProBuilderMesh.maxVertexCount)
+		{
+			uint vertexCount = (uint) vertexes.Count;
+			uint meshCount = System.Math.Max(1u, vertexCount / maxVertexCount);
+
+			if(meshCount < 2)
+				return new List<ProBuilderMesh>() { ProBuilderMesh.Create(vertexes, faces, sharedVertexes, sharedTextures) };
+
+			var sharedVertexLookup = new Dictionary<int, int>();
+			SharedVertex.GetSharedVertexLookup(sharedVertexes, sharedVertexLookup);
+
+			var sharedTextureLookup = new Dictionary<int, int>();
+			SharedVertex.GetSharedVertexLookup(sharedTextures, sharedTextureLookup);
+
+			var meshes = new List<ProBuilderMesh>();
+			var mv = new List<Vertex>();
+			var mf = new List<Face>();
+			var remap = new Dictionary<int, int>();
+
+			foreach (var face in faces)
+			{
+				if (mv.Count + face.distinctIndexes.Count > maxVertexCount)
+				{
+					// finalize mesh
+					meshes.Add( CreateMeshFromSplit(mv, mf, sharedVertexLookup, sharedTextureLookup, remap) );
+					mv.Clear();
+					mf.Clear();
+					remap.Clear();
+				}
+
+				foreach (int i in face.distinctIndexes)
+				{
+					mv.Add(vertexes[i]);
+					remap.Add(i, mv.Count - 1);
+				}
+
+				mf.Add(face);
+			}
+
+			if (mv.Any())
+				meshes.Add( CreateMeshFromSplit(mv, mf, sharedVertexLookup, sharedTextureLookup, remap) );
+
+			return meshes;
+		}
+
+		/// <summary>
+		/// Given an array of "donors", this method returns a merged ProBuilderMesh.
 		/// </summary>
 		/// <param name="meshes"></param>
 		/// <returns></returns>
-		public static ProBuilderMesh[] CombineObjects(IEnumerable<ProBuilderMesh> meshes)
+		public static List<ProBuilderMesh> CombineObjects(IEnumerable<ProBuilderMesh> meshes)
 		{
 			if (meshes == null)
 				throw new ArgumentNullException("meshes");
@@ -41,10 +122,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			if (!meshes.Any() || meshes.Count() < 2)
 				return null;
 
-			List<Vertex> vertexes = new List<Vertex>();
-			List<Face> faces = new List<Face>();
-			List<SharedVertex> sharedVertexes = new List<SharedVertex>();
-			List<SharedVertex> sharedTextures = new List<SharedVertex>();
+			var vertexes = new List<Vertex>();
+			var faces = new List<Face>();
+			var sharedVertexes = new List<SharedVertex>();
+			var sharedTextures = new List<SharedVertex>();
 			int offset = 0;
 
 			foreach (var mesh in meshes)
@@ -57,115 +138,36 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				var meshSharedTextures = mesh.sharedTextures;
 
 				for (int i = 0; i < meshVertexCount; i++)
+					vertexes.Add(transform.TransformVertex(meshVertexes[i]));
+
+				foreach (var face in meshFaces)
 				{
-					meshVertexes.Add(transform.TransformVertex(meshVertexes[i]));
+					var nf = new Face(face);
+					nf.ShiftIndexes(offset);
+					// prevents uvs from shifting when being converted from local coords to world space
+					if (!nf.manualUV && !nf.uv.useWorldSpace)
+						nf.manualUV = true;
+					faces.Add(nf);
+				}
 
-					var face = new Face(meshFaces[i]);
-					face.ShiftIndexes(offset);
-					meshFaces.Add(face);
+				foreach (var sv in meshSharedVertexes)
+				{
+					var nsv = new SharedVertex(sv);
+					nsv.ShiftIndexes(offset);
+					sharedVertexes.Add(nsv);
+				}
 
-					foreach (var sv in meshSharedVertexes)
-					{
-						var nsv = new SharedVertex(sv);
-						nsv.ShiftIndexes(offset);
-						sharedVertexes.Add(nsv);
-					}
-
-					foreach (var st in meshSharedTextures)
-					{
-						var nst = new SharedVertex(st);
-						nst.ShiftIndexes(offset);
-						sharedTextures.Add(nst);
-					}
+				foreach (var st in meshSharedTextures)
+				{
+					var nst = new SharedVertex(st);
+					nst.ShiftIndexes(offset);
+					sharedTextures.Add(nst);
 				}
 
 				offset += meshVertexCount;
 			}
 
-			return ProBuilderMesh.Create(vertexes, faces, sharedVertexes, sharedTextures);
-
-//			List<Vector3> v = new List<Vector3>();
-//			List<Vector2> u = new List<Vector2>();
-//			List<Color> c = new List<Color>();
-//			List<Face> f = new List<Face>();
-//			List<SharedVertex> s = new List<SharedVertex>();
-//			List<SharedVertex> suv = new List<SharedVertex>();
-//
-//			foreach(ProBuilderMesh pb in meshes)
-//			{
-//				int vertexCount = v.Count;
-//
-//				// vertexes
-//				v.AddRange(pb.VertexesInWorldSpace());
-//
-//				// UVs
-//				u.AddRange(pb.texturesInternal);
-//
-//				// Colors
-//				c.AddRange(pb.colorsInternal);
-//
-//				// Faces
-//				Face[] faces = new Face[pb.facesInternal.Length];
-//				for(int i = 0; i < faces.Length; i++)
-//				{
-//					faces[i] = new Face(pb.facesInternal[i]);
-//					faces[i].manualUV = true;
-//					faces[i].ShiftIndexes(vertexCount);
-//				}
-//				f.AddRange(faces);
-//
-//				// Shared indexes
-//				SharedVertex[] si = pb.GetSharedIndexes();
-//				for(int i = 0; i < si.Length; i++)
-//				{
-//					for(int n = 0; n < si[i].length; n++)
-//						si[i][n] += vertexCount;
-//				}
-//				s.AddRange(si);
-//
-//				// Shared indexes UV
-//				{
-//					SharedVertex[] si_uv = pb.GetSharedIndexesUV();
-//					for(int i = 0; i < si_uv.Length; i++)
-//					{
-//						for(int n = 0; n < si_uv[i].length; n++)
-//							si_uv[i][n] += vertexCount;
-//					}
-//
-//					suv.AddRange(si_uv);
-//				}
-//			}
-//
-//			GameObject go = Object.Instantiate(meshes[0].gameObject);
-//			go.transform.position = Vector3.zero;
-//			go.transform.localRotation = Quaternion.identity;
-//			go.transform.localScale = Vector3.one;
-//
-//			// Destroy the children
-//			foreach(Transform t in go.transform)
-//				Object.DestroyImmediate(t.gameObject);
-//
-//			if(go.GetComponent<ProBuilderMesh>()) Object.DestroyImmediate(go.GetComponent<ProBuilderMesh>());
-//			if(go.GetComponent<Entity>()) Object.DestroyImmediate(go.GetComponent<Entity>());
-//
-//			combined = go.AddComponent<ProBuilderMesh>();
-//
-//			combined.positions = v;
-//			combined.textures = u;
-//			combined.colors = c;
-//			combined.faces = f;
-//
-//			combined.sharedVertexesInternal = s.ToArray();
-//			combined.SetSharedTextures(suv.ToArray());
-//			combined.ToMesh();
-//			combined.CenterPivot( meshes[0].transform.position );
-//			combined.Refresh();
-//
-//			// refresh donors since deleting the children of the instantiated object could cause them to lose references
-//			 foreach (ProBuilderMesh pb in meshes)
-//				 pb.Rebuild();
-//
-//			 return true;
+			return SplitByMaxVertexCount(vertexes, faces, sharedVertexes, sharedTextures);
 		}
 
 		/// <summary>

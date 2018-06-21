@@ -17,30 +17,25 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	sealed class MenuCommands : UnityEditor.Editor
 	{
-		private static ProBuilderEditor editor { get { return ProBuilderEditor.instance; } }
+		static ProBuilderEditor editor { get { return ProBuilderEditor.instance; } }
 
 #region Object Level
 
-#if !PROTOTYPE
-		/**
-		 * Combine selected pb_Objects to a single object.
-		 * ProBuilder only.
-		 */
 		public static ActionResult MenuMergeObjects(ProBuilderMesh[] selected)
 		{
 			if(selected.Length < 2)
 				return new ActionResult(ActionResult.Status.Canceled, "Must Select 2+ Objects");
 
-			ProBuilderMesh[] res = null;
+			List<ProBuilderMesh> res = InternalMeshUtility.CombineObjects(selected);
 
-			if( (res = InternalMeshUtility.CombineObjects(selected)) != null )
+			if (res != null)
 			{
 				foreach (var mesh in res)
 				{
 					mesh.Optimize();
 					mesh.gameObject.name = "pb-MergedObject" + mesh.id;
 					UndoUtility.RegisterCreatedObjectUndo(mesh.gameObject, "Merge Objects");
-					Selection.objects = res;
+					Selection.objects = res.Select(x => x.gameObject).ToArray();
 				}
 
 				// Delete donor objects
@@ -51,12 +46,10 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
-			if(editor)
-				ProBuilderEditor.Refresh();
+			ProBuilderEditor.Refresh();
 
 			return new ActionResult(ActionResult.Status.Success, "Merged Objects");
 		}
-#endif
 
 		/**
 		 * Set the pivot to the center of the current element selection.

@@ -19,6 +19,11 @@ namespace UnityEngine.ProBuilder
     {
 	    const int k_UVChannelCount = 4;
 
+	    /// <summary>
+	    /// The maximum number of vertexes that a ProBuilderMesh can accomodate.
+	    /// </summary>
+	    public const uint maxVertexCount = ushort.MaxValue;
+
         [SerializeField]
         [FormerlySerializedAs("_quads")]
         Face[] m_Faces;

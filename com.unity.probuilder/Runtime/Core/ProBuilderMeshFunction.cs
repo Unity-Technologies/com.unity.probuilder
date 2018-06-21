@@ -91,11 +91,24 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="vertexes">Vertex positions array.</param>
 		/// <param name="faces">Faces array.</param>
+		/// <param name="sharedVertexes">Optional SharedVertex[] defines coincident vertexes.</param>
+		/// <param name="sharedTextures">Optional SharedVertex[] defines coincident texture coordinates (UV0).</param>
 		/// <returns></returns>
-		public static ProBuilderMesh[] Create(IEnumerable<Vertex> vertexes, IEnumerable<Face> faces, IEnumerable<SharedVertex> sharedVertexes = null, IEnumerable<SharedVertex> sharedTextures = null)
+		public static ProBuilderMesh Create(IList<Vertex> vertexes,
+			IList<Face> faces,
+			IList<SharedVertex> sharedVertexes = null,
+			IList<SharedVertex> sharedTextures = null)
 		{
-			// todo
-			throw new NotImplementedException();
+			var go = new GameObject();
+			var mesh = go.AddComponent<ProBuilderMesh>();
+			go.name = "ProBuilder Mesh";
+			mesh.SetVertexes(vertexes);
+			mesh.faces = faces;
+			mesh.sharedVertexes = sharedVertexes;
+			mesh.sharedTextures = sharedTextures != null ? sharedTextures.ToArray() : null;
+			mesh.ToMesh();
+			mesh.Refresh();
+			return mesh;
 		}
 
 		void GeometryWithPoints(Vector3[] points)
