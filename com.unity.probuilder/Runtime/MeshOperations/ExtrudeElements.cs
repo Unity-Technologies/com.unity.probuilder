@@ -474,6 +474,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						{
 							dir.item1 += normal;
 							dir.item3.Add(idx);
+							extrudeMap[com] = dir;
 						}
 						else
 						{
