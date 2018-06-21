@@ -1436,14 +1436,19 @@ namespace UnityEditor.ProBuilder
 					{
 						faces.Remove(wing.face);
 
-						foreach(WingedEdge p in wing)
+						using (var it = new WingedEdgeEnumerator(wing))
 						{
-							if(p.opposite != null)
+							while(it.MoveNext())
 							{
-								p.face.material = p.opposite.face.material;
-								p.face.uv = new AutoUnwrapSettings(p.opposite.face.uv);
-								MeshOps.SurfaceTopology.ConformOppositeNormal(p.opposite);
-								break;
+								var p = it.Current;
+								
+								if (p.opposite != null)
+								{
+									p.face.material = p.opposite.face.material;
+									p.face.uv = new AutoUnwrapSettings(p.opposite.face.uv);
+									MeshOps.SurfaceTopology.ConformOppositeNormal(p.opposite);
+									break;
+								}
 							}
 						}
 					}

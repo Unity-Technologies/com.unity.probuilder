@@ -228,14 +228,19 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					// find first edge whose opposite face isn't a filled hole* then
 					// conform normal by that.
 					// *or is a filled hole but has already been conformed
-					foreach(WingedEdge w in wing)
+					using (var it = new WingedEdgeEnumerator(wing))
 					{
-						if(!newHoles.Contains(w.opposite.face))
+						while(it.MoveNext())
 						{
-							w.face.material = w.opposite.face.material;
-							w.face.uv = new AutoUnwrapSettings(w.opposite.face.uv);
-							SurfaceTopology.ConformOppositeNormal(w.opposite);
-							break;
+							var w = it.Current;
+							
+							if (!newHoles.Contains(w.opposite.face))
+							{
+								w.face.material = w.opposite.face.material;
+								w.face.uv = new AutoUnwrapSettings(w.opposite.face.uv);
+								SurfaceTopology.ConformOppositeNormal(w.opposite);
+								break;
+							}
 						}
 					}
 				}

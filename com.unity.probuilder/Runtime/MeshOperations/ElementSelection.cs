@@ -478,20 +478,25 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				if(checkAngle)
 					srcNormal = Math.Normal(mesh, wings[i].face);
 
-				foreach(WingedEdge w in wings[i])
+				using(var it = new WingedEdgeEnumerator(wings[i]))
 				{
-					if(w.opposite != null && !source.Contains(w.opposite.face))
+					while(it.MoveNext())
 					{
-						if(checkAngle)
+						var w = it.Current;
+						
+						if (w.opposite != null && !source.Contains(w.opposite.face))
 						{
-							Vector3 oppNormal = Math.Normal(mesh, w.opposite.face);
+							if (checkAngle)
+							{
+								Vector3 oppNormal = Math.Normal(mesh, w.opposite.face);
 
-							if(Vector3.Angle(srcNormal, oppNormal) < maxAngleDiff)
+								if (Vector3.Angle(srcNormal, oppNormal) < maxAngleDiff)
+									neighboring.Add(w.opposite.face);
+							}
+							else
+							{
 								neighboring.Add(w.opposite.face);
-						}
-						else
-						{
-							neighboring.Add(w.opposite.face);
+							}
 						}
 					}
 				}

@@ -320,6 +320,9 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Addition is performed component-wise for every property.
 		/// </summary>
+		/// <remarks>
+		/// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+		/// </remarks>
 		/// <param name="a">Left side addition parameter.</param>
 		/// <param name="b">Right side addition parameter.</param>
 		/// <returns>A new Vertex with the sum of a + b.</returns>
@@ -331,6 +334,9 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Addition is performed component-wise for every property.
 		/// </summary>
+		/// <remarks>
+		/// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+		/// </remarks>
 		/// <param name="a">Left side addition parameter.</param>
 		/// <param name="b">Right side addition parameter.</param>
 		/// <returns>A new Vertex with the sum of a + b.</returns>
@@ -344,6 +350,9 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Addition is performed component-wise for every property.
 		/// </summary>
+		/// <remarks>
+		/// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+		/// </remarks>
 		/// <param name="b">Right side addition parameter.</param>
 		public void Add(Vertex b)
 		{
@@ -363,6 +372,9 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Subtraction is performed component-wise for every property.
 		/// </summary>
+		/// <remarks>
+		/// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+		/// </remarks>
 		/// <param name="a">Left side subtraction parameter.</param>
 		/// <param name="b">Right side subtraction parameter.</param>
 		/// <returns>A new Vertex with the sum of a - b.</returns>
@@ -374,6 +386,9 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Subtraction is performed component-wise for every property.
 		/// </summary>
+		/// <remarks>
+		/// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+		/// </remarks>
 		/// <param name="a">Left side subtraction parameter.</param>
 		/// <param name="b">Right side subtraction parameter.</param>
 		/// <returns>A new Vertex with the sum of a - b.</returns>
@@ -387,6 +402,9 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Subtraction is performed component-wise for every property.
 		/// </summary>
+		/// <remarks>
+		/// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+		/// </remarks>
 		/// <param name="b">Right side subtraction parameter.</param>
         public void Subtract(Vertex b)
 		{
@@ -406,6 +424,9 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Multiplication is performed component-wise for every property.
 		/// </summary>
+		/// <remarks>
+		/// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+		/// </remarks>
 		/// <param name="a">Left side multiplication parameter.</param>
 		/// <param name="value">Right side multiplication parameter.</param>
 		/// <returns>A new Vertex with the sum of a * b.</returns>
@@ -430,6 +451,9 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Multiplication is performed component-wise for every property.
 		/// </summary>
+		/// <remarks>
+		/// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+		/// </remarks>
 		/// <param name="value">Right side multiplication parameter.</param>
 		public void Multiply(float value)
 		{
@@ -446,6 +470,9 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Division is performed component-wise for every property.
 		/// </summary>
+		/// <remarks>
+		/// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+		/// </remarks>
 		/// <param name="a">Left side division parameter.</param>
 		/// <param name="value">Right side division parameter.</param>
 		/// <returns>A new Vertex with the sum of a / b.</returns>
@@ -457,6 +484,9 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Division is performed component-wise for every property.
 		/// </summary>
+		/// <remarks>
+		/// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+		/// </remarks>
 		/// <param name="a">Left side division parameter.</param>
 		/// <param name="value">Right side division parameter.</param>
 		/// <returns>A new Vertex with the sum of a / b.</returns>
@@ -470,6 +500,9 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Division is performed component-wise for every property.
 		/// </summary>
+		/// <remarks>
+		/// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+		/// </remarks>
 		/// <param name="value">Right side Division parameter.</param>
 		public void Divide(float value)
 		{
