@@ -455,12 +455,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Material mat = BuiltinMaterials.defaultMaterial;
 
 			// Get material and UV stuff from the first edge face
-			SimpleTuple<Face, Edge> faceAndEdge = null;
+			SimpleTuple<Face, Edge> faceAndEdge;
 
-			if(!EdgeExtension.ValidateEdge(mesh, a, out faceAndEdge))
-				EdgeExtension.ValidateEdge(mesh, b, out faceAndEdge);
-
-			if(faceAndEdge != null)
+			if(EdgeExtension.ValidateEdge(mesh, a, out faceAndEdge) || EdgeExtension.ValidateEdge(mesh, b, out faceAndEdge))
 			{
 				uvs = new AutoUnwrapSettings(faceAndEdge.item1.uv);
 				mat = faceAndEdge.item1.material;
