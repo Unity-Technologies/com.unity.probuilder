@@ -111,7 +111,6 @@ namespace UnityEditor.ProBuilder
 
 		Edge[][] m_UniversalEdges = new Edge[0][];
 		Vector3 m_HandlePivotWorld = Vector3.zero;
-		Dictionary<int, int>[] m_SharedIndexesDictionary = new Dictionary<int, int>[0];
 
 		internal Edge[][] selectedUniversalEdges
 		{
@@ -774,11 +773,16 @@ namespace UnityEditor.ProBuilder
 
 				for (int i = 0; i < selection.Length; i++)
 				{
-					selection[i].TranslateVertexesInWorldSpace(selection[i].selectedIndexesInternal, diff, m_SnapEnabled ? m_SnapValue : 0f,
-						m_SnapAxisConstraint, m_SharedIndexesDictionary[i]);
-					selection[i].RefreshUV(selectedFacesInEditZone[selection[i]]);
-					selection[i].Refresh(RefreshMask.Normals);
-					selection[i].mesh.RecalculateBounds();
+					var mesh = selection[i];
+
+					mesh.TranslateVertexesInWorldSpace(mesh.selectedIndexesInternal,
+						diff,
+						m_SnapEnabled ? m_SnapValue : 0f,
+						m_SnapAxisConstraint);
+
+					mesh.RefreshUV(selectedFacesInEditZone[mesh]);
+					mesh.Refresh(RefreshMask.Normals);
+					mesh.mesh.RecalculateBounds();
 				}
 
 				Internal_UpdateSelectionFast();
@@ -837,13 +841,14 @@ namespace UnityEditor.ProBuilder
 				for (int i = 0; i < selection.Length; i++)
 				{
 					// get the plane rotation in local space
+					var mesh = selection[i];
 					Vector3 nrm = Math.Normal(m_VertexPositions[i]);
 					Quaternion localRot = Quaternion.LookRotation(nrm == Vector3.zero ? Vector3.forward : nrm, Vector3.up);
 
-					Vector3[] v = selection[i].positionsInternal;
-					IntArray[] sharedIndexes = selection[i].sharedIndexesInternal;
+					Vector3[] v = mesh.positionsInternal;
+					List<int> coincident = new List<int>();
 
-					for (int n = 0; n < selection[i].selectedIndexesInternal.Length; n++)
+					for (int n = 0; n < mesh.selectedIndexesInternal.Length; n++)
 					{
 						switch (handleAlignment)
 						{
@@ -868,10 +873,10 @@ namespace UnityEditor.ProBuilder
 								// re-apply world position offset
 								ver += m_VertexOffset[i];
 
-								int[] array = sharedIndexes[m_SharedIndexesDictionary[i][selection[i].selectedIndexesInternal[n]]].array;
+								mesh.GetCoincidentVertexes(mesh.selectedIndexesInternal[n], coincident);
 
-								for (int t = 0; t < array.Length; t++)
-									v[array[t]] = ver;
+								for (int t = 0, c = coincident.Count; t < c; t++)
+									v[coincident[t]] = ver;
 
 								break;
 							}
@@ -887,20 +892,20 @@ namespace UnityEditor.ProBuilder
 								ver += m_VertexOffset[i];
 								// set vertex in local space on pb-Object
 
-								int[] array = sharedIndexes[m_SharedIndexesDictionary[i][selection[i].selectedIndexesInternal[n]]].array;
+								mesh.GetCoincidentVertexes(mesh.selectedIndexesInternal[n], coincident);
 
-								for (int t = 0; t < array.Length; t++)
-									v[array[t]] = ver;
+								for (int t = 0, c = coincident.Count; t < c; t++)
+									v[coincident[t]] = ver;
 
 								break;
 							}
 						}
 					}
 
-					selection[i].mesh.vertices = v;
-					selection[i].RefreshUV(selectedFacesInEditZone[selection[i]]);
-					selection[i].Refresh(RefreshMask.Normals);
-					selection[i].mesh.RecalculateBounds();
+					mesh.mesh.vertices = v;
+					mesh.RefreshUV(selectedFacesInEditZone[selection[i]]);
+					mesh.Refresh(RefreshMask.Normals);
+					mesh.mesh.RecalculateBounds();
 				}
 
 				Internal_UpdateSelectionFast();
@@ -960,13 +965,13 @@ namespace UnityEditor.ProBuilder
 
 				// profiler.BeginSample("Calc Matrix");
 				Quaternion transformedRotation = m_RotationInitialInverse * m_HandleRotation;
+				List<int> coincident = new List<int>();
 
 				// profiler.BeginSample("matrix mult");
-				Vector3 ver; // resulting vertex from modification
 				for (int i = 0; i < selection.Length; i++)
 				{
 					Vector3[] v = selection[i].positionsInternal;
-					IntArray[] sharedIndexes = selection[i].sharedIndexesInternal;
+					SharedVertex[] sharedIndexes = selection[i].sharedVertexesInternal;
 
 					Quaternion lr = m_RotationInitial; // selection[0].transform.localRotation;
 					Quaternion ilr = m_RotationInitialInverse; // Quaternion.Inverse(lr);
@@ -974,7 +979,7 @@ namespace UnityEditor.ProBuilder
 					for (int n = 0; n < selection[i].selectedIndexesInternal.Length; n++)
 					{
 						// move vertex to relative origin from center of selection
-						ver = ilr * (m_VertexPositions[i][n] - m_VertexOffset[i]);
+						Vector3 ver = ilr * (m_VertexPositions[i][n] - m_VertexOffset[i]);
 
 						// rotate
 						ver = transformedRotation * ver;
@@ -982,10 +987,10 @@ namespace UnityEditor.ProBuilder
 						// move vertex back to locally offset position
 						ver = (lr * ver) + m_VertexOffset[i];
 
-						int[] array = sharedIndexes[m_SharedIndexesDictionary[i][selection[i].selectedIndexesInternal[n]]].array;
+						selection[i].GetCoincidentVertexes(selection[i].selectedIndexesInternal[n], coincident);
 
-						for (int t = 0; t < array.Length; t++)
-							v[array[t]] = selection[i].transform.InverseTransformPoint(ver);
+						for (int t = 0, c = coincident.Count; t < c; t++)
+							v[coincident[t]] = selection[i].transform.InverseTransformPoint(ver);
 					}
 
 					selection[i].mesh.vertices = v;
@@ -1646,12 +1651,9 @@ namespace UnityEditor.ProBuilder
 				forceUpdate = true;
 
 				m_UniversalEdges = new Edge[selection.Length][];
-				m_SharedIndexesDictionary = new Dictionary<int, int>[selection.Length];
+
 				for (int i = 0; i < selection.Length; i++)
-				{
-					m_SharedIndexesDictionary[i] = selection[i].sharedIndexesInternal.ToDictionary();
-					m_UniversalEdges[i] = EdgeExtension.GetUniversalEdges(EdgeExtension.AllEdges(selection[i].facesInternal), m_SharedIndexesDictionary[i]);
-				}
+					m_UniversalEdges[i] = selection[i].GetSharedVertexHandleEdges(selection[i].facesInternal.SelectMany(x => x.edges)).ToArray();
 			}
 
 			m_HandlePivotWorld = Vector3.zero;
@@ -1662,10 +1664,10 @@ namespace UnityEditor.ProBuilder
 
 			for (var i = 0; i < selection.Length; i++)
 			{
-				var lookup = m_SharedIndexesDictionary[i];
-				used.Clear();
-
 				ProBuilderMesh mesh = selection[i];
+
+				used.Clear();
+				var lookup = mesh.sharedVertexLookup;
 
 				if (!boundsInitialized && mesh.selectedVertexCount > 0)
 				{
@@ -1691,11 +1693,11 @@ namespace UnityEditor.ProBuilder
 					m_SelectedVertexesCommon += used.Count;
 				}
 
-				selectedFacesInEditZone.Add(mesh, ElementSelection.GetNeighborFaces(mesh, mesh.selectedIndexesInternal, m_SharedIndexesDictionary[i]));
+				selectedFacesInEditZone.Add(mesh, ElementSelection.GetNeighborFaces(mesh, mesh.selectedIndexesInternal));
 
-				m_SelectedVertexCount += selection[i].selectedIndexesInternal.Length;
-				m_SelectedFaceCount += selection[i].selectedFaceCount;
-				m_SelectedEdgeCount += selection[i].selectedEdgeCount;
+				m_SelectedVertexCount += mesh.selectedIndexesInternal.Length;
+				m_SelectedFaceCount += mesh.selectedFaceCount;
+				m_SelectedEdgeCount += mesh.selectedEdgeCount;
 			}
 
 			m_HandlePivotWorld = (max + min) * .5f;
@@ -1974,17 +1976,17 @@ namespace UnityEditor.ProBuilder
 
 			for (int i = 0; i < selection.Length; i++)
 			{
-				ProBuilderMesh pb = selection[i];
+				ProBuilderMesh mesh = selection[i];
 
-				int[] indexes = pb.selectedVertexCount > 0
-					? pb.sharedIndexesInternal.AllIndexesWithValues(pb.selectedIndexesInternal).ToArray()
-					: pb.mesh.triangles;
+				var indexes = mesh.selectedVertexCount > 0
+					? mesh.GetCoincidentVertexes(mesh.selectedIndexesInternal)
+					: mesh.facesInternal.SelectMany(x => x.distinctIndexes);
 
-				Snapping.SnapVertexes(pb, indexes, Vector3.one * snapVal);
+				Snapping.SnapVertexes(mesh, indexes, Vector3.one * snapVal);
 
-				pb.ToMesh();
-				pb.Refresh();
-				pb.Optimize();
+				mesh.ToMesh();
+				mesh.Refresh();
+				mesh.Optimize();
 			}
 
 			Internal_UpdateSelectionFast();

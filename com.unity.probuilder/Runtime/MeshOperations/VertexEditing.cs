@@ -32,30 +32,21 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (indexes == null)
                 throw new ArgumentNullException("indexes");
 
-            Vertex[] vertexes = Vertex.GetVertexes(mesh);
-
+            Vertex[] vertexes = mesh.GetVertexes();
 			Vertex cen = collapseToFirst ? vertexes[indexes[0]] : Vertex.Average(vertexes, indexes);
+			mesh.SetVertexesCoincident(indexes);
+			UVEditing.SplitUVs(mesh, indexes);
+			int sharedVertexHandle = mesh.GetSharedVertexHandle(indexes.First());
+			mesh.SetSharedVertexValues(sharedVertexHandle, cen);
 
-			IntArray[] sharedIndexes = mesh.sharedIndexesInternal;
-			IntArray[] sharedIndexesUV = mesh.sharedIndexesUVInternal;
-
-			int newIndex = IntArrayUtility.MergeSharedIndexes(ref sharedIndexes, indexes);
-			IntArrayUtility.MergeSharedIndexes(ref sharedIndexesUV, indexes);
-
-			mesh.sharedIndexesInternal = sharedIndexes;
-			mesh.sharedIndexesUVInternal = sharedIndexesUV;
-
-			mesh.SetSharedVertexValues(newIndex, cen);
-
-			int[] mergedSharedIndex = mesh.GetSharedIndexes()[newIndex].array;
-
+			SharedVertex merged = mesh.sharedVertexesInternal[sharedVertexHandle];
 			int[] removedIndexes = mesh.RemoveDegenerateTriangles();
 
 			// get a non-deleted index to work with
 			int ind = -1;
-			for(int i = 0; i < mergedSharedIndex.Length; i++)
-				if(!removedIndexes.Contains(mergedSharedIndex[i]))
-					ind = mergedSharedIndex[i];
+			for(int i = 0; i < merged.Count; i++)
+				if(!removedIndexes.Contains(merged[i]))
+					ind = merged[i];
 
 			int res = ind;
 
@@ -85,7 +76,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="mesh">The source mesh.</param>
 		/// <param name="vertexes">A list of vertex indexes to split.</param>
-		/// <seealso cref="UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes"/>
+		/// <seealso cref="ProBuilderMesh.sharedVertexes"/>
 		public static void SplitVertexes(this ProBuilderMesh mesh, IEnumerable<int> vertexes)
 		{
             if (mesh == null)
@@ -95,11 +86,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 throw new ArgumentNullException("vertexes");
 
             // ToDictionary always sets the universal indexes in ascending order from 0+.
-            Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
+			Dictionary<int, int> lookup = mesh.sharedVertexLookup;
 			int max = lookup.Count();
 			foreach(int i in vertexes)
 				lookup[i] = ++max;
-			mesh.SetSharedIndexes(lookup);
+			mesh.SetSharedVertexes(lookup);
 		}
 
         /// <summary>
@@ -117,11 +108,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (indexes == null)
                 throw new ArgumentNullException("indexes");
 
-            Vertex[] vertexes = Vertex.GetVertexes(mesh);
-			IntArray[] sharedIndexes = mesh.sharedIndexesInternal;
+            Vertex[] vertexes = mesh.GetVertexes();
+			SharedVertex[] sharedIndexes = mesh.sharedVertexesInternal;
 
-			Dictionary<int, int> lookup = sharedIndexes.ToDictionary();
-			HashSet<int> common = IntArrayUtility.GetCommonIndexes(lookup, indexes);
+			HashSet<int> common = mesh.GetSharedVertexHandles(indexes);
 			int vertexCount = common.Count;
 
 			// Make assumption that there will rarely be a time when a single weld encompasses more than 32 vertexes.
@@ -205,21 +195,22 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			var welds = new int[remapped.Count];
 			int n = 0;
+			var lookup = mesh.sharedVertexLookup;
 
 			foreach(var kvp in remapped)
 			{
-				int[] tris = sharedIndexes[kvp.Key];
+				SharedVertex tris = sharedIndexes[kvp.Key];
 
 				welds[n++] = tris[0];
 
-				for(int i = 0; i < tris.Length; i++)
+				for(int i = 0; i < tris.Count; i++)
 				{
 					lookup[tris[i]] = kvp.Value;
 					vertexes[tris[i]].position = averages[kvp.Value];
 				}
 			}
 
-			mesh.SetSharedIndexes(lookup);
+			mesh.SetSharedVertexes(lookup);
 			mesh.SetVertexes(vertexes);
 			mesh.ToMesh();
             return welds;

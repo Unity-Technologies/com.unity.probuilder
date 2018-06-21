@@ -44,7 +44,7 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            mesh.TranslateVertexesInWorldSpace(indexes, offset, 0f, false, null);
+            mesh.TranslateVertexesInWorldSpace(indexes, offset, 0f, false);
 		}
 
 		/// <summary>
@@ -57,14 +57,18 @@ namespace UnityEngine.ProBuilder
 		/// <param name="offset">The direction and magnitude to translate selectedTriangles, in world space.</param>
 		/// <param name="snapValue">If > 0 snap each vertex to the nearest on-grid point in world space.</param>
 		/// <param name="snapAxisOnly">If true vertexes will only be snapped along the active axis.</param>
-		/// <param name="lookup">A shared index lookup table.  Can pass NULL to have this automatically calculated.</param>
-		internal static void TranslateVertexesInWorldSpace(this ProBuilderMesh mesh, int[] indexes, Vector3 offset, float snapValue, bool snapAxisOnly, Dictionary<int, int> lookup)
+		internal static void TranslateVertexesInWorldSpace(this ProBuilderMesh mesh,
+			int[] indexes,
+			Vector3 offset,
+			float snapValue,
+			bool snapAxisOnly)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
             int i = 0;
-			int[] distinct = lookup != null ? mesh.sharedIndexesInternal.AllIndexesWithValues(lookup, indexes).ToArray() : mesh.sharedIndexesInternal.AllIndexesWithValues(indexes).ToArray();
+
+			List<int> distinct = mesh.GetCoincidentVertexes(indexes);
 
 			Matrix4x4 w2l = mesh.transform.worldToLocalMatrix;
 
@@ -78,7 +82,7 @@ namespace UnityEngine.ProBuilder
 				Matrix4x4 l2w = mesh.transform.localToWorldMatrix;
 				Vector3 mask = snapAxisOnly ? offset.ToMask(Math.handleEpsilon) : Vector3.one;
 
-				for(i = 0; i < distinct.Length; i++)
+				for(i = 0; i < distinct.Count; i++)
 				{
 					var v = l2w.MultiplyPoint3x4(verts[distinct[i]] + localOffset);
 					verts[distinct[i]] = w2l.MultiplyPoint3x4( Snapping.SnapValue(v, snapValue * mask) );
@@ -86,7 +90,7 @@ namespace UnityEngine.ProBuilder
 			}
 			else
 			{
-				for(i = 0; i < distinct.Length; i++)
+				for(i = 0; i < distinct.Count; i++)
 					verts[distinct[i]] += localOffset;
 			}
 
@@ -108,11 +112,10 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			int[] all = mesh.sharedIndexesInternal.AllIndexesWithValues(indexes).ToArray();
-
+			List<int> all = mesh.GetCoincidentVertexes(indexes);
 			Vector3[] verts = mesh.positionsInternal;
 
-			for(int i = 0, c = all.Length; i < c; i++)
+			for(int i = 0, c = all.Count; i < c; i++)
 				verts[all[i]] += offset;
 
 			// don't bother calling a full ToMesh() here because we know for certain that the vertexes and msh.vertices arrays are equal in length
@@ -126,18 +129,17 @@ namespace UnityEngine.ProBuilder
 		/// Use @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" and IntArrayUtility.IndexOf to get a shared (or common) index.
 		/// </summary>
 		/// <param name="mesh">The target mesh.</param>
-		/// <param name="sharedIndex">The shared (or common) index to set the vertex position of.</param>
+		/// <param name="sharedVertexHandle">The shared (or common) index to set the vertex position of.</param>
 		/// <param name="position">The new position in model coordinates.</param>
-		public static void SetSharedVertexPosition(this ProBuilderMesh mesh, int sharedIndex, Vector3 position)
+		public static void SetSharedVertexPosition(this ProBuilderMesh mesh, int sharedVertexHandle, Vector3 position)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
             Vector3[] v = mesh.positionsInternal;
-			int[] array = mesh.sharedIndexesInternal[sharedIndex].array;
 
-			for(int i = 0; i < array.Length; i++)
-				v[array[i]] = position;
+			foreach(var index in mesh.sharedVertexesInternal[sharedVertexHandle])
+				v[index] = position;
 
 			mesh.positions = v;
 			mesh.mesh.vertices = v;
@@ -148,19 +150,17 @@ namespace UnityEngine.ProBuilder
 		/// <br /><br />
 		/// Use @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" and IntArrayUtility.IndexOf to get a shared (or common) index.
 		/// </summary>
-		/// <param name="pb"></param>
-		/// <param name="sharedIndex"></param>
+		/// <param name="mesh"></param>
+		/// <param name="sharedVertexHandle"></param>
 		/// <param name="vertex"></param>
-		internal static void SetSharedVertexValues(this ProBuilderMesh pb, int sharedIndex, Vertex vertex)
+		internal static void SetSharedVertexValues(this ProBuilderMesh mesh, int sharedVertexHandle, Vertex vertex)
 		{
-			Vertex[] vertexes = Vertex.GetVertexes(pb);
+			Vertex[] vertexes = mesh.GetVertexes();
 
-			int[] array = pb.sharedIndexesInternal[sharedIndex].array;
+			foreach(var index in mesh.sharedVertexesInternal[sharedVertexHandle])
+				vertexes[index] = vertex;
 
-			for(int i = 0; i < array.Length; i++)
-				vertexes[array[i]] = vertex;
-
-			pb.SetVertexes(vertexes);
+			mesh.SetVertexes(vertexes);
 		}
 	}
 }

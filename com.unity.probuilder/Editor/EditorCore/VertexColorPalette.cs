@@ -198,26 +198,26 @@ namespace UnityEditor.ProBuilder
 				switch (editor.selectionMode)
 				{
 					case SelectMode.Face:
-						foreach (ProBuilderMesh pb in selection)
+						foreach (ProBuilderMesh mesh in selection)
 						{
-							Color[] colors = pb.colorsInternal;
+							Color[] colors = mesh.GetColors();
 
-							foreach (int i in pb.selectedIndexesInternal)
+							foreach (int i in mesh.selectedIndexesInternal)
 								colors[i] = col;
 
-							pb.colors = colors;
+							mesh.colors = colors;
 						}
 						break;
 					case SelectMode.Edge:
 					case SelectMode.Vertex:
-						foreach (ProBuilderMesh pb in selection)
+						foreach (var mesh in selection)
 						{
-							Color[] colors = pb.colorsInternal;
+							Color[] colors = mesh.GetColors();
 
-							foreach (int i in pb.sharedIndexesInternal.AllIndexesWithValues(pb.selectedIndexesInternal))
+							foreach (int i in mesh.GetCoincidentVertexes(mesh.selectedIndexesInternal))
 								colors[i] = col;
 
-							pb.colors = colors;
+							mesh.colors = colors;
 						}
 						break;
 				}

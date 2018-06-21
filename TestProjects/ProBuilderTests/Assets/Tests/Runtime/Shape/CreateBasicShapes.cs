@@ -125,8 +125,8 @@ namespace UnityEngine.ProBuilder.RuntimeTests.Shape
 					Assert.NotNull(pb.positionsInternal, pb.name);
 					Assert.NotNull(pb.facesInternal, pb.name);
 					Assert.NotNull(pb.texturesInternal, pb.name);
-					Assert.NotNull(pb.sharedIndexesInternal, pb.name);
-					Assert.NotNull(pb.sharedIndexesUVInternal, pb.name);
+					Assert.NotNull(pb.sharedVertexesInternal, pb.name);
+					Assert.NotNull(pb.sharedTextures, pb.name);
 				}
 			}
 		}

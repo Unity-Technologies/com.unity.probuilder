@@ -156,7 +156,7 @@ namespace UnityEngine.ProBuilder
 			}
 			else
 			{
-				target = ProBuilderMesh.CreateInstanceWithVertexesFaces(positions, faces);
+				target = ProBuilderMesh.Create(positions, faces);
 			}
 		}
 

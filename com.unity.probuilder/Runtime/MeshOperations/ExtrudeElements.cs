@@ -48,8 +48,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (edges == null)
                 throw new ArgumentNullException("edges");
 
-            IntArray[] sharedIndexes = mesh.sharedIndexesInternal;
-			Dictionary<int, int> lookup = sharedIndexes.ToDictionary();
+            SharedVertex[] sharedIndexes = mesh.sharedVertexesInternal;
 
 			List<Edge> validEdges = new List<Edge>();
 			List<Face> edgeFaces = new List<Face>();
@@ -59,11 +58,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				int faceCount = 0;
 				Face fa = null;
 
-				foreach(Face f in mesh.facesInternal)
+				foreach(Face face in mesh.facesInternal)
 				{
-					if(f.edgesInternal.IndexOf(e, lookup) > -1)
+					if(mesh.IndexOf(face.edgesInternal, e) > -1)
 					{
-						fa = f;
+						fa = face;
 
 						if(++faceCount > 1)
 							break;
@@ -104,11 +103,16 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				Face face = edgeFaces[i];
 
 				// Averages the normals using only vertexes that are on the edge
-				Vector3 xnorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndexes( sharedIndexes[lookup[edge.a]], allEdgeIndexes, oNormals ) : Math.Normal(mesh, face);
-				Vector3 ynorm = extrudeAsGroup ? InternalMeshUtility.AverageNormalWithIndexes( sharedIndexes[lookup[edge.b]], allEdgeIndexes, oNormals ) : Math.Normal(mesh, face);
+				Vector3 xnorm = extrudeAsGroup
+					? InternalMeshUtility.AverageNormalWithIndexes(sharedIndexes[mesh.GetSharedVertexHandle(edge.a)], allEdgeIndexes, oNormals)
+					: Math.Normal(mesh, face);
 
-				int x_sharedIndex = lookup[edge.a];
-				int y_sharedIndex = lookup[edge.b];
+				Vector3 ynorm = extrudeAsGroup
+					? InternalMeshUtility.AverageNormalWithIndexes(sharedIndexes[mesh.GetSharedVertexHandle(edge.b)], allEdgeIndexes, oNormals)
+					: Math.Normal(mesh, face);
+
+				int x_sharedIndex = mesh.GetSharedVertexHandle(edge.a);
+				int y_sharedIndex = mesh.GetSharedVertexHandle(edge.b);
 
 				Face newFace = mesh.AppendFace(
 					new Vector3[4]
@@ -137,7 +141,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				extrudedIndexes.Add(new Edge(y_sharedIndex, newFace.indexesInternal[4]));
 			}
 
-			sharedIndexes = mesh.sharedIndexesInternal;
+			sharedIndexes = mesh.sharedVertexesInternal;
 
 			// merge extruded vertex indexes with each other
 			if(extrudeAsGroup)
@@ -145,21 +149,22 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				for(int i = 0; i < extrudedIndexes.Count; i++)
 				{
 					int val = extrudedIndexes[i].a;
+
 					for(int n = 0; n < extrudedIndexes.Count; n++)
 					{
 						if(n == i)
 							continue;
 
-						if(extrudedIndexes[n].a == val)
+						if (extrudedIndexes[n].a == val)
 						{
-							IntArrayUtility.MergeSharedIndexes(ref sharedIndexes, extrudedIndexes[n].b, extrudedIndexes[i].b);
+							mesh.SetVertexesCoincident(new int[] { extrudedIndexes[n].b, extrudedIndexes[i].b });
 							break;
 						}
 					}
 				}
 			}
 
-			mesh.sharedIndexesInternal = sharedIndexes;
+			mesh.sharedVertexesInternal = sharedIndexes;
 
 			// todo Should only need to invalidate caches on affected faces
 			foreach(Face f in mesh.facesInternal)
@@ -182,9 +187,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (faces == null)
                 throw new System.ArgumentNullException("faces");
 
-			List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(mesh));
-			int sharedIndexOffset = mesh.sharedIndexesInternal.Length;
-			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
+			List<Vertex> vertexes = new List<Vertex>(mesh.GetVertexes());
+			int sharedIndexOffset = mesh.sharedVertexesInternal.Length;
+			var lookup = mesh.sharedVertexLookup;
 
 			List<FaceRebuildData> detached = new List<FaceRebuildData>();
 
@@ -220,7 +225,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				detached.Add(data);
 			}
 
-			FaceRebuildData.Apply(detached, mesh, vertexes, null, lookup);
+			FaceRebuildData.Apply(detached, mesh, vertexes);
 			mesh.DeleteFaces(faces);
 
 			mesh.ToMesh();
@@ -242,12 +247,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			if(!faceArray.Any())
 				return null;
 
-			List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(pb));
-			int sharedIndexMax = pb.sharedIndexesInternal.Length;
+			List<Vertex> vertexes = new List<Vertex>(pb.GetVertexes());
+			int sharedIndexMax = pb.sharedVertexesInternal.Length;
 			int sharedIndexOffset = 0;
 			int faceIndex = 0;
-			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
-			Dictionary<int, int> lookupUV = pb.sharedIndexesUVInternal.ToDictionary();
+			Dictionary<int, int> lookup = pb.sharedVertexLookup;
+			Dictionary<int, int> lookupUV = pb.sharedTextureLookup;
 			Dictionary<int, int> used = new Dictionary<int, int>();
 			Face[] newFaces = new Face[faceArray.Sum(x => x.edges.Count)];
 
@@ -324,8 +329,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Array.Copy(pb.facesInternal, 0, appended, 0, fc);
 			Array.Copy(newFaces, 0, appended, fc, nc);
 			pb.faces = appended;
-			pb.SetSharedIndexes(lookup);
-			pb.SetSharedIndexesUV(lookupUV);
+			pb.SetSharedVertexes(lookup);
+			pb.SetSharedTextures(lookupUV);
 
 			return newFaces;
 		}
@@ -333,21 +338,21 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Extrude faces as groups.
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="faces"></param>
 		/// <param name="compensateAngleVertexDistance"></param>
 		/// <param name="distance"></param>
 		/// <returns></returns>
-		static Face[] ExtrudeAsGroups(ProBuilderMesh pb, IEnumerable<Face> faces, bool compensateAngleVertexDistance, float distance)
+		static Face[] ExtrudeAsGroups(ProBuilderMesh mesh, IEnumerable<Face> faces, bool compensateAngleVertexDistance, float distance)
 		{
 			if(faces == null || !faces.Any())
 				return null;
 
-			List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(pb));
-			int sharedIndexMax = pb.sharedIndexesInternal.Length;
+			List<Vertex> vertexes = new List<Vertex>(mesh.GetVertexes());
+			int sharedIndexMax = mesh.sharedVertexesInternal.Length;
 			int sharedIndexOffset = 0;
-			Dictionary<int, int> lookup = pb.sharedIndexesInternal.ToDictionary();
-			Dictionary<int, int> lookupUV = pb.sharedIndexesUVInternal.ToDictionary();
+			Dictionary<int, int> lookup = mesh.sharedVertexLookup;
+			Dictionary<int, int> lookupUV = mesh.sharedTextureLookup;
 
 			List<Face> newFaces = new List<Face>();
 			// old triangle index -> old shared index
@@ -360,7 +365,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			// key[shared index], value[normal count, normal sum]
 			Dictionary<int, SimpleTuple<Vector3, Vector3, List<int>>> extrudeMap = new Dictionary<int, SimpleTuple<Vector3, Vector3,List<int>>>();
 
-			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb, faces, true, lookup);
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh, faces, true);
 			List<HashSet<Face>> groups = GetFaceGroups(wings);
 
 			foreach(HashSet<Face> group in groups)
@@ -445,7 +450,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					// @todo keep together if possible
 					face.textureGroup = -1;
 
-					Vector3 normal = Math.Normal(pb, face);
+					Vector3 normal = Math.Normal(mesh, face);
 
 					for(int i = 0; i < face.distinctIndexesInternal.Length; i++)
 					{
@@ -499,17 +504,17 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			foreach(var kvp in delayPosition)
 				vertexes[kvp.Key] = new Vertex(vertexes[kvp.Value]);
 
-			pb.SetVertexes(vertexes);
+			mesh.SetVertexes(vertexes);
 
-			var fc = pb.faceCount;
+			var fc = mesh.faceCount;
 			var nc = newFaces.Count;
 			var appended = new Face[fc + nc];
-			Array.Copy(pb.facesInternal, 0, appended, 0, fc);
+			Array.Copy(mesh.facesInternal, 0, appended, 0, fc);
 			for (int i = fc, c = fc + nc; i < c; i++)
 				appended[i] = newFaces[i - fc];
-			pb.faces = appended;
-			pb.SetSharedIndexes(lookup);
-			pb.SetSharedIndexesUV(lookupUV);
+			mesh.faces = appended;
+			mesh.SetSharedVertexes(lookup);
+			mesh.SetSharedTextures(lookupUV);
 
 			return newFaces.ToArray();
 		}

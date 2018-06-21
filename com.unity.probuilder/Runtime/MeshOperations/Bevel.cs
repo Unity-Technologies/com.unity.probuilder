@@ -24,8 +24,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
-			List<Vertex> vertexes = new List<Vertex>(Vertex.GetVertexes(mesh));
+			Dictionary<int, int> lookup = mesh.sharedVertexLookup;
+			List<Vertex> vertexes = new List<Vertex>(mesh.GetVertexes());
 			List<EdgeLookup> m_edges = EdgeLookup.GetEdgeLookup(edges, lookup).Distinct().ToList();
 			List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh);
 			List<FaceRebuildData> appendFaces = new List<FaceRebuildData>();
@@ -146,12 +146,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			FaceRebuildData.Apply(appendFaces, mesh, vertexes);
 			int removed = mesh.DeleteFaces(sorted.Keys).Length;
-			mesh.SetSharedIndexesUV(new IntArray[0]);
-			mesh.sharedIndexes = IntArrayUtility.GetSharedIndexesWithPositions(mesh.positionsInternal);
+			mesh.sharedTextures = new SharedVertex[0];
+			mesh.sharedVertexes = SharedVertex.GetSharedVertexesWithPositions(mesh.positionsInternal);
 
 			// @todo don't rebuild indexes, keep 'em cached
-			IntArray[] sharedIndexes = mesh.sharedIndexesInternal;
-			lookup = sharedIndexes.ToDictionary();
+			SharedVertex[] sharedIndexes = mesh.sharedVertexesInternal;
+			lookup = mesh.sharedVertexLookup;
 			List<HashSet<int>> holesCommonIndexes = new List<HashSet<int>>();
 
 			// offset the indexes of holes and cull any potential holes that are less than 3 indexes (not a hole :)
@@ -177,7 +177,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			List<WingedEdge> modified = WingedEdge.GetWingedEdges(mesh, appendFaces.Select(x => x.face));
 
 			// now go through the holes and create faces for them
-			vertexes = new List<Vertex>( Vertex.GetVertexes(mesh) );
+			vertexes = new List<Vertex>( mesh.GetVertexes() );
 
 			List<FaceRebuildData> holeFaces = new List<FaceRebuildData>();
 
@@ -192,20 +192,20 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				// skip sorting the path if it's just a triangle
 				if(h.Count < 4)
 				{
-					List<Vertex> v = new List<Vertex>( Vertex.GetVertexes(mesh, h.Select(x => sharedIndexes[x][0]).ToList()) );
+					List<Vertex> v = new List<Vertex>( mesh.GetVertexes(h.Select(x => sharedIndexes[x][0]).ToList()) );
 					holeFaces.Add(AppendElements.FaceWithVertexes(v));
 				}
 				// if this hole has > 3 indexes, it needs a tent pole triangulation, which requires sorting into the perimeter order
 				else
 				{
 					List<int> holePath = WingedEdge.SortCommonIndexesByAdjacency(modified, h);
-					List<Vertex> v = new List<Vertex>( Vertex.GetVertexes(mesh, holePath.Select(x => sharedIndexes[x][0]).ToList()) );
+					List<Vertex> v = new List<Vertex>( mesh.GetVertexes(holePath.Select(x => sharedIndexes[x][0]).ToList()) );
 					holeFaces.AddRange( AppendElements.TentCapWithVertexes(v) );
 				}
 			}
 
 			FaceRebuildData.Apply(holeFaces, mesh, vertexes);
-			mesh.sharedIndexes = IntArrayUtility.GetSharedIndexesWithPositions(mesh.positionsInternal);
+			mesh.sharedVertexes = SharedVertex.GetSharedVertexesWithPositions(mesh.positionsInternal);
 
 			// go through new faces and conform hole normals
 			// get a hash of just the adjacent and bridge faces

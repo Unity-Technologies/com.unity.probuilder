@@ -28,8 +28,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (faces == null)
                 throw new System.ArgumentNullException("faces");
 
-            List<Vertex> vertexes = new List<Vertex>( Vertex.GetVertexes(mesh) );
-			Dictionary<int, int> lookup = mesh.sharedIndexesInternal.ToDictionary();
+            List<Vertex> vertexes = new List<Vertex>( mesh.GetVertexes() );
+			Dictionary<int, int> lookup = mesh.sharedVertexLookup;
 
 			List<FaceRebuildData> rebuild = new List<FaceRebuildData>();
 
@@ -39,7 +39,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				rebuild.AddRange(res);
 			}
 
-			FaceRebuildData.Apply(rebuild, mesh, vertexes, null, lookup, null);
+			FaceRebuildData.Apply(rebuild, mesh, vertexes, null);
 			mesh.DeleteFaces(faces);
 			mesh.ToMesh();
 

@@ -26,10 +26,20 @@ namespace UnityEditor.ProBuilder.Actions
 			return true;
 		}
 
+		protected override MenuActionState OptionsMenuState()
+		{
+			return MenuActionState.VisibleAndEnabled;
+		}
+
 		public override ActionResult DoAction()
 		{
+			ShapeEditor.MenuCreateCube();
+			return new ActionResult(ActionResult.Status.Success, "Create Shape");
+		}
+
+		protected override void DoAlternativeAction()
+		{
 			ShapeEditor.MenuOpenShapeCreator();
-			return new ActionResult(ActionResult.Status.Success, "Open Shape Tool");
 		}
 	}
 }
