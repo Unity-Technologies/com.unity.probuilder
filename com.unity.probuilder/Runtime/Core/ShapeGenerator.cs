@@ -1326,7 +1326,7 @@ namespace UnityEngine.ProBuilder
 			}
 			else
 			{
-				pb.sharedVertexesInternal = SharedVertexesUtility.GetSharedIndexesWithPositions(v);
+				pb.sharedVertexesInternal = SharedVertex.GetSharedVertexesWithPositions(v);
 			}
 
 			pb.ToMesh();

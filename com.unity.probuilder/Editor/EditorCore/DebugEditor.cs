@@ -104,7 +104,7 @@ namespace UnityEditor.ProBuilder
 
 			var sharedVertexes = mesh.sharedTextures;
 
-			for (int i = 0; i < sharedVertexes.Length; i++)
+			for (int i = 0; sharedVertexes != null && i < sharedVertexes.Length; i++)
 				GUILayout.Label(sharedVertexes[i].ToString(", "));
 		}
 

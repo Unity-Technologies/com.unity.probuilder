@@ -10,7 +10,7 @@ namespace UnityEngine.ProBuilder
 {
 	/// <inheritdoc />
 	/// <summary>
-	/// Defines associations between vertex positions that are coincident. This is a list of the indexes that share a common position in model space.
+	/// Defines associations between vertex positions that are coincident. The indexes stored in this collection correspond to the ProBuilderMesh.positions array.
 	/// <br />
 	/// <br />
 	/// Coincident vertexes are vertexes that despite sharing the same coordinate position, are separate entries in the vertex array.
@@ -23,11 +23,11 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		[SerializeField]
 		[FormerlySerializedAs("array")]
-		int[] m_Indexes;
+		int[] m_Vertexes;
 
 		internal int[] arrayInternal
 		{
-			get { return m_Indexes; }
+			get { return m_Vertexes; }
 		}
 
 		/// <summary>
@@ -38,7 +38,7 @@ namespace UnityEngine.ProBuilder
 		{
 			if (indexes == null)
 				throw new ArgumentNullException("indexes");
-			m_Indexes = indexes.ToArray();
+			m_Vertexes = indexes.ToArray();
 		}
 
 		/// <summary>
@@ -49,8 +49,8 @@ namespace UnityEngine.ProBuilder
 		{
 			if (sharedVertex == null)
 				throw new ArgumentNullException("sharedVertex");
-			m_Indexes = new int[sharedVertex.Count];
-			Array.Copy(sharedVertex.m_Indexes, m_Indexes, m_Indexes.Length);
+			m_Vertexes = new int[sharedVertex.Count];
+			Array.Copy(sharedVertex.m_Vertexes, m_Vertexes, m_Vertexes.Length);
 		}
 
 		/// <summary>
@@ -59,86 +59,75 @@ namespace UnityEngine.ProBuilder
 		/// <param name="i">The index to access.</param>
 		public int this[int i]
 		{
-			get { return m_Indexes[i]; }
-			set { m_Indexes[i] = value; }
+			get { return m_Vertexes[i]; }
+			set { m_Vertexes[i] = value; }
 		}
 
+		/// <inheritdoc />
 		public IEnumerator<int> GetEnumerator()
 		{
-			return ((IEnumerable<int>) m_Indexes).GetEnumerator();
+			return ((IEnumerable<int>) m_Vertexes).GetEnumerator();
 		}
 
+		/// <inheritdoc />
 		public override string ToString()
 		{
-			return m_Indexes.ToString(",");
+			return m_Vertexes.ToString(",");
 		}
 
+		/// <inheritdoc />
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();
 		}
 
+		/// <inheritdoc />
 		public void Add(int item)
 		{
-			m_Indexes = ArrayUtility.Add(m_Indexes, item);
+			m_Vertexes = ArrayUtility.Add(m_Vertexes, item);
 		}
 
+		/// <inheritdoc />
 		public void Clear()
 		{
-			m_Indexes = new int[0];
+			m_Vertexes = new int[0];
 		}
 
+		/// <inheritdoc />
 		public bool Contains(int item)
 		{
-			return Array.IndexOf(m_Indexes, item) > -1;
+			return Array.IndexOf(m_Vertexes, item) > -1;
 		}
 
+		/// <inheritdoc />
 		public void CopyTo(int[] array, int arrayIndex)
 		{
-			m_Indexes.CopyTo(array, arrayIndex);
+			m_Vertexes.CopyTo(array, arrayIndex);
 		}
 
+		/// <inheritdoc />
 		public bool Remove(int item)
 		{
-			int ind = Array.IndexOf(m_Indexes, item);
+			int ind = Array.IndexOf(m_Vertexes, item);
 			if (ind < 0)
 				return false;
-			m_Indexes = m_Indexes.RemoveAt(item);
+			m_Vertexes = m_Vertexes.RemoveAt(item);
 			return true;
 		}
 
+		/// <inheritdoc />
 		public int Count
 		{
-			get { return m_Indexes.Length; }
+			get { return m_Vertexes.Length; }
 		}
 
+		/// <inheritdoc />
 		public bool IsReadOnly
 		{
-			get { return m_Indexes.IsReadOnly; }
+			get { return m_Vertexes.IsReadOnly; }
 		}
 
-		/// <summary>
-		/// Remove any arrays that are null or empty.
-		/// </summary>
-		/// <param name="array">The IntArray[] to scan for null or empty entries.</param>
-		/// <returns>A new IntArray[] with no null or empty entries</returns>
-		public static SharedVertex[] RemoveEmptyOrNull(SharedVertex[] array)
-		{
-			if (array == null)
-				throw new ArgumentNullException("array");
-
-			List<SharedVertex> valid = new List<SharedVertex>();
-
-			foreach (var par in array)
-			{
-				if (par != null && par.Any())
-					valid.Add(par);
-			}
-
-			return valid.ToArray();
-		}
-
-		public static void GetSharedVertexLookup(IEnumerable<SharedVertex> sharedVertexes, Dictionary<int, int> lookup)
+		internal static void GetSharedVertexLookup(IEnumerable<SharedVertex> sharedVertexes, Dictionary<int, int> lookup)
 		{
 			lookup.Clear();
 			int commonIndex = 0;
@@ -155,10 +144,130 @@ namespace UnityEngine.ProBuilder
 			}
 		}
 
-		public void ShiftIndexes(int offset)
+		internal void ShiftIndexes(int offset)
 		{
 			for (int i = 0, c = Count; i < c; i++)
-				m_Indexes[i] += offset;
+				m_Vertexes[i] += offset;
+		}
+
+		/// <summary>
+		/// Convert a lookup dictionary (<see cref="SharedVertex.GetSharedVertexLookup"/>) back to <see cref="SharedVertex"/>[].
+		/// </summary>
+		/// <param name="lookup">A Dictionary where Key corresponds to a vertex index, and Value to a common index.</param>
+		/// <returns>A new IntArray[] converted from the lookup dictionary.</returns>
+		internal static SharedVertex[] ToSharedVertexes(IEnumerable<KeyValuePair<int, int>> lookup)
+		{
+			if(lookup == null)
+				return new SharedVertex[0];
+
+			Dictionary<int, int> map = new Dictionary<int, int>();
+			List<List<int>> shared = new List<List<int>>();
+
+			foreach(var kvp in lookup)
+			{
+				if(kvp.Value < 0)
+				{
+					shared.Add(new List<int>() { kvp.Key });
+				}
+				else
+				{
+					int index = -1;
+
+					if(map.TryGetValue(kvp.Value, out index))
+					{
+						shared[index].Add(kvp.Key);
+					}
+					else
+					{
+						map.Add(kvp.Value, shared.Count);
+						shared.Add(new List<int>() { kvp.Key });
+					}
+				}
+			}
+
+			return ToSharedVertexes(shared);
+		}
+
+		static SharedVertex[] ToSharedVertexes(List<List<int>> list)
+		{
+            if (list == null)
+                throw new ArgumentNullException("list");
+			SharedVertex[] arr = new SharedVertex[list.Count];
+			for(int i = 0; i < arr.Length; i++)
+				arr[i] = new SharedVertex(list[i]);
+			return arr;
+		}
+
+		/// <summary>
+		/// Create a new array of SharedVertex objects by comparing points in the passed positions collection.
+		/// </summary>
+		/// <example>
+		/// ```
+		/// <![CDATA[var mesh = gameObject.AdComponent<ProBuilderMesh>();]]>
+		/// mesh.SetPositions(myNewPositions);
+		/// mesh.SetFaces(myNewFaces);
+		/// mesh.SetSharedIndexes(SharedVertex.GetSharedVertexesWithPositions(myNewPositions));
+		/// ```
+		/// </example>
+		/// <param name="positions">A collection of Vector3 positions to be tested for equality.</param>
+		/// <returns>A new SharedVertex[] where each SharedIndex is a list of indexes that are sharing the same position.</returns>
+		public static SharedVertex[] GetSharedVertexesWithPositions(IList<Vector3> positions)
+		{
+            if (positions == null)
+                throw new ArgumentNullException("positions");
+
+			Dictionary<IntVec3, List<int>> sorted = new Dictionary<IntVec3, List<int>>();
+
+			for(int i = 0; i < positions.Count; i++)
+			{
+				List<int> ind;
+				if( sorted.TryGetValue(positions[i], out ind) )
+					ind.Add(i);
+				else
+					sorted.Add(new IntVec3(positions[i]), new List<int>() { i });
+			}
+
+			SharedVertex[] share = new SharedVertex[sorted.Count];
+
+			int t = 0;
+			foreach(KeyValuePair<IntVec3, List<int>> kvp in sorted)
+				share[t++] = new SharedVertex( kvp.Value.ToArray() );
+
+			return share;
+		}
+
+		internal static SharedVertex[] RemoveAndShift(Dictionary<int, int> lookup, IEnumerable<int> remove)
+		{
+			var removedVertexes = new List<int>(remove);
+			removedVertexes.Sort();
+			return SortedRemoveAndShift(lookup, removedVertexes);
+		}
+
+		internal static SharedVertex[] SortedRemoveAndShift(Dictionary<int, int> lookup, List<int> remove)
+		{
+			foreach(int i in remove)
+				lookup[i] = -1;
+
+			var shared = ToSharedVertexes(lookup.Where(x => x.Value > -1));
+
+			for(int i = 0, c = shared.Length; i < c; i++)
+			{
+				for(int n = 0, l = shared[i].Count; n < l; n++)
+				{
+					int index = ArrayUtility.NearestIndexPriorToValue(remove, shared[i][n]);
+					// add 1 because index is zero based
+					shared[i][n] -= index + 1;
+				}
+			}
+
+			return shared;
+		}
+
+		internal static void SetCoincident(Dictionary<int, int> lookup, IEnumerable<int> vertexes)
+		{
+			int index = lookup.Count;
+			foreach (var v in vertexes)
+				lookup[v] = index;
 		}
 	}
 }

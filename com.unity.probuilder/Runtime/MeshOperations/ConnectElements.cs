@@ -276,7 +276,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			pb.sharedTextures = new SharedVertex[0];
 			int removedVertexCount = pb.DeleteFaces(affected.Keys).Length;
-			pb.sharedVertexes = SharedVertexesUtility.GetSharedIndexesWithPositions(pb.positionsInternal);
+			pb.sharedVertexes = SharedVertex.GetSharedVertexesWithPositions(pb.positionsInternal);
 			pb.ToMesh();
 
 			// figure out where the new edges where inserted

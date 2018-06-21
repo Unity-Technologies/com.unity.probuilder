@@ -1,4 +1,4 @@
-	using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.Serialization;
@@ -18,6 +18,11 @@ namespace UnityEngine.ProBuilder
     public sealed partial class ProBuilderMesh : MonoBehaviour, ISerializationCallbackReceiver
     {
 	    const int k_UVChannelCount = 4;
+
+	    /// <summary>
+	    /// The maximum number of vertexes that a ProBuilderMesh can accomodate.
+	    /// </summary>
+	    public const uint maxVertexCount = ushort.MaxValue;
 
         [SerializeField]
         [FormerlySerializedAs("_quads")]
@@ -135,7 +140,7 @@ namespace UnityEngine.ProBuilder
 	    /// <value>
 	    /// A collection of the @"UnityEngine.ProBuilder.Face"'s that make up this mesh.
 	    /// </value>
-	    public IEnumerable<Face> faces
+	    public IList<Face> faces
 	    {
 		    get { return new ReadOnlyCollection<Face>(m_Faces); }
 		    set
@@ -177,7 +182,7 @@ namespace UnityEngine.ProBuilder
 	    /// <value>
 	    /// The shared (or common) index array for this mesh.
 	    /// </value>
-	    public IEnumerable<SharedVertex> sharedVertexes
+	    public IList<SharedVertex> sharedVertexes
 	    {
 		    get { return new ReadOnlyCollection<SharedVertex>(m_SharedVertexes); }
 
@@ -186,18 +191,16 @@ namespace UnityEngine.ProBuilder
 			    if (value == null)
 				    throw new ArgumentNullException("value");
 
-			    var indexes = value.ToArray();
-			    int len = indexes.Length;
+			    int len = value.Count;
 			    m_SharedVertexes = new SharedVertex[len];
-
 			    for (var i = 0; i < len; i++)
-				    m_SharedVertexes[i] = new SharedVertex(indexes[i]);
+				    m_SharedVertexes[i] = new SharedVertex(value[i]);
 
 			    InvalidateSharedVertexLookup();
 		    }
 	    }
 
-	    public Dictionary<int, int> sharedVertexLookup
+	    internal Dictionary<int, int> sharedVertexLookup
 	    {
 		    get
 		    {
@@ -209,19 +212,6 @@ namespace UnityEngine.ProBuilder
 		    }
 	    }
 
-	    /// <value>
-	    /// Get a copy of the shared (or common) index array for this mesh.
-	    /// </value>
-	    /// <seealso cref="sharedVertexes"/>
-	    public SharedVertex[] GetSharedIndexes()
-	    {
-		    int len = m_SharedVertexes.Length;
-		    SharedVertex[] copy = new SharedVertex[len];
-		    for(var i = 0; i < len; i++)
-			    copy[i] = new SharedVertex(m_SharedVertexes[i]);
-		    return copy;
-	    }
-
 	    /// <summary>
 	    /// Set the sharedIndexes array for this mesh with a lookup dictionary.
 	    /// </summary>
@@ -229,11 +219,11 @@ namespace UnityEngine.ProBuilder
 	    /// The new sharedIndexes array.
 	    /// </param>
 	    /// <seealso cref="sharedVertexes"/>
-	    public void SetSharedVertexes(IEnumerable<KeyValuePair<int, int>> indexes)
+	    internal void SetSharedVertexes(IEnumerable<KeyValuePair<int, int>> indexes)
 	    {
 		    if (indexes == null)
 			    throw new ArgumentNullException("indexes");
-		    m_SharedVertexes = SharedVertexesUtility.ToSharedVertexes(indexes);
+		    m_SharedVertexes = SharedVertex.ToSharedVertexes(indexes);
 		    InvalidateSharedVertexLookup();
 	    }
 
@@ -270,7 +260,7 @@ namespace UnityEngine.ProBuilder
 	    {
 		    if (indexes == null)
 			    throw new ArgumentNullException("indexes");
-		    m_SharedTextures = SharedVertexesUtility.ToSharedVertexes(indexes);
+		    m_SharedTextures = SharedVertex.ToSharedVertexes(indexes);
 		    InvalidateSharedTextureLookup();
 	    }
 
@@ -283,7 +273,7 @@ namespace UnityEngine.ProBuilder
 	    /// <value>
 	    /// The vertex positions that make up this mesh.
 	    /// </value>
-        public IEnumerable<Vector3> positions
+        public IList<Vector3> positions
         {
             get { return new ReadOnlyCollection<Vector3>(m_Positions); }
 		    set
@@ -450,7 +440,7 @@ namespace UnityEngine.ProBuilder
 		/// <value>
 		/// Vertex colors array for this mesh. When setting, the value must match the length of positions.
 		/// </value>
-	    public IEnumerable<Color> colors
+	    public IList<Color> colors
         {
             get { return m_Colors != null ? new ReadOnlyCollection<Color>(m_Colors) : null; }
 
@@ -483,7 +473,7 @@ namespace UnityEngine.ProBuilder
 		/// To get the generated tangents that are applied to the mesh through Refresh(), use GetTangents().
 		/// </remarks>
 		/// <seealso cref="GetTangents"/>
-	    public IEnumerable<Vector4> tangents
+	    public IList<Vector4> tangents
 	    {
 			get
 			{
@@ -524,7 +514,7 @@ namespace UnityEngine.ProBuilder
 	    /// The UV0 channel. Null if not present.
 	    /// </value>
 	    /// <seealso cref="GetUVs"/>
-	    public IEnumerable<Vector2> textures
+	    public IList<Vector2> textures
 	    {
 		    get { return m_Textures0 != null ? new ReadOnlyCollection<Vector2>(m_Textures0) : null; }
 		    set
