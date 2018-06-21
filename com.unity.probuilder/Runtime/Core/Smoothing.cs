@@ -6,33 +6,36 @@ namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// Utilities for working with smoothing groups. Smoothing groups are how ProBuilder defines hard and soft edges.
+	/// ProBuilder calculates vertex normals by first calculating the normal for every face, which in turn is applied to each
+	/// vertex that makes up the face. Afterwards, each vertex normal is averaged with coincident vertexes belonging to the
+	/// same smoothing group.
 	/// </summary>
 	public static class Smoothing
 	{
 		/// <value>
 		/// Faces with smoothingGroup = 0 are hard edges. Historically negative values were sometimes also written as hard edges.
 		/// </value>
-		public const int smoothingGroupNone = 0;
+		internal const int smoothingGroupNone = 0;
 
 		/// <value>
 		/// Smoothing groups 1-24 are smooth.
 		/// </value>
-		public const int smoothRangeMin = 1;
+		internal const int smoothRangeMin = 1;
 
 		/// <value>
 		/// Smoothing groups 1-24 are smooth.
 		/// </value>
-		public const int smoothRangeMax = 24;
+		internal const int smoothRangeMax = 24;
 
 		/// <value>
 		/// Smoothing groups 25-42 are hard. Note that this is obsolete, and generally hard faces should be marked smoothingGroupNone.
 		/// </value>
-		public const int hardRangeMin = 25;
+		internal const int hardRangeMin = 25;
 
 		/// <value>
 		/// Smoothing groups 25-42 are hard. Note that this is soon to be obsolete, and generally hard faces should be marked smoothingGroupNone.
 		/// </value>
-		public const int hardRangeMax = 42;
+		internal const int hardRangeMax = 42;
 
 		/// <summary>
 		/// Get the first available unused smoothing group.
