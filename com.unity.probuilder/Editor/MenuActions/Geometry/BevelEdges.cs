@@ -38,7 +38,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return 	ProBuilderEditor.instance == null ||
 					editLevel != EditLevel.Geometry ||
-					(selectionMode & (SelectMode.Face | SelectMode.Edge)) == 0;
+					(componentMode & (ComponentMode.Face | ComponentMode.Edge)) == 0;
 		}
 
 		protected override void OnSettingsGUI()

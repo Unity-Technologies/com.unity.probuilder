@@ -318,7 +318,7 @@ namespace UnityEditor.ProBuilder
 			if (ProBuilderEditor.instance)
 			{
 				ProBuilderEditor.instance.SetEditLevel(EditLevel.Geometry);
-				ProBuilderEditor.instance.SetSelectionMode(SelectMode.Face);
+				ProBuilderEditor.instance.SetSelectionMode(ComponentMode.Face);
 			}
 
 			SceneView.onSceneGUIDelegate += OnSceneGUI;

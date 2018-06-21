@@ -49,7 +49,7 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 		{
 			if (IsEnabled() &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
-				ProBuilderEditor.instance.selectionMode == SelectMode.Face)
+				ProBuilderEditor.instance.componentMode == ComponentMode.Face)
 				return MenuActionState.VisibleAndEnabled;
 
 			return MenuActionState.Hidden;

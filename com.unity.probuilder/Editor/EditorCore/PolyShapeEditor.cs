@@ -50,7 +50,7 @@ namespace UnityEditor.ProBuilder
 				return;
 			}
 
-			ProBuilderEditor.editLevelChanged += OnEditLevelChanged;
+			ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 			m_LineMesh = new Mesh();
 			m_LineMaterial = CreateHighlightLineMaterial();
 			Undo.undoRedoPerformed += UndoRedoPerformed;
@@ -64,7 +64,7 @@ namespace UnityEditor.ProBuilder
 
 		void OnDisable()
 		{
-			ProBuilderEditor.editLevelChanged -= OnEditLevelChanged;
+			ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
 			GameObject.DestroyImmediate(m_LineMesh);
 			GameObject.DestroyImmediate(m_LineMaterial);
 			EditorApplication.update -= Update;
@@ -705,9 +705,9 @@ namespace UnityEditor.ProBuilder
 			return Mathf.Abs(Mathf.Abs(dot) - 1f) < .01f;
 		}
 
-		void OnEditLevelChanged(int editLevel)
+		void OnSelectModeChanged(SelectMode selectMode)
 		{
-			if( polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None && ((EditLevel)editLevel) != EditLevel.Plugin)
+			if( polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None && selectMode != SelectMode.None)
 				polygon.polyEditMode = PolyShape.PolyEditMode.None;
 		}
 

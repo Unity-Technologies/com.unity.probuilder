@@ -57,14 +57,14 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return ProBuilderEditor.instance != null &&
 			       ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
-			       ProBuilderEditor.instance.selectionMode != SelectMode.Vertex;
+			       ProBuilderEditor.instance.componentMode != ComponentMode.Vertex;
 		}
 
 		public override bool IsHidden()
 		{
 			return 	ProBuilderEditor.instance == null ||
 					ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
-			       	ProBuilderEditor.instance.selectionMode == SelectMode.Vertex;
+			       	ProBuilderEditor.instance.componentMode == ComponentMode.Vertex;
 		}
 	}
 }

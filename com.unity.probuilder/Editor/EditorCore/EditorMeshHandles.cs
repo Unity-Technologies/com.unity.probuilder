@@ -292,27 +292,27 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		public void DrawSceneHandles(SelectMode selectionMode)
+		public void DrawSceneHandles(ComponentMode selectionMode)
 		{
 			if (Event.current.type != EventType.Repaint)
 				return;
 
 			switch (selectionMode)
 			{
-				case SelectMode.Edge:
+				case ComponentMode.Edge:
 				{
 					// render wireframe with edge material in edge mode so that the size change is reflected
 					RenderWithColor(m_WireHandles, m_EdgeMaterial, s_WireframeColor);
 					RenderWithColor(m_EdgeHandles, m_EdgeMaterial, s_EdgeSelectedColor);
 					break;
 				}
-				case SelectMode.Face:
+				case ComponentMode.Face:
 				{
 					RenderWithColor(m_WireHandles, m_WireMaterial, s_WireframeColor);
 					RenderWithColor(m_FaceHandles, m_FaceMaterial, s_FaceSelectedColor);
 					break;
 				}
-				case SelectMode.Vertex:
+				case ComponentMode.Vertex:
 				{
 					RenderWithColor(m_WireHandles, m_WireMaterial, s_WireframeColor);
 					RenderWithColor(m_VertexHandles, m_VertMaterial, s_VertexUnselectedColor);
@@ -349,7 +349,7 @@ namespace UnityEditor.ProBuilder
 
 		static List<int> s_VertexList = new List<int>();
 
-		public void RebuildSelectedHandles(IEnumerable<ProBuilderMesh> meshes, SelectMode selectionMode)
+		public void RebuildSelectedHandles(IEnumerable<ProBuilderMesh> meshes, ComponentMode selectionMode)
 		{
 			ClearHandles();
 
@@ -360,7 +360,7 @@ namespace UnityEditor.ProBuilder
 
 				switch (selectionMode)
 				{
-					case SelectMode.Vertex:
+					case ComponentMode.Vertex:
 					{
 						RebuildMeshHandle(mesh, m_VertexHandles, (x,y) =>
 						{
@@ -377,7 +377,7 @@ namespace UnityEditor.ProBuilder
 						break;
 					}
 
-					case SelectMode.Edge:
+					case ComponentMode.Edge:
 					{
 						RebuildMeshHandle(mesh, m_EdgeHandles, (x, y) =>
 						{
@@ -386,7 +386,7 @@ namespace UnityEditor.ProBuilder
 						break;
 					}
 
-					case SelectMode.Face:
+					case ComponentMode.Face:
 					{
 						RebuildMeshHandle(mesh, m_FaceHandles, MeshHandles.CreateFaceMesh);
 						break;

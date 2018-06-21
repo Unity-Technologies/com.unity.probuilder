@@ -4,9 +4,42 @@ using System.Collections;
 namespace UnityEngine.ProBuilder
 {
 	/// <summary>
-	/// Element selection mode.
+	/// Defines what objects are selectable for the scene tool.
 	/// </summary>
 	public enum SelectMode
+	{
+		// note: intentionally not marked as a flag for now
+
+		/// <summary>
+		/// No selection mode defined.
+		/// </summary>
+		None = 0 << 0,
+		/// <summary>
+		/// Objects are selectable.
+		/// </summary>
+		Object = 1 << 0,
+		/// <summary>
+		/// Vertexes are selectable.
+		/// </summary>
+		Vertex = 1 << 1,
+		/// <summary>
+		/// Edges are selectable.
+		/// </summary>
+		Edge = 1 << 2,
+		/// <summary>
+		/// Faces are selectable.
+		/// </summary>
+		Face = 1 << 3,
+		/// <summary>
+		/// Texture coordinates are selectable.
+		/// </summary>
+		Texture = 1 << 4
+	}
+
+	/// <summary>
+	/// Element selection mode.
+	/// </summary>
+	enum ComponentMode
 	{
 		/// <summary>
 		/// Vertexes are selectable.
@@ -25,7 +58,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// Defines what the current tool interacts with in the scene view.
 	/// </summary>'
-	public enum EditLevel
+	internal enum EditLevel
 	{
 		/// <summary>
 		/// The transform tools interact with GameObjects.

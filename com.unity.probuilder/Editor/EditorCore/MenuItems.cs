@@ -63,9 +63,9 @@ namespace UnityEditor.ProBuilder
 			if (editor == null || editor.editLevel != EditLevel.Geometry)
 				return false;
 
-			if (editor.selectionMode == SelectMode.Edge)
+			if (editor.componentMode == ComponentMode.Edge)
 				return MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
-			else if (editor.selectionMode == SelectMode.Face)
+			else if (editor.componentMode == ComponentMode.Face)
 				return MeshSelection.TopInternal().Any(x => x.selectedFaceCount > 0);
 			return false;
 		}
@@ -73,13 +73,13 @@ namespace UnityEditor.ProBuilder
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Selection/Select Loop &l", false, PreferenceKeys.menuSelection)]
 		private static void MenuSelectLoop()
 		{
-			switch (editor.selectionMode)
+			switch (editor.componentMode)
 			{
-				case SelectMode.Edge:
+				case ComponentMode.Edge:
 					MenuCommands.MenuLoopSelection(selection);
 					break;
 
-				case SelectMode.Face:
+				case ComponentMode.Face:
 					MenuCommands.MenuLoopFaces(selection);
 					break;
 			}
@@ -88,13 +88,13 @@ namespace UnityEditor.ProBuilder
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Selection/Select Ring &r", false, PreferenceKeys.menuSelection)]
 		private static void MenuSelectRing()
 		{
-			switch (editor.selectionMode)
+			switch (editor.componentMode)
 			{
-				case SelectMode.Edge:
+				case ComponentMode.Edge:
 					MenuCommands.MenuRingSelection(selection);
 					break;
 
-				case SelectMode.Face:
+				case ComponentMode.Face:
 					MenuCommands.MenuRingFaces(selection);
 					break;
 			}

@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return ProBuilderEditor.instance != null &&
 				editLevel == EditLevel.Geometry &&
-				selectionMode == SelectMode.Edge &&
+				componentMode == ComponentMode.Edge &&
 				MeshSelection.TopInternal().Sum(x => x.selectedEdgeCount) > 0;
 		}
 
@@ -53,7 +53,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return ProBuilderEditor.instance == null ||
 				editLevel != EditLevel.Geometry ||
-				selectionMode != SelectMode.Edge;
+				componentMode != ComponentMode.Edge;
 		}
 
 		public override ActionResult DoAction()

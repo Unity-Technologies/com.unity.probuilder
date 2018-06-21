@@ -30,7 +30,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override bool IsHidden()
 		{
 			return 	editLevel != EditLevel.Geometry ||
-					(PreferencesInternal.GetBool(PreferenceKeys.pbElementSelectIsHamFisted) && selectionMode != SelectMode.Face);
+					(PreferencesInternal.GetBool(PreferenceKeys.pbElementSelectIsHamFisted) && componentMode != ComponentMode.Face);
 		}
 
 		public override ActionResult DoAction()

@@ -40,7 +40,7 @@ namespace UnityEditor.ProBuilder.Actions
 			if (ProBuilderEditor.instance.editLevel != EditLevel.Geometry)
 				return false;
 
-			if (ProBuilderEditor.instance.selectionMode != SelectMode.Edge && ProBuilderEditor.instance.selectionMode != SelectMode.Vertex)
+			if (ProBuilderEditor.instance.componentMode != ComponentMode.Edge && ProBuilderEditor.instance.componentMode != ComponentMode.Vertex)
 				return false;
 
 			if (MeshSelection.TopInternal().Length < 1)
@@ -54,7 +54,7 @@ namespace UnityEditor.ProBuilder.Actions
 			if (ProBuilderEditor.instance.editLevel != EditLevel.Geometry)
 				return true;
 
-			if (ProBuilderEditor.instance.selectionMode != SelectMode.Edge && ProBuilderEditor.instance.selectionMode != SelectMode.Vertex)
+			if (ProBuilderEditor.instance.componentMode != ComponentMode.Edge && ProBuilderEditor.instance.componentMode != ComponentMode.Vertex)
 				return true;
 
 			return false;

@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return ProBuilderEditor.instance == null ||
 				ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
-				ProBuilderEditor.instance.selectionMode != SelectMode.Face;
+				ProBuilderEditor.instance.componentMode != ComponentMode.Face;
 		}
 
 		public override ActionResult DoAction()

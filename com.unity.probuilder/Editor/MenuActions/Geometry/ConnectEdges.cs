@@ -25,7 +25,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return ProBuilderEditor.instance != null &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
-				ProBuilderEditor.instance.selectionMode == SelectMode.Edge &&
+				ProBuilderEditor.instance.componentMode == ComponentMode.Edge &&
 				MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 1);
 		}
 
@@ -33,7 +33,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return 	ProBuilderEditor.instance == null ||
 					ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
-					ProBuilderEditor.instance.selectionMode != SelectMode.Edge;
+					ProBuilderEditor.instance.componentMode != ComponentMode.Edge;
 
 		}
 

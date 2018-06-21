@@ -121,15 +121,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-	    /// <value>
-	    /// Get the <see cref="EditLevel"/> as set by the currently open <see cref="ProBuilderEditor"/>.
-	    /// </value>
-        protected static EditLevel editLevel { get { return ProBuilderEditor.instance ? ProBuilderEditor.instance.editLevel : EditLevel.Top; } }
+	    internal static EditLevel editLevel { get { return ProBuilderEditor.instance ? ProBuilderEditor.instance.editLevel : EditLevel.Top; } }
 
-	    /// <value>
-	    /// Get the <see cref="SelectMode"/> as set by the currently open <see cref="ProBuilderEditor"/>.
-	    /// </value>
-        protected static SelectMode selectionMode { get { return ProBuilderEditor.instance ? ProBuilderEditor.instance.selectionMode : SelectMode.Face; } }
+	    internal static ComponentMode componentMode { get { return ProBuilderEditor.instance ? ProBuilderEditor.instance.componentMode : ComponentMode.Face; } }
 
         Texture2D m_DesaturatedIcon = null;
 
