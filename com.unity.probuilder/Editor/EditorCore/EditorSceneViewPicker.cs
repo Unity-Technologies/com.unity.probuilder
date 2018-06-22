@@ -629,9 +629,6 @@ namespace UnityEditor.ProBuilder
 			return selection.gameObject != null;
 		}
 
-		static SimpleTuple<Face, Vector3> s_DualCullModeRaycastBackFace = new SimpleTuple<Face, Vector3>();
-		static SimpleTuple<Face, Vector3> s_DualCullModeRaycastFrontFace = new SimpleTuple<Face, Vector3>();
-
 		struct EdgeAndDistance
 		{
 			public Edge edge;
@@ -648,8 +645,11 @@ namespace UnityEditor.ProBuilder
 				distance = Mathf.Infinity
 			};
 
+			SimpleTuple<Face, Vector3> s_DualCullModeRaycastBackFace = new SimpleTuple<Face, Vector3>();
+			SimpleTuple<Face, Vector3> s_DualCullModeRaycastFrontFace = new SimpleTuple<Face, Vector3>();
+
 			// get the nearest hit face and point for both cull mode front and back, then prefer the result that is nearest the camera.
-			if (PHandleUtility.FaceRaycastBothCullModes(ray, mesh, s_DualCullModeRaycastBackFace, s_DualCullModeRaycastFrontFace))
+			if (PHandleUtility.FaceRaycastBothCullModes(ray, mesh, ref s_DualCullModeRaycastBackFace, ref s_DualCullModeRaycastFrontFace))
 			{
 				Vector3[] v = mesh.positionsInternal;
 

@@ -149,7 +149,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <summary>
 		/// Inserts new edges connecting the passed edges, optionally restricting new edge insertion to faces in faceMask.
 		/// </summary>
-		/// <param name="pb"></param>
+		/// <param name="mesh"></param>
 		/// <param name="edges"></param>
 		/// <param name="addedFaces"></param>
 		/// <param name="connections"></param>
@@ -158,7 +158,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="faceMask"></param>
 		/// <returns></returns>
 		static ActionResult Connect(
-			this ProBuilderMesh pb,
+			this ProBuilderMesh mesh,
 			IEnumerable<Edge> edges,
 			out Face[] addedFaces,
 			out Edge[] connections,
@@ -166,10 +166,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			bool returnEdges = false,
 			HashSet<Face> faceMask = null)
 		{
-			Dictionary<int, int> lookup = pb.sharedVertexLookup;
-			Dictionary<int, int> lookupUV = pb.sharedTextureLookup;
+			Dictionary<int, int> lookup = mesh.sharedVertexLookup;
+			Dictionary<int, int> lookupUV = mesh.sharedTextureLookup;
 			HashSet<EdgeLookup> distinctEdges = new HashSet<EdgeLookup>(EdgeLookup.GetEdgeLookup(edges, lookup));
-			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh);
 
 			// map each edge to a face so that we have a list of all touched faces with their to-be-subdivided edges
 			Dictionary<Face, List<WingedEdge>> touched = new Dictionary<Face, List<WingedEdge>>();
@@ -210,12 +210,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				affected.Add(kvp.Key, kvp.Value);
 			}
 
-			List<Vertex> vertexes = new List<Vertex>( pb.GetVertexes() );
+			List<Vertex> vertexes = new List<Vertex>( mesh.GetVertexes() );
 			List<ConnectFaceRebuildData> results = new List<ConnectFaceRebuildData>();
 			// just the faces that where connected with > 1 edge
 			List<Face> connectedFaces = new List<Face>();
 
-			HashSet<int> usedTextureGroups = new HashSet<int>(pb.facesInternal.Select(x => x.textureGroup));
+			HashSet<int> usedTextureGroups = new HashSet<int>(mesh.facesInternal.Select(x => x.textureGroup));
 			int newTextureGroupIndex = 1;
 
 			// do the splits
@@ -272,12 +272,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			FaceRebuildData.Apply(results.Select(x => x.faceRebuildData), pb, vertexes, null);
+			FaceRebuildData.Apply(results.Select(x => x.faceRebuildData), mesh, vertexes, null);
 
-			pb.sharedTextures = new SharedVertex[0];
-			int removedVertexCount = pb.DeleteFaces(affected.Keys).Length;
-			pb.sharedVertexes = SharedVertex.GetSharedVertexesWithPositions(pb.positionsInternal);
-			pb.ToMesh();
+			mesh.sharedTextures = new SharedVertex[0];
+			int removedVertexCount = mesh.DeleteFaces(affected.Keys).Length;
+			mesh.sharedVertexes = SharedVertex.GetSharedVertexesWithPositions(mesh.positionsInternal);
+			mesh.ToMesh();
 
 			// figure out where the new edges where inserted
 			if(returnEdges)
@@ -289,7 +289,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					for(int i = 0; i < results[n].newVertexIndexes.Count; i++)
 						appended.Add( ( results[n].newVertexIndexes[i] + results[n].faceRebuildData.Offset() ) - removedVertexCount );
 
-				Dictionary<int, int> lup = pb.sharedVertexLookup;
+				Dictionary<int, int> lup = mesh.sharedVertexLookup;
 				IEnumerable<Edge> newEdges = results.SelectMany(x => x.faceRebuildData.face.edgesInternal).Where(x => appended.Contains(x.a) && appended.Contains(x.b));
 				IEnumerable<EdgeLookup> distNewEdges = EdgeLookup.GetEdgeLookup(newEdges, lup);
 

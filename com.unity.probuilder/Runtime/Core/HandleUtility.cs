@@ -117,7 +117,7 @@ namespace UnityEngine.ProBuilder
 			return OutHitFace > -1;
 		}
 
-		public static bool FaceRaycastBothCullModes(Ray worldRay, ProBuilderMesh mesh, SimpleTuple<Face, Vector3> back, SimpleTuple<Face, Vector3> front)
+		public static bool FaceRaycastBothCullModes(Ray worldRay, ProBuilderMesh mesh, ref SimpleTuple<Face, Vector3> back, ref SimpleTuple<Face, Vector3> front)
 		{
 			// Transform ray into model space
 			worldRay.origin -= mesh.transform.position; // Why doesn't worldToLocalMatrix apply translation?

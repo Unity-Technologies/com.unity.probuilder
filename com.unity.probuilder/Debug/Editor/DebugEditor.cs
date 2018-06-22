@@ -64,11 +64,11 @@ namespace UnityEditor.ProBuilder
 		static void BeginSectionHeader(ProBuilderMesh mesh, string field)
 		{
 			GUILayout.BeginHorizontal(EditorStyles.toolbar);
-			var fieldInfo = typeof(ProBuilderMesh).GetField(field, BindingFlags.Instance | BindingFlags.NonPublic);
-			var id = GetPropertyId(mesh, fieldInfo.Name);
+			var mi = typeof(ProBuilderMesh).GetField(field, BindingFlags.Instance | BindingFlags.NonPublic);
+			var id = GetPropertyId(mesh, mi.Name);
 			if (!s_Expanded.ContainsKey(id))
 				s_Expanded.Add(id, true);
-			s_Expanded[id] = EditorGUILayout.Foldout(s_Expanded[id], fieldInfo.MemberType + " " + fieldInfo.Name);
+			s_Expanded[id] = EditorGUILayout.Foldout(s_Expanded[id], mi.MemberType + " " + mi.Name);
 			GUILayout.FlexibleSpace();
 		}
 

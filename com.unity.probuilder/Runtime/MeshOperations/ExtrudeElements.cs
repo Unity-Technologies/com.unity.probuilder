@@ -468,12 +468,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 							lookupUV.Remove(face.distinctIndexesInternal[i]);
 
 						// add the normal to the list of normals for this shared vertex
-						SimpleTuple<Vector3, Vector3, List<int>> dir = null;
+						SimpleTuple<Vector3, Vector3, List<int>> dir;
 
 						if(extrudeMap.TryGetValue(com, out dir))
 						{
 							dir.item1 += normal;
 							dir.item3.Add(idx);
+							extrudeMap[com] = dir;
 						}
 						else
 						{

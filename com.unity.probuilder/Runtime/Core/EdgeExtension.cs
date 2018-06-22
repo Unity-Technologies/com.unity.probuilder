@@ -71,7 +71,8 @@ namespace UnityEngine.ProBuilder
 				}
 			}
 
-			validEdge = null;
+			validEdge = new SimpleTuple<Face, Edge>();
+			
 			return false;
 		}
 
