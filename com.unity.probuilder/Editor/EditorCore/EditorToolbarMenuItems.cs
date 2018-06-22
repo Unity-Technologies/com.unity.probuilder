@@ -2,7 +2,7 @@
  *	IMPORTANT
  *
  *	This is a generated file. Any changes will be overwritten.
- *	See pb_GenerateMenuItems to make modifications.
+ *	See Debug/GenerateMenuItems to make modifications.
  */
 
 using UnityEngine;
@@ -15,22 +15,18 @@ namespace UnityEditor.ProBuilder
 {
 	static class EditorToolbarMenuItem
 	{
-		const string PB_MENU_PREFIX = "Tools/ProBuilder/";
+		const string k_MenuPrefix = "Tools/ProBuilder/";
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Editors/New Bezier Shape ", true)]
+		[MenuItem(k_MenuPrefix + "Editors/New Bezier Shape ", true)]
 		static bool MenuVerifyNewBezierShape()
 		{
 			NewBezierShape instance = EditorToolbarLoader.GetInstance<NewBezierShape>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Editors/New Bezier Shape ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Editors/New Bezier Shape ", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuDoNewBezierShape()
 		{
 			NewBezierShape instance = EditorToolbarLoader.GetInstance<NewBezierShape>();
@@ -38,20 +34,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Editors/New Poly Shape ", true)]
+		[MenuItem(k_MenuPrefix + "Editors/New Poly Shape ", true)]
 		static bool MenuVerifyNewPolyShape()
 		{
 			NewPolyShape instance = EditorToolbarLoader.GetInstance<NewPolyShape>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Editors/New Poly Shape ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Editors/New Poly Shape ", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuDoNewPolyShape()
 		{
 			NewPolyShape instance = EditorToolbarLoader.GetInstance<NewPolyShape>();
@@ -59,20 +51,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Editors/Open Material Editor ", true)]
+		[MenuItem(k_MenuPrefix + "Editors/Open Material Editor ", true)]
 		static bool MenuVerifyOpenMaterialEditor()
 		{
 			OpenMaterialEditor instance = EditorToolbarLoader.GetInstance<OpenMaterialEditor>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Editors/Open Material Editor ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Editors/Open Material Editor ", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuDoOpenMaterialEditor()
 		{
 			OpenMaterialEditor instance = EditorToolbarLoader.GetInstance<OpenMaterialEditor>();
@@ -80,20 +68,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Editors/Open Shape Editor %#k", true)]
+		[MenuItem(k_MenuPrefix + "Editors/Open Shape Editor %#k", true)]
 		static bool MenuVerifyOpenShapeEditor()
 		{
 			OpenShapeEditor instance = EditorToolbarLoader.GetInstance<OpenShapeEditor>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Editors/Open Shape Editor %#k", false, 0)]
+		[MenuItem(k_MenuPrefix + "Editors/Open Shape Editor %#k", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuDoOpenShapeEditor()
 		{
 			OpenShapeEditor instance = EditorToolbarLoader.GetInstance<OpenShapeEditor>();
@@ -101,20 +85,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Editors/Open Smoothing Editor ", true)]
+		[MenuItem(k_MenuPrefix + "Editors/Open Smoothing Editor ", true)]
 		static bool MenuVerifyOpenSmoothingEditor()
 		{
 			OpenSmoothingEditor instance = EditorToolbarLoader.GetInstance<OpenSmoothingEditor>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Editors/Open Smoothing Editor ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Editors/Open Smoothing Editor ", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuDoOpenSmoothingEditor()
 		{
 			OpenSmoothingEditor instance = EditorToolbarLoader.GetInstance<OpenSmoothingEditor>();
@@ -122,20 +102,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Editors/Open UV Editor ", true)]
+		[MenuItem(k_MenuPrefix + "Editors/Open UV Editor ", true)]
 		static bool MenuVerifyOpenUVEditor()
 		{
 			OpenUVEditor instance = EditorToolbarLoader.GetInstance<OpenUVEditor>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Editors/Open UV Editor ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Editors/Open UV Editor ", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuDoOpenUVEditor()
 		{
 			OpenUVEditor instance = EditorToolbarLoader.GetInstance<OpenUVEditor>();
@@ -143,20 +119,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Editors/Open Vertex Color Editor ", true)]
+		[MenuItem(k_MenuPrefix + "Editors/Open Vertex Color Editor ", true)]
 		static bool MenuVerifyOpenVertexColorEditor()
 		{
 			OpenVertexColorEditor instance = EditorToolbarLoader.GetInstance<OpenVertexColorEditor>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Editors/Open Vertex Color Editor ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Editors/Open Vertex Color Editor ", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuDoOpenVertexColorEditor()
 		{
 			OpenVertexColorEditor instance = EditorToolbarLoader.GetInstance<OpenVertexColorEditor>();
@@ -164,20 +136,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Editors/Open Vertex Position Editor ", true)]
+		[MenuItem(k_MenuPrefix + "Editors/Open Vertex Position Editor ", true)]
 		static bool MenuVerifyOpenVertexPositionEditor()
 		{
 			OpenVertexPositionEditor instance = EditorToolbarLoader.GetInstance<OpenVertexPositionEditor>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Editors/Open Vertex Position Editor ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Editors/Open Vertex Position Editor ", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuDoOpenVertexPositionEditor()
 		{
 			OpenVertexPositionEditor instance = EditorToolbarLoader.GetInstance<OpenVertexPositionEditor>();
@@ -186,20 +154,16 @@ namespace UnityEditor.ProBuilder
 		}
 
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Export/Export Asset ", true)]
+		[MenuItem(k_MenuPrefix + "Export/Export Asset ", true)]
 		static bool MenuVerifyExportAsset()
 		{
 			ExportAsset instance = EditorToolbarLoader.GetInstance<ExportAsset>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Export/Export Asset ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Export/Export Asset ", false, PreferenceKeys.menuExport + 0)]
 		static void MenuDoExportAsset()
 		{
 			ExportAsset instance = EditorToolbarLoader.GetInstance<ExportAsset>();
@@ -207,20 +171,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Export/Export Obj ", true)]
+		[MenuItem(k_MenuPrefix + "Export/Export Obj ", true)]
 		static bool MenuVerifyExportObj()
 		{
 			ExportObj instance = EditorToolbarLoader.GetInstance<ExportObj>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Export/Export Obj ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Export/Export Obj ", false, PreferenceKeys.menuExport + 0)]
 		static void MenuDoExportObj()
 		{
 			ExportObj instance = EditorToolbarLoader.GetInstance<ExportObj>();
@@ -228,20 +188,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Export/Export Ply ", true)]
+		[MenuItem(k_MenuPrefix + "Export/Export Ply ", true)]
 		static bool MenuVerifyExportPly()
 		{
 			ExportPly instance = EditorToolbarLoader.GetInstance<ExportPly>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Export/Export Ply ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Export/Export Ply ", false, PreferenceKeys.menuExport + 0)]
 		static void MenuDoExportPly()
 		{
 			ExportPly instance = EditorToolbarLoader.GetInstance<ExportPly>();
@@ -249,20 +205,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Export/Export Stl Ascii ", true)]
+		[MenuItem(k_MenuPrefix + "Export/Export Stl Ascii ", true)]
 		static bool MenuVerifyExportStlAscii()
 		{
 			ExportStlAscii instance = EditorToolbarLoader.GetInstance<ExportStlAscii>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Export/Export Stl Ascii ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Export/Export Stl Ascii ", false, PreferenceKeys.menuExport + 0)]
 		static void MenuDoExportStlAscii()
 		{
 			ExportStlAscii instance = EditorToolbarLoader.GetInstance<ExportStlAscii>();
@@ -270,20 +222,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Export/Export Stl Binary ", true)]
+		[MenuItem(k_MenuPrefix + "Export/Export Stl Binary ", true)]
 		static bool MenuVerifyExportStlBinary()
 		{
 			ExportStlBinary instance = EditorToolbarLoader.GetInstance<ExportStlBinary>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Export/Export Stl Binary ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Export/Export Stl Binary ", false, PreferenceKeys.menuExport + 0)]
 		static void MenuDoExportStlBinary()
 		{
 			ExportStlBinary instance = EditorToolbarLoader.GetInstance<ExportStlBinary>();
@@ -291,20 +239,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Bevel Edges ", true)]
+		[MenuItem(k_MenuPrefix + "Geometry/Bevel Edges ", true)]
 		static bool MenuVerifyBevelEdges()
 		{
 			BevelEdges instance = EditorToolbarLoader.GetInstance<BevelEdges>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Bevel Edges ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Geometry/Bevel Edges ", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuDoBevelEdges()
 		{
 			BevelEdges instance = EditorToolbarLoader.GetInstance<BevelEdges>();
@@ -312,20 +256,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Bridge Edges &b", true)]
+		[MenuItem(k_MenuPrefix + "Geometry/Bridge Edges &b", true)]
 		static bool MenuVerifyBridgeEdges()
 		{
 			BridgeEdges instance = EditorToolbarLoader.GetInstance<BridgeEdges>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Bridge Edges &b", false, 0)]
+		[MenuItem(k_MenuPrefix + "Geometry/Bridge Edges &b", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuDoBridgeEdges()
 		{
 			BridgeEdges instance = EditorToolbarLoader.GetInstance<BridgeEdges>();
@@ -333,20 +273,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Collapse Vertexes &c", true)]
+		[MenuItem(k_MenuPrefix + "Geometry/Collapse Vertexes &c", true)]
 		static bool MenuVerifyCollapseVertexes()
 		{
 			CollapseVertexes instance = EditorToolbarLoader.GetInstance<CollapseVertexes>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Collapse Vertexes &c", false, 0)]
+		[MenuItem(k_MenuPrefix + "Geometry/Collapse Vertexes &c", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuDoCollapseVertexes()
 		{
 			CollapseVertexes instance = EditorToolbarLoader.GetInstance<CollapseVertexes>();
@@ -354,20 +290,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Conform Face Normals ", true)]
+		[MenuItem(k_MenuPrefix + "Geometry/Conform Face Normals ", true)]
 		static bool MenuVerifyConformFaceNormals()
 		{
 			ConformFaceNormals instance = EditorToolbarLoader.GetInstance<ConformFaceNormals>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Conform Face Normals ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Geometry/Conform Face Normals ", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuDoConformFaceNormals()
 		{
 			ConformFaceNormals instance = EditorToolbarLoader.GetInstance<ConformFaceNormals>();
@@ -377,20 +309,16 @@ namespace UnityEditor.ProBuilder
 
 
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Delete Faces  [delete]", true)]
+		[MenuItem(k_MenuPrefix + "Geometry/Delete Faces  [⌫]", true)]
 		static bool MenuVerifyDeleteFaces()
 		{
 			DeleteFaces instance = EditorToolbarLoader.GetInstance<DeleteFaces>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Delete Faces  [delete]", false, 0)]
+		[MenuItem(k_MenuPrefix + "Geometry/Delete Faces  [⌫]", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuDoDeleteFaces()
 		{
 			DeleteFaces instance = EditorToolbarLoader.GetInstance<DeleteFaces>();
@@ -398,20 +326,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Detach Faces ", true)]
+		[MenuItem(k_MenuPrefix + "Geometry/Detach Faces ", true)]
 		static bool MenuVerifyDetachFaces()
 		{
 			DetachFaces instance = EditorToolbarLoader.GetInstance<DetachFaces>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Detach Faces ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Geometry/Detach Faces ", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuDoDetachFaces()
 		{
 			DetachFaces instance = EditorToolbarLoader.GetInstance<DetachFaces>();
@@ -421,20 +345,16 @@ namespace UnityEditor.ProBuilder
 
 
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Fill Hole ", true)]
+		[MenuItem(k_MenuPrefix + "Geometry/Fill Hole ", true)]
 		static bool MenuVerifyFillHole()
 		{
 			FillHole instance = EditorToolbarLoader.GetInstance<FillHole>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Fill Hole ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Geometry/Fill Hole ", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuDoFillHole()
 		{
 			FillHole instance = EditorToolbarLoader.GetInstance<FillHole>();
@@ -442,20 +362,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Flip Face Edge ", true)]
+		[MenuItem(k_MenuPrefix + "Geometry/Flip Face Edge ", true)]
 		static bool MenuVerifyFlipFaceEdge()
 		{
 			FlipFaceEdge instance = EditorToolbarLoader.GetInstance<FlipFaceEdge>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Flip Face Edge ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Geometry/Flip Face Edge ", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuDoFlipFaceEdge()
 		{
 			FlipFaceEdge instance = EditorToolbarLoader.GetInstance<FlipFaceEdge>();
@@ -463,20 +379,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Flip Face Normals &n", true)]
+		[MenuItem(k_MenuPrefix + "Geometry/Flip Face Normals &n", true)]
 		static bool MenuVerifyFlipFaceNormals()
 		{
 			FlipFaceNormals instance = EditorToolbarLoader.GetInstance<FlipFaceNormals>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Flip Face Normals &n", false, 0)]
+		[MenuItem(k_MenuPrefix + "Geometry/Flip Face Normals &n", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuDoFlipFaceNormals()
 		{
 			FlipFaceNormals instance = EditorToolbarLoader.GetInstance<FlipFaceNormals>();
@@ -484,20 +396,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Insert Edge Loop &u", true)]
+		[MenuItem(k_MenuPrefix + "Geometry/Insert Edge Loop &u", true)]
 		static bool MenuVerifyInsertEdgeLoop()
 		{
 			InsertEdgeLoop instance = EditorToolbarLoader.GetInstance<InsertEdgeLoop>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Insert Edge Loop &u", false, 0)]
+		[MenuItem(k_MenuPrefix + "Geometry/Insert Edge Loop &u", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuDoInsertEdgeLoop()
 		{
 			InsertEdgeLoop instance = EditorToolbarLoader.GetInstance<InsertEdgeLoop>();
@@ -505,20 +413,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Merge Faces ", true)]
+		[MenuItem(k_MenuPrefix + "Geometry/Merge Faces ", true)]
 		static bool MenuVerifyMergeFaces()
 		{
 			MergeFaces instance = EditorToolbarLoader.GetInstance<MergeFaces>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Merge Faces ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Geometry/Merge Faces ", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuDoMergeFaces()
 		{
 			MergeFaces instance = EditorToolbarLoader.GetInstance<MergeFaces>();
@@ -526,20 +430,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Set Pivot To Selection %j", true)]
+		[MenuItem(k_MenuPrefix + "Geometry/Set Pivot To Selection %j", true)]
 		static bool MenuVerifySetPivotToSelection()
 		{
 			SetPivotToSelection instance = EditorToolbarLoader.GetInstance<SetPivotToSelection>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Set Pivot To Selection %j", false, 0)]
+		[MenuItem(k_MenuPrefix + "Geometry/Set Pivot To Selection %j", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuDoSetPivotToSelection()
 		{
 			SetPivotToSelection instance = EditorToolbarLoader.GetInstance<SetPivotToSelection>();
@@ -547,20 +447,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Smart Connect &e", true)]
+		[MenuItem(k_MenuPrefix + "Geometry/Smart Connect &e", true)]
 		static bool MenuVerifySmartConnect()
 		{
 			SmartConnect instance = EditorToolbarLoader.GetInstance<SmartConnect>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Smart Connect &e", false, 0)]
+		[MenuItem(k_MenuPrefix + "Geometry/Smart Connect &e", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuDoSmartConnect()
 		{
 			SmartConnect instance = EditorToolbarLoader.GetInstance<SmartConnect>();
@@ -568,20 +464,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Smart Subdivide &s", true)]
+		[MenuItem(k_MenuPrefix + "Geometry/Smart Subdivide &s", true)]
 		static bool MenuVerifySmartSubdivide()
 		{
 			SmartSubdivide instance = EditorToolbarLoader.GetInstance<SmartSubdivide>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Smart Subdivide &s", false, 0)]
+		[MenuItem(k_MenuPrefix + "Geometry/Smart Subdivide &s", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuDoSmartSubdivide()
 		{
 			SmartSubdivide instance = EditorToolbarLoader.GetInstance<SmartSubdivide>();
@@ -589,20 +481,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Split Vertexes &x", true)]
+		[MenuItem(k_MenuPrefix + "Geometry/Split Vertexes &x", true)]
 		static bool MenuVerifySplitVertexes()
 		{
 			SplitVertexes instance = EditorToolbarLoader.GetInstance<SplitVertexes>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Split Vertexes &x", false, 0)]
+		[MenuItem(k_MenuPrefix + "Geometry/Split Vertexes &x", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuDoSplitVertexes()
 		{
 			SplitVertexes instance = EditorToolbarLoader.GetInstance<SplitVertexes>();
@@ -612,20 +500,16 @@ namespace UnityEditor.ProBuilder
 
 
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Triangulate Faces ", true)]
+		[MenuItem(k_MenuPrefix + "Geometry/Triangulate Faces ", true)]
 		static bool MenuVerifyTriangulateFaces()
 		{
 			TriangulateFaces instance = EditorToolbarLoader.GetInstance<TriangulateFaces>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Triangulate Faces ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Geometry/Triangulate Faces ", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuDoTriangulateFaces()
 		{
 			TriangulateFaces instance = EditorToolbarLoader.GetInstance<TriangulateFaces>();
@@ -633,20 +517,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Weld Vertexes &v", true)]
+		[MenuItem(k_MenuPrefix + "Geometry/Weld Vertexes &v", true)]
 		static bool MenuVerifyWeldVertexes()
 		{
 			WeldVertexes instance = EditorToolbarLoader.GetInstance<WeldVertexes>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Geometry/Weld Vertexes &v", false, 0)]
+		[MenuItem(k_MenuPrefix + "Geometry/Weld Vertexes &v", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuDoWeldVertexes()
 		{
 			WeldVertexes instance = EditorToolbarLoader.GetInstance<WeldVertexes>();
@@ -654,20 +534,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Interaction/Toggle Drag Rect Mode ", true)]
+		[MenuItem(k_MenuPrefix + "Interaction/Toggle Drag Rect Mode ", true)]
 		static bool MenuVerifyToggleDragRectMode()
 		{
 			ToggleDragRectMode instance = EditorToolbarLoader.GetInstance<ToggleDragRectMode>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Interaction/Toggle Drag Rect Mode ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Interaction/Toggle Drag Rect Mode ", false, PreferenceKeys.menuSelection + 1)]
 		static void MenuDoToggleDragRectMode()
 		{
 			ToggleDragRectMode instance = EditorToolbarLoader.GetInstance<ToggleDragRectMode>();
@@ -675,20 +551,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Interaction/Toggle Drag Selection Mode ", true)]
+		[MenuItem(k_MenuPrefix + "Interaction/Toggle Drag Selection Mode ", true)]
 		static bool MenuVerifyToggleDragSelectionMode()
 		{
 			ToggleDragSelectionMode instance = EditorToolbarLoader.GetInstance<ToggleDragSelectionMode>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Interaction/Toggle Drag Selection Mode ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Interaction/Toggle Drag Selection Mode ", false, PreferenceKeys.menuSelection + 1)]
 		static void MenuDoToggleDragSelectionMode()
 		{
 			ToggleDragSelectionMode instance = EditorToolbarLoader.GetInstance<ToggleDragSelectionMode>();
@@ -696,20 +568,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Interaction/Toggle Handle Alignment  [p]", true)]
+		[MenuItem(k_MenuPrefix + "Interaction/Toggle Handle Alignment  [p]", true)]
 		static bool MenuVerifyToggleHandleAlignment()
 		{
 			ToggleHandleAlignment instance = EditorToolbarLoader.GetInstance<ToggleHandleAlignment>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Interaction/Toggle Handle Alignment  [p]", false, 0)]
+		[MenuItem(k_MenuPrefix + "Interaction/Toggle Handle Alignment  [p]", false, PreferenceKeys.menuSelection + 1)]
 		static void MenuDoToggleHandleAlignment()
 		{
 			ToggleHandleAlignment instance = EditorToolbarLoader.GetInstance<ToggleHandleAlignment>();
@@ -717,20 +585,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Interaction/Toggle Select Back Faces ", true)]
+		[MenuItem(k_MenuPrefix + "Interaction/Toggle Select Back Faces ", true)]
 		static bool MenuVerifyToggleSelectBackFaces()
 		{
 			ToggleSelectBackFaces instance = EditorToolbarLoader.GetInstance<ToggleSelectBackFaces>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Interaction/Toggle Select Back Faces ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Interaction/Toggle Select Back Faces ", false, PreferenceKeys.menuSelection + 1)]
 		static void MenuDoToggleSelectBackFaces()
 		{
 			ToggleSelectBackFaces instance = EditorToolbarLoader.GetInstance<ToggleSelectBackFaces>();
@@ -738,20 +602,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Center Pivot ", true)]
+		[MenuItem(k_MenuPrefix + "Object/Center Pivot ", true)]
 		static bool MenuVerifyCenterPivot()
 		{
 			CenterPivot instance = EditorToolbarLoader.GetInstance<CenterPivot>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Center Pivot ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Object/Center Pivot ", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuDoCenterPivot()
 		{
 			CenterPivot instance = EditorToolbarLoader.GetInstance<CenterPivot>();
@@ -759,20 +619,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Conform Object Normals ", true)]
+		[MenuItem(k_MenuPrefix + "Object/Conform Object Normals ", true)]
 		static bool MenuVerifyConformObjectNormals()
 		{
 			ConformObjectNormals instance = EditorToolbarLoader.GetInstance<ConformObjectNormals>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Conform Object Normals ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Object/Conform Object Normals ", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuDoConformObjectNormals()
 		{
 			ConformObjectNormals instance = EditorToolbarLoader.GetInstance<ConformObjectNormals>();
@@ -780,20 +636,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Flip Object Normals ", true)]
+		[MenuItem(k_MenuPrefix + "Object/Flip Object Normals ", true)]
 		static bool MenuVerifyFlipObjectNormals()
 		{
 			FlipObjectNormals instance = EditorToolbarLoader.GetInstance<FlipObjectNormals>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Flip Object Normals ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Object/Flip Object Normals ", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuDoFlipObjectNormals()
 		{
 			FlipObjectNormals instance = EditorToolbarLoader.GetInstance<FlipObjectNormals>();
@@ -801,20 +653,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Freeze Transform ", true)]
+		[MenuItem(k_MenuPrefix + "Object/Freeze Transform ", true)]
 		static bool MenuVerifyFreezeTransform()
 		{
 			FreezeTransform instance = EditorToolbarLoader.GetInstance<FreezeTransform>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Freeze Transform ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Object/Freeze Transform ", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuDoFreezeTransform()
 		{
 			FreezeTransform instance = EditorToolbarLoader.GetInstance<FreezeTransform>();
@@ -823,20 +671,16 @@ namespace UnityEditor.ProBuilder
 		}
 
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Merge Objects ", true)]
+		[MenuItem(k_MenuPrefix + "Object/Merge Objects ", true)]
 		static bool MenuVerifyMergeObjects()
 		{
 			MergeObjects instance = EditorToolbarLoader.GetInstance<MergeObjects>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Merge Objects ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Object/Merge Objects ", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuDoMergeObjects()
 		{
 			MergeObjects instance = EditorToolbarLoader.GetInstance<MergeObjects>();
@@ -844,20 +688,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Mirror Objects ", true)]
+		[MenuItem(k_MenuPrefix + "Object/Mirror Objects ", true)]
 		static bool MenuVerifyMirrorObjects()
 		{
 			MirrorObjects instance = EditorToolbarLoader.GetInstance<MirrorObjects>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Mirror Objects ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Object/Mirror Objects ", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuDoMirrorObjects()
 		{
 			MirrorObjects instance = EditorToolbarLoader.GetInstance<MirrorObjects>();
@@ -865,20 +705,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Pro Builderize ", true)]
+		[MenuItem(k_MenuPrefix + "Object/Pro Builderize ", true)]
 		static bool MenuVerifyProBuilderize()
 		{
 			ProBuilderize instance = EditorToolbarLoader.GetInstance<ProBuilderize>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Pro Builderize ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Object/Pro Builderize ", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuDoProBuilderize()
 		{
 			ProBuilderize instance = EditorToolbarLoader.GetInstance<ProBuilderize>();
@@ -886,20 +722,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Set Collider ", true)]
+		[MenuItem(k_MenuPrefix + "Object/Set Collider ", true)]
 		static bool MenuVerifySetCollider()
 		{
 			SetCollider instance = EditorToolbarLoader.GetInstance<SetCollider>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Set Collider ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Object/Set Collider ", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuDoSetCollider()
 		{
 			SetCollider instance = EditorToolbarLoader.GetInstance<SetCollider>();
@@ -907,20 +739,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Set Trigger ", true)]
+		[MenuItem(k_MenuPrefix + "Object/Set Trigger ", true)]
 		static bool MenuVerifySetTrigger()
 		{
 			SetTrigger instance = EditorToolbarLoader.GetInstance<SetTrigger>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Set Trigger ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Object/Set Trigger ", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuDoSetTrigger()
 		{
 			SetTrigger instance = EditorToolbarLoader.GetInstance<SetTrigger>();
@@ -928,20 +756,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Subdivide Object ", true)]
+		[MenuItem(k_MenuPrefix + "Object/Subdivide Object ", true)]
 		static bool MenuVerifySubdivideObject()
 		{
 			SubdivideObject instance = EditorToolbarLoader.GetInstance<SubdivideObject>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Subdivide Object ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Object/Subdivide Object ", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuDoSubdivideObject()
 		{
 			SubdivideObject instance = EditorToolbarLoader.GetInstance<SubdivideObject>();
@@ -949,20 +773,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Triangulate Object ", true)]
+		[MenuItem(k_MenuPrefix + "Object/Triangulate Object ", true)]
 		static bool MenuVerifyTriangulateObject()
 		{
 			TriangulateObject instance = EditorToolbarLoader.GetInstance<TriangulateObject>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Object/Triangulate Object ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Object/Triangulate Object ", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuDoTriangulateObject()
 		{
 			TriangulateObject instance = EditorToolbarLoader.GetInstance<TriangulateObject>();
@@ -970,20 +790,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Selection/Grow Selection &g", true)]
+		[MenuItem(k_MenuPrefix + "Selection/Grow Selection &g", true)]
 		static bool MenuVerifyGrowSelection()
 		{
 			GrowSelection instance = EditorToolbarLoader.GetInstance<GrowSelection>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Selection/Grow Selection &g", false, 0)]
+		[MenuItem(k_MenuPrefix + "Selection/Grow Selection &g", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuDoGrowSelection()
 		{
 			GrowSelection instance = EditorToolbarLoader.GetInstance<GrowSelection>();
@@ -991,20 +807,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Selection/Invert Selection %#i", true)]
+		[MenuItem(k_MenuPrefix + "Selection/Invert Selection %#i", true)]
 		static bool MenuVerifyInvertSelection()
 		{
 			InvertSelection instance = EditorToolbarLoader.GetInstance<InvertSelection>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Selection/Invert Selection %#i", false, 0)]
+		[MenuItem(k_MenuPrefix + "Selection/Invert Selection %#i", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuDoInvertSelection()
 		{
 			InvertSelection instance = EditorToolbarLoader.GetInstance<InvertSelection>();
@@ -1016,20 +828,16 @@ namespace UnityEditor.ProBuilder
 
 
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Selection/Select Hole ", true)]
+		[MenuItem(k_MenuPrefix + "Selection/Select Hole ", true)]
 		static bool MenuVerifySelectHole()
 		{
 			SelectHole instance = EditorToolbarLoader.GetInstance<SelectHole>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Selection/Select Hole ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Selection/Select Hole ", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuDoSelectHole()
 		{
 			SelectHole instance = EditorToolbarLoader.GetInstance<SelectHole>();
@@ -1037,20 +845,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Selection/Select Material ", true)]
+		[MenuItem(k_MenuPrefix + "Selection/Select Material ", true)]
 		static bool MenuVerifySelectMaterial()
 		{
 			SelectMaterial instance = EditorToolbarLoader.GetInstance<SelectMaterial>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Selection/Select Material ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Selection/Select Material ", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuDoSelectMaterial()
 		{
 			SelectMaterial instance = EditorToolbarLoader.GetInstance<SelectMaterial>();
@@ -1058,20 +862,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Selection/Select Smoothing Group ", true)]
+		[MenuItem(k_MenuPrefix + "Selection/Select Smoothing Group ", true)]
 		static bool MenuVerifySelectSmoothingGroup()
 		{
 			SelectSmoothingGroup instance = EditorToolbarLoader.GetInstance<SelectSmoothingGroup>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Selection/Select Smoothing Group ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Selection/Select Smoothing Group ", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuDoSelectSmoothingGroup()
 		{
 			SelectSmoothingGroup instance = EditorToolbarLoader.GetInstance<SelectSmoothingGroup>();
@@ -1079,20 +879,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Selection/Select Vertex Color ", true)]
+		[MenuItem(k_MenuPrefix + "Selection/Select Vertex Color ", true)]
 		static bool MenuVerifySelectVertexColor()
 		{
 			SelectVertexColor instance = EditorToolbarLoader.GetInstance<SelectVertexColor>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Selection/Select Vertex Color ", false, 0)]
+		[MenuItem(k_MenuPrefix + "Selection/Select Vertex Color ", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuDoSelectVertexColor()
 		{
 			SelectVertexColor instance = EditorToolbarLoader.GetInstance<SelectVertexColor>();
@@ -1100,20 +896,16 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Selection/Shrink Selection &#g", true)]
+		[MenuItem(k_MenuPrefix + "Selection/Shrink Selection &#g", true)]
 		static bool MenuVerifyShrinkSelection()
 		{
 			ShrinkSelection instance = EditorToolbarLoader.GetInstance<ShrinkSelection>();
 
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "C:/Users/karlh/procore/probuilder/com.unity.probuilder/Editor/Menu Actions/Selection/Shrink Selection &#g", false, 0)]
+		[MenuItem(k_MenuPrefix + "Selection/Shrink Selection &#g", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuDoShrinkSelection()
 		{
 			ShrinkSelection instance = EditorToolbarLoader.GetInstance<ShrinkSelection>();

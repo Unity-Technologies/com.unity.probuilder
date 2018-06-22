@@ -55,7 +55,7 @@ namespace UnityEditor.ProBuilder
  *	IMPORTANT
  *
  *	This is a generated file. Any changes will be overwritten.
- *	See pb_GenerateMenuItems to make modifications.
+ *	See Debug/GenerateMenuItems to make modifications.
  */
 
 using UnityEngine;
@@ -68,7 +68,7 @@ namespace UnityEditor.ProBuilder
 {
 	static class EditorToolbarMenuItem
 	{
-		const string PB_MENU_PREFIX = ""Tools/ProBuilder/"";
+		const string k_MenuPrefix = ""Tools/ProBuilder/"";
 ");
 			foreach (string action in actions)
 			{
@@ -79,8 +79,6 @@ namespace UnityEditor.ProBuilder
 			sb.AppendLine("}");
 
 			File.WriteAllText(k_GeneratedFilePath, sb.ToString().Replace("\r\n", "\n"));
-
-			Debug.Log(sb.ToString());
 			EditorUtility.ShowNotification("Successfully Generated\nMenu Items");
 
 			AssetDatabase.Refresh();
@@ -104,7 +102,8 @@ namespace UnityEditor.ProBuilder
 
 			try
 			{
-				o = System.Activator.CreateInstance(System.Type.GetType("UnityEditor.ProBuilder.Actions." + class_name));
+				var type = ReflectionUtility.GetType("UnityEditor.ProBuilder.Actions." + class_name);
+				o = System.Activator.CreateInstance(type);
 			}
 			catch
 			{
@@ -115,15 +114,15 @@ namespace UnityEditor.ProBuilder
 
 			PropertyInfo hasMenuEntryProperty = typeof(MenuAction).GetProperty("hasFileMenuEntry", BindingFlags.NonPublic | BindingFlags.Instance);
 
-			if ((bool) hasMenuEntryProperty.GetValue(o, null) == false)
+			if (hasMenuEntryProperty == null || (bool) hasMenuEntryProperty.GetValue(o, null) == false)
 				return "";
 
 			PropertyInfo tooltipProperty = typeof(MenuAction).GetProperty("tooltip");
-			string shortcut = GetMenuFormattedShortcut(((TooltipContent) tooltipProperty.GetValue(o, null)).shortcut);
+			string shortcut = tooltipProperty == null ? "" : GetMenuFormattedShortcut(((TooltipContent) tooltipProperty.GetValue(o, null)).shortcut);
 
 			// VERIFY
 			sb.Append("\t\t[MenuItem(");
-			sb.Append("PB_MENU_PREFIX + \"");
+			sb.Append("k_MenuPrefix + \"");
 			sb.Append(pretty_path);
 			sb.Append(" ");
 			sb.Append(shortcut);
@@ -142,11 +141,7 @@ namespace UnityEditor.ProBuilder
 			sb.Append(class_name);
 			sb.AppendLine(">();");
 			sb.AppendLine(@"
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
 			return instance != null && instance.IsEnabled();
-#endif
 	");
 			sb.AppendLine("\t\t}");
 
@@ -154,7 +149,7 @@ namespace UnityEditor.ProBuilder
 
 			// PERFORM
 			sb.Append("\t\t[MenuItem(");
-			sb.Append("PB_MENU_PREFIX + \"");
+			sb.Append("k_MenuPrefix + \"");
 			sb.Append(pretty_path);
 			sb.Append(" ");
 			sb.Append(shortcut);
