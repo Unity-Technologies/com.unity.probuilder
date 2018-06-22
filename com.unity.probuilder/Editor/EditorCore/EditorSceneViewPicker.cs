@@ -151,19 +151,19 @@ namespace UnityEditor.ProBuilder
 		static List<VertexPickerEntry> s_NearestVertexes = new List<VertexPickerEntry>();
 		static List<GameObject> s_OverlappingGameObjects = new List<GameObject>();
 
-		public static ProBuilderMesh DoMouseClick(Event evt, SelectMode selectionMode, ScenePickerPreferences pickerPreferences)
+		public static ProBuilderMesh DoMouseClick(Event evt, ComponentMode selectionMode, ScenePickerPreferences pickerPreferences)
 		{
 			bool appendModifier = EditorHandleUtility.IsAppendModifier(evt.modifiers);
 
 			if (!appendModifier)
 				MeshSelection.SetSelection((GameObject) null);
 
-			if (selectionMode == SelectMode.Edge)
+			if (selectionMode == ComponentMode.Edge)
 			{
 				if (!EdgeRaycast(evt.mousePosition, pickerPreferences, true, s_Selection))
 					return null;
 			}
-			else if (selectionMode == SelectMode.Vertex)
+			else if (selectionMode == ComponentMode.Vertex)
 			{
 				if (!VertexRaycast(evt.mousePosition, pickerPreferences, true, s_Selection))
 					return null;
@@ -234,7 +234,7 @@ namespace UnityEditor.ProBuilder
 			return null;
 		}
 
-		public static void DoMouseDrag(Rect mouseDragRect, SelectMode selectionMode, ScenePickerPreferences scenePickerPreferences)
+		public static void DoMouseDrag(Rect mouseDragRect, ComponentMode selectionMode, ScenePickerPreferences scenePickerPreferences)
 		{
 			var pickingOptions = new PickerOptions()
 			{
@@ -253,7 +253,7 @@ namespace UnityEditor.ProBuilder
 
 			switch (selectionMode)
 			{
-				case SelectMode.Vertex:
+				case ComponentMode.Vertex:
 				{
 					Dictionary<ProBuilderMesh, HashSet<int>> selected = Picking.PickVertexesInRect(
 						SceneView.lastActiveSceneView.camera,
@@ -291,7 +291,7 @@ namespace UnityEditor.ProBuilder
 					break;
 				}
 
-				case SelectMode.Face:
+				case ComponentMode.Face:
 				{
 					Dictionary<ProBuilderMesh, HashSet<Face>> selected = Picking.PickFacesInRect(
 						SceneView.lastActiveSceneView.camera,
@@ -327,7 +327,7 @@ namespace UnityEditor.ProBuilder
 					break;
 				}
 
-				case SelectMode.Edge:
+				case ComponentMode.Edge:
 				{
 					var selected = Picking.PickEdgesInRect(
 						SceneView.lastActiveSceneView.camera,
@@ -380,15 +380,15 @@ namespace UnityEditor.ProBuilder
 		// If deepClickOffset is specified, the object + deepClickOffset in the deep select stack will be returned (instead of next).
 		internal static bool MouseRayHitTest(
 			Vector3 mousePosition,
-			SelectMode selectionMode,
+			ComponentMode selectionMode,
 			ScenePickerPreferences pickerOptions,
 			SceneSelection selection,
 			bool allowUnselected = false)
 		{
-			if (selectionMode == SelectMode.Edge)
+			if (selectionMode == ComponentMode.Edge)
 				return EdgeRaycast(mousePosition, pickerOptions, allowUnselected, selection);
 
-			if (selectionMode == SelectMode.Vertex)
+			if (selectionMode == ComponentMode.Vertex)
 				return VertexRaycast(mousePosition, pickerOptions, allowUnselected, selection);
 
 			return FaceRaycast(mousePosition, pickerOptions, allowUnselected, selection, 0, true);

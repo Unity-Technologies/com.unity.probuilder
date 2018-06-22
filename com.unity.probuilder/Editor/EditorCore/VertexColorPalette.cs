@@ -195,9 +195,9 @@ namespace UnityEditor.ProBuilder
 
 			if (editor && editor.editLevel == EditLevel.Geometry)
 			{
-				switch (editor.selectionMode)
+				switch (editor.componentMode)
 				{
-					case SelectMode.Face:
+					case ComponentMode.Face:
 						foreach (ProBuilderMesh mesh in selection)
 						{
 							Color[] colors = mesh.GetColors();
@@ -208,8 +208,8 @@ namespace UnityEditor.ProBuilder
 							mesh.colors = colors;
 						}
 						break;
-					case SelectMode.Edge:
-					case SelectMode.Vertex:
+					case ComponentMode.Edge:
+					case ComponentMode.Vertex:
 						foreach (var mesh in selection)
 						{
 							Color[] colors = mesh.GetColors();

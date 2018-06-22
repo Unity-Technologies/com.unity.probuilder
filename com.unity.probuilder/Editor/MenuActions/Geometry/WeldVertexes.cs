@@ -37,7 +37,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return ProBuilderEditor.instance != null &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
-				ProBuilderEditor.instance.selectionMode == SelectMode.Vertex &&
+				ProBuilderEditor.instance.componentMode == ComponentMode.Vertex &&
 				MeshSelection.TopInternal().Any(x => x.selectedVertexCount > 1);
 		}
 
@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return ProBuilderEditor.instance == null ||
 				ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
-				ProBuilderEditor.instance.selectionMode != SelectMode.Vertex;
+				ProBuilderEditor.instance.componentMode != ComponentMode.Vertex;
 		}
 
 		protected override MenuActionState OptionsMenuState()

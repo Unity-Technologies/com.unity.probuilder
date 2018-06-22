@@ -154,9 +154,9 @@ namespace UnityEditor.ProBuilder
 
 		Tool tool = Tool.Move;
 
-		SelectMode selectionMode
+		ComponentMode selectionMode
 		{
-			get { return editor != null ? editor.selectionMode : SelectMode.Face; }
+			get { return editor != null ? editor.componentMode : ComponentMode.Face; }
 			set
 			{
 				if (editor) editor.SetSelectionMode(value);
@@ -1057,7 +1057,7 @@ namespace UnityEditor.ProBuilder
 
 			switch (selectionMode)
 			{
-				case SelectMode.Edge:
+				case ComponentMode.Edge:
 					float dist, best = 100f;
 
 					try
@@ -1092,7 +1092,7 @@ namespace UnityEditor.ProBuilder
 					nearestElement.valid = best < MIN_DIST_MOUSE_EDGE;
 					break;
 
-				case SelectMode.Face:
+				case ComponentMode.Face:
 
 					try
 					{
@@ -1161,7 +1161,7 @@ namespace UnityEditor.ProBuilder
 
 			switch (selectionMode)
 			{
-				case SelectMode.Edge:
+				case ComponentMode.Edge:
 					if (nearestElement.valid)
 					{
 						ProBuilderMesh mesh = selection[nearestElement.objectIndex];
@@ -1177,7 +1177,7 @@ namespace UnityEditor.ProBuilder
 
 					break;
 
-				case SelectMode.Face:
+				case ComponentMode.Face:
 
 					Vector2 mpos = GUIToUVPoint(mousePosition);
 					bool superBreak = false;
@@ -1207,7 +1207,7 @@ namespace UnityEditor.ProBuilder
 
 					break;
 
-				case SelectMode.Vertex:
+				case ComponentMode.Vertex:
 					RefreshUVCoordinates(new Rect(mousePosition.x - 8, mousePosition.y - 8, 16, 16), true);
 					break;
 			}
@@ -1862,7 +1862,7 @@ namespace UnityEditor.ProBuilder
 			r.height = DOT_SIZE;
 
 			// Draw all vertexes if in vertex mode
-			if (selectionMode == SelectMode.Vertex && screenshotStatus == ScreenshotStatus.Done)
+			if (selectionMode == ComponentMode.Vertex && screenshotStatus == ScreenshotStatus.Done)
 			{
 				for (int i = 0; i < selection.Length; i++)
 				{
@@ -2058,7 +2058,7 @@ namespace UnityEditor.ProBuilder
 
 					switch (selectionMode)
 					{
-						case SelectMode.Edge:
+						case ComponentMode.Edge:
 
 							GL.Begin(GL.LINES);
 							GL.Color(Color.red);
@@ -2073,7 +2073,7 @@ namespace UnityEditor.ProBuilder
 
 							break;
 
-						case SelectMode.Face:
+						case ComponentMode.Face:
 						{
 							Vector3 v = Vector3.zero;
 
@@ -2371,7 +2371,7 @@ namespace UnityEditor.ProBuilder
 				{
 					switch (selectionMode)
 					{
-						case SelectMode.Vertex:
+						case ComponentMode.Vertex:
 							List<int> selectedTris = new List<int>(pb.selectedIndexesInternal);
 
 							for (int j = 0; j < len; j++)
@@ -2394,7 +2394,7 @@ namespace UnityEditor.ProBuilder
 							pb.SetSelectedVertexes(selectedTris.ToArray());
 							break;
 
-						case SelectMode.Edge:
+						case ComponentMode.Edge:
 							List<Edge> selectedEdges = new List<Edge>(pb.selectedEdges);
 
 							for (int n = 0; n < pb.facesInternal.Length; n++)
@@ -2419,7 +2419,7 @@ namespace UnityEditor.ProBuilder
 						/**
 						 * Check if any of the faces intersect with the mousedrag rect.
 						 */
-						case SelectMode.Face:
+						case ComponentMode.Face:
 
 							HashSet<Face> selectedFaces = new HashSet<Face>(selection[i].selectedFacesInternal);
 
@@ -2536,7 +2536,7 @@ namespace UnityEditor.ProBuilder
 			t_selectionMode = GUI.Toolbar(toolbarRect_select, (int)t_selectionMode, SelectionIcons, "Command");
 
 			if (t_selectionMode != (int)selectionMode)
-				selectionMode = (SelectMode)t_selectionMode;
+				selectionMode = (ComponentMode)t_selectionMode;
 
 			// begin Editor pref toggles (Show Texture, Lock UV sceneview handle, etc)
 
@@ -2725,7 +2725,7 @@ namespace UnityEditor.ProBuilder
 			if (GUILayout.Button("Select Island", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
 				Menu_SelectUVIsland();
 
-			GUI.enabled = selectedUVCount > 0 && selectionMode != SelectMode.Face;
+			GUI.enabled = selectedUVCount > 0 && selectionMode != ComponentMode.Face;
 			if (GUILayout.Button("Select Face", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
 				Menu_SelectUVFace();
 

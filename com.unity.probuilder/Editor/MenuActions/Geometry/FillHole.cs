@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return ProBuilderEditor.instance != null &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
-				ProBuilderEditor.instance.selectionMode != SelectMode.Face &&
+				ProBuilderEditor.instance.componentMode != ComponentMode.Face &&
 				MeshSelection.TopInternal().Length > 0;
 		}
 
@@ -34,7 +34,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return ProBuilderEditor.instance == null ||
 				ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
-				ProBuilderEditor.instance.selectionMode == SelectMode.Face;
+				ProBuilderEditor.instance.componentMode == ComponentMode.Face;
 
 		}
 

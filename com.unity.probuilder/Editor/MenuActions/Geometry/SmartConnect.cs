@@ -24,7 +24,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			return ProBuilderEditor.instance != null &&
 				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
-				ProBuilderEditor.instance.selectionMode != SelectMode.Face &&
+				ProBuilderEditor.instance.componentMode != ComponentMode.Face &&
 				MeshSelection.TopInternal().Any(x => x.selectedVertexCount > 1);
 		}
 
@@ -35,12 +35,12 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			switch (ProBuilderEditor.instance.selectionMode)
+			switch (ProBuilderEditor.instance.componentMode)
 			{
-				case SelectMode.Vertex:
+				case ComponentMode.Vertex:
 					return MenuCommands.MenuConnectVertexes(MeshSelection.TopInternal());
 
-				case SelectMode.Edge:
+				case ComponentMode.Edge:
 				default:
 					return MenuCommands.MenuConnectEdges(MeshSelection.TopInternal());
 

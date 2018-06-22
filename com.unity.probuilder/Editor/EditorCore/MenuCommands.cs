@@ -417,7 +417,7 @@ namespace UnityEditor.ProBuilder
 				pb.ToMesh();
 				pb.Refresh(RefreshMask.Normals);
 
-				if(editor && editor.selectionMode == SelectMode.Edge)
+				if(editor && editor.componentMode == ComponentMode.Edge)
 				{
 					if(pb.selectedEdgeCount < 1 || (!enforceCurrentSelectionMode && pb.selectedFaceCount > 0))
 					{
@@ -441,7 +441,7 @@ namespace UnityEditor.ProBuilder
 					pb.ToMesh();
 				}
 
-				if((editor.selectionMode == SelectMode.Face || (!enforceCurrentSelectionMode && !success)) && pb.selectedFaceCount > 0)
+				if((editor.componentMode == ComponentMode.Face || (!enforceCurrentSelectionMode && !success)) && pb.selectedFaceCount > 0)
 				{
 					extrudedFaceCount += pb.selectedFaceCount;
 					var selectedFaces = pb.GetSelectedFaces();
@@ -542,14 +542,14 @@ namespace UnityEditor.ProBuilder
 
 		private static void GetSelectedElementCount(ProBuilderMesh[] selection, out int sel, out int max)
 		{
-			switch(editor.selectionMode)
+			switch(editor.componentMode)
 			{
-				case SelectMode.Face:
+				case ComponentMode.Face:
 					sel = selection.Sum(x => x.selectedFaceCount);
 					max = selection.Sum(x => x.faceCount);
 					break;
 
-				case SelectMode.Edge:
+				case ComponentMode.Edge:
 					sel = selection.Sum(x => x.selectedEdgeCount);
 					max = selection.Sum(x => x.facesInternal.Sum(y=>y.edgesInternal.Length));
 					break;
@@ -598,17 +598,17 @@ namespace UnityEditor.ProBuilder
 			{
 				int previousTriCount = pb.selectedVertexCount;
 
-				switch( editor != null ? editor.selectionMode : (SelectMode)0 )
+				switch( editor != null ? editor.componentMode : (ComponentMode)0 )
 				{
-					case SelectMode.Vertex:
+					case ComponentMode.Vertex:
 						pb.SetSelectedEdges(ElementSelection.GetConnectedEdges(pb, pb.selectedIndexesInternal));
 						break;
 
-					case SelectMode.Edge:
+					case ComponentMode.Edge:
 						pb.SetSelectedEdges(ElementSelection.GetConnectedEdges(pb, pb.selectedIndexesInternal));
 						break;
 
-					case SelectMode.Face:
+					case ComponentMode.Face:
 
 						Face[] selectedFaces = pb.GetSelectedFaces();
 
@@ -671,9 +671,9 @@ namespace UnityEditor.ProBuilder
 			{
 				ProBuilderMesh pb = selection[i];
 
-				switch(editor.selectionMode)
+				switch(editor.componentMode)
 				{
-					case SelectMode.Edge:
+					case ComponentMode.Edge:
 					{
 						int[] perimeter = ElementSelection.GetPerimeterEdges(pb, pb.selectedEdges);
 						pb.SetSelectedEdges( pb.selectedEdges.RemoveAt(perimeter) );
@@ -681,7 +681,7 @@ namespace UnityEditor.ProBuilder
 						break;
 					}
 
-					case SelectMode.Face:
+					case ComponentMode.Face:
 					{
 						Face[] perimeter = ElementSelection.GetPerimeterFaces(pb, pb.selectedFacesInternal).ToArray();
 						pb.SetSelectedFaces( pb.selectedFacesInternal.Except(perimeter).ToArray() );
@@ -689,7 +689,7 @@ namespace UnityEditor.ProBuilder
 						break;
 					}
 
-					case SelectMode.Vertex:
+					case ComponentMode.Vertex:
 					{
 						int[] perimeter = ElementSelection.GetPerimeterVertexes(pb, pb.selectedIndexesInternal, editor.selectedUniversalEdges[i]);
 						pb.SetSelectedVertexes( pb.selectedIndexesInternal.RemoveAt(perimeter) );
@@ -728,9 +728,9 @@ namespace UnityEditor.ProBuilder
 
 			UndoUtility.RecordSelection(selection, "Invert Selection");
 
-			switch( editor != null ? editor.selectionMode : (SelectMode)0 )
+			switch( editor != null ? editor.componentMode : (ComponentMode)0 )
 			{
-				case SelectMode.Vertex:
+				case ComponentMode.Vertex:
 					foreach(var mesh in selection)
 					{
 						SharedVertex[] sharedIndexes = mesh.sharedVertexesInternal;
@@ -751,7 +751,7 @@ namespace UnityEditor.ProBuilder
 					}
 					break;
 
-				case SelectMode.Face:
+				case ComponentMode.Face:
 					foreach(var mesh in selection)
 					{
 						IEnumerable<Face> inverse = mesh.facesInternal.Where( x => !mesh.selectedFacesInternal.Contains(x) );
@@ -759,7 +759,7 @@ namespace UnityEditor.ProBuilder
 					}
 					break;
 
-				case SelectMode.Edge:
+				case ComponentMode.Edge:
 
 					if(!editor) break;
 
@@ -1397,7 +1397,7 @@ namespace UnityEditor.ProBuilder
 					{
 						// if selecting whole path and in edge mode, make sure the path contains
 						// at least one complete edge from the selection.
-						if(	editor.selectionMode == SelectMode.Edge &&
+						if(	editor.componentMode == ComponentMode.Edge &&
 							!hole.Any(x => common.Contains(x.edge.common.a) &&
 							common.Contains(x.edge.common.b)))
 							continue;
