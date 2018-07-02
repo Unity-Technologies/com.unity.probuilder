@@ -49,14 +49,14 @@ namespace UnityEditor.ProBuilder.Actions
 			@"Mirroring objects will duplicate an flip objects on the specified axes."
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return ProBuilderEditor.instance != null && MeshSelection.TopInternal().Length > 0;
+			get { return ProBuilderEditor.instance != null && MeshSelection.TopInternal().Length > 0; }
 		}
 
-		protected override MenuActionState OptionsMenuState()
+		protected override MenuActionState optionsMenuState
 		{
-			return MenuActionState.VisibleAndEnabled;
+			get { return MenuActionState.VisibleAndEnabled; }
 		}
 
 		protected override void OnSettingsGUI()

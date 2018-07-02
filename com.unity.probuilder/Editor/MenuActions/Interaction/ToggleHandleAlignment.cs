@@ -70,9 +70,9 @@ namespace UnityEditor.ProBuilder.Actions
 			return new ActionResult(ActionResult.Status.Success, "Set Handle Alignment\n" + ((HandleAlignment)current).ToString());
 		}
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return ProBuilderEditor.instance != null;
+			get { return ProBuilderEditor.instance != null; }
 		}
 	}
 }

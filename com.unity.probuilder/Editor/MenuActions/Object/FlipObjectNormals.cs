@@ -34,9 +34,9 @@ namespace UnityEditor.ProBuilder.Actions
 			@"Reverse the direction of all faces on the selected objects."
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return ProBuilderEditor.instance != null && MeshSelection.TopInternal().Length > 0;
+			get { return ProBuilderEditor.instance != null && MeshSelection.TopInternal().Length > 0; }
 		}
 
 		public override ActionResult DoAction()

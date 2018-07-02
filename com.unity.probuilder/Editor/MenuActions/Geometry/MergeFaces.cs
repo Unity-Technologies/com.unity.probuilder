@@ -19,17 +19,23 @@ namespace UnityEditor.ProBuilder.Actions
 			@"Tells ProBuilder to treat the selected faces as if they were a single face.  Be careful not to use this with unconnected faces!"
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return ProBuilderEditor.instance != null &&
-				MeshSelection.TopInternal().Any(x => x.selectedFaceCount > 1);
+			get
+			{
+				return ProBuilderEditor.instance != null &&
+					MeshSelection.TopInternal().Any(x => x.selectedFaceCount > 1);
+			}
 		}
 
-		public override bool IsHidden()
+		public override bool hidden
 		{
-			return ProBuilderEditor.instance == null ||
-				ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
-				ProBuilderEditor.instance.componentMode != ComponentMode.Face;
+			get
+			{
+				return ProBuilderEditor.instance == null ||
+					ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
+					ProBuilderEditor.instance.componentMode != ComponentMode.Face;
+			}
 		}
 
 		public override ActionResult DoAction()

@@ -41,19 +41,25 @@ namespace UnityEditor.ProBuilder.Actions
 			keyCommandAlt, 'R'
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return ProBuilderEditor.instance != null &&
-				editLevel == EditLevel.Geometry &&
-				componentMode == ComponentMode.Edge &&
-				MeshSelection.TopInternal().Sum(x => x.selectedEdgeCount) > 0;
+			get
+			{
+				return ProBuilderEditor.instance != null &&
+					editLevel == EditLevel.Geometry &&
+					componentMode == ComponentMode.Edge &&
+					MeshSelection.TopInternal().Sum(x => x.selectedEdgeCount) > 0;
+			}
 		}
 
-		public override bool IsHidden()
+		public override bool hidden
 		{
-			return ProBuilderEditor.instance == null ||
-				editLevel != EditLevel.Geometry ||
-				componentMode != ComponentMode.Edge;
+			get
+			{
+				return ProBuilderEditor.instance == null ||
+					editLevel != EditLevel.Geometry ||
+					componentMode != ComponentMode.Edge;
+			}
 		}
 
 		public override ActionResult DoAction()

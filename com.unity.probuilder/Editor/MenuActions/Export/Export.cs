@@ -96,16 +96,19 @@ namespace UnityEditor.ProBuilder.Actions
 			m_PlyNGons = PreferencesInternal.GetBool("pbPlyNGons", false);
 		}
 
-		public override bool IsHidden() { return false; }
-
-		public override bool IsEnabled()
+		public override bool hidden
 		{
-			return Selection.gameObjects != null && Selection.gameObjects.Length > 0;
+			get { return false; }
 		}
 
-		protected override MenuActionState OptionsMenuState()
+		public override bool enabled
 		{
-			return MenuActionState.VisibleAndEnabled;
+			get { return Selection.gameObjects != null && Selection.gameObjects.Length > 0; }
+		}
+
+		protected override MenuActionState optionsMenuState
+		{
+			get { return MenuActionState.VisibleAndEnabled; }
 		}
 
 		protected override void OnSettingsGUI()

@@ -23,24 +23,30 @@ namespace UnityEditor.ProBuilder.Actions
 			keyCommandSuper, 'E'
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return ProBuilderEditor.instance != null &&
-				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
-				ProBuilderEditor.instance.componentMode == ComponentMode.Edge &&
-				MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
+			get
+			{
+				return ProBuilderEditor.instance != null &&
+					ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
+					ProBuilderEditor.instance.componentMode == ComponentMode.Edge &&
+					MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
+			}
 		}
 
-		public override bool IsHidden()
+		public override bool hidden
 		{
-			return ProBuilderEditor.instance == null ||
-				ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
-				ProBuilderEditor.instance.componentMode != ComponentMode.Edge;
+			get
+			{
+				return ProBuilderEditor.instance == null ||
+					ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
+					ProBuilderEditor.instance.componentMode != ComponentMode.Edge;
+			}
 		}
 
-		protected override MenuActionState OptionsMenuState()
+		protected override MenuActionState optionsMenuState
 		{
-			return MenuActionState.VisibleAndEnabled;
+			get { return MenuActionState.VisibleAndEnabled; }
 		}
 
 		protected override void OnSettingsGUI()

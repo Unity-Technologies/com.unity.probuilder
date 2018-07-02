@@ -19,21 +19,27 @@ namespace UnityEditor.ProBuilder.Actions
 			"Creates a new object (or submesh) from the selected faces."
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return ProBuilderEditor.instance != null &&
-				MeshSelection.TopInternal().Sum(x => x.selectedFaceCount) > 0;
+			get
+			{
+				return ProBuilderEditor.instance != null &&
+					MeshSelection.TopInternal().Sum(x => x.selectedFaceCount) > 0;
+			}
 		}
 
-		public override bool IsHidden()
+		public override bool hidden
 		{
-			return 	editLevel != EditLevel.Geometry ||
+			get
+			{
+				return editLevel != EditLevel.Geometry ||
 					(PreferencesInternal.GetBool(PreferenceKeys.pbElementSelectIsHamFisted) && componentMode != ComponentMode.Face);
+			}
 		}
 
-		protected override MenuActionState OptionsMenuState()
+		protected override MenuActionState optionsMenuState
 		{
-			return MenuActionState.VisibleAndEnabled;
+			get { return MenuActionState.VisibleAndEnabled; }
 		}
 
 		enum DetachSetting

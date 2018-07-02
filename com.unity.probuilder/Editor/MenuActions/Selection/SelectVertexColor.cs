@@ -35,24 +35,30 @@ namespace UnityEditor.ProBuilder.Actions
 			"Selects all faces matching the selected vertex colors."
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return ProBuilderEditor.instance != null &&
-				ProBuilderEditor.instance.editLevel != EditLevel.Top &&
-				MeshSelection.TopInternal().Any(x => x.selectedVertexCount > 0);
+			get
+			{
+				return ProBuilderEditor.instance != null &&
+					ProBuilderEditor.instance.editLevel != EditLevel.Top &&
+					MeshSelection.TopInternal().Any(x => x.selectedVertexCount > 0);
+			}
 		}
 
-		public override bool IsHidden()
+		public override bool hidden
 		{
-			return editLevel != EditLevel.Geometry;
+			get { return editLevel != EditLevel.Geometry; }
 		}
 
-		protected override MenuActionState OptionsMenuState()
+		protected override MenuActionState optionsMenuState
 		{
-			if (IsEnabled() && ProBuilderEditor.instance.editLevel == EditLevel.Geometry)
-				return MenuActionState.VisibleAndEnabled;
+			get
+			{
+				if (enabled && ProBuilderEditor.instance.editLevel == EditLevel.Geometry)
+					return MenuActionState.VisibleAndEnabled;
 
-			return MenuActionState.Visible;
+				return MenuActionState.Visible;
+			}
 		}
 
 		protected override void OnSettingsGUI()

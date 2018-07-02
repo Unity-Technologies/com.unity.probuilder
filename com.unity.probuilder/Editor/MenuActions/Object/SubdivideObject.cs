@@ -29,9 +29,9 @@ namespace UnityEditor.ProBuilder.Actions
 			"Increase the number of edges and vertexes on this object by creating 4 new quads in every face."
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return ProBuilderEditor.instance != null && MeshSelection.TopInternal().Length > 0;
+			get { return ProBuilderEditor.instance != null && MeshSelection.TopInternal().Length > 0; }
 		}
 
 		public override ActionResult DoAction()

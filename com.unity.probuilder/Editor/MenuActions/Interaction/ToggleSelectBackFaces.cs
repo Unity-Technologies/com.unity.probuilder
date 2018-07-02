@@ -45,9 +45,9 @@ The default value is <b>On</b>.
 			return new ActionResult(ActionResult.Status.Success, "Set Hidden Element Selection\n" + (!backFaceEnabled ? "On" : "Off") );
 		}
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return ProBuilderEditor.instance != null;
+			get { return ProBuilderEditor.instance != null; }
 		}
 	}
 }

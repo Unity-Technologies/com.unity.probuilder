@@ -32,32 +32,38 @@ namespace UnityEditor.ProBuilder.Actions
 			"Selects holes on the mesh.\n\nUses the current element selection, or tests the whole mesh if no edges or vertexes are selected."
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			if (ProBuilderEditor.instance == null)
-				return false;
+			get
+			{
+				if (ProBuilderEditor.instance == null)
+					return false;
 
-			if (ProBuilderEditor.instance.editLevel != EditLevel.Geometry)
-				return false;
+				if (ProBuilderEditor.instance.editLevel != EditLevel.Geometry)
+					return false;
 
-			if (ProBuilderEditor.instance.componentMode != ComponentMode.Edge && ProBuilderEditor.instance.componentMode != ComponentMode.Vertex)
-				return false;
+				if (ProBuilderEditor.instance.componentMode != ComponentMode.Edge && ProBuilderEditor.instance.componentMode != ComponentMode.Vertex)
+					return false;
 
-			if (MeshSelection.TopInternal().Length < 1)
-				return false;
+				if (MeshSelection.TopInternal().Length < 1)
+					return false;
 
-			return true;
+				return true;
+			}
 		}
 
-		public override bool IsHidden()
+		public override bool hidden
 		{
-			if (ProBuilderEditor.instance.editLevel != EditLevel.Geometry)
-				return true;
+			get
+			{
+				if (ProBuilderEditor.instance.editLevel != EditLevel.Geometry)
+					return true;
 
-			if (ProBuilderEditor.instance.componentMode != ComponentMode.Edge && ProBuilderEditor.instance.componentMode != ComponentMode.Vertex)
-				return true;
+				if (ProBuilderEditor.instance.componentMode != ComponentMode.Edge && ProBuilderEditor.instance.componentMode != ComponentMode.Vertex)
+					return true;
 
-			return false;
+				return false;
+			}
 		}
 
 		public override ActionResult DoAction()

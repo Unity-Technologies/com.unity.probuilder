@@ -35,26 +35,32 @@ namespace UnityEditor.ProBuilder.Actions
 
 		GUIContent gc_restrictToSelection = new GUIContent("Current Selection", "Optionally restrict the matches to only those faces on currently selected objects.");
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return ProBuilderEditor.instance != null &&
-				ProBuilderEditor.instance.editLevel != EditLevel.Top &&
-				MeshSelection.TopInternal().Any(x => x.selectedFaceCount > 0);
+			get
+			{
+				return ProBuilderEditor.instance != null &&
+					ProBuilderEditor.instance.editLevel != EditLevel.Top &&
+					MeshSelection.TopInternal().Any(x => x.selectedFaceCount > 0);
+			}
 		}
 
-		public override bool IsHidden()
+		public override bool hidden
 		{
-			return editLevel != EditLevel.Geometry;
+			get { return editLevel != EditLevel.Geometry; }
 		}
 
-		protected override MenuActionState OptionsMenuState()
+		protected override MenuActionState optionsMenuState
 		{
-			if (IsEnabled() &&
-				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
-				ProBuilderEditor.instance.componentMode == ComponentMode.Face)
-				return MenuActionState.VisibleAndEnabled;
+			get
+			{
+				if (enabled &&
+					ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
+					ProBuilderEditor.instance.componentMode == ComponentMode.Face)
+					return MenuActionState.VisibleAndEnabled;
 
-			return MenuActionState.Visible;
+				return MenuActionState.Visible;
+			}
 		}
 
 		protected override void OnSettingsGUI()

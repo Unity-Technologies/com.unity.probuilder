@@ -31,17 +31,20 @@ namespace UnityEditor.ProBuilder.Actions
 			keyCommandAlt, 'S'
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return ProBuilderEditor.instance != null &&
-				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
-				ProBuilderEditor.instance.componentMode != ComponentMode.Vertex &&
-				MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
+			get
+			{
+				return ProBuilderEditor.instance != null &&
+					ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
+					ProBuilderEditor.instance.componentMode != ComponentMode.Vertex &&
+					MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
+			}
 		}
 
-		public override bool IsHidden()
+		public override bool hidden
 		{
-			return true;
+			get { return true; }
 		}
 
 		public override ActionResult DoAction()

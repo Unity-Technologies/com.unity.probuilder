@@ -25,7 +25,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -46,7 +46,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -67,7 +67,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -88,7 +88,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -109,7 +109,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -130,7 +130,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -151,7 +151,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -172,7 +172,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -194,7 +194,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -215,7 +215,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -236,7 +236,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -257,7 +257,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -278,7 +278,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -299,7 +299,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -320,7 +320,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -341,7 +341,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -362,7 +362,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -385,7 +385,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -406,7 +406,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -429,7 +429,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -450,7 +450,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -471,7 +471,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -492,7 +492,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -513,7 +513,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -534,7 +534,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -555,7 +555,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -576,7 +576,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -597,7 +597,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -620,7 +620,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -641,7 +641,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -662,7 +662,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -683,7 +683,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -704,7 +704,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -725,7 +725,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -746,7 +746,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -767,7 +767,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -788,7 +788,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -809,7 +809,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -831,7 +831,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -852,7 +852,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -873,7 +873,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -894,7 +894,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -915,7 +915,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -936,7 +936,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -957,7 +957,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -978,7 +978,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -999,7 +999,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -1024,7 +1024,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -1045,7 +1045,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -1066,7 +1066,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -1087,7 +1087,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}
@@ -1108,7 +1108,7 @@ namespace UnityEditor.ProBuilder
 #if PROTOTYPE
 			return instance != null && !instance.isProOnly && instance.IsEnabled();
 #else
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 #endif
 	
 		}

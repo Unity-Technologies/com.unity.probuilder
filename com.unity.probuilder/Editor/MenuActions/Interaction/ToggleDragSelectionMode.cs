@@ -56,16 +56,22 @@ namespace UnityEditor.ProBuilder.Actions
 			return new ActionResult(ActionResult.Status.Success, "Set Shift Drag Mode\n" + SelectionModifierBehavior);
 		}
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return 	ProBuilderEditor.instance != null &&
+			get
+			{
+				return ProBuilderEditor.instance != null &&
 					ProBuilderEditor.instance.editLevel == EditLevel.Geometry;
+			}
 		}
 
-		public override bool IsHidden()
+		public override bool hidden
 		{
-			return 	ProBuilderEditor.instance == null ||
+			get
+			{
+				return ProBuilderEditor.instance == null ||
 					ProBuilderEditor.instance.editLevel != EditLevel.Geometry;
+			}
 		}
 	}
 }

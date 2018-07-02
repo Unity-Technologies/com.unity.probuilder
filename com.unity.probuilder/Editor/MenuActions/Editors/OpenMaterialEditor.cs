@@ -19,9 +19,9 @@ namespace UnityEditor.ProBuilder.Actions
 			"Opens the Material Editor window.\n\nThe Material Editor window applies materials to selected faces or objects."
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return 	ProBuilderEditor.instance != null;
+			get { return ProBuilderEditor.instance != null; }
 		}
 
 		public override ActionResult DoAction()
