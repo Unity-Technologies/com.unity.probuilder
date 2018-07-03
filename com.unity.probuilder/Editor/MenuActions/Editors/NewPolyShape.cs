@@ -41,6 +41,7 @@ namespace UnityEditor.ProBuilder.Actions
 			var mat = PreferencesInternal.GetMaterial(PreferenceKeys.pbDefaultMaterial);
 			foreach (var face in pb.facesInternal)
 				face.material = mat;
+			pb.gameObject.GetComponent<MeshRenderer>().sharedMaterial = mat;
 			EditorUtility.InitObject(pb);
 			MeshSelection.SetSelection(go);
 			UndoUtility.RegisterCreatedObjectUndo(go, "Create Poly Shape");

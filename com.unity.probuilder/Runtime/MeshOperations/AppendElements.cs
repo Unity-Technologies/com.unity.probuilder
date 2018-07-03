@@ -218,13 +218,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		internal static ActionResult CreateShapeFromPolygon(this PolyShape poly)
 		{
 			var mesh = poly.mesh;
-			var material = poly.material;
-
-			if (material == null)
-			{
-				var renderer = poly.GetComponent<MeshRenderer>();
-				material = renderer.sharedMaterial;
-			}
+			var renderer = poly.GetComponent<MeshRenderer>();
+			var material = renderer != null && renderer.sharedMaterial != null ? renderer.sharedMaterial : BuiltinMaterials.defaultMaterial;
 
 			var res = mesh.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals);
 
