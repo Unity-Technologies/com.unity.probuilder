@@ -192,12 +192,10 @@ namespace UnityEditor.ProBuilder
 		public static void ClearElementSelection()
 		{
 			if (ProBuilderEditor.instance)
-			{
 				ProBuilderEditor.instance.ClearElementSelection();
-				s_ElementCountCacheIsDirty = true;
-				if (objectSelectionChanged != null)
-					objectSelectionChanged();
-			}
+			s_ElementCountCacheIsDirty = true;
+			if (objectSelectionChanged != null)
+				objectSelectionChanged();
 		}
 
 		/// <summary>
@@ -205,7 +203,8 @@ namespace UnityEditor.ProBuilder
 		/// </summary>
 		public static void ClearElementAndObjectSelection()
 		{
-			ProBuilderEditor.instance.ClearElementSelection();
+			if(ProBuilderEditor.instance)
+				ProBuilderEditor.instance.ClearElementSelection();
 			Selection.objects = new Object[0];
 		}
 	}

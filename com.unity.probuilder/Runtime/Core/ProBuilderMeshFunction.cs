@@ -35,6 +35,8 @@ namespace UnityEngine.ProBuilder
 			m_Tangents = null;
 			m_SharedVertexes = new SharedVertex[0];
 			m_SharedTextures = new SharedVertex[0];
+			InvalidateSharedVertexLookup();
+			InvalidateSharedTextureLookup();
 			m_Colors = null;
 			ClearSelection();
 		}
@@ -135,7 +137,7 @@ namespace UnityEngine.ProBuilder
 			positions = points;
 			m_Faces = f;
 			m_SharedVertexes = SharedVertex.GetSharedVertexesWithPositions(points);
-
+			InvalidateSharedVertexLookup();
 			ToMesh();
 			Refresh();
 		}
@@ -154,6 +156,8 @@ namespace UnityEngine.ProBuilder
 			m_Positions = vertexes.ToArray();
 			m_Faces = faces.ToArray();
 			m_SharedVertexes = SharedVertex.GetSharedVertexesWithPositions(m_Positions);
+			InvalidateSharedVertexLookup();
+			InvalidateSharedTextureLookup();
 			ToMesh();
 			Refresh();
 		}
