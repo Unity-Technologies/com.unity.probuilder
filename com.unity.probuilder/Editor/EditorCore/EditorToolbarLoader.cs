@@ -139,28 +139,36 @@ namespace UnityEditor.ProBuilder
 		{
 			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 			{
-				var menuActionTypes = assembly.GetTypes().Where(x =>
+				try
 				{
-					if(!typeof(MenuAction).IsAssignableFrom(x)
-						|| x.IsAbstract
-						|| !Attribute.IsDefined(x, typeof(ProBuilderMenuActionAttribute)))
-						return false;
-
-					var constructors = x.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-
-					if (!constructors.Any(y => y.GetParameters().Length < 1))
+					var menuActionTypes = assembly.GetTypes().Where(x =>
 					{
-						Log.Error("{0} type does not contain a parameterless constructor. Only parameterless constructors are invoked with creating MenuItem instances.", x.ToString());
-						return false;
-					}
+						if (!typeof(MenuAction).IsAssignableFrom(x)
+							|| x.IsAbstract
+							|| !Attribute.IsDefined(x, typeof(ProBuilderMenuActionAttribute)))
+							return false;
 
-					if (constructors.Any(z => z.GetParameters().Length > 0))
-						Log.Warning("{0} type contains a non-parameterless constructor. Only parameterless constructors are invoked with creating MenuItem instances.", x.ToString());
+						var constructors = x.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 
-					return true;
-				});
+						if (!constructors.Any(y => y.GetParameters().Length < 1))
+						{
+							Log.Error("{0} type does not contain a parameterless constructor. Only parameterless constructors are invoked with creating MenuItem instances.", x.ToString());
+							return false;
+						}
 
-				list.AddRange(menuActionTypes.Select(x => (MenuAction)Activator.CreateInstance(x)));
+						if (constructors.Any(z => z.GetParameters().Length > 0))
+							Log.Warning("{0} type contains a non-parameterless constructor. Only parameterless constructors are invoked with creating MenuItem instances.", x.ToString());
+
+						return true;
+					});
+
+					list.AddRange(menuActionTypes.Select(x => (MenuAction)Activator.CreateInstance(x)));
+				}
+				catch
+				{
+					// some assemblies cannot be reflected (jetbrains plugin, for example)
+					;
+				}
 			}
 		}
 	}

@@ -15,9 +15,9 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Export; } }
 		public override Texture2D icon { get { return null; } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
+		public override TooltipContent tooltip { get { return s_Tooltip; } }
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Export Asset",
 			"Export a Unity mesh asset file."
@@ -57,9 +57,9 @@ namespace UnityEditor.ProBuilder.Actions
 				ProBuilderMesh first = meshes.FirstOrDefault();
 
 				if(first == null)
-					return res;
+					return null;
 
-				string name = first != null ? first.name : "Mesh";
+				string name = first.name;
 				string path = UnityEditor.EditorUtility.SaveFilePanel("Export to Asset", "Assets", name, "prefab");
 
 				if(string.IsNullOrEmpty(path))
@@ -67,8 +67,8 @@ namespace UnityEditor.ProBuilder.Actions
 
 				string directory = Path.GetDirectoryName(path);
 				name = Path.GetFileNameWithoutExtension(path);
-				string meshPath = string.Format("{0}/{1}.asset", directory, first.mesh.name);
-				string prefabPath = string.Format("{0}/{1}.prefab", directory, first.name);
+				string meshPath = string.Format("{0}/{1}.asset", directory, first.mesh.name).Replace("\\", "/");
+				string prefabPath = string.Format("{0}/{1}.prefab", directory, first.name).Replace("\\", "/");
 
 				// If a file dialog was presented that means the user has already been asked to overwrite.
 				if(File.Exists(meshPath))
@@ -95,7 +95,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		static string DoExport(string path, ProBuilderMesh pb)
 		{
-			string directory = Path.GetDirectoryName(path);
+			string directory = Path.GetDirectoryName(path).Replace("\\", "/");
 			string name = Path.GetFileNameWithoutExtension(path);
 			string relativeDirectory = string.Format("Assets{0}", directory.Replace(Application.dataPath, ""));
 
@@ -111,13 +111,18 @@ namespace UnityEditor.ProBuilder.Actions
 
 			Mesh meshAsset = (Mesh) AssetDatabase.LoadAssetAtPath(meshPath, typeof(Mesh));
 
-			GameObject go = new GameObject();
-			go.AddComponent<MeshFilter>().sharedMesh = meshAsset;
-			go.AddComponent<MeshRenderer>().sharedMaterials = pb.gameObject.GetComponent<MeshRenderer>().sharedMaterials;
+			var go = Object.Instantiate(pb.gameObject);
+			var dup = go.GetComponent<ProBuilderMesh>();
+			var entity = go.GetComponent<Entity>();
+			if(entity != null)
+				Object.DestroyImmediate(entity);
+			dup.preserveMeshAssetOnDestroy = true;
+			Object.DestroyImmediate(dup);
+			go.GetComponent<MeshFilter>().sharedMesh = meshAsset;
 			string relativePrefabPath = string.Format("{0}/{1}.prefab", relativeDirectory, name);
 			string prefabPath = AssetDatabase.GenerateUniqueAssetPath(relativePrefabPath);
 			PrefabUtility.CreatePrefab(prefabPath, go, ReplacePrefabOptions.Default);
-			GameObject.DestroyImmediate(go);
+			Object.DestroyImmediate(go);
 
 			return meshPath;
 		}

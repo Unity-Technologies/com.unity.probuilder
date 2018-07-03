@@ -219,7 +219,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			IEnumerable<ProBuilderMesh> meshes = m_ExportRecursive ? MeshSelection.All() : MeshSelection.TopInternal();
 
-			if(meshes == null || meshes.Count() < 1)
+			if(meshes == null || !meshes.Any())
 			{
 				return new ActionResult(ActionResult.Status.Canceled, "No Meshes Selected");
 			}
