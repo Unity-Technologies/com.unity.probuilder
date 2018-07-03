@@ -26,9 +26,9 @@ namespace UnityEditor.ProBuilder.Actions
 			@"Set the pivot point of this object to the center of it's bounds."
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return ProBuilderEditor.instance != null && MeshSelection.TopInternal().Length > 0;
+			get { return ProBuilderEditor.instance != null && MeshSelection.TopInternal().Length > 0; }
 		}
 
 		public override ActionResult DoAction()

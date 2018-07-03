@@ -34,25 +34,31 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 			keyCommandAlt, 'G'
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return ProBuilderEditor.instance != null &&
-				MenuCommands.VerifyGrowSelection(MeshSelection.TopInternal());
+			get
+			{
+				return ProBuilderEditor.instance != null &&
+					MenuCommands.VerifyGrowSelection(MeshSelection.TopInternal());
+			}
 		}
 
-		public override bool IsHidden()
+		public override bool hidden
 		{
-			return editLevel != EditLevel.Geometry;
+			get { return editLevel != EditLevel.Geometry; }
 		}
 
-		protected override MenuActionState OptionsMenuState()
+		protected override MenuActionState optionsMenuState
 		{
-			if (IsEnabled() &&
-				ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
-				ProBuilderEditor.instance.componentMode == ComponentMode.Face)
-				return MenuActionState.VisibleAndEnabled;
+			get
+			{
+				if (enabled &&
+					ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
+					ProBuilderEditor.instance.componentMode == ComponentMode.Face)
+					return MenuActionState.VisibleAndEnabled;
 
-			return MenuActionState.Hidden;
+				return MenuActionState.Hidden;
+			}
 		}
 
 		protected override void OnSettingsGUI()

@@ -22,14 +22,14 @@ namespace UnityEditor.ProBuilder.Actions
 			"Creates a new shape by clicking around a perimeter and extruding."
 		);
 
-		public override bool IsHidden()
+		public override bool hidden
 		{
-			return false;
+			get { return false; }
 		}
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return true;
+			get { return true; }
 		}
 
 		public override ActionResult DoAction()

@@ -30,15 +30,18 @@ namespace UnityEditor.ProBuilder.Actions
 			keyCommandAlt, keyCommandShift, 'G'
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return ProBuilderEditor.instance != null &&
-				MenuCommands.VerifyShrinkSelection(MeshSelection.TopInternal());
+			get
+			{
+				return ProBuilderEditor.instance != null &&
+					MenuCommands.VerifyShrinkSelection(MeshSelection.TopInternal());
+			}
 		}
 
-		public override bool IsHidden()
+		public override bool hidden
 		{
-			return editLevel != EditLevel.Geometry;
+			get { return editLevel != EditLevel.Geometry; }
 		}
 
 		public override ActionResult DoAction()

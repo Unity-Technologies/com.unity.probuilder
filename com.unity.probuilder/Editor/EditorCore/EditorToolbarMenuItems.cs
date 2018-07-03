@@ -22,7 +22,7 @@ namespace UnityEditor.ProBuilder
 		{
 			NewBezierShape instance = EditorToolbarLoader.GetInstance<NewBezierShape>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -39,7 +39,7 @@ namespace UnityEditor.ProBuilder
 		{
 			NewPolyShape instance = EditorToolbarLoader.GetInstance<NewPolyShape>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -56,7 +56,7 @@ namespace UnityEditor.ProBuilder
 		{
 			OpenMaterialEditor instance = EditorToolbarLoader.GetInstance<OpenMaterialEditor>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -73,7 +73,7 @@ namespace UnityEditor.ProBuilder
 		{
 			OpenShapeEditor instance = EditorToolbarLoader.GetInstance<OpenShapeEditor>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -90,7 +90,7 @@ namespace UnityEditor.ProBuilder
 		{
 			OpenSmoothingEditor instance = EditorToolbarLoader.GetInstance<OpenSmoothingEditor>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -107,7 +107,7 @@ namespace UnityEditor.ProBuilder
 		{
 			OpenUVEditor instance = EditorToolbarLoader.GetInstance<OpenUVEditor>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -124,7 +124,7 @@ namespace UnityEditor.ProBuilder
 		{
 			OpenVertexColorEditor instance = EditorToolbarLoader.GetInstance<OpenVertexColorEditor>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -141,7 +141,7 @@ namespace UnityEditor.ProBuilder
 		{
 			OpenVertexPositionEditor instance = EditorToolbarLoader.GetInstance<OpenVertexPositionEditor>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -159,7 +159,7 @@ namespace UnityEditor.ProBuilder
 		{
 			ExportAsset instance = EditorToolbarLoader.GetInstance<ExportAsset>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -176,7 +176,7 @@ namespace UnityEditor.ProBuilder
 		{
 			ExportObj instance = EditorToolbarLoader.GetInstance<ExportObj>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -193,7 +193,7 @@ namespace UnityEditor.ProBuilder
 		{
 			ExportPly instance = EditorToolbarLoader.GetInstance<ExportPly>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -210,7 +210,7 @@ namespace UnityEditor.ProBuilder
 		{
 			ExportStlAscii instance = EditorToolbarLoader.GetInstance<ExportStlAscii>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -227,7 +227,7 @@ namespace UnityEditor.ProBuilder
 		{
 			ExportStlBinary instance = EditorToolbarLoader.GetInstance<ExportStlBinary>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -244,7 +244,7 @@ namespace UnityEditor.ProBuilder
 		{
 			BevelEdges instance = EditorToolbarLoader.GetInstance<BevelEdges>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -261,7 +261,7 @@ namespace UnityEditor.ProBuilder
 		{
 			BridgeEdges instance = EditorToolbarLoader.GetInstance<BridgeEdges>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -278,7 +278,7 @@ namespace UnityEditor.ProBuilder
 		{
 			CollapseVertexes instance = EditorToolbarLoader.GetInstance<CollapseVertexes>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -295,7 +295,7 @@ namespace UnityEditor.ProBuilder
 		{
 			ConformFaceNormals instance = EditorToolbarLoader.GetInstance<ConformFaceNormals>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -314,7 +314,7 @@ namespace UnityEditor.ProBuilder
 		{
 			DeleteFaces instance = EditorToolbarLoader.GetInstance<DeleteFaces>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -331,7 +331,7 @@ namespace UnityEditor.ProBuilder
 		{
 			DetachFaces instance = EditorToolbarLoader.GetInstance<DetachFaces>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -350,7 +350,7 @@ namespace UnityEditor.ProBuilder
 		{
 			FillHole instance = EditorToolbarLoader.GetInstance<FillHole>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -367,7 +367,7 @@ namespace UnityEditor.ProBuilder
 		{
 			FlipFaceEdge instance = EditorToolbarLoader.GetInstance<FlipFaceEdge>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -384,7 +384,7 @@ namespace UnityEditor.ProBuilder
 		{
 			FlipFaceNormals instance = EditorToolbarLoader.GetInstance<FlipFaceNormals>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -401,7 +401,7 @@ namespace UnityEditor.ProBuilder
 		{
 			InsertEdgeLoop instance = EditorToolbarLoader.GetInstance<InsertEdgeLoop>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -418,7 +418,7 @@ namespace UnityEditor.ProBuilder
 		{
 			MergeFaces instance = EditorToolbarLoader.GetInstance<MergeFaces>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -435,7 +435,7 @@ namespace UnityEditor.ProBuilder
 		{
 			SetPivotToSelection instance = EditorToolbarLoader.GetInstance<SetPivotToSelection>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -452,7 +452,7 @@ namespace UnityEditor.ProBuilder
 		{
 			SmartConnect instance = EditorToolbarLoader.GetInstance<SmartConnect>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -469,7 +469,7 @@ namespace UnityEditor.ProBuilder
 		{
 			SmartSubdivide instance = EditorToolbarLoader.GetInstance<SmartSubdivide>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -486,7 +486,7 @@ namespace UnityEditor.ProBuilder
 		{
 			SplitVertexes instance = EditorToolbarLoader.GetInstance<SplitVertexes>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -505,7 +505,7 @@ namespace UnityEditor.ProBuilder
 		{
 			TriangulateFaces instance = EditorToolbarLoader.GetInstance<TriangulateFaces>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -522,7 +522,7 @@ namespace UnityEditor.ProBuilder
 		{
 			WeldVertexes instance = EditorToolbarLoader.GetInstance<WeldVertexes>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -539,7 +539,7 @@ namespace UnityEditor.ProBuilder
 		{
 			ToggleDragRectMode instance = EditorToolbarLoader.GetInstance<ToggleDragRectMode>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -556,7 +556,7 @@ namespace UnityEditor.ProBuilder
 		{
 			ToggleDragSelectionMode instance = EditorToolbarLoader.GetInstance<ToggleDragSelectionMode>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -573,7 +573,7 @@ namespace UnityEditor.ProBuilder
 		{
 			ToggleHandleAlignment instance = EditorToolbarLoader.GetInstance<ToggleHandleAlignment>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -590,7 +590,7 @@ namespace UnityEditor.ProBuilder
 		{
 			ToggleSelectBackFaces instance = EditorToolbarLoader.GetInstance<ToggleSelectBackFaces>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -607,7 +607,7 @@ namespace UnityEditor.ProBuilder
 		{
 			CenterPivot instance = EditorToolbarLoader.GetInstance<CenterPivot>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -624,7 +624,7 @@ namespace UnityEditor.ProBuilder
 		{
 			ConformObjectNormals instance = EditorToolbarLoader.GetInstance<ConformObjectNormals>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -641,7 +641,7 @@ namespace UnityEditor.ProBuilder
 		{
 			FlipObjectNormals instance = EditorToolbarLoader.GetInstance<FlipObjectNormals>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -658,7 +658,7 @@ namespace UnityEditor.ProBuilder
 		{
 			FreezeTransform instance = EditorToolbarLoader.GetInstance<FreezeTransform>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -676,7 +676,7 @@ namespace UnityEditor.ProBuilder
 		{
 			MergeObjects instance = EditorToolbarLoader.GetInstance<MergeObjects>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -693,7 +693,7 @@ namespace UnityEditor.ProBuilder
 		{
 			MirrorObjects instance = EditorToolbarLoader.GetInstance<MirrorObjects>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -710,7 +710,7 @@ namespace UnityEditor.ProBuilder
 		{
 			ProBuilderize instance = EditorToolbarLoader.GetInstance<ProBuilderize>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -727,7 +727,7 @@ namespace UnityEditor.ProBuilder
 		{
 			SetCollider instance = EditorToolbarLoader.GetInstance<SetCollider>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -744,7 +744,7 @@ namespace UnityEditor.ProBuilder
 		{
 			SetTrigger instance = EditorToolbarLoader.GetInstance<SetTrigger>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -761,7 +761,7 @@ namespace UnityEditor.ProBuilder
 		{
 			SubdivideObject instance = EditorToolbarLoader.GetInstance<SubdivideObject>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -778,7 +778,7 @@ namespace UnityEditor.ProBuilder
 		{
 			TriangulateObject instance = EditorToolbarLoader.GetInstance<TriangulateObject>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -795,7 +795,7 @@ namespace UnityEditor.ProBuilder
 		{
 			GrowSelection instance = EditorToolbarLoader.GetInstance<GrowSelection>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -812,7 +812,7 @@ namespace UnityEditor.ProBuilder
 		{
 			InvertSelection instance = EditorToolbarLoader.GetInstance<InvertSelection>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -833,7 +833,7 @@ namespace UnityEditor.ProBuilder
 		{
 			SelectHole instance = EditorToolbarLoader.GetInstance<SelectHole>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -850,7 +850,7 @@ namespace UnityEditor.ProBuilder
 		{
 			SelectMaterial instance = EditorToolbarLoader.GetInstance<SelectMaterial>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -867,7 +867,7 @@ namespace UnityEditor.ProBuilder
 		{
 			SelectSmoothingGroup instance = EditorToolbarLoader.GetInstance<SelectSmoothingGroup>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -884,7 +884,7 @@ namespace UnityEditor.ProBuilder
 		{
 			SelectVertexColor instance = EditorToolbarLoader.GetInstance<SelectVertexColor>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 
@@ -901,7 +901,7 @@ namespace UnityEditor.ProBuilder
 		{
 			ShrinkSelection instance = EditorToolbarLoader.GetInstance<ShrinkSelection>();
 
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	
 		}
 

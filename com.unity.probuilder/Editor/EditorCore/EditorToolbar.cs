@@ -216,7 +216,7 @@ namespace UnityEditor.ProBuilder
 
 		private bool IsActionValid(MenuAction action)
 		{
-			return !action.IsHidden() && (!isIconMode || action.icon != null);
+			return !action.hidden && (!isIconMode || action.icon != null);
 		}
 
 		public void OnGUI()

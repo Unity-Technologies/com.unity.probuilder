@@ -22,23 +22,29 @@ namespace UnityEditor.ProBuilder.Actions
 			@"Smooth the selected edges by adding a slanted face connecting the two adjacent faces."
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return 	ProBuilderEditor.instance != null &&
+			get
+			{
+				return ProBuilderEditor.instance != null &&
 					ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
 					MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
+			}
 		}
 
-		protected override MenuActionState OptionsMenuState()
+		protected override MenuActionState optionsMenuState
 		{
-			return MenuActionState.VisibleAndEnabled;
+			get { return MenuActionState.VisibleAndEnabled; }
 		}
 
-		public override bool IsHidden()
+		public override bool hidden
 		{
-			return 	ProBuilderEditor.instance == null ||
+			get
+			{
+				return ProBuilderEditor.instance == null ||
 					editLevel != EditLevel.Geometry ||
 					(componentMode & (ComponentMode.Face | ComponentMode.Edge)) == 0;
+			}
 		}
 
 		protected override void OnSettingsGUI()

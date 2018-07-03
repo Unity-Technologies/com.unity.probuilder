@@ -27,14 +27,14 @@ namespace UnityEditor.ProBuilder.Actions
 			"Creates a new shape that is built by extruding along a bezier spline."
 		);
 
-		public override bool IsHidden()
+		public override bool hidden
 		{
-			return !m_ExperimentalFeaturesEnabled;
+			get { return !m_ExperimentalFeaturesEnabled; }
 		}
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return true;
+			get { return true; }
 		}
 
 		public override ActionResult DoAction()

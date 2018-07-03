@@ -21,9 +21,9 @@ namespace UnityEditor.ProBuilder.Actions
 			"Opens either the Vertex Color Palette or the Vertex Color Painter.\n\nThe Palette is useful for applying colors to selected faces with hard edges, where the Painter is good for brush strokes and soft edges.\n\nTo select which editor this button opens, Option + Click."
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return ProBuilderEditor.instance != null;
+			get { return ProBuilderEditor.instance != null; }
 		}
 
 		public override ActionResult DoAction()

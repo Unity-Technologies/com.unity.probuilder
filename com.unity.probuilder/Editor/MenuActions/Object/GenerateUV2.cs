@@ -50,17 +50,20 @@ namespace UnityEditor.ProBuilder.Actions
 			@"Create UV2 maps for all selected objects.\n\nCan optionally be set to Generate UV2 for the entire scene in the options panel."
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			if (generateUV2PerObject)
-				return MeshSelection.TopInternal().Length > 0;
+			get
+			{
+				if (generateUV2PerObject)
+					return MeshSelection.TopInternal().Length > 0;
 
-			return true;
+				return true;
+			}
 		}
 
-		protected override MenuActionState OptionsMenuState()
+		protected override MenuActionState optionsMenuState
 		{
-			return MenuActionState.VisibleAndEnabled;
+			get { return MenuActionState.VisibleAndEnabled; }
 		}
 
 		protected override void OnSettingsGUI()

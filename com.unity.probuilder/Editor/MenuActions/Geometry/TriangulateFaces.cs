@@ -28,17 +28,23 @@ namespace UnityEditor.ProBuilder.Actions
 			"Break all selected faces down to triangles."
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return ProBuilderEditor.instance != null &&
-				editLevel == EditLevel.Geometry &&
-				MeshSelection.TopInternal().Sum(x => x.selectedFaceCount) > 0;
+			get
+			{
+				return ProBuilderEditor.instance != null &&
+					editLevel == EditLevel.Geometry &&
+					MeshSelection.TopInternal().Sum(x => x.selectedFaceCount) > 0;
+			}
 		}
 
-		public override bool IsHidden()
+		public override bool hidden
 		{
-			return editLevel != EditLevel.Geometry ||
-				(PreferencesInternal.GetBool(PreferenceKeys.pbElementSelectIsHamFisted) && componentMode != ComponentMode.Face);
+			get
+			{
+				return editLevel != EditLevel.Geometry ||
+					(PreferencesInternal.GetBool(PreferenceKeys.pbElementSelectIsHamFisted) && componentMode != ComponentMode.Face);
+			}
 		}
 
 		public override ActionResult DoAction()

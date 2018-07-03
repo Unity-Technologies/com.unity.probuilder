@@ -53,18 +53,24 @@ namespace UnityEditor.ProBuilder.Actions
 				"Set Drag Select\n" + (mode == RectSelectMode.Complete ? "Complete" : "Intersect"));
 		}
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return ProBuilderEditor.instance != null &&
-			       ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
-			       ProBuilderEditor.instance.componentMode != ComponentMode.Vertex;
+			get
+			{
+				return ProBuilderEditor.instance != null &&
+					ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
+					ProBuilderEditor.instance.componentMode != ComponentMode.Vertex;
+			}
 		}
 
-		public override bool IsHidden()
+		public override bool hidden
 		{
-			return 	ProBuilderEditor.instance == null ||
+			get
+			{
+				return ProBuilderEditor.instance == null ||
 					ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
-			       	ProBuilderEditor.instance.componentMode == ComponentMode.Vertex;
+					ProBuilderEditor.instance.componentMode == ComponentMode.Vertex;
+			}
 		}
 	}
 }

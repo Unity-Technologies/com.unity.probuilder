@@ -23,12 +23,15 @@ namespace UnityEditor.ProBuilder.Actions
 			"Export a Unity mesh asset file."
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return MeshSelection.count > 0;
+			get { return MeshSelection.count > 0; }
 		}
 
-		public override bool IsHidden() { return true; }
+		public override bool hidden
+		{
+			get { return true; }
+		}
 
 		public override ActionResult DoAction()
 		{

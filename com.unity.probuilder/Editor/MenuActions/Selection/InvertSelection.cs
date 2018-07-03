@@ -30,16 +30,19 @@ namespace UnityEditor.ProBuilder.Actions
 			keyCommandSuper, keyCommandShift, 'I'
 		);
 
-		public override bool IsEnabled()
+		public override bool enabled
 		{
-			return ProBuilderEditor.instance != null
-				&& ProBuilderEditor.instance.editLevel != EditLevel.Top
-				&& MeshSelection.TopInternal().Length > 0;
+			get
+			{
+				return ProBuilderEditor.instance != null
+					&& ProBuilderEditor.instance.editLevel != EditLevel.Top
+					&& MeshSelection.TopInternal().Length > 0;
+			}
 		}
 
-		public override bool IsHidden()
+		public override bool hidden
 		{
-			return editLevel != EditLevel.Geometry;
+			get { return editLevel != EditLevel.Geometry; }
 		}
 
 		public override ActionResult DoAction()
