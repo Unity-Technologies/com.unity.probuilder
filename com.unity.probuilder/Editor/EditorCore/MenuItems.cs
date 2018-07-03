@@ -44,7 +44,7 @@ namespace UnityEditor.ProBuilder
 			ProBuilderEditor e = ProBuilderEditor.instance;
 
 			return e != null &&
-			       e.editLevel == EditLevel.Geometry &&
+			       ProBuilderEditor.editLevel == EditLevel.Geometry &&
 			       selection != null &&
 			       selection.Length > 0 &&
 			       (selection.Any(x => x.selectedEdgeCount > 0) || selection.Any(x => x.selectedFacesInternal.Length > 0));
@@ -60,12 +60,12 @@ namespace UnityEditor.ProBuilder
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Selection/Select Ring &r", true, PreferenceKeys.menuSelection)]
 		private static bool MenuVerifyRingLoop()
 		{
-			if (editor == null || editor.editLevel != EditLevel.Geometry)
+			if (editor == null || ProBuilderEditor.editLevel != EditLevel.Geometry)
 				return false;
 
-			if (editor.componentMode == ComponentMode.Edge)
+			if (ProBuilderEditor.componentMode == ComponentMode.Edge)
 				return MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
-			else if (editor.componentMode == ComponentMode.Face)
+			else if (ProBuilderEditor.componentMode == ComponentMode.Face)
 				return MeshSelection.TopInternal().Any(x => x.selectedFaceCount > 0);
 			return false;
 		}
@@ -73,7 +73,7 @@ namespace UnityEditor.ProBuilder
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Selection/Select Loop &l", false, PreferenceKeys.menuSelection)]
 		private static void MenuSelectLoop()
 		{
-			switch (editor.componentMode)
+			switch (ProBuilderEditor.componentMode)
 			{
 				case ComponentMode.Edge:
 					MenuCommands.MenuLoopSelection(selection);
@@ -88,7 +88,7 @@ namespace UnityEditor.ProBuilder
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Selection/Select Ring &r", false, PreferenceKeys.menuSelection)]
 		private static void MenuSelectRing()
 		{
-			switch (editor.componentMode)
+			switch (ProBuilderEditor.componentMode)
 			{
 				case ComponentMode.Edge:
 					MenuCommands.MenuRingSelection(selection);

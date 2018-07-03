@@ -121,9 +121,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-	    internal static EditLevel editLevel { get { return ProBuilderEditor.instance ? ProBuilderEditor.instance.editLevel : EditLevel.Top; } }
+	    internal static EditLevel editLevel { get { return ProBuilderEditor.instance ? ProBuilderEditor.editLevel : EditLevel.Top; } }
 
-	    internal static ComponentMode componentMode { get { return ProBuilderEditor.instance ? ProBuilderEditor.instance.componentMode : ComponentMode.Face; } }
+	    internal static ComponentMode componentMode { get { return ProBuilderEditor.instance ? ProBuilderEditor.componentMode : ComponentMode.Face; } }
 
         Texture2D m_DesaturatedIcon = null;
 

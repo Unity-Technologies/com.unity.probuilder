@@ -34,8 +34,8 @@ namespace UnityEditor.ProBuilder.Actions
 			get
 			{
 				return ProBuilderEditor.instance == null ||
-					ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
-					ProBuilderEditor.instance.componentMode != ComponentMode.Face;
+					ProBuilderEditor.editLevel != EditLevel.Geometry ||
+					ProBuilderEditor.componentMode != ComponentMode.Face;
 			}
 		}
 

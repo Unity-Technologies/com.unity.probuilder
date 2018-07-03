@@ -36,8 +36,8 @@ namespace UnityEditor.ProBuilder.Actions
 			get
 			{
 				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.instance.componentMode != ComponentMode.Vertex &&
+					ProBuilderEditor.editLevel == EditLevel.Geometry &&
+					ProBuilderEditor.componentMode != ComponentMode.Vertex &&
 					MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
 			}
 		}
@@ -49,7 +49,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			switch (ProBuilderEditor.instance.componentMode)
+			switch (ProBuilderEditor.componentMode)
 			{
 				case ComponentMode.Edge:
 					return MenuCommands.MenuSubdivideEdge(MeshSelection.TopInternal());

@@ -58,8 +58,8 @@ namespace UnityEditor.ProBuilder.Actions
 			get
 			{
 				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.instance.componentMode != ComponentMode.Vertex;
+					ProBuilderEditor.editLevel == EditLevel.Geometry &&
+					ProBuilderEditor.componentMode != ComponentMode.Vertex;
 			}
 		}
 
@@ -68,8 +68,8 @@ namespace UnityEditor.ProBuilder.Actions
 			get
 			{
 				return ProBuilderEditor.instance == null ||
-					ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
-					ProBuilderEditor.instance.componentMode == ComponentMode.Vertex;
+					ProBuilderEditor.editLevel != EditLevel.Geometry ||
+					ProBuilderEditor.componentMode == ComponentMode.Vertex;
 			}
 		}
 	}
