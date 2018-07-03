@@ -194,7 +194,7 @@ namespace UnityEditor.ProBuilder
 
 			pbElementSelectIsHamFisted = !EditorGUILayout.Toggle(
 				new GUIContent("Precise Element Selection",
-					"When enabled you will be able to select object faces when in Vertex of Edge mode by clicking the center of a face.  When disabled, edge and vertex selection will always be restricted to the nearest element."),
+					"When enabled you will be able to select object faces when in vertex or edge mode by clicking the center of a face.  When disabled, edge and vertex selection will always be restricted to the nearest element."),
 				!pbElementSelectIsHamFisted);
 
 			pbForceVertexPivot =
