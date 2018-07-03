@@ -29,8 +29,8 @@ namespace UnityEditor.ProBuilder
 					scrollIconRight = null,
 					scrollIconLeft = null;
 
-		[SerializeField] private List<MenuAction> m_Actions;
-		[SerializeField] private int m_ActionsLength = 0;
+		[SerializeField] List<MenuAction> m_Actions;
+		[SerializeField] int m_ActionsLength = 0;
 
 		public void InitWindowProperties(EditorWindow win)
 		{
@@ -98,14 +98,14 @@ namespace UnityEditor.ProBuilder
 
 		Vector2 scroll = Vector2.zero;
 
-		private void ShowTooltip(Rect rect, string content, Vector2 scrollOffset)
+		void ShowTooltip(Rect rect, string content, Vector2 scrollOffset)
 		{
 			TooltipContent c = TooltipContent.TempContent;
 			c.summary = content;
 			ShowTooltip(rect, c, scrollOffset);
 		}
 
-		private void ShowTooltip(Rect rect, TooltipContent content, Vector2 scrollOffset)
+		void ShowTooltip(Rect rect, TooltipContent content, Vector2 scrollOffset)
 		{
 			Rect buttonRect = new Rect(
 				(window.position.x + rect.x) - scrollOffset.x,
@@ -167,8 +167,8 @@ namespace UnityEditor.ProBuilder
 
 			Vector2 iconSize = m_Actions[0].GetSize(m_IsHorizontalMenu);
 
-			m_IconWidth = (int)iconSize.x + 4;
-			m_IconHeight = (int)iconSize.y + 4;
+			m_ContentWidth = (int)iconSize.x + 4;
+			m_ContentHeight = (int)iconSize.y + 4;
 
 			// if not in icon mode, we have to iterate all buttons to figure out what the maximum size is
 			if(!isIconMode)
@@ -176,15 +176,15 @@ namespace UnityEditor.ProBuilder
 				for(int i = 1; i < m_Actions.Count; i++)
 				{
 					iconSize = m_Actions[i].GetSize(m_IsHorizontalMenu);
-					m_IconWidth = System.Math.Max(m_IconWidth, (int)iconSize.x);
-					m_IconHeight = System.Math.Max(m_IconHeight, (int)iconSize.y);
+					m_ContentWidth = System.Math.Max(m_ContentWidth, (int)iconSize.x);
+					m_ContentHeight = System.Math.Max(m_ContentHeight, (int)iconSize.y);
 				}
 
-				m_IconWidth += 4;
-				m_IconHeight += 4;
+				m_ContentWidth += 4;
+				m_ContentHeight += 4;
 			}
 
-			window.minSize = new Vector2(m_IconWidth + 6, m_IconHeight + 4);
+			window.minSize = new Vector2(m_ContentWidth + 6, m_ContentHeight + 4);
 			window.Repaint();
 		}
 
@@ -206,15 +206,18 @@ namespace UnityEditor.ProBuilder
 			doAnimateScroll = true;
 		}
 
-		private int SCROLL_BTN_SIZE { get { return isFloating ? 12 : 11; } }
-		private int windowWidth { get { return (int) Mathf.Ceil(window.position.width); } }
-		private int windowHeight { get { return (int) Mathf.Ceil(window.position.height); } }
+		int SCROLL_BTN_SIZE { get { return isFloating ? 12 : 11; } }
+		int windowWidth { get { return (int) Mathf.Ceil(window.position.width); } }
+		int windowHeight { get { return (int) Mathf.Ceil(window.position.height); } }
 
-		private bool m_ShowScrollButtons = false;
-		private bool m_IsHorizontalMenu = false;
-		private int m_IconWidth = 1, m_IconHeight = 1;
+		bool m_ShowScrollButtons = false;
+		bool m_IsHorizontalMenu = false;
+		int m_ContentWidth = 1, m_ContentHeight = 1;
 
-		private bool IsActionValid(MenuAction action)
+		int m_Columns;
+		int m_Rows;
+
+		bool IsActionValid(MenuAction action)
 		{
 			return !action.hidden && (!isIconMode || action.icon != null);
 		}
@@ -245,25 +248,32 @@ namespace UnityEditor.ProBuilder
 			int availableHeight = windowHeight;
 			bool isHorizontal = windowWidth > windowHeight * 2;
 
-			if(m_IsHorizontalMenu != isHorizontal)
+			if (m_IsHorizontalMenu != isHorizontal || m_Rows < 1 || m_Columns < 1)
 				CalculateMaxIconSize();
 
-			int columns;
-			int rows;
-
-			if(isHorizontal)
+			if (e.type == EventType.Layout)
 			{
-				rows = ((windowHeight-4) / m_IconHeight);
-				columns = System.Math.Max(windowWidth / m_IconWidth, (menuActionsCount / rows) + (menuActionsCount % rows != 0 ? 1 : 0));
-			}
-			else
-			{
-				columns = System.Math.Max((windowWidth - 4) / m_IconWidth, 1);
-				rows = (menuActionsCount / columns) + (menuActionsCount % columns != 0 ? 1 : 0);
+				int rr = m_Rows;
+				int cc = m_Columns;
+
+				if (isHorizontal)
+				{
+					m_Rows = ((windowHeight - 4) / m_ContentHeight);
+					m_Columns = System.Math.Max(windowWidth / m_ContentWidth, (menuActionsCount / m_Rows) + (menuActionsCount % m_Rows != 0 ? 1 : 0));
+				}
+				else
+				{
+					m_Columns = System.Math.Max((windowWidth - 4) / m_ContentWidth, 1);
+					m_Rows = (menuActionsCount / m_Columns) + (menuActionsCount % m_Columns != 0 ? 1 : 0);
+				}
 			}
 
-			int contentWidth = (menuActionsCount / rows) * m_IconWidth + 4;
-			int contentHeight = rows * m_IconHeight + 4;
+			// happens when maximizing/unmaximizing the window
+			if (m_Rows < 1 || m_Columns < 1)
+				return;
+
+			int contentWidth = (menuActionsCount / m_Rows) * m_ContentWidth + 4;
+			int contentHeight = m_Rows * m_ContentHeight + 4;
 
 			bool showScrollButtons = isHorizontal ? contentWidth > availableWidth : contentHeight > availableHeight;
 
@@ -337,7 +347,7 @@ namespace UnityEditor.ProBuilder
 
 				if(isIconMode)
 				{
-					if( action.DoButton(isHorizontal, e.alt, ref optionRect, GUILayout.MaxHeight(m_IconHeight + 12)) && !e.shift )
+					if( action.DoButton(isHorizontal, e.alt, ref optionRect, GUILayout.MaxHeight(m_ContentHeight + 12)) && !e.shift )
 					{
 						// test for alt click / hover
 						optionRect.x -= scroll.x;
@@ -361,10 +371,10 @@ namespace UnityEditor.ProBuilder
 				}
 				else
 				{
-					if(columns < 2)
+					if(m_Columns < 2)
 						action.DoButton(isHorizontal, e.alt, ref optionRect);
 					else
-						action.DoButton(isHorizontal, e.alt, ref optionRect, GUILayout.MinWidth(m_IconWidth));
+						action.DoButton(isHorizontal, e.alt, ref optionRect, GUILayout.MinWidth(m_ContentWidth));
 				}
 
 				Rect buttonRect = GUILayoutUtility.GetLastRect();
@@ -387,7 +397,7 @@ namespace UnityEditor.ProBuilder
 					forceRepaint = true;
 				}
 
-				if(++columnCount >= columns)
+				if(++columnCount >= m_Columns)
 				{
 					columnCount = 0;
 

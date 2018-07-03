@@ -417,7 +417,7 @@ namespace UnityEditor.ProBuilder
 				pb.ToMesh();
 				pb.Refresh(RefreshMask.Normals);
 
-				if(editor && editor.componentMode == ComponentMode.Edge)
+				if(editor && ProBuilderEditor.componentMode == ComponentMode.Edge)
 				{
 					if(pb.selectedEdgeCount < 1 || (!enforceCurrentSelectionMode && pb.selectedFaceCount > 0))
 					{
@@ -441,7 +441,7 @@ namespace UnityEditor.ProBuilder
 					pb.ToMesh();
 				}
 
-				if((editor.componentMode == ComponentMode.Face || (!enforceCurrentSelectionMode && !success)) && pb.selectedFaceCount > 0)
+				if((ProBuilderEditor.componentMode == ComponentMode.Face || (!enforceCurrentSelectionMode && !success)) && pb.selectedFaceCount > 0)
 				{
 					extrudedFaceCount += pb.selectedFaceCount;
 					var selectedFaces = pb.GetSelectedFaces();
@@ -542,7 +542,7 @@ namespace UnityEditor.ProBuilder
 
 		private static void GetSelectedElementCount(ProBuilderMesh[] selection, out int sel, out int max)
 		{
-			switch(editor.componentMode)
+			switch(ProBuilderEditor.componentMode)
 			{
 				case ComponentMode.Face:
 					sel = selection.Sum(x => x.selectedFaceCount);
@@ -566,7 +566,7 @@ namespace UnityEditor.ProBuilder
 			if(	!editor ||
 				selection == null ||
 				selection.Length < 1 ||
-				editor.editLevel == EditLevel.Top
+				ProBuilderEditor.editLevel == EditLevel.Top
 				)
 				return false;
 
@@ -598,7 +598,7 @@ namespace UnityEditor.ProBuilder
 			{
 				int previousTriCount = pb.selectedVertexCount;
 
-				switch( editor != null ? editor.componentMode : (ComponentMode)0 )
+				switch( editor != null ? ProBuilderEditor.componentMode : (ComponentMode)0 )
 				{
 					case ComponentMode.Vertex:
 						pb.SetSelectedEdges(ElementSelection.GetConnectedEdges(pb, pb.selectedIndexesInternal));
@@ -646,7 +646,7 @@ namespace UnityEditor.ProBuilder
 			if(	!editor ||
 				selection == null ||
 				selection.Length < 1 ||
-				editor.editLevel == EditLevel.Top)
+				ProBuilderEditor.editLevel == EditLevel.Top)
 				return false;
 
 			int sel = 0, max = 0;
@@ -671,7 +671,7 @@ namespace UnityEditor.ProBuilder
 			{
 				ProBuilderMesh pb = selection[i];
 
-				switch(editor.componentMode)
+				switch(ProBuilderEditor.componentMode)
 				{
 					case ComponentMode.Edge:
 					{
@@ -713,7 +713,7 @@ namespace UnityEditor.ProBuilder
 			if(	!editor ||
 				selection == null ||
 				selection.Length < 1 ||
-				editor.editLevel == EditLevel.Top)
+				ProBuilderEditor.editLevel == EditLevel.Top)
 				return false;
 			return true;
 		}
@@ -728,7 +728,7 @@ namespace UnityEditor.ProBuilder
 
 			UndoUtility.RecordSelection(selection, "Invert Selection");
 
-			switch( editor != null ? editor.componentMode : (ComponentMode)0 )
+			switch( editor != null ? ProBuilderEditor.componentMode : (ComponentMode)0 )
 			{
 				case ComponentMode.Vertex:
 					foreach(var mesh in selection)
@@ -788,7 +788,7 @@ namespace UnityEditor.ProBuilder
 			if(	!editor ||
 				selection == null ||
 				selection.Length < 1 ||
-				editor.editLevel == EditLevel.Top)
+				ProBuilderEditor.editLevel == EditLevel.Top)
 				return false;
 
 			int sel, max;
@@ -1397,7 +1397,7 @@ namespace UnityEditor.ProBuilder
 					{
 						// if selecting whole path and in edge mode, make sure the path contains
 						// at least one complete edge from the selection.
-						if(	editor.componentMode == ComponentMode.Edge &&
+						if(	ProBuilderEditor.componentMode == ComponentMode.Edge &&
 							!hole.Any(x => common.Contains(x.edge.common.a) &&
 							common.Contains(x.edge.common.b)))
 							continue;
@@ -1441,7 +1441,7 @@ namespace UnityEditor.ProBuilder
 							while(it.MoveNext())
 							{
 								var p = it.Current;
-								
+
 								if (p.opposite != null)
 								{
 									p.face.material = p.opposite.face.material;

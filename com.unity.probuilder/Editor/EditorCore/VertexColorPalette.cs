@@ -193,9 +193,9 @@ namespace UnityEditor.ProBuilder
 
 			ProBuilderEditor editor = ProBuilderEditor.instance;
 
-			if (editor && editor.editLevel == EditLevel.Geometry)
+			if (editor && ProBuilderEditor.editLevel == EditLevel.Geometry)
 			{
-				switch (editor.componentMode)
+				switch (ProBuilderEditor.componentMode)
 				{
 					case ComponentMode.Face:
 						foreach (ProBuilderMesh mesh in selection)

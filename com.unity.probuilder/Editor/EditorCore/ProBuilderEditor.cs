@@ -157,13 +157,13 @@ namespace UnityEditor.ProBuilder
 		/// <value>
 		/// Get the current @"UnityEngine.ProBuilder.EditLevel".
 		/// </value>
-		internal EditLevel editLevel { get; private set; }
+		internal static EditLevel editLevel { get; private set; }
 
 		/// <summary>
 		/// Get the current @"UnityEngine.ProBuilder.SelectMode".
 		/// </summary>
 		/// <value>The SelectMode currently set.</value>
-		internal ComponentMode componentMode { get; private set; }
+		internal static ComponentMode componentMode { get; private set; }
 
 		/// <value>
 		/// Get and set the current SelectMode.
@@ -173,7 +173,7 @@ namespace UnityEditor.ProBuilder
 			get
 			{
 				if (s_Instance != null)
-					return EditorUtility.GetSelectMode(instance.editLevel, instance.componentMode);
+					return EditorUtility.GetSelectMode(editLevel, componentMode);
 
 				// for backwards compatibility reasons `Object` is returned when editor is closed
 				return SelectMode.Object;
@@ -262,6 +262,12 @@ namespace UnityEditor.ProBuilder
 				true); // open as floating window
 			// would be nice if editorwindow's showMode was exposed
 			editor.isFloatingWindow = !PreferencesInternal.GetBool(PreferenceKeys.pbDefaultOpenInDockableWindow);
+		}
+
+		void OnBecameVisible()
+		{
+			// fixes maximizing/unmaximizing
+			s_Instance = this;
 		}
 
 		internal void OnEnable()

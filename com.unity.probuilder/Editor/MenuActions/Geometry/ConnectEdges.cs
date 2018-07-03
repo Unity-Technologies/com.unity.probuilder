@@ -26,8 +26,8 @@ namespace UnityEditor.ProBuilder.Actions
 			get
 			{
 				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.instance.componentMode == ComponentMode.Edge &&
+					ProBuilderEditor.editLevel == EditLevel.Geometry &&
+					ProBuilderEditor.componentMode == ComponentMode.Edge &&
 					MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 1);
 			}
 		}
@@ -37,8 +37,8 @@ namespace UnityEditor.ProBuilder.Actions
 			get
 			{
 				return ProBuilderEditor.instance == null ||
-					ProBuilderEditor.instance.editLevel != EditLevel.Geometry ||
-					ProBuilderEditor.instance.componentMode != ComponentMode.Edge;
+					ProBuilderEditor.editLevel != EditLevel.Geometry ||
+					ProBuilderEditor.componentMode != ComponentMode.Edge;
 			}
 		}
 

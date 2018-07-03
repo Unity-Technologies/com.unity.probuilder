@@ -156,7 +156,7 @@ namespace UnityEditor.ProBuilder
 
 		ComponentMode selectionMode
 		{
-			get { return editor != null ? editor.componentMode : ComponentMode.Face; }
+			get { return editor != null ? ProBuilderEditor.componentMode : ComponentMode.Face; }
 			set
 			{
 				if (editor) editor.SetSelectionMode(value);
@@ -211,7 +211,7 @@ namespace UnityEditor.ProBuilder
 
 		public static void MenuOpenUVEditor()
 		{
-			if (ProBuilderEditor.instance != null && ProBuilderEditor.instance.editLevel == EditLevel.Top)
+			if (ProBuilderEditor.instance != null && ProBuilderEditor.editLevel == EditLevel.Top)
 				ProBuilderEditor.instance.SetEditLevel(EditLevel.Geometry);
 
 			EditorWindow.GetWindow<UVEditor>(PreferencesInternal.GetBool(PreferenceKeys.pbUVEditorFloating), "UV Editor", true);
@@ -301,7 +301,7 @@ namespace UnityEditor.ProBuilder
 		{
 			instance = null;
 
-			if (editor && editor.editLevel == EditLevel.Texture)
+			if (editor && ProBuilderEditor.editLevel == EditLevel.Texture)
 				editor.PopEditLevel();
 
 			// EditorApplication.delayCall -= this.Close;							// not sure if this is necessary?
@@ -2544,11 +2544,11 @@ namespace UnityEditor.ProBuilder
 
 			if (editor)
 			{
-				gc_SceneViewUVHandles.image = editor.editLevel == EditLevel.Texture ? icon_sceneUV_on : icon_sceneUV_off;
+				gc_SceneViewUVHandles.image = ProBuilderEditor.editLevel == EditLevel.Texture ? icon_sceneUV_on : icon_sceneUV_off;
 
 				if (GUI.Button(editor_toggles_rect, gc_SceneViewUVHandles))
 				{
-					if (editor.editLevel == EditLevel.Texture)
+					if (ProBuilderEditor.editLevel == EditLevel.Texture)
 						editor.PopEditLevel();
 					else
 						editor.SetEditLevel(EditLevel.Texture);

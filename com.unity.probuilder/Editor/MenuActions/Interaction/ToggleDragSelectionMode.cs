@@ -61,7 +61,7 @@ namespace UnityEditor.ProBuilder.Actions
 			get
 			{
 				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.instance.editLevel == EditLevel.Geometry;
+					ProBuilderEditor.editLevel == EditLevel.Geometry;
 			}
 		}
 
@@ -70,7 +70,7 @@ namespace UnityEditor.ProBuilder.Actions
 			get
 			{
 				return ProBuilderEditor.instance == null ||
-					ProBuilderEditor.instance.editLevel != EditLevel.Geometry;
+					ProBuilderEditor.editLevel != EditLevel.Geometry;
 			}
 		}
 	}
