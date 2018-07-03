@@ -110,8 +110,6 @@ namespace UnityEditor.ProBuilder
 
 			EditorGUI.BeginChangeCheck();
 
-			polygon.material = (Material) EditorGUILayout.ObjectField("Material", polygon.material, typeof(Material), false);
-
 			float extrude = polygon.extrude;
 			extrude = EditorGUILayout.FloatField("Extrusion", extrude);
 

@@ -304,6 +304,9 @@ namespace UnityEditor.ProBuilder
 			if (editor && ProBuilderEditor.editLevel == EditLevel.Texture)
 				editor.PopEditLevel();
 
+			if(uv2Editor != null)
+				Object.DestroyImmediate(uv2Editor);
+
 			// EditorApplication.delayCall -= this.Close;							// not sure if this is necessary?
 			ProBuilderEditor.selectionUpdated -= OnSelectionUpdate;
 			ProBuilderMeshEditor.OnGetFrameBoundsEvent -= OnGetFrameBoundsEvent;

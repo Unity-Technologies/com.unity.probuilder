@@ -1,10 +1,5 @@
 using UnityEngine.ProBuilder;
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
-using EditorGUILayout = UnityEditor.EditorGUILayout;
-using EditorStyles = UnityEditor.EditorStyles;
-using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -64,6 +59,13 @@ namespace UnityEditor.ProBuilder.Actions
 		protected override MenuActionState optionsMenuState
 		{
 			get { return MenuActionState.VisibleAndEnabled; }
+		}
+
+		protected override void OnSettingsDisable()
+		{
+			base.OnSettingsDisable();
+			if(uv2Editor != null)
+				Object.DestroyImmediate(uv2Editor);
 		}
 
 		protected override void OnSettingsGUI()
