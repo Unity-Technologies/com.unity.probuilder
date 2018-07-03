@@ -24,7 +24,7 @@ namespace UnityEngine.ProBuilder
 	/// </example>
 	/// <inheritdoc cref="IEquatable{T}" />
 	/// <inheritdoc cref="IEnumerable{T}" />
-	public sealed class WingedEdge : IEquatable<WingedEdge>, IEnumerable<WingedEdge>
+	public sealed class WingedEdge : IEquatable<WingedEdge>
 	{
 		/// <value>
 		/// The local and shared edge that this edge belongs to.
@@ -87,35 +87,6 @@ namespace UnityEngine.ProBuilder
 		{
 			return edge.local.GetHashCode();
 		}
-
-		/// <inheritdoc />
-		/// <summary>
-		/// Enumerator walks the edge by querying the next property.
-		/// </summary>
-		/// <returns>A new WingedEdgeEnumerator.</returns>
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-		   return GetEnumerator();
-		}
-
-		/// <summary>
-		/// Enumerator walks the edge by querying the next property.
-		/// </summary>
-		/// <returns>A new WingedEdgeEnumerator.</returns>
-		public WingedEdgeEnumerator GetEnumerator()
-		{
-		    return new WingedEdgeEnumerator(this);
-		}
-
-		/// <inheritdoc />
-		/// <summary>
-		/// Enumerator walks the edge by querying the next property.
-		/// </summary>
-		/// <returns>A new WingedEdgeEnumerator.</returns>
-        IEnumerator<WingedEdge> IEnumerable<WingedEdge>.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
 
         /// <summary>
         /// How many edges are in this sequence.

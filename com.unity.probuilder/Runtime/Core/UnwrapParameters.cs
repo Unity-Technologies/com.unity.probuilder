@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace UnityEngine.ProBuilder
 {
@@ -8,35 +9,50 @@ namespace UnityEngine.ProBuilder
 	[System.Serializable]
 	public sealed class UnwrapParameters
 	{
+		[Tooltip("Angle between neighbor triangles that will generate seam.")]
+		[Range(1f, 180f)]
+		[SerializeField]
+		[FormerlySerializedAs("hardAngle")]
+		float m_HardAngle = 88f;
+
+		[Tooltip("Measured in pixels, assuming mesh will cover an entire 1024x1024 lightmap.")]
+		[Range(1f, 64f)]
+		[SerializeField]
+		[FormerlySerializedAs("packMargin")]
+		float m_PackMargin = 4f;
+
+		[Tooltip("Measured in percents. Angle error measures deviation of UV angles from geometry angles. Area error "
+			+ "measures deviation of UV triangles area from geometry triangles if they were uniformly scaled.")]
+		[Range(1f, 75f)]
+		[SerializeField]
+		[FormerlySerializedAs("angleError")]
+		float m_AngleError = 8f;
+
+		[Range(1f, 75f)]
+		[SerializeField]
+		[FormerlySerializedAs("areaError")]
+		float m_AreaError = 15f;
+
 		/// <value>
 		/// Angle between neighbor triangles that will generate seam.
 		/// </value>
-		[Tooltip("Angle between neighbor triangles that will generate seam.")]
-		[Range(1f, 180f)]
-		public float hardAngle = 88f;
+		public float hardAngle { get { return m_HardAngle; } set { m_HardAngle = value; } }
 
 		/// <value>
 		/// Measured in pixels, assuming mesh will cover an entire 1024x1024 lightmap.
 		/// </value>
-		[Tooltip("Measured in pixels, assuming mesh will cover an entire 1024x1024 lightmap.")]
-		[Range(1f, 64f)]
-		public float packMargin = 4f;
+		public float packMargin { get { return m_PackMargin; } set { m_PackMargin = value; } }
 
 		/// <value>
 		/// Measured in percents. Angle error measures deviation of UV angles from geometry angles. Area error measures
 		/// deviation of UV triangles area from geometry triangles if they were uniformly scaled.
 		/// </value>
-		[Tooltip("Measured in percents. Angle error measures deviation of UV angles from geometry angles. Area error "
-			+ "measures deviation of UV triangles area from geometry triangles if they were uniformly scaled.")]
-		[Range(1f, 75f)]
-		public float angleError = 8f;
+		public float angleError { get { return m_AngleError; } set { m_AngleError = value; } }
 
 		/// <value>
 		/// Does... something.
 		/// </value>
-		[Tooltip("Does... something.")]
-		[Range(1f, 75f)]
-		public float areaError = 15f;
+		public float areaError { get { return m_AreaError; } set { m_AreaError = value; } }
 
 		public UnwrapParameters()
 		{

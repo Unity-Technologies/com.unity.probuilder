@@ -219,12 +219,17 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 				for(int i = 0; i < wings.Count; i++)
 				{
-					foreach(WingedEdge border in wings[i])
+					using(var it = new WingedEdgeEnumerator(wings[i]))
 					{
-						if(border.opposite != null && !connections.ContainsKey(border.edge))
+						while(it.MoveNext())
 						{
-							float score = GetQuadScore(border, border.opposite);
-							connections.Add(border.edge, score);
+							var border = it.Current;
+
+							if (border.opposite != null && !connections.ContainsKey(border.edge))
+							{
+								float score = GetQuadScore(border, border.opposite);
+								connections.Add(border.edge, score);
+							}
 						}
 					}
 				}
@@ -240,20 +245,25 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					float bestScore = 0f;
 					Face buddy = null;
 
-					foreach(WingedEdge border in face)
+					using (var it = new WingedEdgeEnumerator(face))
 					{
-						if(border.opposite != null && processed.Contains(border.opposite.face))
-							continue;
-
-						float borderScore;
-
-						// only add it if the opposite face's best score is also this face
-						if( connections.TryGetValue(border.edge, out borderScore) &&
-							borderScore > bestScore &&
-							face.face == GetBestQuadConnection(border.opposite, connections))
+						while(it.MoveNext())
 						{
-							bestScore = borderScore;
-							buddy = border.opposite.face;
+							var border = it.Current;
+
+							if (border.opposite != null && processed.Contains(border.opposite.face))
+								continue;
+
+							float borderScore;
+
+							// only add it if the opposite face's best score is also this face
+							if (connections.TryGetValue(border.edge, out borderScore) &&
+								borderScore > bestScore &&
+								face.face == GetBestQuadConnection(border.opposite, connections))
+							{
+								bestScore = borderScore;
+								buddy = border.opposite.face;
+							}
 						}
 					}
 
@@ -283,14 +293,19 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			float score = 0f;
 			Face face = null;
 
-			foreach(WingedEdge border in wing)
+			using (var it = new WingedEdgeEnumerator(wing))
 			{
-				float s = 0f;
-
-				if(connections.TryGetValue(border.edge, out s) && s > score)
+				while(it.MoveNext())
 				{
-					score = connections[border.edge];
-					face = border.opposite.face;
+					var border = it.Current;
+					
+					float s = 0f;
+
+					if (connections.TryGetValue(border.edge, out s) && s > score)
+					{
+						score = connections[border.edge];
+						face = border.opposite.face;
+					}
 				}
 			}
 

@@ -146,19 +146,24 @@ namespace UnityEngine.ProBuilder
 		{
 			bool foundSmoothEdge = false;
 
-			foreach(WingedEdge border in wing)
+			using (var it = new WingedEdgeEnumerator(wing))
 			{
-				if(border.opposite == null)
-					continue;
-
-				if( border.opposite.face.smoothingGroup == Smoothing.smoothingGroupNone
-				    && IsSoftEdge(normals, border.edge, border.opposite.edge, angleThreshold) )
+				while (it.MoveNext())
 				{
-					if(processed.Add(border.opposite.face))
+					var border = it.Current;
+
+					if (border.opposite == null)
+						continue;
+
+					if (border.opposite.face.smoothingGroup == Smoothing.smoothingGroupNone
+						&& IsSoftEdge(normals, border.edge, border.opposite.edge, angleThreshold))
 					{
-						foundSmoothEdge = true;
-						border.opposite.face.smoothingGroup = wing.face.smoothingGroup;
-						FindSoftEdgesRecursive(normals, border.opposite, angleThreshold, processed);
+						if (processed.Add(border.opposite.face))
+						{
+							foundSmoothEdge = true;
+							border.opposite.face.smoothingGroup = wing.face.smoothingGroup;
+							FindSoftEdgesRecursive(normals, border.opposite, angleThreshold, processed);
+						}
 					}
 				}
 			}
