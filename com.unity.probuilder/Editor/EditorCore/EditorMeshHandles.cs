@@ -292,27 +292,27 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		public void DrawSceneHandles(ComponentMode selectionMode)
+		public void DrawSceneHandles(SelectMode mode)
 		{
 			if (Event.current.type != EventType.Repaint)
 				return;
 
-			switch (selectionMode)
+			switch (mode)
 			{
-				case ComponentMode.Edge:
+				case SelectMode.Edge:
 				{
 					// render wireframe with edge material in edge mode so that the size change is reflected
 					RenderWithColor(m_WireHandles, m_EdgeMaterial, s_WireframeColor);
 					RenderWithColor(m_EdgeHandles, m_EdgeMaterial, s_EdgeSelectedColor);
 					break;
 				}
-				case ComponentMode.Face:
+				case SelectMode.Face:
 				{
 					RenderWithColor(m_WireHandles, m_WireMaterial, s_WireframeColor);
 					RenderWithColor(m_FaceHandles, m_FaceMaterial, s_FaceSelectedColor);
 					break;
 				}
-				case ComponentMode.Vertex:
+				case SelectMode.Vertex:
 				{
 					RenderWithColor(m_WireHandles, m_WireMaterial, s_WireframeColor);
 					RenderWithColor(m_VertexHandles, m_VertMaterial, s_VertexUnselectedColor);

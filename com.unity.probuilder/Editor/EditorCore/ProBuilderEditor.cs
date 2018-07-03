@@ -537,7 +537,7 @@ namespace UnityEditor.ProBuilder
 				m_IsRightMouseDown = false;
 
 			if(editLevel != EditLevel.Top)
-				m_EditorMeshHandles.DrawSceneHandles(componentMode);
+				m_EditorMeshHandles.DrawSceneHandles(selectMode);
 
 			DrawHandleGUI(sceneView);
 
