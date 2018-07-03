@@ -5,12 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.7] - 2018-05-30
+## [4.0.0-preview.8] - 2018-07-03
 
 ### Features
 
 - New public API.
-- Project now distributed as source code, taking advantage of assembly definition files.
+- Project now distributed as source code, with assembly definition files.
 - Add experimental pre-selection highlight for vertices and faces (enable in Preferences / ProBuilder / Experimental).
 - Improve the behaviour of vertex and edge selection with hidden faces.
 - Add ability to resize the UV settings window.
@@ -20,14 +20,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Fix regression that broke dragging and dropping GameObjects onto ProBuilder meshes.
 - Fix `Export Asset` not generating UV2 in some cases.
+- Fix Poly Shape and Bezier Shape incorrectly resetting materials to default.
 
 ### Changes
 
 - Tests and documentation are no longer imported with package, significantly improving initial import times.
 - Face selection highlight is now rendered with both front and back faces.
 - Adding custom actions to the ProBuilder toolbar is now done by registering an attribute.
-
-### Changes from 4.0.0-preview.6
+- ProBuilder Debug Editor removed.
 
 ## [3.0.8] - 2018-05-07
 
