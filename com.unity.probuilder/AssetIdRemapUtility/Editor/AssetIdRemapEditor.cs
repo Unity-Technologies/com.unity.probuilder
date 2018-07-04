@@ -135,6 +135,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 		MultiColumnHeaderState m_MultiColumnHeaderState = null;
 		GUIContent m_AssetTreeSettingsContent = null;
 		Vector2 m_ConversionLogScroll = Vector2.zero;
+		bool m_CanAutoRunConversion;
 
 		static class Styles
 		{
@@ -205,6 +206,10 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 			{
 				m_ConversionLog = null;
 			}
+
+			// if the project just contains deprecated guids, and is already in text serialization mode, we can skip the dialog
+			// and just run the conversion immediately.
+			m_CanAutoRunConversion = m_ConversionReadyState == (ConversionReadyState.Ready | ConversionReadyState.DeprecatedAssetIdsFound);
 		}
 
 		void OnGUI()
@@ -295,66 +300,73 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 
 			GUILayout.BeginHorizontal();
 			GUILayout.FlexibleSpace();
-			if (GUILayout.Button("Convert to Package Manager", Styles.convertButton))
+			if (GUILayout.Button("Convert to Package Manager", Styles.convertButton) || m_CanAutoRunConversion)
 			{
-				var log = new StringBuilder();
-
-				try
-				{
-					// Set serialization mode to mixed then back to force-text to reserialize any assets in binary form
-					// that may have somehow persisted (version control makes a state where "Force Text" is enabled with
-					// some existing binary assets persisting possible). this happened during testing.
-					// mixed doesn't refresh anything, but setting to ForceText re-iterates all assets and double-checks
-					// that they are in the correct format.
-					EditorSettings.serializationMode = SerializationMode.Mixed;
-					EditorSettings.serializationMode = SerializationMode.ForceText;
-
-					EditorApplication.LockReloadAssemblies();
-
-					log.AppendLine("ProBuilder Asset Store to Unity Package Manager Conversion Log");
-					log.AppendLine("");
-
-					if((m_ConversionReadyState & ConversionReadyState.AssetStoreInstallFound) == ConversionReadyState.AssetStoreInstallFound)
-					{
-						log.AppendLine("Removing existing ProBuilder files...");
-
-						if (RemoveAssetStoreFiles(m_AssetsToDeleteTreeView.GetRoot(), log))
-						{
-							log.AppendLine("\nRemapping Asset Ids...");
-							RemapAssetIds(log);
-						}
-					}
-					else
-					{
-						log.AppendLine("Remapping Asset Ids...");
-						RemapAssetIds(log);
-					}
-
-				}
-				finally
-				{
-					m_ConversionLog = log.ToString();
-
-					try
-					{
-						Directory.CreateDirectory("Temp");
-						File.WriteAllText(k_ConversionLogPath, m_ConversionLog);
-					}
-					catch
-					{
-						Debug.Log(m_ConversionLog);
-					}
-
-					EditorApplication.UnlockReloadAssemblies();
-					m_ConversionReadyState = ConversionReadyState.ConversionRan;
-					EditorApplication.delayCall += AssetDatabase.Refresh;
-					GUIUtility.ExitGUI();
-				}
+				DoConversion();
+				GUIUtility.ExitGUI();
 			}
 			GUILayout.FlexibleSpace();
 			GUILayout.EndHorizontal();
-
+			#if UNITY_2018_3_OR_NEWER
+			GUILayout.Space(16);
+			#endif
 			GUI.enabled = true;
+		}
+
+		void DoConversion()
+		{
+			var log = new StringBuilder();
+
+			try
+			{
+				// Set serialization mode to mixed then back to force-text to reserialize any assets in binary form
+				// that may have somehow persisted (version control makes a state where "Force Text" is enabled with
+				// some existing binary assets persisting possible). this happened during testing.
+				// mixed doesn't refresh anything, but setting to ForceText re-iterates all assets and double-checks
+				// that they are in the correct format.
+				EditorSettings.serializationMode = SerializationMode.Mixed;
+				EditorSettings.serializationMode = SerializationMode.ForceText;
+
+				EditorApplication.LockReloadAssemblies();
+
+				log.AppendLine("ProBuilder Asset Store to Unity Package Manager Conversion Log");
+				log.AppendLine("");
+
+				if((m_ConversionReadyState & ConversionReadyState.AssetStoreInstallFound) == ConversionReadyState.AssetStoreInstallFound)
+				{
+					log.AppendLine("Removing existing ProBuilder files...");
+
+					if (RemoveAssetStoreFiles(m_AssetsToDeleteTreeView.GetRoot(), log))
+					{
+						log.AppendLine("\nRemapping Asset Ids...");
+						RemapAssetIds(log);
+					}
+				}
+				else
+				{
+					log.AppendLine("Remapping Asset Ids...");
+					RemapAssetIds(log);
+				}
+
+			}
+			finally
+			{
+				m_ConversionLog = log.ToString();
+
+				try
+				{
+					Directory.CreateDirectory("Temp");
+					File.WriteAllText(k_ConversionLogPath, m_ConversionLog);
+				}
+				catch
+				{
+					Debug.Log(m_ConversionLog);
+				}
+
+				EditorApplication.UnlockReloadAssemblies();
+				m_ConversionReadyState = ConversionReadyState.ConversionRan;
+				EditorApplication.delayCall += AssetDatabase.Refresh;
+			}
 		}
 
 		void DrawTreeSettings()

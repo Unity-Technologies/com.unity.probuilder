@@ -146,9 +146,18 @@ namespace UnityEditor.ProBuilder
 			bool isNewVersion = !PreferencesInternal.GetString(k_AboutWindowVersionPref).Equals(currentVersionString, StringComparison.OrdinalIgnoreCase);
 			PreferencesInternal.SetString(k_AboutWindowVersionPref, currentVersionString, PreferenceLocation.Global);
 
-			if (isNewVersion && (PackageImporter.IsPreProBuilder4InProject() || PackageImporter.DoesProjectContainDeprecatedGUIDs()))
-				if (UnityEditor.EditorUtility.DisplayDialog("Conflicting ProBuilder Install in Project",
-					"The Asset Store version of ProBuilder is incompatible with Package Manager. Would you like to convert your project to the Package Manager version of ProBuilder?\n\nIf you choose \"No\" this dialog may be accessed again at any time through the \"Tools/ProBuilder/Repair/Convert to Package Manager\" menu item.",
+			bool assetStoreInstallFound = PackageImporter.IsPreProBuilder4InProject();
+			bool deprecatedGuidsFound = PackageImporter.DoesProjectContainDeprecatedGUIDs();
+
+			const string k_AssetStoreUpgradeTitle = "Old ProBuilder Install Found in Assets";
+			const string k_AssetStoreUpgradeDialog = "The Asset Store version of ProBuilder is incompatible with Package Manager. Would you like to convert your project to the Package Manager version of ProBuilder?";
+			const string k_DeprecatedGuidsTitle = "Broken ProBuilder References Found in Project";
+			const string k_DeprecatedGuidsDialog = "ProBuilder has found some mesh components that are missing references. To keep these models editable by ProBuilder, they need to be repaired. Would you like to perform the repair action now?";
+
+			if (isNewVersion && (assetStoreInstallFound || deprecatedGuidsFound))
+				if (UnityEditor.EditorUtility.DisplayDialog(assetStoreInstallFound ? k_AssetStoreUpgradeTitle : k_DeprecatedGuidsTitle,
+					assetStoreInstallFound ? k_AssetStoreUpgradeDialog : k_DeprecatedGuidsDialog +
+					"\n\nIf you choose \"No\" this dialog may be accessed again at any time through the \"Tools/ProBuilder/Repair/Convert to Package Manager\" menu item.",
 					"Yes", "No"))
 					EditorApplication.delayCall += AssetIdRemapEditor.OpenConversionEditor;
 		}
