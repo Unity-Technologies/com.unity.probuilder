@@ -7,8 +7,6 @@ namespace UnityEditor.ProBuilder
 {
 	static class MenuItems
 	{
-		const string DOCUMENTATION_URL = "http://procore3d.github.io/probuilder2/";
-
 		static ProBuilderEditor editor
 		{
 			get { return ProBuilderEditor.instance; }
@@ -19,13 +17,6 @@ namespace UnityEditor.ProBuilder
 		{
 			AboutWindow.Init();
 		}
-
-		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Documentation", false, PreferenceKeys.menuAbout)]
-		public static void MenuInitDocumentation()
-		{
-			Application.OpenURL(DOCUMENTATION_URL);
-		}
-
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/" + PreferenceKeys.pluginTitle + " Window", false,
 			PreferenceKeys.menuEditor)]
 		public static void OpenEditorWindow()
