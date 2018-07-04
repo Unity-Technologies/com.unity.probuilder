@@ -253,9 +253,6 @@ namespace UnityEditor.ProBuilder
 
 			if (e.type == EventType.Layout)
 			{
-				int rr = m_Rows;
-				int cc = m_Columns;
-
 				if (isHorizontal)
 				{
 					m_Rows = ((windowHeight - 4) / m_ContentHeight);

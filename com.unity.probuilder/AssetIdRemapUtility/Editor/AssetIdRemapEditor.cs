@@ -135,7 +135,6 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 		MultiColumnHeaderState m_MultiColumnHeaderState = null;
 		GUIContent m_AssetTreeSettingsContent = null;
 		Vector2 m_ConversionLogScroll = Vector2.zero;
-		bool m_CanAutoRunConversion;
 
 		static class Styles
 		{
@@ -209,7 +208,8 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 
 			// if the project just contains deprecated guids, and is already in text serialization mode, we can skip the dialog
 			// and just run the conversion immediately.
-			m_CanAutoRunConversion = m_ConversionReadyState == (ConversionReadyState.Ready | ConversionReadyState.DeprecatedAssetIdsFound);
+			if(m_ConversionReadyState == (ConversionReadyState.Ready | ConversionReadyState.DeprecatedAssetIdsFound))
+				DoConversion();
 		}
 
 		void OnGUI()
@@ -300,7 +300,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 
 			GUILayout.BeginHorizontal();
 			GUILayout.FlexibleSpace();
-			if (GUILayout.Button("Convert to Package Manager", Styles.convertButton) || m_CanAutoRunConversion)
+			if (GUILayout.Button("Convert to Package Manager", Styles.convertButton))
 			{
 				DoConversion();
 				GUIUtility.ExitGUI();
