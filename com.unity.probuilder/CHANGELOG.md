@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.7] - 2018-07-03
+## [4.0.0-preview.8] - 2018-07-04
 
 ### Features
 
@@ -28,6 +28,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Face selection highlight is now rendered with both front and back faces.
 - Adding custom actions to the ProBuilder toolbar is now done by registering an attribute.
 - ProBuilder Debug Editor removed.
+
+### Changes since 4.0.0-preview.7
+
+- Improve wording of upgrade dialog.
+- Fix layout exception after upgrading from 3.0.8 to 4.0.0.
 
 ## [3.0.8] - 2018-05-07
 
