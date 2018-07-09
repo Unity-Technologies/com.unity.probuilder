@@ -19,3 +19,11 @@ TestProjects/*/Assets/ProBuilder\ Data
 TestProjects/*/Assets/ProBuilder\ Data.meta
 TestProjects/*/Assets/*.rsp
 TestProjects/*/Assets/*.rsp.meta
+
+UpgradeProjects/*/Library*
+UpgradeProjects/*/Temp*
+UpgradeProjects/*/obj*
+UpgradeProjects/*/.idea
+UpgradeProjects/*/*.csproj
+UpgradeProjects/*/*.sln.DotSettings.user
+UpgradeProjects/*/*.sln
