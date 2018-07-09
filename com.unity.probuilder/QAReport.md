@@ -23,4 +23,4 @@ Test strategy & current info for ProBuilder.
 
 **Unit Tests**
 
-Unit tests are currently only available in the development branch, [here](https://github.com/procore3d/probuilder2). To run Unit Tests, open the "Window > Test Runner" and run all "probuilder2.0" tests.
+Unit tests are distributed as a separate package, named `com.unity.probuilder.tests`. To run locally, include the test package in your Packages manifest, and make sure `com.unity.probuilder.tests` is included in the `testables` array.
