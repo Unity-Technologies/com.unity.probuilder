@@ -12,6 +12,8 @@ namespace UnityEditor.ProBuilder
 	[InitializeOnLoad]
 	static class ScriptingSymbolManager
 	{
+		const string k_FbxModelExporterType = "UnityEditor.Formats.Fbx.Exporter.ModelExporter";
+
 		static ScriptingSymbolManager()
 		{
 			if( FbxTypesExist() )
@@ -24,8 +26,8 @@ namespace UnityEditor.ProBuilder
 		{
 #if UNITY_2017_1_OR_NEWER
 			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-			Type fbxExporterType = ReflectionUtility.GetType("FbxExporters.Editor.ModelExporter");
-			return fbxExporterType != null && assemblies.Any(x => x.FullName.Contains("FbxSdk"));
+			Type fbxExporterType = ReflectionUtility.GetType(k_FbxModelExporterType);
+			return fbxExporterType != null;
 #else
 			return false;
 #endif
