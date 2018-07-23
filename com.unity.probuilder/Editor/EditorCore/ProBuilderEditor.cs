@@ -536,8 +536,7 @@ namespace UnityEditor.ProBuilder
 			if (m_CurrentEvent.type == EventType.MouseUp && m_CurrentEvent.button == 1 || m_CurrentEvent.type == EventType.Ignore)
 				m_IsRightMouseDown = false;
 
-			if(editLevel != EditLevel.Top)
-				m_EditorMeshHandles.DrawSceneHandles(selectMode);
+			m_EditorMeshHandles.DrawSceneHandles(selectMode);
 
 			DrawHandleGUI(sceneView);
 
