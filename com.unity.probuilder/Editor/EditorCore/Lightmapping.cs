@@ -98,14 +98,13 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Return GIWorkflowMode to it's prior state.
 		 */
-		[System.Diagnostics.Conditional("UNITY_5_OR_NEWER")]
 		internal static void PopGIWorkflowMode()
 		{
 			// if no key found (?), don't do anything.
 			if(!PreferencesInternal.HasKey("pb_GIWorkflowMode"))
 				return;
 
-			 UnityEditor.Lightmapping.giWorkflowMode = (UnityEditor.Lightmapping.GIWorkflowMode)PreferencesInternal.GetInt("pb_GIWorkflowMode");
+			UnityEditor.Lightmapping.giWorkflowMode = (UnityEditor.Lightmapping.GIWorkflowMode)PreferencesInternal.GetInt("pb_GIWorkflowMode");
 		}
 	}
 }
