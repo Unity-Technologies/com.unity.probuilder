@@ -441,7 +441,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			Vector3[] positions = mesh.positionsInternal;
-			Color[] colors = mesh.HasArrays(MeshArrays.Color) ? mesh.colorsInternal : null;
+			bool hasColors = mesh.HasArrays(MeshArrays.Color);
+			Color[] colors = hasColors ? mesh.colorsInternal : null;
 
 			Vector3[] v;
 			Color[] c;
@@ -474,58 +475,58 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				if(axbx)
 				{
 					v[0] = positions[a.a];
-					if(colors != null) c[0] = colors[a.a];
+					if(hasColors) c[0] = colors[a.a];
 					s[0] = mesh.GetSharedVertexHandle(a.a);
 					v[1] = positions[a.b];
-					if(colors != null) c[1] = colors[a.b];
-					s[1] = mesh.GetSharedVertexHandle(a.a);
+					if(hasColors) c[1] = colors[a.b];
+					s[1] = mesh.GetSharedVertexHandle(a.b);
 					v[2] = positions[b.b];
-					if(colors != null) c[2] = colors[b.b];
-					s[2] = mesh.GetSharedVertexHandle(a.a);
+					if(hasColors) c[2] = colors[b.b];
+					s[2] = mesh.GetSharedVertexHandle(b.b);
 				}
 				else
 				if(axby)
 				{
 					v[0] = positions[a.a];
-					if(colors != null) c[0] = colors[a.a];
+					if(hasColors) c[0] = colors[a.a];
 					s[0] = mesh.GetSharedVertexHandle(a.a);
 					v[1] = positions[a.b];
-					if(colors != null) c[1] = colors[a.b];
-					s[1] = mesh.GetSharedVertexHandle(a.a);
+					if(hasColors) c[1] = colors[a.b];
+					s[1] = mesh.GetSharedVertexHandle(a.b);
 					v[2] = positions[b.a];
-					if(colors != null) c[2] = colors[b.a];
-					s[2] = mesh.GetSharedVertexHandle(a.a);
+					if(hasColors) c[2] = colors[b.a];
+					s[2] = mesh.GetSharedVertexHandle(b.a);
 				}
 				else
 				if(aybx)
 				{
 					v[0] = positions[a.b];
-					if(colors != null) c[0] = colors[a.b];
-					s[0] = mesh.GetSharedVertexHandle(a.a);
+					if(hasColors) c[0] = colors[a.b];
+					s[0] = mesh.GetSharedVertexHandle(a.b);
 					v[1] = positions[a.a];
-					if(colors != null) c[1] = colors[a.a];
+					if(hasColors) c[1] = colors[a.a];
 					s[1] = mesh.GetSharedVertexHandle(a.a);
 					v[2] = positions[b.b];
-					if(colors != null) c[2] = colors[b.b];
-					s[2] = mesh.GetSharedVertexHandle(a.a);
+					if(hasColors) c[2] = colors[b.b];
+					s[2] = mesh.GetSharedVertexHandle(b.b);
 				}
 				else
 				if(ayby)
 				{
 					v[0] = positions[a.b];
-					if(colors != null) c[0] = colors[a.b];
-					s[0] = mesh.GetSharedVertexHandle(a.a);
+					if(hasColors) c[0] = colors[a.b];
+					s[0] = mesh.GetSharedVertexHandle(a.b);
 					v[1] = positions[a.a];
-					if(colors != null) c[1] = colors[a.a];
+					if(hasColors) c[1] = colors[a.a];
 					s[1] = mesh.GetSharedVertexHandle(a.a);
 					v[2] = positions[b.a];
-					if(colors != null) c[2] = colors[b.a];
-					s[2] = mesh.GetSharedVertexHandle(a.a);
+					if(hasColors) c[2] = colors[b.a];
+					s[2] = mesh.GetSharedVertexHandle(b.a);
 				}
 
 				return mesh.AppendFace(
 					v,
-					colors != null ? c : null,
+					hasColors ? c : null,
 					new Vector2[v.Length],
 					new Face( axbx || axby ? new int[3] {2, 1, 0} : new int[3] {0, 1, 2}, mat, uvs, 0, -1, -1, false ),
 					s);;
@@ -538,40 +539,46 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			s = new int[4]; // shared indexes index to add to
 
 			v[0] = positions[a.a];
-			c[0] = mesh.colorsInternal[a.a];
+			if (hasColors)
+				c[0] = mesh.colorsInternal[a.a];
 			s[0] = mesh.GetSharedVertexHandle(a.a);
 			v[1] = positions[a.b];
-			c[1] = mesh.colorsInternal[a.b];
-			s[1] = mesh.GetSharedVertexHandle(a.a);
+			if (hasColors)
+				c[1] = mesh.colorsInternal[a.b];
+			s[1] = mesh.GetSharedVertexHandle(a.b);
 
-			Vector3 nrm = Vector3.Cross( positions[b.a]-positions[a.a], positions[a.b]-positions[a.a] ).normalized;
-			Vector2[] planed = Projection.PlanarProject( new Vector3[4] {positions[a.a], positions[a.b], positions[b.a], positions[b.b] }, nrm );
+			Vector3 nrm = Vector3.Cross(positions[b.a] - positions[a.a], positions[a.b] - positions[a.a]).normalized;
+			Vector2[] planed = Projection.PlanarProject(new Vector3[4] { positions[a.a], positions[a.b], positions[b.a], positions[b.b] }, nrm);
 
 			Vector2 ipoint = Vector2.zero;
 			bool intersects = Math.GetLineSegmentIntersect(planed[0], planed[2], planed[1], planed[3], ref ipoint);
 
-			if(!intersects)
+			if (!intersects)
 			{
 				v[2] = positions[b.a];
-				c[2] = mesh.colorsInternal[b.a];
-				s[2] = mesh.GetSharedVertexHandle(a.a);
+				if (hasColors)
+					c[2] = mesh.colorsInternal[b.a];
+				s[2] = mesh.GetSharedVertexHandle(b.a);
 				v[3] = positions[b.b];
-				c[3] = mesh.colorsInternal[b.b];
-				s[3] = mesh.GetSharedVertexHandle(a.a);
+				if (hasColors)
+					c[3] = mesh.colorsInternal[b.b];
+				s[3] = mesh.GetSharedVertexHandle(b.b);
 			}
 			else
 			{
 				v[2] = positions[b.b];
-				c[2] = mesh.colorsInternal[b.b];
-				s[2] = mesh.GetSharedVertexHandle(a.a);
+				if (hasColors)
+					c[2] = mesh.colorsInternal[b.b];
+				s[2] = mesh.GetSharedVertexHandle(b.b);
 				v[3] = positions[b.a];
-				c[3] = mesh.colorsInternal[b.a];
-				s[3] = mesh.GetSharedVertexHandle(a.a);
+				if (hasColors)
+					c[3] = mesh.colorsInternal[b.a];
+				s[3] = mesh.GetSharedVertexHandle(b.a);
 			}
 
 			return mesh.AppendFace(
 				v,
-				c,
+				hasColors ? c : null,
 				new Vector2[v.Length],
 				new Face( new int[6] {2, 1, 0, 2, 3, 1 }, mat, uvs, 0, -1, -1, false ),
 				s);
