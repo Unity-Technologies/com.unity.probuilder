@@ -107,7 +107,7 @@ namespace UnityEditor.ProBuilder
 			}
 			catch
 			{
-				Debug.LogWarning("Failed generating menu item for class: \"" + class_name +
+				Log.Warning("Failed generating menu item for class: \"" + class_name +
 				                 "\".  File names must match class names.");
 				return "";
 			}
