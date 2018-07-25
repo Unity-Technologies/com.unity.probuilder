@@ -141,7 +141,7 @@ namespace UnityEditor.ProBuilder
 			sb.Append(class_name);
 			sb.AppendLine(">();");
 			sb.AppendLine(@"
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	");
 			sb.AppendLine("\t\t}");
 
