@@ -107,7 +107,7 @@ namespace UnityEditor.ProBuilder
 			}
 			catch
 			{
-				Debug.LogWarning("Failed generating menu item for class: \"" + class_name +
+				Log.Warning("Failed generating menu item for class: \"" + class_name +
 				                 "\".  File names must match class names.");
 				return "";
 			}
@@ -141,7 +141,7 @@ namespace UnityEditor.ProBuilder
 			sb.Append(class_name);
 			sb.AppendLine(">();");
 			sb.AppendLine(@"
-			return instance != null && instance.IsEnabled();
+			return instance != null && instance.enabled;
 	");
 			sb.AppendLine("\t\t}");
 

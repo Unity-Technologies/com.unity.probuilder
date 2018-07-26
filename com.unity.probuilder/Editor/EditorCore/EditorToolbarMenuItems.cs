@@ -68,19 +68,20 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(k_MenuPrefix + "Editors/Open Shape Editor %#k", true)]
-		static bool MenuVerifyOpenShapeEditor()
+
+		[MenuItem(k_MenuPrefix + "Editors/Open Shape Editor Menu Item %#k", true)]
+		static bool MenuVerifyOpenShapeEditorMenuItem()
 		{
-			OpenShapeEditor instance = EditorToolbarLoader.GetInstance<OpenShapeEditor>();
+			OpenShapeEditorMenuItem instance = EditorToolbarLoader.GetInstance<OpenShapeEditorMenuItem>();
 
 			return instance != null && instance.enabled;
 	
 		}
 
-		[MenuItem(k_MenuPrefix + "Editors/Open Shape Editor %#k", false, PreferenceKeys.menuEditor + 1)]
-		static void MenuDoOpenShapeEditor()
+		[MenuItem(k_MenuPrefix + "Editors/Open Shape Editor Menu Item %#k", false, PreferenceKeys.menuEditor + 1)]
+		static void MenuDoOpenShapeEditorMenuItem()
 		{
-			OpenShapeEditor instance = EditorToolbarLoader.GetInstance<OpenShapeEditor>();
+			OpenShapeEditorMenuItem instance = EditorToolbarLoader.GetInstance<OpenShapeEditorMenuItem>();
 			if(instance != null)
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
@@ -309,7 +310,7 @@ namespace UnityEditor.ProBuilder
 
 
 
-		[MenuItem(k_MenuPrefix + "Geometry/Delete Faces  [⌫]", true)]
+		[MenuItem(k_MenuPrefix + "Geometry/Delete Faces  [delete]", true)]
 		static bool MenuVerifyDeleteFaces()
 		{
 			DeleteFaces instance = EditorToolbarLoader.GetInstance<DeleteFaces>();
@@ -318,7 +319,7 @@ namespace UnityEditor.ProBuilder
 	
 		}
 
-		[MenuItem(k_MenuPrefix + "Geometry/Delete Faces  [⌫]", false, PreferenceKeys.menuGeometry + 3)]
+		[MenuItem(k_MenuPrefix + "Geometry/Delete Faces  [delete]", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuDoDeleteFaces()
 		{
 			DeleteFaces instance = EditorToolbarLoader.GetInstance<DeleteFaces>();
