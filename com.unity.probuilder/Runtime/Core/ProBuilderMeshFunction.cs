@@ -7,6 +7,8 @@ namespace UnityEngine.ProBuilder
 {
 	public sealed partial class ProBuilderMesh
 	{
+		static HashSet<int> s_CachedHashSet = new HashSet<int>();
+
 #if UNITY_EDITOR
 		public void OnBeforeSerialize()
 		{
@@ -682,7 +684,7 @@ namespace UnityEngine.ProBuilder
 			if (coincident == null)
                 throw new ArgumentNullException("coincident");
 
-			HashSet<int> used = new HashSet<int>();
+			s_CachedHashSet.Clear();
 			coincident.Clear();
 			var lookup = sharedVertexLookup;
 
@@ -690,7 +692,7 @@ namespace UnityEngine.ProBuilder
 			{
 				var common = lookup[v];
 
-				if (used.Add(common))
+				if (s_CachedHashSet.Add(common))
 					coincident.AddRange(m_SharedVertexes[common]);
 			}
 		}
@@ -722,17 +724,21 @@ namespace UnityEngine.ProBuilder
 		/// <remarks>
 		/// Note that it is up to the caller to ensure that the passed vertexes are indeed sharing a position.
 		/// </remarks>
-		/// <param name="vertexes">A list of vertexes to be associated as coincident.</param>
+		/// <param name="vertexes">Returns a list of vertexes to be associated as coincident.</param>
 		public void SetVertexesCoincident(IEnumerable<int> vertexes)
 		{
-			SharedVertex.SetCoincident(sharedVertexLookup, vertexes);
-			SetSharedVertexes(sharedVertexLookup);
+			var lookup = sharedVertexLookup;
+			List<int> coincident = new List<int>();
+			GetCoincidentVertexes(vertexes, coincident);
+			SharedVertex.SetCoincident(ref lookup, coincident);
+			SetSharedVertexes(lookup);
 		}
 
 		internal void SetTexturesCoincident(IEnumerable<int> vertexes)
 		{
-			SharedVertex.SetCoincident(sharedTextureLookup, vertexes);
-			SetSharedTextures(sharedTextureLookup);
+			var lookup = sharedTextureLookup;
+			SharedVertex.SetCoincident(ref lookup, vertexes);
+			SetSharedTextures(lookup);
 		}
 
 		internal void AddToSharedVertex(int sharedVertexHandle, int vertex)

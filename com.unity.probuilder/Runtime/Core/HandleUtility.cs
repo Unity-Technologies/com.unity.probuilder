@@ -356,28 +356,5 @@ namespace UnityEngine.ProBuilder
 
 			return FaceRaycast(ray, pb, out hit, Vector3.Distance(cam.transform.position, worldPoint), CullingMode.Front);
 		}
-
-		/// <summary>
-		/// Returns true if this point in world space is occluded by a triangle on this object.
-		/// </summary>
-		/// <remarks>This is very slow, do not use.</remarks>
-		/// <param name="cam"></param>
-		/// <param name="pb"></param>
-		/// <param name="face"></param>
-		/// <returns></returns>
-		internal static bool IsOccluded(Camera cam, ProBuilderMesh pb, Face face)
-		{
-			Vector3 point = Vector3.zero;
-			int len = face.distinctIndexesInternal.Length;
-
-			for(int i = 0;i < len; i++)
-				point += pb.positionsInternal[face.distinctIndexesInternal[i]];
-
-			point *= (1f/len);
-
-			return PointIsOccluded(cam, pb, pb.transform.TransformPoint(point));
-		}
-
 	}
-
 }
