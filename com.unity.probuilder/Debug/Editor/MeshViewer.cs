@@ -28,12 +28,12 @@ namespace UnityEditor.ProBuilder.Debug
 			ProBuilderMesh.elementSelectionChanged -= SelectionChanged;
 		}
 
-		protected ProBuilderMesh mesh
+		public ProBuilderMesh mesh
 		{
 			get { return m_Mesh; }
 		}
 
-		protected MeshViewState viewState
+		public MeshViewState viewState
 		{
 			get { return m_ViewState; }
 		}
@@ -68,6 +68,8 @@ namespace UnityEditor.ProBuilder.Debug
 		protected virtual void SelectionChanged() {}
 		protected virtual void AnythingChanged() {}
 
+		public virtual void OnGUI() { }
+
 		public abstract void Draw(SceneView view);
 
 		internal static void DrawSceneLabel(Vector3 worldPosition, string contents)
@@ -80,11 +82,21 @@ namespace UnityEditor.ProBuilder.Debug
 
 	sealed class MeshViewer : EditorWindow
 	{
+		[Serializable]
 		class MeshViewSetting
 		{
+			[SerializeField]
 			string m_Title;
+
+			[SerializeField]
 			MeshViewState m_ViewState;
+
+			[SerializeField]
+			bool m_Details;
+
+			[SerializeField]
 			string m_AssemblyQualifiedType;
+
 			Type m_Type;
 
 			public string title
@@ -96,6 +108,12 @@ namespace UnityEditor.ProBuilder.Debug
 			{
 				get { return m_ViewState; }
 				set { m_ViewState = value; }
+			}
+
+			public bool detailsExpanded
+			{
+				get { return m_Details; }
+				set { m_Details = value; }
 			}
 
 			public Type type
@@ -130,6 +148,7 @@ namespace UnityEditor.ProBuilder.Debug
 
 		List<MeshDebugView> m_MeshViews = new List<MeshDebugView>();
 
+		[SerializeField]
 		List<MeshViewSetting> m_MeshViewSettings = new List<MeshViewSetting>()
 		{
 			new MeshViewSetting("Shared Vertexes", MeshViewState.Selected, typeof(SharedVertexView))
@@ -145,10 +164,15 @@ namespace UnityEditor.ProBuilder.Debug
 		{
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
 			MeshSelection.objectSelectionChanged += SelectionChanged;
+			ProBuilderMesh.elementSelectionChanged += SelectionChanged;
+			EditorMeshUtility.meshOptimized += MeshOptimized;
+			SelectionChanged();
 		}
 
 		void OnDisable()
 		{
+			EditorMeshUtility.meshOptimized -= MeshOptimized;
+			ProBuilderMesh.elementSelectionChanged -= SelectionChanged;
 			MeshSelection.objectSelectionChanged -= SelectionChanged;
 			SceneView.onSceneGUIDelegate -= OnSceneGUI;
 		}
@@ -161,6 +185,18 @@ namespace UnityEditor.ProBuilder.Debug
 				view.viewState = (MeshViewState) EditorGUILayout.EnumPopup(view.title, view.viewState);
 				if (EditorGUI.EndChangeCheck())
 					SetViewState(view);
+
+				view.detailsExpanded = EditorGUILayout.Foldout(view.detailsExpanded, "Details");
+
+				if (view.detailsExpanded)
+				{
+					GUILayout.BeginVertical(UI.EditorStyles.settingsGroup);
+
+					foreach(var v in m_MeshViews)
+						v.OnGUI();
+
+					GUILayout.EndVertical();
+				}
 			}
 		}
 
@@ -179,6 +215,19 @@ namespace UnityEditor.ProBuilder.Debug
 			foreach(var view in m_MeshViewSettings)
 				foreach(var mesh in MeshSelection.Top())
 					m_MeshViews.Add(view.GetDebugView(mesh));
+
+			Repaint();
+			SceneView.RepaintAll();
+		}
+
+		void SelectionChanged(ProBuilderMesh mesh)
+		{
+			SelectionChanged();
+		}
+
+		void MeshOptimized(ProBuilderMesh pmesh, Mesh umesh)
+		{
+			SelectionChanged();
 		}
 
 		void OnSceneGUI(SceneView view)
@@ -186,7 +235,10 @@ namespace UnityEditor.ProBuilder.Debug
 			Handles.BeginGUI();
 
 			foreach (var mesh in m_MeshViews)
-				mesh.Draw(view);
+			{
+				if(mesh.viewState != MeshViewState.None)
+					mesh.Draw(view);
+			}
 
 			Handles.EndGUI();
 		}
