@@ -148,10 +148,11 @@ namespace UnityEditor.ProBuilder.Debug
 
 		List<MeshDebugView> m_MeshViews = new List<MeshDebugView>();
 
-		[SerializeField]
+//		[SerializeField]
 		List<MeshViewSetting> m_MeshViewSettings = new List<MeshViewSetting>()
 		{
-			new MeshViewSetting("Shared Vertexes", MeshViewState.Selected, typeof(SharedVertexView))
+			new MeshViewSetting("Vertexes", MeshViewState.Selected, typeof(SharedVertexView)),
+			new MeshViewSetting("Edges", MeshViewState.Selected, typeof(EdgeView))
 		};
 
 		[MenuItem("Tools/Debug/Mesh Viewer")]
