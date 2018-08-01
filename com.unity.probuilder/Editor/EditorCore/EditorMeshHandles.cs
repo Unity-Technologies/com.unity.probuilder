@@ -107,7 +107,7 @@ namespace UnityEditor.ProBuilder
 
 			ClearHandles();
 
-			m_MeshPool.Dispose();
+			m_MeshPool.Empty();
 
 			UObject.DestroyImmediate(m_EdgeMaterial);
 			UObject.DestroyImmediate(m_WireMaterial);
