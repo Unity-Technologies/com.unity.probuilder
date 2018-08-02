@@ -38,7 +38,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return new ActionResult(ActionResult.Status.Success, "Create Shape");
 		}
 
-		protected override void DoAlternativeAction()
+		protected override void DoAlternateAction()
 		{
 			ShapeEditor.MenuOpenShapeCreator();
 		}

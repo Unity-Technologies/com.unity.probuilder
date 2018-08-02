@@ -15,7 +15,7 @@ namespace UnityEngine.ProBuilder
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
     [ExecuteInEditMode]
-    public sealed partial class ProBuilderMesh : MonoBehaviour, ISerializationCallbackReceiver
+    public sealed partial class ProBuilderMesh : MonoBehaviour
     {
 	    const int k_UVChannelCount = 4;
 
