@@ -17,7 +17,7 @@ class TempMenuItems : EditorWindow
 		var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
 		Debug.Log("original -> shared vertexes:\n" + mesh.sharedVertexes.ToString("\n"));
 		Debug.Log("original -> shared vertexes lookup:\n" + string.Join("\n", mesh.sharedVertexLookup.OrderBy(x=>x.Key).Select(x=>x.Key +", " +x.Value)) );
-		Debug.Log("original -> has lookup cache: " + mesh.hasSharedLookupCache + "\n" + JsonUtility.ToJson(mesh, true));
+//		Debug.Log("original -> has lookup cache: " + mesh.hasSharedLookupCache + "\n" + JsonUtility.ToJson(mesh, true));
 
 		UnityEditor.Undo.RegisterCompleteObjectUndo(new [] { mesh }, "Merge Vertexes");
 
@@ -27,7 +27,7 @@ class TempMenuItems : EditorWindow
 		mesh.Refresh();
 		Debug.Log("collapsed -> shared vertexes:\n" + mesh.sharedVertexes.ToString("\n"));
 		Debug.Log("collapsed -> shared vertexes lookup:\n" + string.Join("\n", mesh.sharedVertexLookup.OrderBy(x=>x.Key).Select(x=>x.Key +", " +x.Value)) );
-		Debug.Log("collapsed -> has lookup cache: " + mesh.hasSharedLookupCache + "\n" + JsonUtility.ToJson(mesh, true));
+//		Debug.Log("collapsed -> has lookup cache: " + mesh.hasSharedLookupCache + "\n" + JsonUtility.ToJson(mesh, true));
 
 		Undo.PerformUndo();
 
@@ -38,7 +38,7 @@ class TempMenuItems : EditorWindow
 
 		Debug.Log("undo -> shared vertexes:\n" + mesh.sharedVertexes.ToString("\n"));
 		Debug.Log("undo -> shared vertexes lookup:\n" + string.Join("\n", mesh.sharedVertexLookup.OrderBy(x=>x.Key).Select(x=>x.Key +", " +x.Value)) );
-		Debug.Log("undo -> has lookup cache: " + mesh.hasSharedLookupCache + "\n" + JsonUtility.ToJson(mesh, true));
+//		Debug.Log("undo -> has lookup cache: " + mesh.hasSharedLookupCache + "\n" + JsonUtility.ToJson(mesh, true));
 	}
 
 	public static void SaveMeshTemplate(Mesh mesh)
