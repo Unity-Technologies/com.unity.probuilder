@@ -148,12 +148,17 @@ namespace UnityEditor.ProBuilder.Debug
 
 		List<MeshDebugView> m_MeshViews = new List<MeshDebugView>();
 
-//		[SerializeField]
+		[SerializeField]
 		List<MeshViewSetting> m_MeshViewSettings = new List<MeshViewSetting>()
 		{
-			new MeshViewSetting("Vertexes", MeshViewState.Selected, typeof(SharedVertexView)),
-			new MeshViewSetting("Edges", MeshViewState.Selected, typeof(EdgeView))
+			new MeshViewSetting("Indexes", MeshViewState.Selected, typeof(SharedVertexView)),
+			new MeshViewSetting("Edges", MeshViewState.Selected, typeof(EdgeView)),
+			new MeshViewSetting("Positions", MeshViewState.Selected, typeof(PositionView)),
+			new MeshViewSetting("Vertex", MeshViewState.Selected, typeof(VertexView)),
+			new MeshViewSetting("Face", MeshViewState.Selected, typeof(FaceView))
 		};
+
+		Vector2 m_Scroll = Vector2.zero;
 
 		[MenuItem("Tools/Debug/Mesh Viewer")]
 		static void Init()
@@ -180,6 +185,8 @@ namespace UnityEditor.ProBuilder.Debug
 
 		void OnGUI()
 		{
+			m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
+
 			foreach (var view in m_MeshViewSettings)
 			{
 				EditorGUI.BeginChangeCheck();
@@ -194,11 +201,14 @@ namespace UnityEditor.ProBuilder.Debug
 					GUILayout.BeginVertical(UI.EditorStyles.settingsGroup);
 
 					foreach(var v in m_MeshViews)
-						v.OnGUI();
+						if(view.type.IsInstanceOfType(v))
+							v.OnGUI();
 
 					GUILayout.EndVertical();
 				}
 			}
+
+			EditorGUILayout.EndScrollView();
 		}
 
 		void SetViewState(MeshViewSetting settings)
