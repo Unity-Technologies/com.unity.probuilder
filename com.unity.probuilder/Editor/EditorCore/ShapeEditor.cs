@@ -119,8 +119,7 @@ namespace UnityEditor.ProBuilder
 			if(mat != null)
 			{
 				SetFaceMaterial(pb.facesInternal, mat);
-				pb.ToMesh();
-				pb.Refresh();
+				pb.GetComponent<MeshRenderer>().sharedMaterial = mat;
 			}
 			else
 			{

@@ -1190,13 +1190,11 @@ namespace UnityEditor.ProBuilder
 				if(pb.selectedIndexesInternal.Length > 1)
 				{
 					int newIndex = pb.MergeVertexes(pb.selectedIndexesInternal, collapseToFirst);
+
 					success = newIndex > -1;
 
 					if(success)
-					{
-						pb.RemoveDegenerateTriangles();
 						pb.SetSelectedVertexes(new int[] { newIndex });
-					}
 
 					pb.ToMesh();
 					pb.Refresh();
