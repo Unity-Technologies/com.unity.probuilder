@@ -237,6 +237,53 @@ namespace UnityEngine.ProBuilder.Test
 			return true;
 		}
 
+		/// <summary>
+		/// Compare two meshes for value-wise inequality.
+		/// </summary>
+		/// <param name="expected"></param>
+		/// <param name="result"></param>
+		/// <returns></returns>
+		public static bool MeshesAreEqual(Mesh expected, Mesh result)
+		{
+			int vertexCount = expected.vertexCount;
+			int subMeshCount = expected.subMeshCount;
+
+			if(vertexCount != result.vertexCount)
+				return false;
+
+			if(subMeshCount != result.subMeshCount)
+				return false;
+
+			Vertex[] leftVertices = expected.GetVertexes();
+			Vertex[] rightVertices = result.GetVertexes();
+
+			for (int i = 0; i < vertexCount; i++)
+			{
+				if (!leftVertices[i].Equals(rightVertices[i]))
+					return false;
+			}
+
+			List<int> leftIndices = new List<int>();
+			List<int> rightIndices = new List<int>();
+
+			for (int i = 0; i < subMeshCount; i++)
+			{
+				uint indexCount = expected.GetIndexCount(i);
+
+				Assert.AreEqual(expected.GetTopology(i), result.GetTopology(i));
+				Assert.AreEqual(indexCount, result.GetIndexCount(i));
+
+				expected.GetIndices(leftIndices, i);
+				result.GetIndices(rightIndices, i);
+
+				for(int n = 0; n < indexCount; n++)
+					if (leftIndices[n] != rightIndices[n])
+						return false;
+			}
+
+			return true;
+		}
+
 		public static string GetTemplatePath<T>(string assetName, int methodOffset = 0)
 		{
 			StackTrace trace = new StackTrace(1 + methodOffset, true);

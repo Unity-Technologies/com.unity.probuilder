@@ -165,6 +165,14 @@ namespace UnityEngine.ProBuilder
 		    m_SharedTextureLookup.Clear();
 	    }
 
+	    internal void InvalidateCaches()
+	    {
+		    InvalidateSharedVertexLookup();
+		    InvalidateSharedTextureLookup();
+		    foreach(var face in faces)
+			    face.InvalidateCache();
+	    }
+
 	    internal SharedVertex[] sharedVertexesInternal
 	    {
 		    get { return m_SharedVertexes; }
@@ -570,6 +578,23 @@ namespace UnityEngine.ProBuilder
                     break;
             }
         }
+
+	    internal ReadOnlyCollection<Vector2> GetUVs(int channel)
+	    {
+		    if(channel == 0)
+			    return new ReadOnlyCollection<Vector2>(m_Textures0);
+
+		    if(channel == 1)
+			    return new ReadOnlyCollection<Vector2>(mesh.uv2);
+
+		    if(channel == 2)
+				return m_Textures2 == null ? null : new ReadOnlyCollection<Vector2>(m_Textures2.Cast<Vector2>().ToList());
+
+		    if(channel == 3)
+			    return m_Textures3 == null ? null : new ReadOnlyCollection<Vector2>(m_Textures3.Cast<Vector2>().ToList());
+
+		    return null;
+	    }
 
         /// <summary>
         /// Set the mesh UVs per-channel. Channels 0 and 1 are cast to Vector2, where channels 2 and 3 are kept Vector4.

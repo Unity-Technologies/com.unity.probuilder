@@ -350,55 +350,40 @@ namespace UnityEngine.ProBuilder
 		/// <param name="facesToRefresh"></param>
 		internal void RefreshUV(IEnumerable<Face> facesToRefresh)
 		{
-			Vector2[] oldUvs = mesh.uv;
-			Vector2[] newUVs;
-
-			// thanks to the upgrade path, this is necessary.  maybe someday remove it.
-			if (m_Textures0 != null && m_Textures0.Length == vertexCount)
+			// If the UV array has gone out of sync with the positions array, reset all faces to Auto UV so that we can
+			// correct the texture array.
+			if(m_Textures0 == null || m_Textures0.Length != vertexCount)
 			{
-				newUVs = m_Textures0;
-			}
-			else
-			{
-				if (oldUvs != null && oldUvs.Length == vertexCount)
-				{
-					newUVs = oldUvs;
-				}
-				else
-				{
-					foreach (Face f in this.facesInternal)
-						f.manualUV = false;
+				m_Textures0 = new Vector2[vertexCount];
 
-					// this necessitates rebuilding ALL the face uvs, so make sure we do that.
-					facesToRefresh = this.facesInternal;
+				foreach (Face f in facesInternal)
+					f.manualUV = false;
 
-					newUVs = new Vector2[vertexCount];
-				}
+				facesToRefresh = facesInternal;
 			}
 
 			int n = -2;
 			var textureGroups = new Dictionary<int, List<Face>>();
 			bool anyWorldSpace = false;
-			List<Face> group;
 
 			foreach (Face f in facesToRefresh)
 			{
 				if (f.uv.useWorldSpace)
 					anyWorldSpace = true;
 
-				if (f == null || f.manualUV)
+				if (f.manualUV)
 					continue;
 
-				if (f.textureGroup > 0 && textureGroups.TryGetValue(f.textureGroup, out group))
+				if (f.textureGroup > 0 && textureGroups.TryGetValue(f.textureGroup, out List<Face> group))
 					group.Add(f);
 				else
 					textureGroups.Add(f.textureGroup > 0 ? f.textureGroup : n--, new List<Face>() { f });
 			}
 
 			// Add any non-selected faces in texture groups to the update list
-			if (this.facesInternal.Length != facesToRefresh.Count())
+			if (facesInternal.Length != facesToRefresh.Count())
 			{
-				foreach (Face f in this.facesInternal)
+				foreach (Face f in facesInternal)
 				{
 					if (f.manualUV)
 						continue;
@@ -423,13 +408,12 @@ namespace UnityEngine.ProBuilder
 					nrm = Math.Normal(this, kvp.Value[0]);
 
 				if (kvp.Value[0].uv.useWorldSpace)
-					UnwrappingUtility.PlanarMap2(world, newUVs, indexes, kvp.Value[0].uv, transform.TransformDirection(nrm));
+					UnwrappingUtility.PlanarMap2(world, m_Textures0, indexes, kvp.Value[0].uv, transform.TransformDirection(nrm));
 				else
-					UnwrappingUtility.PlanarMap2(positionsInternal, newUVs, indexes, kvp.Value[0].uv, nrm);
+					UnwrappingUtility.PlanarMap2(positionsInternal, m_Textures0, indexes, kvp.Value[0].uv, nrm);
 			}
 
-			m_Textures0 = newUVs;
-			mesh.uv = newUVs;
+			mesh.uv = m_Textures0;
 
 			if (HasArrays(MeshArrays.Texture2))
 				mesh.SetUVs(2, m_Textures2);
@@ -468,11 +452,7 @@ namespace UnityEngine.ProBuilder
 		void RefreshTangents()
 		{
 			Mesh m = GetComponent<MeshFilter>().sharedMesh;
-
-			if (m_Tangents != null && m_Tangents.Length == vertexCount)
-				m.tangents = m_Tangents;
-			else
-				MeshUtility.GenerateTangent(m);
+			MeshUtility.GenerateTangent(m);
 		}
 
 		/// <summary>
