@@ -19,11 +19,14 @@ namespace UnityEditor.ProBuilder
 			if (SceneDragAndDropListener.IsDragging())
 				return;
 
-			foreach(var pb in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
+			foreach(var mesh in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
-				pb.ToMesh();
-				pb.Refresh();
-				pb.Optimize();
+				mesh.InvalidateSharedVertexLookup();
+				mesh.InvalidateSharedTextureLookup();
+
+				mesh.ToMesh();
+				mesh.Refresh();
+				mesh.Optimize();
 			}
 
 			ProBuilderEditor.Refresh(true);

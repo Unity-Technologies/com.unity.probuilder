@@ -390,12 +390,6 @@ namespace UnityEditor.ProBuilder
 
 			bool sceneViewInUse = EditorHandleUtility.SceneViewInUse(e);
 
-//			if(!sceneViewInUse && m_IsEditing)
-//			{
-//				int controlID = GUIUtility.GetControlID(FocusType.Passive);
-//				HandleUtility.AddDefaultControl(controlID);
-//			}
-
 			if(e.type == EventType.KeyDown)
 			{
 				if(e.keyCode == KeyCode.Backspace && m_currentHandle > -1 && m_currentHandle < m_Points.Count)

@@ -239,7 +239,7 @@ namespace UnityEditor.ProBuilder
 		/// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
 	    public abstract ActionResult DoAction();
 
-        protected virtual void DoAlternativeAction()
+        protected virtual void DoAlternateAction()
         {
             MenuOption.Show(OnSettingsGUI, OnSettingsEnable, OnSettingsDisable);
         }
@@ -284,7 +284,7 @@ namespace UnityEditor.ProBuilder
 				{
 					if(showOptions && (optionsMenuState & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
 					{
-						DoAlternativeAction();
+						DoAlternateAction();
 					}
 					else
 					{
@@ -330,7 +330,7 @@ namespace UnityEditor.ProBuilder
 						GUI.enabled = GUI.enabled && (altState & MenuActionState.Enabled) == MenuActionState.Enabled;
 
 						if(DoAltButton(GUILayout.MaxWidth(21), GUILayout.MaxHeight(16)))
-							DoAlternativeAction();
+							DoAlternateAction();
 					}
 				GUILayout.EndHorizontal();
 
