@@ -28,7 +28,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Undo
 
 			// this is usually caught by UndoUtility
 			cube.InvalidateCaches();
-			
+
 			cube.ToMesh();
 			cube.Refresh();
 

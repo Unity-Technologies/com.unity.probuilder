@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
-using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Test;
-using UnityEditor;
-using UnityEngine.TestTools;
 
 namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 {

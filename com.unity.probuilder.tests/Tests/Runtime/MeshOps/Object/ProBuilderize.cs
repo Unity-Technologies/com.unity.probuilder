@@ -22,7 +22,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Object
 				importer.Import(pb.gameObject);
 				dup.ToMesh();
 				dup.Refresh();
-				TestUtility.AssertAreEqual(pb.mesh, dup.mesh, pb.name);
+				TestUtility.AssertAreEqual(pb.mesh, dup.mesh, message: pb.name);
 			}
 			catch
 			{

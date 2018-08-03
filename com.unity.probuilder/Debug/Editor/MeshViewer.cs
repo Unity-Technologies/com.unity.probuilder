@@ -189,23 +189,31 @@ namespace UnityEditor.ProBuilder.Debug
 
 			foreach (var view in m_MeshViewSettings)
 			{
-				EditorGUI.BeginChangeCheck();
-				view.viewState = (MeshViewState) EditorGUILayout.EnumPopup(view.title, view.viewState);
-				if (EditorGUI.EndChangeCheck())
+				GUILayout.BeginVertical(UI.EditorStyles.settingsGroup);
+
+				GUILayout.BeginHorizontal();
+				GUILayout.Label(view.title, EditorStyles.boldLabel);
+				GUILayout.FlexibleSpace();
+
+				if (GUILayout.Button(view.viewState.ToString(), GUILayout.Width(100)))
+				{
+					view.viewState = (MeshViewState)((((int)view.viewState) + 1) % Enum.GetValues(typeof(MeshViewState)).Length);
 					SetViewState(view);
+				}
+
+				GUILayout.EndHorizontal();
 
 				view.detailsExpanded = EditorGUILayout.Foldout(view.detailsExpanded, "Details");
 
 				if (view.detailsExpanded)
 				{
-					GUILayout.BeginVertical(UI.EditorStyles.settingsGroup);
-
 					foreach(var v in m_MeshViews)
 						if(view.type.IsInstanceOfType(v))
 							v.OnGUI();
 
-					GUILayout.EndVertical();
 				}
+
+				GUILayout.EndVertical();
 			}
 
 			EditorGUILayout.EndScrollView();

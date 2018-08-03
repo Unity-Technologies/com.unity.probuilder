@@ -33,6 +33,7 @@ namespace UnityEngine.ProBuilder.Test
 		const string k_TemplatesDirectory = "Packages/com.unity.probuilder.tests/Templates/";
 		const string k_TestsDirectory = "Packages/com.unity.probuilder.tests/Tests/";
 		const string k_TempDirectory = "Assets/ProBuilderUnitTestsTemp/";
+		const MeshArrays k_DefaultMeshArraysCompare = ~MeshArrays.Lightmap;
 
 		public static string TemplatesDirectory
 		{
@@ -199,7 +200,7 @@ namespace UnityEngine.ProBuilder.Test
 		/// <param name="expected"></param>
 		/// <param name="result"></param>
 		/// <returns></returns>
-		public static bool AssertAreEqual(Mesh expected, Mesh result, string message = null)
+		public static bool AssertAreEqual(Mesh expected, Mesh result, MeshArrays compare = k_DefaultMeshArraysCompare, string message = null)
 		{
 			int vertexCount = expected.vertexCount;
 			int subMeshCount = expected.subMeshCount;
@@ -211,11 +212,8 @@ namespace UnityEngine.ProBuilder.Test
 			Vertex[] rightVertices = result.GetVertexes();
 
 			for (int i = 0; i < vertexCount; i++)
-			{
-				if(!leftVertices[i].Equals(rightVertices[i]))
-					Debug.Log("Expected\n" + leftVertices[i].ToString("F5") + "\n---\nReceived:\n" + rightVertices[i].ToString("F5"));
-				Assert.AreEqual(leftVertices[i], rightVertices[i], message);
-			}
+				Assert.True(leftVertices[i].Equals(rightVertices[i], compare),
+					"Expected\n" + leftVertices[i].ToString("F5") + "\n---\nReceived:\n" + rightVertices[i].ToString("F5"));
 
 			List<int> leftIndices = new List<int>();
 			List<int> rightIndices = new List<int>();

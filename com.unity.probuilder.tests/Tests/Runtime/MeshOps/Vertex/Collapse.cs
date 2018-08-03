@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Test;
