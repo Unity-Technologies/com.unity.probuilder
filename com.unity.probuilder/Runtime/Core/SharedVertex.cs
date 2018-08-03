@@ -263,7 +263,7 @@ namespace UnityEngine.ProBuilder
 			return shared;
 		}
 
-		internal static void SetCoincident(Dictionary<int, int> lookup, IEnumerable<int> vertexes)
+		internal static void SetCoincident(ref Dictionary<int, int> lookup, IEnumerable<int> vertexes)
 		{
 			int index = lookup.Count;
 			foreach (var v in vertexes)

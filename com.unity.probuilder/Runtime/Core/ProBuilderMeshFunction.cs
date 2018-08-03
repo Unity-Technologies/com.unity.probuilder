@@ -7,6 +7,8 @@ namespace UnityEngine.ProBuilder
 {
 	public sealed partial class ProBuilderMesh
 	{
+		static HashSet<int> s_CachedHashSet = new HashSet<int>();
+
 		/// <summary>
 		/// Reset all the attribute arrays on this object.
 		/// </summary>
@@ -348,55 +350,40 @@ namespace UnityEngine.ProBuilder
 		/// <param name="facesToRefresh"></param>
 		internal void RefreshUV(IEnumerable<Face> facesToRefresh)
 		{
-			Vector2[] oldUvs = mesh.uv;
-			Vector2[] newUVs;
-
-			// thanks to the upgrade path, this is necessary.  maybe someday remove it.
-			if (m_Textures0 != null && m_Textures0.Length == vertexCount)
+			// If the UV array has gone out of sync with the positions array, reset all faces to Auto UV so that we can
+			// correct the texture array.
+			if(m_Textures0 == null || m_Textures0.Length != vertexCount)
 			{
-				newUVs = m_Textures0;
-			}
-			else
-			{
-				if (oldUvs != null && oldUvs.Length == vertexCount)
-				{
-					newUVs = oldUvs;
-				}
-				else
-				{
-					foreach (Face f in this.facesInternal)
-						f.manualUV = false;
+				m_Textures0 = new Vector2[vertexCount];
 
-					// this necessitates rebuilding ALL the face uvs, so make sure we do that.
-					facesToRefresh = this.facesInternal;
+				foreach (Face f in facesInternal)
+					f.manualUV = false;
 
-					newUVs = new Vector2[vertexCount];
-				}
+				facesToRefresh = facesInternal;
 			}
 
 			int n = -2;
 			var textureGroups = new Dictionary<int, List<Face>>();
 			bool anyWorldSpace = false;
-			List<Face> group;
 
 			foreach (Face f in facesToRefresh)
 			{
 				if (f.uv.useWorldSpace)
 					anyWorldSpace = true;
 
-				if (f == null || f.manualUV)
+				if (f.manualUV)
 					continue;
 
-				if (f.textureGroup > 0 && textureGroups.TryGetValue(f.textureGroup, out group))
+				if (f.textureGroup > 0 && textureGroups.TryGetValue(f.textureGroup, out List<Face> group))
 					group.Add(f);
 				else
 					textureGroups.Add(f.textureGroup > 0 ? f.textureGroup : n--, new List<Face>() { f });
 			}
 
 			// Add any non-selected faces in texture groups to the update list
-			if (this.facesInternal.Length != facesToRefresh.Count())
+			if (facesInternal.Length != facesToRefresh.Count())
 			{
-				foreach (Face f in this.facesInternal)
+				foreach (Face f in facesInternal)
 				{
 					if (f.manualUV)
 						continue;
@@ -421,13 +408,12 @@ namespace UnityEngine.ProBuilder
 					nrm = Math.Normal(this, kvp.Value[0]);
 
 				if (kvp.Value[0].uv.useWorldSpace)
-					UnwrappingUtility.PlanarMap2(world, newUVs, indexes, kvp.Value[0].uv, transform.TransformDirection(nrm));
+					UnwrappingUtility.PlanarMap2(world, m_Textures0, indexes, kvp.Value[0].uv, transform.TransformDirection(nrm));
 				else
-					UnwrappingUtility.PlanarMap2(positionsInternal, newUVs, indexes, kvp.Value[0].uv, nrm);
+					UnwrappingUtility.PlanarMap2(positionsInternal, m_Textures0, indexes, kvp.Value[0].uv, nrm);
 			}
 
-			m_Textures0 = newUVs;
-			mesh.uv = newUVs;
+			mesh.uv = m_Textures0;
 
 			if (HasArrays(MeshArrays.Texture2))
 				mesh.SetUVs(2, m_Textures2);
@@ -460,17 +446,84 @@ namespace UnityEngine.ProBuilder
 
 		void RefreshNormals()
 		{
-			GetComponent<MeshFilter>().sharedMesh.normals = CalculateNormals();
+			mesh.normals = CalculateNormals();
 		}
 
 		void RefreshTangents()
 		{
-			Mesh m = GetComponent<MeshFilter>().sharedMesh;
+			CalculateTangents();
+			mesh.tangents = m_Tangents;
+		}
 
-			if (m_Tangents != null && m_Tangents.Length == vertexCount)
-				m.tangents = m_Tangents;
-			else
-				MeshUtility.GenerateTangent(m);
+		void CalculateTangents()
+		{
+			// http://answers.unity3d.com/questions/7789/calculating-tangents-vector4.html
+			Vector3[] normals = GetNormals();
+
+			int vc = vertexCount;
+			Vector3[] tan1 = new Vector3[vc];
+			Vector3[] tan2 = new Vector3[vc];
+
+			if(!HasArrays(MeshArrays.Tangent))
+				m_Tangents = new Vector4[vc];
+
+			foreach (var face in m_Faces)
+			{
+				int[] triangles = face.indexesInternal;
+
+				for (int a = 0, c = triangles.Length; a < c; a += 3)
+				{
+					long i1 = triangles[a + 0];
+					long i2 = triangles[a + 1];
+					long i3 = triangles[a + 2];
+
+					Vector3 v1 = m_Positions[i1];
+					Vector3 v2 = m_Positions[i2];
+					Vector3 v3 = m_Positions[i3];
+
+					Vector2 w1 = m_Textures0[i1];
+					Vector2 w2 = m_Textures0[i2];
+					Vector2 w3 = m_Textures0[i3];
+
+					float x1 = v2.x - v1.x;
+					float x2 = v3.x - v1.x;
+					float y1 = v2.y - v1.y;
+					float y2 = v3.y - v1.y;
+					float z1 = v2.z - v1.z;
+					float z2 = v3.z - v1.z;
+
+					float s1 = w2.x - w1.x;
+					float s2 = w3.x - w1.x;
+					float t1 = w2.y - w1.y;
+					float t2 = w3.y - w1.y;
+
+					float r = 1.0f / (s1 * t2 - s2 * t1);
+
+					Vector3 sdir = new Vector3((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
+					Vector3 tdir = new Vector3((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
+
+					tan1[i1] += sdir;
+					tan1[i2] += sdir;
+					tan1[i3] += sdir;
+
+					tan2[i1] += tdir;
+					tan2[i2] += tdir;
+					tan2[i3] += tdir;
+				}
+			}
+
+			for (long a = 0; a < vertexCount; ++a)
+			{
+				Vector3 n = normals[a];
+				Vector3 t = tan1[a];
+
+				Vector3.OrthoNormalize(ref n, ref t);
+
+				m_Tangents[a].x = t.x;
+				m_Tangents[a].y = t.y;
+				m_Tangents[a].z = t.z;
+				m_Tangents[a].w = (Vector3.Dot(Vector3.Cross(n, t), tan2[a]) < 0.0f) ? -1.0f : 1.0f;
+			}
 		}
 
 		/// <summary>
@@ -669,7 +722,7 @@ namespace UnityEngine.ProBuilder
 			if (coincident == null)
                 throw new ArgumentNullException("coincident");
 
-			HashSet<int> used = new HashSet<int>();
+			s_CachedHashSet.Clear();
 			coincident.Clear();
 			var lookup = sharedVertexLookup;
 
@@ -677,7 +730,7 @@ namespace UnityEngine.ProBuilder
 			{
 				var common = lookup[v];
 
-				if (used.Add(common))
+				if (s_CachedHashSet.Add(common))
 					coincident.AddRange(m_SharedVertexes[common]);
 			}
 		}
@@ -709,17 +762,21 @@ namespace UnityEngine.ProBuilder
 		/// <remarks>
 		/// Note that it is up to the caller to ensure that the passed vertexes are indeed sharing a position.
 		/// </remarks>
-		/// <param name="vertexes">A list of vertexes to be associated as coincident.</param>
+		/// <param name="vertexes">Returns a list of vertexes to be associated as coincident.</param>
 		public void SetVertexesCoincident(IEnumerable<int> vertexes)
 		{
-			SharedVertex.SetCoincident(sharedVertexLookup, vertexes);
-			SetSharedVertexes(sharedVertexLookup);
+			var lookup = sharedVertexLookup;
+			List<int> coincident = new List<int>();
+			GetCoincidentVertexes(vertexes, coincident);
+			SharedVertex.SetCoincident(ref lookup, coincident);
+			SetSharedVertexes(lookup);
 		}
 
 		internal void SetTexturesCoincident(IEnumerable<int> vertexes)
 		{
-			SharedVertex.SetCoincident(sharedTextureLookup, vertexes);
-			SetSharedTextures(sharedTextureLookup);
+			var lookup = sharedTextureLookup;
+			SharedVertex.SetCoincident(ref lookup, vertexes);
+			SetSharedTextures(lookup);
 		}
 
 		internal void AddToSharedVertex(int sharedVertexHandle, int vertex)

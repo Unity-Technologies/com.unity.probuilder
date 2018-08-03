@@ -21,9 +21,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(var mesh in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
-				mesh.InvalidateSharedVertexLookup();
-				mesh.InvalidateSharedTextureLookup();
-
+				mesh.InvalidateCaches();
 				mesh.ToMesh();
 				mesh.Refresh();
 				mesh.Optimize();
@@ -89,8 +87,10 @@ namespace UnityEditor.ProBuilder
 			Object[] obj = objs.Where(x => !(x is ProBuilderMesh)).ToArray();
 			ProBuilderMesh[] pb = objs.Where(x => x is ProBuilderMesh).Cast<ProBuilderMesh>().ToArray();
 
-			Undo.RecordObjects(obj, msg);
-			UndoUtility.RecordSelection(pb, msg);
+			if(obj.Any())
+				Undo.RecordObjects(obj, msg);
+
+			RecordSelection(pb, msg);
 		}
 
 		/**

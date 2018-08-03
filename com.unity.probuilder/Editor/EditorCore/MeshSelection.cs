@@ -36,6 +36,12 @@ namespace UnityEditor.ProBuilder
 		static MeshSelection()
 		{
 			Selection.selectionChanged += OnObjectSelectionChanged;
+
+			EditorMeshUtility.meshOptimized += (x, y) =>
+			{
+				s_ElementCountCacheIsDirty = true;
+			};
+
 			OnObjectSelectionChanged();
 		}
 

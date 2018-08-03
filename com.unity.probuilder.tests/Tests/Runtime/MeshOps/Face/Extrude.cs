@@ -32,7 +32,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 					TestUtility.SaveAssetTemplate(pb.mesh, pb.name);
 #endif
 					Mesh template = TestUtility.GetAssetTemplate<Mesh>(pb.name);
-					TestUtility.AssertAreEqual(template, pb.mesh, pb.name);
+					TestUtility.AssertAreEqual(template, pb.mesh, message: pb.name);
 				}
 			}
 		}
@@ -55,7 +55,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 					TestUtility.SaveAssetTemplate(pb.mesh, pb.name);
 #endif
 					Mesh template = TestUtility.GetAssetTemplate<Mesh>(pb.name);
-					TestUtility.AssertAreEqual(template, pb.mesh, pb.name);
+					TestUtility.AssertAreEqual(template, pb.mesh, message: pb.name);
 				}
 			}
 		}
@@ -76,7 +76,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 					TestUtility.SaveAssetTemplate(pb.mesh, pb.name);
 #endif
 					Mesh template = TestUtility.GetAssetTemplate<Mesh>(pb.name);
-					TestUtility.AssertAreEqual(template, pb.mesh, pb.name);
+					TestUtility.AssertAreEqual(template, pb.mesh, message: pb.name);
 				}
 			}
 		}

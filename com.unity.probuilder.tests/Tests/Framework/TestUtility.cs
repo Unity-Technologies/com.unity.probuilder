@@ -33,6 +33,7 @@ namespace UnityEngine.ProBuilder.Test
 		const string k_TemplatesDirectory = "Packages/com.unity.probuilder.tests/Templates/";
 		const string k_TestsDirectory = "Packages/com.unity.probuilder.tests/Tests/";
 		const string k_TempDirectory = "Assets/ProBuilderUnitTestsTemp/";
+		const MeshArrays k_DefaultMeshArraysCompare = ~MeshArrays.Lightmap;
 
 		public static string TemplatesDirectory
 		{
@@ -199,7 +200,7 @@ namespace UnityEngine.ProBuilder.Test
 		/// <param name="expected"></param>
 		/// <param name="result"></param>
 		/// <returns></returns>
-		public static bool AssertAreEqual(Mesh expected, Mesh result, string message = null)
+		public static bool AssertAreEqual(Mesh expected, Mesh result, MeshArrays compare = k_DefaultMeshArraysCompare, string message = null)
 		{
 			int vertexCount = expected.vertexCount;
 			int subMeshCount = expected.subMeshCount;
@@ -211,11 +212,8 @@ namespace UnityEngine.ProBuilder.Test
 			Vertex[] rightVertices = result.GetVertexes();
 
 			for (int i = 0; i < vertexCount; i++)
-			{
-				if(!leftVertices[i].Equals(rightVertices[i]))
-					Debug.Log("Expected\n" + leftVertices[i].ToString("F5") + "\n---\nReceived:\n" + rightVertices[i].ToString("F5"));
-				Assert.AreEqual(leftVertices[i], rightVertices[i], message);
-			}
+				Assert.True(leftVertices[i].Equals(rightVertices[i], compare),
+					"Expected\n" + leftVertices[i].ToString("F5") + "\n---\nReceived:\n" + rightVertices[i].ToString("F5"));
 
 			List<int> leftIndices = new List<int>();
 			List<int> rightIndices = new List<int>();
@@ -232,6 +230,53 @@ namespace UnityEngine.ProBuilder.Test
 
 				for(int n = 0; n < indexCount; n++)
 					Assert.AreEqual(leftIndices[n], rightIndices[n], message);
+			}
+
+			return true;
+		}
+
+		/// <summary>
+		/// Compare two meshes for value-wise inequality.
+		/// </summary>
+		/// <param name="expected"></param>
+		/// <param name="result"></param>
+		/// <returns></returns>
+		public static bool MeshesAreEqual(Mesh expected, Mesh result)
+		{
+			int vertexCount = expected.vertexCount;
+			int subMeshCount = expected.subMeshCount;
+
+			if(vertexCount != result.vertexCount)
+				return false;
+
+			if(subMeshCount != result.subMeshCount)
+				return false;
+
+			Vertex[] leftVertices = expected.GetVertexes();
+			Vertex[] rightVertices = result.GetVertexes();
+
+			for (int i = 0; i < vertexCount; i++)
+			{
+				if (!leftVertices[i].Equals(rightVertices[i]))
+					return false;
+			}
+
+			List<int> leftIndices = new List<int>();
+			List<int> rightIndices = new List<int>();
+
+			for (int i = 0; i < subMeshCount; i++)
+			{
+				uint indexCount = expected.GetIndexCount(i);
+
+				Assert.AreEqual(expected.GetTopology(i), result.GetTopology(i));
+				Assert.AreEqual(indexCount, result.GetIndexCount(i));
+
+				expected.GetIndices(leftIndices, i);
+				result.GetIndices(rightIndices, i);
+
+				for(int n = 0; n < indexCount; n++)
+					if (leftIndices[n] != rightIndices[n])
+						return false;
 			}
 
 			return true;

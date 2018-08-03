@@ -251,6 +251,21 @@ namespace UnityEngine.ProBuilder
 				Math.Approx4(m_UV4, other.m_UV4);
 		}
 
+		public bool Equals(Vertex other, MeshArrays mask)
+		{
+			if (ReferenceEquals(other, null))
+				return false;
+
+			return ((mask & MeshArrays.Position) != MeshArrays.Position || Math.Approx3(m_Position, other.m_Position)) &&
+				((mask & MeshArrays.Color) != MeshArrays.Color || Math.ApproxC(m_Color, other.m_Color)) &&
+				((mask & MeshArrays.Normal) != MeshArrays.Normal || Math.Approx3(m_Normal, other.m_Normal)) &&
+				((mask & MeshArrays.Tangent) != MeshArrays.Tangent || Math.Approx4(m_Tangent, other.m_Tangent)) &&
+				((mask & MeshArrays.Texture0) != MeshArrays.Texture0 || Math.Approx2(m_UV0, other.m_UV0)) &&
+				((mask & MeshArrays.Texture1) != MeshArrays.Texture1 || Math.Approx2(m_UV2, other.m_UV2)) &&
+				((mask & MeshArrays.Texture2) != MeshArrays.Texture2 || Math.Approx4(m_UV3, other.m_UV3)) &&
+				((mask & MeshArrays.Texture3) != MeshArrays.Texture3 || Math.Approx4(m_UV4, other.m_UV4));
+		}
+
 		/// <summary>
 		/// Creates a new hashcode from position, uv0, and normal.
 		/// </summary>
@@ -715,7 +730,10 @@ namespace UnityEngine.ProBuilder
 
 			int vertexCount = indexes != null ? indexes.Count : vertexes.Count;
 
-			int normalCount = 0,
+			int positionCount = 0,
+				colorCount = 0,
+				uv0Count = 0,
+				normalCount = 0,
 				tangentCount = 0,
 				uv2Count = 0,
 				uv3Count = 0,
@@ -725,9 +743,24 @@ namespace UnityEngine.ProBuilder
 			{
 				int index = indexes == null ? i : indexes[i];
 
-				v.m_Position += vertexes[index].m_Position;
-				v.m_Color += vertexes[index].m_Color;
-				v.m_UV0 += vertexes[index].m_UV0;
+
+				if(vertexes[index].hasPosition)
+				{
+					positionCount++;
+					v.m_Position += vertexes[index].m_Position;
+				}
+
+				if(vertexes[index].hasColor)
+				{
+					colorCount++;
+					v.m_Color += vertexes[index].m_Color;
+				}
+
+				if(vertexes[index].hasUV0)
+				{
+					uv0Count++;
+					v.m_UV0 += vertexes[index].m_UV0;
+				}
 
 				if (vertexes[index].hasNormal)
 				{
@@ -760,15 +793,54 @@ namespace UnityEngine.ProBuilder
 				}
 			}
 
-			v.m_Position *= (1f / vertexCount);
-			v.m_Color *= (1f / vertexCount);
-			v.m_UV0 *= (1f / vertexCount);
+			if(positionCount > 0)
+			{
+				v.hasPosition = true;
+				v.m_Position *= (1f / positionCount);
+			}
 
-			v.m_Normal *= (1f / normalCount);
-			v.m_Tangent *= (1f / tangentCount);
-			v.m_UV2 *= (1f / uv2Count);
-			v.m_UV3 *= (1f / uv3Count);
-			v.m_UV4 *= (1f / uv4Count);
+			if(colorCount > 0)
+			{
+				v.hasColor = true;
+				v.m_Color *= (1f / colorCount);
+			}
+
+			if(uv0Count > 0)
+			{
+				v.hasUV0 = true;
+				v.m_UV0 *= (1f / uv0Count);
+			}
+
+
+			if(normalCount > 0)
+			{
+				v.hasNormal = true;
+				v.m_Normal *= (1f / normalCount);
+			}
+
+			if(tangentCount > 0)
+			{
+				v.hasTangent = true;
+				v.m_Tangent *= (1f / tangentCount);
+			}
+
+			if(uv2Count > 0)
+			{
+				v.hasUV2 = true;
+				v.m_UV2 *= (1f / uv2Count);
+			}
+
+			if(uv3Count > 0)
+			{
+				v.hasUV3 = true;
+				v.m_UV3 *= (1f / uv3Count);
+			}
+
+			if(uv4Count > 0)
+			{
+				v.hasUV4 = true;
+				v.m_UV4 *= (1f / uv4Count);
+			}
 
 			return v;
 		}
