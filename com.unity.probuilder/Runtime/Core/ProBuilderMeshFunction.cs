@@ -344,6 +344,26 @@ namespace UnityEngine.ProBuilder
 			RefreshUV(facesInternal);
 		}
 
+		void RefreshUV(IList<Face> facesToRefresh)
+		{
+			s_CachedHashSet.Clear();
+
+			for (int i = 0, c = facesToRefresh.Count; i < c; i++)
+			{
+				int textureGroup = facesToRefresh[i].textureGroup;
+
+				if (facesToRefresh[i].manualUV || textureGroup < 1)
+				{
+					UnwrappingUtility.Project(this, facesToRefresh[i]);
+				}
+				else
+				{
+					!s_CachedHashSet.Add(textureGroup))
+					UnwrappingUtility.PlanarMap2(m_Positions, m_Textures0, indexes, kvp.Value[0].uv, nrm);
+				}
+			}
+		}
+
 		/// <summary>
 		/// Re-project AutoUV faces and re-assign ManualUV to mesh.uv channel.
 		/// </summary>

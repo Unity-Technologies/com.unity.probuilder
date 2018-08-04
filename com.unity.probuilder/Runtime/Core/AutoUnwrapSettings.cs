@@ -203,15 +203,15 @@ namespace UnityEngine.ProBuilder
 		/// <param name="unwrapSettings">The settings to copy to this new instance.</param>
 		public AutoUnwrapSettings(AutoUnwrapSettings unwrapSettings)
 		{
-			m_UseWorldSpace = unwrapSettings.useWorldSpace;
-			m_FlipU = unwrapSettings.flipU;
-			m_FlipV = unwrapSettings.flipV;
-			m_SwapUV = unwrapSettings.swapUV;
-			m_Fill = unwrapSettings.fill;
-			m_Scale = unwrapSettings.scale;
-			m_Offset = unwrapSettings.offset;
-			m_Rotation = unwrapSettings.rotation;
-			m_Anchor = unwrapSettings.anchor;
+			m_UseWorldSpace = unwrapSettings.m_UseWorldSpace;
+			m_FlipU = unwrapSettings.m_FlipU;
+			m_FlipV = unwrapSettings.m_FlipV;
+			m_SwapUV = unwrapSettings.m_SwapUV;
+			m_Fill = unwrapSettings.m_Fill;
+			m_Scale = unwrapSettings.m_Scale;
+			m_Offset = unwrapSettings.m_Offset;
+			m_Rotation = unwrapSettings.m_Rotation;
+			m_Anchor = unwrapSettings.m_Anchor;
 		}
 
 		/// <summary>
@@ -260,15 +260,15 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public void Reset()
 		{
-			useWorldSpace = false;
-			flipU = false;
-			flipV = false;
-			swapUV = false;
-			fill = Fill.Tile;
-			scale = new Vector2(1f, 1f);
-			offset = new Vector2(0f, 0f);
-			rotation = 0f;
-			anchor = Anchor.None;
+			m_UseWorldSpace = false;
+			m_FlipU = false;
+			m_FlipV = false;
+			m_SwapUV = false;
+			m_Fill = Fill.Tile;
+			m_Scale = new Vector2(1f, 1f);
+			m_Offset = new Vector2(0f, 0f);
+			m_Rotation = 0f;
+			m_Anchor = Anchor.None;
 		}
 
 		public override string ToString()

@@ -8,6 +8,13 @@ namespace UnityEngine.ProBuilder
 	{
 		static Vector2 s_TempVector2 = Vector2.zero;
 
+		internal static void Project(ProBuilderMesh mesh, Face face)
+		{
+			var nrm = Math.Normal(mesh, face);
+			PlanarMap2(mesh.positionsInternal, );
+			Projection.PlanarProjectUVs(mesh, Projection.VectorToProjectionAxis(nrm));
+		}
+
 		public static void PlanarMap2(Vector3[] verts, Vector2[] uvs, int[] indexes, AutoUnwrapSettings uvSettings, Vector3 normal)
 		{
 			ProjectionAxis projectionAxis = Projection.VectorToProjectionAxis(normal);
