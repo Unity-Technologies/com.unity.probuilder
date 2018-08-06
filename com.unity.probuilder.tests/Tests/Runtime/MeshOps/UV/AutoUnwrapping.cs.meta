@@ -1,16 +1,11 @@
 fileFormatVersion: 2
-guid: 9bcd8be4fb32be1458cc5aeb47e5b908
-labels:
-- procedural
-- uv
-- uvee
-- texture
-- model
-- unwrapping
-- coordinate
-- uv2
+guid: 0cacb5f6aafab4b46a05fff356b727a0
 MonoImporter:
+  externalObjects: {}
   serializedVersion: 2
   defaultReferences: []
   executionOrder: 0
   icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

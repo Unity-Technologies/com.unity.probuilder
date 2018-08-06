@@ -11,9 +11,7 @@ namespace UnityEngine.ProBuilder
 		public static void PlanarMap2(Vector3[] verts, Vector2[] uvs, int[] indexes, AutoUnwrapSettings uvSettings, Vector3 normal)
 		{
 			ProjectionAxis projectionAxis = Projection.VectorToProjectionAxis(normal);
-
 			Projection.PlanarProject(verts, uvs, indexes, normal, projectionAxis);
-
 			ApplyUVSettings(uvs, indexes, uvSettings);
 		}
 
@@ -26,10 +24,10 @@ namespace UnityEngine.ProBuilder
 				case AutoUnwrapSettings.Fill.Tile:
 					break;
 				case AutoUnwrapSettings.Fill.Fit:
-					uvs = NormalizeUVs(uvs, indexes);
+					FitUVs(uvs, indexes);
 					break;
 				case AutoUnwrapSettings.Fill.Stretch:
-					uvs = StretchUVs(uvs, indexes);
+					StretchUVs(uvs, indexes);
 					break;
 			}
 
@@ -84,55 +82,38 @@ namespace UnityEngine.ProBuilder
 			}
 		}
 
-		static Vector2[] StretchUVs(Vector2[] uvs, int[] indexes)
+		static void StretchUVs(Vector2[] uvs, int[] indexes)
 		{
-			Vector2 scale = Math.LargestVector2(uvs, indexes) - Math.SmallestVector2(uvs, indexes);
+			var bounds = new Bounds2D(uvs, indexes);
+			var c = bounds.center;
+			var s = bounds.size;
 
 			for(int i = 0; i < indexes.Length; i++)
 			{
-				uvs[i].x = uvs[indexes[i]].x / scale.x;
-				uvs[i].y = uvs[indexes[i]].y / scale.y;
-			}
+				var uv = uvs[i];
 
-			return uvs;
+				uv.x = ((uv.x - c.x) / s.x) + c.x;
+				uv.y = ((uv.y - c.y) / s.y) + c.y;
+
+				uvs[i] = uv;
+			}
 		}
 
-		/// <summary>
-		/// Returns normalized UV values for a mesh uvs (0,0) - (1,1)
-		/// </summary>
-		/// <param name="uvs"></param>
-		/// <param name="indexes"></param>
-		/// <returns></returns>
-		static Vector2[] NormalizeUVs(Vector2[] uvs, int[] indexes)
+		static void FitUVs(Vector2[] uvs, int[] indexes)
 		{
-			/*
-			 *	how this works -
-			 *		- shift uv coordinates such that the lowest value x and y coordinates are zero
-			 *		- scale non-zeroed coordinates uniformly to normalized values (0,0) - (1,1)
-			 */
+			var bounds = new Bounds2D(uvs, indexes);
+			var c = bounds.center;
+			var s = Mathf.Max(bounds.size.x, bounds.size.y);
 
-			int len = indexes.Length;
-
-			// shift UVs to zeroed coordinates
-			Vector2 smallestVector2 = Math.SmallestVector2(uvs, indexes);
-
-			int i;
-
-			for(i = 0; i < len; i++)
+			for(int i = 0; i < indexes.Length; i++)
 			{
-				uvs[indexes[i]].x -= smallestVector2.x;
-				uvs[indexes[i]].y -= smallestVector2.y;
+				var uv = uvs[i];
+
+				uv.x = ((uv.x - c.x) / s) + c.x;
+				uv.y = ((uv.y - c.y) / s) + c.y;
+
+				uvs[i] = uv;
 			}
-
-			float scale = Math.LargestValue( Math.LargestVector2(uvs, indexes) );
-
-			for(i = 0; i < len; i++)
-			{
-				uvs[indexes[i]].x /= scale;
-				uvs[indexes[i]].y /= scale;
-			}
-
-			return uvs;
 		}
 
 		static void ApplyUVAnchor(Vector2[] uvs, int[] indexes, AutoUnwrapSettings.Anchor anchor)
