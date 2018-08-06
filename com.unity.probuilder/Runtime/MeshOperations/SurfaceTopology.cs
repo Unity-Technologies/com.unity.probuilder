@@ -85,7 +85,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns>The winding order if successfull, unknown if not.</returns>
 		public static WindingOrder GetWindingOrder(this ProBuilderMesh mesh, Face face)
 		{
-			Vector2[] p = Projection.PlanarProject(mesh, face);
+			Vector2[] p = Projection.PlanarProject(mesh.positionsInternal, face.distinctIndexesInternal);
 			return GetWindingOrder(p);
 		}
 
@@ -97,7 +97,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (indexes == null)
                 throw new ArgumentNullException("indexes");
 
-            Vector2[] p = Projection.PlanarProject(vertexes, indexes);
+            Vector2[] p = Projection.PlanarProject(vertexes.Select(x => x.position).ToArray(), indexes);
 			return GetWindingOrder(p);
 		}
 

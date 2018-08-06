@@ -113,7 +113,7 @@ namespace UnityEngine.ProBuilder
         /// </value>
         internal int[] distinctIndexesInternal
         {
-            get { return m_DistinctIndexes == null ? CacheDIstinctIndexes() : m_DistinctIndexes; }
+            get { return m_DistinctIndexes == null ? CacheDistinctIndexes() : m_DistinctIndexes; }
         }
 
         /// <value>
@@ -262,7 +262,7 @@ namespace UnityEngine.ProBuilder
 			return m_Edges;
 		}
 
-		int[] CacheDIstinctIndexes()
+		int[] CacheDistinctIndexes()
 		{
 			if(m_Indexes == null)
 				return null;

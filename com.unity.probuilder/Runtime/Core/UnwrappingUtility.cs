@@ -10,16 +10,19 @@ namespace UnityEngine.ProBuilder
 
 		internal static void Project(ProBuilderMesh mesh, Face face)
 		{
-			var nrm = Math.Normal(mesh, face);
-			PlanarMap2(mesh.positionsInternal, );
-			Projection.PlanarProjectUVs(mesh, Projection.VectorToProjectionAxis(nrm));
+			Projection.PlanarProject(mesh, face);
+			ApplyUVSettings(mesh.texturesInternal, face.distinctIndexesInternal, face.uv);
 		}
 
-		public static void PlanarMap2(Vector3[] verts, Vector2[] uvs, int[] indexes, AutoUnwrapSettings uvSettings, Vector3 normal)
+		internal static void ProjectTextureGroup(ProBuilderMesh mesh, int group, AutoUnwrapSettings unwrapSettings)
 		{
-			ProjectionAxis projectionAxis = Projection.VectorToProjectionAxis(normal);
-			Projection.PlanarProject(verts, uvs, indexes, normal, projectionAxis);
-			ApplyUVSettings(uvs, indexes, uvSettings);
+			Projection.PlanarProject(mesh, group, unwrapSettings);
+
+			foreach (var face in mesh.facesInternal)
+			{
+				if(face.textureGroup == group)
+					ApplyUVSettings(mesh.texturesInternal, face.distinctIndexesInternal, unwrapSettings);
+			}
 		}
 
 		static void ApplyUVSettings(Vector2[] uvs, int[] indexes, AutoUnwrapSettings uvSettings)
@@ -54,7 +57,6 @@ namespace UnityEngine.ProBuilder
 					uvs[indexes[i]] = uvs[indexes[i]].RotateAroundPoint(center, uvSettings.rotation);
 				}
 			}
-
 
 			if(uvSettings.flipU || uvSettings.flipV || uvSettings.swapUV)
 			{

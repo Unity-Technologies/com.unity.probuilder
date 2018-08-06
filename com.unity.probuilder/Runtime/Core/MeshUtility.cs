@@ -401,56 +401,6 @@ namespace UnityEngine.ProBuilder
             return submeshes.Select(x => x.m_Material).ToArray();
         }
 
-        /// <summary>
-        /// Create a new UV channel and return it using each @"UnityEngine.ProBuilder.Face" @"UnityEngine.ProBuilder.AutoUnwrapSettings" property.
-        /// </summary>
-        /// <param name="mesh">The target mesh.</param>
-        /// <returns>A new array of texture coordinates.</returns>
-        internal static Vector2[] GetUVs(ProBuilderMesh mesh)
-		{
-			int n = -2;
-			Dictionary<int, List<Face>> textureGroups = new Dictionary<int, List<Face>>();
-			bool anyWorldSpace = false;
-			List<Face> group;
-
-			foreach (Face f in mesh.facesInternal)
-			{
-				if (f.uv.useWorldSpace)
-					anyWorldSpace = true;
-
-				if (f == null || f.manualUV)
-					continue;
-
-				if (f.textureGroup > 0 && textureGroups.TryGetValue(f.textureGroup, out group))
-					group.Add(f);
-				else
-					textureGroups.Add(f.textureGroup > 0 ? f.textureGroup : n--, new List<Face>() { f });
-			}
-
-			n = 0;
-
-			Vector3[] world = anyWorldSpace ? mesh.VertexesInWorldSpace() : null;
-			Vector2[] uvs = mesh.texturesInternal != null && mesh.texturesInternal.Length == mesh.vertexCount ? mesh.texturesInternal : new Vector2[mesh.vertexCount];
-
-			foreach (KeyValuePair<int, List<Face>> kvp in textureGroups)
-			{
-				Vector3 nrm;
-				int[] indexes = kvp.Value.SelectMany(x => x.distinctIndexesInternal).ToArray();
-
-				if (kvp.Value.Count > 1)
-					nrm = Projection.FindBestPlane(mesh.positionsInternal, indexes).normal;
-				else
-					nrm = Math.Normal(mesh, kvp.Value[0]);
-
-				if (kvp.Value[0].uv.useWorldSpace)
-					UnwrappingUtility.PlanarMap2(world, uvs, indexes, kvp.Value[0].uv, mesh.transform.TransformDirection(nrm));
-				else
-					UnwrappingUtility.PlanarMap2(mesh.positionsInternal, uvs, indexes, kvp.Value[0].uv, nrm);
-			}
-
-			return uvs;
-		}
-
 		/// <summary>
 		/// Creates a new array of vertexes with values from a UnityEngine.Mesh.
 		/// </summary>

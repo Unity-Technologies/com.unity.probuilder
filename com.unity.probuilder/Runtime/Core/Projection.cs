@@ -14,128 +14,116 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Project a collection of 3d positions to a 2d plane.
 		/// </summary>
-		/// <param name="verts">A collection of positions to project based on a direction.</param>
-		/// <param name="planeNormal">The normal to project points from.</param>
-		/// <returns>The verts array projected into 2d coordinates.</returns>
-		public static Vector2[] PlanarProject(IEnumerable<Vector3> verts, Vector3 planeNormal)
+		/// <param name="positions">A collection of positions to project based on a direction.</param>
+		/// <param name="indexes"></param>
+		/// <returns>The positions array projected into 2d coordinates.</returns>
+		public static Vector2[] PlanarProject(IList<Vector3> positions, IList<int> indexes = null)
 		{
-			return PlanarProject(verts.ToArray(), planeNormal, VectorToProjectionAxis(planeNormal));
+			return PlanarProject(positions, indexes, FindBestPlane(positions, indexes).normal);
 		}
 
-		internal static Vector2[] PlanarProject(ProBuilderMesh pb, Face face)
+		public static Vector2[] PlanarProject(IList<Vector3> positions, IList<int> indexes, Vector3 direction)
 		{
-			Vector3 normal = Math.Normal(pb, face);
-			return PlanarProject(pb.positionsInternal, normal, VectorToProjectionAxis(normal), face.indexesInternal);
-		}
+			var nrm = direction;
+			var axis = VectorToProjectionAxis(nrm);
+			var prj = ProjectionAxisToVectorInternal(axis);
+			var len = indexes == null ? positions.Count : indexes.Count;
+			var projected = new Vector2[len];
 
-		internal static Vector2[] PlanarProject(IList<Vertex> vertexes, IList<int> indexes)
-		{
-			int len = indexes.Count;
+			var u = Vector3.Cross(nrm, prj);
+			var v = Vector3.Cross(u, nrm);
 
-			Vector3[] v = new Vector3[len];
+			u.Normalize();
+			v.Normalize();
 
-			for(int i = 0; i < len; i++)
-				v[i] = vertexes[indexes[i]].position;
-
-			Vector3 normal = Math.Normal(vertexes, indexes);
-			ProjectionAxis axis = VectorToProjectionAxis(normal);
-
-			return PlanarProject(v, normal, axis, null);
-		}
-
-		internal static Vector2[] PlanarProject(Vector3[] verts, Vector3 planeNormal, ProjectionAxis projectionAxis, int[] indexes = null)
-		{
-			int len = indexes == null || indexes.Length < 1 ? verts.Length : indexes.Length;
-			Vector2[] uvs = new Vector2[len];
-			Vector3 vec = Vector3.zero;
-
-			switch(projectionAxis)
+			if (indexes != null)
 			{
-				case ProjectionAxis.X:
-				case ProjectionAxis.XNegative:
-					vec = Vector3.up;
-					break;
-
-				case ProjectionAxis.Y:
-				case ProjectionAxis.YNegative:
-					vec = Vector3.forward;
-					break;
-
-				case ProjectionAxis.Z:
-				case ProjectionAxis.ZNegative:
-					vec = Vector3.up;
-					break;
+				for (int i = 0, ic = len; i < ic; ++i)
+					projected[i] = new Vector2(Vector3.Dot(u, positions[indexes[i]]), Vector3.Dot(v, positions[indexes[i]]));
+			}
+			else
+			{
+				for (int i = 0, ic = len; i < ic; ++i)
+					projected[i] = new Vector2(Vector3.Dot(u, positions[i]), Vector3.Dot(v, positions[i]));
 			}
 
-			/**
-			 *	Assign vertexes to UV coordinates
-			 */
-			Vector3 uAxis, vAxis;
+			return projected;
+		}
 
-			// get U axis
-			uAxis = Vector3.Cross(planeNormal, vec);
+		internal static void PlanarProject(ProBuilderMesh mesh, int textureGroup, AutoUnwrapSettings unwrapSettings)
+		{
+			var worldSpace = unwrapSettings.useWorldSpace;
+			var nrm = FindBestPlane(mesh, textureGroup).normal;
+			var trs = (Transform)null;
+
+			if (worldSpace)
+			{
+				trs = mesh.transform;
+				nrm = trs.TransformDirection(nrm);
+			}
+
+			var axis = VectorToProjectionAxis(nrm);
+			var prj = ProjectionAxisToVectorInternal(axis);
+
+			var u = Vector3.Cross(nrm, prj);
+			var v = Vector3.Cross(u, nrm);
+
+			u.Normalize();
+			v.Normalize();
+
+			var faces = mesh.facesInternal;
+			var positions = mesh.positionsInternal;
+			var textures = mesh.texturesInternal;
+
+			for (int f = 0, fc = faces.Length; f < fc; ++f)
+			{
+				if (faces[f].textureGroup != textureGroup)
+					continue;
+
+				var indexes = faces[f].distinctIndexesInternal;
+
+				for (int i = 0, ic = indexes.Length; i < ic; ++i)
+				{
+					var p = worldSpace ? trs.TransformPoint(positions[indexes[i]]) : positions[indexes[i]];
+
+					textures[indexes[i]].x = Vector3.Dot(u, p);
+					textures[indexes[i]].y = Vector3.Dot(v, p);
+				}
+			}
+		}
+
+		internal static void PlanarProject(ProBuilderMesh mesh, Face face)
+		{
+			var nrm = Math.Normal(mesh, face);
+			var trs = (Transform)null;
+			var worldSpace = face.uv.useWorldSpace;
+
+			if (worldSpace)
+			{
+				trs = mesh.transform;
+				nrm = trs.TransformDirection(nrm);
+			}
+
+			var axis = VectorToProjectionAxis(nrm);
+			var prj = ProjectionAxisToVectorInternal(axis);
+
+			var uAxis = Vector3.Cross(nrm, prj);
+			var vAxis = Vector3.Cross(uAxis, nrm);
+
 			uAxis.Normalize();
-
-			// calculate V axis relative to U
-			vAxis = Vector3.Cross(uAxis, planeNormal);
 			vAxis.Normalize();
 
-			for(int i = 0; i < len; i++)
+			var positions = mesh.positionsInternal;
+			var textures = mesh.texturesInternal;
+
+			int[] indexes = face.distinctIndexesInternal;
+
+			for (int i = 0, ic = indexes.Length; i < ic; ++i)
 			{
-				int x = indexes != null ? indexes[i] : i;
-				float u, v;
+				var p = worldSpace ? trs.TransformPoint(positions[indexes[i]]) : positions[indexes[i]];
 
-				u = Vector3.Dot(uAxis, verts[x]);
-				v = Vector3.Dot(vAxis, verts[x]);
-
-				uvs[i] = new Vector2(u, v);
-			}
-
-			return uvs;
-		}
-
-		internal static void PlanarProject(Vector3[] verts, Vector2[] uvs, int[] indexes, Vector3 planeNormal, ProjectionAxis projectionAxis)
-		{
-			Vector3 vec;
-
-			switch(projectionAxis)
-			{
-				case ProjectionAxis.X:
-				case ProjectionAxis.XNegative:
-					vec = Vector3.up;
-					break;
-
-				case ProjectionAxis.Y:
-				case ProjectionAxis.YNegative:
-					vec = Vector3.forward;
-					break;
-
-				case ProjectionAxis.Z:
-				case ProjectionAxis.ZNegative:
-					vec = Vector3.up;
-					break;
-
-				default:
-					vec = Vector3.up;
-					break;
-			}
-
-			// get U axis
-			Math.Cross(planeNormal, vec, ref s_UAxis.x, ref s_UAxis.y, ref s_UAxis.z);
-			s_UAxis.Normalize();
-
-			// calculate V axis relative to U
-			Math.Cross(s_UAxis, planeNormal, ref s_VAxis.x, ref s_VAxis.y, ref s_VAxis.z);
-			s_VAxis.Normalize();
-
-			int len = indexes.Length;
-
-			for(int i = 0; i < len; i++)
-			{
-				int x = indexes[i];
-
-				uvs[x].x = Vector3.Dot(s_UAxis, verts[x]);
-				uvs[x].y = Vector3.Dot(s_VAxis, verts[x]);
+				textures[indexes[i]].x = Vector3.Dot(uAxis, p);
+				textures[indexes[i]].y = Vector3.Dot(vAxis, p);
 			}
 		}
 
@@ -184,6 +172,29 @@ namespace UnityEngine.ProBuilder
 			return values;
 		}
 
+		static Vector3 ProjectionAxisToVectorInternal(ProjectionAxis axis)
+		{
+			// old probuilder didn't respect project axis settings properly, and changing it to the correct version
+			// (ProjectionAxisToVector) would break existing models.
+			switch(axis)
+			{
+				case ProjectionAxis.X:
+				case ProjectionAxis.XNegative:
+					return Vector3.up;
+
+				case ProjectionAxis.Y:
+				case ProjectionAxis.YNegative:
+					return Vector3.forward;
+
+				case ProjectionAxis.Z:
+				case ProjectionAxis.ZNegative:
+					return Vector3.up;
+
+				default:
+					return Vector3.up;
+			}
+		}
+
 		/// <summary>
 		/// Given a ProjectionAxis, return  the appropriate Vector3 conversion.
 		/// </summary>
@@ -223,65 +234,17 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		internal static ProjectionAxis VectorToProjectionAxis(Vector3 plane)
 		{
-			if(Mathf.Abs(plane.x) > Mathf.Abs(plane.y) && Mathf.Abs(plane.x) > Mathf.Abs(plane.z))
-			{
+			float x = System.Math.Abs(plane.x);
+			float y = System.Math.Abs(plane.y);
+			float z = System.Math.Abs(plane.z);
+
+			if(x > y && x > z)
 				return plane.x > 0 ? ProjectionAxis.X : ProjectionAxis.XNegative;
-			}
-			else
-			{
-				if(Mathf.Abs(plane.y) > Mathf.Abs(plane.z))
-					return plane.y > 0 ? ProjectionAxis.Y : ProjectionAxis.YNegative;
-				else
-					return plane.z > 0 ? ProjectionAxis.Z : ProjectionAxis.ZNegative;
-			}
-		}
 
-		/// <summary>
-		/// Find a plane that best fits a set of 3d points.
-		/// </summary>
-		/// <remarks>http://www.ilikebigbits.com/blog/2015/3/2/plane-from-points</remarks>
-		/// <param name="points"></param>
-		/// <param name="selector"></param>
-		/// <param name="indexes"></param>
-		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
-		internal static Plane FindBestPlane<T>(IList<T> points, System.Func<T, Vector3> selector, IList<int> indexes = null)
-		{
-			float 	xx = 0f, xy = 0f, xz = 0f,
-					yy = 0f, yz = 0f, zz = 0f;
+			if(y > z)
+				return plane.y > 0 ? ProjectionAxis.Y : ProjectionAxis.YNegative;
 
-			bool ind = indexes != null && indexes.Count > 0;
-			int len = ind ? indexes.Count : points.Count;
-			Vector3 c = Math.Average(points, selector, indexes);
-
-			for(int i = 0; i < len; i++)
-			{
-				Vector3 r = selector(points[ ind ? indexes[i] : i ]) - c;
-
-				xx += r.x * r.x;
-				xy += r.x * r.y;
-				xz += r.x * r.z;
-				yy += r.y * r.y;
-				yz += r.y * r.z;
-				zz += r.z * r.z;
-			}
-
-			float det_x = yy * zz - yz * yz;
-			float det_y = xx * zz - xz * xz;
-			float det_z = xx * yy - xy * xy;
-
-			Vector3 n;
-
-			if(det_x > det_y && det_x > det_z)
-				n = new Vector3(1f, (xz*yz - xy*zz) / det_x, (xy*yz - xz*yy) / det_x);
-			else if(det_y > det_z)
-				n = new Vector3((yz*xz - xy*zz) / det_y, 1f, (xy*xz - yz*xx) / det_y);
-			else
-				n = new Vector3((yz*xy - xz*yy) / det_z, (xz*xy - yz*xx) / det_z, 1f);
-
-			n.Normalize();
-
-			return new Plane(n, c);
+			return plane.z > 0 ? ProjectionAxis.Z : ProjectionAxis.ZNegative;
 		}
 
 		/// <summary>
@@ -291,7 +254,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="points">The points to find a plane for. Order does not matter.</param>
 		/// <param name="indexes">If provided, only the vertexes referenced by the indexes array will be considered.</param>
 		/// <returns>A plane that best matches the layout of the points array.</returns>
-		public static Plane FindBestPlane(Vector3[] points, int[] indexes = null)
+		public static Plane FindBestPlane(IList<Vector3> points, IList<int> indexes = null)
 		{
 			float 	xx = 0f, xy = 0f, xz = 0f,
 					yy = 0f, yz = 0f, zz = 0f;
@@ -299,8 +262,8 @@ namespace UnityEngine.ProBuilder
             if (points == null)
                 throw new System.ArgumentNullException("points");
 
-			bool ind = indexes != null && indexes.Length > 0;
-			int len = ind ? indexes.Length : points.Length;
+			bool ind = indexes != null && indexes.Count > 0;
+			int len = ind ? indexes.Count : points.Count;
 
 			Vector3 c = Vector3.zero, n = Vector3.zero;
 
@@ -330,6 +293,94 @@ namespace UnityEngine.ProBuilder
 			float det_x = yy * zz - yz * yz;
 			float det_y = xx * zz - xz * xz;
 			float det_z = xx * yy - xy * xy;
+
+			if(det_x > det_y && det_x > det_z)
+			{
+				n.x = 1f;
+				n.y = (xz*yz - xy*zz) / det_x;
+				n.z = (xy*yz - xz*yy) / det_x;
+			}
+			else if(det_y > det_z)
+			{
+				n.x = (yz*xz - xy*zz) / det_y;
+				n.y = 1f;
+				n.z = (xy*xz - yz*xx) / det_y;
+			}
+			else
+			{
+				n.x = (yz*xy - xz*yy) / det_z;
+				n.y = (xz*xy - yz*xx) / det_z;
+				n.z = 1f;
+			}
+
+			n.Normalize();
+
+			return new Plane(n, c);
+		}
+
+		/// <summary>
+		/// Find a plane that best fits a set of faces within a texture group.
+		/// </summary>
+		/// <returns>A plane that best matches the layout of the points array.</returns>
+		internal static Plane FindBestPlane(ProBuilderMesh mesh, int textureGroup)
+		{
+			float 	xx = 0f, xy = 0f, xz = 0f,
+					yy = 0f, yz = 0f, zz = 0f;
+
+            if (mesh == null)
+                throw new System.ArgumentNullException("mesh");
+
+			Vector3 c = Vector3.zero;
+			int len = 0;
+			Vector3[] positions = mesh.positionsInternal;
+			int faceCount = mesh.faceCount;
+			Face[] faces = mesh.facesInternal;
+
+			for(int faceIndex = 0; faceIndex < faceCount; faceIndex++)
+			{
+				if(faces[faceIndex].textureGroup != textureGroup)
+					continue;
+
+				int[] indexes = faces[faceIndex].distinctIndexesInternal;
+
+				for (int index = 0, indexCount = indexes.Length; index < indexCount; index++)
+				{
+					c.x += positions[indexes[index]].x;
+					c.y += positions[indexes[index]].y;
+					c.z += positions[indexes[index]].z;
+
+					len++;
+				}
+			}
+
+			c.x /= len;
+			c.y /= len;
+			c.z /= len;
+
+			for(int faceIndex = 0; faceIndex < faceCount; faceIndex++)
+			{
+				if(faces[faceIndex].textureGroup != textureGroup)
+					continue;
+
+				int[] indexes = faces[faceIndex].distinctIndexesInternal;
+
+				for (int index = 0, indexCount = indexes.Length; index < indexCount; index++)
+				{
+					Vector3 r = positions[indexes[index]] - c;
+
+					xx += r.x * r.x;
+					xy += r.x * r.y;
+					xz += r.x * r.z;
+					yy += r.y * r.y;
+					yz += r.y * r.z;
+					zz += r.z * r.z;
+				}
+			}
+
+			float det_x = yy * zz - yz * yz;
+			float det_y = xx * zz - xz * xz;
+			float det_z = xx * yy - xy * xy;
+			Vector3 n = Vector3.zero;
 
 			if(det_x > det_y && det_x > det_z)
 			{
