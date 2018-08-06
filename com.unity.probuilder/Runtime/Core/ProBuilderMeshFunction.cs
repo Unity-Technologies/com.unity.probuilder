@@ -437,10 +437,10 @@ namespace UnityEngine.ProBuilder
 			if (face == null)
 				throw new ArgumentNullException("face");
 
-			if (m_Colors == null)
-				m_Colors = ArrayUtility.Fill<Color>(Color.white, vertexCount);
+			if (!HasArrays(MeshArrays.Color))
+				m_Colors = ArrayUtility.Fill(Color.white, vertexCount);
 
-			foreach (int i in face.distinctIndexesInternal)
+			foreach (int i in face.distinctIndexes)
 				m_Colors[i] = color;
 		}
 
