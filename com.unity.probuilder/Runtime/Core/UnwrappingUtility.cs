@@ -13,14 +13,17 @@ namespace UnityEngine.ProBuilder
 			Projection.PlanarProject(mesh, face);
 			ApplyUVSettings(mesh.texturesInternal, face.distinctIndexesInternal, face.uv);
 		}
+
 		internal static void ProjectTextureGroup(ProBuilderMesh mesh, int group, AutoUnwrapSettings unwrapSettings)
 		{
 			Projection.PlanarProject(mesh, group, unwrapSettings);
+
 			foreach (var face in mesh.facesInternal)
 			{
 				if(face.textureGroup == group)
 					ApplyUVSettings(mesh.texturesInternal, face.distinctIndexesInternal, unwrapSettings);
 			}
+
 		}
 
 		static void ApplyUVSettings(Vector2[] uvs, int[] indexes, AutoUnwrapSettings uvSettings)
@@ -97,12 +100,12 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < indexes.Length; i++)
 			{
-				var uv = uvs[i];
+				var uv = uvs[indexes[i]];
 
 				uv.x = ((uv.x - c.x) / s.x) + c.x;
 				uv.y = ((uv.y - c.y) / s.y) + c.y;
 
-				uvs[i] = uv;
+				uvs[indexes[i]] = uv;
 			}
 		}
 
@@ -114,12 +117,12 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < indexes.Length; i++)
 			{
-				var uv = uvs[i];
+				var uv = uvs[indexes[i]];
 
 				uv.x = ((uv.x - c.x) / s) + c.x;
 				uv.y = ((uv.y - c.y) / s) + c.y;
 
-				uvs[i] = uv;
+				uvs[indexes[i]] = uv;
 			}
 		}
 
