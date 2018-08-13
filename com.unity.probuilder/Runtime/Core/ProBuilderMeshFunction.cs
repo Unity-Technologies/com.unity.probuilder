@@ -360,9 +360,12 @@ namespace UnityEngine.ProBuilder
 
 			foreach(var face in facesToRefresh)
 			{
+				if (face.manualUV)
+					continue;
+
 				int textureGroup = face.textureGroup;
 
-				if (face.manualUV || textureGroup < 1)
+				if (textureGroup < 1)
 					UnwrappingUtility.Project(this, face);
 				else if (!s_CachedHashSet.Add(textureGroup))
 					UnwrappingUtility.ProjectTextureGroup(this, textureGroup, face.uv);
