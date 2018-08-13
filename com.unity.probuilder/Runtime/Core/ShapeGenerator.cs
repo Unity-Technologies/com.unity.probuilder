@@ -1295,7 +1295,9 @@ namespace UnityEngine.ProBuilder
 			}
 
 			Face[] f = new Face[v.Length/3];
-			for(int i = 0; i < v.Length; i+=3) {
+
+			for(int i = 0; i < v.Length; i+=3)
+			{
 				f[i/3] = new Face( new int[3] { i, i+1, i+2 } );
 				f[i/3].manualUV = manualUvs;
 			}
@@ -1304,9 +1306,21 @@ namespace UnityEngine.ProBuilder
 			{
 				for (int i = 0; i < f.Length; i++)
 				{
-					var uv = f[i].uv;
-					uv.fill = AutoUnwrapSettings.Fill.Fit;
-					f[i].uv = uv;
+					var nrm = Math.Normal(v[f[i].indexesInternal[0]], v[f[i].indexesInternal[1]], v[f[i].indexesInternal[2]]);
+					var axis = Projection.VectorToProjectionAxis(nrm);
+
+					if(axis == ProjectionAxis.X)
+						f[i].textureGroup = 2;
+					else if(axis == ProjectionAxis.Y)
+						f[i].textureGroup = 3;
+					else if(axis == ProjectionAxis.Z)
+						f[i].textureGroup = 4;
+					else if(axis == ProjectionAxis.XNegative)
+						f[i].textureGroup = 5;
+					else if(axis == ProjectionAxis.YNegative)
+						f[i].textureGroup = 6;
+					else if(axis == ProjectionAxis.ZNegative)
+						f[i].textureGroup = 7;
 				}
 			}
 
