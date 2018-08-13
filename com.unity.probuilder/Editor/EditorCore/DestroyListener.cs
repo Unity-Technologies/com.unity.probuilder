@@ -15,15 +15,11 @@ namespace UnityEditor.ProBuilder
 			ProBuilderMesh.meshWillBeDestroyed += OnDestroyObject;
 		}
 
-		static void OnDestroyObject(ProBuilderMesh pb)
+		static void OnDestroyObject(ProBuilderMesh mesh)
 		{
 			if(PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets))
 			{
-				PrefabType type = PrefabUtility.GetPrefabType(pb.gameObject);
-
-				if( type == PrefabType.Prefab ||
-					type == PrefabType.PrefabInstance ||
-					type == PrefabType.DisconnectedPrefabInstance )
+				if(EditorUtility.IsPrefab(mesh))
 				{
 					// Debug.Log("will not destroy prefab mesh");
 				}
@@ -34,7 +30,7 @@ namespace UnityEditor.ProBuilder
 
 					// if it is cached but not a prefab instance or root, destroy the mesh in the cache
 					// otherwise go ahead and destroy as usual
-					if( EditorMeshUtility.GetCachedMesh(pb, out cache_path, out cache_mesh) )
+					if( EditorMeshUtility.GetCachedMesh(mesh, out cache_path, out cache_mesh) )
 					{
 						// on entering / exiting play mode unity instances everything and destroys the scene,
 						// which nukes the mesh cache.  don't do this.
@@ -44,22 +40,22 @@ namespace UnityEditor.ProBuilder
 						if( isPlaying || orWillPlay )
 							return;
 
-						SelectionUtility.Remove(pb);
+						SelectionUtility.Remove(mesh);
 						AssetDatabase.DeleteAsset(cache_path);
 					}
 					else
 					{
-						Object.DestroyImmediate(pb.mesh);
+						Object.DestroyImmediate(mesh.mesh);
 					}
 				}
 			}
 			else
 			{
-				string path = AssetDatabase.GetAssetPath(pb.mesh);
+				string path = AssetDatabase.GetAssetPath(mesh.mesh);
 
 				// If the pb_Object is backed by a Mesh asset don't destroy it.
 				if(string.IsNullOrEmpty(path))
-					Object.DestroyImmediate(pb.mesh);
+					Object.DestroyImmediate(mesh.mesh);
 			}
 		}
 	}
