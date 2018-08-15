@@ -40,7 +40,8 @@ namespace UnityEditor.ProBuilder.Actions
 			if (string.IsNullOrEmpty(res))
 				return new ActionResult(ActionResult.Status.Canceled, "User Canceled");
 
-			AssetDatabase.Refresh();
+			Export.PingExportedModel(res);
+			
 			return new ActionResult(ActionResult.Status.Success, "Export OBJ");
 		}
 

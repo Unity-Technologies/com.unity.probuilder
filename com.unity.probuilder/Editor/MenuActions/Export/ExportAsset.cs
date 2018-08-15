@@ -35,8 +35,8 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			ExportWithFileDialog( MeshSelection.TopInternal() );
-			AssetDatabase.Refresh();
+			var res = ExportWithFileDialog( MeshSelection.TopInternal() );
+			Export.PingExportedModel(res);
 			return new ActionResult(ActionResult.Status.Success, "Make Asset & Prefab");
 		}
 
