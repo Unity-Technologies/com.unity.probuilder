@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Parabox.STL;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
+using UnityEditor.VersionControl;
 using EditorGUILayout = UnityEditor.EditorGUILayout;
 using EditorGUIUtility = UnityEditor.EditorGUIUtility;
 using EditorStyles = UnityEditor.EditorStyles;
@@ -257,15 +258,24 @@ namespace UnityEditor.ProBuilder.Actions
 			if( string.IsNullOrEmpty(res) )
 				return new ActionResult(ActionResult.Status.Canceled, "User Canceled");
 
-			if(res.Replace("\\", "/").IndexOf(Application.dataPath.Replace("\\", "/"), StringComparison.InvariantCultureIgnoreCase) > -1)
+			PingExportedModel(res);
+
+			return new ActionResult(ActionResult.Status.Success, "Export " + m_ExportFormat);
+		}
+
+		internal static void PingExportedModel(string path)
+		{
+			var local = path.Replace("\\", "/");
+			var dataPath = Application.dataPath.Replace("\\", "/");
+
+			if (local.Contains(dataPath))
 			{
-				string projectPath = string.Format("Assets{0}", res.Replace(Application.dataPath, ""));
-				Object o = AssetDatabase.LoadAssetAtPath<GameObject>(projectPath);
+				AssetDatabase.Refresh();
+				var assetPath = "Assets" + local.Replace(dataPath, "");
+				var o = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
 				if(o != null)
 					EditorGUIUtility.PingObject(o);
 			}
-
-			return new ActionResult(ActionResult.Status.Success, "Export " + m_ExportFormat);
 		}
 	}
 }
