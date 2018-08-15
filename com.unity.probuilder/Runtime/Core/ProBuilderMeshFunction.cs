@@ -374,7 +374,9 @@ namespace UnityEngine.ProBuilder
 				if (f.manualUV)
 					continue;
 
-				if (f.textureGroup > 0 && textureGroups.TryGetValue(f.textureGroup, out List<Face> group))
+				List<Face> group;
+
+				if (f.textureGroup > 0 && textureGroups.TryGetValue(f.textureGroup, out group))
 					group.Add(f);
 				else
 					textureGroups.Add(f.textureGroup > 0 ? f.textureGroup : n--, new List<Face>() { f });

@@ -10,9 +10,5 @@
         "Editor"
     ],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": []
+    "allowUnsafeCode": false
 }
