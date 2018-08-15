@@ -3,19 +3,12 @@
     "references": [
         "Unity.ProBuilder.Core",
         "Unity.ProBuilder.MeshOperations",
-        "Unity.ProBuilder.Editor",
-        "Unity.Formats.Fbx.Editor",
-        "Unity.Formats.Fbx.Runtime",
-        "Autodesk.Fbx"
+        "Unity.ProBuilder.Editor"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
     ],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": []
+    "allowUnsafeCode": false
 }
