@@ -250,7 +250,7 @@ namespace UnityEngine.ProBuilder
 		{
 			// Mesh
 			if ((mask & RefreshMask.UV) > 0)
-				RefreshUV();
+				RefreshUV(facesInternal);
 
 			if ((mask & RefreshMask.Colors) > 0)
 				RefreshColors();
@@ -316,10 +316,15 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		internal int GetUnusedTextureGroup(int i = 1)
 		{
-			while (System.Array.Exists(facesInternal, element => element.textureGroup == i))
+			while (Array.Exists(facesInternal, element => element.textureGroup == i))
 				i++;
 
 			return i;
+		}
+
+		static bool IsValidTextureGroup(int group)
+		{
+			return group > 0;
 		}
 
 		/// <summary>
@@ -330,18 +335,10 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		internal int UnusedElementGroup(int i = 1)
 		{
-			while (System.Array.Exists(facesInternal, element => element.elementGroup == i))
+			while (Array.Exists(facesInternal, element => element.elementGroup == i))
 				i++;
 
 			return i;
-		}
-
-		/// <summary>
-		/// Re-project AutoUV faces and re-assign ManualUV to mesh.uv channel.
-		/// </summary>
-		void RefreshUV()
-		{
-			RefreshUV(facesInternal);
 		}
 
 		public void RefreshUV(IEnumerable<Face> facesToRefresh)
@@ -365,7 +362,7 @@ namespace UnityEngine.ProBuilder
 
 				int textureGroup = face.textureGroup;
 
-				if (textureGroup < 1)
+				if (!IsValidTextureGroup(textureGroup))
 					UnwrappingUtility.Project(this, face);
 				else if (!s_CachedHashSet.Add(textureGroup))
 					UnwrappingUtility.ProjectTextureGroup(this, textureGroup, face.uv);
