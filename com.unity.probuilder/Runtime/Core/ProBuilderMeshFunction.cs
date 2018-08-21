@@ -250,7 +250,7 @@ namespace UnityEngine.ProBuilder
 		{
 			// Mesh
 			if ((mask & RefreshMask.UV) > 0)
-				RefreshUV();
+				RefreshUV(facesInternal);
 
 			if ((mask & RefreshMask.Colors) > 0)
 				RefreshColors();
@@ -316,10 +316,15 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		internal int GetUnusedTextureGroup(int i = 1)
 		{
-			while (System.Array.Exists(facesInternal, element => element.textureGroup == i))
+			while (Array.Exists(facesInternal, element => element.textureGroup == i))
 				i++;
 
 			return i;
+		}
+
+		static bool IsValidTextureGroup(int group)
+		{
+			return group > 0;
 		}
 
 		/// <summary>
@@ -330,89 +335,37 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		internal int UnusedElementGroup(int i = 1)
 		{
-			while (System.Array.Exists(facesInternal, element => element.elementGroup == i))
+			while (Array.Exists(facesInternal, element => element.elementGroup == i))
 				i++;
 
 			return i;
 		}
 
-		/// <summary>
-		/// Re-project AutoUV faces and re-assign ManualUV to mesh.uv channel.
-		/// </summary>
-		void RefreshUV()
-		{
-			RefreshUV(facesInternal);
-		}
-
-		/// <summary>
-		/// Re-project AutoUV faces and re-assign ManualUV to mesh.uv channel.
-		/// </summary>
-		/// <param name="facesToRefresh"></param>
-		internal void RefreshUV(IEnumerable<Face> facesToRefresh)
+		public void RefreshUV(IEnumerable<Face> facesToRefresh)
 		{
 			// If the UV array has gone out of sync with the positions array, reset all faces to Auto UV so that we can
 			// correct the texture array.
-			if(m_Textures0 == null || m_Textures0.Length != vertexCount)
+			if(!HasArrays(MeshArrays.Texture0))
 			{
 				m_Textures0 = new Vector2[vertexCount];
-
 				foreach (Face f in facesInternal)
 					f.manualUV = false;
-
 				facesToRefresh = facesInternal;
 			}
 
-			int n = -2;
-			var textureGroups = new Dictionary<int, List<Face>>();
-			bool anyWorldSpace = false;
+			s_CachedHashSet.Clear();
 
-			foreach (Face f in facesToRefresh)
+			foreach(var face in facesToRefresh)
 			{
-				if (f.uv.useWorldSpace)
-					anyWorldSpace = true;
-
-				if (f.manualUV)
+				if (face.manualUV)
 					continue;
 
-				List<Face> group;
+				int textureGroup = face.textureGroup;
 
-				if (f.textureGroup > 0 && textureGroups.TryGetValue(f.textureGroup, out group))
-					group.Add(f);
-				else
-					textureGroups.Add(f.textureGroup > 0 ? f.textureGroup : n--, new List<Face>() { f });
-			}
-
-			// Add any non-selected faces in texture groups to the update list
-			if (facesInternal.Length != facesToRefresh.Count())
-			{
-				foreach (Face f in facesInternal)
-				{
-					if (f.manualUV)
-						continue;
-
-					if (textureGroups.ContainsKey(f.textureGroup) && !textureGroups[f.textureGroup].Contains(f))
-						textureGroups[f.textureGroup].Add(f);
-				}
-			}
-
-			n = 0;
-
-			Vector3[] world = anyWorldSpace ? this.VertexesInWorldSpace() : null;
-
-			foreach (KeyValuePair<int, List<Face>> kvp in textureGroups)
-			{
-				Vector3 nrm;
-				int[] indexes = kvp.Value.SelectMany(x => x.distinctIndexesInternal).ToArray();
-
-				if (kvp.Value.Count > 1)
-					nrm = Projection.FindBestPlane(m_Positions, indexes).normal;
-				else
-					nrm = Math.Normal(this, kvp.Value[0]);
-
-				if (kvp.Value[0].uv.useWorldSpace)
-					UnwrappingUtility.PlanarMap2(world, m_Textures0, indexes, kvp.Value[0].uv, transform.TransformDirection(nrm));
-				else
-					UnwrappingUtility.PlanarMap2(positionsInternal, m_Textures0, indexes, kvp.Value[0].uv, nrm);
+				if (!IsValidTextureGroup(textureGroup))
+					UnwrappingUtility.Project(this, face);
+				else if (!s_CachedHashSet.Add(textureGroup))
+					UnwrappingUtility.ProjectTextureGroup(this, textureGroup, face.uv);
 			}
 
 			mesh.uv = m_Textures0;

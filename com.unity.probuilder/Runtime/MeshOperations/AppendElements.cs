@@ -548,7 +548,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			s[1] = mesh.GetSharedVertexHandle(a.b);
 
 			Vector3 nrm = Vector3.Cross(positions[b.a] - positions[a.a], positions[a.b] - positions[a.a]).normalized;
-			Vector2[] planed = Projection.PlanarProject(new Vector3[4] { positions[a.a], positions[a.b], positions[b.a], positions[b.b] }, nrm);
+			Vector2[] planed = Projection.PlanarProject(new Vector3[4] { positions[a.a], positions[a.b], positions[b.a], positions[b.b] }, null, nrm);
 
 			Vector2 ipoint = Vector2.zero;
 			bool intersects = Math.GetLineSegmentIntersect(planed[0], planed[2], planed[1], planed[3], ref ipoint);
@@ -824,7 +824,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				FaceRebuildData data = dic_data[i];
 
 				Vector3 nrm = Math.Normal(mesh, face);
-				Vector2[] projection = Projection.PlanarProject(data.vertexes.Select(x => x.position).ToArray(), nrm);
+				Vector2[] projection = Projection.PlanarProject(data.vertexes.Select(x => x.position).ToArray(), null, nrm);
 
 				int vertexCount = vertexes.Count;
 

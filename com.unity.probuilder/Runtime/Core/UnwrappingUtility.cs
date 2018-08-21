@@ -8,11 +8,22 @@ namespace UnityEngine.ProBuilder
 	{
 		static Vector2 s_TempVector2 = Vector2.zero;
 
-		public static void PlanarMap2(Vector3[] verts, Vector2[] uvs, int[] indexes, AutoUnwrapSettings uvSettings, Vector3 normal)
+		internal static void Project(ProBuilderMesh mesh, Face face)
 		{
-			ProjectionAxis projectionAxis = Projection.VectorToProjectionAxis(normal);
-			Projection.PlanarProject(verts, uvs, indexes, normal, projectionAxis);
-			ApplyUVSettings(uvs, indexes, uvSettings);
+			Projection.PlanarProject(mesh, face);
+			ApplyUVSettings(mesh.texturesInternal, face.distinctIndexesInternal, face.uv);
+		}
+
+		internal static void ProjectTextureGroup(ProBuilderMesh mesh, int group, AutoUnwrapSettings unwrapSettings)
+		{
+			Projection.PlanarProject(mesh, group, unwrapSettings);
+
+			foreach (var face in mesh.facesInternal)
+			{
+				if(face.textureGroup == group)
+					ApplyUVSettings(mesh.texturesInternal, face.distinctIndexesInternal, unwrapSettings);
+			}
+
 		}
 
 		static void ApplyUVSettings(Vector2[] uvs, int[] indexes, AutoUnwrapSettings uvSettings)
@@ -47,7 +58,6 @@ namespace UnityEngine.ProBuilder
 					uvs[indexes[i]] = uvs[indexes[i]].RotateAroundPoint(center, uvSettings.rotation);
 				}
 			}
-
 
 			if(uvSettings.flipU || uvSettings.flipV || uvSettings.swapUV)
 			{
@@ -90,12 +100,12 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < indexes.Length; i++)
 			{
-				var uv = uvs[i];
+				var uv = uvs[indexes[i]];
 
 				uv.x = ((uv.x - c.x) / s.x) + c.x;
 				uv.y = ((uv.y - c.y) / s.y) + c.y;
 
-				uvs[i] = uv;
+				uvs[indexes[i]] = uv;
 			}
 		}
 
@@ -107,12 +117,12 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < indexes.Length; i++)
 			{
-				var uv = uvs[i];
+				var uv = uvs[indexes[i]];
 
 				uv.x = ((uv.x - c.x) / s) + c.x;
 				uv.y = ((uv.y - c.y) / s) + c.y;
 
-				uvs[i] = uv;
+				uvs[indexes[i]] = uv;
 			}
 		}
 

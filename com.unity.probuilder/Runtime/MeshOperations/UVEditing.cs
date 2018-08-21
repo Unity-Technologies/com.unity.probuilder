@@ -184,14 +184,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		{
 			int[] ind = faces.SelectMany(x => x.distinctIndexesInternal).ToArray();
 
-			// get average face normal
-			Vector3 nrm = Vector3.zero;
-			foreach(Face face in faces)
-				nrm += Math.Normal(mesh, face);
-			nrm /= (float)faces.Length;
-
 			// project uv coordinates
-			Vector2[] uvs = Projection.PlanarProject(ArrayUtility.ValuesWithIndexes(mesh.positionsInternal, ind), nrm);
+			Vector2[] uvs = Projection.PlanarProject(mesh.positionsInternal, ind);
 
 			// re-assign new projected coords back into full uv array
 			Vector2[] rebuiltUVs = GetUVs(mesh, channel);
@@ -230,13 +224,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				ProjectionAxis axis = Projection.VectorToProjectionAxis(nrm);
 
 				if(sorted.ContainsKey(axis))
-				{
 					sorted[axis].Add(faces[i]);
-				}
 				else
-				{
 					sorted.Add(axis, new List<Face>() { faces[i] });
-				}
 
 				// clean up UV stuff - no shared UV indexes and remove element group
 				faces[i].elementGroup = -1;
@@ -247,7 +237,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			{
 				int[] distinct = kvp.Value.SelectMany(x => x.distinctIndexesInternal).ToArray();
 
-				Vector2[] uvs = Projection.PlanarProject( pb.positionsInternal.ValuesWithIndexes(distinct), Projection.ProjectionAxisToVector(kvp.Key), kvp.Key );
+				Vector2[] uvs = Projection.PlanarProject(pb.positionsInternal, distinct);
 
 				for(int n = 0; n < distinct.Length; n++)
 					uv[distinct[n]] = uvs[n];

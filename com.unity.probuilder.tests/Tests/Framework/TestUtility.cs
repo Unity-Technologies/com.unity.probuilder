@@ -213,7 +213,7 @@ namespace UnityEngine.ProBuilder.Test
 
 			for (int i = 0; i < vertexCount; i++)
 				Assert.True(leftVertices[i].Equals(rightVertices[i], compare),
-					"Expected\n" + leftVertices[i].ToString("F5") + "\n---\nReceived:\n" + rightVertices[i].ToString("F5"));
+					expected.name + " != " + result.name + "\nExpected\n" + leftVertices[i].ToString("F5") + "\n---\nReceived:\n" + rightVertices[i].ToString("F5"));
 
 			List<int> leftIndices = new List<int>();
 			List<int> rightIndices = new List<int>();

@@ -71,7 +71,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			Vector3 normal = Projection.FindBestPlane(vertexes).normal;
-			Vector2[] points2d = Projection.PlanarProject(vertexes, normal);
+			Vector2[] points2d = Projection.PlanarProject(vertexes);
 
 			if(unordered)
 				return Triangulation.SortAndTriangulate(points2d, out triangles, convex);
