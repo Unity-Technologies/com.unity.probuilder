@@ -127,7 +127,7 @@ namespace UnityEditor.ProBuilder
 
 		internal static bool IsPrefab(ProBuilderMesh mesh)
 		{
-#if UNITY_2017_3_OR_NEWER
+#if UNITY_2018_3_OR_NEWER
 			return PrefabUtility.GetPrefabAssetType(mesh.gameObject) != PrefabAssetType.NotAPrefab;
 #else
 			PrefabType type = PrefabUtility.GetPrefabType(mesh.gameObject);
