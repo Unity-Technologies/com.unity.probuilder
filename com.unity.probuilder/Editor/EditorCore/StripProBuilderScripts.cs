@@ -76,7 +76,7 @@ namespace UnityEditor.ProBuilder.Actions
 				if(ren != null)
 					EditorUtility.SetSelectionRenderState(ren, EditorUtility.GetSelectionRenderState());
 
-				if( PrefabUtility.GetPrefabType(go) == PrefabType.Prefab )
+				if( EditorUtility.IsPrefabAsset(go) )
 					return;
 
 				EditorUtility.SynchronizeWithMeshFilter(pb);
@@ -90,7 +90,6 @@ namespace UnityEditor.ProBuilder.Actions
 
 					return;
 				}
-
 
 				string cachedMeshPath;
 				Mesh cachedMesh;

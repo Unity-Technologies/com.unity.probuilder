@@ -129,7 +129,7 @@ namespace UnityEditor.ProBuilder
 					if(mesh != m)
 					{
 						// prefab instances should always point to the same mesh
-						if(EditorUtility.IsPrefabInstance(pb.gameObject) || EditorUtility.IsPrefabRoot(pb.gameObject))
+						if(EditorUtility.IsPrefabInstance(pb.gameObject) || EditorUtility.IsPrefabAsset(pb.gameObject))
 						{
 							// Debug.Log("reconnect prefab to mesh");
 

@@ -125,20 +125,41 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		/**
-		 * Returns true if this object is a prefab instanced in the scene.
-		 */
+		internal static bool IsPrefab(ProBuilderMesh mesh)
+		{
+#if UNITY_2018_3_OR_NEWER
+			return PrefabUtility.GetPrefabAssetType(mesh.gameObject) != PrefabAssetType.NotAPrefab;
+#else
+			PrefabType type = PrefabUtility.GetPrefabType(mesh.gameObject);
+			return type == PrefabType.Prefab || type == PrefabType.PrefabInstance || type == PrefabType.DisconnectedPrefabInstance;
+#endif
+		}
+
+		/// <summary>
+		/// Returns true if this object is a prefab instanced in the scene.
+		/// </summary>
+		/// <param name="go"></param>
+		/// <returns></returns>
 		internal static bool IsPrefabInstance(GameObject go)
 		{
+#if UNITY_2018_3_OR_NEWER
+			var status = PrefabUtility.GetPrefabInstanceStatus(go);
+			return status == PrefabInstanceStatus.Connected || status == PrefabInstanceStatus.Disconnected;
+#else
 			return PrefabUtility.GetPrefabType(go) == PrefabType.PrefabInstance;
+#endif
 		}
 
 		/**
 		 * Returns true if this object is a prefab in the Project view.
 		 */
-		internal static bool IsPrefabRoot(GameObject go)
+		internal static bool IsPrefabAsset(GameObject go)
 		{
+#if UNITY_2018_3_OR_NEWER
+			return PrefabUtility.IsPartOfPrefabAsset(go);
+#else
 			return PrefabUtility.GetPrefabType(go) == PrefabType.Prefab;
+#endif
 		}
 
 		/**
@@ -195,7 +216,7 @@ namespace UnityEditor.ProBuilder
 					{
 						// Debug.Log("duplicate mesh");
 
-						if(!meshesAreAssets || !(EditorUtility.IsPrefabRoot(mesh.gameObject) || IsPrefabInstance(mesh.gameObject)))
+						if(!meshesAreAssets || !(EditorUtility.IsPrefabAsset(mesh.gameObject) || IsPrefabInstance(mesh.gameObject)))
 						{
 							// deep copy arrays & ToMesh/Refresh
 							mesh.MakeUnique();
@@ -207,7 +228,7 @@ namespace UnityEditor.ProBuilder
 				{
 					// old mesh didn't exist, so this is probably a prefab being instanced
 
-					if(EditorUtility.IsPrefabRoot(mesh.gameObject))
+					if(EditorUtility.IsPrefabAsset(mesh.gameObject))
 						mesh.mesh.hideFlags = (HideFlags) (1 | 2 | 4 | 8);
 
 					mesh.Optimize();

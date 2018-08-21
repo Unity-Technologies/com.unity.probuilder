@@ -1036,7 +1036,7 @@ namespace UnityEditor.ProBuilder
 				copy.MakeUnique();
 
 				// if is prefab, break connection and destroy children
-				if( EditorUtility.IsPrefabInstance(copy.gameObject) || EditorUtility.IsPrefabRoot(copy.gameObject) )
+				if( EditorUtility.IsPrefabInstance(copy.gameObject) || EditorUtility.IsPrefabAsset(copy.gameObject) )
 					PrefabUtility.DisconnectPrefabInstance(copy.gameObject);
 
 				if(copy.transform.childCount > 0)
