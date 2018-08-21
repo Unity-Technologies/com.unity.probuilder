@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.9] - 2018-08-02
+## [4.0.0-preview.10] - 2018-08-21
 
 ### Features
 
@@ -29,20 +29,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Adding custom actions to the ProBuilder toolbar is now done by registering an attribute.
 - ProBuilder Debug Editor removed.
 
-### Changes since 4.0.0-preview.8
+### Changes since 4.0.0-preview.9
 
 - Update FBX Exporter integration to use version 2.0.0.
-- Fix wireframe not rendering in object mode.
-- Fix lightmap mode being reset to OnDemand when editing objects.
-- Fix `Bridge Edges` regression.
+- Improve performance of UV calculation methods.
+- Improve the default UV mapping of sphere primitives.
+- Support new 2018.3 prefab system.
 - Rename `MenuAction::DoAlternativeAction` to `DoAlternateAction`.
-
-## [4.0.0-preview.8] - 2018-07-04
-
-### Changes since 4.0.0-preview.7
-
-- Improve wording of upgrade dialog.
-- Fix layout exception after upgrading from 3.0.8 to 4.0.0.
+- Fix `Export` functions not refreshing the Project view.
+- Fix edge colors not matching preferences.
+- Fix oversized vertex handle pre-selection billboard.
+- Fix `Collapse Vertexes` breaking mesh topology.
+- Fix face caches not resetting after undo operation
+- Work around `Missing Autodesk.Fbx` errors when FBX Exporter is not in project.
 
 ## [3.0.8] - 2018-05-07
 
