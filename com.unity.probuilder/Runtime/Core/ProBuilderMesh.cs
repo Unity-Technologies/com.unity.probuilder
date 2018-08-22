@@ -75,6 +75,18 @@ namespace UnityEngine.ProBuilder
 	    [SerializeField]
 	    UnwrapParameters m_UnwrapParameters;
 
+	    [SerializeField]
+	    bool m_GenerateUV2;
+
+	    /// <value>
+	    /// Enable or disable automatic UV2 generation in the Editor.
+	    /// </value>
+	    public bool generateUV2
+	    {
+		    get { return m_GenerateUV2; }
+		    set { m_GenerateUV2 = value; }
+	    }
+
 	    /// <value>
 	    /// UV2 generation parameters.
 	    /// </value>

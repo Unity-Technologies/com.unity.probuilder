@@ -17,18 +17,38 @@ namespace UnityEditor.ProBuilder
 	[CanEditMultipleObjects]
 	sealed class ProBuilderMeshEditor : Editor
 	{
-		public delegate void OnGetFrameBoundsDelegate();
+		static class Styles
+		{
+			static bool s_Initialized;
+			public static GUIStyle miniButton;
 
-		public static event OnGetFrameBoundsDelegate OnGetFrameBoundsEvent;
+			public static void Init()
+			{
+				if (s_Initialized)
+					return;
+				s_Initialized = true;
+				miniButton = new GUIStyle(GUI.skin.button);
+				miniButton.stretchHeight = false;
+				miniButton.stretchWidth = false;
+				miniButton.padding = new RectOffset(6, 6, 3, 3);
+			}
+		}
 
-		ProBuilderMesh pb;
+		internal static event System.Action onGetFrameBoundsEvent;
+
+		ProBuilderMesh m_Mesh;
+
+		SerializedProperty m_GenerateUV2;
+		SerializedProperty m_UnwrapParameters;
+
+		GUIContent m_LightmapUVsContent = new GUIContent("Generate Lightmap UVs");
 
 		ProBuilderEditor editor
 		{
 			get { return ProBuilderEditor.instance; }
 		}
 
-		Renderer ren = null;
+		Renderer m_MeshRenderer = null;
 		Vector3 offset = Vector3.zero;
 
 		public void OnEnable()
@@ -36,80 +56,97 @@ namespace UnityEditor.ProBuilder
 			if (EditorApplication.isPlayingOrWillChangePlaymode)
 				return;
 
-			if (target is ProBuilderMesh)
-				pb = (ProBuilderMesh) target;
-			else
+			m_Mesh = (ProBuilderMesh)target;
+
+			if (!m_Mesh)
 				return;
 
-			ren = pb.gameObject.GetComponent<Renderer>();
+			m_GenerateUV2 = serializedObject.FindProperty("m_GenerateUV2");
+			m_UnwrapParameters = serializedObject.FindProperty("m_UnwrapParameters");
+
+			m_MeshRenderer = m_Mesh.gameObject.GetComponent<Renderer>();
 			SelectionRenderState s = EditorUtility.GetSelectionRenderState();
-			EditorUtility.SetSelectionRenderState(ren, editor != null ? s & SelectionRenderState.Outline : s);
+			EditorUtility.SetSelectionRenderState(m_MeshRenderer, editor != null ? s & SelectionRenderState.Outline : s);
 
-			// If Verify returns false, that means the mesh was rebuilt - so generate UV2 again
-
-			foreach (ProBuilderMesh selpb in Selection.transforms.GetComponents<ProBuilderMesh>())
-				EditorUtility.SynchronizeWithMeshFilter(selpb);
+			foreach (var mesh in Selection.transforms.GetComponents<ProBuilderMesh>())
+				EditorUtility.SynchronizeWithMeshFilter(mesh);
 		}
 
 		public override void OnInspectorGUI()
 		{
-			GUI.backgroundColor = Color.green;
+			Styles.Init();
 
-			if (GUILayout.Button("Open " + PreferenceKeys.pluginTitle))
-				ProBuilderEditor.MenuOpenWindow();
-
-			GUI.backgroundColor = Color.white;
-
-			if (!ren)
-				return;
-
-			Vector3 sz = ren.bounds.size;
-
-			EditorGUILayout.Vector3Field("Object Size (read only)", sz);
+			Vector3 bounds = m_MeshRenderer != null ? m_MeshRenderer.bounds.size : Vector3.zero;
+			EditorGUILayout.Vector3Field("Object Size (read only)", bounds);
 
 #if PB_DEBUG
 			GUILayout.TextField( string.IsNullOrEmpty(pb.asset_guid) ? "null" : pb.asset_guid );
 #endif
 
-			if (pb == null) return;
+			serializedObject.Update();
 
-			if (pb.selectedIndexesInternal.Length > 0)
+			EditorGUILayout.PropertyField(m_GenerateUV2, m_LightmapUVsContent);
+
+			if (m_GenerateUV2.boolValue)
 			{
-				GUILayout.Space(5);
+				EditorGUILayout.PropertyField(m_UnwrapParameters, true);
 
-				offset = EditorGUILayout.Vector3Field("Quick Offset", offset);
-
-				if (GUILayout.Button("Apply Offset"))
+				if (m_UnwrapParameters.isExpanded)
 				{
-					foreach (ProBuilderMesh ipb in Selection.transforms.GetComponents<ProBuilderMesh>())
-					{
-						UndoUtility.RecordObject(ipb, "Offset Vertexes");
+					GUILayout.BeginHorizontal();
+					GUILayout.FlexibleSpace();
 
-						ipb.ToMesh();
+					if (GUILayout.Button("Reset", Styles.miniButton))
+						ResetUnwrapParams(m_UnwrapParameters);
 
-						ipb.TranslateVertexesInWorldSpace(ipb.selectedIndexesInternal, offset);
+					if (GUILayout.Button("Apply", Styles.miniButton))
+						RebuildLightmapUVs();
 
-						ipb.Refresh();
-						ipb.Optimize();
-					}
-
-					ProBuilderEditor.Refresh();
+					GUILayout.EndHorizontal();
+					GUILayout.Space(4);
 				}
 			}
+
+			serializedObject.ApplyModifiedProperties();
+		}
+
+		void RebuildLightmapUVs()
+		{
+			foreach (var obj in targets)
+			{
+				if(obj is ProBuilderMesh)
+					((ProBuilderMesh)obj).Optimize(true);
+			}
+		}
+
+		void ResetUnwrapParams(SerializedProperty prop)
+		{
+			var hardAngle = prop.FindPropertyRelative("m_HardAngle");
+			var packMargin = prop.FindPropertyRelative("m_PackMargin");
+			var angleError = prop.FindPropertyRelative("m_AngleError");
+			var areaError = prop.FindPropertyRelative("m_AreaError");
+
+			hardAngle.floatValue = UnwrapParameters.k_HardAngle;
+			packMargin.floatValue = UnwrapParameters.k_PackMargin;
+			angleError.floatValue = UnwrapParameters.k_AngleError;
+			areaError.floatValue = UnwrapParameters.k_AreaError;
+
+			RebuildLightmapUVs();
 		}
 
 		bool HasFrameBounds()
 		{
-			if (pb == null)
-				pb = (ProBuilderMesh) target;
+			if (m_Mesh == null)
+				m_Mesh = (ProBuilderMesh)target;
 
 			return ProBuilderEditor.instance != null &&
-			       InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms).Sum(x => x.selectedIndexesInternal.Length) > 0;
+				InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms).Sum(x => x.selectedIndexesInternal.Length) > 0;
 		}
 
 		Bounds OnGetFrameBounds()
 		{
-			if (OnGetFrameBoundsEvent != null) OnGetFrameBoundsEvent();
+			if (onGetFrameBoundsEvent != null)
+				onGetFrameBoundsEvent();
 
 			Vector3 min = Vector3.zero, max = Vector3.zero;
 			bool init = false;
