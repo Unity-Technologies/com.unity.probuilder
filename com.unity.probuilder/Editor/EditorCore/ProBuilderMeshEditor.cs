@@ -22,6 +22,9 @@ namespace UnityEditor.ProBuilder
 			static bool s_Initialized;
 			public static GUIStyle miniButton;
 
+			public static readonly GUIContent lightmapStatic = EditorGUIUtility.TrTextContent("Lightmap Static", "Controls whether the geometry will be marked as Static for lightmapping purposes. When enabled, this mesh will be present in lightmap calculations.");
+			public static readonly GUIContent lightmapUVs = new GUIContent("Generate Lightmap UVs");
+
 			public static void Init()
 			{
 				if (s_Initialized)
@@ -35,13 +38,12 @@ namespace UnityEditor.ProBuilder
 		}
 
 		internal static event System.Action onGetFrameBoundsEvent;
-
 		ProBuilderMesh m_Mesh;
 
+		SerializedObject m_GameObjectsSerializedObject;
 		SerializedProperty m_GenerateUV2;
 		SerializedProperty m_UnwrapParameters;
-
-		GUIContent m_LightmapUVsContent = new GUIContent("Generate Lightmap UVs");
+		SerializedProperty m_StaticEditorFlags;
 
 		ProBuilderEditor editor
 		{
@@ -61,8 +63,11 @@ namespace UnityEditor.ProBuilder
 			if (!m_Mesh)
 				return;
 
+			m_GameObjectsSerializedObject = new SerializedObject(serializedObject.targetObjects.Select(t => ((Component)t).gameObject).ToArray());
+
 			m_GenerateUV2 = serializedObject.FindProperty("m_GenerateUV2");
 			m_UnwrapParameters = serializedObject.FindProperty("m_UnwrapParameters");
+			m_StaticEditorFlags = m_GameObjectsSerializedObject.FindProperty("m_StaticEditorFlags");
 
 			m_MeshRenderer = m_Mesh.gameObject.GetComponent<Renderer>();
 			SelectionRenderState s = EditorUtility.GetSelectionRenderState();
@@ -85,29 +90,73 @@ namespace UnityEditor.ProBuilder
 
 			serializedObject.Update();
 
-			EditorGUILayout.PropertyField(m_GenerateUV2, m_LightmapUVsContent);
+			LightmapStaticSettings();
 
-			if (m_GenerateUV2.boolValue)
+			bool showLightmapSettings = (m_StaticEditorFlags.intValue & (int)StaticEditorFlags.LightmapStatic) != 0;
+
+			if (showLightmapSettings)
 			{
-				EditorGUILayout.PropertyField(m_UnwrapParameters, true);
+				EditorGUILayout.PropertyField(m_GenerateUV2, Styles.lightmapUVs);
 
-				if (m_UnwrapParameters.isExpanded)
+				if (m_GenerateUV2.boolValue)
 				{
-					GUILayout.BeginHorizontal();
-					GUILayout.FlexibleSpace();
+					EditorGUILayout.PropertyField(m_UnwrapParameters, true);
 
-					if (GUILayout.Button("Reset", Styles.miniButton))
-						ResetUnwrapParams(m_UnwrapParameters);
+					if (m_UnwrapParameters.isExpanded)
+					{
+						GUILayout.BeginHorizontal();
+						GUILayout.FlexibleSpace();
 
-					if (GUILayout.Button("Apply", Styles.miniButton))
-						RebuildLightmapUVs();
+						if (GUILayout.Button("Reset", Styles.miniButton))
+							ResetUnwrapParams(m_UnwrapParameters);
 
-					GUILayout.EndHorizontal();
-					GUILayout.Space(4);
+						if (GUILayout.Button("Apply", Styles.miniButton))
+							RebuildLightmapUVs();
+
+						GUILayout.EndHorizontal();
+						GUILayout.Space(4);
+					}
 				}
+
+				bool anyMissingLightmapUVs = targets.Any(x =>
+				{
+					if (x is ProBuilderMesh)
+					{
+						var uv2 = ((ProBuilderMesh)x).mesh.uv2;
+						return uv2 == null || uv2.Length < 3;
+					}
+
+					return false;
+				});
+
+				if (anyMissingLightmapUVs)
+				{
+					EditorGUILayout.HelpBox("Lightmap UVs are missing, please generate Lightmap UVs.", MessageType.Warning);
+
+					if (GUILayout.Button("Generate Lightmap UVs"))
+						RebuildLightmapUVs();
+				}
+			}
+			else
+			{
+				EditorGUILayout.HelpBox("To enable generation of lightmap UVs for this Mesh, please enable the 'Lightmap Static' property.", MessageType.Info);
 			}
 
 			serializedObject.ApplyModifiedProperties();
+		}
+
+		void LightmapStaticSettings()
+		{
+			bool lightmapStatic = (m_StaticEditorFlags.intValue & (int)StaticEditorFlags.LightmapStatic) != 0;
+
+			EditorGUI.BeginChangeCheck();
+			lightmapStatic = EditorGUILayout.Toggle(Styles.lightmapStatic, lightmapStatic);
+
+			if (EditorGUI.EndChangeCheck())
+			{
+				SceneModeUtility.SetStaticFlags(m_GameObjectsSerializedObject.targetObjects, (int)StaticEditorFlags.LightmapStatic, lightmapStatic);
+				m_GameObjectsSerializedObject.Update();
+			}
 		}
 
 		void RebuildLightmapUVs()
