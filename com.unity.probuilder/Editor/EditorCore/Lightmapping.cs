@@ -64,6 +64,21 @@ namespace UnityEditor.ProBuilder
 				Log.Warning("{0} ProBuilder {1} included in lightmap bake with missing UV2.\nYou can turn off this warning in Preferences/ProBuilder.", count, count == 1 ? "mesh" : "meshes");
 		}
 
+		/// <summary>
+		/// Build Lightmap UVs for each mesh in the selection that is missing the UV2 array.
+		/// </summary>
+		/// <param name="selection"></param>
+		public static void RebuildMissingLightmapUVs(IEnumerable<ProBuilderMesh> selection)
+		{
+			foreach (var mesh in selection)
+			{
+				if (mesh.HasArrays(MeshArrays.Texture1))
+					continue;
+
+				mesh.Optimize(true);
+			}
+		}
+
 		/**
 		 *	Get the UnwrapParam values from a pb_UnwrapParameters object.
 		 *	Not in pb_UnwrapParameters because UnwrapParam is an Editor class.
