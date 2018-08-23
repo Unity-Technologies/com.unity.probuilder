@@ -10,7 +10,7 @@ namespace UnityEngine.ProBuilder
 	public sealed class UnwrapParameters
 	{
 		internal const float k_HardAngle = 88f;
-		internal const float k_PackMargin = 4f;
+		internal const float k_PackMargin = 20f;
 		internal const float k_AngleError = 8f;
 		internal const float k_AreaError = 15f;
 
