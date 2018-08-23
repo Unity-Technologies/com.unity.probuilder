@@ -47,10 +47,13 @@ namespace UnityEditor.ProBuilder
 
 			if(!skipMeshProcessing)
 			{
+				var isLightmappingStatic = mesh.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic);
+
 				// if generating UV2, the process is to manually split the mesh into individual triangles,
 				// generate uv2, then re-assemble with vertex collapsing where possible.
 				// if not generating uv2, just collapse vertexes.
-				if(!PreferencesInternal.GetBool(PreferenceKeys.pbDisableAutoUV2Generation) || forceRebuildUV2)
+				if( isLightmappingStatic &&
+					(!PreferencesInternal.GetBool(PreferenceKeys.pbDisableAutoUV2Generation) || forceRebuildUV2))
 				{
 					Vertex[] vertexes = UnityEngine.ProBuilder.MeshUtility.GeneratePerTriangleMesh(umesh);
 
