@@ -28,7 +28,7 @@ namespace UnityEngine.ProBuilder.Test
 		}
 	}
 
-	static class TestUtility
+	public static class TestUtility
 	{
 		const string k_TemplatesDirectory = "Packages/com.unity.probuilder.tests/Templates/";
 		const string k_TestsDirectory = "Packages/com.unity.probuilder.tests/Tests/";

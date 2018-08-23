@@ -42,6 +42,8 @@ namespace UnityEditor.ProBuilder
 		List<ProBuilderMesh> m_MissingLightmaps = new List<ProBuilderMesh>();
 		UnwrapParameters m_UnwrapParameters;
 
+		internal static readonly Rect desiredPosition = new Rect(100, 100, 348, 234);
+
 		void OnEnable()
 		{
 			m_UnwrapParameters = PreferencesInternal.GetValue<UnwrapParameters>(PreferenceKeys.defaultUnwrapParameters, new UnwrapParameters());
@@ -97,7 +99,6 @@ namespace UnityEditor.ProBuilder
 
 				GUILayout.EndHorizontal();
 			}
-
 		}
 
 		void MeshOptimized(ProBuilderMesh mesh, Mesh umesh)

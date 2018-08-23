@@ -22,7 +22,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Object
 			{
 				// optimize after instantiate because Instantiate runs mesh through serialization, introducing tiny rounding
 				// errors in some fields. by comparing the results post-serialization we get a more accurate diff
-				original.Optimize(true);
+				original.Optimize();
 				EditorUtility.SynchronizeWithMeshFilter(copy);
 				Assert.AreNotEqual(copy, original, "GameObject references are equal");
 				Assert.IsFalse(ReferenceEquals(copy.mesh, original.mesh), "Mesh references are equal");

@@ -1,0 +1,21 @@
+{
+    "name": "Unity.ProBuilder.Tests.Slow",
+    "references": [
+        "Unity.ProBuilder.Tests.Framework",
+        "Unity.ProBuilder.Core",
+        "Unity.ProBuilder.MeshOperations",
+        "Unity.ProBuilder.Editor"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

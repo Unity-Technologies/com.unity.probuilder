@@ -184,6 +184,9 @@ namespace UnityEditor.ProBuilder
 				{
 					var mesh = (ProBuilderMesh) obj;
 
+					if (!mesh.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic))
+						continue;
+
 					if(forceRebuildAll || !mesh.HasArrays(MeshArrays.Texture1))
 						mesh.Optimize(true);
 				}

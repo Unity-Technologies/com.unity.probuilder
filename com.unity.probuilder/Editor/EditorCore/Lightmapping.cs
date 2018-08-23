@@ -12,19 +12,6 @@ namespace UnityEditor.ProBuilder
 	[InitializeOnLoad]
 	static class Lightmapping
 	{
-		/// <summary>
-		/// Editor-only extension to pb_Object generates lightmap UVs.
-		/// </summary>
-		/// <param name="pb"></param>
-		[System.Obsolete("GenerateUV2 is obsolete, use pb_Editor_Mesh_Utility.Optimize(this pb_Object, bool forceRebuildUV2 = false) instead.")]
-		public static void GenerateUV2(this ProBuilderMesh pb) { pb.GenerateUV2(false); }
-
-		[System.Obsolete("GenerateUV2 is obsolete, use pb_Editor_Mesh_Utility.Optimize(this pb_Object, bool forceRebuildUV2 = false) instead.")]
-		public static void GenerateUV2(this ProBuilderMesh pb, bool forceUpdate)
-		{
-			pb.Optimize(forceUpdate);
-		}
-
 		static Lightmapping()
 		{
 			UnityEditor.Lightmapping.completed += OnLightmappingCompleted;
@@ -100,8 +87,7 @@ namespace UnityEditor.ProBuilder
 		 */
 		public static UnwrapParam GetUnwrapParam(UnwrapParameters parameters)
 		{
-			UnwrapParam param;
-			UnwrapParam.SetDefaults(out param);
+			UnwrapParam param = new UnwrapParam();
 
 			if(parameters != null)
 			{
@@ -109,6 +95,13 @@ namespace UnityEditor.ProBuilder
 				param.areaError  = Mathf.Clamp(parameters.areaError , 1f, 75f) * .01f;
 				param.hardAngle  = Mathf.Clamp(parameters.hardAngle , 0f, 180f);
 				param.packMargin = Mathf.Clamp(parameters.packMargin, 1f, 64) * .001f;
+			}
+			else
+			{
+				param.angleError = Mathf.Clamp(UnwrapParameters.k_AngleError, 1f, 75f) * .01f;
+				param.areaError  = Mathf.Clamp(UnwrapParameters.k_AreaError , 1f, 75f) * .01f;
+				param.hardAngle  = Mathf.Clamp(UnwrapParameters.k_HardAngle , 0f, 180f);
+				param.packMargin = Mathf.Clamp(UnwrapParameters.k_PackMargin, 1f, 64) * .001f;
 			}
 
 			return param;
