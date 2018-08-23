@@ -68,15 +68,30 @@ namespace UnityEditor.ProBuilder
 		/// Build Lightmap UVs for each mesh in the selection that is missing the UV2 array.
 		/// </summary>
 		/// <param name="selection"></param>
-		public static void RebuildMissingLightmapUVs(IEnumerable<ProBuilderMesh> selection)
+		/// <param name="showProgressBar"></param>
+		public static int RebuildMissingLightmapUVs(IEnumerable<ProBuilderMesh> selection, bool showProgressBar = false)
 		{
+			int count = 0;
+			float total = selection.Count(x => x.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic) && !x.HasArrays(MeshArrays.Lightmap));
+
 			foreach (var mesh in selection)
 			{
-				if (mesh.HasArrays(MeshArrays.Texture1))
+				if (!mesh.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic) || mesh.HasArrays(MeshArrays.Texture1))
 					continue;
 
+				if (showProgressBar)
+				{
+					if (UnityEditor.EditorUtility.DisplayCancelableProgressBar("Generate Lightmap UVs", "Unwrapping UVs for mesh: " + mesh.name, count / total))
+						break;
+				}
+
+				count++;
 				mesh.Optimize(true);
 			}
+
+			UnityEditor.EditorUtility.ClearProgressBar();
+
+			return count;
 		}
 
 		/**
