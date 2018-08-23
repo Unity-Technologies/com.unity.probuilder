@@ -267,6 +267,16 @@ namespace UnityEditor.ProBuilder
 			return EditorPrefs.GetString(key, fallback);
 		}
 
+		public static T GetValue<T>(string key, T fallback = default(T))
+		{
+			var str = GetString(key, null);
+
+			if (string.IsNullOrEmpty(str))
+				return fallback;
+
+			return JsonUtility.FromJson<T>(str);
+		}
+
 		/// <summary>
 		/// Get a material from preferences.
 		/// </summary>
@@ -414,6 +424,18 @@ namespace UnityEditor.ProBuilder
 			{
 				EditorPrefs.SetString(key, value != null ? AssetDatabase.GetAssetPath(value) : "");
 			}
+		}
+
+		/// <summary>
+		/// Serialize a value to JSON
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
+		/// <param name="location"></param>
+		/// <typeparam name="T"></typeparam>
+		public static void SetValue<T>(string key, T value, PreferenceLocation location = PreferenceLocation.Project)
+		{
+			SetString(key, JsonUtility.ToJson(value), location);
 		}
 	}
 }

@@ -9,7 +9,6 @@ namespace UnityEditor.ProBuilder
 	/// Inspector for working with lightmap UV generation params.
 	/// </summary>
 	[CanEditMultipleObjects]
-	[CustomEditor(typeof(UnwrapParameters))]
 	sealed class UnwrapParametersEditor : Editor
 	{
 		SerializedProperty m_UnwrapParametersProperty;

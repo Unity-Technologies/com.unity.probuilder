@@ -41,7 +41,6 @@ namespace UnityEditor.ProBuilder
 		ProBuilderMesh m_Mesh;
 
 		SerializedObject m_GameObjectsSerializedObject;
-		SerializedProperty m_GenerateUV2;
 		SerializedProperty m_UnwrapParameters;
 		SerializedProperty m_StaticEditorFlags;
 
@@ -51,7 +50,6 @@ namespace UnityEditor.ProBuilder
 		}
 
 		Renderer m_MeshRenderer = null;
-		Vector3 offset = Vector3.zero;
 
 		public void OnEnable()
 		{
@@ -65,7 +63,6 @@ namespace UnityEditor.ProBuilder
 
 			m_GameObjectsSerializedObject = new SerializedObject(serializedObject.targetObjects.Select(t => ((Component)t).gameObject).ToArray());
 
-			m_GenerateUV2 = serializedObject.FindProperty("m_GenerateUV2");
 			m_UnwrapParameters = serializedObject.FindProperty("m_UnwrapParameters");
 			m_StaticEditorFlags = m_GameObjectsSerializedObject.FindProperty("m_StaticEditorFlags");
 
@@ -96,28 +93,22 @@ namespace UnityEditor.ProBuilder
 
 			if (showLightmapSettings)
 			{
-				EditorGUILayout.PropertyField(m_GenerateUV2, Styles.lightmapUVs);
+				EditorGUILayout.PropertyField(m_UnwrapParameters, true);
 
-				if (m_GenerateUV2.boolValue)
+				if (m_UnwrapParameters.isExpanded)
 				{
-					EditorGUILayout.PropertyField(m_UnwrapParameters, true);
+					GUILayout.BeginHorizontal();
+					GUILayout.FlexibleSpace();
 
-					if (m_UnwrapParameters.isExpanded)
-					{
-						GUILayout.BeginHorizontal();
-						GUILayout.FlexibleSpace();
+					if (GUILayout.Button("Reset", Styles.miniButton))
+						ResetUnwrapParams(m_UnwrapParameters);
 
-						if (GUILayout.Button("Reset", Styles.miniButton))
-							ResetUnwrapParams(m_UnwrapParameters);
+					if (GUILayout.Button("Apply", Styles.miniButton))
+						RebuildLightmapUVs();
 
-						if (GUILayout.Button("Apply", Styles.miniButton))
-							RebuildLightmapUVs();
-
-						GUILayout.EndHorizontal();
-						GUILayout.Space(4);
-					}
+					GUILayout.EndHorizontal();
+					GUILayout.Space(4);
 				}
-
 				bool anyMissingLightmapUVs = targets.Any(x =>
 				{
 					if (x is ProBuilderMesh)
