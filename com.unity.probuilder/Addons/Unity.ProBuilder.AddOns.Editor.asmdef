@@ -1,8 +1,7 @@
 {
     "name": "Unity.ProBuilder.AddOns.Editor",
     "references": [
-        "Unity.ProBuilder.Core",
-        "Unity.ProBuilder.MeshOperations",
+        "Unity.ProBuilder",
         "Unity.ProBuilder.Editor"
     ],
     "optionalUnityReferences": [],
