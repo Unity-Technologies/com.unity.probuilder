@@ -7,7 +7,7 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		public override ToolbarGroup group
 		{
-			get { return ToolbarGroup.Tool; }
+			get { return ToolbarGroup.Object; }
 		}
 
 		public override Texture2D icon
@@ -28,7 +28,7 @@ namespace UnityEditor.ProBuilder.Actions
 		static readonly TooltipContent m_Tooltip = new TooltipContent
 		(
 			"Lightmap UVs",
-			@"Create UV2 maps for all selected objects.\n\nCan optionally be set to Generate UV2 for the entire scene in the options panel."
+			@"Generate Lightmap UVs for any meshes in the open scenes that are missing them."
 		);
 
 		public override bool enabled

@@ -14,31 +14,17 @@ class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d", false, 1000)]
 	static void MenuInit()
 	{
-		var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
-		Debug.Log("original -> shared vertexes:\n" + mesh.sharedVertexes.ToString("\n"));
-		Debug.Log("original -> shared vertexes lookup:\n" + string.Join("\n", mesh.sharedVertexLookup.OrderBy(x=>x.Key).Select(x=>x.Key +", " +x.Value)) );
-//		Debug.Log("original -> has lookup cache: " + mesh.hasSharedLookupCache + "\n" + JsonUtility.ToJson(mesh, true));
+		var shapes = Enum.GetValues(typeof(ShapeType)) as ShapeType[];
+		float x = -10f;
+		ProBuilderMesh[] primitives = new ProBuilderMesh[shapes.Length];
+		for (int i = 0, c = shapes.Length; i < c; i++)
+		{
+			primitives[i] = ShapeGenerator.CreateShape(shapes[i]);
+			primitives[i].GetComponent<MeshFilter>().sharedMesh.name = shapes[i].ToString();
 
-		UnityEditor.Undo.RegisterCompleteObjectUndo(new [] { mesh }, "Merge Vertexes");
-
-		mesh.MergeVertexes(new int[] { 0, 1 }, true);
-
-		mesh.ToMesh();
-		mesh.Refresh();
-		Debug.Log("collapsed -> shared vertexes:\n" + mesh.sharedVertexes.ToString("\n"));
-		Debug.Log("collapsed -> shared vertexes lookup:\n" + string.Join("\n", mesh.sharedVertexLookup.OrderBy(x=>x.Key).Select(x=>x.Key +", " +x.Value)) );
-//		Debug.Log("collapsed -> has lookup cache: " + mesh.hasSharedLookupCache + "\n" + JsonUtility.ToJson(mesh, true));
-
-		Undo.PerformUndo();
-
-		mesh.InvalidateCaches();
-
-		mesh.ToMesh();
-		mesh.Refresh();
-
-		Debug.Log("undo -> shared vertexes:\n" + mesh.sharedVertexes.ToString("\n"));
-		Debug.Log("undo -> shared vertexes lookup:\n" + string.Join("\n", mesh.sharedVertexLookup.OrderBy(x=>x.Key).Select(x=>x.Key +", " +x.Value)) );
-//		Debug.Log("undo -> has lookup cache: " + mesh.hasSharedLookupCache + "\n" + JsonUtility.ToJson(mesh, true));
+			primitives[i].transform.position = new Vector3(x, 0f, 0f);
+			x += primitives[i].mesh.bounds.size.x + .5f;
+		}
 	}
 
 	public static void SaveMeshTemplate(Mesh mesh)
