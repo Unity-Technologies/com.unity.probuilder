@@ -119,7 +119,7 @@ namespace UnityEngine.ProBuilder
 
 		    missing |= (channels & MeshArrays.Position) == MeshArrays.Position && m_Positions == null;
 		    missing |= (channels & MeshArrays.Texture0) == MeshArrays.Texture0 && (m_Textures0 == null || m_Textures0.Length != vc);
-		    missing |= (channels & MeshArrays.Texture1) == MeshArrays.Texture1 && (m_Textures1 == null || m_Textures1.Length != vc);
+		    missing |= (channels & MeshArrays.Texture1) == MeshArrays.Texture1 && (m_Textures1 == null || m_Textures1.Length < 3);
 		    missing |= (channels & MeshArrays.Texture2) == MeshArrays.Texture2 && (m_Textures2 == null || m_Textures2.Count != vc);
 		    missing |= (channels & MeshArrays.Texture3) == MeshArrays.Texture3 && (m_Textures3 == null || m_Textures3.Count != vc);
 		    missing |= (channels & MeshArrays.Color) == MeshArrays.Color && (m_Colors == null || m_Colors.Length != vc);

@@ -43,6 +43,8 @@ namespace UnityEditor.ProBuilder
 		SerializedObject m_GameObjectsSerializedObject;
 		SerializedProperty m_UnwrapParameters;
 		SerializedProperty m_StaticEditorFlags;
+		bool m_AnyMissingLightmapUVs;
+		bool m_ModifyingMesh;
 
 		ProBuilderEditor editor
 		{
@@ -51,7 +53,7 @@ namespace UnityEditor.ProBuilder
 
 		Renderer m_MeshRenderer = null;
 
-		public void OnEnable()
+		void OnEnable()
 		{
 			if (EditorApplication.isPlayingOrWillChangePlaymode)
 				return;
@@ -72,6 +74,25 @@ namespace UnityEditor.ProBuilder
 
 			foreach (var mesh in Selection.transforms.GetComponents<ProBuilderMesh>())
 				EditorUtility.SynchronizeWithMeshFilter(mesh);
+
+			ProBuilderEditor.beforeMeshModification += OnBeginMeshModification;
+			ProBuilderEditor.afterMeshModification += OnFinishMeshModification;
+		}
+
+		void OnDisable()
+		{
+			ProBuilderEditor.beforeMeshModification -= OnBeginMeshModification;
+			ProBuilderEditor.afterMeshModification -= OnFinishMeshModification;
+		}
+
+		void OnBeginMeshModification(ProBuilderMesh[] selection)
+		{
+			m_ModifyingMesh = true;
+		}
+
+		void OnFinishMeshModification(ProBuilderMesh[] selection)
+		{
+			m_ModifyingMesh = false;
 		}
 
 		public override void OnInspectorGUI()
@@ -109,18 +130,19 @@ namespace UnityEditor.ProBuilder
 					GUILayout.EndHorizontal();
 					GUILayout.Space(4);
 				}
-				bool anyMissingLightmapUVs = targets.Any(x =>
+
+				if (!m_ModifyingMesh)
 				{
-					if (x is ProBuilderMesh)
+					m_AnyMissingLightmapUVs = targets.Any(x =>
 					{
-						var uv2 = ((ProBuilderMesh)x).mesh.uv2;
-						return uv2 == null || uv2.Length < 3;
-					}
+						if (x is ProBuilderMesh)
+							return !((ProBuilderMesh)x).HasArrays(MeshArrays.Texture1);
 
-					return false;
-				});
+						return false;
+					});
+				}
 
-				if (anyMissingLightmapUVs)
+				if (m_AnyMissingLightmapUVs)
 				{
 					EditorGUILayout.HelpBox("Lightmap UVs are missing, please generate Lightmap UVs.", MessageType.Warning);
 
@@ -146,16 +168,25 @@ namespace UnityEditor.ProBuilder
 			if (EditorGUI.EndChangeCheck())
 			{
 				SceneModeUtility.SetStaticFlags(m_GameObjectsSerializedObject.targetObjects, (int)StaticEditorFlags.LightmapStatic, lightmapStatic);
+
+				if(lightmapStatic)
+					RebuildLightmapUVs(false);
+
 				m_GameObjectsSerializedObject.Update();
 			}
 		}
 
-		void RebuildLightmapUVs()
+		void RebuildLightmapUVs(bool forceRebuildAll = true)
 		{
 			foreach (var obj in targets)
 			{
-				if(obj is ProBuilderMesh)
-					((ProBuilderMesh)obj).Optimize(true);
+				if (obj is ProBuilderMesh)
+				{
+					var mesh = (ProBuilderMesh) obj;
+
+					if(forceRebuildAll || !mesh.HasArrays(MeshArrays.Texture1))
+						mesh.Optimize(true);
+				}
 			}
 		}
 
