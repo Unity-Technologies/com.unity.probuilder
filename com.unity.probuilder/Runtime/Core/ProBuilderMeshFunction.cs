@@ -5,8 +5,21 @@ using System;
 
 namespace UnityEngine.ProBuilder
 {
+#if UNITY_EDITOR
+	public sealed partial class ProBuilderMesh : ISerializationCallbackReceiver
+#else
 	public sealed partial class ProBuilderMesh
+#endif
 	{
+#if UNITY_EDITOR
+		public void OnBeforeSerialize() { }
+
+		public void OnAfterDeserialize()
+		{
+			InvalidateCaches();
+		}
+#endif
+
 		static HashSet<int> s_CachedHashSet = new HashSet<int>();
 
 		/// <summary>
@@ -85,7 +98,8 @@ namespace UnityEngine.ProBuilder
 		/// <param name="sharedVertexes">Optional SharedVertex[] defines coincident vertexes.</param>
 		/// <param name="sharedTextures">Optional SharedVertex[] defines coincident texture coordinates (UV0).</param>
 		/// <returns></returns>
-		public static ProBuilderMesh Create(IList<Vertex> vertexes,
+		public static ProBuilderMesh Create(
+			IList<Vertex> vertexes,
 			IList<Face> faces,
 			IList<SharedVertex> sharedVertexes = null,
 			IList<SharedVertex> sharedTextures = null)
@@ -345,7 +359,7 @@ namespace UnityEngine.ProBuilder
 		{
 			// If the UV array has gone out of sync with the positions array, reset all faces to Auto UV so that we can
 			// correct the texture array.
-			if(!HasArrays(MeshArrays.Texture0))
+			if (!HasArrays(MeshArrays.Texture0))
 			{
 				m_Textures0 = new Vector2[vertexCount];
 				foreach (Face f in facesInternal)
@@ -355,7 +369,7 @@ namespace UnityEngine.ProBuilder
 
 			s_CachedHashSet.Clear();
 
-			foreach(var face in facesToRefresh)
+			foreach (var face in facesToRefresh)
 			{
 				if (face.manualUV)
 					continue;
@@ -419,7 +433,7 @@ namespace UnityEngine.ProBuilder
 			Vector3[] tan1 = new Vector3[vc];
 			Vector3[] tan2 = new Vector3[vc];
 
-			if(!HasArrays(MeshArrays.Tangent))
+			if (!HasArrays(MeshArrays.Tangent))
 				m_Tangents = new Vector4[vc];
 
 			foreach (var face in m_Faces)
@@ -610,7 +624,6 @@ namespace UnityEngine.ProBuilder
 
 					normals[index].Normalize();
 				}
-
 			}
 
 			return normals;
@@ -630,7 +643,7 @@ namespace UnityEngine.ProBuilder
 
 			for (int i = 0; i < m_SharedVertexes.Length; i++)
 			{
-				for(int n = 0, c = m_SharedVertexes[i].Count; n < c; n++)
+				for (int n = 0, c = m_SharedVertexes[i].Count; n < c; n++)
 					if (m_SharedVertexes[i][n] == vertex)
 						return i;
 			}
@@ -656,7 +669,7 @@ namespace UnityEngine.ProBuilder
 		public List<int> GetCoincidentVertexes(IEnumerable<int> vertexes)
 		{
 			if (vertexes == null)
-                throw new ArgumentNullException("vertexes");
+				throw new ArgumentNullException("vertexes");
 
 			List<int> shared = new List<int>();
 			GetCoincidentVertexes(vertexes, shared);
@@ -672,10 +685,10 @@ namespace UnityEngine.ProBuilder
 		public void GetCoincidentVertexes(IEnumerable<int> vertexes, List<int> coincident)
 		{
 			if (vertexes == null)
-                throw new ArgumentNullException("vertexes");
+				throw new ArgumentNullException("vertexes");
 
 			if (coincident == null)
-                throw new ArgumentNullException("coincident");
+				throw new ArgumentNullException("coincident");
 
 			s_CachedHashSet.Clear();
 			coincident.Clear();
@@ -705,7 +718,7 @@ namespace UnityEngine.ProBuilder
 			int common;
 
 			if (!sharedVertexLookup.TryGetValue(vertex, out common))
-                throw new ArgumentOutOfRangeException("vertex");
+				throw new ArgumentOutOfRangeException("vertex");
 
 			coincident.Clear();
 			coincident.AddRange(m_SharedVertexes[common]);
@@ -736,7 +749,7 @@ namespace UnityEngine.ProBuilder
 
 		internal void AddToSharedVertex(int sharedVertexHandle, int vertex)
 		{
-			if(sharedVertexHandle < 0 || sharedVertexHandle >= m_SharedVertexes.Length)
+			if (sharedVertexHandle < 0 || sharedVertexHandle >= m_SharedVertexes.Length)
 				throw new ArgumentOutOfRangeException("sharedVertexHandle");
 
 			m_SharedVertexes[sharedVertexHandle].Add(vertex);
@@ -753,4 +766,3 @@ namespace UnityEngine.ProBuilder
 		}
 	}
 }
-
