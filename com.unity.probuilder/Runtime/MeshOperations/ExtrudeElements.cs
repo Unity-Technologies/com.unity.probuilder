@@ -436,7 +436,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 }, // indexes
 						face.material, // material
 						new AutoUnwrapSettings(face.uv), // UV material
-						face.smoothingGroup, // smoothing group
+						Smoothing.smoothingGroupNone,
 						-1, // texture group
 						-1, // uv element group
 						false // manualUV flag
