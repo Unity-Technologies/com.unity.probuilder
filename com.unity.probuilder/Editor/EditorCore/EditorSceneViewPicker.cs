@@ -371,7 +371,7 @@ namespace UnityEditor.ProBuilder
 			if(!elementsInDragRect && !isAppendModifier)
 				MeshSelection.ClearElementAndObjectSelection();
 
-			ProBuilderEditor.Refresh(false);
+			ProBuilderEditor.Refresh();
 			SceneView.RepaintAll();
 		}
 
