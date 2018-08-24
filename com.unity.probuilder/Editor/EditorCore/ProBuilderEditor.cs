@@ -2028,11 +2028,10 @@ namespace UnityEditor.ProBuilder
 			for (int i = 0; i < selection.Length; i++)
 			{
 				ProBuilderMesh mesh = selection[i];
+				if (mesh.selectedVertexCount < 1)
+					continue;
 
-				var indexes = mesh.selectedVertexCount > 0
-					? mesh.GetCoincidentVertexes(mesh.selectedIndexesInternal)
-					: mesh.facesInternal.SelectMany(x => x.distinctIndexes);
-
+				var indexes = mesh.GetCoincidentVertexes(mesh.selectedIndexesInternal);
 				Snapping.SnapVertexes(mesh, indexes, Vector3.one * snapVal);
 
 				mesh.ToMesh();
