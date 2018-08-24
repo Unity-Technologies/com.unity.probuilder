@@ -1,11 +1,12 @@
 {
     "name": "Unity.ProBuilder.Tests.Framework",
     "references": [
-        "Unity.ProBuilder.Core"
+        "Unity.ProBuilder"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
     ],
     "includePlatforms": [],
-    "excludePlatforms": []
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
 }

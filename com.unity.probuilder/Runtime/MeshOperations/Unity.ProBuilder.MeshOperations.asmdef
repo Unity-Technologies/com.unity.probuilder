@@ -1,9 +1,0 @@
-{
-    "name": "Unity.ProBuilder.MeshOperations",
-    "references": [
-        "Unity.ProBuilder.Core"
-    ],
-    "optionalUnityReferences": [],
-    "includePlatforms": [],
-    "excludePlatforms": []
-}
