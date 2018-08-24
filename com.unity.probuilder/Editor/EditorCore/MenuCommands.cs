@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
@@ -1041,8 +1041,8 @@ namespace UnityEditor.ProBuilder
 
 				if(copy.transform.childCount > 0)
 				{
-					for(int i = 0; i < copy.transform.childCount; ++i)
-						GameObject.DestroyImmediate(copy.transform.GetChild(i).gameObject);
+					for(int i = copy.transform.childCount - 1; i > -1; i--)
+						DestroyImmediate(copy.transform.GetChild(i).gameObject);
 
 					foreach(ProBuilderMesh pb_child in pb.transform.GetComponentsInChildren<ProBuilderMesh>())
 						EditorUtility.SynchronizeWithMeshFilter(pb_child);
