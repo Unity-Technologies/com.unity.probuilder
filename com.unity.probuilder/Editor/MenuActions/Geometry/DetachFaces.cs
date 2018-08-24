@@ -1,9 +1,6 @@
 using UnityEngine;
-using UnityEditor;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
-using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -11,9 +8,9 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_Detach", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
+		public override TooltipContent tooltip { get { return m_Tooltip; } }
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent m_Tooltip = new TooltipContent
 		(
 			"Detach Faces",
 			"Creates a new object (or submesh) from the selected faces."
