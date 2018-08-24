@@ -1131,6 +1131,12 @@ namespace UnityEngine.ProBuilder
 
 			ProBuilderMesh pb = ProBuilderMesh.Create(v.ToArray(), f.ToArray());
 			pb.gameObject.name = "Cone";
+
+			pb.unwrapParameters = new UnwrapParameters()
+			{
+				packMargin = 30f
+			};
+
 			return pb;
 		}
 
@@ -1346,6 +1352,10 @@ namespace UnityEngine.ProBuilder
 			pb.ToMesh();
 			pb.Refresh();
 			pb.gameObject.name = "Icosphere";
+			pb.unwrapParameters = new UnwrapParameters()
+			{
+				packMargin = 30f
+			};
 
 			return pb;
 		}

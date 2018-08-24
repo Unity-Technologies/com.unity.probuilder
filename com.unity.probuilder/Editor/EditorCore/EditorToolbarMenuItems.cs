@@ -51,6 +51,23 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
+		[MenuItem(k_MenuPrefix + "Editors/Open Lightmap UV Editor ", true)]
+		static bool MenuVerifyOpenLightmapUVEditor()
+		{
+			OpenLightmapUVEditor instance = EditorToolbarLoader.GetInstance<OpenLightmapUVEditor>();
+
+			return instance != null && instance.enabled;
+	
+		}
+
+		[MenuItem(k_MenuPrefix + "Editors/Open Lightmap UV Editor ", false, PreferenceKeys.menuEditor + 1)]
+		static void MenuDoOpenLightmapUVEditor()
+		{
+			OpenLightmapUVEditor instance = EditorToolbarLoader.GetInstance<OpenLightmapUVEditor>();
+			if(instance != null)
+				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
 		[MenuItem(k_MenuPrefix + "Editors/Open Material Editor ", true)]
 		static bool MenuVerifyOpenMaterialEditor()
 		{

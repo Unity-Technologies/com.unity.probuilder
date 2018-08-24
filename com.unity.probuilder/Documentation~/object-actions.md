@@ -98,19 +98,19 @@ for a perfectly symmetrical result.
 |__X, Y, Z__| Choose which axis (single or multiple) to mirror on |
 |__Duplicate__ | When **On**, a duplicate object will be created and mirrored, leaving the original unchanged. |
 
-
 <a id="generateuv2"></a>
-## ![Generate UV2 Icon](images/icons/Object_GenerateUV2.png) Generate UV2
+## ![Generate Lightmaps Icon](images/icons/Object_GenerateUV2.png) Lightmap UVs
 
-Builds the UV2 channel for each selected mesh, or all meshes in the scene if the "Generate Scene UVs" option is toggled.
+Generates Lightmap UVs for any meshes in the open scenes that are missing them.
 
 ![Options Icon](images/icons/Options.png) **Custom Settings Available** :
 
+![Lightmap UV Editor](images/LightmapUVEditor.png)
+
 |**Setting:** |**Description:** |
 |:---|:---|
-|__Generate Scene UV2s__ |If **On**, will generate UV2s for all meshes in the scene. Otherwise, only UV2s on the selected object(s) will be generated. |
-|__Enable Auto UV2__ |If **On**, UV2s will be auto-generated as needed. |
-
+|__Auto Lightmap UVs__ |If **On**, ProBuilder will automatically build lightmap arrays as necessary. |
+|__Default Lightmap UVs Settings__ | Define a set of default UV2 unwrapping parameters that all new shapes will use. This preference is per-project. |
 
 ## ![Export Icon](images/icons/Object_Export.png) Export
 
@@ -136,7 +136,6 @@ Export the selected ProBuilder objects to a 3D model.
 |__Texture Scale, Offset__ |OBJ |Some 3D modeling applications import texture scale and offset paramters (Blender, for example). Toggling this will write these values to the exported mtlib file. This can break import in some applications, please use with caution! |
 |__STL Format__ |STL |The STL file specification supports both ASCII and Binary representations. This toggles between the two types. |
 |__Quads__ |PLY |Where possible, ProBuilder will preserve quads when exporting to PLY. |
-
 
 ## ![ProBuilderize Icon](images/icons/Object_ProBuilderize.png) ProBuilderize Object
 
@@ -175,4 +174,3 @@ Assigns the `pb_ColliderBehaviour` script to selected objects, which does the fo
 ### pb_Entity (Deprecated)
 
 Older versions of ProBuilder used a script called `pb_Entity` to manage trigger and collider objects. Projects making use of `pb_Entity` will still continue to function, but it is recommended to make use of the new `pb_TriggerBehaviour` and `pb_ColliderBehaviour` instead.
-

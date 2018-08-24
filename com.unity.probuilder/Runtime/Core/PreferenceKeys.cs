@@ -161,6 +161,8 @@ namespace UnityEngine.ProBuilder
 		internal const string pbShowTrigger = "pbShowTrigger";
 		internal const string pbShowNoDraw = "pbShowNoDraw";
 
+		internal const string defaultUnwrapParameters = "pbDefaultUnwrapParameters";
+
 		internal static readonly Rect RectZero = new Rect(0,0,0,0);
 
 	 	internal static readonly Color proBuilderBlue = new Color(0f, .682f, .937f, 1f);

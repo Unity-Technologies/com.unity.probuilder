@@ -9,29 +9,34 @@ namespace UnityEngine.ProBuilder
 	[System.Serializable]
 	public sealed class UnwrapParameters
 	{
+		internal const float k_HardAngle = 88f;
+		internal const float k_PackMargin = 20f;
+		internal const float k_AngleError = 8f;
+		internal const float k_AreaError = 15f;
+
 		[Tooltip("Angle between neighbor triangles that will generate seam.")]
 		[Range(1f, 180f)]
 		[SerializeField]
 		[FormerlySerializedAs("hardAngle")]
-		float m_HardAngle = 88f;
+		float m_HardAngle = k_HardAngle;
 
 		[Tooltip("Measured in pixels, assuming mesh will cover an entire 1024x1024 lightmap.")]
 		[Range(1f, 64f)]
 		[SerializeField]
 		[FormerlySerializedAs("packMargin")]
-		float m_PackMargin = 4f;
+		float m_PackMargin = k_PackMargin;
 
 		[Tooltip("Measured in percents. Angle error measures deviation of UV angles from geometry angles. Area error "
 			+ "measures deviation of UV triangles area from geometry triangles if they were uniformly scaled.")]
 		[Range(1f, 75f)]
 		[SerializeField]
 		[FormerlySerializedAs("angleError")]
-		float m_AngleError = 8f;
+		float m_AngleError = k_AngleError;
 
 		[Range(1f, 75f)]
 		[SerializeField]
 		[FormerlySerializedAs("areaError")]
-		float m_AreaError = 15f;
+		float m_AreaError = k_AreaError;
 
 		/// <value>
 		/// Angle between neighbor triangles that will generate seam.
@@ -79,10 +84,10 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public void Reset()
 		{
-			hardAngle = 88f;
-			packMargin = 4f;
-			angleError = 8f;
-			areaError = 15f;
+			hardAngle = k_HardAngle;
+			packMargin = k_PackMargin;
+			angleError = k_AngleError;
+			areaError = k_AreaError;
 		}
 
 		public override string ToString()

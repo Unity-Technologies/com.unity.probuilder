@@ -21,12 +21,12 @@ namespace UnityEditor.ProBuilder
 		public static event Action<ProBuilderMesh, Mesh> meshOptimized = null;
 
 		/// <summary>
-		/// Optmizes the mesh geometry, and generates a UV2 channel (if automatic lightmap generation is enabled).
+		/// Optmizes the mesh geometry, and generates a UV2 channel (if object is marked as LightmapStatic, or generateLightmapUVs is true).
 		/// </summary>
 		/// <remarks>This is only applicable to meshes with triangle topology. Quad meshes are not affected by this function.</remarks>
 		/// <param name="mesh">The ProBuilder mesh component to be optimized.</param>
-		/// <param name="forceRebuildUV2">If the Auto UV2 preference is disabled this parameter can be used to force UV2s to be built.</param>
-		public static void Optimize(this ProBuilderMesh mesh, bool forceRebuildUV2 = false)
+		/// <param name="generateLightmapUVs">If the Auto UV2 preference is disabled this parameter can be used to force UV2s to be built.</param>
+		public static void Optimize(this ProBuilderMesh mesh, bool generateLightmapUVs = false)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -47,10 +47,13 @@ namespace UnityEditor.ProBuilder
 
 			if(!skipMeshProcessing)
 			{
+				bool autoLightmap = !PreferencesInternal.GetBool(PreferenceKeys.pbDisableAutoUV2Generation);
+				bool lightmapUVs = generateLightmapUVs || (autoLightmap && mesh.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic));
+
 				// if generating UV2, the process is to manually split the mesh into individual triangles,
 				// generate uv2, then re-assemble with vertex collapsing where possible.
 				// if not generating uv2, just collapse vertexes.
-				if(!PreferencesInternal.GetBool(PreferenceKeys.pbDisableAutoUV2Generation) || forceRebuildUV2)
+				if(lightmapUVs)
 				{
 					Vertex[] vertexes = UnityEngine.ProBuilder.MeshUtility.GeneratePerTriangleMesh(umesh);
 

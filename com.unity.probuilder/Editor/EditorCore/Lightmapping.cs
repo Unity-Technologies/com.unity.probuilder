@@ -12,19 +12,6 @@ namespace UnityEditor.ProBuilder
 	[InitializeOnLoad]
 	static class Lightmapping
 	{
-		/// <summary>
-		/// Editor-only extension to pb_Object generates lightmap UVs.
-		/// </summary>
-		/// <param name="pb"></param>
-		[System.Obsolete("GenerateUV2 is obsolete, use pb_Editor_Mesh_Utility.Optimize(this pb_Object, bool forceRebuildUV2 = false) instead.")]
-		public static void GenerateUV2(this ProBuilderMesh pb) { pb.GenerateUV2(false); }
-
-		[System.Obsolete("GenerateUV2 is obsolete, use pb_Editor_Mesh_Utility.Optimize(this pb_Object, bool forceRebuildUV2 = false) instead.")]
-		public static void GenerateUV2(this ProBuilderMesh pb, bool forceUpdate)
-		{
-			pb.Optimize(forceUpdate);
-		}
-
 		static Lightmapping()
 		{
 			UnityEditor.Lightmapping.completed += OnLightmappingCompleted;
@@ -64,14 +51,43 @@ namespace UnityEditor.ProBuilder
 				Log.Warning("{0} ProBuilder {1} included in lightmap bake with missing UV2.\nYou can turn off this warning in Preferences/ProBuilder.", count, count == 1 ? "mesh" : "meshes");
 		}
 
+		/// <summary>
+		/// Build Lightmap UVs for each mesh in the selection that is missing the UV2 array.
+		/// </summary>
+		/// <param name="selection"></param>
+		/// <param name="showProgressBar"></param>
+		public static int RebuildMissingLightmapUVs(IEnumerable<ProBuilderMesh> selection, bool showProgressBar = false)
+		{
+			int count = 0;
+			float total = selection.Count(x => x.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic) && !x.HasArrays(MeshArrays.Lightmap));
+
+			foreach (var mesh in selection)
+			{
+				if (!mesh.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic) || mesh.HasArrays(MeshArrays.Texture1))
+					continue;
+
+				if (showProgressBar)
+				{
+					if (UnityEditor.EditorUtility.DisplayCancelableProgressBar("Generate Lightmap UVs", "Unwrapping UVs for mesh: " + mesh.name, count / total))
+						break;
+				}
+
+				count++;
+				mesh.Optimize(true);
+			}
+
+			UnityEditor.EditorUtility.ClearProgressBar();
+
+			return count;
+		}
+
 		/**
 		 *	Get the UnwrapParam values from a pb_UnwrapParameters object.
 		 *	Not in pb_UnwrapParameters because UnwrapParam is an Editor class.
 		 */
 		public static UnwrapParam GetUnwrapParam(UnwrapParameters parameters)
 		{
-			UnwrapParam param;
-			UnwrapParam.SetDefaults(out param);
+			UnwrapParam param = new UnwrapParam();
 
 			if(parameters != null)
 			{
@@ -79,6 +95,13 @@ namespace UnityEditor.ProBuilder
 				param.areaError  = Mathf.Clamp(parameters.areaError , 1f, 75f) * .01f;
 				param.hardAngle  = Mathf.Clamp(parameters.hardAngle , 0f, 180f);
 				param.packMargin = Mathf.Clamp(parameters.packMargin, 1f, 64) * .001f;
+			}
+			else
+			{
+				param.angleError = Mathf.Clamp(UnwrapParameters.k_AngleError, 1f, 75f) * .01f;
+				param.areaError  = Mathf.Clamp(UnwrapParameters.k_AreaError , 1f, 75f) * .01f;
+				param.hardAngle  = Mathf.Clamp(UnwrapParameters.k_HardAngle , 0f, 180f);
+				param.packMargin = Mathf.Clamp(UnwrapParameters.k_PackMargin, 1f, 64) * .001f;
 			}
 
 			return param;

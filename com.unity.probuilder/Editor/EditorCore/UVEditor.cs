@@ -288,7 +288,7 @@ namespace UnityEditor.ProBuilder
 
 			instance = this;
 
-			ProBuilderMeshEditor.OnGetFrameBoundsEvent += OnGetFrameBoundsEvent;
+			ProBuilderMeshEditor.onGetFrameBoundsEvent += OnGetFrameBoundsEvent;
 
 			nearestElement.Clear();
 
@@ -309,7 +309,7 @@ namespace UnityEditor.ProBuilder
 
 			// EditorApplication.delayCall -= this.Close;							// not sure if this is necessary?
 			ProBuilderEditor.selectionUpdated -= OnSelectionUpdate;
-			ProBuilderMeshEditor.OnGetFrameBoundsEvent -= OnGetFrameBoundsEvent;
+			ProBuilderMeshEditor.onGetFrameBoundsEvent -= OnGetFrameBoundsEvent;
 		}
 
 		/**

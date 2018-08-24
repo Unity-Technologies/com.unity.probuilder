@@ -101,7 +101,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			pb.ToMesh();
 			pb.Refresh();
-			pb.Optimize(true);
+			pb.Optimize(pb.HasArrays(MeshArrays.Lightmap));
 
 			string meshPath = AssetDatabase.GenerateUniqueAssetPath(string.Format("{0}/{1}.asset", relativeDirectory, pb.mesh.name));
 

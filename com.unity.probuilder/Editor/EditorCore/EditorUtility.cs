@@ -285,6 +285,11 @@ namespace UnityEditor.ProBuilder
 					break;
 			}
 
+			var unwrapParamaters = PreferencesInternal.GetValue<UnwrapParameters>(PreferenceKeys.defaultUnwrapParameters);
+			
+			if (unwrapParamaters != null)
+				pb.unwrapParameters = unwrapParamaters;
+
 			pb.Optimize();
 
 			if( meshCreated != null )

@@ -67,6 +67,8 @@ namespace UnityEditor.ProBuilder
 		{
 			LoadPrefs();
 
+			EditorGUIUtility.labelWidth = 200f;
+
 			s_SettingsScroll = EditorGUILayout.BeginScrollView(s_SettingsScroll);
 
 			EditorGUI.BeginChangeCheck();
@@ -259,6 +261,8 @@ namespace UnityEditor.ProBuilder
 			// Save the preferences
 			if (EditorGUI.EndChangeCheck())
 				SetPrefs();
+
+			EditorGUIUtility.labelWidth = 0f;
 		}
 
 		public static void ResetToDefaults()
