@@ -279,7 +279,7 @@ namespace UnityEditor.ProBuilder
 			}
 			else if (selection.vertex > -1)
 			{
-				var size = (PreferencesInternal.GetFloat(PreferenceKeys.pbVertexHandleSize) * EditorGUIUtility.pixelsPerPoint) * .0125f;
+				var size = PreferencesInternal.GetFloat(PreferenceKeys.pbVertexHandleSize) * .0125f;
 
 				using (new Handles.DrawingScope(preselectionColor, mesh.transform.localToWorldMatrix))
 				{
