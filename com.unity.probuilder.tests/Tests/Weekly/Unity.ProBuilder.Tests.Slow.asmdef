@@ -2,9 +2,8 @@
     "name": "Unity.ProBuilder.Tests.Slow",
     "references": [
         "Unity.ProBuilder.Tests.Framework",
-        "Unity.ProBuilder.Core",
-        "Unity.ProBuilder.MeshOperations",
-        "Unity.ProBuilder.Editor"
+        "Unity.ProBuilder.Editor",
+        "Unity.ProBuilder"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
