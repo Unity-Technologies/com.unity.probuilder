@@ -27,7 +27,7 @@ namespace UnityEditor.ProBuilder
 				mesh.Optimize();
 			}
 
-			ProBuilderEditor.Refresh(true);
+			ProBuilderEditor.Refresh();
 			SceneView.RepaintAll();
 		}
 

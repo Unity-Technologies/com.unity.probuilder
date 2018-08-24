@@ -109,13 +109,7 @@ namespace UnityEditor.ProBuilder
 		Vector3 m_TextureScale = Vector3.one;
 		Rect m_SceneInfoRect = new Rect(10, 10, 200, 40);
 
-		Edge[][] m_UniversalEdges = new Edge[0][];
 		Vector3 m_HandlePivotWorld = Vector3.zero;
-
-		internal Edge[][] selectedUniversalEdges
-		{
-			get { return m_UniversalEdges; }
-		}
 
 		/// <summary>
 		/// Faces that need to be refreshed when moving or modifying the actual selection
@@ -296,7 +290,7 @@ namespace UnityEditor.ProBuilder
 			// make sure load prefs is called first, because other methods depend on the preferences set here
 			LoadPrefs();
 			InitGUI();
-			UpdateSelection(true);
+			UpdateSelection();
 			HideSelectedWireframe();
 
 			m_FindNearestVertex = typeof(HandleUtility).GetMethod("FindNearestVertex",
@@ -413,11 +407,10 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Rebuild the mesh wireframe and selection caches.
 		/// </summary>
-		/// <param name="vertexCountMayHaveChanged">An optional parameter that allows Refresh to skip some more expensive calculations when rebuilding caches if the vertex count and face layout has not changed.</param>
-		public static void Refresh(bool vertexCountMayHaveChanged = true)
+		public static void Refresh()
 		{
 			if (instance != null)
-				instance.UpdateSelection(vertexCountMayHaveChanged);
+				instance.UpdateSelection();
 		}
 
 		void OnGUI()
@@ -732,7 +725,7 @@ namespace UnityEditor.ProBuilder
 					mesh.SetSelectedFaces(mesh.facesInternal);
 				}
 
-				UpdateSelection(false);
+				UpdateSelection();
 				SceneView.RepaintAll();
 				m_WasDoubleClick = true;
 			}
@@ -1112,7 +1105,7 @@ namespace UnityEditor.ProBuilder
 			if (ef > 0)
 			{
 				EditorUtility.ShowNotification("Extrude");
-				UpdateSelection(true);
+				UpdateSelection();
 			}
 		}
 
@@ -1462,7 +1455,7 @@ namespace UnityEditor.ProBuilder
 				case "Escape":
 					ClearElementSelection();
 					EditorUtility.ShowNotification("Top Level");
-					UpdateSelection(false);
+					UpdateSelection();
 					SetEditLevel(EditLevel.Top);
 					return true;
 
@@ -1630,7 +1623,7 @@ namespace UnityEditor.ProBuilder
 			{
 				case EditLevel.Top:
 					ClearElementSelection();
-					UpdateSelection(true);
+					UpdateSelection();
 
 					MeshSelection.SetSelection(Selection.gameObjects);
 					break;
@@ -1639,12 +1632,12 @@ namespace UnityEditor.ProBuilder
 
 					Tools.current = Tool.None;
 
-					UpdateSelection(false);
+					UpdateSelection();
 					SceneView.RepaintAll();
 					break;
 
 				case EditLevel.Plugin:
-					UpdateSelection(false);
+					UpdateSelection();
 					SceneView.RepaintAll();
 					break;
 
@@ -1676,36 +1669,18 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Rebuild the wireframe selection caches.
 		/// </summary>
-		/// <param name="forceUpdate">Force update if mesh attributes have been added or removed, or the face indexes have been altered.</param>
-		void UpdateSelection(bool forceUpdate = true)
+		void UpdateSelection()
 		{
 			m_SelectedVertexCount = 0;
 			m_SelectedFaceCount = 0;
 			m_SelectedEdgeCount = 0;
 			m_SelectedVertexesCommon = 0;
-			ProBuilderMesh[] t_selection = selection;
 			selection = InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms);
 
 			if (selectedFacesInEditZone != null)
 				selectedFacesInEditZone.Clear();
 			else
 				selectedFacesInEditZone = new Dictionary<ProBuilderMesh, List<Face>>();
-
-			bool selectionEqual = t_selection.SequenceEqual(selection);
-
-			// If the top level selection has changed, update all the heavy cache things
-			// that don't change based on element selction
-			if (forceUpdate || !selectionEqual)
-			{
-				// If updating due to inequal selections, set the forceUpdate to true so some of the functions below
-				// know that these values can be trusted.
-				forceUpdate = true;
-
-				m_UniversalEdges = new Edge[selection.Length][];
-
-				for (int i = 0; i < selection.Length; i++)
-					m_UniversalEdges[i] = selection[i].GetSharedVertexHandleEdges(selection[i].facesInternal.SelectMany(x => x.edges)).ToArray();
-			}
 
 			m_HandlePivotWorld = Vector3.zero;
 
@@ -1975,7 +1950,7 @@ namespace UnityEditor.ProBuilder
 											if (jf.textureGroup == tg)
 												newFaceSection.Add(jf);
 										pb.SetSelectedFaces(newFaceSection.ToArray());
-										UpdateSelection(false);
+										UpdateSelection();
 										break;
 
 									case 1:
@@ -1998,7 +1973,7 @@ namespace UnityEditor.ProBuilder
 		void OnObjectSelectionChanged()
 		{
 			m_Hovering.Clear();
-			UpdateSelection(false);
+			UpdateSelection();
 			HideSelectedWireframe();
 		}
 

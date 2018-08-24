@@ -813,7 +813,7 @@ namespace UnityEditor.ProBuilder
 
 					EditorUtility.ShowNotification("Autostitch");
 
-					ProBuilderEditor.Refresh(false);
+					ProBuilderEditor.Refresh();
 
 					Repaint();
 				}
@@ -1217,7 +1217,7 @@ namespace UnityEditor.ProBuilder
 
 			if (editor)
 			{
-				ProBuilderEditor.Refresh(false);
+				ProBuilderEditor.Refresh();
 				SceneView.RepaintAll();
 			}
 			else
@@ -2467,7 +2467,7 @@ namespace UnityEditor.ProBuilder
 							break;
 					}
 
-					ProBuilderEditor.Refresh(false);
+					ProBuilderEditor.Refresh();
 					SceneView.RepaintAll();
 				}
 			}
@@ -2824,7 +2824,7 @@ namespace UnityEditor.ProBuilder
 					(!x.manualUV && x.textureGroup > 0 && textureGroups.Contains(x.textureGroup)));
 
 				pb.SetSelectedFaces(faces.Union(matches).ToArray());
-				ProBuilderEditor.Refresh(false);
+				ProBuilderEditor.Refresh();
 			}
 		}
 
@@ -2874,7 +2874,7 @@ namespace UnityEditor.ProBuilder
 			{
 				Face[] faces = GetFaces(pb, pb.selectedIndexesInternal);
 				pb.SetSelectedFaces(faces);
-				ProBuilderEditor.Refresh(false);
+				ProBuilderEditor.Refresh();
 			}
 		}
 

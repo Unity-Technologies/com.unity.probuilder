@@ -193,7 +193,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			UnityEditor.EditorUtility.ClearProgressBar();
 			MeshSelection.OnObjectSelectionChanged();
-			ProBuilderEditor.Refresh(true);
+			ProBuilderEditor.Refresh();
 
 			if (i < 1)
 				return new ActionResult(ActionResult.Status.Canceled, "Nothing Selected");

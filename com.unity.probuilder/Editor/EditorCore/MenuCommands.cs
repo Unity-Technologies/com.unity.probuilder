@@ -669,30 +669,31 @@ namespace UnityEditor.ProBuilder
 			int rc = 0;
 			for(int i = 0; i < selection.Length; i++)
 			{
-				ProBuilderMesh pb = selection[i];
+				ProBuilderMesh mesh = selection[i];
 
 				switch(ProBuilderEditor.componentMode)
 				{
 					case ComponentMode.Edge:
 					{
-						int[] perimeter = ElementSelection.GetPerimeterEdges(pb, pb.selectedEdges);
-						pb.SetSelectedEdges( pb.selectedEdges.RemoveAt(perimeter) );
+						int[] perimeter = ElementSelection.GetPerimeterEdges(mesh, mesh.selectedEdges);
+						mesh.SetSelectedEdges( mesh.selectedEdges.RemoveAt(perimeter) );
 						rc += perimeter != null ? perimeter.Length : 0;
 						break;
 					}
 
 					case ComponentMode.Face:
 					{
-						Face[] perimeter = ElementSelection.GetPerimeterFaces(pb, pb.selectedFacesInternal).ToArray();
-						pb.SetSelectedFaces( pb.selectedFacesInternal.Except(perimeter).ToArray() );
+						Face[] perimeter = ElementSelection.GetPerimeterFaces(mesh, mesh.selectedFacesInternal).ToArray();
+						mesh.SetSelectedFaces( mesh.selectedFacesInternal.Except(perimeter).ToArray() );
 						rc += perimeter.Length;
 						break;
 					}
 
 					case ComponentMode.Vertex:
 					{
-						int[] perimeter = ElementSelection.GetPerimeterVertexes(pb, pb.selectedIndexesInternal, editor.selectedUniversalEdges[i]);
-						pb.SetSelectedVertexes( pb.selectedIndexesInternal.RemoveAt(perimeter) );
+						var universalEdges = mesh.GetSharedVertexHandleEdges(mesh.facesInternal.SelectMany(x => x.edges)).ToArray();
+						int[] perimeter = ElementSelection.GetPerimeterVertexes(mesh, mesh.selectedIndexesInternal, universalEdges);
+						mesh.SetSelectedVertexes( mesh.selectedIndexesInternal.RemoveAt(perimeter) );
 						rc += perimeter != null ? perimeter.Length : 0;
 						break;
 					}
@@ -700,7 +701,7 @@ namespace UnityEditor.ProBuilder
 
 			}
 
-			ProBuilderEditor.Refresh(false);
+			ProBuilderEditor.Refresh();
 
 			if( rc > 0 )
 				return new ActionResult(ActionResult.Status.Success, "Shrink Selection");
@@ -765,8 +766,9 @@ namespace UnityEditor.ProBuilder
 
 					for(int i = 0; i < selection.Length; i++)
 					{
+						var universalEdges = selection[i].GetSharedVertexHandleEdges(selection[i].facesInternal.SelectMany(x => x.edges)).ToArray();
 						var universal_selected_edges = EdgeExtension.GetSharedVertexHandleEdges(selection[i], selection[i].selectedEdges).Distinct();
-						Edge[] inverse_universal = Array.FindAll(editor.selectedUniversalEdges[i], x => !universal_selected_edges.Contains(x));
+						Edge[] inverse_universal = Array.FindAll(universalEdges, x => !universal_selected_edges.Contains(x));
 						Edge[] inverse = new Edge[inverse_universal.Length];
 
 						for(int n = 0; n < inverse_universal.Length; n++)
@@ -818,7 +820,7 @@ namespace UnityEditor.ProBuilder
 				pb.SetSelectedEdges( edges );
 			}
 
-			ProBuilderEditor.Refresh(false);
+			ProBuilderEditor.Refresh();
 
 			SceneView.RepaintAll();
 
@@ -853,7 +855,7 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
-			ProBuilderEditor.Refresh(false);
+			ProBuilderEditor.Refresh();
 
 			SceneView.RepaintAll();
 
@@ -1010,7 +1012,7 @@ namespace UnityEditor.ProBuilder
 			if(!editor || selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
 
-			UndoUtility.RegisterCompleteObjectUndo(selection, "Detach Selection to PBO");
+			UndoUtility.RegisterCompleteObjectUndo(selection, "Detach Selection to GameObject");
 
 			int detachedFaceCount = 0;
 			List<GameObject> detached = new List<GameObject>();
@@ -1021,18 +1023,16 @@ namespace UnityEditor.ProBuilder
 					continue;
 
 				// work with face indexes here 'cause copying breaks the face ref
-				int[] primary = pb.selectedFacesInternal.Select(x => System.Array.IndexOf((Array) pb.facesInternal, x)).ToArray();
-
+				var primary = pb.selectedFacesInternal.Select(x => Array.IndexOf(pb.facesInternal, x)).ToArray();
 				detachedFaceCount += primary.Length;
 
-				List<int> inverse_list = new List<int>();
+				List<int> inverse = new List<int>();
+
 				for(int i = 0; i < pb.facesInternal.Length; i++)
-					if(System.Array.IndexOf(primary, i) < 0)
-						inverse_list.Add(i);
+					if(primary.Contains(i))
+						inverse.Add(i);
 
-				int[] inverse = inverse_list.ToArray();
-
-				ProBuilderMesh copy = ((GameObject)GameObject.Instantiate(pb.gameObject)).GetComponent<ProBuilderMesh>();
+				ProBuilderMesh copy = Instantiate(pb.gameObject).GetComponent<ProBuilderMesh>();
 				copy.MakeUnique();
 
 				// if is prefab, break connection and destroy children
@@ -1041,8 +1041,8 @@ namespace UnityEditor.ProBuilder
 
 				if(copy.transform.childCount > 0)
 				{
-					for(int i = 0; i < copy.transform.childCount; ++i)
-						GameObject.DestroyImmediate(copy.transform.GetChild(i).gameObject);
+					for(int i = copy.transform.childCount - 1; i > -1; i--)
+						DestroyImmediate(copy.transform.GetChild(i).gameObject);
 
 					foreach(ProBuilderMesh pb_child in pb.transform.GetComponentsInChildren<ProBuilderMesh>())
 						EditorUtility.SynchronizeWithMeshFilter(pb_child);
@@ -1535,7 +1535,7 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
-			ProBuilderEditor.Refresh(true);
+			ProBuilderEditor.Refresh();
 
 			return result;
 		}
