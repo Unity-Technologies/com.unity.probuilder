@@ -601,15 +601,14 @@ namespace UnityEditor.ProBuilder
 			if(plane_width < 1f)
 				plane_width = 1f;
 
-			plane_height_cuts = EditorGUILayout.IntField("Width Segments", plane_height_cuts);
-
-			if(plane_height_cuts < 0)
-				plane_height_cuts = 0;
-
-			plane_width_cuts = EditorGUILayout.IntField("Length Segments", plane_width_cuts);
+			plane_width_cuts = EditorGUILayout.IntField("Width Segments", plane_height_cuts);
+			plane_height_cuts= EditorGUILayout.IntField("Length Segments", plane_width_cuts);
 
 			if(plane_width_cuts < 0)
 				plane_width_cuts = 0;
+
+			if(plane_height_cuts < 0)
+				plane_height_cuts = 0;
 
 			if( m_ShowPreview && (GUI.changed || m_DoInitPreview) )
 				SetPreviewObject(
