@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.10] - 2018-08-21
+## [4.0.0-preview.11] - 2018-08-27
 
 ### Features
 
@@ -15,12 +15,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Improve the behaviour of vertex and edge selection with hidden faces.
 - Add ability to resize the UV settings window.
 - Dimensions overlay now works with mesh element selections.
+- Update FBX Exporter integration to use version 2.0.0.
+- Improve performance of UV calculation methods.
+- Improve the default UV mapping of sphere primitives.
+- Support new 2018.3 prefab system.
 
 ### Bug Fixes
 
 - Fix regression that broke dragging and dropping GameObjects onto ProBuilder meshes.
-- Fix `Export Asset` not generating UV2 in some cases.
 - Fix Poly Shape and Bezier Shape incorrectly resetting materials to default.
+- Fix `Export` not generating UV2 in some cases.
+- Fix `Export` functions not refreshing the Project view.
+- Fix edge colors not matching preferences.
+- Fix oversized vertex handle pre-selection billboard.
+- Fix `Collapse Vertexes` breaking mesh topology.
 
 ### Changes
 
@@ -28,20 +36,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Face selection highlight is now rendered with both front and back faces.
 - Adding custom actions to the ProBuilder toolbar is now done by registering an attribute.
 - ProBuilder Debug Editor removed.
-
-### Changes since 4.0.0-preview.9
-
-- Update FBX Exporter integration to use version 2.0.0.
-- Improve performance of UV calculation methods.
-- Improve the default UV mapping of sphere primitives.
-- Support new 2018.3 prefab system.
 - Rename `MenuAction::DoAlternativeAction` to `DoAlternateAction`.
-- Fix `Export` functions not refreshing the Project view.
-- Fix edge colors not matching preferences.
-- Fix oversized vertex handle pre-selection billboard.
-- Fix `Collapse Vertexes` breaking mesh topology.
-- Fix face caches not resetting after undo operation
-- Work around `Missing Autodesk.Fbx` errors when FBX Exporter is not in project.
+
+## Changes since 4.0.0-preview.10
+
+- Fix mismatched plane width, height segment fields.
+- Fix ProGrids "Push to Grid" affecting un-selected vertices.
+- Fix `Extrude` incorrectly applying smoothing groups to extruded face sides.
+- Fix `Detach to GameObject` sometimes including children in duplicated `GameObject`.
+- Fix vertex handle pre-selection gizmo drawing 2x larger on scaled screens.
+- Simplify assembly definition files, merging ProBuilder.Core & ProBuilder.MeshOperations to single assembly.
+- Redesigned Lightmap UV workflow now exposes settings on the ProBuilderMesh component, provides a modifiable default value, and is generally smarter about keeping Lightmap UV channels in sync with changes.
+- Fix "UV Overlap" warnings on default shapes when baking GI.
 
 ## [3.0.8] - 2018-05-07
 
