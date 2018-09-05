@@ -6,6 +6,8 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
+
+
 	static class Preferences
 	{
 		static int s_ShortcutIndex = 0;

@@ -1035,9 +1035,11 @@ namespace UnityEditor.ProBuilder
 				ProBuilderMesh copy = Instantiate(pb.gameObject).GetComponent<ProBuilderMesh>();
 				copy.MakeUnique();
 
+#if !UNITY_2018_3_OR_NEWER
 				// if is prefab, break connection and destroy children
 				if( EditorUtility.IsPrefabInstance(copy.gameObject) || EditorUtility.IsPrefabAsset(copy.gameObject) )
 					PrefabUtility.DisconnectPrefabInstance(copy.gameObject);
+#endif
 
 				if(copy.transform.childCount > 0)
 				{
@@ -1059,8 +1061,6 @@ namespace UnityEditor.ProBuilder
 
 				pb.ToMesh();
 				copy.ToMesh();
-
-				// copy.CenterPivot(null);
 
 				pb.Refresh();
 				copy.Refresh();
