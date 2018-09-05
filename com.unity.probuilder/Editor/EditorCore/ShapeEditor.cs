@@ -121,10 +121,6 @@ namespace UnityEditor.ProBuilder
 				SetFaceMaterial(pb.facesInternal, mat);
 				pb.GetComponent<MeshRenderer>().sharedMaterial = mat;
 			}
-			else
-			{
-				Debug.Log("mat is null");
-			}
 
 			EditorUtility.InitObject(pb);
 			EditorUtility.SetPivotAndSnapWithPref(pb, null);

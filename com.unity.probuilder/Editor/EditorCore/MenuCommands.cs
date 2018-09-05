@@ -954,8 +954,6 @@ namespace UnityEditor.ProBuilder
 				return new ActionResult(ActionResult.Status.Failure, "No Faces Selected");
 		}
 
-#if !PROTOTYPE
-
 		public static ActionResult MenuDetachFaces(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
@@ -1003,10 +1001,6 @@ namespace UnityEditor.ProBuilder
 				return new ActionResult(ActionResult.Status.Success, "Detach Faces");
 		}
 
-		/**
-		 * Detaches currently selected faces to a new ProBuilder object.
-		 * ProBuilder only.
-		 */
 		public static ActionResult MenuDetachFacesToObject(ProBuilderMesh[] selection)
 		{
 			if(!editor || selection == null || selection.Length < 1)
@@ -1017,22 +1011,21 @@ namespace UnityEditor.ProBuilder
 			int detachedFaceCount = 0;
 			List<GameObject> detached = new List<GameObject>();
 
-			foreach(ProBuilderMesh pb in selection)
+			foreach(ProBuilderMesh mesh in selection)
 			{
-				if(pb.selectedFaceCount < 1 || pb.selectedFaceCount == pb.facesInternal.Length)
+				if(mesh.selectedFaceCount < 1 || mesh.selectedFaceCount == mesh.facesInternal.Length)
 					continue;
 
-				// work with face indexes here 'cause copying breaks the face ref
-				var primary = pb.selectedFacesInternal.Select(x => Array.IndexOf(pb.facesInternal, x)).ToArray();
+				var primary = mesh.selectedFaceIndexes.ToArray();
 				detachedFaceCount += primary.Length;
 
 				List<int> inverse = new List<int>();
 
-				for(int i = 0; i < pb.facesInternal.Length; i++)
-					if(primary.Contains(i))
+				for(int i = 0; i < mesh.facesInternal.Length; i++)
+					if(!primary.Contains(i))
 						inverse.Add(i);
 
-				ProBuilderMesh copy = Instantiate(pb.gameObject).GetComponent<ProBuilderMesh>();
+				ProBuilderMesh copy = Instantiate(mesh.gameObject).GetComponent<ProBuilderMesh>();
 				copy.MakeUnique();
 
 				// if is prefab, break connection and destroy children
@@ -1044,34 +1037,29 @@ namespace UnityEditor.ProBuilder
 					for(int i = copy.transform.childCount - 1; i > -1; i--)
 						DestroyImmediate(copy.transform.GetChild(i).gameObject);
 
-					foreach(ProBuilderMesh pb_child in pb.transform.GetComponentsInChildren<ProBuilderMesh>())
-						EditorUtility.SynchronizeWithMeshFilter(pb_child);
+					foreach(var child in mesh.transform.GetComponentsInChildren<ProBuilderMesh>())
+						EditorUtility.SynchronizeWithMeshFilter(child);
 				}
 
 				Undo.RegisterCreatedObjectUndo(copy.gameObject, "Detach Selection");
 
-				copy.transform.position = pb.transform.position;
-				copy.transform.localScale = pb.transform.localScale;
-				copy.transform.localRotation = pb.transform.localRotation;
+				copy.transform.position = mesh.transform.position;
+				copy.transform.localScale = mesh.transform.localScale;
+				copy.transform.localRotation = mesh.transform.localRotation;
 
-				pb.DeleteFaces(primary);
+				mesh.DeleteFaces(primary);
 				copy.DeleteFaces(inverse);
 
-				pb.ToMesh();
-				copy.ToMesh();
+				mesh.Rebuild();
+				copy.Rebuild();
 
-				// copy.CenterPivot(null);
-
-				pb.Refresh();
-				copy.Refresh();
-
-				pb.Optimize();
+				mesh.Optimize();
 				copy.Optimize();
 
-				pb.ClearSelection();
+				mesh.ClearSelection();
 				copy.ClearSelection();
 
-				copy.gameObject.name = pb.gameObject.name + "-detach";
+				copy.gameObject.name = mesh.gameObject.name + "-detach";
 				detached.Add(copy.gameObject);
 			}
 
@@ -1086,8 +1074,6 @@ namespace UnityEditor.ProBuilder
 			else
 				return new ActionResult(ActionResult.Status.Failure, "No Faces Selected");
 		}
-
-#endif
 #endregion
 
 #region Face / Triangles
