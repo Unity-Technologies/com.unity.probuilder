@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.11] - 2018-08-27
+## [4.0.0-preview.12] - 2018-05-05
 
 ### Features
 
@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Improve performance of UV calculation methods.
 - Improve the default UV mapping of sphere primitives.
 - Support new 2018.3 prefab system.
+- Redesigned Lightmap UV workflow now exposes settings on the ProBuilderMesh component, provides a modifiable default value, and is generally smarter about keeping Lightmap UV channels in sync with changes.
 
 ### Bug Fixes
 
@@ -29,6 +30,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix edge colors not matching preferences.
 - Fix oversized vertex handle pre-selection billboard.
 - Fix `Collapse Vertices` breaking mesh topology.
+- Fix "UV Overlap" warnings on default shapes when baking GI.
+- Fix mismatched plane width, height segment fields.
+- Fix ProGrids "Push to Grid" affecting un-selected vertices.
+- Fix `Extrude` incorrectly applying smoothing groups to extruded face sides.
+- Fix `Detach to GameObject` sometimes including children in duplicated `GameObject`.
+- Fix vertex handle pre-selection gizmo drawing 2x larger on scaled screens.
 
 ### Changes
 
@@ -37,17 +44,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Adding custom actions to the ProBuilder toolbar is now done by registering an attribute.
 - ProBuilder Debug Editor removed.
 - Rename `MenuAction::DoAlternativeAction` to `DoAlternateAction`.
-
-## Changes since 4.0.0-preview.10
-
-- Fix mismatched plane width, height segment fields.
-- Fix ProGrids "Push to Grid" affecting un-selected vertices.
-- Fix `Extrude` incorrectly applying smoothing groups to extruded face sides.
-- Fix `Detach to GameObject` sometimes including children in duplicated `GameObject`.
-- Fix vertex handle pre-selection gizmo drawing 2x larger on scaled screens.
 - Simplify assembly definition files, merging ProBuilder.Core & ProBuilder.MeshOperations to single assembly.
-- Redesigned Lightmap UV workflow now exposes settings on the ProBuilderMesh component, provides a modifiable default value, and is generally smarter about keeping Lightmap UV channels in sync with changes.
-- Fix "UV Overlap" warnings on default shapes when baking GI.
+
+### Changes since 4.0.0-preview.11
+
+- Rename "vertexes" to "vertices."
+- Fix "Detach to GameObject" deleting the current face selection.
+- Fix deprecated GUID check running on every domain reload.
 
 ## [3.0.8] - 2018-05-07
 
