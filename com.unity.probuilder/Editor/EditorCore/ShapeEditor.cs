@@ -584,12 +584,13 @@ namespace UnityEditor.ProBuilder
 		static float plane_height = 10, plane_width = 10;
 		static int plane_height_cuts = 3, plane_width_cuts = 3;
 		static Axis plane_axis = Axis.Up;
+
 		void PlaneGUI()
 		{
 			plane_axis = (Axis)EditorGUILayout.EnumPopup("Initial Orientation", plane_axis);
 
 			plane_width = EditorGUILayout.FloatField("Width", plane_width);
-			plane_height = EditorGUILayout.FloatField("Height", plane_height);
+			plane_height = EditorGUILayout.FloatField("Length", plane_height);
 
 			if(plane_height < 1f)
 				plane_height = 1f;
@@ -597,8 +598,8 @@ namespace UnityEditor.ProBuilder
 			if(plane_width < 1f)
 				plane_width = 1f;
 
-			plane_width_cuts = EditorGUILayout.IntField("Width Segments", plane_height_cuts);
-			plane_height_cuts= EditorGUILayout.IntField("Length Segments", plane_width_cuts);
+			plane_width_cuts= EditorGUILayout.IntField("Width Segments", plane_width_cuts);
+			plane_height_cuts = EditorGUILayout.IntField("Length Segments", plane_height_cuts);
 
 			if(plane_width_cuts < 0)
 				plane_width_cuts = 0;
