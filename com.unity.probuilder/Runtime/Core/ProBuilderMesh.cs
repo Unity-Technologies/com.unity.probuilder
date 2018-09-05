@@ -30,7 +30,7 @@ namespace UnityEngine.ProBuilder
 
         [SerializeField]
         [FormerlySerializedAs("_sharedIndices")]
-        [FormerlySerializedAs("_sharedVertexes")]
+        [FormerlySerializedAs("m_SharedVertexes")]
         SharedVertex[] m_SharedVertices;
 
 	    [NonSerialized]

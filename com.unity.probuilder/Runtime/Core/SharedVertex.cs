@@ -23,6 +23,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		[SerializeField]
 		[FormerlySerializedAs("array")]
+		[FormerlySerializedAs("m_Vertexes")]
 		int[] m_Vertices;
 
 		internal int[] arrayInternal
