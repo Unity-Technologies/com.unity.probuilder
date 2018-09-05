@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.12] - 2018-05-05
+## [4.0.0-preview.13] - 2018-05-05
 
 ### Features
 
@@ -45,6 +45,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - ProBuilder Debug Editor removed.
 - Rename `MenuAction::DoAlternativeAction` to `DoAlternateAction`.
 - Simplify assembly definition files, merging ProBuilder.Core & ProBuilder.MeshOperations to single assembly.
+
+### Changes since 4.0.0-preview.12
+
+- Fix regression that broke editing older ProBuilder meshes.
 
 ### Changes since 4.0.0-preview.11
 
