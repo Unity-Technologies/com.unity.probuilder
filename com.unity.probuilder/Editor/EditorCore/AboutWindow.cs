@@ -38,7 +38,7 @@ namespace UnityEditor.ProBuilder
 		internal const string k_FontRegular = "Asap-Regular.otf";
 		internal const string k_FontMedium = "Asap-Medium.otf";
 
-		// Use less contast-y white and black font colors for better readabililty
+		// Use less contrast-y white and black font colors for better readability
 		public static readonly Color k_FontWhite = HexToColor(0xCECECE);
 		public static readonly Color k_FontBlack = HexToColor(0x545454);
 		public static readonly Color k_FontBlueNormal = HexToColor(0x00AAEF);
@@ -146,8 +146,8 @@ namespace UnityEditor.ProBuilder
 			bool isNewVersion = !PreferencesInternal.GetString(k_AboutWindowVersionPref).Equals(currentVersionString, StringComparison.OrdinalIgnoreCase);
 			PreferencesInternal.SetString(k_AboutWindowVersionPref, currentVersionString, PreferenceLocation.Global);
 
-			bool assetStoreInstallFound = PackageImporter.IsPreProBuilder4InProject();
-			bool deprecatedGuidsFound = PackageImporter.DoesProjectContainDeprecatedGUIDs();
+			bool assetStoreInstallFound = isNewVersion && PackageImporter.IsPreProBuilder4InProject();
+			bool deprecatedGuidsFound = isNewVersion && PackageImporter.DoesProjectContainDeprecatedGUIDs();
 
 			const string k_AssetStoreUpgradeTitle = "Old ProBuilder Install Found in Assets";
 			const string k_AssetStoreUpgradeDialog = "The Asset Store version of ProBuilder is incompatible with Package Manager. Would you like to convert your project to the Package Manager version of ProBuilder?";
