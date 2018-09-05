@@ -13,7 +13,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Edge
 		{
 			var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
 			cube.DeleteFace(cube.faces[0]);
-			var holes = ElementSelection.FindHoles(cube, cube.sharedVertexesInternal.Select(x => x[0]));
+			var holes = ElementSelection.FindHoles(cube, cube.sharedVerticesInternal.Select(x => x[0]));
 			Assert.AreEqual(1, holes.Count, "found exactly 1 hole");
 			var bridgedFace = cube.Bridge(holes[0][0], holes[0][2]);
 			Assert.IsNotNull(bridgedFace);
@@ -37,7 +37,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Edge
 		{
 			var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
 			cube.DeleteFace(cube.faces[0]);
-			var holes = ElementSelection.FindHoles(cube, cube.sharedVertexesInternal.Select(x => x[0]));
+			var holes = ElementSelection.FindHoles(cube, cube.sharedVerticesInternal.Select(x => x[0]));
 			Assert.AreEqual(1, holes.Count, "found exactly 1 hole");
 			var bridgedFace = cube.Bridge(holes[0][0], holes[0][1]);
 			Assert.IsNotNull(bridgedFace);

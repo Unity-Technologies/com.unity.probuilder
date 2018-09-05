@@ -147,7 +147,7 @@ namespace UnityEditor.ProBuilder
 				MeshArrays attribs = MeshArrays.Position | MeshArrays.Normal | MeshArrays.Texture0;
 				if (options.vertexColors)
 					attribs = attribs | MeshArrays.Color;
-				Vertex.GetArrays(model.vertexes, out positions, out colors, out textures0, out normals, out tangent, out uv2, out uv3, out uv4, attribs);
+				Vertex.GetArrays(model.vertices, out positions, out colors, out textures0, out normals, out tangent, out uv2, out uv3, out uv4, attribs);
 
 				// Can skip this entirely if handedness matches Unity & not applying transforms.
 				// matrix is set to identity if not applying transforms.

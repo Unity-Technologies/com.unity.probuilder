@@ -126,11 +126,11 @@ namespace UnityEditor.ProBuilder
 		// All selected pb_Objects
 		internal ProBuilderMesh[] selection = new ProBuilderMesh[0];
 
-		// Sum of all vertexes selected
+		// Sum of all vertices selected
 		int m_SelectedVertexCount;
 
-		// Sum of all vertexes selected, not counting duplicates on common positions
-		int m_SelectedVertexesCommon;
+		// Sum of all vertices selected, not counting duplicates on common positions
+		int m_SelectedVerticesCommon;
 
 		// Sum of all faces selected
 		int m_SelectedFaceCount;
@@ -139,7 +139,7 @@ namespace UnityEditor.ProBuilder
 		int m_SelectedEdgeCount;
 
 		internal int selectedVertexCount { get { return m_SelectedVertexCount; } }
-		internal int selectedVertexCommonCount { get { return m_SelectedVertexesCommon; } }
+		internal int selectedVertexCommonCount { get { return m_SelectedVerticesCommon; } }
 		internal int selectedFaceCount { get { return m_SelectedFaceCount; } }
 		internal int selectedEdgeCount { get { return m_SelectedEdgeCount; } }
 
@@ -548,7 +548,7 @@ namespace UnityEditor.ProBuilder
 					m_CurrentEvent.Use();
 			}
 
-			// Finished moving vertexes, scaling, or adjusting uvs
+			// Finished moving vertices, scaling, or adjusting uvs
 			if ((m_IsMovingElements || m_IsMovingTextures) && GUIUtility.hotControl < 1)
 			{
 				OnFinishVertexModification();
@@ -621,7 +621,7 @@ namespace UnityEditor.ProBuilder
 			}
 
 			// This prevents us from selecting other objects in the scene,
-			// and allows for the selection of faces / vertexes.
+			// and allows for the selection of faces / vertices.
 			int controlID = GUIUtility.GetControlID(FocusType.Passive);
 			HandleUtility.AddDefaultControl(controlID);
 
@@ -819,7 +819,7 @@ namespace UnityEditor.ProBuilder
 				{
 					var mesh = selection[i];
 
-					mesh.TranslateVertexesInWorldSpace(mesh.selectedIndexesInternal,
+					mesh.TranslateVerticesInWorldSpace(mesh.selectedIndexesInternal,
 						diff,
 						m_SnapEnabled ? m_SnapValue : 0f,
 						m_SnapAxisConstraint);
@@ -880,7 +880,7 @@ namespace UnityEditor.ProBuilder
 				bool gotoLocal = m_SelectedFaceCount < 1;
 
 				// if(pref_snapEnabled)
-				// 	pbUndo.RecordSelection(selection as Object[], "Move vertexes");
+				// 	pbUndo.RecordSelection(selection as Object[], "Move vertices");
 
 				for (int i = 0; i < selection.Length; i++)
 				{
@@ -904,7 +904,7 @@ namespace UnityEditor.ProBuilder
 								if (gotoLocal)
 									goto case HandleAlignment.Local;
 
-								// move center of vertexes to 0,0,0 and set rotation as close to identity as possible
+								// move center of vertices to 0,0,0 and set rotation as close to identity as possible
 								over = Quaternion.Inverse(localRot) * (m_VertexPositions[i][n] - m_VertexOffset[i]);
 
 								// apply scale
@@ -917,7 +917,7 @@ namespace UnityEditor.ProBuilder
 								// re-apply world position offset
 								ver += m_VertexOffset[i];
 
-								mesh.GetCoincidentVertexes(mesh.selectedIndexesInternal[n], coincident);
+								mesh.GetCoincidentVertices(mesh.selectedIndexesInternal[n], coincident);
 
 								for (int t = 0, c = coincident.Count; t < c; t++)
 									v[coincident[t]] = ver;
@@ -936,7 +936,7 @@ namespace UnityEditor.ProBuilder
 								ver += m_VertexOffset[i];
 								// set vertex in local space on pb-Object
 
-								mesh.GetCoincidentVertexes(mesh.selectedIndexesInternal[n], coincident);
+								mesh.GetCoincidentVertices(mesh.selectedIndexesInternal[n], coincident);
 
 								for (int t = 0, c = coincident.Count; t < c; t++)
 									v[coincident[t]] = ver;
@@ -993,12 +993,12 @@ namespace UnityEditor.ProBuilder
 
 					for (int i = 0; i < selection.Length; i++)
 					{
-						Vector3[] vertexes = selection[i].positionsInternal;
+						Vector3[] vertices = selection[i].positionsInternal;
 						int[] triangles = selection[i].selectedIndexesInternal;
 						m_VertexPositions[i] = new Vector3[triangles.Length];
 
 						for (int nn = 0; nn < triangles.Length; nn++)
-							m_VertexPositions[i][nn] = selection[i].transform.TransformPoint(vertexes[triangles[nn]]);
+							m_VertexPositions[i][nn] = selection[i].transform.TransformPoint(vertices[triangles[nn]]);
 
 						if (handleAlignment == HandleAlignment.World)
 							m_VertexOffset[i] = m_ElementHandlePosition;
@@ -1015,7 +1015,7 @@ namespace UnityEditor.ProBuilder
 				for (int i = 0; i < selection.Length; i++)
 				{
 					Vector3[] v = selection[i].positionsInternal;
-					SharedVertex[] sharedIndexes = selection[i].sharedVertexesInternal;
+					SharedVertex[] sharedIndexes = selection[i].sharedVerticesInternal;
 
 					Quaternion lr = m_RotationInitial; // selection[0].transform.localRotation;
 					Quaternion ilr = m_RotationInitialInverse; // Quaternion.Inverse(lr);
@@ -1031,7 +1031,7 @@ namespace UnityEditor.ProBuilder
 						// move vertex back to locally offset position
 						ver = (lr * ver) + m_VertexOffset[i];
 
-						selection[i].GetCoincidentVertexes(selection[i].selectedIndexesInternal[n], coincident);
+						selection[i].GetCoincidentVertices(selection[i].selectedIndexesInternal[n], coincident);
 
 						for (int t = 0, c = coincident.Count; t < c; t++)
 							v[coincident[t]] = selection[i].transform.InverseTransformPoint(ver);
@@ -1064,7 +1064,7 @@ namespace UnityEditor.ProBuilder
 			foreach (ProBuilderMesh pb in selection)
 			{
 				// @todo - If caching normals, remove this 'ToMesh' and move
-				Undo.RegisterCompleteObjectUndo(selection, "Extrude Vertexes");
+				Undo.RegisterCompleteObjectUndo(selection, "Extrude Vertices");
 
 				switch (componentMode)
 				{
@@ -1473,7 +1473,7 @@ namespace UnityEditor.ProBuilder
 							break;
 
 						case ComponentMode.Vertex:
-							EditorUtility.ShowNotification("Editing Vertexes");
+							EditorUtility.ShowNotification("Editing Vertices");
 							break;
 
 						case ComponentMode.Edge:
@@ -1674,7 +1674,7 @@ namespace UnityEditor.ProBuilder
 			m_SelectedVertexCount = 0;
 			m_SelectedFaceCount = 0;
 			m_SelectedEdgeCount = 0;
-			m_SelectedVertexesCommon = 0;
+			m_SelectedVerticesCommon = 0;
 			selection = InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms);
 
 			if (selectedFacesInEditZone != null)
@@ -1716,7 +1716,7 @@ namespace UnityEditor.ProBuilder
 						}
 					}
 
-					m_SelectedVertexesCommon += used.Count;
+					m_SelectedVerticesCommon += used.Count;
 				}
 
 				selectedFacesInEditZone.Add(mesh, ElementSelection.GetNeighborFaces(mesh, mesh.selectedIndexesInternal));
@@ -1751,14 +1751,14 @@ namespace UnityEditor.ProBuilder
 		void UpdateSceneInfo()
 		{
 			m_SceneInfo.text = string.Format(
-				"Faces: <b>{0}</b>\nTriangles: <b>{1}</b>\nVertexes: <b>{2} ({3})</b>\n\nSelected Faces: <b>{4}</b>\nSelected Edges: <b>{5}</b>\nSelected Vertexes: <b>{6} ({7})</b>",
+				"Faces: <b>{0}</b>\nTriangles: <b>{1}</b>\nVertices: <b>{2} ({3})</b>\n\nSelected Faces: <b>{4}</b>\nSelected Edges: <b>{5}</b>\nSelected Vertices: <b>{6} ({7})</b>",
 				MeshSelection.totalFaceCount,
 				MeshSelection.totalTriangleCountCompiled,
 				MeshSelection.totalCommonVertexCount,
 				MeshSelection.totalVertexCountOptimized,
 				m_SelectedFaceCount,
 				m_SelectedEdgeCount,
-				m_SelectedVertexesCommon,
+				m_SelectedVerticesCommon,
 				m_SelectedVertexCount);
 		}
 
@@ -2006,8 +2006,8 @@ namespace UnityEditor.ProBuilder
 				if (mesh.selectedVertexCount < 1)
 					continue;
 
-				var indexes = mesh.GetCoincidentVertexes(mesh.selectedIndexesInternal);
-				Snapping.SnapVertexes(mesh, indexes, Vector3.one * snapVal);
+				var indexes = mesh.GetCoincidentVertices(mesh.selectedIndexesInternal);
+				Snapping.SnapVertices(mesh, indexes, Vector3.one * snapVal);
 
 				mesh.ToMesh();
 				mesh.Refresh();
@@ -2034,26 +2034,26 @@ namespace UnityEditor.ProBuilder
 
 		/// <summary>
 		/// When beginning a vertex modification, nuke the UV2 and rebuild the mesh using PB data so that triangles
-		/// match vertexes (and no inserted vertexes from the Unwrapping.GenerateSecondaryUVSet() remain).
+		/// match vertices (and no inserted vertices from the Unwrapping.GenerateSecondaryUVSet() remain).
 		/// </summary>
 		void OnBeginVertexMovement()
 		{
 			switch (m_CurrentTool)
 			{
 				case Tool.Move:
-					UndoUtility.RegisterCompleteObjectUndo(selection, "Translate Vertexes");
+					UndoUtility.RegisterCompleteObjectUndo(selection, "Translate Vertices");
 					break;
 
 				case Tool.Rotate:
-					UndoUtility.RegisterCompleteObjectUndo(selection, "Rotate Vertexes");
+					UndoUtility.RegisterCompleteObjectUndo(selection, "Rotate Vertices");
 					break;
 
 				case Tool.Scale:
-					UndoUtility.RegisterCompleteObjectUndo(selection, "Scale Vertexes");
+					UndoUtility.RegisterCompleteObjectUndo(selection, "Scale Vertices");
 					break;
 
 				default:
-					UndoUtility.RegisterCompleteObjectUndo(selection, "Modify Vertexes");
+					UndoUtility.RegisterCompleteObjectUndo(selection, "Modify Vertices");
 					break;
 			}
 

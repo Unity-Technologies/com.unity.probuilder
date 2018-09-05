@@ -558,7 +558,7 @@ namespace UnityEditor.ProBuilder
 
 		/**
 		 * Automatically select textureGroup buddies, and copy origins of all UVs.
-		 * Also resets the mesh to PB data, removing vertexes appended by
+		 * Also resets the mesh to PB data, removing vertices appended by
 		 * UV2 generation.
 		 */
 		internal void OnBeginUVModification()
@@ -1864,7 +1864,7 @@ namespace UnityEditor.ProBuilder
 			r.width = DOT_SIZE;
 			r.height = DOT_SIZE;
 
-			// Draw all vertexes if in vertex mode
+			// Draw all vertices if in vertex mode
 			if (selectionMode == ComponentMode.Vertex && screenshotStatus == ScreenshotStatus.Done)
 			{
 				for (int i = 0; i < selection.Length; i++)
@@ -2394,7 +2394,7 @@ namespace UnityEditor.ProBuilder
 								}
 							}
 
-							pb.SetSelectedVertexes(selectedTris.ToArray());
+							pb.SetSelectedVertices(selectedTris.ToArray());
 							break;
 
 						case ComponentMode.Edge:
@@ -2589,7 +2589,7 @@ namespace UnityEditor.ProBuilder
 				if (t_channel == 0)
 				{
 					foreach (ProBuilderMesh pb in selection)
-						pb.SetSelectedVertexes(new int[0] { });
+						pb.SetSelectedVertices(new int[0] { });
 				}
 
 				RefreshUVCoordinates();
@@ -2739,7 +2739,7 @@ namespace UnityEditor.ProBuilder
 
 			GUI.enabled = selectedUVCount > 1;
 
-			tool_weldButton = UI.EditorGUIUtility.ToolSettingsGUI("Weld", "Merge selected vertexes that are within a specified distance of one another.",
+			tool_weldButton = UI.EditorGUIUtility.ToolSettingsGUI("Weld", "Merge selected vertices that are within a specified distance of one another.",
 				tool_weldButton,
 				Menu_SewUVs,
 				WeldButtonGUI,
@@ -2783,7 +2783,7 @@ namespace UnityEditor.ProBuilder
 			if (weldDistance <= k_MinimumSewUVDistance)
 				weldDistance = k_MinimumSewUVDistance;
 
-			weldDistance = EditorGUILayout.FloatField(new GUIContent("Max", "The maximum distance between two vertexes in order to be welded together."), weldDistance);
+			weldDistance = EditorGUILayout.FloatField(new GUIContent("Max", "The maximum distance between two vertices in order to be welded together."), weldDistance);
 
 			if (EditorGUI.EndChangeCheck())
 			{

@@ -9,7 +9,7 @@ using EditorStyles = UnityEditor.EditorStyles;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	sealed class WeldVertexes : MenuAction
+	sealed class WeldVertices : MenuAction
 	{
 		public override ToolbarGroup group
 		{
@@ -28,8 +28,8 @@ namespace UnityEditor.ProBuilder.Actions
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
-			"Weld Vertexes",
-			@"Searches the current selection for vertexes that are within the specified distance of on another and merges them into a single vertex.",
+			"Weld Vertices",
+			@"Searches the current selection for vertices that are within the specified distance of on another and merges them into a single vertex.",
 			keyCommandAlt, 'V'
 		);
 
@@ -59,7 +59,7 @@ namespace UnityEditor.ProBuilder.Actions
 			get { return MenuActionState.VisibleAndEnabled; }
 		}
 
-		static readonly GUIContent gc_weldDistance = new GUIContent("Weld Distance", "The maximum distance between two vertexes in order to be welded together.");
+		static readonly GUIContent gc_weldDistance = new GUIContent("Weld Distance", "The maximum distance between two vertices in order to be welded together.");
 		const float k_MinWeldDistance = .00001f;
 
 		protected override void OnSettingsGUI()
@@ -84,13 +84,13 @@ namespace UnityEditor.ProBuilder.Actions
 
 			GUILayout.FlexibleSpace();
 
-			if (GUILayout.Button("Weld Vertexes"))
+			if (GUILayout.Button("Weld Vertices"))
 				DoAction();
 		}
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuWeldVertexes(MeshSelection.TopInternal());
+			return MenuCommands.MenuWeldVertices(MeshSelection.TopInternal());
 		}
 	}
 }

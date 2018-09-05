@@ -13,7 +13,7 @@ namespace UnityEngine.ProBuilder
 	/// Defines associations between vertex positions that are coincident. The indexes stored in this collection correspond to the ProBuilderMesh.positions array.
 	/// <br />
 	/// <br />
-	/// Coincident vertexes are vertexes that despite sharing the same coordinate position, are separate entries in the vertex array.
+	/// Coincident vertices are vertices that despite sharing the same coordinate position, are separate entries in the vertex array.
 	/// </summary>
 	[Serializable]
 	public sealed class SharedVertex : ICollection<int>
@@ -23,11 +23,11 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		[SerializeField]
 		[FormerlySerializedAs("array")]
-		int[] m_Vertexes;
+		int[] m_Vertices;
 
 		internal int[] arrayInternal
 		{
-			get { return m_Vertexes; }
+			get { return m_Vertices; }
 		}
 
 		/// <summary>
@@ -38,7 +38,7 @@ namespace UnityEngine.ProBuilder
 		{
 			if (indexes == null)
 				throw new ArgumentNullException("indexes");
-			m_Vertexes = indexes.ToArray();
+			m_Vertices = indexes.ToArray();
 		}
 
 		/// <summary>
@@ -49,8 +49,8 @@ namespace UnityEngine.ProBuilder
 		{
 			if (sharedVertex == null)
 				throw new ArgumentNullException("sharedVertex");
-			m_Vertexes = new int[sharedVertex.Count];
-			Array.Copy(sharedVertex.m_Vertexes, m_Vertexes, m_Vertexes.Length);
+			m_Vertices = new int[sharedVertex.Count];
+			Array.Copy(sharedVertex.m_Vertices, m_Vertices, m_Vertices.Length);
 		}
 
 		/// <summary>
@@ -59,20 +59,20 @@ namespace UnityEngine.ProBuilder
 		/// <param name="i">The index to access.</param>
 		public int this[int i]
 		{
-			get { return m_Vertexes[i]; }
-			set { m_Vertexes[i] = value; }
+			get { return m_Vertices[i]; }
+			set { m_Vertices[i] = value; }
 		}
 
 		/// <inheritdoc />
 		public IEnumerator<int> GetEnumerator()
 		{
-			return ((IEnumerable<int>) m_Vertexes).GetEnumerator();
+			return ((IEnumerable<int>) m_Vertices).GetEnumerator();
 		}
 
 		/// <inheritdoc />
 		public override string ToString()
 		{
-			return m_Vertexes.ToString(",");
+			return m_Vertices.ToString(",");
 		}
 
 		/// <inheritdoc />
@@ -84,55 +84,55 @@ namespace UnityEngine.ProBuilder
 		/// <inheritdoc />
 		public void Add(int item)
 		{
-			m_Vertexes = ArrayUtility.Add(m_Vertexes, item);
+			m_Vertices = ArrayUtility.Add(m_Vertices, item);
 		}
 
 		/// <inheritdoc />
 		public void Clear()
 		{
-			m_Vertexes = new int[0];
+			m_Vertices = new int[0];
 		}
 
 		/// <inheritdoc />
 		public bool Contains(int item)
 		{
-			return Array.IndexOf(m_Vertexes, item) > -1;
+			return Array.IndexOf(m_Vertices, item) > -1;
 		}
 
 		/// <inheritdoc />
 		public void CopyTo(int[] array, int arrayIndex)
 		{
-			m_Vertexes.CopyTo(array, arrayIndex);
+			m_Vertices.CopyTo(array, arrayIndex);
 		}
 
 		/// <inheritdoc />
 		public bool Remove(int item)
 		{
-			int ind = Array.IndexOf(m_Vertexes, item);
+			int ind = Array.IndexOf(m_Vertices, item);
 			if (ind < 0)
 				return false;
-			m_Vertexes = m_Vertexes.RemoveAt(item);
+			m_Vertices = m_Vertices.RemoveAt(item);
 			return true;
 		}
 
 		/// <inheritdoc />
 		public int Count
 		{
-			get { return m_Vertexes.Length; }
+			get { return m_Vertices.Length; }
 		}
 
 		/// <inheritdoc />
 		public bool IsReadOnly
 		{
-			get { return m_Vertexes.IsReadOnly; }
+			get { return m_Vertices.IsReadOnly; }
 		}
 
-		internal static void GetSharedVertexLookup(IEnumerable<SharedVertex> sharedVertexes, Dictionary<int, int> lookup)
+		internal static void GetSharedVertexLookup(IEnumerable<SharedVertex> sharedVertices, Dictionary<int, int> lookup)
 		{
 			lookup.Clear();
 			int commonIndex = 0;
 
-			foreach (var common in sharedVertexes)
+			foreach (var common in sharedVertices)
 			{
 				foreach (var index in common)
 				{
@@ -147,7 +147,7 @@ namespace UnityEngine.ProBuilder
 		internal void ShiftIndexes(int offset)
 		{
 			for (int i = 0, c = Count; i < c; i++)
-				m_Vertexes[i] += offset;
+				m_Vertices[i] += offset;
 		}
 
 		/// <summary>
@@ -155,7 +155,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="lookup">A Dictionary where Key corresponds to a vertex index, and Value to a common index.</param>
 		/// <returns>A new IntArray[] converted from the lookup dictionary.</returns>
-		internal static SharedVertex[] ToSharedVertexes(IEnumerable<KeyValuePair<int, int>> lookup)
+		internal static SharedVertex[] ToSharedVertices(IEnumerable<KeyValuePair<int, int>> lookup)
 		{
 			if(lookup == null)
 				return new SharedVertex[0];
@@ -185,10 +185,10 @@ namespace UnityEngine.ProBuilder
 				}
 			}
 
-			return ToSharedVertexes(shared);
+			return ToSharedVertices(shared);
 		}
 
-		static SharedVertex[] ToSharedVertexes(List<List<int>> list)
+		static SharedVertex[] ToSharedVertices(List<List<int>> list)
 		{
             if (list == null)
                 throw new ArgumentNullException("list");
@@ -206,12 +206,12 @@ namespace UnityEngine.ProBuilder
 		/// <![CDATA[var mesh = gameObject.AdComponent<ProBuilderMesh>();]]>
 		/// mesh.SetPositions(myNewPositions);
 		/// mesh.SetFaces(myNewFaces);
-		/// mesh.SetSharedIndexes(SharedVertex.GetSharedVertexesWithPositions(myNewPositions));
+		/// mesh.SetSharedIndexes(SharedVertex.GetSharedVerticesWithPositions(myNewPositions));
 		/// ```
 		/// </example>
 		/// <param name="positions">A collection of Vector3 positions to be tested for equality.</param>
 		/// <returns>A new SharedVertex[] where each SharedIndex is a list of indexes that are sharing the same position.</returns>
-		public static SharedVertex[] GetSharedVertexesWithPositions(IList<Vector3> positions)
+		public static SharedVertex[] GetSharedVerticesWithPositions(IList<Vector3> positions)
 		{
             if (positions == null)
                 throw new ArgumentNullException("positions");
@@ -238,9 +238,9 @@ namespace UnityEngine.ProBuilder
 
 		internal static SharedVertex[] RemoveAndShift(Dictionary<int, int> lookup, IEnumerable<int> remove)
 		{
-			var removedVertexes = new List<int>(remove);
-			removedVertexes.Sort();
-			return SortedRemoveAndShift(lookup, removedVertexes);
+			var removedVertices = new List<int>(remove);
+			removedVertices.Sort();
+			return SortedRemoveAndShift(lookup, removedVertices);
 		}
 
 		internal static SharedVertex[] SortedRemoveAndShift(Dictionary<int, int> lookup, List<int> remove)
@@ -248,7 +248,7 @@ namespace UnityEngine.ProBuilder
 			foreach(int i in remove)
 				lookup[i] = -1;
 
-			var shared = ToSharedVertexes(lookup.Where(x => x.Value > -1));
+			var shared = ToSharedVertices(lookup.Where(x => x.Value > -1));
 
 			for(int i = 0, c = shared.Length; i < c; i++)
 			{
@@ -263,10 +263,10 @@ namespace UnityEngine.ProBuilder
 			return shared;
 		}
 
-		internal static void SetCoincident(ref Dictionary<int, int> lookup, IEnumerable<int> vertexes)
+		internal static void SetCoincident(ref Dictionary<int, int> lookup, IEnumerable<int> vertices)
 		{
 			int index = lookup.Count;
-			foreach (var v in vertexes)
+			foreach (var v in vertices)
 				lookup[v] = index;
 		}
 	}

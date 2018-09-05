@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder.Actions
 		private static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Select Holes",
-			"Selects holes on the mesh.\n\nUses the current element selection, or tests the whole mesh if no edges or vertexes are selected."
+			"Selects holes on the mesh.\n\nUses the current element selection, or tests the whole mesh if no edges or vertices are selected."
 		);
 
 		public override bool enabled

@@ -214,7 +214,7 @@ namespace UnityEditor.ProBuilder
 						{
 							Color[] colors = mesh.GetColors();
 
-							foreach (int i in mesh.GetCoincidentVertexes(mesh.selectedIndexesInternal))
+							foreach (int i in mesh.GetCoincidentVertices(mesh.selectedIndexesInternal))
 								colors[i] = col;
 
 							mesh.colors = colors;

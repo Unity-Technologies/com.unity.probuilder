@@ -1021,7 +1021,7 @@ namespace UnityEditor.ProBuilder
 		void CustomGUI()
 		{
 			GUILayout.Label("Custom Geometry", EditorStyles.boldLabel);
-			EditorGUILayout.HelpBox("Vertexes must be wound in faces, and counter-clockwise.\n(Think horizontally reversed Z)", MessageType.Info);
+			EditorGUILayout.HelpBox("Vertices must be wound in faces, and counter-clockwise.\n(Think horizontally reversed Z)", MessageType.Info);
 
 			scrollbar = GUILayout.BeginScrollView(scrollbar);
 				verts = EditorGUILayout.TextArea(verts, GUILayout.MinHeight(160));
@@ -1080,7 +1080,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		void SetPreviewObject(ProBuilderMesh pb, int[] vertexes = null)
+		void SetPreviewObject(ProBuilderMesh pb, int[] vertices = null)
 		{
 			pb.selectable = false;
 
@@ -1098,7 +1098,7 @@ namespace UnityEditor.ProBuilder
 			m_PreviewObject = pb.gameObject;
 
 			if(PreferencesInternal.GetBool(PreferenceKeys.pbForceGridPivot))
-				pb.CenterPivot(vertexes == null ? new int[1]{0} : vertexes);
+				pb.CenterPivot(vertices == null ? new int[1]{0} : vertices);
 
 			if(prevTransform)
 			{

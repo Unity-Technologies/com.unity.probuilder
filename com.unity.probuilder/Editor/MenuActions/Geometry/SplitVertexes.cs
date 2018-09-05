@@ -7,7 +7,7 @@ using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	sealed class SplitVertexes : MenuAction
+	sealed class SplitVertices : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Vert_Split", IconSkin.Pro); } }
@@ -15,8 +15,8 @@ namespace UnityEditor.ProBuilder.Actions
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
-			"Split Vertexes",
-			@"Disconnects vertexes that share the same position in space so that they may be moved independently of one another.",
+			"Split Vertices",
+			@"Disconnects vertices that share the same position in space so that they may be moved independently of one another.",
 			keyCommandAlt, 'X'
 		);
 
@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuSplitVertexes(MeshSelection.TopInternal());
+			return MenuCommands.MenuSplitVertices(MeshSelection.TopInternal());
 		}
 	}
 }

@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix `Export` functions not refreshing the Project view.
 - Fix edge colors not matching preferences.
 - Fix oversized vertex handle pre-selection billboard.
-- Fix `Collapse Vertexes` breaking mesh topology.
+- Fix `Collapse Vertices` breaking mesh topology.
 
 ### Changes
 

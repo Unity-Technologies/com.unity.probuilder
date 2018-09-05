@@ -19,7 +19,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		Object = 1 << 0,
 		/// <summary>
-		/// Vertexes are selectable.
+		/// Vertices are selectable.
 		/// </summary>
 		Vertex = 1 << 1,
 		/// <summary>
@@ -42,7 +42,7 @@ namespace UnityEngine.ProBuilder
 	enum ComponentMode
 	{
 		/// <summary>
-		/// Vertexes are selectable.
+		/// Vertices are selectable.
 		/// </summary>
 		Vertex = 0x0,
 		/// <summary>
@@ -65,7 +65,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		Top = 0,
 		/// <summary>
-		/// The current tool interacts with mesh geometry (faces, edges, vertexes).
+		/// The current tool interacts with mesh geometry (faces, edges, vertices).
 		/// </summary>
 		Geometry = 1,
 		/// <summary>
@@ -200,11 +200,11 @@ namespace UnityEngine.ProBuilder
 	public enum SortMethod
 	{
 		/// <summary>
-		/// Order the vertexes clockwise.
+		/// Order the vertices clockwise.
 		/// </summary>
 		Clockwise,
 		/// <summary>
-		/// Order the vertexes counter-clockwise.
+		/// Order the vertices counter-clockwise.
 		/// </summary>
 		CounterClockwise
 	};

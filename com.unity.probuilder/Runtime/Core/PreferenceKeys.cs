@@ -131,7 +131,7 @@ namespace UnityEngine.ProBuilder
 		internal const string pbLineHandleSize = "pbLineHandleSize";
 		internal const string pbWireframeSize = "pbWireframeSize";
 
-		/// The maximum allowed distance between vertexes to weld.
+		/// The maximum allowed distance between vertices to weld.
 		internal const string pbWeldDistance = "pbWeldDistance";
 
 		internal const string pbExtrudeDistance = "pbExtrudeDistance";

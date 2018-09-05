@@ -94,7 +94,7 @@ namespace UnityEditor.ProBuilder
 		}
 
 		/// <value>
-		/// Get the number of all selected vertexes across the selected ProBuilder meshes.
+		/// Get the number of all selected vertices across the selected ProBuilder meshes.
 		/// </value>
 		/// <remarks>
 		/// This is the ProBuilderMesh.vertexCount, not UnityEngine.Mesh.vertexCount. To get the optimized mesh vertex count,
@@ -103,7 +103,7 @@ namespace UnityEditor.ProBuilder
 		public static int totalVertexCount { get { RebuildElementCounts(); return s_TotalVertexCount; } }
 
 		/// <value>
-		/// Get the number of all selected vertexes across the selected ProBuilder meshes, excluding coincident duplicates.
+		/// Get the number of all selected vertices across the selected ProBuilder meshes, excluding coincident duplicates.
 		/// </value>
 		public static int totalCommonVertexCount { get { RebuildElementCounts(); return s_TotalCommonVertexCount; } }
 
@@ -127,7 +127,7 @@ namespace UnityEditor.ProBuilder
 			try
 			{
 				s_TotalVertexCount = TopInternal().Sum(x => x.vertexCount);
-				s_TotalCommonVertexCount = TopInternal().Sum(x => x.sharedVertexesInternal.Length);
+				s_TotalCommonVertexCount = TopInternal().Sum(x => x.sharedVerticesInternal.Length);
 				s_TotalVertexCountCompiled = TopInternal().Sum(x => x.mesh == null ? 0 : x.mesh.vertexCount);
 				s_TotalFaceCount = TopInternal().Sum(x => x.faceCount);
 				s_TotalTriangleCountCompiled = TopInternal().Sum(x => (int) UnityEngine.ProBuilder.MeshUtility.GetPrimitiveCount(x.mesh));

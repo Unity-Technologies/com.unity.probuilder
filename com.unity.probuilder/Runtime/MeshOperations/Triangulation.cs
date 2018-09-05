@@ -39,27 +39,27 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Attempts to triangulate a set of vertexes. If unordered is specified as false vertexes will not be re-ordered before triangulation.
+		/// Attempts to triangulate a set of vertices. If unordered is specified as false vertices will not be re-ordered before triangulation.
 		/// </summary>
-		/// <param name="vertexes"></param>
+		/// <param name="vertices"></param>
 		/// <param name="triangles"></param>
 		/// <param name="unordered"></param>
 		/// <param name="convex"></param>
 		/// <returns></returns>
-		public static bool TriangulateVertexes(IList<Vertex> vertexes, out List<int> triangles, bool unordered = true, bool convex = false)
+		public static bool TriangulateVertices(IList<Vertex> vertices, out List<int> triangles, bool unordered = true, bool convex = false)
 		{
-			Vector3[] facePoints = new Vector3[vertexes.Count];
+			Vector3[] facePoints = new Vector3[vertices.Count];
 
-			for(int i = 0; i < vertexes.Count; ++i)
-				facePoints[i] = vertexes[i].position;
+			for(int i = 0; i < vertices.Count; ++i)
+				facePoints[i] = vertices[i].position;
 
-			return TriangulateVertexes(facePoints, out triangles, unordered, convex);
+			return TriangulateVertices(facePoints, out triangles, unordered, convex);
 		}
 
-		public static bool TriangulateVertexes(Vector3[] vertexes, out List<int> triangles, bool unordered = true, bool convex = false)
+		public static bool TriangulateVertices(Vector3[] vertices, out List<int> triangles, bool unordered = true, bool convex = false)
 		{
 			triangles = null;
-			int vertexCount = vertexes == null ? 0 : vertexes.Length;
+			int vertexCount = vertices == null ? 0 : vertices.Length;
 
 			if(vertexCount < 3)
 				return false;
@@ -70,8 +70,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				return true;
 			}
 
-			Vector3 normal = Projection.FindBestPlane(vertexes).normal;
-			Vector2[] points2d = Projection.PlanarProject(vertexes);
+			Vector3 normal = Projection.FindBestPlane(vertices).normal;
+			Vector2[] points2d = Projection.PlanarProject(vertices);
 
 			if(unordered)
 				return Triangulation.SortAndTriangulate(points2d, out triangles, convex);
@@ -110,7 +110,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			{
 				if(d.Points[0].Index < 0 || d.Points[1].Index < 0 || d.Points[2].Index < 0)
 				{
-					Log.Warning("Triangulation failed: Additional vertexes were inserted.");
+					Log.Warning("Triangulation failed: Additional vertices were inserted.");
 					return false;
 				}
 
@@ -122,7 +122,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			WindingOrder originalWinding = SurfaceTopology.GetWindingOrder(points);
 
 			// if the re-triangulated first tri doesn't match the winding order of the original
-			// vertexes, flip 'em
+			// vertices, flip 'em
 			if( SurfaceTopology.GetWindingOrder(new Vector2[3]{
 				points[indexes[0]],
 				points[indexes[1]],

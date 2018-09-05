@@ -146,7 +146,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="renderTextureWidth"></param>
 		/// <param name="renderTextureHeight"></param>
 		/// <returns>A dictionary of pb_Object selected vertex indexes.</returns>
-		public static Dictionary<ProBuilderMesh, HashSet<int>> PickVertexesInRect(
+		public static Dictionary<ProBuilderMesh, HashSet<int>> PickVerticesInRect(
 			Camera camera,
 			Rect pickerRect,
 			IList<ProBuilderMesh> selection,
@@ -473,7 +473,7 @@ namespace UnityEngine.ProBuilder
 			map = new Dictionary<uint, SimpleTuple<ProBuilderMesh, int>>();
 
 			// don't start at 0 because that means one vertex would be black, matching
-			// the color used to cull hidden vertexes.
+			// the color used to cull hidden vertices.
 			uint index = 0x02;
 			int selectionCount = selection.Count;
 			pickerObjects = new GameObject[selectionCount];
@@ -557,7 +557,7 @@ namespace UnityEngine.ProBuilder
 
 		static Mesh BuildVertexMesh(ProBuilderMesh pb, Dictionary<uint, SimpleTuple<ProBuilderMesh, int>> map, ref uint index)
 		{
-			int length = System.Math.Min(pb.sharedVertexesInternal.Length, ushort.MaxValue / 4 - 1);
+			int length = System.Math.Min(pb.sharedVerticesInternal.Length, ushort.MaxValue / 4 - 1);
 
 			Vector3[] 	t_billboards 		= new Vector3[ length * 4 ];
 			Vector2[] 	t_uvs 				= new Vector2[ length * 4 ];
@@ -573,7 +573,7 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < length; i++)
 			{
-				Vector3 v = pb.positionsInternal[pb.sharedVertexesInternal[i][0]];
+				Vector3 v = pb.positionsInternal[pb.sharedVerticesInternal[i][0]];
 
 				t_billboards[t+0] = v;
 				t_billboards[t+1] = v;

@@ -74,7 +74,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		};
 
 		ProBuilderMesh m_Mesh;
-		Vertex[] m_Vertexes;
+		Vertex[] m_Vertices;
 
 		/// <summary>
 		/// Create a new MeshImporter instance.
@@ -127,11 +127,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (importSettings == null)
 				importSettings = k_DefaultImportSettings;
 
-			// When importing the mesh is always split into triangles with no vertexes shared
-			// between faces. In a later step co-incident vertexes are collapsed (eg, before
+			// When importing the mesh is always split into triangles with no vertices shared
+			// between faces. In a later step co-incident vertices are collapsed (eg, before
 			// leaving the Import function).
-			Vertex[] sourceVertexes = originalMesh.GetVertexes();
-			List<Vertex> splitVertexes = new List<Vertex>();
+			Vertex[] sourceVertices = originalMesh.GetVertices();
+			List<Vertex> splitVertices = new List<Vertex>();
 			List<Face> faces = new List<Face>();
 
 			// Fill in Faces array with just the position indexes. In the next step we'll
@@ -160,9 +160,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 								-1,
 								true));
 
-							splitVertexes.Add(sourceVertexes[indexes[tri  ]]);
-							splitVertexes.Add(sourceVertexes[indexes[tri+1]]);
-							splitVertexes.Add(sourceVertexes[indexes[tri+2]]);
+							splitVertices.Add(sourceVertices[indexes[tri  ]]);
+							splitVertices.Add(sourceVertices[indexes[tri+1]]);
+							splitVertices.Add(sourceVertices[indexes[tri+2]]);
 
 							vertexIndex += 3;
 						}
@@ -185,10 +185,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 								-1,
 								true));
 
-							splitVertexes.Add(sourceVertexes[indexes[quad  ]]);
-							splitVertexes.Add(sourceVertexes[indexes[quad+1]]);
-							splitVertexes.Add(sourceVertexes[indexes[quad+2]]);
-							splitVertexes.Add(sourceVertexes[indexes[quad+3]]);
+							splitVertices.Add(sourceVertices[indexes[quad  ]]);
+							splitVertices.Add(sourceVertices[indexes[quad+1]]);
+							splitVertices.Add(sourceVertices[indexes[quad+2]]);
+							splitVertices.Add(sourceVertices[indexes[quad+3]]);
 
 							vertexIndex += 4;
 						}
@@ -200,12 +200,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 			}
 
-			m_Vertexes = splitVertexes.ToArray();
+			m_Vertices = splitVertices.ToArray();
 
 			m_Mesh.Clear();
-			m_Mesh.SetVertexes(m_Vertexes);
+			m_Mesh.SetVertices(m_Vertices);
 			m_Mesh.faces = faces;
-			m_Mesh.sharedVertexes = SharedVertex.GetSharedVertexesWithPositions(m_Mesh.positionsInternal);
+			m_Mesh.sharedVertices = SharedVertex.GetSharedVerticesWithPositions(m_Mesh.positionsInternal);
 			m_Mesh.sharedTextures = new SharedVertex[0];
 
 			HashSet<Face> processed = new HashSet<Face>();
@@ -274,15 +274,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					}
 				}
 
-				// don't collapse coincident vertexes if smoothing is enabled, we need the original normals intact
+				// don't collapse coincident vertices if smoothing is enabled, we need the original normals intact
 				MergeElements.MergePairs(m_Mesh, quads, !importSettings.smoothing);
 			}
 
 			if(importSettings.smoothing)
 			{
-				Smoothing.ApplySmoothingGroups(m_Mesh, m_Mesh.facesInternal, importSettings.smoothingAngle, m_Vertexes.Select(x => x.normal).ToArray());
-				// After smoothing has been applied go back and weld coincident vertexes created by MergePairs.
-				MergeElements.CollapseCoincidentVertexes(m_Mesh, m_Mesh.facesInternal);
+				Smoothing.ApplySmoothingGroups(m_Mesh, m_Mesh.facesInternal, importSettings.smoothingAngle, m_Vertices.Select(x => x.normal).ToArray());
+				// After smoothing has been applied go back and weld coincident vertices created by MergePairs.
+				MergeElements.CollapseCoincidentVertices(m_Mesh, m_Mesh.facesInternal);
 			}
 
 			return false;
@@ -298,7 +298,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				while(it.MoveNext())
 				{
 					var border = it.Current;
-					
+
 					float s = 0f;
 
 					if (connections.TryGetValue(border.edge, out s) && s > score)
@@ -325,8 +325,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				return 0f;
 
 			// first check normals
-			Vector3 leftNormal = Math.Normal(m_Vertexes[quad[0]].position, m_Vertexes[quad[1]].position, m_Vertexes[quad[2]].position);
-			Vector3 rightNormal = Math.Normal(m_Vertexes[quad[2]].position, m_Vertexes[quad[3]].position, m_Vertexes[quad[0]].position);
+			Vector3 leftNormal = Math.Normal(m_Vertices[quad[0]].position, m_Vertices[quad[1]].position, m_Vertices[quad[2]].position);
+			Vector3 rightNormal = Math.Normal(m_Vertices[quad[2]].position, m_Vertices[quad[3]].position, m_Vertices[quad[0]].position);
 
 			float score = Vector3.Dot(leftNormal, rightNormal);
 
@@ -334,10 +334,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				return 0f;
 
 			// next is right-angle-ness check
-			Vector3 a = (m_Vertexes[quad[1]].position - m_Vertexes[quad[0]].position);
-			Vector3 b = (m_Vertexes[quad[2]].position - m_Vertexes[quad[1]].position);
-			Vector3 c = (m_Vertexes[quad[3]].position - m_Vertexes[quad[2]].position);
-			Vector3 d = (m_Vertexes[quad[0]].position - m_Vertexes[quad[3]].position);
+			Vector3 a = (m_Vertices[quad[1]].position - m_Vertices[quad[0]].position);
+			Vector3 b = (m_Vertices[quad[2]].position - m_Vertices[quad[1]].position);
+			Vector3 c = (m_Vertices[quad[3]].position - m_Vertices[quad[2]].position);
+			Vector3 d = (m_Vertices[quad[0]].position - m_Vertices[quad[3]].position);
 
 			a.Normalize();
 			b.Normalize();

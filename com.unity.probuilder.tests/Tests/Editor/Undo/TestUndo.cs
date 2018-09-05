@@ -17,8 +17,8 @@ namespace UnityEngine.ProBuilder.EditorTests.Undo
 
 			TestUtility.AssertAreEqual(cube.mesh, duplicate.mesh);
 
-			UnityEditor.Undo.RegisterCompleteObjectUndo(new [] { cube }, "Merge Vertexes");
-			cube.MergeVertexes(new int[] { 0, 1 }, true);
+			UnityEditor.Undo.RegisterCompleteObjectUndo(new [] { cube }, "Merge Vertices");
+			cube.MergeVertices(new int[] { 0, 1 }, true);
 			cube.ToMesh();
 			cube.Refresh();
 

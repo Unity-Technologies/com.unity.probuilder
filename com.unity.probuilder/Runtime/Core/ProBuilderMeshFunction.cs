@@ -27,7 +27,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public void Clear()
 		{
-			// various editor tools expect faces & vertexes to always be valid.
+			// various editor tools expect faces & vertices to always be valid.
 			// ideally we'd null everything here, but that would break a lot of existing code.
 			m_Faces = new Face[0];
 			m_Positions = new Vector3[0];
@@ -35,7 +35,7 @@ namespace UnityEngine.ProBuilder
 			m_Textures2 = null;
 			m_Textures3 = null;
 			m_Tangents = null;
-			m_SharedVertexes = new SharedVertex[0];
+			m_SharedVertices = new SharedVertex[0];
 			m_SharedTextures = new SharedVertex[0];
 			InvalidateSharedVertexLookup();
 			InvalidateSharedTextureLookup();
@@ -63,7 +63,7 @@ namespace UnityEngine.ProBuilder
 		{
 			if (positions.Length % 4 != 0)
 			{
-				Log.Warning("Invalid Geometry. Make sure vertexes in are pairs of 4 (faces).");
+				Log.Warning("Invalid Geometry. Make sure vertices in are pairs of 4 (faces).");
 				return null;
 			}
 
@@ -93,23 +93,23 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Create a new GameObject with a ProBuilderMesh component, MeshFilter, and MeshRenderer, then initializes the ProBuilderMesh with a set of positions and faces.
 		/// </summary>
-		/// <param name="vertexes">Vertex positions array.</param>
+		/// <param name="vertices">Vertex positions array.</param>
 		/// <param name="faces">Faces array.</param>
-		/// <param name="sharedVertexes">Optional SharedVertex[] defines coincident vertexes.</param>
+		/// <param name="sharedVertices">Optional SharedVertex[] defines coincident vertices.</param>
 		/// <param name="sharedTextures">Optional SharedVertex[] defines coincident texture coordinates (UV0).</param>
 		/// <returns></returns>
 		public static ProBuilderMesh Create(
-			IList<Vertex> vertexes,
+			IList<Vertex> vertices,
 			IList<Face> faces,
-			IList<SharedVertex> sharedVertexes = null,
+			IList<SharedVertex> sharedVertices = null,
 			IList<SharedVertex> sharedTextures = null)
 		{
 			var go = new GameObject();
 			var mesh = go.AddComponent<ProBuilderMesh>();
 			go.name = "ProBuilder Mesh";
-			mesh.SetVertexes(vertexes);
+			mesh.SetVertices(vertices);
 			mesh.faces = faces;
-			mesh.sharedVertexes = sharedVertexes;
+			mesh.sharedVertices = sharedVertices;
 			mesh.sharedTextures = sharedTextures != null ? sharedTextures.ToArray() : null;
 			mesh.ToMesh();
 			mesh.Refresh();
@@ -139,7 +139,7 @@ namespace UnityEngine.ProBuilder
 			Clear();
 			positions = points;
 			m_Faces = f;
-			m_SharedVertexes = SharedVertex.GetSharedVertexesWithPositions(points);
+			m_SharedVertices = SharedVertex.GetSharedVerticesWithPositions(points);
 			InvalidateSharedVertexLookup();
 			ToMesh();
 			Refresh();
@@ -148,17 +148,17 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Clear all mesh attributes and reinitialize with new positions and face collections.
 		/// </summary>
-		/// <param name="vertexes">Vertex positions array.</param>
+		/// <param name="vertices">Vertex positions array.</param>
 		/// <param name="faces">Faces array.</param>
-		public void RebuildWithPositionsAndFaces(IEnumerable<Vector3> vertexes, IEnumerable<Face> faces)
+		public void RebuildWithPositionsAndFaces(IEnumerable<Vector3> vertices, IEnumerable<Face> faces)
 		{
-			if (vertexes == null)
-				throw new ArgumentNullException("vertexes");
+			if (vertices == null)
+				throw new ArgumentNullException("vertices");
 
 			Clear();
-			m_Positions = vertexes.ToArray();
+			m_Positions = vertices.ToArray();
 			m_Faces = faces.ToArray();
-			m_SharedVertexes = SharedVertex.GetSharedVertexesWithPositions(m_Positions);
+			m_SharedVertices = SharedVertex.GetSharedVerticesWithPositions(m_Positions);
 			InvalidateSharedVertexLookup();
 			InvalidateSharedTextureLookup();
 			ToMesh();
@@ -213,7 +213,7 @@ namespace UnityEngine.ProBuilder
 		internal void MakeUnique()
 		{
 			// deep copy arrays of reference types
-			sharedVertexes = sharedVertexesInternal;
+			sharedVertices = sharedVerticesInternal;
 			SetSharedTextures(sharedTextureLookup);
 			facesInternal = faces.Select(x => new Face(x)).ToArray();
 
@@ -235,7 +235,7 @@ namespace UnityEngine.ProBuilder
 
 			Clear();
 			positions = other.positions;
-			sharedVertexes = other.sharedVertexesInternal;
+			sharedVertices = other.sharedVerticesInternal;
 			SetSharedTextures(other.sharedTextureLookup);
 			facesInternal = other.faces.Select(x => new Face(x)).ToArray();
 
@@ -400,7 +400,7 @@ namespace UnityEngine.ProBuilder
 		/// Set the vertex colors for a @"UnityEngine.ProBuilder.Face".
 		/// </summary>
 		/// <param name="face">The target face.</param>
-		/// <param name="color">The color to set this face's referenced vertexes to.</param>
+		/// <param name="color">The color to set this face's referenced vertices to.</param>
 		public void SetFaceColor(Face face, Color color)
 		{
 			if (face == null)
@@ -503,7 +503,7 @@ namespace UnityEngine.ProBuilder
 		public Vector3[] CalculateHardNormals()
 		{
 			Vector3[] perTriangleNormal = new Vector3[vertexCount];
-			Vector3[] vertexes = positionsInternal;
+			Vector3[] vertices = positionsInternal;
 			Vector3[] normals = new Vector3[vertexCount];
 			int[] perTriangleAvg = new int[vertexCount];
 			Face[] fces = facesInternal;
@@ -516,7 +516,7 @@ namespace UnityEngine.ProBuilder
 				{
 					int a = indexes[tri], b = indexes[tri + 1], c = indexes[tri + 2];
 
-					Vector3 cross = Math.Normal(vertexes[a], vertexes[b], vertexes[c]);
+					Vector3 cross = Math.Normal(vertices[a], vertices[b], vertices[c]);
 					cross.Normalize();
 
 					perTriangleNormal[a].x += cross.x;
@@ -558,7 +558,7 @@ namespace UnityEngine.ProBuilder
 			// average the soft edge faces
 			int vc = vertexCount;
 			int[] smoothGroup = new int[vc];
-			SharedVertex[] si = sharedVertexesInternal;
+			SharedVertex[] si = sharedVerticesInternal;
 			Face[] fcs = facesInternal;
 			int smoothGroupMax = 24;
 
@@ -577,7 +577,7 @@ namespace UnityEngine.ProBuilder
 			Vector3[] averages = new Vector3[smoothGroupMax];
 			float[] counts = new float[smoothGroupMax];
 
-			// For each sharedIndexes group (individual vertex), find vertexes that are in the same smoothing
+			// For each sharedIndexes group (individual vertex), find vertices that are in the same smoothing
 			// group and average their normals.
 			for (var i = 0; i < si.Length; i++)
 			{
@@ -589,7 +589,7 @@ namespace UnityEngine.ProBuilder
 					counts[n] = 0f;
 				}
 
-				var hold = sharedVertexes;
+				var hold = sharedVertices;
 				var tmp = sharedVertexLookup;
 
 				for (var n = 0; n < si[i].Count; n++)
@@ -641,51 +641,51 @@ namespace UnityEngine.ProBuilder
 			if (m_SharedVertexLookup.TryGetValue(vertex, out res))
 				return res;
 
-			for (int i = 0; i < m_SharedVertexes.Length; i++)
+			for (int i = 0; i < m_SharedVertices.Length; i++)
 			{
-				for (int n = 0, c = m_SharedVertexes[i].Count; n < c; n++)
-					if (m_SharedVertexes[i][n] == vertex)
+				for (int n = 0, c = m_SharedVertices[i].Count; n < c; n++)
+					if (m_SharedVertices[i][n] == vertex)
 						return i;
 			}
 
 			throw new ArgumentOutOfRangeException("vertex");
 		}
 
-		internal HashSet<int> GetSharedVertexHandles(IEnumerable<int> vertexes)
+		internal HashSet<int> GetSharedVertexHandles(IEnumerable<int> vertices)
 		{
 			var lookup = sharedVertexLookup;
 			HashSet<int> common = new HashSet<int>();
-			foreach (var i in vertexes)
+			foreach (var i in vertices)
 				common.Add(lookup[i]);
 			return common;
 		}
 
 		/// <summary>
-		/// Get a list of vertexes that are coincident to any of the vertexes in the passed vertexes parameter.
+		/// Get a list of vertices that are coincident to any of the vertices in the passed vertices parameter.
 		/// </summary>
-		/// <param name="vertexes">A collection of indexes relative to the mesh positions.</param>
-		/// <returns>A list of all vertexes that share a position with any of the passed vertexes.</returns>
-		/// <exception cref="ArgumentNullException">The vertexes parameter may not be null.</exception>
-		public List<int> GetCoincidentVertexes(IEnumerable<int> vertexes)
+		/// <param name="vertices">A collection of indexes relative to the mesh positions.</param>
+		/// <returns>A list of all vertices that share a position with any of the passed vertices.</returns>
+		/// <exception cref="ArgumentNullException">The vertices parameter may not be null.</exception>
+		public List<int> GetCoincidentVertices(IEnumerable<int> vertices)
 		{
-			if (vertexes == null)
-				throw new ArgumentNullException("vertexes");
+			if (vertices == null)
+				throw new ArgumentNullException("vertices");
 
 			List<int> shared = new List<int>();
-			GetCoincidentVertexes(vertexes, shared);
+			GetCoincidentVertices(vertices, shared);
 			return shared;
 		}
 
 		/// <summary>
-		/// Populate a list of vertexes that are coincident to any of the vertexes in the passed vertexes parameter.
+		/// Populate a list of vertices that are coincident to any of the vertices in the passed vertices parameter.
 		/// </summary>
-		/// <param name="vertexes">A collection of indexes relative to the mesh positions.</param>
-		/// <param name="coincident">A list to be cleared and populated with any vertexes that are coincident.</param>
-		/// <exception cref="ArgumentNullException">The vertexes and coincident parameters may not be null.</exception>
-		public void GetCoincidentVertexes(IEnumerable<int> vertexes, List<int> coincident)
+		/// <param name="vertices">A collection of indexes relative to the mesh positions.</param>
+		/// <param name="coincident">A list to be cleared and populated with any vertices that are coincident.</param>
+		/// <exception cref="ArgumentNullException">The vertices and coincident parameters may not be null.</exception>
+		public void GetCoincidentVertices(IEnumerable<int> vertices, List<int> coincident)
 		{
-			if (vertexes == null)
-				throw new ArgumentNullException("vertexes");
+			if (vertices == null)
+				throw new ArgumentNullException("vertices");
 
 			if (coincident == null)
 				throw new ArgumentNullException("coincident");
@@ -694,23 +694,23 @@ namespace UnityEngine.ProBuilder
 			coincident.Clear();
 			var lookup = sharedVertexLookup;
 
-			foreach (var v in vertexes)
+			foreach (var v in vertices)
 			{
 				var common = lookup[v];
 
 				if (s_CachedHashSet.Add(common))
-					coincident.AddRange(m_SharedVertexes[common]);
+					coincident.AddRange(m_SharedVertices[common]);
 			}
 		}
 
 		/// <summary>
-		/// Populate a list with all the vertexes that are coincident to the requested vertex.
+		/// Populate a list with all the vertices that are coincident to the requested vertex.
 		/// </summary>
 		/// <param name="vertex">An index relative to a positions array.</param>
-		/// <param name="coincident">A list to be populated with all coincident vertexes.</param>
+		/// <param name="coincident">A list to be populated with all coincident vertices.</param>
 		/// <exception cref="ArgumentNullException">The coincident list may not be null.</exception>
 		/// <exception cref="ArgumentOutOfRangeException">The SharedVertex[] does not contain an entry for the requested vertex.</exception>
-		public void GetCoincidentVertexes(int vertex, List<int> coincident)
+		public void GetCoincidentVertices(int vertex, List<int> coincident)
 		{
 			if (coincident == null)
 				throw new ArgumentNullException("coincident");
@@ -721,38 +721,38 @@ namespace UnityEngine.ProBuilder
 				throw new ArgumentOutOfRangeException("vertex");
 
 			coincident.Clear();
-			coincident.AddRange(m_SharedVertexes[common]);
+			coincident.AddRange(m_SharedVertices[common]);
 		}
 
 		/// <summary>
-		/// Sets the passed vertexes as being considered coincident by the ProBuilderMesh.
+		/// Sets the passed vertices as being considered coincident by the ProBuilderMesh.
 		/// </summary>
 		/// <remarks>
-		/// Note that it is up to the caller to ensure that the passed vertexes are indeed sharing a position.
+		/// Note that it is up to the caller to ensure that the passed vertices are indeed sharing a position.
 		/// </remarks>
-		/// <param name="vertexes">Returns a list of vertexes to be associated as coincident.</param>
-		public void SetVertexesCoincident(IEnumerable<int> vertexes)
+		/// <param name="vertices">Returns a list of vertices to be associated as coincident.</param>
+		public void SetVerticesCoincident(IEnumerable<int> vertices)
 		{
 			var lookup = sharedVertexLookup;
 			List<int> coincident = new List<int>();
-			GetCoincidentVertexes(vertexes, coincident);
+			GetCoincidentVertices(vertices, coincident);
 			SharedVertex.SetCoincident(ref lookup, coincident);
-			SetSharedVertexes(lookup);
+			SetSharedVertices(lookup);
 		}
 
-		internal void SetTexturesCoincident(IEnumerable<int> vertexes)
+		internal void SetTexturesCoincident(IEnumerable<int> vertices)
 		{
 			var lookup = sharedTextureLookup;
-			SharedVertex.SetCoincident(ref lookup, vertexes);
+			SharedVertex.SetCoincident(ref lookup, vertices);
 			SetSharedTextures(lookup);
 		}
 
 		internal void AddToSharedVertex(int sharedVertexHandle, int vertex)
 		{
-			if (sharedVertexHandle < 0 || sharedVertexHandle >= m_SharedVertexes.Length)
+			if (sharedVertexHandle < 0 || sharedVertexHandle >= m_SharedVertices.Length)
 				throw new ArgumentOutOfRangeException("sharedVertexHandle");
 
-			m_SharedVertexes[sharedVertexHandle].Add(vertex);
+			m_SharedVertices[sharedVertexHandle].Add(vertex);
 			InvalidateSharedVertexLookup();
 		}
 
@@ -761,7 +761,7 @@ namespace UnityEngine.ProBuilder
 			if (vertex == null)
 				throw new ArgumentNullException("vertex");
 
-			m_SharedVertexes = m_SharedVertexes.Add(vertex);
+			m_SharedVertices = m_SharedVertices.Add(vertex);
 			InvalidateSharedVertexLookup();
 		}
 	}

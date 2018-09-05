@@ -469,32 +469,32 @@ namespace UnityEditor.ProBuilder
 		/// returns the index of the segment that best matched (source modified
 		/// from UnityEngine.HandleUtility class).
 		/// </summary>
-		/// <param name="vertexes"></param>
+		/// <param name="vertices"></param>
 		/// <param name="index"></param>
 		/// <param name="distanceToLine"></param>
 		/// <param name="closeLoop"></param>
 		/// <param name="trs"></param>
 		/// <returns></returns>
-		public static Vector3 ClosestPointToPolyLine(List<Vector3> vertexes, out int index, out float distanceToLine, bool closeLoop = false, Transform trs = null)
+		public static Vector3 ClosestPointToPolyLine(List<Vector3> vertices, out int index, out float distanceToLine, bool closeLoop = false, Transform trs = null)
 		{
 			distanceToLine = Mathf.Infinity;
 
 			if(trs != null)
-				distanceToLine = HandleUtility.DistanceToLine(trs.TransformPoint(vertexes[0]), trs.TransformPoint(vertexes[1]));
+				distanceToLine = HandleUtility.DistanceToLine(trs.TransformPoint(vertices[0]), trs.TransformPoint(vertices[1]));
 			else
-				distanceToLine = HandleUtility.DistanceToLine(vertexes[0], vertexes[1]);
+				distanceToLine = HandleUtility.DistanceToLine(vertices[0], vertices[1]);
 
 			index = 0;
-			int count = vertexes.Count;
+			int count = vertices.Count;
 
 			for (int i = 2; i < (closeLoop ? count + 1 : count); i++)
 			{
 				var distance = 0f;
 
 				if(trs != null)
-					distance = HandleUtility.DistanceToLine(trs.TransformPoint(vertexes[i - 1]), trs.TransformPoint(vertexes[i % count]));
+					distance = HandleUtility.DistanceToLine(trs.TransformPoint(vertices[i - 1]), trs.TransformPoint(vertices[i % count]));
 				else
-					distance = HandleUtility.DistanceToLine(vertexes[i - 1], vertexes[i % count]);
+					distance = HandleUtility.DistanceToLine(vertices[i - 1], vertices[i % count]);
 
 				if (distance < distanceToLine)
 				{
@@ -503,8 +503,8 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
-			Vector3 point_a = trs != null ? trs.TransformPoint(vertexes[index]) : vertexes[index];
-			Vector3 point_b = trs != null ? trs.TransformPoint(vertexes[(index + 1) % count]) : vertexes[index + 1];
+			Vector3 point_a = trs != null ? trs.TransformPoint(vertices[index]) : vertices[index];
+			Vector3 point_b = trs != null ? trs.TransformPoint(vertices[(index + 1) % count]) : vertices[index + 1];
 
 			index++;
 

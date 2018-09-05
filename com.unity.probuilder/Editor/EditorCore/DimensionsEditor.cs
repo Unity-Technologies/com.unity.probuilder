@@ -67,7 +67,7 @@ namespace UnityEditor.ProBuilder
 				{
 					var p = x.positions.ToArray();
 
-					return x.selectedVertexes.Select(y =>
+					return x.selectedVertices.Select(y =>
 					{
 						return x.transform.TransformPoint(p[y]);
 					});

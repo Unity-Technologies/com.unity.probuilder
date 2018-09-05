@@ -16,7 +16,7 @@ namespace UnityEngine.ProBuilder
 
 		[SerializeField]
 		Edge[] m_SelectedEdges = new Edge[] { };
-		
+
 		[SerializeField]
 		int[] m_selectedTriangles = new int[] { };
 
@@ -79,9 +79,9 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <value>
-		/// A collection of the currently selected vertexes by their index in the @"UnityEngine.ProBuilder.ProBuilderMesh.positions" array.
+		/// A collection of the currently selected vertices by their index in the @"UnityEngine.ProBuilder.ProBuilderMesh.positions" array.
 		/// </value>
-		public ReadOnlyCollection<int> selectedVertexes
+		public ReadOnlyCollection<int> selectedVertices
 		{
 			get { return new ReadOnlyCollection<int>(m_selectedTriangles); }
 		}
@@ -165,14 +165,14 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Sets the selected vertexes array. Clears SelectedFaces and SelectedEdges arrays.
+		/// Sets the selected vertices array. Clears SelectedFaces and SelectedEdges arrays.
 		/// </summary>
-		/// <param name="vertexes">The new vertex selection.</param>
-		public void SetSelectedVertexes(IEnumerable<int> vertexes)
+		/// <param name="vertices">The new vertex selection.</param>
+		public void SetSelectedVertices(IEnumerable<int> vertices)
 		{
 			m_selectedFaces = new int[0];
 			m_SelectedEdges = new Edge[0];
-			m_selectedTriangles = vertexes != null ? vertexes.Distinct().ToArray() : new int[0];
+			m_selectedTriangles = vertices != null ? vertices.Distinct().ToArray() : new int[0];
 
 			if (elementSelectionChanged != null)
 				elementSelectionChanged(this);

@@ -49,7 +49,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 				selectionRect.width /= EditorGUIUtility.pixelsPerPoint;
 				selectionRect.height /= EditorGUIUtility.pixelsPerPoint;
 
-				var vertices = UnityEngine.ProBuilder.Picking.PickVertexesInRect(
+				var vertices = UnityEngine.ProBuilder.Picking.PickVerticesInRect(
 					camera,
 					selectionRect,
 					selectables,
@@ -126,7 +126,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 			var selection = vertices.FirstOrDefault();
 			Assert.IsNotNull(selection);
 			HashSet<int> selectedElements = selection.Value;
-			Assert.Less(selectedElements.Count, selection.Key.sharedVertexes.Count());
+			Assert.Less(selectedElements.Count, selection.Key.sharedVertices.Count());
 			Assert.Greater(selectedElements.Count, 0);
 			Cleanup();
 		}
@@ -139,7 +139,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
 			var selection = vertices.FirstOrDefault();
 			Assert.IsNotNull(selection);
 			HashSet<int> selectedElements = selection.Value;
-			Assert.AreEqual(selectedElements.Count, selection.Key.sharedVertexes.Count());
+			Assert.AreEqual(selectedElements.Count, selection.Key.sharedVertices.Count());
 			Cleanup();
 		}
 

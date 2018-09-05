@@ -7,7 +7,7 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// Utilities for working with smoothing groups. Smoothing groups are how ProBuilder defines hard and soft edges.
 	/// ProBuilder calculates vertex normals by first calculating the normal for every face, which in turn is applied to each
-	/// vertex that makes up the face. Afterwards, each vertex normal is averaged with coincident vertexes belonging to the
+	/// vertex that makes up the face. Afterwards, each vertex normal is averaged with coincident vertices belonging to the
 	/// same smoothing group.
 	/// </summary>
 	public static class Smoothing

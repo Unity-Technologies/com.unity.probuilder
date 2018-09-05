@@ -70,7 +70,7 @@ namespace UnityEngine.ProBuilder
 	/// </summary>
 	public static class ShapeGenerator
 	{
-		static readonly Vector3[] k_IcosphereVertexes = new Vector3[12]
+		static readonly Vector3[] k_IcosphereVertices = new Vector3[12]
 		{
 			new Vector3(-1f,  Math.phi,  0f),
 			new Vector3( 1f,  Math.phi,  0f),
@@ -116,9 +116,9 @@ namespace UnityEngine.ProBuilder
 		};
 
 		/// <summary>
-		/// A set of 8 vertexes forming the template for a cube mesh.
+		/// A set of 8 vertices forming the template for a cube mesh.
 		/// </summary>
-		static readonly Vector3[] k_CubeVertexes = new Vector3[] {
+		static readonly Vector3[] k_CubeVertices = new Vector3[] {
 			// bottom 4 verts
 			new Vector3(-.5f, -.5f, .5f),		// 0
 			new Vector3(.5f, -.5f, .5f),		// 1
@@ -133,7 +133,7 @@ namespace UnityEngine.ProBuilder
 		};
 
 		/// <summary>
-		/// A set of triangles forming a cube with reference to the k_CubeVertexes array.
+		/// A set of triangles forming a cube with reference to the k_CubeVertices array.
 		/// </summary>
 		static readonly int[] k_CubeTriangles = new int[] {
 			0, 1, 4, 5, 1, 2, 5, 6, 2, 3, 6, 7, 3, 0, 7, 4, 4, 5, 7, 6, 3, 2, 0, 1
@@ -197,8 +197,8 @@ namespace UnityEngine.ProBuilder
 		/// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
 		public static ProBuilderMesh GenerateStair(Vector3 size, int steps, bool buildSides)
 		{
-			// 4 vertexes per quad, 2 quads per step.
-			Vector3[] vertexes = new Vector3[4 * steps * 2];
+			// 4 vertices per quad, 2 quads per step.
+			Vector3[] vertices = new Vector3[4 * steps * 2];
 			Face[] faces = new Face[steps * 2];
 
 			// vertex index, face index
@@ -216,15 +216,15 @@ namespace UnityEngine.ProBuilder
 				float z0 = size.z * inc0;
 				float z1 = size.z * inc1;
 
-				vertexes[v+0] = new Vector3(x0, y0, z0);
-				vertexes[v+1] = new Vector3(x1, y0, z0);
-				vertexes[v+2] = new Vector3(x0, y1, z0);
-				vertexes[v+3] = new Vector3(x1, y1, z0);
+				vertices[v+0] = new Vector3(x0, y0, z0);
+				vertices[v+1] = new Vector3(x1, y0, z0);
+				vertices[v+2] = new Vector3(x0, y1, z0);
+				vertices[v+3] = new Vector3(x1, y1, z0);
 
-				vertexes[v+4] = new Vector3(x0, y1, z0);
-				vertexes[v+5] = new Vector3(x1, y1, z0);
-				vertexes[v+6] = new Vector3(x0, y1, z1);
-				vertexes[v+7] = new Vector3(x1, y1, z1);
+				vertices[v+4] = new Vector3(x0, y1, z0);
+				vertices[v+5] = new Vector3(x1, y1, z0);
+				vertices[v+6] = new Vector3(x0, y1, z1);
+				vertices[v+7] = new Vector3(x1, y1, z1);
 
 				faces[t+0] = new Face( new int[] { 	v + 0,
 														v + 1,
@@ -298,14 +298,14 @@ namespace UnityEngine.ProBuilder
 						}
 					}
 
-					vertexes = vertexes.Concat(sides_v);
+					vertices = vertices.Concat(sides_v);
 					faces = faces.Concat(sides_f);
 
 					x += size.x;
 				}
 
 				// add that last back face
-				vertexes = vertexes.Concat(new Vector3[] {
+				vertices = vertices.Concat(new Vector3[] {
 					new Vector3(0f, 0f, size.z),
 					new Vector3(size.x, 0f, size.z),
 					new Vector3(0f, size.y, size.z),
@@ -315,7 +315,7 @@ namespace UnityEngine.ProBuilder
 				faces = faces.Add(new Face(new int[] {v+0, v+1, v+2, v+1, v+3, v+2}));
 			}
 
-			ProBuilderMesh pb = ProBuilderMesh.Create(vertexes, faces);
+			ProBuilderMesh pb = ProBuilderMesh.Create(vertices, faces);
 			pb.gameObject.name = "Stairs";
 
 			return pb;
@@ -335,7 +335,7 @@ namespace UnityEngine.ProBuilder
 		{
 			bool noInnerSide = innerRadius < Mathf.Epsilon;
 
-			// 4 vertexes per quad, vertical step first, then floor step can be 3 or 4 verts depending on
+			// 4 vertices per quad, vertical step first, then floor step can be 3 or 4 verts depending on
 			// if the inner radius is 0 or not.
 			Vector3[] positions = new Vector3[(4 * steps) + ((noInnerSide ? 3 : 4) * steps)];
 			Face[] faces = new Face[steps * 2];
@@ -619,7 +619,7 @@ namespace UnityEngine.ProBuilder
 			Vector3[] points = new Vector3[k_CubeTriangles.Length];
 
 			for(int i = 0; i < k_CubeTriangles.Length; i++)
-				points[i] = Vector3.Scale(k_CubeVertexes[k_CubeTriangles[i]], size);
+				points[i] = Vector3.Scale(k_CubeVertices[k_CubeTriangles[i]], size);
 
 			ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(points);
 			pb.gameObject.name = "Cube";
@@ -1279,21 +1279,21 @@ namespace UnityEngine.ProBuilder
 		/// </remarks>
 		/// <param name="radius">The radius of the sphere.</param>
 		/// <param name="subdivisions">How many subdivisions to perform.</param>
-		/// <param name="weldVertexes">If false this function will not extract shared indexes. This is useful when showing a preview, where speed of generation is more important than making the shape editable.</param>
+		/// <param name="weldVertices">If false this function will not extract shared indexes. This is useful when showing a preview, where speed of generation is more important than making the shape editable.</param>
 		/// <param name="manualUvs">For performance reasons faces on icospheres are marked as manual UVs. Pass false to this parameter to force auto unwrapped UVs.</param>
 		/// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-		public static ProBuilderMesh GenerateIcosahedron(float radius, int subdivisions, bool weldVertexes = true, bool manualUvs = true)
+		public static ProBuilderMesh GenerateIcosahedron(float radius, int subdivisions, bool weldVertices = true, bool manualUvs = true)
 		{
 			// http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
 
 			Vector3[] v = new Vector3[k_IcosphereTriangles.Length];
 
-            // Regular Icosahedron - 12 vertexes, 20 faces.
+            // Regular Icosahedron - 12 vertices, 20 faces.
             for (int i = 0; i < k_IcosphereTriangles.Length; i+=3)
 			{
-				v[i+0] = k_IcosphereVertexes[ k_IcosphereTriangles[i+0] ].normalized * radius;
-				v[i+1] = k_IcosphereVertexes[ k_IcosphereTriangles[i+1] ].normalized * radius;
-				v[i+2] = k_IcosphereVertexes[ k_IcosphereTriangles[i+2] ].normalized * radius;
+				v[i+0] = k_IcosphereVertices[ k_IcosphereTriangles[i+0] ].normalized * radius;
+				v[i+1] = k_IcosphereVertices[ k_IcosphereTriangles[i+1] ].normalized * radius;
+				v[i+2] = k_IcosphereVertices[ k_IcosphereTriangles[i+2] ].normalized * radius;
 			}
 
             for (int i= 0; i < subdivisions; i++) {
@@ -1336,17 +1336,17 @@ namespace UnityEngine.ProBuilder
 			pb.positionsInternal = v;
 			pb.facesInternal = f;
 
-			if (!weldVertexes)
+			if (!weldVertices)
 			{
 				SharedVertex[] si = new SharedVertex[v.Length];
 				for (int i = 0; i < si.Length; i++)
 					si[i] = new SharedVertex(new int[] {i});
 
-				pb.sharedVertexesInternal = si;
+				pb.sharedVerticesInternal = si;
 			}
 			else
 			{
-				pb.sharedVertexesInternal = SharedVertex.GetSharedVertexesWithPositions(v);
+				pb.sharedVerticesInternal = SharedVertex.GetSharedVerticesWithPositions(v);
 			}
 
 			pb.ToMesh();
@@ -1360,15 +1360,15 @@ namespace UnityEngine.ProBuilder
 			return pb;
 		}
 
-		// Subdivides a set of vertexes (wound as individual triangles) on an icosphere.
+		// Subdivides a set of vertices (wound as individual triangles) on an icosphere.
 		//
 		//	 /\			 /\
 		// 	/  \	-> 	/--\
 		// /____\	   /_\/_\
 		//
-		static Vector3[] SubdivideIcosahedron(Vector3[] vertexes, float radius)
+		static Vector3[] SubdivideIcosahedron(Vector3[] vertices, float radius)
 		{
-			Vector3[] v = new Vector3[vertexes.Length * 4];
+			Vector3[] v = new Vector3[vertices.Length * 4];
 
 			int index = 0;
 
@@ -1379,11 +1379,11 @@ namespace UnityEngine.ProBuilder
 					p4 = Vector3.zero,
 					p5 = Vector3.zero;
 
-			for(int i = 0; i < vertexes.Length; i+=3)
+			for(int i = 0; i < vertices.Length; i+=3)
 			{
-				p0 = vertexes[i+0];
-				p2 = vertexes[i+1];
-				p5 = vertexes[i+2];
+				p0 = vertices[i+0];
+				p2 = vertices[i+1];
+				p5 = vertices[i+2];
 				p1 = ((p0 + p2) * .5f).normalized * radius;
 				p3 = ((p0 + p5) * .5f).normalized * radius;
 				p4 = ((p2 + p5) * .5f).normalized * radius;
@@ -1459,7 +1459,7 @@ namespace UnityEngine.ProBuilder
 			float clampedHorizontalCircumference = Mathf.Clamp(horizontalCircumference, .01f, 360f);
 			float clampedVerticalCircumference = Mathf.Clamp(verticalCircumference, .01f, 360f);
 
-			List<Vector3> vertexes = new List<Vector3>();
+			List<Vector3> vertices = new List<Vector3>();
 
 			int col = clampedColumns - 1;
 
@@ -1467,10 +1467,10 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 1; i < clampedColumns; i++)
 			{
-				vertexes.AddRange(cir);
+				vertices.AddRange(cir);
 				Quaternion rotation = Quaternion.Euler(Vector3.up * ((i/(float)col) * clampedHorizontalCircumference));
 				cir = GetCirclePoints(clampedRows, clampedTubeRadius, clampedVerticalCircumference, rotation, clampedRadius);
-				vertexes.AddRange(cir);
+				vertices.AddRange(cir);
 			}
 
 			// List<int> ind = new List<int>();
@@ -1496,7 +1496,7 @@ namespace UnityEngine.ProBuilder
 				}
 			}
 
-			ProBuilderMesh pb = ProBuilderMesh.Create(vertexes.ToArray(), faces.ToArray());
+			ProBuilderMesh pb = ProBuilderMesh.Create(vertices.ToArray(), faces.ToArray());
 			pb.gameObject.name = "Torus";
 
 			return pb;

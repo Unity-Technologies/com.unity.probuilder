@@ -362,8 +362,8 @@ namespace UnityEditor.ProBuilder
 						RebuildMeshHandle(mesh, m_VertexHandles, (x,y) =>
 						{
 							s_VertexList.Clear();
-							for (int i = 0, c = mesh.sharedVertexesInternal.Length; i < c; i++)
-								s_VertexList.Add(mesh.sharedVertexesInternal[i][0]);
+							for (int i = 0, c = mesh.sharedVerticesInternal.Length; i < c; i++)
+								s_VertexList.Add(mesh.sharedVerticesInternal[i][0]);
 							MeshHandles.CreateVertexMesh(x, y, s_VertexList);
 						});
 

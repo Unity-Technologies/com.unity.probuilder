@@ -45,7 +45,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		}
 
 		/// <summary>
-		/// Gets all faces connected to each index taking into account shared vertexes.
+		/// Gets all faces connected to each index taking into account shared vertices.
 		/// </summary>
 		/// <param name="mesh"></param>
 		/// <param name="indexes"></param>
@@ -221,10 +221,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			return sharedEdges.Where(x => x.Value.Count < 2).Select(x => x.Value[0]).Distinct();
 		}
 
-		internal static int[] GetPerimeterVertexes(ProBuilderMesh mesh, int[] indexes, Edge[] universal_edges_all)
+		internal static int[] GetPerimeterVertices(ProBuilderMesh mesh, int[] indexes, Edge[] universal_edges_all)
 		{
 			int len = indexes.Length;
-			SharedVertex[] sharedIndexes = mesh.sharedVertexesInternal;
+			SharedVertex[] sharedIndexes = mesh.sharedVerticesInternal;
 			int[] universal = new int[len];
 
 			for (int i = 0; i < len; i++)
@@ -483,7 +483,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					while(it.MoveNext())
 					{
 						var w = it.Current;
-						
+
 						if (w.opposite != null && !source.Contains(w.opposite.face))
 						{
 							if (checkAngle)

@@ -41,7 +41,7 @@ namespace UnityEditor.ProBuilder.Actions
 			switch (ProBuilderEditor.componentMode)
 			{
 				case ComponentMode.Vertex:
-					return MenuCommands.MenuConnectVertexes(MeshSelection.TopInternal());
+					return MenuCommands.MenuConnectVertices(MeshSelection.TopInternal());
 
 				case ComponentMode.Edge:
 				default:
