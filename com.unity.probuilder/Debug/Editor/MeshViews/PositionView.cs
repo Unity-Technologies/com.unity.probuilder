@@ -10,7 +10,7 @@ namespace UnityEditor.ProBuilder.Debug
 	{
 		int m_ContentCount = 0;
 		int m_VertexCount = 0;
-		int[] m_Vertexes;
+		int[] m_Vertices;
 		string[] m_Content;
 		HashSet<int> m_Used = new HashSet<int>();
 
@@ -20,11 +20,11 @@ namespace UnityEditor.ProBuilder.Debug
 				return;
 
 			var lookup = mesh.sharedVertexLookup;
-			var display = (viewState == MeshViewState.Selected ? mesh.selectedVertexes : mesh.sharedVertexes.Select(x => x[0])).ToArray();
+			var display = (viewState == MeshViewState.Selected ? mesh.selectedVertices : mesh.sharedVertices.Select(x => x[0])).ToArray();
 			m_Used.Clear();
 
 			m_ContentCount = display.Length;
-			m_Vertexes = new int[m_ContentCount];
+			m_Vertices = new int[m_ContentCount];
 			m_Content = new string[m_ContentCount];
 			var positions = mesh.positionsInternal;
 			m_VertexCount = mesh.vertexCount;
@@ -36,7 +36,7 @@ namespace UnityEditor.ProBuilder.Debug
 
 				if (!m_Used.Add(cIndex))
 					continue;
-				m_Vertexes[i] = lIndex;
+				m_Vertices[i] = lIndex;
 				m_Content[i] = string.Format("<b>{0}</b> {1}", cIndex, positions[lIndex].ToString());
 			}
 		}
@@ -58,7 +58,7 @@ namespace UnityEditor.ProBuilder.Debug
 
 			for (int i = 0; i < m_ContentCount; i++)
 			{
-				var point = trs.TransformPoint(positions[m_Vertexes[i]]);
+				var point = trs.TransformPoint(positions[m_Vertices[i]]);
 
 				if(!UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(view.camera, mesh, point))
 					DrawSceneLabel(point, m_Content[i]);

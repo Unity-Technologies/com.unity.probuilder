@@ -34,7 +34,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		internal static Edge GetEdgeWithSharedVertexHandles(this ProBuilderMesh mesh, Edge edge)
 		{
-			return new Edge(mesh.sharedVertexesInternal[edge.a][0], mesh.sharedVertexesInternal[edge.b][0]);
+			return new Edge(mesh.sharedVerticesInternal[edge.a][0], mesh.sharedVerticesInternal[edge.b][0]);
 		}
 
 		/// <summary>
@@ -49,7 +49,7 @@ namespace UnityEngine.ProBuilder
 		public static bool ValidateEdge(ProBuilderMesh mesh, Edge edge, out SimpleTuple<Face, Edge> validEdge)
 		{
 			Face[] faces = mesh.facesInternal;
-			SharedVertex[] sharedIndexes = mesh.sharedVertexesInternal;
+			SharedVertex[] sharedIndexes = mesh.sharedVerticesInternal;
 
 			Edge universal = GetSharedVertexHandleEdge(mesh, edge);
 
@@ -72,7 +72,7 @@ namespace UnityEngine.ProBuilder
 			}
 
 			validEdge = new SimpleTuple<Face, Edge>();
-			
+
 			return false;
 		}
 

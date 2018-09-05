@@ -291,19 +291,19 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(k_MenuPrefix + "Geometry/Collapse Vertexes &c", true)]
-		static bool MenuVerifyCollapseVertexes()
+		[MenuItem(k_MenuPrefix + "Geometry/Collapse Vertices &c", true)]
+		static bool MenuVerifyCollapseVertices()
 		{
-			CollapseVertexes instance = EditorToolbarLoader.GetInstance<CollapseVertexes>();
+			CollapseVertices instance = EditorToolbarLoader.GetInstance<CollapseVertices>();
 
 			return instance != null && instance.enabled;
 	
 		}
 
-		[MenuItem(k_MenuPrefix + "Geometry/Collapse Vertexes &c", false, PreferenceKeys.menuGeometry + 3)]
-		static void MenuDoCollapseVertexes()
+		[MenuItem(k_MenuPrefix + "Geometry/Collapse Vertices &c", false, PreferenceKeys.menuGeometry + 3)]
+		static void MenuDoCollapseVertices()
 		{
-			CollapseVertexes instance = EditorToolbarLoader.GetInstance<CollapseVertexes>();
+			CollapseVertices instance = EditorToolbarLoader.GetInstance<CollapseVertices>();
 			if(instance != null)
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
@@ -324,6 +324,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null)
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
+
 
 
 
@@ -499,19 +500,19 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(k_MenuPrefix + "Geometry/Split Vertexes &x", true)]
-		static bool MenuVerifySplitVertexes()
+		[MenuItem(k_MenuPrefix + "Geometry/Split Vertices &x", true)]
+		static bool MenuVerifySplitVertices()
 		{
-			SplitVertexes instance = EditorToolbarLoader.GetInstance<SplitVertexes>();
+			SplitVertices instance = EditorToolbarLoader.GetInstance<SplitVertices>();
 
 			return instance != null && instance.enabled;
 	
 		}
 
-		[MenuItem(k_MenuPrefix + "Geometry/Split Vertexes &x", false, PreferenceKeys.menuGeometry + 3)]
-		static void MenuDoSplitVertexes()
+		[MenuItem(k_MenuPrefix + "Geometry/Split Vertices &x", false, PreferenceKeys.menuGeometry + 3)]
+		static void MenuDoSplitVertices()
 		{
-			SplitVertexes instance = EditorToolbarLoader.GetInstance<SplitVertexes>();
+			SplitVertices instance = EditorToolbarLoader.GetInstance<SplitVertices>();
 			if(instance != null)
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
@@ -535,19 +536,19 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(k_MenuPrefix + "Geometry/Weld Vertexes &v", true)]
-		static bool MenuVerifyWeldVertexes()
+		[MenuItem(k_MenuPrefix + "Geometry/Weld Vertices &v", true)]
+		static bool MenuVerifyWeldVertices()
 		{
-			WeldVertexes instance = EditorToolbarLoader.GetInstance<WeldVertexes>();
+			WeldVertices instance = EditorToolbarLoader.GetInstance<WeldVertices>();
 
 			return instance != null && instance.enabled;
 	
 		}
 
-		[MenuItem(k_MenuPrefix + "Geometry/Weld Vertexes &v", false, PreferenceKeys.menuGeometry + 3)]
-		static void MenuDoWeldVertexes()
+		[MenuItem(k_MenuPrefix + "Geometry/Weld Vertices &v", false, PreferenceKeys.menuGeometry + 3)]
+		static void MenuDoWeldVertices()
 		{
-			WeldVertexes instance = EditorToolbarLoader.GetInstance<WeldVertexes>();
+			WeldVertices instance = EditorToolbarLoader.GetInstance<WeldVertices>();
 			if(instance != null)
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}

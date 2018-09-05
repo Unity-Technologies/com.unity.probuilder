@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace UnityEngine.ProBuilder
 {
 	/// <summary>
-	/// An edge connecting two vertexes. May point to an index in the vertexes or the sharedIndexes array (local / common in ProBuilder terminology).
+	/// An edge connecting two vertices. May point to an index in the vertices or the sharedIndexes array (local / common in ProBuilder terminology).
 	/// </summary>
 	[System.Serializable]
 	public struct Edge : System.IEquatable<Edge>

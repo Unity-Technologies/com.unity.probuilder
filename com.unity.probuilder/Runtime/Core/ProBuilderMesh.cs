@@ -20,7 +20,7 @@ namespace UnityEngine.ProBuilder
 	    const int k_UVChannelCount = 4;
 
 	    /// <summary>
-	    /// The maximum number of vertexes that a ProBuilderMesh can accomodate.
+	    /// The maximum number of vertices that a ProBuilderMesh can accomodate.
 	    /// </summary>
 	    public const uint maxVertexCount = ushort.MaxValue;
 
@@ -30,7 +30,7 @@ namespace UnityEngine.ProBuilder
 
         [SerializeField]
         [FormerlySerializedAs("_sharedIndices")]
-        SharedVertex[] m_SharedVertexes;
+        SharedVertex[] m_SharedVertices;
 
 	    [NonSerialized]
 	    Dictionary<int, int> m_SharedVertexLookup;
@@ -135,7 +135,7 @@ namespace UnityEngine.ProBuilder
         }
 
 	    /// <summary>
-	    /// Meshes are composed of vertexes and faces. Faces primarily contain triangles and material information. With these components, ProBuilder will compile a mesh.
+	    /// Meshes are composed of vertices and faces. Faces primarily contain triangles and material information. With these components, ProBuilder will compile a mesh.
 	    /// </summary>
 	    /// <value>
 	    /// A collection of the @"UnityEngine.ProBuilder.Face"'s that make up this mesh.
@@ -173,26 +173,26 @@ namespace UnityEngine.ProBuilder
 			    face.InvalidateCache();
 	    }
 
-	    internal SharedVertex[] sharedVertexesInternal
+	    internal SharedVertex[] sharedVerticesInternal
 	    {
-		    get { return m_SharedVertexes; }
+		    get { return m_SharedVertices; }
 
 		    set
 		    {
-			    m_SharedVertexes = value;
+			    m_SharedVertices = value;
 			    InvalidateSharedVertexLookup();
 		    }
 	    }
 
 	    /// <summary>
-	    /// ProBuilder makes the assumption that no @"UnityEngine.ProBuilder.Face" references a vertex used by another. However, we need a way to associate vertexes in the editor for many operations. These vertexes are usually called coincident, or shared vertexes. ProBuilder manages these associations with the sharedIndexes array. Each array contains a list of triangles that point to vertices considered to be coincident. When ProBuilder compiles a UnityEngine.Mesh from the ProBuilderMesh, these vertices will be condensed to a single vertex where possible.
+	    /// ProBuilder makes the assumption that no @"UnityEngine.ProBuilder.Face" references a vertex used by another. However, we need a way to associate vertices in the editor for many operations. These vertices are usually called coincident, or shared vertices. ProBuilder manages these associations with the sharedIndexes array. Each array contains a list of triangles that point to vertices considered to be coincident. When ProBuilder compiles a UnityEngine.Mesh from the ProBuilderMesh, these vertices will be condensed to a single vertex where possible.
 	    /// </summary>
 	    /// <value>
 	    /// The shared (or common) index array for this mesh.
 	    /// </value>
-	    public IList<SharedVertex> sharedVertexes
+	    public IList<SharedVertex> sharedVertices
 	    {
-		    get { return new ReadOnlyCollection<SharedVertex>(m_SharedVertexes); }
+		    get { return new ReadOnlyCollection<SharedVertex>(m_SharedVertices); }
 
 		    set
 		    {
@@ -200,9 +200,9 @@ namespace UnityEngine.ProBuilder
 				    throw new ArgumentNullException("value");
 
 			    int len = value.Count;
-			    m_SharedVertexes = new SharedVertex[len];
+			    m_SharedVertices = new SharedVertex[len];
 			    for (var i = 0; i < len; i++)
-				    m_SharedVertexes[i] = new SharedVertex(value[i]);
+				    m_SharedVertices[i] = new SharedVertex(value[i]);
 
 			    InvalidateSharedVertexLookup();
 		    }
@@ -215,7 +215,7 @@ namespace UnityEngine.ProBuilder
 			    if (m_SharedVertexLookup == null)
 				    m_SharedVertexLookup = new Dictionary<int, int>();
 			    if (!m_SharedVertexLookup.Any())
-				    SharedVertex.GetSharedVertexLookup(m_SharedVertexes, m_SharedVertexLookup);
+				    SharedVertex.GetSharedVertexLookup(m_SharedVertices, m_SharedVertexLookup);
 			    return m_SharedVertexLookup;
 		    }
 	    }
@@ -226,12 +226,12 @@ namespace UnityEngine.ProBuilder
 	    /// <param name="indexes">
 	    /// The new sharedIndexes array.
 	    /// </param>
-	    /// <seealso cref="sharedVertexes"/>
-	    internal void SetSharedVertexes(IEnumerable<KeyValuePair<int, int>> indexes)
+	    /// <seealso cref="sharedVertices"/>
+	    internal void SetSharedVertices(IEnumerable<KeyValuePair<int, int>> indexes)
 	    {
 		    if (indexes == null)
 			    throw new ArgumentNullException("indexes");
-		    m_SharedVertexes = SharedVertex.ToSharedVertexes(indexes);
+		    m_SharedVertices = SharedVertex.ToSharedVertices(indexes);
 		    InvalidateSharedVertexLookup();
 	    }
 
@@ -268,7 +268,7 @@ namespace UnityEngine.ProBuilder
 	    {
 		    if (indexes == null)
 			    throw new ArgumentNullException("indexes");
-		    m_SharedTextures = SharedVertex.ToSharedVertexes(indexes);
+		    m_SharedTextures = SharedVertex.ToSharedVertices(indexes);
 		    InvalidateSharedTextureLookup();
 	    }
 
@@ -293,11 +293,11 @@ namespace UnityEngine.ProBuilder
         }
 
 		/// <summary>
-		/// Creates a new array of vertexes with values from a @"UnityEngine.ProBuilder.ProBuilderMesh" component.
+		/// Creates a new array of vertices with values from a @"UnityEngine.ProBuilder.ProBuilderMesh" component.
 		/// </summary>
 		/// <param name="indexes">An optional list of indexes pointing to the mesh attribute indexes to include in the returned Vertex array.</param>
-		/// <returns>An array of vertexes.</returns>
-		public Vertex[] GetVertexes(IList<int> indexes = null)
+		/// <returns>An array of vertices.</returns>
+		public Vertex[] GetVertices(IList<int> indexes = null)
 		{
 			int meshVertexCount = vertexCount;
 			int vc = indexes != null ? indexes.Count : vertexCount;
@@ -363,14 +363,14 @@ namespace UnityEngine.ProBuilder
 	    /// <summary>
         /// Set the vertex element arrays on this mesh.
         /// </summary>
-        /// <param name="vertexes">The new vertex array.</param>
+        /// <param name="vertices">The new vertex array.</param>
         /// <param name="applyMesh">An optional parameter that will apply elements to the MeshFilter.sharedMesh. Note that this should only be used when the mesh is in its original state, not optimized (meaning it won't affect triangles which can be modified by Optimize).</param>
-        public void SetVertexes(IList<Vertex> vertexes, bool applyMesh = false)
+        public void SetVertices(IList<Vertex> vertices, bool applyMesh = false)
         {
-            if (vertexes == null)
-                throw new ArgumentNullException("vertexes");
+            if (vertices == null)
+                throw new ArgumentNullException("vertices");
 
-	        var first = vertexes.FirstOrDefault();
+	        var first = vertices.FirstOrDefault();
 
 	        if (first == null || !first.HasArrays(MeshArrays.Position))
 	        {
@@ -387,7 +387,7 @@ namespace UnityEngine.ProBuilder
 	        List<Vector4> uv3;
 	        List<Vector4> uv4;
 
-	        Vertex.GetArrays(vertexes, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
+	        Vertex.GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
 
             m_Positions = position;
             m_Colors = color;
@@ -633,7 +633,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <value>
-		/// How many vertexes are in the positions array.
+		/// How many vertices are in the positions array.
 		/// </value>
 		public int vertexCount
 		{
@@ -669,7 +669,7 @@ namespace UnityEngine.ProBuilder
 	    /// Invoked when the element selection changes on any ProBuilderMesh.
 	    /// </value>
 	    /// <seealso cref="SetSelectedFaces"/>
-	    /// <seealso cref="SetSelectedVertexes"/>
+	    /// <seealso cref="SetSelectedVertices"/>
 	    /// <seealso cref="SetSelectedEdges"/>
 	    public static event Action<ProBuilderMesh> elementSelectionChanged;
 

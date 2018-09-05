@@ -13,8 +13,8 @@ namespace UnityEditor.ProBuilder
 		// The name of this model.
 		public string name;
 
-		// vertexes
-		public Vertex[] vertexes;
+		// vertices
+		public Vertex[] vertices;
 
 		// Submeshes
 		public Submesh[] submeshes;
@@ -23,13 +23,13 @@ namespace UnityEditor.ProBuilder
 		public Matrix4x4 matrix;
 
 		/// <summary>
-		/// Vertex count for the mesh (corresponds to vertexes length).
+		/// Vertex count for the mesh (corresponds to vertices length).
 		/// </summary>
 		public int vertexCount
 		{
 			get
 			{
-				return vertexes == null ? 0 : vertexes.Length;
+				return vertices == null ? 0 : vertices.Length;
 			}
 		}
 
@@ -47,7 +47,7 @@ namespace UnityEditor.ProBuilder
 		public Model(string name, Mesh mesh, Material[] materials, Matrix4x4 matrix)
 		{
 			this.name = name;
-			this.vertexes = mesh.GetVertexes();
+			this.vertices = mesh.GetVertices();
 			this.matrix = matrix;
 			this.submeshes = new Submesh[mesh.subMeshCount];
 			int matCount = materials != null ? materials.Length : 0;
@@ -66,7 +66,7 @@ namespace UnityEditor.ProBuilder
 			mesh.ToMesh(quads ? MeshTopology.Quads : MeshTopology.Triangles);
 			mesh.Refresh(RefreshMask.UV | RefreshMask.Colors | RefreshMask.Normals | RefreshMask.Tangents);
 			this.name = name;
-			vertexes = mesh.GetVertexes();
+			vertices = mesh.GetVertices();
 			submeshes = Submesh.GetSubmeshes(mesh.facesInternal, quads ? MeshTopology.Quads : MeshTopology.Triangles);
 			matrix = mesh.transform.localToWorldMatrix;
 			mesh.ToMesh(MeshTopology.Triangles);

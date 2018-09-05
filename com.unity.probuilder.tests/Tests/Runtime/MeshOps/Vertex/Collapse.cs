@@ -11,7 +11,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Vertex
 		public static void CollapseToFirst()
 		{
 			var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
-			var res = cube.MergeVertexes(new [] { 0, 1 }, true);
+			var res = cube.MergeVertices(new [] { 0, 1 }, true);
 
 			Assert.AreEqual(3, res);
 
@@ -34,7 +34,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Vertex
 		public static void CollapseToCenter()
 		{
 			var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
-			var res = cube.MergeVertexes(new [] { 0, 1 });
+			var res = cube.MergeVertices(new [] { 0, 1 });
 
 			cube.ToMesh();
 			cube.Refresh();

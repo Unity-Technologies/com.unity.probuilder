@@ -300,7 +300,7 @@ namespace UnityEditor.ProBuilder
 		Dictionary<ProBuilderMesh, SmoothGroupData> m_SmoothGroups = new Dictionary<ProBuilderMesh, SmoothGroupData>();
 		static bool s_ShowPreview = false;
 		static bool s_ShowNormals = false;
-		static bool s_IsMovingVertexes = false;
+		static bool s_IsMovingVertices = false;
 		static bool s_ShowHelp = false;
 		static float s_NormalsSize = 0.1f;
 		static float s_PreviewOpacity = .5f;
@@ -358,12 +358,12 @@ namespace UnityEditor.ProBuilder
 
 		private void OnBeginVertexMovement(ProBuilderMesh[] selection)
 		{
-			s_IsMovingVertexes = true;
+			s_IsMovingVertices = true;
 		}
 
 		private void OnFinishVertexMovement(ProBuilderMesh[] selection)
 		{
-			s_IsMovingVertexes = false;
+			s_IsMovingVertices = false;
 			OnSelectionChanged();
 		}
 
@@ -635,7 +635,7 @@ namespace UnityEditor.ProBuilder
 
 			Event evt = Event.current;
 
-			if (!s_IsMovingVertexes && evt.type == EventType.Repaint)
+			if (!s_IsMovingVertices && evt.type == EventType.Repaint)
 			{
 
 				foreach (var kvp in m_SmoothGroups)

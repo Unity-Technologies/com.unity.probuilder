@@ -28,25 +28,25 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (faces == null)
                 throw new System.ArgumentNullException("faces");
 
-            List<Vertex> vertexes = new List<Vertex>( mesh.GetVertexes() );
+            List<Vertex> vertices = new List<Vertex>( mesh.GetVertices() );
 			Dictionary<int, int> lookup = mesh.sharedVertexLookup;
 
 			List<FaceRebuildData> rebuild = new List<FaceRebuildData>();
 
 			foreach(Face face in faces)
 			{
-				List<FaceRebuildData> res = BreakFaceIntoTris(face, vertexes, lookup);
+				List<FaceRebuildData> res = BreakFaceIntoTris(face, vertices, lookup);
 				rebuild.AddRange(res);
 			}
 
-			FaceRebuildData.Apply(rebuild, mesh, vertexes, null);
+			FaceRebuildData.Apply(rebuild, mesh, vertices, null);
 			mesh.DeleteFaces(faces);
 			mesh.ToMesh();
 
 			return rebuild.Select(x => x.face).ToArray();
 		}
 
-		static List<FaceRebuildData> BreakFaceIntoTris(Face face, List<Vertex> vertexes, Dictionary<int, int> lookup)
+		static List<FaceRebuildData> BreakFaceIntoTris(Face face, List<Vertex> vertices, Dictionary<int, int> lookup)
 		{
 			int[] tris = face.indexesInternal;
 			int triCount = tris.Length;
@@ -59,10 +59,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				r.face = new Face(face);
 				r.face.indexesInternal = new int[] { 0, 1, 2};
 
-				r.vertexes = new List<Vertex>() {
-					vertexes[tris[i  ]],
-					vertexes[tris[i+1]],
-					vertexes[tris[i+2]]
+				r.vertices = new List<Vertex>() {
+					vertices[tris[i  ]],
+					vertices[tris[i+1]],
+					vertices[tris[i+2]]
 				};
 
 				r.sharedIndexes = new List<int>() {
@@ -89,15 +89,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			return GetWindingOrder(p);
 		}
 
-		static WindingOrder GetWindingOrder(IList<Vertex> vertexes, IList<int> indexes)
+		static WindingOrder GetWindingOrder(IList<Vertex> vertices, IList<int> indexes)
 		{
-            if (vertexes == null)
-                throw new ArgumentNullException("vertexes");
+            if (vertices == null)
+                throw new ArgumentNullException("vertices");
 
             if (indexes == null)
                 throw new ArgumentNullException("indexes");
 
-            Vector2[] p = Projection.PlanarProject(vertexes.Select(x => x.position).ToArray(), indexes);
+            Vector2[] p = Projection.PlanarProject(vertices.Select(x => x.position).ToArray(), indexes);
 			return GetWindingOrder(p);
 		}
 
@@ -141,7 +141,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="mesh">The mesh that face belongs to.</param>
 		/// <param name="face">The target face.</param>
-		/// <returns>True if successful, false if not. Operation will fail if face does not contain two triangles with exactly 2 shared vertexes.</returns>
+		/// <returns>True if successful, false if not. Operation will fail if face does not contain two triangles with exactly 2 shared vertices.</returns>
 		public static bool FlipEdge(this ProBuilderMesh mesh, Face face)
 		{
             if (mesh == null)

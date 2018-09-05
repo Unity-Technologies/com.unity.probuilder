@@ -7,7 +7,7 @@ using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	sealed class ConnectVertexes : MenuAction
+	sealed class ConnectVertices : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Vert_Connect", IconSkin.Pro); } }
@@ -16,8 +16,8 @@ namespace UnityEditor.ProBuilder.Actions
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
-			"Connect Vertexes",
-			@"Adds edges connecting all selected vertexes.",
+			"Connect Vertices",
+			@"Adds edges connecting all selected vertices.",
 			keyCommandAlt, 'E'
 		);
 
@@ -44,7 +44,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuConnectVertexes(MeshSelection.TopInternal());
+			return MenuCommands.MenuConnectVertices(MeshSelection.TopInternal());
 		}
 	}
 }

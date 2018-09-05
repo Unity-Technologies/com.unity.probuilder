@@ -19,7 +19,7 @@ namespace UnityEditor.ProBuilder.Actions
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Fill Hole",
-			@"Create a new face connecting all selected vertexes."
+			@"Create a new face connecting all selected vertices."
 		);
 
 		public override bool enabled
@@ -52,7 +52,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			GUILayout.Label("Fill Hole Settings", EditorStyles.boldLabel);
 
-			EditorGUILayout.HelpBox("Fill Hole can optionally fill entire holes (default) or just the selected vertexes on the hole edges.\n\nIf no elements are selected, the entire object will be scanned for holes.", MessageType.Info);
+			EditorGUILayout.HelpBox("Fill Hole can optionally fill entire holes (default) or just the selected vertices on the hole edges.\n\nIf no elements are selected, the entire object will be scanned for holes.", MessageType.Info);
 
 			bool wholePath = PreferencesInternal.GetBool(PreferenceKeys.pbFillHoleSelectsEntirePath);
 

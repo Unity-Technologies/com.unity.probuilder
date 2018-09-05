@@ -113,7 +113,7 @@ namespace UnityEditor.ProBuilder
 
 				try
 				{
-					pb.sharedVertexes = SharedVertex.GetSharedVertexesWithPositions(pb.positionsInternal);
+					pb.sharedVertices = SharedVertex.GetSharedVerticesWithPositions(pb.positionsInternal);
 
 					pb.ToMesh();
 					pb.Refresh();

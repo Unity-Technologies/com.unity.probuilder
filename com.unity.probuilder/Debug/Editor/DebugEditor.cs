@@ -57,7 +57,7 @@ namespace UnityEditor.ProBuilder
 
 		void DoMeshInfo(ProBuilderMesh mesh)
 		{
-			DoSharedVertexesInfo(mesh);
+			DoSharedVerticesInfo(mesh);
 			DoSharedTexturesInfo(mesh);
 		}
 
@@ -82,17 +82,17 @@ namespace UnityEditor.ProBuilder
 			return string.Format("{0}.{1}", mesh.GetInstanceID(), property);
 		}
 
-		void DoSharedVertexesInfo(ProBuilderMesh mesh)
+		void DoSharedVerticesInfo(ProBuilderMesh mesh)
 		{
-			BeginSectionHeader(mesh, "m_SharedVertexes");
+			BeginSectionHeader(mesh, "m_SharedVertices");
 			if(GUILayout.Button("Invalidate Cache", EditorStyles.toolbarButton))
 				mesh.InvalidateSharedVertexLookup();
 			GUILayout.EndHorizontal();
 
-			var sharedVertexes = mesh.sharedVertexesInternal;
+			var sharedVertices = mesh.sharedVerticesInternal;
 
-			for (int i = 0; i < sharedVertexes.Length; i++)
-				GUILayout.Label(sharedVertexes[i].ToString(", "));
+			for (int i = 0; i < sharedVertices.Length; i++)
+				GUILayout.Label(sharedVertices[i].ToString(", "));
 		}
 
 		void DoSharedTexturesInfo(ProBuilderMesh mesh)
@@ -102,10 +102,10 @@ namespace UnityEditor.ProBuilder
 				mesh.InvalidateSharedTextureLookup();
 			GUILayout.EndHorizontal();
 
-			var sharedVertexes = mesh.sharedTextures;
+			var sharedVertices = mesh.sharedTextures;
 
-			for (int i = 0; sharedVertexes != null && i < sharedVertexes.Length; i++)
-				GUILayout.Label(sharedVertexes[i].ToString(", "));
+			for (int i = 0; sharedVertices != null && i < sharedVertices.Length; i++)
+				GUILayout.Label(sharedVertices[i].ToString(", "));
 		}
 
 		void DoContextClick()

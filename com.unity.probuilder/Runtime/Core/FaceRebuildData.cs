@@ -12,11 +12,11 @@ namespace UnityEngine.ProBuilder
 #pragma warning disable 0649
 		// new pb_Face
 		public Face face;
-		// new vertexes (all vertexes required to rebuild, not just new)
-		public List<Vertex> vertexes;
-		// shared indexes pointers (must match vertexes length)
+		// new vertices (all vertices required to rebuild, not just new)
+		public List<Vertex> vertices;
+		// shared indexes pointers (must match vertices length)
 		public List<int> sharedIndexes;
-		// shared UV indexes pointers (must match vertexes length)
+		// shared UV indexes pointers (must match vertices length)
 		public List<int> sharedIndexesUV;
 		// The offset applied to this face via Apply() call.
 		private int _appliedOffset = 0;
@@ -32,29 +32,29 @@ namespace UnityEngine.ProBuilder
 
 		public override string ToString()
 		{
-			return string.Format("{0}\n{1}", vertexes.ToString(", "), sharedIndexes.ToString(", "));
+			return string.Format("{0}\n{1}", vertices.ToString(", "), sharedIndexes.ToString(", "));
 		}
 
 		public static void Apply(
 			IEnumerable<FaceRebuildData> newFaces,
 			ProBuilderMesh mesh,
-			List<Vertex> vertexes = null,
+			List<Vertex> vertices = null,
 			List<Face> faces = null)
 		{
 			if (faces == null)
 				faces = new List<Face>(mesh.facesInternal);
 
-			if(vertexes == null)
-				vertexes = new List<Vertex>( mesh.GetVertexes() );
+			if(vertices == null)
+				vertices = new List<Vertex>( mesh.GetVertices() );
 
 			var lookup = mesh.sharedVertexLookup;
 			var lookupUV = mesh.sharedTextureLookup;
 
-			Apply(newFaces, vertexes, faces, lookup, lookupUV);
+			Apply(newFaces, vertices, faces, lookup, lookupUV);
 
-			mesh.SetVertexes(vertexes);
+			mesh.SetVertices(vertices);
 			mesh.faces = faces;
-			mesh.SetSharedVertexes(lookup);
+			mesh.SetSharedVertices(lookup);
 			mesh.SetSharedTextures(lookupUV);
 		}
 
@@ -62,23 +62,23 @@ namespace UnityEngine.ProBuilder
 		/// Shift face rebuild data to appropriate positions and update the vertex, face, and shared indexes arrays.
 		/// </summary>
 		/// <param name="newFaces"></param>
-		/// <param name="vertexes"></param>
+		/// <param name="vertices"></param>
 		/// <param name="faces"></param>
 		/// <param name="sharedVertexLookup"></param>
 		/// <param name="sharedTextureLookup"></param>
 		public static void Apply(
 			IEnumerable<FaceRebuildData> newFaces,
-			List<Vertex> vertexes,
+			List<Vertex> vertices,
 			List<Face> faces,
 			Dictionary<int, int> sharedVertexLookup,
 			Dictionary<int, int> sharedTextureLookup = null)
 		{
-			int index = vertexes.Count;
+			int index = vertices.Count;
 
 			foreach(FaceRebuildData rd in newFaces)
 			{
 				Face face = rd.face;
-				int faceVertexCount = rd.vertexes.Count;
+				int faceVertexCount = rd.vertices.Count;
 
 				bool hasSharedIndexes = sharedVertexLookup != null && rd.sharedIndexes != null && rd.sharedIndexes.Count == faceVertexCount;
 				bool hasSharedIndexesUV = sharedTextureLookup != null && rd.sharedIndexesUV != null && rd.sharedIndexesUV.Count == faceVertexCount;
@@ -100,10 +100,10 @@ namespace UnityEngine.ProBuilder
 				for(int n = 0, c = faceIndexes.Length; n < c; n++)
 					faceIndexes[n] += index;
 
-				index += rd.vertexes.Count;
+				index += rd.vertices.Count;
 				face.indexesInternal = faceIndexes;
 				faces.Add(face);
-				vertexes.AddRange(rd.vertexes);
+				vertices.AddRange(rd.vertices);
 			}
 		}
 	}

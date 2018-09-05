@@ -8,7 +8,7 @@ namespace UnityEngine.ProBuilder
 	/// An edge composed of both the local index and common index.
 	/// <br />
 	/// <br />
-	/// This is useful when comparing vertex indexes that are coincident. Coincident vertexes are defined as vertexes that are share the same coordinate space, but are separate values in the vertex array. ProBuilder tracks these coincident values in the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" array. A "common" (also called "shared") index is the index of a vertex in the sharedIndexes array.
+	/// This is useful when comparing vertex indexes that are coincident. Coincident vertices are defined as vertices that are share the same coordinate space, but are separate values in the vertex array. ProBuilder tracks these coincident values in the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" array. A "common" (also called "shared") index is the index of a vertex in the sharedIndexes array.
 	/// </summary>
 	/// <seealso cref="P:UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" />
 	/// <seealso cref="T:UnityEngine.ProBuilder.Edge" />
@@ -18,7 +18,7 @@ namespace UnityEngine.ProBuilder
 		Edge m_Common;
 
 		/// <value>
-		/// Local edges point to an index in the vertexes array.
+		/// Local edges point to an index in the vertices array.
 		/// </value>
 		public Edge local
 		{

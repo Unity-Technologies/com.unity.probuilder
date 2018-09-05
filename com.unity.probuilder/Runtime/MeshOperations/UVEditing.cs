@@ -175,7 +175,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 		/// <summary>
 		/// Projects UVs on all passed faces, automatically updating the sharedIndexesUV table as required (only associates
-		/// vertexes that share a seam).
+		/// vertices that share a seam).
 		/// </summary>
 		/// <param name="mesh"></param>
 		/// <param name="faces"></param>
@@ -323,7 +323,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					ProjectFacesAuto(mesh, new Face[] { f2 }, channel);
 
 					// Use the first first projected as the starting point
-					// and match the vertexes
+					// and match the vertices
 					f1.manualUV = true;
 					f2.manualUV = true;
 
@@ -351,7 +351,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         static bool AlignEdges(ProBuilderMesh mesh, Face faceToMove, Edge edgeToAlignTo, Edge edgeToBeAligned, int channel)
 		{
 			Vector2[] uvs = GetUVs(mesh, channel);
-			SharedVertex[] sharedIndexes = mesh.sharedVertexesInternal;
+			SharedVertex[] sharedIndexes = mesh.sharedVerticesInternal;
 			SharedVertex[] sharedIndexesUV = mesh.sharedTextures;
 
 			// Match each edge vertex to the other

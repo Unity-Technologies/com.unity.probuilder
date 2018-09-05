@@ -286,7 +286,7 @@ namespace UnityEditor.ProBuilder
 			}
 
 			var unwrapParamaters = PreferencesInternal.GetValue<UnwrapParameters>(PreferenceKeys.defaultUnwrapParameters);
-			
+
 			if (unwrapParamaters != null)
 				pb.unwrapParameters = unwrapParamaters;
 
@@ -322,13 +322,13 @@ namespace UnityEditor.ProBuilder
 		/// Set the pivot point of a mesh.
 		/// </summary>
 		/// <param name="mesh"></param>
-		/// <param name="vertexes">If any values are passed here, the pivot is set to an average of all vertexes at indexes. If null, the first vertex is used as the pivot.</param>
-		internal static void SetPivotAndSnapWithPref(ProBuilderMesh mesh, int[] vertexes)
+		/// <param name="vertices">If any values are passed here, the pivot is set to an average of all vertices at indexes. If null, the first vertex is used as the pivot.</param>
+		internal static void SetPivotAndSnapWithPref(ProBuilderMesh mesh, int[] vertices)
 		{
 			if(PreferencesInternal.GetBool(PreferenceKeys.pbForceGridPivot))
-				mesh.CenterPivot( vertexes == null ? new int[1]{0} : vertexes );
+				mesh.CenterPivot( vertices == null ? new int[1]{0} : vertices );
 			else
-				mesh.CenterPivot(vertexes);
+				mesh.CenterPivot(vertices);
 
 			if(ProGridsInterface.SnapEnabled())
 				mesh.transform.position = Snapping.SnapValue(mesh.transform.position, ProGridsInterface.SnapValue());

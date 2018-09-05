@@ -8,16 +8,16 @@ using UnityEngine.ProBuilder;
 namespace UnityEngine.ProBuilder.MeshOperations
 {
 	/// <summary>
-	/// Functions for removing vertexes and triangles from a mesh.
+	/// Functions for removing vertices and triangles from a mesh.
 	/// </summary>
 	public static class DeleteElements
 	{
 		/// <summary>
-		/// Removes vertexes that no face references.
+		/// Removes vertices that no face references.
 		/// </summary>
 		/// <param name="mesh">The source mesh.</param>
 		/// <returns>A list of deleted vertex indexes.</returns>
-		public static int[] RemoveUnusedVertexes(this ProBuilderMesh mesh)
+		public static int[] RemoveUnusedVertices(this ProBuilderMesh mesh)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -29,19 +29,19 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				if(!tris.Contains(i))
 					del.Add(i);
 
-			mesh.DeleteVertexes(del);
+			mesh.DeleteVertices(del);
 
 			return del.ToArray();
 		}
 
 		/// <summary>
-		/// Deletes the vertexes from the passed index array, and handles rebuilding the sharedIndexes array.
+		/// Deletes the vertices from the passed index array, and handles rebuilding the sharedIndexes array.
 		/// </summary>
 		/// <remarks>This function does not retriangulate the mesh. Ie, you are responsible for ensuring that indexes
 		/// deleted by this function are not referenced by any triangles.</remarks>
 		/// <param name="mesh">The source mesh.</param>
-		/// <param name="distinctIndexes">A list of vertexes to delete. Note that this must not contain duplicates.</param>
-		public static void DeleteVertexes(this ProBuilderMesh mesh, IEnumerable<int> distinctIndexes)
+		/// <param name="distinctIndexes">A list of vertices to delete. Note that this must not contain duplicates.</param>
+		public static void DeleteVertices(this ProBuilderMesh mesh, IEnumerable<int> distinctIndexes)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -49,15 +49,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (distinctIndexes == null || !distinctIndexes.Any())
 				return;
 
-			Vertex[] vertexes = mesh.GetVertexes();
-			int originalVertexCount = vertexes.Length;
+			Vertex[] vertices = mesh.GetVertices();
+			int originalVertexCount = vertices.Length;
 			int[] offset = new int[originalVertexCount];
 
 			List<int> sorted = new List<int>(distinctIndexes);
 
 			sorted.Sort();
 
-			vertexes = vertexes.SortedRemoveAt(sorted);
+			vertices = vertices.SortedRemoveAt(sorted);
 
 			// Add 1 because NearestIndexPriorToValue is 0 indexed.
 			for(int i = 0; i < originalVertexCount; i++)
@@ -77,8 +77,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			var common = mesh.sharedVertexLookup.Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
 			var commonUV = mesh.sharedTextureLookup.Where(x => sorted.BinarySearch(x.Key) < 0).Select(y => new KeyValuePair<int, int>(y.Key - offset[y.Key], y.Value));
 
-			mesh.SetVertexes(vertexes);
-			mesh.SetSharedVertexes(common);
+			mesh.SetVertices(vertices);
+			mesh.SetSharedVertices(common);
 			mesh.SetSharedTextures(commonUV);
 		}
 
@@ -129,7 +129,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			int vertexCount = mesh.positionsInternal.Length;
 
 			Face[] nFaces = mesh.facesInternal.RemoveAt(faceIndexes);
-			var vertexes = mesh.GetVertexes().SortedRemoveAt(indexesToRemove);
+			var vertices = mesh.GetVertices().SortedRemoveAt(indexesToRemove);
 
 			Dictionary<int, int> shiftmap = new Dictionary<int, int>();
 
@@ -147,8 +147,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				nFaces[i].indexesInternal = tris;
 			}
 
-			mesh.SetVertexes(vertexes);
-			mesh.sharedVertexesInternal = SharedVertex.SortedRemoveAndShift(mesh.sharedVertexLookup, indexesToRemove);
+			mesh.SetVertices(vertices);
+			mesh.sharedVerticesInternal = SharedVertex.SortedRemoveAndShift(mesh.sharedVertexLookup, indexesToRemove);
 			mesh.sharedTextures = SharedVertex.SortedRemoveAndShift(mesh.sharedTextureLookup, indexesToRemove);
 			mesh.facesInternal = nFaces;
 			int[] array = indexesToRemove.ToArray();
@@ -160,7 +160,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// Iterates through all faces in a mesh and removes triangles with an area less than float.Epsilon, or with indexes that point to the same vertex.
 		/// </summary>
 		/// <param name="mesh">The source mesh.</param>
-		/// <returns>The number of vertexes deleted as a result of the degenerate triangle cleanup.</returns>
+		/// <returns>The number of vertices deleted as a result of the degenerate triangle cleanup.</returns>
 		public static int[] RemoveDegenerateTriangles(this ProBuilderMesh mesh)
 		{
             if (mesh == null)
@@ -220,9 +220,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			}
 
 			mesh.faces = m_RebuiltFaces;
-			mesh.SetSharedVertexes(m_RebuiltLookup);
+			mesh.SetSharedVertices(m_RebuiltLookup);
 			mesh.SetSharedTextures(m_RebuiltLookupUV);
-			return mesh.RemoveUnusedVertexes();
+			return mesh.RemoveUnusedVertices();
 		}
 
 	}

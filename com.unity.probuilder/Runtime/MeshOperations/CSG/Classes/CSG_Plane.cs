@@ -58,9 +58,9 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
 			EPolygonType polygonType = 0;
 			List<EPolygonType> types = new List<EPolygonType>();
 
-			for (int i = 0; i < polygon.vertexes.Count; i++)
+			for (int i = 0; i < polygon.vertices.Count; i++)
 			{
-				float t = Vector3.Dot(this.normal, polygon.vertexes[i].position) - this.w;
+				float t = Vector3.Dot(this.normal, polygon.vertices[i].position) - this.w;
 				EPolygonType type = (t < -CSG.EPSILON) ? EPolygonType.Back : ((t > CSG.EPSILON) ? EPolygonType.Front : EPolygonType.Coplanar);
 				polygonType |= type;
 				types.Add(type);
@@ -95,13 +95,13 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
 					List<CSG_Vertex> f = new List<CSG_Vertex>();
 					List<CSG_Vertex> b = new List<CSG_Vertex>();
 
-					for (int i = 0; i < polygon.vertexes.Count; i++)
+					for (int i = 0; i < polygon.vertices.Count; i++)
 					{
-						int j = (i + 1) % polygon.vertexes.Count;
+						int j = (i + 1) % polygon.vertices.Count;
 
 						EPolygonType ti = types[i], tj = types[j];
 
-						CSG_Vertex vi = polygon.vertexes[i], vj = polygon.vertexes[j];
+						CSG_Vertex vi = polygon.vertices[i], vj = polygon.vertices[j];
 
 						if (ti != EPolygonType.Back)
 						{

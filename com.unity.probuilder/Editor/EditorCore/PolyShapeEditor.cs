@@ -27,7 +27,7 @@ namespace UnityEditor.ProBuilder
 		static float s_HeightMouseOffset;
 		bool m_NextMouseUpAdvancesMode = false;
 		List<GameObject> m_IgnorePick = new List<GameObject>();
-		bool m_IsModifyingVertexes = false;
+		bool m_IsModifyingVertices = false;
 
 		PolyShape polygon
 		{
@@ -335,7 +335,7 @@ namespace UnityEditor.ProBuilder
 					SetPolyEditMode(PolyShape.PolyEditMode.Height);
 			}
 
-			if(	m_IsModifyingVertexes && (
+			if(	m_IsModifyingVertices && (
 				evt.type == EventType.MouseUp ||
 				evt.type == EventType.Ignore ||
 				evt.type == EventType.KeyDown ||
@@ -711,13 +711,13 @@ namespace UnityEditor.ProBuilder
 
 		void OnBeginVertexMovement()
 		{
-			if(!m_IsModifyingVertexes)
-				m_IsModifyingVertexes = true;
+			if(!m_IsModifyingVertices)
+				m_IsModifyingVertices = true;
 		}
 
 		void OnFinishVertexMovement()
 		{
-			m_IsModifyingVertexes = false;
+			m_IsModifyingVertices = false;
 			RebuildPolyShapeMesh(polygon);
 		}
 

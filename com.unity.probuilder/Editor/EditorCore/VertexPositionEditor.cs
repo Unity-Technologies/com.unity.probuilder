@@ -23,7 +23,7 @@ namespace UnityEditor.ProBuilder
 			public VertexEditorSelection(ProBuilderMesh mesh, bool visible, IEnumerable<int> indexes)
 			{
 				this.isVisible = visible;
-				this.common = mesh.GetCoincidentVertexes(indexes);
+				this.common = mesh.GetCoincidentVertices(indexes);
 			}
 		}
 
@@ -77,7 +77,7 @@ namespace UnityEditor.ProBuilder
 
 				if(selection.TryGetValue(mesh, out sel))
 				{
-					sel.common = mesh.GetCoincidentVertexes(mesh.selectedIndexesInternal);
+					sel.common = mesh.GetCoincidentVertices(mesh.selectedIndexesInternal);
 					res.Add(mesh, sel);
 				}
 				else
@@ -171,7 +171,7 @@ namespace UnityEditor.ProBuilder
 
 							GUILayout.Label(u.ToString(), GUILayout.MinWidth(32), GUILayout.MaxWidth(32));
 
-							Vector3 v = pb.positionsInternal[pb.sharedVertexesInternal[u][0]];
+							Vector3 v = pb.positionsInternal[pb.sharedVerticesInternal[u][0]];
 
 							if(worldSpace) v = transform.TransformPoint(v);
 
@@ -230,7 +230,7 @@ namespace UnityEditor.ProBuilder
 
 				foreach(int i in sel.common)
 				{
-					var indexes = pb.sharedVertexesInternal[i];
+					var indexes = pb.sharedVerticesInternal[i];
 
 					Vector3 point = pb.transform.TransformPoint(positions[indexes[0]]);
 

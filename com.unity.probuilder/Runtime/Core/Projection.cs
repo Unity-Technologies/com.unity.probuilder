@@ -127,16 +127,16 @@ namespace UnityEngine.ProBuilder
 			}
 		}
 
-		internal static Vector2[] SphericalProject(IList<Vector3> vertexes, IList<int> indexes = null)
+		internal static Vector2[] SphericalProject(IList<Vector3> vertices, IList<int> indexes = null)
 		{
-			int len = indexes == null ? vertexes.Count : indexes.Count;
+			int len = indexes == null ? vertices.Count : indexes.Count;
 			Vector2[] uv = new Vector2[len];
-			Vector3 cen = Math.Average(vertexes, indexes);
+			Vector3 cen = Math.Average(vertices, indexes);
 
 			for(int i = 0; i < len; i++)
 			{
 				int indx = indexes == null ? i : indexes[i];
-				Vector3 p = (vertexes[indx] - cen);
+				Vector3 p = (vertices[indx] - cen);
 				p.Normalize();
 				uv[i].x = .5f + (Mathf.Atan2(p.z, p.x) / (2f * Mathf.PI));
 				uv[i].y = .5f - (Mathf.Asin(p.y) / Mathf.PI);
@@ -252,7 +252,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <remarks>http://www.ilikebigbits.com/blog/2015/3/2/plane-from-points</remarks>
 		/// <param name="points">The points to find a plane for. Order does not matter.</param>
-		/// <param name="indexes">If provided, only the vertexes referenced by the indexes array will be considered.</param>
+		/// <param name="indexes">If provided, only the vertices referenced by the indexes array will be considered.</param>
 		/// <returns>A plane that best matches the layout of the points array.</returns>
 		public static Plane FindBestPlane(IList<Vector3> points, IList<int> indexes = null)
 		{

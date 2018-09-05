@@ -122,7 +122,7 @@ namespace UnityEditor.ProBuilder.Actions
 			string relativePrefabPath = string.Format("{0}/{1}.prefab", relativeDirectory, name);
 			string prefabPath = AssetDatabase.GenerateUniqueAssetPath(relativePrefabPath);
 #if UNITY_2018_3_OR_NEWER
-			PrefabUtility.CreatePrefab(prefabPath, go);
+			PrefabUtility.SaveAsPrefabAsset(go, prefabPath);
 #else
 			PrefabUtility.CreatePrefab(prefabPath, go, ReplacePrefabOptions.Default);
 #endif

@@ -75,7 +75,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Populate a rendereble's mesh with a spattering of vertexes representing both selected and not selected.
+		/// Populate a rendereble's mesh with a spattering of vertices representing both selected and not selected.
 		/// </summary>
 		/// <param name="mesh"></param>
 		/// <param name="target"></param>
@@ -93,7 +93,7 @@ namespace UnityEngine.ProBuilder
 		{
 			const ushort k_MaxPointCount = ushort.MaxValue / 4;
 
-			int billboardCount = mesh.sharedVertexesInternal.Length;
+			int billboardCount = mesh.sharedVerticesInternal.Length;
 
 			if (billboardCount > k_MaxPointCount)
 				billboardCount = k_MaxPointCount;
@@ -154,7 +154,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Draw a set of vertexes.
+		/// Draw a set of vertices.
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="target"></param>

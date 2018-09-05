@@ -208,8 +208,8 @@ namespace UnityEngine.ProBuilder.Test
 			Assert.AreEqual(vertexCount, result.vertexCount);
 			Assert.AreEqual(subMeshCount, result.subMeshCount);
 
-			Vertex[] leftVertices = expected.GetVertexes();
-			Vertex[] rightVertices = result.GetVertexes();
+			Vertex[] leftVertices = expected.GetVertices();
+			Vertex[] rightVertices = result.GetVertices();
 
 			for (int i = 0; i < vertexCount; i++)
 				Assert.True(leftVertices[i].Equals(rightVertices[i], compare),
@@ -252,8 +252,8 @@ namespace UnityEngine.ProBuilder.Test
 			if(subMeshCount != result.subMeshCount)
 				return false;
 
-			Vertex[] leftVertices = expected.GetVertexes();
-			Vertex[] rightVertices = result.GetVertexes();
+			Vertex[] leftVertices = expected.GetVertices();
+			Vertex[] rightVertices = result.GetVertices();
 
 			for (int i = 0; i < vertexCount; i++)
 			{

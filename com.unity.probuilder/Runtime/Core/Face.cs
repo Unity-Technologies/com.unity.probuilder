@@ -10,9 +10,9 @@ namespace UnityEngine.ProBuilder
     /// <summary>
     /// A face is composed of a set of triangles, and a material.
     /// <br />
-    /// Triangle indexes may point to the same vertex index as long as the vertexes are unique to the face. Ie, every vertex that a face references should only be used by that face's indices. To associate vertexes that share common attributes (usually position), use the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" property.
+    /// Triangle indexes may point to the same vertex index as long as the vertices are unique to the face. Ie, every vertex that a face references should only be used by that face's indices. To associate vertices that share common attributes (usually position), use the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" property.
     /// <br />
-    /// ProBuilder automatically manages condensing common vertexes in the EditorMeshUtility.Optimize function.
+    /// ProBuilder automatically manages condensing common vertices in the EditorMeshUtility.Optimize function.
     /// </summary>
     [Serializable]
     public sealed class Face
@@ -29,7 +29,7 @@ namespace UnityEngine.ProBuilder
         int m_SmoothingGroup;
 
         /// <summary>
-        /// If manualUV is false, these parameters determine how this face's vertexes are projected to 2d space.
+        /// If manualUV is false, these parameters determine how this face's vertices are projected to 2d space.
         /// </summary>
         [SerializeField]
         [FormerlySerializedAs("_uv")]

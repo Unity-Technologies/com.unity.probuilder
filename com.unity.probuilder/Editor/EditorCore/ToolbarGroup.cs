@@ -21,7 +21,7 @@ namespace UnityEditor.ProBuilder
 		/// </summary>
 		Object = 2,
 		/// <summary>
-		/// This action affects geometry elements (vertexes, edges, faces).
+		/// This action affects geometry elements (vertices, edges, faces).
 		/// </summary>
 		Geometry = 3,
 		/// <summary>
