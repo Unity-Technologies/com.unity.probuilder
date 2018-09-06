@@ -1702,7 +1702,7 @@ namespace UnityEditor.ProBuilder
 				{
 					var shared = mesh.sharedVerticesInternal;
 					m_SelectedVerticesCommon += mesh.selectedSharedVerticesCount;
-					
+
 					foreach(var sharedVertex in mesh.selectedSharedVertices)
 					{
 						Vector3 v = mesh.transform.TransformPoint(mesh.positionsInternal[shared[sharedVertex][0]]);

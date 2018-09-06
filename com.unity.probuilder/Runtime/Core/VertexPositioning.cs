@@ -11,6 +11,8 @@ namespace UnityEngine.ProBuilder
 	/// </summary>
 	public static class VertexPositioning
 	{
+		static List<int> s_CoincidentVertices = new List<int>();
+
 		/// <summary>
 		/// Get a copy of a mesh positions array transformed into world coordinates.
 		/// </summary>
@@ -68,7 +70,8 @@ namespace UnityEngine.ProBuilder
 
             int i = 0;
 
-			List<int> distinct = mesh.GetCoincidentVertices(indexes);
+			s_CoincidentVertices.Clear();
+			mesh.GetCoincidentVertices(indexes, s_CoincidentVertices);
 
 			Matrix4x4 w2l = mesh.transform.worldToLocalMatrix;
 
@@ -82,16 +85,16 @@ namespace UnityEngine.ProBuilder
 				Matrix4x4 l2w = mesh.transform.localToWorldMatrix;
 				Vector3 mask = snapAxisOnly ? offset.ToMask(Math.handleEpsilon) : Vector3.one;
 
-				for(i = 0; i < distinct.Count; i++)
+				for(i = 0; i < s_CoincidentVertices.Count; i++)
 				{
-					var v = l2w.MultiplyPoint3x4(verts[distinct[i]] + localOffset);
-					verts[distinct[i]] = w2l.MultiplyPoint3x4( Snapping.SnapValue(v, snapValue * mask) );
+					var v = l2w.MultiplyPoint3x4(verts[s_CoincidentVertices[i]] + localOffset);
+					verts[s_CoincidentVertices[i]] = w2l.MultiplyPoint3x4( Snapping.SnapValue(v, snapValue * mask) );
 				}
 			}
 			else
 			{
-				for(i = 0; i < distinct.Count; i++)
-					verts[distinct[i]] += localOffset;
+				for(i = 0; i < s_CoincidentVertices.Count; i++)
+					verts[s_CoincidentVertices[i]] += localOffset;
 			}
 
 			// don't bother calling a full ToMesh() here because we know for certain that the vertices and msh.vertices arrays are equal in length
@@ -112,11 +115,12 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			List<int> all = mesh.GetCoincidentVertices(indexes);
+			s_CoincidentVertices.Clear();
+			mesh.GetCoincidentVertices(indexes, s_CoincidentVertices);
 			Vector3[] verts = mesh.positionsInternal;
 
-			for(int i = 0, c = all.Count; i < c; i++)
-				verts[all[i]] += offset;
+			for(int i = 0, c = s_CoincidentVertices.Count; i < c; i++)
+				verts[s_CoincidentVertices[i]] += offset;
 
 			// don't bother calling a full ToMesh() here because we know for certain that the vertices and msh.vertices arrays are equal in length
 			mesh.mesh.vertices = verts;
