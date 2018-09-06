@@ -105,7 +105,17 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				return false;
 			}
 
-			return Import(meshFilter.sharedMesh, mr ? mr.sharedMaterials : null, importSettings);
+			try
+			{
+				Import(meshFilter.sharedMesh, mr ? mr.sharedMaterials : null, importSettings);
+			}
+			catch (Exception e)
+			{
+				Log.Warning(e.ToString());
+				return false;
+			}
+
+			return true;
 		}
 
 		/// <summary>
@@ -114,15 +124,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="originalMesh">The UnityEngine.Mesh to extract attributes from.</param>
 		/// <param name="materials">The materials array corresponding to the originalMesh submeshes.</param>
 		/// <param name="importSettings">Optional settings parameter defines import customization properties.</param>
-		/// <returns>True if the mesh data was successfully translated to the ProBuilderMesh target, false if something went wrong.</returns>
 		/// <exception cref="NotSupportedException">Import only supports triangle and quad mesh topologies.</exception>
-		public bool Import(Mesh originalMesh, Material[] materials, MeshImportSettings importSettings = null)
+		public void Import(Mesh originalMesh, Material[] materials = null, MeshImportSettings importSettings = null)
 		{
             if (originalMesh == null)
                 throw new ArgumentNullException("originalMesh");
-
-            if (materials == null)
-                throw new ArgumentNullException("materials");
 
             if (importSettings == null)
 				importSettings = k_DefaultImportSettings;
@@ -177,7 +183,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						{
 							faces.Add(new Face(new int[] {
 								vertexIndex    , vertexIndex + 1, vertexIndex + 2,
-								vertexIndex + 1, vertexIndex + 2, vertexIndex + 3 },
+								vertexIndex + 2, vertexIndex + 3, vertexIndex + 0 },
 								material,
 								AutoUnwrapSettings.tile,
 								Smoothing.smoothingGroupNone,
@@ -196,7 +202,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					break;
 
 					default:
-						throw new System.NotSupportedException("ProBuilder only supports importing triangle and quad meshes.");
+						throw new NotSupportedException("ProBuilder only supports importing triangle and quad meshes.");
 				}
 			}
 
@@ -284,8 +290,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				// After smoothing has been applied go back and weld coincident vertices created by MergePairs.
 				MergeElements.CollapseCoincidentVertices(m_Mesh, m_Mesh.facesInternal);
 			}
-
-			return false;
 		}
 
 		Face GetBestQuadConnection(WingedEdge wing, Dictionary<EdgeLookup, float> connections)
