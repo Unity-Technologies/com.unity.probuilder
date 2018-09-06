@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Collections.ObjectModel;
+using UnityEngine.Serialization;
 
 namespace UnityEngine.ProBuilder
 {
@@ -12,13 +13,20 @@ namespace UnityEngine.ProBuilder
 		bool m_IsSelectable = true;
 
 		[SerializeField]
-		int[] m_selectedFaces = new int[] { };
+		[FormerlySerializedAs("m_selectedFaces")]
+		int[] m_SelectedFaces = new int[] { };
 
 		[SerializeField]
 		Edge[] m_SelectedEdges = new Edge[] { };
 
 		[SerializeField]
-		int[] m_selectedTriangles = new int[] { };
+		[FormerlySerializedAs("m_selectedTriangles")]
+		int[] m_SelectedTriangles = new int[] { };
+
+		bool m_SelectedCacheDirty;
+
+		int m_SelectedSharedVerticesCount = 0;
+		HashSet<int> m_SelectedSharedVertices = new HashSet<int>();
 
 		/// <value>
 		/// If false mesh elements will not be selectable. This is used by @"UnityEditor.ProBuilder.ProBuilderEditor".
@@ -34,7 +42,7 @@ namespace UnityEngine.ProBuilder
 		/// </value>
 		public int selectedFaceCount
 		{
-			get { return m_selectedFaces.Length; }
+			get { return m_SelectedFaces.Length; }
 		}
 
 		/// <value>
@@ -42,7 +50,7 @@ namespace UnityEngine.ProBuilder
 		/// </value>
 		public int selectedVertexCount
 		{
-			get { return m_selectedTriangles.Length; }
+			get { return m_SelectedTriangles.Length; }
 		}
 
 		/// <value>
@@ -53,15 +61,50 @@ namespace UnityEngine.ProBuilder
 			get { return m_SelectedEdges.Length; }
 		}
 
+		internal int selectedSharedVerticesCount
+		{
+			get
+			{
+				CacheSelection();
+				return m_SelectedSharedVerticesCount;
+			}
+		}
+
+		internal IEnumerable<int> selectedSharedVertices
+		{
+			get
+			{
+				CacheSelection();
+				return m_SelectedSharedVertices;
+			}
+		}
+
+		void CacheSelection()
+		{
+			if (m_SelectedCacheDirty)
+			{
+				m_SelectedCacheDirty = false;
+				m_SelectedSharedVertices.Clear();
+				var lookup = sharedVertexLookup;
+				m_SelectedSharedVerticesCount = 0;
+
+				foreach (var i in m_SelectedTriangles)
+				{
+					if (m_SelectedSharedVertices.Add(lookup[i]))
+						m_SelectedSharedVerticesCount++;
+				}
+			}
+		}
+
 		/// <summary>
 		/// Get a copy of the selected face array.
 		/// </summary>
 		public Face[] GetSelectedFaces()
 		{
-			int len = m_selectedFaces.Length;
+			int len = m_SelectedFaces.Length;
 			var selected = new Face[len];
 			for (var i = 0; i < len; i++)
-				selected[i] = m_Faces[m_selectedFaces[i]];
+				selected[i] = m_Faces[m_SelectedFaces[i]];
 			return selected;
 		}
 
@@ -75,7 +118,7 @@ namespace UnityEngine.ProBuilder
 		/// </value>
 		public ReadOnlyCollection<int> selectedFaceIndexes
 		{
-			get { return new ReadOnlyCollection<int>(m_selectedFaces); }
+			get { return new ReadOnlyCollection<int>(m_SelectedFaces); }
 		}
 
 		/// <value>
@@ -83,7 +126,7 @@ namespace UnityEngine.ProBuilder
 		/// </value>
 		public ReadOnlyCollection<int> selectedVertices
 		{
-			get { return new ReadOnlyCollection<int>(m_selectedTriangles); }
+			get { return new ReadOnlyCollection<int>(m_SelectedTriangles); }
 		}
 
 		/// <value>
@@ -101,20 +144,13 @@ namespace UnityEngine.ProBuilder
 
 		internal int[] selectedIndexesInternal
 		{
-			get { return m_selectedTriangles; }
-		}
-
-		internal void AddToFaceSelection(Face face)
-		{
-			int index = Array.IndexOf(this.facesInternal, face);
-			if (index > -1)
-				SetSelectedFaces(m_selectedFaces.Add(index));
+			get { return m_SelectedTriangles; }
 		}
 
 		internal void AddToFaceSelection(int index)
 		{
 			if (index > -1)
-				SetSelectedFaces(m_selectedFaces.Add(index));
+				SetSelectedFaces(m_SelectedFaces.Add(index));
 		}
 
 		/// <summary>
@@ -134,10 +170,12 @@ namespace UnityEngine.ProBuilder
 			}
 			else
 			{
-				m_selectedFaces = selected.ToArray();
-				m_selectedTriangles = m_selectedFaces.SelectMany(x => facesInternal[x].distinctIndexesInternal).ToArray();
-				m_SelectedEdges = m_selectedFaces.SelectMany(x => facesInternal[x].edges).ToArray();
+				m_SelectedFaces = selected.ToArray();
+				m_SelectedTriangles = m_SelectedFaces.SelectMany(x => facesInternal[x].distinctIndexesInternal).ToArray();
+				m_SelectedEdges = m_SelectedFaces.SelectMany(x => facesInternal[x].edges).ToArray();
 			}
+
+			m_SelectedCacheDirty = true;
 
 			if (elementSelectionChanged != null)
 				elementSelectionChanged(this);
@@ -155,10 +193,12 @@ namespace UnityEngine.ProBuilder
 			}
 			else
 			{
-				m_selectedFaces = new int[0];
+				m_SelectedFaces = new int[0];
 				m_SelectedEdges = edges.ToArray();
-				m_selectedTriangles = m_SelectedEdges.AllTriangles();
+				m_SelectedTriangles = m_SelectedEdges.AllTriangles();
 			}
+
+			m_SelectedCacheDirty = true;
 
 			if (elementSelectionChanged != null)
 				elementSelectionChanged(this);
@@ -170,9 +210,11 @@ namespace UnityEngine.ProBuilder
 		/// <param name="vertices">The new vertex selection.</param>
 		public void SetSelectedVertices(IEnumerable<int> vertices)
 		{
-			m_selectedFaces = new int[0];
+			m_SelectedFaces = new int[0];
 			m_SelectedEdges = new Edge[0];
-			m_selectedTriangles = vertices != null ? vertices.Distinct().ToArray() : new int[0];
+			m_SelectedTriangles = vertices != null ? vertices.Distinct().ToArray() : new int[0];
+
+			m_SelectedCacheDirty = true;
 
 			if (elementSelectionChanged != null)
 				elementSelectionChanged(this);
@@ -184,19 +226,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="index"></param>
 		internal void RemoveFromFaceSelectionAtIndex(int index)
 		{
-			SetSelectedFaces(m_selectedFaces.RemoveAt(index));
-		}
-
-		/// <summary>
-		/// Removes face from SelectedFaces array, and updates the SelectedTriangles and SelectedEdges arrays to match.
-		/// </summary>
-		/// <param name="face"></param>
-		internal void RemoveFromFaceSelection(Face face)
-		{
-			int indx = Array.IndexOf(facesInternal, face);
-
-			if (indx > -1)
-				SetSelectedFaces(m_selectedFaces.Remove(indx));
+			SetSelectedFaces(m_SelectedFaces.RemoveAt(index));
 		}
 
 		/// <summary>
@@ -204,9 +234,11 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public void ClearSelection()
 		{
-			m_selectedFaces = new int[0];
+			m_SelectedFaces = new int[0];
 			m_SelectedEdges = new Edge[0];
-			m_selectedTriangles = new int[0];
+			m_SelectedTriangles = new int[0];
+
+			m_SelectedCacheDirty = true;
 		}
 	}
 }
