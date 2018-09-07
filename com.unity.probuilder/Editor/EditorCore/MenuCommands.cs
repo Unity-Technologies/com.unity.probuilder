@@ -426,7 +426,7 @@ namespace UnityEditor.ProBuilder
 					else
 					{
 						extrudedFaceCount += pb.selectedEdgeCount;
-						Edge[] newEdges = pb.Extrude(	pb.selectedEdges.ToArray(),
+						Edge[] newEdges = pb.Extrude(pb.selectedEdges,
 												PreferencesInternal.GetFloat(PreferenceKeys.pbExtrudeDistance),
 												PreferencesInternal.GetBool(PreferenceKeys.pbExtrudeAsGroup),
 												PreferencesInternal.GetBool(PreferenceKeys.pbManifoldEdgeExtrusion));
