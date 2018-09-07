@@ -172,6 +172,7 @@ namespace UnityEngine.ProBuilder
 		    InvalidateSharedTextureLookup();
 		    foreach(var face in faces)
 			    face.InvalidateCache();
+		    m_SelectedCacheDirty = true;
 	    }
 
 	    internal SharedVertex[] sharedVerticesInternal
