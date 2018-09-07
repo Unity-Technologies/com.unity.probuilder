@@ -141,8 +141,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				extrudedIndexes.Add(new Edge(y_sharedIndex, newFace.indexesInternal[4]));
 			}
 
-			sharedIndexes = mesh.sharedVerticesInternal;
-
 			// merge extruded vertex indexes with each other
 			if(extrudeAsGroup)
 			{
@@ -163,8 +161,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					}
 				}
 			}
-
-			mesh.sharedVerticesInternal = sharedIndexes;
 
 			// todo Should only need to invalidate caches on affected faces
 			foreach(Face f in mesh.facesInternal)
