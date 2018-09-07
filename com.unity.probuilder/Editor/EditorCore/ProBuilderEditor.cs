@@ -51,7 +51,6 @@ namespace UnityEditor.ProBuilder
 		GUIStyle VertexTranslationInfoStyle;
 
 		bool m_ShowSceneInfo;
-		bool m_HamSelection;
 
 		float m_SnapValue = .25f;
 		bool m_SnapAxisConstraint = true;
@@ -345,13 +344,12 @@ namespace UnityEditor.ProBuilder
 			m_ShowPreselectionHighlight = PreferencesInternal.GetBool(PreferenceKeys.pbShowPreselectionHighlight);
 
 			// ---
-			m_HamSelection = PreferencesInternal.GetBool(PreferenceKeys.pbElementSelectIsHamFisted);
 			bool selectHiddenFaces = PreferencesInternal.GetBool(PreferenceKeys.pbEnableBackfaceSelection);
 			SelectionModifierBehavior selectModifierBehavior = PreferencesInternal.GetEnum<SelectionModifierBehavior>(PreferenceKeys.pbDragSelectMode);
 
 			m_ScenePickerPreferences = new ScenePickerPreferences()
 			{
-				maxPointerDistance = m_HamSelection ? ScenePickerPreferences.maxPointerDistanceFuzzy : ScenePickerPreferences.maxPointerDistancePrecise,
+				maxPointerDistance = ScenePickerPreferences.maxPointerDistanceFuzzy,
 				cullMode = selectHiddenFaces ? CullingMode.None : CullingMode.Back,
 				selectionModifierBehavior = selectModifierBehavior,
 				rectSelectMode = PreferencesInternal.GetEnum<RectSelectMode>(PreferenceKeys.pbRectSelectMode)

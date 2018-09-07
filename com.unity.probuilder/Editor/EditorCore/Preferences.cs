@@ -46,7 +46,6 @@ namespace UnityEditor.ProBuilder
 		static bool pbIconGUI;
 		static bool pbShiftOnlyTooltips;
 		static bool pbMeshesAreAssets;
-		static bool pbElementSelectIsHamFisted;
 		static bool pbEnableExperimental;
 		static bool pbShowPreselectionHighlight;
 
@@ -196,11 +195,6 @@ namespace UnityEditor.ProBuilder
 			 */
 			GUILayout.Label("Geometry Editing Settings", EditorStyles.boldLabel);
 
-			pbElementSelectIsHamFisted = !EditorGUILayout.Toggle(
-				new GUIContent("Precise Element Selection",
-					"When enabled you will be able to select object faces when in vertex or edge mode by clicking the center of a face.  When disabled, edge and vertex selection will always be restricted to the nearest element."),
-				!pbElementSelectIsHamFisted);
-
 			pbForceVertexPivot =
 				EditorGUILayout.Toggle(
 					new GUIContent("Force Pivot to Vertex Point",
@@ -327,10 +321,10 @@ namespace UnityEditor.ProBuilder
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbShiftOnlyTooltips);
 #pragma warning disable 612
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbDrawAxisLines);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbElementSelectIsHamFisted);
 #pragma warning restore 612
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbCollapseVertexToFirst);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbMeshesAreAssets);
-				PreferencesInternal.DeleteKey(PreferenceKeys.pbElementSelectIsHamFisted);
 #pragma warning disable 618
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbDragSelectWholeElement);
 #pragma warning restore 618
@@ -457,7 +451,6 @@ namespace UnityEditor.ProBuilder
 			pbIconGUI = PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI);
 			pbShiftOnlyTooltips = PreferencesInternal.GetBool(PreferenceKeys.pbShiftOnlyTooltips);
 			pbMeshesAreAssets = PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets);
-			pbElementSelectIsHamFisted = PreferencesInternal.GetBool(PreferenceKeys.pbElementSelectIsHamFisted);
 			pbEnableExperimental = PreferencesInternal.GetBool(PreferenceKeys.pbEnableExperimental);
 			showMissingLightmapUvWarning = PreferencesInternal.GetBool(PreferenceKeys.pbShowMissingLightmapUvWarning, false);
 			pbManageLightmappingStaticFlag = PreferencesInternal.GetBool(PreferenceKeys.pbManageLightmappingStaticFlag, false);
@@ -525,7 +518,6 @@ namespace UnityEditor.ProBuilder
 			PreferencesInternal.SetBool(PreferenceKeys.pbIconGUI, pbIconGUI, PreferenceLocation.Global);
 			PreferencesInternal.SetBool(PreferenceKeys.pbShiftOnlyTooltips, pbShiftOnlyTooltips, PreferenceLocation.Global);
 			PreferencesInternal.SetBool(PreferenceKeys.pbMeshesAreAssets, pbMeshesAreAssets);
-			PreferencesInternal.SetBool(PreferenceKeys.pbElementSelectIsHamFisted, pbElementSelectIsHamFisted, PreferenceLocation.Global);
 			PreferencesInternal.SetBool(PreferenceKeys.pbEnableExperimental, pbEnableExperimental, PreferenceLocation.Global);
 			PreferencesInternal.SetBool(PreferenceKeys.pbShowMissingLightmapUvWarning, showMissingLightmapUvWarning, PreferenceLocation.Global);
 			PreferencesInternal.SetBool(PreferenceKeys.pbManageLightmappingStaticFlag, pbManageLightmappingStaticFlag, PreferenceLocation.Global);

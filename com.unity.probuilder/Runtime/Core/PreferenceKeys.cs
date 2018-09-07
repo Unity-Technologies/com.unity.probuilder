@@ -56,7 +56,7 @@ namespace UnityEngine.ProBuilder
 		internal const string pbForceConvex = "pbForceConvex";
 		internal const string pbVertexColorPrefs = "pbVertexColorPrefs";
 		internal const string pbShowEditorNotifications = "pbShowEditorNotifications";
-		[System.Obsolete]
+		[Obsolete]
 		internal const string pbDragCheckLimit = "pbDragCheckLimit";
 		internal const string pbForceVertexPivot = "pbForceVertexPivot";
 		internal const string pbForceGridPivot = "pbForceGridPivot";
@@ -66,7 +66,7 @@ namespace UnityEngine.ProBuilder
 		internal const string pbCloseShapeWindow = "pbCloseShapeWindow";
 		internal const string pbUVEditorFloating = "pbUVEditorFloating";
 		internal const string pbUVMaterialPreview = "pbUVMaterialPreview";
-		[System.Obsolete]
+		[Obsolete]
 		internal const string pbShowSceneToolbar = "pbShowSceneToolbar";
 		internal const string pbNormalizeUVsOnPlanarProjection = "pbNormalizeUVsOnPlanarProjection";
 		internal const string pbStripProBuilderOnBuild = "pbStripProBuilderOnBuild";
@@ -85,17 +85,18 @@ namespace UnityEngine.ProBuilder
 		internal const string pbShapeWindowFloating = "pbShapeWindowFloating";
 		internal const string pbIconGUI = "pbIconGUI";
 		internal const string pbShiftOnlyTooltips = "pbShiftOnlyTooltips";
-		[System.Obsolete]
+		[Obsolete]
 		internal const string pbDrawAxisLines = "pbDrawAxisLines";
 		internal const string pbCollapseVertexToFirst = "pbCollapseVertexToFirst";
 		internal const string pbMeshesAreAssets = "pbMeshesAreAssets";
+		[Obsolete]
 		internal const string pbElementSelectIsHamFisted = "pbElementSelectIsHamFisted";
 		internal const string pbFillHoleSelectsEntirePath = "pbFillHoleSelectsEntirePath";
 		internal const string pbDetachToNewObject = "pbDetachToNewObject";
-		[System.Obsolete("Use pb_MeshImporter::quads")]
+		[Obsolete("Use pb_MeshImporter::quads")]
 		internal const string pbPreserveFaces = "pbPreserveFaces";
 		/// When drag selecting faces or edges, does the entire element have to be encompassed?
-		[System.Obsolete("Use pbRectSelectMode")]
+		[Obsolete("Use pbRectSelectMode")]
 		internal const string pbDragSelectWholeElement = "pbDragSelectWholeElement";
 		internal const string pbShowPreselectionHighlight = "pbShowPreselectionHighlight";
 

@@ -61,8 +61,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			get
 			{
-				return editLevel != EditLevel.Geometry ||
-					(PreferencesInternal.GetBool(PreferenceKeys.pbElementSelectIsHamFisted) && componentMode != ComponentMode.Face);
+				return editLevel != EditLevel.Geometry || componentMode != ComponentMode.Face;
 			}
 		}
 
