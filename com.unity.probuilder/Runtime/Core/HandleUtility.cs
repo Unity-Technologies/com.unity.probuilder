@@ -45,7 +45,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="worldRay">A ray in world space.</param>
 		/// <param name="mesh">The ProBuilder object to raycast against.</param>
-		/// <param name="hit">If the mesh was intersected, hit contains information about the intersect point.</param>
+		/// <param name="hit">If the mesh was intersected, hit contains information about the intersect point in local coordinate space.</param>
 		/// <param name="distance">The distance from the ray origin to the intersection point.</param>
 		/// <param name="cullingMode">Which sides of a face are culled when hit testing. Default is back faces are culled.</param>
 		/// <param name="ignore">Optional collection of faces to ignore when raycasting.</param>

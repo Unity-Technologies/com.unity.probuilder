@@ -156,19 +156,19 @@ namespace UnityEditor.ProBuilder
 			bool appendModifier = EditorHandleUtility.IsAppendModifier(evt.modifiers);
 
 			if (!appendModifier)
-				MeshSelection.SetSelection((GameObject) null);
+				MeshSelection.SetSelection((GameObject)null);
 
 			if (selectionMode == ComponentMode.Edge)
 			{
-				if (!EdgeRaycast(evt.mousePosition, pickerPreferences, true, s_Selection))
+				if (EdgeRaycast(evt.mousePosition, pickerPreferences, true, s_Selection) >= pickerPreferences.maxPointerDistance)
 					return null;
 			}
 			else if (selectionMode == ComponentMode.Vertex)
 			{
-				if (!VertexRaycast(evt.mousePosition, pickerPreferences, true, s_Selection))
+				if (VertexRaycast(evt.mousePosition, pickerPreferences, true, s_Selection) >= pickerPreferences.maxPointerDistance)
 					return null;
 			}
-			else if (!FaceRaycast(evt.mousePosition, pickerPreferences, true, s_Selection, evt.clickCount > 1 ? -1 : 0, false))
+			else if (FaceRaycast(evt.mousePosition, pickerPreferences, true, s_Selection, evt.clickCount > 1 ? -1 : 0, false) >= pickerPreferences.maxPointerDistance)
 			{
 				return null;
 			}
@@ -378,7 +378,7 @@ namespace UnityEditor.ProBuilder
 		// Get the object & mesh selection that the mouse is currently nearest.
 		// A ProBuilderMesh is returned because double click actions need to know what the last selected pb_Object was.
 		// If deepClickOffset is specified, the object + deepClickOffset in the deep select stack will be returned (instead of next).
-		internal static bool MouseRayHitTest(
+		internal static float MouseRayHitTest(
 			Vector3 mousePosition,
 			ComponentMode selectionMode,
 			ScenePickerPreferences pickerOptions,
@@ -394,7 +394,7 @@ namespace UnityEditor.ProBuilder
 			return FaceRaycast(mousePosition, pickerOptions, allowUnselected, selection, 0, true);
 		}
 
-		static bool FaceRaycast(Vector3 mousePosition,
+		static float FaceRaycast(Vector3 mousePosition,
 			ScenePickerPreferences pickerOptions,
 			bool allowUnselected,
 			SceneSelection selection,
@@ -417,6 +417,8 @@ namespace UnityEditor.ProBuilder
 
 			selection.Clear();
 
+			float distance = Mathf.Infinity;
+
 			for (int i = 0, next = 0, pickedCount = s_OverlappingGameObjects.Count; i < pickedCount; i++)
 			{
 				var go = s_OverlappingGameObjects[i];
@@ -435,6 +437,7 @@ namespace UnityEditor.ProBuilder
 						pickerOptions.cullMode))
 					{
 						face = mesh.facesInternal[hit.face];
+						distance = Vector2.SqrMagnitude(((Vector2)mousePosition) - HandleUtility.WorldToGUIPoint(mesh.transform.TransformPoint(hit.point)));
 					}
 				}
 
@@ -475,7 +478,7 @@ namespace UnityEditor.ProBuilder
 						selection.mesh = pickedPb;
 						selection.face = pickedFace;
 
-						return true;
+						return Mathf.Sqrt(distance);
 					}
 				}
 
@@ -484,14 +487,14 @@ namespace UnityEditor.ProBuilder
 					// If clicked off a pb_Object but onto another gameobject, set the selection
 					// and dip out.
 					selection.gameObject = pickedGo;
-					return true;
+					return Mathf.Sqrt(distance);
 				}
 			}
 
-			return false;
+			return distance;
 		}
 
-		static bool VertexRaycast(Vector3 mousePosition, ScenePickerPreferences pickerOptions, bool allowUnselected, SceneSelection selection)
+		static float VertexRaycast(Vector3 mousePosition, ScenePickerPreferences pickerOptions, bool allowUnselected, SceneSelection selection)
 		{
 			Camera cam = SceneView.lastActiveSceneView.camera;
 			selection.Clear();
@@ -543,11 +546,11 @@ namespace UnityEditor.ProBuilder
 					selection.gameObject = s_NearestVertices[i].mesh.gameObject;
 					selection.mesh = s_NearestVertices[i].mesh;
 					selection.vertex = s_NearestVertices[i].vertex;
-					return true;
+					return Mathf.Sqrt(s_NearestVertices[i].screenDistance);
 				}
 			}
 
-			return selection.gameObject != null;
+			return Mathf.Infinity;
 		}
 
 		static void GetNearestVertices(ProBuilderMesh mesh, Vector3 mousePosition, List<VertexPickerEntry> list, float maxDistance)
@@ -574,7 +577,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		static bool EdgeRaycast(Vector3 mousePosition, ScenePickerPreferences pickerPrefs, bool allowUnselected, SceneSelection selection)
+		static float EdgeRaycast(Vector3 mousePosition, ScenePickerPreferences pickerPrefs, bool allowUnselected, SceneSelection selection)
 		{
 			selection.Clear();
 			selection.gameObject = UHandleUtility.PickGameObject(mousePosition, false);
@@ -595,7 +598,7 @@ namespace UnityEditor.ProBuilder
 
 					// if it's in the selection, it automatically wins as best. if not, treat this is a fallback.
 					if (hoveredIsInSelection)
-						return true;
+						return tup.distance;
 				}
 			}
 
@@ -626,7 +629,7 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
-			return selection.gameObject != null;
+			return selection.gameObject != null ? bestDistance : Mathf.Infinity;
 		}
 
 		struct EdgeAndDistance
