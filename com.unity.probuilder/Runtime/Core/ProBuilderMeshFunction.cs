@@ -691,7 +691,6 @@ namespace UnityEngine.ProBuilder
 				throw new ArgumentNullException("coincident");
 
 			s_CachedHashSet.Clear();
-			coincident.Clear();
 			var lookup = sharedVertexLookup;
 
 			foreach (var v in vertices)
@@ -720,7 +719,6 @@ namespace UnityEngine.ProBuilder
 			if (!sharedVertexLookup.TryGetValue(vertex, out common))
 				throw new ArgumentOutOfRangeException("vertex");
 
-			coincident.Clear();
 			coincident.AddRange(m_SharedVertices[common]);
 		}
 

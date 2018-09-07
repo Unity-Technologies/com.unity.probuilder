@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder.Actions
 				return ProBuilderEditor.instance != null &&
 					ProBuilderEditor.editLevel == EditLevel.Geometry &&
 					ProBuilderEditor.componentMode == ComponentMode.Vertex &&
-					MeshSelection.TopInternal().Any(x => x.selectedVertexCount > 1);
+					MeshSelection.TopInternal().Any(x => x.selectedSharedVerticesCount > 1);
 			}
 		}
 

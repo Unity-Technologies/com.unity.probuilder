@@ -1686,14 +1686,10 @@ namespace UnityEditor.ProBuilder
 
 			Vector3 min = Vector3.zero, max = Vector3.zero;
 			var boundsInitialized = false;
-			HashSet<int> used = new HashSet<int>();
 
 			for (var i = 0; i < selection.Length; i++)
 			{
 				ProBuilderMesh mesh = selection[i];
-
-				used.Clear();
-				var lookup = mesh.sharedVertexLookup;
 
 				if (!boundsInitialized && mesh.selectedVertexCount > 0)
 				{
@@ -1704,19 +1700,15 @@ namespace UnityEditor.ProBuilder
 
 				if (mesh.selectedVertexCount > 0)
 				{
-					var indexes = mesh.selectedIndexesInternal;
+					var shared = mesh.sharedVerticesInternal;
+					m_SelectedVerticesCommon += mesh.selectedSharedVerticesCount;
 
-					for (int n = 0, c = mesh.selectedVertexCount; n < c; n++)
+					foreach(var sharedVertex in mesh.selectedSharedVertices)
 					{
-						if (used.Add(lookup[indexes[n]]))
-						{
-							Vector3 v = mesh.transform.TransformPoint(mesh.positionsInternal[indexes[n]]);
-							min = Vector3.Min(min, v);
-							max = Vector3.Max(max, v);
-						}
+						Vector3 v = mesh.transform.TransformPoint(mesh.positionsInternal[shared[sharedVertex][0]]);
+						min = Vector3.Min(min, v);
+						max = Vector3.Max(max, v);
 					}
-
-					m_SelectedVerticesCommon += used.Count;
 				}
 
 				selectedFacesInEditZone.Add(mesh, ElementSelection.GetNeighborFaces(mesh, mesh.selectedIndexesInternal));
