@@ -157,7 +157,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="returnEdges"></param>
 		/// <param name="faceMask"></param>
 		/// <returns></returns>
-		static ActionResult Connect(
+		internal static ActionResult Connect(
 			this ProBuilderMesh mesh,
 			IEnumerable<Edge> edges,
 			out Face[] addedFaces,
