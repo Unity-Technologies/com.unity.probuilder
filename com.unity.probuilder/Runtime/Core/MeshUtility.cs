@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections;
+using System.Text;
 
 namespace UnityEngine.ProBuilder
 {
@@ -519,6 +520,49 @@ namespace UnityEngine.ProBuilder
 			mesh.subMeshCount = smc;
 			for (int i = 0; i < smc; i++)
 				mesh.SetTriangles(tris[i], i);
+		}
+
+		internal static string SanityCheck(ProBuilderMesh mesh)
+		{
+			return SanityCheck(mesh.GetVertices());
+		}
+
+		/// <summary>
+		/// Check mesh for invalid properties.
+		/// </summary>
+		/// <param name="mesh"></param>
+		/// <returns>Returns true if mesh is valid, false if a problem was found.</returns>
+		internal static string SanityCheck(Mesh mesh)
+		{
+			return SanityCheck(mesh.GetVertices());
+		}
+
+		/// <summary>
+		/// Check mesh for invalid properties.
+		/// </summary>
+		/// <returns>Returns true if mesh is valid, false if a problem was found.</returns>
+		internal static string SanityCheck(IList<Vertex> vertices)
+		{
+			var sb = new StringBuilder();
+
+			for (int i = 0, c = vertices.Count; i < c; i++)
+			{
+				var vertex = vertices[i];
+
+				if(Math.IsNumber(vertex.position)
+					&& Math.IsNumber(vertex.color)
+					&& Math.IsNumber(vertex.uv0)
+					&& Math.IsNumber(vertex.normal)
+					&& Math.IsNumber(vertex.tangent)
+					&& Math.IsNumber(vertex.uv2)
+					&& Math.IsNumber(vertex.uv3)
+					&& Math.IsNumber(vertex.uv4))
+					continue;
+
+				sb.AppendFormat("vertex {0} contains invalid values:\n{1}\n\n", i, vertex.ToString());
+			}
+
+			return sb.ToString();
 		}
 	}
 }
