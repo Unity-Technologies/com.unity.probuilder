@@ -273,7 +273,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				}
 
 				mesh.Clear();
-				mesh.RebuildWithPositionsAndFaces(vertices, new Face[] { new Face(indexes) });
+
+				mesh.positionsInternal = vertices;
+				mesh.facesInternal = new[] { new Face(indexes) };
+				mesh.sharedVerticesInternal = SharedVertex.GetSharedVerticesWithPositions(vertices);
+				mesh.InvalidateCaches();
 
 				Vector3 nrm = Math.Normal(mesh, mesh.facesInternal[0]);
 

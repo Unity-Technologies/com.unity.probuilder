@@ -508,13 +508,12 @@ namespace UnityEditor.ProBuilder
 				Ray r = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
 
 				Vector3 origin = polygon.transform.TransformPoint(Math.Average(polygon.m_Points));
-
 				float extrude = polygon.extrude;
 
-				if(!sceneInUse)
+				if(evt.type == EventType.MouseMove && !sceneInUse)
 				{
 					Vector3 p = Math.GetNearestPointRayRay(origin, up, r.origin, r.direction);
-					extrude = ProGridsInterface.ProGridsSnap(s_HeightMouseOffset + Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p-origin, up)));
+					extrude = ProGridsInterface.ProGridsSnap(s_HeightMouseOffset + Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p - origin, up)));
 				}
 
 				Vector3 extrudePoint = origin + (extrude * up);

@@ -266,14 +266,17 @@ namespace UnityEngine.ProBuilder
 
 		internal static Vector3 GetNearestPointRayRay(Vector3 ao, Vector3 ad, Vector3 bo, Vector3 bd)
 		{
-			// ray doesn't do parallel
-			if(ad == bd)
+			float dot = Vector3.Dot(ad, bd);
+			float abs = Mathf.Abs(dot);
+
+			// ray is parallel (or garbage)
+			if((abs - 1f) > Mathf.Epsilon || abs < Mathf.Epsilon)
 				return ao;
 
 			Vector3 c = bo - ao;
 
-			float n = -Vector3.Dot(ad, bd) * Vector3.Dot(bd, c) + Vector3.Dot(ad, c) * Vector3.Dot(bd, bd);
-			float d = Vector3.Dot(ad, ad) * Vector3.Dot(bd, bd) - Vector3.Dot(ad, bd) * Vector3.Dot(ad, bd);
+			float n = -dot * Vector3.Dot(bd, c) + Vector3.Dot(ad, c) * Vector3.Dot(bd, bd);
+			float d = Vector3.Dot(ad, ad) * Vector3.Dot(bd, bd) - dot * dot;
 
 			return ao + ad * (n/d);
 		}
@@ -1274,6 +1277,33 @@ namespace UnityEngine.ProBuilder
 			res.x = b.x - a.x;
 			res.y = b.y - a.y;
 			res.z = b.z - a.z;
+		}
+
+		internal static bool IsNumber(float value)
+		{
+			return !(float.IsInfinity(value) || float.IsNaN(value));
+		}
+
+		internal static bool IsNumber(Vector2 value)
+		{
+			return IsNumber(value.x) && IsNumber(value.y);
+		}
+
+		internal static bool IsNumber(Vector3 value)
+		{
+			return IsNumber(value.x) && IsNumber(value.y) && IsNumber(value.z);
+		}
+
+		internal static bool IsNumber(Vector4 value)
+		{
+			return IsNumber(value.x) && IsNumber(value.y) && IsNumber(value.z) && IsNumber(value.w);
+		}
+
+		internal static float MakeNonZero(float value, float min = .001f)
+		{
+			if (float.IsNaN(value) || float.IsInfinity(value) || Mathf.Abs(value) < min)
+				return min * Mathf.Sign(value);
+			return value;
 		}
 	}
 }

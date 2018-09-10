@@ -31,6 +31,8 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		public static float SnapValue(float val, float snpVal)
 		{
+			if (snpVal < Mathf.Epsilon)
+				return val;
 			return snpVal * Mathf.Round(val / snpVal);
 		}
 
