@@ -66,6 +66,7 @@ namespace UnityEditor.ProBuilder
 		GUIStyle m_CommandStyle;
 		Rect m_ElementModeToolbarRect = new Rect(3, 6, 128, 24);
 
+		int m_DefaultControl;
 		SceneSelection m_Hovering = new SceneSelection();
 		SceneSelection m_HoveringPrevious = new SceneSelection();
 		ScenePickerPreferences m_ScenePickerPreferences;
@@ -562,7 +563,12 @@ namespace UnityEditor.ProBuilder
 				&& editLevel == EditLevel.Geometry)
 			{
 				m_Hovering.CopyTo(m_HoveringPrevious);
-				EditorSceneViewPicker.MouseRayHitTest(m_CurrentEvent.mousePosition, componentMode, m_ScenePickerPreferences, m_Hovering);
+
+				if(GUIUtility.hotControl == 0)
+					EditorSceneViewPicker.MouseRayHitTest(m_CurrentEvent.mousePosition, componentMode, m_ScenePickerPreferences, m_Hovering);
+				else
+					m_Hovering.Clear();
+
 				if (!m_Hovering.Equals(m_HoveringPrevious))
 					SceneView.RepaintAll();
 			}
@@ -622,8 +628,8 @@ namespace UnityEditor.ProBuilder
 
 			// This prevents us from selecting other objects in the scene,
 			// and allows for the selection of faces / vertices.
-			int controlID = GUIUtility.GetControlID(FocusType.Passive);
-			HandleUtility.AddDefaultControl(controlID);
+			m_DefaultControl = GUIUtility.GetControlID(FocusType.Passive);
+			HandleUtility.AddDefaultControl(m_DefaultControl);
 
 			// If selection is made, don't use default handle -- set it to Tools.None
 			if (m_SelectedVertexCount > 0)
@@ -1201,6 +1207,8 @@ namespace UnityEditor.ProBuilder
 
 			if (m_CurrentEvent.type == EventType.Repaint
 				&& m_Hovering != null
+				&& GUIUtility.hotControl == 0
+				&& HandleUtility.nearestControl == m_DefaultControl
 				&& editLevel == EditLevel.Geometry)
 			{
 				try
