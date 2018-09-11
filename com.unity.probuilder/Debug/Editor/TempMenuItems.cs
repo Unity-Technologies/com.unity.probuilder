@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEditor;
@@ -14,12 +15,44 @@ class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d", false, 1000)]
 	static void MenuInit()
 	{
-		SettingsDictionary settings = new SettingsDictionary();
+		GetWindow<TempMenuItems>().Show();
 
-		settings.Set("floatValue100", 100f);
+		if(!Settings.ContainsKey<float>("test"))
+			Settings.Set<float>("test", 100f);
 
-		Debug.Log(settings.Get<float>("floatValue100").ToString());
+		if(!Settings.ContainsKey<int>("test"))
+			Settings.Set<int>("test", 100);
 
+		if(!Settings.ContainsKey<Material>("default"))
+			Settings.Set<Material>("default", BuiltinMaterials.defaultMaterial);
+
+		Settings.Save();
+	}
+
+	void OnGUI()
+	{
+		var types = Settings.dictionary.dictionary;
+
+		foreach (var kvp in types)
+		{
+			var dic = kvp.Value;
+
+			GUILayout.Label(kvp.Key, EditorStyles.boldLabel);
+
+			foreach (var entry in dic)
+			{
+				var value = entry.Value;
+
+				value = EditorGUILayout.TextField(entry.Key, value);
+
+				if (!value.Equals(entry.Value))
+				{
+					Settings.Set(kvp.Key, entry.Key, value);
+					Settings.Save();
+					EditorGUIUtility.ExitGUI();
+				}
+			}
+		}
 	}
 
 	public static void SaveMeshTemplate(Mesh mesh)
