@@ -14,17 +14,12 @@ class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d", false, 1000)]
 	static void MenuInit()
 	{
-		var shapes = Enum.GetValues(typeof(ShapeType)) as ShapeType[];
-		float x = -10f;
-		ProBuilderMesh[] primitives = new ProBuilderMesh[shapes.Length];
-		for (int i = 0, c = shapes.Length; i < c; i++)
-		{
-			primitives[i] = ShapeGenerator.CreateShape(shapes[i]);
-			primitives[i].GetComponent<MeshFilter>().sharedMesh.name = shapes[i].ToString();
+		SettingsDictionary settings = new SettingsDictionary();
 
-			primitives[i].transform.position = new Vector3(x, 0f, 0f);
-			x += primitives[i].mesh.bounds.size.x + .5f;
-		}
+		settings.Set("floatValue100", 100f);
+
+		Debug.Log(settings.Get<float>("floatValue100").ToString());
+
 	}
 
 	public static void SaveMeshTemplate(Mesh mesh)
