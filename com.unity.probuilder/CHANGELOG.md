@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.14] - 2018-05-05
+## [4.0.0-preview.15] - 2018-09-11
 
 ### Features
 
@@ -36,6 +36,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix `Extrude` incorrectly applying smoothing groups to extruded face sides.
 - Fix `Detach to GameObject` sometimes including children in duplicated `GameObject`.
 - Fix vertex handle pre-selection gizmo drawing 2x larger on scaled screens.
+- Fix "Detach to GameObject" deleting the current face selection.
+- Fix deprecated GUID check running on every domain reload.
 
 ### Changes
 
@@ -46,19 +48,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Rename `MenuAction::DoAlternativeAction` to `DoAlternateAction`.
 - Simplify assembly definition files, merging ProBuilder.Core & ProBuilder.MeshOperations to single assembly.
 
-### Changes since 4.0.0-preview.13
+### Changes since 4.0.0-preview.14
 
-- Fix _another_ regression that broke editing older ProBuilder meshes.
+- Fix `Connect Edges` notification reporting incorrect count of connected edges.
+- Fix `Create Poly Shape` sometimes throwing errors when setting height.
+- Remove "Precise Element Selection" preference.
+- Fix mesh element selection highlight taking precedence over handle controls.
 
-### Changes since 4.0.0-preview.12
-
-- Fix regression that broke editing older ProBuilder meshes.
-
-### Changes since 4.0.0-preview.11
-
-- Rename "vertexes" to "vertices."
-- Fix "Detach to GameObject" deleting the current face selection.
-- Fix deprecated GUID check running on every domain reload.
+-  Merge branch 'fix-drag-select-multiple-objects-clearing-selection' into 'master'
+- Merge branch 'fix-edge-extrude-splitting-shared-vertices' into 'master'
+- fix case where drag selecting elements with multiple objects in selection could incorrectly clear the selection
+- fix edge extrude as group splitting shared vertices
+- Merge branch 'fix-vertex-actions-incorrectly-summing-selection' into 'master'
+- remove unnecessary allocations in performance critical paths
+- only count shared vertices as one vertex
+- Merge branch 'fix-quad-importer' into 'master'
+fix mesh importer failing to import quads. add tests
 
 ## [3.0.8] - 2018-05-07
 
