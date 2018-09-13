@@ -642,6 +642,14 @@ namespace UnityEngine.ProBuilder
 			get { return m_Positions == null ? 0 : m_Positions.Length; }
 		}
 
+	    /// <value>
+	    /// How many edges compose this mesh.
+	    /// </value>
+	    public int edgeCount
+	    {
+		    get { return m_Faces.Sum(x => x.edgesInternal.Length); }
+	    }
+
 		/// <value>
 		/// How many vertex indexes make up this mesh.
 		/// </value>

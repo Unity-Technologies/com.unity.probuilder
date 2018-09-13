@@ -18,9 +18,10 @@ namespace UnityEditor.ProBuilder
 		static bool s_ElementCountCacheIsDirty = true;
 
 		static int s_TotalVertexCount;
+		static int s_TotalFaceCount;
+		static int s_TotalEdgeCount;
 		static int s_TotalCommonVertexCount;
 		static int s_TotalVertexCountCompiled;
-		static int s_TotalFaceCount;
 		static int s_TotalTriangleCountCompiled;
 
 		static ProBuilderMesh[] selection
@@ -110,9 +111,14 @@ namespace UnityEditor.ProBuilder
 		internal static int totalVertexCountOptimized { get { RebuildElementCounts(); return s_TotalVertexCountCompiled; } }
 
 		/// <value>
-		/// Sum of all selected ProBuilderMesh face counts.
+		/// Sum of all selected ProBuilderMesh object faceCount properties.
 		/// </value>
 		public static int totalFaceCount { get { RebuildElementCounts(); return s_TotalFaceCount; } }
+
+		/// <value>
+		/// Sum of all selected ProBuilderMesh object edgeCount properties.
+		/// </value>
+		public static int totalEdgeCount { get { RebuildElementCounts(); return s_TotalEdgeCount; } }
 
 		/// <value>
 		/// Get the sum of all selected ProBuilder compiled mesh triangle counts (3 indexes make up a triangle, or 4 indexes if topology is quad).
@@ -127,9 +133,10 @@ namespace UnityEditor.ProBuilder
 			try
 			{
 				s_TotalVertexCount = TopInternal().Sum(x => x.vertexCount);
+				s_TotalFaceCount = TopInternal().Sum(x => x.faceCount);
+				s_TotalEdgeCount = TopInternal().Sum(x => x.edgeCount);
 				s_TotalCommonVertexCount = TopInternal().Sum(x => x.sharedVerticesInternal.Length);
 				s_TotalVertexCountCompiled = TopInternal().Sum(x => x.mesh == null ? 0 : x.mesh.vertexCount);
-				s_TotalFaceCount = TopInternal().Sum(x => x.faceCount);
 				s_TotalTriangleCountCompiled = TopInternal().Sum(x => (int) UnityEngine.ProBuilder.MeshUtility.GetPrimitiveCount(x.mesh));
 				s_ElementCountCacheIsDirty = false;
 			}

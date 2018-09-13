@@ -138,6 +138,11 @@ namespace UnityEditor.ProBuilder
 		// Sum of all edges sleected
 		int m_SelectedEdgeCount;
 
+		// per-object selected element maxes
+		internal int selectedFaceCountObjectMax { get; private set; }
+		internal int selectedVertexCountObjectMax { get; private set; }
+		internal int selectedEdgeCountObjectMax { get; private set; }
+
 		internal int selectedVertexCount { get { return m_SelectedVertexCount; } }
 		internal int selectedVertexCommonCount { get { return m_SelectedVerticesCommon; } }
 		internal int selectedFaceCount { get { return m_SelectedFaceCount; } }
@@ -1672,15 +1677,17 @@ namespace UnityEditor.ProBuilder
 				selectModeChanged(EditorUtility.GetSelectMode(editLevel, componentMode));
 		}
 
-		/// <summary>
-		/// Rebuild the wireframe selection caches.
-		/// </summary>
 		void UpdateSelection()
 		{
 			m_SelectedVertexCount = 0;
 			m_SelectedFaceCount = 0;
 			m_SelectedEdgeCount = 0;
 			m_SelectedVerticesCommon = 0;
+
+			selectedFaceCountObjectMax = 0;
+			selectedVertexCountObjectMax = 0;
+			selectedEdgeCountObjectMax = 0;
+
 			selection = InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms);
 
 			if (selectedFacesInEditZone != null)
@@ -1722,6 +1729,10 @@ namespace UnityEditor.ProBuilder
 				m_SelectedVertexCount += mesh.selectedIndexesInternal.Length;
 				m_SelectedFaceCount += mesh.selectedFaceCount;
 				m_SelectedEdgeCount += mesh.selectedEdgeCount;
+
+				selectedVertexCountObjectMax = System.Math.Max(selectedVertexCountObjectMax, mesh.selectedIndexesInternal.Length);
+				selectedFaceCountObjectMax = System.Math.Max(selectedFaceCountObjectMax, mesh.selectedFaceCount);
+				selectedEdgeCountObjectMax = System.Math.Max(selectedEdgeCountObjectMax, mesh.selectedEdgeCount);
 			}
 
 			m_HandlePivotWorld = (max + min) * .5f;
