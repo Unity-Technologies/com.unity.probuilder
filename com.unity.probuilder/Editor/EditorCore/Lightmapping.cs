@@ -12,6 +12,69 @@ namespace UnityEditor.ProBuilder
 	[InitializeOnLoad]
 	static class Lightmapping
 	{
+		[UserSetting("Mesh Settings", "Auto Lightmap UVs", "Automatically build the lightmap UV array when editing ProBuilder meshes. If this feature is disabled, you will need to use the 'Generate UV2' action to build lightmap UVs for meshes prior to baking lightmaps.")]
+		static Pref<bool> m_AutoUnwrapLightmapUV = new Pref<bool>("autoUnwrapLightmapUV", true);
+
+		static Pref<UnwrapParameters> m_UnwrapParameters = new Pref<UnwrapParameters>("defaultLightmapUnwrapParameters", new UnwrapParameters());
+
+		static class Styles
+		{
+			public static readonly GUIContent hardAngle = new GUIContent("Hard Angle", "Angle between neighbor triangles that will generate seam.");
+			public static readonly GUIContent packMargin = new GUIContent("Pack Margin", "Measured in pixels, assuming mesh will cover an entire 1024x1024 lightmap.");
+			public static readonly GUIContent angleError = new GUIContent("Angle Error", "Measured in percents. Angle error measures deviation of UV angles from geometry angles.");
+			public static readonly GUIContent areaError = new GUIContent("Area Error", "");
+
+			static bool s_Initialized;
+			public static GUIStyle miniButton;
+
+			public static void Init()
+			{
+				if (s_Initialized)
+					return;
+
+				s_Initialized = true;
+
+				miniButton = new GUIStyle(GUI.skin.button);
+				miniButton.stretchHeight = false;
+				miniButton.stretchWidth = false;
+				miniButton.padding = new RectOffset(6, 6, 3, 3);
+			}
+		}
+
+		[UserSettingBlock("Mesh Settings")]
+		static void UnwrapSettingDefaults()
+		{
+			Styles.Init();
+
+			GUILayout.Label("Default Lightmap UVs Settings", EditorStyles.boldLabel);
+
+			EditorGUI.BeginChangeCheck();
+
+			var unwrap = (UnwrapParameters) m_UnwrapParameters;
+
+			unwrap.hardAngle = EditorGUILayout.Slider(Styles.hardAngle, unwrap.hardAngle, 1f, 180f);
+			unwrap.packMargin = EditorGUILayout.Slider(Styles.packMargin, unwrap.packMargin, 1f, 64f);
+			unwrap.angleError = EditorGUILayout.Slider(Styles.angleError, unwrap.angleError, 1f, 75f);
+			unwrap.areaError = EditorGUILayout.Slider(Styles.areaError, unwrap.areaError, 1f, 75f);
+
+			GUILayout.BeginHorizontal();
+			GUILayout.FlexibleSpace();
+			if (GUILayout.Button("Reset", Styles.miniButton))
+				unwrap.Reset();
+			GUILayout.EndHorizontal();
+
+			if (EditorGUI.EndChangeCheck())
+			{
+				m_UnwrapParameters.value = unwrap;
+			}
+		}
+
+		public static bool autoUnwrapLightmapUV
+		{
+			get { return (bool) m_AutoUnwrapLightmapUV; }
+			set { m_AutoUnwrapLightmapUV.value = value; }
+		}
+
 		static Lightmapping()
 		{
 			UnityEditor.Lightmapping.completed += OnLightmappingCompleted;

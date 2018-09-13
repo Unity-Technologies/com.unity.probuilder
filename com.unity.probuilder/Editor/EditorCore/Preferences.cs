@@ -6,10 +6,11 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-
-
 	static class Preferences
 	{
+#pragma warning disable 618
+#pragma warning disable 612
+
 		static int s_ShortcutIndex = 0;
 		static Vector2 s_ShortcutScroll = Vector2.zero;
 		const int k_ShortcutLineHeight = 20;
@@ -63,7 +64,7 @@ namespace UnityEditor.ProBuilder
 
 		static Shortcut[] defaultShortcuts;
 
-		[PreferenceItem(PreferenceKeys.pluginTitle)]
+		[PreferenceItem("ProBuilder (Obsolete)")]
 		static void PreferencesGUI()
 		{
 			LoadPrefs();
@@ -293,9 +294,9 @@ namespace UnityEditor.ProBuilder
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbForceConvex);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbVertexColorPrefs);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbShowEditorNotifications);
-#pragma warning disable 612
+// //#pragma warning disable 612
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbDragCheckLimit);
-#pragma warning restore 612
+// #pragma warning restore 612
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbForceVertexPivot);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbForceGridPivot);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbManifoldEdgeExtrusion);
@@ -304,12 +305,14 @@ namespace UnityEditor.ProBuilder
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbCloseShapeWindow);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbUVEditorFloating);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbUVMaterialPreview);
-#pragma warning disable 612
+// #pragma warning disable 612
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbShowSceneToolbar);
-#pragma warning restore 612
+// #pragma warning restore 612
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbNormalizeUVsOnPlanarProjection);
+// #pragma warning disable 618
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbStripProBuilderOnBuild);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbDisableAutoUV2Generation);
+// #pragma warning restore 618
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbShowSceneInfo);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbEnableBackfaceSelection);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbVertexPaletteDockable);
@@ -319,21 +322,21 @@ namespace UnityEditor.ProBuilder
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbShapeWindowFloating);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbIconGUI);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbShiftOnlyTooltips);
-#pragma warning disable 612
+// #pragma warning disable 612
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbDrawAxisLines);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbElementSelectIsHamFisted);
-#pragma warning restore 612
+// #pragma warning restore 612
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbCollapseVertexToFirst);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbMeshesAreAssets);
-#pragma warning disable 618
+// #pragma warning disable 618
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbDragSelectWholeElement);
-#pragma warning restore 618
+// #pragma warning restore 618
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbEnableExperimental);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbFillHoleSelectsEntirePath);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbDetachToNewObject);
-#pragma warning disable 618
+// #pragma warning disable 618
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbPreserveFaces);
-#pragma warning restore 618
+// #pragma warning restore 618
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbVertexHandleSize);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbUVGridSnapValue);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbUVWeldDistance);
@@ -353,7 +356,9 @@ namespace UnityEditor.ProBuilder
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbShowTrigger);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbShowNoDraw);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbShowMissingLightmapUvWarning);
+// #pragma warning disable 612
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbManageLightmappingStaticFlag);
+// #pragma warning restore 612
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbShadowCastingMode);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbDefaultStaticFlags);
 				PreferencesInternal.DeleteKey(PreferenceKeys.pbShowPreselectionHighlight);
@@ -453,7 +458,6 @@ namespace UnityEditor.ProBuilder
 			pbMeshesAreAssets = PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets);
 			pbEnableExperimental = PreferencesInternal.GetBool(PreferenceKeys.pbEnableExperimental);
 			showMissingLightmapUvWarning = PreferencesInternal.GetBool(PreferenceKeys.pbShowMissingLightmapUvWarning, false);
-			pbManageLightmappingStaticFlag = PreferencesInternal.GetBool(PreferenceKeys.pbManageLightmappingStaticFlag, false);
 			pbShowPreselectionHighlight = PreferencesInternal.GetBool(PreferenceKeys.pbShowPreselectionHighlight);
 
 			pbUseUnityColors = PreferencesInternal.GetBool(PreferenceKeys.pbUseUnityColors);
@@ -520,7 +524,6 @@ namespace UnityEditor.ProBuilder
 			PreferencesInternal.SetBool(PreferenceKeys.pbMeshesAreAssets, pbMeshesAreAssets);
 			PreferencesInternal.SetBool(PreferenceKeys.pbEnableExperimental, pbEnableExperimental, PreferenceLocation.Global);
 			PreferencesInternal.SetBool(PreferenceKeys.pbShowMissingLightmapUvWarning, showMissingLightmapUvWarning, PreferenceLocation.Global);
-			PreferencesInternal.SetBool(PreferenceKeys.pbManageLightmappingStaticFlag, pbManageLightmappingStaticFlag, PreferenceLocation.Global);
 			PreferencesInternal.SetBool(PreferenceKeys.pbShowPreselectionHighlight, pbShowPreselectionHighlight, PreferenceLocation.Global);
 			PreferencesInternal.SetFloat(PreferenceKeys.pbUVGridSnapValue, pbUVGridSnapValue, PreferenceLocation.Global);
 
@@ -529,5 +532,7 @@ namespace UnityEditor.ProBuilder
 
 			SceneView.RepaintAll();
 		}
+#pragma warning restore 618
+#pragma warning restore 612
 	}
 }

@@ -55,6 +55,7 @@ namespace UnityEngine.ProBuilder
 		internal const string pbDefaultCollider = "pbDefaultCollider";
 		internal const string pbForceConvex = "pbForceConvex";
 		internal const string pbVertexColorPrefs = "pbVertexColorPrefs";
+		[Obsolete]
 		internal const string pbShowEditorNotifications = "pbShowEditorNotifications";
 		[Obsolete]
 		internal const string pbDragCheckLimit = "pbDragCheckLimit";
@@ -69,8 +70,11 @@ namespace UnityEngine.ProBuilder
 		[Obsolete]
 		internal const string pbShowSceneToolbar = "pbShowSceneToolbar";
 		internal const string pbNormalizeUVsOnPlanarProjection = "pbNormalizeUVsOnPlanarProjection";
+		[Obsolete("Use Settings")]
 		internal const string pbStripProBuilderOnBuild = "pbStripProBuilderOnBuild";
+		[Obsolete("Use Lightmapping.autoUnwrapLightmapUV")]
 		internal const string pbDisableAutoUV2Generation = "pbDisableAutoUV2Generation";
+		[Obsolete]
 		internal const string pbShowSceneInfo = "pbShowSceneInfo";
 		internal const string pbEnableBackfaceSelection = "pbEnableBackfaceSelection";
 		internal const string pbVertexPaletteDockable = "pbVertexPaletteDockable";
@@ -83,6 +87,7 @@ namespace UnityEngine.ProBuilder
 		internal const string pbUniqueModeShortcuts = "pbUniqueModeShortcuts";
 		internal const string pbMaterialEditorFloating = "pbMaterialEditorFloating";
 		internal const string pbShapeWindowFloating = "pbShapeWindowFloating";
+		[Obsolete]
 		internal const string pbIconGUI = "pbIconGUI";
 		internal const string pbShiftOnlyTooltips = "pbShiftOnlyTooltips";
 		[Obsolete]
@@ -120,6 +125,7 @@ namespace UnityEngine.ProBuilder
 		internal const string pbCheckForProBuilderUpdates = "pbCheckForProBuilderUpdates";
 
 		/// Enable ProBuilder to manage the lightmapping static flags.
+		[Obsolete]
 		internal const string pbManageLightmappingStaticFlag = "pbManageLightmappingStaticFlag";
 		internal const string pbShowMissingLightmapUvWarning = "pb_Lightmapping::showMissingLightmapUvWarning";
 		internal const string pbSelectedFaceDither = "pbSelectedFaceDither";

@@ -18,6 +18,9 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	public static class EditorUtility
 	{
+		[UserSetting("General", "Show Action Notifications", "Enable or disable notification popups when performing actions.")]
+		static Pref<bool> s_ShowNotifications = new Pref<bool>("showEditorNotifications", false);
+
 		const float k_DefaultNotificationDuration = 1f;
 		static float s_NotificationTimer = 0f;
 		static EditorWindow s_NotificationWindow;
@@ -83,7 +86,7 @@ namespace UnityEditor.ProBuilder
 		/// <exception cref="ArgumentNullException">Window is null.</exception>
 		internal static void ShowNotification(EditorWindow window, string message)
 		{
-			if(PreferencesInternal.HasKey(PreferenceKeys.pbShowEditorNotifications) && !PreferencesInternal.GetBool(PreferenceKeys.pbShowEditorNotifications))
+			if (!s_ShowNotifications)
 				return;
 
             if (window == null)

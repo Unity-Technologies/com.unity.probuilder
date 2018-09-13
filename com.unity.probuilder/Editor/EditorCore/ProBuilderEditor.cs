@@ -50,12 +50,15 @@ namespace UnityEditor.ProBuilder
 		GUIContent[] m_EditModeIcons;
 		GUIStyle VertexTranslationInfoStyle;
 
-		bool m_ShowSceneInfo;
+		[UserSetting("General", "Show Scene Info", "Toggle the display of information about selected meshes in the Scene View.")]
+		static Pref<bool> s_ShowSceneInfo = new Pref<bool>("showSceneInfo", false);
+
+		[UserSetting("Toolbar", "Icon GUI", "Toggles the ProBuilder window interface between text and icon versions.")]
+		internal static Pref<bool> s_IsIconGui = new Pref<bool>("toolbarIconGUI", false);
 
 		float m_SnapValue = .25f;
 		bool m_SnapAxisConstraint = true;
 		bool m_SnapEnabled;
-		bool m_IsIconGui;
 		MethodInfo m_FindNearestVertex;
 		EditLevel m_PreviousEditLevel;
 		ComponentMode m_PreviousComponentMode;
@@ -341,7 +344,6 @@ namespace UnityEditor.ProBuilder
 			editLevel = PreferencesInternal.GetEnum<EditLevel>(PreferenceKeys.pbDefaultEditLevel);
 			componentMode = PreferencesInternal.GetEnum<ComponentMode>(PreferenceKeys.pbDefaultSelectionMode);
 			handleAlignment = PreferencesInternal.GetEnum<HandleAlignment>(PreferenceKeys.pbHandleAlignment);
-			m_ShowSceneInfo = PreferencesInternal.GetBool(PreferenceKeys.pbShowSceneInfo);
 			m_ShowPreselectionHighlight = PreferencesInternal.GetBool(PreferenceKeys.pbShowPreselectionHighlight);
 
 			// ---
@@ -364,7 +366,6 @@ namespace UnityEditor.ProBuilder
 			m_Shortcuts = Shortcut.ParseShortcuts(PreferencesInternal.GetString(PreferenceKeys.pbDefaultShortcuts)).ToArray();
 
 			m_SceneToolbarLocation = PreferencesInternal.GetEnum<SceneToolbarLocation>(PreferenceKeys.pbToolbarLocation);
-			m_IsIconGui = PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI);
 		}
 
 		void InitGUI()
@@ -463,9 +464,9 @@ namespace UnityEditor.ProBuilder
 
 			menu.AddSeparator("");
 
-			menu.AddItem(new GUIContent("Use Icon Mode", ""), PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI),
+			menu.AddItem(new GUIContent("Use Icon Mode", ""), s_IsIconGui,
 				Menu_ToggleIconMode);
-			menu.AddItem(new GUIContent("Use Text Mode", ""), !PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI),
+			menu.AddItem(new GUIContent("Use Text Mode", ""), !s_IsIconGui,
 				Menu_ToggleIconMode);
 
 			menu.ShowAsContext();
@@ -473,8 +474,7 @@ namespace UnityEditor.ProBuilder
 
 		void Menu_ToggleIconMode()
 		{
-			m_IsIconGui = !PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI);
-			PreferencesInternal.SetBool(PreferenceKeys.pbIconGUI, m_IsIconGui);
+			s_IsIconGui.value = !s_IsIconGui;
 			if (s_EditorToolbar != null)
 				Object.DestroyImmediate(s_EditorToolbar);
 			s_EditorToolbar = ScriptableObject.CreateInstance<EditorToolbar>();
@@ -1281,7 +1281,7 @@ namespace UnityEditor.ProBuilder
 					}
 				}
 
-				if (m_IsMovingElements && m_ShowSceneInfo)
+				if (m_IsMovingElements && s_ShowSceneInfo)
 				{
 					string handleTransformInfo = string.Format(
 						"translate: <b>{0}</b>\nrotate: <b>{1}</b>\nscale: <b>{2}</b>",
@@ -1302,7 +1302,7 @@ namespace UnityEditor.ProBuilder
 					GUI.Label(handleTransformInfoRect, gc, UI.EditorStyles.sceneTextBox);
 				}
 
-				if (m_ShowSceneInfo)
+				if (s_ShowSceneInfo)
 				{
 					Vector2 size = UI.EditorStyles.sceneTextBox.CalcSize(m_SceneInfo);
 					m_SceneInfoRect.width = size.x;
