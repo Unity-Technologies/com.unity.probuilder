@@ -151,16 +151,10 @@ namespace UnityEngine.ProBuilder
 			get { return m_Title; }
 		}
 
-		public UserSettingAttribute(string category, GUIContent title)
+		public UserSettingAttribute(string category, string title, string tooltip = null)
 		{
 			m_Category = category;
-			m_Title = title;
-		}
-
-		public UserSettingAttribute(string category, string title)
-		{
-			m_Category = category;
-			m_Title = new GUIContent(title);
+			m_Title = new GUIContent(title, tooltip);
 		}
 	}
 
