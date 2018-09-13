@@ -1,33 +1,37 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
-using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
-public class SettingsWindow : EditorWindow
+sealed class ProBuilderSettingsProvider : SettingsProvider
 {
 	List<string> m_Categories;
 	Dictionary<string, List<SimpleTuple<GUIContent, IPref>>> m_Settings;
 	Dictionary<string, List<MethodInfo>> m_SettingBlocks;
 
-	[MenuItem("Window/ProBuilder Settings")]
-	static void Init()
+	[SettingsProvider]
+	static SettingsProvider CreateSettingsProvider()
 	{
-		GetWindow<SettingsWindow>();
+		return new ProBuilderSettingsProvider("Project/ProBuilder", SettingsScopes.Project);
 	}
 
-	void OnEnable()
+	public ProBuilderSettingsProvider(string path, SettingsScopes scopes = SettingsScopes.Any)
+		: base(path, scopes)
 	{
-		var fields = typeof(SettingsWindow).Assembly.GetTypes()
+		SearchForSettingAttributes();
+	}
+
+	void SearchForSettingAttributes()
+	{
+		var fields = GetType().Assembly.GetTypes()
 			.SelectMany(x =>
 				x.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
 					.Where(prop => Attribute.IsDefined(prop, typeof(UserSettingAttribute))));
 
-		var methods = typeof(SettingsWindow).Assembly.GetTypes()
+		var methods = GetType().Assembly.GetTypes()
 			.SelectMany(x => x.GetMethods()
 				.Where(y => Attribute.IsDefined(y, typeof(UserSettingBlockAttribute))));
 
@@ -64,7 +68,7 @@ public class SettingsWindow : EditorWindow
 		m_Categories = m_Settings.Keys.Union(m_SettingBlocks.Keys).ToList();
 	}
 
-	void OnGUI()
+	public override void OnGUI(string searchContext)
 	{
 		foreach (var key in m_Categories)
 		{
