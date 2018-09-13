@@ -15,7 +15,7 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 	[SettingsProvider]
 	static SettingsProvider CreateSettingsProvider()
 	{
-		return new ProBuilderSettingsProvider("Project/ProBuilder", SettingsScopes.Project);
+		return new ProBuilderSettingsProvider("Preferences/ProBuilder");
 	}
 
 	public ProBuilderSettingsProvider(string path, SettingsScopes scopes = SettingsScopes.Any)
@@ -32,7 +32,7 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 					.Where(prop => Attribute.IsDefined(prop, typeof(UserSettingAttribute))));
 
 		var methods = GetType().Assembly.GetTypes()
-			.SelectMany(x => x.GetMethods()
+			.SelectMany(x => x.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
 				.Where(y => Attribute.IsDefined(y, typeof(UserSettingBlockAttribute))));
 
 		m_Settings = new Dictionary<string, List<SimpleTuple<GUIContent, IPref>>>();
@@ -41,6 +41,12 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 
 		foreach (var field in fields)
 		{
+			if (!field.IsStatic)
+			{
+				Log.Warning("Cannot create setting entries for instance fields. Skipping \"" + field.Name + "\".");
+				continue;
+			}
+			
 			var attrib = (UserSettingAttribute)field.GetCustomAttribute(typeof(UserSettingAttribute));
 			var pref = (IPref)field.GetValue(null);
 			var category = string.IsNullOrEmpty(attrib.category) ? "Uncategorized" : attrib.category;
@@ -66,6 +72,7 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 		}
 
 		m_Categories = m_Settings.Keys.Union(m_SettingBlocks.Keys).ToList();
+		m_Categories.Sort();
 	}
 
 	public override void OnGUI(string searchContext)
@@ -74,17 +81,17 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 		{
 			GUILayout.Label(key, EditorStyles.boldLabel);
 
-			List<MethodInfo> blocks;
-
-			if (m_SettingBlocks.TryGetValue(key, out blocks))
-				foreach (var block in blocks)
-					block.Invoke(null, null);
-
 			List<SimpleTuple<GUIContent, IPref>> settings;
 
 			if (m_Settings.TryGetValue(key, out settings))
 				foreach(var setting in settings)
 					DoPreferenceField(setting.item1, setting.item2);
+
+			List<MethodInfo> blocks;
+
+			if (m_SettingBlocks.TryGetValue(key, out blocks))
+				foreach (var block in blocks)
+					block.Invoke(null, null);
 		}
 	}
 
@@ -99,6 +106,11 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 		{
 			var cast = (Pref<int>) pref;
 			cast.value = EditorGUILayout.IntField(title, cast.value);
+		}
+		else if (pref is Pref<bool>)
+		{
+			var cast = (Pref<bool>) pref;
+			cast.value = EditorGUILayout.Toggle(title, cast.value);
 		}
 		else if (pref is Pref<string>)
 		{
