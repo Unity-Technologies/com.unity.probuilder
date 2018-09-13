@@ -1,11 +1,7 @@
 using System;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.ProBuilder;
-using UnityEngine.Rendering;
-using UnityEngine.XR.WSA.Input;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
