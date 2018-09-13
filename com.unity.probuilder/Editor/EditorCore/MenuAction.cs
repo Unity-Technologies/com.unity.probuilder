@@ -78,7 +78,7 @@ namespace UnityEditor.ProBuilder
 
         protected MenuAction()
         {
-            iconMode = PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI);
+	        iconMode = ProBuilderEditor.s_IsIconGui;
         }
 
 		/// <summary>

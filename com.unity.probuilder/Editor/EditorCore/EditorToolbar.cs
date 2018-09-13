@@ -60,7 +60,7 @@ namespace UnityEditor.ProBuilder
 			scrollIconRight = IconUtility.GetIcon("Toolbar/ShowNextPage_Right");
 			scrollIconLeft 	= IconUtility.GetIcon("Toolbar/ShowNextPage_Left");
 
-			isIconMode = PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI);
+			isIconMode = ProBuilderEditor.s_IsIconGui;
 			this.window = ProBuilderEditor.instance;
 			CalculateMaxIconSize();
 
@@ -238,7 +238,7 @@ namespace UnityEditor.ProBuilder
 			if(isIconMode && menuActionsCount < 1)
 			{
 				isIconMode = false;
-				PreferencesInternal.SetBool(PreferenceKeys.pbIconGUI, isIconMode);
+				ProBuilderEditor.s_IsIconGui.value = isIconMode;
 				CalculateMaxIconSize();
 				Debug.LogWarning("ProBuilder: Toolbar icons failed to load, reverting to text mode.  Please ensure that the ProBuilder folder contents are unmodified.  If the menu is still not visible, try closing and re-opening the Editor Window.");
 				return;

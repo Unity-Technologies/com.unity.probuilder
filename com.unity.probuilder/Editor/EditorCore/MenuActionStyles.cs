@@ -48,7 +48,7 @@ namespace UnityEditor.ProBuilder
 					s_ButtonStyleVertical.hover.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_HOVER : Color.black;
 					s_ButtonStyleVertical.active.background = IconUtility.GetIcon("Toolbar/Button_Pressed", IconSkin.Pro);
 					s_ButtonStyleVertical.active.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_ACTIVE : Color.black;
-					s_ButtonStyleVertical.alignment = PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI) ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
+					s_ButtonStyleVertical.alignment = ProBuilderEditor.s_IsIconGui ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
 					s_ButtonStyleVertical.border = new RectOffset(4,0,0,0);
 					s_ButtonStyleVertical.stretchWidth = true;
 					s_ButtonStyleVertical.stretchHeight = false;
