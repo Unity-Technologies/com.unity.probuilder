@@ -135,7 +135,59 @@ namespace UnityEngine.ProBuilder
 		}
 	}
 
-	sealed class Pref<T>
+	[AttributeUsage(AttributeTargets.Field)]
+	sealed class UserSettingAttribute : Attribute
+	{
+		string m_Category;
+		GUIContent m_Title;
+
+		public string category
+		{
+			get { return m_Category; }
+		}
+
+		public GUIContent title
+		{
+			get { return m_Title; }
+		}
+
+		public UserSettingAttribute(string category, GUIContent title)
+		{
+			m_Category = category;
+			m_Title = title;
+		}
+
+		public UserSettingAttribute(string category, string title)
+		{
+			m_Category = category;
+			m_Title = new GUIContent(title);
+		}
+	}
+
+	[AttributeUsage(AttributeTargets.Method)]
+	sealed class UserSettingBlockAttribute : Attribute
+	{
+		string m_Category;
+
+		public string category
+		{
+			get { return m_Category; }
+		}
+
+		public UserSettingBlockAttribute(string category)
+		{
+			m_Category = category;
+		}
+	}
+
+	interface IPref
+	{
+		string key { get; }
+		Type type { get; }
+		object boxedValue { get; }
+	}
+
+	sealed class Pref<T> : IPref
 	{
 		bool m_Initialized;
 		string m_Key;
@@ -152,6 +204,16 @@ namespace UnityEngine.ProBuilder
 		public string key
 		{
 			get { return m_Key; }
+		}
+
+		public Type type
+		{
+			get { return typeof(T); }
+		}
+
+		public object boxedValue
+		{
+			get { return value; }
 		}
 
 		public T value
