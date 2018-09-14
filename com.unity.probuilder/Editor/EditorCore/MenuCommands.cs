@@ -540,23 +540,23 @@ namespace UnityEditor.ProBuilder
 
 #region Selection
 
-		private static void GetSelectedElementCount(ProBuilderMesh[] selection, out int sel, out int max)
+		static void GetSelectedElementCount(ProBuilderMesh[] selection, out int sel, out int max)
 		{
 			switch(ProBuilderEditor.componentMode)
 			{
 				case ComponentMode.Face:
-					sel = selection.Sum(x => x.selectedFaceCount);
-					max = selection.Sum(x => x.faceCount);
+					sel = ProBuilderEditor.instance.selectedFaceCount;
+					max = MeshSelection.totalFaceCount;
 					break;
 
 				case ComponentMode.Edge:
-					sel = selection.Sum(x => x.selectedEdgeCount);
-					max = selection.Sum(x => x.facesInternal.Sum(y=>y.edgesInternal.Length));
+					sel = ProBuilderEditor.instance.selectedEdgeCount;
+					max = MeshSelection.totalEdgeCount;
 					break;
 
 				default:
-					sel = selection.Sum(x => x.selectedVertexCount);
-					max = selection.Sum(x => x.indexCount);
+					sel = ProBuilderEditor.instance.selectedVertexCount;
+					max = MeshSelection.totalVertexCount;
 					break;
 			}
 		}

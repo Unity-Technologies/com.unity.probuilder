@@ -196,6 +196,27 @@ namespace UnityEngine.ProBuilder
 				}
 			}
 
+			var coincidentSelection = new Dictionary<ProBuilderMesh, HashSet<int>>();
+
+			// workaround for picking vertices that share a position but are not shared
+			foreach (var meshSelection in selected)
+			{
+				var positions = meshSelection.Key.positionsInternal;
+				var sharedVertices = meshSelection.Key.sharedVerticesInternal;
+				var positionHash = new HashSet<int>(meshSelection.Value.Select(x => VectorHash.GetHashCode(positions[sharedVertices[x][0]])));
+				var collected = new HashSet<int>();
+
+				for (int i = 0, c = sharedVertices.Length; i < c; i++)
+				{
+					var hash = VectorHash.GetHashCode(positions[sharedVertices[i][0]]);
+					if (positionHash.Contains(hash))
+						collected.Add(i);
+				}
+
+				coincidentSelection.Add(meshSelection.Key, collected);
+			}
+			selected = coincidentSelection;
+
 #if PB_RENDER_PICKER_TEXTURE
 			if(width > 0 && height > 0)
 			{
