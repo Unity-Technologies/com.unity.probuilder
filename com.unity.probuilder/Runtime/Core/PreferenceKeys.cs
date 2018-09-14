@@ -42,12 +42,19 @@ namespace UnityEngine.ProBuilder
 		internal const string pbDefaultStaticFlags = "pbDefaultStaticFlags";
 
 		// Color
+		[Obsolete]
 		internal const string pbSelectedFaceColor = "pbDefaultFaceColor";
+		[Obsolete]
 		internal const string pbWireframeColor = "pbDefaultEdgeColor";
+		[Obsolete]
 		internal const string pbUnselectedEdgeColor = "pbUnselectedEdgeColor";
+		[Obsolete]
 		internal const string pbSelectedEdgeColor = "pbSelectedEdgeColor";
+		[Obsolete]
 		internal const string pbSelectedVertexColor = "pbDefaultSelectedVertexColor";
+		[Obsolete]
 		internal const string pbUnselectedVertexColor = "pbDefaultVertexColor";
+		[Obsolete]
 		internal const string pbPreselectionColor = "pbPreselectionColor";
 
 		// Bool
@@ -137,15 +144,21 @@ namespace UnityEngine.ProBuilder
 		/// Enable ProBuilder to manage the lightmapping static flags.
 		[Obsolete]
 		internal const string pbManageLightmappingStaticFlag = "pbManageLightmappingStaticFlag";
+		[Obsolete]
 		internal const string pbShowMissingLightmapUvWarning = "pb_Lightmapping::showMissingLightmapUvWarning";
+		[Obsolete]
 		internal const string pbSelectedFaceDither = "pbSelectedFaceDither";
+		[Obsolete]
 		internal const string pbUseUnityColors = "pbUseUnityColors";
 
 		// Float
+		[Obsolete]
 		internal const string pbVertexHandleSize = "pbVertexHandleSize";
 		internal const string pbUVGridSnapValue = "pbUVGridSnapValue";
 		internal const string pbUVWeldDistance = "pbUVWeldDistance";
+		[Obsolete]
 		internal const string pbLineHandleSize = "pbLineHandleSize";
+		[Obsolete]
 		internal const string pbWireframeSize = "pbWireframeSize";
 
 		/// The maximum allowed distance between vertices to weld.

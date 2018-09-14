@@ -13,9 +13,12 @@ namespace UnityEditor.ProBuilder
 	static class Lightmapping
 	{
 		[UserSetting("General", "Auto Lightmap UVs", "Automatically build the lightmap UV array when editing ProBuilder meshes. If this feature is disabled, you will need to use the 'Generate UV2' action to build lightmap UVs for meshes prior to baking lightmaps.")]
-		static Pref<bool> m_AutoUnwrapLightmapUV = new Pref<bool>("autoUnwrapLightmapUV", true);
+		static Pref<bool> s_AutoUnwrapLightmapUV = new Pref<bool>("autoUnwrapLightmapUV", true);
 
-		static Pref<UnwrapParameters> m_UnwrapParameters = new Pref<UnwrapParameters>("defaultLightmapUnwrapParameters", new UnwrapParameters());
+		[UserSetting("General", "Show Missing Lightmap UVs Warning", "Enable or disable a warning log if lightmaps are baked while ProBuilder shapes are missing a valid UV2 channel.")]
+		static Pref<bool> s_ShowMissingLightmapUVWarning = new Pref<bool>("showMissingLightmapWarning", true, Settings.Scope.User);
+
+		static Pref<UnwrapParameters> s_UnwrapParameters = new Pref<UnwrapParameters>("defaultLightmapUnwrapParameters", new UnwrapParameters());
 
 		static class Styles
 		{
@@ -26,7 +29,6 @@ namespace UnityEditor.ProBuilder
 
 			static bool s_Initialized;
 			public static GUIStyle miniButton;
-			public static GUIStyle indentedBlock;
 			public static bool unwrapSettingsFoldout;
 
 			public static void Init()
@@ -41,11 +43,6 @@ namespace UnityEditor.ProBuilder
 				miniButton.stretchWidth = false;
 				miniButton.padding = new RectOffset(6, 6, 3, 3);
 				miniButton.margin = new RectOffset(4, 4, 4, 0);
-
-				indentedBlock = new GUIStyle()
-				{
-					margin = new RectOffset(8, 0, 0, 0)
-				};
 			}
 		}
 
@@ -59,30 +56,31 @@ namespace UnityEditor.ProBuilder
 			{
 				EditorGUI.BeginChangeCheck();
 
-				var unwrap = (UnwrapParameters) m_UnwrapParameters;
+				var unwrap = (UnwrapParameters) s_UnwrapParameters;
 
-				GUILayout.BeginVertical(Styles.indentedBlock);
-				unwrap.hardAngle = EditorGUILayout.Slider(Styles.hardAngle, unwrap.hardAngle, 1f, 180f);
-				unwrap.packMargin = EditorGUILayout.Slider(Styles.packMargin, unwrap.packMargin, 1f, 64f);
-				unwrap.angleError = EditorGUILayout.Slider(Styles.angleError, unwrap.angleError, 1f, 75f);
-				unwrap.areaError = EditorGUILayout.Slider(Styles.areaError, unwrap.areaError, 1f, 75f);
+				using(new UI.EditorStyles.IndentedBlock())
+				{
+					unwrap.hardAngle = EditorGUILayout.Slider(Styles.hardAngle, unwrap.hardAngle, 1f, 180f);
+					unwrap.packMargin = EditorGUILayout.Slider(Styles.packMargin, unwrap.packMargin, 1f, 64f);
+					unwrap.angleError = EditorGUILayout.Slider(Styles.angleError, unwrap.angleError, 1f, 75f);
+					unwrap.areaError = EditorGUILayout.Slider(Styles.areaError, unwrap.areaError, 1f, 75f);
 
-				GUILayout.BeginHorizontal();
-				GUILayout.FlexibleSpace();
-				if (GUILayout.Button("Reset", Styles.miniButton))
-					unwrap.Reset();
-				GUILayout.EndHorizontal();
-				GUILayout.EndVertical();
+					GUILayout.BeginHorizontal();
+					GUILayout.FlexibleSpace();
+					if (GUILayout.Button("Reset", Styles.miniButton))
+						unwrap.Reset();
+					GUILayout.EndHorizontal();
+				}
 
 				if (EditorGUI.EndChangeCheck())
-					m_UnwrapParameters.value = unwrap;
+					s_UnwrapParameters.value = unwrap;
 			}
 		}
 
 		public static bool autoUnwrapLightmapUV
 		{
-			get { return (bool) m_AutoUnwrapLightmapUV; }
-			set { m_AutoUnwrapLightmapUV.value = value; }
+			get { return (bool) s_AutoUnwrapLightmapUV; }
+			set { s_AutoUnwrapLightmapUV.value = value; }
 		}
 
 		static Lightmapping()
@@ -113,7 +111,7 @@ namespace UnityEditor.ProBuilder
 
 		static void OnLightmappingCompleted()
 		{
-			if (!PreferencesInternal.GetBool(PreferenceKeys.pbShowMissingLightmapUvWarning, false))
+			if (!s_ShowMissingLightmapUVWarning)
 				return;
 
 			var missingUv2 = Object.FindObjectsOfType<ProBuilderMesh>().Where(x => !x.HasArrays(MeshArrays.Lightmap) && x.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic));
@@ -121,7 +119,7 @@ namespace UnityEditor.ProBuilder
 			int count = missingUv2.Count();
 
 			if (count > 0)
-				Log.Warning("{0} ProBuilder {1} included in lightmap bake with missing UV2.\nYou can turn off this warning in Preferences/ProBuilder.", count, count == 1 ? "mesh" : "meshes");
+				Log.Warning("{0} ProBuilder {1} included in lightmap bake with missing UV2. Use the Lightmap + options to find missing UV2s.\n(You can turn off this warning in Preferences/ProBuilder).", count, count == 1 ? "mesh" : "meshes");
 		}
 
 		/// <summary>

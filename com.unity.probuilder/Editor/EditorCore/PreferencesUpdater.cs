@@ -25,7 +25,7 @@ namespace UnityEditor.ProBuilder
 				if (stored < k_ProBuilder_3_0_2)
 				{
 					Log.Info("Updated mesh handle graphic preferences to 3.0.2.");
-
+#pragma warning disable 612
 					PreferencesInternal.DeleteKey(PreferenceKeys.pbUseUnityColors);
 					PreferencesInternal.DeleteKey(PreferenceKeys.pbWireframeColor);
 					PreferencesInternal.DeleteKey(PreferenceKeys.pbSelectedFaceColor);
@@ -37,6 +37,7 @@ namespace UnityEditor.ProBuilder
 					PreferencesInternal.DeleteKey(PreferenceKeys.pbVertexHandleSize);
 					PreferencesInternal.DeleteKey(PreferenceKeys.pbLineHandleSize);
 					PreferencesInternal.DeleteKey(PreferenceKeys.pbWireframeSize);
+#pragma warning restore 612
 				}
 			}
 		}

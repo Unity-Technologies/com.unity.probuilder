@@ -48,7 +48,7 @@ namespace UnityEditor.ProBuilder
 			{ PreferenceKeys.pbCollapseVertexToFirst, false },
 			{ PreferenceKeys.pbEnableExperimental, false },
 			{ PreferenceKeys.pbMeshesAreAssets, false },
-			{ PreferenceKeys.pbSelectedFaceDither, true },
+//			{ PreferenceKeys.pbSelectedFaceDither, true },
 			{ PreferenceKeys.pbShowPreselectionHighlight, false },
 		};
 
@@ -60,9 +60,9 @@ namespace UnityEditor.ProBuilder
 			{ PreferenceKeys.pbUVGridSnapValue, .125f },
 			{ PreferenceKeys.pbUVWeldDistance, .01f },
 			{ PreferenceKeys.pbBevelAmount, .05f },
-			{ PreferenceKeys.pbVertexHandleSize, 3f },
-			{ PreferenceKeys.pbLineHandleSize, 1f },
-			{ PreferenceKeys.pbWireframeSize, .5f },
+//			{ PreferenceKeys.pbVertexHandleSize, 3f },
+//			{ PreferenceKeys.pbLineHandleSize, 1f },
+//			{ PreferenceKeys.pbWireframeSize, .5f },
 		};
 
 		static Dictionary<string, int> s_IntDefaults = new Dictionary<string, int>()
@@ -85,13 +85,13 @@ namespace UnityEditor.ProBuilder
 
 		static Dictionary<string, Color> s_ColorDefaults = new Dictionary<string, Color>()
 		{
-			{ PreferenceKeys.pbSelectedFaceColor, k_ProBuilderSelected},
-			{ PreferenceKeys.pbWireframeColor, k_ProBuilderWireframe},
-			{ PreferenceKeys.pbUnselectedEdgeColor, k_ProBuilderUnselected},
-			{ PreferenceKeys.pbSelectedEdgeColor, k_ProBuilderSelected},
-			{ PreferenceKeys.pbUnselectedVertexColor, k_ProBuilderUnselected},
-			{ PreferenceKeys.pbSelectedVertexColor, k_ProBuilderSelected},
-			{ PreferenceKeys.pbPreselectionColor, k_ProBuilderPreselection },
+//			{ PreferenceKeys.pbSelectedFaceColor, k_ProBuilderSelected},
+//			{ PreferenceKeys.pbWireframeColor, k_ProBuilderWireframe},
+//			{ PreferenceKeys.pbUnselectedEdgeColor, k_ProBuilderUnselected},
+//			{ PreferenceKeys.pbSelectedEdgeColor, k_ProBuilderSelected},
+//			{ PreferenceKeys.pbUnselectedVertexColor, k_ProBuilderUnselected},
+//			{ PreferenceKeys.pbSelectedVertexColor, k_ProBuilderSelected},
+//			{ PreferenceKeys.pbPreselectionColor, k_ProBuilderPreselection },
 		};
 
 		static Dictionary<string, string> s_StringDefaults = new Dictionary<string, string>()
