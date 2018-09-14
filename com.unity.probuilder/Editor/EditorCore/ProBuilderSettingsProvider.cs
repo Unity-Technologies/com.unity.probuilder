@@ -136,7 +136,7 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 				val = EditorGUILayout.EnumFlagsField(title, val);
 			else
 				val = EditorGUILayout.EnumPopup(title, val);
-			if(EditorGUI.EndChangeCheck())
+			if (EditorGUI.EndChangeCheck())
 				pref.SetValue(val);
 		} else if (typeof(UnityEngine.Object).IsAssignableFrom(pref.type))
 		{

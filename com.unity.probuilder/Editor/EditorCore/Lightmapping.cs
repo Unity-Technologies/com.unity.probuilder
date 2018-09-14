@@ -12,7 +12,7 @@ namespace UnityEditor.ProBuilder
 	[InitializeOnLoad]
 	static class Lightmapping
 	{
-		[UserSetting("Mesh Settings", "Auto Lightmap UVs", "Automatically build the lightmap UV array when editing ProBuilder meshes. If this feature is disabled, you will need to use the 'Generate UV2' action to build lightmap UVs for meshes prior to baking lightmaps.")]
+		[UserSetting("General", "Auto Lightmap UVs", "Automatically build the lightmap UV array when editing ProBuilder meshes. If this feature is disabled, you will need to use the 'Generate UV2' action to build lightmap UVs for meshes prior to baking lightmaps.")]
 		static Pref<bool> m_AutoUnwrapLightmapUV = new Pref<bool>("autoUnwrapLightmapUV", true);
 
 		static Pref<UnwrapParameters> m_UnwrapParameters = new Pref<UnwrapParameters>("defaultLightmapUnwrapParameters", new UnwrapParameters());
@@ -26,6 +26,8 @@ namespace UnityEditor.ProBuilder
 
 			static bool s_Initialized;
 			public static GUIStyle miniButton;
+			public static GUIStyle indentedBlock;
+			public static bool unwrapSettingsFoldout;
 
 			public static void Init()
 			{
@@ -38,6 +40,12 @@ namespace UnityEditor.ProBuilder
 				miniButton.stretchHeight = false;
 				miniButton.stretchWidth = false;
 				miniButton.padding = new RectOffset(6, 6, 3, 3);
+				miniButton.margin = new RectOffset(4, 4, 4, 0);
+
+				indentedBlock = new GUIStyle()
+				{
+					margin = new RectOffset(8, 0, 0, 0)
+				};
 			}
 		}
 
@@ -45,27 +53,29 @@ namespace UnityEditor.ProBuilder
 		static void UnwrapSettingDefaults()
 		{
 			Styles.Init();
+			Styles.unwrapSettingsFoldout = EditorGUILayout.Foldout(Styles.unwrapSettingsFoldout, "Lightmap UVs Settings");
 
-			GUILayout.Label("Default Lightmap UVs Settings", EditorStyles.boldLabel);
-
-			EditorGUI.BeginChangeCheck();
-
-			var unwrap = (UnwrapParameters) m_UnwrapParameters;
-
-			unwrap.hardAngle = EditorGUILayout.Slider(Styles.hardAngle, unwrap.hardAngle, 1f, 180f);
-			unwrap.packMargin = EditorGUILayout.Slider(Styles.packMargin, unwrap.packMargin, 1f, 64f);
-			unwrap.angleError = EditorGUILayout.Slider(Styles.angleError, unwrap.angleError, 1f, 75f);
-			unwrap.areaError = EditorGUILayout.Slider(Styles.areaError, unwrap.areaError, 1f, 75f);
-
-			GUILayout.BeginHorizontal();
-			GUILayout.FlexibleSpace();
-			if (GUILayout.Button("Reset", Styles.miniButton))
-				unwrap.Reset();
-			GUILayout.EndHorizontal();
-
-			if (EditorGUI.EndChangeCheck())
+			if (Styles.unwrapSettingsFoldout)
 			{
-				m_UnwrapParameters.value = unwrap;
+				EditorGUI.BeginChangeCheck();
+
+				var unwrap = (UnwrapParameters) m_UnwrapParameters;
+
+				GUILayout.BeginVertical(Styles.indentedBlock);
+				unwrap.hardAngle = EditorGUILayout.Slider(Styles.hardAngle, unwrap.hardAngle, 1f, 180f);
+				unwrap.packMargin = EditorGUILayout.Slider(Styles.packMargin, unwrap.packMargin, 1f, 64f);
+				unwrap.angleError = EditorGUILayout.Slider(Styles.angleError, unwrap.angleError, 1f, 75f);
+				unwrap.areaError = EditorGUILayout.Slider(Styles.areaError, unwrap.areaError, 1f, 75f);
+
+				GUILayout.BeginHorizontal();
+				GUILayout.FlexibleSpace();
+				if (GUILayout.Button("Reset", Styles.miniButton))
+					unwrap.Reset();
+				GUILayout.EndHorizontal();
+				GUILayout.EndVertical();
+
+				if (EditorGUI.EndChangeCheck())
+					m_UnwrapParameters.value = unwrap;
 			}
 		}
 

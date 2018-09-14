@@ -38,7 +38,7 @@ namespace UnityEditor.ProBuilder.Actions
 			PolyShape poly = go.AddComponent<PolyShape>();
 			ProBuilderMesh pb = poly.gameObject.AddComponent<ProBuilderMesh>();
 			pb.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals);
-			var mat = PreferencesInternal.GetMaterial(PreferenceKeys.pbDefaultMaterial);
+			var mat = EditorUtility.GetUserMaterial();
 			foreach (var face in pb.facesInternal)
 				face.material = mat;
 			pb.gameObject.GetComponent<MeshRenderer>().sharedMaterial = mat;

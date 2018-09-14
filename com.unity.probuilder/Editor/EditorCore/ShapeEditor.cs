@@ -40,10 +40,12 @@ namespace UnityEditor.ProBuilder
 
 		static readonly Color k_ColorGreen = new Color(0f, .8f, 0f, .8f);
 
-		[SerializeField] ShapeType m_CurrentShape = ShapeType.Cube;
+		[SerializeField]
+		ShapeType m_CurrentShape = ShapeType.Cube;
 
 		GameObject m_PreviewObject;
 		bool m_ShowPreview = true;
+
 		// used to toggle preview on and off from class OnGUI
 		bool m_DoInitPreview = false;
 		Material m_DefaultMaterial = null;
@@ -56,7 +58,7 @@ namespace UnityEditor.ProBuilder
 
 		void OnEnable()
 		{
-			m_DefaultMaterial = PreferencesInternal.GetMaterial(PreferenceKeys.pbDefaultMaterial);
+			m_DefaultMaterial = EditorUtility.GetUserMaterial();
 			m_DoInitPreview = true;
 
 			if (m_ShapePreviewMaterial == null)
@@ -111,16 +113,11 @@ namespace UnityEditor.ProBuilder
 			ProBuilderMesh pb = ShapeGenerator.GenerateCube(Vector3.one);
 			UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
-			Material mat = PreferencesInternal.GetMaterial(PreferenceKeys.pbDefaultMaterial);
-
-			if(mat != null)
-			{
-				SetFaceMaterial(pb.facesInternal, mat);
-				pb.GetComponent<MeshRenderer>().sharedMaterial = mat;
-			}
+			Material mat = EditorUtility.GetUserMaterial();
+			SetFaceMaterial(pb.facesInternal, mat);
+			pb.GetComponent<MeshRenderer>().sharedMaterial = mat;
 
 			EditorUtility.InitObject(pb);
-			EditorUtility.SetPivotAndSnapWithPref(pb, null);
 		}
 
 		void OnGUI()
@@ -243,7 +240,6 @@ namespace UnityEditor.ProBuilder
 
 				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
 
-				EditorUtility.SetPivotAndSnapWithPref(pb, null);
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -297,7 +293,6 @@ namespace UnityEditor.ProBuilder
 
 				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
 
-				EditorUtility.SetPivotAndSnapWithPref(pb, null);
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -341,7 +336,6 @@ namespace UnityEditor.ProBuilder
 
 				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
 
-				EditorUtility.SetPivotAndSnapWithPref(pb, null);
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -436,7 +430,6 @@ namespace UnityEditor.ProBuilder
 
 				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
 
-				EditorUtility.SetPivotAndSnapWithPref(pb, null);
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -506,7 +499,6 @@ namespace UnityEditor.ProBuilder
 
 				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
 
-				EditorUtility.SetPivotAndSnapWithPref(pb, new int[1] {centerIndex});
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -562,7 +554,6 @@ namespace UnityEditor.ProBuilder
 
 				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
 
-				EditorUtility.SetPivotAndSnapWithPref(pb, null);
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -625,7 +616,6 @@ namespace UnityEditor.ProBuilder
 
 				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
 
-				EditorUtility.SetPivotAndSnapWithPref(pb, null);
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -692,7 +682,6 @@ namespace UnityEditor.ProBuilder
 
 				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
 
-				EditorUtility.SetPivotAndSnapWithPref(pb, null);
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -751,7 +740,6 @@ namespace UnityEditor.ProBuilder
 
 				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
 
-				EditorUtility.SetPivotAndSnapWithPref(pb, null);
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -845,7 +833,6 @@ namespace UnityEditor.ProBuilder
 
 				if (m_DefaultMaterial) SetFaceMaterial(pb.facesInternal,m_DefaultMaterial);
 
-				EditorUtility.SetPivotAndSnapWithPref(pb, null);
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -894,7 +881,6 @@ namespace UnityEditor.ProBuilder
 
 				if (m_DefaultMaterial) SetFaceMaterial(pb.facesInternal,m_DefaultMaterial);
 
-				EditorUtility.SetPivotAndSnapWithPref(pb, null);
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -994,7 +980,6 @@ namespace UnityEditor.ProBuilder
 
 				if (m_DefaultMaterial) SetFaceMaterial(pb.facesInternal,m_DefaultMaterial);
 
-				EditorUtility.SetPivotAndSnapWithPref(pb, null);
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -1040,7 +1025,6 @@ namespace UnityEditor.ProBuilder
 
 				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
 
-				EditorUtility.SetPivotAndSnapWithPref(pb, null);
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -1105,11 +1089,7 @@ namespace UnityEditor.ProBuilder
 				EditorUtility.ScreenCenter(m_PreviewObject.gameObject);
 			}
 
-			if(ProGridsInterface.SnapEnabled())
-				pb.transform.position = Snapping.SnapValue(pb.transform.position, ProGridsInterface.SnapValue());
-			else
-			if(PreferencesInternal.GetBool(PreferenceKeys.pbForceVertexPivot))
-				pb.transform.position = Snapping.SnapValue(pb.transform.position, 1f);
+			EditorUtility.SetPivotLocationAndSnap(pb);
 
 			// Remove pb_Object
 			Mesh m = UnityEngine.ProBuilder.MeshUtility.DeepCopy( pb.mesh );

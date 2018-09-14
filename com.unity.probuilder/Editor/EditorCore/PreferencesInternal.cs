@@ -31,7 +31,7 @@ namespace UnityEditor.ProBuilder
 
 		static Dictionary<string, bool> s_BoolDefaults = new Dictionary<string, bool>()
 		{
-			{ PreferenceKeys.pbForceConvex, false },
+//			{ PreferenceKeys.pbForceConvex, false },
 			{ PreferenceKeys.pbManifoldEdgeExtrusion, false },
 			{ PreferenceKeys.pbPBOSelectionOnly, false },
 //			{ PreferenceKeys.pbCloseShapeWindow, false },
@@ -70,12 +70,12 @@ namespace UnityEditor.ProBuilder
 			{ PreferenceKeys.pbDefaultEditLevel, 0 },
 			{ PreferenceKeys.pbDefaultSelectionMode, 0 },
 			{ PreferenceKeys.pbHandleAlignment, 0 },
-			{ PreferenceKeys.pbDefaultCollider, (int) ColliderType.MeshCollider },
+//			{ PreferenceKeys.pbDefaultCollider, (int) ColliderType.MeshCollider },
 //			{ PreferenceKeys.pbToolbarLocation, (int) SceneToolbarLocation.UpperCenter },
 			{ PreferenceKeys.pbDefaultEntity, (int) EntityType.Detail },
 			{ PreferenceKeys.pbDragSelectMode, (int) SelectionModifierBehavior.Difference },
 			{ PreferenceKeys.pbExtrudeMethod, (int) ExtrudeMethod.VertexNormal },
-			{ PreferenceKeys.pbShadowCastingMode, (int) ShadowCastingMode.TwoSided },
+//			{ PreferenceKeys.pbShadowCastingMode, (int) ShadowCastingMode.TwoSided },
 		};
 
 		static readonly Color k_ProBuilderWireframe = new Color(125f / 255f, 155f / 255f, 185f / 255f, 1f);
@@ -275,40 +275,6 @@ namespace UnityEditor.ProBuilder
 				return fallback;
 
 			return JsonUtility.FromJson<T>(str);
-		}
-
-		/// <summary>
-		/// Get a material from preferences.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <returns></returns>
-		public static Material GetMaterial(string key)
-		{
-			if(s_Preferences != null && preferences.HasKey<Material>(key))
-				return preferences.GetMaterial(key);
-
-			Material mat = null;
-
-			switch(key)
-			{
-				case PreferenceKeys.pbDefaultMaterial:
-					if(EditorPrefs.HasKey(key))
-					{
-						if(EditorPrefs.GetString(key) == "Default-Diffuse")
-							return BuiltinMaterials.GetLegacyDiffuse();
-
-						mat = (Material) AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString(key), typeof(Material));
-					}
-					break;
-
-				default:
-					return BuiltinMaterials.defaultMaterial;
-			}
-
-			if(!mat)
-				mat = BuiltinMaterials.defaultMaterial;
-
-			return mat;
 		}
 
 		/// <summary>

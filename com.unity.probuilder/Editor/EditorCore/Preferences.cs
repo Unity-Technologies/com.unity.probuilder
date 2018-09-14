@@ -480,7 +480,7 @@ namespace UnityEditor.ProBuilder
 			pbShadowCastingMode = PreferencesInternal.GetEnum<ShadowCastingMode>(PreferenceKeys.pbShadowCastingMode);
 			pbDefaultStaticFlags = PreferencesInternal.GetEnum<StaticEditorFlags>(PreferenceKeys.pbDefaultStaticFlags);
 
-			pbDefaultMaterial = PreferencesInternal.GetMaterial(PreferenceKeys.pbDefaultMaterial);
+//			pbDefaultMaterial = PreferencesInternal.GetMaterial(PreferenceKeys.pbDefaultMaterial);
 			defaultShortcuts = PreferencesInternal.GetShortcuts().ToArray();
 		}
 
@@ -505,7 +505,7 @@ namespace UnityEditor.ProBuilder
 			PreferencesInternal.SetColor(PreferenceKeys.pbUnselectedEdgeColor, pbUnselectedEdgeColor, PreferenceLocation.Global);
 
 			PreferencesInternal.SetString(PreferenceKeys.pbDefaultShortcuts, Shortcut.ShortcutsToString(defaultShortcuts), PreferenceLocation.Global);
-			PreferencesInternal.SetMaterial(PreferenceKeys.pbDefaultMaterial, pbDefaultMaterial);
+//			PreferencesInternal.SetMaterial(PreferenceKeys.pbDefaultMaterial, pbDefaultMaterial);
 			PreferencesInternal.SetInt(PreferenceKeys.pbDefaultCollider, (int) defaultColliderType);
 			PreferencesInternal.SetInt(PreferenceKeys.pbShadowCastingMode, (int) pbShadowCastingMode);
 			PreferencesInternal.SetInt(PreferenceKeys.pbDefaultStaticFlags, (int) pbDefaultStaticFlags);

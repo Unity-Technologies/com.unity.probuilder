@@ -38,6 +38,7 @@ namespace UnityEngine.ProBuilder
 		internal const string pbToolbarLocation = "pbToolbarLocation";
 		internal const string pbDefaultEntity = "pbDefaultEntity";
 		internal const string pbExtrudeMethod = "pbExtrudeMethod";
+		[Obsolete]
 		internal const string pbDefaultStaticFlags = "pbDefaultStaticFlags";
 
 		// Color
@@ -54,13 +55,16 @@ namespace UnityEngine.ProBuilder
 		internal const string pbDefaultOpenInDockableWindow = "pbDefaultOpenInDockableWindow";
 		internal const string pbEditorPrefVersion = "pbEditorPrefVersion";
 		internal const string pbEditorShortcutsVersion = "pbEditorShortcutsVersion";
+		[Obsolete]
 		internal const string pbDefaultCollider = "pbDefaultCollider";
+		[Obsolete]
 		internal const string pbForceConvex = "pbForceConvex";
 		internal const string pbVertexColorPrefs = "pbVertexColorPrefs";
 		[Obsolete]
 		internal const string pbShowEditorNotifications = "pbShowEditorNotifications";
 		[Obsolete]
 		internal const string pbDragCheckLimit = "pbDragCheckLimit";
+		[Obsolete]
 		internal const string pbForceVertexPivot = "pbForceVertexPivot";
 		internal const string pbForceGridPivot = "pbForceGridPivot";
 		internal const string pbManifoldEdgeExtrusion = "pbManifoldEdgeExtrusion";
@@ -121,6 +125,7 @@ namespace UnityEngine.ProBuilder
 		internal const string pbDragSelectMode = "pbDragSelectMode";
 
 		/// If present sets the shadow casting mode on new ProBuilder objects.
+		[Obsolete]
 		internal const string pbShadowCastingMode = "pbShadowCastingMode";
 
 		/// Are experimental features enabled?
@@ -154,6 +159,7 @@ namespace UnityEngine.ProBuilder
 
 		// Misc
 		internal const string pbDefaultShortcuts = "pbDefaultShortcuts";
+		[Obsolete]
 		internal const string pbDefaultMaterial = "pbDefaultMaterial";
 		internal const string pbCurrentMaterialPalette = "pbCurrentMaterialPalette";
 
