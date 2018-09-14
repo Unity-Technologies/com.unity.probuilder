@@ -81,9 +81,10 @@ namespace UnityEngine.ProBuilder
 
         public void SetValue(object value)
         {
-            if(!(value is T))
+            // we do want to allow null values
+            if(value != null && !(value is T))
                 throw new ArgumentException("Value must be of type " + typeof(T));
-            this.value = (T)value;
+            this.value = (T) value;
         }
 
         public T value
