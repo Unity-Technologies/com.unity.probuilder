@@ -46,7 +46,7 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 				Log.Warning("Cannot create setting entries for instance fields. Skipping \"" + field.Name + "\".");
 				continue;
 			}
-			
+
 			var attrib = (UserSettingAttribute)field.GetCustomAttribute(typeof(UserSettingAttribute));
 			var pref = (IPref)field.GetValue(null);
 			var category = string.IsNullOrEmpty(attrib.category) ? "Uncategorized" : attrib.category;
@@ -77,6 +77,8 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 
 	public override void OnGUI(string searchContext)
 	{
+		EditorGUIUtility.labelWidth = 200;
+
 		foreach (var key in m_Categories)
 		{
 			GUILayout.Label(key, EditorStyles.boldLabel);
@@ -93,6 +95,8 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 				foreach (var block in blocks)
 					block.Invoke(null, null);
 		}
+
+		EditorGUIUtility.labelWidth = 0;
 	}
 
 	void DoPreferenceField(GUIContent title, IPref pref)
@@ -122,11 +126,19 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 			var cast = (Pref<Color>) pref;
 			cast.value = EditorGUILayout.ColorField(title, cast.value);
 		}
+		else if (typeof(Enum).IsAssignableFrom(pref.type))
+		{
+			Enum val = (Enum) pref.GetValue();
+			EditorGUI.BeginChangeCheck();
+			val = EditorGUILayout.EnumPopup(title, val);
+			if(EditorGUI.EndChangeCheck())
+				pref.SetValue(val);
+		}
 		else
 		{
 			GUILayout.BeginHorizontal();
-			EditorGUILayout.PrefixLabel(title);
-			GUILayout.Label(pref.boxedValue.ToString());
+			GUILayout.Label(title, GUILayout.Width(EditorGUIUtility.labelWidth - EditorStyles.label.margin.right * 2));
+			GUILayout.Label(pref.GetValue().ToString());
 			GUILayout.EndHorizontal();
 		}
 	}

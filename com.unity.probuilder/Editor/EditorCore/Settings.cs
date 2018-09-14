@@ -10,7 +10,7 @@ namespace UnityEngine.ProBuilder
 		public enum Scope
 		{
 			Project,
-			Global
+			User
 		}
 
 		const string k_SettingsPath = "ProjectSettings/ProBuilderSettings.json";
@@ -118,7 +118,7 @@ namespace UnityEngine.ProBuilder
 					instance.m_Dictionary.Set<T>(key, value);
 				break;
 
-				case Scope.Global:
+				case Scope.User:
 					SetEditorPref<T>(key, value);
 				break;
 			}
@@ -132,7 +132,7 @@ namespace UnityEngine.ProBuilder
 					instance.m_Dictionary.Set(type, key, json);
 					break;
 
-				case Scope.Global:
+				case Scope.User:
 					EditorPrefs.SetString(GetEditorPrefKey(type, key), json);
 					break;
 			}

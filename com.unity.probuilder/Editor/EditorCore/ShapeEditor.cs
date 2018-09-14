@@ -51,11 +51,8 @@ namespace UnityEditor.ProBuilder
 		static readonly Color k_PreviewColor = new Color(.5f, .9f, 1f, .56f);
 		Material m_ShapePreviewMaterial;
 
-		// toogle for closing the window after shape creation from the prefrences window
-		static bool prefClose
-		{
-			get { return PreferencesInternal.GetBool(PreferenceKeys.pbCloseShapeWindow, false); }
-		}
+		[UserSetting("Toolbar", "Close Shape Window after Build", "If true the shape window will close after hitting the build button.")]
+		static Pref<bool> s_CloseWindowAfterCreateShape = new Pref<bool>("closeWindowAfterShapeCreation", false);
 
 		void OnEnable()
 		{
@@ -253,7 +250,7 @@ namespace UnityEditor.ProBuilder
 				DestroyPreviewObject();
 				m_ShowPreview = false;
 
-				if(prefClose)
+				if(s_CloseWindowAfterCreateShape)
 				{
 					this.Close();
 				}
@@ -307,7 +304,7 @@ namespace UnityEditor.ProBuilder
 				DestroyPreviewObject();
 				m_ShowPreview = false;
 
-				if (prefClose)
+				if (s_CloseWindowAfterCreateShape)
 				{
 					this.Close();
 				}
@@ -351,7 +348,7 @@ namespace UnityEditor.ProBuilder
 				DestroyPreviewObject();
 				m_ShowPreview = false;
 
-				if (prefClose)
+				if (s_CloseWindowAfterCreateShape)
 				{
 					this.Close();
 				}
@@ -446,7 +443,7 @@ namespace UnityEditor.ProBuilder
 				DestroyPreviewObject();
 				m_ShowPreview = false;
 
-				if (prefClose)
+				if (s_CloseWindowAfterCreateShape)
 				{
 					this.Close();
 				}
@@ -517,7 +514,7 @@ namespace UnityEditor.ProBuilder
 				DestroyPreviewObject();
 				m_ShowPreview = false;
 
-				if (prefClose)
+				if (s_CloseWindowAfterCreateShape)
 				{
 					this.Close();
 				}
@@ -572,7 +569,7 @@ namespace UnityEditor.ProBuilder
 				DestroyPreviewObject();
 				m_ShowPreview = false;
 
-				if (prefClose)
+				if (s_CloseWindowAfterCreateShape)
 				{
 					this.Close();
 				}
@@ -635,7 +632,7 @@ namespace UnityEditor.ProBuilder
 				DestroyPreviewObject();
 				m_ShowPreview = false;
 
-				if (prefClose)
+				if (s_CloseWindowAfterCreateShape)
 				{
 					this.Close();
 				}
@@ -702,7 +699,7 @@ namespace UnityEditor.ProBuilder
 				DestroyPreviewObject();
 				m_ShowPreview = false;
 
-				if (prefClose)
+				if (s_CloseWindowAfterCreateShape)
 				{
 					this.Close();
 				}
@@ -761,7 +758,7 @@ namespace UnityEditor.ProBuilder
 				DestroyPreviewObject();
 				m_ShowPreview = false;
 
-				if (prefClose)
+				if (s_CloseWindowAfterCreateShape)
 				{
 					this.Close();
 				}
@@ -855,7 +852,7 @@ namespace UnityEditor.ProBuilder
 				DestroyPreviewObject();
 				m_ShowPreview = false;
 
-				if (prefClose)
+				if (s_CloseWindowAfterCreateShape)
 				{
 					this.Close();
 				}
@@ -904,7 +901,7 @@ namespace UnityEditor.ProBuilder
 				DestroyPreviewObject();
 				m_ShowPreview = false;
 
-				if (prefClose)
+				if (s_CloseWindowAfterCreateShape)
 				{
 					this.Close();
 				}
@@ -1004,7 +1001,7 @@ namespace UnityEditor.ProBuilder
 				DestroyPreviewObject();
 				m_ShowPreview = false;
 
-				if (prefClose)
+				if (s_CloseWindowAfterCreateShape)
 				{
 					this.Close();
 				}
@@ -1050,7 +1047,7 @@ namespace UnityEditor.ProBuilder
 				DestroyPreviewObject();
 				m_ShowPreview = false;
 
-				if (prefClose)
+				if (s_CloseWindowAfterCreateShape)
 				{
 					this.Close();
 				}

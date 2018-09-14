@@ -34,6 +34,7 @@ namespace UnityEngine.ProBuilder
 		internal const string pbDefaultSelectionMode = "pbDefaultSelectionMode";
 		internal const string pbHandleAlignment = "pbHandleAlignment";
 		internal const string pbVertexColorTool = "pbVertexColorTool";
+		[Obsolete]
 		internal const string pbToolbarLocation = "pbToolbarLocation";
 		internal const string pbDefaultEntity = "pbDefaultEntity";
 		internal const string pbExtrudeMethod = "pbExtrudeMethod";
@@ -49,6 +50,7 @@ namespace UnityEngine.ProBuilder
 		internal const string pbPreselectionColor = "pbPreselectionColor";
 
 		// Bool
+		[Obsolete]
 		internal const string pbDefaultOpenInDockableWindow = "pbDefaultOpenInDockableWindow";
 		internal const string pbEditorPrefVersion = "pbEditorPrefVersion";
 		internal const string pbEditorShortcutsVersion = "pbEditorShortcutsVersion";
@@ -64,6 +66,7 @@ namespace UnityEngine.ProBuilder
 		internal const string pbManifoldEdgeExtrusion = "pbManifoldEdgeExtrusion";
 		internal const string pbPerimeterEdgeBridgeOnly = "pbPerimeterEdgeBridgeOnly";
 		internal const string pbPBOSelectionOnly = "pbPBOSelectionOnly";
+		[Obsolete]
 		internal const string pbCloseShapeWindow = "pbCloseShapeWindow";
 		internal const string pbUVEditorFloating = "pbUVEditorFloating";
 		internal const string pbUVMaterialPreview = "pbUVMaterialPreview";
@@ -84,11 +87,13 @@ namespace UnityEngine.ProBuilder
 		/// - 'G' = Toggle edit level, 'J, K, L' Vert, Edge, Face
 		/// - 'G, J, K, L' = Object, Vert, Edge, Face modes
 		/// </summary>
+		[Obsolete]
 		internal const string pbUniqueModeShortcuts = "pbUniqueModeShortcuts";
 		internal const string pbMaterialEditorFloating = "pbMaterialEditorFloating";
 		internal const string pbShapeWindowFloating = "pbShapeWindowFloating";
 		[Obsolete]
 		internal const string pbIconGUI = "pbIconGUI";
+		[Obsolete]
 		internal const string pbShiftOnlyTooltips = "pbShiftOnlyTooltips";
 		[Obsolete]
 		internal const string pbDrawAxisLines = "pbDrawAxisLines";

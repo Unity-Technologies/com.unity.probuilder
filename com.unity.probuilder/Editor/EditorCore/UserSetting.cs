@@ -45,7 +45,9 @@ namespace UnityEngine.ProBuilder
     {
         string key { get; }
         Type type { get; }
-        object boxedValue { get; }
+
+        object GetValue();
+        void SetValue(object value);
     }
 
     sealed class Pref<T> : IPref
@@ -72,9 +74,16 @@ namespace UnityEngine.ProBuilder
             get { return typeof(T); }
         }
 
-        public object boxedValue
+        public object GetValue()
         {
-            get { return value; }
+            return value;
+        }
+
+        public void SetValue(object value)
+        {
+            if(!(value is T))
+                throw new ArgumentException("Value must be of type " + typeof(T));
+            value = (T)value;
         }
 
         public T value
