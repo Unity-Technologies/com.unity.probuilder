@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using UnityEngine.ProBuilder;
@@ -107,7 +107,7 @@ namespace UnityEditor.ProBuilder
 
 			ClearHandles();
 
-			m_MeshPool.Empty();
+			m_MeshPool.Dispose();
 
 			UObject.DestroyImmediate(m_EdgeMaterial);
 			UObject.DestroyImmediate(m_WireMaterial);

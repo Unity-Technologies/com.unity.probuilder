@@ -9,8 +9,6 @@ namespace UnityEngine.ProBuilder
 	/// </summary>
 	public static class Projection
 	{
-		static Vector3 s_UAxis = Vector3.zero, s_VAxis = Vector3.zero;
-
 		/// <summary>
 		/// Project a collection of 3d positions to a 2d plane.
 		/// </summary>

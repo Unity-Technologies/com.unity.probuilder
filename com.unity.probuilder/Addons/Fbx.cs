@@ -34,12 +34,15 @@ namespace UnityEngine.ProBuilder.Addons.FBX
 	{
 		static bool s_FbxIsLoaded = false;
 
+
+#pragma warning disable 414
 		static readonly string[] k_ProBuilderTypes = new string[]
 		{
 			"BezierShape",
 			"PolyShape",
 			"Entity",
 		};
+#pragma warning restore 414
 
 		public static bool fbxEnabled { get { return s_FbxIsLoaded; } }
 
