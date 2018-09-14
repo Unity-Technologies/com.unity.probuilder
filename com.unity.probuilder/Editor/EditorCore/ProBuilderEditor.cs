@@ -926,6 +926,7 @@ namespace UnityEditor.ProBuilder
 								// re-apply world position offset
 								ver += m_VertexOffset[i];
 
+								coincident.Clear();
 								mesh.GetCoincidentVertices(mesh.selectedIndexesInternal[n], coincident);
 
 								for (int t = 0, c = coincident.Count; t < c; t++)
@@ -943,8 +944,9 @@ namespace UnityEditor.ProBuilder
 								ver = Vector3.Scale(over, m_HandleScale);
 								// move vertex back to locally offset position
 								ver += m_VertexOffset[i];
-								// set vertex in local space on pb-Object
 
+								// set vertex in local space on pb-Object
+								coincident.Clear();
 								mesh.GetCoincidentVertices(mesh.selectedIndexesInternal[n], coincident);
 
 								for (int t = 0, c = coincident.Count; t < c; t++)
@@ -1040,6 +1042,7 @@ namespace UnityEditor.ProBuilder
 						// move vertex back to locally offset position
 						ver = (lr * ver) + m_VertexOffset[i];
 
+						coincident.Clear();
 						selection[i].GetCoincidentVertices(selection[i].selectedIndexesInternal[n], coincident);
 
 						for (int t = 0, c = coincident.Count; t < c; t++)
