@@ -4,7 +4,6 @@ using UObject = UnityEngine.Object;
 using UnityEngine.ProBuilder;
 using System.Reflection;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine.Rendering;
 
 namespace UnityEditor.ProBuilder
@@ -27,7 +26,7 @@ namespace UnityEditor.ProBuilder
 		static readonly Color k_WireframeDefault = new Color(94.0f / 255.0f, 119.0f / 255.0f, 155.0f / 255.0f, 1f);
 
 		static Pref<bool> s_UseUnityColors = new Pref<bool>("handlesUseUnityColors", true, Settings.Scope.User);
-		static Pref<bool> s_DitherFaceHandle = new Pref<bool>("ditherFaceHandles", true);
+		static Pref<bool> s_DitherFaceHandle = new Pref<bool>("ditherFaceHandles", true, Settings.Scope.User);
 		static Pref<Color> s_SelectedFaceColorPref = new Pref<Color>("userSelectedFaceColor", new Color(0f, 210f / 255f, 239f / 255f, 1f), Settings.Scope.User);
 		static Pref<Color> s_WireframeColorPref = new Pref<Color>("userWireframeColor", new Color(125f / 255f, 155f / 255f, 185f / 255f, 1f), Settings.Scope.User);
 		static Pref<Color> s_UnselectedEdgeColorPref = new Pref<Color>("userUnselectedEdgeColor", new Color(44f / 255f, 44f / 255f, 44f / 255f, 1f), Settings.Scope.User);
@@ -36,9 +35,9 @@ namespace UnityEditor.ProBuilder
 		static Pref<Color> s_SelectedVertexColorPref = new Pref<Color>("userSelectedVertexColor", new Color(0f, 210f / 255f, 239f / 255f, 1f), Settings.Scope.User);
 		static Pref<Color> s_PreselectionColorPref = new Pref<Color>("userPreselectionColor", new Color(179f / 255f, 246f / 255f, 255f / 255f, 1f), Settings.Scope.User);
 
-		static Pref<float> s_WireframeLineSize = new Pref<float>("wireframeLineSize", .5f);
-		static Pref<float> s_EdgeLineSize = new Pref<float>("edgeLineSize", 1f);
-		static Pref<float> s_VertexPointSize = new Pref<float>("vertexPointSize", 3f);
+		static Pref<float> s_WireframeLineSize = new Pref<float>("wireframeLineSize", .5f, Settings.Scope.User);
+		static Pref<float> s_EdgeLineSize = new Pref<float>("edgeLineSize", 1f, Settings.Scope.User);
+		static Pref<float> s_VertexPointSize = new Pref<float>("vertexPointSize", 3f, Settings.Scope.User);
 
 		[UserSettingBlock("Graphics")]
 		static void HandleColorPreferences()
@@ -59,6 +58,13 @@ namespace UnityEditor.ProBuilder
 					s_SelectedVertexColorPref.value = EditorGUILayout.ColorField("Selected Vertex Color", s_SelectedVertexColorPref);
 				}
 			}
+
+			s_VertexPointSize.value = EditorGUILayout.Slider("Vertex Size", s_VertexPointSize, 1f, 10f);
+			bool geoLine = BuiltinMaterials.geometryShadersSupported;
+			GUI.enabled = geoLine;
+			s_EdgeLineSize.value = EditorGUILayout.Slider("Line Size", geoLine ? s_EdgeLineSize : 0f, 0f, 3f);
+			s_WireframeLineSize.value = EditorGUILayout.Slider("Wireframe Size", geoLine ? s_EdgeLineSize : 0f, 0f, 3f);
+			GUI.enabled = true;
 		}
 
 		static Color s_FaceSelectedColor;

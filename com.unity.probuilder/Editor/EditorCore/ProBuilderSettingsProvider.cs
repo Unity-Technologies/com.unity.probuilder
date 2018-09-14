@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
+using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
@@ -11,6 +12,26 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 	List<string> m_Categories;
 	Dictionary<string, List<SimpleTuple<GUIContent, IPref>>> m_Settings;
 	Dictionary<string, List<MethodInfo>> m_SettingBlocks;
+
+	static class Styles
+	{
+		static bool s_Initialized;
+
+		public static GUIStyle settingsArea;
+
+		public static void Init()
+		{
+			if (s_Initialized)
+				return;
+
+			s_Initialized = true;
+
+			settingsArea = new GUIStyle()
+			{
+				margin = new RectOffset(6, 6, 0, 0)
+			};
+		}
+	}
 
 	[SettingsProvider]
 	static SettingsProvider CreateSettingsProvider()
@@ -77,8 +98,12 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 
 	public override void OnGUI(string searchContext)
 	{
+		Styles.Init();
+
 		EditorGUI.BeginChangeCheck();
 		EditorGUIUtility.labelWidth = 200;
+
+		GUILayout.BeginVertical(Styles.settingsArea);
 
 		foreach (var key in m_Categories)
 		{
@@ -100,8 +125,16 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 		}
 
 		EditorGUIUtility.labelWidth = 0;
-		if(EditorGUI.EndChangeCheck())
+
+		GUILayout.EndVertical();
+
+		if (EditorGUI.EndChangeCheck())
+		{
 			Settings.Save();
+
+			if (ProBuilderEditor.instance != null)
+				ProBuilderEditor.instance.OnEnable();
+		}
 	}
 
 	void DoPreferenceField(GUIContent title, IPref pref)
