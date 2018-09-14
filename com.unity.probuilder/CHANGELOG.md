@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.15] - 2018-09-11
+## [4.0.0-preview.16] - 2018-09-14
 
 ### Features
 
@@ -38,6 +38,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix vertex handle pre-selection gizmo drawing 2x larger on scaled screens.
 - Fix "Detach to GameObject" deleting the current face selection.
 - Fix deprecated GUID check running on every domain reload.
+- Fix `ProBuilderize` importing quad topologies with incorrect winding.
+- Fix `Extrude Edges` sometimes splitting vertices when extruding as a group.
+- Fix toolbar vertex actions showing as available in some cases where not applicable.
+- Fix case where drag selecting mesh elements could clear the current selection.
+- Fix element preselection highlight incorrectly showing when a GUI control has focus.
+- Fix `Create Poly Shape` throwing errors in some cases.
+- Fix `Connect Edges` action showing incorrect results in notifications.
 
 ### Changes
 
@@ -47,18 +54,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - ProBuilder Debug Editor removed.
 - Rename `MenuAction::DoAlternativeAction` to `DoAlternateAction`.
 - Simplify assembly definition files, merging ProBuilder.Core & ProBuilder.MeshOperations to single assembly.
-
-### Changes since 4.0.0-preview.14
-
-- Fix `Connect Edges` action showing incorrect results in notifications.
-- Fix `Create Poly Shape` throwing errors in some cases.
-- Remove "Precise Element Selection" preference.
-- Fix element preselection highlight incorrectly showing when a GUI control has focus.
-- Fix case where drag selecting mesh elements could clear the current selection.
-- Fix toolbar vertex actions showing as available in some cases where not applicable.
-- Fix `Extrude Edges` sometimes splitting vertices when extruding as a group.
 - Minor performance improvements to some common mesh editing actions.
-- Fix `ProBuilderize` importing quad topologies with incorrect winding.
+- Remove "Precise Element Selection" preference.
+
+### Changes since 4.0.0-preview.15
+
+- Fix incorrect use of object finalizers in some classes.
+- Fix regression that broke rotating and scaling vertices with the transform handles.
+- Fix vertex drag selection with "Select Hidden: Off" omitting distinct but coincident vertices.
+- Remove unused using statements that introduced compiler errors at build time.
+- Improve performance of toolbar rendering by caching some frequently accessed selection information.
 
 ## [3.0.8] - 2018-05-07
 
