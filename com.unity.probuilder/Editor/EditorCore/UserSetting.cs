@@ -83,7 +83,7 @@ namespace UnityEngine.ProBuilder
         {
             if(!(value is T))
                 throw new ArgumentException("Value must be of type " + typeof(T));
-            value = (T)value;
+            this.value = (T)value;
         }
 
         public T value

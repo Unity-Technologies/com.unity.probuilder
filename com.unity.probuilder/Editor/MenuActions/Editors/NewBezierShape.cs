@@ -41,7 +41,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			GameObject go = new GameObject();
 			var bezier = go.AddComponent<BezierShape>();
-			go.GetComponent<MeshRenderer>().sharedMaterial = PreferencesInternal.GetMaterial(PreferenceKeys.pbDefaultMaterial);
+			go.GetComponent<MeshRenderer>().sharedMaterial = EditorUtility.GetUserMaterial();
 			bezier.Init();
 			bezier.Refresh();
 			EditorUtility.InitObject(bezier.GetComponent<ProBuilderMesh>());
