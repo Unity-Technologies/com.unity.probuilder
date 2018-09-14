@@ -78,7 +78,7 @@ namespace UnityEngine.ProBuilder
 				entries.Add(key, value);
 		}
 
-		public T Get<T>(string key, T fallback = default)
+		public T Get<T>(string key, T fallback = default(T))
 		{
 			if(string.IsNullOrEmpty(key))
 				throw new ArgumentNullException("key");
@@ -314,7 +314,7 @@ namespace UnityEngine.ProBuilder
 			EditorPrefs.SetString(k, ValueWrapper<T>.Serialize(value));
 		}
 
-		static T GetEditorPref<T>(string key, T fallback = default)
+		static T GetEditorPref<T>(string key, T fallback = default(T))
 		{
 			var k = GetEditorPrefKey<T>(key);
 			if(EditorPrefs.HasKey(k))
@@ -350,7 +350,7 @@ namespace UnityEngine.ProBuilder
 			}
 		}
 
-		public static T Get<T>(string key, Scope scope = Scope.Project, T fallback = default)
+		public static T Get<T>(string key, Scope scope = Scope.Project, T fallback = default(T))
 		{
 			if(scope == Scope.Project)
 				return instance.m_Dictionary.Get<T>(key, fallback);
