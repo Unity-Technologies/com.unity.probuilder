@@ -77,6 +77,7 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 
 	public override void OnGUI(string searchContext)
 	{
+		EditorGUI.BeginChangeCheck();
 		EditorGUIUtility.labelWidth = 200;
 
 		foreach (var key in m_Categories)
@@ -99,6 +100,8 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 		}
 
 		EditorGUIUtility.labelWidth = 0;
+		if(EditorGUI.EndChangeCheck())
+			Settings.Save();
 	}
 
 	void DoPreferenceField(GUIContent title, IPref pref)
@@ -154,5 +157,6 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 			GUILayout.Label(obj == null ? "null" : pref.GetValue().ToString());
 			GUILayout.EndHorizontal();
 		}
+
 	}
 }
