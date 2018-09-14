@@ -101,7 +101,7 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 		Styles.Init();
 
 		EditorGUI.BeginChangeCheck();
-		EditorGUIUtility.labelWidth = 200;
+		EditorGUIUtility.labelWidth = 240;
 
 		GUILayout.BeginVertical(Styles.settingsArea);
 
@@ -178,7 +178,7 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 		{
 			var obj = (UnityEngine.Object) pref.GetValue();
 			EditorGUI.BeginChangeCheck();
-			EditorGUILayout.ObjectField(title, obj, pref.type, false);
+			obj = EditorGUILayout.ObjectField(title, obj, pref.type, false);
 			if(EditorGUI.EndChangeCheck())
 				pref.SetValue(obj);
 		}
