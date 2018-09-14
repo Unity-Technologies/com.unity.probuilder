@@ -94,6 +94,8 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 			if (m_SettingBlocks.TryGetValue(key, out blocks))
 				foreach (var block in blocks)
 					block.Invoke(null, null);
+
+			GUILayout.Space(8);
 		}
 
 		EditorGUIUtility.labelWidth = 0;
@@ -130,15 +132,26 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 		{
 			Enum val = (Enum) pref.GetValue();
 			EditorGUI.BeginChangeCheck();
-			val = EditorGUILayout.EnumPopup(title, val);
+			if(pref.type.GetCustomAttribute<FlagsAttribute>() != null)
+				val = EditorGUILayout.EnumFlagsField(title, val);
+			else
+				val = EditorGUILayout.EnumPopup(title, val);
 			if(EditorGUI.EndChangeCheck())
 				pref.SetValue(val);
+		} else if (typeof(UnityEngine.Object).IsAssignableFrom(pref.type))
+		{
+			var obj = (UnityEngine.Object) pref.GetValue();
+			EditorGUI.BeginChangeCheck();
+			EditorGUILayout.ObjectField(title, obj, pref.type, false);
+			if(EditorGUI.EndChangeCheck())
+				pref.SetValue(obj);
 		}
 		else
 		{
 			GUILayout.BeginHorizontal();
 			GUILayout.Label(title, GUILayout.Width(EditorGUIUtility.labelWidth - EditorStyles.label.margin.right * 2));
-			GUILayout.Label(pref.GetValue().ToString());
+			var obj = pref.GetValue();
+			GUILayout.Label(obj == null ? "null" : pref.GetValue().ToString());
 			GUILayout.EndHorizontal();
 		}
 	}
