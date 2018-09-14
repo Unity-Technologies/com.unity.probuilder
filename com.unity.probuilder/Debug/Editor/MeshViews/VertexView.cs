@@ -8,7 +8,6 @@ namespace UnityEditor.ProBuilder.Debug
 {
 	class VertexView : MeshDebugView
 	{
-		int m_VertexCount = 0;
 		int m_DisplayCount = 0;
 		List<int> m_Vertices = new List<int>();
 		List<string> m_Content = new List<string>();
@@ -31,7 +30,6 @@ namespace UnityEditor.ProBuilder.Debug
 			var display = (viewState == MeshViewState.Selected ? mesh.selectedVertices : mesh.sharedVertices.Select(x => x[0])).ToArray();
 			m_Used.Clear();
 
-			m_VertexCount = mesh.vertexCount;
 			m_DisplayCount = display.Length;
 			m_Vertices.Clear();
 			m_Content.Clear();

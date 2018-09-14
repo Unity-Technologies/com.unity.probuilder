@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
@@ -13,8 +14,9 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	sealed class SmoothGroupEditor : EditorWindow
 	{
-		class SmoothGroupData
+		class SmoothGroupData : IDisposable
 		{
+			bool m_Disposed;
 			public bool isVisible;
 			public Dictionary<int, List<Face>> groups;
 			public Dictionary<int, Color> groupColors;
@@ -42,15 +44,6 @@ namespace UnityEditor.ProBuilder
 				};
 
 				Rebuild(pb);
-			}
-
-			~SmoothGroupData()
-			{
-				EditorApplication.delayCall += () =>
-				{
-					Object.DestroyImmediate(previewMesh);
-					Object.DestroyImmediate(normalsMesh);
-				};
 			}
 
 			public void Rebuild(ProBuilderMesh pb)
@@ -134,10 +127,29 @@ namespace UnityEditor.ProBuilder
 				normalsMesh.subMeshCount = 1;
 				normalsMesh.SetIndices(indexes, MeshTopology.Lines, 0);
 			}
+
+			void Dispose(bool disposing)
+			{
+				if (!disposing && !m_Disposed)
+				{
+					if(previewMesh)
+						DestroyImmediate(previewMesh);
+
+					if(normalsMesh)
+						DestroyImmediate(normalsMesh);
+
+					m_Disposed = true;
+				}
+			}
+
+			public void Dispose()
+			{
+				Dispose(true);
+			}
 		}
 
-		private static Material s_FaceMaterial = null;
-		private static Material smoothPreviewMaterial
+		static Material s_FaceMaterial = null;
+		static Material smoothPreviewMaterial
 		{
 			get
 			{
@@ -151,8 +163,8 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		private static Material s_NormalPreviewMaterial = null;
-		private static Material normalPreviewMaterial
+		static Material s_NormalPreviewMaterial = null;
+		static Material normalPreviewMaterial
 		{
 			get
 			{
@@ -162,14 +174,14 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		private static GUIStyle s_GroupButtonStyle = null;
-		private static GUIStyle s_GroupButtonSelectedStyle = null;
-		private static GUIStyle s_GroupButtonInUseStyle = null;
-		private static GUIStyle s_GroupButtonMixedSelectionStyle = null;
-		private static GUIStyle s_ColorKeyStyle = null;
-		private static GUIStyle s_WordWrappedRichText = null;
+		static GUIStyle s_GroupButtonStyle = null;
+		static GUIStyle s_GroupButtonSelectedStyle = null;
+		static GUIStyle s_GroupButtonInUseStyle = null;
+		static GUIStyle s_GroupButtonMixedSelectionStyle = null;
+		static GUIStyle s_ColorKeyStyle = null;
+		static GUIStyle s_WordWrappedRichText = null;
 
-		private static GUIStyle groupButtonStyle
+		static GUIStyle groupButtonStyle
 		{
 			get
 			{
@@ -201,7 +213,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		private static GUIStyle groupButtonSelectedStyle
+		static GUIStyle groupButtonSelectedStyle
 		{
 			get
 			{
@@ -220,7 +232,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		private static GUIStyle groupButtonInUseStyle
+		static GUIStyle groupButtonInUseStyle
 		{
 			get
 			{
@@ -239,7 +251,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		private static GUIStyle groupButtonMixedSelectionStyle
+		static GUIStyle groupButtonMixedSelectionStyle
 		{
 			get
 			{
@@ -258,7 +270,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		private static GUIStyle colorKeyStyle
+		static GUIStyle colorKeyStyle
 		{
 			get
 			{
@@ -274,7 +286,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		private static GUIStyle wordWrappedRichText
+		static GUIStyle wordWrappedRichText
 		{
 			get
 			{
@@ -313,7 +325,7 @@ namespace UnityEditor.ProBuilder
 			GetWindow<SmoothGroupEditor>(isUtility, "Smooth Group Editor", true);
 		}
 
-		private void OnEnable()
+		void OnEnable()
 		{
 			if (ProBuilderEditor.instance)
 			{
@@ -342,34 +354,41 @@ namespace UnityEditor.ProBuilder
 			OnSelectionChanged();
 		}
 
-		private void OnDisable()
+		void OnDisable()
 		{
 			SceneView.onSceneGUIDelegate -= OnSceneGUI;
 			Selection.selectionChanged -= OnSelectionChanged;
 			Undo.undoRedoPerformed -= OnSelectionChanged;
 			ProBuilderMesh.elementSelectionChanged -= OnElementSelectionChanged;
-			m_SmoothGroups.Clear();
+			ClearSmoothGroupData();
 		}
 
-		private void OnDestroy()
+		void OnDestroy()
 		{
+			ClearSmoothGroupData();
+		}
+
+		void ClearSmoothGroupData()
+		{
+			foreach (var v in m_SmoothGroups)
+				v.Value.Dispose();
 			m_SmoothGroups.Clear();
 		}
 
-		private void OnBeginVertexMovement(ProBuilderMesh[] selection)
+		void OnBeginVertexMovement(ProBuilderMesh[] selection)
 		{
 			s_IsMovingVertices = true;
 		}
 
-		private void OnFinishVertexMovement(ProBuilderMesh[] selection)
+		void OnFinishVertexMovement(ProBuilderMesh[] selection)
 		{
 			s_IsMovingVertices = false;
 			OnSelectionChanged();
 		}
 
-		private void OnSelectionChanged()
+		void OnSelectionChanged()
 		{
-			m_SmoothGroups.Clear();
+			ClearSmoothGroupData();
 
 			foreach (ProBuilderMesh pb in MeshSelection.TopInternal())
 				m_SmoothGroups.Add(pb, new SmoothGroupData(pb));
@@ -377,7 +396,7 @@ namespace UnityEditor.ProBuilder
 			this.Repaint();
 		}
 
-		private void OnElementSelectionChanged(ProBuilderMesh pb)
+		void OnElementSelectionChanged(ProBuilderMesh pb)
 		{
 			SmoothGroupData data;
 
@@ -387,14 +406,14 @@ namespace UnityEditor.ProBuilder
 				data.CacheSelected(pb);
 		}
 
-		private static void SetWindowIsUtility(bool isUtility)
+		static void SetWindowIsUtility(bool isUtility)
 		{
 			PreferencesInternal.SetBool("pb_SmoothGroupEditor::m_IsWindowUtility", isUtility);
 			GetWindow<SmoothGroupEditor>().Close();
 			MenuOpenSmoothGroupEditor();
 		}
 
-		private void OnGUI()
+		void OnGUI()
 		{
 			Event evt = Event.current;
 
@@ -667,7 +686,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		private static void SelectGroups(ProBuilderMesh pb, HashSet<int> groups)
+		static void SelectGroups(ProBuilderMesh pb, HashSet<int> groups)
 		{
 			UndoUtility.RecordSelection(pb, "Select with Smoothing Group");
 
@@ -679,7 +698,7 @@ namespace UnityEditor.ProBuilder
 			ProBuilderEditor.Refresh();
 		}
 
-		private void SetGroup(ProBuilderMesh pb, int index)
+		void SetGroup(ProBuilderMesh pb, int index)
 		{
 			UndoUtility.RecordObject(pb, "Set Smoothing Group");
 
@@ -701,12 +720,12 @@ namespace UnityEditor.ProBuilder
 			ProBuilderEditor.Refresh();
 		}
 
-		private static Color32 GetDistinctColor(int index)
+		static Color32 GetDistinctColor(int index)
 		{
 			return s_KellysMaxContrastSet[index % s_KellysMaxContrastSet.Length];
 		}
 
-		private static readonly Color32[] s_KellysMaxContrastSet = new Color32[]
+		static readonly Color32[] s_KellysMaxContrastSet = new Color32[]
 		{
 			new Color32(230, 25, 75, 255), 		// Red
 			new Color32(60, 180, 75, 255), 		// Green

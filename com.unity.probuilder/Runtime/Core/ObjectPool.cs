@@ -1,8 +1,6 @@
 using System;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 
 namespace UnityEngine.ProBuilder
 {
@@ -10,7 +8,7 @@ namespace UnityEngine.ProBuilder
 	/// Simple object pool implementation.
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	sealed class ObjectPool<T>
+	sealed class ObjectPool<T> : IDisposable
 	{
 		bool m_IsDisposed;
 		Queue<T> m_Pool = new Queue<T>();
@@ -35,12 +33,6 @@ namespace UnityEngine.ProBuilder
 				m_Pool.Enqueue(constructor());
 		}
 
-		~ObjectPool()
-		{
-			// don't dealloc objects off the main thread
-			EditorApplication.delayCall += Empty;
-		}
-
 		public T Get()
 		{
 			if (m_Pool.Count > 0)
@@ -62,6 +54,20 @@ namespace UnityEngine.ProBuilder
 
 			for (int i = 0; i < count; i++)
 				destructor(m_Pool.Dequeue());
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+		}
+
+		void Dispose(bool disposing)
+		{
+			if (disposing && !m_IsDisposed)
+			{
+				Empty();
+				m_IsDisposed = true;
+			}
 		}
 	}
 }

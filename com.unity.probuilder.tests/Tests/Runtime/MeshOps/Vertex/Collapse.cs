@@ -34,7 +34,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Vertex
 		public static void CollapseToCenter()
 		{
 			var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
-			var res = cube.MergeVertices(new [] { 0, 1 });
+			cube.MergeVertices(new [] { 0, 1 });
 
 			cube.ToMesh();
 			cube.Refresh();

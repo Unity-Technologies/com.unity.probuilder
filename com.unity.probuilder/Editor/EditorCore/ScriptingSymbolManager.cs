@@ -25,7 +25,6 @@ namespace UnityEditor.ProBuilder
 		static bool FbxTypesExist()
 		{
 #if UNITY_2017_1_OR_NEWER
-			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 			Type fbxExporterType = ReflectionUtility.GetType(k_FbxModelExporterType);
 			return fbxExporterType != null;
 #else
