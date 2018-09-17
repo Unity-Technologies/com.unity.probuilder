@@ -60,7 +60,7 @@ namespace UnityEditor.ProBuilder
 		internal static Pref<bool> s_MeshesAreAssets = new Pref<bool>("meshesAreAssets", false, Settings.Scope.Project);
 
 		[UserSettingBlock("Experimental")]
-		static void ExperimentalFeaturesSettings()
+		static void ExperimentalFeaturesSettings(string searchContext)
 		{
 			s_ExperimentalFeatures.value = EditorGUILayout.Toggle("Experimental Features Enabled", s_ExperimentalFeatures.value);
 

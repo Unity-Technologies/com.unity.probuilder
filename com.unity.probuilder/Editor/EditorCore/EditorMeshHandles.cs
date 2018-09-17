@@ -40,7 +40,7 @@ namespace UnityEditor.ProBuilder
 		static Pref<float> s_VertexPointSize = new Pref<float>("vertexPointSize", 3f, Settings.Scope.User);
 
 		[UserSettingBlock("Graphics")]
-		static void HandleColorPreferences()
+		static void HandleColorPreferences(string searchContext)
 		{
 			s_UseUnityColors.value = EditorGUILayout.Toggle("Use Unity Colors", s_UseUnityColors.value);
 

@@ -29,15 +29,22 @@ namespace UnityEngine.ProBuilder
     sealed class UserSettingBlockAttribute : Attribute
     {
         string m_Category;
+        string[] m_Keywords;
 
         public string category
         {
             get { return m_Category; }
         }
 
-        public UserSettingBlockAttribute(string category)
+        public string[] keywords
+        {
+            get { return m_Keywords; }
+        }
+
+        public UserSettingBlockAttribute(string category, params string[] keywords)
         {
             m_Category = category;
+            m_Keywords = keywords;
         }
     }
 

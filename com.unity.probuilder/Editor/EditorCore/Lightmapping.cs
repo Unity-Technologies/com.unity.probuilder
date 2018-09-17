@@ -47,7 +47,7 @@ namespace UnityEditor.ProBuilder
 		}
 
 		[UserSettingBlock("Mesh Settings")]
-		static void UnwrapSettingDefaults()
+		static void UnwrapSettingDefaults(string searchContext)
 		{
 			Styles.Init();
 			Styles.unwrapSettingsFoldout = EditorGUILayout.Foldout(Styles.unwrapSettingsFoldout, "Lightmap UVs Settings");
