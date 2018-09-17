@@ -68,21 +68,46 @@ namespace UnityEngine.ProBuilder
 
 		static string GetEditorPrefKey(string assemblyQualifiedTypeName, string key)
 		{
-			return "ProBuilder::" + assemblyQualifiedTypeName + "::" + key;
+			return assemblyQualifiedTypeName + "::" + key;
 		}
 
 		static void SetEditorPref<T>(string key, T value)
 		{
 			var k = GetEditorPrefKey<T>(key);
-			EditorPrefs.SetString(k, ValueWrapper<T>.Serialize(value));
+
+			if(typeof(T) == typeof(string))
+			 	EditorPrefs.SetString(key, (string) (object) value);
+			else if(typeof(T) == typeof(bool))
+			 	EditorPrefs.SetBool(key, (bool) (object) value);
+			else if(typeof(T) == typeof(float))
+			 	EditorPrefs.SetFloat(key, (float) (object) value);
+			else if(typeof(T) == typeof(int))
+			 	EditorPrefs.SetInt(key, (int) (object) value);
+			else
+				EditorPrefs.SetString(k, ValueWrapper<T>.Serialize(value));
 		}
 
 		static T GetEditorPref<T>(string key, T fallback = default(T))
 		{
 			var k = GetEditorPrefKey<T>(key);
-			if(EditorPrefs.HasKey(k))
+
+			if(!EditorPrefs.HasKey(k))
+				return fallback;
+
+			var o = (object) fallback;
+
+			if(typeof(T) == typeof(string))
+				o = EditorPrefs.GetString(key, (string) o);
+			else if(typeof(T) == typeof(bool))
+				o = EditorPrefs.GetBool(key, (bool) o);
+			else if(typeof(T) == typeof(float))
+				o = EditorPrefs.GetFloat(key, (float) o);
+			else if(typeof(T) == typeof(int))
+				o = EditorPrefs.GetInt(key, (int) o);
+			else
 				return ValueWrapper<T>.Deserialize(EditorPrefs.GetString(k));
-			return fallback;
+
+			return (T) o;
 		}
 
 		public static void Set<T>(string key, T value, Scope scope = Scope.Project)
