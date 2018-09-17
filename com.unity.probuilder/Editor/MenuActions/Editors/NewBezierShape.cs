@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public NewBezierShape()
 		{
-			m_ExperimentalFeaturesEnabled = PreferencesInternal.GetBool(PreferenceKeys.pbEnableExperimental);
+			m_ExperimentalFeaturesEnabled = EditorUtility.s_ExperimentalFeatures;
 		}
 
 		static readonly TooltipContent _tooltip = new TooltipContent

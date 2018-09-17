@@ -56,6 +56,23 @@ namespace UnityEditor.ProBuilder
 		[UserSetting("Mesh Settings", "Collider Type", "What type of Collider to apply to new Shapes.")]
 		static Pref<ColliderType> s_ColliderType = new Pref<ColliderType>("newShapeColliderType", ColliderType.MeshCollider);
 
+		internal static Pref<bool> s_ExperimentalFeatures = new Pref<bool>("experimentalFeaturesEnabled", false, Settings.Scope.User);
+		internal static Pref<bool> s_MeshesAreAssets = new Pref<bool>("meshesAreAssets", false, Settings.Scope.Project);
+
+		[UserSettingBlock("Experimental")]
+		static void ExperimentalFeaturesSettings()
+		{
+			s_ExperimentalFeatures.value = EditorGUILayout.Toggle("Experimental Features Enabled", s_ExperimentalFeatures.value);
+
+			if (s_ExperimentalFeatures.value)
+			{
+				using (new UI.EditorStyles.IndentedBlock())
+				{
+					s_MeshesAreAssets.value = EditorGUILayout.Toggle("Store Mesh as Asset", s_MeshesAreAssets);
+				}
+			}
+		}
+
 		/// <value>
 		/// Subscribe to this delegate to be notified when a new mesh has been created and initialized through ProBuilder.
 		/// </value>
@@ -212,7 +229,7 @@ namespace UnityEditor.ProBuilder
 
 		 	Mesh oldMesh = mesh.mesh;
 	 		MeshSyncState reason = mesh.meshSyncState;
-			bool meshesAreAssets = PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets);
+			bool meshesAreAssets = EditorUtility.s_MeshesAreAssets;
 
 			if( reason != MeshSyncState.None )
 			{

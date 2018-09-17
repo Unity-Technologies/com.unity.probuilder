@@ -83,7 +83,9 @@ namespace UnityEditor.ProBuilder
 		SceneSelection m_Hovering = new SceneSelection();
 		SceneSelection m_HoveringPrevious = new SceneSelection();
 		ScenePickerPreferences m_ScenePickerPreferences;
-		bool m_ShowPreselectionHighlight;
+
+		[UserSetting("Graphics", "Show Hover Highlight", "Highlight the mesh element nearest to the mouse cursor.")]
+		static Pref<bool> s_ShowHoverHighlight = new Pref<bool>("showPreselectionHighlight", true, Settings.Scope.User);
 
 		Tool m_CurrentTool = Tool.Move;
 		Vector2 m_InitialMousePosition;
@@ -359,7 +361,6 @@ namespace UnityEditor.ProBuilder
 			editLevel = PreferencesInternal.GetEnum<EditLevel>(PreferenceKeys.pbDefaultEditLevel);
 			componentMode = PreferencesInternal.GetEnum<ComponentMode>(PreferenceKeys.pbDefaultSelectionMode);
 			handleAlignment = PreferencesInternal.GetEnum<HandleAlignment>(PreferenceKeys.pbHandleAlignment);
-			m_ShowPreselectionHighlight = PreferencesInternal.GetBool(PreferenceKeys.pbShowPreselectionHighlight);
 
 			// ---
 			bool selectHiddenFaces = PreferencesInternal.GetBool(PreferenceKeys.pbEnableBackfaceSelection);
@@ -561,7 +562,7 @@ namespace UnityEditor.ProBuilder
 			}
 
 			// Check mouse position in scene and determine if we should highlight something
-			if (m_ShowPreselectionHighlight
+			if (s_ShowHoverHighlight
 				&& m_CurrentEvent.type == EventType.MouseMove
 				&& editLevel == EditLevel.Geometry)
 			{

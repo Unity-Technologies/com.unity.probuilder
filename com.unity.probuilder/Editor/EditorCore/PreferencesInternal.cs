@@ -46,8 +46,8 @@ namespace UnityEditor.ProBuilder
 //			{ PreferenceKeys.pbUniqueModeShortcuts, false },
 //			{ PreferenceKeys.pbShiftOnlyTooltips, false },
 			{ PreferenceKeys.pbCollapseVertexToFirst, false },
-			{ PreferenceKeys.pbEnableExperimental, false },
-			{ PreferenceKeys.pbMeshesAreAssets, false },
+//			{ PreferenceKeys.pbEnableExperimental, false },
+//			{ PreferenceKeys.pbMeshesAreAssets, false },
 //			{ PreferenceKeys.pbSelectedFaceDither, true },
 			{ PreferenceKeys.pbShowPreselectionHighlight, false },
 		};

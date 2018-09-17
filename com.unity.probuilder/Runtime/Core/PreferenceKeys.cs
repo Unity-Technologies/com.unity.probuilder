@@ -112,6 +112,7 @@ namespace UnityEngine.ProBuilder
 		[Obsolete]
 		internal const string pbDrawAxisLines = "pbDrawAxisLines";
 		internal const string pbCollapseVertexToFirst = "pbCollapseVertexToFirst";
+		[Obsolete]
 		internal const string pbMeshesAreAssets = "pbMeshesAreAssets";
 		[Obsolete]
 		internal const string pbElementSelectIsHamFisted = "pbElementSelectIsHamFisted";
@@ -139,6 +140,7 @@ namespace UnityEngine.ProBuilder
 		internal const string pbShadowCastingMode = "pbShadowCastingMode";
 
 		/// Are experimental features enabled?
+		[Obsolete]
 		internal const string pbEnableExperimental = "pbEnableExperimental";
 
 		/// Automatically check for updates?
