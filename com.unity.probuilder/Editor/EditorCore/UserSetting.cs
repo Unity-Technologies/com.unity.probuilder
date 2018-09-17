@@ -41,7 +41,7 @@ namespace UnityEngine.ProBuilder
             get { return m_Keywords; }
         }
 
-        public UserSettingBlockAttribute(string category, params string[] keywords)
+        public UserSettingBlockAttribute(string category, string[] keywords = null)
         {
             m_Category = category;
             m_Keywords = keywords;

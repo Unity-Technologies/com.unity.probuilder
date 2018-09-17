@@ -46,30 +46,36 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		[UserSettingBlock("Mesh Settings")]
+		[UserSettingBlock("Mesh Settings", new[] { "lightmap", "uvs", "hard", "angle", "pack", "margin", "area", "error" })]
 		static void UnwrapSettingDefaults(string searchContext)
 		{
 			Styles.Init();
-			Styles.unwrapSettingsFoldout = EditorGUILayout.Foldout(Styles.unwrapSettingsFoldout, "Lightmap UVs Settings");
+			var isSearching = !string.IsNullOrWhiteSpace(searchContext);
 
-			if (Styles.unwrapSettingsFoldout)
+			if(!isSearching)
+				Styles.unwrapSettingsFoldout = EditorGUILayout.Foldout(Styles.unwrapSettingsFoldout, "Lightmap UVs Settings");
+
+			if (isSearching || Styles.unwrapSettingsFoldout)
 			{
 				EditorGUI.BeginChangeCheck();
 
 				var unwrap = (UnwrapParameters) s_UnwrapParameters;
 
-				using(new UI.EditorStyles.IndentedBlock())
+				using (new UI.EditorStyles.IndentedBlock())
 				{
-					unwrap.hardAngle = EditorGUILayout.Slider(Styles.hardAngle, unwrap.hardAngle, 1f, 180f);
-					unwrap.packMargin = EditorGUILayout.Slider(Styles.packMargin, unwrap.packMargin, 1f, 64f);
-					unwrap.angleError = EditorGUILayout.Slider(Styles.angleError, unwrap.angleError, 1f, 75f);
-					unwrap.areaError = EditorGUILayout.Slider(Styles.areaError, unwrap.areaError, 1f, 75f);
+					unwrap.hardAngle = UI.EditorGUILayout.SearchableSlider(Styles.hardAngle, unwrap.hardAngle, 1f, 180f, searchContext);
+					unwrap.packMargin = UI.EditorGUILayout.SearchableSlider(Styles.packMargin, unwrap.packMargin, 1f, 64f, searchContext);
+					unwrap.angleError = UI.EditorGUILayout.SearchableSlider(Styles.angleError, unwrap.angleError, 1f, 75f, searchContext);
+					unwrap.areaError = UI.EditorGUILayout.SearchableSlider(Styles.areaError, unwrap.areaError, 1f, 75f, searchContext);
 
-					GUILayout.BeginHorizontal();
-					GUILayout.FlexibleSpace();
-					if (GUILayout.Button("Reset", Styles.miniButton))
-						unwrap.Reset();
-					GUILayout.EndHorizontal();
+					if (!isSearching)
+					{
+						GUILayout.BeginHorizontal();
+						GUILayout.FlexibleSpace();
+						if (GUILayout.Button("Reset", Styles.miniButton))
+							unwrap.Reset();
+						GUILayout.EndHorizontal();
+					}
 				}
 
 				if (EditorGUI.EndChangeCheck())

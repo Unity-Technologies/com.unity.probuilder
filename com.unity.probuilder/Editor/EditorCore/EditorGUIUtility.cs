@@ -79,7 +79,7 @@ namespace UnityEditor.ProBuilder.UI
 
 		static GUIContent _guiContent = null;
 
-		public static GUIContent TempGUIContent(string label, string tooltip = null, Texture2D icon = null)
+		public static GUIContent TempContent(string label, string tooltip = null, Texture2D icon = null)
 		{
 			if(_guiContent == null)
 				_guiContent = new GUIContent();
@@ -365,7 +365,7 @@ namespace UnityEditor.ProBuilder.UI
 		 */
 		public static void SceneLabel(string text, Vector2 position)
 		{
-			GUIContent gc = EditorGUIUtility.TempGUIContent(text);
+			GUIContent gc = EditorGUIUtility.TempContent(text);
 
 			float width = UnityEditor.EditorStyles.boldLabel.CalcSize(gc).x;
 			float height = UnityEditor.EditorStyles.label.CalcHeight(gc, width) + 4;

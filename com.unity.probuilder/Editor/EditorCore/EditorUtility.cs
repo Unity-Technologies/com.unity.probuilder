@@ -59,16 +59,16 @@ namespace UnityEditor.ProBuilder
 		internal static Pref<bool> s_ExperimentalFeatures = new Pref<bool>("experimentalFeaturesEnabled", false, Settings.Scope.User);
 		internal static Pref<bool> s_MeshesAreAssets = new Pref<bool>("meshesAreAssets", false, Settings.Scope.Project);
 
-		[UserSettingBlock("Experimental")]
+		[UserSettingBlock("Experimental", new[] { "store", "mesh", "asset", "experimental", "features", "enabled" })]
 		static void ExperimentalFeaturesSettings(string searchContext)
 		{
-			s_ExperimentalFeatures.value = EditorGUILayout.Toggle("Experimental Features Enabled", s_ExperimentalFeatures.value);
+			s_ExperimentalFeatures.value = UI.EditorGUILayout.SearchableToggle("Experimental Features Enabled", s_ExperimentalFeatures.value, searchContext);
 
 			if (s_ExperimentalFeatures.value)
 			{
 				using (new UI.EditorStyles.IndentedBlock())
 				{
-					s_MeshesAreAssets.value = EditorGUILayout.Toggle("Store Mesh as Asset", s_MeshesAreAssets);
+					s_MeshesAreAssets.value = UI.EditorGUILayout.SearchableToggle("Store Mesh as Asset", s_MeshesAreAssets, searchContext);
 				}
 			}
 		}

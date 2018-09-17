@@ -1298,7 +1298,7 @@ namespace UnityEditor.ProBuilder
 						(m_HandleRotation.eulerAngles - m_RotateOrigin).ToString(),
 						(m_HandleScale - m_ScaleOrigin).ToString());
 
-					var gc = UI.EditorGUIUtility.TempGUIContent(handleTransformInfo);
+					var gc = UI.EditorGUIUtility.TempContent(handleTransformInfo);
 					// sceneview screen.height includes the tab and toolbar
 					var toolbarHeight = EditorStyles.toolbar.CalcHeight(gc, Screen.width);
 					var size = UI.EditorStyles.sceneTextBox.CalcSize(gc);

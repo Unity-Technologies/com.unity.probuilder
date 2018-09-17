@@ -11,7 +11,7 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 {
 	List<string> m_Categories;
 	Dictionary<string, List<SimpleTuple<GUIContent, IPref>>> m_Settings;
-	Dictionary<string, List<SimpleTuple<string[], MethodInfo>>> m_SettingBlocks;
+	Dictionary<string, List<MethodInfo>> m_SettingBlocks;
 	static readonly string[] s_SearchContext = new string[1];
 
 	static class Styles
@@ -62,7 +62,7 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 
 		m_Settings = new Dictionary<string, List<SimpleTuple<GUIContent, IPref>>>();
 
-		m_SettingBlocks = new Dictionary<string, List<SimpleTuple<string[], MethodInfo>>>();
+		m_SettingBlocks = new Dictionary<string, List<MethodInfo>>();
 
 		foreach (var field in fields)
 		{
@@ -98,7 +98,7 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 		{
 			var attrib = (UserSettingBlockAttribute)method.GetCustomAttribute(typeof(UserSettingBlockAttribute));
 			var category = string.IsNullOrEmpty(attrib.category) ? "Uncategorized" : attrib.category;
-			List<SimpleTuple<string[], MethodInfo>> blocks;
+			List<MethodInfo> blocks;
 
 			var parameters = method.GetParameters();
 
@@ -110,16 +110,15 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 
 			if (m_SettingBlocks.TryGetValue(category, out blocks))
 			{
-				blocks.Add(new SimpleTuple<string[], MethodInfo>(attrib.keywords, method));
+				blocks.Add(method);
 			}
 			else
 			{
-				m_SettingBlocks.Add(category, new List<SimpleTuple<string[], MethodInfo>>() { new SimpleTuple<string[], MethodInfo>(attrib.keywords, method) });
+				m_SettingBlocks.Add(category, new List<MethodInfo>() { method });
 			}
 
-			if(attrib.keywords != null)
-				foreach (var word in attrib.keywords)
-					keywords.Add(word);
+			foreach (var word in attrib.keywords)
+				keywords.Add(word);
 		}
 
 		m_Categories = m_Settings.Keys.Union(m_SettingBlocks.Keys).ToList();
@@ -141,17 +140,16 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 		if (hasSearchContext)
 		{
 			// todo - Improve search comparison
-			var searchKeywords = searchContext.Trim().Split(' ');
+			var searchKeywords = searchContext.Split(' ');
 
 			foreach(var settingField in m_Settings)
 				foreach(var setting in settingField.Value)
-					if (searchKeywords.Any(x => setting.item1.text.IndexOf(x, StringComparison.InvariantCultureIgnoreCase) > -1))
+					if (searchKeywords.Any(x => !string.IsNullOrWhiteSpace(x) && setting.item1.text.IndexOf(x, StringComparison.InvariantCultureIgnoreCase) > -1))
 						DoPreferenceField(setting.item1, setting.item2);
 
 			foreach (var settingsBlock in m_SettingBlocks)
 				foreach(var block in settingsBlock.Value)
-					if(block.item1.Any(x => searchContext.IndexOf(x, StringComparison.InvariantCultureIgnoreCase) > -1))
-						block.item2.Invoke(null, s_SearchContext);
+					block.Invoke(null, s_SearchContext);
 		}
 		else
 		{
@@ -165,11 +163,11 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 					foreach(var setting in settings)
 						DoPreferenceField(setting.item1, setting.item2);
 
-				List<SimpleTuple<string[], MethodInfo>> blocks;
+				List<MethodInfo> blocks;
 
 				if (m_SettingBlocks.TryGetValue(key, out blocks))
 					foreach (var block in blocks)
-						block.item2.Invoke(null, s_SearchContext);
+						block.Invoke(null, s_SearchContext);
 
 				GUILayout.Space(8);
 			}

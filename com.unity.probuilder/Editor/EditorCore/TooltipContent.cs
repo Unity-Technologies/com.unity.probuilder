@@ -125,11 +125,11 @@ namespace UnityEditor.ProBuilder
 
 			if(hastitle)
 			{
-				Vector2 ns = TitleStyle.CalcSize(UI.EditorGUIUtility.TempGUIContent(title));
+				Vector2 ns = TitleStyle.CalcSize(UI.EditorGUIUtility.TempContent(title));
 
 				if(hasShortcut)
 				{
-					ns.x += EditorStyles.boldLabel.CalcSize(UI.EditorGUIUtility.TempGUIContent(shortcut)).x + pad;
+					ns.x += EditorStyles.boldLabel.CalcSize(UI.EditorGUIUtility.TempContent(shortcut)).x + pad;
 				}
 
 				total.x += Mathf.Max(ns.x, 256);
@@ -140,11 +140,11 @@ namespace UnityEditor.ProBuilder
 			{
 				if(!hastitle)
 				{
-					Vector2 sumSize = EditorStyles.wordWrappedLabel.CalcSize(UI.EditorGUIUtility.TempGUIContent(summary));
+					Vector2 sumSize = EditorStyles.wordWrappedLabel.CalcSize(UI.EditorGUIUtility.TempContent(summary));
 					total.x = Mathf.Min(sumSize.x, k_MaxWidth);
 				}
 
-				float summaryHeight = EditorStyles.wordWrappedLabel.CalcHeight(UI.EditorGUIUtility.TempGUIContent(summary), total.x);
+				float summaryHeight = EditorStyles.wordWrappedLabel.CalcHeight(UI.EditorGUIUtility.TempContent(summary), total.x);
 				total.y += summaryHeight;
 			}
 
