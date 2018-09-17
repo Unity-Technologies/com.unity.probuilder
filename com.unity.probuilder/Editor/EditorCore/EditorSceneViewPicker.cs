@@ -482,13 +482,10 @@ namespace UnityEditor.ProBuilder
 					}
 				}
 
-				if (!PreferencesInternal.GetBool(PreferenceKeys.pbPBOSelectionOnly))
-				{
-					// If clicked off a pb_Object but onto another gameobject, set the selection
-					// and dip out.
-					selection.gameObject = pickedGo;
-					return Mathf.Sqrt(distance);
-				}
+				// If clicked off a pb_Object but onto another gameobject, set the selection
+				// and dip out.
+				selection.gameObject = pickedGo;
+				return Mathf.Sqrt(distance);
 			}
 
 			return distance;

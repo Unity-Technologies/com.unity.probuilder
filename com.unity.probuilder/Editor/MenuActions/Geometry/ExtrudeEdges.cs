@@ -3,9 +3,6 @@ using UnityEditor;
 using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
-using EditorGUILayout = UnityEditor.EditorGUILayout;
-using EditorStyles = UnityEditor.EditorStyles;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -57,12 +54,10 @@ namespace UnityEditor.ProBuilder.Actions
 
 			float extrudeAmount = PreferencesInternal.HasKey(PreferenceKeys.pbExtrudeDistance) ? PreferencesInternal.GetFloat(PreferenceKeys.pbExtrudeDistance) : .5f;
 			bool extrudeAsGroup = PreferencesInternal.GetBool(PreferenceKeys.pbExtrudeAsGroup);
-			bool manifoldEdgeExtrusion = PreferencesInternal.GetBool(PreferenceKeys.pbManifoldEdgeExtrusion);
 
 			EditorGUI.BeginChangeCheck();
 
 			extrudeAsGroup = EditorGUILayout.Toggle("As Group", extrudeAsGroup);
-			manifoldEdgeExtrusion = EditorGUILayout.Toggle(new GUIContent("Manifold Edge Extrusion", "If false, only non-manifold (edges touching two faces) edges may be extruded.  If true, you may extrude any edge you like (for those who like to live dangerously)."), manifoldEdgeExtrusion);
 
 			extrudeAmount = EditorGUILayout.FloatField("Distance", extrudeAmount);
 
@@ -70,7 +65,6 @@ namespace UnityEditor.ProBuilder.Actions
 			{
 				PreferencesInternal.SetFloat(PreferenceKeys.pbExtrudeDistance, extrudeAmount);
 				PreferencesInternal.SetBool(PreferenceKeys.pbExtrudeAsGroup, extrudeAsGroup);
-				PreferencesInternal.SetBool(PreferenceKeys.pbManifoldEdgeExtrusion, manifoldEdgeExtrusion);
 			}
 
 			GUILayout.FlexibleSpace();

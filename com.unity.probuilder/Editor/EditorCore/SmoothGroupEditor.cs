@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
@@ -12,7 +12,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Smoothing groups editor window.
 	/// </summary>
-	sealed class SmoothGroupEditor : EditorWindow
+	sealed class SmoothGroupEditor : ConfigurableWindow
 	{
 		class SmoothGroupData : IDisposable
 		{
@@ -415,17 +415,7 @@ namespace UnityEditor.ProBuilder
 
 		void OnGUI()
 		{
-			Event evt = Event.current;
-
-			if (evt.type == EventType.ContextClick)
-			{
-				bool isUtility = PreferencesInternal.GetBool("pb_SmoothGroupEditor::m_IsWindowUtility", true);
-
-				GenericMenu menu = new GenericMenu();
-				menu.AddItem (new GUIContent("Open As Floating Window", ""), isUtility, () => SetWindowIsUtility(true));
-				menu.AddItem (new GUIContent("Open As Dockable Window", ""), !isUtility, () => SetWindowIsUtility(false));
-				menu.ShowAsContext ();
-			}
+			DoContextMenu();
 
 			GUILayout.BeginHorizontal(EditorStyles.toolbar);
 

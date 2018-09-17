@@ -32,8 +32,8 @@ namespace UnityEditor.ProBuilder
 		static Dictionary<string, bool> s_BoolDefaults = new Dictionary<string, bool>()
 		{
 //			{ PreferenceKeys.pbForceConvex, false },
-			{ PreferenceKeys.pbManifoldEdgeExtrusion, false },
-			{ PreferenceKeys.pbPBOSelectionOnly, false },
+//			{ PreferenceKeys.pbManifoldEdgeExtrusion, false },
+//			{ PreferenceKeys.pbPBOSelectionOnly, false },
 //			{ PreferenceKeys.pbCloseShapeWindow, false },
 			{ PreferenceKeys.pbGrowSelectionUsingAngle, false },
 			{ PreferenceKeys.pbNormalizeUVsOnPlanarProjection, false },

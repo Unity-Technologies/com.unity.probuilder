@@ -11,7 +11,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Shape creation panel implementation.
 	/// </summary>
-	sealed class ShapeEditor : EditorWindow
+	sealed class ShapeEditor : ConfigurableWindow
 	{
 		enum ShapeType
 		{
@@ -84,29 +84,6 @@ namespace UnityEditor.ProBuilder
 			DestroyPreviewObject();
 		}
 
-		void OpenContextMenu()
-		{
-			var menu = new GenericMenu();
-
-			menu.AddItem (
-				new GUIContent("Window/Open as Floating Window", ""),
-				PreferencesInternal.GetBool(PreferenceKeys.pbShapeWindowFloating),
-				() => { SetFloating(true); } );
-			menu.AddItem (
-				new GUIContent("Window/Open as Dockable Window", ""),
-				!PreferencesInternal.GetBool(PreferenceKeys.pbShapeWindowFloating),
-				() => { SetFloating(false); } );
-
-			menu.ShowAsContext ();
-		}
-
-		void SetFloating(bool floating)
-		{
-			PreferencesInternal.SetBool(PreferenceKeys.pbShapeWindowFloating, floating);
-			Close();
-			MenuOpenShapeCreator();
-		}
-
 		[MenuItem("GameObject/3D Object/" + PreferenceKeys.pluginTitle + " Cube _%k")]
 		public static void MenuCreateCube()
 		{
@@ -122,9 +99,8 @@ namespace UnityEditor.ProBuilder
 
 		void OnGUI()
 		{
-			if(Event.current.type == EventType.ContextClick)
-				OpenContextMenu();
-
+			DoContextMenu();
+			
 			GUILayout.BeginHorizontal();
 				bool sp = m_ShowPreview;
 				m_ShowPreview = GUILayout.Toggle(m_ShowPreview, "Show Preview");

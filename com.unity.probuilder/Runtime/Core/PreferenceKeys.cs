@@ -74,8 +74,11 @@ namespace UnityEngine.ProBuilder
 		[Obsolete]
 		internal const string pbForceVertexPivot = "pbForceVertexPivot";
 		internal const string pbForceGridPivot = "pbForceGridPivot";
+		[Obsolete]
 		internal const string pbManifoldEdgeExtrusion = "pbManifoldEdgeExtrusion";
+		[Obsolete]
 		internal const string pbPerimeterEdgeBridgeOnly = "pbPerimeterEdgeBridgeOnly";
+		[Obsolete]
 		internal const string pbPBOSelectionOnly = "pbPBOSelectionOnly";
 		[Obsolete]
 		internal const string pbCloseShapeWindow = "pbCloseShapeWindow";

@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Manages the ProBuilder toolbar window and tool mode.
 	/// </summary>
-	public sealed class ProBuilderEditor : EditorWindow
+	public sealed class ProBuilderEditor : EditorWindow, IHasCustomMenu
 	{
 		/// <value>
 		/// Raised any time the ProBuilder editor refreshes the selection. This is called every frame when interacting with mesh elements, and after any mesh operation.
@@ -61,7 +61,10 @@ namespace UnityEditor.ProBuilder
 			"and Face modes respectively.")]
 		internal static Pref<bool> s_UniqueModeShortcuts = new Pref<bool>("uniqueModeShortcuts", false, Settings.Scope.User);
 
-		static Pref<bool> s_WindowIsFloating = new Pref<bool>("editorToolbarWindowIsFloating", false);
+		[UserSetting("Mesh Editing", "Allow non-manifold actions", "Enables advanced mesh editing techniques that may create non-manifold geometry.")]
+		internal static Pref<bool> s_AllowNonManifoldActions = new Pref<bool>("allowNonManifoldActions", false, Settings.Scope.User);
+
+		static Pref<bool> s_WindowIsFloating = new Pref<bool>("UnityEngine.ProBuilder.ProBuilderEditor-isUtilityWindow", false, Settings.Scope.Project);
 
 		float m_SnapValue = .25f;
 		bool m_SnapAxisConstraint = true;
@@ -270,7 +273,6 @@ namespace UnityEditor.ProBuilder
 			ProBuilderEditor editor = (ProBuilderEditor) EditorWindow.GetWindow(typeof(ProBuilderEditor),
 				s_WindowIsFloating, PreferenceKeys.pluginTitle,
 				true); // open as floating window
-			// would be nice if editorwindow's showMode was exposed
 			editor.isFloatingWindow = s_WindowIsFloating;
 		}
 
@@ -434,7 +436,9 @@ namespace UnityEditor.ProBuilder
 			switch (e.type)
 			{
 				case EventType.ContextClick:
-					OpenContextMenu();
+					var menu = new GenericMenu();
+					AddItemsToMenu(menu);
+					menu.ShowAsContext();
 					break;
 
 				case EventType.KeyDown:
@@ -464,25 +468,6 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		void OpenContextMenu()
-		{
-			GenericMenu menu = new GenericMenu();
-
-			menu.AddItem(new GUIContent("Open As Floating Window", ""),
-				s_WindowIsFloating, Menu_OpenAsFloatingWindow);
-			menu.AddItem(new GUIContent("Open As Dockable Window", ""),
-				!s_WindowIsFloating, Menu_OpenAsDockableWindow);
-
-			menu.AddSeparator("");
-
-			menu.AddItem(new GUIContent("Use Icon Mode", ""), s_IsIconGui,
-				Menu_ToggleIconMode);
-			menu.AddItem(new GUIContent("Use Text Mode", ""), !s_IsIconGui,
-				Menu_ToggleIconMode);
-
-			menu.ShowAsContext();
-		}
-
 		void Menu_ToggleIconMode()
 		{
 			s_IsIconGui.value = !s_IsIconGui;
@@ -493,18 +478,27 @@ namespace UnityEditor.ProBuilder
 			s_EditorToolbar.InitWindowProperties(this);
 		}
 
-		void Menu_OpenAsDockableWindow()
+		public void AddItemsToMenu(GenericMenu menu)
 		{
-			s_WindowIsFloating.value = false;
-			EditorWindow.GetWindow<ProBuilderEditor>().Close();
-			ProBuilderEditor.MenuOpenWindow();
+			bool floating = s_WindowIsFloating;
+
+			menu.AddItem(new GUIContent("Window/Open as Floating Window", ""), floating, () => SetIsUtilityWindow(true) );
+			menu.AddItem(new GUIContent("Window/Open as Dockable Window", ""), !floating, () => SetIsUtilityWindow(false) );
+			menu.AddSeparator("");
+
+			menu.AddItem(new GUIContent("Use Icon Mode", ""), s_IsIconGui,
+				Menu_ToggleIconMode);
+			menu.AddItem(new GUIContent("Use Text Mode", ""), !s_IsIconGui,
+				Menu_ToggleIconMode);
 		}
 
-		void Menu_OpenAsFloatingWindow()
+		void SetIsUtilityWindow(bool isUtilityWindow)
 		{
-			s_WindowIsFloating.value = true;
-			EditorWindow.GetWindow<ProBuilderEditor>().Close();
-			ProBuilderEditor.MenuOpenWindow();
+			s_WindowIsFloating.value = isUtilityWindow;
+			var windowTitle = titleContent;
+			Close();
+			var res = GetWindow(GetType(), isUtilityWindow);
+			res.titleContent = windowTitle;
 		}
 
 		void OnSceneGUI(SceneView sceneView)
@@ -1093,7 +1087,7 @@ namespace UnityEditor.ProBuilder
 						Edge[] newEdges = pb.Extrude(pb.selectedEdges,
 							0.0001f,
 							PreferencesInternal.GetBool(PreferenceKeys.pbExtrudeAsGroup),
-							PreferencesInternal.GetBool(PreferenceKeys.pbManifoldEdgeExtrusion));
+							s_AllowNonManifoldActions);
 
 						if (newEdges != null)
 						{
