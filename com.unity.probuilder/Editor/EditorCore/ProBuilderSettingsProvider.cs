@@ -70,6 +70,13 @@ sealed class ProBuilderSettingsProvider : SettingsProvider
 
 			var attrib = (UserSettingAttribute)field.GetCustomAttribute(typeof(UserSettingAttribute));
 			var pref = (IPref)field.GetValue(null);
+
+			if (pref == null)
+			{
+				Log.Warning("[UserSettingAttribute] is only valid for types inheriting Pref<T>. Skipping \"" + field.Name + "\"");
+				continue;
+			}
+
 			var category = string.IsNullOrEmpty(attrib.category) ? "Uncategorized" : attrib.category;
 
 			List<SimpleTuple<GUIContent, IPref>> settings;

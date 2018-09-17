@@ -48,7 +48,14 @@ namespace UnityEditor.ProBuilder
 		// The maximum allowable distance magnitude between coords to be considered for proximity snapping (Canvas coordinates)
 		const float MIN_DIST_MOUSE_EDGE = 8f;
 
-		private float pref_gridSnapValue = .0625f;
+		// todo Support Range/Min/Max property decorators
+		static Pref<float> s_GridSnapIncrement = new Pref<float>("uvEditorGridSnapIncrement", .125f, Settings.Scope.Project);
+
+		[UserSettingBlock("UV Editor")]
+		static void UVEditorSettings()
+		{
+			s_GridSnapIncrement.value = EditorGUILayout.Slider("Grid Size", s_GridSnapIncrement, .015625f, 2f);
+		}
 
 		static readonly Color DRAG_BOX_COLOR_BASIC = new Color(0f, .7f, 1f, .2f);
 		static readonly Color DRAG_BOX_COLOR_PRO = new Color(0f, .7f, 1f, 1f);
@@ -254,7 +261,6 @@ namespace UnityEditor.ProBuilder
 
 			// Find preferences
 			pref_showMaterial = PreferencesInternal.GetBool(PreferenceKeys.pbUVMaterialPreview);
-			pref_gridSnapValue = PreferencesInternal.GetFloat(PreferenceKeys.pbUVGridSnapValue);
 		}
 
 		void OnDisable()
@@ -1243,7 +1249,7 @@ namespace UnityEditor.ProBuilder
 
 				if (ControlKey)
 				{
-					handlePosition = Snapping.SnapValue(t_handlePosition, (handlePosition - t_handlePosition).ToMask(Math.handleEpsilon) * pref_gridSnapValue);
+					handlePosition = Snapping.SnapValue(t_handlePosition, (handlePosition - t_handlePosition).ToMask(Math.handleEpsilon) * s_GridSnapIncrement);
 				}
 				else
 				{
@@ -1258,7 +1264,7 @@ namespace UnityEditor.ProBuilder
 						Vector2 offset = Vector2.zero;
 						for (int i = 0; i < selection.Length; i++)
 						{
-							/// todo reset MAX_PROXIMITY_SNAP_DIST
+							// todo reset MAX_PROXIMITY_SNAP_DIST
 							int index = EditorHandleUtility.NearestPoint(handlePosition, selection[i].texturesInternal, MAX_PROXIMITY_SNAP_DIST_CANVAS);
 
 							if (index < 0)
@@ -1305,7 +1311,7 @@ namespace UnityEditor.ProBuilder
 				Vector2 newUVPosition = t_handlePosition;
 
 				if (ControlKey)
-					newUVPosition = Snapping.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask(Math.handleEpsilon) * pref_gridSnapValue);
+					newUVPosition = Snapping.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask(Math.handleEpsilon) * s_GridSnapIncrement);
 
 				for (int n = 0; n < selection.Length; n++)
 				{
@@ -1395,7 +1401,7 @@ namespace UnityEditor.ProBuilder
 				handlePosition.y += delta.y;
 
 				if (ControlKey)
-					handlePosition = Snapping.SnapValue(handlePosition, (handlePosition - handlePosition).ToMask(Math.handleEpsilon) * pref_gridSnapValue);
+					handlePosition = Snapping.SnapValue(handlePosition, (handlePosition - handlePosition).ToMask(Math.handleEpsilon) * s_GridSnapIncrement);
 
 				for (int n = 0; n < selection.Length; n++)
 				{
@@ -1534,7 +1540,7 @@ namespace UnityEditor.ProBuilder
 			uvScale = EditorHandleUtility.ScaleHandle2d(2, UVToGUIPoint(handlePosition), uvScale, 128);
 
 			if (ControlKey)
-				uvScale = Snapping.SnapValue(uvScale, pref_gridSnapValue);
+				uvScale = Snapping.SnapValue(uvScale, s_GridSnapIncrement);
 
 			if (Math.Approx(uvScale.x, 0f, Mathf.Epsilon))
 				uvScale.x = .0001f;
@@ -1604,7 +1610,7 @@ namespace UnityEditor.ProBuilder
 			previousScale.y = 1f / previousScale.y;
 
 			if (ControlKey)
-				textureScale = Snapping.SnapValue(textureScale, pref_gridSnapValue);
+				textureScale = Snapping.SnapValue(textureScale, s_GridSnapIncrement);
 
 			if (!modifyingUVs)
 			{
@@ -1687,7 +1693,7 @@ namespace UnityEditor.ProBuilder
 
 				// Grid temp vars
 				int GridLines = 64;
-				float StepSize = pref_gridSnapValue; // In UV coordinates
+				float StepSize = s_GridSnapIncrement; // In UV coordinates
 
 				// Exponentially scale grid size
 				while (StepSize * uvGridSize * uvGraphScale < uvGridSize / 10)
