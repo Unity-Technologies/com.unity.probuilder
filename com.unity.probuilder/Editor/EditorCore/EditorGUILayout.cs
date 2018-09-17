@@ -170,14 +170,14 @@ namespace UnityEditor.ProBuilder.UI
 		{
 			if (!MatchSearchGroups(searchContext, content.text))
 				return value;
-			return UnityEditor.EditorGUILayout.Slider(searchContext, value, min, max);
+			return UnityEditor.EditorGUILayout.Slider(content, value, min, max);
 		}
 
 		public static float SearchableSlider(string content, float value, float min, float max, string searchContext)
 		{
 			if (!MatchSearchGroups(searchContext, content))
 				return value;
-			return UnityEditor.EditorGUILayout.Slider(searchContext, value, min, max);
+			return UnityEditor.EditorGUILayout.Slider(content, value, min, max);
 		}
 
 		internal static float SearchableFloatField(GUIContent title, float value, string searchContext)
@@ -252,6 +252,8 @@ namespace UnityEditor.ProBuilder.UI
 
 		internal static bool MatchSearchGroups(string searchContext, string content)
 		{
+			if (string.IsNullOrWhiteSpace(searchContext))
+				return true;
 			var split = searchContext.Split(' ');
 			return split.Any(x => !string.IsNullOrWhiteSpace(x) && content.IndexOf(x, StringComparison.InvariantCultureIgnoreCase) > -1);
 		}
