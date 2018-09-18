@@ -64,7 +64,6 @@ namespace UnityEditor.ProBuilder
 
 		static Shortcut[] defaultShortcuts;
 
-		[PreferenceItem("ProBuilder (Obsolete)")]
 		static void PreferencesGUI()
 		{
 			LoadPrefs();

@@ -32,7 +32,8 @@ namespace UnityEditor.ProBuilder
 		const float k_BannerWidth = 480f;
 		const float k_BannerHeight = 270f;
 
-		const string k_AboutWindowVersionPref = "ProBuilder_AboutWindowIdentifier";
+		static Pref<SemVer> s_StoredVersionInfo = new Pref<SemVer>("aboutWindowIdentifier", new SemVer(), Settings.Scope.Project);
+
 		const string k_AboutPrefFormat = "M.m.p-T.b";
 
 		internal const string k_FontRegular = "Asap-Regular.otf";
@@ -142,9 +143,13 @@ namespace UnityEditor.ProBuilder
 
 		internal static void ValidateVersion()
 		{
-			string currentVersionString = Version.currentInfo.ToString(k_AboutPrefFormat);
-			bool isNewVersion = !PreferencesInternal.GetString(k_AboutWindowVersionPref).Equals(currentVersionString, StringComparison.OrdinalIgnoreCase);
-			PreferencesInternal.SetString(k_AboutWindowVersionPref, currentVersionString, PreferenceLocation.Global);
+			var currentVersion = Version.currentInfo;
+			var oldVersion = (SemVer) s_StoredVersionInfo;
+
+			bool isNewVersion = currentVersion != oldVersion;
+
+			if (isNewVersion)
+				s_StoredVersionInfo.SetValue(currentVersion, true);
 
 			bool assetStoreInstallFound = isNewVersion && PackageImporter.IsPreProBuilder4InProject();
 			bool deprecatedGuidsFound = isNewVersion && PackageImporter.DoesProjectContainDeprecatedGUIDs();

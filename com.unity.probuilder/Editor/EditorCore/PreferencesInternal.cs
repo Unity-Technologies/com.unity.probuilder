@@ -24,6 +24,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Manage ProBuilder preferences.
 	/// </summary>
+	[System.Obsolete]
 	[InitializeOnLoad]
 	static class PreferencesInternal
 	{
