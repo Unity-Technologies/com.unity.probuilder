@@ -6,21 +6,15 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-	sealed class DebugEditor : EditorWindow
+	sealed class DebugEditor : ConfigurableWindow
 	{
-		static bool utilityWindow
-		{
-			get { return PreferencesInternal.GetBool("ProBuilderDebugEditor::utilityWindow", false); }
-			set { PreferencesInternal.SetBool("ProBuilderDebugEditor::utilityWindow", value); }
-		}
-
 		static Dictionary<string, bool> s_Expanded = new Dictionary<string, bool>();
 		Vector2 m_Scroll = Vector2.zero;
 
 		[MenuItem("Tools/ProBuilder/Debug/Debug Window")]
 		static void Init()
 		{
-			GetWindow<DebugEditor>(utilityWindow, "ProBuilder Debug", true);
+			GetWindow<DebugEditor>(IsUtilityWindow<DebugEditor>(), "ProBuilder Debug", true);
 		}
 
 		void OnEnable()
@@ -40,10 +34,7 @@ namespace UnityEditor.ProBuilder
 
 		void OnGUI()
 		{
-			var evt = Event.current;
-
-			if (evt.type == EventType.ContextClick)
-				DoContextClick();
+			DoContextMenu();
 
 			m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
 
@@ -106,27 +97,6 @@ namespace UnityEditor.ProBuilder
 
 			for (int i = 0; sharedVertices != null && i < sharedVertices.Length; i++)
 				GUILayout.Label(sharedVertices[i].ToString(", "));
-		}
-
-		void DoContextClick()
-		{
-			GenericMenu menu = new GenericMenu();
-
-			menu.AddItem(new GUIContent("Window/Floating Window", ""), utilityWindow, () =>
-			{
-				utilityWindow = true;
-				Close();
-				Init();
-			});
-
-			menu.AddItem(new GUIContent("Window/Dockable Window", ""), !utilityWindow, () =>
-			{
-				utilityWindow = false;
-				Close();
-				Init();
-			});
-
-			menu.ShowAsContext();
 		}
 	}
 }

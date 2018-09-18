@@ -3342,19 +3342,14 @@ namespace UnityEditor.ProBuilder
 			DoScreenshot();
 		}
 
-		/// Unity 5 changes the starting y position of a window now account for the tab
+		// Unity 5 changes the starting y position of a window now account for the tab
 		float editorWindowTabOffset
 		{
 			get
 			{
-				if (PreferencesInternal.GetBool(PreferenceKeys.pbUVEditorFloating))
+				if (IsUtilityWindow<UVEditor>())
 					return 0;
-				else
-#if UNITY_4_6
-				return 0;
-#else
-					return 11;
-#endif
+				return 11;
 			}
 		}
 
