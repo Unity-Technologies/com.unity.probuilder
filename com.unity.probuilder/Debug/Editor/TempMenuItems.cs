@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEditor;
@@ -14,16 +15,43 @@ class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d", false, 1000)]
 	static void MenuInit()
 	{
-		var shapes = Enum.GetValues(typeof(ShapeType)) as ShapeType[];
-		float x = -10f;
-		ProBuilderMesh[] primitives = new ProBuilderMesh[shapes.Length];
-		for (int i = 0, c = shapes.Length; i < c; i++)
-		{
-			primitives[i] = ShapeGenerator.CreateShape(shapes[i]);
-			primitives[i].GetComponent<MeshFilter>().sharedMesh.name = shapes[i].ToString();
+		GetWindow<TempMenuItems>().Show();
 
-			primitives[i].transform.position = new Vector3(x, 0f, 0f);
-			x += primitives[i].mesh.bounds.size.x + .5f;
+		if(!Settings.ContainsKey<float>("test"))
+			Settings.Set<float>("test", 100f);
+
+		if(!Settings.ContainsKey<int>("test"))
+			Settings.Set<int>("test", 100);
+
+		if(!Settings.ContainsKey<Material>("default"))
+			Settings.Set<Material>("default", BuiltinMaterials.defaultMaterial);
+
+		Settings.Save();
+	}
+
+	void OnGUI()
+	{
+		var types = Settings.dictionary.dictionary;
+
+		foreach (var kvp in types)
+		{
+			var dic = kvp.Value;
+
+			GUILayout.Label(kvp.Key, EditorStyles.boldLabel);
+
+			foreach (var entry in dic)
+			{
+				var value = entry.Value;
+
+				value = EditorGUILayout.TextField(entry.Key, value);
+
+				if (!value.Equals(entry.Value))
+				{
+					Settings.Set(kvp.Key, entry.Key, value);
+					Settings.Save();
+					EditorGUIUtility.ExitGUI();
+				}
+			}
 		}
 	}
 
