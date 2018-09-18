@@ -1,3 +1,5 @@
+#define PRETTY_PRINT_JSON
+
 using System;
 using System.IO;
 using UnityEditor;
@@ -40,7 +42,9 @@ namespace UnityEngine.ProBuilder
 			}
 		}
 
-		Settings() { }
+		Settings()
+		{
+		}
 
 		public static void Save()
 		{

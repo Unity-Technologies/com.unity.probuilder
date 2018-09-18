@@ -54,7 +54,7 @@ namespace UnityEngine.ProBuilder
         Type type { get; }
 
         object GetValue();
-        void SetValue(object value);
+        void SetValue(object value, bool saveProjectSettingsImmediately = false);
     }
 
     sealed class Pref<T> : IPref
@@ -86,12 +86,25 @@ namespace UnityEngine.ProBuilder
             return value;
         }
 
-        public void SetValue(object value)
+        public void SetValue(object value, bool saveProjectSettingsImmediately = false)
         {
             // we do want to allow null values
             if(value != null && !(value is T))
                 throw new ArgumentException("Value must be of type " + typeof(T));
-            this.value = (T) value;
+            SetValue((T) value, saveProjectSettingsImmediately);
+        }
+
+        public void SetValue(T value, bool saveProjectSettingsImmediately = false)
+        {
+            if (Equals(m_Value, value))
+                return;
+
+            m_Value = value;
+
+            Settings.Set<T>(key, m_Value, m_Scope);
+
+            if (m_Scope == Settings.Scope.Project && saveProjectSettingsImmediately)
+                Settings.Save();
         }
 
         public T value
@@ -109,14 +122,7 @@ namespace UnityEngine.ProBuilder
                 return m_Value;
             }
 
-            set
-            {
-                if (Equals(m_Value, value))
-                    return;
-
-                m_Value = value;
-                Settings.Set<T>(key, m_Value, m_Scope);
-            }
+            set { SetValue(value); }
         }
 
         public static implicit operator T(Pref<T> pref)
