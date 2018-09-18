@@ -9,10 +9,8 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	sealed class ToggleSelectBackFaces : MenuAction
 	{
-		bool isEnabled { get { return PreferencesInternal.GetBool(PreferenceKeys.pbEnableBackfaceSelection); } }
-
 		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return isEnabled ? icons[1] : icons[0]; } }
+		public override Texture2D icon { get { return ProBuilderEditor.instance.m_BackfaceSelectEnabled ? icons[1] : icons[0]; } }
 		public override TooltipContent tooltip { get { return _tooltip; } }
 		public override int toolbarPriority { get { return 0; } }
 
@@ -24,7 +22,7 @@ namespace UnityEditor.ProBuilder.Actions
 The default value is <b>On</b>.
 ");
 
-		public override string menuTitle { get { return isEnabled ? "Select Hidden: On" : "Select Hidden: Off"; } }
+		public override string menuTitle { get { return ProBuilderEditor.instance.m_BackfaceSelectEnabled ? "Select Hidden: On" : "Select Hidden: Off"; } }
 
 		Texture2D[] icons;
 
@@ -39,10 +37,9 @@ The default value is <b>On</b>.
 
 		public override ActionResult DoAction()
 		{
-			bool backFaceEnabled = PreferencesInternal.GetBool(PreferenceKeys.pbEnableBackfaceSelection);
-			PreferencesInternal.SetBool(PreferenceKeys.pbEnableBackfaceSelection, !backFaceEnabled);
+			ProBuilderEditor.instance.m_BackfaceSelectEnabled.SetValue(!ProBuilderEditor.instance.m_BackfaceSelectEnabled, true);
 			ProBuilderEditor.instance.LoadPrefs();
-			return new ActionResult(ActionResult.Status.Success, "Set Hidden Element Selection\n" + (!backFaceEnabled ? "On" : "Off") );
+			return new ActionResult(ActionResult.Status.Success, "Set Hidden Element Selection\n" + (!ProBuilderEditor.instance.m_BackfaceSelectEnabled ? "On" : "Off") );
 		}
 
 		public override bool enabled

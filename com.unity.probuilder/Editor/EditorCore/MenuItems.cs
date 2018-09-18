@@ -41,12 +41,6 @@ namespace UnityEditor.ProBuilder
 			       (selection.Any(x => x.selectedEdgeCount > 0) || selection.Any(x => x.selectedFacesInternal.Length > 0));
 		}
 
-		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Geometry/Extrude %e", false, PreferenceKeys.menuGeometry + 3)]
-		static void MenuDoExtrude()
-		{
-			MenuCommands.MenuExtrude(selection, false);
-		}
-
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Selection/Select Loop &l", true, PreferenceKeys.menuSelection)]
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Selection/Select Ring &r", true, PreferenceKeys.menuSelection)]
 		private static bool MenuVerifyRingLoop()

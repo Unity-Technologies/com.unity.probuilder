@@ -84,8 +84,9 @@ namespace UnityEditor.ProBuilder
 			get { return Event.current.modifiers == EventModifiers.Shift; }
 		}
 
-		private bool pref_showMaterial = true;
-		///< Show a preview texture for the first selected face in UV space 0,1?
+		Pref<bool> m_ShowPreviewMaterial = new Pref<bool>("UVEditor.showPreviewMaterial", true, Settings.Scope.Project);
+
+		// Show a preview texture for the first selected face in UV space 0,1?
 #if PB_DEBUG
 	List<Texture2D> m_DebugUVRenderScreens = new List<Texture2D>();
 	#endif
@@ -213,7 +214,7 @@ namespace UnityEditor.ProBuilder
 			if (ProBuilderEditor.instance != null && ProBuilderEditor.editLevel == EditLevel.Top)
 				ProBuilderEditor.instance.SetEditLevel(EditLevel.Geometry);
 
-			EditorWindow.GetWindow<UVEditor>(PreferencesInternal.GetBool(PreferenceKeys.pbUVEditorFloating), "UV Editor", true);
+			GetWindow<UVEditor>("UV Editor");
 		}
 
 		void ScreenshotMenu()
@@ -258,9 +259,6 @@ namespace UnityEditor.ProBuilder
 			ProBuilderMeshEditor.onGetFrameBoundsEvent += OnGetFrameBoundsEvent;
 
 			nearestElement.Clear();
-
-			// Find preferences
-			pref_showMaterial = PreferencesInternal.GetBool(PreferenceKeys.pbUVMaterialPreview);
 		}
 
 		void OnDisable()
@@ -1819,7 +1817,7 @@ namespace UnityEditor.ProBuilder
 
 			var texture = GetMainTexture(m_PreviewMaterial);
 
-			if (pref_showMaterial && m_PreviewMaterial && texture != null)
+			if (m_ShowPreviewMaterial && m_PreviewMaterial && texture != null)
 				EditorGUI.DrawPreviewTexture(UVRectIdentity, texture, null, ScaleMode.StretchToFill, 0);
 
 			if ((screenshotStatus != ScreenshotStatus.PrepareCanvas && screenshotStatus != ScreenshotStatus.CanvasReady) || !screenshot_hideGrid)
@@ -2529,12 +2527,10 @@ namespace UnityEditor.ProBuilder
 
 			editor_toggles_rect.x += editor_toggles_rect.width + PAD;
 
-			gc_ShowPreviewTexture.image = pref_showMaterial ? icon_textureMode_on : icon_textureMode_off;
+			gc_ShowPreviewTexture.image = m_ShowPreviewMaterial ? icon_textureMode_on : icon_textureMode_off;
+
 			if (GUI.Button(editor_toggles_rect, gc_ShowPreviewTexture))
-			{
-				pref_showMaterial = !pref_showMaterial;
-				PreferencesInternal.SetBool(PreferenceKeys.pbUVMaterialPreview, pref_showMaterial);
-			}
+				m_ShowPreviewMaterial.SetValue(!m_ShowPreviewMaterial, true);
 
 			editor_toggles_rect.x += editor_toggles_rect.width + PAD;
 
@@ -2740,24 +2736,19 @@ namespace UnityEditor.ProBuilder
 		}
 
 		const float k_MinimumSewUVDistance = .001f;
+		Pref<float> m_WeldDistance = new Pref<float>("UVEditor.weldDistance", .01f);
 
 		void WeldButtonGUI(int width)
 		{
 			EditorGUI.BeginChangeCheck();
 
-			float weldDistance = PreferencesInternal.GetFloat(PreferenceKeys.pbUVWeldDistance);
+			m_WeldDistance.value = EditorGUILayout.FloatField(new GUIContent("Max", "The maximum distance between two vertices in order to be welded together."), m_WeldDistance);
 
-			if (weldDistance <= k_MinimumSewUVDistance)
-				weldDistance = k_MinimumSewUVDistance;
-
-			weldDistance = EditorGUILayout.FloatField(new GUIContent("Max", "The maximum distance between two vertices in order to be welded together."), weldDistance);
+			if (m_WeldDistance <= k_MinimumSewUVDistance)
+				m_WeldDistance.value = k_MinimumSewUVDistance;
 
 			if (EditorGUI.EndChangeCheck())
-			{
-				if (weldDistance < k_MinimumSewUVDistance)
-					weldDistance = k_MinimumSewUVDistance;
-				PreferencesInternal.SetFloat(PreferenceKeys.pbUVWeldDistance, weldDistance);
-			}
+				Settings.Save();
 		}
 #endregion
 #region UV Selection
@@ -2965,11 +2956,7 @@ namespace UnityEditor.ProBuilder
 
 			if (projected > 0)
 			{
-				if (PreferencesInternal.GetBool(PreferenceKeys.pbNormalizeUVsOnPlanarProjection))
-					Menu_FitUVs();
-				else
-					CenterUVsAtPoint(handlePosition);
-
+				CenterUVsAtPoint(handlePosition);
 				ResetUserPivot();
 			}
 
@@ -3150,7 +3137,7 @@ namespace UnityEditor.ProBuilder
 				return new ActionResult(ActionResult.Status.Canceled, "Invalid UV2 Operation");
 			}
 
-			float weldDistance = PreferencesInternal.GetFloat(PreferenceKeys.pbUVWeldDistance);
+			float weldDistance = m_WeldDistance;
 
 			UndoUtility.RecordSelection(selection, "Sew UV Seams");
 			for (int i = 0; i < selection.Length; i++)

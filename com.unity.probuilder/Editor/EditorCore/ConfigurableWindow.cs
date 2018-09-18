@@ -10,9 +10,14 @@ namespace UnityEditor.ProBuilder
 			get { return GetType().ToString() + "-isUtilityWindow"; }
 		}
 
-		public static bool IsUtilityWindow<T>() where T : ConfigurableWindow
+		protected static bool IsUtilityWindow<T>() where T : ConfigurableWindow
 		{
 			return Settings.Get<bool>(typeof(T).ToString() + "-isUtilityWindow", Settings.Scope.Project, false);
+		}
+
+		public static new T GetWindow<T>(string title, bool focus = true) where T : ConfigurableWindow
+		{
+			return GetWindow<T>(IsUtilityWindow<T>(), title, focus);
 		}
 
 		public virtual void AddItemsToMenu(GenericMenu menu)

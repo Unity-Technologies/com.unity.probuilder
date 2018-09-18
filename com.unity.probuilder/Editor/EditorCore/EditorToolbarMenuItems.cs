@@ -327,7 +327,6 @@ namespace UnityEditor.ProBuilder
 
 
 
-
 		[MenuItem(k_MenuPrefix + "Geometry/Delete Faces  [delete]", true)]
 		static bool MenuVerifyDeleteFaces()
 		{
@@ -358,6 +357,23 @@ namespace UnityEditor.ProBuilder
 		static void MenuDoDetachFaces()
 		{
 			DetachFaces instance = EditorToolbarLoader.GetInstance<DetachFaces>();
+			if(instance != null)
+				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
+		[MenuItem(k_MenuPrefix + "Geometry/Extrude %e", true)]
+		static bool MenuVerifyExtrude()
+		{
+			Extrude instance = EditorToolbarLoader.GetInstance<Extrude>();
+
+			return instance != null && instance.enabled;
+	
+		}
+
+		[MenuItem(k_MenuPrefix + "Geometry/Extrude %e", false, PreferenceKeys.menuGeometry + 3)]
+		static void MenuDoExtrude()
+		{
+			Extrude instance = EditorToolbarLoader.GetInstance<Extrude>();
 			if(instance != null)
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}

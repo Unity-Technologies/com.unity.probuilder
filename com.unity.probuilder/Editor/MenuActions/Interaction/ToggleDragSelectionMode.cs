@@ -1,26 +1,22 @@
 using UnityEngine;
-using UnityEditor;
-using System.Collections;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
-using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
 	sealed class ToggleDragSelectionMode : MenuAction
 	{
-		SelectionModifierBehavior SelectionModifierBehavior
+		SelectionModifierBehavior modifier
 		{
-			get { return PreferencesInternal.GetEnum<SelectionModifierBehavior>(PreferenceKeys.pbDragSelectMode); }
-			set { PreferencesInternal.SetInt(PreferenceKeys.pbDragSelectMode, (int) value); }
+			get { return ProBuilderEditor.instance.m_SelectModifierBehavior; }
+			set { ProBuilderEditor.instance.m_SelectModifierBehavior.SetValue(value, true); }
 		}
 
 		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
 		public override Texture2D icon {
 			get {
-				if(SelectionModifierBehavior == SelectionModifierBehavior.Add)
+				if(modifier == SelectionModifierBehavior.Add)
 					return IconUtility.GetIcon("Toolbar/Selection_ShiftAdd", IconSkin.Pro);
-				else if(SelectionModifierBehavior == SelectionModifierBehavior.Subtract)
+				else if(modifier == SelectionModifierBehavior.Subtract)
 					return IconUtility.GetIcon("Toolbar/Selection_ShiftSubtract", IconSkin.Pro);
 				else
 					return IconUtility.GetIcon("Toolbar/Selection_ShiftDifference", IconSkin.Pro);
@@ -43,17 +39,17 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			get
 			{
-				return string.Format("Shift: {0}", SelectionModifierBehavior);
+				return string.Format("Shift: {0}", modifier);
 			}
 		}
 
 		public override ActionResult DoAction()
 		{
-			int mode = (int) SelectionModifierBehavior;
+			int mode = (int) modifier;
 			int len = System.Enum.GetValues(typeof(SelectionModifierBehavior)).Length;
-			SelectionModifierBehavior = (SelectionModifierBehavior) ((mode + 1) % len);
+			modifier = (SelectionModifierBehavior) ((mode + 1) % len);
 			ProBuilderEditor.instance.LoadPrefs();
-			return new ActionResult(ActionResult.Status.Success, "Set Shift Drag Mode\n" + SelectionModifierBehavior);
+			return new ActionResult(ActionResult.Status.Success, "Set Shift Drag Mode\n" + modifier);
 		}
 
 		public override bool enabled

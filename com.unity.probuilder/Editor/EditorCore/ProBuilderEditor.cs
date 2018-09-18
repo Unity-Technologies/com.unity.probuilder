@@ -51,20 +51,29 @@ namespace UnityEditor.ProBuilder
 		GUIStyle VertexTranslationInfoStyle;
 
 		[UserSetting("General", "Show Scene Info", "Toggle the display of information about selected meshes in the Scene View.")]
-		static Pref<bool> s_ShowSceneInfo = new Pref<bool>("showSceneInfo", false);
+		static Pref<bool> s_ShowSceneInfo = new Pref<bool>("editor.showSceneInfo", false);
 
 		[UserSetting("Toolbar", "Icon GUI", "Toggles the ProBuilder window interface between text and icon versions.")]
-		internal static Pref<bool> s_IsIconGui = new Pref<bool>("toolbarIconGUI", false);
+		internal static Pref<bool> s_IsIconGui = new Pref<bool>("editor.toolbarIconGUI", false);
 
-		[UserSetting("Toolbar", "Unique Mode Shortcuts", "When off, the G key toggles between Object and Element " +
-			"modes and H enumerates the element modes.  If on, G, H, J, and K are shortcuts to Object, Vertex, Edge, " +
-			"and Face modes respectively.")]
-		internal static Pref<bool> s_UniqueModeShortcuts = new Pref<bool>("uniqueModeShortcuts", false, Settings.Scope.User);
+		[UserSetting("Toolbar", "Unique Mode Shortcuts", "When off, the G key toggles between Object and Element modes and H enumerates the element modes.  If on, G, H, J, and K are shortcuts to Object, Vertex, Edge, and Face modes respectively.")]
+		internal static Pref<bool> s_UniqueModeShortcuts = new Pref<bool>("editor.uniqueModeShortcuts", false, Settings.Scope.User);
 
 		[UserSetting("Mesh Editing", "Allow non-manifold actions", "Enables advanced mesh editing techniques that may create non-manifold geometry.")]
-		internal static Pref<bool> s_AllowNonManifoldActions = new Pref<bool>("allowNonManifoldActions", false, Settings.Scope.User);
+		internal static Pref<bool> s_AllowNonManifoldActions = new Pref<bool>("editor.allowNonManifoldActions", false, Settings.Scope.User);
+
+		[UserSetting("Toolbar", "Toolbar Location", "Where the Object, Face, Edge, and Vertex toolbar will be shown in the Scene View.")]
+		static Pref<SceneToolbarLocation> s_SceneToolbarLocation = new Pref<SceneToolbarLocation>("editor.sceneToolbarLocation", SceneToolbarLocation.UpperCenter, Settings.Scope.User);
 
 		static Pref<bool> s_WindowIsFloating = new Pref<bool>("UnityEngine.ProBuilder.ProBuilderEditor-isUtilityWindow", false, Settings.Scope.Project);
+
+		internal Pref<bool> m_BackfaceSelectEnabled = new Pref<bool>("editor.backFaceSelectEnabled", false);
+		internal Pref<RectSelectMode> m_DragSelectRectMode = new Pref<RectSelectMode>("editor.dragSelectRectMode", RectSelectMode.Partial);
+		internal Pref<ExtrudeMethod> m_ExtrudeMethod = new Pref<ExtrudeMethod>("editor.extrudeMethod", ExtrudeMethod.FaceNormal);
+		internal Pref<SelectionModifierBehavior> m_SelectModifierBehavior = new Pref<SelectionModifierBehavior>("editor.rectSelectModifier", SelectionModifierBehavior.Difference);
+		Pref<SelectMode> m_SelectMode = new Pref<SelectMode>("editor.selectMode", SelectMode.Object);
+		internal Pref<bool> m_ExtrudeEdgesAsGroup = new Pref<bool>("editor.extrudeEdgesAsGroup", true);
+		internal Pref<HandleAlignment> m_HandleAlignment = new Pref<HandleAlignment>("editor.handleAlignment", HandleAlignment.World);
 
 		float m_SnapValue = .25f;
 		bool m_SnapAxisConstraint = true;
@@ -74,8 +83,6 @@ namespace UnityEditor.ProBuilder
 		ComponentMode m_PreviousComponentMode;
 		HandleAlignment m_PreviousHandleAlignment;
 		Shortcut[] m_Shortcuts;
-		[UserSetting("Toolbar", "Toolbar Location", "Where the Object, Face, Edge, and Vertex toolbar will be shown in the Scene View.")]
-		static Pref<SceneToolbarLocation> s_SceneToolbarLocation = new Pref<SceneToolbarLocation>("sceneToolbarLocation", SceneToolbarLocation.UpperCenter, Settings.Scope.User);
 		GUIStyle m_CommandStyle;
 		Rect m_ElementModeToolbarRect = new Rect(3, 6, 128, 24);
 
@@ -172,12 +179,21 @@ namespace UnityEditor.ProBuilder
 		/// <value>
 		/// Get the current @"UnityEngine.ProBuilder.EditLevel".
 		/// </value>
-		internal static EditLevel editLevel { get; private set; }
+		/// <remarks>
+		/// Publicly this is Obsolete - new code should use selectMode.
+		/// </remarks>
+		internal static EditLevel editLevel
+		{
+			get; private set;
+		}
 
 		/// <summary>
 		/// Get the current @"UnityEngine.ProBuilder.SelectMode".
 		/// </summary>
-		/// <value>The SelectMode currently set.</value>
+		/// <value>The ComponentMode currently set.</value>
+		/// <remarks>
+		/// Publicly this is Obsolete - new code should use selectMode.
+		/// </remarks>
 		internal static ComponentMode componentMode { get; private set; }
 
 		/// <value>
@@ -225,12 +241,6 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 		}
-
-		/// <summary>
-		/// Get the alignment of the ProBuilder transform gizmo.
-		/// </summary>
-		/// <seealso cref="HandleAlignment"/>
-		public HandleAlignment handleAlignment { get; private set; }
 
 		static class SceneStyles
 		{
@@ -338,7 +348,6 @@ namespace UnityEditor.ProBuilder
 
 			ProGridsInterface.UnsubscribePushToGridEvent(PushToGrid);
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
-			PreferencesInternal.SetInt(PreferenceKeys.pbHandleAlignment, (int) handleAlignment);
 			MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
 
 			// re-enable unity wireframe
@@ -360,20 +369,14 @@ namespace UnityEditor.ProBuilder
 
 			editLevel = PreferencesInternal.GetEnum<EditLevel>(PreferenceKeys.pbDefaultEditLevel);
 			componentMode = PreferencesInternal.GetEnum<ComponentMode>(PreferenceKeys.pbDefaultSelectionMode);
-			handleAlignment = PreferencesInternal.GetEnum<HandleAlignment>(PreferenceKeys.pbHandleAlignment);
-
-			// ---
-			bool selectHiddenFaces = PreferencesInternal.GetBool(PreferenceKeys.pbEnableBackfaceSelection);
-			SelectionModifierBehavior selectModifierBehavior = PreferencesInternal.GetEnum<SelectionModifierBehavior>(PreferenceKeys.pbDragSelectMode);
 
 			m_ScenePickerPreferences = new ScenePickerPreferences()
 			{
 				maxPointerDistance = ScenePickerPreferences.maxPointerDistanceFuzzy,
-				cullMode = selectHiddenFaces ? CullingMode.None : CullingMode.Back,
-				selectionModifierBehavior = selectModifierBehavior,
-				rectSelectMode = PreferencesInternal.GetEnum<RectSelectMode>(PreferenceKeys.pbRectSelectMode)
+				cullMode = m_BackfaceSelectEnabled ? CullingMode.None : CullingMode.Back,
+				selectionModifierBehavior = m_SelectModifierBehavior,
+				rectSelectMode = m_DragSelectRectMode
 			};
-			// ---
 
 			m_SnapEnabled = ProGridsInterface.SnapEnabled();
 			m_SnapValue = ProGridsInterface.SnapValue();
@@ -886,7 +889,7 @@ namespace UnityEditor.ProBuilder
 				Vector3 ver; // resulting vertex from modification
 				Vector3 over; // vertex point to modify. different for world, local, and plane
 
-				bool gotoWorld = Selection.transforms.Length > 1 && handleAlignment == HandleAlignment.Plane;
+				bool gotoWorld = Selection.transforms.Length > 1 && m_HandleAlignment == HandleAlignment.Plane;
 				bool gotoLocal = m_SelectedFaceCount < 1;
 
 				// if(pref_snapEnabled)
@@ -904,7 +907,7 @@ namespace UnityEditor.ProBuilder
 
 					for (int n = 0; n < mesh.selectedIndexesInternal.Length; n++)
 					{
-						switch (handleAlignment)
+						switch (m_HandleAlignment.value)
 						{
 							case HandleAlignment.Plane:
 							{
@@ -1012,7 +1015,7 @@ namespace UnityEditor.ProBuilder
 						for (int nn = 0; nn < triangles.Length; nn++)
 							m_VertexPositions[i][nn] = selection[i].transform.TransformPoint(vertices[triangles[nn]]);
 
-						if (handleAlignment == HandleAlignment.World)
+						if (m_HandleAlignment == HandleAlignment.World)
 							m_VertexOffset[i] = m_ElementHandlePosition;
 						else
 							m_VertexOffset[i] = Math.GetBounds(m_VertexPositions[i]).center;
@@ -1087,7 +1090,7 @@ namespace UnityEditor.ProBuilder
 
 						Edge[] newEdges = pb.Extrude(pb.selectedEdges,
 							0.0001f,
-							PreferencesInternal.GetBool(PreferenceKeys.pbExtrudeAsGroup),
+							m_ExtrudeEdgesAsGroup,
 							s_AllowNonManifoldActions);
 
 						if (newEdges != null)
@@ -1102,7 +1105,7 @@ namespace UnityEditor.ProBuilder
 
 						if (len > 0)
 						{
-							pb.Extrude(pb.selectedFacesInternal, PreferencesInternal.GetEnum<ExtrudeMethod>(PreferenceKeys.pbExtrudeMethod),
+							pb.Extrude(pb.selectedFacesInternal, m_ExtrudeMethod,
 								0.0001f);
 							pb.SetSelectedFaces(pb.selectedFacesInternal);
 							ef += len;
@@ -1508,7 +1511,7 @@ namespace UnityEditor.ProBuilder
 					if (editLevel != EditLevel.Texture)
 					{
 						ToggleHandleAlignment();
-						EditorUtility.ShowNotification("Handle Alignment: " + ((HandleAlignment) handleAlignment).ToString());
+						EditorUtility.ShowNotification("Handle Alignment: " + m_HandleAlignment.value.ToString());
 					}
 
 					return true;
@@ -1564,10 +1567,8 @@ namespace UnityEditor.ProBuilder
 		{
 			if (editLevel == EditLevel.Texture)
 				ha = HandleAlignment.Plane;
-			else
-				PreferencesInternal.SetInt(PreferenceKeys.pbHandleAlignment, (int) ha);
 
-			handleAlignment = ha;
+			m_HandleAlignment.SetValue(ha, true);
 
 			UpdateHandleRotation();
 
@@ -1581,8 +1582,8 @@ namespace UnityEditor.ProBuilder
 
 		internal void ToggleHandleAlignment()
 		{
-			int newHa = (int) handleAlignment + 1;
-			if (newHa >= System.Enum.GetValues(typeof(HandleAlignment)).Length)
+			int newHa = (int) m_HandleAlignment.value + 1;
+			if (newHa >= Enum.GetValues(typeof(HandleAlignment)).Length)
 				newHa = 0;
 			SetHandleAlignment((HandleAlignment) newHa);
 		}
@@ -1607,11 +1608,8 @@ namespace UnityEditor.ProBuilder
 		internal void SetSelectionMode(ComponentMode mode)
 		{
 			componentMode = mode;
-
 			Internal_UpdateSelectionFast();
-
 			PreferencesInternal.SetInt(PreferenceKeys.pbDefaultSelectionMode, (int) componentMode);
-
 			SceneView.RepaintAll();
 		}
 
@@ -1657,7 +1655,7 @@ namespace UnityEditor.ProBuilder
 #if !PROTOTYPE
 				case EditLevel.Texture:
 
-					m_PreviousHandleAlignment = handleAlignment;
+					m_PreviousHandleAlignment = m_HandleAlignment;
 					m_PreviousComponentMode = componentMode;
 
 					SetHandleAlignment(HandleAlignment.Plane);
@@ -1869,7 +1867,7 @@ namespace UnityEditor.ProBuilder
 		{
 			Quaternion localRot = Selection.activeTransform == null ? Quaternion.identity : Selection.activeTransform.rotation;
 
-			switch (handleAlignment)
+			switch (m_HandleAlignment.value)
 			{
 				case HandleAlignment.Plane:
 

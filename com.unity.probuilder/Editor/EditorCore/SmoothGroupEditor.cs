@@ -310,19 +310,20 @@ namespace UnityEditor.ProBuilder
 		GUIContent m_BreakSmoothingContent = null;
 		GUIContent m_SelectFacesWithSmoothGroupSelectionContent = null;
 		Dictionary<ProBuilderMesh, SmoothGroupData> m_SmoothGroups = new Dictionary<ProBuilderMesh, SmoothGroupData>();
-		static bool s_ShowPreview = false;
-		static bool s_ShowNormals = false;
+
 		static bool s_IsMovingVertices = false;
-		static bool s_ShowHelp = false;
-		static float s_NormalsSize = 0.1f;
-		static float s_PreviewOpacity = .5f;
-		static bool s_PreviewDither = false;
-		static bool s_ShowSettings = false;
+
+		static Pref<bool> s_ShowPreview = new Pref<bool>("smoothing.showPreview", false);
+		static Pref<bool> s_ShowNormals = new Pref<bool>("smoothing.showNormals", false);
+		static Pref<bool> s_ShowHelp = new Pref<bool>("smoothing.showHelp", false);
+		static Pref<float> s_NormalsSize = new Pref<float>("smoothing.NormalsSize", 0.1f);
+		static Pref<float> s_PreviewOpacity = new Pref<float>("smoothing.PreviewOpacity", .5f);
+		static Pref<bool> s_PreviewDither = new Pref<bool>("smoothing.previewDither", false);
+		static Pref<bool> s_ShowSettings = new Pref<bool>("smoothing.showSettings", false);
 
 		public static void MenuOpenSmoothGroupEditor()
 		{
-			bool isUtility = PreferencesInternal.GetBool("pb_SmoothGroupEditor::m_IsWindowUtility", true);
-			GetWindow<SmoothGroupEditor>(isUtility, "Smooth Group Editor", true);
+			GetWindow<SmoothGroupEditor>("Smooth Group Editor");
 		}
 
 		void OnEnable()
@@ -339,13 +340,8 @@ namespace UnityEditor.ProBuilder
 			ProBuilderMesh.elementSelectionChanged += OnElementSelectionChanged;
 			ProBuilderEditor.beforeMeshModification += OnBeginVertexMovement;
 			ProBuilderEditor.afterMeshModification += OnFinishVertexMovement;
-			this.autoRepaintOnSceneChange = true;
+			autoRepaintOnSceneChange = true;
 			m_HelpIcon = new GUIContent(IconUtility.GetIcon("Toolbar/Help"), "Open Documentation");
-			s_ShowPreview = PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_ShowPreview", false);
-			s_ShowNormals = PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_DrawNormals", false);
-			s_NormalsSize = PreferencesInternal.GetFloat("pb_SmoothingGroupEditor::m_NormalsSize", .1f);
-			s_PreviewOpacity = PreferencesInternal.GetFloat("pb_SmoothingGroupEditor::m_PreviewOpacity", .5f);
-			s_PreviewDither = PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_PreviewDither", false);
 			m_BreakSmoothingContent = new GUIContent(IconUtility.GetIcon("Toolbar/Face_BreakSmoothing"),
 				"Clear the selected faces of their smoothing groups");
 			m_SelectFacesWithSmoothGroupSelectionContent = new GUIContent(IconUtility.GetIcon("Toolbar/Selection_SelectBySmoothingGroup"),
@@ -406,13 +402,6 @@ namespace UnityEditor.ProBuilder
 				data.CacheSelected(pb);
 		}
 
-		static void SetWindowIsUtility(bool isUtility)
-		{
-			PreferencesInternal.SetBool("pb_SmoothGroupEditor::m_IsWindowUtility", isUtility);
-			GetWindow<SmoothGroupEditor>().Close();
-			MenuOpenSmoothGroupEditor();
-		}
-
 		void OnGUI()
 		{
 			DoContextMenu();
@@ -421,27 +410,21 @@ namespace UnityEditor.ProBuilder
 
 			if (GUILayout.Button("Settings",
 				s_ShowSettings ? UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
-				s_ShowSettings = !s_ShowSettings;
+				s_ShowSettings.SetValue(!s_ShowSettings, true);
 
 			if (GUILayout.Button("Preview",
 				s_ShowPreview ? UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
-			{
-				s_ShowPreview = !s_ShowPreview;
-				PreferencesInternal.SetBool("pb_SmoothingGroupEditor::m_ShowPreview", s_ShowPreview);
-			}
+				s_ShowPreview.SetValue(!s_ShowPreview, true);
 
 			if (GUILayout.Button("Normals",
 				s_ShowNormals ? UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
-			{
-				s_ShowNormals = !s_ShowNormals;
-				PreferencesInternal.SetBool("pb_SmoothingGroupEditor::m_DrawNormals", s_ShowNormals);
-			}
+				s_ShowNormals.SetValue(!s_ShowNormals, true);
 
 			if (s_ShowNormals)
 			{
 				EditorGUI.BeginChangeCheck();
 
-				s_NormalsSize = GUILayout.HorizontalSlider(
+				s_NormalsSize.value = GUILayout.HorizontalSlider(
 					s_NormalsSize,
 					.001f,
 					1f,
@@ -450,7 +433,8 @@ namespace UnityEditor.ProBuilder
 
 				if (EditorGUI.EndChangeCheck())
 				{
-					PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_NormalsSize", s_NormalsSize);
+					Settings.Save();
+
 					foreach (var kvp in m_SmoothGroups)
 						kvp.Value.RebuildNormalsMesh(kvp.Key);
 					SceneView.RepaintAll();
@@ -460,7 +444,7 @@ namespace UnityEditor.ProBuilder
 			GUILayout.FlexibleSpace();
 
 			if(GUILayout.Button(m_HelpIcon, UI.EditorStyles.toolbarHelpIcon))
-				s_ShowHelp = !s_ShowHelp;
+				s_ShowHelp.SetValue(!s_ShowHelp, true);
 			GUILayout.EndHorizontal();
 
 			if (s_ShowSettings)
@@ -471,13 +455,12 @@ namespace UnityEditor.ProBuilder
 
 				EditorGUI.BeginChangeCheck();
 
-				s_PreviewOpacity = EditorGUILayout.Slider("Preview Opacity", s_PreviewOpacity, .001f, 1f);
-				s_PreviewDither = EditorGUILayout.Toggle("Preview Dither", s_PreviewDither);
+				s_PreviewOpacity.value = EditorGUILayout.Slider("Preview Opacity", s_PreviewOpacity, .001f, 1f);
+				s_PreviewDither.value = EditorGUILayout.Toggle("Preview Dither", s_PreviewDither);
 
 				if (EditorGUI.EndChangeCheck())
 				{
-					PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_PreviewOpacity", s_PreviewOpacity);
-					PreferencesInternal.SetBool("pb_SmoothingGroupEditor::m_PreviewDither", s_PreviewDither);
+					Settings.Save();
 					smoothPreviewMaterial.SetFloat("_Opacity", s_PreviewOpacity);
 					smoothPreviewMaterial.SetFloat("_Dither", s_PreviewDither ? 1f : 0f);
 					SceneView.RepaintAll();

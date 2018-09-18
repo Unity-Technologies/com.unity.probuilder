@@ -19,7 +19,7 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_Export", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
+		public override TooltipContent tooltip { get { return m_Tooltip; } }
 		protected override bool hasFileMenuEntry{ get { return false; } }
 
 		GUIContent gc_ExportFormat = new GUIContent("Export Format", "The type of file to export the current selection as.");
@@ -32,26 +32,27 @@ namespace UnityEditor.ProBuilder.Actions
 		GUIContent gc_ObjTextureOffsetScale = new GUIContent("Texture Offset, Scale", "Write texture map offset and scale to the material library. Not all 3D modeling applications support this specificiation, and some will fail to load materials that define these values.");
 		GUIContent gc_ObjQuads = new GUIContent("Export Quads", "Where possible, faces will be exported as quads instead of triangles. Note that this can result in a larger exported mesh (ProBuilder will not merge shared vertices with this option enabled).");
 
-		// Options for each export format
-		bool m_ExportRecursive;
-		bool m_ExportAsGroup;
+		Pref<ExportFormat> m_ExportFormat = new Pref<ExportFormat>("export.format", k_DefaultFormat);
+
+		Pref<bool> m_ExportRecursive = new Pref<bool>("export.exportRecursive", false);
+		Pref<bool> m_ExportAsGroup = new Pref<bool>("export.exportAsGroup", true);
 
 		// obj specific
-		bool m_ObjExportRightHanded;
-		bool m_ObjExportCopyTextures;
-		bool m_ObjApplyTransform;
-		bool m_ObjExportVertexColors;
-		bool m_ObjTextureOffsetScale;
-		bool m_ObjQuads;
+		Pref<bool> m_ObjExportRightHanded = new Pref<bool>("export.objExportRightHanded", true);
+		Pref<bool> m_ObjExportCopyTextures = new Pref<bool>("export.objExportCopyTextures", true);
+		Pref<bool> m_ObjApplyTransform = new Pref<bool>("export.objApplyTransform", true);
+		Pref<bool> m_ObjExportVertexColors = new Pref<bool>("export.objExportVertexColors", false);
+		Pref<bool> m_ObjTextureOffsetScale = new Pref<bool>("export.objTextureOffsetScale", false);
+		Pref<bool> m_ObjQuads = new Pref<bool>("export.objQuads", true);
 
 		// stl specific
-		FileType m_StlExportFormat = FileType.Ascii;
+		Pref<FileType> m_StlExportFormat = new Pref<FileType>("export.stlExportFormat", FileType.Ascii);
 
 		// ply specific
-		bool m_PlyExportIsRightHanded;
-		bool m_PlyApplyTransform;
-		bool m_PlyQuads;
-		bool m_PlyNGons;
+		Pref<bool> m_PlyExportIsRightHanded = new Pref<bool>("export.plyExportIsRightHanded", true);
+		Pref<bool> m_PlyApplyTransform = new Pref<bool>("export.plyApplyTransform", true);
+		Pref<bool> m_PlyQuads = new Pref<bool>("export.plyQuads", true);
+		Pref<bool> m_PlyNGons = new Pref<bool>("export.plyNGons", false);
 
 		public enum ExportFormat
 		{
@@ -63,39 +64,11 @@ namespace UnityEditor.ProBuilder.Actions
 
 		const ExportFormat k_DefaultFormat = ExportFormat.Obj;
 
-		ExportFormat m_ExportFormat = k_DefaultFormat;
-
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent m_Tooltip = new TooltipContent
 		(
 			"Export",
 			"Export the selected ProBuilder objects as a model file."
 		);
-
-		public Export()
-		{
-			m_ExportFormat = (ExportFormat) PreferencesInternal.GetInt("pbDefaultExportFormat", (int) k_DefaultFormat);
-
-			// Recursively select meshes in selection (ie, use GetComponentsInChildren).
-			m_ExportRecursive = PreferencesInternal.GetBool("pbExportRecursive", false);
-			m_ExportAsGroup = PreferencesInternal.GetBool("pbExportAsGroup", true);
-
-			// obj options
-			m_ObjExportRightHanded 	= PreferencesInternal.GetBool("pbObjExportRightHanded", true);
-			m_ObjApplyTransform 	= PreferencesInternal.GetBool("pbObjApplyTransform", true);
-			m_ObjExportCopyTextures = PreferencesInternal.GetBool("pbObjExportCopyTextures", true);
-			m_ObjExportVertexColors = PreferencesInternal.GetBool("pbObjExportVertexColors", false);
-			m_ObjTextureOffsetScale = PreferencesInternal.GetBool("pbObjTextureOffsetScale", false);
-			m_ObjQuads 				= PreferencesInternal.GetBool("pbObjQuads", true);
-
-			// stl options
-			m_StlExportFormat = (Parabox.STL.FileType) PreferencesInternal.GetInt("pbStlFormat", (int) Parabox.STL.FileType.Ascii);
-
-			// PLY options
-			m_PlyExportIsRightHanded = PreferencesInternal.GetBool("pbPlyExportIsRightHanded", true);
-			m_PlyApplyTransform = PreferencesInternal.GetBool("pbPlyApplyTransform", true);
-			m_PlyQuads = PreferencesInternal.GetBool("pbPlyQuads", true);
-			m_PlyNGons = PreferencesInternal.GetBool("pbPlyNGons", false);
-		}
 
 		public override bool hidden
 		{
@@ -117,19 +90,15 @@ namespace UnityEditor.ProBuilder.Actions
 			GUILayout.Label("Export Settings", EditorStyles.boldLabel);
 
 			EditorGUI.BeginChangeCheck();
-			m_ExportFormat = (ExportFormat) EditorGUILayout.EnumPopup(gc_ExportFormat, m_ExportFormat);
-			if(EditorGUI.EndChangeCheck())
-				PreferencesInternal.SetInt("pbDefaultExportFormat", (int) m_ExportFormat);
 
-			m_ExportRecursive = EditorGUILayout.Toggle(gc_ExportRecursive, m_ExportRecursive);
+			m_ExportFormat.value = (ExportFormat) EditorGUILayout.EnumPopup(gc_ExportFormat, m_ExportFormat);
+
+			m_ExportRecursive.value = EditorGUILayout.Toggle(gc_ExportRecursive, m_ExportRecursive);
 
 			if( m_ExportFormat != ExportFormat.Asset &&
 				m_ExportFormat != ExportFormat.Stl )
 			{
-				EditorGUI.BeginChangeCheck();
-				m_ExportAsGroup = EditorGUILayout.Toggle(gc_ExportAsGroup, m_ExportAsGroup);
-				if(EditorGUI.EndChangeCheck())
-					PreferencesInternal.SetBool("pbExportAsGroup", m_ExportAsGroup);
+				m_ExportAsGroup.value = EditorGUILayout.Toggle(gc_ExportAsGroup, m_ExportAsGroup);
 			}
 
 			if(m_ExportFormat == ExportFormat.Obj)
@@ -139,6 +108,9 @@ namespace UnityEditor.ProBuilder.Actions
 			else if(m_ExportFormat == ExportFormat.Ply)
 				PlyExportOptions();
 
+			if(EditorGUI.EndChangeCheck())
+				Settings.Save();
+
 			GUILayout.FlexibleSpace();
 
 			if(GUILayout.Button("Export"))
@@ -147,71 +119,39 @@ namespace UnityEditor.ProBuilder.Actions
 
 		void ObjExportOptions()
 		{
-			EditorGUI.BeginChangeCheck();
-
 			EditorGUI.BeginDisabledGroup(m_ExportAsGroup);
 
 			if(m_ExportAsGroup)
 				EditorGUILayout.Toggle("Apply Transforms", true);
 			else
-				m_ObjApplyTransform = EditorGUILayout.Toggle(gc_ObjApplyTransform, m_ObjApplyTransform);
+				m_ObjApplyTransform.value = EditorGUILayout.Toggle(gc_ObjApplyTransform, m_ObjApplyTransform);
+
 			EditorGUI.EndDisabledGroup();
 
-			m_ObjExportRightHanded = EditorGUILayout.Toggle(gc_ObjExportRightHanded, m_ObjExportRightHanded);
-			m_ObjExportCopyTextures = EditorGUILayout.Toggle(gc_ObjExportCopyTextures, m_ObjExportCopyTextures);
-			m_ObjExportVertexColors = EditorGUILayout.Toggle(gc_ObjExportVertexColors, m_ObjExportVertexColors);
-			m_ObjTextureOffsetScale = EditorGUILayout.Toggle(gc_ObjTextureOffsetScale, m_ObjTextureOffsetScale);
-			m_ObjQuads = EditorGUILayout.Toggle(gc_ObjQuads, m_ObjQuads);
-
-			if(EditorGUI.EndChangeCheck())
-			{
-				PreferencesInternal.SetBool("pbObjExportRightHanded", m_ObjExportRightHanded);
-				PreferencesInternal.SetBool("pbObjApplyTransform", m_ObjApplyTransform);
-				PreferencesInternal.SetBool("pbObjExportCopyTextures", m_ObjExportCopyTextures);
-				PreferencesInternal.SetBool("pbObjExportVertexColors", m_ObjExportVertexColors);
-				PreferencesInternal.SetBool("pbObjTextureOffsetScale", m_ObjTextureOffsetScale);
-				PreferencesInternal.SetBool("pbObjQuads", m_ObjQuads);
-			}
+			m_ObjExportRightHanded.value = EditorGUILayout.Toggle(gc_ObjExportRightHanded, m_ObjExportRightHanded);
+			m_ObjExportCopyTextures.value = EditorGUILayout.Toggle(gc_ObjExportCopyTextures, m_ObjExportCopyTextures);
+			m_ObjExportVertexColors.value = EditorGUILayout.Toggle(gc_ObjExportVertexColors, m_ObjExportVertexColors);
+			m_ObjTextureOffsetScale.value = EditorGUILayout.Toggle(gc_ObjTextureOffsetScale, m_ObjTextureOffsetScale);
+			m_ObjQuads.value = EditorGUILayout.Toggle(gc_ObjQuads, m_ObjQuads);
 		}
 
-		private void StlExportOptions()
+		void StlExportOptions()
 		{
-			EditorGUI.BeginChangeCheck();
-
-			m_StlExportFormat = (Parabox.STL.FileType) EditorGUILayout.EnumPopup("Stl Format", m_StlExportFormat);
-
-			if(EditorGUI.EndChangeCheck())
-				PreferencesInternal.SetInt("pbStlFormat", (int) m_StlExportFormat);
+			m_StlExportFormat.value = (Parabox.STL.FileType) EditorGUILayout.EnumPopup("Stl Format", m_StlExportFormat);
 		}
 
-		private void PlyExportOptions()
+		void PlyExportOptions()
 		{
-			EditorGUI.BeginChangeCheck();
-
 			EditorGUI.BeginDisabledGroup(m_ExportAsGroup);
+
 			if(m_ExportAsGroup)
 				EditorGUILayout.Toggle("Apply Transforms", true);
 			else
-				m_PlyApplyTransform = EditorGUILayout.Toggle(gc_ObjApplyTransform, m_PlyApplyTransform);
+				m_PlyApplyTransform.value = EditorGUILayout.Toggle(gc_ObjApplyTransform, m_PlyApplyTransform);
 			EditorGUI.EndDisabledGroup();
 
-			m_PlyExportIsRightHanded = EditorGUILayout.Toggle("Right Handed", m_PlyExportIsRightHanded);
-			m_PlyQuads = EditorGUILayout.Toggle("Quads", m_PlyQuads);
-
-			// @todo ProBuilder N-Gon importer
-			// m_PlyNGons = EditorGUILayout.Toggle("N-Gons", m_PlyNGons);
-			// if(m_PlyNGons)
-			// {
-			// 	EditorGUILayout.HelpBox("Most 3D modeling programs will not import NGons correctly.", MessageType.Warning);
-			// }
-
-			if(EditorGUI.EndChangeCheck())
-			{
-				PreferencesInternal.SetBool("pbPlyExportIsRightHanded", m_PlyExportIsRightHanded);
-				PreferencesInternal.SetBool("pbPlyApplyTransform", m_PlyApplyTransform);
-				PreferencesInternal.SetBool("pbPlyQuads", m_PlyQuads);
-				PreferencesInternal.SetBool("pbPlyNGons", m_PlyNGons);
-			}
+			m_PlyExportIsRightHanded.value = EditorGUILayout.Toggle("Right Handed", m_PlyExportIsRightHanded);
+			m_PlyQuads.value = EditorGUILayout.Toggle("Quads", m_PlyQuads);
 		}
 
 		public override ActionResult DoAction()

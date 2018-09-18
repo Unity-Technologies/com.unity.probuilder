@@ -1,12 +1,7 @@
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
-using EditorGUILayout = UnityEditor.EditorGUILayout;
-using EditorStyles = UnityEditor.EditorStyles;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -34,6 +29,8 @@ namespace UnityEditor.ProBuilder.Actions
 		);
 
 		GUIContent gc_restrictToSelection = new GUIContent("Current Selection", "Optionally restrict the matches to only those faces on currently selected objects.");
+
+		Pref<bool> m_RestrictToSelectedObjects = new Pref<bool>("SelectMaterial.restrictToSelectedObjects", false, Settings.Scope.Project);
 
 		public override bool enabled
 		{
@@ -69,11 +66,10 @@ namespace UnityEditor.ProBuilder.Actions
 
 			EditorGUI.BeginChangeCheck();
 
-			bool restrictToSelection = PreferencesInternal.GetBool("pb_restrictSelectMaterialToCurrentSelection");
-			restrictToSelection = EditorGUILayout.Toggle(gc_restrictToSelection, restrictToSelection);
+			m_RestrictToSelectedObjects.value = EditorGUILayout.Toggle(gc_restrictToSelection, m_RestrictToSelectedObjects);
 
 			if (EditorGUI.EndChangeCheck())
-				PreferencesInternal.SetBool("pb_restrictSelectMaterialToCurrentSelection", restrictToSelection);
+				Settings.Save();
 
 			GUILayout.FlexibleSpace();
 
@@ -88,7 +84,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			UndoUtility.RecordSelection(MeshSelection.TopInternal(), "Select Faces with Material");
 
-			bool restrictToSelection = PreferencesInternal.GetBool("pb_restrictSelectMaterialToCurrentSelection");
+			bool restrictToSelection = m_RestrictToSelectedObjects;
 
 			HashSet<Material> sel = new HashSet<Material>(MeshSelection.TopInternal().SelectMany(x => x.selectedFacesInternal.Select(y => y.material).Where(z => z != null)));
 			List<GameObject> newSelection = new List<GameObject>();

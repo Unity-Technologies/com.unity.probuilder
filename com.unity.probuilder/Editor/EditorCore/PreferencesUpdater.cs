@@ -7,6 +7,7 @@ namespace UnityEditor.ProBuilder
 {
 	static class PreferencesUpdater
 	{
+		static Pref<SemVer> s_PreferencesVersion = new Pref<SemVer>("preferences.version", new SemVer(), Settings.Scope.Project);
 		static readonly SemVer k_ProBuilder_4_0_0 = new SemVer(4,0,0);
 
 		/// <summary>
@@ -15,12 +16,12 @@ namespace UnityEditor.ProBuilder
 		public static void CheckEditorPrefsVersion()
 		{
 			// this exists to force update preferences when updating packages
-			var stored = new SemVer(PreferencesInternal.GetString(PreferenceKeys.pbEditorPrefVersion)).MajorMinorPatch;
-			var current = Version.currentInfo.MajorMinorPatch;
+			var stored = s_PreferencesVersion.value;
+			var current = Version.currentInfo;
 
 			if (!stored.Equals(current))
 			{
-				PreferencesInternal.SetString(PreferenceKeys.pbEditorPrefVersion, current.ToString("M.m.p"), PreferenceLocation.Global);
+				s_PreferencesVersion.SetValue(current);
 
 				if (stored < k_ProBuilder_4_0_0)
 				{
@@ -111,8 +112,36 @@ namespace UnityEditor.ProBuilder
 			PreferencesInternal.DeleteKey(PreferenceKeys.pbDefaultStaticFlags);
 			PreferencesInternal.DeleteKey(PreferenceKeys.pbShowPreselectionHighlight);
 
-			PreferencesInternal.DeleteKey("ProBuilder_AboutWindowIdentifier");
 
+			PreferencesInternal.DeleteKey("ProBuilder_AboutWindowIdentifier");
+			PreferencesInternal.DeleteKey("pb_UVTemplate_imageSize");
+			PreferencesInternal.DeleteKey("pb_UVTemplate_lineColor");
+			PreferencesInternal.DeleteKey("pb_UVTemplate_backgroundColor");
+			PreferencesInternal.DeleteKey("pb_UVTemplate_transparentBackground");
+			PreferencesInternal.DeleteKey("pb_UVTemplate_hideGrid");
+			PreferencesInternal.DeleteKey("pb_Log::m_LogFilePath");
+			PreferencesInternal.DeleteKey("pb_Log::m_Output");
+			PreferencesInternal.DeleteKey("pb_Log::m_LogLevel");
+			PreferencesInternal.DeleteKey("pb_SmoothingGroupEditor::m_ShowPreview");
+			PreferencesInternal.DeleteKey("pb_SmoothingGroupEditor::m_DrawNormals");
+			PreferencesInternal.DeleteKey("pb_SmoothingGroupEditor::m_NormalsSize");
+			PreferencesInternal.DeleteKey("pb_SmoothingGroupEditor::m_PreviewOpacity");
+			PreferencesInternal.DeleteKey("pb_SmoothingGroupEditor::m_PreviewDither");
+
+			PreferencesInternal.GetInt("pbDefaultExportFormat");
+			PreferencesInternal.GetBool("pbExportRecursive");
+			PreferencesInternal.GetBool("pbExportAsGroup");
+			PreferencesInternal.GetBool("pbObjExportRightHanded");
+			PreferencesInternal.GetBool("pbObjApplyTransform");
+			PreferencesInternal.GetBool("pbObjExportCopyTextures");
+			PreferencesInternal.GetBool("pbObjExportVertexColors");
+			PreferencesInternal.GetBool("pbObjTextureOffsetScale");
+			PreferencesInternal.GetBool("pbObjQuads");
+			PreferencesInternal.GetInt("pbStlFormat");
+			PreferencesInternal.GetBool("pbPlyExportIsRightHanded");
+			PreferencesInternal.GetBool("pbPlyApplyTransform");
+			PreferencesInternal.GetBool("pbPlyQuads");
+			PreferencesInternal.GetBool("pbPlyNGons");
 #pragma warning restore 612, 618
 		}
 	}

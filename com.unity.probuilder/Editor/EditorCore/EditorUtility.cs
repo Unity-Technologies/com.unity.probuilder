@@ -323,10 +323,7 @@ namespace UnityEditor.ProBuilder
 					break;
 			}
 
-			var unwrapParamaters = PreferencesInternal.GetValue<UnwrapParameters>(PreferenceKeys.defaultUnwrapParameters);
-
-			if (unwrapParamaters != null)
-				pb.unwrapParameters = unwrapParamaters;
+			var unwrapParamaters = Lightmapping.s_UnwrapParameters;
 
 			pb.Optimize();
 

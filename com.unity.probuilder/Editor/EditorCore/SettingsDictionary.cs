@@ -103,6 +103,9 @@ namespace UnityEngine.ProBuilder
 
 		public void OnBeforeSerialize()
 		{
+			if (m_DictionaryValues == null)
+				return;
+			
 			m_DictionaryValues.Clear();
 
 			foreach (var type in dictionary)

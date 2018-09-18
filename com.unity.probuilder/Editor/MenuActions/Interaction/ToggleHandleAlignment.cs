@@ -9,20 +9,24 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	sealed class ToggleHandleAlignment : MenuAction
 	{
-		[SerializeField] int count = 0;
-		[SerializeField] Texture2D[] icons = null;
-		int handleAlignment { get { return ProBuilderEditor.instance == null ? 0 : (int)ProBuilderEditor.instance.handleAlignment; } }
+		Texture2D[] icons = null;
+
+		HandleAlignment handleAlignment
+		{
+			get { return ProBuilderEditor.instance == null ? HandleAlignment.World : ProBuilderEditor.instance.m_HandleAlignment; }
+		}
+
 		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return icons[handleAlignment]; } }
+		public override Texture2D icon { get { return icons[(int) handleAlignment]; } }
 		public override int toolbarPriority { get { return 0; } }
 
 		public override TooltipContent tooltip
 		{
 			get
 			{
-				if(handleAlignment == (int) HandleAlignment.World)
+				if(handleAlignment == HandleAlignment.World)
 					return _tooltip_world;
-				if(handleAlignment == (int) HandleAlignment.Local)
+				if(handleAlignment == HandleAlignment.Local)
 					return _tooltip_local;
 				else
 					return _tooltip_plane;
@@ -54,15 +58,13 @@ namespace UnityEditor.ProBuilder.Actions
 				IconUtility.GetIcon("Toolbar/HandleAlign_Local", IconSkin.Pro),
 				IconUtility.GetIcon("Toolbar/HandleAlign_Plane", IconSkin.Pro),
 			};
-
-			this.count = icons.Length;
 		}
 
 		public override ActionResult DoAction()
 		{
-			int current = handleAlignment + 1;
+			int current = (int) handleAlignment + 1;
 
-			if(current >= count)
+			if(current >= System.Enum.GetValues(typeof(HandleAlignment)).Length)
 				current = 0;
 
 			ProBuilderEditor.instance.SetHandleAlignment( (HandleAlignment)current );

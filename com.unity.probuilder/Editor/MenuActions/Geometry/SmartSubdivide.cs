@@ -52,10 +52,10 @@ namespace UnityEditor.ProBuilder.Actions
 			switch (ProBuilderEditor.componentMode)
 			{
 				case ComponentMode.Edge:
-					return MenuCommands.MenuSubdivideEdge(MeshSelection.TopInternal());
+					return EditorToolbarLoader.GetInstance<SubdivideEdges>().DoAction();
 
 				default:
-					return MenuCommands.MenuSubdivideFace(MeshSelection.TopInternal());
+					return EditorToolbarLoader.GetInstance<SubdivideFaces>().DoAction();
 			}
 		}
 	}
