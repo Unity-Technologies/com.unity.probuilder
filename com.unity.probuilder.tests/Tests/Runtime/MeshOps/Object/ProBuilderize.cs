@@ -67,7 +67,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Object
 			TestUtility.SaveAssetTemplate(result.mesh, "imported-cube-triangles");
 #endif
 
-			TestUtility.MeshesAreEqual(TestUtility.GetAssetTemplate<Mesh>("imported-cube-triangles"), result.mesh);
+			TestUtility.AssertMeshesAreEqual(TestUtility.GetAssetTemplate<Mesh>("imported-cube-triangles"), result.mesh);
 
 			UObject.DestroyImmediate(result);
 
@@ -95,7 +95,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Object
 			TestUtility.SaveAssetTemplate(result.mesh, "imported-cube-quads");
 #endif
 
-			TestUtility.MeshesAreEqual(TestUtility.GetAssetTemplate<Mesh>("imported-cube-quads"), result.mesh);
+			TestUtility.AssertMeshesAreEqual(TestUtility.GetAssetTemplate<Mesh>("imported-cube-quads"), result.mesh);
 			UObject.DestroyImmediate(result);
 			AssetDatabase.DeleteAsset(TestUtility.TemporarySavedAssetsDirectory + "maya-cube-quads.fbx");
 		}

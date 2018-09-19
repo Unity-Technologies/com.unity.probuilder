@@ -241,7 +241,7 @@ namespace UnityEngine.ProBuilder.Test
 		/// <param name="expected"></param>
 		/// <param name="result"></param>
 		/// <returns></returns>
-		public static bool MeshesAreEqual(Mesh expected, Mesh result)
+		public static bool AssertMeshesAreEqual(Mesh expected, Mesh result)
 		{
 			int vertexCount = expected.vertexCount;
 			int subMeshCount = expected.subMeshCount;
@@ -270,6 +270,54 @@ namespace UnityEngine.ProBuilder.Test
 
 				for (int n = 0; n < indexCount; n++)
 					Assert.AreEqual(leftIndices[n], rightIndices[n], "Index mismatch");
+			}
+
+			return true;
+		}
+
+		/// <summary>
+		/// Compare two meshes for value-wise inequality.
+		/// </summary>
+		/// <param name="expected"></param>
+		/// <param name="result"></param>
+		/// <returns></returns>
+		public static bool MeshesAreEqual(Mesh expected, Mesh result)
+		{
+			int vertexCount = expected.vertexCount;
+			int subMeshCount = expected.subMeshCount;
+
+			if(vertexCount != result.vertexCount)
+				return false;
+
+			if (subMeshCount != result.subMeshCount)
+				return false;
+
+			Vertex[] leftVertices = expected.GetVertices();
+			Vertex[] rightVertices = result.GetVertices();
+
+			for (int i = 0; i < vertexCount; i++)
+				if(!leftVertices[i].Equals(rightVertices[i]))
+					return false;
+
+			List<int> leftIndices = new List<int>();
+			List<int> rightIndices = new List<int>();
+
+			for (int i = 0; i < subMeshCount; i++)
+			{
+				uint indexCount = expected.GetIndexCount(i);
+
+				if (expected.GetTopology(i) != result.GetTopology(i))
+					return false;
+
+				if (indexCount != result.GetIndexCount(i))
+					return false;
+
+				expected.GetIndices(leftIndices, i);
+				result.GetIndices(rightIndices, i);
+
+				for (int n = 0; n < indexCount; n++)
+					if (leftIndices[n] != rightIndices[n])
+						return false;
 			}
 
 			return true;
