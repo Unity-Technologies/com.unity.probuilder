@@ -16,35 +16,35 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		Pref<bool> m_SelectEntirePath = new Pref<bool>("FillHole.selectEntirePath", true);
 
-		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_FillHole", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Geometry; }
+		}
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Edge_FillHole", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return s_Tooltip; }
+		}
+
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Fill Hole",
 			@"Create a new face connecting all selected vertices."
 		);
 
-		public override bool enabled
+		protected override SelectMode validSelectModes
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.componentMode != ComponentMode.Face &&
-					MeshSelection.TopInternal().Length > 0;
-			}
+			get { return SelectMode.Edge | SelectMode.Vertex; }
 		}
 
-		public override bool hidden
+		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance == null ||
-					ProBuilderEditor.editLevel != EditLevel.Geometry ||
-					ProBuilderEditor.componentMode == ComponentMode.Face;
-			}
+			get { return base.enabled && (ProBuilderEditor.instance.selectedEdgeCount > 0 || ProBuilderEditor.instance.selectedSharedVertexCount > 0); }
 		}
 
 		protected override MenuActionState optionsMenuState

@@ -6,10 +6,9 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// Defines what objects are selectable for the scene tool.
 	/// </summary>
-	public enum SelectMode
+	[System.Flags]
+	public enum SelectMode : ushort
 	{
-		// note: intentionally not marked as a flag for now
-
 		/// <summary>
 		/// No selection mode defined.
 		/// </summary>
@@ -33,7 +32,12 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Texture coordinates are selectable.
 		/// </summary>
-		Texture = 1 << 4
+		Texture = 1 << 4,
+
+		/// <summary>
+		/// Match any value.
+		/// </summary>
+		Any = 0xFFFF
 	}
 
 	/// <summary>

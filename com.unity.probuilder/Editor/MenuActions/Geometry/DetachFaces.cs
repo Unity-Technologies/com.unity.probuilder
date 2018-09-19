@@ -12,29 +12,22 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_Detach", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return m_Tooltip; } }
+		public override TooltipContent tooltip { get { return s_Tooltip; } }
 
-		static readonly TooltipContent m_Tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Detach Faces",
 			"Creates a new object (or submesh) from the selected faces."
 		);
 
-		public override bool enabled
+		protected override SelectMode validSelectModes
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					MeshSelection.TopInternal().Sum(x => x.selectedFaceCount) > 0;
-			}
+			get { return SelectMode.Face; }
 		}
 
-		public override bool hidden
+		public override bool enabled
 		{
-			get
-			{
-				return editLevel != EditLevel.Geometry || componentMode != ComponentMode.Face;
-			}
+			get { return base.enabled && ProBuilderEditor.instance.selectedFaceCount > 0; }
 		}
 
 		protected override MenuActionState optionsMenuState

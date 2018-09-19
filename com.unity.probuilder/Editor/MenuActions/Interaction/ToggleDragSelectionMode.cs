@@ -34,6 +34,10 @@ namespace UnityEditor.ProBuilder.Actions
 - [Subtract] Always subtract from the selection
 - [Difference] Invert the selection by the selected faces (Default)
 ");
+		protected override SelectMode validSelectModes
+		{
+			get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.Texture; }
+		}
 
 		public override string menuTitle
 		{
@@ -50,24 +54,6 @@ namespace UnityEditor.ProBuilder.Actions
 			modifier = (SelectionModifierBehavior) ((mode + 1) % len);
 			ProBuilderEditor.instance.LoadPrefs();
 			return new ActionResult(ActionResult.Status.Success, "Set Shift Drag Mode\n" + modifier);
-		}
-
-		public override bool enabled
-		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.editLevel == EditLevel.Geometry;
-			}
-		}
-
-		public override bool hidden
-		{
-			get
-			{
-				return ProBuilderEditor.instance == null ||
-					ProBuilderEditor.editLevel != EditLevel.Geometry;
-			}
 		}
 	}
 }

@@ -149,11 +149,12 @@ namespace UnityEditor.ProBuilder
 		// All selected pb_Objects
 		internal ProBuilderMesh[] selection = new ProBuilderMesh[0];
 
+		// todo Move selection count caches to MeshSelection
 		// Sum of all vertices selected
 		int m_SelectedVertexCount;
 
 		// Sum of all vertices selected, not counting duplicates on common positions
-		int m_SelectedVerticesCommon;
+		int m_SelectedSharedVertices;
 
 		// Sum of all faces selected
 		int m_SelectedFaceCount;
@@ -163,11 +164,12 @@ namespace UnityEditor.ProBuilder
 
 		// per-object selected element maxes
 		internal int selectedFaceCountObjectMax { get; private set; }
-		internal int selectedVertexCountObjectMax { get; private set; }
 		internal int selectedEdgeCountObjectMax { get; private set; }
+		internal int selectedVertexCountObjectMax { get; private set; }
+		internal int selectedSharedVertexCountObjectMax { get; private set; }
 
+		internal int selectedSharedVertexCount { get { return m_SelectedSharedVertices; } }
 		internal int selectedVertexCount { get { return m_SelectedVertexCount; } }
-		internal int selectedVertexCommonCount { get { return m_SelectedVerticesCommon; } }
 		internal int selectedFaceCount { get { return m_SelectedFaceCount; } }
 		internal int selectedEdgeCount { get { return m_SelectedEdgeCount; } }
 
@@ -1373,26 +1375,7 @@ namespace UnityEditor.ProBuilder
 			if (!used)
 			{
 				foreach (Shortcut cut in matches)
-				{
-					switch (editLevel)
-					{
-						case EditLevel.Top:
-							break;
-
-						case EditLevel.Texture:
-							goto case EditLevel.Geometry;
-
-						case EditLevel.Geometry:
-							used = GeoLevelShortcuts(cut);
-							break;
-					}
-
-					if (used)
-					{
-						usedShortcut = cut;
-						break;
-					}
-				}
+					used |= GeoLevelShortcuts(cut);
 			}
 
 			if (used)
@@ -1576,10 +1559,11 @@ namespace UnityEditor.ProBuilder
 			m_SelectedVertexCount = 0;
 			m_SelectedFaceCount = 0;
 			m_SelectedEdgeCount = 0;
-			m_SelectedVerticesCommon = 0;
+			m_SelectedSharedVertices = 0;
 
 			selectedFaceCountObjectMax = 0;
 			selectedVertexCountObjectMax = 0;
+			selectedSharedVertexCountObjectMax = 0;
 			selectedEdgeCountObjectMax = 0;
 
 			selection = InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms);
@@ -1608,7 +1592,7 @@ namespace UnityEditor.ProBuilder
 				if (mesh.selectedVertexCount > 0)
 				{
 					var shared = mesh.sharedVerticesInternal;
-					m_SelectedVerticesCommon += mesh.selectedSharedVerticesCount;
+					m_SelectedSharedVertices += mesh.selectedSharedVerticesCount;
 
 					foreach(var sharedVertex in mesh.selectedSharedVertices)
 					{
@@ -1620,11 +1604,12 @@ namespace UnityEditor.ProBuilder
 
 				selectedFacesInEditZone.Add(mesh, ElementSelection.GetNeighborFaces(mesh, mesh.selectedIndexesInternal));
 
-				m_SelectedVertexCount += mesh.selectedIndexesInternal.Length;
 				m_SelectedFaceCount += mesh.selectedFaceCount;
 				m_SelectedEdgeCount += mesh.selectedEdgeCount;
+				m_SelectedVertexCount += mesh.selectedIndexesInternal.Length;
 
 				selectedVertexCountObjectMax = System.Math.Max(selectedVertexCountObjectMax, mesh.selectedIndexesInternal.Length);
+				selectedSharedVertexCountObjectMax = System.Math.Max(selectedSharedVertexCountObjectMax, mesh.selectedSharedVerticesCount);
 				selectedFaceCountObjectMax = System.Math.Max(selectedFaceCountObjectMax, mesh.selectedFaceCount);
 				selectedEdgeCountObjectMax = System.Math.Max(selectedEdgeCountObjectMax, mesh.selectedEdgeCount);
 			}
@@ -1642,7 +1627,7 @@ namespace UnityEditor.ProBuilder
 
 			try
 			{
-				m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.Top(), componentMode);
+				m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.TopInternal(), selectMode);
 			}
 			catch
 			{
@@ -1661,7 +1646,7 @@ namespace UnityEditor.ProBuilder
 				MeshSelection.totalVertexCountOptimized,
 				m_SelectedFaceCount,
 				m_SelectedEdgeCount,
-				m_SelectedVerticesCommon,
+				m_SelectedSharedVertices,
 				m_SelectedVertexCount);
 		}
 
@@ -1715,7 +1700,7 @@ namespace UnityEditor.ProBuilder
 			UpdateSceneInfo();
 
 			// todo
-			m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.Top(), componentMode);
+			m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.Top(), selectMode);
 		}
 
 		internal void ClearElementSelection()

@@ -451,6 +451,17 @@ namespace UnityEditor.ProBuilder
 			#endif
 		}
 
+		internal static bool IsGeoMode(SelectMode mode)
+		{
+			return mode.HasFlag(SelectMode.Vertex | SelectMode.Edge | SelectMode.Face);
+		}
+
+		// HasFlag doesn't exist in .NET 3.5
+		internal static bool HasFlag(this SelectMode target, SelectMode value)
+		{
+			return (target & value) > 0;
+		}
+
 		internal static SelectMode GetSelectMode(EditLevel edit, ComponentMode component)
 		{
 			switch (edit)

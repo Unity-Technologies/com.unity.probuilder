@@ -13,36 +13,37 @@ namespace UnityEditor.ProBuilder.Actions
 	sealed class CollapseVertices : MenuAction
 	{
 		Pref<bool> m_CollapseToFirst = new Pref<bool>("CollapseVertices.collapseToFirst", false);
-		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Vert_Collapse", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Geometry; }
+		}
+
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Vert_Collapse", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return s_Tooltip; }
+		}
+
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Collapse Vertices",
 			@"Merge all selected vertices into a single vertex, centered at the average of all selected points.",
 			keyCommandAlt, 'C'
 		);
 
-		public override bool enabled
+		protected override SelectMode validSelectModes
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.componentMode == ComponentMode.Vertex &&
-					MeshSelection.TopInternal().Any(x => x.selectedSharedVerticesCount > 1);
-			}
+			get { return SelectMode.Vertex; }
 		}
 
-		public override bool hidden
+		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance == null ||
-					ProBuilderEditor.editLevel != EditLevel.Geometry ||
-					ProBuilderEditor.componentMode != ComponentMode.Vertex;
-			}
+			get { return base.enabled && ProBuilderEditor.instance.selectedVertexCountObjectMax > 1; }
 		}
 
 		protected override MenuActionState optionsMenuState
@@ -60,12 +61,12 @@ namespace UnityEditor.ProBuilder.Actions
 
 			m_CollapseToFirst.value = EditorGUILayout.Toggle("Collapse To First", m_CollapseToFirst);
 
-			if(EditorGUI.EndChangeCheck())
+			if (EditorGUI.EndChangeCheck())
 				Settings.Save();
 
 			GUILayout.FlexibleSpace();
 
-			if(GUILayout.Button("Collapse Vertices"))
+			if (GUILayout.Button("Collapse Vertices"))
 				DoAction();
 		}
 
@@ -73,7 +74,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			var selection = MeshSelection.TopInternal();
 
-			if(selection == null || selection.Length < 1)
+			if (selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
 
 			bool success = false;
@@ -82,15 +83,15 @@ namespace UnityEditor.ProBuilder.Actions
 
 			UndoUtility.RegisterCompleteObjectUndo(selection, "Collapse Vertices");
 
-			foreach(ProBuilderMesh mesh in selection)
+			foreach (ProBuilderMesh mesh in selection)
 			{
-				if(mesh.selectedIndexesInternal.Length > 1)
+				if (mesh.selectedIndexesInternal.Length > 1)
 				{
 					int newIndex = mesh.MergeVertices(mesh.selectedIndexesInternal, collapseToFirst);
 
 					success = newIndex > -1;
 
-					if(success)
+					if (success)
 						mesh.SetSelectedVertices(new int[] { newIndex });
 
 					mesh.ToMesh();
@@ -101,11 +102,10 @@ namespace UnityEditor.ProBuilder.Actions
 
 			ProBuilderEditor.Refresh();
 
-			if(success)
+			if (success)
 				return new ActionResult(ActionResult.Status.Success, "Collapse Vertices");
 
 			return new ActionResult(ActionResult.Status.Failure, "Collapse Vertices\nNo Vertices Selected");
 		}
 	}
 }
-

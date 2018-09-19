@@ -19,30 +19,27 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override TooltipContent tooltip
 		{
-			get { return _tooltip; }
+			get { return s_Tooltip; }
 		}
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Triangulate Faces",
 			"Break all selected faces down to triangles."
 		);
 
+		protected override SelectMode validSelectModes
+		{
+			get { return SelectMode.Face; }
+		}
+
 		public override bool enabled
 		{
 			get
 			{
-				return ProBuilderEditor.instance != null &&
-					editLevel == EditLevel.Geometry &&
-					MeshSelection.TopInternal().Sum(x => x.selectedFaceCount) > 0;
-			}
-		}
-
-		public override bool hidden
-		{
-			get
-			{
-				return editLevel != EditLevel.Geometry || componentMode != ComponentMode.Face;
+				return ProBuilderEditor.instance != null
+					&& ProBuilderEditor.selectMode.HasFlag(validSelectModes)
+					&& ProBuilderEditor.instance.selectedFaceCount > 0;
 			}
 		}
 

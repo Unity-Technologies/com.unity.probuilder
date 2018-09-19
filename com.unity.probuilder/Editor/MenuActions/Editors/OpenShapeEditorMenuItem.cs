@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder.Actions
 		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"New Shape Tool",
-			"Opens the Shape Editor window.\n\nThe Shape Editor is a window that allows you to interactively create new 3d primitves.",
+			"Opens the Shape Editor window.\n\nThe Shape Editor is a window that allows you to interactively create new 3d primitives.",
 			keyCommandSuper, keyCommandShift, 'K'
 		);
 

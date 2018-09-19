@@ -20,28 +20,29 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override TooltipContent tooltip
 		{
-			get { return _tooltip; }
+			get { return s_Tooltip; }
 		}
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Shrink Selection",
 			@"Removes elements on the edge of the current selection.",
 			keyCommandAlt, keyCommandShift, 'G'
 		);
 
+		protected override SelectMode validSelectModes
+		{
+			get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.Texture; }
+		}
+
 		public override bool enabled
 		{
 			get
 			{
-				return ProBuilderEditor.instance != null &&
-					MenuCommands.VerifyShrinkSelection(MeshSelection.TopInternal());
+				return ProBuilderEditor.instance != null
+					&& ProBuilderEditor.selectMode.HasFlag(validSelectModes)
+					&& MenuCommands.VerifyShrinkSelection(MeshSelection.TopInternal());
 			}
-		}
-
-		public override bool hidden
-		{
-			get { return editLevel != EditLevel.Geometry; }
 		}
 
 		public override ActionResult DoAction()

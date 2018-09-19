@@ -12,37 +12,27 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Bevel", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
+		public override TooltipContent tooltip { get { return s_Tooltip; } }
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Bevel",
 			@"Smooth the selected edges by adding a slanted face connecting the two adjacent faces."
 		);
 
+		protected override SelectMode validSelectModes
+		{
+			get { return SelectMode.Edge | SelectMode.Face; }
+		}
+
 		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.editLevel == EditLevel.Geometry &&
-					MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
-			}
+			get { return base.enabled && ProBuilderEditor.instance.selectedEdgeCount > 0; }
 		}
 
 		protected override MenuActionState optionsMenuState
 		{
 			get { return MenuActionState.VisibleAndEnabled; }
-		}
-
-		public override bool hidden
-		{
-			get
-			{
-				return ProBuilderEditor.instance == null ||
-					editLevel != EditLevel.Geometry ||
-					(componentMode & (ComponentMode.Face | ComponentMode.Edge)) == 0;
-			}
 		}
 
 		protected override void OnSettingsGUI()

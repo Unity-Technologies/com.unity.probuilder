@@ -1,9 +1,5 @@
 using UnityEngine;
-using UnityEditor;
-using System.Collections;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
-using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -15,7 +11,10 @@ namespace UnityEditor.ProBuilder.Actions
 			set { ProBuilderEditor.instance.m_DragSelectRectMode.value = value; }
 		}
 
-		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Selection; }
+		}
 
 		public override Texture2D icon
 		{
@@ -26,8 +25,21 @@ namespace UnityEditor.ProBuilder.Actions
 					: IconUtility.GetIcon("Toolbar/Selection_Rect_Intersect", IconSkin.Pro);
 			}
 		}
-		public override TooltipContent tooltip { get { return s_Tooltip; } }
-		public override int toolbarPriority { get { return 0; } }
+
+		public override TooltipContent tooltip
+		{
+			get { return s_Tooltip; }
+		}
+
+		public override int toolbarPriority
+		{
+			get { return 0; }
+		}
+
+		protected override SelectMode validSelectModes
+		{
+			get { return SelectMode.Edge | SelectMode.Face | SelectMode.Texture; }
+		}
 
 		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
@@ -50,19 +62,8 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			get
 			{
-				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.componentMode != ComponentMode.Vertex;
-			}
-		}
-
-		public override bool hidden
-		{
-			get
-			{
-				return ProBuilderEditor.instance == null ||
-					ProBuilderEditor.editLevel != EditLevel.Geometry ||
-					ProBuilderEditor.componentMode == ComponentMode.Vertex;
+				return ProBuilderEditor.instance != null
+					&& ProBuilderEditor.selectMode.HasFlag(SelectMode.Edge | SelectMode.Face | SelectMode.Texture);
 			}
 		}
 	}

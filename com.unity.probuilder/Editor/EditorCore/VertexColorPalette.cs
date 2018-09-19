@@ -167,11 +167,11 @@ namespace UnityEditor.ProBuilder
 
 			ProBuilderEditor editor = ProBuilderEditor.instance;
 
-			if (editor && ProBuilderEditor.editLevel == EditLevel.Geometry)
+			if (editor && ProBuilderEditor.selectMode.HasFlag(SelectMode.Vertex | SelectMode.Edge | SelectMode.Face) )
 			{
-				switch (ProBuilderEditor.componentMode)
+				switch (ProBuilderEditor.selectMode)
 				{
-					case ComponentMode.Face:
+					case SelectMode.Face:
 						foreach (ProBuilderMesh mesh in selection)
 						{
 							Color[] colors = mesh.GetColors();
@@ -182,8 +182,8 @@ namespace UnityEditor.ProBuilder
 							mesh.colors = colors;
 						}
 						break;
-					case ComponentMode.Edge:
-					case ComponentMode.Vertex:
+					case SelectMode.Edge:
+					case SelectMode.Vertex:
 						foreach (var mesh in selection)
 						{
 							Color[] colors = mesh.GetColors();

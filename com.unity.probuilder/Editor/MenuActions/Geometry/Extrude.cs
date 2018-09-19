@@ -4,6 +4,7 @@ using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
+	// The menu bar entry for Extrude delegates to Face/Edge as appropriate.
 	sealed class Extrude : MenuAction
 	{
 		public override ToolbarGroup @group
@@ -25,6 +26,11 @@ namespace UnityEditor.ProBuilder.Actions
 		public override TooltipContent tooltip
 		{
 			get { return s_Tooltip; }
+		}
+
+		protected override SelectMode validSelectModes
+		{
+			get { return SelectMode.Face | SelectMode.Edge; }
 		}
 
 		public override bool enabled

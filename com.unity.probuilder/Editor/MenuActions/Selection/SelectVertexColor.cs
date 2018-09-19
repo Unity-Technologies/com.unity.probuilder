@@ -37,26 +37,26 @@ namespace UnityEditor.ProBuilder.Actions
 			"Selects all faces matching the selected vertex colors."
 		);
 
+		protected override SelectMode validSelectModes
+		{
+			get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.Texture; }
+		}
+
 		public override bool enabled
 		{
 			get
 			{
-				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.editLevel != EditLevel.Top &&
-					MeshSelection.TopInternal().Any(x => x.selectedVertexCount > 0);
+				return ProBuilderEditor.instance != null
+					&& ProBuilderEditor.selectMode.HasFlag(validSelectModes)
+					&& ProBuilderEditor.instance.selectedVertexCount > 0;
 			}
-		}
-
-		public override bool hidden
-		{
-			get { return editLevel != EditLevel.Geometry; }
 		}
 
 		protected override MenuActionState optionsMenuState
 		{
 			get
 			{
-				if (enabled && ProBuilderEditor.editLevel == EditLevel.Geometry)
+				if (enabled)
 					return MenuActionState.VisibleAndEnabled;
 
 				return MenuActionState.Visible;

@@ -1,8 +1,5 @@
 ﻿using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -10,10 +7,10 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
 		public override Texture2D icon { get { return null; } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
+		public override TooltipContent tooltip { get { return s_Tooltip; } }
 		public override string menuTitle { get { return "Lightmap UV Editor"; } }
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Lightmap UV Editor",
 			""
