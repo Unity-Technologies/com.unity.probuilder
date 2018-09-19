@@ -18,6 +18,12 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	public static class EditorUtility
 	{
+		enum PivotLocation
+		{
+			Center,
+			FirstVertex
+		}
+
 		const float k_DefaultNotificationDuration = 1f;
 		static float s_NotificationTimer = 0f;
 		static EditorWindow s_NotificationWindow;
@@ -25,6 +31,47 @@ namespace UnityEditor.ProBuilder
 
 		const BindingFlags k_BindingFlagsAll =
 			BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+
+		[UserSetting("General", "Show Action Notifications", "Enable or disable notification popups when performing actions.")]
+		static Pref<bool> s_ShowNotifications = new Pref<bool>("showEditorNotifications", false);
+
+		[UserSetting("Mesh Settings", "Static Editor Flags", "Default static flags to apply to new shapes.")]
+		static Pref<StaticEditorFlags> s_StaticEditorFlags = new Pref<StaticEditorFlags>("defaultStaticEditorFlags", 0);
+
+		[UserSetting("Mesh Settings", "Material", "The default material to be applied to newly created shapes.")]
+		static Pref<Material> s_DefaultMaterial = new Pref<Material>("userMaterial", null);
+
+		[UserSetting("Mesh Settings", "Mesh Collider is Convex", "If a MeshCollider is set as the default collider component, this sets the convex setting.")]
+		static Pref<bool> s_MeshColliderIsConvex = new Pref<bool>("meshColliderIsConvex", false);
+
+		[UserSetting("Mesh Settings", "Pivot Location", "Determines the placement of new shape's pivot.")]
+		static Pref<PivotLocation> s_NewShapesPivotAtVertex = new Pref<PivotLocation>("newShapePivotLocation", PivotLocation.FirstVertex);
+
+		[UserSetting("Mesh Settings", "Pivot on Vertex", "When enabled, new shapes will have their pivot point set to a vertex instead of the center.")]
+		static Pref<bool> s_SnapNewShapesToGrid = new Pref<bool>("newShapesSnapToGrid", true);
+
+		[UserSetting("Mesh Settings", "Shadow Casting Mode", "The default ShadowCastingMode to apply to MeshRenderer components.")]
+		static Pref<ShadowCastingMode> s_ShadowCastingMode = new Pref<ShadowCastingMode>("shadowCastingMode", ShadowCastingMode.On);
+
+		[UserSetting("Mesh Settings", "Collider Type", "What type of Collider to apply to new Shapes.")]
+		static Pref<ColliderType> s_ColliderType = new Pref<ColliderType>("newShapeColliderType", ColliderType.MeshCollider);
+
+		internal static Pref<bool> s_ExperimentalFeatures = new Pref<bool>("experimentalFeaturesEnabled", false, Settings.Scope.User);
+		internal static Pref<bool> s_MeshesAreAssets = new Pref<bool>("meshesAreAssets", false, Settings.Scope.Project);
+
+		[UserSettingBlock("Experimental", new[] { "store", "mesh", "asset", "experimental", "features", "enabled" })]
+		static void ExperimentalFeaturesSettings(string searchContext)
+		{
+			s_ExperimentalFeatures.value = UI.EditorGUILayout.SearchableToggle("Experimental Features Enabled", s_ExperimentalFeatures.value, searchContext);
+
+			if (s_ExperimentalFeatures.value)
+			{
+				using (new UI.EditorStyles.IndentedBlock())
+				{
+					s_MeshesAreAssets.value = UI.EditorGUILayout.SearchableToggle("Store Mesh as Asset", s_MeshesAreAssets, searchContext);
+				}
+			}
+		}
 
 		/// <value>
 		/// Subscribe to this delegate to be notified when a new mesh has been created and initialized through ProBuilder.
@@ -83,7 +130,7 @@ namespace UnityEditor.ProBuilder
 		/// <exception cref="ArgumentNullException">Window is null.</exception>
 		internal static void ShowNotification(EditorWindow window, string message)
 		{
-			if(PreferencesInternal.HasKey(PreferenceKeys.pbShowEditorNotifications) && !PreferencesInternal.GetBool(PreferenceKeys.pbShowEditorNotifications))
+			if (!s_ShowNotifications)
 				return;
 
             if (window == null)
@@ -182,7 +229,7 @@ namespace UnityEditor.ProBuilder
 
 		 	Mesh oldMesh = mesh.mesh;
 	 		MeshSyncState reason = mesh.meshSyncState;
-			bool meshesAreAssets = PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets);
+			bool meshesAreAssets = EditorUtility.s_MeshesAreAssets;
 
 			if( reason != MeshSyncState.None )
 			{
@@ -258,30 +305,21 @@ namespace UnityEditor.ProBuilder
 		/// <param name="pb"></param>
 		internal static void InitObject(ProBuilderMesh pb)
 		{
-			ShadowCastingMode scm = PreferencesInternal.GetEnum<ShadowCastingMode>(PreferenceKeys.pbShadowCastingMode);
-			pb.GetComponent<MeshRenderer>().shadowCastingMode = scm;
+			SetPivotLocationAndSnap(pb);
+
+			pb.GetComponent<MeshRenderer>().shadowCastingMode = s_ShadowCastingMode;
 			ScreenCenter(pb.gameObject);
 
-			var flags = PreferencesInternal.HasKey(PreferenceKeys.pbDefaultStaticFlags)
-				? PreferencesInternal.GetEnum<StaticEditorFlags>(PreferenceKeys.pbDefaultStaticFlags)
-				: StaticEditorFlags.LightmapStatic |
-				  StaticEditorFlags.OccluderStatic |
-				  StaticEditorFlags.OccludeeStatic |
-				  StaticEditorFlags.BatchingStatic |
-				  StaticEditorFlags.NavigationStatic |
-				  StaticEditorFlags.OffMeshLinkGeneration |
-				  StaticEditorFlags.ReflectionProbeStatic;
+			GameObjectUtility.SetStaticEditorFlags(pb.gameObject, s_StaticEditorFlags);
 
-			GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
-
-			switch(PreferencesInternal.GetEnum<ColliderType>(PreferenceKeys.pbDefaultCollider))
+			switch(s_ColliderType.value)
 			{
 				case ColliderType.BoxCollider:
 					pb.gameObject.AddComponent<BoxCollider>();
 					break;
 
 				case ColliderType.MeshCollider:
-					pb.gameObject.AddComponent<MeshCollider>().convex = PreferencesInternal.GetBool(PreferenceKeys.pbForceConvex, false);
+					pb.gameObject.AddComponent<MeshCollider>().convex = s_MeshColliderIsConvex;
 					break;
 			}
 
@@ -294,6 +332,30 @@ namespace UnityEditor.ProBuilder
 
 			if( meshCreated != null )
 				meshCreated(pb);
+		}
+
+		internal static void SetPivotLocationAndSnap(ProBuilderMesh mesh)
+		{
+			switch (s_NewShapesPivotAtVertex.value)
+			{
+				case PivotLocation.Center:
+					mesh.CenterPivot(null);
+					break;
+
+				case PivotLocation.FirstVertex:
+					mesh.CenterPivot(new int[1] { 0 });
+					break;
+			}
+
+			if (ProGridsInterface.SnapEnabled())
+				mesh.transform.position = Snapping.SnapValue(mesh.transform.position, ProGridsInterface.SnapValue());
+			else if (s_SnapNewShapesToGrid)
+				mesh.transform.position = Snapping.SnapValue(mesh.transform.position, new Vector3(
+					EditorPrefs.GetFloat("MoveSnapX"),
+					EditorPrefs.GetFloat("MoveSnapY"),
+					EditorPrefs.GetFloat("MoveSnapZ")));
+
+			mesh.Optimize();
 		}
 
 		/**
@@ -316,27 +378,6 @@ namespace UnityEditor.ProBuilder
 		internal static Vector3 ScenePivot()
 		{
 			return GetSceneView().pivot;
-		}
-
-		/// <summary>
-		/// Set the pivot point of a mesh.
-		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="vertices">If any values are passed here, the pivot is set to an average of all vertices at indexes. If null, the first vertex is used as the pivot.</param>
-		internal static void SetPivotAndSnapWithPref(ProBuilderMesh mesh, int[] vertices)
-		{
-			if(PreferencesInternal.GetBool(PreferenceKeys.pbForceGridPivot))
-				mesh.CenterPivot( vertices == null ? new int[1]{0} : vertices );
-			else
-				mesh.CenterPivot(vertices);
-
-			if(ProGridsInterface.SnapEnabled())
-				mesh.transform.position = Snapping.SnapValue(mesh.transform.position, ProGridsInterface.SnapValue());
-			else
-			if(PreferencesInternal.GetBool(PreferenceKeys.pbForceVertexPivot))
-				mesh.transform.position = Snapping.SnapValue(mesh.transform.position, 1f);
-
-			mesh.Optimize();
 		}
 
 		/**
@@ -467,6 +508,17 @@ namespace UnityEditor.ProBuilder
 				default:
 					return ComponentMode.Face;
 			}
+		}
+
+		internal static Material GetUserMaterial()
+		{
+			var mat = s_DefaultMaterial;
+
+			if (mat != null)
+				return mat;
+
+			return BuiltinMaterials.defaultMaterial;
+
 		}
 	}
 }

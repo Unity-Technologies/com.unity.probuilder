@@ -12,6 +12,9 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	static class UnityScenePostProcessor
 	{
+		[UserSetting("General", "Script Stripping", "If true, when building an executable all ProBuilder scripts will be stripped from your built product.")]
+		static Pref<bool> m_ScriptStripping = new Pref<bool>("stripProBuilderScriptsOnBuild", true);
+
 		[PostProcessScene]
 		public static void OnPostprocessScene()
 		{
@@ -65,7 +68,7 @@ namespace UnityEditor.ProBuilder
 				if(pb.mesh != null)
 					pb.mesh.hideFlags = HideFlags.None;
 
-				if(!PreferencesInternal.GetBool(PreferenceKeys.pbStripProBuilderOnBuild))
+				if(!m_ScriptStripping)
 				   return;
 
 				pb.preserveMeshAssetOnDestroy = true;

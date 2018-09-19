@@ -16,16 +16,9 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
-	sealed class UVEditor : EditorWindow
+	sealed class UVEditor : ConfigurableWindow
 	{
-#if PROTOTYPE
-	public static void MenuOpenUVEditor()
-	{
-		Debug.LogWarning("UV Editor is ProBuilder Advanced feature.");
-	}
-#else
-
-		#region Fields
+#region Fields
 
 		ProBuilderEditor editor
 		{
@@ -46,16 +39,23 @@ namespace UnityEditor.ProBuilder
 		const int MIN_ACTION_WINDOW_SIZE = 128;
 		const float MIN_GRAPH_SCALE = .0001f;
 		const float MAX_GRAPH_SCALE = 250f;
-		/// Max canvas zoom
+		// Max canvas zoom
 		const float MAX_GRAPH_SCALE_SCROLL = 20f;
-		/// When scrolling use this value to taper the scroll effect
+		// When scrolling use this value to taper the scroll effect
 		const float MAX_PROXIMITY_SNAP_DIST_UV = .15f;
-		///< The maximum allowable distance magnitude between coords to be considered for proximity snapping (UV coordinates)
+		// The maximum allowable distance magnitude between coords to be considered for proximity snapping (UV coordinates)
 		const float MAX_PROXIMITY_SNAP_DIST_CANVAS = 12f;
-		///< The maximum allowable distance magnitude between coords to be considered for proximity snapping (Canvas coordinates)
+		// The maximum allowable distance magnitude between coords to be considered for proximity snapping (Canvas coordinates)
 		const float MIN_DIST_MOUSE_EDGE = 8f;
 
-		private float pref_gridSnapValue = .0625f;
+		// todo Support Range/Min/Max property decorators
+		static Pref<float> s_GridSnapIncrement = new Pref<float>("uvEditorGridSnapIncrement", .125f, Settings.Scope.Project);
+
+		[UserSettingBlock("UV Editor", new [] { "grid", "size" } )]
+		static void UVEditorSettings(string searchContext)
+		{
+			s_GridSnapIncrement.value = UI.EditorGUILayout.SearchableSlider(UI.EditorGUIUtility.TempContent("Grid Size"), s_GridSnapIncrement, .015625f, 2f, searchContext);
+		}
 
 		static readonly Color DRAG_BOX_COLOR_BASIC = new Color(0f, .7f, 1f, .2f);
 		static readonly Color DRAG_BOX_COLOR_PRO = new Color(0f, .7f, 1f, 1f);
@@ -159,7 +159,8 @@ namespace UnityEditor.ProBuilder
 			get { return editor != null ? ProBuilderEditor.componentMode : ComponentMode.Face; }
 			set
 			{
-				if (editor) editor.SetSelectionMode(value);
+				if (editor)
+					editor.SetSelectionMode(value);
 			}
 		}
 
@@ -204,10 +205,8 @@ namespace UnityEditor.ProBuilder
 		}
 
 		ObjectElementIndex nearestElement = new ObjectElementIndex(-1, -1, -1);
-
-		#endregion
-
-		#region Menu
+#endregion
+#region Menu
 
 		public static void MenuOpenUVEditor()
 		{
@@ -215,21 +214,6 @@ namespace UnityEditor.ProBuilder
 				ProBuilderEditor.instance.SetEditLevel(EditLevel.Geometry);
 
 			EditorWindow.GetWindow<UVEditor>(PreferencesInternal.GetBool(PreferenceKeys.pbUVEditorFloating), "UV Editor", true);
-		}
-
-		void OpenContextMenu()
-		{
-			GenericMenu menu = new GenericMenu();
-
-			menu.AddItem(new GUIContent("Selection/Select Island", ""), false, Menu_SelectUVIsland);
-			menu.AddItem(new GUIContent("Selection/Select Face", ""), false, Menu_SelectUVFace);
-
-			menu.AddSeparator("");
-
-			menu.AddItem(new GUIContent("Window/Open as Floating Window", ""), false, ContextMenu_OpenFloatingWindow);
-			menu.AddItem(new GUIContent("Window/Open as Dockable Window", ""), false, ContextMenu_OpenDockableWindow);
-
-			menu.ShowAsContext();
 		}
 
 		void ScreenshotMenu()
@@ -253,26 +237,8 @@ namespace UnityEditor.ProBuilder
 				new Vector2(256, 152));
 #endif
 		}
-
-		static void ContextMenu_OpenFloatingWindow()
-		{
-			PreferencesInternal.SetBool(PreferenceKeys.pbUVEditorFloating, true);
-
-			EditorWindow.GetWindow<UVEditor>().Close();
-			EditorWindow.GetWindow<UVEditor>(true, "UV Editor", true);
-		}
-
-		static void ContextMenu_OpenDockableWindow()
-		{
-			PreferencesInternal.SetBool(PreferenceKeys.pbUVEditorFloating, false);
-
-			EditorWindow.GetWindow<UVEditor>().Close();
-			EditorWindow.GetWindow<UVEditor>(false, "UV Editor", true);
-		}
-
-		#endregion
-
-		#region Enable
+#endregion
+#region Enable
 
 		void OnEnable()
 		{
@@ -284,7 +250,8 @@ namespace UnityEditor.ProBuilder
 			this.autoRepaintOnSceneChange = true;
 
 			ProBuilderEditor.selectionUpdated += OnSelectionUpdate;
-			if (editor != null) OnSelectionUpdate(editor.selection);
+			if (editor != null)
+				OnSelectionUpdate(editor.selection);
 
 			instance = this;
 
@@ -294,7 +261,6 @@ namespace UnityEditor.ProBuilder
 
 			// Find preferences
 			pref_showMaterial = PreferencesInternal.GetBool(PreferenceKeys.pbUVMaterialPreview);
-			pref_gridSnapValue = PreferencesInternal.GetFloat(PreferenceKeys.pbUVGridSnapValue);
 		}
 
 		void OnDisable()
@@ -304,7 +270,7 @@ namespace UnityEditor.ProBuilder
 			if (editor && ProBuilderEditor.editLevel == EditLevel.Texture)
 				editor.PopEditLevel();
 
-			if(uv2Editor != null)
+			if (uv2Editor != null)
 				Object.DestroyImmediate(uv2Editor);
 
 			// EditorApplication.delayCall -= this.Close;							// not sure if this is necessary?
@@ -363,10 +329,8 @@ namespace UnityEditor.ProBuilder
 				new GUIContent(face_Graphic_off, "Face Selection")
 			};
 		}
-
-		#endregion
-
-		#region GUI Loop
+#endregion
+#region GUI Loop
 
 		const int k_UVInspectorWidthMinManual = 100;
 		const int k_UVInspectorWidthMinAuto = 200;
@@ -505,10 +469,8 @@ namespace UnityEditor.ProBuilder
 		DrawDebugInfo(buggerRect);
 		#endif
 		}
-
-		#endregion
-
-		#region Editor Delegate and Event
+#endregion
+#region Editor Delegate and Event
 
 		void OnSelectionUpdate(ProBuilderMesh[] selection)
 		{
@@ -786,7 +748,8 @@ namespace UnityEditor.ProBuilder
 
 				Face anchor = pb.selectedFacesInternal[len - 1];
 
-				if (anchor == selectedFace) return false;
+				if (anchor == selectedFace)
+					return false;
 
 				UndoUtility.RecordObject(pb, "AutoStitch");
 
@@ -828,10 +791,8 @@ namespace UnityEditor.ProBuilder
 
 			return false;
 		}
-
-		#endregion
-
-		#region Key and Handle Input
+#endregion
+#region Key and Handle Input
 
 		bool m_ignore = false;
 		bool m_rightMouseDrag = false;
@@ -973,9 +934,17 @@ namespace UnityEditor.ProBuilder
 				case EventType.ContextClick:
 
 					if (!m_rightMouseDrag)
-						OpenContextMenu();
+					{
+						var menu = new GenericMenu();
+						menu.AddItem(new GUIContent("Selection/Select Island", ""), false, Menu_SelectUVIsland);
+						menu.AddItem(new GUIContent("Selection/Select Face", ""), false, Menu_SelectUVFace);
+						menu.AddSeparator("");
+						AddItemsToMenu(menu);
+						menu.ShowAsContext();
+					}
 					else
 						m_rightMouseDrag = false;
+
 					break;
 
 				default:
@@ -1116,7 +1085,8 @@ namespace UnityEditor.ProBuilder
 									break;
 								}
 
-								if (superBreak) break;
+								if (superBreak)
+									break;
 							}
 						}
 					}
@@ -1160,7 +1130,8 @@ namespace UnityEditor.ProBuilder
 
 		void OnMouseClick(Vector2 mousePosition)
 		{
-			if (selection == null) return;
+			if (selection == null)
+				return;
 
 			switch (selectionMode)
 			{
@@ -1205,7 +1176,8 @@ namespace UnityEditor.ProBuilder
 
 						selection[i].SetSelectedFaces(selectedFaces.ToArray());
 
-						if (superBreak) break;
+						if (superBreak)
+							break;
 					}
 
 					break;
@@ -1239,10 +1211,8 @@ namespace UnityEditor.ProBuilder
 			RefreshUVCoordinates(dragRect, false);
 			e.Use();
 		}
-
-		#endregion
-
-		#region Tools
+#endregion
+#region Tools
 
 		// tool properties
 		float uvRotation = 0f;
@@ -1267,7 +1237,8 @@ namespace UnityEditor.ProBuilder
 			t_handlePosition = GUIToUVPoint(t_handlePosition);
 			EditorHandleUtility.limitToLeftButton = true;
 
-			if (!e.isMouse) return;
+			if (!e.isMouse)
+				return;
 
 			/**
 			 *	Setting a custom pivot
@@ -1278,7 +1249,7 @@ namespace UnityEditor.ProBuilder
 
 				if (ControlKey)
 				{
-					handlePosition = Snapping.SnapValue(t_handlePosition, (handlePosition - t_handlePosition).ToMask(Math.handleEpsilon) * pref_gridSnapValue);
+					handlePosition = Snapping.SnapValue(t_handlePosition, (handlePosition - t_handlePosition).ToMask(Math.handleEpsilon) * s_GridSnapIncrement);
 				}
 				else
 				{
@@ -1293,10 +1264,11 @@ namespace UnityEditor.ProBuilder
 						Vector2 offset = Vector2.zero;
 						for (int i = 0; i < selection.Length; i++)
 						{
-							/// todo reset MAX_PROXIMITY_SNAP_DIST
+							// todo reset MAX_PROXIMITY_SNAP_DIST
 							int index = EditorHandleUtility.NearestPoint(handlePosition, selection[i].texturesInternal, MAX_PROXIMITY_SNAP_DIST_CANVAS);
 
-							if (index < 0) continue;
+							if (index < 0)
+								continue;
 
 							dist = Vector2.Distance(selection[i].texturesInternal[index], handlePosition);
 
@@ -1339,7 +1311,7 @@ namespace UnityEditor.ProBuilder
 				Vector2 newUVPosition = t_handlePosition;
 
 				if (ControlKey)
-					newUVPosition = Snapping.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask(Math.handleEpsilon) * pref_gridSnapValue);
+					newUVPosition = Snapping.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask(Math.handleEpsilon) * s_GridSnapIncrement);
 
 				for (int n = 0; n < selection.Length; n++)
 				{
@@ -1429,7 +1401,7 @@ namespace UnityEditor.ProBuilder
 				handlePosition.y += delta.y;
 
 				if (ControlKey)
-					handlePosition = Snapping.SnapValue(handlePosition, (handlePosition - handlePosition).ToMask(Math.handleEpsilon) * pref_gridSnapValue);
+					handlePosition = Snapping.SnapValue(handlePosition, (handlePosition - handlePosition).ToMask(Math.handleEpsilon) * s_GridSnapIncrement);
 
 				for (int n = 0; n < selection.Length; n++)
 				{
@@ -1568,10 +1540,12 @@ namespace UnityEditor.ProBuilder
 			uvScale = EditorHandleUtility.ScaleHandle2d(2, UVToGUIPoint(handlePosition), uvScale, 128);
 
 			if (ControlKey)
-				uvScale = Snapping.SnapValue(uvScale, pref_gridSnapValue);
+				uvScale = Snapping.SnapValue(uvScale, s_GridSnapIncrement);
 
-			if (Math.Approx(uvScale.x, 0f, Mathf.Epsilon)) uvScale.x = .0001f;
-			if (Math.Approx(uvScale.y, 0f, Mathf.Epsilon)) uvScale.y = .0001f;
+			if (Math.Approx(uvScale.x, 0f, Mathf.Epsilon))
+				uvScale.x = .0001f;
+			if (Math.Approx(uvScale.y, 0f, Mathf.Epsilon))
+				uvScale.y = .0001f;
 
 			if (t_uvScale != uvScale)
 			{
@@ -1636,7 +1610,7 @@ namespace UnityEditor.ProBuilder
 			previousScale.y = 1f / previousScale.y;
 
 			if (ControlKey)
-				textureScale = Snapping.SnapValue(textureScale, pref_gridSnapValue);
+				textureScale = Snapping.SnapValue(textureScale, s_GridSnapIncrement);
 
 			if (!modifyingUVs)
 			{
@@ -1684,10 +1658,8 @@ namespace UnityEditor.ProBuilder
 			nearestElement.valid = false;
 			needsRepaint = true;
 		}
-
-		#endregion
-
-		#region UV Graph Drawing
+#endregion
+#region UV Graph Drawing
 
 		Vector2 UVGraphCenter = Vector2.zero;
 
@@ -1721,7 +1693,7 @@ namespace UnityEditor.ProBuilder
 
 				// Grid temp vars
 				int GridLines = 64;
-				float StepSize = pref_gridSnapValue; // In UV coordinates
+				float StepSize = s_GridSnapIncrement; // In UV coordinates
 
 				// Exponentially scale grid size
 				while (StepSize * uvGridSize * uvGraphScale < uvGridSize / 10)
@@ -2157,10 +2129,8 @@ namespace UnityEditor.ProBuilder
 		GUI.EndGroup();
 	}
 	#endif
-
-		#endregion
-
-		#region UV Canvas Operations
+#endregion
+#region UV Canvas Operations
 
 		/**
 		 * Zooms in on the current UV selection
@@ -2324,10 +2294,8 @@ namespace UnityEditor.ProBuilder
 
 			return new Bounds2D(new Vector2((xMin + xMax) / 2f, (yMin + yMax) / 2f), new Vector2(xMax - xMin, yMax - yMin));
 		}
-
-		#endregion
-
-		#region Refresh / Set
+#endregion
+#region Refresh / Set
 
 		// Doesn't call Repaint for you
 		void RefreshUVCoordinates()
@@ -2341,7 +2309,8 @@ namespace UnityEditor.ProBuilder
 		 */
 		void RefreshUVCoordinates(Rect? dragRect, bool isClick)
 		{
-			if (editor == null || selection == null) return;
+			if (editor == null || selection == null)
+				return;
 
 			// Convert dragrect from Unity GUI space to UV coordinates
 			Bounds2D dragBounds;
@@ -2502,10 +2471,8 @@ namespace UnityEditor.ProBuilder
 		{
 			handlePosition = UVSelectionBounds().center - handlePosition_offset;
 		}
-
-		#endregion
-
-		#region UV Toolbar
+#endregion
+#region UV Toolbar
 
 		Rect toolbarRect_tool = new Rect(PAD, PAD, 130f, 24f);
 		Rect toolbarRect_select = new Rect(PAD + 130 + PAD, PAD, 130f, 24f);
@@ -2792,17 +2759,16 @@ namespace UnityEditor.ProBuilder
 				PreferencesInternal.SetFloat(PreferenceKeys.pbUVWeldDistance, weldDistance);
 			}
 		}
-
-		#endregion
-
-		#region UV Selection
+#endregion
+#region UV Selection
 
 		/**
 		 * Given selected tris, return an array of all indexes attached to face
 		 */
 		private void SelectUVShell()
 		{
-			if (selection == null || selection.Length < 1) return;
+			if (selection == null || selection.Length < 1)
+				return;
 
 			foreach (ProBuilderMesh pb in selection)
 			{
@@ -2868,7 +2834,8 @@ namespace UnityEditor.ProBuilder
 		 */
 		private void SelectUVFace()
 		{
-			if (selection == null || selection.Length < 1) return;
+			if (selection == null || selection.Length < 1)
+				return;
 
 			foreach (ProBuilderMesh pb in selection)
 			{
@@ -2893,7 +2860,8 @@ namespace UnityEditor.ProBuilder
 			int eg = 0;
 			foreach (SharedVertex sharedVertex in sharedUVs)
 			{
-				if (sharedVertex.arrayInternal.Length < 2) continue;
+				if (sharedVertex.arrayInternal.Length < 2)
+					continue;
 
 				Face[] faces = GetFaces(pb, sharedVertex);
 
@@ -2965,10 +2933,8 @@ namespace UnityEditor.ProBuilder
 				System.Array.Copy(UVEditing.GetUVs(pb, channel), uvCopy[i], pb.vertexCount);
 			}
 		}
-
-		#endregion
-
-		#region Menu Commands
+#endregion
+#region Menu Commands
 
 		/// <summary>
 		/// Planar project UVs on all selected faces in selection.
@@ -3285,7 +3251,8 @@ namespace UnityEditor.ProBuilder
 
 			for (var i = 0; i < selection.Length; i++)
 			{
-				if (selection[i].selectedVertexCount < 3) continue;
+				if (selection[i].selectedVertexCount < 3)
+					continue;
 
 				selection[i].ToMesh();
 
@@ -3326,10 +3293,8 @@ namespace UnityEditor.ProBuilder
 				UVEditing.ApplyUVs(pb, uv, channel);
 			}
 		}
-
-		#endregion
-
-		#region Screenshot Rendering
+#endregion
+#region Screenshot Rendering
 
 		float curUvScale = 0f;
 		///< Store the user set positioning and scale before modifying them for a screenshot
@@ -3377,19 +3342,14 @@ namespace UnityEditor.ProBuilder
 			DoScreenshot();
 		}
 
-		/// Unity 5 changes the starting y position of a window now account for the tab
+		// Unity 5 changes the starting y position of a window now account for the tab
 		float editorWindowTabOffset
 		{
 			get
 			{
-				if (PreferencesInternal.GetBool(PreferenceKeys.pbUVEditorFloating))
+				if (IsUtilityWindow<UVEditor>())
 					return 0;
-				else
-#if UNITY_4_6
-				return 0;
-#else
-					return 11;
-#endif
+				return 11;
 			}
 		}
 
@@ -3542,9 +3502,6 @@ namespace UnityEditor.ProBuilder
 			#endif
 			}
 		}
-
-		#endregion
-
-#endif
+#endregion
 	}
 }

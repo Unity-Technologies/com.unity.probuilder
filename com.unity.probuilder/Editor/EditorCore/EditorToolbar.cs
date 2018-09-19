@@ -15,7 +15,10 @@ namespace UnityEditor.ProBuilder
 
 		bool isFloating { get { return ProBuilderEditor.instance != null && ProBuilderEditor.instance.isFloatingWindow; } }
 		bool isIconMode = true;
-		bool shiftOnlyTooltips = false;
+
+		[UserSetting("Toolbar", "Shift Key Tooltips", "Tooltips will only show when the Shift key is held")]
+		internal static Pref<bool> s_ShiftOnlyTooltips = new Pref<bool>("shiftOnlyTooltips", false, Settings.Scope.User);
+
 		SimpleTuple<string, double> tooltipTimer = new SimpleTuple<string, double>("", 0.0);
 		// the element currently being hovered
 		string hoveringTooltipName = "";
@@ -50,8 +53,6 @@ namespace UnityEditor.ProBuilder
 			EditorApplication.update -= Update;
 			EditorApplication.update += Update;
 
-			shiftOnlyTooltips = PreferencesInternal.GetBool(PreferenceKeys.pbShiftOnlyTooltips);
-
 			tooltipTimer.item1 = "";
 			tooltipTimer.item2 = 0.0;
 			showTooltipTimer = false;
@@ -60,7 +61,7 @@ namespace UnityEditor.ProBuilder
 			scrollIconRight = IconUtility.GetIcon("Toolbar/ShowNextPage_Right");
 			scrollIconLeft 	= IconUtility.GetIcon("Toolbar/ShowNextPage_Left");
 
-			isIconMode = PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI);
+			isIconMode = ProBuilderEditor.s_IsIconGui;
 			this.window = ProBuilderEditor.instance;
 			CalculateMaxIconSize();
 
@@ -121,7 +122,7 @@ namespace UnityEditor.ProBuilder
 			if(!window)
 				return;
 
-			if(!shiftOnlyTooltips)
+			if(!s_ShiftOnlyTooltips)
 			{
 				if( !tooltipTimer.item1.Equals(hoveringTooltipName) )
 				{
@@ -238,7 +239,7 @@ namespace UnityEditor.ProBuilder
 			if(isIconMode && menuActionsCount < 1)
 			{
 				isIconMode = false;
-				PreferencesInternal.SetBool(PreferenceKeys.pbIconGUI, isIconMode);
+				ProBuilderEditor.s_IsIconGui.value = isIconMode;
 				CalculateMaxIconSize();
 				Debug.LogWarning("ProBuilder: Toolbar icons failed to load, reverting to text mode.  Please ensure that the ProBuilder folder contents are unmodified.  If the menu is still not visible, try closing and re-opening the Editor Window.");
 				return;

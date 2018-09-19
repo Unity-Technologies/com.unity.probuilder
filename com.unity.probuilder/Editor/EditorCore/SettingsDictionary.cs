@@ -44,7 +44,7 @@ namespace UnityEngine.ProBuilder
 
 #pragma warning disable 0649
 		[SerializeField]
-		List<SettingsKeyValuePair> m_DictionaryValues;
+		List<SettingsKeyValuePair> m_DictionaryValues = new List<SettingsKeyValuePair>();
 #pragma warning restore 0649
 
 		internal Dictionary<string, Dictionary<string, string>> dictionary = new Dictionary<string, Dictionary<string, string>>();

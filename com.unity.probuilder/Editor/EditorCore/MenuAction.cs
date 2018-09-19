@@ -78,7 +78,7 @@ namespace UnityEditor.ProBuilder
 
         protected MenuAction()
         {
-            iconMode = PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI);
+	        iconMode = ProBuilderEditor.s_IsIconGui;
         }
 
 		/// <summary>
@@ -356,13 +356,13 @@ namespace UnityEditor.ProBuilder
 		{
 			if(iconMode)
 			{
-				m_LastCalculatedSize = ToolbarGroupUtility.GetStyle(ToolbarGroup.Object, isHorizontal).CalcSize(UI.EditorGUIUtility.TempGUIContent(null, null, icon));
+				m_LastCalculatedSize = ToolbarGroupUtility.GetStyle(ToolbarGroup.Object, isHorizontal).CalcSize(UI.EditorGUIUtility.TempContent(null, null, icon));
 			}
 			else
 			{
 				// in text mode always use the vertical layout.
 				isHorizontal = false;
-				m_LastCalculatedSize = MenuActionStyles.buttonStyleVertical.CalcSize(UI.EditorGUIUtility.TempGUIContent(menuTitle)) + AltButtonSize;
+				m_LastCalculatedSize = MenuActionStyles.buttonStyleVertical.CalcSize(UI.EditorGUIUtility.TempContent(menuTitle)) + AltButtonSize;
 			}
 			return m_LastCalculatedSize;
 		}

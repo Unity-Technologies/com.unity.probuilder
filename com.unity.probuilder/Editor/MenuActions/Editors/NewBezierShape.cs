@@ -1,25 +1,17 @@
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
-using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 namespace UnityEditor.ProBuilder.Actions
 {
 	sealed class NewBezierShape : MenuAction
 	{
+		const string k_IconPath = "Toolbar/NewBezierSpline";
+
 		public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
-		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/NewBezierSpline", IconSkin.Pro); } }
+		public override Texture2D icon { get { return IconUtility.GetIcon(k_IconPath, IconSkin.Pro); } }
 		public override TooltipContent tooltip { get { return _tooltip; } }
 		public override string menuTitle { get { return "New Bezier Shape"; } }
 		public override int toolbarPriority { get { return 1; } }
-		private bool m_ExperimentalFeaturesEnabled = false;
-
-		public NewBezierShape()
-		{
-			m_ExperimentalFeaturesEnabled = PreferencesInternal.GetBool(PreferenceKeys.pbEnableExperimental);
-		}
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
@@ -29,7 +21,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool hidden
 		{
-			get { return !m_ExperimentalFeaturesEnabled; }
+			get { return !EditorUtility.s_ExperimentalFeatures; }
 		}
 
 		public override bool enabled
@@ -41,7 +33,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			GameObject go = new GameObject();
 			var bezier = go.AddComponent<BezierShape>();
-			go.GetComponent<MeshRenderer>().sharedMaterial = PreferencesInternal.GetMaterial(PreferenceKeys.pbDefaultMaterial);
+			go.GetComponent<MeshRenderer>().sharedMaterial = EditorUtility.GetUserMaterial();
 			bezier.Init();
 			bezier.Refresh();
 			EditorUtility.InitObject(bezier.GetComponent<ProBuilderMesh>());

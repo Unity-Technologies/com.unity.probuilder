@@ -31,24 +31,24 @@ namespace UnityEditor.ProBuilder
 
 		static Dictionary<string, bool> s_BoolDefaults = new Dictionary<string, bool>()
 		{
-			{ PreferenceKeys.pbForceConvex, false },
-			{ PreferenceKeys.pbManifoldEdgeExtrusion, false },
-			{ PreferenceKeys.pbPBOSelectionOnly, false },
-			{ PreferenceKeys.pbCloseShapeWindow, false },
+//			{ PreferenceKeys.pbForceConvex, false },
+//			{ PreferenceKeys.pbManifoldEdgeExtrusion, false },
+//			{ PreferenceKeys.pbPBOSelectionOnly, false },
+//			{ PreferenceKeys.pbCloseShapeWindow, false },
 			{ PreferenceKeys.pbGrowSelectionUsingAngle, false },
 			{ PreferenceKeys.pbNormalizeUVsOnPlanarProjection, false },
-			{ PreferenceKeys.pbDisableAutoUV2Generation, false },
-			{ PreferenceKeys.pbShowSceneInfo, false },
+//			{ PreferenceKeys.pbDisableAutoUV2Generation, false },
+//			{ PreferenceKeys.pbShowSceneInfo, false },
 			{ PreferenceKeys.pbEnableBackfaceSelection, false },
-			{ PreferenceKeys.pbVertexPaletteDockable, false },
+//			{ PreferenceKeys.pbVertexPaletteDockable, false },
 			{ PreferenceKeys.pbGrowSelectionAngleIterative, false },
-			{ PreferenceKeys.pbIconGUI, false },
-			{ PreferenceKeys.pbUniqueModeShortcuts, false },
-			{ PreferenceKeys.pbShiftOnlyTooltips, false },
+//			{ PreferenceKeys.pbIconGUI, false },
+//			{ PreferenceKeys.pbUniqueModeShortcuts, false },
+//			{ PreferenceKeys.pbShiftOnlyTooltips, false },
 			{ PreferenceKeys.pbCollapseVertexToFirst, false },
-			{ PreferenceKeys.pbEnableExperimental, false },
-			{ PreferenceKeys.pbMeshesAreAssets, false },
-			{ PreferenceKeys.pbSelectedFaceDither, true },
+//			{ PreferenceKeys.pbEnableExperimental, false },
+//			{ PreferenceKeys.pbMeshesAreAssets, false },
+//			{ PreferenceKeys.pbSelectedFaceDither, true },
 			{ PreferenceKeys.pbShowPreselectionHighlight, false },
 		};
 
@@ -60,9 +60,9 @@ namespace UnityEditor.ProBuilder
 			{ PreferenceKeys.pbUVGridSnapValue, .125f },
 			{ PreferenceKeys.pbUVWeldDistance, .01f },
 			{ PreferenceKeys.pbBevelAmount, .05f },
-			{ PreferenceKeys.pbVertexHandleSize, 3f },
-			{ PreferenceKeys.pbLineHandleSize, 1f },
-			{ PreferenceKeys.pbWireframeSize, .5f },
+//			{ PreferenceKeys.pbVertexHandleSize, 3f },
+//			{ PreferenceKeys.pbLineHandleSize, 1f },
+//			{ PreferenceKeys.pbWireframeSize, .5f },
 		};
 
 		static Dictionary<string, int> s_IntDefaults = new Dictionary<string, int>()
@@ -70,12 +70,12 @@ namespace UnityEditor.ProBuilder
 			{ PreferenceKeys.pbDefaultEditLevel, 0 },
 			{ PreferenceKeys.pbDefaultSelectionMode, 0 },
 			{ PreferenceKeys.pbHandleAlignment, 0 },
-			{ PreferenceKeys.pbDefaultCollider, (int) ColliderType.MeshCollider },
-			{ PreferenceKeys.pbToolbarLocation, (int) SceneToolbarLocation.UpperCenter },
+//			{ PreferenceKeys.pbDefaultCollider, (int) ColliderType.MeshCollider },
+//			{ PreferenceKeys.pbToolbarLocation, (int) SceneToolbarLocation.UpperCenter },
 			{ PreferenceKeys.pbDefaultEntity, (int) EntityType.Detail },
 			{ PreferenceKeys.pbDragSelectMode, (int) SelectionModifierBehavior.Difference },
 			{ PreferenceKeys.pbExtrudeMethod, (int) ExtrudeMethod.VertexNormal },
-			{ PreferenceKeys.pbShadowCastingMode, (int) ShadowCastingMode.TwoSided },
+//			{ PreferenceKeys.pbShadowCastingMode, (int) ShadowCastingMode.TwoSided },
 		};
 
 		static readonly Color k_ProBuilderWireframe = new Color(125f / 255f, 155f / 255f, 185f / 255f, 1f);
@@ -85,13 +85,13 @@ namespace UnityEditor.ProBuilder
 
 		static Dictionary<string, Color> s_ColorDefaults = new Dictionary<string, Color>()
 		{
-			{ PreferenceKeys.pbSelectedFaceColor, k_ProBuilderSelected},
-			{ PreferenceKeys.pbWireframeColor, k_ProBuilderWireframe},
-			{ PreferenceKeys.pbUnselectedEdgeColor, k_ProBuilderUnselected},
-			{ PreferenceKeys.pbSelectedEdgeColor, k_ProBuilderSelected},
-			{ PreferenceKeys.pbUnselectedVertexColor, k_ProBuilderUnselected},
-			{ PreferenceKeys.pbSelectedVertexColor, k_ProBuilderSelected},
-			{ PreferenceKeys.pbPreselectionColor, k_ProBuilderPreselection },
+//			{ PreferenceKeys.pbSelectedFaceColor, k_ProBuilderSelected},
+//			{ PreferenceKeys.pbWireframeColor, k_ProBuilderWireframe},
+//			{ PreferenceKeys.pbUnselectedEdgeColor, k_ProBuilderUnselected},
+//			{ PreferenceKeys.pbSelectedEdgeColor, k_ProBuilderSelected},
+//			{ PreferenceKeys.pbUnselectedVertexColor, k_ProBuilderUnselected},
+//			{ PreferenceKeys.pbSelectedVertexColor, k_ProBuilderSelected},
+//			{ PreferenceKeys.pbPreselectionColor, k_ProBuilderPreselection },
 		};
 
 		static Dictionary<string, string> s_StringDefaults = new Dictionary<string, string>()
@@ -275,40 +275,6 @@ namespace UnityEditor.ProBuilder
 				return fallback;
 
 			return JsonUtility.FromJson<T>(str);
-		}
-
-		/// <summary>
-		/// Get a material from preferences.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <returns></returns>
-		public static Material GetMaterial(string key)
-		{
-			if(s_Preferences != null && preferences.HasKey<Material>(key))
-				return preferences.GetMaterial(key);
-
-			Material mat = null;
-
-			switch(key)
-			{
-				case PreferenceKeys.pbDefaultMaterial:
-					if(EditorPrefs.HasKey(key))
-					{
-						if(EditorPrefs.GetString(key) == "Default-Diffuse")
-							return BuiltinMaterials.GetLegacyDiffuse();
-
-						mat = (Material) AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString(key), typeof(Material));
-					}
-					break;
-
-				default:
-					return BuiltinMaterials.defaultMaterial;
-			}
-
-			if(!mat)
-				mat = BuiltinMaterials.defaultMaterial;
-
-			return mat;
 		}
 
 		/// <summary>

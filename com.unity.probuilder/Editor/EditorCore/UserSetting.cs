@@ -29,15 +29,22 @@ namespace UnityEngine.ProBuilder
     sealed class UserSettingBlockAttribute : Attribute
     {
         string m_Category;
+        string[] m_Keywords;
 
         public string category
         {
             get { return m_Category; }
         }
 
-        public UserSettingBlockAttribute(string category)
+        public string[] keywords
+        {
+            get { return m_Keywords; }
+        }
+
+        public UserSettingBlockAttribute(string category, string[] keywords = null)
         {
             m_Category = category;
+            m_Keywords = keywords;
         }
     }
 
@@ -45,7 +52,9 @@ namespace UnityEngine.ProBuilder
     {
         string key { get; }
         Type type { get; }
-        object boxedValue { get; }
+
+        object GetValue();
+        void SetValue(object value, bool saveProjectSettingsImmediately = false);
     }
 
     sealed class Pref<T> : IPref
@@ -72,9 +81,30 @@ namespace UnityEngine.ProBuilder
             get { return typeof(T); }
         }
 
-        public object boxedValue
+        public object GetValue()
         {
-            get { return value; }
+            return value;
+        }
+
+        public void SetValue(object value, bool saveProjectSettingsImmediately = false)
+        {
+            // we do want to allow null values
+            if(value != null && !(value is T))
+                throw new ArgumentException("Value must be of type " + typeof(T));
+            SetValue((T) value, saveProjectSettingsImmediately);
+        }
+
+        public void SetValue(T value, bool saveProjectSettingsImmediately = false)
+        {
+            if (Equals(m_Value, value))
+                return;
+
+            m_Value = value;
+
+            Settings.Set<T>(key, m_Value, m_Scope);
+
+            if (m_Scope == Settings.Scope.Project && saveProjectSettingsImmediately)
+                Settings.Save();
         }
 
         public T value
@@ -92,14 +122,7 @@ namespace UnityEngine.ProBuilder
                 return m_Value;
             }
 
-            set
-            {
-                if (Equals(m_Value, value))
-                    return;
-
-                m_Value = value;
-                Settings.Set<T>(key, m_Value, m_Scope);
-            }
+            set { SetValue(value); }
         }
 
         public static implicit operator T(Pref<T> pref)

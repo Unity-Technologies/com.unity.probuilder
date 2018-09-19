@@ -1,7 +1,5 @@
-using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
+using System;
 using UnityEngine;
-using UnityEditor;
 
 namespace UnityEditor.ProBuilder.UI
 {
@@ -10,142 +8,152 @@ namespace UnityEditor.ProBuilder.UI
 	/// </summary>
 	static class EditorStyles
 	{
+		const string k_FontAsap = "About/Font/Asap-Regular.otf";
+
+		const string k_ButtonBackgroundNormal = "Toolbar/Background/RoundedRect_Normal";
+		const string k_ButtonBackgroundHover = "Toolbar/Background/RoundedRect_Hover";
+		const string k_ButtonBackgroundPressed = "Toolbar/Background/RoundedRect_Pressed";
+		const string k_SettingsBackgroundNormal = "Toolbar/RoundedBorder";
+		const string k_SceneTextBoxBackgroundNormal = "Scene/TextBackground";
+
 		static readonly Color k_TextColorWhiteNormal = new Color(0.7f, 0.7f, 0.7f, 1f);
 		static readonly Color k_TextColorWhiteHover = new Color(0.7f, 0.7f, 0.7f, 1f);
 		static readonly Color k_TextColorWhiteActive = new Color(0.5f, 0.5f, 0.5f, 1f);
 
-		static GUIStyle s_ButtonStyle = null;
-		static GUIStyle s_ToolbarHelpIcon = null;
-		static GUIStyle s_SettingsGroupStyle = null;
-		static GUIStyle s_RowStyle = null;
-		static GUIStyle s_HeaderLabel = null;
-		static GUIStyle s_SceneTextBox = null;
+		static bool s_Initialized;
+		static GUIStyle s_ButtonStyle;
+		static GUIStyle s_ToolbarHelpIcon;
+		static GUIStyle s_SettingsGroup;
+		static GUIStyle s_RowStyle;
+		static GUIStyle s_HeaderLabel;
+		static GUIStyle s_SceneTextBox;
+		static GUIStyle s_IndentedSettingBlock;
 
-		/// <summary>
-		/// A generic menu button with no accent bar.
-		/// </summary>
-		public static GUIStyle buttonStyle
+		public static GUIStyle buttonStyle { get { Init(); return s_ButtonStyle; } }
+		public static GUIStyle toolbarHelpIcon { get { Init(); return s_ToolbarHelpIcon; } }
+		public static GUIStyle settingsGroup { get { Init(); return s_SettingsGroup; } }
+		public static GUIStyle rowStyle { get { Init(); return s_RowStyle; } }
+		public static GUIStyle headerLabel { get { Init(); return s_HeaderLabel; } }
+		public static GUIStyle sceneTextBox { get { Init(); return s_SceneTextBox; } }
+		public static GUIStyle indentedSettingBlock { get { Init(); return s_IndentedSettingBlock; } }
+
+		static void Init()
 		{
-			get
+			if (s_Initialized)
+				return;
+
+			s_Initialized = true;
+
+			s_ButtonStyle = new GUIStyle()
 			{
-				if(s_ButtonStyle == null)
+				normal = new GUIStyleState()
 				{
-					s_ButtonStyle = new GUIStyle();
-					s_ButtonStyle.normal.background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Normal");
-					s_ButtonStyle.normal.textColor = UnityEditor.EditorGUIUtility.isProSkin ? k_TextColorWhiteNormal : Color.black;
-					s_ButtonStyle.hover.background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Hover");
-					s_ButtonStyle.hover.textColor = UnityEditor.EditorGUIUtility.isProSkin ? k_TextColorWhiteHover : Color.black;
-					s_ButtonStyle.active.background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Pressed");
-					s_ButtonStyle.active.textColor = UnityEditor.EditorGUIUtility.isProSkin ? k_TextColorWhiteActive : Color.black;
-					s_ButtonStyle.alignment = PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI) ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
-					s_ButtonStyle.border = new RectOffset(3, 3, 3, 3);
-					s_ButtonStyle.stretchWidth = true;
-					s_ButtonStyle.stretchHeight = false;
-					s_ButtonStyle.margin = new RectOffset(4, 4, 4, 4);
-					s_ButtonStyle.padding = new RectOffset(4, 4, 4, 4);
+					background = IconUtility.GetIcon(k_ButtonBackgroundNormal),
+					textColor = UnityEditor.EditorGUIUtility.isProSkin ? k_TextColorWhiteNormal : Color.black
+				},
+				hover = new GUIStyleState()
+				{
+					background = IconUtility.GetIcon(k_ButtonBackgroundHover),
+					textColor = UnityEditor.EditorGUIUtility.isProSkin ? k_TextColorWhiteHover : Color.black,
+				},
+				active = new GUIStyleState()
+				{
+					background = IconUtility.GetIcon(k_ButtonBackgroundPressed),
+					textColor = UnityEditor.EditorGUIUtility.isProSkin ? k_TextColorWhiteActive : Color.black,
+				},
+				alignment = ProBuilderEditor.s_IsIconGui ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft,
+				border = new RectOffset(3, 3, 3, 3),
+				stretchWidth = true,
+				stretchHeight = false,
+				margin = new RectOffset(4, 4, 4, 4),
+				padding = new RectOffset(4, 4, 4, 4)
+			};
+
+			s_ToolbarHelpIcon = new GUIStyle()
+			{
+				margin = new RectOffset(0, 0, 0, 0),
+				padding = new RectOffset(0, 0, 0, 0),
+				alignment = TextAnchor.MiddleCenter,
+				fixedWidth = 18,
+				fixedHeight = 18
+			};
+
+			s_SettingsGroup = new GUIStyle()
+			{
+				normal = new GUIStyleState()
+				{
+					background = IconUtility.GetIcon(k_SettingsBackgroundNormal)
+				},
+				hover = new GUIStyleState()
+				{
+					background = IconUtility.GetIcon(k_SettingsBackgroundNormal)
+				},
+				active = new GUIStyleState()
+				{
+					background = IconUtility.GetIcon(k_SettingsBackgroundNormal)
+				},
+				border = new RectOffset(3, 3, 3, 3),
+				stretchWidth = true,
+				stretchHeight = false,
+				margin = new RectOffset(4, 4, 4, 4),
+				padding = new RectOffset(4, 4, 4, 6)
+			};
+
+			s_RowStyle = new GUIStyle()
+			{
+				normal = new GUIStyleState() { background = UnityEditor.EditorGUIUtility.whiteTexture },
+				stretchWidth = true,
+				stretchHeight = false,
+				margin = new RectOffset(4, 4, 4, 4),
+				padding = new RectOffset(4, 4, 4, 4)
+			};
+
+			s_HeaderLabel = new GUIStyle(UnityEditor.EditorStyles.boldLabel)
+			{
+				alignment = TextAnchor.LowerLeft,
+				fontSize = 18,
+				stretchWidth = true,
+				stretchHeight = false
+			};
+
+			Font asap = FileUtility.LoadInternalAsset<Font>(k_FontAsap);
+			if (asap != null)
+				s_HeaderLabel.font = asap;
+
+			s_SceneTextBox = new GUIStyle(GUI.skin.box)
+			{
+				wordWrap = false,
+				richText = true,
+				stretchWidth = false,
+				stretchHeight = false,
+				border = new RectOffset(2, 2, 2, 2),
+				padding = new RectOffset(4, 4, 4, 4),
+				alignment = TextAnchor.UpperLeft,
+				normal = new GUIStyleState()
+				{
+					textColor = k_TextColorWhiteNormal,
+					background = IconUtility.GetIcon(k_SceneTextBoxBackgroundNormal)
 				}
-				return s_ButtonStyle;
-			}
+			};
+
+			s_IndentedSettingBlock = new GUIStyle()
+			{
+				padding = new RectOffset(16, 0, 0, 0)
+			};
 		}
 
-		public static GUIStyle toolbarHelpIcon
+		public class IndentedBlock : IDisposable
 		{
-			get
+			public IndentedBlock()
 			{
-				if (s_ToolbarHelpIcon == null)
-				{
-					s_ToolbarHelpIcon = new GUIStyle();
-					s_ToolbarHelpIcon.margin = new RectOffset(0,0,0,0);
-					s_ToolbarHelpIcon.padding = new RectOffset(0,0,0,0);
-					s_ToolbarHelpIcon.alignment = TextAnchor.MiddleCenter;
-					s_ToolbarHelpIcon.fixedWidth = 18;
-					s_ToolbarHelpIcon.fixedHeight = 18;
-				}
-				return s_ToolbarHelpIcon;
+				UnityEditor.EditorGUIUtility.labelWidth -= indentedSettingBlock.padding.left - 4;
+				GUILayout.BeginVertical(indentedSettingBlock);
 			}
-		}
 
-		/// <summary>
-		/// Box outline for a settings group.
-		/// </summary>
-		public static GUIStyle settingsGroup
-		{
-			get
+			public void Dispose()
 			{
-				if (s_SettingsGroupStyle == null)
-				{
-					s_SettingsGroupStyle = new GUIStyle();
-
-					s_SettingsGroupStyle.normal.background 	= IconUtility.GetIcon("Toolbar/RoundedBorder");
-					s_SettingsGroupStyle.hover.background 	= IconUtility.GetIcon("Toolbar/RoundedBorder");
-					s_SettingsGroupStyle.active.background 	= IconUtility.GetIcon("Toolbar/RoundedBorder");
-					s_SettingsGroupStyle.border 			= new RectOffset(3,3,3,3);
-					s_SettingsGroupStyle.stretchWidth 		= true;
-					s_SettingsGroupStyle.stretchHeight 		= false;
-					s_SettingsGroupStyle.margin 			= new RectOffset(4,4,4,4);
-					s_SettingsGroupStyle.padding 			= new RectOffset(4,4,4,6);
-				}
-
-				return s_SettingsGroupStyle;
-			}
-		}
-
-		public static GUIStyle rowStyle
-		{
-			get
-			{
-				if (s_RowStyle == null)
-				{
-					s_RowStyle = new GUIStyle();
-					s_RowStyle.normal.background = UnityEditor.EditorGUIUtility.whiteTexture;
-					s_RowStyle.stretchWidth = true;
-					s_RowStyle.stretchHeight = false;
-					s_RowStyle.margin = new RectOffset(4,4,4,4);
-					s_RowStyle.padding = new RectOffset(4,4,4,4);
-				}
-				return s_RowStyle;
-			}
-		}
-
-		public static GUIStyle headerLabel
-		{
-			get
-			{
-				if (s_HeaderLabel == null)
-				{
-					s_HeaderLabel = new GUIStyle(UnityEditor.EditorStyles.boldLabel);
-					Font asap = FileUtility.LoadInternalAsset<Font>("About/Font/Asap-Regular.otf");
-					if(asap != null)
-						s_HeaderLabel.font = asap;
-					s_HeaderLabel.alignment = TextAnchor.LowerLeft;
-					s_HeaderLabel.fontSize = 18;
-					s_HeaderLabel.stretchWidth = true;
-					s_HeaderLabel.stretchHeight = false;
-				}
-
-				return s_HeaderLabel;
-			}
-		}
-
-		public static GUIStyle sceneTextBox
-		{
-			get
-			{
-				if (s_SceneTextBox == null)
-				{
-					s_SceneTextBox = new GUIStyle(GUI.skin.box);
-					s_SceneTextBox.wordWrap = false;
-					s_SceneTextBox.richText = true;
-					s_SceneTextBox.stretchWidth = false;
-					s_SceneTextBox.stretchHeight = false;
-					s_SceneTextBox.border = new RectOffset(2,2,2,2);
-					s_SceneTextBox.padding = new RectOffset(4,4,4,4);
-					s_SceneTextBox.normal.textColor = k_TextColorWhiteNormal;
-					s_SceneTextBox.alignment = TextAnchor.UpperLeft;
-					s_SceneTextBox.normal.background = IconUtility.GetIcon("Scene/TextBackground");
-				}
-
-				return s_SceneTextBox;
+				GUILayout.EndVertical();
+				UnityEditor.EditorGUIUtility.labelWidth += indentedSettingBlock.padding.left - 4;
 			}
 		}
 	}

@@ -13,7 +13,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Assign materials to faces and objects.
 	/// </summary>
-	sealed class MaterialEditor : EditorWindow
+	sealed class MaterialEditor : ConfigurableWindow
 	{
 		// Reference to pb_Editor instance.
 		static ProBuilderEditor editor { get { return ProBuilderEditor.instance; } }
@@ -186,27 +186,9 @@ namespace UnityEditor.ProBuilder
 			instance = null;
 		}
 
-		private void OpenContextMenu()
-		{
-			GenericMenu menu = new GenericMenu();
-
-			menu.AddItem (new GUIContent("Window/Open as Floating Window", ""), false, () => { SetFloating(true); } );
-			menu.AddItem (new GUIContent("Window/Open as Dockable Window", ""), false, () => { SetFloating(false); } );
-
-			menu.ShowAsContext ();
-		}
-
-		private void SetFloating(bool floating)
-		{
-			PreferencesInternal.SetBool(PreferenceKeys.pbMaterialEditorFloating, floating);
-			this.Close();
-			MenuOpenMaterialEditor();
-		}
-
 		private void OnGUI()
 		{
-			if(Event.current.type == EventType.ContextClick)
-				OpenContextMenu();
+			DoContextMenu();
 
 			GUILayout.Label("Quick Material", EditorStyles.boldLabel);
 			Rect r = GUILayoutUtility.GetLastRect();

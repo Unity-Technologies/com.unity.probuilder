@@ -5,7 +5,7 @@ using UnityEngine;
 namespace UnityEngine.ProBuilder
 {
 	/// <summary>
-	/// Rect to line segment clipping implemention.
+	/// Rect to line segment clipping implementation.
 	/// </summary>
 	/// <remarks>
 	/// https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm

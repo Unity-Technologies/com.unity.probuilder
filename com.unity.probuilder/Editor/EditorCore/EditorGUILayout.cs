@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Linq;
+using UnityEngine;
 using UnityEditor;
 
 namespace UnityEditor.ProBuilder.UI
@@ -163,5 +165,98 @@ namespace UnityEditor.ProBuilder.UI
 
 			return rect;
 		}
+
+		public static float SearchableSlider(GUIContent content, float value, float min, float max, string searchContext)
+		{
+			if (!MatchSearchGroups(searchContext, content.text))
+				return value;
+			return UnityEditor.EditorGUILayout.Slider(content, value, min, max);
+		}
+
+		public static float SearchableSlider(string content, float value, float min, float max, string searchContext)
+		{
+			if (!MatchSearchGroups(searchContext, content))
+				return value;
+			return UnityEditor.EditorGUILayout.Slider(content, value, min, max);
+		}
+
+		internal static float SearchableFloatField(GUIContent title, float value, string searchContext)
+		{
+			if(!MatchSearchGroups(searchContext, title.text))
+				return value;
+			return UnityEditor.EditorGUILayout.FloatField(title, value);
+		}
+
+		internal static float SearchableFloatField(string title, float value, string searchContext)
+		{
+			if(!MatchSearchGroups(searchContext, title))
+				return value;
+			return UnityEditor.EditorGUILayout.FloatField(title, value);
+		}
+
+		internal static int SearchableIntField(GUIContent title, int value, string searchContext)
+		{
+			if(!MatchSearchGroups(searchContext, title.text))
+				return value;
+			return UnityEditor.EditorGUILayout.IntField(title, value);
+		}
+
+		internal static int SearchableIntField(string title, int value, string searchContext)
+		{
+			if(!MatchSearchGroups(searchContext, title))
+				return value;
+			return UnityEditor.EditorGUILayout.IntField(title, value);
+		}
+
+		internal static bool SearchableToggle(GUIContent title, bool value, string searchContext)
+		{
+			if(!MatchSearchGroups(searchContext, title.text))
+				return value;
+			return UnityEditor.EditorGUILayout.Toggle(title, value);
+		}
+
+		internal static bool SearchableToggle(string title, bool value, string searchContext)
+		{
+			if(!MatchSearchGroups(searchContext, title))
+				return value;
+			return UnityEditor.EditorGUILayout.Toggle(title, value);
+		}
+
+		internal static string SearchableTextField(GUIContent title, string value, string searchContext)
+		{
+			if(!MatchSearchGroups(searchContext, title.text))
+				return value;
+			return UnityEditor.EditorGUILayout.TextField(title, value);
+		}
+
+		internal static string SearchableTextField(string title, string value, string searchContext)
+		{
+			if(!MatchSearchGroups(searchContext, title))
+				return value;
+			return UnityEditor.EditorGUILayout.TextField(title, value);
+		}
+
+		internal static Color SearchableColorField(GUIContent title, Color value, string searchContext)
+		{
+			if(!MatchSearchGroups(searchContext, title.text))
+				return value;
+			return UnityEditor.EditorGUILayout.ColorField(title, value);
+		}
+
+		internal static Color SearchableColorField(string title, Color value, string searchContext)
+		{
+			if (!MatchSearchGroups(searchContext, title))
+				return value;
+			return UnityEditor.EditorGUILayout.ColorField(title, value);
+		}
+
+		internal static bool MatchSearchGroups(string searchContext, string content)
+		{
+			if (string.IsNullOrWhiteSpace(searchContext))
+				return true;
+			var split = searchContext.Split(' ');
+			return split.Any(x => !string.IsNullOrWhiteSpace(x) && content.IndexOf(x, StringComparison.InvariantCultureIgnoreCase) > -1);
+		}
+
 	}
 }

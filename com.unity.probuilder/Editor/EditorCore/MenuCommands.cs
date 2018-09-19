@@ -233,7 +233,7 @@ namespace UnityEditor.ProBuilder
 
 			GameObject go = new GameObject();
 
-			go.AddComponent<MeshRenderer>().sharedMaterial = PreferencesInternal.GetMaterial(PreferenceKeys.pbDefaultMaterial);
+			go.AddComponent<MeshRenderer>().sharedMaterial = EditorUtility.GetUserMaterial();
 			go.AddComponent<MeshFilter>().sharedMesh = c;
 
 			ProBuilderMesh pb = InternalMeshUtility.CreateMeshWithTransform(go.transform, false);
@@ -399,9 +399,6 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		/**
-		 * Infers the correct context and extrudes the selected elements.
-		 */
 		public static ActionResult MenuExtrude(ProBuilderMesh[] selection, bool enforceCurrentSelectionMode = false)
 		{
 			if(selection == null || selection.Length < 1)
@@ -429,7 +426,7 @@ namespace UnityEditor.ProBuilder
 						Edge[] newEdges = pb.Extrude(pb.selectedEdges,
 												PreferencesInternal.GetFloat(PreferenceKeys.pbExtrudeDistance),
 												PreferencesInternal.GetBool(PreferenceKeys.pbExtrudeAsGroup),
-												PreferencesInternal.GetBool(PreferenceKeys.pbManifoldEdgeExtrusion));
+												ProBuilderEditor.s_AllowNonManifoldActions);
 						success = newEdges != null;
 
 						if(success)
@@ -467,10 +464,6 @@ namespace UnityEditor.ProBuilder
 				return new ActionResult(ActionResult.Status.Canceled, "Extrude\nEmpty Selection");
 		}
 
-#if !PROTOTYPE
-		/**
-		 * Create a face between two edges.
-		 */
 		public static ActionResult MenuBridgeEdges(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
@@ -479,13 +472,12 @@ namespace UnityEditor.ProBuilder
 			UndoUtility.RecordSelection(selection, "Bridge Edges");
 
 			bool success = false;
-			bool limitToPerimeterEdges = PreferencesInternal.GetBool(PreferenceKeys.pbPerimeterEdgeBridgeOnly);
 
 			foreach(ProBuilderMesh pb in selection)
 			{
 				if(pb.selectedEdgeCount == 2)
 				{
-					if(pb.Bridge(pb.selectedEdges[0], pb.selectedEdges[1], limitToPerimeterEdges) != null)
+					if(pb.Bridge(pb.selectedEdges[0], pb.selectedEdges[1], ProBuilderEditor.s_AllowNonManifoldActions) != null)
 					{
 						success = true;
 						pb.ToMesh();
@@ -535,7 +527,6 @@ namespace UnityEditor.ProBuilder
 
 			return res;
 		}
-#endif
 #endregion
 
 #region Selection

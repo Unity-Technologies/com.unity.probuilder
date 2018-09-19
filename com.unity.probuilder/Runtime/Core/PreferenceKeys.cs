@@ -34,43 +34,64 @@ namespace UnityEngine.ProBuilder
 		internal const string pbDefaultSelectionMode = "pbDefaultSelectionMode";
 		internal const string pbHandleAlignment = "pbHandleAlignment";
 		internal const string pbVertexColorTool = "pbVertexColorTool";
+		[Obsolete]
 		internal const string pbToolbarLocation = "pbToolbarLocation";
 		internal const string pbDefaultEntity = "pbDefaultEntity";
 		internal const string pbExtrudeMethod = "pbExtrudeMethod";
+		[Obsolete]
 		internal const string pbDefaultStaticFlags = "pbDefaultStaticFlags";
 
 		// Color
+		[Obsolete]
 		internal const string pbSelectedFaceColor = "pbDefaultFaceColor";
+		[Obsolete]
 		internal const string pbWireframeColor = "pbDefaultEdgeColor";
+		[Obsolete]
 		internal const string pbUnselectedEdgeColor = "pbUnselectedEdgeColor";
+		[Obsolete]
 		internal const string pbSelectedEdgeColor = "pbSelectedEdgeColor";
+		[Obsolete]
 		internal const string pbSelectedVertexColor = "pbDefaultSelectedVertexColor";
+		[Obsolete]
 		internal const string pbUnselectedVertexColor = "pbDefaultVertexColor";
+		[Obsolete]
 		internal const string pbPreselectionColor = "pbPreselectionColor";
 
 		// Bool
+		[Obsolete]
 		internal const string pbDefaultOpenInDockableWindow = "pbDefaultOpenInDockableWindow";
 		internal const string pbEditorPrefVersion = "pbEditorPrefVersion";
 		internal const string pbEditorShortcutsVersion = "pbEditorShortcutsVersion";
+		[Obsolete]
 		internal const string pbDefaultCollider = "pbDefaultCollider";
+		[Obsolete]
 		internal const string pbForceConvex = "pbForceConvex";
 		internal const string pbVertexColorPrefs = "pbVertexColorPrefs";
+		[Obsolete]
 		internal const string pbShowEditorNotifications = "pbShowEditorNotifications";
 		[Obsolete]
 		internal const string pbDragCheckLimit = "pbDragCheckLimit";
+		[Obsolete]
 		internal const string pbForceVertexPivot = "pbForceVertexPivot";
 		internal const string pbForceGridPivot = "pbForceGridPivot";
+		[Obsolete]
 		internal const string pbManifoldEdgeExtrusion = "pbManifoldEdgeExtrusion";
+		[Obsolete]
 		internal const string pbPerimeterEdgeBridgeOnly = "pbPerimeterEdgeBridgeOnly";
+		[Obsolete]
 		internal const string pbPBOSelectionOnly = "pbPBOSelectionOnly";
+		[Obsolete]
 		internal const string pbCloseShapeWindow = "pbCloseShapeWindow";
 		internal const string pbUVEditorFloating = "pbUVEditorFloating";
 		internal const string pbUVMaterialPreview = "pbUVMaterialPreview";
 		[Obsolete]
 		internal const string pbShowSceneToolbar = "pbShowSceneToolbar";
 		internal const string pbNormalizeUVsOnPlanarProjection = "pbNormalizeUVsOnPlanarProjection";
+		[Obsolete("Use Settings")]
 		internal const string pbStripProBuilderOnBuild = "pbStripProBuilderOnBuild";
+		[Obsolete("Use Lightmapping.autoUnwrapLightmapUV")]
 		internal const string pbDisableAutoUV2Generation = "pbDisableAutoUV2Generation";
+		[Obsolete]
 		internal const string pbShowSceneInfo = "pbShowSceneInfo";
 		internal const string pbEnableBackfaceSelection = "pbEnableBackfaceSelection";
 		internal const string pbVertexPaletteDockable = "pbVertexPaletteDockable";
@@ -80,14 +101,18 @@ namespace UnityEngine.ProBuilder
 		/// - 'G' = Toggle edit level, 'J, K, L' Vert, Edge, Face
 		/// - 'G, J, K, L' = Object, Vert, Edge, Face modes
 		/// </summary>
+		[Obsolete]
 		internal const string pbUniqueModeShortcuts = "pbUniqueModeShortcuts";
 		internal const string pbMaterialEditorFloating = "pbMaterialEditorFloating";
 		internal const string pbShapeWindowFloating = "pbShapeWindowFloating";
+		[Obsolete]
 		internal const string pbIconGUI = "pbIconGUI";
+		[Obsolete]
 		internal const string pbShiftOnlyTooltips = "pbShiftOnlyTooltips";
 		[Obsolete]
 		internal const string pbDrawAxisLines = "pbDrawAxisLines";
 		internal const string pbCollapseVertexToFirst = "pbCollapseVertexToFirst";
+		[Obsolete]
 		internal const string pbMeshesAreAssets = "pbMeshesAreAssets";
 		[Obsolete]
 		internal const string pbElementSelectIsHamFisted = "pbElementSelectIsHamFisted";
@@ -111,25 +136,34 @@ namespace UnityEngine.ProBuilder
 		internal const string pbDragSelectMode = "pbDragSelectMode";
 
 		/// If present sets the shadow casting mode on new ProBuilder objects.
+		[Obsolete]
 		internal const string pbShadowCastingMode = "pbShadowCastingMode";
 
 		/// Are experimental features enabled?
+		[Obsolete]
 		internal const string pbEnableExperimental = "pbEnableExperimental";
 
 		/// Automatically check for updates?
 		internal const string pbCheckForProBuilderUpdates = "pbCheckForProBuilderUpdates";
 
 		/// Enable ProBuilder to manage the lightmapping static flags.
+		[Obsolete]
 		internal const string pbManageLightmappingStaticFlag = "pbManageLightmappingStaticFlag";
+		[Obsolete]
 		internal const string pbShowMissingLightmapUvWarning = "pb_Lightmapping::showMissingLightmapUvWarning";
+		[Obsolete]
 		internal const string pbSelectedFaceDither = "pbSelectedFaceDither";
+		[Obsolete]
 		internal const string pbUseUnityColors = "pbUseUnityColors";
 
 		// Float
+		[Obsolete]
 		internal const string pbVertexHandleSize = "pbVertexHandleSize";
 		internal const string pbUVGridSnapValue = "pbUVGridSnapValue";
 		internal const string pbUVWeldDistance = "pbUVWeldDistance";
+		[Obsolete]
 		internal const string pbLineHandleSize = "pbLineHandleSize";
+		[Obsolete]
 		internal const string pbWireframeSize = "pbWireframeSize";
 
 		/// The maximum allowed distance between vertices to weld.
@@ -143,6 +177,7 @@ namespace UnityEngine.ProBuilder
 
 		// Misc
 		internal const string pbDefaultShortcuts = "pbDefaultShortcuts";
+		[Obsolete]
 		internal const string pbDefaultMaterial = "pbDefaultMaterial";
 		internal const string pbCurrentMaterialPalette = "pbCurrentMaterialPalette";
 

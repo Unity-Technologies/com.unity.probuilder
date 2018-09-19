@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Manages the ProBuilder toolbar window and tool mode.
 	/// </summary>
-	public sealed class ProBuilderEditor : EditorWindow
+	public sealed class ProBuilderEditor : EditorWindow, IHasCustomMenu
 	{
 		/// <value>
 		/// Raised any time the ProBuilder editor refreshes the selection. This is called every frame when interacting with mesh elements, and after any mesh operation.
@@ -50,18 +50,32 @@ namespace UnityEditor.ProBuilder
 		GUIContent[] m_EditModeIcons;
 		GUIStyle VertexTranslationInfoStyle;
 
-		bool m_ShowSceneInfo;
+		[UserSetting("General", "Show Scene Info", "Toggle the display of information about selected meshes in the Scene View.")]
+		static Pref<bool> s_ShowSceneInfo = new Pref<bool>("showSceneInfo", false);
+
+		[UserSetting("Toolbar", "Icon GUI", "Toggles the ProBuilder window interface between text and icon versions.")]
+		internal static Pref<bool> s_IsIconGui = new Pref<bool>("toolbarIconGUI", false);
+
+		[UserSetting("Toolbar", "Unique Mode Shortcuts", "When off, the G key toggles between Object and Element " +
+			"modes and H enumerates the element modes.  If on, G, H, J, and K are shortcuts to Object, Vertex, Edge, " +
+			"and Face modes respectively.")]
+		internal static Pref<bool> s_UniqueModeShortcuts = new Pref<bool>("uniqueModeShortcuts", false, Settings.Scope.User);
+
+		[UserSetting("Mesh Editing", "Allow non-manifold actions", "Enables advanced mesh editing techniques that may create non-manifold geometry.")]
+		internal static Pref<bool> s_AllowNonManifoldActions = new Pref<bool>("allowNonManifoldActions", false, Settings.Scope.User);
+
+		static Pref<bool> s_WindowIsFloating = new Pref<bool>("UnityEngine.ProBuilder.ProBuilderEditor-isUtilityWindow", false, Settings.Scope.Project);
 
 		float m_SnapValue = .25f;
 		bool m_SnapAxisConstraint = true;
 		bool m_SnapEnabled;
-		bool m_IsIconGui;
 		MethodInfo m_FindNearestVertex;
 		EditLevel m_PreviousEditLevel;
 		ComponentMode m_PreviousComponentMode;
 		HandleAlignment m_PreviousHandleAlignment;
 		Shortcut[] m_Shortcuts;
-		SceneToolbarLocation m_SceneToolbarLocation;
+		[UserSetting("Toolbar", "Toolbar Location", "Where the Object, Face, Edge, and Vertex toolbar will be shown in the Scene View.")]
+		static Pref<SceneToolbarLocation> s_SceneToolbarLocation = new Pref<SceneToolbarLocation>("sceneToolbarLocation", SceneToolbarLocation.UpperCenter, Settings.Scope.User);
 		GUIStyle m_CommandStyle;
 		Rect m_ElementModeToolbarRect = new Rect(3, 6, 128, 24);
 
@@ -69,7 +83,9 @@ namespace UnityEditor.ProBuilder
 		SceneSelection m_Hovering = new SceneSelection();
 		SceneSelection m_HoveringPrevious = new SceneSelection();
 		ScenePickerPreferences m_ScenePickerPreferences;
-		bool m_ShowPreselectionHighlight;
+
+		[UserSetting("Graphics", "Show Hover Highlight", "Highlight the mesh element nearest to the mouse cursor.")]
+		static Pref<bool> s_ShowHoverHighlight = new Pref<bool>("showPreselectionHighlight", true, Settings.Scope.User);
 
 		Tool m_CurrentTool = Tool.Move;
 		Vector2 m_InitialMousePosition;
@@ -257,10 +273,9 @@ namespace UnityEditor.ProBuilder
 		internal static void MenuOpenWindow()
 		{
 			ProBuilderEditor editor = (ProBuilderEditor) EditorWindow.GetWindow(typeof(ProBuilderEditor),
-				!PreferencesInternal.GetBool(PreferenceKeys.pbDefaultOpenInDockableWindow), PreferenceKeys.pluginTitle,
+				s_WindowIsFloating, PreferenceKeys.pluginTitle,
 				true); // open as floating window
-			// would be nice if editorwindow's showMode was exposed
-			editor.isFloatingWindow = !PreferencesInternal.GetBool(PreferenceKeys.pbDefaultOpenInDockableWindow);
+			editor.isFloatingWindow = s_WindowIsFloating;
 		}
 
 		void OnBecameVisible()
@@ -346,8 +361,6 @@ namespace UnityEditor.ProBuilder
 			editLevel = PreferencesInternal.GetEnum<EditLevel>(PreferenceKeys.pbDefaultEditLevel);
 			componentMode = PreferencesInternal.GetEnum<ComponentMode>(PreferenceKeys.pbDefaultSelectionMode);
 			handleAlignment = PreferencesInternal.GetEnum<HandleAlignment>(PreferenceKeys.pbHandleAlignment);
-			m_ShowSceneInfo = PreferencesInternal.GetBool(PreferenceKeys.pbShowSceneInfo);
-			m_ShowPreselectionHighlight = PreferencesInternal.GetBool(PreferenceKeys.pbShowPreselectionHighlight);
 
 			// ---
 			bool selectHiddenFaces = PreferencesInternal.GetBool(PreferenceKeys.pbEnableBackfaceSelection);
@@ -367,9 +380,6 @@ namespace UnityEditor.ProBuilder
 			m_SnapAxisConstraint = ProGridsInterface.UseAxisConstraints();
 
 			m_Shortcuts = Shortcut.ParseShortcuts(PreferencesInternal.GetString(PreferenceKeys.pbDefaultShortcuts)).ToArray();
-
-			m_SceneToolbarLocation = PreferencesInternal.GetEnum<SceneToolbarLocation>(PreferenceKeys.pbToolbarLocation);
-			m_IsIconGui = PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI);
 		}
 
 		void InitGUI()
@@ -427,7 +437,9 @@ namespace UnityEditor.ProBuilder
 			switch (e.type)
 			{
 				case EventType.ContextClick:
-					OpenContextMenu();
+					var menu = new GenericMenu();
+					AddItemsToMenu(menu);
+					menu.ShowAsContext();
 					break;
 
 				case EventType.KeyDown:
@@ -457,29 +469,9 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		void OpenContextMenu()
-		{
-			GenericMenu menu = new GenericMenu();
-
-			menu.AddItem(new GUIContent("Open As Floating Window", ""),
-				!PreferencesInternal.GetBool(PreferenceKeys.pbDefaultOpenInDockableWindow, true), Menu_OpenAsFloatingWindow);
-			menu.AddItem(new GUIContent("Open As Dockable Window", ""),
-				PreferencesInternal.GetBool(PreferenceKeys.pbDefaultOpenInDockableWindow, true), Menu_OpenAsDockableWindow);
-
-			menu.AddSeparator("");
-
-			menu.AddItem(new GUIContent("Use Icon Mode", ""), PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI),
-				Menu_ToggleIconMode);
-			menu.AddItem(new GUIContent("Use Text Mode", ""), !PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI),
-				Menu_ToggleIconMode);
-
-			menu.ShowAsContext();
-		}
-
 		void Menu_ToggleIconMode()
 		{
-			m_IsIconGui = !PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI);
-			PreferencesInternal.SetBool(PreferenceKeys.pbIconGUI, m_IsIconGui);
+			s_IsIconGui.value = !s_IsIconGui;
 			if (s_EditorToolbar != null)
 				Object.DestroyImmediate(s_EditorToolbar);
 			s_EditorToolbar = ScriptableObject.CreateInstance<EditorToolbar>();
@@ -487,18 +479,27 @@ namespace UnityEditor.ProBuilder
 			s_EditorToolbar.InitWindowProperties(this);
 		}
 
-		void Menu_OpenAsDockableWindow()
+		public void AddItemsToMenu(GenericMenu menu)
 		{
-			PreferencesInternal.SetBool(PreferenceKeys.pbDefaultOpenInDockableWindow, true);
-			EditorWindow.GetWindow<ProBuilderEditor>().Close();
-			ProBuilderEditor.MenuOpenWindow();
+			bool floating = s_WindowIsFloating;
+
+			menu.AddItem(new GUIContent("Window/Open as Floating Window", ""), floating, () => SetIsUtilityWindow(true) );
+			menu.AddItem(new GUIContent("Window/Open as Dockable Window", ""), !floating, () => SetIsUtilityWindow(false) );
+			menu.AddSeparator("");
+
+			menu.AddItem(new GUIContent("Use Icon Mode", ""), s_IsIconGui,
+				Menu_ToggleIconMode);
+			menu.AddItem(new GUIContent("Use Text Mode", ""), !s_IsIconGui,
+				Menu_ToggleIconMode);
 		}
 
-		void Menu_OpenAsFloatingWindow()
+		void SetIsUtilityWindow(bool isUtilityWindow)
 		{
-			PreferencesInternal.SetBool(PreferenceKeys.pbDefaultOpenInDockableWindow, false);
-			EditorWindow.GetWindow<ProBuilderEditor>().Close();
-			ProBuilderEditor.MenuOpenWindow();
+			s_WindowIsFloating.value = isUtilityWindow;
+			var windowTitle = titleContent;
+			Close();
+			var res = GetWindow(GetType(), isUtilityWindow);
+			res.titleContent = windowTitle;
 		}
 
 		void OnSceneGUI(SceneView sceneView)
@@ -561,7 +562,7 @@ namespace UnityEditor.ProBuilder
 			}
 
 			// Check mouse position in scene and determine if we should highlight something
-			if (m_ShowPreselectionHighlight
+			if (s_ShowHoverHighlight
 				&& m_CurrentEvent.type == EventType.MouseMove
 				&& editLevel == EditLevel.Geometry)
 			{
@@ -1087,7 +1088,7 @@ namespace UnityEditor.ProBuilder
 						Edge[] newEdges = pb.Extrude(pb.selectedEdges,
 							0.0001f,
 							PreferencesInternal.GetBool(PreferenceKeys.pbExtrudeAsGroup),
-							PreferencesInternal.GetBool(PreferenceKeys.pbManifoldEdgeExtrusion));
+							s_AllowNonManifoldActions);
 
 						if (newEdges != null)
 						{
@@ -1235,7 +1236,7 @@ namespace UnityEditor.ProBuilder
 				int currentSelectionMode =
 					(editLevel != EditLevel.Top && editLevel != EditLevel.Plugin) ? ((int) componentMode) + 1 : 0;
 
-				switch (m_SceneToolbarLocation)
+				switch ((SceneToolbarLocation) s_SceneToolbarLocation)
 				{
 					case SceneToolbarLocation.BottomCenter:
 						m_ElementModeToolbarRect.x = (screenWidth / 2 - 64);
@@ -1289,7 +1290,7 @@ namespace UnityEditor.ProBuilder
 					}
 				}
 
-				if (m_IsMovingElements && m_ShowSceneInfo)
+				if (m_IsMovingElements && s_ShowSceneInfo)
 				{
 					string handleTransformInfo = string.Format(
 						"translate: <b>{0}</b>\nrotate: <b>{1}</b>\nscale: <b>{2}</b>",
@@ -1297,7 +1298,7 @@ namespace UnityEditor.ProBuilder
 						(m_HandleRotation.eulerAngles - m_RotateOrigin).ToString(),
 						(m_HandleScale - m_ScaleOrigin).ToString());
 
-					var gc = UI.EditorGUIUtility.TempGUIContent(handleTransformInfo);
+					var gc = UI.EditorGUIUtility.TempContent(handleTransformInfo);
 					// sceneview screen.height includes the tab and toolbar
 					var toolbarHeight = EditorStyles.toolbar.CalcHeight(gc, Screen.width);
 					var size = UI.EditorStyles.sceneTextBox.CalcSize(gc);
@@ -1310,7 +1311,7 @@ namespace UnityEditor.ProBuilder
 					GUI.Label(handleTransformInfoRect, gc, UI.EditorStyles.sceneTextBox);
 				}
 
-				if (m_ShowSceneInfo)
+				if (s_ShowSceneInfo)
 				{
 					Vector2 size = UI.EditorStyles.sceneTextBox.CalcSize(m_SceneInfo);
 					m_SceneInfoRect.width = size.x;
@@ -1401,8 +1402,6 @@ namespace UnityEditor.ProBuilder
 
 		bool AllLevelShortcuts(Shortcut shortcut)
 		{
-			bool uniqueModeShortcuts = PreferencesInternal.GetBool(PreferenceKeys.pbUniqueModeShortcuts);
-
 			switch (shortcut.action)
 			{
 				// TODO Remove once a workaround for non-upper-case shortcut chars is found
@@ -1413,7 +1412,7 @@ namespace UnityEditor.ProBuilder
 						EditorUtility.ShowNotification("Top Level Editing");
 						SetEditLevel(EditLevel.Top);
 					}
-					else if (!uniqueModeShortcuts)
+					else if (!s_UniqueModeShortcuts)
 					{
 						EditorUtility.ShowNotification("Geometry Editing");
 						SetEditLevel(EditLevel.Geometry);
@@ -1423,7 +1422,7 @@ namespace UnityEditor.ProBuilder
 
 				case "Vertex Mode":
 				{
-					if (!uniqueModeShortcuts)
+					if (!s_UniqueModeShortcuts)
 						return false;
 
 					if (editLevel == EditLevel.Top)
@@ -1435,7 +1434,7 @@ namespace UnityEditor.ProBuilder
 
 				case "Edge Mode":
 				{
-					if (!uniqueModeShortcuts)
+					if (!s_UniqueModeShortcuts)
 						return false;
 
 					if (editLevel == EditLevel.Top)
@@ -1447,7 +1446,7 @@ namespace UnityEditor.ProBuilder
 
 				case "Face Mode":
 				{
-					if (!uniqueModeShortcuts)
+					if (!s_UniqueModeShortcuts)
 						return false;
 
 					if (editLevel == EditLevel.Top)
@@ -1476,7 +1475,7 @@ namespace UnityEditor.ProBuilder
 				// TODO Remove once a workaround for non-upper-case shortcut chars is found
 				case "Toggle Selection Mode":
 
-					if (PreferencesInternal.GetBool(PreferenceKeys.pbUniqueModeShortcuts))
+					if(s_UniqueModeShortcuts)
 						return false;
 
 					ToggleSelectionMode();

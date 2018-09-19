@@ -416,9 +416,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <param name="mesh">The source mesh.</param>
 		/// <param name="a">First edge.</param>
 		/// <param name="b">Second edge</param>
-		/// <param name="enforcePerimiterEdgesOnly">If true, this function will not create a face bridging manifold edges.</param>
+		/// <param name="allowNonManifoldGeometry">If true, this function will allow edges to be bridged that create overlapping (non-manifold) faces.</param>
 		/// <returns>The new face, or null of the action failed.</returns>
-		public static Face Bridge(this ProBuilderMesh mesh, Edge a, Edge b, bool enforcePerimiterEdgesOnly = false)
+		public static Face Bridge(this ProBuilderMesh mesh, Edge a, Edge b, bool allowNonManifoldGeometry = false)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -427,7 +427,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Dictionary<int, int> lookup = mesh.sharedVertexLookup;
 
 			// Check to see if a face already exists
-			if(enforcePerimiterEdgesOnly)
+			if(!allowNonManifoldGeometry)
 			{
 				if( ElementSelection.GetNeighborFaces(mesh, a).Count > 1 || ElementSelection.GetNeighborFaces(mesh, b).Count > 1 )
 				{

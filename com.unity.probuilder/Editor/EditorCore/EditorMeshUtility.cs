@@ -43,11 +43,9 @@ namespace UnityEditor.ProBuilder
 				if(umesh.GetTopology(i) != MeshTopology.Triangles)
 					skipMeshProcessing = true;
 
-			bool hasUv2 = false;
-
 			if(!skipMeshProcessing)
 			{
-				bool autoLightmap = !PreferencesInternal.GetBool(PreferenceKeys.pbDisableAutoUV2Generation);
+				bool autoLightmap = Lightmapping.autoUnwrapLightmapUV;
 				bool lightmapUVs = generateLightmapUVs || (autoLightmap && mesh.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic));
 
 				// if generating UV2, the process is to manually split the mesh into individual triangles,
@@ -71,12 +69,10 @@ namespace UnityEditor.ProBuilder
 					{
 						for(int i = 0; i < uv2.Length; i++)
 							vertices[i].uv2 = uv2[i];
-
-						hasUv2 = true;
 					}
 					else
 					{
-						Log.Warning("Generate UV2 failed - the returned size of UV2 array != mesh.vertexCount");
+						Log.Warning("Generate UV2 failed. The returned size of UV2 array != mesh.vertexCount");
 					}
 
 					UnityEngine.ProBuilder.MeshUtility.CollapseSharedVertices(umesh, vertices);
@@ -87,13 +83,10 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
-			if(PreferencesInternal.GetBool(PreferenceKeys.pbManageLightmappingStaticFlag, false))
-				Lightmapping.SetLightmapStaticFlagEnabled(mesh, hasUv2);
-
 			if(meshOptimized != null)
 				meshOptimized(mesh, umesh);
 
-			if(PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets))
+			if(EditorUtility.s_MeshesAreAssets)
 				TryCacheMesh(mesh);
 
 			UnityEditor.EditorUtility.SetDirty(mesh);
