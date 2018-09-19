@@ -28,19 +28,14 @@ namespace UnityEditor.ProBuilder.Actions
 			"Break all selected faces down to triangles."
 		);
 
-		protected override SelectMode validSelectModes
+		public override SelectMode validSelectModes
 		{
 			get { return SelectMode.Face; }
 		}
 
 		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null
-					&& ProBuilderEditor.selectMode.HasFlag(validSelectModes)
-					&& ProBuilderEditor.instance.selectedFaceCount > 0;
-			}
+			get { return base.enabled && MeshSelection.selectedFaceCount > 0; }
 		}
 
 		public override ActionResult DoAction()

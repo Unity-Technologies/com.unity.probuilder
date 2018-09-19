@@ -23,14 +23,14 @@ namespace UnityEditor.ProBuilder.Actions
 			keyCommandSuper, 'E'
 		);
 
-		protected override SelectMode validSelectModes
+		public override SelectMode validSelectModes
 		{
 			get { return SelectMode.Edge; }
 		}
 
 		public override bool enabled
 		{
-			get { return base.enabled && ProBuilderEditor.instance.selectedEdgeCount > 0; }
+			get { return base.enabled && MeshSelection.selectedEdgeCount > 0; }
 		}
 
 		protected override MenuActionState optionsMenuState

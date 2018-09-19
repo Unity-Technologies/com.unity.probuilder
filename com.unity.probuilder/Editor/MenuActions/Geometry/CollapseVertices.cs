@@ -36,14 +36,14 @@ namespace UnityEditor.ProBuilder.Actions
 			keyCommandAlt, 'C'
 		);
 
-		protected override SelectMode validSelectModes
+		public override SelectMode validSelectModes
 		{
 			get { return SelectMode.Vertex; }
 		}
 
 		public override bool enabled
 		{
-			get { return base.enabled && ProBuilderEditor.instance.selectedVertexCountObjectMax > 1; }
+			get { return base.enabled && MeshSelection.selectedVertexCountObjectMax > 1; }
 		}
 
 		protected override MenuActionState optionsMenuState

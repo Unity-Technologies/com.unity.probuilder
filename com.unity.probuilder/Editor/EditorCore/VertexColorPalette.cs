@@ -167,11 +167,12 @@ namespace UnityEditor.ProBuilder
 
 			ProBuilderEditor editor = ProBuilderEditor.instance;
 
-			if (editor && ProBuilderEditor.selectMode.HasFlag(SelectMode.Vertex | SelectMode.Edge | SelectMode.Face) )
+			if (editor && ProBuilderEditor.selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.Edge | SelectMode.Face) )
 			{
 				switch (ProBuilderEditor.selectMode)
 				{
 					case SelectMode.Face:
+					case SelectMode.Texture:
 						foreach (ProBuilderMesh mesh in selection)
 						{
 							Color[] colors = mesh.GetColors();

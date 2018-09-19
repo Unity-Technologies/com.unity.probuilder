@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
@@ -10,27 +9,41 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		Pref<int> m_SubdivisionCount = new Pref<int>("SubdivideEdges.subdivisions", 1);
 
-		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Subdivide", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
-		protected override bool hasFileMenuEntry { get { return false; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Geometry; }
+		}
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Edge_Subdivide", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return s_Tooltip; }
+		}
+
+		protected override bool hasFileMenuEntry
+		{
+			get { return false; }
+		}
+
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Subdivide Edges",
 			"Appends evenly spaced new vertices to the selected edges.",
 			keyCommandAlt, 'S'
 		);
 
+		public override SelectMode validSelectModes
+		{
+			get { return SelectMode.Edge; }
+		}
+
 		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.componentMode == ComponentMode.Edge &&
-					MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
-			}
+			get { return base.enabled && MeshSelection.selectedEdgeCount > 0; }
 		}
 
 		protected override MenuActionState optionsMenuState
@@ -57,22 +70,12 @@ namespace UnityEditor.ProBuilder.Actions
 				DoAction();
 		}
 
-		public override bool hidden
-		{
-			get
-			{
-				return ProBuilderEditor.instance == null ||
-					ProBuilderEditor.editLevel != EditLevel.Geometry ||
-					ProBuilderEditor.componentMode != ComponentMode.Edge;
-			}
-		}
-
 		public override ActionResult DoAction()
 		{
 			var editor = ProBuilderEditor.instance;
 			var selection = MeshSelection.TopInternal();
 
-			if(!editor || selection == null || selection.Length < 1)
+			if (!editor || selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
 
 			int subdivisions = m_SubdivisionCount;
@@ -81,7 +84,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			ActionResult result = ActionResult.NoSelection;
 
-			foreach(ProBuilderMesh pb in selection)
+			foreach (ProBuilderMesh pb in selection)
 			{
 				List<Edge> newEdgeSelection = AppendElements.AppendVerticesToEdge(pb, pb.selectedEdges, subdivisions);
 

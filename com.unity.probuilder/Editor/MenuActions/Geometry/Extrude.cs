@@ -28,7 +28,7 @@ namespace UnityEditor.ProBuilder.Actions
 			get { return s_Tooltip; }
 		}
 
-		protected override SelectMode validSelectModes
+		public override SelectMode validSelectModes
 		{
 			get { return SelectMode.Face | SelectMode.Edge; }
 		}

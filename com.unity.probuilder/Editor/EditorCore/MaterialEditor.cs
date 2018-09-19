@@ -189,7 +189,7 @@ namespace UnityEditor.ProBuilder
 					if(GUILayout.Button("Apply (Ctrl+Shift+Click)"))
 						ApplyMaterial(MeshSelection.TopInternal(), s_QueuedMaterial);
 
-					GUI.enabled = editor != null && editor.selectedFaceCount > 0;
+					GUI.enabled = editor != null && MeshSelection.selectedFaceCount > 0;
 					if(GUILayout.Button("Match Selection"))
 					{
 						ProBuilderMesh tp;
@@ -342,7 +342,7 @@ namespace UnityEditor.ProBuilder
 				OnFaceChanged(pb);
 			}
 
-			if(ProBuilderEditor.instance != null && ProBuilderEditor.instance.selectedFaceCount > 0)
+			if(ProBuilderEditor.instance != null && MeshSelection.selectedFaceCount > 0)
 				EditorUtility.ShowNotification("Set Material\n" + mat.name);
 		}
 

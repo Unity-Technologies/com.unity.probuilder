@@ -21,14 +21,14 @@ namespace UnityEditor.ProBuilder.Actions
 			keyCommandAlt, 'E'
 		);
 
-		protected override SelectMode validSelectModes
+		public override SelectMode validSelectModes
 		{
 			get { return SelectMode.Vertex; }
 		}
 
 		public override bool enabled
 		{
-			get { return base.enabled && ProBuilderEditor.instance.selectedSharedVertexCount > 1; }
+			get { return base.enabled && MeshSelection.selectedSharedVertexCount > 1; }
 		}
 
 		public override ActionResult DoAction()

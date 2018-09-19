@@ -17,10 +17,10 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override TooltipContent tooltip
 		{
-			get { return _tooltip; }
+			get { return s_Tooltip; }
 		}
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Center Pivot",
 			@"Set the pivot point of this object to the center of it's bounds."
@@ -28,7 +28,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool enabled
 		{
-			get { return ProBuilderEditor.instance != null && MeshSelection.TopInternal().Length > 0; }
+			get { return base.enabled && MeshSelection.selectedObjectCount > 0; }
 		}
 
 		public override ActionResult DoAction()

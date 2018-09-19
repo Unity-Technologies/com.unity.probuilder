@@ -27,14 +27,14 @@ namespace UnityEditor.ProBuilder.Actions
 			keyCommandDelete
 		);
 
-		protected override SelectMode validSelectModes
+		public override SelectMode validSelectModes
 		{
 			get { return SelectMode.Face; }
 		}
 
 		public override bool enabled
 		{
-			get { return base.enabled && ProBuilderEditor.instance.selectedFaceCount > 0; }
+			get { return base.enabled && MeshSelection.selectedFaceCount > 0; }
 		}
 
 		public override ActionResult DoAction()

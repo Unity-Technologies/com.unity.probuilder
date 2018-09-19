@@ -1,11 +1,9 @@
 #pragma warning disable 0168
 
 using UnityEngine;
-using UnityEditor;
 using System.Linq;
 using System;
 using System.Reflection;
-using UnityEditor.ProBuilder.Actions;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.Rendering;
@@ -108,6 +106,11 @@ namespace UnityEditor.ProBuilder
 			if(outline) state |= SelectionRenderState.Outline;
 
 			return state;
+		}
+
+		internal static void ShowNotification(ActionResult result)
+		{
+			ShowNotification(result.notification);
 		}
 
 		/// <summary>
@@ -451,15 +454,20 @@ namespace UnityEditor.ProBuilder
 			#endif
 		}
 
-		internal static bool IsGeoMode(SelectMode mode)
+		/// <summary>
+		/// Is this mode one of the mesh element modes (vertex, edge, face, texture).
+		/// </summary>
+		/// <param name="mode"></param>
+		/// <returns></returns>
+		internal static bool IsMeshElementMode(this SelectMode mode)
 		{
-			return mode.HasFlag(SelectMode.Vertex | SelectMode.Edge | SelectMode.Face);
+			return mode.ContainsFlag(SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.Texture);
 		}
 
 		// HasFlag doesn't exist in .NET 3.5
-		internal static bool HasFlag(this SelectMode target, SelectMode value)
+		internal static bool ContainsFlag(this SelectMode target, SelectMode value)
 		{
-			return (target & value) > 0;
+			return (target & value) != SelectMode.None;
 		}
 
 		internal static SelectMode GetSelectMode(EditLevel edit, ComponentMode component)

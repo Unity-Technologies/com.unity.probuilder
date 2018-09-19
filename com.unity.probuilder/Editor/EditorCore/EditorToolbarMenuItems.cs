@@ -880,6 +880,23 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
+		[MenuItem(k_MenuPrefix + "Selection/Select Loop &l", true)]
+		static bool MenuVerifySelectLoop()
+		{
+			SelectLoop instance = EditorToolbarLoader.GetInstance<SelectLoop>();
+
+			return instance != null && instance.enabled;
+	
+		}
+
+		[MenuItem(k_MenuPrefix + "Selection/Select Loop &l", false, PreferenceKeys.menuSelection + 0)]
+		static void MenuDoSelectLoop()
+		{
+			SelectLoop instance = EditorToolbarLoader.GetInstance<SelectLoop>();
+			if(instance != null)
+				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
 		[MenuItem(k_MenuPrefix + "Selection/Select Material ", true)]
 		static bool MenuVerifySelectMaterial()
 		{
@@ -893,6 +910,23 @@ namespace UnityEditor.ProBuilder
 		static void MenuDoSelectMaterial()
 		{
 			SelectMaterial instance = EditorToolbarLoader.GetInstance<SelectMaterial>();
+			if(instance != null)
+				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
+		[MenuItem(k_MenuPrefix + "Selection/Select Ring &r", true)]
+		static bool MenuVerifySelectRing()
+		{
+			SelectRing instance = EditorToolbarLoader.GetInstance<SelectRing>();
+
+			return instance != null && instance.enabled;
+	
+		}
+
+		[MenuItem(k_MenuPrefix + "Selection/Select Ring &r", false, PreferenceKeys.menuSelection + 0)]
+		static void MenuDoSelectRing()
+		{
+			SelectRing instance = EditorToolbarLoader.GetInstance<SelectRing>();
 			if(instance != null)
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}

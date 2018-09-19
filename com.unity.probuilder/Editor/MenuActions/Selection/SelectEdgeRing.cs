@@ -4,6 +4,7 @@ using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -41,30 +42,45 @@ namespace UnityEditor.ProBuilder.Actions
 			keyCommandAlt, 'R'
 		);
 
-		public override bool enabled
+		public override SelectMode validSelectModes
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					editLevel == EditLevel.Geometry &&
-					componentMode == ComponentMode.Edge &&
-					MeshSelection.TopInternal().Sum(x => x.selectedEdgeCount) > 0;
-			}
+			get { return SelectMode.Edge; }
 		}
 
-		public override bool hidden
+		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance == null ||
-					editLevel != EditLevel.Geometry ||
-					componentMode != ComponentMode.Edge;
-			}
+			get { return base.enabled && MeshSelection.selectedEdgeCount > 0; }
 		}
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuRingSelection(MeshSelection.TopInternal());
+			var selection = MeshSelection.TopInternal();
+
+			if(selection == null || selection.Length < 1)
+				return ActionResult.NoSelection;
+
+			UndoUtility.RecordSelection(selection, "Select Edge Ring");
+
+			bool success = false;
+
+			foreach(ProBuilderMesh pb in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
+			{
+				Edge[] edges = ElementSelection.GetEdgeRing(pb, pb.selectedEdges).ToArray();
+
+				if(edges.Length > pb.selectedEdgeCount)
+					success = true;
+
+				pb.SetSelectedEdges( edges );
+			}
+
+			ProBuilderEditor.Refresh();
+
+			SceneView.RepaintAll();
+
+			if(success)
+				return new ActionResult(ActionResult.Status.Success, "Select Edge Ring");
+
+			return new ActionResult(ActionResult.Status.Failure, "Nothing to Ring");
 		}
 	}
 }

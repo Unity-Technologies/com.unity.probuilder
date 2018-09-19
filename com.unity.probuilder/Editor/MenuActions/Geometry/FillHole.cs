@@ -37,14 +37,14 @@ namespace UnityEditor.ProBuilder.Actions
 			@"Create a new face connecting all selected vertices."
 		);
 
-		protected override SelectMode validSelectModes
+		public override SelectMode validSelectModes
 		{
 			get { return SelectMode.Edge | SelectMode.Vertex; }
 		}
 
 		public override bool enabled
 		{
-			get { return base.enabled && (ProBuilderEditor.instance.selectedEdgeCount > 0 || ProBuilderEditor.instance.selectedSharedVertexCount > 0); }
+			get { return base.enabled && (MeshSelection.selectedEdgeCount > 0 || MeshSelection.selectedSharedVertexCount > 0); }
 		}
 
 		protected override MenuActionState optionsMenuState
@@ -108,7 +108,7 @@ namespace UnityEditor.ProBuilder.Actions
 					{
 						// if selecting whole path and in edge mode, make sure the path contains
 						// at least one complete edge from the selection.
-						if(	ProBuilderEditor.componentMode == ComponentMode.Edge &&
+						if(	ProBuilderEditor.selectMode == SelectMode.Edge &&
 							!hole.Any(x => common.Contains(x.edge.common.a) &&
 							common.Contains(x.edge.common.b)))
 							continue;

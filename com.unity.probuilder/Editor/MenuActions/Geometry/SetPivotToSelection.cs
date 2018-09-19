@@ -21,18 +21,19 @@ namespace UnityEditor.ProBuilder.Actions
 			keyCommandSuper, 'J'
 		);
 
+		public override SelectMode validSelectModes
+		{
+			get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face; }
+		}
+
 		public override bool enabled
 		{
 			get
 			{
-				return ProBuilderEditor.instance != null &&
-					MeshSelection.TopInternal().Any(x => x.selectedVertexCount > 0);
+				return base.enabled && (MeshSelection.selectedVertexCount > 0
+					|| MeshSelection.selectedEdgeCount > 0
+					|| MeshSelection.selectedFaceCount > 0);
 			}
-		}
-
-		public override bool hidden
-		{
-			get { return editLevel != EditLevel.Geometry; }
 		}
 
 		public override ActionResult DoAction()

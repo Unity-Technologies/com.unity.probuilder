@@ -64,14 +64,14 @@ namespace UnityEditor.ProBuilder.Actions
 			m_Icons[(int)ExtrudeMethod.FaceNormal] = IconUtility.GetIcon("Toolbar/ExtrudeFace_FaceNormals", IconSkin.Pro);
 		}
 
-		protected override SelectMode validSelectModes
+		public override SelectMode validSelectModes
 		{
 			get { return SelectMode.Face; }
 		}
 
 		public override bool enabled
 		{
-			get { return base.enabled && ProBuilderEditor.instance.selectedFaceCount > 0; }
+			get { return base.enabled && MeshSelection.selectedFaceCount > 0; }
 		}
 
 		protected override MenuActionState optionsMenuState

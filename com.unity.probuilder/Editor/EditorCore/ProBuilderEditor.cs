@@ -134,11 +134,6 @@ namespace UnityEditor.ProBuilder
 
 		Vector3 m_HandlePivotWorld = Vector3.zero;
 
-		/// <summary>
-		/// Faces that need to be refreshed when moving or modifying the actual selection
-		/// </summary>
-		internal Dictionary<ProBuilderMesh, List<Face>> selectedFacesInEditZone { get; private set; }
-
 		Matrix4x4 handleMatrix = Matrix4x4.identity;
 		Quaternion handleRotation = new Quaternion(0f, 0f, 0f, 1f);
 
@@ -148,30 +143,6 @@ namespace UnityEditor.ProBuilder
 
 		// All selected pb_Objects
 		internal ProBuilderMesh[] selection = new ProBuilderMesh[0];
-
-		// todo Move selection count caches to MeshSelection
-		// Sum of all vertices selected
-		int m_SelectedVertexCount;
-
-		// Sum of all vertices selected, not counting duplicates on common positions
-		int m_SelectedSharedVertices;
-
-		// Sum of all faces selected
-		int m_SelectedFaceCount;
-
-		// Sum of all edges sleected
-		int m_SelectedEdgeCount;
-
-		// per-object selected element maxes
-		internal int selectedFaceCountObjectMax { get; private set; }
-		internal int selectedEdgeCountObjectMax { get; private set; }
-		internal int selectedVertexCountObjectMax { get; private set; }
-		internal int selectedSharedVertexCountObjectMax { get; private set; }
-
-		internal int selectedSharedVertexCount { get { return m_SelectedSharedVertices; } }
-		internal int selectedVertexCount { get { return m_SelectedVertexCount; } }
-		internal int selectedFaceCount { get { return m_SelectedFaceCount; } }
-		internal int selectedEdgeCount { get { return m_SelectedEdgeCount; } }
 
 		Event m_CurrentEvent;
 
@@ -234,6 +205,8 @@ namespace UnityEditor.ProBuilder
 
 				if (selectModeChanged != null)
 					selectModeChanged(value);
+
+				s_Instance.Repaint();
 			}
 		}
 
@@ -342,7 +315,7 @@ namespace UnityEditor.ProBuilder
 				BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
 
 			if (selectModeChanged != null)
-				selectModeChanged(EditorUtility.GetSelectMode(editLevel, componentMode));
+				selectModeChanged(selectMode);
 		}
 
 		void OnDisable()
@@ -528,7 +501,7 @@ namespace UnityEditor.ProBuilder
 
 			m_CurrentEvent = Event.current;
 
-			if (editLevel == EditLevel.Geometry)
+			if(selectMode.ContainsFlag(SelectMode.Face | SelectMode.Edge | SelectMode.Vertex))
 			{
 				if (m_CurrentEvent.Equals(Event.KeyboardEvent("v")))
 					m_DoSnapToVertex = true;
@@ -579,12 +552,12 @@ namespace UnityEditor.ProBuilder
 			// Check mouse position in scene and determine if we should highlight something
 			if (s_ShowHoverHighlight
 				&& m_CurrentEvent.type == EventType.MouseMove
-				&& editLevel == EditLevel.Geometry)
+				&& selectMode.ContainsFlag(SelectMode.Face | SelectMode.Edge | SelectMode.Vertex | SelectMode.Texture))
 			{
 				m_Hovering.CopyTo(m_HoveringPrevious);
 
 				if(GUIUtility.hotControl == 0)
-					EditorSceneViewPicker.MouseRayHitTest(m_CurrentEvent.mousePosition, componentMode, m_ScenePickerPreferences, m_Hovering);
+					EditorSceneViewPicker.MouseRayHitTest(m_CurrentEvent.mousePosition, selectMode, m_ScenePickerPreferences, m_Hovering);
 				else
 					m_Hovering.Clear();
 
@@ -595,26 +568,11 @@ namespace UnityEditor.ProBuilder
 			if (Tools.current != Tool.None && Tools.current != m_CurrentTool)
 				SetTool_Internal(Tools.current);
 
-			if ((editLevel == EditLevel.Geometry || editLevel == EditLevel.Texture) && Tools.current != Tool.View)
+			if ( selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.Texture) && Tools.current != Tool.View)
 			{
-				if (m_SelectedVertexCount > 0)
+				if (MeshSelection.selectedVertexCount > 0)
 				{
-					if (editLevel == EditLevel.Geometry)
-					{
-						switch (m_CurrentTool)
-						{
-							case Tool.Move:
-								VertexMoveTool();
-								break;
-							case Tool.Scale:
-								VertexScaleTool();
-								break;
-							case Tool.Rotate:
-								VertexRotateTool();
-								break;
-						}
-					}
-					else if (editLevel == EditLevel.Texture && m_SelectedVertexCount > 0)
+					if (selectMode == SelectMode.Texture)
 					{
 						switch (m_CurrentTool)
 						{
@@ -629,6 +587,22 @@ namespace UnityEditor.ProBuilder
 								break;
 						}
 					}
+					else
+					{
+						switch (m_CurrentTool)
+						{
+							case Tool.Move:
+								VertexMoveTool();
+								break;
+							case Tool.Scale:
+								VertexScaleTool();
+								break;
+							case Tool.Rotate:
+								VertexRotateTool();
+								break;
+						}
+					}
+
 				}
 			}
 			else
@@ -651,7 +625,7 @@ namespace UnityEditor.ProBuilder
 			HandleUtility.AddDefaultControl(m_DefaultControl);
 
 			// If selection is made, don't use default handle -- set it to Tools.None
-			if (m_SelectedVertexCount > 0)
+			if (MeshSelection.selectedVertexCount > 0)
 				Tools.current = Tool.None;
 
 			if (m_CurrentEvent.type == EventType.MouseDown)
@@ -682,7 +656,7 @@ namespace UnityEditor.ProBuilder
 				{
 					m_IsReadyForMouseDrag = false;
 					m_IsDragging = false;
-					EditorSceneViewPicker.DoMouseDrag(m_MouseDragRect, componentMode, m_ScenePickerPreferences);
+					EditorSceneViewPicker.DoMouseDrag(m_MouseDragRect, selectMode, m_ScenePickerPreferences);
 				}
 
 				if (m_WasDoubleClick)
@@ -702,7 +676,7 @@ namespace UnityEditor.ProBuilder
 						if (UVEditor.instance)
 							UVEditor.instance.ResetUserPivot();
 
-						EditorSceneViewPicker.DoMouseClick(m_CurrentEvent, componentMode, m_ScenePickerPreferences);
+						EditorSceneViewPicker.DoMouseClick(m_CurrentEvent, selectMode, m_ScenePickerPreferences);
 						UpdateSelection();
 						SceneView.RepaintAll();
 					}
@@ -714,7 +688,7 @@ namespace UnityEditor.ProBuilder
 						if (UVEditor.instance)
 							UVEditor.instance.ResetUserPivot();
 
-						EditorSceneViewPicker.DoMouseDrag(m_MouseDragRect, componentMode, m_ScenePickerPreferences);
+						EditorSceneViewPicker.DoMouseDrag(m_MouseDragRect, selectMode, m_ScenePickerPreferences);
 					}
 				}
 			}
@@ -722,26 +696,26 @@ namespace UnityEditor.ProBuilder
 
 		void DoubleClick(Event e)
 		{
-			var mesh = EditorSceneViewPicker.DoMouseClick(m_CurrentEvent, componentMode, m_ScenePickerPreferences);
+			var mesh = EditorSceneViewPicker.DoMouseClick(m_CurrentEvent, selectMode, m_ScenePickerPreferences);
 
 			if (mesh != null)
 			{
-				if (componentMode == ComponentMode.Edge)
+				if (selectMode == SelectMode.Edge)
 				{
 					if (e.shift)
-						MenuCommands.MenuRingSelection(selection);
+						EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeRing>().DoAction());
 					else
-						MenuCommands.MenuLoopSelection(selection);
+						EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeLoop>().DoAction());
 				}
-				else if (componentMode == ComponentMode.Face)
+				else if (selectMode == SelectMode.Face)
 				{
 					if ((e.modifiers & (EventModifiers.Control | EventModifiers.Shift)) ==
-					    (EventModifiers.Control | EventModifiers.Shift))
-						MenuCommands.MenuRingAndLoopFaces(selection);
+						(EventModifiers.Control | EventModifiers.Shift))
+						Actions.SelectFaceRing.MenuRingAndLoopFaces(selection);
 					else if (e.control)
-						MenuCommands.MenuRingFaces(selection);
+						EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectFaceRing>().DoAction());
 					else if (e.shift)
-						MenuCommands.MenuLoopFaces(selection);
+						EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectFaceLoop>().DoAction());
 					else
 						mesh.SetSelectedFaces(mesh.facesInternal);
 				}
@@ -849,7 +823,7 @@ namespace UnityEditor.ProBuilder
 						m_SnapEnabled ? m_SnapValue : 0f,
 						m_SnapAxisConstraint);
 
-					mesh.RefreshUV(selectedFacesInEditZone[mesh]);
+					mesh.RefreshUV(MeshSelection.selectedFacesInEditZone[mesh]);
 					mesh.Refresh(RefreshMask.Normals);
 					mesh.mesh.RecalculateBounds();
 				}
@@ -902,7 +876,7 @@ namespace UnityEditor.ProBuilder
 				Vector3 over; // vertex point to modify. different for world, local, and plane
 
 				bool gotoWorld = Selection.transforms.Length > 1 && m_HandleAlignment == HandleAlignment.Plane;
-				bool gotoLocal = m_SelectedFaceCount < 1;
+				bool gotoLocal = MeshSelection.selectedFaceCount < 1;
 
 				// if(pref_snapEnabled)
 				// 	pbUndo.RecordSelection(selection as Object[], "Move vertices");
@@ -974,7 +948,7 @@ namespace UnityEditor.ProBuilder
 					}
 
 					mesh.mesh.vertices = v;
-					mesh.RefreshUV(selectedFacesInEditZone[selection[i]]);
+					mesh.RefreshUV(MeshSelection.selectedFacesInEditZone[selection[i]]);
 					mesh.Refresh(RefreshMask.Normals);
 					mesh.mesh.RecalculateBounds();
 				}
@@ -1066,7 +1040,7 @@ namespace UnityEditor.ProBuilder
 					}
 
 					selection[i].mesh.vertices = v;
-					selection[i].RefreshUV(selectedFacesInEditZone[selection[i]]);
+					selection[i].RefreshUV(MeshSelection.selectedFacesInEditZone[selection[i]]);
 					selection[i].Refresh(RefreshMask.Normals);
 					selection[i].mesh.RecalculateBounds();
 				}
@@ -1094,9 +1068,9 @@ namespace UnityEditor.ProBuilder
 				// @todo - If caching normals, remove this 'ToMesh' and move
 				Undo.RegisterCompleteObjectUndo(selection, "Extrude Vertices");
 
-				switch (componentMode)
+				switch (selectMode)
 				{
-					case ComponentMode.Edge:
+					case SelectMode.Edge:
 						if (pb.selectedFaceCount > 0)
 							goto default;
 
@@ -1231,7 +1205,7 @@ namespace UnityEditor.ProBuilder
 				&& m_Hovering != null
 				&& GUIUtility.hotControl == 0
 				&& HandleUtility.nearestControl == m_DefaultControl
-				&& editLevel == EditLevel.Geometry)
+				&& selectMode.IsMeshElementMode())
 			{
 				try
 				{
@@ -1462,7 +1436,7 @@ namespace UnityEditor.ProBuilder
 
 				/* handle alignment */
 				case "Toggle Handle Pivot":
-					if (m_SelectedVertexCount < 1 || selectMode == SelectMode.Texture)
+					if (MeshSelection.selectedVertexCount < 1 || selectMode == SelectMode.Texture)
 						return false;
 
 					ToggleHandleAlignment();
@@ -1556,66 +1530,11 @@ namespace UnityEditor.ProBuilder
 
 		void UpdateSelection()
 		{
-			m_SelectedVertexCount = 0;
-			m_SelectedFaceCount = 0;
-			m_SelectedEdgeCount = 0;
-			m_SelectedSharedVertices = 0;
-
-			selectedFaceCountObjectMax = 0;
-			selectedVertexCountObjectMax = 0;
-			selectedSharedVertexCountObjectMax = 0;
-			selectedEdgeCountObjectMax = 0;
-
 			selection = InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms);
 
-			if (selectedFacesInEditZone != null)
-				selectedFacesInEditZone.Clear();
-			else
-				selectedFacesInEditZone = new Dictionary<ProBuilderMesh, List<Face>>();
+			MeshSelection.OnComponentSelectionChanged();
 
-			m_HandlePivotWorld = Vector3.zero;
-
-			Vector3 min = Vector3.zero, max = Vector3.zero;
-			var boundsInitialized = false;
-
-			for (var i = 0; i < selection.Length; i++)
-			{
-				ProBuilderMesh mesh = selection[i];
-
-				if (!boundsInitialized && mesh.selectedVertexCount > 0)
-				{
-					boundsInitialized = true;
-					min = mesh.transform.TransformPoint(mesh.positionsInternal[mesh.selectedIndexesInternal[0]]);
-					max = min;
-				}
-
-				if (mesh.selectedVertexCount > 0)
-				{
-					var shared = mesh.sharedVerticesInternal;
-					m_SelectedSharedVertices += mesh.selectedSharedVerticesCount;
-
-					foreach(var sharedVertex in mesh.selectedSharedVertices)
-					{
-						Vector3 v = mesh.transform.TransformPoint(mesh.positionsInternal[shared[sharedVertex][0]]);
-						min = Vector3.Min(min, v);
-						max = Vector3.Max(max, v);
-					}
-				}
-
-				selectedFacesInEditZone.Add(mesh, ElementSelection.GetNeighborFaces(mesh, mesh.selectedIndexesInternal));
-
-				m_SelectedFaceCount += mesh.selectedFaceCount;
-				m_SelectedEdgeCount += mesh.selectedEdgeCount;
-				m_SelectedVertexCount += mesh.selectedIndexesInternal.Length;
-
-				selectedVertexCountObjectMax = System.Math.Max(selectedVertexCountObjectMax, mesh.selectedIndexesInternal.Length);
-				selectedSharedVertexCountObjectMax = System.Math.Max(selectedSharedVertexCountObjectMax, mesh.selectedSharedVerticesCount);
-				selectedFaceCountObjectMax = System.Math.Max(selectedFaceCountObjectMax, mesh.selectedFaceCount);
-				selectedEdgeCountObjectMax = System.Math.Max(selectedEdgeCountObjectMax, mesh.selectedEdgeCount);
-			}
-
-			m_HandlePivotWorld = (max + min) * .5f;
-
+			m_HandlePivotWorld = MeshSelection.bounds.center;
 			UpdateHandleRotation();
 			UpdateTextureHandles();
 			m_HandleRotation = handleRotation;
@@ -1644,63 +1563,23 @@ namespace UnityEditor.ProBuilder
 				MeshSelection.totalTriangleCountCompiled,
 				MeshSelection.totalCommonVertexCount,
 				MeshSelection.totalVertexCountOptimized,
-				m_SelectedFaceCount,
-				m_SelectedEdgeCount,
-				m_SelectedSharedVertices,
-				m_SelectedVertexCount);
+				MeshSelection.selectedFaceCount,
+				MeshSelection.selectedEdgeCount,
+				MeshSelection.selectedSharedVertexCount,
+				MeshSelection.selectedVertexCount);
 		}
 
 		// Only updates things that absolutely need to be refreshed, and assumes that no selection changes have occured
 		internal void Internal_UpdateSelectionFast()
 		{
-			m_SelectedVertexCount = 0;
-			m_SelectedFaceCount = 0;
-			m_SelectedEdgeCount = 0;
-
-			bool boundsInitialized = false;
-			Vector3 min = Vector3.zero, max = Vector3.zero;
-
-			for (int i = 0; i < selection.Length; i++)
-			{
-				ProBuilderMesh pb = selection[i];
-				Vector3[] positions = pb.positionsInternal;
-				int[] indexes = pb.selectedIndexesInternal;
-
-				if (pb == null) continue;
-
-				if (selection[i].selectedVertexCount > 0)
-				{
-					if (!boundsInitialized)
-					{
-						boundsInitialized = true;
-						min = pb.transform.TransformPoint(positions[indexes[0]]);
-						max = min;
-					}
-
-					for (int n = 0; n < selection[i].selectedVertexCount; n++)
-					{
-						min = Vector3.Min(min, pb.transform.TransformPoint(positions[indexes[n]]));
-						max = Vector3.Max(max, pb.transform.TransformPoint(positions[indexes[n]]));
-					}
-				}
-
-				m_SelectedVertexCount += selection[i].selectedVertexCount;
-				m_SelectedFaceCount += selection[i].selectedFaceCount;
-				m_SelectedEdgeCount += selection[i].selectedEdgeCount;
-			}
-
-			m_HandlePivotWorld = (max + min) / 2f;
-
+			MeshSelection.RecalculateSelectionBounds();
+			m_HandlePivotWorld = MeshSelection.bounds.center;
 			UpdateHandleRotation();
 			m_HandleRotation = handleRotation;
-
 			if (selectionUpdated != null)
 				selectionUpdated(selection);
-
 			UpdateSceneInfo();
-
-			// todo
-			m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.Top(), selectMode);
+			m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.TopInternal(), selectMode);
 		}
 
 		internal void ClearElementSelection()
@@ -1885,7 +1764,7 @@ namespace UnityEditor.ProBuilder
 		{
 			UndoUtility.RecordSelection(selection, "Push elements to Grid");
 
-			if (editLevel == EditLevel.Top)
+			if (selectMode == SelectMode.Object || selectMode == SelectMode.None)
 				return;
 
 			for (int i = 0; i < selection.Length; i++)

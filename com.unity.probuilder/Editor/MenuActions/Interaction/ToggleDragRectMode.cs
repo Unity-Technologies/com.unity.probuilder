@@ -36,7 +36,7 @@ namespace UnityEditor.ProBuilder.Actions
 			get { return 0; }
 		}
 
-		protected override SelectMode validSelectModes
+		public override SelectMode validSelectModes
 		{
 			get { return SelectMode.Edge | SelectMode.Face | SelectMode.Texture; }
 		}
@@ -63,7 +63,7 @@ namespace UnityEditor.ProBuilder.Actions
 			get
 			{
 				return ProBuilderEditor.instance != null
-					&& ProBuilderEditor.selectMode.HasFlag(SelectMode.Edge | SelectMode.Face | SelectMode.Texture);
+					&& ProBuilderEditor.selectMode.ContainsFlag(SelectMode.Edge | SelectMode.Face | SelectMode.Texture);
 			}
 		}
 	}

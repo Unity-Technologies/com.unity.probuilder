@@ -20,14 +20,14 @@ namespace UnityEditor.ProBuilder.Actions
 			@"Smooth the selected edges by adding a slanted face connecting the two adjacent faces."
 		);
 
-		protected override SelectMode validSelectModes
+		public override SelectMode validSelectModes
 		{
 			get { return SelectMode.Edge | SelectMode.Face; }
 		}
 
 		public override bool enabled
 		{
-			get { return base.enabled && ProBuilderEditor.instance.selectedEdgeCount > 0; }
+			get { return base.enabled && MeshSelection.selectedEdgeCount > 0; }
 		}
 
 		protected override MenuActionState optionsMenuState

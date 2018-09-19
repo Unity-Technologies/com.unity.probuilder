@@ -21,7 +21,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override TooltipContent tooltip
 		{
-			get { return _tooltip; }
+			get { return s_Tooltip; }
 		}
 
 		[System.Flags]
@@ -33,7 +33,7 @@ namespace UnityEditor.ProBuilder.Actions
 			Duplicate = 0x8
 		}
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Mirror Objects",
 			@"Mirroring objects will duplicate an flip objects on the specified axes."
@@ -41,7 +41,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool enabled
 		{
-			get { return ProBuilderEditor.instance != null && MeshSelection.TopInternal().Length > 0; }
+			get { return base.enabled && MeshSelection.selectedObjectCount > 0; }
 		}
 
 		protected override MenuActionState optionsMenuState

@@ -7,6 +7,9 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	sealed class SelectMaterial : MenuAction
 	{
+		GUIContent gc_restrictToSelection = new GUIContent("Current Selection", "Optionally restrict the matches to only those faces on currently selected objects.");
+		Pref<bool> m_RestrictToSelectedObjects = new Pref<bool>("SelectMaterial.restrictToSelectedObjects", false, Settings.Scope.Project);
+
 		public override ToolbarGroup group
 		{
 			get { return ToolbarGroup.Selection; }
@@ -19,45 +22,28 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override TooltipContent tooltip
 		{
-			get { return _tooltip; }
+			get { return s_Tooltip; }
 		}
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Select by Material",
 			"Selects all faces matching the selected materials."
 		);
 
-		GUIContent gc_restrictToSelection = new GUIContent("Current Selection", "Optionally restrict the matches to only those faces on currently selected objects.");
-
-		Pref<bool> m_RestrictToSelectedObjects = new Pref<bool>("SelectMaterial.restrictToSelectedObjects", false, Settings.Scope.Project);
+		public override SelectMode validSelectModes
+		{
+			get { return SelectMode.Face | SelectMode.Texture; }
+		}
 
 		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.editLevel != EditLevel.Top &&
-					MeshSelection.TopInternal().Any(x => x.selectedFaceCount > 0);
-			}
-		}
-
-		public override bool hidden
-		{
-			get { return editLevel != EditLevel.Geometry; }
+			get { return base.enabled && MeshSelection.selectedFaceCount > 0; }
 		}
 
 		protected override MenuActionState optionsMenuState
 		{
-			get
-			{
-				if (enabled &&
-					ProBuilderEditor.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.componentMode == ComponentMode.Face)
-					return MenuActionState.VisibleAndEnabled;
-
-				return MenuActionState.Visible;
-			}
+			get { return MenuActionState.VisibleAndEnabled; }
 		}
 
 		protected override void OnSettingsGUI()

@@ -28,7 +28,7 @@ namespace UnityEditor.ProBuilder.Actions
 			keyCommandAlt, 'B'
 		);
 
-		protected override SelectMode validSelectModes
+		public override SelectMode validSelectModes
 		{
 			get { return SelectMode.Edge; }
 		}

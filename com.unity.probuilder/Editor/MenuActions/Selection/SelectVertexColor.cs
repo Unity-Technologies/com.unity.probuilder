@@ -13,6 +13,12 @@ namespace UnityEditor.ProBuilder.Actions
 	sealed class SelectVertexColor : MenuAction
 	{
 		Pref<bool> m_SearchSelectedObjectsOnly = new Pref<bool>("SelectVertexColor.restrictToSelectedObjects", false);
+		GUIContent gc_restrictToSelection = new GUIContent("Current Selection", "Optionally restrict the matches to only those faces on currently selected objects.");
+		static readonly TooltipContent s_Tooltip = new TooltipContent
+		(
+			"Select by Colors",
+			"Selects all faces matching the selected vertex colors."
+		);
 
 		public override ToolbarGroup group
 		{
@@ -29,27 +35,14 @@ namespace UnityEditor.ProBuilder.Actions
 			get { return s_Tooltip; }
 		}
 
-		GUIContent gc_restrictToSelection = new GUIContent("Current Selection", "Optionally restrict the matches to only those faces on currently selected objects.");
-
-		static readonly TooltipContent s_Tooltip = new TooltipContent
-		(
-			"Select by Colors",
-			"Selects all faces matching the selected vertex colors."
-		);
-
-		protected override SelectMode validSelectModes
+		public override SelectMode validSelectModes
 		{
 			get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.Texture; }
 		}
 
 		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null
-					&& ProBuilderEditor.selectMode.HasFlag(validSelectModes)
-					&& ProBuilderEditor.instance.selectedVertexCount > 0;
-			}
+			get { return base.enabled && MeshSelection.selectedVertexCount > 0; }
 		}
 
 		protected override MenuActionState optionsMenuState

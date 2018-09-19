@@ -31,14 +31,14 @@ namespace UnityEditor.ProBuilder.Actions
 			"Selects all faces matching the selected smoothing groups."
 		);
 
+		public override SelectMode validSelectModes
+		{
+			get { return SelectMode.Face | SelectMode.Texture; }
+		}
+
 		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.editLevel != EditLevel.Top &&
-					MeshSelection.TopInternal().Any(x => x.selectedFaceCount > 0);
-			}
+			get { return base.enabled && MeshSelection.selectedFaceCount > 0; }
 		}
 
 		public override bool hidden
@@ -50,9 +50,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			get
 			{
-				if (enabled &&
-					ProBuilderEditor.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.componentMode == ComponentMode.Face)
+				if (enabled && ProBuilderEditor.selectMode == SelectMode.Face)
 					return MenuActionState.VisibleAndEnabled;
 
 				return MenuActionState.Visible;

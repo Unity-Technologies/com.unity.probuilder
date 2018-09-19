@@ -9,9 +9,20 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	sealed class InsertEdgeLoop : MenuAction
 	{
-		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_InsertLoop", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Geometry; }
+		}
+
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Edge_InsertLoop", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return _tooltip; }
+		}
 
 		static readonly TooltipContent _tooltip = new TooltipContent
 		(
@@ -20,25 +31,14 @@ namespace UnityEditor.ProBuilder.Actions
 			keyCommandAlt, 'U'
 		);
 
-		public override bool enabled
+		public override SelectMode validSelectModes
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.componentMode == ComponentMode.Edge &&
-					MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
-			}
+			get { return SelectMode.Edge; }
 		}
 
-		public override bool hidden
+		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance == null ||
-					ProBuilderEditor.editLevel != EditLevel.Geometry ||
-					ProBuilderEditor.componentMode != ComponentMode.Edge;
-			}
+			get { return base.enabled && MeshSelection.selectedEdgeCount > 0; }
 		}
 
 		public override ActionResult DoAction()

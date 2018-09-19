@@ -36,27 +36,21 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
 			keyCommandAlt, 'G'
 		);
 
-		public override bool enabled
+		public override SelectMode validSelectModes
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					MenuCommands.VerifyGrowSelection(MeshSelection.TopInternal());
-			}
+			get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.Texture; }
 		}
 
-		public override bool hidden
+		public override bool enabled
 		{
-			get { return editLevel != EditLevel.Geometry; }
+			get { return base.enabled && VerifyGrowSelection(); }
 		}
 
 		protected override MenuActionState optionsMenuState
 		{
 			get
 			{
-				if (enabled &&
-					ProBuilderEditor.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.componentMode == ComponentMode.Face)
+				if (enabled && ProBuilderEditor.selectMode == SelectMode.Face)
 					return MenuActionState.VisibleAndEnabled;
 
 				return MenuActionState.Hidden;
@@ -114,17 +108,18 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
 			{
 				int previousTriCount = pb.selectedVertexCount;
 
-				switch( editor != null ? ProBuilderEditor.componentMode : (ComponentMode)0 )
+				switch(ProBuilderEditor.selectMode)
 				{
-					case ComponentMode.Vertex:
+					case SelectMode.Vertex:
 						pb.SetSelectedEdges(ElementSelection.GetConnectedEdges(pb, pb.selectedIndexesInternal));
 						break;
 
-					case ComponentMode.Edge:
+					case SelectMode.Edge:
 						pb.SetSelectedEdges(ElementSelection.GetConnectedEdges(pb, pb.selectedIndexesInternal));
 						break;
 
-					case ComponentMode.Face:
+					case SelectMode.Texture:
+					case SelectMode.Face:
 
 						Face[] selectedFaces = pb.GetSelectedFaces();
 
@@ -155,6 +150,31 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
 				return new ActionResult(ActionResult.Status.Success, "Grow Selection");
 
 			return new ActionResult(ActionResult.Status.Failure, "Nothing to Grow");
+		}
+
+		static bool VerifyGrowSelection()
+		{
+			int sel, max;
+
+			switch(ProBuilderEditor.selectMode)
+			{
+				case SelectMode.Face:
+					sel = MeshSelection.selectedFaceCount;
+					max = MeshSelection.totalFaceCount;
+					break;
+
+				case SelectMode.Edge:
+					sel = MeshSelection.selectedEdgeCount;
+					max = MeshSelection.totalEdgeCount;
+					break;
+
+				default:
+					sel = MeshSelection.selectedVertexCount;
+					max = MeshSelection.totalVertexCount;
+					break;
+			}
+
+			return sel > 0 && sel < max;
 		}
 	}
 }

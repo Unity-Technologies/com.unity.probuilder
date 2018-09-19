@@ -20,10 +20,10 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override TooltipContent tooltip
 		{
-			get { return _tooltip; }
+			get { return s_Tooltip; }
 		}
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Merge Objects",
 			@"Merges all selected ProBuilder objects to a single mesh."
@@ -31,7 +31,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool enabled
 		{
-			get { return ProBuilderEditor.instance != null && MeshSelection.TopInternal().Length > 1; }
+			get { return base.enabled && MeshSelection.selectedObjectCount > 1; }
 		}
 
 		public override ActionResult DoAction()

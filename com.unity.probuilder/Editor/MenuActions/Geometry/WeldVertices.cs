@@ -23,35 +23,24 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override TooltipContent tooltip
 		{
-			get { return _tooltip; }
+			get { return s_Tooltip; }
 		}
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Weld Vertices",
 			@"Searches the current selection for vertices that are within the specified distance of on another and merges them into a single vertex.",
 			keyCommandAlt, 'V'
 		);
 
-		public override bool enabled
+		public override SelectMode validSelectModes
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.componentMode == ComponentMode.Vertex &&
-					MeshSelection.TopInternal().Any(x => x.selectedSharedVerticesCount > 1);
-			}
+			get { return SelectMode.Vertex; }
 		}
 
-		public override bool hidden
+		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance == null ||
-					ProBuilderEditor.editLevel != EditLevel.Geometry ||
-					ProBuilderEditor.componentMode != ComponentMode.Vertex;
-			}
+			get { return base.enabled && MeshSelection.selectedSharedVertexCountObjectMax > 1; }
 		}
 
 		protected override MenuActionState optionsMenuState

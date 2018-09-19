@@ -20,14 +20,14 @@ namespace UnityEditor.ProBuilder.Actions
 			@"Orients all selected faces to face the same direction."
 		);
 
-		protected override SelectMode validSelectModes
+		public override SelectMode validSelectModes
 		{
 			get { return SelectMode.Face; }
 		}
 
 		public override bool enabled
 		{
-			get { return base.enabled && ProBuilderEditor.instance.selectedFaceCountObjectMax > 1; }
+			get { return base.enabled && MeshSelection.selectedFaceCountObjectMax > 1; }
 		}
 
 		public override ActionResult DoAction()

@@ -8,9 +8,21 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	sealed class ProBuilderize : MenuAction
 	{
+		bool m_Enabled;
 		Pref<bool> m_Quads = new Pref<bool>("meshImporter.quads", true);
 		Pref<bool> m_Smoothing = new Pref<bool>("meshImporter.smoothing", true);
 		Pref<float> m_SmoothingAngle = new Pref<float>("meshImporter.smoothingAngle", 1f);
+
+		public ProBuilderize()
+		{
+			MeshSelection.objectSelectionChanged += () =>
+			{
+				// can't just check if any MeshFilter is present because we need to know whether or not it's already a
+				// probuilder mesh
+				int meshCount = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Count();
+				m_Enabled = meshCount > 0 && meshCount != MeshSelection.selectedObjectCount;
+			};
+		}
 
 		public override ToolbarGroup group
 		{
@@ -43,13 +55,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool enabled
 		{
-			get
-			{
-				int meshCount = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Count();
-
-				return meshCount > 0 &&
-					meshCount != MeshSelection.TopInternal().Length;
-			}
+			get { return base.enabled && m_Enabled; }
 		}
 
 		protected override MenuActionState optionsMenuState

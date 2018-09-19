@@ -205,7 +205,7 @@ namespace UnityEditor.ProBuilder
 	    /// <summary>
 	    /// In which SelectMode states is this action applicable. Drives the `virtual bool hidden { get; }` property unless overridden.
 	    /// </summary>
-	    protected virtual SelectMode validSelectModes
+	    public virtual SelectMode validSelectModes
 	    {
 		    get { return SelectMode.Any; }
 	    }
@@ -217,7 +217,7 @@ namespace UnityEditor.ProBuilder
 	    /// <value>True if this action is valid with current selection and mode.</value>
 	    public virtual bool enabled
 	    {
-		    get { return ProBuilderEditor.instance != null && ProBuilderEditor.selectMode.HasFlag(validSelectModes); }
+		    get { return ProBuilderEditor.instance != null && ProBuilderEditor.selectMode.ContainsFlag(validSelectModes); }
 	    }
 
 	    /// <summary>
@@ -228,7 +228,7 @@ namespace UnityEditor.ProBuilder
 	    /// <value>True if this action should be shown in the toolbar with the current mode and settings, false otherwise.</value>
 	    public virtual bool hidden
 	    {
-		    get { return ProBuilderEditor.selectMode.HasFlag(validSelectModes); }
+		    get { return !ProBuilderEditor.selectMode.ContainsFlag(validSelectModes); }
 	    }
 
 	    /// <summary>
