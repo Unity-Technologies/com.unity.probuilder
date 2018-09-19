@@ -71,16 +71,16 @@ namespace UnityEditor.ProBuilder
 		internal Pref<RectSelectMode> m_DragSelectRectMode = new Pref<RectSelectMode>("editor.dragSelectRectMode", RectSelectMode.Partial);
 		internal Pref<ExtrudeMethod> m_ExtrudeMethod = new Pref<ExtrudeMethod>("editor.extrudeMethod", ExtrudeMethod.FaceNormal);
 		internal Pref<SelectionModifierBehavior> m_SelectModifierBehavior = new Pref<SelectionModifierBehavior>("editor.rectSelectModifier", SelectionModifierBehavior.Difference);
-		Pref<SelectMode> m_SelectMode = new Pref<SelectMode>("editor.selectMode", SelectMode.Object);
 		internal Pref<bool> m_ExtrudeEdgesAsGroup = new Pref<bool>("editor.extrudeEdgesAsGroup", true);
 		internal Pref<HandleAlignment> m_HandleAlignment = new Pref<HandleAlignment>("editor.handleAlignment", HandleAlignment.World);
+		Pref<SelectMode> m_SelectMode = new Pref<SelectMode>("editor.selectMode", SelectMode.Object);
 
 		float m_SnapValue = .25f;
 		bool m_SnapAxisConstraint = true;
 		bool m_SnapEnabled;
 		MethodInfo m_FindNearestVertex;
-		EditLevel m_PreviousEditLevel;
-		ComponentMode m_PreviousComponentMode;
+		// used for 'g' key shortcut to swap between object/vef modes
+		SelectMode m_LastComponentMode;
 		HandleAlignment m_PreviousHandleAlignment;
 		Shortcut[] m_Shortcuts;
 		GUIStyle m_CommandStyle;
@@ -179,22 +179,21 @@ namespace UnityEditor.ProBuilder
 		/// <value>
 		/// Get the current @"UnityEngine.ProBuilder.EditLevel".
 		/// </value>
-		/// <remarks>
-		/// Publicly this is Obsolete - new code should use selectMode.
-		/// </remarks>
+		[Obsolete]
 		internal static EditLevel editLevel
 		{
-			get; private set;
+			get { return s_Instance != null ? EditorUtility.GetEditLevel(instance.m_SelectMode) : EditLevel.Top; }
 		}
 
 		/// <summary>
 		/// Get the current @"UnityEngine.ProBuilder.SelectMode".
 		/// </summary>
 		/// <value>The ComponentMode currently set.</value>
-		/// <remarks>
-		/// Publicly this is Obsolete - new code should use selectMode.
-		/// </remarks>
-		internal static ComponentMode componentMode { get; private set; }
+		[Obsolete]
+		internal static ComponentMode componentMode
+		{
+			get { return s_Instance != null ? EditorUtility.GetComponentMode(instance.m_SelectMode) : ComponentMode.Face; }
+		}
 
 		/// <value>
 		/// Get and set the current SelectMode.
@@ -204,7 +203,7 @@ namespace UnityEditor.ProBuilder
 			get
 			{
 				if (s_Instance != null)
-					return EditorUtility.GetSelectMode(editLevel, componentMode);
+					return s_Instance.m_SelectMode;
 
 				// for backwards compatibility reasons `Object` is returned when editor is closed
 				return SelectMode.Object;
@@ -215,31 +214,45 @@ namespace UnityEditor.ProBuilder
 				if (s_Instance == null)
 					return;
 
-				switch (value)
-				{
-					case SelectMode.None:
-						s_Instance.SetEditLevel(EditLevel.Plugin);
-						break;
-					case SelectMode.Object:
-						s_Instance.SetEditLevel(EditLevel.Top);
-						break;
-					case SelectMode.Vertex:
-						s_Instance.SetEditLevel(EditLevel.Geometry);
-						s_Instance.SetSelectionMode(ComponentMode.Vertex);
-						break;
-					case SelectMode.Edge:
-						s_Instance.SetEditLevel(EditLevel.Geometry);
-						s_Instance.SetSelectionMode(ComponentMode.Edge);
-						break;
-					case SelectMode.Face:
-						s_Instance.SetEditLevel(EditLevel.Geometry);
-						s_Instance.SetSelectionMode(ComponentMode.Face);
-						break;
-					case SelectMode.Texture:
-						s_Instance.SetEditLevel(EditLevel.Texture);
-						break;
-				}
+				var previous = s_Instance.m_SelectMode.value;
+
+				if (previous == value)
+					return;
+
+				s_Instance.m_SelectMode.SetValue(value, true);
+
+				if (previous == SelectMode.Edge || previous == SelectMode.Vertex || previous == SelectMode.Face)
+					s_Instance.m_LastComponentMode = previous;
+
+				if (value == SelectMode.Texture)
+					s_Instance.m_PreviousHandleAlignment = s_Instance.m_HandleAlignment;
+
+				if (previous == SelectMode.Texture)
+					s_Instance.SetHandleAlignment(s_Instance.m_PreviousHandleAlignment);
+
+				if (selectModeChanged != null)
+					selectModeChanged(value);
 			}
+		}
+
+		Stack<SelectMode> m_SelectModeHistory = new Stack<SelectMode>();
+
+		internal static void PushSelectMode(SelectMode mode)
+		{
+			s_Instance.m_SelectModeHistory.Push(selectMode);
+			selectMode = mode;
+		}
+
+		internal static void PopSelectMode()
+		{
+			if (s_Instance.m_SelectModeHistory.Count < 1)
+				return;
+			selectMode = s_Instance.m_SelectModeHistory.Pop();
+		}
+
+		internal static void ResetToLastSelectMode()
+		{
+			selectMode = s_Instance.m_LastComponentMode;
 		}
 
 		static class SceneStyles
@@ -366,9 +379,6 @@ namespace UnityEditor.ProBuilder
 		internal void LoadPrefs()
 		{
 			PreferencesUpdater.CheckEditorPrefsVersion();
-
-			editLevel = PreferencesInternal.GetEnum<EditLevel>(PreferenceKeys.pbDefaultEditLevel);
-			componentMode = PreferencesInternal.GetEnum<ComponentMode>(PreferenceKeys.pbDefaultSelectionMode);
 
 			m_ScenePickerPreferences = new ScenePickerPreferences()
 			{
@@ -1236,8 +1246,9 @@ namespace UnityEditor.ProBuilder
 				int screenWidth = (int) sceneView.position.width;
 				int screenHeight = (int) sceneView.position.height;
 
-				int currentSelectionMode =
-					(editLevel != EditLevel.Top && editLevel != EditLevel.Plugin) ? ((int) componentMode) + 1 : 0;
+				int currentSelectionMode = m_SelectMode == SelectMode.Vertex ? 1
+					: m_SelectMode == SelectMode.Edge ? 2
+					: m_SelectMode == SelectMode.Face ? 3 : 0;
 
 				switch ((SceneToolbarLocation) s_SceneToolbarLocation)
 				{
@@ -1281,16 +1292,13 @@ namespace UnityEditor.ProBuilder
 				if (EditorGUI.EndChangeCheck())
 				{
 					if (currentSelectionMode == 0)
-					{
-						SetEditLevel(EditLevel.Top);
-					}
-					else
-					{
-						if (editLevel != EditLevel.Geometry)
-							SetEditLevel(EditLevel.Geometry);
-
-						SetSelectionMode((ComponentMode) (currentSelectionMode - 1));
-					}
+						selectMode = SelectMode.Object;
+					else if (currentSelectionMode == 1)
+						selectMode = SelectMode.Vertex;
+					else if (currentSelectionMode == 2)
+						selectMode = SelectMode.Edge;
+					else if (currentSelectionMode == 3)
+						selectMode = SelectMode.Face;
 				}
 
 				if (m_IsMovingElements && s_ShowSceneInfo)
@@ -1410,28 +1418,18 @@ namespace UnityEditor.ProBuilder
 				// TODO Remove once a workaround for non-upper-case shortcut chars is found
 				case "Toggle Geometry Mode":
 
-					if (editLevel == EditLevel.Geometry)
-					{
-						EditorUtility.ShowNotification("Top Level Editing");
-						SetEditLevel(EditLevel.Top);
-					}
-					else if (!s_UniqueModeShortcuts)
-					{
-						EditorUtility.ShowNotification("Geometry Editing");
-						SetEditLevel(EditLevel.Geometry);
-					}
-
+					if (selectMode == SelectMode.Object)
+						selectMode = m_LastComponentMode;
+					else
+						selectMode = SelectMode.Object;
+					EditorUtility.ShowNotification(selectMode.ToString() + " Editing");
 					return true;
 
 				case "Vertex Mode":
 				{
 					if (!s_UniqueModeShortcuts)
 						return false;
-
-					if (editLevel == EditLevel.Top)
-						SetEditLevel(EditLevel.Geometry);
-
-					SetSelectionMode(ComponentMode.Vertex);
+					selectMode = SelectMode.Vertex;
 					return true;
 				}
 
@@ -1439,11 +1437,7 @@ namespace UnityEditor.ProBuilder
 				{
 					if (!s_UniqueModeShortcuts)
 						return false;
-
-					if (editLevel == EditLevel.Top)
-						SetEditLevel(EditLevel.Geometry);
-
-					SetSelectionMode(ComponentMode.Edge);
+					selectMode = SelectMode.Edge;
 					return true;
 				}
 
@@ -1451,11 +1445,7 @@ namespace UnityEditor.ProBuilder
 				{
 					if (!s_UniqueModeShortcuts)
 						return false;
-
-					if (editLevel == EditLevel.Top)
-						SetEditLevel(EditLevel.Geometry);
-
-					SetSelectionMode(ComponentMode.Face);
+					selectMode = SelectMode.Face;
 					return true;
 				}
 
@@ -1472,31 +1462,15 @@ namespace UnityEditor.ProBuilder
 					ClearElementSelection();
 					EditorUtility.ShowNotification("Top Level");
 					UpdateSelection();
-					SetEditLevel(EditLevel.Top);
+					selectMode = SelectMode.Object;
 					return true;
 
 				// TODO Remove once a workaround for non-upper-case shortcut chars is found
 				case "Toggle Selection Mode":
-
 					if(s_UniqueModeShortcuts)
 						return false;
-
 					ToggleSelectionMode();
-					switch (componentMode)
-					{
-						case ComponentMode.Face:
-							EditorUtility.ShowNotification("Editing Faces");
-							break;
-
-						case ComponentMode.Vertex:
-							EditorUtility.ShowNotification("Editing Vertices");
-							break;
-
-						case ComponentMode.Edge:
-							EditorUtility.ShowNotification("Editing Edges");
-							break;
-					}
-
+					EditorUtility.ShowNotification(selectMode.ToString());
 					return true;
 
 				case "Delete Face":
@@ -1505,15 +1479,11 @@ namespace UnityEditor.ProBuilder
 
 				/* handle alignment */
 				case "Toggle Handle Pivot":
-					if (m_SelectedVertexCount < 1)
+					if (m_SelectedVertexCount < 1 || selectMode == SelectMode.Texture)
 						return false;
 
-					if (editLevel != EditLevel.Texture)
-					{
-						ToggleHandleAlignment();
-						EditorUtility.ShowNotification("Handle Alignment: " + m_HandleAlignment.value.ToString());
-					}
-
+					ToggleHandleAlignment();
+					EditorUtility.ShowNotification("Handle Alignment: " + m_HandleAlignment.value.ToString());
 					return true;
 
 				case "Set Pivot":
@@ -1565,7 +1535,7 @@ namespace UnityEditor.ProBuilder
 
 		internal void SetHandleAlignment(HandleAlignment ha)
 		{
-			if (editLevel == EditLevel.Texture)
+			if (selectMode == SelectMode.Texture)
 				ha = HandleAlignment.Plane;
 
 			m_HandleAlignment.SetValue(ha, true);
@@ -1593,88 +1563,12 @@ namespace UnityEditor.ProBuilder
 		/// </summary>
 		internal void ToggleSelectionMode()
 		{
-			int smode = (int) componentMode;
-			smode++;
-			if (smode >= k_SelectModeLength)
-				smode = 0;
-			SetSelectionMode((ComponentMode) smode);
-		}
-
-		/// <summary>
-		/// Sets what mesh attributes are editable in the scene.
-		/// </summary>
-		/// <seealso cref="ComponentMode"/>
-		/// <param name="mode">The @"UnityEngine.ProBuilder.SelectMode" to engage.</param>
-		internal void SetSelectionMode(ComponentMode mode)
-		{
-			componentMode = mode;
-			Internal_UpdateSelectionFast();
-			PreferencesInternal.SetInt(PreferenceKeys.pbDefaultSelectionMode, (int) componentMode);
-			SceneView.RepaintAll();
-		}
-
-		/// <summary>
-		/// Set the EditLevel back to its last level.
-		/// </summary>
-		internal void PopEditLevel()
-		{
-			SetEditLevel(m_PreviousEditLevel);
-		}
-
-		/// <summary>
-		/// Set the @"UnityEngine.ProBuilder.EditLevel".
-		/// </summary>
-		/// <param name="editMode">The new EditLevel to engage.</param>
-		internal void SetEditLevel(EditLevel editMode)
-		{
-			m_PreviousEditLevel = editLevel;
-			editLevel = editMode;
-
-			switch (editMode)
-			{
-				case EditLevel.Top:
-					ClearElementSelection();
-					UpdateSelection();
-
-					MeshSelection.SetSelection(Selection.gameObjects);
-					break;
-
-				case EditLevel.Geometry:
-
-					Tools.current = Tool.None;
-
-					UpdateSelection();
-					SceneView.RepaintAll();
-					break;
-
-				case EditLevel.Plugin:
-					UpdateSelection();
-					SceneView.RepaintAll();
-					break;
-
-#if !PROTOTYPE
-				case EditLevel.Texture:
-
-					m_PreviousHandleAlignment = m_HandleAlignment;
-					m_PreviousComponentMode = componentMode;
-
-					SetHandleAlignment(HandleAlignment.Plane);
-					break;
-#endif
-			}
-
-
-			if (m_PreviousEditLevel == EditLevel.Texture && editMode != EditLevel.Texture)
-			{
-				SetSelectionMode(m_PreviousComponentMode);
-				SetHandleAlignment(m_PreviousHandleAlignment);
-			}
-
-			if (editLevel != EditLevel.Texture)
-				PreferencesInternal.SetInt(PreferenceKeys.pbDefaultEditLevel, (int) editLevel);
-
-			if (selectModeChanged != null)
-				selectModeChanged(EditorUtility.GetSelectMode(editLevel, componentMode));
+			if (m_SelectMode == SelectMode.Vertex)
+				m_SelectMode.SetValue(SelectMode.Edge, true);
+			else if (m_SelectMode == SelectMode.Edge)
+				m_SelectMode.SetValue(SelectMode.Face, true);
+			else if (m_SelectMode == SelectMode.Face)
+				m_SelectMode.SetValue(SelectMode.Vertex, true);
 		}
 
 		void UpdateSelection()

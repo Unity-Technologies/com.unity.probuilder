@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
