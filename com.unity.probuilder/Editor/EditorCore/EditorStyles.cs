@@ -8,6 +8,14 @@ namespace UnityEditor.ProBuilder.UI
 	/// </summary>
 	static class EditorStyles
 	{
+		const string k_FontAsap = "About/Font/Asap-Regular.otf";
+
+		const string k_ButtonBackgroundNormal = "Toolbar/Background/RoundedRect_Normal";
+		const string k_ButtonBackgroundHover = "Toolbar/Background/RoundedRect_Hover";
+		const string k_ButtonBackgroundPressed = "Toolbar/Background/RoundedRect_Pressed";
+		const string k_SettingsBackgroundNormal = "Toolbar/RoundedBorder";
+		const string k_SceneTextBoxBackgroundNormal = "Scene/TextBackground";
+
 		static readonly Color k_TextColorWhiteNormal = new Color(0.7f, 0.7f, 0.7f, 1f);
 		static readonly Color k_TextColorWhiteHover = new Color(0.7f, 0.7f, 0.7f, 1f);
 		static readonly Color k_TextColorWhiteActive = new Color(0.5f, 0.5f, 0.5f, 1f);
@@ -40,17 +48,17 @@ namespace UnityEditor.ProBuilder.UI
 			{
 				normal = new GUIStyleState()
 				{
-					background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Normal"),
+					background = IconUtility.GetIcon(k_ButtonBackgroundNormal),
 					textColor = UnityEditor.EditorGUIUtility.isProSkin ? k_TextColorWhiteNormal : Color.black
 				},
 				hover = new GUIStyleState()
 				{
-					background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Hover"),
+					background = IconUtility.GetIcon(k_ButtonBackgroundHover),
 					textColor = UnityEditor.EditorGUIUtility.isProSkin ? k_TextColorWhiteHover : Color.black,
 				},
 				active = new GUIStyleState()
 				{
-					background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Pressed"),
+					background = IconUtility.GetIcon(k_ButtonBackgroundPressed),
 					textColor = UnityEditor.EditorGUIUtility.isProSkin ? k_TextColorWhiteActive : Color.black,
 				},
 				alignment = ProBuilderEditor.s_IsIconGui ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft,
@@ -74,15 +82,15 @@ namespace UnityEditor.ProBuilder.UI
 			{
 				normal = new GUIStyleState()
 				{
-					background = IconUtility.GetIcon("Toolbar/RoundedBorder")
+					background = IconUtility.GetIcon(k_SettingsBackgroundNormal)
 				},
 				hover = new GUIStyleState()
 				{
-					background = IconUtility.GetIcon("Toolbar/RoundedBorder")
+					background = IconUtility.GetIcon(k_SettingsBackgroundNormal)
 				},
 				active = new GUIStyleState()
 				{
-					background = IconUtility.GetIcon("Toolbar/RoundedBorder")
+					background = IconUtility.GetIcon(k_SettingsBackgroundNormal)
 				},
 				border = new RectOffset(3, 3, 3, 3),
 				stretchWidth = true,
@@ -108,7 +116,7 @@ namespace UnityEditor.ProBuilder.UI
 				stretchHeight = false
 			};
 
-			Font asap = FileUtility.LoadInternalAsset<Font>("About/Font/Asap-Regular.otf");
+			Font asap = FileUtility.LoadInternalAsset<Font>(k_FontAsap);
 			if (asap != null)
 				s_HeaderLabel.font = asap;
 
@@ -124,7 +132,7 @@ namespace UnityEditor.ProBuilder.UI
 				normal = new GUIStyleState()
 				{
 					textColor = k_TextColorWhiteNormal,
-					background = IconUtility.GetIcon("Scene/TextBackground")
+					background = IconUtility.GetIcon(k_SceneTextBoxBackgroundNormal)
 				}
 			};
 
