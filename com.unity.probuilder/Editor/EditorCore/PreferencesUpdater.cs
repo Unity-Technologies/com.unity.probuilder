@@ -53,7 +53,7 @@ namespace UnityEditor.ProBuilder
 		// [FormerlySavedAs] attribute (not yet created).
 		static readonly FormerPreferenceKeyMap[] s_FormerPreferenceKeyMap = new FormerPreferenceKeyMap[]
 		{
-#pragma warning disable 618
+#pragma warning disable 612, 618
 			new FormerPreferenceKeyMap("", "about.identifier", typeof(UnityEngine.ProBuilder.SemVer), Settings.Scope.Project),
 			new FormerPreferenceKeyMap(PreferenceKeys.pbUseUnityColors, "handlesUseUnityColors", typeof(System.Boolean), Settings.Scope.User),
 			new FormerPreferenceKeyMap(PreferenceKeys.pbSelectedFaceDither, "ditherFaceHandles", typeof(System.Boolean), Settings.Scope.User),
@@ -111,7 +111,7 @@ namespace UnityEditor.ProBuilder
 			new FormerPreferenceKeyMap(PreferenceKeys.pbStripProBuilderOnBuild, "stripProBuilderScriptsOnBuild", typeof(System.Boolean), Settings.Scope.Project),
 			new FormerPreferenceKeyMap(PreferenceKeys.pbUVGridSnapValue, "uvEditorGridSnapIncrement", typeof(System.Single), Settings.Scope.Project),
 			new FormerPreferenceKeyMap("", "VertexColorPalette.previousColorPalette", typeof(System.String), Settings.Scope.Project),
-#pragma warning restore 618
+#pragma warning restore 612, 618
 		};
 
 		[MenuItem("Tools/Recover Old Preferences")]

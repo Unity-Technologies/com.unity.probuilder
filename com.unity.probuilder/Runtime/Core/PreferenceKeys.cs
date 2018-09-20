@@ -13,15 +13,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public const string pluginTitle = "ProBuilder";
 
-		[Obsolete("Use pb_Material.Default")]
-		public static Material DefaultMaterial
-		{
-			get { return BuiltinMaterials.defaultMaterial; }
-		}
-
-		internal const HideFlags k_EditorHideFlags = (HideFlags) (1 | 2 | 4 | 8);
 		internal const float k_MaxPointDistanceFromControl = 20f;
-
 		internal const char DEGREE_SYMBOL 	= (char)176;
 		internal const char CMD_SUPER  		= '\u2318';
 		internal const char CMD_SHIFT  		= '\u21E7';
@@ -29,181 +21,9 @@ namespace UnityEngine.ProBuilder
 		internal const char CMD_ALT  		= '\u2387';
 		internal const char CMD_DELETE  	= '\u232B';
 
-		// Enum
-		internal const string pbDefaultEditLevel = "pbDefaultEditLevel";
-		internal const string pbDefaultSelectionMode = "pbDefaultSelectionMode";
-		internal const string pbHandleAlignment = "pbHandleAlignment";
-		internal const string pbVertexColorTool = "pbVertexColorTool";
-		[Obsolete]
-		internal const string pbToolbarLocation = "pbToolbarLocation";
-		internal const string pbDefaultEntity = "pbDefaultEntity";
-		internal const string pbExtrudeMethod = "pbExtrudeMethod";
-		[Obsolete]
-		internal const string pbDefaultStaticFlags = "pbDefaultStaticFlags";
-
-		// Color
-		[Obsolete]
-		internal const string pbSelectedFaceColor = "pbDefaultFaceColor";
-		[Obsolete]
-		internal const string pbWireframeColor = "pbDefaultEdgeColor";
-		[Obsolete]
-		internal const string pbUnselectedEdgeColor = "pbUnselectedEdgeColor";
-		[Obsolete]
-		internal const string pbSelectedEdgeColor = "pbSelectedEdgeColor";
-		[Obsolete]
-		internal const string pbSelectedVertexColor = "pbDefaultSelectedVertexColor";
-		[Obsolete]
-		internal const string pbUnselectedVertexColor = "pbDefaultVertexColor";
-		[Obsolete]
-		internal const string pbPreselectionColor = "pbPreselectionColor";
-
-		// Bool
-		[Obsolete]
-		internal const string pbDefaultOpenInDockableWindow = "pbDefaultOpenInDockableWindow";
-		internal const string pbEditorPrefVersion = "pbEditorPrefVersion";
-		internal const string pbEditorShortcutsVersion = "pbEditorShortcutsVersion";
-		[Obsolete]
-		internal const string pbDefaultCollider = "pbDefaultCollider";
-		[Obsolete]
-		internal const string pbForceConvex = "pbForceConvex";
-		internal const string pbVertexColorPrefs = "pbVertexColorPrefs";
-		[Obsolete]
-		internal const string pbShowEditorNotifications = "pbShowEditorNotifications";
-		[Obsolete]
-		internal const string pbDragCheckLimit = "pbDragCheckLimit";
-		[Obsolete]
-		internal const string pbForceVertexPivot = "pbForceVertexPivot";
-		internal const string pbForceGridPivot = "pbForceGridPivot";
-		[Obsolete]
-		internal const string pbManifoldEdgeExtrusion = "pbManifoldEdgeExtrusion";
-		[Obsolete]
-		internal const string pbPerimeterEdgeBridgeOnly = "pbPerimeterEdgeBridgeOnly";
-		[Obsolete]
-		internal const string pbPBOSelectionOnly = "pbPBOSelectionOnly";
-		[Obsolete]
-		internal const string pbCloseShapeWindow = "pbCloseShapeWindow";
-		internal const string pbUVEditorFloating = "pbUVEditorFloating";
-		internal const string pbUVMaterialPreview = "pbUVMaterialPreview";
-		[Obsolete]
-		internal const string pbShowSceneToolbar = "pbShowSceneToolbar";
-		internal const string pbNormalizeUVsOnPlanarProjection = "pbNormalizeUVsOnPlanarProjection";
-		[Obsolete("Use Settings")]
-		internal const string pbStripProBuilderOnBuild = "pbStripProBuilderOnBuild";
-		[Obsolete("Use Lightmapping.autoUnwrapLightmapUV")]
-		internal const string pbDisableAutoUV2Generation = "pbDisableAutoUV2Generation";
-		[Obsolete]
-		internal const string pbShowSceneInfo = "pbShowSceneInfo";
-		internal const string pbEnableBackfaceSelection = "pbEnableBackfaceSelection";
-		internal const string pbVertexPaletteDockable = "pbVertexPaletteDockable";
-		internal const string pbExtrudeAsGroup = "pbExtrudeAsGroup";
-		/// <summary>
-		/// Toggles the edit level and selection mode shortcuts between:
-		/// - 'G' = Toggle edit level, 'J, K, L' Vert, Edge, Face
-		/// - 'G, J, K, L' = Object, Vert, Edge, Face modes
-		/// </summary>
-		[Obsolete]
-		internal const string pbUniqueModeShortcuts = "pbUniqueModeShortcuts";
-		internal const string pbMaterialEditorFloating = "pbMaterialEditorFloating";
-		internal const string pbShapeWindowFloating = "pbShapeWindowFloating";
-		[Obsolete]
-		internal const string pbIconGUI = "pbIconGUI";
-		[Obsolete]
-		internal const string pbShiftOnlyTooltips = "pbShiftOnlyTooltips";
-		[Obsolete]
-		internal const string pbDrawAxisLines = "pbDrawAxisLines";
-		internal const string pbCollapseVertexToFirst = "pbCollapseVertexToFirst";
-		[Obsolete]
-		internal const string pbMeshesAreAssets = "pbMeshesAreAssets";
-		[Obsolete]
-		internal const string pbElementSelectIsHamFisted = "pbElementSelectIsHamFisted";
-		internal const string pbFillHoleSelectsEntirePath = "pbFillHoleSelectsEntirePath";
-		internal const string pbDetachToNewObject = "pbDetachToNewObject";
-		[Obsolete("Use pb_MeshImporter::quads")]
-		internal const string pbPreserveFaces = "pbPreserveFaces";
-		/// When drag selecting faces or edges, does the entire element have to be encompassed?
-		[Obsolete("Use pbRectSelectMode")]
-		internal const string pbDragSelectWholeElement = "pbDragSelectWholeElement";
-		internal const string pbShowPreselectionHighlight = "pbShowPreselectionHighlight";
-
-		/// <summary>
-		/// When drag selecting elements does the entire element need to be encompassed or just touched by the rect.
-		/// </summary>
-		internal const string pbRectSelectMode = "pbRectSelectMode";
-
-		/// <summary>
-		/// When shift + drag selecting elements, how is the selection modified?
-		/// </summary>
-		internal const string pbDragSelectMode = "pbDragSelectMode";
-
-		/// If present sets the shadow casting mode on new ProBuilder objects.
-		[Obsolete]
-		internal const string pbShadowCastingMode = "pbShadowCastingMode";
-
-		/// Are experimental features enabled?
-		[Obsolete]
-		internal const string pbEnableExperimental = "pbEnableExperimental";
-
-		/// Automatically check for updates?
-		internal const string pbCheckForProBuilderUpdates = "pbCheckForProBuilderUpdates";
-
-		/// Enable ProBuilder to manage the lightmapping static flags.
-		[Obsolete]
-		internal const string pbManageLightmappingStaticFlag = "pbManageLightmappingStaticFlag";
-		[Obsolete]
-		internal const string pbShowMissingLightmapUvWarning = "pb_Lightmapping::showMissingLightmapUvWarning";
-		[Obsolete]
-		internal const string pbSelectedFaceDither = "pbSelectedFaceDither";
-		[Obsolete]
-		internal const string pbUseUnityColors = "pbUseUnityColors";
-
-		// Float
-		[Obsolete]
-		internal const string pbVertexHandleSize = "pbVertexHandleSize";
-		internal const string pbUVGridSnapValue = "pbUVGridSnapValue";
-		internal const string pbUVWeldDistance = "pbUVWeldDistance";
-		[Obsolete]
-		internal const string pbLineHandleSize = "pbLineHandleSize";
-		[Obsolete]
-		internal const string pbWireframeSize = "pbWireframeSize";
-
-		/// The maximum allowed distance between vertices to weld.
-		internal const string pbWeldDistance = "pbWeldDistance";
-
-		internal const string pbExtrudeDistance = "pbExtrudeDistance";
-		internal const string pbBevelAmount = "pbBevelAmount";
-
-		// Int
-		internal const string pbEdgeSubdivisions = "pbEdgeSubdivisions";
-
-		// Misc
-		internal const string pbDefaultShortcuts = "pbDefaultShortcuts";
-		[Obsolete]
-		internal const string pbDefaultMaterial = "pbDefaultMaterial";
-		internal const string pbCurrentMaterialPalette = "pbCurrentMaterialPalette";
-
-		/// Grow using angle check?
-		internal const string pbGrowSelectionUsingAngle = "pbGrowSelectionUsingAngle";
-
-		/// The angle value
-		internal const string pbGrowSelectionAngle = "pbGrowSelectionAngle";
-
-		/// If true, only one step of outer edges will be added.
-		internal const string pbGrowSelectionAngleIterative = "pbGrowSelectionAngleIterative";
-
-		internal const string pbShowDetail = "pbShowDetail";
-		internal const string pbShowOccluder = "pbShowOccluder";
-		internal const string pbShowMover = "pbShowMover";
-		internal const string pbShowCollider = "pbShowCollider";
-		internal const string pbShowTrigger = "pbShowTrigger";
-		internal const string pbShowNoDraw = "pbShowNoDraw";
-
-		internal const string defaultUnwrapParameters = "pbDefaultUnwrapParameters";
-
-		internal static readonly Rect RectZero = new Rect(0,0,0,0);
-
-	 	internal static readonly Color proBuilderBlue = new Color(0f, .682f, .937f, 1f);
-	 	internal static readonly Color proBuilderLightGray = new Color(.35f, .35f, .35f, .4f);
-	 	internal static readonly Color proBuilderDarkGray = new Color(.1f, .1f, .1f, .3f);
+		internal static readonly Color proBuilderBlue = new Color(0f, .682f, .937f, 1f);
+		internal static readonly Color proBuilderLightGray = new Color(.35f, .35f, .35f, .4f);
+		internal static readonly Color proBuilderDarkGray = new Color(.1f, .1f, .1f, .3f);
 
 		/// <summary>
 		/// The starting range for about menu items.
@@ -254,5 +74,174 @@ namespace UnityEngine.ProBuilder
 		/// Starting range for export menu items.
 		/// </summary>
 		public const int menuExport = 800;
+
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbDefaultEditLevel = "pbDefaultEditLevel";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbDefaultSelectionMode = "pbDefaultSelectionMode";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbHandleAlignment = "pbHandleAlignment";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbVertexColorTool = "pbVertexColorTool";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbToolbarLocation = "pbToolbarLocation";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbDefaultEntity = "pbDefaultEntity";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbExtrudeMethod = "pbExtrudeMethod";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbDefaultStaticFlags = "pbDefaultStaticFlags";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbSelectedFaceColor = "pbDefaultFaceColor";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbWireframeColor = "pbDefaultEdgeColor";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbUnselectedEdgeColor = "pbUnselectedEdgeColor";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbSelectedEdgeColor = "pbSelectedEdgeColor";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbSelectedVertexColor = "pbDefaultSelectedVertexColor";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbUnselectedVertexColor = "pbDefaultVertexColor";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbPreselectionColor = "pbPreselectionColor";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbDefaultOpenInDockableWindow = "pbDefaultOpenInDockableWindow";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbEditorPrefVersion = "pbEditorPrefVersion";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbEditorShortcutsVersion = "pbEditorShortcutsVersion";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbDefaultCollider = "pbDefaultCollider";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbForceConvex = "pbForceConvex";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbVertexColorPrefs = "pbVertexColorPrefs";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbShowEditorNotifications = "pbShowEditorNotifications";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbDragCheckLimit = "pbDragCheckLimit";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbForceVertexPivot = "pbForceVertexPivot";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbForceGridPivot = "pbForceGridPivot";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbManifoldEdgeExtrusion = "pbManifoldEdgeExtrusion";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbPerimeterEdgeBridgeOnly = "pbPerimeterEdgeBridgeOnly";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbPBOSelectionOnly = "pbPBOSelectionOnly";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbCloseShapeWindow = "pbCloseShapeWindow";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbUVEditorFloating = "pbUVEditorFloating";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbUVMaterialPreview = "pbUVMaterialPreview";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbShowSceneToolbar = "pbShowSceneToolbar";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbNormalizeUVsOnPlanarProjection = "pbNormalizeUVsOnPlanarProjection";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbStripProBuilderOnBuild = "pbStripProBuilderOnBuild";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbDisableAutoUV2Generation = "pbDisableAutoUV2Generation";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbShowSceneInfo = "pbShowSceneInfo";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbEnableBackfaceSelection = "pbEnableBackfaceSelection";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbVertexPaletteDockable = "pbVertexPaletteDockable";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbExtrudeAsGroup = "pbExtrudeAsGroup";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbUniqueModeShortcuts = "pbUniqueModeShortcuts";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbMaterialEditorFloating = "pbMaterialEditorFloating";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbShapeWindowFloating = "pbShapeWindowFloating";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbIconGUI = "pbIconGUI";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbShiftOnlyTooltips = "pbShiftOnlyTooltips";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbDrawAxisLines = "pbDrawAxisLines";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbCollapseVertexToFirst = "pbCollapseVertexToFirst";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbMeshesAreAssets = "pbMeshesAreAssets";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbElementSelectIsHamFisted = "pbElementSelectIsHamFisted";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbFillHoleSelectsEntirePath = "pbFillHoleSelectsEntirePath";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbDetachToNewObject = "pbDetachToNewObject";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbPreserveFaces = "pbPreserveFaces";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbDragSelectWholeElement = "pbDragSelectWholeElement";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbShowPreselectionHighlight = "pbShowPreselectionHighlight";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbRectSelectMode = "pbRectSelectMode";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbDragSelectMode = "pbDragSelectMode";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbShadowCastingMode = "pbShadowCastingMode";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbEnableExperimental = "pbEnableExperimental";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbCheckForProBuilderUpdates = "pbCheckForProBuilderUpdates";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbManageLightmappingStaticFlag = "pbManageLightmappingStaticFlag";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbShowMissingLightmapUvWarning = "pb_Lightmapping::showMissingLightmapUvWarning";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbSelectedFaceDither = "pbSelectedFaceDither";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbUseUnityColors = "pbUseUnityColors";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbVertexHandleSize = "pbVertexHandleSize";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbUVGridSnapValue = "pbUVGridSnapValue";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbUVWeldDistance = "pbUVWeldDistance";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbLineHandleSize = "pbLineHandleSize";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbWireframeSize = "pbWireframeSize";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbWeldDistance = "pbWeldDistance";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbExtrudeDistance = "pbExtrudeDistance";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbBevelAmount = "pbBevelAmount";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbEdgeSubdivisions = "pbEdgeSubdivisions";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbDefaultShortcuts = "pbDefaultShortcuts";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbDefaultMaterial = "pbDefaultMaterial";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbCurrentMaterialPalette = "pbCurrentMaterialPalette";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbGrowSelectionUsingAngle = "pbGrowSelectionUsingAngle";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbGrowSelectionAngle = "pbGrowSelectionAngle";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbGrowSelectionAngleIterative = "pbGrowSelectionAngleIterative";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbShowDetail = "pbShowDetail";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbShowOccluder = "pbShowOccluder";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbShowMover = "pbShowMover";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbShowCollider = "pbShowCollider";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbShowTrigger = "pbShowTrigger";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string pbShowNoDraw = "pbShowNoDraw";
+		[Obsolete("Use Pref<T> or Settings class directly.")]
+		internal const string defaultUnwrapParameters = "pbDefaultUnwrapParameters";
 	}
 }
