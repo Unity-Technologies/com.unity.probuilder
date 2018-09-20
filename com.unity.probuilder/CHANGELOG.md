@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.16] - 2018-09-14
+## [4.0.0-preview.17] - 2018-09-20
 
 ### Features
 
@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Improve the default UV mapping of sphere primitives.
 - Support new 2018.3 prefab system.
 - Redesigned Lightmap UV workflow now exposes settings on the ProBuilderMesh component, provides a modifiable default value, and is generally smarter about keeping Lightmap UV channels in sync with changes.
+- Improve performance of toolbar rendering by caching some frequently accessed selection information.
 
 ### Bug Fixes
 
@@ -45,6 +46,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix element preselection highlight incorrectly showing when a GUI control has focus.
 - Fix `Create Poly Shape` throwing errors in some cases.
 - Fix `Connect Edges` action showing incorrect results in notifications.
+- Fix incorrect use of object finalizers in some classes.
+- Fix vertex drag selection with "Select Hidden: Off" omitting distinct but coincident vertices.
 
 ### Changes
 
@@ -57,13 +60,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Minor performance improvements to some common mesh editing actions.
 - Remove "Precise Element Selection" preference.
 
-### Changes since 4.0.0-preview.15
+### Changes since 4.0.0-preview.16
 
-- Fix incorrect use of object finalizers in some classes.
-- Fix regression that broke rotating and scaling vertices with the transform handles.
-- Fix vertex drag selection with "Select Hidden: Off" omitting distinct but coincident vertices.
-- Remove unused using statements that introduced compiler errors at build time.
-- Improve performance of toolbar rendering by caching some frequently accessed selection information.
+- Redesigned settings interface, now supports searching for keywords.
+- Project preferences are no longer saved in the Assets directory (now located at "ProjectSettings/ProBuilderSettings.json").
 
 ## [3.0.8] - 2018-05-07
 
