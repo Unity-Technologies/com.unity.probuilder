@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	public static class EditorUtility
 	{
-		enum PivotLocation
+		internal enum PivotLocation
 		{
 			Center,
 			FirstVertex
@@ -54,8 +54,8 @@ namespace UnityEditor.ProBuilder
 		[UserSetting("Mesh Settings", "Collider Type", "What type of Collider to apply to new Shapes.")]
 		static Pref<ColliderType> s_ColliderType = new Pref<ColliderType>("newShapeColliderType", ColliderType.MeshCollider);
 
-		internal static Pref<bool> s_ExperimentalFeatures = new Pref<bool>("experimentalFeaturesEnabled", false, Settings.Scope.User);
-		internal static Pref<bool> s_MeshesAreAssets = new Pref<bool>("meshesAreAssets", false, Settings.Scope.Project);
+		internal static Pref<bool> s_ExperimentalFeatures = new Pref<bool>("experimental.featuresEnabled", false, Settings.Scope.User);
+		internal static Pref<bool> s_MeshesAreAssets = new Pref<bool>("experimental.meshesAreAssets", false, Settings.Scope.Project);
 
 		[UserSettingBlock("Experimental", new[] { "store", "mesh", "asset", "experimental", "features", "enabled" })]
 		static void ExperimentalFeaturesSettings(string searchContext)

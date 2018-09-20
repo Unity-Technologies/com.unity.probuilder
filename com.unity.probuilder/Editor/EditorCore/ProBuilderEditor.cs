@@ -82,7 +82,7 @@ namespace UnityEditor.ProBuilder
 		// used for 'g' key shortcut to swap between object/vef modes
 		SelectMode m_LastComponentMode;
 		HandleAlignment m_PreviousHandleAlignment;
-		Shortcut[] m_Shortcuts;
+		static Pref<Shortcut[]> s_Shortcuts = new Pref<Shortcut[]>("editor.sceneViewShortcuts", new Shortcut[0]);
 		GUIStyle m_CommandStyle;
 		Rect m_ElementModeToolbarRect = new Rect(3, 6, 128, 24);
 
@@ -366,8 +366,6 @@ namespace UnityEditor.ProBuilder
 			m_SnapEnabled = ProGridsInterface.SnapEnabled();
 			m_SnapValue = ProGridsInterface.SnapValue();
 			m_SnapAxisConstraint = ProGridsInterface.UseAxisConstraints();
-
-			m_Shortcuts = Shortcut.ParseShortcuts(PreferencesInternal.GetString(PreferenceKeys.pbDefaultShortcuts)).ToArray();
 		}
 
 		void InitGUI()
@@ -431,7 +429,7 @@ namespace UnityEditor.ProBuilder
 					break;
 
 				case EventType.KeyDown:
-					if (m_Shortcuts.Any(x => x.Matches(e.keyCode, e.modifiers)))
+					if (s_Shortcuts.value.Any(x => x.Matches(e.keyCode, e.modifiers)))
 						e.Use();
 					break;
 
@@ -537,7 +535,7 @@ namespace UnityEditor.ProBuilder
 
 			if (m_CurrentEvent.type == EventType.KeyDown)
 			{
-				if (m_Shortcuts.Any(x => x.Matches(m_CurrentEvent.keyCode, m_CurrentEvent.modifiers)))
+				if (s_Shortcuts.value.Any(x => x.Matches(m_CurrentEvent.keyCode, m_CurrentEvent.modifiers)))
 					m_CurrentEvent.Use();
 			}
 
@@ -1328,7 +1326,7 @@ namespace UnityEditor.ProBuilder
 
 		internal bool ShortcutCheck(Event e)
 		{
-			List<Shortcut> matches = m_Shortcuts.Where(x => x.Matches(e.keyCode, e.modifiers)).ToList();
+			List<Shortcut> matches = s_Shortcuts.value.Where(x => x.Matches(e.keyCode, e.modifiers)).ToList();
 
 			if (matches.Count < 1)
 				return false;
