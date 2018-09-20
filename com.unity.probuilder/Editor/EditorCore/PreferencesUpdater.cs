@@ -10,7 +10,7 @@ namespace UnityEditor.ProBuilder
 	static class PreferencesUpdater
 	{
 		static Pref<SemVer> s_PreferencesVersion = new Pref<SemVer>("preferences.version", new SemVer(), Settings.Scope.Project);
-		static readonly SemVer k_ProBuilder_4_0_0 = new SemVer(4,0,0);
+		static readonly SemVer k_ProBuilder_4_0_0 = new SemVer(4, 0, 0, 16, "preview");
 
 		/// <summary>
 		/// Set the editor pref version, and check if any preferences need to be updated or reset.
@@ -117,6 +117,8 @@ namespace UnityEditor.ProBuilder
 		[MenuItem("Tools/Recover Old Preferences")]
 		static void RecoverOldPreferences()
 		{
+			int success = 0;
+
 			foreach (var map in s_FormerPreferenceKeyMap)
 			{
 				object val;
@@ -135,6 +137,8 @@ namespace UnityEditor.ProBuilder
 							val,
 							map.scope
 						});
+
+						success++;
 					}
 					catch
 					{
@@ -142,6 +146,8 @@ namespace UnityEditor.ProBuilder
 				}
 #pragma warning restore 618
 			}
+
+			Debug.Log("ProBuilder successfully recovered " + success + " settings.");
 
 			Settings.Save();
 		}
