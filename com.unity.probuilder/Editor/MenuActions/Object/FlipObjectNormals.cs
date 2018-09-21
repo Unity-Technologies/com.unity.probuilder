@@ -20,7 +20,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override TooltipContent tooltip
 		{
-			get { return _tooltip; }
+			get { return s_Tooltip; }
 		}
 
 		public override string menuTitle
@@ -28,7 +28,7 @@ namespace UnityEditor.ProBuilder.Actions
 			get { return "Flip Normals"; }
 		}
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Flip Object Normals",
 			@"Reverse the direction of all faces on the selected objects."
@@ -36,7 +36,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool enabled
 		{
-			get { return ProBuilderEditor.instance != null && MeshSelection.TopInternal().Length > 0; }
+			get { return base.enabled && MeshSelection.selectedObjectCount > 0; }
 		}
 
 		public override ActionResult DoAction()

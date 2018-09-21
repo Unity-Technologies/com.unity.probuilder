@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
+using UL = UnityEditor.Lightmapping;
 
 namespace UnityEditor.ProBuilder
 {
@@ -13,12 +14,14 @@ namespace UnityEditor.ProBuilder
 	static class Lightmapping
 	{
 		[UserSetting("General", "Auto Lightmap UVs", "Automatically build the lightmap UV array when editing ProBuilder meshes. If this feature is disabled, you will need to use the 'Generate UV2' action to build lightmap UVs for meshes prior to baking lightmaps.")]
-		static Pref<bool> s_AutoUnwrapLightmapUV = new Pref<bool>("autoUnwrapLightmapUV", true);
+		static Pref<bool> s_AutoUnwrapLightmapUV = new Pref<bool>("lightmapping.autoUnwrapLightmapUV", true);
 
 		[UserSetting("General", "Show Missing Lightmap UVs Warning", "Enable or disable a warning log if lightmaps are baked while ProBuilder shapes are missing a valid UV2 channel.")]
-		static Pref<bool> s_ShowMissingLightmapUVWarning = new Pref<bool>("showMissingLightmapWarning", true, Settings.Scope.User);
+		static Pref<bool> s_ShowMissingLightmapUVWarning = new Pref<bool>("lightmapping.showMissingLightmapWarning", true, Settings.Scope.User);
 
-		static Pref<UnwrapParameters> s_UnwrapParameters = new Pref<UnwrapParameters>("defaultLightmapUnwrapParameters", new UnwrapParameters());
+		internal static Pref<UnwrapParameters> s_UnwrapParameters = new Pref<UnwrapParameters>("lightmapping.defaultLightmapUnwrapParameters", new UnwrapParameters());
+
+		static Pref<UL.GIWorkflowMode> s_GiWorkflowMode = new Pref<UL.GIWorkflowMode>("lightmapping.giWorkflowMode", UL.GIWorkflowMode.Iterative, Settings.Scope.User);
 
 		static class Styles
 		{
@@ -91,7 +94,7 @@ namespace UnityEditor.ProBuilder
 
 		static Lightmapping()
 		{
-			UnityEditor.Lightmapping.completed += OnLightmappingCompleted;
+			UL.completed += OnLightmappingCompleted;
 		}
 
 		/// <summary>
@@ -184,27 +187,17 @@ namespace UnityEditor.ProBuilder
 			return param;
 		}
 
-		/**
-		 * Store the previous GIWorkflowMode and set the current value to OnDemand (or leave it Legacy).
-		 */
 		internal static void PushGIWorkflowMode()
 		{
-			PreferencesInternal.SetInt("pb_GIWorkflowMode", (int)UnityEditor.Lightmapping.giWorkflowMode);
+			s_GiWorkflowMode.SetValue(UL.giWorkflowMode, true);
 
-			if(UnityEditor.Lightmapping.giWorkflowMode != UnityEditor.Lightmapping.GIWorkflowMode.Legacy)
-				UnityEditor.Lightmapping.giWorkflowMode = UnityEditor.Lightmapping.GIWorkflowMode.OnDemand;
+			if(UL.giWorkflowMode != UL.GIWorkflowMode.Legacy)
+				UL.giWorkflowMode = UL.GIWorkflowMode.OnDemand;
 		}
 
-		/**
-		 * Return GIWorkflowMode to it's prior state.
-		 */
 		internal static void PopGIWorkflowMode()
 		{
-			// if no key found (?), don't do anything.
-			if(!PreferencesInternal.HasKey("pb_GIWorkflowMode"))
-				return;
-
-			UnityEditor.Lightmapping.giWorkflowMode = (UnityEditor.Lightmapping.GIWorkflowMode)PreferencesInternal.GetInt("pb_GIWorkflowMode");
+			UL.giWorkflowMode = s_GiWorkflowMode;
 		}
 	}
 }

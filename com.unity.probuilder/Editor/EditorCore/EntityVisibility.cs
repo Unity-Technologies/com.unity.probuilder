@@ -10,25 +10,10 @@ namespace UnityEditor.ProBuilder
 	[InitializeOnLoad]
 	static class EntityVisibility
 	{
-		private static bool show_Detail {
-			get { return PreferencesInternal.GetBool(PreferenceKeys.pbShowDetail); }
-			set { PreferencesInternal.SetBool(PreferenceKeys.pbShowDetail, value); }
-		}
-
-		private static bool show_Mover {
-			get { return PreferencesInternal.GetBool(PreferenceKeys.pbShowMover); }
-			set { PreferencesInternal.SetBool(PreferenceKeys.pbShowMover, value); }
-		}
-
-		private static bool show_Collider {
-			get { return PreferencesInternal.GetBool(PreferenceKeys.pbShowCollider); }
-			set { PreferencesInternal.SetBool(PreferenceKeys.pbShowCollider, value); }
-		}
-
-		private static bool show_Trigger {
-			get { return PreferencesInternal.GetBool(PreferenceKeys.pbShowTrigger); }
-			set { PreferencesInternal.SetBool(PreferenceKeys.pbShowTrigger, value); }
-		}
+		static Pref<bool> m_ShowDetail = new Pref<bool>("entity.detailVisible", true);
+		static Pref<bool> m_ShowMover = new Pref<bool>("entity.moverVisible", true);
+		static Pref<bool> m_ShowCollider = new Pref<bool>("entity.colliderVisible", true);
+		static Pref<bool> m_ShowTrigger = new Pref<bool>("entity.triggerVisible", true);
 
 		static EntityVisibility()
 		{
@@ -40,7 +25,7 @@ namespace UnityEditor.ProBuilder
 		}
 
 		/// <summary>
-		/// Set the visibility of an entity type in the sceneview.
+		/// Set the visibility of an entity type in the Scene view.
 		/// </summary>
 		/// <param name="entityType"></param>
 		/// <param name="isVisible"></param>
@@ -49,16 +34,16 @@ namespace UnityEditor.ProBuilder
 			switch(entityType)
 			{
 				case EntityType.Detail:
-					show_Detail = isVisible;
+					m_ShowDetail.SetValue(isVisible, true);
 					break;
 				case EntityType.Mover:
-					show_Mover = isVisible;
+					m_ShowMover.SetValue(isVisible, true);
 					break;
 				case EntityType.Collider:
-					show_Collider = isVisible;
+					m_ShowCollider.SetValue(isVisible, true);
 					break;
 				case EntityType.Trigger:
-					show_Trigger = isVisible;
+					m_ShowTrigger.SetValue(isVisible, true);
 					break;
 			}
 
@@ -92,12 +77,9 @@ namespace UnityEditor.ProBuilder
 			{
 				if (entityBehaviour.manageVisibility)
 				{
-					// skip OnExit because OnEnter is operating on an instanced new scene, no changes will affect the
-					// actual scene
+					// skip OnExit because OnEnter is operating on an instanced new scene, no changes will affect the actual scene
 					if(isEntering)
 						entityBehaviour.OnEnterPlayMode();
-//					else
-//						entityBehaviour.OnExitPlayMode();
 				}
 			}
 
@@ -105,8 +87,8 @@ namespace UnityEditor.ProBuilder
 				return;
 
 			// deprecated pb_Entity path
-			bool detailEnabled	 = show_Detail;
-			bool moverEnabled	 = show_Mover;
+			bool detailEnabled = m_ShowDetail;
+			bool moverEnabled = m_ShowMover;
 
 			foreach(var entity in Resources.FindObjectsOfTypeAll<Entity>())
 			{

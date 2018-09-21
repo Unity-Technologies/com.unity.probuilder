@@ -29,68 +29,6 @@ namespace UnityEditor.ProBuilder
 			get { return Selection.transforms.GetComponents<ProBuilderMesh>(); }
 		}
 
-		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Geometry/Extrude %e", true)]
-		static bool MenuVerifyExtrude()
-		{
-			ProBuilderEditor e = ProBuilderEditor.instance;
-
-			return e != null &&
-			       ProBuilderEditor.editLevel == EditLevel.Geometry &&
-			       selection != null &&
-			       selection.Length > 0 &&
-			       (selection.Any(x => x.selectedEdgeCount > 0) || selection.Any(x => x.selectedFacesInternal.Length > 0));
-		}
-
-		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Geometry/Extrude %e", false, PreferenceKeys.menuGeometry + 3)]
-		static void MenuDoExtrude()
-		{
-			MenuCommands.MenuExtrude(selection, false);
-		}
-
-		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Selection/Select Loop &l", true, PreferenceKeys.menuSelection)]
-		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Selection/Select Ring &r", true, PreferenceKeys.menuSelection)]
-		private static bool MenuVerifyRingLoop()
-		{
-			if (editor == null || ProBuilderEditor.editLevel != EditLevel.Geometry)
-				return false;
-
-			if (ProBuilderEditor.componentMode == ComponentMode.Edge)
-				return MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
-			else if (ProBuilderEditor.componentMode == ComponentMode.Face)
-				return MeshSelection.TopInternal().Any(x => x.selectedFaceCount > 0);
-			return false;
-		}
-
-		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Selection/Select Loop &l", false, PreferenceKeys.menuSelection)]
-		private static void MenuSelectLoop()
-		{
-			switch (ProBuilderEditor.componentMode)
-			{
-				case ComponentMode.Edge:
-					MenuCommands.MenuLoopSelection(selection);
-					break;
-
-				case ComponentMode.Face:
-					MenuCommands.MenuLoopFaces(selection);
-					break;
-			}
-		}
-
-		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Selection/Select Ring &r", false, PreferenceKeys.menuSelection)]
-		private static void MenuSelectRing()
-		{
-			switch (ProBuilderEditor.componentMode)
-			{
-				case ComponentMode.Edge:
-					MenuCommands.MenuRingSelection(selection);
-					break;
-
-				case ComponentMode.Face:
-					MenuCommands.MenuRingFaces(selection);
-					break;
-			}
-		}
-
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 1 &#1", true,
 			PreferenceKeys.menuVertexColors)]
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 2 &#2", true,
@@ -113,7 +51,7 @@ namespace UnityEditor.ProBuilder
 			PreferenceKeys.menuVertexColors)]
 		public static bool VerifyApplyVertexColor()
 		{
-			return ProBuilderEditor.instance != null && ProBuilderEditor.instance.selectedVertexCount > 0;
+			return ProBuilderEditor.instance != null && MeshSelection.selectedVertexCount > 0;
 		}
 
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 1 &#1", false,

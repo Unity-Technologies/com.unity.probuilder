@@ -88,17 +88,7 @@ namespace UnityEditor.ProBuilder
 
 		// Path to the required default material palette. If not valid material palettes are
 		// found a new one will be created with this path (relative to ProBuilder folder).
-		static string s_DefaultMaterialPalettePath;
-
-		static string DefaultMaterialPalettePath
-		{
-			get
-			{
-				if(string.IsNullOrEmpty(s_DefaultMaterialPalettePath))
-					s_DefaultMaterialPalettePath = FileUtility.GetLocalDataDirectory() + "/Default Material Palette.asset";
-				return s_DefaultMaterialPalettePath;
-			}
-		}
+		static Pref<string> s_MaterialPalettePath = new Pref<string>("editor.materialPalettePath", FileUtility.GetLocalDataDirectory() + "/Default Material Palette.asset");
 
 		// The currently loaded material palette asset.
 		static MaterialPalette s_CurrentPalette = null;
@@ -125,9 +115,7 @@ namespace UnityEditor.ProBuilder
 				if (s_CurrentPalette == null)
 				{
 					// Attempt to load the last user-set material palette
-					s_CurrentPalette =
-						AssetDatabase.LoadAssetAtPath<MaterialPalette>(
-							PreferencesInternal.GetString(PreferenceKeys.pbCurrentMaterialPalette));
+					s_CurrentPalette = AssetDatabase.LoadAssetAtPath<MaterialPalette>(s_MaterialPalettePath);
 
 					// If not set (or deleted), fall back on default
 					if (s_CurrentPalette != null)
@@ -142,7 +130,7 @@ namespace UnityEditor.ProBuilder
 					// If no existing pb_MaterialPalette objects in project:
 					// - create a new one
 					// - check for the older pb_ObjectArray and copy data to new default
-					s_CurrentPalette = FileUtility.LoadRequired<MaterialPalette>(DefaultMaterialPalettePath);
+					s_CurrentPalette = FileUtility.LoadRequired<MaterialPalette>(s_MaterialPalettePath);
 
 					string[] m_LegacyMaterialArrays = AssetDatabase.FindAssets("t:pb_ObjectArray");
 
@@ -164,13 +152,10 @@ namespace UnityEditor.ProBuilder
 
 		public static void MenuOpenMaterialEditor()
 		{
-			EditorWindow.GetWindow<MaterialEditor>(
-				PreferencesInternal.GetBool(PreferenceKeys.pbMaterialEditorFloating),
-				"Material Editor",
-				true).Show();
+			GetWindow<MaterialEditor>("Material Editor");
 		}
 
-		private void OnEnable()
+		void OnEnable()
 		{
 			instance = this;
 			this.autoRepaintOnSceneChange = true;
@@ -181,12 +166,12 @@ namespace UnityEditor.ProBuilder
 			RefreshAvailablePalettes();
 		}
 
-		private void OnDisable()
+		void OnDisable()
 		{
 			instance = null;
 		}
 
-		private void OnGUI()
+		void OnGUI()
 		{
 			DoContextMenu();
 
@@ -204,7 +189,7 @@ namespace UnityEditor.ProBuilder
 					if(GUILayout.Button("Apply (Ctrl+Shift+Click)"))
 						ApplyMaterial(MeshSelection.TopInternal(), s_QueuedMaterial);
 
-					GUI.enabled = editor != null && editor.selectedFaceCount > 0;
+					GUI.enabled = editor != null && MeshSelection.selectedFaceCount > 0;
 					if(GUILayout.Button("Match Selection"))
 					{
 						ProBuilderMesh tp;
@@ -357,31 +342,31 @@ namespace UnityEditor.ProBuilder
 				OnFaceChanged(pb);
 			}
 
-			if(ProBuilderEditor.instance != null && ProBuilderEditor.instance.selectedFaceCount > 0)
+			if(ProBuilderEditor.instance != null && MeshSelection.selectedFaceCount > 0)
 				EditorUtility.ShowNotification("Set Material\n" + mat.name);
 		}
 
-		private static void SaveUserMaterials(Material[] materials)
+		static void SaveUserMaterials(Material[] materials)
 		{
 			s_CurrentPalette.array = materials;
 			UnityEditor.EditorUtility.SetDirty(s_CurrentPalette);
 			AssetDatabase.SaveAssets();
 		}
 
-		private static void OnFaceChanged( ProBuilderMesh pb )
+		static void OnFaceChanged( ProBuilderMesh pb )
 		{
 			pb.ToMesh();
 			pb.Refresh();
 			pb.Optimize();
 		}
 
-		private void SetMaterialPalette(MaterialPalette palette)
+		void SetMaterialPalette(MaterialPalette palette)
 		{
 			s_CurrentPalette = palette;
 			RefreshAvailablePalettes();
 		}
 
-		private void RefreshAvailablePalettes()
+		void RefreshAvailablePalettes()
 		{
 			MaterialPalette cur = CurrentPalette;
 			m_AvailablePalettes = FileUtility.FindAndLoadAssets<MaterialPalette>();
@@ -389,7 +374,7 @@ namespace UnityEditor.ProBuilder
 			ArrayUtility.Add<string>(ref m_AvailablePalettes_Str, string.Empty);
 			ArrayUtility.Add<string>(ref m_AvailablePalettes_Str, "New Material Palette...");
 			m_CurrentPaletteIndex = System.Array.IndexOf(m_AvailablePalettes, cur);
-			PreferencesInternal.SetString(PreferenceKeys.pbCurrentMaterialPalette, AssetDatabase.GetAssetPath(cur));
+			s_MaterialPalettePath.SetValue(AssetDatabase.GetAssetPath(cur), true);
 		}
 	}
 }

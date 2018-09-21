@@ -10,9 +10,9 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_UVEditor", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
+		public override TooltipContent tooltip { get { return s_Tooltip; } }
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"UV Editor",
 			"Opens the UV Editor window.\n\nThe UV Editor allows you to change how textures are rendered on this mesh."

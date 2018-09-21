@@ -1,41 +1,40 @@
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
-using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
 	sealed class DeleteFaces : MenuAction
 	{
-		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_Delete", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Geometry; }
+		}
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon("Toolbar/Face_Delete", IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return s_Tooltip; }
+		}
+
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Delete Faces",
 			@"Delete all selected faces.",
 			keyCommandDelete
 		);
 
-		public override bool enabled
+		public override SelectMode validSelectModes
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					editLevel == EditLevel.Geometry &&
-					MeshSelection.TopInternal().Sum(x => x.selectedFaceCount) > 0;
-			}
+			get { return SelectMode.Face; }
 		}
 
-		public override bool hidden
+		public override bool enabled
 		{
-			get
-			{
-				return editLevel != EditLevel.Geometry || componentMode != ComponentMode.Face;
-			}
+			get { return base.enabled && MeshSelection.selectedFaceCount > 0; }
 		}
 
 		public override ActionResult DoAction()

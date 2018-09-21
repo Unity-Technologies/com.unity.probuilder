@@ -43,7 +43,7 @@ namespace UnityEngine.ProBuilder
 	/// </remarks>
 	static class Log
 	{
-		public const string DEFAULT_LOG_PATH = "ProBuilderLog.txt";
+		public const string k_ProBuilderLogFileName = "ProBuilderLog.txt";
 
 		// Retain a stack of previous log levels.
 		static Stack<LogLevel> s_logStack = new Stack<LogLevel>();
@@ -55,7 +55,7 @@ namespace UnityEngine.ProBuilder
 		static LogOutput s_Output = LogOutput.Console;
 
 		// Path to the log file.
-		static string s_LogFilePath = DEFAULT_LOG_PATH;
+		static string s_LogFilePath = k_ProBuilderLogFileName;
 
 		/// <summary>
 		/// Push the current log level in the stack. See also PopLogLevel.

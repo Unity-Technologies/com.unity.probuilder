@@ -1,15 +1,17 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
-using EditorGUILayout = UnityEditor.EditorGUILayout;
-using EditorStyles = UnityEditor.EditorStyles;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
 	sealed class GrowSelection : MenuAction
 	{
+		Pref<bool> m_GrowSelectionWithAngle = new Pref<bool>("GrowSelection.useAngle", false);
+		Pref<bool> m_GrowSelectionAngleIterative = new Pref<bool>("GrowSelection.iterativeGrow", true);
+		Pref<float> m_GrowSelectionAngleValue = new Pref<float>("GrowSelection.angleValue", 15f);
+
 		public override ToolbarGroup group
 		{
 			get { return ToolbarGroup.Selection; }
@@ -30,31 +32,25 @@ namespace UnityEditor.ProBuilder.Actions
 			"Grow Selection",
 			@"Adds adjacent elements to the current selection, optionally testing to see if they are within a specified angle.
 
-Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.",
+Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button.",
 			keyCommandAlt, 'G'
 		);
 
-		public override bool enabled
+		public override SelectMode validSelectModes
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					MenuCommands.VerifyGrowSelection(MeshSelection.TopInternal());
-			}
+			get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.Texture; }
 		}
 
-		public override bool hidden
+		public override bool enabled
 		{
-			get { return editLevel != EditLevel.Geometry; }
+			get { return base.enabled && VerifyGrowSelection(); }
 		}
 
 		protected override MenuActionState optionsMenuState
 		{
 			get
 			{
-				if (enabled &&
-					ProBuilderEditor.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.componentMode == ComponentMode.Face)
+				if (enabled && ProBuilderEditor.selectMode == SelectMode.Face)
 					return MenuActionState.VisibleAndEnabled;
 
 				return MenuActionState.Hidden;
@@ -65,41 +61,120 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 		{
 			GUILayout.Label("Grow Selection Options", EditorStyles.boldLabel);
 
-			bool angleGrow = PreferencesInternal.GetBool(PreferenceKeys.pbGrowSelectionUsingAngle);
-
 			EditorGUI.BeginChangeCheck();
 
-			angleGrow = EditorGUILayout.Toggle("Restrict to Angle", angleGrow);
-			float angleVal = PreferencesInternal.GetFloat(PreferenceKeys.pbGrowSelectionAngle);
+			m_GrowSelectionWithAngle.value = EditorGUILayout.Toggle("Restrict to Angle", m_GrowSelectionWithAngle);
 
-			GUI.enabled = angleGrow;
+			GUI.enabled = m_GrowSelectionWithAngle;
 
-			angleVal = EditorGUILayout.FloatField("Max Angle", angleVal);
+			m_GrowSelectionAngleValue.value = EditorGUILayout.FloatField("Max Angle", m_GrowSelectionAngleValue);
 
-			GUI.enabled = angleGrow;
+			GUI.enabled = m_GrowSelectionWithAngle;
 
-			bool iterative = angleGrow ? PreferencesInternal.GetBool(PreferenceKeys.pbGrowSelectionAngleIterative) : true;
+			bool iterative = m_GrowSelectionWithAngle ? m_GrowSelectionAngleIterative : true;
 
-			iterative = EditorGUILayout.Toggle("Iterative", iterative);
+			m_GrowSelectionAngleIterative.value = EditorGUILayout.Toggle("Iterative", iterative);
 
 			GUI.enabled = true;
 
 			if (EditorGUI.EndChangeCheck())
-			{
-				PreferencesInternal.SetBool(PreferenceKeys.pbGrowSelectionUsingAngle, angleGrow);
-				PreferencesInternal.SetBool(PreferenceKeys.pbGrowSelectionAngleIterative, iterative);
-				PreferencesInternal.SetFloat(PreferenceKeys.pbGrowSelectionAngle, angleVal);
-			}
+				Settings.Save();
 
 			GUILayout.FlexibleSpace();
 
 			if (GUILayout.Button("Grow Selection"))
-				MenuCommands.MenuGrowSelection(MeshSelection.TopInternal());
+				DoAction();
 		}
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuGrowSelection(MeshSelection.TopInternal());
+			var selection = MeshSelection.TopInternal();
+			var editor = ProBuilderEditor.instance;
+
+			if(!ProBuilderEditor.instance || selection == null || selection.Length < 1)
+				return ActionResult.NoSelection;
+
+			UndoUtility.RecordSelection(selection, "Grow Selection");
+
+			int grown = 0;
+			bool angleGrow = m_GrowSelectionWithAngle;
+			bool iterative = m_GrowSelectionAngleIterative;
+			float growSelectionAngle = m_GrowSelectionAngleValue;
+
+			if(!angleGrow && !iterative)
+				iterative = true;
+
+			foreach(ProBuilderMesh pb in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
+			{
+				int previousTriCount = pb.selectedVertexCount;
+
+				switch(ProBuilderEditor.selectMode)
+				{
+					case SelectMode.Vertex:
+						pb.SetSelectedEdges(ElementSelection.GetConnectedEdges(pb, pb.selectedIndexesInternal));
+						break;
+
+					case SelectMode.Edge:
+						pb.SetSelectedEdges(ElementSelection.GetConnectedEdges(pb, pb.selectedIndexesInternal));
+						break;
+
+					case SelectMode.Texture:
+					case SelectMode.Face:
+
+						Face[] selectedFaces = pb.GetSelectedFaces();
+
+						HashSet<Face> sel;
+
+						if(iterative)
+						{
+							sel = ElementSelection.GrowSelection(pb, selectedFaces, angleGrow ? growSelectionAngle : -1f);
+							sel.UnionWith(selectedFaces);
+						}
+						else
+						{
+							sel = ElementSelection.FloodSelection(pb, selectedFaces, angleGrow ? growSelectionAngle : -1f);
+						}
+
+						pb.SetSelectedFaces( sel.ToArray() );
+
+						break;
+				}
+
+				grown += pb.selectedVertexCount - previousTriCount;
+			}
+
+			ProBuilderEditor.Refresh();
+			SceneView.RepaintAll();
+
+			if(grown > 0)
+				return new ActionResult(ActionResult.Status.Success, "Grow Selection");
+
+			return new ActionResult(ActionResult.Status.Failure, "Nothing to Grow");
+		}
+
+		static bool VerifyGrowSelection()
+		{
+			int sel, max;
+
+			switch(ProBuilderEditor.selectMode)
+			{
+				case SelectMode.Face:
+					sel = MeshSelection.selectedFaceCount;
+					max = MeshSelection.totalFaceCount;
+					break;
+
+				case SelectMode.Edge:
+					sel = MeshSelection.selectedEdgeCount;
+					max = MeshSelection.totalEdgeCount;
+					break;
+
+				default:
+					sel = MeshSelection.selectedVertexCount;
+					max = MeshSelection.totalVertexCount;
+					break;
+			}
+
+			return sel > 0 && sel < max;
 		}
 	}
 }

@@ -172,9 +172,9 @@ namespace UnityEditor.ProBuilder
 				if (ProBuilderEditor.instance != null)
 				{
 					if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
-						ProBuilderEditor.instance.PopEditLevel();
+						ProBuilderEditor.PopSelectMode();
 					else
-						ProBuilderEditor.instance.SetEditLevel(EditLevel.Plugin);
+						ProBuilderEditor.PushSelectMode(SelectMode.None);
 				}
 
 				if (polygon.polyEditMode != PolyShape.PolyEditMode.None)

@@ -21,25 +21,14 @@ namespace UnityEditor.ProBuilder.Actions
 			keyCommandAlt, 'E'
 		);
 
-		public override bool enabled
+		public override SelectMode validSelectModes
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.componentMode == ComponentMode.Vertex &&
-					MeshSelection.TopInternal().Any(x => x.selectedSharedVerticesCount > 1);
-			}
+			get { return SelectMode.Vertex; }
 		}
 
-		public override bool hidden
+		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance == null ||
-					ProBuilderEditor.editLevel != EditLevel.Geometry ||
-					ProBuilderEditor.componentMode != ComponentMode.Vertex;
-			}
+			get { return base.enabled && MeshSelection.selectedSharedVertexCount > 1; }
 		}
 
 		public override ActionResult DoAction()

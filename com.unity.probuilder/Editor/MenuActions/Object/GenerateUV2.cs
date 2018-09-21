@@ -17,7 +17,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override TooltipContent tooltip
 		{
-			get { return m_Tooltip; }
+			get { return s_Tooltip; }
 		}
 
 		protected override bool hasFileMenuEntry
@@ -25,7 +25,7 @@ namespace UnityEditor.ProBuilder.Actions
 			get { return false; }
 		}
 
-		static readonly TooltipContent m_Tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Lightmap UVs",
 			@"Generate Lightmap UVs for any meshes in the open scenes that are missing them."

@@ -1,16 +1,16 @@
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
-using EditorGUILayout = UnityEditor.EditorGUILayout;
-using EditorStyles = UnityEditor.EditorStyles;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
 	sealed class WeldVertices : MenuAction
 	{
+		Pref<float> m_WeldDistance = new Pref<float>("WeldVertices.weldDistance", .01f);
+		static readonly GUIContent gc_weldDistance = new GUIContent("Weld Distance", "The maximum distance between two vertices in order to be welded together.");
+		const float k_MinWeldDistance = .00001f;
+
 		public override ToolbarGroup group
 		{
 			get { return ToolbarGroup.Geometry; }
@@ -23,35 +23,24 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override TooltipContent tooltip
 		{
-			get { return _tooltip; }
+			get { return s_Tooltip; }
 		}
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Weld Vertices",
 			@"Searches the current selection for vertices that are within the specified distance of on another and merges them into a single vertex.",
 			keyCommandAlt, 'V'
 		);
 
-		public override bool enabled
+		public override SelectMode validSelectModes
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.componentMode == ComponentMode.Vertex &&
-					MeshSelection.TopInternal().Any(x => x.selectedSharedVerticesCount > 1);
-			}
+			get { return SelectMode.Vertex; }
 		}
 
-		public override bool hidden
+		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance == null ||
-					ProBuilderEditor.editLevel != EditLevel.Geometry ||
-					ProBuilderEditor.componentMode != ComponentMode.Vertex;
-			}
+			get { return base.enabled && MeshSelection.selectedSharedVertexCountObjectMax > 1; }
 		}
 
 		protected override MenuActionState optionsMenuState
@@ -59,27 +48,19 @@ namespace UnityEditor.ProBuilder.Actions
 			get { return MenuActionState.VisibleAndEnabled; }
 		}
 
-		static readonly GUIContent gc_weldDistance = new GUIContent("Weld Distance", "The maximum distance between two vertices in order to be welded together.");
-		const float k_MinWeldDistance = .00001f;
-
 		protected override void OnSettingsGUI()
 		{
 			GUILayout.Label("Weld Settings", EditorStyles.boldLabel);
 
 			EditorGUI.BeginChangeCheck();
 
-			float weldDistance = PreferencesInternal.GetFloat(PreferenceKeys.pbWeldDistance);
-
-			if (weldDistance <= k_MinWeldDistance)
-				weldDistance = k_MinWeldDistance;
-
-			weldDistance = EditorGUILayout.FloatField(gc_weldDistance, weldDistance);
+			m_WeldDistance.value = EditorGUILayout.FloatField(gc_weldDistance, m_WeldDistance);
 
 			if (EditorGUI.EndChangeCheck())
 			{
-				if (weldDistance < k_MinWeldDistance)
-					weldDistance = k_MinWeldDistance;
-				PreferencesInternal.SetFloat(PreferenceKeys.pbWeldDistance, weldDistance);
+				if (m_WeldDistance < k_MinWeldDistance)
+					m_WeldDistance.value = k_MinWeldDistance;
+				Settings.Save();
 			}
 
 			GUILayout.FlexibleSpace();
@@ -90,7 +71,52 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuWeldVertices(MeshSelection.TopInternal());
+			var selection = MeshSelection.TopInternal();
+
+			if(selection == null || selection.Length < 1)
+				return ActionResult.NoSelection;
+
+			ActionResult res = ActionResult.NoSelection;
+
+			UndoUtility.RegisterCompleteObjectUndo(selection, "Weld Vertices");
+
+			int weldCount = 0;
+
+			foreach(ProBuilderMesh mesh in selection)
+			{
+				weldCount += mesh.sharedVerticesInternal.Length;
+
+				if(mesh.selectedIndexesInternal.Length > 1)
+				{
+					mesh.ToMesh();
+
+					int[] welds = mesh.WeldVertices(mesh.selectedIndexesInternal, m_WeldDistance);
+					res = welds != null ? new ActionResult(ActionResult.Status.Success, "Weld Vertices") : new ActionResult(ActionResult.Status.Failure, "Failed Weld Vertices");
+
+					if(res)
+					{
+						if(mesh.RemoveDegenerateTriangles() != null)
+						{
+							mesh.ToMesh();
+							welds = new int[0];	// @todo
+						}
+
+						mesh.SetSelectedVertices(welds ?? new int[0] {});
+					}
+
+					mesh.Refresh();
+					mesh.Optimize();
+				}
+
+				weldCount -= mesh.sharedVerticesInternal.Length;
+			}
+
+			ProBuilderEditor.Refresh();
+
+			if(res && weldCount > 0)
+				return new ActionResult(ActionResult.Status.Success, "Weld " + weldCount + (weldCount > 1 ? " Vertices" : " Vertex"));
+
+			return new ActionResult(ActionResult.Status.Failure, "Nothing to Weld");
 		}
 	}
 }

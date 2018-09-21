@@ -20,10 +20,10 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override TooltipContent tooltip
 		{
-			get { return _tooltip; }
+			get { return s_Tooltip; }
 		}
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Set Collider",
 			"Apply the Collider material and adds a mesh collider (if no collider is present). The MeshRenderer will be automatically turned off on entering play mode."
@@ -31,7 +31,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool enabled
 		{
-			get { return ProBuilderEditor.instance != null && MeshSelection.TopInternal().Length > 0; }
+			get { return base.enabled && MeshSelection.selectedObjectCount > 0; }
 		}
 
 		public override ActionResult DoAction()
@@ -61,7 +61,7 @@ namespace UnityEditor.ProBuilder.Actions
 				Undo.AddComponent<ColliderBehaviour>(pb.gameObject).Initialize();
 			}
 
-			int selectionCount = MeshSelection.TopInternal().Length;
+			int selectionCount = MeshSelection.selectedObjectCount;
 
 			if (selectionCount < 1)
 				return new ActionResult(ActionResult.Status.NoChange, "Set Collider\nNo objects selected");

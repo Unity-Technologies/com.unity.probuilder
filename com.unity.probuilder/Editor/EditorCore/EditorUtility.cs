@@ -1,11 +1,9 @@
 #pragma warning disable 0168
 
 using UnityEngine;
-using UnityEditor;
 using System.Linq;
 using System;
 using System.Reflection;
-using UnityEditor.ProBuilder.Actions;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.Rendering;
@@ -18,7 +16,7 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	public static class EditorUtility
 	{
-		enum PivotLocation
+		internal enum PivotLocation
 		{
 			Center,
 			FirstVertex
@@ -56,8 +54,8 @@ namespace UnityEditor.ProBuilder
 		[UserSetting("Mesh Settings", "Collider Type", "What type of Collider to apply to new Shapes.")]
 		static Pref<ColliderType> s_ColliderType = new Pref<ColliderType>("newShapeColliderType", ColliderType.MeshCollider);
 
-		internal static Pref<bool> s_ExperimentalFeatures = new Pref<bool>("experimentalFeaturesEnabled", false, Settings.Scope.User);
-		internal static Pref<bool> s_MeshesAreAssets = new Pref<bool>("meshesAreAssets", false, Settings.Scope.Project);
+		internal static Pref<bool> s_ExperimentalFeatures = new Pref<bool>("experimental.featuresEnabled", false, Settings.Scope.User);
+		internal static Pref<bool> s_MeshesAreAssets = new Pref<bool>("experimental.meshesAreAssets", false, Settings.Scope.Project);
 
 		[UserSettingBlock("Experimental", new[] { "store", "mesh", "asset", "experimental", "features", "enabled" })]
 		static void ExperimentalFeaturesSettings(string searchContext)
@@ -108,6 +106,11 @@ namespace UnityEditor.ProBuilder
 			if(outline) state |= SelectionRenderState.Outline;
 
 			return state;
+		}
+
+		internal static void ShowNotification(ActionResult result)
+		{
+			ShowNotification(result.notification);
 		}
 
 		/// <summary>
@@ -323,10 +326,7 @@ namespace UnityEditor.ProBuilder
 					break;
 			}
 
-			var unwrapParamaters = PreferencesInternal.GetValue<UnwrapParameters>(PreferenceKeys.defaultUnwrapParameters);
-
-			if (unwrapParamaters != null)
-				pb.unwrapParameters = unwrapParamaters;
+			var unwrapParamaters = Lightmapping.s_UnwrapParameters;
 
 			pb.Optimize();
 
@@ -452,6 +452,22 @@ namespace UnityEditor.ProBuilder
 			#else
 			UnityEditor.Editor.CreateCachedEditor(targetObjects, typeof(T), ref previousEditor);
 			#endif
+		}
+
+		/// <summary>
+		/// Is this mode one of the mesh element modes (vertex, edge, face, texture).
+		/// </summary>
+		/// <param name="mode"></param>
+		/// <returns></returns>
+		internal static bool IsMeshElementMode(this SelectMode mode)
+		{
+			return mode.ContainsFlag(SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.Texture);
+		}
+
+		// HasFlag doesn't exist in .NET 3.5
+		internal static bool ContainsFlag(this SelectMode target, SelectMode value)
+		{
+			return (target & value) != SelectMode.None;
 		}
 
 		internal static SelectMode GetSelectMode(EditLevel edit, ComponentMode component)

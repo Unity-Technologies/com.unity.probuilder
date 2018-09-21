@@ -21,25 +21,24 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override TooltipContent tooltip
 		{
-			get { return _tooltip; }
+			get { return s_Tooltip; }
 		}
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Smart Subdivide",
 			"",
 			keyCommandAlt, 'S'
 		);
 
+		public override SelectMode validSelectModes
+		{
+			get { return SelectMode.Edge | SelectMode.Face; }
+		}
+
 		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.componentMode != ComponentMode.Vertex &&
-					MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
-			}
+			get { return base.enabled && (MeshSelection.selectedEdgeCount > 0 || MeshSelection.selectedFaceCount > 0); }
 		}
 
 		public override bool hidden
@@ -49,13 +48,13 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			switch (ProBuilderEditor.componentMode)
+			switch (ProBuilderEditor.selectMode)
 			{
-				case ComponentMode.Edge:
-					return MenuCommands.MenuSubdivideEdge(MeshSelection.TopInternal());
+				case SelectMode.Edge:
+					return EditorToolbarLoader.GetInstance<SubdivideEdges>().DoAction();
 
 				default:
-					return MenuCommands.MenuSubdivideFace(MeshSelection.TopInternal());
+					return EditorToolbarLoader.GetInstance<SubdivideFaces>().DoAction();
 			}
 		}
 	}

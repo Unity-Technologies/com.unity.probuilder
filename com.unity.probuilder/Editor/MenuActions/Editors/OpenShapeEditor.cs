@@ -10,15 +10,15 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_Shapes", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
+		public override TooltipContent tooltip { get { return s_Tooltip; } }
 		public override string menuTitle { get { return "New Shape"; } }
 		public override int toolbarPriority { get { return 0; } }
 		protected override bool hasFileMenuEntry { get { return false; } }
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"New Shape Tool",
-			"Opens the Shape Editor window.\n\nThe Shape Editor is a window that allows you to interactively create new 3d primitves.",
+			"Opens the Shape Editor window.\n\nThe Shape Editor is a window that allows you to interactively create new 3d primitives.",
 			keyCommandSuper, keyCommandShift, 'K'
 		);
 

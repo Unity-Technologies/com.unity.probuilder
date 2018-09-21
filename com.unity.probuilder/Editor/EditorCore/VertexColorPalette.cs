@@ -8,10 +8,13 @@ using ColorUtility = UnityEngine.ProBuilder.ColorUtility;
 
 namespace UnityEditor.ProBuilder
 {
-	sealed class VertexColorPalette : EditorWindow
+	sealed class VertexColorPalette : ConfigurableWindow
 	{
 		// Older versions of probuilder stored a fixed size array of colors in EditorPrefs.
 		const int k_EditorPrefsColorPaletteCount = 10;
+		const string pbVertexColorPrefs = "pbVertexColorPrefs";
+
+		static Pref<string> m_PreviousColorPalette = new Pref<string>("VertexColorPalette.previousColorPalette", "");
 
 		static VertexColorPalette s_Instance = null;
 
@@ -21,12 +24,6 @@ namespace UnityEditor.ProBuilder
 		ColorPalette colorPalette
 		{
 			get { return m_ColorPalette; }
-		}
-
-		static string lastAssignedColorPalette
-		{
-			get { return PreferencesInternal.GetString("pb_VertexColorPalette::lastAssignedColorPalette", ""); }
-			set { PreferencesInternal.SetString("pb_VertexColorPalette::lastAssignedColorPalette", value); }
 		}
 
 		/// <summary>
@@ -42,7 +39,7 @@ namespace UnityEditor.ProBuilder
 			{
 				Color color = Color.white;
 
-				if (InternalUtility.TryParseColor(PreferencesInternal.GetString(PreferenceKeys.pbVertexColorPrefs + i), ref color))
+				if (InternalUtility.TryParseColor(EditorPrefs.GetString(pbVertexColorPrefs + i), ref color))
 					colors.Add(color);
 			}
 
@@ -58,8 +55,7 @@ namespace UnityEditor.ProBuilder
 		/// </summary>
 		public static void MenuOpenWindow()
 		{
-			bool dockable = PreferencesInternal.GetBool(PreferenceKeys.pbVertexPaletteDockable);
-			GetWindow<VertexColorPalette>(!dockable, "Vertex Colors", true);
+			GetWindow<VertexColorPalette>("Vertex Colors");
 		}
 
 		static ColorPalette GetLastUsedColorPalette()
@@ -71,7 +67,7 @@ namespace UnityEditor.ProBuilder
 				return palette;
 
 			// last set asset path?
-			palette = AssetDatabase.LoadAssetAtPath<ColorPalette>(lastAssignedColorPalette);
+			palette = AssetDatabase.LoadAssetAtPath<ColorPalette>(m_PreviousColorPalette);
 
 			if (palette != null)
 				return palette;
@@ -81,13 +77,13 @@ namespace UnityEditor.ProBuilder
 
 			if(palette != null)
 			{
-				lastAssignedColorPalette = AssetDatabase.GetAssetPath(palette);
+				m_PreviousColorPalette.SetValue(AssetDatabase.GetAssetPath(palette), true);
 				return palette;
 			}
 
 			// create new default
-			lastAssignedColorPalette = FileUtility.GetLocalDataDirectory() + "Default Color Palette.asset";
-			palette = FileUtility.LoadRequired<ColorPalette>(lastAssignedColorPalette);
+			m_PreviousColorPalette.SetValue(FileUtility.GetLocalDataDirectory() + "Default Color Palette.asset", true);
+			palette = FileUtility.LoadRequired<ColorPalette>(m_PreviousColorPalette);
 			CopyColorsFromEditorPrefs(palette);
 
 			return palette;
@@ -99,21 +95,6 @@ namespace UnityEditor.ProBuilder
 			m_ColorPalette = GetLastUsedColorPalette();
 		}
 
-		void OpenContextMenu()
-		{
-			GenericMenu menu = new GenericMenu();
-			menu.AddItem(new GUIContent("Open As Floating Window", ""), false, () => { OpenWindowAsDockable(false); });
-			menu.AddItem(new GUIContent("Open As Dockable Window", ""), false, () => { OpenWindowAsDockable(true); });
-			menu.ShowAsContext();
-		}
-
-		void OpenWindowAsDockable(bool isDockable)
-		{
-			PreferencesInternal.SetBool(PreferenceKeys.pbVertexPaletteDockable, isDockable);
-			GetWindow<VertexColorPalette>().Close();
-			VertexColorPalette.MenuOpenWindow();
-		}
-
 		Vector2 m_Scroll = Vector2.zero;
 		const int k_Padding = 4;
 		const int k_ButtonWidth = 58;
@@ -123,14 +104,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var palette = GetLastUsedColorPalette();
 
-			Event e = Event.current;
-
-			switch (e.type)
-			{
-				case EventType.ContextClick:
-					OpenContextMenu();
-					break;
-			}
+			DoContextMenu();
 
 			GUILayout.BeginHorizontal(EditorStyles.toolbar);
 
@@ -144,7 +118,7 @@ namespace UnityEditor.ProBuilder
 
 			if (m_ColorPalette == null)
 			{
-				GUILayout.Label("Please Select a Color Palatte", EditorStyles.centeredGreyMiniLabel, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
+				GUILayout.Label("Please Select a Color Palette", EditorStyles.centeredGreyMiniLabel, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
 				return;
 			}
 
@@ -193,11 +167,12 @@ namespace UnityEditor.ProBuilder
 
 			ProBuilderEditor editor = ProBuilderEditor.instance;
 
-			if (editor && ProBuilderEditor.editLevel == EditLevel.Geometry)
+			if (editor && ProBuilderEditor.selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.Edge | SelectMode.Face) )
 			{
-				switch (ProBuilderEditor.componentMode)
+				switch (ProBuilderEditor.selectMode)
 				{
-					case ComponentMode.Face:
+					case SelectMode.Face:
+					case SelectMode.Texture:
 						foreach (ProBuilderMesh mesh in selection)
 						{
 							Color[] colors = mesh.GetColors();
@@ -208,8 +183,8 @@ namespace UnityEditor.ProBuilder
 							mesh.colors = colors;
 						}
 						break;
-					case ComponentMode.Edge:
-					case ComponentMode.Vertex:
+					case SelectMode.Edge:
+					case SelectMode.Vertex:
 						foreach (var mesh in selection)
 						{
 							Color[] colors = mesh.GetColors();

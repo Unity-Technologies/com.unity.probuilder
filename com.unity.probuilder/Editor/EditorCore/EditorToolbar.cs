@@ -11,10 +11,13 @@ namespace UnityEditor.ProBuilder
 	[System.Serializable]
 	sealed class EditorToolbar : ScriptableObject
 	{
+		Pref<Vector2> m_ScrollPosition = new Pref<Vector2>("editor.scrollPosition", Vector2.zero);
 		public EditorWindow window;
 
 		bool isFloating { get { return ProBuilderEditor.instance != null && ProBuilderEditor.instance.isFloatingWindow; } }
 		bool isIconMode = true;
+
+		Vector2 m_Scroll = Vector2.zero;
 
 		[UserSetting("Toolbar", "Shift Key Tooltips", "Tooltips will only show when the Shift key is held")]
 		internal static Pref<bool> s_ShiftOnlyTooltips = new Pref<bool>("shiftOnlyTooltips", false, Settings.Scope.User);
@@ -65,8 +68,7 @@ namespace UnityEditor.ProBuilder
 			this.window = ProBuilderEditor.instance;
 			CalculateMaxIconSize();
 
-			scroll.x = PreferencesInternal.GetFloat("pbEditorScroll.x", 0f);
-			scroll.y = PreferencesInternal.GetFloat("pbEditorScroll.y", 0f);
+			m_Scroll = m_ScrollPosition;
 		}
 
 		void OnDisable()
@@ -75,8 +77,7 @@ namespace UnityEditor.ProBuilder
 			// is called.  no clue why.
 			// EditorApplication.update -= Update;
 			ProBuilderEditor.selectionUpdated -= OnElementSelectionChange;
-			PreferencesInternal.SetFloat("pbEditorScroll.x", scroll.x);
-			PreferencesInternal.SetFloat("pbEditorScroll.y", scroll.y);
+			m_ScrollPosition.SetValue(m_Scroll, true);
 		}
 
 		void OnDestroy()
@@ -84,8 +85,7 @@ namespace UnityEditor.ProBuilder
 			// store the scroll in both disable & destroy because there are
 			// situations where one gets updated over the other and it's all
 			// screwy.  script reloads in particular?
-			PreferencesInternal.SetFloat("pbEditorScroll.x", scroll.x);
-			PreferencesInternal.SetFloat("pbEditorScroll.y", scroll.y);
+			m_ScrollPosition.SetValue(m_Scroll, true);
 			MenuActionStyles.ResetStyles();
 		}
 
@@ -96,8 +96,6 @@ namespace UnityEditor.ProBuilder
 			else
 				window.Repaint();
 		}
-
-		Vector2 scroll = Vector2.zero;
 
 		void ShowTooltip(Rect rect, string content, Vector2 scrollOffset)
 		{
@@ -151,7 +149,7 @@ namespace UnityEditor.ProBuilder
 			if(doAnimateScroll)
 			{
 				double scrollTimer = EditorApplication.timeSinceStartup - scrollStartTime;
-				scroll = Vector2.Lerp(scrollOrigin, scrollTarget, (float)scrollTimer / scrollTotalTime);
+				m_Scroll = Vector2.Lerp(scrollOrigin, scrollTarget, (float)scrollTimer / scrollTotalTime);
 
 				if(scrollTimer >= scrollTotalTime)
 					doAnimateScroll = false;
@@ -199,7 +197,7 @@ namespace UnityEditor.ProBuilder
 
 		void StartScrollAnimation(float x, float y)
 		{
-			scrollOrigin = scroll;
+			scrollOrigin = m_Scroll;
 			scrollTarget.x = x;
 			scrollTarget.y = y;
 			scrollStartTime = EditorApplication.timeSinceStartup;
@@ -283,7 +281,7 @@ namespace UnityEditor.ProBuilder
 
 			if(isHorizontal && e.type == EventType.ScrollWheel && e.delta.sqrMagnitude > .001f)
 			{
-				scroll.x += e.delta.y * 10f;
+				m_Scroll.x += e.delta.y * 10f;
 				forceRepaint = true;
 			}
 
@@ -303,25 +301,25 @@ namespace UnityEditor.ProBuilder
 				{
 					GUILayout.BeginHorizontal();
 
-					GUI.enabled = scroll.x > 0;
+					GUI.enabled = m_Scroll.x > 0;
 
 					if(GUILayout.Button(scrollIconLeft, UI.EditorGUIUtility.ButtonNoBackgroundSmallMarginStyle, GUILayout.ExpandHeight(true)))
-						StartScrollAnimation(Mathf.Max(scroll.x - availableWidth, 0f), 0f);
+						StartScrollAnimation(Mathf.Max(m_Scroll.x - availableWidth, 0f), 0f);
 
 					GUI.enabled = true;
 				}
 				else
 				{
-					GUI.enabled = scroll.y > 0;
+					GUI.enabled = m_Scroll.y > 0;
 
 					if(GUILayout.Button(scrollIconUp, UI.EditorGUIUtility.ButtonNoBackgroundSmallMarginStyle))
-						StartScrollAnimation( 0f, Mathf.Max(scroll.y - availableHeight, 0f) );
+						StartScrollAnimation( 0f, Mathf.Max(m_Scroll.y - availableHeight, 0f) );
 
 					GUI.enabled = true;
 				}
 			}
 
-			scroll = GUILayout.BeginScrollView(scroll, false, false, GUIStyle.none, GUIStyle.none, GUIStyle.none);
+			m_Scroll = GUILayout.BeginScrollView(m_Scroll, false, false, GUIStyle.none, GUIStyle.none, GUIStyle.none);
 
 			bool 	tooltipShown = false,
 					hovering = false;
@@ -348,8 +346,8 @@ namespace UnityEditor.ProBuilder
 					if( action.DoButton(isHorizontal, e.alt, ref optionRect, GUILayout.MaxHeight(m_ContentHeight + 12)) && !e.shift )
 					{
 						// test for alt click / hover
-						optionRect.x -= scroll.x;
-						optionRect.y -= scroll.y;
+						optionRect.x -= m_Scroll.x;
+						optionRect.y -= m_Scroll.y;
 
 						if(	windowContainsMouse &&
 							e.type != EventType.Layout &&
@@ -362,7 +360,7 @@ namespace UnityEditor.ProBuilder
 							if( showTooltipTimer )
 							{
 								tooltipShown = true;
-								ShowTooltip(optionRect, "Alt + Click for Options", scroll);
+								ShowTooltip(optionRect, "Alt + Click for Options", m_Scroll);
 							}
 						}
 					}
@@ -388,7 +386,7 @@ namespace UnityEditor.ProBuilder
 					if( e.shift || showTooltipTimer )
 					{
 						tooltipShown = true;
-						ShowTooltip(buttonRect, action.tooltip, scroll);
+						ShowTooltip(buttonRect, action.tooltip, m_Scroll);
 					}
 
 					hovering = true;
@@ -413,18 +411,18 @@ namespace UnityEditor.ProBuilder
 			{
 				if(isHorizontal)
 				{
-					GUI.enabled = scroll.x < maxHorizontalScroll - 2;
+					GUI.enabled = m_Scroll.x < maxHorizontalScroll - 2;
 					if(GUILayout.Button(scrollIconRight, UI.EditorGUIUtility.ButtonNoBackgroundSmallMarginStyle, GUILayout.ExpandHeight(true)))
-						StartScrollAnimation( Mathf.Min(scroll.x + availableWidth + 2, maxHorizontalScroll), 0f );
+						StartScrollAnimation( Mathf.Min(m_Scroll.x + availableWidth + 2, maxHorizontalScroll), 0f );
 					GUI.enabled = true;
 
 					GUILayout.EndHorizontal();
 				}
 				else
 				{
-					GUI.enabled = scroll.y < maxVerticalScroll - 2;
+					GUI.enabled = m_Scroll.y < maxVerticalScroll - 2;
 					if(GUILayout.Button(scrollIconDown, UI.EditorGUIUtility.ButtonNoBackgroundSmallMarginStyle))
-						StartScrollAnimation( 0f, Mathf.Min(scroll.y + availableHeight + 2, maxVerticalScroll) );
+						StartScrollAnimation( 0f, Mathf.Min(m_Scroll.y + availableHeight + 2, maxVerticalScroll) );
 					GUI.enabled = true;
 				}
 			}

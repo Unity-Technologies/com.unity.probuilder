@@ -32,38 +32,14 @@ namespace UnityEditor.ProBuilder.Actions
 			"Selects holes on the mesh.\n\nUses the current element selection, or tests the whole mesh if no edges or vertices are selected."
 		);
 
-		public override bool enabled
+		public override SelectMode validSelectModes
 		{
-			get
-			{
-				if (ProBuilderEditor.instance == null)
-					return false;
-
-				if (ProBuilderEditor.editLevel != EditLevel.Geometry)
-					return false;
-
-				if (ProBuilderEditor.componentMode != ComponentMode.Edge && ProBuilderEditor.componentMode != ComponentMode.Vertex)
-					return false;
-
-				if (MeshSelection.TopInternal().Length < 1)
-					return false;
-
-				return true;
-			}
+			get { return SelectMode.Vertex | SelectMode.Edge; }
 		}
 
-		public override bool hidden
+		public override bool enabled
 		{
-			get
-			{
-				if (ProBuilderEditor.editLevel != EditLevel.Geometry)
-					return true;
-
-				if (ProBuilderEditor.componentMode != ComponentMode.Edge && ProBuilderEditor.componentMode != ComponentMode.Vertex)
-					return true;
-
-				return false;
-			}
+			get { return base.enabled && (MeshSelection.selectedVertexCount > 0 || MeshSelection.selectedEdgeCount > 0); }
 		}
 
 		public override ActionResult DoAction()

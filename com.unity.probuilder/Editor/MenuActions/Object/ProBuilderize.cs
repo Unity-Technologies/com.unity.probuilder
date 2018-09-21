@@ -8,6 +8,22 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	sealed class ProBuilderize : MenuAction
 	{
+		bool m_Enabled;
+		Pref<bool> m_Quads = new Pref<bool>("meshImporter.quads", true);
+		Pref<bool> m_Smoothing = new Pref<bool>("meshImporter.smoothing", true);
+		Pref<float> m_SmoothingAngle = new Pref<float>("meshImporter.smoothingAngle", 1f);
+
+		public ProBuilderize()
+		{
+			MeshSelection.objectSelectionChanged += () =>
+			{
+				// can't just check if any MeshFilter is present because we need to know whether or not it's already a
+				// probuilder mesh
+				int meshCount = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Count();
+				m_Enabled = meshCount > 0 && meshCount != MeshSelection.selectedObjectCount;
+			};
+		}
+
 		public override ToolbarGroup group
 		{
 			get { return ToolbarGroup.Object; }
@@ -26,7 +42,7 @@ namespace UnityEditor.ProBuilder.Actions
 		GUIContent m_QuadsTooltip = new GUIContent("Import Quads", "Create ProBuilder mesh using quads where " +
 			"possible instead of triangles.");
 		GUIContent m_SmoothingTooltip = new GUIContent("Import Smoothing", "Import smoothing groups by " +
-			"testing adjacent faces against an angle thresold.");
+			"testing adjacent faces against an angle threshold.");
 		GUIContent m_SmoothingThresholdTooltip = new GUIContent("Smoothing Threshold", "When importing " +
 			"smoothing groups any adjacent faces with an adjoining angle difference of less than this value will be " +
 			"grouped together in a smoothing group.");
@@ -39,13 +55,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool enabled
 		{
-			get
-			{
-				int meshCount = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Count();
-
-				return meshCount > 0 &&
-					meshCount != MeshSelection.TopInternal().Length;
-			}
+			get { return base.enabled && m_Enabled; }
 		}
 
 		protected override MenuActionState optionsMenuState
@@ -59,25 +69,18 @@ namespace UnityEditor.ProBuilder.Actions
 
 			EditorGUILayout.HelpBox("When Preserve Faces is enabled ProBuilder will try to group adjacent triangles into faces.", MessageType.Info);
 
-			bool quads = PreferencesInternal.GetBool("pb_MeshImporter::quads", true);
-			bool smoothing = PreferencesInternal.GetBool("pb_MeshImporter::smoothing", true);
-			float smoothingThreshold = PreferencesInternal.GetFloat("pb_MeshImporter::smoothingThreshold", 1f);
-
 			EditorGUI.BeginChangeCheck();
 
-			quads = EditorGUILayout.Toggle(m_QuadsTooltip, quads);
-			smoothing = EditorGUILayout.Toggle(m_SmoothingTooltip, smoothing);
-			GUI.enabled = smoothing;
+			m_Quads.value = EditorGUILayout.Toggle(m_QuadsTooltip, m_Quads);
+			m_Smoothing.value = EditorGUILayout.Toggle(m_SmoothingTooltip, m_Smoothing);
+			GUI.enabled = m_Smoothing;
 			EditorGUILayout.PrefixLabel(m_SmoothingThresholdTooltip);
-			smoothingThreshold = EditorGUILayout.Slider(smoothingThreshold, 0.0001f, 45f);
+			m_SmoothingAngle.value = EditorGUILayout.Slider(m_SmoothingAngle, 0.0001f, 45f);
+
 			GUI.enabled = true;
 
 			if (EditorGUI.EndChangeCheck())
-			{
-				PreferencesInternal.SetBool("pb_MeshImporter::quads", quads);
-				PreferencesInternal.SetBool("pb_MeshImporter::smoothing", smoothing);
-				PreferencesInternal.SetFloat("pb_MeshImporter::smoothingThreshold", smoothingThreshold);
-			}
+				Settings.Save();
 
 			GUILayout.FlexibleSpace();
 
@@ -96,9 +99,9 @@ namespace UnityEditor.ProBuilder.Actions
 
 			MeshImportSettings settings = new MeshImportSettings()
 			{
-				quads = PreferencesInternal.GetBool("pb_MeshImporter::quads", true),
-				smoothing = PreferencesInternal.GetBool("pb_MeshImporter::smoothing", true),
-				smoothingAngle = PreferencesInternal.GetFloat("pb_MeshImporter::smoothingThreshold", 1f)
+				quads = m_Quads,
+				smoothing = m_Smoothing,
+				smoothingAngle = m_SmoothingAngle
 			};
 
 			if (top.Count() != all.Count())

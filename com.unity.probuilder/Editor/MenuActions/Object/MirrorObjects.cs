@@ -1,18 +1,14 @@
 using UnityEngine;
-using UnityEditor;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
-using UnityEditor.ProBuilder.UI;
-using EditorGUILayout = UnityEditor.EditorGUILayout;
-using EditorStyles = UnityEditor.EditorStyles;
-using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 namespace UnityEditor.ProBuilder.Actions
 {
 	sealed class MirrorObjects : MenuAction
 	{
+		Pref<MirrorSettings> m_MirrorAxes = new Pref<MirrorSettings>("MirrorObjects.mirrorAxes", MirrorSettings.X);
+
 		public override ToolbarGroup group
 		{
 			get { return ToolbarGroup.Object; }
@@ -25,11 +21,11 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override TooltipContent tooltip
 		{
-			get { return _tooltip; }
+			get { return s_Tooltip; }
 		}
 
 		[System.Flags]
-		private enum MirrorSettings
+		enum MirrorSettings
 		{
 			X = 0x1,
 			Y = 0x2,
@@ -37,13 +33,7 @@ namespace UnityEditor.ProBuilder.Actions
 			Duplicate = 0x8
 		}
 
-		MirrorSettings storedScale
-		{
-			get { return (MirrorSettings)PreferencesInternal.GetInt("pbMirrorObjectScale", (int)(0x1 | 0x8)); }
-			set { PreferencesInternal.SetInt("pbMirrorObjectScale", (int)value); }
-		}
-
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Mirror Objects",
 			@"Mirroring objects will duplicate an flip objects on the specified axes."
@@ -51,7 +41,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool enabled
 		{
-			get { return ProBuilderEditor.instance != null && MeshSelection.TopInternal().Length > 0; }
+			get { return base.enabled && MeshSelection.selectedObjectCount > 0; }
 		}
 
 		protected override MenuActionState optionsMenuState
@@ -65,7 +55,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			EditorGUILayout.HelpBox("Mirror objects on the selected axes.\n\nIf Duplicate is toggled a new object will be instantiated from the selection and mirrored, or if disabled the selection will be moved.", MessageType.Info);
 
-			MirrorSettings scale = storedScale;
+			MirrorSettings scale = m_MirrorAxes;
 
 			bool x = (scale & MirrorSettings.X) != 0 ? true : false;
 			bool y = (scale & MirrorSettings.Y) != 0 ? true : false;
@@ -80,11 +70,11 @@ namespace UnityEditor.ProBuilder.Actions
 			d = EditorGUILayout.Toggle("Duplicate", d);
 
 			if(EditorGUI.EndChangeCheck())
-				storedScale = (MirrorSettings)
+				m_MirrorAxes.SetValue((MirrorSettings)
 				(x ? MirrorSettings.X : 0) |
 				(y ? MirrorSettings.Y : 0) |
 				(z ? MirrorSettings.Z : 0) |
-				(d ? MirrorSettings.Duplicate : 0);
+				(d ? MirrorSettings.Duplicate : 0));
 
 			GUILayout.FlexibleSpace();
 
@@ -95,11 +85,11 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ActionResult DoAction()
 		{
 			Vector3 scale = new Vector3(
-				(storedScale & MirrorSettings.X) > 0 ? -1f : 1f,
-				(storedScale & MirrorSettings.Y) > 0 ? -1f : 1f,
-				(storedScale & MirrorSettings.Z) > 0 ? -1f : 1f );
+				(m_MirrorAxes & MirrorSettings.X) > 0 ? -1f : 1f,
+				(m_MirrorAxes & MirrorSettings.Y) > 0 ? -1f : 1f,
+				(m_MirrorAxes & MirrorSettings.Z) > 0 ? -1f : 1f );
 
-			bool duplicate = (storedScale & MirrorSettings.Duplicate) > 0;
+			bool duplicate = (m_MirrorAxes & MirrorSettings.Duplicate) > 0;
 
 			List<GameObject> res  = new List<GameObject>();
 

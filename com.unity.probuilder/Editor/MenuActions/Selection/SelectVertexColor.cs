@@ -12,6 +12,14 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	sealed class SelectVertexColor : MenuAction
 	{
+		Pref<bool> m_SearchSelectedObjectsOnly = new Pref<bool>("SelectVertexColor.restrictToSelectedObjects", false);
+		GUIContent gc_restrictToSelection = new GUIContent("Current Selection", "Optionally restrict the matches to only those faces on currently selected objects.");
+		static readonly TooltipContent s_Tooltip = new TooltipContent
+		(
+			"Select by Colors",
+			"Selects all faces matching the selected vertex colors."
+		);
+
 		public override ToolbarGroup group
 		{
 			get { return ToolbarGroup.Selection; }
@@ -24,37 +32,24 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override TooltipContent tooltip
 		{
-			get { return _tooltip; }
+			get { return s_Tooltip; }
 		}
 
-		GUIContent gc_restrictToSelection = new GUIContent("Current Selection", "Optionally restrict the matches to only those faces on currently selected objects.");
-
-		static readonly TooltipContent _tooltip = new TooltipContent
-		(
-			"Select by Colors",
-			"Selects all faces matching the selected vertex colors."
-		);
+		public override SelectMode validSelectModes
+		{
+			get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.Texture; }
+		}
 
 		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.editLevel != EditLevel.Top &&
-					MeshSelection.TopInternal().Any(x => x.selectedVertexCount > 0);
-			}
-		}
-
-		public override bool hidden
-		{
-			get { return editLevel != EditLevel.Geometry; }
+			get { return base.enabled && MeshSelection.selectedVertexCount > 0; }
 		}
 
 		protected override MenuActionState optionsMenuState
 		{
 			get
 			{
-				if (enabled && ProBuilderEditor.editLevel == EditLevel.Geometry)
+				if (enabled)
 					return MenuActionState.VisibleAndEnabled;
 
 				return MenuActionState.Visible;
@@ -65,14 +60,11 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			GUILayout.Label("Select by Vertex Color Options", EditorStyles.boldLabel);
 
-			bool restrictToSelection = PreferencesInternal.GetBool("pb_restrictSelectColorToCurrentSelection");
-
 			EditorGUI.BeginChangeCheck();
-
-			restrictToSelection = EditorGUILayout.Toggle(gc_restrictToSelection, restrictToSelection);
+			m_SearchSelectedObjectsOnly.value = EditorGUILayout.Toggle(gc_restrictToSelection, m_SearchSelectedObjectsOnly);
 
 			if (EditorGUI.EndChangeCheck())
-				PreferencesInternal.SetBool("pb_restrictSelectColorToCurrentSelection", restrictToSelection);
+				Settings.Save();
 
 			GUILayout.FlexibleSpace();
 
@@ -101,7 +93,7 @@ namespace UnityEditor.ProBuilder.Actions
 			}
 
 			List<GameObject> newSelection = new List<GameObject>();
-			bool selectionOnly = PreferencesInternal.GetBool("pb_restrictSelectColorToCurrentSelection");
+			bool selectionOnly = m_SearchSelectedObjectsOnly;
 			ProBuilderMesh[] pool = selectionOnly ? MeshSelection.TopInternal() : Object.FindObjectsOfType<ProBuilderMesh>();
 
 			foreach (ProBuilderMesh pb in pool)

@@ -11,11 +11,11 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	sealed class UVRenderOptions : EditorWindow
 	{
-		const string PREF_IMAGESIZE = "pb_UVTemplate_imageSize";
-		const string PREF_LINECOLOR = "pb_UVTemplate_lineColor";
-		const string PREF_BACKGROUNDCOLOR = "pb_UVTemplate_backgroundColor";
-		const string PREF_TRANSPARENTBACKGROUND = "pb_UVTemplate_transparentBackground";
-		const string PREF_HIDEGRID = "pb_UVTemplate_hideGrid";
+		Pref<ImageSize> m_ImageSize = new Pref<ImageSize>("UVRenderOptions.imageSize", ImageSize._1024, Settings.Scope.User);
+		Pref<Color> m_LineColor = new Pref<Color>("UVRenderOptions.lineColor", Color.green, Settings.Scope.User);
+		Pref<Color> m_BackgroundColor = new Pref<Color>("UVRenderOptions.backgroundColor", Color.black, Settings.Scope.User);
+		Pref<bool> m_TransparentBackground = new Pref<bool>("UVRenderOptions.transparentBackground", false, Settings.Scope.User);
+		Pref<bool> m_HideGrid = new Pref<bool>("UVRenderOptions.hideGrid", true, Settings.Scope.User);
 
 		enum ImageSize
 		{
@@ -25,30 +25,6 @@ namespace UnityEditor.ProBuilder
 			_2048 = 2048,
 			_4096 = 4096,
 		};
-
-		ImageSize imageSize = ImageSize._1024;
-		Color lineColor = Color.green;
-		Color backgroundColor = Color.black;
-		bool transparentBackground = true;
-		bool hideGrid = true;
-
-		void OnEnable()
-		{
-			if( PreferencesInternal.HasKey(PREF_IMAGESIZE) )
-				imageSize = (ImageSize)PreferencesInternal.GetInt(PREF_IMAGESIZE);
-
-			if( PreferencesInternal.HasKey(PREF_LINECOLOR) )
-				lineColor = PreferencesInternal.GetColor(PREF_LINECOLOR);
-
-			if( PreferencesInternal.HasKey(PREF_BACKGROUNDCOLOR) )
-				backgroundColor = PreferencesInternal.GetColor(PREF_BACKGROUNDCOLOR);
-
-			if( PreferencesInternal.HasKey(PREF_TRANSPARENTBACKGROUND) )
-				transparentBackground = PreferencesInternal.GetBool(PREF_TRANSPARENTBACKGROUND);
-
-			if( PreferencesInternal.HasKey(PREF_HIDEGRID) )
-				hideGrid = PreferencesInternal.GetBool(PREF_HIDEGRID);
-		}
 
 		public delegate void ScreenshotFunc(int ImageSize, bool HideGrid, Color LineColor, bool TransparentBackground, Color BackgroundColor);
 		public ScreenshotFunc screenFunc;
@@ -60,34 +36,28 @@ namespace UnityEditor.ProBuilder
 			UI.EditorGUIUtility.DrawSeparator(2, PreferenceKeys.proBuilderDarkGray);
 			GUILayout.Space(2);
 
-			imageSize = (ImageSize)EditorGUILayout.EnumPopup(new GUIContent("Image Size", "The pixel size of the image to be rendered."), imageSize);
+			m_ImageSize.value = (ImageSize)EditorGUILayout.EnumPopup(new GUIContent("Image Size", "The pixel size of the image to be rendered."), m_ImageSize);
 
-			hideGrid = EditorGUILayout.Toggle(new GUIContent("Hide Grid", "Hide or show the grid lines."), hideGrid);
+			m_HideGrid.value = EditorGUILayout.Toggle(new GUIContent("Hide Grid", "Hide or show the grid lines."), m_HideGrid);
 
-			lineColor = EditorGUILayout.ColorField(new GUIContent("Line Color", "The color of the template lines."), lineColor);
+			m_LineColor.value = EditorGUILayout.ColorField(new GUIContent("Line Color", "The color of the template lines."), m_LineColor);
 
-			transparentBackground = EditorGUILayout.Toggle(new GUIContent("Transparent Background", "If true, only the template lines will be rendered, leaving the background fully transparent."), transparentBackground);
+			m_TransparentBackground.value = EditorGUILayout.Toggle(new GUIContent("Transparent Background", "If true, only the template lines will be rendered, leaving the background fully transparent."), m_TransparentBackground);
 
-			GUI.enabled = !transparentBackground;
-			backgroundColor = EditorGUILayout.ColorField(new GUIContent("Background Color", "If `TransparentBackground` is off, this will be the fill color of the image."), backgroundColor);
+			GUI.enabled = !m_TransparentBackground;
+			m_BackgroundColor.value = EditorGUILayout.ColorField(new GUIContent("Background Color", "If `TransparentBackground` is off, this will be the fill color of the image."), m_BackgroundColor);
 			GUI.enabled = true;
 
 			if(GUILayout.Button("Save UV Template"))
 			{
-				PreferencesInternal.SetInt(PREF_IMAGESIZE, (int)imageSize);
-				PreferencesInternal.SetString(PREF_LINECOLOR, lineColor.ToString());
-				PreferencesInternal.SetString(PREF_BACKGROUNDCOLOR, backgroundColor.ToString());
-				PreferencesInternal.SetBool(PREF_TRANSPARENTBACKGROUND, transparentBackground);
-				PreferencesInternal.SetBool(PREF_HIDEGRID, hideGrid);
-
 				if(ProBuilderEditor.instance == null || ProBuilderEditor.instance.selection.Length < 1)
 				{
 					Debug.LogWarning("Abandoning UV render because no ProBuilder objects are selected.");
-					this.Close();
+					Close();
 					return;
 				}
 
-				screenFunc((int)imageSize, hideGrid, lineColor, transparentBackground, backgroundColor);
+				screenFunc((int)m_ImageSize.value, m_HideGrid, m_LineColor, m_TransparentBackground, m_BackgroundColor);
 				this.Close();
 			}
 		}

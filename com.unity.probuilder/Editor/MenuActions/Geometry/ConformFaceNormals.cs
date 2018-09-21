@@ -20,23 +20,14 @@ namespace UnityEditor.ProBuilder.Actions
 			@"Orients all selected faces to face the same direction."
 		);
 
-		public override bool enabled
+		public override SelectMode validSelectModes
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					MeshSelection.TopInternal().Any(x => x.selectedFaceCount > 1);
-			}
+			get { return SelectMode.Face; }
 		}
 
-		public override bool hidden
+		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance == null ||
-					ProBuilderEditor.editLevel != EditLevel.Geometry ||
-					ProBuilderEditor.componentMode != ComponentMode.Face;
-			}
+			get { return base.enabled && MeshSelection.selectedFaceCountObjectMax > 1; }
 		}
 
 		public override ActionResult DoAction()

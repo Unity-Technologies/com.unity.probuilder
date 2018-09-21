@@ -3,6 +3,7 @@ using UnityEditor;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
@@ -17,12 +18,34 @@ namespace UnityEditor.ProBuilder
 
 		static bool s_ElementCountCacheIsDirty = true;
 
+		static Bounds s_SelectionBounds = new Bounds();
+
+		public static Bounds bounds
+		{
+			get { return s_SelectionBounds; }
+		}
+
 		static int s_TotalVertexCount;
 		static int s_TotalFaceCount;
 		static int s_TotalEdgeCount;
 		static int s_TotalCommonVertexCount;
 		static int s_TotalVertexCountCompiled;
 		static int s_TotalTriangleCountCompiled;
+
+		internal static int selectedObjectCount { get; private set; }
+		internal static int selectedVertexCount { get; private set; }
+		internal static int selectedSharedVertexCount { get; private set; }
+		internal static int selectedFaceCount { get; private set; }
+		internal static int selectedEdgeCount { get; private set; }
+
+		// per-object selected element maxes
+		internal static int selectedFaceCountObjectMax { get; private set; }
+		internal static int selectedEdgeCountObjectMax { get; private set; }
+		internal static int selectedVertexCountObjectMax { get; private set; }
+		internal static int selectedSharedVertexCountObjectMax { get; private set; }
+
+		// Faces that need to be refreshed when moving or modifying the actual selection
+		internal static Dictionary<ProBuilderMesh, List<Face>> selectedFacesInEditZone { get; private set; }
 
 		static ProBuilderMesh[] selection
 		{
@@ -57,10 +80,85 @@ namespace UnityEditor.ProBuilder
 			// transform.
 			s_TopSelection = Selection.gameObjects.Select(x => x.GetComponent<ProBuilderMesh>()).Where(x => x != null).ToArray();
 			s_DeepSelection = Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<ProBuilderMesh>()).ToArray();
+
+			selectedObjectCount = s_TopSelection.Length;
 			s_ElementCountCacheIsDirty = true;
 
 			if (objectSelectionChanged != null)
 				objectSelectionChanged();
+		}
+
+		internal static void OnComponentSelectionChanged()
+		{
+			selectedVertexCount = 0;
+			selectedFaceCount = 0;
+			selectedEdgeCount = 0;
+			selectedSharedVertexCount = 0;
+
+			selectedFaceCountObjectMax = 0;
+			selectedVertexCountObjectMax = 0;
+			selectedSharedVertexCountObjectMax = 0;
+			selectedEdgeCountObjectMax = 0;
+
+			RecalculateSelectedComponentCounts();
+			RecalculateFacesInEditableArea();
+			RecalculateSelectionBounds();
+		}
+
+		internal static void RecalculateSelectedComponentCounts()
+		{
+			for (var i = 0; i < selection.Length; i++)
+			{
+				var mesh = selection[i];
+
+				selectedFaceCount += mesh.selectedFaceCount;
+				selectedEdgeCount += mesh.selectedEdgeCount;
+				selectedVertexCount += mesh.selectedIndexesInternal.Length;
+				selectedSharedVertexCount += mesh.selectedSharedVerticesCount;
+
+				selectedVertexCountObjectMax = System.Math.Max(selectedVertexCountObjectMax, mesh.selectedIndexesInternal.Length);
+				selectedSharedVertexCountObjectMax = System.Math.Max(selectedSharedVertexCountObjectMax, mesh.selectedSharedVerticesCount);
+				selectedFaceCountObjectMax = System.Math.Max(selectedFaceCountObjectMax, mesh.selectedFaceCount);
+				selectedEdgeCountObjectMax = System.Math.Max(selectedEdgeCountObjectMax, mesh.selectedEdgeCount);
+			}
+		}
+
+		internal static void RecalculateSelectionBounds()
+		{
+			s_SelectionBounds = new Bounds();
+			var boundsInitialized = false;
+
+			for (var i = 0; i < selection.Length; i++)
+			{
+				var mesh = selection[i];
+
+				if (!boundsInitialized && mesh.selectedVertexCount > 0)
+				{
+					boundsInitialized = true;
+					s_SelectionBounds = new Bounds(mesh.transform.TransformPoint(mesh.positionsInternal[mesh.selectedIndexesInternal[0]]), Vector3.zero);
+				}
+
+				if (mesh.selectedVertexCount > 0)
+				{
+					var shared = mesh.sharedVerticesInternal;
+
+					foreach(var sharedVertex in mesh.selectedSharedVertices)
+						s_SelectionBounds.Encapsulate(mesh.transform.TransformPoint(mesh.positionsInternal[shared[sharedVertex][0]]));
+				}
+			}
+		}
+
+		internal static void RecalculateFacesInEditableArea()
+		{
+			if (selectedFacesInEditZone != null)
+				selectedFacesInEditZone.Clear();
+			else
+				selectedFacesInEditZone = new Dictionary<ProBuilderMesh, List<Face>>();
+
+			foreach (var mesh in selection)
+			{
+				selectedFacesInEditZone.Add(mesh, ElementSelection.GetNeighborFaces(mesh, mesh.selectedIndexesInternal));
+			}
 		}
 
 		/// <summary>

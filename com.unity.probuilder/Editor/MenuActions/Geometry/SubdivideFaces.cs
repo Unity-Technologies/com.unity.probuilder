@@ -21,7 +21,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override TooltipContent tooltip
 		{
-			get { return _tooltip; }
+			get { return s_Tooltip; }
 		}
 
 		protected override bool hasFileMenuEntry
@@ -29,30 +29,21 @@ namespace UnityEditor.ProBuilder.Actions
 			get { return false; }
 		}
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Subdivide Faces",
 			@"Inserts a new vertex at the center of each selected face and creates a new edge from the center of each perimeter edge to the center vertex.",
 			keyCommandAlt, 'S'
 		);
 
-		public override bool enabled
+		public override SelectMode validSelectModes
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					MeshSelection.TopInternal().Any(x => x.selectedFaceCount > 0);
-			}
+			get { return SelectMode.Face; }
 		}
 
-		public override bool hidden
+		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance == null ||
-					ProBuilderEditor.editLevel != EditLevel.Geometry ||
-					ProBuilderEditor.componentMode != ComponentMode.Face;
-			}
+			get { return base.enabled && MeshSelection.selectedFaceCount > 0; }
 		}
 
 		public override ActionResult DoAction()

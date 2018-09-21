@@ -1,50 +1,38 @@
 using UnityEngine;
-using UnityEditor;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
-using UnityEditor.ProBuilder.UI;
-using EditorGUILayout = UnityEditor.EditorGUILayout;
-using EditorGUIUtility = UnityEditor.ProBuilder.UI.EditorGUIUtility;
-using EditorStyles = UnityEditor.EditorStyles;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
 	sealed class BevelEdges : MenuAction
 	{
+		Pref<float> m_BevelSize = new Pref<float>("BevelEdges.size", .2f);
+
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Bevel", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
+		public override TooltipContent tooltip { get { return s_Tooltip; } }
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Bevel",
 			@"Smooth the selected edges by adding a slanted face connecting the two adjacent faces."
 		);
 
+		public override SelectMode validSelectModes
+		{
+			get { return SelectMode.Edge | SelectMode.Face; }
+		}
+
 		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.editLevel == EditLevel.Geometry &&
-					MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
-			}
+			get { return base.enabled && MeshSelection.selectedEdgeCount > 0; }
 		}
 
 		protected override MenuActionState optionsMenuState
 		{
 			get { return MenuActionState.VisibleAndEnabled; }
-		}
-
-		public override bool hidden
-		{
-			get
-			{
-				return ProBuilderEditor.instance == null ||
-					editLevel != EditLevel.Geometry ||
-					(componentMode & (ComponentMode.Face | ComponentMode.Edge)) == 0;
-			}
 		}
 
 		protected override void OnSettingsGUI()
@@ -53,15 +41,15 @@ namespace UnityEditor.ProBuilder.Actions
 
 			EditorGUILayout.HelpBox("Amount determines how much space the bevel takes up.  Bigger value means more bevel action.", MessageType.Info);
 
-			float bevelAmount = PreferencesInternal.GetFloat(PreferenceKeys.pbBevelAmount);
-
 			EditorGUI.BeginChangeCheck();
 
-			bevelAmount = UI.EditorGUIUtility.FreeSlider("Distance", bevelAmount, .001f, .99f);
-			if(bevelAmount < .001f) bevelAmount = .001f;
+			m_BevelSize.value = UI.EditorGUIUtility.FreeSlider("Distance", m_BevelSize, .001f, .99f);
+
+			if(m_BevelSize < .001f)
+				m_BevelSize.value = .001f;
 
 			if(EditorGUI.EndChangeCheck())
-				PreferencesInternal.SetFloat(PreferenceKeys.pbBevelAmount, bevelAmount);
+				Settings.Save();
 
 			GUILayout.FlexibleSpace();
 
@@ -71,7 +59,30 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuBevelEdges(MeshSelection.TopInternal());
+			var selection = MeshSelection.TopInternal();
+
+			ActionResult res = ActionResult.NoSelection;
+
+			UndoUtility.RecordSelection(selection, "Bevel Edges");
+
+			foreach(ProBuilderMesh pb in selection)
+			{
+				pb.ToMesh();
+
+				List<Face> faces = Bevel.BevelEdges(pb, pb.selectedEdges, m_BevelSize);
+				res = faces != null ? new ActionResult(ActionResult.Status.Success, "Bevel Edges") : new ActionResult(ActionResult.Status.Failure, "Failed Bevel Edges");
+
+				if(res)
+					pb.SetSelectedFaces(faces);
+
+				pb.Refresh();
+				pb.Optimize();
+			}
+
+			ProBuilderEditor.Refresh();
+
+			return res;
+
 		}
 	}
 }

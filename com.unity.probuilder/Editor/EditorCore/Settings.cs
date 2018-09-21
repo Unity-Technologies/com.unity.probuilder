@@ -128,12 +128,12 @@ namespace UnityEngine.ProBuilder
 			}
 		}
 
-		public static void Set(string type, string key, string json, Scope scope = Scope.Project)
+		internal static void Set(string type, string key, string json, Scope scope = Scope.Project)
 		{
 			switch (scope)
 			{
 				case Scope.Project:
-					instance.m_Dictionary.Set(type, key, json);
+					instance.m_Dictionary.SetJson(type, key, json);
 					break;
 
 				case Scope.User:

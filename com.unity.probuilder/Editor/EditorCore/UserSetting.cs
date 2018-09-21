@@ -52,6 +52,7 @@ namespace UnityEngine.ProBuilder
     {
         string key { get; }
         Type type { get; }
+        Settings.Scope scope { get; }
 
         object GetValue();
         void SetValue(object value, bool saveProjectSettingsImmediately = false);
@@ -84,6 +85,11 @@ namespace UnityEngine.ProBuilder
         public object GetValue()
         {
             return value;
+        }
+
+        public Settings.Scope scope
+        {
+            get { return m_Scope; }
         }
 
         public void SetValue(object value, bool saveProjectSettingsImmediately = false)

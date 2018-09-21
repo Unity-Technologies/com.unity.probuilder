@@ -1,9 +1,5 @@
 using UnityEngine;
-using UnityEditor;
-using System.Collections;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
-using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -11,19 +7,14 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		RectSelectMode mode
 		{
-			get
-			{
-				return (RectSelectMode) PreferencesInternal.GetInt(PreferenceKeys.pbRectSelectMode,
-					(int) RectSelectMode.Partial);
-			}
-
-			set
-			{
-				PreferencesInternal.SetInt(PreferenceKeys.pbRectSelectMode, (int) value);
-			}
+			get { return ProBuilderEditor.instance.m_DragSelectRectMode; }
+			set { ProBuilderEditor.instance.m_DragSelectRectMode.value = value; }
 		}
 
-		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
+		public override ToolbarGroup group
+		{
+			get { return ToolbarGroup.Selection; }
+		}
 
 		public override Texture2D icon
 		{
@@ -34,10 +25,23 @@ namespace UnityEditor.ProBuilder.Actions
 					: IconUtility.GetIcon("Toolbar/Selection_Rect_Intersect", IconSkin.Pro);
 			}
 		}
-		public override TooltipContent tooltip { get { return _tooltip; } }
-		public override int toolbarPriority { get { return 0; } }
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		public override TooltipContent tooltip
+		{
+			get { return s_Tooltip; }
+		}
+
+		public override int toolbarPriority
+		{
+			get { return 0; }
+		}
+
+		public override SelectMode validSelectModes
+		{
+			get { return SelectMode.Edge | SelectMode.Face | SelectMode.Texture; }
+		}
+
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Set Drag Rect Mode",
 			"Sets whether or not a mesh element (edge or face) needs to be completely encompassed by a drag to be selected.\n\nThe default value is Intersect, meaning if any part of the elemnent is touched by the drag rectangle it will be selected."
@@ -48,6 +52,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ActionResult DoAction()
 		{
 			mode = InternalUtility.NextEnumValue(mode);
+			Settings.Save();
 			ProBuilderEditor.instance.LoadPrefs();
 			return new ActionResult(ActionResult.Status.Success,
 				"Set Drag Select\n" + (mode == RectSelectMode.Complete ? "Complete" : "Intersect"));
@@ -57,19 +62,8 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			get
 			{
-				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.componentMode != ComponentMode.Vertex;
-			}
-		}
-
-		public override bool hidden
-		{
-			get
-			{
-				return ProBuilderEditor.instance == null ||
-					ProBuilderEditor.editLevel != EditLevel.Geometry ||
-					ProBuilderEditor.componentMode == ComponentMode.Vertex;
+				return ProBuilderEditor.instance != null
+					&& ProBuilderEditor.selectMode.ContainsFlag(SelectMode.Edge | SelectMode.Face | SelectMode.Texture);
 			}
 		}
 	}

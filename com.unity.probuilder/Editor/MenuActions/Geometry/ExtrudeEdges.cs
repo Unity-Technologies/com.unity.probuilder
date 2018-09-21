@@ -3,42 +3,34 @@ using UnityEditor;
 using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
 	sealed class ExtrudeEdges : MenuAction
 	{
+		Pref<float> m_ExtrudeEdgeDistance = new Pref<float>("ExtrudeEdges.distance", .5f);
+
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Extrude", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
+		public override TooltipContent tooltip { get { return s_Tooltip; } }
 		protected override bool hasFileMenuEntry { get { return false; } }
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Extrude Edges",
 			@"Adds a new face extending from the currently selected edges.  Edges must have an open side to be extruded.",
 			keyCommandSuper, 'E'
 		);
 
-		public override bool enabled
+		public override SelectMode validSelectModes
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					ProBuilderEditor.editLevel == EditLevel.Geometry &&
-					ProBuilderEditor.componentMode == ComponentMode.Edge &&
-					MeshSelection.TopInternal().Any(x => x.selectedEdgeCount > 0);
-			}
+			get { return SelectMode.Edge; }
 		}
 
-		public override bool hidden
+		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance == null ||
-					ProBuilderEditor.editLevel != EditLevel.Geometry ||
-					ProBuilderEditor.componentMode != ComponentMode.Edge;
-			}
+			get { return base.enabled && MeshSelection.selectedEdgeCount > 0; }
 		}
 
 		protected override MenuActionState optionsMenuState
@@ -52,20 +44,14 @@ namespace UnityEditor.ProBuilder.Actions
 
 			EditorGUILayout.HelpBox("Extrude Amount determines how far an edge will be moved along it's normal when extruding.  This value can be negative.\n\nExtrude as Group determines whether or not adjacent faces stay attached to one another when extruding.", MessageType.Info);
 
-			float extrudeAmount = PreferencesInternal.HasKey(PreferenceKeys.pbExtrudeDistance) ? PreferencesInternal.GetFloat(PreferenceKeys.pbExtrudeDistance) : .5f;
-			bool extrudeAsGroup = PreferencesInternal.GetBool(PreferenceKeys.pbExtrudeAsGroup);
-
 			EditorGUI.BeginChangeCheck();
 
-			extrudeAsGroup = EditorGUILayout.Toggle("As Group", extrudeAsGroup);
+			ProBuilderEditor.instance.m_ExtrudeEdgesAsGroup.value = EditorGUILayout.Toggle("As Group", ProBuilderEditor.instance.m_ExtrudeEdgesAsGroup);
 
-			extrudeAmount = EditorGUILayout.FloatField("Distance", extrudeAmount);
+			m_ExtrudeEdgeDistance.value = EditorGUILayout.FloatField("Distance", m_ExtrudeEdgeDistance);
 
 			if(EditorGUI.EndChangeCheck())
-			{
-				PreferencesInternal.SetFloat(PreferenceKeys.pbExtrudeDistance, extrudeAmount);
-				PreferencesInternal.SetBool(PreferenceKeys.pbExtrudeAsGroup, extrudeAsGroup);
-			}
+				Settings.Save();
 
 			GUILayout.FlexibleSpace();
 
@@ -75,7 +61,51 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuExtrude(MeshSelection.TopInternal(), true);
+			var editor = ProBuilderEditor.instance;
+			var selection = MeshSelection.TopInternal();
+
+			if(selection == null || selection.Length < 1)
+				return ActionResult.NoSelection;
+
+			UndoUtility.RegisterCompleteObjectUndo(selection, "Extrude");
+
+			int extrudedFaceCount = 0;
+			bool success = false;
+
+			foreach(ProBuilderMesh pb in selection)
+			{
+				pb.ToMesh();
+				pb.Refresh(RefreshMask.Normals);
+
+				if(pb.selectedEdgeCount < 1)
+					continue;
+
+				extrudedFaceCount += pb.selectedEdgeCount;
+
+				Edge[] newEdges = pb.Extrude(pb.selectedEdges,
+					m_ExtrudeEdgeDistance,
+					ProBuilderEditor.instance.m_ExtrudeEdgesAsGroup,
+					ProBuilderEditor.s_AllowNonManifoldActions);
+
+				success |= newEdges != null;
+
+				if(success)
+					pb.SetSelectedEdges(newEdges);
+				else
+					extrudedFaceCount -= pb.selectedEdgeCount;
+
+				pb.Rebuild();
+			}
+
+			if(editor != null)
+				ProBuilderEditor.Refresh();
+
+			SceneView.RepaintAll();
+
+			if( extrudedFaceCount > 0 )
+				return new ActionResult(ActionResult.Status.Success, "Extrude");
+
+			return new ActionResult(ActionResult.Status.Canceled, "Extrude\nEmpty Selection");
 		}
 	}
 }

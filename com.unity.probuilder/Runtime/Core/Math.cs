@@ -1279,6 +1279,16 @@ namespace UnityEngine.ProBuilder
 			res.z = b.z - a.z;
 		}
 
+		internal static int Min(int a, int b)
+		{
+			return a < b ? a : b;
+		}
+
+		internal static int Max(int a, int b)
+		{
+			return a > b ? a : b;
+		}
+
 		internal static bool IsNumber(float value)
 		{
 			return !(float.IsInfinity(value) || float.IsNaN(value));

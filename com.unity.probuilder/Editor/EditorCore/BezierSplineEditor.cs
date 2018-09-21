@@ -243,10 +243,10 @@ namespace UnityEditor.ProBuilder
 
 			if(ProBuilderEditor.instance != null)
 			{
-				if(m_Target.isEditing)
-					ProBuilderEditor.instance.SetEditLevel(EditLevel.Plugin);
+				if (m_Target.isEditing)
+					ProBuilderEditor.PushSelectMode(SelectMode.None);
 				else
-					ProBuilderEditor.instance.PopEditLevel();
+					ProBuilderEditor.PopSelectMode();
 			}
 
 			if(m_Target.isEditing)

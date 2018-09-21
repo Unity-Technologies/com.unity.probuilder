@@ -203,7 +203,7 @@ namespace UnityEditor.ProBuilder
 			{
 				SetTextureGroup(selection, textureGroup);
 
-				foreach(var kvp in editor.selectedFacesInEditZone)
+				foreach(var kvp in MeshSelection.selectedFacesInEditZone)
 					kvp.Key.RefreshUV(kvp.Value);
 
 				SceneView.RepaintAll();
@@ -223,7 +223,7 @@ namespace UnityEditor.ProBuilder
 			{
 				SetTextureGroup(selection, -1);
 
-				foreach(var kvp in editor.selectedFacesInEditZone)
+				foreach(var kvp in MeshSelection.selectedFacesInEditZone)
 				{
 					kvp.Key.ToMesh();
 					kvp.Key.Refresh();

@@ -62,10 +62,10 @@ namespace UnityEngine.ProBuilder
 
 			var type = typeof(T).AssemblyQualifiedName;
 
-			Set(type, key, ValueWrapper<T>.Serialize(value));
+			SetJson(type, key, ValueWrapper<T>.Serialize(value));
 		}
 
-		public void Set(string type, string key, string value)
+		internal void SetJson(string type, string key, string value)
 		{
 			Dictionary<string, string> entries;
 
@@ -103,6 +103,9 @@ namespace UnityEngine.ProBuilder
 
 		public void OnBeforeSerialize()
 		{
+			if (m_DictionaryValues == null)
+				return;
+
 			m_DictionaryValues.Clear();
 
 			foreach (var type in dictionary)

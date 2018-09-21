@@ -383,7 +383,7 @@ namespace UnityEditor.ProBuilder
 
 		static List<int> s_VertexList = new List<int>();
 
-		public void RebuildSelectedHandles(IEnumerable<ProBuilderMesh> meshes, ComponentMode selectionMode)
+		public void RebuildSelectedHandles(IEnumerable<ProBuilderMesh> meshes, SelectMode selectionMode)
 		{
 			ClearHandles();
 
@@ -394,7 +394,7 @@ namespace UnityEditor.ProBuilder
 
 				switch (selectionMode)
 				{
-					case ComponentMode.Vertex:
+					case SelectMode.Vertex:
 					{
 						RebuildMeshHandle(mesh, m_VertexHandles, (x,y) =>
 						{
@@ -411,7 +411,7 @@ namespace UnityEditor.ProBuilder
 						break;
 					}
 
-					case ComponentMode.Edge:
+					case SelectMode.Edge:
 					{
 						RebuildMeshHandle(mesh, m_EdgeHandles, (x, y) =>
 						{
@@ -420,7 +420,7 @@ namespace UnityEditor.ProBuilder
 						break;
 					}
 
-					case ComponentMode.Face:
+					case SelectMode.Face:
 					{
 						RebuildMeshHandle(mesh, m_FaceHandles, MeshHandles.CreateFaceMesh);
 						break;

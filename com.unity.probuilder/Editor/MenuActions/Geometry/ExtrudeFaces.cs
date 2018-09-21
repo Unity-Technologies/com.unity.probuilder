@@ -1,37 +1,55 @@
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
-using EditorGUILayout = UnityEditor.EditorGUILayout;
-using EditorStyles = UnityEditor.EditorStyles;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
 	sealed class ExtrudeFaces : MenuAction
 	{
-		private ExtrudeMethod m_ExtrudeMethod;
+		Pref<float> m_ExtrudeDistance = new Pref<float>("ExtrudeFaces.distance", .5f);
 
-		private static string GetExtrudeIconString(ExtrudeMethod m)
+		ExtrudeMethod extrudeMethod
+		{
+			get { return ProBuilderEditor.instance.m_ExtrudeMethod; }
+			set { ProBuilderEditor.instance.m_ExtrudeMethod.value = value; }
+		}
+
+		static string GetExtrudeIconString(ExtrudeMethod m)
 		{
 			return m == ExtrudeMethod.VertexNormal ? "Toolbar/ExtrudeFace_VertexNormals"
 				: m == ExtrudeMethod.FaceNormal ? "Toolbar/ExtrudeFace_FaceNormals"
 				: "Toolbar/ExtrudeFace_Individual";
 		}
 
-		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return IconUtility.GetIcon(GetExtrudeIconString(m_ExtrudeMethod), IconSkin.Pro); } }
-		protected override Texture2D disabledIcon
+		public override ToolbarGroup group
 		{
-			get { return IconUtility.GetIcon(string.Format("{0}_disabled", GetExtrudeIconString(m_ExtrudeMethod)), IconSkin.Pro); }
+			get { return ToolbarGroup.Geometry; }
 		}
 
-		public override TooltipContent tooltip { get { return _tooltip; } }
-		protected override bool hasFileMenuEntry { get { return false; } }
-		[SerializeField] Texture2D[] icons = null;
+		public override Texture2D icon
+		{
+			get { return IconUtility.GetIcon(GetExtrudeIconString(extrudeMethod), IconSkin.Pro); }
+		}
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		protected override Texture2D disabledIcon
+		{
+			get { return IconUtility.GetIcon(string.Format("{0}_disabled", GetExtrudeIconString(extrudeMethod)), IconSkin.Pro); }
+		}
+
+		public override TooltipContent tooltip
+		{
+			get { return s_Tooltip; }
+		}
+
+		protected override bool hasFileMenuEntry
+		{
+			get { return false; }
+		}
+
+		Texture2D[] m_Icons = null;
+
+		static readonly TooltipContent s_Tooltip = new TooltipContent
 		(
 			"Extrude Faces",
 			"Extrude selected faces, either as a group or individually.\n\nAlt + Click this button to show additional Extrude options.",
@@ -40,29 +58,20 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public ExtrudeFaces()
 		{
-			m_ExtrudeMethod = (ExtrudeMethod) PreferencesInternal.GetInt(PreferenceKeys.pbExtrudeMethod);
+			m_Icons = new Texture2D[3];
+			m_Icons[(int)ExtrudeMethod.IndividualFaces] = IconUtility.GetIcon("Toolbar/ExtrudeFace_Individual", IconSkin.Pro);
+			m_Icons[(int)ExtrudeMethod.VertexNormal] = IconUtility.GetIcon("Toolbar/ExtrudeFace_VertexNormals", IconSkin.Pro);
+			m_Icons[(int)ExtrudeMethod.FaceNormal] = IconUtility.GetIcon("Toolbar/ExtrudeFace_FaceNormals", IconSkin.Pro);
+		}
 
-			icons = new Texture2D[3];
-			icons[(int)ExtrudeMethod.IndividualFaces] = IconUtility.GetIcon("Toolbar/ExtrudeFace_Individual", IconSkin.Pro);
-			icons[(int)ExtrudeMethod.VertexNormal] = IconUtility.GetIcon("Toolbar/ExtrudeFace_VertexNormals", IconSkin.Pro);
-			icons[(int)ExtrudeMethod.FaceNormal] = IconUtility.GetIcon("Toolbar/ExtrudeFace_FaceNormals", IconSkin.Pro);
+		public override SelectMode validSelectModes
+		{
+			get { return SelectMode.Face; }
 		}
 
 		public override bool enabled
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-					MeshSelection.TopInternal().Sum(x => x.selectedFaceCount) > 0;
-			}
-		}
-
-		public override bool hidden
-		{
-			get
-			{
-				return editLevel != EditLevel.Geometry || componentMode != ComponentMode.Face;
-			}
+			get { return base.enabled && MeshSelection.selectedFaceCount > 0; }
 		}
 
 		protected override MenuActionState optionsMenuState
@@ -76,35 +85,68 @@ namespace UnityEditor.ProBuilder.Actions
 
 			EditorGUILayout.HelpBox("Extrude Amount determines how far a face will be moved along it's normal when extruding.  This value can be negative.\n\nYou may also choose to Extrude by Face Normal, Vertex Normal, or as Individual Faces.", MessageType.Info);
 
-			float extrudeAmount = PreferencesInternal.HasKey(PreferenceKeys.pbExtrudeDistance) ? PreferencesInternal.GetFloat(PreferenceKeys.pbExtrudeDistance) : .5f;
-
 			GUILayout.BeginHorizontal();
-				GUILayout.FlexibleSpace();
-					GUILayout.Label(icons[(int) m_ExtrudeMethod]);
-				GUILayout.FlexibleSpace();
+			GUILayout.FlexibleSpace();
+			GUILayout.Label(m_Icons[(int)extrudeMethod]);
+			GUILayout.FlexibleSpace();
 			GUILayout.EndHorizontal();
 
 			EditorGUI.BeginChangeCheck();
 
-			m_ExtrudeMethod = (ExtrudeMethod) EditorGUILayout.EnumPopup("Extrude By", m_ExtrudeMethod);
-			extrudeAmount = EditorGUILayout.FloatField("Distance", extrudeAmount);
+			extrudeMethod = (ExtrudeMethod)EditorGUILayout.EnumPopup("Extrude By", extrudeMethod);
+			m_ExtrudeDistance.value = EditorGUILayout.FloatField("Distance", m_ExtrudeDistance);
 
-			if(EditorGUI.EndChangeCheck())
-			{
-				PreferencesInternal.SetFloat(PreferenceKeys.pbExtrudeDistance, extrudeAmount);
-				PreferencesInternal.SetInt(PreferenceKeys.pbExtrudeMethod, (int) m_ExtrudeMethod);
-			}
+			if (EditorGUI.EndChangeCheck())
+				Settings.Save();
 
 			GUILayout.FlexibleSpace();
 
-			if(GUILayout.Button("Extrude Faces"))
+			if (GUILayout.Button("Extrude Faces"))
 				DoAction();
 		}
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuExtrude(MeshSelection.TopInternal(), false);
+			var editor = ProBuilderEditor.instance;
+			var selection = MeshSelection.TopInternal();
+
+			if (selection == null || selection.Length < 1)
+				return ActionResult.NoSelection;
+
+			UndoUtility.RegisterCompleteObjectUndo(selection, "Extrude");
+
+			int extrudedFaceCount = 0;
+
+			foreach (ProBuilderMesh mesh in selection)
+			{
+				mesh.ToMesh();
+				mesh.Refresh(RefreshMask.Normals);
+
+				if (mesh.selectedFaceCount < 1)
+					continue;
+
+				extrudedFaceCount += mesh.selectedFaceCount;
+				var selectedFaces = mesh.GetSelectedFaces();
+
+				mesh.Extrude(selectedFaces,
+					ProBuilderEditor.instance.m_ExtrudeMethod,
+					m_ExtrudeDistance);
+
+				mesh.SetSelectedFaces(selectedFaces);
+
+				mesh.Rebuild();
+				mesh.Optimize();
+			}
+
+			if (editor != null)
+				ProBuilderEditor.Refresh();
+
+			SceneView.RepaintAll();
+
+			if (extrudedFaceCount > 0)
+				return new ActionResult(ActionResult.Status.Success, "Extrude");
+
+			return new ActionResult(ActionResult.Status.Canceled, "Extrude\nEmpty Selection");
 		}
 	}
 }
-

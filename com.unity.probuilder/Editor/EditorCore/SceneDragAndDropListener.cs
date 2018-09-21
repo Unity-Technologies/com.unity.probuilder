@@ -40,12 +40,7 @@ namespace UnityEditor.ProBuilder
 
 		static bool isFaceMode
 		{
-			get
-			{
-				return ProBuilderEditor.instance != null &&
-				       ProBuilderEditor.editLevel == EditLevel.Geometry &&
-				       ProBuilderEditor.componentMode == ComponentMode.Face;
-			}
+			get { return ProBuilderEditor.selectMode == SelectMode.Face; }
 		}
 
 		static Material GetMaterialFromDragReferences(UObject[] references, bool createMaterialForTexture)

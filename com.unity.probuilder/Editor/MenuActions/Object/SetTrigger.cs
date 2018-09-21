@@ -32,9 +32,9 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool enabled
 		{
-			get { return ProBuilderEditor.instance != null && MeshSelection.TopInternal().Length > 0; }
+			get { return base.enabled && MeshSelection.selectedObjectCount > 0; }
 		}
-
+		
 		public override ActionResult DoAction()
 		{
 			foreach (ProBuilderMesh pb in MeshSelection.Top())
@@ -62,7 +62,7 @@ namespace UnityEditor.ProBuilder.Actions
 				Undo.AddComponent<TriggerBehaviour>(pb.gameObject).Initialize();
 			}
 
-			int selectionCount = MeshSelection.TopInternal().Length;
+			int selectionCount = MeshSelection.selectedObjectCount;
 
 			if (selectionCount < 1)
 				return new ActionResult(ActionResult.Status.NoChange, "Set Trigger\nNo objects selected");
