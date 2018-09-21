@@ -229,6 +229,51 @@ namespace UnityEditor.ProBuilder
 			return JsonUtility.FromJson<T>(str);
 		}
 
+		public static Material GetMaterial(string key)
+		{
+			if(preferences.HasKey<Material>(key))
+				return preferences.GetMaterial(key);
+
+			return AssetDatabase.LoadAssetAtPath<Material>(EditorPrefs.GetString(key));
+		}
+
+		internal static bool TryGetValue(string key, System.Type type, out object value)
+		{
+			value = null;
+
+			if (!HasKey(key))
+				return false;
+
+			if (type == typeof(bool))
+				value = GetBool(key);
+			else if (type == typeof(float))
+				value = GetFloat(key);
+			else if (type == typeof(int))
+				value = GetInt(key);
+			else if (type == typeof(string))
+				value = GetString(key);
+			else if (type == typeof(Shortcut[]))
+				value = Shortcut.ParseShortcuts(EditorPrefs.GetString(key));
+			else if (type == typeof(Color))
+				value = GetColor(key);
+			else if (type == typeof(Material))
+				value = GetMaterial(key);
+			else if (type == typeof(ColliderType))
+				value = GetEnum<ColliderType>(key);
+			else if (type == typeof(ShadowCastingMode))
+				value = GetEnum<ShadowCastingMode>(key);
+			else if (type == typeof(LogLevel))
+				value = GetEnum<LogLevel>(key);
+			else if (type == typeof(LogOutput))
+				value = GetEnum<LogOutput>(key);
+			else if (type == typeof(SceneToolbarLocation))
+				value = GetEnum<SceneToolbarLocation>(key);
+			else
+				return false;
+
+			return true;
+		}
+
 		/// <summary>
 		/// Retrieve stored shortcuts from preferences in an IEnumerable format.
 		/// </summary>

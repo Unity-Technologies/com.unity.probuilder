@@ -53,7 +53,7 @@ namespace UnityEditor.ProBuilder
 		{
 			array = new Material[10]
 			{
-				PreferenceKeys.DefaultMaterial,
+				null,
 				null,
 				null,
 				null,
