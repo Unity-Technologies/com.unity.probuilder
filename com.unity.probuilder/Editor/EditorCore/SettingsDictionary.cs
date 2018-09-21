@@ -101,6 +101,17 @@ namespace UnityEngine.ProBuilder
 			return fallback;
 		}
 
+		public void Remove<T>(string key)
+		{
+			Dictionary<string, string> entries;
+
+			if (!dictionary.TryGetValue(typeof(T).AssemblyQualifiedName, out entries) || !entries.ContainsKey(key))
+				return;
+			Debug.Log("removing: " + key);
+
+			entries.Remove(key);
+		}
+
 		public void OnBeforeSerialize()
 		{
 			if (m_DictionaryValues == null)

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace UnityEngine.ProBuilder
 {
@@ -22,6 +25,33 @@ namespace UnityEngine.ProBuilder
         {
             m_Category = category;
             m_Title = new GUIContent(title, tooltip);
+        }
+    }
+
+    /// <summary>
+    /// Register a Pref<T> with Settings, but do not automatically create a property field in the SettingsProvider.
+    /// Unlike UserSettingAttribute, this attribute is valid for instance properties as well as static.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field)]
+    sealed class HiddenSettingAttribute : Attribute
+    {
+        string m_Key;
+        Settings.Scope m_Scope;
+
+        public string key
+        {
+            get { return m_Key; }
+        }
+
+        public Settings.Scope scope
+        {
+            get { return m_Scope; }
+        }
+
+        public HiddenSettingAttribute(string key, Settings.Scope scope = Settings.Scope.Project)
+        {
+            m_Key = key;
+            m_Scope = scope;
         }
     }
 
@@ -56,6 +86,7 @@ namespace UnityEngine.ProBuilder
 
         object GetValue();
         void SetValue(object value, bool saveProjectSettingsImmediately = false);
+        void Delete(bool saveProjectSettingsImmediately = false);
     }
 
     sealed class Pref<T> : IPref
@@ -113,6 +144,14 @@ namespace UnityEngine.ProBuilder
                 Settings.Save();
         }
 
+        public void Delete(bool saveProjectSettingsImmediately = false)
+        {
+            Settings.Delete<T>(key, scope);
+
+            if (saveProjectSettingsImmediately)
+                Settings.Save();
+        }
+
         public T value
         {
             get
@@ -134,6 +173,33 @@ namespace UnityEngine.ProBuilder
         public static implicit operator T(Pref<T> pref)
         {
             return pref.value;
+        }
+    }
+
+    static class UserSettings
+    {
+        /// <summary>
+        /// Collect all registered UserSetting and HiddenSetting attributes.
+        /// </summary>
+        /// <returns></returns>
+        public static IEnumerable<IPref> FindUserSettings()
+        {
+            var attribs = typeof(UserSettingAttribute).Assembly.GetTypes()
+                .SelectMany(x => x.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
+                    .Where(prop => Attribute.IsDefined(prop, typeof(UserSettingAttribute)) || Attribute.IsDefined(prop, typeof(HiddenSettingAttribute))));
+
+            List<IPref> preferences = new List<IPref>(attribs.Count());
+
+            foreach (var field in attribs)
+            {
+                if (field.IsStatic && typeof(IPref).IsAssignableFrom(field.FieldType))
+                {
+                    preferences.Add((IPref)field.GetValue(null));
+                    continue;
+                }
+            }
+
+            return preferences;
         }
     }
 }

@@ -11,27 +11,31 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 class TempMenuItems : EditorWindow
 {
+	Vector2 m_Scroll;
+	IEnumerable<IPref> m_Settings;
+
+
 	[MenuItem("Tools/Temp Menu Item &d", false, 1000)]
 	static void MenuInit()
 	{
-
 		GetWindow<TempMenuItems>();
 	}
 
-	Vector2 m_Scroll;
+	void OnEnable()
+	{
+		m_Settings = UserSettings.FindUserSettings();
+	}
+
 
 	void OnGUI()
 	{
-		SelectMode all = SelectMode.Any;
-		SelectMode faceAndEdge = SelectMode.Face | SelectMode.Edge;
-		var allMatchesFace = SelectMode.Face.ContainsFlag(all);
-		var allMatchesFaceAndEdge = SelectMode.Face.ContainsFlag(faceAndEdge);
-		var faceMatchesFace = SelectMode.Face.ContainsFlag(SelectMode.Face);
+		GUILayout.Label("count: " + m_Settings.Count());
 
 		m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
-		foreach (var item in EditorToolbarLoader.GetActions())
+		foreach (var item in m_Settings)
 		{
-			GUILayout.Label(item.menuTitle + "(" + ProBuilderEditor.selectMode.ContainsFlag(item.validSelectModes) + ")   [" + item.validSelectModes + "]");
+			var val = item.GetValue();
+			GUILayout.Label(item.key + "  " + (val != null ? val.ToString() : "null") + "   " + item.scope);
 		}
 		EditorGUILayout.EndScrollView();
 	}

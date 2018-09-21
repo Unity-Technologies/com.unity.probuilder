@@ -66,7 +66,7 @@ namespace UnityEditor.ProBuilder
 			bool geoLine = BuiltinMaterials.geometryShadersSupported;
 			GUI.enabled = geoLine;
 			s_EdgeLineSize.value = UI.EditorGUILayout.SearchableSlider("Line Size", geoLine ? s_EdgeLineSize : 0f, 0f, 3f, searchContext);
-			s_WireframeLineSize.value = UI.EditorGUILayout.SearchableSlider("Wireframe Size", geoLine ? s_EdgeLineSize : 0f, 0f, 3f, searchContext);
+			s_WireframeLineSize.value = UI.EditorGUILayout.SearchableSlider("Wireframe Size", geoLine ? s_WireframeLineSize : 0f, 0f, 3f, searchContext);
 			GUI.enabled = true;
 		}
 

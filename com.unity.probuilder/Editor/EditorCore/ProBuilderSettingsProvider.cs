@@ -21,6 +21,7 @@ namespace UnityEditor.ProBuilder
 			static bool s_Initialized;
 
 			public static GUIStyle settingsArea;
+			public static GUIStyle settingsGizmo;
 
 			public static void Init()
 			{
@@ -32,6 +33,19 @@ namespace UnityEditor.ProBuilder
 				settingsArea = new GUIStyle()
 				{
 					margin = new RectOffset(6, 6, 0, 0)
+				};
+
+				settingsGizmo = new GUIStyle()
+				{
+					normal = new GUIStyleState()
+					{
+						background = IconUtility.GetIcon("Toolbar/Options", IconSkin.Pro)
+					},
+					fixedWidth = 14,
+					fixedHeight = 14,
+					padding = new RectOffset(0,0,0,0),
+					margin = new RectOffset(4,4,4,4),
+					imagePosition = ImagePosition.ImageOnly
 				};
 			}
 		}
@@ -62,9 +76,15 @@ namespace UnityEditor.ProBuilder
 				.SelectMany(x => x.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
 					.Where(y => Attribute.IsDefined(y, typeof(UserSettingBlockAttribute))));
 
-			m_Settings = new Dictionary<string, List<SimpleTuple<GUIContent, IPref>>>();
+			if(m_Settings != null)
+				m_Settings.Clear();
+			else
+				m_Settings = new Dictionary<string, List<SimpleTuple<GUIContent, IPref>>>();
 
-			m_SettingBlocks = new Dictionary<string, List<MethodInfo>>();
+			if(m_SettingBlocks != null)
+				m_SettingBlocks.Clear();
+			else
+				m_SettingBlocks = new Dictionary<string, List<MethodInfo>>();
 
 			foreach (var field in fields)
 			{
@@ -128,6 +148,33 @@ namespace UnityEditor.ProBuilder
 
 			m_Categories = m_Settings.Keys.Union(m_SettingBlocks.Keys).ToList();
 			m_Categories.Sort();
+		}
+
+		public override void OnTitleBarGUI()
+		{
+			Styles.Init();
+
+			if (GUILayout.Button(GUIContent.none, Styles.settingsGizmo))
+				DoContextMenu();
+		}
+
+		void DoContextMenu()
+		{
+			var menu = new GenericMenu();
+
+			menu.AddItem(new GUIContent("Reset All"), false, () =>
+			{
+				foreach (var preferenceField in m_Settings)
+				{
+					foreach(var pref in preferenceField.Value)
+						pref.item2.Delete();
+				}
+
+				Settings.Save();
+				Settings.Reload();
+				SearchForUserSettingAttributes();
+			});
+			menu.ShowAsContext();
 		}
 
 		public override void OnGUI(string searchContext)
@@ -244,6 +291,20 @@ namespace UnityEditor.ProBuilder
 				var obj = pref.GetValue();
 				GUILayout.Label(obj == null ? "null" : pref.GetValue().ToString());
 				GUILayout.EndHorizontal();
+			}
+
+			var evt = Event.current;
+
+			if (evt.type == EventType.ContextClick && GUILayoutUtility.GetLastRect().Contains(evt.mousePosition))
+			{
+				var menu = new GenericMenu();
+				menu.AddItem(new GUIContent("Reset " + pref.key), false, () =>
+				{
+					pref.Delete(true);
+					Settings.Load();
+					SearchForUserSettingAttributes();
+				});
+				menu.ShowAsContext();
 			}
 		}
 	}

@@ -60,6 +60,13 @@ namespace UnityEngine.ProBuilder
 			}
 		}
 
+		public static void Reload()
+		{
+			instance.m_Dictionary = null;
+			instance.m_Dictionary = new SettingsDictionary();
+			Load();
+		}
+
 		internal static SettingsDictionary dictionary
 		{
 			get { return instance.m_Dictionary; }
@@ -128,7 +135,7 @@ namespace UnityEngine.ProBuilder
 			}
 		}
 
-		internal static void Set(string type, string key, string json, Scope scope = Scope.Project)
+		internal static void SetJson(string type, string key, string json, Scope scope = Scope.Project)
 		{
 			switch (scope)
 			{
@@ -156,6 +163,27 @@ namespace UnityEngine.ProBuilder
 				return instance.m_Dictionary.ContainsKey<T>(key);
 
 			return EditorPrefs.HasKey(GetEditorPrefKey<T>(key));
+		}
+
+		public static void Delete<T>(string key, Scope scope = Scope.Project)
+		{
+			if (scope == Scope.Project)
+			{
+				instance.m_Dictionary.Remove<T>(key);
+			}
+			else
+			{
+				var ek = GetEditorPrefKey<T>(key);
+
+				if(EditorPrefs.HasKey(key))
+					EditorPrefs.DeleteKey(key);
+			}
+		}
+
+		public static void DeleteProjectSettings()
+		{
+			if (File.Exists(k_SettingsPath))
+				File.Delete(k_SettingsPath);
 		}
 	}
 }
