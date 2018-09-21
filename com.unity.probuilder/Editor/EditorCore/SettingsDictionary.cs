@@ -29,6 +29,15 @@ namespace UnityEngine.ProBuilder
 			EditorJsonUtility.FromJsonOverwrite(json, value);
 			return ((ValueWrapper<T>)value).m_Value;
 		}
+
+		public static T DeepCopy(T value)
+		{
+			if (typeof(ValueType).IsAssignableFrom(typeof(T)))
+				return value;
+			var str = Serialize(value);
+			return Deserialize(str);
+			return value;
+		}
 	}
 
 	[Serializable]

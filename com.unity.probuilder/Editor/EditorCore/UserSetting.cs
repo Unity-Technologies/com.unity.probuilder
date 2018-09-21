@@ -1,15 +1,29 @@
-﻿using System;
+﻿//#define PB_DEBUG
+
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEditor;
 
 namespace UnityEngine.ProBuilder
 {
+    [Flags]
+    internal enum SettingVisibility
+    {
+        None = 0 << 0,
+        Visible = 1 << 0,
+        Hidden = 1 << 1,
+        Unlisted = 1 << 2
+    }
+
     [AttributeUsage(AttributeTargets.Field)]
     sealed class UserSettingAttribute : Attribute
     {
         string m_Category;
         GUIContent m_Title;
+        bool m_VisibleInSettingsProvider;
 
         public string category
         {
@@ -21,19 +35,25 @@ namespace UnityEngine.ProBuilder
             get { return m_Title; }
         }
 
-        public UserSettingAttribute(string category, string title, string tooltip = null)
+        public bool visibleInSettingsProvider
+        {
+            get { return m_VisibleInSettingsProvider; }
+        }
+
+        public UserSettingAttribute(string category, string title, string tooltip = null, bool visibleInSettingsProvider = true)
         {
             m_Category = category;
             m_Title = new GUIContent(title, tooltip);
+            m_VisibleInSettingsProvider = visibleInSettingsProvider;
         }
     }
 
     /// <summary>
-    /// Register a Pref<T> with Settings, but do not automatically create a property field in the SettingsProvider.
+    /// Register a field with Settings, but do not automatically create a property field in the SettingsProvider.
     /// Unlike UserSettingAttribute, this attribute is valid for instance properties as well as static.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field)]
-    sealed class HiddenSettingAttribute : Attribute
+    sealed class SettingsKeyAttribute : Attribute
     {
         string m_Key;
         Settings.Scope m_Scope;
@@ -48,7 +68,7 @@ namespace UnityEngine.ProBuilder
             get { return m_Scope; }
         }
 
-        public HiddenSettingAttribute(string key, Settings.Scope scope = Settings.Scope.Project)
+        public SettingsKeyAttribute(string key, Settings.Scope scope = Settings.Scope.Project)
         {
             m_Key = key;
             m_Scope = scope;
@@ -83,9 +103,21 @@ namespace UnityEngine.ProBuilder
         string key { get; }
         Type type { get; }
         Settings.Scope scope { get; }
-
         object GetValue();
+        object GetDefaultValue();
         void SetValue(object value, bool saveProjectSettingsImmediately = false);
+
+        /// <summary>
+        /// Set the current value back to the default.
+        /// </summary>
+        /// <param name="saveProjectSettingsImmediately">True to immediately re-serialize project settings.</param>
+        void Reset(bool saveProjectSettingsImmediately = false);
+
+        /// <summary>
+        /// Delete the saved setting. Does not clear the current value.
+        /// </summary>
+        /// <see cref="Reset"/>
+        /// <param name="saveProjectSettingsImmediately">True to immediately re-serialize project settings.</param>
         void Delete(bool saveProjectSettingsImmediately = false);
     }
 
@@ -94,7 +126,10 @@ namespace UnityEngine.ProBuilder
         bool m_Initialized;
         string m_Key;
         T m_Value;
+        T m_DefaultValue;
         Settings.Scope m_Scope;
+
+        Pref() { }
 
         public Pref(string key, T value, Settings.Scope scope = Settings.Scope.Project)
         {
@@ -113,6 +148,11 @@ namespace UnityEngine.ProBuilder
             get { return typeof(T); }
         }
 
+        public object GetDefaultValue()
+        {
+            return ValueWrapper<T>.DeepCopy(m_DefaultValue);
+        }
+
         public object GetValue()
         {
             return value;
@@ -127,7 +167,7 @@ namespace UnityEngine.ProBuilder
         {
             // we do want to allow null values
             if(value != null && !(value is T))
-                throw new ArgumentException("Value must be of type " + typeof(T));
+                throw new ArgumentException("Value must be of type " + typeof(T) + "\n" + key + " expecting value of type " + type +", received " + value.GetType());
             SetValue((T) value, saveProjectSettingsImmediately);
         }
 
@@ -152,6 +192,19 @@ namespace UnityEngine.ProBuilder
                 Settings.Save();
         }
 
+        public void Reset(bool saveProjectSettingsImmediately = false)
+        {
+            value = defaultValue;
+
+            if(saveProjectSettingsImmediately)
+                Settings.Save();
+        }
+
+        public T defaultValue
+        {
+            get { return ValueWrapper<T>.DeepCopy(m_DefaultValue); }
+        }
+
         public T value
         {
             get
@@ -159,6 +212,9 @@ namespace UnityEngine.ProBuilder
                 if (!m_Initialized)
                 {
                     m_Initialized = true;
+
+                    // DeepCopy uses EditorJsonUtility which is not permitted during construction
+                    m_DefaultValue = ValueWrapper<T>.DeepCopy(m_Value);
 
                     if (Settings.ContainsKey<T>(m_Key, m_Scope))
                         m_Value = Settings.Get<T>(m_Key, m_Scope);
@@ -182,24 +238,81 @@ namespace UnityEngine.ProBuilder
         /// Collect all registered UserSetting and HiddenSetting attributes.
         /// </summary>
         /// <returns></returns>
-        public static IEnumerable<IPref> FindUserSettings()
+        public static IEnumerable<IPref> FindUserSettings(SettingVisibility visibility, BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
         {
-            var attribs = typeof(UserSettingAttribute).Assembly.GetTypes()
-                .SelectMany(x => x.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
-                    .Where(prop => Attribute.IsDefined(prop, typeof(UserSettingAttribute)) || Attribute.IsDefined(prop, typeof(HiddenSettingAttribute))));
+            var attributes = typeof(UserSettings).Assembly.GetTypes()
+                .SelectMany(x => x.GetFields(flags)
+                    .Where(prop => Attribute.IsDefined(prop, typeof(UserSettingAttribute))));
 
-            List<IPref> preferences = new List<IPref>(attribs.Count());
+            var settings = new List<IPref>(attributes.Count());
 
-            foreach (var field in attribs)
+            foreach (var field in attributes)
             {
-                if (field.IsStatic && typeof(IPref).IsAssignableFrom(field.FieldType))
+                var userSetting = field.GetCustomAttribute<UserSettingAttribute>();
+
+                if (userSetting != null)
                 {
-                    preferences.Add((IPref)field.GetValue(null));
-                    continue;
+                    if (!field.IsStatic || !typeof(IPref).IsAssignableFrom(field.FieldType))
+                    {
+                        Log.Error("[UserSetting] is only valid on static fields implementing `interface IPref`. \"" + field.Name + "\" (" + field.FieldType + ")\n" + field.DeclaringType);
+                        continue;
+                    }
+
+                    settings.Add((IPref) field.GetValue(null));
+                }
+                else
+                {
+                    var hiddenSetting = field.GetCustomAttribute<HiddenSettingAttribute>();
+                    var pref = CreateGenericPref(hiddenSetting.key, hiddenSetting.scope, field);
+
+                    if(pref != null)
+                        settings.Add(pref);
+                    else
+                        Log.Error("Failed collecting [HiddenSetting] " + hiddenSetting.key + ".");
                 }
             }
 
-            return preferences;
+            if ((visibility & SettingVisibility.Unlisted) == SettingVisibility.Unlisted)
+            {
+                var prefFieldsSansAttribute = typeof(UserSettings).Assembly.GetTypes()
+                    .SelectMany(x => x.GetFields(flags))
+                        .Where(y => typeof(IPref).IsAssignableFrom(y.FieldType)
+                            && !(Attribute.IsDefined(y, typeof(UserSettingAttribute)) || Attribute.IsDefined(y, typeof(HiddenSettingAttribute))));
+
+
+                foreach (var field in prefFieldsSansAttribute)
+                {
+                    if (!field.IsStatic)
+                    {
+                        // It is not possible to retrieve an IPref object from an instance type with no attribute.
+#if PB_DEBUG
+                        Log.Error("Instance field \"" + field.Name + "\" is not registered with [HiddenSetting]. Was this intentional?\n" + field.FieldType + " in " + field.DeclaringType);
+#endif
+                        continue;
+                    }
+
+                    settings.Add((IPref)field.GetValue(null));
+                }
+            }
+
+            return settings;
+        }
+
+        static IPref CreateGenericPref(string key, Settings.Scope scope, FieldInfo field)
+        {
+            try
+            {
+                var type = field.FieldType;
+                if (typeof(IPref).IsAssignableFrom(type) && type.IsGenericType)
+                    type = type.GenericTypeArguments.FirstOrDefault();
+                var genericPrefClass = typeof(Pref<>).MakeGenericType(type);
+                var defaultValue = type.IsValueType ? Activator.CreateInstance(type) : null;
+                return (IPref) Activator.CreateInstance(genericPrefClass, new object[] { key, defaultValue, scope });
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

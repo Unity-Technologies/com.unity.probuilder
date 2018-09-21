@@ -11,6 +11,8 @@ namespace UnityEditor.ProBuilder
 	[System.Serializable]
 	sealed class EditorToolbar : ScriptableObject
 	{
+		EditorToolbar() { }
+
 		Pref<Vector2> m_ScrollPosition = new Pref<Vector2>("editor.scrollPosition", Vector2.zero);
 		public EditorWindow window;
 

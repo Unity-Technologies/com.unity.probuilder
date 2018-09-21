@@ -66,16 +66,6 @@ namespace UnityEditor.ProBuilder
 		{
 			keywords.Clear();
 
-			// collect instance fields/methods too, but only so we can throw a warning that they're invalid.
-			var fields = GetType().Assembly.GetTypes()
-				.SelectMany(x =>
-					x.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
-						.Where(prop => Attribute.IsDefined(prop, typeof(UserSettingAttribute))));
-
-			var methods = GetType().Assembly.GetTypes()
-				.SelectMany(x => x.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-					.Where(y => Attribute.IsDefined(y, typeof(UserSettingBlockAttribute))));
-
 			if(m_Settings != null)
 				m_Settings.Clear();
 			else
@@ -85,6 +75,16 @@ namespace UnityEditor.ProBuilder
 				m_SettingBlocks.Clear();
 			else
 				m_SettingBlocks = new Dictionary<string, List<MethodInfo>>();
+
+			// collect instance fields/methods too, but only so we can throw a warning that they're invalid.
+			var fields = GetType().Assembly.GetTypes()
+				.SelectMany(x =>
+					x.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
+						.Where(prop => Attribute.IsDefined(prop, typeof(UserSettingAttribute))));
+
+			var methods = GetType().Assembly.GetTypes()
+				.SelectMany(x => x.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+					.Where(y => Attribute.IsDefined(y, typeof(UserSettingBlockAttribute))));
 
 			foreach (var field in fields)
 			{
@@ -164,15 +164,15 @@ namespace UnityEditor.ProBuilder
 
 			menu.AddItem(new GUIContent("Reset All"), false, () =>
 			{
-				foreach (var preferenceField in m_Settings)
+				var sb = new System.Text.StringBuilder();
+				foreach (var pref in UserSettings.FindUserSettings())
 				{
-					foreach(var pref in preferenceField.Value)
-						pref.item2.Delete();
+					sb.AppendLine(pref.key + " (" + pref.GetValue() + " -> " + pref.GetDefaultValue() + ")");
+					pref.Reset();
 				}
 
+				Debug.Log(sb.ToString());
 				Settings.Save();
-				Settings.Reload();
-				SearchForUserSettingAttributes();
 			});
 			menu.ShowAsContext();
 		}

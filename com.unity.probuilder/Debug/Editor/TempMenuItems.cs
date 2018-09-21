@@ -2,18 +2,15 @@
 using System.Linq;
 using UnityEngine;
 using UnityEditor;
-using UnityEditor.ProBuilder;
-using UnityEngine.Assertions;
 using UnityEngine.ProBuilder;
 using UObject = UnityEngine.Object;
-using UnityEngine.ProBuilder.AssetIdRemapUtility;
-using UnityEngine.ProBuilder.MeshOperations;
 
 class TempMenuItems : EditorWindow
 {
-	Vector2 m_Scroll;
-	IEnumerable<IPref> m_Settings;
+	[HiddenSetting("TempMenuItems.m_Scroll", Settings.Scope.Project)]
+	static Vector2 m_Scroll;
 
+	IEnumerable<IPref> m_Settings;
 
 	[MenuItem("Tools/Temp Menu Item &d", false, 1000)]
 	static void MenuInit()

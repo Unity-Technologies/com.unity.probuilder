@@ -86,7 +86,7 @@ namespace UnityEditor.ProBuilder
 			if(meshOptimized != null)
 				meshOptimized(mesh, umesh);
 
-			if(EditorUtility.s_MeshesAreAssets)
+			if(EditorUtility.meshesAreAssets)
 				TryCacheMesh(mesh);
 
 			UnityEditor.EditorUtility.SetDirty(mesh);

@@ -54,8 +54,18 @@ namespace UnityEditor.ProBuilder
 		[UserSetting("Mesh Settings", "Collider Type", "What type of Collider to apply to new Shapes.")]
 		static Pref<ColliderType> s_ColliderType = new Pref<ColliderType>("newShapeColliderType", ColliderType.MeshCollider);
 
-		internal static Pref<bool> s_ExperimentalFeatures = new Pref<bool>("experimental.featuresEnabled", false, Settings.Scope.User);
-		internal static Pref<bool> s_MeshesAreAssets = new Pref<bool>("experimental.meshesAreAssets", false, Settings.Scope.Project);
+		static Pref<bool> s_ExperimentalFeatures = new Pref<bool>("experimental.featuresEnabled", false, Settings.Scope.User);
+		static Pref<bool> s_MeshesAreAssets = new Pref<bool>("experimental.meshesAreAssets", false, Settings.Scope.Project);
+
+		internal static bool meshesAreAssets
+		{
+			get { return s_ExperimentalFeatures && s_MeshesAreAssets; }
+		}
+
+		internal static bool experimentalFeaturesEnabled
+		{
+			get { return s_ExperimentalFeatures; }
+		}
 
 		[UserSettingBlock("Experimental", new[] { "store", "mesh", "asset", "experimental", "features", "enabled" })]
 		static void ExperimentalFeaturesSettings(string searchContext)
