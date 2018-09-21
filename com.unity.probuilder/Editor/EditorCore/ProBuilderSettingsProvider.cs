@@ -119,8 +119,11 @@ namespace UnityEditor.ProBuilder
 					m_SettingBlocks.Add(category, new List<MethodInfo>() { method });
 				}
 
-				foreach (var word in attrib.keywords)
-					keywords.Add(word);
+				if (attrib.keywords != null)
+				{
+					foreach (var word in attrib.keywords)
+						keywords.Add(word);
+				}
 			}
 
 			m_Categories = m_Settings.Keys.Union(m_SettingBlocks.Keys).ToList();

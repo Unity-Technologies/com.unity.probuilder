@@ -82,7 +82,7 @@ namespace UnityEditor.ProBuilder
 		// used for 'g' key shortcut to swap between object/vef modes
 		SelectMode m_LastComponentMode;
 		HandleAlignment m_PreviousHandleAlignment;
-		static Pref<Shortcut[]> s_Shortcuts = new Pref<Shortcut[]>("editor.sceneViewShortcuts", new Shortcut[0]);
+		static internal Pref<Shortcut[]> s_Shortcuts = new Pref<Shortcut[]>("editor.sceneViewShortcuts", Shortcut.DefaultShortcuts().ToArray());
 		GUIStyle m_CommandStyle;
 		Rect m_ElementModeToolbarRect = new Rect(3, 6, 128, 24);
 
@@ -92,7 +92,7 @@ namespace UnityEditor.ProBuilder
 		ScenePickerPreferences m_ScenePickerPreferences;
 
 		[UserSetting("Graphics", "Show Hover Highlight", "Highlight the mesh element nearest to the mouse cursor.")]
-		static Pref<bool> s_ShowHoverHighlight = new Pref<bool>("showPreselectionHighlight", true, Settings.Scope.User);
+		static Pref<bool> s_ShowHoverHighlight = new Pref<bool>("editor.showPreselectionHighlight", true, Settings.Scope.User);
 
 		Tool m_CurrentTool = Tool.Move;
 		Vector2 m_InitialMousePosition;
@@ -353,8 +353,6 @@ namespace UnityEditor.ProBuilder
 
 		internal void LoadPrefs()
 		{
-			PreferencesUpdater.CheckEditorPrefsVersion();
-
 			m_ScenePickerPreferences = new ScenePickerPreferences()
 			{
 				maxPointerDistance = ScenePickerPreferences.maxPointerDistanceFuzzy,
@@ -362,6 +360,10 @@ namespace UnityEditor.ProBuilder
 				selectionModifierBehavior = m_SelectModifierBehavior,
 				rectSelectMode = m_DragSelectRectMode
 			};
+
+			// workaround for old single-key shortcuts
+			if(s_Shortcuts.value == null || s_Shortcuts.value.Length < 1)
+				s_Shortcuts.SetValue(Shortcut.DefaultShortcuts().ToArray(), true);
 
 			m_SnapEnabled = ProGridsInterface.SnapEnabled();
 			m_SnapValue = ProGridsInterface.SnapValue();
@@ -1351,17 +1353,10 @@ namespace UnityEditor.ProBuilder
 			}
 
 			if (used)
-			{
-				if (usedShortcut.action != "Delete Face" &&
-				    usedShortcut.action != "Escape" &&
-				    usedShortcut.action != "Quick Apply Nodraw" &&
-				    usedShortcut.action != "Toggle Geometry Mode" &&
-				    usedShortcut.action != "Toggle Handle Pivot" &&
-				    usedShortcut.action != "Toggle Selection Mode")
-					EditorUtility.ShowNotification(usedShortcut.action);
-
 				Event.current.Use();
-			}
+
+			if(usedShortcut != null)
+				EditorUtility.ShowNotification(usedShortcut.action);
 
 			return used;
 		}
@@ -1458,6 +1453,8 @@ namespace UnityEditor.ProBuilder
 								pbo.CenterPivot(null);
 							}
 						}
+
+						EditorUtility.ShowNotification("Set Pivot");
 					}
 
 					return true;

@@ -149,7 +149,10 @@ namespace UnityEditor.ProBuilder
 			bool isNewVersion = currentVersion != oldVersion;
 
 			if (isNewVersion)
+			{
+				PreferencesUpdater.CheckEditorPrefsVersion();
 				s_StoredVersionInfo.SetValue(currentVersion, true);
+			}
 
 			bool assetStoreInstallFound = isNewVersion && PackageImporter.IsPreProBuilder4InProject();
 			bool deprecatedGuidsFound = isNewVersion && PackageImporter.DoesProjectContainDeprecatedGUIDs();

@@ -260,14 +260,14 @@ namespace UnityEditor.ProBuilder
 				value = GetMaterial(key);
 			else if (type == typeof(ColliderType))
 				value = GetEnum<ColliderType>(key);
-			else if (type == typeof(UnityEngine.Rendering.ShadowCastingMode))
-				value = GetEnum<UnityEngine.Rendering.ShadowCastingMode>(key);
-			else if (type == typeof(UnityEngine.ProBuilder.LogLevel))
-				value = GetEnum<UnityEngine.ProBuilder.LogLevel>(key);
-			else if (type == typeof(UnityEngine.ProBuilder.LogOutput))
-				value = GetEnum<UnityEngine.ProBuilder.LogOutput>(key);
-			else if (type == typeof(ProBuilder.SceneToolbarLocation))
-				value = GetEnum<ProBuilder.SceneToolbarLocation>(key);
+			else if (type == typeof(ShadowCastingMode))
+				value = GetEnum<ShadowCastingMode>(key);
+			else if (type == typeof(LogLevel))
+				value = GetEnum<LogLevel>(key);
+			else if (type == typeof(LogOutput))
+				value = GetEnum<LogOutput>(key);
+			else if (type == typeof(SceneToolbarLocation))
+				value = GetEnum<SceneToolbarLocation>(key);
 			else
 				return false;
 
