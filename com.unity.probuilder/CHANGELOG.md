@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.17] - 2018-09-20
+## [4.0.0-preview.18] - 2018-09-21
 
 ### Features
 
@@ -59,6 +59,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Simplify assembly definition files, merging ProBuilder.Core & ProBuilder.MeshOperations to single assembly.
 - Minor performance improvements to some common mesh editing actions.
 - Remove "Precise Element Selection" preference.
+
+### Changes since 4.0.0-preview.17
+
+- Fix Scene view shortcuts upgrading as `null`.
 
 ### Changes since 4.0.0-preview.16
 
