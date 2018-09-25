@@ -1,21 +1,20 @@
-﻿//#define PB_DEBUG
+﻿#define PB_DEBUG
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityEditor;
 
 namespace UnityEngine.ProBuilder
 {
     [Flags]
-    internal enum SettingVisibility
+    enum SettingVisibility
     {
         None = 0 << 0,
-        Visible = 1 << 0,
-        Hidden = 1 << 1,
-        Unlisted = 1 << 2
+        Visible = 1 << 0,     // [UserSetting(visibleInSettingsProvider = true)]
+        Hidden = 1 << 1,      // [UserSetting(visibleInSettingsProvider = false)]
+        Unlisted = 1 << 2,    // [SettingsKey()]
+        Unregistered = 1 << 3 // IPref with no attribute (used in debugging)
     }
 
     [AttributeUsage(AttributeTargets.Field)]
@@ -240,58 +239,77 @@ namespace UnityEngine.ProBuilder
         /// <returns></returns>
         public static IEnumerable<IPref> FindUserSettings(SettingVisibility visibility, BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
         {
-            var attributes = typeof(UserSettings).Assembly.GetTypes()
-                .SelectMany(x => x.GetFields(flags)
-                    .Where(prop => Attribute.IsDefined(prop, typeof(UserSettingAttribute))));
+            var loadedTypes = typeof(UserSettings).Assembly.GetTypes();
+            var loadedFields = loadedTypes.SelectMany(x => x.GetFields(flags));
+            var settings = new List<IPref>();
 
-            var settings = new List<IPref>(attributes.Count());
-
-            foreach (var field in attributes)
+            if ((visibility & (SettingVisibility.Visible | SettingVisibility.Unlisted)) > 0)
             {
-                var userSetting = field.GetCustomAttribute<UserSettingAttribute>();
+                var attributes = loadedFields.Where(prop => Attribute.IsDefined(prop, typeof(UserSettingAttribute)));
 
-                if (userSetting != null)
+                foreach (var field in attributes)
                 {
+                    var userSetting = field.GetCustomAttribute<UserSettingAttribute>();
+
                     if (!field.IsStatic || !typeof(IPref).IsAssignableFrom(field.FieldType))
                     {
-                        Log.Error("[UserSetting] is only valid on static fields implementing `interface IPref`. \"" + field.Name + "\" (" + field.FieldType + ")\n" + field.DeclaringType);
+                        Log.Error("[UserSetting] is only valid on static fields of a type implementing `interface IPref`. \"" + field.Name + "\" (" + field.FieldType + ")\n" + field.DeclaringType);
                         continue;
                     }
 
-                    settings.Add((IPref) field.GetValue(null));
-                }
-                else
-                {
-                    var hiddenSetting = field.GetCustomAttribute<HiddenSettingAttribute>();
-                    var pref = CreateGenericPref(hiddenSetting.key, hiddenSetting.scope, field);
+                    bool visible = userSetting.visibleInSettingsProvider;
 
-                    if(pref != null)
-                        settings.Add(pref);
-                    else
-                        Log.Error("Failed collecting [HiddenSetting] " + hiddenSetting.key + ".");
+                    if (visible && (visibility & SettingVisibility.Visible) == SettingVisibility.Visible)
+                        settings.Add((IPref)field.GetValue(null));
+                    else if (!visible && (visibility & SettingVisibility.Hidden) == SettingVisibility.Hidden)
+                        settings.Add((IPref)field.GetValue(null));
                 }
             }
 
             if ((visibility & SettingVisibility.Unlisted) == SettingVisibility.Unlisted)
             {
-                var prefFieldsSansAttribute = typeof(UserSettings).Assembly.GetTypes()
-                    .SelectMany(x => x.GetFields(flags))
-                        .Where(y => typeof(IPref).IsAssignableFrom(y.FieldType)
-                            && !(Attribute.IsDefined(y, typeof(UserSettingAttribute)) || Attribute.IsDefined(y, typeof(HiddenSettingAttribute))));
+                var settingsKeys = loadedFields.Where(y => Attribute.IsDefined(y, typeof(SettingsKeyAttribute)));
 
-
-                foreach (var field in prefFieldsSansAttribute)
+                foreach (var field in settingsKeys)
                 {
-                    if (!field.IsStatic)
+                    if (field.IsStatic)
                     {
-                        // It is not possible to retrieve an IPref object from an instance type with no attribute.
-#if PB_DEBUG
-                        Log.Error("Instance field \"" + field.Name + "\" is not registered with [HiddenSetting]. Was this intentional?\n" + field.FieldType + " in " + field.DeclaringType);
-#endif
-                        continue;
+                        settings.Add((IPref)field.GetValue(null));
                     }
+                    else
+                    {
+                        var settingAttribute = field.GetCustomAttribute<SettingsKeyAttribute>();
+                        var pref = CreateGenericPref(settingAttribute.key, settingAttribute.scope, field);
+                        if (pref != null)
+                            settings.Add(pref);
+                        else
+                            Log.Warning("Failed adding [SettingsKey] " + field.FieldType + "\"" + settingAttribute.key + "\" in " +  field.DeclaringType);
+                    }
+                }
+            }
 
-                    settings.Add((IPref)field.GetValue(null));
+            if ((visibility & SettingVisibility.Unregistered) == SettingVisibility.Unregistered)
+            {
+                var unregisterd = loadedFields.Where(y => typeof(IPref).IsAssignableFrom(y.FieldType)
+                    && !Attribute.IsDefined(y, typeof(SettingsKeyAttribute))
+                    && !Attribute.IsDefined(y, typeof(UserSettingAttribute)) );
+
+                foreach (var field in unregisterd)
+                {
+                    if (field.IsStatic)
+                    {
+                        settings.Add((IPref)field.GetValue(null));
+                    }
+                    else
+                    {
+#if PB_DEBUG
+                        Log.Warning("Found unregistered instance field: "
+                            + field.FieldType
+                            + " "
+                            + field.Name
+                            + " in " + field.DeclaringType);
+#endif
+                    }
                 }
             }
 

@@ -1,4 +1,8 @@
-﻿using System;
+﻿#if UNITY_2018_3_OR_NEWER
+#define SETTINGS_PROVIDER_ENABLED
+#endif
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -9,12 +13,25 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
+#if SETTINGS_PROVIDER_ENABLED
 	sealed class ProBuilderSettingsProvider : SettingsProvider
+#else
+	sealed class ProBuilderSettingsProvider
+#endif
 	{
+#if SETTINGS_PROVIDER_ENABLED
 		List<string> m_Categories;
 		Dictionary<string, List<SimpleTuple<GUIContent, IPref>>> m_Settings;
 		Dictionary<string, List<MethodInfo>> m_SettingBlocks;
 		static readonly string[] s_SearchContext = new string[1];
+#else
+		static List<string> m_Categories;
+		static Dictionary<string, List<SimpleTuple<GUIContent, IPref>>> m_Settings;
+		static Dictionary<string, List<MethodInfo>> m_SettingBlocks;
+		static readonly string[] s_SearchContext = new string[1];
+		static HashSet<string> keywords = new HashSet<string>();
+		static bool s_Initialized;
+#endif
 
 		static class Styles
 		{
@@ -50,6 +67,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
+#if SETTINGS_PROVIDER_ENABLED
 		[SettingsProvider]
 		static SettingsProvider CreateSettingsProvider()
 		{
@@ -61,8 +79,21 @@ namespace UnityEditor.ProBuilder
 		{
 			SearchForUserSettingAttributes();
 		}
+#else
+		static void Init()
+		{
+			if (s_Initialized)
+				return;
+			s_Initialized = true;
+			SearchForUserSettingAttributes();
+		}
+#endif
 
+#if SETTINGS_PROVIDER_ENABLED
 		void SearchForUserSettingAttributes()
+#else
+		static void SearchForUserSettingAttributes()
+#endif
 		{
 			keywords.Clear();
 
@@ -76,15 +107,15 @@ namespace UnityEditor.ProBuilder
 			else
 				m_SettingBlocks = new Dictionary<string, List<MethodInfo>>();
 
-			// collect instance fields/methods too, but only so we can throw a warning that they're invalid.
-			var fields = GetType().Assembly.GetTypes()
-				.SelectMany(x =>
-					x.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
-						.Where(prop => Attribute.IsDefined(prop, typeof(UserSettingAttribute))));
+			var types = typeof(ProBuilderSettingsProvider).Assembly.GetTypes();
 
-			var methods = GetType().Assembly.GetTypes()
-				.SelectMany(x => x.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-					.Where(y => Attribute.IsDefined(y, typeof(UserSettingBlockAttribute))));
+			// collect instance fields/methods too, but only so we can throw a warning that they're invalid.
+			var fields = types.SelectMany(x =>
+				x.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
+					.Where(prop => Attribute.IsDefined(prop, typeof(UserSettingAttribute))));
+
+			var methods = types.SelectMany(x => x.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+				.Where(y => Attribute.IsDefined(y, typeof(UserSettingBlockAttribute))));
 
 			foreach (var field in fields)
 			{
@@ -150,6 +181,7 @@ namespace UnityEditor.ProBuilder
 			m_Categories.Sort();
 		}
 
+#if SETTINGS_PROVIDER_ENABLED
 		public override void OnTitleBarGUI()
 		{
 			Styles.Init();
@@ -157,6 +189,7 @@ namespace UnityEditor.ProBuilder
 			if (GUILayout.Button(GUIContent.none, Styles.settingsGizmo))
 				DoContextMenu();
 		}
+#endif
 
 		void DoContextMenu()
 		{
@@ -165,7 +198,7 @@ namespace UnityEditor.ProBuilder
 			menu.AddItem(new GUIContent("Reset All"), false, () =>
 			{
 				var sb = new System.Text.StringBuilder();
-				foreach (var pref in UserSettings.FindUserSettings())
+				foreach (var pref in UserSettings.FindUserSettings(SettingVisibility.Visible | SettingVisibility.Unlisted))
 				{
 					sb.AppendLine(pref.key + " (" + pref.GetValue() + " -> " + pref.GetDefaultValue() + ")");
 					pref.Reset();
@@ -177,17 +210,27 @@ namespace UnityEditor.ProBuilder
 			menu.ShowAsContext();
 		}
 
+#if SETTINGS_PROVIDER_ENABLED
 		public override void OnGUI(string searchContext)
+#else
+		[PreferenceItem("ProBuilder")]
+		static void OnGUI()
+#endif
 		{
 			Styles.Init();
 
-			EditorGUI.BeginChangeCheck();
-			EditorGUIUtility.labelWidth = 240;
-
-			GUILayout.BeginVertical(Styles.settingsArea);
-
+#if SETTINGS_PROVIDER_ENABLED
 			var hasSearchContext = !string.IsNullOrEmpty(searchContext);
 			s_SearchContext[0] = searchContext;
+#else
+			Init();
+			const string searchContext = "";
+			const bool hasSearchContext = false;
+#endif
+
+			EditorGUI.BeginChangeCheck();
+			EditorGUIUtility.labelWidth = 240;
+			GUILayout.BeginVertical(Styles.settingsArea);
 
 			if (hasSearchContext)
 			{
@@ -238,7 +281,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		void DoPreferenceField(GUIContent title, IPref pref)
+		static void DoPreferenceField(GUIContent title, IPref pref)
 		{
 			if (pref is Pref<float>)
 			{

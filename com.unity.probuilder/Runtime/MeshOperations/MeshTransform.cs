@@ -21,6 +21,9 @@
 			{
 				Vector3[] positions = mesh.positionsInternal;
 
+				if (positions == null || positions.Length < 3)
+					return;
+
 				foreach (int i in indexes)
 					center += positions[i];
 

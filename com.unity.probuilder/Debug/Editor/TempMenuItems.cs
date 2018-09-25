@@ -7,7 +7,7 @@ using UObject = UnityEngine.Object;
 
 class TempMenuItems : EditorWindow
 {
-	[HiddenSetting("TempMenuItems.m_Scroll", Settings.Scope.Project)]
+	[SettingsKey("TempMenuItems.m_Scroll", Settings.Scope.Project)]
 	static Vector2 m_Scroll;
 
 	IEnumerable<IPref> m_Settings;
@@ -20,7 +20,7 @@ class TempMenuItems : EditorWindow
 
 	void OnEnable()
 	{
-		m_Settings = UserSettings.FindUserSettings();
+		m_Settings = UserSettings.FindUserSettings(SettingVisibility.Visible | SettingVisibility.Unlisted);
 	}
 
 
