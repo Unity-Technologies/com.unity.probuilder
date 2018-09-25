@@ -23,9 +23,6 @@ namespace UnityEditor.ProBuilder
 		Dictionary<string, List<SimpleTuple<GUIContent, IPref>>> m_Settings;
 		Dictionary<string, List<MethodInfo>> m_SettingBlocks;
 		static readonly string[] s_SearchContext = new string[1];
-		static Pref<bool> s_ShowHiddenSettings = new Pref<bool>("settings.showHidden", false, Settings.Scope.User);
-		static Pref<bool> s_ShowUnregisteredSettings = new Pref<bool>("settings.showUnregistered", false, Settings.Scope.User);
-		static Pref<bool> s_ListByKey = new Pref<bool>("settings.listByKey", false, Settings.Scope.User);
 #else
 		static List<string> m_Categories;
 		static Dictionary<string, List<SimpleTuple<GUIContent, IPref>>> m_Settings;
@@ -34,6 +31,10 @@ namespace UnityEditor.ProBuilder
 		static HashSet<string> keywords = new HashSet<string>();
 		static bool s_Initialized;
 #endif
+
+		static Pref<bool> s_ShowHiddenSettings = new Pref<bool>("settings.showHidden", false, Settings.Scope.User);
+		static Pref<bool> s_ShowUnregisteredSettings = new Pref<bool>("settings.showUnregistered", false, Settings.Scope.User);
+		static Pref<bool> s_ListByKey = new Pref<bool>("settings.listByKey", false, Settings.Scope.User);
 
 		static class Styles
 		{
@@ -280,19 +281,13 @@ namespace UnityEditor.ProBuilder
 		{
 			Styles.Init();
 
-#if SETTINGS_PROVIDER_ENABLED
-			var hasSearchContext = !string.IsNullOrEmpty(searchContext);
-			s_SearchContext[0] = searchContext;
-#else
-			Init();
-			const string searchContext = "";
-			const bool hasSearchContext = false;
-#endif
-
 			EditorGUI.BeginChangeCheck();
-			EditorGUIUtility.labelWidth = 240;
 			GUILayout.BeginVertical(Styles.settingsArea);
 
+#if SETTINGS_PROVIDER_ENABLED
+			EditorGUIUtility.labelWidth = 240;
+			var hasSearchContext = !string.IsNullOrEmpty(searchContext);
+			s_SearchContext[0] = searchContext;
 			if (hasSearchContext)
 			{
 				// todo - Improve search comparison
@@ -308,6 +303,10 @@ namespace UnityEditor.ProBuilder
 					block.Invoke(null, s_SearchContext);
 			}
 			else
+#else
+			Init();
+#endif
+
 			{
 				foreach (var key in m_Categories)
 				{

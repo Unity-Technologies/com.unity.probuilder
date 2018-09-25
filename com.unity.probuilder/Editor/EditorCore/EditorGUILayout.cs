@@ -253,6 +253,8 @@ namespace UnityEditor.ProBuilder.UI
 
 		internal static bool MatchSearchGroups(string searchContext, string content)
 		{
+			if (searchContext == null)
+				return true;
 			var ctx = searchContext.Trim();
 			if (string.IsNullOrEmpty(ctx))
 				return true;
