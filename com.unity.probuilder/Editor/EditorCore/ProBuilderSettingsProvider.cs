@@ -25,6 +25,7 @@ namespace UnityEditor.ProBuilder
 		static readonly string[] s_SearchContext = new string[1];
 		static Pref<bool> s_ShowHiddenSettings = new Pref<bool>("settings.showHidden", false, Settings.Scope.User);
 		static Pref<bool> s_ShowUnregisteredSettings = new Pref<bool>("settings.showUnregistered", false, Settings.Scope.User);
+		static Pref<bool> s_ListByKey = new Pref<bool>("settings.listByKey", false, Settings.Scope.User);
 #else
 		static List<string> m_Categories;
 		static Dictionary<string, List<SimpleTuple<GUIContent, IPref>>> m_Settings;
@@ -145,19 +146,14 @@ namespace UnityEditor.ProBuilder
 				}
 
 				var category = string.IsNullOrEmpty(attrib.category) ? "Uncategorized" : attrib.category;
+				var content = s_ListByKey ? new GUIContent(pref.key) : attrib.title;
 
 				List<SimpleTuple<GUIContent, IPref>> settings;
 
 				if (m_Settings.TryGetValue(category, out settings))
-					settings.Add(new SimpleTuple<GUIContent, IPref>(attrib.title, pref));
+					settings.Add(new SimpleTuple<GUIContent, IPref>(content, pref));
 				else
-					m_Settings.Add(category, new List<SimpleTuple<GUIContent, IPref>>() { new SimpleTuple<GUIContent, IPref>(attrib.title, pref) });
-
-				if(attrib.title != null && !string.IsNullOrEmpty(attrib.title.text))
-				{
-					foreach (var word in attrib.title.text.Split(' '))
-						keywords.Add(word);
-				}
+					m_Settings.Add(category, new List<SimpleTuple<GUIContent, IPref>>() { new SimpleTuple<GUIContent, IPref>(content, pref) });
 			}
 
 			foreach (var method in methods)
@@ -202,6 +198,20 @@ namespace UnityEditor.ProBuilder
 					unregistered.Add(new SimpleTuple<GUIContent, IPref>( new GUIContent(pref.key), pref ));
 			}
 
+			foreach (var cat in m_Settings)
+			{
+				foreach (var entry in cat.Value)
+				{
+					var content = entry.item1;
+
+					if(content != null && !string.IsNullOrEmpty(content.text))
+					{
+						foreach (var word in content.text.Split(' '))
+							keywords.Add(word);
+					}
+				}
+			}
+
 			m_Categories = m_Settings.Keys.Union(m_SettingBlocks.Keys).ToList();
 			m_Categories.Sort();
 		}
@@ -223,6 +233,14 @@ namespace UnityEditor.ProBuilder
 			if (EditorPrefs.GetBool("DeveloperMode", false))
 			{
 				menu.AddItem(new GUIContent("Refresh"), false, SearchForUserSettingAttributes);
+
+				menu.AddSeparator("");
+
+				menu.AddItem(new GUIContent("List Settings By Key"), s_ListByKey, () =>
+				{
+					s_ListByKey.SetValue(!s_ListByKey, true);
+					SearchForUserSettingAttributes();
+				});
 
 				menu.AddSeparator("");
 
