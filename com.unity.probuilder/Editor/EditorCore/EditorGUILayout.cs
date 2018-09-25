@@ -2,6 +2,7 @@
 using System.Linq;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.UI
 {
@@ -252,11 +253,140 @@ namespace UnityEditor.ProBuilder.UI
 
 		internal static bool MatchSearchGroups(string searchContext, string content)
 		{
-			if (string.IsNullOrWhiteSpace(searchContext))
+			var ctx = searchContext.Trim();
+			if (string.IsNullOrEmpty(ctx))
 				return true;
 			var split = searchContext.Split(' ');
-			return split.Any(x => !string.IsNullOrWhiteSpace(x) && content.IndexOf(x, StringComparison.InvariantCultureIgnoreCase) > -1);
+			return split.Any(x => !string.IsNullOrEmpty(x) && content.IndexOf(x, StringComparison.InvariantCultureIgnoreCase) > -1);
 		}
 
+		public static float SettingsSlider(GUIContent content, Pref<float> value, float min, float max, string searchContext)
+		{
+			if (!MatchSearchGroups(searchContext, content.text))
+				return value;
+			var res = UnityEditor.EditorGUILayout.Slider(content, value, min, max);
+			DoResetContextMenuForLastRect(value);
+			return res;
+		}
+
+		public static float SettingsSlider(string content, Pref<float> value, float min, float max, string searchContext)
+		{
+			if (!MatchSearchGroups(searchContext, content))
+				return value;
+			var res = UnityEditor.EditorGUILayout.Slider(content, value, min, max);
+			DoResetContextMenuForLastRect(value);
+			return res;
+		}
+
+		internal static float SettingsFloatField(GUIContent title, Pref<float> value, string searchContext)
+		{
+			if(!MatchSearchGroups(searchContext, title.text))
+				return value;
+			var res = UnityEditor.EditorGUILayout.FloatField(title, value);
+			DoResetContextMenuForLastRect(value);
+			return res;
+		}
+
+		internal static float SettingsFloatField(string title, Pref<float> value, string searchContext)
+		{
+			if(!MatchSearchGroups(searchContext, title))
+				return value;
+			var res = UnityEditor.EditorGUILayout.FloatField(title, value);
+			DoResetContextMenuForLastRect(value);
+			return res;
+		}
+
+		internal static int SettingsIntField(GUIContent title, Pref<int> value, string searchContext)
+		{
+			if(!MatchSearchGroups(searchContext, title.text))
+				return value;
+			var res = UnityEditor.EditorGUILayout.IntField(title, value);
+			DoResetContextMenuForLastRect(value);
+			return res;
+		}
+
+		internal static int SettingsIntField(string title, Pref<int> value, string searchContext)
+		{
+			if(!MatchSearchGroups(searchContext, title))
+				return value;
+			var res = UnityEditor.EditorGUILayout.IntField(title, value);
+			DoResetContextMenuForLastRect(value);
+			return res;
+		}
+
+		internal static bool SettingsToggle(GUIContent title, Pref<bool> value, string searchContext)
+		{
+			if(!MatchSearchGroups(searchContext, title.text))
+				return value;
+			var res = UnityEditor.EditorGUILayout.Toggle(title, value);
+			DoResetContextMenuForLastRect(value);
+			return res;
+		}
+
+		internal static bool SettingsToggle(string title, Pref<bool> value, string searchContext)
+		{
+			if(!MatchSearchGroups(searchContext, title))
+				return value;
+			var res = UnityEditor.EditorGUILayout.Toggle(title, value);
+			DoResetContextMenuForLastRect(value);
+			return res;
+		}
+
+		internal static string SettingsTextField(GUIContent title, Pref<string> value, string searchContext)
+		{
+			if(!MatchSearchGroups(searchContext, title.text))
+				return value;
+			var res = UnityEditor.EditorGUILayout.TextField(title, value);
+			DoResetContextMenuForLastRect(value);
+			return res;
+		}
+
+		internal static string SettingsTextField(string title, Pref<string> value, string searchContext)
+		{
+			if(!MatchSearchGroups(searchContext, title))
+				return value;
+			var res = UnityEditor.EditorGUILayout.TextField(title, value);
+			DoResetContextMenuForLastRect(value);
+			return res;
+		}
+
+		internal static Color SettingsColorField(GUIContent title, Pref<Color> value, string searchContext)
+		{
+			if(!MatchSearchGroups(searchContext, title.text))
+				return value;
+			var res = UnityEditor.EditorGUILayout.ColorField(title, value);
+			DoResetContextMenuForLastRect(value);
+			return res;
+		}
+
+		internal static Color SettingsColorField(string title, Pref<Color> value, string searchContext)
+		{
+			if (!MatchSearchGroups(searchContext, title))
+				return value;
+			var res = UnityEditor.EditorGUILayout.ColorField(title, value);
+			DoResetContextMenuForLastRect(value);
+			return res;
+		}
+
+		internal static void DoResetContextMenuForLastRect(IPref pref)
+		{
+			DoResetContextMenu(GUILayoutUtility.GetLastRect(), pref);
+		}
+
+		internal static void DoResetContextMenu(Rect rect, IPref pref)
+		{
+			var evt = Event.current;
+
+			if (evt.type == EventType.ContextClick && rect.Contains(evt.mousePosition))
+			{
+				var menu = new GenericMenu();
+				menu.AddItem(new GUIContent("Reset " + pref.key), false, () =>
+				{
+					pref.Reset(true);
+					UnityEditor.ProBuilder.Settings.Save();
+				});
+				menu.ShowAsContext();
+			}
+		}
 	}
 }

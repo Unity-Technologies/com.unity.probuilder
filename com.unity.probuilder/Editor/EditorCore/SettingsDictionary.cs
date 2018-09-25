@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using UnityEditor;
+using UnityEngine;
 
-namespace UnityEngine.ProBuilder
+namespace UnityEditor.ProBuilder
 {
 	[Serializable]
 	sealed class ValueWrapper<T>
@@ -116,7 +115,6 @@ namespace UnityEngine.ProBuilder
 
 			if (!dictionary.TryGetValue(typeof(T).AssemblyQualifiedName, out entries) || !entries.ContainsKey(key))
 				return;
-			Debug.Log("removing: " + key);
 
 			entries.Remove(key);
 		}

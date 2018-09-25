@@ -54,7 +54,7 @@ namespace UnityEditor.ProBuilder
 		[UserSettingBlock("UV Editor", new [] { "grid", "size" } )]
 		static void UVEditorSettings(string searchContext)
 		{
-			s_GridSnapIncrement.value = UI.EditorGUILayout.SearchableSlider(UI.EditorGUIUtility.TempContent("Grid Size"), s_GridSnapIncrement, .015625f, 2f, searchContext);
+			s_GridSnapIncrement.value = UI.EditorGUILayout.SettingsSlider(UI.EditorGUIUtility.TempContent("Grid Size"), s_GridSnapIncrement, .015625f, 2f, searchContext);
 		}
 
 		static readonly Color DRAG_BOX_COLOR_BASIC = new Color(0f, .7f, 1f, .2f);

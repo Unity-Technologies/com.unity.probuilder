@@ -2,9 +2,9 @@
 
 using System;
 using System.IO;
-using UnityEditor;
+using UnityEngine;
 
-namespace UnityEngine.ProBuilder
+namespace UnityEditor.ProBuilder
 {
 	[Serializable]
 	sealed class Settings

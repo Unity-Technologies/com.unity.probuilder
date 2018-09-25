@@ -45,29 +45,40 @@ namespace UnityEditor.ProBuilder
 		})]
 		static void HandleColorPreferences(string searchContext)
 		{
-			s_UseUnityColors.value = UI.EditorGUILayout.SearchableToggle("Use Unity Colors", s_UseUnityColors.value, searchContext);
+			s_UseUnityColors.value = UI.EditorGUILayout.SettingsToggle("Use Unity Colors", s_UseUnityColors, searchContext);
 
 			if (!s_UseUnityColors.value)
 			{
 				using (new UI.EditorStyles.IndentedBlock())
 				{
-					s_DitherFaceHandle.value = UI.EditorGUILayout.SearchableToggle("Dither Face Overlay", s_DitherFaceHandle, searchContext);
-					s_WireframeColorPref.value = UI.EditorGUILayout.SearchableColorField("Wireframe", s_WireframeColorPref, searchContext);
-					s_PreselectionColorPref.value = UI.EditorGUILayout.SearchableColorField("Preselection", s_PreselectionColorPref, searchContext);
-					s_SelectedFaceColorPref.value = UI.EditorGUILayout.SearchableColorField("Selected Face Color", s_SelectedFaceColorPref, searchContext);
-					s_UnselectedEdgeColorPref.value = UI.EditorGUILayout.SearchableColorField("Unselected Edge Color", s_UnselectedEdgeColorPref, searchContext);
-					s_SelectedEdgeColorPref.value = UI.EditorGUILayout.SearchableColorField("Selected Edge Color", s_SelectedEdgeColorPref, searchContext);
-					s_UnselectedVertexColorPref.value = UI.EditorGUILayout.SearchableColorField("Unselected Vertex Color", s_UnselectedVertexColorPref, searchContext);
-					s_SelectedVertexColorPref.value = UI.EditorGUILayout.SearchableColorField("Selected Vertex Color", s_SelectedVertexColorPref, searchContext);
+					s_DitherFaceHandle.value = UI.EditorGUILayout.SettingsToggle("Dither Face Overlay", s_DitherFaceHandle, searchContext);
+					s_WireframeColorPref.value = UI.EditorGUILayout.SettingsColorField("Wireframe", s_WireframeColorPref, searchContext);
+					s_PreselectionColorPref.value = UI.EditorGUILayout.SettingsColorField("Preselection", s_PreselectionColorPref, searchContext);
+					s_SelectedFaceColorPref.value = UI.EditorGUILayout.SettingsColorField("Selected Face Color", s_SelectedFaceColorPref, searchContext);
+					s_UnselectedEdgeColorPref.value = UI.EditorGUILayout.SettingsColorField("Unselected Edge Color", s_UnselectedEdgeColorPref, searchContext);
+					s_SelectedEdgeColorPref.value = UI.EditorGUILayout.SettingsColorField("Selected Edge Color", s_SelectedEdgeColorPref, searchContext);
+					s_UnselectedVertexColorPref.value = UI.EditorGUILayout.SettingsColorField("Unselected Vertex Color", s_UnselectedVertexColorPref, searchContext);
+					s_SelectedVertexColorPref.value = UI.EditorGUILayout.SettingsColorField("Selected Vertex Color", s_SelectedVertexColorPref, searchContext);
 				}
 			}
 
-			s_VertexPointSize.value = UI.EditorGUILayout.SearchableSlider("Vertex Size", s_VertexPointSize, 1f, 10f, searchContext);
+			s_VertexPointSize.value = UI.EditorGUILayout.SettingsSlider("Vertex Size", s_VertexPointSize, 1f, 10f, searchContext);
+
 			bool geoLine = BuiltinMaterials.geometryShadersSupported;
-			GUI.enabled = geoLine;
-			s_EdgeLineSize.value = UI.EditorGUILayout.SearchableSlider("Line Size", geoLine ? s_EdgeLineSize : 0f, 0f, 3f, searchContext);
-			s_WireframeLineSize.value = UI.EditorGUILayout.SearchableSlider("Wireframe Size", geoLine ? s_WireframeLineSize : 0f, 0f, 3f, searchContext);
-			GUI.enabled = true;
+
+			if (geoLine)
+			{
+				s_EdgeLineSize.value = UI.EditorGUILayout.SettingsSlider("Line Size", s_EdgeLineSize, 0f, 3f, searchContext);
+				s_WireframeLineSize.value = UI.EditorGUILayout.SettingsSlider("Wireframe Size", s_WireframeLineSize, 0f, 3f, searchContext);
+			}
+			else
+			{
+				GUI.enabled = false;
+				UI.EditorGUILayout.SearchableSlider("Line Size", 0f, 0f, 3f, searchContext);
+				UI.EditorGUILayout.SearchableSlider("Wireframe Size", 0f, 0f, 3f, searchContext);
+				GUI.enabled = true;
+			}
+
 		}
 
 		static Color s_FaceSelectedColor;

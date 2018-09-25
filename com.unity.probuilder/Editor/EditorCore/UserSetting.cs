@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEngine;
+using UnityEngine.ProBuilder;
 
-namespace UnityEngine.ProBuilder
+namespace UnityEditor.ProBuilder
 {
     [Flags]
     enum SettingVisibility
@@ -249,7 +251,7 @@ namespace UnityEngine.ProBuilder
 
                 foreach (var field in attributes)
                 {
-                    var userSetting = field.GetCustomAttribute<UserSettingAttribute>();
+                    var userSetting = (UserSettingAttribute) Attribute.GetCustomAttribute(field, typeof(UserSettingAttribute));
 
                     if (!field.IsStatic || !typeof(IPref).IsAssignableFrom(field.FieldType))
                     {
@@ -278,7 +280,7 @@ namespace UnityEngine.ProBuilder
                     }
                     else
                     {
-                        var settingAttribute = field.GetCustomAttribute<SettingsKeyAttribute>();
+                        var settingAttribute = (SettingsKeyAttribute) Attribute.GetCustomAttribute(field, typeof(SettingsKeyAttribute));
                         var pref = CreateGenericPref(settingAttribute.key, settingAttribute.scope, field);
                         if (pref != null)
                             settings.Add(pref);
@@ -322,7 +324,7 @@ namespace UnityEngine.ProBuilder
             {
                 var type = field.FieldType;
                 if (typeof(IPref).IsAssignableFrom(type) && type.IsGenericType)
-                    type = type.GenericTypeArguments.FirstOrDefault();
+                    type = type.GetGenericArguments().FirstOrDefault();
                 var genericPrefClass = typeof(Pref<>).MakeGenericType(type);
                 var defaultValue = type.IsValueType ? Activator.CreateInstance(type) : null;
                 return (IPref) Activator.CreateInstance(genericPrefClass, new object[] { key, defaultValue, scope });

@@ -125,7 +125,7 @@ namespace UnityEditor.ProBuilder
 				MethodInfo set = typeof(Settings).GetMethod("Set", BindingFlags.Static | BindingFlags.Public);
 
 #pragma warning disable 618
-				if (!string.IsNullOrWhiteSpace(map.oldKey) && PreferencesInternal.TryGetValue(map.oldKey, map.type, out val))
+				if (!string.IsNullOrEmpty(map.oldKey) && PreferencesInternal.TryGetValue(map.oldKey, map.type, out val))
 				{
 					try
 					{

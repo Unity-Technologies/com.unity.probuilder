@@ -17,7 +17,7 @@ namespace UnityEditor.ProBuilder
         [UserSettingBlock("Shortcuts")]
         static void ShortcutSettings(string searchContext)
         {
-	        if (!string.IsNullOrWhiteSpace(searchContext))
+	        if (!string.IsNullOrEmpty(searchContext))
 		        return;
 
 	        s_Shortcuts = ProBuilderEditor.s_Shortcuts;
@@ -33,6 +33,8 @@ namespace UnityEditor.ProBuilder
 	        ShortcutEditPanel();
 	        GUILayout.EndVertical();
 	        GUILayout.EndHorizontal();
+
+	        UI.EditorGUILayout.DoResetContextMenuForLastRect(ProBuilderEditor.s_Shortcuts);
         }
 
 		static void ShortcutSelectPanel()

@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityEditor;
-using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
@@ -125,7 +123,7 @@ namespace UnityEditor.ProBuilder
 					continue;
 				}
 
-				var attrib = (UserSettingAttribute)field.GetCustomAttribute(typeof(UserSettingAttribute));
+				var attrib = (UserSettingAttribute) Attribute.GetCustomAttribute(field, typeof(UserSettingAttribute));
 				var pref = (IPref)field.GetValue(null);
 
 				if (pref == null)
@@ -149,7 +147,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach (var method in methods)
 			{
-				var attrib = (UserSettingBlockAttribute)method.GetCustomAttribute(typeof(UserSettingBlockAttribute));
+				var attrib = (UserSettingBlockAttribute) Attribute.GetCustomAttribute(method, typeof(UserSettingBlockAttribute));
 				var category = string.IsNullOrEmpty(attrib.category) ? "Uncategorized" : attrib.category;
 				List<MethodInfo> blocks;
 
@@ -162,13 +160,9 @@ namespace UnityEditor.ProBuilder
 				}
 
 				if (m_SettingBlocks.TryGetValue(category, out blocks))
-				{
 					blocks.Add(method);
-				}
 				else
-				{
 					m_SettingBlocks.Add(category, new List<MethodInfo>() { method });
-				}
 
 				if (attrib.keywords != null)
 				{
@@ -197,14 +191,12 @@ namespace UnityEditor.ProBuilder
 
 			menu.AddItem(new GUIContent("Reset All"), false, () =>
 			{
-				var sb = new System.Text.StringBuilder();
-				foreach (var pref in UserSettings.FindUserSettings(SettingVisibility.Visible | SettingVisibility.Unlisted))
-				{
-					sb.AppendLine(pref.key + " (" + pref.GetValue() + " -> " + pref.GetDefaultValue() + ")");
-					pref.Reset();
-				}
+				if (!UnityEditor.EditorUtility.DisplayDialog("Reset All Settings", "Reset all ProBuilder settings? This is not undo-able.", "Reset", "Cancel"))
+					return;
 
-				Debug.Log(sb.ToString());
+				foreach (var pref in UserSettings.FindUserSettings(SettingVisibility.Visible | SettingVisibility.Unlisted))
+					pref.Reset();
+
 				Settings.Save();
 			});
 			menu.ShowAsContext();
@@ -239,7 +231,7 @@ namespace UnityEditor.ProBuilder
 
 				foreach (var settingField in m_Settings)
 				foreach (var setting in settingField.Value)
-					if (searchKeywords.Any(x => !string.IsNullOrWhiteSpace(x) && setting.item1.text.IndexOf(x, StringComparison.InvariantCultureIgnoreCase) > -1))
+					if (searchKeywords.Any(x => !string.IsNullOrEmpty(x) && setting.item1.text.IndexOf(x, StringComparison.InvariantCultureIgnoreCase) > -1))
 						DoPreferenceField(setting.item1, setting.item2);
 
 				foreach (var settingsBlock in m_SettingBlocks)
@@ -281,7 +273,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		static void DoPreferenceField(GUIContent title, IPref pref)
+		internal static void DoPreferenceField(GUIContent title, IPref pref)
 		{
 			if (pref is Pref<float>)
 			{
@@ -312,7 +304,7 @@ namespace UnityEditor.ProBuilder
 			{
 				Enum val = (Enum)pref.GetValue();
 				EditorGUI.BeginChangeCheck();
-				if (pref.type.GetCustomAttribute<FlagsAttribute>() != null)
+				if (Attribute.IsDefined(pref.type, typeof(FlagsAttribute)))
 					val = EditorGUILayout.EnumFlagsField(title, val);
 				else
 					val = EditorGUILayout.EnumPopup(title, val);
@@ -336,19 +328,7 @@ namespace UnityEditor.ProBuilder
 				GUILayout.EndHorizontal();
 			}
 
-			var evt = Event.current;
-
-			if (evt.type == EventType.ContextClick && GUILayoutUtility.GetLastRect().Contains(evt.mousePosition))
-			{
-				var menu = new GenericMenu();
-				menu.AddItem(new GUIContent("Reset " + pref.key), false, () =>
-				{
-					pref.Delete(true);
-					Settings.Load();
-					SearchForUserSettingAttributes();
-				});
-				menu.ShowAsContext();
-			}
+			UI.EditorGUILayout.DoResetContextMenuForLastRect(pref);
 		}
 	}
 }

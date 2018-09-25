@@ -53,7 +53,7 @@ namespace UnityEditor.ProBuilder
 		static void UnwrapSettingDefaults(string searchContext)
 		{
 			Styles.Init();
-			var isSearching = !string.IsNullOrWhiteSpace(searchContext);
+			var isSearching = !string.IsNullOrEmpty(searchContext);
 
 			if(!isSearching)
 				Styles.unwrapSettingsFoldout = EditorGUILayout.Foldout(Styles.unwrapSettingsFoldout, "Lightmap UVs Settings");
@@ -80,6 +80,8 @@ namespace UnityEditor.ProBuilder
 						GUILayout.EndHorizontal();
 					}
 				}
+
+				UI.EditorGUILayout.DoResetContextMenuForLastRect(s_UnwrapParameters);
 
 				if (EditorGUI.EndChangeCheck())
 					s_UnwrapParameters.value = unwrap;
