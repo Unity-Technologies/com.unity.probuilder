@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
@@ -35,7 +36,6 @@ namespace UnityEditor.ProBuilder
 				return value;
 			var str = Serialize(value);
 			return Deserialize(str);
-			return value;
 		}
 	}
 
@@ -55,12 +55,11 @@ namespace UnityEditor.ProBuilder
 		List<SettingsKeyValuePair> m_DictionaryValues = new List<SettingsKeyValuePair>();
 #pragma warning restore 0649
 
-		internal Dictionary<string, Dictionary<string, string>> dictionary = new Dictionary<string, Dictionary<string, string>>();
+		internal Dictionary<Type, Dictionary<string, string>> dictionary = new Dictionary<Type, Dictionary<string, string>>();
 
 		public bool ContainsKey<T>(string key)
 		{
-			var type = typeof(T).AssemblyQualifiedName;
-			return dictionary.ContainsKey(type) && dictionary[type].ContainsKey(key);
+			return dictionary.ContainsKey(typeof(T)) && dictionary[typeof(T)].ContainsKey(key);
 		}
 
 		public void Set<T>(string key, T value)
@@ -75,10 +74,15 @@ namespace UnityEditor.ProBuilder
 
 		internal void SetJson(string type, string key, string value)
 		{
+			var typeValue = Type.GetType(type);
+
+			if(typeValue == null)
+				throw new ArgumentException("\"type\" must be an assembly qualified type name.");
+
 			Dictionary<string, string> entries;
 
-			if (!dictionary.TryGetValue(type, out entries))
-				dictionary.Add(type, entries = new Dictionary<string, string>());
+			if (!dictionary.TryGetValue(typeValue, out entries))
+				dictionary.Add(typeValue, entries = new Dictionary<string, string>());
 
 			if (entries.ContainsKey(key))
 				entries[key] = value;
@@ -91,10 +95,9 @@ namespace UnityEditor.ProBuilder
 			if (string.IsNullOrEmpty(key))
 				throw new ArgumentNullException("key");
 
-			var type = typeof(T).AssemblyQualifiedName;
 			Dictionary<string, string> entries;
 
-			if (dictionary.TryGetValue(type, out entries) && entries.ContainsKey(key))
+			if (dictionary.TryGetValue(typeof(T), out entries) && entries.ContainsKey(key))
 			{
 				try
 				{
@@ -113,7 +116,7 @@ namespace UnityEditor.ProBuilder
 		{
 			Dictionary<string, string> entries;
 
-			if (!dictionary.TryGetValue(typeof(T).AssemblyQualifiedName, out entries) || !entries.ContainsKey(key))
+			if (!dictionary.TryGetValue(typeof(T), out entries) || !entries.ContainsKey(key))
 				return;
 
 			entries.Remove(key);
@@ -132,7 +135,7 @@ namespace UnityEditor.ProBuilder
 				{
 					m_DictionaryValues.Add(new SettingsKeyValuePair()
 					{
-						type = type.Key,
+						type = type.Key.AssemblyQualifiedName,
 						key = entry.Key,
 						value = entry.Value
 					});
@@ -148,11 +151,36 @@ namespace UnityEditor.ProBuilder
 			{
 				Dictionary<string, string> entries;
 
-				if (dictionary.TryGetValue(entry.type, out entries))
+				var type = Type.GetType(entry.type);
+
+				if (type == null)
+				{
+					Log.Warning("Could not instantiate type \"" + entry.key + "\". Skipping key: " + entry.key + ".");
+					continue;
+				}
+
+				if (dictionary.TryGetValue(type, out entries))
 					entries.Add(entry.key, entry.value);
 				else
-					dictionary.Add(entry.type, new Dictionary<string, string>() { { entry.key, entry.value } });
+					dictionary.Add(type, new Dictionary<string, string>() { { entry.key, entry.value } });
 			}
+		}
+
+		public override string ToString()
+		{
+			var sb = new System.Text.StringBuilder();
+
+			foreach (var type in dictionary)
+			{
+				sb.AppendLine("Type: " + type.Key);
+
+				foreach (var entry in type.Value)
+				{
+					sb.AppendLine("...." + entry.Key + "        " + entry.Value);
+				}
+			}
+
+			return sb.ToString();
 		}
 	}
 }

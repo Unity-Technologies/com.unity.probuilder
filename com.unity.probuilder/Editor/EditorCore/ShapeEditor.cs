@@ -468,8 +468,6 @@ namespace UnityEditor.ProBuilder
 				ProBuilderMesh pb = ShapeGenerator.GenerateCylinder(cyl_axisCuts, cyl_radius, cyl_height, cyl_heightCuts, cyl_smoothing ? 1 : -1);
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
-				int centerIndex = (cyl_axisCuts*(cyl_heightCuts+1)*4)+1;
-
 				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
 
 				EditorUtility.InitObject(pb);

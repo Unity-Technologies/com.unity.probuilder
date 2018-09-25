@@ -74,12 +74,12 @@ namespace UnityEditor.ProBuilder
 
 		static string GetEditorPrefKey<T>(string key)
 		{
-			return GetEditorPrefKey(typeof(T).AssemblyQualifiedName, key);
+			return GetEditorPrefKey(typeof(T).FullName, key);
 		}
 
-		static string GetEditorPrefKey(string assemblyQualifiedTypeName, string key)
+		static string GetEditorPrefKey(string fullName, string key)
 		{
-			return assemblyQualifiedTypeName + "::" + key;
+			return fullName + "::" + key;
 		}
 
 		static void SetEditorPref<T>(string key, T value)
@@ -87,13 +87,13 @@ namespace UnityEditor.ProBuilder
 			var k = GetEditorPrefKey<T>(key);
 
 			if(typeof(T) == typeof(string))
-			 	EditorPrefs.SetString(key, (string) (object) value);
+			 	EditorPrefs.SetString(k, (string) (object) value);
 			else if(typeof(T) == typeof(bool))
-			 	EditorPrefs.SetBool(key, (bool) (object) value);
+			 	EditorPrefs.SetBool(k, (bool) (object) value);
 			else if(typeof(T) == typeof(float))
-			 	EditorPrefs.SetFloat(key, (float) (object) value);
+			 	EditorPrefs.SetFloat(k, (float) (object) value);
 			else if(typeof(T) == typeof(int))
-			 	EditorPrefs.SetInt(key, (int) (object) value);
+			 	EditorPrefs.SetInt(k, (int) (object) value);
 			else
 				EditorPrefs.SetString(k, ValueWrapper<T>.Serialize(value));
 		}
@@ -135,20 +135,6 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		internal static void SetJson(string type, string key, string json, Scope scope = Scope.Project)
-		{
-			switch (scope)
-			{
-				case Scope.Project:
-					instance.m_Dictionary.SetJson(type, key, json);
-					break;
-
-				case Scope.User:
-					EditorPrefs.SetString(GetEditorPrefKey(type, key), json);
-					break;
-			}
-		}
-
 		public static T Get<T>(string key, Scope scope = Scope.Project, T fallback = default(T))
 		{
 			if(scope == Scope.Project)
@@ -173,8 +159,6 @@ namespace UnityEditor.ProBuilder
 			}
 			else
 			{
-				var ek = GetEditorPrefKey<T>(key);
-
 				if(EditorPrefs.HasKey(key))
 					EditorPrefs.DeleteKey(key);
 			}

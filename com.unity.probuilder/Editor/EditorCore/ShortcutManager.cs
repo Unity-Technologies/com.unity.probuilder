@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder
 		        ProBuilderEditor.s_Shortcuts.SetValue(s_Shortcuts = Shortcut.DefaultShortcuts().ToArray(), true);
 
 	        GUILayout.BeginHorizontal();
-	        GUILayout.BeginVertical(GUILayout.MinWidth(EditorGUIUtility.labelWidth), GUILayout.MaxWidth(EditorGUIUtility.labelWidth));
+	        GUILayout.BeginVertical(GUILayout.Width(EditorGUIUtility.labelWidth));
 	        ShortcutSelectPanel();
 	        GUILayout.EndVertical();
 	        GUILayout.BeginVertical();

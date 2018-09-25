@@ -1,4 +1,4 @@
-﻿#define PB_DEBUG
+﻿//#define PB_DEBUG
 
 using System;
 using System.Collections.Generic;
@@ -13,10 +13,40 @@ namespace UnityEditor.ProBuilder
     enum SettingVisibility
     {
         None = 0 << 0,
-        Visible = 1 << 0,     // [UserSetting(visibleInSettingsProvider = true)]
-        Hidden = 1 << 1,      // [UserSetting(visibleInSettingsProvider = false)]
-        Unlisted = 1 << 2,    // [SettingsKey()]
-        Unregistered = 1 << 3 // IPref with no attribute (used in debugging)
+        /// <value>
+        /// Matches any static field implementing IPref and tagged with [UserSettingAttribute(visibleInSettingsProvider = true)].
+        /// </value>
+        /// <summary>
+        /// These fields are automatically scraped by the SettingsProvider and displayed.
+        /// </summary>
+        Visible = 1 << 0,
+
+        /// <value>
+        /// Matches any static field implementing IPref and tagged with [UserSettingAttribute(visibleInSettingsProvider = false)].
+        /// </value>
+        /// <summary>
+        /// These fields will be reset by the "Reset All" menu in SettingsProvider, but are not shown in the interface.
+        /// Typically these fields require some conditional formatting or data handling, and are shown in the
+        /// SettingsProvider UI with a [UserSettingBlockAttribute].
+        /// </summary>
+        Hidden = 1 << 1,
+
+        /// <value>
+        /// A static or instance field tagged with [SettingsKeyAttribute].
+        /// </value>
+        /// <summary>
+        /// Unlisted settings are not shown in the SettingsProvider, but are reset to default values by the "Reset All"
+        /// context menu.
+        /// </summary>
+        Unlisted = 1 << 2,
+
+        /// <value>
+        /// A static field implementing IPref that is not marked with any setting attribute.
+        /// </value>
+        /// <summary>
+        /// Unregistered IPref fields are not affected by the SettingsProvider.
+        /// </summary>
+        Unregistered = 1 << 3
     }
 
     [AttributeUsage(AttributeTargets.Field)]
@@ -41,11 +71,16 @@ namespace UnityEditor.ProBuilder
             get { return m_VisibleInSettingsProvider; }
         }
 
-        public UserSettingAttribute(string category, string title, string tooltip = null, bool visibleInSettingsProvider = true)
+        public UserSettingAttribute()
+        {
+            m_VisibleInSettingsProvider = false;
+        }
+
+        public UserSettingAttribute(string category, string title, string tooltip = null)
         {
             m_Category = category;
             m_Title = new GUIContent(title, tooltip);
-            m_VisibleInSettingsProvider = visibleInSettingsProvider;
+            m_VisibleInSettingsProvider = true;
         }
     }
 

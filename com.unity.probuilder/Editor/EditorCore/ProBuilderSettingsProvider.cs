@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Experimental.UIElements;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
@@ -22,6 +23,8 @@ namespace UnityEditor.ProBuilder
 		Dictionary<string, List<SimpleTuple<GUIContent, IPref>>> m_Settings;
 		Dictionary<string, List<MethodInfo>> m_SettingBlocks;
 		static readonly string[] s_SearchContext = new string[1];
+		static Pref<bool> s_ShowHiddenSettings = new Pref<bool>("settings.showHidden", false, Settings.Scope.User);
+		static Pref<bool> s_ShowUnregisteredSettings = new Pref<bool>("settings.showUnregistered", false, Settings.Scope.User);
 #else
 		static List<string> m_Categories;
 		static Dictionary<string, List<SimpleTuple<GUIContent, IPref>>> m_Settings;
@@ -75,9 +78,14 @@ namespace UnityEditor.ProBuilder
 		public ProBuilderSettingsProvider(string path, SettingsScopes scopes = SettingsScopes.Any)
 			: base(path, scopes)
 		{
+		}
+
+		public override void OnActivate(string searchContext, VisualElement rootElement)
+		{
 			SearchForUserSettingAttributes();
 		}
 #else
+
 		static void Init()
 		{
 			if (s_Initialized)
@@ -124,6 +132,10 @@ namespace UnityEditor.ProBuilder
 				}
 
 				var attrib = (UserSettingAttribute) Attribute.GetCustomAttribute(field, typeof(UserSettingAttribute));
+
+				if (!attrib.visibleInSettingsProvider)
+					continue;
+
 				var pref = (IPref)field.GetValue(null);
 
 				if (pref == null)
@@ -141,8 +153,11 @@ namespace UnityEditor.ProBuilder
 				else
 					m_Settings.Add(category, new List<SimpleTuple<GUIContent, IPref>>() { new SimpleTuple<GUIContent, IPref>(attrib.title, pref) });
 
-				foreach (var word in attrib.title.text.Split(' '))
-					keywords.Add(word);
+				if(attrib.title != null && !string.IsNullOrEmpty(attrib.title.text))
+				{
+					foreach (var word in attrib.title.text.Split(' '))
+						keywords.Add(word);
+				}
 			}
 
 			foreach (var method in methods)
@@ -171,6 +186,22 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
+			if (s_ShowHiddenSettings)
+			{
+				var unlisted = new List<SimpleTuple<GUIContent, IPref>>();
+				m_Settings.Add("Unlisted", unlisted);
+				foreach (var pref in UserSettings.FindUserSettings(SettingVisibility.Unlisted | SettingVisibility.Hidden))
+					unlisted.Add(new SimpleTuple<GUIContent, IPref>( new GUIContent(pref.key), pref ));
+			}
+
+			if (s_ShowUnregisteredSettings)
+			{
+				var unregistered = new List<SimpleTuple<GUIContent, IPref>>();
+				m_Settings.Add("Unregistered", unregistered);
+				foreach (var pref in UserSettings.FindUserSettings(SettingVisibility.Unregistered))
+					unregistered.Add(new SimpleTuple<GUIContent, IPref>( new GUIContent(pref.key), pref ));
+			}
+
 			m_Categories = m_Settings.Keys.Union(m_SettingBlocks.Keys).ToList();
 			m_Categories.Sort();
 		}
@@ -189,16 +220,36 @@ namespace UnityEditor.ProBuilder
 		{
 			var menu = new GenericMenu();
 
+			if (EditorPrefs.GetBool("DeveloperMode", false))
+			{
+				menu.AddItem(new GUIContent("Refresh"), false, SearchForUserSettingAttributes);
+
+				menu.AddSeparator("");
+
+				menu.AddItem(new GUIContent("Show Unlisted Settings"), s_ShowHiddenSettings, () =>
+				{
+					s_ShowHiddenSettings.SetValue(!s_ShowHiddenSettings, true);
+					SearchForUserSettingAttributes();
+				});
+
+				menu.AddItem(new GUIContent("Show Unregistered Settings"), s_ShowUnregisteredSettings, () =>
+				{
+					s_ShowUnregisteredSettings.SetValue(!s_ShowUnregisteredSettings, true);
+					SearchForUserSettingAttributes();
+				});
+
+				menu.AddSeparator("");
+			}
+
 			menu.AddItem(new GUIContent("Reset All"), false, () =>
 			{
 				if (!UnityEditor.EditorUtility.DisplayDialog("Reset All Settings", "Reset all ProBuilder settings? This is not undo-able.", "Reset", "Cancel"))
 					return;
-
 				foreach (var pref in UserSettings.FindUserSettings(SettingVisibility.Visible | SettingVisibility.Unlisted))
 					pref.Reset();
-
 				Settings.Save();
 			});
+
 			menu.ShowAsContext();
 		}
 

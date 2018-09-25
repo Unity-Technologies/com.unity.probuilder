@@ -25,18 +25,30 @@ namespace UnityEditor.ProBuilder
 		static readonly Color k_VertexUnselectedDefault = new Color(.7f, .7f, .7f, 1f);
 		static readonly Color k_WireframeDefault = new Color(94.0f / 255.0f, 119.0f / 255.0f, 155.0f / 255.0f, 1f);
 
+		[UserSetting]
 		static Pref<bool> s_UseUnityColors = new Pref<bool>("handlesUseUnityColors", true, Settings.Scope.User);
+		[UserSetting]
 		static Pref<bool> s_DitherFaceHandle = new Pref<bool>("ditherFaceHandles", true, Settings.Scope.User);
+		[UserSetting]
 		static Pref<Color> s_SelectedFaceColorPref = new Pref<Color>("userSelectedFaceColor", new Color(0f, 210f / 255f, 239f / 255f, 1f), Settings.Scope.User);
+		[UserSetting]
 		static Pref<Color> s_WireframeColorPref = new Pref<Color>("userWireframeColor", new Color(125f / 255f, 155f / 255f, 185f / 255f, 1f), Settings.Scope.User);
+		[UserSetting]
 		static Pref<Color> s_UnselectedEdgeColorPref = new Pref<Color>("userUnselectedEdgeColor", new Color(44f / 255f, 44f / 255f, 44f / 255f, 1f), Settings.Scope.User);
+		[UserSetting]
 		static Pref<Color> s_SelectedEdgeColorPref = new Pref<Color>("userSelectedEdgeColor", new Color(0f, 210f / 255f, 239f / 255f, 1f), Settings.Scope.User);
+		[UserSetting]
 		static Pref<Color> s_UnselectedVertexColorPref = new Pref<Color>("userUnselectedVertexColor", new Color(44f / 255f, 44f / 255f, 44f / 255f, 1f), Settings.Scope.User);
+		[UserSetting]
 		static Pref<Color> s_SelectedVertexColorPref = new Pref<Color>("userSelectedVertexColor", new Color(0f, 210f / 255f, 239f / 255f, 1f), Settings.Scope.User);
+		[UserSetting]
 		static Pref<Color> s_PreselectionColorPref = new Pref<Color>("userPreselectionColor", new Color(179f / 255f, 246f / 255f, 255f / 255f, 1f), Settings.Scope.User);
 
+		[UserSetting]
 		static Pref<float> s_WireframeLineSize = new Pref<float>("wireframeLineSize", .5f, Settings.Scope.User);
+		[UserSetting]
 		static Pref<float> s_EdgeLineSize = new Pref<float>("edgeLineSize", 1f, Settings.Scope.User);
+		[UserSetting]
 		static Pref<float> s_VertexPointSize = new Pref<float>("vertexPointSize", 3f, Settings.Scope.User);
 
 		[UserSettingBlock("Graphics", new []

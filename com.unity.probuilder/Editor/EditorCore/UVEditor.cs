@@ -49,6 +49,7 @@ namespace UnityEditor.ProBuilder
 		const float MIN_DIST_MOUSE_EDGE = 8f;
 
 		// todo Support Range/Min/Max property decorators
+		[UserSetting]
 		static Pref<float> s_GridSnapIncrement = new Pref<float>("uvEditorGridSnapIncrement", .125f, Settings.Scope.Project);
 
 		[UserSettingBlock("UV Editor", new [] { "grid", "size" } )]

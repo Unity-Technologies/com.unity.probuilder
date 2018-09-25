@@ -54,7 +54,10 @@ namespace UnityEditor.ProBuilder
 		[UserSetting("Mesh Settings", "Collider Type", "What type of Collider to apply to new Shapes.")]
 		static Pref<ColliderType> s_ColliderType = new Pref<ColliderType>("newShapeColliderType", ColliderType.MeshCollider);
 
+		[UserSetting]
 		static Pref<bool> s_ExperimentalFeatures = new Pref<bool>("experimental.featuresEnabled", false, Settings.Scope.User);
+
+		[UserSetting]
 		static Pref<bool> s_MeshesAreAssets = new Pref<bool>("experimental.meshesAreAssets", false, Settings.Scope.Project);
 
 		internal static bool meshesAreAssets
@@ -336,7 +339,7 @@ namespace UnityEditor.ProBuilder
 					break;
 			}
 
-			var unwrapParamaters = Lightmapping.s_UnwrapParameters;
+			pb.unwrapParameters = new UnwrapParameters(Lightmapping.s_UnwrapParameters);
 
 			pb.Optimize();
 
