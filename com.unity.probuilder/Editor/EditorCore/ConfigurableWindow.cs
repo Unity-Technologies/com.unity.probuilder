@@ -12,7 +12,7 @@ namespace UnityEditor.ProBuilder
 
 		protected static bool IsUtilityWindow<T>() where T : ConfigurableWindow
 		{
-			return Settings.Get<bool>(typeof(T).ToString() + "-isUtilityWindow", Settings.Scope.Project, false);
+			return ProBuilderSettings.Get<bool>(typeof(T).ToString() + "-isUtilityWindow", SettingScope.Project, false);
 		}
 
 		public static new T GetWindow<T>(string title, bool focus = true) where T : ConfigurableWindow
@@ -22,7 +22,7 @@ namespace UnityEditor.ProBuilder
 
 		public virtual void AddItemsToMenu(GenericMenu menu)
 		{
-			bool floating = Settings.Get<bool>(utilityWindowKey, Settings.Scope.Project, false);
+			bool floating = ProBuilderSettings.Get<bool>(utilityWindowKey, SettingScope.Project, false);
 			menu.AddItem(new GUIContent("Window/Open as Floating Window", ""), floating, () => SetIsUtilityWindow(true) );
 			menu.AddItem(new GUIContent("Window/Open as Dockable Window", ""), !floating, () => SetIsUtilityWindow(false) );
 		}
@@ -41,7 +41,7 @@ namespace UnityEditor.ProBuilder
 
 		void SetIsUtilityWindow(bool isUtilityWindow)
 		{
-			Settings.Set<bool>(utilityWindowKey, isUtilityWindow, Settings.Scope.Project);
+			ProBuilderSettings.Set<bool>(utilityWindowKey, isUtilityWindow, SettingScope.Project);
 			var title = titleContent;
 			Close();
 			var res = GetWindow(GetType(), isUtilityWindow);

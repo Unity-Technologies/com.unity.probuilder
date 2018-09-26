@@ -32,9 +32,9 @@ namespace UnityEditor.ProBuilder
 		static bool s_Initialized;
 #endif
 
-		static Pref<bool> s_ShowHiddenSettings = new Pref<bool>("settings.showHidden", false, Settings.Scope.User);
-		static Pref<bool> s_ShowUnregisteredSettings = new Pref<bool>("settings.showUnregistered", false, Settings.Scope.User);
-		static Pref<bool> s_ListByKey = new Pref<bool>("settings.listByKey", false, Settings.Scope.User);
+		static Pref<bool> s_ShowHiddenSettings = new Pref<bool>("settings.showHidden", false, SettingScope.User);
+		static Pref<bool> s_ShowUnregisteredSettings = new Pref<bool>("settings.showUnregistered", false, SettingScope.User);
+		static Pref<bool> s_ListByKey = new Pref<bool>("settings.listByKey", false, SettingScope.User);
 
 		static class Styles
 		{
@@ -264,9 +264,11 @@ namespace UnityEditor.ProBuilder
 			{
 				if (!UnityEditor.EditorUtility.DisplayDialog("Reset All Settings", "Reset all ProBuilder settings? This is not undo-able.", "Reset", "Cancel"))
 					return;
-				foreach (var pref in UserSettings.FindUserSettings(SettingVisibility.Visible | SettingVisibility.Unlisted))
+
+				foreach (var pref in UserSettings.FindUserSettings(SettingVisibility.Visible | SettingVisibility.Hidden | SettingVisibility.Unlisted))
 					pref.Reset();
-				Settings.Save();
+
+				ProBuilderSettings.Save();
 			});
 
 			menu.ShowAsContext();
@@ -334,7 +336,7 @@ namespace UnityEditor.ProBuilder
 
 			if (EditorGUI.EndChangeCheck())
 			{
-				Settings.Save();
+				ProBuilderSettings.Save();
 
 				if (ProBuilderEditor.instance != null)
 					ProBuilderEditor.instance.OnEnable();

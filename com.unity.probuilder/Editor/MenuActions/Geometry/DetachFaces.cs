@@ -52,7 +52,7 @@ namespace UnityEditor.ProBuilder.Actions
 			m_DetachSetting.value = (DetachSetting) EditorGUILayout.EnumPopup("Detach To", m_DetachSetting);
 
 			if(EditorGUI.EndChangeCheck())
-				Settings.Save();
+				ProBuilderSettings.Save();
 
 			GUILayout.FlexibleSpace();
 

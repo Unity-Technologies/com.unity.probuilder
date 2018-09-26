@@ -8,12 +8,12 @@ using UObject = UnityEngine.Object;
 
 class TempMenuItems : EditorWindow
 {
-	[SettingsKey("TempMenuItems.m_Scroll", Settings.Scope.Project)]
+	[SettingsKey("TempMenuItems.m_Scroll", SettingScope.Project)]
 	static Vector2 m_Scroll;
 
-	IEnumerable<IPref> m_Settings;
+	string m_Settings;
 
-	[MenuItem("Tools/Temp Menu Item &d", false, 1000)]
+//	[MenuItem("Tools/Temp Menu Item &d", false, 1000)]
 	static void MenuInit()
 	{
 		GetWindow<TempMenuItems>();
@@ -21,20 +21,24 @@ class TempMenuItems : EditorWindow
 
 	void OnEnable()
 	{
-		m_Settings = UserSettings.FindUserSettings(SettingVisibility.Visible | SettingVisibility.Unlisted);
+		var settings = UserSettings.FindUserSettings(SettingVisibility.All);
+		var sb = new System.Text.StringBuilder();
+
+		foreach (var pref in settings.OrderBy(x => x.type))
+		{
+			sb.AppendLine(string.Format("{0,-24}{1,-24}{2,-64}{3}", pref.type, pref.scope, pref.key, pref.GetValue().ToString()));
+		}
+
+		m_Settings = sb.ToString();
 	}
 
 
 	void OnGUI()
 	{
-		GUILayout.Label("count: " + m_Settings.Count());
-
 		m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
-		foreach (var item in m_Settings)
-		{
-			var val = item.GetValue();
-			GUILayout.Label(item.key + "  " + (val != null ? val.ToString() : "null") + "   " + item.scope);
-		}
+
+		GUILayout.Label(m_Settings);
+
 		EditorGUILayout.EndScrollView();
 	}
 

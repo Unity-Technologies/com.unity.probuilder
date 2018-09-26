@@ -8,7 +8,7 @@ namespace UnityEditor.ProBuilder.Actions
 	sealed class SelectMaterial : MenuAction
 	{
 		GUIContent gc_restrictToSelection = new GUIContent("Current Selection", "Optionally restrict the matches to only those faces on currently selected objects.");
-		Pref<bool> m_RestrictToSelectedObjects = new Pref<bool>("SelectMaterial.restrictToSelectedObjects", false, Settings.Scope.Project);
+		Pref<bool> m_RestrictToSelectedObjects = new Pref<bool>("SelectMaterial.restrictToSelectedObjects", false, SettingScope.Project);
 
 		public override ToolbarGroup group
 		{
@@ -55,7 +55,7 @@ namespace UnityEditor.ProBuilder.Actions
 			m_RestrictToSelectedObjects.value = EditorGUILayout.Toggle(gc_restrictToSelection, m_RestrictToSelectedObjects);
 
 			if (EditorGUI.EndChangeCheck())
-				Settings.Save();
+				ProBuilderSettings.Save();
 
 			GUILayout.FlexibleSpace();
 

@@ -385,7 +385,7 @@ namespace UnityEditor.ProBuilder.UI
 				menu.AddItem(new GUIContent("Reset " + pref.key), false, () =>
 				{
 					pref.Reset(true);
-					UnityEditor.ProBuilder.Settings.Save();
+					ProBuilderSettings.Save();
 				});
 				menu.ShowAsContext();
 			}

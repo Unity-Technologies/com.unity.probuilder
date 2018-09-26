@@ -50,7 +50,7 @@ namespace UnityEditor.ProBuilder
 
 		// todo Support Range/Min/Max property decorators
 		[UserSetting]
-		static Pref<float> s_GridSnapIncrement = new Pref<float>("uvEditorGridSnapIncrement", .125f, Settings.Scope.Project);
+		static Pref<float> s_GridSnapIncrement = new Pref<float>("uv.uvEditorGridSnapIncrement", .125f, SettingScope.Project);
 
 		[UserSettingBlock("UV Editor", new [] { "grid", "size" } )]
 		static void UVEditorSettings(string searchContext)
@@ -85,7 +85,7 @@ namespace UnityEditor.ProBuilder
 			get { return Event.current.modifiers == EventModifiers.Shift; }
 		}
 
-		Pref<bool> m_ShowPreviewMaterial = new Pref<bool>("UVEditor.showPreviewMaterial", true, Settings.Scope.Project);
+		Pref<bool> m_ShowPreviewMaterial = new Pref<bool>("UVEditor.showPreviewMaterial", true, SettingScope.Project);
 
 		// Show a preview texture for the first selected face in UV space 0,1?
 #if PB_DEBUG
@@ -2750,7 +2750,7 @@ namespace UnityEditor.ProBuilder
 				m_WeldDistance.value = k_MinimumSewUVDistance;
 
 			if (EditorGUI.EndChangeCheck())
-				Settings.Save();
+				ProBuilderSettings.Save();
 		}
 #endregion
 #region UV Selection

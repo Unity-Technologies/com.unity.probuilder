@@ -44,7 +44,9 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Unregistered IPref fields are not affected by the SettingsProvider.
         /// </summary>
-        Unregistered = 1 << 3
+        Unregistered = 1 << 3,
+
+        All = Visible | Hidden | Unlisted | Unregistered
     }
 
     [AttributeUsage(AttributeTargets.Field)]
@@ -90,19 +92,19 @@ namespace UnityEditor.ProBuilder
     sealed class SettingsKeyAttribute : Attribute
     {
         string m_Key;
-        Settings.Scope m_Scope;
+        SettingScope m_Scope;
 
         public string key
         {
             get { return m_Key; }
         }
 
-        public Settings.Scope scope
+        public SettingScope scope
         {
             get { return m_Scope; }
         }
 
-        public SettingsKeyAttribute(string key, Settings.Scope scope = Settings.Scope.Project)
+        public SettingsKeyAttribute(string key, SettingScope scope = SettingScope.Project)
         {
             m_Key = key;
             m_Scope = scope;
@@ -136,7 +138,7 @@ namespace UnityEditor.ProBuilder
     {
         string key { get; }
         Type type { get; }
-        Settings.Scope scope { get; }
+        SettingScope scope { get; }
         object GetValue();
         object GetDefaultValue();
         void SetValue(object value, bool saveProjectSettingsImmediately = false);
@@ -161,15 +163,16 @@ namespace UnityEditor.ProBuilder
         string m_Key;
         T m_Value;
         T m_DefaultValue;
-        Settings.Scope m_Scope;
+        SettingScope m_Scope;
 
         Pref() { }
 
-        public Pref(string key, T value, Settings.Scope scope = Settings.Scope.Project)
+        public Pref(string key, T value, SettingScope scope = SettingScope.Project)
         {
             m_Key = key;
             m_Value = value;
             m_Scope = scope;
+            m_Initialized = false;
         }
 
         public string key
@@ -184,7 +187,7 @@ namespace UnityEditor.ProBuilder
 
         public object GetDefaultValue()
         {
-            return ValueWrapper<T>.DeepCopy(m_DefaultValue);
+            return defaultValue;
         }
 
         public object GetValue()
@@ -192,7 +195,7 @@ namespace UnityEditor.ProBuilder
             return value;
         }
 
-        public Settings.Scope scope
+        public SettingScope scope
         {
             get { return m_Scope; }
         }
@@ -207,53 +210,65 @@ namespace UnityEditor.ProBuilder
 
         public void SetValue(T value, bool saveProjectSettingsImmediately = false)
         {
-            if (Equals(m_Value, value))
+            // If not initialized, that means this key might not be serialized yet. Initialize and continue so that
+            // saveProjectSettingsImmediately is respected.
+            if(!m_Initialized)
+                Init();
+            else if (Equals(m_Value, value))
                 return;
 
             m_Value = value;
 
-            Settings.Set<T>(key, m_Value, m_Scope);
+            ProBuilderSettings.Set<T>(key, m_Value, m_Scope);
 
-            if (m_Scope == Settings.Scope.Project && saveProjectSettingsImmediately)
-                Settings.Save();
+            if (m_Scope == SettingScope.Project && saveProjectSettingsImmediately)
+                ProBuilderSettings.Save();
         }
 
         public void Delete(bool saveProjectSettingsImmediately = false)
         {
-            Settings.Delete<T>(key, scope);
-
-            if (saveProjectSettingsImmediately)
-                Settings.Save();
+            ProBuilderSettings.Delete<T>(key, scope);
+            // Don't Init() because that will set the key again. We just want to reset the m_Value with default and
+            // pretend that this field hasn't been initialised yet.
+            m_Value = ValueWrapper<T>.DeepCopy(m_DefaultValue);
+            m_Initialized = false;
         }
 
         public void Reset(bool saveProjectSettingsImmediately = false)
         {
-            value = defaultValue;
+            SetValue(defaultValue, saveProjectSettingsImmediately);
+        }
 
-            if(saveProjectSettingsImmediately)
-                Settings.Save();
+        void Init()
+        {
+            if (!m_Initialized)
+            {
+                m_Initialized = true;
+
+                // DeepCopy uses EditorJsonUtility which is not permitted during construction
+                m_DefaultValue = ValueWrapper<T>.DeepCopy(m_Value);
+
+                if (ProBuilderSettings.ContainsKey<T>(m_Key, m_Scope))
+                    m_Value = ProBuilderSettings.Get<T>(m_Key, m_Scope);
+                else
+                    ProBuilderSettings.Set<T>(m_Key, m_Value, m_Scope);
+            }
         }
 
         public T defaultValue
         {
-            get { return ValueWrapper<T>.DeepCopy(m_DefaultValue); }
+            get
+            {
+                Init();
+                return ValueWrapper<T>.DeepCopy(m_DefaultValue);
+            }
         }
 
         public T value
         {
             get
             {
-                if (!m_Initialized)
-                {
-                    m_Initialized = true;
-
-                    // DeepCopy uses EditorJsonUtility which is not permitted during construction
-                    m_DefaultValue = ValueWrapper<T>.DeepCopy(m_Value);
-
-                    if (Settings.ContainsKey<T>(m_Key, m_Scope))
-                        m_Value = Settings.Get<T>(m_Key, m_Scope);
-                }
-
+                Init();
                 return m_Value;
             }
 
@@ -264,10 +279,35 @@ namespace UnityEditor.ProBuilder
         {
             return pref.value;
         }
+
+        public override string ToString()
+        {
+            return string.Format("[{0}] {1} : {2}", scope, key, value);
+        }
     }
 
     static class UserSettings
     {
+        [MenuItem("Tools/Dump Settings &d")]
+        static void PrintAll()
+        {
+            var settings = FindUserSettings(SettingVisibility.All);
+            var sb = new System.Text.StringBuilder();
+            Type t = null;
+
+            foreach (var pref in settings.OrderBy(x => x.type.ToString()))
+            {
+                if (pref.type != t)
+                {
+                    t = pref.type;
+                    sb.AppendLine("\n" + pref.type.ToString());
+                }
+                sb.AppendLine(string.Format("{0,-4}{1,-24}{2,-64}{3}", "", pref.scope, pref.key, pref.GetValue().ToString()));
+            }
+
+            Debug.Log(sb.ToString());
+        }
+
         /// <summary>
         /// Collect all registered UserSetting and HiddenSetting attributes.
         /// </summary>
@@ -351,7 +391,7 @@ namespace UnityEditor.ProBuilder
             return settings;
         }
 
-        static IPref CreateGenericPref(string key, Settings.Scope scope, FieldInfo field)
+        static IPref CreateGenericPref(string key, SettingScope scope, FieldInfo field)
         {
             try
             {

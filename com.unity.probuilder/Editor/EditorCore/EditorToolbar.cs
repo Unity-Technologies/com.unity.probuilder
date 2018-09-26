@@ -22,7 +22,7 @@ namespace UnityEditor.ProBuilder
 		Vector2 m_Scroll = Vector2.zero;
 
 		[UserSetting("Toolbar", "Shift Key Tooltips", "Tooltips will only show when the Shift key is held")]
-		internal static Pref<bool> s_ShiftOnlyTooltips = new Pref<bool>("shiftOnlyTooltips", false, Settings.Scope.User);
+		internal static Pref<bool> s_ShiftOnlyTooltips = new Pref<bool>("editor.shiftOnlyTooltips", false, SettingScope.User);
 
 		SimpleTuple<string, double> tooltipTimer = new SimpleTuple<string, double>("", 0.0);
 		// the element currently being hovered

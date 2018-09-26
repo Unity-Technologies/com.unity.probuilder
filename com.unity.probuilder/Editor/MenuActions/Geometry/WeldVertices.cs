@@ -60,7 +60,7 @@ namespace UnityEditor.ProBuilder.Actions
 			{
 				if (m_WeldDistance < k_MinWeldDistance)
 					m_WeldDistance.value = k_MinWeldDistance;
-				Settings.Save();
+				ProBuilderSettings.Save();
 			}
 
 			GUILayout.FlexibleSpace();

@@ -51,7 +51,7 @@ namespace UnityEditor.ProBuilder
 		Material m_ShapePreviewMaterial;
 
 		[UserSetting("Toolbar", "Close Shape Window after Build", "If true the shape window will close after hitting the build button.")]
-		static Pref<bool> s_CloseWindowAfterCreateShape = new Pref<bool>("closeWindowAfterShapeCreation", false);
+		static Pref<bool> s_CloseWindowAfterCreateShape = new Pref<bool>("editor.closeWindowAfterShapeCreation", false);
 
 		void OnEnable()
 		{
@@ -876,7 +876,7 @@ namespace UnityEditor.ProBuilder
 		static float torus_horizontalCircumference = 360f;
 		static float torus_verticalCircumference = 360f;
 		static Vector2 torus_innerOuter = new Vector2(1f, .7f);
-		static Pref<bool> torus_useInnerOuterMethod = new Pref<bool>("shape.torusDefinesInnerOuter", false, Settings.Scope.User);
+		static Pref<bool> torus_useInnerOuterMethod = new Pref<bool>("shape.torusDefinesInnerOuter", false, SettingScope.User);
 
 		void TorusGUI()
 		{

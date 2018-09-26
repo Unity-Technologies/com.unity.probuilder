@@ -69,7 +69,7 @@ namespace UnityEditor.ProBuilder
 			s_LogOutput.value = (LogOutput) global::UnityEditor.ProBuilder.UI.EditorGUILayout.FlagToolbar((int)s_LogOutput.value, gc_output);
 			if(EditorGUI.EndChangeCheck())
 			{
-				Settings.Save();
+				ProBuilderSettings.Save();
 				LogPreferences.SetLogPreferences();
 			}
 
@@ -96,7 +96,7 @@ namespace UnityEditor.ProBuilder
 					}
 					catch {}
 
-					Settings.Save();
+					ProBuilderSettings.Save();
 					Log.SetLogFile(s_LogPath);
 				}
 			}
@@ -116,7 +116,7 @@ namespace UnityEditor.ProBuilder
 			s_LogLevel.value = (LogLevel) global::UnityEditor.ProBuilder.UI.EditorGUILayout.FlagToolbar((int)s_LogLevel.value, gc_level, false, true);
 			if(EditorGUI.EndChangeCheck())
 			{
-				Settings.Save();
+				ProBuilderSettings.Save();
 				Log.SetLogLevel(s_LogLevel);
 			}
 

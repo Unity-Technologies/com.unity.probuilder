@@ -6,16 +6,24 @@ using UnityEngine;
 
 namespace UnityEditor.ProBuilder
 {
+	enum SettingScope
+	{
+		/// <value>
+		/// Setting will be stored in ProjectSettings/k_SettingsPath.
+		/// </value>
+		Project,
+
+		/// <value>
+		/// Setting will be stored in EditorPrefs.
+		/// </value>
+		User
+	}
+
 	[Serializable]
 	sealed class Settings
 	{
-		public enum Scope
-		{
-			Project,
-			User
-		}
-
-		const string k_SettingsPath = "ProjectSettings/ProBuilderSettings.json";
+		[SerializeField]
+		string m_SettingsPath;
 
 #if PRETTY_PRINT_JSON
 		const bool k_PrettyPrintJson = true;
@@ -23,53 +31,48 @@ namespace UnityEditor.ProBuilder
 		const bool k_PrettyPrintJson = false;
 #endif
 
-		static Settings s_Instance;
-
 		[SerializeField]
 		SettingsDictionary m_Dictionary = new SettingsDictionary();
 
-		static Settings instance
-		{
-			get
-			{
-				if (s_Instance == null)
-				{
-					s_Instance = new Settings();
-					Load();
-				}
+		Settings() {}
 
-				return s_Instance;
-			}
-		}
-
-		Settings()
+		public Settings(string settingsPath)
 		{
-		}
-
-		public static void Save()
-		{
-			File.WriteAllText(k_SettingsPath, EditorJsonUtility.ToJson(instance, k_PrettyPrintJson));
-		}
-
-		public static void Load()
-		{
-			if (File.Exists(k_SettingsPath))
-			{
-				var json = File.ReadAllText(k_SettingsPath);
-				EditorJsonUtility.FromJsonOverwrite(json, instance);
-			}
-		}
-
-		public static void Reload()
-		{
-			instance.m_Dictionary = null;
-			instance.m_Dictionary = new SettingsDictionary();
+			m_SettingsPath = settingsPath;
 			Load();
 		}
 
-		internal static SettingsDictionary dictionary
+		internal string settingsPath
 		{
-			get { return instance.m_Dictionary; }
+			get { return m_SettingsPath; }
+			set { m_SettingsPath = value; }
+		}
+
+		public void Save()
+		{
+			File.WriteAllText(m_SettingsPath, EditorJsonUtility.ToJson(this, k_PrettyPrintJson));
+		}
+
+		public void Load()
+		{
+			if (File.Exists(m_SettingsPath))
+			{
+				m_Dictionary = null;
+				var json = File.ReadAllText(m_SettingsPath);
+				EditorJsonUtility.FromJsonOverwrite(json, this);
+			}
+		}
+
+		public void Reload()
+		{
+			m_Dictionary = null;
+			m_Dictionary = new SettingsDictionary();
+			Load();
+		}
+
+		internal SettingsDictionary dictionary
+		{
+			get { return m_Dictionary; }
 		}
 
 		static string GetEditorPrefKey<T>(string key)
@@ -121,53 +124,55 @@ namespace UnityEditor.ProBuilder
 			return (T) o;
 		}
 
-		public static void Set<T>(string key, T value, Scope scope = Scope.Project)
+		public void Set<T>(string key, T value, SettingScope scope = SettingScope.Project)
 		{
 			switch (scope)
 			{
-				case Scope.Project:
-					instance.m_Dictionary.Set<T>(key, value);
+				case SettingScope.Project:
+					m_Dictionary.Set<T>(key, value);
 				break;
 
-				case Scope.User:
+				case SettingScope.User:
 					SetEditorPref<T>(key, value);
 				break;
 			}
 		}
 
-		public static T Get<T>(string key, Scope scope = Scope.Project, T fallback = default(T))
+		public T Get<T>(string key, SettingScope scope = SettingScope.Project, T fallback = default(T))
 		{
-			if(scope == Scope.Project)
-				return instance.m_Dictionary.Get<T>(key, fallback);
+			if(scope == SettingScope.Project)
+				return m_Dictionary.Get<T>(key, fallback);
 
 			return GetEditorPref(key, fallback);
 		}
 
-		public static bool ContainsKey<T>(string key, Scope scope = Scope.Project)
+		public bool ContainsKey<T>(string key, SettingScope scope = SettingScope.Project)
 		{
-			if(scope == Scope.Project)
-				return instance.m_Dictionary.ContainsKey<T>(key);
+			if(scope == SettingScope.Project)
+				return m_Dictionary.ContainsKey<T>(key);
 
 			return EditorPrefs.HasKey(GetEditorPrefKey<T>(key));
 		}
 
-		public static void Delete<T>(string key, Scope scope = Scope.Project)
+		public void Delete<T>(string key, SettingScope scope = SettingScope.Project)
 		{
-			if (scope == Scope.Project)
+			if (scope == SettingScope.Project)
 			{
-				instance.m_Dictionary.Remove<T>(key);
+				m_Dictionary.Remove<T>(key);
 			}
 			else
 			{
-				if(EditorPrefs.HasKey(key))
-					EditorPrefs.DeleteKey(key);
+				var k = GetEditorPrefKey<T>(key);
+
+				if(EditorPrefs.HasKey(k))
+					EditorPrefs.DeleteKey(k);
 			}
 		}
 
-		public static void DeleteProjectSettings()
+		public void DeleteProjectSettings()
 		{
-			if (File.Exists(k_SettingsPath))
-				File.Delete(k_SettingsPath);
+			if (File.Exists(m_SettingsPath))
+				File.Delete(m_SettingsPath);
 		}
 	}
 }

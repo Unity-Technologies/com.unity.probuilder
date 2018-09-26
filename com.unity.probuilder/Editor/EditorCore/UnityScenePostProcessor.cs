@@ -13,7 +13,7 @@ namespace UnityEditor.ProBuilder
 	static class UnityScenePostProcessor
 	{
 		[UserSetting("General", "Script Stripping", "If true, when building an executable all ProBuilder scripts will be stripped from your built product.")]
-		static Pref<bool> m_ScriptStripping = new Pref<bool>("stripProBuilderScriptsOnBuild", true);
+		static Pref<bool> m_ScriptStripping = new Pref<bool>("editor.stripProBuilderScriptsOnBuild", true);
 
 		[PostProcessScene]
 		public static void OnPostprocessScene()
