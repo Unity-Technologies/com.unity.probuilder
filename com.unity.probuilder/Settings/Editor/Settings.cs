@@ -25,6 +25,9 @@ namespace UnityEditor.Settings
 		[SerializeField]
 		string m_SettingsPath;
 
+		public event Action beforeSettingsSaved;
+		public event Action afterSettingsSaved;
+
 #if PRETTY_PRINT_JSON
 		const bool k_PrettyPrintJson = true;
 #else
@@ -50,7 +53,13 @@ namespace UnityEditor.Settings
 
 		public void Save()
 		{
+			if (beforeSettingsSaved!= null)
+				beforeSettingsSaved();
+
 			File.WriteAllText(m_SettingsPath, EditorJsonUtility.ToJson(this, k_PrettyPrintJson));
+
+			if (afterSettingsSaved!= null)
+				afterSettingsSaved();
 		}
 
 		public void Load()

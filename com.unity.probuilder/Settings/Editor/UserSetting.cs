@@ -213,10 +213,10 @@ namespace UnityEditor.Settings
 
     static class UserSettings
     {
-        internal static string GetSettingsString(params SettingScope[] scopes)
+        internal static string GetSettingsString(IEnumerable<Assembly> assemblies, params SettingScope[] scopes)
         {
-            var settings = FindUserSettings(SettingVisibility.All);
-            if(scopes != null)
+            var settings = FindUserSettings(assemblies, SettingVisibility.All);
+            if(scopes != null && scopes.Length > 0)
                 settings = settings.Where(x => scopes.Contains(x.scope));
             var sb = new System.Text.StringBuilder();
             Type t = null;
@@ -242,9 +242,9 @@ namespace UnityEditor.Settings
         /// Collect all registered UserSetting and HiddenSetting attributes.
         /// </summary>
         /// <returns></returns>
-        public static IEnumerable<IUserSetting> FindUserSettings(SettingVisibility visibility, BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
+        public static IEnumerable<IUserSetting> FindUserSettings(IEnumerable<Assembly> assemblies, SettingVisibility visibility, BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
         {
-            var loadedTypes = typeof(UserSettings).Assembly.GetTypes();
+            var loadedTypes = assemblies.SelectMany(x => x.GetTypes());
             var loadedFields = loadedTypes.SelectMany(x => x.GetFields(flags));
             var settings = new List<IUserSetting>();
 

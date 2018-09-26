@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -7,22 +8,41 @@ using UnityEngine.Experimental.UIElements;
 
 namespace UnityEditor.Settings
 {
-	public abstract class UserSettingsProvider : SettingsProvider
+	public sealed class UserSettingsProvider : SettingsProvider
 	{
+		const string k_UserSettingsProviderSettingsPath = "ProjectSettings/UserSettingsProviderSettings.json";
+		const string k_SettingsGearIcon = "Packages/com.unity.probuilder/Settings/Content/Options.png";
+		const int k_LabelWidth = 240;
+
 		List<string> m_Categories;
 		Dictionary<string, List<PrefEntry>> m_Settings;
 		Dictionary<string, List<MethodInfo>> m_SettingBlocks;
 		static readonly string[] s_SearchContext = new string[1];
+		Assembly[] m_Assemblies;
+		static Settings s_Settings;
+		Settings m_SettingsInstance;
+		public event Action afterSettingsSaved;
 
-		const string k_SettingsGearIcon = "Packages/com.unity.probuilder/Settings/Content/Options.png";
+		static Settings userSettingsProviderSettings
+		{
+			get
+			{
+				if(s_Settings == null)
+					s_Settings = new Settings(k_UserSettingsProviderSettingsPath);
+				return s_Settings;
+			}
+		}
 
-		protected abstract Settings settingsInstance { get; }
+		public Settings settingsInstance
+		{
+			get { return m_SettingsInstance; }
+		}
 
-		internal static UserSetting<bool> showHiddenSettings = new UserSetting<bool>(null, "settings.showHidden", false, SettingScope.User);
-		internal static UserSetting<bool> showUnregisteredSettings = new UserSetting<bool>(null, "settings.showUnregistered", false, SettingScope.User);
-		internal static UserSetting<bool> listByKey = new UserSetting<bool>(null, "settings.listByKey", false, SettingScope.User);
-		internal static UserSetting<bool> showUserSettings = new UserSetting<bool>(null, "settings.showUserSettings", false, SettingScope.User);
-		internal static UserSetting<bool> showProjectSettings = new UserSetting<bool>(null, "settings.showProjectSettings", false, SettingScope.User);
+		internal static UserSetting<bool> showHiddenSettings = new UserSetting<bool>(userSettingsProviderSettings, "settings.showHidden", false, SettingScope.User);
+		internal static UserSetting<bool> showUnregisteredSettings = new UserSetting<bool>(userSettingsProviderSettings, "settings.showUnregistered", false, SettingScope.User);
+		internal static UserSetting<bool> listByKey = new UserSetting<bool>(userSettingsProviderSettings, "settings.listByKey", false, SettingScope.User);
+		internal static UserSetting<bool> showUserSettings = new UserSetting<bool>(userSettingsProviderSettings, "settings.showUserSettings", false, SettingScope.User);
+		internal static UserSetting<bool> showProjectSettings = new UserSetting<bool>(userSettingsProviderSettings, "settings.showProjectSettings", false, SettingScope.User);
 
 		static class Styles
 		{
@@ -58,20 +78,31 @@ namespace UnityEditor.Settings
 			}
 		}
 
-//		[SettingsProvider]
-//		static SettingsProvider CreateSettingsProvider()
-//		{
-//			return new UserSettingsProvider("Preferences/ProBuilder");
-//		}
-
-		public UserSettingsProvider(string path, SettingsScopes scopes = SettingsScopes.Any)
+		public UserSettingsProvider(string path, Settings settings, Assembly[] assemblies, SettingsScopes scopes = SettingsScopes.Any)
 			: base(path, scopes)
 		{
+			if(settings == null)
+				throw new ArgumentNullException("settings");
+
+			m_SettingsInstance = settings;
+			m_Assemblies = assemblies;
+			m_SettingsInstance.afterSettingsSaved += OnAfterSettingsSaved;
+		}
+
+		~UserSettingsProvider()
+		{
+			m_SettingsInstance.afterSettingsSaved -= OnAfterSettingsSaved;
 		}
 
 		public override void OnActivate(string searchContext, VisualElement rootElement)
 		{
 			SearchForUserSettingAttributes();
+		}
+
+		void OnAfterSettingsSaved()
+		{
+			if (afterSettingsSaved != null)
+				afterSettingsSaved();
 		}
 
 		struct PrefEntry
@@ -110,7 +141,7 @@ namespace UnityEditor.Settings
 			else
 				m_SettingBlocks = new Dictionary<string, List<MethodInfo>>();
 
-			var types = typeof(UserSettingsProvider).Assembly.GetTypes();
+			var types = m_Assemblies.SelectMany(x => x.GetTypes());
 
 			// collect instance fields/methods too, but only so we can throw a warning that they're invalid.
 			var fields = types.SelectMany(x =>
@@ -182,7 +213,7 @@ namespace UnityEditor.Settings
 			{
 				var unlisted = new List<PrefEntry>();
 				m_Settings.Add("Unlisted", unlisted);
-				foreach (var pref in UserSettings.FindUserSettings(SettingVisibility.Unlisted | SettingVisibility.Hidden))
+				foreach (var pref in UserSettings.FindUserSettings(m_Assemblies, SettingVisibility.Unlisted | SettingVisibility.Hidden))
 					unlisted.Add(new PrefEntry( new GUIContent(pref.key), pref ));
 			}
 
@@ -190,7 +221,7 @@ namespace UnityEditor.Settings
 			{
 				var unregistered = new List<PrefEntry>();
 				m_Settings.Add("Unregistered", unregistered);
-				foreach (var pref in UserSettings.FindUserSettings(SettingVisibility.Unregistered))
+				foreach (var pref in UserSettings.FindUserSettings(m_Assemblies, SettingVisibility.Unregistered))
 					unregistered.Add(new PrefEntry( new GUIContent(pref.key), pref ));
 			}
 
@@ -212,7 +243,6 @@ namespace UnityEditor.Settings
 			m_Categories.Sort();
 		}
 
-#if SETTINGS_PROVIDER_ENABLED
 		public override void OnTitleBarGUI()
 		{
 			Styles.Init();
@@ -220,7 +250,6 @@ namespace UnityEditor.Settings
 			if (GUILayout.Button(GUIContent.none, Styles.settingsGizmo))
 				DoContextMenu();
 		}
-#endif
 
 		void DoContextMenu()
 		{
@@ -267,6 +296,19 @@ namespace UnityEditor.Settings
 				});
 
 				menu.AddSeparator("");
+
+				menu.AddItem(new GUIContent("Open Project Settings File"), false, () =>
+				{
+					var path = Path.GetFullPath(settingsInstance.settingsPath);
+					System.Diagnostics.Process.Start(path);
+				});
+
+				menu.AddItem(new GUIContent("Print All Settings"), false, () =>
+				{
+					Debug.Log(UserSettings.GetSettingsString(m_Assemblies));
+				});
+
+				menu.AddSeparator("");
 			}
 
 			menu.AddItem(new GUIContent("Reset All"), false, () =>
@@ -274,7 +316,8 @@ namespace UnityEditor.Settings
 				if (!UnityEditor.EditorUtility.DisplayDialog("Reset All Settings", "Reset all ProBuilder settings? This is not undo-able.", "Reset", "Cancel"))
 					return;
 
-				foreach (var pref in UserSettings.FindUserSettings(SettingVisibility.Visible | SettingVisibility.Hidden | SettingVisibility.Unlisted))
+				// Do not reset SettingVisibility.Unregistered
+				foreach (var pref in UserSettings.FindUserSettings(m_Assemblies, SettingVisibility.Visible | SettingVisibility.Hidden | SettingVisibility.Unlisted))
 					pref.Reset();
 
 				settingsInstance.Save();
@@ -287,10 +330,11 @@ namespace UnityEditor.Settings
 		{
 			Styles.Init();
 
+			EditorGUIUtility.labelWidth = k_LabelWidth;
+
 			EditorGUI.BeginChangeCheck();
 			GUILayout.BeginVertical(Styles.settingsArea);
 
-			EditorGUIUtility.labelWidth = 240;
 			var hasSearchContext = !string.IsNullOrEmpty(searchContext);
 			s_SearchContext[0] = searchContext;
 			if (hasSearchContext)
@@ -336,9 +380,6 @@ namespace UnityEditor.Settings
 			if (EditorGUI.EndChangeCheck())
 			{
 				settingsInstance.Save();
-
-//				if (ProBuilderEditor.instance != null)
-//					ProBuilderEditor.instance.OnEnable();
 			}
 		}
 
