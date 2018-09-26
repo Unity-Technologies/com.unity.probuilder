@@ -1,15 +1,44 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
-using UnityEditor.ProBuilder;
+using UnityEditor.Settings;
+using UnityEngine.TestTools;
 
 namespace UnityEngine.ProBuilder.EditorTests.Editor
 {
-	static class SettingsTests
+	class SettingsTests : IPrebuildSetup, IPostBuildCleanup
 	{
+		const string k_SettingsTestsPath = "ProjectSettings/SettingsTests.json";
+		static Settings s_Settings;
+
+		static Settings settings
+		{
+			get
+			{
+				if(s_Settings == null)
+					s_Settings = new Settings(k_SettingsTestsPath);
+				return s_Settings;
+			}
+		}
+
+		public void Setup()
+		{
+		}
+
+		public void Cleanup()
+		{
+			foreach (var v in s_AllPreferences)
+				v.Delete();
+
+			if (File.Exists(k_SettingsTestsPath))
+				File.Delete(k_SettingsTestsPath);
+		}
+
+		[Serializable]
 		struct DummyStruct : IEquatable<DummyStruct>
 		{
 			public string stringValue;
@@ -62,6 +91,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
 			}
 		}
 
+		[Serializable]
 		struct DummyClass : IEquatable<DummyClass>
 		{
 			public string stringValue;
@@ -114,19 +144,19 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
 			}
 		}
 
-		static Pref<bool> s_StaticBoolUser = new Pref<bool>("tests.user.static.bool", true, SettingScope.User);
-		static Pref<bool> s_StaticBoolProject = new Pref<bool>("tests.project.static.bool", true, SettingScope.Project);
+		static UserSetting<bool> s_StaticBoolUser = new UserSetting<bool>(settings, "tests.user.static.bool", true, SettingScope.User);
+		static UserSetting<bool> s_StaticBoolProject = new UserSetting<bool>(settings, "tests.project.static.bool", true, SettingScope.Project);
 
-		static Pref<string> s_StaticStringUser = new Pref<string>("tests.user.static.string", "Hello, world!", SettingScope.User);
-		static Pref<string> s_StaticStringProject = new Pref<string>("tests.project.static.string", "Goodbye, world!", SettingScope.Project);
+		static UserSetting<string> s_StaticStringUser = new UserSetting<string>(settings, "tests.user.static.string", "Hello, world!", SettingScope.User);
+		static UserSetting<string> s_StaticStringProject = new UserSetting<string>(settings, "tests.project.static.string", "Goodbye, world!", SettingScope.Project);
 
-		static Pref<DummyStruct> s_StaticStructUser = new Pref<DummyStruct>("tests.user.static.struct", DummyStruct.defaultValue, SettingScope.User);
-		static Pref<DummyStruct> s_StaticStructProject = new Pref<DummyStruct>("tests.project.static.struct", DummyStruct.defaultValue, SettingScope.Project);
+		static UserSetting<DummyStruct> s_StaticStructUser = new UserSetting<DummyStruct>(settings, "tests.user.static.struct", DummyStruct.defaultValue, SettingScope.User);
+		static UserSetting<DummyStruct> s_StaticStructProject = new UserSetting<DummyStruct>(settings, "tests.project.static.struct", DummyStruct.defaultValue, SettingScope.Project);
 
-		static Pref<DummyClass> s_StaticClassUser = new Pref<DummyClass>("tests.user.static.class", DummyClass.defaultValue, SettingScope.User);
-		static Pref<DummyClass> s_StaticClassProject = new Pref<DummyClass>("tests.project.static.class", DummyClass.defaultValue, SettingScope.Project);
+		static UserSetting<DummyClass> s_StaticClassUser = new UserSetting<DummyClass>(settings, "tests.user.static.class", DummyClass.defaultValue, SettingScope.User);
+		static UserSetting<DummyClass> s_StaticClassProject = new UserSetting<DummyClass>(settings, "tests.project.static.class", DummyClass.defaultValue, SettingScope.Project);
 
-		static IPref[] s_AllPreferences = new IPref[]
+		static IUserSetting[] s_AllPreferences = new IUserSetting[]
 		{
 			s_StaticBoolUser,
 			s_StaticBoolProject,
@@ -243,13 +273,33 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
 		}
 
 		[Test]
+		public static void SerializeAndLoad()
+		{
+			foreach(var pref in s_AllPreferences)
+				pref.Reset();
+			settings.Save();
+
+			var instance = new Settings(k_SettingsTestsPath);
+			instance.Load();
+
+			Assert.AreEqual((bool) s_StaticBoolUser, instance.Get<bool>(s_StaticBoolUser.key, s_StaticBoolUser.scope));
+			Assert.AreEqual((bool) s_StaticBoolProject, instance.Get<bool>(s_StaticBoolProject.key, s_StaticBoolProject.scope));
+			Assert.AreEqual((string) s_StaticStringUser, instance.Get<string>(s_StaticStringUser.key, s_StaticStringUser.scope));
+			Assert.AreEqual((string) s_StaticStringProject, instance.Get<string>(s_StaticStringProject.key, s_StaticStringProject.scope));
+			Assert.AreEqual((DummyStruct) s_StaticStructUser, instance.Get<DummyStruct>(s_StaticStructUser.key, s_StaticStructUser.scope));
+			Assert.AreEqual((DummyStruct) s_StaticStructProject, instance.Get<DummyStruct>(s_StaticStructProject.key, s_StaticStructProject.scope));
+			Assert.AreEqual((DummyClass) s_StaticClassUser, instance.Get<DummyClass>(s_StaticClassUser.key, s_StaticClassUser.scope));
+			Assert.AreEqual((DummyClass) s_StaticClassProject, instance.Get<DummyClass>(s_StaticClassProject.key, s_StaticClassProject.scope));
+		}
+
+		[Test]
 		public static void DeleteKeys()
 		{
 			foreach(var pref in s_AllPreferences)
 				pref.Delete();
 
-			ProBuilderSettings.Save();
-			var instance = new Settings(ProBuilderSettings.k_DefaultSettingsPath);
+			settings.Save();
+			var instance = new Settings(k_SettingsTestsPath);
 			instance.Load();
 
 			Assert.IsFalse(instance.ContainsKey<bool>("tests.user.static.bool", SettingScope.User), "tests.user.static.bool");
@@ -268,16 +318,16 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
 			foreach(var pref in s_AllPreferences)
 				pref.Reset();
 
-			ProBuilderSettings.Save();
+			settings.Save();
 
-			Assert.IsTrue(ProBuilderSettings.ContainsKey<bool>("tests.user.static.bool", SettingScope.User), "tests.user.static.bool");
-			Assert.IsTrue(ProBuilderSettings.ContainsKey<bool>("tests.project.static.bool", SettingScope.Project), "tests.project.static.bool");
-			Assert.IsTrue(ProBuilderSettings.ContainsKey<string>("tests.user.static.string", SettingScope.User), "tests.user.static.string");
-			Assert.IsTrue(ProBuilderSettings.ContainsKey<string>("tests.project.static.string", SettingScope.Project), "tests.project.static.string");
-			Assert.IsTrue(ProBuilderSettings.ContainsKey<DummyStruct>("tests.user.static.struct", SettingScope.User), "tests.user.static.struct");
-			Assert.IsTrue(ProBuilderSettings.ContainsKey<DummyStruct>("tests.project.static.struct", SettingScope.Project), "tests.project.static.struct");
-			Assert.IsTrue(ProBuilderSettings.ContainsKey<DummyClass>("tests.user.static.class", SettingScope.User), "tests.user.static.class");
-			Assert.IsTrue(ProBuilderSettings.ContainsKey<DummyClass>("tests.project.static.class", SettingScope.Project), "tests.project.static.class");
+			Assert.IsTrue(settings.ContainsKey<bool>("tests.user.static.bool", SettingScope.User), "tests.user.static.bool");
+			Assert.IsTrue(settings.ContainsKey<bool>("tests.project.static.bool", SettingScope.Project), "tests.project.static.bool");
+			Assert.IsTrue(settings.ContainsKey<string>("tests.user.static.string", SettingScope.User), "tests.user.static.string");
+			Assert.IsTrue(settings.ContainsKey<string>("tests.project.static.string", SettingScope.Project), "tests.project.static.string");
+			Assert.IsTrue(settings.ContainsKey<DummyStruct>("tests.user.static.struct", SettingScope.User), "tests.user.static.struct");
+			Assert.IsTrue(settings.ContainsKey<DummyStruct>("tests.project.static.struct", SettingScope.Project), "tests.project.static.struct");
+			Assert.IsTrue(settings.ContainsKey<DummyClass>("tests.user.static.class", SettingScope.User), "tests.user.static.class");
+			Assert.IsTrue(settings.ContainsKey<DummyClass>("tests.project.static.class", SettingScope.Project), "tests.project.static.class");
 		}
 
 		[Test]
@@ -286,9 +336,9 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
 			foreach(var pref in s_AllPreferences)
 				pref.Reset();
 
-			ProBuilderSettings.Save();
+			settings.Save();
 
-			var instance = new Settings(ProBuilderSettings.k_DefaultSettingsPath);
+			var instance = new Settings(k_SettingsTestsPath);
 			instance.Load();
 
 			Assert.IsTrue(instance.ContainsKey<bool>("tests.user.static.bool", SettingScope.User), "tests.user.static.bool");

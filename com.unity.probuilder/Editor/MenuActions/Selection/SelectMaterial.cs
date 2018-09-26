@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
+using UnityEditor.Settings;
 
 namespace UnityEditor.ProBuilder.Actions
 {

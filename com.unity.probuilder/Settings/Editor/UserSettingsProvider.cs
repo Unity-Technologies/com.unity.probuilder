@@ -1,42 +1,28 @@
-﻿#if UNITY_2018_3_OR_NEWER
-#define SETTINGS_PROVIDER_ENABLED
-#endif
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
-using UnityEngine.ProBuilder;
 
-namespace UnityEditor.ProBuilder
+namespace UnityEditor.Settings
 {
-#if SETTINGS_PROVIDER_ENABLED
-	sealed class ProBuilderSettingsProvider : SettingsProvider
-#else
-	sealed class ProBuilderSettingsProvider
-#endif
+	public abstract class UserSettingsProvider : SettingsProvider
 	{
-#if SETTINGS_PROVIDER_ENABLED
 		List<string> m_Categories;
-		Dictionary<string, List<SimpleTuple<GUIContent, IPref>>> m_Settings;
+		Dictionary<string, List<PrefEntry>> m_Settings;
 		Dictionary<string, List<MethodInfo>> m_SettingBlocks;
 		static readonly string[] s_SearchContext = new string[1];
-#else
-		static List<string> m_Categories;
-		static Dictionary<string, List<SimpleTuple<GUIContent, IPref>>> m_Settings;
-		static Dictionary<string, List<MethodInfo>> m_SettingBlocks;
-		static readonly string[] s_SearchContext = new string[1];
-		static HashSet<string> keywords = new HashSet<string>();
-		static bool s_Initialized;
-#endif
 
-		static Pref<bool> s_ShowHiddenSettings = new Pref<bool>("settings.showHidden", false, SettingScope.User);
-		static Pref<bool> s_ShowUnregisteredSettings = new Pref<bool>("settings.showUnregistered", false, SettingScope.User);
-		static Pref<bool> s_ListByKey = new Pref<bool>("settings.listByKey", false, SettingScope.User);
-		internal static Pref<bool> s_ShowUserSettings = new Pref<bool>("settings.showUserSettings", false, SettingScope.User);
-		internal static Pref<bool> s_ShowProjectSettings = new Pref<bool>("settings.showProjectSettings", false, SettingScope.User);
+		const string k_SettingsGearIcon = "Packages/com.unity.probuilder/Settings/Content/Options.png";
+
+		protected abstract Settings settingsInstance { get; }
+
+		internal static UserSetting<bool> showHiddenSettings = new UserSetting<bool>(null, "settings.showHidden", false, SettingScope.User);
+		internal static UserSetting<bool> showUnregisteredSettings = new UserSetting<bool>(null, "settings.showUnregistered", false, SettingScope.User);
+		internal static UserSetting<bool> listByKey = new UserSetting<bool>(null, "settings.listByKey", false, SettingScope.User);
+		internal static UserSetting<bool> showUserSettings = new UserSetting<bool>(null, "settings.showUserSettings", false, SettingScope.User);
+		internal static UserSetting<bool> showProjectSettings = new UserSetting<bool>(null, "settings.showProjectSettings", false, SettingScope.User);
 
 		static class Styles
 		{
@@ -61,7 +47,7 @@ namespace UnityEditor.ProBuilder
 				{
 					normal = new GUIStyleState()
 					{
-						background = IconUtility.GetIcon("Toolbar/Options", IconSkin.Pro)
+						background = AssetDatabase.LoadAssetAtPath<Texture2D>(k_SettingsGearIcon)
 					},
 					fixedWidth = 14,
 					fixedHeight = 14,
@@ -72,14 +58,13 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-#if SETTINGS_PROVIDER_ENABLED
-		[SettingsProvider]
-		static SettingsProvider CreateSettingsProvider()
-		{
-			return new ProBuilderSettingsProvider("Preferences/ProBuilder");
-		}
+//		[SettingsProvider]
+//		static SettingsProvider CreateSettingsProvider()
+//		{
+//			return new UserSettingsProvider("Preferences/ProBuilder");
+//		}
 
-		public ProBuilderSettingsProvider(string path, SettingsScopes scopes = SettingsScopes.Any)
+		public UserSettingsProvider(string path, SettingsScopes scopes = SettingsScopes.Any)
 			: base(path, scopes)
 		{
 		}
@@ -88,36 +73,44 @@ namespace UnityEditor.ProBuilder
 		{
 			SearchForUserSettingAttributes();
 		}
-#else
 
-		static void Init()
+		struct PrefEntry
 		{
-			if (s_Initialized)
-				return;
-			s_Initialized = true;
-			SearchForUserSettingAttributes();
-		}
-#endif
+			GUIContent m_Content;
+			IUserSetting m_Pref;
 
-#if SETTINGS_PROVIDER_ENABLED
+			public GUIContent content
+			{
+				get { return m_Content; }
+			}
+
+			public IUserSetting pref
+			{
+				get { return m_Pref; }
+			}
+
+			public PrefEntry(GUIContent content, IUserSetting pref)
+			{
+				m_Content = content;
+				m_Pref = pref;
+			}
+		}
+
 		void SearchForUserSettingAttributes()
-#else
-		static void SearchForUserSettingAttributes()
-#endif
 		{
 			keywords.Clear();
 
 			if(m_Settings != null)
 				m_Settings.Clear();
 			else
-				m_Settings = new Dictionary<string, List<SimpleTuple<GUIContent, IPref>>>();
+				m_Settings = new Dictionary<string, List<PrefEntry>>();
 
 			if(m_SettingBlocks != null)
 				m_SettingBlocks.Clear();
 			else
 				m_SettingBlocks = new Dictionary<string, List<MethodInfo>>();
 
-			var types = typeof(ProBuilderSettingsProvider).Assembly.GetTypes();
+			var types = typeof(UserSettingsProvider).Assembly.GetTypes();
 
 			// collect instance fields/methods too, but only so we can throw a warning that they're invalid.
 			var fields = types.SelectMany(x =>
@@ -131,7 +124,7 @@ namespace UnityEditor.ProBuilder
 			{
 				if (!field.IsStatic)
 				{
-					Log.Warning("Cannot create setting entries for instance fields. Skipping \"" + field.Name + "\".");
+					Debug.LogWarning("Cannot create setting entries for instance fields. Skipping \"" + field.Name + "\".");
 					continue;
 				}
 
@@ -140,23 +133,23 @@ namespace UnityEditor.ProBuilder
 				if (!attrib.visibleInSettingsProvider)
 					continue;
 
-				var pref = (IPref)field.GetValue(null);
+				var pref = (IUserSetting)field.GetValue(null);
 
 				if (pref == null)
 				{
-					Log.Warning("[UserSettingAttribute] is only valid for types inheriting Pref<T>. Skipping \"" + field.Name + "\"");
+					Debug.LogWarning("[UserSettingAttribute] is only valid for types inheriting Pref<T>. Skipping \"" + field.Name + "\"");
 					continue;
 				}
 
 				var category = string.IsNullOrEmpty(attrib.category) ? "Uncategorized" : attrib.category;
-				var content = s_ListByKey ? new GUIContent(pref.key) : attrib.title;
+				var content = listByKey ? new GUIContent(pref.key) : attrib.title;
 
-				List<SimpleTuple<GUIContent, IPref>> settings;
+				List<PrefEntry> settings;
 
 				if (m_Settings.TryGetValue(category, out settings))
-					settings.Add(new SimpleTuple<GUIContent, IPref>(content, pref));
+					settings.Add(new PrefEntry(content, pref));
 				else
-					m_Settings.Add(category, new List<SimpleTuple<GUIContent, IPref>>() { new SimpleTuple<GUIContent, IPref>(content, pref) });
+					m_Settings.Add(category, new List<PrefEntry>() { new PrefEntry(content, pref) });
 			}
 
 			foreach (var method in methods)
@@ -169,7 +162,7 @@ namespace UnityEditor.ProBuilder
 
 				if (!method.IsStatic || parameters.Length < 1 || parameters[0].ParameterType != typeof(string))
 				{
-					Log.Warning("[UserSettingBlockAttribute] is only valid for static functions with a single string parameter. Ex, `static void MySettings(string searchContext)`. Skipping \"" + method.Name + "\"");
+					Debug.LogWarning("[UserSettingBlockAttribute] is only valid for static functions with a single string parameter. Ex, `static void MySettings(string searchContext)`. Skipping \"" + method.Name + "\"");
 					continue;
 				}
 
@@ -185,27 +178,27 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
-			if (s_ShowHiddenSettings)
+			if (showHiddenSettings)
 			{
-				var unlisted = new List<SimpleTuple<GUIContent, IPref>>();
+				var unlisted = new List<PrefEntry>();
 				m_Settings.Add("Unlisted", unlisted);
 				foreach (var pref in UserSettings.FindUserSettings(SettingVisibility.Unlisted | SettingVisibility.Hidden))
-					unlisted.Add(new SimpleTuple<GUIContent, IPref>( new GUIContent(pref.key), pref ));
+					unlisted.Add(new PrefEntry( new GUIContent(pref.key), pref ));
 			}
 
-			if (s_ShowUnregisteredSettings)
+			if (showUnregisteredSettings)
 			{
-				var unregistered = new List<SimpleTuple<GUIContent, IPref>>();
+				var unregistered = new List<PrefEntry>();
 				m_Settings.Add("Unregistered", unregistered);
 				foreach (var pref in UserSettings.FindUserSettings(SettingVisibility.Unregistered))
-					unregistered.Add(new SimpleTuple<GUIContent, IPref>( new GUIContent(pref.key), pref ));
+					unregistered.Add(new PrefEntry( new GUIContent(pref.key), pref ));
 			}
 
 			foreach (var cat in m_Settings)
 			{
 				foreach (var entry in cat.Value)
 				{
-					var content = entry.item1;
+					var content = entry.content;
 
 					if(content != null && !string.IsNullOrEmpty(content.text))
 					{
@@ -239,37 +232,37 @@ namespace UnityEditor.ProBuilder
 
 				menu.AddSeparator("");
 
-				menu.AddItem(new GUIContent("List Settings By Key"), s_ListByKey, () =>
+				menu.AddItem(new GUIContent("List Settings By Key"), listByKey, () =>
 				{
-					s_ListByKey.SetValue(!s_ListByKey, true);
+					listByKey.SetValue(!listByKey, true);
 					SearchForUserSettingAttributes();
 				});
 
 				menu.AddSeparator("");
 
-				menu.AddItem(new GUIContent("Show User Settings"), s_ShowUserSettings, () =>
+				menu.AddItem(new GUIContent("Show User Settings"), showUserSettings, () =>
 				{
-					s_ShowUserSettings.SetValue(!s_ShowUserSettings, true);
+					showUserSettings.SetValue(!showUserSettings, true);
 					SearchForUserSettingAttributes();
 				});
 
-				menu.AddItem(new GUIContent("Show Project Settings"), s_ShowProjectSettings, () =>
+				menu.AddItem(new GUIContent("Show Project Settings"), showProjectSettings, () =>
 				{
-					s_ShowProjectSettings.SetValue(!s_ShowProjectSettings, true);
+					showProjectSettings.SetValue(!showProjectSettings, true);
 					SearchForUserSettingAttributes();
 				});
 
 				menu.AddSeparator("");
 
-				menu.AddItem(new GUIContent("Show Unlisted Settings"), s_ShowHiddenSettings, () =>
+				menu.AddItem(new GUIContent("Show Unlisted Settings"), showHiddenSettings, () =>
 				{
-					s_ShowHiddenSettings.SetValue(!s_ShowHiddenSettings, true);
+					showHiddenSettings.SetValue(!showHiddenSettings, true);
 					SearchForUserSettingAttributes();
 				});
 
-				menu.AddItem(new GUIContent("Show Unregistered Settings"), s_ShowUnregisteredSettings, () =>
+				menu.AddItem(new GUIContent("Show Unregistered Settings"), showUnregisteredSettings, () =>
 				{
-					s_ShowUnregisteredSettings.SetValue(!s_ShowUnregisteredSettings, true);
+					showUnregisteredSettings.SetValue(!showUnregisteredSettings, true);
 					SearchForUserSettingAttributes();
 				});
 
@@ -284,25 +277,19 @@ namespace UnityEditor.ProBuilder
 				foreach (var pref in UserSettings.FindUserSettings(SettingVisibility.Visible | SettingVisibility.Hidden | SettingVisibility.Unlisted))
 					pref.Reset();
 
-				ProBuilderSettings.Save();
+				settingsInstance.Save();
 			});
 
 			menu.ShowAsContext();
 		}
 
-#if SETTINGS_PROVIDER_ENABLED
 		public override void OnGUI(string searchContext)
-#else
-		[PreferenceItem("ProBuilder")]
-		static void OnGUI()
-#endif
 		{
 			Styles.Init();
 
 			EditorGUI.BeginChangeCheck();
 			GUILayout.BeginVertical(Styles.settingsArea);
 
-#if SETTINGS_PROVIDER_ENABLED
 			EditorGUIUtility.labelWidth = 240;
 			var hasSearchContext = !string.IsNullOrEmpty(searchContext);
 			s_SearchContext[0] = searchContext;
@@ -313,28 +300,24 @@ namespace UnityEditor.ProBuilder
 
 				foreach (var settingField in m_Settings)
 				foreach (var setting in settingField.Value)
-					if (searchKeywords.Any(x => !string.IsNullOrEmpty(x) && setting.item1.text.IndexOf(x, StringComparison.InvariantCultureIgnoreCase) > -1))
-						DoPreferenceField(setting.item1, setting.item2);
+					if (searchKeywords.Any(x => !string.IsNullOrEmpty(x) && setting.content.text.IndexOf(x, StringComparison.InvariantCultureIgnoreCase) > -1))
+						DoPreferenceField(setting.content, setting.pref);
 
 				foreach (var settingsBlock in m_SettingBlocks)
 				foreach (var block in settingsBlock.Value)
 					block.Invoke(null, s_SearchContext);
 			}
 			else
-#else
-			Init();
-#endif
-
 			{
 				foreach (var key in m_Categories)
 				{
 					GUILayout.Label(key, EditorStyles.boldLabel);
 
-					List<SimpleTuple<GUIContent, IPref>> settings;
+					List<PrefEntry> settings;
 
 					if (m_Settings.TryGetValue(key, out settings))
 						foreach (var setting in settings)
-							DoPreferenceField(setting.item1, setting.item2);
+							DoPreferenceField(setting.content, setting.pref);
 
 					List<MethodInfo> blocks;
 
@@ -352,46 +335,46 @@ namespace UnityEditor.ProBuilder
 
 			if (EditorGUI.EndChangeCheck())
 			{
-				ProBuilderSettings.Save();
+				settingsInstance.Save();
 
-				if (ProBuilderEditor.instance != null)
-					ProBuilderEditor.instance.OnEnable();
+//				if (ProBuilderEditor.instance != null)
+//					ProBuilderEditor.instance.OnEnable();
 			}
 		}
 
-		internal static void DoPreferenceField(GUIContent title, IPref pref)
+		void DoPreferenceField(GUIContent title, IUserSetting pref)
 		{
 			if (EditorPrefs.GetBool("DeveloperMode", false))
 			{
-				if (pref.scope == SettingScope.Project && !s_ShowProjectSettings)
+				if (pref.scope == SettingScope.Project && !showProjectSettings)
 					return;
-				if (pref.scope == SettingScope.User && !s_ShowUserSettings)
+				if (pref.scope == SettingScope.User && !showUserSettings)
 					return;
 			}
 
-			if (pref is Pref<float>)
+			if (pref is UserSetting<float>)
 			{
-				var cast = (Pref<float>)pref;
+				var cast = (UserSetting<float>)pref;
 				cast.value = EditorGUILayout.FloatField(title, cast.value);
 			}
-			else if (pref is Pref<int>)
+			else if (pref is UserSetting<int>)
 			{
-				var cast = (Pref<int>)pref;
+				var cast = (UserSetting<int>)pref;
 				cast.value = EditorGUILayout.IntField(title, cast.value);
 			}
-			else if (pref is Pref<bool>)
+			else if (pref is UserSetting<bool>)
 			{
-				var cast = (Pref<bool>)pref;
+				var cast = (UserSetting<bool>)pref;
 				cast.value = EditorGUILayout.Toggle(title, cast.value);
 			}
-			else if (pref is Pref<string>)
+			else if (pref is UserSetting<string>)
 			{
-				var cast = (Pref<string>)pref;
+				var cast = (UserSetting<string>)pref;
 				cast.value = EditorGUILayout.TextField(title, cast.value);
 			}
-			else if (pref is Pref<Color>)
+			else if (pref is UserSetting<Color>)
 			{
-				var cast = (Pref<Color>)pref;
+				var cast = (UserSetting<Color>)pref;
 				cast.value = EditorGUILayout.ColorField(title, cast.value);
 			}
 			else if (typeof(Enum).IsAssignableFrom(pref.type))
@@ -422,7 +405,7 @@ namespace UnityEditor.ProBuilder
 				GUILayout.EndHorizontal();
 			}
 
-			UI.EditorGUILayout.DoResetContextMenuForLastRect(pref);
+			SettingsGUILayout.DoResetContextMenuForLastRect(pref);
 		}
 	}
 }

@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using UnityEngine.ProBuilder.AssetIdRemapUtility;
 using UnityEngine.ProBuilder;
 using Version = UnityEngine.ProBuilder.Version;
+using UnityEditor.Settings;
 
 namespace UnityEditor.ProBuilder
 {

@@ -4,9 +4,9 @@ using System;
 using System.IO;
 using UnityEngine;
 
-namespace UnityEditor.ProBuilder
+namespace UnityEditor.Settings
 {
-	enum SettingScope
+	public enum SettingScope
 	{
 		/// <value>
 		/// Setting will be stored in ProjectSettings/k_SettingsPath.
@@ -20,7 +20,7 @@ namespace UnityEditor.ProBuilder
 	}
 
 	[Serializable]
-	sealed class Settings
+	public sealed class Settings
 	{
 		[SerializeField]
 		string m_SettingsPath;

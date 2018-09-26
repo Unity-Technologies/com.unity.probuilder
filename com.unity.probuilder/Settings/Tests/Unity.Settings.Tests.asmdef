@@ -1,12 +1,11 @@
 {
-    "name": "Unity.ProBuilder.Debug.Editor",
+    "name": "Unity.Settings.Tests",
     "references": [
-        "Unity.ProBuilder",
-        "Unity.ProBuilder.Editor",
-        "Unity.ProBuilder.AssetIdRemapUtility",
         "Unity.Settings"
     ],
-    "optionalUnityReferences": [],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
     "includePlatforms": [
         "Editor"
     ],

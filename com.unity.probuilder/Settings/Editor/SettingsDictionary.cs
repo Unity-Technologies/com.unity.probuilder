@@ -1,46 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.ProBuilder;
 
-namespace UnityEditor.ProBuilder
+namespace UnityEditor.Settings
 {
 	[Serializable]
-	sealed class ValueWrapper<T>
-	{
-#if PRETTY_PRINT_JSON
-		const bool k_PrettyPrintJson = true;
-#else
-		const bool k_PrettyPrintJson = false;
-#endif
-
-		[SerializeField]
-		T m_Value;
-
-		public static string Serialize(T value)
-		{
-			var obj = new ValueWrapper<T>() { m_Value = value };
-			return EditorJsonUtility.ToJson(obj, k_PrettyPrintJson);
-		}
-
-		public static T Deserialize(string json)
-		{
-			var value = (object)Activator.CreateInstance<ValueWrapper<T>>();
-			EditorJsonUtility.FromJsonOverwrite(json, value);
-			return ((ValueWrapper<T>)value).m_Value;
-		}
-
-		public static T DeepCopy(T value)
-		{
-			if (typeof(ValueType).IsAssignableFrom(typeof(T)))
-				return value;
-			var str = Serialize(value);
-			return Deserialize(str);
-		}
-	}
-
-	[Serializable]
-	sealed class SettingsDictionary : ISerializationCallbackReceiver
+	public sealed class SettingsDictionary : ISerializationCallbackReceiver
 	{
 		[Serializable]
 		struct SettingsKeyValuePair
@@ -155,7 +120,7 @@ namespace UnityEditor.ProBuilder
 
 				if (type == null)
 				{
-					Log.Warning("Could not instantiate type \"" + entry.key + "\". Skipping key: " + entry.key + ".");
+					Debug.LogWarning("Could not instantiate type \"" + entry.key + "\". Skipping key: " + entry.key + ".");
 					continue;
 				}
 

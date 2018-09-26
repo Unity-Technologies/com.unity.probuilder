@@ -1,19 +1,21 @@
+using UnityEditor.Settings;
+using UnitySettings = UnityEditor.Settings.Settings;
+
 namespace UnityEditor.ProBuilder
 {
 	static class ProBuilderSettings
 	{
 		internal const string k_DefaultSettingsPath = "ProjectSettings/ProBuilderSettings.json";
 
-		static Settings s_Instance;
+		static UnitySettings s_Instance;
 
-		static Settings instance
+		internal static UnitySettings instance
 		{
 			get
 			{
 				if (s_Instance == null)
 				{
-					s_Instance = new Settings(k_DefaultSettingsPath);
-					UnityEngine.Debug.Log("loading instance");
+					s_Instance = new UnitySettings(k_DefaultSettingsPath);
 					s_Instance.Load();
 				}
 
@@ -54,11 +56,6 @@ namespace UnityEditor.ProBuilder
 		public static void Delete<T>(string key, SettingScope scope = SettingScope.Project)
 		{
 			instance.Delete<T>(key, scope);
-		}
-
-		internal static SettingsDictionary projectSettings
-		{
-			get { return instance.dictionary; }
 		}
 	}
 }

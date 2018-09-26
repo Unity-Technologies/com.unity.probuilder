@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEditor.Settings;
 
 namespace UnityEditor.ProBuilder
 {
@@ -34,7 +35,7 @@ namespace UnityEditor.ProBuilder
 	        GUILayout.EndVertical();
 	        GUILayout.EndHorizontal();
 
-	        UI.EditorGUILayout.DoResetContextMenuForLastRect(ProBuilderEditor.s_Shortcuts);
+	        SettingsGUILayout.DoResetContextMenuForLastRect(ProBuilderEditor.s_Shortcuts);
         }
 
 		static void ShortcutSelectPanel()

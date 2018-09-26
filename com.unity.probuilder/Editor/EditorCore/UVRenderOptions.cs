@@ -2,6 +2,7 @@ using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 using UnityEditor;
 using UnityEngine;
+using UnityEditor.Settings;
 
 namespace UnityEditor.ProBuilder
 {

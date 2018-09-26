@@ -12,6 +12,7 @@ using UnityEngine.SceneManagement;
 using Math = UnityEngine.ProBuilder.Math;
 using Object = UnityEngine.Object;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
+using UnityEditor.Settings;
 
 namespace UnityEditor.ProBuilder
 {

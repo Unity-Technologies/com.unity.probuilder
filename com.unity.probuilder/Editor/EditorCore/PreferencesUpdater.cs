@@ -4,6 +4,8 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEditor.Settings;
+using UnitySettings = UnityEditor.Settings.Settings;
 
 namespace UnityEditor.ProBuilder
 {
@@ -122,7 +124,7 @@ namespace UnityEditor.ProBuilder
 			foreach (var map in s_FormerPreferenceKeyMap)
 			{
 				object val;
-				MethodInfo set = typeof(Settings).GetMethod("Set", BindingFlags.Static | BindingFlags.Public);
+				MethodInfo set = typeof(UnitySettings).GetMethod("Set", BindingFlags.Static | BindingFlags.Public);
 
 #pragma warning disable 618
 				if (!string.IsNullOrEmpty(map.oldKey) && PreferencesInternal.TryGetValue(map.oldKey, map.type, out val))

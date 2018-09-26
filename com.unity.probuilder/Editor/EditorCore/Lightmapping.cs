@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UL = UnityEditor.Lightmapping;
+using UnityEditor.Settings;
 
 namespace UnityEditor.ProBuilder
 {
@@ -67,10 +68,10 @@ namespace UnityEditor.ProBuilder
 
 				using (new UI.EditorStyles.IndentedBlock())
 				{
-					unwrap.hardAngle = UI.EditorGUILayout.SearchableSlider(Styles.hardAngle, unwrap.hardAngle, 1f, 180f, searchContext);
-					unwrap.packMargin = UI.EditorGUILayout.SearchableSlider(Styles.packMargin, unwrap.packMargin, 1f, 64f, searchContext);
-					unwrap.angleError = UI.EditorGUILayout.SearchableSlider(Styles.angleError, unwrap.angleError, 1f, 75f, searchContext);
-					unwrap.areaError = UI.EditorGUILayout.SearchableSlider(Styles.areaError, unwrap.areaError, 1f, 75f, searchContext);
+					unwrap.hardAngle = SettingsGUILayout.SearchableSlider(Styles.hardAngle, unwrap.hardAngle, 1f, 180f, searchContext);
+					unwrap.packMargin = SettingsGUILayout.SearchableSlider(Styles.packMargin, unwrap.packMargin, 1f, 64f, searchContext);
+					unwrap.angleError = SettingsGUILayout.SearchableSlider(Styles.angleError, unwrap.angleError, 1f, 75f, searchContext);
+					unwrap.areaError = SettingsGUILayout.SearchableSlider(Styles.areaError, unwrap.areaError, 1f, 75f, searchContext);
 
 					if (!isSearching)
 					{
@@ -82,7 +83,7 @@ namespace UnityEditor.ProBuilder
 					}
 				}
 
-				UI.EditorGUILayout.DoResetContextMenuForLastRect(s_UnwrapParameters);
+				SettingsGUILayout.DoResetContextMenuForLastRect(s_UnwrapParameters);
 
 				if (EditorGUI.EndChangeCheck())
 					s_UnwrapParameters.value = unwrap;
