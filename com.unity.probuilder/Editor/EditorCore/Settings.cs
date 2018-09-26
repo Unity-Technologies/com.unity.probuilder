@@ -111,13 +111,13 @@ namespace UnityEditor.ProBuilder
 			var o = (object) fallback;
 
 			if(typeof(T) == typeof(string))
-				o = EditorPrefs.GetString(key, (string) o);
+				o = EditorPrefs.GetString(k, (string) o);
 			else if(typeof(T) == typeof(bool))
-				o = EditorPrefs.GetBool(key, (bool) o);
+				o = EditorPrefs.GetBool(k, (bool) o);
 			else if(typeof(T) == typeof(float))
-				o = EditorPrefs.GetFloat(key, (float) o);
+				o = EditorPrefs.GetFloat(k, (float) o);
 			else if(typeof(T) == typeof(int))
-				o = EditorPrefs.GetInt(key, (int) o);
+				o = EditorPrefs.GetInt(k, (int) o);
 			else
 				return ValueWrapper<T>.Deserialize(EditorPrefs.GetString(k));
 

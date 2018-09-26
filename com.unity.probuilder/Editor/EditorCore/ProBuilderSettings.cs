@@ -55,5 +55,10 @@ namespace UnityEditor.ProBuilder
 		{
 			instance.Delete<T>(key, scope);
 		}
+
+		internal static SettingsDictionary projectSettings
+		{
+			get { return instance.dictionary; }
+		}
 	}
 }

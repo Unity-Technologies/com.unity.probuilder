@@ -176,7 +176,7 @@ namespace UnityEditor.ProBuilder
 
 				foreach (var entry in type.Value)
 				{
-					sb.AppendLine(string.Format("....{0,-64}{1}", entry.Key, entry.Value));
+					sb.AppendLine(string.Format("   {0,-64}{1}", entry.Key, entry.Value));
 				}
 			}
 

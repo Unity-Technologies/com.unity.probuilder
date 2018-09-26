@@ -288,10 +288,11 @@ namespace UnityEditor.ProBuilder
 
     static class UserSettings
     {
-        [MenuItem("Tools/Dump Settings &d")]
-        static void PrintAll()
+        internal static string GetSettingsString(params SettingScope[] scopes)
         {
             var settings = FindUserSettings(SettingVisibility.All);
+            if(scopes != null)
+                settings = settings.Where(x => scopes.Contains(x.scope));
             var sb = new System.Text.StringBuilder();
             Type t = null;
 
@@ -299,13 +300,17 @@ namespace UnityEditor.ProBuilder
             {
                 if (pref.type != t)
                 {
+                    if (t != null)
+                        sb.AppendLine();
                     t = pref.type;
-                    sb.AppendLine("\n" + pref.type.ToString());
+                    sb.AppendLine(pref.type.ToString());
                 }
-                sb.AppendLine(string.Format("{0,-4}{1,-24}{2,-64}{3}", "", pref.scope, pref.key, pref.GetValue().ToString()));
+
+                var val = pref.GetValue();
+                sb.AppendLine(string.Format("{0,-4}{1,-24}{2,-64}{3}", "", pref.scope, pref.key, val != null ? val.ToString() : "null"));
             }
 
-            Debug.Log(sb.ToString());
+            return sb.ToString();
         }
 
         /// <summary>

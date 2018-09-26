@@ -35,6 +35,8 @@ namespace UnityEditor.ProBuilder
 		static Pref<bool> s_ShowHiddenSettings = new Pref<bool>("settings.showHidden", false, SettingScope.User);
 		static Pref<bool> s_ShowUnregisteredSettings = new Pref<bool>("settings.showUnregistered", false, SettingScope.User);
 		static Pref<bool> s_ListByKey = new Pref<bool>("settings.listByKey", false, SettingScope.User);
+		internal static Pref<bool> s_ShowUserSettings = new Pref<bool>("settings.showUserSettings", false, SettingScope.User);
+		internal static Pref<bool> s_ShowProjectSettings = new Pref<bool>("settings.showProjectSettings", false, SettingScope.User);
 
 		static class Styles
 		{
@@ -245,6 +247,20 @@ namespace UnityEditor.ProBuilder
 
 				menu.AddSeparator("");
 
+				menu.AddItem(new GUIContent("Show User Settings"), s_ShowUserSettings, () =>
+				{
+					s_ShowUserSettings.SetValue(!s_ShowUserSettings, true);
+					SearchForUserSettingAttributes();
+				});
+
+				menu.AddItem(new GUIContent("Show Project Settings"), s_ShowProjectSettings, () =>
+				{
+					s_ShowProjectSettings.SetValue(!s_ShowProjectSettings, true);
+					SearchForUserSettingAttributes();
+				});
+
+				menu.AddSeparator("");
+
 				menu.AddItem(new GUIContent("Show Unlisted Settings"), s_ShowHiddenSettings, () =>
 				{
 					s_ShowHiddenSettings.SetValue(!s_ShowHiddenSettings, true);
@@ -345,6 +361,14 @@ namespace UnityEditor.ProBuilder
 
 		internal static void DoPreferenceField(GUIContent title, IPref pref)
 		{
+			if (EditorPrefs.GetBool("DeveloperMode", false))
+			{
+				if (pref.scope == SettingScope.Project && !s_ShowProjectSettings)
+					return;
+				if (pref.scope == SettingScope.User && !s_ShowUserSettings)
+					return;
+			}
+
 			if (pref is Pref<float>)
 			{
 				var cast = (Pref<float>)pref;

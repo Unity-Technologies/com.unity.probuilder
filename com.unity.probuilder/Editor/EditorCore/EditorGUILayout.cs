@@ -262,9 +262,23 @@ namespace UnityEditor.ProBuilder.UI
 			return split.Any(x => !string.IsNullOrEmpty(x) && content.IndexOf(x, StringComparison.InvariantCultureIgnoreCase) > -1);
 		}
 
+		internal static bool DebugModeFilter(IPref pref)
+		{
+			if (!EditorPrefs.GetBool("DeveloperMode", false))
+				return true;
+
+			if (pref.scope == SettingScope.Project && ProBuilderSettingsProvider.s_ShowProjectSettings)
+				return true;
+
+			if (pref.scope == SettingScope.User && ProBuilderSettingsProvider.s_ShowUserSettings)
+				return true;
+
+			return false;
+		}
+
 		public static float SettingsSlider(GUIContent content, Pref<float> value, float min, float max, string searchContext)
 		{
-			if (!MatchSearchGroups(searchContext, content.text))
+			if (!DebugModeFilter(value) || !MatchSearchGroups(searchContext, content.text))
 				return value;
 			var res = UnityEditor.EditorGUILayout.Slider(content, value, min, max);
 			DoResetContextMenuForLastRect(value);
@@ -273,7 +287,7 @@ namespace UnityEditor.ProBuilder.UI
 
 		public static float SettingsSlider(string content, Pref<float> value, float min, float max, string searchContext)
 		{
-			if (!MatchSearchGroups(searchContext, content))
+			if (!DebugModeFilter(value) || !MatchSearchGroups(searchContext, content))
 				return value;
 			var res = UnityEditor.EditorGUILayout.Slider(content, value, min, max);
 			DoResetContextMenuForLastRect(value);
@@ -282,7 +296,7 @@ namespace UnityEditor.ProBuilder.UI
 
 		internal static float SettingsFloatField(GUIContent title, Pref<float> value, string searchContext)
 		{
-			if(!MatchSearchGroups(searchContext, title.text))
+			if(!DebugModeFilter(value) || !MatchSearchGroups(searchContext, title.text))
 				return value;
 			var res = UnityEditor.EditorGUILayout.FloatField(title, value);
 			DoResetContextMenuForLastRect(value);
@@ -291,7 +305,7 @@ namespace UnityEditor.ProBuilder.UI
 
 		internal static float SettingsFloatField(string title, Pref<float> value, string searchContext)
 		{
-			if(!MatchSearchGroups(searchContext, title))
+			if(!DebugModeFilter(value) || !MatchSearchGroups(searchContext, title))
 				return value;
 			var res = UnityEditor.EditorGUILayout.FloatField(title, value);
 			DoResetContextMenuForLastRect(value);
@@ -300,7 +314,7 @@ namespace UnityEditor.ProBuilder.UI
 
 		internal static int SettingsIntField(GUIContent title, Pref<int> value, string searchContext)
 		{
-			if(!MatchSearchGroups(searchContext, title.text))
+			if(!DebugModeFilter(value) || !MatchSearchGroups(searchContext, title.text))
 				return value;
 			var res = UnityEditor.EditorGUILayout.IntField(title, value);
 			DoResetContextMenuForLastRect(value);
@@ -309,7 +323,7 @@ namespace UnityEditor.ProBuilder.UI
 
 		internal static int SettingsIntField(string title, Pref<int> value, string searchContext)
 		{
-			if(!MatchSearchGroups(searchContext, title))
+			if(!DebugModeFilter(value) || !MatchSearchGroups(searchContext, title))
 				return value;
 			var res = UnityEditor.EditorGUILayout.IntField(title, value);
 			DoResetContextMenuForLastRect(value);
@@ -318,7 +332,7 @@ namespace UnityEditor.ProBuilder.UI
 
 		internal static bool SettingsToggle(GUIContent title, Pref<bool> value, string searchContext)
 		{
-			if(!MatchSearchGroups(searchContext, title.text))
+			if(!DebugModeFilter(value) || !MatchSearchGroups(searchContext, title.text))
 				return value;
 			var res = UnityEditor.EditorGUILayout.Toggle(title, value);
 			DoResetContextMenuForLastRect(value);
@@ -327,7 +341,7 @@ namespace UnityEditor.ProBuilder.UI
 
 		internal static bool SettingsToggle(string title, Pref<bool> value, string searchContext)
 		{
-			if(!MatchSearchGroups(searchContext, title))
+			if(!DebugModeFilter(value) || !MatchSearchGroups(searchContext, title))
 				return value;
 			var res = UnityEditor.EditorGUILayout.Toggle(title, value);
 			DoResetContextMenuForLastRect(value);
@@ -336,7 +350,7 @@ namespace UnityEditor.ProBuilder.UI
 
 		internal static string SettingsTextField(GUIContent title, Pref<string> value, string searchContext)
 		{
-			if(!MatchSearchGroups(searchContext, title.text))
+			if(!DebugModeFilter(value) || !MatchSearchGroups(searchContext, title.text))
 				return value;
 			var res = UnityEditor.EditorGUILayout.TextField(title, value);
 			DoResetContextMenuForLastRect(value);
@@ -345,7 +359,7 @@ namespace UnityEditor.ProBuilder.UI
 
 		internal static string SettingsTextField(string title, Pref<string> value, string searchContext)
 		{
-			if(!MatchSearchGroups(searchContext, title))
+			if(!DebugModeFilter(value) || !MatchSearchGroups(searchContext, title))
 				return value;
 			var res = UnityEditor.EditorGUILayout.TextField(title, value);
 			DoResetContextMenuForLastRect(value);
@@ -354,7 +368,7 @@ namespace UnityEditor.ProBuilder.UI
 
 		internal static Color SettingsColorField(GUIContent title, Pref<Color> value, string searchContext)
 		{
-			if(!MatchSearchGroups(searchContext, title.text))
+			if(!DebugModeFilter(value) || !MatchSearchGroups(searchContext, title.text))
 				return value;
 			var res = UnityEditor.EditorGUILayout.ColorField(title, value);
 			DoResetContextMenuForLastRect(value);
@@ -363,7 +377,7 @@ namespace UnityEditor.ProBuilder.UI
 
 		internal static Color SettingsColorField(string title, Pref<Color> value, string searchContext)
 		{
-			if (!MatchSearchGroups(searchContext, title))
+			if (!DebugModeFilter(value) || !MatchSearchGroups(searchContext, title))
 				return value;
 			var res = UnityEditor.EditorGUILayout.ColorField(title, value);
 			DoResetContextMenuForLastRect(value);
@@ -382,7 +396,7 @@ namespace UnityEditor.ProBuilder.UI
 			if (evt.type == EventType.ContextClick && rect.Contains(evt.mousePosition))
 			{
 				var menu = new GenericMenu();
-				menu.AddItem(new GUIContent("Reset " + pref.key), false, () =>
+				menu.AddItem(new GUIContent("Reset [" + pref.scope +"] " + pref.key), false, () =>
 				{
 					pref.Reset(true);
 					ProBuilderSettings.Save();

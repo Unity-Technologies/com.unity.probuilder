@@ -19,6 +19,21 @@ class TempMenuItems : EditorWindow
 		GetWindow<TempMenuItems>();
 	}
 
+	[MenuItem("Tools/Recompile")]
+	static void Recompile()
+	{
+		if(ScriptingSymbolManager.ContainsDefine("PROBUILDER_RECOMPILE_FLAG"))
+			ScriptingSymbolManager.RemoveScriptingDefine("PROBUILDER_RECOMPILE_FLAG");
+		else
+			ScriptingSymbolManager.AddScriptingDefine("PROBUILDER_RECOMPILE_FLAG");
+	}
+
+	[MenuItem("Tools/Dump Settings &d")]
+	static void PrintAll()
+	{
+		Debug.Log(UserSettings.GetSettingsString(SettingScope.User));
+	}
+
 	void OnEnable()
 	{
 		var settings = UserSettings.FindUserSettings(SettingVisibility.All);
