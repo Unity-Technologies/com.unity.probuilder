@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using UnityEditor;
 using UnityEngine.Assertions;
 
 namespace UnityEngine.ProBuilder
@@ -72,7 +73,11 @@ namespace UnityEngine.ProBuilder
 			else if( character == PreferenceKeys.CMD_ALT )
 				return "Alt";
 			else if( character == PreferenceKeys.CMD_DELETE )
+#if UNITY_EDITOR_WIN
+				return "Backspace";
+#else
 				return "Delete";
+#endif
 			else
 				return character.ToString();
 		}
