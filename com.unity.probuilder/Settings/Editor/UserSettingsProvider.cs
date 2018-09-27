@@ -84,6 +84,9 @@ namespace UnityEditor.Settings
 			if(settings == null)
 				throw new ArgumentNullException("settings");
 
+			if(assemblies == null)
+				throw new ArgumentNullException("assemblies");
+
 			m_SettingsInstance = settings;
 			m_Assemblies = assemblies;
 			m_SettingsInstance.afterSettingsSaved += OnAfterSettingsSaved;

@@ -14,10 +14,7 @@ namespace UnityEditor.ProBuilder
 			get
 			{
 				if (s_Instance == null)
-				{
 					s_Instance = new UnitySettings(k_DefaultSettingsPath);
-					s_Instance.Load();
-				}
 
 				return s_Instance;
 			}

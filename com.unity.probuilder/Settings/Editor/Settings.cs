@@ -25,6 +25,9 @@ namespace UnityEditor.Settings
 		[SerializeField]
 		string m_SettingsPath;
 
+		[SerializeField]
+		bool m_Initialized;
+
 		public event Action beforeSettingsSaved;
 		public event Action afterSettingsSaved;
 
@@ -37,22 +40,39 @@ namespace UnityEditor.Settings
 		[SerializeField]
 		SettingsDictionary m_Dictionary = new SettingsDictionary();
 
-		Settings() {}
-
-		public Settings(string settingsPath)
-		{
-			m_SettingsPath = settingsPath;
-			Load();
-		}
-
 		internal string settingsPath
 		{
 			get { return m_SettingsPath; }
 			set { m_SettingsPath = value; }
 		}
 
+		internal SettingsDictionary dictionary
+		{
+			get { return m_Dictionary; }
+		}
+
+		Settings()
+		{
+			m_Initialized = false;
+		}
+
+		public Settings(string settingsPath)
+		{
+			m_SettingsPath = settingsPath;
+			m_Initialized = false;
+		}
+
+		void Init()
+		{
+			// Lazy initialize dictionary because EditorJsonUtility can't be called in constructors
+			if (!m_Initialized)
+				Load();
+		}
+
 		public void Save()
 		{
+			Init();
+
 			if (beforeSettingsSaved!= null)
 				beforeSettingsSaved();
 
@@ -64,6 +84,8 @@ namespace UnityEditor.Settings
 
 		public void Load()
 		{
+			m_Initialized = true;
+
 			if (File.Exists(m_SettingsPath))
 			{
 				m_Dictionary = null;
@@ -77,11 +99,6 @@ namespace UnityEditor.Settings
 			m_Dictionary = null;
 			m_Dictionary = new SettingsDictionary();
 			Load();
-		}
-
-		internal SettingsDictionary dictionary
-		{
-			get { return m_Dictionary; }
 		}
 
 		static string GetEditorPrefKey<T>(string key)
@@ -135,6 +152,8 @@ namespace UnityEditor.Settings
 
 		public void Set<T>(string key, T value, SettingScope scope = SettingScope.Project)
 		{
+			Init();
+
 			switch (scope)
 			{
 				case SettingScope.Project:
@@ -149,6 +168,8 @@ namespace UnityEditor.Settings
 
 		public T Get<T>(string key, SettingScope scope = SettingScope.Project, T fallback = default(T))
 		{
+			Init();
+
 			if(scope == SettingScope.Project)
 				return m_Dictionary.Get<T>(key, fallback);
 
@@ -157,6 +178,8 @@ namespace UnityEditor.Settings
 
 		public bool ContainsKey<T>(string key, SettingScope scope = SettingScope.Project)
 		{
+			Init();
+
 			if(scope == SettingScope.Project)
 				return m_Dictionary.ContainsKey<T>(key);
 
@@ -165,6 +188,8 @@ namespace UnityEditor.Settings
 
 		public void Delete<T>(string key, SettingScope scope = SettingScope.Project)
 		{
+			Init();
+
 			if (scope == SettingScope.Project)
 			{
 				m_Dictionary.Remove<T>(key);
@@ -176,12 +201,6 @@ namespace UnityEditor.Settings
 				if(EditorPrefs.HasKey(k))
 					EditorPrefs.DeleteKey(k);
 			}
-		}
-
-		public void DeleteProjectSettings()
-		{
-			if (File.Exists(m_SettingsPath))
-				File.Delete(m_SettingsPath);
 		}
 	}
 }
