@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.18] - 2018-09-21
+## [4.0.0-preview.19] - 2018-09-27
 
 ### Features
 
@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Support new 2018.3 prefab system.
 - Redesigned Lightmap UV workflow now exposes settings on the ProBuilderMesh component, provides a modifiable default value, and is generally smarter about keeping Lightmap UV channels in sync with changes.
 - Improve performance of toolbar rendering by caching some frequently accessed selection information.
+- Redesigned settings interface, now supports search and resetting individual fields.
 
 ### Bug Fixes
 
@@ -59,15 +60,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Simplify assembly definition files, merging ProBuilder.Core & ProBuilder.MeshOperations to single assembly.
 - Minor performance improvements to some common mesh editing actions.
 - Remove "Precise Element Selection" preference.
-
-### Changes since 4.0.0-preview.17
-
-- Fix Scene view shortcuts upgrading as `null`.
-
-### Changes since 4.0.0-preview.16
-
-- Redesigned settings interface, now supports searching for keywords.
 - Project preferences are no longer saved in the Assets directory (now located at "ProjectSettings/ProBuilderSettings.json").
+
+### Changes since 4.0.0-preview.18
+
+- Fix regressions that broke compatability with Unity 2018.1 and 2018.2.
+- Add ability to reset per-field preferences.
+- Fix various bugs introduced in Settings refactor.
 
 ## [3.0.8] - 2018-05-07
 
