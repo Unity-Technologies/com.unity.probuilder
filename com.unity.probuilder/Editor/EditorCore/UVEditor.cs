@@ -2488,9 +2488,9 @@ namespace UnityEditor.ProBuilder
 
 			var mode = ProBuilderEditor.selectMode;
 
-			int currentSelectionMode = mode == SelectMode.Vertex ? 1
-				: mode == SelectMode.Edge ? 2
-				: mode == SelectMode.Face ? 3 : 0;
+			int currentSelectionMode = mode == SelectMode.Vertex ? 0
+				: mode == SelectMode.Edge ? 1
+				: mode == SelectMode.Face ? 2 : -1;
 
 			GUI.enabled = channel == 0;
 
@@ -2499,12 +2499,10 @@ namespace UnityEditor.ProBuilder
 			if (EditorGUI.EndChangeCheck())
 			{
 				if (currentSelectionMode == 0)
-					ProBuilderEditor.selectMode = SelectMode.Object;
-				else if (currentSelectionMode == 1)
 					ProBuilderEditor.selectMode = SelectMode.Vertex;
-				else if (currentSelectionMode == 2)
+				else if (currentSelectionMode == 1)
 					ProBuilderEditor.selectMode = SelectMode.Edge;
-				else if (currentSelectionMode == 3)
+				else if (currentSelectionMode == 2)
 					ProBuilderEditor.selectMode = SelectMode.Face;
 			}
 

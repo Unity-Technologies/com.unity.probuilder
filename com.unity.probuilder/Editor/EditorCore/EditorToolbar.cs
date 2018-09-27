@@ -13,13 +13,11 @@ namespace UnityEditor.ProBuilder
 	{
 		EditorToolbar() { }
 
-		Pref<Vector2> m_ScrollPosition = new Pref<Vector2>("editor.scrollPosition", Vector2.zero);
+		Pref<Vector2> m_Scroll = new Pref<Vector2>("editor.scrollPosition", Vector2.zero, SettingScope.User);
 		public EditorWindow window;
 
 		bool isFloating { get { return ProBuilderEditor.instance != null && ProBuilderEditor.instance.isFloatingWindow; } }
 		bool isIconMode = true;
-
-		Vector2 m_Scroll = Vector2.zero;
 
 		[UserSetting("Toolbar", "Shift Key Tooltips", "Tooltips will only show when the Shift key is held")]
 		internal static Pref<bool> s_ShiftOnlyTooltips = new Pref<bool>("editor.shiftOnlyTooltips", false, SettingScope.User);
@@ -69,8 +67,6 @@ namespace UnityEditor.ProBuilder
 			isIconMode = ProBuilderEditor.s_IsIconGui;
 			this.window = ProBuilderEditor.instance;
 			CalculateMaxIconSize();
-
-			m_Scroll = m_ScrollPosition;
 		}
 
 		void OnDisable()
@@ -79,7 +75,6 @@ namespace UnityEditor.ProBuilder
 			// is called.  no clue why.
 			// EditorApplication.update -= Update;
 			ProBuilderEditor.selectionUpdated -= OnElementSelectionChange;
-			m_ScrollPosition.SetValue(m_Scroll, true);
 		}
 
 		void OnDestroy()
@@ -87,7 +82,6 @@ namespace UnityEditor.ProBuilder
 			// store the scroll in both disable & destroy because there are
 			// situations where one gets updated over the other and it's all
 			// screwy.  script reloads in particular?
-			m_ScrollPosition.SetValue(m_Scroll, true);
 			MenuActionStyles.ResetStyles();
 		}
 
@@ -151,7 +145,7 @@ namespace UnityEditor.ProBuilder
 			if(doAnimateScroll)
 			{
 				double scrollTimer = EditorApplication.timeSinceStartup - scrollStartTime;
-				m_Scroll = Vector2.Lerp(scrollOrigin, scrollTarget, (float)scrollTimer / scrollTotalTime);
+				m_Scroll.value = Vector2.Lerp(scrollOrigin, scrollTarget, (float)scrollTimer / scrollTotalTime);
 
 				if(scrollTimer >= scrollTotalTime)
 					doAnimateScroll = false;
@@ -283,7 +277,7 @@ namespace UnityEditor.ProBuilder
 
 			if(isHorizontal && e.type == EventType.ScrollWheel && e.delta.sqrMagnitude > .001f)
 			{
-				m_Scroll.x += e.delta.y * 10f;
+				m_Scroll.value = new Vector2(m_Scroll.value.x + e.delta.y * 10f, m_Scroll.value.y);
 				forceRepaint = true;
 			}
 
@@ -303,25 +297,25 @@ namespace UnityEditor.ProBuilder
 				{
 					GUILayout.BeginHorizontal();
 
-					GUI.enabled = m_Scroll.x > 0;
+					GUI.enabled = ((Vector2)m_Scroll).x > 0;
 
 					if(GUILayout.Button(scrollIconLeft, UI.EditorGUIUtility.ButtonNoBackgroundSmallMarginStyle, GUILayout.ExpandHeight(true)))
-						StartScrollAnimation(Mathf.Max(m_Scroll.x - availableWidth, 0f), 0f);
+						StartScrollAnimation(Mathf.Max(((Vector2)m_Scroll).x - availableWidth, 0f), 0f);
 
 					GUI.enabled = true;
 				}
 				else
 				{
-					GUI.enabled = m_Scroll.y > 0;
+					GUI.enabled = ((Vector2)m_Scroll).y > 0;
 
 					if(GUILayout.Button(scrollIconUp, UI.EditorGUIUtility.ButtonNoBackgroundSmallMarginStyle))
-						StartScrollAnimation( 0f, Mathf.Max(m_Scroll.y - availableHeight, 0f) );
+						StartScrollAnimation( 0f, Mathf.Max(((Vector2)m_Scroll).y - availableHeight, 0f) );
 
 					GUI.enabled = true;
 				}
 			}
 
-			m_Scroll = GUILayout.BeginScrollView(m_Scroll, false, false, GUIStyle.none, GUIStyle.none, GUIStyle.none);
+			m_Scroll.value = GUILayout.BeginScrollView(m_Scroll.value, false, false, GUIStyle.none, GUIStyle.none, GUIStyle.none);
 
 			bool 	tooltipShown = false,
 					hovering = false;
@@ -348,8 +342,8 @@ namespace UnityEditor.ProBuilder
 					if( action.DoButton(isHorizontal, e.alt, ref optionRect, GUILayout.MaxHeight(m_ContentHeight + 12)) && !e.shift )
 					{
 						// test for alt click / hover
-						optionRect.x -= m_Scroll.x;
-						optionRect.y -= m_Scroll.y;
+						optionRect.x -= m_Scroll.value.x;
+						optionRect.y -= m_Scroll.value.y;
 
 						if(	windowContainsMouse &&
 							e.type != EventType.Layout &&
@@ -413,18 +407,18 @@ namespace UnityEditor.ProBuilder
 			{
 				if(isHorizontal)
 				{
-					GUI.enabled = m_Scroll.x < maxHorizontalScroll - 2;
+					GUI.enabled = m_Scroll.value.x < maxHorizontalScroll - 2;
 					if(GUILayout.Button(scrollIconRight, UI.EditorGUIUtility.ButtonNoBackgroundSmallMarginStyle, GUILayout.ExpandHeight(true)))
-						StartScrollAnimation( Mathf.Min(m_Scroll.x + availableWidth + 2, maxHorizontalScroll), 0f );
+						StartScrollAnimation( Mathf.Min(m_Scroll.value.x + availableWidth + 2, maxHorizontalScroll), 0f );
 					GUI.enabled = true;
 
 					GUILayout.EndHorizontal();
 				}
 				else
 				{
-					GUI.enabled = m_Scroll.y < maxVerticalScroll - 2;
+					GUI.enabled = m_Scroll.value.y < maxVerticalScroll - 2;
 					if(GUILayout.Button(scrollIconDown, UI.EditorGUIUtility.ButtonNoBackgroundSmallMarginStyle))
-						StartScrollAnimation( 0f, Mathf.Min(m_Scroll.y + availableHeight + 2, maxVerticalScroll) );
+						StartScrollAnimation( 0f, Mathf.Min(m_Scroll.value.y + availableHeight + 2, maxVerticalScroll) );
 					GUI.enabled = true;
 				}
 			}
