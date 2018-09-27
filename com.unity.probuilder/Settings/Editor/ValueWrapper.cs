@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace UnityEditor.Settings
+namespace UnityEditor.SettingsManagement
 {
 	[Serializable]
 	sealed class ValueWrapper<T>

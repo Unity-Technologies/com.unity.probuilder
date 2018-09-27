@@ -5,7 +5,7 @@ using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder.MeshOperations;
-using UnityEngine.ProBuilder.Test;
+using UnityEngine.ProBuilder.Tests.Framework;
 
 namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 {

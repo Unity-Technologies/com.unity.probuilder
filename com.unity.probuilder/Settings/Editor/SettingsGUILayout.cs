@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 
-namespace UnityEditor.Settings
+namespace UnityEditor.SettingsManagement
 {
 	public static class SettingsGUILayout
 	{

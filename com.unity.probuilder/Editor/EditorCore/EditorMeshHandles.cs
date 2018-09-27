@@ -5,7 +5,7 @@ using UnityEngine.ProBuilder;
 using System.Reflection;
 using System.Collections.Generic;
 using UnityEngine.Rendering;
-using UnityEditor.Settings;
+using UnityEditor.SettingsManagement;
 
 namespace UnityEditor.ProBuilder
 {

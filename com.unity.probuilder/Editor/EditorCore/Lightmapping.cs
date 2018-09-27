@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UL = UnityEditor.Lightmapping;
-using UnityEditor.Settings;
+using UnityEditor.SettingsManagement;
 
 namespace UnityEditor.ProBuilder
 {

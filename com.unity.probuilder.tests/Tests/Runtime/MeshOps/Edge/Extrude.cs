@@ -2,11 +2,8 @@
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
-using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.Test;
 using UnityEngine.ProBuilder.MeshOperations;
-using UnityEditor;
-using UnityEngine.TestTools;
+using UnityEngine.ProBuilder.Tests.Framework;
 
 namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Edge
 {

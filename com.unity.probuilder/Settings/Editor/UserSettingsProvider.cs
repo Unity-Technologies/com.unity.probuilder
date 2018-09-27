@@ -1,4 +1,8 @@
-﻿using System;
+﻿#if UNITY_2018_3_OR_NEWER
+#define SETTINGS_PROVIDER_ENABLED
+#endif
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,17 +10,28 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 
-namespace UnityEditor.Settings
+namespace UnityEditor.SettingsManagement
 {
+#if SETTINGS_PROVIDER_ENABLED
 	public sealed class UserSettingsProvider : SettingsProvider
+#else
+	public sealed class UserSettingsProvider
+#endif
 	{
 		const string k_UserSettingsProviderSettingsPath = "ProjectSettings/UserSettingsProviderSettings.json";
 		const string k_SettingsGearIcon = "Packages/com.unity.probuilder/Settings/Content/Options.png";
+#if SETTINGS_PROVIDER_ENABLED
 		const int k_LabelWidth = 240;
+#else
+		const int k_LabelWidth = 180;
+#endif
 
 		List<string> m_Categories;
 		Dictionary<string, List<PrefEntry>> m_Settings;
 		Dictionary<string, List<MethodInfo>> m_SettingBlocks;
+#if !SETTINGS_PROVIDER_ENABLED
+		HashSet<string> keywords = new HashSet<string>();
+#endif
 		static readonly string[] s_SearchContext = new string[1];
 		Assembly[] m_Assemblies;
 		static Settings s_Settings;
@@ -78,8 +93,12 @@ namespace UnityEditor.Settings
 			}
 		}
 
+#if SETTINGS_PROVIDER_ENABLED
 		public UserSettingsProvider(string path, Settings settings, Assembly[] assemblies, SettingsScopes scopes = SettingsScopes.Any)
 			: base(path, scopes)
+#else
+		public UserSettingsProvider(Settings settings, Assembly[] assemblies)
+#endif
 		{
 			if(settings == null)
 				throw new ArgumentNullException("settings");
@@ -90,6 +109,10 @@ namespace UnityEditor.Settings
 			m_SettingsInstance = settings;
 			m_Assemblies = assemblies;
 			m_SettingsInstance.afterSettingsSaved += OnAfterSettingsSaved;
+
+#if !SETTINGS_PROVIDER_ENABLED
+			SearchForUserSettingAttributes();
+#endif
 		}
 
 		~UserSettingsProvider()
@@ -97,10 +120,12 @@ namespace UnityEditor.Settings
 			m_SettingsInstance.afterSettingsSaved -= OnAfterSettingsSaved;
 		}
 
+#if SETTINGS_PROVIDER_ENABLED
 		public override void OnActivate(string searchContext, VisualElement rootElement)
 		{
 			SearchForUserSettingAttributes();
 		}
+#endif
 
 		void OnAfterSettingsSaved()
 		{
@@ -246,6 +271,7 @@ namespace UnityEditor.Settings
 			m_Categories.Sort();
 		}
 
+#if SETTINGS_PROVIDER_ENABLED
 		public override void OnTitleBarGUI()
 		{
 			Styles.Init();
@@ -253,6 +279,7 @@ namespace UnityEditor.Settings
 			if (GUILayout.Button(GUIContent.none, Styles.settingsGizmo))
 				DoContextMenu();
 		}
+#endif
 
 		void DoContextMenu()
 		{
@@ -329,9 +356,19 @@ namespace UnityEditor.Settings
 			menu.ShowAsContext();
 		}
 
+#if SETTINGS_PROVIDER_ENABLED
 		public override void OnGUI(string searchContext)
+#else
+		public void OnGUI(string searchContext)
+#endif
 		{
 			Styles.Init();
+
+#if !SETTINGS_PROVIDER_ENABLED
+			var evt = Event.current;
+			if(evt.type == EventType.ContextClick)
+				DoContextMenu();
+#endif
 
 			EditorGUIUtility.labelWidth = k_LabelWidth;
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
-using UnityEditor.Settings;
+using UnityEditor.SettingsManagement;
 
 namespace UnityEditor.ProBuilder
 {

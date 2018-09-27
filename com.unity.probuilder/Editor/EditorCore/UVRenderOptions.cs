@@ -2,7 +2,7 @@ using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 using UnityEditor;
 using UnityEngine;
-using UnityEditor.Settings;
+using UnityEditor.SettingsManagement;
 
 namespace UnityEditor.ProBuilder
 {

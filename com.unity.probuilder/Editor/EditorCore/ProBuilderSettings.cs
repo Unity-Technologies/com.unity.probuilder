@@ -1,5 +1,4 @@
-using UnityEditor.Settings;
-using UnitySettings = UnityEditor.Settings.Settings;
+using UnityEditor.SettingsManagement;
 
 namespace UnityEditor.ProBuilder
 {
@@ -7,14 +6,14 @@ namespace UnityEditor.ProBuilder
 	{
 		internal const string k_DefaultSettingsPath = "ProjectSettings/ProBuilderSettings.json";
 
-		static UnitySettings s_Instance;
+		static Settings s_Instance;
 
-		internal static UnitySettings instance
+		internal static Settings instance
 		{
 			get
 			{
 				if (s_Instance == null)
-					s_Instance = new UnitySettings(k_DefaultSettingsPath);
+					s_Instance = new Settings(k_DefaultSettingsPath);
 
 				return s_Instance;
 			}

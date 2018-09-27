@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UnityEditor.Settings
+namespace UnityEditor.SettingsManagement
 {
 	[Serializable]
 	public sealed class SettingsDictionary : ISerializationCallbackReceiver

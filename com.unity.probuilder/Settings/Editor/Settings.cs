@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using UnityEngine;
 
-namespace UnityEditor.Settings
+namespace UnityEditor.SettingsManagement
 {
 	public enum SettingScope
 	{

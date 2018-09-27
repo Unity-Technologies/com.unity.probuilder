@@ -2,10 +2,10 @@
 using System;
 using System.IO;
 using NUnit.Framework;
-using UnityEditor.Settings;
+using UnityEditor.SettingsManagement;
 using UnityEngine.TestTools;
 
-namespace UnityEngine.ProBuilder.EditorTests.Editor
+namespace UnityEngine.SettingsManagement.EditorTests
 {
 	class SettingsTests : IPrebuildSetup, IPostBuildCleanup
 	{

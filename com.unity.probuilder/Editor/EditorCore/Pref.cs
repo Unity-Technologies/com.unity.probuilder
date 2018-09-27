@@ -1,5 +1,4 @@
-using UnityEditor.Settings;
-using UnitySettings = UnityEditor.Settings.Settings;
+using UnityEditor.SettingsManagement;
 
 namespace UnityEditor.ProBuilder
 {
@@ -9,7 +8,7 @@ namespace UnityEditor.ProBuilder
 		: base(ProBuilderSettings.instance, key, value, scope)
 		{}
 
-		public Pref(UnitySettings settings, string key, T value, SettingScope scope = SettingScope.Project)
+		public Pref(Settings settings, string key, T value, SettingScope scope = SettingScope.Project)
 			: base(settings, key, value, scope) { }
 	}
 }

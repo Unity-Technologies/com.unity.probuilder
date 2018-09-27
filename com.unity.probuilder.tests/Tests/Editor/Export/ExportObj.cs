@@ -1,11 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using UnityEngine;
-using UnityEditor;
-using UnityEngine.ProBuilder.Test;
-using UnityEngine.TestTools;
+using UnityEngine.ProBuilder.Tests.Framework;
 using UnityEditor.ProBuilder;
 using NUnit.Framework;
 using System.Threading;
