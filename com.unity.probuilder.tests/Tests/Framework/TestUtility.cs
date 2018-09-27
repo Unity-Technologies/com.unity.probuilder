@@ -6,12 +6,11 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using UObject = UnityEngine.Object;
-using UnityEngine.ProBuilder;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine.TestTools;
 
-namespace UnityEngine.ProBuilder.Test
+namespace UnityEngine.ProBuilder.Tests.Framework
 {
 	abstract class TemporaryAssetTest : IPrebuildSetup, IPostBuildCleanup
 	{
