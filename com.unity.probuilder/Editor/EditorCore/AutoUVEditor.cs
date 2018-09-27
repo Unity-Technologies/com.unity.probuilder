@@ -65,11 +65,7 @@ namespace UnityEditor.ProBuilder
 			UpdateDiffDictionary(selection);
 
 			s_ScrollPosition = EditorGUILayout.BeginScrollView(s_ScrollPosition);
-
-			int tempInt = -1;
 			float tempFloat = 0f;
-			Vector2 tempVec2 = Vector2.zero;
-			bool tempBool = false;
 
 			EditorGUI.BeginChangeCheck();
 
