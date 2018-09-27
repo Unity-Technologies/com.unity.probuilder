@@ -105,7 +105,7 @@ namespace UnityEditor.ProBuilder
 			 * Offset
 			 */
 			EditorGUI.showMixedValue = s_AutoUVSettingsDiff["offsetx"] || s_AutoUVSettingsDiff["offsety"];
-			tempVec2 = s_AutoUVSettings.offset;
+			var tempVec2 = s_AutoUVSettings.offset;
 			UnityEngine.GUI.SetNextControlName("offset");
 			s_AutoUVSettings.offset = EditorGUILayout.Vector2Field("Offset", s_AutoUVSettings.offset, GUILayout.MaxWidth(width));
 			if(tempVec2.x != s_AutoUVSettings.offset.x) { SetOffset(s_AutoUVSettings.offset, Axis2D.X, selection); }
