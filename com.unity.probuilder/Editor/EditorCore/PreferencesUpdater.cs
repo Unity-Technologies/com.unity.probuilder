@@ -115,7 +115,6 @@ namespace UnityEditor.ProBuilder
 #pragma warning restore 612, 618
 		};
 
-		[MenuItem("Tools/Recover Old Preferences")]
 		static void RecoverOldPreferences()
 		{
 			int success = 0;
@@ -148,7 +147,9 @@ namespace UnityEditor.ProBuilder
 #pragma warning restore 618
 			}
 
+#if PB_DEBUG
 			Debug.Log("ProBuilder successfully recovered " + success + " settings.");
+#endif
 
 			ProBuilderSettings.Save();
 		}
