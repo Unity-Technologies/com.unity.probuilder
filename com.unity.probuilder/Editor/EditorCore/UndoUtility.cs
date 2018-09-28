@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder
 		{
 			// material preview when dragging in sceneview is done by applying then undoing changes. we don't want to
 			// rebuild the mesh every single frame when dragging.
-			if (SceneDragAndDropListener.IsDragging())
+			if (SceneDragAndDropListener.isDragging)
 				return;
 
 			foreach(var mesh in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
