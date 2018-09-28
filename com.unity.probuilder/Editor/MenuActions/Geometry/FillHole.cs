@@ -63,7 +63,7 @@ namespace UnityEditor.ProBuilder.Actions
 			m_SelectEntirePath.value = EditorGUILayout.Toggle("Fill Entire Hole", m_SelectEntirePath);
 
 			if(EditorGUI.EndChangeCheck())
-				Settings.Save();
+				ProBuilderSettings.Save();
 
 			GUILayout.FlexibleSpace();
 

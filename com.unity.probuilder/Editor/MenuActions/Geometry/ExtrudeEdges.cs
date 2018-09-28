@@ -51,7 +51,7 @@ namespace UnityEditor.ProBuilder.Actions
 			m_ExtrudeEdgeDistance.value = EditorGUILayout.FloatField("Distance", m_ExtrudeEdgeDistance);
 
 			if(EditorGUI.EndChangeCheck())
-				Settings.Save();
+				ProBuilderSettings.Save();
 
 			GUILayout.FlexibleSpace();
 

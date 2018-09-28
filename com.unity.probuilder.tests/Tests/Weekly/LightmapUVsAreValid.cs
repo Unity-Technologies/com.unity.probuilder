@@ -1,15 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.ProBuilder;
 using UnityEngine;
-using UnityEngine.ProBuilder.MeshOperations;
-using UnityEngine.ProBuilder.Test;
-using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using Lightmapping = UnityEditor.Lightmapping;
+using UnityEngine.ProBuilder.Tests.Framework;
 
 namespace UnityEngine.ProBuilder.Tests.Slow
 {

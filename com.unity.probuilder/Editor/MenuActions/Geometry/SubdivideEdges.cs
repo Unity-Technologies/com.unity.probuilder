@@ -62,7 +62,7 @@ namespace UnityEditor.ProBuilder.Actions
 			m_SubdivisionCount.value = (int)UI.EditorGUIUtility.FreeSlider("Subdivisions", m_SubdivisionCount, 1, 32);
 
 			if (EditorGUI.EndChangeCheck())
-				Settings.Save();
+				ProBuilderSettings.Save();
 
 			GUILayout.FlexibleSpace();
 

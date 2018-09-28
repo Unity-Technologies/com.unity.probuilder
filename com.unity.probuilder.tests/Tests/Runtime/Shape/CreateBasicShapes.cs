@@ -1,10 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using NUnit.Framework;
-using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.Test;
+using UnityEngine.ProBuilder.Tests.Framework;
 
 namespace UnityEngine.ProBuilder.RuntimeTests.Shape
 {

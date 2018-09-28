@@ -49,7 +49,7 @@ namespace UnityEditor.ProBuilder.Actions
 				m_BevelSize.value = .001f;
 
 			if(EditorGUI.EndChangeCheck())
-				Settings.Save();
+				ProBuilderSettings.Save();
 
 			GUILayout.FlexibleSpace();
 

@@ -5,6 +5,7 @@ using UnityEngine.ProBuilder;
 using System.Reflection;
 using System.Collections.Generic;
 using UnityEngine.Rendering;
+using UnityEditor.SettingsManagement;
 
 namespace UnityEditor.ProBuilder
 {
@@ -25,19 +26,31 @@ namespace UnityEditor.ProBuilder
 		static readonly Color k_VertexUnselectedDefault = new Color(.7f, .7f, .7f, 1f);
 		static readonly Color k_WireframeDefault = new Color(94.0f / 255.0f, 119.0f / 255.0f, 155.0f / 255.0f, 1f);
 
-		static Pref<bool> s_UseUnityColors = new Pref<bool>("handlesUseUnityColors", true, Settings.Scope.User);
-		static Pref<bool> s_DitherFaceHandle = new Pref<bool>("ditherFaceHandles", true, Settings.Scope.User);
-		static Pref<Color> s_SelectedFaceColorPref = new Pref<Color>("userSelectedFaceColor", new Color(0f, 210f / 255f, 239f / 255f, 1f), Settings.Scope.User);
-		static Pref<Color> s_WireframeColorPref = new Pref<Color>("userWireframeColor", new Color(125f / 255f, 155f / 255f, 185f / 255f, 1f), Settings.Scope.User);
-		static Pref<Color> s_UnselectedEdgeColorPref = new Pref<Color>("userUnselectedEdgeColor", new Color(44f / 255f, 44f / 255f, 44f / 255f, 1f), Settings.Scope.User);
-		static Pref<Color> s_SelectedEdgeColorPref = new Pref<Color>("userSelectedEdgeColor", new Color(0f, 210f / 255f, 239f / 255f, 1f), Settings.Scope.User);
-		static Pref<Color> s_UnselectedVertexColorPref = new Pref<Color>("userUnselectedVertexColor", new Color(44f / 255f, 44f / 255f, 44f / 255f, 1f), Settings.Scope.User);
-		static Pref<Color> s_SelectedVertexColorPref = new Pref<Color>("userSelectedVertexColor", new Color(0f, 210f / 255f, 239f / 255f, 1f), Settings.Scope.User);
-		static Pref<Color> s_PreselectionColorPref = new Pref<Color>("userPreselectionColor", new Color(179f / 255f, 246f / 255f, 255f / 255f, 1f), Settings.Scope.User);
+		[UserSetting]
+		static Pref<bool> s_UseUnityColors = new Pref<bool>("graphics.handlesUseUnityColors", true, SettingScope.User);
+		[UserSetting]
+		static Pref<bool> s_DitherFaceHandle = new Pref<bool>("graphics.ditherFaceHandles", true, SettingScope.User);
+		[UserSetting]
+		static Pref<Color> s_SelectedFaceColorPref = new Pref<Color>("graphics.userSelectedFaceColor", new Color(0f, 210f / 255f, 239f / 255f, 1f), SettingScope.User);
+		[UserSetting]
+		static Pref<Color> s_WireframeColorPref = new Pref<Color>("graphics.userWireframeColor", new Color(125f / 255f, 155f / 255f, 185f / 255f, 1f), SettingScope.User);
+		[UserSetting]
+		static Pref<Color> s_UnselectedEdgeColorPref = new Pref<Color>("graphics.userUnselectedEdgeColor", new Color(44f / 255f, 44f / 255f, 44f / 255f, 1f), SettingScope.User);
+		[UserSetting]
+		static Pref<Color> s_SelectedEdgeColorPref = new Pref<Color>("graphics.userSelectedEdgeColor", new Color(0f, 210f / 255f, 239f / 255f, 1f), SettingScope.User);
+		[UserSetting]
+		static Pref<Color> s_UnselectedVertexColorPref = new Pref<Color>("graphics.userUnselectedVertexColor", new Color(44f / 255f, 44f / 255f, 44f / 255f, 1f), SettingScope.User);
+		[UserSetting]
+		static Pref<Color> s_SelectedVertexColorPref = new Pref<Color>("graphics.userSelectedVertexColor", new Color(0f, 210f / 255f, 239f / 255f, 1f), SettingScope.User);
+		[UserSetting]
+		static Pref<Color> s_PreselectionColorPref = new Pref<Color>("graphics.userPreselectionColor", new Color(179f / 255f, 246f / 255f, 255f / 255f, 1f), SettingScope.User);
 
-		static Pref<float> s_WireframeLineSize = new Pref<float>("wireframeLineSize", .5f, Settings.Scope.User);
-		static Pref<float> s_EdgeLineSize = new Pref<float>("edgeLineSize", 1f, Settings.Scope.User);
-		static Pref<float> s_VertexPointSize = new Pref<float>("vertexPointSize", 3f, Settings.Scope.User);
+		[UserSetting]
+		static Pref<float> s_WireframeLineSize = new Pref<float>("graphics.wireframeLineSize", .5f, SettingScope.User);
+		[UserSetting]
+		static Pref<float> s_EdgeLineSize = new Pref<float>("graphics.edgeLineSize", 1f, SettingScope.User);
+		[UserSetting]
+		static Pref<float> s_VertexPointSize = new Pref<float>("graphics.vertexPointSize", 3f, SettingScope.User);
 
 		[UserSettingBlock("Graphics", new []
 		{
@@ -45,29 +58,40 @@ namespace UnityEditor.ProBuilder
 		})]
 		static void HandleColorPreferences(string searchContext)
 		{
-			s_UseUnityColors.value = UI.EditorGUILayout.SearchableToggle("Use Unity Colors", s_UseUnityColors.value, searchContext);
+			s_UseUnityColors.value = SettingsGUILayout.SettingsToggle("Use Unity Colors", s_UseUnityColors, searchContext);
 
 			if (!s_UseUnityColors.value)
 			{
 				using (new UI.EditorStyles.IndentedBlock())
 				{
-					s_DitherFaceHandle.value = UI.EditorGUILayout.SearchableToggle("Dither Face Overlay", s_DitherFaceHandle, searchContext);
-					s_WireframeColorPref.value = UI.EditorGUILayout.SearchableColorField("Wireframe", s_WireframeColorPref, searchContext);
-					s_PreselectionColorPref.value = UI.EditorGUILayout.SearchableColorField("Preselection", s_PreselectionColorPref, searchContext);
-					s_SelectedFaceColorPref.value = UI.EditorGUILayout.SearchableColorField("Selected Face Color", s_SelectedFaceColorPref, searchContext);
-					s_UnselectedEdgeColorPref.value = UI.EditorGUILayout.SearchableColorField("Unselected Edge Color", s_UnselectedEdgeColorPref, searchContext);
-					s_SelectedEdgeColorPref.value = UI.EditorGUILayout.SearchableColorField("Selected Edge Color", s_SelectedEdgeColorPref, searchContext);
-					s_UnselectedVertexColorPref.value = UI.EditorGUILayout.SearchableColorField("Unselected Vertex Color", s_UnselectedVertexColorPref, searchContext);
-					s_SelectedVertexColorPref.value = UI.EditorGUILayout.SearchableColorField("Selected Vertex Color", s_SelectedVertexColorPref, searchContext);
+					s_DitherFaceHandle.value = SettingsGUILayout.SettingsToggle("Dither Face Overlay", s_DitherFaceHandle, searchContext);
+					s_WireframeColorPref.value = SettingsGUILayout.SettingsColorField("Wireframe", s_WireframeColorPref, searchContext);
+					s_PreselectionColorPref.value = SettingsGUILayout.SettingsColorField("Preselection", s_PreselectionColorPref, searchContext);
+					s_SelectedFaceColorPref.value = SettingsGUILayout.SettingsColorField("Selected Face Color", s_SelectedFaceColorPref, searchContext);
+					s_UnselectedEdgeColorPref.value = SettingsGUILayout.SettingsColorField("Unselected Edge Color", s_UnselectedEdgeColorPref, searchContext);
+					s_SelectedEdgeColorPref.value = SettingsGUILayout.SettingsColorField("Selected Edge Color", s_SelectedEdgeColorPref, searchContext);
+					s_UnselectedVertexColorPref.value = SettingsGUILayout.SettingsColorField("Unselected Vertex Color", s_UnselectedVertexColorPref, searchContext);
+					s_SelectedVertexColorPref.value = SettingsGUILayout.SettingsColorField("Selected Vertex Color", s_SelectedVertexColorPref, searchContext);
 				}
 			}
 
-			s_VertexPointSize.value = UI.EditorGUILayout.SearchableSlider("Vertex Size", s_VertexPointSize, 1f, 10f, searchContext);
+			s_VertexPointSize.value = SettingsGUILayout.SettingsSlider("Vertex Size", s_VertexPointSize, 1f, 10f, searchContext);
+
 			bool geoLine = BuiltinMaterials.geometryShadersSupported;
-			GUI.enabled = geoLine;
-			s_EdgeLineSize.value = UI.EditorGUILayout.SearchableSlider("Line Size", geoLine ? s_EdgeLineSize : 0f, 0f, 3f, searchContext);
-			s_WireframeLineSize.value = UI.EditorGUILayout.SearchableSlider("Wireframe Size", geoLine ? s_EdgeLineSize : 0f, 0f, 3f, searchContext);
-			GUI.enabled = true;
+
+			if (geoLine)
+			{
+				s_EdgeLineSize.value = SettingsGUILayout.SettingsSlider("Line Size", s_EdgeLineSize, 0f, 3f, searchContext);
+				s_WireframeLineSize.value = SettingsGUILayout.SettingsSlider("Wireframe Size", s_WireframeLineSize, 0f, 3f, searchContext);
+			}
+			else
+			{
+				GUI.enabled = false;
+				SettingsGUILayout.SearchableSlider("Line Size", 0f, 0f, 3f, searchContext);
+				SettingsGUILayout.SearchableSlider("Wireframe Size", 0f, 0f, 3f, searchContext);
+				GUI.enabled = true;
+			}
+
 		}
 
 		static Color s_FaceSelectedColor;

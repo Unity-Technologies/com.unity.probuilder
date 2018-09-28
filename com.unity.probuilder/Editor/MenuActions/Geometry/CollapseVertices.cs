@@ -62,7 +62,7 @@ namespace UnityEditor.ProBuilder.Actions
 			m_CollapseToFirst.value = EditorGUILayout.Toggle("Collapse To First", m_CollapseToFirst);
 
 			if (EditorGUI.EndChangeCheck())
-				Settings.Save();
+				ProBuilderSettings.Save();
 
 			GUILayout.FlexibleSpace();
 

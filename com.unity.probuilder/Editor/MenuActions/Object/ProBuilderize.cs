@@ -80,7 +80,7 @@ namespace UnityEditor.ProBuilder.Actions
 			GUI.enabled = true;
 
 			if (EditorGUI.EndChangeCheck())
-				Settings.Save();
+				ProBuilderSettings.Save();
 
 			GUILayout.FlexibleSpace();
 

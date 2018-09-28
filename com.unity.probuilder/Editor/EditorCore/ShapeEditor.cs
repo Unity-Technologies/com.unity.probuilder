@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEditor.SettingsManagement;
 
 namespace UnityEditor.ProBuilder
 {
@@ -51,7 +52,7 @@ namespace UnityEditor.ProBuilder
 		Material m_ShapePreviewMaterial;
 
 		[UserSetting("Toolbar", "Close Shape Window after Build", "If true the shape window will close after hitting the build button.")]
-		static Pref<bool> s_CloseWindowAfterCreateShape = new Pref<bool>("closeWindowAfterShapeCreation", false);
+		static Pref<bool> s_CloseWindowAfterCreateShape = new Pref<bool>("editor.closeWindowAfterShapeCreation", false);
 
 		void OnEnable()
 		{
@@ -468,8 +469,6 @@ namespace UnityEditor.ProBuilder
 				ProBuilderMesh pb = ShapeGenerator.GenerateCylinder(cyl_axisCuts, cyl_radius, cyl_height, cyl_heightCuts, cyl_smoothing ? 1 : -1);
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
-				int centerIndex = (cyl_axisCuts*(cyl_heightCuts+1)*4)+1;
-
 				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
 
 				EditorUtility.InitObject(pb);
@@ -878,7 +877,7 @@ namespace UnityEditor.ProBuilder
 		static float torus_horizontalCircumference = 360f;
 		static float torus_verticalCircumference = 360f;
 		static Vector2 torus_innerOuter = new Vector2(1f, .7f);
-		static Pref<bool> torus_useInnerOuterMethod = new Pref<bool>("shape.torusDefinesInnerOuter", false, Settings.Scope.User);
+		static Pref<bool> torus_useInnerOuterMethod = new Pref<bool>("shape.torusDefinesInnerOuter", false, SettingScope.User);
 
 		void TorusGUI()
 		{

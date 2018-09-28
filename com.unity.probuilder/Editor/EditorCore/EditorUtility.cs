@@ -8,6 +8,7 @@ using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.Rendering;
 using UObject = UnityEngine.Object;
+using UnityEditor.SettingsManagement;
 
 namespace UnityEditor.ProBuilder
 {
@@ -31,42 +32,55 @@ namespace UnityEditor.ProBuilder
 			BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
 		[UserSetting("General", "Show Action Notifications", "Enable or disable notification popups when performing actions.")]
-		static Pref<bool> s_ShowNotifications = new Pref<bool>("showEditorNotifications", false);
+		static Pref<bool> s_ShowNotifications = new Pref<bool>("editor.showEditorNotifications", false);
 
 		[UserSetting("Mesh Settings", "Static Editor Flags", "Default static flags to apply to new shapes.")]
-		static Pref<StaticEditorFlags> s_StaticEditorFlags = new Pref<StaticEditorFlags>("defaultStaticEditorFlags", 0);
+		static Pref<StaticEditorFlags> s_StaticEditorFlags = new Pref<StaticEditorFlags>("mesh.defaultStaticEditorFlags", 0);
 
 		[UserSetting("Mesh Settings", "Material", "The default material to be applied to newly created shapes.")]
-		static Pref<Material> s_DefaultMaterial = new Pref<Material>("userMaterial", null);
+		static Pref<Material> s_DefaultMaterial = new Pref<Material>("mesh.userMaterial", null);
 
 		[UserSetting("Mesh Settings", "Mesh Collider is Convex", "If a MeshCollider is set as the default collider component, this sets the convex setting.")]
-		static Pref<bool> s_MeshColliderIsConvex = new Pref<bool>("meshColliderIsConvex", false);
+		static Pref<bool> s_MeshColliderIsConvex = new Pref<bool>("mesh.meshColliderIsConvex", false);
 
 		[UserSetting("Mesh Settings", "Pivot Location", "Determines the placement of new shape's pivot.")]
-		static Pref<PivotLocation> s_NewShapesPivotAtVertex = new Pref<PivotLocation>("newShapePivotLocation", PivotLocation.FirstVertex);
+		static Pref<PivotLocation> s_NewShapesPivotAtVertex = new Pref<PivotLocation>("mesh.newShapePivotLocation", PivotLocation.FirstVertex);
 
 		[UserSetting("Mesh Settings", "Pivot on Vertex", "When enabled, new shapes will have their pivot point set to a vertex instead of the center.")]
-		static Pref<bool> s_SnapNewShapesToGrid = new Pref<bool>("newShapesSnapToGrid", true);
+		static Pref<bool> s_SnapNewShapesToGrid = new Pref<bool>("mesh.newShapesSnapToGrid", true);
 
 		[UserSetting("Mesh Settings", "Shadow Casting Mode", "The default ShadowCastingMode to apply to MeshRenderer components.")]
-		static Pref<ShadowCastingMode> s_ShadowCastingMode = new Pref<ShadowCastingMode>("shadowCastingMode", ShadowCastingMode.On);
+		static Pref<ShadowCastingMode> s_ShadowCastingMode = new Pref<ShadowCastingMode>("mesh.shadowCastingMode", ShadowCastingMode.On);
 
 		[UserSetting("Mesh Settings", "Collider Type", "What type of Collider to apply to new Shapes.")]
-		static Pref<ColliderType> s_ColliderType = new Pref<ColliderType>("newShapeColliderType", ColliderType.MeshCollider);
+		static Pref<ColliderType> s_ColliderType = new Pref<ColliderType>("mesh.newShapeColliderType", ColliderType.MeshCollider);
 
-		internal static Pref<bool> s_ExperimentalFeatures = new Pref<bool>("experimental.featuresEnabled", false, Settings.Scope.User);
-		internal static Pref<bool> s_MeshesAreAssets = new Pref<bool>("experimental.meshesAreAssets", false, Settings.Scope.Project);
+		[UserSetting]
+		static Pref<bool> s_ExperimentalFeatures = new Pref<bool>("experimental.featuresEnabled", false, SettingScope.User);
+
+		[UserSetting]
+		static Pref<bool> s_MeshesAreAssets = new Pref<bool>("experimental.meshesAreAssets", false, SettingScope.Project);
+
+		internal static bool meshesAreAssets
+		{
+			get { return s_ExperimentalFeatures && s_MeshesAreAssets; }
+		}
+
+		internal static bool experimentalFeaturesEnabled
+		{
+			get { return s_ExperimentalFeatures; }
+		}
 
 		[UserSettingBlock("Experimental", new[] { "store", "mesh", "asset", "experimental", "features", "enabled" })]
 		static void ExperimentalFeaturesSettings(string searchContext)
 		{
-			s_ExperimentalFeatures.value = UI.EditorGUILayout.SearchableToggle("Experimental Features Enabled", s_ExperimentalFeatures.value, searchContext);
+			s_ExperimentalFeatures.value = SettingsGUILayout.SettingsToggle("Experimental Features Enabled", s_ExperimentalFeatures, searchContext);
 
 			if (s_ExperimentalFeatures.value)
 			{
 				using (new UI.EditorStyles.IndentedBlock())
 				{
-					s_MeshesAreAssets.value = UI.EditorGUILayout.SearchableToggle("Store Mesh as Asset", s_MeshesAreAssets, searchContext);
+					s_MeshesAreAssets.value = SettingsGUILayout.SettingsToggle("Store Mesh as Asset", s_MeshesAreAssets, searchContext);
 				}
 			}
 		}
@@ -326,7 +340,7 @@ namespace UnityEditor.ProBuilder
 					break;
 			}
 
-			var unwrapParamaters = Lightmapping.s_UnwrapParameters;
+			pb.unwrapParameters = new UnwrapParameters(Lightmapping.s_UnwrapParameters);
 
 			pb.Optimize();
 

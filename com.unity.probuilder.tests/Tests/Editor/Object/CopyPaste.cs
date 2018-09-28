@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
-using UnityEngine.ProBuilder.Test;
+using UnityEngine.ProBuilder.Tests.Framework;
 using UnityEditor.ProBuilder;
 
 namespace UnityEngine.ProBuilder.EditorTests.Object

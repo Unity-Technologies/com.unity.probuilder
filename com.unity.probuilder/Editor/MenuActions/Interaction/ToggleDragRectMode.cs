@@ -52,7 +52,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ActionResult DoAction()
 		{
 			mode = InternalUtility.NextEnumValue(mode);
-			Settings.Save();
+			ProBuilderSettings.Save();
 			ProBuilderEditor.instance.LoadPrefs();
 			return new ActionResult(ActionResult.Status.Success,
 				"Set Drag Select\n" + (mode == RectSelectMode.Complete ? "Complete" : "Intersect"));

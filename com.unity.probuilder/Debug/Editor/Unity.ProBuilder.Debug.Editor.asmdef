@@ -3,12 +3,17 @@
     "references": [
         "Unity.ProBuilder",
         "Unity.ProBuilder.Editor",
-        "Unity.ProBuilder.AssetIdRemapUtility"
+        "Unity.ProBuilder.AssetIdRemapUtility",
+        "Unity.Settings"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
     ],
     "excludePlatforms": [],
-    "allowUnsafeCode": false
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": []
 }

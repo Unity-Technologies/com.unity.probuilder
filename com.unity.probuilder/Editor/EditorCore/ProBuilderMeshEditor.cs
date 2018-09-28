@@ -22,7 +22,7 @@ namespace UnityEditor.ProBuilder
 			static bool s_Initialized;
 			public static GUIStyle miniButton;
 
-			public static readonly GUIContent lightmapStatic = EditorGUIUtility.TrTextContent("Lightmap Static", "Controls whether the geometry will be marked as Static for lightmapping purposes. When enabled, this mesh will be present in lightmap calculations.");
+			public static readonly GUIContent lightmapStatic = new GUIContent("Lightmap Static", "Controls whether the geometry will be marked as Static for lightmapping purposes. When enabled, this mesh will be present in lightmap calculations.");
 			public static readonly GUIContent lightmapUVs = new GUIContent("Generate Lightmap UVs");
 
 			public static void Init()

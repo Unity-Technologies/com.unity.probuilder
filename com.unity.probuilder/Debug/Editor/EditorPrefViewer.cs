@@ -6,7 +6,7 @@ using Microsoft.Win32;
 using UnityEditor;
 using UnityEngine;
 
-public class EditorPrefBrowser : EditorWindow
+public class EditorPrefBrowser : EditorWindow, IHasCustomMenu
 {
 	private static class Styles
 	{
@@ -188,5 +188,10 @@ public class EditorPrefBrowser : EditorWindow
 	private string StripValueNameHash(string keyValueName)
 	{
 		return keyValueName.Split(new[] { "_h" }, StringSplitOptions.None).First();
+	}
+
+	public void AddItemsToMenu(GenericMenu menu)
+	{
+		menu.AddItem(new GUIContent("Delete All"), false, EditorPrefs.DeleteAll);
 	}
 }

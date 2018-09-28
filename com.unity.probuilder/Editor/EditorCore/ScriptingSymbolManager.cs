@@ -38,6 +38,22 @@ namespace UnityEditor.ProBuilder
 			return attrs.Length > 0;
 		}
 
+		internal static bool ContainsDefine(string define)
+		{
+			foreach (BuildTargetGroup targetGroup in System.Enum.GetValues(typeof(BuildTargetGroup)))
+			{
+				if (targetGroup == BuildTargetGroup.Unknown || IsObsolete(targetGroup))
+						continue;
+
+				string defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+
+				if (!defineSymbols.Contains(define))
+					return false;
+			}
+
+			return true;
+		}
+
 		/// <summary>
 		/// Add a define to the scripting define symbols for every build target.
 		/// </summary>

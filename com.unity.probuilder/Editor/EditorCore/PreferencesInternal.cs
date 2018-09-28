@@ -25,7 +25,6 @@ namespace UnityEditor.ProBuilder
 	/// Manage ProBuilder preferences.
 	/// </summary>
 	[System.Obsolete("Use Pref<T> or Settings class directly.")]
-	[InitializeOnLoad]
 	static class PreferencesInternal
 	{
 		const string k_PrefsAssetName = "ProBuilderPreferences.asset";
@@ -50,12 +49,8 @@ namespace UnityEditor.ProBuilder
 		{
 		};
 
-		static PreferencesInternal()
-		{
-			LoadPreferencesObject();
-		}
-
 		static PreferenceDictionary s_Preferences = null;
+		static bool s_Initialized;
 
 		static void LoadPreferencesObject()
 		{
@@ -67,10 +62,6 @@ namespace UnityEditor.ProBuilder
 			// If that fails, search the project for a compatible preference object
 			if (s_Preferences == null)
 				s_Preferences = FileUtility.FindAssetOfType<PreferenceDictionary>();
-
-			// If that fails, create a new preferences object at the local data directory
-			if (s_Preferences == null)
-				s_Preferences = FileUtility.LoadRequired<PreferenceDictionary>(preferencesPath);
 		}
 
 		/// <summary>
@@ -80,8 +71,11 @@ namespace UnityEditor.ProBuilder
 		{
 			get
 			{
-				if (s_Preferences == null)
+				if (!s_Initialized)
+				{
 					LoadPreferencesObject();
+					s_Initialized = true;
+				}
 
 				return s_Preferences;
 			}
@@ -101,7 +95,8 @@ namespace UnityEditor.ProBuilder
 		/// <param name="key"></param>
 		public static void DeleteKey(string key)
 		{
-			preferences.DeleteKey(key);
+			if(preferences != null)
+				preferences.DeleteKey(key);
 			EditorPrefs.DeleteKey(key);
 		}
 
@@ -231,7 +226,7 @@ namespace UnityEditor.ProBuilder
 
 		public static Material GetMaterial(string key)
 		{
-			if(preferences.HasKey<Material>(key))
+			if(preferences != null && preferences.HasKey<Material>(key))
 				return preferences.GetMaterial(key);
 
 			return AssetDatabase.LoadAssetAtPath<Material>(EditorPrefs.GetString(key));
@@ -295,6 +290,8 @@ namespace UnityEditor.ProBuilder
 		{
 			if(location == PreferenceLocation.Project)
 			{
+				if (preferences == null)
+					return;
 				preferences.SetInt(key, value);
 				UnityEditor.EditorUtility.SetDirty(preferences);
 			}
@@ -312,6 +309,8 @@ namespace UnityEditor.ProBuilder
 		{
 			if(location == PreferenceLocation.Project)
 			{
+				if (preferences == null)
+					return;
 				preferences.SetFloat(key, value);
 				UnityEditor.EditorUtility.SetDirty(preferences);
 			}
@@ -329,6 +328,8 @@ namespace UnityEditor.ProBuilder
 		{
 			if(location == PreferenceLocation.Project)
 			{
+				if (preferences == null)
+					return;
 				preferences.SetBool(key, value);
 				UnityEditor.EditorUtility.SetDirty(preferences);
 			}
@@ -346,6 +347,8 @@ namespace UnityEditor.ProBuilder
 		{
 			if(location == PreferenceLocation.Project)
 			{
+				if (preferences == null)
+					return;
 				preferences.SetString(key, value);
 				UnityEditor.EditorUtility.SetDirty(preferences);
 			}
@@ -363,6 +366,8 @@ namespace UnityEditor.ProBuilder
 		{
 			if(location == PreferenceLocation.Project)
 			{
+				if (preferences == null)
+					return;
 				preferences.SetColor(key, value);
 				UnityEditor.EditorUtility.SetDirty(preferences);
 			}
@@ -380,6 +385,8 @@ namespace UnityEditor.ProBuilder
 		{
 			if(location == PreferenceLocation.Project)
 			{
+				if (preferences == null)
+					return;
 				preferences.SetMaterial(key, value);
 				UnityEditor.EditorUtility.SetDirty(preferences);
 			}

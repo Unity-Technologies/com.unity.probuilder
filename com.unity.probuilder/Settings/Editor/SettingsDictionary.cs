@@ -1,38 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using UnityEditor;
+using UnityEngine;
 
-namespace UnityEngine.ProBuilder
+namespace UnityEditor.SettingsManagement
 {
 	[Serializable]
-	sealed class ValueWrapper<T>
-	{
-#if PRETTY_PRINT_JSON
-		const bool k_PrettyPrintJson = true;
-#else
-		const bool k_PrettyPrintJson = false;
-#endif
-
-		[SerializeField]
-		T m_Value;
-
-		public static string Serialize(T value)
-		{
-			var obj = new ValueWrapper<T>() { m_Value = value };
-			return EditorJsonUtility.ToJson(obj, k_PrettyPrintJson);
-		}
-
-		public static T Deserialize(string json)
-		{
-			var value = (object)Activator.CreateInstance<ValueWrapper<T>>();
-			EditorJsonUtility.FromJsonOverwrite(json, value);
-			return ((ValueWrapper<T>)value).m_Value;
-		}
-	}
-
-	[Serializable]
-	sealed class SettingsDictionary : ISerializationCallbackReceiver
+	public sealed class SettingsDictionary : ISerializationCallbackReceiver
 	{
 		[Serializable]
 		struct SettingsKeyValuePair
@@ -47,12 +20,11 @@ namespace UnityEngine.ProBuilder
 		List<SettingsKeyValuePair> m_DictionaryValues = new List<SettingsKeyValuePair>();
 #pragma warning restore 0649
 
-		internal Dictionary<string, Dictionary<string, string>> dictionary = new Dictionary<string, Dictionary<string, string>>();
+		internal Dictionary<Type, Dictionary<string, string>> dictionary = new Dictionary<Type, Dictionary<string, string>>();
 
 		public bool ContainsKey<T>(string key)
 		{
-			var type = typeof(T).AssemblyQualifiedName;
-			return dictionary.ContainsKey(type) && dictionary[type].ContainsKey(key);
+			return dictionary.ContainsKey(typeof(T)) && dictionary[typeof(T)].ContainsKey(key);
 		}
 
 		public void Set<T>(string key, T value)
@@ -67,10 +39,15 @@ namespace UnityEngine.ProBuilder
 
 		internal void SetJson(string type, string key, string value)
 		{
+			var typeValue = Type.GetType(type);
+
+			if(typeValue == null)
+				throw new ArgumentException("\"type\" must be an assembly qualified type name.");
+
 			Dictionary<string, string> entries;
 
-			if (!dictionary.TryGetValue(type, out entries))
-				dictionary.Add(type, entries = new Dictionary<string, string>());
+			if (!dictionary.TryGetValue(typeValue, out entries))
+				dictionary.Add(typeValue, entries = new Dictionary<string, string>());
 
 			if (entries.ContainsKey(key))
 				entries[key] = value;
@@ -83,10 +60,9 @@ namespace UnityEngine.ProBuilder
 			if (string.IsNullOrEmpty(key))
 				throw new ArgumentNullException("key");
 
-			var type = typeof(T).AssemblyQualifiedName;
 			Dictionary<string, string> entries;
 
-			if (dictionary.TryGetValue(type, out entries) && entries.ContainsKey(key))
+			if (dictionary.TryGetValue(typeof(T), out entries) && entries.ContainsKey(key))
 			{
 				try
 				{
@@ -99,6 +75,16 @@ namespace UnityEngine.ProBuilder
 			}
 
 			return fallback;
+		}
+
+		public void Remove<T>(string key)
+		{
+			Dictionary<string, string> entries;
+
+			if (!dictionary.TryGetValue(typeof(T), out entries) || !entries.ContainsKey(key))
+				return;
+
+			entries.Remove(key);
 		}
 
 		public void OnBeforeSerialize()
@@ -114,7 +100,7 @@ namespace UnityEngine.ProBuilder
 				{
 					m_DictionaryValues.Add(new SettingsKeyValuePair()
 					{
-						type = type.Key,
+						type = type.Key.AssemblyQualifiedName,
 						key = entry.Key,
 						value = entry.Value
 					});
@@ -130,11 +116,36 @@ namespace UnityEngine.ProBuilder
 			{
 				Dictionary<string, string> entries;
 
-				if (dictionary.TryGetValue(entry.type, out entries))
+				var type = Type.GetType(entry.type);
+
+				if (type == null)
+				{
+					Debug.LogWarning("Could not instantiate type \"" + entry.type + "\". Skipping key: " + entry.key + ".");
+					continue;
+				}
+
+				if (dictionary.TryGetValue(type, out entries))
 					entries.Add(entry.key, entry.value);
 				else
-					dictionary.Add(entry.type, new Dictionary<string, string>() { { entry.key, entry.value } });
+					dictionary.Add(type, new Dictionary<string, string>() { { entry.key, entry.value } });
 			}
+		}
+
+		public override string ToString()
+		{
+			var sb = new System.Text.StringBuilder();
+
+			foreach (var type in dictionary)
+			{
+				sb.AppendLine("Type: " + type.Key);
+
+				foreach (var entry in type.Value)
+				{
+					sb.AppendLine(string.Format("   {0,-64}{1}", entry.Key, entry.Value));
+				}
+			}
+
+			return sb.ToString();
 		}
 	}
 }

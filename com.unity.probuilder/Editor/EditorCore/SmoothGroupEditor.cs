@@ -429,7 +429,7 @@ namespace UnityEditor.ProBuilder
 
 				if (EditorGUI.EndChangeCheck())
 				{
-					Settings.Save();
+					ProBuilderSettings.Save();
 
 					foreach (var kvp in m_SmoothGroups)
 						kvp.Value.RebuildNormalsMesh(kvp.Key);
@@ -456,7 +456,7 @@ namespace UnityEditor.ProBuilder
 
 				if (EditorGUI.EndChangeCheck())
 				{
-					Settings.Save();
+					ProBuilderSettings.Save();
 					smoothPreviewMaterial.SetFloat("_Opacity", s_PreviewOpacity);
 					smoothPreviewMaterial.SetFloat("_Dither", s_PreviewDither ? 1f : 0f);
 					SceneView.RepaintAll();

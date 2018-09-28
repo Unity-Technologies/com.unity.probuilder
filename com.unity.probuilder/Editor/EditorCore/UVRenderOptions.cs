@@ -2,6 +2,7 @@ using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 using UnityEditor;
 using UnityEngine;
+using UnityEditor.SettingsManagement;
 
 namespace UnityEditor.ProBuilder
 {
@@ -11,11 +12,11 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	sealed class UVRenderOptions : EditorWindow
 	{
-		Pref<ImageSize> m_ImageSize = new Pref<ImageSize>("UVRenderOptions.imageSize", ImageSize._1024, Settings.Scope.User);
-		Pref<Color> m_LineColor = new Pref<Color>("UVRenderOptions.lineColor", Color.green, Settings.Scope.User);
-		Pref<Color> m_BackgroundColor = new Pref<Color>("UVRenderOptions.backgroundColor", Color.black, Settings.Scope.User);
-		Pref<bool> m_TransparentBackground = new Pref<bool>("UVRenderOptions.transparentBackground", false, Settings.Scope.User);
-		Pref<bool> m_HideGrid = new Pref<bool>("UVRenderOptions.hideGrid", true, Settings.Scope.User);
+		Pref<ImageSize> m_ImageSize = new Pref<ImageSize>("UVRenderOptions.imageSize", ImageSize._1024, SettingScope.User);
+		Pref<Color> m_LineColor = new Pref<Color>("UVRenderOptions.lineColor", Color.green, SettingScope.User);
+		Pref<Color> m_BackgroundColor = new Pref<Color>("UVRenderOptions.backgroundColor", Color.black, SettingScope.User);
+		Pref<bool> m_TransparentBackground = new Pref<bool>("UVRenderOptions.transparentBackground", false, SettingScope.User);
+		Pref<bool> m_HideGrid = new Pref<bool>("UVRenderOptions.hideGrid", true, SettingScope.User);
 
 		enum ImageSize
 		{

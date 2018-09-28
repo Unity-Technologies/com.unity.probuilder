@@ -17,7 +17,7 @@ namespace UnityEditor.ProBuilder
 
 		static void OnDestroyObject(ProBuilderMesh mesh)
 		{
-			if(EditorUtility.s_MeshesAreAssets)
+			if(EditorUtility.meshesAreAssets)
 			{
 				if(EditorUtility.IsPrefab(mesh))
 				{

@@ -3,7 +3,7 @@ using System.IO;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
-using UnityEngine.ProBuilder.Test;
+using UnityEngine.ProBuilder.Tests.Framework;
 using UnityEditor;
 using UnityEngine.ProBuilder.MeshOperations;
 

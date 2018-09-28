@@ -109,7 +109,7 @@ namespace UnityEditor.ProBuilder.Actions
 				PlyExportOptions();
 
 			if(EditorGUI.EndChangeCheck())
-				Settings.Save();
+				ProBuilderSettings.Save();
 
 			GUILayout.FlexibleSpace();
 

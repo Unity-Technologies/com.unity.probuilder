@@ -6,7 +6,6 @@ using System.Linq;
 using UnityEngine.ProBuilder;
 using System;
 using UnityEditor.ProBuilder;
-using UnityEngine.ProBuilder.Test;
 using System.Reflection;
 using HandleUtility = UnityEditor.HandleUtility;
 

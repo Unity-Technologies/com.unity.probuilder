@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UL = UnityEditor.Lightmapping;
+using UnityEditor.SettingsManagement;
 
 namespace UnityEditor.ProBuilder
 {
@@ -17,11 +18,12 @@ namespace UnityEditor.ProBuilder
 		static Pref<bool> s_AutoUnwrapLightmapUV = new Pref<bool>("lightmapping.autoUnwrapLightmapUV", true);
 
 		[UserSetting("General", "Show Missing Lightmap UVs Warning", "Enable or disable a warning log if lightmaps are baked while ProBuilder shapes are missing a valid UV2 channel.")]
-		static Pref<bool> s_ShowMissingLightmapUVWarning = new Pref<bool>("lightmapping.showMissingLightmapWarning", true, Settings.Scope.User);
+		static Pref<bool> s_ShowMissingLightmapUVWarning = new Pref<bool>("lightmapping.showMissingLightmapWarning", true, SettingScope.User);
 
+		[UserSetting]
 		internal static Pref<UnwrapParameters> s_UnwrapParameters = new Pref<UnwrapParameters>("lightmapping.defaultLightmapUnwrapParameters", new UnwrapParameters());
 
-		static Pref<UL.GIWorkflowMode> s_GiWorkflowMode = new Pref<UL.GIWorkflowMode>("lightmapping.giWorkflowMode", UL.GIWorkflowMode.Iterative, Settings.Scope.User);
+		static Pref<UL.GIWorkflowMode> s_GiWorkflowMode = new Pref<UL.GIWorkflowMode>("lightmapping.giWorkflowMode", UL.GIWorkflowMode.Iterative, SettingScope.User);
 
 		static class Styles
 		{
@@ -53,7 +55,7 @@ namespace UnityEditor.ProBuilder
 		static void UnwrapSettingDefaults(string searchContext)
 		{
 			Styles.Init();
-			var isSearching = !string.IsNullOrWhiteSpace(searchContext);
+			var isSearching = !string.IsNullOrEmpty(searchContext);
 
 			if(!isSearching)
 				Styles.unwrapSettingsFoldout = EditorGUILayout.Foldout(Styles.unwrapSettingsFoldout, "Lightmap UVs Settings");
@@ -66,10 +68,10 @@ namespace UnityEditor.ProBuilder
 
 				using (new UI.EditorStyles.IndentedBlock())
 				{
-					unwrap.hardAngle = UI.EditorGUILayout.SearchableSlider(Styles.hardAngle, unwrap.hardAngle, 1f, 180f, searchContext);
-					unwrap.packMargin = UI.EditorGUILayout.SearchableSlider(Styles.packMargin, unwrap.packMargin, 1f, 64f, searchContext);
-					unwrap.angleError = UI.EditorGUILayout.SearchableSlider(Styles.angleError, unwrap.angleError, 1f, 75f, searchContext);
-					unwrap.areaError = UI.EditorGUILayout.SearchableSlider(Styles.areaError, unwrap.areaError, 1f, 75f, searchContext);
+					unwrap.hardAngle = SettingsGUILayout.SearchableSlider(Styles.hardAngle, unwrap.hardAngle, 1f, 180f, searchContext);
+					unwrap.packMargin = SettingsGUILayout.SearchableSlider(Styles.packMargin, unwrap.packMargin, 1f, 64f, searchContext);
+					unwrap.angleError = SettingsGUILayout.SearchableSlider(Styles.angleError, unwrap.angleError, 1f, 75f, searchContext);
+					unwrap.areaError = SettingsGUILayout.SearchableSlider(Styles.areaError, unwrap.areaError, 1f, 75f, searchContext);
 
 					if (!isSearching)
 					{
@@ -80,6 +82,8 @@ namespace UnityEditor.ProBuilder
 						GUILayout.EndHorizontal();
 					}
 				}
+
+				SettingsGUILayout.DoResetContextMenuForLastRect(s_UnwrapParameters);
 
 				if (EditorGUI.EndChangeCheck())
 					s_UnwrapParameters.value = unwrap;

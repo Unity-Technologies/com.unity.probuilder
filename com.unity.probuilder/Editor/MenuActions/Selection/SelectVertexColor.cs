@@ -64,7 +64,7 @@ namespace UnityEditor.ProBuilder.Actions
 			m_SearchSelectedObjectsOnly.value = EditorGUILayout.Toggle(gc_restrictToSelection, m_SearchSelectedObjectsOnly);
 
 			if (EditorGUI.EndChangeCheck())
-				Settings.Save();
+				ProBuilderSettings.Save();
 
 			GUILayout.FlexibleSpace();
 

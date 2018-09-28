@@ -1,48 +1,70 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder;
-using UnityEngine.Assertions;
-using UnityEngine.ProBuilder;
-using UObject = UnityEngine.Object;
-using UnityEngine.ProBuilder.AssetIdRemapUtility;
-using UnityEngine.ProBuilder.MeshOperations;
-
-class TempMenuItems : EditorWindow
-{
-	[MenuItem("Tools/Temp Menu Item &d", false, 1000)]
-	static void MenuInit()
-	{
-
-		GetWindow<TempMenuItems>();
-	}
-
-	Vector2 m_Scroll;
-
-	void OnGUI()
-	{
-		SelectMode all = SelectMode.Any;
-		SelectMode faceAndEdge = SelectMode.Face | SelectMode.Edge;
-		var allMatchesFace = SelectMode.Face.ContainsFlag(all);
-		var allMatchesFaceAndEdge = SelectMode.Face.ContainsFlag(faceAndEdge);
-		var faceMatchesFace = SelectMode.Face.ContainsFlag(SelectMode.Face);
-
-		m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
-		foreach (var item in EditorToolbarLoader.GetActions())
-		{
-			GUILayout.Label(item.menuTitle + "(" + ProBuilderEditor.selectMode.ContainsFlag(item.validSelectModes) + ")   [" + item.validSelectModes + "]");
-		}
-		EditorGUILayout.EndScrollView();
-	}
-
-	public static void SaveMeshTemplate(Mesh mesh)
-	{
-//		StackTrace trace = new StackTrace(1, true);
-//		for (int i = 0; i < trace.FrameCount; i++)
+﻿//using System.Collections.Generic;
+//using System.Linq;
+//using UnityEngine;
+//using UnityEditor;
+//using UnityEngine.ProBuilder;
+//using UnityEditor.ProBuilder;
+//using UObject = UnityEngine.Object;
+//using UnityEditor.Settings;
+//
+//class TempMenuItems : EditorWindow
+//{
+//	[SettingsKey("TempMenuItems.m_Scroll", SettingScope.Project)]
+//	static Vector2 m_Scroll;
+//
+//	string m_Settings;
+//
+////	[MenuItem("Tools/Temp Menu Item &d", false, 1000)]
+//	static void MenuInit()
+//	{
+//		GetWindow<TempMenuItems>();
+//	}
+//
+//	[MenuItem("Tools/Recompile")]
+//	static void Recompile()
+//	{
+//		if(ScriptingSymbolManager.ContainsDefine("PROBUILDER_RECOMPILE_FLAG"))
+//			ScriptingSymbolManager.RemoveScriptingDefine("PROBUILDER_RECOMPILE_FLAG");
+//		else
+//			ScriptingSymbolManager.AddScriptingDefine("PROBUILDER_RECOMPILE_FLAG");
+//	}
+//
+//	[MenuItem("Tools/Dump Settings &d")]
+//	static void PrintAll()
+//	{
+//		Debug.Log(UserSettings.GetSettingsString(SettingScope.User));
+//	}
+//
+//	void OnEnable()
+//	{
+//		var settings = UserSettings.FindUserSettings(SettingVisibility.All);
+//		var sb = new System.Text.StringBuilder();
+//
+//		foreach (var pref in settings.OrderBy(x => x.type))
 //		{
-//			StackFrame first = trace.GetFrame(i);
-//			UnityEngine.Debug.Log(first.GetFileName() + ": " + first.GetMethod());
+//			sb.AppendLine(string.Format("{0,-24}{1,-24}{2,-64}{3}", pref.type, pref.scope, pref.key, pref.GetValue().ToString()));
 //		}
-	}
-}
+//
+//		m_Settings = sb.ToString();
+//	}
+//
+//
+//	void OnGUI()
+//	{
+//		m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
+//
+//		GUILayout.Label(m_Settings);
+//
+//		EditorGUILayout.EndScrollView();
+//	}
+//
+//	public static void SaveMeshTemplate(Mesh mesh)
+//	{
+////		StackTrace trace = new StackTrace(1, true);
+////		for (int i = 0; i < trace.FrameCount; i++)
+////		{
+////			StackFrame first = trace.GetFrame(i);
+////			UnityEngine.Debug.Log(first.GetFileName() + ": " + first.GetMethod());
+////		}
+//	}
+//}

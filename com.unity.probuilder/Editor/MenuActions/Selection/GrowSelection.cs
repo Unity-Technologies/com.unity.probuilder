@@ -78,7 +78,7 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
 			GUI.enabled = true;
 
 			if (EditorGUI.EndChangeCheck())
-				Settings.Save();
+				ProBuilderSettings.Save();
 
 			GUILayout.FlexibleSpace();
 

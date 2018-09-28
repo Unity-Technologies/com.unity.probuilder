@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEditor.SettingsManagement;
 
 namespace UnityEditor.ProBuilder
 {
@@ -17,7 +18,7 @@ namespace UnityEditor.ProBuilder
         [UserSettingBlock("Shortcuts")]
         static void ShortcutSettings(string searchContext)
         {
-	        if (!string.IsNullOrWhiteSpace(searchContext))
+	        if (!string.IsNullOrEmpty(searchContext))
 		        return;
 
 	        s_Shortcuts = ProBuilderEditor.s_Shortcuts;
@@ -26,13 +27,15 @@ namespace UnityEditor.ProBuilder
 		        ProBuilderEditor.s_Shortcuts.SetValue(s_Shortcuts = Shortcut.DefaultShortcuts().ToArray(), true);
 
 	        GUILayout.BeginHorizontal();
-	        GUILayout.BeginVertical(GUILayout.MinWidth(EditorGUIUtility.labelWidth), GUILayout.MaxWidth(EditorGUIUtility.labelWidth));
+	        GUILayout.BeginVertical(GUILayout.Width(EditorGUIUtility.labelWidth));
 	        ShortcutSelectPanel();
 	        GUILayout.EndVertical();
 	        GUILayout.BeginVertical();
 	        ShortcutEditPanel();
 	        GUILayout.EndVertical();
 	        GUILayout.EndHorizontal();
+
+	        SettingsGUILayout.DoResetContextMenuForLastRect(ProBuilderEditor.s_Shortcuts);
         }
 
 		static void ShortcutSelectPanel()
