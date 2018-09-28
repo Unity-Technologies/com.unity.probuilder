@@ -15,7 +15,13 @@ namespace UnityEngine.ProBuilder
 		public int rows = 8;
 		public int columns = 16;
 		public bool smooth = true;
-		public bool isEditing { get; set; }
+		[SerializeField]
+		bool m_IsEditing;
+		public bool isEditing
+		{
+			get { return m_IsEditing; }
+			set { m_IsEditing = value; }
+		}
 
 		ProBuilderMesh m_Mesh;
 
