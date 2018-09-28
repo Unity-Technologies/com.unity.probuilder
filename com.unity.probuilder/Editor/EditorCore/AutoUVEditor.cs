@@ -65,11 +65,7 @@ namespace UnityEditor.ProBuilder
 			UpdateDiffDictionary(selection);
 
 			s_ScrollPosition = EditorGUILayout.BeginScrollView(s_ScrollPosition);
-
-			int tempInt = -1;
 			float tempFloat = 0f;
-			Vector2 tempVec2 = Vector2.zero;
-			bool tempBool = false;
 
 			EditorGUI.BeginChangeCheck();
 
@@ -79,27 +75,29 @@ namespace UnityEditor.ProBuilder
 			GUILayout.Label("Tiling & Alignment", EditorStyles.boldLabel);
 
 			GUILayout.BeginHorizontal();
-				tempInt = (int)s_AutoUVSettings.fill;
 				EditorGUI.showMixedValue = s_AutoUVSettingsDiff["fill"];
 				GUILayout.Label("Fill Mode", GUILayout.MaxWidth(80), GUILayout.MinWidth(80));
+				EditorGUI.BeginChangeCheck();
 				s_AutoUVSettings.fill = (AutoUnwrapSettings.Fill)EditorGUILayout.EnumPopup(s_AutoUVSettings.fill);
-				if(tempInt != (int)s_AutoUVSettings.fill) SetFill(s_AutoUVSettings.fill, selection);
+				if(EditorGUI.EndChangeCheck())
+					SetFill(s_AutoUVSettings.fill, selection);
 			GUILayout.EndHorizontal();
 
 			GUILayout.BeginHorizontal();
 				bool enabled = GUI.enabled;
 				GUI.enabled = !s_AutoUVSettings.useWorldSpace;
-				tempInt = (int) s_AutoUVSettings.anchor;
 				EditorGUI.showMixedValue = s_AutoUVSettingsDiff["anchor"];
+				EditorGUI.BeginChangeCheck();
 				GUILayout.Label("Anchor", GUILayout.MaxWidth(80), GUILayout.MinWidth(80));
 				s_AutoUVSettings.anchor = (AutoUnwrapSettings.Anchor) EditorGUILayout.EnumPopup(s_AutoUVSettings.anchor);
-				if(tempInt != (int)s_AutoUVSettings.anchor) SetAnchor(s_AutoUVSettings.anchor, selection);
+				if(EditorGUI.EndChangeCheck())
+					SetAnchor(s_AutoUVSettings.anchor, selection);
 				GUI.enabled = enabled;
 			GUILayout.EndHorizontal();
 
-			UnityEngine.GUI.backgroundColor = PreferenceKeys.proBuilderLightGray;
+			GUI.backgroundColor = PreferenceKeys.proBuilderLightGray;
 			UI.EditorGUIUtility.DrawSeparator(1);
-			UnityEngine.GUI.backgroundColor = Color.white;
+			GUI.backgroundColor = Color.white;
 
 			GUILayout.Label("Transform", EditorStyles.boldLabel);
 
@@ -107,7 +105,7 @@ namespace UnityEditor.ProBuilder
 			 * Offset
 			 */
 			EditorGUI.showMixedValue = s_AutoUVSettingsDiff["offsetx"] || s_AutoUVSettingsDiff["offsety"];
-			tempVec2 = s_AutoUVSettings.offset;
+			var tempVec2 = s_AutoUVSettings.offset;
 			UnityEngine.GUI.SetNextControlName("offset");
 			s_AutoUVSettings.offset = EditorGUILayout.Vector2Field("Offset", s_AutoUVSettings.offset, GUILayout.MaxWidth(width));
 			if(tempVec2.x != s_AutoUVSettings.offset.x) { SetOffset(s_AutoUVSettings.offset, Axis2D.X, selection); }
@@ -130,7 +128,7 @@ namespace UnityEditor.ProBuilder
 			 */
 			EditorGUI.showMixedValue = s_AutoUVSettingsDiff["scalex"] || s_AutoUVSettingsDiff["scaley"];
 			tempVec2 = s_AutoUVSettings.scale;
-			UnityEngine.GUI.SetNextControlName("scale");
+			GUI.SetNextControlName("scale");
 			EditorGUI.BeginChangeCheck();
 			s_AutoUVSettings.scale = EditorGUILayout.Vector2Field("Tiling", s_AutoUVSettings.scale, GUILayout.MaxWidth(width));
 
@@ -161,45 +159,49 @@ namespace UnityEditor.ProBuilder
 			 */
 			GUILayout.Label("Special", EditorStyles.boldLabel);
 
-			tempBool = s_AutoUVSettings.useWorldSpace;
 			EditorGUI.showMixedValue = s_AutoUVSettingsDiff["useWorldSpace"];
+			EditorGUI.BeginChangeCheck();
 			s_AutoUVSettings.useWorldSpace = EditorGUILayout.Toggle("World Space", s_AutoUVSettings.useWorldSpace);
-			if(s_AutoUVSettings.useWorldSpace != tempBool) SetUseWorldSpace(s_AutoUVSettings.useWorldSpace, selection);
+			if(EditorGUI.EndChangeCheck())
+				SetUseWorldSpace(s_AutoUVSettings.useWorldSpace, selection);
 
-			UnityEngine.GUI.backgroundColor = PreferenceKeys.proBuilderLightGray;
+			GUI.backgroundColor = PreferenceKeys.proBuilderLightGray;
 			UI.EditorGUIUtility.DrawSeparator(1);
-			UnityEngine.GUI.backgroundColor = Color.white;
+			GUI.backgroundColor = Color.white;
 
 
 			// Flip U
-			tempBool = s_AutoUVSettings.flipU;
 			EditorGUI.showMixedValue = s_AutoUVSettingsDiff["flipU"];
+			EditorGUI.BeginChangeCheck();
 			s_AutoUVSettings.flipU = EditorGUILayout.Toggle("Flip U", s_AutoUVSettings.flipU);
-			if(tempBool != s_AutoUVSettings.flipU) SetFlipU(s_AutoUVSettings.flipU, selection);
+			if(EditorGUI.EndChangeCheck())
+				SetFlipU(s_AutoUVSettings.flipU, selection);
 
 			// Flip V
-			tempBool = s_AutoUVSettings.flipV;
 			EditorGUI.showMixedValue = s_AutoUVSettingsDiff["flipV"];
+			EditorGUI.BeginChangeCheck();
 			s_AutoUVSettings.flipV = EditorGUILayout.Toggle("Flip V", s_AutoUVSettings.flipV);
-			if(tempBool != s_AutoUVSettings.flipV) SetFlipV(s_AutoUVSettings.flipV, selection);
+			if(EditorGUI.EndChangeCheck())
+				SetFlipV(s_AutoUVSettings.flipV, selection);
 
-			tempBool = s_AutoUVSettings.swapUV;
 			EditorGUI.showMixedValue = s_AutoUVSettingsDiff["swapUV"];
+			EditorGUI.BeginChangeCheck();
 			s_AutoUVSettings.swapUV = EditorGUILayout.Toggle("Swap U/V", s_AutoUVSettings.swapUV);
-			if(tempBool != s_AutoUVSettings.swapUV) SetSwapUV(s_AutoUVSettings.swapUV, selection);
+			if(EditorGUI.EndChangeCheck())
+				SetSwapUV(s_AutoUVSettings.swapUV, selection);
 
 			/**
 			 * Texture Groups
 			 */
 			GUILayout.Label("Texture Groups", EditorStyles.boldLabel);
 
-			tempInt = textureGroup;
+			EditorGUI.BeginChangeCheck();
 			EditorGUI.showMixedValue = s_AutoUVSettingsDiff["textureGroup"];
 
-			UnityEngine.GUI.SetNextControlName("textureGroup");
+			GUI.SetNextControlName("textureGroup");
 			textureGroup = UI.EditorGUIUtility.IntFieldConstrained(new GUIContent("Texture Group", "Faces in a texture group will be UV mapped as a group, just as though you had selected these faces and used the \"Planar Project\" action"), textureGroup, (int) width);
 
-			if(tempInt != textureGroup)
+			if(EditorGUI.EndChangeCheck())
 			{
 				SetTextureGroup(selection, textureGroup);
 
@@ -260,9 +262,9 @@ namespace UnityEditor.ProBuilder
 			}
 
 
-			UnityEngine.GUI.backgroundColor = PreferenceKeys.proBuilderLightGray;
+			GUI.backgroundColor = PreferenceKeys.proBuilderLightGray;
 			UI.EditorGUIUtility.DrawSeparator(1);
-			UnityEngine.GUI.backgroundColor = Color.white;
+			GUI.backgroundColor = Color.white;
 
 			/**
 			 * Clean up
