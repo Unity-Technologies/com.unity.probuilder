@@ -217,7 +217,12 @@ namespace UnityEditor.ProBuilder
 	    /// <value>True if this action is valid with current selection and mode.</value>
 	    public virtual bool enabled
 	    {
-		    get { return ProBuilderEditor.instance != null && ProBuilderEditor.selectMode.ContainsFlag(validSelectModes); }
+		    get
+		    {
+			    return ProBuilderEditor.instance != null
+				    && ProBuilderEditor.selectMode.ContainsFlag(validSelectModes)
+				    && !ProBuilderEditor.selectMode.ContainsFlag(SelectMode.InputTool);
+		    }
 	    }
 
 	    /// <summary>

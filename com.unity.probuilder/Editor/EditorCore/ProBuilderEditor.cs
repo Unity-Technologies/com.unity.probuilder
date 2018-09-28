@@ -1226,7 +1226,8 @@ namespace UnityEditor.ProBuilder
 
 				int currentSelectionMode = m_SelectMode == SelectMode.Vertex ? 1
 					: m_SelectMode == SelectMode.Edge ? 2
-					: m_SelectMode == SelectMode.Face ? 3 : 0;
+					: m_SelectMode == SelectMode.Face ? 3
+					: m_SelectMode == SelectMode.Object ? 0 : -1;
 
 				switch ((SceneToolbarLocation) s_SceneToolbarLocation)
 				{

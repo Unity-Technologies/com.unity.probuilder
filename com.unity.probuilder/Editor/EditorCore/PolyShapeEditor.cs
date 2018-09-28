@@ -73,8 +73,6 @@ namespace UnityEditor.ProBuilder
 
 		public override void OnInspectorGUI()
 		{
-			GUILayout.Label(polygon.polyEditMode.ToString());
-
 			switch (polygon.polyEditMode)
 			{
 				case PolyShape.PolyEditMode.None:
@@ -358,16 +356,18 @@ namespace UnityEditor.ProBuilder
 
 			HandleUtility.AddDefaultControl(controlID);
 
-			DoPointPlacement( HandleUtility.GUIPointToWorldRay(evt.mousePosition) );
+			DoPointPlacement();
 		}
 
-		void DoPointPlacement(Ray ray)
+		void DoPointPlacement()
 		{
 			Event evt = Event.current;
 			EventType eventType = evt.type;
 
 			if(m_PlacingPoint)
 			{
+				Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
+
 				if(	eventType == EventType.MouseDrag )
 				{
 					float hitDistance = Mathf.Infinity;
@@ -387,6 +387,7 @@ namespace UnityEditor.ProBuilder
 					eventType == EventType.KeyDown ||
 					eventType == EventType.KeyUp )
 				{
+					evt.Use();
 					m_PlacingPoint = false;
 					m_SelectedIndex = -1;
 					SceneView.RepaintAll();
@@ -399,6 +400,7 @@ namespace UnityEditor.ProBuilder
 					if(polygon.m_Points.Count < 1)
 						SetPlane(evt.mousePosition);
 
+					Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
 					float hitDistance = Mathf.Infinity;
 
 					m_Plane.SetNormalAndPosition(polygon.transform.up, polygon.transform.position);
@@ -426,6 +428,8 @@ namespace UnityEditor.ProBuilder
 						m_PlacingPoint = true;
 						m_SelectedIndex = polygon.m_Points.Count - 1;
 						RebuildPolyShapeMesh(polygon);
+
+						evt.Use();
 					}
 				}
 			}
@@ -503,8 +507,11 @@ namespace UnityEditor.ProBuilder
 
 			if(polygon.polyEditMode == PolyShape.PolyEditMode.Height)
 			{
-				if(!used && evt.type == EventType.MouseUp && evt.button == 0 && !EditorHandleUtility.IsAppendModifier(evt.modifiers))
+				if (!used && evt.type == EventType.MouseUp && evt.button == 0 && !EditorHandleUtility.IsAppendModifier(evt.modifiers))
+				{
+					evt.Use();
 					SetPolyEditMode(PolyShape.PolyEditMode.Edit);
+				}
 
 				bool sceneInUse = EditorHandleUtility.SceneViewInUse(evt);
 				Ray r = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
