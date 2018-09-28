@@ -254,7 +254,7 @@ namespace UnityEditor.ProBuilder
 		{
 			instance = null;
 
-			if(ProBuilderEditor.selectMode == SelectMode.Texture)
+			if(ProBuilderEditor.selectMode == SelectMode.TextureFace)
 				ProBuilderEditor.ResetToLastSelectMode();
 
 			if (uv2Editor != null)
@@ -2513,14 +2513,14 @@ namespace UnityEditor.ProBuilder
 
 			if (editor)
 			{
-				gc_SceneViewUVHandles.image = ProBuilderEditor.selectMode == SelectMode.Texture ? icon_sceneUV_on : icon_sceneUV_off;
+				gc_SceneViewUVHandles.image = ProBuilderEditor.selectMode == SelectMode.TextureFace ? icon_sceneUV_on : icon_sceneUV_off;
 
 				if (GUI.Button(editor_toggles_rect, gc_SceneViewUVHandles))
 				{
-					if (ProBuilderEditor.selectMode == SelectMode.Texture)
+					if (ProBuilderEditor.selectMode == SelectMode.TextureFace)
 						ProBuilderEditor.ResetToLastSelectMode();
 					else
-						ProBuilderEditor.selectMode = SelectMode.Texture;
+						ProBuilderEditor.selectMode = SelectMode.TextureFace;
 				}
 			}
 

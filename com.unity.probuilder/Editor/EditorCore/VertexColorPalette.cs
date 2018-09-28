@@ -172,7 +172,7 @@ namespace UnityEditor.ProBuilder
 				switch (ProBuilderEditor.selectMode)
 				{
 					case SelectMode.Face:
-					case SelectMode.Texture:
+					case SelectMode.TextureFace:
 						foreach (ProBuilderMesh mesh in selection)
 						{
 							Color[] colors = mesh.GetColors();

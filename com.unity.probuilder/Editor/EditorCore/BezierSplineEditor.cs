@@ -5,7 +5,7 @@ using UnityEngine.ProBuilder;
 namespace UnityEditor.ProBuilder
 {
 	[CustomEditor(typeof(BezierShape))]
-	sealed class BezierSplineEditor : Editor
+	sealed class BezierShapeEditor : Editor
 	{
 		static GUIContent[] s_TangentModeIcons = new GUIContent[3];
 
@@ -34,7 +34,7 @@ namespace UnityEditor.ProBuilder
 		{
 			get
 			{
-				if(m_Target.mesh == null)
+				if (m_Target.mesh == null)
 				{
 					m_Target.mesh = m_Target.gameObject.AddComponent<ProBuilderMesh>();
 					EditorUtility.InitObject(m_Target.mesh);
@@ -87,16 +87,25 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		List<BezierPoint> m_Points { get { return m_Target.points; } set { m_Target.points = value; } }
+		List<BezierPoint> m_Points
+		{
+			get { return m_Target.points; }
+			set { m_Target.points = value; }
+		}
 
-		bool m_IsEditing { get { return m_Target.isEditing; } set { m_Target.isEditing = value; } }
+		bool m_IsEditing
+		{
+			get { return m_Target.isEditing; }
+			set { m_Target.isEditing = value; }
+		}
 
 		bool m_CloseLoop
 		{
 			get { return m_Target.closeLoop; }
 
-			set {
-				if(m_Target.closeLoop != value)
+			set
+			{
+				if (m_Target.closeLoop != value)
 					UndoUtility.RecordObject(m_Target, "Set Bezier Shape Close Loop");
 				m_Target.closeLoop = value;
 			}
@@ -106,8 +115,9 @@ namespace UnityEditor.ProBuilder
 		{
 			get { return m_Target.radius; }
 
-			set {
-				if(m_Target.radius != value)
+			set
+			{
+				if (m_Target.radius != value)
 					UndoUtility.RecordObject(m_Target, "Set Bezier Shape Radius");
 				m_Target.radius = value;
 			}
@@ -117,8 +127,9 @@ namespace UnityEditor.ProBuilder
 		{
 			get { return m_Target.rows; }
 
-			set {
-				if(m_Target.rows != value)
+			set
+			{
+				if (m_Target.rows != value)
 					UndoUtility.RecordObject(m_Target, "Set Bezier Shape Rows");
 				m_Target.rows = value;
 			}
@@ -128,8 +139,9 @@ namespace UnityEditor.ProBuilder
 		{
 			get { return m_Target.columns; }
 
-			set {
-				if(m_Target.columns != value)
+			set
+			{
+				if (m_Target.columns != value)
 					UndoUtility.RecordObject(m_Target, "Set Bezier Shape Columns");
 				m_Target.columns = value;
 			}
@@ -139,19 +151,21 @@ namespace UnityEditor.ProBuilder
 		{
 			get { return m_Target.smooth; }
 
-			set {
-				if(m_Target.smooth != value)
+			set
+			{
+				if (m_Target.smooth != value)
 					UndoUtility.RecordObject(m_Target, "Set Bezier Shape Smooth");
 				m_Target.smooth = value;
 			}
 		}
 
 		private GUIStyle _commandStyle = null;
+
 		public GUIStyle commandStyle
 		{
 			get
 			{
-				if(_commandStyle == null)
+				if (_commandStyle == null)
 				{
 					_commandStyle = new GUIStyle(EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("Command"));
 					_commandStyle.alignment = TextAnchor.MiddleCenter;
@@ -171,13 +185,25 @@ namespace UnityEditor.ProBuilder
 			s_TangentModeIcons[1] = new GUIContent(IconUtility.GetIcon("Toolbar/Bezier_Aligned"), "Tangent Mode: Aligned");
 			s_TangentModeIcons[2] = new GUIContent(IconUtility.GetIcon("Toolbar/Bezier_Mirrored"), "Tangent Mode: Mirrored");
 
-			if(m_Target != null)
+			if (m_Target != null)
 				SetIsEditing(m_Target.isEditing);
+
+			ProBuilderEditor.selectModeChanged += SelectModeChanged;
 		}
 
 		void OnDisable()
 		{
 			Undo.undoRedoPerformed -= this.UndoRedoPerformed;
+			ProBuilderEditor.selectModeChanged -= SelectModeChanged;
+		}
+
+		void SelectModeChanged(SelectMode mode)
+		{
+			if (!mode.ContainsFlag(SelectMode.InputTool) && m_IsEditing)
+			{
+				SetIsEditing(false);
+				Repaint();
+			}
 		}
 
 		BezierPoint DoBezierPointGUI(BezierPoint point)
@@ -241,13 +267,10 @@ namespace UnityEditor.ProBuilder
 
 			m_Target.isEditing = isEditing;
 
-			if(ProBuilderEditor.instance != null)
-			{
-				if (m_Target.isEditing)
-					ProBuilderEditor.PushSelectMode(SelectMode.None);
-				else
-					ProBuilderEditor.PopSelectMode();
-			}
+			if (m_Target.isEditing)
+				ProBuilderEditor.selectMode |= SelectMode.InputTool;
+			else
+				ProBuilderEditor.selectMode &= ~SelectMode.InputTool;
 
 			if(m_Target.isEditing)
 			{

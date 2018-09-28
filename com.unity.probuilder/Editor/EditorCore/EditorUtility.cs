@@ -475,7 +475,7 @@ namespace UnityEditor.ProBuilder
 		/// <returns></returns>
 		internal static bool IsMeshElementMode(this SelectMode mode)
 		{
-			return mode.ContainsFlag(SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.Texture);
+			return mode.ContainsFlag(SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.TextureFace);
 		}
 
 		// HasFlag doesn't exist in .NET 3.5
@@ -505,7 +505,7 @@ namespace UnityEditor.ProBuilder
 					}
 
 				case EditLevel.Texture:
-					return SelectMode.Texture;
+					return SelectMode.TextureFace;
 
 				default:
 					return SelectMode.None;
@@ -518,7 +518,7 @@ namespace UnityEditor.ProBuilder
 			{
 				case SelectMode.Object:
 					return EditLevel.Top;
-				case SelectMode.Texture:
+				case SelectMode.TextureFace:
 					return EditLevel.Texture;
 				case SelectMode.None:
 					return EditLevel.Plugin;

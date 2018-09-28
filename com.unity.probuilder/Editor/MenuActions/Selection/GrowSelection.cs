@@ -38,7 +38,7 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
 
 		public override SelectMode validSelectModes
 		{
-			get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.Texture; }
+			get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.TextureFace; }
 		}
 
 		public override bool enabled
@@ -118,7 +118,7 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
 						pb.SetSelectedEdges(ElementSelection.GetConnectedEdges(pb, pb.selectedIndexesInternal));
 						break;
 
-					case SelectMode.Texture:
+					case SelectMode.TextureFace:
 					case SelectMode.Face:
 
 						Face[] selectedFaces = pb.GetSelectedFaces();

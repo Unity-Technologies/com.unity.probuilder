@@ -38,7 +38,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override SelectMode validSelectModes
 		{
-			get { return SelectMode.Edge | SelectMode.Face | SelectMode.Texture; }
+			get { return SelectMode.Edge | SelectMode.Face | SelectMode.TextureFace; }
 		}
 
 		static readonly TooltipContent s_Tooltip = new TooltipContent
@@ -63,7 +63,7 @@ namespace UnityEditor.ProBuilder.Actions
 			get
 			{
 				return ProBuilderEditor.instance != null
-					&& ProBuilderEditor.selectMode.ContainsFlag(SelectMode.Edge | SelectMode.Face | SelectMode.Texture);
+					&& ProBuilderEditor.selectMode.ContainsFlag(SelectMode.Edge | SelectMode.Face | SelectMode.TextureFace);
 			}
 		}
 	}

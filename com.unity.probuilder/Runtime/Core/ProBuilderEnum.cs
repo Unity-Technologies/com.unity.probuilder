@@ -7,32 +7,48 @@ namespace UnityEngine.ProBuilder
 	/// Defines what objects are selectable for the scene tool.
 	/// </summary>
 	[System.Flags]
-	public enum SelectMode : ushort
+	public enum SelectMode
 	{
 		/// <summary>
 		/// No selection mode defined.
 		/// </summary>
 		None = 0 << 0,
+
 		/// <summary>
 		/// Objects are selectable.
 		/// </summary>
 		Object = 1 << 0,
+
 		/// <summary>
 		/// Vertices are selectable.
 		/// </summary>
 		Vertex = 1 << 1,
+
 		/// <summary>
 		/// Edges are selectable.
 		/// </summary>
 		Edge = 1 << 2,
+
 		/// <summary>
 		/// Faces are selectable.
 		/// </summary>
 		Face = 1 << 3,
+
 		/// <summary>
 		/// Texture coordinates are selectable.
 		/// </summary>
-		Texture = 1 << 4,
+		TextureFace = 1 << 4,
+
+		// TextureEdge = 1 << 5,
+		Reserved0 = 1 << 5,
+
+		// TextureVertex = 1 << 6,
+		Reserved1 = 1 << 6,
+
+		/// <summary>
+		/// Other input tool (Poly Shape editor, Bezier editor, etc)
+		/// </summary>
+		InputTool = 1 << 7,
 
 		/// <summary>
 		/// Match any value.

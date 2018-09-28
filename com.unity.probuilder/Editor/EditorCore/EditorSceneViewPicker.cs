@@ -292,7 +292,7 @@ namespace UnityEditor.ProBuilder
 				}
 
 				case SelectMode.Face:
-				case SelectMode.Texture:
+				case SelectMode.TextureFace:
 				{
 					Dictionary<ProBuilderMesh, HashSet<Face>> selected = Picking.PickFacesInRect(
 						SceneView.lastActiveSceneView.camera,

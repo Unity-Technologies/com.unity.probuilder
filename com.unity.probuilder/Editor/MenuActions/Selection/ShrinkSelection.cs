@@ -31,7 +31,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override SelectMode validSelectModes
 		{
-			get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.Texture; }
+			get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.TextureFace; }
 		}
 
 		public override bool enabled
@@ -61,7 +61,7 @@ namespace UnityEditor.ProBuilder.Actions
 						break;
 					}
 
-					case SelectMode.Texture:
+					case SelectMode.TextureFace:
 					case SelectMode.Face:
 					{
 						Face[] perimeter = ElementSelection.GetPerimeterFaces(mesh, mesh.selectedFacesInternal).ToArray();

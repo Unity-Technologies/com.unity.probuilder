@@ -62,7 +62,7 @@ namespace UnityEngine.ProBuilder
         public PolyEditMode polyEditMode
         {
             get { return m_EditMode; }
-            set { m_EditMode = value; }
+	        set { m_EditMode = value; }
         }
 
         public bool flipNormals

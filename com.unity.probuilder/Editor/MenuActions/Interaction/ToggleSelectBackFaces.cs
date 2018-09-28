@@ -44,7 +44,7 @@ The default value is <b>On</b>.
 
 		public override SelectMode validSelectModes
 		{
-			get { return SelectMode.Face | SelectMode.Texture; }
+			get { return SelectMode.Face | SelectMode.TextureFace; }
 		}
 
 		Texture2D[] m_Icons;

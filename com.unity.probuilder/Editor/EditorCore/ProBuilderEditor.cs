@@ -199,10 +199,10 @@ namespace UnityEditor.ProBuilder
 				if (previous == SelectMode.Edge || previous == SelectMode.Vertex || previous == SelectMode.Face)
 					s_Instance.m_LastComponentMode = previous;
 
-				if (value == SelectMode.Texture)
+				if (value == SelectMode.TextureFace)
 					s_Instance.m_PreviousHandleAlignment = s_Instance.m_HandleAlignment;
 
-				if (previous == SelectMode.Texture)
+				if (previous == SelectMode.TextureFace)
 					s_Instance.SetHandleAlignment(s_Instance.m_PreviousHandleAlignment);
 
 				if (selectModeChanged != null)
@@ -554,7 +554,7 @@ namespace UnityEditor.ProBuilder
 			// Check mouse position in scene and determine if we should highlight something
 			if (s_ShowHoverHighlight
 				&& m_CurrentEvent.type == EventType.MouseMove
-				&& selectMode.ContainsFlag(SelectMode.Face | SelectMode.Edge | SelectMode.Vertex | SelectMode.Texture))
+				&& selectMode.ContainsFlag(SelectMode.Face | SelectMode.Edge | SelectMode.Vertex | SelectMode.TextureFace))
 			{
 				m_Hovering.CopyTo(m_HoveringPrevious);
 
@@ -570,11 +570,11 @@ namespace UnityEditor.ProBuilder
 			if (Tools.current != Tool.None && Tools.current != m_CurrentTool)
 				SetTool_Internal(Tools.current);
 
-			if ( selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.Texture) && Tools.current != Tool.View)
+			if ( selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.TextureFace) && Tools.current != Tool.View)
 			{
 				if (MeshSelection.selectedVertexCount > 0)
 				{
-					if (selectMode == SelectMode.Texture)
+					if (selectMode == SelectMode.TextureFace)
 					{
 						switch (m_CurrentTool)
 						{
@@ -1431,7 +1431,7 @@ namespace UnityEditor.ProBuilder
 
 				/* handle alignment */
 				case "Toggle Handle Pivot":
-					if (MeshSelection.selectedVertexCount < 1 || selectMode == SelectMode.Texture)
+					if (MeshSelection.selectedVertexCount < 1 || selectMode == SelectMode.TextureFace)
 						return false;
 
 					ToggleHandleAlignment();
@@ -1489,7 +1489,7 @@ namespace UnityEditor.ProBuilder
 
 		internal void SetHandleAlignment(HandleAlignment ha)
 		{
-			if (selectMode == SelectMode.Texture)
+			if (selectMode == SelectMode.TextureFace)
 				ha = HandleAlignment.Plane;
 
 			m_HandleAlignment.SetValue(ha, true);

@@ -73,6 +73,8 @@ namespace UnityEditor.ProBuilder
 
 		public override void OnInspectorGUI()
 		{
+			GUILayout.Label(polygon.polyEditMode.ToString());
+
 			switch (polygon.polyEditMode)
 			{
 				case PolyShape.PolyEditMode.None:
@@ -169,13 +171,10 @@ namespace UnityEditor.ProBuilder
 
 				polygon.polyEditMode = mode;
 
-				if (ProBuilderEditor.instance != null)
-				{
-					if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
-						ProBuilderEditor.PopSelectMode();
-					else
-						ProBuilderEditor.PushSelectMode(SelectMode.None);
-				}
+				if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
+					ProBuilderEditor.selectMode = ProBuilderEditor.selectMode & ~(SelectMode.InputTool);
+				else
+					ProBuilderEditor.selectMode = ProBuilderEditor.selectMode | SelectMode.InputTool;
 
 				if (polygon.polyEditMode != PolyShape.PolyEditMode.None)
 					Tools.current = Tool.None;
@@ -308,7 +307,10 @@ namespace UnityEditor.ProBuilder
 
 		void OnSceneGUI()
 		{
-			if(polygon == null || (polygon.polyEditMode == PolyShape.PolyEditMode.None) || Tools.current != Tool.None)
+			if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
+				return;
+
+			if(polygon == null || Tools.current != Tool.None)
 			{
 				polygon.polyEditMode = PolyShape.PolyEditMode.None;
 				return;
@@ -704,7 +706,10 @@ namespace UnityEditor.ProBuilder
 
 		void OnSelectModeChanged(SelectMode selectMode)
 		{
-			if( polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None && selectMode != SelectMode.None)
+			// User changed select mode manually, remove InputTool flag
+			if( polygon != null
+				&& polygon.polyEditMode != PolyShape.PolyEditMode.None
+				&& !selectMode.ContainsFlag(SelectMode.InputTool))
 				polygon.polyEditMode = PolyShape.PolyEditMode.None;
 		}
 

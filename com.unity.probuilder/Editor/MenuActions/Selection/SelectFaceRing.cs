@@ -40,7 +40,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override SelectMode validSelectModes
 		{
-			get { return SelectMode.Face | SelectMode.Texture; }
+			get { return SelectMode.Face | SelectMode.TextureFace; }
 		}
 
 		public override bool enabled

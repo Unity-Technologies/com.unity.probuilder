@@ -37,7 +37,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override SelectMode validSelectModes
 		{
-			get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.Texture; }
+			get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.TextureFace; }
 		}
 
 		public override bool enabled

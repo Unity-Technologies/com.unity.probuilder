@@ -34,7 +34,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override SelectMode validSelectModes
 		{
-			get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.Texture; }
+			get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.TextureFace; }
 		}
 
 		public override bool enabled
@@ -76,7 +76,7 @@ namespace UnityEditor.ProBuilder.Actions
 					break;
 
 				case SelectMode.Face:
-				case SelectMode.Texture:
+				case SelectMode.TextureFace:
 					foreach(var mesh in selection)
 					{
 						IEnumerable<Face> inverse = mesh.facesInternal.Where( x => !mesh.selectedFacesInternal.Contains(x) );
