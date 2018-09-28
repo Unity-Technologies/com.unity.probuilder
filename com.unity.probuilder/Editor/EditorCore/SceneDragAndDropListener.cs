@@ -33,9 +33,9 @@ namespace UnityEditor.ProBuilder
 			UObject.DestroyImmediate(s_PreviewMesh);
 		}
 
-		public static bool IsDragging()
+		public static bool isDragging
 		{
-			return s_IsSceneViewDragAndDrop;
+			get { return s_IsSceneViewDragAndDrop; }
 		}
 
 		static bool isFaceMode
@@ -116,7 +116,7 @@ namespace UnityEditor.ProBuilder
 
 			if (evt.type == EventType.DragUpdated)
 			{
-				if(!s_IsSceneViewDragAndDrop)
+				if (!s_IsSceneViewDragAndDrop)
 					s_IsSceneViewDragAndDrop = true;
 
 				GameObject go = HandleUtility.PickGameObject(evt.mousePosition, out s_PreviewSubmesh);
@@ -143,49 +143,40 @@ namespace UnityEditor.ProBuilder
 			else if (evt.type == EventType.DragPerform)
 			{
 				s_IsSceneViewDragAndDrop = false;
-
 				GameObject go = HandleUtility.PickGameObject(evt.mousePosition, out s_PreviewSubmesh);
 				SetMeshPreview(go != null ? go.GetComponent<ProBuilderMesh>() : null);
 
-				if (s_CurrentPreview != null)
+				if (s_CurrentPreview != null && s_IsFaceDragAndDropOverrideEnabled)
 				{
-					if (s_IsFaceDragAndDropOverrideEnabled)
+					var renderer = go.GetComponent<Renderer>();
+					var materials = renderer.sharedMaterials;
+					var index = -1;
+
+					for (int i = 0, c = materials.Length; i < c && index < 0; i++)
 					{
-						UndoUtility.RecordObject(s_CurrentPreview, "Set Face Material");
-
-						foreach (var face in s_CurrentPreview.selectedFacesInternal)
-							face.material = s_PreviewMaterial;
-
-						s_CurrentPreview.ToMesh();
-						s_CurrentPreview.Refresh();
-						s_CurrentPreview.Optimize();
-
-						evt.Use();
+						if (materials[i] == s_PreviewMaterial)
+							index = i;
 					}
-					else if(s_PreviewSubmesh > -1)
+
+					if (index < 0)
 					{
-						Material draggedMaterial = GetMaterialFromDragReferences(DragAndDrop.objectReferences, true);
-
-						if (draggedMaterial != null)
-						{
-							UndoUtility.RecordObject(s_CurrentPreview, "Set Face Material");
-
-							var mr = s_CurrentPreview.GetComponent<MeshRenderer>();
-							Material hoveredMaterial = mr == null ? null : mr.sharedMaterials[s_PreviewSubmesh];
-
-							foreach (var face in s_CurrentPreview.facesInternal)
-							{
-								if (hoveredMaterial == null || face.material == hoveredMaterial)
-									face.material = draggedMaterial;
-							}
-
-							s_CurrentPreview.ToMesh();
-							s_CurrentPreview.Refresh();
-							s_CurrentPreview.Optimize();
-
-							evt.Use();
-						}
+						index = materials.Length;
+						var copy = new Material[index + 1];
+						Array.Copy(materials, copy, index);
+						copy[index] = s_PreviewMaterial;
+						renderer.sharedMaterials = copy;
 					}
+
+					UndoUtility.RecordObject(s_CurrentPreview, "Set Face Material");
+
+					foreach (var face in s_CurrentPreview.selectedFacesInternal)
+						face.submeshIndex = index;
+
+					s_CurrentPreview.ToMesh();
+					s_CurrentPreview.Refresh();
+					s_CurrentPreview.Optimize();
+
+					evt.Use();
 				}
 
 				SetMeshPreview(null);

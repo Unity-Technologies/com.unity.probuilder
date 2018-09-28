@@ -95,6 +95,19 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         internal string assetGuid;
 
+	    [NonSerialized]
+	    MeshRenderer m_MeshRenderer;
+
+	    internal MeshRenderer meshRenderer
+	    {
+		    get
+		    {
+			    if (m_MeshRenderer == null)
+				    m_MeshRenderer = GetComponent<MeshRenderer>();
+			    return m_MeshRenderer;
+		    }
+	    }
+
         /// <value>
         /// In the editor, when you delete a ProBuilderMesh you usually also want to destroy the mesh asset.
         /// However, there are situations you'd want to keep the mesh around, like when stripping probuilder scripts.

@@ -123,6 +123,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					c.faceRebuildData.face.textureGroup 	= face.textureGroup < 0 ? newTextureGroupIndex : face.textureGroup;
 					c.faceRebuildData.face.uv 				= new AutoUnwrapSettings(face.uv);
 					c.faceRebuildData.face.smoothingGroup 	= face.smoothingGroup;
+					c.faceRebuildData.face.submeshIndex 	= face.submeshIndex;
 					c.faceRebuildData.face.manualUV 		= face.manualUV;
 					c.faceRebuildData.face.material 		= face.material;
 				}
@@ -261,11 +262,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						if(Vector3.Dot(nrm, fn) < 0)
 							c.faceRebuildData.face.Reverse();
 
-						c.faceRebuildData.face.textureGroup 	= face.textureGroup < 0 ? newTextureGroupIndex : face.textureGroup;
-						c.faceRebuildData.face.uv 				= new AutoUnwrapSettings(face.uv);
-						c.faceRebuildData.face.smoothingGroup 	= face.smoothingGroup;
-						c.faceRebuildData.face.manualUV 		= face.manualUV;
-						c.faceRebuildData.face.material 		= face.material;
+						c.faceRebuildData.face.textureGroup = face.textureGroup < 0 ? newTextureGroupIndex : face.textureGroup;
+						c.faceRebuildData.face.uv = new AutoUnwrapSettings(face.uv);
+						c.faceRebuildData.face.submeshIndex = face.submeshIndex;
+						c.faceRebuildData.face.smoothingGroup = face.smoothingGroup;
+						c.faceRebuildData.face.manualUV = face.manualUV;
+						c.faceRebuildData.face.material = face.material;
 					}
 
 					results.AddRange(res);

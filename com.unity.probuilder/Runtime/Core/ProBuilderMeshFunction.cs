@@ -195,16 +195,25 @@ namespace UnityEngine.ProBuilder
 			m.vertices = m_Positions;
 			m.uv2 = null;
 
-			Submesh[] submeshes = Submesh.GetSubmeshes(facesInternal, preferredTopology);
-			m.subMeshCount = submeshes.Length;
+			int materialCount = MeshUtility.GetMaterialCount(meshRenderer);
+
+			Submesh[] submeshes = Submesh.GetSubmeshes(facesInternal, materialCount, preferredTopology);
+
+			m.subMeshCount = materialCount;
 
 			for (int i = 0; i < m.subMeshCount; i++)
+			{
+#if DEVELOPER_MODE
+				if(i >= materialCount)
+					Log.Warning("Submesh index " + i + " is out of bounds of the MeshRenderer materials array.");
+				if(submeshes[i] == null)
+					throw new Exception("Attempting to assign a null submesh. " + i + "/" + materialCount);
+#endif
 				m.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
+			}
 
 			m.name = string.Format("pb_Mesh{0}", id);
-
 			GetComponent<MeshFilter>().sharedMesh = m;
-			GetComponent<MeshRenderer>().sharedMaterials = submeshes.Select(x => x.m_Material).ToArray();
 		}
 
 		/// <summary>

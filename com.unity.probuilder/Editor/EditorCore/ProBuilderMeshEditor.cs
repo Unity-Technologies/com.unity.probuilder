@@ -156,6 +156,13 @@ namespace UnityEditor.ProBuilder
 			}
 
 			serializedObject.ApplyModifiedProperties();
+
+#if DEVELOPER_MODE
+			GUILayout.Label("Compiled Mesh Information", EditorStyles.boldLabel);
+
+			GUILayout.Label("Vertex Count: " + m_Mesh.mesh.vertexCount);
+			GUILayout.Label("Submesh Count: " + m_Mesh.mesh.subMeshCount);
+#endif
 		}
 
 		void LightmapStaticSettings()

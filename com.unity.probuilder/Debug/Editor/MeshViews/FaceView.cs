@@ -29,6 +29,7 @@ namespace UnityEditor.ProBuilder.Debug
 				center /= face.distinctIndexesInternal.Length;
 
 				var content = "<b>indexes:</b> " + face.ToString() + "\n" +
+					"<b>submesh:</b> " + face.submeshIndex + "\n" +
 					"<b>manual uv:</b> " + face.manualUV + "\n" +
 					"<b>smoothing:</b> " + face.smoothingGroup + "\n" +
 					"<b>texture:</b> " + face.textureGroup + "\n" +

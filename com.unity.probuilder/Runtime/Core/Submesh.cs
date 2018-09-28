@@ -18,8 +18,8 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
 		internal MeshTopology m_Topology;
 
-        [SerializeField]
-		internal Material m_Material;
+		[SerializeField]
+		internal int m_SubmeshIndex;
 
 		/// <value>
 		/// Indexes making up this submesh. Can be triangles or quads, check with topology.
@@ -40,28 +40,28 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <value>
-		/// What material does this submesh use?
+		/// The index in the sharedMaterials array that this submesh aligns with.
 		/// </value>
-		public Material material
+		public int submeshIndex
 		{
-			get { return m_Material; }
-			set { m_Material = value; }
+			get { return m_SubmeshIndex; }
+			set { m_SubmeshIndex = value; }
 		}
 
 		/// <summary>
 		/// Create new Submesh.
 		/// </summary>
-		/// <param name="material">The material that this submesh renders with.</param>
+		/// <param name="submeshIndex">The index of this submesh corresponding to the MeshRenderer.sharedMaterials property.</param>
 		/// <param name="topology">What topology is this submesh. ProBuilder only recognizes Triangles and Quads.</param>
 		/// <param name="indexes">The triangles or quads.</param>
-		public Submesh(Material material, MeshTopology topology, IEnumerable<int> indexes)
+		public Submesh(int submeshIndex, MeshTopology topology, IEnumerable<int> indexes)
 		{
             if (indexes == null)
                 throw new ArgumentNullException("indexes");
 
 			m_Indexes = indexes.ToArray();
 			m_Topology = topology;
-			m_Material = material;
+			m_SubmeshIndex = submeshIndex;
 		}
 
 		/// <summary>
@@ -69,20 +69,27 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="mesh">The source mesh.</param>
 		/// <param name="subMeshIndex">Which submesh to read from.</param>
-		/// <param name="material">The material this submesh should render with.</param>
-		public Submesh(Mesh mesh, int subMeshIndex, Material material)
+		public Submesh(Mesh mesh, int subMeshIndex)
 		{
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
 			m_Indexes = mesh.GetIndices(subMeshIndex);
 			m_Topology = mesh.GetTopology(subMeshIndex);
-			m_Material = material;
+			m_SubmeshIndex = subMeshIndex;
 		}
 
 		public override string ToString()
 		{
-			return string.Format("{0}, {1}, {2}", m_Material != null ? m_Material.name : "null", m_Topology.ToString(), m_Indexes != null ? m_Indexes.Length.ToString() : "0");
+			return string.Format("{0}, {1}, {2}", m_SubmeshIndex, m_Topology.ToString(), m_Indexes != null ? m_Indexes.Length.ToString() : "0");
+		}
+
+		internal static int GetSubmeshCount(ProBuilderMesh mesh)
+		{
+			int count = 0;
+			foreach(var face in mesh.facesInternal)
+				count = Math.Max(count, face.submeshIndex);
+			return count + 1;
 		}
 
 		/// <summary>
@@ -92,7 +99,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="preferredTopology">Should the resulting submeshes be in quads or triangles. Note that quads are not guaranteed; ie, some faces may not be able to be represented in quad format and will fall back on triangles.</param>
 		/// <returns>An array of Submeshes.</returns>
 		/// <exception cref="NotImplementedException">Thrown in the event that a MeshTopology other than Quads or Triangles is passed.</exception>
-		public static Submesh[] GetSubmeshes(IEnumerable<Face> faces, MeshTopology preferredTopology = MeshTopology.Triangles)
+		public static Submesh[] GetSubmeshes(IEnumerable<Face> faces, int submeshCount, MeshTopology preferredTopology = MeshTopology.Triangles)
 		{
 			if(preferredTopology != MeshTopology.Triangles && preferredTopology != MeshTopology.Quads)
 				throw new System.NotImplementedException("Currently only Quads and Triangles are supported.");
@@ -102,47 +109,82 @@ namespace UnityEngine.ProBuilder
 
 			bool wantsQuads = preferredTopology == MeshTopology.Quads;
 
-			Dictionary<Material, List<int>> quads = wantsQuads ? new Dictionary<Material, List<int>>() : null;
-			Dictionary<Material, List<int>> tris = new Dictionary<Material, List<int>>();
+			List<int>[] quads = wantsQuads ? new List<int>[submeshCount] : null;
+			List<int>[] tris = new List<int>[submeshCount];
+			int maxSubmeshIndex = submeshCount - 1;
+
+			for (int i = 0; i < submeshCount; i++)
+			{
+				if (wantsQuads)
+					quads[i] = new List<int>();
+
+				tris[i] = new List<int>();
+			}
 
             foreach(var face in faces)
 			{
 				if(face.indexesInternal == null || face.indexesInternal.Length < 1)
 					continue;
 
-				Material material = face.material != null ? face.material : BuiltinMaterials.defaultMaterial;
-				List<int> polys = null;
+				int submeshIndex = Math.Clamp(face.submeshIndex, 0, maxSubmeshIndex);
 
 				if(wantsQuads && face.IsQuad())
-				{
-					int[] res = face.ToQuad();
-
-					if(quads.TryGetValue(material, out polys))
-						polys.AddRange(res);
-					else
-						quads.Add(material, new List<int>(res));
-				}
+					quads[submeshIndex].AddRange(face.ToQuad());
 				else
+					tris[submeshIndex].AddRange(face.indexesInternal);
+			}
+
+			var submeshes = new Submesh[submeshCount];
+
+			switch (preferredTopology)
+			{
+				case MeshTopology.Triangles:
 				{
-					if(tris.TryGetValue(material, out polys))
-						polys.AddRange(face.indexesInternal);
-					else
-						tris.Add(material, new List<int>(face.indexesInternal));
+					for(int submeshIndex = 0; submeshIndex < submeshCount; submeshIndex++)
+						submeshes[submeshIndex] = new Submesh(submeshIndex, MeshTopology.Triangles, tris[submeshIndex]);
+
+					break;
+				}
+
+				case MeshTopology.Quads:
+				{
+					for(int submeshIndex = 0; submeshIndex < submeshCount; submeshIndex++)
+					{
+						// If a submesh is a mix of triangles and quads, fall back to triangles.
+						if (tris[submeshIndex].Count > 0)
+						{
+							var tri = tris[submeshIndex];
+							var quad = quads[submeshIndex];
+
+							int triCount = tri.Count;
+							int quadCount = quad.Count;
+
+							int[] triangles = new int[triCount + ((quadCount / 4) * 6)];
+
+							for (int i = 0; i < triCount; i++)
+								triangles[i] = tri[i];
+
+							for (int i = 0, n = triCount; i < quadCount; i += 4, n += 6)
+							{
+								triangles[n + 0] = quad[i + 0];
+								triangles[n + 1] = quad[i + 1];
+								triangles[n + 2] = quad[i + 2];
+
+								triangles[n + 3] = quad[i + 2];
+								triangles[n + 4] = quad[i + 3];
+								triangles[n + 5] = quad[i + 0];
+							}
+
+							submeshes[submeshIndex] = new Submesh(submeshIndex, MeshTopology.Triangles, triangles);
+						}
+						else
+						{
+							submeshes[submeshIndex] = new Submesh(submeshIndex, MeshTopology.Quads, quads[submeshIndex]);
+						}
+					}
+					break;
 				}
 			}
-
-			int submeshCount = (quads != null ? quads.Count : 0) + tris.Count;
-			var submeshes = new Submesh[submeshCount];
-			int ii = 0;
-
-			if(quads != null)
-			{
-				foreach(var kvp in quads)
-					submeshes[ii++] = new Submesh(kvp.Key, MeshTopology.Quads, kvp.Value.ToArray());
-			}
-
-			foreach(var kvp in tris)
-				submeshes[ii++] = new Submesh(kvp.Key, MeshTopology.Triangles, kvp.Value.ToArray());
 
 			return submeshes;
 		}

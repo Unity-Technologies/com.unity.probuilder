@@ -524,7 +524,7 @@ namespace UnityEditor.ProBuilder
 			if (m_CurrentEvent.type == EventType.MouseUp && m_CurrentEvent.button == 1 || m_CurrentEvent.type == EventType.Ignore)
 				m_IsRightMouseDown = false;
 
-			m_EditorMeshHandles.DrawSceneHandles(selectMode);
+			m_EditorMeshHandles.DrawSceneHandles(SceneDragAndDropListener.isDragging ? SelectMode.None : selectMode);
 
 			DrawHandleGUI(sceneView);
 
@@ -1204,6 +1204,7 @@ namespace UnityEditor.ProBuilder
 				return;
 
 			if (m_CurrentEvent.type == EventType.Repaint
+				&& !SceneDragAndDropListener.isDragging
 				&& m_Hovering != null
 				&& GUIUtility.hotControl == 0
 				&& HandleUtility.nearestControl == m_DefaultControl

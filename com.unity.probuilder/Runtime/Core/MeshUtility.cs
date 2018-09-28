@@ -12,6 +12,14 @@ namespace UnityEngine.ProBuilder
 	/// </summary>
 	public static class MeshUtility
 	{
+		static List<Material> s_MaterialArray = new List<Material>();
+
+		internal static int GetMaterialCount(Renderer renderer)
+		{
+			renderer.GetSharedMaterials(s_MaterialArray);
+			return s_MaterialArray.Count;
+		}
+
 		/// <summary>
 		/// Create an array of @"UnityEngine.ProBuilder.Vertex" values that are ordered as individual triangles. This modifies the source mesh to match the new individual triangles format.
 		/// </summary>
@@ -357,7 +365,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="targetMesh">Destination UnityEngine.Mesh.</param>
         /// <param name="preferredTopology">If specified, the function will try to create topology matching the reqested format (and falling back on triangles where necessary).</param>
         /// <returns>The resulting material array from the compiled faces array. This is suitable to assign to the MeshRenderer.sharedMaterials property.</returns>
-        public static Material[] Compile(ProBuilderMesh probuilderMesh, Mesh targetMesh, MeshTopology preferredTopology = MeshTopology.Triangles)
+        public static void Compile(ProBuilderMesh probuilderMesh, Mesh targetMesh, MeshTopology preferredTopology = MeshTopology.Triangles)
         {
             if (probuilderMesh == null)
                 throw new ArgumentNullException("probuilderMesh");
@@ -391,15 +399,14 @@ namespace UnityEngine.ProBuilder
             if (probuilderMesh.HasArrays(MeshArrays.Color))
                 targetMesh.colors = probuilderMesh.colorsInternal;
 
-            var submeshes = Submesh.GetSubmeshes(probuilderMesh.facesInternal, preferredTopology);
+	        var materialCount = probuilderMesh.GetComponent<Renderer>().sharedMaterials.Length;
+            var submeshes = Submesh.GetSubmeshes(probuilderMesh.facesInternal, materialCount, preferredTopology);
             targetMesh.subMeshCount = submeshes.Length;
 
             for (int i = 0; i < targetMesh.subMeshCount; i++)
                 targetMesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
 
             targetMesh.name = string.Format("pb_Mesh{0}", probuilderMesh.id);
-
-            return submeshes.Select(x => x.m_Material).ToArray();
         }
 
 		/// <summary>

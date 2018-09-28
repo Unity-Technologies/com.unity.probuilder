@@ -42,6 +42,9 @@ namespace UnityEngine.ProBuilder
         [FormerlySerializedAs("_mat")]
         Material m_Material;
 
+	    [SerializeField]
+	    int m_SubmeshIndex;
+
         /// <value>
         /// If this face has had it's UV coordinates done by hand, don't update them with the auto unwrap crowd.
         /// </value>
@@ -155,6 +158,12 @@ namespace UnityEngine.ProBuilder
 			set { m_Material = value; }
 		}
 
+	    public int submeshIndex
+	    {
+		    get { return m_SubmeshIndex; }
+		    set { m_SubmeshIndex = value; }
+	    }
+
 		/// <value>
 		/// A reference to the Auto UV mapping parameters.
 		/// </value>
@@ -176,7 +185,10 @@ namespace UnityEngine.ProBuilder
 	    /// <summary>
 	    /// Default constructor creates a face with an empty triangles array.
 	    /// </summary>
-		public Face() {}
+	    public Face()
+	    {
+		    m_SubmeshIndex = 0;
+	    }
 
 		/// <summary>
 		/// Initialize a Face with a set of triangles and default values.
@@ -188,6 +200,7 @@ namespace UnityEngine.ProBuilder
 			m_Uv = AutoUnwrapSettings.tile;
 			m_Material = BuiltinMaterials.defaultMaterial;
 			m_SmoothingGroup = Smoothing.smoothingGroupNone;
+		    m_SubmeshIndex = 0;
 			textureGroup = -1;
 			elementGroup = 0;
 		}
@@ -201,6 +214,7 @@ namespace UnityEngine.ProBuilder
 			textureGroup = texture;
 			elementGroup = element;
 			manualUV = manualUVs;
+		    m_SubmeshIndex = 0;
 		}
 
 		/// <summary>
@@ -229,6 +243,7 @@ namespace UnityEngine.ProBuilder
 			m_Material = other.material;
 			manualUV = other.manualUV;
 			elementGroup = other.elementGroup;
+		    m_SubmeshIndex = other.m_SubmeshIndex;
 			InvalidateCache();
 		}
 
