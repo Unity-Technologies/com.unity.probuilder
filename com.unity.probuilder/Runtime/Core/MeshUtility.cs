@@ -392,9 +392,8 @@ namespace UnityEngine.ProBuilder
                 targetMesh.SetUVs(3, uvChannel);
             }
 
-            targetMesh.normals = probuilderMesh.CalculateNormals();
-
-            MeshUtility.GenerateTangent(targetMesh);
+	        targetMesh.normals = probuilderMesh.GetNormals();
+	        targetMesh.tangents = probuilderMesh.GetTangents();
 
             if (probuilderMesh.HasArrays(MeshArrays.Color))
                 targetMesh.colors = probuilderMesh.colorsInternal;
