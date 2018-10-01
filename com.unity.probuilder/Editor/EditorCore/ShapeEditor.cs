@@ -87,11 +87,6 @@ namespace UnityEditor.ProBuilder
 		{
 			ProBuilderMesh pb = ShapeGenerator.GenerateCube(Vector3.one);
 			UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
-
-			Material mat = EditorUtility.GetUserMaterial();
-			SetFaceMaterial(pb.facesInternal, mat);
-			pb.GetComponent<MeshRenderer>().sharedMaterial = mat;
-
 			EditorUtility.InitObject(pb);
 		}
 

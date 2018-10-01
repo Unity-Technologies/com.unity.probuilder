@@ -207,7 +207,7 @@ namespace UnityEditor.SettingsManagement
 
         public override string ToString()
         {
-            return string.Format("[{0}] {1} : {2}", scope, key, value);
+            return string.Format("{0} setting. Key: {1}  Value: {2}", scope, key, value);
         }
     }
 

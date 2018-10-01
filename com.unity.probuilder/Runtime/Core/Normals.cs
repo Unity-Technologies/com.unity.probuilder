@@ -89,12 +89,21 @@ namespace UnityEngine.ProBuilder
 		static void CalculateHardNormals(ProBuilderMesh mesh)
 		{
 			var vertexCount = mesh.vertexCount;
-			Vector3[] positions = mesh.positionsInternal;
-			Face[] faces = mesh.facesInternal;
+			var positions = mesh.positionsInternal;
+			var faces = mesh.facesInternal;
+			var perTriangleAvg = new int[vertexCount];
+
 			if(!mesh.HasArrays(MeshArrays.Normal))
 				mesh.normalsInternal = new Vector3[vertexCount];
-			Vector3[] normals = mesh.normalsInternal;
-			int[] perTriangleAvg = new int[vertexCount];
+
+			var normals = mesh.normalsInternal;
+
+			for (int i = 0; i < vertexCount; i++)
+			{
+				normals[i].x = 0f;
+				normals[i].y = 0f;
+				normals[i].z = 0f;
+			}
 
 			for (int faceIndex = 0, fc = faces.Length; faceIndex < fc; faceIndex++)
 			{

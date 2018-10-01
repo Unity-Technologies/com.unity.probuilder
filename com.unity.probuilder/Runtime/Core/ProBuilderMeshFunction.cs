@@ -425,11 +425,13 @@ namespace UnityEngine.ProBuilder
 		void RefreshNormals()
 		{
 			Normals.CalculateNormals(this);
+			mesh.normals = m_Normals;
 		}
 
 		void RefreshTangents()
 		{
 			Normals.CalculateTangents(this);
+			mesh.tangents = m_Tangents;
 		}
 
 		/// <summary>

@@ -135,7 +135,7 @@ namespace UnityEngine.ProBuilder
 		    var m_Textures1 = mesh != null ? mesh.uv2 : null;
 
 		    missing |= (channels & MeshArrays.Position) == MeshArrays.Position && m_Positions == null;
-		    missing |= (channels & MeshArrays.Normal) == MeshArrays.Normal && m_Normals == null || m_Normals.Length != vc;
+		    missing |= (channels & MeshArrays.Normal) == MeshArrays.Normal && (m_Normals == null || m_Normals.Length != vc);
 		    missing |= (channels & MeshArrays.Texture0) == MeshArrays.Texture0 && (m_Textures0 == null || m_Textures0.Length != vc);
 		    missing |= (channels & MeshArrays.Texture1) == MeshArrays.Texture1 && (m_Textures1 == null || m_Textures1.Length < 3);
 		    missing |= (channels & MeshArrays.Texture2) == MeshArrays.Texture2 && (m_Textures2 == null || m_Textures2.Count != vc);

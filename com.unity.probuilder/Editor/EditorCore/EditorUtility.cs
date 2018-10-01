@@ -324,7 +324,9 @@ namespace UnityEditor.ProBuilder
 		{
 			SetPivotLocationAndSnap(pb);
 
-			pb.GetComponent<MeshRenderer>().shadowCastingMode = s_ShadowCastingMode;
+			pb.meshRenderer.shadowCastingMode = s_ShadowCastingMode;
+			pb.meshRenderer.sharedMaterial = GetUserMaterial();
+
 			ScreenCenter(pb.gameObject);
 
 			GameObjectUtility.SetStaticEditorFlags(pb.gameObject, s_StaticEditorFlags);
@@ -542,13 +544,12 @@ namespace UnityEditor.ProBuilder
 
 		internal static Material GetUserMaterial()
 		{
-			var mat = s_DefaultMaterial;
+			var mat = (Material) s_DefaultMaterial;
 
 			if (mat != null)
 				return mat;
 
 			return BuiltinMaterials.defaultMaterial;
-
 		}
 	}
 }
