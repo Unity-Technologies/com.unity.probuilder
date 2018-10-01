@@ -34,6 +34,10 @@ namespace UnityEngine.ProBuilder.Tests.Framework
 		const string k_TempDirectory = "Assets/ProBuilderUnitTestsTemp/";
 		const MeshArrays k_DefaultMeshArraysCompare = ~MeshArrays.Lightmap;
 
+		const string k_RedMaterialPath = "Packages/com.unity.probuilder.tests/Materials/Red.mat";
+		const string k_BlueMaterialPath = "Packages/com.unity.probuilder.tests/Materials/Blue.mat";
+		const string k_GreenMaterialPath = "Packages/com.unity.probuilder.tests/Materials/Green.mat";
+
 		public static string TemplatesDirectory
 		{
 			get { return k_TemplatesDirectory; }
@@ -53,7 +57,7 @@ namespace UnityEngine.ProBuilder.Tests.Framework
 		{
 			ProBuilderMesh[] m_Shapes;
 
-			static ProBuilderMesh[] GetBasicShapes()
+			public static ProBuilderMesh[] GetBasicShapes()
 			{
 				var shapes = Enum.GetValues(typeof(ShapeType)) as ShapeType[];
 				ProBuilderMesh[] primitives = new ProBuilderMesh[shapes.Length];
@@ -444,6 +448,21 @@ namespace UnityEngine.ProBuilder.Tests.Framework
 				return;
 
 			Directory.Delete(TemporarySavedAssetsDirectory);
+		}
+
+		public static Material redMaterial
+		{
+			get { return AssetDatabase.LoadAssetAtPath<Material>(k_RedMaterialPath); }
+		}
+
+		public static Material blueMaterial
+		{
+			get { return AssetDatabase.LoadAssetAtPath<Material>(k_BlueMaterialPath); }
+		}
+
+		public static Material greenMaterial
+		{
+			get { return AssetDatabase.LoadAssetAtPath<Material>(k_GreenMaterialPath); }
 		}
 	}
 }
