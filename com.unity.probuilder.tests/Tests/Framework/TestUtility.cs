@@ -109,6 +109,14 @@ namespace UnityEngine.ProBuilder.Tests.Framework
 			return path.Replace("\\", "/").Replace(Application.dataPath, "Assets/");
 		}
 
+		public static void AssertSequenceEqual<T>(IList<T> left, IList<T> right)
+		{
+			Assert.AreEqual(left.Count, right.Count, "Count");
+
+			for(int i = 0, c = left.Count; i < c; i++)
+				Assert.AreEqual(left[i], right[i], "index " + i);
+		}
+
 		public static void AssertMeshAttributesValid(Mesh mesh)
 		{
 			int vertexCount = mesh.vertexCount;

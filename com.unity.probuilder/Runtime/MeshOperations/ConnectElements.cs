@@ -123,9 +123,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					c.faceRebuildData.face.textureGroup 	= face.textureGroup < 0 ? newTextureGroupIndex : face.textureGroup;
 					c.faceRebuildData.face.uv 				= new AutoUnwrapSettings(face.uv);
 					c.faceRebuildData.face.smoothingGroup 	= face.smoothingGroup;
-					c.faceRebuildData.face.submeshIndex 	= face.submeshIndex;
 					c.faceRebuildData.face.manualUV 		= face.manualUV;
+					c.faceRebuildData.face.submeshIndex 	= face.submeshIndex;
+#pragma warning disable 618
 					c.faceRebuildData.face.material 		= face.material;
+#pragma warning restore 618
 				}
 
 				successfulSplits.Add(face);
@@ -446,11 +448,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			FaceRebuildData res = AppendElements.FaceWithVertices(n_vertices, false);
 
-			res.face.textureGroup 	= face.textureGroup;
-			res.face.uv 			= new AutoUnwrapSettings(face.uv);
+			res.face.textureGroup = face.textureGroup;
+			res.face.uv = new AutoUnwrapSettings(face.uv);
 			res.face.smoothingGroup = face.smoothingGroup;
-			res.face.manualUV 		= face.manualUV;
-			res.face.material 		= face.material;
+			res.face.manualUV = face.manualUV;
+			res.face.material = face.material;
+			res.face.submeshIndex = face.submeshIndex;
 
 			return new ConnectFaceRebuildData(res, newVertexIndexes);
 		}

@@ -145,21 +145,19 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			int vertexIndex = 0;
 			int materialCount = materials != null ? materials.Length : 0;
 
-			for(int subMeshIndex = 0; subMeshIndex < originalMesh.subMeshCount; subMeshIndex++)
+			for(int submeshIndex = 0; submeshIndex < originalMesh.subMeshCount; submeshIndex++)
 			{
-				Material material = materialCount > 0 ? materials[subMeshIndex % materialCount] : BuiltinMaterials.defaultMaterial;
-
-				switch(originalMesh.GetTopology(subMeshIndex))
+				switch(originalMesh.GetTopology(submeshIndex))
 				{
 					case UnityEngine.MeshTopology.Triangles:
 					{
-						int[] indexes = originalMesh.GetIndices(subMeshIndex);
+						int[] indexes = originalMesh.GetIndices(submeshIndex);
 
 						for(int tri = 0; tri < indexes.Length; tri += 3)
 						{
 							faces.Add(new Face(
 								new int[] { vertexIndex, vertexIndex + 1, vertexIndex + 2 },
-								material,
+								Math.Clamp(submeshIndex, 0, materialCount - 1),
 								AutoUnwrapSettings.tile,
 								Smoothing.smoothingGroupNone,
 								-1,
@@ -177,14 +175,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 					case UnityEngine.MeshTopology.Quads:
 					{
-						int[] indexes = originalMesh.GetIndices(subMeshIndex);
+						int[] indexes = originalMesh.GetIndices(submeshIndex);
 
 						for(int quad = 0; quad < indexes.Length; quad += 4)
 						{
 							faces.Add(new Face(new int[] {
 								vertexIndex    , vertexIndex + 1, vertexIndex + 2,
 								vertexIndex + 2, vertexIndex + 3, vertexIndex + 0 },
-								material,
+								Math.Clamp(submeshIndex, 0, materialCount - 1),
 								AutoUnwrapSettings.tile,
 								Smoothing.smoothingGroupNone,
 								-1,

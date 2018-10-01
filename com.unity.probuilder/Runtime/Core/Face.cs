@@ -152,6 +152,7 @@ namespace UnityEngine.ProBuilder
 		/// <value>
 		/// Get the material that face uses.
 		/// </value>
+		[Obsolete("Face.material is deprecated. Please use submeshIndex instead.")]
 		public Material material
 		{
 			get { return m_Material; }
@@ -205,6 +206,7 @@ namespace UnityEngine.ProBuilder
 			elementGroup = 0;
 		}
 
+		[Obsolete("Face.material is deprecated. Please use \"submeshIndex\" instead.")]
 		internal Face(int[] triangles, Material m, AutoUnwrapSettings u, int smoothing, int texture, int element, bool manualUVs)
 		{
 			SetIndexes(triangles);
@@ -215,6 +217,17 @@ namespace UnityEngine.ProBuilder
 			elementGroup = element;
 			manualUV = manualUVs;
 		    m_SubmeshIndex = 0;
+		}
+
+	    internal Face(int[] triangles, int submeshIndex, AutoUnwrapSettings u, int smoothing, int texture, int element, bool manualUVs)
+		{
+			SetIndexes(triangles);
+			m_Uv = new AutoUnwrapSettings(u);
+			m_SmoothingGroup = smoothing;
+			textureGroup = texture;
+			elementGroup = element;
+			manualUV = manualUVs;
+		    m_SubmeshIndex = submeshIndex;
 		}
 
 		/// <summary>
@@ -240,7 +253,9 @@ namespace UnityEngine.ProBuilder
 			Array.Copy(other.indexesInternal, m_Indexes, len);
 			m_SmoothingGroup = other.smoothingGroup;
 			m_Uv = new AutoUnwrapSettings(other.uv);
+#pragma warning disable 618
 			m_Material = other.material;
+#pragma warning restore 618
 			manualUV = other.manualUV;
 			elementGroup = other.elementGroup;
 		    m_SubmeshIndex = other.m_SubmeshIndex;

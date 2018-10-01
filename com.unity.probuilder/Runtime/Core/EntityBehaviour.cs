@@ -15,16 +15,7 @@ namespace UnityEngine.ProBuilder
 
 		protected void SetMaterial(Material material)
 		{
-			var pb = GetComponent<ProBuilderMesh>();
-
-			if (pb != null)
-			{
-                foreach(var face in pb.facesInternal)
-    				face.material = material;
-				pb.ToMesh();
-				pb.Refresh();
-			}
-			else if (GetComponent<Renderer>())
+			if (GetComponent<Renderer>())
 				GetComponent<Renderer>().sharedMaterial = material;
 			else
 				gameObject.AddComponent<MeshRenderer>().sharedMaterial = material;

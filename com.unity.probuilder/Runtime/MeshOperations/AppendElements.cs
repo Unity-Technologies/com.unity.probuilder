@@ -217,22 +217,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns>An action result indicating the status of the operation.</returns>
 		internal static ActionResult CreateShapeFromPolygon(this PolyShape poly)
 		{
-			var mesh = poly.mesh;
-			var renderer = poly.GetComponent<MeshRenderer>();
-			var material = renderer != null && renderer.sharedMaterial != null ? renderer.sharedMaterial : BuiltinMaterials.defaultMaterial;
-
-			var res = mesh.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals);
-
-			if (material != null)
-			{
-				foreach (var face in mesh.faces)
-					face.material = material;
-
-				// no need to do a ToMesh and Refresh here because we know every face is set to the same material
-				poly.GetComponent<MeshRenderer>().sharedMaterial = material;
-			}
-
-			return res;
+			return poly.mesh.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals);
 		}
 
 		/// <summary>

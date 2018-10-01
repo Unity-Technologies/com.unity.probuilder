@@ -37,18 +37,19 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Edge
 		public static void ConnectRetainsMaterial()
 		{
 			var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
-			mesh.facesInternal[0].material = TestUtility.redMaterial;
-			for (int i = 1; i < mesh.faceCount; i++)
-				mesh.facesInternal[i].material = TestUtility.blueMaterial;
+			mesh.facesInternal[0].submeshIndex = 1;
+
 			var res = mesh.Connect(new ProBuilder.Edge[] { mesh.facesInternal[0].edgesInternal[0], mesh.facesInternal[0].edgesInternal[1] });
 			mesh.ToMesh();
-			Assert.AreEqual(2, mesh.mesh.subMeshCount);
+			Assert.AreEqual(2, mesh.mesh.subMeshCount, "Submesh count");
+
 			foreach(var face in res.item1)
-				Assert.AreEqual(TestUtility.redMaterial, face.material);
+				Assert.AreEqual(TestUtility.redMaterial, 1);
+
 			foreach (var face in mesh.facesInternal)
 			{
 				if(!res.item1.Contains(face))
-					Assert.AreEqual(TestUtility.blueMaterial, face.material);
+					Assert.AreEqual(0, face.submeshIndex);
 			}
 		}
 	}

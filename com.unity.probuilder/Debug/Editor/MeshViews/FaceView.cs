@@ -32,8 +32,7 @@ namespace UnityEditor.ProBuilder.Debug
 					"<b>submesh:</b> " + face.submeshIndex + "\n" +
 					"<b>manual uv:</b> " + face.manualUV + "\n" +
 					"<b>smoothing:</b> " + face.smoothingGroup + "\n" +
-					"<b>texture:</b> " + face.textureGroup + "\n" +
-					"<b>material:</b> " + face.material.name;
+					"<b>texture:</b> " + face.textureGroup;
 
 				m_Content.Add(content);
 				m_Position.Add(center);

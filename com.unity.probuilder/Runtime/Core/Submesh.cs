@@ -197,9 +197,11 @@ namespace UnityEngine.ProBuilder
 
 			foreach (var face in mesh.facesInternal)
 			{
+#pragma warning disable 618
 				var index = Array.IndexOf(materials, face.material);
 				face.submeshIndex = Math.Clamp(index, 0, submeshCount - 1);
 				face.material = null;
+#pragma warning restore 618
 			}
 		}
 	}

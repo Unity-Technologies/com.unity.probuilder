@@ -38,18 +38,15 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 		{
 			var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
 
-			foreach (var face in mesh.facesInternal)
-				face.material = TestUtility.redMaterial;
-
-			mesh.facesInternal[0].material = TestUtility.blueMaterial;
+			mesh.facesInternal[0].submeshIndex = 1;
 
 			var res = Subdivision.Subdivide(mesh, new[] { mesh.facesInternal[0] });
 
 			foreach(var face in res)
-				Assert.AreEqual(TestUtility.blueMaterial, face.material);
+				Assert.AreEqual(1, face.submeshIndex);
 
 			foreach (var face in mesh.facesInternal.Where(x => !res.Contains(x)))
-				Assert.AreEqual(TestUtility.redMaterial, face.material);
+				Assert.AreEqual(0, face.submeshIndex);
 		}
 	}
 }
