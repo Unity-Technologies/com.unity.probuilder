@@ -195,7 +195,15 @@ namespace UnityEngine.ProBuilder
 			m.vertices = m_Positions;
 			m.uv2 = null;
 
-			int materialCount = MeshUtility.GetMaterialCount(meshRenderer);
+			if (m_MeshFormatVersion < k_MeshFormatVersion)
+			{
+				if(m_MeshFormatVersion < k_MeshFormatVersionSubmeshMaterialRefactor)
+					Submesh.MapFaceMaterialsToSubmeshIndex(this);
+
+				m_MeshFormatVersion = k_MeshFormatVersion;
+			}
+
+			int materialCount = MeshUtility.GetMaterialCount(renderer);
 
 			Submesh[] submeshes = Submesh.GetSubmeshes(facesInternal, materialCount, preferredTopology);
 

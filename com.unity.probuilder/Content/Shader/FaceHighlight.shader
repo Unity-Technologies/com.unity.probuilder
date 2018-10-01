@@ -13,12 +13,10 @@ Shader "Hidden/ProBuilder/FaceHighlight"
 		ZTest LEqual
 		ZWrite On
 		Cull Off
-		Blend SrcAlpha OneMinusSrcAlpha
+		Blend Off
 
 		Pass
 		{
-			AlphaTest Greater .25
-
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag

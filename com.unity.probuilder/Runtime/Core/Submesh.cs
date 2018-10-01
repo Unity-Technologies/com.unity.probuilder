@@ -96,9 +96,11 @@ namespace UnityEngine.ProBuilder
 		/// Create submeshes from a set of faces. Currently only Quads and Triangles are supported.
 		/// </summary>
 		/// <param name="faces">The faces to be included in the resulting submeshes. This method handles groups submeshes by comparing the material property of each face.</param>
+		/// <param name="submeshCount">How many submeshes to create. Usually you will just want to pass the length of the MeshRenderer.sharedMaterials array.</param>
 		/// <param name="preferredTopology">Should the resulting submeshes be in quads or triangles. Note that quads are not guaranteed; ie, some faces may not be able to be represented in quad format and will fall back on triangles.</param>
 		/// <returns>An array of Submeshes.</returns>
 		/// <exception cref="NotImplementedException">Thrown in the event that a MeshTopology other than Quads or Triangles is passed.</exception>
+		/// <see cref="MeshUtility.GetMaterialCount"/>
 		public static Submesh[] GetSubmeshes(IEnumerable<Face> faces, int submeshCount, MeshTopology preferredTopology = MeshTopology.Triangles)
 		{
 			if(preferredTopology != MeshTopology.Triangles && preferredTopology != MeshTopology.Quads)
@@ -142,7 +144,6 @@ namespace UnityEngine.ProBuilder
 				{
 					for(int submeshIndex = 0; submeshIndex < submeshCount; submeshIndex++)
 						submeshes[submeshIndex] = new Submesh(submeshIndex, MeshTopology.Triangles, tris[submeshIndex]);
-
 					break;
 				}
 
@@ -187,6 +188,19 @@ namespace UnityEngine.ProBuilder
 			}
 
 			return submeshes;
+		}
+
+		internal static void MapFaceMaterialsToSubmeshIndex(ProBuilderMesh mesh)
+		{
+			var materials = mesh.renderer.sharedMaterials;
+			var submeshCount = materials.Length;
+
+			foreach (var face in mesh.facesInternal)
+			{
+				var index = Array.IndexOf(materials, face.material);
+				face.submeshIndex = Math.Clamp(index, 0, submeshCount - 1);
+				face.material = null;
+			}
 		}
 	}
 }

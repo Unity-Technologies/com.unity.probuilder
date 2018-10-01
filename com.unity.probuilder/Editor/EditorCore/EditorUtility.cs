@@ -324,8 +324,8 @@ namespace UnityEditor.ProBuilder
 		{
 			SetPivotLocationAndSnap(pb);
 
-			pb.meshRenderer.shadowCastingMode = s_ShadowCastingMode;
-			pb.meshRenderer.sharedMaterial = GetUserMaterial();
+			pb.renderer.shadowCastingMode = s_ShadowCastingMode;
+			pb.renderer.sharedMaterial = GetUserMaterial();
 
 			ScreenCenter(pb.gameObject);
 

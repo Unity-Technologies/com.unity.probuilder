@@ -24,6 +24,15 @@ namespace UnityEngine.ProBuilder
 			return vals;
 		}
 
+		public static IEnumerable<int> AllIndexesOf<T>(this IList<T> list, Func<T, bool> lambda)
+		{
+			var indexes = new List<int>();
+			for(int i = 0, c = list.Count; i < c; i++)
+				if (lambda(list[i]))
+					indexes.Add(i);
+			return indexes;
+		}
+
 		public static T[] Add<T>(this T[] arr, T val)
 		{
 			T[] v = new T[arr.Length+1];

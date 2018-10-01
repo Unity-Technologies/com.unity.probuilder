@@ -208,8 +208,8 @@ namespace UnityEngine.ProBuilder.Tests.Framework
 			int vertexCount = expected.vertexCount;
 			int subMeshCount = expected.subMeshCount;
 
-			Assert.AreEqual(vertexCount, result.vertexCount);
-			Assert.AreEqual(subMeshCount, result.subMeshCount);
+			Assert.AreEqual(vertexCount, result.vertexCount, expected.name + " != " + result.name + " (submesh count)");
+			Assert.AreEqual(subMeshCount, result.subMeshCount, expected.name + " != " + result.name + " (submesh count)");
 
 			Vertex[] leftVertices = expected.GetVertices();
 			Vertex[] rightVertices = result.GetVertices();

@@ -17,12 +17,25 @@ namespace UnityEngine.ProBuilder
     [ExecuteInEditMode]
     public sealed partial class ProBuilderMesh : MonoBehaviour
     {
+	    /// <summary>
+	    /// Max number of UV channels that ProBuilderMesh format supports.
+	    /// </summary>
 	    const int k_UVChannelCount = 4;
+
+	    /// <summary>
+	    /// The current mesh format version. This is used to run expensive upgrade functions once in ToMesh().
+	    /// </summary>
+	    const int k_MeshFormatVersion = 1;
+
+	    const int k_MeshFormatVersionSubmeshMaterialRefactor = 1;
 
 	    /// <summary>
 	    /// The maximum number of vertices that a ProBuilderMesh can accomodate.
 	    /// </summary>
 	    public const uint maxVertexCount = ushort.MaxValue;
+
+	    [SerializeField]
+	    int m_MeshFormatVersion = k_MeshFormatVersion;
 
         [SerializeField]
         [FormerlySerializedAs("_quads")]
@@ -101,7 +114,7 @@ namespace UnityEngine.ProBuilder
 	    [NonSerialized]
 	    MeshRenderer m_MeshRenderer;
 
-	    internal MeshRenderer meshRenderer
+	    internal new MeshRenderer renderer
 	    {
 		    get
 		    {
@@ -463,7 +476,7 @@ namespace UnityEngine.ProBuilder
 	    public Vector3[] GetNormals()
 	    {
 		    if (!HasArrays(MeshArrays.Normal))
-				Refresh(RefreshMask.Normals);
+				Normals.CalculateNormals(this);
 
 		    return normals.ToArray();
 	    }
@@ -543,7 +556,7 @@ namespace UnityEngine.ProBuilder
 	    public Vector4[] GetTangents()
 	    {
 		    if (!HasArrays(MeshArrays.Tangent))
-			    Refresh(RefreshMask.Tangents);
+			    Normals.CalculateTangents(this);
 
 		    return tangents.ToArray();
 	    }

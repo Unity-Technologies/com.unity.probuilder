@@ -30,7 +30,8 @@ namespace UnityEditor.ProBuilder
 		/// Older versions of probuilder stored a fixed size array of colors in EditorPrefs. Use this function to get a
 		/// pb_ColorPalette from the older version.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>
+		/// </returns>
 		static void CopyColorsFromEditorPrefs(ColorPalette target)
 		{
 			List<Color> colors = new List<Color>();
