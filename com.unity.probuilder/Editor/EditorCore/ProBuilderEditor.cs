@@ -1899,20 +1899,22 @@ namespace UnityEditor.ProBuilder
 		/// </summary>
 		/// <param name="mat"></param>
 		/// <returns></returns>
-		internal bool GetFirstSelectedMaterial(ref Material mat)
+		internal Material GetFirstSelectedMaterial()
 		{
 			for (int i = 0; i < selection.Length; i++)
 			{
-				for (int n = 0; n < selection[i].selectedFaceCount; n++)
-				{
-					mat = selection[i].selectedFacesInternal[i].material;
+				var mesh = selection[i];
 
+				for (int n = 0; n < mesh.selectedFaceCount; n++)
+				{
+					var face = mesh.selectedFacesInternal[i];
+					var mat = UnityEngine.ProBuilder.MeshUtility.GetSharedMaterial(selection[i].renderer, face.submeshIndex);
 					if (mat != null)
-						return true;
+						return mat;
 				}
 			}
 
-			return false;
+			return null;
 		}
 	}
 }

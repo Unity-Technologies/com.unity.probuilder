@@ -155,7 +155,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 								if (p.opposite != null)
 								{
-									p.face.material = p.opposite.face.material;
+									p.face.submeshIndex = p.opposite.face.submeshIndex;
 									p.face.uv = new AutoUnwrapSettings(p.opposite.face.uv);
 									SurfaceTopology.ConformOppositeNormal(p.opposite);
 									break;

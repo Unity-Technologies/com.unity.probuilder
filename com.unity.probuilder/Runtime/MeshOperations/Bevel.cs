@@ -236,7 +236,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 							if (!newHoles.Contains(w.opposite.face))
 							{
-								w.face.material = w.opposite.face.material;
+								w.face.submeshIndex = w.opposite.face.submeshIndex;
 								w.face.uv = new AutoUnwrapSettings(w.opposite.face.uv);
 								SurfaceTopology.ConformOppositeNormal(w.opposite);
 								break;
@@ -284,7 +284,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
  			rf.face = new Face(
  				triangles,
- 				left.face.material,
+ 				left.face.submeshIndex,
  				AutoUnwrapSettings.tile,
  				-1,
  				-1,

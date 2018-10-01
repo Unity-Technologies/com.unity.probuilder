@@ -62,7 +62,7 @@ namespace UnityEditor.ProBuilder
 				if (matCount < 1)
 					materials[submeshIndex] = BuiltinMaterials.defaultMaterial;
 				else
-					materials[submeshIndex % matCount] = materials[submeshIndex];
+					this.materials[submeshIndex] = materials[Math.Clamp(submeshIndex, 0, matCount - 1)];
 			}
 		}
 

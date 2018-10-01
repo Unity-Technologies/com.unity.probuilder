@@ -73,14 +73,17 @@ namespace UnityEditor.ProBuilder.Actions
 
 			bool restrictToSelection = m_RestrictToSelectedObjects;
 
-			HashSet<Material> sel = new HashSet<Material>(MeshSelection.TopInternal().SelectMany(x => x.selectedFacesInternal.Select(y => y.material).Where(z => z != null)));
+			HashSet<int> sel = new HashSet<int>(
+				MeshSelection.TopInternal()
+					.SelectMany(x => x.selectedFacesInternal.Select(y => y.submeshIndex)));
+
 			List<GameObject> newSelection = new List<GameObject>();
 
 			foreach (ProBuilderMesh pb in restrictToSelection ? MeshSelection.TopInternal() : Object.FindObjectsOfType<ProBuilderMesh>())
 			{
-				IEnumerable<Face> matches = pb.facesInternal.Where(x => sel.Contains(x.material));
+				IEnumerable<Face> matches = pb.facesInternal.Where(x => sel.Contains(x.submeshIndex));
 
-				if (matches.Count() > 0)
+				if (matches.Any())
 				{
 					newSelection.Add(pb.gameObject);
 					pb.SetSelectedFaces(matches);

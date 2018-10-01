@@ -296,7 +296,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 					Face bridge = new Face(
 						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 },
-						face.material,
+						face.submeshIndex,
 						new AutoUnwrapSettings(face.uv),
 						face.smoothingGroup,
 						-1,
@@ -429,13 +429,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					vertices.Add( null );
 
 					Face bridge = new Face(
-						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 }, // indexes
-						face.material, // material
-						new AutoUnwrapSettings(face.uv), // UV material
+						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 },
+						face.submeshIndex,
+						new AutoUnwrapSettings(face.uv),
 						Smoothing.smoothingGroupNone,
-						-1, // texture group
-						-1, // uv element group
-						false // manualUV flag
+						-1,
+						-1,
+						false
 					);
 
 					newFaces.Add(bridge);

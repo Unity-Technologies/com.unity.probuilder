@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -37,14 +36,21 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Edge
 		public static void ConnectRetainsMaterial()
 		{
 			var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
+
+			mesh.renderer.sharedMaterials = new[]
+			{
+				TestUtility.redMaterial,
+				TestUtility.greenMaterial
+			};
+
 			mesh.facesInternal[0].submeshIndex = 1;
 
 			var res = mesh.Connect(new ProBuilder.Edge[] { mesh.facesInternal[0].edgesInternal[0], mesh.facesInternal[0].edgesInternal[1] });
 			mesh.ToMesh();
-			Assert.AreEqual(2, mesh.mesh.subMeshCount, "Submesh count");
+			Assert.AreEqual(2, mesh.mesh.subMeshCount, "submesh count");
 
 			foreach(var face in res.item1)
-				Assert.AreEqual(TestUtility.redMaterial, 1);
+				Assert.AreEqual(1, face.submeshIndex);
 
 			foreach (var face in mesh.facesInternal)
 			{

@@ -252,7 +252,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						faces.Add(
 							new Face(
 								faceTris,
-								t.GetComponent<MeshRenderer>().sharedMaterials[n],
+								n,
 								AutoUnwrapSettings.tile,
 								0,		// smoothing group
 								-1,		// texture group
@@ -382,7 +382,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						faces.Add(
 							new Face(
 								faceTris,
-								sharedMaterials[n >= mat_length ? mat_length - 1 : n],
+								Math.Clamp(n, 0, mat_length - 1),
 								AutoUnwrapSettings.tile,
 								0, // smoothing group
 								-1, // texture group
