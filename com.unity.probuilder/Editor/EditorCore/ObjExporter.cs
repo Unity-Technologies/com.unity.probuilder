@@ -130,7 +130,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(Model model in models)
 			{
-				int subMeshCount = model.subMeshCount;
+				int subMeshCount = model.submeshCount;
 				Matrix4x4 matrix = options.applyTransforms ? model.matrix : Matrix4x4.identity;
 
 				int vertexCount = model.vertexCount;
@@ -197,18 +197,18 @@ namespace UnityEditor.ProBuilder
 				sb.AppendLine();
 
 				// Material assignment
-				for(int subMeshIndex = 0; subMeshIndex < subMeshCount; subMeshIndex++)
+				for(int submeshIndex = 0; submeshIndex < subMeshCount; submeshIndex++)
 				{
-					Submesh submesh = model.submeshes[subMeshIndex];
+					Submesh submesh = model.submeshes[submeshIndex];
 
 					if(subMeshCount > 1)
-						sb.AppendLine(string.Format("g {0}_{1}", model.name, subMeshIndex));
+						sb.AppendLine(string.Format("g {0}_{1}", model.name, submeshIndex));
 					else
 						sb.AppendLine(string.Format("g {0}", model.name));
 
 					string materialName = "";
 
-					if(materialMap.TryGetValue(submesh.m_Material, out materialName))
+					if(materialMap.TryGetValue(model.materials[submeshIndex], out materialName))
 						sb.AppendLine(string.Format("usemtl {0}", materialName));
 					else
 						sb.AppendLine(string.Format("usemtl {0}", "null"));
@@ -279,9 +279,9 @@ namespace UnityEditor.ProBuilder
 
 			foreach(Model model in models)
 			{
-				foreach(Submesh submesh in model.submeshes)
+				for(int i = 0, c = model.submeshCount; i < c; i++)
 				{
-					Material material = submesh.m_Material;
+					Material material = model.materials[i];
 
 					if(material == null)
 						continue;

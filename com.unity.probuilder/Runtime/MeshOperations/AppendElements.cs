@@ -217,22 +217,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		/// <returns>An action result indicating the status of the operation.</returns>
 		internal static ActionResult CreateShapeFromPolygon(this PolyShape poly)
 		{
-			var mesh = poly.mesh;
-			var renderer = poly.GetComponent<MeshRenderer>();
-			var material = renderer != null && renderer.sharedMaterial != null ? renderer.sharedMaterial : BuiltinMaterials.defaultMaterial;
-
-			var res = mesh.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals);
-
-			if (material != null)
-			{
-				foreach (var face in mesh.faces)
-					face.material = material;
-
-				// no need to do a ToMesh and Refresh here because we know every face is set to the same material
-				poly.GetComponent<MeshRenderer>().sharedMaterial = material;
-			}
-
-			return res;
+			return poly.mesh.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals);
 		}
 
 		/// <summary>
@@ -452,7 +437,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Color[] c;
 			int[] s;
 			AutoUnwrapSettings uvs = AutoUnwrapSettings.tile;
-			Material mat = BuiltinMaterials.defaultMaterial;
+			int submeshIndex = 0;
 
 			// Get material and UV stuff from the first edge face
 			SimpleTuple<Face, Edge> faceAndEdge;
@@ -460,7 +445,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			if(EdgeExtension.ValidateEdge(mesh, a, out faceAndEdge) || EdgeExtension.ValidateEdge(mesh, b, out faceAndEdge))
 			{
 				uvs = new AutoUnwrapSettings(faceAndEdge.item1.uv);
-				mat = faceAndEdge.item1.material;
+				submeshIndex = faceAndEdge.item1.submeshIndex;
 			}
 
 			// Bridge will form a triangle
@@ -532,7 +517,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					v,
 					hasColors ? c : null,
 					new Vector2[v.Length],
-					new Face( axbx || axby ? new int[3] {2, 1, 0} : new int[3] {0, 1, 2}, mat, uvs, 0, -1, -1, false ),
+					new Face( axbx || axby ? new int[3] {2, 1, 0} : new int[3] {0, 1, 2}, submeshIndex, uvs, 0, -1, -1, false ),
 					s);;
 			}
 
@@ -584,7 +569,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				v,
 				hasColors ? c : null,
 				new Vector2[v.Length],
-				new Face( new int[6] {2, 1, 0, 2, 3, 1 }, mat, uvs, 0, -1, -1, false ),
+				new Face( new int[6] {2, 1, 0, 2, 3, 1 }, submeshIndex, uvs, 0, -1, -1, false ),
 				s);
 		}
 
@@ -687,7 +672,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			FaceRebuildData data = new FaceRebuildData();
 
-			data.face = new Face(triangles.ToArray(), face.material, new AutoUnwrapSettings(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
+			data.face = new Face(triangles.ToArray(), face.submeshIndex, new AutoUnwrapSettings(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
 			data.vertices 			= n_vertices;
 			data.sharedIndexes 		= n_shared;
 			data.sharedIndexesUV 	= n_sharedUV;
@@ -784,7 +769,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					if( !modifiedFaces.TryGetValue(face, out data) )
 					{
 						data = new FaceRebuildData();
-						data.face = new Face(new int[0], face.material, new AutoUnwrapSettings(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
+						data.face = new Face(new int[0], face.submeshIndex, new AutoUnwrapSettings(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
 						data.vertices = new List<Vertex>(ArrayUtility.ValuesWithIndexes(vertices, face.distinctIndexesInternal));
 						data.sharedIndexes = new List<int>();
 						data.sharedIndexesUV = new List<int>();

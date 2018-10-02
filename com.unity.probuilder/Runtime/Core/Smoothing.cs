@@ -80,7 +80,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Generate smooothing groups for a set of faces by comparing adjacent faces with normal differences less than angleThreshold (in degrees).
+		/// Generate smoothing groups for a set of faces by comparing adjacent faces with normal differences less than angleThreshold (in degrees).
 		/// </summary>
 		/// <param name="mesh">The source mesh.</param>
 		/// <param name="faces">Faces to be considered for smoothing.</param>

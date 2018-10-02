@@ -1,13 +1,8 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine.ProBuilder;
 using System;
-using UnityEditor.ProBuilder;
 using System.Reflection;
-using HandleUtility = UnityEditor.HandleUtility;
 
 namespace UnityEngine.ProBuilder.EditorTests.Editor
 {
@@ -15,12 +10,14 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
 	{
 		const BindingFlags k_BindingFlagsAll = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
+#if !UNITY_2019_1_OR_NEWER
 		[Test]
 		public static void OnPreSceneGUIDelegate()
 		{
 			var fi = typeof(SceneView).GetField("onPreSceneGUIDelegate", k_BindingFlagsAll);
 			Assert.IsNotNull(fi);
 		}
+#endif
 
 #if !UNITY_2018_2_OR_NEWER
 		[Test]

@@ -17,12 +17,25 @@ namespace UnityEngine.ProBuilder
     [ExecuteInEditMode]
     public sealed partial class ProBuilderMesh : MonoBehaviour
     {
+	    /// <summary>
+	    /// Max number of UV channels that ProBuilderMesh format supports.
+	    /// </summary>
 	    const int k_UVChannelCount = 4;
+
+	    /// <summary>
+	    /// The current mesh format version. This is used to run expensive upgrade functions once in ToMesh().
+	    /// </summary>
+	    const int k_MeshFormatVersion = 1;
+
+	    const int k_MeshFormatVersionSubmeshMaterialRefactor = 1;
 
 	    /// <summary>
 	    /// The maximum number of vertices that a ProBuilderMesh can accomodate.
 	    /// </summary>
 	    public const uint maxVertexCount = ushort.MaxValue;
+
+	    [SerializeField]
+	    int m_MeshFormatVersion = k_MeshFormatVersion;
 
         [SerializeField]
         [FormerlySerializedAs("_quads")]
@@ -63,6 +76,9 @@ namespace UnityEngine.ProBuilder
         [FormerlySerializedAs("_tangents")]
         Vector4[] m_Tangents;
 
+	    [NonSerialized]
+	    Vector3[] m_Normals;
+
 		[SerializeField]
         [FormerlySerializedAs("_colors")]
         Color[] m_Colors;
@@ -95,6 +111,19 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         internal string assetGuid;
 
+	    [NonSerialized]
+	    MeshRenderer m_MeshRenderer;
+
+	    internal new MeshRenderer renderer
+	    {
+		    get
+		    {
+			    if (m_MeshRenderer == null)
+				    m_MeshRenderer = GetComponent<MeshRenderer>();
+			    return m_MeshRenderer;
+		    }
+	    }
+
         /// <value>
         /// In the editor, when you delete a ProBuilderMesh you usually also want to destroy the mesh asset.
         /// However, there are situations you'd want to keep the mesh around, like when stripping probuilder scripts.
@@ -119,6 +148,7 @@ namespace UnityEngine.ProBuilder
 		    var m_Textures1 = mesh != null ? mesh.uv2 : null;
 
 		    missing |= (channels & MeshArrays.Position) == MeshArrays.Position && m_Positions == null;
+		    missing |= (channels & MeshArrays.Normal) == MeshArrays.Normal && (m_Normals == null || m_Normals.Length != vc);
 		    missing |= (channels & MeshArrays.Texture0) == MeshArrays.Texture0 && (m_Textures0 == null || m_Textures0.Length != vc);
 		    missing |= (channels & MeshArrays.Texture1) == MeshArrays.Texture1 && (m_Textures1 == null || m_Textures1.Length < 3);
 		    missing |= (channels & MeshArrays.Texture2) == MeshArrays.Texture2 && (m_Textures2 == null || m_Textures2.Count != vc);
@@ -421,24 +451,34 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-	    /// <summary>
-	    /// ProBuilderMesh doesn't store normals, so this function will either:
-	    ///		1. Copy them from the MeshFilter.sharedMesh (if vertex count matches the @"UnityEngine.ProBuilder.ProBuilderMesh.vertexCount")
-	    ///		2. Calculate a new set of normals using @"UnityEngine.ProBuilder.MeshUtility.CalculateNormals".
-	    /// </summary>
-	    /// <returns>An array of vertex normals.</returns>
-	    /// <seealso cref="UnityEngine.ProBuilder.ProBuilderMesh.CalculateNormals"/>
+	    /// <value>
+	    /// The mesh normals.
+	    /// </value>
+	    /// <see cref="Refresh"/>
+	    /// <see cref="Normals.CalculateNormals"/>
+	    public IList<Vector3> normals
+	    {
+		    get { return m_Normals != null ? new ReadOnlyCollection<Vector3>(m_Normals) : null; }
+	    }
+
+	    internal Vector3[] normalsInternal
+	    {
+		    get { return m_Normals; }
+		    set { m_Normals = value; }
+	    }
+
+	    /// <value>
+	    /// Get the normals array for this mesh.
+	    /// </value>
+	    /// <returns>
+	    /// Returns the normals for this mesh.
+	    /// </returns>
 	    public Vector3[] GetNormals()
 	    {
-		    // If mesh isn't optimized try to return a copy from the compiled mesh
-		    if (mesh != null && mesh.vertexCount == vertexCount)
-		    {
-			    var nrm = mesh.normals;
-			    if (nrm != null && nrm.Length == vertexCount)
-				    return nrm;
-		    }
+		    if (!HasArrays(MeshArrays.Normal))
+				Normals.CalculateNormals(this);
 
-		    return CalculateNormals();
+		    return normals.ToArray();
 	    }
 
 	    internal Color[] colorsInternal
@@ -477,7 +517,7 @@ namespace UnityEngine.ProBuilder
 	    }
 
 		/// <value>
-		/// Get the user-set tangents array for this mesh. If tangents have not been explictly set, this value will be null.
+		/// Get the user-set tangents array for this mesh. If tangents have not been explicitly set, this value will be null.
 		/// </value>
 		/// <remarks>
 		/// To get the generated tangents that are applied to the mesh through Refresh(), use GetTangents().
@@ -503,15 +543,22 @@ namespace UnityEngine.ProBuilder
 			}
 	    }
 
+	    internal Vector4[] tangentsInternal
+	    {
+		    get { return m_Tangents; }
+		    set { m_Tangents = value; }
+	    }
+
 	    /// <summary>
-	    /// Get the tangents applied to the mesh. Does not calculate new tangents if none are available (unlike GetNormals()).
+	    /// Get the tangents applied to the mesh, or create and cache them if not yet initialized.
 	    /// </summary>
 	    /// <returns>The tangents applied to the MeshFilter.sharedMesh. If the tangents array length does not match the vertex count, null is returned.</returns>
 	    public Vector4[] GetTangents()
 	    {
-		    if (m_Tangents != null && m_Tangents.Length == vertexCount)
-			    return m_Tangents.ToArray();
-		    return mesh == null ? null : mesh.tangents;
+		    if (!HasArrays(MeshArrays.Tangent))
+			    Normals.CalculateTangents(this);
+
+		    return tangents.ToArray();
 	    }
 
         internal Vector2[] texturesInternal

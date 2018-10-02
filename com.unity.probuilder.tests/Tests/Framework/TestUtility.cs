@@ -34,6 +34,10 @@ namespace UnityEngine.ProBuilder.Tests.Framework
 		const string k_TempDirectory = "Assets/ProBuilderUnitTestsTemp/";
 		const MeshArrays k_DefaultMeshArraysCompare = ~MeshArrays.Lightmap;
 
+		const string k_RedMaterialPath = "Packages/com.unity.probuilder.tests/Materials/Red.mat";
+		const string k_BlueMaterialPath = "Packages/com.unity.probuilder.tests/Materials/Blue.mat";
+		const string k_GreenMaterialPath = "Packages/com.unity.probuilder.tests/Materials/Green.mat";
+
 		public static string TemplatesDirectory
 		{
 			get { return k_TemplatesDirectory; }
@@ -53,7 +57,7 @@ namespace UnityEngine.ProBuilder.Tests.Framework
 		{
 			ProBuilderMesh[] m_Shapes;
 
-			static ProBuilderMesh[] GetBasicShapes()
+			public static ProBuilderMesh[] GetBasicShapes()
 			{
 				var shapes = Enum.GetValues(typeof(ShapeType)) as ShapeType[];
 				ProBuilderMesh[] primitives = new ProBuilderMesh[shapes.Length];
@@ -103,6 +107,14 @@ namespace UnityEngine.ProBuilder.Tests.Framework
 		static string ToAssetPath(string path)
 		{
 			return path.Replace("\\", "/").Replace(Application.dataPath, "Assets/");
+		}
+
+		public static void AssertSequenceEqual<T>(IList<T> left, IList<T> right)
+		{
+			Assert.AreEqual(left.Count, right.Count, "Count");
+
+			for(int i = 0, c = left.Count; i < c; i++)
+				Assert.AreEqual(left[i], right[i], "index " + i);
 		}
 
 		public static void AssertMeshAttributesValid(Mesh mesh)
@@ -204,8 +216,8 @@ namespace UnityEngine.ProBuilder.Tests.Framework
 			int vertexCount = expected.vertexCount;
 			int subMeshCount = expected.subMeshCount;
 
-			Assert.AreEqual(vertexCount, result.vertexCount);
-			Assert.AreEqual(subMeshCount, result.subMeshCount);
+			Assert.AreEqual(vertexCount, result.vertexCount, expected.name + " != " + result.name + " (submesh count)");
+			Assert.AreEqual(subMeshCount, result.subMeshCount, expected.name + " != " + result.name + " (submesh count)");
 
 			Vertex[] leftVertices = expected.GetVertices();
 			Vertex[] rightVertices = result.GetVertices();
@@ -444,6 +456,21 @@ namespace UnityEngine.ProBuilder.Tests.Framework
 				return;
 
 			Directory.Delete(TemporarySavedAssetsDirectory);
+		}
+
+		public static Material redMaterial
+		{
+			get { return AssetDatabase.LoadAssetAtPath<Material>(k_RedMaterialPath); }
+		}
+
+		public static Material blueMaterial
+		{
+			get { return AssetDatabase.LoadAssetAtPath<Material>(k_BlueMaterialPath); }
+		}
+
+		public static Material greenMaterial
+		{
+			get { return AssetDatabase.LoadAssetAtPath<Material>(k_GreenMaterialPath); }
 		}
 	}
 }

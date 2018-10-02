@@ -58,7 +58,6 @@ namespace UnityEngine.ProBuilder
 		public void Refresh()
 		{
 			var mr = GetComponent<MeshRenderer>();
-			var mat = mr != null ? mr.sharedMaterial : null;
 
 			if (points.Count < 2)
 			{
@@ -70,14 +69,6 @@ namespace UnityEngine.ProBuilder
 			{
 				ProBuilderMesh m = mesh;
 				Spline.Extrude(points, radius, columns, rows, closeLoop, smooth, ref m);
-			}
-
-			if(mat != null)
-			{
-				foreach (var face in mesh.facesInternal)
-					face.material = mat;
-
-				mr.sharedMaterial = mat;
 			}
 		}
 	}

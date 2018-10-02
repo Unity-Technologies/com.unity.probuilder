@@ -87,11 +87,6 @@ namespace UnityEditor.ProBuilder
 		{
 			ProBuilderMesh pb = ShapeGenerator.GenerateCube(Vector3.one);
 			UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
-
-			Material mat = EditorUtility.GetUserMaterial();
-			SetFaceMaterial(pb.facesInternal, mat);
-			pb.GetComponent<MeshRenderer>().sharedMaterial = mat;
-
 			EditorUtility.InitObject(pb);
 		}
 
@@ -211,9 +206,6 @@ namespace UnityEditor.ProBuilder
 			{
 				ProBuilderMesh pb = ShapeGenerator.GenerateCube(cubeSize);
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
-
-				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
-
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -264,9 +256,6 @@ namespace UnityEditor.ProBuilder
 					 	plane_axis);
 
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
-
-				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
-
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -305,11 +294,7 @@ namespace UnityEditor.ProBuilder
 			if (GUILayout.Button("Build " + m_CurrentShape, GUILayout.MinHeight(28)))
 			{
 				ProBuilderMesh pb = ShapeGenerator.GeneratePrism(prismSize);
-
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
-
-				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
-
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -401,9 +386,6 @@ namespace UnityEditor.ProBuilder
 						stair_sides);
 
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
-
-				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
-
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -468,9 +450,6 @@ namespace UnityEditor.ProBuilder
 			{
 				ProBuilderMesh pb = ShapeGenerator.GenerateCylinder(cyl_axisCuts, cyl_radius, cyl_height, cyl_heightCuts, cyl_smoothing ? 1 : -1);
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
-
-				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
-
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -523,9 +502,6 @@ namespace UnityEditor.ProBuilder
 			{
 				ProBuilderMesh pb = ShapeGenerator.GenerateDoor(door_totalWidth, door_totalHeight, door_ledgeHeight, door_legWidth, door_depth);
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
-
-				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
-
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -585,9 +561,6 @@ namespace UnityEditor.ProBuilder
 			{
 				ProBuilderMesh pb = ShapeGenerator.GeneratePlane(plane_height, plane_width, plane_height_cuts, plane_width_cuts, plane_axis);
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
-
-				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
-
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -651,9 +624,6 @@ namespace UnityEditor.ProBuilder
 						pipe_subdivHeight
 					 	);
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
-
-				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
-
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -709,9 +679,6 @@ namespace UnityEditor.ProBuilder
 						cone_subdivAxis
 					 	);
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
-
-				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
-
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -800,11 +767,7 @@ namespace UnityEditor.ProBuilder
 					arch_endCaps);
 
 				pb.RemoveDegenerateTriangles();
-
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
-
-				if (m_DefaultMaterial) SetFaceMaterial(pb.facesInternal,m_DefaultMaterial);
-
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -850,8 +813,6 @@ namespace UnityEditor.ProBuilder
 
 				for(int i = 0; i < pb.facesInternal.Length; i++)
 					pb.facesInternal[i].manualUV = true;
-
-				if (m_DefaultMaterial) SetFaceMaterial(pb.facesInternal,m_DefaultMaterial);
 
 				EditorUtility.InitObject(pb);
 
@@ -945,8 +906,6 @@ namespace UnityEditor.ProBuilder
 
 				UVEditing.ProjectFacesBox(pb, pb.facesInternal);
 
-				if (m_DefaultMaterial) SetFaceMaterial(pb.facesInternal,m_DefaultMaterial);
-
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -989,9 +948,6 @@ namespace UnityEditor.ProBuilder
 			{
 				ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(InternalUtility.StringToVector3Array(verts));
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
-
-				if( m_DefaultMaterial ) SetFaceMaterial(pb.facesInternal, m_DefaultMaterial );
-
 				EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
@@ -1108,12 +1064,6 @@ namespace UnityEditor.ProBuilder
 			pb.ToMesh();
 			pb.Refresh();
 			pb.Optimize();
-		}
-
-		static void SetFaceMaterial(Face[] faces, Material material)
-		{
-			foreach (var face in faces)
-				face.material = material;
 		}
 	}
 }

@@ -708,7 +708,7 @@ namespace UnityEditor.ProBuilder
 					UndoUtility.RecordObject(pb, "Copy UV Settings");
 
 					selectedFace.uv = new AutoUnwrapSettings(source.uv);
-					selectedFace.material = source.material;
+					selectedFace.submeshIndex = source.submeshIndex;
 					EditorUtility.ShowNotification("Copy UV Settings");
 
 					pb.ToMesh();
@@ -2446,7 +2446,7 @@ namespace UnityEditor.ProBuilder
 				mode = UVMode.Manual;
 			}
 
-			editor.GetFirstSelectedMaterial(ref m_PreviewMaterial);
+			m_PreviewMaterial = editor.GetFirstSelectedMaterial();
 
 			handlePosition = UVSelectionBounds().center - handlePosition_offset;
 		}

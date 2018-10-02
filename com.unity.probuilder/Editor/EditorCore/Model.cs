@@ -19,6 +19,8 @@ namespace UnityEditor.ProBuilder
 		// Submeshes
 		public Submesh[] submeshes;
 
+		public Material[] materials;
+
 		// Optional transform matrix.
 		public Matrix4x4 matrix;
 
@@ -36,7 +38,7 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Submesh count.
 		/// </summary>
-		public int subMeshCount { get { return submeshes.Length; } }
+		public int submeshCount { get { return submeshes.Length; } }
 
 		public Model()
 		{}
@@ -50,9 +52,18 @@ namespace UnityEditor.ProBuilder
 			this.vertices = mesh.GetVertices();
 			this.matrix = matrix;
 			this.submeshes = new Submesh[mesh.subMeshCount];
+			this.materials = new Material[mesh.subMeshCount];
 			int matCount = materials != null ? materials.Length : 0;
-			for(int subMeshIndex = 0; subMeshIndex < mesh.subMeshCount; subMeshIndex++)
-				submeshes[subMeshIndex] = new Submesh(mesh, subMeshIndex, matCount > 0 ? materials[subMeshIndex % matCount] : BuiltinMaterials.defaultMaterial);
+
+			for (int submeshIndex = 0; submeshIndex < mesh.subMeshCount; submeshIndex++)
+			{
+				submeshes[submeshIndex] = new Submesh(mesh, submeshIndex);
+
+				if (matCount < 1)
+					materials[submeshIndex] = BuiltinMaterials.defaultMaterial;
+				else
+					this.materials[submeshIndex] = materials[Math.Clamp(submeshIndex, 0, matCount - 1)];
+			}
 		}
 
 		/// <summary>
@@ -67,7 +78,7 @@ namespace UnityEditor.ProBuilder
 			mesh.Refresh(RefreshMask.UV | RefreshMask.Colors | RefreshMask.Normals | RefreshMask.Tangents);
 			this.name = name;
 			vertices = mesh.GetVertices();
-			submeshes = Submesh.GetSubmeshes(mesh.facesInternal, quads ? MeshTopology.Quads : MeshTopology.Triangles);
+			submeshes = Submesh.GetSubmeshes(mesh.facesInternal, UnityEngine.ProBuilder.MeshUtility.GetMaterialCount(mesh.renderer), quads ? MeshTopology.Quads : MeshTopology.Triangles);
 			matrix = mesh.transform.localToWorldMatrix;
 			mesh.ToMesh(MeshTopology.Triangles);
 			mesh.Refresh();

@@ -132,7 +132,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 						}
 						: null,
 					new Vector2[4],
-					new Face(new int[6] { 2, 1, 0, 2, 3, 1 }, face.material, AutoUnwrapSettings.tile, 0, -1, -1, false ),
+					new Face(new int[6] { 2, 1, 0, 2, 3, 1 }, face.submeshIndex, AutoUnwrapSettings.tile, 0, -1, -1, false ),
 					new int[4] { x_sharedIndex, y_sharedIndex, -1, -1 });
 
 				newEdges.Add(new Edge(newFace.indexesInternal[3], newFace.indexesInternal[4]));
@@ -296,7 +296,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 					Face bridge = new Face(
 						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 },
-						face.material,
+						face.submeshIndex,
 						new AutoUnwrapSettings(face.uv),
 						face.smoothingGroup,
 						-1,
@@ -429,13 +429,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 					vertices.Add( null );
 
 					Face bridge = new Face(
-						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 }, // indexes
-						face.material, // material
-						new AutoUnwrapSettings(face.uv), // UV material
+						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 },
+						face.submeshIndex,
+						new AutoUnwrapSettings(face.uv),
 						Smoothing.smoothingGroupNone,
-						-1, // texture group
-						-1, // uv element group
-						false // manualUV flag
+						-1,
+						-1,
+						false
 					);
 
 					newFaces.Add(bridge);

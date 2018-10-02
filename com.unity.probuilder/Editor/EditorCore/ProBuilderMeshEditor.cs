@@ -1,9 +1,4 @@
 using UnityEngine;
-using UnityEditor;
-using System.Collections;
-using UnityEditor.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
 
@@ -156,6 +151,13 @@ namespace UnityEditor.ProBuilder
 			}
 
 			serializedObject.ApplyModifiedProperties();
+
+#if DEVELOPER_MODE
+			GUILayout.Label("Compiled Mesh Information", EditorStyles.boldLabel);
+
+			GUILayout.Label("Vertex Count: " + m_Mesh.mesh.vertexCount);
+			GUILayout.Label("Submesh Count: " + m_Mesh.mesh.subMeshCount);
+#endif
 		}
 
 		void LightmapStaticSettings()

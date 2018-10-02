@@ -31,7 +31,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 				int[] indexes = new int[leftLength + rightLength];
 				System.Array.Copy(left.indexesInternal, 0, indexes, 0, leftLength);
 				System.Array.Copy(right.indexesInternal, 0, indexes, leftLength, rightLength);
-				add.Add(new Face(indexes, left.material, left.uv, left.smoothingGroup, left.textureGroup, left.elementGroup, left.manualUV));
+				add.Add(new Face(indexes,
+					left.submeshIndex,
+					left.uv,
+					left.smoothingGroup,
+					left.textureGroup,
+					left.elementGroup,
+					left.manualUV));
 				remove.Add(left);
 				remove.Add(right);
 			}
@@ -66,7 +72,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Face first = faces.First();
 
 			Face mergedFace = new Face(faces.SelectMany(x => x.indexesInternal).ToArray(),
-				first.material,
+				first.submeshIndex,
 				first.uv,
 				first.smoothingGroup,
 				first.textureGroup,

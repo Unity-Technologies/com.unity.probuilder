@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UObject = UnityEngine.Object;
 using System.Linq;
+using Math = UnityEngine.ProBuilder.Math;
+using ArrUtil = UnityEngine.ProBuilder.ArrayUtility;
 
 namespace UnityEditor.ProBuilder
 {
@@ -15,10 +17,15 @@ namespace UnityEditor.ProBuilder
 		static int s_PreviewSubmesh;
 		static ProBuilderMesh s_CurrentPreview;
 		static bool s_IsFaceDragAndDropOverrideEnabled;
+		static Matrix4x4 s_Matrix;
 
 		static SceneDragAndDropListener()
 		{
+#if UNITY_2019_1_OR_NEWER
+			SceneView.duringSceneGui += OnSceneGUI;
+#else
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
+#endif
 			AssemblyReloadEvents.beforeAssemblyReload += OnBeforeAssemblyReload;
 
 			s_PreviewMesh = new Mesh()
@@ -33,9 +40,9 @@ namespace UnityEditor.ProBuilder
 			UObject.DestroyImmediate(s_PreviewMesh);
 		}
 
-		public static bool IsDragging()
+		public static bool isDragging
 		{
-			return s_IsSceneViewDragAndDrop;
+			get { return s_IsSceneViewDragAndDrop; }
 		}
 
 		static bool isFaceMode
@@ -97,9 +104,15 @@ namespace UnityEditor.ProBuilder
 					if (s_IsFaceDragAndDropOverrideEnabled)
 					{
 						s_PreviewMesh.vertices = mesh.positionsInternal;
-						Vector2[] uvs = mesh.texturesInternal;
-						if(uvs != null && uvs.Length == mesh.vertexCount)
-							s_PreviewMesh.uv = uvs;
+
+						if(mesh.HasArrays(MeshArrays.Color))
+							s_PreviewMesh.colors = mesh.colorsInternal;
+						if(mesh.HasArrays(MeshArrays.Normal))
+							s_PreviewMesh.normals = mesh.normalsInternal;
+						if(mesh.HasArrays(MeshArrays.Texture0))
+							s_PreviewMesh.uv = mesh.texturesInternal;
+
+						s_Matrix = mesh.transform.localToWorldMatrix;
 						s_PreviewMesh.triangles = mesh.selectedFacesInternal.SelectMany(x => x.indexes).ToArray();
 					}
 				}
@@ -116,7 +129,7 @@ namespace UnityEditor.ProBuilder
 
 			if (evt.type == EventType.DragUpdated)
 			{
-				if(!s_IsSceneViewDragAndDrop)
+				if (!s_IsSceneViewDragAndDrop)
 					s_IsSceneViewDragAndDrop = true;
 
 				GameObject go = HandleUtility.PickGameObject(evt.mousePosition, out s_PreviewSubmesh);
@@ -143,58 +156,94 @@ namespace UnityEditor.ProBuilder
 			else if (evt.type == EventType.DragPerform)
 			{
 				s_IsSceneViewDragAndDrop = false;
-
 				GameObject go = HandleUtility.PickGameObject(evt.mousePosition, out s_PreviewSubmesh);
 				SetMeshPreview(go != null ? go.GetComponent<ProBuilderMesh>() : null);
 
-				if (s_CurrentPreview != null)
+				if (s_CurrentPreview != null && s_IsFaceDragAndDropOverrideEnabled)
 				{
-					if (s_IsFaceDragAndDropOverrideEnabled)
+					var renderer = go.GetComponent<Renderer>();
+					var materials = renderer.sharedMaterials;
+					var submeshCount = materials.Length;
+					var index = -1;
+
+					for (int i = 0; i < submeshCount && index < 0; i++)
 					{
-						UndoUtility.RecordObject(s_CurrentPreview, "Set Face Material");
-
-						foreach (var face in s_CurrentPreview.selectedFacesInternal)
-							face.material = s_PreviewMaterial;
-
-						s_CurrentPreview.ToMesh();
-						s_CurrentPreview.Refresh();
-						s_CurrentPreview.Optimize();
-
-						evt.Use();
+						if (materials[i] == s_PreviewMaterial)
+							index = i;
 					}
-					else if(s_PreviewSubmesh > -1)
+
+					if (index < 0)
 					{
-						Material draggedMaterial = GetMaterialFromDragReferences(DragAndDrop.objectReferences, true);
+						// Material doesn't exist in MeshRenderer.sharedMaterials, now check if there is an unused
+						// submeshIndex that we can replace with this value instead of creating a new entry.
+						var submeshIndexes = new bool[submeshCount];
 
-						if (draggedMaterial != null)
+						foreach (var face in s_CurrentPreview.facesInternal)
+							submeshIndexes[Math.Clamp(face.submeshIndex, 0, submeshCount - 1)] = true;
+
+						index = Array.IndexOf(submeshIndexes, false);
+
+						if (index > -1)
 						{
-							UndoUtility.RecordObject(s_CurrentPreview, "Set Face Material");
-
-							var mr = s_CurrentPreview.GetComponent<MeshRenderer>();
-							Material hoveredMaterial = mr == null ? null : mr.sharedMaterials[s_PreviewSubmesh];
-
-							foreach (var face in s_CurrentPreview.facesInternal)
-							{
-								if (hoveredMaterial == null || face.material == hoveredMaterial)
-									face.material = draggedMaterial;
-							}
-
-							s_CurrentPreview.ToMesh();
-							s_CurrentPreview.Refresh();
-							s_CurrentPreview.Optimize();
-
-							evt.Use();
+							materials[index] = s_PreviewMaterial;
+							renderer.sharedMaterials = materials;
+						}
+						else
+						{
+							index = materials.Length;
+							var copy = new Material[index + 1];
+							Array.Copy(materials, copy, index);
+							copy[index] = s_PreviewMaterial;
+							renderer.sharedMaterials = copy;
 						}
 					}
+
+					UndoUtility.RecordObject(s_CurrentPreview, "Set Face Material");
+
+					foreach (var face in s_CurrentPreview.selectedFacesInternal)
+						face.submeshIndex = index;
+
+					FilterUnusedSubmeshIndexes(s_CurrentPreview, materials);
+
+					s_CurrentPreview.ToMesh();
+					s_CurrentPreview.Refresh();
+					s_CurrentPreview.Optimize();
+
+					evt.Use();
 				}
 
 				SetMeshPreview(null);
 			}
-			else if (evt.type == EventType.Repaint)
+			else if (evt.type == EventType.Repaint && s_IsFaceDragAndDropOverrideEnabled)
 			{
-				if (s_IsFaceDragAndDropOverrideEnabled && s_PreviewMaterial.SetPass(0))
-					Graphics.DrawMeshNow(s_PreviewMesh, s_CurrentPreview.transform.localToWorldMatrix, 0);
+				if (s_PreviewMaterial.SetPass(0))
+					Graphics.DrawMeshNow(s_PreviewMesh, s_Matrix, 0);
 			}
+		}
+
+		static void FilterUnusedSubmeshIndexes(ProBuilderMesh mesh, Material[] materials)
+		{
+			var submeshCount = materials.Length;
+			var used = new bool[submeshCount];
+
+			foreach (var face in mesh.facesInternal)
+				used[Math.Clamp(face.submeshIndex, 0, submeshCount - 1)] = true;
+
+			var unused = ArrUtil.AllIndexesOf(used, x => !x);
+
+			if (unused.Any())
+			{
+				foreach (var face in mesh.facesInternal)
+				{
+					var original = face.submeshIndex;
+					foreach(var index in unused)
+						if (original > index)
+							face.submeshIndex--;
+				}
+
+				mesh.renderer.sharedMaterials = ArrUtil.RemoveAt(materials, unused);
+			}
+
 		}
 	}
 }
