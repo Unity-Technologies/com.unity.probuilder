@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.19] - 2018-09-27
+## [4.0.0-preview.20] - 2018-10-02
 
 ### Features
 
@@ -62,11 +62,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Remove "Precise Element Selection" preference.
 - Project preferences are no longer saved in the Assets directory (now located at "ProjectSettings/ProBuilderSettings.json").
 
-### Changes since 4.0.0-preview.18
+### Changes since 4.0.0-preview.19
 
-- Fix regressions that broke compatability with Unity 2018.1 and 2018.2.
-- Add ability to reset per-field preferences.
-- Fix various bugs introduced in Settings refactor.
+- Fix `Bezier Shape` and `Poly Shape` tools hiding all menu items when engaged.
+- Fix changes to `MeshRenderer` materials being incorrectly reset by ProBuilder.
+- Improve performance of normal and tangent calculations.
+- Fix `Delete Faces` tooltip not showing "Backspace" as the shortcut key on Windows.
+- Fix ProBuilder creating a deprecated "ProBuilderSettings.asset" file in user projects.
+- Fix Auto UV settings inspector not allowing certain properties to be edited with multiple selections.
+- Fix regression where UV editor toolbar was not representing current select mode.
 
 ## [3.0.8] - 2018-05-07
 
