@@ -1,14 +1,11 @@
 using System;
 using UnityEngine;
-using UnityEditor;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder.UI;
 using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
 using UnityEngine.ProBuilder.MeshOperations;
-using UnityEngine.SceneManagement;
 using Math = UnityEngine.ProBuilder.Math;
 using Object = UnityEngine.Object;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
@@ -1225,10 +1222,26 @@ namespace UnityEditor.ProBuilder
 				int screenWidth = (int) sceneView.position.width;
 				int screenHeight = (int) sceneView.position.height;
 
-				int currentSelectionMode = m_SelectMode == SelectMode.Vertex ? 1
-					: m_SelectMode == SelectMode.Edge ? 2
-					: m_SelectMode == SelectMode.Face ? 3
-					: m_SelectMode == SelectMode.Object ? 0 : -1;
+				int currentSelectionMode = -1;
+
+				switch (m_SelectMode.value)
+				{
+					case SelectMode.Object:
+						currentSelectionMode = 0;
+						break;
+					case SelectMode.Vertex:
+						currentSelectionMode = 1;
+						break;
+					case SelectMode.Edge:
+						currentSelectionMode = 2;
+						break;
+					case SelectMode.Face:
+						currentSelectionMode = 3;
+						break;
+					default:
+						currentSelectionMode = -1;
+						break;
+				}
 
 				switch ((SceneToolbarLocation) s_SceneToolbarLocation)
 				{
