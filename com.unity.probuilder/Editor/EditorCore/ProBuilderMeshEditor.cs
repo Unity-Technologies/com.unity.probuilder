@@ -92,6 +92,9 @@ namespace UnityEditor.ProBuilder
 
 		public override void OnInspectorGUI()
 		{
+			if (m_UnwrapParameters ==  null || m_StaticEditorFlags == null)
+				return;
+
 			Styles.Init();
 
 			Vector3 bounds = m_MeshRenderer != null ? m_MeshRenderer.bounds.size : Vector3.zero;
