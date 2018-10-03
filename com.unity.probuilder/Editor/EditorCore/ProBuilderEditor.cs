@@ -249,6 +249,9 @@ namespace UnityEditor.ProBuilder
 				if (previous == SelectMode.Edge || previous == SelectMode.Vertex || previous == SelectMode.Face)
 					s_Instance.m_LastComponentMode = previous;
 
+				if (value == SelectMode.Object)
+					Tools.current = s_Instance.m_CurrentTool;
+
 				if (value == SelectMode.TextureFace)
 					s_Instance.m_PreviousHandleOrientation = s_Instance.m_HandleOrientation;
 
