@@ -407,6 +407,8 @@ namespace UnityEditor.ProBuilder
 
 		static List<int> s_VertexList = new List<int>();
 
+		// todo Keep caches of selection and just update positions as necessary instead of rebuilding every
+		// call.
 		public void RebuildSelectedHandles(IEnumerable<ProBuilderMesh> meshes, SelectMode selectionMode)
 		{
 			ClearHandles();

@@ -294,13 +294,7 @@ namespace UnityEditor.ProBuilder
 			if(vertexCountChanged)
 				polygon.mesh.Optimize();
 
-			if(ProBuilderEditor.instance != null)
-			{
-				if(!vertexCountChanged)
-					ProBuilderEditor.instance.Internal_UpdateSelectionFast();
-				else
-					ProBuilderEditor.Refresh();
-			}
+			ProBuilderEditor.Refresh(vertexCountChanged);
 		}
 
 		void OnSceneGUI()

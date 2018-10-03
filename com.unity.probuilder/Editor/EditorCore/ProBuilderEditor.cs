@@ -185,7 +185,7 @@ namespace UnityEditor.ProBuilder
 		Vector3 m_TextureScale = Vector3.one;
 		Rect m_SceneInfoRect = new Rect(10, 10, 200, 40);
 
-		Vector3 m_HandlePivotWorld = Vector3.zero;
+		Vector3 m_HandlePosition = Vector3.zero;
 
 		Matrix4x4 handleMatrix = Matrix4x4.identity;
 
@@ -258,6 +258,7 @@ namespace UnityEditor.ProBuilder
 				if (selectModeChanged != null)
 					selectModeChanged(value);
 
+				s_Instance.UpdateMeshHandles();
 				s_Instance.Repaint();
 			}
 		}
@@ -470,10 +471,10 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Rebuild the mesh wireframe and selection caches.
 		/// </summary>
-		public static void Refresh()
+		public static void Refresh(bool vertexCountChanged = true)
 		{
 			if (instance != null)
-				instance.UpdateSelection();
+				instance.UpdateSelection(vertexCountChanged);
 		}
 
 		void OnGUI()
@@ -793,7 +794,9 @@ namespace UnityEditor.ProBuilder
 
 		void VertexMoveTool()
 		{
-			m_ElementHandlePosition = m_HandlePivotWorld;
+			if (!m_IsMovingElements)
+				m_ElementHandlePosition = m_HandlePosition;
+
 			m_ElementHandleCachedPosition = m_ElementHandlePosition;
 
 			m_ElementHandlePosition = Handles.PositionHandle(m_ElementHandlePosition, m_HandleRotation);
@@ -889,15 +892,13 @@ namespace UnityEditor.ProBuilder
 					mesh.mesh.RecalculateBounds();
 				}
 
-				Internal_UpdateSelectionFast();
-
-				// profiler.EndSample();
+				UpdateMeshHandles();
 			}
 		}
 
 		void VertexScaleTool()
 		{
-			m_ElementHandlePosition = m_HandlePivotWorld;
+			m_ElementHandlePosition = m_HandlePosition;
 
 			m_HandleScalePrevious = m_HandleScale;
 
@@ -1014,14 +1015,14 @@ namespace UnityEditor.ProBuilder
 					mesh.mesh.RecalculateBounds();
 				}
 
-				Internal_UpdateSelectionFast();
+				UpdateMeshHandles();
 			}
 		}
 
 		void VertexRotateTool()
 		{
 			if (!m_IsMovingElements)
-				m_ElementHandlePosition = m_HandlePivotWorld;
+				m_ElementHandlePosition = m_HandlePosition;
 
 			m_HandleRotationPrevious = m_HandleRotation;
 
@@ -1105,16 +1106,8 @@ namespace UnityEditor.ProBuilder
 					selection[i].Refresh(RefreshMask.Normals);
 					selection[i].mesh.RecalculateBounds();
 				}
-				// profiler.EndSample();
 
-				// don't modify the handle rotation because otherwise rotating with plane coordinates
-				// updates the handle rotation with every change, making moving things a changing target
-				Quaternion rotateToolHandleRotation = m_HandleRotation;
-
-				Internal_UpdateSelectionFast();
-
-				m_HandleRotation = rotateToolHandleRotation;
-				// profiler.EndSample();
+				UpdateMeshHandles();
 			}
 		}
 
@@ -1126,7 +1119,6 @@ namespace UnityEditor.ProBuilder
 			int ef = 0;
 			foreach (ProBuilderMesh pb in selection)
 			{
-				// @todo - If caching normals, remove this 'ToMesh' and move
 				Undo.RegisterCompleteObjectUndo(selection, "Extrude Vertices");
 
 				switch (selectMode)
@@ -1199,7 +1191,6 @@ namespace UnityEditor.ProBuilder
 
 				uvEditor.SceneMoveTool(pos - m_TextureHandlePositionPrevious);
 				m_TextureHandlePositionPrevious = pos;
-
 				uvEditor.Repaint();
 			}
 		}
@@ -1209,7 +1200,7 @@ namespace UnityEditor.ProBuilder
 			UVEditor uvEditor = UVEditor.instance;
 			if (!uvEditor) return;
 
-			float size = HandleUtility.GetHandleSize(m_HandlePivotWorld);
+			float size = HandleUtility.GetHandleSize(m_HandlePosition);
 
 			if (m_CurrentEvent.alt) return;
 
@@ -1236,7 +1227,7 @@ namespace UnityEditor.ProBuilder
 			UVEditor uvEditor = UVEditor.instance;
 			if (!uvEditor) return;
 
-			float size = HandleUtility.GetHandleSize(m_HandlePivotWorld);
+			float size = HandleUtility.GetHandleSize(m_HandlePosition);
 
 			Matrix4x4 prev = Handles.matrix;
 			Handles.matrix = handleMatrix;
@@ -1585,21 +1576,28 @@ namespace UnityEditor.ProBuilder
 				m_SelectMode.SetValue(SelectMode.Vertex, true);
 		}
 
-		void UpdateSelection()
+		void UpdateSelection(bool selectionChanged = true)
 		{
-			selection = InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms);
+			selection = MeshSelection.TopInternal();
 
-			MeshSelection.OnComponentSelectionChanged();
-
-			m_HandlePivotWorld = MeshSelection.bounds.center;
+			m_HandlePosition = GetHandlePosition();
 			m_HandleRotation = GetHandleRotation();
+
 			UpdateTextureHandles();
+			UpdateMeshHandles();
+
+			if (selectionChanged)
+			{
+				UpdateSceneInfo();
+				MeshSelection.OnComponentSelectionChanged();
+			}
 
 			if (selectionUpdated != null)
 				selectionUpdated(selection);
+		}
 
-			UpdateSceneInfo();
-
+		void UpdateMeshHandles()
+		{
 			try
 			{
 				m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.TopInternal(), selectMode);
@@ -1625,18 +1623,6 @@ namespace UnityEditor.ProBuilder
 				MeshSelection.selectedVertexCount);
 		}
 
-		// Only updates things that absolutely need to be refreshed, and assumes that no selection changes have occured
-		internal void Internal_UpdateSelectionFast()
-		{
-			MeshSelection.RecalculateSelectionBounds();
-			m_HandlePivotWorld = MeshSelection.bounds.center;
-			m_HandleRotation = GetHandleRotation();
-			if (selectionUpdated != null)
-				selectionUpdated(selection);
-			UpdateSceneInfo();
-			m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.TopInternal(), selectMode);
-		}
-
 		internal void ClearElementSelection()
 		{
 			foreach (ProBuilderMesh pb in selection)
@@ -1647,10 +1633,11 @@ namespace UnityEditor.ProBuilder
 
 		void UpdateTextureHandles()
 		{
-			if (selection.Length < 1) return;
+			if (!selectMode.ContainsFlag(SelectMode.TextureFace) || !selection.Any())
+				return;
 
 			// Reset temp vars
-			m_TextureHandlePosition = m_HandlePivotWorld;
+			m_TextureHandlePosition = m_HandlePosition;
 			m_TextureScale = Vector3.one;
 			m_TextureRotation = Quaternion.identity;
 
@@ -1674,6 +1661,12 @@ namespace UnityEditor.ProBuilder
 				handleMatrix *= Matrix4x4.TRS(Math.GetBounds(pb.positionsInternal.ValuesWithIndexes(face.distinctIndexesInternal)).center,
 					Quaternion.LookRotation(nrm, bitan), Vector3.one);
 			}
+		}
+
+		internal Vector3 GetHandlePosition()
+		{
+			MeshSelection.RecalculateSelectionBounds();
+			return MeshSelection.bounds.center;
 		}
 
 		internal Quaternion GetHandleRotation()
@@ -1833,7 +1826,7 @@ namespace UnityEditor.ProBuilder
 				mesh.Optimize();
 			}
 
-			Internal_UpdateSelectionFast();
+			UpdateSelection();
 		}
 
 		void ProGridsToolbarOpen(bool menuOpen)
@@ -1906,7 +1899,6 @@ namespace UnityEditor.ProBuilder
 					UVEditor.instance.OnFinishUVModification();
 
 				UpdateTextureHandles();
-
 				m_IsMovingTextures = false;
 			}
 			else if (m_IsMovingElements)
@@ -1920,6 +1912,8 @@ namespace UnityEditor.ProBuilder
 
 				m_IsMovingElements = false;
 			}
+
+			UpdateSelection();
 
 			if (afterMeshModification != null)
 				afterMeshModification(selection);
