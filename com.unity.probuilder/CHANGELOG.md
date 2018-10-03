@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.20] - 2018-10-02
+## [4.0.0-preview.21] - 2018-10-03
 
 ### Features
 
@@ -49,6 +49,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix `Connect Edges` action showing incorrect results in notifications.
 - Fix incorrect use of object finalizers in some classes.
 - Fix vertex drag selection with "Select Hidden: Off" omitting distinct but coincident vertices.
+- Fix changes to `MeshRenderer` materials being incorrectly reset by ProBuilder.
+- Fix `Delete Faces` tooltip not showing "Backspace" as the shortcut key on Windows.
+- Fix Auto UV settings inspector not allowing certain properties to be edited with multiple selections.
 
 ### Changes
 
@@ -61,16 +64,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Minor performance improvements to some common mesh editing actions.
 - Remove "Precise Element Selection" preference.
 - Project preferences are no longer saved in the Assets directory (now located at "ProjectSettings/ProBuilderSettings.json").
-
-### Changes since 4.0.0-preview.19
-
-- Fix `Bezier Shape` and `Poly Shape` tools hiding all menu items when engaged.
-- Fix changes to `MeshRenderer` materials being incorrectly reset by ProBuilder.
 - Improve performance of normal and tangent calculations.
-- Fix `Delete Faces` tooltip not showing "Backspace" as the shortcut key on Windows.
-- Fix ProBuilder creating a deprecated "ProBuilderSettings.asset" file in user projects.
-- Fix Auto UV settings inspector not allowing certain properties to be edited with multiple selections.
-- Fix regression where UV editor toolbar was not representing current select mode.
+
+
+### Changes since 4.0.0-preview.20
+
+- Fix regression in `Poly Shape` tool that caused null reference errors to be thrown during height setting stage.
+- Fix vertex dots not showing up when switching to vert mode.
+- Performance optimization for selection changes in editor.
+- Fix missing `Select Hidden` toggle in vertex / edge mode (regression).
 
 ## [3.0.8] - 2018-05-07
 
