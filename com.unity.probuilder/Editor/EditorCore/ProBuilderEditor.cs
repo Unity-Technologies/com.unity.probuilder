@@ -335,7 +335,7 @@ namespace UnityEditor.ProBuilder
 			s_Instance = this;
 		}
 
-		internal void OnEnable()
+		void OnEnable()
 		{
 			s_Instance = this;
 
@@ -409,6 +409,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if(s_Instance != null)
 				s_Instance.LoadSettings();
+			SceneView.RepaintAll();
 		}
 
 		void LoadSettings()

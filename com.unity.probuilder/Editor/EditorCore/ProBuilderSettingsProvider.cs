@@ -39,7 +39,7 @@ namespace UnityEditor.ProBuilder
 				s_SettingsProvider.afterSettingsSaved += () =>
 				{
 					if (ProBuilderEditor.instance != null)
-						ProBuilderEditor.instance.OnEnable();
+						ProBuilderEditor.ReloadSettings();
 				};
 			}
 

@@ -526,9 +526,7 @@ namespace UnityEditor.ProBuilder
 			PreferencesInternal.SetBool(PreferenceKeys.pbShowPreselectionHighlight, pbShowPreselectionHighlight, PreferenceLocation.Global);
 			PreferencesInternal.SetFloat(PreferenceKeys.pbUVGridSnapValue, pbUVGridSnapValue, PreferenceLocation.Global);
 
-			if (ProBuilderEditor.instance != null)
-				ProBuilderEditor.instance.OnEnable();
-
+			ProBuilderEditor.ReloadSettings();
 			SceneView.RepaintAll();
 		}
 #pragma warning restore 618
