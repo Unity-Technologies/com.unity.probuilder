@@ -377,16 +377,8 @@ namespace UnityEditor.ProBuilder
 			if(m_Target != null)
 			{
 				m_Target.Refresh();
-
 				UpdateControlPoints();
-
-				if(ProBuilderEditor.instance != null)
-				{
-					if(!vertexCountChanged)
-						ProBuilderEditor.instance.Internal_UpdateSelectionFast();
-					else
-						ProBuilderEditor.Refresh();
-				}
+				ProBuilderEditor.Refresh(vertexCountChanged);
 			}
 		}
 
