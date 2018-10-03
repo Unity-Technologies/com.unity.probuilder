@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.22] - 2018-10-03
+## [4.0.0-preview.23] - 2018-10-03
 
 ### Features
 
@@ -66,6 +66,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Project preferences are no longer saved in the Assets directory (now located at "ProjectSettings/ProBuilderSettings.json").
 - Improve performance of normal and tangent calculations.
 
+### Changes since 4.0.0-preview.22
+
+- Fix face, edge, and vertex modes requiring user to first select an object before registering element selection when clicking.
+- Fix small mouse movements during clicks incorrectly being considered mouse drags.
+- Fix switching to `Object` mode losing the current tool.
 
 ### Changes since 4.0.0-preview.21
 
