@@ -201,7 +201,6 @@ namespace UnityEditor.ProBuilder
 		Event m_CurrentEvent;
 
 		internal bool isFloatingWindow { get; private set; }
-		internal bool selectHiddenEnabled { get { return m_ScenePickerPreferences.cullMode == CullingMode.None; } }
 
 		/// <value>
 		/// Get the current @"UnityEngine.ProBuilder.EditLevel".
@@ -609,6 +608,9 @@ namespace UnityEditor.ProBuilder
 					m_CurrentEvent.Use();
 			}
 
+			if (selectMode == SelectMode.Object)
+				return;
+
 			// Finished moving vertices, scaling, or adjusting uvs
 			if ((m_IsMovingElements || m_IsMovingTextures) && GUIUtility.hotControl < 1)
 			{
@@ -633,10 +635,16 @@ namespace UnityEditor.ProBuilder
 					SceneView.RepaintAll();
 			}
 
+			if (Tools.current == Tool.View)
+				return;
+
+			// Overrides the toolbar transform tools
 			if (Tools.current != Tool.None && Tools.current != m_CurrentTool)
 				SetTool_Internal(Tools.current);
 
-			if ( selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.TextureFace) && Tools.current != Tool.View)
+			Tools.current = Tool.None;
+
+			if (selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.TextureFace))
 			{
 				if (MeshSelection.selectedVertexCount > 0)
 				{
@@ -673,15 +681,8 @@ namespace UnityEditor.ProBuilder
 
 				}
 			}
-			else
-			{
-				return;
-			}
 
-			// m_CurrentEvent.alt || Tools.current == Tool.View || GUIUtility.hotControl > 0 || middleClick
-			// Tools.viewTool == ViewTool.FPS || Tools.viewTool == ViewTool.Orbit
-			if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent) || m_CurrentEvent.isKey || selection == null ||
-			    selection.Length < 1)
+			if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent) || m_CurrentEvent.isKey)
 			{
 				m_IsDragging = false;
 				return;
@@ -691,10 +692,6 @@ namespace UnityEditor.ProBuilder
 			// and allows for the selection of faces / vertices.
 			m_DefaultControl = GUIUtility.GetControlID(FocusType.Passive);
 			HandleUtility.AddDefaultControl(m_DefaultControl);
-
-			// If selection is made, don't use default handle -- set it to Tools.None
-			if (MeshSelection.selectedVertexCount > 0)
-				Tools.current = Tool.None;
 
 			if (m_CurrentEvent.type == EventType.MouseDown)
 			{
