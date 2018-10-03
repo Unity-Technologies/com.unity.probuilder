@@ -18,6 +18,8 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	public sealed class ProBuilderEditor : EditorWindow, IHasCustomMenu
 	{
+		const float k_MouseDragThreshold = 16f;
+
 		/// <value>
 		/// Raised any time the ProBuilder editor refreshes the selection. This is called every frame when interacting with mesh elements, and after any mesh operation.
 		/// </value>
@@ -710,10 +712,14 @@ namespace UnityEditor.ProBuilder
 
 			if (m_CurrentEvent.type == EventType.MouseDrag && m_IsReadyForMouseDrag)
 			{
-				if(!m_IsDragging)
-					sceneView.Repaint();
-
-				m_IsDragging = true;
+				if (!m_IsDragging)
+				{
+					if (Vector2.Distance(m_CurrentEvent.mousePosition, m_InitialMousePosition) > k_MouseDragThreshold)
+					{
+						sceneView.Repaint();
+						m_IsDragging = true;
+					}
+				}
 			}
 
 			if (m_CurrentEvent.type == EventType.Ignore)
