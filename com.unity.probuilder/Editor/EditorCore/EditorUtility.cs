@@ -81,6 +81,9 @@ namespace UnityEditor.ProBuilder
 				using (new UI.EditorStyles.IndentedBlock())
 				{
 					s_MeshesAreAssets.value = SettingsGUILayout.SettingsToggle("Store Mesh as Asset", s_MeshesAreAssets, searchContext);
+
+					if (s_MeshesAreAssets.value)
+						EditorGUILayout.HelpBox("Please note that this feature is untested, and may result in instabilities or lost work. Proceed with caution!", MessageType.Warning);
 				}
 			}
 		}
