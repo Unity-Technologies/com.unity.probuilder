@@ -8,17 +8,22 @@ namespace UnityEngine.ProBuilder
 
 		public static void CalculateTangents(ProBuilderMesh mesh)
 		{
-			// http://answers.unity3d.com/questions/7789/calculating-tangents-vector4.html
-			Vector3[] normals = mesh.GetNormals();
-
 			int vc = mesh.vertexCount;
-			var positions = mesh.positionsInternal;
-			var textures = mesh.texturesInternal;
-			var tan1 = new Vector3[vc];
-			var tan2 = new Vector3[vc];
 
 			if (!mesh.HasArrays(MeshArrays.Tangent))
 				mesh.tangentsInternal = new Vector4[vc];
+
+			if (!mesh.HasArrays(MeshArrays.Position) || !mesh.HasArrays(MeshArrays.Texture0))
+				return;
+
+			// http://answers.unity3d.com/questions/7789/calculating-tangents-vector4.html
+			Vector3[] normals = mesh.GetNormals();
+
+			var positions = mesh.positionsInternal;
+			var textures = mesh.texturesInternal;
+
+			var tan1 = new Vector3[vc];
+			var tan2 = new Vector3[vc];
 
 			var tangents = mesh.tangentsInternal;
 
