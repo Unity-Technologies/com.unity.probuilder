@@ -57,8 +57,6 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public void Refresh()
 		{
-			var mr = GetComponent<MeshRenderer>();
-
 			if (points.Count < 2)
 			{
 				mesh.Clear();

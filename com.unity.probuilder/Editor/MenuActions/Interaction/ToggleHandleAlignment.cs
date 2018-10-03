@@ -11,9 +11,10 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		Texture2D[] m_Icons;
 
-		HandleAlignment handleAlignment
+		HandleOrientation handleOrientation
 		{
-			get { return ProBuilderEditor.instance == null ? HandleAlignment.World : ProBuilderEditor.instance.m_HandleAlignment; }
+			get { return ProBuilderEditor.instance == null ? HandleOrientation.World : ProBuilderEditor.instance.handleOrientation; }
+			set { ProBuilderEditor.instance.handleOrientation = value; }
 		}
 
 		public override ToolbarGroup group
@@ -23,7 +24,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override Texture2D icon
 		{
-			get { return m_Icons[(int)handleAlignment]; }
+			get { return m_Icons[(int)handleOrientation]; }
 		}
 
 		public override int toolbarPriority
@@ -35,9 +36,9 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			get
 			{
-				if (handleAlignment == HandleAlignment.World)
+				if (handleOrientation == HandleOrientation.World)
 					return s_TooltipWorld;
-				if (handleAlignment == HandleAlignment.Local)
+				if (handleOrientation == HandleOrientation.Local)
 					return s_TooltipLocal;
 				else
 					return s_TooltipPlane;
@@ -61,7 +62,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override string menuTitle
 		{
-			get { return "Handle: " + ((HandleAlignment)handleAlignment).ToString(); }
+			get { return "Handle: " + ((HandleOrientation)handleOrientation).ToString(); }
 		}
 
 		public override SelectMode validSelectModes
@@ -81,14 +82,14 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			int current = (int)handleAlignment + 1;
+			int current = (int)handleOrientation + 1;
 
-			if (current >= System.Enum.GetValues(typeof(HandleAlignment)).Length)
+			if (current >= System.Enum.GetValues(typeof(HandleOrientation)).Length)
 				current = 0;
 
-			ProBuilderEditor.instance.SetHandleAlignment((HandleAlignment)current);
-			ProBuilderEditor.instance.LoadPrefs();
-			return new ActionResult(ActionResult.Status.Success, "Set Handle Alignment\n" + ((HandleAlignment)current).ToString());
+			handleOrientation = (HandleOrientation)current;
+
+			return new ActionResult(ActionResult.Status.Success, "Set Handle Alignment\n" + ((HandleOrientation)current).ToString());
 		}
 
 		public override bool enabled

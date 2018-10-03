@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEditor.SettingsManagement;
 
@@ -25,13 +26,22 @@ namespace UnityEditor.ProBuilder
 		}
 #else
 
+		[NonSerialized]
 		static UserSettingsProvider s_SettingsProvider;
 
 		[PreferenceItem("ProBuilder")]
 		static void ProBuilderPreferencesGUI()
 		{
-			if(s_SettingsProvider == null)
-				s_SettingsProvider = new UserSettingsProvider(ProBuilderSettings.instance, new [] { typeof(ProBuilderSettingsProvider).Assembly });
+			if (s_SettingsProvider == null)
+			{
+				s_SettingsProvider = new UserSettingsProvider(ProBuilderSettings.instance, new[] { typeof(ProBuilderSettingsProvider).Assembly });
+
+				s_SettingsProvider.afterSettingsSaved += () =>
+				{
+					if (ProBuilderEditor.instance != null)
+						ProBuilderEditor.instance.OnEnable();
+				};
+			}
 
 			s_SettingsProvider.OnGUI(null);
 		}

@@ -7,8 +7,8 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		RectSelectMode mode
 		{
-			get { return ProBuilderEditor.instance.m_DragSelectRectMode; }
-			set { ProBuilderEditor.instance.m_DragSelectRectMode.value = value; }
+			get { return ProBuilderEditor.instance.rectSelectMode; }
+			set { ProBuilderEditor.instance.rectSelectMode = value; }
 		}
 
 		public override ToolbarGroup group
@@ -52,8 +52,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ActionResult DoAction()
 		{
 			mode = InternalUtility.NextEnumValue(mode);
-			ProBuilderSettings.Save();
-			ProBuilderEditor.instance.LoadPrefs();
+
 			return new ActionResult(ActionResult.Status.Success,
 				"Set Drag Select\n" + (mode == RectSelectMode.Complete ? "Complete" : "Intersect"));
 		}

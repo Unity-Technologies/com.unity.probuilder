@@ -14,7 +14,6 @@ namespace UnityEditor.ProBuilder
 		static bool s_IsSceneViewDragAndDrop;
 		static Mesh s_PreviewMesh;
 		static Material s_PreviewMaterial;
-		static int s_PreviewSubmesh;
 		static ProBuilderMesh s_CurrentPreview;
 		static bool s_IsFaceDragAndDropOverrideEnabled;
 		static Matrix4x4 s_Matrix;
@@ -132,7 +131,8 @@ namespace UnityEditor.ProBuilder
 				if (!s_IsSceneViewDragAndDrop)
 					s_IsSceneViewDragAndDrop = true;
 
-				GameObject go = HandleUtility.PickGameObject(evt.mousePosition, out s_PreviewSubmesh);
+				int submeshIndex;
+				GameObject go = HandleUtility.PickGameObject(evt.mousePosition, out submeshIndex);
 
 				SetMeshPreview(go != null ? go.GetComponent<ProBuilderMesh>() : null);
 
@@ -156,7 +156,8 @@ namespace UnityEditor.ProBuilder
 			else if (evt.type == EventType.DragPerform)
 			{
 				s_IsSceneViewDragAndDrop = false;
-				GameObject go = HandleUtility.PickGameObject(evt.mousePosition, out s_PreviewSubmesh);
+				int submeshIndex;
+				GameObject go = HandleUtility.PickGameObject(evt.mousePosition, out submeshIndex);
 				SetMeshPreview(go != null ? go.GetComponent<ProBuilderMesh>() : null);
 
 				if (s_CurrentPreview != null && s_IsFaceDragAndDropOverrideEnabled)

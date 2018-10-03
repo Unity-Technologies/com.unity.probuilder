@@ -7,8 +7,8 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		SelectionModifierBehavior modifier
 		{
-			get { return ProBuilderEditor.instance.m_SelectModifierBehavior; }
-			set { ProBuilderEditor.instance.m_SelectModifierBehavior.SetValue(value, true); }
+			get { return ProBuilderEditor.instance.selectionModifierBehavior; }
+			set { ProBuilderEditor.instance.selectionModifierBehavior = value; }
 		}
 
 		public override ToolbarGroup group
@@ -64,7 +64,6 @@ namespace UnityEditor.ProBuilder.Actions
 			int mode = (int)modifier;
 			int len = System.Enum.GetValues(typeof(SelectionModifierBehavior)).Length;
 			modifier = (SelectionModifierBehavior)((mode + 1) % len);
-			ProBuilderEditor.instance.LoadPrefs();
 			return new ActionResult(ActionResult.Status.Success, "Set Shift Drag Mode\n" + modifier);
 		}
 	}

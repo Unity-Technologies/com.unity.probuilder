@@ -46,7 +46,6 @@ namespace UnityEditor.ProBuilder
 
 		// used to toggle preview on and off from class OnGUI
 		bool m_DoInitPreview = false;
-		Material m_DefaultMaterial = null;
 		Vector2 m_Scroll = Vector2.zero;
 		static readonly Color k_PreviewColor = new Color(.5f, .9f, 1f, .56f);
 		Material m_ShapePreviewMaterial;
@@ -56,7 +55,6 @@ namespace UnityEditor.ProBuilder
 
 		void OnEnable()
 		{
-			m_DefaultMaterial = EditorUtility.GetUserMaterial();
 			m_DoInitPreview = true;
 
 			if (m_ShapePreviewMaterial == null)

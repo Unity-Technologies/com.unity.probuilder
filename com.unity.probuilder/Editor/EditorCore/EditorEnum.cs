@@ -1,4 +1,6 @@
 
+using System;
+
 namespace UnityEditor.ProBuilder
 {
 	/// <summary>
@@ -21,7 +23,7 @@ namespace UnityEditor.ProBuilder
 	/// This overrides the Unity Pivot / Global setting when editing vertices, faces, or edges.
 	/// </remarks>
 	/// <remarks>Editor only.</remarks>
-	public enum HandleAlignment
+	public enum HandleOrientation
 	{
 		/// <summary>
 		/// The gizmo is aligned in world space.
@@ -34,7 +36,7 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// The gizmo is aligned relative to the currently selected face. When editing vertices or edges, this falls back to <see cref="Local"/> alignment.
 		/// </summary>
-		Plane = 2
+		Normal = 2
 	}
 
 	/// <summary>
