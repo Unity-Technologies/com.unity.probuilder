@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuInsertEdgeLoop(MeshSelection.TopInternal());
+			return MenuCommands.MenuInsertEdgeLoop(MeshSelection.topInternal);
 		}
 	}
 }

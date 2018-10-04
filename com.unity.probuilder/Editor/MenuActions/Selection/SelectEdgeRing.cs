@@ -54,7 +54,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			var selection = MeshSelection.TopInternal();
+			var selection = MeshSelection.topInternal;
 
 			if(selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;

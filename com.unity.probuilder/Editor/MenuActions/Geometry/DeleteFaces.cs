@@ -39,7 +39,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuDeleteFace(MeshSelection.TopInternal());
+			return MenuCommands.MenuDeleteFace(MeshSelection.topInternal);
 		}
 	}
 }

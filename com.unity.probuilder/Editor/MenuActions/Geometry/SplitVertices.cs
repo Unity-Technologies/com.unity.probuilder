@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuSplitVertices(MeshSelection.TopInternal());
+			return MenuCommands.MenuSplitVertices(MeshSelection.topInternal);
 		}
 	}
 }

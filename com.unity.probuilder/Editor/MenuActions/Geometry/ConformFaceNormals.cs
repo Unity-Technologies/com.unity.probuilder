@@ -32,7 +32,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuConformNormals(MeshSelection.TopInternal());
+			return MenuCommands.MenuConformNormals(MeshSelection.topInternal);
 		}
 	}
 }

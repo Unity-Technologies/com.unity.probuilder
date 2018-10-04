@@ -33,7 +33,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuConnectEdges(MeshSelection.TopInternal());
+			return MenuCommands.MenuConnectEdges(MeshSelection.topInternal);
 		}
 	}
 }

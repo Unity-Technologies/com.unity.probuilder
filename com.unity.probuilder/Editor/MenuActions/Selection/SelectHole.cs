@@ -44,11 +44,11 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			UndoUtility.RecordSelection(MeshSelection.TopInternal(), "Select Hole");
+			UndoUtility.RecordSelection(MeshSelection.topInternal, "Select Hole");
 
 			ActionResult res = ActionResult.NoSelection;
 
-			foreach (ProBuilderMesh pb in MeshSelection.TopInternal())
+			foreach (ProBuilderMesh pb in MeshSelection.topInternal)
 			{
 				bool selectAll = pb.selectedIndexesInternal == null || pb.selectedIndexesInternal.Length < 1;
 				IEnumerable<int> indexes = selectAll ? pb.facesInternal.SelectMany(x => x.indexes) : pb.selectedIndexesInternal;

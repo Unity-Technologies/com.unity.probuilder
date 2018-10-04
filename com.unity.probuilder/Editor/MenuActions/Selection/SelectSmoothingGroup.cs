@@ -59,13 +59,13 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			UndoUtility.RecordSelection(MeshSelection.TopInternal(), "Select Faces with Smoothing Group");
+			UndoUtility.RecordSelection(MeshSelection.topInternal, "Select Faces with Smoothing Group");
 
-			HashSet<int> selectedSmoothGroups = new HashSet<int>(MeshSelection.TopInternal().SelectMany(x => x.selectedFacesInternal.Select(y => y.smoothingGroup)));
+			HashSet<int> selectedSmoothGroups = new HashSet<int>(MeshSelection.topInternal.SelectMany(x => x.selectedFacesInternal.Select(y => y.smoothingGroup)));
 
 			List<GameObject> newSelection = new List<GameObject>();
 
-			foreach (ProBuilderMesh pb in MeshSelection.TopInternal())
+			foreach (ProBuilderMesh pb in MeshSelection.topInternal)
 			{
 				IEnumerable<Face> matches = pb.facesInternal.Where(x => selectedSmoothGroups.Contains(x.smoothingGroup));
 

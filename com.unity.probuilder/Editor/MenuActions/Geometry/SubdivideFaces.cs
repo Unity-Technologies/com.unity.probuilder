@@ -48,7 +48,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuSubdivideFace(MeshSelection.TopInternal());
+			return MenuCommands.MenuSubdivideFace(MeshSelection.topInternal);
 		}
 	}
 }

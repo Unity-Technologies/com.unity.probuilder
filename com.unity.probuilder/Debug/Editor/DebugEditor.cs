@@ -38,7 +38,7 @@ namespace UnityEditor.ProBuilder
 
 			m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
 
-			foreach (var mesh in MeshSelection.Top())
+			foreach (var mesh in MeshSelection.top)
 			{
 				DoMeshInfo(mesh);
 			}

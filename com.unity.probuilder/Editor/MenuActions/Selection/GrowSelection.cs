@@ -88,7 +88,7 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
 
 		public override ActionResult DoAction()
 		{
-			var selection = MeshSelection.TopInternal();
+			var selection = MeshSelection.topInternal;
 			var editor = ProBuilderEditor.instance;
 
 			if(!ProBuilderEditor.instance || selection == null || selection.Length < 1)

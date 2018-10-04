@@ -36,7 +36,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuMergeObjects(MeshSelection.TopInternal());
+			return MenuCommands.MenuMergeObjects(MeshSelection.topInternal);
 		}
 	}
 }

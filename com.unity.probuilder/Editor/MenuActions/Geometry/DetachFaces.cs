@@ -63,9 +63,9 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ActionResult DoAction()
 		{
 			if (m_DetachSetting == DetachSetting.GameObject)
-				return DetachFacesToObject(MeshSelection.TopInternal());
+				return DetachFacesToObject(MeshSelection.topInternal);
 
-			return DetachFacesToSubmesh(MeshSelection.TopInternal());
+			return DetachFacesToSubmesh(MeshSelection.topInternal);
 		}
 
 		static ActionResult DetachFacesToSubmesh(ProBuilderMesh[] selection)

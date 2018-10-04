@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
@@ -14,7 +15,6 @@ namespace UnityEditor.ProBuilder
 	public static class MeshSelection
 	{
 		static ProBuilderMesh[] s_TopSelection = new ProBuilderMesh[0];
-		static ProBuilderMesh[] s_DeepSelection = new ProBuilderMesh[0];
 
 		static bool s_ElementCountCacheIsDirty = true;
 
@@ -79,7 +79,6 @@ namespace UnityEditor.ProBuilder
 			// GameObjects returns both parent and child when both are selected, where transforms only returns the top-most
 			// transform.
 			s_TopSelection = Selection.gameObjects.Select(x => x.GetComponent<ProBuilderMesh>()).Where(x => x != null).ToArray();
-			s_DeepSelection = Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<ProBuilderMesh>()).ToArray();
 
 			selectedObjectCount = s_TopSelection.Length;
 			s_ElementCountCacheIsDirty = true;
@@ -164,24 +163,29 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Get all selected ProBuilderMesh components. Corresponds to <![CDATA[Selection.gameObjects.Select(x => x.GetComponent<ProBuilderMesh>().Where(y => y != null);]]>.
 		/// </summary>
-		/// <returns>An array of the currently selected ProBuilderMesh components. Does not include children of selected objects.</returns>
-		public static IEnumerable<ProBuilderMesh> Top()
+		/// <value>An array of the currently selected ProBuilderMesh components. Does not include children of selected objects.</value>
+		public static IEnumerable<ProBuilderMesh> top
 		{
-			return s_TopSelection;
+			get { return new ReadOnlyCollection<ProBuilderMesh>(s_TopSelection); }
 		}
 
-		internal static ProBuilderMesh[] TopInternal()
+		internal static ProBuilderMesh[] topInternal
 		{
-			return s_TopSelection;
+			get { return s_TopSelection; }
 		}
 
 		/// <summary>
 		/// Get all selected ProBuilderMesh components, including those in children of selected objects.
 		/// </summary>
 		/// <returns>All selected ProBuilderMesh components, including those in children of selected objects.</returns>
-		public static IEnumerable<ProBuilderMesh> All()
+		public static IEnumerable<ProBuilderMesh> deep
 		{
-			return s_DeepSelection;
+			get { return Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<ProBuilderMesh>()); }
+		}
+
+		internal static bool Contains(ProBuilderMesh mesh)
+		{
+			return s_TopSelection.Contains(mesh);
 		}
 
 		/// <value>
@@ -189,7 +193,7 @@ namespace UnityEditor.ProBuilder
 		/// </value>
 		public static int count
 		{
-			get { return TopInternal().Length; }
+			get { return topInternal.Length; }
 		}
 
 		/// <value>
@@ -230,12 +234,12 @@ namespace UnityEditor.ProBuilder
 
 			try
 			{
-				s_TotalVertexCount = TopInternal().Sum(x => x.vertexCount);
-				s_TotalFaceCount = TopInternal().Sum(x => x.faceCount);
-				s_TotalEdgeCount = TopInternal().Sum(x => x.edgeCount);
-				s_TotalCommonVertexCount = TopInternal().Sum(x => x.sharedVerticesInternal.Length);
-				s_TotalVertexCountCompiled = TopInternal().Sum(x => x.mesh == null ? 0 : x.mesh.vertexCount);
-				s_TotalTriangleCountCompiled = TopInternal().Sum(x => (int) UnityEngine.ProBuilder.MeshUtility.GetPrimitiveCount(x.mesh));
+				s_TotalVertexCount = topInternal.Sum(x => x.vertexCount);
+				s_TotalFaceCount = topInternal.Sum(x => x.faceCount);
+				s_TotalEdgeCount = topInternal.Sum(x => x.edgeCount);
+				s_TotalCommonVertexCount = topInternal.Sum(x => x.sharedVerticesInternal.Length);
+				s_TotalVertexCountCompiled = topInternal.Sum(x => x.mesh == null ? 0 : x.mesh.vertexCount);
+				s_TotalTriangleCountCompiled = topInternal.Sum(x => (int) UnityEngine.ProBuilder.MeshUtility.GetPrimitiveCount(x.mesh));
 				s_ElementCountCacheIsDirty = false;
 			}
 			catch

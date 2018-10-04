@@ -63,7 +63,7 @@ namespace UnityEditor.ProBuilder
 
 			if (ProBuilderEditor.instance != null)
 			{
-				Vector3[] positions = MeshSelection.TopInternal().SelectMany(x =>
+				Vector3[] positions = MeshSelection.topInternal.SelectMany(x =>
 				{
 					var p = x.positions.ToArray();
 

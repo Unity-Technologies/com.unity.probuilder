@@ -242,7 +242,7 @@ namespace UnityEditor.ProBuilder
 				rectSelectMode = scenePickerPreferences.rectSelectMode
 			};
 
-			var selection = MeshSelection.TopInternal();
+			var selection = MeshSelection.topInternal;
 			UndoUtility.RecordSelection(selection, "Drag Select");
 			bool isAppendModifier = EditorHandleUtility.IsAppendModifier(Event.current.modifiers);
 
@@ -426,7 +426,7 @@ namespace UnityEditor.ProBuilder
 				var mesh = go.GetComponent<ProBuilderMesh>();
 				Face face = null;
 
-				if (mesh != null && (allowUnselected || MeshSelection.TopInternal().Contains(mesh)))
+				if (mesh != null && (allowUnselected || MeshSelection.topInternal.Contains(mesh)))
 				{
 					Ray ray = UHandleUtility.GUIPointToWorldRay(mousePosition);
 					RaycastHit hit;
@@ -506,7 +506,7 @@ namespace UnityEditor.ProBuilder
 
 				if (mesh != null && mesh.selectable)
 				{
-					if(MeshSelection.Top().Contains(mesh))
+					if(MeshSelection.topInternal.Contains(mesh))
 						GetNearestVertices(mesh, mousePosition, s_NearestVertices, maxDistance);
 					else if (allowUnselected)
 						s_NearestVertices.Add(new VertexPickerEntry()
@@ -521,7 +521,7 @@ namespace UnityEditor.ProBuilder
 
 			if(selection.mesh == null)
 			{
-				foreach (var mesh in MeshSelection.Top())
+				foreach (var mesh in MeshSelection.topInternal)
 				{
 					if (!mesh.selectable)
 						continue;
@@ -582,7 +582,7 @@ namespace UnityEditor.ProBuilder
 			var hoveredMesh = selection.gameObject != null ? selection.gameObject.GetComponent<ProBuilderMesh>() : null;
 
 			float bestDistance = pickerPrefs.maxPointerDistance;
-			bool hoveredIsInSelection = MeshSelection.TopInternal().Contains(hoveredMesh);
+			bool hoveredIsInSelection = MeshSelection.topInternal.Contains(hoveredMesh);
 
 			if(hoveredMesh != null && (allowUnselected || hoveredIsInSelection))
 			{
@@ -600,7 +600,7 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
-			foreach (var mesh in MeshSelection.TopInternal())
+			foreach (var mesh in MeshSelection.topInternal)
 			{
 				var trs = mesh.transform;
 				var positions = mesh.positionsInternal;

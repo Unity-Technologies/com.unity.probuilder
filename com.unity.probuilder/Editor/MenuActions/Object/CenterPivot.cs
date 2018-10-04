@@ -33,7 +33,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuCenterPivot(MeshSelection.TopInternal());
+			return MenuCommands.MenuCenterPivot(MeshSelection.topInternal);
 		}
 	}
 }

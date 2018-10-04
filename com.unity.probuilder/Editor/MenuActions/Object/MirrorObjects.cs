@@ -93,7 +93,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			List<GameObject> res  = new List<GameObject>();
 
-			foreach(ProBuilderMesh pb in MeshSelection.TopInternal())
+			foreach(ProBuilderMesh pb in MeshSelection.topInternal)
 				res.Add( Mirror(pb, scale, duplicate).gameObject );
 
 			MeshSelection.SetSelection(res);

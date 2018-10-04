@@ -50,7 +50,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			var selection = MeshSelection.TopInternal();
+			var selection = MeshSelection.topInternal;
 
 			UndoUtility.RecordSelection(selection, "Select Face Ring");
 

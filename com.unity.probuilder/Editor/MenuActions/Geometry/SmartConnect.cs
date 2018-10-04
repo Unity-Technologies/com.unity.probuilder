@@ -45,10 +45,10 @@ namespace UnityEditor.ProBuilder.Actions
 			switch (ProBuilderEditor.selectMode)
 			{
 				case SelectMode.Vertex:
-					return MenuCommands.MenuConnectVertices(MeshSelection.TopInternal());
+					return MenuCommands.MenuConnectVertices(MeshSelection.topInternal);
 
 				default:
-					return MenuCommands.MenuConnectEdges(MeshSelection.TopInternal());
+					return MenuCommands.MenuConnectEdges(MeshSelection.topInternal);
 			}
 		}
 	}

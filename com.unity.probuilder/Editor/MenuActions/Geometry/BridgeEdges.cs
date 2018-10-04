@@ -35,12 +35,12 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool enabled
 		{
-			get { return base.enabled && MeshSelection.TopInternal().Any(x => x.selectedEdgeCount == 2); }
+			get { return base.enabled && MeshSelection.topInternal.Any(x => x.selectedEdgeCount == 2); }
 		}
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuBridgeEdges(MeshSelection.TopInternal());
+			return MenuCommands.MenuBridgeEdges(MeshSelection.topInternal);
 		}
 	}
 }

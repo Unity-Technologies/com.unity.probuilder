@@ -382,7 +382,7 @@ namespace UnityEditor.ProBuilder
 		{
 			ClearSmoothGroupData();
 
-			foreach (ProBuilderMesh pb in MeshSelection.TopInternal())
+			foreach (ProBuilderMesh pb in MeshSelection.topInternal)
 				m_SmoothGroups.Add(pb, new SmoothGroupData(pb));
 
 			this.Repaint();

@@ -1,16 +1,9 @@
 using System;
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using System.Collections.Generic;
 using Parabox.STL;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
-using UnityEditor.VersionControl;
-using EditorGUILayout = UnityEditor.EditorGUILayout;
-using EditorGUIUtility = UnityEditor.EditorGUIUtility;
-using EditorStyles = UnityEditor.EditorStyles;
 using Object = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder.Actions
@@ -158,7 +151,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			string res = null;
 
-			IEnumerable<ProBuilderMesh> meshes = m_ExportRecursive ? MeshSelection.All() : MeshSelection.TopInternal();
+			IEnumerable<ProBuilderMesh> meshes = m_ExportRecursive ? MeshSelection.deep : MeshSelection.topInternal;
 
 			if(meshes == null || !meshes.Any())
 			{

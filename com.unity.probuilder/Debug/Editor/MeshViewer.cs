@@ -232,7 +232,7 @@ namespace UnityEditor.ProBuilder.Debug
 			m_MeshViews.Clear();
 
 			foreach(var view in m_MeshViewSettings)
-				foreach(var mesh in MeshSelection.Top())
+				foreach(var mesh in MeshSelection.topInternal)
 					m_MeshViews.Add(view.GetDebugView(mesh));
 
 			Repaint();

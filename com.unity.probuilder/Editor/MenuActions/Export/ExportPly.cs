@@ -35,7 +35,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			string res = ExportWithFileDialog(MeshSelection.TopInternal());
+			string res = ExportWithFileDialog(MeshSelection.topInternal);
 
 			if (string.IsNullOrEmpty(res))
 				return new ActionResult(ActionResult.Status.Canceled, "User Canceled");

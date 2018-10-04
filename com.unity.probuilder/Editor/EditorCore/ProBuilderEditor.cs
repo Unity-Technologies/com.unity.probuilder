@@ -1583,7 +1583,7 @@ namespace UnityEditor.ProBuilder
 
 		void UpdateSelection(bool selectionChanged = true)
 		{
-			selection = MeshSelection.TopInternal();
+			selection = MeshSelection.topInternal;
 
 			m_HandlePosition = GetHandlePosition();
 			m_HandleRotation = GetHandleRotation();
@@ -1605,7 +1605,7 @@ namespace UnityEditor.ProBuilder
 		{
 			try
 			{
-				m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.TopInternal(), selectMode);
+				m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.topInternal, selectMode);
 			}
 			catch
 			{

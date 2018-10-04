@@ -38,7 +38,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuSetPivot(MeshSelection.TopInternal());
+			return MenuCommands.MenuSetPivot(MeshSelection.topInternal);
 		}
 	}
 }

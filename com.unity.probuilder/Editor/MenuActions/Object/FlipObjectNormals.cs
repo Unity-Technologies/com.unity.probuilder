@@ -41,7 +41,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuFlipObjectNormals(MeshSelection.TopInternal());
+			return MenuCommands.MenuFlipObjectNormals(MeshSelection.topInternal);
 		}
 	}
 }

@@ -34,10 +34,10 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			get { return base.enabled && MeshSelection.selectedObjectCount > 0; }
 		}
-		
+
 		public override ActionResult DoAction()
 		{
-			foreach (ProBuilderMesh pb in MeshSelection.Top())
+			foreach (ProBuilderMesh pb in MeshSelection.topInternal)
 			{
 				var existing = pb.GetComponents<EntityBehaviour>();
 

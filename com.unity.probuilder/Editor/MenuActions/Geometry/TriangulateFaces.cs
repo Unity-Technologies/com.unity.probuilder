@@ -42,9 +42,9 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			ActionResult res = ActionResult.NoSelection;
 
-			UndoUtility.RecordSelection(MeshSelection.TopInternal(), "Triangulate Faces");
+			UndoUtility.RecordSelection(MeshSelection.topInternal, "Triangulate Faces");
 
-			foreach (ProBuilderMesh pb in MeshSelection.TopInternal())
+			foreach (ProBuilderMesh pb in MeshSelection.topInternal)
 			{
 				pb.ToMesh();
 				Face[] triangulatedFaces = pb.ToTriangles(pb.selectedFacesInternal);

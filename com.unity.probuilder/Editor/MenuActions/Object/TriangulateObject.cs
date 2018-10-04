@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuTriangulateObject(MeshSelection.TopInternal());
+			return MenuCommands.MenuTriangulateObject(MeshSelection.topInternal);
 		}
 	}
 }
