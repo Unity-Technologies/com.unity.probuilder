@@ -1,9 +1,6 @@
 {
-    "name": "Unity.ProBuilder",
-    "references": [
-        "Unity.ProBuilder.Poly2Tri",
-        "KdTree"
-    ],
+    "name": "KdTree",
+    "references": [],
     "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
