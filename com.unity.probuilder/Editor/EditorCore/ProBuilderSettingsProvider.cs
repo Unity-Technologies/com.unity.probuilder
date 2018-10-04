@@ -19,7 +19,7 @@ namespace UnityEditor.ProBuilder
 			provider.afterSettingsSaved += () =>
 			{
 				if (ProBuilderEditor.instance != null)
-					ProBuilderEditor.instance.OnEnable();
+					ProBuilderEditor.ReloadSettings();
 			};
 
 			return provider;
