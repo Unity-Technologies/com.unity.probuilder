@@ -73,7 +73,7 @@ namespace KdTree
 						{
 							case AddDuplicateBehavior.Skip:
 								return false;
-								
+
 							case AddDuplicateBehavior.Error:
 								throw new DuplicateNodeError();
 
@@ -116,8 +116,8 @@ namespace KdTree
 			if (removedNode.IsLeaf)
 				return;
 
-			// The folllowing code might seem a little redundant but we're using 
-			// 2 queues so we can add the child nodes back in, in (more or less) 
+			// The folllowing code might seem a little redundant but we're using
+			// 2 queues so we can add the child nodes back in, in (more or less)
 			// the same order they were added in the first place
 			var nodesToReadd = new Queue<KdTreeNode<TKey, TValue>>();
 
@@ -212,8 +212,6 @@ namespace KdTree
 			if (count == 0)
 				return new KdTreeNode<TKey, TValue>[0];
 
-			var neighbours = new KdTreeNode<TKey, TValue>[count];
-
 			var nearestNeighbours = new NearestNeighbourList<KdTreeNode<TKey, TValue>, TKey>(count, typeMath);
 
 			var rect = HyperRect<TKey>.Infinite(dimensions, typeMath);
@@ -232,38 +230,38 @@ namespace KdTree
 
 		/*
 		 * 1. Search for the target
-		 * 
+		 *
 		 *   1.1 Start by splitting the specified hyper rect
 		 *       on the specified node's point along the current
 		 *       dimension so that we end up with 2 sub hyper rects
 		 *       (current dimension = depth % dimensions)
-		 *   
+		 *
 		 *	 1.2 Check what sub rectangle the the target point resides in
 		 *	     under the current dimension
-		 *	     
-		 *   1.3 Set that rect to the nearer rect and also the corresponding 
-		 *       child node to the nearest rect and node and the other rect 
+		 *
+		 *   1.3 Set that rect to the nearer rect and also the corresponding
+		 *       child node to the nearest rect and node and the other rect
 		 *       and child node to the further rect and child node (for use later)
-		 *       
+		 *
 		 *   1.4 Travel into the nearer rect and node by calling function
-		 *       recursively with nearer rect and node and incrementing 
+		 *       recursively with nearer rect and node and incrementing
 		 *       the depth
-		 * 
+		 *
 		 * 2. Add leaf to list of nearest neighbours
-		 * 
+		 *
 		 * 3. Walk back up tree and at each level:
-		 * 
+		 *
 		 *    3.1 Add node to nearest neighbours if
 		 *        we haven't filled our nearest neighbour
 		 *        list yet or if it has a distance to target less
-		 *        than any of the distances in our current nearest 
+		 *        than any of the distances in our current nearest
 		 *        neighbours.
-		 *        
+		 *
 		 *    3.2 If there is any point in the further rectangle that is closer to
 		 *        the target than our furtherest nearest neighbour then travel into
 		 *        that rect and node
-		 * 
-		 *  That's it, when it finally finishes traversing the branches 
+		 *
+		 *  That's it, when it finally finishes traversing the branches
 		 *  it needs to we'll have our list!
 		 */
 
@@ -281,7 +279,7 @@ namespace KdTree
 			// Work out the current dimension
 			int dimension = depth % dimensions;
 
-			// Split our hyper-rect into 2 sub rects along the current 
+			// Split our hyper-rect into 2 sub rects along the current
 			// node's point on the current dimension
 			var leftRect = rect.Clone();
 			leftRect.MaxPoint[dimension] = node.Point[dimension];
@@ -312,7 +310,7 @@ namespace KdTree
 
 			TKey distanceSquaredToTarget;
 
-			// Walk down into the further branch but only if our capacity hasn't been reached 
+			// Walk down into the further branch but only if our capacity hasn't been reached
 			// OR if there's a region in the further rect that's closer to the target than our
 			// current furtherest nearest neighbour
 			TKey[] closestPointInFurtherRect = furtherRect.GetClosestPoint(target, typeMath);
@@ -353,7 +351,7 @@ namespace KdTree
 		public KdTreeNode<TKey, TValue>[] RadialSearch(TKey[] center, TKey radius, int count)
 		{
 			var nearestNeighbours = new NearestNeighbourList<KdTreeNode<TKey, TValue>, TKey>(count, typeMath);
-			
+
 			AddNearestNeighbours(
 				root,
 				center,
@@ -463,7 +461,7 @@ namespace KdTree
 			{
 				for (var index = 0; index <= depth; index++)
 					sb.Append("\t");
-				
+
 				sb.Append(side == -1 ? "L " : "R ");
 
 				if (node[side] == null)
@@ -487,7 +485,7 @@ namespace KdTree
 		{
 			if (node == null)
 				return;
-			
+
 			nodes.Add(node);
 
 			for (var side = -1; side <= 1; side += 2)
@@ -549,7 +547,7 @@ namespace KdTree
 			if (toIndex > midIndex)
 				AddNodesBalanced(nodes, nextDimension, midIndex + 1, toIndex);
 		}
-		
+
 		public void Balance()
 		{
 			var nodeList = new List<KdTreeNode<TKey, TValue>>();

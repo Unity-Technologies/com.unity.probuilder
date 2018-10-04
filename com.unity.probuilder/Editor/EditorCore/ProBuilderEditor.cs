@@ -1603,6 +1603,9 @@ namespace UnityEditor.ProBuilder
 
 		void UpdateMeshHandles()
 		{
+			if (m_EditorMeshHandles == null)
+				return;
+
 			try
 			{
 				m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.topInternal, selectMode);

@@ -42,7 +42,7 @@ namespace UnityEngine.ProBuilder
 			s_IsInitialized = true;
 
 			var geo = Shader.Find(lineShader);
-			s_GeometryShadersSupported = geo.isSupported;
+			s_GeometryShadersSupported = geo != null && geo.isSupported;
 
 			// ProBuilder default
 			if (GraphicsSettings.renderPipelineAsset != null)
