@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.25] - 2018-10-04
+## [4.0.0-preview.26] - 2018-10-04
 
 ### Features
 
@@ -65,6 +65,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Remove "Precise Element Selection" preference.
 - Project preferences are no longer saved in the Assets directory (now located at "ProjectSettings/ProBuilderSettings.json").
 - Improve performance of normal and tangent calculations.
+
+### Changes since 4.0.0-preview.25
+
+- Fix unstable lightmapping unit test.
+- Fix minor compile errors in 2018.1.
+- Move third party libs into ProBuilder namespace.
 
 ### Changes since 4.0.0-preview.24
 
