@@ -31,9 +31,9 @@
 
 using System;
 
-namespace Poly2Tri {
+namespace UnityEngine.ProBuilder.Poly2Tri {
 	public class PolygonGenerator {
-		static readonly Random RNG = new Random();
+		static readonly System.Random RNG = new System.Random();
 
 		private static double PI_2 = 2.0 * Math.PI;
 

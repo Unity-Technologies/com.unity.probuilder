@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.ProBuilder.UI;
 using System.Linq;
-using Parabox.STL;
+using UnityEngine.ProBuilder.Stl;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 

@@ -34,7 +34,7 @@
 /// Future possibilities
 ///   Documentation!
 
-namespace Poly2Tri {
+namespace UnityEngine.ProBuilder.Poly2Tri {
 	public class PolygonPoint : TriangulationPoint {
 		public PolygonPoint( double x, double y, int index = INSERTED_INDEX ) : base(x, y, index) { }
 

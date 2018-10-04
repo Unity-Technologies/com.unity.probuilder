@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace KdTree
+namespace UnityEngine.ProBuilder.KdTree
 {
 	public interface IKdTree<TKey, TValue> : IEnumerable<KdTreeNode<TKey, TValue>>
 	{

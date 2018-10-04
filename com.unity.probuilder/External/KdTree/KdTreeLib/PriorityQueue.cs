@@ -1,13 +1,13 @@
 ﻿using System;
 
-struct ItemPriority<TItem, TPriority>
+namespace UnityEngine.ProBuilder.KdTree
 {
-	public TItem Item;
-	public TPriority Priority;
-}
+	struct ItemPriority<TItem, TPriority>
+	{
+		public TItem Item;
+		public TPriority Priority;
+	}
 
-namespace KdTree
-{
 	public class PriorityQueue<TItem, TPriority> : IPriorityQueue<TItem, TPriority>
 	{
 		public PriorityQueue(int capacity, ITypeMath<TPriority> priorityMath)
@@ -55,7 +55,7 @@ namespace KdTree
 
 			queue[newItemIndex] = new ItemPriority<TItem, TPriority> { Item = item, Priority = priority };
 
-			ReorderItem(newItemIndex, -1); 
+			ReorderItem(newItemIndex, -1);
 		}
 
 		public TItem Dequeue()

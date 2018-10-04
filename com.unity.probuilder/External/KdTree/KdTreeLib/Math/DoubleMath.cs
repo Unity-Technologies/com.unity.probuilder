@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KdTree.Math
+namespace UnityEngine.ProBuilder.KdTree.Math
 {
     [Serializable]
     public class DoubleMath : TypeMath<double>

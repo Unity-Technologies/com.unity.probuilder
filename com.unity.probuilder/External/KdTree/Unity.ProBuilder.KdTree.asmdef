@@ -1,5 +1,5 @@
 {
-    "name": "KdTree",
+    "name": "Unity.ProBuilder.KdTree",
     "references": [],
     "optionalUnityReferences": [],
     "includePlatforms": [],
