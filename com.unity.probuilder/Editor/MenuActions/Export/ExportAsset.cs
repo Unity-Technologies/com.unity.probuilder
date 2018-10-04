@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using System.Collections.Generic;
-using Parabox.STL;
+using UnityEngine.ProBuilder.Stl;
 using System.IO;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;

@@ -1,14 +1,16 @@
 using System.Text;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using UnityEngine;
 using System.Linq;
 
-namespace Parabox.STL
+namespace UnityEngine.ProBuilder.Stl
 {
 	/**
 	 *	Describes the file format of an STL file.
 	 */
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	public enum FileType
 	{
 		Ascii,

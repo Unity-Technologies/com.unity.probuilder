@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
-using Parabox.STL;
+using UnityEngine.ProBuilder.Stl;
 using UnityEngine.ProBuilder;
 using Object = UnityEngine.Object;
 
@@ -130,7 +130,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		void StlExportOptions()
 		{
-			m_StlExportFormat.value = (Parabox.STL.FileType) EditorGUILayout.EnumPopup("Stl Format", m_StlExportFormat);
+			m_StlExportFormat.value = (UnityEngine.ProBuilder.Stl.FileType) EditorGUILayout.EnumPopup("Stl Format", m_StlExportFormat);
 		}
 
 		void PlyExportOptions()

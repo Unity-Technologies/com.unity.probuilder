@@ -33,7 +33,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Poly2Tri {
+namespace UnityEngine.ProBuilder.Poly2Tri {
 	public struct FixedBitArray3 : IEnumerable<bool> {
 		public bool _0, _1, _2;
 		public bool this[ int index ] { get {

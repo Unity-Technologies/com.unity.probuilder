@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Poly2Tri {
+namespace UnityEngine.ProBuilder.Poly2Tri {
 	public class DTSweepDebugContext : TriangulationDebugContext {
 		/*
 		 * Fields used for visual representation of current triangulation

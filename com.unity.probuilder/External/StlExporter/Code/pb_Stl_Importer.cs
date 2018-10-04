@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Parabox.STL
+namespace UnityEngine.ProBuilder.Stl
 {
 	/**
 	 * Import methods for STL files.

@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Parabox.STL
+namespace UnityEngine.ProBuilder.Stl
 {
 	/**
 	 *	Provides menu items for writing STL files from a scene selection.

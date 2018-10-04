@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using Poly2Tri;
+using UnityEngine.ProBuilder.Poly2Tri;
 using UnityEngine.ProBuilder;
 
 namespace UnityEngine.ProBuilder.MeshOperations

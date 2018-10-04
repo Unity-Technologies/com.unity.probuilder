@@ -4,7 +4,7 @@ using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using System.IO;
 using System.Collections.Generic;
-using Parabox.STL;
+using UnityEngine.ProBuilder.Stl;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using EditorUtility = UnityEditor.EditorUtility;

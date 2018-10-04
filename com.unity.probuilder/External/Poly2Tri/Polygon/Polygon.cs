@@ -42,7 +42,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Poly2Tri {
+namespace UnityEngine.ProBuilder.Poly2Tri {
 	public class Polygon : Triangulatable {
 		protected List<TriangulationPoint> _points = new List<TriangulationPoint>();
 		protected List<TriangulationPoint> _steinerPoints;

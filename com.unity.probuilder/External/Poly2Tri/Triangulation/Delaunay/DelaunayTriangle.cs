@@ -42,7 +42,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 
-namespace Poly2Tri {
+namespace UnityEngine.ProBuilder.Poly2Tri {
 	public class DelaunayTriangle {
 		public FixedArray3<TriangulationPoint> Points;
 		public FixedArray3<DelaunayTriangle  > Neighbors;
@@ -96,7 +96,7 @@ namespace Poly2Tri {
 		/// <param name="t">Opposite triangle</param>
 		/// <param name="p">The point in t that isn't shared between the triangles</param>
 		public TriangulationPoint OppositePoint(DelaunayTriangle t, TriangulationPoint p) {
-			Debug.Assert(t != this, "self-pointer error");
+			System.Diagnostics.Debug.Assert(t != this, "self-pointer error");
 			return PointCWFrom(t.PointCWFrom(p));
 		}
 		

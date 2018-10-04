@@ -3,7 +3,7 @@ using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace KdTree
+namespace UnityEngine.ProBuilder.KdTree
 {
 	[Serializable]
 	public class KdTreeNode<TKey, TValue>

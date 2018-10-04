@@ -1,4 +1,4 @@
-﻿namespace KdTree
+﻿namespace UnityEngine.ProBuilder.KdTree
 {
 	public struct HyperRect<T>
 	{

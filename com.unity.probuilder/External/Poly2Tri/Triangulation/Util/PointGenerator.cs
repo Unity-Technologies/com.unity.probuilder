@@ -32,9 +32,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace Poly2Tri {
+namespace UnityEngine.ProBuilder.Poly2Tri {
 	public class PointGenerator {
-		static readonly Random RNG = new Random();
+		static readonly System.Random RNG = new System.Random();
 
 		public static List<TriangulationPoint> UniformDistribution(int n, double scale) {
 			List<TriangulationPoint> points = new List<TriangulationPoint>();

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KdTree.Math
+namespace UnityEngine.ProBuilder.KdTree.Math
 {
 	// Algebraic!
 	[Serializable]

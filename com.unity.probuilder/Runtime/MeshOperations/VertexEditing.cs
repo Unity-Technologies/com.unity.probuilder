@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine.ProBuilder;
-using KdTree;
-using KdTree.Math;
+using UnityEngine.ProBuilder.KdTree;
+using UnityEngine.ProBuilder.KdTree.Math;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {

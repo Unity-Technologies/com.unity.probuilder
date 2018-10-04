@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KdTree
+namespace UnityEngine.ProBuilder.KdTree
 {
 	public interface INearestNeighbourList<TItem, TDistance>
 	{

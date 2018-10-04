@@ -30,7 +30,7 @@
  */
 
 using System.Collections.Generic;
-namespace Poly2Tri {
+namespace UnityEngine.ProBuilder.Poly2Tri {
 	/*
 	 * Extends the PointSet by adding some Constraints on how it will be triangulated<br>
 	 * A constraint defines an edge between two points in the set, these edges can not
