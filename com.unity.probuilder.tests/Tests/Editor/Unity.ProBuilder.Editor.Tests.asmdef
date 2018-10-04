@@ -3,7 +3,8 @@
     "references": [
         "Unity.ProBuilder.Tests.Framework",
         "Unity.ProBuilder",
-        "Unity.ProBuilder.Editor"
+        "Unity.ProBuilder.Editor",
+        "Unity.ProBuilder.Stl"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
@@ -12,5 +13,9 @@
         "Editor"
     ],
     "excludePlatforms": [],
-    "allowUnsafeCode": false
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
 }
