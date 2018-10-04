@@ -39,7 +39,7 @@
     "com.unity.modules.xr": "1.0.0",
     "com.unity.probuilder":"file:../../../com.unity.probuilder",
     "com.unity.probuilder.tests":"file:../../../com.unity.probuilder.tests",
-    "com.unity.progrids": "3.0.2-preview"
+    "com.unity.progrids": "3.0.3-preview.0"
   },
   "testables": [
     "com.unity.probuilder",
