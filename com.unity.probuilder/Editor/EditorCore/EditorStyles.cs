@@ -27,7 +27,6 @@ namespace UnityEditor.ProBuilder.UI
 		static GUIStyle s_RowStyle;
 		static GUIStyle s_HeaderLabel;
 		static GUIStyle s_SceneTextBox;
-		static GUIStyle s_IndentedSettingBlock;
 
 		public static GUIStyle buttonStyle { get { Init(); return s_ButtonStyle; } }
 		public static GUIStyle toolbarHelpIcon { get { Init(); return s_ToolbarHelpIcon; } }
@@ -35,7 +34,6 @@ namespace UnityEditor.ProBuilder.UI
 		public static GUIStyle rowStyle { get { Init(); return s_RowStyle; } }
 		public static GUIStyle headerLabel { get { Init(); return s_HeaderLabel; } }
 		public static GUIStyle sceneTextBox { get { Init(); return s_SceneTextBox; } }
-		public static GUIStyle indentedSettingBlock { get { Init(); return s_IndentedSettingBlock; } }
 
 		static void Init()
 		{
@@ -135,26 +133,6 @@ namespace UnityEditor.ProBuilder.UI
 					background = IconUtility.GetIcon(k_SceneTextBoxBackgroundNormal)
 				}
 			};
-
-			s_IndentedSettingBlock = new GUIStyle()
-			{
-				padding = new RectOffset(16, 0, 0, 0)
-			};
-		}
-
-		public class IndentedBlock : IDisposable
-		{
-			public IndentedBlock()
-			{
-				UnityEditor.EditorGUIUtility.labelWidth -= indentedSettingBlock.padding.left - 4;
-				GUILayout.BeginVertical(indentedSettingBlock);
-			}
-
-			public void Dispose()
-			{
-				GUILayout.EndVertical();
-				UnityEditor.EditorGUIUtility.labelWidth += indentedSettingBlock.padding.left - 4;
-			}
 		}
 	}
 }

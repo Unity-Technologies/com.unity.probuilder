@@ -56,10 +56,10 @@ namespace UnityEditor.ProBuilder
 		static Pref<ColliderType> s_ColliderType = new Pref<ColliderType>("mesh.newShapeColliderType", ColliderType.MeshCollider);
 
 		[UserSetting]
-		static Pref<bool> s_ExperimentalFeatures = new Pref<bool>("experimental.featuresEnabled", false, SettingScope.User);
+		static Pref<bool> s_ExperimentalFeatures = new Pref<bool>("experimental.featuresEnabled", false, SettingsScopes.User);
 
 		[UserSetting]
-		static Pref<bool> s_MeshesAreAssets = new Pref<bool>("experimental.meshesAreAssets", false, SettingScope.Project);
+		static Pref<bool> s_MeshesAreAssets = new Pref<bool>("experimental.meshesAreAssets", false, SettingsScopes.Project);
 
 		internal static bool meshesAreAssets
 		{
@@ -78,7 +78,7 @@ namespace UnityEditor.ProBuilder
 
 			if (s_ExperimentalFeatures.value)
 			{
-				using (new UI.EditorStyles.IndentedBlock())
+				using (new SettingsGUILayout.Subgroup())
 				{
 					s_MeshesAreAssets.value = SettingsGUILayout.SettingsToggle("Store Mesh as Asset", s_MeshesAreAssets, searchContext);
 

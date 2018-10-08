@@ -1,6 +1,4 @@
-﻿#define PB_PROGRIDS_ENABLED
-
-#if PB_PROGRIDS_ENABLED
+﻿#if PROGRIDS_ENABLED
 
 using System.Reflection;
 using NUnit.Framework;
