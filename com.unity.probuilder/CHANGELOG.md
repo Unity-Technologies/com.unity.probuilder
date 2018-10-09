@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.26] - 2018-10-04
+## [4.0.0-preview.27] - 2018-10-09
 
 ### Features
 
@@ -52,6 +52,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix changes to `MeshRenderer` materials being incorrectly reset by ProBuilder.
 - Fix `Delete Faces` tooltip not showing "Backspace" as the shortcut key on Windows.
 - Fix Auto UV settings inspector not allowing certain properties to be edited with multiple selections.
+- Fix face, edge, and vertex modes requiring user to first select an object before registering element selection when clicking.
 
 ### Changes
 
@@ -65,40 +66,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Remove "Precise Element Selection" preference.
 - Project preferences are no longer saved in the Assets directory (now located at "ProjectSettings/ProBuilderSettings.json").
 - Improve performance of normal and tangent calculations.
-
-### Changes since 4.0.0-preview.25
-
-- Fix unstable lightmapping unit test.
-- Fix minor compile errors in 2018.1.
-- Move third party libs into ProBuilder namespace.
-
-### Changes since 4.0.0-preview.24
-
 - `MeshSelection.Top()` becomes `MeshSelection.top` property.
 - Include third party dependencies as source code with assembly definitions instead of pre-compiled DLLs.
-- Fix cases where vertex/edge selection would fail to fall back on gameobjects with no current selection (regression in preview).
-
-### Changes since 4.0.0-preview.23
-
-- Fix compiler error in Unity 2019.1.
-
-### Changes since 4.0.0-preview.22
-
-- Fix face, edge, and vertex modes requiring user to first select an object before registering element selection when clicking.
-- Fix small mouse movements during clicks incorrectly being considered mouse drags.
-- Fix switching to Object mode losing the current tool.
-
-### Changes since 4.0.0-preview.21
-
-- Fix changes to graphics settings not repainting the scene view.
-- Fix changing settings causing scene view to draw ProBuilder GUI multiple times.
-
-### Changes since 4.0.0-preview.20
-
-- Fix regression in `Poly Shape` tool that caused null reference errors to be thrown during height setting stage.
-- Fix vertex dots not showing up when switching to vert mode.
 - Performance optimization for selection changes in editor.
-- Fix missing `Select Hidden` toggle in vertex / edge mode (regression).
+
+### Changes since 4.0.0-preview.26
+
+- Fix lightmap unit test instabilities.
+- Refactor settings code to be more modular.
+- Remove hard-coded `#define PROGRIDS_ENABLED` from ProGrids unit tests.
 
 ## [3.0.8] - 2018-05-07
 
