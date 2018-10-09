@@ -71,14 +71,14 @@ namespace UnityEditor.ProBuilder
 			get { return s_ExperimentalFeatures; }
 		}
 
-		[UserSettingBlock("Experimental", new[] { "store", "mesh", "asset", "experimental", "features", "enabled" })]
+		[UserSettingBlock("Experimental")]
 		static void ExperimentalFeaturesSettings(string searchContext)
 		{
 			s_ExperimentalFeatures.value = SettingsGUILayout.SettingsToggle("Experimental Features Enabled", s_ExperimentalFeatures, searchContext);
 
 			if (s_ExperimentalFeatures.value)
 			{
-				using (new SettingsGUILayout.Subgroup())
+				using (new SettingsGUILayout.IndentedGroup())
 				{
 					s_MeshesAreAssets.value = SettingsGUILayout.SettingsToggle("Store Mesh as Asset", s_MeshesAreAssets, searchContext);
 

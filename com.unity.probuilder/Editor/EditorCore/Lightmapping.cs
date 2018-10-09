@@ -51,7 +51,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		[UserSettingBlock("Mesh Settings", new[] { "lightmap", "uvs", "hard", "angle", "pack", "margin", "area", "error" })]
+		[UserSettingBlock("Mesh Settings")]
 		static void UnwrapSettingDefaults(string searchContext)
 		{
 			Styles.Init();
@@ -66,7 +66,7 @@ namespace UnityEditor.ProBuilder
 
 				var unwrap = (UnwrapParameters) s_UnwrapParameters;
 
-				using (new SettingsGUILayout.Subgroup())
+				using (new SettingsGUILayout.IndentedGroup())
 				{
 					unwrap.hardAngle = SettingsGUILayout.SearchableSlider(Styles.hardAngle, unwrap.hardAngle, 1f, 180f, searchContext);
 					unwrap.packMargin = SettingsGUILayout.SearchableSlider(Styles.packMargin, unwrap.packMargin, 1f, 64f, searchContext);

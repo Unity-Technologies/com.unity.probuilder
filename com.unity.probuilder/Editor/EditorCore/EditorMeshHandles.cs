@@ -52,17 +52,14 @@ namespace UnityEditor.ProBuilder
 		[UserSetting]
 		static Pref<float> s_VertexPointSize = new Pref<float>("graphics.vertexPointSize", 3f, SettingsScopes.User);
 
-		[UserSettingBlock("Graphics", new []
-		{
-			"dither", "color", "wireframe", "preselection", "highlight", "selected", "face", "vertex", "edge", "overlay"
-		})]
+		[UserSettingBlock("Graphics")]
 		static void HandleColorPreferences(string searchContext)
 		{
 			s_UseUnityColors.value = SettingsGUILayout.SettingsToggle("Use Unity Colors", s_UseUnityColors, searchContext);
 
 			if (!s_UseUnityColors.value)
 			{
-				using (new SettingsGUILayout.Subgroup())
+				using (new SettingsGUILayout.IndentedGroup())
 				{
 					s_DitherFaceHandle.value = SettingsGUILayout.SettingsToggle("Dither Face Overlay", s_DitherFaceHandle, searchContext);
 					s_WireframeColorPref.value = SettingsGUILayout.SettingsColorField("Wireframe", s_WireframeColorPref, searchContext);

@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder
 				ProBuilderSettings.instance,
 				new [] { typeof(ProBuilderSettingsProvider).Assembly });
 
-			provider.afterSettingsSaved += () =>
+			ProBuilderSettings.instance.afterSettingsSaved += () =>
 			{
 				if (ProBuilderEditor.instance != null)
 					ProBuilderEditor.ReloadSettings();
@@ -36,7 +36,7 @@ namespace UnityEditor.ProBuilder
 			{
 				s_SettingsProvider = new UserSettingsProvider(ProBuilderSettings.instance, new[] { typeof(ProBuilderSettingsProvider).Assembly });
 
-				s_SettingsProvider.afterSettingsSaved += () =>
+				ProBuilderSettings.instance.afterSettingsSaved += () =>
 				{
 					if (ProBuilderEditor.instance != null)
 						ProBuilderEditor.ReloadSettings();

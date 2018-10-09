@@ -13,7 +13,13 @@ namespace UnityEditor.ProBuilder
 			get
 			{
 				if (s_Instance == null)
-					s_Instance = new Settings(k_DefaultSettingsPath);
+				{
+					s_Instance = new Settings(new ISettingsRepository[]
+					{
+						new ProjectSettingsRepository(k_DefaultSettingsPath),
+						new UserSettingsRepository(),
+					});
+				}
 
 				return s_Instance;
 			}

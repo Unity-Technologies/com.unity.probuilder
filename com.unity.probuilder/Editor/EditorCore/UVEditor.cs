@@ -53,7 +53,7 @@ namespace UnityEditor.ProBuilder
 		[UserSetting]
 		static Pref<float> s_GridSnapIncrement = new Pref<float>("uv.uvEditorGridSnapIncrement", .125f, SettingsScopes.Project);
 
-		[UserSettingBlock("UV Editor", new [] { "grid", "size" } )]
+		[UserSettingBlock("UV Editor")]
 		static void UVEditorSettings(string searchContext)
 		{
 			s_GridSnapIncrement.value = SettingsGUILayout.SettingsSlider(UI.EditorGUIUtility.TempContent("Grid Size"), s_GridSnapIncrement, .015625f, 2f, searchContext);
