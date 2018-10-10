@@ -23,4 +23,10 @@ Test strategy & current info for ProBuilder.
 
 **Unit Tests**
 
-Unit tests are distributed as a separate package, named `com.unity.probuilder.tests`. To run locally, include the test package in your Packages manifest, and make sure `com.unity.probuilder.tests` is included in the `testables` array.
+On [Katana](https://katana.bf.unity3d.com/projects/com.unity.probuilder/builders?automation-tools_branch=master&comunityprobuilder_branch=master&package-validation-suite_branch=master&unity_branch=trunk)
+
+Unit tests are distributed as a separate package, named `com.unity.probuilder.tests`.
+
+To run locally, include the test package in your Packages manifest, and make sure `com.unity.probuilder.tests` is included in the `testables` array.
+
+
