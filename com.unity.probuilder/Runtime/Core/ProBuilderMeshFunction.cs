@@ -298,44 +298,14 @@ namespace UnityEngine.ProBuilder
 
 		void RefreshCollisions()
 		{
-			Mesh m = mesh;
+			mesh.RecalculateBounds();
 
-			m.RecalculateBounds();
+			var meshCollider = GetComponent<MeshCollider>();
 
-			if (!userCollisions && GetComponent<Collider>())
+			if (meshCollider != null)
 			{
-				foreach (Collider c in gameObject.GetComponents<Collider>())
-				{
-					System.Type t = c.GetType();
-
-					if (t == typeof(BoxCollider))
-					{
-						((BoxCollider)c).center = m.bounds.center;
-						((BoxCollider)c).size = m.bounds.size;
-					}
-					else if (t == typeof(SphereCollider))
-					{
-						((SphereCollider)c).center = m.bounds.center;
-						((SphereCollider)c).radius = Math.LargestValue(m.bounds.extents);
-					}
-					else if (t == typeof(CapsuleCollider))
-					{
-						((CapsuleCollider)c).center = m.bounds.center;
-						Vector2 xy = new Vector2(m.bounds.extents.x, m.bounds.extents.z);
-						((CapsuleCollider)c).radius = Math.LargestValue(xy);
-						((CapsuleCollider)c).height = m.bounds.size.y;
-					}
-					else if (t == typeof(WheelCollider))
-					{
-						((WheelCollider)c).center = m.bounds.center;
-						((WheelCollider)c).radius = Math.LargestValue(m.bounds.extents);
-					}
-					else if (t == typeof(MeshCollider))
-					{
-						gameObject.GetComponent<MeshCollider>().sharedMesh = null; // this is stupid.
-						gameObject.GetComponent<MeshCollider>().sharedMesh = m;
-					}
-				}
+				gameObject.GetComponent<MeshCollider>().sharedMesh = null;
+				gameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
 			}
 		}
 

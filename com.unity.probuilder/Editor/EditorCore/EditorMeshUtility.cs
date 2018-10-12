@@ -2,7 +2,9 @@
 using System;
 using System.IO;
 using System.Linq;
+using UnityEditor.SettingsManagement;
 using UnityEngine.ProBuilder;
+using Math = UnityEngine.ProBuilder.Math;
 
 namespace UnityEditor.ProBuilder
 {
@@ -13,6 +15,9 @@ namespace UnityEditor.ProBuilder
 	{
 		const string k_MeshCacheDirectoryName = "ProBuilderMeshCache";
 		static string k_MeshCacheDirectory = "Assets/ProBuilder Data/ProBuilderMeshCache";
+
+		[UserSetting("Mesh Editing", "Auto Resize Colliders", "Automatically resize colliders with mesh bounds as you edit.")]
+		static Pref<bool> s_AutoResizeCollisions = new Pref<bool>("editor.autoRecalculateCollisions", false, SettingsScopes.Project);
 
 		/// <value>
 		/// This callback is raised after a ProBuilderMesh has been successfully optimized.
@@ -82,6 +87,9 @@ namespace UnityEditor.ProBuilder
 					UnityEngine.ProBuilder.MeshUtility.CollapseSharedVertices(umesh);
 				}
 			}
+
+			if (s_AutoResizeCollisions)
+				RebuildColliders(mesh);
 
 			if(meshOptimized != null)
 				meshOptimized(mesh, umesh);
@@ -207,6 +215,50 @@ namespace UnityEditor.ProBuilder
 			}
 
 			return k_MeshCacheDirectory;
+		}
+
+		/// <summary>
+		/// Resize any collider components on this mesh to match the size of the mesh bounds.
+		/// </summary>
+		/// <param name="mesh">The mesh target to rebuild collider volumes for.</param>
+		public static void RebuildColliders(this ProBuilderMesh mesh)
+		{
+			mesh.mesh.RecalculateBounds();
+
+			var bounds = mesh.mesh.bounds;
+
+			foreach (var collider in mesh.GetComponents<Collider>())
+			{
+				Type t = collider.GetType();
+
+				if (t == typeof(BoxCollider))
+				{
+					((BoxCollider)collider).center = bounds.center;
+					((BoxCollider)collider).size = bounds.size;
+				}
+				else if (t == typeof(SphereCollider))
+				{
+					((SphereCollider)collider).center = bounds.center;
+					((SphereCollider)collider).radius = Math.LargestValue(bounds.extents);
+				}
+				else if (t == typeof(CapsuleCollider))
+				{
+					((CapsuleCollider)collider).center = bounds.center;
+					Vector2 xy = new Vector2(bounds.extents.x, bounds.extents.z);
+					((CapsuleCollider)collider).radius = Math.LargestValue(xy);
+					((CapsuleCollider)collider).height = bounds.size.y;
+				}
+				else if (t == typeof(WheelCollider))
+				{
+					((WheelCollider)collider).center = bounds.center;
+					((WheelCollider)collider).radius = Math.LargestValue(bounds.extents);
+				}
+				else if (t == typeof(MeshCollider))
+				{
+					((MeshCollider)collider).sharedMesh = null;
+					((MeshCollider)collider).sharedMesh = mesh.mesh;
+				}
+			}
 		}
 	}
 }
