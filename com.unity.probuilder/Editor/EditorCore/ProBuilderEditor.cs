@@ -263,7 +263,7 @@ namespace UnityEditor.ProBuilder
 				if (selectModeChanged != null)
 					selectModeChanged(value);
 
-				s_Instance.UpdateMeshHandles();
+				s_Instance.UpdateMeshHandles(true);
 				s_Instance.Repaint();
 			}
 		}
@@ -897,7 +897,7 @@ namespace UnityEditor.ProBuilder
 					mesh.mesh.RecalculateBounds();
 				}
 
-				UpdateMeshHandles();
+				UpdateMeshHandles(false);
 			}
 		}
 
@@ -1020,7 +1020,7 @@ namespace UnityEditor.ProBuilder
 					mesh.mesh.RecalculateBounds();
 				}
 
-				UpdateMeshHandles();
+				UpdateMeshHandles(false);
 			}
 		}
 
@@ -1112,7 +1112,7 @@ namespace UnityEditor.ProBuilder
 					selection[i].mesh.RecalculateBounds();
 				}
 
-				UpdateMeshHandles();
+				UpdateMeshHandles(false);
 			}
 		}
 
@@ -1589,7 +1589,7 @@ namespace UnityEditor.ProBuilder
 			m_HandleRotation = GetHandleRotation();
 
 			UpdateTextureHandles();
-			UpdateMeshHandles();
+			UpdateMeshHandles(selectionChanged);
 
 			if (selectionChanged)
 			{
@@ -1601,14 +1601,14 @@ namespace UnityEditor.ProBuilder
 				selectionUpdated(selection);
 		}
 
-		void UpdateMeshHandles()
+		void UpdateMeshHandles(bool selectionOrVertexCountChanged)
 		{
 			if (m_EditorMeshHandles == null)
 				return;
 
 			try
 			{
-				m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.topInternal, selectMode);
+				m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.topInternal, selectMode, selectionOrVertexCountChanged);
 			}
 			catch
 			{
@@ -1748,46 +1748,39 @@ namespace UnityEditor.ProBuilder
 		/// </summary>
 		void VerifyTextureGroupSelection()
 		{
-			foreach (ProBuilderMesh pb in selection)
+			bool selectionModified = false;
+
+			foreach (ProBuilderMesh mesh in selection)
 			{
 				List<int> alreadyChecked = new List<int>();
 
-				foreach (Face f in pb.selectedFacesInternal)
+				foreach (Face f in mesh.selectedFacesInternal)
 				{
 					int tg = f.textureGroup;
+
 					if (tg > 0 && !alreadyChecked.Contains(f.textureGroup))
 					{
-						foreach (Face j in pb.facesInternal)
-							if (j != f && j.textureGroup == tg && !pb.selectedFacesInternal.Contains(j))
+						foreach (Face j in mesh.facesInternal)
+						{
+							if (j != f && j.textureGroup == tg && !mesh.selectedFacesInternal.Contains(j))
 							{
-								// int i = EditorUtility.DisplayDialogComplex("Mixed Texture Group Selection", "One or more of the faces selected belong to a Texture Group that does not have all it's member faces selected.  To modify, please either add the remaining group faces to the selection, or remove the current face from this smoothing group.", "Add Group to Selection", "Cancel", "Remove From Group");
-								int i = 0;
-								switch (i)
-								{
-									case 0:
-										List<Face> newFaceSection = new List<Face>();
-										foreach (Face jf in pb.facesInternal)
-											if (jf.textureGroup == tg)
-												newFaceSection.Add(jf);
-										pb.SetSelectedFaces(newFaceSection.ToArray());
-										UpdateSelection();
-										break;
-
-									case 1:
-										break;
-
-									case 2:
-										f.textureGroup = 0;
-										break;
-								}
-
+								List<Face> newFaceSection = new List<Face>();
+								foreach (Face jf in mesh.facesInternal)
+									if (jf.textureGroup == tg)
+										newFaceSection.Add(jf);
+								mesh.SetSelectedFaces(newFaceSection.ToArray());
+								selectionModified = true;
 								break;
 							}
+						}
 					}
 
 					alreadyChecked.Add(f.textureGroup);
 				}
 			}
+
+			if(selectionModified)
+				UpdateSelection(true);
 		}
 
 		void OnObjectSelectionChanged()

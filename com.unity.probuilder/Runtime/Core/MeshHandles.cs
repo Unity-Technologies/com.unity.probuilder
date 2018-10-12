@@ -5,12 +5,11 @@ namespace UnityEngine.ProBuilder
 {
 	static class MeshHandles
 	{
+		static List<int> s_VertexList = new List<int>();
+
 		/// <summary>
 		/// Populate a renderable's mesh with a face highlight mesh matching the selected triangles array.
 		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="target"></param>
-		/// <returns></returns>
 		internal static void CreateFaceMesh(ProBuilderMesh mesh, Mesh target)
 		{
 			target.Clear();
@@ -75,12 +74,19 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Populate a rendereble's mesh with a spattering of vertices representing both selected and not selected.
+		/// Populate a renderable's mesh with a spattering of vertices representing both selected and not selected.
 		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="target"></param>
-		/// <param name="indexes"></param>
-		/// <returns></returns>
+		internal static void CreateVertexMesh(ProBuilderMesh mesh, Mesh target)
+		{
+			s_VertexList.Clear();
+
+			for (int i = 0, c = mesh.sharedVerticesInternal.Length; i < c; i++)
+				s_VertexList.Add(mesh.sharedVerticesInternal[i][0]);
+
+			CreateVertexMesh(mesh, target, s_VertexList);
+		}
+
+
 		internal static void CreateVertexMesh(ProBuilderMesh mesh, Mesh target, IList<int> indexes)
 		{
 			if (BuiltinMaterials.geometryShadersSupported)
@@ -93,7 +99,7 @@ namespace UnityEngine.ProBuilder
 		{
 			const ushort k_MaxPointCount = ushort.MaxValue / 4;
 
-			int billboardCount = mesh.sharedVerticesInternal.Length;
+			int billboardCount = indexes.Count;
 
 			if (billboardCount > k_MaxPointCount)
 				billboardCount = k_MaxPointCount;
@@ -156,14 +162,11 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Draw a set of vertices.
 		/// </summary>
-		/// <param name="pb"></param>
-		/// <param name="target"></param>
-		/// <param name="indexes"></param>
-		static void BuildVertexMeshInternal(ProBuilderMesh pb, Mesh target, IList<int> indexes)
+		static void BuildVertexMeshInternal(ProBuilderMesh mesh, Mesh target, IEnumerable<int> indexes)
 		{
 			target.Clear();
 			target.name = "pb_ElementGraphics::PointMesh";
-			target.vertices = pb.positionsInternal;
+			target.vertices = mesh.positionsInternal;
 			target.subMeshCount = 1;
 			target.SetIndices(indexes as int[] ?? indexes.ToArray(), MeshTopology.Points, 0);
 		}
