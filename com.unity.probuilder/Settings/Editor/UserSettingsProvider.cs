@@ -50,6 +50,16 @@ namespace UnityEditor.SettingsManagement
 		}
 #else
 		const int k_LabelWidth = 180;
+
+		int labelWidth
+		{
+			get { return k_LabelWidth; }
+		}
+
+		int defaultLayoutMaxWidth
+		{
+			get { return 0; }
+		}
 #endif
 
 		List<string> m_Categories;
@@ -122,8 +132,6 @@ namespace UnityEditor.SettingsManagement
 			m_Assemblies = assemblies;
 
 #if !SETTINGS_PROVIDER_ENABLED
-			m_SettingsInstance.beforeSettingsSaved += OnBeforeSettingsSaved;
-			m_SettingsInstance.afterSettingsSaved += OnAfterSettingsSaved;
 			SearchForUserSettingAttributes();
 #endif
 		}

@@ -3,6 +3,15 @@ using UnityEngine;
 
 namespace UnityEditor.SettingsManagement
 {
+#if !UNITY_2018_3_OR_NEWER
+    public enum SettingsScopes
+    {
+        Any = 0x0,
+        User = 0x1,
+        Project = 0x2
+    }
+#endif
+
     /// <summary>
     /// Register a static field of type IUserSetting with the UserSettingsProvider window.
     /// </summary>
