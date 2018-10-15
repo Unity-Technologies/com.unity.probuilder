@@ -19,9 +19,9 @@ namespace UnityEditor.ProBuilder
 		Dictionary<ProBuilderMesh, MeshHandle> m_WireHandles;
 		Dictionary<ProBuilderMesh, MeshHandle> m_VertexHandles;
 
-		Dictionary<ProBuilderMesh, MeshHandle> m_FaceHandles;
-		Dictionary<ProBuilderMesh, MeshHandle> m_VertHandles;
-		Dictionary<ProBuilderMesh, MeshHandle> m_EdgeHandles;
+		Dictionary<ProBuilderMesh, MeshHandle> m_SelectedFaceHandles;
+		Dictionary<ProBuilderMesh, MeshHandle> m_SelectedVertexHandles;
+		Dictionary<ProBuilderMesh, MeshHandle> m_SelectedEdgeHandles;
 
 		static readonly Color k_VertexUnselectedDefault = new Color(.7f, .7f, .7f, 1f);
 		static readonly Color k_WireframeDefault = new Color(94.0f / 255.0f, 119.0f / 255.0f, 155.0f / 255.0f, 1f);
@@ -144,9 +144,9 @@ namespace UnityEditor.ProBuilder
 			m_MeshPool = new ObjectPool<Mesh>( 0, 8, CreateMesh, DestroyMesh);
 			m_WireHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
 			m_VertexHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
-			m_FaceHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
-			m_EdgeHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
-			m_VertHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
+			m_SelectedFaceHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
+			m_SelectedEdgeHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
+			m_SelectedVertexHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
 
 			var lineShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.lineShader : BuiltinMaterials.wireShader;
 			var vertShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.pointShader : BuiltinMaterials.dotShader;
@@ -358,20 +358,20 @@ namespace UnityEditor.ProBuilder
 				{
 					// render wireframe with edge material in edge mode so that the size change is reflected
 					RenderWithColor(m_WireHandles, m_EdgeMaterial, s_EdgeUnselectedColor);
-					RenderWithColor(m_EdgeHandles, m_EdgeMaterial, s_EdgeSelectedColor);
+					RenderWithColor(m_SelectedEdgeHandles, m_EdgeMaterial, s_EdgeSelectedColor);
 					break;
 				}
 				case SelectMode.Face:
 				{
 					RenderWithColor(m_WireHandles, m_WireMaterial, s_WireframeColor);
-					RenderWithColor(m_FaceHandles, m_FaceMaterial, s_FaceSelectedColor);
+					RenderWithColor(m_SelectedFaceHandles, m_FaceMaterial, s_FaceSelectedColor);
 					break;
 				}
 				case SelectMode.Vertex:
 				{
 					RenderWithColor(m_WireHandles, m_WireMaterial, s_WireframeColor);
 					RenderWithColor(m_VertexHandles, m_VertMaterial, s_VertexUnselectedColor);
-					RenderWithColor(m_VertHandles, m_VertMaterial, s_VertexSelectedColor);
+					RenderWithColor(m_SelectedVertexHandles, m_VertMaterial, s_VertexSelectedColor);
 					break;
 				}
 				default:
@@ -397,17 +397,47 @@ namespace UnityEditor.ProBuilder
 		{
 			ClearHandlesInternal(m_WireHandles);
 			ClearHandlesInternal(m_VertexHandles);
-			ClearHandlesInternal(m_FaceHandles);
-			ClearHandlesInternal(m_EdgeHandles);
-			ClearHandlesInternal(m_VertHandles);
+			ClearHandlesInternal(m_SelectedFaceHandles);
+			ClearHandlesInternal(m_SelectedEdgeHandles);
+			ClearHandlesInternal(m_SelectedVertexHandles);
 		}
 
-		static List<int> s_VertexList = new List<int>();
-
-		// todo Keep caches of selection and just update positions as necessary instead of rebuilding every
-		// call.
-		public void RebuildSelectedHandles(IEnumerable<ProBuilderMesh> meshes, SelectMode selectionMode)
+		public void RebuildSelectedHandles(IEnumerable<ProBuilderMesh> meshes, SelectMode selectionMode, bool selectionOrVertexCountChanged = true)
 		{
+			if (!selectionOrVertexCountChanged)
+			{
+				foreach (var handle in m_WireHandles)
+					handle.Value.mesh.vertices = handle.Key.positionsInternal;
+
+				switch (selectionMode)
+				{
+					case SelectMode.Vertex:
+					{
+						foreach (var handle in m_VertexHandles)
+							handle.Value.mesh.vertices = handle.Key.positionsInternal;
+						foreach (var handle in m_SelectedVertexHandles)
+							handle.Value.mesh.vertices = handle.Key.positionsInternal;
+						break;
+					}
+
+					case SelectMode.Edge:
+					{
+						foreach (var handle in m_SelectedEdgeHandles)
+							handle.Value.mesh.vertices = handle.Key.positionsInternal;
+						break;
+					}
+
+					case SelectMode.Face:
+					{
+						foreach (var handle in m_SelectedFaceHandles)
+							handle.Value.mesh.vertices = handle.Key.positionsInternal;
+						break;
+					}
+				}
+
+				return;
+			}
+
 			ClearHandles();
 
 			foreach (var mesh in meshes)
@@ -419,15 +449,9 @@ namespace UnityEditor.ProBuilder
 				{
 					case SelectMode.Vertex:
 					{
-						RebuildMeshHandle(mesh, m_VertexHandles, (x,y) =>
-						{
-							s_VertexList.Clear();
-							for (int i = 0, c = mesh.sharedVerticesInternal.Length; i < c; i++)
-								s_VertexList.Add(mesh.sharedVerticesInternal[i][0]);
-							MeshHandles.CreateVertexMesh(x, y, s_VertexList);
-						});
+						RebuildMeshHandle(mesh, m_VertexHandles, MeshHandles.CreateVertexMesh);
 
-						RebuildMeshHandle(mesh, m_VertHandles, (x,y) =>
+						RebuildMeshHandle(mesh, m_SelectedVertexHandles, (x, y) =>
 						{
 							MeshHandles.CreateVertexMesh(x, y, x.selectedIndexesInternal);
 						});
@@ -436,7 +460,7 @@ namespace UnityEditor.ProBuilder
 
 					case SelectMode.Edge:
 					{
-						RebuildMeshHandle(mesh, m_EdgeHandles, (x, y) =>
+						RebuildMeshHandle(mesh, m_SelectedEdgeHandles, (x, y) =>
 						{
 							MeshHandles.CreateEdgeMesh(x, y, x.selectedEdgesInternal);
 						});
@@ -445,7 +469,7 @@ namespace UnityEditor.ProBuilder
 
 					case SelectMode.Face:
 					{
-						RebuildMeshHandle(mesh, m_FaceHandles, MeshHandles.CreateFaceMesh);
+						RebuildMeshHandle(mesh, m_SelectedFaceHandles, MeshHandles.CreateFaceMesh);
 						break;
 					}
 				}
