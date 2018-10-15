@@ -46,6 +46,16 @@ namespace UnityEngine.ProBuilder
         [FormerlySerializedAs("m_SharedVertexes")]
         SharedVertex[] m_SharedVertices;
 
+		[Flags]
+	    enum CacheValidState : byte
+	    {
+			SharedVertex = 1 << 0,
+			SharedTexture = 1 << 1
+	    }
+
+	    [NonSerialized]
+	    CacheValidState m_CacheValid;
+
 	    [NonSerialized]
 	    Dictionary<int, int> m_SharedVertexLookup;
 
@@ -145,16 +155,22 @@ namespace UnityEngine.ProBuilder
 
 		    int vc = vertexCount;
 
-		    var m_Textures1 = mesh != null ? mesh.uv2 : null;
 
 		    missing |= (channels & MeshArrays.Position) == MeshArrays.Position && m_Positions == null;
 		    missing |= (channels & MeshArrays.Normal) == MeshArrays.Normal && (m_Normals == null || m_Normals.Length != vc);
 		    missing |= (channels & MeshArrays.Texture0) == MeshArrays.Texture0 && (m_Textures0 == null || m_Textures0.Length != vc);
-		    missing |= (channels & MeshArrays.Texture1) == MeshArrays.Texture1 && (m_Textures1 == null || m_Textures1.Length < 3);
 		    missing |= (channels & MeshArrays.Texture2) == MeshArrays.Texture2 && (m_Textures2 == null || m_Textures2.Count != vc);
 		    missing |= (channels & MeshArrays.Texture3) == MeshArrays.Texture3 && (m_Textures3 == null || m_Textures3.Count != vc);
 		    missing |= (channels & MeshArrays.Color) == MeshArrays.Color && (m_Colors == null || m_Colors.Length != vc);
 		    missing |= (channels & MeshArrays.Tangent) == MeshArrays.Tangent && (m_Tangents == null || m_Tangents.Length != vc);
+
+		    // UV2 is a special case. It is not stored in ProBuilderMesh, does not necessarily match the vertex count,
+		    // at it has a cost to check.
+		    if ((channels & MeshArrays.Texture1) == MeshArrays.Texture1)
+		    {
+			    var m_Textures1 = mesh != null ? mesh.uv2 : null;
+			    missing |= (m_Textures1 == null || m_Textures1.Length < 3);
+		    }
 
 		    return !missing;
 	    }
@@ -187,6 +203,7 @@ namespace UnityEngine.ProBuilder
 		    if(m_SharedVertexLookup == null)
 			    m_SharedVertexLookup = new Dictionary<int, int>();
 		    m_SharedVertexLookup.Clear();
+		    m_CacheValid &= ~CacheValidState.SharedVertex;
 	    }
 
 	    internal void InvalidateSharedTextureLookup()
@@ -194,6 +211,7 @@ namespace UnityEngine.ProBuilder
 		    if(m_SharedTextureLookup == null)
 			    m_SharedTextureLookup = new Dictionary<int, int>();
 		    m_SharedTextureLookup.Clear();
+		    m_CacheValid &= ~CacheValidState.SharedTexture;
 	    }
 
 	    internal void InvalidateCaches()
@@ -244,10 +262,12 @@ namespace UnityEngine.ProBuilder
 	    {
 		    get
 		    {
-			    if (m_SharedVertexLookup == null)
-				    m_SharedVertexLookup = new Dictionary<int, int>();
-			    if (!m_SharedVertexLookup.Any())
+			    if ((m_CacheValid & CacheValidState.SharedVertex) != CacheValidState.SharedVertex)
+			    {
 				    SharedVertex.GetSharedVertexLookup(m_SharedVertices, m_SharedVertexLookup);
+				    m_CacheValid |= CacheValidState.SharedVertex;
+			    }
+
 			    return m_SharedVertexLookup;
 		    }
 	    }
@@ -281,15 +301,10 @@ namespace UnityEngine.ProBuilder
 	    {
 		    get
 		    {
-			    if (m_SharedTextureLookup == null)
-				    m_SharedTextureLookup = new Dictionary<int, int>();
-
-			    if (!m_SharedTextureLookup.Any())
+			    if((m_CacheValid & CacheValidState.SharedTexture) != CacheValidState.SharedTexture)
 			    {
-				    if (m_SharedTextures == null)
-					    m_SharedTextureLookup.Clear();
-				    else
-					    SharedVertex.GetSharedVertexLookup(m_SharedTextures, m_SharedTextureLookup);
+				    m_CacheValid |= CacheValidState.SharedTexture;
+				    SharedVertex.GetSharedVertexLookup(m_SharedTextures, m_SharedTextureLookup);
 			    }
 
 			    return m_SharedTextureLookup;

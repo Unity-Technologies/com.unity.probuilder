@@ -98,7 +98,7 @@ namespace UnityEngine.ProBuilder
 			}
 
 			// don't bother calling a full ToMesh() here because we know for certain that the vertices and msh.vertices arrays are equal in length
-			mesh.positions = verts;
+			mesh.positionsInternal = verts;
 			mesh.mesh.vertices = verts;
 		}
 
@@ -145,7 +145,7 @@ namespace UnityEngine.ProBuilder
 			foreach(var index in mesh.sharedVerticesInternal[sharedVertexHandle])
 				v[index] = position;
 
-			mesh.positions = v;
+			mesh.positionsInternal = v;
 			mesh.mesh.vertices = v;
 		}
 

@@ -4,7 +4,13 @@ namespace UnityEngine.ProBuilder
 	{
 		static Vector3[] s_SmoothAvg = new Vector3[Smoothing.smoothRangeMax];
 		static float[] s_SmoothAvgCount = new float[Smoothing.smoothRangeMax];
+		static int[] s_CachedIntArray = new int[ushort.MaxValue];
 
+		static void ClearIntArray(int count)
+		{
+			for (int i = 0; i < count; i++)
+				s_CachedIntArray[i] = 0;
+		}
 
 		public static void CalculateTangents(ProBuilderMesh mesh)
 		{
@@ -96,7 +102,8 @@ namespace UnityEngine.ProBuilder
 			var vertexCount = mesh.vertexCount;
 			var positions = mesh.positionsInternal;
 			var faces = mesh.facesInternal;
-			var perTriangleAvg = new int[vertexCount];
+			// s_CachedIntArray acts as the average count per-normal
+			ClearIntArray(vertexCount);
 
 			if(!mesh.HasArrays(MeshArrays.Normal))
 				mesh.normalsInternal = new Vector3[vertexCount];
@@ -133,17 +140,17 @@ namespace UnityEngine.ProBuilder
 					normals[b].z += cross.z;
 					normals[c].z += cross.z;
 
-					perTriangleAvg[a]++;
-					perTriangleAvg[b]++;
-					perTriangleAvg[c]++;
+					s_CachedIntArray[a]++;
+					s_CachedIntArray[b]++;
+					s_CachedIntArray[c]++;
 				}
 			}
 
 			for (var i = 0; i < vertexCount; i++)
 			{
-				normals[i].x = normals[i].x / perTriangleAvg[i];
-				normals[i].y = normals[i].y / perTriangleAvg[i];
-				normals[i].z = normals[i].z / perTriangleAvg[i];
+				normals[i].x = normals[i].x / s_CachedIntArray[i];
+				normals[i].y = normals[i].y / s_CachedIntArray[i];
+				normals[i].z = normals[i].z / s_CachedIntArray[i];
 			}
 		}
 
@@ -155,20 +162,23 @@ namespace UnityEngine.ProBuilder
 		{
 			CalculateHardNormals(mesh);
 
-			int vc = mesh.vertexCount;
 			var sharedVertices = mesh.sharedVerticesInternal;
 			var faces = mesh.facesInternal;
 			// CalculateHardNormals ensures that normals array is initialized
 			var normals = mesh.normalsInternal;
 			int smoothGroupMax = 24;
-			var smoothGroup = new int[vc];
+			// s_CachedIntArray acts as the smoothingGroup lookup for each vertex
+			ClearIntArray(mesh.vertexCount);
 
 			// Create a lookup of each triangles smoothing group.
-			foreach (var face in faces)
+			for(int i = 0, c = mesh.faceCount; i < c; i++)
 			{
-				foreach (int tri in face.distinctIndexesInternal)
+				var face = faces[i];
+				var indices = face.distinctIndexesInternal;
+
+				for(int n = 0, d = indices.Length; n < d; n++)
 				{
-					smoothGroup[tri] = face.smoothingGroup;
+					s_CachedIntArray[indices[n]] = face.smoothingGroup;
 
 					if (face.smoothingGroup >= smoothGroupMax)
 						smoothGroupMax = face.smoothingGroup + 1;
@@ -190,7 +200,7 @@ namespace UnityEngine.ProBuilder
 				for (var n = 0; n < sharedVertices[i].Count; n++)
 				{
 					int index = sharedVertices[i][n];
-					int group = smoothGroup[index];
+					int group = s_CachedIntArray[index];
 
 					// Ideally this should only continue on group == NONE, but historically negative values have also
 					// been treated as no smoothing.
@@ -207,7 +217,7 @@ namespace UnityEngine.ProBuilder
 				for (int n = 0; n < sharedVertices[i].Count; n++)
 				{
 					int index = sharedVertices[i][n];
-					int group = smoothGroup[index];
+					int group = s_CachedIntArray[index];
 
 					if (group <= Smoothing.smoothingGroupNone ||
 						(group > Smoothing.smoothRangeMax && group < Smoothing.hardRangeMax))

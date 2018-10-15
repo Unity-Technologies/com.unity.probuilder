@@ -511,7 +511,12 @@ namespace UnityEngine.ProBuilder
 				var common = lookup[v];
 
 				if (s_CachedHashSet.Add(common))
-					coincident.AddRange(m_SharedVertices[common]);
+				{
+					var indices = m_SharedVertices[common];
+
+					for (int i = 0, c = indices.Count; i < c; i++)
+						coincident.Add(indices[i]);
+				}
 			}
 		}
 
@@ -532,7 +537,10 @@ namespace UnityEngine.ProBuilder
 			if (!sharedVertexLookup.TryGetValue(vertex, out common))
 				throw new ArgumentOutOfRangeException("vertex");
 
-			coincident.AddRange(m_SharedVertices[common]);
+			var indices = m_SharedVertices[common];
+
+			for (int i = 0, c = indices.Count; i < c; i++)
+				coincident.Add(indices[i]);
 		}
 
 		/// <summary>
