@@ -3,8 +3,7 @@
     "references": [
         "Unity.ProBuilder",
         "Unity.ProBuilder.Editor",
-        "Unity.ProBuilder.AssetIdRemapUtility",
-        "Unity.Settings"
+        "Unity.ProBuilder.AssetIdRemapUtility"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [
