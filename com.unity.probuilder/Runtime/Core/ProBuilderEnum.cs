@@ -372,7 +372,7 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         Tangents = 0x8,
         /// <summary>
-        /// If userCollisions is not true, any primitive colliders will be resized to best fit the mesh bounds.
+        /// Re-assign the MeshCollider sharedMesh.
         /// </summary>
         Collisions = 0x10,
         /// <summary>
