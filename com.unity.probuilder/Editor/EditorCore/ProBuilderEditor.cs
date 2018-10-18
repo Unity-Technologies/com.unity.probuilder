@@ -98,20 +98,22 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		internal HandleOrientation handleOrientation
+		internal static HandleOrientation handleOrientation
 		{
-			get { return m_HandleOrientation.value; }
+			get { return s_HandleOrientation.value; }
 
 			set
 			{
-				if (value == m_HandleOrientation.value)
+				if (value == s_HandleOrientation.value)
 					return;
 
 				if (selectMode.ContainsFlag(SelectMode.TextureFace))
 					value = HandleOrientation.Normal;
 
-				m_HandleOrientation.SetValue(value, true);
-				m_HandleRotation = GetHandleRotation();
+				s_HandleOrientation.SetValue(value, true);
+
+				if(instance != null)
+					instance.m_HandleRotation = MeshSelection.GetHandleRotation(s_HandleOrientation);
 			}
 
 		}
@@ -255,10 +257,10 @@ namespace UnityEditor.ProBuilder
 					Tools.current = s_Instance.m_CurrentTool;
 
 				if (value == SelectMode.TextureFace)
-					s_Instance.m_PreviousHandleOrientation = s_Instance.m_HandleOrientation;
+					s_Instance.m_PreviousHandleOrientation = s_HandleOrientation;
 
 				if (previous == SelectMode.TextureFace)
-					s_Instance.handleOrientation = s_Instance.m_PreviousHandleOrientation;
+					handleOrientation = s_Instance.m_PreviousHandleOrientation;
 
 				if (selectModeChanged != null)
 					selectModeChanged(value);
@@ -616,7 +618,7 @@ namespace UnityEditor.ProBuilder
 			if ((m_IsMovingElements || m_IsMovingTextures) && GUIUtility.hotControl < 1)
 			{
 				OnFinishVertexModification();
-				m_HandleRotation = GetHandleRotation();
+				m_HandleRotation = MeshSelection.GetHandleRotation(s_HandleOrientation);
 				UpdateTextureHandles();
 			}
 
@@ -797,8 +799,17 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
+		static VertexManipulationTool s_MoveTool;
+
 		void VertexMoveTool()
 		{
+			if(s_MoveTool == null)
+				s_MoveTool = new MoveTool();
+
+			s_MoveTool.OnSceneGUI(Event.current);
+
+			return;
+
 			if (!m_IsMovingElements)
 				m_ElementHandlePosition = m_HandlePosition;
 
@@ -809,11 +820,8 @@ namespace UnityEditor.ProBuilder
 			if (m_CurrentEvent.alt)
 				return;
 
-			bool previouslyMoving = m_IsMovingElements;
-
 			if (m_ElementHandlePosition != m_ElementHandleCachedPosition)
 			{
-				// profiler.BeginSample("VertexMoveTool()");
 				Vector3 diff = m_ElementHandlePosition - m_ElementHandleCachedPosition;
 
 				Vector3 mask = diff.ToMask(Math.handleEpsilon);
@@ -861,16 +869,10 @@ namespace UnityEditor.ProBuilder
 						}
 					}
 				}
-				// else if(snapToEdge && nearestEdge.IsValid())
-				// {
-				// 	// FINDME
 
-				// }
-
-				m_IsMovingElements = true;
-
-				if (previouslyMoving == false)
+				if (!m_IsMovingElements)
 				{
+					m_IsMovingElements = true;
 					m_TranslateOrigin = m_ElementHandleCachedPosition;
 					m_RotateOrigin = m_HandleRotation.eulerAngles;
 					m_ScaleOrigin = m_HandleScale;
@@ -942,7 +944,7 @@ namespace UnityEditor.ProBuilder
 				Vector3 ver; // resulting vertex from modification
 				Vector3 over; // vertex point to modify. different for world, local, and plane
 
-				bool gotoWorld = Selection.transforms.Length > 1 && m_HandleOrientation == HandleOrientation.Normal;
+				bool gotoWorld = Selection.transforms.Length > 1 && s_HandleOrientation == HandleOrientation.Normal;
 				bool gotoLocal = MeshSelection.selectedFaceCount < 1;
 
 				// if(pref_snapEnabled)
@@ -960,7 +962,7 @@ namespace UnityEditor.ProBuilder
 
 					for (int n = 0; n < mesh.selectedIndexesInternal.Length; n++)
 					{
-						switch (m_HandleOrientation.value)
+						switch (s_HandleOrientation.value)
 						{
 							case HandleOrientation.Normal:
 							{
@@ -1068,7 +1070,7 @@ namespace UnityEditor.ProBuilder
 						for (int nn = 0; nn < triangles.Length; nn++)
 							m_VertexPositions[i][nn] = selection[i].transform.TransformPoint(vertices[triangles[nn]]);
 
-						if (m_HandleOrientation == HandleOrientation.World)
+						if (s_HandleOrientation == HandleOrientation.World)
 							m_VertexOffset[i] = m_ElementHandlePosition;
 						else
 							m_VertexOffset[i] = Math.GetBounds(m_VertexPositions[i]).center;
@@ -1508,7 +1510,7 @@ namespace UnityEditor.ProBuilder
 						return false;
 
 					ToggleHandleAlignment();
-					EditorUtility.ShowNotification("Handle Alignment: " + m_HandleOrientation.value.ToString());
+					EditorUtility.ShowNotification("Handle Alignment: " + s_HandleOrientation.value.ToString());
 					return true;
 
 				case "Set Pivot":
@@ -1562,7 +1564,7 @@ namespace UnityEditor.ProBuilder
 
 		internal void ToggleHandleAlignment()
 		{
-			int newHa = (int) m_HandleOrientation.value + 1;
+			int newHa = (int) s_HandleOrientation.value + 1;
 			if (newHa >= Enum.GetValues(typeof(HandleOrientation)).Length)
 				newHa = 0;
 			handleOrientation = ((HandleOrientation) newHa);
@@ -1585,8 +1587,8 @@ namespace UnityEditor.ProBuilder
 		{
 			selection = MeshSelection.topInternal;
 
-			m_HandlePosition = GetHandlePosition();
-			m_HandleRotation = GetHandleRotation();
+			m_HandlePosition = MeshSelection.GetHandlePosition();
+			m_HandleRotation = MeshSelection.GetHandleRotation(s_HandleOrientation);
 
 			UpdateTextureHandles();
 			UpdateMeshHandles(selectionChanged);
@@ -1601,19 +1603,22 @@ namespace UnityEditor.ProBuilder
 				selectionUpdated(selection);
 		}
 
-		void UpdateMeshHandles(bool selectionOrVertexCountChanged)
+		static void UpdateMeshHandles(bool selectionOrVertexCountChanged)
 		{
-			if (m_EditorMeshHandles == null)
+			if (!s_Instance)
+				return;
+
+			if (s_Instance.m_EditorMeshHandles == null)
 				return;
 
 			try
 			{
-				m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.topInternal, selectMode, selectionOrVertexCountChanged);
+				s_Instance.m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.topInternal, selectMode, selectionOrVertexCountChanged);
 			}
 			catch
 			{
 				// happens on undo when c++ object is gone but c# isn't in the know
-				m_EditorMeshHandles.ClearHandles();
+				s_Instance.m_EditorMeshHandles.ClearHandles();
 			}
 		}
 
@@ -1668,49 +1673,6 @@ namespace UnityEditor.ProBuilder
 
 				handleMatrix *= Matrix4x4.TRS(Math.GetBounds(pb.positionsInternal.ValuesWithIndexes(face.distinctIndexesInternal)).center,
 					Quaternion.LookRotation(nrm, bitan), Vector3.one);
-			}
-		}
-
-		internal Vector3 GetHandlePosition()
-		{
-			MeshSelection.RecalculateSelectionBounds();
-			return MeshSelection.bounds.center;
-		}
-
-		internal Quaternion GetHandleRotation()
-		{
-			Quaternion localRotation = Selection.activeTransform == null ? Quaternion.identity : Selection.activeTransform.rotation;
-
-			switch (m_HandleOrientation.value)
-			{
-				case HandleOrientation.Normal:
-
-					if (Selection.transforms.Length > 1)
-						goto default;
-
-					ProBuilderMesh pb;
-					Face face;
-
-					if (!GetFirstSelectedFace(out pb, out face))
-						goto case HandleOrientation.Local;
-
-					// use average normal, tangent, and bi-tangent to calculate rotation relative to local space
-					var tup = Math.NormalTangentBitangent(pb, face);
-					Vector3 nrm = tup.normal, bitan = tup.bitangent;
-
-					if (nrm == Vector3.zero || bitan == Vector3.zero)
-					{
-						nrm = Vector3.up;
-						bitan = Vector3.right;
-					}
-
-					return localRotation * Quaternion.LookRotation(nrm, bitan);
-
-				case HandleOrientation.Local:
-					return localRotation;
-
-				default:
-					return Quaternion.identity;
 			}
 		}
 
@@ -1849,7 +1811,7 @@ namespace UnityEditor.ProBuilder
 		/// When beginning a vertex modification, nuke the UV2 and rebuild the mesh using PB data so that triangles
 		/// match vertices (and no inserted vertices from the Unwrapping.GenerateSecondaryUVSet() remain).
 		/// </summary>
-		void OnBeginVertexMovement()
+		internal void OnBeginVertexMovement()
 		{
 			switch (m_CurrentTool)
 			{
@@ -1887,12 +1849,12 @@ namespace UnityEditor.ProBuilder
 				beforeMeshModification(selection);
 		}
 
-		void OnFinishVertexModification()
+		internal void OnFinishVertexModification()
 		{
 			Lightmapping.PopGIWorkflowMode();
 
 			m_HandleScale = Vector3.one;
-			m_HandleRotation = GetHandleRotation();
+			m_HandleRotation = MeshSelection.GetHandleRotation(s_HandleOrientation);
 
 			if (m_IsMovingTextures)
 			{

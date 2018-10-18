@@ -13,8 +13,8 @@ namespace UnityEditor.ProBuilder.Actions
 
 		HandleOrientation handleOrientation
 		{
-			get { return ProBuilderEditor.instance == null ? HandleOrientation.World : ProBuilderEditor.instance.handleOrientation; }
-			set { ProBuilderEditor.instance.handleOrientation = value; }
+			get { return ProBuilderEditor.instance == null ? HandleOrientation.World : ProBuilderEditor.handleOrientation; }
+			set { ProBuilderEditor.handleOrientation = value; }
 		}
 
 		public override ToolbarGroup group

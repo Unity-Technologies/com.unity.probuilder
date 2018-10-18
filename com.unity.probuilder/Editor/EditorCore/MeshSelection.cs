@@ -322,5 +322,77 @@ namespace UnityEditor.ProBuilder
 				ProBuilderEditor.instance.ClearElementSelection();
 			Selection.objects = new Object[0];
 		}
+
+		internal static Vector3 GetHandlePosition()
+		{
+			switch (Tools.pivotMode)
+			{
+				case PivotMode.Pivot:
+				{
+					ProBuilderMesh mesh;
+					Face face;
+
+					if (!GetFirstSelectedFace(out mesh, out face))
+						goto default;
+
+					return mesh.transform.TransformPoint(Math.Average(mesh.positionsInternal, face.distinctIndexesInternal));
+				}
+
+				default:
+					RecalculateSelectionBounds();
+					return bounds.center;
+			}
+		}
+
+		internal static Quaternion GetHandleRotation(HandleOrientation orientation)
+		{
+			Quaternion localRotation = Selection.activeTransform == null ? Quaternion.identity : Selection.activeTransform.rotation;
+
+			switch (orientation)
+			{
+				case HandleOrientation.Normal:
+
+					ProBuilderMesh mesh;
+					Face face;
+
+					if(!GetFirstSelectedFace(out mesh, out face))
+						goto default;
+
+					// use average normal, tangent, and bi-tangent to calculate rotation relative to local space
+					var tup = Math.NormalTangentBitangent(mesh, face);
+					Vector3 nrm = tup.normal, bitan = tup.bitangent;
+
+					if (nrm == Vector3.zero || bitan == Vector3.zero)
+					{
+						nrm = Vector3.up;
+						bitan = Vector3.right;
+					}
+
+					return localRotation * Quaternion.LookRotation(nrm, bitan);
+
+				case HandleOrientation.Local:
+					return localRotation;
+
+				default:
+					return Quaternion.identity;
+			}
+		}
+
+		static bool GetFirstSelectedFace(out ProBuilderMesh mesh, out Face face)
+		{
+			foreach (var m in topInternal)
+			{
+				if (m.selectedFaceCount > 0)
+				{
+					mesh = m;
+					face = mesh.selectedFacesInternal[0];
+					return true;
+				}
+			}
+
+			mesh = null;
+			face = null;
+			return false;
+		}
 	}
 }
