@@ -801,6 +801,8 @@ namespace UnityEditor.ProBuilder
 		}
 
 		static VertexManipulationTool s_MoveTool;
+		static VertexManipulationTool s_RotateTool;
+		static VertexManipulationTool m_ScaleTool;
 
 		void VertexMoveTool()
 		{
@@ -906,6 +908,10 @@ namespace UnityEditor.ProBuilder
 
 		void VertexScaleTool()
 		{
+			if (m_ScaleTool == null)
+				m_ScaleTool = new ScaleTool();
+			m_ScaleTool.OnSceneGUI(Event.current);
+
 			m_ElementHandlePosition = m_HandlePosition;
 
 			m_HandleScalePrevious = m_HandleScale;
@@ -1029,6 +1035,13 @@ namespace UnityEditor.ProBuilder
 
 		void VertexRotateTool()
 		{
+			if(s_RotateTool == null)
+				s_RotateTool = new RotateTool();
+
+			s_RotateTool.OnSceneGUI(Event.current);
+
+			return;
+
 			if (!m_IsMovingElements)
 				m_ElementHandlePosition = m_HandlePosition;
 
