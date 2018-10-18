@@ -70,8 +70,9 @@ namespace UnityEditor.ProBuilder
 		internal Pref<ExtrudeMethod> m_ExtrudeMethod = new Pref<ExtrudeMethod>("editor.extrudeMethod", ExtrudeMethod.FaceNormal);
 		internal Pref<SelectionModifierBehavior> m_SelectModifierBehavior = new Pref<SelectionModifierBehavior>("editor.rectSelectModifier", SelectionModifierBehavior.Difference);
 		internal Pref<bool> m_ExtrudeEdgesAsGroup = new Pref<bool>("editor.extrudeEdgesAsGroup", true);
-		internal Pref<HandleOrientation> m_HandleOrientation = new Pref<HandleOrientation>("editor.handleAlignment", HandleOrientation.World);
 		Pref<SelectMode> m_SelectMode = new Pref<SelectMode>("editor.selectMode", SelectMode.Object);
+
+		internal static Pref<HandleOrientation> s_HandleOrientation = new Pref<HandleOrientation>("editor.handleAlignment", HandleOrientation.World);
 
 		internal RectSelectMode rectSelectMode
 		{
@@ -265,7 +266,7 @@ namespace UnityEditor.ProBuilder
 				if (selectModeChanged != null)
 					selectModeChanged(value);
 
-				s_Instance.UpdateMeshHandles(true);
+				UpdateMeshHandles(true);
 				s_Instance.Repaint();
 			}
 		}
@@ -1603,7 +1604,7 @@ namespace UnityEditor.ProBuilder
 				selectionUpdated(selection);
 		}
 
-		static void UpdateMeshHandles(bool selectionOrVertexCountChanged)
+		internal static void UpdateMeshHandles(bool selectionOrVertexCountChanged = true)
 		{
 			if (!s_Instance)
 				return;

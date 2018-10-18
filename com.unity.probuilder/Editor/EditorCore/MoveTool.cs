@@ -10,6 +10,7 @@ struct MeshAndElementSelection
 	ProBuilderMesh m_Mesh;
 	Vector3[] m_Positions;
 	List<ElementGroup> m_Selection;
+	bool m_ApplyDeltaInWorldSpace;
 
 	public ProBuilderMesh mesh
 	{
@@ -26,11 +27,20 @@ struct MeshAndElementSelection
 		get { return m_Selection; }
 	}
 
-	public MeshAndElementSelection(ProBuilderMesh mesh, List<ElementGroup> groups)
+	public bool applyDeltaInWorldSpace
+	{
+		get { return m_ApplyDeltaInWorldSpace; }
+	}
+
+	public MeshAndElementSelection(ProBuilderMesh mesh, PivotPoint pivot)
 	{
 		m_Mesh = mesh;
 		m_Positions = mesh.positions.ToArray();
+		m_ApplyDeltaInWorldSpace = pivot == PivotPoint.WorldBoundingBoxCenter;
+		var groups = new List<ElementGroup>();
+		ElementGroup.GetElementGroups(mesh, pivot, groups);
 		m_Selection = groups;
+
 	}
 }
 
@@ -38,44 +48,43 @@ struct ElementGroup
 {
 	List<int> m_Indices;
 	Matrix4x4 m_Matrix;
-	bool m_ApplyDeltaInWorldSpace;
 
 	public List<int> indices
 	{
 		get { return m_Indices; }
 	}
 
+	/// <summary>
+	/// The coordinate space in which vertices are transformed.
+	/// </summary>
 	public Matrix4x4 matrix
 	{
 		get { return m_Matrix; }
 	}
 
-	public bool applyDeltaInWorldSpace
+	public Matrix4x4 inverseMatrix
 	{
-		get { return m_ApplyDeltaInWorldSpace; }
+		get { return m_Matrix.inverse; }
 	}
 
 	public static void GetElementGroups(ProBuilderMesh mesh, PivotPoint pivot, List<ElementGroup> groups)
 	{
 		Matrix4x4 matrix = Matrix4x4.identity;
-		bool applyDeltaInWorldSpace;
 
 		switch (pivot)
 		{
 			case PivotPoint.ModelBoundingBoxCenter:
-				matrix = Matrix4x4.identity;
-				applyDeltaInWorldSpace = false;
+				var bounds = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal);
+				matrix = Matrix4x4.TRS(-bounds.center, Quaternion.identity, Vector3.one);
 				break;
 
 			case PivotPoint.IndividualOrigins:
-				applyDeltaInWorldSpace = false;
 				break;
 
 //			case PivotPoint.WorldBoundingBoxCenter:
 //			case PivotPoint.Custom:
 			default:
 				matrix = mesh.transform.localToWorldMatrix;
-				applyDeltaInWorldSpace = true;
 				break;
 		}
 
@@ -83,7 +92,6 @@ struct ElementGroup
 		{
 			m_Indices = mesh.GetCoincidentVertices(mesh.selectedIndexesInternal),
 			m_Matrix = matrix,
-			m_ApplyDeltaInWorldSpace = applyDeltaInWorldSpace
 		});
 	}
 }
@@ -95,7 +103,6 @@ abstract class VertexManipulationTool
 
 	Vector3 m_HandlePositionOrigin;
 	Quaternion m_HandleRotationOrigin;
-	Matrix4x4 m_HandleMatrixInverse;
 
 	protected Vector3 handlePositionOrigin
 	{
@@ -111,6 +118,25 @@ abstract class VertexManipulationTool
 
     protected bool m_IsEditing;
 
+	public void OnSceneGUI(Event evt)
+	{
+		if (evt.type == EventType.MouseUp || evt.type == EventType.Ignore)
+			FinishEdit();
+
+		if (evt.alt)
+			return;
+
+		if (!m_IsEditing)
+		{
+			m_HandlePosition = MeshSelection.GetHandlePosition();
+			m_HandleRotation = MeshSelection.GetHandleRotation(ProBuilderEditor.handleOrientation);
+		}
+
+		DoTool(m_HandlePosition, m_HandleRotation);
+	}
+
+	protected abstract void DoTool(Vector3 handlePosition, Quaternion handleRotation);
+
     protected void BeginEdit()
     {
         if (m_IsEditing)
@@ -120,7 +146,6 @@ abstract class VertexManipulationTool
 
 	    m_HandlePositionOrigin = m_HandlePosition;
 	    m_HandleRotationOrigin = m_HandleRotation;
-	    m_HandleMatrixInverse = Matrix4x4.TRS(m_HandlePosition, m_HandleRotation, Vector3.one).inverse;
 
 	    ProBuilderEditor.instance.OnBeginVertexMovement();
 
@@ -128,45 +153,13 @@ abstract class VertexManipulationTool
 
 	    foreach (var mesh in MeshSelection.topInternal)
 	    {
-		    var groups = new List<ElementGroup>();
-		    var pivotMode = Tools.pivotMode.ProBuilderPivot();
-		    var orientation = ProBuilderEditor.handleOrientation;
-		    ElementGroup.GetElementGroups(mesh, pivotMode, groups);
-		    m_Selection.Add(new MeshAndElementSelection(mesh, groups));
+		    var pivot = Tools.pivotMode == PivotMode.Center
+			    ? PivotPoint.WorldBoundingBoxCenter
+			    : PivotPoint.ModelBoundingBoxCenter;
+
+			m_Selection.Add(new MeshAndElementSelection(mesh, pivot));
 	    }
     }
-
-	/// <summary>
-	///
-	/// </summary>
-	/// <param name="translation">The translation to apply in handle coordinates (usually this corresponds to world space).</param>
-	protected void ApplyTranslation(Vector3 translation)
-	{
-		var t = Quaternion.Inverse(m_HandleRotationOrigin) * translation;
-
-		foreach (var selectionGroup in m_Selection)
-		{
-			var mesh = selectionGroup.mesh;
-			var origins = selectionGroup.positions;
-			var positions = mesh.positionsInternal;
-
-			foreach (var group in selectionGroup.selection)
-			{
-				foreach (var index in group.indices)
-				{
-					positions[index] = origins[index] + t;
-				}
-			}
-
-			mesh.mesh.vertices = positions;
-
-//				mesh.RefreshUV(MeshSelection.selectedFacesInEditZone[mesh]);
-//				mesh.Refresh(RefreshMask.Normals);
-//				mesh.mesh.RecalculateBounds();
-		}
-
-		ProBuilderEditor.UpdateMeshHandles();
-	}
 
     protected void FinishEdit()
     {
@@ -178,22 +171,38 @@ abstract class VertexManipulationTool
         m_IsEditing = false;
     }
 
-	public void OnSceneGUI(Event evt)
+	/// <summary>
+	///
+	/// </summary>
+	/// <param name="translation">The translation to apply in handle coordinates (usually this corresponds to world space).</param>
+	protected void ApplyTranslation(Vector3 translation)
 	{
-		if (evt.alt)
-			return;
+		foreach (var selectionGroup in m_Selection)
+		{
+			var delta = selectionGroup.applyDeltaInWorldSpace
+				? translation
+				: Quaternion.Inverse(m_HandleRotationOrigin) * translation;
 
-		m_HandlePosition = MeshSelection.GetHandlePosition();
-		m_HandleRotation = MeshSelection.GetHandleRotation(ProBuilderEditor.handleOrientation);
+			var mesh = selectionGroup.mesh;
+			var origins = selectionGroup.positions;
+			var positions = mesh.positionsInternal;
 
-		DoTool(m_HandlePosition, m_HandleRotation);
+			foreach (var group in selectionGroup.selection)
+			{
+				foreach (var index in group.indices)
+				{
+					// todo Move matrix * origin to selection group c'tor
+					positions[index] = group.inverseMatrix.MultiplyPoint3x4(group.matrix.MultiplyPoint3x4(origins[index]) + delta);
+				}
+			}
 
-		if (evt.type == EventType.MouseUp || evt.type == EventType.Ignore)
-			FinishEdit();
+			mesh.mesh.vertices = positions;
+			mesh.RefreshUV(MeshSelection.selectedFacesInEditZone[mesh]);
+			mesh.Refresh(RefreshMask.Normals);
+		}
 
+		ProBuilderEditor.UpdateMeshHandles(false);
 	}
-
-	protected abstract void DoTool(Vector3 handlePosition, Quaternion handleRotation);
 }
 
 class MoveTool : VertexManipulationTool
@@ -224,7 +233,7 @@ class MoveTool : VertexManipulationTool
 	    GUILayout.Label(delta.ToString());
 	    Handles.EndGUI();
 
-//
+
 //	    if (!m_IsMovingElements)
 //			m_ElementHandlePosition = m_HandlePosition;
 //

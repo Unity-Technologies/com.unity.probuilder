@@ -70,6 +70,14 @@ namespace UnityEditor.ProBuilder
 		}
 
 		/// <value>
+		/// Returns the active selected mesh.
+		/// </value>
+		public static ProBuilderMesh activeMesh
+		{
+			get { return selectedObjectCount > 0 ? s_TopSelection[selectedObjectCount - 1] : null; }
+		}
+
+		/// <value>
 		/// Receive notifications when the object selection changes.
 		/// </value>
 		public static event System.Action objectSelectionChanged;
@@ -329,13 +337,11 @@ namespace UnityEditor.ProBuilder
 			{
 				case PivotMode.Pivot:
 				{
-					ProBuilderMesh mesh;
-					Face face;
-
-					if (!GetFirstSelectedFace(out mesh, out face))
-						goto default;
-
-					return mesh.transform.TransformPoint(Math.Average(mesh.positionsInternal, face.distinctIndexesInternal));
+					var mesh = activeMesh;
+					if (mesh == null)
+						return Vector3.zero;
+					var center = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal);
+					return mesh.transform.TransformPoint(center.center);
 				}
 
 				default:
