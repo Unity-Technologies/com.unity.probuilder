@@ -1499,7 +1499,7 @@ namespace UnityEditor.ProBuilder
 					return true;
 
 				case "Delete Face":
-					EditorUtility.ShowNotification(MenuCommands.MenuDeleteFace(selection).notification);
+					EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<DeleteFaces>().DoAction().notification);
 					return true;
 
 				/* handle alignment */
