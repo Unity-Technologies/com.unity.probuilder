@@ -913,6 +913,8 @@ namespace UnityEditor.ProBuilder
 				m_ScaleTool = new ScaleTool();
 			m_ScaleTool.OnSceneGUI(Event.current);
 
+			return;
+
 			m_ElementHandlePosition = m_HandlePosition;
 
 			m_HandleScalePrevious = m_HandleScale;

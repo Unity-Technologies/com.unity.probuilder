@@ -15,6 +15,7 @@ namespace UnityEditor.ProBuilder
 	public static class MeshSelection
 	{
 		static List<ProBuilderMesh> s_TopSelection = new List<ProBuilderMesh>();
+		static ProBuilderMesh s_ActiveMesh;
 
 		static bool s_ElementCountCacheIsDirty = true;
 
@@ -78,7 +79,7 @@ namespace UnityEditor.ProBuilder
 		/// </value>
 		public static ProBuilderMesh activeMesh
 		{
-			get { return selectedObjectCount > 0 ? s_TopSelection[selectedObjectCount - 1] : null; }
+			get { return s_ActiveMesh; }
 		}
 
 		/// <value>
@@ -91,6 +92,7 @@ namespace UnityEditor.ProBuilder
 			// GameObjects returns both parent and child when both are selected, where transforms only returns the top-most
 			// transform.
 			s_TopSelection.Clear();
+			s_ActiveMesh = null;
 
 			var gameObjects = Selection.gameObjects;
 
@@ -99,7 +101,11 @@ namespace UnityEditor.ProBuilder
 				var mesh = gameObjects[i].GetComponent<ProBuilderMesh>();
 
 				if (mesh != null)
+				{
+					if (gameObjects[i] == Selection.activeGameObject)
+						s_ActiveMesh = mesh;
 					s_TopSelection.Add(mesh);
+				}
 			}
 
 			selectedObjectCount = s_TopSelection.Count;
@@ -277,6 +283,7 @@ namespace UnityEditor.ProBuilder
 
 			temp[len] = t;
 
+			Selection.activeObject = t;
 			Selection.objects = temp;
 		}
 
@@ -294,6 +301,9 @@ namespace UnityEditor.ProBuilder
 			}
 
 			Selection.objects = temp;
+
+			if (Selection.activeGameObject == t)
+				Selection.activeObject = temp.FirstOrDefault();
 		}
 
 		internal static void SetSelection(IList<GameObject> newSelection)

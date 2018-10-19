@@ -13,6 +13,7 @@ namespace UnityEditor.ProBuilder
 	{
 		const HideFlags k_MeshHideFlags = (HideFlags) (1 | 2 | 4 | 8);
 
+		static bool s_Initialized;
 		bool m_IsDisposed;
 		ObjectPool<Mesh> m_MeshPool;
 
@@ -104,6 +105,8 @@ namespace UnityEditor.ProBuilder
 		Material m_VertMaterial;
 		Material m_WireMaterial;
 
+		static Material s_LineMaterial;
+
 		public static Color faceSelectedColor
 		{
 			get { return s_FaceSelectedColor; }
@@ -159,6 +162,15 @@ namespace UnityEditor.ProBuilder
 			ReloadPreferences();
 		}
 
+		static void Init()
+		{
+			if (s_Initialized)
+				return;
+			s_Initialized = true;
+			var shader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.lineShader : BuiltinMaterials.wireShader;
+			s_LineMaterial = CreateMaterial(Shader.Find(shader), "ProBuilder::GeneralUseLineMaterial");
+		}
+
 		public void Dispose()
 		{
 			if (m_IsDisposed)
@@ -211,6 +223,10 @@ namespace UnityEditor.ProBuilder
 
 			m_VertMaterial.SetFloat("_Scale", s_VertexPointSize * EditorGUIUtility.pixelsPerPoint);
 
+			m_WireMaterial.SetInt("_HandleZTest", (int) CompareFunction.LessEqual);
+			m_EdgeMaterial.SetInt("_HandleZTest", (int) CompareFunction.LessEqual);
+
+
 			if (BuiltinMaterials.geometryShadersSupported)
 			{
 				m_WireMaterial.SetFloat("_Scale", s_WireframeLineSize * EditorGUIUtility.pixelsPerPoint);
@@ -249,13 +265,24 @@ namespace UnityEditor.ProBuilder
 			CompareFunction.Always
 		};
 
-		internal bool BeginDrawingLines(CompareFunction zTest)
+		internal static bool BeginDrawingLines(Color color, CompareFunction zTest = CompareFunction.LessEqual, float thickness = -1f)
 		{
 			if (Event.current.type != EventType.Repaint)
 				return false;
 
+			Init();
+
+			if (thickness < Mathf.Epsilon)
+				thickness = s_EdgeLineSize;
+
+			s_LineMaterial.SetColor("_Color", color);
+			s_LineMaterial.SetInt("_HandleZTest", (int) zTest);
+
+			if(BuiltinMaterials.geometryShadersSupported)
+				s_LineMaterial.SetFloat("_Scale", thickness * EditorGUIUtility.pixelsPerPoint);
+
 			if (!BuiltinMaterials.geometryShadersSupported ||
-				!m_EdgeMaterial.SetPass(0))
+				!s_LineMaterial.SetPass(0))
 			{
 				if (s_ApplyWireMaterial == null)
 				{
@@ -283,10 +310,16 @@ namespace UnityEditor.ProBuilder
 			return true;
 		}
 
-		internal void EndDrawingLines()
+		internal static void EndDrawingLines()
 		{
 			GL.End();
 			GL.PopMatrix();
+		}
+
+		internal static void DrawLine(Vector3 a, Vector3 b)
+		{
+			GL.Vertex(a);
+			GL.Vertex(b);
 		}
 
 		internal void DrawSceneSelection(SceneSelection selection)
@@ -325,9 +358,7 @@ namespace UnityEditor.ProBuilder
 			}
 			else if (selection.edge != Edge.Empty)
 			{
-				m_EdgeMaterial.SetColor("_Color", preselectionColor);
-
-				if (BeginDrawingLines(Handles.zTest))
+				if (BeginDrawingLines(preselectionColor, Handles.zTest))
 				{
 					GL.MultMatrix(mesh.transform.localToWorldMatrix);
 					GL.Vertex(positions[selection.edge.a]);

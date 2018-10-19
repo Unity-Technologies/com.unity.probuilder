@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
-using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.Rendering;
 
 namespace UnityEditor.ProBuilder
 {
@@ -38,11 +37,13 @@ namespace UnityEditor.ProBuilder
 		{
 			m_Mesh = mesh;
 			m_Positions = mesh.positions.ToArray();
+			var l2w = m_Mesh.transform.localToWorldMatrix;
+			for (int i = 0, c = m_Positions.Length; i < c; i++)
+				m_Positions[i] = l2w.MultiplyPoint3x4(m_Positions[i]);
 			m_ApplyDeltaInWorldSpace = pivot == PivotPoint.WorldBoundingBoxCenter;
 			var groups = new List<ElementGroup>();
 			ElementGroup.GetElementGroups(mesh, pivot, groups);
 			m_Selection = groups;
-
 		}
 	}
 
@@ -57,7 +58,7 @@ namespace UnityEditor.ProBuilder
 		}
 
 		/// <summary>
-		/// The coordinate space in which vertices are transformed.
+		/// An additional transform to be applied to world space vertices prior to handle apply.
 		/// </summary>
 		public Matrix4x4 matrix
 		{
@@ -72,13 +73,13 @@ namespace UnityEditor.ProBuilder
 		public static void GetElementGroups(ProBuilderMesh mesh, PivotPoint pivot, List<ElementGroup> groups)
 		{
 			Matrix4x4 matrix = Matrix4x4.identity;
+			var trs = mesh.transform.localToWorldMatrix;
 
 			switch (pivot)
 			{
 				case PivotPoint.ModelBoundingBoxCenter:
-					// Vertices will be transformed in local space
 					var bounds = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal);
-					matrix = Matrix4x4.TRS(-bounds.center, Quaternion.identity, Vector3.one);
+					matrix = Matrix4x4.Translate(trs.MultiplyPoint3x4(-bounds.center));
 					break;
 
 				case PivotPoint.IndividualOrigins:
@@ -87,7 +88,7 @@ namespace UnityEditor.ProBuilder
 				//			case PivotPoint.WorldBoundingBoxCenter:
 				//			case PivotPoint.Custom:
 				default:
-					matrix = Matrix4x4.identity;
+					matrix = Matrix4x4.Translate(-MeshSelection.GetHandlePosition());
 					break;
 			}
 
@@ -134,6 +135,40 @@ namespace UnityEditor.ProBuilder
 			{
 				m_HandlePosition = MeshSelection.GetHandlePosition();
 				m_HandleRotation = MeshSelection.GetHandleRotation(ProBuilderEditor.handleOrientation);
+			}
+			else
+			{
+				if (evt.type == EventType.Repaint && Tools.pivotMode == PivotMode.Pivot)
+				{
+					foreach (var key in m_Selection)
+					{
+						var trs = key.mesh.transform;
+
+						foreach (var group in key.selection)
+						{
+							var p = group.inverseMatrix.MultiplyPoint3x4(Vector3.zero);
+							var size = HandleUtility.GetHandleSize(p) * .5f;
+
+							if (EditorMeshHandles.BeginDrawingLines(Color.green, CompareFunction.Always))
+							{
+								EditorMeshHandles.DrawLine(p, p + group.inverseMatrix.MultiplyVector(Vector3.up) * size);
+								EditorMeshHandles.EndDrawingLines();
+							}
+
+							if (EditorMeshHandles.BeginDrawingLines(Color.red, CompareFunction.Always))
+							{
+								EditorMeshHandles.DrawLine(p, p + group.inverseMatrix.MultiplyVector(Vector3.right) * size);
+								EditorMeshHandles.EndDrawingLines();
+							}
+
+							if (EditorMeshHandles.BeginDrawingLines(Color.blue, CompareFunction.Always))
+							{
+								EditorMeshHandles.DrawLine(p, p + group.inverseMatrix.MultiplyVector(Vector3.forward) * size);
+								EditorMeshHandles.EndDrawingLines();
+							}
+						}
+					}
+				}
 			}
 
 			DoTool(m_HandlePosition, m_HandleRotation);
@@ -184,26 +219,36 @@ namespace UnityEditor.ProBuilder
 			foreach (var selectionGroup in m_Selection)
 			{
 				var mesh = selectionGroup.mesh;
+				var worldToLocal = mesh.transform.worldToLocalMatrix;
+				var localToWorld = Matrix4x4.Rotate(mesh.transform.localRotation);
 				var origins = selectionGroup.positions;
 				var positions = mesh.positionsInternal;
+
+				var transformed = selectionGroup.applyDeltaInWorldSpace
+					? delta
+					: localToWorld * (delta * Matrix4x4.Rotate(m_HandleRotationOrigin).inverse);
 
 				foreach (var group in selectionGroup.selection)
 				{
 					foreach (var index in group.indices)
 					{
 						// todo Move matrix * origin to selection group c'tor
-						if (selectionGroup.applyDeltaInWorldSpace)
-						{
-							positions[index] = group.inverseMatrix.MultiplyPoint3x4(delta.MultiplyPoint3x4(group.matrix.MultiplyPoint3x4(origins[index])));
-						}
-						else
-						{
-							var p = group.matrix.MultiplyPoint3x4(origins[index]);
-							p = m_HandleRotationOrigin * p;
-							p = delta.MultiplyPoint3x4(p);
-							p = Quaternion.Inverse(m_HandleRotationOrigin) * p;
-							positions[index] = group.inverseMatrix.MultiplyPoint3x4(p);
-						}
+//						if (selectionGroup.applyDeltaInWorldSpace)
+//						{
+							// position = WorldToLocal * (InverseGroupMatrix * (delta * (GroupMatrix * WorldPosition)))
+							positions[index] = worldToLocal.MultiplyPoint3x4(
+								group.inverseMatrix.MultiplyPoint3x4(
+									transformed.MultiplyPoint3x4(
+										group.matrix.MultiplyPoint3x4(origins[index]))));
+//						}
+//						else
+//						{
+//							var p = group.matrix.MultiplyPoint3x4(origins[index]);
+//							p = m_HandleRotationOrigin * p;
+//							p = delta.MultiplyPoint3x4(p);
+//							p = Quaternion.Inverse(m_HandleRotationOrigin) * p;
+//							positions[index] = group.inverseMatrix.MultiplyPoint3x4(p);
+//						}
 					}
 				}
 
@@ -221,6 +266,40 @@ namespace UnityEditor.ProBuilder
 		Vector3 m_HandlePosition;
 		Vector3 delta = Vector3.zero;
 
+		void DoTranslate(Vector3 deltaInWorldSpace)
+		{
+			foreach (var key in m_Selection)
+			{
+				var mesh = key.mesh;
+				var meshRotation = mesh.transform.rotation;
+				var worldToLocal = mesh.transform.worldToLocalMatrix;
+				var origins = key.positions;
+				var positions = mesh.positionsInternal;
+
+				var delta = key.applyDeltaInWorldSpace
+					? deltaInWorldSpace
+					: meshRotation * (handleRotationOriginInverse * deltaInWorldSpace);
+
+				var mat = Matrix4x4.Translate(delta);
+
+				foreach (var group in key.selection)
+				{
+					foreach (var index in group.indices)
+					{
+						positions[index] = worldToLocal.MultiplyPoint3x4(
+							group.inverseMatrix.MultiplyPoint3x4(
+								mat.MultiplyPoint3x4(group.matrix.MultiplyPoint3x4(origins[index]))));
+					}
+				}
+
+				mesh.mesh.vertices = positions;
+				mesh.RefreshUV(MeshSelection.selectedFacesInEditZone[mesh]);
+				mesh.Refresh(RefreshMask.Normals);
+			}
+
+			ProBuilderEditor.UpdateMeshHandles(false);
+		}
+
 		protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
 		{
 			if (!m_IsEditing)
@@ -237,102 +316,9 @@ namespace UnityEditor.ProBuilder
 
 				delta = m_HandlePosition - handlePositionOrigin;
 
-				Apply(Matrix4x4.TRS(delta, Quaternion.identity, Vector3.one));
+				DoTranslate(delta);
 			}
-
-			//	    if (!m_IsMovingElements)
-			//			m_ElementHandlePosition = m_HandlePosition;
-			//
-			//		m_ElementHandleCachedPosition = m_ElementHandlePosition;
-			//
-			//		m_ElementHandlePosition = Handles.PositionHandle(m_ElementHandlePosition, m_HandleRotation);
-			//
-			//		if (m_CurrentEvent.alt)
-			//			return;
-			//
-			//		if (m_ElementHandlePosition != m_ElementHandleCachedPosition)
-			//		{
-			//			Vector3 diff = m_ElementHandlePosition - m_ElementHandleCachedPosition;
-			//
-			//			Vector3 mask = diff.ToMask(Math.handleEpsilon);
-			//
-			//			if (m_DoSnapToVertex)
-			//			{
-			//				Vector3 v;
-			//
-			//				if (FindNearestVertex(m_CurrentEvent.mousePosition, out v))
-			//					diff = Vector3.Scale(v - m_ElementHandleCachedPosition, mask);
-			//			}
-			//			else if (m_DoSnapToFace)
-			//			{
-			//				ProBuilderMesh obj = null;
-			//				RaycastHit hit;
-			//				Dictionary<ProBuilderMesh, HashSet<Face>> ignore = new Dictionary<ProBuilderMesh, HashSet<Face>>();
-			//				foreach (ProBuilderMesh pb in selection)
-			//					ignore.Add(pb, new HashSet<Face>(pb.selectedFacesInternal));
-			//
-			//				if (EditorHandleUtility.FaceRaycast(m_CurrentEvent.mousePosition, out obj, out hit, ignore))
-			//				{
-			//					if (mask.IntSum() == 1)
-			//					{
-			//						Ray r = new Ray(m_ElementHandleCachedPosition, -mask);
-			//						Plane plane = new Plane(obj.transform.TransformDirection(hit.normal).normalized,
-			//							obj.transform.TransformPoint(hit.point));
-			//
-			//						float forward, backward;
-			//						plane.Raycast(r, out forward);
-			//						plane.Raycast(r, out backward);
-			//						float planeHit = Mathf.Abs(forward) < Mathf.Abs(backward) ? forward : backward;
-			//						r.direction = -r.direction;
-			//						plane.Raycast(r, out forward);
-			//						plane.Raycast(r, out backward);
-			//						float rev = Mathf.Abs(forward) < Mathf.Abs(backward) ? forward : backward;
-			//						if (Mathf.Abs(rev) > Mathf.Abs(planeHit))
-			//							planeHit = rev;
-			//
-			//						if (Mathf.Abs(planeHit) > Mathf.Epsilon)
-			//							diff = mask * -planeHit;
-			//					}
-			//					else
-			//					{
-			//						diff = Vector3.Scale(obj.transform.TransformPoint(hit.point) - m_ElementHandleCachedPosition, mask.Abs());
-			//					}
-			//				}
-			//			}
-			//
-			//			if (!m_IsMovingElements)
-			//			{
-			//				m_IsMovingElements = true;
-			//				m_TranslateOrigin = m_ElementHandleCachedPosition;
-			//				m_RotateOrigin = m_HandleRotation.eulerAngles;
-			//				m_ScaleOrigin = m_HandleScale;
-			//
-			//				OnBeginVertexMovement();
-			//
-			//				if (Event.current.modifiers == EventModifiers.Shift)
-			//					ShiftExtrude();
-			//
-			//				ProGridsInterface.OnHandleMove(mask);
-			//			}
-			//
-			//			for (int i = 0; i < selection.Length; i++)
-			//			{
-			//				var mesh = selection[i];
-			//
-			//				mesh.TranslateVerticesInWorldSpace(mesh.selectedIndexesInternal,
-			//					diff,
-			//					m_SnapEnabled ? m_SnapValue : 0f,
-			//					m_SnapAxisConstraint);
-			//
-			//				mesh.RefreshUV(MeshSelection.selectedFacesInEditZone[mesh]);
-			//				mesh.Refresh(RefreshMask.Normals);
-			//				mesh.mesh.RecalculateBounds();
-			//			}
-			//
-			//			UpdateMeshHandles();
-			//		}
 		}
-
 	}
 
 	class RotateTool : VertexManipulationTool
