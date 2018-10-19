@@ -51,6 +51,7 @@ namespace UnityEditor.ProBuilder
 	{
 		List<int> m_Indices;
 		Matrix4x4 m_Matrix;
+		Matrix4x4 m_InverseMatrix;
 
 		public List<int> indices
 		{
@@ -67,19 +68,19 @@ namespace UnityEditor.ProBuilder
 
 		public Matrix4x4 inverseMatrix
 		{
-			get { return m_Matrix.inverse; }
+			get { return m_InverseMatrix; }
 		}
 
 		public static void GetElementGroups(ProBuilderMesh mesh, PivotPoint pivot, List<ElementGroup> groups)
 		{
-			Matrix4x4 matrix = Matrix4x4.identity;
+			Matrix4x4 inverse = Matrix4x4.identity;
 			var trs = mesh.transform.localToWorldMatrix;
 
 			switch (pivot)
 			{
 				case PivotPoint.ModelBoundingBoxCenter:
 					var bounds = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal);
-					matrix = Matrix4x4.Translate(trs.MultiplyPoint3x4(-bounds.center));
+					inverse = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), mesh.transform.rotation, Vector3.one);
 					break;
 
 				case PivotPoint.IndividualOrigins:
@@ -88,14 +89,15 @@ namespace UnityEditor.ProBuilder
 				//			case PivotPoint.WorldBoundingBoxCenter:
 				//			case PivotPoint.Custom:
 				default:
-					matrix = Matrix4x4.Translate(-MeshSelection.GetHandlePosition());
+					inverse = Matrix4x4.Translate(MeshSelection.GetHandlePosition());
 					break;
 			}
 
 			groups.Add(new ElementGroup()
 			{
 				m_Indices = mesh.GetCoincidentVertices(mesh.selectedIndexesInternal),
-				m_Matrix = matrix,
+				m_InverseMatrix = inverse,
+				m_Matrix = inverse.inverse,
 			});
 		}
 	}
@@ -142,28 +144,47 @@ namespace UnityEditor.ProBuilder
 				{
 					foreach (var key in m_Selection)
 					{
-						var trs = key.mesh.transform;
-
+#if DEBUG
 						foreach (var group in key.selection)
 						{
-							var p = group.inverseMatrix.MultiplyPoint3x4(Vector3.zero);
+							using (var faceDrawer = new EditorMeshHandles.FaceDrawingScope(Color.cyan, CompareFunction.Always))
+							{
+								foreach (var face in key.mesh.GetSelectedFaces())
+								{
+									var indices = face.indexesInternal;
+
+									for (int i = 0, c = indices.Length; i < c; i += 3)
+									{
+										faceDrawer.Draw(
+											group.matrix.MultiplyPoint3x4(key.positions[indices[i]]),
+											group.matrix.MultiplyPoint3x4(key.positions[indices[i + 1]]),
+											group.matrix.MultiplyPoint3x4(key.positions[indices[i + 2]])
+										);
+									}
+								}
+							}
+#endif
+
+							var m = group.matrix.inverse;
+							var p = m.MultiplyPoint3x4(Vector3.zero);
+
 							var size = HandleUtility.GetHandleSize(p) * .5f;
 
 							if (EditorMeshHandles.BeginDrawingLines(Color.green, CompareFunction.Always))
 							{
-								EditorMeshHandles.DrawLine(p, p + group.inverseMatrix.MultiplyVector(Vector3.up) * size);
+								EditorMeshHandles.DrawLine(p, p + m.MultiplyVector(Vector3.up) * size);
 								EditorMeshHandles.EndDrawingLines();
 							}
 
 							if (EditorMeshHandles.BeginDrawingLines(Color.red, CompareFunction.Always))
 							{
-								EditorMeshHandles.DrawLine(p, p + group.inverseMatrix.MultiplyVector(Vector3.right) * size);
+								EditorMeshHandles.DrawLine(p, p + m.MultiplyVector(Vector3.right) * size);
 								EditorMeshHandles.EndDrawingLines();
 							}
 
 							if (EditorMeshHandles.BeginDrawingLines(Color.blue, CompareFunction.Always))
 							{
-								EditorMeshHandles.DrawLine(p, p + group.inverseMatrix.MultiplyVector(Vector3.forward) * size);
+								EditorMeshHandles.DrawLine(p, p + m.MultiplyVector(Vector3.forward) * size);
 								EditorMeshHandles.EndDrawingLines();
 							}
 						}
@@ -278,7 +299,7 @@ namespace UnityEditor.ProBuilder
 
 				var delta = key.applyDeltaInWorldSpace
 					? deltaInWorldSpace
-					: meshRotation * (handleRotationOriginInverse * deltaInWorldSpace);
+					: (handleRotationOriginInverse * deltaInWorldSpace);
 
 				var mat = Matrix4x4.Translate(delta);
 

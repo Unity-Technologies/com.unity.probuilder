@@ -804,7 +804,7 @@ namespace UnityEditor.ProBuilder
 		static VertexManipulationTool s_MoveTool;
 		static VertexManipulationTool s_RotateTool;
 		static VertexManipulationTool m_ScaleTool;
-
+#pragma warning disable 612
 		void VertexMoveTool()
 		{
 			if(s_MoveTool == null)
@@ -1134,6 +1134,7 @@ namespace UnityEditor.ProBuilder
 				UpdateMeshHandles(false);
 			}
 		}
+#pragma warning restore 612
 
 		/// <summary>
 		/// Extrude the current selection with no translation.

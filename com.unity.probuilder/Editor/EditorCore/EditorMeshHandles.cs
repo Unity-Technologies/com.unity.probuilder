@@ -9,11 +9,10 @@ using UnityEditor.SettingsManagement;
 
 namespace UnityEditor.ProBuilder
 {
-	class EditorMeshHandles : IDisposable, IHasPreferences
+	partial class EditorMeshHandles : IDisposable, IHasPreferences
 	{
 		const HideFlags k_MeshHideFlags = (HideFlags) (1 | 2 | 4 | 8);
 
-		static bool s_Initialized;
 		bool m_IsDisposed;
 		ObjectPool<Mesh> m_MeshPool;
 
@@ -101,11 +100,8 @@ namespace UnityEditor.ProBuilder
 		static Color s_VertexUnselectedColor;
 
 		Material m_EdgeMaterial;
-		Material m_FaceMaterial;
 		Material m_VertMaterial;
 		Material m_WireMaterial;
-
-		static Material s_LineMaterial;
 
 		public static Color faceSelectedColor
 		{
@@ -144,6 +140,8 @@ namespace UnityEditor.ProBuilder
 
 		public EditorMeshHandles()
 		{
+			Init();
+
 			m_MeshPool = new ObjectPool<Mesh>( 0, 8, CreateMesh, DestroyMesh);
 			m_WireHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
 			m_VertexHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
@@ -157,18 +155,8 @@ namespace UnityEditor.ProBuilder
 			m_EdgeMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::LineMaterial");
 			m_WireMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::WireMaterial");
 			m_VertMaterial = CreateMaterial(Shader.Find(vertShader), "ProBuilder::VertexMaterial");
-			m_FaceMaterial = CreateMaterial(Shader.Find(BuiltinMaterials.faceShader), "ProBuilder::FaceMaterial");
 
 			ReloadPreferences();
-		}
-
-		static void Init()
-		{
-			if (s_Initialized)
-				return;
-			s_Initialized = true;
-			var shader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.lineShader : BuiltinMaterials.wireShader;
-			s_LineMaterial = CreateMaterial(Shader.Find(shader), "ProBuilder::GeneralUseLineMaterial");
 		}
 
 		public void Dispose()
@@ -185,7 +173,6 @@ namespace UnityEditor.ProBuilder
 			UObject.DestroyImmediate(m_EdgeMaterial);
 			UObject.DestroyImmediate(m_WireMaterial);
 			UObject.DestroyImmediate(m_VertMaterial);
-			UObject.DestroyImmediate(m_FaceMaterial);
 		}
 
 		public void ReloadPreferences()
@@ -219,13 +206,12 @@ namespace UnityEditor.ProBuilder
 			}
 
 			m_WireMaterial.SetColor("_Color", s_WireframeColor);
-			m_FaceMaterial.SetFloat("_Dither", (s_UseUnityColors || s_DitherFaceHandle) ? 1f : 0f);
+			s_FaceMaterial.SetFloat("_Dither", (s_UseUnityColors || s_DitherFaceHandle) ? 1f : 0f);
 
 			m_VertMaterial.SetFloat("_Scale", s_VertexPointSize * EditorGUIUtility.pixelsPerPoint);
 
 			m_WireMaterial.SetInt("_HandleZTest", (int) CompareFunction.LessEqual);
 			m_EdgeMaterial.SetInt("_HandleZTest", (int) CompareFunction.LessEqual);
-
 
 			if (BuiltinMaterials.geometryShadersSupported)
 			{
@@ -265,63 +251,6 @@ namespace UnityEditor.ProBuilder
 			CompareFunction.Always
 		};
 
-		internal static bool BeginDrawingLines(Color color, CompareFunction zTest = CompareFunction.LessEqual, float thickness = -1f)
-		{
-			if (Event.current.type != EventType.Repaint)
-				return false;
-
-			Init();
-
-			if (thickness < Mathf.Epsilon)
-				thickness = s_EdgeLineSize;
-
-			s_LineMaterial.SetColor("_Color", color);
-			s_LineMaterial.SetInt("_HandleZTest", (int) zTest);
-
-			if(BuiltinMaterials.geometryShadersSupported)
-				s_LineMaterial.SetFloat("_Scale", thickness * EditorGUIUtility.pixelsPerPoint);
-
-			if (!BuiltinMaterials.geometryShadersSupported ||
-				!s_LineMaterial.SetPass(0))
-			{
-				if (s_ApplyWireMaterial == null)
-				{
-					s_ApplyWireMaterial = typeof(HandleUtility).GetMethod(
-						"ApplyWireMaterial",
-						BindingFlags.Static | BindingFlags.NonPublic,
-						null,
-						new System.Type[] { typeof(CompareFunction) },
-						null);
-
-					if (s_ApplyWireMaterial == null)
-					{
-						Log.Info("Failed to find wire material, stopping draw lines.");
-						return false;
-					}
-				}
-
-				s_ApplyWireMaterialArgs[0] = zTest;
-				s_ApplyWireMaterial.Invoke(null, s_ApplyWireMaterialArgs);
-			}
-
-			GL.PushMatrix();
-			GL.Begin(GL.LINES);
-
-			return true;
-		}
-
-		internal static void EndDrawingLines()
-		{
-			GL.End();
-			GL.PopMatrix();
-		}
-
-		internal static void DrawLine(Vector3 a, Vector3 b)
-		{
-			GL.Vertex(a);
-			GL.Vertex(b);
-		}
-
 		internal void DrawSceneSelection(SceneSelection selection)
 		{
 			var mesh = selection.mesh;
@@ -334,9 +263,9 @@ namespace UnityEditor.ProBuilder
 			// Draw nearest edge
 			if (selection.face != null)
 			{
-				m_FaceMaterial.SetColor("_Color", preselectionColor);
+				s_FaceMaterial.SetColor("_Color", preselectionColor);
 
-				if (!m_FaceMaterial.SetPass(0))
+				if (!s_FaceMaterial.SetPass(0))
 					return;
 
 				GL.PushMatrix();
@@ -395,7 +324,7 @@ namespace UnityEditor.ProBuilder
 				case SelectMode.Face:
 				{
 					RenderWithColor(m_WireHandles, m_WireMaterial, s_WireframeColor);
-					RenderWithColor(m_SelectedFaceHandles, m_FaceMaterial, s_FaceSelectedColor);
+					RenderWithColor(m_SelectedFaceHandles, s_FaceMaterial, s_FaceSelectedColor);
 					break;
 				}
 				case SelectMode.Vertex:
