@@ -14,7 +14,7 @@ namespace UnityEditor.ProBuilder
 	[InitializeOnLoad]
 	public static class MeshSelection
 	{
-		static ProBuilderMesh[] s_TopSelection = new ProBuilderMesh[0];
+		static List<ProBuilderMesh> s_TopSelection = new List<ProBuilderMesh>();
 
 		static bool s_ElementCountCacheIsDirty = true;
 
@@ -32,7 +32,11 @@ namespace UnityEditor.ProBuilder
 		static int s_TotalVertexCountCompiled;
 		static int s_TotalTriangleCountCompiled;
 
-		internal static int selectedObjectCount { get; private set; }
+		/// <value>
+		/// How many ProBuilderMesh components are currently selected. Corresponds to the length of Top.
+		/// </value>
+		public static int selectedObjectCount { get; private set; }
+
 		internal static int selectedVertexCount { get; private set; }
 		internal static int selectedSharedVertexCount { get; private set; }
 		internal static int selectedFaceCount { get; private set; }
@@ -70,6 +74,14 @@ namespace UnityEditor.ProBuilder
 		}
 
 		/// <value>
+		/// Returns the active selected mesh.
+		/// </value>
+		public static ProBuilderMesh activeMesh
+		{
+			get { return selectedObjectCount > 0 ? s_TopSelection[selectedObjectCount - 1] : null; }
+		}
+
+		/// <value>
 		/// Receive notifications when the object selection changes.
 		/// </value>
 		public static event System.Action objectSelectionChanged;
@@ -78,9 +90,20 @@ namespace UnityEditor.ProBuilder
 		{
 			// GameObjects returns both parent and child when both are selected, where transforms only returns the top-most
 			// transform.
-			s_TopSelection = Selection.gameObjects.Select(x => x.GetComponent<ProBuilderMesh>()).Where(x => x != null).ToArray();
+			s_TopSelection.Clear();
 
-			selectedObjectCount = s_TopSelection.Length;
+			var gameObjects = Selection.gameObjects;
+
+			for (int i = 0, c = gameObjects.Length; i < c; i++)
+			{
+				var mesh = gameObjects[i].GetComponent<ProBuilderMesh>();
+
+				if (mesh != null)
+					s_TopSelection.Add(mesh);
+			}
+
+			selectedObjectCount = s_TopSelection.Count;
+
 			s_ElementCountCacheIsDirty = true;
 
 			if (objectSelectionChanged != null)
@@ -169,7 +192,7 @@ namespace UnityEditor.ProBuilder
 			get { return new ReadOnlyCollection<ProBuilderMesh>(s_TopSelection); }
 		}
 
-		internal static ProBuilderMesh[] topInternal
+		internal static List<ProBuilderMesh> topInternal
 		{
 			get { return s_TopSelection; }
 		}
@@ -186,14 +209,6 @@ namespace UnityEditor.ProBuilder
 		internal static bool Contains(ProBuilderMesh mesh)
 		{
 			return s_TopSelection.Contains(mesh);
-		}
-
-		/// <value>
-		/// How many ProBuilderMesh components are currently selected. Corresponds to the length of Top.
-		/// </value>
-		public static int count
-		{
-			get { return topInternal.Length; }
 		}
 
 		/// <value>
@@ -252,10 +267,16 @@ namespace UnityEditor.ProBuilder
 		{
 			if(t == null || Selection.objects.Contains(t))
 				return;
-			Object[] temp = new Object[Selection.objects.Length + 1];
-			temp[0] = t;
-			for(int i = 1; i < temp.Length; i++)
-				temp[i] = Selection.objects[i-1];
+
+			int len = Selection.objects.Length;
+
+			Object[] temp = new Object[len + 1];
+
+			for(int i = 0; i < len; i++)
+				temp[i] = Selection.objects[i];
+
+			temp[len] = t;
+
 			Selection.objects = temp;
 		}
 
@@ -284,8 +305,11 @@ namespace UnityEditor.ProBuilder
 			if(Tools.current == Tool.None)
 				Tools.current = Tool.Move;
 
-			if(newSelection != null && newSelection.Count > 0) {
-				Selection.activeTransform = newSelection[0].transform;
+			var newCount = newSelection != null ? newSelection.Count : 0;
+
+			if(newCount > 0)
+			{
+				Selection.activeTransform = newSelection[newCount - 1].transform;
 				Selection.objects = newSelection.ToArray();
 			}
 			else
