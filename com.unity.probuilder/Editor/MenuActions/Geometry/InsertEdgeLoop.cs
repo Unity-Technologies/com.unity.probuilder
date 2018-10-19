@@ -4,6 +4,7 @@ using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -43,7 +44,32 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuInsertEdgeLoop(MeshSelection.topInternal);
+			if(MeshSelection.selectedObjectCount < 1)
+				return ActionResult.NoSelection;
+
+			int success = 0;
+			UndoUtility.RecordSelection("Insert Edge Loop");
+
+			foreach(ProBuilderMesh pb in MeshSelection.topInternal)
+			{
+				Edge[] edges = pb.Connect(ElementSelection.GetEdgeRing(pb, pb.selectedEdges)).item2;
+
+				if(edges != null)
+				{
+					pb.SetSelectedEdges(edges);
+					pb.ToMesh();
+					pb.Refresh();
+					pb.Optimize();
+					success++;
+				}
+			}
+
+			ProBuilderEditor.Refresh();
+
+			if(success > 0)
+				return new ActionResult(ActionResult.Status.Success, "Insert Edge Loop");
+
+			return new ActionResult(ActionResult.Status.Success, "Insert Edge Loop");
 		}
 	}
 }

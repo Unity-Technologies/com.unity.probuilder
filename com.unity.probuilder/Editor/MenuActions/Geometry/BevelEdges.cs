@@ -59,13 +59,11 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			var selection = MeshSelection.topInternal;
-
 			ActionResult res = ActionResult.NoSelection;
 
-			UndoUtility.RecordSelection(selection, "Bevel Edges");
+			UndoUtility.RecordSelection("Bevel Edges");
 
-			foreach(ProBuilderMesh pb in selection)
+			foreach(ProBuilderMesh pb in MeshSelection.topInternal)
 			{
 				pb.ToMesh();
 

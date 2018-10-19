@@ -73,19 +73,16 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			var editor = ProBuilderEditor.instance;
-			var selection = MeshSelection.topInternal;
-
-			if(editor == null)
+			if (MeshSelection.selectedObjectCount < 1)
 				return ActionResult.NoSelection;
 
-			UndoUtility.RecordSelection(selection, "Fill Hole");
+			UndoUtility.RecordSelection("Fill Hole");
 
 			ActionResult res = new ActionResult(ActionResult.Status.NoChange, "No Holes Found");
 			int filled = 0;
 			bool wholePath = m_SelectEntirePath;
 
-			foreach(ProBuilderMesh mesh in selection)
+			foreach(ProBuilderMesh mesh in MeshSelection.topInternal)
 			{
 				bool selectAll = mesh.selectedIndexesInternal == null || mesh.selectedIndexesInternal.Length < 1;
 				IEnumerable<int> indexes = selectAll ? mesh.facesInternal.SelectMany(x => x.indexes) : mesh.selectedIndexesInternal;

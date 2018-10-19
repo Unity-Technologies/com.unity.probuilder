@@ -21,6 +21,7 @@ namespace UnityEditor.ProBuilder
 
 #region Object Level
 
+		[Obsolete]
 		public static ActionResult MenuMergeObjects(ProBuilderMesh[] selected)
 		{
 			if(selected.Length < 2)
@@ -55,11 +56,13 @@ namespace UnityEditor.ProBuilder
 		 * Set the pivot to the center of the current element selection.
 		 * ProBuilder only.
 		 */
+		[Obsolete]
 		public static ActionResult MenuCenterPivot(ProBuilderMesh[] selection)
 		{
 			return SetPivotInternal(selection, null);
 		}
 
+		[Obsolete]
 		public static ActionResult MenuSetPivot(ProBuilderMesh[] selection)
 		{
 			int[][] tri = new int[selection.Length][];
@@ -104,6 +107,7 @@ namespace UnityEditor.ProBuilder
 			return new ActionResult(ActionResult.Status.Success, "Set Pivot");
 		}
 
+		[Obsolete]
 		public static ActionResult MenuFreezeTransforms(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
@@ -274,6 +278,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 *	Reverse the direction of all faces on each object.
 		 */
+		[Obsolete]
 		public static ActionResult MenuFlipObjectNormals(ProBuilderMesh[] selected)
 		{
 			if(selected == null || selected.Length < 1)
@@ -296,6 +301,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Flips all face normals if editLevel == EditLevel.Top, else flips only pb_Object->SelectedFaces
 		 */
+		[Obsolete]
 		public static ActionResult MenuFlipNormals(ProBuilderMesh[] selected)
 		{
 			if(selected == null || selected.Length < 1)
@@ -334,51 +340,11 @@ namespace UnityEditor.ProBuilder
 
 			return new ActionResult(ActionResult.Status.Canceled, "Flip Normals\nNo Faces Selected");
 		}
-
-		/**
-		 * Attempt to make face normals uniform.
-		 */
-		public static ActionResult MenuConformObjectNormals(ProBuilderMesh[] selection)
-		{
-			return DoConformNormals(selection, false);
-		}
-
-		public static ActionResult MenuConformNormals(ProBuilderMesh[] selection)
-		{
-			return DoConformNormals(selection, true);
-		}
-
-		public static ActionResult DoConformNormals(ProBuilderMesh[] selection, bool perFace = true)
-		{
-			if(!editor || selection == null || selection.Length < 1)
-				return ActionResult.NoSelection;
-
-			UndoUtility.RecordSelection(selection, "Conform " + (MeshSelection.selectedFaceCount > 0 ? "Face" : "Object") + " Normals.");
-
-			ActionResult res = ActionResult.NoSelection;
-
-			foreach(ProBuilderMesh pb in selection)
-			{
-				Face[] faces = perFace ? pb.GetSelectedFaces() : pb.facesInternal;
-
-				if(faces == null)
-					continue;
-
-				res = UnityEngine.ProBuilder.MeshOperations.SurfaceTopology.ConformNormals(pb, faces);
-
-				pb.ToMesh();
-				pb.Refresh();
-				pb.Optimize();
-			}
-
-			ProBuilderEditor.Refresh();
-
-			return res;
-		}
 #endregion
 
 #region Extrude / Bridge
 
+		[Obsolete]
 		public static ActionResult MenuBridgeEdges(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
@@ -427,6 +393,7 @@ namespace UnityEditor.ProBuilder
 		 * Delete selected faces.
 		 * ProBuilder only.
 		 */
+		[Obsolete]
 		public static ActionResult MenuDeleteFace(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
@@ -472,6 +439,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 *	Treat selected faces as a single face.
 		 */
+		[Obsolete]
 		public static ActionResult MenuMergeFaces(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
@@ -509,6 +477,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Turn / flip / swap a quad connecting edge.
 		 */
+		[Obsolete]
 		public static ActionResult MenuFlipEdges(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
@@ -538,8 +507,7 @@ namespace UnityEditor.ProBuilder
 
 			if(success > 0)
 				return new ActionResult(ActionResult.Status.Success, "Flipped " + success + " Edges");
-			else
-				return new ActionResult(ActionResult.Status.Failure, string.Format("Flip Edges\n{0}", attempts > 0 ? "Faces Must Be Quads" : "No Faces Selected"));
+			return new ActionResult(ActionResult.Status.Failure, string.Format("Flip Edges\n{0}", attempts > 0 ? "Faces Must Be Quads" : "No Faces Selected"));
 		}
 #endregion
 
@@ -547,6 +515,7 @@ namespace UnityEditor.ProBuilder
 
 #if !PROTOTYPE
 
+		[Obsolete]
 		public static ActionResult MenuSplitVertices(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
@@ -628,6 +597,7 @@ namespace UnityEditor.ProBuilder
 		 * center of the edge.  Otherwise from Vertex.
 		 * ProBuilder only.
 		 */
+		[Obsolete]
 		public static ActionResult MenuSubdivide(ProBuilderMesh[] selection)
 		{
 			if(!editor || selection == null || selection.Length < 1)
@@ -659,6 +629,7 @@ namespace UnityEditor.ProBuilder
 		 * Subdivides all currently selected faces.
 		 * ProBuilder only.
 		 */
+		[Obsolete]
 		public static ActionResult MenuSubdivideFace(ProBuilderMesh[] selection)
 		{
 			if(!editor || selection == null || selection.Length < 1)
@@ -696,6 +667,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
+		[Obsolete]
 		public static ActionResult MenuConnectEdges(ProBuilderMesh[] selection)
 		{
 			ActionResult res = ActionResult.NoSelection;
@@ -725,6 +697,7 @@ namespace UnityEditor.ProBuilder
 		 * Connects all currently selected vertices.
 		 * ProBuilder only.
 		 */
+		[Obsolete]
 		public static ActionResult MenuConnectVertices(ProBuilderMesh[] selection)
 		{
 			ActionResult res = ActionResult.NoSelection;
@@ -757,6 +730,7 @@ namespace UnityEditor.ProBuilder
 		 * Inserts an edge loop along currently selected Edges.
 		 * ProBuilder only.
 		 */
+		[Obsolete]
 		public static ActionResult MenuInsertEdgeLoop(ProBuilderMesh[] selection)
 		{
 			if(!editor || selection == null || selection.Length < 1)

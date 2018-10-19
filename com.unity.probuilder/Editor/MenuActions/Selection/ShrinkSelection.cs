@@ -42,12 +42,13 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ActionResult DoAction()
 		{
 			var selection = MeshSelection.topInternal;
+			var selectionCount = MeshSelection.selectedObjectCount;
 
-			UndoUtility.RecordSelection(selection, "Shrink Selection");
+			UndoUtility.RecordSelection("Shrink Selection");
 
 			// find perimeter edges
 			int rc = 0;
-			for(int i = 0; i < selection.Length; i++)
+			for(int i = 0; i < selectionCount; i++)
 			{
 				ProBuilderMesh mesh = selection[i];
 

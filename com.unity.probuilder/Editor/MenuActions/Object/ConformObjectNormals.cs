@@ -38,7 +38,22 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuConformObjectNormals(MeshSelection.topInternal);
+			UndoUtility.RecordSelection("Conform Object Normals");
+
+			ActionResult res = ActionResult.NoSelection;
+
+			foreach(ProBuilderMesh pb in MeshSelection.topInternal)
+			{
+				res = UnityEngine.ProBuilder.MeshOperations.SurfaceTopology.ConformNormals(pb, pb.faces);
+
+				pb.ToMesh();
+				pb.Refresh();
+				pb.Optimize();
+			}
+
+			ProBuilderEditor.Refresh();
+
+			return res;
 		}
 	}
 }

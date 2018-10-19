@@ -47,8 +47,8 @@
 		/// Set the pivot point of a mesh in world space. The Transform component position property is set to worldPosition, while the mesh geometry does not move.
 		/// </summary>
 		/// <param name="mesh">The target mesh.</param>
-		/// <param name="worldPosition">The new transform position.</param>
-		public static void CenterPivot(this ProBuilderMesh mesh, Vector3 worldPosition)
+		/// <param name="worldPosition">The new pivot position in world space.</param>
+		public static void SetPivot(this ProBuilderMesh mesh, Vector3 worldPosition)
 		{
             if (mesh == null)
                 throw new System.ArgumentNullException("mesh");

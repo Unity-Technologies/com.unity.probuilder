@@ -62,22 +62,23 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			if (m_DetachSetting == DetachSetting.GameObject)
-				return DetachFacesToObject(MeshSelection.topInternal);
-
-			return DetachFacesToSubmesh(MeshSelection.topInternal);
-		}
-
-		static ActionResult DetachFacesToSubmesh(ProBuilderMesh[] selection)
-		{
-			if(selection == null || selection.Length < 1)
+			if(MeshSelection.selectedObjectCount < 1)
 				return ActionResult.NoSelection;
 
-			UndoUtility.RegisterCompleteObjectUndo(selection, "Detach Face(s)");
+			UndoUtility.RecordSelection("Detach Face(s)");
+
+			if (m_DetachSetting == DetachSetting.GameObject)
+				return DetachFacesToObject();
+
+			return DetachFacesToSubmesh();
+		}
+
+		static ActionResult DetachFacesToSubmesh()
+		{
 
 			int count = 0;
 
-			foreach(ProBuilderMesh pb in selection)
+			foreach(ProBuilderMesh pb in MeshSelection.topInternal)
 			{
 				pb.ToMesh();
 				List<Face> res = pb.DetachFaces(pb.selectedFacesInternal);
@@ -97,17 +98,12 @@ namespace UnityEditor.ProBuilder.Actions
 			return new ActionResult(ActionResult.Status.Success, "Detach Faces");
 		}
 
-		static ActionResult DetachFacesToObject(ProBuilderMesh[] selection)
+		static ActionResult DetachFacesToObject()
 		{
-			if(selection == null || selection.Length < 1)
-				return ActionResult.NoSelection;
-
-			UndoUtility.RegisterCompleteObjectUndo(selection, "Detach Selection to GameObject");
-
 			int detachedFaceCount = 0;
 			List<GameObject> detached = new List<GameObject>();
 
-			foreach(ProBuilderMesh mesh in selection)
+			foreach(ProBuilderMesh mesh in MeshSelection.topInternal)
 			{
 				if(mesh.selectedFaceCount < 1 || mesh.selectedFaceCount == mesh.facesInternal.Length)
 					continue;

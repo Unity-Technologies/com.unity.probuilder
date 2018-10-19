@@ -71,18 +71,16 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			var selection = MeshSelection.topInternal;
-
-			if(selection == null || selection.Length < 1)
+			if (MeshSelection.selectedObjectCount < 1)
 				return ActionResult.NoSelection;
 
 			ActionResult res = ActionResult.NoSelection;
 
-			UndoUtility.RegisterCompleteObjectUndo(selection, "Weld Vertices");
+			UndoUtility.RecordSelection("Weld Vertices");
 
 			int weldCount = 0;
 
-			foreach(ProBuilderMesh mesh in selection)
+			foreach(ProBuilderMesh mesh in MeshSelection.topInternal)
 			{
 				weldCount += mesh.sharedVerticesInternal.Length;
 

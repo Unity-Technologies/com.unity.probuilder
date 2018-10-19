@@ -54,23 +54,21 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			var selection = MeshSelection.topInternal;
-
-			if(selection == null || selection.Length < 1)
+			if(MeshSelection.selectedObjectCount < 1)
 				return ActionResult.NoSelection;
 
-			UndoUtility.RecordSelection(selection, "Select Edge Ring");
+			UndoUtility.RecordSelection("Select Edge Ring");
 
 			bool success = false;
 
-			foreach(ProBuilderMesh pb in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
+			foreach(var mesh in MeshSelection.topInternal)
 			{
-				Edge[] edges = ElementSelection.GetEdgeRing(pb, pb.selectedEdges).ToArray();
+				Edge[] edges = ElementSelection.GetEdgeRing(mesh, mesh.selectedEdges).ToArray();
 
-				if(edges.Length > pb.selectedEdgeCount)
+				if(edges.Length > mesh.selectedEdgeCount)
 					success = true;
 
-				pb.SetSelectedEdges( edges );
+				mesh.SetSelectedEdges( edges );
 			}
 
 			ProBuilderEditor.Refresh();

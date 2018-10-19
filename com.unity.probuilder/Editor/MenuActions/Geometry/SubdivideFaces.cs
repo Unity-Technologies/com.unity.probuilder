@@ -1,9 +1,6 @@
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
-using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -48,7 +45,39 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuSubdivideFace(MeshSelection.topInternal);
+			if (MeshSelection.selectedObjectCount < 1)
+				return ActionResult.NoSelection;
+
+			int success = 0;
+			UndoUtility.RecordSelection("Subdivide Faces");
+
+			foreach(ProBuilderMesh pb in MeshSelection.topInternal)
+			{
+				Face[] faces = pb.Subdivide(pb.selectedFacesInternal);
+
+				pb.ToMesh();
+
+				if(faces != null)
+				{
+					success += pb.selectedFacesInternal.Length;
+					pb.SetSelectedFaces(faces);
+
+					pb.Refresh();
+					pb.Optimize();
+				}
+			}
+
+			if(success > 0)
+			{
+				ProBuilderEditor.Refresh();
+
+				return new ActionResult(ActionResult.Status.Success, "Subdivide " + success + ((success > 1) ? " faces" : " face"));
+			}
+			else
+			{
+				Debug.LogWarning("Subdivide faces failed - did you not have any faces selected?");
+				return new ActionResult(ActionResult.Status.Failure, "Subdivide Faces\nNo faces selected");
+			}
 		}
 	}
 }

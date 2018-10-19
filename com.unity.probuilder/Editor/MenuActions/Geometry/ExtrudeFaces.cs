@@ -107,17 +107,14 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			var editor = ProBuilderEditor.instance;
-			var selection = MeshSelection.topInternal;
-
-			if (selection == null || selection.Length < 1)
+			if(MeshSelection.selectedObjectCount < 1)
 				return ActionResult.NoSelection;
 
-			UndoUtility.RegisterCompleteObjectUndo(selection, "Extrude");
+			UndoUtility.RecordSelection("Extrude");
 
 			int extrudedFaceCount = 0;
 
-			foreach (ProBuilderMesh mesh in selection)
+			foreach (ProBuilderMesh mesh in MeshSelection.topInternal)
 			{
 				mesh.ToMesh();
 				mesh.Refresh(RefreshMask.Normals);
@@ -138,10 +135,7 @@ namespace UnityEditor.ProBuilder.Actions
 				mesh.Optimize();
 			}
 
-			if (editor != null)
-				ProBuilderEditor.Refresh();
-
-			SceneView.RepaintAll();
+			ProBuilderEditor.Refresh();
 
 			if (extrudedFaceCount > 0)
 				return new ActionResult(ActionResult.Status.Success, "Extrude");

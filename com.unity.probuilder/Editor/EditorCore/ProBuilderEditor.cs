@@ -1583,7 +1583,8 @@ namespace UnityEditor.ProBuilder
 
 		void UpdateSelection(bool selectionChanged = true)
 		{
-			selection = MeshSelection.topInternal;
+			// todo remove selection property
+			selection = MeshSelection.topInternal.ToArray();
 
 			m_HandlePosition = GetHandlePosition();
 			m_HandleRotation = GetHandleRotation();

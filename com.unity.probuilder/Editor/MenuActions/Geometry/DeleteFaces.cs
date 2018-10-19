@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -39,7 +40,36 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuDeleteFace(MeshSelection.topInternal);
+			if(MeshSelection.selectedObjectCount < 1)
+				return ActionResult.NoSelection;
+
+			UndoUtility.RecordSelection("Delete Face");
+
+			int count = 0;
+
+			foreach(ProBuilderMesh pb in MeshSelection.topInternal)
+			{
+				if(pb.selectedFaceCount == pb.facesInternal.Length)
+				{
+					Debug.LogWarning("Attempting to delete all faces on this mesh...  I'm afraid I can't let you do that.");
+					continue;
+				}
+
+				pb.DeleteFaces(pb.selectedFacesInternal);
+				count += pb.selectedFaceCount;
+
+				pb.ToMesh();
+				pb.Refresh();
+				pb.Optimize();
+			}
+
+			MeshSelection.ClearElementSelection();
+			ProBuilderEditor.Refresh();
+
+			if(count > 0)
+				return new ActionResult(ActionResult.Status.Success, "Delete " + count + " Faces");
+
+			return new ActionResult(ActionResult.Status.Failure, "No Faces Selected");
 		}
 	}
 }

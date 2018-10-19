@@ -246,8 +246,7 @@ namespace UnityEditor.ProBuilder
 				rectSelectMode = scenePickerPreferences.rectSelectMode
 			};
 
-			var selection = MeshSelection.topInternal;
-			UndoUtility.RecordSelection(selection, "Drag Select");
+			UndoUtility.RecordSelection("Drag Select");
 			bool isAppendModifier = EditorHandleUtility.IsAppendModifier(Event.current.modifiers);
 
 			if (!isAppendModifier)
@@ -262,7 +261,7 @@ namespace UnityEditor.ProBuilder
 					Dictionary<ProBuilderMesh, HashSet<int>> selected = Picking.PickVerticesInRect(
 						SceneView.lastActiveSceneView.camera,
 						mouseDragRect,
-						selection,
+						MeshSelection.topInternal,
 						pickingOptions,
 						EditorGUIUtility.pixelsPerPoint);
 
@@ -301,7 +300,7 @@ namespace UnityEditor.ProBuilder
 					Dictionary<ProBuilderMesh, HashSet<Face>> selected = Picking.PickFacesInRect(
 						SceneView.lastActiveSceneView.camera,
 						mouseDragRect,
-						selection,
+						MeshSelection.topInternal,
 						pickingOptions,
 						EditorGUIUtility.pixelsPerPoint);
 
@@ -337,7 +336,7 @@ namespace UnityEditor.ProBuilder
 					var selected = Picking.PickEdgesInRect(
 						SceneView.lastActiveSceneView.camera,
 						mouseDragRect,
-						selection,
+						MeshSelection.topInternal,
 						pickingOptions,
 						EditorGUIUtility.pixelsPerPoint);
 
