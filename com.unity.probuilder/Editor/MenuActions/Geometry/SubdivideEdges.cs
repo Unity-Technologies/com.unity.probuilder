@@ -72,19 +72,16 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			var editor = ProBuilderEditor.instance;
-			var selection = MeshSelection.topInternal;
-
-			if (!editor || selection == null || selection.Length < 1)
+			if (MeshSelection.selectedObjectCount < 1)
 				return ActionResult.NoSelection;
 
 			int subdivisions = m_SubdivisionCount;
 
-			UndoUtility.RegisterCompleteObjectUndo(selection, "Subdivide Edges");
+			UndoUtility.RecordSelection("Subdivide Edges");
 
 			ActionResult result = ActionResult.NoSelection;
 
-			foreach (ProBuilderMesh pb in selection)
+			foreach (ProBuilderMesh pb in MeshSelection.topInternal)
 			{
 				List<Edge> newEdgeSelection = AppendElements.AppendVerticesToEdge(pb, pb.selectedEdges, subdivisions);
 

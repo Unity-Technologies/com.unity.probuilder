@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Linq;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -40,7 +41,37 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuBridgeEdges(MeshSelection.topInternal);
+			if(MeshSelection.selectedObjectCount < 1)
+				return ActionResult.NoSelection;
+
+			UndoUtility.RecordSelection("Bridge Edges");
+
+			bool success = false;
+
+			foreach(var mesh in MeshSelection.topInternal)
+			{
+				if(mesh.selectedEdgeCount == 2)
+				{
+					if(mesh.Bridge(mesh.selectedEdges[0], mesh.selectedEdges[1], ProBuilderEditor.s_AllowNonManifoldActions) != null)
+					{
+						success = true;
+						mesh.ToMesh();
+						mesh.Refresh();
+						mesh.Optimize();
+					}
+				}
+			}
+
+			if(success)
+			{
+				ProBuilderEditor.Refresh();
+				return new ActionResult(ActionResult.Status.Success, "Bridge Edges");
+			}
+			else
+			{
+				Debug.LogWarning("Failed Bridge Edges.  Bridge Edges requires that only 2 edges be selected, and they must both only have one connecting face (non-manifold).");
+				return new ActionResult(ActionResult.Status.Failure, "Bridge Edges requires that only 2 edges be selected, and they must both only have one connecting face (non-manifold).");
+			}
 		}
 	}
 }

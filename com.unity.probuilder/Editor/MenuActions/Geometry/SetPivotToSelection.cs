@@ -4,6 +4,7 @@ using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -38,7 +39,30 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuSetPivot(MeshSelection.topInternal);
+			if (MeshSelection.selectedObjectCount < 1)
+				return ActionResult.NoSelection;
+
+			Object[] objects = new Object[MeshSelection.selectedObjectCount * 2];
+
+			for (int i = 0, c = MeshSelection.selectedObjectCount; i < c; i++)
+			{
+				objects[i] = MeshSelection.topInternal[i];
+				objects[i + c] = MeshSelection.topInternal[i].transform;
+			}
+
+			UndoUtility.RegisterCompleteObjectUndo(objects, "Set Pivot");
+
+			foreach(var mesh in MeshSelection.topInternal)
+			{
+				TransformUtility.UnparentChildren(mesh.transform);
+				mesh.CenterPivot(mesh.selectedIndexesInternal);
+				mesh.Optimize();
+				TransformUtility.ReparentChildren(mesh.transform);
+			}
+
+			ProBuilderEditor.Refresh();
+
+			return new ActionResult(ActionResult.Status.Success, "Set Pivot");
 		}
 	}
 }

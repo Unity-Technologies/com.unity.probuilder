@@ -25,7 +25,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool enabled
 		{
-			get { return MeshSelection.count > 0; }
+			get { return MeshSelection.selectedObjectCount > 0; }
 		}
 
 		public override bool hidden

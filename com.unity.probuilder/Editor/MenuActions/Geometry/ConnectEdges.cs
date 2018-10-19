@@ -1,9 +1,6 @@
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
-using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -33,7 +30,28 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuConnectEdges(MeshSelection.topInternal);
+			ActionResult res = ActionResult.NoSelection;
+
+			UndoUtility.RecordSelection("Connect Edges");
+
+			foreach(var mesh in MeshSelection.topInternal)
+			{
+				Edge[] connections;
+				Face[] faces;
+
+				res = ConnectElements.Connect(mesh, mesh.selectedEdges, out faces, out connections, true, true);
+
+				if (connections != null)
+				{
+					mesh.SetSelectedEdges(connections);
+					mesh.Refresh();
+					mesh.Optimize();
+				}
+			}
+
+			ProBuilderEditor.Refresh();
+			return res;
+
 		}
 	}
 }

@@ -77,7 +77,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			UndoUtility.RecordSelection(MeshSelection.topInternal, "Select Faces with Vertex Colors");
+			UndoUtility.RecordSelection("Select Faces with Vertex Colors");
 
 			HashSet<Color32> colors = new HashSet<Color32>();
 
@@ -94,7 +94,13 @@ namespace UnityEditor.ProBuilder.Actions
 
 			List<GameObject> newSelection = new List<GameObject>();
 			bool selectionOnly = m_SearchSelectedObjectsOnly;
-			ProBuilderMesh[] pool = selectionOnly ? MeshSelection.topInternal : Object.FindObjectsOfType<ProBuilderMesh>();
+
+			IEnumerable<ProBuilderMesh> pool;
+
+			if (selectionOnly)
+				pool = MeshSelection.topInternal;
+			else
+				pool = Object.FindObjectsOfType<ProBuilderMesh>();
 
 			foreach (ProBuilderMesh pb in pool)
 			{

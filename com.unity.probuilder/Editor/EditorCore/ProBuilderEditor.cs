@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
+using UnityEditor.ProBuilder.Actions;
 using UnityEngine.ProBuilder;
 using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
 using UnityEngine.ProBuilder.MeshOperations;
@@ -1515,7 +1516,7 @@ namespace UnityEditor.ProBuilder
 					return true;
 
 				case "Delete Face":
-					EditorUtility.ShowNotification(MenuCommands.MenuDeleteFace(selection).notification);
+					EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<DeleteFaces>().DoAction().notification);
 					return true;
 
 				/* handle alignment */
@@ -1599,7 +1600,8 @@ namespace UnityEditor.ProBuilder
 
 		void UpdateSelection(bool selectionChanged = true)
 		{
-			selection = MeshSelection.topInternal;
+			// todo remove selection property
+			selection = MeshSelection.topInternal.ToArray();
 
 			m_HandlePosition = MeshSelection.GetHandlePosition();
 			m_HandleRotation = MeshSelection.GetHandleRotation(s_HandleOrientation);

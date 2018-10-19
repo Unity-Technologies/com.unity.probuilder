@@ -44,18 +44,15 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			var selection = MeshSelection.topInternal;
-			var editor = ProBuilderEditor.instance;
-
-			if(selection == null || selection.Length < 1)
+			if(MeshSelection.selectedObjectCount < 1)
 				return ActionResult.NoSelection;
 
-			UndoUtility.RecordSelection(selection, "Invert Selection");
+			UndoUtility.RecordSelection("Invert Selection");
 
 			switch(ProBuilderEditor.selectMode)
 			{
 				case SelectMode.Vertex:
-					foreach(var mesh in selection)
+					foreach(var mesh in MeshSelection.topInternal)
 					{
 						SharedVertex[] sharedIndexes = mesh.sharedVerticesInternal;
 						List<int> selectedSharedIndexes = new List<int>();
@@ -77,7 +74,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 				case SelectMode.Face:
 				case SelectMode.TextureFace:
-					foreach(var mesh in selection)
+					foreach(var mesh in MeshSelection.topInternal)
 					{
 						IEnumerable<Face> inverse = mesh.facesInternal.Where( x => !mesh.selectedFacesInternal.Contains(x) );
 						mesh.SetSelectedFaces(inverse.ToArray());
@@ -86,19 +83,17 @@ namespace UnityEditor.ProBuilder.Actions
 
 				case SelectMode.Edge:
 
-					if(!editor) break;
-
-					for(int i = 0; i < selection.Length; i++)
+					foreach(var mesh in MeshSelection.topInternal)
 					{
-						var universalEdges = selection[i].GetSharedVertexHandleEdges(selection[i].facesInternal.SelectMany(x => x.edges)).ToArray();
-						var universal_selected_edges = EdgeExtension.GetSharedVertexHandleEdges(selection[i], selection[i].selectedEdges).Distinct();
+						var universalEdges = mesh.GetSharedVertexHandleEdges(mesh.facesInternal.SelectMany(x => x.edges)).ToArray();
+						var universal_selected_edges = EdgeExtension.GetSharedVertexHandleEdges(mesh, mesh.selectedEdges).Distinct();
 						Edge[] inverse_universal = System.Array.FindAll(universalEdges, x => !universal_selected_edges.Contains(x));
 						Edge[] inverse = new Edge[inverse_universal.Length];
 
 						for(int n = 0; n < inverse_universal.Length; n++)
-							inverse[n] = new Edge( selection[i].sharedVerticesInternal[inverse_universal[n].a][0], selection[i].sharedVerticesInternal[inverse_universal[n].b][0] );
+							inverse[n] = new Edge( mesh.sharedVerticesInternal[inverse_universal[n].a][0], mesh.sharedVerticesInternal[inverse_universal[n].b][0] );
 
-						selection[i].SetSelectedEdges(inverse);
+						mesh.SetSelectedEdges(inverse);
 					}
 					break;
 			}

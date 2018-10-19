@@ -1,10 +1,5 @@
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
-using EditorGUILayout = UnityEditor.EditorGUILayout;
-using EditorStyles = UnityEditor.EditorStyles;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -28,7 +23,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			MenuCommands.MenuOpenVertexColorsEditor();
+			VertexColorPalette.MenuOpenWindow();
 			return new ActionResult(ActionResult.Status.Success, "Open Vertex Color Window");
 		}
 	}
