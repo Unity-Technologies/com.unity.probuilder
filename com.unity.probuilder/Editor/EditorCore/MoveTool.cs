@@ -150,11 +150,7 @@ namespace UnityEditor.ProBuilder
 			}
 			else
 			{
-#if DEBUG_HANDLES
 				if (evt.type == EventType.Repaint)
-#else
-				if (evt.type == EventType.Repaint && pivotPoint != PivotPoint.WorldBoundingBoxCenter)
-#endif
 				{
 					foreach (var key in m_Selection)
 					{
@@ -326,11 +322,14 @@ namespace UnityEditor.ProBuilder
 				m_Scale = Vector3.one;
 
 			EditorGUI.BeginChangeCheck();
-			m_Scale = Handles.ScaleHandle(m_Scale, handlePosition, handleRotation, UnityEditor.HandleUtility.GetHandleSize(handlePosition));
+
+			m_Scale = Handles.ScaleHandle(m_Scale, handlePosition, handleRotation, HandleUtility.GetHandleSize(handlePosition));
+
 			if (EditorGUI.EndChangeCheck())
 			{
 				if (!m_IsEditing)
 					BeginEdit();
+
 				Apply(Matrix4x4.Scale(m_Scale));
 			}
 		}
