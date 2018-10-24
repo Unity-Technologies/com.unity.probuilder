@@ -33,68 +33,180 @@ namespace UnityEditor.ProBuilder
 			s_FaceMaterial.SetFloat("_Dither", (s_UseUnityColors || s_DitherFaceHandle) ? 1f : 0f);
 		}
 
-		internal static bool BeginDrawingLines(Color color, CompareFunction zTest = CompareFunction.LessEqual, float thickness = -1f)
+		internal static void DrawGizmo(Vector3 position, Quaternion rotation, float size = -1f)
 		{
-			if (Event.current.type != EventType.Repaint)
-				return false;
+			var p = position;
+			size = HandleUtility.GetHandleSize(p) * size < 0f ? .5f : size;
 
-			Init();
-
-			if (thickness < Mathf.Epsilon)
-				thickness = s_EdgeLineSize;
-
-			s_LineMaterial.SetColor("_Color", color);
-			s_LineMaterial.SetInt("_HandleZTest", (int) zTest);
-
-			if(BuiltinMaterials.geometryShadersSupported)
-				s_LineMaterial.SetFloat("_Scale", thickness * EditorGUIUtility.pixelsPerPoint);
-
-			if (!BuiltinMaterials.geometryShadersSupported ||
-				!s_LineMaterial.SetPass(0))
+			using (var lineDrawer = new LineDrawingScope(Color.green, -1f, CompareFunction.Always))
 			{
-				if (s_ApplyWireMaterial == null)
+				lineDrawer.DrawLine(p, p + rotation * Vector3.up * size);
+				lineDrawer.color = Color.red;
+				lineDrawer.DrawLine(p, p + rotation * Vector3.right * size);
+				lineDrawer.color = Color.blue;
+				lineDrawer.DrawLine(p, p + rotation * Vector3.forward * size);
+			}
+		}
+
+		internal static void DrawGizmo(Vector3 position, Matrix4x4 matrix, float size = -1f)
+		{
+			var p = matrix.MultiplyPoint3x4(position);
+			size = HandleUtility.GetHandleSize(p) * size < 0f ? .5f : size;
+
+			using (var lineDrawer = new LineDrawingScope(Color.green, -1f, CompareFunction.Always))
+			{
+				lineDrawer.DrawLine(p, p + matrix.MultiplyVector(Vector3.up) * size);
+				lineDrawer.color = Color.red;
+				lineDrawer.DrawLine(p, p + matrix.MultiplyVector(Vector3.right) * size);
+				lineDrawer.color = Color.blue;
+				lineDrawer.DrawLine(p, p + matrix.MultiplyVector(Vector3.forward) * size);
+			}
+		}
+
+		internal class LineDrawingScope : IDisposable
+		{
+			Color m_Color;
+			float m_Thickness;
+			CompareFunction m_ZTest;
+			bool m_IsDisposed;
+
+			public Color color
+			{
+				get { return m_Color; }
+				set
 				{
-					s_ApplyWireMaterial = typeof(HandleUtility).GetMethod(
-						"ApplyWireMaterial",
-						BindingFlags.Static | BindingFlags.NonPublic,
-						null,
-						new System.Type[] { typeof(CompareFunction) },
-						null);
-
-					if (s_ApplyWireMaterial == null)
-					{
-						Log.Info("Failed to find wire material, stopping draw lines.");
-						return false;
-					}
+					End();
+					m_Color = value;
+					Begin();
 				}
-
-				s_ApplyWireMaterialArgs[0] = zTest;
-				s_ApplyWireMaterial.Invoke(null, s_ApplyWireMaterialArgs);
 			}
 
-			GL.PushMatrix();
-			GL.Begin(GL.LINES);
+			public float thickness
+			{
+				get { return m_Thickness; }
+				set
+				{
+					End();
+					if (value < Mathf.Epsilon)
+						m_Thickness = s_EdgeLineSize;
+					else
+						m_Thickness = value;
+					Begin();
+				}
+			}
 
-			return true;
+			public CompareFunction zTest
+			{
+				get { return m_ZTest; }
+
+				set
+				{
+					End();
+					m_ZTest = value;
+					Begin();
+				}
+			}
+
+			public LineDrawingScope(Color color, float thickness = -1f, CompareFunction zTest = CompareFunction.LessEqual)
+			{
+				Init();
+				m_Color = color;
+				m_Thickness = thickness;
+				Begin();
+			}
+
+			void Begin()
+			{
+				s_LineMaterial.SetColor("_Color", color);
+				s_LineMaterial.SetInt("_HandleZTest", (int) zTest);
+
+				if(BuiltinMaterials.geometryShadersSupported)
+					s_LineMaterial.SetFloat("_Scale", thickness * EditorGUIUtility.pixelsPerPoint);
+
+				if (!BuiltinMaterials.geometryShadersSupported ||
+					!s_LineMaterial.SetPass(0))
+				{
+					if (s_ApplyWireMaterial == null)
+					{
+						s_ApplyWireMaterial = typeof(HandleUtility).GetMethod(
+							"ApplyWireMaterial",
+							BindingFlags.Static | BindingFlags.NonPublic,
+							null,
+							new System.Type[] { typeof(CompareFunction) },
+							null);
+
+						if (s_ApplyWireMaterial == null)
+							throw new Exception("Failed to find wire material, stopping draw lines.");
+					}
+
+					s_ApplyWireMaterialArgs[0] = zTest;
+					s_ApplyWireMaterial.Invoke(null, s_ApplyWireMaterialArgs);
+				}
+
+				GL.PushMatrix();
+				GL.Begin(GL.LINES);
+			}
+
+			void End()
+			{
+				GL.End();
+				GL.PopMatrix();
+			}
+
+			public void DrawLine(Vector3 a, Vector3 b)
+			{
+				GL.Vertex(a);
+				GL.Vertex(b);
+			}
+
+			public void Dispose()
+			{
+				if (m_IsDisposed)
+					return;
+				m_IsDisposed = true;
+
+				End();
+			}
 		}
 
-		internal static void EndDrawingLines()
+		internal class TriangleDrawingScope : IDisposable
 		{
-			GL.End();
-			GL.PopMatrix();
-		}
+			Color m_Color;
+			CompareFunction m_ZTest;
+			bool m_IsDisposed;
 
-		internal static void DrawLine(Vector3 a, Vector3 b)
-		{
-			GL.Vertex(a);
-			GL.Vertex(b);
-		}
+			public Color color
+			{
+				get { return m_Color; }
+				set
+				{
+					End();
+					m_Color = value;
+					Begin();
+				}
+			}
 
-		internal class FaceDrawingScope : IDisposable
-		{
-			Vector3[] m_Positions;
+			public CompareFunction zTest
+			{
+				get { return m_ZTest; }
 
-			public FaceDrawingScope(Color color, CompareFunction zTest = CompareFunction.LessEqual)
+				set
+				{
+					End();
+					m_ZTest = value;
+					Begin();
+				}
+			}
+
+			public TriangleDrawingScope(Color color, CompareFunction zTest = CompareFunction.LessEqual)
+			{
+				Init();
+				m_Color = color;
+				m_ZTest = zTest;
+				Begin();
+			}
+
+			void Begin()
 			{
 				s_FaceMaterial.SetColor("_Color", color);
 				s_FaceMaterial.SetInt("_HandleZTest", (int) zTest);
@@ -106,10 +218,18 @@ namespace UnityEditor.ProBuilder
 				GL.Begin(GL.TRIANGLES);
 			}
 
-			public void Dispose()
+			void End()
 			{
 				GL.End();
 				GL.PopMatrix();
+			}
+
+			public void Dispose()
+			{
+				if (m_IsDisposed)
+					return;
+				m_IsDisposed = true;
+				End();
 			}
 
 			public void Draw(Vector3 a, Vector3 b, Vector3 c)

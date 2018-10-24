@@ -287,12 +287,11 @@ namespace UnityEditor.ProBuilder
 			}
 			else if (selection.edge != Edge.Empty)
 			{
-				if (BeginDrawingLines(preselectionColor, Handles.zTest))
+				using (new EditorMeshHandles.LineDrawingScope(preselectionColor, -1f, Handles.zTest))
 				{
 					GL.MultMatrix(mesh.transform.localToWorldMatrix);
 					GL.Vertex(positions[selection.edge.a]);
 					GL.Vertex(positions[selection.edge.b]);
-					EndDrawingLines();
 				}
 			}
 			else if (selection.vertex > -1)

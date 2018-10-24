@@ -113,6 +113,11 @@ namespace UnityEngine.ProBuilder
 			get { return GetSelectedFaces(); }
 		}
 
+		internal int[] selectedFaceIndicesInternal
+		{
+			get { return m_SelectedFaces; }
+		}
+
 		/// <value>
 		/// A collection of the currently selected faces by their index in the @"UnityEngine.ProBuilder.ProBuilderMesh.faces" array.
 		/// </value>

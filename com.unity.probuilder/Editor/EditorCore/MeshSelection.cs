@@ -387,7 +387,7 @@ namespace UnityEditor.ProBuilder
 					ProBuilderMesh mesh;
 					Face face;
 
-					if(!GetFirstSelectedFace(out mesh, out face))
+					if(!GetActiveFace(out mesh, out face))
 						goto default;
 
 					// use average normal, tangent, and bi-tangent to calculate rotation relative to local space
@@ -410,16 +410,13 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		static bool GetFirstSelectedFace(out ProBuilderMesh mesh, out Face face)
+		static bool GetActiveFace(out ProBuilderMesh mesh, out Face face)
 		{
-			foreach (var m in topInternal)
+			if (activeMesh != null && activeMesh.selectedFaceCount > 0)
 			{
-				if (m.selectedFaceCount > 0)
-				{
-					mesh = m;
-					face = mesh.selectedFacesInternal[0];
-					return true;
-				}
+				mesh = activeMesh;
+				face = mesh.faces[activeMesh.selectedFaceIndicesInternal[0]];
+				return true;
 			}
 
 			mesh = null;
