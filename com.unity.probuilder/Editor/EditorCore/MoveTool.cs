@@ -150,7 +150,7 @@ namespace UnityEditor.ProBuilder
 			}
 			else
 			{
-#if DEBUG
+#if DEBUG_HANDLES
 				if (evt.type == EventType.Repaint)
 #else
 				if (evt.type == EventType.Repaint && pivotPoint != PivotPoint.WorldBoundingBoxCenter)
@@ -158,9 +158,9 @@ namespace UnityEditor.ProBuilder
 				{
 					foreach (var key in m_Selection)
 					{
-#if DEBUG
 						foreach (var group in key.selection)
 						{
+#if DEBUG_HANDLES
 							using (var faceDrawer = new EditorMeshHandles.TriangleDrawingScope(Color.cyan, CompareFunction.Always))
 							{
 								foreach (var face in key.mesh.GetSelectedFaces())
@@ -183,12 +183,6 @@ namespace UnityEditor.ProBuilder
 					}
 				}
 			}
-
-			Handles.BeginGUI();
-			GUILayout.Label("pivot: " + pivotPoint);
-			GUILayout.Label("position: " + m_HandlePosition);
-			GUILayout.Label("rotation: " + m_HandleRotation.eulerAngles);
-			Handles.EndGUI();
 
 			DoTool(m_HandlePosition, m_HandleRotation);
 		}
@@ -319,11 +313,6 @@ namespace UnityEditor.ProBuilder
 
 				Apply(Matrix4x4.Rotate(m_Rotation));
 			}
-
-			Handles.BeginGUI();
-			GUILayout.Label("rotate handle: " + (m_Rotation * handleRotationOriginInverse).eulerAngles);
-			GUILayout.Label("rotate handle: " + ( (m_Rotation * handleRotationOriginInverse) * handleRotationOriginInverse).eulerAngles);
-			Handles.EndGUI();
 		}
 	}
 
