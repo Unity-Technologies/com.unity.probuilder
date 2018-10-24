@@ -68,9 +68,7 @@ namespace UnityEditor.ProBuilder
 
 		internal Pref<bool> m_BackfaceSelectEnabled = new Pref<bool>("editor.backFaceSelectEnabled", false);
 		internal Pref<RectSelectMode> m_DragSelectRectMode = new Pref<RectSelectMode>("editor.dragSelectRectMode", RectSelectMode.Partial);
-		internal Pref<ExtrudeMethod> m_ExtrudeMethod = new Pref<ExtrudeMethod>("editor.extrudeMethod", ExtrudeMethod.FaceNormal);
 		internal Pref<SelectionModifierBehavior> m_SelectModifierBehavior = new Pref<SelectionModifierBehavior>("editor.rectSelectModifier", SelectionModifierBehavior.Difference);
-		internal Pref<bool> m_ExtrudeEdgesAsGroup = new Pref<bool>("editor.extrudeEdgesAsGroup", true);
 		Pref<SelectMode> m_SelectMode = new Pref<SelectMode>("editor.selectMode", SelectMode.Object);
 
 		internal static Pref<HandleOrientation> s_HandleOrientation = new Pref<HandleOrientation>("editor.handleAlignment", HandleOrientation.World);
@@ -883,9 +881,6 @@ namespace UnityEditor.ProBuilder
 
 					OnBeginVertexMovement();
 
-					if (Event.current.modifiers == EventModifiers.Shift)
-						ShiftExtrude();
-
 					ProGridsInterface.OnHandleMove(mask);
 				}
 
@@ -936,9 +931,6 @@ namespace UnityEditor.ProBuilder
 					m_ScaleOrigin = m_HandleScale;
 
 					OnBeginVertexMovement();
-
-					if (Event.current.modifiers == EventModifiers.Shift)
-						ShiftExtrude();
 
 					// cache vertex positions for scaling later
 					m_VertexPositions = new Vector3[selection.Length][];
@@ -1071,9 +1063,6 @@ namespace UnityEditor.ProBuilder
 
 					OnBeginVertexMovement();
 
-					if (Event.current.modifiers == EventModifiers.Shift)
-						ShiftExtrude();
-
 					// cache vertex positions for modifying later
 					m_VertexPositions = new Vector3[selection.Length][];
 					m_VertexOffset = new Vector3[selection.Length];
@@ -1135,59 +1124,6 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 #pragma warning restore 612
-
-		/// <summary>
-		/// Extrude the current selection with no translation.
-		/// </summary>
-		void ShiftExtrude()
-		{
-			int ef = 0;
-			foreach (ProBuilderMesh pb in selection)
-			{
-				Undo.RegisterCompleteObjectUndo(selection, "Extrude Vertices");
-
-				switch (selectMode)
-				{
-					case SelectMode.Edge:
-						if (pb.selectedFaceCount > 0)
-							goto default;
-
-						Edge[] newEdges = pb.Extrude(pb.selectedEdges,
-							0.0001f,
-							m_ExtrudeEdgesAsGroup,
-							s_AllowNonManifoldActions);
-
-						if (newEdges != null)
-						{
-							ef += newEdges.Length;
-							pb.SetSelectedEdges(newEdges);
-						}
-						break;
-
-					default:
-						int len = pb.selectedFacesInternal.Length;
-
-						if (len > 0)
-						{
-							pb.Extrude(pb.selectedFacesInternal, m_ExtrudeMethod,
-								0.0001f);
-							pb.SetSelectedFaces(pb.selectedFacesInternal);
-							ef += len;
-						}
-
-						break;
-				}
-
-				pb.ToMesh();
-				pb.Refresh();
-			}
-
-			if (ef > 0)
-			{
-				EditorUtility.ShowNotification("Extrude");
-				UpdateSelection();
-			}
-		}
 
 		void TextureMoveTool()
 		{

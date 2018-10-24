@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
+
 #if DEBUG_HANDLES
 using UnityEngine.Rendering;
 #endif
@@ -65,7 +67,6 @@ namespace UnityEditor.ProBuilder
 
 		public static void GetElementGroups(ProBuilderMesh mesh, PivotPoint pivot, List<ElementGroup> groups)
 		{
-			Matrix4x4 postApplyPositionsMatrix;
 			var trs = mesh.transform.localToWorldMatrix;
 
 			switch (pivot)
@@ -73,43 +74,113 @@ namespace UnityEditor.ProBuilder
 				case PivotPoint.ModelBoundingBoxCenter:
 				{
 					var bounds = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal);
-					postApplyPositionsMatrix = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), mesh.transform.rotation, Vector3.one);
+					var post = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), mesh.transform.rotation, Vector3.one);
+
+					groups.Add(new ElementGroup()
+					{
+						m_Indices = mesh.GetCoincidentVertices(mesh.selectedIndexesInternal),
+						m_PostApplyPositionsMatrix = post,
+						m_PreApplyPositionsMatrix = post.inverse
+					});
+
 					break;
 				}
 
 				case PivotPoint.IndividualOrigins:
 				{
-					var bounds = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal);
-					var ntb = Math.NormalTangentBitangent(mesh, mesh.selectedFacesInternal[0]);
-					var rot = mesh.transform.rotation * Quaternion.LookRotation(ntb.normal, ntb.bitangent);
-					postApplyPositionsMatrix = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), rot, Vector3.one);
+					if (ProBuilderEditor.selectMode != SelectMode.Face)
+						goto case PivotPoint.ModelBoundingBoxCenter;
+
+					foreach (var list in GetFaceSelectionGroups(mesh))
+					{
+						var bounds = Math.GetBounds(mesh.positionsInternal, list);
+						var ntb = Math.NormalTangentBitangent(mesh, list[0]);
+						var rot = mesh.transform.rotation * Quaternion.LookRotation(ntb.normal, ntb.bitangent);
+						var post = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), rot, Vector3.one);
+
+						var indices = new List<int>();
+						mesh.GetCoincidentVertices(list, indices);
+
+						groups.Add(new ElementGroup()
+						{
+							m_Indices = indices,
+							m_PostApplyPositionsMatrix = post,
+							m_PreApplyPositionsMatrix = post.inverse
+						});
+					}
 					break;
 				}
 
 				default:
 				{
-					postApplyPositionsMatrix = Matrix4x4.Translate(MeshSelection.GetHandlePosition());
+					var post = Matrix4x4.Translate(MeshSelection.GetHandlePosition());
+
+					groups.Add(new ElementGroup()
+					{
+						m_Indices = mesh.GetCoincidentVertices(mesh.selectedIndexesInternal),
+						m_PostApplyPositionsMatrix = Matrix4x4.Translate(MeshSelection.GetHandlePosition()),
+						m_PreApplyPositionsMatrix = post.inverse
+					});
+
 					break;
 				}
 			}
+		}
 
-			groups.Add(new ElementGroup()
+		internal static List<List<Face>> GetFaceSelectionGroups(ProBuilderMesh mesh)
+		{
+			var wings = WingedEdge.GetWingedEdges(mesh, mesh.selectedFacesInternal, true);
+			var filter = new HashSet<Face>();
+			var groups = new List<List<Face>>();
+
+			foreach (var wing in wings)
 			{
-				m_Indices = mesh.GetCoincidentVertices(mesh.selectedIndexesInternal),
-				m_PostApplyPositionsMatrix = postApplyPositionsMatrix,
-				m_PreApplyPositionsMatrix = postApplyPositionsMatrix.inverse
-			});
+				if (!filter.Add(wing.face))
+					continue;
+
+				var group = new List<Face>() { wing.face };
+				CollectAdjacentFaces(wing, filter, group);
+				groups.Add(group);
+			}
+
+			return groups;
+		}
+
+		static void CollectAdjacentFaces(WingedEdge wing, HashSet<Face> filter, List<Face> group)
+		{
+			var enumerator = new WingedEdgeEnumerator(wing);
+
+			while (enumerator.MoveNext())
+			{
+				var cur = enumerator.Current.opposite;
+
+				if (cur  == null)
+					continue;
+
+				var face = cur.face;
+
+				if (!filter.Add(face))
+					continue;
+
+				group.Add(face);
+				CollectAdjacentFaces(enumerator.Current, filter, group);
+			}
 		}
 	}
 
 	abstract class VertexManipulationTool
 	{
+		internal static Pref<bool> s_ExtrudeEdgesAsGroup = new Pref<bool>("editor.extrudeEdgesAsGroup", true);
+		internal static Pref<ExtrudeMethod> s_ExtrudeMethod = new Pref<ExtrudeMethod>("editor.extrudeMethod", ExtrudeMethod.FaceNormal);
+
 		Vector3 m_HandlePosition;
 		Quaternion m_HandleRotation;
 
 		Vector3 m_HandlePositionOrigin;
 		Quaternion m_HandleRotationOrigin;
 		protected Quaternion handleRotationOriginInverse { get; private set; }
+
+		protected Event currentEvent { get; private set; }
 
 		protected PivotPoint pivotPoint { get; private set; }
 
@@ -129,11 +200,10 @@ namespace UnityEditor.ProBuilder
 
 		public void OnSceneGUI(Event evt)
 		{
+			currentEvent = evt;
+
 			if (evt.type == EventType.MouseUp || evt.type == EventType.Ignore)
 				FinishEdit();
-
-			if (evt.alt)
-				return;
 
 			if (Tools.pivotMode == PivotMode.Center)
 				pivotPoint = PivotPoint.WorldBoundingBoxCenter;
@@ -189,6 +259,9 @@ namespace UnityEditor.ProBuilder
 			if (m_IsEditing)
 				return;
 
+			if (currentEvent.shift)
+				Extrude();
+
 			m_IsEditing = true;
 
 			m_HandlePositionOrigin = m_HandlePosition;
@@ -200,9 +273,7 @@ namespace UnityEditor.ProBuilder
 			m_Selection.Clear();
 
 			foreach (var mesh in MeshSelection.topInternal)
-			{
 				m_Selection.Add(new MeshAndElementSelection(mesh, pivotPoint));
-			}
 		}
 
 		protected void FinishEdit()
@@ -240,6 +311,59 @@ namespace UnityEditor.ProBuilder
 			}
 
 			ProBuilderEditor.UpdateMeshHandles(false);
+		}
+
+		static void Extrude()
+		{
+			int ef = 0;
+
+			var selection = MeshSelection.topInternal;
+			var selectMode = ProBuilderEditor.selectMode;
+
+			UndoUtility.RecordSelection("Extrude Vertices");
+
+			foreach (var mesh in selection)
+			{
+				switch (selectMode)
+				{
+					case SelectMode.Edge:
+						if (mesh.selectedFaceCount > 0)
+							goto default;
+
+						Edge[] newEdges = mesh.Extrude(mesh.selectedEdges,
+							0.0001f,
+							s_ExtrudeEdgesAsGroup,
+							ProBuilderEditor.s_AllowNonManifoldActions);
+
+						if (newEdges != null)
+						{
+							ef += newEdges.Length;
+							mesh.SetSelectedEdges(newEdges);
+						}
+						break;
+
+					default:
+						int len = mesh.selectedFacesInternal.Length;
+
+						if (len > 0)
+						{
+							mesh.Extrude(mesh.selectedFacesInternal, s_ExtrudeMethod, 0.0001f);
+							mesh.SetSelectedFaces(mesh.selectedFacesInternal);
+							ef += len;
+						}
+
+						break;
+				}
+
+				mesh.ToMesh();
+				mesh.Refresh();
+			}
+
+			if (ef > 0)
+			{
+				EditorUtility.ShowNotification("Extrude");
+				ProBuilderEditor.Refresh();
+			}
 		}
 	}
 }

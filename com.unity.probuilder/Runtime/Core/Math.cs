@@ -980,6 +980,45 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
+		/// Creates an AABB with a set of vertices.
+		/// </summary>
+		/// <param name="positions"></param>
+		/// <returns></returns>
+		internal static Bounds GetBounds(Vector3[] positions, IEnumerable<Face> faces)
+		{
+			bool initialized = false;
+
+			Vector3 min = Vector3.zero;
+			Vector3 max = min;
+
+			foreach (var face in faces)
+			{
+				var indices = face.distinctIndexesInternal;
+
+				if (!initialized)
+				{
+					initialized = true;
+					min = positions[indices[0]];
+					max = positions[indices[0]];
+				}
+
+				for(int i = 0, c = indices.Length; i < c; i++)
+				{
+					min.x = Mathf.Min(positions[indices[i]].x, min.x);
+					max.x = Mathf.Max(positions[indices[i]].x, max.x);
+
+					min.y = Mathf.Min(positions[indices[i]].y, min.y);
+					max.y = Mathf.Max(positions[indices[i]].y, max.y);
+
+					min.z = Mathf.Min(positions[indices[i]].z, min.z);
+					max.z = Mathf.Max(positions[indices[i]].z, max.z);
+				}
+			}
+
+			return new Bounds((min+max) * .5f, max - min);
+		}
+
+		/// <summary>
 		/// Gets the average of a vector array.
 		/// </summary>
 		/// <param name="array">The array</param>

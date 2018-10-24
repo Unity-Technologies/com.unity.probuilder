@@ -52,6 +52,9 @@ namespace UnityEditor.ProBuilder
 		[UserSetting]
 		static Pref<float> s_VertexPointSize = new Pref<float>("graphics.vertexPointSize", 3f, SettingsScopes.User);
 
+		[UserSetting("Graphics", "Handle Z Test", "The compare function to use when drawing mesh handles.")]
+		static Pref<CompareFunction> s_HandleCompareFunction = new Pref<CompareFunction>("graphics.handleZTest", CompareFunction.Always, SettingsScopes.User);
+
 		[UserSettingBlock("Graphics")]
 		static void HandleColorPreferences(string searchContext)
 		{
@@ -263,31 +266,24 @@ namespace UnityEditor.ProBuilder
 			// Draw nearest edge
 			if (selection.face != null)
 			{
-				s_FaceMaterial.SetColor("_Color", preselectionColor);
-
-				if (!s_FaceMaterial.SetPass(0))
-					return;
-
-				GL.PushMatrix();
-				GL.Begin(GL.TRIANGLES);
-				GL.MultMatrix(mesh.transform.localToWorldMatrix);
-
-				var face = selection.face;
-				var ind = face.indexes;
-
-				for (int i = 0, c = ind.Count; i < c; i += 3)
+				using (new TriangleDrawingScope(preselectionColor, s_HandleCompareFunction))
 				{
-					GL.Vertex(positions[ind[i]]);
-					GL.Vertex(positions[ind[i+1]]);
-					GL.Vertex(positions[ind[i+2]]);
-				}
+					GL.MultMatrix(mesh.transform.localToWorldMatrix);
 
-				GL.End();
-				GL.PopMatrix();
+					var face = selection.face;
+					var ind = face.indexes;
+
+					for (int i = 0, c = ind.Count; i < c; i += 3)
+					{
+						GL.Vertex(positions[ind[i]]);
+						GL.Vertex(positions[ind[i+1]]);
+						GL.Vertex(positions[ind[i+2]]);
+					}
+				}
 			}
 			else if (selection.edge != Edge.Empty)
 			{
-				using (new EditorMeshHandles.LineDrawingScope(preselectionColor, -1f, Handles.zTest))
+				using (new LineDrawingScope(preselectionColor, -1f, s_HandleCompareFunction))
 				{
 					GL.MultMatrix(mesh.transform.localToWorldMatrix);
 					GL.Vertex(positions[selection.edge.a]);

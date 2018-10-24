@@ -51,7 +51,7 @@ namespace UnityEditor.ProBuilder
 		internal static void DrawGizmo(Vector3 position, Matrix4x4 matrix, float size = -1f)
 		{
 			var p = matrix.MultiplyPoint3x4(position);
-			size = HandleUtility.GetHandleSize(p) * size < 0f ? .5f : size;
+			size = HandleUtility.GetHandleSize(p) * size < 0f ? .25f : size;
 
 			using (var lineDrawer = new LineDrawingScope(Color.green, -1f, CompareFunction.Always))
 			{

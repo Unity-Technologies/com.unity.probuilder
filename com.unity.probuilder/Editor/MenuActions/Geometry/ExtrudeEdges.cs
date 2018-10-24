@@ -46,7 +46,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			EditorGUI.BeginChangeCheck();
 
-			ProBuilderEditor.instance.m_ExtrudeEdgesAsGroup.value = EditorGUILayout.Toggle("As Group", ProBuilderEditor.instance.m_ExtrudeEdgesAsGroup);
+			VertexManipulationTool.s_ExtrudeEdgesAsGroup.value = EditorGUILayout.Toggle("As Group", VertexManipulationTool.s_ExtrudeEdgesAsGroup);
 
 			m_ExtrudeEdgeDistance.value = EditorGUILayout.FloatField("Distance", m_ExtrudeEdgeDistance);
 
@@ -81,7 +81,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 				Edge[] newEdges = pb.Extrude(pb.selectedEdges,
 					m_ExtrudeEdgeDistance,
-					ProBuilderEditor.instance.m_ExtrudeEdgesAsGroup,
+					VertexManipulationTool.s_ExtrudeEdgesAsGroup,
 					ProBuilderEditor.s_AllowNonManifoldActions);
 
 				success |= newEdges != null;

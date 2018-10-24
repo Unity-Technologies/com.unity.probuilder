@@ -46,11 +46,6 @@ namespace UnityEditor.ProBuilder
 					Apply(Matrix4x4.Rotate(m_Rotation * Quaternion.Inverse(handleRotationOrigin)));
 				}
 			}
-
-
-			Handles.BeginGUI();
-			GUILayout.Label("Rotation: " + m_Rotation.eulerAngles);
-			Handles.EndGUI();
 		}
 	}
 }
