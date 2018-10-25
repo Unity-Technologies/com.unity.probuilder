@@ -18,12 +18,12 @@ namespace UnityEditor.ProBuilder
 		static Pref<bool> s_AutoUnwrapLightmapUV = new Pref<bool>("lightmapping.autoUnwrapLightmapUV", true);
 
 		[UserSetting("General", "Show Missing Lightmap UVs Warning", "Enable or disable a warning log if lightmaps are baked while ProBuilder shapes are missing a valid UV2 channel.")]
-		static Pref<bool> s_ShowMissingLightmapUVWarning = new Pref<bool>("lightmapping.showMissingLightmapWarning", true, SettingsScopes.User);
+		static Pref<bool> s_ShowMissingLightmapUVWarning = new Pref<bool>("lightmapping.showMissingLightmapWarning", true, SettingsScope.User);
 
 		[UserSetting]
 		internal static Pref<UnwrapParameters> s_UnwrapParameters = new Pref<UnwrapParameters>("lightmapping.defaultLightmapUnwrapParameters", new UnwrapParameters());
 
-		static Pref<UL.GIWorkflowMode> s_GiWorkflowMode = new Pref<UL.GIWorkflowMode>("lightmapping.giWorkflowMode", UL.GIWorkflowMode.Iterative, SettingsScopes.User);
+		static Pref<UL.GIWorkflowMode> s_GiWorkflowMode = new Pref<UL.GIWorkflowMode>("lightmapping.giWorkflowMode", UL.GIWorkflowMode.Iterative, SettingsScope.User);
 
 		static class Styles
 		{

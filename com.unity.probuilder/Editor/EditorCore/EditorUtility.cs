@@ -56,10 +56,10 @@ namespace UnityEditor.ProBuilder
 		static Pref<ColliderType> s_ColliderType = new Pref<ColliderType>("mesh.newShapeColliderType", ColliderType.MeshCollider);
 
 		[UserSetting]
-		static Pref<bool> s_ExperimentalFeatures = new Pref<bool>("experimental.featuresEnabled", false, SettingsScopes.User);
+		static Pref<bool> s_ExperimentalFeatures = new Pref<bool>("experimental.featuresEnabled", false, SettingsScope.User);
 
 		[UserSetting]
-		static Pref<bool> s_MeshesAreAssets = new Pref<bool>("experimental.meshesAreAssets", false, SettingsScopes.Project);
+		static Pref<bool> s_MeshesAreAssets = new Pref<bool>("experimental.meshesAreAssets", false, SettingsScope.Project);
 
 		internal static bool meshesAreAssets
 		{

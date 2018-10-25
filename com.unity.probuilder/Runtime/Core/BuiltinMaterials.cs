@@ -47,7 +47,11 @@ namespace UnityEngine.ProBuilder
 			// ProBuilder default
 			if (GraphicsSettings.renderPipelineAsset != null)
 			{
+#if UNITY_2019_1_OR_NEWER
+				s_DefaultMaterial = GraphicsSettings.renderPipelineAsset.defaultMaterial;
+#else
 				s_DefaultMaterial = GraphicsSettings.renderPipelineAsset.GetDefaultMaterial();
+#endif
 			}
 			else
 			{

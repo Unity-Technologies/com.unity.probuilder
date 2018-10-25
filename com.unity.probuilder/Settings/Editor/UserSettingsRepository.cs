@@ -55,12 +55,12 @@ namespace UnityEditor.SettingsManagement
 		}
 
 		/// <value>
-		/// What SettingsScopes this repository applies to.
+		/// What SettingsScope this repository applies to.
 		/// </value>
 		/// <inheritdoc cref="ISettingsRepository.scope"/>
-		public SettingsScopes scope
+		public SettingsScope scope
 		{
-			get { return SettingsScopes.User; }
+			get { return SettingsScope.User; }
 		}
 
 		/// <value>

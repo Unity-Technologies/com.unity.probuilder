@@ -145,10 +145,10 @@ namespace UnityEditor.SettingsManagement
 			if (!EditorPrefs.GetBool("DeveloperMode", false))
 				return true;
 
-			if (pref.scope == SettingsScopes.Project && UserSettingsProvider.showProjectSettings)
+			if (pref.scope == SettingsScope.Project && UserSettingsProvider.showProjectSettings)
 				return true;
 
-			if (pref.scope == SettingsScopes.User && UserSettingsProvider.showUserSettings)
+			if (pref.scope == SettingsScope.User && UserSettingsProvider.showUserSettings)
 				return true;
 
 			return false;
