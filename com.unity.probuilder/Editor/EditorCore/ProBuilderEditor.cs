@@ -27,16 +27,6 @@ namespace UnityEditor.ProBuilder
 		/// </value>
 		public static event Action<ProBuilderMesh[]> selectionUpdated;
 
-        /// <value>
-        /// Called when vertex modifications are complete.
-        /// </value>
-        public static event Action<ProBuilderMesh[]> afterMeshModification;
-
-        /// <value>
-        /// Called immediately prior to beginning vertex modifications. The ProBuilderMesh will be in un-altered state at this point (meaning ProBuilderMesh.ToMesh and ProBuilderMesh.Refresh have been called, but not Optimize).
-        /// </value>
-        public static event Action<ProBuilderMesh[]> beforeMeshModification;
-
 		/// <value>
 		/// Raised when the EditLevel is changed.
 		/// </value>
@@ -111,11 +101,7 @@ namespace UnityEditor.ProBuilder
 					value = HandleOrientation.Normal;
 
 				s_HandleOrientation.SetValue(value, true);
-
-				if(instance != null)
-					instance.m_HandleRotation = MeshSelection.GetHandleRotation(s_HandleOrientation);
 			}
-
 		}
 
 		internal bool backfaceSelectionEnabled
@@ -132,10 +118,6 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		float m_SnapValue = .25f;
-		bool m_SnapAxisConstraint = true;
-		bool m_SnapEnabled;
-		MethodInfo m_FindNearestVertex;
 		// used for 'g' key shortcut to swap between object/vef modes
 		SelectMode m_LastComponentMode;
 		HandleOrientation m_PreviousHandleOrientation;
@@ -160,39 +142,14 @@ namespace UnityEditor.ProBuilder
 		// prevents leftClickUp from stealing focus after double click
 		bool m_WasDoubleClick;
 		// vertex handles
-		Vector3 m_ElementHandlePosition;
-		Vector3 m_ElementHandleCachedPosition;
-		bool m_IsMovingElements;
 		bool m_IsRightMouseDown;
 
-		bool m_DoSnapToVertex;
-		bool m_DoSnapToFace;
-		Vector3 m_HandleScalePrevious = Vector3.one;
-		Vector3 m_HandleScale = Vector3.one;
 		Vector3[][] m_VertexPositions;
 		Vector3[] m_VertexOffset;
-		Quaternion m_HandleRotationPrevious = Quaternion.identity;
-		Quaternion m_HandleRotation = Quaternion.identity;
-		Quaternion m_RotationInitial;
-		Quaternion m_RotationInitialInverse;
 
 		GUIContent m_SceneInfo = new GUIContent();
 
-		// Use for delta display
-		Vector3 m_TranslateOrigin = Vector3.zero;
-		Vector3 m_RotateOrigin = Vector3.zero;
-		Vector3 m_ScaleOrigin = Vector3.zero;
-
-		Vector3 m_TextureHandlePosition = Vector3.zero;
-		Vector3 m_TextureHandlePositionPrevious = Vector3.zero;
-		bool m_IsMovingTextures;
-		Quaternion m_TextureRotation = Quaternion.identity;
-		Vector3 m_TextureScale = Vector3.one;
 		Rect m_SceneInfoRect = new Rect(10, 10, 200, 40);
-
-		Vector3 m_HandlePosition = Vector3.zero;
-
-		Matrix4x4 handleMatrix = Matrix4x4.identity;
 
 #if !UNITY_2018_2_OR_NEWER
 		static MethodInfo s_ResetOnSceneGUIState = null;
@@ -371,9 +328,6 @@ namespace UnityEditor.ProBuilder
 			UpdateSelection();
 			HideSelectedWireframe();
 
-			m_FindNearestVertex = typeof(HandleUtility).GetMethod("FindNearestVertex",
-				BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
-
 			if (selectModeChanged != null)
 				selectModeChanged(selectMode);
 		}
@@ -434,10 +388,6 @@ namespace UnityEditor.ProBuilder
 			// workaround for old single-key shortcuts
 			if(s_Shortcuts.value == null || s_Shortcuts.value.Length < 1)
 				s_Shortcuts.SetValue(Shortcut.DefaultShortcuts().ToArray(), true);
-
-			m_SnapEnabled = ProGridsInterface.SnapEnabled();
-			m_SnapValue = ProGridsInterface.SnapValue();
-			m_SnapAxisConstraint = ProGridsInterface.UseAxisConstraints();
 		}
 
 		void InitGUI()
@@ -571,20 +521,20 @@ namespace UnityEditor.ProBuilder
 
 			m_CurrentEvent = Event.current;
 
-			if(selectMode.ContainsFlag(SelectMode.Face | SelectMode.Edge | SelectMode.Vertex))
-			{
-				if (m_CurrentEvent.Equals(Event.KeyboardEvent("v")))
-					m_DoSnapToVertex = true;
-				else if (m_CurrentEvent.Equals(Event.KeyboardEvent("c")))
-					m_DoSnapToFace = true;
-			}
+//			if(selectMode.ContainsFlag(SelectMode.Face | SelectMode.Edge | SelectMode.Vertex))
+//			{
+//				if (m_CurrentEvent.Equals(Event.KeyboardEvent("v")))
+//					m_DoSnapToVertex = true;
+//				else if (m_CurrentEvent.Equals(Event.KeyboardEvent("c")))
+//					m_DoSnapToFace = true;
+//			}
 
 			// Snap stuff
-			if (m_CurrentEvent.type == EventType.KeyUp)
-			{
-				m_DoSnapToFace = false;
-				m_DoSnapToVertex = false;
-			}
+//			if (m_CurrentEvent.type == EventType.KeyUp)
+//			{
+//				m_DoSnapToFace = false;
+//				m_DoSnapToVertex = false;
+//			}
 
 			if (m_CurrentEvent.type == EventType.MouseDown && m_CurrentEvent.button == 1)
 				m_IsRightMouseDown = true;
@@ -613,14 +563,14 @@ namespace UnityEditor.ProBuilder
 
 			if (selectMode == SelectMode.Object)
 				return;
-
-			// Finished moving vertices, scaling, or adjusting uvs
-			if ((m_IsMovingElements || m_IsMovingTextures) && GUIUtility.hotControl < 1)
-			{
-				OnFinishVertexModification();
-				m_HandleRotation = MeshSelection.GetHandleRotation(s_HandleOrientation);
-				UpdateTextureHandles();
-			}
+//
+//			// Finished moving vertices, scaling, or adjusting uvs
+//			if ((m_IsMovingElements || m_IsMovingTextures) && GUIUtility.hotControl < 1)
+//			{
+//				OnFinishVertexModification();
+//				m_HandleRotation = MeshSelection.GetHandleRotation(s_HandleOrientation);
+//				UpdateTextureHandles();
+//			}
 
 			// Check mouse position in scene and determine if we should highlight something
 			if (s_ShowHoverHighlight
@@ -811,402 +761,197 @@ namespace UnityEditor.ProBuilder
 			s_MoveTool.OnSceneGUI(Event.current);
 
 			return;
-
-			if (!m_IsMovingElements)
-				m_ElementHandlePosition = m_HandlePosition;
-
-			m_ElementHandleCachedPosition = m_ElementHandlePosition;
-
-			m_ElementHandlePosition = Handles.PositionHandle(m_ElementHandlePosition, m_HandleRotation);
-
-			if (m_CurrentEvent.alt)
-				return;
-
-			if (m_ElementHandlePosition != m_ElementHandleCachedPosition)
-			{
-				Vector3 diff = m_ElementHandlePosition - m_ElementHandleCachedPosition;
-
-				Vector3 mask = diff.ToMask(Math.handleEpsilon);
-
-				if (m_DoSnapToVertex)
-				{
-					Vector3 v;
-
-					if (FindNearestVertex(m_CurrentEvent.mousePosition, out v))
-						diff = Vector3.Scale(v - m_ElementHandleCachedPosition, mask);
-				}
-				else if (m_DoSnapToFace)
-				{
-					ProBuilderMesh obj = null;
-					RaycastHit hit;
-					Dictionary<ProBuilderMesh, HashSet<Face>> ignore = new Dictionary<ProBuilderMesh, HashSet<Face>>();
-					foreach (ProBuilderMesh pb in selection)
-						ignore.Add(pb, new HashSet<Face>(pb.selectedFacesInternal));
-
-					if (EditorHandleUtility.FaceRaycast(m_CurrentEvent.mousePosition, out obj, out hit, ignore))
-					{
-						if (mask.IntSum() == 1)
-						{
-							Ray r = new Ray(m_ElementHandleCachedPosition, -mask);
-							Plane plane = new Plane(obj.transform.TransformDirection(hit.normal).normalized,
-								obj.transform.TransformPoint(hit.point));
-
-							float forward, backward;
-							plane.Raycast(r, out forward);
-							plane.Raycast(r, out backward);
-							float planeHit = Mathf.Abs(forward) < Mathf.Abs(backward) ? forward : backward;
-							r.direction = -r.direction;
-							plane.Raycast(r, out forward);
-							plane.Raycast(r, out backward);
-							float rev = Mathf.Abs(forward) < Mathf.Abs(backward) ? forward : backward;
-							if (Mathf.Abs(rev) > Mathf.Abs(planeHit))
-								planeHit = rev;
-
-							if (Mathf.Abs(planeHit) > Mathf.Epsilon)
-								diff = mask * -planeHit;
-						}
-						else
-						{
-							diff = Vector3.Scale(obj.transform.TransformPoint(hit.point) - m_ElementHandleCachedPosition, mask.Abs());
-						}
-					}
-				}
-
-				if (!m_IsMovingElements)
-				{
-					m_IsMovingElements = true;
-					m_TranslateOrigin = m_ElementHandleCachedPosition;
-					m_RotateOrigin = m_HandleRotation.eulerAngles;
-					m_ScaleOrigin = m_HandleScale;
-
-					OnBeginVertexMovement();
-
-					ProGridsInterface.OnHandleMove(mask);
-				}
-
-				for (int i = 0; i < selection.Length; i++)
-				{
-					var mesh = selection[i];
-
-					mesh.TranslateVerticesInWorldSpace(mesh.selectedIndexesInternal,
-						diff,
-						m_SnapEnabled ? m_SnapValue : 0f,
-						m_SnapAxisConstraint);
-
-					mesh.RefreshUV(MeshSelection.selectedFacesInEditZone[mesh]);
-					mesh.Refresh(RefreshMask.Normals);
-					mesh.mesh.RecalculateBounds();
-				}
-
-				UpdateMeshHandles(false);
-			}
+//
+//			if (!m_IsMovingElements)
+//				m_ElementHandlePosition = m_HandlePosition;
+//
+//			m_ElementHandleCachedPosition = m_ElementHandlePosition;
+//
+//			m_ElementHandlePosition = Handles.PositionHandle(m_ElementHandlePosition, m_HandleRotation);
+//
+//			if (m_CurrentEvent.alt)
+//				return;
+//
+//			if (m_ElementHandlePosition != m_ElementHandleCachedPosition)
+//			{
+//				Vector3 diff = m_ElementHandlePosition - m_ElementHandleCachedPosition;
+//
+//				Vector3 mask = diff.ToMask(Math.handleEpsilon);
+//
+//				if (m_DoSnapToVertex)
+//				{
+//					Vector3 v;
+//
+//					if (FindNearestVertex(m_CurrentEvent.mousePosition, out v))
+//						diff = Vector3.Scale(v - m_ElementHandleCachedPosition, mask);
+//				}
+//				else if (m_DoSnapToFace)
+//				{
+//					ProBuilderMesh obj = null;
+//					RaycastHit hit;
+//					Dictionary<ProBuilderMesh, HashSet<Face>> ignore = new Dictionary<ProBuilderMesh, HashSet<Face>>();
+//					foreach (ProBuilderMesh pb in selection)
+//						ignore.Add(pb, new HashSet<Face>(pb.selectedFacesInternal));
+//
+//					if (EditorHandleUtility.FaceRaycast(m_CurrentEvent.mousePosition, out obj, out hit, ignore))
+//					{
+//						if (mask.IntSum() == 1)
+//						{
+//							Ray r = new Ray(m_ElementHandleCachedPosition, -mask);
+//							Plane plane = new Plane(obj.transform.TransformDirection(hit.normal).normalized,
+//								obj.transform.TransformPoint(hit.point));
+//
+//							float forward, backward;
+//							plane.Raycast(r, out forward);
+//							plane.Raycast(r, out backward);
+//							float planeHit = Mathf.Abs(forward) < Mathf.Abs(backward) ? forward : backward;
+//							r.direction = -r.direction;
+//							plane.Raycast(r, out forward);
+//							plane.Raycast(r, out backward);
+//							float rev = Mathf.Abs(forward) < Mathf.Abs(backward) ? forward : backward;
+//							if (Mathf.Abs(rev) > Mathf.Abs(planeHit))
+//								planeHit = rev;
+//
+//							if (Mathf.Abs(planeHit) > Mathf.Epsilon)
+//								diff = mask * -planeHit;
+//						}
+//						else
+//						{
+//							diff = Vector3.Scale(obj.transform.TransformPoint(hit.point) - m_ElementHandleCachedPosition, mask.Abs());
+//						}
+//					}
+//				}
+//
+//				if (!m_IsMovingElements)
+//				{
+//					m_IsMovingElements = true;
+//					m_TranslateOrigin = m_ElementHandleCachedPosition;
+//					m_RotateOrigin = m_HandleRotation.eulerAngles;
+//					m_ScaleOrigin = m_HandleScale;
+//
+//					OnBeginVertexMovement();
+//
+//					ProGridsInterface.OnHandleMove(mask);
+//				}
+//
+//				for (int i = 0; i < selection.Length; i++)
+//				{
+//					var mesh = selection[i];
+//
+//					mesh.TranslateVerticesInWorldSpace(mesh.selectedIndexesInternal,
+//						diff,
+//						m_SnapEnabled ? m_SnapValue : 0f,
+//						m_SnapAxisConstraint);
+//
+//					mesh.RefreshUV(MeshSelection.selectedFacesInEditZone[mesh]);
+//					mesh.Refresh(RefreshMask.Normals);
+//					mesh.mesh.RecalculateBounds();
+//				}
+//
+//				UpdateMeshHandles(false);
+//			}
 		}
 
 		void VertexScaleTool()
 		{
 			if (m_ScaleTool == null)
 				m_ScaleTool = new ScaleTool();
+
 			m_ScaleTool.OnSceneGUI(Event.current);
-
-			return;
-
-			m_ElementHandlePosition = m_HandlePosition;
-
-			m_HandleScalePrevious = m_HandleScale;
-
-			m_HandleScale = Handles.ScaleHandle(m_HandleScale, m_ElementHandlePosition, m_HandleRotation,
-				HandleUtility.GetHandleSize(m_ElementHandlePosition));
-
-			if (m_CurrentEvent.alt) return;
-
-			bool previouslyMoving = m_IsMovingElements;
-
-			if (m_HandleScalePrevious != m_HandleScale)
-			{
-				m_IsMovingElements = true;
-				if (previouslyMoving == false)
-				{
-					m_TranslateOrigin = m_ElementHandleCachedPosition;
-					m_RotateOrigin = m_HandleRotation.eulerAngles;
-					m_ScaleOrigin = m_HandleScale;
-
-					OnBeginVertexMovement();
-
-					// cache vertex positions for scaling later
-					m_VertexPositions = new Vector3[selection.Length][];
-					m_VertexOffset = new Vector3[selection.Length];
-
-					for (int i = 0; i < selection.Length; i++)
-					{
-						m_VertexPositions[i] = selection[i].positionsInternal.ValuesWithIndexes(selection[i].selectedIndexesInternal);
-						m_VertexOffset[i] = Math.Average(m_VertexPositions[i]);
-					}
-				}
-
-				Vector3 ver; // resulting vertex from modification
-				Vector3 over; // vertex point to modify. different for world, local, and plane
-
-				bool gotoWorld = Selection.transforms.Length > 1 && s_HandleOrientation == HandleOrientation.Normal;
-				bool gotoLocal = MeshSelection.selectedFaceCount < 1;
-
-				// if(pref_snapEnabled)
-				// 	pbUndo.RecordSelection(selection as Object[], "Move vertices");
-
-				for (int i = 0; i < selection.Length; i++)
-				{
-					// get the plane rotation in local space
-					var mesh = selection[i];
-					Vector3 nrm = Math.Normal(m_VertexPositions[i]);
-					Quaternion localRot = Quaternion.LookRotation(nrm == Vector3.zero ? Vector3.forward : nrm, Vector3.up);
-
-					Vector3[] v = mesh.positionsInternal;
-					List<int> coincident = new List<int>();
-
-					for (int n = 0; n < mesh.selectedIndexesInternal.Length; n++)
-					{
-						switch (s_HandleOrientation.value)
-						{
-							case HandleOrientation.Normal:
-							{
-								if (gotoWorld)
-									goto case HandleOrientation.World;
-
-								if (gotoLocal)
-									goto case HandleOrientation.Local;
-
-								// move center of vertices to 0,0,0 and set rotation as close to identity as possible
-								over = Quaternion.Inverse(localRot) * (m_VertexPositions[i][n] - m_VertexOffset[i]);
-
-								// apply scale
-								ver = Vector3.Scale(over, m_HandleScale);
-
-								// re-apply original rotation
-								if (m_VertexPositions[i].Length > 2)
-									ver = localRot * ver;
-
-								// re-apply world position offset
-								ver += m_VertexOffset[i];
-
-								coincident.Clear();
-								mesh.GetCoincidentVertices(mesh.selectedIndexesInternal[n], coincident);
-
-								for (int t = 0, c = coincident.Count; t < c; t++)
-									v[coincident[t]] = ver;
-
-								break;
-							}
-
-							case HandleOrientation.World:
-							case HandleOrientation.Local:
-							{
-								// move vertex to relative origin from center of selection
-								over = m_VertexPositions[i][n] - m_VertexOffset[i];
-								// apply scale
-								ver = Vector3.Scale(over, m_HandleScale);
-								// move vertex back to locally offset position
-								ver += m_VertexOffset[i];
-
-								// set vertex in local space on pb-Object
-								coincident.Clear();
-								mesh.GetCoincidentVertices(mesh.selectedIndexesInternal[n], coincident);
-
-								for (int t = 0, c = coincident.Count; t < c; t++)
-									v[coincident[t]] = ver;
-
-								break;
-							}
-						}
-					}
-
-					mesh.mesh.vertices = v;
-					mesh.RefreshUV(MeshSelection.selectedFacesInEditZone[selection[i]]);
-					mesh.Refresh(RefreshMask.Normals);
-					mesh.mesh.RecalculateBounds();
-				}
-
-				UpdateMeshHandles(false);
-			}
 		}
 
 		void VertexRotateTool()
 		{
-			if(s_RotateTool == null)
+			if (s_RotateTool == null)
 				s_RotateTool = new RotateTool();
 
 			s_RotateTool.OnSceneGUI(Event.current);
-
-			return;
-
-			if (!m_IsMovingElements)
-				m_ElementHandlePosition = m_HandlePosition;
-
-			m_HandleRotationPrevious = m_HandleRotation;
-
-			if (m_CurrentEvent.alt)
-				Handles.RotationHandle(m_HandleRotation, m_ElementHandlePosition);
-			else
-				m_HandleRotation = Handles.RotationHandle(m_HandleRotation, m_ElementHandlePosition);
-
-			if (m_HandleRotation != m_HandleRotationPrevious)
-			{
-				// profiler.BeginSample("Rotate");
-				if (!m_IsMovingElements)
-				{
-					m_IsMovingElements = true;
-
-					m_TranslateOrigin = m_ElementHandleCachedPosition;
-					m_RotateOrigin = m_HandleRotation.eulerAngles;
-					m_ScaleOrigin = m_HandleScale;
-
-					m_RotationInitial = m_HandleRotationPrevious;
-					m_RotationInitialInverse = Quaternion.Inverse(m_HandleRotationPrevious);
-
-					OnBeginVertexMovement();
-
-					// cache vertex positions for modifying later
-					m_VertexPositions = new Vector3[selection.Length][];
-					m_VertexOffset = new Vector3[selection.Length];
-
-					for (int i = 0; i < selection.Length; i++)
-					{
-						Vector3[] vertices = selection[i].positionsInternal;
-						int[] triangles = selection[i].selectedIndexesInternal;
-						m_VertexPositions[i] = new Vector3[triangles.Length];
-
-						for (int nn = 0; nn < triangles.Length; nn++)
-							m_VertexPositions[i][nn] = selection[i].transform.TransformPoint(vertices[triangles[nn]]);
-
-						if (s_HandleOrientation == HandleOrientation.World)
-							m_VertexOffset[i] = m_ElementHandlePosition;
-						else
-							m_VertexOffset[i] = Math.GetBounds(m_VertexPositions[i]).center;
-					}
-				}
-
-				// profiler.BeginSample("Calc Matrix");
-				Quaternion transformedRotation = m_RotationInitialInverse * m_HandleRotation;
-				List<int> coincident = new List<int>();
-
-				// profiler.BeginSample("matrix mult");
-				for (int i = 0; i < selection.Length; i++)
-				{
-					Vector3[] v = selection[i].positionsInternal;
-					SharedVertex[] sharedIndexes = selection[i].sharedVerticesInternal;
-
-					Quaternion lr = m_RotationInitial; // selection[0].transform.localRotation;
-					Quaternion ilr = m_RotationInitialInverse; // Quaternion.Inverse(lr);
-
-					for (int n = 0; n < selection[i].selectedIndexesInternal.Length; n++)
-					{
-						// move vertex to relative origin from center of selection
-						Vector3 ver = ilr * (m_VertexPositions[i][n] - m_VertexOffset[i]);
-
-						// rotate
-						ver = transformedRotation * ver;
-
-						// move vertex back to locally offset position
-						ver = (lr * ver) + m_VertexOffset[i];
-
-						coincident.Clear();
-						selection[i].GetCoincidentVertices(selection[i].selectedIndexesInternal[n], coincident);
-
-						for (int t = 0, c = coincident.Count; t < c; t++)
-							v[coincident[t]] = selection[i].transform.InverseTransformPoint(ver);
-					}
-
-					selection[i].mesh.vertices = v;
-					selection[i].RefreshUV(MeshSelection.selectedFacesInEditZone[selection[i]]);
-					selection[i].Refresh(RefreshMask.Normals);
-					selection[i].mesh.RecalculateBounds();
-				}
-
-				UpdateMeshHandles(false);
-			}
 		}
+
 #pragma warning restore 612
 
 		void TextureMoveTool()
 		{
-			UVEditor uvEditor = UVEditor.instance;
-			if (!uvEditor) return;
-
-			Vector3 cached = m_TextureHandlePosition;
-
-			m_TextureHandlePosition = Handles.PositionHandle(m_TextureHandlePosition, m_HandleRotation);
-
-			if (m_CurrentEvent.alt) return;
-
-			if (m_TextureHandlePosition != cached)
-			{
-				cached = Quaternion.Inverse(m_HandleRotation) * m_TextureHandlePosition;
-				cached.y = -cached.y;
-
-				Vector3 lossyScale = selection[0].transform.lossyScale;
-				Vector3 pos = cached.DivideBy(lossyScale);
-
-				if (!m_IsMovingTextures)
-				{
-					m_TextureHandlePositionPrevious = pos;
-					m_IsMovingTextures = true;
-				}
-
-				uvEditor.SceneMoveTool(pos - m_TextureHandlePositionPrevious);
-				m_TextureHandlePositionPrevious = pos;
-				uvEditor.Repaint();
-			}
+//			UVEditor uvEditor = UVEditor.instance;
+//			if (!uvEditor) return;
+//
+//			Vector3 cached = m_TextureHandlePosition;
+//
+//			m_TextureHandlePosition = Handles.PositionHandle(m_TextureHandlePosition, m_HandleRotation);
+//
+//			if (m_CurrentEvent.alt) return;
+//
+//			if (m_TextureHandlePosition != cached)
+//			{
+//				cached = Quaternion.Inverse(m_HandleRotation) * m_TextureHandlePosition;
+//				cached.y = -cached.y;
+//
+//				Vector3 lossyScale = selection[0].transform.lossyScale;
+//				Vector3 pos = cached.DivideBy(lossyScale);
+//
+//				if (!m_IsMovingTextures)
+//				{
+//					m_TextureHandlePositionPrevious = pos;
+//					m_IsMovingTextures = true;
+//				}
+//
+//				uvEditor.SceneMoveTool(pos - m_TextureHandlePositionPrevious);
+//				m_TextureHandlePositionPrevious = pos;
+//				uvEditor.Repaint();
+//			}
 		}
 
 		void TextureRotateTool()
 		{
-			UVEditor uvEditor = UVEditor.instance;
-			if (!uvEditor) return;
-
-			float size = HandleUtility.GetHandleSize(m_HandlePosition);
-
-			if (m_CurrentEvent.alt) return;
-
-			Matrix4x4 prev = Handles.matrix;
-			Handles.matrix = handleMatrix;
-
-			Quaternion cached = m_TextureRotation;
-
-			m_TextureRotation = Handles.Disc(m_TextureRotation, Vector3.zero, Vector3.forward, size, false, 0f);
-
-			if (m_TextureRotation != cached)
-			{
-				if (!m_IsMovingTextures)
-					m_IsMovingTextures = true;
-
-				uvEditor.SceneRotateTool(-m_TextureRotation.eulerAngles.z);
-			}
-
-			Handles.matrix = prev;
+//			UVEditor uvEditor = UVEditor.instance;
+//			if (!uvEditor) return;
+//
+//			float size = HandleUtility.GetHandleSize(m_HandlePosition);
+//
+//			if (m_CurrentEvent.alt) return;
+//
+//			Matrix4x4 prev = Handles.matrix;
+//			Handles.matrix = handleMatrix;
+//
+//			Quaternion cached = m_TextureRotation;
+//
+//			m_TextureRotation = Handles.Disc(m_TextureRotation, Vector3.zero, Vector3.forward, size, false, 0f);
+//
+//			if (m_TextureRotation != cached)
+//			{
+//				if (!m_IsMovingTextures)
+//					m_IsMovingTextures = true;
+//
+//				uvEditor.SceneRotateTool(-m_TextureRotation.eulerAngles.z);
+//			}
+//
+//			Handles.matrix = prev;
 		}
 
 		void TextureScaleTool()
 		{
-			UVEditor uvEditor = UVEditor.instance;
-			if (!uvEditor) return;
-
-			float size = HandleUtility.GetHandleSize(m_HandlePosition);
-
-			Matrix4x4 prev = Handles.matrix;
-			Handles.matrix = handleMatrix;
-
-			Vector3 cached = m_TextureScale;
-			m_TextureScale = Handles.ScaleHandle(m_TextureScale, Vector3.zero, Quaternion.identity, size);
-
-			if (m_CurrentEvent.alt) return;
-
-			if (cached != m_TextureScale)
-			{
-				if (!m_IsMovingTextures)
-					m_IsMovingTextures = true;
-
-				uvEditor.SceneScaleTool(m_TextureScale, cached);
-			}
-
-			Handles.matrix = prev;
+//			UVEditor uvEditor = UVEditor.instance;
+//			if (!uvEditor) return;
+//
+//			float size = HandleUtility.GetHandleSize(m_HandlePosition);
+//
+//			Matrix4x4 prev = Handles.matrix;
+//			Handles.matrix = handleMatrix;
+//
+//			Vector3 cached = m_TextureScale;
+//			m_TextureScale = Handles.ScaleHandle(m_TextureScale, Vector3.zero, Quaternion.identity, size);
+//
+//			if (m_CurrentEvent.alt) return;
+//
+//			if (cached != m_TextureScale)
+//			{
+//				if (!m_IsMovingTextures)
+//					m_IsMovingTextures = true;
+//
+//				uvEditor.SceneScaleTool(m_TextureScale, cached);
+//			}
+//
+//			Handles.matrix = prev;
 		}
 
 		void DrawHandleGUI(SceneView sceneView)
@@ -1308,26 +1053,27 @@ namespace UnityEditor.ProBuilder
 						selectMode = SelectMode.Face;
 				}
 
-				if (m_IsMovingElements && s_ShowSceneInfo)
-				{
-					string handleTransformInfo = string.Format(
-						"translate: <b>{0}</b>\nrotate: <b>{1}</b>\nscale: <b>{2}</b>",
-						(m_ElementHandlePosition - m_TranslateOrigin).ToString(),
-						(m_HandleRotation.eulerAngles - m_RotateOrigin).ToString(),
-						(m_HandleScale - m_ScaleOrigin).ToString());
-
-					var gc = UI.EditorGUIUtility.TempContent(handleTransformInfo);
-					// sceneview screen.height includes the tab and toolbar
-					var toolbarHeight = EditorStyles.toolbar.CalcHeight(gc, Screen.width);
-					var size = UI.EditorStyles.sceneTextBox.CalcSize(gc);
-
-					Rect handleTransformInfoRect = new Rect(
-						sceneView.position.width - (size.x + 8), sceneView.position.height - (size.y + 8 + toolbarHeight),
-						size.x,
-						size.y);
-
-					GUI.Label(handleTransformInfoRect, gc, UI.EditorStyles.sceneTextBox);
-				}
+				// todo Move to VertexManipulationTool
+//				if (m_IsMovingElements && s_ShowSceneInfo)
+//				{
+//					string handleTransformInfo = string.Format(
+//						"translate: <b>{0}</b>\nrotate: <b>{1}</b>\nscale: <b>{2}</b>",
+//						(m_ElementHandlePosition - m_TranslateOrigin).ToString(),
+//						(m_HandleRotation.eulerAngles - m_RotateOrigin).ToString(),
+//						(m_HandleScale - m_ScaleOrigin).ToString());
+//
+//					var gc = UI.EditorGUIUtility.TempContent(handleTransformInfo);
+//					// sceneview screen.height includes the tab and toolbar
+//					var toolbarHeight = EditorStyles.toolbar.CalcHeight(gc, Screen.width);
+//					var size = UI.EditorStyles.sceneTextBox.CalcSize(gc);
+//
+//					Rect handleTransformInfoRect = new Rect(
+//						sceneView.position.width - (size.x + 8), sceneView.position.height - (size.y + 8 + toolbarHeight),
+//						size.x,
+//						size.y);
+//
+//					GUI.Label(handleTransformInfoRect, gc, UI.EditorStyles.sceneTextBox);
+//				}
 
 				if (s_ShowSceneInfo)
 				{
@@ -1542,8 +1288,8 @@ namespace UnityEditor.ProBuilder
 			// todo remove selection property
 			selection = MeshSelection.topInternal.ToArray();
 
-			m_HandlePosition = MeshSelection.GetHandlePosition();
-			m_HandleRotation = MeshSelection.GetHandleRotation(s_HandleOrientation);
+//			m_HandlePosition = MeshSelection.GetHandlePosition();
+//			m_HandleRotation = MeshSelection.GetHandleRotation(s_HandleOrientation);
 
 			UpdateTextureHandles();
 			UpdateMeshHandles(selectionChanged);
@@ -1601,63 +1347,34 @@ namespace UnityEditor.ProBuilder
 
 		void UpdateTextureHandles()
 		{
-			if (!selectMode.ContainsFlag(SelectMode.TextureFace) || !selection.Any())
-				return;
-
-			// Reset temp vars
-			m_TextureHandlePosition = m_HandlePosition;
-			m_TextureScale = Vector3.one;
-			m_TextureRotation = Quaternion.identity;
-
-			ProBuilderMesh pb;
-			Face face;
-
-			handleMatrix = selection[0].transform.localToWorldMatrix;
-
-			if (GetFirstSelectedFace(out pb, out face))
-			{
-				var normals = Math.NormalTangentBitangent(pb, face);
-				var nrm = normals.normal;
-				var bitan = normals.bitangent;
-
-				if (nrm == Vector3.zero || bitan == Vector3.zero)
-				{
-					nrm = Vector3.up;
-					bitan = Vector3.right;
-				}
-
-				handleMatrix *= Matrix4x4.TRS(Math.GetBounds(pb.positionsInternal.ValuesWithIndexes(face.distinctIndexesInternal)).center,
-					Quaternion.LookRotation(nrm, bitan), Vector3.one);
-			}
-		}
-
-		/// <summary>
-		/// Find the nearest vertex among all visible objects.
-		/// </summary>
-		/// <param name="mousePosition"></param>
-		/// <param name="vertex"></param>
-		/// <returns></returns>
-		bool FindNearestVertex(Vector2 mousePosition, out Vector3 vertex)
-		{
-			List<Transform> t =
-				new List<Transform>(
-					(Transform[]) InternalUtility.GetComponents<Transform>(
-						HandleUtility.PickRectObjects(new Rect(0, 0, Screen.width, Screen.height))));
-
-			GameObject nearest = HandleUtility.PickGameObject(mousePosition, false);
-
-			if (nearest != null)
-				t.Add(nearest.transform);
-
-			object[] parameters = new object[] { (Vector2) mousePosition, t.ToArray(), null };
-
-			if (m_FindNearestVertex == null)
-				m_FindNearestVertex = typeof(HandleUtility).GetMethod("findNearestVertex",
-					BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
-
-			object result = m_FindNearestVertex.Invoke(this, parameters);
-			vertex = (bool) result ? (Vector3) parameters[2] : Vector3.zero;
-			return (bool) result;
+//			if (!selectMode.ContainsFlag(SelectMode.TextureFace) || !selection.Any())
+//				return;
+//
+//			// Reset temp vars
+//			m_TextureHandlePosition = m_HandlePosition;
+//			m_TextureScale = Vector3.one;
+//			m_TextureRotation = Quaternion.identity;
+//
+//			ProBuilderMesh pb;
+//			Face face;
+//
+//			handleMatrix = selection[0].transform.localToWorldMatrix;
+//
+//			if (GetFirstSelectedFace(out pb, out face))
+//			{
+//				var normals = Math.NormalTangentBitangent(pb, face);
+//				var nrm = normals.normal;
+//				var bitan = normals.bitangent;
+//
+//				if (nrm == Vector3.zero || bitan == Vector3.zero)
+//				{
+//					nrm = Vector3.up;
+//					bitan = Vector3.right;
+//				}
+//
+//				handleMatrix *= Matrix4x4.TRS(Math.GetBounds(pb.positionsInternal.ValuesWithIndexes(face.distinctIndexesInternal)).center,
+//					Quaternion.LookRotation(nrm, bitan), Vector3.one);
+//			}
 		}
 
 		/// <summary>
@@ -1760,81 +1477,6 @@ namespace UnityEditor.ProBuilder
 		internal void OnBeginTextureModification()
 		{
 			VerifyTextureGroupSelection();
-		}
-
-		/// <summary>
-		/// When beginning a vertex modification, nuke the UV2 and rebuild the mesh using PB data so that triangles
-		/// match vertices (and no inserted vertices from the Unwrapping.GenerateSecondaryUVSet() remain).
-		/// </summary>
-		internal void OnBeginVertexMovement()
-		{
-			switch (m_CurrentTool)
-			{
-				case Tool.Move:
-					UndoUtility.RegisterCompleteObjectUndo(selection, "Translate Vertices");
-					break;
-
-				case Tool.Rotate:
-					UndoUtility.RegisterCompleteObjectUndo(selection, "Rotate Vertices");
-					break;
-
-				case Tool.Scale:
-					UndoUtility.RegisterCompleteObjectUndo(selection, "Scale Vertices");
-					break;
-
-				default:
-					UndoUtility.RegisterCompleteObjectUndo(selection, "Modify Vertices");
-					break;
-			}
-
-			m_SnapEnabled = ProGridsInterface.SnapEnabled();
-			m_SnapValue = ProGridsInterface.SnapValue();
-			m_SnapAxisConstraint = ProGridsInterface.UseAxisConstraints();
-
-			// Disable iterative lightmapping
-			Lightmapping.PushGIWorkflowMode();
-
-			foreach (ProBuilderMesh pb in selection)
-			{
-				pb.ToMesh();
-				pb.Refresh();
-			}
-
-			if (beforeMeshModification != null)
-				beforeMeshModification(selection);
-		}
-
-		internal void OnFinishVertexModification()
-		{
-			Lightmapping.PopGIWorkflowMode();
-
-			m_HandleScale = Vector3.one;
-			m_HandleRotation = MeshSelection.GetHandleRotation(s_HandleOrientation);
-
-			if (m_IsMovingTextures)
-			{
-				if (UVEditor.instance != null)
-					UVEditor.instance.OnFinishUVModification();
-
-				UpdateTextureHandles();
-				m_IsMovingTextures = false;
-			}
-			else if (m_IsMovingElements)
-			{
-				foreach (ProBuilderMesh sel in selection)
-				{
-					sel.ToMesh();
-					sel.Refresh();
-					sel.Optimize();
-				}
-
-				m_IsMovingElements = false;
-			}
-
-			UpdateSelection();
-
-			if (afterMeshModification != null)
-				afterMeshModification(selection);
 		}
 
 		/// <summary>

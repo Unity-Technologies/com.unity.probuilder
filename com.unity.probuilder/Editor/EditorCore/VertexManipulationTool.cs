@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using Math = UnityEngine.ProBuilder.Math;
 
 #if DEBUG_HANDLES
 using UnityEngine.Rendering;
@@ -170,15 +173,43 @@ namespace UnityEditor.ProBuilder
 
 	abstract class VertexManipulationTool
 	{
+		/// <value>
+		/// Called when vertex modifications are complete.
+		/// </value>
+		public static event Action<ProBuilderMesh[]> afterMeshModification;
+
+		/// <value>
+		/// Called immediately prior to beginning vertex modifications. The ProBuilderMesh will be in un-altered state at this point (meaning ProBuilderMesh.ToMesh and ProBuilderMesh.Refresh have been called, but not Optimize).
+		/// </value>
+		public static event Action<ProBuilderMesh[]> beforeMeshModification;
+
 		internal static Pref<bool> s_ExtrudeEdgesAsGroup = new Pref<bool>("editor.extrudeEdgesAsGroup", true);
 		internal static Pref<ExtrudeMethod> s_ExtrudeMethod = new Pref<ExtrudeMethod>("editor.extrudeMethod", ExtrudeMethod.FaceNormal);
 
 		Vector3 m_HandlePosition;
 		Quaternion m_HandleRotation;
-
 		Vector3 m_HandlePositionOrigin;
 		Quaternion m_HandleRotationOrigin;
-		protected Quaternion handleRotationOriginInverse { get; private set; }
+
+		float m_SnapValue = .25f;
+		bool m_SnapAxisConstraint = true;
+		bool m_SnapEnabled;
+		static bool s_Initialized;
+		static FieldInfo s_VertexDragging;
+		static MethodInfo s_FindNearestVertex;
+		static object[] s_FindNearestVertexArguments = new object[] { null, null, null };
+
+		protected static bool vertexDragging
+		{
+			get
+			{
+				Init();
+				return s_VertexDragging != null && (bool) s_VertexDragging.GetValue(null);
+			}
+		}
+
+		protected List<MeshAndElementSelection> m_Selection = new List<MeshAndElementSelection>();
+		protected bool m_IsEditing;
 
 		protected Event currentEvent { get; private set; }
 
@@ -189,14 +220,37 @@ namespace UnityEditor.ProBuilder
 			get { return m_HandlePositionOrigin; }
 		}
 
+		protected Quaternion handleRotationOriginInverse { get; private set; }
+
 		protected Quaternion handleRotationOrigin
 		{
 			get { return m_HandleRotationOrigin; }
 		}
 
-		protected List<MeshAndElementSelection> m_Selection = new List<MeshAndElementSelection>();
+		protected float snapValue
+		{
+			get { return m_SnapValue; }
+		}
 
-		protected bool m_IsEditing;
+		protected bool snapAxisConstraint
+		{
+			get { return m_SnapAxisConstraint; }
+		}
+
+		protected bool snapEnabled
+		{
+			get { return m_SnapEnabled; }
+		}
+
+		static void Init()
+		{
+			if (s_Initialized)
+				return;
+			s_Initialized = true;
+			s_VertexDragging = typeof(Tools).GetField("vertexDragging", BindingFlags.NonPublic | BindingFlags.Static);
+			s_FindNearestVertex = typeof(HandleUtility).GetMethod("FindNearestVertex",
+				BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
+		}
 
 		public void OnSceneGUI(Event evt)
 		{
@@ -249,12 +303,13 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
+
 			DoTool(m_HandlePosition, m_HandleRotation);
 		}
 
 		protected abstract void DoTool(Vector3 handlePosition, Quaternion handleRotation);
 
-		protected void BeginEdit()
+		protected void BeginEdit(string undoMessage)
 		{
 			if (m_IsEditing)
 				return;
@@ -268,7 +323,7 @@ namespace UnityEditor.ProBuilder
 			m_HandleRotationOrigin = m_HandleRotation;
 			handleRotationOriginInverse = Quaternion.Inverse(m_HandleRotation);
 
-			ProBuilderEditor.instance.OnBeginVertexMovement();
+			OnBeginVertexMovement(undoMessage);
 
 			m_Selection.Clear();
 
@@ -281,7 +336,7 @@ namespace UnityEditor.ProBuilder
 			if (!m_IsEditing)
 				return;
 
-			ProBuilderEditor.instance.OnFinishVertexModification();
+			OnFinishVertexModification();
 
 			m_IsEditing = false;
 		}
@@ -365,5 +420,71 @@ namespace UnityEditor.ProBuilder
 				ProBuilderEditor.Refresh();
 			}
 		}
+
+		/// <summary>
+		/// Find the nearest vertex among all visible objects.
+		/// </summary>
+		/// <param name="mousePosition"></param>
+		/// <param name="vertex"></param>
+		/// <returns></returns>
+		protected static bool FindNearestVertex(Vector2 mousePosition, out Vector3 vertex)
+		{
+			s_FindNearestVertexArguments[0] = mousePosition;
+
+			if (s_FindNearestVertex == null)
+				s_FindNearestVertex = typeof(HandleUtility).GetMethod("findNearestVertex",
+					BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
+
+			object result = s_FindNearestVertex.Invoke(null, s_FindNearestVertexArguments);
+			vertex = (bool) result ? (Vector3) s_FindNearestVertexArguments[2] : Vector3.zero;
+			return (bool) result;
+		}
+
+		/// <summary>
+		/// When beginning a vertex modification, nuke the UV2 and rebuild the mesh using PB data so that triangles
+		/// match vertices (and no inserted vertices from the Unwrapping.GenerateSecondaryUVSet() remain).
+		/// </summary>
+		protected void OnBeginVertexMovement(string undoMessage)
+		{
+			UndoUtility.RecordSelection(string.IsNullOrEmpty(undoMessage) ? "Modify Vertices" : undoMessage);
+
+			m_SnapEnabled = ProGridsInterface.SnapEnabled();
+			m_SnapValue = ProGridsInterface.SnapValue();
+			m_SnapAxisConstraint = ProGridsInterface.UseAxisConstraints();
+
+			// Disable iterative lightmapping
+			Lightmapping.PushGIWorkflowMode();
+
+			var selection = MeshSelection.topInternal.ToArray();
+
+			foreach (var mesh in selection)
+			{
+				mesh.ToMesh();
+				mesh.Refresh();
+			}
+
+			if (beforeMeshModification != null)
+				beforeMeshModification(selection);
+		}
+
+		internal void OnFinishVertexModification()
+		{
+			Lightmapping.PopGIWorkflowMode();
+
+			var selection = MeshSelection.topInternal.ToArray();
+
+			foreach (var mesh in selection)
+			{
+				mesh.ToMesh();
+				mesh.Refresh();
+				mesh.Optimize();
+			}
+
+			ProBuilderEditor.Refresh();
+
+			if (afterMeshModification != null)
+				afterMeshModification(selection);
+		}
+
 	}
 }

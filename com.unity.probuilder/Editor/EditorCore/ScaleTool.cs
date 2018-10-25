@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder
 			if (EditorGUI.EndChangeCheck())
 			{
 				if (!m_IsEditing)
-					BeginEdit();
+					BeginEdit("Scale Selection");
 
 				Apply(Matrix4x4.Scale(m_Scale));
 			}

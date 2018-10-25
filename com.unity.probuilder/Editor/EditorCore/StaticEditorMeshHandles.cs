@@ -65,6 +65,7 @@ namespace UnityEditor.ProBuilder
 
 		internal class LineDrawingScope : IDisposable
 		{
+			bool m_Wire;
 			Color m_Color;
 			float m_Thickness;
 			CompareFunction m_ZTest;
@@ -73,17 +74,23 @@ namespace UnityEditor.ProBuilder
 			public Color color
 			{
 				get { return m_Color; }
+
 				set
 				{
-					End();
+					if(!m_Wire)
+						End();
+
 					m_Color = value;
-					Begin();
+
+					if(!m_Wire)
+						Begin();
 				}
 			}
 
 			public float thickness
 			{
 				get { return m_Thickness; }
+				
 				set
 				{
 					End();
@@ -117,14 +124,15 @@ namespace UnityEditor.ProBuilder
 
 			void Begin()
 			{
+				m_Wire = thickness < .01f || !BuiltinMaterials.geometryShadersSupported;
+
 				s_LineMaterial.SetColor("_Color", color);
 				s_LineMaterial.SetInt("_HandleZTest", (int) zTest);
 
-				if(BuiltinMaterials.geometryShadersSupported)
+				if(!m_Wire)
 					s_LineMaterial.SetFloat("_Scale", thickness * EditorGUIUtility.pixelsPerPoint);
 
-				if (!BuiltinMaterials.geometryShadersSupported ||
-					!s_LineMaterial.SetPass(0))
+				if (m_Wire || !s_LineMaterial.SetPass(0))
 				{
 					if (s_ApplyWireMaterial == null)
 					{
@@ -155,6 +163,9 @@ namespace UnityEditor.ProBuilder
 
 			public void DrawLine(Vector3 a, Vector3 b)
 			{
+				if(m_Wire)
+					GL.Color(color);
+
 				GL.Vertex(a);
 				GL.Vertex(b);
 			}

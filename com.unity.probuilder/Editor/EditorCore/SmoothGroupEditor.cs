@@ -334,8 +334,8 @@ namespace UnityEditor.ProBuilder
 			Selection.selectionChanged += OnSelectionChanged;
 			Undo.undoRedoPerformed += OnSelectionChanged;
 			ProBuilderMesh.elementSelectionChanged += OnElementSelectionChanged;
-			ProBuilderEditor.beforeMeshModification += OnBeginVertexMovement;
-			ProBuilderEditor.afterMeshModification += OnFinishVertexMovement;
+			VertexManipulationTool.beforeMeshModification += OnBeginVertexMovement;
+			VertexManipulationTool.afterMeshModification += OnFinishVertexMovement;
 			autoRepaintOnSceneChange = true;
 			m_HelpIcon = new GUIContent(IconUtility.GetIcon("Toolbar/Help"), "Open Documentation");
 			m_BreakSmoothingContent = new GUIContent(IconUtility.GetIcon("Toolbar/Face_BreakSmoothing"),

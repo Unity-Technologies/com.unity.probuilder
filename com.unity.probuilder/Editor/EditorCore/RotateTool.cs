@@ -24,7 +24,7 @@ namespace UnityEditor.ProBuilder
 				if (EditorGUI.EndChangeCheck())
 				{
 					if (!m_IsEditing)
-						BeginEdit();
+						BeginEdit("Rotate Selection");
 
 					Apply(Matrix4x4.Rotate(m_Rotation));
 				}
@@ -41,7 +41,7 @@ namespace UnityEditor.ProBuilder
 				if (EditorGUI.EndChangeCheck())
 				{
 					if (!m_IsEditing)
-						BeginEdit();
+						BeginEdit("Rotate Selection");
 
 					Apply(Matrix4x4.Rotate(m_Rotation * Quaternion.Inverse(handleRotationOrigin)));
 				}
