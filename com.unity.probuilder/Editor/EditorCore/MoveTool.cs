@@ -9,6 +9,16 @@ namespace UnityEditor.ProBuilder
 		Vector3 m_HandlePosition;
 		Matrix4x4 m_Translation = Matrix4x4.identity;
 
+		bool m_SnapInWorldCoordinates;
+		Vector3 m_WorldSnapDirection;
+		Vector3 m_WorldSnapMask;
+
+		protected override void OnToolEngaged()
+		{
+			m_SnapInWorldCoordinates = false;
+			m_WorldSnapMask = new Vector3Mask(0x0);
+		}
+
 		protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
 		{
 			if (!m_IsEditing)
@@ -32,9 +42,9 @@ namespace UnityEditor.ProBuilder
 					if (FindNearestVertex(currentEvent.mousePosition, out nearest))
 					{
 						var unrotated = handleRotationOriginInverse * delta;
-						var dir = Math.ToMask(unrotated, k_CardinalAxisError);
+						var dir = new Vector3Mask(unrotated, k_CardinalAxisError);
 
-						if (dir.IntSum() == 1)
+						if (dir.active == 1)
 						{
 							var rot_dir = handleRotationOrigin * dir * 10000f;
 
@@ -48,9 +58,24 @@ namespace UnityEditor.ProBuilder
 				}
 				else if (snapEnabled)
 				{
-					var travel = delta.magnitude;
-					delta = delta.normalized * Snapping.SnapValue(travel, snapValue);
-					m_HandlePosition = handlePosition + delta;
+					var localDir = handleRotationOriginInverse * delta;
+					m_WorldSnapDirection = delta.normalized;
+
+					if (!m_SnapInWorldCoordinates && (Math.IsCardinalAxis(delta) || !Math.IsCardinalAxis(localDir)))
+						m_SnapInWorldCoordinates = true;
+
+					if (m_SnapInWorldCoordinates)
+					{
+						m_WorldSnapMask |= new Vector3Mask(m_WorldSnapDirection, k_CardinalAxisError);
+						m_HandlePosition = Snapping.SnapValue(m_HandlePosition, m_WorldSnapMask * snapValue);
+						delta = m_HandlePosition - handlePositionOrigin;
+					}
+					else
+					{
+						var travel = delta.magnitude;
+						delta = m_WorldSnapDirection * Snapping.SnapValue(travel, snapValue);
+						m_HandlePosition = handlePositionOrigin + delta;
+					}
 				}
 
 				switch (pivotPoint)

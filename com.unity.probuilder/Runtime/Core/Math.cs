@@ -1238,23 +1238,6 @@ namespace UnityEngine.ProBuilder
 			return value < lowerBound ? lowerBound : value > upperBound ? upperBound : value;
 		}
 
-		internal static Vector2 ToMask(this Vector2 vec, float delta = floatEpsilon)
-		{
-			return new Vector2(
-				Mathf.Abs(vec.x) > delta ? 1f : 0f,
-				Mathf.Abs(vec.y) > delta ? 1f : 0f
-				);
-		}
-
-		internal static Vector3 ToMask(this Vector3 vec, float delta = floatEpsilon)
-		{
-			return new Vector3(
-				Mathf.Abs(vec.x) > delta ? 1f : 0f,
-				Mathf.Abs(vec.y) > delta ? 1f : 0f,
-				Mathf.Abs(vec.z) > delta ? 1f : 0f
-				);
-		}
-
 		internal static Vector3 ToSignedMask(this Vector3 vec, float delta = floatEpsilon)
 		{
 			return new Vector3(

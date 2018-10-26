@@ -1236,7 +1236,7 @@ namespace UnityEditor.ProBuilder
 
 				if (ControlKey)
 				{
-					handlePosition = Snapping.SnapValue(t_handlePosition, (handlePosition - t_handlePosition).ToMask(Math.handleEpsilon) * s_GridSnapIncrement);
+					handlePosition = Snapping.SnapValue(t_handlePosition, (Vector3) new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
 				}
 				else
 				{
@@ -1298,7 +1298,7 @@ namespace UnityEditor.ProBuilder
 				Vector2 newUVPosition = t_handlePosition;
 
 				if (ControlKey)
-					newUVPosition = Snapping.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask(Math.handleEpsilon) * s_GridSnapIncrement);
+					newUVPosition = Snapping.SnapValue(newUVPosition, new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
 
 				for (int n = 0; n < selection.Length; n++)
 				{
@@ -1388,7 +1388,7 @@ namespace UnityEditor.ProBuilder
 				handlePosition.y += delta.y;
 
 				if (ControlKey)
-					handlePosition = Snapping.SnapValue(handlePosition, (handlePosition - handlePosition).ToMask(Math.handleEpsilon) * s_GridSnapIncrement);
+					handlePosition = Snapping.SnapValue(handlePosition, new Vector3Mask((handlePosition - handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
 
 				for (int n = 0; n < selection.Length; n++)
 				{

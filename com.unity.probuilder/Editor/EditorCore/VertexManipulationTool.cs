@@ -309,6 +309,9 @@ namespace UnityEditor.ProBuilder
 
 		protected abstract void DoTool(Vector3 handlePosition, Quaternion handleRotation);
 
+		protected virtual void OnToolEngaged() { }
+		protected virtual void OnToolDisengaged() { }
+
 		protected void BeginEdit(string undoMessage)
 		{
 			if (m_IsEditing)
@@ -347,6 +350,8 @@ namespace UnityEditor.ProBuilder
 
 			foreach (var mesh in MeshSelection.topInternal)
 				m_Selection.Add(new MeshAndElementSelection(mesh, pivotPoint));
+
+			OnToolEngaged();
 		}
 
 		protected void FinishEdit()
@@ -371,6 +376,8 @@ namespace UnityEditor.ProBuilder
 				afterMeshModification(selection);
 
 			m_IsEditing = false;
+
+			OnToolDisengaged();
 		}
 
 		protected void Apply(Matrix4x4 delta)
