@@ -138,12 +138,10 @@ namespace UnityEditor.ProBuilder
 
 			foreach (var wing in wings)
 			{
-				if (!filter.Add(wing.face))
-					continue;
-
-				var group = new List<Face>() { wing.face };
+				var group = new List<Face>() { };
 				CollectAdjacentFaces(wing, filter, group);
-				groups.Add(group);
+				if(group.Count > 0)
+					groups.Add(group);
 			}
 
 			return groups;
@@ -151,22 +149,19 @@ namespace UnityEditor.ProBuilder
 
 		static void CollectAdjacentFaces(WingedEdge wing, HashSet<Face> filter, List<Face> group)
 		{
+			if (!filter.Add(wing.face))
+				return;
+
+			group.Add(wing.face);
+
 			var enumerator = new WingedEdgeEnumerator(wing);
 
 			while (enumerator.MoveNext())
 			{
-				var cur = enumerator.Current.opposite;
-
-				if (cur  == null)
+				var opposite = enumerator.Current.opposite;
+				if (opposite == null)
 					continue;
-
-				var face = cur.face;
-
-				if (!filter.Add(face))
-					continue;
-
-				group.Add(face);
-				CollectAdjacentFaces(enumerator.Current, filter, group);
+				CollectAdjacentFaces(opposite, filter, group);
 			}
 		}
 	}
