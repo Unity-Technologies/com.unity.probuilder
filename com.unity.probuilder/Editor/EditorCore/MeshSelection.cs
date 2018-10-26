@@ -363,11 +363,16 @@ namespace UnityEditor.ProBuilder
 			{
 				case PivotMode.Pivot:
 				{
-					var mesh = activeMesh;
-					if (mesh == null)
-						return Vector3.zero;
-					var center = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal);
-					return mesh.transform.TransformPoint(center.center);
+					ProBuilderMesh mesh = activeMesh;
+					Face face;
+					Vector3 center = Vector3.zero;
+
+					if (ProBuilderEditor.handleOrientation == HandleOrientation.Normal && GetActiveFace(out mesh, out face))
+						center = Math.GetBounds(mesh.positionsInternal, face.distinctIndexesInternal).center;
+					else if(activeMesh != null)
+						center = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal).center;
+
+					return mesh.transform.TransformPoint(center);
 				}
 
 				default:
@@ -419,7 +424,7 @@ namespace UnityEditor.ProBuilder
 				return true;
 			}
 
-			mesh = null;
+			mesh = activeMesh;
 			face = null;
 			return false;
 		}

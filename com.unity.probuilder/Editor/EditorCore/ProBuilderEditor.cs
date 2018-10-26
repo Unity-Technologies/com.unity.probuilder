@@ -101,6 +101,8 @@ namespace UnityEditor.ProBuilder
 					value = HandleOrientation.Normal;
 
 				s_HandleOrientation.SetValue(value, true);
+
+				SceneView.RepaintAll();
 			}
 		}
 
