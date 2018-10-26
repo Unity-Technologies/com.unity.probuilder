@@ -53,7 +53,7 @@ namespace UnityEditor.ProBuilder
 		static Pref<float> s_VertexPointSize = new Pref<float>("graphics.vertexPointSize", 3f, SettingsScope.User);
 
 		[UserSetting("Graphics", "Handle Z Test", "The compare function to use when drawing mesh handles.")]
-		static Pref<CompareFunction> s_HandleCompareFunction = new Pref<CompareFunction>("graphics.handleZTest", CompareFunction.Always, SettingsScopes.User);
+		static Pref<CompareFunction> s_HandleCompareFunction = new Pref<CompareFunction>("graphics.handleZTest", CompareFunction.Always, SettingsScope.User);
 
 		[UserSettingBlock("Graphics")]
 		static void HandleColorPreferences(string searchContext)

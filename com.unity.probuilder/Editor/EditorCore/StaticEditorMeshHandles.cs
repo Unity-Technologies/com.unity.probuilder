@@ -90,7 +90,7 @@ namespace UnityEditor.ProBuilder
 			public float thickness
 			{
 				get { return m_Thickness; }
-				
+
 				set
 				{
 					End();
@@ -118,7 +118,8 @@ namespace UnityEditor.ProBuilder
 			{
 				Init();
 				m_Color = color;
-				m_Thickness = thickness;
+				m_Thickness = thickness < 0f ? s_EdgeLineSize : thickness;
+				m_ZTest = zTest;
 				Begin();
 			}
 
@@ -126,11 +127,12 @@ namespace UnityEditor.ProBuilder
 			{
 				m_Wire = thickness < .01f || !BuiltinMaterials.geometryShadersSupported;
 
-				s_LineMaterial.SetColor("_Color", color);
-				s_LineMaterial.SetInt("_HandleZTest", (int) zTest);
-
-				if(!m_Wire)
+				if (!m_Wire)
+				{
+					s_LineMaterial.SetColor("_Color", color);
 					s_LineMaterial.SetFloat("_Scale", thickness * EditorGUIUtility.pixelsPerPoint);
+					s_LineMaterial.SetInt("_HandleZTest", (int) zTest);
+				}
 
 				if (m_Wire || !s_LineMaterial.SetPass(0))
 				{

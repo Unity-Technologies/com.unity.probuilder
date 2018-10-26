@@ -36,7 +36,7 @@ namespace UnityEditor.ProBuilder
 
 						if (dir.IntSum() == 1)
 						{
-							var rot_dir = handleRotationOrigin * dir * 1000f;
+							var rot_dir = handleRotationOrigin * dir * 10000f;
 
 							m_HandlePosition = HandleUtility.ProjectPointLine(nearest,
 								handlePositionOrigin + rot_dir,
@@ -45,6 +45,12 @@ namespace UnityEditor.ProBuilder
 							delta = m_HandlePosition - handlePositionOrigin;
 						}
 					}
+				}
+				else if (snapEnabled)
+				{
+					var travel = delta.magnitude;
+					delta = delta.normalized * Snapping.SnapValue(travel, snapValue);
+					m_HandlePosition = handlePosition + delta;
 				}
 
 				switch (pivotPoint)

@@ -245,7 +245,7 @@ namespace UnityEditor.SettingsManagement
             m_Value = value;
             settings.Set<T>(key, m_Value, m_Scope);
 
-            if (m_Scope == SettingsScope.Project && saveProjectSettingsImmediately)
+            if (saveProjectSettingsImmediately)
                 settings.Save();
         }
 

@@ -314,6 +314,16 @@ namespace UnityEditor.ProBuilder
 			if (m_IsEditing)
 				return;
 
+			// Disable iterative lightmapping
+			Lightmapping.PushGIWorkflowMode();
+
+			var selection = MeshSelection.topInternal.ToArray();
+
+			UndoUtility.RegisterCompleteObjectUndo(selection, string.IsNullOrEmpty(undoMessage) ? "Modify Vertices" : undoMessage);
+
+			if (beforeMeshModification != null)
+				beforeMeshModification(selection);
+
 			if (currentEvent.shift)
 				Extrude();
 
@@ -323,7 +333,15 @@ namespace UnityEditor.ProBuilder
 			m_HandleRotationOrigin = m_HandleRotation;
 			handleRotationOriginInverse = Quaternion.Inverse(m_HandleRotation);
 
-			OnBeginVertexMovement(undoMessage);
+			m_SnapEnabled = ProGridsInterface.SnapEnabled();
+			m_SnapValue = ProGridsInterface.SnapValue();
+			m_SnapAxisConstraint = ProGridsInterface.UseAxisConstraints();
+
+			foreach (var mesh in selection)
+			{
+				mesh.ToMesh();
+				mesh.Refresh();
+			}
 
 			m_Selection.Clear();
 
@@ -336,7 +354,21 @@ namespace UnityEditor.ProBuilder
 			if (!m_IsEditing)
 				return;
 
-			OnFinishVertexModification();
+			Lightmapping.PopGIWorkflowMode();
+
+			var selection = MeshSelection.topInternal.ToArray();
+
+			foreach (var mesh in selection)
+			{
+				mesh.ToMesh();
+				mesh.Refresh();
+				mesh.Optimize();
+			}
+
+			ProBuilderEditor.Refresh();
+
+			if (afterMeshModification != null)
+				afterMeshModification(selection);
 
 			m_IsEditing = false;
 		}
@@ -374,8 +406,6 @@ namespace UnityEditor.ProBuilder
 
 			var selection = MeshSelection.topInternal;
 			var selectMode = ProBuilderEditor.selectMode;
-
-			UndoUtility.RecordSelection("Extrude Vertices");
 
 			foreach (var mesh in selection)
 			{
@@ -439,52 +469,5 @@ namespace UnityEditor.ProBuilder
 			vertex = (bool) result ? (Vector3) s_FindNearestVertexArguments[2] : Vector3.zero;
 			return (bool) result;
 		}
-
-		/// <summary>
-		/// When beginning a vertex modification, nuke the UV2 and rebuild the mesh using PB data so that triangles
-		/// match vertices (and no inserted vertices from the Unwrapping.GenerateSecondaryUVSet() remain).
-		/// </summary>
-		protected void OnBeginVertexMovement(string undoMessage)
-		{
-			UndoUtility.RecordSelection(string.IsNullOrEmpty(undoMessage) ? "Modify Vertices" : undoMessage);
-
-			m_SnapEnabled = ProGridsInterface.SnapEnabled();
-			m_SnapValue = ProGridsInterface.SnapValue();
-			m_SnapAxisConstraint = ProGridsInterface.UseAxisConstraints();
-
-			// Disable iterative lightmapping
-			Lightmapping.PushGIWorkflowMode();
-
-			var selection = MeshSelection.topInternal.ToArray();
-
-			foreach (var mesh in selection)
-			{
-				mesh.ToMesh();
-				mesh.Refresh();
-			}
-
-			if (beforeMeshModification != null)
-				beforeMeshModification(selection);
-		}
-
-		internal void OnFinishVertexModification()
-		{
-			Lightmapping.PopGIWorkflowMode();
-
-			var selection = MeshSelection.topInternal.ToArray();
-
-			foreach (var mesh in selection)
-			{
-				mesh.ToMesh();
-				mesh.Refresh();
-				mesh.Optimize();
-			}
-
-			ProBuilderEditor.Refresh();
-
-			if (afterMeshModification != null)
-				afterMeshModification(selection);
-		}
-
 	}
 }
