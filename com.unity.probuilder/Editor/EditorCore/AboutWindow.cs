@@ -33,7 +33,7 @@ namespace UnityEditor.ProBuilder
 		const float k_BannerWidth = 480f;
 		const float k_BannerHeight = 270f;
 
-		static Pref<SemVer> s_StoredVersionInfo = new Pref<SemVer>("about.identifier", new SemVer(), SettingsScopes.Project);
+		static Pref<SemVer> s_StoredVersionInfo = new Pref<SemVer>("about.identifier", new SemVer(), SettingsScope.Project);
 
 		const string k_AboutPrefFormat = "M.m.p-T.b";
 

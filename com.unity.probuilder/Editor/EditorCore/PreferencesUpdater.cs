@@ -10,7 +10,7 @@ namespace UnityEditor.ProBuilder
 {
 	static class PreferencesUpdater
 	{
-		static Pref<SemVer> s_PreferencesVersion = new Pref<SemVer>("preferences.version", new SemVer(), SettingsScopes.Project);
+		static Pref<SemVer> s_PreferencesVersion = new Pref<SemVer>("preferences.version", new SemVer(), SettingsScope.Project);
 		static readonly SemVer k_ProBuilder_4_0_0 = new SemVer(4, 0, 0, 16, "preview");
 
 		/// <summary>
@@ -39,9 +39,9 @@ namespace UnityEditor.ProBuilder
 			public string oldKey;
 			public string newKey;
 			public System.Type type;
-			public SettingsScopes scope;
+			public SettingsScope scope;
 
-			public FormerPreferenceKeyMap(string oldKey, string newKey, System.Type type, SettingsScopes scope)
+			public FormerPreferenceKeyMap(string oldKey, string newKey, System.Type type, SettingsScope scope)
 			{
 				this.oldKey = oldKey;
 				this.newKey = newKey;
@@ -55,63 +55,63 @@ namespace UnityEditor.ProBuilder
 		static readonly FormerPreferenceKeyMap[] s_FormerPreferenceKeyMap = new FormerPreferenceKeyMap[]
 		{
 #pragma warning disable 612, 618
-			new FormerPreferenceKeyMap("", "about.identifier", typeof(UnityEngine.ProBuilder.SemVer), SettingsScopes.Project),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbUseUnityColors, "graphics.handlesUseUnityColors", typeof(System.Boolean), SettingsScopes.User),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbSelectedFaceDither, "graphics.ditherFaceHandles", typeof(System.Boolean), SettingsScopes.User),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbSelectedFaceColor, "graphics.userSelectedFaceColor", typeof(UnityEngine.Color), SettingsScopes.User),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbWireframeColor, "graphics.userWireframeColor", typeof(UnityEngine.Color), SettingsScopes.User),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbUnselectedEdgeColor, "graphics.userUnselectedEdgeColor", typeof(UnityEngine.Color), SettingsScopes.User),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbSelectedEdgeColor, "graphics.userSelectedEdgeColor", typeof(UnityEngine.Color), SettingsScopes.User),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbUnselectedVertexColor, "graphics.userUnselectedVertexColor", typeof(UnityEngine.Color), SettingsScopes.User),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbSelectedVertexColor, "graphics.userSelectedVertexColor", typeof(UnityEngine.Color), SettingsScopes.User),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbPreselectionColor, "graphics.userPreselectionColor", typeof(UnityEngine.Color), SettingsScopes.User),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbWireframeSize, "graphics.wireframeLineSize", typeof(System.Single), SettingsScopes.User),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbLineHandleSize, "graphics.edgeLineSize", typeof(System.Single), SettingsScopes.User),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbVertexHandleSize, "graphics.vertexPointSize", typeof(System.Single), SettingsScopes.User),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbShiftOnlyTooltips, "editor.shiftOnlyTooltips", typeof(System.Boolean), SettingsScopes.User),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbShowEditorNotifications, "editor.showEditorNotifications", typeof(System.Boolean), SettingsScopes.Project),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbDefaultStaticFlags, "mesh.defaultStaticEditorFlags", typeof(UnityEditor.StaticEditorFlags), SettingsScopes.Project),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbDefaultMaterial, "mesh.userMaterial", typeof(UnityEngine.Material), SettingsScopes.Project),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbForceConvex, "mesh.meshColliderIsConvex", typeof(System.Boolean), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("", "mesh.newShapePivotLocation", typeof(UnityEditor.ProBuilder.EditorUtility.PivotLocation), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("", "mesh.newShapesSnapToGrid", typeof(System.Boolean), SettingsScopes.Project),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbShadowCastingMode, "mesh.shadowCastingMode", typeof(UnityEngine.Rendering.ShadowCastingMode), SettingsScopes.Project),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbDefaultCollider, "mesh.newShapeColliderType", typeof(UnityEngine.ProBuilder.ColliderType), SettingsScopes.Project),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbEnableExperimental, "experimental.featuresEnabled", typeof(System.Boolean), SettingsScopes.User),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbMeshesAreAssets, "experimental.meshesAreAssets", typeof(System.Boolean), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("", "entity.detailVisible", typeof(System.Boolean), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("", "entity.moverVisible", typeof(System.Boolean), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("", "entity.colliderVisible", typeof(System.Boolean), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("", "entity.triggerVisible", typeof(System.Boolean), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("", "lightmapping.autoUnwrapLightmapUV", typeof(System.Boolean), SettingsScopes.Project),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbShowMissingLightmapUvWarning, "lightmapping.showMissingLightmapWarning", typeof(System.Boolean), SettingsScopes.User),
-			new FormerPreferenceKeyMap("", "lightmapping.defaultLightmapUnwrapParameters", typeof(UnityEngine.ProBuilder.UnwrapParameters), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("", "lightmapping.giWorkflowMode", typeof(UnityEditor.Lightmapping.GIWorkflowMode), SettingsScopes.User),
-			new FormerPreferenceKeyMap("pb_Log::m_LogLevel", "log.level", typeof(UnityEngine.ProBuilder.LogLevel), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("pb_Log::m_Output", "log.output", typeof(UnityEngine.ProBuilder.LogOutput), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("pb_Log::m_LogFilePath", "log.path", typeof(System.String), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("", "editor.materialPalettePath", typeof(System.String), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("", "preferences.version", typeof(UnityEngine.ProBuilder.SemVer), SettingsScopes.Project),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbShowSceneInfo, "editor.showSceneInfo", typeof(System.Boolean), SettingsScopes.Project),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbIconGUI, "editor.toolbarIconGUI", typeof(System.Boolean), SettingsScopes.Project),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbUniqueModeShortcuts, "editor.uniqueModeShortcuts", typeof(System.Boolean), SettingsScopes.User),
-			new FormerPreferenceKeyMap("", "editor.allowNonManifoldActions", typeof(System.Boolean), SettingsScopes.User),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbToolbarLocation, "editor.sceneToolbarLocation", typeof(UnityEditor.ProBuilder.SceneToolbarLocation), SettingsScopes.User),
-			new FormerPreferenceKeyMap("", "UnityEngine.ProBuilder.ProBuilderEditor-isUtilityWindow", typeof(System.Boolean), SettingsScopes.Project),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbDefaultShortcuts, "editor.sceneViewShortcuts", typeof(UnityEngine.ProBuilder.Shortcut[]), SettingsScopes.Project),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbShowPreselectionHighlight, "editor.showPreselectionHighlight", typeof(System.Boolean), SettingsScopes.User),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbCloseShapeWindow, "editor.closeWindowAfterShapeCreation", typeof(System.Boolean), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("", "shape.torusDefinesInnerOuter", typeof(System.Boolean), SettingsScopes.User),
-			new FormerPreferenceKeyMap("pb_SmoothingGroupEditor::m_ShowPreview", "smoothing.showPreview", typeof(System.Boolean), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("pb_SmoothingGroupEditor::m_DrawNormals", "smoothing.showNormals", typeof(System.Boolean), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("", "smoothing.showHelp", typeof(System.Boolean), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("pb_SmoothingGroupEditor::m_NormalsSize", "smoothing.NormalsSize", typeof(System.Single), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("pb_SmoothingGroupEditor::m_PreviewOpacity", "smoothing.PreviewOpacity", typeof(System.Single), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("pb_SmoothingGroupEditor::m_PreviewDither", "smoothing.previewDither", typeof(System.Boolean), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("", "smoothing.showSettings", typeof(System.Boolean), SettingsScopes.Project),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbStripProBuilderOnBuild, "editor.stripProBuilderScriptsOnBuild", typeof(System.Boolean), SettingsScopes.Project),
-			new FormerPreferenceKeyMap(PreferenceKeys.pbUVGridSnapValue, "uv.uvEditorGridSnapIncrement", typeof(System.Single), SettingsScopes.Project),
-			new FormerPreferenceKeyMap("", "VertexColorPalette.previousColorPalette", typeof(System.String), SettingsScopes.Project),
+			new FormerPreferenceKeyMap("", "about.identifier", typeof(UnityEngine.ProBuilder.SemVer), SettingsScope.Project),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbUseUnityColors, "graphics.handlesUseUnityColors", typeof(System.Boolean), SettingsScope.User),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbSelectedFaceDither, "graphics.ditherFaceHandles", typeof(System.Boolean), SettingsScope.User),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbSelectedFaceColor, "graphics.userSelectedFaceColor", typeof(UnityEngine.Color), SettingsScope.User),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbWireframeColor, "graphics.userWireframeColor", typeof(UnityEngine.Color), SettingsScope.User),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbUnselectedEdgeColor, "graphics.userUnselectedEdgeColor", typeof(UnityEngine.Color), SettingsScope.User),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbSelectedEdgeColor, "graphics.userSelectedEdgeColor", typeof(UnityEngine.Color), SettingsScope.User),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbUnselectedVertexColor, "graphics.userUnselectedVertexColor", typeof(UnityEngine.Color), SettingsScope.User),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbSelectedVertexColor, "graphics.userSelectedVertexColor", typeof(UnityEngine.Color), SettingsScope.User),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbPreselectionColor, "graphics.userPreselectionColor", typeof(UnityEngine.Color), SettingsScope.User),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbWireframeSize, "graphics.wireframeLineSize", typeof(System.Single), SettingsScope.User),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbLineHandleSize, "graphics.edgeLineSize", typeof(System.Single), SettingsScope.User),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbVertexHandleSize, "graphics.vertexPointSize", typeof(System.Single), SettingsScope.User),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbShiftOnlyTooltips, "editor.shiftOnlyTooltips", typeof(System.Boolean), SettingsScope.User),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbShowEditorNotifications, "editor.showEditorNotifications", typeof(System.Boolean), SettingsScope.Project),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbDefaultStaticFlags, "mesh.defaultStaticEditorFlags", typeof(UnityEditor.StaticEditorFlags), SettingsScope.Project),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbDefaultMaterial, "mesh.userMaterial", typeof(UnityEngine.Material), SettingsScope.Project),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbForceConvex, "mesh.meshColliderIsConvex", typeof(System.Boolean), SettingsScope.Project),
+			new FormerPreferenceKeyMap("", "mesh.newShapePivotLocation", typeof(UnityEditor.ProBuilder.EditorUtility.PivotLocation), SettingsScope.Project),
+			new FormerPreferenceKeyMap("", "mesh.newShapesSnapToGrid", typeof(System.Boolean), SettingsScope.Project),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbShadowCastingMode, "mesh.shadowCastingMode", typeof(UnityEngine.Rendering.ShadowCastingMode), SettingsScope.Project),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbDefaultCollider, "mesh.newShapeColliderType", typeof(UnityEngine.ProBuilder.ColliderType), SettingsScope.Project),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbEnableExperimental, "experimental.featuresEnabled", typeof(System.Boolean), SettingsScope.User),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbMeshesAreAssets, "experimental.meshesAreAssets", typeof(System.Boolean), SettingsScope.Project),
+			new FormerPreferenceKeyMap("", "entity.detailVisible", typeof(System.Boolean), SettingsScope.Project),
+			new FormerPreferenceKeyMap("", "entity.moverVisible", typeof(System.Boolean), SettingsScope.Project),
+			new FormerPreferenceKeyMap("", "entity.colliderVisible", typeof(System.Boolean), SettingsScope.Project),
+			new FormerPreferenceKeyMap("", "entity.triggerVisible", typeof(System.Boolean), SettingsScope.Project),
+			new FormerPreferenceKeyMap("", "lightmapping.autoUnwrapLightmapUV", typeof(System.Boolean), SettingsScope.Project),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbShowMissingLightmapUvWarning, "lightmapping.showMissingLightmapWarning", typeof(System.Boolean), SettingsScope.User),
+			new FormerPreferenceKeyMap("", "lightmapping.defaultLightmapUnwrapParameters", typeof(UnityEngine.ProBuilder.UnwrapParameters), SettingsScope.Project),
+			new FormerPreferenceKeyMap("", "lightmapping.giWorkflowMode", typeof(UnityEditor.Lightmapping.GIWorkflowMode), SettingsScope.User),
+			new FormerPreferenceKeyMap("pb_Log::m_LogLevel", "log.level", typeof(UnityEngine.ProBuilder.LogLevel), SettingsScope.Project),
+			new FormerPreferenceKeyMap("pb_Log::m_Output", "log.output", typeof(UnityEngine.ProBuilder.LogOutput), SettingsScope.Project),
+			new FormerPreferenceKeyMap("pb_Log::m_LogFilePath", "log.path", typeof(System.String), SettingsScope.Project),
+			new FormerPreferenceKeyMap("", "editor.materialPalettePath", typeof(System.String), SettingsScope.Project),
+			new FormerPreferenceKeyMap("", "preferences.version", typeof(UnityEngine.ProBuilder.SemVer), SettingsScope.Project),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbShowSceneInfo, "editor.showSceneInfo", typeof(System.Boolean), SettingsScope.Project),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbIconGUI, "editor.toolbarIconGUI", typeof(System.Boolean), SettingsScope.Project),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbUniqueModeShortcuts, "editor.uniqueModeShortcuts", typeof(System.Boolean), SettingsScope.User),
+			new FormerPreferenceKeyMap("", "editor.allowNonManifoldActions", typeof(System.Boolean), SettingsScope.User),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbToolbarLocation, "editor.sceneToolbarLocation", typeof(UnityEditor.ProBuilder.SceneToolbarLocation), SettingsScope.User),
+			new FormerPreferenceKeyMap("", "UnityEngine.ProBuilder.ProBuilderEditor-isUtilityWindow", typeof(System.Boolean), SettingsScope.Project),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbDefaultShortcuts, "editor.sceneViewShortcuts", typeof(UnityEngine.ProBuilder.Shortcut[]), SettingsScope.Project),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbShowPreselectionHighlight, "editor.showPreselectionHighlight", typeof(System.Boolean), SettingsScope.User),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbCloseShapeWindow, "editor.closeWindowAfterShapeCreation", typeof(System.Boolean), SettingsScope.Project),
+			new FormerPreferenceKeyMap("", "shape.torusDefinesInnerOuter", typeof(System.Boolean), SettingsScope.User),
+			new FormerPreferenceKeyMap("pb_SmoothingGroupEditor::m_ShowPreview", "smoothing.showPreview", typeof(System.Boolean), SettingsScope.Project),
+			new FormerPreferenceKeyMap("pb_SmoothingGroupEditor::m_DrawNormals", "smoothing.showNormals", typeof(System.Boolean), SettingsScope.Project),
+			new FormerPreferenceKeyMap("", "smoothing.showHelp", typeof(System.Boolean), SettingsScope.Project),
+			new FormerPreferenceKeyMap("pb_SmoothingGroupEditor::m_NormalsSize", "smoothing.NormalsSize", typeof(System.Single), SettingsScope.Project),
+			new FormerPreferenceKeyMap("pb_SmoothingGroupEditor::m_PreviewOpacity", "smoothing.PreviewOpacity", typeof(System.Single), SettingsScope.Project),
+			new FormerPreferenceKeyMap("pb_SmoothingGroupEditor::m_PreviewDither", "smoothing.previewDither", typeof(System.Boolean), SettingsScope.Project),
+			new FormerPreferenceKeyMap("", "smoothing.showSettings", typeof(System.Boolean), SettingsScope.Project),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbStripProBuilderOnBuild, "editor.stripProBuilderScriptsOnBuild", typeof(System.Boolean), SettingsScope.Project),
+			new FormerPreferenceKeyMap(PreferenceKeys.pbUVGridSnapValue, "uv.uvEditorGridSnapIncrement", typeof(System.Single), SettingsScope.Project),
+			new FormerPreferenceKeyMap("", "VertexColorPalette.previousColorPalette", typeof(System.String), SettingsScope.Project),
 #pragma warning restore 612, 618
 		};
 

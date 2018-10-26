@@ -11,7 +11,7 @@ namespace UnityEditor.SettingsManagement
     /// </summary>
     static class UserSettings
     {
-        internal static string GetSettingsString(IEnumerable<Assembly> assemblies, params SettingsScopes[] scopes)
+        internal static string GetSettingsString(IEnumerable<Assembly> assemblies, params SettingsScope[] scopes)
         {
             var settings = FindUserSettings(assemblies, SettingVisibility.All);
             if (scopes != null && scopes.Length > 0)
@@ -119,7 +119,7 @@ namespace UnityEditor.SettingsManagement
             return settings;
         }
 
-        static IUserSetting CreateGenericPref(string key, SettingsScopes scope, FieldInfo field)
+        static IUserSetting CreateGenericPref(string key, SettingsScope scope, FieldInfo field)
         {
             try
             {

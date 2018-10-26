@@ -46,9 +46,9 @@ namespace UnityEditor.SettingsManagement
 		/// This repository implementation is relevant to the Project scope.
 		/// </value>
 		/// <inheritdoc cref="ISettingsRepository.scope"/>
-		public SettingsScopes scope
+		public SettingsScope scope
 		{
-			get { return SettingsScopes.Project; }
+			get { return SettingsScope.Project; }
 		}
 
 		/// <value>
@@ -108,7 +108,7 @@ namespace UnityEditor.SettingsManagement
 			Init();
 			return m_Dictionary.ContainsKey<T>(key);
 		}
-		
+
 		/// <summary>
 		/// Remove a key value pair from the settings repository.
 		/// </summary>

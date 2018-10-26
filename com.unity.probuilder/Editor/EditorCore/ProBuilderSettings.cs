@@ -30,22 +30,22 @@ namespace UnityEditor.ProBuilder
 			instance.Save();
 		}
 
-		public static void Set<T>(string key, T value, SettingsScopes scope = SettingsScopes.Project)
+		public static void Set<T>(string key, T value, SettingsScope scope = SettingsScope.Project)
 		{
 			instance.Set<T>(key, value, scope);
 		}
 
-		public static T Get<T>(string key, SettingsScopes scope = SettingsScopes.Project, T fallback = default(T))
+		public static T Get<T>(string key, SettingsScope scope = SettingsScope.Project, T fallback = default(T))
 		{
 			return instance.Get<T>(key, scope, fallback);
 		}
 
-		public static bool ContainsKey<T>(string key, SettingsScopes scope = SettingsScopes.Project)
+		public static bool ContainsKey<T>(string key, SettingsScope scope = SettingsScope.Project)
 		{
 			return instance.ContainsKey<T>(key, scope);
 		}
 
-		public static void Delete<T>(string key, SettingsScopes scope = SettingsScopes.Project)
+		public static void Delete<T>(string key, SettingsScope scope = SettingsScope.Project)
 		{
 			instance.DeleteKey<T>(key, scope);
 		}
