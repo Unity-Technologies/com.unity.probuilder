@@ -14,6 +14,8 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	static class EditorHandleUtility
 	{
+		static Stack<Matrix4x4> s_HandleMatrix = new Stack<Matrix4x4>();
+
 		public static bool SceneViewInUse(Event e)
 		{
 			return 	e.alt
@@ -555,6 +557,16 @@ namespace UnityEditor.ProBuilder
 				return PivotPoint.WorldBoundingBoxCenter;
 
 			return PivotPoint.ModelBoundingBoxCenter;
+		}
+
+		internal static void PushMatrix()
+		{
+			s_HandleMatrix.Push(Handles.matrix);
+		}
+
+		internal static void PopMatrix()
+		{
+			Handles.matrix = s_HandleMatrix.Pop();
 		}
 	}
 }

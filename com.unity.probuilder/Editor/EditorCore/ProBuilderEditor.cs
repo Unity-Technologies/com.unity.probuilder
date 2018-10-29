@@ -145,6 +145,7 @@ namespace UnityEditor.ProBuilder
 		bool m_WasDoubleClick;
 		// vertex handles
 		bool m_IsRightMouseDown;
+		static Dictionary<Type, VertexManipulationTool> s_EditorTools = new Dictionary<Type, VertexManipulationTool>();
 
 		Vector3[][] m_VertexPositions;
 		Vector3[] m_VertexOffset;
@@ -512,6 +513,18 @@ namespace UnityEditor.ProBuilder
 			res.titleContent = windowTitle;
 		}
 
+
+		VertexManipulationTool GetTool<T>() where T : VertexManipulationTool, new()
+		{
+			VertexManipulationTool tool;
+
+			if (s_EditorTools.TryGetValue(typeof(T), out tool))
+				return tool;
+			tool = new T();
+			s_EditorTools.Add(typeof(T), tool);
+			return tool;
+		}
+
 		void OnSceneGUI(SceneView sceneView)
 		{
 #if !UNITY_2018_2_OR_NEWER
@@ -522,21 +535,6 @@ namespace UnityEditor.ProBuilder
 			SceneStyles.Init();
 
 			m_CurrentEvent = Event.current;
-
-//			if(selectMode.ContainsFlag(SelectMode.Face | SelectMode.Edge | SelectMode.Vertex))
-//			{
-//				if (m_CurrentEvent.Equals(Event.KeyboardEvent("v")))
-//					m_DoSnapToVertex = true;
-//				else if (m_CurrentEvent.Equals(Event.KeyboardEvent("c")))
-//					m_DoSnapToFace = true;
-//			}
-
-			// Snap stuff
-//			if (m_CurrentEvent.type == EventType.KeyUp)
-//			{
-//				m_DoSnapToFace = false;
-//				m_DoSnapToVertex = false;
-//			}
 
 			if (m_CurrentEvent.type == EventType.MouseDown && m_CurrentEvent.button == 1)
 				m_IsRightMouseDown = true;
@@ -565,14 +563,6 @@ namespace UnityEditor.ProBuilder
 
 			if (selectMode == SelectMode.Object)
 				return;
-//
-//			// Finished moving vertices, scaling, or adjusting uvs
-//			if ((m_IsMovingElements || m_IsMovingTextures) && GUIUtility.hotControl < 1)
-//			{
-//				OnFinishVertexModification();
-//				m_HandleRotation = MeshSelection.GetHandleRotation(s_HandleOrientation);
-//				UpdateTextureHandles();
-//			}
 
 			// Check mouse position in scene and determine if we should highlight something
 			if (s_ShowHoverHighlight
@@ -608,13 +598,13 @@ namespace UnityEditor.ProBuilder
 						switch (m_CurrentTool)
 						{
 							case Tool.Move:
-								TextureMoveTool();
+								GetTool<TextureMoveTool>().OnSceneGUI(m_CurrentEvent);
 								break;
 							case Tool.Rotate:
-								TextureRotateTool();
+//								GetTool<TextureRotateTool>().OnSceneGUI(m_CurrentEvent);
 								break;
 							case Tool.Scale:
-								TextureScaleTool();
+//								GetTool<TextureScaleTool>().OnSceneGUI(m_CurrentEvent);
 								break;
 						}
 					}
@@ -623,13 +613,13 @@ namespace UnityEditor.ProBuilder
 						switch (m_CurrentTool)
 						{
 							case Tool.Move:
-								VertexMoveTool();
+								GetTool<VertexMoveTool>().OnSceneGUI(m_CurrentEvent);
 								break;
 							case Tool.Scale:
-								VertexScaleTool();
+								GetTool<VertexScaleTool>().OnSceneGUI(m_CurrentEvent);
 								break;
 							case Tool.Rotate:
-								VertexRotateTool();
+								GetTool<VertexRotateTool>().OnSceneGUI(m_CurrentEvent);
 								break;
 						}
 					}
@@ -749,211 +739,6 @@ namespace UnityEditor.ProBuilder
 				SceneView.RepaintAll();
 				m_WasDoubleClick = true;
 			}
-		}
-
-		static VertexManipulationTool s_MoveTool;
-		static VertexManipulationTool s_RotateTool;
-		static VertexManipulationTool m_ScaleTool;
-#pragma warning disable 612
-		void VertexMoveTool()
-		{
-			if(s_MoveTool == null)
-				s_MoveTool = new MoveTool();
-
-			s_MoveTool.OnSceneGUI(Event.current);
-
-			return;
-//
-//			if (!m_IsMovingElements)
-//				m_ElementHandlePosition = m_HandlePosition;
-//
-//			m_ElementHandleCachedPosition = m_ElementHandlePosition;
-//
-//			m_ElementHandlePosition = Handles.PositionHandle(m_ElementHandlePosition, m_HandleRotation);
-//
-//			if (m_CurrentEvent.alt)
-//				return;
-//
-//			if (m_ElementHandlePosition != m_ElementHandleCachedPosition)
-//			{
-//				Vector3 diff = m_ElementHandlePosition - m_ElementHandleCachedPosition;
-//
-//				Vector3 mask = diff.ToMask(Math.handleEpsilon);
-//
-//				if (m_DoSnapToVertex)
-//				{
-//					Vector3 v;
-//
-//					if (FindNearestVertex(m_CurrentEvent.mousePosition, out v))
-//						diff = Vector3.Scale(v - m_ElementHandleCachedPosition, mask);
-//				}
-//				else if (m_DoSnapToFace)
-//				{
-//					ProBuilderMesh obj = null;
-//					RaycastHit hit;
-//					Dictionary<ProBuilderMesh, HashSet<Face>> ignore = new Dictionary<ProBuilderMesh, HashSet<Face>>();
-//					foreach (ProBuilderMesh pb in selection)
-//						ignore.Add(pb, new HashSet<Face>(pb.selectedFacesInternal));
-//
-//					if (EditorHandleUtility.FaceRaycast(m_CurrentEvent.mousePosition, out obj, out hit, ignore))
-//					{
-//						if (mask.IntSum() == 1)
-//						{
-//							Ray r = new Ray(m_ElementHandleCachedPosition, -mask);
-//							Plane plane = new Plane(obj.transform.TransformDirection(hit.normal).normalized,
-//								obj.transform.TransformPoint(hit.point));
-//
-//							float forward, backward;
-//							plane.Raycast(r, out forward);
-//							plane.Raycast(r, out backward);
-//							float planeHit = Mathf.Abs(forward) < Mathf.Abs(backward) ? forward : backward;
-//							r.direction = -r.direction;
-//							plane.Raycast(r, out forward);
-//							plane.Raycast(r, out backward);
-//							float rev = Mathf.Abs(forward) < Mathf.Abs(backward) ? forward : backward;
-//							if (Mathf.Abs(rev) > Mathf.Abs(planeHit))
-//								planeHit = rev;
-//
-//							if (Mathf.Abs(planeHit) > Mathf.Epsilon)
-//								diff = mask * -planeHit;
-//						}
-//						else
-//						{
-//							diff = Vector3.Scale(obj.transform.TransformPoint(hit.point) - m_ElementHandleCachedPosition, mask.Abs());
-//						}
-//					}
-//				}
-//
-//				if (!m_IsMovingElements)
-//				{
-//					m_IsMovingElements = true;
-//					m_TranslateOrigin = m_ElementHandleCachedPosition;
-//					m_RotateOrigin = m_HandleRotation.eulerAngles;
-//					m_ScaleOrigin = m_HandleScale;
-//
-//					OnBeginVertexMovement();
-//
-//					ProGridsInterface.OnHandleMove(mask);
-//				}
-//
-//				for (int i = 0; i < selection.Length; i++)
-//				{
-//					var mesh = selection[i];
-//
-//					mesh.TranslateVerticesInWorldSpace(mesh.selectedIndexesInternal,
-//						diff,
-//						m_SnapEnabled ? m_SnapValue : 0f,
-//						m_SnapAxisConstraint);
-//
-//					mesh.RefreshUV(MeshSelection.selectedFacesInEditZone[mesh]);
-//					mesh.Refresh(RefreshMask.Normals);
-//					mesh.mesh.RecalculateBounds();
-//				}
-//
-//				UpdateMeshHandles(false);
-//			}
-		}
-
-		void VertexScaleTool()
-		{
-			if (m_ScaleTool == null)
-				m_ScaleTool = new ScaleTool();
-
-			m_ScaleTool.OnSceneGUI(Event.current);
-		}
-
-		void VertexRotateTool()
-		{
-			if (s_RotateTool == null)
-				s_RotateTool = new RotateTool();
-
-			s_RotateTool.OnSceneGUI(Event.current);
-		}
-
-#pragma warning restore 612
-
-		void TextureMoveTool()
-		{
-//			UVEditor uvEditor = UVEditor.instance;
-//			if (!uvEditor) return;
-//
-//			Vector3 cached = m_TextureHandlePosition;
-//
-//			m_TextureHandlePosition = Handles.PositionHandle(m_TextureHandlePosition, m_HandleRotation);
-//
-//			if (m_CurrentEvent.alt) return;
-//
-//			if (m_TextureHandlePosition != cached)
-//			{
-//				cached = Quaternion.Inverse(m_HandleRotation) * m_TextureHandlePosition;
-//				cached.y = -cached.y;
-//
-//				Vector3 lossyScale = selection[0].transform.lossyScale;
-//				Vector3 pos = cached.DivideBy(lossyScale);
-//
-//				if (!m_IsMovingTextures)
-//				{
-//					m_TextureHandlePositionPrevious = pos;
-//					m_IsMovingTextures = true;
-//				}
-//
-//				uvEditor.SceneMoveTool(pos - m_TextureHandlePositionPrevious);
-//				m_TextureHandlePositionPrevious = pos;
-//				uvEditor.Repaint();
-//			}
-		}
-
-		void TextureRotateTool()
-		{
-//			UVEditor uvEditor = UVEditor.instance;
-//			if (!uvEditor) return;
-//
-//			float size = HandleUtility.GetHandleSize(m_HandlePosition);
-//
-//			if (m_CurrentEvent.alt) return;
-//
-//			Matrix4x4 prev = Handles.matrix;
-//			Handles.matrix = handleMatrix;
-//
-//			Quaternion cached = m_TextureRotation;
-//
-//			m_TextureRotation = Handles.Disc(m_TextureRotation, Vector3.zero, Vector3.forward, size, false, 0f);
-//
-//			if (m_TextureRotation != cached)
-//			{
-//				if (!m_IsMovingTextures)
-//					m_IsMovingTextures = true;
-//
-//				uvEditor.SceneRotateTool(-m_TextureRotation.eulerAngles.z);
-//			}
-//
-//			Handles.matrix = prev;
-		}
-
-		void TextureScaleTool()
-		{
-//			UVEditor uvEditor = UVEditor.instance;
-//			if (!uvEditor) return;
-//
-//			float size = HandleUtility.GetHandleSize(m_HandlePosition);
-//
-//			Matrix4x4 prev = Handles.matrix;
-//			Handles.matrix = handleMatrix;
-//
-//			Vector3 cached = m_TextureScale;
-//			m_TextureScale = Handles.ScaleHandle(m_TextureScale, Vector3.zero, Quaternion.identity, size);
-//
-//			if (m_CurrentEvent.alt) return;
-//
-//			if (cached != m_TextureScale)
-//			{
-//				if (!m_IsMovingTextures)
-//					m_IsMovingTextures = true;
-//
-//				uvEditor.SceneScaleTool(m_TextureScale, cached);
-//			}
-//
-//			Handles.matrix = prev;
 		}
 
 		void DrawHandleGUI(SceneView sceneView)

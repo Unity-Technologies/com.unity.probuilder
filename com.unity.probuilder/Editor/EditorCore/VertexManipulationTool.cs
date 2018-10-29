@@ -13,37 +13,25 @@ using UnityEngine.Rendering;
 
 namespace UnityEditor.ProBuilder
 {
-	struct MeshAndElementSelection
+	abstract class MeshAndElementGroupPair
 	{
 		ProBuilderMesh m_Mesh;
-		Vector3[] m_Positions;
-		List<ElementGroup> m_Selection;
+		List<ElementGroup> m_ElementGroups;
 
 		public ProBuilderMesh mesh
 		{
 			get { return m_Mesh; }
 		}
 
-		public Vector3[] positions
+		public List<ElementGroup> elementGroups
 		{
-			get { return m_Positions; }
+			get { return m_ElementGroups; }
 		}
 
-		public List<ElementGroup> selection
-		{
-			get { return m_Selection; }
-		}
-
-		public MeshAndElementSelection(ProBuilderMesh mesh, PivotPoint pivot)
+		public MeshAndElementGroupPair(ProBuilderMesh mesh, PivotPoint pivot)
 		{
 			m_Mesh = mesh;
-			m_Positions = mesh.positions.ToArray();
-			var l2w = m_Mesh.transform.localToWorldMatrix;
-			for (int i = 0, c = m_Positions.Length; i < c; i++)
-				m_Positions[i] = l2w.MultiplyPoint3x4(m_Positions[i]);
-			var groups = new List<ElementGroup>();
-			ElementGroup.GetElementGroups(mesh, pivot, groups);
-			m_Selection = groups;
+			m_ElementGroups = ElementGroup.GetElementGroups(mesh, pivot);
 		}
 	}
 
@@ -66,6 +54,13 @@ namespace UnityEditor.ProBuilder
 		public Matrix4x4 inverseMatrix
 		{
 			get { return m_PostApplyPositionsMatrix; }
+		}
+
+		public static List<ElementGroup> GetElementGroups(ProBuilderMesh mesh, PivotPoint pivot)
+		{
+			var groups = new List<ElementGroup>();
+			GetElementGroups(mesh, pivot, groups);
+			return groups;
 		}
 
 		public static void GetElementGroups(ProBuilderMesh mesh, PivotPoint pivot, List<ElementGroup> groups)
@@ -130,7 +125,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		internal static List<List<Face>> GetFaceSelectionGroups(ProBuilderMesh mesh)
+		static List<List<Face>> GetFaceSelectionGroups(ProBuilderMesh mesh)
 		{
 			var wings = WingedEdge.GetWingedEdges(mesh, mesh.selectedFacesInternal, true);
 			var filter = new HashSet<Face>();
@@ -185,6 +180,8 @@ namespace UnityEditor.ProBuilder
 		Quaternion m_HandleRotation;
 		Vector3 m_HandlePositionOrigin;
 		Quaternion m_HandleRotationOrigin;
+		List<MeshAndElementGroupPair> m_MeshAndElementGroupPairs = new List<MeshAndElementGroupPair>();
+		bool m_IsEditing;
 
 		float m_SnapValue = .25f;
 		bool m_SnapAxisConstraint = true;
@@ -193,6 +190,11 @@ namespace UnityEditor.ProBuilder
 		static FieldInfo s_VertexDragging;
 		static MethodInfo s_FindNearestVertex;
 		static object[] s_FindNearestVertexArguments = new object[] { null, null, null };
+
+		protected IEnumerable<MeshAndElementGroupPair> meshAndElementGroupPairs
+		{
+			get { return m_MeshAndElementGroupPairs; }
+		}
 
 		protected static bool vertexDragging
 		{
@@ -203,8 +205,10 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		protected List<MeshAndElementSelection> m_Selection = new List<MeshAndElementSelection>();
-		protected bool m_IsEditing;
+		protected bool isEditing
+		{
+			get { return m_IsEditing; }
+		}
 
 		protected Event currentEvent { get; private set; }
 
@@ -247,6 +251,8 @@ namespace UnityEditor.ProBuilder
 				BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
 		}
 
+		protected abstract MeshAndElementGroupPair GetMeshAndElementGroupPair(ProBuilderMesh mesh, PivotPoint pivot);
+
 		public void OnSceneGUI(Event evt)
 		{
 			currentEvent = evt;
@@ -270,9 +276,9 @@ namespace UnityEditor.ProBuilder
 			{
 				if (evt.type == EventType.Repaint)
 				{
-					foreach (var key in m_Selection)
+					foreach (var key in m_MeshAndElementGroupPairs)
 					{
-						foreach (var group in key.selection)
+						foreach (var group in key.elementGroups)
 						{
 #if DEBUG_HANDLES
 							using (var faceDrawer = new EditorMeshHandles.TriangleDrawingScope(Color.cyan, CompareFunction.Always))
@@ -305,6 +311,7 @@ namespace UnityEditor.ProBuilder
 		protected abstract void DoTool(Vector3 handlePosition, Quaternion handleRotation);
 
 		protected virtual void OnToolEngaged() { }
+
 		protected virtual void OnToolDisengaged() { }
 
 		protected void BeginEdit(string undoMessage)
@@ -341,10 +348,10 @@ namespace UnityEditor.ProBuilder
 				mesh.Refresh();
 			}
 
-			m_Selection.Clear();
+			m_MeshAndElementGroupPairs.Clear();
 
 			foreach (var mesh in MeshSelection.topInternal)
-				m_Selection.Add(new MeshAndElementSelection(mesh, pivotPoint));
+				m_MeshAndElementGroupPairs.Add(GetMeshAndElementGroupPair(mesh, pivotPoint));
 
 			OnToolEngaged();
 		}
@@ -373,33 +380,6 @@ namespace UnityEditor.ProBuilder
 			m_IsEditing = false;
 
 			OnToolDisengaged();
-		}
-
-		protected void Apply(Matrix4x4 delta)
-		{
-			foreach (var key in m_Selection)
-			{
-				var mesh = key.mesh;
-				var worldToLocal = mesh.transform.worldToLocalMatrix;
-				var origins = key.positions;
-				var positions = mesh.positionsInternal;
-
-				foreach (var group in key.selection)
-				{
-					foreach (var index in group.indices)
-					{
-						positions[index] = worldToLocal.MultiplyPoint3x4(
-							group.inverseMatrix.MultiplyPoint3x4(
-								delta.MultiplyPoint3x4(group.matrix.MultiplyPoint3x4(origins[index]))));
-					}
-				}
-
-				mesh.mesh.vertices = positions;
-				mesh.RefreshUV(MeshSelection.selectedFacesInEditZone[mesh]);
-				mesh.Refresh(RefreshMask.Normals);
-			}
-
-			ProBuilderEditor.UpdateMeshHandles(false);
 		}
 
 		static void Extrude()

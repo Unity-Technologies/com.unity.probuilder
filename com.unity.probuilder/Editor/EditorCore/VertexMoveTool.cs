@@ -3,7 +3,7 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-	class MoveTool : VertexManipulationTool
+	class VertexMoveTool : VertexTool
 	{
 		const float k_CardinalAxisError = .001f;
 		Vector3 m_HandlePosition;
@@ -21,7 +21,7 @@ namespace UnityEditor.ProBuilder
 
 		protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
 		{
-			if (!m_IsEditing)
+			if (!isEditing)
 				m_HandlePosition = handlePosition;
 
 			EditorGUI.BeginChangeCheck();
@@ -30,7 +30,7 @@ namespace UnityEditor.ProBuilder
 
 			if (EditorGUI.EndChangeCheck())
 			{
-				if (!m_IsEditing)
+				if (!isEditing)
 					BeginEdit("Translate Selection");
 
 				var delta = m_HandlePosition - handlePositionOrigin;

@@ -383,8 +383,6 @@ namespace UnityEditor.ProBuilder
 
 		internal static Quaternion GetHandleRotation(HandleOrientation orientation)
 		{
-			Quaternion localRotation = Selection.activeTransform == null ? Quaternion.identity : Selection.activeTransform.rotation;
-
 			switch (orientation)
 			{
 				case HandleOrientation.Normal:
@@ -393,7 +391,7 @@ namespace UnityEditor.ProBuilder
 					Face face;
 
 					if(!GetActiveFace(out mesh, out face))
-						goto default;
+						goto case HandleOrientation.Local;
 
 					// use average normal, tangent, and bi-tangent to calculate rotation relative to local space
 					var tup = Math.NormalTangentBitangent(mesh, face);
@@ -405,10 +403,12 @@ namespace UnityEditor.ProBuilder
 						bitan = Vector3.right;
 					}
 
-					return localRotation * Quaternion.LookRotation(nrm, bitan);
+					return activeMesh.transform.rotation * Quaternion.LookRotation(nrm, bitan);
 
 				case HandleOrientation.Local:
-					return localRotation;
+					if (activeMesh == null)
+						goto default;
+					return activeMesh.transform.rotation;
 
 				default:
 					return Quaternion.identity;

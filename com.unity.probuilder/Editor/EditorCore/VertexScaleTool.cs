@@ -2,13 +2,13 @@ using UnityEngine;
 
 namespace UnityEditor.ProBuilder
 {
-	class ScaleTool : VertexManipulationTool
+	class VertexScaleTool : VertexTool
 	{
 		Vector3 m_Scale;
 
 		protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
 		{
-			if (!m_IsEditing)
+			if (!isEditing)
 				m_Scale = Vector3.one;
 
 			EditorGUI.BeginChangeCheck();
@@ -17,7 +17,7 @@ namespace UnityEditor.ProBuilder
 
 			if (EditorGUI.EndChangeCheck())
 			{
-				if (!m_IsEditing)
+				if (!isEditing)
 					BeginEdit("Scale Selection");
 
 				Apply(Matrix4x4.Scale(m_Scale));

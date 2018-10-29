@@ -3,7 +3,7 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-	class RotateTool : VertexManipulationTool
+	class VertexRotateTool : VertexTool
 	{
 		Quaternion m_Rotation;
 
@@ -13,7 +13,7 @@ namespace UnityEditor.ProBuilder
 			{
 				EditorGUI.BeginChangeCheck();
 
-				if (!m_IsEditing)
+				if (!isEditing)
 					m_Rotation = Quaternion.identity;
 
 				var hm = Handles.matrix;
@@ -23,7 +23,7 @@ namespace UnityEditor.ProBuilder
 
 				if (EditorGUI.EndChangeCheck())
 				{
-					if (!m_IsEditing)
+					if (!isEditing)
 						BeginEdit("Rotate Selection");
 
 					Apply(Matrix4x4.Rotate(m_Rotation));
@@ -33,14 +33,14 @@ namespace UnityEditor.ProBuilder
 			{
 				EditorGUI.BeginChangeCheck();
 
-				if (!m_IsEditing)
+				if (!isEditing)
 					m_Rotation = handleRotation;
 
 				m_Rotation = Handles.RotationHandle(m_Rotation, handlePosition);
 
 				if (EditorGUI.EndChangeCheck())
 				{
-					if (!m_IsEditing)
+					if (!isEditing)
 						BeginEdit("Rotate Selection");
 
 					Apply(Matrix4x4.Rotate(m_Rotation * Quaternion.Inverse(handleRotationOrigin)));
