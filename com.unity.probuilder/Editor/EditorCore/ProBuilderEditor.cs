@@ -123,6 +123,7 @@ namespace UnityEditor.ProBuilder
 		// used for 'g' key shortcut to swap between object/vef modes
 		SelectMode m_LastComponentMode;
 		HandleOrientation m_PreviousHandleOrientation;
+		PivotMode m_PreviousHandlePivot;
 		[UserSetting]
 		static internal Pref<Shortcut[]> s_Shortcuts = new Pref<Shortcut[]>("editor.sceneViewShortcuts", Shortcut.DefaultShortcuts().ToArray());
 		GUIStyle m_CommandStyle;
@@ -208,6 +209,9 @@ namespace UnityEditor.ProBuilder
 				if (previous == value)
 					return;
 
+				var wasTextureMode = previous.ContainsFlag(SelectMode.TextureEdge | SelectMode.TextureVertex | SelectMode.TextureFace);
+				var isTextureMode = value.ContainsFlag(SelectMode.TextureEdge | SelectMode.TextureVertex | SelectMode.TextureFace);
+
 				s_Instance.m_SelectMode.SetValue(value, true);
 
 				if (previous == SelectMode.Edge || previous == SelectMode.Vertex || previous == SelectMode.Face)
@@ -216,11 +220,23 @@ namespace UnityEditor.ProBuilder
 				if (value == SelectMode.Object)
 					Tools.current = s_Instance.m_CurrentTool;
 
-				if (value == SelectMode.TextureFace)
+				if (!wasTextureMode && isTextureMode)
+				{
+					s_Instance.m_PreviousHandlePivot = Tools.pivotMode;
 					s_Instance.m_PreviousHandleOrientation = s_HandleOrientation;
 
-				if (previous == SelectMode.TextureFace)
-					handleOrientation = s_Instance.m_PreviousHandleOrientation;
+					Tools.pivotMode = PivotMode.Pivot;
+					handleOrientation = HandleOrientation.Normal;
+				}
+				else if(wasTextureMode && !isTextureMode)
+				{
+					if (Tools.pivotMode == PivotMode.Pivot
+						&& handleOrientation == HandleOrientation.Normal)
+					{
+						Tools.pivotMode = s_Instance.m_PreviousHandlePivot;
+						handleOrientation = s_Instance.m_PreviousHandleOrientation;
+					}
+				}
 
 				if (selectModeChanged != null)
 					selectModeChanged(value);
@@ -406,27 +422,6 @@ namespace UnityEditor.ProBuilder
 			VertexTranslationInfoStyle.normal.background = EditorGUIUtility.whiteTexture;
 			VertexTranslationInfoStyle.normal.textColor = new Color(1f, 1f, 1f, .6f);
 			VertexTranslationInfoStyle.padding = new RectOffset(3, 3, 3, 0);
-
-			var object_Graphic_off = IconUtility.GetIcon("Modes/Mode_Object");
-			var face_Graphic_off = IconUtility.GetIcon("Modes/Mode_Face");
-			var vertex_Graphic_off = IconUtility.GetIcon("Modes/Mode_Vertex");
-			var edge_Graphic_off = IconUtility.GetIcon("Modes/Mode_Edge");
-
-			m_EditModeIcons = new GUIContent[]
-			{
-				object_Graphic_off != null
-					? new GUIContent(object_Graphic_off, "Object Selection")
-					: new GUIContent("OBJ", "Object Selection"),
-				vertex_Graphic_off != null
-					? new GUIContent(vertex_Graphic_off, "Vertex Selection")
-					: new GUIContent("VRT", "Vertex Selection"),
-				edge_Graphic_off != null
-					? new GUIContent(edge_Graphic_off, "Edge Selection")
-					: new GUIContent("EDG", "Edge Selection"),
-				face_Graphic_off != null
-					? new GUIContent(face_Graphic_off, "Face Selection")
-					: new GUIContent("FCE", "Face Selection"),
-			};
 		}
 
 		/// <summary>
@@ -567,7 +562,7 @@ namespace UnityEditor.ProBuilder
 			// Check mouse position in scene and determine if we should highlight something
 			if (s_ShowHoverHighlight
 				&& m_CurrentEvent.type == EventType.MouseMove
-				&& selectMode.ContainsFlag(SelectMode.Face | SelectMode.Edge | SelectMode.Vertex | SelectMode.TextureFace))
+				&& selectMode.IsMeshElementMode())
 			{
 				m_Hovering.CopyTo(m_HoveringPrevious);
 
@@ -589,11 +584,11 @@ namespace UnityEditor.ProBuilder
 
 			Tools.current = Tool.None;
 
-			if (selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.TextureFace))
+			if (selectMode.IsMeshElementMode())
 			{
 				if (MeshSelection.selectedVertexCount > 0)
 				{
-					if (selectMode == SelectMode.TextureFace)
+					if (selectMode.IsTextureMode())
 					{
 						switch (m_CurrentTool)
 						{
@@ -601,10 +596,10 @@ namespace UnityEditor.ProBuilder
 								GetTool<TextureMoveTool>().OnSceneGUI(m_CurrentEvent);
 								break;
 							case Tool.Rotate:
-//								GetTool<TextureRotateTool>().OnSceneGUI(m_CurrentEvent);
+								GetTool<TextureRotateTool>().OnSceneGUI(m_CurrentEvent);
 								break;
 							case Tool.Scale:
-//								GetTool<TextureScaleTool>().OnSceneGUI(m_CurrentEvent);
+								GetTool<TextureScaleTool>().OnSceneGUI(m_CurrentEvent);
 								break;
 						}
 					}
@@ -711,14 +706,14 @@ namespace UnityEditor.ProBuilder
 
 			if (mesh != null)
 			{
-				if (selectMode == SelectMode.Edge)
+				if (selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
 				{
 					if (e.shift)
 						EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeRing>().DoAction());
 					else
 						EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeLoop>().DoAction());
 				}
-				else if (selectMode == SelectMode.Face)
+				else if (selectMode.ContainsFlag(SelectMode.Face | SelectMode.TextureFace))
 				{
 					if ((e.modifiers & (EventModifiers.Control | EventModifiers.Shift)) ==
 						(EventModifiers.Control | EventModifiers.Shift))
@@ -768,27 +763,6 @@ namespace UnityEditor.ProBuilder
 				int screenWidth = (int) sceneView.position.width;
 				int screenHeight = (int) sceneView.position.height;
 
-				int currentSelectionMode = -1;
-
-				switch (m_SelectMode.value)
-				{
-					case SelectMode.Object:
-						currentSelectionMode = 0;
-						break;
-					case SelectMode.Vertex:
-						currentSelectionMode = 1;
-						break;
-					case SelectMode.Edge:
-						currentSelectionMode = 2;
-						break;
-					case SelectMode.Face:
-						currentSelectionMode = 3;
-						break;
-					default:
-						currentSelectionMode = -1;
-						break;
-				}
-
 				switch ((SceneToolbarLocation) s_SceneToolbarLocation)
 				{
 					case SceneToolbarLocation.BottomCenter:
@@ -823,22 +797,7 @@ namespace UnityEditor.ProBuilder
 						break;
 				}
 
-				EditorGUI.BeginChangeCheck();
-
-				currentSelectionMode =
-					GUI.Toolbar(m_ElementModeToolbarRect, (int) currentSelectionMode, m_EditModeIcons, m_CommandStyle);
-
-				if (EditorGUI.EndChangeCheck())
-				{
-					if (currentSelectionMode == 0)
-						selectMode = SelectMode.Object;
-					else if (currentSelectionMode == 1)
-						selectMode = SelectMode.Vertex;
-					else if (currentSelectionMode == 2)
-						selectMode = SelectMode.Edge;
-					else if (currentSelectionMode == 3)
-						selectMode = SelectMode.Face;
-				}
+				m_SelectMode.value = UI.EditorGUIUtility.DoElementModeToolbar(m_ElementModeToolbarRect, m_SelectMode);
 
 				// todo Move to VertexManipulationTool
 //				if (m_IsMovingElements && s_ShowSceneInfo)

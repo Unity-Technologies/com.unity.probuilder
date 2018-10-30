@@ -606,7 +606,7 @@ namespace UnityEditor.ProBuilder
 		[MenuItem(k_MenuPrefix + "Interaction/Toggle Handle Alignment  [p]", true)]
 		static bool MenuVerifyToggleHandleAlignment()
 		{
-			ToggleHandleAlignment instance = EditorToolbarLoader.GetInstance<ToggleHandleAlignment>();
+			ToggleHandleOrientation instance = EditorToolbarLoader.GetInstance<ToggleHandleOrientation>();
 
 			return instance != null && instance.enabled;
 	
@@ -615,7 +615,7 @@ namespace UnityEditor.ProBuilder
 		[MenuItem(k_MenuPrefix + "Interaction/Toggle Handle Alignment  [p]", false, PreferenceKeys.menuSelection + 1)]
 		static void MenuDoToggleHandleAlignment()
 		{
-			ToggleHandleAlignment instance = EditorToolbarLoader.GetInstance<ToggleHandleAlignment>();
+			ToggleHandleOrientation instance = EditorToolbarLoader.GetInstance<ToggleHandleOrientation>();
 			if(instance != null)
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}

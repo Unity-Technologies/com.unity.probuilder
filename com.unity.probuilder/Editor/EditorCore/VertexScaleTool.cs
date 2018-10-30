@@ -8,6 +8,8 @@ namespace UnityEditor.ProBuilder
 
 		protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
 		{
+			base.DoTool(handlePosition, handleRotation);
+
 			if (!isEditing)
 				m_Scale = Vector3.one;
 

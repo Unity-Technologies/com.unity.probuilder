@@ -7,6 +7,8 @@ namespace UnityEditor.ProBuilder
 {
 	abstract class VertexTool : VertexManipulationTool
 	{
+		const bool k_CollectCoincidentVertices = true;
+
 		class MeshAndPositions : MeshAndElementGroupPair
 		{
 			Vector3[] m_Positions;
@@ -16,7 +18,7 @@ namespace UnityEditor.ProBuilder
 				get { return m_Positions; }
 			}
 
-			public MeshAndPositions(ProBuilderMesh mesh, PivotPoint pivot) : base(mesh, pivot)
+			public MeshAndPositions(ProBuilderMesh mesh, PivotPoint pivot) : base(mesh, pivot, k_CollectCoincidentVertices)
 			{
 				m_Positions = mesh.positions.ToArray();
 
@@ -30,6 +32,38 @@ namespace UnityEditor.ProBuilder
 		protected override MeshAndElementGroupPair GetMeshAndElementGroupPair (ProBuilderMesh mesh, PivotPoint pivot)
 		{
 			return new MeshAndPositions(mesh, pivot);
+		}
+
+		protected override void DoTool(Vector3 position, Quaternion rotation)
+		{
+			if (isEditing && currentEvent.type == EventType.Repaint)
+			{
+				foreach (var key in meshAndElementGroupPairs)
+				{
+					foreach (var group in key.elementGroups)
+					{
+#if DEBUG_HANDLES
+							using (var faceDrawer = new EditorMeshHandles.TriangleDrawingScope(Color.cyan, CompareFunction.Always))
+							{
+								foreach (var face in key.mesh.GetSelectedFaces())
+								{
+									var indices = face.indexesInternal;
+
+									for (int i = 0, c = indices.Length; i < c; i += 3)
+									{
+										faceDrawer.Draw(
+											group.matrix.MultiplyPoint3x4(key.positions[indices[i]]),
+											group.matrix.MultiplyPoint3x4(key.positions[indices[i + 1]]),
+											group.matrix.MultiplyPoint3x4(key.positions[indices[i + 2]])
+										);
+									}
+								}
+							}
+#endif
+						EditorMeshHandles.DrawGizmo(Vector3.zero, group.matrix.inverse);
+					}
+				}
+			}
 		}
 
 		protected void Apply(Matrix4x4 delta)

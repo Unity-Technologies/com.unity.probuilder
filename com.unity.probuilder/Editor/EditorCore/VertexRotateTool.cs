@@ -9,6 +9,8 @@ namespace UnityEditor.ProBuilder
 
 		protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
 		{
+			base.DoTool(handlePosition, handleRotation);
+
 			if (Tools.pivotMode == PivotMode.Pivot)
 			{
 				EditorGUI.BeginChangeCheck();

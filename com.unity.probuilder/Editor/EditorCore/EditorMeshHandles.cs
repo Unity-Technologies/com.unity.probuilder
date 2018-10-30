@@ -310,6 +310,7 @@ namespace UnityEditor.ProBuilder
 			switch (mode)
 			{
 				case SelectMode.Edge:
+				case SelectMode.TextureEdge:
 				{
 					// render wireframe with edge material in edge mode so that the size change is reflected
 					RenderWithColor(m_WireHandles, m_EdgeMaterial, s_EdgeUnselectedColor);
@@ -317,12 +318,14 @@ namespace UnityEditor.ProBuilder
 					break;
 				}
 				case SelectMode.Face:
+				case SelectMode.TextureFace:
 				{
 					RenderWithColor(m_WireHandles, m_WireMaterial, s_WireframeColor);
 					RenderWithColor(m_SelectedFaceHandles, s_FaceMaterial, s_FaceSelectedColor);
 					break;
 				}
 				case SelectMode.Vertex:
+				case SelectMode.TextureVertex:
 				{
 					RenderWithColor(m_WireHandles, m_WireMaterial, s_WireframeColor);
 					RenderWithColor(m_VertexHandles, m_VertMaterial, s_VertexUnselectedColor);
@@ -367,6 +370,7 @@ namespace UnityEditor.ProBuilder
 				switch (selectionMode)
 				{
 					case SelectMode.Vertex:
+					case SelectMode.TextureVertex:
 					{
 						foreach (var handle in m_VertexHandles)
 							handle.Value.mesh.vertices = handle.Key.positionsInternal;
@@ -376,6 +380,7 @@ namespace UnityEditor.ProBuilder
 					}
 
 					case SelectMode.Edge:
+					case SelectMode.TextureEdge:
 					{
 						foreach (var handle in m_SelectedEdgeHandles)
 							handle.Value.mesh.vertices = handle.Key.positionsInternal;
@@ -383,6 +388,7 @@ namespace UnityEditor.ProBuilder
 					}
 
 					case SelectMode.Face:
+					case SelectMode.TextureFace:
 					{
 						foreach (var handle in m_SelectedFaceHandles)
 							handle.Value.mesh.vertices = handle.Key.positionsInternal;
@@ -403,6 +409,7 @@ namespace UnityEditor.ProBuilder
 				switch (selectionMode)
 				{
 					case SelectMode.Vertex:
+					case SelectMode.TextureVertex:
 					{
 						RebuildMeshHandle(mesh, m_VertexHandles, MeshHandles.CreateVertexMesh);
 
@@ -414,6 +421,7 @@ namespace UnityEditor.ProBuilder
 					}
 
 					case SelectMode.Edge:
+					case SelectMode.TextureEdge:
 					{
 						RebuildMeshHandle(mesh, m_SelectedEdgeHandles, (x, y) =>
 						{
@@ -423,6 +431,7 @@ namespace UnityEditor.ProBuilder
 					}
 
 					case SelectMode.Face:
+					case SelectMode.TextureFace:
 					{
 						RebuildMeshHandle(mesh, m_SelectedFaceHandles, MeshHandles.CreateFaceMesh);
 						break;

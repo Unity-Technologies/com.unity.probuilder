@@ -158,7 +158,6 @@ namespace UnityEditor.ProBuilder
 		Tool tool = Tool.Move;
 
 		GUIContent[] ToolIcons;
-		GUIContent[] SelectionIcons;
 
 		struct ObjectElementIndex
 		{
@@ -307,13 +306,6 @@ namespace UnityEditor.ProBuilder
 				new GUIContent(moveIcon, "Move Tool"),
 				new GUIContent(rotateIcon, "Rotate Tool"),
 				new GUIContent(scaleIcon, "Scale Tool")
-			};
-
-			SelectionIcons = new GUIContent[3]
-			{
-				new GUIContent(vertex_Graphic_off, "Vertex Selection"),
-				new GUIContent(edge_Graphic_off, "Edge Selection"),
-				new GUIContent(face_Graphic_off, "Face Selection")
 			};
 		}
 #endregion
@@ -1017,6 +1009,7 @@ namespace UnityEditor.ProBuilder
 			switch (ProBuilderEditor.selectMode)
 			{
 				case SelectMode.Edge:
+				case SelectMode.TextureEdge:
 					float dist, best = 100f;
 
 					try
@@ -1052,6 +1045,7 @@ namespace UnityEditor.ProBuilder
 					break;
 
 				case SelectMode.Face:
+				case SelectMode.TextureFace:
 
 					try
 					{
@@ -1123,6 +1117,7 @@ namespace UnityEditor.ProBuilder
 			switch (ProBuilderEditor.selectMode)
 			{
 				case SelectMode.Edge:
+				case SelectMode.TextureEdge:
 					if (nearestElement.valid)
 					{
 						ProBuilderMesh mesh = selection[nearestElement.objectIndex];
@@ -1139,6 +1134,7 @@ namespace UnityEditor.ProBuilder
 					break;
 
 				case SelectMode.Face:
+				case SelectMode.TextureFace:
 
 					Vector2 mpos = GUIToUVPoint(mousePosition);
 					bool superBreak = false;
@@ -1170,6 +1166,7 @@ namespace UnityEditor.ProBuilder
 					break;
 
 				case SelectMode.Vertex:
+				case SelectMode.TextureVertex:
 					RefreshUVCoordinates(new Rect(mousePosition.x - 8, mousePosition.y - 8, 16, 16), true);
 					break;
 			}
@@ -1824,7 +1821,7 @@ namespace UnityEditor.ProBuilder
 			r.height = DOT_SIZE;
 
 			// Draw all vertices if in vertex mode
-			if (ProBuilderEditor.selectMode == SelectMode.Vertex && screenshotStatus == ScreenshotStatus.Done)
+			if (ProBuilderEditor.selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.TextureVertex) && screenshotStatus == ScreenshotStatus.Done)
 			{
 				for (int i = 0; i < selection.Length; i++)
 				{
@@ -1882,7 +1879,7 @@ namespace UnityEditor.ProBuilder
 			}
 			Handles.EndGUI();
 		}
-		#endif
+#endif
 
 			GUI.color = Color.white;
 
@@ -2000,7 +1997,7 @@ namespace UnityEditor.ProBuilder
 
 						if (pb.selectedEdgeCount > 0)
 						{
-							foreach (Edge edge in pb.selectedEdges)
+							foreach (Edge edge in pb.selectedEdgesInternal)
 							{
 								x = UVToGUIPoint(uv[edge.a]);
 								y = UVToGUIPoint(uv[edge.b]);
@@ -2021,6 +2018,7 @@ namespace UnityEditor.ProBuilder
 					switch (ProBuilderEditor.selectMode)
 					{
 						case SelectMode.Edge:
+						case SelectMode.TextureEdge:
 
 							GL.Begin(GL.LINES);
 							GL.Color(Color.red);
@@ -2036,6 +2034,7 @@ namespace UnityEditor.ProBuilder
 							break;
 
 						case SelectMode.Face:
+						case SelectMode.TextureFace:
 						{
 							Vector3 v = Vector3.zero;
 
@@ -2331,6 +2330,7 @@ namespace UnityEditor.ProBuilder
 					switch (ProBuilderEditor.selectMode)
 					{
 						case SelectMode.Vertex:
+						case SelectMode.TextureVertex:
 							List<int> selectedTris = new List<int>(pb.selectedIndexesInternal);
 
 							for (int j = 0; j < len; j++)
@@ -2354,6 +2354,7 @@ namespace UnityEditor.ProBuilder
 							break;
 
 						case SelectMode.Edge:
+						case SelectMode.TextureEdge:
 							List<Edge> selectedEdges = new List<Edge>(pb.selectedEdges);
 
 							for (int n = 0; n < pb.facesInternal.Length; n++)
@@ -2379,6 +2380,7 @@ namespace UnityEditor.ProBuilder
 						 * Check if any of the faces intersect with the mousedrag rect.
 						 */
 						case SelectMode.Face:
+						case SelectMode.TextureFace:
 
 							HashSet<Face> selectedFaces = new HashSet<Face>(selection[i].selectedFacesInternal);
 
@@ -2398,16 +2400,6 @@ namespace UnityEditor.ProBuilder
 										break;
 									}
 								}
-
-								// // if(dragBounds.Intersects(faceBounds))
-								// for(int t = 0; t < uvs.Length; t++)
-								// {
-								// 	if(!dragBounds.ContainsPoint(uvs[t]))
-								// 	{
-								// 		allPointsContained = false;
-								// 		break;
-								// 	}
-								// }
 
 								if (allPointsContained)
 								{
@@ -2473,9 +2465,6 @@ namespace UnityEditor.ProBuilder
 			if (commandStyle == null)
 				commandStyle = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("Command");
 
-			/**
-			 * Handle toggles and SelectionMode toggles.
-			 */
 			EditorGUI.BeginChangeCheck();
 
 			tool = (Tool)GUI.Toolbar(toolbarRect_tool, (int)tool < 0 ? 0 : (int)tool, ToolIcons, "Command");
@@ -2486,41 +2475,23 @@ namespace UnityEditor.ProBuilder
 				SceneView.RepaintAll();
 			}
 
-			var mode = ProBuilderEditor.selectMode;
-
-			int currentSelectionMode = mode == SelectMode.Vertex ? 0
-				: mode == SelectMode.Edge ? 1
-				: mode == SelectMode.Face ? 2 : -1;
-
-			GUI.enabled = channel == 0;
-
-			EditorGUI.BeginChangeCheck();
-			currentSelectionMode = GUI.Toolbar(toolbarRect_select, currentSelectionMode, SelectionIcons, "Command");
-			if (EditorGUI.EndChangeCheck())
-			{
-				if (currentSelectionMode == 0)
-					ProBuilderEditor.selectMode = SelectMode.Vertex;
-				else if (currentSelectionMode == 1)
-					ProBuilderEditor.selectMode = SelectMode.Edge;
-				else if (currentSelectionMode == 2)
-					ProBuilderEditor.selectMode = SelectMode.Face;
-			}
-
+			ProBuilderEditor.selectMode = UI.EditorGUIUtility.DoElementModeToolbar(toolbarRect_select, ProBuilderEditor.selectMode);
 
 			// begin Editor pref toggles (Show Texture, Lock UV sceneview handle, etc)
-
-			Rect editor_toggles_rect = new Rect(toolbarRect_select.x + 130, PAD - 1, 36f, 22f);
+			Rect editor_toggles_rect = new Rect(toolbarRect_select.x + 140, PAD - 1, 36f, 22f);
 
 			if (editor)
 			{
-				gc_SceneViewUVHandles.image = ProBuilderEditor.selectMode == SelectMode.TextureFace ? icon_sceneUV_on : icon_sceneUV_off;
+				gc_SceneViewUVHandles.image = ProBuilderEditor.selectMode.IsTextureMode() ? icon_sceneUV_on : icon_sceneUV_off;
 
 				if (GUI.Button(editor_toggles_rect, gc_SceneViewUVHandles))
 				{
-					if (ProBuilderEditor.selectMode == SelectMode.TextureFace)
-						ProBuilderEditor.ResetToLastSelectMode();
+					if (ProBuilderEditor.selectMode.IsTextureMode())
+						ProBuilderEditor.selectMode = ProBuilderEditor.selectMode.GetPositionMode();
 					else
-						ProBuilderEditor.selectMode = SelectMode.TextureFace;
+						ProBuilderEditor.selectMode = ProBuilderEditor.selectMode.GetTextureMode();
+
+					SceneView.RepaintAll();
 				}
 			}
 

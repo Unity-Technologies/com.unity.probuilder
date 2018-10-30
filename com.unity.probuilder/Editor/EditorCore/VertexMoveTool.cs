@@ -21,6 +21,8 @@ namespace UnityEditor.ProBuilder
 
 		protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
 		{
+			base.DoTool(handlePosition, handleRotation);
+
 			if (!isEditing)
 				m_HandlePosition = handlePosition;
 
@@ -56,7 +58,7 @@ namespace UnityEditor.ProBuilder
 						}
 					}
 				}
-				else if (snapEnabled)
+				else if (progridsSnapEnabled)
 				{
 					var localDir = handleRotationOriginInverse * delta;
 					m_WorldSnapDirection = delta.normalized;
@@ -67,13 +69,13 @@ namespace UnityEditor.ProBuilder
 					if (m_SnapInWorldCoordinates)
 					{
 						m_WorldSnapMask |= new Vector3Mask(m_WorldSnapDirection, k_CardinalAxisError);
-						m_HandlePosition = Snapping.SnapValue(m_HandlePosition, m_WorldSnapMask * snapValue);
+						m_HandlePosition = Snapping.SnapValue(m_HandlePosition, m_WorldSnapMask * progridsSnapValue);
 						delta = m_HandlePosition - handlePositionOrigin;
 					}
 					else
 					{
 						var travel = delta.magnitude;
-						delta = m_WorldSnapDirection * Snapping.SnapValue(travel, snapValue);
+						delta = m_WorldSnapDirection * Snapping.SnapValue(travel, progridsSnapValue);
 						m_HandlePosition = handlePositionOrigin + delta;
 					}
 				}

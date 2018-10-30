@@ -1,33 +1,75 @@
 using UnityEngine;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
 	class TextureScaleTool : TextureTool
 	{
+		Vector2 m_Scale;
+		float m_UniformScale;
+
 		protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
 		{
-//			UVEditor uvEditor = UVEditor.instance;
-//			if (!uvEditor) return;
-//
-//			float size = HandleUtility.GetHandleSize(m_HandlePosition);
-//
-//			Matrix4x4 prev = Handles.matrix;
-//			Handles.matrix = handleMatrix;
-//
-//			Vector3 cached = m_TextureScale;
-//			m_TextureScale = Handles.ScaleHandle(m_TextureScale, Vector3.zero, Quaternion.identity, size);
-//
-//			if (m_CurrentEvent.alt) return;
-//
-//			if (cached != m_TextureScale)
-//			{
-//				if (!m_IsMovingTextures)
-//					m_IsMovingTextures = true;
-//
-//				uvEditor.SceneScaleTool(m_TextureScale, cached);
-//			}
-//
-//			Handles.matrix = prev;
+			if (!isEditing)
+			{
+				m_Scale.x = 1f;
+				m_Scale.y = 1f;
+				m_UniformScale = 1f;
+			}
+
+			EditorGUI.BeginChangeCheck();
+
+			var size = HandleUtility.GetHandleSize(handlePosition);
+
+			EditorHandleUtility.PushMatrix();
+
+			Handles.matrix = Matrix4x4.TRS(handlePosition, handleRotation, Vector3.one);
+
+			var snap = relativeSnapEnabled
+				? relativeSnapScale
+				: progridsSnapEnabled
+					? progridsSnapValue
+					: 0f;
+
+			Handles.color = Color.red;
+			m_Scale.x = Handles.ScaleAxisHandle(m_Scale.x, Vector3.zero, Quaternion.identity, Vector3.right, size, snap);
+
+			Handles.color = Color.green;
+			m_Scale.y = Handles.ScaleAxisHandle(m_Scale.y, Vector3.zero, Quaternion.identity, Vector3.up, size, snap);
+
+			Handles.color = Color.blue;
+			m_UniformScale = Handles.ScaleValueHandle(m_UniformScale, Vector3.zero, Quaternion.identity, size, Handles.CubeHandleCap, snap);
+
+			EditorHandleUtility.PopMatrix();
+
+			if (EditorGUI.EndChangeCheck())
+			{
+				if(!isEditing)
+					BeginEdit("Scale Textures");
+
+				var delta = m_Scale * m_UniformScale;
+				
+				delta.x = 1f / delta.x;
+				delta.y = 1f / delta.y;
+
+				foreach (var mesh in meshAndElementGroupPairs)
+				{
+					if (!(mesh is MeshAndTextures))
+						continue;
+
+					var origins = ((MeshAndTextures)mesh).origins;
+					var positions = ((MeshAndTextures)mesh).textures;
+
+					foreach (var group in mesh.elementGroups)
+					{
+						foreach(var index in group.indices)
+							positions[index] = group.inverseMatrix.MultiplyPoint(
+								Vector2.Scale(group.matrix.MultiplyPoint3x4(origins[index]), delta));
+					}
+
+					mesh.mesh.mesh.SetUVs(k_TextureChannel, positions);
+				}
+			}
 		}
 	}
 }

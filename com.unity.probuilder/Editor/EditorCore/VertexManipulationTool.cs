@@ -28,14 +28,14 @@ namespace UnityEditor.ProBuilder
 			get { return m_ElementGroups; }
 		}
 
-		public MeshAndElementGroupPair(ProBuilderMesh mesh, PivotPoint pivot)
+		public MeshAndElementGroupPair(ProBuilderMesh mesh, PivotPoint pivot, bool collectCoincidentIndices)
 		{
 			m_Mesh = mesh;
-			m_ElementGroups = ElementGroup.GetElementGroups(mesh, pivot);
+			m_ElementGroups = ElementGroup.GetElementGroups(mesh, pivot, collectCoincidentIndices);
 		}
 	}
 
-	struct ElementGroup
+	class ElementGroup
 	{
 		List<int> m_Indices;
 		Matrix4x4 m_PreApplyPositionsMatrix;
@@ -49,6 +49,11 @@ namespace UnityEditor.ProBuilder
 		public Matrix4x4 matrix
 		{
 			get { return m_PreApplyPositionsMatrix; }
+			set
+			{
+				m_PreApplyPositionsMatrix = value;
+				m_PostApplyPositionsMatrix = m_PreApplyPositionsMatrix.inverse;
+			}
 		}
 
 		public Matrix4x4 inverseMatrix
@@ -56,15 +61,9 @@ namespace UnityEditor.ProBuilder
 			get { return m_PostApplyPositionsMatrix; }
 		}
 
-		public static List<ElementGroup> GetElementGroups(ProBuilderMesh mesh, PivotPoint pivot)
+		public static List<ElementGroup> GetElementGroups(ProBuilderMesh mesh, PivotPoint pivot, bool collectCoincident)
 		{
 			var groups = new List<ElementGroup>();
-			GetElementGroups(mesh, pivot, groups);
-			return groups;
-		}
-
-		public static void GetElementGroups(ProBuilderMesh mesh, PivotPoint pivot, List<ElementGroup> groups)
-		{
 			var trs = mesh.transform.localToWorldMatrix;
 
 			switch (pivot)
@@ -76,7 +75,9 @@ namespace UnityEditor.ProBuilder
 
 					groups.Add(new ElementGroup()
 					{
-						m_Indices = mesh.GetCoincidentVertices(mesh.selectedIndexesInternal),
+						m_Indices = collectCoincident
+							? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
+							: new List<int>(mesh.selectedIndexesInternal),
 						m_PostApplyPositionsMatrix = post,
 						m_PreApplyPositionsMatrix = post.inverse
 					});
@@ -96,8 +97,17 @@ namespace UnityEditor.ProBuilder
 						var rot = mesh.transform.rotation * Quaternion.LookRotation(ntb.normal, ntb.bitangent);
 						var post = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), rot, Vector3.one);
 
-						var indices = new List<int>();
-						mesh.GetCoincidentVertices(list, indices);
+						List<int> indices;
+
+						if (collectCoincident)
+						{
+							indices = new List<int>();
+							mesh.GetCoincidentVertices(list, indices);
+						}
+						else
+						{
+							indices = list.SelectMany(x => x.distinctIndexesInternal).ToList();
+						}
 
 						groups.Add(new ElementGroup()
 						{
@@ -115,7 +125,9 @@ namespace UnityEditor.ProBuilder
 
 					groups.Add(new ElementGroup()
 					{
-						m_Indices = mesh.GetCoincidentVertices(mesh.selectedIndexesInternal),
+						m_Indices = collectCoincident
+							? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
+							: new List<int>(mesh.selectedIndexesInternal),
 						m_PostApplyPositionsMatrix = Matrix4x4.Translate(MeshSelection.GetHandlePosition()),
 						m_PreApplyPositionsMatrix = post.inverse
 					});
@@ -123,6 +135,8 @@ namespace UnityEditor.ProBuilder
 					break;
 				}
 			}
+
+			return groups;
 		}
 
 		static List<List<Face>> GetFaceSelectionGroups(ProBuilderMesh mesh)
@@ -183,9 +197,9 @@ namespace UnityEditor.ProBuilder
 		List<MeshAndElementGroupPair> m_MeshAndElementGroupPairs = new List<MeshAndElementGroupPair>();
 		bool m_IsEditing;
 
-		float m_SnapValue = .25f;
+		float m_ProgridsSnapValue = .25f;
 		bool m_SnapAxisConstraint = true;
-		bool m_SnapEnabled;
+		bool m_ProgridsSnapEnabled;
 		static bool s_Initialized;
 		static FieldInfo s_VertexDragging;
 		static MethodInfo s_FindNearestVertex;
@@ -226,9 +240,9 @@ namespace UnityEditor.ProBuilder
 			get { return m_HandleRotationOrigin; }
 		}
 
-		protected float snapValue
+		protected float progridsSnapValue
 		{
-			get { return m_SnapValue; }
+			get { return m_ProgridsSnapValue; }
 		}
 
 		protected bool snapAxisConstraint
@@ -236,9 +250,14 @@ namespace UnityEditor.ProBuilder
 			get { return m_SnapAxisConstraint; }
 		}
 
-		protected bool snapEnabled
+		protected bool progridsSnapEnabled
 		{
-			get { return m_SnapEnabled; }
+			get { return m_ProgridsSnapEnabled; }
+		}
+
+		protected bool relativeSnapEnabled
+		{
+			get { return currentEvent.control; }
 		}
 
 		static void Init()
@@ -272,38 +291,6 @@ namespace UnityEditor.ProBuilder
 				m_HandlePosition = MeshSelection.GetHandlePosition();
 				m_HandleRotation = MeshSelection.GetHandleRotation(ProBuilderEditor.handleOrientation);
 			}
-			else
-			{
-				if (evt.type == EventType.Repaint)
-				{
-					foreach (var key in m_MeshAndElementGroupPairs)
-					{
-						foreach (var group in key.elementGroups)
-						{
-#if DEBUG_HANDLES
-							using (var faceDrawer = new EditorMeshHandles.TriangleDrawingScope(Color.cyan, CompareFunction.Always))
-							{
-								foreach (var face in key.mesh.GetSelectedFaces())
-								{
-									var indices = face.indexesInternal;
-
-									for (int i = 0, c = indices.Length; i < c; i += 3)
-									{
-										faceDrawer.Draw(
-											group.matrix.MultiplyPoint3x4(key.positions[indices[i]]),
-											group.matrix.MultiplyPoint3x4(key.positions[indices[i + 1]]),
-											group.matrix.MultiplyPoint3x4(key.positions[indices[i + 2]])
-										);
-									}
-								}
-							}
-#endif
-							EditorMeshHandles.DrawGizmo(Vector3.zero, group.matrix.inverse);
-						}
-					}
-				}
-			}
-
 
 			DoTool(m_HandlePosition, m_HandleRotation);
 		}
@@ -338,8 +325,8 @@ namespace UnityEditor.ProBuilder
 			m_HandleRotationOrigin = m_HandleRotation;
 			handleRotationOriginInverse = Quaternion.Inverse(m_HandleRotation);
 
-			m_SnapEnabled = ProGridsInterface.SnapEnabled();
-			m_SnapValue = ProGridsInterface.SnapValue();
+			m_ProgridsSnapEnabled = ProGridsInterface.SnapEnabled();
+			m_ProgridsSnapValue = ProGridsInterface.SnapValue();
 			m_SnapAxisConstraint = ProGridsInterface.UseAxisConstraints();
 
 			foreach (var mesh in selection)
@@ -363,6 +350,8 @@ namespace UnityEditor.ProBuilder
 
 			Lightmapping.PopGIWorkflowMode();
 
+			OnToolDisengaged();
+
 			var selection = MeshSelection.topInternal.ToArray();
 
 			foreach (var mesh in selection)
@@ -378,8 +367,6 @@ namespace UnityEditor.ProBuilder
 				afterMeshModification(selection);
 
 			m_IsEditing = false;
-
-			OnToolDisengaged();
 		}
 
 		static void Extrude()
