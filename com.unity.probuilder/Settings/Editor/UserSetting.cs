@@ -64,7 +64,7 @@ namespace UnityEditor.SettingsManagement
         /// <value>
         /// At which scope this setting is saved.
         /// </value>
-        SettingsScopes scope { get; }
+        SettingsScope scope { get; }
 
         /// <value>
         /// The <see cref="Settings"/> instance that this setting should be saved and loaded from.
@@ -129,7 +129,7 @@ namespace UnityEditor.SettingsManagement
         string m_Key;
         T m_Value;
         T m_DefaultValue;
-        SettingsScopes m_Scope;
+        SettingsScope m_Scope;
         Settings m_Settings;
 
         UserSetting() { }
@@ -141,7 +141,7 @@ namespace UnityEditor.SettingsManagement
         /// <param name="key">The key for this value.</param>
         /// <param name="value">The default value for this key.</param>
         /// <param name="scope">The scope at which to save this setting.</param>
-        public UserSetting(Settings settings, string key, T value, SettingsScopes scope = SettingsScopes.Project)
+        public UserSetting(Settings settings, string key, T value, SettingsScope scope = SettingsScope.Project)
         {
             m_Key = key;
             m_Value = value;
@@ -200,7 +200,7 @@ namespace UnityEditor.SettingsManagement
         /// The scope at which to save this key and value.
         /// </value>
         /// <inheritdoc />
-        public SettingsScopes scope
+        public SettingsScope scope
         {
             get { return m_Scope; }
         }
@@ -245,7 +245,7 @@ namespace UnityEditor.SettingsManagement
             m_Value = value;
             settings.Set<T>(key, m_Value, m_Scope);
 
-            if (m_Scope == SettingsScopes.Project && saveProjectSettingsImmediately)
+            if (m_Scope == SettingsScope.Project && saveProjectSettingsImmediately)
                 settings.Save();
         }
 
@@ -289,8 +289,8 @@ namespace UnityEditor.SettingsManagement
         {
             if (!m_Initialized)
             {
-                if (m_Scope == SettingsScopes.Project && settings == null)
-                    throw new Exception("UserSetting \"" + m_Key + "\" is attempting to access SettingsScopes.Project setting with no Settings instance!");
+                if (m_Scope == SettingsScope.Project && settings == null)
+                    throw new Exception("UserSetting \"" + m_Key + "\" is attempting to access SettingsScope.Project setting with no Settings instance!");
 
                 m_Initialized = true;
 

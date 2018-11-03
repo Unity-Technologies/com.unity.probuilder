@@ -13,14 +13,14 @@ namespace UnityEditor.ProBuilder
 	{
 		EditorToolbar() { }
 
-		Pref<Vector2> m_Scroll = new Pref<Vector2>("editor.scrollPosition", Vector2.zero, SettingsScopes.User);
+		Pref<Vector2> m_Scroll = new Pref<Vector2>("editor.scrollPosition", Vector2.zero, SettingsScope.User);
 		public EditorWindow window;
 
 		bool isFloating { get { return ProBuilderEditor.instance != null && ProBuilderEditor.instance.isFloatingWindow; } }
 		bool isIconMode = true;
 
 		[UserSetting("Toolbar", "Shift Key Tooltips", "Tooltips will only show when the Shift key is held")]
-		internal static Pref<bool> s_ShiftOnlyTooltips = new Pref<bool>("editor.shiftOnlyTooltips", false, SettingsScopes.User);
+		internal static Pref<bool> s_ShiftOnlyTooltips = new Pref<bool>("editor.shiftOnlyTooltips", false, SettingsScope.User);
 
 		SimpleTuple<string, double> tooltipTimer = new SimpleTuple<string, double>("", 0.0);
 		// the element currently being hovered

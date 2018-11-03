@@ -51,7 +51,7 @@ namespace UnityEditor.ProBuilder
 
 		// todo Support Range/Min/Max property decorators
 		[UserSetting]
-		static Pref<float> s_GridSnapIncrement = new Pref<float>("uv.uvEditorGridSnapIncrement", .125f, SettingsScopes.Project);
+		static Pref<float> s_GridSnapIncrement = new Pref<float>("uv.uvEditorGridSnapIncrement", .125f, SettingsScope.Project);
 
 		[UserSettingBlock("UV Editor")]
 		static void UVEditorSettings(string searchContext)
@@ -86,7 +86,7 @@ namespace UnityEditor.ProBuilder
 			get { return Event.current.modifiers == EventModifiers.Shift; }
 		}
 
-		Pref<bool> m_ShowPreviewMaterial = new Pref<bool>("UVEditor.showPreviewMaterial", true, SettingsScopes.Project);
+		Pref<bool> m_ShowPreviewMaterial = new Pref<bool>("UVEditor.showPreviewMaterial", true, SettingsScope.Project);
 
 		// Show a preview texture for the first selected face in UV space 0,1?
 #if PB_DEBUG

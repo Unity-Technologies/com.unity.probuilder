@@ -6,9 +6,9 @@ namespace UnityEditor.SettingsManagement
 	public interface ISettingsRepository
 	{
 		/// <value>
-		/// What SettingsScopes this repository applies to.
+		/// What SettingsScope this repository applies to.
 		/// </value>
-		SettingsScopes scope { get; }
+		SettingsScope scope { get; }
 
 		/// <value>
 		/// File path to the serialized settings data.

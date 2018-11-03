@@ -17,7 +17,7 @@ namespace UnityEditor.ProBuilder
 		static string k_MeshCacheDirectory = "Assets/ProBuilder Data/ProBuilderMeshCache";
 
 		[UserSetting("Mesh Editing", "Auto Resize Colliders", "Automatically resize colliders with mesh bounds as you edit.")]
-		static Pref<bool> s_AutoResizeCollisions = new Pref<bool>("editor.autoRecalculateCollisions", false, SettingsScopes.Project);
+		static Pref<bool> s_AutoResizeCollisions = new Pref<bool>("editor.autoRecalculateCollisions", false, SettingsScope.Project);
 
 		/// <value>
 		/// This callback is raised after a ProBuilderMesh has been successfully optimized.

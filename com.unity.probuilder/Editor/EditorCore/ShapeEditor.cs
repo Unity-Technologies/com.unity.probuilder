@@ -836,7 +836,7 @@ namespace UnityEditor.ProBuilder
 		static float torus_horizontalCircumference = 360f;
 		static float torus_verticalCircumference = 360f;
 		static Vector2 torus_innerOuter = new Vector2(1f, .7f);
-		static Pref<bool> torus_useInnerOuterMethod = new Pref<bool>("shape.torusDefinesInnerOuter", false, SettingsScopes.User);
+		static Pref<bool> torus_useInnerOuterMethod = new Pref<bool>("shape.torusDefinesInnerOuter", false, SettingsScope.User);
 
 		void TorusGUI()
 		{
