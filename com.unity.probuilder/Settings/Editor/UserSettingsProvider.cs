@@ -8,7 +8,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+#if SETTINGS_PROVIDER_ENABLED
 using UnityEngine.UIElements;
+#endif
 
 namespace UnityEditor.SettingsManagement
 {
