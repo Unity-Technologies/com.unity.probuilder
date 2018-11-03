@@ -17,6 +17,7 @@ namespace UnityEditor.ProBuilder
 		{
 			AboutWindow.Init();
 		}
+
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/" + PreferenceKeys.pluginTitle + " Window", false,
 			PreferenceKeys.menuEditor)]
 		public static void OpenEditorWindow()

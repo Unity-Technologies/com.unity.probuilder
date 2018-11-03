@@ -32,10 +32,10 @@ namespace UnityEditor.ProBuilder
 					: 0f;
 
 			Handles.color = Color.red;
-			m_Scale.x = Handles.ScaleAxisHandle(m_Scale.x, Vector3.zero, Quaternion.identity, Vector3.right, size, snap);
+			m_Scale.x = Handles.ScaleSlider(m_Scale.x, Vector3.zero, Vector3.right, Quaternion.identity, size, snap);
 
 			Handles.color = Color.green;
-			m_Scale.y = Handles.ScaleAxisHandle(m_Scale.y, Vector3.zero, Quaternion.identity, Vector3.up, size, snap);
+			m_Scale.y = Handles.ScaleSlider(m_Scale.y, Vector3.zero, Vector3.up, Quaternion.identity, size, snap);
 
 			Handles.color = Color.blue;
 			m_UniformScale = Handles.ScaleValueHandle(m_UniformScale, Vector3.zero, Quaternion.identity, size, Handles.CubeHandleCap, snap);
@@ -48,7 +48,7 @@ namespace UnityEditor.ProBuilder
 					BeginEdit("Scale Textures");
 
 				var delta = m_Scale * m_UniformScale;
-				
+
 				delta.x = 1f / delta.x;
 				delta.y = 1f / delta.y;
 
