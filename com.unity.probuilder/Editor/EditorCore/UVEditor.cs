@@ -288,10 +288,6 @@ namespace UnityEditor.ProBuilder
 			Texture2D scaleIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] { "ScaleTool" });
 			Texture2D viewIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] { "ViewToolMove" });
 
-			Texture2D face_Graphic_off = IconUtility.GetIcon("Modes/Mode_Face");
-			Texture2D vertex_Graphic_off = IconUtility.GetIcon("Modes/Mode_Vertex");
-			Texture2D edge_Graphic_off = IconUtility.GetIcon("Modes/Mode_Edge");
-
 			icon_textureMode_on = IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_ShowTexture_On", IconSkin.Pro);
 			icon_textureMode_off = IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_ShowTexture_Off", IconSkin.Pro);
 

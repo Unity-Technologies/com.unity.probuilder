@@ -362,7 +362,8 @@ namespace UnityEditor.ProBuilder
 
 			UpdateSelection();
 
-			m_EditorMeshHandles.Dispose();
+			if(m_EditorMeshHandles != null)
+				m_EditorMeshHandles.Dispose();
 
 			if (selectionUpdated != null)
 				selectionUpdated(null);
