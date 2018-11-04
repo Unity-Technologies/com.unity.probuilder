@@ -509,7 +509,6 @@ namespace UnityEditor.ProBuilder
 			res.titleContent = windowTitle;
 		}
 
-
 		VertexManipulationTool GetTool<T>() where T : VertexManipulationTool, new()
 		{
 			VertexManipulationTool tool;
@@ -519,6 +518,27 @@ namespace UnityEditor.ProBuilder
 			tool = new T();
 			s_EditorTools.Add(typeof(T), tool);
 			return tool;
+		}
+
+		VertexManipulationTool GetToolForSelectMode(Tool tool, SelectMode mode)
+		{
+			switch (tool)
+			{
+				case Tool.Move:
+					return mode.IsTextureMode()
+						? GetTool<TextureMoveTool>()
+						: GetTool<VertexMoveTool>();
+				case Tool.Rotate:
+					return mode.IsTextureMode()
+						? GetTool<TextureRotateTool>()
+						: GetTool<VertexRotateTool>();
+				case Tool.Scale:
+					return mode.IsTextureMode()
+						? GetTool<TextureScaleTool>()
+						: GetTool<VertexScaleTool>();
+				default:
+					return null;
+			}
 		}
 
 		void OnSceneGUI(SceneView sceneView)
@@ -585,42 +605,12 @@ namespace UnityEditor.ProBuilder
 
 			Tools.current = Tool.None;
 
-			if (selectMode.IsMeshElementMode())
+			if (selectMode.IsMeshElementMode() && MeshSelection.selectedVertexCount > 0)
 			{
-				if (MeshSelection.selectedVertexCount > 0)
-				{
-					if (selectMode.IsTextureMode())
-					{
-						switch (m_CurrentTool)
-						{
-							case Tool.Move:
-								GetTool<TextureMoveTool>().OnSceneGUI(m_CurrentEvent);
-								break;
-							case Tool.Rotate:
-								GetTool<TextureRotateTool>().OnSceneGUI(m_CurrentEvent);
-								break;
-							case Tool.Scale:
-								GetTool<TextureScaleTool>().OnSceneGUI(m_CurrentEvent);
-								break;
-						}
-					}
-					else
-					{
-						switch (m_CurrentTool)
-						{
-							case Tool.Move:
-								GetTool<VertexMoveTool>().OnSceneGUI(m_CurrentEvent);
-								break;
-							case Tool.Scale:
-								GetTool<VertexScaleTool>().OnSceneGUI(m_CurrentEvent);
-								break;
-							case Tool.Rotate:
-								GetTool<VertexRotateTool>().OnSceneGUI(m_CurrentEvent);
-								break;
-						}
-					}
+				var tool = GetToolForSelectMode(m_CurrentTool, m_SelectMode);
 
-				}
+				if(tool != null)
+					tool.OnSceneGUI(m_CurrentEvent);
 			}
 
 			if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent) || m_CurrentEvent.isKey)
@@ -798,7 +788,7 @@ namespace UnityEditor.ProBuilder
 						break;
 				}
 
-				m_SelectMode.value = UI.EditorGUIUtility.DoElementModeToolbar(m_ElementModeToolbarRect, m_SelectMode);
+				selectMode = UI.EditorGUIUtility.DoElementModeToolbar(m_ElementModeToolbarRect, selectMode);
 
 				// todo Move to VertexManipulationTool
 //				if (m_IsMovingElements && s_ShowSceneInfo)
@@ -1035,10 +1025,6 @@ namespace UnityEditor.ProBuilder
 			// todo remove selection property
 			selection = MeshSelection.topInternal.ToArray();
 
-//			m_HandlePosition = MeshSelection.GetHandlePosition();
-//			m_HandleRotation = MeshSelection.GetHandleRotation(s_HandleOrientation);
-
-			UpdateTextureHandles();
 			UpdateMeshHandles(selectionChanged);
 
 			if (selectionChanged)
@@ -1074,14 +1060,14 @@ namespace UnityEditor.ProBuilder
 		{
 			m_SceneInfo.text = string.Format(
 				"Faces: <b>{0}</b>\nTriangles: <b>{1}</b>\nVertices: <b>{2} ({3})</b>\n\nSelected Faces: <b>{4}</b>\nSelected Edges: <b>{5}</b>\nSelected Vertices: <b>{6} ({7})</b>",
-				MeshSelection.totalFaceCount,
-				MeshSelection.totalTriangleCountCompiled,
-				MeshSelection.totalCommonVertexCount,
-				MeshSelection.totalVertexCountOptimized,
-				MeshSelection.selectedFaceCount,
-				MeshSelection.selectedEdgeCount,
-				MeshSelection.selectedSharedVertexCount,
-				MeshSelection.selectedVertexCount);
+				MeshSelection.totalFaceCount.ToString(),
+				MeshSelection.totalTriangleCountCompiled.ToString(),
+				MeshSelection.totalCommonVertexCount.ToString(),
+				MeshSelection.totalVertexCountOptimized.ToString(),
+				MeshSelection.selectedFaceCount.ToString(),
+				MeshSelection.selectedEdgeCount.ToString(),
+				MeshSelection.selectedSharedVertexCount.ToString(),
+				MeshSelection.selectedVertexCount.ToString());
 		}
 
 		internal void ClearElementSelection()
@@ -1090,38 +1076,6 @@ namespace UnityEditor.ProBuilder
 				pb.ClearSelection();
 
 			m_Hovering.Clear();
-		}
-
-		void UpdateTextureHandles()
-		{
-//			if (!selectMode.ContainsFlag(SelectMode.TextureFace) || !selection.Any())
-//				return;
-//
-//			// Reset temp vars
-//			m_TextureHandlePosition = m_HandlePosition;
-//			m_TextureScale = Vector3.one;
-//			m_TextureRotation = Quaternion.identity;
-//
-//			ProBuilderMesh pb;
-//			Face face;
-//
-//			handleMatrix = selection[0].transform.localToWorldMatrix;
-//
-//			if (GetFirstSelectedFace(out pb, out face))
-//			{
-//				var normals = Math.NormalTangentBitangent(pb, face);
-//				var nrm = normals.normal;
-//				var bitan = normals.bitangent;
-//
-//				if (nrm == Vector3.zero || bitan == Vector3.zero)
-//				{
-//					nrm = Vector3.up;
-//					bitan = Vector3.right;
-//				}
-//
-//				handleMatrix *= Matrix4x4.TRS(Math.GetBounds(pb.positionsInternal.ValuesWithIndexes(face.distinctIndexesInternal)).center,
-//					Quaternion.LookRotation(nrm, bitan), Vector3.one);
-//			}
 		}
 
 		/// <summary>
