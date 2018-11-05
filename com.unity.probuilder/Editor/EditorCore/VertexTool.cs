@@ -8,6 +8,9 @@ namespace UnityEditor.ProBuilder
 	abstract class VertexTool : VertexManipulationTool
 	{
 		const bool k_CollectCoincidentVertices = true;
+#if APPLY_POSITION_TO_SPACE_GIZMO
+		Matrix4x4 m_CurrentDelta = Matrix4x4.identity;
+#endif
 
 		class MeshAndPositions : MeshAndElementGroupPair
 		{
@@ -36,7 +39,7 @@ namespace UnityEditor.ProBuilder
 
 		protected override void DoTool(Vector3 position, Quaternion rotation)
 		{
-			if (isEditing && currentEvent.type == EventType.Repaint)
+			if ( isEditing && currentEvent.type == EventType.Repaint)
 			{
 				foreach (var key in meshAndElementGroupPairs)
 				{
@@ -60,7 +63,12 @@ namespace UnityEditor.ProBuilder
 								}
 							}
 #endif
+
+#if APPLY_POSITION_TO_SPACE_GIZMO
+						EditorMeshHandles.DrawGizmo(Vector3.zero, group.matrix.inverse * m_CurrentDelta);
+#else
 						EditorMeshHandles.DrawGizmo(Vector3.zero, group.matrix.inverse);
+#endif
 					}
 				}
 			}
@@ -68,6 +76,10 @@ namespace UnityEditor.ProBuilder
 
 		protected void Apply(Matrix4x4 delta)
 		{
+#if APPLY_POSITION_TO_SPACE_GIZMO
+			m_CurrentDelta.SetColumn(3, delta.GetColumn(3));
+#endif
+
 			foreach (var key in meshAndElementGroupPairs)
 			{
 				if (!(key is MeshAndPositions))

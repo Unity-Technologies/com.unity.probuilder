@@ -11,7 +11,6 @@ namespace UnityEditor.ProBuilder
 	partial class EditorMeshHandles
 	{
 		static bool s_Initialized;
-
 		static Material s_LineMaterial;
 		static Material s_FaceMaterial;
 
@@ -51,7 +50,7 @@ namespace UnityEditor.ProBuilder
 		internal static void DrawGizmo(Vector3 position, Matrix4x4 matrix, float size = -1f)
 		{
 			var p = matrix.MultiplyPoint3x4(position);
-			size = HandleUtility.GetHandleSize(p) * size < 0f ? .25f : size;
+			size = HandleUtility.GetHandleSize(p) * size < 0f ? .2f : size;
 
 			using (var lineDrawer = new LineDrawingScope(Color.green, -1f, CompareFunction.Always))
 			{
