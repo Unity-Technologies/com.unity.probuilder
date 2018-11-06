@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.28] - 2018-11-05
+## [4.0.0-preview.29] - 2018-11-06
 
 ### Features
 
@@ -22,6 +22,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Redesigned Lightmap UV workflow now exposes settings on the ProBuilderMesh component, provides a modifiable default value, and is generally smarter about keeping Lightmap UV channels in sync with changes.
 - Improve performance of toolbar rendering by caching some frequently accessed selection information.
 - Redesigned settings interface, now supports search and resetting individual fields.
+- Add support for `Pivot` and `Center` handle position toggle.
+- Handles now support operating in selection space (Position: Pivot + Orientation: Normal).
+- Texture scene tool now supports vertices and edges.
+- Improve performance of mesh rebuild functions.
+- Improve performance of vertex, edge, and face gizmos.
 
 ### Bug Fixes
 
@@ -69,17 +74,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `MeshSelection.Top()` becomes `MeshSelection.top` property.
 - Include third party dependencies as source code with assembly definitions instead of pre-compiled DLLs.
 - Performance optimization for selection changes in editor.
-
-### Changes since 4.0.0-preview.27
-
-- Add support for `Pivot` and `Center` handle position toggle.
-- Handles now support operating in selection space (Position: Pivot + Orientation: Normal).
-- Texture scene tool now supports vertices and edges.
-- Improve performance of mesh rebuild functions.
-- Improve performance of vertex, edge, and face gizmos.
 - Make auto-resizing colliders opt-in instead of on by default.
-- Fix tests sometimes not creating temporary directories.
-- Fix occasional null reference error in cases where window layout is reloaded.
+
+### Changes since 4.0.0-preview.28
+
+- Fix `Shape Editor` moving the preview object when modifying parameters.
 
 ## [3.0.8] - 2018-05-07
 
