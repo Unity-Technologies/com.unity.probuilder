@@ -43,6 +43,7 @@ namespace UnityEditor.ProBuilder
 		void SetIsUtilityWindow(bool isUtilityWindow)
 		{
 			ProBuilderSettings.Set<bool>(utilityWindowKey, isUtilityWindow, SettingsScope.Project);
+			ProBuilderSettings.Save();
 			var title = titleContent;
 			Close();
 			var res = GetWindow(GetType(), isUtilityWindow);
