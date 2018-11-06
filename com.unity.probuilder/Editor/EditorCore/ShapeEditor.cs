@@ -31,7 +31,7 @@ namespace UnityEditor.ProBuilder
 		{
 			public virtual string name
 			{
-				get { return GetType().ToString(); }
+				get { return ObjectNames.NicifyVariableName(GetType().Name); }
 			}
 
 			public abstract void OnGUI();
@@ -50,6 +50,7 @@ namespace UnityEditor.ProBuilder
 		Vector2 m_Scroll = Vector2.zero;
 
 		static ShapeType s_CurrentShape = ShapeType.Cube;
+		static int s_CurrentIndex = 0;
 
 		GameObject m_PreviewObject;
 		bool m_ShowPreview = true;
@@ -108,92 +109,32 @@ namespace UnityEditor.ProBuilder
 		{
 			DoContextMenu();
 
-			GUILayout.BeginHorizontal();
-				bool sp = m_ShowPreview;
-				m_ShowPreview = GUILayout.Toggle(m_ShowPreview, "Show Preview");
-
-				if(sp != m_ShowPreview)
-				{
-					if(m_ShowPreview)
-						m_DoInitPreview = true;
-					else
-						DestroyPreviewObject();
-				}
-
-				if(GUILayout.Button("Center Preview"))
-				{
-					if(m_PreviewObject == null) return;
-
-					EditorUtility.ScreenCenter(m_PreviewObject.gameObject);
-					Selection.activeTransform = m_PreviewObject.transform;
-					Selection.activeObject = m_PreviewObject;
-
-					SceneView.RepaintAll();
-				}
-			GUILayout.EndHorizontal();
-
-			GUILayout.Space(7);
-
 			GUILayout.Label("Shape Selector", EditorStyles.boldLabel);
 
-			ShapeType oldShape = s_CurrentShape;
-			s_CurrentShape = (ShapeType) EditorGUILayout.EnumPopup(s_CurrentShape);
+			EditorGUI.BeginChangeCheck();
 
-			if(s_CurrentShape != oldShape) m_DoInitPreview = true;
+			s_CurrentIndex = EditorGUILayout.Popup(s_CurrentIndex, m_ShapeTypes);
 
 			m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
 
-			switch(s_CurrentShape)
-			{
-				case ShapeType.Cube:
-					m_ShapeBuilders.First().OnGUI();
-					break;
-//				case ShapeType.Prism:
-//					PrismGUI();
-//					break;
-//				case ShapeType.Stair:
-//					StairGUI();
-//					break;
-//				case ShapeType.Cylinder:
-//					CylinderGUI();
-//					break;
-//				case ShapeType.Plane:
-//					PlaneGUI();
-//					break;
-//				case ShapeType.Door:
-//					DoorGUI();
-//					break;
-//				case ShapeType.Pipe:
-//					PipeGUI();
-//					break;
-//				case ShapeType.Cone:
-//					ConeGUI();
-//					break;
-//				case ShapeType.Sprite:
-//					SpriteGUI();
-//					break;
-//				case ShapeType.Arch:
-//					ArchGUI();
-//					break;
-//				case ShapeType.Icosahedron:
-//					IcosahedronGUI();
-//					break;
-//				case ShapeType.Torus:
-//					TorusGUI();
-//					break;
-//				case ShapeType.Custom:
-//					CustomGUI();
-//					break;
+			var shape = m_ShapeBuilders[s_CurrentIndex];
 
-				default:
-					EditorGUILayout.EndScrollView();
-					return;
-			}
+			shape.OnGUI();
 
 			EditorGUILayout.EndScrollView();
 
+			if (EditorGUI.EndChangeCheck())
+				SetPreviewMesh(shape.Build());
 
 			GUILayout.FlexibleSpace();
+
+			if (GUILayout.Button("Build"))
+			{
+				var res = shape.Build();
+				EditorUtility.InitObject(res);
+				ApplyPreviewTransform(res);
+				DestroyPreviewObject();
+			}
 		}
 
 		static Vector3 cubeSize = Vector3.one;
@@ -973,7 +914,26 @@ namespace UnityEditor.ProBuilder
 
 		void SetPreviewMesh(ProBuilderMesh mesh)
 		{
+			ApplyPreviewTransform(mesh);
 
+			DestroyPreviewObject();
+
+			mesh.selectable = false;
+			m_PreviewObject = mesh.gameObject;
+
+			mesh.preserveMeshAssetOnDestroy = true;
+			var umesh = mesh.mesh;
+			DestroyImmediate(mesh);
+
+			umesh.hideFlags = HideFlags.DontSave;
+			m_PreviewObject.hideFlags = HideFlags.DontSave;
+			m_PreviewObject.GetComponent<MeshRenderer>().sharedMaterial = m_ShapePreviewMaterial;
+
+			Selection.activeTransform = m_PreviewObject.transform;
+		}
+
+		void ApplyPreviewTransform(ProBuilderMesh mesh)
+		{
 			var position = Vector3.zero;
 			var scale = Vector3.one;
 			var rotation = Quaternion.identity;
@@ -984,33 +944,20 @@ namespace UnityEditor.ProBuilder
 				position = m_PreviewObject.transform.position;
 				rotation = m_PreviewObject.transform.localRotation;
 				scale = m_PreviewObject.transform.localScale;
-
-				DestroyPreviewObject();
 			}
 
-			mesh.selectable = false;
-			m_PreviewObject = mesh.gameObject;
+			EditorUtility.SetPivotLocationAndSnap(mesh);
 
 			if (previous)
 			{
-				m_PreviewObject.transform.position = position;
-				m_PreviewObject.transform.localRotation = rotation;
-				m_PreviewObject.transform.localScale = scale;
+				mesh.transform.position = position;
+				mesh.transform.localRotation = rotation;
+				mesh.transform.localScale = scale;
 			}
 			else
 			{
 				EditorUtility.ScreenCenter(mesh.gameObject);
 			}
-
-			EditorUtility.SetPivotLocationAndSnap(mesh);
-
-			mesh.preserveMeshAssetOnDestroy = true;
-			DestroyImmediate(mesh);
-
-			mesh.hideFlags = HideFlags.DontSave;
-			m_PreviewObject.hideFlags = HideFlags.DontSave;
-
-			Selection.activeTransform = m_PreviewObject.transform;
 		}
 	}
 }
