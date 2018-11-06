@@ -83,12 +83,12 @@ namespace UnityEngine.ProBuilder
 			if(Mathf.Abs(snapValue) > Mathf.Epsilon)
 			{
 				Matrix4x4 l2w = mesh.transform.localToWorldMatrix;
-				Vector3 mask = snapAxisOnly ? offset.ToMask(Math.handleEpsilon) : Vector3.one;
+				var mask = snapAxisOnly ? new Vector3Mask(offset, Math.handleEpsilon) : Vector3Mask.XYZ;
 
 				for(i = 0; i < s_CoincidentVertices.Count; i++)
 				{
 					var v = l2w.MultiplyPoint3x4(verts[s_CoincidentVertices[i]] + localOffset);
-					verts[s_CoincidentVertices[i]] = w2l.MultiplyPoint3x4( Snapping.SnapValue(v, snapValue * mask) );
+					verts[s_CoincidentVertices[i]] = w2l.MultiplyPoint3x4( Snapping.SnapValue(v, ((Vector3)mask) * snapValue) );
 				}
 			}
 			else

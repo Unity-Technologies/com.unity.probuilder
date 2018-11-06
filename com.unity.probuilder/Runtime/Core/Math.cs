@@ -937,24 +937,82 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="positions"></param>
 		/// <returns></returns>
-		internal static Bounds GetBounds(Vector3[] positions)
+		internal static Bounds GetBounds(Vector3[] positions, int[] indices = null)
 		{
-			if (positions.Length < 1)
+			bool hasIndices = indices != null;
+
+			if ((hasIndices && indices.Length < 1) || positions.Length < 1)
 				return default(Bounds);
 
-			Vector3 min = positions[0];
+			Vector3 min = positions[hasIndices ? indices[0] : 0];
 			Vector3 max = min;
 
-			for(int i = 1, c = positions.Length; i < c; i++)
+			if (hasIndices)
 			{
-				min.x = Mathf.Min(positions[i].x, min.x);
-				max.x = Mathf.Max(positions[i].x, max.x);
+				for(int i = 1, c = indices.Length; i < c; i++)
+				{
+					min.x = Mathf.Min(positions[indices[i]].x, min.x);
+					max.x = Mathf.Max(positions[indices[i]].x, max.x);
 
-				min.y = Mathf.Min(positions[i].y, min.y);
-				max.y = Mathf.Max(positions[i].y, max.y);
+					min.y = Mathf.Min(positions[indices[i]].y, min.y);
+					max.y = Mathf.Max(positions[indices[i]].y, max.y);
 
-				min.z = Mathf.Min(positions[i].z, min.z);
-				max.z = Mathf.Max(positions[i].z, max.z);
+					min.z = Mathf.Min(positions[indices[i]].z, min.z);
+					max.z = Mathf.Max(positions[indices[i]].z, max.z);
+				}
+			}
+			else
+			{
+				for(int i = 1, c = positions.Length; i < c; i++)
+				{
+					min.x = Mathf.Min(positions[i].x, min.x);
+					max.x = Mathf.Max(positions[i].x, max.x);
+
+					min.y = Mathf.Min(positions[i].y, min.y);
+					max.y = Mathf.Max(positions[i].y, max.y);
+
+					min.z = Mathf.Min(positions[i].z, min.z);
+					max.z = Mathf.Max(positions[i].z, max.z);
+				}
+			}
+
+			return new Bounds((min+max) * .5f, max - min);
+		}
+
+		/// <summary>
+		/// Creates an AABB with a set of vertices.
+		/// </summary>
+		/// <param name="positions"></param>
+		/// <returns></returns>
+		internal static Bounds GetBounds(Vector3[] positions, IEnumerable<Face> faces)
+		{
+			bool initialized = false;
+
+			Vector3 min = Vector3.zero;
+			Vector3 max = min;
+
+			foreach (var face in faces)
+			{
+				var indices = face.distinctIndexesInternal;
+
+				if (!initialized)
+				{
+					initialized = true;
+					min = positions[indices[0]];
+					max = positions[indices[0]];
+				}
+
+				for(int i = 0, c = indices.Length; i < c; i++)
+				{
+					min.x = Mathf.Min(positions[indices[i]].x, min.x);
+					max.x = Mathf.Max(positions[indices[i]].x, max.x);
+
+					min.y = Mathf.Min(positions[indices[i]].y, min.y);
+					max.y = Mathf.Max(positions[indices[i]].y, max.y);
+
+					min.z = Mathf.Min(positions[indices[i]].z, min.z);
+					max.z = Mathf.Max(positions[indices[i]].z, max.z);
+				}
 			}
 
 			return new Bounds((min+max) * .5f, max - min);
@@ -1178,23 +1236,6 @@ namespace UnityEngine.ProBuilder
 		public static int Clamp(int value, int lowerBound, int upperBound)
 		{
 			return value < lowerBound ? lowerBound : value > upperBound ? upperBound : value;
-		}
-
-		internal static Vector2 ToMask(this Vector2 vec, float delta = floatEpsilon)
-		{
-			return new Vector2(
-				Mathf.Abs(vec.x) > delta ? 1f : 0f,
-				Mathf.Abs(vec.y) > delta ? 1f : 0f
-				);
-		}
-
-		internal static Vector3 ToMask(this Vector3 vec, float delta = floatEpsilon)
-		{
-			return new Vector3(
-				Mathf.Abs(vec.x) > delta ? 1f : 0f,
-				Mathf.Abs(vec.y) > delta ? 1f : 0f,
-				Mathf.Abs(vec.z) > delta ? 1f : 0f
-				);
 		}
 
 		internal static Vector3 ToSignedMask(this Vector3 vec, float delta = floatEpsilon)

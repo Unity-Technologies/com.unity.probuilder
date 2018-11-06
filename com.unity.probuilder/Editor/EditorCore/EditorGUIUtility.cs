@@ -13,6 +13,43 @@ namespace UnityEditor.ProBuilder.UI
 	/// </summary>
 	static class EditorGUIUtility
 	{
+		static class Styles
+		{
+			static bool s_Initialized;
+
+			public static GUIStyle command = "command";
+			public static GUIContent[] selectModeIcons;
+
+			public static void Init()
+			{
+				if (s_Initialized)
+					return;
+
+				s_Initialized = true;
+
+				var object_Graphic_off = IconUtility.GetIcon("Modes/Mode_Object");
+				var face_Graphic_off = IconUtility.GetIcon("Modes/Mode_Face");
+				var vertex_Graphic_off = IconUtility.GetIcon("Modes/Mode_Vertex");
+				var edge_Graphic_off = IconUtility.GetIcon("Modes/Mode_Edge");
+
+				selectModeIcons = new GUIContent[]
+				{
+					object_Graphic_off != null
+						? new GUIContent(object_Graphic_off, "Object Selection")
+						: new GUIContent("OBJ", "Object Selection"),
+					vertex_Graphic_off != null
+						? new GUIContent(vertex_Graphic_off, "Vertex Selection")
+						: new GUIContent("VRT", "Vertex Selection"),
+					edge_Graphic_off != null
+						? new GUIContent(edge_Graphic_off, "Edge Selection")
+						: new GUIContent("EDG", "Edge Selection"),
+					face_Graphic_off != null
+						? new GUIContent(face_Graphic_off, "Face Selection")
+						: new GUIContent("FCE", "Face Selection"),
+				};
+			}
+		}
+
 		static readonly Color TOOL_SETTINGS_COLOR = UnityEditor.EditorGUIUtility.isProSkin
 			? Color.green
 			: new Color(.2f, .2f, .2f, .2f);
@@ -378,6 +415,55 @@ namespace UnityEditor.ProBuilder.UI
 			EditorGUIUtility.DrawSolidColor(sceneLabelRect, SceneLabelBackgroundColor);
 
 			GUI.Label(sceneLabelRect, gc, sceneBoldLabel);
+		}
+
+		public static SelectMode DoElementModeToolbar(Rect rect, SelectMode mode)
+		{
+			Styles.Init();
+
+			EditorGUI.BeginChangeCheck();
+
+			var textureMode = mode.ContainsFlag(SelectMode.TextureVertex | SelectMode.TextureEdge | SelectMode.TextureFace);
+
+			int currentSelectionMode = -1;
+
+			switch (mode)
+			{
+				case SelectMode.Object:
+					currentSelectionMode = 0;
+					break;
+				case SelectMode.Vertex:
+				case SelectMode.TextureVertex:
+					currentSelectionMode = 1;
+					break;
+				case SelectMode.Edge:
+				case SelectMode.TextureEdge:
+					currentSelectionMode = 2;
+					break;
+				case SelectMode.Face:
+				case SelectMode.TextureFace:
+					currentSelectionMode = 3;
+					break;
+				default:
+					currentSelectionMode = -1;
+					break;
+			}
+
+			currentSelectionMode = GUI.Toolbar(rect, currentSelectionMode, Styles.selectModeIcons, Styles.command);
+
+			if (EditorGUI.EndChangeCheck())
+			{
+				if (currentSelectionMode == 0)
+					mode = SelectMode.Object;
+				else if (currentSelectionMode == 1)
+					mode = textureMode ? SelectMode.TextureVertex : SelectMode.Vertex;
+				else if (currentSelectionMode == 2)
+					mode = textureMode ? SelectMode.TextureEdge : SelectMode.Edge;
+				else if (currentSelectionMode == 3)
+					mode = textureMode ? SelectMode.TextureFace : SelectMode.Face;
+			}
+
+			return mode;
 		}
 	}
 }

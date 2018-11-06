@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.27] - 2018-10-09
+## [4.0.0-preview.28] - 2018-11-05
 
 ### Features
 
@@ -70,11 +70,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Include third party dependencies as source code with assembly definitions instead of pre-compiled DLLs.
 - Performance optimization for selection changes in editor.
 
-### Changes since 4.0.0-preview.26
+### Changes since 4.0.0-preview.27
 
-- Fix lightmap unit test instabilities.
-- Refactor settings code to be more modular.
-- Remove hard-coded `#define PROGRIDS_ENABLED` from ProGrids unit tests.
+- Add support for `Pivot` and `Center` handle position toggle.
+- Handles now support operating in selection space (Position: Pivot + Orientation: Normal).
+- Texture scene tool now supports vertices and edges.
+- Improve performance of mesh rebuild functions.
+- Improve performance of vertex, edge, and face gizmos.
+- Make auto-resizing colliders opt-in instead of on by default.
+- Fix tests sometimes not creating temporary directories.
+- Fix occasional null reference error in cases where window layout is reloaded.
 
 ## [3.0.8] - 2018-05-07
 

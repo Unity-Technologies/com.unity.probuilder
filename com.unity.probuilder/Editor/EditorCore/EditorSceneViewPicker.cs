@@ -160,9 +160,9 @@ namespace UnityEditor.ProBuilder
 
 			float pickedElementDistance = Mathf.Infinity;
 
-			if (selectionMode == SelectMode.Edge)
+			if (selectionMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
 				pickedElementDistance = EdgeRaycast(evt.mousePosition, pickerPreferences, true, s_Selection);
-			else if (selectionMode == SelectMode.Vertex)
+			else if (selectionMode.ContainsFlag(SelectMode.Vertex | SelectMode.TextureVertex))
 				pickedElementDistance = VertexRaycast(evt.mousePosition, pickerPreferences, true, s_Selection);
 			else
 				pickedElementDistance = FaceRaycast(evt.mousePosition, pickerPreferences, true, s_Selection, evt.clickCount > 1 ? -1 : 0, false);
@@ -246,8 +246,7 @@ namespace UnityEditor.ProBuilder
 				rectSelectMode = scenePickerPreferences.rectSelectMode
 			};
 
-			var selection = MeshSelection.topInternal;
-			UndoUtility.RecordSelection(selection, "Drag Select");
+			UndoUtility.RecordSelection("Drag Select");
 			bool isAppendModifier = EditorHandleUtility.IsAppendModifier(Event.current.modifiers);
 
 			if (!isAppendModifier)
@@ -258,11 +257,12 @@ namespace UnityEditor.ProBuilder
 			switch (selectionMode)
 			{
 				case SelectMode.Vertex:
+				case SelectMode.TextureVertex:
 				{
 					Dictionary<ProBuilderMesh, HashSet<int>> selected = Picking.PickVerticesInRect(
 						SceneView.lastActiveSceneView.camera,
 						mouseDragRect,
-						selection,
+						MeshSelection.topInternal,
 						pickingOptions,
 						EditorGUIUtility.pixelsPerPoint);
 
@@ -301,7 +301,7 @@ namespace UnityEditor.ProBuilder
 					Dictionary<ProBuilderMesh, HashSet<Face>> selected = Picking.PickFacesInRect(
 						SceneView.lastActiveSceneView.camera,
 						mouseDragRect,
-						selection,
+						MeshSelection.topInternal,
 						pickingOptions,
 						EditorGUIUtility.pixelsPerPoint);
 
@@ -333,11 +333,12 @@ namespace UnityEditor.ProBuilder
 				}
 
 				case SelectMode.Edge:
+				case SelectMode.TextureEdge:
 				{
 					var selected = Picking.PickEdgesInRect(
 						SceneView.lastActiveSceneView.camera,
 						mouseDragRect,
-						selection,
+						MeshSelection.topInternal,
 						pickingOptions,
 						EditorGUIUtility.pixelsPerPoint);
 
@@ -390,10 +391,10 @@ namespace UnityEditor.ProBuilder
 			SceneSelection selection,
 			bool allowUnselected = false)
 		{
-			if (selectionMode == SelectMode.Edge)
+			if (selectionMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
 				return EdgeRaycast(mousePosition, pickerOptions, allowUnselected, selection);
 
-			if (selectionMode == SelectMode.Vertex)
+			if (selectionMode.ContainsFlag(SelectMode.Vertex | SelectMode.TextureVertex))
 				return VertexRaycast(mousePosition, pickerOptions, allowUnselected, selection);
 
 			return FaceRaycast(mousePosition, pickerOptions, allowUnselected, selection, 0, true);

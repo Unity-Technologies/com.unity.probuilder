@@ -52,7 +52,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			var selection = MeshSelection.topInternal;
 
-			UndoUtility.RecordSelection(selection, "Select Face Ring");
+			UndoUtility.RecordSelection("Select Face Ring");
 
 			foreach (ProBuilderMesh pb in selection)
 			{

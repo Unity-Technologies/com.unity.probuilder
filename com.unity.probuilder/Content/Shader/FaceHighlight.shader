@@ -4,13 +4,14 @@ Shader "Hidden/ProBuilder/FaceHighlight"
 	{
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_Dither ("Dithering", float) = 0
+		_HandleZTest ("_HandleZTest", Int) = 8
 	}
 
 	SubShader
 	{
 		Tags { "IgnoreProjector"="True" "RenderType"="Geometry" }
 		Lighting Off
-		ZTest LEqual
+		ZTest [_HandleZTest]
 		ZWrite On
 		Cull Off
 		Blend Off

@@ -331,12 +331,11 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentNullException("mesh");
 
 			var lookup = mesh.sharedVertexLookup;
-			IEnumerable<Face> distinct = faces.Distinct();
 
 			List<WingedEdge> winged = new List<WingedEdge>();
 			Dictionary<Edge, WingedEdge> opposites = new Dictionary<Edge, WingedEdge>();
 
-			foreach (Face f in distinct)
+			foreach (Face f in faces)
 			{
 				List<Edge> edges = SortEdgesByAdjacency(f);
 				int edgeLength = edges.Count;

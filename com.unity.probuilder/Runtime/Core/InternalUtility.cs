@@ -12,7 +12,7 @@ namespace UnityEngine.ProBuilder
 	/// </summary>
 	static class InternalUtility
 	{
-		// todo Change to shallow search
+		[Obsolete]
 		public static T[] GetComponents<T>(this IEnumerable<GameObject> gameObjects) where T : Component
 		{
 			List<T> c = new List<T>();

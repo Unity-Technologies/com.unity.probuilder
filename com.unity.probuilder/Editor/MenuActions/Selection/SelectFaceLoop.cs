@@ -54,7 +54,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			var selection = MeshSelection.topInternal;
 
-			UndoUtility.RecordSelection(selection, "Select Face Loop");
+			UndoUtility.RecordSelection("Select Face Loop");
 
 			foreach (ProBuilderMesh pb in selection)
 			{

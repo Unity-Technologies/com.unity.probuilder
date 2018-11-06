@@ -43,7 +43,41 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuFlipNormals(MeshSelection.topInternal);
+			if(MeshSelection.selectedObjectCount < 1)
+				return ActionResult.NoSelection;
+
+			UndoUtility.RecordSelection("Flip Face Normals");
+
+			int c = 0;
+			int faceCount = MeshSelection.selectedFaceCount;
+
+			foreach(ProBuilderMesh pb in MeshSelection.topInternal)
+			{
+				if( pb.selectedFaceCount < 1 && faceCount < 1 )
+				{
+					foreach(var face in pb.facesInternal)
+						face.Reverse();
+
+					c += pb.facesInternal.Length;
+				}
+				else
+				{
+					foreach(var face in pb.GetSelectedFaces())
+						face.Reverse();
+
+					c += pb.selectedFaceCount;
+				}
+
+
+				pb.ToMesh();
+				pb.Refresh();
+				pb.Optimize();
+			}
+
+			if(c > 0)
+				return new ActionResult(ActionResult.Status.Success, "Flip " + c + (c > 1 ? " Face Normals" : " Face Normal"));
+
+			return new ActionResult(ActionResult.Status.Canceled, "Flip Normals\nNo Faces Selected");
 		}
 	}
 }

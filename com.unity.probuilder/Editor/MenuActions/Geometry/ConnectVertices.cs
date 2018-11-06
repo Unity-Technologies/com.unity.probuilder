@@ -1,9 +1,6 @@
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
-using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -33,7 +30,30 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuConnectVertices(MeshSelection.topInternal);
+			ActionResult res = ActionResult.NoSelection;
+
+			UndoUtility.RecordSelection("Connect Vertices");
+
+			foreach(var mesh in MeshSelection.topInternal)
+			{
+				mesh.ToMesh();
+				int[] splits = mesh.Connect(mesh.selectedIndexesInternal);
+
+				if(splits != null)
+				{
+					mesh.Refresh();
+					mesh.Optimize();
+					mesh.SetSelectedVertices(splits);
+					res = new ActionResult(ActionResult.Status.Success, "Connect Edges");
+				}
+				else
+				{
+					res = new ActionResult(ActionResult.Status.Failure, "Failed Connecting Edges");
+				}
+			}
+			ProBuilderEditor.Refresh();
+
+			return res;
 		}
 	}
 }

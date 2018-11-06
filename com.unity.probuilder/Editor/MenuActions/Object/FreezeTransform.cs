@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEngine;
@@ -36,7 +37,40 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuFreezeTransforms(MeshSelection.topInternal);
+			if (MeshSelection.selectedObjectCount < 1)
+				return ActionResult.NoSelection;
+
+			UndoUtility.RecordMeshAndTransformSelection("Freeze Transforms");
+
+			var selection = MeshSelection.topInternal;
+			Vector3[][] positions = new Vector3[selection.Count][];
+
+			for(int i = 0, c = selection.Count; i < c; i++)
+				positions[i] = selection[i].VerticesInWorldSpace();
+
+			for(int i = 0, c = selection.Count; i < c; i++)
+			{
+				ProBuilderMesh pb = selection[i];
+
+				pb.transform.position = Vector3.zero;
+				pb.transform.rotation = Quaternion.identity;
+				pb.transform.localScale = Vector3.one;
+
+				foreach(Face face in pb.facesInternal)
+					face.manualUV = true;
+
+				pb.positions = positions[i];
+
+				pb.ToMesh();
+				pb.Refresh();
+				pb.Optimize();
+			}
+
+			ProBuilderEditor.Refresh();
+
+			SceneView.RepaintAll();
+
+			return new ActionResult(ActionResult.Status.Success, "Freeze Transforms");
 		}
 	}
 }

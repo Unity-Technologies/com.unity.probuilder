@@ -1,8 +1,6 @@
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -26,7 +24,24 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuTriangulateObject(MeshSelection.topInternal);
+			if(MeshSelection.selectedObjectCount < 1)
+				return ActionResult.NoSelection;
+
+			UndoUtility.RecordSelection("Triangulate Objects");
+
+			foreach(var mesh in MeshSelection.topInternal)
+			{
+				mesh.ToMesh();
+				mesh.ToTriangles(mesh.facesInternal);
+				mesh.Refresh();
+				mesh.Optimize();
+				mesh.ClearSelection();
+			}
+
+			ProBuilderEditor.Refresh();
+
+			var c = MeshSelection.selectedObjectCount;
+			return new ActionResult(ActionResult.Status.Success, "Triangulate " + c + (c > 1 ? " Objects" : " Object"));
 		}
 	}
 }

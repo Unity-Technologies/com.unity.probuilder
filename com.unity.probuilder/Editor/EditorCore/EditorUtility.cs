@@ -480,10 +480,71 @@ namespace UnityEditor.ProBuilder
 		/// <returns></returns>
 		internal static bool IsMeshElementMode(this SelectMode mode)
 		{
-			return mode.ContainsFlag(SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.TextureFace);
+			return mode.ContainsFlag(
+				SelectMode.Vertex
+				| SelectMode.Edge
+				| SelectMode.Face
+				| SelectMode.TextureEdge
+				| SelectMode.TextureFace
+				| SelectMode.TextureVertex
+				);
 		}
 
-		// HasFlag doesn't exist in .NET 3.5
+		internal static bool IsTextureMode(this SelectMode mode)
+		{
+			return mode.ContainsFlag(
+				SelectMode.TextureEdge
+				| SelectMode.TextureFace
+				| SelectMode.TextureVertex
+				);
+		}
+
+		internal static bool IsPositionMode(this SelectMode mode)
+		{
+			return mode.ContainsFlag(
+				SelectMode.TextureEdge
+				| SelectMode.TextureFace
+				| SelectMode.TextureVertex
+				);
+		}
+
+		internal static SelectMode GetPositionMode(this SelectMode mode)
+		{
+			if (mode.ContainsFlag(SelectMode.TextureFace))
+				mode = (mode & ~SelectMode.TextureFace) | SelectMode.Face;
+
+			if (mode.ContainsFlag(SelectMode.TextureEdge))
+				mode = (mode & ~SelectMode.TextureEdge) | SelectMode.Edge;
+
+			if (mode.ContainsFlag(SelectMode.TextureVertex))
+				mode = (mode & ~SelectMode.TextureVertex) | SelectMode.Vertex;
+
+			return mode;
+		}
+
+		internal static SelectMode GetTextureMode(this SelectMode mode)
+		{
+			if (mode.ContainsFlag(SelectMode.Face))
+				mode = (mode & ~SelectMode.Face) | SelectMode.TextureFace;
+
+			if (mode.ContainsFlag(SelectMode.Edge))
+				mode = (mode & ~SelectMode.Edge) | SelectMode.TextureEdge;
+
+			if (mode.ContainsFlag(SelectMode.Vertex))
+				mode = (mode & ~SelectMode.Vertex) | SelectMode.TextureVertex;
+
+			return mode;
+		}
+
+		/// <summary>
+		/// Test if SelectMode contains any of the value bits.
+		/// </summary>
+		/// <remarks>
+		/// HasFlag doesn't exist in .NET 3.5
+		/// </remarks>
+		/// <param name="target"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
 		internal static bool ContainsFlag(this SelectMode target, SelectMode value)
 		{
 			return (target & value) != SelectMode.None;

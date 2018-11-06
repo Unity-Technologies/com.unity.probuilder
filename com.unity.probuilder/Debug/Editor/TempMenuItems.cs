@@ -10,13 +10,6 @@ class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d", false, 1000)]
 	static void MenuInit()
 	{
-		string[] search = new[]
-		{
-			"Assets/Temp.cs",
-			"Assets/*.cs",
-			"*.cs"
-		};
-
 
 	}
 

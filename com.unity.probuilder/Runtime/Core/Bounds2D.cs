@@ -366,14 +366,43 @@ namespace UnityEngine.ProBuilder
 		/// <param name="points"></param>
 		/// <param name="indexes"></param>
 		/// <returns></returns>
-		public static Vector2 Center(Vector2[] points, int[] indexes)
+		public static Vector2 Center(IList<Vector2> points, IList<int> indexes)
 		{
 			float 	xMin = 0f,
 					xMax = 0f,
 					yMin = 0f,
 					yMax = 0f;
 
-			int size = indexes.Length;
+			int size = indexes.Count;
+
+			xMin = points[indexes[0]].x;
+			yMin = points[indexes[0]].y;
+			xMax = xMin;
+			yMax = yMin;
+
+			for(int i = 1; i < size; i++)
+			{
+				float x = points[indexes[i]].x;
+				float y = points[indexes[i]].y;
+
+				if(x < xMin) xMin = x;
+				if(x > xMax) xMax = x;
+
+				if(y < yMin) yMin = y;
+				if(y > yMax) yMax = y;
+			}
+
+			return new Vector2( (xMin + xMax) / 2f, (yMin + yMax) / 2f );
+		}
+
+		internal static Vector2 Center(IList<Vector4> points, IList<int> indexes)
+		{
+			float 	xMin = 0f,
+					xMax = 0f,
+					yMin = 0f,
+					yMax = 0f;
+
+			int size = indexes.Count;
 
 			xMin = points[indexes[0]].x;
 			yMin = points[indexes[0]].y;

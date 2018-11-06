@@ -72,18 +72,16 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			var selection = MeshSelection.topInternal;
-
-			if (selection == null || selection.Length < 1)
+			if (MeshSelection.selectedObjectCount < 1)
 				return ActionResult.NoSelection;
 
 			bool success = false;
 
 			bool collapseToFirst = m_CollapseToFirst;
 
-			UndoUtility.RegisterCompleteObjectUndo(selection, "Collapse Vertices");
+			UndoUtility.RecordSelection("Collapse Vertices");
 
-			foreach (ProBuilderMesh mesh in selection)
+			foreach (var mesh in MeshSelection.topInternal)
 			{
 				if (mesh.selectedIndexesInternal.Length > 1)
 				{

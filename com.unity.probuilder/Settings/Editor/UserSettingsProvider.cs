@@ -8,7 +8,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+#if SETTINGS_PROVIDER_ENABLED
+#if UNITY_2018_3
 using UnityEngine.Experimental.UIElements;
+#else
+using UnityEngine.UIElements;
+#endif
+#endif
 
 namespace UnityEditor.SettingsManagement
 {

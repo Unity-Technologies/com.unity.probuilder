@@ -7,14 +7,14 @@ using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	sealed class ToggleHandleAlignment : MenuAction
+	sealed class ToggleHandleOrientation : MenuAction
 	{
 		Texture2D[] m_Icons;
 
 		HandleOrientation handleOrientation
 		{
-			get { return ProBuilderEditor.instance == null ? HandleOrientation.World : ProBuilderEditor.instance.handleOrientation; }
-			set { ProBuilderEditor.instance.handleOrientation = value; }
+			get { return ProBuilderEditor.instance == null ? HandleOrientation.World : ProBuilderEditor.handleOrientation; }
+			set { ProBuilderEditor.handleOrientation = value; }
 		}
 
 		public override ToolbarGroup group
@@ -70,7 +70,12 @@ namespace UnityEditor.ProBuilder.Actions
 			get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face; }
 		}
 
-		public ToggleHandleAlignment()
+		public override bool hidden
+		{
+			get { return false; }
+		}
+
+		public ToggleHandleOrientation()
 		{
 			m_Icons = new Texture2D[]
 			{

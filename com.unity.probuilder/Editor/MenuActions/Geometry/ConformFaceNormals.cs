@@ -11,10 +11,10 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_ConformNormals", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
+		public override TooltipContent tooltip { get { return s_TooltipContent; } }
 		public override string menuTitle { get { return "Conform Normals"; } }
 
-		static readonly TooltipContent _tooltip = new TooltipContent
+		static readonly TooltipContent s_TooltipContent = new TooltipContent
 		(
 			"Conform Face Normals",
 			@"Orients all selected faces to face the same direction."
@@ -32,7 +32,29 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuConformNormals(MeshSelection.topInternal);
+			var selection = MeshSelection.topInternal;
+
+			UndoUtility.RecordSelection("Conform " + (MeshSelection.selectedFaceCount > 0 ? "Face" : "Object") + " Normals.");
+
+			ActionResult res = ActionResult.NoSelection;
+
+			foreach(ProBuilderMesh pb in selection)
+			{
+				var faces = pb.GetSelectedFaces();
+
+				if(faces == null)
+					continue;
+
+				res = UnityEngine.ProBuilder.MeshOperations.SurfaceTopology.ConformNormals(pb, faces);
+
+				pb.ToMesh();
+				pb.Refresh();
+				pb.Optimize();
+			}
+
+			ProBuilderEditor.Refresh();
+
+			return res;
 		}
 	}
 }

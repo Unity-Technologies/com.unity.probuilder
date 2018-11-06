@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Experimental.CSG;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
@@ -155,15 +157,15 @@ namespace UnityEditor.ProBuilder
 				switch(operation)
 				{
 					case BooleanOp.Union:
-						MenuCommands.MenuUnion(m_LeftGameObject.GetComponent<ProBuilderMesh>(), m_RightGameObject.GetComponent<ProBuilderMesh>());
+						MenuUnion(m_LeftGameObject.GetComponent<ProBuilderMesh>(), m_RightGameObject.GetComponent<ProBuilderMesh>());
 						break;
 
 					case BooleanOp.Intersection:
-						MenuCommands.MenuIntersect(m_LeftGameObject.GetComponent<ProBuilderMesh>(), m_RightGameObject.GetComponent<ProBuilderMesh>());
+						MenuIntersect(m_LeftGameObject.GetComponent<ProBuilderMesh>(), m_RightGameObject.GetComponent<ProBuilderMesh>());
 						break;
 
 					case BooleanOp.Subtraction:
-						MenuCommands.MenuSubtract(m_LeftGameObject.GetComponent<ProBuilderMesh>(), m_RightGameObject.GetComponent<ProBuilderMesh>());
+						MenuSubtract(m_LeftGameObject.GetComponent<ProBuilderMesh>(), m_RightGameObject.GetComponent<ProBuilderMesh>());
 						break;
 				}
 			}
@@ -290,6 +292,78 @@ namespace UnityEditor.ProBuilder
 				Repaint();
 			}
 			return false;
+		}
+
+		enum BooleanOperation
+		{
+			Union,
+			Subtract,
+			Intersect
+		}
+
+		static ActionResult MenuBooleanOperation(BooleanOperation operation, ProBuilderMesh lhs, ProBuilderMesh rhs)
+		{
+			if(lhs == null || rhs == null)
+				return new ActionResult(ActionResult.Status.Failure, "Must Select 2 Objects");
+
+			string op_string = operation == BooleanOperation.Union ? "Union" : (operation == BooleanOperation.Subtract ? "Subtract" : "Intersect");
+
+			ProBuilderMesh[] sel = new ProBuilderMesh[] { lhs, rhs };
+
+			UndoUtility.RecordSelection(sel, op_string);
+
+			Mesh c;
+
+			switch(operation)
+			{
+				case BooleanOperation.Union:
+					c = CSG.Union(lhs.gameObject, rhs.gameObject);
+					break;
+
+				case BooleanOperation.Subtract:
+					c = CSG.Subtract(lhs.gameObject, rhs.gameObject);
+					break;
+
+				default:
+					c = CSG.Intersect(lhs.gameObject, rhs.gameObject);
+					break;
+			}
+
+			GameObject go = new GameObject();
+
+			go.AddComponent<MeshRenderer>().sharedMaterial = EditorUtility.GetUserMaterial();
+			go.AddComponent<MeshFilter>().sharedMesh = c;
+
+			ProBuilderMesh pb = InternalMeshUtility.CreateMeshWithTransform(go.transform, false);
+			DestroyImmediate(go);
+
+			Selection.objects = new Object[] { pb.gameObject };
+
+			return new ActionResult(ActionResult.Status.Success, op_string);
+		}
+
+		/**
+		 * Union operation between two ProBuilder objects.
+		 */
+		public static ActionResult MenuUnion(ProBuilderMesh lhs, ProBuilderMesh rhs)
+		{
+			return MenuBooleanOperation(BooleanOperation.Union, lhs, rhs);
+		}
+
+		/**
+		 * Subtract boolean operation between two pb_Objects.
+		 */
+		public static ActionResult MenuSubtract(ProBuilderMesh lhs, ProBuilderMesh rhs)
+		{
+			return MenuBooleanOperation(BooleanOperation.Subtract, lhs, rhs);
+		}
+
+		/**
+		 * Intersect boolean operation between two pb_Objects.
+		 */
+		public static ActionResult MenuIntersect(ProBuilderMesh lhs, ProBuilderMesh rhs)
+		{
+			return MenuBooleanOperation(BooleanOperation.Intersect, lhs, rhs);
 		}
 	}
 }

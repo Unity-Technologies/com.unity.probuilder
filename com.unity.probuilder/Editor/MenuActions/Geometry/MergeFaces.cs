@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Linq;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -39,7 +40,35 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuMergeFaces(MeshSelection.topInternal);
+			if(MeshSelection.selectedObjectCount < 1)
+				return ActionResult.NoSelection;
+
+			UndoUtility.RecordSelection("Merge Faces");
+
+			int success = 0;
+
+			foreach(ProBuilderMesh pb in MeshSelection.topInternal)
+			{
+				if(pb.selectedFaceCount > 1)
+				{
+					success += pb.selectedFaceCount;
+
+					Face face = MergeElements.Merge(pb, pb.selectedFacesInternal);
+
+					pb.ToMesh();
+					pb.Refresh();
+					pb.Optimize();
+
+					pb.SetSelectedFaces( new Face[] { face } );
+				}
+			}
+
+			ProBuilderEditor.Refresh();
+
+			if(success > 0)
+				return new ActionResult(ActionResult.Status.Success, "Merged " + success + " Faces");
+
+			return new ActionResult(ActionResult.Status.Failure, "Merge Faces\nNo Faces Selected");
 		}
 	}
 }

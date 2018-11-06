@@ -14,6 +14,8 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	static class EditorHandleUtility
 	{
+		static Stack<Matrix4x4> s_HandleMatrix = new Stack<Matrix4x4>();
+
 		public static bool SceneViewInUse(Event e)
 		{
 			return 	e.alt
@@ -520,6 +522,51 @@ namespace UnityEditor.ProBuilder
 			Vector3 p = Vector3.Lerp(point_a, point_b, Mathf.Clamp01(travel));
 
 			return trs != null ? trs.InverseTransformPoint(p) : p;
+		}
+
+		internal static HandleOrientation ProBuilderHandleOrientation(this PivotRotation rotation)
+		{
+			if (rotation == PivotRotation.Global)
+				return HandleOrientation.World;
+
+			if (rotation == PivotRotation.Local)
+				return HandleOrientation.Local;
+
+			return HandleOrientation.Normal;
+		}
+
+		internal static PivotRotation UnityPivotRotation(this HandleOrientation orientation)
+		{
+			if (orientation == HandleOrientation.World)
+				return PivotRotation.Global;
+
+			return PivotRotation.Local;
+		}
+
+		internal static PivotMode UnityPivot(this PivotPoint pivotPoint)
+		{
+			if (pivotPoint == PivotPoint.WorldBoundingBoxCenter)
+				return PivotMode.Center;
+
+			return PivotMode.Pivot;
+		}
+
+		internal static PivotPoint ProBuilderPivot(this PivotMode pivotMode)
+		{
+			if (pivotMode == PivotMode.Center)
+				return PivotPoint.WorldBoundingBoxCenter;
+
+			return PivotPoint.ModelBoundingBoxCenter;
+		}
+
+		internal static void PushMatrix()
+		{
+			s_HandleMatrix.Push(Handles.matrix);
+		}
+
+		internal static void PopMatrix()
+		{
+			Handles.matrix = s_HandleMatrix.Pop();
 		}
 	}
 }

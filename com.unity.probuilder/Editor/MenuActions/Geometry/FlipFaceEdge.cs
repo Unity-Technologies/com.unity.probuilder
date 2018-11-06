@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -38,7 +39,35 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuFlipEdges(MeshSelection.topInternal);
+			if(MeshSelection.selectedObjectCount < 1)
+				return ActionResult.NoSelection;
+
+			UndoUtility.RecordSelection("Flip Face Edges");
+			int success = 0;
+			int attempts = 0;
+
+			foreach(ProBuilderMesh pb in MeshSelection.topInternal)
+			{
+				foreach(Face face in pb.selectedFacesInternal)
+				{
+					if( pb.FlipEdge(face) )
+						success++;
+				}
+
+				attempts++;
+
+				pb.ToMesh();
+				pb.Refresh();
+				pb.Optimize();
+			}
+
+			ProBuilderEditor.Refresh();
+
+			if(success > 0)
+				return new ActionResult(ActionResult.Status.Success, "Flipped " + success + " Edges");
+			
+			return new ActionResult(ActionResult.Status.Failure, string.Format("Flip Edges\n{0}", attempts > 0 ? "Faces Must Be Quads" : "No Faces Selected"));
+
 		}
 	}
 }

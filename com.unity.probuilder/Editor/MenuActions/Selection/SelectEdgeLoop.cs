@@ -54,16 +54,14 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			var selection = MeshSelection.topInternal;
-
-			if(selection == null || selection.Length < 1)
+			if(MeshSelection.selectedObjectCount < 1)
 				return ActionResult.NoSelection;
 
-			UndoUtility.RecordSelection(selection, "Select Edge Loop");
+			UndoUtility.RecordSelection("Select Edge Loop");
 
 			bool foundLoop = false;
 
-			foreach(ProBuilderMesh pb in selection)
+			foreach(ProBuilderMesh pb in MeshSelection.topInternal)
 			{
 				Edge[] loop;
 				bool success = ElementSelection.GetEdgeLoop(pb, pb.selectedEdges, out loop);

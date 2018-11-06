@@ -470,6 +470,40 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Populate a list of vertices that are coincident to any of the vertices in the passed vertices parameter.
 		/// </summary>
+		/// <param name="faces">A collection of faces to gather vertices from.</param>
+		/// <param name="coincident">A list to be cleared and populated with any vertices that are coincident.</param>
+		/// <exception cref="ArgumentNullException">The vertices and coincident parameters may not be null.</exception>
+		public void GetCoincidentVertices(IEnumerable<Face> faces, List<int> coincident)
+		{
+			if (faces == null)
+				throw new ArgumentNullException("faces");
+
+			if (coincident == null)
+				throw new ArgumentNullException("coincident");
+
+			s_CachedHashSet.Clear();
+			var lookup = sharedVertexLookup;
+
+			foreach(var face in faces)
+			{
+				foreach (var v in face.distinctIndexesInternal)
+				{
+					var common = lookup[v];
+
+					if (s_CachedHashSet.Add(common))
+					{
+						var indices = m_SharedVertices[common];
+
+						for (int i = 0, c = indices.Count; i < c; i++)
+							coincident.Add(indices[i]);
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Populate a list of vertices that are coincident to any of the vertices in the passed vertices parameter.
+		/// </summary>
 		/// <param name="vertices">A collection of indexes relative to the mesh positions.</param>
 		/// <param name="coincident">A list to be cleared and populated with any vertices that are coincident.</param>
 		/// <exception cref="ArgumentNullException">The vertices and coincident parameters may not be null.</exception>

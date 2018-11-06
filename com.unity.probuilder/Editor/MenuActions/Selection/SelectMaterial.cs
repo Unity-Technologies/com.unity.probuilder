@@ -69,9 +69,14 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			UndoUtility.RecordSelection(MeshSelection.topInternal, "Select Faces with Material");
+			IEnumerable<ProBuilderMesh> selection;
 
-			bool restrictToSelection = m_RestrictToSelectedObjects;
+			if (m_RestrictToSelectedObjects)
+				selection = MeshSelection.topInternal;
+			else
+				selection = Object.FindObjectsOfType<ProBuilderMesh>();
+
+			UndoUtility.RecordSelection("Select Faces with Material");
 
 			HashSet<int> sel = new HashSet<int>(
 				MeshSelection.topInternal
@@ -79,7 +84,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			List<GameObject> newSelection = new List<GameObject>();
 
-			foreach (ProBuilderMesh pb in restrictToSelection ? MeshSelection.topInternal : Object.FindObjectsOfType<ProBuilderMesh>())
+			foreach (var pb in selection)
 			{
 				IEnumerable<Face> matches = pb.facesInternal.Where(x => sel.Contains(x.submeshIndex));
 

@@ -6,7 +6,7 @@ namespace UnityEditor.ProBuilder
 {
 	/// <inheritdoc />
 	/// <summary>
-	/// Custom editor for pb_Object type.
+	/// Custom editor for ProBuilderMesh type.
 	/// </summary>
 	[CustomEditor(typeof(ProBuilderMesh))]
 	[CanEditMultipleObjects]
@@ -70,14 +70,14 @@ namespace UnityEditor.ProBuilder
 			foreach (var mesh in Selection.transforms.GetComponents<ProBuilderMesh>())
 				EditorUtility.SynchronizeWithMeshFilter(mesh);
 
-			ProBuilderEditor.beforeMeshModification += OnBeginMeshModification;
-			ProBuilderEditor.afterMeshModification += OnFinishMeshModification;
+			VertexManipulationTool.beforeMeshModification += OnBeginMeshModification;
+			VertexManipulationTool.afterMeshModification += OnFinishMeshModification;
 		}
 
 		void OnDisable()
 		{
-			ProBuilderEditor.beforeMeshModification -= OnBeginMeshModification;
-			ProBuilderEditor.afterMeshModification -= OnFinishMeshModification;
+			VertexManipulationTool.beforeMeshModification -= OnBeginMeshModification;
+			VertexManipulationTool.afterMeshModification -= OnFinishMeshModification;
 		}
 
 		void OnBeginMeshModification(ProBuilderMesh[] selection)

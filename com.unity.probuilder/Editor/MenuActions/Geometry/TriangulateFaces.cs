@@ -42,15 +42,15 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			ActionResult res = ActionResult.NoSelection;
 
-			UndoUtility.RecordSelection(MeshSelection.topInternal, "Triangulate Faces");
+			UndoUtility.RecordSelection("Triangulate Faces");
 
-			foreach (ProBuilderMesh pb in MeshSelection.topInternal)
+			foreach (ProBuilderMesh mesh in MeshSelection.topInternal)
 			{
-				pb.ToMesh();
-				Face[] triangulatedFaces = pb.ToTriangles(pb.selectedFacesInternal);
-				pb.Refresh();
-				pb.Optimize();
-				pb.SetSelectedFaces(triangulatedFaces);
+				mesh.ToMesh();
+				Face[] triangulatedFaces = mesh.ToTriangles(mesh.selectedFacesInternal);
+				mesh.Refresh();
+				mesh.Optimize();
+				mesh.SetSelectedFaces(triangulatedFaces);
 				res = new ActionResult(ActionResult.Status.Success, string.Format("Triangulated {0} {1}", triangulatedFaces.Length, triangulatedFaces.Length < 2 ? "Face" : "Faces"));
 			}
 

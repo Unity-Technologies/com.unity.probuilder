@@ -48,7 +48,7 @@ namespace UnityEditor.ProBuilder
 				new Actions.OpenSmoothingEditor(),
 
 				new Actions.ToggleSelectBackFaces(),
-				new Actions.ToggleHandleAlignment(),
+				new Actions.ToggleHandleOrientation(),
 				new Actions.ToggleDragSelectionMode(),
 				new Actions.ToggleDragRectMode(),
 

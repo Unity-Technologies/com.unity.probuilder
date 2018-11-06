@@ -21,6 +21,9 @@ namespace UnityEngine.ProBuilder
 
 		public void DrawMeshNow(int submeshIndex)
 		{
+			if (m_Transform == null || m_Mesh == null)
+				return;
+			
 			Graphics.DrawMeshNow(m_Mesh, m_Transform.localToWorldMatrix, submeshIndex);
 		}
 	}

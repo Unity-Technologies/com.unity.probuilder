@@ -12,14 +12,16 @@ using UnityEngine.TestTools;
 
 namespace UnityEngine.ProBuilder.Tests.Framework
 {
-	abstract class TemporaryAssetTest : IPrebuildSetup, IPostBuildCleanup
+	abstract class TemporaryAssetTest
 	{
+		[SetUp]
 		public void Setup()
 		{
 			if (!Directory.Exists(TestUtility.TemporarySavedAssetsDirectory))
 				Directory.CreateDirectory(TestUtility.TemporarySavedAssetsDirectory);
 		}
 
+		[TearDown]
 		public void Cleanup()
 		{
 			if (Directory.Exists(TestUtility.TemporarySavedAssetsDirectory))

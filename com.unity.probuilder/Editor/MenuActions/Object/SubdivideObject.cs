@@ -1,8 +1,6 @@
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -36,7 +34,29 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			return MenuCommands.MenuSubdivide(MeshSelection.topInternal);
+			if(MeshSelection.selectedObjectCount < 1)
+				return ActionResult.NoSelection;
+
+			UndoUtility.RecordSelection("Subdivide Selection");
+
+			int success = 0;
+
+			foreach(ProBuilderMesh pb in MeshSelection.topInternal)
+			{
+				pb.ToMesh();
+
+				if( pb.Subdivide() )
+					success++;
+
+				pb.Refresh();
+				pb.Optimize();
+
+				pb.SetSelectedVertices(new int[0]);
+			}
+
+			ProBuilderEditor.Refresh();
+
+			return new ActionResult(ActionResult.Status.Success, "Subdivide " + success + " Objects");
 		}
 	}
 }

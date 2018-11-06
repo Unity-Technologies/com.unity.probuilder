@@ -19,7 +19,7 @@ namespace UnityEditor.ProBuilder
 			if (SceneDragAndDropListener.isDragging)
 				return;
 
-			foreach(var mesh in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
+			foreach (var mesh in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
 				mesh.InvalidateCaches();
 				mesh.ToMesh();
@@ -37,10 +37,30 @@ namespace UnityEditor.ProBuilder
 		 */
 		public static void RecordSelection(ProBuilderMesh pb, string msg)
 		{
-			if( pb.vertexCount > 256 )
+			if (pb.vertexCount > 256)
 				RegisterCompleteObjectUndo(pb, msg);
 			else
 				Undo.RecordObject(pb, msg);
+		}
+
+		internal static void RecordSelection(string message)
+		{
+			RecordSelection(MeshSelection.topInternal.ToArray(), message);
+		}
+
+		internal static void RecordMeshAndTransformSelection(string message)
+		{
+			var count = MeshSelection.selectedObjectCount;
+			var res = new Object [count];
+			var selection = MeshSelection.topInternal;
+
+			for (int i = 0, c = count; i < c; i++)
+			{
+				res[i] = selection[i];
+				res[i+c] = selection[i].transform;
+			}
+
+			Undo.RegisterCompleteObjectUndo(res, message);
 		}
 
 		/**
