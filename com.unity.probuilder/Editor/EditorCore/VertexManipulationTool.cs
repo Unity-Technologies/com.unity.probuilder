@@ -102,7 +102,13 @@ namespace UnityEditor.ProBuilder
 						{
 							var bounds = Math.GetBounds(mesh.positionsInternal, list);
 							var ntb = Math.NormalTangentBitangent(mesh, list[0]);
-							var post = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), Quaternion.identity, Vector3.one);
+							var rot = orientation == HandleOrientation.World
+								? Quaternion.identity
+								: orientation == HandleOrientation.Normal
+									? mesh.transform.rotation * Quaternion.LookRotation(ntb.normal, ntb.bitangent)
+									: mesh.transform.rotation;
+
+							var post = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), rot, Vector3.one);
 
 							List<int> indices;
 
@@ -121,9 +127,7 @@ namespace UnityEditor.ProBuilder
 								m_Indices = indices,
 								m_PostApplyPositionsMatrix = post,
 								m_PreApplyPositionsMatrix = post.inverse,
-								m_SelectionSpaceRotation = orientation == HandleOrientation.Normal
-									? mesh.transform.rotation * Quaternion.LookRotation(ntb.normal, ntb.bitangent)
-									: mesh.transform.rotation
+								m_SelectionSpaceRotation = Quaternion.identity
 							});
 						}
 					}
@@ -142,7 +146,7 @@ namespace UnityEditor.ProBuilder
 							: new List<int>(mesh.selectedIndexesInternal),
 						m_PostApplyPositionsMatrix = post,
 						m_PreApplyPositionsMatrix = post.inverse,
-						m_SelectionSpaceRotation = mesh.transform.rotation
+						m_SelectionSpaceRotation = Quaternion.identity
 					});
 
 					break;
