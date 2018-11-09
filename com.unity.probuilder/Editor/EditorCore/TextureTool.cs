@@ -56,7 +56,7 @@ namespace UnityEditor.ProBuilder
 				get { return m_Origins; }
 			}
 
-			public MeshAndTextures(ProBuilderMesh mesh, PivotPoint pivot) : base(mesh, pivot, k_CollectCoincidentVertices)
+			public MeshAndTextures(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation) : base(mesh, pivot, orientation, k_CollectCoincidentVertices)
 			{
 				m_Textures = new List<Vector4>();
 				mesh.GetUVs(k_TextureChannel, m_Textures);
@@ -65,7 +65,7 @@ namespace UnityEditor.ProBuilder
 				foreach (var group in elementGroups)
 				{
 					var bounds = Bounds2D.Center(m_Origins, group.indices);
-					group.matrix = Matrix4x4.Translate(-bounds);
+					group.preApplyMatrix = Matrix4x4.Translate(-bounds);
 				}
 			}
 		}
@@ -106,9 +106,9 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		protected override MeshAndElementGroupPair GetMeshAndElementGroupPair(ProBuilderMesh mesh, PivotPoint pivot)
+		protected override MeshAndElementGroupPair GetMeshAndElementGroupPair(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation)
 		{
-			return new MeshAndTextures(mesh, pivot);
+			return new MeshAndTextures(mesh, pivot, orientation);
 		}
 	}
 }

@@ -16,6 +16,7 @@ namespace UnityEditor.ProBuilder
 	abstract class MeshAndElementGroupPair
 	{
 		ProBuilderMesh m_Mesh;
+
 		List<ElementGroup> m_ElementGroups;
 
 		public ProBuilderMesh mesh
@@ -28,10 +29,10 @@ namespace UnityEditor.ProBuilder
 			get { return m_ElementGroups; }
 		}
 
-		public MeshAndElementGroupPair(ProBuilderMesh mesh, PivotPoint pivot, bool collectCoincidentIndices)
+		public MeshAndElementGroupPair(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation, bool collectCoincidentIndices)
 		{
 			m_Mesh = mesh;
-			m_ElementGroups = ElementGroup.GetElementGroups(mesh, pivot, collectCoincidentIndices);
+			m_ElementGroups = ElementGroup.GetElementGroups(mesh, pivot, orientation, collectCoincidentIndices);
 		}
 	}
 
@@ -41,12 +42,17 @@ namespace UnityEditor.ProBuilder
 		Matrix4x4 m_PreApplyPositionsMatrix;
 		Matrix4x4 m_PostApplyPositionsMatrix;
 
+		/// <value>
+		/// Transform a delta into selection space.
+		/// </value>
+		Quaternion m_SelectionSpaceRotation;
+
 		public List<int> indices
 		{
 			get { return m_Indices; }
 		}
 
-		public Matrix4x4 matrix
+		public Matrix4x4 preApplyMatrix
 		{
 			get { return m_PreApplyPositionsMatrix; }
 			set
@@ -56,66 +62,72 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		public Matrix4x4 inverseMatrix
+		public Matrix4x4 postApplyMatrix
 		{
 			get { return m_PostApplyPositionsMatrix; }
 		}
 
-		public static List<ElementGroup> GetElementGroups(ProBuilderMesh mesh, PivotPoint pivot, bool collectCoincident)
+		public Quaternion handleToSelectionRotation
+		{
+			get { return m_SelectionSpaceRotation; }
+		}
+
+		public static List<ElementGroup> GetElementGroups(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation, bool collectCoincident)
 		{
 			var groups = new List<ElementGroup>();
 			var trs = mesh.transform.localToWorldMatrix;
 
 			switch (pivot)
 			{
-				case PivotPoint.ModelBoundingBoxCenter:
-				{
-					var bounds = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal);
-					var post = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), mesh.transform.rotation, Vector3.one);
-
-					groups.Add(new ElementGroup()
-					{
-						m_Indices = collectCoincident
-							? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
-							: new List<int>(mesh.selectedIndexesInternal),
-						m_PostApplyPositionsMatrix = post,
-						m_PreApplyPositionsMatrix = post.inverse
-					});
-
-					break;
-				}
-
 				case PivotPoint.IndividualOrigins:
 				{
 					if (ProBuilderEditor.selectMode != SelectMode.Face)
-						goto case PivotPoint.ModelBoundingBoxCenter;
-
-					foreach (var list in GetFaceSelectionGroups(mesh))
 					{
-						var bounds = Math.GetBounds(mesh.positionsInternal, list);
-						var ntb = Math.NormalTangentBitangent(mesh, list[0]);
-						var rot = mesh.transform.rotation * Quaternion.LookRotation(ntb.normal, ntb.bitangent);
-						var post = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), rot, Vector3.one);
-
-						List<int> indices;
-
-						if (collectCoincident)
-						{
-							indices = new List<int>();
-							mesh.GetCoincidentVertices(list, indices);
-						}
-						else
-						{
-							indices = list.SelectMany(x => x.distinctIndexesInternal).ToList();
-						}
+						var bounds = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal);
+						var post = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), Quaternion.identity, Vector3.one);
 
 						groups.Add(new ElementGroup()
 						{
-							m_Indices = indices,
+							m_Indices = collectCoincident
+								? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
+								: new List<int>(mesh.selectedIndexesInternal),
 							m_PostApplyPositionsMatrix = post,
-							m_PreApplyPositionsMatrix = post.inverse
+							m_PreApplyPositionsMatrix = post.inverse,
+							m_SelectionSpaceRotation = mesh.transform.rotation
 						});
 					}
+					else
+					{
+						foreach (var list in GetFaceSelectionGroups(mesh))
+						{
+							var bounds = Math.GetBounds(mesh.positionsInternal, list);
+							var ntb = Math.NormalTangentBitangent(mesh, list[0]);
+							var post = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), Quaternion.identity, Vector3.one);
+
+							List<int> indices;
+
+							if (collectCoincident)
+							{
+								indices = new List<int>();
+								mesh.GetCoincidentVertices(list, indices);
+							}
+							else
+							{
+								indices = list.SelectMany(x => x.distinctIndexesInternal).ToList();
+							}
+
+							groups.Add(new ElementGroup()
+							{
+								m_Indices = indices,
+								m_PostApplyPositionsMatrix = post,
+								m_PreApplyPositionsMatrix = post.inverse,
+								m_SelectionSpaceRotation = orientation == HandleOrientation.Normal
+									? mesh.transform.rotation * Quaternion.LookRotation(ntb.normal, ntb.bitangent)
+									: mesh.transform.rotation
+							});
+						}
+					}
+
 					break;
 				}
 
@@ -128,8 +140,9 @@ namespace UnityEditor.ProBuilder
 						m_Indices = collectCoincident
 							? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
 							: new List<int>(mesh.selectedIndexesInternal),
-						m_PostApplyPositionsMatrix = Matrix4x4.Translate(MeshSelection.GetHandlePosition()),
-						m_PreApplyPositionsMatrix = post.inverse
+						m_PostApplyPositionsMatrix = post,
+						m_PreApplyPositionsMatrix = post.inverse,
+						m_SelectionSpaceRotation = mesh.transform.rotation
 					});
 
 					break;
@@ -177,6 +190,22 @@ namespace UnityEditor.ProBuilder
 
 	abstract class VertexManipulationTool
 	{
+		static Pref<HandleOrientation> s_HandleOrientation = new Pref<HandleOrientation>("editor.handleOrientation", HandleOrientation.World, SettingsScope.User);
+
+		static Pref<PivotPoint> s_PivotPoint = new Pref<PivotPoint>("editor.pivotPoint", PivotPoint.Center, SettingsScope.User);
+
+		public static PivotPoint pivotPoint
+		{
+			get { return s_PivotPoint; }
+			set { s_PivotPoint.SetValue(value, true); }
+		}
+
+		public static HandleOrientation handleOrientation
+		{
+			get { return s_HandleOrientation; }
+			set { s_HandleOrientation.SetValue(value, true); }
+		}
+
 		/// <value>
 		/// Called when vertex modifications are complete.
 		/// </value>
@@ -226,8 +255,6 @@ namespace UnityEditor.ProBuilder
 
 		protected Event currentEvent { get; private set; }
 
-		protected PivotPoint pivotPoint { get; private set; }
-
 		protected Vector3 handlePositionOrigin
 		{
 			get { return m_HandlePositionOrigin; }
@@ -270,7 +297,7 @@ namespace UnityEditor.ProBuilder
 				BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
 		}
 
-		protected abstract MeshAndElementGroupPair GetMeshAndElementGroupPair(ProBuilderMesh mesh, PivotPoint pivot);
+		protected abstract MeshAndElementGroupPair GetMeshAndElementGroupPair(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation);
 
 		public void OnSceneGUI(Event evt)
 		{
@@ -279,17 +306,10 @@ namespace UnityEditor.ProBuilder
 			if (evt.type == EventType.MouseUp || evt.type == EventType.Ignore)
 				FinishEdit();
 
-			if (Tools.pivotMode == PivotMode.Center)
-				pivotPoint = PivotPoint.WorldBoundingBoxCenter;
-			else if(ProBuilderEditor.handleOrientation == HandleOrientation.Normal)
-				pivotPoint = PivotPoint.IndividualOrigins;
-			else
-				pivotPoint = PivotPoint.ModelBoundingBoxCenter;
-
 			if (!m_IsEditing)
 			{
 				m_HandlePosition = MeshSelection.GetHandlePosition();
-				m_HandleRotation = MeshSelection.GetHandleRotation(ProBuilderEditor.handleOrientation);
+				m_HandleRotation = MeshSelection.GetHandleRotation();
 			}
 
 			DoTool(m_HandlePosition, m_HandleRotation);
@@ -338,7 +358,7 @@ namespace UnityEditor.ProBuilder
 			m_MeshAndElementGroupPairs.Clear();
 
 			foreach (var mesh in MeshSelection.topInternal)
-				m_MeshAndElementGroupPairs.Add(GetMeshAndElementGroupPair(mesh, pivotPoint));
+				m_MeshAndElementGroupPairs.Add(GetMeshAndElementGroupPair(mesh, pivotPoint, handleOrientation));
 
 			OnToolEngaged();
 		}

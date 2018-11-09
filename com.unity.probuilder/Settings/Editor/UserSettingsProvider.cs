@@ -38,7 +38,7 @@ namespace UnityEditor.SettingsManagement
 			get
 			{
 				if (s_DefaultLabelWidth != null)
-					return (int) ((float) s_DefaultLabelWidth.GetValue(null));
+					return (int) ((float) s_DefaultLabelWidth.GetValue(null, null));
 
 				return k_LabelWidth;
 			}
@@ -49,7 +49,7 @@ namespace UnityEditor.SettingsManagement
 			get
 			{
 				if (s_DefaultLayoutMaxWidth != null)
-					return (int) ((float)s_DefaultLayoutMaxWidth.GetValue(null));
+					return (int) ((float) s_DefaultLayoutMaxWidth.GetValue(null, null));
 
 				return 0;
 			}

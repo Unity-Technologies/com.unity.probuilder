@@ -359,15 +359,16 @@ namespace UnityEditor.ProBuilder
 
 		internal static Vector3 GetHandlePosition()
 		{
-			switch (Tools.pivotMode)
+			switch (VertexManipulationTool.pivotPoint)
 			{
-				case PivotMode.Pivot:
+				case PivotPoint.ActiveElement:
+				case PivotPoint.IndividualOrigins:
 				{
 					ProBuilderMesh mesh = activeMesh;
 					Face face;
 					Vector3 center = Vector3.zero;
 
-					if (ProBuilderEditor.handleOrientation == HandleOrientation.Normal && GetActiveFace(out mesh, out face))
+					if (VertexManipulationTool.handleOrientation == HandleOrientation.Normal && GetActiveFace(out mesh, out face))
 						center = Math.GetBounds(mesh.positionsInternal, face.distinctIndexesInternal).center;
 					else if(activeMesh != null)
 						center = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal).center;
@@ -381,9 +382,9 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		internal static Quaternion GetHandleRotation(HandleOrientation orientation)
+		internal static Quaternion GetHandleRotation()
 		{
-			switch (orientation)
+			switch (VertexManipulationTool.handleOrientation)
 			{
 				case HandleOrientation.Normal:
 
