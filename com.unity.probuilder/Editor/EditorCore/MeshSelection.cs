@@ -368,7 +368,7 @@ namespace UnityEditor.ProBuilder
 					Face face;
 					Vector3 center = Vector3.zero;
 
-					if (VertexManipulationTool.handleOrientation == HandleOrientation.Normal && GetActiveFace(out mesh, out face))
+					if (VertexManipulationTool.handleOrientation == HandleOrientation.ActiveSelection && GetActiveFace(out mesh, out face))
 						center = Math.GetBounds(mesh.positionsInternal, face.distinctIndexesInternal).center;
 					else if(activeMesh != null)
 						center = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal).center;
@@ -386,13 +386,13 @@ namespace UnityEditor.ProBuilder
 		{
 			switch (VertexManipulationTool.handleOrientation)
 			{
-				case HandleOrientation.Normal:
+				case HandleOrientation.ActiveSelection:
 
 					ProBuilderMesh mesh;
 					Face face;
 
 					if(!GetActiveFace(out mesh, out face))
-						goto case HandleOrientation.Local;
+						goto case HandleOrientation.ActiveObject;
 
 					// use average normal, tangent, and bi-tangent to calculate rotation relative to local space
 					var tup = Math.NormalTangentBitangent(mesh, face);
@@ -406,7 +406,7 @@ namespace UnityEditor.ProBuilder
 
 					return activeMesh.transform.rotation * Quaternion.LookRotation(nrm, bitan);
 
-				case HandleOrientation.Local:
+				case HandleOrientation.ActiveObject:
 					if (activeMesh == null)
 						goto default;
 					return activeMesh.transform.rotation;

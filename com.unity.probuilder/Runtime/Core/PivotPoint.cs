@@ -18,9 +18,9 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		ActiveElement,
 
-		/// <summary>
-		/// Transforms are applied from a user-defined pivot point.
-		/// </summary>
-		Custom
+//		/// <summary>
+//		/// Transforms are applied from a user-defined pivot point.
+//		/// </summary>
+//		Custom
 	}
 }

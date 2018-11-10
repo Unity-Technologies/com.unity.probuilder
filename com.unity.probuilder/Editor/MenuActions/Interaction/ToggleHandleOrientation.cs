@@ -38,7 +38,7 @@ namespace UnityEditor.ProBuilder.Actions
 			{
 				if (handleOrientation == HandleOrientation.World)
 					return s_TooltipWorld;
-				if (handleOrientation == HandleOrientation.Local)
+				if (handleOrientation == HandleOrientation.ActiveObject)
 					return s_TooltipLocal;
 				else
 					return s_TooltipPlane;
