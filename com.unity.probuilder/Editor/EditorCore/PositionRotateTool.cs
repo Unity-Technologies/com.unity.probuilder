@@ -11,7 +11,7 @@ namespace UnityEditor.ProBuilder
 		{
 			base.DoTool(handlePosition, handleRotation);
 
-			if (pivotPoint == PivotPoint.IndividualOrigins)
+			if (pivotPoint == PivotPoint.IndividualOrigins || pivotPoint == PivotPoint.ActiveElement)
 			{
 				EditorGUI.BeginChangeCheck();
 
@@ -67,10 +67,6 @@ namespace UnityEditor.ProBuilder
 				{
 					foreach (var index in group.indices)
 					{
-						// res = Group pre-apply matrix * world vertex position
-						// res += translation
-						// res = Group post-apply matrix * res
-						// positions[i] = mesh.worldToLocal * res
 						positions[index] = worldToLocal.MultiplyPoint3x4(
 							group.postApplyMatrix.MultiplyPoint3x4(
 								rotation * group.preApplyMatrix.MultiplyPoint3x4(origins[index])));

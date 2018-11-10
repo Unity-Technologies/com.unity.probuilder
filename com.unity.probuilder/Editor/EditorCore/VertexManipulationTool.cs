@@ -42,11 +42,6 @@ namespace UnityEditor.ProBuilder
 		Matrix4x4 m_PreApplyPositionsMatrix;
 		Matrix4x4 m_PostApplyPositionsMatrix;
 
-		/// <value>
-		/// Transform a delta into selection space.
-		/// </value>
-		Quaternion m_SelectionSpaceRotation;
-
 		public List<int> indices
 		{
 			get { return m_Indices; }
@@ -67,11 +62,6 @@ namespace UnityEditor.ProBuilder
 			get { return m_PostApplyPositionsMatrix; }
 		}
 
-		public Quaternion handleToSelectionRotation
-		{
-			get { return m_SelectionSpaceRotation; }
-		}
-
 		public static List<ElementGroup> GetElementGroups(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation, bool collectCoincident)
 		{
 			var groups = new List<ElementGroup>();
@@ -81,6 +71,7 @@ namespace UnityEditor.ProBuilder
 			{
 				case PivotPoint.IndividualOrigins:
 				{
+					// todo Get normal from active element (edge, vertex)
 					if (ProBuilderEditor.selectMode != SelectMode.Face)
 					{
 						var bounds = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal);
@@ -92,8 +83,7 @@ namespace UnityEditor.ProBuilder
 								? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
 								: new List<int>(mesh.selectedIndexesInternal),
 							m_PostApplyPositionsMatrix = post,
-							m_PreApplyPositionsMatrix = post.inverse,
-							m_SelectionSpaceRotation = mesh.transform.rotation
+							m_PreApplyPositionsMatrix = post.inverse
 						});
 					}
 					else
@@ -126,11 +116,26 @@ namespace UnityEditor.ProBuilder
 							{
 								m_Indices = indices,
 								m_PostApplyPositionsMatrix = post,
-								m_PreApplyPositionsMatrix = post.inverse,
-								m_SelectionSpaceRotation = Quaternion.identity
+								m_PreApplyPositionsMatrix = post.inverse
 							});
 						}
 					}
+
+					break;
+				}
+
+				case PivotPoint.ActiveElement:
+				{
+					var post = Matrix4x4.TRS(MeshSelection.GetHandlePosition(), MeshSelection.GetHandleRotation(), Vector3.one);
+
+					groups.Add(new ElementGroup()
+					{
+						m_Indices = collectCoincident
+							? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
+							: new List<int>(mesh.selectedIndexesInternal),
+						m_PostApplyPositionsMatrix = post,
+						m_PreApplyPositionsMatrix = post.inverse,
+					});
 
 					break;
 				}
@@ -146,7 +151,6 @@ namespace UnityEditor.ProBuilder
 							: new List<int>(mesh.selectedIndexesInternal),
 						m_PostApplyPositionsMatrix = post,
 						m_PreApplyPositionsMatrix = post.inverse,
-						m_SelectionSpaceRotation = Quaternion.identity
 					});
 
 					break;
