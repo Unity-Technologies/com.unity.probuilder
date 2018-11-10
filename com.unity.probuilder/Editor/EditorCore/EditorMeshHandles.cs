@@ -106,6 +106,11 @@ namespace UnityEditor.ProBuilder
 		Material m_VertMaterial;
 		Material m_WireMaterial;
 
+		internal static float dotCapSize
+		{
+			get { return s_VertexPointSize * .0125f; }
+		}
+
 		public static Color faceSelectedColor
 		{
 			get { return s_FaceSelectedColor; }
@@ -292,7 +297,7 @@ namespace UnityEditor.ProBuilder
 			}
 			else if (selection.vertex > -1)
 			{
-				var size = s_VertexPointSize * .0125f;
+				var size = dotCapSize;
 
 				using (new Handles.DrawingScope(preselectionColor, mesh.transform.localToWorldMatrix))
 				{

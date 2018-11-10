@@ -142,7 +142,7 @@ namespace UnityEditor.ProBuilder
 
 				default:
 				{
-					var post = Matrix4x4.Translate(MeshSelection.GetHandlePosition());
+					var post = Matrix4x4.TRS(MeshSelection.GetHandlePosition(), MeshSelection.GetHandleRotation(), Vector3.one);
 
 					groups.Add(new ElementGroup()
 					{

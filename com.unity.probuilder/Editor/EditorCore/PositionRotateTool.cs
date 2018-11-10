@@ -11,42 +11,22 @@ namespace UnityEditor.ProBuilder
 		{
 			base.DoTool(handlePosition, handleRotation);
 
-			if (pivotPoint == PivotPoint.IndividualOrigins || pivotPoint == PivotPoint.ActiveElement)
+			EditorGUI.BeginChangeCheck();
+
+			if (!isEditing)
+				m_Rotation = Quaternion.identity;
+
+			var hm = Handles.matrix;
+			Handles.matrix = Matrix4x4.TRS(handlePosition, handleRotation, Vector3.one);
+			m_Rotation = Handles.RotationHandle(m_Rotation, Vector3.zero);
+			Handles.matrix = hm;
+
+			if (EditorGUI.EndChangeCheck())
 			{
-				EditorGUI.BeginChangeCheck();
-
 				if (!isEditing)
-					m_Rotation = Quaternion.identity;
+					BeginEdit("Rotate Selection");
 
-				var hm = Handles.matrix;
-				Handles.matrix = Matrix4x4.TRS(handlePosition, handleRotation, Vector3.one);
-				m_Rotation = Handles.RotationHandle(m_Rotation, Vector3.zero);
-				Handles.matrix = hm;
-
-				if (EditorGUI.EndChangeCheck())
-				{
-					if (!isEditing)
-						BeginEdit("Rotate Selection");
-
-					ApplyRotation(m_Rotation);
-				}
-			}
-			else
-			{
-				EditorGUI.BeginChangeCheck();
-
-				if (!isEditing)
-					m_Rotation = handleRotation;
-
-				m_Rotation = Handles.RotationHandle(m_Rotation, handlePosition);
-
-				if (EditorGUI.EndChangeCheck())
-				{
-					if (!isEditing)
-						BeginEdit("Rotate Selection");
-
-					ApplyRotation(m_Rotation * handleRotationOriginInverse);
-				}
+				ApplyRotation(m_Rotation);
 			}
 		}
 

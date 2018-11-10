@@ -72,7 +72,7 @@ namespace UnityEditor.ProBuilder
 #if APPLY_POSITION_TO_SPACE_GIZMO
 						EditorMeshHandles.DrawGizmo(Vector3.zero, group.matrix.inverse * m_CurrentDelta);
 #else
-						EditorMeshHandles.DrawGizmo(Vector3.zero, group.preApplyMatrix.inverse);
+						EditorMeshHandles.DrawTransformOriginGizmo(group.postApplyMatrix, Vector3.up);
 #endif
 					}
 				}
