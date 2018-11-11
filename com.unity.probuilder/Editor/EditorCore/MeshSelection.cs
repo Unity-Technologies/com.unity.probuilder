@@ -385,7 +385,7 @@ namespace UnityEditor.ProBuilder
 		{
 			switch (VertexManipulationTool.handleOrientation)
 			{
-				case HandleOrientation.ActiveSelection:
+				case HandleOrientation.ActiveElement:
 					return GetActiveSelectionOrientation();
 
 				case HandleOrientation.ActiveObject:

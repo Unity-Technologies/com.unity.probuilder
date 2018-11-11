@@ -72,7 +72,7 @@ namespace UnityEditor.ProBuilder
 
 						var rot = orientation == HandleOrientation.World
 							? Quaternion.identity
-							: orientation == HandleOrientation.ActiveSelection
+							: orientation == HandleOrientation.ActiveElement
 								? EditorHandleUtility.GetRotation(mesh, indices)
 								: mesh.transform.rotation;
 
@@ -93,7 +93,7 @@ namespace UnityEditor.ProBuilder
 
 							var rot = orientation == HandleOrientation.World
 								? Quaternion.identity
-								: orientation == HandleOrientation.ActiveSelection
+								: orientation == HandleOrientation.ActiveElement
 									? EditorHandleUtility.GetRotation(mesh, mesh.GetActiveFace().distinctIndexesInternal)
 									: mesh.transform.rotation;
 

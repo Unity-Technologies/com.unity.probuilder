@@ -22,7 +22,7 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// The gizmo is aligned relative to the currently selected face. When editing vertices or edges, this falls back to <see cref="ActiveObject"/> alignment.
 		/// </summary>
-		ActiveSelection = 2,
+		ActiveElement = 2,
 
 //		/// <summary>
 //		/// The transform gizmo is user-set.
