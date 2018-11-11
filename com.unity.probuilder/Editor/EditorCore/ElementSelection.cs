@@ -94,7 +94,7 @@ namespace UnityEditor.ProBuilder
 							var rot = orientation == HandleOrientation.World
 								? Quaternion.identity
 								: orientation == HandleOrientation.ActiveElement
-									? EditorHandleUtility.GetRotation(mesh, mesh.GetActiveFace().distinctIndexesInternal)
+									? EditorHandleUtility.GetRotation(mesh, list[0].distinctIndexesInternal)
 									: mesh.transform.rotation;
 
 							var post = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), rot, Vector3.one);
