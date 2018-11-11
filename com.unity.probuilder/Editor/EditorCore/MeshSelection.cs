@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEditor;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -387,28 +386,58 @@ namespace UnityEditor.ProBuilder
 			switch (VertexManipulationTool.handleOrientation)
 			{
 				case HandleOrientation.ActiveSelection:
-
-					ProBuilderMesh mesh;
-					Face face;
-
-					if(!GetActiveFace(out mesh, out face))
-						goto case HandleOrientation.ActiveObject;
-
-					// use average normal, tangent, and bi-tangent to calculate rotation relative to local space
-					var tup = Math.NormalTangentBitangent(mesh, face);
-					Vector3 nrm = tup.normal, bitan = tup.bitangent;
-
-					if (nrm == Vector3.zero || bitan == Vector3.zero)
-					{
-						nrm = Vector3.up;
-						bitan = Vector3.right;
-					}
-
-					return activeMesh.transform.rotation * Quaternion.LookRotation(nrm, bitan);
+					return GetActiveSelectionOrientation();
 
 				case HandleOrientation.ActiveObject:
 					if (activeMesh == null)
 						goto default;
+					return activeMesh.transform.rotation;
+
+				default:
+					return Quaternion.identity;
+			}
+		}
+
+		static Quaternion GetActiveSelectionOrientation()
+		{
+			if(activeMesh == null)
+				return Quaternion.identity;
+
+			switch (ProBuilderEditor.selectMode)
+			{
+				case SelectMode.Face:
+				case SelectMode.TextureFace:
+				{
+					if (activeMesh.selectedFaceCount < 1)
+						return activeMesh.transform.rotation;
+
+					// Intentionally not using coincident vertices here. We want the normal of just the face, not an
+					// average of it's neighbors.
+					return EditorHandleUtility.GetRotation(activeMesh,
+						activeMesh.facesInternal[activeMesh.selectedFaceIndicesInternal[0]].distinctIndexesInternal);
+				}
+
+				case SelectMode.Edge:
+				{
+					return EditorHandleUtility.GetRotation(activeMesh, activeMesh.selectedCoincidentVertices);
+				}
+
+				case SelectMode.Vertex:
+				{
+					return EditorHandleUtility.GetRotation(activeMesh, activeMesh.selectedCoincidentVertices);
+				}
+
+				case SelectMode.TextureEdge:
+				{
+					return EditorHandleUtility.GetRotation(activeMesh, activeMesh.selectedIndexesInternal);
+				}
+
+				case SelectMode.TextureVertex:
+				{
+					return EditorHandleUtility.GetRotation(activeMesh, activeMesh.selectedIndexesInternal);
+				}
+
+				case SelectMode.Object:
 					return activeMesh.transform.rotation;
 
 				default:
@@ -421,7 +450,7 @@ namespace UnityEditor.ProBuilder
 			if (activeMesh != null && activeMesh.selectedFaceCount > 0)
 			{
 				mesh = activeMesh;
-				face = mesh.faces[activeMesh.selectedFaceIndicesInternal[0]];
+				face = mesh.GetActiveFace();
 				return true;
 			}
 

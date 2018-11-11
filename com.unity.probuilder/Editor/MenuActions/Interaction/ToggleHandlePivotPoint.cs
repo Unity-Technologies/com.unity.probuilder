@@ -42,7 +42,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override string menuTitle
 		{
-			get { return "Pivot: " + pivotPoint.ToString(); }
+			get { return "Pivot: " + s_Tooltips[(int)pivotPoint]; }
 		}
 
 		public override SelectMode validSelectModes
@@ -75,7 +75,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			pivotPoint = (PivotPoint)current;
 
-			return new ActionResult(ActionResult.Status.Success, "Set Pivot Point\n" + ((PivotPoint)current).ToString());
+			return new ActionResult(ActionResult.Status.Success, "Set Pivot Point\n" + s_Tooltips[(int)pivotPoint].title);
 		}
 
 		public override bool enabled

@@ -42,7 +42,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override string menuTitle
 		{
-			get { return "Orientation: " + handleOrientation.ToString(); }
+			get { return "Orientation: " + s_Tooltips[(int)handleOrientation].title; }
 		}
 
 		public override SelectMode validSelectModes
@@ -74,7 +74,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			handleOrientation = (HandleOrientation)current;
 
-			return new ActionResult(ActionResult.Status.Success, "Set Handle Orientation\n" + ((HandleOrientation)current).ToString());
+			return new ActionResult(ActionResult.Status.Success, "Set Handle Orientation\n" + s_Tooltips[current].title);
 		}
 
 		public override bool enabled

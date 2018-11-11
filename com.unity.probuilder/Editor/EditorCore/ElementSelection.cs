@@ -63,17 +63,24 @@ namespace UnityEditor.ProBuilder
 			{
 				case PivotPoint.IndividualOrigins:
 				{
-					// todo Get normal from active element (edge, vertex)
-					if (ProBuilderEditor.selectMode != SelectMode.Face)
+					if (ProBuilderEditor.selectMode != SelectMode.Face || mesh.selectedFaceCount < 1)
 					{
 						var bounds = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal);
-						var post = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), Quaternion.identity, Vector3.one);
+						var indices = collectCoincident
+							? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
+							: new List<int>(mesh.selectedIndexesInternal);
+
+						var rot = orientation == HandleOrientation.World
+							? Quaternion.identity
+							: orientation == HandleOrientation.ActiveSelection
+								? EditorHandleUtility.GetRotation(mesh, indices)
+								: mesh.transform.rotation;
+
+						var post = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), rot, Vector3.one);
 
 						groups.Add(new ElementGroup()
 						{
-							m_Indices = collectCoincident
-								? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
-								: new List<int>(mesh.selectedIndexesInternal),
+							m_Indices = indices,
 							m_PostApplyPositionsMatrix = post,
 							m_PreApplyPositionsMatrix = post.inverse
 						});
@@ -83,11 +90,11 @@ namespace UnityEditor.ProBuilder
 						foreach (var list in GetFaceSelectionGroups(mesh))
 						{
 							var bounds = Math.GetBounds(mesh.positionsInternal, list);
-							var ntb = Math.NormalTangentBitangent(mesh, list[0]);
+
 							var rot = orientation == HandleOrientation.World
 								? Quaternion.identity
 								: orientation == HandleOrientation.ActiveSelection
-									? mesh.transform.rotation * Quaternion.LookRotation(ntb.normal, ntb.bitangent)
+									? EditorHandleUtility.GetRotation(mesh, mesh.GetActiveFace().distinctIndexesInternal)
 									: mesh.transform.rotation;
 
 							var post = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), rot, Vector3.one);
