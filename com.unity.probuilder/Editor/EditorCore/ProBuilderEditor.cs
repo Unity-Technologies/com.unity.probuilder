@@ -103,7 +103,7 @@ namespace UnityEditor.ProBuilder
 		// used for 'g' key shortcut to swap between object/vef modes
 		SelectMode m_LastComponentMode;
 		[UserSetting]
-		static internal Pref<Shortcut[]> s_Shortcuts = new Pref<Shortcut[]>("editor.sceneViewShortcuts", Shortcut.DefaultShortcuts().ToArray());
+		internal static Pref<Shortcut[]> s_Shortcuts = new Pref<Shortcut[]>("editor.sceneViewShortcuts", Shortcut.DefaultShortcuts().ToArray());
 		GUIStyle m_CommandStyle;
 		Rect m_ElementModeToolbarRect = new Rect(3, 6, 128, 24);
 
@@ -339,6 +339,9 @@ namespace UnityEditor.ProBuilder
 			foreach (var pb in FindObjectsOfType<ProBuilderMesh>())
 				EditorUtility.SetSelectionRenderState(pb.gameObject.GetComponent<Renderer>(),
 					EditorUtility.GetSelectionRenderState());
+
+			if (selectModeChanged != null)
+				selectModeChanged(SelectMode.Object);
 
 			SceneView.RepaintAll();
 		}

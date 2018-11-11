@@ -377,10 +377,21 @@ namespace UnityEditor.ProBuilder
 					case SelectMode.Vertex:
 					case SelectMode.TextureVertex:
 					{
-						foreach (var handle in m_VertexHandles)
-							handle.Value.mesh.vertices = handle.Key.positionsInternal;
-						foreach (var handle in m_SelectedVertexHandles)
-							handle.Value.mesh.vertices = handle.Key.positionsInternal;
+						if (BuiltinMaterials.geometryShadersSupported)
+						{
+							foreach (var handle in m_VertexHandles)
+								handle.Value.mesh.vertices = handle.Key.positionsInternal;
+							foreach (var handle in m_SelectedVertexHandles)
+								handle.Value.mesh.vertices = handle.Key.positionsInternal;
+						}
+						else
+						{
+							foreach (var handle in m_VertexHandles)
+								MeshHandles.CreateVertexMesh(handle.Key, handle.Value.mesh);
+							foreach(var handle in m_SelectedVertexHandles)
+								MeshHandles.CreateVertexMesh(handle.Key, handle.Value.mesh, handle.Key.selectedIndexesInternal);
+						}
+
 						break;
 					}
 
@@ -417,21 +428,16 @@ namespace UnityEditor.ProBuilder
 					case SelectMode.TextureVertex:
 					{
 						RebuildMeshHandle(mesh, m_VertexHandles, MeshHandles.CreateVertexMesh);
-
-						RebuildMeshHandle(mesh, m_SelectedVertexHandles, (x, y) =>
-						{
-							MeshHandles.CreateVertexMesh(x, y, x.selectedIndexesInternal);
-						});
+						RebuildMeshHandle(mesh, m_SelectedVertexHandles,
+							(x, y) => { MeshHandles.CreateVertexMesh(x, y, x.selectedIndexesInternal); });
 						break;
 					}
 
 					case SelectMode.Edge:
 					case SelectMode.TextureEdge:
 					{
-						RebuildMeshHandle(mesh, m_SelectedEdgeHandles, (x, y) =>
-						{
-							MeshHandles.CreateEdgeMesh(x, y, x.selectedEdgesInternal);
-						});
+						RebuildMeshHandle(mesh, m_SelectedEdgeHandles,
+							(x, y) => { MeshHandles.CreateEdgeMesh(x, y, x.selectedEdgesInternal); });
 						break;
 					}
 
