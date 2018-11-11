@@ -11,17 +11,23 @@ namespace UnityEditor.ProBuilder
 		Vector3 m_WorldSnapDirection;
 		Vector3 m_WorldSnapMask;
 
+		Vector3 m_IndividualOriginDirection;
+		bool m_DirectionOriginInitialized;
+
 		protected override void OnToolEngaged()
 		{
 			m_SnapInWorldCoordinates = false;
 			m_WorldSnapMask = new Vector3Mask(0x0);
+			m_DirectionOriginInitialized = false;
 		}
 
 		protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
 		{
 			base.DoTool(handlePosition, handleRotation);
 
-			if (!isEditing)
+			if (isEditing)
+				DrawSelectionOriginGizmos();
+			else
 				m_HandlePosition = handlePosition;
 
 			EditorGUI.BeginChangeCheck();
@@ -78,6 +84,17 @@ namespace UnityEditor.ProBuilder
 					}
 				}
 
+				if (pivotPoint == PivotPoint.IndividualOrigins && !m_DirectionOriginInitialized)
+				{
+					var mask = new Vector3Mask(handleRotationOriginInverse * delta, k_CardinalAxisError);
+
+					if (mask.active > 0)
+					{
+						m_IndividualOriginDirection = mask;
+						m_DirectionOriginInitialized = true;
+					}
+				}
+
 				ApplyTranslation(handleRotationOriginInverse * delta);
 			}
 		}
@@ -115,6 +132,20 @@ namespace UnityEditor.ProBuilder
 			}
 
 			ProBuilderEditor.UpdateMeshHandles(false);
+		}
+
+		void DrawSelectionOriginGizmos()
+		{
+			if (isEditing && currentEvent.type == EventType.Repaint)
+			{
+				foreach (var key in meshAndElementGroupPairs)
+				{
+					foreach (var group in key.elementGroups)
+					{
+						EditorMeshHandles.DrawTransformOriginGizmo(group.postApplyMatrix, m_IndividualOriginDirection);
+					}
+				}
+			}
 		}
 	}
 }

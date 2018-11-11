@@ -39,7 +39,7 @@ namespace UnityEditor.ProBuilder
 			return new MeshAndPositions(mesh, pivot, orientation);
 		}
 
-		protected override void DoTool(Vector3 position, Quaternion rotation)
+		protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
 		{
 			if (isEditing && currentEvent.type == EventType.Repaint)
 			{
@@ -67,12 +67,6 @@ namespace UnityEditor.ProBuilder
 								}
 							}
 						}
-#endif
-
-#if APPLY_POSITION_TO_SPACE_GIZMO
-						EditorMeshHandles.DrawGizmo(Vector3.zero, group.matrix.inverse * m_CurrentDelta);
-#else
-						EditorMeshHandles.DrawTransformOriginGizmo(group.postApplyMatrix, Vector3.up);
 #endif
 					}
 				}

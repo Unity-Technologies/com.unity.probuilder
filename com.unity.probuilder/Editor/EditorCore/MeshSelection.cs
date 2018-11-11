@@ -368,7 +368,7 @@ namespace UnityEditor.ProBuilder
 					Face face;
 					Vector3 center = Vector3.zero;
 
-					if (VertexManipulationTool.handleOrientation == HandleOrientation.ActiveSelection && GetActiveFace(out mesh, out face))
+					if (GetActiveFace(out mesh, out face))
 						center = Math.GetBounds(mesh.positionsInternal, face.distinctIndexesInternal).center;
 					else if(activeMesh != null)
 						center = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal).center;

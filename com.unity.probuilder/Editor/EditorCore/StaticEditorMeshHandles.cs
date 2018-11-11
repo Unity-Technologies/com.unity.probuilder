@@ -9,7 +9,7 @@ namespace UnityEditor.ProBuilder
 {
 	partial class EditorMeshHandles
 	{
-		const float k_DefaultGizmoSize = .4f;
+		const float k_DefaultGizmoSize = .2f;
 		static bool s_Initialized;
 		static Material s_LineMaterial;
 		static Material s_FaceMaterial;
