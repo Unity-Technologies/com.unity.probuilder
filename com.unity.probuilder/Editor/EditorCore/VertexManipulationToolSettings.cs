@@ -1,4 +1,5 @@
-﻿#if UNITY_2019_1_OR_NEWER
+﻿#if UNITY_2019_1_OR_NEWER && PB_OVERRIDE_TOOL_SETTINGS
+
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
@@ -55,4 +56,5 @@ namespace UnityEditor.ProBuilder
 		}
 	}
 }
+
 #endif

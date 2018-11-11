@@ -1,9 +1,5 @@
 using UnityEngine;
-using UnityEditor;
-using System.Collections;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
-using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -26,7 +22,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override int toolbarPriority
 		{
-			get { return 0; }
+			get { return 1; }
 		}
 
 		static readonly TooltipContent s_Tooltip = new TooltipContent

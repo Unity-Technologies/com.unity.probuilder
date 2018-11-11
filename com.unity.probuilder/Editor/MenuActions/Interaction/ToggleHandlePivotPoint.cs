@@ -1,16 +1,16 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	sealed class ToggleHandleOrientation : MenuAction
+	sealed class ToggleHandlePivotPoint : MenuAction
 	{
 		Texture2D[] m_Icons;
 
-		HandleOrientation handleOrientation
+		PivotPoint pivotPoint
 		{
-			get { return VertexManipulationTool.handleOrientation; }
-			set { VertexManipulationTool.handleOrientation = value; }
+			get { return VertexManipulationTool.pivotPoint; }
+			set { VertexManipulationTool.pivotPoint = value; }
 		}
 
 		public override ToolbarGroup group
@@ -20,7 +20,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override Texture2D icon
 		{
-			get { return m_Icons[(int)handleOrientation]; }
+			get { return m_Icons[(int)pivotPoint]; }
 		}
 
 		public override int toolbarPriority
@@ -30,19 +30,19 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override TooltipContent tooltip
 		{
-			get { return s_Tooltips[(int) handleOrientation]; }
+			get { return s_Tooltips[(int) pivotPoint]; }
 		}
 
 		static readonly TooltipContent[] s_Tooltips = new TooltipContent[]
 		{
-			new TooltipContent("World", "The transform handle is oriented in a fixed direction.", 'P'),
-			new TooltipContent("ActiveObject", "The transform handle is aligned with the active object rotation.", 'P'),
-			new TooltipContent("ActiveSelection", "The transform handle is aligned with the active element selection.", 'P')
+			new TooltipContent("Center", "Transforms are applied from the center point of the selection bounding box."),
+			new TooltipContent("Individual Origins", "Transforms are applied from the center of each selection group."),
+			new TooltipContent("Active Element", "Transforms are applied from the active selection center.")
 		};
 
 		public override string menuTitle
 		{
-			get { return "Orientation: " + handleOrientation.ToString(); }
+			get { return "Pivot: " + pivotPoint.ToString(); }
 		}
 
 		public override SelectMode validSelectModes
@@ -55,7 +55,8 @@ namespace UnityEditor.ProBuilder.Actions
 			get { return false; }
 		}
 
-		public ToggleHandleOrientation()
+		// TODO Need icons for PivotPoint
+		public ToggleHandlePivotPoint()
 		{
 			m_Icons = new Texture2D[]
 			{
@@ -67,14 +68,14 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			int current = (int)handleOrientation + 1;
+			int current = (int)pivotPoint + 1;
 
-			if (current >= System.Enum.GetValues(typeof(HandleOrientation)).Length)
+			if (current >= System.Enum.GetValues(typeof(PivotPoint)).Length)
 				current = 0;
 
-			handleOrientation = (HandleOrientation)current;
+			pivotPoint = (PivotPoint)current;
 
-			return new ActionResult(ActionResult.Status.Success, "Set Handle Orientation\n" + ((HandleOrientation)current).ToString());
+			return new ActionResult(ActionResult.Status.Success, "Set Pivot Point\n" + ((PivotPoint)current).ToString());
 		}
 
 		public override bool enabled
