@@ -36,8 +36,8 @@ namespace UnityEditor.ProBuilder.Actions
 		static readonly TooltipContent[] s_Tooltips = new TooltipContent[]
 		{
 			new TooltipContent("World", "The transform handle is oriented in a fixed direction.", 'P'),
-			new TooltipContent("ActiveObject", "The transform handle is aligned with the active object rotation.", 'P'),
-			new TooltipContent("ActiveSelection", "The transform handle is aligned with the active element selection.", 'P')
+			new TooltipContent("Active Object", "The transform handle is aligned with the active object rotation.", 'P'),
+			new TooltipContent("Active Selection", "The transform handle is aligned with the active element selection.", 'P')
 		};
 
 		public override string menuTitle
