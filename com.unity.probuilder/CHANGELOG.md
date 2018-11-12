@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.30] - 2018-11-12
+## [4.0.0-preview.31] - 2018-11-12
 
 ### Features
 
@@ -75,6 +75,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Include third party dependencies as source code with assembly definitions instead of pre-compiled DLLs.
 - Performance optimization for selection changes in editor.
 - Make auto-resizing colliders opt-in instead of on by default.
+
+### Changes since 4.0.0-preview.30
+
+- Respect Unity pivot mode and rotation toggles by default, and add a preference to override with PivotPoint and HandleRotation.
 
 ### Changes since 4.0.0-preview.29
 
