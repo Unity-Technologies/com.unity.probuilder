@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
@@ -533,6 +535,85 @@ namespace UnityEditor.ProBuilder
 			var bit = Vector3.Cross(nrm, tan * tan.w);
 
 			return mesh.transform.rotation * Quaternion.LookRotation(nrm, bit);
+		}
+
+		internal static Quaternion GetFaceRotation(ProBuilderMesh mesh, IEnumerable<Face> faces, HandleOrientation orientation)
+		{
+			if (mesh == null)
+				return Quaternion.identity;
+
+			switch (orientation)
+			{
+				case HandleOrientation.ActiveElement:
+					if (mesh.selectedFaceCount < 1)
+						goto case HandleOrientation.ActiveObject;
+
+					// Intentionally not using coincident vertices here. We want the normal of just the face, not an
+					// average of it's neighbors.
+					return GetRotation(mesh, faces.First().distinctIndexesInternal);
+
+				case HandleOrientation.ActiveObject:
+					return mesh.transform.rotation;
+
+				default:
+					return Quaternion.identity;
+			}
+		}
+
+		internal static Quaternion GetEdgeRotation(ProBuilderMesh mesh, IEnumerable<Edge> edges, HandleOrientation orientation)
+		{
+			if (mesh == null)
+				return Quaternion.identity;
+
+			switch (orientation)
+			{
+				case HandleOrientation.ActiveElement:
+					if (mesh.selectedEdgeCount < 1)
+						goto case HandleOrientation.ActiveObject;
+
+					// Getting an average of the edge normals isn't very helpful in real world uses, so we just use the
+					// first selected edge for orientation.
+					// This function accepts an enumerable because in the future we may want to do something more
+					// sophisticated, and it's conventient because selections are stored as collections.
+					var face = EdgeUtility.GetFace(mesh, edges.First());
+
+					if (face == null)
+						goto case HandleOrientation.ActiveObject;
+
+					Normal nrm = Math.NormalTangentBitangent(mesh, face);
+
+					if(nrm.normal == Vector3.zero || nrm.bitangent == Vector3.zero)
+						goto case HandleOrientation.ActiveObject;
+
+					return mesh.transform.rotation * Quaternion.LookRotation(nrm.normal, nrm.bitangent);
+
+				case HandleOrientation.ActiveObject:
+					return mesh.transform.rotation;
+
+				default:
+					return Quaternion.identity;
+			}
+		}
+
+		internal static Quaternion GetVertexRotation(ProBuilderMesh mesh, IEnumerable<int> vertices, HandleOrientation orientation)
+		{
+			if (mesh == null)
+				return Quaternion.identity;
+
+			switch (orientation)
+			{
+				case HandleOrientation.ActiveElement:
+					if (mesh.selectedVertexCount < 1)
+						goto case HandleOrientation.ActiveObject;
+
+					return GetRotation(mesh, vertices);
+
+				case HandleOrientation.ActiveObject:
+					return mesh.transform.rotation;
+
+				default:
+					return Quaternion.identity;
+			}
 		}
 	}
 }

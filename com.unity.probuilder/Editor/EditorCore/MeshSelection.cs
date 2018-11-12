@@ -383,59 +383,23 @@ namespace UnityEditor.ProBuilder
 
 		internal static Quaternion GetHandleRotation()
 		{
-			switch (VertexManipulationTool.handleOrientation)
-			{
-				case HandleOrientation.ActiveElement:
-					return GetActiveSelectionOrientation();
-
-				case HandleOrientation.ActiveObject:
-					if (activeMesh == null)
-						goto default;
-					return activeMesh.transform.rotation;
-
-				default:
-					return Quaternion.identity;
-			}
-		}
-
-		static Quaternion GetActiveSelectionOrientation()
-		{
-			if(activeMesh == null)
-				return Quaternion.identity;
+			var orientation = VertexManipulationTool.handleOrientation;
 
 			switch (ProBuilderEditor.selectMode)
 			{
 				case SelectMode.Face:
 				case SelectMode.TextureFace:
-				{
-					if (activeMesh.selectedFaceCount < 1)
-						return activeMesh.transform.rotation;
-
-					// Intentionally not using coincident vertices here. We want the normal of just the face, not an
-					// average of it's neighbors.
-					return EditorHandleUtility.GetRotation(activeMesh,
-						activeMesh.facesInternal[activeMesh.selectedFaceIndicesInternal[0]].distinctIndexesInternal);
-				}
+					return EditorHandleUtility.GetFaceRotation(activeMesh, activeMesh.selectedFacesInternal, orientation);
 
 				case SelectMode.Edge:
-				{
-					return EditorHandleUtility.GetRotation(activeMesh, activeMesh.selectedCoincidentVertices);
-				}
+				case SelectMode.TextureEdge:
+					return EditorHandleUtility.GetEdgeRotation(activeMesh, activeMesh.selectedEdgesInternal, orientation);
 
 				case SelectMode.Vertex:
-				{
-					return EditorHandleUtility.GetRotation(activeMesh, activeMesh.selectedCoincidentVertices);
-				}
-
-				case SelectMode.TextureEdge:
-				{
-					return EditorHandleUtility.GetRotation(activeMesh, activeMesh.selectedIndexesInternal);
-				}
+					return EditorHandleUtility.GetVertexRotation(activeMesh, activeMesh.selectedCoincidentVertices, orientation);
 
 				case SelectMode.TextureVertex:
-				{
-					return EditorHandleUtility.GetRotation(activeMesh, activeMesh.selectedIndexesInternal);
-				}
+					return EditorHandleUtility.GetVertexRotation(activeMesh, activeMesh.selectedIndexesInternal, orientation);
 
 				case SelectMode.Object:
 					return activeMesh.transform.rotation;

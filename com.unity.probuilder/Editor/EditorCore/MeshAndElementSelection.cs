@@ -58,23 +58,23 @@ namespace UnityEditor.ProBuilder
 		{
 			var groups = new List<ElementGroup>();
 			var trs = mesh.transform.localToWorldMatrix;
+			var selectMode = ProBuilderEditor.selectMode;
 
 			switch (pivot)
 			{
 				case PivotPoint.IndividualOrigins:
 				{
-					if (ProBuilderEditor.selectMode != SelectMode.Face || mesh.selectedFaceCount < 1)
+					// todo Pass SelectMode as part of args
+					if (selectMode != SelectMode.Face || mesh.selectedFaceCount < 1)
 					{
 						var bounds = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal);
 						var indices = collectCoincident
 							? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
 							: new List<int>(mesh.selectedIndexesInternal);
 
-						var rot = orientation == HandleOrientation.World
-							? Quaternion.identity
-							: orientation == HandleOrientation.ActiveElement
-								? EditorHandleUtility.GetRotation(mesh, indices)
-								: mesh.transform.rotation;
+						var rot = selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge)
+							? EditorHandleUtility.GetEdgeRotation(mesh, mesh.selectedEdgesInternal, orientation)
+							: EditorHandleUtility.GetVertexRotation(mesh, indices, orientation);
 
 						var post = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), rot, Vector3.one);
 
@@ -90,13 +90,7 @@ namespace UnityEditor.ProBuilder
 						foreach (var list in GetFaceSelectionGroups(mesh))
 						{
 							var bounds = Math.GetBounds(mesh.positionsInternal, list);
-
-							var rot = orientation == HandleOrientation.World
-								? Quaternion.identity
-								: orientation == HandleOrientation.ActiveElement
-									? EditorHandleUtility.GetRotation(mesh, list[0].distinctIndexesInternal)
-									: mesh.transform.rotation;
-
+							var rot = EditorHandleUtility.GetFaceRotation(mesh, list, orientation);
 							var post = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), rot, Vector3.one);
 
 							List<int> indices;

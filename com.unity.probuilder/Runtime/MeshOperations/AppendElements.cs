@@ -442,7 +442,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			// Get material and UV stuff from the first edge face
 			SimpleTuple<Face, Edge> faceAndEdge;
 
-			if(EdgeExtension.ValidateEdge(mesh, a, out faceAndEdge) || EdgeExtension.ValidateEdge(mesh, b, out faceAndEdge))
+			if(EdgeUtility.ValidateEdge(mesh, a, out faceAndEdge) || EdgeUtility.ValidateEdge(mesh, b, out faceAndEdge))
 			{
 				uvs = new AutoUnwrapSettings(faceAndEdge.item1.uv);
 				submeshIndex = faceAndEdge.item1.submeshIndex;
@@ -739,7 +739,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			Dictionary<int, int> lookup = mesh.sharedVertexLookup;
 			Dictionary<int, int> lookupUV = mesh.sharedTextureLookup;
             List<int> indexesToDelete = new List<int>();
-            IEnumerable<Edge> commonEdges = EdgeExtension.GetSharedVertexHandleEdges(mesh, edges);
+            IEnumerable<Edge> commonEdges = EdgeUtility.GetSharedVertexHandleEdges(mesh, edges);
             List<Edge> distinctEdges = commonEdges.Distinct().ToList();
 
             Dictionary<Face, FaceRebuildData> modifiedFaces = new Dictionary<Face, FaceRebuildData>();
@@ -749,7 +749,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			foreach(Edge edge in distinctEdges)
 			{
-				Edge localEdge = EdgeExtension.GetEdgeWithSharedVertexHandles(mesh, edge);
+				Edge localEdge = EdgeUtility.GetEdgeWithSharedVertexHandles(mesh, edge);
 
 				// Generate the new vertices that will be inserted on this edge
 				List<Vertex> verticesToAppend = new List<Vertex>(count);

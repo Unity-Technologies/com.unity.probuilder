@@ -1,14 +1,12 @@
-﻿using System.Collections;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// Utilities for working with pb_Edge.
 	/// </summary>
-	static class EdgeExtension
+	static class EdgeUtility
 	{
 		/// <summary>
 		/// Returns new edges where each edge is composed not of vertex indexes, but rather the index in ProBuilderMesh.sharedIndexes of each vertex.
@@ -130,6 +128,27 @@ namespace UnityEngine.ProBuilder
 				arr[n++] = edges[i].b;
 			}
 			return arr;
+		}
+
+		internal static Face GetFace(this ProBuilderMesh mesh, Edge edge)
+		{
+			Face res = null;
+
+			foreach (var face in mesh.facesInternal)
+			{
+				var edges = face.edgesInternal;
+
+				for (int i = 0, c = edges.Length; i < c; i++)
+				{
+					if (edge.Equals(edges[i]))
+						return face;
+
+					if (edges.Contains(edges[i]))
+						res = face;
+				}
+			}
+
+			return res;
 		}
 	}
 
