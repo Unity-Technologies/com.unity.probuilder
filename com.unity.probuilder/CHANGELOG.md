@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.29] - 2018-11-06
+## [4.0.0-preview.30] - 2018-11-12
 
 ### Features
 
@@ -76,9 +76,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Performance optimization for selection changes in editor.
 - Make auto-resizing colliders opt-in instead of on by default.
 
-### Changes since 4.0.0-preview.28
+### Changes since 4.0.0-preview.29
 
-- Fix `Shape Editor` moving the preview object when modifying parameters.
+- Fix ProGrids breaking handle movement.
+- Add `Pivot Point` and `Handle Orientation` settings.
+
+### Known Issues
+
+- Handle transformations on two faces connected by a single vertex with `PivotPoint.IndividualOrigins` and `HandleOrientation.ActiveSelection` chooses a single direction to move the shared vertex instead of averaging the direction. The same applies to extrusion with these parameters.
 
 ## [3.0.8] - 2018-05-07
 
