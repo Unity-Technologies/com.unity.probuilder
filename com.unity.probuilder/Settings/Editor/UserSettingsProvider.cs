@@ -105,8 +105,8 @@ namespace UnityEditor.SettingsManagement
 		internal static UserSetting<bool> showHiddenSettings = new UserSetting<bool>(userSettingsProviderSettings, "settings.showHidden", false, SettingsScope.User);
 		internal static UserSetting<bool> showUnregisteredSettings = new UserSetting<bool>(userSettingsProviderSettings, "settings.showUnregistered", false, SettingsScope.User);
 		internal static UserSetting<bool> listByKey = new UserSetting<bool>(userSettingsProviderSettings, "settings.listByKey", false, SettingsScope.User);
-		internal static UserSetting<bool> showUserSettings = new UserSetting<bool>(userSettingsProviderSettings, "settings.showUserSettings", false, SettingsScope.User);
-		internal static UserSetting<bool> showProjectSettings = new UserSetting<bool>(userSettingsProviderSettings, "settings.showProjectSettings", false, SettingsScope.User);
+		internal static UserSetting<bool> showUserSettings = new UserSetting<bool>(userSettingsProviderSettings, "settings.showUserSettings", true, SettingsScope.User);
+		internal static UserSetting<bool> showProjectSettings = new UserSetting<bool>(userSettingsProviderSettings, "settings.showProjectSettings", true, SettingsScope.User);
 
 #if SETTINGS_PROVIDER_ENABLED
 		/// <summary>

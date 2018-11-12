@@ -14,20 +14,82 @@ namespace UnityEditor.ProBuilder
 	abstract class VertexManipulationTool
 	{
 		static Pref<HandleOrientation> s_HandleOrientation = new Pref<HandleOrientation>("editor.handleOrientation", HandleOrientation.World, SettingsScope.User);
-
+#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
 		static Pref<PivotPoint> s_PivotPoint = new Pref<PivotPoint>("editor.pivotPoint", PivotPoint.Center, SettingsScope.User);
+#endif
+
+		// Enable this define to access PivotPoint.ActiveSelection. This also has the effect of ignoring Tools.pivotMode and Tools.pivotRotation settings.
+#if !PROBUILDER_ENABLE_HANDLE_OVERRIDE
+		static PivotRotation s_PivotRotation;
+#endif
 
 		public static PivotPoint pivotPoint
 		{
+#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
 			get { return s_PivotPoint; }
 			set { s_PivotPoint.SetValue(value, true); }
+#else
+			get
+			{
+				return Tools.pivotMode == PivotMode.Pivot
+					? Experimental.pivotModePivotEquivalent
+					: PivotPoint.Center;
+			}
+#endif
 		}
 
 		public static HandleOrientation handleOrientation
 		{
-			get { return s_HandleOrientation; }
-			set { s_HandleOrientation.SetValue(value, true); }
+			get
+			{
+#if !PROBUILDER_ENABLE_HANDLE_OVERRIDE
+				SyncPivotRotation();
+#endif
+				return s_HandleOrientation;
+			}
+			set
+			{
+				s_HandleOrientation.SetValue(value, true);
+
+#if !PROBUILDER_ENABLE_HANDLE_OVERRIDE
+				if (value != HandleOrientation.ActiveElement)
+					Tools.pivotRotation = value == HandleOrientation.ActiveObject
+						? PivotRotation.Local
+						: PivotRotation.Global;
+
+				var toolbar = typeof(EditorWindow).Assembly.GetType("UnityEditor.Toolbar");
+				var repaint = toolbar.GetMethod("RepaintToolbar", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+				repaint.Invoke(null, null);
+#endif
+			}
 		}
+
+#if !PROBUILDER_ENABLE_HANDLE_OVERRIDE
+		// Sync ProBuilder HandleOrientation to the current Tools.PivotRotation
+		static void SyncPivotRotation()
+		{
+			if (s_PivotRotation != Tools.pivotRotation)
+			{
+				s_HandleOrientation.SetValue(Tools.pivotRotation == PivotRotation.Global
+					? HandleOrientation.World
+					: HandleOrientation.ActiveObject);
+				s_PivotRotation = Tools.pivotRotation;
+				return;
+			}
+
+			var value = s_HandleOrientation.value;
+			var unity = value == HandleOrientation.ActiveObject ? PivotRotation.Local : PivotRotation.Global;
+
+			if (value != HandleOrientation.ActiveElement)
+			{
+				if (unity != Tools.pivotRotation)
+					s_HandleOrientation.SetValue(Tools.pivotRotation == PivotRotation.Global
+							? HandleOrientation.World
+							: HandleOrientation.ActiveObject,
+						true);
+			}
+		}
+#endif
 
 		/// <value>
 		/// Called when vertex modifications are complete.

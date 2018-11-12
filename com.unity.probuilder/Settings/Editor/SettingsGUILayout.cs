@@ -86,12 +86,16 @@ namespace UnityEditor.SettingsManagement
 		/// </summary>
 		public class IndentedGroup : IDisposable
 		{
+			bool m_EnabledState;
+
 			/// <summary>
 			/// Create an indented GUI section.
 			/// </summary>
-			public IndentedGroup()
+			public IndentedGroup(bool enabled = true)
 			{
-				UnityEditor.EditorGUIUtility.labelWidth -= SettingsGUIStyles.indentedSettingBlock.padding.left - 4;
+				m_EnabledState = GUI.enabled;
+				GUI.enabled = enabled;
+				EditorGUIUtility.labelWidth -= SettingsGUIStyles.indentedSettingBlock.padding.left - 4;
 				GUILayout.BeginVertical(SettingsGUIStyles.indentedSettingBlock);
 			}
 
@@ -101,8 +105,7 @@ namespace UnityEditor.SettingsManagement
 			public IndentedGroup(string label)
 			{
 				GUILayout.Label(label);
-
-				UnityEditor.EditorGUIUtility.labelWidth -= SettingsGUIStyles.indentedSettingBlock.padding.left - 4;
+				EditorGUIUtility.labelWidth -= SettingsGUIStyles.indentedSettingBlock.padding.left - 4;
 				GUILayout.BeginVertical(SettingsGUIStyles.indentedSettingBlock);
 			}
 
@@ -113,7 +116,8 @@ namespace UnityEditor.SettingsManagement
 			public void Dispose()
 			{
 				GUILayout.EndVertical();
-				UnityEditor.EditorGUIUtility.labelWidth += SettingsGUIStyles.indentedSettingBlock.padding.left - 4;
+				EditorGUIUtility.labelWidth += SettingsGUIStyles.indentedSettingBlock.padding.left - 4;
+				GUI.enabled = m_EnabledState;
 			}
 		}
 

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
+
+using UnityEngine;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
@@ -84,3 +86,4 @@ namespace UnityEditor.ProBuilder.Actions
 		}
 	}
 }
+#endif

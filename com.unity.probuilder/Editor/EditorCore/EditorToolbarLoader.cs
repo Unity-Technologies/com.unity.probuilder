@@ -49,7 +49,9 @@ namespace UnityEditor.ProBuilder
 
 				new Actions.ToggleSelectBackFaces(),
 				new Actions.ToggleHandleOrientation(),
+#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
 				new Actions.ToggleHandlePivotPoint(),
+#endif
 				new Actions.ToggleDragSelectionMode(),
 				new Actions.ToggleDragRectMode(),
 
