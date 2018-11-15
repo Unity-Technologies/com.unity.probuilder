@@ -46,7 +46,7 @@ namespace UnityEditor.ProBuilder
 		[UserSetting("Mesh Settings", "Pivot Location", "Determines the placement of new shape's pivot.")]
 		static Pref<PivotLocation> s_NewShapesPivotAtVertex = new Pref<PivotLocation>("mesh.newShapePivotLocation", PivotLocation.FirstVertex);
 
-		[UserSetting("Mesh Settings", "Snap New Shape To Grid", "When enabled, new shapes will have their pivot point set to a vertex instead of the center.")]
+		[UserSetting("Mesh Settings", "Snap New Shape To Grid", "When enabled, new shapes will snap to the closest point on grid.")]
 		static Pref<bool> s_SnapNewShapesToGrid = new Pref<bool>("mesh.newShapesSnapToGrid", true);
 
 		[UserSetting("Mesh Settings", "Shadow Casting Mode", "The default ShadowCastingMode to apply to MeshRenderer components.")]
