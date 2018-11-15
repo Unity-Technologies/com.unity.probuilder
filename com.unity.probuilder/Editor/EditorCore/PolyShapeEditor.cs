@@ -64,12 +64,20 @@ namespace UnityEditor.ProBuilder
 
 		void OnDisable()
 		{
-			ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+            // Quit Edit mode when the object gets de-selected.
+		    if (polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
+		        SetPolyEditMode(PolyShape.PolyEditMode.None);
+
+            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
 			GameObject.DestroyImmediate(m_LineMesh);
 			GameObject.DestroyImmediate(m_LineMaterial);
 			EditorApplication.update -= Update;
 			Undo.undoRedoPerformed -= UndoRedoPerformed;
-		}
+
+            // Delete the created Polyshape if path is empty.
+		    if (polygon.polyEditMode == PolyShape.PolyEditMode.Path && polygon.m_Points.Count == 0)
+		        GameObject.DestroyImmediate(polygon.gameObject);
+        }
 
 		public override void OnInspectorGUI()
 		{
