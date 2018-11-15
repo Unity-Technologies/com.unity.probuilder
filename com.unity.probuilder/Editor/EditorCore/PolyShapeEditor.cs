@@ -76,7 +76,7 @@ namespace UnityEditor.ProBuilder
 
             // Delete the created Polyshape if path is empty.
 		    if (polygon.polyEditMode == PolyShape.PolyEditMode.Path && polygon.m_Points.Count == 0)
-		        GameObject.DestroyImmediate(polygon.gameObject);
+		        Undo.DestroyObjectImmediate(polygon.gameObject);
         }
 
 		public override void OnInspectorGUI()
