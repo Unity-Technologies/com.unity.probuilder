@@ -312,7 +312,7 @@ namespace UnityEditor.ProBuilder
 
 			if(polygon == null || Tools.current != Tool.None)
 			{
-				polygon.polyEditMode = PolyShape.PolyEditMode.None;
+                SetPolyEditMode(PolyShape.PolyEditMode.None);
 				return;
 			}
 
@@ -716,10 +716,13 @@ namespace UnityEditor.ProBuilder
 		void OnSelectModeChanged(SelectMode selectMode)
 		{
 			// User changed select mode manually, remove InputTool flag
-			if( polygon != null
-				&& polygon.polyEditMode != PolyShape.PolyEditMode.None
-				&& !selectMode.ContainsFlag(SelectMode.InputTool))
-				polygon.polyEditMode = PolyShape.PolyEditMode.None;
+		    if (polygon != null
+		        && polygon.polyEditMode != PolyShape.PolyEditMode.None
+		        && !selectMode.ContainsFlag(SelectMode.InputTool))
+		    {
+		        SetPolyEditMode(PolyShape.PolyEditMode.None);
+
+		    }
 		}
 
 		void OnBeginVertexMovement()
