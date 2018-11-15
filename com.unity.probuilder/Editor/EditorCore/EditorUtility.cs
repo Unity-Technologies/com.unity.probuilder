@@ -325,7 +325,9 @@ namespace UnityEditor.ProBuilder
 		/// <param name="pb"></param>
 		internal static void InitObject(ProBuilderMesh pb)
 		{
-			SetPivotLocationAndSnap(pb);
+		    ScreenCenter(pb.gameObject);
+
+            SetPivotLocationAndSnap(pb);
 
 			pb.renderer.shadowCastingMode = s_ShadowCastingMode;
 			pb.renderer.sharedMaterial = GetUserMaterial();
@@ -363,8 +365,6 @@ namespace UnityEditor.ProBuilder
 					mesh.CenterPivot(new int[1] { mesh.firstVertexPivotIndex });
 					break;
 			}
-
-            ScreenCenter(mesh.gameObject);
 
 			if (ProGridsInterface.SnapEnabled())
 				mesh.transform.position = Snapping.SnapValue(mesh.transform.position, ProGridsInterface.SnapValue());
