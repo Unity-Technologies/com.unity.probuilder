@@ -17,12 +17,6 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	public static class EditorUtility
 	{
-		internal enum PivotLocation
-		{
-			Center,
-			FirstVertex
-		}
-
 		const float k_DefaultNotificationDuration = 1f;
 		static float s_NotificationTimer = 0f;
 		static EditorWindow s_NotificationWindow;
@@ -70,6 +64,11 @@ namespace UnityEditor.ProBuilder
 		{
 			get { return s_ExperimentalFeatures; }
 		}
+
+	    internal static PivotLocation newShapePivotLocation
+	    {
+	        get { return s_NewShapesPivotAtVertex; }
+	    }
 
 		[UserSettingBlock("Experimental")]
 		static void ExperimentalFeaturesSettings(string searchContext)
@@ -355,17 +354,6 @@ namespace UnityEditor.ProBuilder
 
 		internal static void SetPivotLocationAndSnap(ProBuilderMesh mesh)
 		{
-			switch (s_NewShapesPivotAtVertex.value)
-			{
-				case PivotLocation.Center:
-					mesh.CenterPivot(null);
-					break;
-
-				case PivotLocation.FirstVertex:
-					mesh.CenterPivot(new int[1] { mesh.firstVertexPivotIndex });
-					break;
-			}
-
 			if (ProGridsInterface.SnapEnabled())
 				mesh.transform.position = Snapping.SnapValue(mesh.transform.position, ProGridsInterface.SnapValue());
 			else if (s_SnapNewShapesToGrid)
