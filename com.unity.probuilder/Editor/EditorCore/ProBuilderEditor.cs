@@ -35,6 +35,7 @@ namespace UnityEditor.ProBuilder
 		static EditorToolbar s_EditorToolbar;
 		static ProBuilderEditor s_Instance;
 		EditorMeshHandles m_EditorMeshHandles;
+	    EditorEventsMonitor m_EditorEventsMonitor;
 
 		GUIContent[] m_EditModeIcons;
 		GUIStyle VertexTranslationInfoStyle;
@@ -326,6 +327,7 @@ namespace UnityEditor.ProBuilder
 				m_EditorMeshHandles.Dispose();
 
 			m_EditorMeshHandles = new EditorMeshHandles();
+            m_EditorEventsMonitor = new EditorEventsMonitor();
 
 #if UNITY_2019_1_OR_NEWER
 			SceneView.duringSceneGui += OnSceneGUI;
@@ -335,6 +337,7 @@ namespace UnityEditor.ProBuilder
 			ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
 			ProGridsInterface.SubscribeToolbarEvent(ProGridsToolbarOpen);
 			MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
+		    EditorEventsMonitor.editorPixelPerPointsChanged += OnEditorPixelPerPointsChanged;
 
 			ProGridsToolbarOpen(ProGridsInterface.SceneToolbarIsExtended());
 
@@ -347,6 +350,8 @@ namespace UnityEditor.ProBuilder
 			UpdateSelection();
 			HideSelectedWireframe();
 
+            m_EditorEventsMonitor.StartMonitor();
+
 			if (selectModeChanged != null)
 				selectModeChanged(selectMode);
 		}
@@ -355,7 +360,10 @@ namespace UnityEditor.ProBuilder
 		{
 			s_Instance = null;
 
-			if (s_EditorToolbar != null)
+		    if (m_EditorEventsMonitor != null)
+		        m_EditorEventsMonitor.StopMonitor();
+
+		    if (s_EditorToolbar != null)
 				DestroyImmediate(s_EditorToolbar);
 
 			ClearElementSelection();
@@ -376,10 +384,11 @@ namespace UnityEditor.ProBuilder
 			ProGridsInterface.UnsubscribePushToGridEvent(PushToGrid);
 			ProGridsInterface.UnsubscribeToolbarEvent(ProGridsToolbarOpen);
 			MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
+		    EditorEventsMonitor.editorPixelPerPointsChanged -= OnEditorPixelPerPointsChanged;
 
-			// re-enable unity wireframe
-			// todo set wireframe override in pb_Selection, no pb_Editor
-			foreach (var pb in FindObjectsOfType<ProBuilderMesh>())
+            // re-enable unity wireframe
+            // todo set wireframe override in pb_Selection, no pb_Editor
+            foreach (var pb in FindObjectsOfType<ProBuilderMesh>())
 				EditorUtility.SetSelectionRenderState(pb.gameObject.GetComponent<Renderer>(),
 					EditorUtility.GetSelectionRenderState());
 
@@ -408,7 +417,7 @@ namespace UnityEditor.ProBuilder
 			// workaround for old single-key shortcuts
 			if(s_Shortcuts.value == null || s_Shortcuts.value.Length < 1)
 				s_Shortcuts.SetValue(Shortcut.DefaultShortcuts().ToArray(), true);
-		}
+        }
 
 		void InitGUI()
 		{
@@ -1118,7 +1127,13 @@ namespace UnityEditor.ProBuilder
 				UpdateSelection(true);
 		}
 
-		void OnObjectSelectionChanged()
+	    void OnEditorPixelPerPointsChanged()
+	    {
+            if (m_EditorMeshHandles != null)
+	            m_EditorMeshHandles.ReloadPreferences();
+        }
+
+        void OnObjectSelectionChanged()
 		{
 			m_Hovering.Clear();
 			UpdateSelection();
