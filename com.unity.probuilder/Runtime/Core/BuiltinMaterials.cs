@@ -11,12 +11,12 @@ namespace UnityEngine.ProBuilder
 	{
 		static bool s_IsInitialized;
 
-		internal const string faceShader = "Hidden/ProBuilder/FaceHighlight";
-		internal const string lineShader = "Hidden/ProBuilder/LineBillboard";
-		internal const string pointShader = "Hidden/ProBuilder/PointBillboard";
+		internal const string k_FaceShader = "Hidden/ProBuilder/FaceHighlight";
+		internal const string k_LineShader = "Hidden/ProBuilder/LineBillboard";
+		internal const string k_PointShader = "Hidden/ProBuilder/PointBillboard";
 		// used when gpu doesn't support geometry shaders (metal, for example)
-		internal const string wireShader = "Hidden/ProBuilder/FaceHighlight";
-		internal const string dotShader = "Hidden/ProBuilder/VertexShader";
+		internal const string k_WireShader = "Hidden/ProBuilder/FaceHighlight";
+		internal const string k_DotShader = "Hidden/ProBuilder/VertexShader";
 
 	    internal static readonly Color k_PreviewColor = new Color(.5f, .9f, 1f, .56f);
 
@@ -39,7 +39,7 @@ namespace UnityEngine.ProBuilder
 
 			s_IsInitialized = true;
 
-			var geo = Shader.Find(lineShader);
+			var geo = Shader.Find(k_LineShader);
 			s_GeometryShadersSupported = geo != null && geo.isSupported;
 
 			// ProBuilder default
