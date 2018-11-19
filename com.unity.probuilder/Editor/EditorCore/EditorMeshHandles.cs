@@ -106,6 +106,11 @@ namespace UnityEditor.ProBuilder
 		Material m_VertMaterial;
 		Material m_WireMaterial;
 
+		internal static float dotCapSize
+		{
+			get { return s_VertexPointSize * .0125f; }
+		}
+
 		public static Color faceSelectedColor
 		{
 			get { return s_FaceSelectedColor; }
@@ -292,7 +297,7 @@ namespace UnityEditor.ProBuilder
 			}
 			else if (selection.vertex > -1)
 			{
-				var size = s_VertexPointSize * .0125f;
+				var size = dotCapSize;
 
 				using (new Handles.DrawingScope(preselectionColor, mesh.transform.localToWorldMatrix))
 				{
@@ -372,10 +377,21 @@ namespace UnityEditor.ProBuilder
 					case SelectMode.Vertex:
 					case SelectMode.TextureVertex:
 					{
-						foreach (var handle in m_VertexHandles)
-							handle.Value.mesh.vertices = handle.Key.positionsInternal;
-						foreach (var handle in m_SelectedVertexHandles)
-							handle.Value.mesh.vertices = handle.Key.positionsInternal;
+						if (BuiltinMaterials.geometryShadersSupported)
+						{
+							foreach (var handle in m_VertexHandles)
+								handle.Value.mesh.vertices = handle.Key.positionsInternal;
+							foreach (var handle in m_SelectedVertexHandles)
+								handle.Value.mesh.vertices = handle.Key.positionsInternal;
+						}
+						else
+						{
+							foreach (var handle in m_VertexHandles)
+								MeshHandles.CreateVertexMesh(handle.Key, handle.Value.mesh);
+							foreach(var handle in m_SelectedVertexHandles)
+								MeshHandles.CreateVertexMesh(handle.Key, handle.Value.mesh, handle.Key.selectedIndexesInternal);
+						}
+
 						break;
 					}
 
@@ -412,21 +428,16 @@ namespace UnityEditor.ProBuilder
 					case SelectMode.TextureVertex:
 					{
 						RebuildMeshHandle(mesh, m_VertexHandles, MeshHandles.CreateVertexMesh);
-
-						RebuildMeshHandle(mesh, m_SelectedVertexHandles, (x, y) =>
-						{
-							MeshHandles.CreateVertexMesh(x, y, x.selectedIndexesInternal);
-						});
+						RebuildMeshHandle(mesh, m_SelectedVertexHandles,
+							(x, y) => { MeshHandles.CreateVertexMesh(x, y, x.selectedIndexesInternal); });
 						break;
 					}
 
 					case SelectMode.Edge:
 					case SelectMode.TextureEdge:
 					{
-						RebuildMeshHandle(mesh, m_SelectedEdgeHandles, (x, y) =>
-						{
-							MeshHandles.CreateEdgeMesh(x, y, x.selectedEdgesInternal);
-						});
+						RebuildMeshHandle(mesh, m_SelectedEdgeHandles,
+							(x, y) => { MeshHandles.CreateEdgeMesh(x, y, x.selectedEdgesInternal); });
 						break;
 					}
 

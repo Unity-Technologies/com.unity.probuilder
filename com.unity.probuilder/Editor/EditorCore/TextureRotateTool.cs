@@ -52,9 +52,9 @@ namespace UnityEditor.ProBuilder
 					foreach (var group in mesh.elementGroups)
 					{
 						foreach(var index in group.indices)
-							positions[index] = group.inverseMatrix.MultiplyPoint(
+							positions[index] = group.postApplyMatrix.MultiplyPoint(
 								Math.RotateAroundPoint(
-									group.matrix.MultiplyPoint3x4(origins[index]), Vector2.zero, -m_Rotation));
+									group.preApplyMatrix.MultiplyPoint3x4(origins[index]), Vector2.zero, -m_Rotation));
 					}
 
 					mesh.mesh.mesh.SetUVs(k_TextureChannel, positions);

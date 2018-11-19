@@ -1,18 +1,20 @@
-using System.Collections.Generic;
+//#define DEBUG_HANDLES
+
 using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-	abstract class VertexTool : VertexManipulationTool
+	abstract class PositionTool : VertexManipulationTool
 	{
 		const bool k_CollectCoincidentVertices = true;
+
 #if APPLY_POSITION_TO_SPACE_GIZMO
 		Matrix4x4 m_CurrentDelta = Matrix4x4.identity;
 #endif
 
-		class MeshAndPositions : MeshAndElementGroupPair
+		protected class MeshAndPositions : MeshAndElementGroupPair
 		{
 			Vector3[] m_Positions;
 
@@ -21,7 +23,7 @@ namespace UnityEditor.ProBuilder
 				get { return m_Positions; }
 			}
 
-			public MeshAndPositions(ProBuilderMesh mesh, PivotPoint pivot) : base(mesh, pivot, k_CollectCoincidentVertices)
+			public MeshAndPositions(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation) : base(mesh, pivot, orientation, k_CollectCoincidentVertices)
 			{
 				m_Positions = mesh.positions.ToArray();
 
@@ -32,42 +34,39 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		protected override MeshAndElementGroupPair GetMeshAndElementGroupPair (ProBuilderMesh mesh, PivotPoint pivot)
+		protected override MeshAndElementGroupPair GetMeshAndElementGroupPair (ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation)
 		{
-			return new MeshAndPositions(mesh, pivot);
+			return new MeshAndPositions(mesh, pivot, orientation);
 		}
 
-		protected override void DoTool(Vector3 position, Quaternion rotation)
+		protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
 		{
-			if ( isEditing && currentEvent.type == EventType.Repaint)
+			if (isEditing && currentEvent.type == EventType.Repaint)
 			{
 				foreach (var key in meshAndElementGroupPairs)
 				{
 					foreach (var group in key.elementGroups)
 					{
 #if DEBUG_HANDLES
-							using (var faceDrawer = new EditorMeshHandles.TriangleDrawingScope(Color.cyan, CompareFunction.Always))
-							{
-								foreach (var face in key.mesh.GetSelectedFaces())
-								{
-									var indices = face.indexesInternal;
+						var positions = ((MeshAndPositions) key).positions;
 
-									for (int i = 0, c = indices.Length; i < c; i += 3)
-									{
-										faceDrawer.Draw(
-											group.matrix.MultiplyPoint3x4(key.positions[indices[i]]),
-											group.matrix.MultiplyPoint3x4(key.positions[indices[i + 1]]),
-											group.matrix.MultiplyPoint3x4(key.positions[indices[i + 2]])
-										);
-									}
+						using (var faceDrawer = new EditorMeshHandles.TriangleDrawingScope(Color.cyan,
+							UnityEngine.Rendering.CompareFunction.Always))
+						{
+							foreach (var face in key.mesh.GetSelectedFaces())
+							{
+								var indices = face.indexesInternal;
+
+								for (int i = 0, c = indices.Length; i < c; i += 3)
+								{
+									faceDrawer.Draw(
+										group.preApplyMatrix.MultiplyPoint3x4(positions[indices[i]]),
+										group.preApplyMatrix.MultiplyPoint3x4(positions[indices[i + 1]]),
+										group.preApplyMatrix.MultiplyPoint3x4(positions[indices[i + 2]])
+									);
 								}
 							}
-#endif
-
-#if APPLY_POSITION_TO_SPACE_GIZMO
-						EditorMeshHandles.DrawGizmo(Vector3.zero, group.matrix.inverse * m_CurrentDelta);
-#else
-						EditorMeshHandles.DrawGizmo(Vector3.zero, group.matrix.inverse);
+						}
 #endif
 					}
 				}
@@ -96,8 +95,8 @@ namespace UnityEditor.ProBuilder
 					foreach (var index in group.indices)
 					{
 						positions[index] = worldToLocal.MultiplyPoint3x4(
-							group.inverseMatrix.MultiplyPoint3x4(
-								delta.MultiplyPoint3x4(group.matrix.MultiplyPoint3x4(origins[index]))));
+							group.postApplyMatrix.MultiplyPoint3x4(
+								delta.MultiplyPoint3x4(group.preApplyMatrix.MultiplyPoint3x4(origins[index]))));
 					}
 				}
 

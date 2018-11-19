@@ -481,6 +481,7 @@ namespace UnityEngine.ProBuilder
 			if (coincident == null)
 				throw new ArgumentNullException("coincident");
 
+			coincident.Clear();
 			s_CachedHashSet.Clear();
 			var lookup = sharedVertexLookup;
 
@@ -515,6 +516,7 @@ namespace UnityEngine.ProBuilder
 			if (coincident == null)
 				throw new ArgumentNullException("coincident");
 
+			coincident.Clear();
 			s_CachedHashSet.Clear();
 			var lookup = sharedVertexLookup;
 

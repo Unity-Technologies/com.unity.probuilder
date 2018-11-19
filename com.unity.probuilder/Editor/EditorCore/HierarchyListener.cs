@@ -51,7 +51,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if(!EditorApplication.isPlaying)
 			{
-				bool meshesAreAssets = EditorUtility.meshesAreAssets;
+				bool meshesAreAssets = Experimental.meshesAreAssets;
 
 				// on duplication, or copy paste, this rebuilds the mesh structures of the new objects
 				foreach(ProBuilderMesh pb in Selection.transforms.GetComponents<ProBuilderMesh>())

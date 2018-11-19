@@ -38,7 +38,7 @@ namespace UnityEditor.SettingsManagement
 			get
 			{
 				if (s_DefaultLabelWidth != null)
-					return (int) ((float) s_DefaultLabelWidth.GetValue(null));
+					return (int) ((float) s_DefaultLabelWidth.GetValue(null, null));
 
 				return k_LabelWidth;
 			}
@@ -49,7 +49,7 @@ namespace UnityEditor.SettingsManagement
 			get
 			{
 				if (s_DefaultLayoutMaxWidth != null)
-					return (int) ((float)s_DefaultLayoutMaxWidth.GetValue(null));
+					return (int) ((float) s_DefaultLayoutMaxWidth.GetValue(null, null));
 
 				return 0;
 			}
@@ -105,8 +105,8 @@ namespace UnityEditor.SettingsManagement
 		internal static UserSetting<bool> showHiddenSettings = new UserSetting<bool>(userSettingsProviderSettings, "settings.showHidden", false, SettingsScope.User);
 		internal static UserSetting<bool> showUnregisteredSettings = new UserSetting<bool>(userSettingsProviderSettings, "settings.showUnregistered", false, SettingsScope.User);
 		internal static UserSetting<bool> listByKey = new UserSetting<bool>(userSettingsProviderSettings, "settings.listByKey", false, SettingsScope.User);
-		internal static UserSetting<bool> showUserSettings = new UserSetting<bool>(userSettingsProviderSettings, "settings.showUserSettings", false, SettingsScope.User);
-		internal static UserSetting<bool> showProjectSettings = new UserSetting<bool>(userSettingsProviderSettings, "settings.showProjectSettings", false, SettingsScope.User);
+		internal static UserSetting<bool> showUserSettings = new UserSetting<bool>(userSettingsProviderSettings, "settings.showUserSettings", true, SettingsScope.User);
+		internal static UserSetting<bool> showProjectSettings = new UserSetting<bool>(userSettingsProviderSettings, "settings.showProjectSettings", true, SettingsScope.User);
 
 #if SETTINGS_PROVIDER_ENABLED
 		/// <summary>

@@ -86,7 +86,7 @@ namespace UnityEditor.ProBuilder.Actions
 					foreach(var mesh in MeshSelection.topInternal)
 					{
 						var universalEdges = mesh.GetSharedVertexHandleEdges(mesh.facesInternal.SelectMany(x => x.edges)).ToArray();
-						var universal_selected_edges = EdgeExtension.GetSharedVertexHandleEdges(mesh, mesh.selectedEdges).Distinct();
+						var universal_selected_edges = EdgeUtility.GetSharedVertexHandleEdges(mesh, mesh.selectedEdges).Distinct();
 						Edge[] inverse_universal = System.Array.FindAll(universalEdges, x => !universal_selected_edges.Contains(x));
 						Edge[] inverse = new Edge[inverse_universal.Length];
 

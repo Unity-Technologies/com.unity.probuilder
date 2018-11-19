@@ -23,7 +23,7 @@ namespace UnityEditor.ProBuilder
 			NewBezierShape instance = EditorToolbarLoader.GetInstance<NewBezierShape>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/New Bezier Shape ", false, PreferenceKeys.menuEditor + 1)]
@@ -40,7 +40,7 @@ namespace UnityEditor.ProBuilder
 			NewPolyShape instance = EditorToolbarLoader.GetInstance<NewPolyShape>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/New Poly Shape ", false, PreferenceKeys.menuEditor + 1)]
@@ -57,7 +57,7 @@ namespace UnityEditor.ProBuilder
 			OpenLightmapUVEditor instance = EditorToolbarLoader.GetInstance<OpenLightmapUVEditor>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/Open Lightmap UV Editor ", false, PreferenceKeys.menuEditor + 1)]
@@ -74,7 +74,7 @@ namespace UnityEditor.ProBuilder
 			OpenMaterialEditor instance = EditorToolbarLoader.GetInstance<OpenMaterialEditor>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/Open Material Editor ", false, PreferenceKeys.menuEditor + 1)]
@@ -92,7 +92,7 @@ namespace UnityEditor.ProBuilder
 			OpenShapeEditorMenuItem instance = EditorToolbarLoader.GetInstance<OpenShapeEditorMenuItem>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/Open Shape Editor Menu Item %#k", false, PreferenceKeys.menuEditor + 1)]
@@ -109,7 +109,7 @@ namespace UnityEditor.ProBuilder
 			OpenSmoothingEditor instance = EditorToolbarLoader.GetInstance<OpenSmoothingEditor>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/Open Smoothing Editor ", false, PreferenceKeys.menuEditor + 1)]
@@ -126,7 +126,7 @@ namespace UnityEditor.ProBuilder
 			OpenUVEditor instance = EditorToolbarLoader.GetInstance<OpenUVEditor>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/Open UV Editor ", false, PreferenceKeys.menuEditor + 1)]
@@ -143,7 +143,7 @@ namespace UnityEditor.ProBuilder
 			OpenVertexColorEditor instance = EditorToolbarLoader.GetInstance<OpenVertexColorEditor>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/Open Vertex Color Editor ", false, PreferenceKeys.menuEditor + 1)]
@@ -160,7 +160,7 @@ namespace UnityEditor.ProBuilder
 			OpenVertexPositionEditor instance = EditorToolbarLoader.GetInstance<OpenVertexPositionEditor>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/Open Vertex Position Editor ", false, PreferenceKeys.menuEditor + 1)]
@@ -178,7 +178,7 @@ namespace UnityEditor.ProBuilder
 			ExportAsset instance = EditorToolbarLoader.GetInstance<ExportAsset>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Export/Export Asset ", false, PreferenceKeys.menuExport + 0)]
@@ -195,7 +195,7 @@ namespace UnityEditor.ProBuilder
 			ExportObj instance = EditorToolbarLoader.GetInstance<ExportObj>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Export/Export Obj ", false, PreferenceKeys.menuExport + 0)]
@@ -212,7 +212,7 @@ namespace UnityEditor.ProBuilder
 			ExportPly instance = EditorToolbarLoader.GetInstance<ExportPly>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Export/Export Ply ", false, PreferenceKeys.menuExport + 0)]
@@ -229,7 +229,7 @@ namespace UnityEditor.ProBuilder
 			ExportStlAscii instance = EditorToolbarLoader.GetInstance<ExportStlAscii>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Export/Export Stl Ascii ", false, PreferenceKeys.menuExport + 0)]
@@ -246,7 +246,7 @@ namespace UnityEditor.ProBuilder
 			ExportStlBinary instance = EditorToolbarLoader.GetInstance<ExportStlBinary>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Export/Export Stl Binary ", false, PreferenceKeys.menuExport + 0)]
@@ -263,7 +263,7 @@ namespace UnityEditor.ProBuilder
 			BevelEdges instance = EditorToolbarLoader.GetInstance<BevelEdges>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Bevel Edges ", false, PreferenceKeys.menuGeometry + 3)]
@@ -280,7 +280,7 @@ namespace UnityEditor.ProBuilder
 			BridgeEdges instance = EditorToolbarLoader.GetInstance<BridgeEdges>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Bridge Edges &b", false, PreferenceKeys.menuGeometry + 3)]
@@ -297,7 +297,7 @@ namespace UnityEditor.ProBuilder
 			CollapseVertices instance = EditorToolbarLoader.GetInstance<CollapseVertices>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Collapse Vertices &c", false, PreferenceKeys.menuGeometry + 3)]
@@ -314,7 +314,7 @@ namespace UnityEditor.ProBuilder
 			ConformFaceNormals instance = EditorToolbarLoader.GetInstance<ConformFaceNormals>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Conform Face Normals ", false, PreferenceKeys.menuGeometry + 3)]
@@ -333,7 +333,7 @@ namespace UnityEditor.ProBuilder
 			DeleteFaces instance = EditorToolbarLoader.GetInstance<DeleteFaces>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Delete Faces  [delete]", false, PreferenceKeys.menuGeometry + 3)]
@@ -350,7 +350,7 @@ namespace UnityEditor.ProBuilder
 			DetachFaces instance = EditorToolbarLoader.GetInstance<DetachFaces>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Detach Faces ", false, PreferenceKeys.menuGeometry + 3)]
@@ -367,7 +367,7 @@ namespace UnityEditor.ProBuilder
 			Extrude instance = EditorToolbarLoader.GetInstance<Extrude>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Extrude %e", false, PreferenceKeys.menuGeometry + 3)]
@@ -386,7 +386,7 @@ namespace UnityEditor.ProBuilder
 			FillHole instance = EditorToolbarLoader.GetInstance<FillHole>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Fill Hole ", false, PreferenceKeys.menuGeometry + 3)]
@@ -403,7 +403,7 @@ namespace UnityEditor.ProBuilder
 			FlipFaceEdge instance = EditorToolbarLoader.GetInstance<FlipFaceEdge>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Flip Face Edge ", false, PreferenceKeys.menuGeometry + 3)]
@@ -420,7 +420,7 @@ namespace UnityEditor.ProBuilder
 			FlipFaceNormals instance = EditorToolbarLoader.GetInstance<FlipFaceNormals>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Flip Face Normals &n", false, PreferenceKeys.menuGeometry + 3)]
@@ -437,7 +437,7 @@ namespace UnityEditor.ProBuilder
 			InsertEdgeLoop instance = EditorToolbarLoader.GetInstance<InsertEdgeLoop>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Insert Edge Loop &u", false, PreferenceKeys.menuGeometry + 3)]
@@ -454,7 +454,7 @@ namespace UnityEditor.ProBuilder
 			MergeFaces instance = EditorToolbarLoader.GetInstance<MergeFaces>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Merge Faces ", false, PreferenceKeys.menuGeometry + 3)]
@@ -471,7 +471,7 @@ namespace UnityEditor.ProBuilder
 			SetPivotToSelection instance = EditorToolbarLoader.GetInstance<SetPivotToSelection>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Set Pivot To Selection %j", false, PreferenceKeys.menuGeometry + 3)]
@@ -488,7 +488,7 @@ namespace UnityEditor.ProBuilder
 			SmartConnect instance = EditorToolbarLoader.GetInstance<SmartConnect>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Smart Connect &e", false, PreferenceKeys.menuGeometry + 3)]
@@ -505,7 +505,7 @@ namespace UnityEditor.ProBuilder
 			SmartSubdivide instance = EditorToolbarLoader.GetInstance<SmartSubdivide>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Smart Subdivide &s", false, PreferenceKeys.menuGeometry + 3)]
@@ -522,7 +522,7 @@ namespace UnityEditor.ProBuilder
 			SplitVertices instance = EditorToolbarLoader.GetInstance<SplitVertices>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Split Vertices &x", false, PreferenceKeys.menuGeometry + 3)]
@@ -541,7 +541,7 @@ namespace UnityEditor.ProBuilder
 			TriangulateFaces instance = EditorToolbarLoader.GetInstance<TriangulateFaces>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Triangulate Faces ", false, PreferenceKeys.menuGeometry + 3)]
@@ -558,7 +558,7 @@ namespace UnityEditor.ProBuilder
 			WeldVertices instance = EditorToolbarLoader.GetInstance<WeldVertices>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Weld Vertices &v", false, PreferenceKeys.menuGeometry + 3)]
@@ -575,7 +575,7 @@ namespace UnityEditor.ProBuilder
 			ToggleDragRectMode instance = EditorToolbarLoader.GetInstance<ToggleDragRectMode>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Interaction/Toggle Drag Rect Mode ", false, PreferenceKeys.menuSelection + 1)]
@@ -592,7 +592,7 @@ namespace UnityEditor.ProBuilder
 			ToggleDragSelectionMode instance = EditorToolbarLoader.GetInstance<ToggleDragSelectionMode>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Interaction/Toggle Drag Selection Mode ", false, PreferenceKeys.menuSelection + 1)]
@@ -603,13 +603,14 @@ namespace UnityEditor.ProBuilder
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
+#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
 		[MenuItem(k_MenuPrefix + "Interaction/Toggle Handle Alignment  [p]", true)]
 		static bool MenuVerifyToggleHandleAlignment()
 		{
 			ToggleHandleOrientation instance = EditorToolbarLoader.GetInstance<ToggleHandleOrientation>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Interaction/Toggle Handle Alignment  [p]", false, PreferenceKeys.menuSelection + 1)]
@@ -619,6 +620,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null)
 				UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
+#endif
 
 		[MenuItem(k_MenuPrefix + "Interaction/Toggle Select Back Faces ", true)]
 		static bool MenuVerifyToggleSelectBackFaces()
@@ -626,7 +628,7 @@ namespace UnityEditor.ProBuilder
 			ToggleSelectBackFaces instance = EditorToolbarLoader.GetInstance<ToggleSelectBackFaces>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Interaction/Toggle Select Back Faces ", false, PreferenceKeys.menuSelection + 1)]
@@ -643,7 +645,7 @@ namespace UnityEditor.ProBuilder
 			CenterPivot instance = EditorToolbarLoader.GetInstance<CenterPivot>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Center Pivot ", false, PreferenceKeys.menuGeometry + 2)]
@@ -660,7 +662,7 @@ namespace UnityEditor.ProBuilder
 			ConformObjectNormals instance = EditorToolbarLoader.GetInstance<ConformObjectNormals>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Conform Object Normals ", false, PreferenceKeys.menuGeometry + 2)]
@@ -677,7 +679,7 @@ namespace UnityEditor.ProBuilder
 			FlipObjectNormals instance = EditorToolbarLoader.GetInstance<FlipObjectNormals>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Flip Object Normals ", false, PreferenceKeys.menuGeometry + 2)]
@@ -694,7 +696,7 @@ namespace UnityEditor.ProBuilder
 			FreezeTransform instance = EditorToolbarLoader.GetInstance<FreezeTransform>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Freeze Transform ", false, PreferenceKeys.menuGeometry + 2)]
@@ -712,7 +714,7 @@ namespace UnityEditor.ProBuilder
 			MergeObjects instance = EditorToolbarLoader.GetInstance<MergeObjects>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Merge Objects ", false, PreferenceKeys.menuGeometry + 2)]
@@ -729,7 +731,7 @@ namespace UnityEditor.ProBuilder
 			MirrorObjects instance = EditorToolbarLoader.GetInstance<MirrorObjects>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Mirror Objects ", false, PreferenceKeys.menuGeometry + 2)]
@@ -746,7 +748,7 @@ namespace UnityEditor.ProBuilder
 			ProBuilderize instance = EditorToolbarLoader.GetInstance<ProBuilderize>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Pro Builderize ", false, PreferenceKeys.menuGeometry + 2)]
@@ -763,7 +765,7 @@ namespace UnityEditor.ProBuilder
 			SetCollider instance = EditorToolbarLoader.GetInstance<SetCollider>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Set Collider ", false, PreferenceKeys.menuGeometry + 2)]
@@ -780,7 +782,7 @@ namespace UnityEditor.ProBuilder
 			SetTrigger instance = EditorToolbarLoader.GetInstance<SetTrigger>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Set Trigger ", false, PreferenceKeys.menuGeometry + 2)]
@@ -797,7 +799,7 @@ namespace UnityEditor.ProBuilder
 			SubdivideObject instance = EditorToolbarLoader.GetInstance<SubdivideObject>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Subdivide Object ", false, PreferenceKeys.menuGeometry + 2)]
@@ -814,7 +816,7 @@ namespace UnityEditor.ProBuilder
 			TriangulateObject instance = EditorToolbarLoader.GetInstance<TriangulateObject>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Triangulate Object ", false, PreferenceKeys.menuGeometry + 2)]
@@ -831,7 +833,7 @@ namespace UnityEditor.ProBuilder
 			GrowSelection instance = EditorToolbarLoader.GetInstance<GrowSelection>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Selection/Grow Selection &g", false, PreferenceKeys.menuSelection + 0)]
@@ -848,7 +850,7 @@ namespace UnityEditor.ProBuilder
 			InvertSelection instance = EditorToolbarLoader.GetInstance<InvertSelection>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Selection/Invert Selection %#i", false, PreferenceKeys.menuSelection + 0)]
@@ -869,7 +871,7 @@ namespace UnityEditor.ProBuilder
 			SelectHole instance = EditorToolbarLoader.GetInstance<SelectHole>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Selection/Select Hole ", false, PreferenceKeys.menuSelection + 0)]
@@ -886,7 +888,7 @@ namespace UnityEditor.ProBuilder
 			SelectLoop instance = EditorToolbarLoader.GetInstance<SelectLoop>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Selection/Select Loop &l", false, PreferenceKeys.menuSelection + 0)]
@@ -903,7 +905,7 @@ namespace UnityEditor.ProBuilder
 			SelectMaterial instance = EditorToolbarLoader.GetInstance<SelectMaterial>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Selection/Select Material ", false, PreferenceKeys.menuSelection + 0)]
@@ -920,7 +922,7 @@ namespace UnityEditor.ProBuilder
 			SelectRing instance = EditorToolbarLoader.GetInstance<SelectRing>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Selection/Select Ring &r", false, PreferenceKeys.menuSelection + 0)]
@@ -937,7 +939,7 @@ namespace UnityEditor.ProBuilder
 			SelectSmoothingGroup instance = EditorToolbarLoader.GetInstance<SelectSmoothingGroup>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Selection/Select Smoothing Group ", false, PreferenceKeys.menuSelection + 0)]
@@ -954,7 +956,7 @@ namespace UnityEditor.ProBuilder
 			SelectVertexColor instance = EditorToolbarLoader.GetInstance<SelectVertexColor>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Selection/Select Vertex Color ", false, PreferenceKeys.menuSelection + 0)]
@@ -971,7 +973,7 @@ namespace UnityEditor.ProBuilder
 			ShrinkSelection instance = EditorToolbarLoader.GetInstance<ShrinkSelection>();
 
 			return instance != null && instance.enabled;
-	
+
 		}
 
 		[MenuItem(k_MenuPrefix + "Selection/Shrink Selection &#g", false, PreferenceKeys.menuSelection + 0)]

@@ -1,9 +1,7 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Collections.ObjectModel;
-using UnityEngine.Serialization;
 
 namespace UnityEngine.ProBuilder
 {
@@ -12,21 +10,18 @@ namespace UnityEngine.ProBuilder
 		[SerializeField]
 		bool m_IsSelectable = true;
 
+		// Serialized for undo in the editor
 		[SerializeField]
-		[FormerlySerializedAs("m_selectedFaces")]
 		int[] m_SelectedFaces = new int[] { };
-
 		[SerializeField]
 		Edge[] m_SelectedEdges = new Edge[] { };
-
 		[SerializeField]
-		[FormerlySerializedAs("m_selectedTriangles")]
-		int[] m_SelectedTriangles = new int[] { };
+		int[] m_SelectedVertices = new int[] { };
 
 		bool m_SelectedCacheDirty;
-
 		int m_SelectedSharedVerticesCount = 0;
 		HashSet<int> m_SelectedSharedVertices = new HashSet<int>();
+		List<int> m_SelectedCoincidentVertices = new List<int>();
 
 		/// <value>
 		/// If false mesh elements will not be selectable. This is used by @"UnityEditor.ProBuilder.ProBuilderEditor".
@@ -50,7 +45,7 @@ namespace UnityEngine.ProBuilder
 		/// </value>
 		public int selectedVertexCount
 		{
-			get { return m_SelectedTriangles.Length; }
+			get { return m_SelectedVertices.Length; }
 		}
 
 		/// <value>
@@ -79,19 +74,37 @@ namespace UnityEngine.ProBuilder
 			}
 		}
 
+		/// <summary>
+		/// All selected vertices and their coincident neighbors.
+		/// </summary>
+		internal IEnumerable<int> selectedCoincidentVertices
+		{
+			get
+			{
+				CacheSelection();
+				return m_SelectedCoincidentVertices;
+			}
+		}
+
 		void CacheSelection()
 		{
 			if (m_SelectedCacheDirty)
 			{
 				m_SelectedCacheDirty = false;
 				m_SelectedSharedVertices.Clear();
+				m_SelectedCoincidentVertices.Clear();
 				var lookup = sharedVertexLookup;
 				m_SelectedSharedVerticesCount = 0;
 
-				foreach (var i in m_SelectedTriangles)
+				foreach (var i in m_SelectedVertices)
 				{
 					if (m_SelectedSharedVertices.Add(lookup[i]))
+					{
 						m_SelectedSharedVerticesCount++;
+
+						foreach (var n in sharedVerticesInternal[lookup[i]])
+							m_SelectedCoincidentVertices.Add(n);
+					}
 				}
 			}
 		}
@@ -131,7 +144,7 @@ namespace UnityEngine.ProBuilder
 		/// </value>
 		public ReadOnlyCollection<int> selectedVertices
 		{
-			get { return new ReadOnlyCollection<int>(m_SelectedTriangles); }
+			get { return new ReadOnlyCollection<int>(m_SelectedVertices); }
 		}
 
 		/// <value>
@@ -149,7 +162,28 @@ namespace UnityEngine.ProBuilder
 
 		internal int[] selectedIndexesInternal
 		{
-			get { return m_SelectedTriangles; }
+			get { return m_SelectedVertices; }
+		}
+
+		internal Face GetActiveFace()
+		{
+			if (selectedFaceCount < 1)
+				return null;
+			return m_Faces[selectedFaceIndicesInternal[0]];
+		}
+
+		internal Edge GetActiveEdge()
+		{
+			if (selectedEdgeCount < 1)
+				return Edge.Empty;
+			return m_SelectedEdges[0];
+		}
+
+		internal int GetActiveVertex()
+		{
+			if (selectedVertexCount < 1)
+				return -1;
+			return m_SelectedVertices[0];
 		}
 
 		internal void AddToFaceSelection(int index)
@@ -176,7 +210,7 @@ namespace UnityEngine.ProBuilder
 			else
 			{
 				m_SelectedFaces = selected.ToArray();
-				m_SelectedTriangles = m_SelectedFaces.SelectMany(x => facesInternal[x].distinctIndexesInternal).ToArray();
+				m_SelectedVertices = m_SelectedFaces.SelectMany(x => facesInternal[x].distinctIndexesInternal).ToArray();
 				m_SelectedEdges = m_SelectedFaces.SelectMany(x => facesInternal[x].edges).ToArray();
 			}
 
@@ -200,7 +234,7 @@ namespace UnityEngine.ProBuilder
 			{
 				m_SelectedFaces = new int[0];
 				m_SelectedEdges = edges.ToArray();
-				m_SelectedTriangles = m_SelectedEdges.AllTriangles();
+				m_SelectedVertices = m_SelectedEdges.AllTriangles();
 			}
 
 			m_SelectedCacheDirty = true;
@@ -217,7 +251,7 @@ namespace UnityEngine.ProBuilder
 		{
 			m_SelectedFaces = new int[0];
 			m_SelectedEdges = new Edge[0];
-			m_SelectedTriangles = vertices != null ? vertices.Distinct().ToArray() : new int[0];
+			m_SelectedVertices = vertices != null ? vertices.Distinct().ToArray() : new int[0];
 
 			m_SelectedCacheDirty = true;
 
@@ -241,7 +275,7 @@ namespace UnityEngine.ProBuilder
 		{
 			m_SelectedFaces = new int[0];
 			m_SelectedEdges = new Edge[0];
-			m_SelectedTriangles = new int[0];
+			m_SelectedVertices = new int[0];
 
 			m_SelectedCacheDirty = true;
 		}

@@ -107,6 +107,9 @@ namespace UnityEngine.ProBuilder
 			m_Mask = mask;
 		}
 
+		/// <summary>
+		/// The number of toggled axes.
+		/// </summary>
 		public int active
 		{
 			get

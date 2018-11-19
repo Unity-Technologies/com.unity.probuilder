@@ -61,8 +61,6 @@ namespace UnityEditor.ProBuilder
 		internal Pref<SelectionModifierBehavior> m_SelectModifierBehavior = new Pref<SelectionModifierBehavior>("editor.rectSelectModifier", SelectionModifierBehavior.Difference);
 		Pref<SelectMode> m_SelectMode = new Pref<SelectMode>("editor.selectMode", SelectMode.Object);
 
-		internal static Pref<HandleOrientation> s_HandleOrientation = new Pref<HandleOrientation>("editor.handleAlignment", HandleOrientation.World);
-
 		internal RectSelectMode rectSelectMode
 		{
 			get { return m_DragSelectRectMode.value; }
@@ -88,24 +86,6 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		internal static HandleOrientation handleOrientation
-		{
-			get { return s_HandleOrientation.value; }
-
-			set
-			{
-				if (value == s_HandleOrientation.value)
-					return;
-
-				if (selectMode.ContainsFlag(SelectMode.TextureFace))
-					value = HandleOrientation.Normal;
-
-				s_HandleOrientation.SetValue(value, true);
-
-				SceneView.RepaintAll();
-			}
-		}
-
 		internal bool backfaceSelectionEnabled
 		{
 			get { return m_BackfaceSelectEnabled.value; }
@@ -122,10 +102,8 @@ namespace UnityEditor.ProBuilder
 
 		// used for 'g' key shortcut to swap between object/vef modes
 		SelectMode m_LastComponentMode;
-		HandleOrientation m_PreviousHandleOrientation;
-		PivotMode m_PreviousHandlePivot;
 		[UserSetting]
-		static internal Pref<Shortcut[]> s_Shortcuts = new Pref<Shortcut[]>("editor.sceneViewShortcuts", Shortcut.DefaultShortcuts().ToArray());
+		internal static Pref<Shortcut[]> s_Shortcuts = new Pref<Shortcut[]>("editor.sceneViewShortcuts", Shortcut.DefaultShortcuts().ToArray());
 		GUIStyle m_CommandStyle;
 		Rect m_ElementModeToolbarRect = new Rect(3, 6, 128, 24);
 
@@ -209,9 +187,6 @@ namespace UnityEditor.ProBuilder
 				if (previous == value)
 					return;
 
-				var wasTextureMode = previous.ContainsFlag(SelectMode.TextureEdge | SelectMode.TextureVertex | SelectMode.TextureFace);
-				var isTextureMode = value.ContainsFlag(SelectMode.TextureEdge | SelectMode.TextureVertex | SelectMode.TextureFace);
-
 				s_Instance.m_SelectMode.SetValue(value, true);
 
 				if (previous == SelectMode.Edge || previous == SelectMode.Vertex || previous == SelectMode.Face)
@@ -219,24 +194,6 @@ namespace UnityEditor.ProBuilder
 
 				if (value == SelectMode.Object)
 					Tools.current = s_Instance.m_CurrentTool;
-
-				if (!wasTextureMode && isTextureMode)
-				{
-					s_Instance.m_PreviousHandlePivot = Tools.pivotMode;
-					s_Instance.m_PreviousHandleOrientation = s_HandleOrientation;
-
-					Tools.pivotMode = PivotMode.Pivot;
-					handleOrientation = HandleOrientation.Normal;
-				}
-				else if(wasTextureMode && !isTextureMode)
-				{
-					if (Tools.pivotMode == PivotMode.Pivot
-						&& handleOrientation == HandleOrientation.Normal)
-					{
-						Tools.pivotMode = s_Instance.m_PreviousHandlePivot;
-						handleOrientation = s_Instance.m_PreviousHandleOrientation;
-					}
-				}
 
 				if (selectModeChanged != null)
 					selectModeChanged(value);
@@ -383,6 +340,9 @@ namespace UnityEditor.ProBuilder
 				EditorUtility.SetSelectionRenderState(pb.gameObject.GetComponent<Renderer>(),
 					EditorUtility.GetSelectionRenderState());
 
+			if (selectModeChanged != null)
+				selectModeChanged(SelectMode.Object);
+
 			SceneView.RepaintAll();
 		}
 
@@ -431,7 +391,10 @@ namespace UnityEditor.ProBuilder
 		public static void Refresh(bool vertexCountChanged = true)
 		{
 			if (instance != null)
+			{
 				instance.UpdateSelection(vertexCountChanged);
+				SceneView.RepaintAll();
+			}
 		}
 
 		void OnGUI()
@@ -527,15 +490,15 @@ namespace UnityEditor.ProBuilder
 				case Tool.Move:
 					return mode.IsTextureMode()
 						? GetTool<TextureMoveTool>()
-						: GetTool<VertexMoveTool>();
+						: GetTool<PositionMoveTool>();
 				case Tool.Rotate:
 					return mode.IsTextureMode()
 						? GetTool<TextureRotateTool>()
-						: GetTool<VertexRotateTool>();
+						: GetTool<PositionRotateTool>();
 				case Tool.Scale:
 					return mode.IsTextureMode()
 						? GetTool<TextureScaleTool>()
-						: GetTool<VertexScaleTool>();
+						: GetTool<PositionScaleTool>();
 				default:
 					return null;
 			}
@@ -941,15 +904,6 @@ namespace UnityEditor.ProBuilder
 					EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<DeleteFaces>().DoAction().notification);
 					return true;
 
-				/* handle alignment */
-				case "Toggle Handle Pivot":
-					if (MeshSelection.selectedVertexCount < 1 || selectMode == SelectMode.TextureFace)
-						return false;
-
-					ToggleHandleAlignment();
-					EditorUtility.ShowNotification("Handle Alignment: " + s_HandleOrientation.value.ToString());
-					return true;
-
 				case "Set Pivot":
 
 					if (selection.Length > 0)
@@ -997,14 +951,6 @@ namespace UnityEditor.ProBuilder
 
 			if (UVEditor.instance != null)
 				UVEditor.instance.SetTool(newTool);
-		}
-
-		internal void ToggleHandleAlignment()
-		{
-			int newHa = (int) s_HandleOrientation.value + 1;
-			if (newHa >= Enum.GetValues(typeof(HandleOrientation)).Length)
-				newHa = 0;
-			handleOrientation = ((HandleOrientation) newHa);
 		}
 
 		/// <summary>
