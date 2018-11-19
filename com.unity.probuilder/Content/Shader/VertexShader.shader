@@ -3,6 +3,7 @@
 	Properties
 	{
 		_Scale("Scale", Range(1,7)) = 3.3
+		_Color ("Color", Color) = (1,1,1,1)
 	}
 
 	SubShader
@@ -31,6 +32,7 @@
 			#include "UnityCG.cginc"
 
 			float _Scale;
+			float4 _Color;
 
 			struct appdata
 			{
@@ -80,7 +82,7 @@
 
 			half4 frag (v2f i) : COLOR
 			{
-				return i.color;
+				return _Color * i.color;
 			}
 
 			ENDCG
