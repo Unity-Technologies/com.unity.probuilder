@@ -117,7 +117,7 @@ namespace UnityEditor.ProBuilder.Actions
 					if(!primary.Contains(i))
 						inverse.Add(i);
 
-				ProBuilderMesh copy = Object.Instantiate(mesh.gameObject).GetComponent<ProBuilderMesh>();
+				ProBuilderMesh copy = Object.Instantiate(mesh.gameObject, mesh.transform.parent).GetComponent<ProBuilderMesh>();
 				copy.MakeUnique();
 
 #if !UNITY_2018_3_OR_NEWER
