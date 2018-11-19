@@ -63,8 +63,8 @@ namespace UnityEditor.ProBuilder
 					foreach (var group in mesh.elementGroups)
 					{
 						foreach(var index in group.indices)
-							positions[index] = group.inverseMatrix.MultiplyPoint(
-								Vector2.Scale(group.matrix.MultiplyPoint3x4(origins[index]), delta));
+							positions[index] = group.postApplyMatrix.MultiplyPoint(
+								Vector2.Scale(group.preApplyMatrix.MultiplyPoint3x4(origins[index]), delta));
 					}
 
 					mesh.mesh.mesh.SetUVs(k_TextureChannel, positions);

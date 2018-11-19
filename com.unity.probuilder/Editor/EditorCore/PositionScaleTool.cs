@@ -1,8 +1,9 @@
 using UnityEngine;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-	class VertexScaleTool : VertexTool
+	class PositionScaleTool : PositionTool
 	{
 		Vector3 m_Scale;
 
@@ -15,7 +16,12 @@ namespace UnityEditor.ProBuilder
 
 			EditorGUI.BeginChangeCheck();
 
-			m_Scale = Handles.ScaleHandle(m_Scale, handlePosition, handleRotation, HandleUtility.GetHandleSize(handlePosition));
+			var size = HandleUtility.GetHandleSize(handlePosition);
+
+			EditorHandleUtility.PushMatrix();
+			Handles.matrix = Matrix4x4.TRS(handlePosition, handleRotation, Vector3.one);
+			m_Scale = Handles.ScaleHandle(m_Scale, Vector3.zero, Quaternion.identity, size);
+			EditorHandleUtility.PopMatrix();
 
 			if (EditorGUI.EndChangeCheck())
 			{
@@ -26,5 +32,4 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 	}
-
 }

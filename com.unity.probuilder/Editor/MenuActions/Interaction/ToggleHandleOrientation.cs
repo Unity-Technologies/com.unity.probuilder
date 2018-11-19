@@ -1,9 +1,5 @@
 using UnityEngine;
-using UnityEditor;
-using System.Collections;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
-using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -13,8 +9,8 @@ namespace UnityEditor.ProBuilder.Actions
 
 		HandleOrientation handleOrientation
 		{
-			get { return ProBuilderEditor.instance == null ? HandleOrientation.World : ProBuilderEditor.handleOrientation; }
-			set { ProBuilderEditor.handleOrientation = value; }
+			get { return VertexManipulationTool.handleOrientation; }
+			set { VertexManipulationTool.handleOrientation = value; }
 		}
 
 		public override ToolbarGroup group
@@ -34,35 +30,25 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override TooltipContent tooltip
 		{
-			get
-			{
-				if (handleOrientation == HandleOrientation.World)
-					return s_TooltipWorld;
-				if (handleOrientation == HandleOrientation.Local)
-					return s_TooltipLocal;
-				else
-					return s_TooltipPlane;
-			}
+			get { return s_Tooltips[(int) handleOrientation]; }
 		}
 
-		static readonly TooltipContent s_TooltipWorld = new TooltipContent(
-			"Set Handle Alignment",
-			"Toggles the coordinate space that the transform gizmo is rendered in.\n\nCurrent: World (handle is always the same)",
-			'P');
-
-		static readonly TooltipContent s_TooltipLocal = new TooltipContent(
-			"Set Handle Alignment",
-			"Toggles the coordinate space that the transform gizmo is rendered in.\n\nCurrent: Local (handle is relative to the GameObject selection)",
-			'P');
-
-		static readonly TooltipContent s_TooltipPlane = new TooltipContent(
-			"Set Handle Alignment",
-			"Toggles the coordinate space that the transform gizmo is rendered in.\n\nCurrent: Plane (handle is relative to the element selection)",
-			'P');
+		static readonly TooltipContent[] s_Tooltips = new TooltipContent[]
+		{
+#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
+			new TooltipContent("World", "The transform handle is oriented in a fixed direction.", 'P'),
+			new TooltipContent("Active Object", "The transform handle is aligned with the active object rotation.", 'P'),
+			new TooltipContent("Active Selection", "The transform handle is aligned with the active element selection.", 'P')
+#else
+			new TooltipContent("Global", "The transform handle is oriented in a fixed direction.", 'P'),
+			new TooltipContent("Local", "The transform handle is aligned with the active object rotation.", 'P'),
+			new TooltipContent("Active Selection", "The transform handle is aligned with the active element selection.", 'P')
+#endif
+		};
 
 		public override string menuTitle
 		{
-			get { return "Handle: " + ((HandleOrientation)handleOrientation).ToString(); }
+			get { return "Orientation: " + s_Tooltips[(int)handleOrientation].title; }
 		}
 
 		public override SelectMode validSelectModes
@@ -94,7 +80,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			handleOrientation = (HandleOrientation)current;
 
-			return new ActionResult(ActionResult.Status.Success, "Set Handle Alignment\n" + ((HandleOrientation)current).ToString());
+			return new ActionResult(ActionResult.Status.Success, "Set Handle Orientation\n" + s_Tooltips[current].title);
 		}
 
 		public override bool enabled

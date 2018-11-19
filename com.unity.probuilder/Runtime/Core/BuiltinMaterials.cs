@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UObject = UnityEngine.Object;
 using UnityEngine.Rendering;
 using System.Reflection;
-using UnityEditor;
 
 namespace UnityEngine.ProBuilder
 {
@@ -23,7 +18,9 @@ namespace UnityEngine.ProBuilder
 		internal const string wireShader = "Hidden/ProBuilder/FaceHighlight";
 		internal const string dotShader = "Hidden/ProBuilder/VertexShader";
 
-		static Shader s_SelectionPickerShader;
+	    internal static readonly Color previewColor = new Color(.5f, .9f, 1f, .56f);
+
+        static Shader s_SelectionPickerShader;
 
 		static bool s_GeometryShadersSupported;
 
@@ -33,6 +30,7 @@ namespace UnityEngine.ProBuilder
 		static Material s_EdgePickerMaterial;
 		static Material s_UnityDefaultDiffuse;
 		static Material s_UnlitVertexColorMaterial;
+	    static Material s_ShapePreviewMaterial;
 
 		static void Init()
 		{
@@ -83,7 +81,17 @@ namespace UnityEngine.ProBuilder
 			}
 
 			s_UnlitVertexColorMaterial = (Material) Resources.Load("Materials/UnlitVertexColor", typeof(Material));
-		}
+
+		    s_ShapePreviewMaterial = new Material(s_DefaultMaterial.shader);
+		    s_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
+
+		    if (s_ShapePreviewMaterial.HasProperty("_MainTex"))
+		        s_ShapePreviewMaterial.mainTexture = (Texture2D)Resources.Load("Textures/GridBox_Default");
+
+		    if (s_ShapePreviewMaterial.HasProperty("_Color"))
+		        s_ShapePreviewMaterial.SetColor("_Color", previewColor);
+
+        }
 
 		/// <summary>
 		/// Does this platform support geometry shaders?
@@ -234,5 +242,14 @@ namespace UnityEngine.ProBuilder
 				return s_UnlitVertexColorMaterial;
 			}
 		}
+
+	    internal static Material ShapePreviewMaterial
+        {
+	        get
+	        {
+                Init();
+	            return s_ShapePreviewMaterial;
+	        }
+	    }
 	}
 }

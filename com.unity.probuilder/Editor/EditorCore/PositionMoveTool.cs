@@ -3,27 +3,31 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-	class VertexMoveTool : VertexTool
+	class PositionMoveTool : PositionTool
 	{
 		const float k_CardinalAxisError = .001f;
 		Vector3 m_HandlePosition;
-		Matrix4x4 m_Translation = Matrix4x4.identity;
-
 		bool m_SnapInWorldCoordinates;
 		Vector3 m_WorldSnapDirection;
 		Vector3 m_WorldSnapMask;
+
+		Vector3 m_IndividualOriginDirection;
+		bool m_DirectionOriginInitialized;
 
 		protected override void OnToolEngaged()
 		{
 			m_SnapInWorldCoordinates = false;
 			m_WorldSnapMask = new Vector3Mask(0x0);
+			m_DirectionOriginInitialized = false;
 		}
 
 		protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
 		{
 			base.DoTool(handlePosition, handleRotation);
 
-			if (!isEditing)
+			if (isEditing)
+				DrawSelectionOriginGizmos();
+			else
 				m_HandlePosition = handlePosition;
 
 			EditorGUI.BeginChangeCheck();
@@ -80,23 +84,67 @@ namespace UnityEditor.ProBuilder
 					}
 				}
 
-				switch (pivotPoint)
+				if (pivotPoint == PivotPoint.IndividualOrigins && !m_DirectionOriginInitialized)
 				{
-					case PivotPoint.WorldBoundingBoxCenter:
-						break;
+					var mask = new Vector3Mask(handleRotationOriginInverse * delta, k_CardinalAxisError);
 
-					case PivotPoint.ModelBoundingBoxCenter:
-						delta = handleRotationOriginInverse * delta;
-						break;
-
-					case PivotPoint.IndividualOrigins:
-						delta = handleRotationOriginInverse * delta;
-						break;
+					if (mask.active > 0)
+					{
+						m_IndividualOriginDirection = mask;
+						m_DirectionOriginInitialized = true;
+					}
 				}
 
-				m_Translation.SetTRS(delta, Quaternion.identity, Vector3.one);
+				ApplyTranslation(handleRotationOriginInverse * delta);
+			}
+		}
 
-				Apply(m_Translation);
+		void ApplyTranslation(Vector3 translation)
+		{
+			foreach (var key in meshAndElementGroupPairs)
+			{
+				if (!(key is MeshAndPositions))
+					continue;
+
+				var kvp = (MeshAndPositions)key;
+				var mesh = kvp.mesh;
+				var worldToLocal = mesh.transform.worldToLocalMatrix;
+				var origins = kvp.positions;
+				var positions = mesh.positionsInternal;
+
+				foreach (var group in kvp.elementGroups)
+				{
+					foreach (var index in group.indices)
+					{
+						// res = Group pre-apply matrix * world vertex position
+						// res += translation
+						// res = Group post-apply matrix * res
+						// positions[i] = mesh.worldToLocal * res
+						positions[index] = worldToLocal.MultiplyPoint3x4(
+							group.postApplyMatrix.MultiplyPoint3x4(
+								translation + group.preApplyMatrix.MultiplyPoint3x4(origins[index])));
+					}
+				}
+
+				mesh.mesh.vertices = positions;
+				mesh.RefreshUV(MeshSelection.selectedFacesInEditZone[mesh]);
+				mesh.Refresh(RefreshMask.Normals);
+			}
+
+			ProBuilderEditor.UpdateMeshHandles(false);
+		}
+
+		void DrawSelectionOriginGizmos()
+		{
+			if (isEditing && currentEvent.type == EventType.Repaint)
+			{
+				foreach (var key in meshAndElementGroupPairs)
+				{
+					foreach (var group in key.elementGroups)
+					{
+						EditorMeshHandles.DrawTransformOriginGizmo(group.postApplyMatrix, m_IndividualOriginDirection);
+					}
+				}
 			}
 		}
 	}

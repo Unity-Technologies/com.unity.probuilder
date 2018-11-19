@@ -1,11 +1,8 @@
 using UnityEngine;
-using UnityEditor;
-using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.ProBuilder;
-using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
@@ -70,32 +67,6 @@ namespace UnityEditor.ProBuilder
 		public static HandleConstraint2D CurrentAxisConstraint { get { return axisConstraint; } }
 
 		public static bool limitToLeftButton = true;
-
-		/**
-		 * Convert a UV point to a GUI point with relative size.
-		 * @param pixelSize How many pixels make up a 0,1 distance in UV space.
-		 */
-		internal static Vector2 UVToGUIPoint(Vector2 uv, int pixelSize)
-		{
-			// flip y
-			Vector2 u = new Vector2(uv.x, -uv.y);
-			u *= pixelSize;
-			u = new Vector2(Mathf.Round(u.x), Mathf.Round(u.y));
-
-			return u;
-		}
-
-		/**
-		 * Convert a GUI point back to a UV coordinate.
-		 * @param pixelSize How many pixels make up a 0,1 distance in UV space.
-		 * @sa UVToGUIPoint
-		 */
-		internal static Vector2 GUIToUVPoint(Vector2 gui, int pixelSize)
-		{
-			gui /= (float)pixelSize;
-			Vector2 u = new Vector2(gui.x, -gui.y);
-			return u;
-		}
 
 		/**
 		 * A 2D GUI view position handle.
@@ -352,29 +323,6 @@ namespace UnityEditor.ProBuilder
 			return scale;
 		}
 
-		/**
-		 * Pick the GameObject nearest mousePosition (filtering out @ignore) and raycast for a face it.
-		 */
-		internal static bool FaceRaycast(Vector2 mousePosition, out ProBuilderMesh pb, out RaycastHit hit, Dictionary<ProBuilderMesh, HashSet<Face>> ignore = null)
-		{
-			pb = null;
-			hit = null;
-
-			GameObject go = HandleUtility.PickGameObject(mousePosition, false);
-
-			if(go == null)
-				return false;
-
-			pb = go.GetComponent<ProBuilderMesh>();
-
-			if(pb == null || (ignore != null && ignore.ContainsKey(pb)))
-				return false;
-
-			Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
-
-			return UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, pb, out hit, ignore[pb]);
-		}
-
 		internal static void GetAllOverlapping(Vector2 mousePosition, List<GameObject> list)
 		{
 			list.Clear();
@@ -524,41 +472,6 @@ namespace UnityEditor.ProBuilder
 			return trs != null ? trs.InverseTransformPoint(p) : p;
 		}
 
-		internal static HandleOrientation ProBuilderHandleOrientation(this PivotRotation rotation)
-		{
-			if (rotation == PivotRotation.Global)
-				return HandleOrientation.World;
-
-			if (rotation == PivotRotation.Local)
-				return HandleOrientation.Local;
-
-			return HandleOrientation.Normal;
-		}
-
-		internal static PivotRotation UnityPivotRotation(this HandleOrientation orientation)
-		{
-			if (orientation == HandleOrientation.World)
-				return PivotRotation.Global;
-
-			return PivotRotation.Local;
-		}
-
-		internal static PivotMode UnityPivot(this PivotPoint pivotPoint)
-		{
-			if (pivotPoint == PivotPoint.WorldBoundingBoxCenter)
-				return PivotMode.Center;
-
-			return PivotMode.Pivot;
-		}
-
-		internal static PivotPoint ProBuilderPivot(this PivotMode pivotMode)
-		{
-			if (pivotMode == PivotMode.Center)
-				return PivotPoint.WorldBoundingBoxCenter;
-
-			return PivotPoint.ModelBoundingBoxCenter;
-		}
-
 		internal static void PushMatrix()
 		{
 			s_HandleMatrix.Push(Handles.matrix);
@@ -567,6 +480,140 @@ namespace UnityEditor.ProBuilder
 		internal static void PopMatrix()
 		{
 			Handles.matrix = s_HandleMatrix.Pop();
+		}
+
+		/// <summary>
+		/// Collects coincident vertices and returns a rotation calculated from the average normal and bitangent.
+		/// </summary>
+		/// <param name="mesh"></param>
+		/// <param name="indices"></param>
+		/// <returns></returns>
+		internal static Quaternion GetRotation(ProBuilderMesh mesh, IEnumerable<int> indices)
+		{
+			if (!mesh.HasArrays(MeshArrays.Normal))
+				Normals.CalculateNormals(mesh);
+
+			if(!mesh.HasArrays(MeshArrays.Tangent))
+				Normals.CalculateTangents(mesh);
+
+			var normals = mesh.normalsInternal;
+			var tangents = mesh.tangentsInternal;
+
+			var nrm = Vector3.zero;
+			var tan = Vector4.zero;
+			float count = 0;
+
+			foreach (var index in indices)
+			{
+				var n = normals[index];
+				var t = tangents[index];
+
+				nrm.x += n.x;
+				nrm.y += n.y;
+				nrm.z += n.z;
+
+				tan.x += t.x;
+				tan.y += t.y;
+				tan.z += t.z;
+				tan.w += t.w;
+
+				count++;
+			}
+
+			nrm.x /= count;
+			nrm.y /= count;
+			nrm.z /= count;
+
+			tan.x /= count;
+			tan.y /= count;
+			tan.z /= count;
+			tan.w /= count;
+
+			if (nrm == Vector3.zero || tan == Vector4.zero)
+				return mesh.transform.rotation;
+
+			var bit = Vector3.Cross(nrm, tan * tan.w);
+
+			return mesh.transform.rotation * Quaternion.LookRotation(nrm, bit);
+		}
+
+		internal static Quaternion GetFaceRotation(ProBuilderMesh mesh, IEnumerable<Face> faces, HandleOrientation orientation)
+		{
+			if (mesh == null)
+				return Quaternion.identity;
+
+			switch (orientation)
+			{
+				case HandleOrientation.ActiveElement:
+					if (mesh.selectedFaceCount < 1)
+						goto case HandleOrientation.ActiveObject;
+
+					// Intentionally not using coincident vertices here. We want the normal of just the face, not an
+					// average of it's neighbors.
+					return GetRotation(mesh, faces.First().distinctIndexesInternal);
+
+				case HandleOrientation.ActiveObject:
+					return mesh.transform.rotation;
+
+				default:
+					return Quaternion.identity;
+			}
+		}
+
+		internal static Quaternion GetEdgeRotation(ProBuilderMesh mesh, IEnumerable<Edge> edges, HandleOrientation orientation)
+		{
+			if (mesh == null)
+				return Quaternion.identity;
+
+			switch (orientation)
+			{
+				case HandleOrientation.ActiveElement:
+					if (mesh.selectedEdgeCount < 1)
+						goto case HandleOrientation.ActiveObject;
+
+					// Getting an average of the edge normals isn't very helpful in real world uses, so we just use the
+					// first selected edge for orientation.
+					// This function accepts an enumerable because in the future we may want to do something more
+					// sophisticated, and it's conventient because selections are stored as collections.
+					var face = EdgeUtility.GetFace(mesh, edges.First());
+
+					if (face == null)
+						goto case HandleOrientation.ActiveObject;
+
+					Normal nrm = Math.NormalTangentBitangent(mesh, face);
+
+					if(nrm.normal == Vector3.zero || nrm.bitangent == Vector3.zero)
+						goto case HandleOrientation.ActiveObject;
+
+					return mesh.transform.rotation * Quaternion.LookRotation(nrm.normal, nrm.bitangent);
+
+				case HandleOrientation.ActiveObject:
+					return mesh.transform.rotation;
+
+				default:
+					return Quaternion.identity;
+			}
+		}
+
+		internal static Quaternion GetVertexRotation(ProBuilderMesh mesh, IEnumerable<int> vertices, HandleOrientation orientation)
+		{
+			if (mesh == null)
+				return Quaternion.identity;
+
+			switch (orientation)
+			{
+				case HandleOrientation.ActiveElement:
+					if (mesh.selectedVertexCount < 1)
+						goto case HandleOrientation.ActiveObject;
+
+					return GetRotation(mesh, vertices);
+
+				case HandleOrientation.ActiveObject:
+					return mesh.transform.rotation;
+
+				default:
+					return Quaternion.identity;
+			}
 		}
 	}
 }
