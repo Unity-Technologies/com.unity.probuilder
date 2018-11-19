@@ -49,13 +49,18 @@ namespace UnityEditor.ProBuilder
 		[UserSetting("Mesh Settings", "Collider Type", "What type of Collider to apply to new Shapes.")]
 		static Pref<ColliderType> s_ColliderType = new Pref<ColliderType>("mesh.newShapeColliderType", ColliderType.MeshCollider);
 
-		/// <value>
-		/// Subscribe to this delegate to be notified when a new mesh has been created and initialized through ProBuilder.
-		/// </value>
-		/// <remarks>
-		/// This is only called when an object is initialized in editor, and created by ProBuilder menu items.
-		/// </remarks>
-		public static event Action<ProBuilderMesh> meshCreated = null;
+	    internal static PivotLocation newShapePivotLocation
+	    {
+	        get { return s_NewShapesPivotAtVertex; }
+	    }
+
+        /// <value>
+        /// Subscribe to this delegate to be notified when a new mesh has been created and initialized through ProBuilder.
+        /// </value>
+        /// <remarks>
+        /// This is only called when an object is initialized in editor, and created by ProBuilder menu items.
+        /// </remarks>
+        public static event Action<ProBuilderMesh> meshCreated = null;
 
 		/// <summary>
 		/// Set the selected render state for an object. In Unity 5.4 and lower, this just toggles wireframe on or off.
