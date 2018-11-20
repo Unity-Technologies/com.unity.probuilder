@@ -27,3 +27,7 @@ UpgradeProjects/*/.idea
 UpgradeProjects/*/*.csproj
 UpgradeProjects/*/*.sln.DotSettings.user
 UpgradeProjects/*/*.sln
+
+git-hgmeta-format
+*.bak
+*.bak.meta
