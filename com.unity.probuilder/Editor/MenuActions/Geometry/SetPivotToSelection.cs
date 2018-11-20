@@ -8,62 +8,61 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	sealed class SetPivotToSelection : MenuAction
-	{
-		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Pivot_CenterOnElements", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
-		public override string menuTitle { get { return "Set Pivot"; } }
+    sealed class SetPivotToSelection : MenuAction
+    {
+        public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Pivot_CenterOnElements", IconSkin.Pro); } }
+        public override TooltipContent tooltip { get { return _tooltip; } }
+        public override string menuTitle { get { return "Set Pivot"; } }
 
-		static readonly TooltipContent _tooltip = new TooltipContent
-		(
-			"Set Pivot to Center of Selection",
-			@"Moves the pivot point of each mesh to the average of all selected elements positions.  This means the pivot point moves to where-ever the handle currently is.",
-			keyCommandSuper, 'J'
-		);
+        static readonly TooltipContent _tooltip = new TooltipContent
+            (
+                "Set Pivot to Center of Selection",
+                @"Moves the pivot point of each mesh to the average of all selected elements positions.  This means the pivot point moves to where-ever the handle currently is.",
+                keyCommandSuper, 'J'
+            );
 
-		public override SelectMode validSelectModes
-		{
-			get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face; }
-		}
+        public override SelectMode validSelectModes
+        {
+            get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face; }
+        }
 
-		public override bool enabled
-		{
-			get
-			{
-				return base.enabled && (MeshSelection.selectedVertexCount > 0
-					|| MeshSelection.selectedEdgeCount > 0
-					|| MeshSelection.selectedFaceCount > 0);
-			}
-		}
+        public override bool enabled
+        {
+            get
+            {
+                return base.enabled && (MeshSelection.selectedVertexCount > 0
+                                        || MeshSelection.selectedEdgeCount > 0
+                                        || MeshSelection.selectedFaceCount > 0);
+            }
+        }
 
-		public override ActionResult DoAction()
-		{
-			if (MeshSelection.selectedObjectCount < 1)
-				return ActionResult.NoSelection;
+        public override ActionResult DoAction()
+        {
+            if (MeshSelection.selectedObjectCount < 1)
+                return ActionResult.NoSelection;
 
-			Object[] objects = new Object[MeshSelection.selectedObjectCount * 2];
+            Object[] objects = new Object[MeshSelection.selectedObjectCount * 2];
 
-			for (int i = 0, c = MeshSelection.selectedObjectCount; i < c; i++)
-			{
-				objects[i] = MeshSelection.topInternal[i];
-				objects[i + c] = MeshSelection.topInternal[i].transform;
-			}
+            for (int i = 0, c = MeshSelection.selectedObjectCount; i < c; i++)
+            {
+                objects[i] = MeshSelection.topInternal[i];
+                objects[i + c] = MeshSelection.topInternal[i].transform;
+            }
 
-			UndoUtility.RegisterCompleteObjectUndo(objects, "Set Pivot");
+            UndoUtility.RegisterCompleteObjectUndo(objects, "Set Pivot");
 
-			foreach(var mesh in MeshSelection.topInternal)
-			{
-				TransformUtility.UnparentChildren(mesh.transform);
-				mesh.CenterPivot(mesh.selectedIndexesInternal);
-				mesh.Optimize();
-				TransformUtility.ReparentChildren(mesh.transform);
-			}
+            foreach (var mesh in MeshSelection.topInternal)
+            {
+                TransformUtility.UnparentChildren(mesh.transform);
+                mesh.CenterPivot(mesh.selectedIndexesInternal);
+                mesh.Optimize();
+                TransformUtility.ReparentChildren(mesh.transform);
+            }
 
-			ProBuilderEditor.Refresh();
+            ProBuilderEditor.Refresh();
 
-			return new ActionResult(ActionResult.Status.Success, "Set Pivot");
-		}
-	}
+            return new ActionResult(ActionResult.Status.Success, "Set Pivot");
+        }
+    }
 }
-

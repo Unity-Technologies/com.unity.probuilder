@@ -4,273 +4,273 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-	/// <inheritdoc />
-	/// <summary>
-	/// Custom editor for ProBuilderMesh type.
-	/// </summary>
-	[CustomEditor(typeof(ProBuilderMesh))]
-	[CanEditMultipleObjects]
-	sealed class ProBuilderMeshEditor : Editor
-	{
-		static class Styles
-		{
-			static bool s_Initialized;
-			public static GUIStyle miniButton;
+    /// <inheritdoc />
+    /// <summary>
+    /// Custom editor for ProBuilderMesh type.
+    /// </summary>
+    [CustomEditor(typeof(ProBuilderMesh))]
+    [CanEditMultipleObjects]
+    sealed class ProBuilderMeshEditor : Editor
+    {
+        static class Styles
+        {
+            static bool s_Initialized;
+            public static GUIStyle miniButton;
 
-			public static readonly GUIContent lightmapStatic = new GUIContent("Lightmap Static", "Controls whether the geometry will be marked as Static for lightmapping purposes. When enabled, this mesh will be present in lightmap calculations.");
-			public static readonly GUIContent lightmapUVs = new GUIContent("Generate Lightmap UVs");
+            public static readonly GUIContent lightmapStatic = new GUIContent("Lightmap Static", "Controls whether the geometry will be marked as Static for lightmapping purposes. When enabled, this mesh will be present in lightmap calculations.");
+            public static readonly GUIContent lightmapUVs = new GUIContent("Generate Lightmap UVs");
 
-			public static void Init()
-			{
-				if (s_Initialized)
-					return;
-				s_Initialized = true;
-				miniButton = new GUIStyle(GUI.skin.button);
-				miniButton.stretchHeight = false;
-				miniButton.stretchWidth = false;
-				miniButton.padding = new RectOffset(6, 6, 3, 3);
-			}
-		}
+            public static void Init()
+            {
+                if (s_Initialized)
+                    return;
+                s_Initialized = true;
+                miniButton = new GUIStyle(GUI.skin.button);
+                miniButton.stretchHeight = false;
+                miniButton.stretchWidth = false;
+                miniButton.padding = new RectOffset(6, 6, 3, 3);
+            }
+        }
 
-		internal static event System.Action onGetFrameBoundsEvent;
-		ProBuilderMesh m_Mesh;
+        internal static event System.Action onGetFrameBoundsEvent;
+        ProBuilderMesh m_Mesh;
 
-		SerializedObject m_GameObjectsSerializedObject;
-		SerializedProperty m_UnwrapParameters;
-		SerializedProperty m_StaticEditorFlags;
-		bool m_AnyMissingLightmapUVs;
-		bool m_ModifyingMesh;
+        SerializedObject m_GameObjectsSerializedObject;
+        SerializedProperty m_UnwrapParameters;
+        SerializedProperty m_StaticEditorFlags;
+        bool m_AnyMissingLightmapUVs;
+        bool m_ModifyingMesh;
 
-		ProBuilderEditor editor
-		{
-			get { return ProBuilderEditor.instance; }
-		}
+        ProBuilderEditor editor
+        {
+            get { return ProBuilderEditor.instance; }
+        }
 
-		Renderer m_MeshRenderer = null;
+        Renderer m_MeshRenderer = null;
 
-		void OnEnable()
-		{
-			if (EditorApplication.isPlayingOrWillChangePlaymode)
-				return;
+        void OnEnable()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+                return;
 
-			m_Mesh = (ProBuilderMesh)target;
+            m_Mesh = (ProBuilderMesh)target;
 
-			if (!m_Mesh)
-				return;
+            if (!m_Mesh)
+                return;
 
-			m_GameObjectsSerializedObject = new SerializedObject(serializedObject.targetObjects.Select(t => ((Component)t).gameObject).ToArray());
+            m_GameObjectsSerializedObject = new SerializedObject(serializedObject.targetObjects.Select(t => ((Component)t).gameObject).ToArray());
 
-			m_UnwrapParameters = serializedObject.FindProperty("m_UnwrapParameters");
-			m_StaticEditorFlags = m_GameObjectsSerializedObject.FindProperty("m_StaticEditorFlags");
+            m_UnwrapParameters = serializedObject.FindProperty("m_UnwrapParameters");
+            m_StaticEditorFlags = m_GameObjectsSerializedObject.FindProperty("m_StaticEditorFlags");
 
-			m_MeshRenderer = m_Mesh.gameObject.GetComponent<Renderer>();
-			SelectionRenderState s = EditorUtility.GetSelectionRenderState();
-			EditorUtility.SetSelectionRenderState(m_MeshRenderer, editor != null ? s & SelectionRenderState.Outline : s);
+            m_MeshRenderer = m_Mesh.gameObject.GetComponent<Renderer>();
+            SelectionRenderState s = EditorUtility.GetSelectionRenderState();
+            EditorUtility.SetSelectionRenderState(m_MeshRenderer, editor != null ? s & SelectionRenderState.Outline : s);
 
-			foreach (var mesh in Selection.transforms.GetComponents<ProBuilderMesh>())
-				EditorUtility.SynchronizeWithMeshFilter(mesh);
+            foreach (var mesh in Selection.transforms.GetComponents<ProBuilderMesh>())
+                EditorUtility.SynchronizeWithMeshFilter(mesh);
 
-			VertexManipulationTool.beforeMeshModification += OnBeginMeshModification;
-			VertexManipulationTool.afterMeshModification += OnFinishMeshModification;
-		}
+            VertexManipulationTool.beforeMeshModification += OnBeginMeshModification;
+            VertexManipulationTool.afterMeshModification += OnFinishMeshModification;
+        }
 
-		void OnDisable()
-		{
-			VertexManipulationTool.beforeMeshModification -= OnBeginMeshModification;
-			VertexManipulationTool.afterMeshModification -= OnFinishMeshModification;
-		}
+        void OnDisable()
+        {
+            VertexManipulationTool.beforeMeshModification -= OnBeginMeshModification;
+            VertexManipulationTool.afterMeshModification -= OnFinishMeshModification;
+        }
 
-		void OnBeginMeshModification(ProBuilderMesh[] selection)
-		{
-			m_ModifyingMesh = true;
-		}
+        void OnBeginMeshModification(ProBuilderMesh[] selection)
+        {
+            m_ModifyingMesh = true;
+        }
 
-		void OnFinishMeshModification(ProBuilderMesh[] selection)
-		{
-			m_ModifyingMesh = false;
-		}
+        void OnFinishMeshModification(ProBuilderMesh[] selection)
+        {
+            m_ModifyingMesh = false;
+        }
 
-		public override void OnInspectorGUI()
-		{
-			if (m_UnwrapParameters ==  null || m_StaticEditorFlags == null)
-				return;
+        public override void OnInspectorGUI()
+        {
+            if (m_UnwrapParameters ==  null || m_StaticEditorFlags == null)
+                return;
 
-			Styles.Init();
+            Styles.Init();
 
-			Vector3 bounds = m_MeshRenderer != null ? m_MeshRenderer.bounds.size : Vector3.zero;
-			EditorGUILayout.Vector3Field("Object Size (read only)", bounds);
+            Vector3 bounds = m_MeshRenderer != null ? m_MeshRenderer.bounds.size : Vector3.zero;
+            EditorGUILayout.Vector3Field("Object Size (read only)", bounds);
 
 #if PB_DEBUG
-			GUILayout.TextField( string.IsNullOrEmpty(pb.asset_guid) ? "null" : pb.asset_guid );
+            GUILayout.TextField(string.IsNullOrEmpty(pb.asset_guid) ? "null" : pb.asset_guid);
 #endif
 
-			serializedObject.Update();
+            serializedObject.Update();
 
-			LightmapStaticSettings();
+            LightmapStaticSettings();
 
-			bool showLightmapSettings = (m_StaticEditorFlags.intValue & (int)StaticEditorFlags.LightmapStatic) != 0;
+            bool showLightmapSettings = (m_StaticEditorFlags.intValue & (int)StaticEditorFlags.LightmapStatic) != 0;
 
-			if (showLightmapSettings)
-			{
-				EditorGUILayout.PropertyField(m_UnwrapParameters, true);
+            if (showLightmapSettings)
+            {
+                EditorGUILayout.PropertyField(m_UnwrapParameters, true);
 
-				if (m_UnwrapParameters.isExpanded)
-				{
-					GUILayout.BeginHorizontal();
-					GUILayout.FlexibleSpace();
+                if (m_UnwrapParameters.isExpanded)
+                {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.FlexibleSpace();
 
-					if (GUILayout.Button("Reset", Styles.miniButton))
-						ResetUnwrapParams(m_UnwrapParameters);
+                    if (GUILayout.Button("Reset", Styles.miniButton))
+                        ResetUnwrapParams(m_UnwrapParameters);
 
-					if (GUILayout.Button("Apply", Styles.miniButton))
-						RebuildLightmapUVs();
+                    if (GUILayout.Button("Apply", Styles.miniButton))
+                        RebuildLightmapUVs();
 
-					GUILayout.EndHorizontal();
-					GUILayout.Space(4);
-				}
+                    GUILayout.EndHorizontal();
+                    GUILayout.Space(4);
+                }
 
-				if (!m_ModifyingMesh)
-				{
-					m_AnyMissingLightmapUVs = targets.Any(x =>
-					{
-						if (x is ProBuilderMesh)
-							return !((ProBuilderMesh)x).HasArrays(MeshArrays.Texture1);
+                if (!m_ModifyingMesh)
+                {
+                    m_AnyMissingLightmapUVs = targets.Any(x =>
+                        {
+                            if (x is ProBuilderMesh)
+                                return !((ProBuilderMesh)x).HasArrays(MeshArrays.Texture1);
 
-						return false;
-					});
-				}
+                            return false;
+                        });
+                }
 
-				if (m_AnyMissingLightmapUVs)
-				{
-					EditorGUILayout.HelpBox("Lightmap UVs are missing, please generate Lightmap UVs.", MessageType.Warning);
+                if (m_AnyMissingLightmapUVs)
+                {
+                    EditorGUILayout.HelpBox("Lightmap UVs are missing, please generate Lightmap UVs.", MessageType.Warning);
 
-					if (GUILayout.Button("Generate Lightmap UVs"))
-						RebuildLightmapUVs();
-				}
-			}
-			else
-			{
-				EditorGUILayout.HelpBox("To enable generation of lightmap UVs for this Mesh, please enable the 'Lightmap Static' property.", MessageType.Info);
-			}
+                    if (GUILayout.Button("Generate Lightmap UVs"))
+                        RebuildLightmapUVs();
+                }
+            }
+            else
+            {
+                EditorGUILayout.HelpBox("To enable generation of lightmap UVs for this Mesh, please enable the 'Lightmap Static' property.", MessageType.Info);
+            }
 
-			serializedObject.ApplyModifiedProperties();
+            serializedObject.ApplyModifiedProperties();
 
 #if DEVELOPER_MODE
-			GUILayout.Label("Compiled Mesh Information", EditorStyles.boldLabel);
-			if (m_Mesh != null && m_Mesh.mesh != null)
-			{
-				GUILayout.Label("Vertex Count: " + m_Mesh.mesh.vertexCount);
-				GUILayout.Label("Submesh Count: " + m_Mesh.mesh.subMeshCount);
-			}
+            GUILayout.Label("Compiled Mesh Information", EditorStyles.boldLabel);
+            if (m_Mesh != null && m_Mesh.mesh != null)
+            {
+                GUILayout.Label("Vertex Count: " + m_Mesh.mesh.vertexCount);
+                GUILayout.Label("Submesh Count: " + m_Mesh.mesh.subMeshCount);
+            }
 #endif
-		}
+        }
 
-		void LightmapStaticSettings()
-		{
-			bool lightmapStatic = (m_StaticEditorFlags.intValue & (int)StaticEditorFlags.LightmapStatic) != 0;
+        void LightmapStaticSettings()
+        {
+            bool lightmapStatic = (m_StaticEditorFlags.intValue & (int)StaticEditorFlags.LightmapStatic) != 0;
 
-			EditorGUI.BeginChangeCheck();
-			lightmapStatic = EditorGUILayout.Toggle(Styles.lightmapStatic, lightmapStatic);
+            EditorGUI.BeginChangeCheck();
+            lightmapStatic = EditorGUILayout.Toggle(Styles.lightmapStatic, lightmapStatic);
 
-			if (EditorGUI.EndChangeCheck())
-			{
-				SceneModeUtility.SetStaticFlags(m_GameObjectsSerializedObject.targetObjects, (int)StaticEditorFlags.LightmapStatic, lightmapStatic);
+            if (EditorGUI.EndChangeCheck())
+            {
+                SceneModeUtility.SetStaticFlags(m_GameObjectsSerializedObject.targetObjects, (int)StaticEditorFlags.LightmapStatic, lightmapStatic);
 
-				if(lightmapStatic)
-					RebuildLightmapUVs(false);
+                if (lightmapStatic)
+                    RebuildLightmapUVs(false);
 
-				m_GameObjectsSerializedObject.Update();
-			}
-		}
+                m_GameObjectsSerializedObject.Update();
+            }
+        }
 
-		void RebuildLightmapUVs(bool forceRebuildAll = true)
-		{
-			foreach (var obj in targets)
-			{
-				if (obj is ProBuilderMesh)
-				{
-					var mesh = (ProBuilderMesh) obj;
+        void RebuildLightmapUVs(bool forceRebuildAll = true)
+        {
+            foreach (var obj in targets)
+            {
+                if (obj is ProBuilderMesh)
+                {
+                    var mesh = (ProBuilderMesh)obj;
 
-					if (!mesh.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic))
-						continue;
+                    if (!mesh.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic))
+                        continue;
 
-					if(forceRebuildAll || !mesh.HasArrays(MeshArrays.Texture1))
-						mesh.Optimize(true);
-				}
-			}
-		}
+                    if (forceRebuildAll || !mesh.HasArrays(MeshArrays.Texture1))
+                        mesh.Optimize(true);
+                }
+            }
+        }
 
-		void ResetUnwrapParams(SerializedProperty prop)
-		{
-			var hardAngle = prop.FindPropertyRelative("m_HardAngle");
-			var packMargin = prop.FindPropertyRelative("m_PackMargin");
-			var angleError = prop.FindPropertyRelative("m_AngleError");
-			var areaError = prop.FindPropertyRelative("m_AreaError");
+        void ResetUnwrapParams(SerializedProperty prop)
+        {
+            var hardAngle = prop.FindPropertyRelative("m_HardAngle");
+            var packMargin = prop.FindPropertyRelative("m_PackMargin");
+            var angleError = prop.FindPropertyRelative("m_AngleError");
+            var areaError = prop.FindPropertyRelative("m_AreaError");
 
-			hardAngle.floatValue = UnwrapParameters.k_HardAngle;
-			packMargin.floatValue = UnwrapParameters.k_PackMargin;
-			angleError.floatValue = UnwrapParameters.k_AngleError;
-			areaError.floatValue = UnwrapParameters.k_AreaError;
+            hardAngle.floatValue = UnwrapParameters.k_HardAngle;
+            packMargin.floatValue = UnwrapParameters.k_PackMargin;
+            angleError.floatValue = UnwrapParameters.k_AngleError;
+            areaError.floatValue = UnwrapParameters.k_AreaError;
 
-			RebuildLightmapUVs();
-		}
+            RebuildLightmapUVs();
+        }
 
-		bool HasFrameBounds()
-		{
-			if (m_Mesh == null)
-				m_Mesh = (ProBuilderMesh)target;
+        bool HasFrameBounds()
+        {
+            if (m_Mesh == null)
+                m_Mesh = (ProBuilderMesh)target;
 
-			return ProBuilderEditor.instance != null &&
-				InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms).Sum(x => x.selectedIndexesInternal.Length) > 0;
-		}
+            return ProBuilderEditor.instance != null &&
+                InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms).Sum(x => x.selectedIndexesInternal.Length) > 0;
+        }
 
-		Bounds OnGetFrameBounds()
-		{
-			if (onGetFrameBoundsEvent != null)
-				onGetFrameBoundsEvent();
+        Bounds OnGetFrameBounds()
+        {
+            if (onGetFrameBoundsEvent != null)
+                onGetFrameBoundsEvent();
 
-			Vector3 min = Vector3.zero, max = Vector3.zero;
-			bool init = false;
+            Vector3 min = Vector3.zero, max = Vector3.zero;
+            bool init = false;
 
-			foreach (ProBuilderMesh mesh in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
-			{
-				int[] tris = mesh.selectedIndexesInternal;
+            foreach (ProBuilderMesh mesh in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
+            {
+                int[] tris = mesh.selectedIndexesInternal;
 
-				if (tris == null || tris.Length < 1)
-					continue;
+                if (tris == null || tris.Length < 1)
+                    continue;
 
-				Vector3[] verts = mesh.positionsInternal;
-				var trs = mesh.transform;
+                Vector3[] verts = mesh.positionsInternal;
+                var trs = mesh.transform;
 
-				if (!init)
-				{
-					init = true;
-					min = trs.TransformPoint(verts[tris[0]]);
-					max = trs.TransformPoint(verts[tris[0]]);
-				}
+                if (!init)
+                {
+                    init = true;
+                    min = trs.TransformPoint(verts[tris[0]]);
+                    max = trs.TransformPoint(verts[tris[0]]);
+                }
 
-				for (int i = 0, c = tris.Length; i < c; i++)
-				{
-					Vector3 p = trs.TransformPoint(verts[tris[i]]);
+                for (int i = 0, c = tris.Length; i < c; i++)
+                {
+                    Vector3 p = trs.TransformPoint(verts[tris[i]]);
 
-					min.x = Mathf.Min(p.x, min.x);
-					max.x = Mathf.Max(p.x, max.x);
+                    min.x = Mathf.Min(p.x, min.x);
+                    max.x = Mathf.Max(p.x, max.x);
 
-					min.y = Mathf.Min(p.y, min.y);
-					max.y = Mathf.Max(p.y, max.y);
+                    min.y = Mathf.Min(p.y, min.y);
+                    max.y = Mathf.Max(p.y, max.y);
 
-					min.z = Mathf.Min(p.z, min.z);
-					max.z = Mathf.Max(p.z, max.z);
-				}
-			}
+                    min.z = Mathf.Min(p.z, min.z);
+                    max.z = Mathf.Max(p.z, max.z);
+                }
+            }
 
-			return new Bounds((min + max) / 2f, max != min ? max - min : Vector3.one * .1f);
-		}
+            return new Bounds((min + max) / 2f, max != min ? max - min : Vector3.one * .1f);
+        }
 
-		[MenuItem("CONTEXT/ProBuilderMesh/Open ProBuilder")]
-		static void OpenProBuilder()
-		{
-			ProBuilderEditor.MenuOpenWindow();
-		}
-	}
+        [MenuItem("CONTEXT/ProBuilderMesh/Open ProBuilder")]
+        static void OpenProBuilder()
+        {
+            ProBuilderEditor.MenuOpenWindow();
+        }
+    }
 }

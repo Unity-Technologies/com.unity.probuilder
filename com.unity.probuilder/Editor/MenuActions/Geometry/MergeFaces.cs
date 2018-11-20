@@ -5,70 +5,70 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	sealed class MergeFaces : MenuAction
-	{
-		public override ToolbarGroup group
-		{
-			get { return ToolbarGroup.Geometry; }
-		}
+    sealed class MergeFaces : MenuAction
+    {
+        public override ToolbarGroup group
+        {
+            get { return ToolbarGroup.Geometry; }
+        }
 
-		public override Texture2D icon
-		{
-			get { return IconUtility.GetIcon("Toolbar/Face_Merge", IconSkin.Pro); }
-		}
+        public override Texture2D icon
+        {
+            get { return IconUtility.GetIcon("Toolbar/Face_Merge", IconSkin.Pro); }
+        }
 
-		public override TooltipContent tooltip
-		{
-			get { return s_Tooltip; }
-		}
+        public override TooltipContent tooltip
+        {
+            get { return s_Tooltip; }
+        }
 
-		static readonly TooltipContent s_Tooltip = new TooltipContent
-		(
-			"Merge Faces",
-			@"Tells ProBuilder to treat the selected faces as if they were a single face.  Be careful not to use this with unconnected faces!"
-		);
+        static readonly TooltipContent s_Tooltip = new TooltipContent
+            (
+                "Merge Faces",
+                @"Tells ProBuilder to treat the selected faces as if they were a single face.  Be careful not to use this with unconnected faces!"
+            );
 
-		public override SelectMode validSelectModes
-		{
-			get { return SelectMode.Face; }
-		}
+        public override SelectMode validSelectModes
+        {
+            get { return SelectMode.Face; }
+        }
 
-		public override bool enabled
-		{
-			get { return base.enabled && MeshSelection.selectedFaceCount > 0; }
-		}
+        public override bool enabled
+        {
+            get { return base.enabled && MeshSelection.selectedFaceCount > 0; }
+        }
 
-		public override ActionResult DoAction()
-		{
-			if(MeshSelection.selectedObjectCount < 1)
-				return ActionResult.NoSelection;
+        public override ActionResult DoAction()
+        {
+            if (MeshSelection.selectedObjectCount < 1)
+                return ActionResult.NoSelection;
 
-			UndoUtility.RecordSelection("Merge Faces");
+            UndoUtility.RecordSelection("Merge Faces");
 
-			int success = 0;
+            int success = 0;
 
-			foreach(ProBuilderMesh pb in MeshSelection.topInternal)
-			{
-				if(pb.selectedFaceCount > 1)
-				{
-					success += pb.selectedFaceCount;
+            foreach (ProBuilderMesh pb in MeshSelection.topInternal)
+            {
+                if (pb.selectedFaceCount > 1)
+                {
+                    success += pb.selectedFaceCount;
 
-					Face face = MergeElements.Merge(pb, pb.selectedFacesInternal);
+                    Face face = MergeElements.Merge(pb, pb.selectedFacesInternal);
 
-					pb.ToMesh();
-					pb.Refresh();
-					pb.Optimize();
+                    pb.ToMesh();
+                    pb.Refresh();
+                    pb.Optimize();
 
-					pb.SetSelectedFaces( new Face[] { face } );
-				}
-			}
+                    pb.SetSelectedFaces(new Face[] { face });
+                }
+            }
 
-			ProBuilderEditor.Refresh();
+            ProBuilderEditor.Refresh();
 
-			if(success > 0)
-				return new ActionResult(ActionResult.Status.Success, "Merged " + success + " Faces");
+            if (success > 0)
+                return new ActionResult(ActionResult.Status.Success, "Merged " + success + " Faces");
 
-			return new ActionResult(ActionResult.Status.Failure, "Merge Faces\nNo Faces Selected");
-		}
-	}
+            return new ActionResult(ActionResult.Status.Failure, "Merge Faces\nNo Faces Selected");
+        }
+    }
 }

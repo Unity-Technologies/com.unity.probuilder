@@ -1,4 +1,4 @@
-﻿// Original CSG.JS library by Evan Wallace (http://madebyevan.com), under the MIT license.
+// Original CSG.JS library by Evan Wallace (http://madebyevan.com), under the MIT license.
 // GitHub: https://github.com/evanw/csg.js/
 //
 // C++ port by Tomasz Dabrowski (http://28byteslater.com), under the MIT license.
@@ -20,67 +20,67 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEngine.ProBuilder.Experimental.CSG
 {
-	/// <summary>
-	/// Base class for CSG operations.  Contains GameObject level methods for Subtraction, Intersection, and Union operations. The GameObjects passed to these functions will not be modified.
-	/// </summary>
-	sealed class CSG
-	{
-		// Tolerance used by `splitPolygon()` to decide if a point is on the plane.
-		public const float EPSILON = 0.00001f;
+    /// <summary>
+    /// Base class for CSG operations.  Contains GameObject level methods for Subtraction, Intersection, and Union operations. The GameObjects passed to these functions will not be modified.
+    /// </summary>
+    sealed class CSG
+    {
+        // Tolerance used by `splitPolygon()` to decide if a point is on the plane.
+        public const float EPSILON = 0.00001f;
 
-		/**
-		 * Returns a new mesh by merging @lhs with @rhs.
-		 */
-		public static Mesh Union(GameObject lhs, GameObject rhs)
-		{
-			CSG_Model csg_model_a = new CSG_Model(lhs);
-			CSG_Model csg_model_b = new CSG_Model(rhs);
+        /**
+         * Returns a new mesh by merging @lhs with @rhs.
+         */
+        public static Mesh Union(GameObject lhs, GameObject rhs)
+        {
+            CSG_Model csg_model_a = new CSG_Model(lhs);
+            CSG_Model csg_model_b = new CSG_Model(rhs);
 
-			CSG_Node a = new CSG_Node( csg_model_a.ToPolygons() );
-			CSG_Node b = new CSG_Node( csg_model_b.ToPolygons() );
+            CSG_Node a = new CSG_Node(csg_model_a.ToPolygons());
+            CSG_Node b = new CSG_Node(csg_model_b.ToPolygons());
 
-			List<CSG_Polygon> polygons = CSG_Node.Union(a, b).AllPolygons();
+            List<CSG_Polygon> polygons = CSG_Node.Union(a, b).AllPolygons();
 
-			CSG_Model result = new CSG_Model(polygons);
+            CSG_Model result = new CSG_Model(polygons);
 
-			return result.ToMesh();
-		}
+            return result.ToMesh();
+        }
 
-		/**
-		 * Returns a new mesh by subtracting @rhs from @lhs.
-		 */
-		public static Mesh Subtract(GameObject lhs, GameObject rhs)
-		{
-			CSG_Model csg_model_a = new CSG_Model(lhs);
-			CSG_Model csg_model_b = new CSG_Model(rhs);
+        /**
+         * Returns a new mesh by subtracting @rhs from @lhs.
+         */
+        public static Mesh Subtract(GameObject lhs, GameObject rhs)
+        {
+            CSG_Model csg_model_a = new CSG_Model(lhs);
+            CSG_Model csg_model_b = new CSG_Model(rhs);
 
-			CSG_Node a = new CSG_Node( csg_model_a.ToPolygons() );
-			CSG_Node b = new CSG_Node( csg_model_b.ToPolygons() );
+            CSG_Node a = new CSG_Node(csg_model_a.ToPolygons());
+            CSG_Node b = new CSG_Node(csg_model_b.ToPolygons());
 
-			List<CSG_Polygon> polygons = CSG_Node.Subtract(a, b).AllPolygons();
+            List<CSG_Polygon> polygons = CSG_Node.Subtract(a, b).AllPolygons();
 
-			CSG_Model result = new CSG_Model(polygons);
+            CSG_Model result = new CSG_Model(polygons);
 
-			return result.ToMesh();
-		}
+            return result.ToMesh();
+        }
 
-		/**
-		 * Return a new mesh by intersecting @lhs with @rhs.  This operation
-		 * is non-commutative, so set @lhs and @rhs accordingly.
-		 */
-		public static Mesh Intersect(GameObject lhs, GameObject rhs)
-		{
-			CSG_Model csg_model_a = new CSG_Model(lhs);
-			CSG_Model csg_model_b = new CSG_Model(rhs);
+        /**
+         * Return a new mesh by intersecting @lhs with @rhs.  This operation
+         * is non-commutative, so set @lhs and @rhs accordingly.
+         */
+        public static Mesh Intersect(GameObject lhs, GameObject rhs)
+        {
+            CSG_Model csg_model_a = new CSG_Model(lhs);
+            CSG_Model csg_model_b = new CSG_Model(rhs);
 
-			CSG_Node a = new CSG_Node( csg_model_a.ToPolygons() );
-			CSG_Node b = new CSG_Node( csg_model_b.ToPolygons() );
+            CSG_Node a = new CSG_Node(csg_model_a.ToPolygons());
+            CSG_Node b = new CSG_Node(csg_model_b.ToPolygons());
 
-			List<CSG_Polygon> polygons = CSG_Node.Intersect(a, b).AllPolygons();
+            List<CSG_Polygon> polygons = CSG_Node.Intersect(a, b).AllPolygons();
 
-			CSG_Model result = new CSG_Model(polygons);
+            CSG_Model result = new CSG_Model(polygons);
 
-			return result.ToMesh();
-		}
-	}
+            return result.ToMesh();
+        }
+    }
 }

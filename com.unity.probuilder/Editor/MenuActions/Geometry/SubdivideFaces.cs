@@ -4,80 +4,80 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	sealed class SubdivideFaces : MenuAction
-	{
-		public override ToolbarGroup group
-		{
-			get { return ToolbarGroup.Geometry; }
-		}
+    sealed class SubdivideFaces : MenuAction
+    {
+        public override ToolbarGroup group
+        {
+            get { return ToolbarGroup.Geometry; }
+        }
 
-		public override Texture2D icon
-		{
-			get { return IconUtility.GetIcon("Toolbar/Face_Subdivide", IconSkin.Pro); }
-		}
+        public override Texture2D icon
+        {
+            get { return IconUtility.GetIcon("Toolbar/Face_Subdivide", IconSkin.Pro); }
+        }
 
-		public override TooltipContent tooltip
-		{
-			get { return s_Tooltip; }
-		}
+        public override TooltipContent tooltip
+        {
+            get { return s_Tooltip; }
+        }
 
-		protected override bool hasFileMenuEntry
-		{
-			get { return false; }
-		}
+        protected override bool hasFileMenuEntry
+        {
+            get { return false; }
+        }
 
-		static readonly TooltipContent s_Tooltip = new TooltipContent
-		(
-			"Subdivide Faces",
-			@"Inserts a new vertex at the center of each selected face and creates a new edge from the center of each perimeter edge to the center vertex.",
-			keyCommandAlt, 'S'
-		);
+        static readonly TooltipContent s_Tooltip = new TooltipContent
+            (
+                "Subdivide Faces",
+                @"Inserts a new vertex at the center of each selected face and creates a new edge from the center of each perimeter edge to the center vertex.",
+                keyCommandAlt, 'S'
+            );
 
-		public override SelectMode validSelectModes
-		{
-			get { return SelectMode.Face; }
-		}
+        public override SelectMode validSelectModes
+        {
+            get { return SelectMode.Face; }
+        }
 
-		public override bool enabled
-		{
-			get { return base.enabled && MeshSelection.selectedFaceCount > 0; }
-		}
+        public override bool enabled
+        {
+            get { return base.enabled && MeshSelection.selectedFaceCount > 0; }
+        }
 
-		public override ActionResult DoAction()
-		{
-			if (MeshSelection.selectedObjectCount < 1)
-				return ActionResult.NoSelection;
+        public override ActionResult DoAction()
+        {
+            if (MeshSelection.selectedObjectCount < 1)
+                return ActionResult.NoSelection;
 
-			int success = 0;
-			UndoUtility.RecordSelection("Subdivide Faces");
+            int success = 0;
+            UndoUtility.RecordSelection("Subdivide Faces");
 
-			foreach(ProBuilderMesh pb in MeshSelection.topInternal)
-			{
-				Face[] faces = pb.Subdivide(pb.selectedFacesInternal);
+            foreach (ProBuilderMesh pb in MeshSelection.topInternal)
+            {
+                Face[] faces = pb.Subdivide(pb.selectedFacesInternal);
 
-				pb.ToMesh();
+                pb.ToMesh();
 
-				if(faces != null)
-				{
-					success += pb.selectedFacesInternal.Length;
-					pb.SetSelectedFaces(faces);
+                if (faces != null)
+                {
+                    success += pb.selectedFacesInternal.Length;
+                    pb.SetSelectedFaces(faces);
 
-					pb.Refresh();
-					pb.Optimize();
-				}
-			}
+                    pb.Refresh();
+                    pb.Optimize();
+                }
+            }
 
-			if(success > 0)
-			{
-				ProBuilderEditor.Refresh();
+            if (success > 0)
+            {
+                ProBuilderEditor.Refresh();
 
-				return new ActionResult(ActionResult.Status.Success, "Subdivide " + success + ((success > 1) ? " faces" : " face"));
-			}
-			else
-			{
-				Debug.LogWarning("Subdivide faces failed - did you not have any faces selected?");
-				return new ActionResult(ActionResult.Status.Failure, "Subdivide Faces\nNo faces selected");
-			}
-		}
-	}
+                return new ActionResult(ActionResult.Status.Success, "Subdivide " + success + ((success > 1) ? " faces" : " face"));
+            }
+            else
+            {
+                Debug.LogWarning("Subdivide faces failed - did you not have any faces selected?");
+                return new ActionResult(ActionResult.Status.Failure, "Subdivide Faces\nNo faces selected");
+            }
+        }
+    }
 }

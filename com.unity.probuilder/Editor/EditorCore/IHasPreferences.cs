@@ -1,7 +1,7 @@
-﻿namespace UnityEditor.ProBuilder
+namespace UnityEditor.ProBuilder
 {
-	interface IHasPreferences
-	{
-		void ReloadPreferences();
-	}
+    interface IHasPreferences
+    {
+        void ReloadPreferences();
+    }
 }

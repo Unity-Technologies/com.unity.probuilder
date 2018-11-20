@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
@@ -186,7 +186,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Edge
             Assert.AreEqual(3, mesh.mesh.subMeshCount);
 
 #pragma warning disable 618
-            foreach(var face in mesh.facesInternal)
+            foreach (var face in mesh.facesInternal)
                 Assert.IsTrue(face.material == null);
 #pragma warning restore 618
 
