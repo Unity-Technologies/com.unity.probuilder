@@ -5,12 +5,26 @@
 	/// </summary>
 	public static class MeshTransform
 	{
-		/// <summary>
-		/// Center the mesh pivot at the average of a set of vertices.
-		/// </summary>
-		/// <param name="mesh">The target mesh.</param>
-		/// <param name="indexes">The indexes of the positions to average to find the new pivot.</param>
-		public static void CenterPivot(this ProBuilderMesh mesh, int[] indexes)
+	    internal static void SetPivot(this ProBuilderMesh mesh, PivotLocation pivotType, int firstVertexIndex = 0)
+	    {
+	        switch (pivotType)
+	        {
+	            case PivotLocation.Center:
+	                mesh.CenterPivot(null);
+	                break;
+
+	            case PivotLocation.FirstVertex:
+	                mesh.CenterPivot(new int[1] { firstVertexIndex });
+	                break;
+	        }
+        }
+
+        /// <summary>
+        /// Center the mesh pivot at the average of a set of vertices.
+        /// </summary>
+        /// <param name="mesh">The target mesh.</param>
+        /// <param name="indexes">The indexes of the positions to average to find the new pivot.</param>
+        public static void CenterPivot(this ProBuilderMesh mesh, int[] indexes)
 		{
             if (mesh == null)
                 throw new System.ArgumentNullException("mesh");

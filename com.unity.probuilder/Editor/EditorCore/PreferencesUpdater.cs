@@ -73,7 +73,7 @@ namespace UnityEditor.ProBuilder
 			new FormerPreferenceKeyMap(PreferenceKeys.pbDefaultStaticFlags, "mesh.defaultStaticEditorFlags", typeof(UnityEditor.StaticEditorFlags), SettingsScope.Project),
 			new FormerPreferenceKeyMap(PreferenceKeys.pbDefaultMaterial, "mesh.userMaterial", typeof(UnityEngine.Material), SettingsScope.Project),
 			new FormerPreferenceKeyMap(PreferenceKeys.pbForceConvex, "mesh.meshColliderIsConvex", typeof(System.Boolean), SettingsScope.Project),
-			new FormerPreferenceKeyMap("", "mesh.newShapePivotLocation", typeof(UnityEditor.ProBuilder.EditorUtility.PivotLocation), SettingsScope.Project),
+			new FormerPreferenceKeyMap("", "mesh.newShapePivotLocation", typeof(UnityEngine.ProBuilder.PivotLocation), SettingsScope.Project),
 			new FormerPreferenceKeyMap("", "mesh.newShapesSnapToGrid", typeof(System.Boolean), SettingsScope.Project),
 			new FormerPreferenceKeyMap(PreferenceKeys.pbShadowCastingMode, "mesh.shadowCastingMode", typeof(UnityEngine.Rendering.ShadowCastingMode), SettingsScope.Project),
 			new FormerPreferenceKeyMap(PreferenceKeys.pbDefaultCollider, "mesh.newShapeColliderType", typeof(UnityEngine.ProBuilder.ColliderType), SettingsScope.Project),
