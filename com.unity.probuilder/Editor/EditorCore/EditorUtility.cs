@@ -46,7 +46,7 @@ namespace UnityEditor.ProBuilder
 		[UserSetting("Mesh Settings", "Pivot Location", "Determines the placement of new shape's pivot.")]
 		static Pref<PivotLocation> s_NewShapesPivotAtVertex = new Pref<PivotLocation>("mesh.newShapePivotLocation", PivotLocation.FirstVertex);
 
-		[UserSetting("Mesh Settings", "Pivot on Vertex", "When enabled, new shapes will have their pivot point set to a vertex instead of the center.")]
+		[UserSetting("Mesh Settings", "Snap New Shape To Grid", "When enabled, new shapes will snap to the closest point on grid.")]
 		static Pref<bool> s_SnapNewShapesToGrid = new Pref<bool>("mesh.newShapesSnapToGrid", true);
 
 		[UserSetting("Mesh Settings", "Shadow Casting Mode", "The default ShadowCastingMode to apply to MeshRenderer components.")]
@@ -292,12 +292,12 @@ namespace UnityEditor.ProBuilder
 		/// <param name="pb"></param>
 		internal static void InitObject(ProBuilderMesh pb)
 		{
-			SetPivotLocationAndSnap(pb);
+		    ScreenCenter(pb.gameObject);
+
+            SetPivotLocationAndSnap(pb);
 
 			pb.renderer.shadowCastingMode = s_ShadowCastingMode;
 			pb.renderer.sharedMaterial = GetUserMaterial();
-
-			ScreenCenter(pb.gameObject);
 
 			GameObjectUtility.SetStaticEditorFlags(pb.gameObject, s_StaticEditorFlags);
 
@@ -322,7 +322,7 @@ namespace UnityEditor.ProBuilder
 
 		internal static void SetPivotLocationAndSnap(ProBuilderMesh mesh)
 		{
-			switch (s_NewShapesPivotAtVertex.value)
+            switch (s_NewShapesPivotAtVertex.value)
 			{
 				case PivotLocation.Center:
 					mesh.CenterPivot(null);
@@ -341,8 +341,8 @@ namespace UnityEditor.ProBuilder
 					EditorPrefs.GetFloat("MoveSnapY"),
 					EditorPrefs.GetFloat("MoveSnapZ")));
 
-			mesh.Optimize();
-		}
+		    mesh.Optimize();
+        }
 
 		/**
 		 * Puts the selected gameObject at the pivot point of the SceneView camera.
