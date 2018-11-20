@@ -1084,7 +1084,6 @@ namespace UnityEngine.ProBuilder
 			ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(v.ToArray());
 
 			pb.gameObject.name = "Pipe";
-		    pb.firstVertexPivotIndex = 1;
 
 			return pb;
 		}
@@ -1303,25 +1302,10 @@ namespace UnityEngine.ProBuilder
 
 			Face[] f = new Face[v.Length/3];
 
-		    Vector3 bottomMostVertexPosition = Vector3.positiveInfinity;
-		    int bottomMostVertexIndex = -1;
-
 			for(int i = 0; i < v.Length; i+=3)
 			{
 				f[i/3] = new Face( new int[3] { i, i+1, i+2 } );
 				f[i/3].manualUV = manualUvs;
-
-                // Get the bottom most vertex of the whole shape. We'll use it as a pivot point.
-			    for (int j = 0; j < f[i / 3].indexes.Count; ++j)
-			    {
-			        int index = f[i / 3].indexes[j];
-
-                    if (v[index].y < bottomMostVertexPosition.y)
-			        {
-			            bottomMostVertexPosition = v[index];
-			            bottomMostVertexIndex = index;
-			        }
-			    }
 			}
 
 			if (!manualUvs)
@@ -1348,7 +1332,6 @@ namespace UnityEngine.ProBuilder
 
 			GameObject go = new GameObject();
 			ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
-		    pb.firstVertexPivotIndex = bottomMostVertexIndex;
 			pb.Clear();
 			pb.positionsInternal = v;
 			pb.facesInternal = f;

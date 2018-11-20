@@ -362,7 +362,7 @@ namespace UnityEditor.ProBuilder
 					break;
 
 				case PivotLocation.FirstVertex:
-					mesh.CenterPivot(new int[1] { mesh.firstVertexPivotIndex });
+					mesh.CenterPivot(new int[1] { 0 });
 					break;
 			}
 

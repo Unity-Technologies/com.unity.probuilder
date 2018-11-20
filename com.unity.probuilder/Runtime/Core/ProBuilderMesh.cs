@@ -93,9 +93,6 @@ namespace UnityEngine.ProBuilder
         [FormerlySerializedAs("_colors")]
         Color[] m_Colors;
 
-        [SerializeField]
-        int m_FirstVertexPivotIndex;
-
 	    /// <value>
 	    /// If false, ProBuilder will automatically create and scale colliders.
 	    /// </value>
@@ -578,12 +575,6 @@ namespace UnityEngine.ProBuilder
 
 		    return tangents.ToArray();
 	    }
-
-        public int firstVertexPivotIndex
-        {
-            get { return m_FirstVertexPivotIndex; }
-            set { m_FirstVertexPivotIndex = value; }
-        }
 
         internal Vector2[] texturesInternal
 		{
