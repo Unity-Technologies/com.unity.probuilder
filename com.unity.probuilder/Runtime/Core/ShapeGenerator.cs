@@ -155,7 +155,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="shape">The ShapeType to create.</param>
         /// <param name="pivotType">Where the shape's pivot will be.</param>
         /// <returns>A new GameObject with the ProBuilderMesh initialized to the primitve shape.</returns>
-        public static ProBuilderMesh CreateShape(ShapeType shape, PivotLocation pivotType)
+        public static ProBuilderMesh CreateShape(ShapeType shape, PivotLocation pivotType = PivotLocation.Center)
 		{
 			ProBuilderMesh pb = null;
 
