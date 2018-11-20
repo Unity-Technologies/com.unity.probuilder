@@ -70,7 +70,6 @@ namespace UnityEngine.ProBuilder
 
             int i = 0;
 
-			s_CoincidentVertices.Clear();
 			mesh.GetCoincidentVertices(indexes, s_CoincidentVertices);
 
 			Matrix4x4 w2l = mesh.transform.worldToLocalMatrix;
@@ -115,7 +114,6 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-			s_CoincidentVertices.Clear();
 			mesh.GetCoincidentVertices(indexes, s_CoincidentVertices);
 			Vector3[] verts = mesh.positionsInternal;
 

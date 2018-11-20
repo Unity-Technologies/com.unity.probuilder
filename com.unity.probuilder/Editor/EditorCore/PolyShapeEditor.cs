@@ -64,12 +64,20 @@ namespace UnityEditor.ProBuilder
 
 		void OnDisable()
 		{
-			ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+            // Quit Edit mode when the object gets de-selected.
+		    if (polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
+		        SetPolyEditMode(PolyShape.PolyEditMode.None);
+
+            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
 			GameObject.DestroyImmediate(m_LineMesh);
 			GameObject.DestroyImmediate(m_LineMaterial);
 			EditorApplication.update -= Update;
 			Undo.undoRedoPerformed -= UndoRedoPerformed;
-		}
+
+            // Delete the created Polyshape if path is empty.
+		    if (polygon.polyEditMode == PolyShape.PolyEditMode.Path && polygon.m_Points.Count == 0)
+		        Undo.DestroyObjectImmediate(polygon.gameObject);
+        }
 
 		public override void OnInspectorGUI()
 		{
@@ -304,7 +312,7 @@ namespace UnityEditor.ProBuilder
 
 			if(polygon == null || Tools.current != Tool.None)
 			{
-				polygon.polyEditMode = PolyShape.PolyEditMode.None;
+                SetPolyEditMode(PolyShape.PolyEditMode.None);
 				return;
 			}
 
@@ -708,10 +716,13 @@ namespace UnityEditor.ProBuilder
 		void OnSelectModeChanged(SelectMode selectMode)
 		{
 			// User changed select mode manually, remove InputTool flag
-			if( polygon != null
-				&& polygon.polyEditMode != PolyShape.PolyEditMode.None
-				&& !selectMode.ContainsFlag(SelectMode.InputTool))
-				polygon.polyEditMode = PolyShape.PolyEditMode.None;
+		    if (polygon != null
+		        && polygon.polyEditMode != PolyShape.PolyEditMode.None
+		        && !selectMode.ContainsFlag(SelectMode.InputTool))
+		    {
+		        SetPolyEditMode(PolyShape.PolyEditMode.None);
+
+		    }
 		}
 
 		void OnBeginVertexMovement()

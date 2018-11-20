@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEditor;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -359,15 +358,16 @@ namespace UnityEditor.ProBuilder
 
 		internal static Vector3 GetHandlePosition()
 		{
-			switch (Tools.pivotMode)
+			switch (VertexManipulationTool.pivotPoint)
 			{
-				case PivotMode.Pivot:
+				case PivotPoint.ActiveElement:
+				case PivotPoint.IndividualOrigins:
 				{
 					ProBuilderMesh mesh = activeMesh;
 					Face face;
 					Vector3 center = Vector3.zero;
 
-					if (ProBuilderEditor.handleOrientation == HandleOrientation.Normal && GetActiveFace(out mesh, out face))
+					if (GetActiveFace(out mesh, out face))
 						center = Math.GetBounds(mesh.positionsInternal, face.distinctIndexesInternal).center;
 					else if(activeMesh != null)
 						center = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal).center;
@@ -381,33 +381,27 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		internal static Quaternion GetHandleRotation(HandleOrientation orientation)
+		internal static Quaternion GetHandleRotation()
 		{
-			switch (orientation)
+			var orientation = VertexManipulationTool.handleOrientation;
+
+			switch (ProBuilderEditor.selectMode)
 			{
-				case HandleOrientation.Normal:
+				case SelectMode.Face:
+				case SelectMode.TextureFace:
+					return EditorHandleUtility.GetFaceRotation(activeMesh, activeMesh.selectedFacesInternal, orientation);
 
-					ProBuilderMesh mesh;
-					Face face;
+				case SelectMode.Edge:
+				case SelectMode.TextureEdge:
+					return EditorHandleUtility.GetEdgeRotation(activeMesh, activeMesh.selectedEdgesInternal, orientation);
 
-					if(!GetActiveFace(out mesh, out face))
-						goto case HandleOrientation.Local;
+				case SelectMode.Vertex:
+					return EditorHandleUtility.GetVertexRotation(activeMesh, activeMesh.selectedCoincidentVertices, orientation);
 
-					// use average normal, tangent, and bi-tangent to calculate rotation relative to local space
-					var tup = Math.NormalTangentBitangent(mesh, face);
-					Vector3 nrm = tup.normal, bitan = tup.bitangent;
+				case SelectMode.TextureVertex:
+					return EditorHandleUtility.GetVertexRotation(activeMesh, activeMesh.selectedIndexesInternal, orientation);
 
-					if (nrm == Vector3.zero || bitan == Vector3.zero)
-					{
-						nrm = Vector3.up;
-						bitan = Vector3.right;
-					}
-
-					return activeMesh.transform.rotation * Quaternion.LookRotation(nrm, bitan);
-
-				case HandleOrientation.Local:
-					if (activeMesh == null)
-						goto default;
+				case SelectMode.Object:
 					return activeMesh.transform.rotation;
 
 				default:
@@ -420,7 +414,7 @@ namespace UnityEditor.ProBuilder
 			if (activeMesh != null && activeMesh.selectedFaceCount > 0)
 			{
 				mesh = activeMesh;
-				face = mesh.faces[activeMesh.selectedFaceIndicesInternal[0]];
+				face = mesh.GetActiveFace();
 				return true;
 			}
 

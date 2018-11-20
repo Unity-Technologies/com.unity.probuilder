@@ -10,16 +10,23 @@ namespace UnityEngine.ProBuilder
 	public enum HandleOrientation
 	{
 		/// <summary>
-		/// The gizmo is aligned in world space.
+		/// The gizmo is aligned to identity in world space.
 		/// </summary>
 		World = 0,
+
 		/// <summary>
-		/// The gizmo is aligned relative to the mesh transform. Also called coordinate or model space.
+		/// The gizmo is aligned relative to the active mesh transform. Also called coordinate or model space.
 		/// </summary>
-		Local = 1,
+		ActiveObject = 1,
+
 		/// <summary>
-		/// The gizmo is aligned relative to the currently selected face. When editing vertices or edges, this falls back to <see cref="Local"/> alignment.
+		/// The gizmo is aligned relative to the currently selected face. When editing vertices or edges, this falls back to <see cref="ActiveObject"/> alignment.
 		/// </summary>
-		Normal = 2
+		ActiveElement = 2,
+
+//		/// <summary>
+//		/// The transform gizmo is user-set.
+//		/// </summary>
+//		Custom = 3
 	}
 }

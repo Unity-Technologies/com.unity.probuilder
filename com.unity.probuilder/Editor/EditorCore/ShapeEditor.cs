@@ -32,7 +32,6 @@ namespace UnityEditor.ProBuilder
 
 		static readonly Color k_PreviewColor = new Color(.5f, .9f, 1f, .56f);
 
-		Material m_ShapePreviewMaterial;
 		Vector2 m_Scroll = Vector2.zero;
 		static int s_CurrentIndex = 0;
 		GameObject m_PreviewObject;
@@ -61,26 +60,9 @@ namespace UnityEditor.ProBuilder
 
 		void OnEnable()
 		{
-			if (m_ShapePreviewMaterial == null)
-			{
-				m_ShapePreviewMaterial = new Material(BuiltinMaterials.defaultMaterial.shader);
-				m_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
-
-				if (m_ShapePreviewMaterial.HasProperty("_MainTex"))
-					m_ShapePreviewMaterial.mainTexture = (Texture2D)Resources.Load("Textures/GridBox_Default");
-
-				if (m_ShapePreviewMaterial.HasProperty("_Color"))
-					m_ShapePreviewMaterial.SetColor("_Color", k_PreviewColor);
-			}
-
 			m_ShapeTypes = m_ShapeBuilders.Select(x => x.name).ToArray();
 
 			SetPreviewMesh(m_ShapeBuilders[s_CurrentIndex].Build());
-		}
-
-		void OnDisable()
-		{
-			DestroyImmediate(m_ShapePreviewMaterial);
 		}
 
 		void OnDestroy()
@@ -125,7 +107,7 @@ namespace UnityEditor.ProBuilder
 			{
 				var res = shape.Build();
 				EditorUtility.InitObject(res);
-				ApplyPreviewTransform(res);
+                ApplyPreviewTransform(res);
 				DestroyPreviewObject();
 
 				if (s_CloseWindowAfterCreateShape)
@@ -159,10 +141,10 @@ namespace UnityEditor.ProBuilder
 
 			umesh.hideFlags = HideFlags.DontSave;
 			m_PreviewObject.hideFlags = HideFlags.DontSave;
-			m_PreviewObject.GetComponent<MeshRenderer>().sharedMaterial = m_ShapePreviewMaterial;
+			m_PreviewObject.GetComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.ShapePreviewMaterial;
 
 			Selection.activeTransform = m_PreviewObject.transform;
-		}
+        }
 
 		void ApplyPreviewTransform(ProBuilderMesh mesh)
 		{

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using UnityEngine.ProBuilder;
@@ -10,6 +9,7 @@ namespace UnityEditor.ProBuilder
 {
 	partial class EditorMeshHandles
 	{
+		const float k_DefaultGizmoSize = .2f;
 		static bool s_Initialized;
 		static Material s_LineMaterial;
 		static Material s_FaceMaterial;
@@ -50,7 +50,7 @@ namespace UnityEditor.ProBuilder
 		internal static void DrawGizmo(Vector3 position, Matrix4x4 matrix, float size = -1f)
 		{
 			var p = matrix.MultiplyPoint3x4(position);
-			size = HandleUtility.GetHandleSize(p) * size < 0f ? .2f : size;
+			size = HandleUtility.GetHandleSize(p) * size < 0f ? k_DefaultGizmoSize : size;
 
 			using (var lineDrawer = new LineDrawingScope(Color.green, -1f, CompareFunction.Always))
 			{
@@ -60,6 +60,20 @@ namespace UnityEditor.ProBuilder
 				lineDrawer.color = Color.blue;
 				lineDrawer.DrawLine(p, p + matrix.MultiplyVector(Vector3.forward) * size);
 			}
+		}
+
+		internal static void DrawTransformOriginGizmo(Matrix4x4 matrix, Vector3 direction,  float size = -1f)
+		{
+			var p = matrix.MultiplyPoint(Vector3.zero);
+			var s = HandleUtility.GetHandleSize(p);
+			var d = size < 0f ? k_DefaultGizmoSize : size;
+			var e = Event.current.type;
+
+			Handles.color = Color.gray;
+			Handles.DotHandleCap(0, p, Quaternion.identity, s * dotCapSize, e);
+			Handles.DotHandleCap(0, p + matrix.MultiplyVector(direction) * d, Quaternion.identity, s * dotCapSize, e);
+			Handles.DrawLine(p, p + matrix.MultiplyVector(direction) * d);
+			Handles.color = Color.white;
 		}
 
 		internal class LineDrawingScope : IDisposable

@@ -223,7 +223,7 @@ namespace UnityEditor.ProBuilder
 			Vector2 mpos = e.mousePosition;
 			bool forceRepaint = false;
 
-			// if icon mode and no actions are found, that probably means icons failed to load.  revert to text mode.
+			// if icon mode and no actions are found, that probably means icons failed to load. revert to text mode.
 			int menuActionsCount = 0;
 
 			for(int i = 0; i < m_Actions.Count; i++)
