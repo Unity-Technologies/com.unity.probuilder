@@ -9,63 +9,63 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	sealed class MergeObjects : MenuAction
-	{
-		public override ToolbarGroup group
-		{
-			get { return ToolbarGroup.Object; }
-		}
+    sealed class MergeObjects : MenuAction
+    {
+        public override ToolbarGroup group
+        {
+            get { return ToolbarGroup.Object; }
+        }
 
-		public override Texture2D icon
-		{
-			get { return IconUtility.GetIcon("Toolbar/Object_Merge", IconSkin.Pro); }
-		}
+        public override Texture2D icon
+        {
+            get { return IconUtility.GetIcon("Toolbar/Object_Merge", IconSkin.Pro); }
+        }
 
-		public override TooltipContent tooltip
-		{
-			get { return s_Tooltip; }
-		}
+        public override TooltipContent tooltip
+        {
+            get { return s_Tooltip; }
+        }
 
-		static readonly TooltipContent s_Tooltip = new TooltipContent
-		(
-			"Merge Objects",
-			@"Merges all selected ProBuilder objects to a single mesh."
-		);
+        static readonly TooltipContent s_Tooltip = new TooltipContent
+            (
+                "Merge Objects",
+                @"Merges all selected ProBuilder objects to a single mesh."
+            );
 
-		public override bool enabled
-		{
-			get { return base.enabled && MeshSelection.selectedObjectCount > 1; }
-		}
+        public override bool enabled
+        {
+            get { return base.enabled && MeshSelection.selectedObjectCount > 1; }
+        }
 
-		public override ActionResult DoAction()
-		{
-			if(MeshSelection.selectedObjectCount < 2)
-				return new ActionResult(ActionResult.Status.Canceled, "Must Select 2+ Objects");
+        public override ActionResult DoAction()
+        {
+            if (MeshSelection.selectedObjectCount < 2)
+                return new ActionResult(ActionResult.Status.Canceled, "Must Select 2+ Objects");
 
-			var selected = MeshSelection.top.ToArray();
-			List<ProBuilderMesh> res = InternalMeshUtility.CombineObjects(MeshSelection.topInternal);
+            var selected = MeshSelection.top.ToArray();
+            List<ProBuilderMesh> res = InternalMeshUtility.CombineObjects(MeshSelection.topInternal);
 
-			if (res != null)
-			{
-				foreach (var mesh in res)
-				{
-					mesh.Optimize();
-					mesh.gameObject.name = "pb-MergedObject" + mesh.id;
-					UndoUtility.RegisterCreatedObjectUndo(mesh.gameObject, "Merge Objects");
-					Selection.objects = res.Select(x => x.gameObject).ToArray();
-				}
+            if (res != null)
+            {
+                foreach (var mesh in res)
+                {
+                    mesh.Optimize();
+                    mesh.gameObject.name = "pb-MergedObject" + mesh.id;
+                    UndoUtility.RegisterCreatedObjectUndo(mesh.gameObject, "Merge Objects");
+                    Selection.objects = res.Select(x => x.gameObject).ToArray();
+                }
 
-				// Delete donor objects
-				for(int i = 0; i < selected.Length; i++)
-				{
-					if(selected[i] != null)
-						UndoUtility.DestroyImmediate(selected[i].gameObject);
-				}
-			}
+                // Delete donor objects
+                for (int i = 0; i < selected.Length; i++)
+                {
+                    if (selected[i] != null)
+                        UndoUtility.DestroyImmediate(selected[i].gameObject);
+                }
+            }
 
-			ProBuilderEditor.Refresh();
+            ProBuilderEditor.Refresh();
 
-			return new ActionResult(ActionResult.Status.Success, "Merged Objects");
-		}
-	}
+            return new ActionResult(ActionResult.Status.Success, "Merged Objects");
+        }
+    }
 }

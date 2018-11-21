@@ -4,50 +4,50 @@ using UnityEditor.SettingsManagement;
 
 namespace UnityEditor.ProBuilder
 {
-	abstract class ConfigurableWindow : EditorWindow, IHasCustomMenu
-	{
-		string utilityWindowKey
-		{
-			get { return GetType().ToString() + "-isUtilityWindow"; }
-		}
+    abstract class ConfigurableWindow : EditorWindow, IHasCustomMenu
+    {
+        string utilityWindowKey
+        {
+            get { return GetType().ToString() + "-isUtilityWindow"; }
+        }
 
-		protected static bool IsUtilityWindow<T>() where T : ConfigurableWindow
-		{
-			return ProBuilderSettings.Get<bool>(typeof(T).ToString() + "-isUtilityWindow", SettingsScope.Project, false);
-		}
+        protected static bool IsUtilityWindow<T>() where T : ConfigurableWindow
+        {
+            return ProBuilderSettings.Get<bool>(typeof(T).ToString() + "-isUtilityWindow", SettingsScope.Project, false);
+        }
 
-		public static new T GetWindow<T>(string title, bool focus = true) where T : ConfigurableWindow
-		{
-			return GetWindow<T>(IsUtilityWindow<T>(), title, focus);
-		}
+        public static new T GetWindow<T>(string title, bool focus = true) where T : ConfigurableWindow
+        {
+            return GetWindow<T>(IsUtilityWindow<T>(), title, focus);
+        }
 
-		public virtual void AddItemsToMenu(GenericMenu menu)
-		{
-			bool floating = ProBuilderSettings.Get<bool>(utilityWindowKey, SettingsScope.Project, false);
-			menu.AddItem(new GUIContent("Window/Open as Floating Window", ""), floating, () => SetIsUtilityWindow(true) );
-			menu.AddItem(new GUIContent("Window/Open as Dockable Window", ""), !floating, () => SetIsUtilityWindow(false) );
-		}
+        public virtual void AddItemsToMenu(GenericMenu menu)
+        {
+            bool floating = ProBuilderSettings.Get<bool>(utilityWindowKey, SettingsScope.Project, false);
+            menu.AddItem(new GUIContent("Window/Open as Floating Window", ""), floating, () => SetIsUtilityWindow(true));
+            menu.AddItem(new GUIContent("Window/Open as Dockable Window", ""), !floating, () => SetIsUtilityWindow(false));
+        }
 
-		protected void DoContextMenu()
-		{
-			var e = Event.current;
+        protected void DoContextMenu()
+        {
+            var e = Event.current;
 
-			if (e.type == EventType.ContextClick)
-			{
-				var menu = new GenericMenu();
-				AddItemsToMenu(menu);
-				menu.ShowAsContext();
-			}
-		}
+            if (e.type == EventType.ContextClick)
+            {
+                var menu = new GenericMenu();
+                AddItemsToMenu(menu);
+                menu.ShowAsContext();
+            }
+        }
 
-		void SetIsUtilityWindow(bool isUtilityWindow)
-		{
-			ProBuilderSettings.Set<bool>(utilityWindowKey, isUtilityWindow, SettingsScope.Project);
-			ProBuilderSettings.Save();
-			var title = titleContent;
-			Close();
-			var res = GetWindow(GetType(), isUtilityWindow);
-			res.titleContent = title;
-		}
-	}
+        void SetIsUtilityWindow(bool isUtilityWindow)
+        {
+            ProBuilderSettings.Set<bool>(utilityWindowKey, isUtilityWindow, SettingsScope.Project);
+            ProBuilderSettings.Save();
+            var title = titleContent;
+            Close();
+            var res = GetWindow(GetType(), isUtilityWindow);
+            res.titleContent = title;
+        }
+    }
 }

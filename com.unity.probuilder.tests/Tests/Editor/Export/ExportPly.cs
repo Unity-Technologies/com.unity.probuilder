@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Linq;
 using UnityEngine;
 using UnityEditor.ProBuilder;
@@ -8,30 +8,30 @@ using UnityEngine.ProBuilder.Tests.Framework;
 
 namespace UnityEngine.ProBuilder.EditorTests.Export
 {
-	class ExportPly : TemporaryAssetTest
-	{
-		[Test]
-		public static void NumbersAreCultureInvariant()
-		{
-			var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
-			var current = Thread.CurrentThread.CurrentCulture;
+    class ExportPly : TemporaryAssetTest
+    {
+        [Test]
+        public static void NumbersAreCultureInvariant()
+        {
+            var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
+            var current = Thread.CurrentThread.CurrentCulture;
 
-			try
-			{
-				Thread.CurrentThread.CurrentCulture = new CultureInfo("de-DE");
+            try
+            {
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("de-DE");
 
-				string ply;
+                string ply;
 
-				if (PlyExporter.Export(new ProBuilderMesh[] { cube }, out ply))
-				{
-					Assert.IsFalse(ply.Any(x => x.Equals(',')));
-				}
-			}
-			finally
-			{
-				Thread.CurrentThread.CurrentCulture = current;
-				UnityEngine.Object.DestroyImmediate(cube);
-			}
-		}
-	}
+                if (PlyExporter.Export(new ProBuilderMesh[] { cube }, out ply))
+                {
+                    Assert.IsFalse(ply.Any(x => x.Equals(',')));
+                }
+            }
+            finally
+            {
+                Thread.CurrentThread.CurrentCulture = current;
+                UnityEngine.Object.DestroyImmediate(cube);
+            }
+        }
+    }
 }

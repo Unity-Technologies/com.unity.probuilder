@@ -4,404 +4,404 @@ using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
 {
-	/// <summary>
-	/// Functions for projecting 3d points to 2d space.
-	/// </summary>
-	public static class Projection
-	{
-		/// <summary>
-		/// Project a collection of 3d positions to a 2d plane.
-		/// </summary>
-		/// <param name="positions">A collection of positions to project based on a direction.</param>
-		/// <param name="indexes"></param>
-		/// <returns>The positions array projected into 2d coordinates.</returns>
-		public static Vector2[] PlanarProject(IList<Vector3> positions, IList<int> indexes = null)
-		{
-			return PlanarProject(positions, indexes, FindBestPlane(positions, indexes).normal);
-		}
+    /// <summary>
+    /// Functions for projecting 3d points to 2d space.
+    /// </summary>
+    public static class Projection
+    {
+        /// <summary>
+        /// Project a collection of 3d positions to a 2d plane.
+        /// </summary>
+        /// <param name="positions">A collection of positions to project based on a direction.</param>
+        /// <param name="indexes"></param>
+        /// <returns>The positions array projected into 2d coordinates.</returns>
+        public static Vector2[] PlanarProject(IList<Vector3> positions, IList<int> indexes = null)
+        {
+            return PlanarProject(positions, indexes, FindBestPlane(positions, indexes).normal);
+        }
 
-		public static Vector2[] PlanarProject(IList<Vector3> positions, IList<int> indexes, Vector3 direction)
-		{
-			var nrm = direction;
-			var axis = VectorToProjectionAxis(nrm);
-			var prj = ProjectionAxisToVectorInternal(axis);
-			var len = indexes == null ? positions.Count : indexes.Count;
-			var projected = new Vector2[len];
+        public static Vector2[] PlanarProject(IList<Vector3> positions, IList<int> indexes, Vector3 direction)
+        {
+            var nrm = direction;
+            var axis = VectorToProjectionAxis(nrm);
+            var prj = ProjectionAxisToVectorInternal(axis);
+            var len = indexes == null ? positions.Count : indexes.Count;
+            var projected = new Vector2[len];
 
-			var u = Vector3.Cross(nrm, prj);
-			var v = Vector3.Cross(u, nrm);
+            var u = Vector3.Cross(nrm, prj);
+            var v = Vector3.Cross(u, nrm);
 
-			u.Normalize();
-			v.Normalize();
+            u.Normalize();
+            v.Normalize();
 
-			if (indexes != null)
-			{
-				for (int i = 0, ic = len; i < ic; ++i)
-					projected[i] = new Vector2(Vector3.Dot(u, positions[indexes[i]]), Vector3.Dot(v, positions[indexes[i]]));
-			}
-			else
-			{
-				for (int i = 0, ic = len; i < ic; ++i)
-					projected[i] = new Vector2(Vector3.Dot(u, positions[i]), Vector3.Dot(v, positions[i]));
-			}
+            if (indexes != null)
+            {
+                for (int i = 0, ic = len; i < ic; ++i)
+                    projected[i] = new Vector2(Vector3.Dot(u, positions[indexes[i]]), Vector3.Dot(v, positions[indexes[i]]));
+            }
+            else
+            {
+                for (int i = 0, ic = len; i < ic; ++i)
+                    projected[i] = new Vector2(Vector3.Dot(u, positions[i]), Vector3.Dot(v, positions[i]));
+            }
 
-			return projected;
-		}
+            return projected;
+        }
 
-		internal static void PlanarProject(ProBuilderMesh mesh, int textureGroup, AutoUnwrapSettings unwrapSettings)
-		{
-			var worldSpace = unwrapSettings.useWorldSpace;
-			var nrm = FindBestPlane(mesh, textureGroup).normal;
-			var trs = (Transform)null;
+        internal static void PlanarProject(ProBuilderMesh mesh, int textureGroup, AutoUnwrapSettings unwrapSettings)
+        {
+            var worldSpace = unwrapSettings.useWorldSpace;
+            var nrm = FindBestPlane(mesh, textureGroup).normal;
+            var trs = (Transform)null;
 
-			if (worldSpace)
-			{
-				trs = mesh.transform;
-				nrm = trs.TransformDirection(nrm);
-			}
+            if (worldSpace)
+            {
+                trs = mesh.transform;
+                nrm = trs.TransformDirection(nrm);
+            }
 
-			var axis = VectorToProjectionAxis(nrm);
-			var prj = ProjectionAxisToVectorInternal(axis);
+            var axis = VectorToProjectionAxis(nrm);
+            var prj = ProjectionAxisToVectorInternal(axis);
 
-			var u = Vector3.Cross(nrm, prj);
-			var v = Vector3.Cross(u, nrm);
+            var u = Vector3.Cross(nrm, prj);
+            var v = Vector3.Cross(u, nrm);
 
-			u.Normalize();
-			v.Normalize();
+            u.Normalize();
+            v.Normalize();
 
-			var faces = mesh.facesInternal;
-			var positions = mesh.positionsInternal;
-			var textures = mesh.texturesInternal;
+            var faces = mesh.facesInternal;
+            var positions = mesh.positionsInternal;
+            var textures = mesh.texturesInternal;
 
-			for (int f = 0, fc = faces.Length; f < fc; ++f)
-			{
-				if (faces[f].textureGroup != textureGroup)
-					continue;
+            for (int f = 0, fc = faces.Length; f < fc; ++f)
+            {
+                if (faces[f].textureGroup != textureGroup)
+                    continue;
 
-				var indexes = faces[f].distinctIndexesInternal;
+                var indexes = faces[f].distinctIndexesInternal;
 
-				for (int i = 0, ic = indexes.Length; i < ic; ++i)
-				{
-					var p = worldSpace ? trs.TransformPoint(positions[indexes[i]]) : positions[indexes[i]];
+                for (int i = 0, ic = indexes.Length; i < ic; ++i)
+                {
+                    var p = worldSpace ? trs.TransformPoint(positions[indexes[i]]) : positions[indexes[i]];
 
-					textures[indexes[i]].x = Vector3.Dot(u, p);
-					textures[indexes[i]].y = Vector3.Dot(v, p);
-				}
-			}
-		}
+                    textures[indexes[i]].x = Vector3.Dot(u, p);
+                    textures[indexes[i]].y = Vector3.Dot(v, p);
+                }
+            }
+        }
 
-		internal static void PlanarProject(ProBuilderMesh mesh, Face face)
-		{
-			var nrm = Math.Normal(mesh, face);
-			var trs = (Transform)null;
-			var worldSpace = face.uv.useWorldSpace;
+        internal static void PlanarProject(ProBuilderMesh mesh, Face face)
+        {
+            var nrm = Math.Normal(mesh, face);
+            var trs = (Transform)null;
+            var worldSpace = face.uv.useWorldSpace;
 
-			if (worldSpace)
-			{
-				trs = mesh.transform;
-				nrm = trs.TransformDirection(nrm);
-			}
+            if (worldSpace)
+            {
+                trs = mesh.transform;
+                nrm = trs.TransformDirection(nrm);
+            }
 
-			var axis = VectorToProjectionAxis(nrm);
-			var prj = ProjectionAxisToVectorInternal(axis);
+            var axis = VectorToProjectionAxis(nrm);
+            var prj = ProjectionAxisToVectorInternal(axis);
 
-			var uAxis = Vector3.Cross(nrm, prj);
-			var vAxis = Vector3.Cross(uAxis, nrm);
+            var uAxis = Vector3.Cross(nrm, prj);
+            var vAxis = Vector3.Cross(uAxis, nrm);
 
-			uAxis.Normalize();
-			vAxis.Normalize();
+            uAxis.Normalize();
+            vAxis.Normalize();
 
-			var positions = mesh.positionsInternal;
-			var textures = mesh.texturesInternal;
+            var positions = mesh.positionsInternal;
+            var textures = mesh.texturesInternal;
 
-			int[] indexes = face.distinctIndexesInternal;
+            int[] indexes = face.distinctIndexesInternal;
 
-			for (int i = 0, ic = indexes.Length; i < ic; ++i)
-			{
-				var p = worldSpace ? trs.TransformPoint(positions[indexes[i]]) : positions[indexes[i]];
+            for (int i = 0, ic = indexes.Length; i < ic; ++i)
+            {
+                var p = worldSpace ? trs.TransformPoint(positions[indexes[i]]) : positions[indexes[i]];
 
-				textures[indexes[i]].x = Vector3.Dot(uAxis, p);
-				textures[indexes[i]].y = Vector3.Dot(vAxis, p);
-			}
-		}
+                textures[indexes[i]].x = Vector3.Dot(uAxis, p);
+                textures[indexes[i]].y = Vector3.Dot(vAxis, p);
+            }
+        }
 
-		internal static Vector2[] SphericalProject(IList<Vector3> vertices, IList<int> indexes = null)
-		{
-			int len = indexes == null ? vertices.Count : indexes.Count;
-			Vector2[] uv = new Vector2[len];
-			Vector3 cen = Math.Average(vertices, indexes);
+        internal static Vector2[] SphericalProject(IList<Vector3> vertices, IList<int> indexes = null)
+        {
+            int len = indexes == null ? vertices.Count : indexes.Count;
+            Vector2[] uv = new Vector2[len];
+            Vector3 cen = Math.Average(vertices, indexes);
 
-			for(int i = 0; i < len; i++)
-			{
-				int indx = indexes == null ? i : indexes[i];
-				Vector3 p = (vertices[indx] - cen);
-				p.Normalize();
-				uv[i].x = .5f + (Mathf.Atan2(p.z, p.x) / (2f * Mathf.PI));
-				uv[i].y = .5f - (Mathf.Asin(p.y) / Mathf.PI);
-			}
+            for (int i = 0; i < len; i++)
+            {
+                int indx = indexes == null ? i : indexes[i];
+                Vector3 p = (vertices[indx] - cen);
+                p.Normalize();
+                uv[i].x = .5f + (Mathf.Atan2(p.z, p.x) / (2f * Mathf.PI));
+                uv[i].y = .5f - (Mathf.Asin(p.y) / Mathf.PI);
+            }
 
-			return uv;
-		}
+            return uv;
+        }
 
-		/// <summary>
-		/// Returns a new set of points wound as a contour counter-clockwise.
-		/// </summary>
-		/// <param name="verts"></param>
-		/// <param name="method"></param>
-		/// <returns></returns>
-		internal static IList<Vector2> Sort(IList<Vector2> verts, SortMethod method = SortMethod.CounterClockwise)
-		{
-			Vector2 cen = Math.Average(verts);
-			Vector2 up = Vector2.up;
-			int count = verts.Count;
+        /// <summary>
+        /// Returns a new set of points wound as a contour counter-clockwise.
+        /// </summary>
+        /// <param name="verts"></param>
+        /// <param name="method"></param>
+        /// <returns></returns>
+        internal static IList<Vector2> Sort(IList<Vector2> verts, SortMethod method = SortMethod.CounterClockwise)
+        {
+            Vector2 cen = Math.Average(verts);
+            Vector2 up = Vector2.up;
+            int count = verts.Count;
 
-			List<SimpleTuple<float, Vector2>> angles = new List<SimpleTuple<float, Vector2>>(count);
+            List<SimpleTuple<float, Vector2>> angles = new List<SimpleTuple<float, Vector2>>(count);
 
-			for(int i = 0; i < count; i++)
-				angles.Add(new SimpleTuple<float, Vector2>(Math.SignedAngle(up, verts[i] - cen), verts[i]));
+            for (int i = 0; i < count; i++)
+                angles.Add(new SimpleTuple<float, Vector2>(Math.SignedAngle(up, verts[i] - cen), verts[i]));
 
-			angles.Sort((a, b) => { return a.item1 < b.item1 ? -1 : 1; });
+            angles.Sort((a, b) => { return a.item1 < b.item1 ? -1 : 1; });
 
-			IList<Vector2> values = angles.Select(x => x.item2).ToList();
+            IList<Vector2> values = angles.Select(x => x.item2).ToList();
 
-			if(method == SortMethod.Clockwise)
-				values = values.Reverse().ToList();
+            if (method == SortMethod.Clockwise)
+                values = values.Reverse().ToList();
 
-			return values;
-		}
+            return values;
+        }
 
-		static Vector3 ProjectionAxisToVectorInternal(ProjectionAxis axis)
-		{
-			// old probuilder didn't respect project axis settings properly, and changing it to the correct version
-			// (ProjectionAxisToVector) would break existing models.
-			switch(axis)
-			{
-				case ProjectionAxis.X:
-				case ProjectionAxis.XNegative:
-					return Vector3.up;
+        static Vector3 ProjectionAxisToVectorInternal(ProjectionAxis axis)
+        {
+            // old probuilder didn't respect project axis settings properly, and changing it to the correct version
+            // (ProjectionAxisToVector) would break existing models.
+            switch (axis)
+            {
+                case ProjectionAxis.X:
+                case ProjectionAxis.XNegative:
+                    return Vector3.up;
 
-				case ProjectionAxis.Y:
-				case ProjectionAxis.YNegative:
-					return Vector3.forward;
+                case ProjectionAxis.Y:
+                case ProjectionAxis.YNegative:
+                    return Vector3.forward;
 
-				case ProjectionAxis.Z:
-				case ProjectionAxis.ZNegative:
-					return Vector3.up;
+                case ProjectionAxis.Z:
+                case ProjectionAxis.ZNegative:
+                    return Vector3.up;
 
-				default:
-					return Vector3.up;
-			}
-		}
+                default:
+                    return Vector3.up;
+            }
+        }
 
-		/// <summary>
-		/// Given a ProjectionAxis, return  the appropriate Vector3 conversion.
-		/// </summary>
-		/// <param name="axis"></param>
-		/// <returns></returns>
-		internal static Vector3 ProjectionAxisToVector(ProjectionAxis axis)
-		{
-			switch(axis)
-			{
-				case ProjectionAxis.X:
-					return Vector3.right;
+        /// <summary>
+        /// Given a ProjectionAxis, return  the appropriate Vector3 conversion.
+        /// </summary>
+        /// <param name="axis"></param>
+        /// <returns></returns>
+        internal static Vector3 ProjectionAxisToVector(ProjectionAxis axis)
+        {
+            switch (axis)
+            {
+                case ProjectionAxis.X:
+                    return Vector3.right;
 
-				case ProjectionAxis.Y:
-					return Vector3.up;
+                case ProjectionAxis.Y:
+                    return Vector3.up;
 
-				case ProjectionAxis.Z:
-					return Vector3.forward;
+                case ProjectionAxis.Z:
+                    return Vector3.forward;
 
-				case ProjectionAxis.XNegative:
-					return -Vector3.right;
+                case ProjectionAxis.XNegative:
+                    return -Vector3.right;
 
-				case ProjectionAxis.YNegative:
-					return -Vector3.up;
+                case ProjectionAxis.YNegative:
+                    return -Vector3.up;
 
-				case ProjectionAxis.ZNegative:
-					return -Vector3.forward;
+                case ProjectionAxis.ZNegative:
+                    return -Vector3.forward;
 
-				default:
-					return Vector3.zero;
-			}
-		}
+                default:
+                    return Vector3.zero;
+            }
+        }
 
-		/// <summary>
-		/// Returns a projection axis based on which axis is the largest
-		/// </summary>
-		/// <param name="plane"></param>
-		/// <returns></returns>
-		internal static ProjectionAxis VectorToProjectionAxis(Vector3 plane)
-		{
-			float x = System.Math.Abs(plane.x);
-			float y = System.Math.Abs(plane.y);
-			float z = System.Math.Abs(plane.z);
+        /// <summary>
+        /// Returns a projection axis based on which axis is the largest
+        /// </summary>
+        /// <param name="plane"></param>
+        /// <returns></returns>
+        internal static ProjectionAxis VectorToProjectionAxis(Vector3 plane)
+        {
+            float x = System.Math.Abs(plane.x);
+            float y = System.Math.Abs(plane.y);
+            float z = System.Math.Abs(plane.z);
 
-			if(x > y && x > z)
-				return plane.x > 0 ? ProjectionAxis.X : ProjectionAxis.XNegative;
+            if (x > y && x > z)
+                return plane.x > 0 ? ProjectionAxis.X : ProjectionAxis.XNegative;
 
-			if(y > z)
-				return plane.y > 0 ? ProjectionAxis.Y : ProjectionAxis.YNegative;
+            if (y > z)
+                return plane.y > 0 ? ProjectionAxis.Y : ProjectionAxis.YNegative;
 
-			return plane.z > 0 ? ProjectionAxis.Z : ProjectionAxis.ZNegative;
-		}
+            return plane.z > 0 ? ProjectionAxis.Z : ProjectionAxis.ZNegative;
+        }
 
-		/// <summary>
-		/// Find a plane that best fits a set of 3d points.
-		/// </summary>
-		/// <remarks>http://www.ilikebigbits.com/blog/2015/3/2/plane-from-points</remarks>
-		/// <param name="points">The points to find a plane for. Order does not matter.</param>
-		/// <param name="indexes">If provided, only the vertices referenced by the indexes array will be considered.</param>
-		/// <returns>A plane that best matches the layout of the points array.</returns>
-		public static Plane FindBestPlane(IList<Vector3> points, IList<int> indexes = null)
-		{
-			float 	xx = 0f, xy = 0f, xz = 0f,
-					yy = 0f, yz = 0f, zz = 0f;
+        /// <summary>
+        /// Find a plane that best fits a set of 3d points.
+        /// </summary>
+        /// <remarks>http://www.ilikebigbits.com/blog/2015/3/2/plane-from-points</remarks>
+        /// <param name="points">The points to find a plane for. Order does not matter.</param>
+        /// <param name="indexes">If provided, only the vertices referenced by the indexes array will be considered.</param>
+        /// <returns>A plane that best matches the layout of the points array.</returns>
+        public static Plane FindBestPlane(IList<Vector3> points, IList<int> indexes = null)
+        {
+            float   xx = 0f, xy = 0f, xz = 0f,
+                    yy = 0f, yz = 0f, zz = 0f;
 
             if (points == null)
                 throw new System.ArgumentNullException("points");
 
-			bool ind = indexes != null && indexes.Count > 0;
-			int len = ind ? indexes.Count : points.Count;
+            bool ind = indexes != null && indexes.Count > 0;
+            int len = ind ? indexes.Count : points.Count;
 
-			Vector3 c = Vector3.zero, n = Vector3.zero;
+            Vector3 c = Vector3.zero, n = Vector3.zero;
 
-			for(int i = 0; i < len; i++)
-			{
-				c.x += points[ind ? indexes[i] : i].x;
-				c.y += points[ind ? indexes[i] : i].y;
-				c.z += points[ind ? indexes[i] : i].z;
-			}
+            for (int i = 0; i < len; i++)
+            {
+                c.x += points[ind ? indexes[i] : i].x;
+                c.y += points[ind ? indexes[i] : i].y;
+                c.z += points[ind ? indexes[i] : i].z;
+            }
 
-			c.x /= (float) len;
-			c.y /= (float) len;
-			c.z /= (float) len;
+            c.x /= (float)len;
+            c.y /= (float)len;
+            c.z /= (float)len;
 
-			for(int i = 0; i < len; i++)
-			{
-				Vector3 r = points[ ind ? indexes[i] : i ] - c;
+            for (int i = 0; i < len; i++)
+            {
+                Vector3 r = points[ind ? indexes[i] : i] - c;
 
-				xx += r.x * r.x;
-				xy += r.x * r.y;
-				xz += r.x * r.z;
-				yy += r.y * r.y;
-				yz += r.y * r.z;
-				zz += r.z * r.z;
-			}
+                xx += r.x * r.x;
+                xy += r.x * r.y;
+                xz += r.x * r.z;
+                yy += r.y * r.y;
+                yz += r.y * r.z;
+                zz += r.z * r.z;
+            }
 
-			float det_x = yy * zz - yz * yz;
-			float det_y = xx * zz - xz * xz;
-			float det_z = xx * yy - xy * xy;
+            float det_x = yy * zz - yz * yz;
+            float det_y = xx * zz - xz * xz;
+            float det_z = xx * yy - xy * xy;
 
-			if(det_x > det_y && det_x > det_z)
-			{
-				n.x = 1f;
-				n.y = (xz*yz - xy*zz) / det_x;
-				n.z = (xy*yz - xz*yy) / det_x;
-			}
-			else if(det_y > det_z)
-			{
-				n.x = (yz*xz - xy*zz) / det_y;
-				n.y = 1f;
-				n.z = (xy*xz - yz*xx) / det_y;
-			}
-			else
-			{
-				n.x = (yz*xy - xz*yy) / det_z;
-				n.y = (xz*xy - yz*xx) / det_z;
-				n.z = 1f;
-			}
+            if (det_x > det_y && det_x > det_z)
+            {
+                n.x = 1f;
+                n.y = (xz * yz - xy * zz) / det_x;
+                n.z = (xy * yz - xz * yy) / det_x;
+            }
+            else if (det_y > det_z)
+            {
+                n.x = (yz * xz - xy * zz) / det_y;
+                n.y = 1f;
+                n.z = (xy * xz - yz * xx) / det_y;
+            }
+            else
+            {
+                n.x = (yz * xy - xz * yy) / det_z;
+                n.y = (xz * xy - yz * xx) / det_z;
+                n.z = 1f;
+            }
 
-			n.Normalize();
+            n.Normalize();
 
-			return new Plane(n, c);
-		}
+            return new Plane(n, c);
+        }
 
-		/// <summary>
-		/// Find a plane that best fits a set of faces within a texture group.
-		/// </summary>
-		/// <returns>A plane that best matches the layout of the points array.</returns>
-		internal static Plane FindBestPlane(ProBuilderMesh mesh, int textureGroup)
-		{
-			float 	xx = 0f, xy = 0f, xz = 0f,
-					yy = 0f, yz = 0f, zz = 0f;
+        /// <summary>
+        /// Find a plane that best fits a set of faces within a texture group.
+        /// </summary>
+        /// <returns>A plane that best matches the layout of the points array.</returns>
+        internal static Plane FindBestPlane(ProBuilderMesh mesh, int textureGroup)
+        {
+            float   xx = 0f, xy = 0f, xz = 0f,
+                    yy = 0f, yz = 0f, zz = 0f;
 
             if (mesh == null)
                 throw new System.ArgumentNullException("mesh");
 
-			Vector3 c = Vector3.zero;
-			int len = 0;
-			Vector3[] positions = mesh.positionsInternal;
-			int faceCount = mesh.faceCount;
-			Face[] faces = mesh.facesInternal;
+            Vector3 c = Vector3.zero;
+            int len = 0;
+            Vector3[] positions = mesh.positionsInternal;
+            int faceCount = mesh.faceCount;
+            Face[] faces = mesh.facesInternal;
 
-			for(int faceIndex = 0; faceIndex < faceCount; faceIndex++)
-			{
-				if(faces[faceIndex].textureGroup != textureGroup)
-					continue;
+            for (int faceIndex = 0; faceIndex < faceCount; faceIndex++)
+            {
+                if (faces[faceIndex].textureGroup != textureGroup)
+                    continue;
 
-				int[] indexes = faces[faceIndex].distinctIndexesInternal;
+                int[] indexes = faces[faceIndex].distinctIndexesInternal;
 
-				for (int index = 0, indexCount = indexes.Length; index < indexCount; index++)
-				{
-					c.x += positions[indexes[index]].x;
-					c.y += positions[indexes[index]].y;
-					c.z += positions[indexes[index]].z;
+                for (int index = 0, indexCount = indexes.Length; index < indexCount; index++)
+                {
+                    c.x += positions[indexes[index]].x;
+                    c.y += positions[indexes[index]].y;
+                    c.z += positions[indexes[index]].z;
 
-					len++;
-				}
-			}
+                    len++;
+                }
+            }
 
-			c.x /= len;
-			c.y /= len;
-			c.z /= len;
+            c.x /= len;
+            c.y /= len;
+            c.z /= len;
 
-			for(int faceIndex = 0; faceIndex < faceCount; faceIndex++)
-			{
-				if(faces[faceIndex].textureGroup != textureGroup)
-					continue;
+            for (int faceIndex = 0; faceIndex < faceCount; faceIndex++)
+            {
+                if (faces[faceIndex].textureGroup != textureGroup)
+                    continue;
 
-				int[] indexes = faces[faceIndex].distinctIndexesInternal;
+                int[] indexes = faces[faceIndex].distinctIndexesInternal;
 
-				for (int index = 0, indexCount = indexes.Length; index < indexCount; index++)
-				{
-					Vector3 r = positions[indexes[index]] - c;
+                for (int index = 0, indexCount = indexes.Length; index < indexCount; index++)
+                {
+                    Vector3 r = positions[indexes[index]] - c;
 
-					xx += r.x * r.x;
-					xy += r.x * r.y;
-					xz += r.x * r.z;
-					yy += r.y * r.y;
-					yz += r.y * r.z;
-					zz += r.z * r.z;
-				}
-			}
+                    xx += r.x * r.x;
+                    xy += r.x * r.y;
+                    xz += r.x * r.z;
+                    yy += r.y * r.y;
+                    yz += r.y * r.z;
+                    zz += r.z * r.z;
+                }
+            }
 
-			float det_x = yy * zz - yz * yz;
-			float det_y = xx * zz - xz * xz;
-			float det_z = xx * yy - xy * xy;
-			Vector3 n = Vector3.zero;
+            float det_x = yy * zz - yz * yz;
+            float det_y = xx * zz - xz * xz;
+            float det_z = xx * yy - xy * xy;
+            Vector3 n = Vector3.zero;
 
-			if(det_x > det_y && det_x > det_z)
-			{
-				n.x = 1f;
-				n.y = (xz*yz - xy*zz) / det_x;
-				n.z = (xy*yz - xz*yy) / det_x;
-			}
-			else if(det_y > det_z)
-			{
-				n.x = (yz*xz - xy*zz) / det_y;
-				n.y = 1f;
-				n.z = (xy*xz - yz*xx) / det_y;
-			}
-			else
-			{
-				n.x = (yz*xy - xz*yy) / det_z;
-				n.y = (xz*xy - yz*xx) / det_z;
-				n.z = 1f;
-			}
+            if (det_x > det_y && det_x > det_z)
+            {
+                n.x = 1f;
+                n.y = (xz * yz - xy * zz) / det_x;
+                n.z = (xy * yz - xz * yy) / det_x;
+            }
+            else if (det_y > det_z)
+            {
+                n.x = (yz * xz - xy * zz) / det_y;
+                n.y = 1f;
+                n.z = (xy * xz - yz * xx) / det_y;
+            }
+            else
+            {
+                n.x = (yz * xy - xz * yy) / det_z;
+                n.y = (xz * xy - yz * xx) / det_z;
+                n.z = 1f;
+            }
 
-			n.Normalize();
+            n.Normalize();
 
-			return new Plane(n, c);
-		}
-	}
+            return new Plane(n, c);
+        }
+    }
 }

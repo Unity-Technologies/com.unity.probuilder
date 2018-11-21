@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 
 namespace UnityEditor.SettingsManagement
@@ -15,7 +15,7 @@ namespace UnityEditor.SettingsManagement
     /// <summary>
     /// Register a static field of type IUserSetting with the UserSettingsProvider window.
     /// </summary>
-	[AttributeUsage(AttributeTargets.Field)]
+    [AttributeUsage(AttributeTargets.Field)]
     public sealed class UserSettingAttribute : Attribute
     {
         string m_Category;

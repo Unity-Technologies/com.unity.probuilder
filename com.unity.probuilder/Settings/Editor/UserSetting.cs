@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 
 namespace UnityEditor.SettingsManagement
@@ -132,7 +132,7 @@ namespace UnityEditor.SettingsManagement
         SettingsScope m_Scope;
         Settings m_Settings;
 
-        UserSetting() { }
+        UserSetting() {}
 
         /// <summary>
         /// Constructor for UserSetting{T} type.
@@ -226,9 +226,9 @@ namespace UnityEditor.SettingsManagement
         public void SetValue(object value, bool saveProjectSettingsImmediately = false)
         {
             // we do want to allow null values
-            if(value != null && !(value is T))
-                throw new ArgumentException("Value must be of type " + typeof(T) + "\n" + key + " expecting value of type " + type +", received " + value.GetType());
-            SetValue((T) value, saveProjectSettingsImmediately);
+            if (value != null && !(value is T))
+                throw new ArgumentException("Value must be of type " + typeof(T) + "\n" + key + " expecting value of type " + type + ", received " + value.GetType());
+            SetValue((T)value, saveProjectSettingsImmediately);
         }
 
         /// <summary>

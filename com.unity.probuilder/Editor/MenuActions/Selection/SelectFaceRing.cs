@@ -1,82 +1,82 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	sealed class SelectFaceRing : MenuAction
-	{
-		public override ToolbarGroup group
-		{
-			get { return ToolbarGroup.Selection; }
-		}
+    sealed class SelectFaceRing : MenuAction
+    {
+        public override ToolbarGroup group
+        {
+            get { return ToolbarGroup.Selection; }
+        }
 
-		public override Texture2D icon
-		{
-			get { return IconUtility.GetIcon("Toolbar/Selection_Ring_Face", IconSkin.Pro); }
-		}
+        public override Texture2D icon
+        {
+            get { return IconUtility.GetIcon("Toolbar/Selection_Ring_Face", IconSkin.Pro); }
+        }
 
-		public override TooltipContent tooltip
-		{
-			get { return s_Tooltip; }
-		}
+        public override TooltipContent tooltip
+        {
+            get { return s_Tooltip; }
+        }
 
-		public override int toolbarPriority
-		{
-			get { return 2; }
-		}
+        public override int toolbarPriority
+        {
+            get { return 2; }
+        }
 
-		protected override bool hasFileMenuEntry
-		{
-			get { return false; }
-		}
+        protected override bool hasFileMenuEntry
+        {
+            get { return false; }
+        }
 
-		private static readonly TooltipContent s_Tooltip = new TooltipContent
-		(
-			"Select Face Ring",
-			"Selects a ring of connected faces.\n\n<b>Shortcut</b>: Control + Double Click on Face."
-		);
+        private static readonly TooltipContent s_Tooltip = new TooltipContent
+            (
+                "Select Face Ring",
+                "Selects a ring of connected faces.\n\n<b>Shortcut</b>: Control + Double Click on Face."
+            );
 
-		public override SelectMode validSelectModes
-		{
-			get { return SelectMode.Face | SelectMode.TextureFace; }
-		}
+        public override SelectMode validSelectModes
+        {
+            get { return SelectMode.Face | SelectMode.TextureFace; }
+        }
 
-		public override bool enabled
-		{
-			get { return base.enabled && MeshSelection.selectedFaceCount > 0; }
-		}
+        public override bool enabled
+        {
+            get { return base.enabled && MeshSelection.selectedFaceCount > 0; }
+        }
 
-		public override ActionResult DoAction()
-		{
-			var selection = MeshSelection.topInternal;
+        public override ActionResult DoAction()
+        {
+            var selection = MeshSelection.topInternal;
 
-			UndoUtility.RecordSelection("Select Face Ring");
+            UndoUtility.RecordSelection("Select Face Ring");
 
-			foreach (ProBuilderMesh pb in selection)
-			{
-				HashSet<Face> loop = ElementSelection.GetFaceLoop(pb, pb.selectedFacesInternal, true);
-				pb.SetSelectedFaces(loop);
-			}
+            foreach (ProBuilderMesh pb in selection)
+            {
+                HashSet<Face> loop = ElementSelection.GetFaceLoop(pb, pb.selectedFacesInternal, true);
+                pb.SetSelectedFaces(loop);
+            }
 
-			ProBuilderEditor.Refresh();
+            ProBuilderEditor.Refresh();
 
-			return new ActionResult(ActionResult.Status.Success, "Select Face Ring");
-		}
+            return new ActionResult(ActionResult.Status.Success, "Select Face Ring");
+        }
 
-		public static ActionResult MenuRingAndLoopFaces(ProBuilderMesh[] selection)
-		{
-			UndoUtility.RecordSelection(selection, "Select Face Ring and Loop");
+        public static ActionResult MenuRingAndLoopFaces(ProBuilderMesh[] selection)
+        {
+            UndoUtility.RecordSelection(selection, "Select Face Ring and Loop");
 
-			foreach (ProBuilderMesh pb in selection)
-			{
-				HashSet<Face> loop = ElementSelection.GetFaceRingAndLoop(pb, pb.selectedFacesInternal);
-				pb.SetSelectedFaces(loop);
-			}
+            foreach (ProBuilderMesh pb in selection)
+            {
+                HashSet<Face> loop = ElementSelection.GetFaceRingAndLoop(pb, pb.selectedFacesInternal);
+                pb.SetSelectedFaces(loop);
+            }
 
-			ProBuilderEditor.Refresh();
-			return new ActionResult(ActionResult.Status.Success, "Select Face Ring and Loop");
-		}
-	}
+            ProBuilderEditor.Refresh();
+            return new ActionResult(ActionResult.Status.Success, "Select Face Ring and Loop");
+        }
+    }
 }

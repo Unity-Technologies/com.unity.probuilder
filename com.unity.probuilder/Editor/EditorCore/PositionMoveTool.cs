@@ -1,151 +1,151 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-	class PositionMoveTool : PositionTool
-	{
-		const float k_CardinalAxisError = .001f;
-		Vector3 m_HandlePosition;
-		bool m_SnapInWorldCoordinates;
-		Vector3 m_WorldSnapDirection;
-		Vector3 m_WorldSnapMask;
+    class PositionMoveTool : PositionTool
+    {
+        const float k_CardinalAxisError = .001f;
+        Vector3 m_HandlePosition;
+        bool m_SnapInWorldCoordinates;
+        Vector3 m_WorldSnapDirection;
+        Vector3 m_WorldSnapMask;
 
-		Vector3 m_IndividualOriginDirection;
-		bool m_DirectionOriginInitialized;
+        Vector3 m_IndividualOriginDirection;
+        bool m_DirectionOriginInitialized;
 
-		protected override void OnToolEngaged()
-		{
-			m_SnapInWorldCoordinates = false;
-			m_WorldSnapMask = new Vector3Mask(0x0);
-			m_DirectionOriginInitialized = false;
-		}
+        protected override void OnToolEngaged()
+        {
+            m_SnapInWorldCoordinates = false;
+            m_WorldSnapMask = new Vector3Mask(0x0);
+            m_DirectionOriginInitialized = false;
+        }
 
-		protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
-		{
-			base.DoTool(handlePosition, handleRotation);
+        protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
+        {
+            base.DoTool(handlePosition, handleRotation);
 
-			if (isEditing)
-				DrawSelectionOriginGizmos();
-			else
-				m_HandlePosition = handlePosition;
+            if (isEditing)
+                DrawSelectionOriginGizmos();
+            else
+                m_HandlePosition = handlePosition;
 
-			EditorGUI.BeginChangeCheck();
+            EditorGUI.BeginChangeCheck();
 
-			m_HandlePosition = Handles.PositionHandle(m_HandlePosition, handleRotation);
+            m_HandlePosition = Handles.PositionHandle(m_HandlePosition, handleRotation);
 
-			if (EditorGUI.EndChangeCheck())
-			{
-				if (!isEditing)
-					BeginEdit("Translate Selection");
+            if (EditorGUI.EndChangeCheck())
+            {
+                if (!isEditing)
+                    BeginEdit("Translate Selection");
 
-				var delta = m_HandlePosition - handlePositionOrigin;
+                var delta = m_HandlePosition - handlePositionOrigin;
 
-				if (vertexDragging)
-				{
-					Vector3 nearest;
+                if (vertexDragging)
+                {
+                    Vector3 nearest;
 
-					if (FindNearestVertex(currentEvent.mousePosition, out nearest))
-					{
-						var unrotated = handleRotationOriginInverse * delta;
-						var dir = new Vector3Mask(unrotated, k_CardinalAxisError);
+                    if (FindNearestVertex(currentEvent.mousePosition, out nearest))
+                    {
+                        var unrotated = handleRotationOriginInverse * delta;
+                        var dir = new Vector3Mask(unrotated, k_CardinalAxisError);
 
-						if (dir.active == 1)
-						{
-							var rot_dir = handleRotationOrigin * dir * 10000f;
+                        if (dir.active == 1)
+                        {
+                            var rot_dir = handleRotationOrigin * dir * 10000f;
 
-							m_HandlePosition = HandleUtility.ProjectPointLine(nearest,
-								handlePositionOrigin + rot_dir,
-								handlePositionOrigin - rot_dir);
+                            m_HandlePosition = HandleUtility.ProjectPointLine(nearest,
+                                    handlePositionOrigin + rot_dir,
+                                    handlePositionOrigin - rot_dir);
 
-							delta = m_HandlePosition - handlePositionOrigin;
-						}
-					}
-				}
-				else if (progridsSnapEnabled)
-				{
-					var localDir = handleRotationOriginInverse * delta;
-					m_WorldSnapDirection = delta.normalized;
+                            delta = m_HandlePosition - handlePositionOrigin;
+                        }
+                    }
+                }
+                else if (progridsSnapEnabled)
+                {
+                    var localDir = handleRotationOriginInverse * delta;
+                    m_WorldSnapDirection = delta.normalized;
 
-					if (!m_SnapInWorldCoordinates && (Math.IsCardinalAxis(delta) || !Math.IsCardinalAxis(localDir)))
-						m_SnapInWorldCoordinates = true;
+                    if (!m_SnapInWorldCoordinates && (Math.IsCardinalAxis(delta) || !Math.IsCardinalAxis(localDir)))
+                        m_SnapInWorldCoordinates = true;
 
-					if (m_SnapInWorldCoordinates)
-					{
-						m_WorldSnapMask |= new Vector3Mask(m_WorldSnapDirection, k_CardinalAxisError);
-						m_HandlePosition = Snapping.SnapValue(m_HandlePosition, m_WorldSnapMask * progridsSnapValue);
-						delta = m_HandlePosition - handlePositionOrigin;
-					}
-					else
-					{
-						var travel = delta.magnitude;
-						delta = m_WorldSnapDirection * Snapping.SnapValue(travel, progridsSnapValue);
-						m_HandlePosition = handlePositionOrigin + delta;
-					}
-				}
+                    if (m_SnapInWorldCoordinates)
+                    {
+                        m_WorldSnapMask |= new Vector3Mask(m_WorldSnapDirection, k_CardinalAxisError);
+                        m_HandlePosition = Snapping.SnapValue(m_HandlePosition, m_WorldSnapMask * progridsSnapValue);
+                        delta = m_HandlePosition - handlePositionOrigin;
+                    }
+                    else
+                    {
+                        var travel = delta.magnitude;
+                        delta = m_WorldSnapDirection * Snapping.SnapValue(travel, progridsSnapValue);
+                        m_HandlePosition = handlePositionOrigin + delta;
+                    }
+                }
 
-				if (pivotPoint == PivotPoint.IndividualOrigins && !m_DirectionOriginInitialized)
-				{
-					var mask = new Vector3Mask(handleRotationOriginInverse * delta, k_CardinalAxisError);
+                if (pivotPoint == PivotPoint.IndividualOrigins && !m_DirectionOriginInitialized)
+                {
+                    var mask = new Vector3Mask(handleRotationOriginInverse * delta, k_CardinalAxisError);
 
-					if (mask.active > 0)
-					{
-						m_IndividualOriginDirection = mask;
-						m_DirectionOriginInitialized = true;
-					}
-				}
+                    if (mask.active > 0)
+                    {
+                        m_IndividualOriginDirection = mask;
+                        m_DirectionOriginInitialized = true;
+                    }
+                }
 
-				ApplyTranslation(handleRotationOriginInverse * delta);
-			}
-		}
+                ApplyTranslation(handleRotationOriginInverse * delta);
+            }
+        }
 
-		void ApplyTranslation(Vector3 translation)
-		{
-			foreach (var key in meshAndElementGroupPairs)
-			{
-				if (!(key is MeshAndPositions))
-					continue;
+        void ApplyTranslation(Vector3 translation)
+        {
+            foreach (var key in meshAndElementGroupPairs)
+            {
+                if (!(key is MeshAndPositions))
+                    continue;
 
-				var kvp = (MeshAndPositions)key;
-				var mesh = kvp.mesh;
-				var worldToLocal = mesh.transform.worldToLocalMatrix;
-				var origins = kvp.positions;
-				var positions = mesh.positionsInternal;
+                var kvp = (MeshAndPositions)key;
+                var mesh = kvp.mesh;
+                var worldToLocal = mesh.transform.worldToLocalMatrix;
+                var origins = kvp.positions;
+                var positions = mesh.positionsInternal;
 
-				foreach (var group in kvp.elementGroups)
-				{
-					foreach (var index in group.indices)
-					{
-						// res = Group pre-apply matrix * world vertex position
-						// res += translation
-						// res = Group post-apply matrix * res
-						// positions[i] = mesh.worldToLocal * res
-						positions[index] = worldToLocal.MultiplyPoint3x4(
-							group.postApplyMatrix.MultiplyPoint3x4(
-								translation + group.preApplyMatrix.MultiplyPoint3x4(origins[index])));
-					}
-				}
+                foreach (var group in kvp.elementGroups)
+                {
+                    foreach (var index in group.indices)
+                    {
+                        // res = Group pre-apply matrix * world vertex position
+                        // res += translation
+                        // res = Group post-apply matrix * res
+                        // positions[i] = mesh.worldToLocal * res
+                        positions[index] = worldToLocal.MultiplyPoint3x4(
+                                group.postApplyMatrix.MultiplyPoint3x4(
+                                    translation + group.preApplyMatrix.MultiplyPoint3x4(origins[index])));
+                    }
+                }
 
-				mesh.mesh.vertices = positions;
-				mesh.RefreshUV(MeshSelection.selectedFacesInEditZone[mesh]);
-				mesh.Refresh(RefreshMask.Normals);
-			}
+                mesh.mesh.vertices = positions;
+                mesh.RefreshUV(MeshSelection.selectedFacesInEditZone[mesh]);
+                mesh.Refresh(RefreshMask.Normals);
+            }
 
-			ProBuilderEditor.UpdateMeshHandles(false);
-		}
+            ProBuilderEditor.UpdateMeshHandles(false);
+        }
 
-		void DrawSelectionOriginGizmos()
-		{
-			if (isEditing && currentEvent.type == EventType.Repaint)
-			{
-				foreach (var key in meshAndElementGroupPairs)
-				{
-					foreach (var group in key.elementGroups)
-					{
-						EditorMeshHandles.DrawTransformOriginGizmo(group.postApplyMatrix, m_IndividualOriginDirection);
-					}
-				}
-			}
-		}
-	}
+        void DrawSelectionOriginGizmos()
+        {
+            if (isEditing && currentEvent.type == EventType.Repaint)
+            {
+                foreach (var key in meshAndElementGroupPairs)
+                {
+                    foreach (var group in key.elementGroups)
+                    {
+                        EditorMeshHandles.DrawTransformOriginGizmo(group.postApplyMatrix, m_IndividualOriginDirection);
+                    }
+                }
+            }
+        }
+    }
 }
