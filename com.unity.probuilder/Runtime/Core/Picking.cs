@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,7 +27,7 @@ namespace UnityEngine.ProBuilder
         {
             depthTest = true,
             rectSelectMode = RectSelectMode.Partial,
-        }
+        };
 
         /// <value>
         /// A set of options with default values.
