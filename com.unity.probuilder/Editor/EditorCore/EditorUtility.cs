@@ -17,12 +17,6 @@ namespace UnityEditor.ProBuilder
     /// </summary>
     public static class EditorUtility
     {
-        internal enum PivotLocation
-        {
-            Center,
-            FirstVertex
-        }
-
         const float k_DefaultNotificationDuration = 1f;
         static float s_NotificationTimer = 0f;
         static EditorWindow s_NotificationWindow;
@@ -46,7 +40,7 @@ namespace UnityEditor.ProBuilder
         [UserSetting("Mesh Settings", "Pivot Location", "Determines the placement of new shape's pivot.")]
         static Pref<PivotLocation> s_NewShapesPivotAtVertex = new Pref<PivotLocation>("mesh.newShapePivotLocation", PivotLocation.FirstVertex);
 
-        [UserSetting("Mesh Settings", "Pivot on Vertex", "When enabled, new shapes will have their pivot point set to a vertex instead of the center.")]
+		[UserSetting("Mesh Settings", "Snap New Shape To Grid", "When enabled, new shapes will snap to the closest point on grid.")]
         static Pref<bool> s_SnapNewShapesToGrid = new Pref<bool>("mesh.newShapesSnapToGrid", true);
 
         [UserSetting("Mesh Settings", "Shadow Casting Mode", "The default ShadowCastingMode to apply to MeshRenderer components.")]
@@ -54,6 +48,11 @@ namespace UnityEditor.ProBuilder
 
         [UserSetting("Mesh Settings", "Collider Type", "What type of Collider to apply to new Shapes.")]
         static Pref<ColliderType> s_ColliderType = new Pref<ColliderType>("mesh.newShapeColliderType", ColliderType.MeshCollider);
+
+	    internal static PivotLocation newShapePivotLocation
+	    {
+	        get { return s_NewShapesPivotAtVertex; }
+	    }
 
         /// <value>
         /// Subscribe to this delegate to be notified when a new mesh has been created and initialized through ProBuilder.
@@ -295,12 +294,12 @@ namespace UnityEditor.ProBuilder
         /// <param name="pb"></param>
         internal static void InitObject(ProBuilderMesh pb)
         {
+		    ScreenCenter(pb.gameObject);
+
             SetPivotLocationAndSnap(pb);
 
             pb.renderer.shadowCastingMode = s_ShadowCastingMode;
             pb.renderer.sharedMaterial = GetUserMaterial();
-
-            ScreenCenter(pb.gameObject);
 
             GameObjectUtility.SetStaticEditorFlags(pb.gameObject, s_StaticEditorFlags);
 
@@ -325,17 +324,6 @@ namespace UnityEditor.ProBuilder
 
         internal static void SetPivotLocationAndSnap(ProBuilderMesh mesh)
         {
-            switch (s_NewShapesPivotAtVertex.value)
-            {
-                case PivotLocation.Center:
-                    mesh.CenterPivot(null);
-                    break;
-
-                case PivotLocation.FirstVertex:
-                    mesh.CenterPivot(new int[1] { 0 });
-                    break;
-            }
-
             if (ProGridsInterface.SnapEnabled())
                 mesh.transform.position = Snapping.SnapValue(mesh.transform.position, ProGridsInterface.SnapValue());
             else if (s_SnapNewShapesToGrid)

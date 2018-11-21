@@ -215,16 +215,11 @@ namespace UnityEditor.ProBuilder
             m_WireMaterial.SetColor("_Color", s_WireframeColor);
             s_FaceMaterial.SetFloat("_Dither", (s_UseUnityColors || s_DitherFaceHandle) ? 1f : 0f);
 
-            m_VertMaterial.SetFloat("_Scale", s_VertexPointSize * EditorGUIUtility.pixelsPerPoint);
-
             m_WireMaterial.SetInt("_HandleZTest", (int)CompareFunction.LessEqual);
             m_EdgeMaterial.SetInt("_HandleZTest", (int)CompareFunction.LessEqual);
 
-            if (BuiltinMaterials.geometryShadersSupported)
-            {
-                m_WireMaterial.SetFloat("_Scale", s_WireframeLineSize * EditorGUIUtility.pixelsPerPoint);
-                m_EdgeMaterial.SetFloat("_Scale", s_EdgeLineSize * EditorGUIUtility.pixelsPerPoint);
-            }
+		    SetMaterialsScaleAttribute();
+
         }
 
         static Material CreateMaterial(Shader shader, string materialName)
@@ -310,6 +305,9 @@ namespace UnityEditor.ProBuilder
         {
             if (Event.current.type != EventType.Repaint)
                 return;
+
+            // Update the scale based on EditorGUIUtility.pixelsPerPoints in case the DPI would have changed.
+		    SetMaterialsScaleAttribute();
 
             switch (mode)
             {
@@ -469,6 +467,17 @@ namespace UnityEditor.ProBuilder
             foreach (var kvp in handles)
                 m_MeshPool.Put(kvp.Value.mesh);
             handles.Clear();
+        }
+
+	    void SetMaterialsScaleAttribute()
+	    {
+	        m_VertMaterial.SetFloat("_Scale", s_VertexPointSize * EditorGUIUtility.pixelsPerPoint);
+
+	        if (BuiltinMaterials.geometryShadersSupported)
+	        {
+	            m_WireMaterial.SetFloat("_Scale", s_WireframeLineSize * EditorGUIUtility.pixelsPerPoint);
+	            m_EdgeMaterial.SetFloat("_Scale", s_EdgeLineSize * EditorGUIUtility.pixelsPerPoint);
+	        }
         }
     }
 }

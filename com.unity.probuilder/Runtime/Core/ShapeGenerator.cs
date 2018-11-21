@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder
 {
@@ -63,6 +64,15 @@ namespace UnityEngine.ProBuilder
         /// The tastiest of all shapes.
         /// </remarks>
         Torus
+    }
+
+    /// <summary>
+    /// Describes the type of pivot ProBuilder would automatically assign on primitive creation.
+    /// </summary>
+    public enum PivotLocation
+    {
+        Center,
+        FirstVertex
     }
 
     /// <summary>
@@ -143,44 +153,45 @@ namespace UnityEngine.ProBuilder
         /// Create a shape with default parameters.
         /// </summary>
         /// <param name="shape">The ShapeType to create.</param>
+        /// <param name="pivotType">Where the shape's pivot will be.</param>
         /// <returns>A new GameObject with the ProBuilderMesh initialized to the primitve shape.</returns>
-        public static ProBuilderMesh CreateShape(ShapeType shape)
+        public static ProBuilderMesh CreateShape(ShapeType shape, PivotLocation pivotType = PivotLocation.Center)
         {
             ProBuilderMesh pb = null;
 
             if (shape == ShapeType.Cube)
-                pb = GenerateCube(Vector3.one);
+				pb = GenerateCube(pivotType, Vector3.one);
             if (shape == ShapeType.Stair)
-                pb = GenerateStair(new Vector3(2f, 2.5f, 4f), 6, true);
+				pb = GenerateStair(pivotType, new Vector3(2f, 2.5f, 4f), 6, true);
             if (shape == ShapeType.CurvedStair)
-                pb = GenerateCurvedStair(2f, 2.5f, 2f, 180f, 8, true);
+				pb = GenerateCurvedStair(pivotType, 2f, 2.5f, 2f, 180f, 8, true);
             if (shape == ShapeType.Prism)
-                pb = GeneratePrism(Vector3.one);
+				pb = GeneratePrism(pivotType, Vector3.one);
             if (shape == ShapeType.Cylinder)
-                pb = GenerateCylinder(8, 1f, 2f, 2);
+				pb = GenerateCylinder(pivotType, 8, 1f, 2f, 2);
             if (shape == ShapeType.Plane)
-                pb = GeneratePlane(5f, 5f, 5, 5, Axis.Up);
+				pb = GeneratePlane(pivotType, 5f, 5f, 5, 5, Axis.Up);
             if (shape == ShapeType.Door)
-                pb = GenerateDoor(3f, 2.5f, .5f, .75f, 1f);
+				pb = GenerateDoor(pivotType, 3f, 2.5f, .5f, .75f, 1f);
             if (shape == ShapeType.Pipe)
-                pb = GeneratePipe(1f, 2f, .25f, 8, 2);
+				pb = GeneratePipe(pivotType, 1f, 2f, .25f, 8, 2);
             if (shape == ShapeType.Cone)
-                pb = GenerateCone(.5f, 1f, 8);
+				pb = GenerateCone(pivotType, .5f, 1f, 8);
             if (shape == ShapeType.Sprite)
-                pb = GeneratePlane(1f, 1f, 0, 0, Axis.Up);
+				pb = GeneratePlane(pivotType, 1f, 1f, 0, 0, Axis.Up);
             if (shape == ShapeType.Arch)
-                pb = GenerateArch(180f, 2f, 1f, 1f, 9, true, true, true, true, true);
+				pb = GenerateArch(pivotType, 180f, 2f, 1f, 1f, 9, true, true, true, true, true);
             if (shape == ShapeType.Sphere)
-                pb = GenerateIcosahedron(.5f, 2, true, false);
+				pb = GenerateIcosahedron(pivotType, .5f, 2, true, false);
             if (shape == ShapeType.Torus)
-                pb = GenerateTorus(12, 16, 1f, .3f, true, 360f, 360f);
+				pb = GenerateTorus(pivotType, 12, 16, 1f, .3f, true, 360f, 360f);
 
             if (pb == null)
             {
 #if DEBUG
                 Log.Error(shape.ToString() + " type has no default!");
 #endif
-                pb = GenerateCube(Vector3.one);
+				pb = GenerateCube(pivotType, Vector3.one);
             }
 
             pb.gameObject.name = shape.ToString();
@@ -191,11 +202,12 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Create a set of stairs.
         /// </summary>
+        /// <param name="pivotType">Where the shape's pivot will be.</param>
         /// <param name="size">The bounds of the stairs.</param>
         /// <param name="steps">How many steps does the stairset have.</param>
         /// <param name="buildSides">If true, build the side and back walls. If false, only the stair top and connecting planes will be built.</param>
         /// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-        public static ProBuilderMesh GenerateStair(Vector3 size, int steps, bool buildSides)
+        public static ProBuilderMesh GenerateStair(PivotLocation pivotType, Vector3 size, int steps, bool buildSides)
         {
             // 4 vertices per quad, 2 quads per step.
             Vector3[] vertices = new Vector3[4 * steps * 2];
@@ -317,6 +329,7 @@ namespace UnityEngine.ProBuilder
 
             ProBuilderMesh pb = ProBuilderMesh.Create(vertices, faces);
             pb.gameObject.name = "Stairs";
+            pb.SetPivot(pivotType);
 
             return pb;
         }
@@ -324,6 +337,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Create a set of curved stairs.
         /// </summary>
+        /// <param name="pivotType">Where the shape's pivot will be.</param>
         /// <param name="stairWidth">The width of the stair set.</param>
         /// <param name="height">The height of the stair set.</param>
         /// <param name="innerRadius">The radius from center to inner stair bounds.</param>
@@ -331,7 +345,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="steps">How many steps this stair set contains.</param>
         /// <param name="buildSides">If true, build the side and back walls. If false, only the stair top and connecting planes will be built.</param>
         /// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-        public static ProBuilderMesh GenerateCurvedStair(float stairWidth, float height, float innerRadius, float circumference, int steps, bool buildSides)
+        public static ProBuilderMesh GenerateCurvedStair(PivotLocation pivotType, float stairWidth, float height, float innerRadius, float circumference, int steps, bool buildSides)
         {
             bool noInnerSide = innerRadius < Mathf.Epsilon;
 
@@ -533,6 +547,7 @@ namespace UnityEngine.ProBuilder
             ProBuilderMesh pb = ProBuilderMesh.Create(positions, faces);
 
             pb.gameObject.name = "Stairs";
+		    pb.SetPivot(pivotType);
 
             return pb;
         }
@@ -540,6 +555,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Creates a stair set with the given parameters.
         /// </summary>
+        /// <param name="pivotType">Where the shape's pivot will be.</param>
         /// <param name="steps">How many steps should this stairwell have?</param>
         /// <param name="width">How wide (in meters) should this stairset be?</param>
         /// <param name="height">How tall (in meters) should this stairset be?</param>
@@ -548,7 +564,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="generateBack">If true, a back face to the stairwell will be appended.</param>
         /// <param name="platformsOnly">If true, only the front face and tops of the stairwell will be built.  Nice for when a staircase is embedded between geometry.</param>
         /// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-        internal static ProBuilderMesh GenerateStair(int steps, float width, float height, float depth, bool sidesGoToFloor, bool generateBack, bool platformsOnly)
+        internal static ProBuilderMesh GenerateStair(PivotLocation pivotType, int steps, float width, float height, float depth, bool sidesGoToFloor, bool generateBack, bool platformsOnly)
         {
             int i = 0;
 
@@ -610,15 +626,18 @@ namespace UnityEngine.ProBuilder
 
             ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(verts.ToArray());
             pb.gameObject.name = "Stairs";
+		    pb.SetPivot(pivotType);
+
             return pb;
         }
 
         /// <summary>
         /// Create a new cube with the specified size. Size is baked (ie, not applied as a scale value in the transform).
         /// </summary>
+        /// <param name="pivotType">Where the shape's pivot will be.</param>
         /// <param name="size">The bounds of the new cube.</param>
         /// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-        public static ProBuilderMesh GenerateCube(Vector3 size)
+        public static ProBuilderMesh GenerateCube(PivotLocation pivotType, Vector3 size)
         {
             Vector3[] points = new Vector3[k_CubeTriangles.Length];
 
@@ -627,19 +646,22 @@ namespace UnityEngine.ProBuilder
 
             ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(points);
             pb.gameObject.name = "Cube";
+		    pb.SetPivot(pivotType);
+
             return pb;
         }
 
         /// <summary>
         /// Creates a cylinder pb_Object with the supplied parameters.
         /// </summary>
+        /// <param name="pivotType">Where the shape's pivot will be.</param>
         /// <param name="axisDivisions">How many divisions to create on the vertical axis.  Larger values = smoother surface.</param>
         /// <param name="radius">The radius in world units.</param>
         /// <param name="height">The height of this object in world units.</param>
         /// <param name="heightCuts">The amount of divisions to create on the horizontal axis.</param>
         /// <param name="smoothing"></param>
         /// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-        public static ProBuilderMesh GenerateCylinder(int axisDivisions, float radius, float height, int heightCuts, int smoothing = -1)
+        public static ProBuilderMesh GenerateCylinder(PivotLocation pivotType, int axisDivisions, float radius, float height, int heightCuts, int smoothing = -1)
         {
             if (axisDivisions % 2 != 0)
                 axisDivisions++;
@@ -753,15 +775,18 @@ namespace UnityEngine.ProBuilder
 
             ProBuilderMesh pb = ProBuilderMesh.Create(verts, faces);
             pb.gameObject.name = "Cylinder";
+		    pb.SetPivot(pivotType);
+
             return pb;
         }
 
         /// <summary>
         /// Create a new prism primitive.
         /// </summary>
+        /// <param name="pivotType">Where the shape's pivot will be.</param>
         /// <param name="size">Scale to apply to the shape.</param>
         /// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-        public static ProBuilderMesh GeneratePrism(Vector3 size)
+        public static ProBuilderMesh GeneratePrism(PivotLocation pivotType, Vector3 size)
         {
             size.y *= 2f;
 
@@ -812,19 +837,22 @@ namespace UnityEngine.ProBuilder
 
             ProBuilderMesh pb = ProBuilderMesh.Create(v, f);
             pb.gameObject.name = "Prism";
+		    pb.SetPivot(pivotType);
+
             return pb;
         }
 
         /// <summary>
         /// Create a door shape suitable for placement in a wall structure.
         /// </summary>
+        /// <param name="pivotType">Where the shape's pivot will be.</param>
         /// <param name="totalWidth">The total width of the door</param>
         /// <param name="totalHeight">The total height of the door</param>
         /// <param name="ledgeHeight">The height between the top of the door frame and top of the object</param>
         /// <param name="legWidth">The width of each leg on both sides of the door</param>
         /// <param name="depth">The distance between the front and back faces of the door object</param>
         /// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-        public static ProBuilderMesh GenerateDoor(float totalWidth, float totalHeight, float ledgeHeight, float legWidth, float depth)
+        public static ProBuilderMesh GenerateDoor(PivotLocation pivotType, float totalWidth, float totalHeight, float ledgeHeight, float legWidth, float depth)
         {
             float xLegCoord = totalWidth / 2f;
             legWidth = xLegCoord - legWidth;
@@ -907,19 +935,22 @@ namespace UnityEngine.ProBuilder
 
             ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(points.ToArray());
             pb.gameObject.name = "Door";
+		    pb.SetPivot(pivotType);
+
             return pb;
         }
 
         /// <summary>
         /// Create a new plane shape.
         /// </summary>
+        /// <param name="pivotType">Where the shape's pivot will be.</param>
         /// <param name="width">Plane width.</param>
         /// <param name="height">Plane height.</param>
         /// <param name="widthCuts">Divisions on the X axis.</param>
         /// <param name="heightCuts">Divisions on the Y axis.</param>
         /// <param name="axis">The axis to build the plane on. Ex: ProBuilder.Axis.Up is a plane with a normal of Vector3.up.</param>
         /// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-        public static ProBuilderMesh GeneratePlane(float width, float height, int widthCuts, int heightCuts, Axis axis)
+        public static ProBuilderMesh GeneratePlane(PivotLocation pivotType, float width, float height, int widthCuts, int heightCuts, Axis axis)
         {
             int w = widthCuts + 1;
             int h = heightCuts + 1;
@@ -990,19 +1021,22 @@ namespace UnityEngine.ProBuilder
 
             ProBuilderMesh pb = ProBuilderMesh.Create(v, f);
             pb.gameObject.name = "Plane";
+		    pb.SetPivot(pivotType);
+
             return pb;
         }
 
         /// <summary>
         /// Create a new pipe shape.
         /// </summary>
+        /// <param name="pivotType">Where the shape's pivot will be.</param>
         /// <param name="radius">Radius of the generated pipe.</param>
         /// <param name="height">Height of the generated pipe.</param>
         /// <param name="thickness">How thick the walls will be.</param>
         /// <param name="subdivAxis">How many subdivisions on the axis.</param>
         /// <param name="subdivHeight">How many subdivisions on the Y axis.</param>
         /// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-        public static ProBuilderMesh GeneratePipe(float radius, float height, float thickness, int subdivAxis, int subdivHeight)
+        public static ProBuilderMesh GeneratePipe(PivotLocation pivotType, float radius, float height, float thickness, int subdivAxis, int subdivHeight)
         {
             // template is outer ring - radius refers to outer ring always
             Vector2[] templateOut = new Vector2[subdivAxis];
@@ -1089,6 +1123,7 @@ namespace UnityEngine.ProBuilder
             ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(v.ToArray());
 
             pb.gameObject.name = "Pipe";
+		    pb.SetPivot(pivotType, 1);
 
             return pb;
         }
@@ -1096,11 +1131,12 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Create a new cone shape.
         /// </summary>
+        /// <param name="pivotType">Where the shape's pivot will be.</param>
         /// <param name="radius">Radius of the generated cone.</param>
         /// <param name="height">How tall the cone will be.</param>
         /// <param name="subdivAxis">How many subdivisions on the axis.</param>
         /// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-        public static ProBuilderMesh GenerateCone(float radius, float height, int subdivAxis)
+        public static ProBuilderMesh GenerateCone(PivotLocation pivotType, float radius, float height, int subdivAxis)
         {
             // template is outer ring - radius refers to outer ring always
             Vector3[] template = new Vector3[subdivAxis];
@@ -1136,7 +1172,7 @@ namespace UnityEngine.ProBuilder
 
             ProBuilderMesh pb = ProBuilderMesh.Create(v.ToArray(), f.ToArray());
             pb.gameObject.name = "Cone";
-
+		    pb.SetPivot(pivotType);
             pb.unwrapParameters = new UnwrapParameters()
             {
                 packMargin = 30f
@@ -1148,6 +1184,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Create a new arch shape.
         /// </summary>
+        /// <param name="pivotType">Where the shape's pivot will be.</param>
         /// <param name="angle">Amount of a circle the arch takes up.</param>
         /// <param name="radius">Distance from origin to furthest extent of geometry.</param>
         /// <param name="width">Distance from arch top to inner radius.</param>
@@ -1159,7 +1196,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="backFaces">Render back faces toggle.</param>
         /// <param name="endCaps">If true the faces capping the ends of this arch will be included. Does not apply if radius is 360 degrees.</param>
         /// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-        public static ProBuilderMesh GenerateArch(float angle, float radius, float width, float depth, int radialCuts, bool insideFaces, bool outsideFaces, bool frontFaces, bool backFaces, bool endCaps)
+        public static ProBuilderMesh GenerateArch(PivotLocation pivotType, float angle, float radius, float width, float depth, int radialCuts, bool insideFaces, bool outsideFaces, bool frontFaces, bool backFaces, bool endCaps)
         {
             Vector2[] templateOut = new Vector2[radialCuts];
             Vector2[] templateIn = new Vector2[radialCuts];
@@ -1273,6 +1310,8 @@ namespace UnityEngine.ProBuilder
             ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(v.ToArray());
 
             pb.gameObject.name = "Arch";
+		    pb.SetPivot(pivotType);
+
             return pb;
         }
 
@@ -1282,12 +1321,13 @@ namespace UnityEngine.ProBuilder
         /// <remarks>
         /// This method does not build UVs, so after generating BoxProject for UVs.
         /// </remarks>
+        /// <param name="pivotType">Where the shape's pivot will be.</param>
         /// <param name="radius">The radius of the sphere.</param>
         /// <param name="subdivisions">How many subdivisions to perform.</param>
         /// <param name="weldVertices">If false this function will not extract shared indexes. This is useful when showing a preview, where speed of generation is more important than making the shape editable.</param>
         /// <param name="manualUvs">For performance reasons faces on icospheres are marked as manual UVs. Pass false to this parameter to force auto unwrapped UVs.</param>
         /// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-        public static ProBuilderMesh GenerateIcosahedron(float radius, int subdivisions, bool weldVertices = true, bool manualUvs = true)
+        public static ProBuilderMesh GenerateIcosahedron(PivotLocation pivotType, float radius, int subdivisions, bool weldVertices = true, bool manualUvs = true)
         {
             // http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
 
@@ -1308,10 +1348,25 @@ namespace UnityEngine.ProBuilder
 
             Face[] f = new Face[v.Length / 3];
 
-            for (int i = 0; i < v.Length; i += 3)
+		    Vector3 bottomMostVertexPosition = Vector3.positiveInfinity;
+		    int bottomMostVertexIndex = -1;
+
+            for (int i = 0; i < v.Length; i+=3)
             {
                 f[i / 3] = new Face(new int[3] { i, i + 1, i + 2 });
                 f[i / 3].manualUV = manualUvs;
+
+			    // Get the bottom most vertex of the whole shape. We'll use it as a pivot point.
+			    for (int j = 0; j < f[i / 3].indexes.Count; ++j)
+			    {
+			        int index = f[i / 3].indexes[j];
+
+			        if (v[index].y < bottomMostVertexPosition.y)
+			        {
+			            bottomMostVertexPosition = v[index];
+			            bottomMostVertexIndex = index;
+			        }
+			    }
             }
 
             if (!manualUvs)
@@ -1358,6 +1413,8 @@ namespace UnityEngine.ProBuilder
             pb.ToMesh();
             pb.Refresh();
             pb.gameObject.name = "Icosphere";
+		    pb.SetPivot(pivotType, bottomMostVertexIndex);
+
             pb.unwrapParameters = new UnwrapParameters()
             {
                 packMargin = 30f
@@ -1446,6 +1503,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Create a torus mesh.
         /// </summary>
+        /// <param name="pivotType">Where the shape's pivot will be.</param>
         /// <param name="rows">The number of horizontal divisions.</param>
         /// <param name="columns">The number of vertical divisions.</param>
         /// <param name="innerRadius">The distance from center to the inner bound of geometry.</param>
@@ -1455,7 +1513,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="verticalCircumference">The circumference of the vertical geometry in degrees.</param>
         /// <param name="manualUvs">A torus shape does not unwrap textures well using automatic UVs. To disable this feature and instead use manual UVs, pass true.</param>
         /// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
-        public static ProBuilderMesh GenerateTorus(int rows, int columns, float innerRadius, float outerRadius, bool smooth, float horizontalCircumference, float verticalCircumference, bool manualUvs = false)
+        public static ProBuilderMesh GenerateTorus(PivotLocation pivotType, int rows, int columns, float innerRadius, float outerRadius, bool smooth, float horizontalCircumference, float verticalCircumference, bool manualUvs = false)
         {
             int clampedRows = (int)Mathf.Clamp(rows + 1, 4, 128);
             int clampedColumns = (int)Mathf.Clamp(columns + 1, 4, 128);
@@ -1504,6 +1562,7 @@ namespace UnityEngine.ProBuilder
 
             ProBuilderMesh pb = ProBuilderMesh.Create(vertices.ToArray(), faces.ToArray());
             pb.gameObject.name = "Torus";
+            pb.SetPivot(pivotType);
 
             return pb;
         }
