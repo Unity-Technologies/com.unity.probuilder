@@ -4,56 +4,56 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	sealed class ConnectVertices : MenuAction
-	{
-		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Vert_Connect", IconSkin.Pro); } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
-		protected override bool hasFileMenuEntry { get { return false; } }
+    sealed class ConnectVertices : MenuAction
+    {
+        public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Vert_Connect", IconSkin.Pro); } }
+        public override TooltipContent tooltip { get { return _tooltip; } }
+        protected override bool hasFileMenuEntry { get { return false; } }
 
-		static readonly TooltipContent _tooltip = new TooltipContent
-		(
-			"Connect Vertices",
-			@"Adds edges connecting all selected vertices.",
-			keyCommandAlt, 'E'
-		);
+        static readonly TooltipContent _tooltip = new TooltipContent
+            (
+                "Connect Vertices",
+                @"Adds edges connecting all selected vertices.",
+                keyCommandAlt, 'E'
+            );
 
-		public override SelectMode validSelectModes
-		{
-			get { return SelectMode.Vertex; }
-		}
+        public override SelectMode validSelectModes
+        {
+            get { return SelectMode.Vertex; }
+        }
 
-		public override bool enabled
-		{
-			get { return base.enabled && MeshSelection.selectedSharedVertexCount > 1; }
-		}
+        public override bool enabled
+        {
+            get { return base.enabled && MeshSelection.selectedSharedVertexCount > 1; }
+        }
 
-		public override ActionResult DoAction()
-		{
-			ActionResult res = ActionResult.NoSelection;
+        public override ActionResult DoAction()
+        {
+            ActionResult res = ActionResult.NoSelection;
 
-			UndoUtility.RecordSelection("Connect Vertices");
+            UndoUtility.RecordSelection("Connect Vertices");
 
-			foreach(var mesh in MeshSelection.topInternal)
-			{
-				mesh.ToMesh();
-				int[] splits = mesh.Connect(mesh.selectedIndexesInternal);
+            foreach (var mesh in MeshSelection.topInternal)
+            {
+                mesh.ToMesh();
+                int[] splits = mesh.Connect(mesh.selectedIndexesInternal);
 
-				if(splits != null)
-				{
-					mesh.Refresh();
-					mesh.Optimize();
-					mesh.SetSelectedVertices(splits);
-					res = new ActionResult(ActionResult.Status.Success, "Connect Edges");
-				}
-				else
-				{
-					res = new ActionResult(ActionResult.Status.Failure, "Failed Connecting Edges");
-				}
-			}
-			ProBuilderEditor.Refresh();
+                if (splits != null)
+                {
+                    mesh.Refresh();
+                    mesh.Optimize();
+                    mesh.SetSelectedVertices(splits);
+                    res = new ActionResult(ActionResult.Status.Success, "Connect Edges");
+                }
+                else
+                {
+                    res = new ActionResult(ActionResult.Status.Failure, "Failed Connecting Edges");
+                }
+            }
+            ProBuilderEditor.Refresh();
 
-			return res;
-		}
-	}
+            return res;
+        }
+    }
 }

@@ -42,8 +42,8 @@ namespace UnityEngine.ProBuilder
         [FormerlySerializedAs("_mat")]
         Material m_Material;
 
-	    [SerializeField]
-	    int m_SubmeshIndex;
+        [SerializeField]
+        int m_SubmeshIndex;
 
         /// <value>
         /// If this face has had it's UV coordinates done by hand, don't update them with the auto unwrap crowd.
@@ -67,15 +67,15 @@ namespace UnityEngine.ProBuilder
         internal int[] indexesInternal
         {
             get { return m_Indexes; }
-	        set
-	        {
-		        if(m_Indexes == null)
-			        throw new ArgumentNullException("value");
-		        if(m_Indexes.Length % 3 != 0)
-			        throw new ArgumentException("Face indexes must be a multiple of 3.");
-		        m_Indexes = value;
-		        InvalidateCache();
-	        }
+            set
+            {
+                if (m_Indexes == null)
+                    throw new ArgumentNullException("value");
+                if (m_Indexes.Length % 3 != 0)
+                    throw new ArgumentException("Face indexes must be a multiple of 3.");
+                m_Indexes = value;
+                InvalidateCache();
+            }
         }
 
         /// <value>
@@ -97,19 +97,19 @@ namespace UnityEngine.ProBuilder
 
             int len = array.Length;
 
-	        if(len % 3 != 0)
-		        throw new ArgumentException("Face indexes must be a multiple of 3.");
+            if (len % 3 != 0)
+                throw new ArgumentException("Face indexes must be a multiple of 3.");
 
             m_Indexes = new int[len];
             Array.Copy(array, m_Indexes, len);
-	        InvalidateCache();
+            InvalidateCache();
         }
 
-	    [NonSerialized]
-	    int[] m_DistinctIndexes;
+        [NonSerialized]
+        int[] m_DistinctIndexes;
 
-	    [NonSerialized]
-	    Edge[] m_Edges;
+        [NonSerialized]
+        Edge[] m_Edges;
 
         /// <value>
         /// Returns a reference to the cached distinct indexes (each vertex index is only referenced once in m_DistinctIndexes).
@@ -127,285 +127,285 @@ namespace UnityEngine.ProBuilder
             get { return new ReadOnlyCollection<int>(distinctIndexesInternal); }
         }
 
-	    internal Edge[] edgesInternal
-	    {
-		    get { return m_Edges == null ? CacheEdges() : m_Edges; }
-	    }
+        internal Edge[] edgesInternal
+        {
+            get { return m_Edges == null ? CacheEdges() : m_Edges; }
+        }
 
         /// <value>
         /// Get the perimeter edges that commpose this face.
         /// </value>
-	    public ReadOnlyCollection<Edge> edges
-	    {
-		    get { return new ReadOnlyCollection<Edge>(edgesInternal); }
-	    }
+        public ReadOnlyCollection<Edge> edges
+        {
+            get { return new ReadOnlyCollection<Edge>(edgesInternal); }
+        }
 
-	    /// <value>
-		/// What smoothing group this face belongs to, if any. This is used to calculate vertex normals.
-		/// </value>
-		public int smoothingGroup
-		{
-			get { return m_SmoothingGroup; }
-			set { m_SmoothingGroup = value; }
-		}
+        /// <value>
+        /// What smoothing group this face belongs to, if any. This is used to calculate vertex normals.
+        /// </value>
+        public int smoothingGroup
+        {
+            get { return m_SmoothingGroup; }
+            set { m_SmoothingGroup = value; }
+        }
 
-		/// <value>
-		/// Get the material that face uses.
-		/// </value>
-		[Obsolete("Face.material is deprecated. Please use submeshIndex instead.")]
-		public Material material
-		{
-			get { return m_Material; }
-			set { m_Material = value; }
-		}
+        /// <value>
+        /// Get the material that face uses.
+        /// </value>
+        [Obsolete("Face.material is deprecated. Please use submeshIndex instead.")]
+        public Material material
+        {
+            get { return m_Material; }
+            set { m_Material = value; }
+        }
 
-	    public int submeshIndex
-	    {
-		    get { return m_SubmeshIndex; }
-		    set { m_SubmeshIndex = value; }
-	    }
+        public int submeshIndex
+        {
+            get { return m_SubmeshIndex; }
+            set { m_SubmeshIndex = value; }
+        }
 
-		/// <value>
-		/// A reference to the Auto UV mapping parameters.
-		/// </value>
-		public AutoUnwrapSettings uv
-		{
-			get { return m_Uv; }
-			set { m_Uv = value; }
-		}
+        /// <value>
+        /// A reference to the Auto UV mapping parameters.
+        /// </value>
+        public AutoUnwrapSettings uv
+        {
+            get { return m_Uv; }
+            set { m_Uv = value; }
+        }
 
-		/// <summary>
-		/// Accesses the indexes array.
-		/// </summary>
-		/// <param name="i"></param>
-		public int this[int i]
-		{
-			get { return indexesInternal[i]; }
-		}
+        /// <summary>
+        /// Accesses the indexes array.
+        /// </summary>
+        /// <param name="i"></param>
+        public int this[int i]
+        {
+            get { return indexesInternal[i]; }
+        }
 
-	    /// <summary>
-	    /// Default constructor creates a face with an empty triangles array.
-	    /// </summary>
-	    public Face()
-	    {
-		    m_SubmeshIndex = 0;
-	    }
+        /// <summary>
+        /// Default constructor creates a face with an empty triangles array.
+        /// </summary>
+        public Face()
+        {
+            m_SubmeshIndex = 0;
+        }
 
-		/// <summary>
-		/// Initialize a Face with a set of triangles and default values.
-		/// </summary>
-		/// <param name="array">The new triangles array.</param>
-		public Face(int[] array)
-		{
-			SetIndexes(array);
-			m_Uv = AutoUnwrapSettings.tile;
-			m_Material = BuiltinMaterials.defaultMaterial;
-			m_SmoothingGroup = Smoothing.smoothingGroupNone;
-		    m_SubmeshIndex = 0;
-			textureGroup = -1;
-			elementGroup = 0;
-		}
+        /// <summary>
+        /// Initialize a Face with a set of triangles and default values.
+        /// </summary>
+        /// <param name="array">The new triangles array.</param>
+        public Face(int[] array)
+        {
+            SetIndexes(array);
+            m_Uv = AutoUnwrapSettings.tile;
+            m_Material = BuiltinMaterials.defaultMaterial;
+            m_SmoothingGroup = Smoothing.smoothingGroupNone;
+            m_SubmeshIndex = 0;
+            textureGroup = -1;
+            elementGroup = 0;
+        }
 
-		[Obsolete("Face.material is deprecated. Please use \"submeshIndex\" instead.")]
-		internal Face(int[] triangles, Material m, AutoUnwrapSettings u, int smoothing, int texture, int element, bool manualUVs)
-		{
-			SetIndexes(triangles);
-			m_Uv = new AutoUnwrapSettings(u);
-			m_Material = m;
-			m_SmoothingGroup = smoothing;
-			textureGroup = texture;
-			elementGroup = element;
-			manualUV = manualUVs;
-		    m_SubmeshIndex = 0;
-		}
+        [Obsolete("Face.material is deprecated. Please use \"submeshIndex\" instead.")]
+        internal Face(int[] triangles, Material m, AutoUnwrapSettings u, int smoothing, int texture, int element, bool manualUVs)
+        {
+            SetIndexes(triangles);
+            m_Uv = new AutoUnwrapSettings(u);
+            m_Material = m;
+            m_SmoothingGroup = smoothing;
+            textureGroup = texture;
+            elementGroup = element;
+            manualUV = manualUVs;
+            m_SubmeshIndex = 0;
+        }
 
-	    internal Face(int[] triangles, int submeshIndex, AutoUnwrapSettings u, int smoothing, int texture, int element, bool manualUVs)
-		{
-			SetIndexes(triangles);
-			m_Uv = new AutoUnwrapSettings(u);
-			m_SmoothingGroup = smoothing;
-			textureGroup = texture;
-			elementGroup = element;
-			manualUV = manualUVs;
-		    m_SubmeshIndex = submeshIndex;
-		}
+        internal Face(int[] triangles, int submeshIndex, AutoUnwrapSettings u, int smoothing, int texture, int element, bool manualUVs)
+        {
+            SetIndexes(triangles);
+            m_Uv = new AutoUnwrapSettings(u);
+            m_SmoothingGroup = smoothing;
+            textureGroup = texture;
+            elementGroup = element;
+            manualUV = manualUVs;
+            m_SubmeshIndex = submeshIndex;
+        }
 
-		/// <summary>
-		/// Deep copy constructor.
-		/// </summary>
-		/// <param name="other">The Face from which to copy properties.</param>
-		public Face(Face other)
-		{
-			CopyFrom(other);
-		}
+        /// <summary>
+        /// Deep copy constructor.
+        /// </summary>
+        /// <param name="other">The Face from which to copy properties.</param>
+        public Face(Face other)
+        {
+            CopyFrom(other);
+        }
 
-		/// <summary>
-		/// Copies values from other to this face.
-		/// </summary>
-		/// <param name="other">The Face from which to copy properties.</param>
-		public void CopyFrom(Face other)
-		{
+        /// <summary>
+        /// Copies values from other to this face.
+        /// </summary>
+        /// <param name="other">The Face from which to copy properties.</param>
+        public void CopyFrom(Face other)
+        {
             if (other == null)
                 throw new ArgumentNullException("other");
 
             int len = other.indexesInternal.Length;
-			m_Indexes = new int[len];
-			Array.Copy(other.indexesInternal, m_Indexes, len);
-			m_SmoothingGroup = other.smoothingGroup;
-			m_Uv = new AutoUnwrapSettings(other.uv);
+            m_Indexes = new int[len];
+            Array.Copy(other.indexesInternal, m_Indexes, len);
+            m_SmoothingGroup = other.smoothingGroup;
+            m_Uv = new AutoUnwrapSettings(other.uv);
 #pragma warning disable 618
-			m_Material = other.material;
+            m_Material = other.material;
 #pragma warning restore 618
-			manualUV = other.manualUV;
-			elementGroup = other.elementGroup;
-		    m_SubmeshIndex = other.m_SubmeshIndex;
-			InvalidateCache();
-		}
+            manualUV = other.manualUV;
+            elementGroup = other.elementGroup;
+            m_SubmeshIndex = other.m_SubmeshIndex;
+            InvalidateCache();
+        }
 
-		internal void InvalidateCache()
-	    {
-		    m_Edges = null;
-		    m_DistinctIndexes = null;
-	    }
+        internal void InvalidateCache()
+        {
+            m_Edges = null;
+            m_DistinctIndexes = null;
+        }
 
-		Edge[] CacheEdges()
-		{
-			if(m_Indexes == null)
-				return null;
+        Edge[] CacheEdges()
+        {
+            if (m_Indexes == null)
+                return null;
 
-			HashSet<Edge> dist = new HashSet<Edge>();
-			List<Edge> dup = new List<Edge>();
+            HashSet<Edge> dist = new HashSet<Edge>();
+            List<Edge> dup = new List<Edge>();
 
-			for(int i = 0; i < indexesInternal.Length; i+=3)
-			{
-				Edge a = new Edge(indexesInternal[i+0],indexesInternal[i+1]);
-				Edge b = new Edge(indexesInternal[i+1],indexesInternal[i+2]);
-				Edge c = new Edge(indexesInternal[i+2],indexesInternal[i+0]);
+            for (int i = 0; i < indexesInternal.Length; i += 3)
+            {
+                Edge a = new Edge(indexesInternal[i + 0], indexesInternal[i + 1]);
+                Edge b = new Edge(indexesInternal[i + 1], indexesInternal[i + 2]);
+                Edge c = new Edge(indexesInternal[i + 2], indexesInternal[i + 0]);
 
-				if(!dist.Add(a)) dup.Add(a);
-				if(!dist.Add(b)) dup.Add(b);
-				if(!dist.Add(c)) dup.Add(c);
-			}
+                if (!dist.Add(a)) dup.Add(a);
+                if (!dist.Add(b)) dup.Add(b);
+                if (!dist.Add(c)) dup.Add(c);
+            }
 
-			dist.ExceptWith(dup);
-			m_Edges = dist.ToArray();
-			return m_Edges;
-		}
+            dist.ExceptWith(dup);
+            m_Edges = dist.ToArray();
+            return m_Edges;
+        }
 
-		int[] CacheDistinctIndexes()
-		{
-			if(m_Indexes == null)
-				return null;
-			m_DistinctIndexes = m_Indexes.Distinct().ToArray();
-			return distinctIndexesInternal;
-		}
+        int[] CacheDistinctIndexes()
+        {
+            if (m_Indexes == null)
+                return null;
+            m_DistinctIndexes = m_Indexes.Distinct().ToArray();
+            return distinctIndexesInternal;
+        }
 
-		/// <summary>
-		/// Test if a triangle is contained within the triangles array of this face.
-		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <param name="c"></param>
-		/// <returns></returns>
-	    public bool Contains(int a, int b, int c)
-		{
-			for (int i = 0, cnt = indexesInternal.Length; i < cnt; i += 3)
-			{
-				if (a == indexesInternal[i + 0]
-					&& b == indexesInternal[i + 1]
-					&& c == indexesInternal[i + 2])
-					return true;
-			}
+        /// <summary>
+        /// Test if a triangle is contained within the triangles array of this face.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public bool Contains(int a, int b, int c)
+        {
+            for (int i = 0, cnt = indexesInternal.Length; i < cnt; i += 3)
+            {
+                if (a == indexesInternal[i + 0]
+                    && b == indexesInternal[i + 1]
+                    && c == indexesInternal[i + 2])
+                    return true;
+            }
 
-			return false;
-		}
+            return false;
+        }
 
-	    /// <summary>
-	    /// Is this face representable as quad?
-	    /// </summary>
-	    /// <returns></returns>
-	    public bool IsQuad()
-	    {
-		    return edgesInternal != null && edgesInternal.Length == 4;
-	    }
+        /// <summary>
+        /// Is this face representable as quad?
+        /// </summary>
+        /// <returns></returns>
+        public bool IsQuad()
+        {
+            return edgesInternal != null && edgesInternal.Length == 4;
+        }
 
-		/// <summary>
-		/// Convert a 2 triangle face to a quad representation.
-		/// </summary>
-		/// <returns>A quad (4 indexes), or null if indexes are not able to be represented as a quad.</returns>
-		public int[] ToQuad()
-		{
-			if(!IsQuad())
-				throw new InvalidOperationException("Face is not representable as a quad. Use Face.IsQuad to check for validity.");
+        /// <summary>
+        /// Convert a 2 triangle face to a quad representation.
+        /// </summary>
+        /// <returns>A quad (4 indexes), or null if indexes are not able to be represented as a quad.</returns>
+        public int[] ToQuad()
+        {
+            if (!IsQuad())
+                throw new InvalidOperationException("Face is not representable as a quad. Use Face.IsQuad to check for validity.");
 
-			int[] quad = new int[4] { edgesInternal[0].a, edgesInternal[0].b, -1, -1 };
+            int[] quad = new int[4] { edgesInternal[0].a, edgesInternal[0].b, -1, -1 };
 
-			if(edgesInternal[1].a == quad[1])
-				quad[2] = edgesInternal[1].b;
-			else if(edgesInternal[2].a == quad[1])
-				quad[2] = edgesInternal[2].b;
-			else if (edgesInternal[3].a == quad[1])
-				quad[2] = edgesInternal[3].b;
+            if (edgesInternal[1].a == quad[1])
+                quad[2] = edgesInternal[1].b;
+            else if (edgesInternal[2].a == quad[1])
+                quad[2] = edgesInternal[2].b;
+            else if (edgesInternal[3].a == quad[1])
+                quad[2] = edgesInternal[3].b;
 
-			if(edgesInternal[1].a == quad[2])
-				quad[3] = edgesInternal[1].b;
-			else if(edgesInternal[2].a == quad[2])
-				quad[3] = edgesInternal[2].b;
-			else if(edgesInternal[3].a == quad[2])
-				quad[3] = edgesInternal[3].b;
+            if (edgesInternal[1].a == quad[2])
+                quad[3] = edgesInternal[1].b;
+            else if (edgesInternal[2].a == quad[2])
+                quad[3] = edgesInternal[2].b;
+            else if (edgesInternal[3].a == quad[2])
+                quad[3] = edgesInternal[3].b;
 
-			return quad;
-		}
+            return quad;
+        }
 
-		public override string ToString()
-		{
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        public override string ToString()
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-			for(int i = 0; i < indexesInternal.Length; i += 3)
-			{
-				sb.Append("[");
-				sb.Append(indexesInternal[i]);
-				sb.Append(", ");
-				sb.Append(indexesInternal[i+1]);
-				sb.Append(", ");
-				sb.Append(indexesInternal[i+2]);
-				sb.Append("]");
+            for (int i = 0; i < indexesInternal.Length; i += 3)
+            {
+                sb.Append("[");
+                sb.Append(indexesInternal[i]);
+                sb.Append(", ");
+                sb.Append(indexesInternal[i + 1]);
+                sb.Append(", ");
+                sb.Append(indexesInternal[i + 2]);
+                sb.Append("]");
 
-				if(i < indexesInternal.Length-3)
-					sb.Append(", ");
-			}
+                if (i < indexesInternal.Length - 3)
+                    sb.Append(", ");
+            }
 
-			return sb.ToString();
-		}
+            return sb.ToString();
+        }
 
-	    /// <summary>
-		/// Add offset to each value in the indexes array.
-		/// </summary>
-		/// <param name="offset">The value to add to each index.</param>
-		public void ShiftIndexes(int offset)
-		{
-			for (int i = 0, c = m_Indexes.Length; i < c; i++)
-				m_Indexes[i] += offset;
+        /// <summary>
+        /// Add offset to each value in the indexes array.
+        /// </summary>
+        /// <param name="offset">The value to add to each index.</param>
+        public void ShiftIndexes(int offset)
+        {
+            for (int i = 0, c = m_Indexes.Length; i < c; i++)
+                m_Indexes[i] += offset;
 
-			InvalidateCache();
-		}
+            InvalidateCache();
+        }
 
-		/// <summary>
-		/// Find the smallest value in the triangles array.
-		/// </summary>
-		/// <returns>The smallest value in the indexes array.</returns>
-		int SmallestIndexValue()
-		{
-			int smallest = m_Indexes[0];
+        /// <summary>
+        /// Find the smallest value in the triangles array.
+        /// </summary>
+        /// <returns>The smallest value in the indexes array.</returns>
+        int SmallestIndexValue()
+        {
+            int smallest = m_Indexes[0];
 
-			for (int i = 1; i < m_Indexes.Length; i++)
-			{
-				if (m_Indexes[i] < smallest)
-					smallest = m_Indexes[i];
-			}
+            for (int i = 1; i < m_Indexes.Length; i++)
+            {
+                if (m_Indexes[i] < smallest)
+                    smallest = m_Indexes[i];
+            }
 
-			return smallest;
-		}
+            return smallest;
+        }
 
         /// <summary>
         /// Finds the smallest value in the indexes array, then offsets by subtracting that value from each index.
@@ -417,22 +417,22 @@ namespace UnityEngine.ProBuilder
         /// ```
         /// </example>
         public void ShiftIndexesToZero()
-		{
+        {
             int offset = SmallestIndexValue();
 
-			for (int i = 0; i < m_Indexes.Length; i++)
-				m_Indexes[i] -= offset;
+            for (int i = 0; i < m_Indexes.Length; i++)
+                m_Indexes[i] -= offset;
 
-			InvalidateCache();
-		}
+            InvalidateCache();
+        }
 
-		/// <summary>
-		/// Reverse the order of the triangle array. This has the effect of reversing the direction that this face renders.
-		/// </summary>
-		public void Reverse()
-		{
-			Array.Reverse(m_Indexes);
-			InvalidateCache();
-		}
-	}
+        /// <summary>
+        /// Reverse the order of the triangle array. This has the effect of reversing the direction that this face renders.
+        /// </summary>
+        public void Reverse()
+        {
+            Array.Reverse(m_Indexes);
+            InvalidateCache();
+        }
+    }
 }

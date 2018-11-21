@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -94,8 +94,8 @@ namespace UnityEditor.SettingsManagement
             if ((visibility & SettingVisibility.Unregistered) == SettingVisibility.Unregistered)
             {
                 var unregisterd = loadedFields.Where(y => typeof(IUserSetting).IsAssignableFrom(y.FieldType)
-                    && !Attribute.IsDefined(y, typeof(SettingsKeyAttribute))
-                    && !Attribute.IsDefined(y, typeof(UserSettingAttribute)));
+                        && !Attribute.IsDefined(y, typeof(SettingsKeyAttribute))
+                        && !Attribute.IsDefined(y, typeof(UserSettingAttribute)));
 
                 foreach (var field in unregisterd)
                 {

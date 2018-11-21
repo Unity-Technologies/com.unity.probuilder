@@ -11,122 +11,122 @@ using EditorUtility = UnityEditor.EditorUtility;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-	sealed class ExportObj : MenuAction
-	{
-		public override ToolbarGroup group { get { return ToolbarGroup.Export; } }
-		public override Texture2D icon { get { return null; } }
-		public override TooltipContent tooltip { get { return _tooltip; } }
+    sealed class ExportObj : MenuAction
+    {
+        public override ToolbarGroup group { get { return ToolbarGroup.Export; } }
+        public override Texture2D icon { get { return null; } }
+        public override TooltipContent tooltip { get { return _tooltip; } }
 
-		static readonly TooltipContent _tooltip = new TooltipContent
-		(
-			"Export Obj",
-			"Export a Wavefront OBJ file."
-		);
+        static readonly TooltipContent _tooltip = new TooltipContent
+            (
+                "Export Obj",
+                "Export a Wavefront OBJ file."
+            );
 
-		public override bool hidden
-		{
-			get { return true; }
-		}
+        public override bool hidden
+        {
+            get { return true; }
+        }
 
-		public override bool enabled
-		{
-			get { return Selection.gameObjects != null && Selection.gameObjects.Length > 0; }
-		}
+        public override bool enabled
+        {
+            get { return Selection.gameObjects != null && Selection.gameObjects.Length > 0; }
+        }
 
-		public override ActionResult DoAction()
-		{
-			string res = ExportWithFileDialog(MeshSelection.topInternal);
+        public override ActionResult DoAction()
+        {
+            string res = ExportWithFileDialog(MeshSelection.topInternal);
 
-			if (string.IsNullOrEmpty(res))
-				return new ActionResult(ActionResult.Status.Canceled, "User Canceled");
+            if (string.IsNullOrEmpty(res))
+                return new ActionResult(ActionResult.Status.Canceled, "User Canceled");
 
-			Export.PingExportedModel(res);
-			
-			return new ActionResult(ActionResult.Status.Success, "Export OBJ");
-		}
+            Export.PingExportedModel(res);
 
-		/**
-		 *	Prompt user for a save file location and export meshes as Obj.
-		 */
-		public static string ExportWithFileDialog(IEnumerable<ProBuilderMesh> meshes, bool asGroup = true, bool allowQuads = true, ObjOptions options = null)
-		{
-			if(meshes == null || !meshes.Any())
-				return null;
+            return new ActionResult(ActionResult.Status.Success, "Export OBJ");
+        }
 
-			IEnumerable<Model> models = allowQuads
-				? meshes.Select(x => new Model(x.gameObject.name, x))
-				: meshes.Select(x => new Model(x.gameObject.name, x.mesh, x.GetComponent<MeshRenderer>().sharedMaterials, x.transform.localToWorldMatrix));
+        /**
+         *  Prompt user for a save file location and export meshes as Obj.
+         */
+        public static string ExportWithFileDialog(IEnumerable<ProBuilderMesh> meshes, bool asGroup = true, bool allowQuads = true, ObjOptions options = null)
+        {
+            if (meshes == null || !meshes.Any())
+                return null;
 
-			string path = null, res = null;
+            IEnumerable<Model> models = allowQuads
+                ? meshes.Select(x => new Model(x.gameObject.name, x))
+                : meshes.Select(x => new Model(x.gameObject.name, x.mesh, x.GetComponent<MeshRenderer>().sharedMaterials, x.transform.localToWorldMatrix));
 
-			if(asGroup || models.Count() < 2)
-			{
-				ProBuilderMesh first = meshes.FirstOrDefault();
-				string name = first != null ? first.name : "ProBuilderModel";
-				path = UnityEditor.EditorUtility.SaveFilePanel("Export to Obj", "Assets", name, "obj");
+            string path = null, res = null;
 
-				if(string.IsNullOrEmpty(path))
-					return null;
+            if (asGroup || models.Count() < 2)
+            {
+                ProBuilderMesh first = meshes.FirstOrDefault();
+                string name = first != null ? first.name : "ProBuilderModel";
+                path = UnityEditor.EditorUtility.SaveFilePanel("Export to Obj", "Assets", name, "obj");
 
-				res = DoExport(path, models, options);
-			}
-			else
-			{
-				path = UnityEditor.EditorUtility.SaveFolderPanel("Export to Obj", "Assets", "");
+                if (string.IsNullOrEmpty(path))
+                    return null;
 
-				if(string.IsNullOrEmpty(path) || !Directory.Exists(path))
-					return null;
+                res = DoExport(path, models, options);
+            }
+            else
+            {
+                path = UnityEditor.EditorUtility.SaveFolderPanel("Export to Obj", "Assets", "");
 
-				foreach(Model model in models)
-					res = DoExport(string.Format("{0}/{1}.obj", path, model.name), new List<Model>() { model }, options);
-			}
+                if (string.IsNullOrEmpty(path) || !Directory.Exists(path))
+                    return null;
 
-			return res;
-		}
+                foreach (Model model in models)
+                    res = DoExport(string.Format("{0}/{1}.obj", path, model.name), new List<Model>() { model }, options);
+            }
 
-		static string DoExport(string path, IEnumerable<Model> models, ObjOptions options)
-		{
-			string name = Path.GetFileNameWithoutExtension(path);
-			string directory = Path.GetDirectoryName(path);
+            return res;
+        }
 
-			List<string> textures = null;
-			string obj, mat;
+        static string DoExport(string path, IEnumerable<Model> models, ObjOptions options)
+        {
+            string name = Path.GetFileNameWithoutExtension(path);
+            string directory = Path.GetDirectoryName(path);
 
-			if( ObjExporter.Export(name, models, out obj, out mat, out textures, options) )
-			{
-				try
-				{
-					CopyTextures(textures, directory);
-					FileUtility.WriteAllText(string.Format("{0}/{1}.obj", directory, name), obj);
-					FileUtility.WriteAllText(string.Format("{0}/{1}.mtl", directory, name.Replace(" ", "_")), mat);
-				}
-				catch(System.Exception e)
-				{
-					Debug.LogWarning(string.Format("Failed writing obj to path: {0}\n{1}", string.Format("{0}/{1}.obj", path, name), e.ToString()));
-					return null;
-				}
-			}
-			else
-			{
-				Debug.LogWarning("No meshes selected.");
-				return null;
-			}
+            List<string> textures = null;
+            string obj, mat;
 
-			return path;
-		}
+            if (ObjExporter.Export(name, models, out obj, out mat, out textures, options))
+            {
+                try
+                {
+                    CopyTextures(textures, directory);
+                    FileUtility.WriteAllText(string.Format("{0}/{1}.obj", directory, name), obj);
+                    FileUtility.WriteAllText(string.Format("{0}/{1}.mtl", directory, name.Replace(" ", "_")), mat);
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogWarning(string.Format("Failed writing obj to path: {0}\n{1}", string.Format("{0}/{1}.obj", path, name), e.ToString()));
+                    return null;
+                }
+            }
+            else
+            {
+                Debug.LogWarning("No meshes selected.");
+                return null;
+            }
 
-		/**
-		 *	Copy files from their path to a destination directory.
-		 */
-		private static void CopyTextures(List<string> textures, string destination)
-		{
-			foreach(string path in textures)
-			{
-				string dest = string.Format("{0}/{1}", destination, Path.GetFileName(path));
+            return path;
+        }
 
-				if(!File.Exists(dest))
-					File.Copy(path, dest);
-			}
-		}
-	}
+        /**
+         *  Copy files from their path to a destination directory.
+         */
+        private static void CopyTextures(List<string> textures, string destination)
+        {
+            foreach (string path in textures)
+            {
+                string dest = string.Format("{0}/{1}", destination, Path.GetFileName(path));
+
+                if (!File.Exists(dest))
+                    File.Copy(path, dest);
+            }
+        }
+    }
 }

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Serialization;
 using System.Collections.ObjectModel;
@@ -24,19 +24,19 @@ namespace UnityEngine.ProBuilder
 
         ProBuilderMesh m_Mesh;
 
-		[FormerlySerializedAs("points")]
+        [FormerlySerializedAs("points")]
         [SerializeField]
         internal List<Vector3> m_Points = new List<Vector3>();
 
-		[FormerlySerializedAs("extrude")]
+        [FormerlySerializedAs("extrude")]
         [SerializeField]
         float m_Extrude = 0f;
 
-		[FormerlySerializedAs("polyEditMode")]
+        [FormerlySerializedAs("polyEditMode")]
         [SerializeField]
         PolyEditMode m_EditMode;
 
-		[FormerlySerializedAs("flipNormals")]
+        [FormerlySerializedAs("flipNormals")]
         [SerializeField]
         bool m_FlipNormals;
 
@@ -53,7 +53,7 @@ namespace UnityEngine.ProBuilder
             m_Points = points.ToList();
         }
 
-	    public float extrude
+        public float extrude
         {
             get { return m_Extrude; }
             set { m_Extrude = value; }
@@ -62,7 +62,7 @@ namespace UnityEngine.ProBuilder
         public PolyEditMode polyEditMode
         {
             get { return m_EditMode; }
-	        set { m_EditMode = value; }
+            set { m_EditMode = value; }
         }
 
         public bool flipNormals
@@ -71,29 +71,29 @@ namespace UnityEngine.ProBuilder
             set { m_FlipNormals = value; }
         }
 
-	    public ProBuilderMesh mesh
-		{
-			get
-			{
-				if(m_Mesh == null)
-					m_Mesh = GetComponent<ProBuilderMesh>();
+        public ProBuilderMesh mesh
+        {
+            get
+            {
+                if (m_Mesh == null)
+                    m_Mesh = GetComponent<ProBuilderMesh>();
 
-				return m_Mesh;
-			}
+                return m_Mesh;
+            }
 
-			set
-			{
-				m_Mesh = value;
-			}
-		}
+            set
+            {
+                m_Mesh = value;
+            }
+        }
 
-		/// <summary>
-		/// ProGridsConditionalSnap tells pg_Editor to reflect this value.
-		/// </summary>
-		/// <returns></returns>
-		bool IsSnapEnabled()
-		{
-			return isOnGrid;
-		}
-	}
+        /// <summary>
+        /// ProGridsConditionalSnap tells pg_Editor to reflect this value.
+        /// </summary>
+        /// <returns></returns>
+        bool IsSnapEnabled()
+        {
+            return isOnGrid;
+        }
+    }
 }
