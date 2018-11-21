@@ -31,28 +31,33 @@ namespace UnityEditor.ProBuilder
 
         static void DoHandleSettings(Rect rect)
         {
+            Handles.BeginGUI();
             using (new EditorGUI.DisabledScope(k_EnableHandleSettingInput))
             {
                 GUILayout.BeginArea(rect);
                 EditorGUI.BeginChangeCheck();
+
                 GUILayout.BeginHorizontal();
                 EditorGUIUtility.labelWidth = 80;
-                #if PROBUILDER_ENABLE_HANDLE_OVERRIDE
+#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
                 VertexManipulationTool.pivotPoint =
                     (PivotPoint)EditorGUILayout.EnumPopup("Pivot Point", VertexManipulationTool.pivotPoint);
                 VertexManipulationTool.handleOrientation =
                     (HandleOrientation)EditorGUILayout.EnumPopup("Orientation",
                         VertexManipulationTool.handleOrientation);
-                #else
+#else
                 EditorGUILayout.EnumPopup("Pivot Point", VertexManipulationTool.pivotPoint);
                 EditorGUILayout.EnumPopup("Orientation", VertexManipulationTool.handleOrientation);
-                #endif
+#endif
+
                 EditorGUIUtility.labelWidth = 0;
                 GUILayout.EndHorizontal();
-                GUILayout.EndArea();
+
                 if (EditorGUI.EndChangeCheck())
                     ProBuilderEditor.Refresh();
+                GUILayout.EndArea();
             }
+            Handles.EndGUI();
         }
     }
 }
