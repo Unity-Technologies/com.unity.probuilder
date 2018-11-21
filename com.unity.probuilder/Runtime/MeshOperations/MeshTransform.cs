@@ -5,18 +5,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
     /// </summary>
     public static class MeshTransform
     {
-	    internal static void SetPivot(this ProBuilderMesh mesh, PivotLocation pivotType, int firstVertexIndex = 0)
-	    {
-	        switch (pivotType)
-	        {
-	            case PivotLocation.Center:
-	                mesh.CenterPivot(null);
-	                break;
+        internal static void SetPivot(this ProBuilderMesh mesh, PivotLocation pivotType, int firstVertexIndex = 0)
+        {
+            switch (pivotType)
+            {
+                case PivotLocation.Center:
+                    mesh.CenterPivot(null);
+                    break;
 
-	            case PivotLocation.FirstVertex:
-	                mesh.CenterPivot(new int[1] { firstVertexIndex });
-	                break;
-	        }
+                case PivotLocation.FirstVertex:
+                    mesh.CenterPivot(new int[1] { firstVertexIndex });
+                    break;
+            }
         }
 
         /// <summary>

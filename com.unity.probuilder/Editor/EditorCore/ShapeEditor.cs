@@ -73,7 +73,7 @@ namespace UnityEditor.ProBuilder
         [MenuItem("GameObject/3D Object/" + PreferenceKeys.pluginTitle + " Cube _%k")]
         public static void MenuCreateCube()
         {
-			ProBuilderMesh mesh = ShapeGenerator.GenerateCube(EditorUtility.newShapePivotLocation, Vector3.one);
+            ProBuilderMesh mesh = ShapeGenerator.GenerateCube(EditorUtility.newShapePivotLocation, Vector3.one);
             UndoUtility.RegisterCreatedObjectUndo(mesh.gameObject, "Create Shape");
             EditorUtility.InitObject(mesh);
         }
@@ -192,7 +192,7 @@ namespace UnityEditor.ProBuilder
 
             public override ProBuilderMesh Build(bool preview = false)
             {
-				return ShapeGenerator.GenerateCube(EditorUtility.newShapePivotLocation, s_CubeSize);
+                return ShapeGenerator.GenerateCube(EditorUtility.newShapePivotLocation, s_CubeSize);
             }
         }
 
@@ -207,7 +207,7 @@ namespace UnityEditor.ProBuilder
 
             public override ProBuilderMesh Build(bool preview = false)
             {
-				return ShapeGenerator.GeneratePlane(EditorUtility.newShapePivotLocation, 1, 1, 0, 0, s_Axis);
+                return ShapeGenerator.GeneratePlane(EditorUtility.newShapePivotLocation, 1, 1, 0, 0, s_Axis);
             }
         }
 
@@ -226,7 +226,7 @@ namespace UnityEditor.ProBuilder
 
             public override ProBuilderMesh Build(bool preview = false)
             {
-				return ShapeGenerator.GeneratePrism(EditorUtility.newShapePivotLocation, s_PrismSize);
+                return ShapeGenerator.GeneratePrism(EditorUtility.newShapePivotLocation, s_PrismSize);
             }
         }
 
@@ -282,7 +282,7 @@ namespace UnityEditor.ProBuilder
                 if (s_Circumference > 0f)
                 {
                     return ShapeGenerator.GenerateCurvedStair(
-					    EditorUtility.newShapePivotLocation,
+                        EditorUtility.newShapePivotLocation,
                         s_Size.x,
                         s_Size.y,
                         s_Size.z,
@@ -292,7 +292,7 @@ namespace UnityEditor.ProBuilder
                 }
 
                 return ShapeGenerator.GenerateStair(
-				    EditorUtility.newShapePivotLocation,
+                    EditorUtility.newShapePivotLocation,
                     s_Size,
                     s_Steps,
                     s_Sides);
@@ -333,9 +333,9 @@ namespace UnityEditor.ProBuilder
             {
                 return ShapeGenerator.GenerateCylinder(
                     EditorUtility.newShapePivotLocation,
-                    s_AxisSegments, 
-                    s_Radius, 
-                    s_Height, 
+                    s_AxisSegments,
+                    s_Radius,
+                    s_Height,
                     s_HeighSegments,
                     s_Smooth ? 1 : -1);
             }
@@ -369,13 +369,13 @@ namespace UnityEditor.ProBuilder
 
             public override ProBuilderMesh Build(bool preview = false)
             {
-				return ShapeGenerator.GenerateDoor(
-				    EditorUtility.newShapePivotLocation,
-				    s_Width,
-				    s_Height,
-				    s_LedgeHeight,
-				    s_LegWidth, 
-				    s_Depth);
+                return ShapeGenerator.GenerateDoor(
+                    EditorUtility.newShapePivotLocation,
+                    s_Width,
+                    s_Height,
+                    s_LedgeHeight,
+                    s_LegWidth,
+                    s_Depth);
             }
         }
 
@@ -412,13 +412,13 @@ namespace UnityEditor.ProBuilder
 
             public override ProBuilderMesh Build(bool preview = false)
             {
-				return ShapeGenerator.GeneratePlane(
-				    EditorUtility.newShapePivotLocation, 
-				    s_Height, 
-				    s_Width,
-				    s_HeightSegments,
-				    s_WidthSegments,
-				    s_Axis);
+                return ShapeGenerator.GeneratePlane(
+                    EditorUtility.newShapePivotLocation,
+                    s_Height,
+                    s_Width,
+                    s_HeightSegments,
+                    s_WidthSegments,
+                    s_Axis);
             }
         }
 
@@ -452,7 +452,7 @@ namespace UnityEditor.ProBuilder
             public override ProBuilderMesh Build(bool preview = false)
             {
                 return ShapeGenerator.GeneratePipe(
-				    EditorUtility.newShapePivotLocation,
+                    EditorUtility.newShapePivotLocation,
                     s_Radius,
                     s_Height,
                     s_Thickness,
@@ -534,7 +534,7 @@ namespace UnityEditor.ProBuilder
             public override ProBuilderMesh Build(bool preview = false)
             {
                 return ShapeGenerator.GenerateArch(
-				    EditorUtility.newShapePivotLocation,
+                    EditorUtility.newShapePivotLocation,
                     s_Angle,
                     s_Radius,
                     Mathf.Clamp(s_Width, 0.01f, s_Radius),
@@ -562,11 +562,11 @@ namespace UnityEditor.ProBuilder
             public override ProBuilderMesh Build(bool preview = false)
             {
                 // To keep the preview snappy, shared indexes aren't built in IcosahadreonGenerator
-				var mesh = ShapeGenerator.GenerateIcosahedron(
-				    EditorUtility.newShapePivotLocation,
-				    s_Radius,
-				    s_Subdivisions,
-				    !preview);
+                var mesh = ShapeGenerator.GenerateIcosahedron(
+                        EditorUtility.newShapePivotLocation,
+                        s_Radius,
+                        s_Subdivisions,
+                        !preview);
 
                 if (!preview)
                     UVEditing.ProjectFacesBox(mesh, mesh.facesInternal);
@@ -639,8 +639,8 @@ namespace UnityEditor.ProBuilder
             public override ProBuilderMesh Build(bool isPreview = false)
             {
                 var mesh = ShapeGenerator.GenerateTorus(
-				    EditorUtility.newShapePivotLocation,
-                    s_Rows,
+                        EditorUtility.newShapePivotLocation,
+                        s_Rows,
                         s_Columns,
                         s_Radius,
                         s_TubeRadius,
@@ -676,8 +676,8 @@ namespace UnityEditor.ProBuilder
 
                 if (positions.Length % 4 == 0)
                     return ProBuilderMesh.CreateInstanceWithPoints(
-                            InternalUtility.StringToVector3Array(verts)
-                            );
+                        InternalUtility.StringToVector3Array(verts)
+                        );
 
                 return ProBuilderMesh.Create();
             }

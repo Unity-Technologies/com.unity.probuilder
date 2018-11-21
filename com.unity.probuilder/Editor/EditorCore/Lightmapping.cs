@@ -8,200 +8,200 @@ using UnityEditor.SettingsManagement;
 
 namespace UnityEditor.ProBuilder
 {
-	/// <summary>
-	/// Methods used in manipulating or creating Lightmaps.
-	/// </summary>
-	[InitializeOnLoad]
-	static class Lightmapping
-	{
-		[UserSetting("General", "Auto Lightmap UVs", "Automatically build the lightmap UV array when editing ProBuilder meshes. If this feature is disabled, you will need to use the 'Generate UV2' action to build lightmap UVs for meshes prior to baking lightmaps.")]
-		static Pref<bool> s_AutoUnwrapLightmapUV = new Pref<bool>("lightmapping.autoUnwrapLightmapUV", true);
+    /// <summary>
+    /// Methods used in manipulating or creating Lightmaps.
+    /// </summary>
+    [InitializeOnLoad]
+    static class Lightmapping
+    {
+        [UserSetting("General", "Auto Lightmap UVs", "Automatically build the lightmap UV array when editing ProBuilder meshes. If this feature is disabled, you will need to use the 'Generate UV2' action to build lightmap UVs for meshes prior to baking lightmaps.")]
+        static Pref<bool> s_AutoUnwrapLightmapUV = new Pref<bool>("lightmapping.autoUnwrapLightmapUV", true);
 
-		[UserSetting("General", "Show Missing Lightmap UVs Warning", "Enable or disable a warning log if lightmaps are baked while ProBuilder shapes are missing a valid UV2 channel.")]
-		static Pref<bool> s_ShowMissingLightmapUVWarning = new Pref<bool>("lightmapping.showMissingLightmapWarning", true, SettingsScope.User);
+        [UserSetting("General", "Show Missing Lightmap UVs Warning", "Enable or disable a warning log if lightmaps are baked while ProBuilder shapes are missing a valid UV2 channel.")]
+        static Pref<bool> s_ShowMissingLightmapUVWarning = new Pref<bool>("lightmapping.showMissingLightmapWarning", true, SettingsScope.User);
 
-		[UserSetting]
-		internal static Pref<UnwrapParameters> s_UnwrapParameters = new Pref<UnwrapParameters>("lightmapping.defaultLightmapUnwrapParameters", new UnwrapParameters());
+        [UserSetting]
+        internal static Pref<UnwrapParameters> s_UnwrapParameters = new Pref<UnwrapParameters>("lightmapping.defaultLightmapUnwrapParameters", new UnwrapParameters());
 
-		static Pref<UL.GIWorkflowMode> s_GiWorkflowMode = new Pref<UL.GIWorkflowMode>("lightmapping.giWorkflowMode", UL.GIWorkflowMode.Iterative, SettingsScope.User);
+        static Pref<UL.GIWorkflowMode> s_GiWorkflowMode = new Pref<UL.GIWorkflowMode>("lightmapping.giWorkflowMode", UL.GIWorkflowMode.Iterative, SettingsScope.User);
 
-		static class Styles
-		{
-			public static readonly GUIContent hardAngle = new GUIContent("Hard Angle", "Angle between neighbor triangles that will generate seam.");
-			public static readonly GUIContent packMargin = new GUIContent("Pack Margin", "Measured in pixels, assuming mesh will cover an entire 1024x1024 lightmap.");
-			public static readonly GUIContent angleError = new GUIContent("Angle Error", "Measured in percents. Angle error measures deviation of UV angles from geometry angles.");
-			public static readonly GUIContent areaError = new GUIContent("Area Error", "");
+        static class Styles
+        {
+            public static readonly GUIContent hardAngle = new GUIContent("Hard Angle", "Angle between neighbor triangles that will generate seam.");
+            public static readonly GUIContent packMargin = new GUIContent("Pack Margin", "Measured in pixels, assuming mesh will cover an entire 1024x1024 lightmap.");
+            public static readonly GUIContent angleError = new GUIContent("Angle Error", "Measured in percents. Angle error measures deviation of UV angles from geometry angles.");
+            public static readonly GUIContent areaError = new GUIContent("Area Error", "");
 
-			static bool s_Initialized;
-			public static GUIStyle miniButton;
-			public static bool unwrapSettingsFoldout;
+            static bool s_Initialized;
+            public static GUIStyle miniButton;
+            public static bool unwrapSettingsFoldout;
 
-			public static void Init()
-			{
-				if (s_Initialized)
-					return;
+            public static void Init()
+            {
+                if (s_Initialized)
+                    return;
 
-				s_Initialized = true;
+                s_Initialized = true;
 
-				miniButton = new GUIStyle(GUI.skin.button);
-				miniButton.stretchHeight = false;
-				miniButton.stretchWidth = false;
-				miniButton.padding = new RectOffset(6, 6, 3, 3);
-				miniButton.margin = new RectOffset(4, 4, 4, 0);
-			}
-		}
+                miniButton = new GUIStyle(GUI.skin.button);
+                miniButton.stretchHeight = false;
+                miniButton.stretchWidth = false;
+                miniButton.padding = new RectOffset(6, 6, 3, 3);
+                miniButton.margin = new RectOffset(4, 4, 4, 0);
+            }
+        }
 
-		[UserSettingBlock("Mesh Settings")]
-		static void UnwrapSettingDefaults(string searchContext)
-		{
-			Styles.Init();
-			var isSearching = !string.IsNullOrEmpty(searchContext);
+        [UserSettingBlock("Mesh Settings")]
+        static void UnwrapSettingDefaults(string searchContext)
+        {
+            Styles.Init();
+            var isSearching = !string.IsNullOrEmpty(searchContext);
 
-			if(!isSearching)
-				Styles.unwrapSettingsFoldout = EditorGUILayout.Foldout(Styles.unwrapSettingsFoldout, "Lightmap UVs Settings");
+            if (!isSearching)
+                Styles.unwrapSettingsFoldout = EditorGUILayout.Foldout(Styles.unwrapSettingsFoldout, "Lightmap UVs Settings");
 
-			if (isSearching || Styles.unwrapSettingsFoldout)
-			{
-				EditorGUI.BeginChangeCheck();
+            if (isSearching || Styles.unwrapSettingsFoldout)
+            {
+                EditorGUI.BeginChangeCheck();
 
-				var unwrap = (UnwrapParameters) s_UnwrapParameters;
+                var unwrap = (UnwrapParameters)s_UnwrapParameters;
 
-				using (new SettingsGUILayout.IndentedGroup())
-				{
-					unwrap.hardAngle = SettingsGUILayout.SearchableSlider(Styles.hardAngle, unwrap.hardAngle, 1f, 180f, searchContext);
-					unwrap.packMargin = SettingsGUILayout.SearchableSlider(Styles.packMargin, unwrap.packMargin, 1f, 64f, searchContext);
-					unwrap.angleError = SettingsGUILayout.SearchableSlider(Styles.angleError, unwrap.angleError, 1f, 75f, searchContext);
-					unwrap.areaError = SettingsGUILayout.SearchableSlider(Styles.areaError, unwrap.areaError, 1f, 75f, searchContext);
+                using (new SettingsGUILayout.IndentedGroup())
+                {
+                    unwrap.hardAngle = SettingsGUILayout.SearchableSlider(Styles.hardAngle, unwrap.hardAngle, 1f, 180f, searchContext);
+                    unwrap.packMargin = SettingsGUILayout.SearchableSlider(Styles.packMargin, unwrap.packMargin, 1f, 64f, searchContext);
+                    unwrap.angleError = SettingsGUILayout.SearchableSlider(Styles.angleError, unwrap.angleError, 1f, 75f, searchContext);
+                    unwrap.areaError = SettingsGUILayout.SearchableSlider(Styles.areaError, unwrap.areaError, 1f, 75f, searchContext);
 
-					if (!isSearching)
-					{
-						GUILayout.BeginHorizontal();
-						GUILayout.FlexibleSpace();
-						if (GUILayout.Button("Reset", Styles.miniButton))
-							unwrap.Reset();
-						GUILayout.EndHorizontal();
-					}
-				}
+                    if (!isSearching)
+                    {
+                        GUILayout.BeginHorizontal();
+                        GUILayout.FlexibleSpace();
+                        if (GUILayout.Button("Reset", Styles.miniButton))
+                            unwrap.Reset();
+                        GUILayout.EndHorizontal();
+                    }
+                }
 
-				SettingsGUILayout.DoResetContextMenuForLastRect(s_UnwrapParameters);
+                SettingsGUILayout.DoResetContextMenuForLastRect(s_UnwrapParameters);
 
-				if (EditorGUI.EndChangeCheck())
-					s_UnwrapParameters.value = unwrap;
-			}
-		}
+                if (EditorGUI.EndChangeCheck())
+                    s_UnwrapParameters.value = unwrap;
+            }
+        }
 
-		public static bool autoUnwrapLightmapUV
-		{
-			get { return (bool) s_AutoUnwrapLightmapUV; }
-			set { s_AutoUnwrapLightmapUV.value = value; }
-		}
+        public static bool autoUnwrapLightmapUV
+        {
+            get { return (bool)s_AutoUnwrapLightmapUV; }
+            set { s_AutoUnwrapLightmapUV.value = value; }
+        }
 
-		static Lightmapping()
-		{
-			UL.completed += OnLightmappingCompleted;
-		}
+        static Lightmapping()
+        {
+            UL.completed += OnLightmappingCompleted;
+        }
 
-		/// <summary>
-		/// Toggles the LightmapStatic bit of an objects Static flags.
-		/// </summary>
-		/// <param name="pb"></param>
-		/// <param name="isEnabled"></param>
-		public static void SetLightmapStaticFlagEnabled(ProBuilderMesh pb, bool isEnabled)
-		{
-			Entity ent = pb.GetComponent<Entity>();
+        /// <summary>
+        /// Toggles the LightmapStatic bit of an objects Static flags.
+        /// </summary>
+        /// <param name="pb"></param>
+        /// <param name="isEnabled"></param>
+        public static void SetLightmapStaticFlagEnabled(ProBuilderMesh pb, bool isEnabled)
+        {
+            Entity ent = pb.GetComponent<Entity>();
 
-			if (ent != null && ent.entityType == EntityType.Detail)
-			{
-				StaticEditorFlags flags = GameObjectUtility.GetStaticEditorFlags(pb.gameObject);
+            if (ent != null && ent.entityType == EntityType.Detail)
+            {
+                StaticEditorFlags flags = GameObjectUtility.GetStaticEditorFlags(pb.gameObject);
 
-				if (isEnabled != (flags & StaticEditorFlags.LightmapStatic) > 0)
-				{
-					flags ^= StaticEditorFlags.LightmapStatic;
-					GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
-				}
-			}
-		}
+                if (isEnabled != (flags & StaticEditorFlags.LightmapStatic) > 0)
+                {
+                    flags ^= StaticEditorFlags.LightmapStatic;
+                    GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
+                }
+            }
+        }
 
-		static void OnLightmappingCompleted()
-		{
-			if (!s_ShowMissingLightmapUVWarning)
-				return;
+        static void OnLightmappingCompleted()
+        {
+            if (!s_ShowMissingLightmapUVWarning)
+                return;
 
-			var missingUv2 = Object.FindObjectsOfType<ProBuilderMesh>().Where(x => !x.HasArrays(MeshArrays.Lightmap) && x.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic));
+            var missingUv2 = Object.FindObjectsOfType<ProBuilderMesh>().Where(x => !x.HasArrays(MeshArrays.Lightmap) && x.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic));
 
-			int count = missingUv2.Count();
+            int count = missingUv2.Count();
 
-			if (count > 0)
-				Log.Warning("{0} ProBuilder {1} included in lightmap bake with missing UV2. Use the Lightmap + options to find missing UV2s.\n(You can turn off this warning in Preferences/ProBuilder).", count, count == 1 ? "mesh" : "meshes");
-		}
+            if (count > 0)
+                Log.Warning("{0} ProBuilder {1} included in lightmap bake with missing UV2. Use the Lightmap + options to find missing UV2s.\n(You can turn off this warning in Preferences/ProBuilder).", count, count == 1 ? "mesh" : "meshes");
+        }
 
-		/// <summary>
-		/// Build Lightmap UVs for each mesh in the selection that is missing the UV2 array.
-		/// </summary>
-		/// <param name="selection"></param>
-		/// <param name="showProgressBar"></param>
-		public static int RebuildMissingLightmapUVs(IEnumerable<ProBuilderMesh> selection, bool showProgressBar = false)
-		{
-			int count = 0;
-			float total = selection.Count(x => x.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic) && !x.HasArrays(MeshArrays.Lightmap));
+        /// <summary>
+        /// Build Lightmap UVs for each mesh in the selection that is missing the UV2 array.
+        /// </summary>
+        /// <param name="selection"></param>
+        /// <param name="showProgressBar"></param>
+        public static int RebuildMissingLightmapUVs(IEnumerable<ProBuilderMesh> selection, bool showProgressBar = false)
+        {
+            int count = 0;
+            float total = selection.Count(x => x.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic) && !x.HasArrays(MeshArrays.Lightmap));
 
-			foreach (var mesh in selection)
-			{
-				if (!mesh.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic) || mesh.HasArrays(MeshArrays.Texture1))
-					continue;
+            foreach (var mesh in selection)
+            {
+                if (!mesh.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic) || mesh.HasArrays(MeshArrays.Texture1))
+                    continue;
 
-				if (showProgressBar)
-				{
-					if (UnityEditor.EditorUtility.DisplayCancelableProgressBar("Generate Lightmap UVs", "Unwrapping UVs for mesh: " + mesh.name, count / total))
-						break;
-				}
+                if (showProgressBar)
+                {
+                    if (UnityEditor.EditorUtility.DisplayCancelableProgressBar("Generate Lightmap UVs", "Unwrapping UVs for mesh: " + mesh.name, count / total))
+                        break;
+                }
 
-				count++;
-				mesh.Optimize(true);
-			}
+                count++;
+                mesh.Optimize(true);
+            }
 
-			UnityEditor.EditorUtility.ClearProgressBar();
+            UnityEditor.EditorUtility.ClearProgressBar();
 
-			return count;
-		}
+            return count;
+        }
 
-		/**
-		 *	Get the UnwrapParam values from a pb_UnwrapParameters object.
-		 *	Not in pb_UnwrapParameters because UnwrapParam is an Editor class.
-		 */
-		public static UnwrapParam GetUnwrapParam(UnwrapParameters parameters)
-		{
-			UnwrapParam param = new UnwrapParam();
+        /**
+         *  Get the UnwrapParam values from a pb_UnwrapParameters object.
+         *  Not in pb_UnwrapParameters because UnwrapParam is an Editor class.
+         */
+        public static UnwrapParam GetUnwrapParam(UnwrapParameters parameters)
+        {
+            UnwrapParam param = new UnwrapParam();
 
-			if(parameters != null)
-			{
-				param.angleError = Mathf.Clamp(parameters.angleError, 1f, 75f) * .01f;
-				param.areaError  = Mathf.Clamp(parameters.areaError , 1f, 75f) * .01f;
-				param.hardAngle  = Mathf.Clamp(parameters.hardAngle , 0f, 180f);
-				param.packMargin = Mathf.Clamp(parameters.packMargin, 1f, 64) * .001f;
-			}
-			else
-			{
-				param.angleError = Mathf.Clamp(UnwrapParameters.k_AngleError, 1f, 75f) * .01f;
-				param.areaError  = Mathf.Clamp(UnwrapParameters.k_AreaError , 1f, 75f) * .01f;
-				param.hardAngle  = Mathf.Clamp(UnwrapParameters.k_HardAngle , 0f, 180f);
-				param.packMargin = Mathf.Clamp(UnwrapParameters.k_PackMargin, 1f, 64) * .001f;
-			}
+            if (parameters != null)
+            {
+                param.angleError = Mathf.Clamp(parameters.angleError, 1f, 75f) * .01f;
+                param.areaError  = Mathf.Clamp(parameters.areaError , 1f, 75f) * .01f;
+                param.hardAngle  = Mathf.Clamp(parameters.hardAngle , 0f, 180f);
+                param.packMargin = Mathf.Clamp(parameters.packMargin, 1f, 64) * .001f;
+            }
+            else
+            {
+                param.angleError = Mathf.Clamp(UnwrapParameters.k_AngleError, 1f, 75f) * .01f;
+                param.areaError  = Mathf.Clamp(UnwrapParameters.k_AreaError , 1f, 75f) * .01f;
+                param.hardAngle  = Mathf.Clamp(UnwrapParameters.k_HardAngle , 0f, 180f);
+                param.packMargin = Mathf.Clamp(UnwrapParameters.k_PackMargin, 1f, 64) * .001f;
+            }
 
-			return param;
-		}
+            return param;
+        }
 
-		internal static void PushGIWorkflowMode()
-		{
-			s_GiWorkflowMode.SetValue(UL.giWorkflowMode, true);
+        internal static void PushGIWorkflowMode()
+        {
+            s_GiWorkflowMode.SetValue(UL.giWorkflowMode, true);
 
-			if(UL.giWorkflowMode != UL.GIWorkflowMode.Legacy)
-				UL.giWorkflowMode = UL.GIWorkflowMode.OnDemand;
-		}
+            if (UL.giWorkflowMode != UL.GIWorkflowMode.Legacy)
+                UL.giWorkflowMode = UL.GIWorkflowMode.OnDemand;
+        }
 
-		internal static void PopGIWorkflowMode()
-		{
-			UL.giWorkflowMode = s_GiWorkflowMode;
-		}
-	}
+        internal static void PopGIWorkflowMode()
+        {
+            UL.giWorkflowMode = s_GiWorkflowMode;
+        }
+    }
 }

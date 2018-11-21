@@ -218,8 +218,7 @@ namespace UnityEditor.ProBuilder
             m_WireMaterial.SetInt("_HandleZTest", (int)CompareFunction.LessEqual);
             m_EdgeMaterial.SetInt("_HandleZTest", (int)CompareFunction.LessEqual);
 
-		    SetMaterialsScaleAttribute();
-
+            SetMaterialsScaleAttribute();
         }
 
         static Material CreateMaterial(Shader shader, string materialName)
@@ -307,7 +306,7 @@ namespace UnityEditor.ProBuilder
                 return;
 
             // Update the scale based on EditorGUIUtility.pixelsPerPoints in case the DPI would have changed.
-		    SetMaterialsScaleAttribute();
+            SetMaterialsScaleAttribute();
 
             switch (mode)
             {
@@ -469,15 +468,15 @@ namespace UnityEditor.ProBuilder
             handles.Clear();
         }
 
-	    void SetMaterialsScaleAttribute()
-	    {
-	        m_VertMaterial.SetFloat("_Scale", s_VertexPointSize * EditorGUIUtility.pixelsPerPoint);
+        void SetMaterialsScaleAttribute()
+        {
+            m_VertMaterial.SetFloat("_Scale", s_VertexPointSize * EditorGUIUtility.pixelsPerPoint);
 
-	        if (BuiltinMaterials.geometryShadersSupported)
-	        {
-	            m_WireMaterial.SetFloat("_Scale", s_WireframeLineSize * EditorGUIUtility.pixelsPerPoint);
-	            m_EdgeMaterial.SetFloat("_Scale", s_EdgeLineSize * EditorGUIUtility.pixelsPerPoint);
-	        }
+            if (BuiltinMaterials.geometryShadersSupported)
+            {
+                m_WireMaterial.SetFloat("_Scale", s_WireframeLineSize * EditorGUIUtility.pixelsPerPoint);
+                m_EdgeMaterial.SetFloat("_Scale", s_EdgeLineSize * EditorGUIUtility.pixelsPerPoint);
+            }
         }
     }
 }

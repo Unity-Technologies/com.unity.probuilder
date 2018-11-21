@@ -160,38 +160,38 @@ namespace UnityEngine.ProBuilder
             ProBuilderMesh pb = null;
 
             if (shape == ShapeType.Cube)
-				pb = GenerateCube(pivotType, Vector3.one);
+                pb = GenerateCube(pivotType, Vector3.one);
             if (shape == ShapeType.Stair)
-				pb = GenerateStair(pivotType, new Vector3(2f, 2.5f, 4f), 6, true);
+                pb = GenerateStair(pivotType, new Vector3(2f, 2.5f, 4f), 6, true);
             if (shape == ShapeType.CurvedStair)
-				pb = GenerateCurvedStair(pivotType, 2f, 2.5f, 2f, 180f, 8, true);
+                pb = GenerateCurvedStair(pivotType, 2f, 2.5f, 2f, 180f, 8, true);
             if (shape == ShapeType.Prism)
-				pb = GeneratePrism(pivotType, Vector3.one);
+                pb = GeneratePrism(pivotType, Vector3.one);
             if (shape == ShapeType.Cylinder)
-				pb = GenerateCylinder(pivotType, 8, 1f, 2f, 2);
+                pb = GenerateCylinder(pivotType, 8, 1f, 2f, 2);
             if (shape == ShapeType.Plane)
-				pb = GeneratePlane(pivotType, 5f, 5f, 5, 5, Axis.Up);
+                pb = GeneratePlane(pivotType, 5f, 5f, 5, 5, Axis.Up);
             if (shape == ShapeType.Door)
-				pb = GenerateDoor(pivotType, 3f, 2.5f, .5f, .75f, 1f);
+                pb = GenerateDoor(pivotType, 3f, 2.5f, .5f, .75f, 1f);
             if (shape == ShapeType.Pipe)
-				pb = GeneratePipe(pivotType, 1f, 2f, .25f, 8, 2);
+                pb = GeneratePipe(pivotType, 1f, 2f, .25f, 8, 2);
             if (shape == ShapeType.Cone)
-				pb = GenerateCone(pivotType, .5f, 1f, 8);
+                pb = GenerateCone(pivotType, .5f, 1f, 8);
             if (shape == ShapeType.Sprite)
-				pb = GeneratePlane(pivotType, 1f, 1f, 0, 0, Axis.Up);
+                pb = GeneratePlane(pivotType, 1f, 1f, 0, 0, Axis.Up);
             if (shape == ShapeType.Arch)
-				pb = GenerateArch(pivotType, 180f, 2f, 1f, 1f, 9, true, true, true, true, true);
+                pb = GenerateArch(pivotType, 180f, 2f, 1f, 1f, 9, true, true, true, true, true);
             if (shape == ShapeType.Sphere)
-				pb = GenerateIcosahedron(pivotType, .5f, 2, true, false);
+                pb = GenerateIcosahedron(pivotType, .5f, 2, true, false);
             if (shape == ShapeType.Torus)
-				pb = GenerateTorus(pivotType, 12, 16, 1f, .3f, true, 360f, 360f);
+                pb = GenerateTorus(pivotType, 12, 16, 1f, .3f, true, 360f, 360f);
 
             if (pb == null)
             {
 #if DEBUG
                 Log.Error(shape.ToString() + " type has no default!");
 #endif
-				pb = GenerateCube(pivotType, Vector3.one);
+                pb = GenerateCube(pivotType, Vector3.one);
             }
 
             pb.gameObject.name = shape.ToString();
@@ -547,7 +547,7 @@ namespace UnityEngine.ProBuilder
             ProBuilderMesh pb = ProBuilderMesh.Create(positions, faces);
 
             pb.gameObject.name = "Stairs";
-		    pb.SetPivot(pivotType);
+            pb.SetPivot(pivotType);
 
             return pb;
         }
@@ -626,7 +626,7 @@ namespace UnityEngine.ProBuilder
 
             ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(verts.ToArray());
             pb.gameObject.name = "Stairs";
-		    pb.SetPivot(pivotType);
+            pb.SetPivot(pivotType);
 
             return pb;
         }
@@ -646,7 +646,7 @@ namespace UnityEngine.ProBuilder
 
             ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(points);
             pb.gameObject.name = "Cube";
-		    pb.SetPivot(pivotType);
+            pb.SetPivot(pivotType);
 
             return pb;
         }
@@ -775,7 +775,7 @@ namespace UnityEngine.ProBuilder
 
             ProBuilderMesh pb = ProBuilderMesh.Create(verts, faces);
             pb.gameObject.name = "Cylinder";
-		    pb.SetPivot(pivotType);
+            pb.SetPivot(pivotType);
 
             return pb;
         }
@@ -837,7 +837,7 @@ namespace UnityEngine.ProBuilder
 
             ProBuilderMesh pb = ProBuilderMesh.Create(v, f);
             pb.gameObject.name = "Prism";
-		    pb.SetPivot(pivotType);
+            pb.SetPivot(pivotType);
 
             return pb;
         }
@@ -935,7 +935,7 @@ namespace UnityEngine.ProBuilder
 
             ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(points.ToArray());
             pb.gameObject.name = "Door";
-		    pb.SetPivot(pivotType);
+            pb.SetPivot(pivotType);
 
             return pb;
         }
@@ -1021,7 +1021,7 @@ namespace UnityEngine.ProBuilder
 
             ProBuilderMesh pb = ProBuilderMesh.Create(v, f);
             pb.gameObject.name = "Plane";
-		    pb.SetPivot(pivotType);
+            pb.SetPivot(pivotType);
 
             return pb;
         }
@@ -1123,7 +1123,7 @@ namespace UnityEngine.ProBuilder
             ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(v.ToArray());
 
             pb.gameObject.name = "Pipe";
-		    pb.SetPivot(pivotType, 1);
+            pb.SetPivot(pivotType, 1);
 
             return pb;
         }
@@ -1172,7 +1172,7 @@ namespace UnityEngine.ProBuilder
 
             ProBuilderMesh pb = ProBuilderMesh.Create(v.ToArray(), f.ToArray());
             pb.gameObject.name = "Cone";
-		    pb.SetPivot(pivotType);
+            pb.SetPivot(pivotType);
             pb.unwrapParameters = new UnwrapParameters()
             {
                 packMargin = 30f
@@ -1310,7 +1310,7 @@ namespace UnityEngine.ProBuilder
             ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(v.ToArray());
 
             pb.gameObject.name = "Arch";
-		    pb.SetPivot(pivotType);
+            pb.SetPivot(pivotType);
 
             return pb;
         }
@@ -1348,25 +1348,25 @@ namespace UnityEngine.ProBuilder
 
             Face[] f = new Face[v.Length / 3];
 
-		    Vector3 bottomMostVertexPosition = Vector3.positiveInfinity;
-		    int bottomMostVertexIndex = -1;
+            Vector3 bottomMostVertexPosition = Vector3.positiveInfinity;
+            int bottomMostVertexIndex = -1;
 
-            for (int i = 0; i < v.Length; i+=3)
+            for (int i = 0; i < v.Length; i += 3)
             {
                 f[i / 3] = new Face(new int[3] { i, i + 1, i + 2 });
                 f[i / 3].manualUV = manualUvs;
 
-			    // Get the bottom most vertex of the whole shape. We'll use it as a pivot point.
-			    for (int j = 0; j < f[i / 3].indexes.Count; ++j)
-			    {
-			        int index = f[i / 3].indexes[j];
+                // Get the bottom most vertex of the whole shape. We'll use it as a pivot point.
+                for (int j = 0; j < f[i / 3].indexes.Count; ++j)
+                {
+                    int index = f[i / 3].indexes[j];
 
-			        if (v[index].y < bottomMostVertexPosition.y)
-			        {
-			            bottomMostVertexPosition = v[index];
-			            bottomMostVertexIndex = index;
-			        }
-			    }
+                    if (v[index].y < bottomMostVertexPosition.y)
+                    {
+                        bottomMostVertexPosition = v[index];
+                        bottomMostVertexIndex = index;
+                    }
+                }
             }
 
             if (!manualUvs)
@@ -1413,7 +1413,7 @@ namespace UnityEngine.ProBuilder
             pb.ToMesh();
             pb.Refresh();
             pb.gameObject.name = "Icosphere";
-		    pb.SetPivot(pivotType, bottomMostVertexIndex);
+            pb.SetPivot(pivotType, bottomMostVertexIndex);
 
             pb.unwrapParameters = new UnwrapParameters()
             {
