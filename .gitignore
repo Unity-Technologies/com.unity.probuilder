@@ -5,6 +5,8 @@ probuilder2.0/*.csproj
 probuilder2.0/*.sln
 probuilder2.0/.idea
 probuilder2.0/Packages
+probuilder2.0/Logs/*
+git-hgmeta-format
 
 # usually you don't want to ignore this, but probuilder should be settings agnostic
 # so it's easier to just not deal with it.
