@@ -22,11 +22,7 @@ namespace ProBuilder.EditorCore
 		{
 			if(pb_PreferencesInternal.GetBool(pb_Constant.pbMeshesAreAssets))
 			{
-				PrefabType type = PrefabUtility.GetPrefabType(pb.gameObject);
-
-				if( type == PrefabType.Prefab ||
-					type == PrefabType.PrefabInstance ||
-					type == PrefabType.DisconnectedPrefabInstance )
+                if (pb_EditorUtility.IsPrefab(pb.gameObject))
 				{
 					// Debug.Log("will not destroy prefab mesh");
 				}

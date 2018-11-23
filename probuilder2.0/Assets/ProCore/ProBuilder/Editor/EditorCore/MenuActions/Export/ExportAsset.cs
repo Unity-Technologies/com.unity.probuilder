@@ -112,8 +112,12 @@ namespace ProBuilder.Actions
 			go.AddComponent<MeshRenderer>().sharedMaterials = pb.gameObject.GetComponent<MeshRenderer>().sharedMaterials;
 			string relativePrefabPath = string.Format("{0}/{1}.prefab", relativeDirectory, name);
 			string prefabPath = AssetDatabase.GenerateUniqueAssetPath(relativePrefabPath);
-			PrefabUtility.CreatePrefab(prefabPath, go, ReplacePrefabOptions.Default);
-			GameObject.DestroyImmediate(go);
+#if UNITY_2018_3_OR_NEWER
+		    PrefabUtility.SaveAsPrefabAsset(go, prefabPath);
+#else
+            PrefabUtility.CreatePrefab(prefabPath, go, ReplacePrefabOptions.Default);
+#endif
+            GameObject.DestroyImmediate(go);
 
 			return meshPath;
 		}
