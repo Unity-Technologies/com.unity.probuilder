@@ -44,9 +44,13 @@ namespace ProBuilder.Core
 
 					if (pipe != null)
 					{
-						s_DefaultMaterial = pipe.GetDefaultMaterial();
+#if UNITY_2019_1_OR_NEWER
+					    s_DefaultMaterial = pipe.defaultMaterial;
+#else
+                        s_DefaultMaterial = pipe.GetDefaultMaterial();
+#endif
 					}
-					else
+                    else
 					{
 						s_DefaultMaterial = (Material)Resources.Load("Materials/Default_Prototype", typeof(Material));
 
