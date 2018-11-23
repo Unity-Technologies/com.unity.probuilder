@@ -1,6 +1,4 @@
-using System;
 using System.IO;
-using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder.Tests.Framework;
@@ -14,7 +12,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Object
         [Test]
         public static void CubeSurvivesRoundTrip()
         {
-            var pb = ShapeGenerator.GenerateCube(Vector3.one);
+            var pb = ShapeGenerator.CreateShape(ShapeType.Cube);
 
             try
             {
