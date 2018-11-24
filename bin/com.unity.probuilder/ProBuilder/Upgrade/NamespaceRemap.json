@@ -1,0 +1,25 @@
+{
+  "m_Map":
+  [
+    {
+      "key": "ProBuilder2.Common",
+      "value": "ProBuilder.Core"
+    },
+    {
+      "key": "ProBuilder2.MeshOperations",
+      "value": "ProBuilder.MeshOperations"
+    },
+    {
+      "key": "ProBuilder2.EditorCommon",
+      "value": "ProBuilder.EditorCore"
+    },
+    {
+      "key": "ProBuilder2.Interface",
+      "value": "ProBuilder.Interface"
+    },
+    {
+      "key": "ProBuilder2.Actions",
+      "value": "ProBuilder.Actions"
+    }
+  ]
+}

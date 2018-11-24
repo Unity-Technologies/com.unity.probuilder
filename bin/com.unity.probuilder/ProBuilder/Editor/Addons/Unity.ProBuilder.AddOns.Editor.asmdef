@@ -1,0 +1,13 @@
+{
+    "name": "Unity.ProBuilder.AddOns.Editor",
+    "references": [
+        
+        
+        
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": []
+}
