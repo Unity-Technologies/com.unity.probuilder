@@ -153,7 +153,7 @@ namespace ProBuilder.EditorCore
 					if(mesh != m)
 					{
 						// prefab instances should always point to the same mesh
-						if(pb_EditorUtility.IsPrefabInstance(pb.gameObject) || pb_EditorUtility.IsPrefabRoot(pb.gameObject))
+						if(pb_EditorUtility.IsPrefabInstance(pb.gameObject) || pb_EditorUtility.IsPrefabAsset(pb.gameObject))
 						{
 							// Debug.Log("reconnect prefab to mesh");
 

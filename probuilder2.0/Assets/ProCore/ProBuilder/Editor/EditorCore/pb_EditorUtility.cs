@@ -166,26 +166,42 @@ namespace ProBuilder.EditorCore
 			AssetDatabase.Refresh();
 		}
 
-		/**
+        /**
 		 * Returns true if this object is a prefab instanced in the scene.
 		 */
-		public static bool IsPrefabInstance(GameObject go)
-		{
+	    internal static bool IsPrefabInstance(GameObject go)
+	    {
+#if UNITY_2018_3_OR_NEWER
+	        var status = PrefabUtility.GetPrefabInstanceStatus(go);
+	        return status == PrefabInstanceStatus.Connected || status == PrefabInstanceStatus.Disconnected;
+#else
 			return PrefabUtility.GetPrefabType(go) == PrefabType.PrefabInstance;
-		}
+#endif
+	    }
 
-		/**
-		 * Returns true if this object is a prefab in the Project view.
-		 */
-		public static bool IsPrefabRoot(GameObject go)
-		{
+	    internal static bool IsPrefabAsset(GameObject go)
+	    {
+#if UNITY_2018_3_OR_NEWER
+	        return PrefabUtility.IsPartOfPrefabAsset(go);
+#else
 			return PrefabUtility.GetPrefabType(go) == PrefabType.Prefab;
-		}
+#endif
+	    }
 
-		/**
+	    internal static bool IsPrefab(GameObject go)
+	    {
+#if UNITY_2018_3_OR_NEWER
+	        return PrefabUtility.GetPrefabAssetType(go) != PrefabAssetType.NotAPrefab;
+#else
+			PrefabType type = PrefabUtility.GetPrefabType(go);
+			return type == PrefabType.Prefab || type == PrefabType.PrefabInstance || type == PrefabType.DisconnectedPrefabInstance;
+#endif
+	    }
+
+        /**
 		 *	Returns true if Asset Store window is open, false otherwise.
 		 */
-		public static bool AssetStoreWindowIsOpen()
+        public static bool AssetStoreWindowIsOpen()
 		{
 			return Resources.FindObjectsOfTypeAll<EditorWindow>().Any(x => x.GetType().ToString().Contains("AssetStoreWindow"));
 		}
@@ -226,7 +242,7 @@ namespace ProBuilder.EditorCore
 					{
 						// Debug.Log("duplicate mesh");
 
-						if(!meshesAreAssets || !(pb_EditorUtility.IsPrefabRoot(pb.gameObject) || IsPrefabInstance(pb.gameObject)))
+						if(!meshesAreAssets || !(pb_EditorUtility.IsPrefabAsset(pb.gameObject) || IsPrefabInstance(pb.gameObject)))
 						{
 							// deep copy arrays & ToMesh/Refresh
 							pb.MakeUnique();
@@ -238,7 +254,7 @@ namespace ProBuilder.EditorCore
 				{
 					// old mesh didn't exist, so this is probably a prefab being instanced
 
-					if(pb_EditorUtility.IsPrefabRoot(pb.gameObject))
+					if(pb_EditorUtility.IsPrefabAsset(pb.gameObject))
 						pb.msh.hideFlags = (HideFlags) (1 | 2 | 4 | 8);
 
 					pb.Optimize();
@@ -428,7 +444,7 @@ namespace ProBuilder.EditorCore
 		 */
 		public static void CreateCachedEditor<T>(UnityEngine.Object[] targetObjects, ref UnityEditor.Editor previousEditor) where T : UnityEditor.Editor
 		{
-			#if UNITY_4_7
+#if UNITY_4_7
 			if (previousEditor != null && pbUtil.IsEqual(previousEditor.targets, targetObjects) )
 				return;
 
@@ -436,9 +452,9 @@ namespace ProBuilder.EditorCore
 				UnityEngine.Object.DestroyImmediate(previousEditor);
 
 			previousEditor = Editor.CreateEditor(targetObjects, typeof(T));
-			#else
+#else
 			UnityEditor.Editor.CreateCachedEditor(targetObjects, typeof(T), ref previousEditor);
-			#endif
+#endif
 		}
 	}
 }

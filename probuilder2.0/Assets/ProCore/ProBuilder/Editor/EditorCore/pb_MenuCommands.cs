@@ -1111,10 +1111,12 @@ namespace ProBuilder.EditorCore
 				pb_Object copy = ((GameObject)GameObject.Instantiate(pb.gameObject)).GetComponent<pb_Object>();
 				copy.MakeUnique();
 
-				// if is prefab, break connection and destroy children
-				if( pb_EditorUtility.IsPrefabInstance(copy.gameObject) || pb_EditorUtility.IsPrefabRoot(copy.gameObject) )
+#if !UNITY_2018_3_OR_NEWER
+                // if is prefab, break connection and destroy children
+                if( pb_EditorUtility.IsPrefabInstance(copy.gameObject) || pb_EditorUtility.IsPrefabRoot(copy.gameObject) )
 					PrefabUtility.DisconnectPrefabInstance(copy.gameObject);
-
+#endif
+    
 				if(copy.transform.childCount > 0)
 				{
 					for(int i = 0; i < copy.transform.childCount; ++i)
@@ -1166,12 +1168,12 @@ namespace ProBuilder.EditorCore
 #endif
 #endregion
 
-#region Face / Triangles
+                #region Face / Triangles
 
-		/**
-		 *	Treat selected faces as a single face.
-		 */
-		public static pb_ActionResult MenuMergeFaces(pb_Object[] selection)
+                /**
+                 *	Treat selected faces as a single face.
+                 */
+                public static pb_ActionResult MenuMergeFaces(pb_Object[] selection)
 		{
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
