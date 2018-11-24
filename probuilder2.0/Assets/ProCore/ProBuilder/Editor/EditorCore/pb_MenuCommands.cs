@@ -1113,7 +1113,7 @@ namespace ProBuilder.EditorCore
 
 #if !UNITY_2018_3_OR_NEWER
                 // if is prefab, break connection and destroy children
-                if( pb_EditorUtility.IsPrefabInstance(copy.gameObject) || pb_EditorUtility.IsPrefabRoot(copy.gameObject) )
+                if( pb_EditorUtility.IsPrefabInstance(copy.gameObject) || pb_EditorUtility.IsPrefabAsset(copy.gameObject) )
 					PrefabUtility.DisconnectPrefabInstance(copy.gameObject);
 #endif
     
