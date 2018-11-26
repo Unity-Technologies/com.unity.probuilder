@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.31] - 2018-11-12
+## [4.0.0-preview.32] - 2018-11-26
 
 ### Features
 
@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Texture scene tool now supports vertices and edges.
 - Improve performance of mesh rebuild functions.
 - Improve performance of vertex, edge, and face gizmos.
+- Respect Unity pivot mode and pivot orientation (note that setting `Orientation: Normal` overrides the Unity pivot rotation).
 
 ### Bug Fixes
 
@@ -76,14 +77,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Performance optimization for selection changes in editor.
 - Make auto-resizing colliders opt-in instead of on by default.
 
-### Changes since 4.0.0-preview.30
+### Changes since 4.0.0-preview.31
 
-- Respect Unity pivot mode and rotation toggles by default, and add a preference to override with PivotPoint and HandleRotation.
-
-### Changes since 4.0.0-preview.29
-
-- Fix ProGrids breaking handle movement.
-- Add `Pivot Point` and `Handle Orientation` settings.
+- Fix bug where adjusting shape creation parameters would move the preview mesh.
+- Fix bug where the mesh element gizmos would not respect the screen DPI on startup.
+- Fix regression that broke ProGrids compatibility.
+- Fix `Pipe` and `Sphere` shapes not setting a consistent pivot point.
+- Fix possible null reference exception when deleting the `Shape Editor` preview mesh.
+- Automatically destroy invalid `Poly Shape` objects when the selection is lost.
+- `Detach to GameObject` now sets the detached object as a child of the donor mesh.
+- Fix vertex billboards not rendering when the backing graphics API does not support geometry shaders.
+- Fix new shapes not instantiating on the grid when `Snap New Shape To Grid` is enabled.
 
 ### Known Issues
 
