@@ -1,7 +1,8 @@
 {
 	"Name":"ProBuilder Unity Package Manager",
 	"UnityPath":[
-		"C:/Program Files/2018.1/2018.1.9f2_a6cc294b73ee/Editor"
+		"C:/Program Files/2018.1/2018.1.9f2_a6cc294b73ee/Editor",
+		"/Applications/2018.1/Unity 2018.1.2f1_a46d718d282d/Unity.app"
 		// "C:/Users/$USER/unity/unity/build/WindowsEditor",
 		// "/Users/$USER/unity/unity/build/MacEditor/Unity.app",
 		// "C:/Users/$USER/unity/build/WindowsEditor",
