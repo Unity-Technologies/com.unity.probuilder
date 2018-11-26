@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.32] - 2018-11-26
+## [4.0.0-preview.33] - 2018-11-26
 
 ### Features
 
@@ -76,6 +76,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Include third party dependencies as source code with assembly definitions instead of pre-compiled DLLs.
 - Performance optimization for selection changes in editor.
 - Make auto-resizing colliders opt-in instead of on by default.
+
+### Changes since 4.0.0-preview.32
+
+- Shorten the `Orientation: Active Selection` label to just `Orientation: Active`.
 
 ### Changes since 4.0.0-preview.31
 
