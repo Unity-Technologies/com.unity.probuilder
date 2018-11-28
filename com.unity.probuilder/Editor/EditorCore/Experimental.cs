@@ -1,5 +1,6 @@
 using UnityEditor.SettingsManagement;
 using UnityEngine.ProBuilder;
+using UnityEngine;
 
 namespace UnityEditor.ProBuilder
 {
@@ -47,26 +48,34 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            var overrideHandleSettings = ScriptingSymbolManager.ContainsDefine(k_OverrideHandleSettings);
-
-            EditorGUI.BeginChangeCheck();
-
-            overrideHandleSettings = EditorGUILayout.Toggle("Override Handle Settings", overrideHandleSettings);
-
-            if (EditorGUI.EndChangeCheck())
+            if (EditorUtility.IsDeveloperMode())
             {
-                if (overrideHandleSettings)
-                    ScriptingSymbolManager.AddScriptingDefine(k_OverrideHandleSettings);
-                else
-                    ScriptingSymbolManager.RemoveScriptingDefine(k_OverrideHandleSettings);
-            }
+                GUILayout.Space(8);
 
-            using (new SettingsGUILayout.IndentedGroup(!overrideHandleSettings))
-            {
+                GUILayout.Label("Developer", EditorStyles.boldLabel);
+
+                var overrideHandleSettings = ScriptingSymbolManager.ContainsDefine(k_OverrideHandleSettings);
+
                 EditorGUI.BeginChangeCheck();
-                s_PivotModePivotEquivalent.value = (PivotPoint)EditorGUILayout.EnumPopup("PivotMode.Pivot", s_PivotModePivotEquivalent);
+
+                overrideHandleSettings = EditorGUILayout.Toggle(new GUIContent("Override Handle Settings", "Enables the scene view handle options."), overrideHandleSettings);
+
                 if (EditorGUI.EndChangeCheck())
-                    ProBuilderSettings.Save();
+                {
+                    if (overrideHandleSettings)
+                        ScriptingSymbolManager.AddScriptingDefine(k_OverrideHandleSettings);
+                    else
+                        ScriptingSymbolManager.RemoveScriptingDefine(k_OverrideHandleSettings);
+                }
+
+                using (new SettingsGUILayout.IndentedGroup(!overrideHandleSettings))
+                {
+                    EditorGUI.BeginChangeCheck();
+                    s_PivotModePivotEquivalent.value =
+                        (PivotPoint) EditorGUILayout.EnumPopup("PivotMode.Pivot", s_PivotModePivotEquivalent);
+                    if (EditorGUI.EndChangeCheck())
+                        ProBuilderSettings.Save();
+                }
             }
         }
     }
