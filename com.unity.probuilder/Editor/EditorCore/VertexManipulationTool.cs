@@ -5,6 +5,10 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
+#if !UNITY_2018_3_OR_NEWER
+using UnityEditor.SettingsManagement;
+#endif
+
 #if DEBUG_HANDLES
 using UnityEngine.Rendering;
 #endif
