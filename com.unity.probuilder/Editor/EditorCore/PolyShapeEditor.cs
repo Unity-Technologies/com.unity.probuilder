@@ -292,7 +292,7 @@ namespace UnityEditor.ProBuilder
 
             DrawPolyLine(polygon.m_Points);
 
-            var createShapeSucceeded = polygon.CreateShapeFromPolygon().status != ActionResult.Status.Success;
+            var createShapeSucceeded = polygon.CreateShapeFromPolygon().status == ActionResult.Status.Success;
 
             if (polygon.polyEditMode == PolyShape.PolyEditMode.Path || createShapeSucceeded)
                 ProBuilderEditor.Refresh(vertexCountChanged);
