@@ -51,7 +51,7 @@ namespace UnityEditor.ProBuilder
         internal static void RecordMeshAndTransformSelection(string message)
         {
             var count = MeshSelection.selectedObjectCount;
-            var res = new Object[count];
+            var res = new Object[count * 2];
             var selection = MeshSelection.topInternal;
 
             for (int i = 0, c = count; i < c; i++)
