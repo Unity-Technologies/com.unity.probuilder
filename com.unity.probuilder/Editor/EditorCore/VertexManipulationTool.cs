@@ -4,6 +4,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEditor.SettingsManagement;
 
 #if DEBUG_HANDLES
 using UnityEngine.Rendering;
@@ -14,9 +15,29 @@ namespace UnityEditor.ProBuilder
     abstract class VertexManipulationTool
     {
         static Pref<HandleOrientation> s_HandleOrientation = new Pref<HandleOrientation>("editor.handleOrientation", HandleOrientation.World, SettingsScope.User);
+
 #if PROBUILDER_ENABLE_HANDLE_OVERRIDE
         static Pref<PivotPoint> s_PivotPoint = new Pref<PivotPoint>("editor.pivotPoint", PivotPoint.Center, SettingsScope.User);
+#else
+
+        [UserSetting(UserSettingsProvider.developerModeCategory, "PivotMode.Pivot", "Set the behavior of the \"Pivot\" handle mode when editing mesh elements.")]
+        static Pref<PivotPoint> s_PivotModePivotEquivalent = new Pref<PivotPoint>("editor.pivotModePivotEquivalent", PivotPoint.IndividualOrigins, SettingsScope.User);
+
+        [UserSetting(UserSettingsProvider.developerModeCategory, "Show Internal Pivot and Orientation")]
+        static Pref<bool> s_ShowHandleSettingsInScene = new Pref<bool>("developer.showHandleSettingsInScene", false, SettingsScope.User);
+
+        internal static PivotPoint pivotModePivotEquivalent
+        {
+            get { return s_PivotModePivotEquivalent; }
+            set { s_PivotModePivotEquivalent.SetValue(value); }
+        }
+
+        internal static bool showHandleSettingsInScene
+        {
+            get { return s_ShowHandleSettingsInScene; }
+        }
 #endif
+
 
         // Enable this define to access PivotPoint.ActiveSelection. This also has the effect of ignoring Tools.pivotMode and Tools.pivotRotation settings.
 #if !PROBUILDER_ENABLE_HANDLE_OVERRIDE
@@ -32,7 +53,7 @@ namespace UnityEditor.ProBuilder
             get
             {
                 return Tools.pivotMode == PivotMode.Pivot
-                    ? Experimental.pivotModePivotEquivalent
+                    ? pivotModePivotEquivalent
                     : PivotPoint.Center;
             }
 #endif
