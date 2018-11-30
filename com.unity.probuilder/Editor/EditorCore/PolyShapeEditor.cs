@@ -284,7 +284,6 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        // Update the pb_Object with the new coordinates. Returns true if mesh successfully triangulated, false if not.
         void RebuildPolyShapeMesh(bool vertexCountChanged = false)
         {
             // If Undo is called immediately after creation this situation can occur
@@ -293,16 +292,12 @@ namespace UnityEditor.ProBuilder
 
             DrawPolyLine(polygon.m_Points);
 
-            if (polygon.polyEditMode == PolyShape.PolyEditMode.Path || polygon.CreateShapeFromPolygon().status != ActionResult.Status.Success)
-            {
+            var createShapeSucceeded = polygon.CreateShapeFromPolygon().status == ActionResult.Status.Success;
+
+            if (polygon.polyEditMode == PolyShape.PolyEditMode.Path || createShapeSucceeded)
+                ProBuilderEditor.Refresh(vertexCountChanged);
+            else
                 ProBuilderEditor.Refresh();
-                return;
-            }
-
-            if (vertexCountChanged)
-                polygon.mesh.Optimize();
-
-            ProBuilderEditor.Refresh(vertexCountChanged);
         }
 
         void OnSceneGUI()
