@@ -48,7 +48,7 @@ namespace UnityEngine.ProBuilder
         /// <value>
         /// If this face has had it's UV coordinates done by hand, don't update them with the auto unwrap crowd.
         /// </value>
-        public bool manualUV { get; set; }
+        public bool manualUV;
 
         /// <value>
         /// UV element group. Used by the UV editor to group faces.
@@ -59,7 +59,7 @@ namespace UnityEngine.ProBuilder
         /// <value>
         /// What texture group this face belongs to. Used when projecting auto UVs.
         /// </value>
-        public int textureGroup { get; set; }
+        public int textureGroup;
 
         /// <value>
         /// Return a reference to the triangle indexes that make up this face.
