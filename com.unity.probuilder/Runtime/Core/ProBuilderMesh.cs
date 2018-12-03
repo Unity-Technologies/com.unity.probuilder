@@ -35,7 +35,7 @@ namespace UnityEngine.ProBuilder
         public const uint maxVertexCount = ushort.MaxValue;
 
         [SerializeField]
-        int m_MeshFormatVersion = k_MeshFormatVersion;
+        int m_MeshFormatVersion;
 
         [SerializeField]
         [FormerlySerializedAs("_quads")]

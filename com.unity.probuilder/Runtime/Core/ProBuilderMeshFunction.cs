@@ -211,6 +211,8 @@ namespace UnityEngine.ProBuilder
 
                 m_MeshFormatVersion = k_MeshFormatVersion;
             }
+            
+            m_MeshFormatVersion = k_MeshFormatVersion;
 
             int materialCount = MeshUtility.GetMaterialCount(renderer);
 
