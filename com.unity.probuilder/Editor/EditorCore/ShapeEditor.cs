@@ -158,8 +158,6 @@ namespace UnityEditor.ProBuilder
                 scale = m_PreviewObject.transform.localScale;
             }
 
-            EditorUtility.SetPivotLocationAndSnap(mesh);
-
             if (previous)
             {
                 mesh.transform.position = position;
@@ -169,6 +167,7 @@ namespace UnityEditor.ProBuilder
             else
             {
                 EditorUtility.ScreenCenter(mesh.gameObject);
+                EditorUtility.SetPivotLocationAndSnap(mesh);
             }
         }
 
