@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Resources;
-using UnityEditor;
-using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using PHandleUtility = UnityEngine.ProBuilder.HandleUtility;
 using UHandleUtility = UnityEditor.HandleUtility;
-using MaterialEditor = UnityEditor.ProBuilder.MaterialEditor;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 
 namespace UnityEditor.ProBuilder

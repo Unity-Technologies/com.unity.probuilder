@@ -11,24 +11,31 @@ namespace UnityEditor.ProBuilder
         Vector3 m_WorldSnapDirection;
         Vector3 m_WorldSnapMask;
 
+#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
         Vector3 m_IndividualOriginDirection;
         bool m_DirectionOriginInitialized;
+#endif
 
         protected override void OnToolEngaged()
         {
             m_SnapInWorldCoordinates = false;
             m_WorldSnapMask = new Vector3Mask(0x0);
+#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
             m_DirectionOriginInitialized = false;
+#endif
         }
 
         protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
         {
             base.DoTool(handlePosition, handleRotation);
 
+            if (!isEditing)
+                m_HandlePosition = handlePosition;
+
+#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
             if (isEditing)
                 DrawSelectionOriginGizmos();
-            else
-                m_HandlePosition = handlePosition;
+#endif
 
             EditorGUI.BeginChangeCheck();
 
@@ -84,6 +91,7 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
+#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
                 if (pivotPoint == PivotPoint.IndividualOrigins && !m_DirectionOriginInitialized)
                 {
                     var mask = new Vector3Mask(handleRotationOriginInverse * delta, k_CardinalAxisError);
@@ -94,6 +102,7 @@ namespace UnityEditor.ProBuilder
                         m_DirectionOriginInitialized = true;
                     }
                 }
+#endif
 
                 ApplyTranslation(handleRotationOriginInverse * delta);
             }
@@ -134,6 +143,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.UpdateMeshHandles(false);
         }
 
+#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
         void DrawSelectionOriginGizmos()
         {
             if (isEditing && currentEvent.type == EventType.Repaint)
@@ -147,5 +157,6 @@ namespace UnityEditor.ProBuilder
                 }
             }
         }
+#endif
     }
 }

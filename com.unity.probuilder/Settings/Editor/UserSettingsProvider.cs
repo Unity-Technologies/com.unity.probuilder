@@ -28,6 +28,7 @@ namespace UnityEditor.SettingsManagement
     public sealed class UserSettingsProvider
 #endif
     {
+        public const string developerModeCategory = "Developer Mode";
         const string k_UserSettingsProviderSettingsPath = "ProjectSettings/UserSettingsProviderSettings.json";
 
 #if SETTINGS_PROVIDER_ENABLED
@@ -188,6 +189,7 @@ namespace UnityEditor.SettingsManagement
 
         void SearchForUserSettingAttributes()
         {
+            var isDeveloperMode = EditorPrefs.GetBool("DeveloperMode", false);
             var keywordsHash = new HashSet<string>();
 
             if (m_Settings != null)
@@ -234,6 +236,9 @@ namespace UnityEditor.SettingsManagement
                 var category = string.IsNullOrEmpty(attrib.category) ? "Uncategorized" : attrib.category;
                 var content = listByKey ? new GUIContent(pref.key) : attrib.title;
 
+                if (developerModeCategory.Equals(category) && !isDeveloperMode)
+                    continue;
+
                 List<PrefEntry> settings;
 
                 if (m_Settings.TryGetValue(category, out settings))
@@ -246,6 +251,10 @@ namespace UnityEditor.SettingsManagement
             {
                 var attrib = (UserSettingBlockAttribute)Attribute.GetCustomAttribute(method, typeof(UserSettingBlockAttribute));
                 var category = string.IsNullOrEmpty(attrib.category) ? "Uncategorized" : attrib.category;
+
+                if (developerModeCategory.Equals(category) && !isDeveloperMode)
+                    continue;
+
                 List<MethodInfo> blocks;
 
                 var parameters = method.GetParameters();
@@ -405,6 +414,11 @@ namespace UnityEditor.SettingsManagement
                     {
                         Debug.Log(UserSettings.GetSettingsString(m_Assemblies));
                     });
+
+#if UNITY_2019_1_OR_NEWER
+                menu.AddSeparator("Developer/");
+                menu.AddItem(new GUIContent("Developer/Recompile Scripts"), false, UnityEditorInternal.InternalEditorUtility.RequestScriptReload);
+#endif
             }
 
             menu.ShowAsContext();

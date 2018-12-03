@@ -31,3 +31,4 @@ UpgradeProjects/*/*.sln
 git-hgmeta-format
 *.bak
 *.bak.meta
+*.sublime-workspace

@@ -30,8 +30,6 @@ namespace UnityEditor.ProBuilder
             GetWindow<ShapeEditor>("Shape Tool");
         }
 
-        static readonly Color k_PreviewColor = new Color(.5f, .9f, 1f, .56f);
-
         Vector2 m_Scroll = Vector2.zero;
         static int s_CurrentIndex = 0;
         GameObject m_PreviewObject;

@@ -382,6 +382,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+#if !UNITY_2019_1_OR_NEWER
         internal static void RegisterOnPreSceneGUIDelegate(SceneView.OnSceneFunc func)
         {
             var del = onPreSceneGuiDelegate;
@@ -399,12 +400,8 @@ namespace UnityEditor.ProBuilder
             if (del != null)
                 del -= func;
         }
+#endif
 
-        /**
-         *  Is this code running on a Unix OS?
-         *
-         *  Alt summary: Do you know this?
-         */
         internal static bool IsUnix()
         {
             System.PlatformID platform = System.Environment.OSVersion.Platform;
@@ -572,6 +569,11 @@ namespace UnityEditor.ProBuilder
                 return mat;
 
             return BuiltinMaterials.defaultMaterial;
+        }
+
+        internal static bool IsDeveloperMode()
+        {
+            return EditorPrefs.GetBool("DeveloperMode", false);
         }
     }
 }
