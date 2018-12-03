@@ -69,8 +69,9 @@ namespace UnityEngine.ProBuilder
             }
 
             GameObject go = new GameObject();
-            ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
             go.name = "ProBuilder Mesh";
+            ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
+            pb.m_MeshFormatVersion = k_MeshFormatVersion;
             pb.GeometryWithPoints(positions);
 
             return pb;
@@ -80,6 +81,7 @@ namespace UnityEngine.ProBuilder
         {
             var go = new GameObject();
             var pb = go.AddComponent<ProBuilderMesh>();
+            pb.m_MeshFormatVersion = k_MeshFormatVersion;
             pb.Clear();
             return pb;
         }
@@ -95,6 +97,7 @@ namespace UnityEngine.ProBuilder
             GameObject go = new GameObject();
             ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
             go.name = "ProBuilder Mesh";
+            pb.m_MeshFormatVersion = k_MeshFormatVersion;
             pb.RebuildWithPositionsAndFaces(positions, faces);
             return pb;
         }
@@ -114,8 +117,9 @@ namespace UnityEngine.ProBuilder
             IList<SharedVertex> sharedTextures = null)
         {
             var go = new GameObject();
-            var mesh = go.AddComponent<ProBuilderMesh>();
             go.name = "ProBuilder Mesh";
+            var mesh = go.AddComponent<ProBuilderMesh>();
+            mesh.m_MeshFormatVersion = k_MeshFormatVersion;
             mesh.SetVertices(vertices);
             mesh.faces = faces;
             mesh.sharedVertices = sharedVertices;
@@ -211,7 +215,7 @@ namespace UnityEngine.ProBuilder
 
                 m_MeshFormatVersion = k_MeshFormatVersion;
             }
-            
+
             m_MeshFormatVersion = k_MeshFormatVersion;
 
             int materialCount = MeshUtility.GetMaterialCount(renderer);
