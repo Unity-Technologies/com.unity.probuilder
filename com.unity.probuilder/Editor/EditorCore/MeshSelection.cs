@@ -409,7 +409,7 @@ namespace UnityEditor.ProBuilder
         internal static Quaternion GetHandleRotation()
         {
             var active = GetActiveSelectionGroup();
-            
+
             return active != null && active.elementGroups.Count > 0
                 ? active.elementGroups.Last().rotation
                 : Quaternion.identity;
@@ -419,54 +419,11 @@ namespace UnityEditor.ProBuilder
         {
             foreach (var pair in elementSelection)
             {
-                // Use last selected pair as the active selection
                 if (pair.mesh == s_ActiveMesh)
                     return pair;
             }
 
             return null;
-        }
-
-        internal static bool GetActiveFace(out ProBuilderMesh mesh, out Face face)
-        {
-            if (activeMesh != null && activeMesh.selectedFaceCount > 0)
-            {
-                mesh = activeMesh;
-                face = mesh.GetActiveFace();
-                return true;
-            }
-
-            mesh = activeMesh;
-            face = null;
-            return false;
-        }
-
-        internal static bool GetActiveEdge(out ProBuilderMesh mesh, out Edge edge)
-        {
-            if (activeMesh != null && activeMesh.selectedEdgeCount > 0)
-            {
-                mesh = activeMesh;
-                edge = mesh.GetActiveEdge();
-                return true;
-            }
-
-            mesh = activeMesh;
-            edge = Edge.Empty;
-            return false;
-        }
-
-        internal static bool GetActiveVertex(out ProBuilderMesh mesh, out int vertex)
-        {
-            if (activeMesh != null && activeMesh.selectedVertexCount > 0)
-            {
-                mesh = activeMesh;
-                vertex = mesh.GetActiveVertex();
-                return true;
-            }
-
-            mesh = activeMesh;
-            vertex = -1;
-            return false;
-        }
+       }
     }
 }

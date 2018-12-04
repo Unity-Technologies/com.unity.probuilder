@@ -94,7 +94,7 @@ namespace UnityEditor.ProBuilder
             {
                 case PivotPoint.IndividualOrigins:
                 {
-                    if (selectMode == SelectMode.Vertex)
+                    if (selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.TextureVertex))
                     {
                         foreach (var list in GetVertexSelectionGroups(mesh, collectCoincident))
                         {
@@ -103,7 +103,7 @@ namespace UnityEditor.ProBuilder
                             groups.Add(new ElementGroup(list, trs.MultiplyPoint3x4(bounds.center), rot));
                         }
                     }
-                    else if (selectMode == SelectMode.Edge)
+                    else if (selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
                     {
                         foreach (var list in GetEdgeSelectionGroups(mesh))
                         {
@@ -125,7 +125,7 @@ namespace UnityEditor.ProBuilder
                             groups.Add(new ElementGroup(indices, trs.MultiplyPoint3x4(bounds.center), rot));
                         }
                     }
-                    else if (selectMode == SelectMode.Face)
+                    else if (selectMode.ContainsFlag(SelectMode.Face | SelectMode.TextureFace))
                     {
                         foreach (var list in GetFaceSelectionGroups(mesh))
                         {
@@ -158,7 +158,7 @@ namespace UnityEditor.ProBuilder
                     var position = mesh.transform.position;
                     var rotation = mesh.transform.rotation;
 
-                    if (selectMode == SelectMode.Face)
+                    if (selectMode.ContainsFlag(SelectMode.Face | SelectMode.TextureFace))
                     {
                         var face = mesh.GetActiveFace();
 
@@ -168,7 +168,7 @@ namespace UnityEditor.ProBuilder
                             rotation = EditorHandleUtility.GetFaceRotation(mesh, orientation, new Face[] { face });
                         }
                     }
-                    else if (selectMode == SelectMode.Edge)
+                    else if (selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
                     {
                         var edge = mesh.GetActiveEdge();
 
@@ -178,7 +178,7 @@ namespace UnityEditor.ProBuilder
                             rotation = EditorHandleUtility.GetEdgeRotation(mesh, orientation, new Edge[] { edge });
                         }
                     }
-                    else if (selectMode == SelectMode.Vertex)
+                    else if (selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.TextureVertex))
                     {
                         var vertex = mesh.GetActiveVertex();
 

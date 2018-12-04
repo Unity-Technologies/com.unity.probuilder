@@ -21,7 +21,7 @@ namespace UnityEditor.ProBuilder
         static Pref<HandleOrientation> s_HandleOrientation = new Pref<HandleOrientation>("editor.handleOrientation", HandleOrientation.World, SettingsScope.User);
 
         [UserSetting(UserSettingsProvider.developerModeCategory, "PivotMode.Pivot", "Set the behavior of the \"Pivot\" handle mode when editing mesh elements.")]
-        static Pref<PivotPoint> s_PivotModePivotEquivalent = new Pref<PivotPoint>("editor.pivotModePivotEquivalent", PivotPoint.IndividualOrigins, SettingsScope.User);
+        static Pref<PivotPoint> s_PivotModePivotEquivalent = new Pref<PivotPoint>("editor.pivotModePivotEquivalent", PivotPoint.ActiveElement, SettingsScope.User);
 
         [UserSetting(UserSettingsProvider.developerModeCategory, "Show Internal Pivot and Orientation")]
         static Pref<bool> s_ShowHandleSettingsInScene = new Pref<bool>("developer.showHandleSettingsInScene", false, SettingsScope.User);
