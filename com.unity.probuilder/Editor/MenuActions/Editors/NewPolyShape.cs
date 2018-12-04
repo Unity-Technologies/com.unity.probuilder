@@ -45,7 +45,9 @@ namespace UnityEditor.ProBuilder.Actions
 
             Vector3 pivot;
 
-            if (ProGridsInterface.GetPivot(out pivot))
+            if (ProGridsInterface.ProGridsActive() &&
+                ProGridsInterface.SnapEnabled() &&
+                ProGridsInterface.GetPivot(out pivot))
                 go.transform.position = pivot;
 
             return new ActionResult(ActionResult.Status.Success, "Create Poly Shape");

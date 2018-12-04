@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using UnityEngine.ProBuilder;
@@ -119,9 +120,6 @@ namespace UnityEditor.ProBuilder
         {
             pivot = Vector3.zero;
 
-            if (!ProGridsActive() || !SnapEnabled())
-                return false;
-
             var getPivot = GetProGridsType().GetMethod("GetPivot");
 
             if (getPivot != null)
@@ -131,6 +129,45 @@ namespace UnityEditor.ProBuilder
             }
 
             return false;
+        }
+
+        public static bool IsFullGridEnabled()
+        {
+            var fullGridEnabled = GetProGridsType().GetMethod("IsFullGridEnabled", (BindingFlags.NonPublic | BindingFlags.Static));
+            if (fullGridEnabled != null)
+            {
+                return (bool)fullGridEnabled.Invoke(null, null);
+            }
+            else
+            {
+                Debug.LogWarning("IsFullGridEnabled failed to find an appropriate `IsFullGridEnabled` method on `ProGridsEditor` type");
+            }
+
+            return false;
+        }
+
+        public static int GetActiveGridAxis()
+        {
+            var getActiveAxis = GetProGridsType().GetMethod("GetActiveGridAxis", (BindingFlags.NonPublic | BindingFlags.Static));
+            if (getActiveAxis != null)
+                return (int)getActiveAxis.Invoke(null, null);
+            else
+            {
+                Debug.LogWarning("GetActiveGridAxis failed to find an appropriate `GetActiveGridAxis` method on `ProGridsEditor` type");
+            }
+            return -1;
+        }
+
+        public static float GetActiveGridOffset()
+        {
+            var getGridOffset = GetProGridsType().GetMethod("GetActiveGridOffset", (BindingFlags.NonPublic | BindingFlags.Static));
+            if (getGridOffset != null)
+                return (float)getGridOffset.Invoke(null, null);
+            else
+            {
+                Debug.LogWarning("GetActiveGridOffset failed to find an appropriate `GetActiveGridOffset` method on `ProGridsEditor` type");
+            }
+            return -1f;
         }
 
         /// <summary>

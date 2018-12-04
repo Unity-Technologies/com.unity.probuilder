@@ -1,9 +1,7 @@
 using UnityEngine;
-using UnityEditor;
 using UnityEngine.ProBuilder.MeshOperations;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder.UI;
 using MeshTopology = UnityEngine.MeshTopology;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 
@@ -20,7 +18,9 @@ namespace UnityEditor.ProBuilder
 
         Material m_LineMaterial;
         Mesh m_LineMesh = null;
+
         Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
+
         bool m_PlacingPoint = false;
         int m_SelectedIndex = -2;
         float m_DistanceFromHeightHandle;
@@ -368,7 +368,8 @@ namespace UnityEditor.ProBuilder
                 if (eventType == EventType.MouseDrag)
                 {
                     float hitDistance = Mathf.Infinity;
-                    m_Plane.SetNormalAndPosition(polygon.transform.up, polygon.transform.position);
+
+                    SetPlaneBasedOnMousePosition(ray);
 
                     if (m_Plane.Raycast(ray, out hitDistance))
                     {
@@ -397,10 +398,10 @@ namespace UnityEditor.ProBuilder
                     if (polygon.m_Points.Count < 1)
                         SetPlane(evt.mousePosition);
 
-                    Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
                     float hitDistance = Mathf.Infinity;
 
-                    m_Plane.SetNormalAndPosition(polygon.transform.up, polygon.transform.position);
+                    Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
+                    SetPlaneBasedOnMousePosition(ray);
 
                     if (m_Plane.Raycast(ray, out hitDistance))
                     {
@@ -476,6 +477,104 @@ namespace UnityEditor.ProBuilder
                     }
                 }
             }
+        }
+
+        void SetPlaneBasedOnMousePosition(Ray ray)
+        {
+            if (ProGridsInterface.ProGridsActive())
+            {
+                if (!ProGridsInterface.IsFullGridEnabled())
+                {
+                    // Snap plane on one active grid (ProGrids).
+                    PlacePlaneOnProGridsAxis();
+                }
+                else
+                {
+                    // Snap plane on the closest plane when all grids are active (ProGrids).
+                    if (polygon.m_Points.Count < 1)
+                        FindProGridsClosestPlane(ray);
+                }
+            }
+            else
+            {
+                // Snap on focus center.
+                PlacePlaneOnCenter();
+            }
+        }
+
+        void FindProGridsClosestPlane(Ray ray)
+        {
+            Vector3 pivot;
+
+            ProGridsInterface.GetPivot(out pivot);
+
+            Plane[] planes = new Plane[3];
+            planes[0].SetNormalAndPosition(Vector3.right, pivot);   // X axis
+            planes[1].SetNormalAndPosition(Vector3.up, pivot);      // Y axis
+            planes[2].SetNormalAndPosition(Vector3.forward, pivot); // Z Axis
+
+            float distance;
+            float closestDistance = Mathf.Infinity;
+            Plane closestPlane = default(Plane);
+
+            for (int i = 0; i < planes.Length; ++i)
+            {
+                if (planes[i].Raycast(ray, out distance))
+                {
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestPlane = planes[i];
+                    }
+                }
+            }
+
+            m_Plane.SetNormalAndPosition(closestPlane.normal, pivot);
+        }
+
+        void PlacePlaneOnProGridsAxis()
+        {
+            Vector3 planePosition = polygon.transform.position;
+            Vector3 normal = polygon.transform.up;
+            int axis = ProGridsInterface.GetActiveGridAxis();
+            float offset = ProGridsInterface.GetActiveGridOffset();
+
+            Vector3 pivot;
+
+            // Snap the plane to the rendered grid.
+            ProGridsInterface.GetPivot(out pivot);
+
+            switch (axis)
+            {
+                case 0:
+                case 1:
+                    // X axis
+                    planePosition.x = pivot.x + offset;
+                    normal = Vector3.right;
+                    break;
+                case 2:
+                case 3:
+                    // Y axis
+                    planePosition.y = pivot.y + offset;
+                    normal = Vector3.up;
+                    break;
+                case 4:
+                case 5:
+                    // Z axis
+                    planePosition.z = pivot.z + offset;
+                    normal = Vector3.forward;
+                    break;
+            }
+
+            m_Plane.SetNormalAndPosition(normal, planePosition);
+        }
+
+        void PlacePlaneOnCenter()
+        {
+            Vector3 planePosition = polygon.transform.position;
+            Vector3 normal = polygon.transform.up;
+
+            m_Plane.SetNormalAndPosition(normal, planePosition);
         }
 
         void DoExistingPointsGUI()
