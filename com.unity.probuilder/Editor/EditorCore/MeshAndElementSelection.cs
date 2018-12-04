@@ -64,7 +64,7 @@ namespace UnityEditor.ProBuilder
             {
                 case PivotPoint.IndividualOrigins:
                 {
-                    // todo Pass SelectMode as part of args
+                    // todo - Support individual origins for vertices and edges
                     if (selectMode != SelectMode.Face || mesh.selectedFaceCount < 1)
                     {
                         var bounds = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal);
@@ -73,8 +73,8 @@ namespace UnityEditor.ProBuilder
                             : new List<int>(mesh.selectedIndexesInternal);
 
                         var rot = selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge)
-                            ? EditorHandleUtility.GetEdgeRotation(mesh, mesh.selectedEdgesInternal, orientation)
-                            : EditorHandleUtility.GetVertexRotation(mesh, indices, orientation);
+                            ? EditorHandleUtility.GetEdgeRotation(mesh, orientation)
+                            : EditorHandleUtility.GetVertexRotation(mesh, orientation);
 
                         var post = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), rot, Vector3.one);
 
@@ -90,7 +90,7 @@ namespace UnityEditor.ProBuilder
                         foreach (var list in GetFaceSelectionGroups(mesh))
                         {
                             var bounds = Math.GetBounds(mesh.positionsInternal, list);
-                            var rot = EditorHandleUtility.GetFaceRotation(mesh, list, orientation);
+                            var rot = EditorHandleUtility.GetFaceRotation(mesh, orientation, list.Last());
                             var post = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), rot, Vector3.one);
 
                             List<int> indices;

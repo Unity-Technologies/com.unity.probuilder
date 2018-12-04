@@ -533,7 +533,7 @@ namespace UnityEditor.ProBuilder
             return mesh.transform.rotation * Quaternion.LookRotation(nrm, bit);
         }
 
-        internal static Quaternion GetFaceRotation(ProBuilderMesh mesh, IEnumerable<Face> faces, HandleOrientation orientation)
+        internal static Quaternion GetFaceRotation(ProBuilderMesh mesh, HandleOrientation orientation, Face face = null)
         {
             if (mesh == null)
                 return Quaternion.identity;
@@ -546,7 +546,9 @@ namespace UnityEditor.ProBuilder
 
                     // Intentionally not using coincident vertices here. We want the normal of just the face, not an
                     // average of it's neighbors.
-                    return GetRotation(mesh, faces.First().distinctIndexesInternal);
+                    return GetRotation(mesh, face != null
+                        ? face.distinctIndexesInternal
+                        : mesh.GetActiveFace().distinctIndexesInternal);
 
                 case HandleOrientation.ActiveObject:
                     return mesh.transform.rotation;
@@ -556,7 +558,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        internal static Quaternion GetEdgeRotation(ProBuilderMesh mesh, IEnumerable<Edge> edges, HandleOrientation orientation)
+        internal static Quaternion GetEdgeRotation(ProBuilderMesh mesh, HandleOrientation orientation)
         {
             if (mesh == null)
                 return Quaternion.identity;
@@ -571,7 +573,7 @@ namespace UnityEditor.ProBuilder
                     // first selected edge for orientation.
                     // This function accepts an enumerable because in the future we may want to do something more
                     // sophisticated, and it's conventient because selections are stored as collections.
-                    var face = EdgeUtility.GetFace(mesh, edges.First());
+                    var face = EdgeUtility.GetFace(mesh, mesh.GetActiveEdge());
 
                     if (face == null)
                         goto case HandleOrientation.ActiveObject;
@@ -591,7 +593,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        internal static Quaternion GetVertexRotation(ProBuilderMesh mesh, IEnumerable<int> vertices, HandleOrientation orientation)
+        internal static Quaternion GetVertexRotation(ProBuilderMesh mesh, HandleOrientation orientation)
         {
             if (mesh == null)
                 return Quaternion.identity;
@@ -602,7 +604,7 @@ namespace UnityEditor.ProBuilder
                     if (mesh.selectedVertexCount < 1)
                         goto case HandleOrientation.ActiveObject;
 
-                    return GetRotation(mesh, vertices);
+                    return GetRotation(mesh, new int[] { mesh.GetActiveVertex() });
 
                 case HandleOrientation.ActiveObject:
                     return mesh.transform.rotation;

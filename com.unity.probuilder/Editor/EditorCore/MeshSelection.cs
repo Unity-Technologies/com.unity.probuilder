@@ -365,13 +365,26 @@ namespace UnityEditor.ProBuilder
                 case PivotPoint.IndividualOrigins:
                 {
                     ProBuilderMesh mesh = activeMesh;
-                    Face face;
                     Vector3 center = Vector3.zero;
 
-                    if (GetActiveFace(out mesh, out face))
-                        center = Math.GetBounds(mesh.positionsInternal, face.distinctIndexesInternal).center;
-                    else if (activeMesh != null)
-                        center = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal).center;
+                    if (ProBuilderEditor.selectMode == SelectMode.Face)
+                    {
+                        Face face;
+                        if (GetActiveFace(out mesh, out face))
+                            center = Math.GetBounds(mesh.positionsInternal, face.distinctIndexesInternal).center;
+                    }
+                    else if (ProBuilderEditor.selectMode == SelectMode.Edge)
+                    {
+                        Edge edge;
+                        if (GetActiveEdge(out mesh, out edge))
+                            center = (mesh.positionsInternal[edge.a] + mesh.positionsInternal[edge.b]) * .5f;
+                    }
+                    else if (ProBuilderEditor.selectMode == SelectMode.Vertex)
+                    {
+                        int vertex;
+                        if (GetActiveVertex(out mesh, out vertex))
+                            center = mesh.positionsInternal[vertex];
+                    }
 
                     return mesh.transform.TransformPoint(center);
                 }
@@ -390,17 +403,17 @@ namespace UnityEditor.ProBuilder
             {
                 case SelectMode.Face:
                 case SelectMode.TextureFace:
-                    return EditorHandleUtility.GetFaceRotation(activeMesh, activeMesh.selectedFacesInternal, orientation);
+                    return EditorHandleUtility.GetFaceRotation(activeMesh, orientation);
 
                 case SelectMode.Edge:
                 case SelectMode.TextureEdge:
-                    return EditorHandleUtility.GetEdgeRotation(activeMesh, activeMesh.selectedEdgesInternal, orientation);
+                    return EditorHandleUtility.GetEdgeRotation(activeMesh, orientation);
 
                 case SelectMode.Vertex:
-                    return EditorHandleUtility.GetVertexRotation(activeMesh, activeMesh.selectedCoincidentVertices, orientation);
+                    return EditorHandleUtility.GetVertexRotation(activeMesh, orientation);
 
                 case SelectMode.TextureVertex:
-                    return EditorHandleUtility.GetVertexRotation(activeMesh, activeMesh.selectedIndexesInternal, orientation);
+                    return EditorHandleUtility.GetVertexRotation(activeMesh, orientation);
 
                 case SelectMode.Object:
                     return activeMesh.transform.rotation;
@@ -410,7 +423,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        static bool GetActiveFace(out ProBuilderMesh mesh, out Face face)
+        internal static bool GetActiveFace(out ProBuilderMesh mesh, out Face face)
         {
             if (activeMesh != null && activeMesh.selectedFaceCount > 0)
             {
@@ -421,6 +434,34 @@ namespace UnityEditor.ProBuilder
 
             mesh = activeMesh;
             face = null;
+            return false;
+        }
+
+        internal static bool GetActiveEdge(out ProBuilderMesh mesh, out Edge edge)
+        {
+            if (activeMesh != null && activeMesh.selectedEdgeCount > 0)
+            {
+                mesh = activeMesh;
+                edge = mesh.GetActiveEdge();
+                return true;
+            }
+
+            mesh = activeMesh;
+            edge = Edge.Empty;
+            return false;
+        }
+
+        internal static bool GetActiveVertex(out ProBuilderMesh mesh, out int vertex)
+        {
+            if (activeMesh != null && activeMesh.selectedVertexCount > 0)
+            {
+                mesh = activeMesh;
+                vertex = mesh.GetActiveVertex();
+                return true;
+            }
+
+            mesh = activeMesh;
+            vertex = -1;
             return false;
         }
     }
