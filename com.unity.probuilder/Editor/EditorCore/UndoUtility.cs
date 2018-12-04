@@ -14,16 +14,25 @@ namespace UnityEditor.ProBuilder
 
         static void UndoRedoPerformed()
         {
-            // material preview when dragging in sceneview is done by applying then undoing changes. we don't want to
+            // material preview when dragging in scene-view is done by applying then undoing changes. we don't want to
             // rebuild the mesh every single frame when dragging.
             if (SceneDragAndDropListener.isDragging)
+            {
                 return;
+            }
+
+            // Synchronize just checks that the mesh is not null, and UV2 is still valid. This should be very cheap except
+            // for the FindObjectsOfType call.
+            foreach (var mesh in Object.FindObjectsOfType<ProBuilderMesh>())
+            {
+                EditorUtility.SynchronizeWithMeshFilter(mesh);
+                mesh.InvalidateCaches();
+            }
 
             foreach (var mesh in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
             {
                 mesh.InvalidateCaches();
-                mesh.ToMesh();
-                mesh.Refresh();
+                mesh.Rebuild();
                 mesh.Optimize();
             }
 

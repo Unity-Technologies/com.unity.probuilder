@@ -46,6 +46,37 @@ namespace UnityEditor.ProBuilder
             List<Vector4> m_Origins;
             List<Vector4> m_Textures;
 
+            Matrix4x4 m_PreApplyMatrix;
+            Matrix4x4 m_PostApplyMatrix;
+
+            public Matrix4x4 preApplyMatrix
+            {
+                get
+                {
+                    return m_PreApplyMatrix;
+                }
+
+                private set
+                {
+                    m_PreApplyMatrix = value;
+                    m_PostApplyMatrix = value.inverse;
+                }
+            }
+
+            public Matrix4x4 postApplyMatrix
+            {
+                get
+                {
+                    return m_PostApplyMatrix;
+                }
+
+                private set
+                {
+                    m_PostApplyMatrix = value;
+                    m_PreApplyMatrix = value.inverse;
+                }
+            }
+
             public List<Vector4> textures
             {
                 get { return m_Textures; }
@@ -61,12 +92,7 @@ namespace UnityEditor.ProBuilder
                 m_Textures = new List<Vector4>();
                 mesh.GetUVs(k_TextureChannel, m_Textures);
                 m_Origins = new List<Vector4>(m_Textures);
-
-                foreach (var group in elementGroups)
-                {
-                    var bounds = Bounds2D.Center(m_Origins, group.indices);
-                    group.preApplyMatrix = Matrix4x4.Translate(-bounds);
-                }
+                preApplyMatrix = Matrix4x4.Translate(-Bounds2D.Center(m_Origins, mesh.selectedIndexesInternal));
             }
         }
 

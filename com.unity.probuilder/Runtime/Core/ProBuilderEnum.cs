@@ -299,7 +299,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// The mesh is in sync.
         /// </summary>
-        None
+        InSync
     }
 
     /// <summary>

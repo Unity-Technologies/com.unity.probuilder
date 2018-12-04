@@ -123,6 +123,9 @@ namespace UnityEditor.ProBuilder
 
                 foreach (var group in kvp.elementGroups)
                 {
+                    var postApplyMatrix = GetPostApplyMatrix(group);
+                    var preApplyMatrix = postApplyMatrix.inverse;
+
                     foreach (var index in group.indices)
                     {
                         // res = Group pre-apply matrix * world vertex position
@@ -130,8 +133,8 @@ namespace UnityEditor.ProBuilder
                         // res = Group post-apply matrix * res
                         // positions[i] = mesh.worldToLocal * res
                         positions[index] = worldToLocal.MultiplyPoint3x4(
-                                group.postApplyMatrix.MultiplyPoint3x4(
-                                    translation + group.preApplyMatrix.MultiplyPoint3x4(origins[index])));
+                                postApplyMatrix.MultiplyPoint3x4(
+                                    translation + preApplyMatrix.MultiplyPoint3x4(origins[index])));
                     }
                 }
 

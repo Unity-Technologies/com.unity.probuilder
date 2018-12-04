@@ -199,6 +199,10 @@ namespace UnityEditor.ProBuilder
             {
                 var mesh = selection[i];
 
+                // Undo causes this state
+                if (mesh == null)
+                    return;
+
                 if (!boundsInitialized && mesh.selectedVertexCount > 0)
                 {
                     boundsInitialized = true;

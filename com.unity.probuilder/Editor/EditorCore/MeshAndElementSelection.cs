@@ -31,8 +31,6 @@ namespace UnityEditor.ProBuilder
     class ElementGroup
     {
         List<int> m_Indices;
-        Matrix4x4 m_PreApplyPositionsMatrix;
-        Matrix4x4 m_PostApplyPositionsMatrix;
         Vector3 m_Position;
         Quaternion m_Rotation;
 
@@ -57,31 +55,12 @@ namespace UnityEditor.ProBuilder
             get { return m_Indices; }
         }
 
-        public Matrix4x4 preApplyMatrix
-        {
-            get { return m_PreApplyPositionsMatrix; }
-            set
-            {
-                m_PreApplyPositionsMatrix = value;
-                m_PostApplyPositionsMatrix = m_PreApplyPositionsMatrix.inverse;
-            }
-        }
-
-        public Matrix4x4 postApplyMatrix
-        {
-            get { return m_PostApplyPositionsMatrix; }
-        }
-
         public ElementGroup(List<int> indices, Vector3 position, Quaternion rotation)
         {
             m_Indices = indices;
 
             m_Position = position;
             m_Rotation = rotation;
-
-            var post = Matrix4x4.TRS(position, rotation, Vector3.one);
-            m_PostApplyPositionsMatrix = post;
-            m_PreApplyPositionsMatrix = post.inverse;
         }
 
         public static List<ElementGroup> GetElementGroups(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation, bool collectCoincident)
@@ -198,11 +177,32 @@ namespace UnityEditor.ProBuilder
                     var indices = collectCoincident
                         ? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
                         : new List<int>(mesh.selectedIndexesInternal);
+                    var position = MeshSelection.bounds.center;
+                    var rotation = Quaternion.identity;
 
-                    var bounds = Math.GetBounds(mesh.positionsInternal, indices);
+                    if (selectMode.ContainsFlag(SelectMode.Face | SelectMode.TextureFace))
+                    {
+                        var face = mesh.GetActiveFace();
 
-                    groups.Add(new ElementGroup(indices, trs.MultiplyPoint3x4(bounds.center), trs.rotation));
+                        if (face != null)
+                            rotation = EditorHandleUtility.GetFaceRotation(mesh, orientation, new Face[] { face });
+                    }
+                    else if (selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
+                    {
+                        var edge = mesh.GetActiveEdge();
 
+                        if (edge != Edge.Empty)
+                            rotation = EditorHandleUtility.GetEdgeRotation(mesh, orientation, new Edge[] { edge });
+                    }
+                    else if (selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.TextureVertex))
+                    {
+                        var vertex = mesh.GetActiveVertex();
+
+                        if (vertex > -1)
+                            rotation = EditorHandleUtility.GetVertexRotation(mesh, orientation, new int[] { vertex });
+                    }
+
+                    groups.Add(new ElementGroup( indices, position, rotation));
                     break;
                 }
             }

@@ -777,7 +777,7 @@ namespace UnityEngine.ProBuilder
                 if (meshNo != id)
                     return MeshSyncState.InstanceIDMismatch;
 
-                return mesh.uv2 == null ? MeshSyncState.Lightmap : MeshSyncState.None;
+                return mesh.uv2 == null ? MeshSyncState.Lightmap : MeshSyncState.InSync;
             }
         }
     }

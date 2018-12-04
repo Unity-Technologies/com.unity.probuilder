@@ -39,16 +39,39 @@ namespace UnityEditor.ProBuilder
             return new MeshAndPositions(mesh, pivot, orientation);
         }
 
+        internal Matrix4x4 GetPostApplyMatrix(ElementGroup group)
+        {
+            switch (pivotPoint)
+            {
+                case PivotPoint.Center:
+                    return Matrix4x4.TRS(handlePositionOrigin, handleRotationOrigin, Vector3.one);
+
+                case PivotPoint.ActiveElement:
+                    return Matrix4x4.TRS(handlePositionOrigin, handleRotationOrigin, Vector3.one);
+
+                case PivotPoint.IndividualOrigins:
+                    return Matrix4x4.TRS(group.position, group.rotation, Vector3.one);
+
+                default:
+                    return Matrix4x4.identity;
+            }
+        }
+
         protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
         {
             if (isEditing && currentEvent.type == EventType.Repaint)
             {
                 foreach (var key in elementSelection)
                 {
+                    if (!(key is MeshAndPositions))
+                        break;
+
                     foreach (var group in key.elementGroups)
                     {
 #if DEBUG_HANDLES
                         var positions = ((MeshAndPositions)key).positions;
+                        var postApplyMatrix = GetPostApplyMatrix(group);
+                        var preApplyMatrix = postApplyMatrix.inverse;
 
                         using (var faceDrawer = new EditorMeshHandles.TriangleDrawingScope(Color.cyan,
                                        UnityEngine.Rendering.CompareFunction.Always))
@@ -60,9 +83,9 @@ namespace UnityEditor.ProBuilder
                                 for (int i = 0, c = indices.Length; i < c; i += 3)
                                 {
                                     faceDrawer.Draw(
-                                        group.preApplyMatrix.MultiplyPoint3x4(positions[indices[i]]),
-                                        group.preApplyMatrix.MultiplyPoint3x4(positions[indices[i + 1]]),
-                                        group.preApplyMatrix.MultiplyPoint3x4(positions[indices[i + 2]])
+                                        preApplyMatrix.MultiplyPoint3x4(positions[indices[i]]),
+                                        preApplyMatrix.MultiplyPoint3x4(positions[indices[i + 1]]),
+                                        preApplyMatrix.MultiplyPoint3x4(positions[indices[i + 2]])
                                         );
                                 }
                             }
@@ -92,11 +115,14 @@ namespace UnityEditor.ProBuilder
 
                 foreach (var group in kvp.elementGroups)
                 {
+                    var postApplyMatrix = GetPostApplyMatrix(group);
+                    var preApplyMatrix = postApplyMatrix.inverse;
+
                     foreach (var index in group.indices)
                     {
                         positions[index] = worldToLocal.MultiplyPoint3x4(
-                                group.postApplyMatrix.MultiplyPoint3x4(
-                                    delta.MultiplyPoint3x4(group.preApplyMatrix.MultiplyPoint3x4(origins[index]))));
+                                postApplyMatrix.MultiplyPoint3x4(
+                                    delta.MultiplyPoint3x4(preApplyMatrix.MultiplyPoint3x4(origins[index]))));
                     }
                 }
 

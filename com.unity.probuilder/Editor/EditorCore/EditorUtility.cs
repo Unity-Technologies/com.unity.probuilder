@@ -217,12 +217,12 @@ namespace UnityEditor.ProBuilder
                 throw new ArgumentNullException("mesh");
 
             Mesh oldMesh = mesh.mesh;
-            MeshSyncState reason = mesh.meshSyncState;
+            MeshSyncState state = mesh.meshSyncState;
             bool meshesAreAssets = Experimental.meshesAreAssets;
 
-            if (reason != MeshSyncState.None)
+            if (state != MeshSyncState.InSync)
             {
-                if (reason == MeshSyncState.Null)
+                if (state == MeshSyncState.Null)
                 {
                     mesh.Rebuild();
                     mesh.Optimize();
