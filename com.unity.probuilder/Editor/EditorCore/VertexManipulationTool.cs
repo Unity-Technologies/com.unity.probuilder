@@ -134,7 +134,6 @@ namespace UnityEditor.ProBuilder
         Quaternion m_HandleRotation;
         Vector3 m_HandlePositionOrigin;
         Quaternion m_HandleRotationOrigin;
-        List<MeshAndElementGroupPair> m_MeshAndElementGroupPairs = new List<MeshAndElementGroupPair>();
         bool m_IsEditing;
 
         float m_ProgridsSnapValue = .25f;
@@ -145,9 +144,9 @@ namespace UnityEditor.ProBuilder
         static MethodInfo s_FindNearestVertex;
         static object[] s_FindNearestVertexArguments = new object[] { null, null, null };
 
-        protected IEnumerable<MeshAndElementGroupPair> meshAndElementGroupPairs
+        protected IEnumerable<MeshAndElementSelection> elementSelection
         {
-            get { return m_MeshAndElementGroupPairs; }
+            get { return MeshSelection.elementSelection; }
         }
 
         protected static bool vertexDragging
@@ -208,7 +207,7 @@ namespace UnityEditor.ProBuilder
                     BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
         }
 
-        protected abstract MeshAndElementGroupPair GetMeshAndElementGroupPair(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation);
+        internal abstract MeshAndElementSelection GetElementSelectionGroups(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation);
 
         public void OnSceneGUI(Event evt)
         {
@@ -265,11 +264,6 @@ namespace UnityEditor.ProBuilder
                 mesh.ToMesh();
                 mesh.Refresh();
             }
-
-            m_MeshAndElementGroupPairs.Clear();
-
-            foreach (var mesh in MeshSelection.topInternal)
-                m_MeshAndElementGroupPairs.Add(GetMeshAndElementGroupPair(mesh, pivotPoint, handleOrientation));
 
             OnToolEngaged();
         }

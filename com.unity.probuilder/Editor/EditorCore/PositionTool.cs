@@ -14,7 +14,7 @@ namespace UnityEditor.ProBuilder
         Matrix4x4 m_CurrentDelta = Matrix4x4.identity;
 #endif
 
-        protected class MeshAndPositions : MeshAndElementGroupPair
+        protected class MeshAndPositions : MeshAndElementSelection
         {
             Vector3[] m_Positions;
 
@@ -34,7 +34,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        protected override MeshAndElementGroupPair GetMeshAndElementGroupPair(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation)
+        internal override MeshAndElementSelection GetElementSelectionGroups(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation)
         {
             return new MeshAndPositions(mesh, pivot, orientation);
         }
@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder
         {
             if (isEditing && currentEvent.type == EventType.Repaint)
             {
-                foreach (var key in meshAndElementGroupPairs)
+                foreach (var key in elementSelection)
                 {
                     foreach (var group in key.elementGroups)
                     {
@@ -79,7 +79,7 @@ namespace UnityEditor.ProBuilder
             m_CurrentDelta.SetColumn(3, delta.GetColumn(3));
 #endif
 
-            foreach (var key in meshAndElementGroupPairs)
+            foreach (var key in elementSelection)
             {
                 if (!(key is MeshAndPositions))
                     continue;

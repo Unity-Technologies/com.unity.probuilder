@@ -58,7 +58,7 @@ namespace UnityEditor.ProBuilder
                 // invert `y` because to users it's confusing that "up" in UV space visually moves the texture down
                 var delta = new Vector4(m_Position.x, -m_Position.y, 0f, 0f);
 
-                foreach (var mesh in meshAndElementGroupPairs)
+                foreach (var mesh in elementSelection)
                 {
                     if (!(mesh is MeshAndTextures))
                         continue;

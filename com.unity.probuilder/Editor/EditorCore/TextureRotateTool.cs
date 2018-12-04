@@ -41,7 +41,7 @@ namespace UnityEditor.ProBuilder
                 else if (progridsSnapEnabled)
                     m_Rotation = Snapping.SnapValue(m_Rotation, progridsSnapValue);
 
-                foreach (var mesh in meshAndElementGroupPairs)
+                foreach (var mesh in elementSelection)
                 {
                     if (!(mesh is MeshAndTextures))
                         continue;

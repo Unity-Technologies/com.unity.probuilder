@@ -110,7 +110,7 @@ namespace UnityEditor.ProBuilder
 
         void ApplyTranslation(Vector3 translation)
         {
-            foreach (var key in meshAndElementGroupPairs)
+            foreach (var key in elementSelection)
             {
                 if (!(key is MeshAndPositions))
                     continue;

@@ -32,7 +32,7 @@ namespace UnityEditor.ProBuilder
 
         void ApplyRotation(Quaternion rotation)
         {
-            foreach (var key in meshAndElementGroupPairs)
+            foreach (var key in elementSelection)
             {
                 if (!(key is MeshAndPositions))
                     continue;

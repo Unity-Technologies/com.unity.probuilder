@@ -472,6 +472,16 @@ namespace UnityEditor.ProBuilder
             res.titleContent = windowTitle;
         }
 
+        internal static VertexManipulationTool activeTool
+        {
+            get
+            {
+                return s_Instance == null
+                    ? null
+                    : s_Instance.GetToolForSelectMode(s_Instance.m_CurrentTool, s_Instance.m_SelectMode);
+            }
+        }
+
         VertexManipulationTool GetTool<T>() where T : VertexManipulationTool, new()
         {
             VertexManipulationTool tool;

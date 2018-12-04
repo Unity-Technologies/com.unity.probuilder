@@ -52,7 +52,7 @@ namespace UnityEditor.ProBuilder
                 delta.x = 1f / delta.x;
                 delta.y = 1f / delta.y;
 
-                foreach (var mesh in meshAndElementGroupPairs)
+                foreach (var mesh in elementSelection)
                 {
                     if (!(mesh is MeshAndTextures))
                         continue;
