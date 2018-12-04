@@ -8,8 +8,8 @@ namespace UnityEditor.ProBuilder.Actions
 {
     sealed class GrowSelection : MenuAction
     {
-        Pref<bool> m_GrowSelectionWithAngle = new Pref<bool>("GrowSelection.useAngle", false);
-        Pref<bool> m_GrowSelectionAngleIterative = new Pref<bool>("GrowSelection.iterativeGrow", true);
+        Pref<bool> m_GrowSelectionWithAngle = new Pref<bool>("GrowSelection.useAngle", true);
+        Pref<bool> m_GrowSelectionAngleIterative = new Pref<bool>("GrowSelection.iterativeGrow", false);
         Pref<float> m_GrowSelectionAngleValue = new Pref<float>("GrowSelection.angleValue", 15f);
 
         public override ToolbarGroup group
@@ -63,7 +63,7 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
 
             EditorGUI.BeginChangeCheck();
 
-            m_GrowSelectionWithAngle.value = EditorGUILayout.Toggle("Restrict to Angle", m_GrowSelectionWithAngle);
+            m_GrowSelectionWithAngle.value = EditorGUILayout.Toggle("Restrict to Angle", m_GrowSelectionWithAngle.value);
 
             GUI.enabled = m_GrowSelectionWithAngle;
 
@@ -73,7 +73,12 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
 
             bool iterative = m_GrowSelectionWithAngle ? m_GrowSelectionAngleIterative : true;
 
-            m_GrowSelectionAngleIterative.value = EditorGUILayout.Toggle("Iterative", iterative);
+            EditorGUI.BeginChangeCheck();
+            iterative = EditorGUILayout.Toggle("Iterative", iterative);
+            if (EditorGUI.EndChangeCheck())
+            {
+                m_GrowSelectionAngleIterative.value = iterative;
+            }
 
             GUI.enabled = true;
 
