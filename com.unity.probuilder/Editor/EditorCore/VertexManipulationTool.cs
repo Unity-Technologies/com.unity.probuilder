@@ -19,6 +19,7 @@ namespace UnityEditor.ProBuilder
     abstract class VertexManipulationTool
     {
         static Pref<HandleOrientation> s_HandleOrientation = new Pref<HandleOrientation>("editor.handleOrientation", HandleOrientation.World, SettingsScope.User);
+        static Pref<PivotPoint> s_PivotPoint = new Pref<PivotPoint>("editor.pivotPoint", PivotPoint.Center, SettingsScope.User);
 
         [UserSetting(UserSettingsProvider.developerModeCategory, "PivotMode.Pivot", "Set the behavior of the \"Pivot\" handle mode when editing mesh elements.")]
         static Pref<PivotPoint> s_PivotModePivotEquivalent = new Pref<PivotPoint>("editor.pivotModePivotEquivalent", PivotPoint.ActiveElement, SettingsScope.User);
@@ -44,9 +45,22 @@ namespace UnityEditor.ProBuilder
         {
             get
             {
+                SyncPivotPoint();
+
                 return Tools.pivotMode == PivotMode.Pivot
                     ? pivotModePivotEquivalent
                     : PivotPoint.Center;
+            }
+        }
+
+        static void SyncPivotPoint()
+        {
+            var unity = s_PivotPoint.value == PivotPoint.Center ? PivotMode.Center : PivotMode.Pivot;
+
+            if (Tools.pivotMode != unity)
+            {
+                s_PivotPoint.SetValue(Tools.pivotMode == PivotMode.Center ? PivotPoint.Center : s_PivotModePivotEquivalent.value, true);
+                MeshSelection.InvalidateElementSelection();
             }
         }
 
