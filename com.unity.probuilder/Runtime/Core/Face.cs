@@ -45,10 +45,17 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         int m_SubmeshIndex;
 
+
+        [SerializeField]
+        private bool m_ManualUV;
         /// <value>
         /// If this face has had it's UV coordinates done by hand, don't update them with the auto unwrap crowd.
         /// </value>
-        public bool manualUV { get; set; }
+        public bool manualUV
+        {
+            get { return m_ManualUV; }
+            set { m_ManualUV = value; }
+        }
 
         /// <value>
         /// UV element group. Used by the UV editor to group faces.
@@ -56,10 +63,18 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         internal int elementGroup;
 
+
+        [SerializeField]
+        private int m_TextureGroup;
+
         /// <value>
         /// What texture group this face belongs to. Used when projecting auto UVs.
         /// </value>
-        public int textureGroup { get; set; }
+        public int textureGroup
+        {
+            get { return m_TextureGroup;}
+            set { m_TextureGroup = value; }
+        }
 
         /// <value>
         /// Return a reference to the triangle indexes that make up this face.
