@@ -11,7 +11,7 @@ namespace UnityEditor.ProBuilder
         Vector3 m_WorldSnapDirection;
         Vector3 m_WorldSnapMask;
 
-#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
+#if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
         Vector3 m_IndividualOriginDirection;
         bool m_DirectionOriginInitialized;
 #endif
@@ -20,7 +20,7 @@ namespace UnityEditor.ProBuilder
         {
             m_SnapInWorldCoordinates = false;
             m_WorldSnapMask = new Vector3Mask(0x0);
-#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
+#if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
             m_DirectionOriginInitialized = false;
 #endif
         }
@@ -32,7 +32,7 @@ namespace UnityEditor.ProBuilder
             if (!isEditing)
                 m_HandlePosition = handlePosition;
 
-#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
+#if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
             if (isEditing)
                 DrawSelectionOriginGizmos();
 #endif
@@ -91,7 +91,7 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
-#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
+#if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
                 if (pivotPoint == PivotPoint.IndividualOrigins && !m_DirectionOriginInitialized)
                 {
                     var mask = new Vector3Mask(handleRotationOriginInverse * delta, k_CardinalAxisError);
@@ -143,7 +143,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.UpdateMeshHandles(false);
         }
 
-#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
+#if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
         void DrawSelectionOriginGizmos()
         {
             if (isEditing && currentEvent.type == EventType.Repaint)

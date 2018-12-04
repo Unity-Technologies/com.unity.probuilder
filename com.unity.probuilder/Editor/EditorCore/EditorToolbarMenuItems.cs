@@ -560,26 +560,7 @@ namespace UnityEditor.ProBuilder
             if (instance != null)
                 UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
         }
-
-#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
-        [MenuItem(k_MenuPrefix + "Interaction/Toggle Handle Alignment  [p]", true)]
-        static bool MenuVerifyToggleHandleAlignment()
-        {
-            ToggleHandleOrientation instance = EditorToolbarLoader.GetInstance<ToggleHandleOrientation>();
-
-            return instance != null && instance.enabled;
-        }
-
-        [MenuItem(k_MenuPrefix + "Interaction/Toggle Handle Alignment  [p]", false, PreferenceKeys.menuSelection + 1)]
-        static void MenuDoToggleHandleAlignment()
-        {
-            ToggleHandleOrientation instance = EditorToolbarLoader.GetInstance<ToggleHandleOrientation>();
-            if (instance != null)
-                UnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);
-        }
-
-#endif
-
+        
         [MenuItem(k_MenuPrefix + "Interaction/Toggle Select Back Faces ", true)]
         static bool MenuVerifyToggleSelectBackFaces()
         {

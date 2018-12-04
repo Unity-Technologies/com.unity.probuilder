@@ -1050,10 +1050,10 @@ namespace UnityEngine.ProBuilder
                 }
 
                 min = ComponentMin(positions[edge.a], min);
-                max = ComponentMin(positions[edge.a], max);
+                max = ComponentMax(positions[edge.a], max);
 
                 min = ComponentMin(positions[edge.b], min);
-                max = ComponentMin(positions[edge.b], max);
+                max = ComponentMax(positions[edge.b], max);
            }
 
             return new Bounds((min + max) * .5f, max - min);

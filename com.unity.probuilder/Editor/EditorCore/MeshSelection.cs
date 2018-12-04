@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder
         static List<MeshAndElementSelection> s_ElementSelection = new List<MeshAndElementSelection>();
 
         static bool s_TotalElementCountCacheIsDirty = true;
-
+        static bool s_SelectedElementGroupsDirty = true;
         static Bounds s_SelectionBounds = new Bounds();
 
         public static Bounds bounds
@@ -62,14 +62,24 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        internal static void InvalidateElementSelection()
+        {
+            s_SelectedElementGroupsDirty = true;
+        }
+
         internal static IEnumerable<MeshAndElementSelection> elementSelection
         {
-            get { return s_ElementSelection; }
+            get
+            {
+                RecalculateSelectedElementGroups();
+                return s_ElementSelection;
+            }
         }
 
         static MeshSelection()
         {
             Selection.selectionChanged += OnObjectSelectionChanged;
+            ProBuilderMesh.elementSelectionChanged += ElementSelectionChanged;
             EditorMeshUtility.meshOptimized += (x, y) => { s_TotalElementCountCacheIsDirty = true; };
             OnObjectSelectionChanged();
         }
@@ -120,6 +130,7 @@ namespace UnityEditor.ProBuilder
         internal static void OnComponentSelectionChanged()
         {
             s_TotalElementCountCacheIsDirty = true;
+            s_SelectedElementGroupsDirty = true;
 
             selectedVertexCount = 0;
             selectedFaceCount = 0;
@@ -134,6 +145,20 @@ namespace UnityEditor.ProBuilder
             RecalculateSelectedComponentCounts();
             RecalculateFacesInEditableArea();
             RecalculateSelectionBounds();
+        }
+
+        static void ElementSelectionChanged(ProBuilderMesh mesh)
+        {
+            InvalidateElementSelection();
+        }
+
+        internal static void RecalculateSelectedElementGroups()
+        {
+            if (!s_SelectedElementGroupsDirty)
+                return;
+
+            s_SelectedElementGroupsDirty = false;
+            s_ElementSelection.Clear();
 
             var activeTool = ProBuilderEditor.activeTool;
 
@@ -141,7 +166,7 @@ namespace UnityEditor.ProBuilder
             {
                 foreach (var mesh in s_TopSelection)
                 {
-                    s_ElementSelection.Add(activeTool.GetElementSelectionGroups(mesh,
+                    s_ElementSelection.Add(activeTool.GetElementSelection(mesh,
                         VertexManipulationTool.pivotPoint, VertexManipulationTool.handleOrientation));
                 }
             }
@@ -375,55 +400,24 @@ namespace UnityEditor.ProBuilder
         internal static Vector3 GetHandlePosition()
         {
             var active = GetActiveSelectionGroup();
-            if (active == null)
-                Debug.Log("sdflhkasd");
-            return active != null ? active.elementGroups.Last().position : Vector3.zero;
 
-//            switch (VertexManipulationTool.pivotPoint)
-//            {
-//                case PivotPoint.ActiveElement:
-//                case PivotPoint.IndividualOrigins:
-//                {
-//                    ProBuilderMesh mesh = activeMesh;
-//                    Vector3 center = Vector3.zero;
-//
-//                    if (ProBuilderEditor.selectMode == SelectMode.Face)
-//                    {
-//                        Face face;
-//                        if (GetActiveFace(out mesh, out face))
-//                            center = Math.GetBounds(mesh.positionsInternal, face.distinctIndexesInternal).center;
-//                    }
-//                    else if (ProBuilderEditor.selectMode == SelectMode.Edge)
-//                    {
-//                        Edge edge;
-//                        if (GetActiveEdge(out mesh, out edge))
-//                            center = (mesh.positionsInternal[edge.a] + mesh.positionsInternal[edge.b]) * .5f;
-//                    }
-//                    else if (ProBuilderEditor.selectMode == SelectMode.Vertex)
-//                    {
-//                        int vertex;
-//                        if (GetActiveVertex(out mesh, out vertex))
-//                            center = mesh.positionsInternal[vertex];
-//                    }
-//
-//                    return mesh.transform.TransformPoint(center);
-//                }
-//
-//                default:
-//                    RecalculateSelectionBounds();
-//                    return bounds.center;
-//            }
+            return active != null && active.elementGroups.Count > 0
+                ? active.elementGroups.Last().position
+                : Vector3.zero;
         }
 
         internal static Quaternion GetHandleRotation()
         {
             var active = GetActiveSelectionGroup();
-            return active != null ? active.elementGroups.Last().rotation : Quaternion.identity;
+            
+            return active != null && active.elementGroups.Count > 0
+                ? active.elementGroups.Last().rotation
+                : Quaternion.identity;
         }
 
         internal static MeshAndElementSelection GetActiveSelectionGroup()
         {
-            foreach (var pair in s_ElementSelection)
+            foreach (var pair in elementSelection)
             {
                 // Use last selected pair as the active selection
                 if (pair.mesh == s_ActiveMesh)

@@ -52,7 +52,7 @@ namespace UnityEditor.ProBuilder
             get { return m_Rotation; }
         }
 
-        public List<int> indices
+        public IEnumerable<int> indices
         {
             get { return m_Indices; }
         }
@@ -74,10 +74,12 @@ namespace UnityEditor.ProBuilder
 
         public ElementGroup(List<int> indices, Vector3 position, Quaternion rotation)
         {
-            var post = Matrix4x4.TRS(position, rotation, Vector3.one);
             m_Indices = indices;
+
             m_Position = position;
             m_Rotation = rotation;
+
+            var post = Matrix4x4.TRS(position, rotation, Vector3.one);
             m_PostApplyPositionsMatrix = post;
             m_PreApplyPositionsMatrix = post.inverse;
         }
@@ -92,7 +94,6 @@ namespace UnityEditor.ProBuilder
             {
                 case PivotPoint.IndividualOrigins:
                 {
-                    // todo - Support individual origins for vertices and edges
                     if (selectMode == SelectMode.Vertex)
                     {
                         foreach (var list in GetVertexSelectionGroups(mesh, collectCoincident))
@@ -181,7 +182,7 @@ namespace UnityEditor.ProBuilder
                     {
                         var vertex = mesh.GetActiveVertex();
 
-                        if (vertex < 0)
+                        if (vertex > -1)
                         {
                             position = trs.MultiplyPoint3x4(mesh.positionsInternal[vertex]);
                             rotation = EditorHandleUtility.GetVertexRotation(mesh, orientation, new int[] { vertex });
@@ -209,7 +210,7 @@ namespace UnityEditor.ProBuilder
             return groups;
         }
 
-        static List<List<Face>> GetFaceSelectionGroups(ProBuilderMesh mesh)
+        static IEnumerable<List<Face>> GetFaceSelectionGroups(ProBuilderMesh mesh)
         {
             var wings = WingedEdge.GetWingedEdges(mesh, mesh.selectedFacesInternal, true);
             var filter = new HashSet<Face>();
@@ -226,7 +227,7 @@ namespace UnityEditor.ProBuilder
             return groups;
         }
 
-        static List<List<int>> GetVertexSelectionGroups(ProBuilderMesh mesh, bool collectCoincident)
+        static IEnumerable<List<int>> GetVertexSelectionGroups(ProBuilderMesh mesh, bool collectCoincident)
         {
             if (!collectCoincident)
                 return mesh.selectedIndexesInternal.Select(x => new List<int>() { x }).ToList();
@@ -238,50 +239,65 @@ namespace UnityEditor.ProBuilder
             foreach (var index in shared)
             {
                 var coincident = new List<int>();
-                mesh.GetCoincidentVertices(index, coincident);
+                mesh.GetCoincidentVertices(mesh.sharedVerticesInternal[index][0], coincident);
                 groups.Add(coincident);
             }
 
             return groups;
         }
 
-        static List<List<Edge>> GetEdgeSelectionGroups(ProBuilderMesh mesh)
+        static IEnumerable<List<Edge>> GetEdgeSelectionGroups(ProBuilderMesh mesh)
         {
-            // todo Generating a WingedEdge collection just to get selection groups is wasteful
-            var wings = WingedEdge.GetWingedEdges(mesh);
-            var edges = mesh.selectedEdgesInternal;
-            var filter = new HashSet<Edge>();
-            var groups = new List<List<Edge>>();
+            var edges = EdgeLookup.GetEdgeLookup(mesh.selectedEdgesInternal, mesh.sharedVertexLookup);
+            var groups = new List<SimpleTuple<HashSet<int>, List<Edge>>>();
 
             foreach (var edge in edges)
             {
-                var group = new List<Edge>();
-                group.Add(edge);
-                groups.Add(group);
+                var foundMatch = false;
 
-                var wing = wings.FirstOrDefault(x => x.edge.local.Equals(edge));
+                foreach (var kvp in groups)
+                {
+                    if (kvp.item1.Contains(edge.common.a) || kvp.item1.Contains(edge.common.b))
+                    {
+                        kvp.item1.Add(edge.common.a);
+                        kvp.item1.Add(edge.common.b);
+                        kvp.item2.Add(edge.local);
+                        foundMatch = true;
+                        break;
+                    }
+                }
 
-                if (wing == null)
-                    continue;
-
-                CollectedAdjacentEdges(wing, filter, group);
+                if (!foundMatch)
+                    groups.Add(new SimpleTuple<HashSet<int>, List<Edge>>(
+                        new HashSet<int>() { edge.common.a, edge.common.b },
+                        new List<Edge>() { edge.local }));
             }
 
-            return groups;
-        }
+            // collect overlapping groups (happens in cases where selection order begins as two separate groups but
+            // becomes one)
+            var res = new List<List<Edge>>();
+            var overlap = new HashSet<int>();
 
-        static void CollectedAdjacentEdges(WingedEdge wing, HashSet<Edge> filter, List<Edge> group)
-        {
-            var edge = wing.edge.local;
+            for(int i = 0, c = groups.Count; i < c; i++)
+            {
+                if (overlap.Contains(i))
+                    continue;
 
-            if (!filter.Add(edge))
-                return;
+                List<Edge> grp = groups[i].item2;
 
-            group.Add(edge);
+                for (int n = i + 1; n < c; n++)
+                {
+                    if (groups[i].item1.Overlaps(groups[n].item1))
+                    {
+                        overlap.Add(n);
+                        grp.AddRange(groups[n].item2);
+                    }
+                }
 
-            CollectedAdjacentEdges(wing.next, filter, group);
-            CollectedAdjacentEdges(wing.previous, filter, group);
-            CollectedAdjacentEdges(wing.opposite, filter, group);
+                res.Add(grp);
+            }
+
+            return res;
         }
 
         static void CollectAdjacentFaces(WingedEdge wing, HashSet<Face> filter, List<Face> group)

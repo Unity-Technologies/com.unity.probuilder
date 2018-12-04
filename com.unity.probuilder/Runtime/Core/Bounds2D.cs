@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UnityEngine.ProBuilder
 {
@@ -397,24 +398,24 @@ namespace UnityEngine.ProBuilder
             return new Vector2((xMin + xMax) / 2f, (yMin + yMax) / 2f);
         }
 
-        internal static Vector2 Center(IList<Vector4> points, IList<int> indexes)
+        internal static Vector2 Center(IList<Vector4> points, IEnumerable<int> indexes)
         {
             float   xMin = 0f,
                     xMax = 0f,
                     yMin = 0f,
                     yMax = 0f;
 
-            int size = indexes.Count;
+            var first = indexes.First();
 
-            xMin = points[indexes[0]].x;
-            yMin = points[indexes[0]].y;
+            xMin = points[first].x;
+            yMin = points[first].y;
             xMax = xMin;
             yMax = yMin;
 
-            for (int i = 1; i < size; i++)
+            foreach(var index in indexes)
             {
-                float x = points[indexes[i]].x;
-                float y = points[indexes[i]].y;
+                float x = points[index].x;
+                float y = points[index].y;
 
                 if (x < xMin) xMin = x;
                 if (x > xMax) xMax = x;
