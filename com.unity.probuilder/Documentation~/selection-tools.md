@@ -32,7 +32,9 @@ Choose how the scene handles will be oriented when selecting [elements](fundamen
 |:---|:---|
 | ![Handle Alignment Global](images/icons/HandleAlign_World.png) | Global: Similar to a compass, the handle orientation is always the same, regardless of local rotation. |
 | ![Handle Alignment Local](images/icons/HandleAlign_Local.png) | Local: Similar to "left vs right", handle orientation is relative the object's rotation. |
-| ![Handle Alignment Planar](images/icons/HandleAlign_Plane.png) | Planar: This special mode aligns the handles to exact normal direction of the selected face. |
+| ![Handle Alignment Normal](images/icons/HandleAlign_Plane.png) | Normal: This special mode aligns the handles to exact normal direction of the selected face. |
+
+> **TIP:** If you set Unity's "Pivot <> Center" toggle to "Pivot" while also using ProBuilder's "Normal" alignment, you can manipulate elements from the active item, for example hinging a selection of vertices from a specific point! 
 
 ![Handle Alignment Examples](images/HandleAlign_ExamplesWithTextAndIcons.png)
 
