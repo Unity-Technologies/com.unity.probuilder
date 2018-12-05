@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
@@ -11,14 +12,7 @@ namespace UnityEditor.ProBuilder
     /// </summary>
     static class ReflectionUtility
     {
-        public static bool enableWarnings = true;
         const BindingFlags k_AllFlags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
-
-        static void Warning(string text)
-        {
-            if (enableWarnings)
-                Debug.LogWarning(text);
-        }
 
         /// <summary>
         /// Get a component with type name.
@@ -74,7 +68,7 @@ namespace UnityEditor.ProBuilder
 
             if (t == null)
             {
-                Warning(string.Format("Could not find type \"{0}\"!", type));
+                Log.Warning("Could not find type \"{0}\"!", type);
                 return null;
             }
             else
@@ -129,7 +123,7 @@ namespace UnityEditor.ProBuilder
                 return Delegate.CreateDelegate(typeof(T), methodInfo);
             else
             {
-                Debug.LogWarningFormat("Couldn't get method '{0}' from type {1}", methodName, type.ToString());
+                Log.Warning("Couldn't get method '{0}' from type {1}", methodName, type.ToString());
             }
             return null;
         }
@@ -141,7 +135,7 @@ namespace UnityEditor.ProBuilder
                 return Delegate.CreateDelegate(typeof(T), methodInfo);
             else
             {
-                Debug.LogWarningFormat("Couldn't get method '{0}' from type {1}", methodName, type.ToString());
+                Log.Warning("Couldn't get method '{0}' from type {1}", methodName, type.ToString());
             }
 
             return null;
@@ -155,7 +149,7 @@ namespace UnityEditor.ProBuilder
                 return Delegate.CreateDelegate(typeof(T), propertyInfo.GetGetMethod());
             else
             {
-                Debug.LogWarningFormat("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
+                Log.Warning("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
             }
             return null;
         }
@@ -169,7 +163,7 @@ namespace UnityEditor.ProBuilder
                 return Delegate.CreateDelegate(typeof(T), methodInfo);//propertyInfo.GetGetMethod());
             else
             {
-                Debug.LogWarningFormat("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
+                Log.Warning("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
             }
             return null;
         }
@@ -182,7 +176,7 @@ namespace UnityEditor.ProBuilder
                 return Delegate.CreateDelegate(typeof(T), target, propertyInfo.GetGetMethod());
             else
             {
-                Debug.LogWarningFormat("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
+                Log.Warning("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
             }
             return null;
         }
@@ -197,7 +191,7 @@ namespace UnityEditor.ProBuilder
                 return Delegate.CreateDelegate(typeof(T), target, methodInfo);
             else
             {
-                Debug.LogWarningFormat("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
+                Log.Warning("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
             }
             return null;
         }
@@ -210,7 +204,7 @@ namespace UnityEditor.ProBuilder
                 return fieldInfo;
             else
             {
-                Debug.LogWarningFormat("Couldn't get field '{0}' from type {1}", fieldName, type.ToString());
+                Log.Warning("Couldn't get field '{0}' from type {1}", fieldName, type.ToString());
             }
             return null;
         }
