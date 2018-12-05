@@ -24,9 +24,13 @@ namespace UnityEditor.ProBuilder
         static void OnSceneGUI(SceneView view)
         {
             if (!EditorUtility.IsDeveloperMode()
-                || !VertexManipulationTool.showHandleSettingsInScene
                 || view != SceneView.lastActiveSceneView)
                 return;
+
+#if !PROBUILDER_ENABLE_HANDLE_OVERRIDE
+            if (!VertexManipulationTool.showHandleSettingsInScene)
+                return;
+#endif
 
             DoHandleSettings(new Rect(
                     8,
