@@ -13,7 +13,7 @@ namespace UnityEditor.ProBuilder
         static Color k_HandleColor = new Color(.8f, .8f, .8f, 1f);
         static Color k_HandleColorGreen = new Color(.01f, .9f, .3f, 1f);
         static Color k_HandleSelectedColor = new Color(.01f, .8f, .98f, 1f);
-        static readonly Vector3 k_SnapMask = new Vector3(1f, 0f, 1f);
+        
         const float k_HandleSize = .05f;
 
         Material m_LineMaterial;
@@ -374,7 +374,9 @@ namespace UnityEditor.ProBuilder
                     if (m_Plane.Raycast(ray, out hitDistance))
                     {
                         evt.Use();
-                        polygon.m_Points[m_SelectedIndex] = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)), k_SnapMask);
+
+                        Vector3 snapMask = Snapping.GetSnappingMaskBasedOnNormalVector(m_Plane.normal);
+                        polygon.m_Points[m_SelectedIndex] = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)), snapMask);
                         RebuildPolyShapeMesh(false);
                         SceneView.RepaintAll();
                     }
@@ -413,7 +415,8 @@ namespace UnityEditor.ProBuilder
                         if (polygon.m_Points.Count < 1)
                             polygon.transform.position = polygon.isOnGrid ? ProGridsInterface.ProGridsSnap(hit) : hit;
 
-                        Vector3 point = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(hit), k_SnapMask);
+                        Vector3 snapMask = Snapping.GetSnappingMaskBasedOnNormalVector(m_Plane.normal);
+                        Vector3 point = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(hit), snapMask);
 
                         if (polygon.m_Points.Count > 2 && Math.Approx3(polygon.m_Points[0], point))
                         {
@@ -581,10 +584,28 @@ namespace UnityEditor.ProBuilder
         {
             Transform trs = polygon.transform;
             int len = polygon.m_Points.Count;
-            Vector3 up = polygon.transform.up;
-            Vector3 right = polygon.transform.right;
-            Vector3 forward = polygon.transform.forward;
+
+            // Define on which plane we will be moving the existing point.
+            Vector3 up = m_Plane.normal;
             Vector3 center = Vector3.zero;
+            Vector3 right = Vector3.zero;
+            Vector3 forward = Vector3.zero;
+
+            if (Mathf.Approximately(up.x, 1f))
+            {
+                right = Vector3.up;
+                forward = Vector3.forward;
+            }
+            else if (Mathf.Approximately(up.y, 1f))
+            {
+                right = Vector3.right;
+                forward = Vector3.forward;
+            }
+            else if (Mathf.Approximately(up.z, 1f))
+            {
+                right = Vector3.right;
+                forward = Vector3.up;
+            }
 
             Event evt = Event.current;
 
@@ -593,9 +614,7 @@ namespace UnityEditor.ProBuilder
             if (!used &&
                 (evt.type == EventType.MouseDown &&
                  evt.button == 0 &&
-                 !EditorHandleUtility.IsAppendModifier(evt.modifiers)
-                )
-                )
+                 !EditorHandleUtility.IsAppendModifier(evt.modifiers)))
             {
                 m_SelectedIndex = -1;
                 Repaint();
@@ -659,7 +678,9 @@ namespace UnityEditor.ProBuilder
                     if (EditorGUI.EndChangeCheck())
                     {
                         UndoUtility.RecordObject(polygon, "Move Polygon Shape Point");
-                        polygon.m_Points[ii] = ProGridsInterface.ProGridsSnap(trs.InverseTransformPoint(point), k_SnapMask);
+
+                        Vector3 snapMask = Snapping.GetSnappingMaskBasedOnNormalVector(m_Plane.normal);
+                        polygon.m_Points[ii] = ProGridsInterface.ProGridsSnap(trs.InverseTransformPoint(point), snapMask);
                         OnBeginVertexMovement();
                         RebuildPolyShapeMesh(false);
                     }
