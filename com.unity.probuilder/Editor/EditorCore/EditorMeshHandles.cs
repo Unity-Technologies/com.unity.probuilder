@@ -76,7 +76,7 @@ namespace UnityEditor.ProBuilder
             }
 
             s_VertexPointSize.value = SettingsGUILayout.SettingsSlider("Vertex Size", s_VertexPointSize, 1f, 10f, searchContext);
-
+            
             var depthTestSelectionHighlight = s_HandleCompareFunction != CompareFunction.Always;
             EditorGUI.BeginChangeCheck();
             depthTestSelectionHighlight = SettingsGUILayout.SearchableToggle("Depth Test", depthTestSelectionHighlight, searchContext);
