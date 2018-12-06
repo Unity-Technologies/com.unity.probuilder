@@ -69,8 +69,9 @@ namespace UnityEngine.ProBuilder
             }
 
             GameObject go = new GameObject();
-            ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
             go.name = "ProBuilder Mesh";
+            ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
+            pb.m_MeshFormatVersion = k_MeshFormatVersion;
             pb.GeometryWithPoints(positions);
 
             return pb;
@@ -80,6 +81,7 @@ namespace UnityEngine.ProBuilder
         {
             var go = new GameObject();
             var pb = go.AddComponent<ProBuilderMesh>();
+            pb.m_MeshFormatVersion = k_MeshFormatVersion;
             pb.Clear();
             return pb;
         }
@@ -95,6 +97,7 @@ namespace UnityEngine.ProBuilder
             GameObject go = new GameObject();
             ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
             go.name = "ProBuilder Mesh";
+            pb.m_MeshFormatVersion = k_MeshFormatVersion;
             pb.RebuildWithPositionsAndFaces(positions, faces);
             return pb;
         }
@@ -114,8 +117,9 @@ namespace UnityEngine.ProBuilder
             IList<SharedVertex> sharedTextures = null)
         {
             var go = new GameObject();
-            var mesh = go.AddComponent<ProBuilderMesh>();
             go.name = "ProBuilder Mesh";
+            var mesh = go.AddComponent<ProBuilderMesh>();
+            mesh.m_MeshFormatVersion = k_MeshFormatVersion;
             mesh.SetVertices(vertices);
             mesh.faces = faces;
             mesh.sharedVertices = sharedVertices;
@@ -211,6 +215,8 @@ namespace UnityEngine.ProBuilder
 
                 m_MeshFormatVersion = k_MeshFormatVersion;
             }
+
+            m_MeshFormatVersion = k_MeshFormatVersion;
 
             int materialCount = MeshUtility.GetMaterialCount(renderer);
 
@@ -499,6 +505,48 @@ namespace UnityEngine.ProBuilder
                         for (int i = 0, c = indices.Count; i < c; i++)
                             coincident.Add(indices[i]);
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Populate a list of vertices that are coincident to any of the vertices in the passed vertices parameter.
+        /// </summary>
+        /// <param name="edges">A collection of edges to gather vertices from.</param>
+        /// <param name="coincident">A list to be cleared and populated with any vertices that are coincident.</param>
+        /// <exception cref="ArgumentNullException">The vertices and coincident parameters may not be null.</exception>
+        public void GetCoincidentVertices(IEnumerable<Edge> edges, List<int> coincident)
+        {
+            if (faces == null)
+                throw new ArgumentNullException("edges");
+
+            if (coincident == null)
+                throw new ArgumentNullException("coincident");
+
+            coincident.Clear();
+            s_CachedHashSet.Clear();
+            var lookup = sharedVertexLookup;
+
+            foreach (var edge in edges)
+            {
+                var common = lookup[edge.a];
+
+                if (s_CachedHashSet.Add(common))
+                {
+                    var indices = m_SharedVertices[common];
+
+                    for (int i = 0, c = indices.Count; i < c; i++)
+                        coincident.Add(indices[i]);
+                }
+
+                common = lookup[edge.b];
+
+                if (s_CachedHashSet.Add(common))
+                {
+                    var indices = m_SharedVertices[common];
+
+                    for (int i = 0, c = indices.Count; i < c; i++)
+                        coincident.Add(indices[i]);
                 }
             }
         }

@@ -5,7 +5,7 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-    abstract class MeshAndElementGroupPair
+    abstract class MeshAndElementSelection
     {
         ProBuilderMesh m_Mesh;
 
@@ -21,7 +21,7 @@ namespace UnityEditor.ProBuilder
             get { return m_ElementGroups; }
         }
 
-        public MeshAndElementGroupPair(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation, bool collectCoincidentIndices)
+        public MeshAndElementSelection(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation, bool collectCoincidentIndices)
         {
             m_Mesh = mesh;
             m_ElementGroups = ElementGroup.GetElementGroups(mesh, pivot, orientation, collectCoincidentIndices);
@@ -31,27 +31,36 @@ namespace UnityEditor.ProBuilder
     class ElementGroup
     {
         List<int> m_Indices;
-        Matrix4x4 m_PreApplyPositionsMatrix;
-        Matrix4x4 m_PostApplyPositionsMatrix;
+        Vector3 m_Position;
+        Quaternion m_Rotation;
 
-        public List<int> indices
+        /// <value>
+        /// Center of this selection in world space.
+        /// </value>
+        public Vector3 position
+        {
+            get { return m_Position; }
+        }
+
+        /// <value>
+        /// Rotation of this selection in world space.
+        /// </value>
+        public Quaternion rotation
+        {
+            get { return m_Rotation; }
+        }
+
+        public IEnumerable<int> indices
         {
             get { return m_Indices; }
         }
 
-        public Matrix4x4 preApplyMatrix
+        public ElementGroup(List<int> indices, Vector3 position, Quaternion rotation)
         {
-            get { return m_PreApplyPositionsMatrix; }
-            set
-            {
-                m_PreApplyPositionsMatrix = value;
-                m_PostApplyPositionsMatrix = m_PreApplyPositionsMatrix.inverse;
-            }
-        }
+            m_Indices = indices;
 
-        public Matrix4x4 postApplyMatrix
-        {
-            get { return m_PostApplyPositionsMatrix; }
+            m_Position = position;
+            m_Rotation = rotation;
         }
 
         public static List<ElementGroup> GetElementGroups(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation, bool collectCoincident)
@@ -64,35 +73,43 @@ namespace UnityEditor.ProBuilder
             {
                 case PivotPoint.IndividualOrigins:
                 {
-                    // todo Pass SelectMode as part of args
-                    if (selectMode != SelectMode.Face || mesh.selectedFaceCount < 1)
+                    if (selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.TextureVertex))
                     {
-                        var bounds = Math.GetBounds(mesh.positionsInternal, mesh.selectedIndexesInternal);
-                        var indices = collectCoincident
-                            ? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
-                            : new List<int>(mesh.selectedIndexesInternal);
-
-                        var rot = selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge)
-                            ? EditorHandleUtility.GetEdgeRotation(mesh, mesh.selectedEdgesInternal, orientation)
-                            : EditorHandleUtility.GetVertexRotation(mesh, indices, orientation);
-
-                        var post = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), rot, Vector3.one);
-
-                        groups.Add(new ElementGroup()
+                        foreach (var list in GetVertexSelectionGroups(mesh, collectCoincident))
                         {
-                            m_Indices = indices,
-                            m_PostApplyPositionsMatrix = post,
-                            m_PreApplyPositionsMatrix = post.inverse
-                        });
+                            var bounds = Math.GetBounds(mesh.positionsInternal, list);
+                            var rot = EditorHandleUtility.GetVertexRotation(mesh, orientation, list);
+                            groups.Add(new ElementGroup(list, trs.MultiplyPoint3x4(bounds.center), rot));
+                        }
                     }
-                    else
+                    else if (selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
+                    {
+                        foreach (var list in GetEdgeSelectionGroups(mesh))
+                        {
+                            var bounds = Math.GetBounds(mesh.positionsInternal, list);
+                            var rot = EditorHandleUtility.GetEdgeRotation(mesh, orientation, list);
+
+                            List<int> indices;
+
+                            if (collectCoincident)
+                            {
+                                indices = new List<int>();
+                                mesh.GetCoincidentVertices(list, indices);
+                            }
+                            else
+                            {
+                                indices = list.SelectMany(x => new int[] { x.a, x.b }).ToList();
+                            }
+
+                            groups.Add(new ElementGroup(indices, trs.MultiplyPoint3x4(bounds.center), rot));
+                        }
+                    }
+                    else if (selectMode.ContainsFlag(SelectMode.Face | SelectMode.TextureFace))
                     {
                         foreach (var list in GetFaceSelectionGroups(mesh))
                         {
                             var bounds = Math.GetBounds(mesh.positionsInternal, list);
-                            var rot = EditorHandleUtility.GetFaceRotation(mesh, list, orientation);
-                            var post = Matrix4x4.TRS(trs.MultiplyPoint3x4(bounds.center), rot, Vector3.one);
-
+                            var rot = EditorHandleUtility.GetFaceRotation(mesh, orientation, list);
                             List<int> indices;
 
                             if (collectCoincident)
@@ -105,47 +122,87 @@ namespace UnityEditor.ProBuilder
                                 indices = list.SelectMany(x => x.distinctIndexesInternal).ToList();
                             }
 
-                            groups.Add(new ElementGroup()
-                            {
-                                m_Indices = indices,
-                                m_PostApplyPositionsMatrix = post,
-                                m_PreApplyPositionsMatrix = post.inverse
-                            });
+                            groups.Add(new ElementGroup(indices, trs.MultiplyPoint3x4(bounds.center), rot));
                         }
                     }
-
                     break;
                 }
 
                 case PivotPoint.ActiveElement:
                 {
-                    var post = Matrix4x4.TRS(MeshSelection.GetHandlePosition(), MeshSelection.GetHandleRotation(), Vector3.one);
+                    var indices = collectCoincident
+                        ? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
+                        : new List<int>(mesh.selectedIndexesInternal);
 
-                    groups.Add(new ElementGroup()
+                    var position = mesh.transform.position;
+                    var rotation = mesh.transform.rotation;
+
+                    if (selectMode.ContainsFlag(SelectMode.Face | SelectMode.TextureFace))
                     {
-                        m_Indices = collectCoincident
-                            ? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
-                            : new List<int>(mesh.selectedIndexesInternal),
-                        m_PostApplyPositionsMatrix = post,
-                        m_PreApplyPositionsMatrix = post.inverse,
-                    });
+                        var face = mesh.GetActiveFace();
 
+                        if (face != null)
+                        {
+                            position = trs.MultiplyPoint3x4(Math.GetBounds(mesh.positionsInternal, face.distinctIndexesInternal).center);
+                            rotation = EditorHandleUtility.GetFaceRotation(mesh, orientation, new Face[] { face });
+                        }
+                    }
+                    else if (selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
+                    {
+                        var edge = mesh.GetActiveEdge();
+
+                        if (edge != Edge.Empty)
+                        {
+                            position = trs.MultiplyPoint3x4(Math.GetBounds(mesh.positionsInternal, new int [] { edge.a, edge.b }).center);
+                            rotation = EditorHandleUtility.GetEdgeRotation(mesh, orientation, new Edge[] { edge });
+                        }
+                    }
+                    else if (selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.TextureVertex))
+                    {
+                        var vertex = mesh.GetActiveVertex();
+
+                        if (vertex > -1)
+                        {
+                            position = trs.MultiplyPoint3x4(mesh.positionsInternal[vertex]);
+                            rotation = EditorHandleUtility.GetVertexRotation(mesh, orientation, new int[] { vertex });
+                        }
+                    }
+
+                    groups.Add(new ElementGroup(indices, position, rotation));
                     break;
                 }
 
                 default:
                 {
-                    var post = Matrix4x4.TRS(MeshSelection.GetHandlePosition(), MeshSelection.GetHandleRotation(), Vector3.one);
+                    var indices = collectCoincident
+                        ? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
+                        : new List<int>(mesh.selectedIndexesInternal);
+                    var position = MeshSelection.bounds.center;
+                    var rotation = Quaternion.identity;
 
-                    groups.Add(new ElementGroup()
+                    if (selectMode.ContainsFlag(SelectMode.Face | SelectMode.TextureFace))
                     {
-                        m_Indices = collectCoincident
-                            ? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
-                            : new List<int>(mesh.selectedIndexesInternal),
-                        m_PostApplyPositionsMatrix = post,
-                        m_PreApplyPositionsMatrix = post.inverse,
-                    });
+                        var face = mesh.GetActiveFace();
 
+                        if (face != null)
+                            rotation = EditorHandleUtility.GetFaceRotation(mesh, orientation, new Face[] { face });
+                    }
+                    else if (selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
+                    {
+                        var edge = mesh.GetActiveEdge();
+
+                        if (edge != Edge.Empty)
+                            rotation = EditorHandleUtility.GetEdgeRotation(mesh, orientation, new Edge[] { edge });
+                    }
+                    else if (selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.TextureVertex))
+                    {
+                        var vertex = mesh.GetActiveVertex();
+
+                        if (vertex > -1)
+                            rotation = EditorHandleUtility.GetVertexRotation(mesh, orientation, new int[] { vertex });
+                    }
+
+                    groups.Add(new ElementGroup( indices, position, rotation));
                     break;
                 }
             }
@@ -153,7 +210,7 @@ namespace UnityEditor.ProBuilder
             return groups;
         }
 
-        static List<List<Face>> GetFaceSelectionGroups(ProBuilderMesh mesh)
+        static IEnumerable<List<Face>> GetFaceSelectionGroups(ProBuilderMesh mesh)
         {
             var wings = WingedEdge.GetWingedEdges(mesh, mesh.selectedFacesInternal, true);
             var filter = new HashSet<Face>();
@@ -168,6 +225,79 @@ namespace UnityEditor.ProBuilder
             }
 
             return groups;
+        }
+
+        static IEnumerable<List<int>> GetVertexSelectionGroups(ProBuilderMesh mesh, bool collectCoincident)
+        {
+            if (!collectCoincident)
+                return mesh.selectedIndexesInternal.Select(x => new List<int>() { x }).ToList();
+
+            var shared = mesh.selectedSharedVertices;
+
+            var groups = new List<List<int>>();
+
+            foreach (var index in shared)
+            {
+                var coincident = new List<int>();
+                mesh.GetCoincidentVertices(mesh.sharedVerticesInternal[index][0], coincident);
+                groups.Add(coincident);
+            }
+
+            return groups;
+        }
+
+        static IEnumerable<List<Edge>> GetEdgeSelectionGroups(ProBuilderMesh mesh)
+        {
+            var edges = EdgeLookup.GetEdgeLookup(mesh.selectedEdgesInternal, mesh.sharedVertexLookup);
+            var groups = new List<SimpleTuple<HashSet<int>, List<Edge>>>();
+
+            foreach (var edge in edges)
+            {
+                var foundMatch = false;
+
+                foreach (var kvp in groups)
+                {
+                    if (kvp.item1.Contains(edge.common.a) || kvp.item1.Contains(edge.common.b))
+                    {
+                        kvp.item1.Add(edge.common.a);
+                        kvp.item1.Add(edge.common.b);
+                        kvp.item2.Add(edge.local);
+                        foundMatch = true;
+                        break;
+                    }
+                }
+
+                if (!foundMatch)
+                    groups.Add(new SimpleTuple<HashSet<int>, List<Edge>>(
+                        new HashSet<int>() { edge.common.a, edge.common.b },
+                        new List<Edge>() { edge.local }));
+            }
+
+            // collect overlapping groups (happens in cases where selection order begins as two separate groups but
+            // becomes one)
+            var res = new List<List<Edge>>();
+            var overlap = new HashSet<int>();
+
+            for(int i = 0, c = groups.Count; i < c; i++)
+            {
+                if (overlap.Contains(i))
+                    continue;
+
+                List<Edge> grp = groups[i].item2;
+
+                for (int n = i + 1; n < c; n++)
+                {
+                    if (groups[i].item1.Overlaps(groups[n].item1))
+                    {
+                        overlap.Add(n);
+                        grp.AddRange(groups[n].item2);
+                    }
+                }
+
+                res.Add(grp);
+            }
+
+            return res;
         }
 
         static void CollectAdjacentFaces(WingedEdge wing, HashSet<Face> filter, List<Face> group)

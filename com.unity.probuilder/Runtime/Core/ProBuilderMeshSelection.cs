@@ -169,21 +169,21 @@ namespace UnityEngine.ProBuilder
         {
             if (selectedFaceCount < 1)
                 return null;
-            return m_Faces[selectedFaceIndicesInternal[0]];
+            return m_Faces[selectedFaceIndicesInternal[selectedFaceCount - 1]];
         }
 
         internal Edge GetActiveEdge()
         {
             if (selectedEdgeCount < 1)
                 return Edge.Empty;
-            return m_SelectedEdges[0];
+            return m_SelectedEdges[selectedEdgeCount - 1];
         }
 
         internal int GetActiveVertex()
         {
             if (selectedVertexCount < 1)
                 return -1;
-            return m_SelectedVertices[0];
+            return m_SelectedVertices[selectedVertexCount - 1];
         }
 
         internal void AddToFaceSelection(int index)

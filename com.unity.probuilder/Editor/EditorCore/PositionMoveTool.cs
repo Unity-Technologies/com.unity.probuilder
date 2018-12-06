@@ -11,7 +11,7 @@ namespace UnityEditor.ProBuilder
         Vector3 m_WorldSnapDirection;
         Vector3 m_WorldSnapMask;
 
-#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
+#if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
         Vector3 m_IndividualOriginDirection;
         bool m_DirectionOriginInitialized;
 #endif
@@ -20,7 +20,7 @@ namespace UnityEditor.ProBuilder
         {
             m_SnapInWorldCoordinates = false;
             m_WorldSnapMask = new Vector3Mask(0x0);
-#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
+#if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
             m_DirectionOriginInitialized = false;
 #endif
         }
@@ -32,7 +32,7 @@ namespace UnityEditor.ProBuilder
             if (!isEditing)
                 m_HandlePosition = handlePosition;
 
-#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
+#if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
             if (isEditing)
                 DrawSelectionOriginGizmos();
 #endif
@@ -91,7 +91,7 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
-#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
+#if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
                 if (pivotPoint == PivotPoint.IndividualOrigins && !m_DirectionOriginInitialized)
                 {
                     var mask = new Vector3Mask(handleRotationOriginInverse * delta, k_CardinalAxisError);
@@ -110,7 +110,7 @@ namespace UnityEditor.ProBuilder
 
         void ApplyTranslation(Vector3 translation)
         {
-            foreach (var key in meshAndElementGroupPairs)
+            foreach (var key in elementSelection)
             {
                 if (!(key is MeshAndPositions))
                     continue;
@@ -123,6 +123,9 @@ namespace UnityEditor.ProBuilder
 
                 foreach (var group in kvp.elementGroups)
                 {
+                    var postApplyMatrix = GetPostApplyMatrix(group);
+                    var preApplyMatrix = postApplyMatrix.inverse;
+
                     foreach (var index in group.indices)
                     {
                         // res = Group pre-apply matrix * world vertex position
@@ -130,8 +133,8 @@ namespace UnityEditor.ProBuilder
                         // res = Group post-apply matrix * res
                         // positions[i] = mesh.worldToLocal * res
                         positions[index] = worldToLocal.MultiplyPoint3x4(
-                                group.postApplyMatrix.MultiplyPoint3x4(
-                                    translation + group.preApplyMatrix.MultiplyPoint3x4(origins[index])));
+                                postApplyMatrix.MultiplyPoint3x4(
+                                    translation + preApplyMatrix.MultiplyPoint3x4(origins[index])));
                     }
                 }
 
@@ -143,7 +146,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.UpdateMeshHandles(false);
         }
 
-#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
+#if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
         void DrawSelectionOriginGizmos()
         {
             if (isEditing && currentEvent.type == EventType.Repaint)

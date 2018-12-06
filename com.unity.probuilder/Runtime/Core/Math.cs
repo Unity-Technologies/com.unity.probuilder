@@ -937,11 +937,11 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         /// <param name="positions"></param>
         /// <returns></returns>
-        internal static Bounds GetBounds(Vector3[] positions, int[] indices = null)
+        internal static Bounds GetBounds(Vector3[] positions, IList<int> indices = null)
         {
             bool hasIndices = indices != null;
 
-            if ((hasIndices && indices.Length < 1) || positions.Length < 1)
+            if ((hasIndices && indices.Count < 1) || positions.Length < 1)
                 return default(Bounds);
 
             Vector3 min = positions[hasIndices ? indices[0] : 0];
@@ -949,7 +949,7 @@ namespace UnityEngine.ProBuilder
 
             if (hasIndices)
             {
-                for (int i = 1, c = indices.Length; i < c; i++)
+                for (int i = 1, c = indices.Count; i < c; i++)
                 {
                     min.x = Mathf.Min(positions[indices[i]].x, min.x);
                     max.x = Mathf.Max(positions[indices[i]].x, max.x);
@@ -1014,6 +1014,47 @@ namespace UnityEngine.ProBuilder
                     max.z = Mathf.Max(positions[indices[i]].z, max.z);
                 }
             }
+
+            return new Bounds((min + max) * .5f, max - min);
+        }
+
+        static Vector3 ComponentMin(Vector3 a, Vector3 b)
+        {
+            return new Vector3(Mathf.Min(a.x, b.x), Mathf.Min(a.y, b.y), Mathf.Min(a.z, b.z));
+        }
+
+        static Vector3 ComponentMax(Vector3 a, Vector3 b)
+        {
+            return new Vector3(Mathf.Max(a.x, b.x), Mathf.Max(a.y, b.y), Mathf.Max(a.z, b.z));
+        }
+
+        /// <summary>
+        /// Creates an AABB with a set of vertices.
+        /// </summary>
+        /// <param name="positions"></param>
+        /// <returns></returns>
+        internal static Bounds GetBounds(Vector3[] positions, IEnumerable<Edge> edges)
+        {
+            bool initialized = false;
+
+            Vector3 min = Vector3.zero;
+            Vector3 max = min;
+
+            foreach (var edge in edges)
+            {
+                if (!initialized)
+                {
+                    initialized = true;
+                    min = positions[edge.a];
+                    max = positions[edge.a];
+                }
+
+                min = ComponentMin(positions[edge.a], min);
+                max = ComponentMax(positions[edge.a], max);
+
+                min = ComponentMin(positions[edge.b], min);
+                max = ComponentMax(positions[edge.b], max);
+           }
 
             return new Bounds((min + max) * .5f, max - min);
         }

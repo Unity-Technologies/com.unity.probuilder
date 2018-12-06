@@ -32,7 +32,7 @@ namespace UnityEditor.ProBuilder
 
         void ApplyRotation(Quaternion rotation)
         {
-            foreach (var key in meshAndElementGroupPairs)
+            foreach (var key in elementSelection)
             {
                 if (!(key is MeshAndPositions))
                     continue;
@@ -45,11 +45,14 @@ namespace UnityEditor.ProBuilder
 
                 foreach (var group in kvp.elementGroups)
                 {
+                    var postApplyMatrix = GetPostApplyMatrix(group);
+                    var preApplyMatrix = postApplyMatrix.inverse;
+
                     foreach (var index in group.indices)
                     {
                         positions[index] = worldToLocal.MultiplyPoint3x4(
-                                group.postApplyMatrix.MultiplyPoint3x4(
-                                    rotation * group.preApplyMatrix.MultiplyPoint3x4(origins[index])));
+                                postApplyMatrix.MultiplyPoint3x4(
+                                    rotation * preApplyMatrix.MultiplyPoint3x4(origins[index])));
                     }
                 }
 

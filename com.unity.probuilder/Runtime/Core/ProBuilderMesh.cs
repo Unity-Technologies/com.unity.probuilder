@@ -35,7 +35,7 @@ namespace UnityEngine.ProBuilder
         public const uint maxVertexCount = ushort.MaxValue;
 
         [SerializeField]
-        int m_MeshFormatVersion = k_MeshFormatVersion;
+        int m_MeshFormatVersion;
 
         [SerializeField]
         [FormerlySerializedAs("_quads")]
@@ -777,7 +777,7 @@ namespace UnityEngine.ProBuilder
                 if (meshNo != id)
                     return MeshSyncState.InstanceIDMismatch;
 
-                return mesh.uv2 == null ? MeshSyncState.Lightmap : MeshSyncState.None;
+                return mesh.uv2 == null ? MeshSyncState.Lightmap : MeshSyncState.InSync;
             }
         }
     }

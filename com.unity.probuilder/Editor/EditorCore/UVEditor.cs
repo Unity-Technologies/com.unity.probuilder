@@ -2494,7 +2494,10 @@ namespace UnityEditor.ProBuilder
                     if (ProBuilderEditor.selectMode.IsTextureMode())
                         ProBuilderEditor.selectMode = ProBuilderEditor.selectMode.GetPositionMode();
                     else
+                    {
+                        VertexManipulationTool.handleOrientation = HandleOrientation.ActiveElement;
                         ProBuilderEditor.selectMode = ProBuilderEditor.selectMode.GetTextureMode();
+                    }
 
                     SceneView.RepaintAll();
                 }

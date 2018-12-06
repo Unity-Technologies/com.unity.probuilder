@@ -51,6 +51,8 @@ namespace UnityEngine.ProBuilder
         /// </value>
         public WingedEdge opposite { get; private set; }
 
+        WingedEdge() {}
+
         /// <summary>
         /// Equality comparision tests for local edge equality, disregarding other values.
         /// </summary>

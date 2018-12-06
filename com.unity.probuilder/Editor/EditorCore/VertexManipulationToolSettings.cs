@@ -1,16 +1,11 @@
 using UnityEngine;
-using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
     [InitializeOnLoad]
     static class VertexManipulationToolSettings
     {
-#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
-        const bool k_EnableHandleSettingInput = false;
-#else
         const bool k_EnableHandleSettingInput = true;
-#endif
 
         static VertexManipulationToolSettings()
         {
@@ -45,16 +40,9 @@ namespace UnityEditor.ProBuilder
 
                 GUILayout.BeginHorizontal();
                 EditorGUIUtility.labelWidth = 80;
-#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
-                VertexManipulationTool.pivotPoint =
-                    (PivotPoint)EditorGUILayout.EnumPopup("Pivot Point", VertexManipulationTool.pivotPoint);
-                VertexManipulationTool.handleOrientation =
-                    (HandleOrientation)EditorGUILayout.EnumPopup("Orientation",
-                        VertexManipulationTool.handleOrientation);
-#else
+
                 EditorGUILayout.EnumPopup("Pivot Point", VertexManipulationTool.pivotPoint);
                 EditorGUILayout.EnumPopup("Orientation", VertexManipulationTool.handleOrientation);
-#endif
 
                 EditorGUIUtility.labelWidth = 0;
                 GUILayout.EndHorizontal();
