@@ -23,24 +23,24 @@ namespace UnityEditor.ProBuilder
             "pg_Editor",
         };
 
-        static Func<object> m_ProGridsInstanceDelegate = null;
-        static Func<bool> m_ProGridsActiveDelegate = null;
-        static Func<bool> m_SceneToolbarIsExtendedDelegate = null;
-        static Func<bool> m_UseAxisConstraintDelegate = null;
-        static Func<bool> m_SnapEnabledDelegate = null;
-        static Func<bool> m_IsFullGridEnabledDelegate = null;
-        static Func<float> m_GetActiveGridOffsetDelegate = null;
-        static Func<float> m_SnapValueDelegate = null;
-        static Func<Vector3> m_GetPivotDelegate = null;
+        static Func<object> s_ProGridsInstanceDelegate = null;
+        static Func<bool> s_ProGridsActiveDelegate = null;
+        static Func<bool> s_SceneToolbarIsExtendedDelegate = null;
+        static Func<bool> s_UseAxisConstraintDelegate = null;
+        static Func<bool> s_SnapEnabledDelegate = null;
+        static Func<bool> s_IsFullGridEnabledDelegate = null;
+        static Func<float> s_GetActiveGridOffsetDelegate = null;
+        static Func<float> s_SnapValueDelegate = null;
+        static Func<Vector3> s_GetPivotDelegate = null;
 
-        static Action<Action<float>> m_SubscribePushToGridEventDelegate = null;
-        static Action<Action<float>> m_UnsubscribePushToGridEventDelegate = null;
-        static Action<Action<bool>> m_SubscribeToolbarEventDelegate = null;
-        static Action<Action<bool>> m_UnsubscribeToolbarEventDelegate = null;
+        static Action<Action<float>> s_SubscribePushToGridEventDelegate = null;
+        static Action<Action<float>> s_UnsubscribePushToGridEventDelegate = null;
+        static Action<Action<bool>> s_SubscribeToolbarEventDelegate = null;
+        static Action<Action<bool>> s_UnsubscribeToolbarEventDelegate = null;
 
-        static Action<Vector3> m_OnHandleMoveDelegate = null;
+        static Action<Vector3> s_OnHandleMoveDelegate = null;
 
-        static FieldInfo m_GetActiveGridAxisDelegate = null;
+        static FieldInfo s_GetActiveGridAxisDelegate = null;
 
         static ProGridsInterface()
         {
@@ -63,11 +63,11 @@ namespace UnityEditor.ProBuilder
             if (GetProGridsType() == null)
                 return null;
 
-            if (m_ProGridsInstanceDelegate == null)
-                m_ProGridsInstanceDelegate = (Func<object>)ReflectionUtility.GetOpenDelegateOnProperty<Func<object>>(GetProGridsType(), "Instance", BindingFlags.NonPublic | BindingFlags.Static);
+            if (s_ProGridsInstanceDelegate == null)
+                s_ProGridsInstanceDelegate = (Func<object>)ReflectionUtility.GetOpenDelegateOnProperty<Func<object>>(GetProGridsType(), "Instance", BindingFlags.NonPublic | BindingFlags.Static);
 
-            if (m_ProGridsInstanceDelegate != null)
-                return m_ProGridsInstanceDelegate();
+            if (s_ProGridsInstanceDelegate != null)
+                return s_ProGridsInstanceDelegate();
 
             return null;
         }
@@ -81,11 +81,11 @@ namespace UnityEditor.ProBuilder
             if (GetProGridsType() == null)
                 return false;
 
-            if (m_ProGridsActiveDelegate == null)
-                m_ProGridsActiveDelegate = (Func<bool>)ReflectionUtility.GetOpenDelegate<Func<bool>>(GetProGridsType(), "SceneToolbarActive");
+            if (s_ProGridsActiveDelegate == null)
+                s_ProGridsActiveDelegate = (Func<bool>)ReflectionUtility.GetOpenDelegate<Func<bool>>(GetProGridsType(), "SceneToolbarActive");
 
-            if (m_ProGridsActiveDelegate != null)
-                return m_ProGridsActiveDelegate();
+            if (s_ProGridsActiveDelegate != null)
+                return s_ProGridsActiveDelegate();
 
             return false;
         }
@@ -99,11 +99,11 @@ namespace UnityEditor.ProBuilder
             if (GetProGridsType() == null)
                 return false;
 
-            if (m_SceneToolbarIsExtendedDelegate == null)
-                m_SceneToolbarIsExtendedDelegate = (Func<bool>)ReflectionUtility.GetOpenDelegate<Func<bool>>(GetProGridsType(), "SceneToolbarIsExtended");
+            if (s_SceneToolbarIsExtendedDelegate == null)
+                s_SceneToolbarIsExtendedDelegate = (Func<bool>)ReflectionUtility.GetOpenDelegate<Func<bool>>(GetProGridsType(), "SceneToolbarIsExtended");
 
-            if (m_SceneToolbarIsExtendedDelegate != null)
-                return m_SceneToolbarIsExtendedDelegate();
+            if (s_SceneToolbarIsExtendedDelegate != null)
+                return s_SceneToolbarIsExtendedDelegate();
 
             return false;
         }
@@ -117,11 +117,11 @@ namespace UnityEditor.ProBuilder
             if (GetProGridsType() == null)
                 return false;
 
-            if (m_UseAxisConstraintDelegate == null)
-                m_UseAxisConstraintDelegate = (Func<bool>)ReflectionUtility.GetOpenDelegate<Func<bool>>(GetProGridsType(), "UseAxisConstraints");
+            if (s_UseAxisConstraintDelegate == null)
+                s_UseAxisConstraintDelegate = (Func<bool>)ReflectionUtility.GetOpenDelegate<Func<bool>>(GetProGridsType(), "UseAxisConstraints");
                 
-            if (m_UseAxisConstraintDelegate != null)
-                return m_UseAxisConstraintDelegate();
+            if (s_UseAxisConstraintDelegate != null)
+                return s_UseAxisConstraintDelegate();
 
             return false;
         }
@@ -135,11 +135,11 @@ namespace UnityEditor.ProBuilder
             if (GetProGridsType() == null)
                 return false;
 
-            if (m_SnapEnabledDelegate == null)
-                m_SnapEnabledDelegate = (Func<bool>)ReflectionUtility.GetOpenDelegate<Func<bool>>(GetProGridsType(), "SnapEnabled");
+            if (s_SnapEnabledDelegate == null)
+                s_SnapEnabledDelegate = (Func<bool>)ReflectionUtility.GetOpenDelegate<Func<bool>>(GetProGridsType(), "SnapEnabled");
 
-            if (m_SnapEnabledDelegate != null)
-                return m_SnapEnabledDelegate();
+            if (s_SnapEnabledDelegate != null)
+                return s_SnapEnabledDelegate();
 
             return false;
         }
@@ -153,11 +153,11 @@ namespace UnityEditor.ProBuilder
             if (GetProGridsType() == null)
                 return 0f;
 
-            if (m_SnapValueDelegate == null)
-                m_SnapValueDelegate = (Func<float>)ReflectionUtility.GetOpenDelegate<Func<float>>(GetProGridsType(), "SnapValue");
+            if (s_SnapValueDelegate == null)
+                s_SnapValueDelegate = (Func<float>)ReflectionUtility.GetOpenDelegate<Func<float>>(GetProGridsType(), "SnapValue");
 
-            if (m_SnapValueDelegate != null)
-                return m_SnapValueDelegate();
+            if (s_SnapValueDelegate != null)
+                return s_SnapValueDelegate();
 
             return 0f;
         }
@@ -171,12 +171,12 @@ namespace UnityEditor.ProBuilder
         {
             pivot = Vector3.zero;
 
-            if (m_GetPivotDelegate == null)
-                m_GetPivotDelegate = (Func<Vector3>)ReflectionUtility.GetOpenDelegate<Func<Vector3>>(GetProGridsType(), "GetPivot");
+            if (s_GetPivotDelegate == null)
+                s_GetPivotDelegate = (Func<Vector3>)ReflectionUtility.GetOpenDelegate<Func<Vector3>>(GetProGridsType(), "GetPivot");
 
-            if (m_GetPivotDelegate != null)
+            if (s_GetPivotDelegate != null)
             {
-                pivot = m_GetPivotDelegate();
+                pivot = s_GetPivotDelegate();
                 return true;
             }
 
@@ -185,35 +185,35 @@ namespace UnityEditor.ProBuilder
 
         public static bool IsFullGridEnabled()
         {
-            if (m_IsFullGridEnabledDelegate == null)
-                m_IsFullGridEnabledDelegate = (Func<bool>)ReflectionUtility.GetClosedDelegateOnProperty<Func<bool>>(
+            if (s_IsFullGridEnabledDelegate == null)
+                s_IsFullGridEnabledDelegate = (Func<bool>)ReflectionUtility.GetClosedDelegateOnProperty<Func<bool>>(
                     GetProGridsType(), GetProGridsInstance(), "FullGridEnabled", BindingFlags.Instance | BindingFlags.NonPublic);
 
-            if (m_IsFullGridEnabledDelegate != null)
-                return m_IsFullGridEnabledDelegate();
+            if (s_IsFullGridEnabledDelegate != null)
+                return s_IsFullGridEnabledDelegate();
 
             return false;
         }
 
         public static int GetActiveGridAxis()
         {
-            if (m_GetActiveGridAxisDelegate == null)
-                m_GetActiveGridAxisDelegate = ReflectionUtility.GetFieldInfo(GetProGridsType(), "m_RenderPlane", (BindingFlags.Instance | BindingFlags.NonPublic));
+            if (s_GetActiveGridAxisDelegate == null)
+                s_GetActiveGridAxisDelegate = ReflectionUtility.GetFieldInfo(GetProGridsType(), "m_RenderPlane", (BindingFlags.Instance | BindingFlags.NonPublic));
 
-            if (m_GetActiveGridAxisDelegate != null)
-                return (int)m_GetActiveGridAxisDelegate.GetValue(GetProGridsInstance());
+            if (s_GetActiveGridAxisDelegate != null)
+                return (int)s_GetActiveGridAxisDelegate.GetValue(GetProGridsInstance());
             
             return -1;
         }
 
         public static float GetActiveGridOffset()
         {
-            if (m_GetActiveGridOffsetDelegate == null)
-                m_GetActiveGridOffsetDelegate = (Func<float>)ReflectionUtility.GetClosedDelegateOnProperty<Func<float>>(
+            if (s_GetActiveGridOffsetDelegate == null)
+                s_GetActiveGridOffsetDelegate = (Func<float>)ReflectionUtility.GetClosedDelegateOnProperty<Func<float>>(
                     GetProGridsType(), GetProGridsInstance(), "GridRenderOffset", (BindingFlags.Instance | BindingFlags.Public));
 
-            if (m_GetActiveGridOffsetDelegate != null)
-                return m_GetActiveGridOffsetDelegate();
+            if (s_GetActiveGridOffsetDelegate != null)
+                return s_GetActiveGridOffsetDelegate();
             
             return 0f;
         }
@@ -227,11 +227,11 @@ namespace UnityEditor.ProBuilder
             if (GetProGridsType() == null)
                 return;
 
-            if (m_SubscribePushToGridEventDelegate == null)
-                m_SubscribePushToGridEventDelegate = (Action<Action<float>>)ReflectionUtility.GetOpenDelegate<Action<Action<float>>>(GetProGridsType(), "AddPushToGridListener");
+            if (s_SubscribePushToGridEventDelegate == null)
+                s_SubscribePushToGridEventDelegate = (Action<Action<float>>)ReflectionUtility.GetOpenDelegate<Action<Action<float>>>(GetProGridsType(), "AddPushToGridListener");
 
-            if (m_SubscribePushToGridEventDelegate != null)
-                m_SubscribePushToGridEventDelegate(listener);
+            if (s_SubscribePushToGridEventDelegate != null)
+                s_SubscribePushToGridEventDelegate(listener);
         }
 
         /// <summary>
@@ -243,11 +243,11 @@ namespace UnityEditor.ProBuilder
             if (GetProGridsType() == null)
                 return;
 
-            if (m_UnsubscribePushToGridEventDelegate == null)
-                m_UnsubscribePushToGridEventDelegate = (Action<Action<float>>)ReflectionUtility.GetOpenDelegate<Action<Action<float>>>(GetProGridsType(), "RemovePushToGridListener");
+            if (s_UnsubscribePushToGridEventDelegate == null)
+                s_UnsubscribePushToGridEventDelegate = (Action<Action<float>>)ReflectionUtility.GetOpenDelegate<Action<Action<float>>>(GetProGridsType(), "RemovePushToGridListener");
 
-            if (m_UnsubscribePushToGridEventDelegate != null)
-                m_UnsubscribePushToGridEventDelegate(listener);
+            if (s_UnsubscribePushToGridEventDelegate != null)
+                s_UnsubscribePushToGridEventDelegate(listener);
         }
 
         /// <summary>
@@ -259,11 +259,11 @@ namespace UnityEditor.ProBuilder
             if (GetProGridsType() == null)
                 return;
 
-            if (m_OnHandleMoveDelegate == null)
-                m_OnHandleMoveDelegate = (Action<Vector3>)ReflectionUtility.GetOpenDelegate<Action<Vector3>>(GetProGridsType(), "OnHandleMove");
+            if (s_OnHandleMoveDelegate == null)
+                s_OnHandleMoveDelegate = (Action<Vector3>)ReflectionUtility.GetOpenDelegate<Action<Vector3>>(GetProGridsType(), "OnHandleMove");
 
-            if (m_OnHandleMoveDelegate != null)
-                m_OnHandleMoveDelegate(worldDirection);
+            if (s_OnHandleMoveDelegate != null)
+                s_OnHandleMoveDelegate(worldDirection);
         }
 
         /// <summary>
@@ -275,11 +275,11 @@ namespace UnityEditor.ProBuilder
             if (GetProGridsType() == null)
                 return;
 
-            if (m_SubscribeToolbarEventDelegate == null)
-                m_SubscribeToolbarEventDelegate = (Action<Action<bool>>)ReflectionUtility.GetOpenDelegate<Action<Action<bool>>>(GetProGridsType(), "AddToolbarEventSubscriber");
+            if (s_SubscribeToolbarEventDelegate == null)
+                s_SubscribeToolbarEventDelegate = (Action<Action<bool>>)ReflectionUtility.GetOpenDelegate<Action<Action<bool>>>(GetProGridsType(), "AddToolbarEventSubscriber");
 
-            if (m_SubscribeToolbarEventDelegate != null)
-                m_SubscribeToolbarEventDelegate(listener);
+            if (s_SubscribeToolbarEventDelegate != null)
+                s_SubscribeToolbarEventDelegate(listener);
         }
 
         /// <summary>
@@ -291,11 +291,11 @@ namespace UnityEditor.ProBuilder
             if (GetProGridsType() == null)
                 return;
 
-            if (m_UnsubscribeToolbarEventDelegate == null)
-                m_UnsubscribeToolbarEventDelegate = (Action<Action<bool>>)ReflectionUtility.GetOpenDelegate<Action<Action<bool>>>(GetProGridsType(), "RemoveToolbarEventSubscriber");
+            if (s_UnsubscribeToolbarEventDelegate == null)
+                s_UnsubscribeToolbarEventDelegate = (Action<Action<bool>>)ReflectionUtility.GetOpenDelegate<Action<Action<bool>>>(GetProGridsType(), "RemoveToolbarEventSubscriber");
 
-            if (m_UnsubscribeToolbarEventDelegate != null)
-                m_UnsubscribeToolbarEventDelegate(listener);
+            if (s_UnsubscribeToolbarEventDelegate != null)
+                s_UnsubscribeToolbarEventDelegate(listener);
         }
 
         /// <summary>
