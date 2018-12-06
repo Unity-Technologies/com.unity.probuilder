@@ -248,6 +248,8 @@ namespace UnityEditor.ProBuilder
                         polygon.transform.position =
                             polygon.isOnGrid ? ProGridsInterface.ProGridsSnap(hitPointWorld, Vector3.one) : hitPointWorld;
 
+                        PlacePlaneOnCenter();
+
                         return;
                     }
                 }
@@ -282,6 +284,9 @@ namespace UnityEditor.ProBuilder
                     polygon.transform.rotation = Quaternion.Euler(new Vector3(-90f * Mathf.Sign(cam_z), 0f, 0f));
                     break;
             }
+
+            Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
+            SetPlaneBasedOnMousePosition(ray);
         }
 
         void RebuildPolyShapeMesh(bool vertexCountChanged = false)
@@ -369,8 +374,6 @@ namespace UnityEditor.ProBuilder
                 {
                     float hitDistance = Mathf.Infinity;
 
-                    SetPlaneBasedOnMousePosition(ray);
-
                     if (m_Plane.Raycast(ray, out hitDistance))
                     {
                         evt.Use();
@@ -402,7 +405,6 @@ namespace UnityEditor.ProBuilder
                     float hitDistance = Mathf.Infinity;
 
                     Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
-                    SetPlaneBasedOnMousePosition(ray);
 
                     if (m_Plane.Raycast(ray, out hitDistance))
                     {
