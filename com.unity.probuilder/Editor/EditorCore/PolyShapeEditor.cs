@@ -286,7 +286,10 @@ namespace UnityEditor.ProBuilder
             }
 
             Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
+
             SetPlaneBasedOnMousePosition(ray);
+
+            polygon.transform.rotation = Quaternion.LookRotation(m_Plane.normal) * Quaternion.Euler(new Vector3(90f, 0f, 0f));
         }
 
         void RebuildPolyShapeMesh(bool vertexCountChanged = false)
@@ -583,27 +586,10 @@ namespace UnityEditor.ProBuilder
             Transform trs = polygon.transform;
             int len = polygon.m_Points.Count;
 
-            // Define on which plane we will be moving the existing point.
-            Vector3 up = m_Plane.normal;
+            Vector3 up = polygon.transform.up;
+            Vector3 right = polygon.transform.right;
+            Vector3 forward = polygon.transform.forward;
             Vector3 center = Vector3.zero;
-            Vector3 right = Vector3.zero;
-            Vector3 forward = Vector3.zero;
-
-            if (Mathf.Approximately(up.x, 1f))
-            {
-                right = Vector3.up;
-                forward = Vector3.forward;
-            }
-            else if (Mathf.Approximately(up.y, 1f))
-            {
-                right = Vector3.right;
-                forward = Vector3.forward;
-            }
-            else if (Mathf.Approximately(up.z, 1f))
-            {
-                right = Vector3.right;
-                forward = Vector3.up;
-            }
 
             Event evt = Event.current;
 
