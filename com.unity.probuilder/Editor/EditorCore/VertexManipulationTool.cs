@@ -19,13 +19,10 @@ namespace UnityEditor.ProBuilder
     abstract class VertexManipulationTool
     {
         static Pref<HandleOrientation> s_HandleOrientation = new Pref<HandleOrientation>("editor.handleOrientation", HandleOrientation.World, SettingsScope.User);
-
-#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
         static Pref<PivotPoint> s_PivotPoint = new Pref<PivotPoint>("editor.pivotPoint", PivotPoint.Center, SettingsScope.User);
-#else
 
         [UserSetting(UserSettingsProvider.developerModeCategory, "PivotMode.Pivot", "Set the behavior of the \"Pivot\" handle mode when editing mesh elements.")]
-        static Pref<PivotPoint> s_PivotModePivotEquivalent = new Pref<PivotPoint>("editor.pivotModePivotEquivalent", PivotPoint.IndividualOrigins, SettingsScope.User);
+        static Pref<PivotPoint> s_PivotModePivotEquivalent = new Pref<PivotPoint>("editor.pivotModePivotEquivalent", PivotPoint.ActiveElement, SettingsScope.User);
 
         [UserSetting(UserSettingsProvider.developerModeCategory, "Show Internal Pivot and Orientation")]
         static Pref<bool> s_ShowHandleSettingsInScene = new Pref<bool>("developer.showHandleSettingsInScene", false, SettingsScope.User);
@@ -40,56 +37,57 @@ namespace UnityEditor.ProBuilder
         {
             get { return s_ShowHandleSettingsInScene; }
         }
-#endif
-
 
         // Enable this define to access PivotPoint.ActiveSelection. This also has the effect of ignoring Tools.pivotMode and Tools.pivotRotation settings.
-#if !PROBUILDER_ENABLE_HANDLE_OVERRIDE
         static PivotRotation s_PivotRotation;
-#endif
 
         public static PivotPoint pivotPoint
         {
-#if PROBUILDER_ENABLE_HANDLE_OVERRIDE
-            get { return s_PivotPoint; }
-            set { s_PivotPoint.SetValue(value, true); }
-#else
             get
             {
+                SyncPivotPoint();
+
                 return Tools.pivotMode == PivotMode.Pivot
                     ? pivotModePivotEquivalent
                     : PivotPoint.Center;
             }
-#endif
+        }
+
+        static void SyncPivotPoint()
+        {
+            var unity = s_PivotPoint.value == PivotPoint.Center ? PivotMode.Center : PivotMode.Pivot;
+
+            if (Tools.pivotMode != unity)
+            {
+                s_PivotPoint.SetValue(Tools.pivotMode == PivotMode.Center ? PivotPoint.Center : s_PivotModePivotEquivalent.value, true);
+                MeshSelection.InvalidateElementSelection();
+            }
         }
 
         public static HandleOrientation handleOrientation
         {
             get
             {
-#if !PROBUILDER_ENABLE_HANDLE_OVERRIDE
                 SyncPivotRotation();
-#endif
                 return s_HandleOrientation;
             }
             set
             {
                 s_HandleOrientation.SetValue(value, true);
 
-#if !PROBUILDER_ENABLE_HANDLE_OVERRIDE
                 if (value != HandleOrientation.ActiveElement)
                     Tools.pivotRotation = value == HandleOrientation.ActiveObject
                         ? PivotRotation.Local
                         : PivotRotation.Global;
 
+                MeshSelection.InvalidateElementSelection();
+
                 var toolbar = typeof(EditorWindow).Assembly.GetType("UnityEditor.Toolbar");
                 var repaint = toolbar.GetMethod("RepaintToolbar", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
                 repaint.Invoke(null, null);
-#endif
             }
         }
 
-#if !PROBUILDER_ENABLE_HANDLE_OVERRIDE
         // Sync ProBuilder HandleOrientation to the current Tools.PivotRotation
         static void SyncPivotRotation()
         {
@@ -99,6 +97,7 @@ namespace UnityEditor.ProBuilder
                     ? HandleOrientation.World
                     : HandleOrientation.ActiveObject);
                 s_PivotRotation = Tools.pivotRotation;
+                MeshSelection.InvalidateElementSelection();
                 return;
             }
 
@@ -108,14 +107,15 @@ namespace UnityEditor.ProBuilder
             if (value != HandleOrientation.ActiveElement)
             {
                 if (unity != Tools.pivotRotation)
+                {
                     s_HandleOrientation.SetValue(Tools.pivotRotation == PivotRotation.Global
-                        ? HandleOrientation.World
-                        : HandleOrientation.ActiveObject,
+                            ? HandleOrientation.World
+                            : HandleOrientation.ActiveObject,
                         true);
+                    MeshSelection.InvalidateElementSelection();
+                }
             }
         }
-
-#endif
 
         /// <value>
         /// Called when vertex modifications are complete.
@@ -134,7 +134,6 @@ namespace UnityEditor.ProBuilder
         Quaternion m_HandleRotation;
         Vector3 m_HandlePositionOrigin;
         Quaternion m_HandleRotationOrigin;
-        List<MeshAndElementGroupPair> m_MeshAndElementGroupPairs = new List<MeshAndElementGroupPair>();
         bool m_IsEditing;
 
         float m_ProgridsSnapValue = .25f;
@@ -145,9 +144,9 @@ namespace UnityEditor.ProBuilder
         static MethodInfo s_FindNearestVertex;
         static object[] s_FindNearestVertexArguments = new object[] { null, null, null };
 
-        protected IEnumerable<MeshAndElementGroupPair> meshAndElementGroupPairs
+        protected IEnumerable<MeshAndElementSelection> elementSelection
         {
-            get { return m_MeshAndElementGroupPairs; }
+            get { return MeshSelection.elementSelection; }
         }
 
         protected static bool vertexDragging
@@ -208,7 +207,7 @@ namespace UnityEditor.ProBuilder
                     BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
         }
 
-        protected abstract MeshAndElementGroupPair GetMeshAndElementGroupPair(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation);
+        internal abstract MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation);
 
         public void OnSceneGUI(Event evt)
         {
@@ -265,11 +264,6 @@ namespace UnityEditor.ProBuilder
                 mesh.ToMesh();
                 mesh.Refresh();
             }
-
-            m_MeshAndElementGroupPairs.Clear();
-
-            foreach (var mesh in MeshSelection.topInternal)
-                m_MeshAndElementGroupPairs.Add(GetMeshAndElementGroupPair(mesh, pivotPoint, handleOrientation));
 
             OnToolEngaged();
         }

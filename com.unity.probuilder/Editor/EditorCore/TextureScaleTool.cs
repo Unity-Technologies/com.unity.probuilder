@@ -52,19 +52,20 @@ namespace UnityEditor.ProBuilder
                 delta.x = 1f / delta.x;
                 delta.y = 1f / delta.y;
 
-                foreach (var mesh in meshAndElementGroupPairs)
+                foreach (var mesh in elementSelection)
                 {
                     if (!(mesh is MeshAndTextures))
                         continue;
 
-                    var origins = ((MeshAndTextures)mesh).origins;
-                    var positions = ((MeshAndTextures)mesh).textures;
+                    var mat = (MeshAndTextures) mesh;
+                    var origins = mat.origins;
+                    var positions = mat.textures;
 
                     foreach (var group in mesh.elementGroups)
                     {
                         foreach (var index in group.indices)
-                            positions[index] = group.postApplyMatrix.MultiplyPoint(
-                                    Vector2.Scale(group.preApplyMatrix.MultiplyPoint3x4(origins[index]), delta));
+                            positions[index] = mat.postApplyMatrix.MultiplyPoint(
+                                    Vector2.Scale(mat.preApplyMatrix.MultiplyPoint3x4(origins[index]), delta));
                     }
 
                     mesh.mesh.mesh.SetUVs(k_TextureChannel, positions);

@@ -533,7 +533,7 @@ namespace UnityEditor.ProBuilder
             return mesh.transform.rotation * Quaternion.LookRotation(nrm, bit);
         }
 
-        internal static Quaternion GetFaceRotation(ProBuilderMesh mesh, IEnumerable<Face> faces, HandleOrientation orientation)
+        internal static Quaternion GetFaceRotation(ProBuilderMesh mesh, HandleOrientation orientation, IEnumerable<Face> faces)
         {
             if (mesh == null)
                 return Quaternion.identity;
@@ -541,12 +541,15 @@ namespace UnityEditor.ProBuilder
             switch (orientation)
             {
                 case HandleOrientation.ActiveElement:
+
                     if (mesh.selectedFaceCount < 1)
                         goto case HandleOrientation.ActiveObject;
 
+                    var face = faces.First();
+
                     // Intentionally not using coincident vertices here. We want the normal of just the face, not an
                     // average of it's neighbors.
-                    return GetRotation(mesh, faces.First().distinctIndexesInternal);
+                    return GetRotation(mesh, face.distinctIndexesInternal);
 
                 case HandleOrientation.ActiveObject:
                     return mesh.transform.rotation;
@@ -556,7 +559,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        internal static Quaternion GetEdgeRotation(ProBuilderMesh mesh, IEnumerable<Edge> edges, HandleOrientation orientation)
+        internal static Quaternion GetEdgeRotation(ProBuilderMesh mesh, HandleOrientation orientation, IEnumerable<Edge> edges)
         {
             if (mesh == null)
                 return Quaternion.identity;
@@ -570,7 +573,7 @@ namespace UnityEditor.ProBuilder
                     // Getting an average of the edge normals isn't very helpful in real world uses, so we just use the
                     // first selected edge for orientation.
                     // This function accepts an enumerable because in the future we may want to do something more
-                    // sophisticated, and it's conventient because selections are stored as collections.
+                    // sophisticated, and it's convenient because selections are stored as collections.
                     var face = EdgeUtility.GetFace(mesh, edges.First());
 
                     if (face == null)
@@ -591,7 +594,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        internal static Quaternion GetVertexRotation(ProBuilderMesh mesh, IEnumerable<int> vertices, HandleOrientation orientation)
+        internal static Quaternion GetVertexRotation(ProBuilderMesh mesh, HandleOrientation orientation, IEnumerable<int> vertices)
         {
             if (mesh == null)
                 return Quaternion.identity;

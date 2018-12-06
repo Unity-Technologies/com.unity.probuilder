@@ -41,10 +41,41 @@ namespace UnityEditor.ProBuilder
             get { return EditorPrefs.GetFloat(UnityRotateSnap, 15f); }
         }
 
-        protected class MeshAndTextures : MeshAndElementGroupPair
+        protected class MeshAndTextures : MeshAndElementSelection
         {
             List<Vector4> m_Origins;
             List<Vector4> m_Textures;
+
+            Matrix4x4 m_PreApplyMatrix;
+            Matrix4x4 m_PostApplyMatrix;
+
+            public Matrix4x4 preApplyMatrix
+            {
+                get
+                {
+                    return m_PreApplyMatrix;
+                }
+
+                private set
+                {
+                    m_PreApplyMatrix = value;
+                    m_PostApplyMatrix = value.inverse;
+                }
+            }
+
+            public Matrix4x4 postApplyMatrix
+            {
+                get
+                {
+                    return m_PostApplyMatrix;
+                }
+
+                private set
+                {
+                    m_PostApplyMatrix = value;
+                    m_PreApplyMatrix = value.inverse;
+                }
+            }
 
             public List<Vector4> textures
             {
@@ -61,12 +92,7 @@ namespace UnityEditor.ProBuilder
                 m_Textures = new List<Vector4>();
                 mesh.GetUVs(k_TextureChannel, m_Textures);
                 m_Origins = new List<Vector4>(m_Textures);
-
-                foreach (var group in elementGroups)
-                {
-                    var bounds = Bounds2D.Center(m_Origins, group.indices);
-                    group.preApplyMatrix = Matrix4x4.Translate(-bounds);
-                }
+                preApplyMatrix = Matrix4x4.Translate(-Bounds2D.Center(m_Origins, mesh.selectedIndexesInternal));
             }
         }
 
@@ -74,7 +100,7 @@ namespace UnityEditor.ProBuilder
         {
             var isFaceMode = ProBuilderEditor.selectMode.ContainsFlag(SelectMode.TextureFace | SelectMode.Face);
 
-            foreach (var mesh in meshAndElementGroupPairs)
+            foreach (var mesh in elementSelection)
             {
                 if (!(mesh is MeshAndTextures))
                     continue;
@@ -106,7 +132,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        protected override MeshAndElementGroupPair GetMeshAndElementGroupPair(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation)
+        internal override MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation)
         {
             return new MeshAndTextures(mesh, pivot, orientation);
         }
