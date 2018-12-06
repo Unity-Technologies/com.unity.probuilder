@@ -1,8 +1,7 @@
 {
 	"Name":"ProBuilder Unity Package Manager",
 	"UnityPath":[
-		"C:/Program Files/2018.1/2018.1.9f2_a6cc294b73ee/Editor",
-		"/Applications/2018.1/Unity 2018.1.2f1_a46d718d282d/Unity.app"
+		"/Applications/2018.3/Unity 2018.3.0b10_6677d031dfe5/Unity.app"
 		// "C:/Users/$USER/unity/unity/build/WindowsEditor",
 		// "/Users/$USER/unity/unity/build/MacEditor/Unity.app",
 		// "C:/Users/$USER/unity/build/WindowsEditor",
@@ -28,7 +27,9 @@
 		"UNITY_2017_2_OR_NEWER",
 		"UNITY_2017_3_OR_NEWER",
 		"UNITY_2018_1_OR_NEWER",
-		"UNITY_2018_1",
+		"UNITY_2018_2_OR_NEWER",
+		"UNITY_2018_3",
+		"UNITY_2018_3_OR_NEWER",
 	],
 	"Clean":[
 		{ "Command":"rm", "Arguments": [
