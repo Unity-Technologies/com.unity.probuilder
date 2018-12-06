@@ -497,8 +497,7 @@ namespace UnityEditor.ProBuilder
                 else
                 {
                     // Snap plane on the closest plane when all grids are active (ProGrids).
-                    if (polygon.m_Points.Count < 1)
-                        FindProGridsClosestPlane(ray);
+                    FindProGridsClosestPlane(ray);
                 }
             }
             else
