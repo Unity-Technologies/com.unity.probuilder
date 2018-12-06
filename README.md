@@ -106,60 +106,19 @@ ProBuilder controls updating the UMesh via the `pb_Object::ToMesh` and
 
 ## Building for Unity Package Manager
 
-### Setup
+Run `mono pb-build.exe upm.json -C`, targeting the lowest supported version of Unity. Either edit the `upm.json` `UnityEditor` path values or pass `--unityPath` directly with the location of your Unity install.
 
-Check out the [com.unity.probuilder-dll](https://gitlab.internal.unity3d.com/upm-packages/world-building/com.unity.probuilder-dll) repository to a directory adjacent to the **probuilder2** repository.
-
-> **Important** There are two similarly named projects - `com.unity.probuilder` and `com.unity.probuilder-dll`. Make sure to download the `-dll` suffixed project - the former is for ProBuilder 4.x, whereas the `-dll` version is for 3.x.
-
-If you do not need to publish builds to Package Manager you can simply create an empty folder named **com.unity.probuilder-dll** in the same directory as the **probuilder2** repository.
-
-*See below for an example folder structure.*
-
-```
-# check out package manager repository
-git clone git@gitlab.internal.unity3d.com:upm-packages/world-building/com.unity.probuilder-dll.git com.unity.probuilder-dll
-```
-
-At this point your directory structure should something like this:
-
-```
-C:/Users/karl/dev
-|_ probuilder2
-  |_ art_source
-  |_ build
-  |_ docs
-  |_ probuilder2.0
-|_ com.unity.probuilder-dll
-  |_ Documentation
-  |_ ProBuilder
-  |_ CHANGELOG.md
-  |_ etc...
-```
-
-### Compile ProBuilder from Source Project
-
-In the **probuilder2** directory, run **upm.json** build target:
-
-`mono pb-build.exe upm.json`
-
-If you check out the `unity/trunk` repository to somewhere other than `$HOME` (`~` on unix, `C:/Users/%USER%` on Windows) you will need to either modify the **upm.json** file "UnityPath" to append your Unity build directory, or pass `-unity-path=<path_to_unity>` to `pb-build`. See `mono pb-build.exe --help` for more information on build arguments.
-
-The build target takes care of copying all the necessary files and changelogs to the package manager staging project, as well as updating the version information in both the source project and upm project.
-
-To increment the version number, update `probuilder2.0/Assets/ProCore/ProBuilder/About/changelog.txt`. This is where the version number for `pb_Version` and `package.json` is collected.
+This creates a package in `bin/com.unity.probuilder` that is ready to tag and push.
 
 #### Release checklist
 
+- [ ] Update `upm.json` with the lowest supported Unity version and defines.
 - [ ] Update `changelog.txt` in the `ProBuilder/About` folder
-- [ ] In `com.unity.probuilder-dll`, `git co . && git clean -df`
-- [ ] In `probuilder2`, run `mono pb-build.exe upm.json -C`
-- [ ] In `probuilder2`, `git commit -a`
-- [ ] In `probuilder2`, `git tag (version number)`
-- [ ] In `com.unity.probuilder-dll`, `git add -A; git commit`
-- [ ] In `com.unity.probuilder-dll`, `git tag (version number)`
-
-After pushing the `com.unity.probuilder-dll`, Gitlab CI will build and publish to Bintray.
+- [ ] `mono pb-build.exe upm.json -C`
+- [ ] `git commit -a`
+- [ ] `git tag v3.x.x-metadata.x`
+- [ ] `git push; git push origin v3.x.x-metadata.x`
+- [ ] The mirroring service will update the `gitlab` repo, which runs the CI to publish to Bintay.
 
 Pass `-d` for a debug build. See `pb-build --help` for additional args.
 
