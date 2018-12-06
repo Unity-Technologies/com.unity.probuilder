@@ -375,8 +375,7 @@ namespace UnityEditor.ProBuilder
                     {
                         evt.Use();
 
-                        Vector3 snapMask = Snapping.GetSnappingMaskBasedOnNormalVector(m_Plane.normal);
-                        polygon.m_Points[m_SelectedIndex] = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)), snapMask);
+                        polygon.m_Points[m_SelectedIndex] = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)), Vector3.one);
                         RebuildPolyShapeMesh(false);
                         SceneView.RepaintAll();
                     }
@@ -415,8 +414,7 @@ namespace UnityEditor.ProBuilder
                         if (polygon.m_Points.Count < 1)
                             polygon.transform.position = polygon.isOnGrid ? ProGridsInterface.ProGridsSnap(hit) : hit;
 
-                        Vector3 snapMask = Snapping.GetSnappingMaskBasedOnNormalVector(m_Plane.normal);
-                        Vector3 point = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(hit), snapMask);
+                        Vector3 point = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(hit), Vector3.one);
 
                         if (polygon.m_Points.Count > 2 && Math.Approx3(polygon.m_Points[0], point))
                         {
@@ -542,29 +540,27 @@ namespace UnityEditor.ProBuilder
             int axis = ProGridsInterface.GetActiveGridAxis();
             float offset = ProGridsInterface.GetActiveGridOffset();
 
-            Vector3 pivot;
-
             // Snap the plane to the rendered grid.
-            ProGridsInterface.GetPivot(out pivot);
+            ProGridsInterface.GetPivot(out planePosition);
 
             switch (axis)
             {
                 case 0:
                 case 1:
                     // X axis
-                    planePosition.x = pivot.x + offset;
+                    planePosition.x += offset;
                     normal = Vector3.right;
                     break;
                 case 2:
                 case 3:
                     // Y axis
-                    planePosition.y = pivot.y + offset;
+                    planePosition.y += offset;
                     normal = Vector3.up;
                     break;
                 case 4:
                 case 5:
                     // Z axis
-                    planePosition.z = pivot.z + offset;
+                    planePosition.z += offset;
                     normal = Vector3.forward;
                     break;
             }
