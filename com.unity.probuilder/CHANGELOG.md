@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.33] - 2018-11-26
+## [4.0.0-preview.34] - 2018-12-07
 
 ### Features
 
@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Texture scene tool now supports vertices and edges.
 - Improve performance of mesh rebuild functions.
 - Improve performance of vertex, edge, and face gizmos.
-- Respect Unity pivot mode and pivot orientation (note that setting `Orientation: Normal` overrides the Unity pivot rotation).
+- Respect Unity pivot mode and pivot orientation (note that setting `Orientation: Normal` overrides the Unity pivot orientation).
 
 ### Bug Fixes
 
@@ -59,6 +59,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix `Delete Faces` tooltip not showing "Backspace" as the shortcut key on Windows.
 - Fix Auto UV settings inspector not allowing certain properties to be edited with multiple selections.
 - Fix face, edge, and vertex modes requiring user to first select an object before registering element selection when clicking.
+- Fix bug where adjusting shape creation parameters would move the preview mesh.
+- Fix bug where the mesh element gizmos would not respect the screen DPI on startup.
+- Fix `Pipe` and `Sphere` shapes not setting a consistent pivot point.
+- Fix possible null reference exception when deleting the `Shape Editor` preview mesh.
+- Automatically destroy invalid `Poly Shape` objects when the selection is lost.
+- `Detach to GameObject` now sets the detached object as a child of the donor mesh.
+- Fix vertex billboards not rendering when the backing graphics API does not support geometry shaders.
+- Fix new shapes not instantiating on the grid when `Snap New Shape To Grid` is enabled.
 
 ### Changes
 
@@ -77,21 +85,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Performance optimization for selection changes in editor.
 - Make auto-resizing colliders opt-in instead of on by default.
 
-### Changes since 4.0.0-preview.32
+### Changes since 4.0.0-preview.33
 
-- Shorten the `Orientation: Active Selection` label to just `Orientation: Active`.
-
-### Changes since 4.0.0-preview.31
-
-- Fix bug where adjusting shape creation parameters would move the preview mesh.
-- Fix bug where the mesh element gizmos would not respect the screen DPI on startup.
-- Fix regression that broke ProGrids compatibility.
-- Fix `Pipe` and `Sphere` shapes not setting a consistent pivot point.
-- Fix possible null reference exception when deleting the `Shape Editor` preview mesh.
-- Automatically destroy invalid `Poly Shape` objects when the selection is lost.
-- `Detach to GameObject` now sets the detached object as a child of the donor mesh.
-- Fix vertex billboards not rendering when the backing graphics API does not support geometry shaders.
-- Fix new shapes not instantiating on the grid when `Snap New Shape To Grid` is enabled.
+- Fix `Poly Shape` not instantiating on grid when ProGrids is enabled.
+- Fix toggling static flags not consistently rebuilding lightmap UVs when `Auto Lightmap UVs` is enabled.
+- Fix `Poly Shape` not aligning with the ProGrids plane.
+- Add a preference to disable depth testing for mesh selection highlights.
+- Use the last selected mesh element as the active selection pivot, matching object selection.
+- Fix potential error when `Poly Shape` enters an invalid path.
+- (Regression) Fix `Material Editor` not applying materials to meshes correctly.
+- (Regression) Fix meshes with multiple materials not retaining materials when upgrading from older versions.
+- (Regression) Fix `manualUV` and `textureGroup` properties not saving.
+- (Regression) Fix `Freeze Transform` throwing errors.
+- (Internal) `PivotMode.Pivot` now works for vertices and edges.
+- (Internal) Fix pivot/center toggle not refreshing scene handle.
+- (Internal) Fix texture mode handles not respecting active selection.
 
 ### Known Issues
 
