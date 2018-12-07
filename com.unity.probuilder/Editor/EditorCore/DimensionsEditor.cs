@@ -41,12 +41,20 @@ namespace UnityEditor.ProBuilder
             material = new Material(Shader.Find("ProBuilder/UnlitVertexColor"));
             mesh.hideFlags = HideFlags.DontSave;
             material.hideFlags = HideFlags.DontSave;
+#if UNITY_2019_1_OR_NEWER
+            SceneView.duringSceneGui += OnSceneGUI;
+#else
             SceneView.onSceneGUIDelegate += OnSceneGUI;
+#endif
         }
 
         void OnDisable()
         {
+#if UNITY_2019_1_OR_NEWER
+            SceneView.duringSceneGui -= OnSceneGUI;
+#else
             SceneView.onSceneGUIDelegate -= OnSceneGUI;
+#endif
             DestroyImmediate(mesh);
             DestroyImmediate(material);
         }
