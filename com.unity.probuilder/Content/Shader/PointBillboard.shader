@@ -4,6 +4,7 @@ Shader "Hidden/ProBuilder/PointBillboard"
     {
         _Color ("Color", Color) = (1,1,1,1)
         _Scale ("Scale", Range(0, 20)) = 7
+        _HandleZTest ("_HandleZTest", Int) = 8
     }
 
     SubShader
@@ -22,7 +23,7 @@ Shader "Hidden/ProBuilder/PointBillboard"
         {
             Name "VertexPass"
             Lighting Off
-            ZTest LEqual
+            ZTest [_HandleZTest]
             ZWrite On
             Cull Off
             Blend Off
