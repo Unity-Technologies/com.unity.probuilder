@@ -26,11 +26,6 @@ namespace UnityEngine.ProBuilder
         internal static readonly Color proBuilderDarkGray = new Color(.1f, .1f, .1f, .3f);
 
         /// <summary>
-        /// The starting range for about menu items.
-        /// </summary>
-        public const int menuAbout = 0;
-
-        /// <summary>
         /// The starting range for editor menu items.
         /// </summary>
         public const int menuEditor = 100;
