@@ -1,12 +1,9 @@
 #pragma warning disable 0618
 
 using UnityEngine;
-using UnityEditor;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder
 {
@@ -318,9 +315,13 @@ namespace UnityEditor.ProBuilder
             GUILayout.EndScrollView();
         }
 
-        /**
-         * Applies the currently queued material to the selected face and eats the event.
-         */
+        /// <summary>
+        /// Applies the currently queued material to the selected face and eats the event.
+        /// </summary>
+        /// <param name="em"></param>
+        /// <param name="pb"></param>
+        /// <param name="quad"></param>
+        /// <returns></returns>
         public bool ClickShortcutCheck(EventModifiers em, ProBuilderMesh pb, Face quad)
         {
             if (UVEditor.instance == null)
@@ -329,7 +330,9 @@ namespace UnityEditor.ProBuilder
                 {
                     UndoUtility.RecordObject(pb, "Quick Apply");
                     quad.material = s_QueuedMaterial;
-                    OnFaceChanged(pb);
+                    pb.ToMesh();
+                    pb.Refresh();
+                    pb.Optimize();
                     EditorUtility.ShowNotification("Quick Apply Material");
                     return true;
                 }
@@ -338,18 +341,18 @@ namespace UnityEditor.ProBuilder
             return false;
         }
 
-        public static void ApplyMaterial(IEnumerable<ProBuilderMesh> selection, Material mat)
+        static void ApplyMaterial(IEnumerable<ProBuilderMesh> selection, Material mat)
         {
-            if (mat == null) return;
+            if (mat == null)
+                return;
 
             UndoUtility.RecordSelection(selection.ToArray(), "Set Face Materials");
 
-            foreach (ProBuilderMesh pb in selection)
+            foreach (var mesh in selection)
             {
-                Face[] faces = pb.selectedFaceCount > 0 ? pb.GetSelectedFaces() : pb.facesInternal;
-                foreach (var face in faces)
-                    face.material = mat;
-                OnFaceChanged(pb);
+                mesh.SetMaterial(mesh.selectedFaceCount > 0 ? mesh.GetSelectedFaces() : mesh.facesInternal, mat);
+                mesh.Rebuild();
+                mesh.Optimize();
             }
 
             if (ProBuilderEditor.instance != null && MeshSelection.selectedFaceCount > 0)
@@ -361,13 +364,6 @@ namespace UnityEditor.ProBuilder
             s_CurrentPalette.array = materials;
             UnityEditor.EditorUtility.SetDirty(s_CurrentPalette);
             AssetDatabase.SaveAssets();
-        }
-
-        static void OnFaceChanged(ProBuilderMesh pb)
-        {
-            pb.ToMesh();
-            pb.Refresh();
-            pb.Optimize();
         }
 
         void SetMaterialPalette(MaterialPalette palette)
