@@ -10,27 +10,6 @@ namespace UnityEditor.ProBuilder
     partial class EditorMeshHandles
     {
         const float k_DefaultGizmoSize = .2f;
-        static bool s_Initialized;
-        static Material s_LineMaterial;
-        static Material s_FaceMaterial;
-
-        static Mesh s_FaceMesh;
-
-        static void Init()
-        {
-            if (s_Initialized)
-                return;
-            s_Initialized = true;
-
-            var shader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.lineShader : BuiltinMaterials.wireShader;
-            s_LineMaterial = CreateMaterial(Shader.Find(shader), "ProBuilder::GeneralUseLineMaterial");
-
-            s_FaceMesh = new Mesh();
-            s_FaceMesh.hideFlags = HideFlags.HideAndDontSave;
-
-            s_FaceMaterial = CreateMaterial(Shader.Find(BuiltinMaterials.faceShader), "ProBuilder::FaceMaterial");
-            s_FaceMaterial.SetFloat("_Dither", (s_UseUnityColors || s_DitherFaceHandle) ? 1f : 0f);
-        }
 
         internal static void DrawGizmo(Vector3 position, Quaternion rotation, float size = -1f)
         {
@@ -129,7 +108,6 @@ namespace UnityEditor.ProBuilder
 
             public LineDrawingScope(Color color, float thickness = -1f, CompareFunction zTest = CompareFunction.LessEqual)
             {
-                Init();
                 m_Color = color;
                 m_Thickness = thickness < 0f ? s_EdgeLineSize : thickness;
                 m_ZTest = zTest;
@@ -142,13 +120,16 @@ namespace UnityEditor.ProBuilder
 
                 if (!m_Wire)
                 {
-                    s_LineMaterial.SetColor("_Color", color);
-                    s_LineMaterial.SetFloat("_Scale", thickness * EditorGUIUtility.pixelsPerPoint);
-                    s_LineMaterial.SetInt("_HandleZTest", (int)zTest);
+                    Get().m_LineMaterial.SetColor("_Color", color);
+                    Get().m_LineMaterial.SetFloat("_Scale", thickness * EditorGUIUtility.pixelsPerPoint);
+                    Get().m_LineMaterial.SetInt("_HandleZTest", (int)zTest);
                 }
 
-                if (m_Wire || !s_LineMaterial.SetPass(0))
+                if (m_Wire || !Get().m_LineMaterial.SetPass(0))
                 {
+#if UNITY_2019_1_OR_NEWER
+                    HandleUtility.ApplyWireMaterial(zTest);
+#else
                     if (s_ApplyWireMaterial == null)
                     {
                         s_ApplyWireMaterial = typeof(HandleUtility).GetMethod(
@@ -164,6 +145,7 @@ namespace UnityEditor.ProBuilder
 
                     s_ApplyWireMaterialArgs[0] = zTest;
                     s_ApplyWireMaterial.Invoke(null, s_ApplyWireMaterialArgs);
+#endif
                 }
 
                 GL.PushMatrix();
@@ -226,7 +208,6 @@ namespace UnityEditor.ProBuilder
 
             public TriangleDrawingScope(Color color, CompareFunction zTest = CompareFunction.LessEqual)
             {
-                Init();
                 m_Color = color;
                 m_ZTest = zTest;
                 Begin();
@@ -234,10 +215,10 @@ namespace UnityEditor.ProBuilder
 
             void Begin()
             {
-                s_FaceMaterial.SetColor("_Color", color);
-                s_FaceMaterial.SetInt("_HandleZTest", (int)zTest);
+                Get().m_FaceMaterial.SetColor("_Color", color);
+                Get().m_FaceMaterial.SetInt("_HandleZTest", (int)zTest);
 
-                if (!s_FaceMaterial.SetPass(0))
+                if (!Get().m_FaceMaterial.SetPass(0))
                     throw new Exception("Failed initializing face material.");
 
                 GL.PushMatrix();

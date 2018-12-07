@@ -34,7 +34,6 @@ namespace UnityEditor.ProBuilder
 
         static EditorToolbar s_EditorToolbar;
         static ProBuilderEditor s_Instance;
-        EditorMeshHandles m_EditorMeshHandles;
 
         GUIContent[] m_EditModeIcons;
         GUIStyle VertexTranslationInfoStyle;
@@ -279,11 +278,6 @@ namespace UnityEditor.ProBuilder
         {
             s_Instance = this;
 
-            if (m_EditorMeshHandles != null)
-                m_EditorMeshHandles.Dispose();
-
-            m_EditorMeshHandles = new EditorMeshHandles();
-
 #if UNITY_2019_1_OR_NEWER
             SceneView.duringSceneGui += OnSceneGUI;
 #else
@@ -319,9 +313,6 @@ namespace UnityEditor.ProBuilder
 
             UpdateSelection();
 
-            if (m_EditorMeshHandles != null)
-                m_EditorMeshHandles.Dispose();
-
             if (selectionUpdated != null)
                 selectionUpdated(null);
 
@@ -355,7 +346,7 @@ namespace UnityEditor.ProBuilder
 
         void LoadSettings()
         {
-            m_EditorMeshHandles.ReloadPreferences();
+            EditorMeshHandles.ResetPreferences();
 
             m_ScenePickerPreferences = new ScenePickerPreferences()
             {
@@ -531,7 +522,7 @@ namespace UnityEditor.ProBuilder
             if (m_CurrentEvent.type == EventType.MouseUp && m_CurrentEvent.button == 1 || m_CurrentEvent.type == EventType.Ignore)
                 m_IsRightMouseDown = false;
 
-            m_EditorMeshHandles.DrawSceneHandles(SceneDragAndDropListener.isDragging ? SelectMode.None : selectMode);
+            EditorMeshHandles.DrawSceneHandles(SceneDragAndDropListener.isDragging ? SelectMode.None : selectMode);
 
             DrawHandleGUI(sceneView);
 
@@ -714,7 +705,7 @@ namespace UnityEditor.ProBuilder
             {
                 try
                 {
-                    m_EditorMeshHandles.DrawSceneSelection(m_Hovering);
+                    EditorMeshHandles.DrawSceneSelection(m_Hovering);
                 }
                 catch
                 {
@@ -998,17 +989,14 @@ namespace UnityEditor.ProBuilder
             if (!s_Instance)
                 return;
 
-            if (s_Instance.m_EditorMeshHandles == null)
-                return;
-
             try
             {
-                s_Instance.m_EditorMeshHandles.RebuildSelectedHandles(MeshSelection.topInternal, selectMode, selectionOrVertexCountChanged);
+                EditorMeshHandles.RebuildSelectedHandles(MeshSelection.topInternal, selectMode, selectionOrVertexCountChanged);
             }
             catch
             {
                 // happens on undo when c++ object is gone but c# isn't in the know
-                s_Instance.m_EditorMeshHandles.ClearHandles();
+                EditorMeshHandles.ClearHandles();
             }
         }
 

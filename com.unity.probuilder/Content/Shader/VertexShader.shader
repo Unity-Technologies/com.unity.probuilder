@@ -4,6 +4,7 @@ Shader "Hidden/ProBuilder/VertexShader"
     {
         _Scale("Scale", Range(1,7)) = 3.3
         _Color ("Color", Color) = (1,1,1,1)
+        _HandleZTest ("_HandleZTest", Int) = 8
     }
 
     SubShader
@@ -16,7 +17,7 @@ Shader "Hidden/ProBuilder/VertexShader"
         }
 
         Lighting Off
-        ZTest LEqual
+        ZTest [_HandleZTest]
         ZWrite On
         Cull Off
         Blend Off
@@ -24,8 +25,6 @@ Shader "Hidden/ProBuilder/VertexShader"
 
         Pass
         {
-            AlphaTest Greater .25
-
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
