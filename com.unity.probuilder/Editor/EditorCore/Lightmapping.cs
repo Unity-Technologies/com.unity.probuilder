@@ -14,6 +14,8 @@ namespace UnityEditor.ProBuilder
     [InitializeOnLoad]
     static class Lightmapping
     {
+        const string k_StaticEditorFlagsProperty = "m_StaticEditorFlags";
+
         [UserSetting("General", "Auto Lightmap UVs", "Automatically build the lightmap UV array when editing ProBuilder meshes. If this feature is disabled, you will need to use the 'Generate UV2' action to build lightmap UVs for meshes prior to baking lightmaps.")]
         static Pref<bool> s_AutoUnwrapLightmapUV = new Pref<bool>("lightmapping.autoUnwrapLightmapUV", true);
 
@@ -99,6 +101,7 @@ namespace UnityEditor.ProBuilder
         static Lightmapping()
         {
             UL.completed += OnLightmappingCompleted;
+            Undo.postprocessModifications += PostprocessModifications;
         }
 
         /// <summary>
@@ -122,6 +125,35 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        static UndoPropertyModification[] PostprocessModifications(UndoPropertyModification[] modifications)
+        {
+            if (!Lightmapping.autoUnwrapLightmapUV)
+                return modifications;
+
+            foreach (var modification in modifications)
+            {
+                if (modification.currentValue.propertyPath.Equals(k_StaticEditorFlagsProperty))
+                {
+                    var staticFlags = uint.Parse(modification.currentValue.value);
+                    var lightmapStatic = (staticFlags & (uint) StaticEditorFlags.LightmapStatic) != 0;
+
+                    if (lightmapStatic)
+                    {
+                        var gameObject = modification.currentValue.target as GameObject;
+
+                        if (gameObject != null)
+                        {
+                            var mesh = gameObject.GetComponent<ProBuilderMesh>();
+
+                            if (mesh != null)
+                                mesh.Optimize();
+                        }
+                    }
+                }
+            }
+
+            return modifications;
+        }
         static void OnLightmappingCompleted()
         {
             if (!s_ShowMissingLightmapUVWarning)

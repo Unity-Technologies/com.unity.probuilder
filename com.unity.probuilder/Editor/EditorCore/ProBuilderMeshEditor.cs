@@ -62,8 +62,8 @@ namespace UnityEditor.ProBuilder
 
             m_UnwrapParameters = serializedObject.FindProperty("m_UnwrapParameters");
             m_StaticEditorFlags = m_GameObjectsSerializedObject.FindProperty("m_StaticEditorFlags");
-
             m_MeshRenderer = m_Mesh.gameObject.GetComponent<Renderer>();
+
             SelectionRenderState s = EditorUtility.GetSelectionRenderState();
             EditorUtility.SetSelectionRenderState(m_MeshRenderer, editor != null ? s & SelectionRenderState.Outline : s);
 
@@ -108,9 +108,32 @@ namespace UnityEditor.ProBuilder
 
             LightmapStaticSettings();
 
-            bool showLightmapSettings = (m_StaticEditorFlags.intValue & (int)StaticEditorFlags.LightmapStatic) != 0;
+            serializedObject.ApplyModifiedProperties();
 
-            if (showLightmapSettings)
+#if DEVELOPER_MODE
+            GUILayout.Label("Compiled Mesh Information", EditorStyles.boldLabel);
+            if (m_Mesh != null && m_Mesh.mesh != null)
+            {
+                GUILayout.Label("Vertex Count: " + m_Mesh.mesh.vertexCount);
+                GUILayout.Label("Submesh Count: " + m_Mesh.mesh.subMeshCount);
+            }
+#endif
+        }
+
+        void LightmapStaticSettings()
+        {
+            m_GameObjectsSerializedObject.Update();
+
+            bool lightmapStatic = (m_StaticEditorFlags.intValue & (int)StaticEditorFlags.LightmapStatic) != 0;
+
+            EditorGUI.BeginChangeCheck();
+
+            lightmapStatic = EditorGUILayout.Toggle(Styles.lightmapStatic, lightmapStatic);
+
+            if (EditorGUI.EndChangeCheck())
+                SceneModeUtility.SetStaticFlags(m_GameObjectsSerializedObject.targetObjects, (int)StaticEditorFlags.LightmapStatic, lightmapStatic);
+
+            if (lightmapStatic)
             {
                 EditorGUILayout.PropertyField(m_UnwrapParameters, true);
 
@@ -132,12 +155,12 @@ namespace UnityEditor.ProBuilder
                 if (!m_ModifyingMesh)
                 {
                     m_AnyMissingLightmapUVs = targets.Any(x =>
-                        {
-                            if (x is ProBuilderMesh)
-                                return !((ProBuilderMesh)x).HasArrays(MeshArrays.Texture1);
+                    {
+                        if (x is ProBuilderMesh)
+                            return !((ProBuilderMesh)x).HasArrays(MeshArrays.Texture1);
 
-                            return false;
-                        });
+                        return false;
+                    });
                 }
 
                 if (m_AnyMissingLightmapUVs)
@@ -153,34 +176,6 @@ namespace UnityEditor.ProBuilder
                 EditorGUILayout.HelpBox("To enable generation of lightmap UVs for this Mesh, please enable the 'Lightmap Static' property.", MessageType.Info);
             }
 
-            serializedObject.ApplyModifiedProperties();
-
-#if DEVELOPER_MODE
-            GUILayout.Label("Compiled Mesh Information", EditorStyles.boldLabel);
-            if (m_Mesh != null && m_Mesh.mesh != null)
-            {
-                GUILayout.Label("Vertex Count: " + m_Mesh.mesh.vertexCount);
-                GUILayout.Label("Submesh Count: " + m_Mesh.mesh.subMeshCount);
-            }
-#endif
-        }
-
-        void LightmapStaticSettings()
-        {
-            bool lightmapStatic = (m_StaticEditorFlags.intValue & (int)StaticEditorFlags.LightmapStatic) != 0;
-
-            EditorGUI.BeginChangeCheck();
-            lightmapStatic = EditorGUILayout.Toggle(Styles.lightmapStatic, lightmapStatic);
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                SceneModeUtility.SetStaticFlags(m_GameObjectsSerializedObject.targetObjects, (int)StaticEditorFlags.LightmapStatic, lightmapStatic);
-
-                if (lightmapStatic)
-                    RebuildLightmapUVs(false);
-
-                m_GameObjectsSerializedObject.Update();
-            }
         }
 
         void RebuildLightmapUVs(bool forceRebuildAll = true)
