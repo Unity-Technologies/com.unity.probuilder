@@ -1,9 +1,7 @@
 using UnityEngine;
-using UnityEditor;
 using UnityEngine.ProBuilder.MeshOperations;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder.UI;
 using MeshTopology = UnityEngine.MeshTopology;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 
@@ -15,12 +13,14 @@ namespace UnityEditor.ProBuilder
         static Color k_HandleColor = new Color(.8f, .8f, .8f, 1f);
         static Color k_HandleColorGreen = new Color(.01f, .9f, .3f, 1f);
         static Color k_HandleSelectedColor = new Color(.01f, .8f, .98f, 1f);
-        static readonly Vector3 k_SnapMask = new Vector3(1f, 0f, 1f);
+        
         const float k_HandleSize = .05f;
 
         Material m_LineMaterial;
         Mesh m_LineMesh = null;
+
         Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
+
         bool m_PlacingPoint = false;
         int m_SelectedIndex = -2;
         float m_DistanceFromHeightHandle;
@@ -248,6 +248,8 @@ namespace UnityEditor.ProBuilder
                         polygon.transform.position =
                             polygon.isOnGrid ? ProGridsInterface.ProGridsSnap(hitPointWorld, Vector3.one) : hitPointWorld;
 
+                        PlacePlaneOnCenter();
+
                         return;
                     }
                 }
@@ -282,6 +284,12 @@ namespace UnityEditor.ProBuilder
                     polygon.transform.rotation = Quaternion.Euler(new Vector3(-90f * Mathf.Sign(cam_z), 0f, 0f));
                     break;
             }
+
+            Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
+
+            SetPlaneBasedOnMousePosition(ray);
+
+            polygon.transform.rotation = Quaternion.LookRotation(m_Plane.normal) * Quaternion.Euler(new Vector3(90f, 0f, 0f));
         }
 
         void RebuildPolyShapeMesh(bool vertexCountChanged = false)
@@ -368,12 +376,12 @@ namespace UnityEditor.ProBuilder
                 if (eventType == EventType.MouseDrag)
                 {
                     float hitDistance = Mathf.Infinity;
-                    m_Plane.SetNormalAndPosition(polygon.transform.up, polygon.transform.position);
 
                     if (m_Plane.Raycast(ray, out hitDistance))
                     {
                         evt.Use();
-                        polygon.m_Points[m_SelectedIndex] = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)), k_SnapMask);
+
+                        polygon.m_Points[m_SelectedIndex] = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)), Vector3.one);
                         RebuildPolyShapeMesh(false);
                         SceneView.RepaintAll();
                     }
@@ -397,10 +405,9 @@ namespace UnityEditor.ProBuilder
                     if (polygon.m_Points.Count < 1)
                         SetPlane(evt.mousePosition);
 
-                    Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
                     float hitDistance = Mathf.Infinity;
 
-                    m_Plane.SetNormalAndPosition(polygon.transform.up, polygon.transform.position);
+                    Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
 
                     if (m_Plane.Raycast(ray, out hitDistance))
                     {
@@ -412,7 +419,7 @@ namespace UnityEditor.ProBuilder
                         if (polygon.m_Points.Count < 1)
                             polygon.transform.position = polygon.isOnGrid ? ProGridsInterface.ProGridsSnap(hit) : hit;
 
-                        Vector3 point = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(hit), k_SnapMask);
+                        Vector3 point = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(hit), Vector3.one);
 
                         if (polygon.m_Points.Count > 2 && Math.Approx3(polygon.m_Points[0], point))
                         {
@@ -478,10 +485,106 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        void SetPlaneBasedOnMousePosition(Ray ray)
+        {
+            if (ProGridsInterface.ProGridsActive())
+            {
+                if (!ProGridsInterface.IsFullGridEnabled())
+                {
+                    // Snap plane on one active grid (ProGrids).
+                    PlacePlaneOnProGridsAxis();
+                }
+                else
+                {
+                    // Snap plane on the closest plane when all grids are active (ProGrids).
+                    FindProGridsClosestPlane(ray);
+                }
+            }
+            else
+            {
+                // Snap on focus center.
+                PlacePlaneOnCenter();
+            }
+        }
+
+        void FindProGridsClosestPlane(Ray ray)
+        {
+            Vector3 pivot;
+
+            ProGridsInterface.GetPivot(out pivot);
+
+            Plane[] planes = new Plane[3];
+            planes[0].SetNormalAndPosition(Vector3.right, pivot);   // X axis
+            planes[1].SetNormalAndPosition(Vector3.up, pivot);      // Y axis
+            planes[2].SetNormalAndPosition(Vector3.forward, pivot); // Z Axis
+
+            float distance;
+            float closestDistance = Mathf.Infinity;
+            Plane closestPlane = default(Plane);
+
+            for (int i = 0; i < planes.Length; ++i)
+            {
+                if (planes[i].Raycast(ray, out distance))
+                {
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestPlane = planes[i];
+                    }
+                }
+            }
+
+            m_Plane.SetNormalAndPosition(closestPlane.normal, pivot);
+        }
+
+        void PlacePlaneOnProGridsAxis()
+        {
+            Vector3 planePosition = polygon.transform.position;
+            Vector3 normal = polygon.transform.up;
+            int axis = ProGridsInterface.GetActiveGridAxis();
+            float offset = ProGridsInterface.GetActiveGridOffset();
+
+            // Snap the plane to the rendered grid.
+            ProGridsInterface.GetPivot(out planePosition);
+
+            switch (axis)
+            {
+                case 0:
+                case 1:
+                    // X axis
+                    planePosition.x += offset;
+                    normal = Vector3.right;
+                    break;
+                case 2:
+                case 3:
+                    // Y axis
+                    planePosition.y += offset;
+                    normal = Vector3.up;
+                    break;
+                case 4:
+                case 5:
+                    // Z axis
+                    planePosition.z += offset;
+                    normal = Vector3.forward;
+                    break;
+            }
+
+            m_Plane.SetNormalAndPosition(normal, planePosition);
+        }
+
+        void PlacePlaneOnCenter()
+        {
+            Vector3 planePosition = polygon.transform.position;
+            Vector3 normal = polygon.transform.up;
+
+            m_Plane.SetNormalAndPosition(normal, planePosition);
+        }
+
         void DoExistingPointsGUI()
         {
             Transform trs = polygon.transform;
             int len = polygon.m_Points.Count;
+
             Vector3 up = polygon.transform.up;
             Vector3 right = polygon.transform.right;
             Vector3 forward = polygon.transform.forward;
@@ -494,9 +597,7 @@ namespace UnityEditor.ProBuilder
             if (!used &&
                 (evt.type == EventType.MouseDown &&
                  evt.button == 0 &&
-                 !EditorHandleUtility.IsAppendModifier(evt.modifiers)
-                )
-                )
+                 !EditorHandleUtility.IsAppendModifier(evt.modifiers)))
             {
                 m_SelectedIndex = -1;
                 Repaint();
@@ -560,7 +661,9 @@ namespace UnityEditor.ProBuilder
                     if (EditorGUI.EndChangeCheck())
                     {
                         UndoUtility.RecordObject(polygon, "Move Polygon Shape Point");
-                        polygon.m_Points[ii] = ProGridsInterface.ProGridsSnap(trs.InverseTransformPoint(point), k_SnapMask);
+
+                        Vector3 snapMask = Snapping.GetSnappingMaskBasedOnNormalVector(m_Plane.normal);
+                        polygon.m_Points[ii] = ProGridsInterface.ProGridsSnap(trs.InverseTransformPoint(point), snapMask);
                         OnBeginVertexMovement();
                         RebuildPolyShapeMesh(false);
                     }

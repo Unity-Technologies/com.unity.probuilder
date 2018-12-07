@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
@@ -11,14 +12,7 @@ namespace UnityEditor.ProBuilder
     /// </summary>
     static class ReflectionUtility
     {
-        public static bool enableWarnings = true;
         const BindingFlags k_AllFlags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
-
-        static void Warning(string text)
-        {
-            if (enableWarnings)
-                Debug.LogWarning(text);
-        }
 
         /// <summary>
         /// Get a component with type name.
@@ -61,84 +55,6 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Call a method with args.
-        /// </summary>
-        /// <param name="target">Target object</param>
-        /// <param name="method">The name of the method to invoke</param>
-        /// <param name="flags">Optional BindingFlags. If none are passed, defaults to Public|NonPublic|Static|Instance</param>
-        /// <param name="args">Any additional arguments to pass to the invoked function</param>
-        /// <returns></returns>
-        public static object Invoke(
-            object target,
-            string method,
-            BindingFlags flags = k_AllFlags,
-            params object[] args)
-        {
-            if (target == null)
-            {
-                Warning("Invoke failed, target is null and no type was provided.");
-                return null;
-            }
-
-            return Invoke(target, target.GetType(), method, null, flags, args);
-        }
-
-        public static object Invoke(
-            object target,
-            string type,
-            string method,
-            BindingFlags flags = k_AllFlags,
-            string assembly = null,
-            params object[] args)
-        {
-            Type t = GetType(type, assembly);
-
-            if (t == null && target != null)
-                t = target.GetType();
-
-            if (t != null)
-                return Invoke(target, t, method, null, flags, args);
-            else
-                Warning("Invoke failed, type is null: " + type);
-
-            return null;
-        }
-
-        /// <summary>
-        /// Invoke a method with arguments.
-        /// </summary>
-        /// <param name="target"></param>
-        /// <param name="type"></param>
-        /// <param name="method"></param>
-        /// <param name="methodParams"></param>
-        /// <param name="flags"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public static object Invoke(
-            object target,
-            Type type,
-            string method,
-            Type[] methodParams = null,
-            BindingFlags flags = k_AllFlags,
-            params object[] args)
-        {
-            MethodInfo mi = null;
-
-            if (methodParams == null)
-                mi = type.GetMethod(method, flags);
-            else
-                mi = type.GetMethod(method, flags, null, methodParams, null);
-
-            if (mi == null)
-            {
-                Warning("Failed to find method " + method + " in type " + type);
-                return null;
-            }
-
-            return mi.Invoke(target, args);
-        }
-
-        /// <summary>
         /// Fetch a value using GetProperty or GetField.
         /// </summary>
         /// <param name="target"></param>
@@ -152,7 +68,7 @@ namespace UnityEditor.ProBuilder
 
             if (t == null)
             {
-                Warning(string.Format("Could not find type \"{0}\"!", type));
+                Log.Warning("Could not find type \"{0}\"!", type);
                 return null;
             }
             else
@@ -198,6 +114,99 @@ namespace UnityEditor.ProBuilder
                 fi.SetValue(target, value);
 
             return pi != null || fi != null;
+        }
+
+        static public Delegate GetOpenDelegate<T>(Type type, string methodName)
+        {
+            MethodInfo methodInfo = type.GetMethod(methodName);
+            if (methodInfo != null)
+                return Delegate.CreateDelegate(typeof(T), methodInfo);
+            else
+            {
+                Log.Warning("Couldn't get method '{0}' from type {1}", methodName, type.ToString());
+            }
+            return null;
+        }
+
+        static public Delegate GetOpenDelegate<T>(Type type, string methodName, BindingFlags bindings)
+        {
+            MethodInfo methodInfo = type.GetMethod(methodName, bindings);
+            if (methodInfo != null)
+                return Delegate.CreateDelegate(typeof(T), methodInfo);
+            else
+            {
+                Log.Warning("Couldn't get method '{0}' from type {1}", methodName, type.ToString());
+            }
+
+            return null;
+        }
+
+        static public Delegate GetOpenDelegateOnProperty<T>(Type type, string propertyName)
+        {
+            PropertyInfo propertyInfo = type.GetProperty(propertyName);
+
+            if (propertyInfo != null)
+                return Delegate.CreateDelegate(typeof(T), propertyInfo.GetGetMethod());
+            else
+            {
+                Log.Warning("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
+            }
+            return null;
+        }
+
+        static public Delegate GetOpenDelegateOnProperty<T>(Type type, string propertyName, BindingFlags bindings)
+        {
+            PropertyInfo propertyInfo = type.GetProperty(propertyName, bindings);
+            MethodInfo methodInfo = propertyInfo.GetGetMethod(true);
+
+            if (methodInfo != null)
+                return Delegate.CreateDelegate(typeof(T), methodInfo);//propertyInfo.GetGetMethod());
+            else
+            {
+                Log.Warning("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
+            }
+            return null;
+        }
+
+        static public Delegate GetClosedDelegateOnProperty<T>(Type type, object target, string propertyName)
+        {
+            PropertyInfo propertyInfo = type.GetProperty(propertyName);
+
+            if (propertyInfo != null)
+                return Delegate.CreateDelegate(typeof(T), target, propertyInfo.GetGetMethod());
+            else
+            {
+                Log.Warning("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
+            }
+            return null;
+        }
+
+
+        static public Delegate GetClosedDelegateOnProperty<T>(Type type, object target, string propertyName, BindingFlags bindings)
+        {
+            PropertyInfo propertyInfo = type.GetProperty(propertyName, bindings);
+            MethodInfo methodInfo = propertyInfo.GetGetMethod(true);
+
+            if (methodInfo != null)
+                return Delegate.CreateDelegate(typeof(T), target, methodInfo);
+            else
+            {
+                Log.Warning("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
+            }
+            return null;
+        }
+
+        static public FieldInfo GetFieldInfo(Type type, string fieldName, BindingFlags bindings)
+        {
+            FieldInfo fieldInfo = type.GetField(fieldName, bindings);
+
+            if (fieldInfo != null)
+                return fieldInfo;
+            else
+            {
+                Log.Warning("Couldn't get field '{0}' from type {1}", fieldName, type.ToString());
+            }
+            return null;
         }
     }
 }

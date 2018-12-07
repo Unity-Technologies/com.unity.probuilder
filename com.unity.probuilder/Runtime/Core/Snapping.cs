@@ -67,5 +67,13 @@ namespace UnityEngine.ProBuilder
             foreach (var v in indexes)
                 verts[v] = mesh.transform.InverseTransformPoint(SnapValue(mesh.transform.TransformPoint(verts[v]), snap));
         }
+
+        internal static Vector3 GetSnappingMaskBasedOnNormalVector(Vector3 normal)
+        {
+            return new Vector3(
+                (Mathf.Approximately(Mathf.Abs(normal.x), 1f)) ? 0f : 1f,
+                (Mathf.Approximately(Mathf.Abs(normal.y), 1f)) ? 0f : 1f,
+                (Mathf.Approximately(Mathf.Abs(normal.z), 1f)) ? 0f : 1f);
+        }
     }
 }

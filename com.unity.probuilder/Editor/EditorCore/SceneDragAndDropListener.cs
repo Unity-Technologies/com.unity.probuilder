@@ -18,6 +18,8 @@ namespace UnityEditor.ProBuilder
         static bool s_IsFaceDragAndDropOverrideEnabled;
         static Matrix4x4 s_Matrix;
 
+        static Func<Material> s_GetDefaultMaterialDelegate = null;
+
         static SceneDragAndDropListener()
         {
 #if UNITY_2019_1_OR_NEWER
@@ -49,6 +51,16 @@ namespace UnityEditor.ProBuilder
             get { return ProBuilderEditor.selectMode == SelectMode.Face; }
         }
 
+        static Material GetDefaultMaterial()
+        {
+                if (s_GetDefaultMaterialDelegate == null)
+                    s_GetDefaultMaterialDelegate = (Func<Material>)ReflectionUtility.GetOpenDelegate<Func<Material>>(typeof(Material), "GetDefaultMaterial");
+
+                if (s_GetDefaultMaterialDelegate != null)
+                    return s_GetDefaultMaterialDelegate();
+                return null;
+        }
+
         static Material GetMaterialFromDragReferences(UObject[] references, bool createMaterialForTexture)
         {
             Material mat = references.FirstOrDefault(x => x is Material) as Material;
@@ -61,7 +73,8 @@ namespace UnityEditor.ProBuilder
 
             if (!string.IsNullOrEmpty(texPath))
             {
-                var defaultMaterial = ReflectionUtility.Invoke(null, typeof(Material), "GetDefaultMaterial") as Material;
+
+                var defaultMaterial = GetDefaultMaterial();
 
                 if (defaultMaterial == null)
                     mat = new Material(Shader.Find("Standard"));
