@@ -168,7 +168,11 @@ namespace UnityEditor.ProBuilder.Debug
 
         void OnEnable()
         {
+#if UNITY_2019_1_OR_NEWER
+            SceneView.duringSceneGui += OnSceneGUI;
+#else
             SceneView.onSceneGUIDelegate += OnSceneGUI;
+#endif
             MeshSelection.objectSelectionChanged += SelectionChanged;
             ProBuilderMesh.elementSelectionChanged += SelectionChanged;
             EditorMeshUtility.meshOptimized += MeshOptimized;
@@ -180,7 +184,11 @@ namespace UnityEditor.ProBuilder.Debug
             EditorMeshUtility.meshOptimized -= MeshOptimized;
             ProBuilderMesh.elementSelectionChanged -= SelectionChanged;
             MeshSelection.objectSelectionChanged -= SelectionChanged;
+#if UNITY_2019_1_OR_NEWER
+            SceneView.duringSceneGui -= OnSceneGUI;
+#else
             SceneView.onSceneGUIDelegate -= OnSceneGUI;
+#endif
         }
 
         void OnGUI()

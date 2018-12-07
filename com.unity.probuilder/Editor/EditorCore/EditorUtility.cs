@@ -365,6 +365,7 @@ namespace UnityEditor.ProBuilder
             return SceneView.lastActiveSceneView == null ? EditorWindow.GetWindow<SceneView>() : SceneView.lastActiveSceneView;
         }
 
+#if !UNITY_2019_1_OR_NEWER
         static SceneView.OnSceneFunc onPreSceneGuiDelegate
         {
             get
@@ -382,7 +383,6 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-#if !UNITY_2019_1_OR_NEWER
         internal static void RegisterOnPreSceneGUIDelegate(SceneView.OnSceneFunc func)
         {
             var del = onPreSceneGuiDelegate;
