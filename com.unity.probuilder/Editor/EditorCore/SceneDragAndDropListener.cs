@@ -162,54 +162,17 @@ namespace UnityEditor.ProBuilder
 
                 if (s_CurrentPreview != null && s_IsFaceDragAndDropOverrideEnabled)
                 {
-                    var renderer = go.GetComponent<Renderer>();
-                    var materials = renderer.sharedMaterials;
-                    var submeshCount = materials.Length;
-                    var index = -1;
-
-                    for (int i = 0; i < submeshCount && index < 0; i++)
-                    {
-                        if (materials[i] == s_PreviewMaterial)
-                            index = i;
-                    }
-
-                    if (index < 0)
-                    {
-                        // Material doesn't exist in MeshRenderer.sharedMaterials, now check if there is an unused
-                        // submeshIndex that we can replace with this value instead of creating a new entry.
-                        var submeshIndexes = new bool[submeshCount];
-
-                        foreach (var face in s_CurrentPreview.facesInternal)
-                            submeshIndexes[Math.Clamp(face.submeshIndex, 0, submeshCount - 1)] = true;
-
-                        index = Array.IndexOf(submeshIndexes, false);
-
-                        if (index > -1)
-                        {
-                            materials[index] = s_PreviewMaterial;
-                            renderer.sharedMaterials = materials;
-                        }
-                        else
-                        {
-                            index = materials.Length;
-                            var copy = new Material[index + 1];
-                            Array.Copy(materials, copy, index);
-                            copy[index] = s_PreviewMaterial;
-                            renderer.sharedMaterials = copy;
-                        }
-                    }
-
                     UndoUtility.RecordObject(s_CurrentPreview, "Set Face Material");
+                    UndoUtility.RecordObject(s_CurrentPreview.renderer, "Set Face Material");
 
-                    foreach (var face in s_CurrentPreview.selectedFacesInternal)
-                        face.submeshIndex = index;
-
-                    FilterUnusedSubmeshIndexes(s_CurrentPreview, materials);
+                    s_CurrentPreview.SetMaterial(s_CurrentPreview.selectedFacesInternal, s_PreviewMaterial);
 
                     s_CurrentPreview.ToMesh();
                     s_CurrentPreview.Refresh();
                     s_CurrentPreview.Optimize();
 
+                    FilterUnusedSubmeshIndexes(s_CurrentPreview, s_CurrentPreview.renderer.sharedMaterials);
+                    
                     evt.Use();
                 }
 

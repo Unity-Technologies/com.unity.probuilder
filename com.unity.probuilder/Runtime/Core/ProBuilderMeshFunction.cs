@@ -178,12 +178,7 @@ namespace UnityEngine.ProBuilder
             Refresh();
         }
 
-        /// <summary>
-        /// Wraps ToMesh and Refresh in a single call.
-        /// </summary>
-        /// <seealso cref="ToMesh"/>
-        /// <seealso cref="Refresh"/>
-        public void Rebuild()
+        internal void Rebuild()
         {
             ToMesh();
             Refresh();
@@ -413,6 +408,58 @@ namespace UnityEngine.ProBuilder
 
             foreach (int i in face.distinctIndexes)
                 m_Colors[i] = color;
+        }
+
+        /// <summary>
+        /// Set the material for a collection of faces.
+        /// </summary>
+        /// <remarks>
+        /// To apply the changes to the UnityEngine.Mesh, make sure to call ToMesh and Refresh.
+        /// </remarks>
+        /// <param name="faces">The faces to apply the material to.</param>
+        /// <param name="material">The material to apply.</param>
+        public void SetMaterial(IEnumerable<Face> faces, Material material)
+        {
+            var materials = renderer.sharedMaterials;
+            var submeshCount = materials.Length;
+            var index = -1;
+
+            for (int i = 0; i < submeshCount && index < 0; i++)
+            {
+                if (materials[i] == material)
+                    index = i;
+            }
+
+            if (index < 0)
+            {
+                // Material doesn't exist in MeshRenderer.sharedMaterials, now check if there is an unused
+                // submeshIndex that we can replace with this value instead of creating a new entry.
+                var submeshIndexes = new bool[submeshCount];
+
+                foreach (var face in m_Faces)
+                    submeshIndexes[Math.Clamp(face.submeshIndex, 0, submeshCount - 1)] = true;
+
+                index = Array.IndexOf(submeshIndexes, false);
+
+                // Found an unused submeshIndex, replace it with the material.
+                if (index > -1)
+                {
+                    materials[index] = material;
+                    renderer.sharedMaterials = materials;
+                }
+                else
+                {
+                    // There were no unused submesh indices, append another submesh and material.
+                    index = materials.Length;
+                    var copy = new Material[index + 1];
+                    Array.Copy(materials, copy, index);
+                    copy[index] = material;
+                    renderer.sharedMaterials = copy;
+                }
+            }
+
+            foreach (var face in faces)
+                face.submeshIndex = index;
         }
 
         void RefreshNormals()
