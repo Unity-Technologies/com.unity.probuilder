@@ -38,7 +38,7 @@ namespace UnityEditor.ProBuilder
             get { return s_ShowHandleSettingsInScene; }
         }
 
-        // Enable this define to access PivotPoint.ActiveSelection. This also has the effect of ignoring Tools.pivotMode and Tools.pivotRotation settings.
+        // Store PivotRotation so that we can detect changes and update our handles appropriately
         static PivotRotation s_PivotRotation;
 
         public static PivotPoint pivotPoint
@@ -211,6 +211,10 @@ namespace UnityEditor.ProBuilder
 
         public void OnSceneGUI(Event evt)
         {
+            // necessary because there is no callback on toolbar changes
+            SyncPivotPoint();
+            SyncPivotRotation();
+
             currentEvent = evt;
 
             if (evt.type == EventType.MouseUp || evt.type == EventType.Ignore)
