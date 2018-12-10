@@ -5,7 +5,7 @@ using Version = UnityEngine.ProBuilder.Version;
 namespace UnityEditor.ProBuilder
 {
     [InitializeOnLoad]
-    public class VersionValidator
+    class VersionValidator
     {
         static Pref<SemVer> s_StoredVersionInfo = new Pref<SemVer>("about.identifier", new SemVer(), SettingsScope.Project);
         
