@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.35] - 2018-12-17
+## [4.0.0-preview.36] - 2018-12-17
 
 ### Features
 
@@ -90,6 +90,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Performance optimization for selection changes in editor.
 - Make auto-resizing colliders opt-in instead of on by default.
 - Use the last selected mesh element as the active selection pivot, matching object selection.
+
+### Changes since 4.0.0-preview.35
+
+- (Internal) Fix regression that broke hover highlight for edges on Metal graphics devices.
 
 ### Changes since 4.0.0-preview.34
 
