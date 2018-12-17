@@ -309,7 +309,7 @@ namespace UnityEditor.ProBuilder
             }
             else if (selection.edge != Edge.Empty)
             {
-                using (var drawingScope = new LineDrawingScope(preselectionColor, -1f, s_HandleCompareFunction))
+                using (var drawingScope = new LineDrawingScope(preselectionColor))
                 {
                     GL.MultMatrix(mesh.transform.localToWorldMatrix);
                     drawingScope.DrawLine(positions[selection.edge.a], positions[selection.edge.b]);
