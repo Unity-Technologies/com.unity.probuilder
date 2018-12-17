@@ -10,17 +10,15 @@ Advanced features include UV editing, vertex colors, parametric shapes, and text
 
 ## Helpful Links and Info
 
-- [Email](mailto:contact@procore3d.com)
-- [Facebook](http://www.facebook.com/probuilder3d)
+- [Tutorials and Documentation](https://docs.unity3d.com/Packages/com.unity.probuilder@4.0/manual/index.html)
+- [Support Forum](https://forum.unity.com/forums/world-building.146/)
 - [Twitter](http://www.twitter.com/probuilder3d)
-- [Online Documentation](https://docs.unity3d.com/Packages/com.unity.probuilder@latest/)
-- [Tutorial Videos](http://www.procore3d.com/videos)
-- [Support and Troubleshooting](https://forum.unity.com/forums/world-building.146/)
 
 # Document Revision History
 
 |Date|Reason|Version|
 |---|---|---|
+| Dec 04, 2018 | Updating with changes from 4.0.0 | 4.0.0 |
 |Jan 31, 2018|Installation instructions updated, minor tweaks to wording. | 3.0.0 |
 |Nov 9, 2017|Document created. | 2.9.8 |
 

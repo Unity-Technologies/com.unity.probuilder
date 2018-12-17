@@ -3,7 +3,7 @@
 First time using ProBuilder? Start here for an overview of creating your first mesh, editing geometry,
 applying materials, and UV editing.
 
-<iframe class="youtube-preview" src="https://www.youtube.com/embed/Ta3HkV_qHTc" allowfullscreen></iframe>
+<iframe class="youtube-preview" width="560" height="315" src="https://www.youtube.com/embed/Ta3HkV_qHTc" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 ---
 
@@ -20,7 +20,7 @@ Every toolbar button has a tooltip that will show a short summary about it's use
 
 <img src="images/Cube_120x120.png" align="right"> Press `CTRL K` on your keyboard to spawn in a new ProBuilder-editable cube.
 
-To help you get started, ProBuilder includes a library of additional shapes. Each shape is customizable with starting dimensions and a set of parameters.
+To help you get started, ProBuilder includes a library of additional shapes. Each shape is customizable with starting dimensions and a set of parameters. Access these shapes by pressing `CTRL SHIFT K` on your keyboard.
 
 ![Shape Tool Example](images/Example_ShapeToolsWithCurvedStair.png)
 

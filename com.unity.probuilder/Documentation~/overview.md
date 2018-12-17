@@ -1,27 +1,26 @@
 # Installing ProBuilder
 
+> **TIP:** Always check and ensure that you have zero errors (red text) in the console **before** installing ProBuilder. 
+
 ## Unity 2018.1 and later (recommended)
 
-To install this package, follow the instructions in the [Package Manager documentation](https://docs.unity3d.com/Packages/com.unity.package-manager-ui@latest).
+1. Open the Package Manager ( `Window > Package Manager` )
+1. Click in the search bar and type "ProBuilder"
+1. Click on ProBuilder in the package list (left side), then click "Install" in the package details (right side)
 
 Verify that ProBuilder is correctly installed by opening `Tools > ProBuilder > About`.
 
-### Upgrading from ProBuilder 2.9.8
+### Upgrading from the Asset Store version of ProBuilder
 
-To upgrade a Unity project with ProBuilder 2.9.8 or later, follow these instructions.
-
-1. Open the project in Unity 2018.1 or later
-2. Edit the **manifest.json** as described above
-3. Follow the **Convert to Package Manager** utility instructions.
+ProBuilder will detect this, and automatically open the "Convert to Package Manager" utility. Follow the steps and instructions to complete the upgrade.
 
 If the **Convert to Package Manager** utility does not automatically open, you can manually start the process by opening `Tools > ProBuilder > Repair > Convert to Package Manager`.
 
-See also [Upgrading to Probuilder Package v3.0](faq#convert-to-package-manager)
-
+If you are having issues installing or upgrading, see the [ProBuilder Upgrade FAQ](faq#convert-to-package-manager) or send us a message on the [Support Forum](https://forum.unity.com/forums/world-building.146/).
 
 ## Unity 2017.3 and earlier
 
-**Important** - The Asset Store version of ProBuilder will only receive critical bug fixes going forward. New features are available in the 2018.1 Package Manager version of ProBuilder.
+> **IMPORTANT:** The Asset Store version of ProBuilder will only receive critical bug fixes going forward. New features are available in the 2018.1 Package Manager version of ProBuilder.
 
 1. Open your Unity project and ensure you have no persistent errors (red-colored text) in the Console.
 1. From the top menu, choose `Window > Asset Store`.

@@ -103,14 +103,13 @@ for a perfectly symmetrical result.
 
 Generates Lightmap UVs for any meshes in the open scenes that are missing them.
 
-![Options Icon](images/icons/Options.png) **Custom Settings Available** :
+> **TIP:** You can edit lightmap generation paramaters per-object in the "ProBuilderMesh" component found on ProBuilder objects. Or, modify the defaults via the [ProBuilder Preferences](preferences)
 
-![Lightmap UV Editor](images/LightmapUVEditor.png)
+![Options Icon](images/icons/Options.png) **Custom Settings Available** :
 
 |**Setting:** |**Description:** |
 |:---|:---|
-|__Auto Lightmap UVs__ |If **On**, ProBuilder will automatically build lightmap arrays as necessary. |
-|__Default Lightmap UVs Settings__ | Define a set of default UV2 unwrapping parameters that all new shapes will use. This preference is per-project. |
+|__Auto Lightmap UVs__ |If **On**, ProBuilder will automatically rebuild lightmap UVs when necessary (ie, if a mesh is edited or is changed to Static) |
 
 ## ![Export Icon](images/icons/Object_Export.png) Export
 
