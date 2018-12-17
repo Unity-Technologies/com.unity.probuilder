@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.34] - 2018-12-07
+## [4.0.0-preview.35] - 2018-12-17
 
 ### Features
 
@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Improve performance of mesh rebuild functions.
 - Improve performance of vertex, edge, and face gizmos.
 - Respect Unity pivot mode and pivot orientation (note that setting `Orientation: Normal` overrides the Unity pivot orientation).
+- Add a preference to disable depth testing for mesh selection highlights.
 
 ### Bug Fixes
 
@@ -67,6 +68,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `Detach to GameObject` now sets the detached object as a child of the donor mesh.
 - Fix vertex billboards not rendering when the backing graphics API does not support geometry shaders.
 - Fix new shapes not instantiating on the grid when `Snap New Shape To Grid` is enabled.
+- Fix potential error when `Poly Shape` enters an invalid path.
+- Fix `Poly Shape` not instantiating on grid when ProGrids is enabled.
+- Fix toggling static flags not consistently rebuilding lightmap UVs when `Auto Lightmap UVs` is enabled.
+- Fix `Poly Shape` not aligning with the ProGrids plane.
 
 ### Changes
 
@@ -84,22 +89,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Include third party dependencies as source code with assembly definitions instead of pre-compiled DLLs.
 - Performance optimization for selection changes in editor.
 - Make auto-resizing colliders opt-in instead of on by default.
-
-### Changes since 4.0.0-preview.33
-
-- Fix `Poly Shape` not instantiating on grid when ProGrids is enabled.
-- Fix toggling static flags not consistently rebuilding lightmap UVs when `Auto Lightmap UVs` is enabled.
-- Fix `Poly Shape` not aligning with the ProGrids plane.
-- Add a preference to disable depth testing for mesh selection highlights.
 - Use the last selected mesh element as the active selection pivot, matching object selection.
-- Fix potential error when `Poly Shape` enters an invalid path.
-- (Regression) Fix `Material Editor` not applying materials to meshes correctly.
-- (Regression) Fix meshes with multiple materials not retaining materials when upgrading from older versions.
-- (Regression) Fix `manualUV` and `textureGroup` properties not saving.
-- (Regression) Fix `Freeze Transform` throwing errors.
-- (Internal) `PivotMode.Pivot` now works for vertices and edges.
-- (Internal) Fix pivot/center toggle not refreshing scene handle.
-- (Internal) Fix texture mode handles not respecting active selection.
+
+### Changes since 4.0.0-preview.34
+
+- Fix FBX Exporter incompatibilities breaking compiliation.
+- Remove "About" window.
+- (Internal) Fix selection preview highlight not respecting color choices on all graphics devices.
+- (Internal) Fix inconsistencies with depth test param between vertex, edge, and face modes.
+- (Internal) Fix handle pivot and rotation not updating with toolbar.
 
 ### Known Issues
 
