@@ -1,3 +1,5 @@
+// todo Once we drop support for 2018.3, use optional assembly definitions
+#if PROBUILDER_FBX_2_0_1_OR_NEWER
 using System;
 using UnityEditor;
 using Autodesk.Fbx;
@@ -76,3 +78,4 @@ namespace UnityEngine.ProBuilder.Addons.FBX
         }
     }
 }
+#endif
