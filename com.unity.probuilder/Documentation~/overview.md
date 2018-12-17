@@ -12,7 +12,7 @@ Verify that ProBuilder is correctly installed by opening `Tools > ProBuilder > A
 
 ### Upgrading from the Asset Store version of ProBuilder
 
-ProBuilder will detect this, and should automatically open the "Convert to Package Manager" utility. Follow the steps and instructions to complete the upgrade.
+ProBuilder will detect this, and automatically open the "Convert to Package Manager" utility. Follow the steps and instructions to complete the upgrade.
 
 If the **Convert to Package Manager** utility does not automatically open, you can manually start the process by opening `Tools > ProBuilder > Repair > Convert to Package Manager`.
 
