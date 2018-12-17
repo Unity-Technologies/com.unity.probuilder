@@ -8,7 +8,7 @@ ProBuilder contains many settings that can be customized to suit your needs.
 
 
 ## Experimental
-> **May break your project, use with care!**
+> **By enabling these, you’ll have early access to features that are still under development. That means you’ll experience a less stable ProBuilder, so please use with caution. Additionally, we cannot gauruntee when or if these experimental features will be completed.**
 
 |**Setting:** ||**Description:**|
 |:---|:---|:---|
