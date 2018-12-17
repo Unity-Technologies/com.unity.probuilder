@@ -12,12 +12,6 @@ namespace UnityEditor.ProBuilder
             get { return ProBuilderEditor.instance; }
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/About", false, PreferenceKeys.menuAbout)]
-        public static void MenuInitAbout()
-        {
-            AboutWindow.Init();
-        }
-
         [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/" + PreferenceKeys.pluginTitle + " Window", false,
              PreferenceKeys.menuEditor)]
         public static void OpenEditorWindow()
