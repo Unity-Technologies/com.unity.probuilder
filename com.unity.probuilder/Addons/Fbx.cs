@@ -1,12 +1,8 @@
-using UnityEngine;
-using UnityEditor;
 using System;
-#if PROBUILDER_FBX_PLUGIN_ENABLED
+using UnityEditor;
 using Autodesk.Fbx;
-using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEditor.Formats.Fbx.Exporter;
-#endif
 
 namespace UnityEngine.ProBuilder.Addons.FBX
 {
@@ -31,19 +27,14 @@ namespace UnityEngine.ProBuilder.Addons.FBX
     {
         static bool s_FbxIsLoaded = false;
 
-
-#pragma warning disable 414
-        static readonly string[] k_ProBuilderTypes = new string[]
+        static readonly Type[] k_ProBuilderTypes = new Type[]
         {
-            "BezierShape",
-            "PolyShape",
-            "Entity",
+            typeof(BezierShape),
+            typeof(PolyShape),
+            typeof(Entity)
         };
-#pragma warning restore 414
 
         public static bool fbxEnabled { get { return s_FbxIsLoaded; } }
-
-#if PROBUILDER_FBX_PLUGIN_ENABLED
 
         static FbxOptions m_FbxOptions = new FbxOptions() {
             quads = true
@@ -59,15 +50,15 @@ namespace UnityEngine.ProBuilder.Addons.FBX
             if (s_FbxIsLoaded)
                 return;
             ModelExporter.RegisterMeshCallback<ProBuilderMesh>(GetMeshForComponent, true);
-            m_FbxOptions.quads = PreferencesInternal.GetBool("Export::m_FbxQuads", true);
+            m_FbxOptions.quads = ProBuilderSettings.Get<bool>("Export::m_FbxQuads", SettingsScope.User, true);
             s_FbxIsLoaded = true;
         }
 
         static bool GetMeshForComponent(ModelExporter exporter, ProBuilderMesh pmesh, FbxNode node)
         {
             Mesh mesh = new Mesh();
-            var materials = MeshUtility.Compile(pmesh, mesh, m_FbxOptions.quads ? MeshTopology.Quads : MeshTopology.Triangles);
-            exporter.ExportMesh(mesh, node, materials);
+            MeshUtility.Compile(pmesh, mesh, m_FbxOptions.quads ? MeshTopology.Quads : MeshTopology.Triangles);
+            exporter.ExportMesh(mesh, node, pmesh.GetComponent<MeshRenderer>().sharedMaterials);
             Object.DestroyImmediate(mesh);
 
             // probuilder can't handle mesh assets that may be externally reloaded, just strip pb stuff for now.
@@ -83,7 +74,5 @@ namespace UnityEngine.ProBuilder.Addons.FBX
 
             return true;
         }
-
-#endif
     }
 }

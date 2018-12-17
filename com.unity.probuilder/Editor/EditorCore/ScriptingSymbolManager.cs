@@ -1,37 +1,9 @@
 using System;
-using System.Linq;
-using System.Reflection;
-using UnityEngine.ProBuilder;
-using UnityEditor;
 
 namespace UnityEditor.ProBuilder
 {
-    /// <summary>
-    /// Addons that rely on scripting define symbols can be enabled / disabled here. This class is separated from the add-on scripts themselves and bundled in the DLL so that restarting Unity will unload scripting defines that are no longer available.
-    /// </summary>
-    [InitializeOnLoad]
     static class ScriptingSymbolManager
     {
-        const string k_FbxModelExporterType = "UnityEditor.Formats.Fbx.Exporter.ModelExporter";
-
-        static ScriptingSymbolManager()
-        {
-            if (FbxTypesExist())
-                AddScriptingDefine("PROBUILDER_FBX_PLUGIN_ENABLED");
-            else
-                RemoveScriptingDefine("PROBUILDER_FBX_PLUGIN_ENABLED");
-        }
-
-        static bool FbxTypesExist()
-        {
-#if UNITY_2017_1_OR_NEWER
-            Type fbxExporterType = ReflectionUtility.GetType(k_FbxModelExporterType);
-            return fbxExporterType != null;
-#else
-            return false;
-#endif
-        }
-
         static bool IsObsolete(BuildTargetGroup group)
         {
             var attrs = typeof(BuildTargetGroup).GetField(group.ToString()).GetCustomAttributes(typeof(ObsoleteAttribute), false);
