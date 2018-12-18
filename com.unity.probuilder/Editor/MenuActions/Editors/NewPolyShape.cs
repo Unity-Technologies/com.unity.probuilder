@@ -39,16 +39,19 @@ namespace UnityEditor.ProBuilder.Actions
             ProBuilderMesh pb = poly.gameObject.AddComponent<ProBuilderMesh>();
             pb.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals);
             EditorUtility.InitObject(pb);
+
+            // Special case - we don't want to reset the grid pivot because we rely on it to set the active plane for
+            // interaction, regardless of whether snapping is enabled or not.
+            if (ProGridsInterface.SnapEnabled() || ProGridsInterface.GridVisible())
+            {
+                Vector3 pivot;
+                if(ProGridsInterface.GetPivot(out pivot))
+                    go.transform.position = pivot;
+            }
             MeshSelection.SetSelection(go);
             UndoUtility.RegisterCreatedObjectUndo(go, "Create Poly Shape");
             poly.polyEditMode = PolyShape.PolyEditMode.Path;
 
-            Vector3 pivot;
-
-            if (ProGridsInterface.ProGridsActive() &&
-                ProGridsInterface.SnapEnabled() &&
-                ProGridsInterface.GetPivot(out pivot))
-                go.transform.position = pivot;
 
             return new ActionResult(ActionResult.Status.Success, "Create Poly Shape");
         }
