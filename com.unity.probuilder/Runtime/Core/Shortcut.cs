@@ -75,7 +75,7 @@ namespace UnityEngine.ProBuilder
             shortcuts.Add(new Shortcut("Set Collider", "Sets all selected objects to entity type Collider.", KeyCode.C, 0));
             shortcuts.Add(new Shortcut("Set Mover", "Sets all selected objects to entity type Mover.", KeyCode.M, 0));
             shortcuts.Add(new Shortcut("Set Detail", "Sets all selected objects to entity type Brush.", KeyCode.B, 0));
-            shortcuts.Add(new Shortcut("Toggle Handle Pivot", "Toggles the orientation of the ProBuilder selection handle.", KeyCode.P, 0));
+            shortcuts.Add(new Shortcut("Toggle Handle Orientation", "Toggles the orientation of the ProBuilder selection handle.", KeyCode.P, 0));
             shortcuts.Add(new Shortcut("Set Pivot", "Center pivot around current selection.", KeyCode.J, EventModifiers.Command));
             shortcuts.Add(new Shortcut("Delete Face", "Deletes all selected faces.", KeyCode.Backspace, EventModifiers.FunctionKey));
             shortcuts.Add(new Shortcut("Vertex Mode", "Enter Vertex editing mode.  Automatically swaps to Element level editing.", KeyCode.H, (EventModifiers)0));

@@ -893,6 +893,14 @@ namespace UnityEditor.ProBuilder
                     selectMode = SelectMode.Object;
                     return true;
 
+                // Used to be (incorrectly) named handle pivot, and since shortcuts are serialized this value is still valid
+                case "Toggle Handle Pivot":
+                case "Toggle Handle Orientation":
+                    var orientation = (int) VertexManipulationTool.handleOrientation;
+                    var count = Enum.GetValues(typeof(HandleOrientation)).Length;
+                    VertexManipulationTool.handleOrientation = (HandleOrientation) ((orientation+1) % count);
+                    return true;
+
                 // TODO Remove once a workaround for non-upper-case shortcut chars is found
                 case "Toggle Selection Mode":
                     if (s_UniqueModeShortcuts)
