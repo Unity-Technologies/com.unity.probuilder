@@ -212,12 +212,11 @@ namespace UnityEditor.ProBuilder
 
             DrawPolyLine(polygon.m_Points);
 
-            var createShapeSucceeded = polygon.CreateShapeFromPolygon().status == ActionResult.Status.Success;
+            polygon.CreateShapeFromPolygon();
 
-            if (polygon.polyEditMode == PolyShape.PolyEditMode.Path || createShapeSucceeded)
-                ProBuilderEditor.Refresh(vertexCountChanged);
-            else
-                ProBuilderEditor.Refresh();
+            // While the vertex count may not change, the triangle winding might. So unfortunately we can't take
+            // advantage of the `vertexCountChanged = false` optimization here.
+            ProBuilderEditor.Refresh();
         }
 
         void OnSceneGUI()
