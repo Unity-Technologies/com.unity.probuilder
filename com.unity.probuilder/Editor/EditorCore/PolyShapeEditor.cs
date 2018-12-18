@@ -3,7 +3,6 @@ using UnityEngine.ProBuilder.MeshOperations;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using MeshTopology = UnityEngine.MeshTopology;
-using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 
 namespace UnityEditor.ProBuilder
 {
@@ -407,7 +406,7 @@ namespace UnityEditor.ProBuilder
             {
                 m_Plane.SetNormalAndPosition(
                     m_Plane.normal,
-                    ProGridsInterface.ProGridsSnap(m_Plane.normal * m_Plane.distance));
+                    ProGridsInterface.ProGridsSnap(m_Plane.normal * -m_Plane.distance));
             }
 
             var planeNormal = m_Plane.normal;

@@ -1,9 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditorInternal;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 
 namespace UnityEditor.ProBuilder
@@ -632,15 +630,7 @@ namespace UnityEditor.ProBuilder
             Plane plane;
 
             if (GetPlaneFromPickedObject(mousePosition, out plane))
-            {
-                var rotation = Quaternion.LookRotation(plane.normal);
-                var go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                go.transform.position = plane.normal * -plane.distance;
-                go.transform.rotation = rotation;
-                go.transform.localScale = Vector3.one * 100f;
-
                 return plane;
-            }
 
             if(GetPlaneFromProGridsAxis(mousePosition, out plane))
                 return plane;
@@ -676,7 +666,8 @@ namespace UnityEditor.ProBuilder
                         go,
                         out hit))
                     {
-                        plane = new Plane(go.transform.TransformDirection(hit.normal),
+                        plane = new Plane(
+                            go.transform.TransformDirection(hit.normal),
                             go.transform.TransformPoint(hit.point));
                         return true;
                     }
@@ -762,18 +753,23 @@ namespace UnityEditor.ProBuilder
 
         static Plane GetPlaneFromCameraDirection()
         {
-            SceneView sceneView = SceneView.lastActiveSceneView;
+            var sceneView = SceneView.lastActiveSceneView;
+            var cameraDirection = sceneView.camera.transform.forward;
 
-            float camX = Vector3.Dot(sceneView.camera.transform.forward, Vector3.right);
-            float camY = Vector3.Dot(sceneView.camera.transform.position - sceneView.pivot.normalized, Vector3.up);
-            float camZ = Vector3.Dot(sceneView.camera.transform.forward, Vector3.forward);
+            float pitch = Mathf.Abs(Vector3.Dot(cameraDirection, Vector3.up));
+            float right = Mathf.Abs(Vector3.Dot(cameraDirection, Vector3.right));
+            float forward = Mathf.Abs(Vector3.Dot(cameraDirection, Vector3.forward));
 
             ProjectionAxis axis = ProjectionAxis.Y;
 
-            if (Mathf.Abs(camX) > .98f)
-                axis = ProjectionAxis.X;
-            else if (Mathf.Abs(camZ) > .98f)
-                axis = ProjectionAxis.Z;
+            // Orthographic view, use X or Z
+            if (pitch < .02f)
+            {
+                if (right > forward)
+                    axis = ProjectionAxis.X;
+                else
+                    axis = ProjectionAxis.Z;
+            }
 
             return new Plane(Projection.ProjectionAxisToVector(axis), SceneView.lastActiveSceneView.pivot);
         }
