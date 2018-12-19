@@ -638,19 +638,17 @@ namespace UnityEditor.ProBuilder
             return GetPlaneFromCameraDirection();
         }
 
-        static List<GameObject> s_IgnorePick = new List<GameObject>();
-
         static bool GetPlaneFromPickedObject(Vector2 mousePosition, out Plane plane)
         {
             GameObject go = null;
-            s_IgnorePick.Clear();
+            var ignorePicking = new List<GameObject>();
 
             do
             {
                 if (go != null)
-                    s_IgnorePick.Add(go);
+                    ignorePicking.Add(go);
 
-                go = HandleUtility.PickGameObject(mousePosition, false, s_IgnorePick.ToArray());
+                go = HandleUtility.PickGameObject(mousePosition, false, ignorePicking.ToArray());
             } while (go != null && go.GetComponent<MeshFilter>() == null);
 
             if (go != null)
