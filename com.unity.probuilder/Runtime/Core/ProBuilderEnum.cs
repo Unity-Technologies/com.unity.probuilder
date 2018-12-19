@@ -152,6 +152,14 @@ namespace UnityEngine.ProBuilder
         ZNegative
     }
 
+    enum HandleAxis
+    {
+        X = 1 << 0,
+        Y = 1 << 1,
+        Z = 1 << 2,
+        Free = 1 << 3
+    }
+
     /// <summary>
     /// pb_ShapeEditor enum.
     /// </summary>

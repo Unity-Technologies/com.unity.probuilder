@@ -32,6 +32,7 @@ namespace UnityEditor.ProBuilder
         static Func<float> s_GetActiveGridOffsetDelegate = null;
         static Func<float> s_SnapValueDelegate = null;
         static Func<Vector3> s_GetPivotDelegate = null;
+        static FieldInfo s_GridVisibleField = null;
 
         static Action<Action<float>> s_SubscribePushToGridEventDelegate = null;
         static Action<Action<float>> s_UnsubscribePushToGridEventDelegate = null;
@@ -119,7 +120,7 @@ namespace UnityEditor.ProBuilder
 
             if (s_UseAxisConstraintDelegate == null)
                 s_UseAxisConstraintDelegate = (Func<bool>)ReflectionUtility.GetOpenDelegate<Func<bool>>(GetProGridsType(), "UseAxisConstraints");
-                
+
             if (s_UseAxisConstraintDelegate != null)
                 return s_UseAxisConstraintDelegate();
 
@@ -140,6 +141,23 @@ namespace UnityEditor.ProBuilder
 
             if (s_SnapEnabledDelegate != null)
                 return s_SnapEnabledDelegate();
+
+            return false;
+        }
+
+        /// <summary>
+        /// Is the grid visible?
+        /// </summary>
+        public static bool GridVisible()
+        {
+            if (GetProGridsType() == null || GetProGridsInstance() == null)
+                return false;
+
+            if (s_GridVisibleField == null)
+                s_GridVisibleField = GetProGridsType().GetField("m_DrawGrid", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            if (s_GridVisibleField != null)
+                return (bool) s_GridVisibleField.GetValue(GetProGridsInstance());
 
             return false;
         }
@@ -177,6 +195,9 @@ namespace UnityEditor.ProBuilder
             if (s_GetPivotDelegate != null)
             {
                 pivot = s_GetPivotDelegate();
+
+                // earlier version of progrids return a non-snapped pivot point
+                pivot = Snapping.SnapValue(pivot, SnapValue());
                 return true;
             }
 
@@ -195,15 +216,26 @@ namespace UnityEditor.ProBuilder
             return false;
         }
 
-        public static int GetActiveGridAxis()
+        public static HandleAxis GetActiveGridAxis()
         {
             if (s_GetActiveGridAxisDelegate == null)
                 s_GetActiveGridAxisDelegate = ReflectionUtility.GetFieldInfo(GetProGridsType(), "m_RenderPlane", (BindingFlags.Instance | BindingFlags.NonPublic));
 
             if (s_GetActiveGridAxisDelegate != null)
-                return (int)s_GetActiveGridAxisDelegate.GetValue(GetProGridsInstance());
-            
-            return -1;
+            {
+                var value = (int) s_GetActiveGridAxisDelegate.GetValue(GetProGridsInstance());
+
+                // note - the hex notation that doesn't align to bit masks is intentional. long ago these values were
+                // defined in progrids, and now we're stuck with random values in the render plane enum.
+                if(value == 0x1 || value == 0x8)
+                    return HandleAxis.X;
+                if(value == 0x2 || value == 0x16)
+                    return HandleAxis.Y;
+                if(value == 0x4 || value == 0x32)
+                    return HandleAxis.Z;
+            }
+
+            return HandleAxis.Free;
         }
 
         public static float GetActiveGridOffset()
@@ -214,7 +246,7 @@ namespace UnityEditor.ProBuilder
 
             if (s_GetActiveGridOffsetDelegate != null)
                 return s_GetActiveGridOffsetDelegate();
-            
+
             return 0f;
         }
 

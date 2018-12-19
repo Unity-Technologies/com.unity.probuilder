@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
+using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 
 namespace UnityEditor.ProBuilder
 {
@@ -613,6 +613,163 @@ namespace UnityEditor.ProBuilder
                 default:
                     return Quaternion.identity;
             }
+        }
+
+        /// <summary>
+        /// Get a plane suitable for mouse input in a scene view.
+        /// </summary>
+        /// <param name="mousePosition"></param>
+        /// <returns></returns>
+        internal static Plane FindBestPlane(Vector2 mousePosition)
+        {
+            // Priority in finding the "best" plane for input from a mouse position:
+            // 1. Take the plane from the first hit mesh.
+            // 2. If ProGrids is drawing a grid, use the plane normal and raycast for position
+            // 3. Use the nearest matching plane based on the scene camera direction
+
+            Plane plane;
+
+            if (GetPlaneFromPickedObject(mousePosition, out plane))
+                return plane;
+
+            if(GetPlaneFromProGridsAxis(mousePosition, out plane))
+                return plane;
+
+            return GetPlaneFromCameraDirection();
+        }
+
+        static bool GetPlaneFromPickedObject(Vector2 mousePosition, out Plane plane)
+        {
+            GameObject go = null;
+            var ignorePicking = new List<GameObject>();
+
+            do
+            {
+                if (go != null)
+                    ignorePicking.Add(go);
+
+                go = HandleUtility.PickGameObject(mousePosition, false, ignorePicking.ToArray());
+            } while (go != null && go.GetComponent<MeshFilter>() == null);
+
+            if (go != null)
+            {
+                Mesh m = go.GetComponent<MeshFilter>().sharedMesh;
+
+                if (m != null)
+                {
+                    RaycastHit hit;
+
+                    if (UnityEngine.ProBuilder.HandleUtility.MeshRaycast(
+                        HandleUtility.GUIPointToWorldRay(mousePosition),
+                        go,
+                        out hit))
+                    {
+                        plane = new Plane(
+                            go.transform.TransformDirection(hit.normal),
+                            go.transform.TransformPoint(hit.point));
+                        return true;
+                    }
+                }
+            }
+
+            plane = default(Plane);
+            return false;
+        }
+
+        static bool GetPlaneFromProGridsAxis(Vector2 mousePosition, out Plane plane)
+        {
+            if (!ProGridsInterface.ProGridsActive() || !ProGridsInterface.GridVisible())
+            {
+                plane = default(Plane);
+                return false;
+            }
+
+            Vector3 point = SceneView.lastActiveSceneView.pivot;
+            Vector3 progridsPivot;
+            if(ProGridsInterface.GetPivot(out progridsPivot))
+                point = progridsPivot;
+            Vector3 normal = Vector3.up;
+
+            if (ProGridsInterface.IsFullGridEnabled())
+            {
+                var ray = HandleUtility.GUIPointToWorldRay(mousePosition);
+
+                Plane[] planes = new Plane[3]
+                {
+                    new Plane(Vector3.right, point),
+                    new Plane(Vector3.up, point),
+                    new Plane(Vector3.forward, point)
+                };
+
+                float closestDistance = Mathf.Infinity;
+                Plane closestPlane = default(Plane);
+
+                for (int i = 0; i < planes.Length; ++i)
+                {
+                    float distance;
+
+                    if (planes[i].Raycast(ray, out distance))
+                    {
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            closestPlane = planes[i];
+                        }
+                    }
+                }
+
+                plane = new Plane(closestPlane.normal, point);
+            }
+            else
+            {
+
+                var axis = ProGridsInterface.GetActiveGridAxis();
+                float offset = ProGridsInterface.GetActiveGridOffset();
+
+                switch (axis)
+                {
+                    case HandleAxis.X:
+                        point.x += offset;
+                        normal = Vector3.right;
+                        break;
+
+                    case HandleAxis.Y:
+                        point.y += offset;
+                        normal = Vector3.up;
+                        break;
+                    case HandleAxis.Z:
+                        point.z += offset;
+                        normal = Vector3.forward;
+                        break;
+                }
+
+                plane = new Plane(normal, point);
+            }
+
+            return true;
+        }
+
+        static Plane GetPlaneFromCameraDirection()
+        {
+            var sceneView = SceneView.lastActiveSceneView;
+            var cameraDirection = sceneView.camera.transform.forward;
+
+            float pitch = Mathf.Abs(Vector3.Dot(cameraDirection, Vector3.up));
+            float right = Mathf.Abs(Vector3.Dot(cameraDirection, Vector3.right));
+            float forward = Mathf.Abs(Vector3.Dot(cameraDirection, Vector3.forward));
+
+            ProjectionAxis axis = ProjectionAxis.Y;
+
+            // Orthographic view, use X or Z
+            if (pitch < .02f)
+            {
+                if (right > forward)
+                    axis = ProjectionAxis.X;
+                else
+                    axis = ProjectionAxis.Z;
+            }
+
+            return new Plane(Projection.ProjectionAxisToVector(axis), SceneView.lastActiveSceneView.pivot);
         }
     }
 }

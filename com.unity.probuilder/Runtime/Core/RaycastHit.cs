@@ -3,7 +3,7 @@ using UnityEngine;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// The results of a raycast against a ProBuilderMesh.
+    /// The results of a raycast hit.
     /// </summary>
     sealed class RaycastHit
     {

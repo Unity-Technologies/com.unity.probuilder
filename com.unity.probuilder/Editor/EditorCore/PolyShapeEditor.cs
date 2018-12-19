@@ -3,7 +3,6 @@ using UnityEngine.ProBuilder.MeshOperations;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using MeshTopology = UnityEngine.MeshTopology;
-using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 
 namespace UnityEditor.ProBuilder
 {
@@ -13,7 +12,7 @@ namespace UnityEditor.ProBuilder
         static Color k_HandleColor = new Color(.8f, .8f, .8f, 1f);
         static Color k_HandleColorGreen = new Color(.01f, .9f, .3f, 1f);
         static Color k_HandleSelectedColor = new Color(.01f, .8f, .98f, 1f);
-        
+
         const float k_HandleSize = .05f;
 
         Material m_LineMaterial;
@@ -26,7 +25,6 @@ namespace UnityEditor.ProBuilder
         float m_DistanceFromHeightHandle;
         static float s_HeightMouseOffset;
         bool m_NextMouseUpAdvancesMode = false;
-        List<GameObject> m_IgnorePick = new List<GameObject>();
         bool m_IsModifyingVertices = false;
 
         PolyShape polygon
@@ -69,13 +67,19 @@ namespace UnityEditor.ProBuilder
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
 
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
-            GameObject.DestroyImmediate(m_LineMesh);
-            GameObject.DestroyImmediate(m_LineMaterial);
+            DestroyImmediate(m_LineMesh);
+            DestroyImmediate(m_LineMaterial);
             EditorApplication.update -= Update;
             Undo.undoRedoPerformed -= UndoRedoPerformed;
 
             // Delete the created Polyshape if path is empty.
             if (polygon.polyEditMode == PolyShape.PolyEditMode.Path && polygon.m_Points.Count == 0)
+                DiscardIncompleteShape();
+        }
+
+        void DiscardIncompleteShape()
+        {
+            if(polygon != null && polygon.gameObject != null)
                 Undo.DestroyObjectImmediate(polygon.gameObject);
         }
 
@@ -200,98 +204,6 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        void SetPlane(Vector2 mousePosition)
-        {
-            GameObject go = null;
-            m_IgnorePick.Clear();
-
-            do
-            {
-                if (go != null)
-                    m_IgnorePick.Add(go);
-
-                go = HandleUtility.PickGameObject(mousePosition, false, m_IgnorePick.ToArray());
-            }
-            while (go != null && go.GetComponent<MeshFilter>() == null);
-
-            if (go != null)
-            {
-                Mesh m = go.GetComponent<MeshFilter>().sharedMesh;
-
-                if (m != null)
-                {
-                    RaycastHit hit;
-
-                    if (UnityEngine.ProBuilder.HandleUtility.WorldRaycast(HandleUtility.GUIPointToWorldRay(mousePosition),
-                            go.transform,
-                            m.vertices,
-                            m.triangles,
-                            out hit))
-                    {
-                        polygon.transform.rotation = Quaternion.LookRotation(go.transform.TransformDirection(hit.normal).normalized) *
-                            Quaternion.Euler(new Vector3(90f, 0f, 0f));
-                        Vector3 hitPointWorld = go.transform.TransformPoint(hit.point);
-
-                        // if hit point on plane is cardinal axis and on grid, snap to grid.
-                        if (!Math.IsCardinalAxis(polygon.transform.up))
-                        {
-                            polygon.isOnGrid = false;
-                        }
-                        else
-                        {
-                            const float epsilon = .00001f;
-                            float snapVal = Mathf.Abs(ProGridsInterface.SnapValue());
-                            float rem = Mathf.Abs(snapVal - (Vector3.Scale(polygon.transform.up, hitPointWorld).magnitude % snapVal));
-                            polygon.isOnGrid = (rem < epsilon || Mathf.Abs(snapVal - rem) < epsilon);
-                        }
-
-                        polygon.transform.position =
-                            polygon.isOnGrid ? ProGridsInterface.ProGridsSnap(hitPointWorld, Vector3.one) : hitPointWorld;
-
-                        PlacePlaneOnCenter();
-
-                        return;
-                    }
-                }
-            }
-
-            // No mesh in the way, set the plane based on camera
-            SceneView sceneView = SceneView.lastActiveSceneView;
-            float cam_x = Vector3.Dot(sceneView.camera.transform.forward, Vector3.right);
-            float cam_y = Vector3.Dot(sceneView.camera.transform.position - sceneView.pivot.normalized, Vector3.up);
-            float cam_z = Vector3.Dot(sceneView.camera.transform.forward, Vector3.forward);
-
-            ProjectionAxis axis = ProjectionAxis.Y;
-
-            if (Mathf.Abs(cam_x) > .98f)
-                axis = ProjectionAxis.X;
-            else if (Mathf.Abs(cam_z) > .98f)
-                axis = ProjectionAxis.Z;
-
-            polygon.transform.position = ProGridsInterface.ProGridsSnap(polygon.transform.position);
-
-            switch (axis)
-            {
-                case ProjectionAxis.X:
-                    polygon.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 90f * Mathf.Sign(cam_x)));
-                    break;
-
-                case ProjectionAxis.Y:
-                    polygon.transform.rotation = Quaternion.Euler(new Vector3(cam_y < 0f ? 180f : 0f, 0f, 0f));
-                    break;
-
-                case ProjectionAxis.Z:
-                    polygon.transform.rotation = Quaternion.Euler(new Vector3(-90f * Mathf.Sign(cam_z), 0f, 0f));
-                    break;
-            }
-
-            Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
-
-            SetPlaneBasedOnMousePosition(ray);
-
-            polygon.transform.rotation = Quaternion.LookRotation(m_Plane.normal) * Quaternion.Euler(new Vector3(90f, 0f, 0f));
-        }
-
         void RebuildPolyShapeMesh(bool vertexCountChanged = false)
         {
             // If Undo is called immediately after creation this situation can occur
@@ -300,12 +212,11 @@ namespace UnityEditor.ProBuilder
 
             DrawPolyLine(polygon.m_Points);
 
-            var createShapeSucceeded = polygon.CreateShapeFromPolygon().status == ActionResult.Status.Success;
+            polygon.CreateShapeFromPolygon();
 
-            if (polygon.polyEditMode == PolyShape.PolyEditMode.Path || createShapeSucceeded)
-                ProBuilderEditor.Refresh(vertexCountChanged);
-            else
-                ProBuilderEditor.Refresh();
+            // While the vertex count may not change, the triangle winding might. So unfortunately we can't take
+            // advantage of the `vertexCountChanged = false` optimization here.
+            ProBuilderEditor.Refresh();
         }
 
         void OnSceneGUI()
@@ -352,13 +263,12 @@ namespace UnityEditor.ProBuilder
             DoExistingPointsGUI();
 
             if (evt.type == EventType.KeyDown)
-                HandleKeyEvent(evt.keyCode);
+                HandleKeyEvent(evt);
 
             if (EditorHandleUtility.SceneViewInUse(evt))
                 return;
 
             int controlID = GUIUtility.GetControlID(FocusType.Passive);
-
             HandleUtility.AddDefaultControl(controlID);
 
             DoPointPlacement();
@@ -403,7 +313,7 @@ namespace UnityEditor.ProBuilder
                 if (eventType == EventType.MouseDown)
                 {
                     if (polygon.m_Points.Count < 1)
-                        SetPlane(evt.mousePosition);
+                        SetupInputPlane(evt.mousePosition);
 
                     float hitDistance = Mathf.Infinity;
 
@@ -411,13 +321,15 @@ namespace UnityEditor.ProBuilder
 
                     if (m_Plane.Raycast(ray, out hitDistance))
                     {
-                        evt.Use();
                         UndoUtility.RecordObject(polygon, "Add Polygon Shape Point");
 
                         Vector3 hit = ray.GetPoint(hitDistance);
 
                         if (polygon.m_Points.Count < 1)
+                        {
                             polygon.transform.position = polygon.isOnGrid ? ProGridsInterface.ProGridsSnap(hit) : hit;
+                            polygon.transform.rotation = Quaternion.LookRotation(m_Plane.normal) * Quaternion.Euler(new Vector3(90f, 0f, 0f));
+                        }
 
                         Vector3 point = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(hit), Vector3.one);
 
@@ -485,99 +397,32 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        void SetPlaneBasedOnMousePosition(Ray ray)
+        void SetupInputPlane(Vector2 mousePosition)
         {
-            if (ProGridsInterface.ProGridsActive())
+            m_Plane = EditorHandleUtility.FindBestPlane(mousePosition);
+
+            if (ProGridsInterface.SnapEnabled())
             {
-                if (!ProGridsInterface.IsFullGridEnabled())
-                {
-                    // Snap plane on one active grid (ProGrids).
-                    PlacePlaneOnProGridsAxis();
-                }
-                else
-                {
-                    // Snap plane on the closest plane when all grids are active (ProGrids).
-                    FindProGridsClosestPlane(ray);
-                }
+                m_Plane.SetNormalAndPosition(
+                    m_Plane.normal,
+                    ProGridsInterface.ProGridsSnap(m_Plane.normal * -m_Plane.distance));
+            }
+
+            var planeNormal = m_Plane.normal;
+            var planeCenter = m_Plane.normal * -m_Plane.distance;
+
+            // if hit point on plane is cardinal axis and on grid, snap to grid.
+            if (Math.IsCardinalAxis(planeNormal))
+            {
+                const float epsilon = .00001f;
+                float snapVal = Mathf.Abs(ProGridsInterface.SnapValue());
+                float rem = Mathf.Abs(snapVal - (Vector3.Scale(planeNormal, planeCenter).magnitude % snapVal));
+                polygon.isOnGrid = (rem < epsilon || Mathf.Abs(snapVal - rem) < epsilon);
             }
             else
             {
-                // Snap on focus center.
-                PlacePlaneOnCenter();
+                polygon.isOnGrid = false;
             }
-        }
-
-        void FindProGridsClosestPlane(Ray ray)
-        {
-            Vector3 pivot;
-
-            ProGridsInterface.GetPivot(out pivot);
-
-            Plane[] planes = new Plane[3];
-            planes[0].SetNormalAndPosition(Vector3.right, pivot);   // X axis
-            planes[1].SetNormalAndPosition(Vector3.up, pivot);      // Y axis
-            planes[2].SetNormalAndPosition(Vector3.forward, pivot); // Z Axis
-
-            float distance;
-            float closestDistance = Mathf.Infinity;
-            Plane closestPlane = default(Plane);
-
-            for (int i = 0; i < planes.Length; ++i)
-            {
-                if (planes[i].Raycast(ray, out distance))
-                {
-                    if (distance < closestDistance)
-                    {
-                        closestDistance = distance;
-                        closestPlane = planes[i];
-                    }
-                }
-            }
-
-            m_Plane.SetNormalAndPosition(closestPlane.normal, pivot);
-        }
-
-        void PlacePlaneOnProGridsAxis()
-        {
-            Vector3 planePosition = polygon.transform.position;
-            Vector3 normal = polygon.transform.up;
-            int axis = ProGridsInterface.GetActiveGridAxis();
-            float offset = ProGridsInterface.GetActiveGridOffset();
-
-            // Snap the plane to the rendered grid.
-            ProGridsInterface.GetPivot(out planePosition);
-
-            switch (axis)
-            {
-                case 0:
-                case 1:
-                    // X axis
-                    planePosition.x += offset;
-                    normal = Vector3.right;
-                    break;
-                case 2:
-                case 3:
-                    // Y axis
-                    planePosition.y += offset;
-                    normal = Vector3.up;
-                    break;
-                case 4:
-                case 5:
-                    // Z axis
-                    planePosition.z += offset;
-                    normal = Vector3.forward;
-                    break;
-            }
-
-            m_Plane.SetNormalAndPosition(normal, planePosition);
-        }
-
-        void PlacePlaneOnCenter()
-        {
-            Vector3 planePosition = polygon.transform.position;
-            Vector3 normal = polygon.transform.up;
-
-            m_Plane.SetNormalAndPosition(normal, planePosition);
         }
 
         void DoExistingPointsGUI()
@@ -716,8 +561,10 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        void HandleKeyEvent(KeyCode key)
+        void HandleKeyEvent(Event evt)
         {
+            KeyCode key = evt.keyCode;
+
             switch (key)
             {
                 case KeyCode.Space:
@@ -729,11 +576,19 @@ namespace UnityEditor.ProBuilder
                             SetPolyEditMode(PolyShape.PolyEditMode.Edit);
                         else
                             SetPolyEditMode(PolyShape.PolyEditMode.Height);
+
+                        evt.Use();
                     }
                     else if (polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+                    {
                         SetPolyEditMode(PolyShape.PolyEditMode.Edit);
+                        evt.Use();
+                    }
                     else if (polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
+                    {
                         SetPolyEditMode(PolyShape.PolyEditMode.None);
+                        evt.Use();
+                    }
 
                     break;
                 }
@@ -746,19 +601,23 @@ namespace UnityEditor.ProBuilder
                         polygon.m_Points.RemoveAt(m_SelectedIndex);
                         m_SelectedIndex = -1;
                         RebuildPolyShapeMesh(polygon);
+                        evt.Use();
                     }
                     break;
                 }
 
                 case KeyCode.Escape:
                 {
-                    if (polygon.polyEditMode == PolyShape.PolyEditMode.Path || polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+                    if (polygon.polyEditMode == PolyShape.PolyEditMode.Path ||
+                        polygon.polyEditMode == PolyShape.PolyEditMode.Height)
                     {
-                        Undo.DestroyObjectImmediate(polygon.gameObject);
+                        DiscardIncompleteShape();
+                        evt.Use();
                     }
                     else if (polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
                     {
                         SetPolyEditMode(PolyShape.PolyEditMode.None);
+                        evt.Use();
                     }
 
                     break;

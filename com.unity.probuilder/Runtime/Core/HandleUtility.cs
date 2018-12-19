@@ -283,17 +283,23 @@ namespace UnityEngine.ProBuilder
         /// Find the nearest triangle intersected by InWorldRay on this mesh.
         /// </summary>
         /// <param name="InWorldRay"></param>
-        /// <param name="transform"></param>
-        /// <param name="vertices"></param>
-        /// <param name="triangles"></param>
         /// <param name="hit"></param>
         /// <param name="distance"></param>
-        /// <param name="cullingMode"></param>
         /// <returns></returns>
-        public static bool WorldRaycast(Ray InWorldRay, Transform transform, Vector3[] vertices, int[] triangles, out RaycastHit hit, float distance = Mathf.Infinity)
+        public static bool MeshRaycast(Ray InWorldRay, GameObject gameObject, out RaycastHit hit, float distance = Mathf.Infinity)
         {
-            Ray ray = transform.InverseTransformRay(InWorldRay);
-            return MeshRaycast(ray, vertices, triangles, out hit, distance);
+            var meshFilter = gameObject.GetComponent<MeshFilter>();
+            var mesh = meshFilter != null ? meshFilter.sharedMesh : null;
+
+            if (!mesh)
+            {
+                hit = default(RaycastHit);
+                return false;
+            }
+
+            var transform = gameObject.transform;
+            var ray = transform.InverseTransformRay(InWorldRay);
+            return MeshRaycast(ray, mesh.vertices, mesh.triangles, out hit, distance);
         }
 
         /// <summary>
