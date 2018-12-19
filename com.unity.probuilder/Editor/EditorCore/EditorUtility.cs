@@ -362,6 +362,11 @@ namespace UnityEditor.ProBuilder
         }
 
 #if !UNITY_2019_1_OR_NEWER
+        const BindingFlags k_BindingFlagsAll = BindingFlags.NonPublic
+            | BindingFlags.Public
+            | BindingFlags.Instance
+            | BindingFlags.Static;
+
         static SceneView.OnSceneFunc onPreSceneGuiDelegate
         {
             get
