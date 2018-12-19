@@ -79,8 +79,8 @@ namespace UnityEditor.ProBuilder
 
         void DiscardIncompleteShape()
         {
-//            if(polygon != null && polygon.gameObject != null)
-//                Undo.DestroyObjectImmediate(polygon.gameObject);
+            if(polygon != null && polygon.gameObject != null)
+                Undo.DestroyObjectImmediate(polygon.gameObject);
         }
 
         public override void OnInspectorGUI()
