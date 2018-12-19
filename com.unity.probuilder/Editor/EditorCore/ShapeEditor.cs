@@ -266,8 +266,6 @@ namespace UnityEditor.ProBuilder
                 }
                 else
                 {
-                    s_Size = EditorGUILayout.Vector3Field("Width, Height, Depth", s_Size);
-
                     s_Size.x = UI.EditorGUIUtility.FreeSlider("Width", s_Size.x, 0.01f, 10f);
                     s_Size.y = UI.EditorGUIUtility.FreeSlider("Height", s_Size.y, 0.01f, 10f);
                     s_Size.z = UI.EditorGUIUtility.FreeSlider("Depth", s_Size.z, 0.01f, 10f);
