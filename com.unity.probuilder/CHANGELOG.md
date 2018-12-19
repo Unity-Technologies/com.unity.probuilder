@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.36] - 2018-12-17
+## [4.0.0-preview.37] - 2018-12-17
 
 ### Features
 
@@ -72,6 +72,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix `Poly Shape` not instantiating on grid when ProGrids is enabled.
 - Fix toggling static flags not consistently rebuilding lightmap UVs when `Auto Lightmap UVs` is enabled.
 - Fix `Poly Shape` not aligning with the ProGrids plane.
+- Fix FBX Exporter incompatibilities breaking compiliation.
 
 ### Changes
 
@@ -90,22 +91,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Performance optimization for selection changes in editor.
 - Make auto-resizing colliders opt-in instead of on by default.
 - Use the last selected mesh element as the active selection pivot, matching object selection.
-
-### Changes since 4.0.0-preview.35
-
-- (Internal) Fix regression that broke hover highlight for edges on Metal graphics devices.
-
-### Changes since 4.0.0-preview.34
-
-- Fix FBX Exporter incompatibilities breaking compiliation.
 - Remove "About" window.
-- (Internal) Fix selection preview highlight not respecting color choices on all graphics devices.
-- (Internal) Fix inconsistencies with depth test param between vertex, edge, and face modes.
-- (Internal) Fix handle pivot and rotation not updating with toolbar.
 
-### Known Issues
+### Changes since 4.0.0-preview.36
 
-- Handle transformations on two faces connected by a single vertex with `PivotPoint.IndividualOrigins` and `HandleOrientation.ActiveSelection` chooses a single direction to move the shared vertex instead of averaging the direction. The same applies to extrusion with these parameters.
+- (Internal) Fix `Toggle Handle Orientation` tooltip and shortcut.
+- (Internal) Fix issue where plane picking would not respect a visible progrids plane if grid snapping was disabled.
+- Fix stair shape showing dimensions field twice.
+- Fix incorrect wireframe overlay when editing a `Poly Shape`.
 
 ## [3.0.8] - 2018-05-07
 
