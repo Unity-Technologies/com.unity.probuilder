@@ -5,7 +5,6 @@ using System.Linq;
 using System;
 using System.Reflection;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.Rendering;
 using UObject = UnityEngine.Object;
 using UnityEditor.SettingsManagement;
@@ -21,9 +20,6 @@ namespace UnityEditor.ProBuilder
         static float s_NotificationTimer = 0f;
         static EditorWindow s_NotificationWindow;
         static bool s_IsNotificationDisplayed = false;
-
-        const BindingFlags k_BindingFlagsAll =
-            BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
         [UserSetting("General", "Show Action Notifications", "Enable or disable notification popups when performing actions.")]
         static Pref<bool> s_ShowNotifications = new Pref<bool>("editor.showEditorNotifications", false);

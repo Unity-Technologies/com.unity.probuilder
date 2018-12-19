@@ -67,14 +67,8 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override ActionResult DoAction()
         {
-            int current = (int)handleOrientation + 1;
-
-            if (current >= System.Enum.GetValues(typeof(HandleOrientation)).Length)
-                current = 0;
-
-            handleOrientation = (HandleOrientation)current;
-
-            return new ActionResult(ActionResult.Status.Success, "Set Handle Orientation\n" + k_Tooltips[current].title);
+            handleOrientation = InternalUtility.NextEnumValue(handleOrientation);
+            return new ActionResult(ActionResult.Status.Success, "Set Handle Orientation\n" + k_Tooltips[(int)handleOrientation].title);
         }
 
         public override bool enabled
