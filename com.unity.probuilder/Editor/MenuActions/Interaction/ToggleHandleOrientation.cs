@@ -30,10 +30,10 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override TooltipContent tooltip
         {
-            get { return s_Tooltips[(int)handleOrientation]; }
+            get { return k_Tooltips[(int)handleOrientation]; }
         }
 
-        static readonly TooltipContent[] s_Tooltips = new TooltipContent[]
+        static readonly TooltipContent[] k_Tooltips = new TooltipContent[]
         {
             new TooltipContent("Global", "The transform handle is oriented in a fixed direction.", 'P'),
             new TooltipContent("Local", "The transform handle is aligned with the active object rotation.", 'P'),
@@ -42,7 +42,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override string menuTitle
         {
-            get { return "Orientation: " + s_Tooltips[(int)handleOrientation].title; }
+            get { return "Orientation: " + k_Tooltips[(int)handleOrientation].title; }
         }
 
         public override SelectMode validSelectModes
@@ -67,14 +67,8 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override ActionResult DoAction()
         {
-            int current = (int)handleOrientation + 1;
-
-            if (current >= System.Enum.GetValues(typeof(HandleOrientation)).Length)
-                current = 0;
-
-            handleOrientation = (HandleOrientation)current;
-
-            return new ActionResult(ActionResult.Status.Success, "Set Handle Orientation\n" + s_Tooltips[current].title);
+            handleOrientation = InternalUtility.NextEnumValue(handleOrientation);
+            return new ActionResult(ActionResult.Status.Success, "Set Handle Orientation\n" + k_Tooltips[(int)handleOrientation].title);
         }
 
         public override bool enabled
