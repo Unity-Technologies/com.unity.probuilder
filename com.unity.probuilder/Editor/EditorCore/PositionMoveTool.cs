@@ -79,7 +79,11 @@ namespace UnityEditor.ProBuilder
 
                     if (m_SnapInWorldCoordinates)
                     {
-                        m_WorldSnapMask |= new Vector3Mask(m_WorldSnapDirection, k_CardinalAxisError);
+                        if (snapAxisConstraint)
+                            m_WorldSnapMask |= new Vector3Mask(m_WorldSnapDirection, k_CardinalAxisError);
+                        else
+                            m_WorldSnapMask = Vector3Mask.XYZ;
+                            
                         m_HandlePosition = Snapping.SnapValue(m_HandlePosition, m_WorldSnapMask * progridsSnapValue);
                         delta = m_HandlePosition - handlePositionOrigin;
                     }
