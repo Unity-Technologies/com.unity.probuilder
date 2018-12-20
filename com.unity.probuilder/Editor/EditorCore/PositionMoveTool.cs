@@ -41,18 +41,6 @@ namespace UnityEditor.ProBuilder
 
             var delta = m_HandlePosition - handlePositionOrigin;
 
-            if (delta.sqrMagnitude > k_MinTranslateDeltaSqrMagnitude)
-            {
-                m_ActiveAxes |= new Vector3Mask(handleRotationOriginInverse * delta, k_CardinalAxisError);
-                var mask = new Vector3Mask(handleRotation * m_ActiveAxes);
-
-                Snapping.SnapValueOnRay(
-                    new Ray(handlePositionOrigin, delta),
-                    delta.magnitude,
-                    progridsSnapValue,
-                    mask);
-            }
-
             if (EditorGUI.EndChangeCheck() && delta.sqrMagnitude > k_MinTranslateDeltaSqrMagnitude)
             {
                 if (!isEditing)
@@ -81,16 +69,23 @@ namespace UnityEditor.ProBuilder
                 }
                 else if (progridsSnapEnabled)
                 {
-                    if (snapAxisConstraint && Event.current.type != EventType.Repaint)
+                    if (snapAxisConstraint)
                     {
                         m_ActiveAxes |= new Vector3Mask(handleRotationOriginInverse * delta, k_CardinalAxisError);
                         var mask = new Vector3Mask(handleRotation * m_ActiveAxes);
 
-                        m_HandlePosition = Snapping.SnapValueOnRay(
-                            new Ray(handlePositionOrigin, delta),
-                            delta.magnitude,
-                            progridsSnapValue,
-                            mask);
+                        if (mask.active == 1)
+                        {
+                            m_HandlePosition = Snapping.SnapValueOnRay(
+                                new Ray(handlePositionOrigin, delta),
+                                delta.magnitude,
+                                progridsSnapValue,
+                                mask);
+                        }
+                        else
+                        {
+                            m_HandlePosition = Snapping.SnapValue(m_HandlePosition, progridsSnapValue);
+                        }
                     }
                     else
                     {
