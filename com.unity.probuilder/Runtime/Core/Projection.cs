@@ -228,21 +228,21 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Returns a projection axis based on which axis is the largest
         /// </summary>
-        /// <param name="plane"></param>
+        /// <param name="direction"></param>
         /// <returns></returns>
-        internal static ProjectionAxis VectorToProjectionAxis(Vector3 plane)
+        internal static ProjectionAxis VectorToProjectionAxis(Vector3 direction)
         {
-            float x = System.Math.Abs(plane.x);
-            float y = System.Math.Abs(plane.y);
-            float z = System.Math.Abs(plane.z);
+            float x = System.Math.Abs(direction.x);
+            float y = System.Math.Abs(direction.y);
+            float z = System.Math.Abs(direction.z);
 
             if (x > y && x > z)
-                return plane.x > 0 ? ProjectionAxis.X : ProjectionAxis.XNegative;
+                return direction.x > 0 ? ProjectionAxis.X : ProjectionAxis.XNegative;
 
             if (y > z)
-                return plane.y > 0 ? ProjectionAxis.Y : ProjectionAxis.YNegative;
+                return direction.y > 0 ? ProjectionAxis.Y : ProjectionAxis.YNegative;
 
-            return plane.z > 0 ? ProjectionAxis.Z : ProjectionAxis.ZNegative;
+            return direction.z > 0 ? ProjectionAxis.Z : ProjectionAxis.ZNegative;
         }
 
         /// <summary>

@@ -6,10 +6,9 @@ namespace UnityEditor.ProBuilder
     class PositionMoveTool : PositionTool
     {
         const float k_CardinalAxisError = .001f;
+        const float k_MinTranslateDeltaSqrMagnitude = .00001f;
         Vector3 m_HandlePosition;
-        bool m_SnapInWorldCoordinates;
-        Vector3 m_WorldSnapDirection;
-        Vector3 m_WorldSnapMask;
+        Vector3Mask m_ActiveAxes;
 
 #if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
         Vector3 m_IndividualOriginDirection;
@@ -18,8 +17,7 @@ namespace UnityEditor.ProBuilder
 
         protected override void OnToolEngaged()
         {
-            m_SnapInWorldCoordinates = false;
-            m_WorldSnapMask = new Vector3Mask(0x0);
+            m_ActiveAxes = new Vector3Mask(0x0);
 #if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
             m_DirectionOriginInitialized = false;
 #endif
@@ -41,12 +39,24 @@ namespace UnityEditor.ProBuilder
 
             m_HandlePosition = Handles.PositionHandle(m_HandlePosition, handleRotation);
 
-            if (EditorGUI.EndChangeCheck())
+            var delta = m_HandlePosition - handlePositionOrigin;
+
+            if (delta.sqrMagnitude > k_MinTranslateDeltaSqrMagnitude)
+            {
+                m_ActiveAxes |= new Vector3Mask(handleRotationOriginInverse * delta, k_CardinalAxisError);
+                var mask = new Vector3Mask(handleRotation * m_ActiveAxes);
+
+                Snapping.SnapValueOnRay(
+                    new Ray(handlePositionOrigin, delta),
+                    delta.magnitude,
+                    progridsSnapValue,
+                    mask);
+            }
+
+            if (EditorGUI.EndChangeCheck() && delta.sqrMagnitude > k_MinTranslateDeltaSqrMagnitude)
             {
                 if (!isEditing)
                     BeginEdit("Translate Selection");
-
-                var delta = m_HandlePosition - handlePositionOrigin;
 
                 if (vertexDragging)
                 {
@@ -59,11 +69,11 @@ namespace UnityEditor.ProBuilder
 
                         if (dir.active == 1)
                         {
-                            var rot_dir = handleRotationOrigin * dir * 10000f;
+                            var rotationDirection = handleRotationOrigin * dir * 10000f;
 
                             m_HandlePosition = HandleUtility.ProjectPointLine(nearest,
-                                    handlePositionOrigin + rot_dir,
-                                    handlePositionOrigin - rot_dir);
+                                handlePositionOrigin + rotationDirection,
+                                handlePositionOrigin - rotationDirection);
 
                             delta = m_HandlePosition - handlePositionOrigin;
                         }
@@ -71,28 +81,23 @@ namespace UnityEditor.ProBuilder
                 }
                 else if (progridsSnapEnabled)
                 {
-                    var localDir = handleRotationOriginInverse * delta;
-                    m_WorldSnapDirection = delta.normalized;
-
-                    if (!m_SnapInWorldCoordinates && (Math.IsCardinalAxis(delta) || !Math.IsCardinalAxis(localDir)))
-                        m_SnapInWorldCoordinates = true;
-
-                    if (m_SnapInWorldCoordinates)
+                    if (snapAxisConstraint && Event.current.type != EventType.Repaint)
                     {
-                        if (snapAxisConstraint)
-                            m_WorldSnapMask |= new Vector3Mask(m_WorldSnapDirection, k_CardinalAxisError);
-                        else
-                            m_WorldSnapMask = Vector3Mask.XYZ;
-                            
-                        m_HandlePosition = Snapping.SnapValue(m_HandlePosition, m_WorldSnapMask * progridsSnapValue);
-                        delta = m_HandlePosition - handlePositionOrigin;
+                        m_ActiveAxes |= new Vector3Mask(handleRotationOriginInverse * delta, k_CardinalAxisError);
+                        var mask = new Vector3Mask(handleRotation * m_ActiveAxes);
+
+                        m_HandlePosition = Snapping.SnapValueOnRay(
+                            new Ray(handlePositionOrigin, delta),
+                            delta.magnitude,
+                            progridsSnapValue,
+                            mask);
                     }
                     else
                     {
-                        var travel = delta.magnitude;
-                        delta = m_WorldSnapDirection * Snapping.SnapValue(travel, progridsSnapValue);
-                        m_HandlePosition = handlePositionOrigin + delta;
+                        m_HandlePosition = Snapping.SnapValue(m_HandlePosition, progridsSnapValue);
                     }
+
+                    delta = m_HandlePosition - handlePositionOrigin;
                 }
 
 #if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO

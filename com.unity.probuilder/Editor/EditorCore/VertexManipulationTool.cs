@@ -224,6 +224,10 @@ namespace UnityEditor.ProBuilder
             {
                 m_HandlePosition = MeshSelection.GetHandlePosition();
                 m_HandleRotation = MeshSelection.GetHandleRotation();
+                
+                m_HandlePositionOrigin = m_HandlePosition;
+                m_HandleRotationOrigin = m_HandleRotation;
+                handleRotationOriginInverse = Quaternion.Inverse(m_HandleRotation);
             }
 
             DoTool(m_HandlePosition, m_HandleRotation);
@@ -254,10 +258,6 @@ namespace UnityEditor.ProBuilder
                 Extrude();
 
             m_IsEditing = true;
-
-            m_HandlePositionOrigin = m_HandlePosition;
-            m_HandleRotationOrigin = m_HandleRotation;
-            handleRotationOriginInverse = Quaternion.Inverse(m_HandleRotation);
 
             m_ProgridsSnapEnabled = ProGridsInterface.SnapEnabled();
             m_ProgridsSnapValue = ProGridsInterface.SnapValue();
