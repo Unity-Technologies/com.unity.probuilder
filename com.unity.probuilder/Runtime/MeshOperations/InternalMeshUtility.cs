@@ -1,9 +1,6 @@
 using System;
-using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.ProBuilder;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
@@ -12,7 +9,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <summary>
         /// Averages shared normals with the mask of all (indexes contained in perimeter edge)
         /// </summary>
-        internal static Vector3 AverageNormalWithIndexes(SharedVertex shared, int[] all, Vector3[] norm)
+        internal static Vector3 AverageNormalWithIndexes(SharedVertex shared, int[] all, IList<Vector3> norm)
         {
             Vector3 n = Vector3.zero;
             int count = 0;
