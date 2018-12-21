@@ -65,7 +65,7 @@ namespace UnityEngine.ProBuilder
 
 
         [SerializeField]
-        private int m_TextureGroup;
+        int m_TextureGroup;
 
         /// <value>
         /// What texture group this face belongs to. Used when projecting auto UVs.

@@ -3,8 +3,7 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UObject = UnityEngine.Object;
 using System.Linq;
-using Math = UnityEngine.ProBuilder.Math;
-using ArrUtil = UnityEngine.ProBuilder.ArrayUtility;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
@@ -184,8 +183,8 @@ namespace UnityEditor.ProBuilder
                     s_CurrentPreview.Refresh();
                     s_CurrentPreview.Optimize();
 
-                    FilterUnusedSubmeshIndexes(s_CurrentPreview, s_CurrentPreview.renderer.sharedMaterials);
-                    
+                    InternalMeshUtility.FilterUnusedSubmeshIndexes(s_CurrentPreview);
+
                     evt.Use();
                 }
 
@@ -195,30 +194,6 @@ namespace UnityEditor.ProBuilder
             {
                 if (s_PreviewMaterial.SetPass(0))
                     Graphics.DrawMeshNow(s_PreviewMesh, s_Matrix, 0);
-            }
-        }
-
-        static void FilterUnusedSubmeshIndexes(ProBuilderMesh mesh, Material[] materials)
-        {
-            var submeshCount = materials.Length;
-            var used = new bool[submeshCount];
-
-            foreach (var face in mesh.facesInternal)
-                used[Math.Clamp(face.submeshIndex, 0, submeshCount - 1)] = true;
-
-            var unused = ArrUtil.AllIndexesOf(used, x => !x);
-
-            if (unused.Any())
-            {
-                foreach (var face in mesh.facesInternal)
-                {
-                    var original = face.submeshIndex;
-                    foreach (var index in unused)
-                        if (original > index)
-                            face.submeshIndex--;
-                }
-
-                mesh.renderer.sharedMaterials = ArrUtil.RemoveAt(materials, unused);
             }
         }
     }
