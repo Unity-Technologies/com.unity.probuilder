@@ -77,7 +77,12 @@ namespace UnityEngine.ProBuilder
             return pb;
         }
 
-        internal static ProBuilderMesh Create()
+        /// <summary>
+        /// Create a new GameObject with a ProBuilderMesh component, MeshFilter, and MeshRenderer. All arrays are
+        /// initialized as empty.
+        /// </summary>
+        /// <returns>A reference to the new ProBuilderMesh component.</returns>
+        public static ProBuilderMesh Create()
         {
             var go = new GameObject();
             var pb = go.AddComponent<ProBuilderMesh>();
@@ -91,7 +96,7 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         /// <param name="positions">Vertex positions array.</param>
         /// <param name="faces">Faces array.</param>
-        /// <returns></returns>
+        /// <returns>A reference to the new ProBuilderMesh component.</returns>
         public static ProBuilderMesh Create(IEnumerable<Vector3> positions, IEnumerable<Face> faces)
         {
             GameObject go = new GameObject();

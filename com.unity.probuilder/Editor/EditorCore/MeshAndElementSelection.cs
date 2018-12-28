@@ -5,6 +5,9 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
+    /// <summary>
+    /// Represents the state of a ProBuilderMesh and it's selected elements.
+    /// </summary>
     abstract class MeshAndElementSelection
     {
         ProBuilderMesh m_Mesh;

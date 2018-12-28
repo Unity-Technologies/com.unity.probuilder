@@ -235,7 +235,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// ProBuilder makes the assumption that no @"UnityEngine.ProBuilder.Face" references a vertex used by another. However, we need a way to associate vertices in the editor for many operations. These vertices are usually called coincident, or shared vertices. ProBuilder manages these associations with the sharedIndexes array. Each array contains a list of triangles that point to vertices considered to be coincident. When ProBuilder compiles a UnityEngine.Mesh from the ProBuilderMesh, these vertices will be condensed to a single vertex where possible.
+        /// ProBuilder makes the assumption that no @"UnityEngine.ProBuilder.Face" references a vertex used by another.
+        /// However, we need a way to associate vertices in the editor for many operations. These vertices are usually
+        /// called coincident, or shared vertices. ProBuilder manages these associations with the sharedIndexes array.
+        /// Each array contains a list of triangles that point to vertices considered to be coincident. When ProBuilder
+        /// compiles a UnityEngine.Mesh from the ProBuilderMesh, these vertices will be condensed to a single vertex
+        /// where possible.
         /// </summary>
         /// <value>
         /// The shared (or common) index array for this mesh.

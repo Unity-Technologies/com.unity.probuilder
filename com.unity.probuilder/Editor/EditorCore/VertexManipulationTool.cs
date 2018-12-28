@@ -16,7 +16,7 @@ using UnityEngine.Rendering;
 
 namespace UnityEditor.ProBuilder
 {
-    abstract class VertexManipulationTool
+    public abstract class VertexManipulationTool
     {
         static Pref<HandleOrientation> s_HandleOrientation = new Pref<HandleOrientation>("editor.handleOrientation", HandleOrientation.World, SettingsScope.User);
         static Pref<PivotPoint> s_PivotPoint = new Pref<PivotPoint>("editor.pivotPoint", PivotPoint.Center, SettingsScope.User);
@@ -41,6 +41,12 @@ namespace UnityEditor.ProBuilder
         // Store PivotRotation so that we can detect changes and update our handles appropriately
         static PivotRotation s_PivotRotation;
 
+        /// <value>
+        /// Where the handle is positioned relative to the current selection.
+        /// </value>
+        /// <remarks>
+        /// Relates to the UnityEditor.PivotMode enum, with additional options.
+        /// </remarks>
         public static PivotPoint pivotPoint
         {
             get
@@ -64,6 +70,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <value>
+        /// How the handle is rotated relative to the current selection.
+        /// </value>
         public static HandleOrientation handleOrientation
         {
             get
@@ -144,7 +153,7 @@ namespace UnityEditor.ProBuilder
         static MethodInfo s_FindNearestVertex;
         static object[] s_FindNearestVertexArguments = new object[] { null, null, null };
 
-        protected IEnumerable<MeshAndElementSelection> elementSelection
+        internal IEnumerable<MeshAndElementSelection> elementSelection
         {
             get { return MeshSelection.elementSelection; }
         }

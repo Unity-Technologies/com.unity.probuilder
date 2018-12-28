@@ -128,20 +128,29 @@ namespace UnityEngine.ProBuilder
             get { return m_Vertices.IsReadOnly; }
         }
 
-        internal static void GetSharedVertexLookup(IEnumerable<SharedVertex> sharedVertices, Dictionary<int, int> lookup)
+        /// <summary>
+        /// A <see cref="SharedVertex"/> is used to associate discrete vertices that share a common position. A lookup
+        /// Dictionary provides a fast way to find the index of a <see cref="SharedVertex"/> in the
+        /// <see cref="ProBuilderMesh.sharedVertices"/> array with a vertex index.
+        /// </summary>
+        /// <param name="sharedVertices">
+        /// A collection of SharedVertex values.
+        /// </param>
+        /// <param name="lookup">
+        /// A Dictionary where the Key represents an index in the Mesh positions array, and the
+        /// Value is the index of it's placement in the sharedVertices array.
+        /// </param>
+        public static void GetSharedVertexLookup(IList<SharedVertex> sharedVertices, Dictionary<int, int> lookup)
         {
             lookup.Clear();
-            int commonIndex = 0;
 
-            foreach (var common in sharedVertices)
+            for(int i = 0, c = sharedVertices.Count; i < c; i++)
             {
-                foreach (var index in common)
+                foreach (var index in sharedVertices[i])
                 {
                     if (!lookup.ContainsKey(index))
-                        lookup.Add(index, commonIndex);
+                        lookup.Add(index, i);
                 }
-
-                commonIndex++;
             }
         }
 
