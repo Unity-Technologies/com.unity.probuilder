@@ -1,9 +1,7 @@
 using System;
-using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.ProBuilder;
+using ArrUtil = UnityEngine.ProBuilder.ArrayUtility;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
@@ -12,7 +10,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <summary>
         /// Averages shared normals with the mask of all (indexes contained in perimeter edge)
         /// </summary>
-        internal static Vector3 AverageNormalWithIndexes(SharedVertex shared, int[] all, Vector3[] norm)
+        internal static Vector3 AverageNormalWithIndexes(SharedVertex shared, int[] all, IList<Vector3> norm)
         {
             Vector3 n = Vector3.zero;
             int count = 0;
@@ -32,7 +30,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
             List<Face> faces,
             Dictionary<int, int> sharedVertexLookup,
             Dictionary<int, int> sharedTextureLookup,
-            Dictionary<int, int> remap)
+            Dictionary<int, int> remap,
+            Material[] materials)
         {
             // finalize mesh
             var sv = new Dictionary<int, int>();
@@ -57,7 +56,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
                     st.Add(kvp.Value, v);
             }
 
-            return ProBuilderMesh.Create(vertices, faces, SharedVertex.ToSharedVertices(sv), st.Any() ? SharedVertex.ToSharedVertices(st) : null);
+            return ProBuilderMesh.Create(
+                vertices,
+                faces,
+                SharedVertex.ToSharedVertices(sv),
+                st.Any() ? SharedVertex.ToSharedVertices(st) : null,
+                materials);
         }
 
         /// <summary>
@@ -68,9 +72,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
         {
             uint vertexCount = (uint)vertices.Count;
             uint meshCount = System.Math.Max(1u, vertexCount / maxVertexCount);
+            var submeshCount = faces.Max(x => x.submeshIndex) + 1;
 
             if (meshCount < 2)
-                return new List<ProBuilderMesh>() { ProBuilderMesh.Create(vertices, faces, sharedVertices, sharedTextures) };
+                return new List<ProBuilderMesh>() { ProBuilderMesh.Create(vertices, faces, sharedVertices, sharedTextures, new Material[submeshCount]) };
 
             var sharedVertexLookup = new Dictionary<int, int>();
             SharedVertex.GetSharedVertexLookup(sharedVertices, sharedVertexLookup);
@@ -88,7 +93,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 if (mv.Count + face.distinctIndexes.Count > maxVertexCount)
                 {
                     // finalize mesh
-                    meshes.Add(CreateMeshFromSplit(mv, mf, sharedVertexLookup, sharedTextureLookup, remap));
+                    meshes.Add(CreateMeshFromSplit(mv, mf, sharedVertexLookup, sharedTextureLookup, remap, new Material[submeshCount]));
                     mv.Clear();
                     mf.Clear();
                     remap.Clear();
@@ -104,7 +109,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             }
 
             if (mv.Any())
-                meshes.Add(CreateMeshFromSplit(mv, mf, sharedVertexLookup, sharedTextureLookup, remap));
+                meshes.Add(CreateMeshFromSplit(mv, mf, sharedVertexLookup, sharedTextureLookup, remap, new Material[submeshCount]));
 
             return meshes;
         }
@@ -127,6 +132,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             var sharedVertices = new List<SharedVertex>();
             var sharedTextures = new List<SharedVertex>();
             int offset = 0;
+            var materialMap = new List<Material>();
 
             foreach (var mesh in meshes)
             {
@@ -136,18 +142,41 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 var meshFaces = mesh.facesInternal;
                 var meshSharedVertices = mesh.sharedVertices;
                 var meshSharedTextures = mesh.sharedTextures;
+                var materials = mesh.renderer.sharedMaterials;
+                var materialCount = materials.Length;
 
                 for (int i = 0; i < meshVertexCount; i++)
                     vertices.Add(transform.TransformVertex(meshVertices[i]));
 
                 foreach (var face in meshFaces)
                 {
-                    var nf = new Face(face);
-                    nf.ShiftIndexes(offset);
+                    var newFace = new Face(face);
+                    newFace.ShiftIndexes(offset);
                     // prevents uvs from shifting when being converted from local coords to world space
-                    if (!nf.manualUV && !nf.uv.useWorldSpace)
-                        nf.manualUV = true;
-                    faces.Add(nf);
+                    if (!newFace.manualUV && !newFace.uv.useWorldSpace)
+                        newFace.manualUV = true;
+
+                    var material = materials[Math.Clamp(face.submeshIndex, 0, materialCount - 1)];
+                    var submeshIndex = materialMap.IndexOf(material);
+
+                    if (submeshIndex > -1)
+                    {
+                        newFace.submeshIndex = submeshIndex;
+                    }
+                    else
+                    {
+                        if (material == null)
+                        {
+                            newFace.submeshIndex = 0;
+                        }
+                        else
+                        {
+                            newFace.submeshIndex = materialMap.Count;
+                            materialMap.Add(material);
+                        }
+                    }
+
+                    faces.Add(newFace);
                 }
 
                 foreach (var sv in meshSharedVertices)
@@ -167,7 +196,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 offset += meshVertexCount;
             }
 
-            return SplitByMaxVertexCount(vertices, faces, sharedVertices, sharedTextures);
+            var res = SplitByMaxVertexCount(vertices, faces, sharedVertices, sharedTextures);
+
+            foreach (var m in res)
+            {
+                m.renderer.sharedMaterials = materialMap.ToArray();
+                FilterUnusedSubmeshIndexes(m);
+            }
+
+            return res;
         }
 
         /// <summary>
@@ -400,6 +437,31 @@ namespace UnityEngine.ProBuilder.MeshOperations
             pb.colorsInternal = cols.ToArray();
 
             return true;
+        }
+
+        internal static void FilterUnusedSubmeshIndexes(ProBuilderMesh mesh)
+        {
+            var materials = mesh.renderer.sharedMaterials;
+            var submeshCount = materials.Length;
+            var used = new bool[submeshCount];
+
+            foreach (var face in mesh.facesInternal)
+                used[Math.Clamp(face.submeshIndex, 0, submeshCount - 1)] = true;
+
+            var unused = ArrUtil.AllIndexesOf(used, x => !x);
+
+            if (unused.Any())
+            {
+                foreach (var face in mesh.facesInternal)
+                {
+                    var original = face.submeshIndex;
+                    foreach (var index in unused)
+                        if (original > index)
+                            face.submeshIndex--;
+                }
+
+                mesh.renderer.sharedMaterials = ArrUtil.RemoveAt(materials, unused);
+            }
         }
     }
 }

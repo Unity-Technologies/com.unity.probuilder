@@ -109,16 +109,20 @@ namespace UnityEngine.ProBuilder
         /// <param name="faces">Faces array.</param>
         /// <param name="sharedVertices">Optional SharedVertex[] defines coincident vertices.</param>
         /// <param name="sharedTextures">Optional SharedVertex[] defines coincident texture coordinates (UV0).</param>
+        /// <param name="materials">Optional array of materials that will be assigned to the MeshRenderer.</param>
         /// <returns></returns>
         public static ProBuilderMesh Create(
             IList<Vertex> vertices,
             IList<Face> faces,
             IList<SharedVertex> sharedVertices = null,
-            IList<SharedVertex> sharedTextures = null)
+            IList<SharedVertex> sharedTextures = null,
+            IList<Material> materials = null)
         {
             var go = new GameObject();
             go.name = "ProBuilder Mesh";
             var mesh = go.AddComponent<ProBuilderMesh>();
+            if (materials != null)
+                mesh.renderer.sharedMaterials = materials.ToArray();
             mesh.m_MeshFormatVersion = k_MeshFormatVersion;
             mesh.SetVertices(vertices);
             mesh.faces = faces;
