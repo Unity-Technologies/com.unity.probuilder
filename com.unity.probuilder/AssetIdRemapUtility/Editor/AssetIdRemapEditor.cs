@@ -159,10 +159,10 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             }
         }
 
-        [MenuItem("Tools/ProBuilder/Repair/Convert to Package Manager")]
+        [MenuItem("Tools/ProBuilder/Repair/Convert to ProBuilder 4")]
         internal static void OpenConversionEditor()
         {
-            GetWindow<AssetIdRemapEditor>(true, "Package Manager Conversion Utility", true);
+            GetWindow<AssetIdRemapEditor>(true, "ProBuilder 4 Conversion Utility", true);
         }
 
         void OnEnable()
@@ -185,7 +185,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
                 {
                     new MultiColumnHeaderState.Column()
                     {
-                        headerContent = new GUIContent("Asset Store Files to Delete")
+                        headerContent = new GUIContent("Obsolete Files to Delete")
                     }
                 });
 
@@ -246,7 +246,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             }
             else if ((m_ConversionReadyState & ConversionReadyState.AssetStoreInstallFound) > 0)
             {
-                GUILayout.Label("Asset Store Files to Delete", EditorStyles.boldLabel);
+                GUILayout.Label("Obsolete Files to Delete", EditorStyles.boldLabel);
 
                 m_AssetTreeRect = GUILayoutUtility.GetRect(position.width, 128, GUILayout.ExpandHeight(true));
 
@@ -300,7 +300,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Convert to Package Manager", Styles.convertButton))
+            if (GUILayout.Button("Convert to ProBuilder 4", Styles.convertButton))
             {
                 DoConversion();
                 GUIUtility.ExitGUI();
@@ -329,7 +329,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 
                 EditorApplication.LockReloadAssemblies();
 
-                log.AppendLine("ProBuilder Asset Store to Unity Package Manager Conversion Log");
+                log.AppendLine("ProBuilder 4 Conversion Log");
                 log.AppendLine("");
 
                 if ((m_ConversionReadyState & ConversionReadyState.AssetStoreInstallFound) == ConversionReadyState.AssetStoreInstallFound)
@@ -438,7 +438,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 
                         if (string.IsNullOrEmpty(m_DeprecatedProBuilderDirectory))
                         {
-                            UnityEngine.Debug.LogWarning("Canceling ProBuilder Asset Store to Package Manager conversion. You may start this process again at any time by accessing the Tools>ProBuilder>Repair>Convert to Package Manager menu item.");
+                            UnityEngine.Debug.LogWarning("Canceling ProBuilder Asset Store to Package Manager conversion. You may start this process again at any time by accessing the 'Tools>ProBuilder>Repair>Convert to ProBuilder 4' menu item.");
                             EditorApplication.delayCall += Close;
                             break;
                         }
@@ -462,7 +462,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
                 }
                 else if (res == k_DialogCancel)
                 {
-                    UnityEngine.Debug.LogWarning("Canceling ProBuilder Asset Store to Package Manager conversion. You may start this process again at any time by accessing the Tools>ProBuilder>Repair>Convert to Package Manager menu item.");
+                    UnityEngine.Debug.LogWarning("Canceling ProBuilder Asset Store to Package Manager conversion. You may start this process again at any time by accessing the 'Tools>ProBuilder>Repair>Convert to ProBuilder 4' menu item.");
                     EditorApplication.delayCall += Close;
                 }
             }
