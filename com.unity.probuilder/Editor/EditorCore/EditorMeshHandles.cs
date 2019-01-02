@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using UnityEngine.ProBuilder;
-using System.Reflection;
 using System.Collections.Generic;
 using UnityEngine.Rendering;
 using UnityEditor.SettingsManagement;
@@ -385,7 +384,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        public static  void ClearHandles()
+        public static void ClearHandles()
         {
             Get().ClearHandlesInternal();
         }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.Rendering;
 
 namespace UnityEngine.ProBuilder
 {
@@ -162,6 +163,7 @@ namespace UnityEngine.ProBuilder
         /// Draw a set of vertices.
         /// </summary>
         static void BuildVertexMeshInternal(ProBuilderMesh mesh, Mesh target, IEnumerable<int> indexes)
+
         {
             target.Clear();
             target.name = "pb_ElementGraphics::PointMesh";
@@ -169,5 +171,18 @@ namespace UnityEngine.ProBuilder
             target.subMeshCount = 1;
             target.SetIndices(indexes as int[] ?? indexes.ToArray(), MeshTopology.Points, 0);
         }
+
+        public static void Render(IEnumerable<MeshHandle> handles, Material material, Color color, bool depthTest = true)
+        {
+            material.SetInt("_HandleZTest", (int) (depthTest ? CompareFunction.LessEqual : CompareFunction.Always));
+            material.SetColor("_Color", color);
+
+            if (material.SetPass(0))
+            {
+                foreach (var handle in handles)
+                    handle.DrawMeshNow(0);
+            }
+        }
+
     }
 }
