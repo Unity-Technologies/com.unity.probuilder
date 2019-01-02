@@ -159,7 +159,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             }
         }
 
-        [MenuItem("Tools/ProBuilder/Repair/Convert Scene to ProBuilder 4")]
+        [MenuItem("Tools/ProBuilder/Repair/Convert to ProBuilder 4")]
         internal static void OpenConversionEditor()
         {
             GetWindow<AssetIdRemapEditor>(true, "ProBuilder 4 Conversion Utility", true);
@@ -300,7 +300,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Convert Scene to ProBuilder 4", Styles.convertButton))
+            if (GUILayout.Button("Convert to ProBuilder 4", Styles.convertButton))
             {
                 DoConversion();
                 GUIUtility.ExitGUI();
@@ -438,7 +438,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 
                         if (string.IsNullOrEmpty(m_DeprecatedProBuilderDirectory))
                         {
-                            UnityEngine.Debug.LogWarning("Canceling ProBuilder Asset Store to Package Manager conversion. You may start this process again at any time by accessing the 'Tools>ProBuilder>Repair>Convert Scene to ProBuilder 4' menu item.");
+                            UnityEngine.Debug.LogWarning("Canceling ProBuilder Asset Store to Package Manager conversion. You may start this process again at any time by accessing the 'Tools>ProBuilder>Repair>Convert to ProBuilder 4' menu item.");
                             EditorApplication.delayCall += Close;
                             break;
                         }
@@ -462,7 +462,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
                 }
                 else if (res == k_DialogCancel)
                 {
-                    UnityEngine.Debug.LogWarning("Canceling ProBuilder Asset Store to Package Manager conversion. You may start this process again at any time by accessing the 'Tools>ProBuilder>Repair>Convert Scene to ProBuilder 4' menu item.");
+                    UnityEngine.Debug.LogWarning("Canceling ProBuilder Asset Store to Package Manager conversion. You may start this process again at any time by accessing the 'Tools>ProBuilder>Repair>Convert to ProBuilder 4' menu item.");
                     EditorApplication.delayCall += Close;
                 }
             }
