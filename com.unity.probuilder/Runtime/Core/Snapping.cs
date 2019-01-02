@@ -98,7 +98,6 @@ namespace UnityEngine.ProBuilder
         internal static Vector3 SnapValueOnRay(Ray ray, float distance, float snap, Vector3Mask mask)
         {
             var nearest = k_MaxRaySnapDistance;
-            var snapped = ray.origin + ray.direction * distance;
 
             var forwardRay = new Ray(ray.origin, ray.direction);
             var backwardsRay = new Ray(ray.origin, -ray.direction);
@@ -127,27 +126,6 @@ namespace UnityEngine.ProBuilder
                         nearest = d;
                     if (backwardPlane.Raycast(backwardsRay, out d) && Mathf.Abs(d) < nearest)
                         nearest = -d;
-
-                    if (Event.current.type == EventType.Repaint)
-                    {
-                        UnityEditor.Handles.color = Color.yellow;
-                        UnityEditor.Handles.DrawLine(ray.origin, ray.origin + ray.direction * 100f);
-
-                        UnityEditor.Handles.color = Color.red;
-                        UnityEditor.Handles.DrawLine(ray.origin, ray.origin + prj);
-
-                        UnityEditor.Handles.color = Color.white;
-
-                        var verts = new Vector3[]
-                        {
-                            (Quaternion.LookRotation(prj) * new Vector3(-.5f, -.5f)) + SnapValue(ray.origin + prj, snap),
-                            (Quaternion.LookRotation(prj) * new Vector3(-.5f,  .5f)) + SnapValue(ray.origin + prj, snap),
-                            (Quaternion.LookRotation(prj) * new Vector3(.5f, .5f)) + SnapValue(ray.origin + prj, snap),
-                            (Quaternion.LookRotation(prj) * new Vector3(.5f,  -.5f)) + SnapValue(ray.origin + prj, snap)
-                        };
-
-                        UnityEditor.Handles.DrawSolidRectangleWithOutline(verts, new Color(.1f, .1f, .1f, .5f), Color.black);
-                    }
                 }
             }
 

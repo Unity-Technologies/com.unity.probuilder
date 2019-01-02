@@ -193,7 +193,7 @@ namespace UnityEngine.ProBuilder
                 if(i < 0 || i > 2)
                     throw new IndexOutOfRangeException();
 
-                return (0b1 & (m_Mask >> i)) * 1f;
+                return (1 & (m_Mask >> i)) * 1f;
             }
 
             set
