@@ -121,7 +121,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Does this platform support geometry shaders?
+        /// Return true if the current graphics device supports geometry shaders, and false if it does not.
         /// </summary>
         public static bool geometryShadersSupported
         {
@@ -132,12 +132,12 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <summary>
+        /// <value>
         /// The default ProBuilder material.
-        /// <br />
-        /// <br />
+        /// </value>
+        /// <remarks>
         /// When using the Scriptable Render Pipeline this returns the default material for that pipeline.
-        /// </summary>
+        /// </remarks>
         public static Material defaultMaterial
         {
             get
@@ -147,9 +147,9 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <summary>
+        /// <value>
         /// Shader used in selection picking functions.
-        /// </summary>
+        /// </value>
         internal static Shader selectionPickerShader
         {
             get
@@ -159,9 +159,9 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <summary>
+        /// <value>
         /// Material used for face picking functions.
-        /// </summary>
+        /// </value>
         internal static Material facePickerMaterial
         {
             get
@@ -171,9 +171,9 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <summary>
+        /// <value>
         /// Material used for vertex picking functions.
-        /// </summary>
+        /// </value>
         internal static Material vertexPickerMaterial
         {
             get
@@ -183,9 +183,9 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <summary>
+        /// <value>
         /// Material used for edge picking functions.
-        /// </summary>
+        /// </value>
         internal static Material edgePickerMaterial
         {
             get
@@ -195,9 +195,9 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <summary>
+        /// <value>
         /// The ProBuilder "Trigger" entity type material.
-        /// </summary>
+        /// </value>
         internal static Material triggerMaterial
         {
             get
@@ -207,9 +207,9 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <summary>
+        /// <value>
         /// The ProBuilder "Collider" entity type material.
-        /// </summary>
+        /// </value>
         internal static Material colliderMaterial
         {
             get

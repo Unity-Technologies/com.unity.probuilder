@@ -2,7 +2,6 @@ using System.Text;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using UnityEngine;
 using System.Linq;
 
 namespace UnityEngine.ProBuilder.Stl
@@ -20,7 +19,7 @@ namespace UnityEngine.ProBuilder.Stl
 	/**
 	 *	Export STL files from Unity mesh assets.
 	 */
-	public static class pb_Stl
+	static class pb_Stl
 	{
 		/**
 		 * Write a mesh file to STL.
