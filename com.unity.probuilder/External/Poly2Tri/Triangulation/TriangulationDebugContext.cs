@@ -30,7 +30,7 @@
  */
 
 namespace UnityEngine.ProBuilder.Poly2Tri {
-	public abstract class TriangulationDebugContext {
+	abstract class TriangulationDebugContext {
 		protected TriangulationContext _tcx;
 
 		public TriangulationDebugContext(TriangulationContext tcx) {

@@ -32,7 +32,7 @@
 using System;
 
 namespace UnityEngine.ProBuilder.Poly2Tri {
-	public class PolygonGenerator {
+	class PolygonGenerator {
 		static readonly System.Random RNG = new System.Random();
 
 		private static double PI_2 = 2.0 * Math.PI;

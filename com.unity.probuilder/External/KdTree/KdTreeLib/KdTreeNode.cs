@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace UnityEngine.ProBuilder.KdTree
 {
 	[Serializable]
-	public class KdTreeNode<TKey, TValue>
+	class KdTreeNode<TKey, TValue>
 	{
 		public KdTreeNode()
 		{

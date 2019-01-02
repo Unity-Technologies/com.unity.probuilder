@@ -21,6 +21,9 @@ namespace UnityEditor.ProBuilder
         static bool s_SelectedElementGroupsDirty = true;
         static Bounds s_SelectionBounds = new Bounds();
 
+        /// <value>
+        /// An axis-aligned bounding box encompassing the selected elements.
+        /// </value>
         public static Bounds bounds
         {
             get { return s_SelectionBounds; }

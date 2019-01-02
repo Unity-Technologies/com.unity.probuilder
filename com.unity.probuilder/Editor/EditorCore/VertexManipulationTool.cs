@@ -16,7 +16,7 @@ using UnityEngine.Rendering;
 
 namespace UnityEditor.ProBuilder
 {
-    public abstract class VertexManipulationTool
+    abstract class VertexManipulationTool
     {
         static Pref<HandleOrientation> s_HandleOrientation = new Pref<HandleOrientation>("editor.handleOrientation", HandleOrientation.World, SettingsScope.User);
         static Pref<PivotPoint> s_PivotPoint = new Pref<PivotPoint>("editor.pivotPoint", PivotPoint.Center, SettingsScope.User);
@@ -129,12 +129,12 @@ namespace UnityEditor.ProBuilder
         /// <value>
         /// Called when vertex modifications are complete.
         /// </value>
-        public static event Action<ProBuilderMesh[]> afterMeshModification;
+        public static event Action<IEnumerable<ProBuilderMesh>> afterMeshModification;
 
         /// <value>
         /// Called immediately prior to beginning vertex modifications. The ProBuilderMesh will be in un-altered state at this point (meaning ProBuilderMesh.ToMesh and ProBuilderMesh.Refresh have been called, but not Optimize).
         /// </value>
-        public static event Action<ProBuilderMesh[]> beforeMeshModification;
+        public static event Action<IEnumerable<ProBuilderMesh>> beforeMeshModification;
 
         internal static Pref<bool> s_ExtrudeEdgesAsGroup = new Pref<bool>("editor.extrudeEdgesAsGroup", true);
         internal static Pref<ExtrudeMethod> s_ExtrudeMethod = new Pref<ExtrudeMethod>("editor.extrudeMethod", ExtrudeMethod.FaceNormal);

@@ -36,7 +36,7 @@
 ///   Comments!
 
 namespace UnityEngine.ProBuilder.Poly2Tri {
-	public class AdvancingFrontNode {
+	class AdvancingFrontNode {
 		public AdvancingFrontNode Next;
 		public AdvancingFrontNode Prev;
 		public double             Value;

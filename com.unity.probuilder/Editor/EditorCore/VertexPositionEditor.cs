@@ -67,7 +67,7 @@ namespace UnityEditor.ProBuilder
 #endif
         }
 
-        void OnSelectionUpdate(ProBuilderMesh[] newSelection)
+        void OnSelectionUpdate(IEnumerable<ProBuilderMesh> newSelection)
         {
             if (newSelection == null)
             {

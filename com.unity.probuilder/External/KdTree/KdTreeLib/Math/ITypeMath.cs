@@ -1,6 +1,6 @@
 ﻿namespace UnityEngine.ProBuilder.KdTree
 {
-	public interface ITypeMath<T>
+	interface ITypeMath<T>
 	{
 		int Compare(T a, T b);
 

@@ -1,6 +1,6 @@
 ﻿namespace UnityEngine.ProBuilder.KdTree
 {
-	public struct HyperRect<T>
+	struct HyperRect<T>
 	{
 		private T[] minPoint;
 		public T[] MinPoint

@@ -30,7 +30,7 @@
  */
 
 namespace UnityEngine.ProBuilder.Poly2Tri {
-	public class DTSweepDebugContext : TriangulationDebugContext {
+	class DTSweepDebugContext : TriangulationDebugContext {
 		/*
 		 * Fields used for visual representation of current triangulation
 		 */

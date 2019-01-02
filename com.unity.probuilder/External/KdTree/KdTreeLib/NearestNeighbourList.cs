@@ -2,7 +2,7 @@
 
 namespace UnityEngine.ProBuilder.KdTree
 {
-	public interface INearestNeighbourList<TItem, TDistance>
+	interface INearestNeighbourList<TItem, TDistance>
 	{
 		bool Add(TItem item, TDistance distance);
 		TItem GetFurtherest();
@@ -12,7 +12,7 @@ namespace UnityEngine.ProBuilder.KdTree
 		int Count { get; }
 	}
 
-	public class NearestNeighbourList<TItem, TDistance> : INearestNeighbourList<TItem, TDistance>
+	class NearestNeighbourList<TItem, TDistance> : INearestNeighbourList<TItem, TDistance>
 	{
 		public NearestNeighbourList(int maxCapacity, ITypeMath<TDistance> distanceMath)
 		{

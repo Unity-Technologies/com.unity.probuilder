@@ -32,12 +32,12 @@
  * Forces a triangle edge between two points p and q
  * when triangulating. For example used to enforce
  * Polygon Edges during a polygon triangulation.
- * 
+ *
  * @author Thomas Åhlén, thahlen@gmail.com
  */
 
 namespace UnityEngine.ProBuilder.Poly2Tri {
-	public class TriangulationConstraint {
+	class TriangulationConstraint {
 		public TriangulationPoint P;
 		public TriangulationPoint Q;
 	}

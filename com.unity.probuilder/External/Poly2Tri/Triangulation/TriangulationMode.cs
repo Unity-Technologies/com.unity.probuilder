@@ -30,7 +30,7 @@
  */
 
 namespace UnityEngine.ProBuilder.Poly2Tri {
-	public enum TriangulationMode {
+	enum TriangulationMode {
 		Unconstrained,Constrained,Polygon
 	}
 }
