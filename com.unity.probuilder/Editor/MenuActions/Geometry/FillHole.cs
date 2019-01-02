@@ -93,8 +93,7 @@ namespace UnityEditor.ProBuilder.Actions
                 HashSet<int> common = mesh.GetSharedVertexHandles(indexes);
                 List<List<WingedEdge>> holes = ElementSelection.FindHoles(wings, common);
 
-                HashSet<Face> faces = new HashSet<Face>();
-                List<Face> adjacent = new List<Face>();
+                HashSet<Face> appendedFaces = new HashSet<Face>();
 
                 foreach (List<WingedEdge> hole in holes)
                 {
@@ -112,51 +111,50 @@ namespace UnityEditor.ProBuilder.Actions
 
                         holeIndexes = hole.Select(x => x.edge.local.a).ToList();
                         face = AppendElements.CreatePolygon(mesh, holeIndexes, false);
-                        adjacent.AddRange(hole.Select(x => x.face));
                     }
                     else
                     {
                         IEnumerable<WingedEdge> selected = hole.Where(x => common.Contains(x.edge.common.a));
                         holeIndexes = selected.Select(x => x.edge.local.a).ToList();
                         face = AppendElements.CreatePolygon(mesh, holeIndexes, true);
-
-                        if (res)
-                            adjacent.AddRange(selected.Select(x => x.face));
                     }
 
                     if (face != null)
                     {
                         filled++;
-                        adjacent.Add(face);
-                        faces.Add(face);
+                        appendedFaces.Add(face);
                     }
                 }
 
-                mesh.SetSelectedFaces(faces);
+                mesh.SetSelectedFaces(appendedFaces);
 
-                wings = WingedEdge.GetWingedEdges(mesh, adjacent);
+                wings = WingedEdge.GetWingedEdges(mesh);
 
                 // make sure the appended faces match the first adjacent face found
                 // both in winding and face properties
-                foreach (WingedEdge wing in wings)
+                foreach (var appendedFace in appendedFaces)
                 {
-                    if (faces.Contains(wing.face))
+                    var wing = wings.FirstOrDefault(x => x.face == appendedFace);
+
+                    if (wing == null)
+                        continue;
+
+                    using (var it = new WingedEdgeEnumerator(wing))
                     {
-                        faces.Remove(wing.face);
-
-                        using (var it = new WingedEdgeEnumerator(wing))
+                        while (it.MoveNext())
                         {
-                            while (it.MoveNext())
-                            {
-                                var p = it.Current;
+                            if (it.Current == null)
+                                continue;
 
-                                if (p.opposite != null)
-                                {
-                                    p.face.submeshIndex = p.opposite.face.submeshIndex;
-                                    p.face.uv = new AutoUnwrapSettings(p.opposite.face.uv);
-                                    SurfaceTopology.ConformOppositeNormal(p.opposite);
-                                    break;
-                                }
+                            var currentWing = it.Current;
+                            var oppositeFace = it.Current.opposite?.face;
+
+                            if (oppositeFace != null && !appendedFaces.Contains(oppositeFace))
+                            {
+                                currentWing.face.submeshIndex = oppositeFace.submeshIndex;
+                                currentWing.face.uv = new AutoUnwrapSettings(oppositeFace.uv);
+                                SurfaceTopology.ConformOppositeNormal(currentWing.opposite);
+                                break;
                             }
                         }
                     }
