@@ -185,7 +185,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
                 {
                     new MultiColumnHeaderState.Column()
                     {
-                        headerContent = new GUIContent("Obselete Files to Delete")
+                        headerContent = new GUIContent("Obsolete Files to Delete")
                     }
                 });
 
@@ -246,7 +246,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             }
             else if ((m_ConversionReadyState & ConversionReadyState.AssetStoreInstallFound) > 0)
             {
-                GUILayout.Label("Obselete Files to Delete", EditorStyles.boldLabel);
+                GUILayout.Label("Obsolete Files to Delete", EditorStyles.boldLabel);
 
                 m_AssetTreeRect = GUILayoutUtility.GetRect(position.width, 128, GUILayout.ExpandHeight(true));
 
