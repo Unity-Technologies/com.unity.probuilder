@@ -5,7 +5,7 @@ namespace UnityEngine.ProBuilder
     /// </summary>
     static class Version
     {
-        internal static readonly SemVer currentInfo = new SemVer("4.0.0-preview.37", "2018/12/19");
+        internal static readonly SemVer currentInfo = new SemVer("4.0.0-preview.38", "2019/01/03");
 
         /// <summary>
         /// Get the current version.

@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.37] - 2018-12-17
+## [4.0.0-preview.38] - 2018-01-03
 
 ### Features
 
@@ -73,6 +73,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix toggling static flags not consistently rebuilding lightmap UVs when `Auto Lightmap UVs` is enabled.
 - Fix `Poly Shape` not aligning with the ProGrids plane.
 - Fix FBX Exporter incompatibilities breaking compiliation.
+- Fix stair shape showing dimensions field twice.
+- Fix incorrect wireframe overlay when editing a `Poly Shape`.
 
 ### Changes
 
@@ -93,12 +95,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Use the last selected mesh element as the active selection pivot, matching object selection.
 - Remove "About" window.
 
-### Changes since 4.0.0-preview.36
+### Changes since 4.0.0-preview.37
 
-- (Internal) Fix `Toggle Handle Orientation` tooltip and shortcut.
-- (Internal) Fix issue where plane picking would not respect a visible progrids plane if grid snapping was disabled.
-- Fix stair shape showing dimensions field twice.
-- Fix incorrect wireframe overlay when editing a `Poly Shape`.
+- (Regression) Fix `Fill Hole` action not correctly orienting appended face normals.
+- (Regression) Fix a potential `NullReferenceException` when extruding edges.
+- (Regression) Fix `Merge Objects` action resulting in missing materials.
+- (Regression) Fix vertex translation not respecting ProGrids `Snap on all Axes` preference.
 
 ## [3.0.8] - 2018-05-07
 
