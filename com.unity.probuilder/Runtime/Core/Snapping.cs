@@ -8,6 +8,8 @@ namespace UnityEngine.ProBuilder
     /// </summary>
     static class Snapping
     {
+        const float k_MaxRaySnapDistance = Mathf.Infinity;
+
         /// <summary>
         /// Round value to nearest snpVal increment.
         /// </summary>
@@ -74,6 +76,60 @@ namespace UnityEngine.ProBuilder
                 (Mathf.Approximately(Mathf.Abs(normal.x), 1f)) ? 0f : 1f,
                 (Mathf.Approximately(Mathf.Abs(normal.y), 1f)) ? 0f : 1f,
                 (Mathf.Approximately(Mathf.Abs(normal.z), 1f)) ? 0f : 1f);
+        }
+
+        public static Vector3 Ceil(Vector3 vertex, float snpVal)
+        {
+            return new Vector3(
+                snpVal * Mathf.Ceil(vertex.x / snpVal),
+                snpVal * Mathf.Ceil(vertex.y / snpVal),
+                snpVal * Mathf.Ceil(vertex.z / snpVal));
+        }
+
+        public static Vector3 Floor(Vector3 vertex, float snpVal)
+        {
+            // snapValue is a global setting that comes from ProGrids
+            return new Vector3(
+                snpVal * Mathf.Floor(vertex.x / snpVal),
+                snpVal * Mathf.Floor(vertex.y / snpVal),
+                snpVal * Mathf.Floor(vertex.z / snpVal));
+        }
+
+        internal static Vector3 SnapValueOnRay(Ray ray, float distance, float snap, Vector3Mask mask)
+        {
+            var nearest = k_MaxRaySnapDistance;
+
+            var forwardRay = new Ray(ray.origin, ray.direction);
+            var backwardsRay = new Ray(ray.origin, -ray.direction);
+
+            for (int i = 0; i < 3; i++)
+            {
+                if (mask[i] > 0f)
+                {
+                    var dir = new Vector3Mask(new Vector3Mask((byte) (1 << i)));
+
+                    var prj = Vector3.Project(
+                        ray.direction * Math.MakeNonZero(distance),
+                        dir * Mathf.Sign(ray.direction[i]));
+
+                    var pnt = ray.origin + prj;
+
+                    var forwardPlane = new Plane(dir, Ceil(pnt, snap));
+                    var backwardPlane = new Plane(dir, Floor(pnt, snap));
+                    float d;
+
+                    if (forwardPlane.Raycast(forwardRay, out d) && Mathf.Abs(d) < nearest)
+                        nearest = d;
+                    if (forwardPlane.Raycast(backwardsRay, out d) && Mathf.Abs(d) < nearest)
+                        nearest = -d;
+                    if (backwardPlane.Raycast(forwardRay, out d) && Mathf.Abs(d) < nearest)
+                        nearest = d;
+                    if (backwardPlane.Raycast(backwardsRay, out d) && Mathf.Abs(d) < nearest)
+                        nearest = -d;
+                }
+            }
+
+            return ray.origin + ray.direction * (nearest > k_MaxRaySnapDistance ? distance : nearest);
         }
     }
 }

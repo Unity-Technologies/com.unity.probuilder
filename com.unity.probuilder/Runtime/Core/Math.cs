@@ -781,6 +781,9 @@ namespace UnityEngine.ProBuilder
         /// <returns></returns>
         internal static bool IsCardinalAxis(Vector3 v, float epsilon = floatEpsilon)
         {
+            if (v == Vector3.zero)
+                return false;
+
             v.Normalize();
 
             return (1f - Mathf.Abs(Vector3.Dot(Vector3.up, v))) < epsilon ||
@@ -1391,7 +1394,7 @@ namespace UnityEngine.ProBuilder
             return IsNumber(value.x) && IsNumber(value.y) && IsNumber(value.z) && IsNumber(value.w);
         }
 
-        internal static float MakeNonZero(float value, float min = .001f)
+        internal static float MakeNonZero(float value, float min = .0001f)
         {
             if (float.IsNaN(value) || float.IsInfinity(value) || Mathf.Abs(value) < min)
                 return min * Mathf.Sign(value);
