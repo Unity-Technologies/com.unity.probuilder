@@ -24,8 +24,14 @@ namespace UnityEditor.ProBuilder
         public virtual void AddItemsToMenu(GenericMenu menu)
         {
             bool floating = ProBuilderSettings.Get<bool>(utilityWindowKey, SettingsScope.Project, false);
-            menu.AddItem(new GUIContent("Window/Open as Floating Window", ""), floating, () => SetIsUtilityWindow(true));
-            menu.AddItem(new GUIContent("Window/Open as Dockable Window", ""), !floating, () => SetIsUtilityWindow(false));
+
+            if (menu.GetItemCount() > 1)
+                menu.AddSeparator("");
+                
+            menu.AddItem(new GUIContent("Open as Floating Window", ""), floating, () => SetIsUtilityWindow(true));
+            menu.AddItem(new GUIContent("Open as Dockable Window", ""), !floating, () => SetIsUtilityWindow(false));
+
+            menu.AddSeparator("");
         }
 
         protected void DoContextMenu()

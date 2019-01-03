@@ -80,7 +80,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 return null;
 
             Vector3[] localVerts = mesh.positionsInternal;
-            Vector3[] oNormals = mesh.mesh.normals;
+            if (!mesh.HasArrays(MeshArrays.Normal))
+                mesh.Refresh(RefreshMask.Normals);
+            IList<Vector3> oNormals = mesh.normals;
 
             int[] allEdgeIndexes = new int[validEdges.Count * 2];
             int c = 0;
@@ -113,23 +115,27 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 int x_sharedIndex = mesh.GetSharedVertexHandle(edge.a);
                 int y_sharedIndex = mesh.GetSharedVertexHandle(edge.b);
 
-                Face newFace = mesh.AppendFace(
-                        new Vector3[4]
+                var positions = new Vector3[4]
                 {
                     localVerts[edge.a],
                     localVerts[edge.b],
                     localVerts[edge.a] + xnorm.normalized * distance,
                     localVerts[edge.b] + ynorm.normalized * distance
-                },
-                        hasColors
-                        ? new Color[4]
-                {
-                    mesh.colorsInternal[edge.a],
-                    mesh.colorsInternal[edge.b],
-                    mesh.colorsInternal[edge.a],
-                    mesh.colorsInternal[edge.b]
-                }
-                        : null,
+                };
+
+                var colors = hasColors
+                    ? new Color[4]
+                    {
+                        mesh.colorsInternal[edge.a],
+                        mesh.colorsInternal[edge.b],
+                        mesh.colorsInternal[edge.a],
+                        mesh.colorsInternal[edge.b]
+                    }
+                    : null;
+
+                Face newFace = mesh.AppendFace(
+                        positions,
+                        colors,
                         new Vector2[4],
                         new Face(new int[6] { 2, 1, 0, 2, 3, 1 }, face.submeshIndex, AutoUnwrapSettings.tile, 0, -1, -1, false),
                         new int[4] { x_sharedIndex, y_sharedIndex, -1, -1 });
