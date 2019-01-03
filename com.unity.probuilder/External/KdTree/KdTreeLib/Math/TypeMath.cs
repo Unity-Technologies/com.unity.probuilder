@@ -2,9 +2,8 @@
 
 namespace UnityEngine.ProBuilder.KdTree.Math
 {
-	// Algebraic!
 	[Serializable]
-	public abstract class TypeMath<T> : ITypeMath<T>
+	abstract class TypeMath<T> : ITypeMath<T>
 	{
 		#region ITypeMath<T> members
 

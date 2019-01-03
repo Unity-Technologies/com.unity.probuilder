@@ -32,7 +32,7 @@
 using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder.Poly2Tri {
-	public class DTSweepPointComparator : IComparer<TriangulationPoint> {
+	class DTSweepPointComparator : IComparer<TriangulationPoint> {
 		public int Compare(TriangulationPoint p1, TriangulationPoint p2) {
 			if (p1.Y < p2.Y) {
 				return -1;

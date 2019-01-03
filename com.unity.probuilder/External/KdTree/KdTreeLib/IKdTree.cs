@@ -2,7 +2,7 @@
 
 namespace UnityEngine.ProBuilder.KdTree
 {
-	public interface IKdTree<TKey, TValue> : IEnumerable<KdTreeNode<TKey, TValue>>
+	interface IKdTree<TKey, TValue> : IEnumerable<KdTreeNode<TKey, TValue>>
 	{
 		bool Add(TKey[] point, TValue value);
 
@@ -21,7 +21,7 @@ namespace UnityEngine.ProBuilder.KdTree
 		void Clear();
 
 		KdTreeNode<TKey, TValue>[] GetNearestNeighbours(TKey[] point, int count = int.MaxValue);
-		
+
 		int Count { get; }
 	}
 }

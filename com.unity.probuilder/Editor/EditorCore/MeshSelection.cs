@@ -21,6 +21,9 @@ namespace UnityEditor.ProBuilder
         static bool s_SelectedElementGroupsDirty = true;
         static Bounds s_SelectionBounds = new Bounds();
 
+        /// <value>
+        /// An axis-aligned bounding box encompassing the selected elements.
+        /// </value>
         public static Bounds bounds
         {
             get { return s_SelectionBounds; }
@@ -38,10 +41,27 @@ namespace UnityEditor.ProBuilder
         /// </value>
         public static int selectedObjectCount { get; private set; }
 
-        internal static int selectedVertexCount { get; private set; }
-        internal static int selectedSharedVertexCount { get; private set; }
-        internal static int selectedFaceCount { get; private set; }
-        internal static int selectedEdgeCount { get; private set; }
+        /// <value>
+        /// The sum of all selected ProBuilderMesh selected vertex counts.
+        /// </value>
+        /// <seealso cref="selectedSharedVertexCount"/>
+        public static int selectedVertexCount { get; private set; }
+
+        /// <value>
+        /// The sum of all selected ProBuilderMesh selected shared vertex counts.
+        /// </value>
+        /// <seealso cref="selectedVertexCount"/>
+        public static int selectedSharedVertexCount { get; private set; }
+
+        /// <value>
+        /// The sum of all selected ProBuilderMesh selected face counts.
+        /// </value>
+        public static int selectedFaceCount { get; private set; }
+
+        /// <value>
+        /// The sum of all selected ProBuilderMesh selected edge counts.
+        /// </value>
+        public static int selectedEdgeCount { get; private set; }
 
         // per-object selected element maxes
         internal static int selectedFaceCountObjectMax { get; private set; }

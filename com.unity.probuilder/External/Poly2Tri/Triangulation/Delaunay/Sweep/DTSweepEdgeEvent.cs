@@ -33,7 +33,7 @@
 ///   Turned DTSweepEdgeEvent into a value type
 
 namespace UnityEngine.ProBuilder.Poly2Tri {
-	public class DTSweepEdgeEvent {
+	class DTSweepEdgeEvent {
 		public DTSweepConstraint ConstrainedEdge;
 		public bool Right;
 	}

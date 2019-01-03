@@ -33,14 +33,14 @@ using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder.Poly2Tri {
 
-	public class TriangulationPoint {
+	class TriangulationPoint {
 
 		// This point was an inserted index.
 		public const int INSERTED_INDEX = -1;
 
 		// This point is not a valid index.
 		public const int INVALID_INDEX = -2;
-		
+
 		// List of edges this point constitutes an upper ending point (CDT)
 		public List<DTSweepConstraint> Edges { get; private set; }
 

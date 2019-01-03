@@ -32,7 +32,7 @@
 using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder.Poly2Tri {
-	public class PointSet : Triangulatable {
+	class PointSet : Triangulatable {
 		public IList<TriangulationPoint> Points { get; private set; }
 		public IList<DelaunayTriangle> Triangles { get; private set; }
 

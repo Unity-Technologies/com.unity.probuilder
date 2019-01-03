@@ -33,7 +33,7 @@ namespace UnityEngine.ProBuilder.Poly2Tri {
 	/**
 	 * @author Thomas Åhlén, thahlen@gmail.com
 	 */
-	public class TriangulationUtil {
+	class TriangulationUtil {
 		public static double EPSILON = 1e-12;
 		/// <summary>
 		///   Requirements:
@@ -45,9 +45,9 @@ namespace UnityEngine.ProBuilder.Poly2Tri {
 		///               / \
 		///              /   \
 		///            b/     \c
-		///            +-------+ 
-		///           /    B    \  
-		///          /           \ 
+		///            +-------+
+		///           /    B    \
+		///          /           \
 		/// </code>
 		///    Facts:
 		///  d has to be in area B to have a chance to be inside the circle formed by a,b and c

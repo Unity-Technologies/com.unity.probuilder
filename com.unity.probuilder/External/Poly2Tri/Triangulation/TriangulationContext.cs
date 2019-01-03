@@ -32,7 +32,7 @@
 using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder.Poly2Tri {
-	public abstract class TriangulationContext {
+	abstract class TriangulationContext {
 		public TriangulationDebugContext DebugContext { get; protected set; }
 
 		public readonly List<DelaunayTriangle> Triangles = new List<DelaunayTriangle>();

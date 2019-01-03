@@ -375,12 +375,12 @@ namespace UnityEditor.ProBuilder
             m_SmoothGroups.Clear();
         }
 
-        void OnBeginVertexMovement(ProBuilderMesh[] selection)
+        void OnBeginVertexMovement(IEnumerable<ProBuilderMesh> selection)
         {
             s_IsMovingVertices = true;
         }
 
-        void OnFinishVertexMovement(ProBuilderMesh[] selection)
+        void OnFinishVertexMovement(IEnumerable<ProBuilderMesh> selection)
         {
             s_IsMovingVertices = false;
             OnSelectionChanged();

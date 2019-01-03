@@ -239,9 +239,9 @@ namespace UnityEditor.ProBuilder
             this.wantsMouseMove = true;
             this.autoRepaintOnSceneChange = true;
 
-            ProBuilderEditor.selectionUpdated += OnSelectionUpdate;
-            if (editor != null)
-                OnSelectionUpdate(editor.selection);
+            MeshSelection.objectSelectionChanged += ObjectSelectionChanged;
+            ProBuilderMesh.elementSelectionChanged += ElementSelectionChanged;
+            ObjectSelectionChanged();
 
             instance = this;
 
@@ -258,10 +258,10 @@ namespace UnityEditor.ProBuilder
                 ProBuilderEditor.ResetToLastSelectMode();
 
             if (uv2Editor != null)
-                Object.DestroyImmediate(uv2Editor);
+                DestroyImmediate(uv2Editor);
 
-            // EditorApplication.delayCall -= this.Close;                           // not sure if this is necessary?
-            ProBuilderEditor.selectionUpdated -= OnSelectionUpdate;
+            MeshSelection.objectSelectionChanged -= ObjectSelectionChanged;
+            ProBuilderMesh.elementSelectionChanged -= ElementSelectionChanged;
             ProBuilderMeshEditor.onGetFrameBoundsEvent -= OnGetFrameBoundsEvent;
         }
 
@@ -450,16 +450,21 @@ namespace UnityEditor.ProBuilder
         #endregion
         #region Editor Delegate and Event
 
-        void OnSelectionUpdate(ProBuilderMesh[] selection)
+        void ElementSelectionChanged(ProBuilderMesh mesh)
         {
-            this.selection = selection;
+            ObjectSelectionChanged();
+        }
+
+        void ObjectSelectionChanged()
+        {
+            selection = MeshSelection.top.ToArray();
 
             SetSelectedUVsWithSceneView();
 
             RefreshUVCoordinates();
 
             // get incompletely selected texture groups
-            int len = selection == null ? 0 : selection.Length;
+            int len = selection == null ? 0 : selection.Count();
 
             incompleteTextureGroupsInSelection = new List<Face[]>[len];
             incompleteTextureGroupsInSelection_CoordCache.Clear();

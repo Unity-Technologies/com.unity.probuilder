@@ -43,7 +43,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder.Poly2Tri {
-	public class DelaunayTriangle {
+	class DelaunayTriangle {
 		public FixedArray3<TriangulationPoint> Points;
 		public FixedArray3<DelaunayTriangle  > Neighbors;
 		public FixedBitArray3 EdgeIsConstrained, EdgeIsDelaunay;
@@ -99,7 +99,7 @@ namespace UnityEngine.ProBuilder.Poly2Tri {
 			System.Diagnostics.Debug.Assert(t != this, "self-pointer error");
 			return PointCWFrom(t.PointCWFrom(p));
 		}
-		
+
 		public DelaunayTriangle NeighborCWFrom    (TriangulationPoint point) { return Neighbors[(Points.IndexOf(point)+1)%3]; }
 		public DelaunayTriangle NeighborCCWFrom   (TriangulationPoint point) { return Neighbors[(Points.IndexOf(point)+2)%3]; }
 		public DelaunayTriangle NeighborAcrossFrom(TriangulationPoint point) { return Neighbors[ Points.IndexOf(point)     ]; }

@@ -8,6 +8,71 @@ using UObject = UnityEngine.Object;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
+    /// A collection of settings defining how mesh element picking behaves.
+    /// </summary>
+    public struct PickerOptions
+    {
+        /// <value>
+        /// Should depth testing be performed when hit testing elements?
+        /// Enable to select only visible elements, disable to select all elements regardless of visibility.
+        /// </value>
+        public bool depthTest { get; set; }
+
+        /// <value>
+        /// Require elements to be completely encompassed by the rect selection (Complete) or only touched (Partial).
+        /// </value>
+        /// <remarks>
+        /// Does not apply to vertex picking.
+        /// </remarks>
+        public RectSelectMode rectSelectMode { get; set; }
+
+        static readonly PickerOptions k_Default = new PickerOptions()
+        {
+            depthTest = true,
+            rectSelectMode = RectSelectMode.Partial,
+        };
+
+        /// <value>
+        /// A set of options with default values.
+        /// </value>
+        public static PickerOptions Default
+        {
+            get { return k_Default; }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is PickerOptions))
+                return false;
+
+            return Equals((PickerOptions)obj);
+        }
+
+        public bool Equals(PickerOptions other)
+        {
+            return depthTest == other.depthTest && rectSelectMode == other.rectSelectMode;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (depthTest.GetHashCode() * 397) ^ (int)rectSelectMode;
+            }
+        }
+
+        public static bool operator==(PickerOptions a, PickerOptions b)
+        {
+            return a.Equals(b);
+        }
+
+        public static bool operator!=(PickerOptions a, PickerOptions b)
+        {
+            return !a.Equals(b);
+        }
+    }
+
+    /// <summary>
     /// Functions for picking elements in a view by rendering a picker texture and testing pixels.
     /// </summary>
     static class SelectionPickerRenderer

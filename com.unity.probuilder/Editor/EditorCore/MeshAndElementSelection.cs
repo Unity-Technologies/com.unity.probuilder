@@ -5,6 +5,9 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
+    /// <summary>
+    /// Represents the state of a ProBuilderMesh and it's selected elements.
+    /// </summary>
     abstract class MeshAndElementSelection
     {
         ProBuilderMesh m_Mesh;
@@ -78,7 +81,7 @@ namespace UnityEditor.ProBuilder
                         foreach (var list in GetVertexSelectionGroups(mesh, collectCoincident))
                         {
                             var bounds = Math.GetBounds(mesh.positionsInternal, list);
-                            var rot = EditorHandleUtility.GetVertexRotation(mesh, orientation, list);
+                            var rot = UnityEngine.ProBuilder.HandleUtility.GetVertexRotation(mesh, orientation, list);
                             groups.Add(new ElementGroup(list, trs.MultiplyPoint3x4(bounds.center), rot));
                         }
                     }
@@ -87,7 +90,7 @@ namespace UnityEditor.ProBuilder
                         foreach (var list in GetEdgeSelectionGroups(mesh))
                         {
                             var bounds = Math.GetBounds(mesh.positionsInternal, list);
-                            var rot = EditorHandleUtility.GetEdgeRotation(mesh, orientation, list);
+                            var rot = UnityEngine.ProBuilder.HandleUtility.GetEdgeRotation(mesh, orientation, list);
 
                             List<int> indices;
 
@@ -109,7 +112,7 @@ namespace UnityEditor.ProBuilder
                         foreach (var list in GetFaceSelectionGroups(mesh))
                         {
                             var bounds = Math.GetBounds(mesh.positionsInternal, list);
-                            var rot = EditorHandleUtility.GetFaceRotation(mesh, orientation, list);
+                            var rot = UnityEngine.ProBuilder.HandleUtility.GetFaceRotation(mesh, orientation, list);
                             List<int> indices;
 
                             if (collectCoincident)
@@ -144,7 +147,7 @@ namespace UnityEditor.ProBuilder
                         if (face != null)
                         {
                             position = trs.MultiplyPoint3x4(Math.GetBounds(mesh.positionsInternal, face.distinctIndexesInternal).center);
-                            rotation = EditorHandleUtility.GetFaceRotation(mesh, orientation, new Face[] { face });
+                            rotation = UnityEngine.ProBuilder.HandleUtility.GetFaceRotation(mesh, orientation, new Face[] { face });
                         }
                     }
                     else if (selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
@@ -154,7 +157,7 @@ namespace UnityEditor.ProBuilder
                         if (edge != Edge.Empty)
                         {
                             position = trs.MultiplyPoint3x4(Math.GetBounds(mesh.positionsInternal, new int [] { edge.a, edge.b }).center);
-                            rotation = EditorHandleUtility.GetEdgeRotation(mesh, orientation, new Edge[] { edge });
+                            rotation = UnityEngine.ProBuilder.HandleUtility.GetEdgeRotation(mesh, orientation, new Edge[] { edge });
                         }
                     }
                     else if (selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.TextureVertex))
@@ -164,7 +167,7 @@ namespace UnityEditor.ProBuilder
                         if (vertex > -1)
                         {
                             position = trs.MultiplyPoint3x4(mesh.positionsInternal[vertex]);
-                            rotation = EditorHandleUtility.GetVertexRotation(mesh, orientation, new int[] { vertex });
+                            rotation = UnityEngine.ProBuilder.HandleUtility.GetVertexRotation(mesh, orientation, new int[] { vertex });
                         }
                     }
 
@@ -185,21 +188,21 @@ namespace UnityEditor.ProBuilder
                         var face = mesh.GetActiveFace();
 
                         if (face != null)
-                            rotation = EditorHandleUtility.GetFaceRotation(mesh, orientation, new Face[] { face });
+                            rotation = UnityEngine.ProBuilder.HandleUtility.GetFaceRotation(mesh, orientation, new Face[] { face });
                     }
                     else if (selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
                     {
                         var edge = mesh.GetActiveEdge();
 
                         if (edge != Edge.Empty)
-                            rotation = EditorHandleUtility.GetEdgeRotation(mesh, orientation, new Edge[] { edge });
+                            rotation = UnityEngine.ProBuilder.HandleUtility.GetEdgeRotation(mesh, orientation, new Edge[] { edge });
                     }
                     else if (selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.TextureVertex))
                     {
                         var vertex = mesh.GetActiveVertex();
 
                         if (vertex > -1)
-                            rotation = EditorHandleUtility.GetVertexRotation(mesh, orientation, new int[] { vertex });
+                            rotation = UnityEngine.ProBuilder.HandleUtility.GetVertexRotation(mesh, orientation, new int[] { vertex });
                     }
 
                     groups.Add(new ElementGroup( indices, position, rotation));

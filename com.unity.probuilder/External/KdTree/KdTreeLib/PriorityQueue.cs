@@ -8,7 +8,7 @@ namespace UnityEngine.ProBuilder.KdTree
 		public TPriority Priority;
 	}
 
-	public class PriorityQueue<TItem, TPriority> : IPriorityQueue<TItem, TPriority>
+	class PriorityQueue<TItem, TPriority> : IPriorityQueue<TItem, TPriority>
 	{
 		public PriorityQueue(int capacity, ITypeMath<TPriority> priorityMath)
 		{

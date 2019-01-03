@@ -7,12 +7,10 @@ using System.Linq;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// Static methods for working with pb_Objects in an editor.
+    /// Static methods for working with ProBuilderMesh objects in an editor.
     /// </summary>
-    static class HandleUtility
+    public static class HandleUtility
     {
-        const float k_MaxEdgeSelectDistance = 20f;
-
         /// <summary>
         /// Convert a screen point (0,0 bottom left, in pixels) to a GUI point (0,0 top left, in points).
         /// </summary>
@@ -20,22 +18,21 @@ namespace UnityEngine.ProBuilder
         /// <param name="point"></param>
         /// <param name="pixelsPerPoint"></param>
         /// <returns></returns>
-        public static Vector3 ScreenToGuiPoint(this Camera camera, Vector3 point, float pixelsPerPoint)
+        internal static Vector3 ScreenToGuiPoint(this Camera camera, Vector3 point, float pixelsPerPoint)
         {
             return new Vector3(point.x / pixelsPerPoint, (camera.pixelHeight - point.y) / pixelsPerPoint, point.z);
         }
 
         /// <summary>
         /// Find a triangle intersected by InRay on InMesh.  InRay is in world space.
-        /// Returns the index in mesh.faces of the hit face, or -1.  Optionally can ignore
-        /// backfaces.
+        /// Returns the index in mesh.faces of the hit face, or -1.  Optionally can ignore backfaces.
         /// </summary>
         /// <param name="worldRay"></param>
         /// <param name="mesh"></param>
         /// <param name="hit"></param>
         /// <param name="ignore"></param>
         /// <returns></returns>
-        public static bool FaceRaycast(Ray worldRay, ProBuilderMesh mesh, out RaycastHit hit, HashSet<Face> ignore = null)
+        internal static bool FaceRaycast(Ray worldRay, ProBuilderMesh mesh, out RaycastHit hit, HashSet<Face> ignore = null)
         {
             return FaceRaycast(worldRay, mesh, out hit, Mathf.Infinity, CullingMode.Back, ignore);
         }
@@ -50,7 +47,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="cullingMode">Which sides of a face are culled when hit testing. Default is back faces are culled.</param>
         /// <param name="ignore">Optional collection of faces to ignore when raycasting.</param>
         /// <returns>True if the ray intersects with the mesh, false if not.</returns>
-        public static bool FaceRaycast(Ray worldRay, ProBuilderMesh mesh, out RaycastHit hit, float distance, CullingMode cullingMode, HashSet<Face> ignore = null)
+        internal static bool FaceRaycast(Ray worldRay, ProBuilderMesh mesh, out RaycastHit hit, float distance, CullingMode cullingMode, HashSet<Face> ignore = null)
         {
             // Transform ray into model space
             worldRay.origin -= mesh.transform.position; // Why doesn't worldToLocalMatrix apply translation?
@@ -117,7 +114,7 @@ namespace UnityEngine.ProBuilder
             return OutHitFace > -1;
         }
 
-        public static bool FaceRaycastBothCullModes(Ray worldRay, ProBuilderMesh mesh, ref SimpleTuple<Face, Vector3> back, ref SimpleTuple<Face, Vector3> front)
+        internal static bool FaceRaycastBothCullModes(Ray worldRay, ProBuilderMesh mesh, ref SimpleTuple<Face, Vector3> back, ref SimpleTuple<Face, Vector3> front)
         {
             // Transform ray into model space
             worldRay.origin -= mesh.transform.position; // Why doesn't worldToLocalMatrix apply translation?
@@ -193,7 +190,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="cullingMode">What sides of triangles does the ray intersect with.</param>
         /// <param name="ignore">Optional collection of faces to ignore when raycasting.</param>
         /// <returns>True if the ray intersects with the mesh, false if not.</returns>
-        public static bool FaceRaycast(
+        internal static bool FaceRaycast(
             Ray InWorldRay,
             ProBuilderMesh mesh,
             out List<RaycastHit> hits,
@@ -270,7 +267,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="transform"></param>
         /// <param name="InWorldRay"></param>
         /// <returns></returns>
-        public static Ray InverseTransformRay(this Transform transform, Ray InWorldRay)
+        internal static Ray InverseTransformRay(this Transform transform, Ray InWorldRay)
         {
             Vector3 o = InWorldRay.origin;
             o -= transform.position;
@@ -286,7 +283,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="hit"></param>
         /// <param name="distance"></param>
         /// <returns></returns>
-        public static bool MeshRaycast(Ray InWorldRay, GameObject gameObject, out RaycastHit hit, float distance = Mathf.Infinity)
+        internal static bool MeshRaycast(Ray InWorldRay, GameObject gameObject, out RaycastHit hit, float distance = Mathf.Infinity)
         {
             var meshFilter = gameObject.GetComponent<MeshFilter>();
             var mesh = meshFilter != null ? meshFilter.sharedMesh : null;
@@ -311,7 +308,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="hit"></param>
         /// <param name="distance"></param>
         /// <returns></returns>
-        public static bool MeshRaycast(Ray InRay, Vector3[] mesh, int[] triangles, out RaycastHit hit, float distance = Mathf.Infinity)
+        internal static bool MeshRaycast(Ray InRay, Vector3[] mesh, int[] triangles, out RaycastHit hit, float distance = Mathf.Infinity)
         {
             // float dot;               // vars used in loop
             float hitDistance = Mathf.Infinity;
@@ -361,6 +358,167 @@ namespace UnityEngine.ProBuilder
             RaycastHit hit;
 
             return FaceRaycast(ray, pb, out hit, Vector3.Distance(cam.transform.position, worldPoint), CullingMode.Front);
+        }
+
+        /// <summary>
+        /// Collects coincident vertices and returns a rotation calculated from the average normal and bitangent.
+        /// </summary>
+        /// <param name="mesh">The target mesh.</param>
+        /// <param name="indices">Vertex indices to consider in the rotation calculations.</param>
+        /// <returns>A rotation calculated from the average normal of each vertex.</returns>
+        public static Quaternion GetRotation(ProBuilderMesh mesh, IEnumerable<int> indices)
+        {
+            if (!mesh.HasArrays(MeshArrays.Normal))
+                Normals.CalculateNormals(mesh);
+
+            if (!mesh.HasArrays(MeshArrays.Tangent))
+                Normals.CalculateTangents(mesh);
+
+            var normals = mesh.normalsInternal;
+            var tangents = mesh.tangentsInternal;
+
+            var nrm = Vector3.zero;
+            var tan = Vector4.zero;
+            float count = 0;
+
+            foreach (var index in indices)
+            {
+                var n = normals[index];
+                var t = tangents[index];
+
+                nrm.x += n.x;
+                nrm.y += n.y;
+                nrm.z += n.z;
+
+                tan.x += t.x;
+                tan.y += t.y;
+                tan.z += t.z;
+                tan.w += t.w;
+
+                count++;
+            }
+
+            nrm.x /= count;
+            nrm.y /= count;
+            nrm.z /= count;
+
+            tan.x /= count;
+            tan.y /= count;
+            tan.z /= count;
+            tan.w /= count;
+
+            if (nrm == Vector3.zero || tan == Vector4.zero)
+                return mesh.transform.rotation;
+
+            var bit = Vector3.Cross(nrm, tan * tan.w);
+
+            return mesh.transform.rotation * Quaternion.LookRotation(nrm, bit);
+        }
+
+        /// <summary>
+        /// Get a rotation suitable for orienting a handle or gizmo relative to the element selection.
+        /// </summary>
+        /// <param name="mesh">The target mesh.</param>
+        /// <param name="orientation">The type of <see cref="HandleOrientation"/> to calculate.</param>
+        /// <param name="faces">Faces to consider in the rotation calculations. Only used when
+        /// <see cref="HandleOrientation"/> is <see cref="HandleOrientation.ActiveElement"/>.</param>
+        /// <returns>A rotation appropriate to the orientation and element selection.</returns>
+        public static Quaternion GetFaceRotation(ProBuilderMesh mesh, HandleOrientation orientation, IEnumerable<Face> faces)
+        {
+            if (mesh == null)
+                return Quaternion.identity;
+
+            switch (orientation)
+            {
+                case HandleOrientation.ActiveElement:
+
+                    if (mesh.selectedFaceCount < 1)
+                        goto case HandleOrientation.ActiveObject;
+
+                    var face = faces.First();
+
+                    // Intentionally not using coincident vertices here. We want the normal of just the face, not an
+                    // average of it's neighbors.
+                    return GetRotation(mesh, face.distinctIndexesInternal);
+
+                case HandleOrientation.ActiveObject:
+                    return mesh.transform.rotation;
+
+                default:
+                    return Quaternion.identity;
+            }
+        }
+
+        /// <summary>
+        /// Get a rotation suitable for orienting a handle or gizmo relative to the element selection.
+        /// </summary>
+        /// <param name="mesh">The target mesh.</param>
+        /// <param name="orientation">The type of <see cref="HandleOrientation"/> to calculate.</param>
+        /// <param name="edges">Edges to consider in the rotation calculations. Only used when
+        /// <see cref="HandleOrientation"/> is <see cref="HandleOrientation.ActiveElement"/>.</param>
+        /// <returns>A rotation appropriate to the orientation and element selection.</returns>
+        public static Quaternion GetEdgeRotation(ProBuilderMesh mesh, HandleOrientation orientation, IEnumerable<Edge> edges)
+        {
+            if (mesh == null)
+                return Quaternion.identity;
+
+            switch (orientation)
+            {
+                case HandleOrientation.ActiveElement:
+                    if (mesh.selectedEdgeCount < 1)
+                        goto case HandleOrientation.ActiveObject;
+
+                    // Getting an average of the edge normals isn't very helpful in real world uses, so we just use the
+                    // first selected edge for orientation.
+                    // This function accepts an enumerable because in the future we may want to do something more
+                    // sophisticated, and it's convenient because selections are stored as collections.
+                    var face = EdgeUtility.GetFace(mesh, edges.First());
+
+                    if (face == null)
+                        goto case HandleOrientation.ActiveObject;
+
+                    Normal nrm = Math.NormalTangentBitangent(mesh, face);
+
+                    if (nrm.normal == Vector3.zero || nrm.bitangent == Vector3.zero)
+                        goto case HandleOrientation.ActiveObject;
+
+                    return mesh.transform.rotation * Quaternion.LookRotation(nrm.normal, nrm.bitangent);
+
+                case HandleOrientation.ActiveObject:
+                    return mesh.transform.rotation;
+
+                default:
+                    return Quaternion.identity;
+            }
+        }
+
+        /// <summary>
+        /// Get a rotation suitable for orienting a handle or gizmo relative to the element selection.
+        /// </summary>
+        /// <param name="mesh">The target mesh.</param>
+        /// <param name="orientation">The type of <see cref="HandleOrientation"/> to calculate.</param>
+        /// <param name="vertices">Edges to consider in the rotation calculations. Only used when
+        /// <see cref="HandleOrientation"/> is <see cref="HandleOrientation.ActiveElement"/>.</param>
+        /// <returns>A rotation appropriate to the orientation and element selection.</returns>
+        public static Quaternion GetVertexRotation(ProBuilderMesh mesh, HandleOrientation orientation, IEnumerable<int> vertices)
+        {
+            if (mesh == null)
+                return Quaternion.identity;
+
+            switch (orientation)
+            {
+                case HandleOrientation.ActiveElement:
+                    if (mesh.selectedVertexCount < 1)
+                        goto case HandleOrientation.ActiveObject;
+
+                    return GetRotation(mesh, vertices);
+
+                case HandleOrientation.ActiveObject:
+                    return mesh.transform.rotation;
+
+                default:
+                    return Quaternion.identity;
+            }
         }
     }
 }

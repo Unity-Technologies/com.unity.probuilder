@@ -42,7 +42,7 @@ namespace UnityEngine.ProBuilder.Poly2Tri {
 	/**
 	 * @author Thomas Åhlen (thahlen@gmail.com)
 	 */
-	public class AdvancingFront {
+	class AdvancingFront {
 		public AdvancingFrontNode Head;
 		public AdvancingFrontNode Tail;
 		protected AdvancingFrontNode Search;

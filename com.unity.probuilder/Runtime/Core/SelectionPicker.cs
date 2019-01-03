@@ -1,78 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// A collection of settings defining how mesh element picking behaves.
-    /// </summary>
-    struct PickerOptions
-    {
-        /// <value>
-        /// Should depth testing be performed when hit testing elements?
-        /// Enable to select only visible elements, disable to select all elements regardless of visibility.
-        /// </value>
-        public bool depthTest { get; set; }
-
-        /// <value>
-        /// Require elements to be completely encompassed by the rect selection (Complete) or only touched (Partial).
-        /// </value>
-        /// <remarks>
-        /// Does not apply to vertex picking.
-        /// </remarks>
-        public RectSelectMode rectSelectMode { get; set; }
-
-        static readonly PickerOptions k_Default = new PickerOptions()
-        {
-            depthTest = true,
-            rectSelectMode = RectSelectMode.Partial,
-        };
-
-        /// <value>
-        /// A set of options with default values.
-        /// </value>
-        public static PickerOptions Default
-        {
-            get { return k_Default; }
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (!(obj is PickerOptions))
-                return false;
-
-            return Equals((PickerOptions)obj);
-        }
-
-        public bool Equals(PickerOptions other)
-        {
-            return depthTest == other.depthTest && rectSelectMode == other.rectSelectMode;
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return (depthTest.GetHashCode() * 397) ^ (int)rectSelectMode;
-            }
-        }
-
-        public static bool operator==(PickerOptions a, PickerOptions b)
-        {
-            return a.Equals(b);
-        }
-
-        public static bool operator!=(PickerOptions a, PickerOptions b)
-        {
-            return !a.Equals(b);
-        }
-    }
-
-    /// <summary>
     /// Functions for picking mesh elements in a view. Can either render a texture to test, or cast a ray. Prefer this over calling SelectionPickerRenderer directly.
     /// </summary>
-    static class Picking
+    public static class SelectionPicker
     {
         /// <summary>
         /// Pick the vertex indexes contained within a rect.
@@ -270,6 +203,15 @@ namespace UnityEngine.ProBuilder
             return selected;
         }
 
+        /// <summary>
+        /// Pick the edges contained within a rect.
+        /// </summary>
+        /// <param name="cam"></param>
+        /// <param name="rect">Rect is in GUI space, where 0,0 is top left of screen, width = cam.pixelWidth / pointsPerPixel.</param>
+        /// <param name="selectable">The ProBuilder mesh objects to consider when hit testing.</param>
+        /// <param name="options">Culling options.</param>
+        /// <param name="pixelsPerPoint">Scale the render texture to match rect coordinates. Generally you'll just pass in EditorGUIUtility.pointsPerPixel.</param>
+        /// <returns>A dictionary of ProBuilderMesh and edges that are in the selection rect.</returns>
         public static Dictionary<ProBuilderMesh, HashSet<Edge>> PickEdgesInRect(
             Camera cam,
             Rect rect,
@@ -345,6 +287,25 @@ namespace UnityEngine.ProBuilder
             }
 
             return selected;
+        }
+
+        /// <summary>
+        /// Returns the first hit face on a ProBuilder mesh given a screen position and camera.
+        /// </summary>
+        /// <param name="camera">The camera to use when calculating the raycast.</param>
+        /// <param name="mousePosition">The screen position to use when calculating the raycast.</param>
+        /// <param name="pickable">The ProBuilderMesh to test for ray/face intersection.</param>
+        /// <returns>A Face if successful, null if the hit test failed.</returns>
+        public static Face PickFace(Camera camera, Vector3 mousePosition, ProBuilderMesh pickable)
+        {
+            Ray ray = camera.ScreenPointToRay(mousePosition);
+
+            RaycastHit hit;
+
+            if (HandleUtility.FaceRaycast(ray, pickable, out hit, Mathf.Infinity, CullingMode.Back))
+                return pickable.facesInternal[hit.face];
+
+            return null;
         }
     }
 }
