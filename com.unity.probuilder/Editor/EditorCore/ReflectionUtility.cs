@@ -181,7 +181,6 @@ namespace UnityEditor.ProBuilder
             return null;
         }
 
-
         static public Delegate GetClosedDelegateOnProperty<T>(Type type, object target, string propertyName, BindingFlags bindings)
         {
             PropertyInfo propertyInfo = type.GetProperty(propertyName, bindings);
