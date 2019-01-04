@@ -1,70 +1,44 @@
-<div class="site"><a href="https://youtu.be/Ta3HkV_qHTc"><img src="images/VidLink_GettingStarted_Slim.png"></a></div>
+# Vertex tools
 
----
+This portion of the ProBuilder toolbar provides access to ProBuilder editing tools that you can use in the [Vertex edit mode](modes.md).
 
-<a id="collapse"></a>
-## ![Collapse Vertices Icon](images/icons/Vert_Collapse.png) Collapse Vertices
+![Vertex tools on the ProBuilder toolbar](images/tool_vertices.png)
 
-<div class="video-link">
-Section Video: <a href="https://youtu.be/l9pQWme7wrY?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Vertex Actions: Collapse Vertices</a>
-</div>
-
-**Keyboard Shortcut** : `ALT C`
-
-Collapses all selected vertices to a single point, regardless of distance.
-
-![](images/CollapseVerts_Example.png)
-
-![Options Icon](images/icons/Options.png) **Custom Settings Available** :
-
-|**Setting:** |**Description:** |
-|:---|:---|
-|__Collapse To First__ |Collapse to first-selected vertex position, instead of selection center. |
-
-
-## ![Weld Vertices Icon](images/icons/Vert_Weld.png) Weld Vertices
-
-<div class="video-link">
-Section Video: <a href="https://youtu.be/MaVDYQmT5Yg?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Vertex Actions: Weld Vertices</a>
-</div>
-
-**Keyboard Shortcut** : `ALT V`
-
-Merge vertices within a set distance of one another.
-
-![](images/WeldVerts_Example.png)
-
-![Options Icon](images/icons/Options.png) **Custom Settings Available** :
-
-|**Setting:** |**Description:** |
-|:---|:---|
-|__Collapse To First__ |Collapse to first-selected vertex position, instead of selection center. |
-
+> ***Note:*** Some actions also have extra options, or custom settings, available. The tool buttons are marked with a special indicator in the top right corner. The documentation for each tool includes information about these options.
 
 ## ![Connect Vertices Icon](images/icons/Vert_Connect.png) Connect Vertices
 
-<div class="video-link">
-Section Video: <a href="https://youtu.be/3wcSPqZy6Oc?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Vertex Actions: Connect Vertices</a>
-</div>
+Use the **Connect Vertices** tool to create a new edge connecting the selected vertices.
 
-**Keyboard Shortcut** : `ALT E`
+For more information, see the [Connect Vertices](Vert_Connect.md) tool reference.
 
-Create a new edge connecting the selected vertices.
+## ![Fill Hole icon](images/icons/FillHole.png) Fill Hole
 
-![](images/ConnectVerts_Example.png)
+Use the **Fill Hole** tool to create a new face filling any holes that touch the selected vertices.
 
+For more information, see the [Fill Hole](Vert_FillHole.md) tool reference.
 
-## ![Split Vertices Icon](images/icons/Vert_Split.png "Split Vertices Icon") Split Vertices
+## ![Split Vertices Icon](images/icons/Vert_Split.png) Split Vertices
 
-<div class="video-link">
-Section Video: <a href="https://youtu.be/90_q4haZDZo?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Vertex Actions: Split Vertices</a>
-</div>
+Use the **Split Vertices** tool to split a single vertex into multiple vertices (one per adjacent face).
 
-**Keyboard Shortcut** : `ALT X`
+For more information, see the [Split Vertices](Vert_Split.md) tool reference.
 
-Splits a vertex into it’s individual vertices so that they may be moved independently of one another.
+## ![Collapse Vertices icon](images/icons/Vert_Collapse.png) Collapse Vertices
 
-![](images/SplitVerts_Example.png)
+Use the **Collapse Vertices** tool to colapse all selected vertices to a single point, regardless of distance. 
 
-> **Note** : <br/>When a vertex is **Split**, the newly separated vertices will not actually move apart on their own. This was done for the image, to better illustrate the effect of this action.
+For more information, see the [Collapse Vertices](Vert_Collapse.md) tool reference.
+
+## ![Weld Vertices icon](images/icons/Vert_Weld.png) Weld Vertices
+
+Use the **Weld Vertices** tool to merge selected vertices within a specific distance of one another.
+
+For more information, see the [Weld Vertices](Vert_Weld.md) tool reference.
+
+## ![Set Pivot icon](images/icons/SetPivot.png) Set Pivot
+
+Use the **Set Pivot** tool to move the pivot point of this Mesh to the average center of the selected vertices.
+
+For more information, see the [Set Pivot](Vert_SetPivot.md) tool reference.
 

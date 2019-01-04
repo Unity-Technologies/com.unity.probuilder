@@ -1,104 +1,56 @@
-<div class="site"><a href="https://youtu.be/Ta3HkV_qHTc"><img src="images/VidLink_GettingStarted_Slim.png"></a></div>
+# Edge Tools
 
----
+This portion of the ProBuilder toolbar provides access to ProBuilder editing tools that you can use in the [Edge edit mode](modes.md).
 
-## ![Bridge Edges Icon](images/icons/Edge_Bridge.png) Bridge Edges
+![Edge tools on the ProBuilder toolbar](images/tool_edges.png)
 
-<div class="video-link">
-Section Video: <a href="https://youtu.be/de927QxOW9E?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Edge Actions: Bridge Edges</a>
-</div>
+> ***Note:*** Some actions also have extra options, or custom settings, available. The tool buttons are marked with a special indicator in the top right corner. The documentation for each tool includes information about these options.
 
-**Keyboard Shortcut** : `ALT B`
+## ![Bevel Edges icon](images/icons/Edge_Bevel.png) Bevel
 
-Create a new face between two selected edges. Each edge must have a free side.
+Use the **Bevel** tool to split the selected edge(s) into two edges, with a new face between.
 
-> **Note:** <br/>By default, only open edges can be **Bridged**. You can change this in the [ProBuilder Preferences](preferences#bridge-perimeter-edges-only).
+For more information, see the [Bevel](Edge_Bevel.md) tool reference.
 
-![](images/BridgeEdges_Example.png)
+## ![Connect Edges icon](images/icons/Edge_Connect.png) Connect Edges
 
+Use the **Connect Edges** tool to insert an edge connecting the centers of each selected edge.
 
-<a id="bevel"></a>
-## ![Bevel Edges Icon](images/icons/Edge_Bevel.png) Bevel
+For more information, see the [Connect Edges](Edge_Connect.md) tool reference.
 
-<div class="video-link">
-Section Video: <a href="https://youtu.be/gEc6wjEj960?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Edge Actions: Bevel Edges</a>
-</div>
+## ![Extrude Edges icon](images/icons/Edge_Extrude.png) Extrude Edges
 
-<!-- **Keyboard Shortcut** : `ALT B` -->
+Use the **Extrude Edges** tool to push a new edge out from each selected edge.
 
-Splits the selected edge(s) into two edges, with a new face between.
+For more information, see the [Extrude Edges](Edge_Extrude.md) tool reference.
 
-![](images/BevelEdges_Example.png)
+## ![Bridge Edges icon](images/icons/Edge_Bridge.png) Bridge Edges
 
-![Options Icon](images/icons/Options.png) **Custom Settings Available** :
+Use the **Bridge Edges** tool to create a new face between two selected edges. 
 
-|**Setting:** |**Description:** |
-|:---|:---|
-|__Distance__ |Sets the distance each new edge is moved, from the position of the original. |
+For more information, see the [Bridge Edges](Edge_Bridge.md) tool reference.
 
+## ![Insert Edge Loop icon](images/icons/Edge_InsertLoop.png) Insert Edge Loop
 
-## ![Connect Edges Icon](images/icons/Edge_Connect.png) Connect Edges
+Use the **Insert Edge Loop** tool to add a new edge loop from the selected edge(s). 
 
-<div class="video-link">
-Section Video: <a href="https://youtu.be/3wcSPqZy6Oc?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Edge Actions: Connect Edges</a>
-</div>
+For more information, see the [Insert Edge Loop](Edge_InsertLoop.md) tool reference.
 
-**Keyboard Shortcut** : `ALT E`
+## ![Fill Hole icon](images/icons/FillHole.png) Fill Hole
 
-Insert an edge connecting the centers of each selected edge.
+Use the **Fill Hole** tool to create a new face filling any holes that touch the selected edges.
 
-![](images/ConnectEdges_Example.png)
+For more information, see the [Fill Hole](Edge_FillHole.md) tool reference.
 
+## ![Subdivide Edge icon](images/icons/Edge_Subdivide.png) Subdivide Edges
 
-## ![Extrude Edges Icon](images/icons/Edge_Extrude.png) Extrude Edges
+Use the **Subdivide Edges** tool to divide the selected edge(s) into multiple edges. 
 
-<div class="video-link">
-Section Video: <a href="https://youtu.be/r7-3zkDfxGQ?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Edge Actions: Extrude Edges</a>
-</div>
+For more information, see the [Subdivide Edges](Edge_Subdivide.md) tool reference.
 
-**Keyboard Shortcut** : `SHIFT DRAG` / `CONTROL E` (PC) / `COMMAND E` (Mac)
+## ![Set Pivot icon](images/icons/SetPivot.png) Set Pivot
 
-Pushes a new edge out from the selected edge, connected by a new face.
+Use the **Set Pivot** tool to move the pivot point of this Mesh to the average center of the selected edges.
 
-You can also extrude edges by holding `SHIFT` while moving, rotating, or scaling them.
-
-![](images/ExtrudeEdges_Example.png)
-
-![Options Icon](images/icons/Options.png) **Custom Settings Available** :
-
-|**Setting:** |**Description:** |
-|:---|:---|
-|__Distance__ |Distance to extrude the edge(s). |
-
-
-## ![Subdivide Edge Icon](images/icons/Edge_Subdivide.png) Subdivide Edge
-
-<div class="video-link">
-Section Video: <a href="https://youtu.be/CC3J82ZY6-g?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Edge Actions: Subdivide Edge</a>
-</div>
-
-**Keyboard Shortcut** : `ALT S`
-
-Divides the selected edge(s) into multiple edges.
-
-![](images/SubdivideEdge_Example.png)
-
-![Options Icon](images/icons/Options.png) **Custom Settings Available** :
-
-|**Setting:** |**Description:** |
-|:---|:---|
-|__Subdivisions__ | Number of divisions to make in the selected edge(s). |
-
-
-## ![Insert Edge Loop Icon](images/icons/Edge_InsertLoop.png) Insert Edge Loop
-
-<div class="video-link">
-Section Video: <a href="https://youtu.be/Sy6K4SBDRGo?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Edge Actions: Subdivide Edge</a>
-</div>
-
-**Keyboard Shortcut** : `ALT U`
-
-Adds a new edge loop from the selected edge(s).
-
-![](images/InsertEdgeLoop_Example.png)
+For more information, see the [Set Pivot](Edge_SetPivot.md) tool reference.
 
