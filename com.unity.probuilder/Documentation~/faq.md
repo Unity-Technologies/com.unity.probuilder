@@ -1,126 +1,89 @@
-# FAQ
+# Troubleshooting
 
-<a name="convert-to-package-manager"></a>
-## Upgrading to Probuilder Package v3.0
+This section covers the following issues:
 
-In most cases, the process to upgrade a Unity project using ProBuilder 2.9.8 or lower to ProBuilder 3.0.0 or higher is simply to import the latest version. However, if that fails you may manually invoke the upgrade utility.
+* [Faces appear as black / don't render](#norender)
+* [Pink Shaders](#pink)
+* [Spotty Textures on Lightmapped GameObjects](#spotty)
+* [Missing FbxPrefab or assembly reference error](#fbx)
 
-`Tools/ProBuilder/Repair/Convert to Package Manager`
 
-To force the **Convert to Package Manager** utility to run, context click in the window and select "Find and Replace Deprecated File Ids."
 
-## Source Code
+<a name="norender"></a>
 
-Currently source code access is not available. We're working on getting it published soon.
+## Faces not rendering (black)
 
-## API
+If you are editing Mesh elements and suddenly notice that some of your faces have turned black, that can be either an auto-lightmapping problem or an indication that you have two edges or two vertices in a single Mesh that are now sharing the same space.
 
-The ProBuilder API is currently considered to be in **beta**. It **will** change before the final release.
+![Unrendered face](images/faq_black.png)
+
+First, check the **Auto Lightmap UVs** setting for on the [Lightmap UV Editor](lightmap-uv.md) window. Sometimes faces that appear as black just haven't been rendered yet because there are more rendering jobs than your resources can handle (particularly on older machines).
+
+To access the **Auto Lightmap UVs** setting:
+
+1. Open the [Lightmap UV Editor](lightmap-uv.md) window (**Tools** > **ProBuilder** > **Editors** > **Open Lightmap UV Editor**).
+
+2. Disable the **Auto Lightmap UVs** option.
+
+	![Disable the Auto Generate option](images/faq-norender.png)
+
+If you turn off the automatic lightmapping option and you still see faces that are not rendering, it may be that you have doubled vertices in your Mesh.
+
+To fix the elements that are sharing the same place:
+
+1. Select the entire Mesh.
+2. [Open the **Options** window](workflow-edit.md#edit) for the **Weld Vertices** tool and make sure that the **Weld Distance** value is very low (for example, 0.01 or 0.0001). This ensures the tool doesn't weld vertices that are close but not doubled.
+3. Click the **Weld Vertices** button.
+
+
+
+> ***Tip:*** You can always enable the __Show Scene Info__ property in the [ProBuilder Preferences](preferences.md#info_overlay) window while debugging. This displays information about the selected Mesh, including the total number of vertices, edges, and faces, and how many are currently selected in the top left corner of the Scene view.
+
+
+
+<a name="pink"></a>
 
 ## Pink Shaders
 
-If you are upgrading a project from the Asset Store package make sure to run the [Convert to Package Manager](#convert-to-package-manager) utility.
+If you are upgrading a project from the Asset Store package make sure to run the [Convert to Package Manager](installing.md#convert-to-package-manager) utility.
 
-If you're using the new Standard Rendering Pipeline you may have issues compiling the ProBuilder default shader. As a workaround, you can set the default material for ProBuilder in:
-
-`Edit > Preferences > ProBuilder`
-
-Under "Default Material."
+If you are using the new Standard Rendering Pipeline (SRP) you may have issues compiling the ProBuilder default Shader. As a workaround, you can set the [default Material](preferences.md#defmat) preference.
 
 
-## Error building Player (Windows Store, iOS, Android, WebGL)
 
-Usually seen with console errors:
+<a name="spotty"></a>
 
-- `Error building Player: UnityException: Failed to run serialization weaver with command`
-- `Reference Rewriter found some errors with command`
-
-To get things compiling again, you need to mark the ProBuilder Mesh Operations DLLs as Editor only.
-
-![DLL Target Settings](images/DLLTargets.png)
-
-The caveat is that this means you won't be able to access any of the ProBuilder mesh operations API at runtime.
-
-If this step does not address the build issues, it may be necessary to strip ProBuilder scripts entirely before compile.  Fortunetely this is also trivial:
-
-### Steps to Strip ProBuilder Scripts at Build Time
-
-1. First make sure that `Strip PB Scripts on Build` is checked in the Preferences/ProBuilder panel.
-
-	![strip_pb_scripts](images/strip_pb_scripts.png)
-
-1. Next, locate `ProBuilderCore-Unity5.dll` and `ProBuilderMeshOps-Unity5.dll` in your project.
-
-	![dlls](images/dlls.png)
-
-1. With both `ProBuilderCore-Unity5` and `ProBuilderMeshOps-Unity5` selected, in the Inspector window un-check "Any Platform."  Then toggle both "Editor" and "Standalone."
-
-	![build target](images/build_target.png)
-
-
-If you're using ProBuilder 2.5 or lower, some errors will appear when scripts reload.  Open the following files (in ProBuilder/API Examples):
-
-- IcoBumpin.cs
-- HueCube.cs
-- RuntimeEdit.cs
-
-In each of these files, place this line at the very beginning:
-
-	#if UNITY_EDITOR || UNITY_STANDALONE
-
-and this line at the very end:
-
-	#endif
-
-For example, here's what `RuntimeEdit.cs` looks like:
-
-	#if UNITY_STANDALONE || UNITY_EDITOR
-	using UnityEngine;
-	using System.Collections;
-	using ProBuilder2.Common;
-
-	namespace ProBuilder2.Examples
-	{
-
-		/**
-		 *	\brief This class allows the user to select a single face at a time and move it forwards or backwards.
-		 *	More advanced usage of the ProBuilder API should make use of the pb_Object->SelectedFaces list to keep
-		 *	track of the selected faces.
-		 */
-		public class RuntimeEdit : MonoBehaviour
-		{
-			// ... etc
-		}
-	}
-	#endif
-
-Now compile your project and run!
-
-## Missing Icons
-
-If you upgraded ProBuilder and are now missing icons in the toolbar, first try restarting Unity.
-
-If that does not work,
-
-1. Delete this folder: `ProCore/ProBuilder/Resources/GUI`
-2. Re-import ProBuilder from Asset Store / ProCore Downloads
-
-## Spotty Textures on Lightmapped Objects
+## Spotty Textures on Lightmapped GameObjects
 
 ![bad lightmap uvs](images/BadLightmapUVs.png)
 
-The object does not have a UV2 channel built.
+This happens because the GameObject does not have a UV2 channel built.
 
-- Select the affected objects
-- Click `Generate UV2` in the ProBuilder Toolbar
+To build the UV2 channel:
 
-## `FbxPrefab` could not be found. Are you missing an assembly reference?
+1. Select the affected GameObject(s).
+2. Run the [Lightmap UVs](Object_LightmapUVs.md) tool.
+
+
+
+<a name="fbx"></a>
+
+## Missing FbxPrefab or assembly reference error
+
+You may see one or more of these errors if you imported the **FBX Exporter** package, then later removed it:
 
 ```
-Assets/ProCore/ProBuilder/Editor/Addons/pb_Fbx.cs(62,35): error CS0246: The type or namespace name `FbxPrefab' could not be found. Are you missing an assembly reference?
+<project-folder>/Addons/Fbx.cs(66,81): error CS0246: The type or namespace name `FbxNode' could not be found. Are you missing an assembly reference?
+
+<project-folder>/Addons/Fbx.cs(11,19): error CS0234: The type or namespace name `Formats' does not exist in the namespace `UnityEditor'. Are you missing an assembly reference?
+
+<project-folder>/Addons/Fbx.cs(8,7): error CS0246: The type or namespace name `Autodesk' could not be found. Are you missing an assembly reference?
 ```
 
-This error may occur if you have imported the **FbxExporters** Unity package, then later removed it. To fix this error, you can either:
+To resolve these errors, you can follow either of these fixes:
 
-- Re-import the **FbxExporter** package
-- Open `Edit > Project Settings > Player` and in the **Scripting Define Symbols** field delete `PROBUILDER_FBX_ENABLED`.
+- Re-import the **FBX Exporter** package.
+- Open **PlayerSettings** (from the top menu: **Edit** > **Project Settings** > **Player**) and remove the **PROBUILDER_FBX_PLUGIN_ENABLED** flag from **Scripting Define Symbols**.
+
+
+

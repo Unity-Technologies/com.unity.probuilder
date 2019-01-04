@@ -1,24 +1,26 @@
-﻿<div class="site"><a href="https://youtu.be/Ta3HkV_qHTc"><img src="images/VidLink_GettingStarted_Slim.png"></a></div>
+# About ProBuilder
 
-# What is ProBuilder?
+You can build, edit, and texture custom geometry in Unity using the tools available in the ProBuilder package. You can also use ProBuilder to help with in-scene level design, prototyping, collision Meshes, and play-testing on the fly. 
 
-Build, edit, and texture custom geometry in Unity. Use ProBuilder for in-scene level design, prototyping, collision meshes, all with on-the-fly play-testing.
+ProBuilder also comes with a [Scripting API](api.md) that allows you to write C# scripts to make your own tools and customizations.
 
-Advanced features include UV editing, vertex colors, parametric shapes, and texture blending. With ProBuilder's model export feature it's easy to tweak your levels in any external 3D modelling suite.
+![ProBuilder and Unity](images/probuilder_unitylogo.png)
 
-<iframe class="youtube-preview" width="560" height="315" src="https://www.youtube.com/embed/HUeQeSB45PI?rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+Some of the advanced features include:
 
-## Helpful Links and Info
+* [UV editing and Texture mapping](workflow-texture-mapping.md)
+* [Applying Vertex Colors](workflow-vertexcolors.md)
+* [Creating parametric shapes](workflow-create.md)
 
-- [Tutorials and Documentation](https://docs.unity3d.com/Packages/com.unity.probuilder@4.0/manual/index.html)
-- [Support Forum](https://forum.unity.com/forums/world-building.146/)
-- [Twitter](http://www.twitter.com/probuilder3d)
+In addition, the ProBuilder package includes a [Model export feature](workflow-exporting.md) which you can use to tweak your levels in any 3D modeling software.
 
-# Document Revision History
 
-|Date|Reason|Version|
-|---|---|---|
-| Dec 04, 2018 | Updating with changes from 4.0.0 | 4.0.0 |
-|Jan 31, 2018|Installation instructions updated, minor tweaks to wording. | 3.0.0 |
-|Nov 9, 2017|Document created. | 2.9.8 |
 
+## Document revision history
+
+| Date | Reason | Version |
+|:---|:---|:---|
+| December 19, 2018 | Major restructuring, added overviews, verified package documentation to match version number. | 4.0.0 |
+| May 15, 2018 | Edited, performed some restructuring. | 3.0.8 |
+| Jan 31, 2018 | Installation instructions updated, minor tweaks to wording. | 3.0.0 |
+| Nov 9, 2017 | Document created. | 2.9.8 |

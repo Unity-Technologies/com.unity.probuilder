@@ -1,92 +1,52 @@
-<div class="site"><a href="https://youtu.be/Ta3HkV_qHTc"><img src="images/VidLink_GettingStarted_Slim.png"></a></div>
+# Tool panels
 
----
+This portion of the ProBuilder toolbar provides access to most of the ProBuilder windows and components.
 
-<a name="shape-tool"></a>
-## ![Shape Tool Icon](images/icons/Panel_Shapes.png) Shape Tool
+![Tool Panels on the ProBuilder toolbar](images/tool_panels.png)
 
-**Keyboard Shortcut** : `CTRL SHIFT K`
+> ***Note:*** Some actions also have extra options, or custom settings, available. The tool buttons are marked with a special indicator in the top right corner. The documentation for each tool includes information about these options.
 
-**Purpose** : Create new editable shapes such as cylinder, arch, and stairs.
+## ![Shape Tool icon](images/icons/Panel_Shapes.png) New Shape
 
-Each shape has specific properties which can be customized before creation. For example, the stairs shape lets you choose items like step height, arc, and which parts of the stairway to build.
+Use the **Shape Tool** window to create new ProBuilder Mesh shapes such as cylinders, arches, and stairs.
 
-![Shape Tool Example](images/Example_ShapeToolsWithCurvedStair.png)
+For more information, see the [Shape Tool](shape-tool.md) window reference.
 
-**Usage**
+## ![Poly Shape Tool icon](images/icons/NewPolyShape.png) New Poly Shape
 
-1. Click **New Shape**.
-1. If *Shape Preview* is enabled, you will see a blue preview object in the scene.
-1. Choose the shape you'd like to create (ex, cube, cylinder, torus, etc).
-1. Set the options (ex, width, height, radius, number of stairs, etc).
-1. You may move or rotate the preview object within your scene.
-1. Click **Build Shape** to create your final shape.
+Use the **Poly Shape** component to create a custom 2-dimensional shape and then extrude it that shape to create a custom 3-dimensional Mesh.
 
+For more information, see the [Poly Shape](polyshape.md) component reference.
 
-<a name="material-tools"></a>
-## ![Material Tools Icon](images/icons/Panel_Materials.png) Material Tools
+## ![Bezier Shape icon](images/icons/NewBezierSpline.png) New Bezier Shape
 
-**Purpose** : Apply materials to objects or faces.
+Use the **Bezier Shape** component to define a bezier curve around which ProBuilder extrudes a Mesh.
 
-![Material Tools](images/MaterialTools_WithExample.png)
+> ***Warning:*** Bezier shapes are experimental, meaning that they are still under development, and may reduce ProBuilder's stability. Please use with caution.
 
-**Quick Material Usage**
+For more information, see the [Bezier Shape](bezier.md) component reference.
 
-- **(A)** The current *Quick Material*.
-- **(B)** Apply the material to the selected faces.
-- **(C)** Pick your material from the selected face.
-- **(D)** Preview of the current *Quick Material*.
+## ![Smoothing Groups icon](images/icons/Panel_Smoothing.png) Smoothing 
 
-Hold `CTRL SHIFT` while clicking on a face to apply the *Quick Material*.
+Use the **Smooth Group Editor** window to create a smooth and rounded look.
 
-**Material Palette Usage**
+For more information, see the [Smooth Group Editor](smoothing-groups.md) window reference.
 
-- **(E)** Drag-and-drop your often-used materials to these slots.
-- **(F)** Create additional Material Palette slots.
+## ![Vertex Color icon](images/icons/Panel_VertColors.png) Vertex Colors
 
-You can also press `ALT (number key)` to apply materials from the Palette.
+Use the **Vertex Colors** window to apply or paint vertex colors onto Meshes.
 
+For more information, see the [Vertex Colors](material-tools.md) window reference.
 
-<a name="texturing"></a>
-## ![UV Editor Icon](images/icons/Panel_UVEditor.png) Texturing and UVs
+## ![Material Tools icon](images/icons/Panel_Materials.png) Material Editor
 
-**Purpose**: Opens the UV Editor.
+Use the **Material Editor** window to apply Materials to objects or faces.
 
-![Materials Example](images/Example_MaterialsOnLevel.png)
+For more information, see the [Material Editor](material-tools.md) window reference.
 
-The UV Editor Panel includes both [Auto UV](auto-uvs-actions) tools, and a complete [Manual UV Editing and Unwrapping](manual-uvs-actions) system.
+## ![UV Editor icon](images/icons/Panel_UVEditor.png) UV Editor
 
-For more information, see [Texturing and UVs](overview-texture-mapping).
+Use the **UV Editor** window to apply textures to objects or faces. You can also use it to automatically or manually wrap and unwrap textures.
 
+For more information, see the [UV Editor](uv-editor.md) window reference.
 
-<a name="vertex-colors"></a>
-## ![Vertex Color Tools Icon](images/icons/Panel_VertColors.png) Vertex Color Tools
-
-**Purpose** : Opens the Vertex Coloring controls, for applying or painting vertex colors onto meshes.
-
-> **Warning:** <br/>Not all shaders will show vertex colors on a mesh.
-
-![Vertex Coloring](images/VertexColor_WithLevelExample.png)
-
-Applying Vertex Colors is a great way to colorize levels for prototyping, team layout, zones, etc.
-
-
-<a name="smoothing-groups"></a>
-## ![Smoothing Groups Icon](images/icons/Panel_Smoothing.png) Smoothing Groups
-
-<div class="video-link">
-Section Video: <a href="https://www.youtube.com/watch?v=6bwZ9vN7uN0&index=4&list=PL1GU9r7hfosDHqJBqsBzkrLRDOH2EXCMa">ProBuilder Toolbar: Smoothing Groups</a>
-</div>
-
-**Purpose**: Create a smooth and rounded look, or sharp and hard cornered.
-
-**Usage**:
-
-![Smoothing Groups Example](images/Smoothing_Editor.png)
-
-- Choose Face editing from the [Edit Mode Toolbar](overview-toolbar#edit-mode-toolbar)
-- Select a group of faces that you want to have smooth adjoining edges
-- Click an unused smooth group number in the Smooth Group Editor
-	- *Note* Smooth groups already in use are shown with a light blue highlight
-- To clear selected face smoothing groups, select the faces and click the ![break smooth groups](images/icons/Face_BreakSmoothing.png) icon
-- To select all faces matching with the current smooth group index, use the ![select by smooth group](images/icons/Selection_SelectBySmoothingGroup.png) icon
