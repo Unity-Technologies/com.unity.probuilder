@@ -1,84 +1,64 @@
-<div class="site"><a href="https://youtu.be/Ta3HkV_qHTc"><img src="images/VidLink_GettingStarted_Slim.png"></a></div>
+# UV Editor toolbar
 
----
-
-<!-- # Video: UV Editor Toolbar
-
-[![UV Editor Toolbar Video](images/VideoLink_YouTube_768.png)](@todo)
- -->
-
-![](images/UVToolbar.png)
+![UV Editor toolbar](images/UVToolbar.png)
 
 
-## Select, Move, Rotate, Scale
 
-<!--div class="video-link-missing">
-Section Video: <a href="@todo">UV Editor Toolbar: Manipulators</a>
-</div-->
+![A](images/LetterCircle_A.png) This first group of buttons contains shortcuts to the standard Unity manipulation modes. Clicking these has the exact same effect as clicking on the [main Unity toolbar buttons](https://docs.unity3d.com/Manual/PositioningGameObjects.html).
 
-This first group of buttons contains shortcuts to the standard Unity manipulation modes. Clicking these will have the exact same effect as clicking on the main Unity toolbar buttons.
+![Item B](images/LetterCircle_B.png) The second button group contains shortcuts to ProBuilder's [Element Edit modes](edit-mode-toolbar.md). When using [Manual UV Editing](manual-uvs-actions.md), this allows you to select and manipulate UVs by Vertex, Edge, or Face.  
 
+> ***Note:*** When using [Auto UVs](auto-uvs-actions.md) you may only edit UVs by face. Editing an Edge or Vertex will convert the selected UVs to [Manual UVs](manual-uvs-actions.md).
 
-## Vertex, Edge Face
+![C](images/LetterCircle_C.png) The third group of buttons allow you to: 
 
-<!--div class="video-link-missing">
-Section Video: <a href="@todo">UV Editor Toolbar: Element Selection</a>
-</div-->
-
-The second button group contains shortcuts to ProBuilder's [Element Editing Modes](fundamentals#modes). When using [Manual UV Editing](manual-uvs-actions), this allows you to select and manipulate UVs by Vertex, Edge, or Face.  
-
-> **Note:** <br/>When using [Auto UVs](auto-uvs-actions) you may only edit UVs by face. Editing an Edge or Vertex will convert the selected UVs to [Manual UVs](manual-uvs-actions).
+* Control how Unity's standard [transform tools](#Scope) behave.
+* Display the face's [Texture](#Texture) in the UV Viewer (or not).
+* Create [UV Templates](#SaveUV) from the current UV mapping.
 
 
-## ![In-Scene Controls Toggle](images/icons/ProBuilderGUI_UV_Manip_On.png) In-Scene Controls
 
-<!--div class="video-link-missing">
-Section Video: <a href="@todo">UV Editor Toolbar: In-Scene Controls</a>
-</div-->
+<a name="Scope"></a>
 
-When **On**, you can use Unity's standard Move, Rotate, and Scale tools to directly manipulate UVs in the scene, without affecting geometry.
+## ![In-Scene ON](images/icons/ProBuilderGUI_UV_Manip_On.png) Scope controls
 
-|**Toolbar Icon:** |**Description:** |
+When **On** (![In-Scene ON](images/icons/ProBuilderGUI_UV_Manip_On.png)), you can use Unity's standard Move, Rotate, and Scale tools to directly manipulate UVs in the scene, without affecting geometry.
+
+When **Off** (![In-Scene OFF](images/icons/ProBuilderGUI_UV_Manip_Off.png)), the Move, Rotate, and Scale tools return to normal geometry actions.
+
+![Move, Rotate, and Scale tools on a Mesh](images/UV_InSceneControls.png)
+
+When using the transform tools in the UV Viewer, you can snap to increments with the **Ctrl** (Windows) or **Cmd** (Mac) modifiers. You can customize the size of these increment values by setting the [UV Snap Increment](preferences.md#uvs) preference.
+
+
+
+<a name="Texture"></a>
+
+
+## ![In-Scene ON](images/icons/ProBuilderGUI_UV_ShowTexture_On.png) Texture preview
+
+When **On** (![In-Scene ON](images/icons/ProBuilderGUI_UV_ShowTexture_On.png)), the selected face's Texture appears in the UV Viewer. This preview makes it easier to fit the UV to the Texture.
+
+When **Off** (![In-Scene OFF](images/icons/ProBuilderGUI_UV_ShowTexture_Off.png)), the Texture does not appear in the UV Viewer.
+
+![Toggle the Texture preview (OFF - ON)](images/ShowTexturePreview_Example.png)
+
+
+
+<a name="SaveUV"></a>
+
+## ![Render UV Template button](images/icons/ProBuilderGUI_UV_RenderUVTemplate.png) Save UV image
+
+Click the Camera icon (![Render UV Template button](images/icons/ProBuilderGUI_UV_RenderUVTemplate.png)) to open the **Save UV Image** window. You can use this window to render a UV Template for texture map painting, atlasing, and sprite sheets.
+
+![Render UVs Panel](images/RenderUVsPanel.png)
+
+|**Property:** |**Function:** |
 |:---|:---|
-| ![In-Scene ON](images/icons/ProBuilderGUI_UV_Manip_On.png) | **On** : Move, Rotate, and Scale tools will affect UVs, geometry will not be affected |
-| ![In-Scene OFF](images/icons/ProBuilderGUI_UV_Manip_On.png) |  **Off** : Move, Rotate, and Scale tools will return to normal geometry actions |
+|__Image Size__|Choose the total size for the rendered template. ProBuilder always renders the image as a square.|
+|__Hide Grid__|Enable this option to prevent the grid from appearing in the rendered image.|
+|__Line Color__|Choose the color that you want ProBuilder to use for rendering the UV lines.|
+|__Transparent Background__|Enable this option to render a transparent background.|
+|__Background Color__|Choose the color that you want ProBuilder to use for the background. This option is only available when the __Transparent Background__ property is disabled.|
 
-![](images/UV_InSceneControls.png)
-
-Snap to increments by holding `CTRL` . You can customize these increment values via the [ProBuilder Preferences](preferences)
-
-
-## ![Texture Preview Toggle](images/icons/ProBuilderGUI_UV_ShowTexture_On.png) Texture Preview
-
-<!--div class="video-link-missing">
-Section Video: <a href="@todo">UV Editor Toolbar: Texture Preview</a>
-</div-->
-
-When **On**, the selected face's main texture will be displayed in the UV Viewer.
-
-|**Toolbar Icon:** |**Description:** |
-|:---|:---|
-| ![In-Scene ON](images/icons/ProBuilderGUI_UV_ShowTexture_On.png) | **On** : Selected element's Texture will be displayed in the UV Viewer |
-| ![In-Scene OFF](images/icons/ProBuilderGUI_UV_ShowTexture_Off.png) | **Off** : No texture will be displayed in the UV Viewer |
-
-![](images/ShowTexturePreview_Example.png)
-
-
-## ![Render UV Template Button](images/icons/ProBuilderGUI_UV_Manip_On.png) Render UV Template
-
-<!--div class="video-link-missing">
-Section Video: <a href="@todo">UV Editor Toolbar: Render UV Template</a>
-</div-->
-
-Opens the Render UVs tool panel, for rendering UV Templates to be used with texture map painting, atlasing, sprite sheets, etc.
-
-![](images/RenderUVsPanel.png)
-
-* __Image Size__ : Total size of the rendered template (always square)
-* __Hide Grid__ : Should the grid be hidden in the render?
-* __Line Color__ : What color should UV lines be rendered as?
-* __Transparent Background__ : Should the background be rendered transparent?
-* __Background Color__ : If you want a non-transparent background, set the color here
-* __Save UV Template__ : Click to render the UV Template - a file dialog will be opened to save the file.
-
-
+When you are satisfied with the options on this window, click the __Save UV Template__ button. A file browser opens so you can choose the filename and location where you want to save the file.

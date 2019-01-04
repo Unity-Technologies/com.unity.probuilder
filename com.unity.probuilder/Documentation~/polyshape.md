@@ -1,44 +1,32 @@
-<div class="site"><a href="https://youtu.be/Ta3HkV_qHTc"><img src="images/VidLink_GettingStarted_Slim.png"></a></div>
+# ![Poly Shape Tool icon](images/icons/NewPolyShape.png) Poly Shape component
 
----
-
-## ![Poly Shape Icon](images/icons/NewPolyShape.png) Poly Shape
-
-<div class="video-link">
-Section Video: <a href="https://youtu.be/Xn8YPCnnoDc">Creating and Editing a Poly Shape</a>
-</div>
-
-![](images/PolyShape_HeaderImage.png)
-
-**Poly Shape** is unlike the usual ProBuilder shapes in that it is interactive and editable indefinitely.  Once a **Poly Shape** has been created you may continue to edit it's control points and other settings.
-
-> **Important!**: 
-> Modifying control points or settings will clear any mesh edits.
+After you initially [create a Poly Shape](workflow-create-polyshape.md), you can still modify the shape as long as you are in Poly Shape editing mode. You can toggle the Poly Shape editing mode on and off with the **Edit(ing) Poly Shape** button.
 
 
-## Quick Start
 
-![](images/Experimental_PolyShapeMenu.png)
+![Toggle editing mode on and off](images/Experimental_PolyShapeInspector.png)
 
-- In the [ProBuilder Toolbar](overview-toolbar.md) select **New Poly Shape**.
-- In the Scene View click to add control points.  These will form the outer bounds of your mesh.
-- Once finished placing points, hit `Enter / Return` or `Space` to finalize the shape.
-- Move the mouse up and down to set the mesh height, then `Left Click` to finalize.
 
-After the initial path and height setting, the mesh enters **Editing Mode**.
+
+> ***Note:*** You can always modify Mesh elements on the Poly Shape Mesh using the standard ProBuilder editing tools. However, each time you re-enter Poly Shape editing mode, any element changes are lost.
+
 
 
 ## Editing a Poly Shape
 
-Even after the initial creation steps a **Poly Shape** can still be modified.
+When you are in Poly Shape editing mode, the **Poly Shape** component in the Inspector displays the **Editing Poly Shape** button. If you are not in Poly Shape editing mode, the **Edit Poly Shape** button appears instead.
 
-Select the **Edit Poly Shape** button in the **Unity Inspector**.  To disable Poly Shape Editing simply click this button again.
+To enter the Poly Shape editing mode, click the **Edit Poly Shape** button.  To exit out of the Poly Shape editing mode, click the button (**Editing Poly Shape**) again.
 
-![](images/Experimental_PolyShapeInspector.png)
+In Poly Shape editing mode, you can modify the shape by performing the following tasks in the Scene view:
 
-- Move existing control points by clicking and dragging.
-- Add new points by clicking along the perimeter line.
-- Remove existing points by clicking to select, then press `Backspace` (`Delete` on Mac).
-- Set the height by clicking and dragging the handle in the center of the mesh.
-- Flip the normals by selecting **Flip Normals** in the Inspector.
+- Click and drag existing control points to move them around.
+- Click existing control points to select them, then use **Backspace** (Windows) or **Delete** (Mac) to remove the points from the shape.
+- Click along the perimeter line to add new control points.
+- Click and drag the handle in the center of the Mesh to set the height.
+
+You can also use the controls in the **Poly Shape** component in the Inspector to:
+
+- Enter a value to use for the height of the Mesh in the **Extrusion** property.
+- Enable or disable the **Flip Normals** option to toggle whether the Camera displays the interior or exterior of the Mesh.
 

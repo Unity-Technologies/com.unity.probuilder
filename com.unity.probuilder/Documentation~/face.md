@@ -1,139 +1,75 @@
-<div class="site"><a href="https://youtu.be/Ta3HkV_qHTc"><img src="images/VidLink_GettingStarted_Slim.png"></a></div>
+# Face tools
 
+This portion of the ProBuilder toolbar provides access to ProBuilder editing tools that you can use in the [Face edit mode](modes.md).
 
-## ![Delete Face Icon](images/icons/Face_Delete.png) Delete Face
+![Face tools on the ProBuilder toolbar](images/tool_faces.png)
 
-<div class="video-link">
-Section Video: <a href="https://youtu.be/Iy6RBaKB9jU?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Delete Faces</a>
-</div>
+> ***Note:*** Some actions also have extra options, or custom settings, available. The tool buttons are marked with a special indicator in the top right corner. The documentation for each tool includes information about these options.
 
-**Keyboard Shortcut** : `BACKSPACE`
+## ![Bevel icon](images/icons/Edge_Bevel.png) Bevel
 
-Deletes the selected face(s).
+Use the **Bevel** tool to [bevel](Edge_Bevel.md) every edge on the selected face(s).
 
-![](images/DeleteFace_Example.png)
+For more information, see the [Bevel](Face_Bevel.md) tool reference.
 
+## ![Subdivide Face icon](images/icons/Face_Subdivide.png) Subdivide Faces
 
-## ![Detach Face Icon](images/icons/Face_Detach.png) Detach Face
+Use the **Subdivide Faces** tool to add a vertex at the center of each edge and connect them in the center.
 
-<div class="video-link">
-Section Video: <a href="https://youtu.be/rqD8tQ3GOpA?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Detach Faces</a>
-</div>
+For more information, see the [Subdivide Faces](Face_Subdivide.md) tool reference.
 
-Detach the selected face(s) to a new sub-mesh, or separate object.
+## ![Triangulate Faces icon](images/icons/Face_Triangulate.png) Triangulate Faces
 
-![](images/DetachFace_Example.png)
+Use the **Triangulate Faces** tool to reduce selected faces to their base triangles.
 
-![Options Icon](images/icons/Options.png) **Custom Settings Available** :
+For more information, see the [Triangulate Faces](Face_Triangulate.md) tool reference.
 
-|**Setting:** |**Description:** |
-|:---|:---|
-|__Detach To New Object__ |If **On**, the face(s) will be detached to a new, separate object. Otherwise, they will be detached to a sub-mesh within the original object. |
+## ![Detach Face icon](images/icons/Face_Detach.png) Detach Faces
 
+Use the **Detach Faces** tool to detach the selected face(s) from the rest of the Mesh.
 
-<a id="extrude">
-## ![Extrude Face Icon](images/icons/Face_Extrude.png) Extrude Face
+For more information, see the [Detach Faces](Face_Detach.md) tool reference.
 
-<div class="video-link">
-Section Video: <a href="https://youtu.be/5IcZd8aIS68?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Extrude Faces</a>
-</div>
+## ![Extrude Face icon](images/icons/Face_Extrude.png) Extrude Faces
 
-**Keyboard Shortcut** : `SHIFT DRAG`
+Use the **Extrude Faces** tool to pull out the currently selected face and attach sides to each edge.
 
-Creates a new face by pulling out the currently selected face and attaching sides to each edge.
+For more information, see the [Extrude Faces](Face_Extrude.md) tool reference.
 
-You can also extrude by holding `SHIFT` while moving, rotating, or scaling the faces.
+## ![Set Pivot icon](images/icons/SetPivot.png) Set Pivot
 
-![](images/ExtrudeFace_Example.png)
+Use the **Set Pivot** tool to move the pivot point of this Mesh to the average center of the selected faces.
 
-![Options Icon](images/icons/Options.png) **Custom Settings Available** :
+For more information, see the [Set Pivot](Face_SetPivot.md) tool reference.
 
-|**Setting:** |**Description:** |
-|:---|:---|
-| ![FaceNormalsIcon](images/icons/ExtrudeFace_FaceNormals.png) **Face Normals** |Extrudes each selected Face according to it's own surface direction, and adjacent faces remain connected. |
-| ![FaceNormalsIcon](images/icons/ExtrudeFace_VertexNormals.png) **Vertex Normals** |Extrudes selected Faces by Vertex normals. Adjacent Faces remain connected. |
-| ![FaceNormalsIcon](images/icons/ExtrudeFace_Individual.png) **Individual Faces** |Extrudes each selected Face according to it's own surface direction, however adjacent faces do **not** remain connected. |
-|__Distance__ |Distance to extrude the selected faces(s). |
+## ![Delete Face Icon](images/icons/Face_Delete.png) Delete Faces
 
+Use the **Delete Faces** tool to delete the selected face(s).
 
-## ![Flip Normals Icon](images/icons/Face_FlipNormals.png) Flip Normals
+For more information, see the [Delete Faces](Face_Delete.md) tool reference.
 
-<div class="video-link">
-Section Video: <a href="https://youtu.be/RngRqt3L8H8?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Flip Normals</a>
-</div>
+## ![Flip Normals icon](images/icons/Face_FlipNormals.png) Flip Face Normals
 
-Flips the normals on the selected face(s).
+Use the **Flip Face Normals** tool to flip the normals only on the selected face(s).
 
-![](images/FlipFaceNormals_Example.png)
+For more information, see the [Flip Face Normals](Face_FlipNormals.md) tool reference.
 
+## ![Merge Faces icon](images/icons/Face_Merge.png) Merge Faces
 
-## ![Flip Triangles Icon](images/icons/Face_FlipTri.png) Flip Face Edge
+Use the **Merge Faces** tool to merge selected faces into a single face, and remove any dividing edges.
 
-<div class="video-link">
-Section Video: <a href="https://youtu.be/ftIjv3tsTGc?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Flip Face Edge</a>
-</div>
-
-Swap the triangle orientation on the selected face(s). This will only work on quads (faces with 4 sides).
-
-![](images/FlipTri_Example.png)
-
+For more information, see the [Merge Faces](Face_Merge.md) tool reference.
 
 ## ![Conform Normals Icon](images/icons/Face_ConformNormals.png) Conform Normals
 
-<div class="video-link">
-Section Video: <a href="https://youtu.be/a9T_xe4x2pU?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Conform Normals</a>
-</div>
+Use the **Conform Normals** tool to set all selected face normals to the same relative direction. 
 
-Sets all selected face normals to the same relative direction.
+For more information, see the [Conform Normals](Face_ConformNormals.md) tool reference.
 
+## ![Flip Triangles icon](images/icons/Face_FlipTri.png) Flip Face Edge
 
-## ![Merge Faces Icon](images/icons/Face_Merge.png) Merge Faces
+Use the **Flip Face Edge** (**Turn Edges**) tool to swap the triangle orientation on the selected face(s) with four sides.
 
-<div class="video-link">
-Section Video: <a href="https://youtu.be/fMUHuWUXnP8?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Merge Faces</a>
-</div>
-
-Merges selected faces into a single face, and removes any dividing edges.
-
-![](images/MergeFaces_Example.png)
-
-
-## ![Subdivide Face Icon](images/icons/Face_Subdivide.png) Subdivide Faces
-
-<div class="video-link">
-Section Video: <a href="https://youtu.be/jgH1MHB6p3w?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Subdivide Face</a>
-</div>
-
-Split each selected face by adding a vertex at the center of each edge and connecting them in the center.
-
-![](images/SubdivideFace_Example.png)
-
-
-## ![Bevel Icon](images/icons/Edge_Bevel.png) Bevel Faces
-
-<div class="video-link">
-Section Video: <a href="https://youtu.be/2UbvKLQyDDc?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Bevel Face</a>
-</div>
-
-Performs the [Bevel Edge](edge#bevel) action on all the edges of the selected face(s).
-
-![](images/BevelFace_Example.png)
-
-![Options Icon](images/icons/Options.png) **Custom Settings Available** :
-
-|**Setting:** |**Description:** |
-|:---|:---|
-|__Distance__ | Sets the distance each new edge is moved, from the position of the original. |
-
-
-## ![Triangulate Faces Icon](images/icons/Face_Triangulate.png) Triangulate Faces
-
-<div class="video-link">
-Section Video: <a href="https://www.youtube.com/watch?v=tkbMt-XDj1I&index=3&list=PL1GU9r7hfosDHqJBqsBzkrLRDOH2EXCMa">Face Actions: Triangulate Faces</a>
-</div>
-
-Reduces selected faces to their base triangles, creating a faceted, non-smooth appearance. 
-
-![Triangulate Object Example](images/TriangulateObject_Example.png)
+For more information, see the [Flip Face Edge](Face_FlipTri.md) tool reference.
 
 
