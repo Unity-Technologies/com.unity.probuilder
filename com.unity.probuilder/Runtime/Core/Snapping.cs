@@ -47,13 +47,52 @@ namespace UnityEngine.ProBuilder
         /// <returns></returns>
         public static Vector3 SnapValue(Vector3 vertex, Vector3 snap)
         {
-            float _x = vertex.x, _y = vertex.y, _z = vertex.z;
+            float x = vertex.x, y = vertex.y, z = vertex.z;
             Vector3 v = new Vector3(
-                    (Mathf.Abs(snap.x) < 0.0001f ? _x : snap.x * Mathf.Round(_x / snap.x)),
-                    (Mathf.Abs(snap.y) < 0.0001f ? _y : snap.y * Mathf.Round(_y / snap.y)),
-                    (Mathf.Abs(snap.z) < 0.0001f ? _z : snap.z * Mathf.Round(_z / snap.z))
+                    (Mathf.Abs(snap.x) < 0.0001f ? x : snap.x * Mathf.Round(x / snap.x)),
+                    (Mathf.Abs(snap.y) < 0.0001f ? y : snap.y * Mathf.Round(y / snap.y)),
+                    (Mathf.Abs(snap.z) < 0.0001f ? z : snap.z * Mathf.Round(z / snap.z))
                     );
             return v;
+        }
+
+        public static Vector3 Floor(Vector3 vertex, Vector3 snap)
+        {
+            float x = vertex.x, y = vertex.y, z = vertex.z;
+            Vector3 v = new Vector3(
+                    (Mathf.Abs(snap.x) < 0.0001f ? x : snap.x * Mathf.Floor(x / snap.x)),
+                    (Mathf.Abs(snap.y) < 0.0001f ? y : snap.y * Mathf.Floor(y / snap.y)),
+                    (Mathf.Abs(snap.z) < 0.0001f ? z : snap.z * Mathf.Floor(z / snap.z))
+                    );
+            return v;
+        }
+
+        public static Vector3 Ceil(Vector3 vertex, Vector3 snap)
+        {
+            float x = vertex.x, y = vertex.y, z = vertex.z;
+            Vector3 v = new Vector3(
+                    (Mathf.Abs(snap.x) < 0.0001f ? x : snap.x * Mathf.Ceil(x / snap.x)),
+                    (Mathf.Abs(snap.y) < 0.0001f ? y : snap.y * Mathf.Ceil(y / snap.y)),
+                    (Mathf.Abs(snap.z) < 0.0001f ? z : snap.z * Mathf.Ceil(z / snap.z))
+                    );
+            return v;
+        }
+
+        public static Vector3 Ceil(Vector3 vertex, float snpVal)
+        {
+            return new Vector3(
+                snpVal * Mathf.Ceil(vertex.x / snpVal),
+                snpVal * Mathf.Ceil(vertex.y / snpVal),
+                snpVal * Mathf.Ceil(vertex.z / snpVal));
+        }
+
+        public static Vector3 Floor(Vector3 vertex, float snpVal)
+        {
+            // snapValue is a global setting that comes from ProGrids
+            return new Vector3(
+                snpVal * Mathf.Floor(vertex.x / snpVal),
+                snpVal * Mathf.Floor(vertex.y / snpVal),
+                snpVal * Mathf.Floor(vertex.z / snpVal));
         }
 
         /// <summary>
@@ -78,23 +117,6 @@ namespace UnityEngine.ProBuilder
                 (Mathf.Approximately(Mathf.Abs(normal.z), 1f)) ? 0f : 1f);
         }
 
-        public static Vector3 Ceil(Vector3 vertex, float snpVal)
-        {
-            return new Vector3(
-                snpVal * Mathf.Ceil(vertex.x / snpVal),
-                snpVal * Mathf.Ceil(vertex.y / snpVal),
-                snpVal * Mathf.Ceil(vertex.z / snpVal));
-        }
-
-        public static Vector3 Floor(Vector3 vertex, float snpVal)
-        {
-            // snapValue is a global setting that comes from ProGrids
-            return new Vector3(
-                snpVal * Mathf.Floor(vertex.x / snpVal),
-                snpVal * Mathf.Floor(vertex.y / snpVal),
-                snpVal * Mathf.Floor(vertex.z / snpVal));
-        }
-
         internal static Vector3 SnapValueOnRay(Ray ray, float distance, float snap, Vector3Mask mask)
         {
             var nearest = k_MaxRaySnapDistance;
@@ -113,18 +135,13 @@ namespace UnityEngine.ProBuilder
                         dir * Mathf.Sign(ray.direction[i]));
 
                     var pnt = ray.origin + prj;
+                    var plane = new Plane(dir, SnapValue(pnt, dir * snap));
 
-                    var forwardPlane = new Plane(dir, Ceil(pnt, snap));
-                    var backwardPlane = new Plane(dir, Floor(pnt, snap));
                     float d;
 
-                    if (forwardPlane.Raycast(forwardRay, out d) && Mathf.Abs(d) < nearest)
+                    if (plane.Raycast(forwardRay, out d) && Mathf.Abs(d) < nearest)
                         nearest = d;
-                    if (forwardPlane.Raycast(backwardsRay, out d) && Mathf.Abs(d) < nearest)
-                        nearest = -d;
-                    if (backwardPlane.Raycast(forwardRay, out d) && Mathf.Abs(d) < nearest)
-                        nearest = d;
-                    if (backwardPlane.Raycast(backwardsRay, out d) && Mathf.Abs(d) < nearest)
+                    if (plane.Raycast(backwardsRay, out d) && Mathf.Abs(d) < nearest)
                         nearest = -d;
                 }
             }

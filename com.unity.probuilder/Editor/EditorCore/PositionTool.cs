@@ -133,30 +133,5 @@ namespace UnityEditor.ProBuilder
 
             ProBuilderEditor.UpdateMeshHandles(false);
         }
-
-        protected void SnapOriginPositionsToGrid(Vector3Mask activeAxes)
-        {
-            var snapValue = ProGridsInterface.SnapValue();
-
-            foreach (var selection in elementSelection)
-            {
-                var positionSelection = selection as MeshAndPositions;
-
-                if (positionSelection == null)
-                    continue;
-
-                var mesh = selection.mesh;
-                var positions = positionSelection.positions;
-
-                foreach (var group in selection.elementGroups)
-                {
-                    foreach (var index in group.indices)
-                    {
-                        var snapped = Snapping.SnapValue(positions[index], activeAxes * snapValue);
-                        positions[index] = snapped;
-                    }
-                }
-            }
-        }
     }
 }
