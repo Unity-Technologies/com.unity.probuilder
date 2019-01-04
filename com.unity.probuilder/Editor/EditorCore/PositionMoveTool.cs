@@ -10,7 +10,6 @@ namespace UnityEditor.ProBuilder
         Vector3 m_HandlePosition;
         Vector3Mask m_ActiveAxes;
 
-        bool m_SnapEnabled;
         bool m_SnapElementsIndividually;
 
 #if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
@@ -26,8 +25,7 @@ namespace UnityEditor.ProBuilder
             m_DirectionOriginInitialized = false;
 #endif
 
-            m_SnapEnabled = ProGridsInterface.SnapEnabled();
-            m_SnapElementsIndividually = m_SnapEnabled && !ProGridsInterface.GetProGridsSnapAsGroup();
+            m_SnapElementsIndividually = progridsSnapEnabled && !ProGridsInterface.GetProGridsSnapAsGroup();
         }
 
         protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
@@ -51,7 +49,12 @@ namespace UnityEditor.ProBuilder
             if (EditorGUI.EndChangeCheck() && delta.sqrMagnitude > k_MinTranslateDeltaSqrMagnitude)
             {
                 if (!isEditing)
+                {
                     BeginEdit("Translate Selection");
+
+                    if (progridsSnapEnabled && m_SnapElementsIndividually && !snapAxisConstraint)
+                        SnapOriginPositionsToGrid(Vector3Mask.XYZ);
+                }
 
                 if (vertexDragging)
                 {
@@ -84,7 +87,7 @@ namespace UnityEditor.ProBuilder
 
                         // Respect ProGrids "Snap as Group = Off" by pushing origins to the grid prior to applying
                         // translation.
-                        if (m_SnapEnabled && m_SnapElementsIndividually && previousActiveAxes != m_ActiveAxes)
+                        if (m_SnapElementsIndividually && previousActiveAxes != m_ActiveAxes)
                             SnapOriginPositionsToGrid(m_ActiveAxes);
 
                         var snapMaskWorldSpace = new Vector3Mask(handleRotation * m_ActiveAxes);
