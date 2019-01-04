@@ -120,7 +120,9 @@ namespace UnityEditor.SettingsManagement
 
                 if (type == null)
                 {
-                    Debug.LogWarning("Could not instantiate type \"" + entry.type + "\". Skipping key: " + entry.key + ".");
+#if PROBUILDER_DEBUG
+	                Debug.LogWarning("Could not instantiate type \"" + entry.type + "\". Skipping key: " + entry.key + ".");
+#endif
                     continue;
                 }
 

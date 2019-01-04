@@ -195,6 +195,7 @@ namespace UnityEngine.ProBuilder
             }
 
             pb.gameObject.name = shape.ToString();
+            pb.renderer.sharedMaterial = BuiltinMaterials.defaultMaterial;
 
             return pb;
         }

@@ -1,15 +1,14 @@
 using System.Linq;
 using System.Collections;
 using System.IO;
-using UnityEditor;
-using UnityEditor.ProBuilder;
-using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.ProBuilder;
+using UnityEditor.SceneManagement;
 using UnityEngine.TestTools;
-using Lightmapping = UnityEditor.Lightmapping;
 using UnityEngine.ProBuilder.Tests.Framework;
+using UnityEngine.SceneManagement;
 
-namespace UnityEngine.ProBuilder.Tests.Slow
+namespace UnityEditor.ProBuilder.Tests.Slow
 {
     class LightmapUVsAreValid
     {
@@ -23,7 +22,7 @@ namespace UnityEngine.ProBuilder.Tests.Slow
 
             AssetDatabase.Refresh();
 
-            var scene = SceneManagement.SceneManager.GetActiveScene();
+            var scene = SceneManager.GetActiveScene();
             EditorSceneManager.SaveScene(scene, k_LightmapUnitTestsScene, false);
         }
 
@@ -34,7 +33,17 @@ namespace UnityEngine.ProBuilder.Tests.Slow
             AssetDatabase.Refresh();
         }
 
-        bool s_FinishedBaking;
+        static bool s_FinishedBaking;
+
+        static void LightmappingStarted()
+        {
+            s_FinishedBaking = false;
+        }
+
+        static void LightmappingCompleted()
+        {
+            s_FinishedBaking = true;
+        }
 
         [UnityTest]
         public IEnumerator DefaultUnwrapParamsDoNotOverlap()
@@ -44,8 +53,13 @@ namespace UnityEngine.ProBuilder.Tests.Slow
             try
             {
                 Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.OnDemand;
-                Lightmapping.started += () => { s_FinishedBaking = false; };
-                Lightmapping.completed += () => { s_FinishedBaking = true; };
+
+                Lightmapping.started += LightmappingStarted;
+
+                if (Lightmapping.completed == null)
+                    Lightmapping.completed = LightmappingCompleted;
+                else
+                    Lightmapping.completed += LightmappingCompleted;
 
                 Setup();
 
@@ -72,6 +86,8 @@ namespace UnityEngine.ProBuilder.Tests.Slow
             }
             finally
             {
+                Lightmapping.started -= LightmappingStarted;
+                Lightmapping.completed -= LightmappingCompleted;
                 Lightmapping.giWorkflowMode = lightmapMode;
                 Cleanup();
             }
