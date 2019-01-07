@@ -1,32 +1,38 @@
-# Installing ProBuilder
+# Getting started 
 
-> **TIP:** Always check and ensure that you have zero errors (red text) in the console **before** installing ProBuilder. 
+You can access all of ProBuilder's editing tools from the [ProBuilder toolbar](toolbar.md), which dynamically adapts to your [Edit mode](edit-mode-toolbar.md) and your current selection.
 
-## Unity 2018.1 and later (recommended)
+![Toolbar Example](images/ProBuilderToolbar_GeoActionsArea.png)
 
-1. Open the Package Manager ( `Window > Package Manager` )
-1. Click in the search bar and type "ProBuilder"
-1. Click on ProBuilder in the package list (left side), then click "Install" in the package details (right side)
+Every toolbar button has a tooltip that shows a short summary about its use. Viewing tooltips is a great way to start learning about ProBuilder's functionality.
 
-Verify that ProBuilder is correctly installed by opening `Tools > ProBuilder > About`.
+## Building and editing complex Meshes
 
-### Upgrading from the Asset Store version of ProBuilder
+ProBuilder Meshes act like regular GameObjects in Unity. You can transform them and add components to them. They respond to Physics and you can animate them and attach scripts to them in order to control them. However, standard Unity Meshes are not the same as ProBuilder Meshes: you can't edit them with ProBuilder tools until you [convert them into ProBuilder objects](Object_ProBuilderize.md). 
 
-ProBuilder will detect this, and automatically open the "Convert to Package Manager" utility. Follow the steps and instructions to complete the upgrade.
+![ProBuilder vs. Unity Meshes](images/PBvsUnityMeshes.png)
 
-If the **Convert to Package Manager** utility does not automatically open, you can manually start the process by opening `Tools > ProBuilder > Repair > Convert to Package Manager`.
+But the most common way to build a ProBuilder Mesh is to [create it](workflow-create.md) and [edit it](workflow-edit.md) entirely with ProBuilder tools. 
 
-If you are having issues installing or upgrading, see the [ProBuilder Upgrade FAQ](faq#convert-to-package-manager) or send us a message on the [Support Forum](https://forum.unity.com/forums/world-building.146/).
+## Applying Materials and Vertex Colors
 
-## Unity 2017.3 and earlier
+You can apply _any_ Material to ProBuilder Meshes using the [Material Palette](material-tools.md), either on selected faces in [Element mode](edit-mode-toolbar.md) or across the entire object. 
 
-> **IMPORTANT:** The Asset Store version of ProBuilder will only receive critical bug fixes going forward. New features are available in the 2018.1 Package Manager version of ProBuilder.
+You can also apply [Vertex Colors](workflow-vertexcolors.md) to your Mesh while you are still building the geometry. This can help easily identify parts of complex Meshes, such as the floor, or simply provide a little color while you are greyboxing.
 
-1. Open your Unity project and ensure you have no persistent errors (red-colored text) in the Console.
-1. From the top menu, choose `Window > Asset Store`.
-1. In the Asset Store window type "ProBuilder" into the search bar.
-1. Click the "ProBuilder" icon in the search results.
-1. Click the blue "Download" button, and wait for the download to complete.
-1. After Unity has downloaded the package, click "Import."
-1. An "Import Unity Package" window will appear. Click "Import" at the bottom-right.
-1. After the import process completes, choose `Tools > ProBuilder > ProBuilder Window` from the top menu to begin using ProBuilder.
+### Editing UVs
+
+ProBuilder provides [automatic UV unwrapping](auto-uvs-actions.md), as well as a complete [manual UV editor](manual-uvs-actions.md).
+
+__Auto UV__ mode lets you tweak basics like offset, tiling, and rotation, while ProBuilder handles the complex UV work automatically.
+
+__Manual UV__ mode enables complete control of the UVs. With this workflow you can lay out your UV maps precisely.
+
+> ***Tip:*** You may use whichever you prefer, or a mix of both, even on the same Mesh.
+
+For more information, see [Materials, Shaders, Textures, and UVs](workflow-texture-mapping.md)
+
+## Exporting to other formats
+
+You can also [export your ProBuilder Meshes](workflow-exporting.md) to several file formats, such as `.asset`, `.obj`, and `.stl`. Then you can reimport them into Unity and use them as prefabs or spawn them. However, as soon as you convert a ProBuilder Mesh to the `.asset` format, it becomes a regular Unity GameObject and you can't modify it with ProBuilder tools any more.
+
