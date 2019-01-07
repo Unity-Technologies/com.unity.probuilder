@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.38] - 2018-01-03
+## [4.0.0-preview.39] - 2018-01-07
 
 ### Features
 
@@ -95,12 +95,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Use the last selected mesh element as the active selection pivot, matching object selection.
 - Remove "About" window.
 
-### Changes since 4.0.0-preview.37
+### Changes since 4.0.0-preview.38
 
-- (Regression) Fix `Fill Hole` action not correctly orienting appended face normals.
-- (Regression) Fix a potential `NullReferenceException` when extruding edges.
-- (Regression) Fix `Merge Objects` action resulting in missing materials.
-- (Regression) Fix vertex translation not respecting ProGrids `Snap on all Axes` preference.
+- Add manual documentation.
+- (Regression) Fix inconsistencies with ProGrids when snapping mesh elements.
+- (Regression) Fix `Vertex Position Editor` throwing endless errors.
+- (Regression) Fix upgrading from 2.x and 3.x losing `Face.manualUV` values.
+- (Internal) Move settings manager to a different asmdef name so that it can later be moved into a dependency.
+- (Internal) Initialize defualt shapes with builtin material.
+- (Internal) Don't show a user-facing log when deprecated preference types can't be loaded.
+- (Internal) Update the conversion utility text to reflect that it applies to both Asset Store and Package Manager versions of ProBuilder below 4.0.0.
+- (Internal) Mark all external code used as internal.
+- Expose APIs necessary for mesh element picking at runtime.
 
 ## [3.0.8] - 2018-05-07
 
