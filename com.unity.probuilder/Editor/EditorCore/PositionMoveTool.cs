@@ -8,9 +8,11 @@ namespace UnityEditor.ProBuilder
         const float k_CardinalAxisError = .001f;
         const float k_MinTranslateDeltaSqrMagnitude = .00001f;
         Vector3 m_HandlePosition;
-        Vector3Mask m_ActiveAxes;
+        Vector3 m_RawHandleDelta;
+        Vector3Mask m_ActiveAxesModel;
+        Vector3Mask m_ActiveAxesWorld;
 
-        bool m_SnapElementsIndividually;
+        bool m_SnapAsGroup;
 
 #if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
         Vector3 m_IndividualOriginDirection;
@@ -20,7 +22,7 @@ namespace UnityEditor.ProBuilder
         protected override void OnToolEngaged()
         {
             // If grids are enabled and "snap on all axes" is on, initialize active axes to all.
-            m_ActiveAxes = progridsSnapEnabled && !snapAxisConstraint
+            m_ActiveAxesModel = progridsSnapEnabled && !snapAxisConstraint
                 ? Vector3Mask.XYZ
                 : new Vector3Mask(0x0);
 
@@ -28,7 +30,7 @@ namespace UnityEditor.ProBuilder
             m_DirectionOriginInitialized = false;
 #endif
 
-            m_SnapElementsIndividually = progridsSnapEnabled && !ProGridsInterface.GetProGridsSnapAsGroup();
+            m_SnapAsGroup = progridsSnapEnabled && ProGridsInterface.GetProGridsSnapAsGroup();
         }
 
         protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
@@ -47,14 +49,8 @@ namespace UnityEditor.ProBuilder
 
             m_HandlePosition = Handles.PositionHandle(m_HandlePosition, handleRotation);
 
-            var delta = m_HandlePosition - handlePositionOrigin;
-
-            if(Event.current.type == EventType.Repaint)
-                Snapping.SnapValueOnRay(
-                    new Ray(handlePositionOrigin, delta),
-                    delta.magnitude,
-                    progridsSnapValue,
-                    new Vector3Mask(handleRotation * m_ActiveAxes));
+            m_RawHandleDelta = m_HandlePosition - handlePositionOrigin;
+            var delta = m_RawHandleDelta;
 
             if (EditorGUI.EndChangeCheck() && delta.sqrMagnitude > k_MinTranslateDeltaSqrMagnitude)
             {
@@ -86,17 +82,16 @@ namespace UnityEditor.ProBuilder
                 {
                     if (snapAxisConstraint)
                     {
-                        m_ActiveAxes |= new Vector3Mask(handleRotationOriginInverse * delta, k_CardinalAxisError);
+                        m_ActiveAxesModel |= new Vector3Mask(handleRotationOriginInverse * delta, k_CardinalAxisError);
+                        m_ActiveAxesWorld = new Vector3Mask(handleRotation * m_ActiveAxesModel);
 
-                        var snapMaskWorldSpace = new Vector3Mask(handleRotation * m_ActiveAxes);
-
-                        if (snapMaskWorldSpace.active == 1)
+                        if (m_ActiveAxesWorld.active == 1)
                         {
                             m_HandlePosition = Snapping.SnapValueOnRay(
                                 new Ray(handlePositionOrigin, delta),
                                 delta.magnitude,
                                 progridsSnapValue,
-                                snapMaskWorldSpace);
+                                m_ActiveAxesWorld);
                         }
                         else
                         {
@@ -130,6 +125,8 @@ namespace UnityEditor.ProBuilder
 
         void ApplyTranslation(Vector3 translation)
         {
+            var translationMagnitude = translation.magnitude;
+
             foreach (var key in elementSelection)
             {
                 if (!(key is MeshAndPositions))
@@ -152,11 +149,26 @@ namespace UnityEditor.ProBuilder
                         // res += translation
                         // res = Group post-apply matrix * res
                         // positions[i] = mesh.worldToLocal * res
-                        if (progridsSnapEnabled && m_SnapElementsIndividually)
+                        if (progridsSnapEnabled && !m_SnapAsGroup)
                         {
-                            var wp = postApplyMatrix.MultiplyPoint3x4(translation + preApplyMatrix.MultiplyPoint3x4(origins[index]));
-                            var snap = Snapping.SnapValue(wp, m_ActiveAxes * progridsSnapValue);
-                            positions[index] = worldToLocal.MultiplyPoint3x4(snap);
+                            if (snapAxisConstraint && m_ActiveAxesWorld.active == 1)
+                            {
+                                var wp = postApplyMatrix.MultiplyPoint3x4(preApplyMatrix.MultiplyPoint3x4(origins[index]));
+
+                                var snap = Snapping.SnapValueOnRay(
+                                    new Ray(wp, m_RawHandleDelta),
+                                    translationMagnitude,
+                                    progridsSnapValue,
+                                    m_ActiveAxesWorld);
+
+                                positions[index] = worldToLocal.MultiplyPoint3x4(snap);
+                            }
+                            else
+                            {
+                                var wp = postApplyMatrix.MultiplyPoint3x4(translation + preApplyMatrix.MultiplyPoint3x4(origins[index]));
+                                var snap = Snapping.SnapValue(wp, Vector3.one * progridsSnapValue);
+                                positions[index] = worldToLocal.MultiplyPoint3x4(snap);
+                            }
                         }
                         else
                         {
