@@ -67,7 +67,7 @@ namespace UnityEngine.ProBuilder
         }
     }
 
-    struct Vector3Mask
+    struct Vector3Mask : IEquatable<Vector3Mask>
     {
         const byte X = 1 << 0;
         const byte Y = 1 << 1;
@@ -186,6 +186,16 @@ namespace UnityEngine.ProBuilder
                 rotated.z > rotated.x && rotated.z > rotated.y ? 1 : 0);
         }
 
+        public static bool operator ==(Vector3Mask left, Vector3Mask right)
+        {
+            return left.m_Mask == right.m_Mask;
+        }
+
+        public static bool operator !=(Vector3Mask left, Vector3Mask right)
+        {
+            return !(left == right);
+        }
+
         public float this[int i]
         {
             get
@@ -204,6 +214,22 @@ namespace UnityEngine.ProBuilder
                 m_Mask &= (byte) ~(1 << i);
                 m_Mask |= (byte) ((value > 0f ? 1 : 0) << i);
             }
+        }
+
+        public bool Equals(Vector3Mask other)
+        {
+            return m_Mask == other.m_Mask;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            return obj is Vector3Mask && Equals((Vector3Mask) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return m_Mask.GetHashCode();
         }
     }
 }
