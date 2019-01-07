@@ -137,6 +137,12 @@ namespace UnityEngine.ProBuilder
                     var pnt = ray.origin + prj;
                     var plane = new Plane(dir, SnapValue(pnt, dir * snap));
 
+                    if(Mathf.Abs(plane.GetDistanceToPoint(ray.origin)) < .0001f)
+                    {
+                        nearest = 0f;
+                        continue;
+                    }
+
                     float d;
 
                     if (plane.Raycast(forwardRay, out d) && Mathf.Abs(d) < nearest)
@@ -146,7 +152,7 @@ namespace UnityEngine.ProBuilder
                 }
             }
 
-            return ray.origin + ray.direction * (nearest > k_MaxRaySnapDistance ? distance : nearest);
+            return ray.origin + ray.direction * (Mathf.Abs(nearest) >= k_MaxRaySnapDistance ? distance : nearest);
         }
     }
 }
