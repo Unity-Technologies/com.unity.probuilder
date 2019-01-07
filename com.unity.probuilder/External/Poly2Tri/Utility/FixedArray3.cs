@@ -34,7 +34,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder.Poly2Tri {
-	public struct FixedArray3<T> : IEnumerable<T> where T:class {
+	struct FixedArray3<T> : IEnumerable<T> where T:class {
 		public T _0, _1, _2;
 		public T this[ int index ] { get {
 			switch ( index ) {

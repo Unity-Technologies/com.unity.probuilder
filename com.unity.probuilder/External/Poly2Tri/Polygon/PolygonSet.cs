@@ -38,7 +38,7 @@
 using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder.Poly2Tri {
-	public class PolygonSet {
+	class PolygonSet {
 		protected List<Polygon> _polygons = new List<Polygon>();
 
 		public PolygonSet() {}

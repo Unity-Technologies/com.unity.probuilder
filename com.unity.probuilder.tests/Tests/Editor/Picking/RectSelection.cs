@@ -49,7 +49,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
                 selectionRect.width /= EditorGUIUtility.pixelsPerPoint;
                 selectionRect.height /= EditorGUIUtility.pixelsPerPoint;
 
-                var vertices = UnityEngine.ProBuilder.Picking.PickVerticesInRect(
+                var vertices = UnityEngine.ProBuilder.SelectionPicker.PickVerticesInRect(
                         camera,
                         selectionRect,
                         selectables,
@@ -74,7 +74,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
                 selectionRect.width /= EditorGUIUtility.pixelsPerPoint;
                 selectionRect.height /= EditorGUIUtility.pixelsPerPoint;
 
-                var edges = UnityEngine.ProBuilder.Picking.PickEdgesInRect(
+                var edges = UnityEngine.ProBuilder.SelectionPicker.PickEdgesInRect(
                         camera,
                         selectionRect,
                         selectables,
@@ -100,7 +100,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Picking
                 selectionRect.width /= EditorGUIUtility.pixelsPerPoint;
                 selectionRect.height /= EditorGUIUtility.pixelsPerPoint;
 
-                var faces = UnityEngine.ProBuilder.Picking.PickFacesInRect(
+                var faces = UnityEngine.ProBuilder.SelectionPicker.PickFacesInRect(
                         camera,
                         selectionRect,
                         selectables,

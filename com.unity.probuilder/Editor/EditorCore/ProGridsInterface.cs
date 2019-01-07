@@ -28,6 +28,7 @@ namespace UnityEditor.ProBuilder
         static Func<bool> s_SceneToolbarIsExtendedDelegate = null;
         static Func<bool> s_UseAxisConstraintDelegate = null;
         static Func<bool> s_SnapEnabledDelegate = null;
+        static Func<bool> s_ProGridsSnapAsGroupDelegate = null;
         static Func<bool> s_IsFullGridEnabledDelegate = null;
         static Func<float> s_GetActiveGridOffsetDelegate = null;
         static Func<float> s_SnapValueDelegate = null;
@@ -71,6 +72,24 @@ namespace UnityEditor.ProBuilder
                 return s_ProGridsInstanceDelegate();
 
             return null;
+        }
+
+        public static bool GetProGridsSnapAsGroup()
+        {
+            if (GetProGridsType() == null)
+                return false;
+
+            if (s_ProGridsSnapAsGroupDelegate == null)
+                s_ProGridsSnapAsGroupDelegate = (Func<bool>) ReflectionUtility.GetClosedDelegateOnProperty<Func<bool>>(
+                    GetProGridsType(),
+                    GetProGridsInstance(),
+                    "SnapAsGroupEnabled",
+                    BindingFlags.Instance | BindingFlags.NonPublic);
+
+            if (s_ProGridsSnapAsGroupDelegate != null)
+                return s_ProGridsSnapAsGroupDelegate();
+
+            return false;
         }
 
         /// <summary>
@@ -133,7 +152,7 @@ namespace UnityEditor.ProBuilder
         /// <returns></returns>
         public static bool SnapEnabled()
         {
-            if (GetProGridsType() == null)
+            if (GetProGridsType() == null || !ProGridsActive())
                 return false;
 
             if (s_SnapEnabledDelegate == null)
@@ -340,7 +359,7 @@ namespace UnityEditor.ProBuilder
             if (GetProGridsType() == null)
                 return point;
 
-            if (ProGridsInterface.SnapEnabled())
+            if (SnapEnabled())
                 return Snapping.SnapValue(point, ProGridsInterface.SnapValue());
 
             return point;

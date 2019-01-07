@@ -11,30 +11,28 @@ namespace UnityEditor.ProBuilder
     /// <summary>
     /// A simple line-item editor for vertex positions.
     /// </summary>
-    sealed class VertexPositionEditor : EditorWindow
+    sealed class VertexPositionEditor : ConfigurableWindow
     {
-        const int MAX_SCENE_LABELS = 100;
+        const int k_MaxSelectableVertices = 100;
+        Dictionary<ProBuilderMesh, VertexEditorSelection> m_Selection = new Dictionary<ProBuilderMesh, VertexEditorSelection>();
+        static Color s_EvenColor;
+        static Color s_OddColor;
+
+        Vector2 m_Scroll = Vector2.zero;
+        bool m_IsActive;
+        public bool m_WorldSpace = true;
 
         class VertexEditorSelection
         {
-            public bool isVisible = false;
+            public bool isVisible;
             public IEnumerable<int> common;
 
             public VertexEditorSelection(ProBuilderMesh mesh, bool visible, IEnumerable<int> indexes)
             {
-                this.isVisible = visible;
-                this.common = mesh.GetCoincidentVertices(indexes);
+                isVisible = visible;
+                common = mesh.GetSharedVertexHandles(indexes);
             }
         }
-
-        Dictionary<ProBuilderMesh, VertexEditorSelection> selection = new Dictionary<ProBuilderMesh, VertexEditorSelection>();
-
-        static Color EVEN;
-        static Color ODD;
-
-        Vector2 scroll = Vector2.zero;
-        bool moving = false;
-        public bool worldSpace = true;
 
         public static void MenuOpenVertexEditor()
         {
@@ -43,8 +41,8 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            EVEN = EditorGUIUtility.isProSkin ? new Color(.18f, .18f, .18f, 1f) : new Color(.85f, .85f, .85f, 1f);
-            ODD = EditorGUIUtility.isProSkin ? new Color(.15f, .15f, .15f, 1f) : new Color(.80f, .80f, .80f, 1f);
+            s_EvenColor = EditorGUIUtility.isProSkin ? new Color(.18f, .18f, .18f, 1f) : new Color(.85f, .85f, .85f, 1f);
+            s_OddColor = EditorGUIUtility.isProSkin ? new Color(.15f, .15f, .15f, 1f) : new Color(.80f, .80f, .80f, 1f);
 
             ProBuilderEditor.selectionUpdated += OnSelectionUpdate;
 #if UNITY_2019_1_OR_NEWER
@@ -67,12 +65,12 @@ namespace UnityEditor.ProBuilder
 #endif
         }
 
-        void OnSelectionUpdate(ProBuilderMesh[] newSelection)
+        void OnSelectionUpdate(IEnumerable<ProBuilderMesh> newSelection)
         {
             if (newSelection == null)
             {
-                if (selection != null)
-                    selection.Clear();
+                if (m_Selection != null)
+                    m_Selection.Clear();
 
                 return;
             }
@@ -83,9 +81,9 @@ namespace UnityEditor.ProBuilder
             {
                 VertexEditorSelection sel;
 
-                if (selection.TryGetValue(mesh, out sel))
+                if (m_Selection.TryGetValue(mesh, out sel))
                 {
-                    sel.common = mesh.GetCoincidentVertices(mesh.selectedIndexesInternal);
+                    sel.common = mesh.GetSharedVertexHandles(mesh.selectedIndexesInternal);
                     res.Add(mesh, sel);
                 }
                 else
@@ -94,23 +92,23 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            selection = res;
+            m_Selection = res;
 
             this.Repaint();
         }
 
         void OnVertexMovementBegin(ProBuilderMesh pb)
         {
-            moving = true;
+            m_IsActive = true;
             pb.ToMesh();
             pb.Refresh();
         }
 
         void OnVertexMovementFinish()
         {
-            moving = false;
+            m_IsActive = false;
 
-            foreach (var kvp in selection)
+            foreach (var kvp in m_Selection)
             {
                 kvp.Key.ToMesh();
                 kvp.Key.Refresh();
@@ -124,14 +122,14 @@ namespace UnityEditor.ProBuilder
 
             GUILayout.FlexibleSpace();
 
-            GUIStyle style = worldSpace ? EditorStyles.toolbarButton : UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton);
+            GUIStyle style = m_WorldSpace ? EditorStyles.toolbarButton : UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton);
 
-            if (GUILayout.Button(worldSpace ? "World Space" : "Model Space", style))
-                worldSpace = !worldSpace;
+            if (GUILayout.Button(m_WorldSpace ? "World Space" : "Model Space", style))
+                m_WorldSpace = !m_WorldSpace;
 
             GUILayout.EndHorizontal();
 
-            if (selection == null || selection.Count < 1 || !selection.Any(x => x.Key.selectedVertexCount > 0))
+            if (m_Selection == null || m_Selection.Count < 1 || !m_Selection.Any(x => x.Key.selectedVertexCount > 0))
             {
                 GUILayout.FlexibleSpace();
                 GUILayout.Label("Select a ProBuilder Mesh", UI.EditorGUIUtility.CenteredGreyMiniLabel);
@@ -141,24 +139,24 @@ namespace UnityEditor.ProBuilder
 
             Event e = Event.current;
 
-            if (moving)
+            if (m_IsActive)
             {
                 if (e.type == EventType.Ignore ||
                     e.type == EventType.MouseUp)
                     OnVertexMovementFinish();
             }
 
-            scroll = EditorGUILayout.BeginScrollView(scroll);
+            m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
 
-            foreach (var kvp in selection)
+            foreach (var kvp in m_Selection)
             {
-                ProBuilderMesh pb = kvp.Key;
+                ProBuilderMesh mesh = kvp.Key;
                 VertexEditorSelection sel = kvp.Value;
 
                 bool open = sel.isVisible;
 
                 EditorGUI.BeginChangeCheck();
-                open = EditorGUILayout.Foldout(open, pb.name);
+                open = EditorGUILayout.Foldout(open, mesh.name);
                 if (EditorGUI.EndChangeCheck())
                     sel.isVisible = open;
 
@@ -169,19 +167,19 @@ namespace UnityEditor.ProBuilder
                     bool wasWideMode = EditorGUIUtility.wideMode;
                     EditorGUIUtility.wideMode = true;
                     Color background = GUI.backgroundColor;
-                    Transform transform = pb.transform;
+                    Transform transform = mesh.transform;
 
                     foreach (int u in sel.common)
                     {
-                        GUI.backgroundColor = index % 2 == 0 ? EVEN : ODD;
+                        GUI.backgroundColor = index % 2 == 0 ? s_EvenColor : s_OddColor;
                         GUILayout.BeginHorizontal(UI.EditorGUIUtility.solidBackgroundStyle);
                         GUI.backgroundColor = background;
 
                         GUILayout.Label(u.ToString(), GUILayout.MinWidth(32), GUILayout.MaxWidth(32));
 
-                        Vector3 v = pb.positionsInternal[pb.sharedVerticesInternal[u][0]];
+                        Vector3 v = mesh.positionsInternal[mesh.sharedVerticesInternal[u][0]];
 
-                        if (worldSpace) v = transform.TransformPoint(v);
+                        if (m_WorldSpace) v = transform.TransformPoint(v);
 
                         EditorGUI.BeginChangeCheck();
 
@@ -189,18 +187,18 @@ namespace UnityEditor.ProBuilder
 
                         if (EditorGUI.EndChangeCheck())
                         {
-                            if (!moving)
-                                OnVertexMovementBegin(pb);
+                            if (!m_IsActive)
+                                OnVertexMovementBegin(mesh);
 
-                            UndoUtility.RecordObject(pb, "Set Vertex Postion");
+                            UndoUtility.RecordObject(mesh, "Set Vertex Postion");
 
-                            pb.SetSharedVertexPosition(u, worldSpace ? transform.InverseTransformPoint(v) : v);
+                            mesh.SetSharedVertexPosition(u, m_WorldSpace ? transform.InverseTransformPoint(v) : v);
 
                             if (ProBuilderEditor.instance != null)
                             {
-                                pb.RefreshUV(MeshSelection.selectedFacesInEditZone[pb]);
-                                pb.Refresh(RefreshMask.Normals);
-                                pb.mesh.RecalculateBounds();
+                                mesh.RefreshUV(MeshSelection.selectedFacesInEditZone[mesh]);
+                                mesh.Refresh(RefreshMask.Normals);
+                                mesh.mesh.RecalculateBounds();
                                 ProBuilderEditor.Refresh();
                             }
                         }
@@ -218,7 +216,7 @@ namespace UnityEditor.ProBuilder
 
         void OnSceneGUI(SceneView sceneView)
         {
-            if (selection == null)
+            if (m_Selection == null)
                 return;
 
             int labelCount = 0;
@@ -226,27 +224,27 @@ namespace UnityEditor.ProBuilder
             Handles.BeginGUI();
 
             // Only show dropped down probuilder objects.
-            foreach (KeyValuePair<ProBuilderMesh, VertexEditorSelection> selected in selection)
+            foreach (KeyValuePair<ProBuilderMesh, VertexEditorSelection> selected in m_Selection)
             {
-                ProBuilderMesh pb = selected.Key;
+                ProBuilderMesh mesh = selected.Key;
                 VertexEditorSelection sel = selected.Value;
 
                 if (!sel.isVisible)
                     continue;
 
-                Vector3[] positions = pb.positionsInternal;
+                Vector3[] positions = mesh.positionsInternal;
 
                 foreach (int i in sel.common)
                 {
-                    var indexes = pb.sharedVerticesInternal[i];
+                    var indexes = mesh.sharedVerticesInternal[i];
 
-                    Vector3 point = pb.transform.TransformPoint(positions[indexes[0]]);
+                    Vector3 point = mesh.transform.TransformPoint(positions[indexes[0]]);
 
                     Vector2 cen = HandleUtility.WorldToGUIPoint(point);
 
                     UI.EditorGUIUtility.SceneLabel(i.ToString(), cen);
 
-                    if (++labelCount > MAX_SCENE_LABELS) break;
+                    if (++labelCount > k_MaxSelectableVertices) break;
                 }
             }
             Handles.EndGUI();

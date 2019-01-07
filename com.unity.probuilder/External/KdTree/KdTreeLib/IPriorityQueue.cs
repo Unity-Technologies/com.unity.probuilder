@@ -1,6 +1,6 @@
 ﻿namespace UnityEngine.ProBuilder.KdTree
 {
-	public interface IPriorityQueue<TItem, TPriority>
+	interface IPriorityQueue<TItem, TPriority>
 	{
 		void Enqueue(TItem item, TPriority priority);
 

@@ -30,7 +30,7 @@
  */
 
 namespace UnityEngine.ProBuilder.Poly2Tri {
-	public enum Orientation {
+	enum Orientation {
 		CW, CCW, Collinear
 	}
 }

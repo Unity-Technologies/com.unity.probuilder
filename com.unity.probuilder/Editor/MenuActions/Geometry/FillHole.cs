@@ -147,7 +147,7 @@ namespace UnityEditor.ProBuilder.Actions
                                 continue;
 
                             var currentWing = it.Current;
-                            var oppositeFace = it.Current.opposite?.face;
+                            var oppositeFace = it.Current.opposite != null ? it.Current.opposite.face : null;
 
                             if (oppositeFace != null && !appendedFaces.Contains(oppositeFace))
                             {

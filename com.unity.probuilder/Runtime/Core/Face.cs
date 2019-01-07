@@ -47,7 +47,9 @@ namespace UnityEngine.ProBuilder
 
 
         [SerializeField]
-        private bool m_ManualUV;
+        [FormerlySerializedAs("manualUV")]
+        bool m_ManualUV;
+
         /// <value>
         /// If this face has had it's UV coordinates done by hand, don't update them with the auto unwrap crowd.
         /// </value>

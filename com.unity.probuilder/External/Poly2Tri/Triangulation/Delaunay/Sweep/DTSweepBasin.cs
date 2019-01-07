@@ -30,7 +30,7 @@
  */
 
 namespace UnityEngine.ProBuilder.Poly2Tri {
-	public class DTSweepBasin {
+	class DTSweepBasin {
 		public AdvancingFrontNode leftNode;
 		public AdvancingFrontNode bottomNode;
 		public AdvancingFrontNode rightNode;

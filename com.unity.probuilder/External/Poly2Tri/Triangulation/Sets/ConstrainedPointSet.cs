@@ -36,11 +36,11 @@ namespace UnityEngine.ProBuilder.Poly2Tri {
 	 * A constraint defines an edge between two points in the set, these edges can not
 	 * be crossed. They will be enforced triangle edges after a triangulation.
 	 * <p>
-	 * 
-	 * 
+	 *
+	 *
 	 * @author Thomas Åhlén, thahlen@gmail.com
 	 */
-	public class ConstrainedPointSet : PointSet {
+	class ConstrainedPointSet : PointSet {
 		public int[] EdgeIndex { get; private set; }
 
 		public ConstrainedPointSet(List<TriangulationPoint> points, int[] index)

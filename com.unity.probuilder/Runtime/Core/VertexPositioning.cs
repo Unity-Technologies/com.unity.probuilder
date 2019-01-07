@@ -113,8 +113,44 @@ namespace UnityEngine.ProBuilder
         {
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
-
             mesh.GetCoincidentVertices(indexes, s_CoincidentVertices);
+            TranslateVerticesInternal(mesh, s_CoincidentVertices, offset);
+        }
+
+        /// <summary>
+        /// Translate a set of vertices with an offset provided in local (model) coordinates.
+        /// <br />
+        /// Unlike most other mesh operations, this function applies the mesh positions to both ProBuilderMesh and the UnityEngine.Mesh.
+        /// </summary>
+        /// <param name="mesh">The mesh to be affected.</param>
+        /// <param name="edges">A set of edges that are to be affected.</param>
+        /// <param name="offset"></param>
+        public static void TranslateVertices(this ProBuilderMesh mesh, IEnumerable<Edge> edges, Vector3 offset)
+        {
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+            mesh.GetCoincidentVertices(edges, s_CoincidentVertices);
+            TranslateVerticesInternal(mesh, s_CoincidentVertices, offset);
+        }
+
+        /// <summary>
+        /// Translate a set of vertices with an offset provided in local (model) coordinates.
+        /// <br />
+        /// Unlike most other mesh operations, this function applies the mesh positions to both ProBuilderMesh and the UnityEngine.Mesh.
+        /// </summary>
+        /// <param name="mesh">The mesh to be affected.</param>
+        /// <param name="faces">A set of faces that are to be affected.</param>
+        /// <param name="offset"></param>
+        public static void TranslateVertices(this ProBuilderMesh mesh, IEnumerable<Face> faces, Vector3 offset)
+        {
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+            mesh.GetCoincidentVertices(faces, s_CoincidentVertices);
+            TranslateVerticesInternal(mesh, s_CoincidentVertices, offset);
+        }
+
+        static void TranslateVerticesInternal(ProBuilderMesh mesh, IEnumerable<int> indices, Vector3 offset)
+        {
             Vector3[] verts = mesh.positionsInternal;
 
             for (int i = 0, c = s_CoincidentVertices.Count; i < c; i++)

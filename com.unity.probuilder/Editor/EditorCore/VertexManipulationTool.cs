@@ -41,6 +41,12 @@ namespace UnityEditor.ProBuilder
         // Store PivotRotation so that we can detect changes and update our handles appropriately
         static PivotRotation s_PivotRotation;
 
+        /// <value>
+        /// Where the handle is positioned relative to the current selection.
+        /// </value>
+        /// <remarks>
+        /// Relates to the UnityEditor.PivotMode enum, with additional options.
+        /// </remarks>
         public static PivotPoint pivotPoint
         {
             get
@@ -64,6 +70,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <value>
+        /// How the handle is rotated relative to the current selection.
+        /// </value>
         public static HandleOrientation handleOrientation
         {
             get
@@ -120,12 +129,12 @@ namespace UnityEditor.ProBuilder
         /// <value>
         /// Called when vertex modifications are complete.
         /// </value>
-        public static event Action<ProBuilderMesh[]> afterMeshModification;
+        public static event Action<IEnumerable<ProBuilderMesh>> afterMeshModification;
 
         /// <value>
         /// Called immediately prior to beginning vertex modifications. The ProBuilderMesh will be in un-altered state at this point (meaning ProBuilderMesh.ToMesh and ProBuilderMesh.Refresh have been called, but not Optimize).
         /// </value>
-        public static event Action<ProBuilderMesh[]> beforeMeshModification;
+        public static event Action<IEnumerable<ProBuilderMesh>> beforeMeshModification;
 
         internal static Pref<bool> s_ExtrudeEdgesAsGroup = new Pref<bool>("editor.extrudeEdgesAsGroup", true);
         internal static Pref<ExtrudeMethod> s_ExtrudeMethod = new Pref<ExtrudeMethod>("editor.extrudeMethod", ExtrudeMethod.FaceNormal);
@@ -144,7 +153,7 @@ namespace UnityEditor.ProBuilder
         static MethodInfo s_FindNearestVertex;
         static object[] s_FindNearestVertexArguments = new object[] { null, null, null };
 
-        protected IEnumerable<MeshAndElementSelection> elementSelection
+        internal IEnumerable<MeshAndElementSelection> elementSelection
         {
             get { return MeshSelection.elementSelection; }
         }
@@ -224,6 +233,10 @@ namespace UnityEditor.ProBuilder
             {
                 m_HandlePosition = MeshSelection.GetHandlePosition();
                 m_HandleRotation = MeshSelection.GetHandleRotation();
+                
+                m_HandlePositionOrigin = m_HandlePosition;
+                m_HandleRotationOrigin = m_HandleRotation;
+                handleRotationOriginInverse = Quaternion.Inverse(m_HandleRotation);
             }
 
             DoTool(m_HandlePosition, m_HandleRotation);
@@ -254,10 +267,6 @@ namespace UnityEditor.ProBuilder
                 Extrude();
 
             m_IsEditing = true;
-
-            m_HandlePositionOrigin = m_HandlePosition;
-            m_HandleRotationOrigin = m_HandleRotation;
-            handleRotationOriginInverse = Quaternion.Inverse(m_HandleRotation);
 
             m_ProgridsSnapEnabled = ProGridsInterface.SnapEnabled();
             m_ProgridsSnapValue = ProGridsInterface.SnapValue();

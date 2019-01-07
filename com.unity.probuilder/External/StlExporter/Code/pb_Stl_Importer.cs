@@ -11,7 +11,7 @@ namespace UnityEngine.ProBuilder.Stl
 	/**
 	 * Import methods for STL files.
 	 */
-	public static class pb_Stl_Importer
+	static class pb_Stl_Importer
 	{
 		const int MAX_FACETS_PER_MESH = 65535 / 3;
 
@@ -80,7 +80,7 @@ namespace UnityEngine.ProBuilder.Stl
             facet.c = binaryReader.GetVector3();
             facet.b = binaryReader.GetVector3();
             binaryReader.ReadUInt16(); // padding
-          
+
             return facet;
         }
         private static Vector3 GetVector3(this BinaryReader binaryReader)
@@ -158,7 +158,7 @@ namespace UnityEngine.ProBuilder.Stl
 
 						case VERTEX:
                             // maintain counter-clockwise orientation of vertices:
-                            if (vertex == 0) f.a = StringToVec3(line.Replace("vertex ", ""));							
+                            if (vertex == 0) f.a = StringToVec3(line.Replace("vertex ", ""));
 							else if(vertex == 2) f.c = StringToVec3(line.Replace("vertex ", ""));
                             else if (vertex == 1) f.b = StringToVec3(line.Replace("vertex ", ""));
                             vertex++;
@@ -195,7 +195,7 @@ namespace UnityEngine.ProBuilder.Stl
 			float.TryParse(split[1], out v.y);
 			float.TryParse(split[2], out v.z);
 
-            return v.UnityCoordTrafo(); 
+            return v.UnityCoordTrafo();
 		}
 
 		/**

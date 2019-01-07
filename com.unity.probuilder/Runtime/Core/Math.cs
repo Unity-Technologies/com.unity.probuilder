@@ -1,9 +1,5 @@
 using System;
-using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.ProBuilder;
-using System.Linq;
 
 namespace UnityEngine.ProBuilder
 {
@@ -20,12 +16,12 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// ProBuilder epsilon constant.
         /// </summary>
-        const float floatEpsilon = float.Epsilon;
+        const float k_FltEpsilon = float.Epsilon;
 
         /// <summary>
         /// Epsilon to use when comparing vertex positions for equality.
         /// </summary>
-        const float floatCompareEpsilon = .0001f;
+        const float k_FltCompareEpsilon = .0001f;
 
         /// <summary>
         /// The minimum distance a handle must move on an axis before considering that axis as engaged.
@@ -779,8 +775,11 @@ namespace UnityEngine.ProBuilder
         /// <param name="v"></param>
         /// <param name="epsilon"></param>
         /// <returns></returns>
-        internal static bool IsCardinalAxis(Vector3 v, float epsilon = floatEpsilon)
+        internal static bool IsCardinalAxis(Vector3 v, float epsilon = k_FltEpsilon)
         {
+            if (v == Vector3.zero)
+                return false;
+
             v.Normalize();
 
             return (1f - Mathf.Abs(Vector3.Dot(Vector3.up, v))) < epsilon ||
@@ -1065,7 +1064,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="array">The array</param>
         /// <param name="indexes">If provided the average is the sum of all points contained in the indexes array. If not, the entire v array is used.</param>
         /// <returns>Average Vector3 of passed vertex array.</returns>
-        internal static Vector2 Average(IList<Vector2> array, IList<int> indexes = null)
+        public static Vector2 Average(IList<Vector2> array, IList<int> indexes = null)
         {
             if (array == null)
                 throw new ArgumentNullException("array");
@@ -1084,10 +1083,10 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets the average of a vector array.
         /// </summary>
-        /// <param name="array">The array</param>
+        /// <param name="array">The array.</param>
         /// <param name="indexes">If provided the average is the sum of all points contained in the indexes array. If not, the entire v array is used.</param>
         /// <returns>Average Vector3 of passed vertex array.</returns>
-        internal static Vector3 Average(IList<Vector3> array, IList<int> indexes = null)
+        public static Vector3 Average(IList<Vector3> array, IList<int> indexes = null)
         {
             if (array == null)
                 throw new ArgumentNullException("array");
@@ -1121,12 +1120,12 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Average a set of vertices.
         /// </summary>
-        /// <param name="list"></param>
-        /// <param name="selector"></param>
+        /// <param name="list">The collection from which to select indices.</param>
+        /// <param name="selector">The function used to get vertex values.</param>
         /// <param name="indexes"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static Vector3 Average<T>(this IList<T> list, Func<T, Vector3> selector, IList<int> indexes = null)
+        internal static Vector3 Average<T>(this IList<T> list, Func<T, Vector3> selector, IList<int> indexes = null)
         {
             if (list == null)
                 throw new ArgumentNullException("list");
@@ -1151,7 +1150,7 @@ namespace UnityEngine.ProBuilder
             return sum / len;
         }
 
-        internal static Vector4 Average(IList<Vector4> v, IList<int> indexes = null)
+        public static Vector4 Average(IList<Vector4> v, IList<int> indexes = null)
         {
             Vector4 sum = Vector4.zero;
             float len = indexes == null ? v.Count : indexes.Count;
@@ -1180,7 +1179,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="b">Second Vector2 value.</param>
         /// <param name="delta">The maximum difference between components allowed.</param>
         /// <returns>True if a and b components are respectively within delta distance of one another.</returns>
-        internal static bool Approx2(this Vector2 a, Vector2 b, float delta = floatCompareEpsilon)
+        internal static bool Approx2(this Vector2 a, Vector2 b, float delta = k_FltCompareEpsilon)
         {
             return
                 Mathf.Abs(a.x - b.x) < delta &&
@@ -1194,7 +1193,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="b">Second Vector3 value.</param>
         /// <param name="delta">The maximum difference between components allowed.</param>
         /// <returns>True if a and b components are respectively within delta distance of one another.</returns>
-        internal static bool Approx3(this Vector3 a, Vector3 b, float delta = floatCompareEpsilon)
+        internal static bool Approx3(this Vector3 a, Vector3 b, float delta = k_FltCompareEpsilon)
         {
             return
                 Mathf.Abs(a.x - b.x) < delta &&
@@ -1210,7 +1209,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="delta">The maximum difference between components allowed.</param>
         /// <returns>True if a and b components are respectively within delta distance of one another.</returns>
 
-        internal static bool Approx4(this Vector4 a, Vector4 b, float delta = floatCompareEpsilon)
+        internal static bool Approx4(this Vector4 a, Vector4 b, float delta = k_FltCompareEpsilon)
         {
             return
                 Mathf.Abs(a.x - b.x) < delta &&
@@ -1226,7 +1225,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="b">Second Color value.</param>
         /// <param name="delta">The maximum difference between components allowed.</param>
         /// <returns>True if a and b components are respectively within delta distance of one another.</returns>
-        internal static bool ApproxC(this Color a, Color b, float delta = floatCompareEpsilon)
+        internal static bool ApproxC(this Color a, Color b, float delta = k_FltCompareEpsilon)
         {
             return Mathf.Abs(a.r - b.r) < delta &&
                 Mathf.Abs(a.g - b.g) < delta &&
@@ -1242,7 +1241,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="delta">The maximum difference between components allowed.</param>
         /// <returns>True if a and b components are respectively within delta distance of one another.</returns>
 
-        internal static bool Approx(this float a, float b, float delta = floatCompareEpsilon)
+        internal static bool Approx(this float a, float b, float delta = k_FltCompareEpsilon)
         {
             return Mathf.Abs(b - a) < Mathf.Abs(delta);
         }
@@ -1279,7 +1278,7 @@ namespace UnityEngine.ProBuilder
             return value<lowerBound? lowerBound : value> upperBound ? upperBound : value;
         }
 
-        internal static Vector3 ToSignedMask(this Vector3 vec, float delta = floatEpsilon)
+        internal static Vector3 ToSignedMask(this Vector3 vec, float delta = k_FltEpsilon)
         {
             return new Vector3(
                 Mathf.Abs(vec.x) > delta ? vec.x / Mathf.Abs(vec.x) : 0f,
@@ -1391,7 +1390,7 @@ namespace UnityEngine.ProBuilder
             return IsNumber(value.x) && IsNumber(value.y) && IsNumber(value.z) && IsNumber(value.w);
         }
 
-        internal static float MakeNonZero(float value, float min = .001f)
+        internal static float MakeNonZero(float value, float min = .0001f)
         {
             if (float.IsNaN(value) || float.IsInfinity(value) || Mathf.Abs(value) < min)
                 return min * Mathf.Sign(value);

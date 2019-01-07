@@ -2,7 +2,7 @@ using UnityEditor.SettingsManagement;
 
 namespace UnityEditor.ProBuilder
 {
-    public class Pref<T> : UserSetting<T>
+    sealed class Pref<T> : UserSetting<T>
     {
         public Pref(string key, T value, SettingsScope scope = SettingsScope.Project)
             : base(ProBuilderSettings.instance, key, value, scope)

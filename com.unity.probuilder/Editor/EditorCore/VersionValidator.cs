@@ -38,7 +38,7 @@ namespace UnityEditor.ProBuilder
             if (isNewVersion && (assetStoreInstallFound || deprecatedGuidsFound))
                 if (UnityEditor.EditorUtility.DisplayDialog(assetStoreInstallFound ? k_AssetStoreUpgradeTitle : k_DeprecatedGuidsTitle,
                         assetStoreInstallFound ? k_AssetStoreUpgradeDialog : k_DeprecatedGuidsDialog +
-                        "\n\nIf you choose \"No\" this dialog may be accessed again at any time through the \"Tools/ProBuilder/Repair/Convert to Package Manager\" menu item.",
+                        "\n\nIf you choose \"No\" this dialog may be accessed again at any time through the \"Tools/ProBuilder/Repair/Convert to ProBuilder 4\" menu item.",
                         "Yes", "No"))
                     EditorApplication.delayCall += AssetIdRemapEditor.OpenConversionEditor;
         }

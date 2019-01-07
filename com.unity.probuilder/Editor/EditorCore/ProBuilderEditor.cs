@@ -25,12 +25,22 @@ namespace UnityEditor.ProBuilder
         /// <value>
         /// Raised any time the ProBuilder editor refreshes the selection. This is called every frame when interacting with mesh elements, and after any mesh operation.
         /// </value>
-        public static event Action<ProBuilderMesh[]> selectionUpdated;
+        public static event Action<IEnumerable<ProBuilderMesh>> selectionUpdated;
 
         /// <value>
         /// Raised when the EditLevel is changed.
         /// </value>
         public static event Action<SelectMode> selectModeChanged;
+
+        /// <value>
+        /// Called when vertex modifications are complete.
+        /// </value>
+        public static event Action<IEnumerable<ProBuilderMesh>> afterMeshModification;
+
+        /// <value>
+        /// Called immediately prior to beginning vertex modifications. The ProBuilderMesh will be in un-altered state at this point (meaning ProBuilderMesh.ToMesh and ProBuilderMesh.Refresh have been called, but not Optimize).
+        /// </value>
+        public static event Action<IEnumerable<ProBuilderMesh>> beforeMeshModification;
 
         static EditorToolbar s_EditorToolbar;
         static ProBuilderEditor s_Instance;
@@ -293,6 +303,9 @@ namespace UnityEditor.ProBuilder
             s_ResetOnSceneGUIState = typeof(SceneView).GetMethod("ResetOnSceneGUIState", BindingFlags.Instance | BindingFlags.NonPublic);
 #endif
 
+            VertexManipulationTool.beforeMeshModification += BeforeMeshModification;
+            VertexManipulationTool.afterMeshModification += AfterMeshModification;
+
             LoadSettings();
             InitGUI();
             UpdateSelection();
@@ -305,6 +318,9 @@ namespace UnityEditor.ProBuilder
         void OnDisable()
         {
             s_Instance = null;
+
+            VertexManipulationTool.beforeMeshModification -= BeforeMeshModification;
+            VertexManipulationTool.afterMeshModification -= AfterMeshModification;
 
             if (s_EditorToolbar != null)
                 DestroyImmediate(s_EditorToolbar);
@@ -335,6 +351,18 @@ namespace UnityEditor.ProBuilder
                 selectModeChanged(SelectMode.Object);
 
             SceneView.RepaintAll();
+        }
+
+        void BeforeMeshModification(IEnumerable<ProBuilderMesh> meshes)
+        {
+            if(beforeMeshModification != null)
+                beforeMeshModification(meshes);
+        }
+
+        void AfterMeshModification(IEnumerable<ProBuilderMesh> meshes)
+        {
+            if(afterMeshModification != null)
+                afterMeshModification(meshes);
         }
 
         internal static void ReloadSettings()

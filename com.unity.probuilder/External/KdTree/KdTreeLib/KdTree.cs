@@ -8,7 +8,7 @@ using System.Text;
 
 namespace UnityEngine.ProBuilder.KdTree
 {
-	public enum AddDuplicateBehavior
+	enum AddDuplicateBehavior
 	{
 		Skip,
 		Error,
@@ -16,7 +16,7 @@ namespace UnityEngine.ProBuilder.KdTree
 		Collect
 	}
 
-	public class DuplicateNodeError : Exception
+	class DuplicateNodeError : Exception
 	{
 		public DuplicateNodeError()
 			: base("Cannot Add Node With Duplicate Coordinates")
@@ -25,7 +25,7 @@ namespace UnityEngine.ProBuilder.KdTree
 	}
 
 	[Serializable]
-	public class KdTree<TKey, TValue> : IKdTree<TKey, TValue>
+	class KdTree<TKey, TValue> : IKdTree<TKey, TValue>
 	{
 		public KdTree(int dimensions, ITypeMath<TKey> typeMath)
 		{

@@ -32,7 +32,7 @@
 using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder.Poly2Tri {
-	public interface Triangulatable {
+	interface Triangulatable {
 		void Prepare(TriangulationContext tcx);
 
 		IList<TriangulationPoint> Points { get; } // MM: Neither of these are used via interface (yet?)

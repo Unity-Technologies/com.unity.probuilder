@@ -3,7 +3,7 @@
 namespace UnityEngine.ProBuilder.KdTree.Math
 {
 	[Serializable]
-	public class FloatMath : TypeMath<float>
+	class FloatMath : TypeMath<float>
 	{
 		public override int Compare(float a, float b)
 		{

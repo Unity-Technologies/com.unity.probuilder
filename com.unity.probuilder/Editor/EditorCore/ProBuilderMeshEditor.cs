@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.ProBuilder;
@@ -80,12 +81,12 @@ namespace UnityEditor.ProBuilder
             VertexManipulationTool.afterMeshModification -= OnFinishMeshModification;
         }
 
-        void OnBeginMeshModification(ProBuilderMesh[] selection)
+        void OnBeginMeshModification(IEnumerable<ProBuilderMesh> selection)
         {
             m_ModifyingMesh = true;
         }
 
-        void OnFinishMeshModification(ProBuilderMesh[] selection)
+        void OnFinishMeshModification(IEnumerable<ProBuilderMesh> selection)
         {
             m_ModifyingMesh = false;
         }
