@@ -145,9 +145,9 @@ namespace UnityEngine.ProBuilder
 
                     float d;
 
-                    if (plane.Raycast(forwardRay, out d) && Mathf.Abs(d) < nearest)
+                    if (plane.Raycast(forwardRay, out d) && Mathf.Abs(d) < Mathf.Abs(nearest))
                         nearest = d;
-                    if (plane.Raycast(backwardsRay, out d) && Mathf.Abs(d) < nearest)
+                    if (plane.Raycast(backwardsRay, out d) && Mathf.Abs(d) < Mathf.Abs(nearest))
                         nearest = -d;
                 }
             }
