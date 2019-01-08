@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.39] - 2018-01-07
+## [4.0.0-preview.40] - 2018-01-08
 
 ### Features
 
@@ -94,6 +94,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Make auto-resizing colliders opt-in instead of on by default.
 - Use the last selected mesh element as the active selection pivot, matching object selection.
 - Remove "About" window.
+
+### Changes since 4.0.0-preview.39
+
+- (Regression) Fix `Fit UVs` not refreshing the `MeshFilter.sharedMesh` UVs.
+- (Regression) Fix `SnapValueOnRay` return `Inf` when ray has no length.
+- Update license file.
 
 ### Changes since 4.0.0-preview.38
 
