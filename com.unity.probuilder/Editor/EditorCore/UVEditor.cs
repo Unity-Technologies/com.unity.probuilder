@@ -3239,6 +3239,9 @@ namespace UnityEditor.ProBuilder
                     uv[m_DistinctIndexesSelection[i][n]] = uvs[n];
 
                 UVEditing.ApplyUVs(selection[i], uv, channel);
+                
+                selection[i].Refresh();
+                selection[i].Optimize();
             }
 
             RefreshSelectedUVCoordinates();
