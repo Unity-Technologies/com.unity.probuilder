@@ -124,6 +124,7 @@ namespace UnityEngine.ProBuilder
         [NonSerialized]
         MeshRenderer m_MeshRenderer;
 
+#pragma warning disable 109
         internal new MeshRenderer renderer
         {
             get
@@ -133,6 +134,22 @@ namespace UnityEngine.ProBuilder
                 return m_MeshRenderer;
             }
         }
+#pragma warning restore 109
+
+        [NonSerialized]
+        MeshFilter m_MeshFilter;
+
+#pragma warning disable 109
+        internal new MeshFilter filter
+        {
+            get
+            {
+                if (m_MeshFilter == null)
+                    m_MeshFilter = GetComponent<MeshFilter>();
+                return m_MeshFilter;
+            }
+        }
+#pragma warning restore 109
 
         /// <value>
         /// In the editor, when you delete a ProBuilderMesh you usually also want to destroy the mesh asset.
@@ -154,7 +171,6 @@ namespace UnityEngine.ProBuilder
             bool missing = false;
 
             int vc = vertexCount;
-
 
             missing |= (channels & MeshArrays.Position) == MeshArrays.Position && m_Positions == null;
             missing |= (channels & MeshArrays.Normal) == MeshArrays.Normal && (m_Normals == null || m_Normals.Length != vc);
@@ -755,8 +771,8 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         internal Mesh mesh
         {
-            get { return GetComponent<MeshFilter>().sharedMesh; }
-            set { gameObject.GetComponent<MeshFilter>().sharedMesh = value; }
+            get { return filter.sharedMesh; }
+            set { filter.sharedMesh = value; }
         }
 
         internal int id
