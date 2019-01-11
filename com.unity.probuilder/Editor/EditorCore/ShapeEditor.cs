@@ -80,6 +80,9 @@ namespace UnityEditor.ProBuilder
         {
             DoContextMenu();
 
+            if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Return)
+                CreateSelectedShape(true);
+
             GUILayout.Label("Shape Selector", EditorStyles.boldLabel);
 
             EditorGUI.BeginChangeCheck();
@@ -102,15 +105,18 @@ namespace UnityEditor.ProBuilder
             GUILayout.FlexibleSpace();
 
             if (GUILayout.Button("Build"))
-            {
-                var res = shape.Build();
-                EditorUtility.InitObject(res);
-                ApplyPreviewTransform(res);
-                DestroyPreviewObject();
+                CreateSelectedShape();
+        }
 
-                if (s_CloseWindowAfterCreateShape)
-                    Close();
-            }
+        void CreateSelectedShape(bool forceCloseWindow = false)
+        {
+            var res = m_ShapeBuilders[s_CurrentIndex].Build();
+            EditorUtility.InitObject(res);
+            ApplyPreviewTransform(res);
+            DestroyPreviewObject();
+
+            if (forceCloseWindow || s_CloseWindowAfterCreateShape)
+                Close();
         }
 
         void DestroyPreviewObject()

@@ -18,7 +18,6 @@ namespace UnityEngine.ProBuilder
         {
             InvalidateCaches();
         }
-
 #endif
 
         static HashSet<int> s_CachedHashSet = new HashSet<int>();
@@ -42,6 +41,14 @@ namespace UnityEngine.ProBuilder
             InvalidateSharedTextureLookup();
             m_Colors = null;
             ClearSelection();
+        }
+
+        void Awake()
+        {
+            if (vertexCount > 0
+                && faceCount > 0
+                && meshSyncState == MeshSyncState.Null)
+                Rebuild();
         }
 
         void OnDestroy()
@@ -240,7 +247,7 @@ namespace UnityEngine.ProBuilder
             }
 
             m.name = string.Format("pb_Mesh{0}", id);
-            GetComponent<MeshFilter>().sharedMesh = m;
+            filter.sharedMesh = m;
         }
 
         /// <summary>
@@ -398,7 +405,7 @@ namespace UnityEngine.ProBuilder
 
         void RefreshColors()
         {
-            Mesh m = GetComponent<MeshFilter>().sharedMesh;
+            Mesh m = filter.sharedMesh;
             m.colors = m_Colors;
         }
 
