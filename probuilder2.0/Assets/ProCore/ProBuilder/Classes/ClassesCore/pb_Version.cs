@@ -48,11 +48,11 @@ namespace ProBuilder.Core
 					}
 				}
 
-				return s_LoadedVersion = new pb_VersionInfo("3.10.0-preview.1", "null");
+				return s_LoadedVersion = new pb_VersionInfo("3.10.0", "null");
 			}
 		}
 #else
-		public static readonly pb_VersionInfo Current = new pb_VersionInfo("3.10.0-preview.1", "en-US: 12-06-2018");
+		public static readonly pb_VersionInfo Current = new pb_VersionInfo("3.10.0", "en-US: 01-14-2019");
 #endif
 	}
 }
