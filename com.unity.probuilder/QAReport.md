@@ -9,17 +9,17 @@ Test strategy & current info for ProBuilder.
 
 | | |
 |--|--|
-|Test Rail | [ProBuilder for Unity 2018.x (Package Manager)](https://qatestrail.hq.unity3d.com/index.php?/suites/view/2498) |
-| QA Test Results | [ProBuilder Test Rail Results](https://qatestrail.hq.unity3d.com/index.php?/runs/overview/32) |
-| Known Bugs | [Favro - World Building Collection](https://fogbugz.unity3d.com/f/filters/?ixPersonAssignedTo=1667) |
-| Planning | [Favro - World Building Collection](https://favro.com/organization/c564ede4ed3337f7b17986b6/5458f34f10ce252532bf6d1e) |
+|Test Rail | [ProBuilder for Unity 2018.x (Package Manager)](https://qatestrail.hq.unity3d.com/index.php?/projects/overview/32) |
+| QA Test Results | [ProBuilder Test Rail Results](https://qatestrail.hq.unity3d.com/index.php?/runs/view/11092&group_by=cases:section_id&group_order=asc) |
+| Known Bugs | [JIRA - World Building](https://unity3d.atlassian.net/secure/RapidBoard.jspa?rapidView=73&projectKey=WB&view=planning&selectedIssue=WB-1106&epics=visible) |
+| Planning | [JIRA - World Building Epics](https://unity3d.atlassian.net/secure/RapidBoard.jspa?rapidView=73&projectKey=WB&view=planning&selectedIssue=WB-1106&epics=visible) |
 
 ## Test Strategy
 
 **Manual Testing**
 
-1. Run test via TestRails: [ProBuilder for Unity 2018.x (Package Manager)](https://qatestrail.hq.unity3d.com/index.php?/suites/view/2498)
-2. If QA passed, submit and request publishing via the [Package Publishing Form](https://docs.google.com/forms/d/e/1FAIpQLSdSIRO6s6_gM-BxXbDtdzIej-Hhk-3n68xSyC2sM8tp7413mw/viewform)
+1. Run test via TestRails: [ProBuilder for Unity 2018.x (Package Manager)](https://qatestrail.hq.unity3d.com/index.php?/projects/overview/32)
+2. If QA passed (@TODO)
 
 **Unit Tests**
 
