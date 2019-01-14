@@ -19,7 +19,6 @@ Test strategy & current info for ProBuilder.
 **Manual Testing**
 
 1. Run test via TestRails: [ProBuilder for Unity 2018.x (Package Manager)](https://qatestrail.hq.unity3d.com/index.php?/projects/overview/32)
-2. If QA passed (@TODO)
 
 **Unit Tests**
 

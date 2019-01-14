@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview.41] - 2018-01-14
+## [4.0.0] - 2018-01-14
 
 ### Features
 
@@ -96,10 +96,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Use the last selected mesh element as the active selection pivot, matching object selection.
 - Remove "About" window.
 - Expose APIs necessary for mesh element picking at runtime.
-
-### Changes since 4.0.0-preview.40
-
-- (Regression) Fix instantiating probuilder mesh not refreshing meshfilter value
 
 ## [3.0.8] - 2018-05-07
 
