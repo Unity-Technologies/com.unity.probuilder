@@ -1,5 +1,11 @@
 image: node:6.10.0
 
+variables:
+  BINTRAY_STAGING: 'https://staging-packages.unity.com'
+
+before_script:
+  - chmod +x build.sh
+
 stages:
   - push_to_packman_staging
 
@@ -8,6 +14,5 @@ push_to_packman_staging:
   only:
     - tags
   script:
-    - cd com.unity.probuilder
-    - curl -u $USER_NAME:$API_KEY https://staging-packages.unity.com/auth > .npmrc
-    - npm publish
+    - ./build.sh npm auth "$BINTRAY_STAGING" "$USER_NAME" "$API_KEY"
+- ./build.sh package-ci publish --git-head $CI_COMMIT_SHA --git-url $CI_REPOSITORY_URL
