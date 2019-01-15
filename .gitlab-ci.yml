@@ -15,4 +15,4 @@ push_to_packman_staging:
     - tags
   script:
     - ./build.sh npm auth "$BINTRAY_STAGING" "$USER_NAME" "$API_KEY"
-- ./build.sh package-ci publish --git-head $CI_COMMIT_SHA --git-url $CI_REPOSITORY_URL
+    - ./build.sh package-ci publish --git-head $CI_COMMIT_SHA --git-url $CI_REPOSITORY_URL
