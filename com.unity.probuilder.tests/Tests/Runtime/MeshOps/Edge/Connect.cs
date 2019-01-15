@@ -4,7 +4,6 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Tests.Framework;
-
 namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Edge
 {
     static class Connect
