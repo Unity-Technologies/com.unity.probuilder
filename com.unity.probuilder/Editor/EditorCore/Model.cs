@@ -79,6 +79,11 @@ namespace UnityEditor.ProBuilder
             this.name = name;
             vertices = mesh.GetVertices();
             submeshes = Submesh.GetSubmeshes(mesh.facesInternal, UnityEngine.ProBuilder.MeshUtility.GetMaterialCount(mesh.renderer), quads ? MeshTopology.Quads : MeshTopology.Triangles);
+            materials = new Material[submeshCount];
+
+            for (int i = 0; i < submeshCount; ++i)
+                materials[i] = mesh.renderer.sharedMaterials[Math.Clamp(i, 0, materials.Length - 1)];
+
             matrix = mesh.transform.localToWorldMatrix;
             mesh.ToMesh(MeshTopology.Triangles);
             mesh.Refresh();
