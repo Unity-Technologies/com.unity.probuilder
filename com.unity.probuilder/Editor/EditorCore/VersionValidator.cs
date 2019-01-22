@@ -9,7 +9,15 @@ namespace UnityEditor.ProBuilder
     class VersionValidator
     {
         static readonly SemVer k_ProBuilder4_0_0 = new SemVer(4, 0, 0);
+        static readonly SemVer k_ProBuilder3_0_0 = new SemVer(3, 0, 0);
+        static readonly SemVer k_ProBuilder2_0_0 = new SemVer(2, 0, 0);
         static readonly SemVer k_EmptyVersion = new SemVer(0, 0, 0);
+        
+        const string k_UpgradeDialog = "ProBuilder 2.x and 3.x assets are incompatible with 4.0.0+ and need to be upgraded.* Would you like to convert your project to the new version of ProBuilder?\n\n*Future updates will not require this conversion.";
+        const string k_UpgradeLaterText = "\n\nIf you choose \"No\" this dialog may be accessed again at any time through the \"Tools/ProBuilder/Repair/Convert to ProBuilder 4\" menu item.";
+        const string k_AssetStoreUpgradeTitle = "Old ProBuilder Install Found";
+        const string k_DeprecatedGuidsTitle = "Broken ProBuilder References Found in Project";
+        const string k_DeprecatedGuidsDialog = "ProBuilder has found some mesh components that are missing references. To keep these models editable by ProBuilder, they need to be repaired. Would you like to perform the repair action now?";
 
         static Pref<SemVer> s_StoredVersionInfo = new Pref<SemVer>("about.identifier", new SemVer(), SettingsScope.Project);
 
@@ -36,11 +44,14 @@ namespace UnityEditor.ProBuilder
                 PreferencesUpdater.CheckEditorPrefsVersion();
                 s_StoredVersionInfo.SetValue(currentVersion, true);
 
-                // When upgrading, skip the expensive scan for old GUIDs in scene and prefab files. It is only necessary
-                // in the case where a user has deleted the old version prior to updating (which should be an edge case
-                // with Package Manager). The full check is still available through a menu item.
-                if (oldVersion < k_ProBuilder4_0_0)
-                    CheckForUpgradeableAssets(false);
+                if (oldVersion > k_ProBuilder2_0_0 && oldVersion < k_ProBuilder4_0_0)
+                {
+                    if (UnityEditor.EditorUtility.DisplayDialog(
+                        "Upgrade to ProBuilder 4",
+                        k_UpgradeDialog + k_UpgradeLaterText,
+                        "Yes", "No"))
+                        EditorApplication.delayCall += AssetIdRemapEditor.OpenConversionEditor;
+                }
             }
         }
 
@@ -49,19 +60,11 @@ namespace UnityEditor.ProBuilder
             bool pre4PackageFound = PackageImporter.IsPreProBuilder4InProject();
             bool deprecatedGuidsFound = checkForDeprecatedGuids && PackageImporter.DoesProjectContainDeprecatedGUIDs();
 
-            const string k_AssetStoreUpgradeTitle = "Old ProBuilder Install Found";
-            const string k_UpgradeDialog = "ProBuilder 2.x and 3.x assets are incompatible with 4.0.0+ and need to be upgraded.* Would you like to convert your project to the new version of ProBuilder?\n\n*Future updates will not require this conversion.";
-            const string k_DeprecatedGuidsTitle = "Broken ProBuilder References Found in Project";
-            const string k_DeprecatedGuidsDialog = "ProBuilder has found some mesh components that are missing references. To keep these models editable by ProBuilder, they need to be repaired. Would you like to perform the repair action now?";
-
             if (pre4PackageFound || deprecatedGuidsFound)
             {
                 if (UnityEditor.EditorUtility.DisplayDialog(
                     pre4PackageFound ? k_AssetStoreUpgradeTitle : k_DeprecatedGuidsTitle,
-                    pre4PackageFound
-                        ? k_UpgradeDialog
-                        : k_DeprecatedGuidsDialog +
-                          "\n\nIf you choose \"No\" this dialog may be accessed again at any time through the \"Tools/ProBuilder/Repair/Convert to ProBuilder 4\" menu item.",
+                    (pre4PackageFound ? k_UpgradeDialog : k_DeprecatedGuidsDialog) + k_UpgradeLaterText,
                     "Yes", "No"))
                     EditorApplication.delayCall += AssetIdRemapEditor.OpenConversionEditor;
             }
