@@ -79,7 +79,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
                 while (sr.Peek() > -1)
                 {
                     var line = sr.ReadLine();
-                    
+
                     if (line.Contains(a) || line.Contains(b))
                         return true;
                 }
@@ -95,20 +95,27 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             var count = (scenes.Length + prefabs.Length) - 1f;
             var exit = false;
 
-            for(int n = 0; !exit && n < 2; n++)
+            try
             {
-                var arr = n < 1 ? scenes : prefabs;
-
-                for (int i = 0, c = arr.Length; !exit && i < c; i++)
+                for (int n = 0; !exit && n < 2; n++)
                 {
-                    if (FileContainsString(arr[i], k_ProBuilder2CoreGUID, k_ProBuilder3CoreGUID))
-                        return true;
+                    var arr = n < 1 ? scenes : prefabs;
 
-                    exit = EditorUtility.DisplayCancelableProgressBar(
-                        "Checking for Broken ProBuilder References",
-                        "Scanning scene " + arr[i],
-                        i / count);
+                    for (int i = 0, c = arr.Length; !exit && i < c; i++)
+                    {
+                        if (FileContainsString(arr[i], k_ProBuilder2CoreGUID, k_ProBuilder3CoreGUID))
+                            return true;
+
+                        exit = EditorUtility.DisplayCancelableProgressBar(
+                            "Checking for Broken ProBuilder References",
+                            "Scanning scene " + arr[i],
+                            i / count);
+                    }
                 }
+            }
+            finally
+            {
+                EditorUtility.ClearProgressBar();
             }
 
             return false;
