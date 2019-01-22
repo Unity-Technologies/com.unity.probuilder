@@ -9,10 +9,7 @@ namespace UnityEditor.ProBuilder
     class VersionValidator
     {
         static readonly SemVer k_ProBuilder4_0_0 = new SemVer(4, 0, 0);
-        static readonly SemVer k_ProBuilder3_0_0 = new SemVer(3, 0, 0);
-        static readonly SemVer k_ProBuilder2_0_0 = new SemVer(2, 0, 0);
-        static readonly SemVer k_EmptyVersion = new SemVer(0, 0, 0);
-        
+
         const string k_UpgradeDialog = "ProBuilder 2.x and 3.x assets are incompatible with 4.0.0+ and need to be upgraded.* Would you like to convert your project to the new version of ProBuilder?\n\n*Future updates will not require this conversion.";
         const string k_UpgradeLaterText = "\n\nIf you choose \"No\" this dialog may be accessed again at any time through the \"Tools/ProBuilder/Repair/Convert to ProBuilder 4\" menu item.";
         const string k_AssetStoreUpgradeTitle = "Old ProBuilder Install Found";
@@ -44,21 +41,15 @@ namespace UnityEditor.ProBuilder
                 PreferencesUpdater.CheckEditorPrefsVersion();
                 s_StoredVersionInfo.SetValue(currentVersion, true);
 
-                if (oldVersion > k_ProBuilder2_0_0 && oldVersion < k_ProBuilder4_0_0)
-                {
-                    if (UnityEditor.EditorUtility.DisplayDialog(
-                        "Upgrade to ProBuilder 4",
-                        k_UpgradeDialog + k_UpgradeLaterText,
-                        "Yes", "No"))
-                        EditorApplication.delayCall += AssetIdRemapEditor.OpenConversionEditor;
-                }
+                if (oldVersion < k_ProBuilder4_0_0)
+                    CheckForUpgradeableAssets(true);
             }
         }
 
         static void CheckForUpgradeableAssets(bool checkForDeprecatedGuids, bool calledFromMenu = false)
         {
             bool pre4PackageFound = PackageImporter.IsPreProBuilder4InProject();
-            bool deprecatedGuidsFound = checkForDeprecatedGuids && PackageImporter.DoesProjectContainDeprecatedGUIDs();
+            bool deprecatedGuidsFound = !pre4PackageFound && checkForDeprecatedGuids && PackageImporter.DoesProjectContainDeprecatedGUIDs();
 
             if (pre4PackageFound || deprecatedGuidsFound)
             {
