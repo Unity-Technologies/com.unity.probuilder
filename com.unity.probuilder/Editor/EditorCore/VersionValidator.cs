@@ -9,6 +9,7 @@ namespace UnityEditor.ProBuilder
     class VersionValidator
     {
         static readonly SemVer k_ProBuilder4_0_0 = new SemVer(4, 0, 0);
+        static readonly SemVer k_EmptyVersion = new SemVer(0, 0, 0);
 
         static Pref<SemVer> s_StoredVersionInfo = new Pref<SemVer>("about.identifier", new SemVer(), SettingsScope.Project);
 
@@ -36,7 +37,7 @@ namespace UnityEditor.ProBuilder
                 s_StoredVersionInfo.SetValue(currentVersion, true);
             }
 
-            if (currentVersion >= k_ProBuilder4_0_0)
+            if (oldVersion >= k_ProBuilder4_0_0)
                 return;
 
             bool assetStoreInstallFound = isNewVersion && PackageImporter.IsPreProBuilder4InProject();
