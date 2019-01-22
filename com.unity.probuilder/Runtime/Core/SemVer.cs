@@ -235,6 +235,16 @@ namespace UnityEngine.ProBuilder
             return left.CompareTo(right) > 0;
         }
 
+        public static bool operator <=(SemVer left, SemVer right)
+        {
+            return left == right || left < right;
+        }
+
+        public static bool operator>=(SemVer left, SemVer right)
+        {
+            return left == right || left > right;
+        }
+
         /// <summary>
         /// Simple formatting for a version info. The following characters are available:
         /// 'M' Major
