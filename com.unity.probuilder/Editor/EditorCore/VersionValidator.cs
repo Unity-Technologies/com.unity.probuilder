@@ -1,7 +1,6 @@
 ﻿using UnityEngine.ProBuilder.AssetIdRemapUtility;
 using UnityEngine.ProBuilder;
 using Version = UnityEngine.ProBuilder.Version;
-using UnityEditor;
 
 namespace UnityEditor.ProBuilder
 {
@@ -14,7 +13,6 @@ namespace UnityEditor.ProBuilder
         const string k_UpgradeLaterText = "\n\nIf you choose \"No\" this dialog may be accessed again at any time through the \"Tools/ProBuilder/Repair/Convert to ProBuilder 4\" menu item.";
         const string k_AssetStoreUpgradeTitle = "Old ProBuilder Install Found";
         const string k_DeprecatedGuidsTitle = "Broken ProBuilder References Found in Project";
-        const string k_DeprecatedGuidsDialog = "ProBuilder has found some mesh components that are missing references. To keep these models editable by ProBuilder, they need to be repaired. Would you like to perform the repair action now?";
 
         static Pref<SemVer> s_StoredVersionInfo = new Pref<SemVer>("about.identifier", new SemVer(), SettingsScope.Project);
 
@@ -33,7 +31,6 @@ namespace UnityEditor.ProBuilder
         {
             var currentVersion = Version.currentInfo;
             var oldVersion = (SemVer) s_StoredVersionInfo;
-
             bool isNewVersion = currentVersion != oldVersion;
 
             if (isNewVersion)
@@ -55,7 +52,7 @@ namespace UnityEditor.ProBuilder
             {
                 if (UnityEditor.EditorUtility.DisplayDialog(
                     pre4PackageFound ? k_AssetStoreUpgradeTitle : k_DeprecatedGuidsTitle,
-                    (pre4PackageFound ? k_UpgradeDialog : k_DeprecatedGuidsDialog) + k_UpgradeLaterText,
+                    k_UpgradeDialog + k_UpgradeLaterText,
                     "Yes", "No"))
                     EditorApplication.delayCall += AssetIdRemapEditor.OpenConversionEditor;
             }
