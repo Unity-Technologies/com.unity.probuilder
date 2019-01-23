@@ -36,9 +36,9 @@ namespace UnityEngine.ProBuilder
         public int minor { get { return m_Minor; } }
         public int patch { get { return m_Patch; } }
         public int build { get { return m_Build; } }
-        public string type { get { return m_Type; } }
-        public string metadata { get { return m_Metadata; } }
-        public string date { get { return m_Date; } }
+        public string type { get { return m_Type != null ? m_Type : ""; } }
+        public string metadata { get { return m_Metadata != null ? m_Metadata : ""; } }
+        public string date { get { return m_Date != null ? m_Date : ""; } }
 
         /// <summary>
         /// Get a new version info with just the major, minor, and patch values.
@@ -80,7 +80,7 @@ namespace UnityEngine.ProBuilder
 #if PB_DEBUG
             else
             {
-                pb_Log.Error("Failed parsing version info: " + formatted);
+                Log.Error("Failed parsing version info: " + formatted);
             }
 #endif
         }
@@ -105,7 +105,7 @@ namespace UnityEngine.ProBuilder
 
         public override bool Equals(object o)
         {
-            return o is SemVer && this.Equals((SemVer)o);
+            return o is SemVer && Equals((SemVer)o);
         }
 
         public override int GetHashCode()
@@ -124,7 +124,7 @@ namespace UnityEngine.ProBuilder
                 }
                 else
                 {
-                    return string.IsNullOrEmpty(m_Metadata) ? m_Metadata.GetHashCode() : base.GetHashCode();
+                    return string.IsNullOrEmpty(metadata) ? metadata.GetHashCode() : base.GetHashCode();
                 }
             }
 
@@ -144,15 +144,15 @@ namespace UnityEngine.ProBuilder
                 return major == version.major &&
                     minor == version.minor &&
                     patch == version.patch &&
-                    type == version.type &&
-                    build == version.build;
+                    type.Equals(version.type) &&
+                    build.Equals(version.build);
             }
             else
             {
-                if (string.IsNullOrEmpty(m_Metadata) || string.IsNullOrEmpty(version.m_Metadata))
+                if (string.IsNullOrEmpty(metadata) || string.IsNullOrEmpty(version.metadata))
                     return false;
 
-                return m_Metadata.Equals(version.m_Metadata);
+                return metadata.Equals(version.metadata);
             }
         }
 
@@ -235,6 +235,16 @@ namespace UnityEngine.ProBuilder
             return left.CompareTo(right) > 0;
         }
 
+        public static bool operator <=(SemVer left, SemVer right)
+        {
+            return left == right || left < right;
+        }
+
+        public static bool operator>=(SemVer left, SemVer right)
+        {
+            return left == right || left > right;
+        }
+
         /// <summary>
         /// Simple formatting for a version info. The following characters are available:
         /// 'M' Major
@@ -298,22 +308,22 @@ namespace UnityEngine.ProBuilder
 
             sb.Append(ToString("M.m.p"));
 
-            if (!string.IsNullOrEmpty(m_Type))
+            if (!string.IsNullOrEmpty(type))
             {
                 sb.Append("-");
-                sb.Append(m_Type);
+                sb.Append(type);
 
-                if (m_Build > -1)
+                if (build > -1)
                 {
                     sb.Append(".");
-                    sb.Append(m_Build.ToString());
+                    sb.Append(build.ToString());
                 }
             }
 
-            if (!string.IsNullOrEmpty(m_Date))
+            if (!string.IsNullOrEmpty(date))
             {
                 sb.Append(" ");
-                sb.Append(m_Date);
+                sb.Append(date);
             }
 
             return sb.ToString();

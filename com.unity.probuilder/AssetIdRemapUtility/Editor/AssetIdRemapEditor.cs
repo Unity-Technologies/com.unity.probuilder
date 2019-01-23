@@ -159,10 +159,9 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             }
         }
 
-        [MenuItem("Tools/ProBuilder/Repair/Convert to ProBuilder 4")]
         internal static void OpenConversionEditor()
         {
-            GetWindow<AssetIdRemapEditor>(true, "ProBuilder 4 Conversion Utility", true);
+            GetWindow<AssetIdRemapEditor>(true, "ProBuilder Update Utility", true);
         }
 
         void OnEnable()

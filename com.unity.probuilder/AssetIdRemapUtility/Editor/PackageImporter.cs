@@ -72,13 +72,15 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             return false;
         }
 
-        static bool FileContainsString(string path, string search)
+        static bool FileContainsString(string path, string a, string b)
         {
             using (var sr = new StreamReader(path))
             {
                 while (sr.Peek() > -1)
                 {
-                    if (sr.ReadLine().Contains(search))
+                    var line = sr.ReadLine();
+
+                    if (line.Contains(a) || line.Contains(b))
                         return true;
                 }
             }
@@ -88,13 +90,33 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 
         internal static bool DoesProjectContainDeprecatedGUIDs()
         {
-            foreach (var file in Directory.GetFiles("Assets", "*.unity", SearchOption.AllDirectories))
-                if (FileContainsString(file, k_ProBuilder2CoreGUID) || FileContainsString(file, k_ProBuilder3CoreGUID))
-                    return true;
+            var scenes = Directory.GetFiles("Assets", "*.unity", SearchOption.AllDirectories);
+            var prefabs = Directory.GetFiles("Assets", "*.prefab", SearchOption.AllDirectories);
+            var count = (scenes.Length + prefabs.Length) - 1f;
+            var exit = false;
 
-            foreach (var file in Directory.GetFiles("Assets", "*.prefab", SearchOption.AllDirectories))
-                if (FileContainsString(file, k_ProBuilder2CoreGUID) || FileContainsString(file, k_ProBuilder3CoreGUID))
-                    return true;
+            try
+            {
+                for (int n = 0; !exit && n < 2; n++)
+                {
+                    var arr = n < 1 ? scenes : prefabs;
+
+                    for (int i = 0, c = arr.Length; !exit && i < c; i++)
+                    {
+                        if (FileContainsString(arr[i], k_ProBuilder2CoreGUID, k_ProBuilder3CoreGUID))
+                            return true;
+
+                        exit = EditorUtility.DisplayCancelableProgressBar(
+                            "Checking for Broken ProBuilder References",
+                            "Scanning scene " + arr[i],
+                            i / count);
+                    }
+                }
+            }
+            finally
+            {
+                EditorUtility.ClearProgressBar();
+            }
 
             return false;
         }
