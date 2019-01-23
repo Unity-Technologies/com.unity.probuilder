@@ -48,7 +48,7 @@ namespace UnityEditor.ProBuilder
                 s_Instance.minSize = Vector2.zero;
                 s_Instance.maxSize = Vector2.zero;
                 s_Instance.hideFlags = HideFlags.HideAndDontSave;
-                s_Instance.ShowPopup();
+                s_Instance.ShowTooltip();
 
                 object parent = ReflectionUtility.GetValue(s_Instance, s_Instance.GetType(), "m_Parent");
                 object window = ReflectionUtility.GetValue(parent, parent.GetType(), "window");
