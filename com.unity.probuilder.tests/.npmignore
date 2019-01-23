@@ -8,3 +8,5 @@ Documentation/ApiDocs/**
 QAReport.md
 QAReport.md.meta
 .gitlab-ci.yml
+.git
+.github
