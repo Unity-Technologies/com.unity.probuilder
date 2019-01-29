@@ -36,7 +36,7 @@ namespace UnityEditor.ProBuilder.Actions
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
                 "Mirror Objects",
-                @"Mirroring objects will duplicate an flip objects on the specified axes."
+                @"Mirroring objects will duplicate and flip objects on the specified axes."
             );
 
         public override bool enabled
