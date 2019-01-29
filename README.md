@@ -1,4 +1,4 @@
-## quickstart
+## Quickstart
 
 ProBuilder is split into two packages; the source code, and unit tests. To work with source, add a reference to the `com.unity.probuilder` directory in a Unity project's manifest. The same applies for the unit tests package, though for a package to be visible to the test runner it also needs to be registered with the testables array.
 
@@ -18,9 +18,16 @@ Additionally, there are example projects included for testing upgrading between 
 
 See the readme in `com.unity.probuilder` for more information about working with source.
 
-## contributing
+## License
 
-- Install the code formatting configs for whatever IDE you use
-	- https://confluence.hq.unity3d.com/display/DEV/Tool+Configuration
-- Clone and install the `unity-meta` formatter for git
-	- https://github.cds.internal.unity3d.com/unity/git-hgmeta-format
+[Unity Companion License](LICENSE.md)
+
+## Contributing
+
+### All contributions are subject to the [Unity Contribution Agreement(UCA)](https://unity3d.com/legal/licenses/Unity_Contribution_Agreement)
+
+By making a pull request, you are confirming agreement to the terms and conditions of the UCA, including that your Contributions are your original creation and that you have complete right and authority to make your Contributions.
+
+## Third Party Licenses
+
+[Third Party Licenses](com.unity.probuilder/Third Party Notices.md)
