@@ -1,13 +1,8 @@
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using System.Collections.Generic;
-using UnityEngine.ProBuilder.Stl;
 using System.IO;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
-using EditorUtility = UnityEditor.EditorUtility;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -68,7 +63,7 @@ namespace UnityEditor.ProBuilder.Actions
                 string directory = Path.GetDirectoryName(path);
                 name = Path.GetFileNameWithoutExtension(path);
                 string meshPath = string.Format("{0}/{1}.asset", directory, first.mesh.name).Replace("\\", "/");
-                string prefabPath = string.Format("{0}/{1}.prefab", directory, first.name).Replace("\\", "/");
+                string prefabPath = string.Format("{0}/{1}.prefab", directory, name).Replace("\\", "/");
 
                 // If a file dialog was presented that means the user has already been asked to overwrite.
                 if (File.Exists(meshPath))
@@ -101,7 +96,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             pb.ToMesh();
             pb.Refresh();
-            pb.Optimize(pb.HasArrays(MeshArrays.Lightmap));
+            pb.Optimize();
 
             string meshPath = AssetDatabase.GenerateUniqueAssetPath(string.Format("{0}/{1}.asset", relativeDirectory, pb.mesh.name));
 
