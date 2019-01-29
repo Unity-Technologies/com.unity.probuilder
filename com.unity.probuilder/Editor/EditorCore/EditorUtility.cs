@@ -63,31 +63,9 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         /// <param name="renderer"></param>
         /// <param name="state"></param>
-        internal static void SetSelectionRenderState(Renderer renderer, SelectionRenderState state)
+        internal static void SetSelectionRenderState(Renderer renderer, EditorSelectedRenderState state)
         {
-            UnityEditor.EditorUtility.SetSelectedRenderState(renderer, (EditorSelectedRenderState)state);
-        }
-
-        internal static SelectionRenderState GetSelectionRenderState()
-        {
-            bool wireframe = false, outline = false;
-
-            try
-            {
-                wireframe = (bool)ReflectionUtility.GetValue(null, "UnityEditor.AnnotationUtility", "showSelectionWire");
-                outline = (bool)ReflectionUtility.GetValue(null, "UnityEditor.AnnotationUtility", "showSelectionOutline");
-            }
-            catch
-            {
-                Log.Warning("Looks like Unity changed the AnnotationUtility \"showSelectionOutline\"\nPlease email contact@procore3d.com and let Karl know!");
-            }
-
-            SelectionRenderState state = SelectionRenderState.None;
-
-            if (wireframe) state |= SelectionRenderState.Wireframe;
-            if (outline) state |= SelectionRenderState.Outline;
-
-            return state;
+            UnityEditor.EditorUtility.SetSelectedRenderState(renderer, state);
         }
 
         internal static void ShowNotification(ActionResult result)

@@ -65,12 +65,6 @@ namespace UnityEditor.ProBuilder
             m_StaticEditorFlags = m_GameObjectsSerializedObject.FindProperty("m_StaticEditorFlags");
             m_MeshRenderer = m_Mesh.gameObject.GetComponent<Renderer>();
 
-            SelectionRenderState s = EditorUtility.GetSelectionRenderState();
-            EditorUtility.SetSelectionRenderState(m_MeshRenderer, editor != null ? s & SelectionRenderState.Outline : s);
-
-            foreach (var mesh in Selection.transforms.GetComponents<ProBuilderMesh>())
-                EditorUtility.SynchronizeWithMeshFilter(mesh);
-
             VertexManipulationTool.beforeMeshModification += OnBeginMeshModification;
             VertexManipulationTool.afterMeshModification += OnFinishMeshModification;
         }

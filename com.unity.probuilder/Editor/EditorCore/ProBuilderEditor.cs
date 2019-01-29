@@ -309,7 +309,7 @@ namespace UnityEditor.ProBuilder
             LoadSettings();
             InitGUI();
             UpdateSelection();
-            HideSelectedWireframe();
+            SetOverrideWireframe(true);
 
             if (selectModeChanged != null)
                 selectModeChanged(selectMode);
@@ -341,11 +341,7 @@ namespace UnityEditor.ProBuilder
             ProGridsInterface.UnsubscribeToolbarEvent(ProGridsToolbarOpen);
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
 
-            // re-enable unity wireframe
-            // todo set wireframe override in pb_Selection, no pb_Editor
-            foreach (var pb in FindObjectsOfType<ProBuilderMesh>())
-                EditorUtility.SetSelectionRenderState(pb.gameObject.GetComponent<Renderer>(),
-                    EditorUtility.GetSelectionRenderState());
+            SetOverrideWireframe(false);
 
             if (selectModeChanged != null)
                 selectModeChanged(SelectMode.Object);
@@ -1100,17 +1096,27 @@ namespace UnityEditor.ProBuilder
         {
             m_Hovering.Clear();
             UpdateSelection();
-            HideSelectedWireframe();
+            SetOverrideWireframe(true);
         }
 
         /// <summary>
         /// Hide the default unity wireframe renderer
         /// </summary>
-        void HideSelectedWireframe()
+        void SetOverrideWireframe(bool overrideWireframe)
         {
-            foreach (ProBuilderMesh pb in selection)
-                EditorUtility.SetSelectionRenderState(pb.gameObject.GetComponent<Renderer>(),
-                    EditorUtility.GetSelectionRenderState() & SelectionRenderState.Outline);
+            const EditorSelectedRenderState k_DefaultSelectedRenderState = EditorSelectedRenderState.Highlight | EditorSelectedRenderState.Wireframe;
+
+            foreach (var mesh in Selection.transforms.GetComponents<ProBuilderMesh>())
+            {
+                // Disable Wireframe for meshes when ProBuilder is active
+                EditorUtility.SetSelectionRenderState(
+                    mesh.renderer,
+                    overrideWireframe
+                        ? k_DefaultSelectedRenderState & ~(EditorSelectedRenderState.Wireframe)
+                        : k_DefaultSelectedRenderState);
+
+                EditorUtility.SynchronizeWithMeshFilter(mesh);
+            }
 
             SceneView.RepaintAll();
         }
