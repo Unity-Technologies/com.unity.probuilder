@@ -30,4 +30,4 @@ By making a pull request, you are confirming agreement to the terms and conditio
 
 ## Third Party Licenses
 
-[Third Party Licenses](com.unity.probuilder/Third\ Party\ Notices.md)
+[Third Party Licenses](https://github.com/Unity-Technologies/com.unity.probuilder/blob/master/com.unity.probuilder/Third%20Party%20Notices.md)
