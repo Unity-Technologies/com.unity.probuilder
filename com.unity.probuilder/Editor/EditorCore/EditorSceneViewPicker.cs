@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.SettingsManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using PHandleUtility = UnityEngine.ProBuilder.HandleUtility;
@@ -11,6 +12,19 @@ namespace UnityEditor.ProBuilder
 {
     struct ScenePickerPreferences
     {
+        [UserSettingBlock("Picking")]
+        static void HandlePickingPreferences(string searchContext)
+        {
+            pickingDistance.value = Mathf.Max(0, SettingsGUILayout.SearchableFloatField("Picking Distance", pickingDistance, searchContext));
+            offObjectMultiplier.value = Mathf.Max(0, SettingsGUILayout.SearchableFloatField("Off Object Multiplier", offObjectMultiplier, searchContext));
+        }
+
+        [UserSetting]
+        public static Pref<float> pickingDistance = new Pref<float>("picking.pickingDistance", 128f, SettingsScope.User);
+
+        [UserSetting]
+        public static Pref<float> offObjectMultiplier = new Pref<float>("picking.offObjectMultiplier", 128f, SettingsScope.User);
+
         public const float maxPointerDistanceFuzzy = 128f;
         public const float maxPointerDistancePrecise = 12f;
         public const CullingMode defaultCullingMode = CullingMode.Back;
@@ -18,6 +32,7 @@ namespace UnityEditor.ProBuilder
         public const RectSelectMode defaultRectSelectionMode = RectSelectMode.Partial;
 
         public float maxPointerDistance;
+        public float offPointerMultiplier;
         public CullingMode cullMode;
         public SelectionModifierBehavior selectionModifierBehavior;
         public RectSelectMode rectSelectMode;
@@ -501,6 +516,9 @@ namespace UnityEditor.ProBuilder
                 var trs = mesh.transform;
                 var positions = mesh.positionsInternal;
 
+                //When the pointer is over another object, apply a modifier to the distance to prefer picking the object hovered over the currently selected
+                var distMultiplier = (hoveredMesh == mesh || hoveredMesh == null) ? 1.0f : pickerPrefs.offPointerMultiplier;
+
                 foreach (var face in mesh.facesInternal)
                 {
                     foreach (var edge in face.edges)
@@ -511,6 +529,8 @@ namespace UnityEditor.ProBuilder
                         float d = UHandleUtility.DistanceToLine(
                                 trs.TransformPoint(positions[x]),
                                 trs.TransformPoint(positions[y]));
+
+                        d *= distMultiplier;
 
                         if (d < bestDistance)
                         {

@@ -374,7 +374,8 @@ namespace UnityEditor.ProBuilder
 
             m_ScenePickerPreferences = new ScenePickerPreferences()
             {
-                maxPointerDistance = ScenePickerPreferences.maxPointerDistanceFuzzy,
+                offPointerMultiplier = ScenePickerPreferences.offObjectMultiplier,
+                maxPointerDistance = ScenePickerPreferences.pickingDistance,
                 cullMode = m_BackfaceSelectEnabled ? CullingMode.None : CullingMode.Back,
                 selectionModifierBehavior = m_SelectModifierBehavior,
                 rectSelectMode = m_DragSelectRectMode
