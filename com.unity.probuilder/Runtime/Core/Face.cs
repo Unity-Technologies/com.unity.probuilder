@@ -268,12 +268,14 @@ namespace UnityEngine.ProBuilder
             int len = other.indexesInternal.Length;
             m_Indexes = new int[len];
             Array.Copy(other.indexesInternal, m_Indexes, len);
+
             m_SmoothingGroup = other.smoothingGroup;
             m_Uv = new AutoUnwrapSettings(other.uv);
 #pragma warning disable 618
             m_Material = other.material;
 #pragma warning restore 618
             manualUV = other.manualUV;
+            m_TextureGroup = other.textureGroup;
             elementGroup = other.elementGroup;
             m_SubmeshIndex = other.m_SubmeshIndex;
             InvalidateCache();
