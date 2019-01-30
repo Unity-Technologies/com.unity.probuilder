@@ -23,7 +23,7 @@ namespace UnityEditor.ProBuilder
         public static Pref<float> pickingDistance = new Pref<float>("picking.pickingDistance", 128f, SettingsScope.User);
 
         [UserSetting]
-        public static Pref<float> offObjectMultiplier = new Pref<float>("picking.offObjectMultiplier", 128f, SettingsScope.User);
+        public static Pref<float> offObjectMultiplier = new Pref<float>("picking.offObjectMultiplier", 10f, SettingsScope.User);
 
         public const float maxPointerDistanceFuzzy = 128f;
         public const float maxPointerDistancePrecise = 12f;
