@@ -9,6 +9,16 @@ namespace UnityEngine.ProBuilder
     [System.Serializable]
     public struct AutoUnwrapSettings
     {
+        public static AutoUnwrapSettings defaultAutoUnwrapSettings
+        {
+            get
+            {
+                var settings = new AutoUnwrapSettings();
+                settings.Reset();
+                return settings;
+            }
+        }
+
         /// <summary>
         /// The point from which UV transform operations will be performed.
         /// <br />

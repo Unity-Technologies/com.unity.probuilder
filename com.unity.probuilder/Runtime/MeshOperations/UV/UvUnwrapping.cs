@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
 {
-    static class UnwrappingUtility
+    static class UvUnwrapping
     {
         static Vector2 s_TempVector2 = Vector2.zero;
 
