@@ -41,7 +41,6 @@ namespace UnityEngine.ProBuilder
             get { return m_Color; }
             set
             {
-                Debug.Log("set color");
                 hasColor = true;
                 m_Color = value;
             }
@@ -196,9 +195,6 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentNullException("vertex");
 
             var c = new CSG_Vertex();
-
-            if((vertex.attributes & MeshArrays.Color) > 0)
-                Debug.Log("c'tor color");
 
             c.m_Attributes = vertex.attributes;
             c.m_Position = vertex.position;
