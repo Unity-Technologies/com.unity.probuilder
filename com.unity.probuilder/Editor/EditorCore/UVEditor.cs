@@ -142,8 +142,6 @@ namespace UnityEditor.ProBuilder
         List<Face[]>[] incompleteTextureGroupsInSelection = new List<Face[]>[0];
         List<List<Vector2>> incompleteTextureGroupsInSelection_CoordCache = new List<List<Vector2>>();
 
-        int selectedUVCount = 0;
-        int selectedFaceCount = 0;
         int screenWidth, screenHeight;
 
         // true when uvs are being moved around
@@ -396,7 +394,7 @@ namespace UnityEditor.ProBuilder
             DrawUVGraph(graphRect);
 
             // Draw AND update translation handles
-            if (channel == 0 && selection != null && selectedUVCount > 0)
+            if (channel == 0 && selection != null && MeshSelection.selectedVertexCount > 0)
             {
                 switch (tool)
                 {
@@ -2315,9 +2313,6 @@ namespace UnityEditor.ProBuilder
             else
                 dragBounds = new Bounds2D(Vector2.zero, Vector2.zero);
 
-            selectedUVCount = MeshSelection.selectedVertexCount;
-            selectedFaceCount = MeshSelection.selectedFaceCount;
-
             for (int i = 0; i < selection.Length; i++)
             {
                 ProBuilderMesh pb = selection[i];
@@ -2636,8 +2631,6 @@ namespace UnityEditor.ProBuilder
             if (isKeyDown && Event.current.type == EventType.used)
 #endif
                 eatNextKeyUp = true;
-
-            GUI.enabled = selectedFaceCount > 0;
         }
 
         bool tool_weldButton = false;
@@ -2646,7 +2639,7 @@ namespace UnityEditor.ProBuilder
 
         void DrawManualModeUI()
         {
-            GUI.enabled = selectedFaceCount > 0;
+            GUI.enabled = MeshSelection.selectedFaceCount > 0;
 
             if (GUILayout.Button(gc_ConvertToAuto, EditorStyles.miniButton))
                 Menu_SetAutoUV();
@@ -2670,13 +2663,13 @@ namespace UnityEditor.ProBuilder
             /**
              * Selection
              */
-            GUI.enabled = selectedUVCount > 0;
+            GUI.enabled = MeshSelection.selectedVertexCount > 0;
             GUILayout.Label("Selection", EditorStyles.miniBoldLabel);
 
             if (GUILayout.Button("Select Island", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
                 Menu_SelectUVIsland();
 
-            GUI.enabled = selectedUVCount > 0 && ProBuilderEditor.selectMode != SelectMode.Face;
+            GUI.enabled = MeshSelection.selectedVertexCount > 0 && ProBuilderEditor.selectMode != SelectMode.Face;
             if (GUILayout.Button("Select Face", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
                 Menu_SelectUVFace();
 
@@ -2685,7 +2678,7 @@ namespace UnityEditor.ProBuilder
              */
             GUILayout.Label("Edit", EditorStyles.miniBoldLabel);
 
-            GUI.enabled = selectedUVCount > 1;
+            GUI.enabled = MeshSelection.selectedVertexCount > 1;
 
             tool_weldButton = UI.EditorGUIUtility.ToolSettingsGUI("Weld", "Merge selected vertices that are within a specified distance of one another.",
                     tool_weldButton,
@@ -2698,7 +2691,7 @@ namespace UnityEditor.ProBuilder
             if (GUILayout.Button("Collapse UVs", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
                 Menu_CollapseUVs();
 
-            GUI.enabled = selectedUVCount > 1;
+            GUI.enabled = MeshSelection.selectedVertexCount > 1;
             if (GUILayout.Button("Split UVs", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
                 Menu_SplitUVs();
 
@@ -3073,7 +3066,7 @@ namespace UnityEditor.ProBuilder
             SetSelectedUVsWithSceneView();
             RefreshUVCoordinates();
 
-            EditorUtility.ShowNotification(this, "Set " + selectedFaceCount + " Faces " + (isManual ? "Manual" : "Auto"));
+            EditorUtility.ShowNotification(this, "Set " + MeshSelection.selectedFaceCount + " Faces " + (isManual ? "Manual" : "Auto"));
         }
 
         public void Menu_SelectUVIsland()
