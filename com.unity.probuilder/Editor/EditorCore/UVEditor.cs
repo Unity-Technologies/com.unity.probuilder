@@ -239,12 +239,11 @@ namespace UnityEditor.ProBuilder
 
             MeshSelection.objectSelectionChanged += ObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged += ElementSelectionChanged;
-            ObjectSelectionChanged();
-
-            instance = this;
-
             ProBuilderMeshEditor.onGetFrameBoundsEvent += OnGetFrameBoundsEvent;
+            Undo.undoRedoPerformed += ObjectSelectionChanged;
 
+            ObjectSelectionChanged();
+            instance = this;
             nearestElement.Clear();
         }
 
@@ -261,6 +260,7 @@ namespace UnityEditor.ProBuilder
             MeshSelection.objectSelectionChanged -= ObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged -= ElementSelectionChanged;
             ProBuilderMeshEditor.onGetFrameBoundsEvent -= OnGetFrameBoundsEvent;
+            Undo.undoRedoPerformed -= ObjectSelectionChanged;
         }
 
         /**
