@@ -117,7 +117,7 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
                         {
                             float t = (this.w - Vector3.Dot(this.normal, vi.position)) / Vector3.Dot(this.normal, vj.position - vi.position);
 
-                            CSG_Vertex v = CSG_Vertex.Interpolate(vi, vj, t);
+                            CSG_Vertex v = CSG_VertexUtility.Mix(vi, vj, t);
 
                             f.Add(v);
                             b.Add(v);
