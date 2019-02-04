@@ -390,9 +390,9 @@ namespace UnityEngine.ProBuilder
                 int textureGroup = face.textureGroup;
 
                 if (!IsValidTextureGroup(textureGroup))
-                    UnwrappingUtility.Project(this, face);
+                    UvUnwrapping.Project(this, face);
                 else if (!s_CachedHashSet.Add(textureGroup))
-                    UnwrappingUtility.ProjectTextureGroup(this, textureGroup, face.uv);
+                    UvUnwrapping.ProjectTextureGroup(this, textureGroup, face.uv);
             }
 
             mesh.uv = m_Textures0;

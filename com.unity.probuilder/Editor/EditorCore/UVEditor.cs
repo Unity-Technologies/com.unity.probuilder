@@ -2827,7 +2827,8 @@ namespace UnityEditor.ProBuilder
          *  way, we can easily select UV shells by grouping all elements as opposed
          *  to iterating through and checking nearby faces every time.
          */
-        private void RefreshElementGroups(ProBuilderMesh pb)
+        // todo Remove elementGroup and use WingedEdge instead
+        void RefreshElementGroups(ProBuilderMesh pb)
         {
             foreach (Face f in pb.facesInternal)
                 f.elementGroup = -1;
@@ -3239,7 +3240,7 @@ namespace UnityEditor.ProBuilder
                     uv[m_DistinctIndexesSelection[i][n]] = uvs[n];
 
                 UVEditing.ApplyUVs(selection[i], uv, channel);
-                
+
                 selection[i].Refresh();
                 selection[i].Optimize();
             }

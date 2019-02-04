@@ -170,7 +170,7 @@ namespace UnityEngine.ProBuilder
             return values;
         }
 
-        static Vector3 ProjectionAxisToVectorInternal(ProjectionAxis axis)
+        internal static Vector3 ProjectionAxisToVectorInternal(ProjectionAxis axis)
         {
             // old probuilder didn't respect project axis settings properly, and changing it to the correct version
             // (ProjectionAxisToVector) would break existing models.
