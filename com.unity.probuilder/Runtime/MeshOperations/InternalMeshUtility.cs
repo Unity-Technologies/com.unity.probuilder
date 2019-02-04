@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ArrUtil = UnityEngine.ProBuilder.ArrayUtility;
+using UnityEditor;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
@@ -202,8 +203,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
             {
                 m.renderer.sharedMaterials = materialMap.ToArray();
                 FilterUnusedSubmeshIndexes(m);
+                m.SetPivot(Selection.activeGameObject.transform.position);
             }
-
             return res;
         }
 
