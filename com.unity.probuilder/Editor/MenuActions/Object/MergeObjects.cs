@@ -50,7 +50,7 @@ namespace UnityEditor.ProBuilder.Actions
                 foreach (var mesh in res)
                 {
                     mesh.Optimize();
-                    mesh.gameObject.name = "pb-MergedObject" + mesh.id;
+                    mesh.gameObject.name = Selection.activeGameObject.name + "-Merged";
                     UndoUtility.RegisterCreatedObjectUndo(mesh.gameObject, "Merge Objects");
                     Selection.objects = res.Select(x => x.gameObject).ToArray();
                 }
