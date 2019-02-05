@@ -63,6 +63,9 @@ namespace UnityEditor.ProBuilder
         [UserSetting("Toolbar", "Toolbar Location", "Where the Object, Face, Edge, and Vertex toolbar will be shown in the Scene View.")]
         static Pref<SceneToolbarLocation> s_SceneToolbarLocation = new Pref<SceneToolbarLocation>("editor.sceneToolbarLocation", SceneToolbarLocation.UpperCenter, SettingsScope.User);
 
+        [UserSetting()]
+        static Pref<float> s_PickingDistance = new Pref<float>("picking.pickingDistance", 128f, SettingsScope.User);
+
         static Pref<bool> s_WindowIsFloating = new Pref<bool>("UnityEngine.ProBuilder.ProBuilderEditor-isUtilityWindow", false, SettingsScope.Project);
 
         internal Pref<bool> m_BackfaceSelectEnabled = new Pref<bool>("editor.backFaceSelectEnabled", false);
@@ -213,6 +216,14 @@ namespace UnityEditor.ProBuilder
         }
 
         Stack<SelectMode> m_SelectModeHistory = new Stack<SelectMode>();
+
+        [UserSettingBlock("Picking")]
+        static void PickingPreferences(string searchContext)
+        {
+            s_PickingDistance.value = SettingsGUILayout.SearchableSlider(
+                new GUIContent("Picking Distance", "Distance to an object before it's considered hovered."),
+                s_PickingDistance.value, 1, 150, searchContext);
+        }
 
         internal static void PushSelectMode(SelectMode mode)
         {
@@ -374,8 +385,8 @@ namespace UnityEditor.ProBuilder
 
             m_ScenePickerPreferences = new ScenePickerPreferences()
             {
-                offPointerMultiplier = ScenePickerPreferences.offObjectMultiplier,
-                maxPointerDistance = ScenePickerPreferences.pickingDistance,
+                offPointerMultiplier = s_PickingDistance * 0.1f, //Multiplier is 10% of the picking distance
+                maxPointerDistance = s_PickingDistance,
                 cullMode = m_BackfaceSelectEnabled ? CullingMode.None : CullingMode.Back,
                 selectionModifierBehavior = m_SelectModifierBehavior,
                 rectSelectMode = m_DragSelectRectMode

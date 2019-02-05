@@ -12,25 +12,6 @@ namespace UnityEditor.ProBuilder
 {
     struct ScenePickerPreferences
     {
-        [UserSettingBlock("Picking")]
-        static void HandlePickingPreferences(string searchContext)
-        {
-            pickingDistance.value = Mathf.Max(0, SettingsGUILayout.SearchableFloatField("Picking Distance", pickingDistance, searchContext));
-            offObjectMultiplier.value = Mathf.Max(0, SettingsGUILayout.SearchableFloatField("Off Object Multiplier", offObjectMultiplier, searchContext));
-        }
-
-        [UserSetting]
-        public static Pref<float> pickingDistance = new Pref<float>("picking.pickingDistance", 128f, SettingsScope.User);
-
-        [UserSetting]
-        public static Pref<float> offObjectMultiplier = new Pref<float>("picking.offObjectMultiplier", 10f, SettingsScope.User);
-
-        public const float maxPointerDistanceFuzzy = 128f;
-        public const float maxPointerDistancePrecise = 12f;
-        public const CullingMode defaultCullingMode = CullingMode.Back;
-        public const SelectionModifierBehavior defaultSelectionModifierBehavior = SelectionModifierBehavior.Difference;
-        public const RectSelectMode defaultRectSelectionMode = RectSelectMode.Partial;
-
         public float maxPointerDistance;
         public float offPointerMultiplier;
         public CullingMode cullMode;
