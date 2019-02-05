@@ -379,26 +379,13 @@ namespace UnityEditor.ProBuilder
             s_NearestVertices.Clear();
             selection.gameObject = HandleUtility.PickGameObject(mousePosition, false);
             float maxDistance = pickerOptions.maxPointerDistance * pickerOptions.maxPointerDistance;
+            ProBuilderMesh hoveredMesh = selection.gameObject != null ? selection.gameObject.GetComponent<ProBuilderMesh>() : null;
 
             if (allowUnselected && selection.gameObject != null)
             {
-                var mesh = selection.gameObject.GetComponent<ProBuilderMesh>();
-
-                if (mesh != null && mesh.selectable && !MeshSelection.Contains(mesh))
+                if (hoveredMesh != null && hoveredMesh.selectable && !MeshSelection.Contains(hoveredMesh))
                 {
-                    var matches = GetNearestVertices(mesh, mousePosition, s_NearestVertices, maxDistance);
-
-                    for (int i = 0; i < matches; i++)
-                    {
-                        // Append `maxDistance` so that selected meshes are favored
-                        s_NearestVertices[i] = new VertexPickerEntry()
-                        {
-                            mesh = s_NearestVertices[i].mesh,
-                            vertex = s_NearestVertices[i].vertex,
-                            screenDistance = s_NearestVertices[i].screenDistance + maxDistance,
-                            worldPosition = s_NearestVertices[i].worldPosition
-                        };
-                    }
+                    GetNearestVertices(hoveredMesh, mousePosition, s_NearestVertices, maxDistance, 1);
                 }
             }
 
@@ -409,7 +396,7 @@ namespace UnityEditor.ProBuilder
                     if (!mesh.selectable)
                         continue;
 
-                    GetNearestVertices(mesh, mousePosition, s_NearestVertices, maxDistance);
+                    GetNearestVertices(mesh, mousePosition, s_NearestVertices, maxDistance, hoveredMesh == mesh || hoveredMesh == null ? 1.0f : pickerOptions.offPointerMultiplier);
                 }
             }
 
@@ -423,10 +410,6 @@ namespace UnityEditor.ProBuilder
                     selection.mesh = s_NearestVertices[i].mesh;
                     selection.vertex = s_NearestVertices[i].vertex;
 
-                    // If mesh was unselected, remove the distance modifier
-                    if (s_NearestVertices[i].screenDistance > maxDistance)
-                        return Mathf.Sqrt(s_NearestVertices[i].screenDistance - maxDistance);
-
                     return Mathf.Sqrt(s_NearestVertices[i].screenDistance);
                 }
             }
@@ -434,7 +417,7 @@ namespace UnityEditor.ProBuilder
             return Mathf.Infinity;
         }
 
-        static int GetNearestVertices(ProBuilderMesh mesh, Vector3 mousePosition, List<VertexPickerEntry> list, float maxDistance)
+        static int GetNearestVertices(ProBuilderMesh mesh, Vector3 mousePosition, List<VertexPickerEntry> list, float maxDistance, float distModifier)
         {
             var positions = mesh.positionsInternal;
             var common = mesh.sharedVerticesInternal;
@@ -446,7 +429,7 @@ namespace UnityEditor.ProBuilder
                 Vector3 v = mesh.transform.TransformPoint(positions[index]);
                 Vector3 p = UHandleUtility.WorldToGUIPoint(v);
 
-                float dist = (p - mousePosition).sqrMagnitude;
+                float dist = (p - mousePosition).sqrMagnitude * distModifier;
 
                 if (dist < maxDistance)
                 {
