@@ -127,33 +127,38 @@ namespace UnityEditor.ProBuilder
 
         static UndoPropertyModification[] PostprocessModifications(UndoPropertyModification[] modifications)
         {
-            if (!Lightmapping.autoUnwrapLightmapUV)
+            if (!autoUnwrapLightmapUV)
                 return modifications;
 
             foreach (var modification in modifications)
             {
-                if (modification.currentValue.propertyPath.Equals(k_StaticEditorFlagsProperty))
+                string property = modification.currentValue == null ? null : modification.currentValue.propertyPath;
+
+                if (string.IsNullOrEmpty(property)
+                    || !property.Equals(k_StaticEditorFlagsProperty)
+                    || string.IsNullOrEmpty(modification.currentValue.value))
+                    continue;
+
+                var staticFlags = uint.Parse(modification.currentValue.value);
+                var lightmapStatic = (staticFlags & (uint) StaticEditorFlags.LightmapStatic) != 0;
+
+                if (lightmapStatic)
                 {
-                    var staticFlags = uint.Parse(modification.currentValue.value);
-                    var lightmapStatic = (staticFlags & (uint) StaticEditorFlags.LightmapStatic) != 0;
+                    var gameObject = modification.currentValue.target as GameObject;
 
-                    if (lightmapStatic)
+                    if (gameObject != null)
                     {
-                        var gameObject = modification.currentValue.target as GameObject;
+                        var mesh = gameObject.GetComponent<ProBuilderMesh>();
 
-                        if (gameObject != null)
-                        {
-                            var mesh = gameObject.GetComponent<ProBuilderMesh>();
-
-                            if (mesh != null)
-                                mesh.Optimize();
-                        }
+                        if (mesh != null)
+                            mesh.Optimize();
                     }
                 }
             }
 
             return modifications;
         }
+
         static void OnLightmappingCompleted()
         {
             if (!s_ShowMissingLightmapUVWarning)
