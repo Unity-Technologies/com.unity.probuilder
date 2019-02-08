@@ -5,27 +5,54 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.3] - 2018-01-25
+## [4.0.4-preview.0] - 2019-01-25
+
+### Features
+
+- Significantly improve the accuracy of `Convert to Auto UV` action.
+- Add support for auto UV unwrapped faces in the `Auto Stitch UVS` action.
+
+### Bug Fixes
+
+- Set the pivot of merged meshes to the active selection pivot instead of origin.
+- Fix `Reset Auto UVs` not breaking element and texture group associations.
+- Fix in-scene texture tool setting faces to manual when editing in face mode.
+- Fix undo not refreshing the UV editor graph.
+- Fix UV editor tools remaining disabled after a selection change.
+- Fix `Auto Stitch UVs` action not getting correct edge for adjacent faces.
+- Fix `Boolean Tool` expecting certain mesh attributes to be present, causing errors in some cases.
+- Fix texture groups not saving correctly in some cases.
+- Fix selected object outline not rendering in specific cases.
+- Fixed typo in Mirror Objects tooltip.
+- Fix `Export Asset` breaking prefab instances.
+- `Vertex Color` action tooltip no longer mentions deprecated paint mode.
+- Fix changelog dates for January 2019.
+
+### Changes
+
+- Name newly merged `GameObject`s after the active selected `GameObject`.
+
+## [4.0.3] - 2019-01-25
 
 ### Bug Fixes
 
 - Fix an issue that caused version validation to run when entering playmode, resulting in large memory spikes and lag.
 - Fix tooltips closing other popup dialogs.
 
-## [4.0.2] - 2018-01-18
+## [4.0.2] - 2019-01-18
 
 ### Bug Fixes
 
 - Fix OBJ export failing due to missing materials.
 
-## [4.0.1] - 2018-01-16
+## [4.0.1] - 2019-01-16
 
 ### Bug Fixes
 
 - Add missing [3.0.9] changelog entry.
 - Update package metadata to meet current requirements.
 
-## [4.0.0] - 2018-01-14
+## [4.0.0] - 2019-01-14
 
 ### Features
 
