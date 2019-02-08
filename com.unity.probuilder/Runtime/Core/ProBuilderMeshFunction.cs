@@ -229,7 +229,7 @@ namespace UnityEngine.ProBuilder
 
             m_MeshFormatVersion = k_MeshFormatVersion;
 
-            int materialCount = MeshUtility.GetMaterialCount(renderer);
+            int materialCount = MaterialUtility.GetMaterialCount(renderer);
 
             Submesh[] submeshes = Submesh.GetSubmeshes(facesInternal, materialCount, preferredTopology);
 

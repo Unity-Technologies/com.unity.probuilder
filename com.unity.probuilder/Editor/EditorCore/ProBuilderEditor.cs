@@ -1186,28 +1186,5 @@ namespace UnityEditor.ProBuilder
 
             return true;
         }
-
-        /// <summary>
-        /// Returns the first selected pb_Object and pb_Face, or false if not found.
-        /// </summary>
-        /// <param name="mat"></param>
-        /// <returns></returns>
-        internal Material GetFirstSelectedMaterial()
-        {
-            for (int i = 0; i < selection.Length; i++)
-            {
-                var mesh = selection[i];
-
-                for (int n = 0; n < mesh.selectedFaceCount; n++)
-                {
-                    var face = mesh.selectedFacesInternal[i];
-                    var mat = UnityEngine.ProBuilder.MeshUtility.GetSharedMaterial(selection[i].renderer, face.submeshIndex);
-                    if (mat != null)
-                        return mat;
-                }
-            }
-
-            return null;
-        }
     }
 }

@@ -99,16 +99,23 @@ namespace UnityEditor.ProBuilder
 
         // The currently loaded material palette asset.
         static MaterialPalette s_CurrentPalette = null;
+
         // The user set "quick material"
-        static Material s_QueuedMaterial;
+        [SerializeField]
+        Material m_QueuedMaterial;
+
         // Custom style for material row background
         GUIStyle m_RowBackgroundStyle;
+
         // The view scroll position.
         Vector2 m_ViewScroll = Vector2.zero;
+
         // All available material palettes
         MaterialPalette[] m_AvailablePalettes = null;
+
         // List of string names for all available palettes (plus one entry for 'Add New')
         string[] m_AvailablePalettes_Str = null;
+        
         // The index of the currently loaded material palette in m_AvailablePalettes
         int m_CurrentPaletteIndex = 0;
 
@@ -189,28 +196,30 @@ namespace UnityEditor.ProBuilder
             GUILayout.BeginHorizontal(GUILayout.MaxWidth(Screen.width - 74));
             GUILayout.BeginVertical();
 
-            s_QueuedMaterial = (Material)EditorGUILayout.ObjectField(s_QueuedMaterial, typeof(Material), true);
+            m_QueuedMaterial = (Material)EditorGUILayout.ObjectField(m_QueuedMaterial, typeof(Material), true);
 
             GUILayout.Space(2);
 
             if (GUILayout.Button("Apply (Ctrl+Shift+Click)"))
-                ApplyMaterial(MeshSelection.topInternal, s_QueuedMaterial);
+                ApplyMaterial(MeshSelection.topInternal, m_QueuedMaterial);
 
             GUI.enabled = editor != null && MeshSelection.selectedFaceCount > 0;
             if (GUILayout.Button("Match Selection"))
             {
-                ProBuilderMesh tp;
-                Face tf;
-                if (editor.GetFirstSelectedFace(out tp, out tf))
-                    s_QueuedMaterial = tf.material;
+                m_QueuedMaterial = EditorMaterialUtility.GetActiveSelection();
             }
             GUI.enabled = true;
 
             GUILayout.EndVertical();
 
             GUI.Box(new Rect(left, r.y + r.height + 2, 64, 64), "");
-            if (s_QueuedMaterial != null && s_QueuedMaterial.mainTexture != null)
-                EditorGUI.DrawPreviewTexture(new Rect(left + 2, r.y + r.height + 4, 60, 60), s_QueuedMaterial.mainTexture, s_QueuedMaterial, ScaleMode.StretchToFill, 0);
+
+            var previewTexture = EditorMaterialUtility.GetPreviewTexture(m_QueuedMaterial);
+
+            if (previewTexture != null)
+            {
+                GUI.Label(new Rect(left + 2, r.y + r.height + 4, 60, 60), previewTexture);
+            }
             else
             {
                 GUI.Box(new Rect(left + 2, r.y + r.height + 4, 60, 60), "");
@@ -329,7 +338,7 @@ namespace UnityEditor.ProBuilder
                 if (em == (EventModifiers.Control | EventModifiers.Shift))
                 {
                     UndoUtility.RecordObject(pb, "Quick Apply");
-                    quad.material = s_QueuedMaterial;
+                    quad.material = m_QueuedMaterial;
                     pb.ToMesh();
                     pb.Refresh();
                     pb.Optimize();

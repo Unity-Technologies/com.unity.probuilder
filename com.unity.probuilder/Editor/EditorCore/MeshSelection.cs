@@ -112,6 +112,11 @@ namespace UnityEditor.ProBuilder
             get { return s_ActiveMesh; }
         }
 
+        internal static Face activeFace
+        {
+            get { return activeMesh != null ? activeMesh.selectedFacesInternal.LastOrDefault() : null; }
+        }
+
         /// <value>
         /// Receive notifications when the object selection changes.
         /// </value>

@@ -179,11 +179,11 @@ namespace UnityEditor.ProBuilder
 
                     s_CurrentPreview.SetMaterial(s_CurrentPreview.selectedFacesInternal, s_PreviewMaterial);
 
+                    InternalMeshUtility.FilterUnusedSubmeshIndexes(s_CurrentPreview);
+
                     s_CurrentPreview.ToMesh();
                     s_CurrentPreview.Refresh();
                     s_CurrentPreview.Optimize();
-
-                    InternalMeshUtility.FilterUnusedSubmeshIndexes(s_CurrentPreview);
 
                     evt.Use();
                 }
