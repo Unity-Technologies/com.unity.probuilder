@@ -344,7 +344,13 @@ namespace UnityEngine.ProBuilder
 
             if (bounds.ContainsPoint(point))
             {
-                Vector2 rayStart = bounds.center + Vector2.up * (bounds.size.y + 2f);
+                //Get the direction toward the first edge of the polygon
+                Vector2 p1 = polygon[indexes != null ? indexes[0] : 0];
+                Vector2 p2 = polygon[indexes != null ? indexes[1] : 1];
+                Vector2 center = p1 + (p2 - p1) * 0.5f;
+                Vector2 dir = center - bounds.center;
+
+                Vector2 rayStart = bounds.center + dir * (bounds.size.y + bounds.size.x + 2f);
                 int collisions = 0;
 
                 for (int i = 0; i < len; i += 2)
