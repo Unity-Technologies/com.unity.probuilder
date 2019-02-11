@@ -78,7 +78,7 @@ namespace UnityEditor.ProBuilder
             mesh.Refresh(RefreshMask.UV | RefreshMask.Colors | RefreshMask.Normals | RefreshMask.Tangents);
             this.name = name;
             vertices = mesh.GetVertices();
-            submeshes = Submesh.GetSubmeshes(mesh.facesInternal, UnityEngine.ProBuilder.MeshUtility.GetMaterialCount(mesh.renderer), quads ? MeshTopology.Quads : MeshTopology.Triangles);
+            submeshes = Submesh.GetSubmeshes(mesh.facesInternal, MaterialUtility.GetMaterialCount(mesh.renderer), quads ? MeshTopology.Quads : MeshTopology.Triangles);
             materials = new Material[submeshCount];
 
             for (int i = 0; i < submeshCount; ++i)

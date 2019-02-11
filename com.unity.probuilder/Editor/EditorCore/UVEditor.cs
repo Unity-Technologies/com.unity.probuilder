@@ -1766,34 +1766,6 @@ namespace UnityEditor.ProBuilder
         // re-usable rect for drawing graphs
         Rect r = new Rect(0, 0, 0, 0);
 
-        internal static Texture2D GetMainTexture(Material material)
-        {
-            if (material == null || material.shader == null)
-                return null;
-
-            Texture2D best = null;
-
-            for (int i = 0; i < ShaderUtil.GetPropertyCount(material.shader); i++)
-            {
-                if (ShaderUtil.GetPropertyType(material.shader, i) == ShaderUtil.ShaderPropertyType.TexEnv)
-                {
-                    string propertyName = ShaderUtil.GetPropertyName(material.shader, i);
-
-                    Texture2D tex = material.GetTexture(propertyName) as Texture2D;
-
-                    if (tex != null)
-                    {
-                        if (propertyName.Contains("_MainTex") || propertyName.Contains("Albedo"))
-                            return tex;
-                        else if (best == null)
-                            best = tex;
-                    }
-                }
-            }
-
-            return best;
-        }
-
         private void DrawUVGraph(Rect rect)
         {
             var evt = Event.current;
@@ -1806,7 +1778,7 @@ namespace UnityEditor.ProBuilder
             UVRectIdentity.x = UVGraphCenter.x + uvGraphOffset.x;
             UVRectIdentity.y = UVGraphCenter.y + uvGraphOffset.y - UVRectIdentity.height;
 
-            var texture = GetMainTexture(m_PreviewMaterial);
+            var texture = EditorMaterialUtility.GetPreviewTexture(m_PreviewMaterial);
 
             if (m_ShowPreviewMaterial && m_PreviewMaterial && texture != null)
                 EditorGUI.DrawPreviewTexture(UVRectIdentity, texture, null, ScaleMode.StretchToFill, 0);
@@ -2442,7 +2414,7 @@ namespace UnityEditor.ProBuilder
                 mode = UVMode.Manual;
             }
 
-            m_PreviewMaterial = editor.GetFirstSelectedMaterial();
+            m_PreviewMaterial = EditorMaterialUtility.GetActiveSelection();
 
             handlePosition = UVSelectionBounds().center - handlePosition_offset;
         }
