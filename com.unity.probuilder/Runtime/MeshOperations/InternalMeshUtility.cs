@@ -198,12 +198,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
             }
 
             var res = SplitByMaxVertexCount(vertices, faces, sharedVertices, sharedTextures);
+            var pivot = meshes.LastOrDefault().transform.position;
 
             foreach (var m in res)
             {
                 m.renderer.sharedMaterials = materialMap.ToArray();
                 FilterUnusedSubmeshIndexes(m);
-                m.SetPivot(Selection.activeGameObject.transform.position);
+                m.SetPivot(pivot);
             }
             return res;
         }
