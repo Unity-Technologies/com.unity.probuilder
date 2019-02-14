@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.4-preview.1] - 2019-02-11
+## [4.0.4-preview.2] - 2019-02-14
 
 ### Features
 
@@ -27,16 +27,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix `Export Asset` breaking prefab instances.
 - `Vertex Color` action tooltip no longer mentions deprecated paint mode.
 - Fix changelog dates for January 2019.
+- Fix Material Editor rendering incorrectly when an SRP material is assigned to the "Quick Material" field.
+- Lessen an edge case where `Math.PointInPolygon` could return the wrong value.
+- Fix an exception when keyframing mesh properties via Timeline.
 
 ### Changes
 
 - Name newly merged `GameObject`s after the active selected `GameObject`.
 
-### Changes since 4.0.4-preview.0
+### Changes since 4.0.4-preview.1
 
-- Fix Material Editor rendering incorrectly when an SRP material is assigned to the "Quick Material" field.
-- Lessen an edge case where `Math.PointInPolygon` could return the wrong value.
-- Fix an exception when keyframing mesh properties via Timeline.
+- Fix a regression that broke building projects.
 
 ## [4.0.3] - 2019-01-25
 
