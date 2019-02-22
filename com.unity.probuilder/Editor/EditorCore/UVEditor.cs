@@ -1,3 +1,7 @@
+#if !UNITY_2019_1_OR_NEWER
+#define LEGACY_SHORTCUTS
+#endif
+
 #if UNITY_5_5_OR_NEWER
 #define RETINA_ENABLED
 #endif
@@ -942,6 +946,9 @@ namespace UnityEditor.ProBuilder
                 return;
             }
 
+#if !LEGACY_SHORTCUTS
+        }
+#else
             bool used = false;
 
             switch (e.keyCode)
@@ -984,6 +991,7 @@ namespace UnityEditor.ProBuilder
             if (!used && ProBuilderEditor.instance)
                 ProBuilderEditor.instance.ShortcutCheck(e);
         }
+#endif
 
         /**
          * Finds the nearest edge to the mouse and sets the `nearestEdge` struct with it's info

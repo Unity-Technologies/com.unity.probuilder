@@ -1,3 +1,9 @@
+#if !UNITY_2019_1_OR_NEWER
+#define LEGACY_SHORTCUTS
+#endif
+
+#if LEGACY_SHORTCUTS
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -102,3 +108,5 @@ namespace UnityEditor.ProBuilder
         }
     }
 }
+
+#endif

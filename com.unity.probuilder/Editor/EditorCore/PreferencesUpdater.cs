@@ -98,7 +98,9 @@ namespace UnityEditor.ProBuilder
             new FormerPreferenceKeyMap("", "editor.allowNonManifoldActions", typeof(System.Boolean), SettingsScope.User),
             new FormerPreferenceKeyMap(PreferenceKeys.pbToolbarLocation, "editor.sceneToolbarLocation", typeof(UnityEditor.ProBuilder.SceneToolbarLocation), SettingsScope.User),
             new FormerPreferenceKeyMap("", "UnityEngine.ProBuilder.ProBuilderEditor-isUtilityWindow", typeof(System.Boolean), SettingsScope.Project),
+#if LEGACY_SHORTCUTS
             new FormerPreferenceKeyMap(PreferenceKeys.pbDefaultShortcuts, "editor.sceneViewShortcuts", typeof(UnityEngine.ProBuilder.Shortcut[]), SettingsScope.Project),
+#endif
             new FormerPreferenceKeyMap(PreferenceKeys.pbShowPreselectionHighlight, "editor.showPreselectionHighlight", typeof(System.Boolean), SettingsScope.User),
             new FormerPreferenceKeyMap(PreferenceKeys.pbCloseShapeWindow, "editor.closeWindowAfterShapeCreation", typeof(System.Boolean), SettingsScope.Project),
             new FormerPreferenceKeyMap("", "shape.torusDefinesInnerOuter", typeof(System.Boolean), SettingsScope.User),

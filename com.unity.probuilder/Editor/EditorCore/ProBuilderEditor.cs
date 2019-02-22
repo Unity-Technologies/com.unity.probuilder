@@ -1,15 +1,14 @@
+#if !UNITY_2019_1_OR_NEWER
+#define LEGACY_SHORTCUTS
+#endif
+
 using System;
 using UnityEngine;
 using System.Linq;
-using System.Reflection;
 using System.Collections.Generic;
-using UnityEditor.ProBuilder.Actions;
 using UnityEngine.ProBuilder;
 using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
-using UnityEngine.ProBuilder.MeshOperations;
-using Math = UnityEngine.ProBuilder.Math;
-using Object = UnityEngine.Object;
-using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
+using UObject = UnityEngine.Object;
 using UnityEditor.SettingsManagement;
 
 namespace UnityEditor.ProBuilder
@@ -111,8 +110,11 @@ namespace UnityEditor.ProBuilder
 
         // used for 'g' key shortcut to swap between object/vef modes
         SelectMode m_LastComponentMode;
+
+#if LEGACY_SHORTCUTS
         [UserSetting]
         internal static Pref<Shortcut[]> s_Shortcuts = new Pref<Shortcut[]>("editor.sceneViewShortcuts", Shortcut.DefaultShortcuts().ToArray());
+#endif
         GUIStyle m_CommandStyle;
         Rect m_ElementModeToolbarRect = new Rect(3, 6, 128, 24);
 
@@ -132,7 +134,9 @@ namespace UnityEditor.ProBuilder
         // prevents leftClickUp from stealing focus after double click
         bool m_WasDoubleClick;
         // vertex handles
+#if LEGACY_SHORTCUTS
         bool m_IsRightMouseDown;
+#endif
         static Dictionary<Type, VertexManipulationTool> s_EditorTools = new Dictionary<Type, VertexManipulationTool>();
 
         Vector3[][] m_VertexPositions;
@@ -380,15 +384,17 @@ namespace UnityEditor.ProBuilder
                 rectSelectMode = m_DragSelectRectMode
             };
 
+#if LEGACY_SHORTCUTS
             // workaround for old single-key shortcuts
             if (s_Shortcuts.value == null || s_Shortcuts.value.Length < 1)
                 s_Shortcuts.SetValue(Shortcut.DefaultShortcuts().ToArray(), true);
+#endif
         }
 
         void InitGUI()
         {
             if (s_EditorToolbar != null)
-                Object.DestroyImmediate(s_EditorToolbar);
+                UObject.DestroyImmediate(s_EditorToolbar);
 
             s_EditorToolbar = ScriptableObject.CreateInstance<EditorToolbar>();
             s_EditorToolbar.hideFlags = HideFlags.HideAndDontSave;
@@ -417,6 +423,7 @@ namespace UnityEditor.ProBuilder
             if (m_CommandStyle == null)
                 m_CommandStyle = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("Command");
 
+#if LEGACY_SHORTCUTS
             Event e = Event.current;
 
             switch (e.type)
@@ -436,6 +443,7 @@ namespace UnityEditor.ProBuilder
                     ShortcutCheck(e);
                     break;
             }
+#endif
 
             if (s_EditorToolbar != null)
             {
@@ -458,7 +466,7 @@ namespace UnityEditor.ProBuilder
         {
             s_IsIconGui.value = !s_IsIconGui;
             if (s_EditorToolbar != null)
-                Object.DestroyImmediate(s_EditorToolbar);
+                UObject.DestroyImmediate(s_EditorToolbar);
             s_EditorToolbar = ScriptableObject.CreateInstance<EditorToolbar>();
             s_EditorToolbar.hideFlags = HideFlags.HideAndDontSave;
             s_EditorToolbar.InitWindowProperties(this);
@@ -540,15 +548,17 @@ namespace UnityEditor.ProBuilder
 
             m_CurrentEvent = Event.current;
 
+            EditorMeshHandles.DrawSceneHandles(SceneDragAndDropListener.isDragging ? SelectMode.None : selectMode);
+
+            DrawHandleGUI(sceneView);
+
+#if LEGACY_SHORTCUTS
+
             if (m_CurrentEvent.type == EventType.MouseDown && m_CurrentEvent.button == 1)
                 m_IsRightMouseDown = true;
 
             if (m_CurrentEvent.type == EventType.MouseUp && m_CurrentEvent.button == 1 || m_CurrentEvent.type == EventType.Ignore)
                 m_IsRightMouseDown = false;
-
-            EditorMeshHandles.DrawSceneHandles(SceneDragAndDropListener.isDragging ? SelectMode.None : selectMode);
-
-            DrawHandleGUI(sceneView);
 
             if (!m_IsRightMouseDown && (m_CurrentEvent.type == EventType.KeyUp ? m_CurrentEvent.keyCode : KeyCode.None) != KeyCode.None)
             {
@@ -564,6 +574,7 @@ namespace UnityEditor.ProBuilder
                 if (s_Shortcuts.value.Any(x => x.Matches(m_CurrentEvent.keyCode, m_CurrentEvent.modifiers)))
                     m_CurrentEvent.Use();
             }
+#endif
 
             if (selectMode == SelectMode.Object)
                 return;
@@ -828,6 +839,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+#if LEGACY_SHORTCUTS
         internal bool ShortcutCheck(Event e)
         {
             List<Shortcut> matches = s_Shortcuts.value.Where(x => x.Matches(e.keyCode, e.modifiers)).ToList();
@@ -962,6 +974,7 @@ namespace UnityEditor.ProBuilder
                     return false;
             }
         }
+#endif
 
         /// <summary>
         /// Allows another window to tell the Editor what Tool is now in use. Does *not* update any other windows.

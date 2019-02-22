@@ -247,8 +247,10 @@ namespace UnityEditor.ProBuilder
                 value = GetInt(key);
             else if (type == typeof(string))
                 value = GetString(key);
+#if LEGACY_SHORTCUTS
             else if (type == typeof(Shortcut[]))
                 value = Shortcut.ParseShortcuts(EditorPrefs.GetString(key));
+#endif
             else if (type == typeof(Color))
                 value = GetColor(key);
             else if (type == typeof(Material))
@@ -269,6 +271,7 @@ namespace UnityEditor.ProBuilder
             return true;
         }
 
+#if LEGACY_SHORTCUTS
         /// <summary>
         /// Retrieve stored shortcuts from preferences in an IEnumerable format.
         /// </summary>
@@ -279,6 +282,7 @@ namespace UnityEditor.ProBuilder
                 ? Shortcut.ParseShortcuts(EditorPrefs.GetString(PreferenceKeys.pbDefaultShortcuts))
                 : Shortcut.DefaultShortcuts();
         }
+#endif
 
         /// <summary>
         /// Associate key with int value.

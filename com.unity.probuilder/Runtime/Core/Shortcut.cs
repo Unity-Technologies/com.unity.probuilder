@@ -1,3 +1,8 @@
+#if !UNITY_2019_1_OR_NEWER
+#define LEGACY_SHORTCUTS
+#endif
+
+#if LEGACY_SHORTCUTS
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -6,6 +11,7 @@ namespace UnityEngine.ProBuilder
     /// <summary>
     /// ProBuilder shortcuts.
     /// </summary>
+    [System.Obsolete]
     sealed class Shortcut
     {
         public Shortcut(string a, string d, KeyCode k, EventModifiers e)
@@ -129,3 +135,4 @@ namespace UnityEngine.ProBuilder
         }
     }
 }
+#endif
