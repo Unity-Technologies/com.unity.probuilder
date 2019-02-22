@@ -21,7 +21,54 @@ namespace UnityEditor.ProBuilder
     sealed class GenerateMenuItems : Editor
     {
         const string k_GeneratedFilePath = "Packages/com.unity.probuilder/Editor/EditorCore/EditorToolbarMenuItems.cs";
+
         const string k_MenuActionsFolder = "Packages/com.unity.probuilder/Editor/MenuActions/";
+
+        class MenuActionData
+        {
+            public bool valid { get; private set; }
+
+            // False to not create menu entry
+            public bool visibleInMenu { get; private set; }
+
+            // type = "NewBezierShape"
+            public string type { get; private set; }
+
+            // path = "Editors/New Bezier Shape"
+            public string path { get; private set; }
+
+            // shortcut = "#%d"
+            public string shortcut { get; private set; }
+
+            public MenuActionData(string scriptPath)
+            {
+                var rawPath = scriptPath.Replace("\\", "/").Replace(k_MenuActionsFolder, "").Replace(".cs", "");
+                type = GetClassName(rawPath);
+                path = Regex.Replace(rawPath, @"(\B[A-Z]+?(?=[A-Z][^A-Z])|\B[A-Z]+?(?=[^A-Z]))", " $0");
+                MenuAction instance = null;
+
+                try
+                {
+                    var t = ReflectionUtility.GetType("UnityEditor.ProBuilder.Actions." + type);
+                    instance = System.Activator.CreateInstance(t) as MenuAction;
+                    valid = true;
+                }
+                catch
+                {
+                    Log.Warning($"Failed generating menu item for {scriptPath}. File names must match class names.", "scriptPath");
+                    valid = false;
+                }
+
+                if (valid)
+                {
+                    PropertyInfo hasMenuEntryProperty = typeof(MenuAction).GetProperty("hasFileMenuEntry", BindingFlags.NonPublic | BindingFlags.Instance);
+                    visibleInMenu = hasMenuEntryProperty != null && (bool)hasMenuEntryProperty.GetValue(instance, null);
+
+                    PropertyInfo tooltipProperty = typeof(MenuAction).GetProperty("tooltip");
+                    shortcut = tooltipProperty == null ? "" : ((TooltipContent)tooltipProperty.GetValue(instance, null)).shortcut;
+                }
+            }
+        }
 
         static readonly HashSet<string> IgnoreActions = new HashSet<string>()
         {
@@ -30,49 +77,38 @@ namespace UnityEditor.ProBuilder
 
         static readonly Dictionary<string, string> MenuPriorityLookup = new Dictionary<string, string>()
         {
-            {"Editors", "PreferenceKeys.menuEditor + 1"},
-            {"Object", "PreferenceKeys.menuGeometry + 2"},
-            {"Geometry", "PreferenceKeys.menuGeometry + 3"},
-            {"Interaction", "PreferenceKeys.menuSelection + 1"},
-            {"Selection", "PreferenceKeys.menuSelection + 0"},
-            {"Export", "PreferenceKeys.menuExport + 0"}
+            { "Editors", "PreferenceKeys.menuEditor + 1" },
+            { "Object", "PreferenceKeys.menuGeometry + 2" },
+            { "Geometry", "PreferenceKeys.menuGeometry + 3" },
+            { "Interaction", "PreferenceKeys.menuSelection + 1" },
+            { "Selection", "PreferenceKeys.menuSelection + 0" },
+            { "Export", "PreferenceKeys.menuExport + 0" }
         };
 
-        [MenuItem("Tools/Debug/ProBuilder/Rebuild Menu Items", false, 800)]
-        static void doit()
+        [MenuItem("Tools/Debug/ProBuilder/Rebuild Menu Items &d", false, 800)]
+        static void GenerateMenuItemsForActions()
         {
             if (File.Exists(k_GeneratedFilePath))
                 File.Delete(k_GeneratedFilePath);
 
             StringBuilder sb = new StringBuilder();
 
+            AppendHeader(sb);
+
             IEnumerable<string> actions = Directory.GetFiles(k_MenuActionsFolder, "*.cs", SearchOption.AllDirectories)
                 .Select(x => x.Replace("\\", "/"))
                 .Where(y => !IgnoreActions.Contains(GetClassName(y)));
 
-            sb.AppendLine(
-                @"/**
- *  IMPORTANT
- *
- *  This is a generated file. Any changes will be overwritten.
- *  See Debug/GenerateMenuItems to make modifications.
- */
-
-using UnityEngine;
-using UnityEditor;
-using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder.Actions;
-using System.Collections.Generic;
-
-namespace UnityEditor.ProBuilder
-{
-    static class EditorToolbarMenuItem
-    {
-        const string k_MenuPrefix = ""Tools/ProBuilder/"";
-");
             foreach (string action in actions)
             {
-                sb.AppendLine(GenerateMenuItemFunctions(action));
+                var data = new MenuActionData(action);
+                UnityEngine.Debug.Log($"{data.visibleInMenu}\n{data.type}\n{data.path}\n{data.shortcut}");
+
+                if (data.valid)
+                {
+                    sb.AppendLine();
+                    AppendMenuItem(sb, data);
+                }
             }
 
             sb.AppendLine("\t}");
@@ -84,96 +120,50 @@ namespace UnityEditor.ProBuilder
             AssetDatabase.Refresh();
         }
 
-        /// <summary>
-        /// Generate the [MenuItem()] body for a pb_MenuAction from it's script path.
-        /// </summary>
-        /// <param name="scriptPath"></param>
-        /// <returns></returns>
-        static string GenerateMenuItemFunctions(string scriptPath)
+        static void AppendHeader(StringBuilder sb)
         {
-            string action = scriptPath.Replace("\\", "/").Replace(k_MenuActionsFolder, "").Replace(".cs", "");
-            string category = GetActionCategory(action);
-            string menu_priority = GetMenuPriority(category);
-            string class_name = GetClassName(action);
-            string pretty_path = Regex.Replace(action, @"(\B[A-Z]+?(?=[A-Z][^A-Z])|\B[A-Z]+?(?=[^A-Z]))", " $0");
+            sb.AppendLine(@"/**
+ *  IMPORTANT
+ *
+ *  This is a generated file. Any changes will be overwritten.
+ *  See Debug/GenerateMenuItems to make modifications.
+ */
 
-            StringBuilder sb = new StringBuilder();
-            object o = null;
+using UnityEngine;
+using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder.Actions;
 
-            try
-            {
-                var type = ReflectionUtility.GetType("UnityEditor.ProBuilder.Actions." + class_name);
-                o = System.Activator.CreateInstance(type);
-            }
-            catch
-            {
-                Log.Warning("Failed generating menu item for class: \"" + class_name +
-                    "\".  File names must match class names.");
-                return "";
-            }
+namespace UnityEditor.ProBuilder
+{
+    static class EditorToolbarMenuItem
+    {
+        const string k_MenuPrefix = ""Tools/ProBuilder/"";");
+        }
 
-            PropertyInfo hasMenuEntryProperty = typeof(MenuAction).GetProperty("hasFileMenuEntry", BindingFlags.NonPublic | BindingFlags.Instance);
+        static void AppendMenuItem(StringBuilder sb, MenuActionData data)
+        {
+            // Verify
+            sb.AppendLine($"\t\t[MenuItem(k_MenuPrefix + \"{data.path} \", true)]");
+            sb.AppendLine($"\t\tstatic bool MenuVerify_{data.type}()");
+            sb.AppendLine( "\t\t{");
+            sb.AppendLine($"\t\t\tvar instance = EditorToolbarLoader.GetInstance<{data.type}>();");
+            sb.AppendLine( "\t\t\treturn instance != null && instance.enabled;");
+            sb.AppendLine( "\t\t}");
 
-            if (hasMenuEntryProperty == null || (bool)hasMenuEntryProperty.GetValue(o, null) == false)
-                return "";
+            var category = GetActionCategory(data.path);
+            var priority = GetMenuPriority(category);
+            var shortcut = GetMenuFormattedShortcut(data.shortcut);
 
-            PropertyInfo tooltipProperty = typeof(MenuAction).GetProperty("tooltip");
-            string shortcut = tooltipProperty == null ? "" : GetMenuFormattedShortcut(((TooltipContent)tooltipProperty.GetValue(o, null)).shortcut);
+            sb.AppendLine();
 
-            // VERIFY
-            sb.Append("\t\t[MenuItem(");
-            sb.Append("k_MenuPrefix + \"");
-            sb.Append(pretty_path);
-            sb.Append(" ");
-            sb.Append(shortcut);
-            sb.Append("\", true)]");
-            sb.AppendLine("");
-
-            sb.Append("\t\tstatic bool MenuVerify");
-            sb.Append(class_name);
-            sb.AppendLine("()");
-
-            sb.AppendLine("\t\t{");
-
-            sb.Append("\t\t\t");
-            sb.Append(class_name);
-            sb.Append(" instance = EditorToolbarLoader.GetInstance<");
-            sb.Append(class_name);
-            sb.AppendLine(">();");
-            sb.AppendLine(@"
-            return instance != null && instance.enabled;
-    ");
-            sb.AppendLine("\t\t}");
-
-            sb.AppendLine("");
-
-            // PERFORM
-            sb.Append("\t\t[MenuItem(");
-            sb.Append("k_MenuPrefix + \"");
-            sb.Append(pretty_path);
-            sb.Append(" ");
-            sb.Append(shortcut);
-            sb.Append("\", false, ");
-            sb.Append(menu_priority);
-            sb.Append(")]");
-            sb.AppendLine("");
-
-            sb.Append("\t\tstatic void MenuDo");
-            sb.Append(class_name);
-            sb.AppendLine("()");
-
-            sb.AppendLine("\t\t{");
-
-            sb.Append("\t\t\t");
-            sb.Append(class_name);
-            sb.Append(" instance = EditorToolbarLoader.GetInstance<");
-            sb.Append(class_name);
-            sb.AppendLine(">();");
-            sb.AppendLine("\t\t\tif(instance != null)");
-            sb.AppendLine("\t\t\t\tUnityEditor.ProBuilder.EditorUtility.ShowNotification(instance.DoAction().notification);");
-            sb.AppendLine("\t\t}");
-
-            return sb.ToString();
+            // Action
+            sb.AppendLine($"\t\t[MenuItem(k_MenuPrefix + \"{data.path}{shortcut}\", false, {priority})]");
+            sb.AppendLine($"\t\tstatic void MenuPerform_{data.type}()");
+            sb.AppendLine( "\t\t{");
+            sb.AppendLine($"\t\t\tvar instance = EditorToolbarLoader.GetInstance<{data.type}>();");
+            sb.AppendLine( "\t\t\tif(instance != null && instance.enabled)");
+            sb.AppendLine( "\t\t\t\tEditorUtility.ShowNotification(instance.DoAction().notification);");
+            sb.AppendLine( "\t\t}");
         }
 
         static string GetClassName(string scriptPath)
@@ -228,8 +218,14 @@ namespace UnityEditor.ProBuilder
                     res += s.Trim().ToLower();
             }
 
-            if (res.Length > 0 && inSceneShortcut)
-                res = string.Format(" [{0}]", res);
+            if (!string.IsNullOrEmpty(res))
+            {
+                // Show single-key context shortcuts by invalidating the MenuItem syntax
+                if (inSceneShortcut)
+                    res = $" [{res}]";
+                else
+                    res = $" {res}";
+            }
 
             return res;
         }
