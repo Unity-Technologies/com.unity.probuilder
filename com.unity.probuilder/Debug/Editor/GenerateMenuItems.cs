@@ -1,15 +1,15 @@
-#define PROBUILDER_DEBUG
-
-#if PROBUILDER_DEBUG
+#if UNITY_2019_1_OR_NEWER
+#define SHORTCUT_MANAGER
+#endif
 
 using UnityEngine;
-using UnityEditor;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Reflection;
 using System.IO;
+using UnityEditor.ShortcutManagement;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
@@ -31,41 +31,42 @@ namespace UnityEditor.ProBuilder
             // False to not create menu entry
             public bool visibleInMenu { get; private set; }
 
+            public System.Type type { get; private set; }
+
             // type = "NewBezierShape"
-            public string type { get; private set; }
+            public string typeString { get; private set; }
 
             // path = "Editors/New Bezier Shape"
             public string path { get; private set; }
 
-            // shortcut = "#%d"
-            public string shortcut { get; private set; }
+            // MenuItemAttribute shortcut string, ex "#%d"
+            public string menuItemShortcut { get; private set; }
 
             public MenuActionData(string scriptPath)
             {
                 var rawPath = scriptPath.Replace("\\", "/").Replace(k_MenuActionsFolder, "").Replace(".cs", "");
-                type = GetClassName(rawPath);
+                typeString = GetClassName(rawPath);
                 path = Regex.Replace(rawPath, @"(\B[A-Z]+?(?=[A-Z][^A-Z])|\B[A-Z]+?(?=[^A-Z]))", " $0");
                 MenuAction instance = null;
 
                 try
                 {
-                    var t = ReflectionUtility.GetType("UnityEditor.ProBuilder.Actions." + type);
-                    instance = System.Activator.CreateInstance(t) as MenuAction;
-                    valid = true;
+                    type = ReflectionUtility.GetType("UnityEditor.ProBuilder.Actions." + typeString);
+                    instance = System.Activator.CreateInstance(type) as MenuAction;
                 }
                 catch
                 {
                     Log.Warning($"Failed generating menu item for {scriptPath}. File names must match class names.", "scriptPath");
-                    valid = false;
                 }
+
+                valid = instance != null;
 
                 if (valid)
                 {
                     PropertyInfo hasMenuEntryProperty = typeof(MenuAction).GetProperty("hasFileMenuEntry", BindingFlags.NonPublic | BindingFlags.Instance);
                     visibleInMenu = hasMenuEntryProperty != null && (bool)hasMenuEntryProperty.GetValue(instance, null);
 
-                    PropertyInfo tooltipProperty = typeof(MenuAction).GetProperty("tooltip");
-                    shortcut = tooltipProperty == null ? "" : ((TooltipContent)tooltipProperty.GetValue(instance, null)).shortcut;
+                    menuItemShortcut = instance.tooltip.shortcut;
                 }
             }
         }
@@ -102,7 +103,8 @@ namespace UnityEditor.ProBuilder
             foreach (string action in actions)
             {
                 var data = new MenuActionData(action);
-                UnityEngine.Debug.Log($"{data.visibleInMenu}\n{data.type}\n{data.path}\n{data.shortcut}");
+
+//                UnityEngine.Debug.Log($"{data.visibleInMenu}\n{data.typeString}\n{data.path}\n{data.menuItemShortcut}");
 
                 if (data.valid)
                 {
@@ -128,39 +130,74 @@ namespace UnityEditor.ProBuilder
  *  This is a generated file. Any changes will be overwritten.
  *  See Debug/GenerateMenuItems to make modifications.
  */
+#if UNITY_2019_1_OR_NEWER
+#define SHORTCUT_MANAGER
+#endif
 
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.Actions;
+#if SHORTCUT_MANAGER
+using UnityEditor.ShortcutManagement;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
     static class EditorToolbarMenuItem
     {
-        const string k_MenuPrefix = ""Tools/ProBuilder/"";");
+        const string k_MenuPrefix = ""Tools/ProBuilder/"";
+        const string k_ShortcutPrefix = ""ProBuilder/"";");
         }
 
         static void AppendMenuItem(StringBuilder sb, MenuActionData data)
         {
             // Verify
             sb.AppendLine($"\t\t[MenuItem(k_MenuPrefix + \"{data.path} \", true)]");
-            sb.AppendLine($"\t\tstatic bool MenuVerify_{data.type}()");
+            sb.AppendLine($"\t\tstatic bool MenuVerify_{data.typeString}()");
             sb.AppendLine( "\t\t{");
-            sb.AppendLine($"\t\t\tvar instance = EditorToolbarLoader.GetInstance<{data.type}>();");
+            sb.AppendLine($"\t\t\tvar instance = EditorToolbarLoader.GetInstance<{data.typeString}>();");
             sb.AppendLine( "\t\t\treturn instance != null && instance.enabled;");
             sb.AppendLine( "\t\t}");
 
             var category = GetActionCategory(data.path);
             var priority = GetMenuPriority(category);
-            var shortcut = GetMenuFormattedShortcut(data.shortcut);
+            var shortcut = GetMenuFormattedShortcut(data.menuItemShortcut);
 
             sb.AppendLine();
 
+#if SHORTCUT_MANAGER
+            var disallowShortcut = data.type.GetCustomAttribute<DisallowMenuActionShortcutAttribute>();
+
+            if (disallowShortcut == null)
+            {
+                var shortcutInfo = data.type.GetCustomAttribute<MenuActionShortcutAttribute>();
+
+                sb.AppendLine("#if SHORTCUT_MANAGER");
+                if (shortcutInfo != null)
+                {
+                    var key = GetShortcutAttributeKeyBindingArgs(shortcutInfo.key, shortcutInfo.modifiers);
+                    var ctx = shortcutInfo.context == null ? "null" : $"typeof({shortcutInfo.context})";
+
+                    if (!string.IsNullOrEmpty(key))
+                        sb.AppendLine($"\t\t[Shortcut(k_ShortcutPrefix + \"{data.path}\", {ctx}, {key})]");
+                    else
+                        sb.AppendLine($"\t\t[Shortcut(k_ShortcutPrefix + \"{data.path}\", {ctx})]");
+                }
+                else
+                {
+                    sb.AppendLine($"\t\t[Shortcut(k_ShortcutPrefix + \"{data.path}\")]");
+                }
+                sb.AppendLine("#endif");
+            }
+#endif
+
             // Action
             sb.AppendLine($"\t\t[MenuItem(k_MenuPrefix + \"{data.path}{shortcut}\", false, {priority})]");
-            sb.AppendLine($"\t\tstatic void MenuPerform_{data.type}()");
+            sb.AppendLine($"\t\tstatic void MenuPerform_{data.typeString}()");
             sb.AppendLine( "\t\t{");
-            sb.AppendLine($"\t\t\tvar instance = EditorToolbarLoader.GetInstance<{data.type}>();");
+            sb.AppendLine($"\t\t\tvar instance = EditorToolbarLoader.GetInstance<{data.typeString}>();");
+            // *Important* The `instance.enabled` check is redundant for MenuItems, but not for ShortcutManager
+            // shortcuts, which only have the context of what EditorWindow is active.
             sb.AppendLine( "\t\t\tif(instance != null && instance.enabled)");
             sb.AppendLine( "\t\t\t\tEditorUtility.ShowNotification(instance.DoAction().notification);");
             sb.AppendLine( "\t\t}");
@@ -229,7 +266,38 @@ namespace UnityEditor.ProBuilder
 
             return res;
         }
-    }
-}
+
+#if SHORTCUT_MANAGER
+
+        static string GetShortcutAttributeKeyBindingArgs(KeyCode key, EventModifiers modifiers)
+        {
+            var m = (int) ConvertEventModifiersToShortcutModifiers(modifiers, true);
+            var k = (int) key;
+
+            return $"(KeyCode) {k}, (ShortcutModifiers) {m}";
+        }
+
+        static ShortcutModifiers ConvertEventModifiersToShortcutModifiers(EventModifiers eventModifiers, bool coalesceCommandAndControl)
+        {
+            ShortcutModifiers modifiers = ShortcutModifiers.None;
+            if ((eventModifiers & EventModifiers.Alt) != 0)
+                modifiers |= ShortcutModifiers.Alt;
+            if ((eventModifiers & EventModifiers.Shift) != 0)
+                modifiers |= ShortcutModifiers.Shift;
+
+            if (coalesceCommandAndControl)
+            {
+                if ((eventModifiers & (EventModifiers.Command | EventModifiers.Control)) != 0)
+                    modifiers |= ShortcutModifiers.Action;
+            }
+            else if (Application.platform == RuntimePlatform.OSXEditor && (eventModifiers & EventModifiers.Command) != 0)
+                modifiers |= ShortcutModifiers.Action;
+            else if (Application.platform != RuntimePlatform.OSXEditor && (eventModifiers & EventModifiers.Control) != 0)
+                modifiers |= ShortcutModifiers.Action;
+
+            return modifiers;
+        }
 
 #endif
+    }
+}

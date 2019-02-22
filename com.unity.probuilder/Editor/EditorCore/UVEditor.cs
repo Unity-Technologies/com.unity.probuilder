@@ -1,5 +1,5 @@
-#if !UNITY_2019_1_OR_NEWER
-#define LEGACY_SHORTCUTS
+#if UNITY_2019_1_OR_NEWER
+#define SHORTCUT_MANAGER
 #endif
 
 #if UNITY_5_5_OR_NEWER
@@ -946,7 +946,7 @@ namespace UnityEditor.ProBuilder
                 return;
             }
 
-#if !LEGACY_SHORTCUTS
+#if SHORTCUT_MANAGER
         }
 #else
             bool used = false;

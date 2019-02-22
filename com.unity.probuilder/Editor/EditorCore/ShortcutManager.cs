@@ -1,8 +1,8 @@
-#if !UNITY_2019_1_OR_NEWER
-#define LEGACY_SHORTCUTS
+#if UNITY_2019_1_OR_NEWER
+#define SHORTCUT_MANAGER
 #endif
 
-#if LEGACY_SHORTCUTS
+#if !SHORTCUT_MANAGER
 
 using System.Collections;
 using System.Collections.Generic;

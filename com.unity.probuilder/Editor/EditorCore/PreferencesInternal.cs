@@ -1,3 +1,7 @@
+#if UNITY_2019_1_OR_NEWER
+#define SHORTCUT_MANAGER
+#endif
+
 using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
@@ -247,7 +251,7 @@ namespace UnityEditor.ProBuilder
                 value = GetInt(key);
             else if (type == typeof(string))
                 value = GetString(key);
-#if LEGACY_SHORTCUTS
+#if !SHORTCUT_MANAGER
             else if (type == typeof(Shortcut[]))
                 value = Shortcut.ParseShortcuts(EditorPrefs.GetString(key));
 #endif
@@ -271,7 +275,7 @@ namespace UnityEditor.ProBuilder
             return true;
         }
 
-#if LEGACY_SHORTCUTS
+#if !SHORTCUT_MANAGER
         /// <summary>
         /// Retrieve stored shortcuts from preferences in an IEnumerable format.
         /// </summary>
