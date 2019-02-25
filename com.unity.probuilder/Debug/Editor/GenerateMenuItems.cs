@@ -166,27 +166,21 @@ namespace UnityEditor.ProBuilder
             sb.AppendLine();
 
 #if SHORTCUT_MANAGER
-            var disallowShortcut = data.type.GetCustomAttribute<DisallowMenuActionShortcutAttribute>();
 
-            if (disallowShortcut == null)
+            var shortcutInfo = data.type.GetCustomAttribute<MenuActionShortcutAttribute>();
+
+            if (shortcutInfo != null)
             {
-                var shortcutInfo = data.type.GetCustomAttribute<MenuActionShortcutAttribute>();
-
                 sb.AppendLine("#if SHORTCUT_MANAGER");
-                if (shortcutInfo != null)
-                {
-                    var key = GetShortcutAttributeKeyBindingArgs(shortcutInfo.key, shortcutInfo.modifiers);
-                    var ctx = shortcutInfo.context == null ? "null" : $"typeof({shortcutInfo.context})";
 
-                    if (!string.IsNullOrEmpty(key))
-                        sb.AppendLine($"\t\t[Shortcut(k_ShortcutPrefix + \"{data.path}\", {ctx}, {key})]");
-                    else
-                        sb.AppendLine($"\t\t[Shortcut(k_ShortcutPrefix + \"{data.path}\", {ctx})]");
-                }
+                var key = GetShortcutAttributeKeyBindingArgs(shortcutInfo.key, shortcutInfo.modifiers);
+                var ctx = shortcutInfo.context == null ? "null" : $"typeof({shortcutInfo.context})";
+
+                if (!string.IsNullOrEmpty(key))
+                    sb.AppendLine($"\t\t[Shortcut(k_ShortcutPrefix + \"{data.path}\", {ctx}, {key})]");
                 else
-                {
-                    sb.AppendLine($"\t\t[Shortcut(k_ShortcutPrefix + \"{data.path}\")]");
-                }
+                    sb.AppendLine($"\t\t[Shortcut(k_ShortcutPrefix + \"{data.path}\", {ctx})]");
+
                 sb.AppendLine("#endif");
             }
 #endif
@@ -197,7 +191,7 @@ namespace UnityEditor.ProBuilder
             sb.AppendLine( "\t\t{");
             sb.AppendLine($"\t\t\tvar instance = EditorToolbarLoader.GetInstance<{data.typeString}>();");
             // *Important* The `instance.enabled` check is redundant for MenuItems, but not for ShortcutManager
-            // shortcuts, which only have the context of what EditorWindow is active.
+            // shortcuts, which atm only have the context of what EditorWindow is active.
             sb.AppendLine( "\t\t\tif(instance != null && instance.enabled)");
             sb.AppendLine( "\t\t\t\tEditorUtility.ShowNotification(instance.DoAction().notification);");
             sb.AppendLine( "\t\t}");

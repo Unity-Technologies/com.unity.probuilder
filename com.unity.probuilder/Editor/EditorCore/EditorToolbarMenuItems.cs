@@ -29,9 +29,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Editors/New Bezier Shape")]
-#endif
 		[MenuItem(k_MenuPrefix + "Editors/New Bezier Shape", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuPerform_NewBezierShape()
 		{
@@ -47,9 +44,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Editors/New Poly Shape")]
-#endif
 		[MenuItem(k_MenuPrefix + "Editors/New Poly Shape", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuPerform_NewPolyShape()
 		{
@@ -65,9 +59,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Editors/Open Lightmap UV Editor")]
-#endif
 		[MenuItem(k_MenuPrefix + "Editors/Open Lightmap UV Editor", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuPerform_OpenLightmapUVEditor()
 		{
@@ -83,9 +74,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Editors/Open Material Editor")]
-#endif
 		[MenuItem(k_MenuPrefix + "Editors/Open Material Editor", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuPerform_OpenMaterialEditor()
 		{
@@ -101,9 +89,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Editors/Open Shape Editor")]
-#endif
 		[MenuItem(k_MenuPrefix + "Editors/Open Shape Editor %#k", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuPerform_OpenShapeEditor()
 		{
@@ -119,9 +104,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Editors/Open Shape Editor Menu Item")]
-#endif
 		[MenuItem(k_MenuPrefix + "Editors/Open Shape Editor Menu Item %#k", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuPerform_OpenShapeEditorMenuItem()
 		{
@@ -137,9 +119,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Editors/Open Smoothing Editor")]
-#endif
 		[MenuItem(k_MenuPrefix + "Editors/Open Smoothing Editor", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuPerform_OpenSmoothingEditor()
 		{
@@ -155,9 +134,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Editors/Open UV Editor")]
-#endif
 		[MenuItem(k_MenuPrefix + "Editors/Open UV Editor", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuPerform_OpenUVEditor()
 		{
@@ -173,9 +149,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Editors/Open Vertex Color Editor")]
-#endif
 		[MenuItem(k_MenuPrefix + "Editors/Open Vertex Color Editor", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuPerform_OpenVertexColorEditor()
 		{
@@ -191,9 +164,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Editors/Open Vertex Position Editor")]
-#endif
 		[MenuItem(k_MenuPrefix + "Editors/Open Vertex Position Editor", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuPerform_OpenVertexPositionEditor()
 		{
@@ -209,9 +179,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Export/Export")]
-#endif
 		[MenuItem(k_MenuPrefix + "Export/Export", false, PreferenceKeys.menuExport + 0)]
 		static void MenuPerform_Export()
 		{
@@ -227,9 +194,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Export/Export Asset")]
-#endif
 		[MenuItem(k_MenuPrefix + "Export/Export Asset", false, PreferenceKeys.menuExport + 0)]
 		static void MenuPerform_ExportAsset()
 		{
@@ -245,9 +209,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Export/Export Obj")]
-#endif
 		[MenuItem(k_MenuPrefix + "Export/Export Obj", false, PreferenceKeys.menuExport + 0)]
 		static void MenuPerform_ExportObj()
 		{
@@ -263,9 +224,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Export/Export Ply")]
-#endif
 		[MenuItem(k_MenuPrefix + "Export/Export Ply", false, PreferenceKeys.menuExport + 0)]
 		static void MenuPerform_ExportPly()
 		{
@@ -281,9 +239,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Export/Export Stl Ascii")]
-#endif
 		[MenuItem(k_MenuPrefix + "Export/Export Stl Ascii", false, PreferenceKeys.menuExport + 0)]
 		static void MenuPerform_ExportStlAscii()
 		{
@@ -299,9 +254,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Export/Export Stl Binary")]
-#endif
 		[MenuItem(k_MenuPrefix + "Export/Export Stl Binary", false, PreferenceKeys.menuExport + 0)]
 		static void MenuPerform_ExportStlBinary()
 		{
@@ -317,9 +269,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Bevel Edges")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Bevel Edges", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_BevelEdges()
 		{
@@ -335,9 +284,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Bridge Edges")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Bridge Edges &b", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_BridgeEdges()
 		{
@@ -353,9 +299,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Collapse Vertices")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Collapse Vertices &c", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_CollapseVertices()
 		{
@@ -371,9 +314,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Conform Face Normals")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Conform Face Normals", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_ConformFaceNormals()
 		{
@@ -389,9 +329,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Connect Edges")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Connect Edges &e", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_ConnectEdges()
 		{
@@ -407,9 +344,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Connect Vertices")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Connect Vertices &e", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_ConnectVertices()
 		{
@@ -426,7 +360,7 @@ namespace UnityEditor.ProBuilder
 		}
 
 #if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Delete Faces")]
+		[Shortcut(k_ShortcutPrefix + "Geometry/Delete Faces", typeof(UnityEditor.SceneView), (KeyCode) 8, (ShortcutModifiers) 0)]
 #endif
 		[MenuItem(k_MenuPrefix + "Geometry/Delete Faces [⌫]", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_DeleteFaces()
@@ -443,9 +377,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Detach Faces")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Detach Faces", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_DetachFaces()
 		{
@@ -461,9 +392,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Extrude")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Extrude %e", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_Extrude()
 		{
@@ -494,9 +422,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Extrude Faces")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Extrude Faces %e", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_ExtrudeFaces()
 		{
@@ -512,9 +437,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Fill Hole")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Fill Hole", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_FillHole()
 		{
@@ -530,9 +452,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Flip Face Edge")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Flip Face Edge", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_FlipFaceEdge()
 		{
@@ -548,9 +467,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Flip Face Normals")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Flip Face Normals &n", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_FlipFaceNormals()
 		{
@@ -566,9 +482,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Insert Edge Loop")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Insert Edge Loop &u", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_InsertEdgeLoop()
 		{
@@ -584,9 +497,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Merge Faces")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Merge Faces", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_MergeFaces()
 		{
@@ -602,9 +512,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Set Pivot To Selection")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Set Pivot To Selection %j", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_SetPivotToSelection()
 		{
@@ -620,9 +527,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Smart Connect")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Smart Connect &e", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_SmartConnect()
 		{
@@ -638,9 +542,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Smart Subdivide")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Smart Subdivide &s", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_SmartSubdivide()
 		{
@@ -656,9 +557,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Split Vertices")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Split Vertices &x", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_SplitVertices()
 		{
@@ -674,9 +572,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Subdivide Edges")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Subdivide Edges &s", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_SubdivideEdges()
 		{
@@ -692,9 +587,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Subdivide Faces")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Subdivide Faces &s", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_SubdivideFaces()
 		{
@@ -710,9 +602,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Triangulate Faces")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Triangulate Faces", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_TriangulateFaces()
 		{
@@ -728,9 +617,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Geometry/Weld Vertices")]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Weld Vertices &v", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_WeldVertices()
 		{
@@ -746,9 +632,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Interaction/Toggle Drag Rect Mode")]
-#endif
 		[MenuItem(k_MenuPrefix + "Interaction/Toggle Drag Rect Mode", false, PreferenceKeys.menuSelection + 1)]
 		static void MenuPerform_ToggleDragRectMode()
 		{
@@ -764,9 +647,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Interaction/Toggle Drag Selection Mode")]
-#endif
 		[MenuItem(k_MenuPrefix + "Interaction/Toggle Drag Selection Mode", false, PreferenceKeys.menuSelection + 1)]
 		static void MenuPerform_ToggleDragSelectionMode()
 		{
@@ -800,9 +680,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Interaction/Toggle Select Back Faces")]
-#endif
 		[MenuItem(k_MenuPrefix + "Interaction/Toggle Select Back Faces", false, PreferenceKeys.menuSelection + 1)]
 		static void MenuPerform_ToggleSelectBackFaces()
 		{
@@ -818,9 +695,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Object/Center Pivot")]
-#endif
 		[MenuItem(k_MenuPrefix + "Object/Center Pivot", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuPerform_CenterPivot()
 		{
@@ -836,9 +710,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Object/Conform Object Normals")]
-#endif
 		[MenuItem(k_MenuPrefix + "Object/Conform Object Normals", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuPerform_ConformObjectNormals()
 		{
@@ -854,9 +725,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Object/Flip Object Normals")]
-#endif
 		[MenuItem(k_MenuPrefix + "Object/Flip Object Normals", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuPerform_FlipObjectNormals()
 		{
@@ -872,9 +740,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Object/Freeze Transform")]
-#endif
 		[MenuItem(k_MenuPrefix + "Object/Freeze Transform", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuPerform_FreezeTransform()
 		{
@@ -890,9 +755,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Object/Generate U V2")]
-#endif
 		[MenuItem(k_MenuPrefix + "Object/Generate U V2", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuPerform_GenerateUV2()
 		{
@@ -908,9 +770,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Object/Merge Objects")]
-#endif
 		[MenuItem(k_MenuPrefix + "Object/Merge Objects", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuPerform_MergeObjects()
 		{
@@ -926,9 +785,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Object/Mirror Objects")]
-#endif
 		[MenuItem(k_MenuPrefix + "Object/Mirror Objects", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuPerform_MirrorObjects()
 		{
@@ -944,9 +800,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Object/Pro Builderize")]
-#endif
 		[MenuItem(k_MenuPrefix + "Object/Pro Builderize", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuPerform_ProBuilderize()
 		{
@@ -998,9 +851,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Object/Subdivide Object")]
-#endif
 		[MenuItem(k_MenuPrefix + "Object/Subdivide Object", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuPerform_SubdivideObject()
 		{
@@ -1016,9 +866,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Object/Triangulate Object")]
-#endif
 		[MenuItem(k_MenuPrefix + "Object/Triangulate Object", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuPerform_TriangulateObject()
 		{
@@ -1034,9 +881,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Selection/Grow Selection")]
-#endif
 		[MenuItem(k_MenuPrefix + "Selection/Grow Selection &g", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuPerform_GrowSelection()
 		{
@@ -1052,9 +896,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Selection/Invert Selection")]
-#endif
 		[MenuItem(k_MenuPrefix + "Selection/Invert Selection %#i", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuPerform_InvertSelection()
 		{
@@ -1070,9 +911,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Selection/Select Edge Loop")]
-#endif
 		[MenuItem(k_MenuPrefix + "Selection/Select Edge Loop &l", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuPerform_SelectEdgeLoop()
 		{
@@ -1088,9 +926,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Selection/Select Edge Ring")]
-#endif
 		[MenuItem(k_MenuPrefix + "Selection/Select Edge Ring &r", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuPerform_SelectEdgeRing()
 		{
@@ -1106,9 +941,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Selection/Select Face Loop")]
-#endif
 		[MenuItem(k_MenuPrefix + "Selection/Select Face Loop", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuPerform_SelectFaceLoop()
 		{
@@ -1124,9 +956,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Selection/Select Face Ring")]
-#endif
 		[MenuItem(k_MenuPrefix + "Selection/Select Face Ring", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuPerform_SelectFaceRing()
 		{
@@ -1142,9 +971,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Selection/Select Hole")]
-#endif
 		[MenuItem(k_MenuPrefix + "Selection/Select Hole", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuPerform_SelectHole()
 		{
@@ -1160,9 +986,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Selection/Select Loop")]
-#endif
 		[MenuItem(k_MenuPrefix + "Selection/Select Loop &l", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuPerform_SelectLoop()
 		{
@@ -1178,9 +1001,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Selection/Select Material")]
-#endif
 		[MenuItem(k_MenuPrefix + "Selection/Select Material", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuPerform_SelectMaterial()
 		{
@@ -1196,9 +1016,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Selection/Select Ring")]
-#endif
 		[MenuItem(k_MenuPrefix + "Selection/Select Ring &r", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuPerform_SelectRing()
 		{
@@ -1214,9 +1031,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Selection/Select Smoothing Group")]
-#endif
 		[MenuItem(k_MenuPrefix + "Selection/Select Smoothing Group", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuPerform_SelectSmoothingGroup()
 		{
@@ -1232,9 +1046,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Selection/Select Vertex Color")]
-#endif
 		[MenuItem(k_MenuPrefix + "Selection/Select Vertex Color", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuPerform_SelectVertexColor()
 		{
@@ -1250,9 +1061,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Selection/Shrink Selection")]
-#endif
 		[MenuItem(k_MenuPrefix + "Selection/Shrink Selection &#g", false, PreferenceKeys.menuSelection + 0)]
 		static void MenuPerform_ShrinkSelection()
 		{
