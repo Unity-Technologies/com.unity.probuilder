@@ -6,11 +6,12 @@ using System;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
-using FlyingWormConsole3.FullSerializer.Internal;
 using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder.Actions;
 using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
 using UObject = UnityEngine.Object;
 using UnityEditor.SettingsManagement;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
@@ -962,7 +963,7 @@ namespace UnityEditor.ProBuilder
                     {
                         foreach (ProBuilderMesh pbo in selection)
                         {
-                            UndoUtility.RecordObjects(new Object[2] { pbo, pbo.transform }, "Set Pivot");
+                            UndoUtility.RecordObjects(new UObject[2] { pbo, pbo.transform }, "Set Pivot");
 
                             if (pbo.selectedIndexesInternal.Length > 0)
                             {

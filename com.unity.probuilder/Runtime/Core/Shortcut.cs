@@ -11,7 +11,9 @@ namespace UnityEngine.ProBuilder
     /// <summary>
     /// ProBuilder shortcuts.
     /// </summary>
+#if SHORTCUT_MANAGER
     [System.Obsolete]
+#endif
     sealed class Shortcut
     {
         public Shortcut(string a, string d, KeyCode k, EventModifiers e)
