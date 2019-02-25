@@ -26,6 +26,7 @@ namespace UnityEditor.ProBuilder
     static class EditorSceneViewPicker
     {
         static int s_DeepSelectionPrevious = 0x0;
+        static bool s_AppendModifierPreviousState = false;
         static SceneSelection s_Selection = new SceneSelection();
         static List<VertexPickerEntry> s_NearestVertices = new List<VertexPickerEntry>();
         static List<GameObject> s_OverlappingGameObjects = new List<GameObject>();
@@ -295,6 +296,14 @@ namespace UnityEditor.ProBuilder
             // If any event modifiers are engaged don't cycle the deep click
             EventModifiers em = Event.current.modifiers;
 
+            // Reset cycle if we used an event modifier previously.
+            // Move state back to single selection.
+            if ((em != EventModifiers.None) != s_AppendModifierPreviousState)
+            {
+                s_AppendModifierPreviousState = (em != EventModifiers.None);
+                s_DeepSelectionPrevious = newHash;
+            }
+            
             if (isPreview || em != EventModifiers.None)
                 EditorHandleUtility.GetHovered(mousePosition, s_OverlappingGameObjects);
             else
