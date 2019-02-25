@@ -22,6 +22,9 @@ namespace UnityEditor.ProBuilder
         // Match the value set in RectSelection.cs
         const float k_MouseDragThreshold = 6f;
 
+        //Off pointer multiplier is a percentage of the picking distance
+        const float k_OffPointerMultiplierPercent = 0.1f;  
+
         /// <value>
         /// Raised any time the ProBuilder editor refreshes the selection. This is called every frame when interacting with mesh elements, and after any mesh operation.
         /// </value>
@@ -385,7 +388,7 @@ namespace UnityEditor.ProBuilder
 
             m_ScenePickerPreferences = new ScenePickerPreferences()
             {
-                offPointerMultiplier = s_PickingDistance * 0.1f, //Multiplier is 10% of the picking distance
+                offPointerMultiplier = s_PickingDistance * k_OffPointerMultiplierPercent,
                 maxPointerDistance = s_PickingDistance,
                 cullMode = m_BackfaceSelectEnabled ? CullingMode.None : CullingMode.Back,
                 selectionModifierBehavior = m_SelectModifierBehavior,
