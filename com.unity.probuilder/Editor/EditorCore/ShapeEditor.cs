@@ -153,7 +153,7 @@ namespace UnityEditor.ProBuilder
         {
             ApplyPreviewTransform(mesh);
 
-            DestroyPreviewObject();
+            DestroyPreviewObject(mesh);
 
             mesh.selectable = false;
             m_PreviewObject = mesh.gameObject;
