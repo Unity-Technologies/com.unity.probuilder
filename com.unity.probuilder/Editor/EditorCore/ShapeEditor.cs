@@ -113,20 +113,39 @@ namespace UnityEditor.ProBuilder
             var res = m_ShapeBuilders[s_CurrentIndex].Build();
             EditorUtility.InitObject(res);
             ApplyPreviewTransform(res);
-            DestroyPreviewObject();
+            DestroyPreviewObject(res);
 
             if (forceCloseWindow || s_CloseWindowAfterCreateShape)
                 Close();
         }
 
-        void DestroyPreviewObject()
+        void DestroyPreviewObject(ProBuilderMesh result = null)
         {
             if (m_PreviewObject != null)
             {
+                ReparentPreviewChildren(result);
+
                 if (m_PreviewObject.GetComponent<MeshFilter>().sharedMesh != null)
                     DestroyImmediate(m_PreviewObject.GetComponent<MeshFilter>().sharedMesh);
 
                 DestroyImmediate(m_PreviewObject);
+            }
+        }
+
+        void ReparentPreviewChildren(ProBuilderMesh target)
+        {
+            int childCount;
+            if (m_PreviewObject != null && (childCount = m_PreviewObject.transform.childCount) > 0)
+            {
+                Transform parent = target != null
+                    ? target.transform
+                    : new GameObject("Preview Hierarchy Backup").transform;
+
+                for (int i = childCount - 1; i >= 0; --i)
+                {
+                    var child = m_PreviewObject.transform.GetChild(i);
+                    child.SetParent(parent);
+                }
             }
         }
 
