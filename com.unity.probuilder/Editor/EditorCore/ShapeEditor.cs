@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -33,6 +34,9 @@ namespace UnityEditor.ProBuilder
         Vector2 m_Scroll = Vector2.zero;
         static int s_CurrentIndex = 0;
         GameObject m_PreviewObject;
+        static readonly List<Component> s_OriginalComponentsTemp = new List<Component>(4);
+        readonly List<Component> m_OriginalComponents = new List<Component>(4);
+        static readonly List<Component> s_ComponentBuffer = new List<Component>(16);
 
         [UserSetting("Toolbar", "Close Shape Window after Build", "When true the shape window will close after hitting the build button.")]
         static Pref<bool> s_CloseWindowAfterCreateShape = new Pref<bool>("editor.closeWindowAfterShapeCreation", false);
@@ -113,6 +117,7 @@ namespace UnityEditor.ProBuilder
             var res = m_ShapeBuilders[s_CurrentIndex].Build();
             EditorUtility.InitObject(res);
             ApplyPreviewTransform(res);
+            CopyAddedComponents(m_PreviewObject, m_OriginalComponents, res.gameObject);
             DestroyPreviewObject(res);
 
             if (forceCloseWindow || s_CloseWindowAfterCreateShape)
@@ -151,22 +156,43 @@ namespace UnityEditor.ProBuilder
 
         void SetPreviewMesh(ProBuilderMesh mesh)
         {
-            ApplyPreviewTransform(mesh);
+            var nextPreview = mesh.gameObject;
+            mesh.selectable = false;
+            mesh.preserveMeshAssetOnDestroy = true;
 
+            var umesh = mesh.mesh;
+            umesh.hideFlags = HideFlags.DontSave;
+            nextPreview.hideFlags = HideFlags.DontSave;
+            nextPreview.GetComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.ShapePreviewMaterial;
+            nextPreview.GetComponents(s_OriginalComponentsTemp);
+
+            ApplyPreviewTransform(mesh);
+            CopyAddedComponents(m_PreviewObject, m_OriginalComponents, nextPreview);
             DestroyPreviewObject(mesh);
 
-            mesh.selectable = false;
-            m_PreviewObject = mesh.gameObject;
-
-            mesh.preserveMeshAssetOnDestroy = true;
-            var umesh = mesh.mesh;
+            m_OriginalComponents.Clear();
+            m_OriginalComponents.AddRange(s_OriginalComponentsTemp);
             DestroyImmediate(mesh);
 
-            umesh.hideFlags = HideFlags.DontSave;
-            m_PreviewObject.hideFlags = HideFlags.DontSave;
-            m_PreviewObject.GetComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.ShapePreviewMaterial;
-
+            m_PreviewObject = nextPreview;
             Selection.activeTransform = m_PreviewObject.transform;
+        }
+
+        void CopyAddedComponents(GameObject original, IList<Component> originalComponents, GameObject target)
+        {
+            if (original == null || target == null)
+                return;
+
+            original.GetComponents(s_ComponentBuffer);
+
+            foreach (var component in s_ComponentBuffer)
+            {
+                if (!originalComponents.Contains(component))
+                {
+                    var copy = target.AddComponent(component.GetType());
+                    UnityEditor.EditorUtility.CopySerialized(component, copy);
+                }
+            }
         }
 
         void ApplyPreviewTransform(ProBuilderMesh mesh)
