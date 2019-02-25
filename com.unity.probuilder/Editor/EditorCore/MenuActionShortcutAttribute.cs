@@ -1,5 +1,4 @@
 using System;
-using UnityEditor.ShortcutManagement;
 using UnityEngine;
 
 namespace UnityEditor.ProBuilder
@@ -31,17 +30,6 @@ namespace UnityEditor.ProBuilder
 			context = defaultContext;
 			key = defaultKeyCode;
 			modifiers = defaultShorcutModifiers;
-		}
-	}
-
-	/// <summary>
-	/// Decorate MenuAction classes to set default ShortcutBinding or override the ShortcutContext (default is global).
-	/// </summary>
-	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-	class DisallowMenuActionShortcutAttribute : Attribute
-	{
-		public DisallowMenuActionShortcutAttribute()
-		{
 		}
 	}
 }

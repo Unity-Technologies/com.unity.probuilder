@@ -1,13 +1,9 @@
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
-using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-    [DisallowMenuActionShortcut]
     sealed class ExtrudeEdges : MenuAction
     {
         Pref<float> m_ExtrudeEdgeDistance = new Pref<float>("ExtrudeEdges.distance", .5f);
