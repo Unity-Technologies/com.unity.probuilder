@@ -308,8 +308,8 @@ namespace UnityEditor.ProBuilder
         #region GUI Loop
 
         const int k_UVInspectorWidthMinManual = 100;
-        const int k_UVInspectorWidthMinAuto = 200;
-        const int k_UVInspectorWidth = 210;
+        const int k_UVInspectorWidthMinAuto = 240;
+        const int k_UVInspectorWidth = 240;
 
         Rect graphRect,
              toolbarRect,
