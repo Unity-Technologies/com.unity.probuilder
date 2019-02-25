@@ -29,6 +29,7 @@ namespace UnityEditor.ProBuilder
         static SceneSelection s_Selection = new SceneSelection();
         static List<VertexPickerEntry> s_NearestVertices = new List<VertexPickerEntry>();
         static List<GameObject> s_OverlappingGameObjects = new List<GameObject>();
+        static List<Edge> s_EdgeBuffer = new List<Edge>(32);
 
         public static ProBuilderMesh DoMouseClick(Event evt, SelectMode selectionMode, ScenePickerPreferences pickerPreferences)
         {
@@ -495,11 +496,12 @@ namespace UnityEditor.ProBuilder
                         return tup.distance;
                 }
             }
-
+            
             foreach (var mesh in MeshSelection.topInternal)
             {
                 var trs = mesh.transform;
                 var positions = mesh.positionsInternal;
+                s_EdgeBuffer.Clear();
 
                 foreach (var face in mesh.facesInternal)
                 {
@@ -507,13 +509,21 @@ namespace UnityEditor.ProBuilder
                     {
                         int x = edge.a;
                         int y = edge.b;
+                        
 
                         float d = UHandleUtility.DistanceToLine(
                                 trs.TransformPoint(positions[x]),
                                 trs.TransformPoint(positions[y]));
 
-                        if (d < bestDistance)
+                        if (d == bestDistance)
                         {
+                            s_EdgeBuffer.Add(new Edge(x, y));
+                        }
+                        else if (d < bestDistance)
+                        {
+                            s_EdgeBuffer.Clear();
+                            s_EdgeBuffer.Add(new Edge(x, y));
+
                             selection.gameObject = mesh.gameObject;
                             selection.mesh = mesh;
                             selection.edge = new Edge(x, y);
@@ -521,6 +531,11 @@ namespace UnityEditor.ProBuilder
                         }
                     }
                 }
+
+                //If more than 1 edge is closest, the closest is one of the vertex.
+                //Get closest edge to the camera.
+                if (s_EdgeBuffer.Count > 1)
+                    selection.edge = GetClosestEdgeToCamera(positions, s_EdgeBuffer);
             }
 
             if (selection.gameObject != null)
@@ -531,6 +546,34 @@ namespace UnityEditor.ProBuilder
             }
 
             return Mathf.Infinity;
+        }
+
+        static Edge GetClosestEdgeToCamera(Vector3[] positions, IEnumerable<Edge> edges)
+        {
+            var camPos = SceneView.lastActiveSceneView.camera.transform.position;
+            var closestDistToScreen = Mathf.Infinity;
+            Edge closest = default;
+
+            foreach (var edge in edges)
+            {
+                var a = positions[edge.a];
+                var b = positions[edge.b];
+                var dir = (b - a).normalized * 0.01f;
+
+                //Use a point that is close to the vertex on the edge but not on it,
+                //otherwise we will have the same issue with every edge having the same distance to screen
+                float dToScreen = Mathf.Min(
+                    Vector3.Distance(camPos, a + dir),
+                    Vector3.Distance(camPos, b - dir));
+
+                if (dToScreen < closestDistToScreen)
+                {
+                    closestDistToScreen = dToScreen;
+                    closest = edge;
+                }
+            }
+
+            return closest;
         }
 
         struct EdgeAndDistance
