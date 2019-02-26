@@ -1,7 +1,9 @@
+using System;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using System.Collections.Generic;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -88,18 +90,40 @@ namespace UnityEditor.ProBuilder.Actions
                 {
                     mesh.ToMesh();
 
+                    var selectedVertices  = mesh.GetCoincidentVertices(mesh.selectedVertices);
                     int[] welds = mesh.WeldVertices(mesh.selectedIndexesInternal, m_WeldDistance);
                     res = welds != null ? new ActionResult(ActionResult.Status.Success, "Weld Vertices") : new ActionResult(ActionResult.Status.Failure, "Failed Weld Vertices");
 
                     if (res)
                     {
-                        if (mesh.RemoveDegenerateTriangles() != null)
+                        var removedIndices = mesh.RemoveDegenerateTriangles();
+                        if (removedIndices != null)
                         {
-                            mesh.ToMesh();
-                            welds = new int[0]; // @todo
-                        }
+                            if (removedIndices.Length > 0)
+                            {
+                                var newlySelectedVertices = new List<int>();
+                                selectedVertices.Sort();
+                                Array.Sort(removedIndices);
 
-                        mesh.SetSelectedVertices(welds ?? new int[0] {});
+                                int count = 0;
+                                for (int i = 0; i < selectedVertices.Count ; i++)
+                                {
+                                    if (count >= removedIndices.Length || selectedVertices[i] != removedIndices[count] )
+                                    {
+                                        newlySelectedVertices.Add(selectedVertices[i] - UnityEngine.ProBuilder.ArrayUtility.NearestIndexPriorToValue(removedIndices, selectedVertices[i]) - 1);
+                                    }
+                                    else
+                                    {
+                                        ++count;
+                                    }
+                                }
+                                mesh.SetSelectedVertices(newlySelectedVertices.ToArray());
+
+                            }
+                            mesh.ToMesh();
+                        }
+                        else
+                            mesh.SetSelectedVertices(welds ?? new int[0] {});
                     }
 
                     mesh.Refresh();
