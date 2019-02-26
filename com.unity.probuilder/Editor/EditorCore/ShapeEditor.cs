@@ -190,6 +190,9 @@ namespace UnityEditor.ProBuilder
                 if (!originalComponents.Contains(component))
                 {
                     var copy = target.AddComponent(component.GetType());
+                    if (copy == null)
+                        continue;
+
                     UnityEditor.EditorUtility.CopySerialized(component, copy);
                 }
             }
