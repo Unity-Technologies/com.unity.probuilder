@@ -130,6 +130,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             var vertices = new List<Vertex>();
             var faces = new List<Face>();
+            var autoUvFaces = new List<Face>();
             var sharedVertices = new List<SharedVertex>();
             var sharedTextures = new List<SharedVertex>();
             int offset = 0;
@@ -153,10 +154,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 {
                     var newFace = new Face(face);
                     newFace.ShiftIndexes(offset);
+
                     // prevents uvs from shifting when being converted from local coords to world space
                     if (!newFace.manualUV && !newFace.uv.useWorldSpace)
+                    {
                         newFace.manualUV = true;
-
+                        autoUvFaces.Add(newFace);
+                    }
                     var material = materials[Math.Clamp(face.submeshIndex, 0, materialCount - 1)];
                     var submeshIndex = materialMap.IndexOf(material);
 
@@ -205,6 +209,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 m.renderer.sharedMaterials = materialMap.ToArray();
                 FilterUnusedSubmeshIndexes(m);
                 m.SetPivot(pivot);
+                UVEditing.SetAutoAndAlignUnwrapParamsToUVs(m, autoUvFaces);
+
             }
             return res;
         }
