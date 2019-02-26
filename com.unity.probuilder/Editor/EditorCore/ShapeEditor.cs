@@ -69,7 +69,7 @@ namespace UnityEditor.ProBuilder
         {
             if (m_PreviewObject != null && m_PreviewObject.transform.childCount >= 1)
             {
-                CreateSelectedShape();
+                CreateSelectedShape(autosave: true);
             }
             else
             {
@@ -117,9 +117,10 @@ namespace UnityEditor.ProBuilder
                 CreateSelectedShape();
         }
 
-        void CreateSelectedShape(bool forceCloseWindow = false)
+        void CreateSelectedShape(bool forceCloseWindow = false, bool autosave = false)
         {
             var res = m_ShapeBuilders[s_CurrentIndex].Build();
+            if (autosave) res.name = res.name + " (autosaved)";
             EditorUtility.InitObject(res);
             ApplyPreviewTransform(res);
             CopyAddedComponents(m_PreviewObject, m_OriginalComponents, res.gameObject);
