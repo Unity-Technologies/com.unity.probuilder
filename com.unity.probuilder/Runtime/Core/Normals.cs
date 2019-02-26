@@ -184,6 +184,13 @@ namespace UnityEngine.ProBuilder
                         smoothGroupMax = face.smoothingGroup + 1;
                 }
             }
+            
+            // Increase buffers size if we have more smoothing groups than usual.
+            if (smoothGroupMax > s_SmoothAvg.Length)
+            {
+                s_SmoothAvg = new Vector3[smoothGroupMax];
+                s_SmoothAvgCount = new float[smoothGroupMax];
+            }
 
             // For each sharedIndexes group (individual vertex), find vertices that are in the same smoothing
             // group and average their normals.
