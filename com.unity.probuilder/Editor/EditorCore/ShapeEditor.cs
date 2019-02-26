@@ -115,6 +115,8 @@ namespace UnityEditor.ProBuilder
             ApplyPreviewTransform(res);
             DestroyPreviewObject();
 
+            Undo.RegisterCreatedObjectUndo(res.gameObject, "Create Shape");
+
             if (forceCloseWindow || s_CloseWindowAfterCreateShape)
                 Close();
         }
