@@ -5,6 +5,8 @@ namespace UnityEditor.ProBuilder
 {
     class TextureMoveTool : TextureTool
     {
+        static readonly float k_Vector3Magnitude = Vector3.one.magnitude;
+
         Vector3 m_Position = Vector3.zero;
 
         protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
@@ -63,7 +65,8 @@ namespace UnityEditor.ProBuilder
                     if (!(mesh is MeshAndTextures))
                         continue;
 
-                    delta *= 1f / mesh.mesh.transform.lossyScale.magnitude;
+                    // Account for object scale
+                    delta *= k_Vector3Magnitude / mesh.mesh.transform.lossyScale.magnitude;
 
                     var origins = ((MeshAndTextures)mesh).origins;
                     var positions = ((MeshAndTextures)mesh).textures;

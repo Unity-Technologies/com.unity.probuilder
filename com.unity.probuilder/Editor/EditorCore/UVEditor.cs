@@ -531,7 +531,7 @@ namespace UnityEditor.ProBuilder
 
             if (update)
             {
-                /// UpdateSelection clears handlePosition
+                // UpdateSelection clears handlePosition
                 Vector2 storedHandlePosition = handlePosition;
                 ProBuilderEditor.Refresh();
                 SetHandlePosition(storedHandlePosition, true);
