@@ -10,11 +10,6 @@ namespace UnityEditor.ProBuilder
     [InitializeOnLoad]
     internal static class EntityVisibility
     {
-        private static readonly Pref<bool> m_ShowDetail = new Pref<bool>("entity.detailVisible", true);
-        private static readonly Pref<bool> m_ShowMover = new Pref<bool>("entity.moverVisible", true);
-        private static readonly Pref<bool> m_ShowCollider = new Pref<bool>("entity.colliderVisible", true);
-        private static readonly Pref<bool> m_ShowTrigger = new Pref<bool>("entity.triggerVisible", true);
-
         static EntityVisibility()
         {
 #if UNITY_2017_2_OR_NEWER
@@ -47,22 +42,6 @@ namespace UnityEditor.ProBuilder
         /// <param name="isVisible"></param>
         public static void SetEntityVisibility(EntityType entityType, bool isVisible)
         {
-            switch (entityType)
-            {
-                case EntityType.Detail:
-                    m_ShowDetail.SetValue(isVisible, true);
-                    break;
-                case EntityType.Mover:
-                    m_ShowMover.SetValue(isVisible, true);
-                    break;
-                case EntityType.Collider:
-                    m_ShowCollider.SetValue(isVisible, true);
-                    break;
-                case EntityType.Trigger:
-                    m_ShowTrigger.SetValue(isVisible, true);
-                    break;
-            }
-
             foreach (var entity in Object.FindObjectsOfType<Entity>())
                 if (entity.entityType == entityType)
                 {
@@ -94,31 +73,6 @@ namespace UnityEditor.ProBuilder
 
             if (!isEntering)
                 return;
-
-            // deprecated pb_Entity path
-            bool detailEnabled = m_ShowDetail;
-            bool moverEnabled = m_ShowMover;
-
-            foreach (var entity in Resources.FindObjectsOfTypeAll<Entity>())
-            {
-                var mr = entity.gameObject.GetComponent<MeshRenderer>();
-
-                if (mr == null)
-                    continue;
-
-                switch (entity.entityType)
-                {
-                    case EntityType.Detail:
-                        if (!detailEnabled)
-                            mr.enabled = true;
-                        break;
-
-                    case EntityType.Mover:
-                        if (!moverEnabled)
-                            mr.enabled = true;
-                        break;
-                }
-            }
         }
     }
 }
