@@ -4,6 +4,10 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.Assertions;
 
+#if UNITY_EDITOR
+using UnityEditor.SceneManagement;
+#endif
+
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
@@ -42,6 +46,11 @@ namespace UnityEngine.ProBuilder
             go.transform.position           = t.position;
             go.transform.localRotation      = t.localRotation;
             go.transform.localScale         = t.localScale;
+            
+            #if UNITY_EDITOR
+            StageUtility.PlaceGameObjectInCurrentStage(go);
+            #endif
+            
             return go;
         }
 
