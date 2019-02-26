@@ -311,6 +311,11 @@ namespace UnityEditor.ProBuilder
         const int k_UVInspectorWidthMinAuto = 240;
         const int k_UVInspectorWidth = 240;
 
+        int minimumInspectorWidth
+        {
+            get { return (mode == UVMode.Auto ? k_UVInspectorWidthMinAuto : k_UVInspectorWidthMinManual); }
+        }
+
         Rect graphRect,
              toolbarRect,
              actionWindowRect = new Rect(6, 64, k_UVInspectorWidth, 340);
@@ -384,9 +389,8 @@ namespace UnityEditor.ProBuilder
             actionWindowRect.y = (int)Mathf.Clamp(actionWindowRect.y, PAD, position.height - MIN_ACTION_WINDOW_SIZE);
             if (actionWindowRect.y + actionWindowRect.height > position.height)
                 actionWindowRect.height = position.height - actionWindowRect.y - 24;
-            int minWidth = (mode == UVMode.Auto ? k_UVInspectorWidthMinAuto : k_UVInspectorWidthMinManual);
-            if (actionWindowRect.width < minWidth)
-                actionWindowRect.width = minWidth;
+            if (actionWindowRect.width < minimumInspectorWidth)
+                actionWindowRect.width = minimumInspectorWidth;
 
             // Mouse drags, canvas movement, etc
             HandleInput();
@@ -2520,7 +2524,7 @@ namespace UnityEditor.ProBuilder
         {
             if (channel == 0)
             {
-                GUILayout.Label("UV Mode: " + mode.ToString(), EditorStyles.boldLabel);
+                GUILayout.Label("UV Mode: " + mode, EditorStyles.boldLabel);
 
                 switch (mode)
                 {
@@ -2624,10 +2628,11 @@ namespace UnityEditor.ProBuilder
             GUILayout.Label("Project UVs", EditorStyles.miniBoldLabel);
 
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Planar", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
+
+            if (GUILayout.Button("Planar", EditorStyles.miniButton))
                 Menu_PlanarProject();
 
-            if (GUILayout.Button("Box", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
+            if (GUILayout.Button("Box", EditorStyles.miniButton))
                 Menu_BoxProject();
 
             GUILayout.EndHorizontal();
@@ -2638,11 +2643,11 @@ namespace UnityEditor.ProBuilder
             GUI.enabled = MeshSelection.selectedVertexCount > 0;
             GUILayout.Label("Selection", EditorStyles.miniBoldLabel);
 
-            if (GUILayout.Button("Select Island", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
+            if (GUILayout.Button("Select Island", EditorStyles.miniButton))
                 Menu_SelectUVIsland();
 
             GUI.enabled = MeshSelection.selectedVertexCount > 0 && ProBuilderEditor.selectMode != SelectMode.Face;
-            if (GUILayout.Button("Select Face", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
+            if (GUILayout.Button("Select Face", EditorStyles.miniButton))
                 Menu_SelectUVFace();
 
             /**
@@ -2656,28 +2661,26 @@ namespace UnityEditor.ProBuilder
                     tool_weldButton,
                     Menu_SewUVs,
                     WeldButtonGUI,
-                    (int)actionWindowRect.width,
-                    20,
                     selection);
 
-            if (GUILayout.Button("Collapse UVs", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
+            if (GUILayout.Button("Collapse UVs", EditorStyles.miniButton))
                 Menu_CollapseUVs();
 
             GUI.enabled = MeshSelection.selectedVertexCount > 1;
-            if (GUILayout.Button("Split UVs", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
+            if (GUILayout.Button("Split UVs", EditorStyles.miniButton))
                 Menu_SplitUVs();
 
             GUILayout.Space(4);
 
-            if (GUILayout.Button("Flip Horizontal", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
+            if (GUILayout.Button("Flip Horizontal", EditorStyles.miniButton))
                 Menu_FlipUVs(Vector2.up);
 
-            if (GUILayout.Button("Flip Vertical", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
+            if (GUILayout.Button("Flip Vertical", EditorStyles.miniButton))
                 Menu_FlipUVs(Vector2.right);
 
             GUILayout.Space(4);
 
-            if (GUILayout.Button("Fit UVs", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
+            if (GUILayout.Button("Fit UVs", EditorStyles.miniButton))
                 Menu_FitUVs();
 
             EditorGUILayout.EndScrollView();
@@ -2688,11 +2691,13 @@ namespace UnityEditor.ProBuilder
         const float k_MinimumSewUVDistance = .001f;
         Pref<float> m_WeldDistance = new Pref<float>("UVEditor.weldDistance", .01f);
 
-        void WeldButtonGUI(int width)
+        void WeldButtonGUI()
         {
             EditorGUI.BeginChangeCheck();
 
+            EditorGUIUtility.labelWidth = 30f;
             m_WeldDistance.value = EditorGUILayout.FloatField(new GUIContent("Max", "The maximum distance between two vertices in order to be welded together."), m_WeldDistance);
+            EditorGUIUtility.labelWidth = 0f;
 
             if (m_WeldDistance <= k_MinimumSewUVDistance)
                 m_WeldDistance.value = k_MinimumSewUVDistance;
