@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEditor.SettingsManagement;
@@ -69,7 +67,14 @@ namespace UnityEditor.ProBuilder
 
         void OnDestroy()
         {
-            DestroyPreviewObject();
+            if (m_PreviewObject != null && m_PreviewObject.transform.childCount >= 1)
+            {
+                CreateSelectedShape();
+            }
+            else
+            {
+                DestroyPreviewObject();
+            }
         }
 
         [MenuItem("GameObject/3D Object/" + PreferenceKeys.pluginTitle + " Cube _%k")]
@@ -142,10 +147,7 @@ namespace UnityEditor.ProBuilder
             int childCount;
             if (m_PreviewObject != null && (childCount = m_PreviewObject.transform.childCount) > 0)
             {
-                Transform parent = target != null
-                    ? target.transform
-                    : new GameObject("Preview Hierarchy Backup").transform;
-
+                Transform parent = target != null ? target.transform : null;
                 for (int i = childCount - 1; i >= 0; --i)
                 {
                     var child = m_PreviewObject.transform.GetChild(i);
