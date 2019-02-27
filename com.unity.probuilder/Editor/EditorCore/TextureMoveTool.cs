@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
@@ -8,6 +10,22 @@ namespace UnityEditor.ProBuilder
         static readonly float k_Vector3Magnitude = Vector3.one.magnitude;
 
         Vector3 m_Position = Vector3.zero;
+
+        protected class TranslateTextureSelection : MeshAndTextures
+        {
+            SimpleTuple<Face, Vector2>[] m_FaceAndScale;
+
+            public TranslateTextureSelection(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation)
+                : base(mesh, pivot, orientation)
+            {
+                var faces = mesh.faces;
+
+                m_FaceAndScale = mesh.selectedFaceIndexes.Select(x =>
+                {
+                    return new SimpleTuple<Face, Vector2>(faces[x], Vector2.one);
+                }).ToArray();
+            }
+        }
 
         protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
         {
