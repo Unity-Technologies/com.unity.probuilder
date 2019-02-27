@@ -125,7 +125,7 @@ namespace UnityEditor.ProBuilder
 
             // Draw at the end so we get the snapped value
             if(showHandleInfo && isEditing)
-                DrawDeltaInfo("Translate: " + (handleRotationOriginInverse * delta).ToString("0.00"));
+                DrawDeltaInfo(string.Format("Translate: <b>{0:F2}</b>  {1}", delta.magnitude, (handleRotationOriginInverse * delta).ToString("0.00")));
         }
 
         void ApplyTranslation(Vector3 translation)
