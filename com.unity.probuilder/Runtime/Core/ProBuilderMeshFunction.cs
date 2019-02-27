@@ -403,6 +403,20 @@ namespace UnityEngine.ProBuilder
                 mesh.SetUVs(3, m_Textures3);
         }
 
+        public void SetGroupUV(AutoUnwrapSettings settings, int group)
+        {
+            if (!IsValidTextureGroup(group))
+                return;
+            
+            foreach (var face in facesInternal)
+            {
+                if (face.textureGroup != group)
+                    continue;
+
+                face.uv = settings;
+            }
+        }
+
         void RefreshColors()
         {
             Mesh m = filter.sharedMesh;

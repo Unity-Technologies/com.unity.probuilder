@@ -473,6 +473,7 @@ namespace UnityEditor.ProBuilder
                     var uv = q.uv;
                     uv.rotation = rot;
                     q.uv = uv;
+                    sel[i].SetGroupUV(uv, q.textureGroup); //TODO don't do this multiple time for same group
                 }
             }
         }
