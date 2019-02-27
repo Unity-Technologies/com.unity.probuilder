@@ -66,7 +66,7 @@ namespace UnityEditor.ProBuilder
         [UserSetting("Toolbar", "Toolbar Location", "Where the Object, Face, Edge, and Vertex toolbar will be shown in the Scene View.")]
         static Pref<SceneToolbarLocation> s_SceneToolbarLocation = new Pref<SceneToolbarLocation>("editor.sceneToolbarLocation", SceneToolbarLocation.UpperCenter, SettingsScope.User);
 
-        [UserSetting()]
+        [UserSetting]
         static Pref<float> s_PickingDistance = new Pref<float>("picking.pickingDistance", 128f, SettingsScope.User);
 
         static Pref<bool> s_WindowIsFloating = new Pref<bool>("UnityEngine.ProBuilder.ProBuilderEditor-isUtilityWindow", false, SettingsScope.Project);
@@ -220,7 +220,7 @@ namespace UnityEditor.ProBuilder
 
         Stack<SelectMode> m_SelectModeHistory = new Stack<SelectMode>();
 
-        [UserSettingBlock("Picking")]
+        [UserSettingBlock(UserSettingsProvider.developerModeCategory)]
         static void PickingPreferences(string searchContext)
         {
             s_PickingDistance.value = SettingsGUILayout.SearchableSlider(
