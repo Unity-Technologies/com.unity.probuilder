@@ -552,7 +552,7 @@ namespace UnityEditor.ProBuilder
         {
             var camPos = SceneView.lastActiveSceneView.camera.transform.position;
             var closestDistToScreen = Mathf.Infinity;
-            Edge closest = default;
+            Edge closest = default(Edge);
 
             foreach (var edge in edges)
             {
