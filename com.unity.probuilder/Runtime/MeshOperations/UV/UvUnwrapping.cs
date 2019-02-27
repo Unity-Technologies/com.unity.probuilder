@@ -1,5 +1,3 @@
-using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
@@ -7,6 +5,7 @@ namespace UnityEngine.ProBuilder
     static class UvUnwrapping
     {
         static Vector2 s_TempVector2 = Vector2.zero;
+        static readonly List<int> s_IndexBuffer = new List<int>(64);
 
         internal static void Project(ProBuilderMesh mesh, Face face)
         {
@@ -18,16 +17,21 @@ namespace UnityEngine.ProBuilder
         {
             Projection.PlanarProject(mesh, group, unwrapSettings);
 
+            s_IndexBuffer.Clear();
             foreach (var face in mesh.facesInternal)
             {
                 if (face.textureGroup == group)
-                    ApplyUVSettings(mesh.texturesInternal, face.distinctIndexesInternal, unwrapSettings);
+                {
+                    s_IndexBuffer.AddRange(face.distinctIndexesInternal);
+                }
             }
+
+            ApplyUVSettings(mesh.texturesInternal, s_IndexBuffer, unwrapSettings);
         }
 
-        static void ApplyUVSettings(Vector2[] uvs, int[] indexes, AutoUnwrapSettings uvSettings)
+        static void ApplyUVSettings(Vector2[] uvs, IList<int> indexes, AutoUnwrapSettings uvSettings)
         {
-            int len = indexes.Length;
+            int len = indexes.Count;
 
             switch (uvSettings.fill)
             {
@@ -84,20 +88,21 @@ namespace UnityEngine.ProBuilder
                 }
             }
 
-            for (int i = 0; i < indexes.Length; i++)
+            for (int i = 0; i < indexes.Count; i++)
             {
                 uvs[indexes[i]].x -= uvSettings.offset.x;
                 uvs[indexes[i]].y -= uvSettings.offset.y;
             }
         }
 
-        static void StretchUVs(Vector2[] uvs, int[] indexes)
+        static void StretchUVs(Vector2[] uvs, IList<int> indexes)
         {
-            var bounds = new Bounds2D(uvs, indexes);
+            var bounds = new Bounds2D();
+            bounds.SetWithPoints(uvs, indexes);
             var c = bounds.center;
             var s = bounds.size;
 
-            for (int i = 0; i < indexes.Length; i++)
+            for (int i = 0; i < indexes.Count; i++)
             {
                 var uv = uvs[indexes[i]];
 
@@ -108,13 +113,14 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        static void FitUVs(Vector2[] uvs, int[] indexes)
+        static void FitUVs(Vector2[] uvs, IList<int> indexes)
         {
-            var bounds = new Bounds2D(uvs, indexes);
+            var bounds = new Bounds2D();
+            bounds.SetWithPoints(uvs, indexes);
             var c = bounds.center;
             var s = Mathf.Max(bounds.size.x, bounds.size.y);
 
-            for (int i = 0; i < indexes.Length; i++)
+            for (int i = 0; i < indexes.Count; i++)
             {
                 var uv = uvs[indexes[i]];
 
@@ -125,7 +131,7 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        static void ApplyUVAnchor(Vector2[] uvs, int[] indexes, AutoUnwrapSettings.Anchor anchor)
+        static void ApplyUVAnchor(Vector2[] uvs, IList<int> indexes, AutoUnwrapSettings.Anchor anchor)
         {
             s_TempVector2.x = 0f;
             s_TempVector2.y = 0f;
@@ -147,7 +153,7 @@ namespace UnityEngine.ProBuilder
             else
                 s_TempVector2.y = min.y;
 
-            int len = indexes.Length;
+            int len = indexes.Count;
 
             for (int i = 0; i < len; i++)
             {

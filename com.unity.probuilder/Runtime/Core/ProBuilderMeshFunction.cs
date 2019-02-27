@@ -391,7 +391,7 @@ namespace UnityEngine.ProBuilder
 
                 if (!IsValidTextureGroup(textureGroup))
                     UvUnwrapping.Project(this, face);
-                else if (!s_CachedHashSet.Add(textureGroup))
+                else if (s_CachedHashSet.Add(textureGroup))
                     UvUnwrapping.ProjectTextureGroup(this, textureGroup, face.uv);
             }
 
