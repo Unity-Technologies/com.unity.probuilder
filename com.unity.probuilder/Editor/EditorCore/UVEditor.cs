@@ -238,6 +238,7 @@ namespace UnityEditor.ProBuilder
             this.autoRepaintOnSceneChange = true;
 
             MeshSelection.objectSelectionChanged += ObjectSelectionChanged;
+            ProBuilderEditor.selectionUpdated += SelectionUpdated;
             ProBuilderMesh.elementSelectionChanged += ElementSelectionChanged;
             ProBuilderMeshEditor.onGetFrameBoundsEvent += OnGetFrameBoundsEvent;
             Undo.undoRedoPerformed += ObjectSelectionChanged;
@@ -257,6 +258,7 @@ namespace UnityEditor.ProBuilder
             if (uv2Editor != null)
                 DestroyImmediate(uv2Editor);
 
+            ProBuilderEditor.selectionUpdated -= SelectionUpdated;
             MeshSelection.objectSelectionChanged -= ObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged -= ElementSelectionChanged;
             ProBuilderMeshEditor.onGetFrameBoundsEvent -= OnGetFrameBoundsEvent;
@@ -455,6 +457,11 @@ namespace UnityEditor.ProBuilder
         void ElementSelectionChanged(ProBuilderMesh mesh)
         {
             ObjectSelectionChanged();
+        }
+
+        void SelectionUpdated(IEnumerable<ProBuilderMesh> proBuilderMeshes)
+        {
+            UpdateMode();
         }
 
         void ObjectSelectionChanged()
@@ -2268,6 +2275,27 @@ namespace UnityEditor.ProBuilder
         #endregion
         #region Refresh / Set
 
+        void UpdateMode()
+        {
+            // figure out what the mode of selected faces is
+            if (MeshSelection.selectedFaceCount > 0)
+            {
+                // @todo write a more effecient method for this
+                List<bool> manual = new List<bool>();
+                for (int i = 0; i < selection.Length; i++)
+                    manual.AddRange(selection[i].selectedFacesInternal.Select(x => x.manualUV).ToList());
+                int c = manual.Distinct().Count();
+                if (c > 1)
+                    mode = UVMode.Mixed;
+                else if (c > 0)
+                    mode = manual[0] ? UVMode.Manual : UVMode.Auto;
+            }
+            else
+            {
+                mode = UVMode.Manual;
+            }
+        }
+
         // Doesn't call Repaint for you
         void RefreshUVCoordinates()
         {
@@ -2400,24 +2428,6 @@ namespace UnityEditor.ProBuilder
                     ProBuilderEditor.Refresh();
                     SceneView.RepaintAll();
                 }
-            }
-
-            // figure out what the mode of selected faces is
-            if (MeshSelection.selectedFaceCount > 0)
-            {
-                // @todo write a more effecient method for this
-                List<bool> manual = new List<bool>();
-                for (int i = 0; i < selection.Length; i++)
-                    manual.AddRange(selection[i].selectedFacesInternal.Select(x => x.manualUV).ToList());
-                int c = manual.Distinct().Count();
-                if (c > 1)
-                    mode = UVMode.Mixed;
-                else if (c > 0)
-                    mode = manual[0] ? UVMode.Manual : UVMode.Auto;
-            }
-            else
-            {
-                mode = UVMode.Manual;
             }
 
             m_PreviewMaterial = EditorMaterialUtility.GetActiveSelection();
