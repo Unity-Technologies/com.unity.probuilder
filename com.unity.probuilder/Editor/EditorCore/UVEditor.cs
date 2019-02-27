@@ -2621,8 +2621,12 @@ namespace UnityEditor.ProBuilder
 
             if (GUILayout.Button(gc_ConvertToAuto, EditorStyles.miniButton))
                 Menu_SetAutoUV();
-
+            
+            // Allowd scrollview to be enabled.
+            // Otherwise, we won't be able to use the scrollbar without selecting a face.
+            GUI.enabled = true;
             scroll = EditorGUILayout.BeginScrollView(scroll);
+            GUI.enabled = MeshSelection.selectedFaceCount > 0;
 
             /**
              * Projection Methods
@@ -2685,9 +2689,9 @@ namespace UnityEditor.ProBuilder
             if (GUILayout.Button("Fit UVs", EditorStyles.miniButton))
                 Menu_FitUVs();
 
-            EditorGUILayout.EndScrollView();
-
             GUI.enabled = true;
+            
+            EditorGUILayout.EndScrollView();
         }
 
         const float k_MinimumSewUVDistance = .001f;
