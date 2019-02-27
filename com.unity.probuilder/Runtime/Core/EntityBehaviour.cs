@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace UnityEngine.ProBuilder
 {
@@ -12,6 +13,8 @@ namespace UnityEngine.ProBuilder
         public abstract void Initialize();
 
         public abstract void OnEnterPlayMode();
+
+        public abstract void OnSceneLoaded(Scene scene, LoadSceneMode mode);
 
         protected void SetMaterial(Material material)
         {
