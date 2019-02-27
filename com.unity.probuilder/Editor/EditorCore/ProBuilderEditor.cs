@@ -778,28 +778,6 @@ namespace UnityEditor.ProBuilder
 
                 selectMode = UI.EditorGUIUtility.DoElementModeToolbar(m_ElementModeToolbarRect, selectMode);
 
-                // todo Move to VertexManipulationTool
-//              if (m_IsMovingElements && s_ShowSceneInfo)
-//              {
-//                  string handleTransformInfo = string.Format(
-//                      "translate: <b>{0}</b>\nrotate: <b>{1}</b>\nscale: <b>{2}</b>",
-//                      (m_ElementHandlePosition - m_TranslateOrigin).ToString(),
-//                      (m_HandleRotation.eulerAngles - m_RotateOrigin).ToString(),
-//                      (m_HandleScale - m_ScaleOrigin).ToString());
-//
-//                  var gc = UI.EditorGUIUtility.TempContent(handleTransformInfo);
-//                  // sceneview screen.height includes the tab and toolbar
-//                  var toolbarHeight = EditorStyles.toolbar.CalcHeight(gc, Screen.width);
-//                  var size = UI.EditorStyles.sceneTextBox.CalcSize(gc);
-//
-//                  Rect handleTransformInfoRect = new Rect(
-//                      sceneView.position.width - (size.x + 8), sceneView.position.height - (size.y + 8 + toolbarHeight),
-//                      size.x,
-//                      size.y);
-//
-//                  GUI.Label(handleTransformInfoRect, gc, UI.EditorStyles.sceneTextBox);
-//              }
-
                 if (s_ShowSceneInfo)
                 {
                     Vector2 size = UI.EditorStyles.sceneTextBox.CalcSize(m_SceneInfo);
