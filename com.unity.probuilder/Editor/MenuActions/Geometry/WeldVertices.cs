@@ -96,6 +96,8 @@ namespace UnityEditor.ProBuilder.Actions
 
                     if (res)
                     {
+                        var newSelection = welds ?? new int[0] { };
+
                         var removedIndices = mesh.RemoveDegenerateTriangles();
                         if (removedIndices != null)
                         {
@@ -117,13 +119,12 @@ namespace UnityEditor.ProBuilder.Actions
                                         ++count;
                                     }
                                 }
-                                mesh.SetSelectedVertices(newlySelectedVertices.ToArray());
 
+                                newSelection = newlySelectedVertices.ToArray();
                             }
                             mesh.ToMesh();
                         }
-                        else
-                            mesh.SetSelectedVertices(welds ?? new int[0] {});
+                        mesh.SetSelectedVertices(newSelection);
                     }
 
                     mesh.Refresh();
