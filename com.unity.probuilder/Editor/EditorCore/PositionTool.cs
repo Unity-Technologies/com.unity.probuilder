@@ -1,6 +1,7 @@
 //#define DEBUG_HANDLES
 
 using System.Linq;
+using UnityEditor.SettingsManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
@@ -8,6 +9,33 @@ namespace UnityEditor.ProBuilder
 {
     abstract class PositionTool : VertexManipulationTool
     {
+        [UserSetting("General", "Show Handle Info", "Toggle the display of information of move, rotate, and scale deltas.")]
+        static Pref<bool> s_ShowHandleInfo = new Pref<bool>("editor.showHandleDelta", false, SettingsScope.User);
+
+        protected bool showHandleInfo
+        {
+            get { return s_ShowHandleInfo.value; }
+        }
+
+        protected void DrawDeltaInfo(string text)
+        {
+            Handles.BeginGUI();
+            var view = SceneView.lastActiveSceneView;
+            var gc = UI.EditorGUIUtility.TempContent(text);
+
+            // scene view screen.height includes the tab and toolbar
+            var toolbarHeight = UI.EditorStyles.sceneTextBox.CalcHeight(gc, Screen.width);
+            var contentSize = UI.EditorStyles.sceneTextBox.CalcSize(gc);
+            Rect handleTransformInfoRect = new Rect(
+                view.position.width - (contentSize.x + 8),
+                view.position.height - (contentSize.y + 8 + toolbarHeight),
+                contentSize.x,
+                contentSize.y);
+
+            GUI.Label(handleTransformInfoRect, gc, UI.EditorStyles.sceneTextBox);
+            Handles.EndGUI();
+        }
+
         const bool k_CollectCoincidentVertices = true;
 
 #if APPLY_POSITION_TO_SPACE_GIZMO
@@ -59,6 +87,7 @@ namespace UnityEditor.ProBuilder
 
         protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
         {
+#if DEBUG_HANDLES
             if (isEditing && currentEvent.type == EventType.Repaint)
             {
                 foreach (var key in elementSelection)
@@ -68,7 +97,6 @@ namespace UnityEditor.ProBuilder
 
                     foreach (var group in key.elementGroups)
                     {
-#if DEBUG_HANDLES
                         var positions = ((MeshAndPositions)key).positions;
                         var postApplyMatrix = GetPostApplyMatrix(group);
                         var preApplyMatrix = postApplyMatrix.inverse;
@@ -90,10 +118,10 @@ namespace UnityEditor.ProBuilder
                                 }
                             }
                         }
-#endif
                     }
                 }
             }
+#endif
         }
 
         protected void Apply(Matrix4x4 delta)

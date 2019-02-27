@@ -10,7 +10,8 @@ namespace UnityEngine.ProBuilder
     public static class Projection
     {
         /// <summary>
-        /// Project a collection of 3d positions to a 2d plane.
+        /// Project a collection of 3d positions to a 2d plane. The direction from which the vertices are projected
+        /// is calculated using <see cref="FindBestPlane"/>.
         /// </summary>
         /// <param name="positions">A collection of positions to project based on a direction.</param>
         /// <param name="indexes"></param>
@@ -20,11 +21,20 @@ namespace UnityEngine.ProBuilder
             return PlanarProject(positions, indexes, FindBestPlane(positions, indexes).normal);
         }
 
+        /// <summary>
+        /// Project a collection of 3d positions to a 2d plane.
+        /// </summary>
+        /// <param name="positions">A collection of positions to project based on a direction.</param>
+        /// <param name="indexes">
+        /// A collection of indices to project. The returned array will match the length of indices.
+        /// </param>
+        /// <param name="direction">The direction from which vertex positions are projected into 2d space.</param>
+        /// <returns>The positions array projected into 2d coordinates.</returns>
         public static Vector2[] PlanarProject(IList<Vector3> positions, IList<int> indexes, Vector3 direction)
         {
             var nrm = direction;
             var axis = VectorToProjectionAxis(nrm);
-            var prj = ProjectionAxisToVectorInternal(axis);
+            var prj = GetTangentToAxis(axis);
             var len = indexes == null ? positions.Count : indexes.Count;
             var projected = new Vector2[len];
 
@@ -61,7 +71,7 @@ namespace UnityEngine.ProBuilder
             }
 
             var axis = VectorToProjectionAxis(nrm);
-            var prj = ProjectionAxisToVectorInternal(axis);
+            var prj = GetTangentToAxis(axis);
 
             var u = Vector3.Cross(nrm, prj);
             var v = Vector3.Cross(u, nrm);
@@ -103,7 +113,7 @@ namespace UnityEngine.ProBuilder
             }
 
             var axis = VectorToProjectionAxis(nrm);
-            var prj = ProjectionAxisToVectorInternal(axis);
+            var prj = GetTangentToAxis(axis);
 
             var uAxis = Vector3.Cross(nrm, prj);
             var vAxis = Vector3.Cross(uAxis, nrm);
@@ -170,7 +180,7 @@ namespace UnityEngine.ProBuilder
             return values;
         }
 
-        internal static Vector3 ProjectionAxisToVectorInternal(ProjectionAxis axis)
+        internal static Vector3 GetTangentToAxis(ProjectionAxis axis)
         {
             // old probuilder didn't respect project axis settings properly, and changing it to the correct version
             // (ProjectionAxisToVector) would break existing models.

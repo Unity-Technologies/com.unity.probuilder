@@ -314,30 +314,26 @@ namespace UnityEditor.ProBuilder.UI
         public static bool ToolSettingsGUI(string text,
             string description,
             bool showSettings,
-            System.Func<ProBuilderMesh[], ActionResult> action,
-            System.Action<int> gui,
-            int guiWidth,
-            int guiHeight,
+            Func<ProBuilderMesh[], ActionResult> action,
+            Action gui,
             ProBuilderMesh[] selection)
         {
-            return ToolSettingsGUI(text, description, showSettings, action, gui, true, guiWidth, guiHeight , selection);
+            return ToolSettingsGUI(text, description, showSettings, action, gui, true, selection);
         }
 
         public static bool ToolSettingsGUI(string text,
             string description,
             bool showSettings,
-            System.Func<ProBuilderMesh[], ActionResult> action,
-            System.Action<int> gui,
+            Func<ProBuilderMesh[], ActionResult> action,
+            Action gui,
             bool enabled,
-            int guiWidth,
-            int guiHeight,
             ProBuilderMesh[] selection)
         {
             if (enabled)
             {
                 GUILayout.BeginHorizontal();
 
-                if (GUILayout.Button(new GUIContent(text, description), UnityEditor.EditorStyles.miniButtonLeft, GUILayout.MaxWidth(guiWidth - 24 - 6)))
+                if (GUILayout.Button(new GUIContent(text, description), UnityEditor.EditorStyles.miniButtonLeft))
                     action(selection);
 
                 if (GUILayout.Button(showSettings ? "-" : "+", UnityEditor.EditorStyles.miniButtonRight, GUILayout.MaxWidth(24)))
@@ -346,12 +342,9 @@ namespace UnityEditor.ProBuilder.UI
 
                 if (showSettings)
                 {
-                    UnityEngine.GUI.backgroundColor = TOOL_SETTINGS_COLOR;
-                    Rect al = GUILayoutUtility.GetLastRect();
-                    UnityEngine.GUI.Box(new Rect(al.x, al.y + al.height + 2, al.width, guiHeight), "");
-                    UnityEngine.GUI.backgroundColor = Color.white;
-
-                    gui(guiWidth);
+                    GUILayout.BeginVertical(EditorStyles.sceneTextBox);
+                    gui();
+                    GUILayout.EndVertical();
                     GUILayout.Space(4);
                 }
             }

@@ -1,3 +1,5 @@
+using System;
+
 namespace UnityEngine.ProBuilder
 {
     public static class Normals
@@ -183,6 +185,13 @@ namespace UnityEngine.ProBuilder
                     if (face.smoothingGroup >= smoothGroupMax)
                         smoothGroupMax = face.smoothingGroup + 1;
                 }
+            }
+            
+            // Increase buffers size if we have more smoothing groups than usual.
+            if (smoothGroupMax > s_SmoothAvg.Length)
+            {
+                Array.Resize(ref s_SmoothAvg, smoothGroupMax);
+                Array.Resize(ref s_SmoothAvgCount, smoothGroupMax);
             }
 
             // For each sharedIndexes group (individual vertex), find vertices that are in the same smoothing
