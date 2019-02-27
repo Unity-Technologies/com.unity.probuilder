@@ -910,11 +910,13 @@ namespace UnityEditor.ProBuilder
                     break;
 
                 case EventType.ScrollWheel:
+                    if (!actionWindowRect.Contains(e.mousePosition))
+                    {
+                        SetCanvasScale(uvGraphScale - e.delta.y * ((uvGraphScale / MAX_GRAPH_SCALE_SCROLL) * SCROLL_MODIFIER));
+                        e.Use();
+                        needsRepaint = true;
+                    }
 
-                    SetCanvasScale(uvGraphScale - e.delta.y * ((uvGraphScale / MAX_GRAPH_SCALE_SCROLL) * SCROLL_MODIFIER));
-                    e.Use();
-
-                    needsRepaint = true;
                     break;
 
                 case EventType.ContextClick:
