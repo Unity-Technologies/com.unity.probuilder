@@ -351,6 +351,7 @@ namespace UnityEditor.ProBuilder
                     var uv = q.uv;
                     uv.flipU = flipU;
                     q.uv = uv;
+                    sel[i].SetGroupUV(q.uv, q.textureGroup);
                 }
             }
         }
@@ -365,6 +366,7 @@ namespace UnityEditor.ProBuilder
                     var uv = q.uv;
                     uv.flipV = flipV;
                     q.uv = uv;
+                    sel[i].SetGroupUV(q.uv, q.textureGroup);
                 }
             }
         }
@@ -379,6 +381,7 @@ namespace UnityEditor.ProBuilder
                     var uv = q.uv;
                     uv.swapUV = swapUV;
                     q.uv = uv;
+                    sel[i].SetGroupUV(q.uv, q.textureGroup);
                 }
             }
         }
@@ -393,6 +396,7 @@ namespace UnityEditor.ProBuilder
                     var uv = q.uv;
                     uv.useWorldSpace = useWorldSpace;
                     q.uv = uv;
+                    sel[i].SetGroupUV(q.uv, q.textureGroup);
                 }
             }
         }
@@ -407,6 +411,7 @@ namespace UnityEditor.ProBuilder
                     var uv = q.uv;
                     uv.fill = fill;
                     q.uv = uv;
+                    sel[i].SetGroupUV(q.uv, q.textureGroup);
                 }
             }
         }
@@ -422,6 +427,7 @@ namespace UnityEditor.ProBuilder
                     var uv = q.uv;
                     uv.anchor = anchor;
                     q.uv = uv;
+                    sel[i].SetGroupUV(q.uv, q.textureGroup);
                 }
             }
         }
@@ -458,6 +464,8 @@ namespace UnityEditor.ProBuilder
                             break;
                         }
                     }
+
+                    sel[i].SetGroupUV(q.uv, q.textureGroup);
                 }
             }
         }
@@ -473,6 +481,7 @@ namespace UnityEditor.ProBuilder
                     var uv = q.uv;
                     uv.rotation = rot;
                     q.uv = uv;
+                    sel[i].SetGroupUV(uv, q.textureGroup);
                 }
             }
         }
@@ -509,6 +518,8 @@ namespace UnityEditor.ProBuilder
                             break;
                         }
                     }
+
+                    sel[i].SetGroupUV(q.uv, q.textureGroup);
                 }
             }
         }
