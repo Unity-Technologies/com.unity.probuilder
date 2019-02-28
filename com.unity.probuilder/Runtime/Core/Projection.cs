@@ -61,25 +61,36 @@ namespace UnityEngine.ProBuilder
         internal static void PlanarProject(ProBuilderMesh mesh, int textureGroup, AutoUnwrapSettings unwrapSettings)
         {
             var worldSpace = unwrapSettings.useWorldSpace;
-            var nrm = FindBestPlane(mesh, textureGroup).normal;
             var trs = (Transform)null;
+            var faces = mesh.facesInternal;
+
+            // Get a projection direction by averaging the normals of all selected faces
+            var projectionDirection = Vector3.zero;
+
+            for (int f = 0, fc = faces.Length; f < fc; ++f)
+            {
+                if (faces[f].textureGroup != textureGroup)
+                    continue;
+
+                var nrm = Math.Normal(mesh, faces[f]);
+                projectionDirection += nrm;
+            }
 
             if (worldSpace)
             {
                 trs = mesh.transform;
-                nrm = trs.TransformDirection(nrm);
+                projectionDirection = trs.TransformDirection(projectionDirection);
             }
 
-            var axis = VectorToProjectionAxis(nrm);
+            var axis = VectorToProjectionAxis(projectionDirection);
             var prj = GetTangentToAxis(axis);
 
-            var u = Vector3.Cross(nrm, prj);
-            var v = Vector3.Cross(u, nrm);
+            var u = Vector3.Cross(projectionDirection, prj);
+            var v = Vector3.Cross(u, projectionDirection);
 
             u.Normalize();
             v.Normalize();
 
-            var faces = mesh.facesInternal;
             var positions = mesh.positionsInternal;
             var textures = mesh.texturesInternal;
 
@@ -349,7 +360,7 @@ namespace UnityEngine.ProBuilder
                 if (faces[faceIndex].textureGroup != textureGroup)
                     continue;
 
-                int[] indexes = faces[faceIndex].distinctIndexesInternal;
+                int[] indexes = faces[faceIndex].indexesInternal;
 
                 for (int index = 0, indexCount = indexes.Length; index < indexCount; index++)
                 {
@@ -370,7 +381,7 @@ namespace UnityEngine.ProBuilder
                 if (faces[faceIndex].textureGroup != textureGroup)
                     continue;
 
-                int[] indexes = faces[faceIndex].distinctIndexesInternal;
+                int[] indexes = faces[faceIndex].indexesInternal;
 
                 for (int index = 0, indexCount = indexes.Length; index < indexCount; index++)
                 {
