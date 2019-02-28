@@ -403,7 +403,7 @@ namespace UnityEngine.ProBuilder
                 mesh.SetUVs(3, m_Textures3);
         }
 
-        public void SetGroupUV(AutoUnwrapSettings settings, int group)
+        internal void SetGroupUV(AutoUnwrapSettings settings, int group)
         {
             if (!IsValidTextureGroup(group))
                 return;
