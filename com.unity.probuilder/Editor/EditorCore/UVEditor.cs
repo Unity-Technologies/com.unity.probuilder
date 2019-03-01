@@ -107,6 +107,7 @@ namespace UnityEditor.ProBuilder
 
         GUIContent gc_ConvertToManual = new GUIContent("Convert to Manual", "There are 2 methods of unwrapping UVs in ProBuilder; Automatic unwrapping and Manual.  Auto unwrapped UVs are generated dynamically using a set of parameters, which may be set.  Manual UVs are akin to traditional UV unwrapping, in that once you set them they will not be updated as your mesh changes.");
         GUIContent gc_ConvertToAuto = new GUIContent("Convert to Auto", "There are 2 methods of unwrapping UVs in ProBuilder; Automatic unwrapping and Manual.  Auto unwrapped UVs are generated dynamically using a set of parameters, which may be set.  Manual UVs are akin to traditional UV unwrapping, in that once you set them they will not be updated as your mesh changes.");
+        GUIContent gc_NoUvSelected = new GUIContent("No UVs Selected");
 
         GUIContent gc_RenderUV = new GUIContent((Texture2D)null, "Renders the current UV workspace from coordinates {0,0} to {1,1} to a 256px image.");
 
