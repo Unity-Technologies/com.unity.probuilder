@@ -26,6 +26,7 @@ namespace UnityEditor.ProBuilder
         static SceneSelection s_Selection = new SceneSelection();
         static List<VertexPickerEntry> s_NearestVertices = new List<VertexPickerEntry>();
         static List<GameObject> s_OverlappingGameObjects = new List<GameObject>();
+        static readonly List<int> s_IndexBuffer = new List<int>(16);
 
         public static ProBuilderMesh DoMouseClick(Event evt, SelectMode selectionMode, ScenePickerPreferences pickerPreferences)
         {
@@ -103,7 +104,22 @@ namespace UnityEditor.ProBuilder
                     UndoUtility.RecordSelection(mesh, "Select Vertex");
 
                     if (ind > -1)
-                        mesh.SetSelectedVertices(mesh.selectedIndexesInternal.RemoveAt(ind));
+                    {
+                        var sharedIndex = mesh.sharedVertexLookup[s_Selection.vertex];
+                        var sharedVertex = mesh.sharedVerticesInternal[sharedIndex];
+                        s_IndexBuffer.Clear();
+                        foreach (var vertex in sharedVertex)
+                        {
+                            var index = Array.IndexOf(mesh.selectedIndexesInternal, vertex);
+                            if (index < 0)
+                                continue;
+
+                            s_IndexBuffer.Add(index);
+                        }
+
+                        s_IndexBuffer.Sort();
+                        mesh.SetSelectedVertices(mesh.selectedIndexesInternal.SortedRemoveAt(s_IndexBuffer));
+                    }
                     else
                         mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(s_Selection.vertex));
                 }
