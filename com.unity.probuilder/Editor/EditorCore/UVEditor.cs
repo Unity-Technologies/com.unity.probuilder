@@ -118,7 +118,8 @@ namespace UnityEditor.ProBuilder
         {
             Auto,
             Manual,
-            Mixed
+            Mixed,
+            NoSelection,
         };
 
         UVMode mode = UVMode.Auto;
@@ -238,6 +239,7 @@ namespace UnityEditor.ProBuilder
             this.autoRepaintOnSceneChange = true;
 
             MeshSelection.objectSelectionChanged += ObjectSelectionChanged;
+            ProBuilderEditor.selectModeChanged += SelectModeChanged;
             ProBuilderMesh.elementSelectionChanged += ElementSelectionChanged;
             ProBuilderMeshEditor.onGetFrameBoundsEvent += OnGetFrameBoundsEvent;
             Undo.undoRedoPerformed += ObjectSelectionChanged;
@@ -256,9 +258,10 @@ namespace UnityEditor.ProBuilder
 
             if (uv2Editor != null)
                 DestroyImmediate(uv2Editor);
-            
+
             MeshSelection.objectSelectionChanged -= ObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged -= ElementSelectionChanged;
+            ProBuilderEditor.selectModeChanged -= SelectModeChanged;
             ProBuilderMeshEditor.onGetFrameBoundsEvent -= OnGetFrameBoundsEvent;
             Undo.undoRedoPerformed -= ObjectSelectionChanged;
         }
@@ -446,11 +449,16 @@ namespace UnityEditor.ProBuilder
 #if PB_DEBUG
             buggerRect = new Rect(this.position.width - 226, PAD, 220, 300);
             DrawDebugInfo(buggerRect);
-        #endif
+#endif
         }
 
         #endregion
         #region Editor Delegate and Event
+
+        void SelectModeChanged(SelectMode mode)
+        {
+            UpdateMode();
+        }
 
         void ElementSelectionChanged(ProBuilderMesh mesh)
         {
@@ -2270,32 +2278,71 @@ namespace UnityEditor.ProBuilder
 
         void UpdateMode()
         {
-            bool hasSelectedFaces = false;
-            for (int i = 0; i < selection.Length; ++i)
+            switch (ProBuilderEditor.selectMode)
             {
-                if (selection[i].selectedFacesInternal.Length > 0)
-                {
-                    hasSelectedFaces = true;
-                    break;
-                }
-            }
+                case SelectMode.Face:
+                case SelectMode.TextureFace:
+                    bool hasSelectedFaces = false;
+                    for (int i = 0; i < selection.Length; ++i)
+                    {
+                        if (selection[i].selectedFaceCount > 0)
+                        {
+                            hasSelectedFaces = true;
+                            break;
+                        }
+                    }
 
-            // figure out what the mode of selected faces is
-            if (hasSelectedFaces)
-            {
-                // @todo write a more effecient method for this
-                List<bool> manual = new List<bool>();
-                for (int i = 0; i < selection.Length; i++)
-                    manual.AddRange(selection[i].selectedFacesInternal.Select(x => x.manualUV).ToList());
-                int c = manual.Distinct().Count();
-                if (c > 1)
-                    mode = UVMode.Mixed;
-                else if (c > 0)
-                    mode = manual[0] ? UVMode.Manual : UVMode.Auto;
-            }
-            else
-            {
-                mode = UVMode.Manual;
+                    if (hasSelectedFaces)
+                    {
+                        // @todo write a more effecient method for this
+                        List<bool> manual = new List<bool>();
+                        for (int i = 0; i < selection.Length; i++)
+                            manual.AddRange(selection[i].selectedFacesInternal.Select(x => x.manualUV).ToList());
+                        int c = manual.Distinct().Count();
+                        if (c > 1)
+                            mode = UVMode.Mixed;
+                        else if (c > 0)
+                            mode = manual[0] ? UVMode.Manual : UVMode.Auto;
+                    }
+                    else
+                    {
+                        mode = UVMode.NoSelection;
+                    }
+                    break;
+
+                case SelectMode.Edge:
+                case SelectMode.TextureEdge:
+                    bool hasEdgeSelected = false;
+                    for (int i = 0; i < selection.Length; ++i)
+                    {
+                        if (selection[i].selectedEdgeCount > 0)
+                        {
+                            hasEdgeSelected = true;
+                            break;
+                        }
+                    }
+
+                    mode = hasEdgeSelected ? UVMode.Manual : UVMode.NoSelection;
+                    break;
+
+                case SelectMode.Vertex:
+                case SelectMode.TextureVertex:
+                    bool hasVertexSelected = false;
+                    for (int i = 0; i < selection.Length; ++i)
+                    {
+                        if (selection[i].selectedVertexCount > 0)
+                        {
+                            hasVertexSelected = true;
+                            break;
+                        }
+                    }
+
+                    mode = hasVertexSelected ? UVMode.Manual : UVMode.NoSelection;
+                    break;
+
+                default:
+                    mode = UVMode.NoSelection;
+                    break;
             }
         }
 
@@ -2541,7 +2588,8 @@ namespace UnityEditor.ProBuilder
         {
             if (channel == 0)
             {
-                GUILayout.Label("UV Mode: " + mode, EditorStyles.boldLabel);
+                if (mode != UVMode.NoSelection)
+                    GUILayout.Label("UV Mode: " + mode, EditorStyles.boldLabel);
 
                 switch (mode)
                 {
@@ -2561,6 +2609,10 @@ namespace UnityEditor.ProBuilder
                         if (GUILayout.Button(gc_ConvertToAuto, EditorStyles.miniButton))
                             Menu_SetAutoUV();
 
+                        break;
+
+                    case UVMode.NoSelection:
+                        GUILayout.Label(gc_NoUvSelected, EditorStyles.centeredGreyMiniLabel, GUILayout.ExpandHeight(true));
                         break;
                 }
             }
