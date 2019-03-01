@@ -238,7 +238,6 @@ namespace UnityEditor.ProBuilder
             this.autoRepaintOnSceneChange = true;
 
             MeshSelection.objectSelectionChanged += ObjectSelectionChanged;
-            ProBuilderEditor.selectionUpdated += SelectionUpdated;
             ProBuilderMesh.elementSelectionChanged += ElementSelectionChanged;
             ProBuilderMeshEditor.onGetFrameBoundsEvent += OnGetFrameBoundsEvent;
             Undo.undoRedoPerformed += ObjectSelectionChanged;
@@ -257,8 +256,7 @@ namespace UnityEditor.ProBuilder
 
             if (uv2Editor != null)
                 DestroyImmediate(uv2Editor);
-
-            ProBuilderEditor.selectionUpdated -= SelectionUpdated;
+            
             MeshSelection.objectSelectionChanged -= ObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged -= ElementSelectionChanged;
             ProBuilderMeshEditor.onGetFrameBoundsEvent -= OnGetFrameBoundsEvent;
@@ -457,11 +455,6 @@ namespace UnityEditor.ProBuilder
         void ElementSelectionChanged(ProBuilderMesh mesh)
         {
             ObjectSelectionChanged();
-        }
-
-        void SelectionUpdated(IEnumerable<ProBuilderMesh> proBuilderMeshes)
-        {
-            UpdateMode();
         }
 
         void ObjectSelectionChanged()
@@ -2277,8 +2270,18 @@ namespace UnityEditor.ProBuilder
 
         void UpdateMode()
         {
+            bool hasSelectedFaces = false;
+            for (int i = 0; i < selection.Length; ++i)
+            {
+                if (selection[i].selectedFacesInternal.Length > 0)
+                {
+                    hasSelectedFaces = true;
+                    break;
+                }
+            }
+
             // figure out what the mode of selected faces is
-            if (MeshSelection.selectedFaceCount > 0)
+            if (hasSelectedFaces)
             {
                 // @todo write a more effecient method for this
                 List<bool> manual = new List<bool>();
@@ -2431,6 +2434,8 @@ namespace UnityEditor.ProBuilder
             }
 
             m_PreviewMaterial = EditorMaterialUtility.GetActiveSelection();
+
+            UpdateMode();
 
             handlePosition = UVSelectionBounds().center - handlePosition_offset;
         }
