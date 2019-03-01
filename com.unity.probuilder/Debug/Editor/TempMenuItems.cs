@@ -9,6 +9,13 @@ class TempMenuItems : EditorWindow
     [MenuItem("Tools/Temp Menu Item &d", false, 1000)]
     static void MenuInit()
     {
+        foreach (var mesh in MeshSelection.top)
+        {
+            foreach (var face in mesh.facesInternal)
+            {
+                face.InvalidateCache();
+            }
+        }
     }
 
     [MenuItem("Tools/Recompile")]
