@@ -7,7 +7,7 @@ namespace UnityEngine.ProBuilder
         static Vector2 s_TempVector2 = Vector2.zero;
         static readonly List<int> s_IndexBuffer = new List<int>(64);
 
-        internal static void Project(ProBuilderMesh mesh, Face face)
+        internal static void Unwrap(ProBuilderMesh mesh, Face face)
         {
             Projection.PlanarProject(mesh, face);
             ApplyUVSettings(mesh.texturesInternal, face.distinctIndexesInternal, face.uv);
