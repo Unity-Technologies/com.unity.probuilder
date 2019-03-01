@@ -67,6 +67,8 @@ namespace UnityEditor.ProBuilder
 
         void OnDestroy()
         {
+            //In the case where the user added children to the preview,
+            //create shape instead so the user doesn't lose what he was doing.
             if (m_PreviewObject != null && m_PreviewObject.transform.childCount >= 1)
             {
                 CreateSelectedShape(autosave: true);
