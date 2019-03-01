@@ -256,7 +256,7 @@ namespace UnityEditor.ProBuilder
 
             if (uv2Editor != null)
                 DestroyImmediate(uv2Editor);
-
+            
             MeshSelection.objectSelectionChanged -= ObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged -= ElementSelectionChanged;
             ProBuilderMeshEditor.onGetFrameBoundsEvent -= OnGetFrameBoundsEvent;
@@ -2268,6 +2268,37 @@ namespace UnityEditor.ProBuilder
         #endregion
         #region Refresh / Set
 
+        void UpdateMode()
+        {
+            bool hasSelectedFaces = false;
+            for (int i = 0; i < selection.Length; ++i)
+            {
+                if (selection[i].selectedFacesInternal.Length > 0)
+                {
+                    hasSelectedFaces = true;
+                    break;
+                }
+            }
+
+            // figure out what the mode of selected faces is
+            if (hasSelectedFaces)
+            {
+                // @todo write a more effecient method for this
+                List<bool> manual = new List<bool>();
+                for (int i = 0; i < selection.Length; i++)
+                    manual.AddRange(selection[i].selectedFacesInternal.Select(x => x.manualUV).ToList());
+                int c = manual.Distinct().Count();
+                if (c > 1)
+                    mode = UVMode.Mixed;
+                else if (c > 0)
+                    mode = manual[0] ? UVMode.Manual : UVMode.Auto;
+            }
+            else
+            {
+                mode = UVMode.Manual;
+            }
+        }
+
         // Doesn't call Repaint for you
         void RefreshUVCoordinates()
         {
@@ -2402,25 +2433,9 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            // figure out what the mode of selected faces is
-            if (MeshSelection.selectedFaceCount > 0)
-            {
-                // @todo write a more effecient method for this
-                List<bool> manual = new List<bool>();
-                for (int i = 0; i < selection.Length; i++)
-                    manual.AddRange(selection[i].selectedFacesInternal.Select(x => x.manualUV).ToList());
-                int c = manual.Distinct().Count();
-                if (c > 1)
-                    mode = UVMode.Mixed;
-                else if (c > 0)
-                    mode = manual[0] ? UVMode.Manual : UVMode.Auto;
-            }
-            else
-            {
-                mode = UVMode.Manual;
-            }
-
             m_PreviewMaterial = EditorMaterialUtility.GetActiveSelection();
+
+            UpdateMode();
 
             handlePosition = UVSelectionBounds().center - handlePosition_offset;
         }
