@@ -64,27 +64,6 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.UV
 			new Vector2(1f, .2f),
 		};
 
-		static IEnumerable EnumerateTestCases()
-		{
-			foreach (var offset in AutoUVOffsetParameters)
-			{
-				foreach (var scale in AutoUVScaleParameters)
-				{
-					foreach (var rotation in AutoUVRotationParameters)
-					{
-						yield return new TestCaseData(offset, rotation, scale).SetName(
-							string.Format("({0:F2}, {1:F2}), {2:F2}, ({3:F2}, {4:F2})",
-								offset.x,
-								offset.y,
-								rotation,
-								scale.x,
-								scale.y
-							));
-					}
-				}
-			}
-		}
-
 		static float GetEdgeRotation(ProBuilderMesh mesh, ProBuilder.Edge edge)
 		{
 			var dir = mesh.texturesInternal[edge.b] - mesh.texturesInternal[edge.a];
@@ -100,7 +79,10 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.UV
 		}
 
 		[TestCaseSource(typeof(ConvertUvUnwrappingMethodTests), "EnumerateTestCases")]
-		public void SetManualFaceToAuto_MatchesOriginalUVs(Vector2 offset, float rotation, Vector2 scale)
+		public void SetManualFaceToAuto_MatchesOriginalUVs(
+			[ValueSource("AutoUVOffsetParameters")] Vector2 offset,
+			[ValueSource("AutoUVRotationParameters")] float rotation,
+			[ValueSource("AutoUVScaleParameters")] Vector2 scale)
 		{
 			var unwrap = face.uv;
 			unwrap.offset = offset;

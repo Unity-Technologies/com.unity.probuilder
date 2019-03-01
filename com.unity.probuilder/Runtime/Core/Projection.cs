@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
@@ -32,11 +33,24 @@ namespace UnityEngine.ProBuilder
         /// <returns>The positions array projected into 2d coordinates.</returns>
         public static Vector2[] PlanarProject(IList<Vector3> positions, IList<int> indexes, Vector3 direction)
         {
+            List<Vector2> results = new List<Vector2>(indexes != null ? indexes.Count : positions.Count);
+            PlanarProject(positions, indexes, direction, results);
+            return results.ToArray();
+        }
+
+        internal static void PlanarProject(IList<Vector3> positions, IList<int> indexes, Vector3 direction, List<Vector2> results)
+        {
+            if(positions == null)
+                throw new ArgumentNullException("positions");
+
+            if(results == null)
+                throw new ArgumentNullException("results");
+
             var nrm = direction;
             var axis = VectorToProjectionAxis(nrm);
             var prj = GetTangentToAxis(axis);
             var len = indexes == null ? positions.Count : indexes.Count;
-            var projected = new Vector2[len];
+            results.Clear();
 
             var u = Vector3.Cross(nrm, prj);
             var v = Vector3.Cross(u, nrm);
@@ -47,15 +61,13 @@ namespace UnityEngine.ProBuilder
             if (indexes != null)
             {
                 for (int i = 0, ic = len; i < ic; ++i)
-                    projected[i] = new Vector2(Vector3.Dot(u, positions[indexes[i]]), Vector3.Dot(v, positions[indexes[i]]));
+                    results.Add(new Vector2(Vector3.Dot(u, positions[indexes[i]]), Vector3.Dot(v, positions[indexes[i]])));
             }
             else
             {
                 for (int i = 0, ic = len; i < ic; ++i)
-                    projected[i] = new Vector2(Vector3.Dot(u, positions[i]), Vector3.Dot(v, positions[i]));
+                    results.Add(new Vector2(Vector3.Dot(u, positions[i]), Vector3.Dot(v, positions[i])));
             }
-
-            return projected;
         }
 
         internal static void PlanarProject(ProBuilderMesh mesh, int textureGroup, AutoUnwrapSettings unwrapSettings)
