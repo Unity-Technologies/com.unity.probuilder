@@ -1,19 +1,21 @@
+#if UNITY_2019_1_OR_NEWER
+#define SHORTCUT_MANAGER
+#endif
+
 #if UNITY_5_5_OR_NEWER
 #define RETINA_ENABLED
 #endif
 
 using UnityEngine;
-using UnityEditor;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using UnityEditor.ProBuilder;
 using System.Reflection;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder.UI;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEditor.SettingsManagement;
+#if SHORTCUT_MANAGER
+using UnityEditor.ShortcutManagement;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -58,6 +60,15 @@ namespace UnityEditor.ProBuilder
         {
             s_GridSnapIncrement.value = SettingsGUILayout.SettingsSlider(UI.EditorGUIUtility.TempContent("Grid Size"), s_GridSnapIncrement, .015625f, 2f, searchContext);
         }
+
+#if SHORTCUT_MANAGER
+        [Shortcut("ProBuilder/UV Editor/Reset Canvas", typeof(UVEditor), KeyCode.Alpha0)]
+        static void ResetCanvasShortcut()
+        {
+            if(instance != null)
+                instance.ResetCanvas();
+        }
+#endif
 
         static readonly Color DRAG_BOX_COLOR_BASIC = new Color(0f, .7f, 1f, .2f);
         static readonly Color DRAG_BOX_COLOR_PRO = new Color(0f, .7f, 1f, 1f);
@@ -948,6 +959,9 @@ namespace UnityEditor.ProBuilder
                 return;
             }
 
+#if SHORTCUT_MANAGER
+        }
+#else
             bool used = false;
 
             switch (e.keyCode)
@@ -955,7 +969,6 @@ namespace UnityEditor.ProBuilder
                 case KeyCode.Keypad0:
                 case KeyCode.Alpha0:
                     ResetCanvas();
-                    uvGraphOffset = Vector2.zero;
                     e.Use();
                     needsRepaint = true;
                     used = true;
@@ -990,6 +1003,7 @@ namespace UnityEditor.ProBuilder
             if (!used && ProBuilderEditor.instance)
                 ProBuilderEditor.instance.ShortcutCheck(e);
         }
+#endif
 
         /**
          * Finds the nearest edge to the mouse and sets the `nearestEdge` struct with it's info
@@ -2152,6 +2166,7 @@ namespace UnityEditor.ProBuilder
         {
             uvGraphScale = 1f;
             SetCanvasCenter(new Vector2(.5f, -.5f) * uvGridSize * uvGraphScale);
+            uvGraphOffset = Vector2.zero;
         }
 
         /**
