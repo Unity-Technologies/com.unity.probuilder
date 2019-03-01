@@ -119,7 +119,8 @@ namespace UnityEditor.ProBuilder
 
                             s_IndexBuffer.Add(index);
                         }
-                        
+
+                        s_IndexBuffer.Sort();
                         mesh.SetSelectedVertices(mesh.selectedIndexesInternal.SortedRemoveAt(s_IndexBuffer));
                     }
                     else
