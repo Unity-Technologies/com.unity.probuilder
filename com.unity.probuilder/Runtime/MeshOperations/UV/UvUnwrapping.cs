@@ -45,9 +45,6 @@ namespace UnityEngine.ProBuilder
                     break;
             }
 
-            if (!uvSettings.useWorldSpace && uvSettings.anchor != AutoUnwrapSettings.Anchor.None)
-                ApplyUVAnchor(uvs, indexes, uvSettings.anchor);
-
             // Apply transform last, so that fill and justify don't override it.
             if (uvSettings.scale.x != 1f ||
                 uvSettings.scale.y != 1f ||
@@ -62,6 +59,9 @@ namespace UnityEngine.ProBuilder
                 }
             }
 
+            if (!uvSettings.useWorldSpace && uvSettings.anchor != AutoUnwrapSettings.Anchor.None)
+                ApplyUVAnchor(uvs, indexes, uvSettings.anchor);
+            
             if (uvSettings.flipU || uvSettings.flipV || uvSettings.swapUV)
             {
                 for (int i = 0; i < len; i++)
