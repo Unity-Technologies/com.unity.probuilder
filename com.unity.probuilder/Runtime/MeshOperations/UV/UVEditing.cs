@@ -200,10 +200,24 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="channel"></param>
         internal static void ProjectFacesAuto(ProBuilderMesh mesh, Face[] faces, int channel)
         {
+            if (faces.Length < 1)
+                return;
+
             int[] ind = faces.SelectMany(x => x.distinctIndexesInternal).ToArray();
 
+            // Get a projection direction by averaging the normals of all selected faces
+            var projectionDirection = Vector3.zero;
+
+            foreach (var face in faces)
+            {
+                var nrm = Math.Normal(mesh, face);
+                projectionDirection += nrm;
+            }
+
+            projectionDirection /= (float) faces.Length;
+
             // project uv coordinates
-            Vector2[] uvs = Projection.PlanarProject(mesh.positionsInternal, ind);
+            Vector2[] uvs = Projection.PlanarProject(mesh.positionsInternal, ind, projectionDirection);
 
             // re-assign new projected coords back into full uv array
             Vector2[] rebuiltUVs = GetUVs(mesh, channel);
@@ -227,18 +241,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <summary>
         /// Projects UVs for each face using the closest normal on a box.
         /// </summary>
-        /// <param name="pb"></param>
+        /// <param name="mesh"></param>
         /// <param name="faces"></param>
         /// <param name="channel"></param>
-        public static void ProjectFacesBox(ProBuilderMesh pb, Face[] faces, int channel = 0)
+        public static void ProjectFacesBox(ProBuilderMesh mesh, Face[] faces, int channel = 0)
         {
-            Vector2[] uv = GetUVs(pb, channel);
+            Vector2[] uv = GetUVs(mesh, channel);
 
             Dictionary<ProjectionAxis, List<Face>> sorted = new Dictionary<ProjectionAxis, List<Face>>();
 
             for (int i = 0; i < faces.Length; i++)
             {
-                Vector3 nrm = Math.Normal(pb, faces[i]);
+                Vector3 nrm = Math.Normal(mesh, faces[i]);
                 ProjectionAxis axis = Projection.VectorToProjectionAxis(nrm);
 
                 if (sorted.ContainsKey(axis))
@@ -255,16 +269,16 @@ namespace UnityEngine.ProBuilder.MeshOperations
             {
                 int[] distinct = kvp.Value.SelectMany(x => x.distinctIndexesInternal).ToArray();
 
-                Vector2[] uvs = Projection.PlanarProject(pb.positionsInternal, distinct);
+                Vector2[] uvs = Projection.PlanarProject(mesh.positionsInternal, distinct, Projection.ProjectionAxisToVector(kvp.Key));
 
                 for (int n = 0; n < distinct.Length; n++)
                     uv[distinct[n]] = uvs[n];
 
-                SplitUVs(pb, distinct);
+                SplitUVs(mesh, distinct);
             }
 
             /* and set the msh uv array using the new coordintaes */
-            ApplyUVs(pb, uv, channel);
+            ApplyUVs(mesh, uv, channel);
         }
 
         /// <summary>

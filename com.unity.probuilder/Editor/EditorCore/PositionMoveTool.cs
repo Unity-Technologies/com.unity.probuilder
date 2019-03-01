@@ -50,6 +50,7 @@ namespace UnityEditor.ProBuilder
             m_HandlePosition = Handles.PositionHandle(m_HandlePosition, handleRotation);
 
             m_RawHandleDelta = m_HandlePosition - handlePositionOrigin;
+
             var delta = m_RawHandleDelta;
 
             if (EditorGUI.EndChangeCheck() && delta.sqrMagnitude > k_MinTranslateDeltaSqrMagnitude)
@@ -121,6 +122,10 @@ namespace UnityEditor.ProBuilder
 
                 ApplyTranslation(handleRotationOriginInverse * delta);
             }
+
+            // Draw at the end so we get the snapped value
+            if(showHandleInfo && isEditing)
+                DrawDeltaInfo(string.Format("Translate: <b>{0:F2}</b>  {1}", delta.magnitude, (handleRotationOriginInverse * delta).ToString("0.00")));
         }
 
         void ApplyTranslation(Vector3 translation)

@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
@@ -360,6 +361,7 @@ namespace UnityEditor.ProBuilder
             foreach (var mesh in selection)
             {
                 mesh.SetMaterial(mesh.selectedFaceCount > 0 ? mesh.GetSelectedFaces() : mesh.facesInternal, mat);
+                InternalMeshUtility.FilterUnusedSubmeshIndexes(mesh);
                 mesh.Rebuild();
                 mesh.Optimize();
             }

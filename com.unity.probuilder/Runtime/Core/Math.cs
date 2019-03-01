@@ -908,6 +908,18 @@ namespace UnityEngine.ProBuilder
             return l;
         }
 
+        internal static Vector2 SmallestVector2(Vector2[] v, IList<int> indexes)
+        {
+            int len = indexes.Count;
+            Vector2 l = v[indexes[0]];
+            for (int i = 0; i < len; i++)
+            {
+                if (v[indexes[i]].x < l.x) l.x = v[indexes[i]].x;
+                if (v[indexes[i]].y < l.y) l.y = v[indexes[i]].y;
+            }
+            return l;
+        }
+
         /// <summary>
         /// The largest X and Y value in an array.  May or may not belong to the same Vector2.
         /// </summary>
@@ -928,6 +940,18 @@ namespace UnityEngine.ProBuilder
         internal static Vector2 LargestVector2(Vector2[] v, int[] indexes)
         {
             int len = indexes.Length;
+            Vector2 l = v[indexes[0]];
+            for (int i = 0; i < len; i++)
+            {
+                if (v[indexes[i]].x > l.x) l.x = v[indexes[i]].x;
+                if (v[indexes[i]].y > l.y) l.y = v[indexes[i]].y;
+            }
+            return l;
+        }
+
+        internal static Vector2 LargestVector2(Vector2[] v, IList<int> indexes)
+        {
+            int len = indexes.Count;
             Vector2 l = v[indexes[0]];
             for (int i = 0; i < len; i++)
             {

@@ -391,7 +391,7 @@ namespace UnityEngine.ProBuilder
 
                 if (!IsValidTextureGroup(textureGroup))
                     UvUnwrapping.Project(this, face);
-                else if (!s_CachedHashSet.Add(textureGroup))
+                else if (s_CachedHashSet.Add(textureGroup))
                     UvUnwrapping.ProjectTextureGroup(this, textureGroup, face.uv);
             }
 
@@ -401,6 +401,20 @@ namespace UnityEngine.ProBuilder
                 mesh.SetUVs(2, m_Textures2);
             if (HasArrays(MeshArrays.Texture3))
                 mesh.SetUVs(3, m_Textures3);
+        }
+
+        internal void SetGroupUV(AutoUnwrapSettings settings, int group)
+        {
+            if (!IsValidTextureGroup(group))
+                return;
+            
+            foreach (var face in facesInternal)
+            {
+                if (face.textureGroup != group)
+                    continue;
+
+                face.uv = settings;
+            }
         }
 
         void RefreshColors()

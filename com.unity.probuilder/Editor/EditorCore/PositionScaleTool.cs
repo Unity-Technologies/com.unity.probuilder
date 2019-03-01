@@ -11,6 +11,9 @@ namespace UnityEditor.ProBuilder
         {
             base.DoTool(handlePosition, handleRotation);
 
+            if (showHandleInfo && isEditing)
+                DrawDeltaInfo("Scale: " + m_Scale.ToString("0.00"));
+
             if (!isEditing)
                 m_Scale = Vector3.one;
 
