@@ -129,11 +129,12 @@ namespace UnityEditor.ProBuilder
 
                     m_Mesh.SetVertices(m_Points);
 
-#if UNITY_2019_1_OR_NEWER
-                    m_Mesh.SetIndices(NoAllocHelpers.ExtractArrayFromListT(s_Indices), MeshTopology.Points, 0, false);
-#else
+                    // NoAllocHelpers is internal API, and there is no SetIndices overload that accepts a list like
+                    // SetVertices or SetUVs.
+//#if UNITY_2019_1_OR_NEWER
+//                    m_Mesh.SetIndices(NoAllocHelpers.ExtractArrayFromListT(m_Indices), MeshTopology.Points, 0, false);
+//#else
                     m_Mesh.SetIndices(m_Indices.ToArray(), MeshTopology.Points, 0, false);
-#endif
                 }
                 else
                 {
