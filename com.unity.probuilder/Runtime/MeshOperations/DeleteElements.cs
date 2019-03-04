@@ -157,7 +157,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Iterates through all faces in a mesh and removes triangles with an area less than float.Epsilon, or with indexes that point to the same vertex.
+        /// Iterates through all faces in a mesh and removes triangles with an area less than float.Epsilon, or with
+        /// indexes that point to the same vertex. This function also enforces the rule that a face must contain no
+        /// coincident vertices.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <returns>The number of vertices deleted as a result of the degenerate triangle cleanup.</returns>
@@ -169,14 +171,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
             Dictionary<int, int> m_Lookup = mesh.sharedVertexLookup;
             Dictionary<int, int> m_LookupUV = mesh.sharedTextureLookup;
             Vector3[] m_Positions = mesh.positionsInternal;
-            Dictionary<int, int> m_RebuiltLookup = new Dictionary<int, int>();
-            Dictionary<int, int> m_RebuiltLookupUV = new Dictionary<int, int>();
-            List<Face> m_RebuiltFaces = new List<Face>();
+            Dictionary<int, int> m_RebuiltLookup = new Dictionary<int, int>(m_Lookup.Count);
+            Dictionary<int, int> m_RebuiltLookupUV = new Dictionary<int, int>(m_LookupUV.Count);
+            List<Face> m_RebuiltFaces = new List<Face>(mesh.faceCount);
+            Dictionary<int, int> m_DuplicateIndexFilter = new Dictionary<int, int>(8);
 
             foreach (Face face in mesh.facesInternal)
             {
+                m_DuplicateIndexFilter.Clear();
                 List<int> tris = new List<int>();
-
                 int[] ind = face.indexesInternal;
 
                 for (int i = 0; i < ind.Length; i += 3)
@@ -185,29 +188,54 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
                     if (area > Mathf.Epsilon)
                     {
-                        int a = m_Lookup[ind[i]],
-                            b = m_Lookup[ind[i + 1]],
-                            c = m_Lookup[ind[i + 2]];
+                        // Index in the positions array
+                        int triangleIndexA = ind[i],
+                            triangleIndexB = ind[i+1],
+                            triangleIndexC = ind[i+2];
 
-                        if (!(a == b || a == c || b == c))
+                        // Common index (also called SharedIndexHandle)
+                        int sharedIndexA = m_Lookup[triangleIndexA],
+                            sharedIndexB = m_Lookup[triangleIndexB],
+                            sharedIndexC = m_Lookup[triangleIndexC];
+
+                        // test if there are any duplicates in the triangle
+                        if (!(sharedIndexA == sharedIndexB || sharedIndexA == sharedIndexC || sharedIndexB == sharedIndexC))
                         {
-                            tris.Add(ind[i + 0]);
-                            tris.Add(ind[i + 1]);
-                            tris.Add(ind[i + 2]);
+                            int index;
 
-                            if (!m_RebuiltLookup.ContainsKey(ind[i]))
-                                m_RebuiltLookup.Add(ind[i], a);
-                            if (!m_RebuiltLookup.ContainsKey(ind[i + 1]))
-                                m_RebuiltLookup.Add(ind[i + 1], b);
-                            if (!m_RebuiltLookup.ContainsKey(ind[i + 2]))
-                                m_RebuiltLookup.Add(ind[i + 2], c);
+                            // catch case where face has two distinct vertices that are in fact coincident.
+                            if (!m_DuplicateIndexFilter.TryGetValue(sharedIndexA, out index))
+                                m_DuplicateIndexFilter.Add(sharedIndexA, triangleIndexA);
+                            else
+                                triangleIndexA = index;
 
-                            if (m_LookupUV.ContainsKey(ind[i]) && !m_RebuiltLookupUV.ContainsKey(ind[i]))
-                                m_RebuiltLookupUV.Add(ind[i], m_LookupUV[ind[i]]);
-                            if (m_LookupUV.ContainsKey(ind[i + 1]) && !m_RebuiltLookupUV.ContainsKey(ind[i + 1]))
-                                m_RebuiltLookupUV.Add(ind[i + 1], m_LookupUV[ind[i + 1]]);
-                            if (m_LookupUV.ContainsKey(ind[i + 2]) && !m_RebuiltLookupUV.ContainsKey(ind[i + 2]))
-                                m_RebuiltLookupUV.Add(ind[i + 2], m_LookupUV[ind[i + 2]]);
+                            if (!m_DuplicateIndexFilter.TryGetValue(sharedIndexB, out index))
+                                m_DuplicateIndexFilter.Add(sharedIndexB, triangleIndexB);
+                            else
+                                triangleIndexB = index;
+
+                            if (!m_DuplicateIndexFilter.TryGetValue(sharedIndexC, out index))
+                                m_DuplicateIndexFilter.Add(sharedIndexC, triangleIndexC);
+                            else
+                                triangleIndexC = index;
+
+                            tris.Add(triangleIndexA);
+                            tris.Add(triangleIndexB);
+                            tris.Add(triangleIndexC);
+
+                            if (!m_RebuiltLookup.ContainsKey(triangleIndexA))
+                                m_RebuiltLookup.Add(triangleIndexA, sharedIndexA);
+                            if (!m_RebuiltLookup.ContainsKey(triangleIndexB))
+                                m_RebuiltLookup.Add(triangleIndexB, sharedIndexB);
+                            if (!m_RebuiltLookup.ContainsKey(triangleIndexC))
+                                m_RebuiltLookup.Add(triangleIndexC, sharedIndexC);
+
+                            if (m_LookupUV.ContainsKey(triangleIndexA) && !m_RebuiltLookupUV.ContainsKey(triangleIndexA))
+                                m_RebuiltLookupUV.Add(triangleIndexA, m_LookupUV[triangleIndexA]);
+                            if (m_LookupUV.ContainsKey(triangleIndexB) && !m_RebuiltLookupUV.ContainsKey(triangleIndexB))
+                                m_RebuiltLookupUV.Add(triangleIndexB, m_LookupUV[triangleIndexB]);
+                            if (m_LookupUV.ContainsKey(triangleIndexC) && !m_RebuiltLookupUV.ContainsKey(triangleIndexC))
+                                m_RebuiltLookupUV.Add(triangleIndexC, m_LookupUV[triangleIndexC]);
                         }
                     }
                 }
