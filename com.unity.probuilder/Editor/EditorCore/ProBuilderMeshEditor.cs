@@ -92,6 +92,9 @@ namespace UnityEditor.ProBuilder
 
             Styles.Init();
 
+            if (GUILayout.Button("Open ProBuilder"))
+                ProBuilderEditor.MenuOpenWindow();
+
             Vector3 bounds = m_MeshRenderer != null ? m_MeshRenderer.bounds.size : Vector3.zero;
             EditorGUILayout.Vector3Field("Object Size (read only)", bounds);
 

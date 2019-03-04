@@ -2,11 +2,10 @@ using System;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
+    [MenuActionShortcut(typeof(SceneView), KeyCode.T)]
     sealed class SetTrigger : MenuAction
     {
         public override ToolbarGroup group

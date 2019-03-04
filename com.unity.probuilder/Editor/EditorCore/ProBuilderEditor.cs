@@ -1,16 +1,17 @@
+#if UNITY_2019_1_OR_NEWER
+#define SHORTCUT_MANAGER
+#endif
+
 using System;
 using UnityEngine;
 using System.Linq;
-using System.Reflection;
 using System.Collections.Generic;
-using UnityEditor.ProBuilder.Actions;
 using UnityEngine.ProBuilder;
+using UnityEditor.ProBuilder.Actions;
 using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
-using UnityEngine.ProBuilder.MeshOperations;
-using Math = UnityEngine.ProBuilder.Math;
-using Object = UnityEngine.Object;
-using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
+using UObject = UnityEngine.Object;
 using UnityEditor.SettingsManagement;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
@@ -57,8 +58,10 @@ namespace UnityEditor.ProBuilder
         [UserSetting("Toolbar", "Icon GUI", "Toggles the ProBuilder window interface between text and icon versions.")]
         internal static Pref<bool> s_IsIconGui = new Pref<bool>("editor.toolbarIconGUI", false);
 
+#if !SHORTCUT_MANAGER
         [UserSetting("Toolbar", "Unique Mode Shortcuts", "When off, the G key toggles between Object and Element modes and H enumerates the element modes.  If on, G, H, J, and K are shortcuts to Object, Vertex, Edge, and Face modes respectively.")]
         internal static Pref<bool> s_UniqueModeShortcuts = new Pref<bool>("editor.uniqueModeShortcuts", false, SettingsScope.User);
+#endif
 
         [UserSetting("Mesh Editing", "Allow non-manifold actions", "Enables advanced mesh editing techniques that may create non-manifold geometry.")]
         internal static Pref<bool> s_AllowNonManifoldActions = new Pref<bool>("editor.allowNonManifoldActions", false, SettingsScope.User);
@@ -117,8 +120,11 @@ namespace UnityEditor.ProBuilder
 
         // used for 'g' key shortcut to swap between object/vef modes
         SelectMode m_LastComponentMode;
+
+#if !SHORTCUT_MANAGER
         [UserSetting]
         internal static Pref<Shortcut[]> s_Shortcuts = new Pref<Shortcut[]>("editor.sceneViewShortcuts", Shortcut.DefaultShortcuts().ToArray());
+#endif
         GUIStyle m_CommandStyle;
         Rect m_ElementModeToolbarRect = new Rect(3, 6, 128, 24);
 
@@ -138,7 +144,9 @@ namespace UnityEditor.ProBuilder
         // prevents leftClickUp from stealing focus after double click
         bool m_WasDoubleClick;
         // vertex handles
+#if !SHORTCUT_MANAGER
         bool m_IsRightMouseDown;
+#endif
         static Dictionary<Type, VertexManipulationTool> s_EditorTools = new Dictionary<Type, VertexManipulationTool>();
 
         Vector3[][] m_VertexPositions;
@@ -395,15 +403,17 @@ namespace UnityEditor.ProBuilder
                 rectSelectMode = m_DragSelectRectMode
             };
 
+#if !SHORTCUT_MANAGER
             // workaround for old single-key shortcuts
             if (s_Shortcuts.value == null || s_Shortcuts.value.Length < 1)
                 s_Shortcuts.SetValue(Shortcut.DefaultShortcuts().ToArray(), true);
+#endif
         }
 
         void InitGUI()
         {
             if (s_EditorToolbar != null)
-                Object.DestroyImmediate(s_EditorToolbar);
+                UObject.DestroyImmediate(s_EditorToolbar);
 
             s_EditorToolbar = ScriptableObject.CreateInstance<EditorToolbar>();
             s_EditorToolbar.hideFlags = HideFlags.HideAndDontSave;
@@ -442,6 +452,7 @@ namespace UnityEditor.ProBuilder
                     menu.ShowAsContext();
                     break;
 
+#if !SHORTCUT_MANAGER
                 case EventType.KeyDown:
                     if (s_Shortcuts.value.Any(x => x.Matches(e.keyCode, e.modifiers)))
                         e.Use();
@@ -450,6 +461,15 @@ namespace UnityEditor.ProBuilder
                 case EventType.KeyUp:
                     ShortcutCheck(e);
                     break;
+#else
+                case EventType.KeyUp:
+                    if (e.keyCode == KeyCode.Escape)
+                    {
+                        selectMode = SelectMode.Object;
+                        e.Use();
+                    }
+                    break;
+#endif
             }
 
             if (s_EditorToolbar != null)
@@ -473,7 +493,7 @@ namespace UnityEditor.ProBuilder
         {
             s_IsIconGui.value = !s_IsIconGui;
             if (s_EditorToolbar != null)
-                Object.DestroyImmediate(s_EditorToolbar);
+                UObject.DestroyImmediate(s_EditorToolbar);
             s_EditorToolbar = ScriptableObject.CreateInstance<EditorToolbar>();
             s_EditorToolbar.hideFlags = HideFlags.HideAndDontSave;
             s_EditorToolbar.InitWindowProperties(this);
@@ -555,15 +575,17 @@ namespace UnityEditor.ProBuilder
 
             m_CurrentEvent = Event.current;
 
+            EditorMeshHandles.DrawSceneHandles(SceneDragAndDropListener.isDragging ? SelectMode.None : selectMode);
+
+            DrawHandleGUI(sceneView);
+
+#if !SHORTCUT_MANAGER
+
             if (m_CurrentEvent.type == EventType.MouseDown && m_CurrentEvent.button == 1)
                 m_IsRightMouseDown = true;
 
             if (m_CurrentEvent.type == EventType.MouseUp && m_CurrentEvent.button == 1 || m_CurrentEvent.type == EventType.Ignore)
                 m_IsRightMouseDown = false;
-
-            EditorMeshHandles.DrawSceneHandles(SceneDragAndDropListener.isDragging ? SelectMode.None : selectMode);
-
-            DrawHandleGUI(sceneView);
 
             if (!m_IsRightMouseDown && (m_CurrentEvent.type == EventType.KeyUp ? m_CurrentEvent.keyCode : KeyCode.None) != KeyCode.None)
             {
@@ -579,6 +601,7 @@ namespace UnityEditor.ProBuilder
                 if (s_Shortcuts.value.Any(x => x.Matches(m_CurrentEvent.keyCode, m_CurrentEvent.modifiers)))
                     m_CurrentEvent.Use();
             }
+#endif
 
             if (selectMode == SelectMode.Object)
                 return;
@@ -821,6 +844,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+#if !SHORTCUT_MANAGER
         internal bool ShortcutCheck(Event e)
         {
             List<Shortcut> matches = s_Shortcuts.value.Where(x => x.Matches(e.keyCode, e.modifiers)).ToList();
@@ -934,7 +958,7 @@ namespace UnityEditor.ProBuilder
                     {
                         foreach (ProBuilderMesh pbo in selection)
                         {
-                            UndoUtility.RecordObjects(new Object[2] { pbo, pbo.transform }, "Set Pivot");
+                            UndoUtility.RecordObjects(new UObject[2] { pbo, pbo.transform }, "Set Pivot");
 
                             if (pbo.selectedIndexesInternal.Length > 0)
                             {
@@ -955,6 +979,7 @@ namespace UnityEditor.ProBuilder
                     return false;
             }
         }
+#endif
 
         /// <summary>
         /// Allows another window to tell the Editor what Tool is now in use. Does *not* update any other windows.
@@ -988,6 +1013,8 @@ namespace UnityEditor.ProBuilder
                 m_SelectMode.SetValue(SelectMode.Face, true);
             else if (m_SelectMode == SelectMode.Face)
                 m_SelectMode.SetValue(SelectMode.Vertex, true);
+
+            Repaint();
         }
 
         void UpdateSelection(bool selectionChanged = true)

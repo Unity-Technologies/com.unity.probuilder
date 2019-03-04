@@ -1,11 +1,41 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
     class TextureMoveTool : TextureTool
     {
+        static readonly float k_Vector3Magnitude = Vector3.one.magnitude;
+
         Vector3 m_Position = Vector3.zero;
+
+        protected class TranslateTextureSelection : MeshAndTextures
+        {
+            SimpleTuple<Face, Vector2>[] m_FaceAndScale;
+
+            public SimpleTuple<Face, Vector2>[] faceAndScale
+            {
+                get { return m_FaceAndScale; }
+            }
+
+            public TranslateTextureSelection(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation)
+                : base(mesh, pivot, orientation)
+            {
+                var faces = mesh.faces;
+
+                m_FaceAndScale = mesh.selectedFaceIndexes.Select(x =>
+                    new SimpleTuple<Face, Vector2>(faces[x], UVEditing.GetUVTransform(mesh, faces[x]).scale))
+                        .ToArray();
+            }
+        }
+
+        internal override MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation)
+        {
+            return new TranslateTextureSelection(mesh, pivot, orientation);
+        }
 
         protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
         {
@@ -58,23 +88,45 @@ namespace UnityEditor.ProBuilder
                 // invert `y` because to users it's confusing that "up" in UV space visually moves the texture down
                 var delta = new Vector4(m_Position.x, -m_Position.y, 0f, 0f);
 
-                foreach (var mesh in elementSelection)
+                foreach (var value in elementSelection)
                 {
-                    if (!(mesh is MeshAndTextures))
+                    var selection = value as TranslateTextureSelection;
+
+                    if (selection == null)
                         continue;
 
-                    delta *= 1f / mesh.mesh.transform.lossyScale.magnitude;
+                    // Account for object scale
+                    delta *= k_Vector3Magnitude / selection.mesh.transform.lossyScale.magnitude;
 
-                    var origins = ((MeshAndTextures)mesh).origins;
-                    var positions = ((MeshAndTextures)mesh).textures;
+                    var origins = selection.origins;
+                    var positions = selection.textures;
 
-                    foreach (var group in mesh.elementGroups)
+                    // Translating faces is treated as a special case because we want the textures in scene to visually
+                    // match the movement of the translation handle. When UVs are scaled, they have the appearance of
+                    // moving faster or slower (even though they are translating the correct distances). To avoid this,
+                    // we cache the UV scale of each face and modify the translation delta accordingly. This isn't perfect,
+                    // as it will not be able to find the scale for sheared or otherwise distorted face UVs. However, for
+                    // most cases it maps quite well.
+                    if (ProBuilderEditor.selectMode == SelectMode.TextureFace)
                     {
-                        foreach (var index in group.indices)
-                            positions[index] = origins[index] + delta;
+                        foreach (var face in selection.faceAndScale)
+                        {
+                            var faceDelta = new Vector4(delta.x / face.item2.x, delta.y / face.item2.y, 0f, 0f);
+
+                            foreach (var index in face.item1.distinctIndexes)
+                                positions[index] = origins[index] + faceDelta;
+                        }
+                    }
+                    else
+                    {
+                        foreach (var group in value.elementGroups)
+                        {
+                            foreach (var index in group.indices)
+                                positions[index] = origins[index] + delta;
+                        }
                     }
 
-                    mesh.mesh.mesh.SetUVs(k_TextureChannel, positions);
+                    selection.mesh.mesh.SetUVs(k_TextureChannel, positions);
                 }
             }
 

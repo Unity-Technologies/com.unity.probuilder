@@ -4,6 +4,7 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
+    [MenuActionShortcut(typeof(SceneView), KeyCode.Backspace)]
     sealed class DeleteFaces : MenuAction
     {
         public override ToolbarGroup group
