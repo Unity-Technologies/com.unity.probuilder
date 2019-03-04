@@ -1,19 +1,21 @@
+#if UNITY_2019_1_OR_NEWER
+#define SHORTCUT_MANAGER
+#endif
+
 #if UNITY_5_5_OR_NEWER
 #define RETINA_ENABLED
 #endif
 
 using UnityEngine;
-using UnityEditor;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using UnityEditor.ProBuilder;
 using System.Reflection;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder.UI;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEditor.SettingsManagement;
+#if SHORTCUT_MANAGER
+using UnityEditor.ShortcutManagement;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -26,6 +28,17 @@ namespace UnityEditor.ProBuilder
             get { return ProBuilderEditor.instance; }
         }
 
+        public override void AddItemsToMenu(GenericMenu menu)
+        {
+            base.AddItemsToMenu(menu);
+
+#if PB_DEBUG
+            menu.AddItem(new GUIContent("Show UV Coordinate Labels"), s_DebugDrawCoordinateLabels.value, () =>
+            {
+                s_DebugDrawCoordinateLabels.SetValue(!s_DebugDrawCoordinateLabels.value, true);
+            });
+#endif
+        }
         public static UVEditor instance;
 
         const int LEFT_MOUSE_BUTTON = 0;
@@ -58,6 +71,15 @@ namespace UnityEditor.ProBuilder
         {
             s_GridSnapIncrement.value = SettingsGUILayout.SettingsSlider(UI.EditorGUIUtility.TempContent("Grid Size"), s_GridSnapIncrement, .015625f, 2f, searchContext);
         }
+
+#if SHORTCUT_MANAGER
+        [Shortcut("ProBuilder/UV Editor/Reset Canvas", typeof(UVEditor), KeyCode.Alpha0)]
+        static void ResetCanvasShortcut()
+        {
+            if(instance != null)
+                instance.ResetCanvas();
+        }
+#endif
 
         static readonly Color DRAG_BOX_COLOR_BASIC = new Color(0f, .7f, 1f, .2f);
         static readonly Color DRAG_BOX_COLOR_PRO = new Color(0f, .7f, 1f, 1f);
@@ -112,8 +134,8 @@ namespace UnityEditor.ProBuilder
         GUIContent gc_RenderUV = new GUIContent((Texture2D)null, "Renders the current UV workspace from coordinates {0,0} to {1,1} to a 256px image.");
 
         // Full grid size in pixels (-1, 1)
-        private int uvGridSize = 256;
-        private float uvGraphScale = 1f;
+        int uvGridSize = 256;
+        float uvGraphScale = 1f;
 
         enum UVMode
         {
@@ -129,7 +151,7 @@ namespace UnityEditor.ProBuilder
         string[] UV_CHANNELS_STR = new string[] { "UV 1", "UV 2 (read-only)", "UV 3 (read-only)", "UV 4 (read-only)" };
 
 #if PB_DEBUG
-        bool debug_showCoordinates = false;
+        static Pref<bool> s_DebugDrawCoordinateLabels = new Pref<bool>("uv.drawDebugCoordLabels", false, SettingsScope.User);
     #endif
 
         // what uv channel to modify
@@ -446,11 +468,6 @@ namespace UnityEditor.ProBuilder
                 Repaint();
                 needsRepaint = false;
             }
-
-#if PB_DEBUG
-            buggerRect = new Rect(this.position.width - 226, PAD, 220, 300);
-            DrawDebugInfo(buggerRect);
-#endif
         }
 
         #endregion
@@ -808,11 +825,7 @@ namespace UnityEditor.ProBuilder
             {
                 case EventType.MouseDown:
 
-#if PB_DEBUG
-                    if (toolbarRect.Contains(e.mousePosition) || actionWindowRect.Contains(e.mousePosition) || buggerRect.Contains(e.mousePosition))
-                #else
                     if (toolbarRect.Contains(e.mousePosition) || actionWindowRect.Contains(e.mousePosition))
-#endif
                     {
                         m_ignore = true;
                         return;
@@ -957,6 +970,9 @@ namespace UnityEditor.ProBuilder
                 return;
             }
 
+#if SHORTCUT_MANAGER
+        }
+#else
             bool used = false;
 
             switch (e.keyCode)
@@ -964,7 +980,6 @@ namespace UnityEditor.ProBuilder
                 case KeyCode.Keypad0:
                 case KeyCode.Alpha0:
                     ResetCanvas();
-                    uvGraphOffset = Vector2.zero;
                     e.Use();
                     needsRepaint = true;
                     used = true;
@@ -999,6 +1014,7 @@ namespace UnityEditor.ProBuilder
             if (!used && ProBuilderEditor.instance)
                 ProBuilderEditor.instance.ShortcutCheck(e);
         }
+#endif
 
         /**
          * Finds the nearest edge to the mouse and sets the `nearestEdge` struct with it's info
@@ -1853,20 +1869,21 @@ namespace UnityEditor.ProBuilder
                     Handles.CircleHandleCap(-1, UVToGUIPoint(lines[i]), Quaternion.identity, 8f, evt.type);
 
 #if PB_DEBUG
-            if (debug_showCoordinates)
+            if (s_DebugDrawCoordinateLabels)
             {
                 Handles.BeginGUI();
                 r.width = 256f;
                 r.height = 40f;
-                foreach (pb_Object pb in selection)
+
+                foreach (var mesh in selection)
                 {
-                    foreach (int i in pb.SelectedTriangles)
+                    foreach (int i in mesh.selectedIndexesInternal)
                     {
-                        Vector2 v = pb.uv[i];
+                        Vector2 v = mesh.texturesInternal[i];
                         Vector2 sv = UVToGUIPoint(v);
                         r.x = sv.x;
                         r.y = sv.y;
-                        GUI.Label(r, "UV:" + v.ToString("F2") + "\nScreen: " + (int)sv.x + ", " + (int)sv.y);
+                        GUI.Label(r, v.ToString("F2"));
                     }
                 }
                 Handles.EndGUI();
@@ -2081,33 +2098,6 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-#if PB_DEBUG
-        void DrawDebugInfo(Rect rect)
-        {
-            Vector2 mpos = Event.current.mousePosition;
-
-            GUI.BeginGroup(rect);
-            GUILayout.BeginVertical(GUILayout.MaxWidth(rect.width - 6));
-
-            GUILayout.Label("Scale: " + uvGraphScale);
-
-            GUILayout.Label("Object: " + nearestElement.ToString());
-            GUILayout.Label(mpos + " (" + this.position.width + ", " + this.position.height + ")");
-
-            // GUILayout.Label("m_mouseDragging: " + m_mouseDragging);
-            // GUILayout.Label("m_rightMouseDrag: " + m_rightMouseDrag);
-            // GUILayout.Label("m_draggingCanvas: " + m_draggingCanvas);
-            // GUILayout.Label("modifyingUVs: " + modifyingUVs);
-
-            debug_showCoordinates = EditorGUILayout.Toggle("Show UV coordinates", debug_showCoordinates);
-
-            GUILayout.Label("Handle: " + handlePosition.ToString("F3"));
-            GUILayout.Label("Offset: " + handlePosition_offset.ToString("F3"));
-
-            GUI.EndGroup();
-        }
-
-    #endif
         #endregion
         #region UV Canvas Operations
 
@@ -2161,6 +2151,7 @@ namespace UnityEditor.ProBuilder
         {
             uvGraphScale = 1f;
             SetCanvasCenter(new Vector2(.5f, -.5f) * uvGridSize * uvGraphScale);
+            uvGraphOffset = Vector2.zero;
         }
 
         /**
@@ -2689,7 +2680,7 @@ namespace UnityEditor.ProBuilder
 
             if (GUILayout.Button(gc_ConvertToAuto, EditorStyles.miniButton))
                 Menu_SetAutoUV();
-            
+
             // Allowd scrollview to be enabled.
             // Otherwise, we won't be able to use the scrollbar without selecting a face.
             GUI.enabled = true;
@@ -2758,7 +2749,7 @@ namespace UnityEditor.ProBuilder
                 Menu_FitUVs();
 
             GUI.enabled = true;
-            
+
             EditorGUILayout.EndScrollView();
         }
 
@@ -3419,22 +3410,6 @@ namespace UnityEditor.ProBuilder
                     {
                         screenshot.ReadPixels(screenshotCanvasRect, (int)screenshotTexturePosition.x, (int)screenshotTexturePosition.y);
 
-#if PB_DEBUG
-                        Texture2D wholeScreenTexture = new Texture2D((int)ScreenRect.width, (int)ScreenRect.height);
-                        Rect wholeScreenRect;
-
-                        if ((bool)pb_Reflection.GetValue(this, this.GetType(), "docked"))
-                            wholeScreenRect = new Rect(4, 2, (int)ScreenRect.width - 4, (int)ScreenRect.height - 2);
-                        else
-                            wholeScreenRect = new Rect(0, 0, (int)ScreenRect.width, (int)ScreenRect.height);
-
-                        wholeScreenTexture.ReadPixels(wholeScreenRect,
-                            (int)(EditorGUIUtility.pixelsPerPoint / wholeScreenRect.width),
-                            (int)(EditorGUIUtility.pixelsPerPoint / wholeScreenRect.height));
-
-                        m_DebugUVRenderScreens.Add(wholeScreenTexture);
-                    #endif
-
                         screenshotTexturePosition.y += screenshotCanvasRect.height;
 
                         if (screenshotTexturePosition.y < screenshot_size)
@@ -3513,15 +3488,6 @@ namespace UnityEditor.ProBuilder
             {
                 FileUtility.SaveTexture(screenshot, screenShotPath);
                 DestroyImmediate(screenshot);
-
-#if PB_DEBUG
-                for (int n = 0; n < m_DebugUVRenderScreens.Count; n++)
-                {
-                    pb_EditorUtility.SaveTexture(m_DebugUVRenderScreens[n], "Assets/uv-render-" + n + ".png");
-                    DestroyImmediate(m_DebugUVRenderScreens[n]);
-                }
-                m_DebugUVRenderScreens.Clear();
-            #endif
             }
         }
 

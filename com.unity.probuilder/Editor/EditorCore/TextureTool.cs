@@ -97,6 +97,11 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        protected override void OnToolEngaged()
+        {
+            MeshSelection.InvalidateElementSelection();
+        }
+
         protected override void OnToolDisengaged()
         {
             var isFaceMode = ProBuilderEditor.selectMode.ContainsFlag(SelectMode.TextureFace | SelectMode.Face);

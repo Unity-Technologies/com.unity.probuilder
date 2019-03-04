@@ -1,11 +1,9 @@
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
+    [MenuActionShortcut(typeof(SceneView), KeyCode.C)]
     sealed class SetCollider : MenuAction
     {
         public override ToolbarGroup group

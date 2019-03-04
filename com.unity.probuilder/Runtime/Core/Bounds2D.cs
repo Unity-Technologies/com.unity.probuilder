@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -61,7 +60,7 @@ namespace UnityEngine.ProBuilder
         /// Create bounds from a set of 2d points.
         /// </summary>
         /// <param name="points"></param>
-        public Bounds2D(Vector2[] points)
+        public Bounds2D(IList<Vector2> points)
         {
             SetWithPoints(points);
         }
@@ -71,46 +70,9 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         /// <param name="points"></param>
         /// <param name="indexes"></param>
-        public Bounds2D(Vector2[] points, int[] indexes)
+        public Bounds2D(IList<Vector2> points, IList<int> indexes)
         {
             SetWithPoints(points, indexes);
-        }
-
-        /// <summary>
-        /// Create bounds from a set of 2d points.
-        /// </summary>
-        /// <param name="points"></param>
-        /// <param name="edges"></param>
-        public Bounds2D(Vector2[] points, Edge[] edges)
-        {
-            float   xMin = 0f,
-                                  xMax = 0f,
-                                  yMin = 0f,
-                                  yMax = 0f;
-
-            if (points.Length > 0 && edges.Length > 0)
-            {
-                xMin = points[edges[0].a].x;
-                yMin = points[edges[0].a].y;
-                xMax = xMin;
-                yMax = yMin;
-
-                for (int i = 0; i < edges.Length; i++)
-                {
-                    xMin = Mathf.Min(xMin, points[edges[i].a].x);
-                    xMin = Mathf.Min(xMin, points[edges[i].b].x);
-                    yMin = Mathf.Min(yMin, points[edges[i].a].y);
-                    yMin = Mathf.Min(yMin, points[edges[i].b].y);
-
-                    xMax = Mathf.Max(xMax, points[edges[i].a].x);
-                    xMax = Mathf.Max(xMax, points[edges[i].b].x);
-                    yMax = Mathf.Max(yMax, points[edges[i].a].y);
-                    yMax = Mathf.Max(yMax, points[edges[i].b].y);
-                }
-            }
-
-            this.center = new Vector2((xMin + xMax) / 2f, (yMin + yMax) / 2f);
-            this.size = new Vector3(xMax - xMin, yMax - yMin);
         }
 
         /// <summary>
@@ -333,14 +295,14 @@ namespace UnityEngine.ProBuilder
         /// <param name="points"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public static Vector2 Center(Vector2[] points, int length = -1)
+        public static Vector2 Center(IList<Vector2> points)
         {
             float   xMin = 0f,
                     xMax = 0f,
                     yMin = 0f,
                     yMax = 0f;
 
-            int size = length < 1 ? points.Length : length;
+            int size = points.Count;
 
             xMin = points[0].x;
             yMin = points[0].y;
@@ -362,13 +324,6 @@ namespace UnityEngine.ProBuilder
             return new Vector2((xMin + xMax) / 2f, (yMin + yMax) / 2f);
         }
 
-        /// <summary>
-        /// Returns the center of the bounding box of points.  Optional parameter @length limits the bounds calculations
-        /// to only the points up to length in array.
-        /// </summary>
-        /// <param name="points"></param>
-        /// <param name="indexes"></param>
-        /// <returns></returns>
         public static Vector2 Center(IList<Vector2> points, IList<int> indexes)
         {
             float   xMin = 0f,
@@ -396,6 +351,35 @@ namespace UnityEngine.ProBuilder
             }
 
             return new Vector2((xMin + xMax) / 2f, (yMin + yMax) / 2f);
+        }
+
+        public static Vector2 Size(IList<Vector2> points, IList<int> indexes)
+        {
+            float   xMin = 0f,
+                    xMax = 0f,
+                    yMin = 0f,
+                    yMax = 0f;
+
+            int size = indexes.Count;
+
+            xMin = points[indexes[0]].x;
+            yMin = points[indexes[0]].y;
+            xMax = xMin;
+            yMax = yMin;
+
+            for (int i = 1; i < size; i++)
+            {
+                float x = points[indexes[i]].x;
+                float y = points[indexes[i]].y;
+
+                if (x < xMin) xMin = x;
+                if (x > xMax) xMax = x;
+
+                if (y < yMin) yMin = y;
+                if (y > yMax) yMax = y;
+            }
+
+            return new Vector2(xMax - xMin, yMax - yMin);
         }
 
         internal static Vector2 Center(IList<Vector4> points, IEnumerable<int> indexes)

@@ -3,6 +3,7 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
+    [MenuActionShortcut(typeof(SceneView), KeyCode.P)]
     sealed class ToggleHandleOrientation : MenuAction
     {
         Texture2D[] m_Icons;
@@ -10,7 +11,11 @@ namespace UnityEditor.ProBuilder.Actions
         HandleOrientation handleOrientation
         {
             get { return VertexManipulationTool.handleOrientation; }
-            set { VertexManipulationTool.handleOrientation = value; }
+            set
+            {
+                VertexManipulationTool.handleOrientation = value;
+                ProBuilderEditor.Refresh(false);
+            }
         }
 
         public override ToolbarGroup group
