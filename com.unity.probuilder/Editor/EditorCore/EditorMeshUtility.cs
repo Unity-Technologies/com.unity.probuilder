@@ -51,7 +51,12 @@ namespace UnityEditor.ProBuilder
             if (!skipMeshProcessing)
             {
                 bool autoLightmap = Lightmapping.autoUnwrapLightmapUV;
+                
+#if UNITY_2019_2_OR_NEWER
+                bool lightmapUVs = generateLightmapUVs || (autoLightmap && mesh.gameObject.HasStaticFlag(StaticEditorFlags.ContributeGI));
+#else
                 bool lightmapUVs = generateLightmapUVs || (autoLightmap && mesh.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic));
+#endif
 
                 // if generating UV2, the process is to manually split the mesh into individual triangles,
                 // generate uv2, then re-assemble with vertex collapsing where possible.
