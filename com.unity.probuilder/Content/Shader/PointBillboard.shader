@@ -85,7 +85,7 @@ Shader "Hidden/ProBuilder/PointBillboard"
                     GS_INPUT output = (GS_INPUT)0;
 
                     output.pos = float4(UnityObjectToViewPos(v.vertex.xyz), 1);
-                    output.pos.xyz *= lerp(.98, .95, ORTHO);
+                    output.pos.xyz *= lerp(.99, .95, ORTHO);
                     output.pos = mul(UNITY_MATRIX_P, output.pos);
                     // convert clip -> ndc -> screen, build billboards in geo shader, then screen -> ndc -> clip
                     output.pos = ClipToScreen(output.pos);
