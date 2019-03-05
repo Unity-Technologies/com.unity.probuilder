@@ -65,7 +65,6 @@ namespace UnityEditor.ProBuilder
                 {
                     PropertyInfo hasMenuEntryProperty = typeof(MenuAction).GetProperty("hasFileMenuEntry", BindingFlags.NonPublic | BindingFlags.Instance);
                     visibleInMenu = hasMenuEntryProperty != null && (bool)hasMenuEntryProperty.GetValue(instance, null);
-
                     menuItemShortcut = instance.tooltip.shortcut;
                 }
             }
@@ -104,7 +103,8 @@ namespace UnityEditor.ProBuilder
             {
                 var data = new MenuActionData(action);
 
-//                UnityEngine.Debug.Log($"{data.visibleInMenu}\n{data.typeString}\n{data.path}\n{data.menuItemShortcut}");
+                if (!data.visibleInMenu)
+                    continue;
 
                 if (data.valid)
                 {
@@ -161,12 +161,11 @@ namespace UnityEditor.ProBuilder
 
             var category = GetActionCategory(data.path);
             var priority = GetMenuPriority(category);
-            var shortcut = GetMenuFormattedShortcut(data.menuItemShortcut);
+            var menuItemShortcut = GetMenuFormattedShortcut(data.menuItemShortcut);
 
             sb.AppendLine();
 
 #if SHORTCUT_MANAGER
-
             var shortcutInfo = data.type.GetCustomAttribute<MenuActionShortcutAttribute>();
 
             if (shortcutInfo != null)
@@ -186,7 +185,7 @@ namespace UnityEditor.ProBuilder
 #endif
 
             // Action
-            sb.AppendLine($"\t\t[MenuItem(k_MenuPrefix + \"{data.path}{shortcut}\", false, {priority})]");
+            sb.AppendLine($"\t\t[MenuItem(k_MenuPrefix + \"{data.path}{menuItemShortcut}\", false, {priority})]");
             sb.AppendLine($"\t\tstatic void MenuPerform_{data.typeString}()");
             sb.AppendLine( "\t\t{");
             sb.AppendLine($"\t\t\tvar instance = EditorToolbarLoader.GetInstance<{data.typeString}>();");
