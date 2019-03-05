@@ -61,7 +61,7 @@
 	* [Flip Face Edge](Face_FlipTri)
 	* [Flip Face Normals](Face_FlipNormals)
 	* [Flip Normals - Objects](Object_FlipNormals)
-	* [Freeze Transform](Pivot_Reset)
+	* [Freeze Transform](Freeze_Transform)
 	* [Grow Selection](Selection_Grow)
 	* [Insert Edge Loop](Edge_InsertLoop)
 	* [Inset](Face_Inset)

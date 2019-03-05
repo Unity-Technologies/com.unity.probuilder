@@ -26,7 +26,7 @@ For more information, see the [Flip Normals](Object_FlipNormals.md) tool documen
 
 Use the **Freeze Transform** tool to set the selected object's position, rotation, and scale to world-relative origin.
 
-For more information, see the [Freeze Transform](Pivot_Reset.md) tool documentation.
+For more information, see the [Freeze Transform](Freeze_Transform.md) tool documentation.
 
 ## Merge Objects
 

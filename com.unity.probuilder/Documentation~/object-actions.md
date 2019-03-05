@@ -60,11 +60,11 @@ Use the **Flip Normals** tool to flip the normals of **all** faces on the select
 
 For more information, see the [Flip Normals](Object_FlipNormals.md) tool documentation.
 
-## ![Freeze Transform icon](images/icons/Pivot_Reset.png) Freeze Transform
+## ![Freeze Transform icon](images/icons/Freeze_Transform.png) Freeze Transform
 
 Use the **Freeze Transform** tool to set the selected object's position, rotation, and scale to world-relative origin.
 
-For more information, see the [Freeze Transform](Pivot_Reset.md) tool documentation.
+For more information, see the [Freeze Transform](Freeze_Transform.md) tool documentation.
 
 ## ![Subdivide Object icon](images/icons/Object_Subdivide.png) Subdivide Object
 
