@@ -4,13 +4,20 @@ using System.Linq;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
+    /// <summary>
+    /// Methods for merging multiple <see cref="ProBuilderMesh"/> objects to a single mesh.
+    /// </summary>
 	public static class CombineMeshes
 	{
         /// <summary>
-        /// Given an array of "donors", this method returns a merged ProBuilderMesh.
+        /// Merge a collection of <see cref="ProBuilderMesh"/> objects to as few meshes as possible. This may result in
+        /// more than one mesh due to a max vertex count limit of 65535.
         /// </summary>
-        /// <param name="meshes"></param>
-        /// <returns></returns>
+        /// <param name="meshes">A collection of meshes to be merged.</param>
+        /// <returns>
+        /// A list of merged meshes. In most cases this will be a single mesh. However it can be multiple in cases
+        /// where the resulting vertex count exceeds the maximum allowable value.
+        /// </returns>
         public static List<ProBuilderMesh> Combine(IEnumerable<ProBuilderMesh> meshes)
         {
             if (meshes == null)
@@ -92,7 +99,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 offset += meshVertexCount;
             }
 
-            var res = InternalMeshUtility.SplitByMaxVertexCount(vertices, faces, sharedVertices, sharedTextures);
+            var res = SplitByMaxVertexCount(vertices, faces, sharedVertices, sharedTextures);
             var pivot = meshes.LastOrDefault().transform.position;
 
             foreach (var m in res)
@@ -103,7 +110,96 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 UVEditing.SetAutoAndAlignUnwrapParamsToUVs(m, autoUvFaces);
 
             }
+
             return res;
+        }
+
+        static ProBuilderMesh CreateMeshFromSplit(List<Vertex> vertices,
+            List<Face> faces,
+            Dictionary<int, int> sharedVertexLookup,
+            Dictionary<int, int> sharedTextureLookup,
+            Dictionary<int, int> remap,
+            Material[] materials)
+        {
+            // finalize mesh
+            var sv = new Dictionary<int, int>();
+            var st = new Dictionary<int, int>();
+
+            foreach (var f in faces)
+            {
+                for (int i = 0, c = f.indexesInternal.Length; i < c; i++)
+                    f.indexesInternal[i] = remap[f.indexesInternal[i]];
+
+                f.InvalidateCache();
+            }
+
+            foreach (var kvp in remap)
+            {
+                int v;
+
+                if (sharedVertexLookup.TryGetValue(kvp.Key, out v))
+                    sv.Add(kvp.Value, v);
+
+                if (sharedTextureLookup.TryGetValue(kvp.Key, out v))
+                    st.Add(kvp.Value, v);
+            }
+
+            return ProBuilderMesh.Create(
+                vertices,
+                faces,
+                SharedVertex.ToSharedVertices(sv),
+                st.Any() ? SharedVertex.ToSharedVertices(st) : null,
+                materials);
+        }
+
+        /// <summary>
+        /// Break a ProBuilder mesh into multiple meshes if it's vertex count is greater than maxVertexCount.
+        /// </summary>
+        /// <returns></returns>
+        internal static List<ProBuilderMesh> SplitByMaxVertexCount(IList<Vertex> vertices, IList<Face> faces, IList<SharedVertex> sharedVertices, IList<SharedVertex> sharedTextures, uint maxVertexCount = ProBuilderMesh.maxVertexCount)
+        {
+            uint vertexCount = (uint)vertices.Count;
+            uint meshCount = System.Math.Max(1u, vertexCount / maxVertexCount);
+            var submeshCount = faces.Max(x => x.submeshIndex) + 1;
+
+            if (meshCount < 2)
+                return new List<ProBuilderMesh>() { ProBuilderMesh.Create(vertices, faces, sharedVertices, sharedTextures, new Material[submeshCount]) };
+
+            var sharedVertexLookup = new Dictionary<int, int>();
+            SharedVertex.GetSharedVertexLookup(sharedVertices, sharedVertexLookup);
+
+            var sharedTextureLookup = new Dictionary<int, int>();
+            SharedVertex.GetSharedVertexLookup(sharedTextures, sharedTextureLookup);
+
+            var meshes = new List<ProBuilderMesh>();
+            var mv = new List<Vertex>();
+            var mf = new List<Face>();
+            var remap = new Dictionary<int, int>();
+
+            foreach (var face in faces)
+            {
+                if (mv.Count + face.distinctIndexes.Count > maxVertexCount)
+                {
+                    // finalize mesh
+                    meshes.Add(CreateMeshFromSplit(mv, mf, sharedVertexLookup, sharedTextureLookup, remap, new Material[submeshCount]));
+                    mv.Clear();
+                    mf.Clear();
+                    remap.Clear();
+                }
+
+                foreach (int i in face.distinctIndexes)
+                {
+                    mv.Add(vertices[i]);
+                    remap.Add(i, mv.Count - 1);
+                }
+
+                mf.Add(face);
+            }
+
+            if (mv.Any())
+                meshes.Add(CreateMeshFromSplit(mv, mf, sharedVertexLookup, sharedTextureLookup, remap, new Material[submeshCount]));
+
+            return meshes;
         }
 	}
 }
