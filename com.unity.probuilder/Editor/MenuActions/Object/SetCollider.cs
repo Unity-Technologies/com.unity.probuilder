@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-    [MenuActionShortcut(typeof(SceneView), KeyCode.C)]
     sealed class SetCollider : MenuAction
     {
         public override ToolbarGroup group
