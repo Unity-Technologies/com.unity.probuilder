@@ -1,7 +1,7 @@
 {
 	"name": "com.unity.probuilder.tests",
 	"displayName":"ProBuilder Unit Tests",
-	"version": "4.0.3",
+	"version": "4.0.4",
 	"unity": "2018.3",
 	"description": "Unit tests for ProBuilder",
 	"dependencies": {

@@ -18,19 +18,20 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
         {
             using (var shapes = new TestUtility.BuiltInPrimitives())
             {
-                foreach (var pb in (IEnumerable<ProBuilderMesh>)shapes)
+                foreach (var mesh in (IEnumerable<ProBuilderMesh>)shapes)
                 {
-                    var face = pb.facesInternal.FirstOrDefault();
-                    pb.DeleteFace(face);
-                    pb.ToMesh();
-                    pb.Refresh();
+                    var face = mesh.facesInternal.FirstOrDefault();
+                    mesh.DeleteFace(face);
+                    mesh.ToMesh();
+                    mesh.Refresh();
+
 #if PB_CREATE_TEST_MESH_TEMPLATES
-                    TestUtility.SaveAssetTemplate(pb.mesh, pb.name);
+                    TestUtility.SaveAssetTemplate(mesh.mesh, mesh.name);
 #endif
-                    TestUtility.AssertMeshAttributesValid(pb.mesh);
-                    var template = TestUtility.GetAssetTemplate<Mesh>(pb.name);
+                    TestUtility.AssertMeshAttributesValid(mesh.mesh);
+                    var template = TestUtility.GetAssetTemplate<Mesh>(mesh.name);
                     Assert.IsNotNull(template);
-                    TestUtility.AssertAreEqual(template, pb.mesh);
+                    TestUtility.AssertAreEqual(template, mesh.mesh);
                 }
             }
         }

@@ -257,14 +257,21 @@ namespace UnityEngine.ProBuilder.Tests.Framework
             int vertexCount = expected.vertexCount;
             int subMeshCount = expected.subMeshCount;
 
-            Assert.AreEqual(vertexCount, result.vertexCount, "Vertex count");
-            Assert.AreEqual(subMeshCount, result.subMeshCount, "Submesh count");
+            string prefix = string.Format("Expected {0}, Was {1}\n",
+                expected == null ? "null" : expected.name,
+                result == null ? "null" : result.name);
+
+            Assert.AreEqual(vertexCount, result.vertexCount, prefix + "Vertex count");
+            Assert.AreEqual(subMeshCount, result.subMeshCount, prefix + "Submesh count");
 
             Vertex[] leftVertices = expected.GetVertices();
             Vertex[] rightVertices = result.GetVertices();
 
             for (int i = 0; i < vertexCount; i++)
-                Assert.IsTrue(leftVertices[i].Equals(rightVertices[i]), "Vertices are not equal.");
+                Assert.IsTrue(leftVertices[i].Equals(rightVertices[i]), string.Format("{0} Vertices are not equal.\nExpected:\n{1}\nReceived:\n{2}",
+                    prefix,
+                    leftVertices[i].ToString("F2"),
+                    rightVertices[i].ToString("F2")));
 
             List<int> leftIndices = new List<int>();
             List<int> rightIndices = new List<int>();
@@ -273,14 +280,14 @@ namespace UnityEngine.ProBuilder.Tests.Framework
             {
                 uint indexCount = expected.GetIndexCount(i);
 
-                Assert.AreEqual(expected.GetTopology(i), result.GetTopology(i), "Mesh topology");
-                Assert.AreEqual(indexCount, result.GetIndexCount(i), "Submesh index count");
+                Assert.AreEqual(expected.GetTopology(i), result.GetTopology(i), prefix + "Mesh topology");
+                Assert.AreEqual(indexCount, result.GetIndexCount(i), prefix + "Submesh index count");
 
                 expected.GetIndices(leftIndices, i);
                 result.GetIndices(rightIndices, i);
 
                 for (int n = 0; n < indexCount; n++)
-                    Assert.AreEqual(leftIndices[n], rightIndices[n], "Index mismatch");
+                    Assert.AreEqual(leftIndices[n], rightIndices[n], prefix + "Index mismatch");
             }
 
             return true;

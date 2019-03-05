@@ -41,6 +41,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Object
             var source = AssetDatabase.LoadMainAssetAtPath(srcPath);
             var meshImporter = (ModelImporter)AssetImporter.GetAtPath(srcPath);
             meshImporter.globalScale = 100f;
+            meshImporter.isReadable = true;
             meshImporter.SaveAndReimport();
 
             Assert.IsNotNull(source);
