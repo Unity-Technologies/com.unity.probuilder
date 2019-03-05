@@ -8,7 +8,7 @@ After you initially [create a Poly Shape](workflow-create-polyshape.md), you can
 
 
 
-> ***Note:*** You can always modify Mesh elements on the Poly Shape Mesh using the standard ProBuilder editing tools. However, each time you re-enter Poly Shape editing mode, any element changes are lost.
+> **Note:** You can modify Mesh elements on the Poly Shape Mesh with the standard ProBuilder editing tools. However, each time you re-enter Poly Shape editing mode, you lose any element changes.
 
 
 
@@ -16,12 +16,12 @@ After you initially [create a Poly Shape](workflow-create-polyshape.md), you can
 
 When you are in Poly Shape editing mode, the **Poly Shape** component in the Inspector displays the **Editing Poly Shape** button. If you are not in Poly Shape editing mode, the **Edit Poly Shape** button appears instead.
 
-To enter the Poly Shape editing mode, click the **Edit Poly Shape** button.  To exit out of the Poly Shape editing mode, click the button (**Editing Poly Shape**) again.
+To enter the Poly Shape editing mode, click the **Edit Poly Shape** button. To exit out of the Poly Shape editing mode, click the button (**Editing Poly Shape**) again.
 
-In Poly Shape editing mode, you can modify the shape by performing the following tasks in the Scene view:
+To modify the shape in Poly Shape editing mode, perform the following tasks in the Scene view:
 
 - Click and drag existing control points to move them around.
-- Click existing control points to select them, then use **Backspace** (Windows) or **Delete** (Mac) to remove the points from the shape.
+- Click existing control points to select them, then use **Backspace** (Windows) or **Delete** (macOS) to remove the points from the shape.
 - Click along the perimeter line to add new control points.
 - Click and drag the handle in the center of the Mesh to set the height.
 

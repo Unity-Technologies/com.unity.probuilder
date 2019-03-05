@@ -1,6 +1,6 @@
 # ProBuilder Window
 
-Opens the [ProBuilder toolbar](toolbar.md) and [Edit mode toolbar](edit-mode-toolbar.md) together. 
+This opens the [ProBuilder toolbar](toolbar.md) and [Edit mode toolbar](edit-mode-toolbar.md) together. 
 
 ![ProBuilder toolbar and Edit mode toolbar opens and closes at the same time](images/menu-open.png)
 

@@ -1,11 +1,14 @@
 # ![Set Pivot icon](images/icons/SetPivot.png) Set Pivot (Vertices)
 
-Move the pivot point of this Mesh to the average center of the selected vertices.
+Use the __Set Pivot__ tool to move the pivot point of this Mesh to the average center of the selected vertices.
 
-> ***Tip:*** You can also use this tool with the **Ctrl+J** (Windows) or **Cmd+J** (Mac) hotkey.
+> **Tip:** You can also use this tool with the **Ctrl/Cmd+J** hotkey.
 
 
 
 ![Centering the pivot on selected Vertex points](images/Vert_SetPivot.png)
 
-In the first panel of this example, the pivot point of the log is at the end corner of the cylinder. The middle panel shows the vertices on the end selected so the Set Pivot tool changes the pivot to the center of those end vertices. The third panel displays the pivot point in the center of the cylinder end, even when back in Object editing mode.
+In this example:
+* **Left panel**: The pivot point of the log is at the end corner of the cylinder. 
+* **Middle panel**: The vertices on the end are selected, so the Set Pivot tool changes the pivot to the center of those end vertices. 
+* **Right panel**: The pivot point is now in the center of the cylinder end, even when in Object editing mode.

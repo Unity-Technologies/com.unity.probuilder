@@ -4,7 +4,7 @@ The **Smooth Group Editor** window allows you to [add and remove smoothing group
 
 ![Smoothing Groups Example](images/Smoothing_Editor_props.png)
 
-![A](images/LetterCircle_A.png) The [toggle buttons](#Toggle Panel buttons) control the visibility of some areas of the window.
+![A](images/LetterCircle_A.png) The [toggle buttons](#toggle) control the visibility of some areas of the window.
 
 ![B](images/LetterCircle_B.png) The [Normals control](#normals) is a visual aid that allows you to change the length of the normals displayed on the Mesh in the Scene view.
 
@@ -14,7 +14,7 @@ The **Smooth Group Editor** window allows you to [add and remove smoothing group
 
 ![E](images/LetterCircle_E.png) The [main button panel](#main-panel) allows you to define up to 23 sets of smoothing groups. 
 
-> ***Tip:*** You can also access this tool from the ProBuilder menu (**Tools** > **ProBuilder** > **Editors** > **Open Smoothing Editor**).
+> **Tip:** You can also access this tool from the ProBuilder menu (**Tools** > **ProBuilder** > **Editors** > **Open Smoothing Editor**).
 
 
 
@@ -34,11 +34,11 @@ The cluster of buttons in the top left corner of the window hide or display the 
 
 ## Normals control
 
-You can change the length of the normals displayed on the Mesh with the Normals slider control. Viewing the normals allows you to see which vertices are split, therefore affecting the smoothing.
+You can use the Normals slider control to change the length of the normals ProBuilder displays on the Mesh. Viewing the normals allows you to see which vertices are split, therefore affecting the smoothing.
 
 ![Normals control](images/Smoothing_Editor_props-pnlNormals.png)
 
-Moving the slider position towards the left shortens the length of the normals and moving to the right lengthens them. When the slider is all the way to the left, the normals are no longer visible.
+Move the slider position towards the left to shorten the length of the normals, or move them to the right to lengthen them. When the slider is all the way to the left, the normals are no longer visible.
 
 
 
@@ -64,7 +64,7 @@ The overlay controls panel allows you to customize how ProBuilder previews the s
 
 
 
-| ***Property:***     | ***Description:***                                           |
+| **Property:**     | **Description:**                                           |
 | ------------------- | ------------------------------------------------------------ |
 | **Preview Opacity** | Increase this value to show more of the color of the applied smoothing group and less of the Mesh's Material. The range of values is **0.001** (smoothing group colors are invisible) to **1** (only smoothing colors are visible). |
 | **Preview Dither**  | Enable this option to see how ProBuilder applies the smoothing to the Mesh with the dither overlay. |
@@ -85,18 +85,18 @@ The main button panel allows you to define up to 23 sets of smoothing groups.
 
 These buttons in the top right corner help you manage smoothing groups:
 
-* Click the ![Select by smooth group](images/icons/Selection_SelectBySmoothingGroup.png) Select Smoothing Group button to extend the face selection to all faces in the currently selected smoothing group. For best results, click a single face in the group to start and then click this button. The tool doesn't shrink the current selection, so start with as small a selection as possible.
-* Click the ![Break smooth groups](images/icons/Face_BreakSmoothing.png) Clear Smoothing Group button to remove all faces from the currently selected smoothing group.
+* Click the ![Select by smooth group](images/icons/Selection_SelectBySmoothingGroup.png) __Select Smoothing Group__ button to extend the face selection to all faces in the currently selected smoothing group. For best results, click a single face in the group to start and then click this button. The tool doesn't shrink the current selection, so start with as small a selection as possible.
+* Click the ![Break smooth groups](images/icons/Face_BreakSmoothing.png) __Clear Smoothing Group__ button to remove all faces from the currently selected smoothing group.
 
 ### Preview colors
 
 This panel is always visible, but the color under each button only appears in [Preview mode](#toggle). 
 
-Regardless of whether or not you are in Preview mode, the button background changes color according to what faces and smoothing group you've selected:
+Whether or not you are in Preview mode, the button background changes color according to what faces and smoothing group you've selected:
 
-| ***Button color:***                                          | ***Description:***                                           |
+| **Button color:**                                          | **Description:**                                           |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![White button background](images/Smoothing_Editor_props-btnWhite.png) | No faces are in selected Smoothing Group yet.                |
+| ![White button background](images/Smoothing_Editor_props-btnWhite.png) | No faces are in the selected Smoothing Group yet.                |
 | ![Gray-blue button background](images/Smoothing_Editor_props-btnGray.png) | None of the selected faces are in the selected Smoothing Group. |
 | ![Blue button background](images/Smoothing_Editor_props-btnBlue.png) | All of the faces in the currently selected Smoothing Group are currently selected. |
 | ![Yellow button background](images/Smoothing_Editor_props-btnYellow.png) | The current selection includes faces that are in the currently selected Smoothing Group, but it also includes faces that are not in any Smoothing Group. |
