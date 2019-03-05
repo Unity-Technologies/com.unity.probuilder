@@ -73,11 +73,11 @@ You can also save your Palette as a custom Palette and load it in other Scenes o
 
 ![Item C](images/LetterCircle_C.png) Use one of the buttons to apply the associated Material to the selected face(s). Alternatively, you can use the hotkey displayed on the button (**Alt/Opt+#**).
 
-![Item D](images/LetterCircle_D.png) Set a reference to the Material you want to use in this slot or "well" of the Material Palette.
+![Item D](images/LetterCircle_D.png) Set a reference to the Material you want to use in this slot of the Material Palette.
 
-![Item E](images/LetterCircle_E.png) To delete an extra slot or "well", click the red square on the right edge of the button.
+![Item E](images/LetterCircle_E.png) To delete an extra slot, click the red square on the right edge of the button.
 
-![Item F](images/LetterCircle_F.png) Click **Add** to add a new slot or "well" to the Material Palette. 
+![Item F](images/LetterCircle_F.png) Click **Add** to add a new slot to the Material Palette. 
 
 
 
