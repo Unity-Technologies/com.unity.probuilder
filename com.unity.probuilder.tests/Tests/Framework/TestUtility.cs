@@ -25,10 +25,12 @@ namespace UnityEngine.ProBuilder.Tests.Framework
         public void Cleanup()
         {
             if (Directory.Exists(TestUtility.TemporarySavedAssetsDirectory))
-            {
                 Directory.Delete(TestUtility.TemporarySavedAssetsDirectory, true);
-                File.Delete(TestUtility.TemporarySavedAssetsDirectory + ".meta");
-            }
+
+            var meta = TestUtility.TemporarySavedAssetsDirectory;
+            if (meta.EndsWith("/") || meta.EndsWith("\\"))
+                meta = meta.Substring(0, meta.Length - 1);
+            File.Delete(meta + ".meta");
         }
     }
 
