@@ -264,6 +264,9 @@ namespace UnityEditor.ProBuilder
 
         static string GetShortcutAttributeKeyBindingArgs(KeyCode key, EventModifiers modifiers)
         {
+            if(key == KeyCode.None)
+                return "";
+
             var m = (int) ConvertEventModifiersToShortcutModifiers(modifiers, true);
             var k = (int) key;
 

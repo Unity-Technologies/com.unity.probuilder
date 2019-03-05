@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-    [MenuActionShortcut(typeof(SceneView))]
     sealed class SetTrigger : MenuAction
     {
         public override ToolbarGroup group

@@ -680,9 +680,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Object/Set Collider", typeof(UnityEditor.SceneView), (KeyCode) 99, (ShortcutModifiers) 0)]
-#endif
 		[MenuItem(k_MenuPrefix + "Object/Set Collider", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuPerform_SetCollider()
 		{
@@ -698,9 +695,6 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
-		[Shortcut(k_ShortcutPrefix + "Object/Set Trigger", typeof(UnityEditor.SceneView), (KeyCode) 0, (ShortcutModifiers) 0)]
-#endif
 		[MenuItem(k_MenuPrefix + "Object/Set Trigger", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuPerform_SetTrigger()
 		{
