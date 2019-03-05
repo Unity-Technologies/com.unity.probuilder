@@ -93,7 +93,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             var scenes = Directory.GetFiles("Assets", "*.unity", SearchOption.AllDirectories);
             var prefabs = Directory.GetFiles("Assets", "*.prefab", SearchOption.AllDirectories);
             var count = (scenes.Length + prefabs.Length) - 1f;
-            var exit = false;
+            var exit = count < 1f;
 
             try
             {
