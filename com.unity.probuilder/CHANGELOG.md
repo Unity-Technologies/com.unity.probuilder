@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.4-preview.2] - 2019-02-14
+## [4.0.4-preview.3] - 2019-03-05
 
 ### Features
 
@@ -35,9 +35,47 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Name newly merged `GameObject`s after the active selected `GameObject`.
 
-### Changes since 4.0.4-preview.1
+### Changes since 4.0.4-preview.2
 
-- Fix a regression that broke building projects.
+## Features
+
+- Use `ShortcutManager` API to manage single-key shortcuts.
+- Added option to show current tool delta in the Scene View ("Show Handle Info".)
+
+## Bug Fixes
+
+- Fixed creating a new PB shape with the Shape Tool does not dirty the scene.
+- Fixed MaterialEditor not filtering out unused submesh index when applying new material.
+- Fixed Vertices/Faces/Edges picking in Prefab mode.
+- Fixed Action window in UVEditor not scrollable.
+- Fixed deep selection on faces shouldn't trigger when multiple faces are selected.
+- Fixed UV action panel scroll does not work if nothing or just one vertex selected.
+- Fixed `ProBuilderize` action potentially creating un-editable geometry if "Import Smoothing" is enabled.
+- Fixed change to one member of a UV group not replicating to the other member of the group.
+- Fixed UV group not having their settings applied at the same time.
+- Fixed sometimes needing to click twice on a face in the UV editor to the right actions.
+- Fixed de-selecting vertices not working properly in certain situations.
+- Fixed edge selection sometimes picking edge behind the mesh.
+- Fixed UV panel shows incorrect info when zero UVs are selected.
+- Fixed deep Selection should not trigger if no elements are selected.
+- Fixed Element Selection lost after using Weld action.
+- Fixed UVs converting to manual when merging 2 objects.
+- Fixed Selection being discarded when connecting edges.
+- Fixed trigger and collider types not always hiding properly.
+- Fixed Box Project resulting in skewed UVs.
+- Fixed in-scene Texture Move tool not translating UVs at a constant speed when scaled.
+- Fixed `Weld Vertices` and `Collapse Vertices` sometimes leaving invalid edges in affected faces.
+- Fixed ProBuilder window not updating when toggling handle orientation from shortcut key.
+- Fixed `Subdivide` action resulting in horizontally flipped UV coordinates.
+- Fixed `Box Project` action resulting in horizontally flipped UV coordinates.
+- Fixed UV Editor preview texture sometimes not appearing.
+
+## Changes
+
+- Changed the order of UV transform operation (rotation and scale are now called before applying the anchor).
+- Changed picking to now prefers the object hovered over the selected object.
+- Add "Open ProBuilder" button back to `ProBuilderMesh` component Editor.
+- Increase the minimum size of Auto UV Editor window to not require vertical scrollbars.
 
 ## [4.0.3] - 2019-01-25
 
