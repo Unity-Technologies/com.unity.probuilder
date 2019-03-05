@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder.Actions
                 return new ActionResult(ActionResult.Status.Canceled, "Must Select 2+ Objects");
 
             var selected = MeshSelection.top.ToArray();
-            List<ProBuilderMesh> res = InternalMeshUtility.CombineObjects(MeshSelection.topInternal);
+            List<ProBuilderMesh> res = CombineMeshes.Combine(MeshSelection.topInternal);
 
             if (res != null)
             {
