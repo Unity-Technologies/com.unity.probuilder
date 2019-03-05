@@ -18,8 +18,8 @@ You can customize the shape of a cylinder with these shape properties:
 
 | **Property:** | **Description:** |
 |:-- |:-- |
-| __Radius__ | Set the radius (width) of the cylinder. The default value is 0.5. The minimum value is 0.01. |
+| __Radius__ | Set the radius (width) of the cylinder in meters. The default value is 0.5. The minimum value is 0.01. |
 | __Number of Sides__ | Set the number of sides for the cylinder. The more sides you use (relative to the size of the __Radius__), the smoother the sides of the cylinder become. The default value is 8. Valid values range from 4 to 48. |
-| __Height__ | Set the height of the cylinder. The default value is 1. |
+| __Height__ | Set the height of the cylinder in meters. The default value is 1. |
 | __Height Segments__ | Set the number of divisions to use for the height of the cylinder. For example, a value of 3 produces 4 faces on every side of the cylinder. The default value is 0. Valid values range from 0 to 48. |
 | __Smooth__ | Enable this option to smooth the edges of the polygons. This is enabled by default. |

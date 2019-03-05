@@ -4,7 +4,7 @@ Use the **Shape Tool** window to create new ProBuilder Mesh shapes, such as cyli
 
 ![Shape Tool properties](images/shape-tool.png) 
 
-Each shape has specific properties. You can customize these before you add the shape to your Scene. For example, the *Stair* shape lets you choose items like step height, arc, and which parts of the stairway to build.
+Each shape has specific properties. You can customize these before you add the shape to your Scene. For example, the *Stair* shape lets you choose items like step height, arc, and which parts of the stairway to build. 
 
 ![Shape Tool Example](images/Example_ShapeToolsWithCurvedStair.png)
 
@@ -45,4 +45,6 @@ The following sections describe the shape-specific properties available for thes
 * [Sphere](Sphere.md)
 * [Torus](Torus.md)
 * [Custom](Custom.md)
+
+
 

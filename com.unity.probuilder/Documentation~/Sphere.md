@@ -20,5 +20,5 @@ You can customize the shape of a sphere with these shape properties:
 
 | **Property:** | **Description:** |
 |:-- |:-- |
-| __Radius__ | Set the radius (size) of the sphere. The default value is 1. Valid values range from 0.01 to 10. |
+| __Radius__ | Set the radius (size) of the sphere in meters. The default value is 1. Valid values range from 0.01 to 10. |
 | __Subdivisions__ | Set the number of times to subdivide each triangle. The default value is 1. Valid values range from 0 to 4.<br /><br />The more subdivisions you create, the smoother the sphere appears. However, remember that each subdivision increases the number of triangles exponentially, which means that it uses a lot more resources to render. |

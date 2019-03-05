@@ -18,6 +18,6 @@ You can customize the shape of a cone with these shape properties:
 
 | **Property:** | **Description:** |
 |:-- |:-- |
-| __Radius__ | Set the radius of the base of the cone. The default value is 1. The minimum value is 0.1. |
-| __Height__ | Set the height for the cone. The default value is 2. The minimum value is 0.1. |
+| __Radius__ | Set the radius of the base of the cone in meters. The default value is 1. The minimum value is 0.1. |
+| __Height__ | Set the height for the cone in meters. The default value is 2. The minimum value is 0.1. |
 | __Number of Sides__ | Set the number of sides for the cone. The more sides you use (relative to the size of the __Radius__ and the __Height__), the smoother the sides of the cone become. The default value is 6. Valid values range from 3 to 32. |
