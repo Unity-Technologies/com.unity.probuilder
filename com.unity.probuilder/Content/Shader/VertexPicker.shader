@@ -29,6 +29,9 @@ CGPROGRAM
             #pragma fragment frag
             #include "UnityCG.cginc"
 
+            // Is the camera in orthographic mode? (1 yes, 0 no)
+            #define ORTHO (1 - UNITY_MATRIX_P[3][3])
+
             struct appdata
             {
                 float4 vertex : POSITION;
@@ -50,7 +53,7 @@ CGPROGRAM
                 v2f o;
 
                 o.pos = float4(UnityObjectToViewPos(v.vertex.xyz), 1);
-                o.pos.xyz *= .95;
+                o.pos.xyz *= lerp(.99, .95, ORTHO);
                 o.pos = mul(UNITY_MATRIX_P, o.pos);
 
                 // convert vertex to screen space, add pixel-unit xy to vertex, then transform back to clip space.
