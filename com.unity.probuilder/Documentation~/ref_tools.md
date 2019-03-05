@@ -23,7 +23,7 @@ This table lists all the icons and tool names available in ProBuilder, and indic
 | ![Flip Triangles icon](images/icons/Face_FlipTri.png) |[Flip Face Edge](Face_FlipTri.md)  | | | | x |
 | ![Flip Normals icon](images/icons/Face_FlipNormals.png) |[Flip Face Normals](Face_FlipNormals.md) | | | | x |
 | ![Flip Normals icon](images/icons/Object_FlipNormals.png) |[Flip Normals](Object_FlipNormals.md) | x | | | |
-| ![Freeze Transform icon](images/icons/Pivot_Reset.png) |[Freeze Transform](Pivot_Reset.md) | x | | | |
+| ![Freeze Transform icon](images/icons/Freeze_Transform.png) |[Freeze Transform](Freeze_Transform.md) | x | | | |
 | ![Handle Alignment Local](images/icons/HandleAlign_Local.png) |**Handle** (see [Orientation](HandleAlign.md)) | x | x | x | x |
 | ![Lightmap UVs icon](images/icons/Object_LightmapUVs.png) |[Lightmap UVs](Object_LightmapUVs.md) | x | | | |
 | ![Grow Selection](images/icons/Selection_Grow.png) |[Grow Selection](Selection_Grow.md) | | x | x | x |

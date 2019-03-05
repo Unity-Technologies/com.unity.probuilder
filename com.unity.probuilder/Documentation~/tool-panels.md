@@ -4,7 +4,7 @@ This portion of the ProBuilder toolbar provides access to most of the ProBuilder
 
 ![Tool Panels on the ProBuilder toolbar](images/tool_panels.png)
 
-> ***Note:*** Some actions also have extra options, or custom settings, available. The tool buttons are marked with a special indicator in the top right corner. The documentation for each tool includes information about these options.
+> ***Note:*** Some actions also have extra options or custom settings available. The tool buttons have a special indicator in the top right corner (shown as a gear icon in the first tool icon in the image above). The documentation for each tool includes information about these options.
 
 ## ![Shape Tool icon](images/icons/Panel_Shapes.png) New Shape
 
@@ -14,7 +14,7 @@ For more information, see the [Shape Tool](shape-tool.md) window reference.
 
 ## ![Poly Shape Tool icon](images/icons/NewPolyShape.png) New Poly Shape
 
-Use the **Poly Shape** component to create a custom 2-dimensional shape and then extrude it that shape to create a custom 3-dimensional Mesh.
+Use the **Poly Shape** component to create a custom 2-dimensional shape and then extrude that shape to create a custom 3-dimensional Mesh.
 
 For more information, see the [Poly Shape](polyshape.md) component reference.
 
@@ -22,7 +22,7 @@ For more information, see the [Poly Shape](polyshape.md) component reference.
 
 Use the **Bezier Shape** component to define a bezier curve around which ProBuilder extrudes a Mesh.
 
-> ***Warning:*** Bezier shapes are experimental, meaning that they are still under development, and may reduce ProBuilder's stability. Please use with caution.
+> ***Warning:*** Bezier shapes are experimental, meaning that they are still under development, and might reduce ProBuilder's stability. Please use with caution.
 
 For more information, see the [Bezier Shape](bezier.md) component reference.
 

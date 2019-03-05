@@ -2,7 +2,7 @@
 
 # ![Flip Normals icon](images/icons/Face_FlipNormals.png) Flip Face Normals
 
-Flips the normals only on the selected face(s).
+The __Flip Face Normals__ tool flips the normals only on the selected face(s).
 
 ![Inside of cube is visible after Normals change](images/FlipFaceNormals_Example.png)
 

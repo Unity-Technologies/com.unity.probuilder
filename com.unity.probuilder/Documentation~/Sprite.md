@@ -1,13 +1,13 @@
 # Sprite
-A sprite shape is basically a quick way to create a [plane](Plane.md) with all values set to 1 unit. 
+In ProBuilder, a sprite shape is a [plane](Plane.md) with all values set to 1 unit. 
 
 ![Sprite shape](images/shape-tool_sprite.png)
 
-You can customize the rotation of the sprite when you first create it by setting the __Axis__ property:
+To customize the rotation of the sprite when you first create it, use the __Axis__ property.
 
 ![Sprite shape properties](images/shape-tool_sprite-props.png)
 
-|**_Property:_** ||**_Function:_** |
+|**Property:** ||**Function:** |
 |:---|:---|:---|
 | __Axis__ || Choose the starting orientation for the plane. Default value is *Up*. |
 ||*Right*|Width is along the the z-axis, height is along the the y-axis, normals point towards the X-axis in the positive direction.|

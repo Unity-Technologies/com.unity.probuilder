@@ -1,18 +1,35 @@
 # Debug
 
-This sub-menu provides access to the **Log Preferences** window, which allows you to customize how ProBuilder logs messages.
+Use this sub-menu to access the **Log Preferences** window. 
 
 ![Debug Window Example](images/menu-debug.png)
 
-![A](images/LetterCircle_A.png) Write messages to the **Console**. By default, this button is ON, indicated by a darker color.
+Use the **Log Preferences** window to customize how ProBuilder logs messages. The darker color indicates that the setting is enabled (ON); the lighter color indicates that the setting is disabled (OFF).
 
-![B](images/LetterCircle_B.png) Write messages to a **File**. By default, this button is OFF, indicated by a lighter color.
+![A](images/LetterCircle_A.png) [Log Output](#output) defines where ProBuilder writes messages to.
 
-![C](images/LetterCircle_C.png) Click the file widget to select a folder for the log file. This widget is only available if the **File** button is ON.
+![B](images/LetterCircle_B.png) [Chatty-ness](#chattyness) defines which kind of messages ProBuilder logs.
 
-![D](images/LetterCircle_D.png) Click the **open** button to open the saved log file. This button is only available if the **File** button is ON.
+<a name="output"></a>
 
-![E](images/LetterCircle_E.png) The **Chatty-ness** level defines which kind of messages ProBuilder logs. By default, ProBuilder logs everything, and all buttons are ON.
+## Log Output
 
-![F](images/LetterCircle_F.png) Use the **Clear Log File** button to reset the saved log file by emptying all previously logged messages.
+__Log Output__ defines where ProBuilder writes messages to: the Unity __Console__ or to a log __File__:
+
+* Click the __Console__ button to enable writing to the Console. 
+* Click the __File__ button to enable writing to a file. When the **File** output target is enabled, the **Log Path** widget and the **open** button are enabled.
+* To set the __Log Path__, click the __...__ button and select a folder for the log file. This widget is only available if the **File** button is ON.
+* Click the **open** button to open the saved __ProBuilderLog.txt__ log file. This button is only available if the **File** button is ON.
+
+By default, ProBuilder writes messages only to the __Console__.
+
+<a name="chattyness"></a>
+
+## Chatty-ness
+
+The __Chatty-ness__ section defines which kind of messages ProBuilder logs: 
+
+* Toggle whether or not ProBuilder logs messages about the following: **Errors**, **Warnings**, **General information**, **Debug messages**, or everything. By default, ProBuilder logs everything, and these buttons are all ON.
+* Click the __Clear Log File__ button to reset the saved log file. This deletes all messages that ProBuilder previously logged.
+
 

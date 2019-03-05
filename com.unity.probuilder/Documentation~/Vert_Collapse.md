@@ -1,16 +1,12 @@
 # ![Collapse Vertices icon](images/icons/Vert_Collapse.png) Collapse Vertices
 
-Collapses all selected vertices to a single point, regardless of distance. 
+The __Collapse Vertices__ tool collapses all selected vertices to a single point, regardless of distance. 
 
 ![Cube becomes a pyramid](images/CollapseVerts_Example.png)
 
+> **Tip:** You can also use this tool with the **Alt/Opt+C** hotkey.
 
-
-> ***Tip:*** You can also use this tool with the **Alt+C** (Windows) or **Opt+C** (Mac) hotkey.
-
-ProBuilder uses the **Collapse To First** option to decide whether the vertices are collapsed to a central point, or to the first selected vertex.
-
-
+ProBuilder uses the **Collapse To First** option to decide whether to collapse the vertices to a central point, or to the first selected vertex.
 
 ## Collapse Vertices Options
 

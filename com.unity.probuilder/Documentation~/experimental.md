@@ -1,11 +1,11 @@
 # Experimental features
 
-ProBuilder has some additional features that are considered experimental:
+ProBuilder has some experimental features:
 
 - [Bezier Shape Tool](bezier.md)
 - [Boolean (CSG) Tool](boolean.md)
 
-These features are still under development, and may reduce ProBuilder's stability. Please use with caution.
+These features are still under development; they are not fully tested, and might reduce ProBuilder's stability. Use these with caution.
 
 By default, experimental features are disabled. 
 

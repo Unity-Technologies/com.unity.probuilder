@@ -12,8 +12,8 @@ Exports the selected object(s) in the OBJ format.
 
 ## Export Stl Ascii
 
-Exports the selected object(s) in the STL ASCII format
+Exports the selected object(s) in the STL ASCII format.
 
 ## Export Stl Binary
 
-Export the selected object(s) as STL in Binary format
+Export the selected object(s) as STL in Binary format.

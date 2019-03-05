@@ -1,6 +1,6 @@
 # ![Conform Normals icon](images/icons/Object_ConformNormals.png) Conform Normals (Objects)
 
-Sets all face normals on the selected object to the same relative direction. 
+The __Conform Normals__ tool sets all face normals on the selected object to the same relative direction. 
 
 ProBuilder uses the direction that most of the faces on the object are already facing.
 

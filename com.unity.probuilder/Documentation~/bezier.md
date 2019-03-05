@@ -1,8 +1,8 @@
 # ![Bezier Shape Icon](images/icons/NewBezierSpline.png) Bezier Shape component
 
-> ***Warning:*** Bezier shapes are experimental, meaning that they are still under development, and may reduce ProBuilder's stability. Please use with caution.
+> **Warning:** Bezier shapes are experimental, meaning that they are still under development, and might reduce ProBuilder's stability. Please use with caution.
 
-After you initially [create a Bezier Shape](workflow-create-bezier.md), you can still modify the shape as long as you are in Bezier Shape editing mode. You can toggle the Bezier Shape editing mode on and off with the **Edit(ing) Bezier Shape** button.
+After you [create a Bezier Shape](workflow-create-bezier.md), you can still modify the shape as long as you are in Bezier Shape editing mode. To toggle the Bezier Shape editing mode on and off, use the **Edit(ing) Bezier Shape** button.
 
 ![Bezier Shape component](images/Experimental_BezierInspector.png)
 
@@ -14,7 +14,7 @@ After you initially [create a Bezier Shape](workflow-create-bezier.md), you can 
 
 
 
-> ***Note:*** You can always modify Mesh elements on the Bezier Shape Mesh using the standard ProBuilder editing tools. However, each time you re-enter Bezier Shape editing mode, any element changes are lost.
+> **Note:** You can modify Mesh elements on the Bezier Shape Mesh with the standard ProBuilder editing tools. However, each time you re-enter Bezier Shape editing mode, you lose any element changes.
 
 
 
@@ -24,16 +24,11 @@ When you are in Bezier Shape editing mode, the **Bezier Shape** component in the
 
 To enter the Bezier Shape editing mode, click the **Edit Bezier Shape** button.  To exit out of the Bezier Shape editing mode, click the button (**Editing Bezier Shape**) again.
 
+In Bezier Shape editing mode, you can modify the shape. To do this, perform the following tasks in the Scene view:
 
-
-In Bezier Shape editing mode, you can modify the shape by performing the following tasks in the Scene view:
-
-- Click and drag existing control points to move them around. When you select control points, translation and rotation handles appear for more precise control.
-- Click existing control points to select them, then use **Backspace** (Windows) or **Delete** (Mac) to remove the points from the shape.
-
-- Click along the bezier path line to add new control points.
-
-
+* Click and drag existing control points to move them around. When you select control points, translation and rotation handles appear for more precise control.
+* Click existing control points to select them, then use **Backspace** (Windows) or **Delete** (macOS) to remove the points from the shape.
+* Click along the bezier path line to add new control points.
 
 You can also use the controls in the **Bezier Shape** component in the Inspector to:
 
@@ -53,7 +48,7 @@ Use these property values to set precise values for the curve's position, rotati
 
 ![Curve property values in the Bezier Shape component](images/bezier_curveprops.png)
 
-| ***Property:*** | ***Description:***                                           |
+| **Property:** | **Description:**                                           |
 | :-------------- | :----------------------------------------------------------- |
 | __Position__    | Enter the local position of the selected control point.      |
 | __Tan. In__     | Enter the local position of the selected control tangent *in* handle. |
@@ -68,7 +63,7 @@ Use these property values to set precise values for the curve's position, rotati
 
 Tangent modes change how much control you have over the tangent handles.
 
-| ***Icon***                              | ***Tangent Mode*** | ***Description***                                            |
+| **Icon**                              | **Tangent Mode** | **Description**                                            |
 | :-------------------------------------- | :----------------- | :----------------------------------------------------------- |
 | ![Free](images/Bezier_Free.png)         | **Free**           | Adjusting one tangent does not affect the other.             |
 | ![Aligned](images/Bezier_Aligned.png)   | **Aligned**        | Adjusting one tangent forces the other tangent's magnitude to match. |
@@ -84,7 +79,7 @@ Use these property values to set some basic characteristics of the Bezier Shape.
 
 ![Curve property values in the Bezier Shape component](images/bezier_shapeprops.png)
 
-| ***Property:*** | ***Description:***                                           |
+| **Property:** | **Description:**                                           |
 | :-------------- | :----------------------------------------------------------- |
 | __CloseLoop__   | Enable this option to loop the extruded path back around to the start point. |
 | __Smooth__      | Enable this option to use soft normals for the extruded pipe faces.<br />Disable it for hard normals. |
