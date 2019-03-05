@@ -1,6 +1,6 @@
 # ![Fill Hole icon](images/icons/FillHole.png) Fill Hole (Edges)
 
-Creates a new face filling any holes that touch the selected edges.
+The __Fill Hole__ tool creates a new face that fills any holes that touch the selected edges.
 
 ![Create new face from open edges](images/FillHole_Example.png)
 

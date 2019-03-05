@@ -4,17 +4,17 @@
 
 
 
-![A](images/LetterCircle_A.png) This first group of buttons contains shortcuts to the standard Unity manipulation modes. Clicking these has the exact same effect as clicking on the [main Unity toolbar buttons](https://docs.unity3d.com/Manual/PositioningGameObjects.html).
+![A](images/LetterCircle_A.png) This first group of buttons contains shortcuts to the standard Unity manipulation modes. These have exactly the same effect as the [main Unity toolbar buttons](https://docs.unity3d.com/Manual/PositioningGameObjects.html).
 
-![Item B](images/LetterCircle_B.png) The second button group contains shortcuts to ProBuilder's [Element Edit modes](edit-mode-toolbar.md). When using [Manual UV Editing](manual-uvs-actions.md), this allows you to select and manipulate UVs by Vertex, Edge, or Face.  
+![Item B](images/LetterCircle_B.png) The second button group contains shortcuts to ProBuilder's [Element Edit modes](edit-mode-toolbar.md). When you use [Manual UV Editing](manual-uvs-actions.md), this allows you to select and manipulate UVs by Vertex, Edge, or Face.  
 
-> ***Note:*** When using [Auto UVs](auto-uvs-actions.md) you may only edit UVs by face. Editing an Edge or Vertex will convert the selected UVs to [Manual UVs](manual-uvs-actions.md).
+> **Note:** When you use [Auto UVs](auto-uvs-actions.md), you can only edit UVs by face. If you edit an Edge or Vertex, ProBuilder converts the selected UVs to [Manual UVs](manual-uvs-actions.md).
 
-![C](images/LetterCircle_C.png) The third group of buttons allow you to: 
+![C](images/LetterCircle_C.png) The third group of buttons contain buttons to perform the following actions: 
 
-* Control how Unity's standard [transform tools](#Scope) behave.
-* Display the face's [Texture](#Texture) in the UV Viewer (or not).
-* Create [UV Templates](#SaveUV) from the current UV mapping.
+* ![In-Scene ON](images/icons/ProBuilderGUI_UV_Manip_On.png) __Scope controls__: Control how Unity's standard [transform tools](#Scope) behave.
+* ![In-Scene ON](images/icons/ProBuilderGUI_UV_ShowTexture_On.png) __Texture preview__: Toggle whether the UV Viewer displays the face's [Texture](#Texture).
+* ![Render UV Template button](images/icons/ProBuilderGUI_UV_RenderUVTemplate.png) __Save UV image__: Create [UV Templates](#SaveUV) from the current UV mapping.
 
 
 
@@ -22,13 +22,13 @@
 
 ## ![In-Scene ON](images/icons/ProBuilderGUI_UV_Manip_On.png) Scope controls
 
-When **On** (![In-Scene ON](images/icons/ProBuilderGUI_UV_Manip_On.png)), you can use Unity's standard Move, Rotate, and Scale tools to directly manipulate UVs in the scene, without affecting geometry.
+When Scope controls are **on** (![In-Scene ON](images/icons/ProBuilderGUI_UV_Manip_On.png)), you can use Unity's standard Move, Rotate, and Scale tools to directly manipulate UVs in the scene, without affecting geometry.
 
-When **Off** (![In-Scene OFF](images/icons/ProBuilderGUI_UV_Manip_Off.png)), the Move, Rotate, and Scale tools return to normal geometry actions.
+When Scope controls are **off** (![In-Scene OFF](images/icons/ProBuilderGUI_UV_Manip_Off.png)), the Move, Rotate, and Scale tools return to normal geometry actions.
 
 ![Move, Rotate, and Scale tools on a Mesh](images/UV_InSceneControls.png)
 
-When using the transform tools in the UV Viewer, you can snap to increments with the **Ctrl** (Windows) or **Cmd** (Mac) modifiers. You can customize the size of these increment values by setting the [UV Snap Increment](preferences.md#uvs) preference.
+When you use the Transform tools in the UV Viewer, you can snap to increments with the **Ctrl** (Windows) or **Cmd** (macOS) modifiers. To customize the size of these increment values, set the [UV Snap Increment](preferences.md#uvs) preference.
 
 
 
@@ -37,9 +37,9 @@ When using the transform tools in the UV Viewer, you can snap to increments with
 
 ## ![In-Scene ON](images/icons/ProBuilderGUI_UV_ShowTexture_On.png) Texture preview
 
-When **On** (![In-Scene ON](images/icons/ProBuilderGUI_UV_ShowTexture_On.png)), the selected face's Texture appears in the UV Viewer. This preview makes it easier to fit the UV to the Texture.
+When Texture preview is **on** (![In-Scene ON](images/icons/ProBuilderGUI_UV_ShowTexture_On.png)), the selected face's Texture appears in the UV Viewer. This preview makes it easier to fit the UV to the Texture.
 
-When **Off** (![In-Scene OFF](images/icons/ProBuilderGUI_UV_ShowTexture_Off.png)), the Texture does not appear in the UV Viewer.
+When Texture preview is **off** (![In-Scene OFF](images/icons/ProBuilderGUI_UV_ShowTexture_Off.png)), the Texture does not appear in the UV Viewer.
 
 ![Toggle the Texture preview (OFF - ON)](images/ShowTexturePreview_Example.png)
 

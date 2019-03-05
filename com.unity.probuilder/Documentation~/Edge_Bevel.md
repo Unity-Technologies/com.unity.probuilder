@@ -1,6 +1,6 @@
-# ![Bevel Edges icon](images/icons/Edge_Bevel.png) Bevel (Edges)
+# ![Bevel Edges icon](images/icons/Edge_Bevel.png) Bevel Edge
 
-Splits the selected edge(s) into two edges, with a new face between. You can change the width of the beveling using __Distance__ option. 
+The __Bevel Edge__ tool splits the selected edge(s) into two edges, with a new face between.
 
 ![Bevel 3 edges on cube](images/BevelEdges_Example.png)
 
@@ -10,5 +10,5 @@ Splits the selected edge(s) into two edges, with a new face between. You can cha
 
 ![Bevel Edge options](images/Edge_Bevel_props.png)
 
-You can control the width of the bevel by changing the __Distance__ to move the newly created edge(s) from the position of the original edge(s). This becomes the width of the new face(s).
+To change the width of the bevel, change the __Distance__ to move the newly created edge(s) from the position of the original edge(s). This becomes the width of the new face(s).
 

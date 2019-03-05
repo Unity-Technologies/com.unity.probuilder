@@ -7,44 +7,33 @@ ProBuilder provides a Scripting API for C# which you can use to extend the ProBu
 - [UnityEngine.ProBuilder.MeshOperations](../api/UnityEngine.ProBuilder.MeshOperations.html) provides classes for Mesh editing. Use them to manipulate ProBuilder Meshes, including topology and I/0 operations. 
 
 All Mesh creation and editing functionality is restricted to the `UnityEngine.ProBuilder` and
-`UnityEngine.ProBuilder.MeshOperations` libraries, which are both available at runtime.
+`UnityEngine.ProBuilder.MeshOperations` libraries, which are both available at run time.
 
-Mesh data is stored in a component ([ProBuilderMesh](../api/UnityEngine.ProBuilder.ProBuilderMesh.html)) and compiled to a
+ProBuilder stores Mesh data in a component ([ProBuilderMesh](../api/UnityEngine.ProBuilder.ProBuilderMesh.html)) and compiles it to a
 [UnityEngine.Mesh](https://docs.unity3d.com/ScriptReference/Mesh.html) object as necessary. 
 
 `ProBuilderMesh` stores the following Mesh information:
 
 - Positions
-
 - UVs
-
 - Faces
-
   - Triangles
-
   - Material
-
   - Smoothing group
-
   - Auto/Manual UVs
 
-    ***Note:*** ProBuilder can automatically UV unwrap triangles on a per-face basis. You can toggle this feature using the [Face](../api/UnityEngine.ProBuilder.Face.html) class. In addition, users can unwrap faces manually.
+    **Note:** ProBuilder can automatically UV unwrap triangles on a per-face basis. You can toggle this feature with the [Face](../api/UnityEngine.ProBuilder.Face.html) class. In addition, users can unwrap faces manually.
 
 - Tangent (if user set)
-
 - UV3/4 (if user set)
-
 - Colors
-
 - Shared indices (also called common vertices)
 
 Normals, tangents, collisions, and UVs are calculated as necessary.
 
+## Create a Mesh
 
-
-## Creating a Mesh
-
-This example demonstrates how to build a simple quad with the ProBuilder API (not using the [ShapeGenerator](../api/UnityEngine.ProBuilder.ShapeGenerator.html) class):
+This example demonstrates how to build a simple quad with the ProBuilder API (not with the [ShapeGenerator](../api/UnityEngine.ProBuilder.ShapeGenerator.html) class):
 
 ```c#
 // Create a new quad facing forward.
@@ -61,13 +50,11 @@ ProBuilderMesh quad = ProBuilderMesh.Create(
 
 
 
-## Modifying a Mesh
+## Modify a Mesh
 
 Modifying a ProBuilder Mesh is a bit different from modifying a Unity Mesh: instead of working with [MeshFilter.sharedMesh](https://docs.unity3d.com/ScriptReference/MeshFilter-sharedMesh.html) you work with the ProBuilder representation of the Mesh: [ProBuilderMesh](../api/UnityEngine.ProBuilder.ProBuilderMesh.html).
 
-The basics are the same however. Set vertex positions, modify triangles (faces
-in ProBuilder), then rebuild the mesh. Say for example you'd like to move the
-vertices up on that quad from the previous example:
+The basics are the same: Set vertex positions, modify triangles (faces in ProBuilder), then rebuild the mesh. For example, to move the vertices up on that quad from the previous example:
 
 ```c#
 // Move vertex positions up

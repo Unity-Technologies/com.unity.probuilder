@@ -10,11 +10,11 @@ In Manual mode, the **Actions** panel displays the **UV Mode: Manual** label and
 
 To access this panel, either click the **Convert to Manual** button from the [Actions panel in Auto UV Mode](auto-uvs-actions.md), or  click the ![UV Vertex edit mode](images/icons/EditModes_Vertex.png) **UV Vertex** or ![UV Edge edit mode](images/icons/EditModes_Edge.png) **UV Edge** [edit mode buttons](edit-mode-toolbar.md).
 
-> ***Tip:*** If you get to the point where you have been making a lot of edits and something seems wrong but you're not sure how to fix it, you can always clear all the edits by clicking the **Reset UVs** button on the **UV Mode: Auto** Actions panel.
+> **Tip:** If you get to the point where you have been making a lot of edits and something seems wrong but you're not sure how to fix it, you can clear all the edits. To do this, navigate to the **UV Mode: Auto** Actions panel and click the **Reset UVs** button.
 
 To switch back to the **Actions** panel in **Auto UV Mode** and convert all selected faces to [Auto UVs](auto-uvs-actions), click the **Convert to Auto** button.
 
-> ***Tip:*** Before you start manipulating UVs manually, make sure you delete any faces that you don't need. For example, if you have a box that is sitting against the wall and doesn't move, it is just a waste of resources to render that face because it isn't visible. 
+> **Tip:** Before you start to manipulate UVs manually, make sure you delete any faces that you don't need. For example, if you have a box that is sitting against the wall and doesn't move, delete the face pressed up aganst the wall. It is a waste of resources to render faces that aren't visible. 
 
 
 
@@ -52,7 +52,7 @@ There are two selection helpers you can use to expand which UV elements are sele
 
 ### Select Island
 
-With a UV element selected, clicking this expands the selection to include all other connected UV elements.
+With a UV element selected, click this to expand the selection so that it includes all other connected UV elements.
 
 ![Expand selection from one face to all connected faces](images/UVExamples_SelectIsland.png)
 
@@ -75,9 +75,9 @@ ProBuilder provides a number of manual manipulation tools for working in the UV 
 
 ### Weld
 
-Collapses selected vertices together, but only if they are within a set distance.
+**Weld** collapses selected vertices together, but only if they are within a set distance.
 
-To adjust the distance modifier, click the **+** button on the right side of the Weld button.
+To adjust the distance modifier, click the **+** button on the right side of the **Weld** button.
 
 ![Reduce edges that are near to a single edge](images/UVExamples_WeldUVs.png)
 
@@ -87,7 +87,7 @@ For example, it is good practice to use a low value, such as 0.01. Then you can 
 
 ### Collapse UVs
 
-Collapses all selected vertices to a single vertex, regardless of distance.
+**Collapse UVs** collapses all selected vertices to a single vertex, regardless of distance.
 
 ![Reduce vertices selected across multiple islands to a single vertex](images/UVExamples_CollapseUVs.png)
 
@@ -95,7 +95,7 @@ Collapses all selected vertices to a single vertex, regardless of distance.
 
 ### Split UVs
 
-Breaks off the selected UV element(s) from any UV element(s), allowing them to be manipulated independently.
+**Split UVs** breaks off the selected UV element(s) from any UV element(s), so that you can manipulate them independently.
 
 ![Break face off from the island](images/UVExamples_SplitUVs.png)
 
@@ -103,7 +103,7 @@ Breaks off the selected UV element(s) from any UV element(s), allowing them to b
 
 ### Flip Horizontal
 
-Flip the selected UV element(s) in the horizontal direction.
+**Flip Horizontal** flips the selected UV element(s) in the horizontal direction.
 
 ![Mirror island horizontally](images/UVExamples_FlipHorizontal.png)
 
@@ -111,7 +111,7 @@ Flip the selected UV element(s) in the horizontal direction.
 
 ### Flip Vertical
 
-Flip the selected UV element(s) in the vertical direction.
+**Flip Vertical** flips the selected UV element(s) in the vertical direction.
 
 ![Mirror island vertically](images/UVExamples_FlipVertical.png)
 
@@ -119,7 +119,7 @@ Flip the selected UV element(s) in the vertical direction.
 
 ### Fit UVs
 
-Scale and move the selected UV element(s) to fit them exactly within the UV space.
+Use **Fit UVs** to scale and move the selected UV element(s) to fit them exactly within the UV space.
 
 ![Expand the island to occupy as much of the space as possible](images/UVExamples_FitUVs.png)
 
@@ -127,9 +127,9 @@ Scale and move the selected UV element(s) to fit them exactly within the UV spac
 
 ### Autostitching
 
-Autostitching saves the tedious work of unwrapping UV faces by manually position each one individually and welding the UV vertices together. 
+Usually, to unwrap UV faces, you need to manually position each one individually and weld the UV vertices together. **Autostitching** performs this automatically.
 
-You can autostitch any two adjacent faces together by following this procedure:
+You can autostitch any two adjacent faces together. To do this, follow this procedure:
 
 1. Select a face in the Scene view.
 
@@ -137,7 +137,7 @@ You can autostitch any two adjacent faces together by following this procedure:
 
 3. Select a face on the Mesh and then **Ctrl+Click** a face that shares an edge with the current selection. 
 
-	> ***Important:*** Use the **Ctrl** key for both MacOS and Windows.
+	> **Important:** Use the **Ctrl** key for both macOS and Windows.
 
 4. You can continue to **Ctrl+Click** one face at a time as long as it is adjacent to the selected face.
 
@@ -157,6 +157,6 @@ You can copy UVs from one face to another. For example, if you are working on a 
 
 3. **Ctrl+Shift+Click** on the face you want to copy to.
 
-	> ***Important:*** Use the **Ctrl** key for both MacOS and Windows.
+	> **Important:** Use the **Ctrl** key for both macOS and Windows.
 
 4. You can continue to **Ctrl+Shift+Click** each face you want to copy to.
