@@ -6,4 +6,4 @@ The __Select Edge Loop__ tool selects an edge loop from each selected edge. An e
 
 ![Select Edge Loop Examples](images/Selection_LoopExample.png)
 
-> **Tip:** You can also use this tool with the **Alt+L** (Windows) or **Opt+L** (macOS) hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Select Loop**).
+> **Tip:** You can also use this tool with the **Alt/Opt+L** hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Select Loop**).

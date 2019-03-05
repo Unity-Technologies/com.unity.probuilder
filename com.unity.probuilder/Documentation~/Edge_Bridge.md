@@ -6,11 +6,6 @@ By default, this tool can only bridge two open edges (that is, no face on the *o
 
 ![Bridge edges between two planes](images/BridgeEdges_Example.png)
 
-> **Tip:** You can also use this tool with the **Alt+B** (Windows) or **Alt/Opt+B** (macOS) hotkey.
-
-
-
-
-
+> **Tip:** You can also use this tool with the **Alt/Opt+B** hotkey.
 
 

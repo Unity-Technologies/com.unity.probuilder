@@ -10,4 +10,4 @@ In this example:
 
 This tool is available in the [vertex, edge, and face modes](modes.md).
 
-> **Tip:** You can also use this tool with the **Ctrl+Shift+I** (Windows) or **Cmd+Shift+I** (macOS) hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Invert Selection**).
+> **Tip:** You can also use this tool with the **Ctrl/Cmd+Shift+I** hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Invert Selection**).

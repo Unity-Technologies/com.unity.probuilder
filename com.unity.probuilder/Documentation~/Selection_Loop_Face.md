@@ -8,4 +8,4 @@ ProBuilder only considers faces part of a loop if they are quads (contain exactl
 
 This tool is only available in [face mode](modes.md). 
 
-> ***Tip:*** You can also use this tool with the **Alt+Shift+L+Double-Click** (Windows) or **Opt/Alt+Shift+L+Double-Click** (macOS) hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Select Loop**).
+> ***Tip:*** You can also use this tool with the **Opt/Alt+Shift+L+Double-Click** hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Select Loop**).

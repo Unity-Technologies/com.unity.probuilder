@@ -2,7 +2,7 @@
 
 The __Connect Edges__ tool inserts an edge that connects the centers of each selected edge.
 
-> **Tip:** You can also use this tool with the **Alt+E** (Windows) or **Alt/Opt+E** (macOS) hotkey.
+> **Tip:** You can also use this tool with the **Alt/Opt+E** hotkey.
 
 ![Create vertical edge on side of cube](images/ConnectEdges_Example.png)
 

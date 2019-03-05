@@ -1,4 +1,4 @@
-﻿# About ProBuilder
+# About ProBuilder
 
 You can build, edit, and texture custom geometry in Unity with the tools available in the ProBuilder package. You can also use ProBuilder to help with in-scene level design, prototyping, collision Meshes, and play-testing. 
 
@@ -8,7 +8,7 @@ ProBuilder also comes with a [Scripting API](api.md), so that you can write C# s
 
 Some of the advanced features include:
 
-* [UV editing and Texture mapping](workflow-texture-mapping.md)
+* [UV editing and texture mapping](workflow-texture-mapping.md)
 * [Applying Vertex Colors](workflow-vertexcolors.md)
 * [Creating parametric shapes](workflow-create.md)
 

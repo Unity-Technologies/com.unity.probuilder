@@ -10,7 +10,7 @@ You can invoke this tool in either way:
 
 - Select one or more edge(s) and click **Extrude Edges**. By default, the distance of the extrusion is **0.5**, but you can change that with the **Distance** option.
 
-	> **Tip:** You can also use the **Ctrl+E** (Windows) or **Cmd+E** (macOS) hotkey instead of the button with this method.
+	> **Tip:** You can also use the **Ctrl/Cmd+E** hotkey instead of the button with this method.
 
 - Select one or more edge(s) and then hold **Shift** while you move, rotate, or scale the selected edge(s). This method ignores the options but provides greater control, especially with the direction of the extrusion.
 

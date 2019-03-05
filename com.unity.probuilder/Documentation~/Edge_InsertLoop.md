@@ -6,7 +6,7 @@ The __Insert Edge Loop__ tool adds a new edge loop from the selected edge(s). An
 
 ![Insert horizontal loop on plane](images/InsertEdgeLoop_Example.png)
 
-> **Tip:** You can also use this tool with the **Alt+U** (Windows) or **Alt/Opt+U** (macOS) hotkey.
+> **Tip:** You can also use this tool with the **Alt/Opt+U** hotkey.
 
 This creates more geometry than [Connect Edges](Edge_Connect.md) or [Connect Vertices](Vert_Connect.md), but it makes the geometry cleaner. For example, if you insert an edge on a single face of a cube you get a T-junction, but if you insert an edge loop instead, you get the same geometry all around the cube, provided that the loop is only passing through quads.
 

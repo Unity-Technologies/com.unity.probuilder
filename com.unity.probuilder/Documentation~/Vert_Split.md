@@ -6,5 +6,5 @@ The __Split Vertices__ tool splits a vertex into individual vertices (one for ea
 
 > **Note:** When a vertex splits, the newly separated vertices remain in place. This image only shows the vertices apart as a demonstration, to illustrate that the original vertex became four. 
 
-> **Tip:** You can also use this tool with the **Alt+X** (Windows) or **Alt/Opt+X** (macOS) hotkey.
+> **Tip:** You can also use this tool with the **Alt/Opt+X** hotkey.
 

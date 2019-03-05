@@ -2,7 +2,7 @@
 
 The __Subdivide Face__ tool splits each selected face. To do this, it adds a vertex at the center of each edge and connects them in the center.
 
-> **Tip:** You can also use this tool with the **Alt+S** (Windows) or **Opt+S** (macOS) hotkey.
+> **Tip:** You can also use this tool with the **Alt/Opt+S** hotkey.
 
 ![Split side of cube into 4 squares](images/SubdivideFace_Example.png)
 

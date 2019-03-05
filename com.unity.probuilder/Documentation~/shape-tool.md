@@ -16,7 +16,7 @@ To create a new ProBuilder Mesh based on one of the predefined shapes:
 
 1. In the ProBuilder toolbar, click the **New Shape** tool. 
 
-	> **Tip:** You can also use the **Ctrl+Shift+K** (Windows) or **Cmd+Shift+K** (macOS) hotkey to open the **Shape Tool** window, or use the menu (**Tools** > **ProBuilder** > **Editors** > **Open Shape Editor Menu Item**).
+	> **Tip:** You can also use the **Ctrl/Cmd+Shift+K** hotkey to open the **Shape Tool** window, or use the menu (**Tools** > **ProBuilder** > **Editors** > **Open Shape Editor Menu Item**).
 
 1. Choose the shape you'd like to create (such as *Cube*, *Cylinder* or *Torus*) from the __Shape Selector__ drop-down menu. The properties specific to that shape type apppear in the Shape Tool window.
 

@@ -4,7 +4,7 @@ The __Weld Vertices__ tool merges selected vertices within a specific distance o
 
 ![Reduce flat narrow face to a single edge on top of Mesh](images/WeldVerts_Example.png)
 
-> **Tip:** You can also use this tool with the **Alt+V** (Windows) or **Alt/Opt+V** (macOS) hotkey.
+> **Tip:** You can also use this tool with the **Alt/Opt+V** hotkey.
 
 ## Weld Vertices Options
 

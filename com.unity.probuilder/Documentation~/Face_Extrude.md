@@ -10,7 +10,7 @@ You can invoke this tool in either way:
 
 - Select one or more face(s) and click **Extrude Faces**. By default, the distance of the extrusion is **0.5**, but you can change that with the **Distance** option.
 
-	> **Tip:** You can also use the **Ctrl+E** (Windows) or **Cmd+E** (Mac) hotkey instead of the button with this method.
+	> **Tip:** You can also use the **Ctrl/Cmd+E** hotkey instead of the button with this method.
 
 - Select one or more face(s) and then hold **Shift** while moving, rotating, or scaling the selected face(s). This method ignores the options but provides greater control, especially with the direction of the extrusion. 
 

@@ -2,7 +2,7 @@
 
 Use the __Set Pivot__ tool to move the pivot point of this Mesh to the average center of the selected edges.
 
-> **Tip:** You can also use this tool with the **Ctrl+J** (Windows) or **Cmd+J** (macOS) hotkey.
+> **Tip:** You can also use this tool with the **Ctrl/Cmd+J** hotkey.
 
 
 

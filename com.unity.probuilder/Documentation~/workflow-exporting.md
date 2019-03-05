@@ -33,7 +33,7 @@ To export one or more objects to one of the [supported formats](#formats):
 
 1. Select the object(s) you want to export.
 
-2. **Alt+Click** (Windows) or **Option+Click** (macOS) over the ![Export Icon](images/icons/Object_Export.png)**Export** button.
+2. **Alt/Opt+Click** over the ![Export Icon](images/icons/Object_Export.png)**Export** button.
 
   The [Export Options](Object_Export.md) appear.
 

@@ -10,4 +10,4 @@ In this example:
 
 This tool is available in the [vertex, edge, and face modes](modes.md).
 
-> **Tip:** You can also use this tool with the **Alt+Shift+G** (Windows) or **Alt/Opt+Shift+G** (macOS) hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Shrink Selection**).
+> **Tip:** You can also use this tool with the **Alt/Opt+Shift+G** hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Shrink Selection**).

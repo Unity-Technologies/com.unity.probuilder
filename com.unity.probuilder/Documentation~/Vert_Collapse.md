@@ -4,7 +4,7 @@ The __Collapse Vertices__ tool collapses all selected vertices to a single point
 
 ![Cube becomes a pyramid](images/CollapseVerts_Example.png)
 
-> **Tip:** You can also use this tool with the **Alt+C** (Windows) or **Alt/Opt+C** (macOS) hotkey.
+> **Tip:** You can also use this tool with the **Alt/Opt+C** hotkey.
 
 ProBuilder uses the **Collapse To First** option to decide whether to collapse the vertices to a central point, or to the first selected vertex.
 

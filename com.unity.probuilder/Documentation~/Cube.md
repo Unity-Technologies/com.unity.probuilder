@@ -1,5 +1,5 @@
 # Cube
-A cube is the default shape in ProBuilder. It is a six-sided 3D square. To add a default cube to the Scene, you can use **Ctrl+K** (Windows) or **Cmd+K** (macOS) keyboard shortcut.
+A cube is the default shape in ProBuilder. It is a six-sided 3D square. To add a default cube to the Scene, you can use the **Ctrl/Cmd+K** keyboard shortcut.
 
 ![Cube shapes](images/shape-tool_cube.png)
 

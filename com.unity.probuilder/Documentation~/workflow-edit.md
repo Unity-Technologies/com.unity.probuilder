@@ -28,7 +28,7 @@ To edit objects and elements, you need to:
 1. Decide which tools can help you achieve the end results. There might be multiple solutions that can all produce the effect you want. This can be a very challenging stage, particularly for new users who don't know what ProBuilder's tools can do.
 2. Select the element(s) that you want to modify. Often, the editing tool impacts which elements you need to select and how you need to select them.
 3. Depending on which tool you are using, set any options to help customize the outcome or change the default settings. If a tool offers options, an indicator appears on the button in the [ProBuilder toolbar](toolbar.md):
-	* **Alt+Click** (Windows) or **Alt/Opt+Click** (macOS) the gear ![Options Icon](images/icons/Options.png) indicator that appears in the top right of the button in **Icon** mode.
+	* **Alt/Opt+Click** the gear ![Options Icon](images/icons/Options.png) indicator that appears in the top right of the button in **Icon** mode.
 	* **Click** the `+` icon that appears on the right side of the button in **Text** mode.
 4. Perform the action. Depending on what you are doing, this may be a simple matter of clicking a button. In some cases, you may be carrying out some intricate procedures. For example, you can click to [extrude edges](Edge_Extrude.md) with the default settings, or you can use the **Shift+Drag** method to control exactly how and where to locate the extruded edge.
 

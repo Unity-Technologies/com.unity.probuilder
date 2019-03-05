@@ -1,14 +1,5 @@
 # Materials, Shaders, Textures, and UVs
 
-o "Materials, Shaders, Textures, and UVs" (but really nothing about Shaders & smoothing isn't represented)
-o "Materials, Textures, and UVs" (but smoothing isn't represented)
-Texture Mapping 101 (but non-Texture Materials or smoothing aren't represented)
-o "Refining appearances" or "Refining Meshes" or "Refining Mesh appearances" (but that's pretty vague and if you're for quick info on Textures or Materials it's not obvious at the highest TOC level) 
-o "Mesh appearance"
-o "Finishing Meshes" (same trouble plus) 
-o "Materials and Texture wrapping" (similar to what I have now but without the UV)
-o Something about Graphics maybe? --> 
-
 In Unity, [Materials](https://docs.unity3d.com/Manual/class-Material.html) allow you to specify which Shader to use on a Mesh. [Shaders](https://docs.unity3d.com/Manual/Shaders.html) perform a set of calculations that tell Unity how to render (draw) your Meshes based on properties specific to that Shader. 
 
 You can apply Materials to make your floor look like it's made of tile, wood, stone, or anything else that you want. ProBuilder allows you to [apply a Material](workflow-materials.md) to the entire Mesh, or just on selected faces. This allows you to provide more realistic-looking surfaces during game play or while grey-boxing. For example, you might decide to use tiles on the floor, brick on some walls, and stone on others.

@@ -6,6 +6,6 @@ The __Select Edge Ring__ tool selects a ring from each selected edge. An edge ri
 
 ![Select Edge Ring Examples](images/Selection_RingExample.png)
 
-> **Tip:** You can also use this tool with the **Alt+R** (Windows) or **Alt/Opt+R** (macoS) hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Select Ring**).
+> **Tip:** You can also use this tool with the **Alt/Opt+R** hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Select Ring**).
 
 

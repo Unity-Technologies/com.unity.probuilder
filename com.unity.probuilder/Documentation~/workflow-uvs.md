@@ -27,7 +27,7 @@ You can [translate, rotate, and scale](https://docs.unity3d.com/Manual/Positioni
 	![Fit the image to the top of the barrel](images/UVExamples_Scale.png) 
 
 
-> **Tip:** If you hold down the **Ctrl** (Windows) or **Cmd** (macOS) key while translating in the UV Editor window, the UV element snaps to the grid.
+> **Tip:** If you hold down the **Ctrl/Cmd** key while translating in the UV Editor window, the UV element snaps to the grid.
 
 
 

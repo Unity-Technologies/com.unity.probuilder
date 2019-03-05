@@ -12,7 +12,7 @@ The index of each vertex appears on the left, followed by the **X**, **Y**, and 
 
 For example, to create a [Custom Shape](Custom.md) and set the vertex positions with this editor:
 
-1. From the ProBuilder toolbar, **Alt+click** (Windows) or **Alt/Opt+click** (macOS) the **New Shape** (![Shape Tool icon](images/icons/Panel_Shapes.png)) button. 
+1. From the ProBuilder toolbar, **Alt/Opt+click** the **New Shape** (![Shape Tool icon](images/icons/Panel_Shapes.png)) button. 
 
 2. Choose the **Custom** shape from the __Shape Selector__ drop-down menu. 
 

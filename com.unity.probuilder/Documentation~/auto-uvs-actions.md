@@ -1,6 +1,6 @@
 # Actions panel: Auto UV Mode
 
-In Auto mode, the **Actions** panel displays the **UV Mode: Auto** label and the settings for automatic Texture mapping. To access this panel, click the **Convert to Auto** button from the [Actions panel in Manual UV Mode](manual-uvs-actions.md). 
+In Auto mode, the **Actions** panel displays the **UV Mode: Auto** label and the settings for automatic texture mapping. To access this panel, click the **Convert to Auto** button from the [Actions panel in Manual UV Mode](manual-uvs-actions.md). 
 
 The Auto mode provides the following tools to help you with texture mapping:
 
