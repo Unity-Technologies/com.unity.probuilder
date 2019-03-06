@@ -24,7 +24,7 @@ namespace UnityEditor.ProBuilder
         const float k_MouseDragThreshold = 6f;
 
         //Off pointer multiplier is a percentage of the picking distance
-        const float k_OffPointerMultiplierPercent = 0.1f;  
+        const float k_OffPointerMultiplierPercent = 0.1f;
 
         /// <value>
         /// Raised any time the ProBuilder editor refreshes the selection. This is called every frame when interacting with mesh elements, and after any mesh operation.
@@ -491,9 +491,9 @@ namespace UnityEditor.ProBuilder
 
         void Menu_ToggleIconMode()
         {
-            s_IsIconGui.value = !s_IsIconGui;
+            s_IsIconGui.value = !s_IsIconGui.value;
             if (s_EditorToolbar != null)
-                UObject.DestroyImmediate(s_EditorToolbar);
+                DestroyImmediate(s_EditorToolbar);
             s_EditorToolbar = ScriptableObject.CreateInstance<EditorToolbar>();
             s_EditorToolbar.hideFlags = HideFlags.HideAndDontSave;
             s_EditorToolbar.InitWindowProperties(this);

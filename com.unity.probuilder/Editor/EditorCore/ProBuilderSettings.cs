@@ -1,9 +1,20 @@
 using UnityEditor.SettingsManagement;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
     static class ProBuilderSettings
     {
+        [InitializeOnLoadMethod]
+        static void SaveSettingsOnExit()
+        {
+            EditorApplication.quitting += () =>
+            {
+                Log.Info("Saving on quit");
+                Save();
+            };
+        }
+
         internal const string k_DefaultSettingsPath = "ProjectSettings/ProBuilderSettings.json";
 
         static Settings s_Instance;
