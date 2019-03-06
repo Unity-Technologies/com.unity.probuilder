@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.4-preview.5] - 2019-03-05
+## [4.0.4-preview.6] - 2019-03-06
 
 ### Features
 
@@ -34,6 +34,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changes
 
 - Name newly merged `GameObject`s after the active selected `GameObject`.
+
+### Changes since 4.0.4-preview.5
+
+## Bug Fixes
+
+- Fix project settings not consistently being saved.
+
 
 ### Changes since 4.0.4-preview.4
 
