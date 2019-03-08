@@ -15,28 +15,28 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	static class ProBuilderEditorShortcuts
 	{
-		[Shortcut("ProBuilder/Editor/Edit Objects", typeof(SceneView))] //, KeyCode.G)]
+		[Shortcut("ProBuilder/Editor/Edit Objects", typeof(SceneView))]
 		static void SetSelectMode_Object()
 		{
 			ProBuilderEditor.selectMode = SelectMode.Object;
 		}
 
-		[Shortcut("ProBuilder/Editor/Edit Vertices", typeof(SceneView))] //, KeyCode.H)]
+		[Shortcut("ProBuilder/Editor/Edit Vertices", typeof(SceneView))]
 		static void SetSelectMode_Vertex()
 		{
-			ProBuilderEditor.selectMode = SelectMode.Object;
+			ProBuilderEditor.selectMode = SelectMode.Vertex;
 		}
 
-		[Shortcut("ProBuilder/Editor/Edit Edges", typeof(SceneView))] //, KeyCode.J)]
+		[Shortcut("ProBuilder/Editor/Edit Edges", typeof(SceneView))]
 		static void SetSelectMode_Edge()
 		{
-			ProBuilderEditor.selectMode = SelectMode.Object;
+			ProBuilderEditor.selectMode = SelectMode.Edge;
 		}
 
-		[Shortcut("ProBuilder/Editor/Edit Faces", typeof(SceneView))] //, KeyCode.K)]
+		[Shortcut("ProBuilder/Editor/Edit Faces", typeof(SceneView))]
 		static void SetSelectMode_Faces()
 		{
-			ProBuilderEditor.selectMode = SelectMode.Object;
+			ProBuilderEditor.selectMode = SelectMode.Face;
 		}
 
 		[Shortcut("ProBuilder/Editor/Toggle Geometry Mode", typeof(SceneView), KeyCode.G)]
