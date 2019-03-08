@@ -221,8 +221,7 @@ namespace UnityEditor.ProBuilder
                 if (selectModeChanged != null)
                     selectModeChanged(value);
 
-                UpdateMeshHandles(true);
-                s_Instance.Repaint();
+                Refresh();
             }
         }
 
