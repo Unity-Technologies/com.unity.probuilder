@@ -579,8 +579,17 @@ namespace UnityEditor.ProBuilder
 
             DrawHandleGUI(sceneView);
 
-#if !SHORTCUT_MANAGER
-
+#if SHORTCUT_MANAGER
+            // Escape isn't assignable as a shortcut
+            if (m_CurrentEvent.type == EventType.KeyDown)
+            {
+                if (m_CurrentEvent.keyCode == KeyCode.Escape && selectMode != SelectMode.Object)
+                {
+                    selectMode = SelectMode.Object;
+                    m_CurrentEvent.Use();
+                }
+            }
+#else
             if (m_CurrentEvent.type == EventType.MouseDown && m_CurrentEvent.button == 1)
                 m_IsRightMouseDown = true;
 
