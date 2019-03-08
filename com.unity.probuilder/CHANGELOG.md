@@ -5,64 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.4-preview.6] - 2019-03-06
+## [4.0.4-preview.7] - 2019-03-08
 
 ### Features
 
 - Significantly improve the accuracy of `Convert to Auto UV` action.
 - Add support for auto UV unwrapped faces in the `Auto Stitch UVS` action.
+- Use `ShortcutManager` API to manage single-key shortcuts.
+- Added option to show current tool delta in the Scene View ("Show Handle Info".)
 
 ### Bug Fixes
 
 - Set the pivot of merged meshes to the active selection pivot instead of origin.
-- Fix `Reset Auto UVs` not breaking element and texture group associations.
-- Fix in-scene texture tool setting faces to manual when editing in face mode.
-- Fix undo not refreshing the UV editor graph.
-- Fix UV editor tools remaining disabled after a selection change.
-- Fix `Auto Stitch UVs` action not getting correct edge for adjacent faces.
-- Fix `Boolean Tool` expecting certain mesh attributes to be present, causing errors in some cases.
-- Fix texture groups not saving correctly in some cases.
-- Fix selected object outline not rendering in specific cases.
+- Fixed `Reset Auto UVs` not breaking element and texture group associations.
+- Fixed in-scene texture tool setting faces to manual when editing in face mode.
+- Fixed undo not refreshing the UV editor graph.
+- Fixed UV editor tools remaining disabled after a selection change.
+- Fixed `Auto Stitch UVs` action not getting correct edge for adjacent faces.
+- Fixed `Boolean Tool` expecting certain mesh attributes to be present, causing errors in some cases.
+- Fixed texture groups not saving correctly in some cases.
+- Fixed selected object outline not rendering in specific cases.
 - Fixed typo in Mirror Objects tooltip.
-- Fix `Export Asset` breaking prefab instances.
+- Fixed `Export Asset` breaking prefab instances.
 - `Vertex Color` action tooltip no longer mentions deprecated paint mode.
-- Fix changelog dates for January 2019.
-- Fix Material Editor rendering incorrectly when an SRP material is assigned to the "Quick Material" field.
+- Fixed changelog dates for January 2019.
+- Fixed Material Editor rendering incorrectly when an SRP material is assigned to the "Quick Material" field.
 - Lessen an edge case where `Math.PointInPolygon` could return the wrong value.
-- Fix an exception when keyframing mesh properties via Timeline.
-
-### Changes
-
-- Name newly merged `GameObject`s after the active selected `GameObject`.
-
-### Changes since 4.0.4-preview.5
-
-## Bug Fixes
-
-- Fix project settings not consistently being saved.
-
-
-### Changes since 4.0.4-preview.4
-
-## Bug Fixes
-
-- Fix assertion when importing ProBuilder to an empty project.
-
-### Changes since 4.0.4-preview.3
-
-## Bug Fixes
-
-- Fix warning in tests caused by a left-over meta file from a temporary directory.
-
-### Changes since 4.0.4-preview.2
-
-## Features
-
-- Use `ShortcutManager` API to manage single-key shortcuts.
-- Added option to show current tool delta in the Scene View ("Show Handle Info".)
-
-## Bug Fixes
-
+- Fixed an exception when keyframing mesh properties via Timeline.
+- Fixed project settings not being consistently being saved in certain cases.
+- Fixed assertion when importing ProBuilder to an empty project.
+- Fixed warning in tests caused by a left-over meta file from a temporary directory.
 - Fixed creating a new PB shape with the Shape Tool does not dirty the scene.
 - Fixed MaterialEditor not filtering out unused submesh index when applying new material.
 - Fixed Vertices/Faces/Edges picking in Prefab mode.
@@ -89,12 +61,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed `Box Project` action resulting in horizontally flipped UV coordinates.
 - Fixed UV Editor preview texture sometimes not appearing.
 
-## Changes
+### Changes
 
+- Name newly merged `GameObject`s after the active selected `GameObject`.
 - Changed the order of UV transform operation (rotation and scale are now called before applying the anchor).
 - Changed picking to now prefers the object hovered over the selected object.
-- Add "Open ProBuilder" button back to `ProBuilderMesh` component Editor.
-- Increase the minimum size of Auto UV Editor window to not require vertical scrollbars.
+- Added "Open ProBuilder" button back to `ProBuilderMesh` component Editor.
+- Increased the minimum size of Auto UV Editor window to not require vertical scrollbars.
+
+### Changes since 4.0.4-preview.6
+
+## Bug Fixes
+
+- Fixed unique mode shortcuts not entering their respective select modes.
+- Fixed `Escape` key not setting select mode to `Object`.
+- Fixed lag when setting select mode via shortcuts.
 
 ## [4.0.3] - 2019-01-25
 
