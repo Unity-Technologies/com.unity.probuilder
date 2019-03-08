@@ -116,7 +116,7 @@ namespace UnityEditor.ProBuilder
 
         // List of string names for all available palettes (plus one entry for 'Add New')
         string[] m_AvailablePalettes_Str = null;
-        
+
         // The index of the currently loaded material palette in m_AvailablePalettes
         int m_CurrentPaletteIndex = 0;
 
@@ -360,7 +360,8 @@ namespace UnityEditor.ProBuilder
 
             foreach (var mesh in selection)
             {
-                mesh.SetMaterial(mesh.selectedFaceCount > 0 ? mesh.GetSelectedFaces() : mesh.facesInternal, mat);
+                var applyPerFace = ProBuilderEditor.selectMode.ContainsFlag(SelectMode.Face) && mesh.faceCount > 0;
+                mesh.SetMaterial(applyPerFace ? mesh.GetSelectedFaces() : mesh.facesInternal, mat);
                 InternalMeshUtility.FilterUnusedSubmeshIndexes(mesh);
                 mesh.Rebuild();
                 mesh.Optimize();
