@@ -184,7 +184,7 @@ namespace UnityEditor.ProBuilder
 
                 sb.AppendLine();
 
-                var normalIndexMap = AppendNormals(sb, normals, "vn", true);
+                var normalIndexMap = AppendArrayVec3(sb, normals, "vn", true);
 
                 sb.AppendLine();
 
@@ -400,6 +400,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        // AppendPositions separately from AppendArrayVec3 to support the non-spec color extension that some DCCs can read
         static Dictionary<int, int> AppendPositions(StringBuilder sb, Vector3[] positions, Color[] colors, bool mergeCoincident, bool includeColors)
         {
             var writeColors = includeColors && colors != null && colors.Length == positions.Length;
@@ -503,7 +504,7 @@ namespace UnityEditor.ProBuilder
             return map;
         }
 
-        static Dictionary<int, int> AppendNormals(StringBuilder sb, Vector3[] array, string prefix, bool mergeCoincident)
+        static Dictionary<int, int> AppendArrayVec3(StringBuilder sb, Vector3[] array, string prefix, bool mergeCoincident)
         {
             Dictionary<IntVec3, int> common = new Dictionary<IntVec3, int>();
             Dictionary<int, int> map = new Dictionary<int, int>();
