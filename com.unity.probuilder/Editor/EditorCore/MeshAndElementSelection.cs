@@ -66,6 +66,36 @@ namespace UnityEditor.ProBuilder
             m_Rotation = rotation;
         }
 
+        internal static List<int> GetSelectedIndicesForSelectMode(ProBuilderMesh mesh, SelectMode mode, bool collectCoincident)
+        {
+            if (mode.ContainsFlag(SelectMode.Face | SelectMode.TextureFace))
+            {
+                List<int> indices = new List<int>();
+
+                if (collectCoincident)
+                    mesh.GetCoincidentVertices(mesh.selectedFacesInternal, indices);
+                else
+                    Face.GetDistinctIndices(mesh.selectedFacesInternal, indices);
+
+                return indices;
+            }
+            else if(mode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
+            {
+                List<int> indices = new List<int>();
+
+                if (collectCoincident)
+                    mesh.GetCoincidentVertices(mesh.selectedEdgesInternal, indices);
+                else
+                    Edge.GetIndices(mesh.selectedEdgesInternal, indices);
+
+                return indices;
+            }
+
+            return collectCoincident
+                ? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
+                : new List<int>(mesh.selectedIndexesInternal);
+        }
+
         public static List<ElementGroup> GetElementGroups(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation, bool collectCoincident)
         {
             var groups = new List<ElementGroup>();
@@ -133,10 +163,7 @@ namespace UnityEditor.ProBuilder
 
                 case PivotPoint.ActiveElement:
                 {
-                    var indices = collectCoincident
-                        ? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
-                        : new List<int>(mesh.selectedIndexesInternal);
-
+                    var indices = GetSelectedIndicesForSelectMode(mesh, selectMode, collectCoincident);
                     var position = mesh.transform.position;
                     var rotation = mesh.transform.rotation;
 
@@ -177,9 +204,7 @@ namespace UnityEditor.ProBuilder
 
                 default:
                 {
-                    var indices = collectCoincident
-                        ? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
-                        : new List<int>(mesh.selectedIndexesInternal);
+                    var indices = GetSelectedIndicesForSelectMode(mesh, selectMode, collectCoincident);
                     var position = MeshSelection.bounds.center;
                     var rotation = Quaternion.identity;
 

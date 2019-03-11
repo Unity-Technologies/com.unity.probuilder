@@ -1019,13 +1019,11 @@ namespace UnityEditor.ProBuilder
         internal void ToggleSelectionMode()
         {
             if (m_SelectMode == SelectMode.Vertex)
-                m_SelectMode.SetValue(SelectMode.Edge, true);
+                selectMode = SelectMode.Edge;
             else if (m_SelectMode == SelectMode.Edge)
-                m_SelectMode.SetValue(SelectMode.Face, true);
+                selectMode = SelectMode.Face;
             else if (m_SelectMode == SelectMode.Face)
-                m_SelectMode.SetValue(SelectMode.Vertex, true);
-
-            Repaint();
+                selectMode = SelectMode.Vertex;
         }
 
         void UpdateSelection(bool selectionChanged = true)
