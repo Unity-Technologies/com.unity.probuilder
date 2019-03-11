@@ -159,7 +159,7 @@ namespace UnityEditor.ProBuilder
                 mesh.Refresh(RefreshMask.Normals);
             }
 
-            ProBuilderEditor.UpdateMeshHandles(false);
+            ProBuilderEditor.Refresh(false);
         }
     }
 }

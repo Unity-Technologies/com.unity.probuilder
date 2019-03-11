@@ -161,7 +161,10 @@ namespace UnityEditor.ProBuilder
 #endif
 
         // All selected pb_Objects
-        internal ProBuilderMesh[] selection = new ProBuilderMesh[0];
+        internal List<ProBuilderMesh> selection
+        {
+            get { return MeshSelection.topInternal; }
+        }
 
         Event m_CurrentEvent;
 
@@ -742,7 +745,7 @@ namespace UnityEditor.ProBuilder
                 {
                     if ((e.modifiers & (EventModifiers.Control | EventModifiers.Shift)) ==
                         (EventModifiers.Control | EventModifiers.Shift))
-                        Actions.SelectFaceRing.MenuRingAndLoopFaces(selection);
+                        Actions.SelectFaceRing.MenuRingAndLoopFaces(MeshSelection.topInternal);
                     else if (e.control)
                         EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectFaceRing>().DoAction());
                     else if (e.shift)
@@ -1027,9 +1030,6 @@ namespace UnityEditor.ProBuilder
 
         void UpdateSelection(bool selectionChanged = true)
         {
-            // todo remove selection property
-            selection = MeshSelection.topInternal.ToArray();
-
             UpdateMeshHandles(selectionChanged);
 
             if (selectionChanged)
@@ -1155,12 +1155,12 @@ namespace UnityEditor.ProBuilder
         /// <param name="snapVal"></param>
         void PushToGrid(float snapVal)
         {
-            UndoUtility.RecordSelection(selection, "Push elements to Grid");
+            UndoUtility.RecordSelection(selection.ToArray(), "Push elements to Grid");
 
             if (selectMode == SelectMode.Object || selectMode == SelectMode.None)
                 return;
 
-            for (int i = 0; i < selection.Length; i++)
+            for (int i = 0, c = MeshSelection.selectedObjectCount; i < c; i++)
             {
                 ProBuilderMesh mesh = selection[i];
                 if (mesh.selectedVertexCount < 1)
@@ -1203,7 +1203,8 @@ namespace UnityEditor.ProBuilder
             pb = null;
             face = null;
 
-            if (selection.Length < 1) return false;
+            if (selection.Count < 1)
+                return false;
 
             pb = selection.FirstOrDefault(x => x.selectedFaceCount > 0);
 

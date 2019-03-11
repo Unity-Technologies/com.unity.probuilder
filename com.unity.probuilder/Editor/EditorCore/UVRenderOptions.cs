@@ -51,7 +51,7 @@ namespace UnityEditor.ProBuilder
 
             if (GUILayout.Button("Save UV Template"))
             {
-                if (ProBuilderEditor.instance == null || ProBuilderEditor.instance.selection.Length < 1)
+                if (ProBuilderEditor.instance == null || MeshSelection.selectedObjectCount < 1)
                 {
                     Debug.LogWarning("Abandoning UV render because no ProBuilder objects are selected.");
                     Close();

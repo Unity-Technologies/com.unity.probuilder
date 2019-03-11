@@ -31,7 +31,7 @@ namespace UnityEditor.ProBuilder
         [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 10 &0", true, PreferenceKeys.menuMaterialColors)]
         public static bool VerifyMaterialAction()
         {
-            return ProBuilderEditor.instance != null && ProBuilderEditor.instance.selection.Length > 0;
+            return ProBuilderEditor.instance != null && MeshSelection.selectedObjectCount > 0;
         }
 
         [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 1 &1", false, PreferenceKeys.menuMaterialColors)]
