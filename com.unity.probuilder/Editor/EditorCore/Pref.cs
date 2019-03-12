@@ -1,4 +1,5 @@
 using UnityEditor.SettingsManagement;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
@@ -10,5 +11,10 @@ namespace UnityEditor.ProBuilder
 
         public Pref(Settings settings, string key, T value, SettingsScope scope = SettingsScope.Project)
             : base(settings, key, value, scope) {}
+
+        public static implicit operator T(Pref<T> pref)
+        {
+            return pref.value;
+        }
     }
 }
