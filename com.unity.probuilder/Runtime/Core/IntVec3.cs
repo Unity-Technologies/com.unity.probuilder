@@ -7,17 +7,15 @@ namespace UnityEngine.ProBuilder
     /// </summary>
     struct IntVec3 : System.IEquatable<IntVec3>
     {
-        public Vector3 vec;
+        public Vector3 value;
 
-        public float x { get { return vec.x; } }
-        public float y { get { return vec.y; } }
-        public float z { get { return vec.z; } }
-
-        public const float RESOLUTION = VectorHash.FLT_COMPARE_RESOLUTION;
+        public float x { get { return value.x; } }
+        public float y { get { return value.y; } }
+        public float z { get { return value.z; } }
 
         public IntVec3(Vector3 vector)
         {
-            this.vec = vector;
+            this.value = vector;
         }
 
         public override string ToString()
@@ -57,17 +55,17 @@ namespace UnityEngine.ProBuilder
 
         public override int GetHashCode()
         {
-            return VectorHash.GetHashCode(vec);
+            return VectorHash.GetHashCode(value);
         }
 
         private static int round(float v)
         {
-            return System.Convert.ToInt32(v * RESOLUTION);
+            return System.Convert.ToInt32(v * VectorHash.FltCompareResolution);
         }
 
         public static implicit operator Vector3(IntVec3 p)
         {
-            return p.vec;
+            return p.value;
         }
 
         public static implicit operator IntVec3(Vector3 p)
