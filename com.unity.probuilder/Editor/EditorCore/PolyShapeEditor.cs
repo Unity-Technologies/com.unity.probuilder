@@ -155,6 +155,9 @@ namespace UnityEditor.ProBuilder
         {
             if (polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Path && m_LineMaterial != null)
                 m_LineMaterial.SetFloat("_EditorTime", (float)EditorApplication.timeSinceStartup);
+
+            //if (polygon.m_Points.Count == 2)
+                //Debug.Log("2 points!");
         }
 
         void SetPolyEditMode(PolyShape.PolyEditMode mode)
@@ -339,10 +342,27 @@ namespace UnityEditor.ProBuilder
                             return;
                         }
 
-                        polygon.m_Points.Add(point);
+                        if (polygon.m_Points.Count == 1)
+                        {
+                            //Add the corners of the box
+                            Vector3 xCorner = new Vector3 (point.x, 0, 0);
+                            Vector3 zCorner = new Vector3 (0, 0, point.z);
 
-                        m_PlacingPoint = true;
-                        m_SelectedIndex = polygon.m_Points.Count - 1;
+                            polygon.m_Points.Add(xCorner);
+                            polygon.m_Points.Add(point);
+                            polygon.m_Points.Add(zCorner);
+
+                            m_SelectedIndex = 3;
+
+                            m_NextMouseUpAdvancesMode = true;
+                        }
+                        else
+                        {
+                            polygon.m_Points.Add(point);
+                            m_PlacingPoint = true;
+                            m_SelectedIndex = polygon.m_Points.Count - 1;
+                        }
+                        
                         RebuildPolyShapeMesh(polygon);
 
                         evt.Use();

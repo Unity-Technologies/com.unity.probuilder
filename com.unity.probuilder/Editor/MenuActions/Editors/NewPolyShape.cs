@@ -39,6 +39,8 @@ namespace UnityEditor.ProBuilder.Actions
             ProBuilderMesh pb = poly.gameObject.AddComponent<ProBuilderMesh>();
             pb.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals);
             EditorUtility.InitObject(pb);
+            pb.GetComponent<MeshRenderer>().enabled = false;
+            pb.GetComponent<MeshCollider>().enabled = false;
 
             // Special case - we don't want to reset the grid pivot because we rely on it to set the active plane for
             // interaction, regardless of whether snapping is enabled or not.
