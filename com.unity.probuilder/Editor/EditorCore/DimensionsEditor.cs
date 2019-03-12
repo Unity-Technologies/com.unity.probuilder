@@ -76,14 +76,14 @@ namespace UnityEditor.ProBuilder
 #endif
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged += OnElementSelectionChanged;
-            ProBuilderEditor.selectionUpdated += EditingMeshSelection;
+            ProBuilderEditor.selectionUpdated += OnEditingMeshSelection;
         }
 
         void OnDisable()
         {
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged -= OnElementSelectionChanged;
-            ProBuilderEditor.selectionUpdated -= EditingMeshSelection;
+            ProBuilderEditor.selectionUpdated -= OnEditingMeshSelection;
 
 #if UNITY_2019_1_OR_NEWER
             SceneView.duringSceneGui -= OnSceneGUI;
@@ -215,7 +215,7 @@ namespace UnityEditor.ProBuilder
             RebuildBounds();
         }
 
-        void EditingMeshSelection(IEnumerable<ProBuilderMesh> meshes)
+        void OnEditingMeshSelection(IEnumerable<ProBuilderMesh> meshes)
         {
             RebuildBounds();
         }
