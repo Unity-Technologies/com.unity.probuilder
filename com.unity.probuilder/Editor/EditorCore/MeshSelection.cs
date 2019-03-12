@@ -72,16 +72,6 @@ namespace UnityEditor.ProBuilder
         // Faces that need to be refreshed when moving or modifying the actual selection
         internal static Dictionary<ProBuilderMesh, List<Face>> selectedFacesInEditZone { get; private set; }
 
-        static ProBuilderMesh[] selection
-        {
-            get
-            {
-                return ProBuilderEditor.instance != null
-                    ? ProBuilderEditor.instance.selection
-                    : InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms);
-            }
-        }
-
         internal static void InvalidateElementSelection()
         {
             s_SelectedElementGroupsDirty = true;
@@ -199,9 +189,9 @@ namespace UnityEditor.ProBuilder
 
         internal static void RecalculateSelectedComponentCounts()
         {
-            for (var i = 0; i < selection.Length; i++)
+            for (var i = 0; i < topInternal.Count; i++)
             {
-                var mesh = selection[i];
+                var mesh = topInternal[i];
 
                 selectedFaceCount += mesh.selectedFaceCount;
                 selectedEdgeCount += mesh.selectedEdgeCount;
@@ -220,9 +210,9 @@ namespace UnityEditor.ProBuilder
             s_SelectionBounds = new Bounds();
             var boundsInitialized = false;
 
-            for (var i = 0; i < selection.Length; i++)
+            for (int i = 0, c = topInternal.Count; i < c; i++)
             {
-                var mesh = selection[i];
+                var mesh = topInternal[i];
 
                 // Undo causes this state
                 if (mesh == null)
@@ -251,7 +241,7 @@ namespace UnityEditor.ProBuilder
             else
                 selectedFacesInEditZone = new Dictionary<ProBuilderMesh, List<Face>>();
 
-            foreach (var mesh in selection)
+            foreach (var mesh in topInternal)
             {
                 selectedFacesInEditZone.Add(mesh, ElementSelection.GetNeighborFaces(mesh, mesh.selectedIndexesInternal));
             }
@@ -377,7 +367,7 @@ namespace UnityEditor.ProBuilder
 
         internal static void SetSelection(IList<GameObject> newSelection)
         {
-            UndoUtility.RecordSelection(selection, "Change Selection");
+            UndoUtility.RecordSelection(topInternal.ToArray(), "Change Selection");
             ClearElementAndObjectSelection();
 
             // if the previous tool was set to none, use Tool.Move
@@ -399,7 +389,7 @@ namespace UnityEditor.ProBuilder
 
         internal static void SetSelection(GameObject go)
         {
-            UndoUtility.RecordSelection(selection, "Change Selection");
+            UndoUtility.RecordSelection(topInternal.ToArray(), "Change Selection");
             ClearElementAndObjectSelection();
             AddToSelection(go);
         }

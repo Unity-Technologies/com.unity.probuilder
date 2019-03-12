@@ -234,6 +234,9 @@ namespace UnityEditor.ProBuilder
 
         Bounds OnGetFrameBounds()
         {
+            if (!ProBuilderEditor.selectMode.IsMeshElementMode())
+                return m_MeshRenderer != null ? m_MeshRenderer.bounds : default(Bounds);
+
             if (onGetFrameBoundsEvent != null)
                 onGetFrameBoundsEvent();
 

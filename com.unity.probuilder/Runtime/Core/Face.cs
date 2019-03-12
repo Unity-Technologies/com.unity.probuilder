@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.Serialization;
@@ -452,6 +453,28 @@ namespace UnityEngine.ProBuilder
         {
             Array.Reverse(m_Indexes);
             InvalidateCache();
+        }
+
+        internal static void GetIndices(IEnumerable<Face> faces, List<int> indices)
+        {
+            indices.Clear();
+
+            foreach (var face in faces)
+            {
+                for (int i = 0, c = face.indexesInternal.Length; i < c; ++i)
+                    indices.Add(face.indexesInternal[i]);
+            }
+        }
+
+        internal static void GetDistinctIndices(IEnumerable<Face> faces, List<int> indices)
+        {
+            indices.Clear();
+
+            foreach (var face in faces)
+            {
+                for (int i = 0, c = face.distinctIndexesInternal.Length; i < c; ++i)
+                    indices.Add(face.distinctIndexesInternal[i]);
+            }
         }
     }
 }

@@ -1,13 +1,23 @@
+#if UNITY_2019_1_OR_NEWER
+#define SHORTCUT_MANAGER
+#endif
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.SettingsManagement;
+using UnityEditor.ShortcutManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using Object = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder
 {
     sealed class DimensionsEditor : ScriptableObject
     {
         static DimensionsEditor s_Instance;
+        bool m_HasBounds;
+        Bounds m_Bounds;
 
         [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Dimensions Overlay/Hide", true, PreferenceKeys.menuEditor + 30)]
         static bool HideVerify()
@@ -34,6 +44,24 @@ namespace UnityEditor.ProBuilder
             CreateInstance<DimensionsEditor>();
         }
 
+        [UserSetting("Dimensions Overlay", "Always use Object Bounds", "When disabled, the dimensions will be " +
+            "calculated using the current face, edge, or vertex selection. When enabled, the object bounds are used.")]
+        static Pref<bool> s_AlwaysUseObjectBounds = new Pref<bool>("s_AlwaysUseObjectBounds", false, SettingsScope.User);
+
+#if SHORTCUT_MANAGER
+        [Shortcut("ProBuilder/Dimensions Overlay/Toggle Object, Element Bounds", typeof(SceneView))]
+        static void ToggleUseElementBounds()
+        {
+            s_AlwaysUseObjectBounds.SetValue(!s_AlwaysUseObjectBounds.value, true);
+
+            if (s_Instance != null)
+            {
+                s_Instance.RebuildBounds();
+                EditorUtility.ShowNotification("Dimensions Overlay\n" + (s_AlwaysUseObjectBounds.value ? "Object" : "Element"));
+            }
+        }
+#endif
+
         void OnEnable()
         {
             s_Instance = this;
@@ -46,10 +74,17 @@ namespace UnityEditor.ProBuilder
 #else
             SceneView.onSceneGUIDelegate += OnSceneGUI;
 #endif
+            MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
+            ProBuilderMesh.elementSelectionChanged += OnElementSelectionChanged;
+            ProBuilderEditor.selectionUpdated += OnEditingMeshSelection;
         }
 
         void OnDisable()
         {
+            MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
+            ProBuilderMesh.elementSelectionChanged -= OnElementSelectionChanged;
+            ProBuilderEditor.selectionUpdated -= OnEditingMeshSelection;
+
 #if UNITY_2019_1_OR_NEWER
             SceneView.duringSceneGui -= OnSceneGUI;
 #else
@@ -59,33 +94,107 @@ namespace UnityEditor.ProBuilder
             DestroyImmediate(material);
         }
 
-        bool GetSelectedBounds(out Bounds bounds)
+        static bool GetElementBounds(IEnumerable<ProBuilderMesh> meshes, SelectMode mode, out Bounds bounds)
         {
-            IEnumerable<MeshRenderer> renderers = Selection.transforms.Where(x => x.GetComponent<MeshRenderer>() != null).Select(x => x.GetComponent<MeshRenderer>());
+            bool initialized = false;
+            bounds = new Bounds();
+
+            foreach (var mesh in meshes)
+            {
+                var positions = mesh.positionsInternal;
+                var trs = mesh.transform;
+
+                switch (mode)
+                {
+                    case SelectMode.Face:
+                    case SelectMode.TextureFace:
+                    {
+                        var faces = mesh.facesInternal;
+
+                        foreach (var face in mesh.selectedFaceIndicesInternal)
+                        {
+                            foreach (var index in faces[face].distinctIndexesInternal)
+                            {
+                                var position = trs.TransformPoint(positions[index]);
+
+                                if (!initialized)
+                                {
+                                    bounds = new Bounds(position, Vector3.zero);
+                                    initialized = true;
+                                }
+                                else
+                                {
+                                    bounds.Encapsulate(position);
+                                }
+                            }
+                        }
+                        break;
+                    }
+
+                    case SelectMode.Edge:
+                    case SelectMode.TextureEdge:
+                    {
+                        foreach (var edge in mesh.selectedEdgesInternal)
+                        {
+                            var a = trs.TransformPoint(positions[edge.a]);
+                            var b = trs.TransformPoint(positions[edge.b]);
+
+                            if (!initialized)
+                            {
+                                bounds = new Bounds(a, Vector3.zero);
+                                initialized = true;
+                            }
+                            else
+                            {
+                                bounds.Encapsulate(a);
+                            }
+
+                            bounds.Encapsulate(b);
+                        }
+
+                        break;
+                    }
+
+                    case SelectMode.Vertex:
+                    case SelectMode.TextureVertex:
+                    {
+                        foreach (var index in mesh.selectedIndexesInternal)
+                        {
+                            var position = trs.TransformPoint(positions[index]);
+
+                            if (!initialized)
+                            {
+                                bounds = new Bounds(position, Vector3.zero);
+                                initialized = true;
+                            }
+                            else
+                            {
+                                bounds.Encapsulate(position);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+
+            return initialized;
+        }
+
+        static bool GetSelectedBounds(out Bounds bounds)
+        {
+            var selectMode = ProBuilderEditor.selectMode;
+
+            if (selectMode.IsMeshElementMode() && !s_AlwaysUseObjectBounds.value)
+                return GetElementBounds(MeshSelection.topInternal, selectMode, out bounds);
+
+            var renderers = Selection.transforms
+                .Where(x => x.GetComponent<MeshRenderer>() != null)
+                .Select(x => x.GetComponent<MeshRenderer>());
 
             if (!renderers.Any())
             {
                 bounds = new Bounds();
                 return false;
-            }
-
-            if (ProBuilderEditor.instance != null)
-            {
-                Vector3[] positions = MeshSelection.topInternal.SelectMany(x =>
-                    {
-                        var p = x.positions.ToArray();
-
-                        return x.selectedVertices.Select(y =>
-                        {
-                            return x.transform.TransformPoint(p[y]);
-                        });
-                    }).ToArray();
-
-                if (positions.Length > 0)
-                {
-                    bounds = Math.GetBounds(positions);
-                    return true;
-                }
             }
 
             bounds = renderers.First().bounds;
@@ -96,11 +205,31 @@ namespace UnityEditor.ProBuilder
             return true;
         }
 
+        void OnObjectSelectionChanged()
+        {
+            RebuildBounds();
+        }
+
+        void OnElementSelectionChanged(ProBuilderMesh mesh)
+        {
+            RebuildBounds();
+        }
+
+        void OnEditingMeshSelection(IEnumerable<ProBuilderMesh> meshes)
+        {
+            RebuildBounds();
+        }
+
+        void RebuildBounds()
+        {
+            m_HasBounds = GetSelectedBounds(out m_Bounds);
+            SceneView.RepaintAll();
+        }
+
         void OnSceneGUI(SceneView scnview)
         {
-            Bounds bounds;
-            if (GetSelectedBounds(out bounds))
-                RenderBounds(bounds);
+            if(Selection.count > 0 && m_HasBounds)
+                RenderBounds(m_Bounds);
         }
 
         Mesh mesh;
@@ -126,7 +255,7 @@ namespace UnityEditor.ProBuilder
 
         const float DISTANCE_LINE_OFFSET = .2f;
 
-        float LineDistance()
+        static float LineDistance()
         {
             return HandleUtility.GetHandleSize(Selection.activeTransform.position) * DISTANCE_LINE_OFFSET;
         }

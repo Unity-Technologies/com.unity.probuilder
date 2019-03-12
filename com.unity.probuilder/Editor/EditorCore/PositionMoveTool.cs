@@ -189,7 +189,7 @@ namespace UnityEditor.ProBuilder
                 mesh.Refresh(RefreshMask.Normals);
             }
 
-            ProBuilderEditor.UpdateMeshHandles(false);
+            ProBuilderEditor.Refresh(false);
         }
 
 #if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO

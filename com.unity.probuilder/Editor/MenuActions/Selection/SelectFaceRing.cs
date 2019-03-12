@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
@@ -65,9 +66,9 @@ namespace UnityEditor.ProBuilder.Actions
             return new ActionResult(ActionResult.Status.Success, "Select Face Ring");
         }
 
-        public static ActionResult MenuRingAndLoopFaces(ProBuilderMesh[] selection)
+        public static ActionResult MenuRingAndLoopFaces(IEnumerable<ProBuilderMesh> selection)
         {
-            UndoUtility.RecordSelection(selection, "Select Face Ring and Loop");
+            UndoUtility.RecordSelection(selection.ToArray(), "Select Face Ring and Loop");
 
             foreach (ProBuilderMesh pb in selection)
             {
