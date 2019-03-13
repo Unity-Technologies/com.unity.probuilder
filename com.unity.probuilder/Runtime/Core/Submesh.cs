@@ -100,7 +100,6 @@ namespace UnityEngine.ProBuilder
         /// <param name="preferredTopology">Should the resulting submeshes be in quads or triangles. Note that quads are not guaranteed; ie, some faces may not be able to be represented in quad format and will fall back on triangles.</param>
         /// <returns>An array of Submeshes.</returns>
         /// <exception cref="NotImplementedException">Thrown in the event that a MeshTopology other than Quads or Triangles is passed.</exception>
-        /// <see cref="MeshUtility.GetMaterialCount"/>
         public static Submesh[] GetSubmeshes(IEnumerable<Face> faces, int submeshCount, MeshTopology preferredTopology = MeshTopology.Triangles)
         {
             if (preferredTopology != MeshTopology.Triangles && preferredTopology != MeshTopology.Quads)

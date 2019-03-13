@@ -115,15 +115,18 @@ namespace UnityEditor.ProBuilder
 
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine("# Exported from ProBuilder");
-            sb.AppendLine("# http://www.procore3d.com/probuilder");
+            sb.AppendLine("# ProBuilder " + Version.currentInfo.MajorMinorPatch);
+            sb.AppendLine("# https://unity3d.com/unity/features/worldbuilding/probuilder");
             sb.AppendLine(string.Format("# {0}", System.DateTime.Now));
             sb.AppendLine();
             sb.AppendLine(string.Format("mtllib ./{0}.mtl", name.Replace(" ", "_")));
             sb.AppendLine(string.Format("o {0}", name));
             sb.AppendLine();
 
-            int triangleOffset = 1;
+            // obj orders indices 1 indexed
+            int positionOffset = 1;
+            int normalOffset = 1;
+            int textureOffset = 1;
 
             bool reverseWinding = options.handedness == ObjOptions.Handedness.Right;
             float handedness = options.handedness == ObjOptions.Handedness.Left ? 1f : -1f;
@@ -145,8 +148,10 @@ namespace UnityEditor.ProBuilder
                 List<Vector4> uv4;
 
                 MeshArrays attribs = MeshArrays.Position | MeshArrays.Normal | MeshArrays.Texture0;
+
                 if (options.vertexColors)
                     attribs = attribs | MeshArrays.Color;
+
                 Vertex.GetArrays(model.vertices, out positions, out colors, out textures0, out normals, out tangent, out uv2, out uv3, out uv4, attribs);
 
                 // Can skip this entirely if handedness matches Unity & not applying transforms.
@@ -171,28 +176,15 @@ namespace UnityEditor.ProBuilder
 
                 sb.AppendLine(string.Format("g {0}", model.name));
 
-                if (options.vertexColors && colors != null && colors.Length == vertexCount)
-                {
-                    for (int i = 0; i < vertexCount; i++)
-                        sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "v {0} {1} {2} {3} {4} {5}",
-                                positions[i].x, positions[i].y, positions[i].z,
-                                colors[i].r, colors[i].g, colors[i].b));
-                }
-                else
-                {
-                    for (int i = 0; i < vertexCount; i++)
-                        sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "v {0} {1} {2}", positions[i].x, positions[i].y, positions[i].z));
-                }
+                var positionIndexMap = AppendPositions(sb, positions, colors, true, options.vertexColors);
 
                 sb.AppendLine();
 
-                for (int i = 0; normals != null && i < vertexCount; i++)
-                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "vn {0} {1} {2}", normals[i].x, normals[i].y, normals[i].z));
+                var textureIndexMap = AppendArrayVec2(sb, textures0, "vt", true);
 
                 sb.AppendLine();
 
-                for (int i = 0; textures0 != null && i < vertexCount; i++)
-                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "vt {0} {1}", textures0[i].x, textures0[i].y));
+                var normalIndexMap = AppendArrayVec3(sb, normals, "vn", true);
 
                 sb.AppendLine();
 
@@ -215,51 +207,58 @@ namespace UnityEditor.ProBuilder
 
                     int[] indexes = submesh.m_Indexes;
                     int inc = submesh.m_Topology == MeshTopology.Quads ? 4 : 3;
+                    int inc1 = inc - 1;
+
+                    int o0 = reverseWinding ? inc1 : 0;
+                    int o1 = reverseWinding ? inc1 - 1 : 1;
+                    int o2 = reverseWinding ? inc1 - 2 : 2;
+                    int o3 = reverseWinding ? inc1 - 3 : 3;
 
                     for (int ff = 0; ff < indexes.Length; ff += inc)
                     {
+                        int p0 = positionIndexMap[indexes[ff + o0]] + positionOffset;
+                        int p1 = positionIndexMap[indexes[ff + o1]] + positionOffset;
+                        int p2 = positionIndexMap[indexes[ff + o2]] + positionOffset;
+
+                        int t0 = textureIndexMap[indexes[ff + o0]] + textureOffset;
+                        int t1 = textureIndexMap[indexes[ff + o1]] + textureOffset;
+                        int t2 = textureIndexMap[indexes[ff + o2]] + textureOffset;
+
+                        int n0 = normalIndexMap[indexes[ff + o0]] + normalOffset;
+                        int n1 = normalIndexMap[indexes[ff + o1]] + normalOffset;
+                        int n2 = normalIndexMap[indexes[ff + o2]] + normalOffset;
+
                         if (inc == 4)
                         {
-                            if (reverseWinding)
-                            {
-                                sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2} {3}/{3}/{3}",
-                                        indexes[ff + 3] + triangleOffset,
-                                        indexes[ff + 2] + triangleOffset,
-                                        indexes[ff + 1] + triangleOffset,
-                                        indexes[ff + 0] + triangleOffset));
-                            }
-                            else
-                            {
-                                sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2} {3}/{3}/{3}",
-                                        indexes[ff + 0] + triangleOffset,
-                                        indexes[ff + 1] + triangleOffset,
-                                        indexes[ff + 2] + triangleOffset,
-                                        indexes[ff + 3] + triangleOffset));
-                            }
+                            int p3 = positionIndexMap[indexes[ff + o3]] + positionOffset;
+                            int n3 = normalIndexMap[indexes[ff + o3]] + normalOffset;
+                            int t3 = textureIndexMap[indexes[ff + o3]] + textureOffset;
+
+                            sb.AppendLine(string.Format(CultureInfo.InvariantCulture,
+                                "f {0}/{4}/{8} {1}/{5}/{9} {2}/{6}/{10} {3}/{7}/{11}",
+                                    p0, p1, p2, p3,
+                                    t0, t1, t2, t3,
+                                    n0, n1, n2, n3
+                                    ));
                         }
                         else
                         {
-                            if (reverseWinding)
-                            {
-                                sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}",
-                                        indexes[ff + 2] + triangleOffset,
-                                        indexes[ff + 1] + triangleOffset,
-                                        indexes[ff + 0] + triangleOffset));
-                            }
-                            else
-                            {
-                                sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}",
-                                        indexes[ff + 0] + triangleOffset,
-                                        indexes[ff + 1] + triangleOffset,
-                                        indexes[ff + 2] + triangleOffset));
-                            }
+                            sb.AppendLine(string.Format(CultureInfo.InvariantCulture,
+                                "f {0}/{3}/{6} {1}/{4}/{7} {2}/{5}/{8}",
+                                p0, p1, p2,
+                                t0, t1, t2,
+                                n0, n1, n2
+                                ));
+
                         }
                     }
 
                     sb.AppendLine();
                 }
 
-                triangleOffset += vertexCount;
+                positionOffset += positionIndexMap.Count;
+                normalOffset += normalIndexMap.Count;
+                textureOffset += textureIndexMap.Count;
             }
 
             return sb.ToString();
@@ -368,6 +367,183 @@ namespace UnityEditor.ProBuilder
             }
 
             return sb.ToString();
+        }
+
+        struct PositionColorKey : System.IEquatable<PositionColorKey>
+        {
+            public IntVec3 position;
+            public IntVec4 color;
+
+            public PositionColorKey(Vector3 p, Color c)
+            {
+                position = new IntVec3(p);
+                color = new IntVec4(c);
+            }
+
+            public bool Equals(PositionColorKey other)
+            {
+                return position.Equals(other.position) && color.Equals(other.color);
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj)) return false;
+                return obj is PositionColorKey other && Equals(other);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    return (position.GetHashCode() * 397) ^ color.GetHashCode();
+                }
+            }
+        }
+
+        // AppendPositions separately from AppendArrayVec3 to support the non-spec color extension that some DCCs can read
+        static Dictionary<int, int> AppendPositions(StringBuilder sb, Vector3[] positions, Color[] colors, bool mergeCoincident, bool includeColors)
+        {
+            var writeColors = includeColors && colors != null && colors.Length == positions.Length;
+
+            Dictionary<PositionColorKey, int> common = new Dictionary<PositionColorKey, int>();
+            Dictionary<int, int> map = new Dictionary<int, int>();
+
+            int index = 0;
+
+            for (int i = 0, c = positions.Length; i < c; i++)
+            {
+                var position = positions[i];
+                var color = includeColors ? colors[i] : Color.white;
+
+                var key = new PositionColorKey(position, color);
+                int vertexIndex;
+
+                if (mergeCoincident)
+                {
+                    if (!common.TryGetValue(key, out vertexIndex))
+                    {
+                        vertexIndex = index++;
+                        common.Add(key, vertexIndex);
+                    }
+                    else
+                    {
+                        map.Add(i, vertexIndex);
+                        continue;
+                    }
+                }
+                else
+                {
+                    vertexIndex = i;
+                }
+
+                map.Add(i, vertexIndex);
+
+                if (writeColors)
+                {
+                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "v {0} {1} {2} {3} {4} {5}",
+                        position.x,
+                        position.y,
+                        position.z,
+                        color.r,
+                        color.g,
+                        color.b));
+                }
+                else
+                {
+                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "v {0} {1} {2}",
+                        position.x,
+                        position.y,
+                        position.z));
+                }
+            }
+
+            return map;
+        }
+
+        static Dictionary<int, int> AppendArrayVec2(StringBuilder sb, Vector2[] array, string prefix, bool mergeCoincident)
+        {
+            if (array == null)
+                return null;
+
+            Dictionary<IntVec2, int> common = new Dictionary<IntVec2, int>();
+            Dictionary<int, int> map = new Dictionary<int, int>();
+            int index = 0;
+
+            for (int i = 0, c = array.Length; i < c; i++)
+            {
+                var texture = array[i];
+                var key = new IntVec2(texture);
+                int vertexIndex;
+
+                if (mergeCoincident)
+                {
+                    if (!common.TryGetValue(key, out vertexIndex))
+                    {
+                        vertexIndex = index++;
+                        common.Add(key, vertexIndex);
+                    }
+                    else
+                    {
+                        map.Add(i, vertexIndex);
+                        continue;
+                    }
+                }
+                else
+                {
+                    vertexIndex = i;
+                }
+
+                map.Add(i, vertexIndex);
+
+                sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "{0} {1} {2}",
+                    prefix,
+                    texture.x,
+                    texture.y));
+            }
+
+            return map;
+        }
+
+        static Dictionary<int, int> AppendArrayVec3(StringBuilder sb, Vector3[] array, string prefix, bool mergeCoincident)
+        {
+            Dictionary<IntVec3, int> common = new Dictionary<IntVec3, int>();
+            Dictionary<int, int> map = new Dictionary<int, int>();
+            int index = 0;
+
+            for (int i = 0, c = array.Length; i < c; i++)
+            {
+                var value = array[i];
+                var key = new IntVec3(value);
+                int vertexIndex;
+
+                if (mergeCoincident)
+                {
+                    if (!common.TryGetValue(key, out vertexIndex))
+                    {
+                        vertexIndex = index++;
+                        common.Add(key, vertexIndex);
+                    }
+                    else
+                    {
+                        map.Add(i, vertexIndex);
+                        continue;
+                    }
+                }
+                else
+                {
+                    vertexIndex = i;
+                }
+
+                map.Add(i, vertexIndex);
+
+                sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "{0} {1} {2} {3}",
+                    prefix,
+                    value.x,
+                    value.y,
+                    value.z));
+            }
+
+            return map;
         }
     }
 }

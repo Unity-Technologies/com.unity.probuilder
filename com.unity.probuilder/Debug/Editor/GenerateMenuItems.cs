@@ -85,7 +85,7 @@ namespace UnityEditor.ProBuilder
             { "Export", "PreferenceKeys.menuExport + 0" }
         };
 
-        [MenuItem("Tools/Debug/ProBuilder/Rebuild Menu Items &d", false, 800)]
+        [MenuItem("Tools/Debug/ProBuilder/Rebuild Menu Items", false, 800)]
         static void GenerateMenuItemsForActions()
         {
             if (File.Exists(k_GeneratedFilePath))

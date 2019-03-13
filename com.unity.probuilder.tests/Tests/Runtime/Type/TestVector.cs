@@ -83,7 +83,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.Type
         public static void TestComparison_IVEC3()
         {
             IntVec3 a = (IntVec3)RandVec3();
-            IntVec3 b = (IntVec3)(a.vec * 2.3f);
+            IntVec3 b = (IntVec3)(a.value * 2.3f);
             IntVec3 c = (IntVec3) new Vector3(a.x, a.y + .001f, a.z);
             IntVec3 d = (IntVec3) new Vector3(a.x, a.y, a.z);
 
