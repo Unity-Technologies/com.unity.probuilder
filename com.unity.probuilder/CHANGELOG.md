@@ -5,14 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.4-preview.7] - 2019-03-08
-
-### Features
-
-- Significantly improve the accuracy of `Convert to Auto UV` action.
-- Add support for auto UV unwrapped faces in the `Auto Stitch UVS` action.
-- Use `ShortcutManager` API to manage single-key shortcuts.
-- Added option to show current tool delta in the Scene View ("Show Handle Info".)
+## [4.0.4-preview.8] - 2019-03-13
 
 ### Bug Fixes
 
@@ -60,6 +53,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed `Subdivide` action resulting in horizontally flipped UV coordinates.
 - Fixed `Box Project` action resulting in horizontally flipped UV coordinates.
 - Fixed UV Editor preview texture sometimes not appearing.
+- Fixed lag when setting select mode via shortcuts.
+- Frame bounds focuses on element selection when in Object mode.
+- Apply material incorrectly applies to face selection when in Object mode.
+- Dimension overlay displays element bounds when in Object mode.
+- Fixed handle position not updating when the element selection mode changed.
+- Fixed `Strip ProBuilder Scripts on Build` not being respected.
+- Fixed `Export OBJ` not sharing vertex data, resulting in split vertices in other DCCs.
 
 ### Changes
 
@@ -68,14 +68,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Changed picking to now prefers the object hovered over the selected object.
 - Added "Open ProBuilder" button back to `ProBuilderMesh` component Editor.
 - Increased the minimum size of Auto UV Editor window to not require vertical scrollbars.
-
-### Changes since 4.0.4-preview.6
-
-## Bug Fixes
-
-- Fixed unique mode shortcuts not entering their respective select modes.
-- Fixed `Escape` key not setting select mode to `Object`.
-- Fixed lag when setting select mode via shortcuts.
+- Significantly improve the accuracy of `Convert to Auto UV` action.
+- Add support for auto UV unwrapped faces in the `Auto Stitch UVS` action.
+- Use `ShortcutManager` API to manage single-key shortcuts.
+- Added option to show current tool delta in the Scene View ("Show Handle Info".)
 
 ## [4.0.3] - 2019-01-25
 
