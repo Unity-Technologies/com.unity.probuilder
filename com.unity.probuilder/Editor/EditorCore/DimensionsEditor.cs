@@ -228,7 +228,11 @@ namespace UnityEditor.ProBuilder
 
         void OnSceneGUI(SceneView scnview)
         {
+#if UNITY_2019_1_OR_NEWER
             if(Selection.count > 0 && m_HasBounds)
+#else
+            if(Selection.objects.Length > 0 && m_HasBounds)
+#endif
                 RenderBounds(m_Bounds);
         }
 

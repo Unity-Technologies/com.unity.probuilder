@@ -965,7 +965,7 @@ namespace UnityEditor.ProBuilder
 
                 case "Set Pivot":
 
-                    if (selection.Length > 0)
+                    if (selection.Count > 0)
                     {
                         foreach (ProBuilderMesh pbo in selection)
                         {
