@@ -9,7 +9,7 @@ using UnityEditor.SettingsManagement;
 namespace UnityEditor.ProBuilder
 {
     /// <summary>
-    /// When building the project, remove all references to pb_Objects.
+    /// When building the project, remove all references to <see cref="ProBuilderMesh"/> and <see cref="EntityBehaviour"/>.
     /// </summary>
     static class UnityScenePostProcessor
     {
@@ -44,39 +44,44 @@ namespace UnityEditor.ProBuilder
             if (EditorApplication.isPlayingOrWillChangePlaymode)
                 return;
 
-
             foreach (var entity in Resources.FindObjectsOfTypeAll<EntityBehaviour>())
             {
                 if (entity.manageVisibility)
                     entity.OnEnterPlayMode();
             }
 
-            // pb_Entity is deprecated - remove someday
-
-            foreach (var pb in Object.FindObjectsOfType<ProBuilderMesh>())
+            foreach (var mesh in Object.FindObjectsOfType<ProBuilderMesh>())
             {
-                GameObject go = pb.gameObject;
+                GameObject go = mesh.gameObject;
 
-                Entity entity = pb.gameObject.GetComponent<Entity>();
-
-                if (entity == null)
-                    continue;
-
-                if (entity.entityType == EntityType.Collider || entity.entityType == EntityType.Trigger)
-                    go.GetComponent<MeshRenderer>().enabled = false;
+                var entity = ProcessLegacyEntity(go);
 
                 // clear hideflags on prefab meshes
-                if (pb.mesh != null)
-                    pb.mesh.hideFlags = HideFlags.None;
+                if (mesh.mesh != null)
+                    mesh.mesh.hideFlags = HideFlags.None;
 
-                if (!m_ScriptStripping)
-                    return;
+                if (m_ScriptStripping == false)
+                    continue;
 
-                pb.preserveMeshAssetOnDestroy = true;
+                mesh.preserveMeshAssetOnDestroy = true;
 
-                Object.DestroyImmediate(pb);
+                Object.DestroyImmediate(mesh);
                 Object.DestroyImmediate(entity);
             }
+        }
+
+        static Entity ProcessLegacyEntity(GameObject go)
+        {
+            // Entity is deprecated - remove someday
+            Entity entity = go.GetComponent<Entity>();
+
+            if (entity == null)
+                return null;
+
+            if (entity.entityType == EntityType.Collider || entity.entityType == EntityType.Trigger)
+                go.GetComponent<MeshRenderer>().enabled = false;
+
+            return entity;
         }
     }
 }
