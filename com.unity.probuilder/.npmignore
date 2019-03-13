@@ -1,5 +1,6 @@
 artifacts/**
 build/**
+build.sh*
 Documentation~/ApiDocs/**
 Tests/
 Tests.meta
