@@ -387,8 +387,10 @@ namespace UnityEditor.ProBuilder
 
             public override bool Equals(object obj)
             {
-                if (ReferenceEquals(null, obj)) return false;
-                return obj is PositionColorKey other && Equals(other);
+                if (ReferenceEquals(null, obj))
+                    return false;
+                    
+                return obj is PositionColorKey && Equals(obj);
             }
 
             public override int GetHashCode()
