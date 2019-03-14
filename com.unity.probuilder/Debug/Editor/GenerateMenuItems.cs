@@ -1,3 +1,5 @@
+#if !NET_LEGACY
+
 #if UNITY_2019_1_OR_NEWER
 #define SHORTCUT_MANAGER
 #endif
@@ -297,3 +299,5 @@ namespace UnityEditor.ProBuilder
 #endif
     }
 }
+
+#endif
