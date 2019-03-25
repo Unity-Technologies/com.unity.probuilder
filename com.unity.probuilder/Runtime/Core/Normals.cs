@@ -10,6 +10,9 @@ namespace UnityEngine.ProBuilder
 
         static void ClearIntArray(int count)
         {
+            if (count > s_CachedIntArray.Length)
+                Array.Resize(ref s_CachedIntArray, count);
+
             for (int i = 0; i < count; i++)
                 s_CachedIntArray[i] = 0;
         }
@@ -186,7 +189,7 @@ namespace UnityEngine.ProBuilder
                         smoothGroupMax = face.smoothingGroup + 1;
                 }
             }
-            
+
             // Increase buffers size if we have more smoothing groups than usual.
             if (smoothGroupMax > s_SmoothAvg.Length)
             {
