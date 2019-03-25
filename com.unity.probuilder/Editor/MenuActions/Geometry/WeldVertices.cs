@@ -98,19 +98,22 @@ namespace UnityEditor.ProBuilder.Actions
                     {
                         var newSelection = welds ?? new int[0] { };
 
-                        var removedIndices = mesh.RemoveDegenerateTriangles();
-                        if (removedIndices != null)
+
+                        if (MeshValidation.ContainsDegenerateTriangles(mesh))
                         {
-                            if (removedIndices.Length > 0)
+                            List<int> removedIndices = new List<int>();
+
+                            if(MeshValidation.RemoveDegenerateTriangles(mesh, removedIndices))
                             {
                                 var newlySelectedVertices = new List<int>();
                                 selectedVertices.Sort();
-                                Array.Sort(removedIndices);
+                                removedIndices.Sort();
 
                                 int count = 0;
+                                
                                 for (int i = 0; i < selectedVertices.Count ; i++)
                                 {
-                                    if (count >= removedIndices.Length || selectedVertices[i] != removedIndices[count] )
+                                    if (count >= removedIndices.Count || selectedVertices[i] != removedIndices[count] )
                                     {
                                         newlySelectedVertices.Add(selectedVertices[i] - UnityEngine.ProBuilder.ArrayUtility.NearestIndexPriorToValue(removedIndices, selectedVertices[i]) - 1);
                                     }
