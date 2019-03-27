@@ -24,9 +24,9 @@ namespace UnityEditor.ProBuilder.Actions
         GUIContent gc_ObjExportVertexColors = new GUIContent("Vertex Colors", "Some 3D modeling applications will read and write vertex colors as an unofficial extension to the OBJ format.\n\nWarning! Enabling this can break compatibility with some other 3D modeling applications.");
         GUIContent gc_ObjTextureOffsetScale = new GUIContent("Texture Offset, Scale", "Write texture map offset and scale to the material library. Not all 3D modeling applications support this specificiation, and some will fail to load materials that define these values.");
         GUIContent gc_ObjQuads = new GUIContent("Export Quads", "Where possible, faces will be exported as quads instead of triangles. Note that this can result in a larger exported mesh (ProBuilder will not merge shared vertices with this option enabled).");
+        GUIContent gc_ExportAssetInPlace = new GUIContent("Replace Source", "Remove the ProBuilder component and replace the MeshFilter mesh with the exported asset.");
 
         Pref<ExportFormat> m_ExportFormat = new Pref<ExportFormat>("export.format", k_DefaultFormat);
-
         Pref<bool> m_ExportRecursive = new Pref<bool>("export.exportRecursive", false);
         Pref<bool> m_ExportAsGroup = new Pref<bool>("export.exportAsGroup", true);
 
@@ -52,7 +52,8 @@ namespace UnityEditor.ProBuilder.Actions
             Obj,
             Stl,
             Ply,
-            Asset
+            Asset,
+            Prefab
         }
 
         const ExportFormat k_DefaultFormat = ExportFormat.Obj;
@@ -84,12 +85,23 @@ namespace UnityEditor.ProBuilder.Actions
 
             EditorGUI.BeginChangeCheck();
 
+            EditorGUI.BeginChangeCheck();
             m_ExportFormat.value = (ExportFormat)EditorGUILayout.EnumPopup(gc_ExportFormat, m_ExportFormat);
+            if (EditorGUI.EndChangeCheck())
+            {
+                if (m_ExportFormat.value == ExportFormat.Asset || m_ExportFormat.value == ExportFormat.Prefab)
+                {
+                    var opt = ExportAsset.s_ExportAssetOptions.value;
+                    opt.makePrefab = m_ExportFormat.value == ExportFormat.Prefab;
+                    ExportAsset.s_ExportAssetOptions.SetValue(opt);
+                }
+            }
 
             m_ExportRecursive.value = EditorGUILayout.Toggle(gc_ExportRecursive, m_ExportRecursive);
 
-            if (m_ExportFormat != ExportFormat.Asset &&
-                m_ExportFormat != ExportFormat.Stl)
+            if (m_ExportFormat != ExportFormat.Asset
+                && m_ExportFormat != ExportFormat.Prefab
+                && m_ExportFormat != ExportFormat.Stl)
             {
                 m_ExportAsGroup.value = EditorGUILayout.Toggle(gc_ExportAsGroup, m_ExportAsGroup);
             }
@@ -100,6 +112,8 @@ namespace UnityEditor.ProBuilder.Actions
                 StlExportOptions();
             else if (m_ExportFormat == ExportFormat.Ply)
                 PlyExportOptions();
+            else if (m_ExportFormat == ExportFormat.Asset || m_ExportFormat == ExportFormat.Prefab)
+                AssetExportOptions();
 
             if (EditorGUI.EndChangeCheck())
                 ProBuilderSettings.Save();
@@ -147,17 +161,26 @@ namespace UnityEditor.ProBuilder.Actions
             m_PlyQuads.value = EditorGUILayout.Toggle("Quads", m_PlyQuads);
         }
 
+        void AssetExportOptions()
+        {
+            var options = ExportAsset.s_ExportAssetOptions.value;
+
+            EditorGUI.BeginChangeCheck();
+            options.replaceOriginal = EditorGUILayout.Toggle(gc_ExportAssetInPlace, options.replaceOriginal);
+            if(EditorGUI.EndChangeCheck())
+                ExportAsset.s_ExportAssetOptions.SetValue(options);
+        }
+
         public override ActionResult DoAction()
         {
             string res = null;
 
-            IEnumerable<ProBuilderMesh> meshes = m_ExportRecursive ? MeshSelection.deep : MeshSelection.topInternal;
+            List<ProBuilderMesh> meshes = m_ExportRecursive ? MeshSelection.deep.ToList() : MeshSelection.topInternal;
 
             if (meshes == null || !meshes.Any())
-            {
                 return new ActionResult(ActionResult.Status.Canceled, "No Meshes Selected");
-            }
-            else if (m_ExportFormat == ExportFormat.Obj)
+
+            if (m_ExportFormat == ExportFormat.Obj)
             {
                 res = ExportObj.ExportWithFileDialog(meshes,
                         m_ExportAsGroup,
@@ -183,17 +206,17 @@ namespace UnityEditor.ProBuilder.Actions
                     ngons = m_PlyNGons
                 });
             }
-            else if (m_ExportFormat == ExportFormat.Asset)
+            else if (m_ExportFormat == ExportFormat.Asset || m_ExportFormat == ExportFormat.Prefab)
             {
-                res = ExportAsset.ExportWithFileDialog(meshes);
+                res = ExportAsset.ExportWithFileDialog(meshes, ExportAsset.s_ExportAssetOptions.value);
             }
 
             if (string.IsNullOrEmpty(res))
-                return new ActionResult(ActionResult.Status.Canceled, "User Canceled");
+                return new ActionResult(ActionResult.Status.Canceled, "Canceled");
 
             PingExportedModel(res);
 
-            return new ActionResult(ActionResult.Status.Success, "Export " + m_ExportFormat);
+            return new ActionResult(ActionResult.Status.Success, "Export " + m_ExportFormat.value);
         }
 
         internal static void PingExportedModel(string path)
