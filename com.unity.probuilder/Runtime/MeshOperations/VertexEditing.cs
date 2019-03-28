@@ -40,7 +40,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
             mesh.SetSharedVertexValues(sharedVertexHandle, cen);
 
             SharedVertex merged = mesh.sharedVerticesInternal[sharedVertexHandle];
-            int[] removedIndexes = mesh.RemoveDegenerateTriangles();
+            List<int> removedIndexes = new List<int>();
+
+            MeshValidation.RemoveDegenerateTriangles(mesh, removedIndexes);
 
             // get a non-deleted index to work with
             int ind = -1;
@@ -50,7 +52,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             int res = ind;
 
-            for (int i = 0; i < removedIndexes.Length; i++)
+            for (int i = 0; i < removedIndexes.Count; i++)
                 if (ind > removedIndexes[i])
                     res--;
 

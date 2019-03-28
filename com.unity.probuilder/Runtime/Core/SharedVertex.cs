@@ -12,7 +12,6 @@ namespace UnityEngine.ProBuilder
     /// <summary>
     /// Defines associations between vertex positions that are coincident. The indexes stored in this collection correspond to the ProBuilderMesh.positions array.
     /// <br />
-    /// <br />
     /// Coincident vertices are vertices that despite sharing the same coordinate position, are separate entries in the vertex array.
     /// </summary>
     [Serializable]

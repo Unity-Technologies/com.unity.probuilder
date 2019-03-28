@@ -1,9 +1,8 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.ComponentModel;
 using System.Linq;
-using UnityEngine.ProBuilder;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
@@ -12,28 +11,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
     /// </summary>
     public static class DeleteElements
     {
-        /// <summary>
-        /// Removes vertices that no face references.
-        /// </summary>
-        /// <param name="mesh">The source mesh.</param>
-        /// <returns>A list of deleted vertex indexes.</returns>
-        public static int[] RemoveUnusedVertices(this ProBuilderMesh mesh)
-        {
-            if (mesh == null)
-                throw new ArgumentNullException("mesh");
-
-            List<int> del = new List<int>();
-            HashSet<int> tris = new HashSet<int>(mesh.facesInternal.SelectMany(x => x.indexes));
-
-            for (int i = 0; i < mesh.positionsInternal.Length; i++)
-                if (!tris.Contains(i))
-                    del.Add(i);
-
-            mesh.DeleteVertices(del);
-
-            return del.ToArray();
-        }
-
         /// <summary>
         /// Deletes the vertices from the passed index array, and handles rebuilding the sharedIndexes array.
         /// </summary>
@@ -156,101 +133,22 @@ namespace UnityEngine.ProBuilder.MeshOperations
             return array;
         }
 
-        /// <summary>
-        /// Iterates through all faces in a mesh and removes triangles with an area less than float.Epsilon, or with
-        /// indexes that point to the same vertex. This function also enforces the rule that a face must contain no
-        /// coincident vertices.
-        /// </summary>
-        /// <param name="mesh">The source mesh.</param>
-        /// <returns>The number of vertices deleted as a result of the degenerate triangle cleanup.</returns>
+        [Obsolete("Use MeshValidation.RemoveDegenerateTriangles")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static int[] RemoveDegenerateTriangles(this ProBuilderMesh mesh)
         {
-            if (mesh == null)
-                throw new ArgumentNullException("mesh");
+            List<int> removed = new List<int>();
+            MeshValidation.RemoveDegenerateTriangles(mesh, removed);
+            return removed.ToArray();
+        }
 
-            Dictionary<int, int> m_Lookup = mesh.sharedVertexLookup;
-            Dictionary<int, int> m_LookupUV = mesh.sharedTextureLookup;
-            Vector3[] m_Positions = mesh.positionsInternal;
-            Dictionary<int, int> m_RebuiltLookup = new Dictionary<int, int>(m_Lookup.Count);
-            Dictionary<int, int> m_RebuiltLookupUV = new Dictionary<int, int>(m_LookupUV.Count);
-            List<Face> m_RebuiltFaces = new List<Face>(mesh.faceCount);
-            Dictionary<int, int> m_DuplicateIndexFilter = new Dictionary<int, int>(8);
-
-            foreach (Face face in mesh.facesInternal)
-            {
-                m_DuplicateIndexFilter.Clear();
-                List<int> tris = new List<int>();
-                int[] ind = face.indexesInternal;
-
-                for (int i = 0; i < ind.Length; i += 3)
-                {
-                    float area = Math.TriangleArea(m_Positions[ind[i + 0]], m_Positions[ind[i + 1]], m_Positions[ind[i + 2]]);
-
-                    if (area > Mathf.Epsilon)
-                    {
-                        // Index in the positions array
-                        int triangleIndexA = ind[i],
-                            triangleIndexB = ind[i+1],
-                            triangleIndexC = ind[i+2];
-
-                        // Common index (also called SharedIndexHandle)
-                        int sharedIndexA = m_Lookup[triangleIndexA],
-                            sharedIndexB = m_Lookup[triangleIndexB],
-                            sharedIndexC = m_Lookup[triangleIndexC];
-
-                        // test if there are any duplicates in the triangle
-                        if (!(sharedIndexA == sharedIndexB || sharedIndexA == sharedIndexC || sharedIndexB == sharedIndexC))
-                        {
-                            int index;
-
-                            // catch case where face has two distinct vertices that are in fact coincident.
-                            if (!m_DuplicateIndexFilter.TryGetValue(sharedIndexA, out index))
-                                m_DuplicateIndexFilter.Add(sharedIndexA, triangleIndexA);
-                            else
-                                triangleIndexA = index;
-
-                            if (!m_DuplicateIndexFilter.TryGetValue(sharedIndexB, out index))
-                                m_DuplicateIndexFilter.Add(sharedIndexB, triangleIndexB);
-                            else
-                                triangleIndexB = index;
-
-                            if (!m_DuplicateIndexFilter.TryGetValue(sharedIndexC, out index))
-                                m_DuplicateIndexFilter.Add(sharedIndexC, triangleIndexC);
-                            else
-                                triangleIndexC = index;
-
-                            tris.Add(triangleIndexA);
-                            tris.Add(triangleIndexB);
-                            tris.Add(triangleIndexC);
-
-                            if (!m_RebuiltLookup.ContainsKey(triangleIndexA))
-                                m_RebuiltLookup.Add(triangleIndexA, sharedIndexA);
-                            if (!m_RebuiltLookup.ContainsKey(triangleIndexB))
-                                m_RebuiltLookup.Add(triangleIndexB, sharedIndexB);
-                            if (!m_RebuiltLookup.ContainsKey(triangleIndexC))
-                                m_RebuiltLookup.Add(triangleIndexC, sharedIndexC);
-
-                            if (m_LookupUV.ContainsKey(triangleIndexA) && !m_RebuiltLookupUV.ContainsKey(triangleIndexA))
-                                m_RebuiltLookupUV.Add(triangleIndexA, m_LookupUV[triangleIndexA]);
-                            if (m_LookupUV.ContainsKey(triangleIndexB) && !m_RebuiltLookupUV.ContainsKey(triangleIndexB))
-                                m_RebuiltLookupUV.Add(triangleIndexB, m_LookupUV[triangleIndexB]);
-                            if (m_LookupUV.ContainsKey(triangleIndexC) && !m_RebuiltLookupUV.ContainsKey(triangleIndexC))
-                                m_RebuiltLookupUV.Add(triangleIndexC, m_LookupUV[triangleIndexC]);
-                        }
-                    }
-                }
-
-                if (tris.Count > 0)
-                {
-                    face.indexesInternal = tris.ToArray();
-                    m_RebuiltFaces.Add(face);
-                }
-            }
-
-            mesh.faces = m_RebuiltFaces;
-            mesh.SetSharedVertices(m_RebuiltLookup);
-            mesh.SetSharedTextures(m_RebuiltLookupUV);
-            return mesh.RemoveUnusedVertices();
+        [Obsolete("Use MeshValidation.RemoveUnusedVertices")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static int[] RemoveUnusedVertices(this ProBuilderMesh mesh)
+        {
+            List<int> removed = new List<int>();
+            MeshValidation.RemoveUnusedVertices(mesh, removed);
+            return removed.ToArray();
         }
     }
 }

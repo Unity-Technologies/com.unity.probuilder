@@ -1,10 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
-using UnityEditor;
 using UnityEngine;
 
 namespace UnityEditor.ProBuilder
@@ -139,17 +136,17 @@ namespace UnityEditor.ProBuilder
 
             foreach (ProBuilderMesh pb in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
             {
-                pb.ToMesh();
+                int removedVertexCount;
 
-                int[] rm = pb.RemoveDegenerateTriangles();
-                count += rm != null ? rm.Length : 0;
-
-                pb.ToMesh();
-                pb.Refresh();
-                pb.Optimize();
+                if(!MeshValidation.EnsureMeshIsValid(pb, out removedVertexCount))
+                {
+                    pb.Rebuild();
+                    pb.Optimize();
+                    count += removedVertexCount;
+                }
             }
 
-            EditorUtility.ShowNotification("Removed " + (count / 3) + " degenerate triangles.");
+            EditorUtility.ShowNotification("Removed " + count + " vertices \nbelonging to degenerate triangles.");
         }
     }
 }

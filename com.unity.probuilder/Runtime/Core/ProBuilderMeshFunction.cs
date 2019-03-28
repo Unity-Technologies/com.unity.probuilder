@@ -194,6 +194,9 @@ namespace UnityEngine.ProBuilder
             Refresh();
         }
 
+        /// <summary>
+        /// Wraps <see cref="ToMesh"/> and <see cref="Refresh"/>.
+        /// </summary>
         internal void Rebuild()
         {
             ToMesh();
@@ -407,7 +410,7 @@ namespace UnityEngine.ProBuilder
         {
             if (!IsValidTextureGroup(group))
                 return;
-            
+
             foreach (var face in facesInternal)
             {
                 if (face.textureGroup != group)
