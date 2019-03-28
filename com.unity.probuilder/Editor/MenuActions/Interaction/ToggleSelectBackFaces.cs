@@ -12,7 +12,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            get { return ProBuilderEditor.instance.m_BackfaceSelectEnabled ? m_Icons[1] : m_Icons[0]; }
+            get { return ProBuilderEditor.backfaceSelectionEnabled ? m_Icons[1] : m_Icons[0]; }
         }
 
         public override TooltipContent tooltip
@@ -35,7 +35,7 @@ The default value is <b>On</b>.
 
         public override string menuTitle
         {
-            get { return ProBuilderEditor.instance.m_BackfaceSelectEnabled ? "Select Hidden: On" : "Select Hidden: Off"; }
+            get { return ProBuilderEditor.backfaceSelectionEnabled ? "Select Hidden: On" : "Select Hidden: Off"; }
         }
 
         public override SelectMode validSelectModes
@@ -59,8 +59,8 @@ The default value is <b>On</b>.
 
         public override ActionResult DoAction()
         {
-            ProBuilderEditor.instance.backfaceSelectionEnabled = !ProBuilderEditor.instance.backfaceSelectionEnabled;
-            return new ActionResult(ActionResult.Status.Success, "Set Hidden Element Selection\n" + (!ProBuilderEditor.instance.m_BackfaceSelectEnabled ? "On" : "Off"));
+            ProBuilderEditor.backfaceSelectionEnabled = !ProBuilderEditor.backfaceSelectionEnabled;
+            return new ActionResult(ActionResult.Status.Success, "Set Hidden Element Selection\n" + (!ProBuilderEditor.backfaceSelectionEnabled ? "On" : "Off"));
         }
     }
 }
