@@ -5,7 +5,7 @@ using System.Linq;
 namespace UnityEngine.ProBuilder.MeshOperations
 {
     /// <summary>
-    /// Methods for testing that mesh topology is correct.
+    /// Methods for validating and fixing mesh topology.
     /// </summary>
 	public static class MeshValidation
 	{
@@ -272,14 +272,24 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Remove any degenerate triangles on a mesh, keeping the selection intact.
+        ///
         /// </summary>
         /// <returns>
         /// 0 if mesh is valid, or greater than 0 if corrections were made. If this method returns greater than 0, you will need to
         /// rebuild the mesh using <see cref="ProBuilderMesh.ToMesh"/> and <see cref="ProBuilderMesh.Refresh"/>.
         /// </returns>
-        internal static int EnsureMeshIsValid(ProBuilderMesh mesh)
+
+
+        /// <summary>
+        /// Check a mesh for degenerate triangles or unused vertices, and remove them if necessary.
+        /// </summary>
+        /// <param name="mesh">The mesh to test.</param>
+        /// <param name="removedVertices">If fixes were made, this will be set to the number of vertices removed during that process.</param>
+        /// <returns>Returns true if no problems were found, false if topology issues were discovered and fixed.</returns>
+        internal static bool EnsureMeshIsValid(ProBuilderMesh mesh, out int removedVertices)
         {
+            removedVertices = 0;
+
             if (ContainsDegenerateTriangles(mesh))
             {
                 var faces = mesh.selectedFacesInternal;
@@ -291,16 +301,17 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 if (RemoveDegenerateTriangles(mesh, removed))
                 {
                     mesh.sharedVertices = SharedVertex.GetSharedVerticesWithPositions(mesh.positionsInternal);
-                    
+
                     RebuildSelectionIndexes(mesh, ref faces, ref edges, ref indices, removed);
                     mesh.selectedFacesInternal = faces;
                     mesh.selectedEdgesInternal = edges;
                     mesh.selectedIndexesInternal = indices;
-                    return removed.Count;
+                    removedVertices = removed.Count;
+                    return false;
                 }
             }
 
-            return 0;
+            return true;
         }
 	}
 }

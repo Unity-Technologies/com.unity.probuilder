@@ -136,13 +136,13 @@ namespace UnityEditor.ProBuilder
 
             foreach (ProBuilderMesh pb in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
             {
-                var removed = MeshValidation.EnsureMeshIsValid(pb);
+                int removedVertexCount;
 
-                if (removed > 0)
+                if(!MeshValidation.EnsureMeshIsValid(pb, out removedVertexCount))
                 {
                     pb.Rebuild();
                     pb.Optimize();
-                    count += removed;
+                    count += removedVertexCount;
                 }
             }
 
