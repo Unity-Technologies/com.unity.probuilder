@@ -7,8 +7,8 @@ namespace UnityEditor.ProBuilder.Actions
     {
         SelectionModifierBehavior modifier
         {
-            get { return ProBuilderEditor.instance.selectionModifierBehavior; }
-            set { ProBuilderEditor.instance.selectionModifierBehavior = value; }
+            get { return ProBuilderEditor.selectionModifierBehavior; }
+            set { ProBuilderEditor.selectionModifierBehavior = value; }
         }
 
         public override ToolbarGroup group

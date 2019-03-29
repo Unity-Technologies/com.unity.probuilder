@@ -7,8 +7,8 @@ namespace UnityEditor.ProBuilder.Actions
     {
         RectSelectMode mode
         {
-            get { return ProBuilderEditor.instance.rectSelectMode; }
-            set { ProBuilderEditor.instance.rectSelectMode = value; }
+            get { return ProBuilderEditor.rectSelectMode; }
+            set { ProBuilderEditor.rectSelectMode = value; }
         }
 
         public override ToolbarGroup group
