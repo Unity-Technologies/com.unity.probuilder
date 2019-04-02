@@ -3,6 +3,7 @@
 #endif
 
 #if !SHORTCUT_MANAGER
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -14,6 +15,7 @@ namespace UnityEngine.ProBuilder
 #if SHORTCUT_MANAGER
     [System.Obsolete]
 #endif
+    [Serializable]
     sealed class Shortcut
     {
         public Shortcut(string a, string d, KeyCode k, EventModifiers e)
