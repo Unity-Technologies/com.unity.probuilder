@@ -9,7 +9,13 @@ Shader "ProBuilder/Reference Unlit"
 
     SubShader
     {
-        Tags { "Queue"="AlphaTest" "IgnoreProjector"="True" "RenderType"="Transparent" }
+        Tags
+        {
+            "Queue"="Transparent"
+            "IgnoreProjector"="True"
+            "RenderType"="Transparent"
+        }
+        
         Lighting Off
         ZTest LEqual
         Blend SrcAlpha OneMinusSrcAlpha

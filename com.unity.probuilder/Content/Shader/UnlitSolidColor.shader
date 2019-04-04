@@ -9,7 +9,7 @@ Shader "ProBuilder/Unlit Solid Color"
 
     SubShader
     {
-        Tags { "IgnoreProjector"="True" "RenderType"="Geometry" }
+        Tags { "IgnoreProjector"="True" "Queue"="Transparent" }
         Lighting Off
         ZTest LEqual
         ZWrite On
@@ -18,8 +18,6 @@ Shader "ProBuilder/Unlit Solid Color"
 
         Pass
         {
-            AlphaTest Greater .25
-
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag

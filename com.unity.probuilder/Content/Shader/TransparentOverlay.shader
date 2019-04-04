@@ -7,7 +7,7 @@ Shader "Hidden/ProBuilder/TransparentOverlay"
 
     SubShader
     {
-        Tags { "IgnoreProjector"="True" "RenderType"="Transparent" }
+        Tags { "IgnoreProjector"="True" "RenderType"="Transparent" "Queue"="Transparent" }
         Lighting Off
         ZTest LEqual
         ZWrite On
@@ -16,8 +16,6 @@ Shader "Hidden/ProBuilder/TransparentOverlay"
 
         Pass
         {
-            AlphaTest Greater .25
-
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
