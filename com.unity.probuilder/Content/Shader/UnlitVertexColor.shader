@@ -4,7 +4,7 @@ Shader "ProBuilder/UnlitVertexColor"
 {
     SubShader
     {
-        Tags { "Queue"="AlphaTest" "IgnoreProjector"="True" "RenderType"="Transparent" }
+        Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
         Lighting Off
         ZTest LEqual
         Blend SrcAlpha OneMinusSrcAlpha
@@ -13,8 +13,6 @@ Shader "ProBuilder/UnlitVertexColor"
 
         Pass
         {
-            AlphaTest Greater .25
-
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag

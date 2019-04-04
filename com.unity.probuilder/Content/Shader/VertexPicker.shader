@@ -22,7 +22,6 @@ Shader "Hidden/ProBuilder/VertexPicker"
         Pass
         {
             Name "Vertices"
-            AlphaTest Greater .25
 
 CGPROGRAM
             #pragma vertex vert

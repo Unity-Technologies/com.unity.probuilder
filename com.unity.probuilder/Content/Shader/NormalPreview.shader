@@ -11,8 +11,6 @@ Shader "Hidden/ProBuilder/NormalPreview"
 
         Pass
         {
-            AlphaTest Greater .25
-
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag

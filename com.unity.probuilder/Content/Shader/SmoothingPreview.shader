@@ -15,8 +15,6 @@ Shader "Hidden/ProBuilder/SmoothingPreview"
 
         Pass
         {
-            AlphaTest Greater .25
-
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
