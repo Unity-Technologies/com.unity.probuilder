@@ -3,11 +3,15 @@
 using UnityEngine;
 using System.Linq;
 using System;
-using System.Reflection;
+using UnityEditor.Experimental.SceneManagement;
 using UnityEngine.ProBuilder;
 using UnityEngine.Rendering;
 using UObject = UnityEngine.Object;
 using UnityEditor.SettingsManagement;
+using UnityEngine.SceneManagement;
+#if !UNITY_2019_1_OR_NEWER
+using System.Reflection;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -268,6 +272,15 @@ namespace UnityEditor.ProBuilder
         /// <param name="pb"></param>
         internal static void InitObject(ProBuilderMesh pb)
         {
+            var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+
+            if (prefabStage != null)
+            {
+                SceneManager.MoveGameObjectToScene(pb.gameObject, prefabStage.scene);
+                // Prefabs cannot have multiple roots
+                pb.transform.SetParent(prefabStage.prefabContentsRoot.transform, true);
+            }
+
             ScreenCenter(pb.gameObject);
 
             SetPivotLocationAndSnap(pb);
