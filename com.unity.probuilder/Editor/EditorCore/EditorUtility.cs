@@ -267,19 +267,38 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
+        /// Move a GameObject to the active scene, where active scene may be a prefab stage.
+        /// </summary>
+        /// <param name="gameObject"></param>
+        internal static void MoveToActiveScene(GameObject gameObject)
+        {
+            var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+            var activeScene = SceneManager.GetActiveScene();
+
+            if (prefabStage != null)
+            {
+                if (gameObject.scene != prefabStage.scene)
+                {
+                    SceneManager.MoveGameObjectToScene(gameObject, prefabStage.scene);
+
+                    // Prefabs cannot have multiple roots
+                    gameObject.transform.SetParent(prefabStage.prefabContentsRoot.transform, true);
+                }
+            }
+            else if(gameObject.scene != activeScene)
+            {
+                gameObject.transform.SetParent(null);
+                SceneManager.MoveGameObjectToScene(gameObject, activeScene);
+            }
+        }
+
+        /// <summary>
         /// Initialize this object with the various editor-only parameters, and invoke the object creation callback.
         /// </summary>
         /// <param name="pb"></param>
         internal static void InitObject(ProBuilderMesh pb)
         {
-            var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
-
-            if (prefabStage != null)
-            {
-                SceneManager.MoveGameObjectToScene(pb.gameObject, prefabStage.scene);
-                // Prefabs cannot have multiple roots
-                pb.transform.SetParent(prefabStage.prefabContentsRoot.transform, true);
-            }
+            MoveToActiveScene(pb.gameObject);
 
             ScreenCenter(pb.gameObject);
 
