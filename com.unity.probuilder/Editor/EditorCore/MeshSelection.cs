@@ -108,6 +108,7 @@ namespace UnityEditor.ProBuilder
             Selection.selectionChanged += OnObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged += ElementSelectionChanged;
             EditorMeshUtility.meshOptimized += (x, y) => { s_TotalElementCountCacheIsDirty = true; };
+            ProBuilderMesh.componentWillBeDestroyed += RemoveMeshFromSelectionInternal;
             OnObjectSelectionChanged();
         }
 
@@ -379,6 +380,12 @@ namespace UnityEditor.ProBuilder
 
             if (Selection.activeGameObject == t)
                 Selection.activeObject = temp.FirstOrDefault();
+        }
+
+        internal static void RemoveMeshFromSelectionInternal(ProBuilderMesh mesh)
+        {
+            if (s_TopSelection.Contains(mesh))
+                s_TopSelection.Remove(mesh);
         }
 
         internal static void SetSelection(IList<GameObject> newSelection)

@@ -759,6 +759,11 @@ namespace UnityEngine.ProBuilder
         public static event Action<ProBuilderMesh> meshWillBeDestroyed;
 
         /// <value>
+        /// Invoked from ProBuilderMesh.OnDestroy before any cleanup is performed.
+        /// </value>
+        internal static event Action<ProBuilderMesh> componentWillBeDestroyed;
+
+        /// <value>
         /// Invoked when the element selection changes on any ProBuilderMesh.
         /// </value>
         /// <seealso cref="SetSelectedFaces"/>
