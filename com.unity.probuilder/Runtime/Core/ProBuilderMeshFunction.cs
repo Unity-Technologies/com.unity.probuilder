@@ -53,6 +53,9 @@ namespace UnityEngine.ProBuilder
 
         void OnDestroy()
         {
+            if (componentWillBeDestroyed != null)
+                componentWillBeDestroyed(this);
+
             // Time.frameCount is zero when loading scenes in the Editor. It's the only way I could figure to
             // differentiate between OnDestroy invoked from user delete & editor scene loading.
             if (!preserveMeshAssetOnDestroy &&
