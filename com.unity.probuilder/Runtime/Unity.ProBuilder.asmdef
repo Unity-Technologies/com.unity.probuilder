@@ -10,6 +10,7 @@
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": false,
-    "defineConstraints": []
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
 }
