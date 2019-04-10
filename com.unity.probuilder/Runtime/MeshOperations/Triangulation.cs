@@ -70,13 +70,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 return true;
             }
 
-            Vector3 normal = Projection.FindBestPlane(vertices).normal;
             Vector2[] points2d = Projection.PlanarProject(vertices);
 
             if (unordered)
-                return Triangulation.SortAndTriangulate(points2d, out triangles, convex);
-            else
-                return Triangulate(points2d, out triangles, convex);
+                return SortAndTriangulate(points2d, out triangles, convex);
+
+            return Triangulate(points2d, out triangles, convex);
         }
 
         /// <summary>
@@ -102,7 +101,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             }
             catch (System.Exception e)
             {
-                Log.Warning("Triangulation failed: " + e.ToString());
+                Log.Info("Triangulation failed: " + e.ToString());
                 return false;
             }
 
@@ -110,7 +109,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             {
                 if (d.Points[0].Index < 0 || d.Points[1].Index < 0 || d.Points[2].Index < 0)
                 {
-                    Log.Warning("Triangulation failed: Additional vertices were inserted.");
+                    Log.Info("Triangulation failed: Additional vertices were inserted.");
                     return false;
                 }
 

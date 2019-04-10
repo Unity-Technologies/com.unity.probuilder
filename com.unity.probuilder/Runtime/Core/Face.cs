@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.Serialization;
@@ -268,12 +269,14 @@ namespace UnityEngine.ProBuilder
             int len = other.indexesInternal.Length;
             m_Indexes = new int[len];
             Array.Copy(other.indexesInternal, m_Indexes, len);
+
             m_SmoothingGroup = other.smoothingGroup;
             m_Uv = new AutoUnwrapSettings(other.uv);
 #pragma warning disable 618
             m_Material = other.material;
 #pragma warning restore 618
             manualUV = other.manualUV;
+            m_TextureGroup = other.textureGroup;
             elementGroup = other.elementGroup;
             m_SubmeshIndex = other.m_SubmeshIndex;
             InvalidateCache();
@@ -450,6 +453,28 @@ namespace UnityEngine.ProBuilder
         {
             Array.Reverse(m_Indexes);
             InvalidateCache();
+        }
+
+        internal static void GetIndices(IEnumerable<Face> faces, List<int> indices)
+        {
+            indices.Clear();
+
+            foreach (var face in faces)
+            {
+                for (int i = 0, c = face.indexesInternal.Length; i < c; ++i)
+                    indices.Add(face.indexesInternal[i]);
+            }
+        }
+
+        internal static void GetDistinctIndices(IEnumerable<Face> faces, List<int> indices)
+        {
+            indices.Clear();
+
+            foreach (var face in faces)
+            {
+                for (int i = 0, c = face.distinctIndexesInternal.Length; i < c; ++i)
+                    indices.Add(face.distinctIndexesInternal[i]);
+            }
         }
     }
 }

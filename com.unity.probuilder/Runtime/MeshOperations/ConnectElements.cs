@@ -228,14 +228,17 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
                 if (inserts == 1 || (faceMask != null && !faceMask.Contains(face)))
                 {
-                    ConnectFaceRebuildData c = InsertVertices(face, targetEdges, vertices);
+                    ConnectFaceRebuildData c;
 
-                    Vector3 fn = Math.Normal(c.faceRebuildData.vertices, c.faceRebuildData.face.indexesInternal);
+                    if (InsertVertices(face, targetEdges, vertices, out c))
+                    {
+                        Vector3 fn = Math.Normal(c.faceRebuildData.vertices, c.faceRebuildData.face.indexesInternal);
 
-                    if (Vector3.Dot(nrm, fn) < 0)
-                        c.faceRebuildData.face.Reverse();
+                        if (Vector3.Dot(nrm, fn) < 0)
+                            c.faceRebuildData.face.Reverse();
 
-                    results.Add(c);
+                        results.Add(c);
+                    }
                 }
                 else if (inserts > 1)
                 {
@@ -425,7 +428,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             return faces;
         }
 
-        static ConnectFaceRebuildData InsertVertices(Face face, List<WingedEdge> edges, List<Vertex> vertices)
+        static bool InsertVertices(Face face, List<WingedEdge> edges, List<Vertex> vertices, out ConnectFaceRebuildData data)
         {
             List<Edge> perimeter = WingedEdge.SortEdgesByAdjacency(face);
             List<Vertex> n_vertices = new List<Vertex>();
@@ -445,13 +448,21 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             FaceRebuildData res = AppendElements.FaceWithVertices(n_vertices, false);
 
-            res.face.textureGroup = face.textureGroup;
-            res.face.uv = new AutoUnwrapSettings(face.uv);
-            res.face.smoothingGroup = face.smoothingGroup;
-            res.face.manualUV = face.manualUV;
-            res.face.submeshIndex = face.submeshIndex;
+            if (res != null)
+            {
+                res.face.textureGroup = face.textureGroup;
+                res.face.uv = new AutoUnwrapSettings(face.uv);
+                res.face.smoothingGroup = face.smoothingGroup;
+                res.face.manualUV = face.manualUV;
+                res.face.submeshIndex = face.submeshIndex;
 
-            return new ConnectFaceRebuildData(res, newVertexIndexes);
+                data = new ConnectFaceRebuildData(res, newVertexIndexes);
+                return true;
+            }
+
+            data = null;
+
+            return false;
         }
 
         static List<ConnectFaceRebuildData> ConnectIndexesPerFace(

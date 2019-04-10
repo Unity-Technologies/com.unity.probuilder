@@ -1,10 +1,10 @@
 # Exporting and re-importing
 
-If you want to use a ProBuilder Mesh in another program, such as a 3D modeling application, you can use the **Export** tool to save it to one of the supported formats. For example, you may be using a ProBuilder Mesh as a placeholder while greyboxing but now you want to create or enhance a complex Mesh.
+If you want to use a ProBuilder Mesh in another program, such as a 3D modeling application, you can use the **Export** tool to save it to one of the supported formats. For example, you might be using a ProBuilder Mesh as a placeholder while greyboxing, but eventually want to create or enhance a complex Mesh.
 
-You can also export your ProBuilder Mesh to the Unity `.asset` format, re-import it to use as a prefab or spawn it in the Scene. 
+You can also export your ProBuilder Mesh to the Unity `.asset` format and re-import it to use as a Prefab or spawn it in the Scene. 
 
-> ***Caution:*** When you export a ProBuilder Mesh to file, remember that if you want to re-import and use ProBuilder tools on it, you need to [ProBuilderize](Object_ProBuilderize.md) first.
+> **Caution:** When you export a ProBuilder Mesh to file, remember that if you want to re-import and use ProBuilder tools on it, you need to [ProBuilderize](Object_ProBuilderize.md) first.
 
 This section provides information on which formats are available, how to export ProBuilder objects to file, and also some tips for re-importing back into Unity.
 
@@ -16,11 +16,11 @@ This section provides information on which formats are available, how to export 
 
 ProBuilder allows you to export GameObjects to the following formats:
 
-| ***Format:*** | ***Description:***                                           |
+| **Format:** | **Description:**                                           |
 | :------------ | :----------------------------------------------------------- |
-| `OBJ`         | Wavefront OBJ. Widely supported model format supports multiple Textures and Mesh groups. |
-| `STL`         | A widely supported format generally used in CAD software or 3D printing. Only supports Triangle geometry. |
-| `PLY`         | Stanford PLY. Generally supported and very extensible. Supports quads and vertex colors, but not multiple Materials. |
+| `OBJ`         | Wavefront OBJ. This is a widely supported model format. It supports multiple Textures and Mesh groups. |
+| `STL`         | A widely supported format, generally used in CAD software or 3D printing. It only supports Triangle geometry. |
+| `PLY`         | Stanford PLY. Generally supported and very extensible. It supports quads and vertex colors, but not multiple Materials. |
 | `Asset`       | Unity Asset format, only readable in Unity.                  |
 
 
@@ -33,7 +33,7 @@ To export one or more objects to one of the [supported formats](#formats):
 
 1. Select the object(s) you want to export.
 
-2. **Alt+Click** (Windows) or **Option+Click** (Mac) over the ![Export Icon](images/icons/Object_Export.png)**Export** button.
+2. **Alt/Opt+Click** over the ![Export Icon](images/icons/Object_Export.png)**Export** button.
 
   The [Export Options](Object_Export.md) appear.
 
@@ -45,7 +45,7 @@ To export one or more objects to one of the [supported formats](#formats):
 
 4. If you're exporting an OBJ to use in Unity, disable the [Copy Textures](Object_Export.md) option. 
 
-	> ***Tip:*** Upon re-importing the Mesh, follow the instructions under [Re-importing an exported Mesh](#reimport).
+	> **Tip:** When you re-import the Mesh, follow the instructions under [Re-importing an exported Mesh](#reimport).
 
 5. When you are finished setting the Export options, click **Export**.
 

@@ -3,11 +3,15 @@
 using UnityEngine;
 using System.Linq;
 using System;
-using System.Reflection;
+using UnityEditor.Experimental.SceneManagement;
 using UnityEngine.ProBuilder;
 using UnityEngine.Rendering;
 using UObject = UnityEngine.Object;
 using UnityEditor.SettingsManagement;
+using UnityEngine.SceneManagement;
+#if !UNITY_2019_1_OR_NEWER
+using System.Reflection;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -263,11 +267,39 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
+        /// Move a GameObject to the active scene, where active scene may be a prefab stage.
+        /// </summary>
+        /// <param name="gameObject"></param>
+        internal static void MoveToActiveScene(GameObject gameObject)
+        {
+            var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+            var activeScene = SceneManager.GetActiveScene();
+
+            if (prefabStage != null)
+            {
+                if (gameObject.scene != prefabStage.scene)
+                {
+                    SceneManager.MoveGameObjectToScene(gameObject, prefabStage.scene);
+
+                    // Prefabs cannot have multiple roots
+                    gameObject.transform.SetParent(prefabStage.prefabContentsRoot.transform, true);
+                }
+            }
+            else if(gameObject.scene != activeScene)
+            {
+                gameObject.transform.SetParent(null);
+                SceneManager.MoveGameObjectToScene(gameObject, activeScene);
+            }
+        }
+
+        /// <summary>
         /// Initialize this object with the various editor-only parameters, and invoke the object creation callback.
         /// </summary>
         /// <param name="pb"></param>
         internal static void InitObject(ProBuilderMesh pb)
         {
+            MoveToActiveScene(pb.gameObject);
+
             ScreenCenter(pb.gameObject);
 
             SetPivotLocationAndSnap(pb);

@@ -1,12 +1,10 @@
 # ![Weld Vertices icon](images/icons/Vert_Weld.png) Weld Vertices
 
-Merges selected vertices within a specific distance of one another. You can set this distance with the **Weld Distance** option.
+The __Weld Vertices__ tool merges selected vertices within a specific distance of one another. You can set this distance with the **Weld Distance** option.
 
 ![Reduce flat narrow face to a single edge on top of Mesh](images/WeldVerts_Example.png)
 
-> ***Tip:*** You can also use this tool with the **Alt+V** (Windows) or **Opt+V** (Mac) hotkey.
-
-
+> **Tip:** You can also use this tool with the **Alt/Opt+V** hotkey.
 
 ## Weld Vertices Options
 

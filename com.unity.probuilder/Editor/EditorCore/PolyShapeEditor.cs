@@ -63,7 +63,7 @@ namespace UnityEditor.ProBuilder
         void OnDisable()
         {
             // Quit Edit mode when the object gets de-selected.
-            if (polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
+            if (polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
 
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
@@ -73,7 +73,7 @@ namespace UnityEditor.ProBuilder
             Undo.undoRedoPerformed -= UndoRedoPerformed;
 
             // Delete the created Polyshape if path is empty.
-            if (polygon.polyEditMode == PolyShape.PolyEditMode.Path && polygon.m_Points.Count == 0)
+            if (polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Path && polygon.m_Points.Count == 0)
                 DiscardIncompleteShape();
         }
 

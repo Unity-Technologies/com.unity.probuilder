@@ -19,14 +19,23 @@ namespace UnityEditor.ProBuilder
 
         static bool s_TotalElementCountCacheIsDirty = true;
         static bool s_SelectedElementGroupsDirty = true;
+        static bool s_SelectedFacesInEditAreaDirty = true;
+        static bool s_SelectionBoundsDirty = true;
+
         static Bounds s_SelectionBounds = new Bounds();
+        static Dictionary<ProBuilderMesh, List<Face>> s_SelectedFacesInEditArea = new Dictionary<ProBuilderMesh, List<Face>>();
 
         /// <value>
         /// An axis-aligned bounding box encompassing the selected elements.
         /// </value>
         public static Bounds bounds
         {
-            get { return s_SelectionBounds; }
+            get
+            {
+                if(s_SelectionBoundsDirty)
+                    RecalculateSelectionBounds();
+                return s_SelectionBounds;
+            }
         }
 
         static int s_TotalVertexCount;
@@ -70,15 +79,13 @@ namespace UnityEditor.ProBuilder
         internal static int selectedSharedVertexCountObjectMax { get; private set; }
 
         // Faces that need to be refreshed when moving or modifying the actual selection
-        internal static Dictionary<ProBuilderMesh, List<Face>> selectedFacesInEditZone { get; private set; }
-
-        static ProBuilderMesh[] selection
+        internal static Dictionary<ProBuilderMesh, List<Face>> selectedFacesInEditZone
         {
             get
             {
-                return ProBuilderEditor.instance != null
-                    ? ProBuilderEditor.instance.selection
-                    : InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms);
+                if(s_SelectedFacesInEditAreaDirty)
+                    RecalculateFacesInEditableArea();
+                return s_SelectedFacesInEditArea;
             }
         }
 
@@ -101,6 +108,7 @@ namespace UnityEditor.ProBuilder
             Selection.selectionChanged += OnObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged += ElementSelectionChanged;
             EditorMeshUtility.meshOptimized += (x, y) => { s_TotalElementCountCacheIsDirty = true; };
+            ProBuilderMesh.componentWillBeDestroyed += RemoveMeshFromSelectionInternal;
             OnObjectSelectionChanged();
         }
 
@@ -110,6 +118,11 @@ namespace UnityEditor.ProBuilder
         public static ProBuilderMesh activeMesh
         {
             get { return s_ActiveMesh; }
+        }
+
+        internal static Face activeFace
+        {
+            get { return activeMesh != null ? activeMesh.selectedFacesInternal.LastOrDefault() : null; }
         }
 
         /// <value>
@@ -150,7 +163,9 @@ namespace UnityEditor.ProBuilder
         internal static void OnComponentSelectionChanged()
         {
             s_TotalElementCountCacheIsDirty = true;
+            s_SelectedFacesInEditAreaDirty = true;
             s_SelectedElementGroupsDirty = true;
+            s_SelectionBoundsDirty = true;
 
             selectedVertexCount = 0;
             selectedFaceCount = 0;
@@ -163,8 +178,6 @@ namespace UnityEditor.ProBuilder
             selectedEdgeCountObjectMax = 0;
 
             RecalculateSelectedComponentCounts();
-            RecalculateFacesInEditableArea();
-            RecalculateSelectionBounds();
         }
 
         static void ElementSelectionChanged(ProBuilderMesh mesh)
@@ -194,9 +207,9 @@ namespace UnityEditor.ProBuilder
 
         internal static void RecalculateSelectedComponentCounts()
         {
-            for (var i = 0; i < selection.Length; i++)
+            for (var i = 0; i < topInternal.Count; i++)
             {
-                var mesh = selection[i];
+                var mesh = topInternal[i];
 
                 selectedFaceCount += mesh.selectedFaceCount;
                 selectedEdgeCount += mesh.selectedEdgeCount;
@@ -212,12 +225,13 @@ namespace UnityEditor.ProBuilder
 
         internal static void RecalculateSelectionBounds()
         {
+            s_SelectionBoundsDirty = false;
             s_SelectionBounds = new Bounds();
             var boundsInitialized = false;
 
-            for (var i = 0; i < selection.Length; i++)
+            for (int i = 0, c = topInternal.Count; i < c; i++)
             {
-                var mesh = selection[i];
+                var mesh = topInternal[i];
 
                 // Undo causes this state
                 if (mesh == null)
@@ -239,16 +253,14 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        internal static void RecalculateFacesInEditableArea()
+        static void RecalculateFacesInEditableArea()
         {
-            if (selectedFacesInEditZone != null)
-                selectedFacesInEditZone.Clear();
-            else
-                selectedFacesInEditZone = new Dictionary<ProBuilderMesh, List<Face>>();
+            s_SelectedFacesInEditAreaDirty = false;
+            s_SelectedFacesInEditArea.Clear();
 
-            foreach (var mesh in selection)
+            foreach (var mesh in topInternal)
             {
-                selectedFacesInEditZone.Add(mesh, ElementSelection.GetNeighborFaces(mesh, mesh.selectedIndexesInternal));
+                s_SelectedFacesInEditArea.Add(mesh, ElementSelection.GetNeighborFaces(mesh, mesh.selectedIndexesInternal));
             }
         }
 
@@ -370,9 +382,15 @@ namespace UnityEditor.ProBuilder
                 Selection.activeObject = temp.FirstOrDefault();
         }
 
+        internal static void RemoveMeshFromSelectionInternal(ProBuilderMesh mesh)
+        {
+            if (s_TopSelection.Contains(mesh))
+                s_TopSelection.Remove(mesh);
+        }
+
         internal static void SetSelection(IList<GameObject> newSelection)
         {
-            UndoUtility.RecordSelection(selection, "Change Selection");
+            UndoUtility.RecordSelection(topInternal.ToArray(), "Change Selection");
             ClearElementAndObjectSelection();
 
             // if the previous tool was set to none, use Tool.Move
@@ -394,7 +412,7 @@ namespace UnityEditor.ProBuilder
 
         internal static void SetSelection(GameObject go)
         {
-            UndoUtility.RecordSelection(selection, "Change Selection");
+            UndoUtility.RecordSelection(topInternal.ToArray(), "Change Selection");
             ClearElementAndObjectSelection();
             AddToSelection(go);
         }

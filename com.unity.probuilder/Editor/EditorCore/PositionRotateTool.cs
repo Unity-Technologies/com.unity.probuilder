@@ -11,6 +11,16 @@ namespace UnityEditor.ProBuilder
         {
             base.DoTool(handlePosition, handleRotation);
 
+            if (showHandleInfo && isEditing)
+            {
+                var euler = m_Rotation.eulerAngles;
+
+                DrawDeltaInfo(string.Format("Rotate: {0,5:##0.00}, {1,5:##0.00}, {2,5:##0.00}",
+                    euler.x,
+                    euler.y,
+                    euler.z));
+            }
+
             EditorGUI.BeginChangeCheck();
 
             if (!isEditing)
@@ -61,7 +71,7 @@ namespace UnityEditor.ProBuilder
                 mesh.Refresh(RefreshMask.Normals);
             }
 
-            ProBuilderEditor.UpdateMeshHandles(false);
+            ProBuilderEditor.Refresh(false);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -229,11 +230,32 @@ namespace UnityEditor.ProBuilder
             if (evt.type == EventType.MouseUp || evt.type == EventType.Ignore)
                 FinishEdit();
 
+            switch (ProBuilderEditor.selectMode)
+            {
+                case SelectMode.Face:
+                case SelectMode.TextureFace:
+                    if (MeshSelection.selectedFaceCount < 1)
+                        return;
+                    break;
+
+                case SelectMode.Edge:
+                case SelectMode.TextureEdge:
+                    if (MeshSelection.selectedEdgeCount < 1)
+                        return;
+                    break;
+
+                case SelectMode.Vertex:
+                case SelectMode.TextureVertex:
+                    if (MeshSelection.selectedVertexCount < 1)
+                        return;
+                    break;
+            }
+
             if (!m_IsEditing)
             {
                 m_HandlePosition = MeshSelection.GetHandlePosition();
                 m_HandleRotation = MeshSelection.GetHandleRotation();
-                
+
                 m_HandlePositionOrigin = m_HandlePosition;
                 m_HandleRotationOrigin = m_HandleRotation;
                 handleRotationOriginInverse = Quaternion.Inverse(m_HandleRotation);

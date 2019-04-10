@@ -172,5 +172,16 @@ namespace UnityEngine.ProBuilder
             var common = lookup[index];
             return lookup[a] == common || lookup[b] == common;
         }
+
+        internal static void GetIndices(IEnumerable<Edge> edges, List<int> indices)
+        {
+            indices.Clear();
+
+            foreach (var edge in edges)
+            {
+                indices.Add(edge.a);
+                indices.Add(edge.b);
+            }
+        }
     }
 }

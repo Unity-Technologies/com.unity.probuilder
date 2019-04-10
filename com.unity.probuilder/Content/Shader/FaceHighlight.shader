@@ -9,12 +9,12 @@ Shader "Hidden/ProBuilder/FaceHighlight"
 
     SubShader
     {
-        Tags { "IgnoreProjector"="True" "RenderType"="Geometry" }
+        Tags { "IgnoreProjector"="True" "Queue"="Transparent" }
         Lighting Off
         ZTest [_HandleZTest]
         ZWrite On
         Cull Off
-        Blend Off
+        Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
         {

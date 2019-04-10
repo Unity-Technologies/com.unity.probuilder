@@ -6,13 +6,13 @@ Applying vertex colors is a great way to colorize levels for prototyping, team l
 
 
 
-> ***Warning:*** Not all shaders display vertex colors on a Mesh. However, you can see vertex colors on your Meshes as long as you use a Material that supports vertex colors (like the default ProBuilder Material).
+> **Warning:** Not all shaders display vertex colors on a Mesh. However, you can see vertex colors on your Meshes as long as you use a Material that supports vertex colors (like the default ProBuilder Material).
 
 
 
 ## Editing modes
 
-Depending on what [editing mode](modes.md) you are in and what you have selected on your Mesh, the vertex colors appear differently. For example, if you select a single vertex or edge, the color you apply is intense on that element and fades outward from it. But if you select a face or the entire Mesh object, the color covers the face or Mesh evenly:
+Depending on what [editing mode](modes.md) you are in and what you select on your Mesh, the vertex colors appear differently. For example, if you select a single vertex or edge, the color you apply is intense on that element and fades outward from it. However, if you select a face or the entire Mesh object, the color covers the face or Mesh evenly:
 
 ![Vertex Colors window](images/VertexColors_bymodes.png)
 
@@ -36,11 +36,11 @@ To apply a vertex color:
 
 
 
-> ***Tip:*** If you know the number of the color preset, you can apply it directly using either of these methods: 
+> **Tip:** If you know the number of the color preset, you can apply it directly with either of these methods: 
 >
 > * Use the **Alt/Opt+Shift+#** hotkey.
 > * Select the color preset from the ProBuilder menu (**Tools** > **ProBuilder** > **Vertex Colors** > **Set Selected Faces to Preset #**).
 
 
 
-> ***Note:*** To remove a vertex color, apply the white vertex color (**#FFFFFF**).
+> **Note:** To remove a vertex color, apply the white vertex color (**#FFFFFF**).

@@ -107,6 +107,7 @@ namespace UnityEditor.ProBuilder
         static Color s_VertexUnselectedColor;
 
         Material m_EdgeMaterial;
+        // Can be either point geo shader or the older vertex shader
         Material m_VertMaterial;
         Material m_WireMaterial;
         Material m_LineMaterial;
@@ -115,41 +116,6 @@ namespace UnityEditor.ProBuilder
         internal static float dotCapSize
         {
             get { return s_VertexPointSize * .0125f; }
-        }
-
-        public static Color faceSelectedColor
-        {
-            get { return s_FaceSelectedColor; }
-        }
-
-        public static Color wireframeColor
-        {
-            get { return s_WireframeColor; }
-        }
-
-        public static Color preselectionColor
-        {
-            get { return s_PreselectionColor; }
-        }
-
-        public static Color edgeSelectedColor
-        {
-            get { return s_EdgeSelectedColor; }
-        }
-
-        public static Color edgeUnselectedColor
-        {
-            get { return s_EdgeUnselectedColor; }
-        }
-
-        public static Color vertexSelectedColor
-        {
-            get { return s_VertexSelectedColor; }
-        }
-
-        public static Color vertexUnselectedColor
-        {
-            get { return s_VertexUnselectedColor; }
         }
 
         EditorMeshHandles()
@@ -294,7 +260,7 @@ namespace UnityEditor.ProBuilder
             // Draw nearest edge
             if (selection.face != null)
             {
-                using (new TriangleDrawingScope(preselectionColor))
+                using (new TriangleDrawingScope(s_PreselectionColor))
                 {
                     GL.MultMatrix(mesh.transform.localToWorldMatrix);
 
@@ -304,14 +270,14 @@ namespace UnityEditor.ProBuilder
                     for (int i = 0, c = ind.Count; i < c; i += 3)
                     {
                         GL.Vertex(positions[ind[i]]);
-                        GL.Vertex(positions[ind[i + 1]]);
-                        GL.Vertex(positions[ind[i + 2]]);
+                        GL.Vertex(positions[ind[i+1]]);
+                        GL.Vertex(positions[ind[i+2]]);
                     }
                 }
             }
             else if (selection.edge != Edge.Empty)
             {
-                using (var drawingScope = new LineDrawingScope(preselectionColor, -1f, CompareFunction.Always))
+                using (var drawingScope = new LineDrawingScope(s_PreselectionColor, -1f, CompareFunction.Always))
                 {
                     GL.MultMatrix(mesh.transform.localToWorldMatrix);
                     drawingScope.DrawLine(positions[selection.edge.a], positions[selection.edge.b]);
@@ -319,12 +285,9 @@ namespace UnityEditor.ProBuilder
             }
             else if (selection.vertex > -1)
             {
-                var size = dotCapSize;
-
-                using (new Handles.DrawingScope(preselectionColor, mesh.transform.localToWorldMatrix))
+                using (var drawingScope = new PointDrawingScope(s_PreselectionColor, CompareFunction.Always) { matrix = mesh.transform.localToWorldMatrix })
                 {
-                    var pos = positions[selection.vertex];
-                    Handles.DotHandleCap(-1, pos, Quaternion.identity, HandleUtility.GetHandleSize(pos) * size, Event.current.type);
+                    drawingScope.Draw(positions[selection.vertex]);
                 }
             }
         }

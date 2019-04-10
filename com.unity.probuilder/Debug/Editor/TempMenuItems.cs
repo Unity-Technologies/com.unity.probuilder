@@ -1,4 +1,5 @@
-using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.ProBuilder;
@@ -9,6 +10,16 @@ class TempMenuItems : EditorWindow
     [MenuItem("Tools/Temp Menu Item &d", false, 1000)]
     static void MenuInit()
     {
+        List<string> textures;
+        string obj, mat;
+
+        ObjOptions options = new ObjOptions()
+        {
+            applyTransforms = false
+        };
+
+        if (ObjExporter.Export("probuilder cube", MeshSelection.top.Select(x => new Model("Cube", x)), out obj, out mat, out textures, options))
+            System.IO.File.WriteAllText("/Users/karlh/Desktop/cube.obj", obj);
     }
 
     [MenuItem("Tools/Recompile")]

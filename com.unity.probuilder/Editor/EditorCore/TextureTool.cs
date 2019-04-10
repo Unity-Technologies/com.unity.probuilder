@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
@@ -96,6 +97,11 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        protected override void OnToolEngaged()
+        {
+            MeshSelection.InvalidateElementSelection();
+        }
+
         protected override void OnToolDisengaged()
         {
             var isFaceMode = ProBuilderEditor.selectMode.ContainsFlag(SelectMode.TextureFace | SelectMode.Face);
@@ -105,10 +111,12 @@ namespace UnityEditor.ProBuilder
                 if (!(mesh is MeshAndTextures))
                     continue;
 
+                var textures = ((MeshAndTextures)mesh).textures;
+                mesh.mesh.SetUVs(k_TextureChannel, textures);
+
                 if (isFaceMode)
                 {
-                    foreach (var face in mesh.mesh.selectedFacesInternal)
-                        face.manualUV = true;
+                    UVEditing.SetAutoAndAlignUnwrapParamsToUVs(mesh.mesh, mesh.mesh.selectedFacesInternal.Where(x => !x.manualUV));
                 }
                 else
                 {
@@ -126,9 +134,6 @@ namespace UnityEditor.ProBuilder
                         }
                     }
                 }
-
-                var textures = ((MeshAndTextures)mesh).textures;
-                mesh.mesh.SetUVs(k_TextureChannel, textures);
             }
         }
 

@@ -5,27 +5,118 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.3] - 2018-01-25
+## [4.1.0-preview.1] - 2019-04-09
+
+### Features
+
+- Add the option to export assets either as prefabs, or just the mesh.
+
+### Bug Fixes
+
+- Fixed new shapes not instantiating in prefab staging scenes.
+- Fixed `Unlit Color` and `Face Highlight` shaders flickering in some cases.
+- Fixed shortcuts not saving correctly in Unity 2018.3.
+- Fixed a potential exception when an incompatible version of ProGrids is present in the project.
+- Fixed an exception when maximizing and un-maximizing the ProBuilder editor window.
+- Fixed the `Boolean Editor` incorrectly resizing it's contents.
+- Fixed an exception when `Connect Edges` is executed on an edge with coplanar faces.
+- Fixed a potential exception in the `Normals` class when vertex count exceeds `ushort.max`.
+- Fixed an issue when upgrading ProBuilder from a version lower than `4.0.0` that would result in meshes with multiple materials being condensed to a single material.
+- Fixed a potential exception when removing `ProBuilderMesh` components from code.
+
+### Changes
+
+- ProBuilder assembly definitions now have `Auto Referenced` enabled.
+
+## [4.0.4] - 2019-03-13
+
+### Bug Fixes
+
+- Set the pivot of merged meshes to the active selection pivot instead of origin.
+- Fixed `Reset Auto UVs` not breaking element and texture group associations.
+- Fixed in-scene texture tool setting faces to manual when editing in face mode.
+- Fixed undo not refreshing the UV editor graph.
+- Fixed UV editor tools remaining disabled after a selection change.
+- Fixed `Auto Stitch UVs` action not getting correct edge for adjacent faces.
+- Fixed `Boolean Tool` expecting certain mesh attributes to be present, causing errors in some cases.
+- Fixed texture groups not saving correctly in some cases.
+- Fixed selected object outline not rendering in specific cases.
+- Fixed typo in Mirror Objects tooltip.
+- Fixed `Export Asset` breaking prefab instances.
+- `Vertex Color` action tooltip no longer mentions deprecated paint mode.
+- Fixed changelog dates for January 2019.
+- Fixed Material Editor rendering incorrectly when an SRP material is assigned to the "Quick Material" field.
+- Lessen an edge case where `Math.PointInPolygon` could return the wrong value.
+- Fixed an exception when keyframing mesh properties via Timeline.
+- Fixed project settings not being consistently being saved in certain cases.
+- Fixed assertion when importing ProBuilder to an empty project.
+- Fixed warning in tests caused by a left-over meta file from a temporary directory.
+- Fixed creating a new PB shape with the Shape Tool does not dirty the scene.
+- Fixed MaterialEditor not filtering out unused submesh index when applying new material.
+- Fixed Vertices/Faces/Edges picking in Prefab mode.
+- Fixed Action window in UVEditor not scrollable.
+- Fixed deep selection on faces shouldn't trigger when multiple faces are selected.
+- Fixed UV action panel scroll does not work if nothing or just one vertex selected.
+- Fixed `ProBuilderize` action potentially creating un-editable geometry if "Import Smoothing" is enabled.
+- Fixed change to one member of a UV group not replicating to the other member of the group.
+- Fixed UV group not having their settings applied at the same time.
+- Fixed sometimes needing to click twice on a face in the UV editor to the right actions.
+- Fixed de-selecting vertices not working properly in certain situations.
+- Fixed edge selection sometimes picking edge behind the mesh.
+- Fixed UV panel shows incorrect info when zero UVs are selected.
+- Fixed deep Selection should not trigger if no elements are selected.
+- Fixed Element Selection lost after using Weld action.
+- Fixed UVs converting to manual when merging 2 objects.
+- Fixed Selection being discarded when connecting edges.
+- Fixed trigger and collider types not always hiding properly.
+- Fixed Box Project resulting in skewed UVs.
+- Fixed in-scene Texture Move tool not translating UVs at a constant speed when scaled.
+- Fixed `Weld Vertices` and `Collapse Vertices` sometimes leaving invalid edges in affected faces.
+- Fixed ProBuilder window not updating when toggling handle orientation from shortcut key.
+- Fixed `Subdivide` action resulting in horizontally flipped UV coordinates.
+- Fixed `Box Project` action resulting in horizontally flipped UV coordinates.
+- Fixed UV Editor preview texture sometimes not appearing.
+- Fixed lag when setting select mode via shortcuts.
+- Frame bounds focuses on element selection when in Object mode.
+- Apply material incorrectly applies to face selection when in Object mode.
+- Dimension overlay displays element bounds when in Object mode.
+- Fixed handle position not updating when the element selection mode changed.
+- Fixed `Strip ProBuilder Scripts on Build` not being respected.
+- Fixed `Export OBJ` not sharing vertex data, resulting in split vertices in other DCCs.
+
+### Changes
+
+- Name newly merged `GameObject`s after the active selected `GameObject`.
+- Changed the order of UV transform operation (rotation and scale are now called before applying the anchor).
+- Changed picking to now prefers the object hovered over the selected object.
+- Added "Open ProBuilder" button back to `ProBuilderMesh` component Editor.
+- Increased the minimum size of Auto UV Editor window to not require vertical scrollbars.
+- Significantly improve the accuracy of `Convert to Auto UV` action.
+- Add support for auto UV unwrapped faces in the `Auto Stitch UVS` action.
+- Use `ShortcutManager` API to manage single-key shortcuts.
+- Added option to show current tool delta in the Scene View ("Show Handle Info".)
+
+## [4.0.3] - 2019-01-25
 
 ### Bug Fixes
 
 - Fix an issue that caused version validation to run when entering playmode, resulting in large memory spikes and lag.
 - Fix tooltips closing other popup dialogs.
 
-## [4.0.2] - 2018-01-18
+## [4.0.2] - 2019-01-18
 
 ### Bug Fixes
 
 - Fix OBJ export failing due to missing materials.
 
-## [4.0.1] - 2018-01-16
+## [4.0.1] - 2019-01-16
 
 ### Bug Fixes
 
 - Add missing [3.0.9] changelog entry.
 - Update package metadata to meet current requirements.
 
-## [4.0.0] - 2018-01-14
+## [4.0.0] - 2019-01-14
 
 ### Features
 

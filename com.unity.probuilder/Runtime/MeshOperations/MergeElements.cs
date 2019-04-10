@@ -128,7 +128,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 face.InvalidateCache();
             }
 
-            mesh.RemoveUnusedVertices();
+            MeshValidation.RemoveUnusedVertices(mesh);
         }
     }
 }

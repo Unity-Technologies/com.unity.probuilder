@@ -54,12 +54,17 @@ namespace UnityEditor.ProBuilder.Tests.Slow
             {
                 Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.OnDemand;
 
+#if UNITY_2019_2_OR_NEWER
+                Lightmapping.bakeStarted += LightmappingStarted;
+                Lightmapping.bakeCompleted += LightmappingCompleted;
+#else
                 Lightmapping.started += LightmappingStarted;
 
                 if (Lightmapping.completed == null)
                     Lightmapping.completed = LightmappingCompleted;
                 else
                     Lightmapping.completed += LightmappingCompleted;
+#endif
 
                 Setup();
 
@@ -67,7 +72,11 @@ namespace UnityEditor.ProBuilder.Tests.Slow
 
                 using (var shapes = new TestUtility.BuiltInPrimitives())
                 {
+#if UNITY_2019_2_OR_NEWER
+                    SceneModeUtility.SetStaticFlags(shapes.Select(it => it.gameObject).ToArray(), (int)StaticEditorFlags.ContributeGI, true);
+#else
                     SceneModeUtility.SetStaticFlags(shapes.Select(it => it.gameObject).ToArray(), (int)StaticEditorFlags.LightmapStatic, true);
+#endif
 
                     foreach (ProBuilderMesh mesh in shapes)
                     {
@@ -86,8 +95,13 @@ namespace UnityEditor.ProBuilder.Tests.Slow
             }
             finally
             {
+#if UNITY_2019_2_OR_NEWER
+                Lightmapping.bakeStarted -= LightmappingStarted;
+                Lightmapping.bakeCompleted -= LightmappingCompleted;
+#else
                 Lightmapping.started -= LightmappingStarted;
                 Lightmapping.completed -= LightmappingCompleted;
+#endif
                 Lightmapping.giWorkflowMode = lightmapMode;
                 Cleanup();
             }

@@ -1,6 +1,6 @@
 # ![Extrude Face icon](images/icons/Face_Extrude.png) Extrude Faces
 
-Creates a new face by pulling out the currently selected face and attaching sides to each edge.
+The __Extrude Faces__ tool creates a new face. To do this, it pulls out the currently selected face, and attaches sides to each edge.
 
 By default, each new face follows the direction of its vertex normals, but you can change this with the **Extrude By** option.
 
@@ -10,7 +10,7 @@ You can invoke this tool in either way:
 
 - Select one or more face(s) and click **Extrude Faces**. By default, the distance of the extrusion is **0.5**, but you can change that with the **Distance** option.
 
-	> ***Tip:*** You can also use the **Ctrl+E** (Windows) or **Cmd+E** (Mac) hotkey instead of the button with this method.
+	> **Tip:** You can also use the **Ctrl/Cmd+E** hotkey instead of the button with this method.
 
 - Select one or more face(s) and then hold **Shift** while moving, rotating, or scaling the selected face(s). This method ignores the options but provides greater control, especially with the direction of the extrusion. 
 
@@ -20,11 +20,11 @@ You can invoke this tool in either way:
 
 ## Extrude Faces Options
 
-These options apply only if you are using the **Extrude Faces** button or the **Ctrl/Cmd+E** hotkey.
+These options only apply if you are using the **Extrude Faces** button or the **Ctrl/Cmd+E** hotkey.
 
 ![Extrude Face options](images/Face_Extrude_props.png)
 
-| ***Property:*** |                                                              | ***Description:***                                           |
+| **Property:** |                                                              | **Description:**                                           |
 | :-------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | **Extrude By**  |                                                              | Direction for extruding each selected face.                  |
 |                 | ![FaceNormalsIcon](images/icons/ExtrudeFace_FaceNormals.png) **Face Normals** | Use the selected face's own surface direction. Adjacent faces remain connected. |

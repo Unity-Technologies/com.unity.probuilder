@@ -92,6 +92,9 @@ namespace UnityEditor.ProBuilder
 
             Styles.Init();
 
+            if (GUILayout.Button("Open ProBuilder"))
+                ProBuilderEditor.MenuOpenWindow();
+
             Vector3 bounds = m_MeshRenderer != null ? m_MeshRenderer.bounds.size : Vector3.zero;
             EditorGUILayout.Vector3Field("Object Size (read only)", bounds);
 
@@ -119,14 +122,24 @@ namespace UnityEditor.ProBuilder
         {
             m_GameObjectsSerializedObject.Update();
 
+#if UNITY_2019_2_OR_NEWER
+            bool lightmapStatic = (m_StaticEditorFlags.intValue & (int)StaticEditorFlags.ContributeGI) != 0;
+#else
             bool lightmapStatic = (m_StaticEditorFlags.intValue & (int)StaticEditorFlags.LightmapStatic) != 0;
+#endif
 
             EditorGUI.BeginChangeCheck();
 
             lightmapStatic = EditorGUILayout.Toggle(Styles.lightmapStatic, lightmapStatic);
 
             if (EditorGUI.EndChangeCheck())
+            {
+#if UNITY_2019_2_OR_NEWER
+                SceneModeUtility.SetStaticFlags(m_GameObjectsSerializedObject.targetObjects, (int)StaticEditorFlags.ContributeGI, lightmapStatic);
+#else
                 SceneModeUtility.SetStaticFlags(m_GameObjectsSerializedObject.targetObjects, (int)StaticEditorFlags.LightmapStatic, lightmapStatic);
+#endif
+            }
 
             if (lightmapStatic)
             {
@@ -181,8 +194,13 @@ namespace UnityEditor.ProBuilder
                 {
                     var mesh = (ProBuilderMesh)obj;
 
+#if UNITY_2019_2_OR_NEWER
+                    if (!mesh.gameObject.HasStaticFlag(StaticEditorFlags.ContributeGI))
+                        continue;
+#else
                     if (!mesh.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic))
                         continue;
+#endif
 
                     if (forceRebuildAll || !mesh.HasArrays(MeshArrays.Texture1))
                         mesh.Optimize(true);
@@ -216,6 +234,9 @@ namespace UnityEditor.ProBuilder
 
         Bounds OnGetFrameBounds()
         {
+            if (!ProBuilderEditor.selectMode.IsMeshElementMode())
+                return m_MeshRenderer != null ? m_MeshRenderer.bounds : default(Bounds);
+
             if (onGetFrameBoundsEvent != null)
                 onGetFrameBoundsEvent();
 

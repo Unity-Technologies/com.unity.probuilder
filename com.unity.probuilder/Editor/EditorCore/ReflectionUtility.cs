@@ -116,7 +116,7 @@ namespace UnityEditor.ProBuilder
             return pi != null || fi != null;
         }
 
-        static public Delegate GetOpenDelegate<T>(Type type, string methodName)
+        public static Delegate GetOpenDelegate<T>(Type type, string methodName)
         {
             MethodInfo methodInfo = type.GetMethod(methodName);
             if (methodInfo != null)
@@ -128,83 +128,87 @@ namespace UnityEditor.ProBuilder
             return null;
         }
 
-        static public Delegate GetOpenDelegate<T>(Type type, string methodName, BindingFlags bindings)
+        public static Delegate GetOpenDelegate<T>(Type type, string methodName, BindingFlags bindings)
         {
             MethodInfo methodInfo = type.GetMethod(methodName, bindings);
+
             if (methodInfo != null)
                 return Delegate.CreateDelegate(typeof(T), methodInfo);
-            else
-            {
-                Log.Warning("Couldn't get method '{0}' from type {1}", methodName, type.ToString());
-            }
+
+            Log.Warning("Couldn't get method '{0}' from type {1}", methodName, type.ToString());
 
             return null;
         }
 
-        static public Delegate GetOpenDelegateOnProperty<T>(Type type, string propertyName)
+        public static Delegate GetOpenDelegateOnProperty<T>(Type type, string propertyName)
         {
             PropertyInfo propertyInfo = type.GetProperty(propertyName);
 
             if (propertyInfo != null)
-                return Delegate.CreateDelegate(typeof(T), propertyInfo.GetGetMethod());
-            else
             {
-                Log.Warning("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
+                MethodInfo get = propertyInfo.GetGetMethod();
+
+                if(get != null)
+                    return Delegate.CreateDelegate(typeof(T), get);
             }
+
+            Log.Warning("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
+
             return null;
         }
 
-        static public Delegate GetOpenDelegateOnProperty<T>(Type type, string propertyName, BindingFlags bindings)
+        public static Delegate GetOpenDelegateOnProperty<T>(Type type, string propertyName, BindingFlags bindings)
         {
             PropertyInfo propertyInfo = type.GetProperty(propertyName, bindings);
-            MethodInfo methodInfo = propertyInfo.GetGetMethod(true);
+            MethodInfo methodInfo = propertyInfo == null ? null : propertyInfo.GetGetMethod(true);
 
             if (methodInfo != null)
                 return Delegate.CreateDelegate(typeof(T), methodInfo);//propertyInfo.GetGetMethod());
-            else
-            {
-                Log.Warning("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
-            }
+
+            Log.Warning("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
+
             return null;
         }
 
-        static public Delegate GetClosedDelegateOnProperty<T>(Type type, object target, string propertyName)
+        public static Delegate GetClosedDelegateOnProperty<T>(Type type, object target, string propertyName)
         {
             PropertyInfo propertyInfo = type.GetProperty(propertyName);
 
             if (propertyInfo != null)
-                return Delegate.CreateDelegate(typeof(T), target, propertyInfo.GetGetMethod());
-            else
             {
-                Log.Warning("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
+                MethodInfo get = propertyInfo.GetGetMethod();
+
+                if(get != null)
+                    return Delegate.CreateDelegate(typeof(T), target, get);
             }
+
+            Log.Warning("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
+
             return null;
         }
 
-        static public Delegate GetClosedDelegateOnProperty<T>(Type type, object target, string propertyName, BindingFlags bindings)
+        public static Delegate GetClosedDelegateOnProperty<T>(Type type, object target, string propertyName, BindingFlags bindings)
         {
             PropertyInfo propertyInfo = type.GetProperty(propertyName, bindings);
-            MethodInfo methodInfo = propertyInfo.GetGetMethod(true);
+            MethodInfo methodInfo = propertyInfo != null ? propertyInfo.GetGetMethod(true) : null;
 
             if (methodInfo != null)
                 return Delegate.CreateDelegate(typeof(T), target, methodInfo);
-            else
-            {
-                Log.Warning("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
-            }
+
+            Log.Warning("Couldn't get property '{0}' from type {1}", propertyName, type.ToString());
+            
             return null;
         }
 
-        static public FieldInfo GetFieldInfo(Type type, string fieldName, BindingFlags bindings)
+        public static FieldInfo GetFieldInfo(Type type, string fieldName, BindingFlags bindings)
         {
             FieldInfo fieldInfo = type.GetField(fieldName, bindings);
 
             if (fieldInfo != null)
                 return fieldInfo;
-            else
-            {
-                Log.Warning("Couldn't get field '{0}' from type {1}", fieldName, type.ToString());
-            }
+
+            Log.Warning("Couldn't get field '{0}' from type {1}", fieldName, type.ToString());
+
             return null;
         }
     }

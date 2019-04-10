@@ -1,12 +1,12 @@
 # Repair
 
-This sub-menu provides access to several helper scripts that repair problems with ProBuilder Meshes in the Scene.
+Use this sub-menu to access several helper scripts that repair problems with ProBuilder Meshes in the Scene.
 
 ![Tools > ProBuilder > Repair menu](images/menu-repair.png)
 
 ## Rebuild All ProBuilder Objects
 
-Rebuilds Mesh representations from stored ProBuilder data for each GameObject in the scene. If you have a lot of GameObjects in a Scene, this can take a while.
+Rebuilds Mesh representations from stored ProBuilder data for each GameObject in the Scene. If you have a lot of GameObjects in a Scene, this can take a while.
 
 ## Rebuild Shared Indexes Cache
 
@@ -18,4 +18,4 @@ Deletes triangles on a Mesh that are either taking up no space, or are duplicate
 
 ## Convert to Package Manager
 
-Used when upgrading an older ProBuilder project to this version. <!-- See [Upgrading from older versions of ProBuilder](installing.md) for more information. -->
+Use this script if you are upgrading an older ProBuilder project to this version. <!-- See [Upgrading from older versions of ProBuilder](installing.md) for more information. -->

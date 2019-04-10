@@ -1,6 +1,6 @@
 # The ProBuilder menu
 
-Use the ProBuilder menu to access most of the ProBuilder editors and tools, as well as special tools only available through this menu. For example, you can access tools to repair and debug ProBuilder, or access the experimental [Boolean](boolean.md) tool. 
+Use the ProBuilder menu to access most of the ProBuilder editors and tools, and the special tools that are only available through this menu. For example, you can access tools to repair and debug ProBuilder, or access the experimental [Boolean](boolean.md) tool. 
 
 ![The ProBuilder menu](images/pb_menu.png)
 

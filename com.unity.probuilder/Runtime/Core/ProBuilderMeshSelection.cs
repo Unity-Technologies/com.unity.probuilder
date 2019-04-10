@@ -121,16 +121,6 @@ namespace UnityEngine.ProBuilder
             return selected;
         }
 
-        internal Face[] selectedFacesInternal
-        {
-            get { return GetSelectedFaces(); }
-        }
-
-        internal int[] selectedFaceIndicesInternal
-        {
-            get { return m_SelectedFaces; }
-        }
-
         /// <value>
         /// A collection of the currently selected faces by their index in the @"UnityEngine.ProBuilder.ProBuilderMesh.faces" array.
         /// </value>
@@ -155,14 +145,28 @@ namespace UnityEngine.ProBuilder
             get { return new ReadOnlyCollection<Edge>(m_SelectedEdges); }
         }
 
+        internal Face[] selectedFacesInternal
+        {
+            get { return GetSelectedFaces(); }
+            set { m_SelectedFaces = value.Select(x => Array.IndexOf(m_Faces, x)).ToArray(); }
+        }
+
+        internal int[] selectedFaceIndicesInternal
+        {
+            get { return m_SelectedFaces; }
+            set { m_SelectedFaces = value; }
+        }
+
         internal Edge[] selectedEdgesInternal
         {
             get { return m_SelectedEdges; }
+            set { m_SelectedEdges = value; }
         }
 
         internal int[] selectedIndexesInternal
         {
             get { return m_SelectedVertices; }
+            set { m_SelectedVertices = value; }
         }
 
         internal Face GetActiveFace()

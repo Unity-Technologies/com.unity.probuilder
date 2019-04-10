@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder.UI;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
@@ -54,12 +54,6 @@ namespace UnityEditor.ProBuilder
 
         #region ONGUI
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="selection"></param>
-        /// <param name="maxWidth"></param>
-        /// <returns>Returns true on GUI change detected.</returns>
         public static bool OnGUI(ProBuilderMesh[] selection, float width)
         {
             UpdateDiffDictionary(selection);
@@ -255,12 +249,17 @@ namespace UnityEditor.ProBuilder
                 for (int i = 0; i < selection.Length; i++)
                 {
                     foreach (Face face in selection[i].GetSelectedFaces())
+                    {
                         face.uv = AutoUnwrapSettings.tile;
+                        face.textureGroup = -1;
+                        face.elementGroup = -1;
+                    }
+
+                    UVEditing.SplitUVs(selection[i], selection[i].GetSelectedFaces());
                 }
 
                 ProBuilderEditor.Refresh();
             }
-
 
             GUI.backgroundColor = PreferenceKeys.proBuilderLightGray;
             UI.EditorGUIUtility.DrawSeparator(1);
@@ -352,6 +351,7 @@ namespace UnityEditor.ProBuilder
                     var uv = q.uv;
                     uv.flipU = flipU;
                     q.uv = uv;
+                    sel[i].SetGroupUV(q.uv, q.textureGroup);
                 }
             }
         }
@@ -366,6 +366,7 @@ namespace UnityEditor.ProBuilder
                     var uv = q.uv;
                     uv.flipV = flipV;
                     q.uv = uv;
+                    sel[i].SetGroupUV(q.uv, q.textureGroup);
                 }
             }
         }
@@ -380,6 +381,7 @@ namespace UnityEditor.ProBuilder
                     var uv = q.uv;
                     uv.swapUV = swapUV;
                     q.uv = uv;
+                    sel[i].SetGroupUV(q.uv, q.textureGroup);
                 }
             }
         }
@@ -394,6 +396,7 @@ namespace UnityEditor.ProBuilder
                     var uv = q.uv;
                     uv.useWorldSpace = useWorldSpace;
                     q.uv = uv;
+                    sel[i].SetGroupUV(q.uv, q.textureGroup);
                 }
             }
         }
@@ -408,6 +411,7 @@ namespace UnityEditor.ProBuilder
                     var uv = q.uv;
                     uv.fill = fill;
                     q.uv = uv;
+                    sel[i].SetGroupUV(q.uv, q.textureGroup);
                 }
             }
         }
@@ -423,6 +427,7 @@ namespace UnityEditor.ProBuilder
                     var uv = q.uv;
                     uv.anchor = anchor;
                     q.uv = uv;
+                    sel[i].SetGroupUV(q.uv, q.textureGroup);
                 }
             }
         }
@@ -459,6 +464,8 @@ namespace UnityEditor.ProBuilder
                             break;
                         }
                     }
+
+                    sel[i].SetGroupUV(q.uv, q.textureGroup);
                 }
             }
         }
@@ -474,6 +481,7 @@ namespace UnityEditor.ProBuilder
                     var uv = q.uv;
                     uv.rotation = rot;
                     q.uv = uv;
+                    sel[i].SetGroupUV(uv, q.textureGroup);
                 }
             }
         }
@@ -510,6 +518,8 @@ namespace UnityEditor.ProBuilder
                             break;
                         }
                     }
+
+                    sel[i].SetGroupUV(q.uv, q.textureGroup);
                 }
             }
         }

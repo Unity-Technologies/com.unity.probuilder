@@ -96,9 +96,9 @@ namespace UnityEditor.ProBuilder.Actions
             {
                 try
                 {
-                    CopyTextures(textures, directory);
                     FileUtility.WriteAllText(string.Format("{0}/{1}.obj", directory, name), obj);
                     FileUtility.WriteAllText(string.Format("{0}/{1}.mtl", directory, name.Replace(" ", "_")), mat);
+                    CopyTextures(textures, directory);
                 }
                 catch (System.Exception e)
                 {
@@ -115,14 +115,18 @@ namespace UnityEditor.ProBuilder.Actions
             return path;
         }
 
-        /**
-         *  Copy files from their path to a destination directory.
-         */
-        private static void CopyTextures(List<string> textures, string destination)
+        // Copy files from their path to a destination directory.
+        static void CopyTextures(List<string> textures, string destination)
         {
             foreach (string path in textures)
             {
                 string dest = string.Format("{0}/{1}", destination, Path.GetFileName(path));
+
+                if (!File.Exists(path))
+                {
+                    Log.Warning("OBJ Export: Could not find texture \"" + path + ",\" it will not be copied.");
+                    continue;
+                }
 
                 if (!File.Exists(dest))
                     File.Copy(path, dest);

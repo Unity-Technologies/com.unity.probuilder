@@ -140,7 +140,7 @@ namespace UnityEngine.ProBuilder
          * Given a sorted list and value, returns the index of the greatest value in sorted_list that is
          * less than value.  Ex: List( { 0, 1, 4, 6, 7 } ) Value(5) returns 2, which is the index of value 4.
          * If value is less than sorted[0], -1 is returned.  If value is greater than sorted[end], sorted.Count-1
-         * is returned.  If an exact match is found, the index prior to that match is returned.
+         * is returned. If an exact match is found, the index prior to that match is returned.
          */
         public static int NearestIndexPriorToValue<T>(IList<T> sorted_list, T value) where T : System.IComparable<T>
         {

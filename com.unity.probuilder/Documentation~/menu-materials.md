@@ -1,6 +1,6 @@
 # Materials
 
-This sub-menu provides access to applying specific Material presets to the selection.
+Use this sub-menu to apply specific Material presets to the selection.
 
 ![Tools > ProBuilder > Materials menu](images/menu-materials.png)
 

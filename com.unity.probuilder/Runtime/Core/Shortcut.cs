@@ -1,3 +1,9 @@
+#if UNITY_2019_1_OR_NEWER
+#define SHORTCUT_MANAGER
+#endif
+
+#if !SHORTCUT_MANAGER
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -6,6 +12,10 @@ namespace UnityEngine.ProBuilder
     /// <summary>
     /// ProBuilder shortcuts.
     /// </summary>
+#if SHORTCUT_MANAGER
+    [System.Obsolete]
+#endif
+    [Serializable]
     sealed class Shortcut
     {
         public Shortcut(string a, string d, KeyCode k, EventModifiers e)
@@ -129,3 +139,4 @@ namespace UnityEngine.ProBuilder
         }
     }
 }
+#endif

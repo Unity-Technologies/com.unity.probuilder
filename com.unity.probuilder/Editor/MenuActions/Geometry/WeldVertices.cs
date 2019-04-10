@@ -1,7 +1,9 @@
+using System;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using System.Collections.Generic;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -88,18 +90,44 @@ namespace UnityEditor.ProBuilder.Actions
                 {
                     mesh.ToMesh();
 
+                    var selectedVertices  = mesh.GetCoincidentVertices(mesh.selectedVertices);
                     int[] welds = mesh.WeldVertices(mesh.selectedIndexesInternal, m_WeldDistance);
                     res = welds != null ? new ActionResult(ActionResult.Status.Success, "Weld Vertices") : new ActionResult(ActionResult.Status.Failure, "Failed Weld Vertices");
 
                     if (res)
                     {
-                        if (mesh.RemoveDegenerateTriangles() != null)
-                        {
-                            mesh.ToMesh();
-                            welds = new int[0]; // @todo
-                        }
+                        var newSelection = welds ?? new int[0] { };
 
-                        mesh.SetSelectedVertices(welds ?? new int[0] {});
+
+                        if (MeshValidation.ContainsDegenerateTriangles(mesh))
+                        {
+                            List<int> removedIndices = new List<int>();
+
+                            if(MeshValidation.RemoveDegenerateTriangles(mesh, removedIndices))
+                            {
+                                var newlySelectedVertices = new List<int>();
+                                selectedVertices.Sort();
+                                removedIndices.Sort();
+
+                                int count = 0;
+                                
+                                for (int i = 0; i < selectedVertices.Count ; i++)
+                                {
+                                    if (count >= removedIndices.Count || selectedVertices[i] != removedIndices[count] )
+                                    {
+                                        newlySelectedVertices.Add(selectedVertices[i] - UnityEngine.ProBuilder.ArrayUtility.NearestIndexPriorToValue(removedIndices, selectedVertices[i]) - 1);
+                                    }
+                                    else
+                                    {
+                                        ++count;
+                                    }
+                                }
+
+                                newSelection = newlySelectedVertices.ToArray();
+                            }
+                            mesh.ToMesh();
+                        }
+                        mesh.SetSelectedVertices(newSelection);
                     }
 
                     mesh.Refresh();

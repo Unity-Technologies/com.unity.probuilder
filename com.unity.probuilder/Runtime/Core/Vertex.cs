@@ -156,6 +156,11 @@ namespace UnityEngine.ProBuilder
             }
         }
 
+        internal MeshArrays attributes
+        {
+            get { return m_Attributes; }
+        }
+
         /// <summary>
         /// Find if a vertex attribute has been set.
         /// </summary>
@@ -862,8 +867,13 @@ namespace UnityEngine.ProBuilder
             Vertex v = new Vertex();
 
             v.m_Position = x.m_Position * i + y.m_Position * weight;
-            v.m_Color = x.m_Color * i + y.m_Color * weight;
-            v.m_UV0 = x.m_UV0 * i + y.m_UV0 * weight;
+
+            if (x.hasColor && y.hasColor)
+                v.m_Color = x.m_Color * i + y.m_Color * weight;
+            else if (x.hasColor)
+                v.m_Color = x.m_Color;
+            else if (y.hasColor)
+                v.m_Color = y.m_Color;
 
             if (x.hasNormal && y.hasNormal)
                 v.m_Normal = x.m_Normal * i + y.m_Normal * weight;
@@ -878,6 +888,13 @@ namespace UnityEngine.ProBuilder
                 v.m_Tangent = x.m_Tangent;
             else if (y.hasTangent)
                 v.m_Tangent = y.m_Tangent;
+
+            if (x.hasUV0 && y.hasUV0)
+                v.m_UV0 = x.m_UV0 * i + y.m_UV0 * weight;
+            else if (x.hasUV0)
+                v.m_UV0 = x.m_UV0;
+            else if (y.hasUV0)
+                v.m_UV0 = y.m_UV0;
 
             if (x.hasUV2 && y.hasUV2)
                 v.m_UV2 = x.m_UV2 * i + y.m_UV2 * weight;

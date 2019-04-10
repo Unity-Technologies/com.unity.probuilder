@@ -14,6 +14,12 @@ namespace UnityEditor.ProBuilder
     [InitializeOnLoad]
     static class Lightmapping
     {
+#if UNITY_2019_2_OR_NEWER
+        const StaticEditorFlags k_ContributeGI = StaticEditorFlags.ContributeGI;
+#else
+        const StaticEditorFlags k_ContributeGI = StaticEditorFlags.LightmapStatic;
+#endif
+
         const string k_StaticEditorFlagsProperty = "m_StaticEditorFlags";
 
         [UserSetting("General", "Auto Lightmap UVs", "Automatically build the lightmap UV array when editing ProBuilder meshes. If this feature is disabled, you will need to use the 'Generate UV2' action to build lightmap UVs for meshes prior to baking lightmaps.")]
@@ -100,7 +106,11 @@ namespace UnityEditor.ProBuilder
 
         static Lightmapping()
         {
+#if UNITY_2019_2_OR_NEWER
+            UL.bakeCompleted += OnLightmappingCompleted;
+#else
             UL.completed += OnLightmappingCompleted;
+#endif
             Undo.postprocessModifications += PostprocessModifications;
         }
 
@@ -117,9 +127,9 @@ namespace UnityEditor.ProBuilder
             {
                 StaticEditorFlags flags = GameObjectUtility.GetStaticEditorFlags(pb.gameObject);
 
-                if (isEnabled != (flags & StaticEditorFlags.LightmapStatic) > 0)
+                if (isEnabled != (flags & k_ContributeGI) > 0)
                 {
-                    flags ^= StaticEditorFlags.LightmapStatic;
+                    flags ^= k_ContributeGI;
                     GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
                 }
             }
@@ -127,39 +137,44 @@ namespace UnityEditor.ProBuilder
 
         static UndoPropertyModification[] PostprocessModifications(UndoPropertyModification[] modifications)
         {
-            if (!Lightmapping.autoUnwrapLightmapUV)
+            if (!autoUnwrapLightmapUV)
                 return modifications;
 
             foreach (var modification in modifications)
             {
-                if (modification.currentValue.propertyPath.Equals(k_StaticEditorFlagsProperty))
+                string property = modification.currentValue == null ? null : modification.currentValue.propertyPath;
+
+                if (string.IsNullOrEmpty(property)
+                    || !property.Equals(k_StaticEditorFlagsProperty)
+                    || string.IsNullOrEmpty(modification.currentValue.value))
+                    continue;
+
+                var staticFlags = uint.Parse(modification.currentValue.value);
+                var lightmapStatic = (staticFlags & (uint) k_ContributeGI) != 0;
+
+                if (lightmapStatic)
                 {
-                    var staticFlags = uint.Parse(modification.currentValue.value);
-                    var lightmapStatic = (staticFlags & (uint) StaticEditorFlags.LightmapStatic) != 0;
+                    var gameObject = modification.currentValue.target as GameObject;
 
-                    if (lightmapStatic)
+                    if (gameObject != null)
                     {
-                        var gameObject = modification.currentValue.target as GameObject;
+                        var mesh = gameObject.GetComponent<ProBuilderMesh>();
 
-                        if (gameObject != null)
-                        {
-                            var mesh = gameObject.GetComponent<ProBuilderMesh>();
-
-                            if (mesh != null)
-                                mesh.Optimize();
-                        }
+                        if (mesh != null)
+                            mesh.Optimize();
                     }
                 }
             }
 
             return modifications;
         }
+
         static void OnLightmappingCompleted()
         {
             if (!s_ShowMissingLightmapUVWarning)
                 return;
 
-            var missingUv2 = Object.FindObjectsOfType<ProBuilderMesh>().Where(x => !x.HasArrays(MeshArrays.Lightmap) && x.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic));
+            var missingUv2 = Object.FindObjectsOfType<ProBuilderMesh>().Where(x => !x.HasArrays(MeshArrays.Lightmap) && x.gameObject.HasStaticFlag(k_ContributeGI));
 
             int count = missingUv2.Count();
 
@@ -175,11 +190,11 @@ namespace UnityEditor.ProBuilder
         public static int RebuildMissingLightmapUVs(IEnumerable<ProBuilderMesh> selection, bool showProgressBar = false)
         {
             int count = 0;
-            float total = selection.Count(x => x.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic) && !x.HasArrays(MeshArrays.Lightmap));
+            float total = selection.Count(x => x.gameObject.HasStaticFlag(k_ContributeGI) && !x.HasArrays(MeshArrays.Lightmap));
 
             foreach (var mesh in selection)
             {
-                if (!mesh.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic) || mesh.HasArrays(MeshArrays.Texture1))
+                if (!mesh.gameObject.HasStaticFlag(k_ContributeGI) || mesh.HasArrays(MeshArrays.Texture1))
                     continue;
 
                 if (showProgressBar)

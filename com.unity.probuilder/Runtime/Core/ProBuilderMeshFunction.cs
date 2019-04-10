@@ -53,6 +53,9 @@ namespace UnityEngine.ProBuilder
 
         void OnDestroy()
         {
+            if (componentWillBeDestroyed != null)
+                componentWillBeDestroyed(this);
+
             // Time.frameCount is zero when loading scenes in the Editor. It's the only way I could figure to
             // differentiate between OnDestroy invoked from user delete & editor scene loading.
             if (!preserveMeshAssetOnDestroy &&
@@ -194,6 +197,9 @@ namespace UnityEngine.ProBuilder
             Refresh();
         }
 
+        /// <summary>
+        /// Wraps <see cref="ToMesh"/> and <see cref="Refresh"/>.
+        /// </summary>
         internal void Rebuild()
         {
             ToMesh();
@@ -229,7 +235,7 @@ namespace UnityEngine.ProBuilder
 
             m_MeshFormatVersion = k_MeshFormatVersion;
 
-            int materialCount = MeshUtility.GetMaterialCount(renderer);
+            int materialCount = MaterialUtility.GetMaterialCount(renderer);
 
             Submesh[] submeshes = Submesh.GetSubmeshes(facesInternal, materialCount, preferredTopology);
 
@@ -390,9 +396,9 @@ namespace UnityEngine.ProBuilder
                 int textureGroup = face.textureGroup;
 
                 if (!IsValidTextureGroup(textureGroup))
-                    UnwrappingUtility.Project(this, face);
-                else if (!s_CachedHashSet.Add(textureGroup))
-                    UnwrappingUtility.ProjectTextureGroup(this, textureGroup, face.uv);
+                    UvUnwrapping.Unwrap(this, face);
+                else if (s_CachedHashSet.Add(textureGroup))
+                    UvUnwrapping.ProjectTextureGroup(this, textureGroup, face.uv);
             }
 
             mesh.uv = m_Textures0;
@@ -401,6 +407,20 @@ namespace UnityEngine.ProBuilder
                 mesh.SetUVs(2, m_Textures2);
             if (HasArrays(MeshArrays.Texture3))
                 mesh.SetUVs(3, m_Textures3);
+        }
+
+        internal void SetGroupUV(AutoUnwrapSettings settings, int group)
+        {
+            if (!IsValidTextureGroup(group))
+                return;
+
+            foreach (var face in facesInternal)
+            {
+                if (face.textureGroup != group)
+                    continue;
+
+                face.uv = settings;
+            }
         }
 
         void RefreshColors()

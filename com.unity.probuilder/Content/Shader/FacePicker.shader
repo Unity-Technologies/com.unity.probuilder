@@ -2,10 +2,6 @@
 
 Shader "Hidden/ProBuilder/FacePicker"
 {
-    Properties {
-        _Tint ("Tint", Color) = (1,1,1,1)
-    }
-
     SubShader
     {
         Tags { "ProBuilderPicker"="Base" }
@@ -49,7 +45,7 @@ Shader "Hidden/ProBuilder/FacePicker"
 
             float4 frag (v2f i) : COLOR
             {
-                return _Tint * i.color;
+                return i.color;
             }
 
             ENDCG

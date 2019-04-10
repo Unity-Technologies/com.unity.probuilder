@@ -1,6 +1,6 @@
 # Vertex Colors
 
-This sub-menu provides access to applying specific Vertex Color presets to the selection.
+Use this sub-menu to apply specific Vertex Color presets to the selection.
 
 ![Tools > ProBuilder > Materials menu](images/menu-vertexcolors.png)
 

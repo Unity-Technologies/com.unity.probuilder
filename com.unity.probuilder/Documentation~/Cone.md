@@ -1,5 +1,5 @@
 # Cone
-You can make a cone shape with a wide base, or a tall thin cone, or a smoother look.
+A cone is a shape which tapers from a circular (or roughly circular) base to a point. You can adjust the settings to change the height, width, and smoothness.
 
 ![Cone shapes](images/shape-tool_cone.png)
 
@@ -16,8 +16,8 @@ You can customize the shape of a cone with these shape properties:
 ![Cone shape properties](images/shape-tool_cone-props.png)
 
 
-| Property: | Description: |
-|: |: |
-| __Radius__ | Set the radius (size of the base) of the cone. Default value is 1. Minimum value is 0.1. |
-| __Height__ | Set the height for the cone. Default value is 2. Minimum value is 0.1. |
-| __Number of Sides__ | Set the number of sides for the cone. The more sides you use (relative to the size of the __Radius__ and the __Height__), the smoother the sides of the cone become. Default value is 6. Valid values range from 3 to 32. |
+| **Property:** | **Description:** |
+|:-- |:-- |
+| __Radius__ | Set the radius of the base of the cone in meters. The default value is 1. The minimum value is 0.1. |
+| __Height__ | Set the height for the cone in meters. The default value is 2. The minimum value is 0.1. |
+| __Number of Sides__ | Set the number of sides for the cone. The more sides you use (relative to the size of the __Radius__ and the __Height__), the smoother the sides of the cone become. The default value is 6. Valid values range from 3 to 32. |

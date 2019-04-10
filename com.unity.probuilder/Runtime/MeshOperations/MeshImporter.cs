@@ -1,9 +1,7 @@
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.ProBuilder;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
@@ -149,7 +147,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             {
                 switch (originalMesh.GetTopology(submeshIndex))
                 {
-                    case UnityEngine.MeshTopology.Triangles:
+                    case MeshTopology.Triangles:
                     {
                         int[] indexes = originalMesh.GetIndices(submeshIndex);
 
@@ -173,22 +171,23 @@ namespace UnityEngine.ProBuilder.MeshOperations
                     }
                     break;
 
-                    case UnityEngine.MeshTopology.Quads:
+                    case MeshTopology.Quads:
                     {
                         int[] indexes = originalMesh.GetIndices(submeshIndex);
 
                         for (int quad = 0; quad < indexes.Length; quad += 4)
                         {
-                            faces.Add(new Face(new int[] {
-                                vertexIndex    , vertexIndex + 1, vertexIndex + 2,
-                                vertexIndex + 2, vertexIndex + 3, vertexIndex + 0
-                            },
-                                    Math.Clamp(submeshIndex, 0, materialCount - 1),
-                                    AutoUnwrapSettings.tile,
-                                    Smoothing.smoothingGroupNone,
-                                    -1,
-                                    -1,
-                                    true));
+                            faces.Add(new Face(new int[]
+                                {
+                                    vertexIndex, vertexIndex + 1, vertexIndex + 2,
+                                    vertexIndex + 2, vertexIndex + 3, vertexIndex + 0
+                                },
+                                Math.Clamp(submeshIndex, 0, materialCount - 1),
+                                AutoUnwrapSettings.tile,
+                                Smoothing.smoothingGroupNone,
+                                -1,
+                                -1,
+                                true));
 
                             splitVertices.Add(sourceVertices[indexes[quad]]);
                             splitVertices.Add(sourceVertices[indexes[quad + 1]]);

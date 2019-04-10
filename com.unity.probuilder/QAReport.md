@@ -9,9 +9,10 @@ Test strategy & current info for ProBuilder.
 
 | | |
 |--|--|
-|Test Rail | [ProBuilder for Unity 2018.x (Package Manager)](https://qatestrail.hq.unity3d.com/index.php?/projects/overview/32) |
-|Latest Test Rail Result - Unity 2018.3 | [PB 4.0.1, Unity 2018.3](https://qatestrail.hq.unity3d.com/index.php?/runs/view/11230) |
-|Latest Test Rail Result - Unity 2019.1 | [PB 4.0.1, Unity 2019.1](https://qatestrail.hq.unity3d.com/index.php?/runs/view/11231) |
+|Test Rail | [ProBuilder Test Rail - Master](https://qatestrail.hq.unity3d.com/index.php?/projects/overview/32) |
+|Latest Test Rail Result - Unity 2018.3 | [PB 4.0.4p11, Unity 2018.3.9f1](https://qatestrail.hq.unity3d.com/index.php?/runs/view/12271) |
+|Latest Test Rail Result - Unity 2019.1 | [PB 4.0.4p11, Unity 2019.1.0b7](https://qatestrail.hq.unity3d.com/index.php?/runs/view/12090) |
+|Latest Test Rail Result - Unity 2019.2 | [PB 4.0.4p11, Unity 2019.2.0a8](https://qatestrail.hq.unity3d.com/index.php?/runs/view/12266) |
 | Known Bugs | [JIRA - World Building](https://unity3d.atlassian.net/secure/RapidBoard.jspa?rapidView=73&projectKey=WB&view=planning&selectedIssue=WB-1106&epics=visible) |
 | Planning | [JIRA - World Building Epics](https://unity3d.atlassian.net/secure/RapidBoard.jspa?rapidView=73&projectKey=WB&view=planning&selectedIssue=WB-1106&epics=visible) |
 

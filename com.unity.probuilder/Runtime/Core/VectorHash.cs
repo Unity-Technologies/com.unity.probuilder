@@ -9,11 +9,11 @@ namespace UnityEngine.ProBuilder
     /// </summary>
     static class VectorHash
     {
-        public const float FLT_COMPARE_RESOLUTION = 1000f;
+        public const float FltCompareResolution = 1000f;
 
         static int HashFloat(float f)
         {
-            ulong u = (ulong)(f * FLT_COMPARE_RESOLUTION);
+            ulong u = (ulong)(f * FltCompareResolution);
             return (int)(u % int.MaxValue);
         }
 

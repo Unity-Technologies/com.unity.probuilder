@@ -43,7 +43,8 @@ namespace UnityEditor.ProBuilder.Actions
 
                 if (connections != null)
                 {
-                    mesh.SetSelectedEdges(connections);
+                    if (connections.Length != 0)
+                        mesh.SetSelectedEdges(connections);
                     mesh.Refresh();
                     mesh.Optimize();
                 }

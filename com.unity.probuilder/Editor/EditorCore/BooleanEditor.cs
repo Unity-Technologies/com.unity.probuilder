@@ -8,7 +8,7 @@ namespace UnityEditor.ProBuilder
     /// <summary>
     /// Editor window for accessing boolean functionality.
     /// </summary>
-    sealed class BooleanEditor : EditorWindow
+    sealed class BooleanEditor : ConfigurableWindow
     {
         enum BooleanOp
         {
@@ -19,27 +19,24 @@ namespace UnityEditor.ProBuilder
 
         const int k_Padding = 6;
         const int k_PreviewInset = 2;
-        const int k_LowerControlsHeight = 32;
 
         GameObject m_LeftGameObject, m_RightGameObject;
         int m_PreviewHeight, m_PreviewWidth;
 
-        Rect lhsRect = new Rect(k_Padding, k_Padding, 0f, 0f);
-        Rect lhsPreviewRect = new Rect(k_Padding + k_PreviewInset, k_Padding + k_PreviewInset, 0f, 0f);
-
-        Rect rhsRect = new Rect(0f, k_Padding, 0f, 0f);
-        Rect rhsPreviewRect = new Rect(0f, k_Padding + k_PreviewInset, 0f, 0f);
-        Rect swapOrderRect = new Rect(0f, 0f, 42f, 42f);
+        Rect m_LeftObjectField = new Rect(k_Padding + k_PreviewInset, k_Padding + k_PreviewInset, 0f, 0f);
+        Rect m_RightObjectField = new Rect(0f, k_Padding + k_PreviewInset, 0f, 0f);
+        Rect m_ReverseOperationOrderRect = new Rect(0f, 0f, 42f, 42f);
 
         static GUIStyle previewBackground;
         static GUIStyle unicodeIconStyle;
 
         Color backgroundColor = new Color(.15625f, .15625f, .15625f, 1f);
         Texture2D backgroundTexture;
-        Editor lhsEditor, rhsEditor;
+        Editor m_LeftPreviewEditor, m_RightPreviewEditor;
         BooleanOp operation = BooleanOp.Intersection;
         bool mouseClickedSwapRect = false;
         Vector2Int screen = Vector2Int.zero;
+        static readonly string k_ReverseArrowsIcon = ((char)8644).ToString();
 
         [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Experimental/Boolean (CSG) Tool", false, PreferenceKeys.menuMisc)]
         public static void MenuOpenBooleanTool()
@@ -49,12 +46,14 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            ProBuilderMesh[] pbs = (ProBuilderMesh[])Selection.transforms.GetComponents<ProBuilderMesh>();
+            minSize = new Vector2(200f, 135f);
 
-            if (pbs.Length == 2)
+            var meshes = Selection.transforms.GetComponents<ProBuilderMesh>();
+
+            if (meshes.Length == 2)
             {
-                m_LeftGameObject = pbs[0].gameObject;
-                m_RightGameObject = pbs[1].gameObject;
+                m_LeftGameObject = meshes[0].gameObject;
+                m_RightGameObject = meshes[1].gameObject;
             }
 
             previewBackground = new GUIStyle();
@@ -73,9 +72,13 @@ namespace UnityEditor.ProBuilder
             previewBackground.normal.background = backgroundTexture;
 
             unicodeIconStyle = new GUIStyle();
-            unicodeIconStyle.fontSize = 64;
+            unicodeIconStyle.fontSize = 32;
             unicodeIconStyle.normal.textColor = Color.white;
             unicodeIconStyle.alignment = TextAnchor.MiddleCenter;
+
+            var arrowSize = unicodeIconStyle.CalcSize(UI.EditorGUIUtility.TempContent(k_ReverseArrowsIcon));
+            m_ReverseOperationOrderRect.width = arrowSize.x;
+            m_ReverseOperationOrderRect.width = arrowSize.y;
         }
 
         void OnDisable()
@@ -88,6 +91,8 @@ namespace UnityEditor.ProBuilder
 
         void OnGUI()
         {
+            DoContextMenu();
+
             Event e = Event.current;
             screen.x = (int)position.width;
             screen.y = (int)position.height;
@@ -96,7 +101,7 @@ namespace UnityEditor.ProBuilder
             switch (e.type)
             {
                 case EventType.MouseDown:
-                    if (swapOrderRect.Contains(e.mousePosition))
+                    if (m_ReverseOperationOrderRect.Contains(e.mousePosition))
                     {
                         mouseClickedSwapRect = true;
                         e.Use();
@@ -104,7 +109,7 @@ namespace UnityEditor.ProBuilder
                     break;
 
                 case EventType.MouseUp:
-                    if (mouseClickedSwapRect && swapOrderRect.Contains(Event.current.mousePosition))
+                    if (mouseClickedSwapRect && m_ReverseOperationOrderRect.Contains(Event.current.mousePosition))
                     {
                         ReverseOperationOrder();
                         e.Use();
@@ -121,17 +126,6 @@ namespace UnityEditor.ProBuilder
 
             if (ListenForDragAndDrop())
                 return;
-
-            swapOrderRect.x = (screen.x / 2f) - (swapOrderRect.width / 2f);
-            swapOrderRect.y = k_Padding + m_PreviewHeight / 2f - (swapOrderRect.width / 2f);
-
-            // http://xahlee.info/comp/unicode_arrows.html
-            if (GUI.Button(swapOrderRect, ((char)8644).ToString(), unicodeIconStyle))
-            {
-                ReverseOperationOrder();
-            }
-
-            GUILayout.Space(m_PreviewHeight + k_Padding * 2);
 
             GUILayout.BeginHorizontal();
             ProBuilderMesh lpb = m_LeftGameObject != null ? m_LeftGameObject.GetComponent<ProBuilderMesh>() : null;
@@ -153,7 +147,7 @@ namespace UnityEditor.ProBuilder
 
             operation = (BooleanOp)EditorGUILayout.EnumPopup("Operation", operation);
 
-            if (GUILayout.Button("Apply", GUILayout.MinHeight(32)))
+            if (GUILayout.Button("Apply"))
             {
                 switch (operation)
                 {
@@ -177,59 +171,49 @@ namespace UnityEditor.ProBuilder
             GameObject tmp = m_LeftGameObject;
             m_LeftGameObject = m_RightGameObject;
             m_RightGameObject = tmp;
-            lhsEditor = null;
-            rhsEditor = null;
+            m_LeftPreviewEditor = null;
+            m_RightPreviewEditor = null;
         }
 
-        /**
-         * Draw the mesh previews
-         */
+        // Draw the mesh previews
         void DrawPreviewWells()
         {
-            // RECT CALCULTAIONS
-            m_PreviewWidth = (int)screen.x / 2 - k_Padding - 2;
-            m_PreviewHeight = (int)Mathf.Min(screen.y - k_LowerControlsHeight, screen.x / 2 - (k_Padding * 2));
+            GUILayout.BeginHorizontal();
+            m_LeftObjectField = GUILayoutUtility.GetRect(GUIContent.none, UI.EditorStyles.sceneTextBox, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+            m_RightObjectField = GUILayoutUtility.GetRect(GUIContent.none, UI.EditorStyles.sceneTextBox, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
 
-            lhsRect.width = m_PreviewWidth;
-            lhsRect.height = m_PreviewHeight;
+            GUILayout.EndHorizontal();
 
-            lhsPreviewRect.width = lhsRect.width -  k_PreviewInset * 2;
-            lhsPreviewRect.height = lhsRect.height - k_PreviewInset * 2;
+            GUI.Box(m_LeftObjectField, GUIContent.none, UI.EditorStyles.sceneTextBox);
+            GUI.Box(m_RightObjectField, GUIContent.none, UI.EditorStyles.sceneTextBox);
 
-            rhsRect.x = lhsRect.x + lhsRect.width + k_Padding;
-            rhsRect.width = lhsRect.width;
-            rhsRect.height = lhsRect.height;
+            m_ReverseOperationOrderRect.x = (screen.x / 2f) - (m_ReverseOperationOrderRect.width / 2f);
+            m_ReverseOperationOrderRect.y = m_LeftObjectField.y + m_LeftObjectField.height * .5f - m_ReverseOperationOrderRect.height * .5f;
 
-            rhsPreviewRect.x = rhsRect.x + k_PreviewInset;
-            rhsPreviewRect.width = lhsPreviewRect.width;
-            rhsPreviewRect.height = lhsPreviewRect.height;
-            // END RECT CALCULATIONS
-
-            // DRAW PREVIEW WELLS
-            GUI.Box(lhsRect, "", UI.EditorStyles.sceneTextBox);
-            GUI.Box(rhsRect, "", UI.EditorStyles.sceneTextBox);
+            m_LeftObjectField = InsetRect(m_LeftObjectField, k_PreviewInset);
+            m_RightObjectField = InsetRect(m_RightObjectField, k_PreviewInset);
 
             if (m_LeftGameObject != null)
             {
-                if (lhsEditor == null)
-                    lhsEditor = UnityEditor.Editor.CreateEditor(m_LeftGameObject);
-                lhsEditor.OnPreviewGUI(lhsPreviewRect, previewBackground);
+                if (m_LeftPreviewEditor == null)
+                    m_LeftPreviewEditor = UnityEditor.Editor.CreateEditor(m_LeftGameObject);
+                m_LeftPreviewEditor.OnPreviewGUI(m_LeftObjectField, previewBackground);
             }
             else
             {
-                GUI.Label(lhsRect, "Drag GameObject Here", EditorStyles.centeredGreyMiniLabel);
+                GUI.Label(m_LeftObjectField, "Drag GameObject Here", EditorStyles.centeredGreyMiniLabel);
             }
 
             if (m_RightGameObject != null)
             {
-                if (rhsEditor == null)
-                    rhsEditor = UnityEditor.Editor.CreateEditor(m_RightGameObject);
+                if (m_RightPreviewEditor == null)
+                    m_RightPreviewEditor = UnityEditor.Editor.CreateEditor(m_RightGameObject);
 
-                rhsEditor.OnPreviewGUI(rhsPreviewRect, previewBackground);
+                m_RightPreviewEditor.OnPreviewGUI(m_RightObjectField, previewBackground);
             }
             else
             {
-                GUI.Label(rhsRect, "Drag GameObject Here", EditorStyles.centeredGreyMiniLabel);
+                GUI.Label(m_RightObjectField, "Drag GameObject Here", EditorStyles.centeredGreyMiniLabel);
             }
 
             // Show text summary
@@ -250,7 +234,15 @@ namespace UnityEditor.ProBuilder
                         break;
                 }
             }
-            // END PREVIEW WELLS
+
+            // http://xahlee.info/comp/unicode_arrows.html
+            if (GUI.Button(m_ReverseOperationOrderRect, k_ReverseArrowsIcon, unicodeIconStyle))
+                ReverseOperationOrder();
+        }
+
+        static Rect InsetRect(Rect rect, int pad)
+        {
+            return new Rect(rect.x + pad, rect.y + pad, rect.width - pad * 2, rect.height - pad * 2);
         }
 
         /**
@@ -261,9 +253,9 @@ namespace UnityEditor.ProBuilder
         {
             Vector2 mPos = Event.current.mousePosition;
 
-            bool inLeft = lhsPreviewRect.Contains(mPos);
+            bool inLeft = m_LeftObjectField.Contains(mPos);
 
-            if (!inLeft && !rhsPreviewRect.Contains(mPos))
+            if (!inLeft && !m_RightObjectField.Contains(mPos))
                 return false;
 
             if ((Event.current.type == EventType.DragUpdated || Event.current.type == EventType.DragPerform) && DragAndDrop.objectReferences.Length > 0)
@@ -281,9 +273,25 @@ namespace UnityEditor.ProBuilder
                             if (pb == m_LeftGameObject || pb == m_RightGameObject) continue;
 
                             if (inLeft)
+                            {
                                 m_LeftGameObject = (GameObject)pb;
+
+                                if (m_LeftPreviewEditor != null)
+                                {
+                                    DestroyImmediate(m_LeftPreviewEditor);
+                                    m_LeftPreviewEditor = null;
+                                }
+                            }
                             else
+                            {
                                 m_RightGameObject = (GameObject)pb;
+
+                                if (m_RightPreviewEditor != null)
+                                {
+                                    DestroyImmediate(m_RightPreviewEditor);
+                                    m_RightPreviewEditor = null;
+                                }
+                            }
 
                             return true;
                         }

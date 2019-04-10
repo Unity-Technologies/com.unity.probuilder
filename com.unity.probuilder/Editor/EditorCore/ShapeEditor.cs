@@ -1,10 +1,12 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using UnityEditor.Experimental.SceneManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEditor.SettingsManagement;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.SceneManagement;
 
 namespace UnityEditor.ProBuilder
 {
@@ -58,14 +60,35 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            m_ShapeTypes = m_ShapeBuilders.Select(x => x.name).ToArray();
+            PrefabStage.prefabStageOpened += PrefabStageOpened;
+            PrefabStage.prefabStageClosing += PrefabStageClosing;
 
+            m_ShapeTypes = m_ShapeBuilders.Select(x => x.name).ToArray();
             SetPreviewMesh(m_ShapeBuilders[s_CurrentIndex].Build());
         }
 
         void OnDestroy()
         {
+            PrefabStage.prefabStageOpened -= PrefabStageOpened;
+            PrefabStage.prefabStageClosing -= PrefabStageClosing;
+
             DestroyPreviewObject();
+        }
+
+        void PrefabStageOpened(PrefabStage stage)
+        {
+            if(m_PreviewObject != null)
+                EditorUtility.MoveToActiveScene(m_PreviewObject);
+        }
+
+        void PrefabStageClosing(PrefabStage stage)
+        {
+            // Closing is called while the PrefabStage is still open, so we can't use EditorUtility.MoveToActiveScene
+            if (m_PreviewObject != null)
+            {
+                m_PreviewObject.transform.SetParent(null);
+                SceneManager.MoveGameObjectToScene(m_PreviewObject, SceneManager.GetActiveScene());
+            }
         }
 
         [MenuItem("GameObject/3D Object/" + PreferenceKeys.pluginTitle + " Cube _%k")]
@@ -115,6 +138,8 @@ namespace UnityEditor.ProBuilder
             ApplyPreviewTransform(res);
             DestroyPreviewObject();
 
+            Undo.RegisterCreatedObjectUndo(res.gameObject, "Create Shape");
+
             if (forceCloseWindow || s_CloseWindowAfterCreateShape)
                 Close();
         }
@@ -132,6 +157,7 @@ namespace UnityEditor.ProBuilder
 
         void SetPreviewMesh(ProBuilderMesh mesh)
         {
+            EditorUtility.MoveToActiveScene(mesh.gameObject);
             ApplyPreviewTransform(mesh);
 
             DestroyPreviewObject();

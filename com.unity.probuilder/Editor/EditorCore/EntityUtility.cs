@@ -10,7 +10,11 @@ namespace UnityEditor.ProBuilder
     static class EntityUtility
     {
         const StaticEditorFlags StaticEditorFlags_All =
+#if UNITY_2019_2_OR_NEWER
+            StaticEditorFlags.ContributeGI |
+#else
             StaticEditorFlags.LightmapStatic |
+#endif
             StaticEditorFlags.OccluderStatic |
             StaticEditorFlags.BatchingStatic |
             StaticEditorFlags.OccludeeStatic |
