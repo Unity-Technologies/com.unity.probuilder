@@ -54,8 +54,12 @@ namespace UnityEngine.ProBuilder.Tests.Framework
         {
             get
             {
+#if UNITY_2019_2_OR_NEWER
                 var packageName = PackageInfo.FindForAssembly(Assembly.GetExecutingAssembly()).name;
                 return "Packages/" + packageName + "/Tests";
+#else
+                return "Packages/com.unity.probuilder/Tests";
+#endif
             }
         }
 
