@@ -1,0 +1,25 @@
+# Template
+upm-ci~/**
+.Editor/**
+.yamato/**
+*.zip*
+
+# System generated files
+.DS_Store
+
+# VCS
+.gitignore/**
+.github/**
+.git/**
+.repoconfig/**
+.editorconfig/**
+
+# Debug and source materials
+Debug/**
+Debug.meta
+art_source~
+UpgradeProjects~
+
+# Internal package files
+QAReport.md
+QAReport.md.meta
