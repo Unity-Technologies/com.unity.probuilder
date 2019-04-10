@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEditor;
-using UnityEngine.TestTools;
+using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 
 namespace UnityEngine.ProBuilder.Tests.Framework
 {
@@ -36,23 +37,26 @@ namespace UnityEngine.ProBuilder.Tests.Framework
 
     public static class TestUtility
     {
-        const string k_TestDirectoryRoot = "Packages/com.unity.probuilder/Tests";
-        const string k_TemplatesDirectory = k_TestDirectoryRoot + "/Templates/";
-        const string k_TempDirectory = "Assets/ProBuilderUnitTestsTemp/";
         const MeshArrays k_DefaultMeshArraysCompare = ~MeshArrays.Lightmap;
 
-        const string k_RedMaterialPath = k_TestDirectoryRoot + "/Materials/Red.mat";
-        const string k_BlueMaterialPath = k_TestDirectoryRoot + "/Materials/Blue.mat";
-        const string k_GreenMaterialPath = k_TestDirectoryRoot + "/Materials/Green.mat";
+        static readonly string k_TempDirectory = "Assets/ProBuilderUnitTestsTemp/";
+        static readonly string k_TemplatesDirectory = testsRootDirectory + "/Templates/";
+        static readonly string k_RedMaterialPath = testsRootDirectory + "/Materials/Red.mat";
+        static readonly string k_BlueMaterialPath = testsRootDirectory + "/Materials/Blue.mat";
+        static readonly string k_GreenMaterialPath = testsRootDirectory + "/Materials/Green.mat";
 
-        public static string TemplatesDirectory
+        public static string templatesDirectory
         {
             get { return k_TemplatesDirectory; }
         }
 
-        public static string TestsRootDirectory
+        public static string testsRootDirectory
         {
-            get { return k_TestDirectoryRoot; }
+            get
+            {
+                var packageName = PackageInfo.FindForAssembly(Assembly.GetExecutingAssembly()).name;
+                return "Packages/" + packageName + "/Tests";
+            }
         }
 
         public static string TemporarySavedAssetsDirectory
@@ -360,10 +364,12 @@ namespace UnityEngine.ProBuilder.Tests.Framework
                 return null;
             }
 
+            // Get the calling file path relative to the `Tests/` directory
             string fullFilePath = Path.GetFullPath(filePath).Replace("\\", "/");
-            string fullTestRootPath = Path.GetFullPath(TestsRootDirectory).Replace("\\", "/");
+            string fullTestRootPath = Path.GetFullPath(testsRootDirectory).Replace("\\", "/");
             string relativeTemplatePath = fullFilePath.Replace(fullTestRootPath, "");
             string relativeTemplateDir = Path.GetDirectoryName(relativeTemplatePath);
+
             string methodName = calling.GetMethod().Name;
 
             return string.Format("{0}/{1}/{2}/{3}/{4}.asset",
@@ -382,7 +388,7 @@ namespace UnityEngine.ProBuilder.Tests.Framework
         /// <returns></returns>
         public static T GetAssetTemplate<T>(string name) where T : UObject
         {
-            string assetPath = TemplatesDirectory + GetTemplatePath<T>(name, 1);
+            string assetPath = templatesDirectory + GetTemplatePath<T>(name, 1);
             T asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);
             Assert.IsFalse(asset == null, "Failed loading asset template: " + name + "\n" + assetPath);
             return asset;
@@ -422,7 +428,7 @@ namespace UnityEngine.ProBuilder.Tests.Framework
             if (!path.EndsWith(".asset"))
                 path += ".asset";
 
-            string assetPath = string.Format("{0}{1}", TemplatesDirectory, path);
+            string assetPath = string.Format("{0}{1}", templatesDirectory, path);
             string fullDirectoryPath = Path.GetDirectoryName(assetPath);
 
             if (string.IsNullOrEmpty(fullDirectoryPath))

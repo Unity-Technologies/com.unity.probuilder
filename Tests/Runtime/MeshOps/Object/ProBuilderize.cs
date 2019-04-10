@@ -36,7 +36,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Object
 
             // do this song and dance because AssetDatabase.LoadAssetAtPath doesn't seem to work with models in the
             // Package directories
-            File.Copy(TestUtility.TemplatesDirectory + "MeshImporter/maya-cube-quads.fbx", srcPath);
+            File.Copy(TestUtility.templatesDirectory + "MeshImporter/maya-cube-quads.fbx", srcPath);
             AssetDatabase.Refresh();
             var source = AssetDatabase.LoadMainAssetAtPath(srcPath);
             var meshImporter = (ModelImporter)AssetImporter.GetAtPath(srcPath);
