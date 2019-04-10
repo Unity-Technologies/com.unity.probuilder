@@ -36,14 +36,14 @@ namespace UnityEngine.ProBuilder.Tests.Framework
 
     public static class TestUtility
     {
-        const string k_TemplatesDirectory = "Packages/com.unity.probuilder.tests/Templates/";
-        const string k_TestsDirectory = "Packages/com.unity.probuilder.tests/Tests/";
+        const string k_TestDirectoryRoot = "Packages/com.unity.probuilder/Tests";
+        const string k_TemplatesDirectory = k_TestDirectoryRoot + "/Templates/";
         const string k_TempDirectory = "Assets/ProBuilderUnitTestsTemp/";
         const MeshArrays k_DefaultMeshArraysCompare = ~MeshArrays.Lightmap;
 
-        const string k_RedMaterialPath = "Packages/com.unity.probuilder.tests/Materials/Red.mat";
-        const string k_BlueMaterialPath = "Packages/com.unity.probuilder.tests/Materials/Blue.mat";
-        const string k_GreenMaterialPath = "Packages/com.unity.probuilder.tests/Materials/Green.mat";
+        const string k_RedMaterialPath = k_TestDirectoryRoot + "/Materials/Red.mat";
+        const string k_BlueMaterialPath = k_TestDirectoryRoot + "/Materials/Blue.mat";
+        const string k_GreenMaterialPath = k_TestDirectoryRoot + "/Materials/Green.mat";
 
         public static string TemplatesDirectory
         {
@@ -52,7 +52,7 @@ namespace UnityEngine.ProBuilder.Tests.Framework
 
         public static string TestsRootDirectory
         {
-            get { return k_TestsDirectory; }
+            get { return k_TestDirectoryRoot; }
         }
 
         public static string TemporarySavedAssetsDirectory
