@@ -11,8 +11,8 @@ upm-ci~/**
 .gitignore/**
 .github/**
 .git/**
-.repoconfig/**
-.editorconfig/**
+.repoconfig
+.editorconfig
 
 # Debug and source materials
 Debug/**
