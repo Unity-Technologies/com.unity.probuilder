@@ -58,12 +58,16 @@ namespace UnityEngine.ProBuilder.Tests.Framework
                 var packageName = PackageInfo.FindForAssembly(Assembly.GetExecutingAssembly()).name;
                 return "Packages/" + packageName + "/Tests";
 #else
-                var assembly = Assembly.GetExecutingAssembly();
-
-                if(assembly.Location.Contains("com.unity.probuilder.tests"))
-                    return "Packages/com.unity.probuilder.tests/Tests";
-                else
+                if (Directory.Exists("Packages/com.unity.probuilder/Tests"))
                     return "Packages/com.unity.probuilder/Tests";
+                return "Packages/com.unity.probuilder.tests/Tests";
+
+//                var assembly = Assembly.GetExecutingAssembly();
+//
+//                if(assembly.Location.Contains("com.unity.probuilder.tests"))
+//                    return "Packages/com.unity.probuilder.tests/Tests";
+//                else
+//                    return "Packages/com.unity.probuilder/Tests";
 #endif
             }
         }
