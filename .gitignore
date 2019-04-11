@@ -12,5 +12,5 @@ UpgradeProjects~/*/*.csproj
 # IDE generated files
 UpgradeProjects~/*/.idea/**
 .vscode/**
-*.sublime-project
-*.sublime-workspace
+*.sublime-project*
+*.sublime-workspace*
