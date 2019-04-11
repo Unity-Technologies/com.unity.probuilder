@@ -374,7 +374,7 @@ namespace UnityEngine.ProBuilder.Tests.Framework
             string fullFilePath = Path.GetFullPath(filePath).Replace("\\", "/");
             string fullTestRootPath = Path.GetFullPath(testsRootDirectory).Replace("\\", "/");
             string relativeTemplatePath = fullFilePath.Replace(fullTestRootPath, "");
-            string relativeTemplateDir = Path.GetDirectoryName(relativeTemplatePath).TrimStart('/');
+            string relativeTemplateDir = Path.GetDirectoryName(relativeTemplatePath).Replace("\\", "/").TrimStart('/');
 
             string methodName = calling.GetMethod().Name;
 
