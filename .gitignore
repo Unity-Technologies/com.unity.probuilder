@@ -14,3 +14,7 @@ UpgradeProjects~/*/.idea/**
 .vscode/**
 *.sublime-project*
 *.sublime-workspace*
+
+# Package Manager
+.Editor/**
+upm-ci~/**

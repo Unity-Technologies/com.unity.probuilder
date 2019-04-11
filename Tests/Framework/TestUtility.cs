@@ -61,13 +61,6 @@ namespace UnityEngine.ProBuilder.Tests.Framework
                 if (Directory.Exists("Packages/com.unity.probuilder/Tests"))
                     return "Packages/com.unity.probuilder/Tests";
                 return "Packages/com.unity.probuilder.tests/Tests";
-
-//                var assembly = Assembly.GetExecutingAssembly();
-//
-//                if(assembly.Location.Contains("com.unity.probuilder.tests"))
-//                    return "Packages/com.unity.probuilder.tests/Tests";
-//                else
-//                    return "Packages/com.unity.probuilder/Tests";
 #endif
             }
         }
@@ -381,7 +374,7 @@ namespace UnityEngine.ProBuilder.Tests.Framework
             string fullFilePath = Path.GetFullPath(filePath).Replace("\\", "/");
             string fullTestRootPath = Path.GetFullPath(testsRootDirectory).Replace("\\", "/");
             string relativeTemplatePath = fullFilePath.Replace(fullTestRootPath, "");
-            string relativeTemplateDir = Path.GetDirectoryName(relativeTemplatePath);
+            string relativeTemplateDir = Path.GetDirectoryName(relativeTemplatePath).TrimStart('/');
 
             string methodName = calling.GetMethod().Name;
 
@@ -403,7 +396,7 @@ namespace UnityEngine.ProBuilder.Tests.Framework
         {
             string assetPath = templatesDirectory + GetTemplatePath<T>(name, 1);
             T asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);
-            Assert.IsFalse(asset == null, "Failed loading asset template: " + name + "\n" + assetPath);
+            Assert.IsFalse(asset == null, "Failed loading asset template " + name + " at path " + assetPath);
             return asset;
         }
 

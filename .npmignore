@@ -23,3 +23,5 @@ UpgradeProjects~
 # Internal package files
 QAReport.md
 QAReport.md.meta
+
+TestRunnerOptions.json
