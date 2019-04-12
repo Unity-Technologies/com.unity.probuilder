@@ -26,7 +26,6 @@ namespace UnityEngine.ProBuilder.RuntimeTests.Shape
             // to set `dontDestroyOnDelete` in the editor.
             TestUtility.SaveAssetTemplate(pb.GetComponent<MeshFilter>().sharedMesh, type.ToString());
 #else
-
             try
             {
                 TestUtility.AssertMeshAttributesValid(pb.mesh);

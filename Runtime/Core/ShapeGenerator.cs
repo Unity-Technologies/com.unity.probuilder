@@ -184,7 +184,10 @@ namespace UnityEngine.ProBuilder
             if (shape == ShapeType.Sphere)
                 pb = GenerateIcosahedron(pivotType, .5f, 2, true, false);
             if (shape == ShapeType.Torus)
-                pb = GenerateTorus(pivotType, 12, 16, 1f, .3f, true, 360f, 360f);
+            {
+                pb = GenerateTorus(pivotType, 12, 16, 1f, .3f, true, 360f, 360f, true);
+                UVEditing.ProjectFacesBox(pb, pb.facesInternal);
+            }
 
             if (pb == null)
             {

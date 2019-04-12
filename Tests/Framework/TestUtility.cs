@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEditor;
+#if UNITY_2019_2_OR_NEWER
 using PackageInfo = UnityEditor.PackageManager.PackageInfo;
+#endif
 
 namespace UnityEngine.ProBuilder.Tests.Framework
 {
