@@ -8,31 +8,46 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Edge
 {
     static class Connect
     {
-        [Test]
-        public static void Connect2Edges()
+        public static ShapeType[] shapeTypes
         {
-            using (var shapes = new TestUtility.BuiltInPrimitives())
+            get { return (ShapeType[])typeof(ShapeType).GetEnumValues(); }
+        }
+
+        [Test]
+        public static void ConnectEdges_MatchesTemplate([ValueSource("shapeTypes")] ShapeType shapeType)
+        {
+            var mesh = ShapeGenerator.CreateShape(shapeType);
+
+            Assume.That(mesh, Is.Not.Null);
+
+            try
             {
-                foreach (var mesh in (IEnumerable<ProBuilderMesh>)shapes)
-                {
-                    var face = mesh.facesInternal[0];
-                    mesh.Connect(new ProBuilder.Edge[] { face.edgesInternal[0], face.edgesInternal[1] });
-                    mesh.ToMesh();
-                    mesh.Refresh();
+                var face = mesh.facesInternal[0];
+
+                mesh.Connect(new ProBuilder.Edge[] { face.edgesInternal[0], face.edgesInternal[1] });
+                mesh.ToMesh();
+                mesh.Refresh();
 
 #if PB_CREATE_TEST_MESH_TEMPLATES
-                    TestUtility.SaveAssetTemplate(mesh.mesh, mesh.name);
+                TestUtility.SaveAssetTemplate(mesh.mesh, mesh.name);
 #endif
-                    TestUtility.AssertMeshAttributesValid(mesh.mesh);
-                    var template = TestUtility.GetAssetTemplate<Mesh>(mesh.name);
-                    Assert.IsNotNull(template);
-                    TestUtility.AssertMeshesAreEqual(template, mesh.mesh);
-                }
+                TestUtility.AssertMeshAttributesValid(mesh.mesh);
+                var template = TestUtility.GetAssetTemplate<Mesh>(mesh.name);
+                Assert.IsNotNull(template);
+                TestUtility.AssertMeshesAreEqual(template, mesh.mesh);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError(e.ToString());
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(mesh.gameObject);
             }
         }
 
         [Test]
-        public static void ConnectRetainsMaterial()
+        public static void ConnectEdges_RetainsMaterial()
         {
             var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
 
