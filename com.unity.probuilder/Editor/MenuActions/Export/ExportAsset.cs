@@ -119,14 +119,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             string directory = Path.GetDirectoryName(path);
             string name = Path.GetFileNameWithoutExtension(path);
-            string meshPath = string.Format("{0}/{1}.asset", directory, mesh.mesh.name).Replace("\\", "/");
             string prefabPath = string.Format("{0}/{1}.prefab", directory, name).Replace("\\", "/");
-
-            if (File.Exists(meshPath))
-                AssetDatabase.DeleteAsset(meshPath.Replace(Application.dataPath, "Assets"));
-
-            if (File.Exists(prefabPath))
-                AssetDatabase.DeleteAsset(prefabPath.Replace(Application.dataPath, "Assets"));
 
             return ExportPrefab(path, mesh, replace);
         }
@@ -137,10 +130,6 @@ namespace UnityEditor.ProBuilder.Actions
 
             if (string.IsNullOrEmpty(path))
                 return null;
-
-            // If a file dialog was presented that means the user has already been asked to overwrite.
-            if (File.Exists(path))
-                AssetDatabase.DeleteAsset(path.Replace(Application.dataPath, "Assets"));
 
             ExportMesh(path, mesh);
 
@@ -168,11 +157,11 @@ namespace UnityEditor.ProBuilder.Actions
             pb.Refresh();
             pb.Optimize();
 
-            string meshPath = AssetDatabase.GenerateUniqueAssetPath(string.Format("{0}/{1}.asset", relativeDirectory, pb.mesh.name));
+            string meshPath = string.Format("{0}/{1}.asset", relativeDirectory, name);
 
-            AssetDatabase.CreateAsset(pb.mesh, meshPath);
-
-            Mesh meshAsset = (Mesh)AssetDatabase.LoadAssetAtPath(meshPath, typeof(Mesh));
+            Mesh meshAsset = Object.Instantiate(pb.mesh);
+            meshAsset.name = name;
+            meshAsset = CreateOrReplaceAsset(meshAsset, meshPath);
 
             var go = replace ? pb.gameObject : Object.Instantiate(pb.gameObject);
 
@@ -182,8 +171,7 @@ namespace UnityEditor.ProBuilder.Actions
             Undo.DestroyObjectImmediate(component);
 
             go.GetComponent<MeshFilter>().sharedMesh = meshAsset;
-            string relativePrefabPath = string.Format("{0}/{1}.prefab", relativeDirectory, name);
-            string prefabPath = AssetDatabase.GenerateUniqueAssetPath(relativePrefabPath);
+            string prefabPath = string.Format("{0}/{1}.prefab", relativeDirectory, name);
 
 #if UNITY_2018_3_OR_NEWER
             if(replace)
@@ -217,13 +205,32 @@ namespace UnityEditor.ProBuilder.Actions
             mesh.ToMesh();
             mesh.Refresh();
             mesh.Optimize();
-            mesh.mesh.name = name;
 
-            string meshPath = AssetDatabase.GenerateUniqueAssetPath(string.Format("{0}/{1}.asset", relativeDirectory, name));
+            var meshAsset = Object.Instantiate(mesh.mesh);
+            meshAsset.name = name;
 
-            AssetDatabase.CreateAsset(mesh.mesh, meshPath);
+            string meshPath = string.Format("{0}/{1}.asset", relativeDirectory, name);
+            CreateOrReplaceAsset(meshAsset, meshPath);
 
             return meshPath;
+        }
+
+        static T CreateOrReplaceAsset<T>(T asset, string path) where T : Object
+        {
+            T existingAsset = AssetDatabase.LoadAssetAtPath<T>(path);
+            if (existingAsset == null)
+            {
+                AssetDatabase.CreateAsset(asset, path);
+                return asset;
+            }
+            else
+            {
+                var tempPath = AssetDatabase.GenerateUniqueAssetPath(path);
+                AssetDatabase.CreateAsset(asset, tempPath);
+                FileUtil.ReplaceFile(tempPath, path);
+                AssetDatabase.DeleteAsset(tempPath);
+                return existingAsset;
+            }
         }
     }
 }
