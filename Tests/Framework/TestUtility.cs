@@ -9,6 +9,7 @@ using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEditor;
 #if UNITY_2019_2_OR_NEWER
+using System.Reflection;
 using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 #endif
 

@@ -9,7 +9,7 @@ using UnityEngine.TestTools;
 
 namespace UnityEngine.ProBuilder.RuntimeTests.MeshOperations
 {
-    class ExtrudeElementTests
+    class ExtrudeTests
     {
         public static ShapeType[] shapeTypes
         {
