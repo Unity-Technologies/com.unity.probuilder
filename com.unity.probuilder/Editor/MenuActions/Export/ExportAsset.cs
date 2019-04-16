@@ -83,6 +83,7 @@ namespace UnityEditor.ProBuilder.Actions
                 if (string.IsNullOrEmpty(path) || !Directory.Exists(path))
                     return null;
 
+                meshes = meshes.ToList();
                 for(int i = 0, c = meshes.Count; i < c; i++)
                 {
                     var pb = meshes[i];
@@ -95,7 +96,7 @@ namespace UnityEditor.ProBuilder.Actions
                     }
                     else
                     {
-                        res = ExportMesh(assetPath, pb);
+                        res = ExportMesh(assetPath, pb, options.replaceOriginal);
 
                         if (options.replaceOriginal)
                         {
@@ -106,6 +107,7 @@ namespace UnityEditor.ProBuilder.Actions
                     }
                 }
             }
+            AssetDatabase.Refresh();
 
             return res;
         }
@@ -117,10 +119,6 @@ namespace UnityEditor.ProBuilder.Actions
             if (string.IsNullOrEmpty(path))
                 return null;
 
-            string directory = Path.GetDirectoryName(path);
-            string name = Path.GetFileNameWithoutExtension(path);
-            string prefabPath = string.Format("{0}/{1}.prefab", directory, name).Replace("\\", "/");
-
             return ExportPrefab(path, mesh, replace);
         }
 
@@ -131,7 +129,7 @@ namespace UnityEditor.ProBuilder.Actions
             if (string.IsNullOrEmpty(path))
                 return null;
 
-            ExportMesh(path, mesh);
+            ExportMesh(path, mesh, replace);
 
             if (replace)
             {
@@ -159,7 +157,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             string meshPath = string.Format("{0}/{1}.asset", relativeDirectory, name);
 
-            Mesh meshAsset = Object.Instantiate(pb.mesh);
+            Mesh meshAsset = pb.mesh;
             meshAsset.name = name;
             meshAsset = CreateOrReplaceAsset(meshAsset, meshPath);
 
@@ -171,6 +169,11 @@ namespace UnityEditor.ProBuilder.Actions
             Undo.DestroyObjectImmediate(component);
 
             go.GetComponent<MeshFilter>().sharedMesh = meshAsset;
+            var meshCollider = go.GetComponent<MeshCollider>();
+            if (meshCollider)
+            {
+                meshCollider.sharedMesh = meshAsset;
+            }
             string prefabPath = string.Format("{0}/{1}.prefab", relativeDirectory, name);
 
 #if UNITY_2018_3_OR_NEWER
@@ -191,7 +194,7 @@ namespace UnityEditor.ProBuilder.Actions
             return meshPath;
         }
 
-        static string ExportMesh(string path, ProBuilderMesh mesh)
+        static string ExportMesh(string path, ProBuilderMesh mesh, bool replace)
         {
             var existing = AssetDatabase.GetAssetPath(mesh.mesh);
 
@@ -206,11 +209,21 @@ namespace UnityEditor.ProBuilder.Actions
             mesh.Refresh();
             mesh.Optimize();
 
-            var meshAsset = Object.Instantiate(mesh.mesh);
+            var meshAsset = mesh.mesh;
             meshAsset.name = name;
 
             string meshPath = string.Format("{0}/{1}.asset", relativeDirectory, name);
-            CreateOrReplaceAsset(meshAsset, meshPath);
+            meshAsset = CreateOrReplaceAsset(meshAsset, meshPath);
+
+            if (replace)
+            {
+                mesh.GetComponent<MeshFilter>().sharedMesh = meshAsset;
+                var meshCollider = mesh.GetComponent<MeshCollider>();
+                if (meshCollider)
+                {
+                    meshCollider.sharedMesh = meshAsset;
+                }
+            }
 
             return meshPath;
         }
