@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5c9c851079c8c42de80d622ca825a9dc
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - panCursor: {fileID: 2800000, guid: d77d6fe8a9d62430ca45bba6b98e1457, type: 3}
+  - orbitCursor: {fileID: 2800000, guid: 799480ee10f41421bb92f9e5a3c69787, type: 3}
+  - dollyCursor: {fileID: 2800000, guid: ff473b481fdc64223a2f01e41b055bb4, type: 3}
+  - lookCursor: {fileID: 2800000, guid: 1851cc976bd974a93abe4a0bde62e9ec, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

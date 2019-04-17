@@ -1,34 +1,20 @@
-com.unity.probuilder/docs~/site
-com.unity.probuilder/artifacts/**
-com.unity.probuilder/build/**
-com.unity.probuilder/Documentation/ApiDocs/**
-*.DS_Store
-com.unity.probuilder/.npmrc
-com.unity.probuilder/*.sublime-workspace*
+# System files
+.DS_Store
 
-TestProjects/*/Library*
-TestProjects/*/Temp*
-TestProjects/*/obj*
-TestProjects/*/.idea
-TestProjects/*/*.csproj
-TestProjects/*/*.sln.DotSettings.user
-TestProjects/*/*.sln
-TestProjects/*/Assets/Debug
-TestProjects/*/Assets/Debug.meta
-TestProjects/*/Assets/ProBuilder\ Data
-TestProjects/*/Assets/ProBuilder\ Data.meta
-TestProjects/*/Assets/*.rsp
-TestProjects/*/Assets/*.rsp.meta
+# Unity generated files
+UpgradeProjects~/*/Library/**
+UpgradeProjects~/*/Logs/**
+UpgradeProjects~/*/Temp/**
+UpgradeProjects~/*/obj/**
+UpgradeProjects~/*/*.sln
+UpgradeProjects~/*/*.csproj
 
-UpgradeProjects/*/Library*
-UpgradeProjects/*/Temp*
-UpgradeProjects/*/obj*
-UpgradeProjects/*/.idea
-UpgradeProjects/*/*.csproj
-UpgradeProjects/*/*.sln.DotSettings.user
-UpgradeProjects/*/*.sln
+# IDE generated files
+UpgradeProjects~/*/.idea/**
+.vscode/**
+*.sublime-project*
+*.sublime-workspace*
 
-git-hgmeta-format
-*.bak
-*.bak.meta
-*.sublime-workspace
+# Package Manager
+.Editor/**
+upm-ci~/**

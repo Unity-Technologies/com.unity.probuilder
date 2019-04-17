@@ -1,0 +1,5 @@
+{
+	"displayName":"Editor Examples",
+	"description": "Scripts demonstrating how to integrate new functionality into the ProBuilder editor window.",
+	"createSeparatePackage": true
+}
