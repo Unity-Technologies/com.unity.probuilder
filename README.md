@@ -23,7 +23,7 @@ The simplest way to get started working with source is to clone the repository i
 
 ```
 ~/Desktop/MyProject$ cd Packages/
-~/Desktop/MyProject$ /Packages git clone https://github.com/Unity-Technologies/com.unity.probuilder
+~/Desktop/MyProject/Packages$ git clone https://github.com/Unity-Technologies/com.unity.probuilder
 ```
 
 See the [Package Manager](https://docs.unity3d.com/Packages/com.unity.package-manager-ui@2.0/manual/index.html#installing-removing-disabling-and-updating-packages) documentation for more information on installing packages.
