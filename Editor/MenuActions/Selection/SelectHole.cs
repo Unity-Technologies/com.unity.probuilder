@@ -39,7 +39,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override bool enabled
         {
-            get { return base.enabled && (MeshSelection.selectedVertexCount > 0 || MeshSelection.selectedEdgeCount > 0); }
+            get { return base.enabled && MeshSelection.selectedObjectCount > 0; }
         }
 
         public override ActionResult DoAction()
