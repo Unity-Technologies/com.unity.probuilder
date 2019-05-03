@@ -53,7 +53,8 @@ namespace UnityEngine.ProBuilder.EditorTests.Selection
             };
         }
 
-        void Cleanup()
+        [TearDown]
+        public void Cleanup()
         {
             for (int i = 0; i < selectables.Length; i++)
             {
@@ -90,7 +91,6 @@ namespace UnityEngine.ProBuilder.EditorTests.Selection
                 //All selectable object should have all faces selected
                 Assert.AreEqual(currObject.selectedFacesInternal.Length, 6);
             }            
-            Cleanup();
         }
 
         [Test]
@@ -132,8 +132,6 @@ namespace UnityEngine.ProBuilder.EditorTests.Selection
                 Assert.AreEqual(colors0[tris0[n]], colors1[tris1[n]]);
                 Assert.AreEqual(colors0[tris0[n]], faceColors[0]);
             }
-
-            Cleanup();
         }
     }
 }
