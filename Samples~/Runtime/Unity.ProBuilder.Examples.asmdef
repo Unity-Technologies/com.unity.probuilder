@@ -1,9 +1,9 @@
 {
     "name": "Unity.ProBuilder.Examples",
     "references": [
-        "Unity.ProBuilder"
+        "Unity.ProBuilder",
+        "Unity.ugui"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
