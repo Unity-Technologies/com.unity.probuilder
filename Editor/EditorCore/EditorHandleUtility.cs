@@ -512,16 +512,13 @@ namespace UnityEditor.ProBuilder
                     ignorePicking.Add(go);
 
                 go = HandleUtility.PickGameObject(mousePosition, false, ignorePicking.ToArray());
-            } while (go != null && go.GetComponent<MeshFilter>() == null);
+            } while (go != null && (go.GetComponent<MeshFilter>() == null && go.GetComponent<Terrain>() == null));
 
             if (go != null)
             {
-                Mesh m = go.GetComponent<MeshFilter>().sharedMesh;
-
-                if (m != null)
+                if (go.GetComponent<MeshFilter>() != null && go.GetComponent<MeshFilter>().sharedMesh != null)
                 {
                     RaycastHit hit;
-
                     if (UnityEngine.ProBuilder.HandleUtility.MeshRaycast(
                         HandleUtility.GUIPointToWorldRay(mousePosition),
                         go,
@@ -530,6 +527,15 @@ namespace UnityEditor.ProBuilder
                         plane = new Plane(
                             go.transform.TransformDirection(hit.normal),
                             go.transform.TransformPoint(hit.point));
+                        return true;
+                    }
+                }
+                else if (go.GetComponent<Terrain>() != null)
+                {
+                    UnityEngine.RaycastHit hit;
+                    if (Physics.Raycast(HandleUtility.GUIPointToWorldRay(mousePosition), out hit))
+                    {
+                        plane = new Plane(hit.normal,hit.point);
                         return true;
                     }
                 }
