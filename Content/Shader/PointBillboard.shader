@@ -60,8 +60,7 @@ Shader "Hidden/ProBuilder/PointBillboard"
                 // Is the camera in orthographic mode? (1 yes, 0 no)
                 #define ORTHO (1 - UNITY_MATRIX_P[3][3])
 
-                // How far to pull vertices towards camera in orthographic mode
-                const float ORTHO_CAM_OFFSET = .0001;
+                #define ScreenDepthModifier (lerp(.00001, 0, ORTHO))
 
                 float4 ClipToScreen(float4 v)
                 {
@@ -73,7 +72,6 @@ Shader "Hidden/ProBuilder/PointBillboard"
 
                 float4 ScreenToClip(float4 v)
                 {
-                    v.z -= ORTHO_CAM_OFFSET * ORTHO;
                     v.xy /= _ScreenParams.xy;
                     v.xy = (v.xy - .5) / .5;
                     v.xy *= v.w;
@@ -85,7 +83,9 @@ Shader "Hidden/ProBuilder/PointBillboard"
                     GS_INPUT output = (GS_INPUT)0;
 
                     output.pos = float4(UnityObjectToViewPos(v.vertex.xyz), 1);
-                    output.pos.xyz *= lerp(.99, .95, ORTHO);
+                    // perspective rendering applies offset in view coordinates, and orthographic applies offset in the geometry
+                    // shader screen space
+                    output.pos.xyz *= lerp(1, .95, ORTHO);
                     output.pos = mul(UNITY_MATRIX_P, output.pos);
                     // convert clip -> ndc -> screen, build billboards in geo shader, then screen -> ndc -> clip
                     output.pos = ClipToScreen(output.pos);
@@ -94,7 +94,6 @@ Shader "Hidden/ProBuilder/PointBillboard"
                     return output;
                 }
 
-                // Geometry Shader -----------------------------------------------------
                 [maxvertexcount(4)]
                 void geo(point GS_INPUT p[1], inout TriangleStream<FS_INPUT> triStream)
                 {
@@ -104,16 +103,16 @@ Shader "Hidden/ProBuilder/PointBillboard"
                     FS_INPUT geo_out;
                     geo_out.color = p[0].color;
 
-                    geo_out.pos = ScreenToClip( float4(p[0].pos.x + _Scale, p[0].pos.y - _Scale, p[0].pos.z, p[0].pos.w) );
+                    geo_out.pos = ScreenToClip( float4(p[0].pos.x + _Scale, p[0].pos.y - _Scale, p[0].pos.z, p[0].pos.w - ScreenDepthModifier) );
                     triStream.Append(geo_out);
 
-                    geo_out.pos =  ScreenToClip( float4(p[0].pos.x + _Scale, p[0].pos.y + _Scale, p[0].pos.z, p[0].pos.w) );
+                    geo_out.pos =  ScreenToClip( float4(p[0].pos.x + _Scale, p[0].pos.y + _Scale, p[0].pos.z, p[0].pos.w - ScreenDepthModifier) );
                     triStream.Append(geo_out);
 
-                    geo_out.pos =  ScreenToClip( float4(p[0].pos.x - _Scale, p[0].pos.y - _Scale, p[0].pos.z, p[0].pos.w) );
+                    geo_out.pos =  ScreenToClip( float4(p[0].pos.x - _Scale, p[0].pos.y - _Scale, p[0].pos.z, p[0].pos.w - ScreenDepthModifier) );
                     triStream.Append(geo_out);
 
-                    geo_out.pos =  ScreenToClip( float4(p[0].pos.x - _Scale, p[0].pos.y + _Scale, p[0].pos.z, p[0].pos.w) );
+                    geo_out.pos =  ScreenToClip( float4(p[0].pos.x - _Scale, p[0].pos.y + _Scale, p[0].pos.z, p[0].pos.w - ScreenDepthModifier) );
                     triStream.Append(geo_out);
                 }
 
