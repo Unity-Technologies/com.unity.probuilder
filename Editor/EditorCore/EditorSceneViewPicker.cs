@@ -316,7 +316,7 @@ namespace UnityEditor.ProBuilder
                 s_AppendModifierPreviousState = (em != EventModifiers.None);
                 s_DeepSelectionPrevious = newHash;
             }
-            
+
             if (isPreview || em != EventModifiers.None)
                 EditorHandleUtility.GetHovered(mousePosition, s_OverlappingGameObjects);
             else
@@ -474,6 +474,12 @@ namespace UnityEditor.ProBuilder
             return matches;
         }
 
+        /// <summary>
+        /// Get the nearest <see cref="Edge"/> to a screen position.
+        /// </summary>
+        /// <returns>
+        /// Distance is returned as the screen distance to mesh, not edge.
+        /// </returns>
         static float EdgeRaycast(Vector3 mousePosition, ScenePickerPreferences pickerPrefs, bool allowUnselected, SceneSelection selection)
         {
             selection.Clear();
@@ -481,34 +487,36 @@ namespace UnityEditor.ProBuilder
             var hoveredMesh = selection.gameObject != null ? selection.gameObject.GetComponent<ProBuilderMesh>() : null;
 
             float bestDistance = pickerPrefs.maxPointerDistance;
-            float unselectedBestDistance = bestDistance;
             bool hoveredIsInSelection = MeshSelection.topInternal.Contains(hoveredMesh);
 
             if (hoveredMesh != null && (allowUnselected || hoveredIsInSelection))
             {
                 var tup = GetNearestEdgeOnMesh(hoveredMesh, mousePosition);
 
-                if (tup.edge.IsValid() && tup.distance < pickerPrefs.maxPointerDistance)
+                if (tup.edge.IsValid())
                 {
                     selection.gameObject = hoveredMesh.gameObject;
                     selection.mesh = hoveredMesh;
                     selection.edge = tup.edge;
-                    unselectedBestDistance = tup.distance;
+                    bestDistance = tup.distance;
 
-                    // if it's in the selection, it automatically wins as best. if not, treat this is a fallback.
+                    // If the nearest edge was acquired by a raycast, then the distance to mesh is 0f.
                     if (hoveredIsInSelection)
-                        return tup.distance;
+                        return 0f; // tup.distance;
                 }
             }
-            
+
             foreach (var mesh in MeshSelection.topInternal)
             {
                 var trs = mesh.transform;
                 var positions = mesh.positionsInternal;
                 s_EdgeBuffer.Clear();
 
-                //When the pointer is over another object, apply a modifier to the distance to prefer picking the object hovered over the currently selected
-                var distMultiplier = (hoveredMesh == mesh || hoveredMesh == null) ? 1.0f : pickerPrefs.offPointerMultiplier;
+                // When the pointer is over another object, apply a modifier to the distance to prefer picking the
+                // object hovered over the currently selected
+                var distMultiplier = (hoveredMesh == mesh || hoveredMesh == null)
+                    ? 1.0f
+                    : pickerPrefs.offPointerMultiplier;
 
                 foreach (var face in mesh.facesInternal)
                 {
@@ -516,15 +524,15 @@ namespace UnityEditor.ProBuilder
                     {
                         int x = edge.a;
                         int y = edge.b;
-                        
 
                         float d = UHandleUtility.DistanceToLine(
                                 trs.TransformPoint(positions[x]),
                                 trs.TransformPoint(positions[y]));
 
                         d *= distMultiplier;
-                        
-                        if (d == bestDistance)
+
+                        // account for stacked edges
+                        if (Mathf.Approximately(d, bestDistance))
                         {
                             s_EdgeBuffer.Add(new Edge(x, y));
                         }
@@ -541,20 +549,13 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
-                //If more than 1 edge is closest, the closest is one of the vertex.
-                //Get closest edge to the camera.
+                // If more than 1 edge is closest, the closest is one of the vertex.
+                // Get closest edge to the camera.
                 if (s_EdgeBuffer.Count > 1)
                     selection.edge = GetClosestEdgeToCamera(positions, s_EdgeBuffer);
             }
 
-            if (selection.gameObject != null)
-            {
-                if (bestDistance < pickerPrefs.maxPointerDistance)
-                    return bestDistance;
-                return unselectedBestDistance;
-            }
-
-            return Mathf.Infinity;
+            return selection.gameObject != null ? bestDistance : Mathf.Infinity;
         }
 
         static Edge GetClosestEdgeToCamera(Vector3[] positions, IEnumerable<Edge> edges)
@@ -591,6 +592,9 @@ namespace UnityEditor.ProBuilder
             public float distance;
         }
 
+        /// <summary>
+        /// Get the nearest edge to a screen position.
+        /// </summary>
         static EdgeAndDistance GetNearestEdgeOnMesh(ProBuilderMesh mesh, Vector3 mousePosition)
         {
             Ray ray = UHandleUtility.GUIPointToWorldRay(mousePosition);
