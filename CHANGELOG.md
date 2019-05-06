@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.1.0-preview.3] - 2019-05-06
+## [4.1.0-preview.4] - 2019-05-06
 
 ### Features
 
@@ -31,6 +31,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed compile errors when opened in Unity 2018.4.
 - Fixed scene information view not showing the correct selected element counts.
 - Fixed vertex dots rendering slightly offset from the vertex position with an orthographic camera.
+- Fixed `Poly Shape` creation tool not recognizing terrain when adding the origin point.
+- Fixed `Select Faces with Color` not selecting faces with no color.
+- Fixed compile error in runtime samples on Unity 2019.3.
 
 ### Changes
 
