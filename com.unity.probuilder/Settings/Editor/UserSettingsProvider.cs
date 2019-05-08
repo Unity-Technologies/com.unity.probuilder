@@ -9,10 +9,10 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 #if SETTINGS_PROVIDER_ENABLED
-#if UNITY_2018_3
-using UnityEngine.Experimental.UIElements;
-#else
+#if UNITY_2019_1_OR_NEWER
 using UnityEngine.UIElements;
+#else
+using UnityEngine.Experimental.UIElements;
 #endif
 #endif
 
