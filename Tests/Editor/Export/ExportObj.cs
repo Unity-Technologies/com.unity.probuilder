@@ -1,18 +1,20 @@
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder.Tests.Framework;
 using UnityEditor.ProBuilder;
 using NUnit.Framework;
 using System.Threading;
+using UnityEditor;
 
 namespace UnityEngine.ProBuilder.EditorTests.Export
 {
     class ExportObj : TemporaryAssetTest
     {
         [Test]
-        public static void NumbersAreCultureInvariant()
+        public static void SerializedValues_AreCultureInvariant()
         {
             var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             var model = new Model("Cube", cube.GetComponent<MeshFilter>().sharedMesh, cube.GetComponent<MeshRenderer>().sharedMaterial);
@@ -36,6 +38,62 @@ namespace UnityEngine.ProBuilder.EditorTests.Export
                 Thread.CurrentThread.CurrentCulture = current;
                 UnityEngine.Object.DestroyImmediate(cube);
             }
+        }
+
+        [Test]
+        public void ExportSingleCube_CreatesUnityReadableMeshFile()
+        {
+            var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
+
+            string obj;
+            string mtl;
+            List<string> textures;
+
+            var res = ObjExporter.Export("Single cube",
+                new Model[] { new Model("Single Cube Mesh", cube, true) },
+                out obj,
+                out mtl,
+                out textures);
+
+            Assume.That(res, Is.True);
+            Assume.That(string.IsNullOrEmpty(obj), Is.False);
+            Assume.That(string.IsNullOrEmpty(mtl), Is.False);
+
+            string exportedPath = TestUtility.temporarySavedAssetsDirectory + "/SingleCube.obj";
+
+            File.WriteAllText(exportedPath, obj);
+            AssetDatabase.ImportAsset(exportedPath);
+
+            var imported = AssetDatabase.LoadAssetAtPath(exportedPath, typeof(Mesh)) as Mesh;
+
+            Assume.That(imported, Is.Not.Null);
+
+            Assert.That(imported.vertexCount, Is.GreaterThan(0));
+        }
+
+        [Test]
+        public static void ExportMultipleMeshes_CreatesModelWithTwoGroups()
+        {
+            var cube1 = new Model("Cube A", ShapeGenerator.CreateShape(ShapeType.Cube));
+            var cube2 = new Model("Cube B", ShapeGenerator.CreateShape(ShapeType.Cube));
+            string exportedPath = TestUtility.temporarySavedAssetsDirectory + "/ObjGroup.obj";
+
+            UnityEditor.ProBuilder.Actions.ExportObj.DoExport(exportedPath, new Model[] { cube1, cube2 }, new ObjOptions()
+            {
+                copyTextures = false,
+                applyTransforms = true,
+                vertexColors = false
+            });
+
+            AssetDatabase.ImportAsset(exportedPath);
+
+            var imported = AssetDatabase.LoadAssetAtPath(exportedPath, typeof(Mesh)) as Mesh;
+
+            Assume.That(imported, Is.Not.Null);
+
+            var all = AssetDatabase.LoadAllAssetRepresentationsAtPath(exportedPath);
+
+            Assert.That(all.Count(x => x is Mesh), Is.EqualTo(2));
         }
     }
 }

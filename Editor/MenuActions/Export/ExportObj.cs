@@ -45,9 +45,7 @@ namespace UnityEditor.ProBuilder.Actions
             return new ActionResult(ActionResult.Status.Success, "Export OBJ");
         }
 
-        /**
-         *  Prompt user for a save file location and export meshes as Obj.
-         */
+        // Prompt user for a save file location and export meshes as Obj.
         public static string ExportWithFileDialog(IEnumerable<ProBuilderMesh> meshes, bool asGroup = true, bool allowQuads = true, ObjOptions options = null)
         {
             if (meshes == null || !meshes.Any())
@@ -84,7 +82,7 @@ namespace UnityEditor.ProBuilder.Actions
             return res;
         }
 
-        static string DoExport(string path, IEnumerable<Model> models, ObjOptions options)
+        internal static string DoExport(string path, IEnumerable<Model> models, ObjOptions options)
         {
             string name = Path.GetFileNameWithoutExtension(path);
             string directory = Path.GetDirectoryName(path);
