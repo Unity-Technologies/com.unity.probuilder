@@ -212,7 +212,8 @@ namespace UnityEditor.ProBuilder
 
             DrawPolyLine(polygon.m_Points);
 
-            polygon.CreateShapeFromPolygon();
+            if(polygon.polyEditMode != PolyShape.PolyEditMode.Path)
+                polygon.CreateShapeFromPolygon();
 
             // While the vertex count may not change, the triangle winding might. So unfortunately we can't take
             // advantage of the `vertexCountChanged = false` optimization here.
