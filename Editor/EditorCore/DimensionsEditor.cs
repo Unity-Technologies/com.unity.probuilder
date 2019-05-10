@@ -49,16 +49,39 @@ namespace UnityEditor.ProBuilder
         static Pref<bool> s_AlwaysUseObjectBounds = new Pref<bool>("s_AlwaysUseObjectBounds", false, SettingsScope.User);
 
 #if SHORTCUT_MANAGER
-        [Shortcut("ProBuilder/Dimensions Overlay/Toggle Object, Element Bounds", typeof(SceneView))]
+        [Shortcut("ProBuilder/Dimensions Overlay/Toggle Overlay", typeof(SceneView))]
         static void ToggleUseElementBounds()
         {
-            s_AlwaysUseObjectBounds.SetValue(!s_AlwaysUseObjectBounds.value, true);
+            // toggle between { Off, Visible Object, Visible Selection }
+            if (s_Instance != null)
+            {
+                var alwaysObject = s_AlwaysUseObjectBounds.value;
+
+                // Visible Object -> Visible Selection
+                if (alwaysObject)
+                    s_AlwaysUseObjectBounds.SetValue(false, true);
+                // Visible Selection -> Off
+                else
+                    DestroyImmediate(s_Instance);
+            }
+            else
+            {
+                // Off -> Visible Object
+                s_AlwaysUseObjectBounds.SetValue(true, true);
+                Init();
+            }
 
             if (s_Instance != null)
             {
                 s_Instance.RebuildBounds();
                 EditorUtility.ShowNotification("Dimensions Overlay\n" + (s_AlwaysUseObjectBounds.value ? "Object" : "Element"));
             }
+            else
+            {
+                EditorUtility.ShowNotification("Dimensions Overlay\nOff");
+            }
+
+            SceneView.RepaintAll();
         }
 #endif
 
