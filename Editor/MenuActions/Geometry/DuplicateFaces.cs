@@ -11,7 +11,7 @@ namespace UnityEditor.ProBuilder.Actions
         Pref<DuplicateFaceSetting> m_DuplicateFaceSetting = new Pref<DuplicateFaceSetting>("DuplicateFaces.target", DuplicateFaceSetting.GameObject);
 
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_Detach", IconSkin.Pro); } } //icon to be replaced
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_Duplicate", IconSkin.Pro); } } //icon to be replaced
         public override TooltipContent tooltip { get { return s_Tooltip; } }
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
@@ -104,7 +104,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             foreach (ProBuilderMesh mesh in MeshSelection.topInternal)
             {
-                if (mesh.selectedFaceCount < 1 || mesh.selectedFaceCount == mesh.facesInternal.Length)
+                if (mesh.selectedFaceCount < 1)
                     continue;
 
                 var primary = mesh.selectedFaceIndexes.ToArray();
