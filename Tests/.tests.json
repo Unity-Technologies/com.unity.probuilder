@@ -1,6 +1,5 @@
 {
 	"createSeparatePackage":true,
 	"name":"com.unity.probuilder.tests",
-	"displayName":"ProBuilder Tests",
-	"disableProjectUpdate": true
+	"displayName":"ProBuilder Tests"
 }
