@@ -33,7 +33,7 @@ namespace UnityEditor.ProBuilder.Actions
         // obj specific
         Pref<bool> m_ObjExportRightHanded = new Pref<bool>("export.objExportRightHanded", true);
         Pref<bool> m_ObjExportCopyTextures = new Pref<bool>("export.objExportCopyTextures", true);
-        Pref<bool> m_ObjApplyTransform = new Pref<bool>("export.objApplyTransform", true);
+        Pref<bool> m_ObjApplyTransform = new Pref<bool>("export.objApplyTransform", false);
         Pref<bool> m_ObjExportVertexColors = new Pref<bool>("export.objExportVertexColors", false);
         Pref<bool> m_ObjTextureOffsetScale = new Pref<bool>("export.objTextureOffsetScale", false);
         Pref<bool> m_ObjQuads = new Pref<bool>("export.objQuads", true);
@@ -188,7 +188,7 @@ namespace UnityEditor.ProBuilder.Actions
                         new ObjOptions() {
                     handedness = m_ObjExportRightHanded ? ObjOptions.Handedness.Right : ObjOptions.Handedness.Left,
                     copyTextures = m_ObjExportCopyTextures,
-                    applyTransforms = m_ExportAsGroup || m_ObjApplyTransform,
+                    applyTransforms = m_ExportAsGroup || m_ObjApplyTransform.value,
                     vertexColors = m_ObjExportVertexColors,
                     textureOffsetScale = m_ObjTextureOffsetScale
                 });
