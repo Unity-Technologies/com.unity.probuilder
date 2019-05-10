@@ -1176,9 +1176,8 @@ namespace UnityEngine.ProBuilder
                 sideFaces.Add(face);
                 f.Add(new Face(new int[3] {i + 3, i + 4, i + 5}));
             }
-            
-            ProBuilderMesh pb = ProBuilderMesh.Create(v.ToArray(), f.ToArray());
 
+            ProBuilderMesh pb = ProBuilderMesh.Create(v.ToArray(), f.ToArray());
             pb.gameObject.name = "Cone";
             pb.SetPivot(pivotType);
             pb.unwrapParameters = new UnwrapParameters()
@@ -1193,7 +1192,9 @@ namespace UnityEngine.ProBuilder
             uv.anchor = AutoUnwrapSettings.Anchor.LowerLeft;
             firstFace.uv = uv;
             firstFace.manualUV = true;
-            UvUnwrapping.Unwrap(pb, firstFace, Vector3.up);
+            // Always use up vector for projection of side faces.
+            // Otherwise the lines in the PB texture end up crooked.
+            UvUnwrapping.Unwrap(pb, firstFace, projection: Vector3.up);
             for (int i = 1; i < sideFaces.Count; i++)
             {
                 var fa = sideFaces[i];
