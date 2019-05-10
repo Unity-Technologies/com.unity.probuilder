@@ -1197,9 +1197,9 @@ namespace UnityEngine.ProBuilder
             UvUnwrapping.Unwrap(pb, firstFace, projection: Vector3.up);
             for (int i = 1; i < sideFaces.Count; i++)
             {
-                var fa = sideFaces[i];
-                fa.manualUV = true;
-                UvUnwrapping.CopyUVs(pb, fa, firstFace);
+                var sideFace = sideFaces[i];
+                sideFace.manualUV = true;
+                UvUnwrapping.CopyUVs(pb, firstFace, sideFace);
             }
             pb.RefreshUV(sideFaces);
             return pb;

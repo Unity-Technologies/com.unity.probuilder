@@ -14,20 +14,20 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Copy UVs from faceToCopy to face for the given mesh.
+        /// Copy UVs from source to dest for the given mesh.
         /// </summary>
         /// <param name="mesh">ProbuilderMesh</param>
-        /// <param name="face">face to copy UVs to</param>
-        /// <param name="faceToCopy">face to copy UVs from</param>
-        internal static void CopyUVs(ProBuilderMesh mesh, Face face, Face faceToCopy)
+        /// <param name="source">face to copy UVs from</param>
+        /// <param name="dest">face to copy UVs to</param>
+        internal static void CopyUVs(ProBuilderMesh mesh, Face source, Face dest)
         {
             var uvs = mesh.texturesInternal;
-            var faceIndexes = face.distinctIndexesInternal;
-            var copyIndexes = faceToCopy.distinctIndexesInternal;
-            for (int i = 0; i < faceIndexes.Length; i++)
+            var sourceIndexes = source.distinctIndexesInternal;
+            var destIndexes = dest.distinctIndexesInternal;
+            for (int i = 0; i < sourceIndexes.Length; i++)
             {
-                uvs[faceIndexes[i]].x = uvs[copyIndexes[i]].x;
-                uvs[faceIndexes[i]].y = uvs[copyIndexes[i]].y;
+                uvs[destIndexes[i]].x = uvs[sourceIndexes[i]].x;
+                uvs[destIndexes[i]].y = uvs[sourceIndexes[i]].y;
             }
         }
 
