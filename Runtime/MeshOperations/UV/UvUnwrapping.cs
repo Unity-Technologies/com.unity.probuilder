@@ -7,10 +7,28 @@ namespace UnityEngine.ProBuilder
         static Vector2 s_TempVector2 = Vector2.zero;
         static readonly List<int> s_IndexBuffer = new List<int>(64);
 
-        internal static void Unwrap(ProBuilderMesh mesh, Face face)
+        internal static void Unwrap(ProBuilderMesh mesh, Face face, Vector3 projection = default(Vector3))
         {
-            Projection.PlanarProject(mesh, face);
+            Projection.PlanarProject(mesh, face, projection != Vector3.zero? projection : Vector3.zero);
             ApplyUVSettings(mesh.texturesInternal, face.distinctIndexesInternal, face.uv);
+        }
+
+        /// <summary>
+        /// Copy UVs from faceToCopy to face for the given mesh.
+        /// </summary>
+        /// <param name="mesh">ProbuilderMesh</param>
+        /// <param name="face">face to copy UVs to</param>
+        /// <param name="faceToCopy">face to copy UVs from</param>
+        internal static void CopyUVs(ProBuilderMesh mesh, Face face, Face faceToCopy)
+        {
+            var uvs = mesh.texturesInternal;
+            var faceIndexes = face.distinctIndexesInternal;
+            var copyIndexes = faceToCopy.distinctIndexesInternal;
+            for (int i = 0; i < faceIndexes.Length; i++)
+            {
+                uvs[faceIndexes[i]].x = uvs[copyIndexes[i]].x;
+                uvs[faceIndexes[i]].y = uvs[copyIndexes[i]].y;
+            }
         }
 
         internal static void ProjectTextureGroup(ProBuilderMesh mesh, int group, AutoUnwrapSettings unwrapSettings)

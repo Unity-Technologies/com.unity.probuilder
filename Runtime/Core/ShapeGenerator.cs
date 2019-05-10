@@ -1168,13 +1168,17 @@ namespace UnityEngine.ProBuilder
                 v.Add(Vector3.zero);
             }
 
+            List<Face> sideFaces = new List<Face>();
             for (int i = 0; i < subdivAxis * 6; i += 6)
             {
-                f.Add(new Face(new int[3] {i + 2, i + 1, i + 0}));
+                Face face = new Face(new int[3] { i + 2, i + 1, i + 0 });
+                f.Add(face);
+                sideFaces.Add(face);
                 f.Add(new Face(new int[3] {i + 3, i + 4, i + 5}));
             }
-
+            
             ProBuilderMesh pb = ProBuilderMesh.Create(v.ToArray(), f.ToArray());
+
             pb.gameObject.name = "Cone";
             pb.SetPivot(pivotType);
             pb.unwrapParameters = new UnwrapParameters()
@@ -1182,6 +1186,21 @@ namespace UnityEngine.ProBuilder
                 packMargin = 30f
             };
 
+            // Set the UVs manually for the side faces, so that they are uniform.
+            // Calculate the UVs for the first face, then set the others to the same.
+            var firstFace = sideFaces[0];
+            var uv = firstFace.uv;
+            uv.anchor = AutoUnwrapSettings.Anchor.LowerLeft;
+            firstFace.uv = uv;
+            firstFace.manualUV = true;
+            UvUnwrapping.Unwrap(pb, firstFace, Vector3.up);
+            for (int i = 1; i < sideFaces.Count; i++)
+            {
+                var fa = sideFaces[i];
+                fa.manualUV = true;
+                UvUnwrapping.CopyUVs(pb, fa, firstFace);
+            }
+            pb.RefreshUV(sideFaces);
             return pb;
         }
 
