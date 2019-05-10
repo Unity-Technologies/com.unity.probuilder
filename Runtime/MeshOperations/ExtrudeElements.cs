@@ -180,7 +180,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="mesh">The source mesh.</param>
         /// <param name="faces">The faces to split from the mesh.</param>
         /// <returns>The faces created forming the detached face group.</returns>
-        public static List<Face> DetachFaces(this ProBuilderMesh mesh, IEnumerable<Face> faces)
+        public static List<Face> DetachFaces(this ProBuilderMesh mesh, IEnumerable<Face> faces, bool deleteSourceFaces = true)
         {
             if (mesh == null)
                 throw new System.ArgumentNullException("mesh");
@@ -227,12 +227,16 @@ namespace UnityEngine.ProBuilder.MeshOperations
             }
 
             FaceRebuildData.Apply(detached, mesh, vertices);
-            mesh.DeleteFaces(faces);
+            if (deleteSourceFaces)
+            {
+                mesh.DeleteFaces(faces);
+            }
 
             mesh.ToMesh();
 
             return detached.Select(x => x.face).ToList();
         }
+
 
         /// <summary>
         /// Extrude each face in faces individually along it's normal by distance.
