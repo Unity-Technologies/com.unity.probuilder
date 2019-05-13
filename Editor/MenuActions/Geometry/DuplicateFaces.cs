@@ -17,7 +17,7 @@ namespace UnityEditor.ProBuilder.Actions
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
                 "Duplicate Faces",
-                "Creates a new object (or submesh) from the selected faces."
+                "Makes an exact copy of the selected faces, and either adds them to this mesh or creates a new Game Object"
             );
 
         public override SelectMode validSelectModes
@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder.Actions
         {
             GUILayout.Label("Duplicate Face Settings", EditorStyles.boldLabel);
 
-            EditorGUILayout.HelpBox("Duplicate Faces can separate the selection into either a new GameObject or a submesh.", MessageType.Info);
+            EditorGUILayout.HelpBox("You can create a new Game Object with the selected face(s), or keep them as part of this object by using a Submesh.", MessageType.Info);
 
             EditorGUI.BeginChangeCheck();
 
