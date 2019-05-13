@@ -41,7 +41,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Geometry
         {
             //Make first faces selected
             ProBuilderMesh mesh = selectables[0];
-            Assert.IsNotNull(mesh.faces);
+            Assume.That(mesh.faces, Is.Not.Null);
             Face face = selectables[0].faces[0];
             List<Face> selectedFaces = new List<Face>();
             selectedFaces.Add(face);
@@ -73,7 +73,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Geometry
         {
             //Make first faces selected
             ProBuilderMesh mesh = selectables[0];
-            Assert.IsNotNull(mesh.faces);
+            Assume.That(mesh.faces, Is.Not.Null);
             Face face = selectables[0].faces[0];
             List<Face> selectedFaces = new List<Face>();
             selectedFaces.Add(face);
@@ -81,7 +81,6 @@ namespace UnityEngine.ProBuilder.EditorTests.Geometry
             Assert.AreEqual(mesh.selectedFaceCount, 1);
             MeshSelection.SetSelection(mesh.gameObject);
             MeshSelection.OnObjectSelectionChanged();
-
 
             UnityEditor.ProBuilder.Actions.DuplicateFaces duplicateFaces = new UnityEditor.ProBuilder.Actions.DuplicateFaces();
             ProBuilderSettings.Set<UnityEditor.ProBuilder.Actions.DuplicateFaces.DuplicateFaceSetting>("DuplicateFaces.target", UnityEditor.ProBuilder.Actions.DuplicateFaces.DuplicateFaceSetting.Submesh);

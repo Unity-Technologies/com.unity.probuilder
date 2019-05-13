@@ -99,16 +99,16 @@ namespace UnityEditor.ProBuilder.Actions
 
         static ActionResult DuplicateFacesToObject()
         {
-            int DuplicateedFaceCount = 0;
-            List<GameObject> Duplicateed = new List<GameObject>();
+            int duplicatedFaceCount = 0;
+            List<GameObject> duplicated = new List<GameObject>();
 
             foreach (ProBuilderMesh mesh in MeshSelection.topInternal)
             {
                 if (mesh.selectedFaceCount < 1)
                     continue;
 
-                var primary = mesh.selectedFaceIndexes.ToArray();
-                DuplicateedFaceCount += primary.Length;
+                var primary = mesh.selectedFaceIndexes;
+                duplicatedFaceCount += primary.Count;
 
                 List<int> inverse = new List<int>();
 
@@ -117,7 +117,7 @@ namespace UnityEditor.ProBuilder.Actions
                         inverse.Add(i);
 
                 ProBuilderMesh copy = Object.Instantiate(mesh.gameObject, mesh.transform.parent).GetComponent<ProBuilderMesh>();
-                copy.MakeUnique();
+                EditorUtility.SynchronizeWithMeshFilter(copy);
 
 #if !UNITY_2018_3_OR_NEWER
                 // if is prefab, break connection and destroy children
@@ -136,30 +136,22 @@ namespace UnityEditor.ProBuilder.Actions
 
                 Undo.RegisterCreatedObjectUndo(copy.gameObject, "Duplicate Selection");
 
-                copy.transform.position = mesh.transform.position;
-                copy.transform.localScale = mesh.transform.localScale;
-                copy.transform.localRotation = mesh.transform.localRotation;
-
                 copy.DeleteFaces(inverse);
-
-                mesh.Rebuild();
                 copy.Rebuild();
-
-                mesh.Optimize();
                 copy.Optimize();
-
                 mesh.ClearSelection();
                 copy.ClearSelection();
+                copy.SetSelectedFaces(copy.faces);
 
-                copy.gameObject.name = mesh.gameObject.name + "-Duplicate";
-                Duplicateed.Add(copy.gameObject);
+                copy.gameObject.name = GameObjectUtility.GetUniqueNameForSibling(mesh.transform.parent, mesh.gameObject.name);
+                duplicated.Add(copy.gameObject);
             }
 
-            MeshSelection.SetSelection(Duplicateed.ToArray());
+            MeshSelection.SetSelection(duplicated);
             ProBuilderEditor.Refresh();
 
-            if (DuplicateedFaceCount > 0)
-                return new ActionResult(ActionResult.Status.Success, "Duplicate " + DuplicateedFaceCount + " faces to new Object");
+            if (duplicatedFaceCount > 0)
+                return new ActionResult(ActionResult.Status.Success, "Duplicate " + duplicatedFaceCount + " faces to new Object");
 
             return new ActionResult(ActionResult.Status.Failure, "No Faces Selected");
         }
