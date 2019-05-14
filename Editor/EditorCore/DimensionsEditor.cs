@@ -15,9 +15,50 @@ namespace UnityEditor.ProBuilder
 {
     sealed class DimensionsEditor : ScriptableObject
     {
+        struct Trs : IEquatable<Trs>
+        {
+            public Vector3 position { get; set; }
+            public Quaternion rotation { get; set; }
+            public Vector3 scale { get; set; }
+
+            public Trs(Transform t)
+            {
+                position = t.position;
+                rotation = t.rotation;
+                scale = t.localScale;
+            }
+
+            public bool Equals(Trs other)
+            {
+                return position.Equals(other.position) && rotation.Equals(other.rotation) && scale.Equals(other.scale);
+            }
+
+            public override bool Equals(object obj)
+            {
+                return obj is Trs other && Equals(other);
+            }
+
+            public static explicit operator Trs(Transform trs)
+            {
+                return new Trs(trs);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    var hashCode = position.GetHashCode();
+                    hashCode = (hashCode * 397) ^ rotation.GetHashCode();
+                    hashCode = (hashCode * 397) ^ scale.GetHashCode();
+                    return hashCode;
+                }
+            }
+        }
+
         static DimensionsEditor s_Instance;
         bool m_HasBounds;
         Bounds m_Bounds;
+        Dictionary<Transform, Trs> m_Selected = new Dictionary<Transform, Trs>();
 
         [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Dimensions Overlay/Hide", true, PreferenceKeys.menuEditor + 30)]
         static bool HideVerify()
@@ -203,12 +244,22 @@ namespace UnityEditor.ProBuilder
             return initialized;
         }
 
-        static bool GetSelectedBounds(out Bounds bounds)
+        bool GetSelectedBounds(out Bounds bounds)
         {
+            m_Selected.Clear();
+
             var selectMode = ProBuilderEditor.selectMode;
 
             if (selectMode.IsMeshElementMode() && !s_AlwaysUseObjectBounds.value)
+            {
+                foreach (var m in MeshSelection.topInternal)
+                    m_Selected.Add(m.transform, new Trs(m.transform));
+
                 return GetElementBounds(MeshSelection.topInternal, selectMode, out bounds);
+            }
+
+            foreach (var m in Selection.transforms)
+                m_Selected.Add(m.transform, new Trs(m.transform));
 
             var renderers = Selection.transforms
                 .Where(x => x.GetComponent<MeshRenderer>() != null)
@@ -252,11 +303,22 @@ namespace UnityEditor.ProBuilder
         void OnSceneGUI(SceneView scnview)
         {
 #if UNITY_2019_1_OR_NEWER
-            if(Selection.count > 0 && m_HasBounds)
+            if (Selection.count > 0 && m_HasBounds)
 #else
             if(Selection.objects.Length > 0 && m_HasBounds)
 #endif
+            {
+                foreach (var m in m_Selected)
+                {
+                    if (!((Trs)m.Key).Equals(m.Value))
+                    {
+                        RebuildBounds();
+                        break;
+                    }
+                }
+
                 RenderBounds(m_Bounds);
+            }
         }
 
         Mesh mesh;
