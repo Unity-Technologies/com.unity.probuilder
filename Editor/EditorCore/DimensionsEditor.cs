@@ -85,9 +85,16 @@ namespace UnityEditor.ProBuilder
             CreateInstance<DimensionsEditor>();
         }
 
-        [UserSetting("Dimensions Overlay", "Always use Object Bounds", "When disabled, the dimensions will be " +
-            "calculated using the current face, edge, or vertex selection. When enabled, the object bounds are used.")]
-        static Pref<bool> s_AlwaysUseObjectBounds = new Pref<bool>("s_AlwaysUseObjectBounds", false, SettingsScope.User);
+        enum BoundsDisplay
+        {
+            Object = 1,
+            Element = 2
+        }
+
+        [UserSetting("Dimensions Overlay", "Bounds Display", "Sets what content is considered when calculating the selected" +
+            "bounds.\nObject displays the world space bounds of the selection.\nElement displays the world space bounds" +
+            "of the selected mesh elements (vertices, faces, edges).")]
+        static Pref<BoundsDisplay> s_BoundsDisplay = new Pref<BoundsDisplay>("s_BoundsDisplay", BoundsDisplay.Object, SettingsScope.User);
 
 #if SHORTCUT_MANAGER
         [Shortcut("ProBuilder/Dimensions Overlay/Toggle Overlay", typeof(SceneView))]
@@ -96,11 +103,11 @@ namespace UnityEditor.ProBuilder
             // toggle between { Off, Visible Object, Visible Selection }
             if (s_Instance != null)
             {
-                var alwaysObject = s_AlwaysUseObjectBounds.value;
+                var display = s_BoundsDisplay.value;
 
                 // Visible Object -> Visible Selection
-                if (alwaysObject)
-                    s_AlwaysUseObjectBounds.SetValue(false, true);
+                if (display == BoundsDisplay.Object)
+                    s_BoundsDisplay.SetValue(BoundsDisplay.Element, true);
                 // Visible Selection -> Off
                 else
                     DestroyImmediate(s_Instance);
@@ -108,14 +115,14 @@ namespace UnityEditor.ProBuilder
             else
             {
                 // Off -> Visible Object
-                s_AlwaysUseObjectBounds.SetValue(true, true);
+                s_BoundsDisplay.SetValue(BoundsDisplay.Object, true);
                 Init();
             }
 
             if (s_Instance != null)
             {
                 s_Instance.RebuildBounds();
-                EditorUtility.ShowNotification("Dimensions Overlay\n" + (s_AlwaysUseObjectBounds.value ? "Object" : "Element"));
+                EditorUtility.ShowNotification("Dimensions Overlay\n" + s_BoundsDisplay.value.ToString());
             }
             else
             {
@@ -141,6 +148,8 @@ namespace UnityEditor.ProBuilder
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged += OnElementSelectionChanged;
             ProBuilderEditor.selectionUpdated += OnEditingMeshSelection;
+
+            RebuildBounds();
         }
 
         void OnDisable()
@@ -250,7 +259,7 @@ namespace UnityEditor.ProBuilder
 
             var selectMode = ProBuilderEditor.selectMode;
 
-            if (selectMode.IsMeshElementMode() && !s_AlwaysUseObjectBounds.value)
+            if (s_BoundsDisplay.value == BoundsDisplay.Element && ProBuilderEditor.selectMode.IsMeshElementMode())
             {
                 foreach (var m in MeshSelection.topInternal)
                     m_Selected.Add(m.transform, new Trs(m.transform));
