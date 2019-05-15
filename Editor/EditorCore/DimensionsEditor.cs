@@ -59,6 +59,9 @@ namespace UnityEditor.ProBuilder
         bool m_HasBounds;
         Bounds m_Bounds;
         Dictionary<Transform, Trs> m_Selected = new Dictionary<Transform, Trs>();
+        // When ProBuilder is modifying a mesh, it doesn't recalculate the mesh bounds. This lets our bounds encapsulation
+        // function know that Renderer.bounds is not to be trusted.
+        static bool s_RecalculateMeshBounds;
 
         [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Dimensions Overlay/Hide", true, PreferenceKeys.menuEditor + 30)]
         static bool HideVerify()
@@ -136,10 +139,10 @@ namespace UnityEditor.ProBuilder
         void OnEnable()
         {
             s_Instance = this;
-            mesh = new Mesh();
-            material = new Material(Shader.Find("ProBuilder/UnlitVertexColor"));
-            mesh.hideFlags = HideFlags.DontSave;
-            material.hideFlags = HideFlags.DontSave;
+            m_DisplayMesh = new Mesh();
+            m_DisplayMaterial = new Material(Shader.Find("ProBuilder/UnlitVertexColor"));
+            m_DisplayMesh.hideFlags = HideFlags.DontSave;
+            m_DisplayMaterial.hideFlags = HideFlags.DontSave;
 #if UNITY_2019_1_OR_NEWER
             SceneView.duringSceneGui += OnSceneGUI;
 #else
@@ -148,6 +151,8 @@ namespace UnityEditor.ProBuilder
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged += OnElementSelectionChanged;
             ProBuilderEditor.selectionUpdated += OnEditingMeshSelection;
+            VertexManipulationTool.beforeMeshModification += OnBeginMeshModification;
+            VertexManipulationTool.afterMeshModification += OnFinishMeshModification;
 
             RebuildBounds();
         }
@@ -157,14 +162,26 @@ namespace UnityEditor.ProBuilder
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged -= OnElementSelectionChanged;
             ProBuilderEditor.selectionUpdated -= OnEditingMeshSelection;
+            VertexManipulationTool.beforeMeshModification -= OnBeginMeshModification;
+            VertexManipulationTool.afterMeshModification -= OnFinishMeshModification;
 
 #if UNITY_2019_1_OR_NEWER
             SceneView.duringSceneGui -= OnSceneGUI;
 #else
             SceneView.onSceneGUIDelegate -= OnSceneGUI;
 #endif
-            DestroyImmediate(mesh);
-            DestroyImmediate(material);
+            DestroyImmediate(m_DisplayMesh);
+            DestroyImmediate(m_DisplayMaterial);
+        }
+
+        static void OnBeginMeshModification(IEnumerable<ProBuilderMesh> meshes)
+        {
+            s_RecalculateMeshBounds = true;
+        }
+
+        static void OnFinishMeshModification(IEnumerable<ProBuilderMesh> meshes)
+        {
+            s_RecalculateMeshBounds = false;
         }
 
         static bool GetElementBounds(IEnumerable<ProBuilderMesh> meshes, SelectMode mode, out Bounds bounds)
@@ -270,6 +287,12 @@ namespace UnityEditor.ProBuilder
             foreach (var m in Selection.transforms)
                 m_Selected.Add(m.transform, new Trs(m.transform));
 
+            if (s_RecalculateMeshBounds)
+            {
+                foreach(var mesh in MeshSelection.topInternal)
+                    mesh.mesh.RecalculateBounds();
+            }
+
             var renderers = Selection.transforms
                 .Where(x => x.GetComponent<MeshRenderer>() != null)
                 .Select(x => x.GetComponent<MeshRenderer>());
@@ -330,11 +353,11 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        Mesh mesh;
-        Material material;
+        Mesh m_DisplayMesh;
+        Material m_DisplayMaterial;
 
         // readonly Color wirecolor = new Color(.9f, .9f, .9f, .6f);
-        readonly Color LightWhite = new Color(.6f, .6f, .6f, .5f);
+        readonly Color k_LightWhite = new Color(.6f, .6f, .6f, .5f);
 
         /// <summary>
         /// Render an axis aligned bounding box in world space.
@@ -342,7 +365,7 @@ namespace UnityEditor.ProBuilder
         /// <param name="bounds">aabb</param>
         void RenderBounds(Bounds bounds)
         {
-            if (!mesh)
+            if (!m_DisplayMesh)
                 return;
 
             // show labels
@@ -405,7 +428,7 @@ namespace UnityEditor.ProBuilder
 
             Vector3 left = Vector3.Cross(cam.forward, Vector3.up).normalized * LineDistance();
 
-            Handles.color = LightWhite;
+            Handles.color = k_LightWhite;
             Handles.DrawLine(a + left * .1f, a + left);
             Handles.DrawLine(b + left * .1f, b + left);
             Handles.color = Color.green;
@@ -467,7 +490,7 @@ namespace UnityEditor.ProBuilder
             float sign = dot < 0f ? -1f : 1f;
             Vector3 offset = -(Vector3.up + (Vector3.right * sign)).normalized * LineDistance();
 
-            Handles.color = LightWhite;
+            Handles.color = k_LightWhite;
             Handles.DrawLine(a + offset * .1f, a + offset);
             Handles.DrawLine(b + offset * .1f, b + offset);
 
@@ -535,7 +558,7 @@ namespace UnityEditor.ProBuilder
             float sign = dot < 0f ? -1f : 1f;
             Vector3 offset = -(Vector3.up + (Vector3.forward * sign)).normalized * LineDistance();
 
-            Handles.color = LightWhite;
+            Handles.color = k_LightWhite;
             Handles.DrawLine(a + offset * .1f, a + offset);
             Handles.DrawLine(b + offset * .1f, b + offset);
 
