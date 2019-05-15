@@ -37,7 +37,15 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override bool enabled
         {
-            get { return base.enabled && MeshSelection.selectedVertexCount > 0; }
+            get
+            {
+                // This isn't completely accurate, because to check that each selected vertex has coincident vertices is
+                // unnecessarily expensive for the purposes of this property. So here we handle the most common case,
+                // where a single vertex is selected with no additional coincident vertices.
+                return base.enabled
+                    && MeshSelection.selectedVertexCountObjectMax > 0
+                    && !(MeshSelection.selectedVertexCountObjectMax == 1 && MeshSelection.selectedCoincidentVertexCountMax == 1);
+            }
         }
 
         public override ActionResult DoAction()
@@ -51,7 +59,7 @@ namespace UnityEditor.ProBuilder.Actions
             foreach (ProBuilderMesh mesh in MeshSelection.topInternal)
             {
                 var coincident = mesh.selectedCoincidentVertices;
-                splitCount += coincident.Count();
+                splitCount += mesh.selectedSharedVerticesCount;
                 mesh.SplitVertices(coincident);
             }
 
@@ -59,7 +67,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             if (splitCount > 0)
                 return new ActionResult(ActionResult.Status.Success, "Split " + splitCount + (splitCount > 1 ? " Vertices" : " Vertex"));
-                
+
             return new ActionResult(ActionResult.Status.Failure, "Split Vertices\nInsuffient Vertices Selected");
         }
     }
