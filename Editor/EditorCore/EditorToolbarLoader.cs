@@ -85,6 +85,7 @@ namespace UnityEditor.ProBuilder
 
                 // All
                 new Actions.SetPivotToSelection(),
+                new Actions.MoveElements(),
 
                 // Faces (All)
                 new Actions.DeleteFaces(),
