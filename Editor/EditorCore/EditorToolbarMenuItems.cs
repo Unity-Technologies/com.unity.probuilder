@@ -430,6 +430,21 @@ namespace UnityEditor.ProBuilder
 				EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
+		[MenuItem(k_MenuPrefix + "Geometry/Move Elements ", true)]
+		static bool MenuVerify_MoveElements()
+		{
+			var instance = EditorToolbarLoader.GetInstance<MoveElements>();
+			return instance != null && instance.enabled;
+		}
+
+		[MenuItem(k_MenuPrefix + "Geometry/Move Elements", false, PreferenceKeys.menuGeometry + 3)]
+		static void MenuPerform_MoveElements()
+		{
+			var instance = EditorToolbarLoader.GetInstance<MoveElements>();
+			if(instance != null && instance.enabled)
+				EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
 		[MenuItem(k_MenuPrefix + "Geometry/Set Pivot To Selection ", true)]
 		static bool MenuVerify_SetPivotToSelection()
 		{
