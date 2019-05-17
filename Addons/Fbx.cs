@@ -5,8 +5,6 @@ using System.Reflection;
 using System.Linq;
 using UnityEditor.ProBuilder;
 
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Unity.ProBuilder.AddOns.FBX.Dynamic")]
-
 namespace UnityEngine.ProBuilder.Addons.FBX
 {
     /// <summary>
@@ -37,7 +35,7 @@ namespace UnityEngine.ProBuilder.Addons.FBX
                 {
                     try
                     {
-                        s_FbxExporterAssembly = System.Reflection.Assembly.Load("Unity.Formats.Fbx.Editor");
+                        s_FbxExporterAssembly = Assembly.Load("Unity.Formats.Fbx.Editor");
                     }
                     catch (System.IO.FileNotFoundException)
                     {
@@ -45,26 +43,6 @@ namespace UnityEngine.ProBuilder.Addons.FBX
                     }
                 }
                 return s_FbxExporterAssembly;
-            }
-        }
-
-        static Assembly s_FbxSdkAssembly = null;
-        private static Assembly FbxSdkAssembly
-        {
-            get
-            {
-                if(s_FbxSdkAssembly == null)
-                {
-                    try
-                    {
-                        s_FbxSdkAssembly = Assembly.Load("Autodesk.Fbx");
-                    }
-                    catch(System.IO.FileNotFoundException)
-                    {
-                        s_FbxSdkAssembly = null;
-                    }
-                }
-                return s_FbxSdkAssembly;
             }
         }
         
@@ -86,7 +64,7 @@ namespace UnityEngine.ProBuilder.Addons.FBX
 
         static void TryLoadFbxSupport()
         {
-            if (FbxExporterAssembly == null || FbxSdkAssembly == null)
+            if (FbxExporterAssembly == null)
             {
                 return;
             }
@@ -100,57 +78,13 @@ namespace UnityEngine.ProBuilder.Addons.FBX
                .First(t => t.ContainsGenericParameters);
             
             getMeshForComponent = getMeshForComponent.MakeGenericType(typeof(ProBuilderMesh));
-            var meshDelegate = Delegate.CreateDelegate(getMeshForComponent, Fbx.toMethod());
+            var meshDelegate = Delegate.CreateDelegate(getMeshForComponent, typeof(Fbx).GetMethod("GetMeshForComponent", BindingFlags.NonPublic | BindingFlags.Static));
 
             registerMeshCallback.Invoke(null, new object[] { meshDelegate, true });
             
             m_FbxOptions.quads = ProBuilderSettings.Get<bool>("Export::m_FbxQuads", SettingsScope.User, true);
         }
-
-        static string code = @"
-        using UnityEditor.Formats.Fbx.Exporter;
-        using Autodesk.Fbx;
-        using UnityEngine;
-        namespace UnityEngine.ProBuilder.Addons.FBX
-        {
-            public static class FbxExporterDelegate
-            {
-                public static bool GetMeshForComponent(ModelExporter exporter, ProBuilderMesh pmesh, FbxNode node)
-                {
-                    Debug.Log(""Over Here"");
-                    return Fbx.GetMeshForComponent(exporter, pmesh, node);
-                }
-            }
-        }";
-
-        static MethodInfo toMethod()
-        {
-            var parameters = new System.CodeDom.Compiler.CompilerParameters();
-            parameters.ReferencedAssemblies.Add("mscorlib.dll");
-            foreach(var assemblyName in Assembly.GetExecutingAssembly().GetReferencedAssemblies())
-            {
-                var assembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(a => a.GetName().Name == assemblyName.Name);
-                if (assembly != null)
-                {
-                    parameters.ReferencedAssemblies.Add(assembly.Location);
-                }
-            }
-            parameters.ReferencedAssemblies.Add(Assembly.GetExecutingAssembly().Location);
-            parameters.ReferencedAssemblies.Add(FbxExporterAssembly.Location);
-            parameters.ReferencedAssemblies.Add(FbxSdkAssembly.Location);
-            parameters.GenerateInMemory = true;
-            parameters.OutputAssembly = "Unity.ProBuilder.AddOns.FBX.Dynamic.dll";
-            var c = new Microsoft.CSharp.CSharpCodeProvider();
-            System.CodeDom.Compiler.CompilerResults results = c.CompileAssemblyFromSource(parameters, code);
-            foreach(var error in results.Errors)
-            {
-                Debug.LogError(error);
-            }
-            var asm = results.CompiledAssembly;
-            var compiledType = asm.GetType("UnityEngine.ProBuilder.Addons.FBX.FbxExporterDelegate");
-            return compiledType.GetMethod("GetMeshForComponent");
-        }
-
+        
         internal static bool GetMeshForComponent(object exporter, ProBuilderMesh pmesh, object node)
         {
             Mesh mesh = new Mesh();
