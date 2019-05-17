@@ -3,6 +3,9 @@ using System;
 using UnityEditor;
 using System.Reflection;
 using System.Linq;
+using UnityEditor.ProBuilder;
+
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Unity.ProBuilder.AddOns.FBX.Dynamic")]
 
 namespace UnityEngine.ProBuilder.Addons.FBX
 {
@@ -95,28 +98,28 @@ namespace UnityEngine.ProBuilder.Addons.FBX
             var getMeshForComponent = FbxExporterAssembly.GetTypes()
                .Where(t => t.BaseType == typeof(MulticastDelegate) && t.Name.StartsWith("GetMeshForComponent"))
                .First(t => t.ContainsGenericParameters);
-
+            
             getMeshForComponent = getMeshForComponent.MakeGenericType(typeof(ProBuilderMesh));
             var meshDelegate = Delegate.CreateDelegate(getMeshForComponent, Fbx.toMethod());
 
             registerMeshCallback.Invoke(null, new object[] { meshDelegate, true });
-
-            /*ModelExporter.RegisterMeshCallback<ProBuilderMesh>(GetMeshForComponent, true);
+            
             m_FbxOptions.quads = ProBuilderSettings.Get<bool>("Export::m_FbxQuads", SettingsScope.User, true);
-            s_FbxIsLoaded = true;*/
         }
 
         static string code = @"
-        using UnityEngine.ProBuilder;
         using UnityEditor.Formats.Fbx.Exporter;
         using Autodesk.Fbx;
         using UnityEngine;
-        public static class __CompiledExpr__
+        namespace UnityEngine.ProBuilder.Addons.FBX
         {
-            public static bool GetMeshForComponent(ModelExporter exporter, ProBuilderMesh pmesh, FbxNode node)
+            public static class FbxExporterDelegate
             {
-                Debug.Log(""Over Here"");
-                return false;
+                public static bool GetMeshForComponent(ModelExporter exporter, ProBuilderMesh pmesh, FbxNode node)
+                {
+                    Debug.Log(""Over Here"");
+                    return Fbx.GetMeshForComponent(exporter, pmesh, node);
+                }
             }
         }";
 
@@ -132,28 +135,30 @@ namespace UnityEngine.ProBuilder.Addons.FBX
                     parameters.ReferencedAssemblies.Add(assembly.Location);
                 }
             }
-
             parameters.ReferencedAssemblies.Add(Assembly.GetExecutingAssembly().Location);
             parameters.ReferencedAssemblies.Add(FbxExporterAssembly.Location);
             parameters.ReferencedAssemblies.Add(FbxSdkAssembly.Location);
             parameters.GenerateInMemory = true;
-
+            parameters.OutputAssembly = "Unity.ProBuilder.AddOns.FBX.Dynamic.dll";
             var c = new Microsoft.CSharp.CSharpCodeProvider();
             System.CodeDom.Compiler.CompilerResults results = c.CompileAssemblyFromSource(parameters, code);
             foreach(var error in results.Errors)
             {
-                Debug.Log("error: " + error.ToString());
+                Debug.LogError(error);
             }
             var asm = results.CompiledAssembly;
-            var compiledType = asm.GetType("__CompiledExpr__");
+            var compiledType = asm.GetType("UnityEngine.ProBuilder.Addons.FBX.FbxExporterDelegate");
             return compiledType.GetMethod("GetMeshForComponent");
         }
 
-        /*static bool GetMeshForComponent(ModelExporter exporter, ProBuilderMesh pmesh, FbxNode node)
+        internal static bool GetMeshForComponent(object exporter, ProBuilderMesh pmesh, object node)
         {
             Mesh mesh = new Mesh();
             MeshUtility.Compile(pmesh, mesh, m_FbxOptions.quads ? MeshTopology.Quads : MeshTopology.Triangles);
-            exporter.ExportMesh(mesh, node, pmesh.GetComponent<MeshRenderer>().sharedMaterials);
+
+            var exportMeshMethod = exporter.GetType().GetMethod("ExportMesh", BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { typeof(Mesh), node.GetType(), typeof(Material[]) }, null);
+            exportMeshMethod.Invoke(exporter, new object[] { mesh, node, pmesh.GetComponent<MeshRenderer>().sharedMaterials });
+
             Object.DestroyImmediate(mesh);
 
             // probuilder can't handle mesh assets that may be externally reloaded, just strip pb stuff for now.
@@ -168,6 +173,6 @@ namespace UnityEngine.ProBuilder.Addons.FBX
             Object.DestroyImmediate(pmesh);
 
             return true;
-        }*/
+        }
     }
 }
