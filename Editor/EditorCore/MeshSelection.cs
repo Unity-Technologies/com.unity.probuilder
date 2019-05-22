@@ -77,6 +77,7 @@ namespace UnityEditor.ProBuilder
         internal static int selectedEdgeCountObjectMax { get; private set; }
         internal static int selectedVertexCountObjectMax { get; private set; }
         internal static int selectedSharedVertexCountObjectMax { get; private set; }
+        internal static int selectedCoincidentVertexCountMax { get; private set; }
 
         // Faces that need to be refreshed when moving or modifying the actual selection
         internal static Dictionary<ProBuilderMesh, List<Face>> selectedFacesInEditZone
@@ -175,6 +176,7 @@ namespace UnityEditor.ProBuilder
             selectedFaceCountObjectMax = 0;
             selectedVertexCountObjectMax = 0;
             selectedSharedVertexCountObjectMax = 0;
+            selectedCoincidentVertexCountMax = 0;
             selectedEdgeCountObjectMax = 0;
 
             RecalculateSelectedComponentCounts();
@@ -218,6 +220,7 @@ namespace UnityEditor.ProBuilder
 
                 selectedVertexCountObjectMax = System.Math.Max(selectedVertexCountObjectMax, mesh.selectedIndexesInternal.Length);
                 selectedSharedVertexCountObjectMax = System.Math.Max(selectedSharedVertexCountObjectMax, mesh.selectedSharedVerticesCount);
+                selectedCoincidentVertexCountMax = System.Math.Max(selectedCoincidentVertexCountMax, mesh.selectedCoincidentVertexCount);
                 selectedFaceCountObjectMax = System.Math.Max(selectedFaceCountObjectMax, mesh.selectedFaceCount);
                 selectedEdgeCountObjectMax = System.Math.Max(selectedEdgeCountObjectMax, mesh.selectedEdgeCount);
             }

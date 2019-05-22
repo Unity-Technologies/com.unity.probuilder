@@ -32,7 +32,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOperations
         [Test]
         public static void ImportMeshWithQuads_MatchesWindingOrder()
         {
-            var srcPath = TestUtility.TemporarySavedAssetsDirectory + "maya-cube-quads.fbx";
+            var srcPath = TestUtility.temporarySavedAssetsDirectory + "maya-cube-quads.fbx";
 
             // do this song and dance because AssetDatabase.LoadAssetAtPath doesn't seem to work with models in the
             // Package directories
@@ -96,7 +96,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOperations
 
             TestUtility.AssertMeshesAreEqual(TestUtility.GetAssetTemplate<Mesh>("imported-cube-quads"), result.mesh);
             UObject.DestroyImmediate(result);
-            AssetDatabase.DeleteAsset(TestUtility.TemporarySavedAssetsDirectory + "maya-cube-quads.fbx");
+            AssetDatabase.DeleteAsset(TestUtility.temporarySavedAssetsDirectory + "maya-cube-quads.fbx");
         }
     }
 }

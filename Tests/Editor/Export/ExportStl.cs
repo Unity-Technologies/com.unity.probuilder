@@ -15,7 +15,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Export
         {
             var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             var current = Thread.CurrentThread.CurrentCulture;
-            string path = TestUtility.TemporarySavedAssetsDirectory + "/ExportStl.stl";
+            string path = TestUtility.temporarySavedAssetsDirectory + "/ExportStl.stl";
 
             try
             {
