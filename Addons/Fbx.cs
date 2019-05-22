@@ -26,23 +26,18 @@ namespace UnityEngine.ProBuilder.Addons.FBX
     [InitializeOnLoad]
     static class Fbx
     {
-        static Assembly s_FbxExporterAssembly = null;
         private static Assembly FbxExporterAssembly
         {
             get
             {
-                if (s_FbxExporterAssembly == null)
+                try
                 {
-                    try
-                    {
-                        s_FbxExporterAssembly = Assembly.Load("Unity.Formats.Fbx.Editor");
-                    }
-                    catch (System.IO.FileNotFoundException)
-                    {
-                        s_FbxExporterAssembly = null;
-                    }
+                    return Assembly.Load("Unity.Formats.Fbx.Editor");
                 }
-                return s_FbxExporterAssembly;
+                catch (System.IO.FileNotFoundException)
+                {
+                    return null;
+                }
             }
         }
         
@@ -84,14 +79,17 @@ namespace UnityEngine.ProBuilder.Addons.FBX
             
             m_FbxOptions.quads = ProBuilderSettings.Get<bool>("Export::m_FbxQuads", SettingsScope.User, true);
         }
-        
-        internal static bool GetMeshForComponent(object exporter, ProBuilderMesh pmesh, object node)
+
+        static bool GetMeshForComponent(object exporter, ProBuilderMesh pmesh, object node)
         {
             Mesh mesh = new Mesh();
             MeshUtility.Compile(pmesh, mesh, m_FbxOptions.quads ? MeshTopology.Quads : MeshTopology.Triangles);
 
+            // using reflection to call: exporter.ExportMesh(mesh, node, pmesh.GetComponent<MeshRenderer>().sharedMaterials)
+            var pMeshRenderer = pmesh.GetComponent<MeshRenderer>();
+            var sharedMaterials = pMeshRenderer ? pMeshRenderer.sharedMaterials : null;
             var exportMeshMethod = exporter.GetType().GetMethod("ExportMesh", BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { typeof(Mesh), node.GetType(), typeof(Material[]) }, null);
-            exportMeshMethod.Invoke(exporter, new object[] { mesh, node, pmesh.GetComponent<MeshRenderer>().sharedMaterials });
+            exportMeshMethod.Invoke(exporter, new object[] { mesh, node, sharedMaterials });
 
             Object.DestroyImmediate(mesh);
 
