@@ -47,7 +47,7 @@ namespace UnityEditor.ProBuilder
 
         static bool isFaceMode
         {
-            get { return ProBuilderEditor.selectMode == SelectMode.Face; }
+            get { return ProBuilderEditor.selectMode == SelectMode.Face || ProBuilderEditor.selectMode == SelectMode.TextureFace; }
         }
 
         static Material GetDefaultMaterial()
