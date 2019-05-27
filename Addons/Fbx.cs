@@ -1,10 +1,9 @@
 // todo Once we drop support for 2018.3, use optional assembly definitions
-#if PROBUILDER_FBX_2_0_1_OR_NEWER
 using System;
 using UnityEditor;
-using Autodesk.Fbx;
+using System.Reflection;
+using System.Linq;
 using UnityEditor.ProBuilder;
-using UnityEditor.Formats.Fbx.Exporter;
 
 namespace UnityEngine.ProBuilder.Addons.FBX
 {
@@ -16,9 +15,9 @@ namespace UnityEngine.ProBuilder.Addons.FBX
         /// <summary>
         /// Export mesh topology as quads if possible.
         /// </summary>
-        #pragma warning disable 649
+#pragma warning disable 649
         public bool quads;
-        #pragma warning restore 649
+#pragma warning restore 649
     }
 
     /// <summary>
@@ -27,16 +26,27 @@ namespace UnityEngine.ProBuilder.Addons.FBX
     [InitializeOnLoad]
     static class Fbx
     {
-        static bool s_FbxIsLoaded = false;
-
+        private static Assembly FbxExporterAssembly
+        {
+            get
+            {
+                try
+                {
+                    return Assembly.Load("Unity.Formats.Fbx.Editor");
+                }
+                catch (System.IO.FileNotFoundException)
+                {
+                    return null;
+                }
+            }
+        }
+        
         static readonly Type[] k_ProBuilderTypes = new Type[]
         {
             typeof(BezierShape),
             typeof(PolyShape),
             typeof(Entity)
         };
-
-        public static bool fbxEnabled { get { return s_FbxIsLoaded; } }
 
         static FbxOptions m_FbxOptions = new FbxOptions() {
             quads = true
@@ -49,18 +59,38 @@ namespace UnityEngine.ProBuilder.Addons.FBX
 
         static void TryLoadFbxSupport()
         {
-            if (s_FbxIsLoaded)
+            if (FbxExporterAssembly == null)
+            {
                 return;
-            ModelExporter.RegisterMeshCallback<ProBuilderMesh>(GetMeshForComponent, true);
+            }
+
+            var modelExporter = FbxExporterAssembly.GetType("UnityEditor.Formats.Fbx.Exporter.ModelExporter");
+            var registerMeshCallback = modelExporter.GetMethods(BindingFlags.NonPublic | BindingFlags.Static).Where(x => x.Name == "RegisterMeshCallback").First(x => x.ContainsGenericParameters);
+            registerMeshCallback = registerMeshCallback.MakeGenericMethod(typeof(ProBuilderMesh));
+
+            var getMeshForComponent = FbxExporterAssembly.GetTypes()
+               .Where(t => t.BaseType == typeof(MulticastDelegate) && t.Name.StartsWith("GetMeshForComponent"))
+               .First(t => t.ContainsGenericParameters);
+            
+            getMeshForComponent = getMeshForComponent.MakeGenericType(typeof(ProBuilderMesh));
+            var meshDelegate = Delegate.CreateDelegate(getMeshForComponent, typeof(Fbx).GetMethod("GetMeshForComponent", BindingFlags.NonPublic | BindingFlags.Static));
+
+            registerMeshCallback.Invoke(null, new object[] { meshDelegate, true });
+            
             m_FbxOptions.quads = ProBuilderSettings.Get<bool>("Export::m_FbxQuads", SettingsScope.User, true);
-            s_FbxIsLoaded = true;
         }
 
-        static bool GetMeshForComponent(ModelExporter exporter, ProBuilderMesh pmesh, FbxNode node)
+        static bool GetMeshForComponent(object exporter, ProBuilderMesh pmesh, object node)
         {
             Mesh mesh = new Mesh();
             MeshUtility.Compile(pmesh, mesh, m_FbxOptions.quads ? MeshTopology.Quads : MeshTopology.Triangles);
-            exporter.ExportMesh(mesh, node, pmesh.GetComponent<MeshRenderer>().sharedMaterials);
+
+            // using reflection to call: exporter.ExportMesh(mesh, node, pmesh.GetComponent<MeshRenderer>().sharedMaterials)
+            var pMeshRenderer = pmesh.GetComponent<MeshRenderer>();
+            var sharedMaterials = pMeshRenderer ? pMeshRenderer.sharedMaterials : null;
+            var exportMeshMethod = exporter.GetType().GetMethod("ExportMesh", BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { typeof(Mesh), node.GetType(), typeof(Material[]) }, null);
+            exportMeshMethod.Invoke(exporter, new object[] { mesh, node, sharedMaterials });
+
             Object.DestroyImmediate(mesh);
 
             // probuilder can't handle mesh assets that may be externally reloaded, just strip pb stuff for now.
@@ -78,4 +108,3 @@ namespace UnityEngine.ProBuilder.Addons.FBX
         }
     }
 }
-#endif

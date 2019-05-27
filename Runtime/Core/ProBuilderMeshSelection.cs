@@ -20,6 +20,7 @@ namespace UnityEngine.ProBuilder
 
         bool m_SelectedCacheDirty;
         int m_SelectedSharedVerticesCount = 0;
+        int m_SelectedCoincidentVertexCount = 0;
         HashSet<int> m_SelectedSharedVertices = new HashSet<int>();
         List<int> m_SelectedCoincidentVertices = new List<int>();
 
@@ -65,6 +66,15 @@ namespace UnityEngine.ProBuilder
             }
         }
 
+        internal int selectedCoincidentVertexCount
+        {
+            get
+            {
+                CacheSelection();
+                return m_SelectedCoincidentVertexCount;
+            }
+        }
+
         internal IEnumerable<int> selectedSharedVertices
         {
             get
@@ -95,14 +105,18 @@ namespace UnityEngine.ProBuilder
                 m_SelectedCoincidentVertices.Clear();
                 var lookup = sharedVertexLookup;
                 m_SelectedSharedVerticesCount = 0;
+                m_SelectedCoincidentVertexCount = 0;
 
                 foreach (var i in m_SelectedVertices)
                 {
                     if (m_SelectedSharedVertices.Add(lookup[i]))
                     {
-                        m_SelectedSharedVerticesCount++;
+                        var coincident = sharedVerticesInternal[lookup[i]];
 
-                        foreach (var n in sharedVerticesInternal[lookup[i]])
+                        m_SelectedSharedVerticesCount++;
+                        m_SelectedCoincidentVertexCount += coincident.Count;
+
+                        foreach (var n in coincident)
                             m_SelectedCoincidentVertices.Add(n);
                     }
                 }

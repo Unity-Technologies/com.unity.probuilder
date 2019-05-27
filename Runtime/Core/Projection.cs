@@ -123,7 +123,7 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        internal static void PlanarProject(ProBuilderMesh mesh, Face face)
+        internal static void PlanarProject(ProBuilderMesh mesh, Face face, Vector3 projection = default)
         {
             var nrm = Math.Normal(mesh, face);
             var trs = (Transform)null;
@@ -135,8 +135,12 @@ namespace UnityEngine.ProBuilder
                 nrm = trs.TransformDirection(nrm);
             }
 
-            var axis = VectorToProjectionAxis(nrm);
-            var prj = GetTangentToAxis(axis);
+            Vector3 prj = projection;
+            if (prj == Vector3.zero)
+            {
+                var axis = VectorToProjectionAxis(nrm);
+                prj = GetTangentToAxis(axis);
+            }
 
             var uAxis = Vector3.Cross(nrm, prj);
             var vAxis = Vector3.Cross(uAxis, nrm);
