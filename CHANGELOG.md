@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.1.0-preview.4] - 2019-05-27
+## [4.1.0-preview.5] - 2019-05-27
 
 ### Features
 
@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Improved the naming of exported mesh assets.
 - Added API examples as a sample package.
 - Re-enabled FBX Exporter integration, adding support for quad export and automatical removal of ProBuilder components on export.
+- Added ability to duplicate faces to a new game object or to new submesh.
 
 ### Bug Fixes
 
