@@ -17,23 +17,27 @@ namespace UnityEngine.ProBuilder.Tests.Framework
 {
     abstract class TemporaryAssetTest
     {
-        [SetUp]
-        public void Setup()
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
         {
-            if (!Directory.Exists(TestUtility.TemporarySavedAssetsDirectory))
-                Directory.CreateDirectory(TestUtility.TemporarySavedAssetsDirectory);
+            if (!Directory.Exists(TestUtility.temporarySavedAssetsDirectory))
+                Directory.CreateDirectory(TestUtility.temporarySavedAssetsDirectory);
         }
 
-        [TearDown]
-        public void Cleanup()
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
         {
-            if (Directory.Exists(TestUtility.TemporarySavedAssetsDirectory))
-                Directory.Delete(TestUtility.TemporarySavedAssetsDirectory, true);
+            if (Directory.Exists(TestUtility.temporarySavedAssetsDirectory))
+                Directory.Delete(TestUtility.temporarySavedAssetsDirectory, true);
 
-            var meta = TestUtility.TemporarySavedAssetsDirectory;
+            var meta = TestUtility.temporarySavedAssetsDirectory;
+
             if (meta.EndsWith("/") || meta.EndsWith("\\"))
                 meta = meta.Substring(0, meta.Length - 1);
+
             File.Delete(meta + ".meta");
+
+            AssetDatabase.Refresh();
         }
     }
 
@@ -67,7 +71,7 @@ namespace UnityEngine.ProBuilder.Tests.Framework
             }
         }
 
-        public static string TemporarySavedAssetsDirectory
+        public static string temporarySavedAssetsDirectory
         {
             get { return k_TempDirectory; }
         }
@@ -468,20 +472,20 @@ namespace UnityEngine.ProBuilder.Tests.Framework
 
         public static string SaveAssetTemporary<T>(UObject asset) where T : UObject
         {
-            if (!Directory.Exists(TemporarySavedAssetsDirectory))
-                Directory.CreateDirectory(TemporarySavedAssetsDirectory);
+            if (!Directory.Exists(temporarySavedAssetsDirectory))
+                Directory.CreateDirectory(temporarySavedAssetsDirectory);
 
-            string path = AssetDatabase.GenerateUniqueAssetPath(string.Format("{0}/{1}.asset", TemporarySavedAssetsDirectory, asset.name));
+            string path = AssetDatabase.GenerateUniqueAssetPath(string.Format("{0}/{1}.asset", temporarySavedAssetsDirectory, asset.name));
             AssetDatabase.CreateAsset(asset, path);
             return path;
         }
 
         public static void ClearTempAssets()
         {
-            if (!Directory.Exists(TemporarySavedAssetsDirectory))
+            if (!Directory.Exists(temporarySavedAssetsDirectory))
                 return;
 
-            Directory.Delete(TemporarySavedAssetsDirectory);
+            Directory.Delete(temporarySavedAssetsDirectory);
         }
 
         public static Material redMaterial

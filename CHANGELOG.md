@@ -5,13 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.1.0-preview.4] - 2019-05-06
+## [4.1.0-preview.4] - 2019-05-27
 
 ### Features
 
 - Added the option to export assets either as prefabs, or just the mesh.
 - Improved the naming of exported mesh assets.
 - Added API examples as a sample package.
+- Re-enabled FBX Exporter integration, adding support for quad export and automatical removal of ProBuilder components on export.
 
 ### Bug Fixes
 
@@ -34,11 +35,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed `Poly Shape` creation tool not recognizing terrain when adding the origin point.
 - Fixed `Select Faces with Color` not selecting faces with no color.
 - Fixed compile error in runtime samples on Unity 2019.3.
+- Fixed `Split Vertices` not collecting coincident vertices when selected with a mouse click.
+- Fixed case where `Apply Material` would not be registered for Undo.
+- Fixed `Export OBJ` resulting in corrupted files when exporting multiple objects as a single model.
+- Fixed `Poly Shape` tool incorrectly rendering a mesh preview before the shape is finalized.
+- Fixed case where `Poly Shape` could leave the active tool in an invalid state.
 
 ### Changes
 
 - ProBuilder assembly definitions now have `Auto Referenced` enabled.
 - Project layout restructured for compatibility with file protocol.
+- Improved the default UV layout of Cone shape.
 
 ## [4.0.4] - 2019-03-13
 

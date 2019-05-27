@@ -356,7 +356,7 @@ namespace UnityEditor.ProBuilder
             if (mat == null)
                 return;
 
-            UndoUtility.RecordSelection(selection.ToArray(), "Set Face Materials");
+            UndoUtility.RecordComponents<MeshRenderer, ProBuilderMesh>(selection, "Set Material");
 
             foreach (var mesh in selection)
             {
