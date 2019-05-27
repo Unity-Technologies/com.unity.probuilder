@@ -180,7 +180,19 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="mesh">The source mesh.</param>
         /// <param name="faces">The faces to split from the mesh.</param>
         /// <returns>The faces created forming the detached face group.</returns>
-        public static List<Face> DetachFaces(this ProBuilderMesh mesh, IEnumerable<Face> faces, bool deleteSourceFaces = true)
+        public static List<Face> DetachFaces(this ProBuilderMesh mesh, IEnumerable<Face> faces)
+        {
+            return DetachFaces(mesh, faces, true);
+        }
+
+        /// <summary>
+        /// Split any shared vertices so that this face may be moved independently of the main object.
+        /// </summary>
+        /// <param name="mesh">The source mesh.</param>
+        /// <param name="faces">The faces to split from the mesh.</param>
+        /// <param name="deleteSourceFaces">Whether or not to delete the faces on the source geometry which were detached.</param>
+        /// <returns>The faces created forming the detached face group.</returns>
+        public static List<Face> DetachFaces(this ProBuilderMesh mesh, IEnumerable<Face> faces, bool deleteSourceFaces)
         {
             if (mesh == null)
                 throw new System.ArgumentNullException("mesh");
