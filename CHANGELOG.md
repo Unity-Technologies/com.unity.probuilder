@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Improved the naming of exported mesh assets.
 - Added API examples as a sample package.
 - Re-enabled FBX Exporter integration, adding support for quad export and automatical removal of ProBuilder components on export.
+- Added ability to duplicate faces to a new game object or to new submesh.
 
 ### Bug Fixes
 
