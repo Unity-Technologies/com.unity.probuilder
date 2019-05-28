@@ -63,7 +63,6 @@ namespace UnityEngine.ProBuilder.EditorTests.Geometry
             Assert.That(sharedVertices.Length, Is.GreaterThanOrEqualTo(2));
 
             var selectedVertices = sharedVertices[0].Union(sharedVertices[1]);
-            Debug.Log("selected: " + string.Join(", ", selectedVertices));
             Assert.That(selectedVertices.Count(), Is.GreaterThan(1));
 
             // Set the selected vertices to two different shared vertices (collapsable)
