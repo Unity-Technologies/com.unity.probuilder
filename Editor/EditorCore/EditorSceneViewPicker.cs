@@ -83,7 +83,17 @@ namespace UnityEditor.ProBuilder
                     UndoUtility.RecordSelection(mesh, "Select Face");
 
                     if (sel > -1)
-                        mesh.RemoveFromFaceSelectionAtIndex(sel);
+                    {
+                        if (!appendModifier || s_Selection.face == mesh.GetActiveFace())
+                        {
+                            mesh.RemoveFromFaceSelectionAtIndex(sel);
+                        }
+                        else
+                        {
+                            mesh.selectedFaceIndicesInternal = mesh.selectedFaceIndicesInternal.Remove(ind);
+                            mesh.SetSelectedFaces(mesh.selectedFaceIndicesInternal.Add(ind));
+                        }
+                    }
                     else
                         mesh.AddToFaceSelection(ind);
                 }
@@ -94,7 +104,17 @@ namespace UnityEditor.ProBuilder
                     UndoUtility.RecordSelection(mesh, "Select Edge");
 
                     if (ind > -1)
-                        mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().RemoveAt(ind));
+                    {
+                        if (!appendModifier || s_Selection.edge == mesh.GetActiveEdge())
+                        {
+                            mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().RemoveAt(ind));
+                        }
+                        else
+                        {
+                            mesh.selectedEdgesInternal = mesh.selectedEdgesInternal.Remove(s_Selection.edge);
+                            mesh.SetSelectedEdges(mesh.selectedEdgesInternal.Add(s_Selection.edge));
+                        }
+                    }
                     else
                         mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().Add(s_Selection.edge));
                 }
@@ -108,18 +128,27 @@ namespace UnityEditor.ProBuilder
                     {
                         var sharedIndex = mesh.sharedVertexLookup[s_Selection.vertex];
                         var sharedVertex = mesh.sharedVerticesInternal[sharedIndex];
-                        s_IndexBuffer.Clear();
-                        foreach (var vertex in sharedVertex)
+
+                        if (!appendModifier || s_Selection.vertex == mesh.GetActiveVertex())
                         {
-                            var index = Array.IndexOf(mesh.selectedIndexesInternal, vertex);
-                            if (index < 0)
-                                continue;
+                            s_IndexBuffer.Clear();
+                            foreach (var vertex in sharedVertex)
+                            {
+                                var index = Array.IndexOf(mesh.selectedIndexesInternal, vertex);
+                                if (index < 0)
+                                    continue;
 
-                            s_IndexBuffer.Add(index);
+                                s_IndexBuffer.Add(index);
+                            }
+
+                            s_IndexBuffer.Sort();
+                            mesh.SetSelectedVertices(mesh.selectedIndexesInternal.SortedRemoveAt(s_IndexBuffer));
                         }
-
-                        s_IndexBuffer.Sort();
-                        mesh.SetSelectedVertices(mesh.selectedIndexesInternal.SortedRemoveAt(s_IndexBuffer));
+                        else
+                        {
+                            mesh.selectedIndexesInternal = mesh.selectedIndexesInternal.Remove(s_Selection.vertex);
+                            mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(s_Selection.vertex));
+                        }
                     }
                     else
                         mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(s_Selection.vertex));
