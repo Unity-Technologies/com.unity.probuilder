@@ -90,6 +90,7 @@ namespace UnityEditor.ProBuilder
                 // Faces (All)
                 new Actions.DeleteFaces(),
                 new Actions.DetachFaces(),
+                new Actions.DuplicateFaces(),
                 new Actions.ExtrudeFaces(),
 
                 // Face
