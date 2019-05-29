@@ -19,7 +19,11 @@ namespace UnityEditor.ProBuilder.Actions
         static Pref<CoordinateSpace> s_CoordinateSpace = new Pref<CoordinateSpace>("MoveElements.s_CoordinateSpace", CoordinateSpace.World);
 
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon(null, IconSkin.Pro); } }
+        
+        public override Texture2D icon
+        {
+            get { return null; }
+        }
 
         public override TooltipContent tooltip
         {
@@ -95,7 +99,11 @@ namespace UnityEditor.ProBuilder.Actions
                 ProBuilderEditor.Refresh();
             }
 
-            return new ActionResult(ActionResult.Status.Success, "Move " + MeshSelection.selectedVertexCount + " Element(s)");
+            if(ProBuilderEditor.selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
+                return new ActionResult(ActionResult.Status.Success, "Move " + MeshSelection.selectedEdgeCount + (MeshSelection.selectedEdgeCount > 1 ? " Edges" : " Edge"));
+            if(ProBuilderEditor.selectMode.ContainsFlag(SelectMode.Face | SelectMode.TextureFace))
+                return new ActionResult(ActionResult.Status.Success, "Move " + MeshSelection.selectedFaceCount + (MeshSelection.selectedFaceCount > 1 ? " Faces" : " Face"));
+            return new ActionResult(ActionResult.Status.Success, "Move " + MeshSelection.selectedVertexCount + (MeshSelection.selectedVertexCount > 1 ? " Vertices" : " Vertex"));
         }
     }
 }
