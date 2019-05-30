@@ -195,6 +195,10 @@ namespace UnityEditor.ProBuilder.UI
         public static Rect DoResizeHandle(Rect rect)
         {
             var evt = Event.current;
+            if (evt.rawType == UnityEngine.EventType.Used)
+            {
+                return rect;
+            }
             IDictionary<int, Tuple<Rect, ComputeResize>> resizeHandles = new Dictionary<int, Tuple<Rect, ComputeResize>>();
             resizeHandles.Add(CreateResizeHandleControl(new Rect(rect.width - s_ResizeHandleAreaDimension, rect.height - s_ResizeHandleAreaDimension, s_ResizeHandleAreaDimension, s_ResizeHandleAreaDimension), "BottomRight", rect, MouseCursor.ResizeUpLeft, ResizeBottomRight));
             resizeHandles.Add(CreateResizeHandleControl(new Rect(0, rect.height - s_ResizeHandleAreaDimension, s_ResizeHandleAreaDimension, s_ResizeHandleAreaDimension), "BottomLeft", rect, MouseCursor.ResizeUpRight, ResizeBottomLeft));
