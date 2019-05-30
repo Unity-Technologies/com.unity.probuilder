@@ -57,7 +57,14 @@ namespace UnityEditor.ProBuilder
                 return null;
             }
 
-            MeshSelection.AddToSelection(s_Selection.gameObject);
+            if (appendModifier && Selection.gameObjects.Contains(s_Selection.gameObject))
+            {
+                MeshSelection.MakeActiveObject(s_Selection.gameObject);
+            }
+            else
+            {
+                MeshSelection.AddToSelection(s_Selection.gameObject);
+            }
 
             if (s_Selection.mesh != null)
             {
