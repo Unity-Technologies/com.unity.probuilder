@@ -28,7 +28,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         Pref<ExportFormat> m_ExportFormat = new Pref<ExportFormat>("export.format", k_DefaultFormat);
         Pref<bool> m_ExportRecursive = new Pref<bool>("export.exportRecursive", false);
-        Pref<bool> m_ExportAsGroup = new Pref<bool>("export.exportAsGroup", true);
+        Pref<bool> m_ExportAsGroup = new Pref<bool>("export.exportAsGroup", false);
 
         // obj specific
         Pref<bool> m_ObjExportRightHanded = new Pref<bool>("export.objExportRightHanded", true);
