@@ -161,27 +161,6 @@ namespace UnityEngine.ProBuilder
     }
 
     /// <summary>
-    /// pb_ShapeEditor enum.
-    /// </summary>
-    [System.Obsolete("See pb_ShapeType")]
-    enum Shape
-    {
-        Cube,
-        Stair,
-        Prism,
-        Cylinder,
-        Plane,
-        Door,
-        Pipe,
-        Cone,
-        Sprite,
-        Arch,
-        Icosahedron,
-        Torus,
-        Custom
-    }
-
-    /// <summary>
     /// Human readable axis enum.
     /// </summary>
     public enum Axis
