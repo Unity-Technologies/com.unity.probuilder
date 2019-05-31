@@ -121,9 +121,9 @@ namespace UnityEditor.ProBuilder.UI
             public Rect startingRect;
         }
 
-        private delegate Rect ComputeResize(Rect curretRect, ResizeHandleState handleState, Event currentEvent);
+        delegate Rect ComputeResize(Rect currentRect, ResizeHandleState handleState, Event currentEvent, int minimumWidth, int minimumHeight);
 
-        private static KeyValuePair<int, Tuple<Rect, ComputeResize>> CreateResizeHandleControl(Rect activeRect, String suffix, Rect parentWindowRect, UnityEditor.MouseCursor cursor, ComputeResize resizeDelegate)
+        static KeyValuePair<int, Tuple<Rect, ComputeResize>> CreateResizeHandleControl(Rect activeRect, String suffix, Rect parentWindowRect, UnityEditor.MouseCursor cursor, ComputeResize resizeDelegate)
         {
             int id = GUIUtility.GetControlID(("ProBuilderWindowResize" + suffix).GetHashCode(), FocusType.Passive, parentWindowRect);
             HandleUtility.AddControl(id, Vector2.Distance(activeRect.center, Event.current.mousePosition));
@@ -131,60 +131,66 @@ namespace UnityEditor.ProBuilder.UI
             return new KeyValuePair<int, Tuple<Rect, ComputeResize>>(id, new Tuple<Rect, ComputeResize>(activeRect, resizeDelegate));
         }
 
-        private static Rect ResizeBottomRight(Rect currentRect, ResizeHandleState handleState, Event currentEvent)
+        static Rect ResizeBottomRight(Rect currentRect, ResizeHandleState handleState, Event currentEvent, int minimumWidth, int minimumHeight)
         {
             currentRect.width = handleState.startingRect.width + (currentEvent.mousePosition.x - handleState.origin.x);
             currentRect.height = handleState.startingRect.height + (currentEvent.mousePosition.y - handleState.origin.y);
             return currentRect;
         }
 
-        private static Rect ResizeBottomLeft(Rect currentRect, ResizeHandleState handleState, Event currentEvent)
+        static Rect ResizeBottomLeft(Rect currentRect, ResizeHandleState handleState, Event currentEvent, int minimumWidth, int minimumHeight)
         {
-            currentRect.x = currentRect.x + (currentEvent.mousePosition.x - handleState.origin.x);
             currentRect.width = currentRect.width - (currentEvent.mousePosition.x - handleState.origin.x);
+            currentRect.width = Mathf.Max(currentRect.width, minimumWidth);
+            currentRect.x = handleState.startingRect.xMax - currentRect.width;
             currentRect.height = handleState.startingRect.height + (currentEvent.mousePosition.y - handleState.origin.y);
             return currentRect;
         }
 
-        private static Rect ResizeBottom(Rect currentRect, ResizeHandleState handleState, Event currentEvent)
+        static Rect ResizeBottom(Rect currentRect, ResizeHandleState handleState, Event currentEvent, int minimumWidth, int minimumHeight)
         {
             currentRect.height = handleState.startingRect.height + (currentEvent.mousePosition.y - handleState.origin.y);
             return currentRect;
         }
 
-        private static Rect ResizeTop(Rect currentRect, ResizeHandleState handleState, Event currentEvent)
+        static Rect ResizeTop(Rect currentRect, ResizeHandleState handleState, Event currentEvent, int minimumWidth, int minimumHeight)
         {
             currentRect.height = currentRect.height - (currentEvent.mousePosition.y - handleState.origin.y);
-            currentRect.y = currentRect.y + (currentEvent.mousePosition.y - handleState.origin.y);
+            currentRect.height = Mathf.Max(currentRect.height, minimumHeight);
+            currentRect.y = handleState.startingRect.yMax - currentRect.height;
             return currentRect;
         }
 
-        private static Rect ResizeLeft(Rect currentRect, ResizeHandleState handleState, Event currentEvent)
+        static Rect ResizeLeft(Rect currentRect, ResizeHandleState handleState, Event currentEvent, int minimumWidth, int minimumHeight)
         {
-            currentRect.x = currentRect.x + (currentEvent.mousePosition.x - handleState.origin.x);
             currentRect.width = currentRect.width - (currentEvent.mousePosition.x - handleState.origin.x);
+            currentRect.width = Mathf.Max(currentRect.width, minimumWidth);
+            currentRect.x = handleState.startingRect.xMax - currentRect.width;            
             return currentRect;
         }
 
-        private static Rect ResizeRight(Rect currentRect, ResizeHandleState handleState, Event currentEvent)
+        static Rect ResizeRight(Rect currentRect, ResizeHandleState handleState, Event currentEvent, int minimumWidth, int minimumHeight)
         {
             currentRect.width = handleState.startingRect.width + (currentEvent.mousePosition.x - handleState.origin.x);
             return currentRect;
         }
 
-        private static Rect ResizeTopLeft(Rect currentRect, ResizeHandleState handleState, Event currentEvent)
+        static Rect ResizeTopLeft(Rect currentRect, ResizeHandleState handleState, Event currentEvent, int minimumWidth, int minimumHeight)
         {
             currentRect.height = currentRect.height - (currentEvent.mousePosition.y - handleState.origin.y);
-            currentRect.y = currentRect.y + (currentEvent.mousePosition.y - handleState.origin.y);
-            currentRect.x = currentRect.x + (currentEvent.mousePosition.x - handleState.origin.x);
+            currentRect.height = Mathf.Max(currentRect.height, minimumHeight);
+            currentRect.y = handleState.startingRect.yMax - currentRect.height;
             currentRect.width = currentRect.width - (currentEvent.mousePosition.x - handleState.origin.x);
+            currentRect.width = Mathf.Max(currentRect.width, minimumWidth);
+            currentRect.x = handleState.startingRect.xMax - currentRect.width;
             return currentRect;
         }
 
-        private static Rect ResizeTopRight(Rect currentRect, ResizeHandleState handleState, Event currentEvent)
+        static Rect ResizeTopRight(Rect currentRect, ResizeHandleState handleState, Event currentEvent, int minimumWidth, int minimumHeight)
         {
             currentRect.height = currentRect.height - (currentEvent.mousePosition.y - handleState.origin.y);
-            currentRect.y = currentRect.y + (currentEvent.mousePosition.y - handleState.origin.y);
+            currentRect.height = Mathf.Max(currentRect.height, minimumHeight);
+            currentRect.y = handleState.startingRect.yMax - currentRect.height;
             currentRect.width = handleState.startingRect.width + (currentEvent.mousePosition.x - handleState.origin.x);
             return currentRect;
         }
@@ -192,10 +198,10 @@ namespace UnityEditor.ProBuilder.UI
         static int s_ResizeHandleAreaDimension = 6;
         static int s_MoveWindowAreaHeight = 30;
 
-        public static Rect DoResizeHandle(Rect rect)
+        public static Rect DoResizeHandle(Rect rect, int minimumWidth, int minimumHeight)
         {
             var evt = Event.current;
-            if (evt.rawType == UnityEngine.EventType.Used)
+            if (evt.type == EventType.Used)
             {
                 return rect;
             }
@@ -245,7 +251,7 @@ namespace UnityEditor.ProBuilder.UI
             else if (evt.type == EventType.MouseDrag)
             {
                 var state = (ResizeHandleState)GUIUtility.GetStateObject(typeof(ResizeHandleState), GUIUtility.hotControl);
-                rect = resizeHandles[GUIUtility.hotControl].Item2(rect, state, evt);
+                rect = resizeHandles[GUIUtility.hotControl].Item2(rect, state, evt, minimumWidth, minimumHeight);
                 
                 GUI.changed = true;
                 evt.Use();
