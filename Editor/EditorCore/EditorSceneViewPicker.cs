@@ -158,7 +158,7 @@ namespace UnityEditor.ProBuilder
                             mesh.SetSelectedVertices(mesh.selectedIndexesInternal);
                         }
                         else
-                            mesh.SetSelectedVertices(mesh.selectedIndexesInternal.AddRange(s_IndexBuffer.ToArray()));
+                            mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(s_Selection.vertex));
                     }
                     else
                         mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(s_Selection.vertex));
