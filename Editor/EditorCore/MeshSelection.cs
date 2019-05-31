@@ -373,7 +373,7 @@ namespace UnityEditor.ProBuilder
 
             Object[] temp = new Object[Selection.objects.Length - 1];
 
-            for (int i = 1; i < temp.Length; i++)
+            for (int i = 0; i < temp.Length; i++)
             {
                 if (i != ind)
                     temp[i] = Selection.objects[i];

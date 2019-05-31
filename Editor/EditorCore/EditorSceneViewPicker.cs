@@ -32,6 +32,8 @@ namespace UnityEditor.ProBuilder
         public static ProBuilderMesh DoMouseClick(Event evt, SelectMode selectionMode, ScenePickerPreferences pickerPreferences)
         {
             bool appendModifier = EditorHandleUtility.IsAppendModifier(evt.modifiers);
+            bool addToSelectionModifier = EditorHandleUtility.IsSelectionAddModifier(evt.modifiers);
+            bool addOrRemoveIfPresentFromSelectionModifier = EditorHandleUtility.IsSelectionAppendOrRemoveIfPresentModifier(evt.modifiers);
 
             if (!appendModifier)
                 MeshSelection.SetSelection((GameObject)null);
@@ -57,8 +59,10 @@ namespace UnityEditor.ProBuilder
                 return null;
             }
 
-            if (appendModifier && Selection.gameObjects.Contains(s_Selection.gameObject))
+            bool activeObjectSelectionChanged = false;
+            if (Selection.gameObjects.Contains(s_Selection.gameObject))
             {
+                activeObjectSelectionChanged = true;
                 MeshSelection.MakeActiveObject(s_Selection.gameObject);
             }
             else
@@ -91,7 +95,8 @@ namespace UnityEditor.ProBuilder
 
                     if (sel > -1)
                     {
-                        if (!appendModifier || s_Selection.face == mesh.GetActiveFace())
+                        if (!appendModifier || addOrRemoveIfPresentFromSelectionModifier ||
+                            (addToSelectionModifier && s_Selection.face == mesh.GetActiveFace() && !activeObjectSelectionChanged))
                         {
                             mesh.RemoveFromFaceSelectionAtIndex(sel);
                         }
@@ -112,7 +117,8 @@ namespace UnityEditor.ProBuilder
 
                     if (ind > -1)
                     {
-                        if (!appendModifier || s_Selection.edge == mesh.GetActiveEdge())
+                        if (!appendModifier || addOrRemoveIfPresentFromSelectionModifier ||
+                            (addToSelectionModifier && s_Selection.edge == mesh.GetActiveEdge() && !activeObjectSelectionChanged))
                         {
                             mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().RemoveAt(ind));
                         }
@@ -128,34 +134,31 @@ namespace UnityEditor.ProBuilder
                 else if (s_Selection.vertex > -1)
                 {
                     int ind = Array.IndexOf(mesh.selectedIndexesInternal, s_Selection.vertex);
-
+                    
                     UndoUtility.RecordSelection(mesh, "Select Vertex");
 
                     if (ind > -1)
                     {
                         var sharedIndex = mesh.sharedVertexLookup[s_Selection.vertex];
                         var sharedVertex = mesh.sharedVerticesInternal[sharedIndex];
-
-                        if (!appendModifier || s_Selection.vertex == mesh.GetActiveVertex())
+                        s_IndexBuffer.Clear();
+                        foreach (var vertex in sharedVertex)
                         {
-                            s_IndexBuffer.Clear();
-                            foreach (var vertex in sharedVertex)
-                            {
-                                var index = Array.IndexOf(mesh.selectedIndexesInternal, vertex);
-                                if (index < 0)
-                                    continue;
+                            var index = Array.IndexOf(mesh.selectedIndexesInternal, vertex);
+                            if (index < 0)
+                                continue;
 
-                                s_IndexBuffer.Add(index);
-                            }
-
-                            s_IndexBuffer.Sort();
-                            mesh.SetSelectedVertices(mesh.selectedIndexesInternal.SortedRemoveAt(s_IndexBuffer));
+                            s_IndexBuffer.Add(index);
+                        }
+                        s_IndexBuffer.Sort();
+                        mesh.selectedIndexesInternal = mesh.selectedIndexesInternal.SortedRemoveAt(s_IndexBuffer);
+                        if (!appendModifier || addOrRemoveIfPresentFromSelectionModifier ||
+                           (addToSelectionModifier && s_Selection.vertex == mesh.GetActiveVertex() && !activeObjectSelectionChanged))
+                        {                           
+                            mesh.SetSelectedVertices(mesh.selectedIndexesInternal);
                         }
                         else
-                        {
-                            mesh.selectedIndexesInternal = mesh.selectedIndexesInternal.Remove(s_Selection.vertex);
-                            mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(s_Selection.vertex));
-                        }
+                            mesh.SetSelectedVertices(mesh.selectedIndexesInternal.AddRange(s_IndexBuffer.ToArray()));
                     }
                     else
                         mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(s_Selection.vertex));
