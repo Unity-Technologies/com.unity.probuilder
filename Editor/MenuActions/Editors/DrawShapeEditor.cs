@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override ActionResult DoAction()
         {
-            EditorTools.EditorTools.SetActiveTool<ShapeTool>();
+            EditorTools.EditorTools.SetActiveTool<DrawShapeTool>();
             return new ActionResult(ActionResult.Status.Success, "Open Shape Tool");
         }
     }
