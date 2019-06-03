@@ -6,18 +6,18 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-    sealed class DetachFaces : MenuAction
+    sealed class DuplicateFaces : MenuAction
     {
-        Pref<DetachSetting> m_DetachSetting = new Pref<DetachSetting>("DetachFaces.target", DetachSetting.GameObject);
+        Pref<DuplicateFaceSetting> m_DuplicateFaceSetting = new Pref<DuplicateFaceSetting>("DuplicateFaces.target", DuplicateFaceSetting.GameObject);
 
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_Detach", IconSkin.Pro); } }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_Duplicate", IconSkin.Pro); } } //icon to be replaced
         public override TooltipContent tooltip { get { return s_Tooltip; } }
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
-                "Detach Faces",
-                "Creates a new object (or submesh) from the selected faces."
+                "Duplicate Faces",
+                "Makes an exact copy of the selected faces, and either adds them to this mesh or creates a new Game Object"
             );
 
         public override SelectMode validSelectModes
@@ -35,7 +35,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
-        enum DetachSetting
+        internal enum DuplicateFaceSetting
         {
             GameObject,
             Submesh
@@ -43,20 +43,20 @@ namespace UnityEditor.ProBuilder.Actions
 
         protected override void OnSettingsGUI()
         {
-            GUILayout.Label("Detach Face Settings", EditorStyles.boldLabel);
+            GUILayout.Label("Duplicate Face Settings", EditorStyles.boldLabel);
 
-            EditorGUILayout.HelpBox("Detach Faces can separate the selection into either a new GameObject or a submesh.", MessageType.Info);
+            EditorGUILayout.HelpBox("You can create a new Game Object with the selected face(s), or keep them as part of this object by using a Submesh.", MessageType.Info);
 
             EditorGUI.BeginChangeCheck();
 
-            m_DetachSetting.value = (DetachSetting)EditorGUILayout.EnumPopup("Detach To", m_DetachSetting);
+            m_DuplicateFaceSetting.value = (DuplicateFaceSetting)EditorGUILayout.EnumPopup("Duplicate To", m_DuplicateFaceSetting);
 
             if (EditorGUI.EndChangeCheck())
                 ProBuilderSettings.Save();
 
             GUILayout.FlexibleSpace();
 
-            if (GUILayout.Button("Detach Selection"))
+            if (GUILayout.Button("Duplicate Selection"))
                 EditorUtility.ShowNotification(DoAction().notification);
         }
 
@@ -65,22 +65,22 @@ namespace UnityEditor.ProBuilder.Actions
             if (MeshSelection.selectedObjectCount < 1)
                 return ActionResult.NoSelection;
 
-            UndoUtility.RecordSelection("Detach Face(s)");
+            UndoUtility.RecordSelection("Duplicate Face(s)");
 
-            if (m_DetachSetting == DetachSetting.GameObject)
-                return DetachFacesToObject();
+            if (m_DuplicateFaceSetting == DuplicateFaceSetting.GameObject)
+                return DuplicateFacesToObject();
 
-            return DetachFacesToSubmesh();
+            return DuplicateFacesToSubmesh();
         }
 
-        static ActionResult DetachFacesToSubmesh()
+        static ActionResult DuplicateFacesToSubmesh()
         {
             int count = 0;
 
             foreach (ProBuilderMesh pb in MeshSelection.topInternal)
             {
                 pb.ToMesh();
-                List<Face> res = pb.DetachFaces(pb.selectedFacesInternal);
+                List<Face> res = pb.DetachFaces(pb.selectedFacesInternal, false);
                 pb.Refresh();
                 pb.Optimize();
 
@@ -92,23 +92,23 @@ namespace UnityEditor.ProBuilder.Actions
             ProBuilderEditor.Refresh();
 
             if (count > 0)
-                return new ActionResult(ActionResult.Status.Success, "Detach " + count + (count > 1 ? " Faces" : " Face"));
+                return new ActionResult(ActionResult.Status.Success, "Duplicate " + count + (count > 1 ? " Faces" : " Face"));
 
-            return new ActionResult(ActionResult.Status.Success, "Detach Faces");
+            return new ActionResult(ActionResult.Status.Success, "Duplicate Faces");
         }
 
-        static ActionResult DetachFacesToObject()
+        static ActionResult DuplicateFacesToObject()
         {
-            int detachedFaceCount = 0;
-            List<GameObject> detached = new List<GameObject>();
+            int duplicatedFaceCount = 0;
+            List<GameObject> duplicated = new List<GameObject>();
 
             foreach (ProBuilderMesh mesh in MeshSelection.topInternal)
             {
-                if (mesh.selectedFaceCount < 1 || mesh.selectedFaceCount == mesh.facesInternal.Length)
+                if (mesh.selectedFaceCount < 1)
                     continue;
 
                 var primary = mesh.selectedFaceIndexes;
-                detachedFaceCount += primary.Count;
+                duplicatedFaceCount += primary.Count;
 
                 List<int> inverse = new List<int>();
 
@@ -134,31 +134,24 @@ namespace UnityEditor.ProBuilder.Actions
                         EditorUtility.SynchronizeWithMeshFilter(child);
                 }
 
-                Undo.RegisterCreatedObjectUndo(copy.gameObject, "Detach Selection");
+                Undo.RegisterCreatedObjectUndo(copy.gameObject, "Duplicate Selection");
 
-                mesh.DeleteFaces(primary);
                 copy.DeleteFaces(inverse);
-
-                mesh.Rebuild();
                 copy.Rebuild();
-
-                mesh.Optimize();
                 copy.Optimize();
-
                 mesh.ClearSelection();
                 copy.ClearSelection();
-
                 copy.SetSelectedFaces(copy.faces);
 
-                copy.gameObject.name = GameObjectUtility.GetUniqueNameForSibling(mesh.transform.parent, mesh.gameObject.name); ;
-                detached.Add(copy.gameObject);
+                copy.gameObject.name = GameObjectUtility.GetUniqueNameForSibling(mesh.transform.parent, mesh.gameObject.name);
+                duplicated.Add(copy.gameObject);
             }
 
-            MeshSelection.SetSelection(detached);
+            MeshSelection.SetSelection(duplicated);
             ProBuilderEditor.Refresh();
 
-            if (detachedFaceCount > 0)
-                return new ActionResult(ActionResult.Status.Success, "Detach " + detachedFaceCount + " faces to new Object");
+            if (duplicatedFaceCount > 0)
+                return new ActionResult(ActionResult.Status.Success, "Duplicate " + duplicatedFaceCount + " faces to new Object");
 
             return new ActionResult(ActionResult.Status.Failure, "No Faces Selected");
         }

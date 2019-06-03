@@ -325,6 +325,21 @@ namespace UnityEditor.ProBuilder
 				EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
+		[MenuItem(k_MenuPrefix + "Geometry/Duplicate Faces ", true)]
+		static bool MenuVerify_DuplicateFaces()
+		{
+			var instance = EditorToolbarLoader.GetInstance<DuplicateFaces>();
+			return instance != null && instance.enabled;
+		}
+
+		[MenuItem(k_MenuPrefix + "Geometry/Duplicate Faces", false, PreferenceKeys.menuGeometry + 3)]
+		static void MenuPerform_DuplicateFaces()
+		{
+			var instance = EditorToolbarLoader.GetInstance<DuplicateFaces>();
+			if(instance != null && instance.enabled)
+				EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
 		[MenuItem(k_MenuPrefix + "Geometry/Extrude ", true)]
 		static bool MenuVerify_Extrude()
 		{
