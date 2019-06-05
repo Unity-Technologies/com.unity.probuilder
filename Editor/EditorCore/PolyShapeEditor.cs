@@ -609,13 +609,17 @@ namespace UnityEditor.ProBuilder
 
                 case KeyCode.Escape:
                 {
-                    if (polygon.polyEditMode == PolyShape.PolyEditMode.Path ||
-                        polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+                    if (polygon.polyEditMode == PolyShape.PolyEditMode.Path)
                     {
                         DiscardIncompleteShape();
                         evt.Use();
                     }
                     else if (polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
+                    {
+                        SetPolyEditMode(PolyShape.PolyEditMode.None);
+                        evt.Use();
+                    }
+                    else if (polygon.polyEditMode == PolyShape.PolyEditMode.Height)
                     {
                         SetPolyEditMode(PolyShape.PolyEditMode.None);
                         evt.Use();
