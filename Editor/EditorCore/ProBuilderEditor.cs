@@ -449,6 +449,9 @@ namespace UnityEditor.ProBuilder
 
         void OnGUI()
         {
+            if (s_EditorToolbar != null && s_EditorToolbar.isIconMode != s_IsIconGui.value)
+                IconModeChanged();
+
             if (m_CommandStyle == null)
                 m_CommandStyle = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("Command");
 
@@ -499,14 +502,19 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        void Menu_ToggleIconMode()
+        void IconModeChanged()
         {
-            s_IsIconGui.value = !s_IsIconGui.value;
             if (s_EditorToolbar != null)
                 DestroyImmediate(s_EditorToolbar);
             s_EditorToolbar = ScriptableObject.CreateInstance<EditorToolbar>();
             s_EditorToolbar.hideFlags = HideFlags.HideAndDontSave;
             s_EditorToolbar.InitWindowProperties(this);
+        }
+
+        void Menu_ToggleIconMode()
+        {
+            s_IsIconGui.value = !s_IsIconGui.value;
+            IconModeChanged();
         }
 
         public void AddItemsToMenu(GenericMenu menu)
