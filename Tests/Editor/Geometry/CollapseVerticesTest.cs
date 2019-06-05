@@ -2,6 +2,7 @@
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEditor.ProBuilder;
+using UnityEditor;
 
 namespace UnityEngine.ProBuilder.EditorTests.Geometry
 {
@@ -9,10 +10,18 @@ namespace UnityEngine.ProBuilder.EditorTests.Geometry
     {
         ProBuilderMesh m_PBMesh = null;
         SelectMode m_PreviousSelectMode;
+        bool m_OpenedWindow = false;
 
         [SetUp]
         public void Setup()
         {
+            // make sure the ProBuilder window is open
+            if (ProBuilderEditor.instance == null)
+            {
+                ProBuilderEditor.MenuOpenWindow();
+                m_OpenedWindow = true;
+            }
+            Assert.That(ProBuilderEditor.instance, Is.Not.Null);
             m_PBMesh = ShapeGenerator.CreateShape(ShapeType.Cube);
             m_PreviousSelectMode = ProBuilderEditor.selectMode;
             ProBuilderEditor.selectMode = SelectMode.Vertex;
@@ -26,6 +35,12 @@ namespace UnityEngine.ProBuilder.EditorTests.Geometry
                 UObject.DestroyImmediate(m_PBMesh.gameObject);
             }
             ProBuilderEditor.selectMode = m_PreviousSelectMode;
+
+            // close editor window if we had to open it
+            if (m_OpenedWindow && ProBuilderEditor.instance != null)
+            {
+                ProBuilderEditor.instance.Close();
+            }
         }
 
         [Test]
