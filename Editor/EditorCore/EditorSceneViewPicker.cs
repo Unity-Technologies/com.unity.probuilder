@@ -99,6 +99,20 @@ namespace UnityEditor.ProBuilder
                             (addToSelectionModifier && s_Selection.face == mesh.GetActiveFace() && !activeObjectSelectionChanged))
                         {
                             mesh.RemoveFromFaceSelectionAtIndex(sel);
+
+                            if (mesh.selectedFaceCount == 0)
+                            {
+                                //Top internal is not yet updated to reflect the object selection at this point.
+                                //This is why we cannot make the assumption that the last item should be the current active object and skip it.
+                                for (var i = MeshSelection.topInternal.Count - 1; i >= 0; i--)
+                                {
+                                    if (MeshSelection.topInternal[i].selectedFaceCount > 0)
+                                    {
+                                        MeshSelection.MakeActiveObject(MeshSelection.topInternal[i].gameObject);
+                                        break;
+                                    }
+                                }
+                            }
                         }
                         else
                         {
@@ -121,6 +135,20 @@ namespace UnityEditor.ProBuilder
                             (addToSelectionModifier && s_Selection.edge == mesh.GetActiveEdge() && !activeObjectSelectionChanged))
                         {
                             mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().RemoveAt(ind));
+
+                            if (mesh.selectedEdgeCount == 0)
+                            {
+                                //Top internal is not yet updated to reflect the object selection at this point.
+                                //This is why we cannot make the assumption that the last item should be the current active object and skip it.
+                                for (var i = MeshSelection.topInternal.Count - 1; i >= 0; i--)
+                                {
+                                    if (MeshSelection.topInternal[i].selectedEdgeCount > 0)
+                                    {
+                                        MeshSelection.MakeActiveObject(MeshSelection.topInternal[i].gameObject);
+                                        break;
+                                    }
+                                }
+                            }
                         }
                         else
                         {
@@ -156,6 +184,20 @@ namespace UnityEditor.ProBuilder
                            (addToSelectionModifier && s_Selection.vertex == mesh.GetActiveVertex() && !activeObjectSelectionChanged))
                         {                           
                             mesh.SetSelectedVertices(mesh.selectedIndexesInternal);
+
+                            if (mesh.selectedIndexesInternal.Length == 0)
+                            {
+                                //Top internal is not yet updated to reflect the object selection at this point.
+                                //This is why we cannot make the assumption that the last item should be the current active object and skip it.
+                                for (var i = MeshSelection.topInternal.Count - 1; i >= 0; i--)
+                                {
+                                    if (MeshSelection.topInternal[i].selectedIndexesInternal.Length > 0)
+                                    {
+                                        MeshSelection.MakeActiveObject(MeshSelection.topInternal[i].gameObject);
+                                        break;
+                                    }
+                                }
+                            }
                         }
                         else
                             mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(s_Selection.vertex));
@@ -163,6 +205,8 @@ namespace UnityEditor.ProBuilder
                     else
                         mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(s_Selection.vertex));
                 }
+
+               
 
                 return mesh;
             }
