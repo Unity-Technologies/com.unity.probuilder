@@ -1,39 +1,20 @@
 using System;
+using System.Collections.Generic;
 using UnityEditor.EditorTools;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine.ProBuilder;
 using UnityEngine;
-using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
-    // todo Don't recalculate bounds during an edit operation, it causes the handles to drift
     [EditorTool("Edit Shape", typeof(Shape))]
     public class EditShapeTool : EditorTool
     {
         BoxBoundsHandle m_BoundsHandle;
-        bool m_EditingBounds;
-
-        public override GUIContent toolbarIcon
-        {
-            get { return PrimitiveBoundsHandle.editModeButton; }
-        }
 
         void OnEnable()
         {
             m_BoundsHandle = new BoxBoundsHandle();
-            Undo.undoRedoPerformed += UndoRedoPerformed;
-        }
-
-        void OnDisable()
-        {
-            Undo.undoRedoPerformed += UndoRedoPerformed;
-        }
-
-        void UndoRedoPerformed()
-        {
-            foreach (var shape in targets)
-                (shape as Shape).Rebuild();
         }
 
         public override void OnToolGUI(EditorWindow window)
@@ -57,16 +38,11 @@ namespace UnityEditor.ProBuilder
                 CopyColliderPropertiesToHandle(shape);
 
                 m_BoundsHandle.SetColor(Handles.s_ColliderHandleColor);
-
                 EditorGUI.BeginChangeCheck();
-                
                 m_BoundsHandle.DrawHandle();
-
                 if (EditorGUI.EndChangeCheck())
                 {
-                    UndoUtility.RecordObject(
-                        shape,
-                        string.Format("Modify {0}", ObjectNames.NicifyVariableName(target.GetType().Name)));
+                    Undo.RecordObject(shape, string.Format("Modify {0}", ObjectNames.NicifyVariableName(target.GetType().Name)));
                     CopyHandlePropertiesToCollider(shape);
                 }
             }
@@ -75,6 +51,11 @@ namespace UnityEditor.ProBuilder
         static Vector3 TransformColliderCenterToHandleSpace(Transform colliderTransform, Vector3 colliderCenter)
         {
             return Handles.inverseMatrix * (colliderTransform.localToWorldMatrix * colliderCenter);
+        }
+
+        static Vector3 TransformHandleCenterToColliderSpace(Transform colliderTransform, Vector3 handleCenter)
+        {
+            return colliderTransform.localToWorldMatrix.inverse * (Handles.matrix * handleCenter);
         }
 
         static Vector3 InvertScaleVector(Vector3 scaleVector)
@@ -94,17 +75,13 @@ namespace UnityEditor.ProBuilder
 
         void CopyHandlePropertiesToCollider(Shape shape)
         {
-            var bounds = new Bounds();
-
+            var bounds = shape.mesh.mesh.bounds;
             var trs = shape.transform;
-            bounds.center = Handles.matrix.MultiplyPoint3x4(m_BoundsHandle.center);
+            bounds.center = TransformHandleCenterToColliderSpace(trs, m_BoundsHandle.center);
             Vector3 size = Vector3.Scale(m_BoundsHandle.size, InvertScaleVector(trs.lossyScale));
             size = new Vector3(Mathf.Abs(size.x), Mathf.Abs(size.y), Mathf.Abs(size.z));
             bounds.size = size;
 
-            shape.Rebuild(bounds, shape.transform.rotation);
-            shape.mesh.SetPivot(EditorUtility.newShapePivotLocation);
-            ProBuilderEditor.Refresh(false);
         }
     }
 }

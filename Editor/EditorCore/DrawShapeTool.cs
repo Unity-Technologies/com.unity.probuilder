@@ -68,7 +68,10 @@ namespace UnityEditor.ProBuilder
                 EditorUtility.InitObject(m_Shape.mesh, false);
             }
 
-            m_Shape.Rebuild(m_Bounds, m_Rotation);
+            m_Shape.size = Math.Abs(m_Bounds.size);
+            m_Shape.transform.position = m_Bounds.center;
+            m_Shape.transform.rotation = m_Rotation;
+            m_Shape.Rebuild();
             m_Shape.mesh.SetPivot(EditorUtility.newShapePivotLocation);
             ProBuilderEditor.Refresh(false);
         }
@@ -93,6 +96,13 @@ namespace UnityEditor.ProBuilder
 //            Handles.EndGUI();
 
             var evt = Event.current;
+
+//            if (evt.type == EventType.Repaint
+//                && m_InputState != InputState.SelectPlane
+//                && m_Bounds.size.sqrMagnitude > .01f)
+//            {
+//                RecalculateBounds();
+//            }
 
             if (EditorHandleUtility.SceneViewInUse(evt))
                 return;

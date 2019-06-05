@@ -27,7 +27,7 @@ namespace UnityEngine.ProBuilder
             0, 1, 4, 5, 1, 2, 5, 6, 2, 3, 6, 7, 3, 0, 7, 4, 4, 5, 7, 6, 3, 2, 0, 1
         };
 
-        public override void RebuildMesh()
+        public override void Rebuild()
         {
             mesh.Clear();
 

@@ -26,19 +26,6 @@ namespace UnityEngine.ProBuilder
             get { return m_Transform == null ? m_Transform = GetComponent<Transform>() : m_Transform; }
         }
 
-        public void Rebuild(Bounds bounds, Quaternion rotation)
-        {
-            size = Math.Abs(bounds.size);
-            transform.position = bounds.center;
-            transform.rotation = rotation;
-            Rebuild();
-        }
-
-        public void Rebuild()
-        {
-            RebuildMesh();
-        }
-
-        public abstract void RebuildMesh();
+        public abstract void Rebuild();
     }
 }
