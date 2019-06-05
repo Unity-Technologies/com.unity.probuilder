@@ -199,7 +199,7 @@ namespace UnityEditor.ProBuilder
             else
             {
                 EditorUtility.ScreenCenter(mesh.gameObject);
-                EditorUtility.TrySnapToGrid(mesh);
+                EditorUtility.SetPivotLocationAndSnap(mesh);
             }
         }
 

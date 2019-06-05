@@ -336,12 +336,19 @@ namespace UnityEditor.ProBuilder
         const int k_UVInspectorWidthMinManual = 100;
         const int k_UVInspectorWidthMinAuto = 240;
         const int k_UVInspectorWidth = 240;
+        //Following values were determined empirically
+        const int k_UVInspectorHeightMinManual = 50;
+        const int k_UVInspectorHeightMinAuto = 100;
 
         int minimumInspectorWidth
         {
             get { return (mode == UVMode.Auto ? k_UVInspectorWidthMinAuto : k_UVInspectorWidthMinManual); }
         }
 
+        int minimumInspectorHeight
+        {
+            get { return (mode == UVMode.Auto ? k_UVInspectorHeightMinAuto : k_UVInspectorHeightMinManual); }
+        }
         Rect graphRect,
              toolbarRect,
              actionWindowRect = new Rect(6, 64, k_UVInspectorWidth, 340);
@@ -2573,7 +2580,7 @@ namespace UnityEditor.ProBuilder
             GUI.EndGroup();
         }
 
-        static Rect ActionWindowDragRect = new Rect(0, 0, 10000, 20);
+        static Rect ActionWindowDragRect = new Rect(0, 6, 10000, 30);
         static Editor uv2Editor = null;
 
         void DrawActionWindow(int windowIndex)
@@ -2631,7 +2638,7 @@ namespace UnityEditor.ProBuilder
             }
 
             GUI.DragWindow(ActionWindowDragRect);
-            actionWindowRect = UI.EditorGUILayout.DoResizeHandle(actionWindowRect);
+            actionWindowRect = UI.EditorGUILayout.DoResizeHandle(actionWindowRect, minimumInspectorWidth, minimumInspectorHeight);
         }
 
         bool modifyingUVs_AutoPanel = false;
