@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using UnityEngine.ProBuilder;
-using System.Reflection;
 using UnityEngine.Rendering;
 
 namespace UnityEditor.ProBuilder

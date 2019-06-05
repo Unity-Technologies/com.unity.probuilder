@@ -296,13 +296,14 @@ namespace UnityEditor.ProBuilder
         /// Initialize this object with the various editor-only parameters, and invoke the object creation callback.
         /// </summary>
         /// <param name="pb"></param>
-        internal static void InitObject(ProBuilderMesh pb)
+        internal static void InitObject(ProBuilderMesh pb, bool snapToGrid = true)
         {
             MoveToActiveScene(pb.gameObject);
 
             ScreenCenter(pb.gameObject);
 
-            SetPivotLocationAndSnap(pb);
+            if(snapToGrid)
+                TrySnapToGrid(pb);
 
             pb.renderer.shadowCastingMode = s_ShadowCastingMode;
             pb.renderer.sharedMaterial = GetUserMaterial();
@@ -328,7 +329,8 @@ namespace UnityEditor.ProBuilder
                 meshCreated(pb);
         }
 
-        internal static void SetPivotLocationAndSnap(ProBuilderMesh mesh)
+        // Snap new meshes to the grid if the preference is enabled, or progrids is active
+        internal static void TrySnapToGrid(ProBuilderMesh mesh)
         {
             if (ProGridsInterface.SnapEnabled())
                 mesh.transform.position = Snapping.SnapValue(mesh.transform.position, ProGridsInterface.SnapValue());
