@@ -1,14 +1,11 @@
 using System;
 using UnityEditor.EditorTools;
 using UnityEngine;
-using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
 using Math = UnityEngine.ProBuilder.Math;
-using UObject = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder
 {
-    class DrawShapeTool : EditorTool
+    class ShapeTool : EditorTool
     {
         enum InputState
         {
@@ -19,8 +16,6 @@ namespace UnityEditor.ProBuilder
 
         [SerializeField]
         InputState m_InputState;
-
-        Shape m_Shape;
 
         // plane of interaction
         Plane m_Plane;
@@ -49,60 +44,49 @@ namespace UnityEditor.ProBuilder
             else if (m_InputState == InputState.SetWidthAndDepth)
                 m_InputState = InputState.SetHeight;
             else
-                FinishShape();
+                FinishShapeCreate();
 
             SceneView.RepaintAll();
         }
 
-        void RebuildShape()
+        void FinishShapeCreate()
         {
-            RecalculateBounds();
-
-            if (m_Bounds.size.sqrMagnitude < .01f)
-                return;
-
-            if (m_Shape == null)
-            {
-                m_Shape = new GameObject("Shape").AddComponent<Cube>();
-                UndoUtility.RegisterCreatedObjectUndo(m_Shape.gameObject, "Draw Shape");
-                EditorUtility.InitObject(m_Shape.mesh, false);
-            }
-
-            m_Shape.size = Math.Abs(m_Bounds.size);
-            m_Shape.transform.position = m_Bounds.center;
-            m_Shape.transform.rotation = m_Rotation;
-            m_Shape.Rebuild();
-            m_Shape.mesh.SetPivot(EditorUtility.newShapePivotLocation);
-            ProBuilderEditor.Refresh(false);
-        }
-
-        void FinishShape()
-        {
-            m_Shape = null;
-            m_InputState = InputState.SelectPlane;
-        }
-
-        void CancelShape()
-        {
-            if(m_Shape != null)
-                DestroyImmediate(m_Shape.gameObject);
             m_InputState = InputState.SelectPlane;
         }
 
         public override void OnToolGUI(EditorWindow window)
         {
-//            Handles.BeginGUI();
-//            GUILayout.Label("state: " + m_InputState);
-//            Handles.EndGUI();
+            Handles.BeginGUI();
+            GUILayout.Label("state: " + m_InputState);
+            Handles.EndGUI();
 
             var evt = Event.current;
 
-//            if (evt.type == EventType.Repaint
-//                && m_InputState != InputState.SelectPlane
-//                && m_Bounds.size.sqrMagnitude > .01f)
-//            {
-//                RecalculateBounds();
-//            }
+            if (evt.type == EventType.Repaint && m_InputState != InputState.SelectPlane)
+            {
+                Handles.DrawLine(m_Origin, m_OppositeCorner);
+                Handles.DrawLine(m_OppositeCorner, m_HeightCorner);
+
+                // draw handle orientation
+                var nrm = m_Plane.normal;
+                var bit = m_Forward;
+                var tan = Vector3.Cross(nrm, bit);
+
+                nrm *= .1f;
+                bit *= .1f;
+                tan *= .1f;
+
+                Handles.color = Color.blue;
+                Handles.DrawLine(m_Origin - bit, m_Origin + bit);
+                Handles.color = Color.red;
+                Handles.DrawLine(m_Origin - tan, m_Origin + tan);
+                Handles.color = Color.green;
+                Handles.DrawLine(m_Origin - nrm, m_Origin + nrm);
+                Handles.color = Color.white;
+
+                // draw bounds
+                RecalculateBounds();
+            }
 
             if (EditorHandleUtility.SceneViewInUse(evt))
                 return;
@@ -159,7 +143,6 @@ namespace UnityEditor.ProBuilder
                     {
                         m_OppositeCorner = ray.GetPoint(distance);
                         m_HeightCorner = m_OppositeCorner;
-                        RebuildShape();
                         SceneView.RepaintAll();
                     }
                     break;
@@ -167,10 +150,7 @@ namespace UnityEditor.ProBuilder
 
                 case EventType.MouseUp:
                 {
-                    if (Vector3.Distance(m_OppositeCorner, m_Origin) < .1f)
-                        CancelShape();
-                    else
-                        AdvanceInputState();
+                    AdvanceInputState();
                     break;
                 }
             }
@@ -185,14 +165,12 @@ namespace UnityEditor.ProBuilder
                 {
                     Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
                     m_HeightCorner = Math.GetNearestPointRayRay(m_OppositeCorner, m_Plane.normal, ray.origin, ray.direction);
-                    RebuildShape();
                     SceneView.RepaintAll();
                     break;
                 }
 
                 case EventType.MouseUp:
                 {
-                    RebuildShape();
                     AdvanceInputState();
                     break;
                 }
@@ -201,22 +179,24 @@ namespace UnityEditor.ProBuilder
 
         void RecalculateBounds()
         {
+//            Handles.DrawLine(m_Origin, m_OppositeCorner);
+//            Handles.DrawLine(m_OppositeCorner, m_HeightCorner);
+
             var fo = HandleUtility.PointOnLineParameter(m_OppositeCorner, m_Origin, m_Forward);
             var ri = HandleUtility.PointOnLineParameter(m_OppositeCorner, m_Origin, m_Right);
+            Handles.DrawLine(m_Origin, m_Origin + m_Forward * fo);
+            Handles.DrawLine(m_Origin, m_Origin + m_Right * ri);
 
-            var direction = m_HeightCorner - m_OppositeCorner;
-            var height = direction.magnitude * Mathf.Sign(Vector3.Dot(m_Plane.normal, direction));
 
+            var height = (m_HeightCorner - m_OppositeCorner).magnitude;
             m_Bounds.center = ((m_OppositeCorner + m_Origin) * .5f) + m_Plane.normal * (height * .5f);
             m_Bounds.size = new Vector3(ri, height, fo);
             m_Rotation = Quaternion.LookRotation(m_Forward, m_Plane.normal);
 
-            Handles.color = new Color(.2f, .4f, .8f, 1f);
             EditorHandleUtility.PushMatrix();
             Handles.matrix = Matrix4x4.TRS(m_Bounds.center, m_Rotation, Vector3.one);
             Handles.DrawWireCube(Vector3.zero, m_Bounds.size);
             EditorHandleUtility.PopMatrix();
-            Handles.color = Color.white;
         }
     }
 }
