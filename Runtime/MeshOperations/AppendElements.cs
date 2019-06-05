@@ -264,19 +264,23 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 mesh.sharedVerticesInternal = SharedVertex.GetSharedVerticesWithPositions(vertices);
                 mesh.InvalidateCaches();
 
-                Vector3 nrm = Math.Normal(mesh, mesh.facesInternal[0]);
-
-                if (Vector3.Dot(Vector3.up, nrm) > 0f)
-                    mesh.facesInternal[0].Reverse();
-
-                mesh.DuplicateAndFlip(mesh.facesInternal);
-
-                mesh.Extrude(new Face[] { mesh.facesInternal[1] }, ExtrudeMethod.IndividualFaces, extrude);
-
-                if ((extrude < 0f && !flipNormals) || (extrude > 0f && flipNormals))
+                
+                if (extrude != 0.0f )
                 {
-                    foreach (var face in mesh.facesInternal)
-                        face.Reverse();
+                    Vector3 nrm = Math.Normal(mesh, mesh.facesInternal[0]);
+
+                    if (Vector3.Dot(Vector3.up, nrm) > 0f)
+                        mesh.facesInternal[0].Reverse();
+
+                    mesh.DuplicateAndFlip(mesh.facesInternal);
+
+                    mesh.Extrude(new Face[] { mesh.facesInternal[1] }, ExtrudeMethod.IndividualFaces, extrude);
+
+                    if ((extrude < 0f && !flipNormals) || (extrude > 0f && flipNormals))
+                    {
+                        foreach (var face in mesh.facesInternal)
+                            face.Reverse();
+                    }
                 }
 
                 mesh.ToMesh();
