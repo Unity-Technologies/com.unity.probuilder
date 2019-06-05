@@ -485,34 +485,23 @@ namespace UnityEditor.ProBuilder
         /// <returns></returns>
         internal static Plane FindBestPlane(Vector2 mousePosition)
         {
-            var res = FindBestPlaneAndBitangent(mousePosition);
-            return res.item1;
-        }
-
-        internal static SimpleTuple<Plane, Vector3> FindBestPlaneAndBitangent(Vector2 mousePosition)
-        {
             // Priority in finding the "best" plane for input from a mouse position:
             // 1. Take the plane from the first hit mesh.
             // 2. If ProGrids is drawing a grid, use the plane normal and raycast for position
             // 3. Use the nearest matching plane based on the scene camera direction
 
             Plane plane;
-            Vector3 bitangent;
 
-            if (GetPlaneFromPickedObject(mousePosition, out plane, out bitangent))
-                return new SimpleTuple<Plane, Vector3>(plane, bitangent);
+            if (GetPlaneFromPickedObject(mousePosition, out plane))
+                return plane;
 
-            if (!GetPlaneFromProGridsAxis(mousePosition, out plane))
-                plane = GetPlaneFromCameraDirection();
+            if(GetPlaneFromProGridsAxis(mousePosition, out plane))
+                return plane;
 
-            var nrm = plane.normal;
-
-            bitangent = Vector3.Cross(nrm, Vector3.Cross(nrm, nrm == Vector3.right ? Vector3.forward : Vector3.right));
-
-            return new SimpleTuple<Plane, Vector3>(plane, bitangent);
+            return GetPlaneFromCameraDirection();
         }
 
-        static bool GetPlaneFromPickedObject(Vector2 mousePosition, out Plane plane, out Vector3 bitangent)
+        static bool GetPlaneFromPickedObject(Vector2 mousePosition, out Plane plane)
         {
             GameObject go = null;
             var ignorePicking = new List<GameObject>();
@@ -523,7 +512,7 @@ namespace UnityEditor.ProBuilder
                     ignorePicking.Add(go);
 
                 go = HandleUtility.PickGameObject(mousePosition, false, ignorePicking.ToArray());
-            } while (go != null && go.GetComponent<MeshFilter>() == null && go.GetComponent<Terrain>() == null);
+            } while (go != null && (go.GetComponent<MeshFilter>() == null && go.GetComponent<Terrain>() == null));
 
             if (go != null)
             {
@@ -538,9 +527,6 @@ namespace UnityEditor.ProBuilder
                         plane = new Plane(
                             go.transform.TransformDirection(hit.normal),
                             go.transform.TransformPoint(hit.point));
-                        var forward = go.transform.forward;
-                        var dot = Vector3.Dot(plane.normal, forward);
-                        bitangent = Mathf.Abs(dot) > .9f ? go.transform.up : forward;
                         return true;
                     }
                 }
@@ -549,16 +535,13 @@ namespace UnityEditor.ProBuilder
                     UnityEngine.RaycastHit hit;
                     if (Physics.Raycast(HandleUtility.GUIPointToWorldRay(mousePosition), out hit))
                     {
-                        plane = new Plane(hit.normal, hit.point);
-                        var forward = go.transform.forward;
-                        bitangent = Mathf.Abs(Vector3.Dot(plane.normal, forward)) > .9f ? go.transform.up : forward;
+                        plane = new Plane(hit.normal,hit.point);
                         return true;
                     }
                 }
             }
 
             plane = default(Plane);
-            bitangent = Vector3.forward;
             return false;
         }
 
