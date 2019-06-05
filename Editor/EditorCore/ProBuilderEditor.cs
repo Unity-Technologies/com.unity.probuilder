@@ -422,13 +422,7 @@ namespace UnityEditor.ProBuilder
 
         void InitGUI()
         {
-            if (s_EditorToolbar != null)
-                UObject.DestroyImmediate(s_EditorToolbar);
-
-            s_EditorToolbar = ScriptableObject.CreateInstance<EditorToolbar>();
-            s_EditorToolbar.hideFlags = HideFlags.HideAndDontSave;
-            s_EditorToolbar.InitWindowProperties(this);
-
+            OpenEditorToolbar();
             VertexTranslationInfoStyle = new GUIStyle();
             VertexTranslationInfoStyle.normal.background = EditorGUIUtility.whiteTexture;
             VertexTranslationInfoStyle.normal.textColor = new Color(1f, 1f, 1f, .6f);
@@ -502,13 +496,19 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        void IconModeChanged()
+        void OpenEditorToolbar()
         {
             if (s_EditorToolbar != null)
                 DestroyImmediate(s_EditorToolbar);
+
             s_EditorToolbar = ScriptableObject.CreateInstance<EditorToolbar>();
             s_EditorToolbar.hideFlags = HideFlags.HideAndDontSave;
             s_EditorToolbar.InitWindowProperties(this);
+        }
+
+        void IconModeChanged()
+        {
+            OpenEditorToolbar();
         }
 
         void Menu_ToggleIconMode()
