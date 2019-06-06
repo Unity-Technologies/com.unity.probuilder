@@ -181,10 +181,11 @@ namespace UnityEditor.ProBuilder
                             s_IndexBuffer.Add(index);
                         }
                         s_IndexBuffer.Sort();
-                        mesh.selectedIndexesInternal = mesh.selectedIndexesInternal.SortedRemoveAt(s_IndexBuffer);
+                        
                         if (!appendModifier || addOrRemoveIfPresentFromSelectionModifier ||
                            (addToSelectionModifier && s_Selection.vertex == mesh.GetActiveVertex() && !activeObjectSelectionChanged))
-                        {                           
+                        {
+                            mesh.selectedIndexesInternal = mesh.selectedIndexesInternal.SortedRemoveAt(s_IndexBuffer);
                             mesh.SetSelectedVertices(mesh.selectedIndexesInternal);
 
                             if (addOrRemoveIfPresentFromSelectionModifier && activeObjectSelectionChanged)
@@ -205,7 +206,11 @@ namespace UnityEditor.ProBuilder
                             }
                         }
                         else
+                        {
+                            mesh.selectedIndexesInternal = mesh.selectedIndexesInternal.SortedRemoveAt(s_IndexBuffer);
                             mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(s_Selection.vertex));
+                        }
+
                     }
                     else
                         mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(s_Selection.vertex));
