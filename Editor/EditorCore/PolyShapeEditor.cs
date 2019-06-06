@@ -620,7 +620,7 @@ namespace UnityEditor.ProBuilder
                         SetPolyEditMode(PolyShape.PolyEditMode.None);
                         evt.Use();
                     }
-                    
+
                     break;
                 }
             }
