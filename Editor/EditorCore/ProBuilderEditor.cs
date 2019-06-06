@@ -46,7 +46,7 @@ namespace UnityEditor.ProBuilder
         /// </value>
         public static event Action<IEnumerable<ProBuilderMesh>> beforeMeshModification;
 
-        static EditorToolbar s_EditorToolbar;
+        internal static EditorToolbar s_EditorToolbar;
         static ProBuilderEditor s_Instance;
 
         GUIContent[] m_EditModeIcons;
