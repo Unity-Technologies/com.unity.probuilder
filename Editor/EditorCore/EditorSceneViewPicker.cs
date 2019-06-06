@@ -102,8 +102,6 @@ namespace UnityEditor.ProBuilder
                             }
                             else if (mesh.selectedFaceCount == 0)
                             {
-                                //Top internal is not yet updated to reflect the object selection at this point.
-                                //This is why we cannot make the assumption that the last item should be the current active object and skip it.
                                 for (var i = MeshSelection.topInternal.Count - 1; i >= 0; i--)
                                 {
                                     if (MeshSelection.topInternal[i].selectedFaceCount > 0)
@@ -143,8 +141,6 @@ namespace UnityEditor.ProBuilder
                             }
                             else if (mesh.selectedEdgeCount == 0)
                             {
-                                //Top internal is not yet updated to reflect the object selection at this point.
-                                //This is why we cannot make the assumption that the last item should be the current active object and skip it.
                                 for (var i = MeshSelection.topInternal.Count - 1; i >= 0; i--)
                                 {
                                     if (MeshSelection.topInternal[i].selectedEdgeCount > 0)
@@ -197,8 +193,6 @@ namespace UnityEditor.ProBuilder
                             }
                             else if (mesh.selectedIndexesInternal.Length == 0)
                             {
-                                //Top internal is not yet updated to reflect the object selection at this point.
-                                //This is why we cannot make the assumption that the last item should be the current active object and skip it.
                                 for (var i = MeshSelection.topInternal.Count - 1; i >= 0; i--)
                                 {
                                     if (MeshSelection.topInternal[i].selectedIndexesInternal.Length > 0)
