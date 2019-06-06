@@ -40,7 +40,6 @@ namespace UnityEngine.ProBuilder.EditorTests
             }
         }
 
-
         [UnityTest]
         public IEnumerator Preferences_IconWindowChanged()
         {
