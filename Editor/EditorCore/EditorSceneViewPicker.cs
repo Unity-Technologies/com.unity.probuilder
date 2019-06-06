@@ -59,15 +59,11 @@ namespace UnityEditor.ProBuilder
                 return null;
             }
 
+            GameObject candidateNewActiveObject = s_Selection.gameObject;
             bool activeObjectSelectionChanged = false;
             if (Selection.gameObjects.Contains(s_Selection.gameObject))
             {
                 activeObjectSelectionChanged = true;
-                MeshSelection.MakeActiveObject(s_Selection.gameObject);
-            }
-            else
-            {
-                MeshSelection.AddToSelection(s_Selection.gameObject);
             }
 
             if (s_Selection.mesh != null)
@@ -100,7 +96,11 @@ namespace UnityEditor.ProBuilder
                         {
                             mesh.RemoveFromFaceSelectionAtIndex(sel);
 
-                            if (mesh.selectedFaceCount == 0)
+                            if (addOrRemoveIfPresentFromSelectionModifier && activeObjectSelectionChanged)
+                            {
+                                candidateNewActiveObject = Selection.activeGameObject;
+                            }
+                            else if (mesh.selectedFaceCount == 0)
                             {
                                 //Top internal is not yet updated to reflect the object selection at this point.
                                 //This is why we cannot make the assumption that the last item should be the current active object and skip it.
@@ -108,7 +108,7 @@ namespace UnityEditor.ProBuilder
                                 {
                                     if (MeshSelection.topInternal[i].selectedFaceCount > 0)
                                     {
-                                        MeshSelection.MakeActiveObject(MeshSelection.topInternal[i].gameObject);
+                                        candidateNewActiveObject = MeshSelection.topInternal[i].gameObject;
                                         break;
                                     }
                                 }
@@ -136,7 +136,11 @@ namespace UnityEditor.ProBuilder
                         {
                             mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().RemoveAt(ind));
 
-                            if (mesh.selectedEdgeCount == 0)
+                            if (addOrRemoveIfPresentFromSelectionModifier && activeObjectSelectionChanged)
+                            {
+                                candidateNewActiveObject = Selection.activeGameObject;
+                            }
+                            else if (mesh.selectedEdgeCount == 0)
                             {
                                 //Top internal is not yet updated to reflect the object selection at this point.
                                 //This is why we cannot make the assumption that the last item should be the current active object and skip it.
@@ -144,7 +148,7 @@ namespace UnityEditor.ProBuilder
                                 {
                                     if (MeshSelection.topInternal[i].selectedEdgeCount > 0)
                                     {
-                                        MeshSelection.MakeActiveObject(MeshSelection.topInternal[i].gameObject);
+                                        candidateNewActiveObject = MeshSelection.topInternal[i].gameObject;
                                         break;
                                     }
                                 }
@@ -185,7 +189,11 @@ namespace UnityEditor.ProBuilder
                         {                           
                             mesh.SetSelectedVertices(mesh.selectedIndexesInternal);
 
-                            if (mesh.selectedIndexesInternal.Length == 0)
+                            if (addOrRemoveIfPresentFromSelectionModifier && activeObjectSelectionChanged)
+                            {
+                                candidateNewActiveObject = Selection.activeGameObject;
+                            }
+                            else if (mesh.selectedIndexesInternal.Length == 0)
                             {
                                 //Top internal is not yet updated to reflect the object selection at this point.
                                 //This is why we cannot make the assumption that the last item should be the current active object and skip it.
@@ -193,7 +201,7 @@ namespace UnityEditor.ProBuilder
                                 {
                                     if (MeshSelection.topInternal[i].selectedIndexesInternal.Length > 0)
                                     {
-                                        MeshSelection.MakeActiveObject(MeshSelection.topInternal[i].gameObject);
+                                        candidateNewActiveObject = MeshSelection.topInternal[i].gameObject;
                                         break;
                                     }
                                 }
@@ -206,9 +214,17 @@ namespace UnityEditor.ProBuilder
                         mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(s_Selection.vertex));
                 }
 
-               
+                if(activeObjectSelectionChanged)
+                { 
+                    MeshSelection.MakeActiveObject(candidateNewActiveObject);
+                }
+                else
+                {
+                    MeshSelection.AddToSelection(candidateNewActiveObject);
+                }
 
-                return mesh;
+
+            return mesh;
             }
 
             return null;
