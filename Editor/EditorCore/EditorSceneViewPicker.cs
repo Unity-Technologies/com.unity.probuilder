@@ -61,7 +61,7 @@ namespace UnityEditor.ProBuilder
 
             GameObject candidateNewActiveObject = s_Selection.gameObject;
             bool activeObjectSelectionChanged = false;
-            if (Selection.gameObjects.Contains(s_Selection.gameObject))
+            if (Selection.gameObjects.Contains(s_Selection.gameObject) && s_Selection.gameObject != Selection.activeGameObject)
             {
                 activeObjectSelectionChanged = true;
             }
@@ -109,6 +109,7 @@ namespace UnityEditor.ProBuilder
                                     if (MeshSelection.topInternal[i].selectedFaceCount > 0)
                                     {
                                         candidateNewActiveObject = MeshSelection.topInternal[i].gameObject;
+                                        activeObjectSelectionChanged = true;
                                         break;
                                     }
                                 }
@@ -149,6 +150,7 @@ namespace UnityEditor.ProBuilder
                                     if (MeshSelection.topInternal[i].selectedEdgeCount > 0)
                                     {
                                         candidateNewActiveObject = MeshSelection.topInternal[i].gameObject;
+                                        activeObjectSelectionChanged = true;
                                         break;
                                     }
                                 }
@@ -202,6 +204,7 @@ namespace UnityEditor.ProBuilder
                                     if (MeshSelection.topInternal[i].selectedIndexesInternal.Length > 0)
                                     {
                                         candidateNewActiveObject = MeshSelection.topInternal[i].gameObject;
+                                        activeObjectSelectionChanged = true;
                                         break;
                                     }
                                 }
