@@ -4,7 +4,9 @@
         "Unity.ProBuilder.Tests.Framework",
         "Unity.ProBuilder",
         "Unity.ProBuilder.Editor",
-        "Unity.ProBuilder.Stl"
+        "Unity.ProBuilder.Stl",
+        "UnityEngine.TestRunner",
+        "Unity.ProBuilder.Settings.Editor"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
