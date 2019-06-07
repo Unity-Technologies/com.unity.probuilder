@@ -27,6 +27,9 @@ namespace UnityEditor.ProBuilder
         bool m_NextMouseUpAdvancesMode = false;
         bool m_IsModifyingVertices = false;
 
+        // should the height change handles be visible?
+        bool m_DrawHeightHandles = true;
+
         PolyShape polygon
         {
             get { return target as PolyShape; }
@@ -212,8 +215,30 @@ namespace UnityEditor.ProBuilder
 
             DrawPolyLine(polygon.m_Points);
 
-            if(polygon.polyEditMode != PolyShape.PolyEditMode.Path)
-                polygon.CreateShapeFromPolygon();
+            if (polygon.polyEditMode != PolyShape.PolyEditMode.Path)
+            {
+                var result = polygon.CreateShapeFromPolygon();
+                if(result.status == ActionResult.Status.Failure)
+                {
+                    m_LineMaterial.SetColor("_Highlight", Color.red);
+                    m_LineMaterial.SetColor("_Base", Color.red);
+
+                    // hide the handle to change the height of the invalid mesh
+                    m_DrawHeightHandles = false;
+
+                    // skip height edit mode if the mesh is invalid
+                    if(polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+                    {
+                        SetPolyEditMode(PolyShape.PolyEditMode.Edit);
+                    }
+                }
+                else
+                {
+                    m_LineMaterial.SetColor("_Highlight", new Color(0f, 200f / 255f, 170f / 200f, 1f));
+                    m_LineMaterial.SetColor("_Base", new Color(0f, 136f / 255f, 1f, 1f));
+                    m_DrawHeightHandles = true;
+                }
+            }
 
             // While the vertex count may not change, the triangle winding might. So unfortunately we can't take
             // advantage of the `vertexCountChanged = false` optimization here.
@@ -377,7 +402,6 @@ namespace UnityEditor.ProBuilder
                     if (distanceToVertex > PreferenceKeys.k_MaxPointDistanceFromControl && distanceToLine < PreferenceKeys.k_MaxPointDistanceFromControl)
                     {
                         Handles.color = Color.green;
-
                         Handles.DotHandleCap(-1, wp, Quaternion.identity, HandleUtility.GetHandleSize(wp) * k_HandleSize, evt.type);
 
                         if (evt.type == EventType.MouseDown)
@@ -471,12 +495,15 @@ namespace UnityEditor.ProBuilder
 
                 Vector3 extrudePoint = origin + (extrude * up);
 
-                Handles.color = k_HandleColor;
-                Handles.DotHandleCap(-1, origin, Quaternion.identity, HandleUtility.GetHandleSize(origin) * k_HandleSize, evt.type);
-                Handles.color = k_HandleColorGreen;
-                Handles.DrawLine(origin, extrudePoint);
-                Handles.DotHandleCap(-1, extrudePoint, Quaternion.identity, HandleUtility.GetHandleSize(extrudePoint) * k_HandleSize, evt.type);
-                Handles.color = Color.white;
+                if (m_DrawHeightHandles)
+                {
+                    Handles.color = k_HandleColor;
+                    Handles.DotHandleCap(-1, origin, Quaternion.identity, HandleUtility.GetHandleSize(origin) * k_HandleSize, evt.type);
+                    Handles.color = k_HandleColorGreen;
+                    Handles.DrawLine(origin, extrudePoint);
+                    Handles.DotHandleCap(-1, extrudePoint, Quaternion.identity, HandleUtility.GetHandleSize(extrudePoint) * k_HandleSize, evt.type);
+                    Handles.color = Color.white;
+                }
 
                 if (!sceneInUse && polygon.extrude != extrude)
                 {
@@ -544,12 +571,15 @@ namespace UnityEditor.ProBuilder
 
                     EditorGUI.BeginChangeCheck();
 
-                    Handles.color = k_HandleColor;
-                    Handles.DotHandleCap(-1, center, Quaternion.identity, HandleUtility.GetHandleSize(center) * k_HandleSize, evt.type);
-                    Handles.DrawLine(center, extrude);
-                    Handles.color = k_HandleColorGreen;
-                    extrude = Handles.Slider(extrude, up, HandleUtility.GetHandleSize(extrude) * k_HandleSize, Handles.DotHandleCap, 0f);
-                    Handles.color = Color.white;
+                    if (m_DrawHeightHandles)
+                    {
+                        Handles.color = k_HandleColor;
+                        Handles.DotHandleCap(-1, center, Quaternion.identity, HandleUtility.GetHandleSize(center) * k_HandleSize, evt.type);
+                        Handles.DrawLine(center, extrude);
+                        Handles.color = k_HandleColorGreen;
+                        extrude = Handles.Slider(extrude, up, HandleUtility.GetHandleSize(extrude) * k_HandleSize, Handles.DotHandleCap, 0f);
+                        Handles.color = Color.white;
+                    }
 
                     if (EditorGUI.EndChangeCheck())
                     {

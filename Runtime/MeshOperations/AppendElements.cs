@@ -284,6 +284,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
             }
             else
             {
+                // clear mesh instead of showing an invalid one
+                mesh.Clear();
+                mesh.ToMesh();
+                mesh.Refresh();
                 Log.PopLogLevel();
                 return new ActionResult(ActionResult.Status.Failure, "Failed Triangulating Points");
             }
