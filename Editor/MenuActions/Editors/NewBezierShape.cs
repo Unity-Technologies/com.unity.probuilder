@@ -33,7 +33,7 @@ namespace UnityEditor.ProBuilder.Actions
         {
             GameObject go = new GameObject();
             var bezier = go.AddComponent<BezierShape>();
-            go.GetComponent<MeshRenderer>().sharedMaterial = EditorUtility.GetUserMaterial();
+            go.GetComponent<MeshRenderer>().sharedMaterial = EditorMaterialUtility.GetUserMaterial();
             bezier.Init();
             bezier.Refresh();
             EditorUtility.InitObject(bezier.GetComponent<ProBuilderMesh>());

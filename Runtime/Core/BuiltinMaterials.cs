@@ -10,10 +10,11 @@ namespace UnityEngine.ProBuilder
     /// </summary>
     public static class BuiltinMaterials
     {
-        static readonly string[] k_DefaultMaterialsSRP = new string[]
+        // Names of the Standard Vertex Color materials included in the SRP sample packages.
+        internal static readonly string[] k_StandardRenderPipelineMaterials = new string[]
         {
-            "Materials/StandardVertexColorLWRP",
-            "Materials/StandardVertexColorHDRP"
+            "ProBuilder Default LWRP",
+            "ProBuilder Default HDRP"
         };
 
         static bool s_IsInitialized;
@@ -252,28 +253,15 @@ namespace UnityEngine.ProBuilder
 
         internal static Material GetDefaultMaterial()
         {
-            Material material = null;
+            Material material;
 
             if (GraphicsSettings.renderPipelineAsset != null)
             {
-                for (int i = 0, c = k_DefaultMaterialsSRP.Length; i < c; ++i)
-                {
-                    material = (Material)Resources.Load(k_DefaultMaterialsSRP[i]);
-
-                    if (material != null && material.shader != null && material.shader.isSupported)
-                        break;
-
-                    material = null;
-                }
-
-                if (material == null)
-                {
 #if UNITY_2019_1_OR_NEWER
                     material = GraphicsSettings.renderPipelineAsset.defaultMaterial;
 #else
                     material = GraphicsSettings.renderPipelineAsset.GetDefaultMaterial();
 #endif
-                }
             }
             else
             {
