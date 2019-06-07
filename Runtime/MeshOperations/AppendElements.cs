@@ -287,7 +287,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 {
                     mesh.DuplicateAndFlip(mesh.facesInternal);
 
-                    mesh.Extrude(new Face[] { mesh.facesInternal[1] }, ExtrudeMethod.IndividualFaces, extrude);
+                    mesh.Extrude(new Face[] { mesh.facesInternal[0] }, ExtrudeMethod.IndividualFaces, extrude);
 
                     if ((extrude < 0f && !flipNormals) || (extrude > 0f && flipNormals))
                     {
