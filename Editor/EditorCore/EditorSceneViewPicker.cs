@@ -187,7 +187,7 @@ namespace UnityEditor.ProBuilder
                         {
                             mesh.selectedIndexesInternal = mesh.selectedIndexesInternal.SortedRemoveAt(s_IndexBuffer);
                             mesh.SetSelectedVertices(mesh.selectedIndexesInternal);
-                            
+
                             if (addOrRemoveIfPresentFromSelectionModifier && activeObjectSelectionChanged)
                             {
                                 candidateNewActiveObject = Selection.activeGameObject;
