@@ -1,6 +1,7 @@
 using System;
 using UnityEngine.Rendering;
 using System.Reflection;
+using UnityEditor;
 
 namespace UnityEngine.ProBuilder
 {
@@ -9,6 +10,12 @@ namespace UnityEngine.ProBuilder
     /// </summary>
     public static class BuiltinMaterials
     {
+        static readonly string[] k_DefaultMaterialsSRP = new string[]
+        {
+            "Materials/StandardVertexColorLWRP",
+            "Materials/StandardVertexColorHDRP"
+        };
+
         static bool s_IsInitialized;
 
         /// <value>
@@ -70,22 +77,7 @@ namespace UnityEngine.ProBuilder
             var geo = Shader.Find(lineShader);
             s_GeometryShadersSupported = geo != null && geo.isSupported;
 
-            // ProBuilder default
-            if (GraphicsSettings.renderPipelineAsset != null)
-            {
-#if UNITY_2019_1_OR_NEWER
-                s_DefaultMaterial = GraphicsSettings.renderPipelineAsset.defaultMaterial;
-#else
-                s_DefaultMaterial = GraphicsSettings.renderPipelineAsset.GetDefaultMaterial();
-#endif
-            }
-            else
-            {
-                s_DefaultMaterial = (Material)Resources.Load("Materials/ProBuilderDefault", typeof(Material));
-
-                if (s_DefaultMaterial == null || !s_DefaultMaterial.shader.isSupported)
-                    s_DefaultMaterial = GetLegacyDiffuse();
-            }
+            s_DefaultMaterial = GetDefaultMaterial();
 
             // SelectionPicker shader
             s_SelectionPickerShader = (Shader)Shader.Find("Hidden/ProBuilder/SelectionPicker");
@@ -251,11 +243,47 @@ namespace UnityEngine.ProBuilder
                 {
                     var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     s_UnityDefaultDiffuse = go.GetComponent<MeshRenderer>().sharedMaterial;
-                    UnityEngine.Object.DestroyImmediate(go);
+                    Object.DestroyImmediate(go);
                 }
             }
 
             return s_UnityDefaultDiffuse;
+        }
+
+        internal static Material GetDefaultMaterial()
+        {
+            Material material = null;
+
+            if (GraphicsSettings.renderPipelineAsset != null)
+            {
+                for (int i = 0, c = k_DefaultMaterialsSRP.Length; i < c; ++i)
+                {
+                    material = (Material)Resources.Load(k_DefaultMaterialsSRP[i]);
+
+                    if (material != null && material.shader != null && material.shader.isSupported)
+                        break;
+
+                    material = null;
+                }
+
+                if (material == null)
+                {
+#if UNITY_2019_1_OR_NEWER
+                    material = GraphicsSettings.renderPipelineAsset.defaultMaterial;
+#else
+                    material = GraphicsSettings.renderPipelineAsset.GetDefaultMaterial();
+#endif
+                }
+            }
+            else
+            {
+                material = (Material)Resources.Load("Materials/ProBuilderDefault", typeof(Material));
+
+                if (material == null || !material.shader.isSupported)
+                    material = GetLegacyDiffuse();
+            }
+
+            return material;
         }
 
         /// <summary>
