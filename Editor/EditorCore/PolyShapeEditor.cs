@@ -13,6 +13,9 @@ namespace UnityEditor.ProBuilder
         static Color k_HandleColorGreen = new Color(.01f, .9f, .3f, 1f);
         static Color k_HandleSelectedColor = new Color(.01f, .8f, .98f, 1f);
 
+        static Color k_LineMaterialBaseColor = new Color(0f, 136f / 255f, 1f, 1f);
+        static Color k_LineMaterialHighlightColor = new Color(0f, 200f / 255f, 170f / 200f, 1f);
+
         const float k_HandleSize = .05f;
 
         Material m_LineMaterial;
@@ -38,8 +41,8 @@ namespace UnityEditor.ProBuilder
         Material CreateHighlightLineMaterial()
         {
             Material mat = new Material(Shader.Find("Hidden/ProBuilder/ScrollHighlight"));
-            mat.SetColor("_Highlight", new Color(0f, 200f / 255f, 170f / 200f, 1f));
-            mat.SetColor("_Base", new Color(0f, 136f / 255f, 1f, 1f));
+            mat.SetColor("_Highlight", k_LineMaterialHighlightColor);
+            mat.SetColor("_Base", k_LineMaterialBaseColor);
             return mat;
         }
 
@@ -234,8 +237,9 @@ namespace UnityEditor.ProBuilder
                 }
                 else
                 {
-                    m_LineMaterial.SetColor("_Highlight", new Color(0f, 200f / 255f, 170f / 200f, 1f));
-                    m_LineMaterial.SetColor("_Base", new Color(0f, 136f / 255f, 1f, 1f));
+                    // make sure everything set to normal if polygon creation succeeded
+                    m_LineMaterial.SetColor("_Highlight", k_LineMaterialHighlightColor);
+                    m_LineMaterial.SetColor("_Base", k_LineMaterialBaseColor);
                     m_DrawHeightHandles = true;
                 }
             }
