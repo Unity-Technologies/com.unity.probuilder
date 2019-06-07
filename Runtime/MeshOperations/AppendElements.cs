@@ -214,10 +214,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// Create a poly shape from a set of points on a plane. The points must be ordered.
         /// </summary>
         /// <param name="poly"></param>
+        /// <param name="cameraLookAt">If the normal of the polygon of the first face is facing in the same direction of the camera lookat it will be inverted at creation, so it is facing the camera.</param>
         /// <returns>An action result indicating the status of the operation.</returns>
-        internal static ActionResult CreateShapeFromPolygon(this PolyShape poly)
+        internal static ActionResult CreateShapeFromPolygon(this PolyShape poly, Vector3 cameraLookAt)
         {
-            return poly.mesh.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals);
+            return poly.mesh.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals, cameraLookAt);
         }
 
         /// <summary>
