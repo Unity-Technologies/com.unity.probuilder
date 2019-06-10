@@ -16,6 +16,8 @@ namespace UnityEditor.ProBuilder
         static Color k_LineMaterialBaseColor = new Color(0f, 136f / 255f, 1f, 1f);
         static Color k_LineMaterialHighlightColor = new Color(0f, 200f / 255f, 170f / 200f, 1f);
 
+        static Color k_InvalidLineMaterialColor = Color.red;
+
         const float k_HandleSize = .05f;
 
         Material m_LineMaterial;
@@ -223,8 +225,8 @@ namespace UnityEditor.ProBuilder
                 var result = polygon.CreateShapeFromPolygon();
                 if(result.status == ActionResult.Status.Failure)
                 {
-                    m_LineMaterial.SetColor("_Highlight", Color.red);
-                    m_LineMaterial.SetColor("_Base", Color.red);
+                    m_LineMaterial.SetColor("_Highlight", k_InvalidLineMaterialColor);
+                    m_LineMaterial.SetColor("_Base", k_InvalidLineMaterialColor);
 
                     // hide the handle to change the height of the invalid mesh
                     m_DrawHeightHandles = false;
