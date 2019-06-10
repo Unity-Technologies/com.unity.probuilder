@@ -728,19 +728,34 @@ namespace UnityEditor.ProBuilder
             // Copy UV settings
             if (e.modifiers == (EventModifiers.Control | EventModifiers.Shift))
             {
-                // get first selected Auto UV face
+                // get first selected UV face
                 ProBuilderMesh firstObj;
-                Face source;
+                Face[] source = new Face[1];
 
-                ProBuilderEditor.instance.GetFirstSelectedFace(out firstObj, out source);
+                ProBuilderEditor.instance.GetFirstSelectedFace(out firstObj, out source[0]);
 
                 if (source != null)
                 {
                     UndoUtility.RecordObject(pb, "Copy UV Settings");
 
-                    selectedFace.uv = new AutoUnwrapSettings(source.uv);
-                    selectedFace.submeshIndex = source.submeshIndex;
+                    bool sourceWasManualUV = source[0].manualUV;
+                    if (sourceWasManualUV == true)
+                    {
+                        //We need to convert it to auto
+                        UVEditing.SetAutoUV(firstObj, source, true);
+                        pb.Refresh();
+                        pb.Optimize();
+                    }
+
+                    selectedFace.uv = new AutoUnwrapSettings(source[0].uv);
+                    selectedFace.submeshIndex = source[0].submeshIndex;
                     EditorUtility.ShowNotification("Copy UV Settings");
+
+                    if (sourceWasManualUV == true)
+                    {
+                        //We need to convert it back to false
+                        UVEditing.SetAutoUV(firstObj, source, false);
+                    }
 
                     pb.ToMesh();
                     pb.Refresh();
