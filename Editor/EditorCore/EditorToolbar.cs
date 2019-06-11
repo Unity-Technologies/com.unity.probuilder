@@ -17,7 +17,7 @@ namespace UnityEditor.ProBuilder
         public EditorWindow window;
 
         bool isFloating { get { return ProBuilderEditor.instance != null && ProBuilderEditor.instance.isFloatingWindow; } }
-        bool isIconMode = true;
+        internal bool isIconMode = true;
 
         [UserSetting("Toolbar", "Shift Key Tooltips", "Tooltips will only show when the Shift key is held")]
         internal static Pref<bool> s_ShiftOnlyTooltips = new Pref<bool>("editor.shiftOnlyTooltips", false, SettingsScope.User);
