@@ -107,19 +107,16 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Set the triangles that compose this face.
         /// </summary>
-        /// <param name="array">The new triangle array.</param>
-        public void SetIndexes(int[] array)
+        /// <param name="indices">The new triangle array.</param>
+        public void SetIndexes(IEnumerable<int> indices)
         {
-            if (array == null)
-                throw new ArgumentNullException("array");
-
+            if (indices == null)
+                throw new ArgumentNullException("indices");
+            var array = indices.ToArray();
             int len = array.Length;
-
             if (len % 3 != 0)
                 throw new ArgumentException("Face indexes must be a multiple of 3.");
-
-            m_Indexes = new int[len];
-            Array.Copy(array, m_Indexes, len);
+            m_Indexes = array;
             InvalidateCache();
         }
 
@@ -475,6 +472,28 @@ namespace UnityEngine.ProBuilder
                 for (int i = 0, c = face.distinctIndexesInternal.Length; i < c; ++i)
                     indices.Add(face.distinctIndexesInternal[i]);
             }
+        }
+
+        /// <summary>
+        /// Advance to the next connected edge given a source edge and the index connect.
+        /// </summary>
+        internal bool TryGetNextEdge(Edge source, int index, ref Edge nextEdge, ref int nextIndex)
+        {
+            for (int i = 0, c = edgesInternal.Length; i < c; i++)
+            {
+                if (edgesInternal[i] == source)
+                    continue;
+
+                nextEdge = edgesInternal[i];
+
+                if (nextEdge.Contains(index))
+                {
+                    nextIndex = nextEdge.a == index ? nextEdge.b : nextEdge.a;
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
