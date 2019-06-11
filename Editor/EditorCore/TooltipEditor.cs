@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Reflection;
 using System;
+using UnityEngine.Assertions;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
@@ -51,7 +52,20 @@ namespace UnityEditor.ProBuilder
 #if UNITY_2019_1_OR_NEWER
                 s_Instance.ShowTooltip();
 #else
-                s_Instance.ShowPopup();
+                var ShowModeType = ReflectionUtility.GetType("UnityEditor.ShowMode");
+                var showMethodInfo = typeof(EditorWindow).GetMethod(  
+                    "ShowPopupWithMode",
+                    BindingFlags.NonPublic | BindingFlags.Instance,  
+                    null,
+                    new []
+                    {
+                        ShowModeType,
+                        typeof(bool),
+                    },
+                    null);
+
+                Assert.IsNotNull(showMethodInfo, "Failed to get method UnityEditor.EditorWindow.ShowPopupWithMode. ");
+                showMethodInfo.Invoke(s_Instance, new [] { Enum.ToObject(ShowModeType, 1), false }); 
 #endif
 
                 object parent = ReflectionUtility.GetValue(s_Instance, s_Instance.GetType(), "m_Parent");
