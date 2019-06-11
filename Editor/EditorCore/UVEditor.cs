@@ -1693,10 +1693,10 @@ namespace UnityEditor.ProBuilder
         // private class UVGraphCoordinates
         // {
         // Remember that Unity GUI coordinates Y origin is the bottom
-        private static Vector2 UpperLeft = new Vector2(0f, -1f);
-        private static Vector2 UpperRight = new Vector2(1f, -1f);
-        private static Vector2 LowerLeft = new Vector2(0f, 0f);
-        private static Vector2 LowerRight = new Vector2(1f, 0f);
+        internal static Vector2 UpperLeft = new Vector2(0f, -1f);
+        internal static Vector2 UpperRight = new Vector2(1f, -1f);
+        internal static Vector2 LowerLeft = new Vector2(0f, 0f);
+        internal static Vector2 LowerRight = new Vector2(1f, 0f);
 
         private Rect UVGraphZeroZero = new Rect(0, 0, 40, 40);
         private Rect UVGraphOneOne = new Rect(0, 0, 40, 40);
@@ -2270,6 +2270,44 @@ namespace UnityEditor.ProBuilder
             }
 
             return new Bounds2D(new Vector2((xMin + xMax) / 2f, (yMin + yMax) / 2f), new Vector2(xMax - xMin, yMax - yMin));
+        }
+
+        /// <summary>
+        /// Returns the leftmost lowest coordinate of the current selection in UV space
+        /// </summary>
+        /// <returns></returns>
+        internal Vector2 UVSelectionLowerLeftUV()
+        {
+            float xMin = 0f, yMin = 0f;
+            bool first = true;
+            for (int n = 0; n < selection.Length; n++)
+            {
+                Vector2[] uv = selection[n].texturesInternal;
+
+                foreach (int i in m_DistinctIndexesSelection[n])
+                {
+                    if (first)
+                    {
+                        xMin = uv[i].x;
+                        yMin = uv[i].y;
+                        first = false;
+                    }
+                    else
+                    {
+                        if (uv[i].x < xMin)
+                        {
+                            xMin = uv[i].x;
+                            yMin = uv[i].y;
+                        }
+                        else if (uv[i].x == xMin && uv[i].y < yMin)
+                        {
+                            yMin = uv[i].y;
+                        }
+                    }
+                }
+            }
+
+            return new Vector2(xMin, yMin);
         }
 
         #endregion
@@ -2960,7 +2998,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Planar project UVs on all selected faces in selection.
         /// </summary>
-        void Menu_PlanarProject()
+        internal void Menu_PlanarProject()
         {
             UndoUtility.RecordSelection(selection, "Planar Project Faces");
             int projected = 0;
@@ -2986,7 +3024,7 @@ namespace UnityEditor.ProBuilder
 
             if (projected > 0)
             {
-                CenterUVsAtPoint(handlePosition);
+                CenterUVsAtPoint(UVSelectionLowerLeftUV(), LowerLeft);
                 ResetUserPivot();
             }
 
@@ -3026,7 +3064,7 @@ namespace UnityEditor.ProBuilder
 
             if (p > 0)
             {
-                CenterUVsAtPoint(handlePosition);
+                CenterUVsAtPoint(UVSelectionLowerLeftUV(), LowerLeft);
                 ResetUserPivot();
             }
 
@@ -3066,7 +3104,7 @@ namespace UnityEditor.ProBuilder
 
             if (p > 0)
             {
-                CenterUVsAtPoint(handlePosition);
+                CenterUVsAtPoint(UVSelectionBounds().center, handlePosition);
                 ResetUserPivot();
             }
 
@@ -3292,13 +3330,13 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Moves the selected UVs to where their bounds center is now point, where point is in UV space. Does not call ToMesh or Refresh.
+        /// Moves the selected UVs to where the anchor is now point, where both anchor_position and point are in UV space. Does not call ToMesh or Refresh.
         /// </summary>
+        /// <param name="anchor_position"></param>
         /// <param name="point"></param>
-        void CenterUVsAtPoint(Vector2 point)
+        void CenterUVsAtPoint(Vector2 anchor_position,  Vector2 point)
         {
-            Vector2 uv_cen = UVSelectionBounds().center;
-            Vector2 delta = uv_cen - point;
+            Vector2 delta = anchor_position - point;
 
             for (int i = 0; i < selection.Length; i++)
             {
@@ -3313,7 +3351,7 @@ namespace UnityEditor.ProBuilder
                 UVEditing.ApplyUVs(pb, uv, channel);
             }
         }
-
+       
         #endregion
         #region Screenshot Rendering
 
