@@ -17,6 +17,7 @@ namespace UnityEditor.ProBuilder
         Pref<Color> m_BackgroundColor = new Pref<Color>("UVRenderOptions.backgroundColor", Color.black, SettingsScope.User);
         Pref<bool> m_TransparentBackground = new Pref<bool>("UVRenderOptions.transparentBackground", false, SettingsScope.User);
         Pref<bool> m_HideGrid = new Pref<bool>("UVRenderOptions.hideGrid", true, SettingsScope.User);
+        Pref<bool> m_RenderTexture = new Pref<bool>("UVRenderOptions.renderTexture", true, SettingsScope.User);
 
         enum ImageSize
         {
@@ -58,7 +59,7 @@ namespace UnityEditor.ProBuilder
                     return;
                 }
 
-                screenFunc((int)m_ImageSize.value, m_HideGrid, m_LineColor, m_TransparentBackground, m_BackgroundColor);
+                screenFunc((int)m_ImageSize.value, m_HideGrid, m_LineColor, m_TransparentBackground, m_BackgroundColor, m_RenderTexture);
                 this.Close();
             }
         }
