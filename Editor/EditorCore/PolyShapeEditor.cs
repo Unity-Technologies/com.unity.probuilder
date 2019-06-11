@@ -222,7 +222,7 @@ namespace UnityEditor.ProBuilder
 
             if (polygon.polyEditMode != PolyShape.PolyEditMode.Path)
             {
-                var result = polygon.CreateShapeFromPolygon();
+                var result = polygon.CreateShapeFromPolygon(SceneView.lastActiveSceneView.camera.transform.forward);
                 if(result.status == ActionResult.Status.Failure)
                 {
                     m_LineMaterial.SetColor("_Highlight", k_InvalidLineMaterialColor);

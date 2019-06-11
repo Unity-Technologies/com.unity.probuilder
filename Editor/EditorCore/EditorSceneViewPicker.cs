@@ -32,6 +32,8 @@ namespace UnityEditor.ProBuilder
         public static ProBuilderMesh DoMouseClick(Event evt, SelectMode selectionMode, ScenePickerPreferences pickerPreferences)
         {
             bool appendModifier = EditorHandleUtility.IsAppendModifier(evt.modifiers);
+            bool addToSelectionModifier = EditorHandleUtility.IsSelectionAddModifier(evt.modifiers);
+            bool addOrRemoveIfPresentFromSelectionModifier = EditorHandleUtility.IsSelectionAppendOrRemoveIfPresentModifier(evt.modifiers);
 
             if (!appendModifier)
                 MeshSelection.SetSelection((GameObject)null);
@@ -57,7 +59,12 @@ namespace UnityEditor.ProBuilder
                 return null;
             }
 
-            MeshSelection.AddToSelection(s_Selection.gameObject);
+            GameObject candidateNewActiveObject = s_Selection.gameObject;
+            bool activeObjectSelectionChanged = false;
+            if (Selection.gameObjects.Contains(s_Selection.gameObject) && s_Selection.gameObject != Selection.activeGameObject)
+            {
+                activeObjectSelectionChanged = true;
+            }
 
             if (s_Selection.mesh != null)
             {
@@ -83,7 +90,35 @@ namespace UnityEditor.ProBuilder
                     UndoUtility.RecordSelection(mesh, "Select Face");
 
                     if (sel > -1)
-                        mesh.RemoveFromFaceSelectionAtIndex(sel);
+                    {
+                        if (!appendModifier || addOrRemoveIfPresentFromSelectionModifier ||
+                            (addToSelectionModifier && s_Selection.face == mesh.GetActiveFace() && !activeObjectSelectionChanged))
+                        {
+                            mesh.RemoveFromFaceSelectionAtIndex(sel);
+
+                            if (addOrRemoveIfPresentFromSelectionModifier && activeObjectSelectionChanged)
+                            {
+                                candidateNewActiveObject = Selection.activeGameObject;
+                            }
+                            else if (mesh.selectedFaceCount == 0)
+                            {
+                                for (var i = MeshSelection.topInternal.Count - 1; i >= 0; i--)
+                                {
+                                    if (MeshSelection.topInternal[i].selectedFaceCount > 0)
+                                    {
+                                        candidateNewActiveObject = MeshSelection.topInternal[i].gameObject;
+                                        activeObjectSelectionChanged = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            mesh.selectedFaceIndicesInternal = mesh.selectedFaceIndicesInternal.Remove(ind);
+                            mesh.SetSelectedFaces(mesh.selectedFaceIndicesInternal.Add(ind));
+                        }
+                    }
                     else
                         mesh.AddToFaceSelection(ind);
                 }
@@ -94,14 +129,42 @@ namespace UnityEditor.ProBuilder
                     UndoUtility.RecordSelection(mesh, "Select Edge");
 
                     if (ind > -1)
-                        mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().RemoveAt(ind));
+                    {
+                        if (!appendModifier || addOrRemoveIfPresentFromSelectionModifier ||
+                            (addToSelectionModifier && s_Selection.edge == mesh.GetActiveEdge() && !activeObjectSelectionChanged))
+                        {
+                            mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().RemoveAt(ind));
+
+                            if (addOrRemoveIfPresentFromSelectionModifier && activeObjectSelectionChanged)
+                            {
+                                candidateNewActiveObject = Selection.activeGameObject;
+                            }
+                            else if (mesh.selectedEdgeCount == 0)
+                            {
+                                for (var i = MeshSelection.topInternal.Count - 1; i >= 0; i--)
+                                {
+                                    if (MeshSelection.topInternal[i].selectedEdgeCount > 0)
+                                    {
+                                        candidateNewActiveObject = MeshSelection.topInternal[i].gameObject;
+                                        activeObjectSelectionChanged = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            mesh.selectedEdgesInternal = mesh.selectedEdgesInternal.Remove(s_Selection.edge);
+                            mesh.SetSelectedEdges(mesh.selectedEdgesInternal.Add(s_Selection.edge));
+                        }
+                    }
                     else
                         mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().Add(s_Selection.edge));
                 }
                 else if (s_Selection.vertex > -1)
                 {
                     int ind = Array.IndexOf(mesh.selectedIndexesInternal, s_Selection.vertex);
-
+                    
                     UndoUtility.RecordSelection(mesh, "Select Vertex");
 
                     if (ind > -1)
@@ -117,15 +180,53 @@ namespace UnityEditor.ProBuilder
 
                             s_IndexBuffer.Add(index);
                         }
-
                         s_IndexBuffer.Sort();
-                        mesh.SetSelectedVertices(mesh.selectedIndexesInternal.SortedRemoveAt(s_IndexBuffer));
+                        
+                        if (!appendModifier || addOrRemoveIfPresentFromSelectionModifier ||
+                           (addToSelectionModifier && s_Selection.vertex == mesh.GetActiveVertex() && !activeObjectSelectionChanged))
+                        {
+                            mesh.selectedIndexesInternal = mesh.selectedIndexesInternal.SortedRemoveAt(s_IndexBuffer);
+                            mesh.SetSelectedVertices(mesh.selectedIndexesInternal);
+
+                            if (addOrRemoveIfPresentFromSelectionModifier && activeObjectSelectionChanged)
+                            {
+                                candidateNewActiveObject = Selection.activeGameObject;
+                            }
+                            else if (mesh.selectedIndexesInternal.Length == 0)
+                            {
+                                for (var i = MeshSelection.topInternal.Count - 1; i >= 0; i--)
+                                {
+                                    if (MeshSelection.topInternal[i].selectedIndexesInternal.Length > 0)
+                                    {
+                                        candidateNewActiveObject = MeshSelection.topInternal[i].gameObject;
+                                        activeObjectSelectionChanged = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            mesh.selectedIndexesInternal = mesh.selectedIndexesInternal.SortedRemoveAt(s_IndexBuffer);
+                            mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(s_Selection.vertex));
+                        }
+
                     }
                     else
                         mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(s_Selection.vertex));
                 }
 
-                return mesh;
+                if(activeObjectSelectionChanged)
+                { 
+                    MeshSelection.MakeActiveObject(candidateNewActiveObject);
+                }
+                else
+                {
+                    MeshSelection.AddToSelection(candidateNewActiveObject);
+                }
+
+
+            return mesh;
             }
 
             return null;

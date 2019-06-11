@@ -31,6 +31,17 @@ namespace UnityEditor.ProBuilder
                 (em & EventModifiers.Command) == EventModifiers.Command;
         }
 
+        public static bool IsSelectionAddModifier(EventModifiers em)
+        {
+            return (em & EventModifiers.Shift) == EventModifiers.Shift;
+        }
+
+        public static bool IsSelectionAppendOrRemoveIfPresentModifier(EventModifiers em)
+        {
+            return (((Application.platform == RuntimePlatform.OSXEditor)  && (em & EventModifiers.Command) == EventModifiers.Command) ||
+                ((Application.platform != RuntimePlatform.OSXEditor) && (em & EventModifiers.Control) == EventModifiers.Control));
+        }
+
         const int HANDLE_PADDING = 8;
         const int LEFT_MOUSE_BUTTON = 0;
         const int MIDDLE_MOUSE_BUTTON = 2;
