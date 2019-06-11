@@ -259,16 +259,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (Triangulation.TriangulateVertices(vertices, out triangles, false))
             {
                 int[] indexes = triangles.ToArray();
-
-                // check that all points are represented in the triangulation
-                HashSet<int> triangleSet = new HashSet<int>(triangles);
-                if(triangleSet.Count != vertices.Length)
-                {
-                    ClearAndRefreshMesh(mesh);
-                    Log.PopLogLevel();
-                    return new ActionResult(ActionResult.Status.Failure, "Triangulation missing points");
-                }
-
+                
                 if (Math.PolygonArea(vertices, indexes) < Mathf.Epsilon)
                 {
                     ClearAndRefreshMesh(mesh);
@@ -279,9 +270,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 mesh.Clear();
 
                 mesh.positionsInternal = vertices;
-                mesh.facesInternal = new[] { new Face(indexes) };
+                var newFace = new Face(indexes);
+                mesh.facesInternal = new[] { newFace };
                 mesh.sharedVerticesInternal = SharedVertex.GetSharedVerticesWithPositions(vertices);
                 mesh.InvalidateCaches();
+
+                // check that all points are represented in the triangulation
+                if (newFace.distinctIndexesInternal.Length != vertices.Length)
+                {
+                    ClearAndRefreshMesh(mesh);
+                    Log.PopLogLevel();
+                    return new ActionResult(ActionResult.Status.Failure, "Triangulation missing points");
+                }
 
                 Vector3 nrm = Math.Normal(mesh, mesh.facesInternal[0]);
 
