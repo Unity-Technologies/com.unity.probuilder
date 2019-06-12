@@ -3055,8 +3055,7 @@ namespace UnityEditor.ProBuilder
 
                 if (selection[i].selectedFacesInternal.Length > 0)
                 {
-                    UVEditing.ProjectFacesBox(selection[i], selection[i].selectedFacesInternal, LowerLeft, channel);
-                    //UVEditing.ProjectFacesBox(selection[i], selection[i].selectedFacesInternal, channel);
+                    UVEditing.ProjectFacesBox(selection[i], selection[i].selectedFacesInternal, channel);
                     p++;
                 }
             }
