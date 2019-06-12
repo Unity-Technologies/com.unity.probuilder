@@ -718,6 +718,70 @@ namespace UnityEditor.ProBuilder
             Repaint();
         }
 
+        bool IsCopyUVSettingsModifiers(EventModifiers modifiers)
+        {
+            return (modifiers == (EventModifiers.Control | EventModifiers.Shift));
+        }
+
+        /**
+         * returns true if a copy of UV settingsoccured from the first selected face to the target face
+         */
+        bool CopyFaceUVSettings(ProBuilderMesh pb, Face targetFace)
+        {
+            // get first selected UV face
+            ProBuilderMesh firstObj;
+            Face[] source = new Face[1];
+
+            ProBuilderEditor.instance.GetFirstSelectedFace(out firstObj, out source[0]);
+
+            if (source != null)
+            {
+                UndoUtility.RecordObject(pb, "Copy UV Settings");
+
+                bool destinationWasManualUV = targetFace.manualUV;
+                bool sourceWasManualUV = source[0].manualUV;
+                if (sourceWasManualUV == true)
+                {
+                    //We need to convert it to auto
+                    UVEditing.SetAutoUV(firstObj, source, true);
+                    pb.Refresh();
+                    pb.Optimize();
+                }
+
+                targetFace.uv = new AutoUnwrapSettings(source[0].uv);
+                targetFace.submeshIndex = source[0].submeshIndex;
+                EditorUtility.ShowNotification("Copy UV Settings");
+
+                if (sourceWasManualUV == true)
+                {
+                    //We need to convert it back to false
+                    UVEditing.SetAutoUV(firstObj, source, false); 
+                }
+
+                pb.ToMesh();
+                pb.Refresh();
+                pb.Optimize();
+
+                if (sourceWasManualUV != destinationWasManualUV)
+                {
+                    source[0] = targetFace;
+                    UVEditing.SetAutoUV(pb, source, !sourceWasManualUV);
+                    pb.ToMesh();
+                    pb.Refresh();
+                    pb.Optimize();
+                }
+
+                RefreshUVCoordinates();
+                Repaint();
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         /**
          * return true if shortcut should eat the event
          */
@@ -726,51 +790,9 @@ namespace UnityEditor.ProBuilder
             Event e = Event.current;
 
             // Copy UV settings
-            if (e.modifiers == (EventModifiers.Control | EventModifiers.Shift))
+            if (IsCopyUVSettingsModifiers(e.modifiers))
             {
-                // get first selected UV face
-                ProBuilderMesh firstObj;
-                Face[] source = new Face[1];
-
-                ProBuilderEditor.instance.GetFirstSelectedFace(out firstObj, out source[0]);
-
-                if (source != null)
-                {
-                    UndoUtility.RecordObject(pb, "Copy UV Settings");
-
-                    bool sourceWasManualUV = source[0].manualUV;
-                    if (sourceWasManualUV == true)
-                    {
-                        //We need to convert it to auto
-                        UVEditing.SetAutoUV(firstObj, source, true);
-                        pb.Refresh();
-                        pb.Optimize();
-                    }
-
-                    selectedFace.uv = new AutoUnwrapSettings(source[0].uv);
-                    selectedFace.submeshIndex = source[0].submeshIndex;
-                    EditorUtility.ShowNotification("Copy UV Settings");
-
-                    if (sourceWasManualUV == true)
-                    {
-                        //We need to convert it back to false
-                        UVEditing.SetAutoUV(firstObj, source, false);
-                    }
-
-                    pb.ToMesh();
-                    pb.Refresh();
-                    pb.Optimize();
-
-                    RefreshUVCoordinates();
-
-                    Repaint();
-
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return CopyFaceUVSettings(pb, selectedFace);
             }
             else if (e.modifiers == EventModifiers.Control)
             {
@@ -920,6 +942,21 @@ namespace UnityEditor.ProBuilder
                         }
                         else
                         {
+                            if ((ProBuilderEditor.selectMode == SelectMode.Face || ProBuilderEditor.selectMode == SelectMode.TextureFace) &&
+                                editor && IsCopyUVSettingsModifiers(e.modifiers))
+                            {
+                                Face targetFace;
+                                for (int i = 0; i < selection.Length; i++)
+                                {
+                                    if (GetFaceFromMousePosition(e.mousePosition, selection[i], out targetFace))
+                                    {
+                                        CopyFaceUVSettings(selection[i], targetFace);
+                                        return;
+                                    }
+                                }
+                                break;
+                            }
+
                             UndoUtility.RecordSelection(selection, "Change Selection");
 
                             if (Event.current.modifiers == (EventModifiers)0 && editor)
@@ -1165,6 +1202,21 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        bool GetFaceFromMousePosition(Vector2 mousePosition, ProBuilderMesh pb, out Face faceSelected)
+        {
+            Vector2 mpos = GUIToUVPoint(mousePosition);
+            for (int i = 0; i < pb.facesInternal.Length; i++)
+            {
+                if (Math.PointInPolygon(pb.texturesInternal, mpos, pb.facesInternal[i].edgesInternal.AllTriangles()))
+                {
+                    faceSelected = pb.facesInternal[i];
+                    return true;
+                }
+            }
+            faceSelected = new Face();
+            return false;
+        }
+
         void OnMouseClick(Vector2 mousePosition)
         {
             if (selection == null)
@@ -1192,33 +1244,21 @@ namespace UnityEditor.ProBuilder
                 case SelectMode.Face:
                 case SelectMode.TextureFace:
 
-                    Vector2 mpos = GUIToUVPoint(mousePosition);
-                    bool superBreak = false;
+                    Face tempFace;
                     for (int i = 0; i < selection.Length; i++)
                     {
-                        HashSet<Face> selectedFaces = new HashSet<Face>(selection[i].selectedFacesInternal);
-
-                        for (int n = 0; n < selection[i].facesInternal.Length; n++)
+                        if (GetFaceFromMousePosition(mousePosition, selection[i], out tempFace))
                         {
-                            if (Math.PointInPolygon(selection[i].texturesInternal, mpos, selection[i].facesInternal[n].edgesInternal.AllTriangles()))
-                            {
-                                if (selectedFaces.Contains(selection[i].facesInternal[n]))
-                                    selectedFaces.Remove(selection[i].facesInternal[n]);
-                                else
-                                    selectedFaces.Add(selection[i].facesInternal[n]);
+                            HashSet<Face> selectedFaces = new HashSet<Face>(selection[i].selectedFacesInternal);
+                            if (selectedFaces.Contains(tempFace))
+                                selectedFaces.Remove(tempFace);
+                            else
+                                selectedFaces.Add(tempFace);
 
-                                // Only select one face per click
-                                superBreak = true;
-                                break;
-                            }
-                        }
-
-                        selection[i].SetSelectedFaces(selectedFaces.ToArray());
-
-                        if (superBreak)
+                            selection[i].SetSelectedFaces(selectedFaces.ToArray());
                             break;
+                        }
                     }
-
                     break;
 
                 case SelectMode.Vertex:
