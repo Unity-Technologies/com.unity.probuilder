@@ -413,7 +413,7 @@ namespace UnityEditor.ProBuilder
             for (int i = 0, c = positions.Length; i < c; i++)
             {
                 var position = positions[i];
-                var color = includeColors ? colors[i] : Color.white;
+                var color = writeColors ? colors[i] : Color.white;
 
                 var key = new PositionColorKey(position, color);
                 int vertexIndex;
