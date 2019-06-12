@@ -281,8 +281,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             ApplyUVs(mesh, uv, channel);
         }
 
-
-         /// <summary>
+        /// <summary>
         /// Projects UVs for each face using the closest normal on a sphere.
         /// </summary>
         /// <param name="pb"></param>
