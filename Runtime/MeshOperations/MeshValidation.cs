@@ -82,7 +82,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="mesh">The mesh that owns the face to be tested.</param>
         /// <param name="face">The face to test.</param>
         /// <returns>True if the face contains split triangles, false if the face is contiguous.</returns>
-        public static bool IsSplitFace(this ProBuilderMesh mesh, Face face)
+        public static bool ContainsNonContiguousTriangles(this ProBuilderMesh mesh, Face face)
         {
             Edge current = face.edgesInternal[0], start = current;
             int index = current.a;
@@ -98,13 +98,24 @@ namespace UnityEngine.ProBuilder.MeshOperations
             return count != face.edgesInternal.Length;
         }
 
-        internal static List<Face> SeparateSplitFaces(this ProBuilderMesh mesh, IEnumerable<Face> faces)
+        /// <summary>
+        /// Ensure that each face in faces is composed of contiguous triangle sets. If a face contains non-contiguous
+        /// triangles, it will be split into as many faces as necessary to ensure that each group of adjacent triangles
+        /// compose a single face.
+        /// </summary>
+        /// <param name="mesh">The mesh that contains the faces to test.</param>
+        /// <param name="faces">The faces to test for non-contiguous triangles.</param>
+        /// <returns>
+        /// A list of any newly created faces as a result of splitting non-contiguous triangles. Returns an
+        /// empty list if no faces required fixing.
+        /// </returns>
+        public static List<Face> EnsureFacesAreComposedOfContiguousTriangles(this ProBuilderMesh mesh, IEnumerable<Face> faces)
         {
             var appended = new List<Face>();
 
             foreach (var face in faces)
             {
-                if (IsSplitFace(mesh, face))
+                if (ContainsNonContiguousTriangles(mesh, face))
                 {
                     var groups = CollectFaceGroups(mesh, face);
 

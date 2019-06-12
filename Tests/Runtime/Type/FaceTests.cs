@@ -34,7 +34,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.Type
             var face = shape.faces.First();
             Assume.That(face, Is.Not.Null);
             Assume.That(face.edgesInternal, Has.Length.EqualTo(indexCount));
-            Assert.That(MeshValidation.IsSplitFace(shape, face), Is.False);
+            Assert.That(MeshValidation.ContainsNonContiguousTriangles(shape, face), Is.False);
         }
 
         [Test]
@@ -42,7 +42,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.Type
         {
             var cube = TestUtility.CreateCubeWithNonContiguousMergedFace();
             Assume.That(cube.item1.faceCount, Is.EqualTo(5));
-            Assert.That(MeshValidation.IsSplitFace(cube.item1, cube.item2), Is.True);
+            Assert.That(MeshValidation.ContainsNonContiguousTriangles(cube.item1, cube.item2), Is.True);
         }
 
     }

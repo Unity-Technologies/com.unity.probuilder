@@ -33,7 +33,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <returns>The faces created as a result of inserting new edges.</returns>
         public static Face[] Connect(this ProBuilderMesh mesh, IEnumerable<Face> faces)
         {
-            var split = MeshValidation.SeparateSplitFaces(mesh, faces);
+            var split = MeshValidation.EnsureFacesAreComposedOfContiguousTriangles(mesh, faces);
             HashSet<Face> mask = new HashSet<Face>(faces);
             if (split.Count > 0)
             {
