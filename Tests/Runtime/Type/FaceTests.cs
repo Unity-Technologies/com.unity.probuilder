@@ -1,6 +1,7 @@
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.Tests.Framework;
 
 namespace UnityEngine.ProBuilder.RuntimeTests.Type
 {
@@ -39,43 +40,10 @@ namespace UnityEngine.ProBuilder.RuntimeTests.Type
         [Test]
         public void MeshValidation_IsSplitFace_DetectsDisconnectedTriangles()
         {
-            var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
-
-            Assume.That(cube, Is.Not.Null);
-
-            int index = 1;
-            Face a = cube.faces[0], b = cube.faces[index++];
-            Assume.That(a, Is.Not.Null);
-            Assume.That(b, Is.Not.Null);
-
-            while (FacesAreAdjacent(cube, a, b) && index < cube.faceCount)
-                b = cube.faces[index++];
-
-            Assume.That(FacesAreAdjacent(cube, a, b), Is.False);
-
-            var res = MergeElements.Merge(cube, new Face[] { a, b });
-
-            Assume.That(cube.faceCount, Is.EqualTo(5));
-
-            Assert.That(MeshValidation.IsSplitFace(cube, res), Is.True);
+            var cube = TestUtility.CreateCubeWithNonContiguousMergedFace();
+            Assume.That(cube.item1.faceCount, Is.EqualTo(5));
+            Assert.That(MeshValidation.IsSplitFace(cube.item1, cube.item2), Is.True);
         }
 
-        static bool FacesAreAdjacent(ProBuilderMesh mesh, Face a, Face b)
-        {
-            for (int i = 0, c = a.edgesInternal.Length; i < c; i++)
-            {
-                var ea = mesh.GetSharedVertexHandleEdge(a.edgesInternal[i]);
-
-                for (int n = 0; n < b.edgesInternal.Length; n++)
-                {
-                    var eb = mesh.GetSharedVertexHandleEdge(b.edgesInternal[n]);
-
-                    if (ea == eb)
-                        return true;
-                }
-            }
-
-            return false;
-        }
     }
 }
