@@ -221,6 +221,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
             return poly.mesh.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals, cameraLookAt);
         }
 
+
+        /// <summary>
+        /// Clear and refresh mesh in case of failure to create a shape.
+        /// </summary>
+        /// <param name="mesh"></param>
+        internal static void ClearAndRefreshMesh(this ProBuilderMesh mesh)
+        {
+            mesh.Clear();
+            mesh.ToMesh();
+            mesh.Refresh();
+        }
+
         /// <summary>
         /// Rebuild a mesh from an ordered set of points.
         /// </summary>
@@ -250,9 +262,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             if (points == null || points.Count < 3)
             {
-                mesh.Clear();
-                mesh.ToMesh();
-                mesh.Refresh();
+                ClearAndRefreshMesh(mesh);
                 return new ActionResult(ActionResult.Status.NoChange, "Too Few Points");
             }
 
@@ -264,10 +274,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (Triangulation.TriangulateVertices(vertices, out triangles, false))
             {
                 int[] indexes = triangles.ToArray();
-
+                
                 if (Math.PolygonArea(vertices, indexes) < Mathf.Epsilon)
                 {
-                    mesh.Clear();
+                    ClearAndRefreshMesh(mesh);
                     Log.PopLogLevel();
                     return new ActionResult(ActionResult.Status.Failure, "Polygon Area < Epsilon");
                 }
@@ -275,9 +285,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 mesh.Clear();
 
                 mesh.positionsInternal = vertices;
-                mesh.facesInternal = new[] { new Face(indexes) };
+                var newFace = new Face(indexes);
+                mesh.facesInternal = new[] { newFace };
                 mesh.sharedVerticesInternal = SharedVertex.GetSharedVerticesWithPositions(vertices);
                 mesh.InvalidateCaches();
+
+                // check that all points are represented in the triangulation
+                if (newFace.distinctIndexesInternal.Length != vertices.Length)
+                {
+                    ClearAndRefreshMesh(mesh);
+                    Log.PopLogLevel();
+                    return new ActionResult(ActionResult.Status.Failure, "Triangulation missing points");
+                }
 
                 Vector3 nrm = Math.Normal(mesh, mesh.facesInternal[0]);
                 cameraLookAt.Normalize();
@@ -302,6 +321,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
             }
             else
             {
+                // clear mesh instead of showing an invalid one
+                ClearAndRefreshMesh(mesh);
                 Log.PopLogLevel();
                 return new ActionResult(ActionResult.Status.Failure, "Failed Triangulating Points");
             }
