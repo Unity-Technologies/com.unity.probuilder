@@ -3494,9 +3494,9 @@ namespace UnityEditor.ProBuilder
 
         void SaveUVRender()
         {
+            m_ShowPreviewMaterial.value = m_ShowPreviewMaterialCacheDuringScreenshot;
             if (screenshot && !string.IsNullOrEmpty(screenShotPath))
             {
-                m_ShowPreviewMaterial.value = m_ShowPreviewMaterialCacheDuringScreenshot;
                 FileUtility.SaveTexture(screenshot, screenShotPath);
                 DestroyImmediate(screenshot);
             }
