@@ -109,6 +109,7 @@ namespace UnityEditor.ProBuilder
         }
 
         Pref<bool> m_ShowPreviewMaterial = new Pref<bool>("UVEditor.showPreviewMaterial", true, SettingsScope.Project);
+        bool m_ShowPreviewMaterialCacheDuringScreenshot;
 
         // Show a preview texture for the first selected face in UV space 0,1?
 #if PB_DEBUG
@@ -245,7 +246,7 @@ namespace UnityEditor.ProBuilder
                     this.position.y + 32,
                     0,
                     0),
-                new Vector2(256, 152));
+                new Vector2(256, 172));
 #endif
         }
 
@@ -3359,6 +3360,8 @@ namespace UnityEditor.ProBuilder
             if (string.IsNullOrEmpty(screenShotPath))
                 return;
 
+            m_ShowPreviewMaterialCacheDuringScreenshot = m_ShowPreviewMaterial;
+            m_ShowPreviewMaterial.value = RenderTexture;
             screenshotStatus = ScreenshotStatus.Done;
             DoScreenshot();
         }
@@ -3493,6 +3496,7 @@ namespace UnityEditor.ProBuilder
         {
             if (screenshot && !string.IsNullOrEmpty(screenShotPath))
             {
+                m_ShowPreviewMaterial.value = m_ShowPreviewMaterialCacheDuringScreenshot;
                 FileUtility.SaveTexture(screenshot, screenShotPath);
                 DestroyImmediate(screenshot);
             }
