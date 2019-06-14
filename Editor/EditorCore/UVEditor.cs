@@ -729,47 +729,49 @@ namespace UnityEditor.ProBuilder
         bool CopyFaceUVSettings(ProBuilderMesh pb, Face targetFace)
         {
             // get first selected UV face
-            ProBuilderMesh firstObj;
+            ProBuilderMesh firstObj = MeshSelection.activeMesh;
             Face[] source = new Face[1];
-
-            ProBuilderEditor.instance.GetFirstSelectedFace(out firstObj, out source[0]);
-
+            source[0] = MeshSelection.activeFace;
             if (source != null)
             {
                 UndoUtility.RecordObject(pb, "Copy UV Settings");
-
                 bool destinationWasManualUV = targetFace.manualUV;
                 bool sourceWasManualUV = source[0].manualUV;
+                
                 if (sourceWasManualUV == true)
                 {
                     //We need to convert it to auto
+                    firstObj.ToMesh();
                     UVEditing.SetAutoUV(firstObj, source, true);
-                    pb.Refresh();
-                    pb.Optimize();
+                    firstObj.Refresh();
+                    firstObj.Optimize();
                 }
 
                 targetFace.uv = new AutoUnwrapSettings(source[0].uv);
                 targetFace.submeshIndex = source[0].submeshIndex;
                 EditorUtility.ShowNotification("Copy UV Settings");
+                pb.ToMesh();
+                pb.Refresh();
 
                 if (sourceWasManualUV == true)
                 {
                     //We need to convert it back to false
-                    UVEditing.SetAutoUV(firstObj, source, false); 
+                    firstObj.ToMesh();
+                    UVEditing.SetAutoUV(firstObj, source, false);
+                    firstObj.Refresh();
+                    firstObj.Optimize();
                 }
 
-                pb.ToMesh();
-                pb.Refresh();
-                pb.Optimize();
-
+                
                 if (sourceWasManualUV != destinationWasManualUV)
                 {
                     source[0] = targetFace;
-                    UVEditing.SetAutoUV(pb, source, !sourceWasManualUV);
                     pb.ToMesh();
+                    UVEditing.SetAutoUV(pb, source, !sourceWasManualUV);
                     pb.Refresh();
                     pb.Optimize();
                 }
+                
 
                 RefreshUVCoordinates();
                 Repaint();
