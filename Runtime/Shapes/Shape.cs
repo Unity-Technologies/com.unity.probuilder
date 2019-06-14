@@ -18,6 +18,16 @@ namespace UnityEngine.ProBuilder
             set { m_Size = value; }
         }
 
+        // Bounds where center is in world space, size is mesh.bounds.size
+        internal Bounds bounds
+        {
+            get
+            {
+                var mb = mesh.mesh.bounds;
+                return new Bounds(transform.TransformPoint(mb.center), mb.size);
+            }
+        }
+
         public ProBuilderMesh mesh
         {
             get { return m_Mesh == null ? m_Mesh = GetComponent<ProBuilderMesh>() : m_Mesh; }
@@ -33,7 +43,7 @@ namespace UnityEngine.ProBuilder
             size = Math.Abs(bounds.size);
             transform.position = bounds.center;
             transform.rotation = rotation;
-            Rebuild();
+            RebuildMesh();
         }
 
         public void Rebuild()
@@ -41,6 +51,6 @@ namespace UnityEngine.ProBuilder
             RebuildMesh();
         }
 
-        public abstract void RebuildMesh();
+        protected abstract void RebuildMesh();
     }
 }

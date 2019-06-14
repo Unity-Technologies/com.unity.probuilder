@@ -36,6 +36,11 @@ namespace UnityEditor.ProBuilder
             EditorTools.EditorTools.activeToolChanged += ActiveToolChanged;
         }
 
+        void OnDisable()
+        {
+            EditorTools.EditorTools.activeToolChanged -= ActiveToolChanged;
+        }
+
         void ActiveToolChanged()
         {
             if (EditorTools.EditorTools.IsActiveTool(this))
@@ -63,7 +68,7 @@ namespace UnityEditor.ProBuilder
 
             if (m_Shape == null)
             {
-                m_Shape = new GameObject("Shape").AddComponent<Cube>();
+                m_Shape = new GameObject("Shape").AddComponent<Stairs>();
                 UndoUtility.RegisterCreatedObjectUndo(m_Shape.gameObject, "Draw Shape");
                 EditorUtility.InitObject(m_Shape.mesh, false);
             }
@@ -75,6 +80,7 @@ namespace UnityEditor.ProBuilder
 
         void FinishShape()
         {
+            Debug.Log("complete shape: " + m_Bounds);
             m_Shape = null;
             m_InputState = InputState.SelectPlane;
         }
