@@ -1,8 +1,10 @@
 namespace UnityEngine.ProBuilder
 {
+    [AddComponentMenu("")]
     [RequireComponent(typeof(ProBuilderMesh))]
     public abstract class Shape : MonoBehaviour
     {
+        [HideInInspector]
         [SerializeField]
         Vector3 m_Size;
 
