@@ -720,11 +720,15 @@ namespace UnityEditor.ProBuilder
 
         bool IsCopyUVSettingsModifiers(EventModifiers modifiers)
         {
+#if UNITY_STANDALONE_OSX
+            return (modifiers == (EventModifiers.Command | EventModifiers.Shift));
+#else
             return (modifiers == (EventModifiers.Control | EventModifiers.Shift));
+#endif
         }
 
         /**
-         * returns true if a copy of UV settingsoccured from the first selected face to the target face
+         * returns true if a copy of UV settings occured from the first selected face to the target face
          */
         bool CopyFaceUVSettings(ProBuilderMesh pb, Face targetFace)
         {
@@ -732,56 +736,45 @@ namespace UnityEditor.ProBuilder
             ProBuilderMesh firstObj = MeshSelection.activeMesh;
             Face[] source = new Face[1];
             source[0] = MeshSelection.activeFace;
-            if (source != null)
-            {
-                UndoUtility.RecordObject(pb, "Copy UV Settings");
-                bool destinationWasManualUV = targetFace.manualUV;
-                bool sourceWasManualUV = source[0].manualUV;
-                
-                if (sourceWasManualUV == true)
-                {
-                    //We need to convert it to auto
-                    firstObj.ToMesh();
-                    UVEditing.SetAutoUV(firstObj, source, true);
-                    firstObj.Refresh();
-                    firstObj.Optimize();
-                }
 
-                targetFace.uv = new AutoUnwrapSettings(source[0].uv);
-                targetFace.submeshIndex = source[0].submeshIndex;
-                EditorUtility.ShowNotification("Copy UV Settings");
-                pb.ToMesh();
-                pb.Refresh();
-
-                if (sourceWasManualUV == true)
-                {
-                    //We need to convert it back to false
-                    firstObj.ToMesh();
-                    UVEditing.SetAutoUV(firstObj, source, false);
-                    firstObj.Refresh();
-                    firstObj.Optimize();
-                }
-
-                
-                if (sourceWasManualUV != destinationWasManualUV)
-                {
-                    source[0] = targetFace;
-                    pb.ToMesh();
-                    UVEditing.SetAutoUV(pb, source, !sourceWasManualUV);
-                    pb.Refresh();
-                    pb.Optimize();
-                }
-                
-
-                RefreshUVCoordinates();
-                Repaint();
-
-                return true;
-            }
-            else
-            {
+            if (source[0] == null)
                 return false;
+
+
+            UndoUtility.RecordObject(pb, "Copy UV Settings");
+            bool destinationWasManualUV = targetFace.manualUV;
+            bool sourceWasManualUV = source[0].manualUV;
+
+            if (sourceWasManualUV == true)
+            {
+                //We need to convert it to auto
+                UVEditing.SetAutoUV(firstObj, source, true);
             }
+
+            targetFace.uv = new AutoUnwrapSettings(source[0].uv);
+            targetFace.submeshIndex = source[0].submeshIndex;
+            EditorUtility.ShowNotification("Copy UV Settings");
+
+            if (sourceWasManualUV == true)
+            {
+                //We need to convert it back to false
+                UVEditing.SetAutoUV(firstObj, source, false);
+            }
+
+
+            if (sourceWasManualUV != destinationWasManualUV)
+            {
+                source[0] = targetFace;
+                UVEditing.SetAutoUV(pb, source, !sourceWasManualUV);
+            }
+
+            pb.Rebuild();
+            pb.Optimize();
+
+            RefreshUVCoordinates();
+            Repaint();
+
+            return true;
         }
 
         /**
