@@ -3055,7 +3055,7 @@ namespace UnityEditor.ProBuilder
 
                 if (selection[i].selectedFacesInternal.Length > 0)
                 {
-                    UVEditing.ProjectFacesBox(selection[i], selection[i].selectedFacesInternal, channel);
+                    UVEditing.ProjectFacesBox(selection[i], selection[i].selectedFacesInternal, LowerLeft, channel);
                     p++;
                 }
             }
@@ -3064,7 +3064,6 @@ namespace UnityEditor.ProBuilder
 
             if (p > 0)
             {
-                CenterUVsAtPoint(UVSelectionLowerLeftUV(), LowerLeft);
                 ResetUserPivot();
             }
 
