@@ -28,6 +28,36 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOperations
         }
 
         [Test]
+        public void CreateShapeFromPolygon_CreateMeshFailure_TriangulationMissingPoints()
+        {
+            // Test that creating the shape fails if the triangulation missed some of the points (invalid mesh)
+            m_Poly.m_Points.Add(new Vector3(0.9f, 0, 3.4f));
+            m_Poly.m_Points.Add(new Vector3(6.1f, 0, 5.7f));
+            m_Poly.m_Points.Add(new Vector3(-1.6f, 0, 8.8f));
+            m_Poly.m_Points.Add(new Vector3(7.4f, 0, -2.6f));
+
+            var result = m_Poly.CreateShapeFromPolygon(Vector3.up);
+            Assert.That(result.status, Is.EqualTo(ActionResult.Status.Failure));
+            Assert.That(result.notification, Is.EqualTo("Triangulation missing points"));
+
+            // check that the mesh is cleared
+            Assert.That(m_pb.facesInternal.Length, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void CreateShapeFromPolygon_CreateMeshSuccess()
+        {
+            // Test that creating a valid shape gives a result of Success
+            m_Poly.m_Points.Add(new Vector3(0, 0, 0));
+            m_Poly.m_Points.Add(new Vector3(0, 0, 2));
+            m_Poly.m_Points.Add(new Vector3(2, 0, 2));
+            m_Poly.m_Points.Add(new Vector3(2, 0, 0));
+
+            var result = m_Poly.CreateShapeFromPolygon(Vector3.up);
+            Assert.That(result.status, Is.EqualTo(ActionResult.Status.Success));
+        }
+
+        [Test]
         public void CreateShapeFromPolygon_ExtrudeOrNot()
         {
             m_Poly.m_Points.Add(new Vector3(0,0,0));
