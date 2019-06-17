@@ -743,14 +743,13 @@ namespace UnityEditor.ProBuilder
             UndoUtility.RecordObject(pb, "Copy UV Settings");
             bool destinationWasManualUV = targetFace.manualUV;
             bool sourceWasManualUV = source[0].manualUV;
-                
+
             if (sourceWasManualUV == true)
             {
                 //We need to convert it to auto
                 firstObj.ToMesh();
                 UVEditing.SetAutoUV(firstObj, source, true);
                 firstObj.Refresh();
-                firstObj.Optimize();
             }
 
             pb.ToMesh();
@@ -760,23 +759,20 @@ namespace UnityEditor.ProBuilder
                 //should be in auto prior to paste
                 destination[0] = targetFace;
                 UVEditing.SetAutoUV(pb, destination, true);
-                destinationWasManualUV = false;
             }
 
             targetFace.uv = new AutoUnwrapSettings(source[0].uv);
             targetFace.submeshIndex = source[0].submeshIndex;
             EditorUtility.ShowNotification("Copy UV Settings");
             pb.Refresh();
-            pb.Optimize();
 
-            if (sourceWasManualUV != destinationWasManualUV)
+            if (sourceWasManualUV)
             {
                 //Ensure UV mode of target face matches source face UV mode.
                 destination[0] = targetFace;
                 pb.ToMesh();
-                UVEditing.SetAutoUV(pb, destination, !sourceWasManualUV);
+                UVEditing.SetAutoUV(pb, destination, false);
                 pb.Refresh();
-                pb.Optimize();
             }
 
             if (sourceWasManualUV == true)
@@ -785,14 +781,15 @@ namespace UnityEditor.ProBuilder
                 firstObj.ToMesh();
                 UVEditing.SetAutoUV(firstObj, source, false);
                 firstObj.Refresh();
-                firstObj.Optimize();
             }
+
+            pb.Optimize();
+            firstObj.Optimize();
 
             RefreshUVCoordinates();
             Repaint();
 
             return true;
-           
         }
 
         /**
