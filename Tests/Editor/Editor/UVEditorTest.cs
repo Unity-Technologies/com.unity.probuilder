@@ -61,7 +61,6 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
             {
                 Assert.That(f.manualUV, Is.EqualTo(false));
             }
-
             
             //Select faces
             UVEditor.instance.Menu_SetManualUV();
