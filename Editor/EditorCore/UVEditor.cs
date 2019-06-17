@@ -756,6 +756,8 @@ namespace UnityEditor.ProBuilder
             pb.ToMesh();
             if (destinationWasManualUV)
             {
+                //We are going to paste auto settings therefore target face
+                //should be in auto prior to paste
                 destination[0] = targetFace;
                 UVEditing.SetAutoUV(pb, destination, true);
                 destinationWasManualUV = false;
@@ -769,6 +771,7 @@ namespace UnityEditor.ProBuilder
 
             if (sourceWasManualUV != destinationWasManualUV)
             {
+                //Ensure UV mode of target face matches source face UV mode.
                 destination[0] = targetFace;
                 pb.ToMesh();
                 UVEditing.SetAutoUV(pb, destination, !sourceWasManualUV);
@@ -778,7 +781,7 @@ namespace UnityEditor.ProBuilder
 
             if (sourceWasManualUV == true)
             {
-                //We need to convert it back to false
+                //We need to convert it back to manual
                 firstObj.ToMesh();
                 UVEditing.SetAutoUV(firstObj, source, false);
                 firstObj.Refresh();
