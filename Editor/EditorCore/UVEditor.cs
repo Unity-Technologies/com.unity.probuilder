@@ -735,6 +735,7 @@ namespace UnityEditor.ProBuilder
             // get first selected UV face
             ProBuilderMesh firstObj = MeshSelection.activeMesh;
             Face[] source = new Face[1];
+            Face[] destination = new Face[1];
             source[0] = MeshSelection.activeFace;
             if (source[0] == null)
                 return false;
@@ -752,11 +753,28 @@ namespace UnityEditor.ProBuilder
                 firstObj.Optimize();
             }
 
+            pb.ToMesh();
+            if (destinationWasManualUV)
+            {
+                destination[0] = targetFace;
+                UVEditing.SetAutoUV(pb, destination, true);
+                destinationWasManualUV = false;
+            }
+
             targetFace.uv = new AutoUnwrapSettings(source[0].uv);
             targetFace.submeshIndex = source[0].submeshIndex;
             EditorUtility.ShowNotification("Copy UV Settings");
-            pb.ToMesh();
             pb.Refresh();
+            pb.Optimize();
+
+            if (sourceWasManualUV != destinationWasManualUV)
+            {
+                destination[0] = targetFace;
+                pb.ToMesh();
+                UVEditing.SetAutoUV(pb, destination, !sourceWasManualUV);
+                pb.Refresh();
+                pb.Optimize();
+            }
 
             if (sourceWasManualUV == true)
             {
@@ -766,17 +784,6 @@ namespace UnityEditor.ProBuilder
                 firstObj.Refresh();
                 firstObj.Optimize();
             }
-
-                
-            if (sourceWasManualUV != destinationWasManualUV)
-            {
-                source[0] = targetFace;
-                pb.ToMesh();
-                UVEditing.SetAutoUV(pb, source, !sourceWasManualUV);
-                pb.Refresh();
-                pb.Optimize();
-            }
-                
 
             RefreshUVCoordinates();
             Repaint();
