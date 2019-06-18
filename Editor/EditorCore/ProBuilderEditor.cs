@@ -6,8 +6,8 @@ using System;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
-using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.Actions;
+using UnityEngine.ProBuilder;
 using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
 using UObject = UnityEngine.Object;
 using UnityEditor.SettingsManagement;
@@ -46,7 +46,7 @@ namespace UnityEditor.ProBuilder
         /// </value>
         public static event Action<IEnumerable<ProBuilderMesh>> beforeMeshModification;
 
-        static EditorToolbar s_EditorToolbar;
+        internal static EditorToolbar s_EditorToolbar;
         static ProBuilderEditor s_Instance;
 
         GUIContent[] m_EditModeIcons;
@@ -422,13 +422,7 @@ namespace UnityEditor.ProBuilder
 
         void InitGUI()
         {
-            if (s_EditorToolbar != null)
-                UObject.DestroyImmediate(s_EditorToolbar);
-
-            s_EditorToolbar = ScriptableObject.CreateInstance<EditorToolbar>();
-            s_EditorToolbar.hideFlags = HideFlags.HideAndDontSave;
-            s_EditorToolbar.InitWindowProperties(this);
-
+            OpenEditorToolbar();
             VertexTranslationInfoStyle = new GUIStyle();
             VertexTranslationInfoStyle.normal.background = EditorGUIUtility.whiteTexture;
             VertexTranslationInfoStyle.normal.textColor = new Color(1f, 1f, 1f, .6f);
@@ -449,6 +443,9 @@ namespace UnityEditor.ProBuilder
 
         void OnGUI()
         {
+            if (s_EditorToolbar != null && s_EditorToolbar.isIconMode != s_IsIconGui.value)
+                IconModeChanged();
+
             if (m_CommandStyle == null)
                 m_CommandStyle = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("Command");
 
@@ -499,14 +496,25 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        void Menu_ToggleIconMode()
+        void OpenEditorToolbar()
         {
-            s_IsIconGui.value = !s_IsIconGui.value;
             if (s_EditorToolbar != null)
                 DestroyImmediate(s_EditorToolbar);
+
             s_EditorToolbar = ScriptableObject.CreateInstance<EditorToolbar>();
             s_EditorToolbar.hideFlags = HideFlags.HideAndDontSave;
             s_EditorToolbar.InitWindowProperties(this);
+        }
+
+        void IconModeChanged()
+        {
+            OpenEditorToolbar();
+        }
+
+        void Menu_ToggleIconMode()
+        {
+            s_IsIconGui.value = !s_IsIconGui.value;
+            IconModeChanged();
         }
 
         public void AddItemsToMenu(GenericMenu menu)
@@ -1040,8 +1048,8 @@ namespace UnityEditor.ProBuilder
 
             if (selectionChanged)
             {
-                UpdateSceneInfo();
                 MeshSelection.OnComponentSelectionChanged();
+                UpdateSceneInfo();
             }
 
             if (selectionUpdated != null)

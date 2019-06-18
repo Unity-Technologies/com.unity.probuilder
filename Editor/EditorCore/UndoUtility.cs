@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.ProBuilder;
@@ -108,7 +109,7 @@ namespace UnityEditor.ProBuilder
         /**
          * Record objects for Undo.
          */
-        public static void RecordObjects(Object[] objs, string msg)
+        public static void RecordObjects(IEnumerable<Object> objs, string msg)
         {
             if (objs == null)
                 return;
@@ -149,6 +150,53 @@ namespace UnityEditor.ProBuilder
         public static void RegisterCreatedObjectUndo(Object obj, string msg)
         {
             Undo.RegisterCreatedObjectUndo(obj, msg);
+        }
+
+        public static void RecordComponents<T0, T1>(IEnumerable<Component> objs, string message)
+            where T0 : Component
+            where T1 : Component
+        {
+            List<Object> targets = new List<Object>();
+
+            foreach (var o in objs)
+            {
+                var t = o.GetComponent<T0>();
+                var k = o.GetComponent<T1>();
+
+                if (t != null)
+                    targets.Add(t);
+
+                if (k != null)
+                    targets.Add(k);
+            }
+
+            RecordObjects(targets, message);
+        }
+
+        public static void RecordComponents<T0, T1, T2>(IEnumerable<Component> objs, string message)
+            where T0 : Component
+            where T1 : Component
+            where T2 : Component
+        {
+            List<Object> targets = new List<Object>();
+
+            foreach (var o in objs)
+            {
+                var t0 = o.GetComponent<T0>();
+                var t1 = o.GetComponent<T1>();
+                var t2 = o.GetComponent<T2>();
+
+                if (t0 != null)
+                    targets.Add(t0);
+
+                if (t1 != null)
+                    targets.Add(t1);
+
+                if (t2 != null)
+                    targets.Add(t2);
+            }
+
+            RecordObjects(targets, message);
         }
     }
 }

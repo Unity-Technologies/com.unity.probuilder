@@ -5,13 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.1.0-preview.2] - 2019-04-26
+## [4.1.0-preview.5] - 2019-06-03
 
 ### Features
 
 - Added the option to export assets either as prefabs, or just the mesh.
 - Improved the naming of exported mesh assets.
 - Added API examples as a sample package.
+- Re-enabled FBX Exporter integration, adding support for quad export and automatical removal of ProBuilder components on export.
+- Added ability to duplicate faces to a new game object or to new submesh.
 
 ### Bug Fixes
 
@@ -26,11 +28,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed an issue when upgrading ProBuilder from a version lower than `4.0.0` that would result in meshes with multiple materials being condensed to a single material.
 - Fixed a potential exception when removing `ProBuilderMesh` components from code.
 - Fixed an inconsistency in UV projection that could result in faces being unwrapped differently between Unity versions.
+- Fixed obscured edges sometimes taking priority over visible edges when picking elements.
+- Fixed `Select Holes` action incorrectly showing as disabled in some cases.
+- Fixed compile errors when opened in Unity 2018.4.
+- Fixed scene information view not showing the correct selected element counts.
+- Fixed vertex dots rendering slightly offset from the vertex position with an orthographic camera.
+- Fixed `Poly Shape` creation tool not recognizing terrain when adding the origin point.
+- Fixed `Select Faces with Color` not selecting faces with no color.
+- Fixed compile error in runtime samples on Unity 2019.3.
+- Fixed `Split Vertices` not collecting coincident vertices when selected with a mouse click.
+- Fixed case where `Apply Material` would not be registered for Undo.
+- Fixed `Export OBJ` resulting in corrupted files when exporting multiple objects as a single model.
+- Fixed `Poly Shape` tool incorrectly rendering a mesh preview before the shape is finalized.
+- Fixed case where `Poly Shape` could leave the active tool in an invalid state.
+- Fixed case where drag selecting a single vertex would enable "Collapse Vertices" in toolbar
+- Fixed case where drag-and-dropping material onto selected faces applies material to all faces if "Edit UVs in Scene" enabled
 
 ### Changes
 
 - ProBuilder assembly definitions now have `Auto Referenced` enabled.
 - Project layout restructured for compatibility with file protocol.
+- Improved the default UV layout of Cone shape.
 
 ## [4.0.4] - 2019-03-13
 

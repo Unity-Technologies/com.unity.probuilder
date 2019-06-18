@@ -32,6 +32,8 @@ namespace UnityEditor.ProBuilder
         public static ProBuilderMesh DoMouseClick(Event evt, SelectMode selectionMode, ScenePickerPreferences pickerPreferences)
         {
             bool appendModifier = EditorHandleUtility.IsAppendModifier(evt.modifiers);
+            bool addToSelectionModifier = EditorHandleUtility.IsSelectionAddModifier(evt.modifiers);
+            bool addOrRemoveIfPresentFromSelectionModifier = EditorHandleUtility.IsSelectionAppendOrRemoveIfPresentModifier(evt.modifiers);
 
             if (!appendModifier)
                 MeshSelection.SetSelection((GameObject)null);
@@ -57,7 +59,12 @@ namespace UnityEditor.ProBuilder
                 return null;
             }
 
-            MeshSelection.AddToSelection(s_Selection.gameObject);
+            GameObject candidateNewActiveObject = s_Selection.gameObject;
+            bool activeObjectSelectionChanged = false;
+            if (Selection.gameObjects.Contains(s_Selection.gameObject) && s_Selection.gameObject != Selection.activeGameObject)
+            {
+                activeObjectSelectionChanged = true;
+            }
 
             if (s_Selection.mesh != null)
             {
@@ -83,7 +90,35 @@ namespace UnityEditor.ProBuilder
                     UndoUtility.RecordSelection(mesh, "Select Face");
 
                     if (sel > -1)
-                        mesh.RemoveFromFaceSelectionAtIndex(sel);
+                    {
+                        if (!appendModifier || addOrRemoveIfPresentFromSelectionModifier ||
+                            (addToSelectionModifier && s_Selection.face == mesh.GetActiveFace() && !activeObjectSelectionChanged))
+                        {
+                            mesh.RemoveFromFaceSelectionAtIndex(sel);
+
+                            if (addOrRemoveIfPresentFromSelectionModifier && activeObjectSelectionChanged)
+                            {
+                                candidateNewActiveObject = Selection.activeGameObject;
+                            }
+                            else if (mesh.selectedFaceCount == 0)
+                            {
+                                for (var i = MeshSelection.topInternal.Count - 1; i >= 0; i--)
+                                {
+                                    if (MeshSelection.topInternal[i].selectedFaceCount > 0)
+                                    {
+                                        candidateNewActiveObject = MeshSelection.topInternal[i].gameObject;
+                                        activeObjectSelectionChanged = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            mesh.selectedFaceIndicesInternal = mesh.selectedFaceIndicesInternal.Remove(ind);
+                            mesh.SetSelectedFaces(mesh.selectedFaceIndicesInternal.Add(ind));
+                        }
+                    }
                     else
                         mesh.AddToFaceSelection(ind);
                 }
@@ -94,14 +129,42 @@ namespace UnityEditor.ProBuilder
                     UndoUtility.RecordSelection(mesh, "Select Edge");
 
                     if (ind > -1)
-                        mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().RemoveAt(ind));
+                    {
+                        if (!appendModifier || addOrRemoveIfPresentFromSelectionModifier ||
+                            (addToSelectionModifier && s_Selection.edge == mesh.GetActiveEdge() && !activeObjectSelectionChanged))
+                        {
+                            mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().RemoveAt(ind));
+
+                            if (addOrRemoveIfPresentFromSelectionModifier && activeObjectSelectionChanged)
+                            {
+                                candidateNewActiveObject = Selection.activeGameObject;
+                            }
+                            else if (mesh.selectedEdgeCount == 0)
+                            {
+                                for (var i = MeshSelection.topInternal.Count - 1; i >= 0; i--)
+                                {
+                                    if (MeshSelection.topInternal[i].selectedEdgeCount > 0)
+                                    {
+                                        candidateNewActiveObject = MeshSelection.topInternal[i].gameObject;
+                                        activeObjectSelectionChanged = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            mesh.selectedEdgesInternal = mesh.selectedEdgesInternal.Remove(s_Selection.edge);
+                            mesh.SetSelectedEdges(mesh.selectedEdgesInternal.Add(s_Selection.edge));
+                        }
+                    }
                     else
                         mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().Add(s_Selection.edge));
                 }
                 else if (s_Selection.vertex > -1)
                 {
                     int ind = Array.IndexOf(mesh.selectedIndexesInternal, s_Selection.vertex);
-
+                    
                     UndoUtility.RecordSelection(mesh, "Select Vertex");
 
                     if (ind > -1)
@@ -117,15 +180,53 @@ namespace UnityEditor.ProBuilder
 
                             s_IndexBuffer.Add(index);
                         }
-
                         s_IndexBuffer.Sort();
-                        mesh.SetSelectedVertices(mesh.selectedIndexesInternal.SortedRemoveAt(s_IndexBuffer));
+                        
+                        if (!appendModifier || addOrRemoveIfPresentFromSelectionModifier ||
+                           (addToSelectionModifier && s_Selection.vertex == mesh.GetActiveVertex() && !activeObjectSelectionChanged))
+                        {
+                            mesh.selectedIndexesInternal = mesh.selectedIndexesInternal.SortedRemoveAt(s_IndexBuffer);
+                            mesh.SetSelectedVertices(mesh.selectedIndexesInternal);
+
+                            if (addOrRemoveIfPresentFromSelectionModifier && activeObjectSelectionChanged)
+                            {
+                                candidateNewActiveObject = Selection.activeGameObject;
+                            }
+                            else if (mesh.selectedIndexesInternal.Length == 0)
+                            {
+                                for (var i = MeshSelection.topInternal.Count - 1; i >= 0; i--)
+                                {
+                                    if (MeshSelection.topInternal[i].selectedIndexesInternal.Length > 0)
+                                    {
+                                        candidateNewActiveObject = MeshSelection.topInternal[i].gameObject;
+                                        activeObjectSelectionChanged = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            mesh.selectedIndexesInternal = mesh.selectedIndexesInternal.SortedRemoveAt(s_IndexBuffer);
+                            mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(s_Selection.vertex));
+                        }
+
                     }
                     else
                         mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(s_Selection.vertex));
                 }
 
-                return mesh;
+                if(activeObjectSelectionChanged)
+                { 
+                    MeshSelection.MakeActiveObject(candidateNewActiveObject);
+                }
+                else
+                {
+                    MeshSelection.AddToSelection(candidateNewActiveObject);
+                }
+
+
+            return mesh;
             }
 
             return null;
@@ -316,7 +417,7 @@ namespace UnityEditor.ProBuilder
                 s_AppendModifierPreviousState = (em != EventModifiers.None);
                 s_DeepSelectionPrevious = newHash;
             }
-            
+
             if (isPreview || em != EventModifiers.None)
                 EditorHandleUtility.GetHovered(mousePosition, s_OverlappingGameObjects);
             else
@@ -474,6 +575,12 @@ namespace UnityEditor.ProBuilder
             return matches;
         }
 
+        /// <summary>
+        /// Get the nearest <see cref="Edge"/> to a screen position.
+        /// </summary>
+        /// <returns>
+        /// Distance is returned as the screen distance to mesh, not edge.
+        /// </returns>
         static float EdgeRaycast(Vector3 mousePosition, ScenePickerPreferences pickerPrefs, bool allowUnselected, SceneSelection selection)
         {
             selection.Clear();
@@ -481,34 +588,36 @@ namespace UnityEditor.ProBuilder
             var hoveredMesh = selection.gameObject != null ? selection.gameObject.GetComponent<ProBuilderMesh>() : null;
 
             float bestDistance = pickerPrefs.maxPointerDistance;
-            float unselectedBestDistance = bestDistance;
             bool hoveredIsInSelection = MeshSelection.topInternal.Contains(hoveredMesh);
 
             if (hoveredMesh != null && (allowUnselected || hoveredIsInSelection))
             {
                 var tup = GetNearestEdgeOnMesh(hoveredMesh, mousePosition);
 
-                if (tup.edge.IsValid() && tup.distance < pickerPrefs.maxPointerDistance)
+                if (tup.edge.IsValid())
                 {
                     selection.gameObject = hoveredMesh.gameObject;
                     selection.mesh = hoveredMesh;
                     selection.edge = tup.edge;
-                    unselectedBestDistance = tup.distance;
+                    bestDistance = tup.distance;
 
-                    // if it's in the selection, it automatically wins as best. if not, treat this is a fallback.
+                    // If the nearest edge was acquired by a raycast, then the distance to mesh is 0f.
                     if (hoveredIsInSelection)
-                        return tup.distance;
+                        return 0f; // tup.distance;
                 }
             }
-            
+
             foreach (var mesh in MeshSelection.topInternal)
             {
                 var trs = mesh.transform;
                 var positions = mesh.positionsInternal;
                 s_EdgeBuffer.Clear();
 
-                //When the pointer is over another object, apply a modifier to the distance to prefer picking the object hovered over the currently selected
-                var distMultiplier = (hoveredMesh == mesh || hoveredMesh == null) ? 1.0f : pickerPrefs.offPointerMultiplier;
+                // When the pointer is over another object, apply a modifier to the distance to prefer picking the
+                // object hovered over the currently selected
+                var distMultiplier = (hoveredMesh == mesh || hoveredMesh == null)
+                    ? 1.0f
+                    : pickerPrefs.offPointerMultiplier;
 
                 foreach (var face in mesh.facesInternal)
                 {
@@ -516,15 +625,15 @@ namespace UnityEditor.ProBuilder
                     {
                         int x = edge.a;
                         int y = edge.b;
-                        
 
                         float d = UHandleUtility.DistanceToLine(
                                 trs.TransformPoint(positions[x]),
                                 trs.TransformPoint(positions[y]));
 
                         d *= distMultiplier;
-                        
-                        if (d == bestDistance)
+
+                        // account for stacked edges
+                        if (Mathf.Approximately(d, bestDistance))
                         {
                             s_EdgeBuffer.Add(new Edge(x, y));
                         }
@@ -541,20 +650,13 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
-                //If more than 1 edge is closest, the closest is one of the vertex.
-                //Get closest edge to the camera.
+                // If more than 1 edge is closest, the closest is one of the vertex.
+                // Get closest edge to the camera.
                 if (s_EdgeBuffer.Count > 1)
                     selection.edge = GetClosestEdgeToCamera(positions, s_EdgeBuffer);
             }
 
-            if (selection.gameObject != null)
-            {
-                if (bestDistance < pickerPrefs.maxPointerDistance)
-                    return bestDistance;
-                return unselectedBestDistance;
-            }
-
-            return Mathf.Infinity;
+            return selection.gameObject != null ? bestDistance : Mathf.Infinity;
         }
 
         static Edge GetClosestEdgeToCamera(Vector3[] positions, IEnumerable<Edge> edges)
@@ -591,6 +693,9 @@ namespace UnityEditor.ProBuilder
             public float distance;
         }
 
+        /// <summary>
+        /// Get the nearest edge to a screen position.
+        /// </summary>
         static EdgeAndDistance GetNearestEdgeOnMesh(ProBuilderMesh mesh, Vector3 mousePosition)
         {
             Ray ray = UHandleUtility.GUIPointToWorldRay(mousePosition);

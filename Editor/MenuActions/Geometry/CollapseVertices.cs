@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override bool enabled
         {
-            get { return base.enabled && MeshSelection.selectedVertexCountObjectMax > 1; }
+            get { return base.enabled && MeshSelection.selectedSharedVertexCountObjectMax > 1; }
         }
 
         protected override MenuActionState optionsMenuState

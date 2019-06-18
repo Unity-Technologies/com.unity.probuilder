@@ -11,6 +11,7 @@ namespace UnityEditor.ProBuilder
     /// </summary>
     static class MenuActionStyles
     {
+        const int k_FontSize = 11;
         internal static readonly Color TEXT_COLOR_WHITE_NORMAL = new Color(0.82f, 0.82f, 0.82f, 1f);
         internal static readonly Color TEXT_COLOR_WHITE_HOVER = new Color(0.7f, 0.7f, 0.7f, 1f);
         internal static readonly Color TEXT_COLOR_WHITE_ACTIVE = new Color(0.5f, 0.5f, 0.5f, 1f);
@@ -42,6 +43,7 @@ namespace UnityEditor.ProBuilder
                 if (s_ButtonStyleVertical == null)
                 {
                     s_ButtonStyleVertical = new GUIStyle();
+                    s_ButtonStyleVertical.fontSize = k_FontSize;
                     s_ButtonStyleVertical.normal.background = IconUtility.GetIcon("Toolbar/Button_Normal", IconSkin.Pro);
                     s_ButtonStyleVertical.normal.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_NORMAL : Color.black;
                     s_ButtonStyleVertical.hover.background = IconUtility.GetIcon("Toolbar/Button_Hover", IconSkin.Pro);
@@ -67,18 +69,19 @@ namespace UnityEditor.ProBuilder
                 {
                     s_ButtonStyleHorizontal = new GUIStyle();
 
-                    s_ButtonStyleHorizontal.normal.textColor    = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_NORMAL : Color.black;
-                    s_ButtonStyleHorizontal.normal.background   = IconUtility.GetIcon("Toolbar/Button_Normal_Horizontal", IconSkin.Pro);
-                    s_ButtonStyleHorizontal.hover.background    = IconUtility.GetIcon("Toolbar/Button_Hover_Horizontal", IconSkin.Pro);
-                    s_ButtonStyleHorizontal.hover.textColor         = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_HOVER : Color.black;
-                    s_ButtonStyleHorizontal.active.background   = IconUtility.GetIcon("Toolbar/Button_Pressed_Horizontal", IconSkin.Pro);
-                    s_ButtonStyleHorizontal.active.textColor    = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_ACTIVE : Color.black;
-                    s_ButtonStyleHorizontal.alignment           = TextAnchor.MiddleCenter;
-                    s_ButtonStyleHorizontal.border              = new RectOffset(0, 0, 4, 0);
-                    s_ButtonStyleHorizontal.stretchWidth        = true;
-                    s_ButtonStyleHorizontal.stretchHeight       = false;
-                    s_ButtonStyleHorizontal.margin              = new RectOffset(4, 4, 4, 5);
-                    s_ButtonStyleHorizontal.padding                 = new RectOffset(2, 2, 8, 0);
+                    s_ButtonStyleHorizontal.fontSize = k_FontSize;
+                    s_ButtonStyleHorizontal.normal.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_NORMAL : Color.black;
+                    s_ButtonStyleHorizontal.normal.background = IconUtility.GetIcon("Toolbar/Button_Normal_Horizontal", IconSkin.Pro);
+                    s_ButtonStyleHorizontal.hover.background = IconUtility.GetIcon("Toolbar/Button_Hover_Horizontal", IconSkin.Pro);
+                    s_ButtonStyleHorizontal.hover.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_HOVER : Color.black;
+                    s_ButtonStyleHorizontal.active.background = IconUtility.GetIcon("Toolbar/Button_Pressed_Horizontal", IconSkin.Pro);
+                    s_ButtonStyleHorizontal.active.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_ACTIVE : Color.black;
+                    s_ButtonStyleHorizontal.alignment = TextAnchor.MiddleCenter;
+                    s_ButtonStyleHorizontal.border = new RectOffset(0, 0, 4, 0);
+                    s_ButtonStyleHorizontal.stretchWidth = true;
+                    s_ButtonStyleHorizontal.stretchHeight = false;
+                    s_ButtonStyleHorizontal.margin = new RectOffset(4, 4, 4, 5);
+                    s_ButtonStyleHorizontal.padding = new RectOffset(2, 2, 8, 0);
                 }
                 return s_ButtonStyleHorizontal;
             }
@@ -91,6 +94,7 @@ namespace UnityEditor.ProBuilder
                 if (s_RowStyleVertical == null)
                 {
                     s_RowStyleVertical = new GUIStyle();
+                    s_RowStyleVertical.fontSize = k_FontSize;
                     s_RowStyleVertical.alignment = TextAnchor.MiddleLeft;
                     s_RowStyleVertical.stretchWidth = true;
                     s_RowStyleVertical.stretchHeight = false;
@@ -108,6 +112,7 @@ namespace UnityEditor.ProBuilder
                 if (s_RowStyleHorizontal == null)
                 {
                     s_RowStyleHorizontal = new GUIStyle();
+                    s_RowStyleHorizontal.fontSize = k_FontSize;
                     s_RowStyleHorizontal.alignment = TextAnchor.MiddleCenter;
                     s_RowStyleHorizontal.stretchWidth = true;
                     s_RowStyleHorizontal.stretchHeight = false;
@@ -126,18 +131,18 @@ namespace UnityEditor.ProBuilder
                 {
                     s_AltButtonStyle = new GUIStyle();
 
-                    s_AltButtonStyle.normal.background  = IconUtility.GetIcon("Toolbar/AltButton_Normal", IconSkin.Pro);
-                    s_AltButtonStyle.normal.textColor   = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_NORMAL : Color.black;
-                    s_AltButtonStyle.hover.background   = IconUtility.GetIcon("Toolbar/AltButton_Hover", IconSkin.Pro);
-                    s_AltButtonStyle.hover.textColor    = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_HOVER : Color.black;
-                    s_AltButtonStyle.active.background  = IconUtility.GetIcon("Toolbar/AltButton_Pressed", IconSkin.Pro);
-                    s_AltButtonStyle.active.textColor   = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_ACTIVE : Color.black;
-                    s_AltButtonStyle.alignment          = TextAnchor.MiddleCenter;
-                    s_AltButtonStyle.border                 = new RectOffset(1, 1, 1, 1);
-                    s_AltButtonStyle.stretchWidth       = false;
-                    s_AltButtonStyle.stretchHeight      = true;
-                    s_AltButtonStyle.margin                 = new RectOffset(4, 4, 4, 4);
-                    s_AltButtonStyle.padding            = new RectOffset(2, 2, 1, 3);
+                    s_AltButtonStyle.normal.background = IconUtility.GetIcon("Toolbar/AltButton_Normal", IconSkin.Pro);
+                    s_AltButtonStyle.normal.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_NORMAL : Color.black;
+                    s_AltButtonStyle.hover.background = IconUtility.GetIcon("Toolbar/AltButton_Hover", IconSkin.Pro);
+                    s_AltButtonStyle.hover.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_HOVER : Color.black;
+                    s_AltButtonStyle.active.background = IconUtility.GetIcon("Toolbar/AltButton_Pressed", IconSkin.Pro);
+                    s_AltButtonStyle.active.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_ACTIVE : Color.black;
+                    s_AltButtonStyle.alignment = TextAnchor.MiddleCenter;
+                    s_AltButtonStyle.border = new RectOffset(1, 1, 1, 1);
+                    s_AltButtonStyle.stretchWidth = false;
+                    s_AltButtonStyle.stretchHeight = true;
+                    s_AltButtonStyle.margin = new RectOffset(4, 4, 4, 4);
+                    s_AltButtonStyle.padding = new RectOffset(2, 2, 1, 3);
                 }
                 return s_AltButtonStyle;
             }

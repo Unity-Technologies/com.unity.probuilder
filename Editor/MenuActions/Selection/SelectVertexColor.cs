@@ -102,34 +102,60 @@ namespace UnityEditor.ProBuilder.Actions
             else
                 pool = Object.FindObjectsOfType<ProBuilderMesh>();
 
-            foreach (ProBuilderMesh pb in pool)
+            //If the original selection does not have colors assigned we will select faces without colors
+            if (colors.Count == 0)
             {
-                Color[] mesh_colors = pb.colorsInternal;
-
-                if (mesh_colors == null || mesh_colors.Length != pb.vertexCount)
-                    continue;
-
-                List<Face> matches = new List<Face>();
-                Face[] faces = pb.facesInternal;
-
-                for (int i = 0; i < faces.Length; i++)
+                foreach (ProBuilderMesh pb in pool)
                 {
-                    int[] tris = faces[i].distinctIndexesInternal;
-
-                    for (int n = 0; n < tris.Length; n++)
+                    if (pb.colorsInternal == null)
                     {
-                        if (colors.Contains((Color32)mesh_colors[tris[n]]))
+                        List<Face> matches = new List<Face>();
+                        Face[] faces = pb.facesInternal;
+
+                        foreach(var face in faces)
                         {
-                            matches.Add(faces[i]);
-                            break;
+                            matches.Add(face);
+                        }                        
+
+                        if (matches.Count > 0)
+                        {
+                            newSelection.Add(pb.gameObject);
+                            pb.SetSelectedFaces(matches);
                         }
                     }
                 }
-
-                if (matches.Count > 0)
+            }
+            else
+            {
+                foreach (ProBuilderMesh pb in pool)
                 {
-                    newSelection.Add(pb.gameObject);
-                    pb.SetSelectedFaces(matches);
+                    Color[] mesh_colors = pb.colorsInternal;
+
+                    if (mesh_colors == null || mesh_colors.Length != pb.vertexCount)
+                        continue;
+
+                    List<Face> matches = new List<Face>();
+                    Face[] faces = pb.facesInternal;
+
+                    for (int i = 0; i < faces.Length; i++)
+                    {
+                        int[] tris = faces[i].distinctIndexesInternal;
+
+                        for (int n = 0; n < tris.Length; n++)
+                        {
+                            if (colors.Contains((Color32)mesh_colors[tris[n]]))
+                            {
+                                matches.Add(faces[i]);
+                                break;
+                            }
+                        }
+                    }
+
+                    if (matches.Count > 0)
+                    {
+                        newSelection.Add(pb.gameObject);
+                        pb.SetSelectedFaces(matches);
+                    }
                 }
             }
 

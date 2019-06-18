@@ -31,6 +31,17 @@ namespace UnityEditor.ProBuilder
                 (em & EventModifiers.Command) == EventModifiers.Command;
         }
 
+        public static bool IsSelectionAddModifier(EventModifiers em)
+        {
+            return (em & EventModifiers.Shift) == EventModifiers.Shift;
+        }
+
+        public static bool IsSelectionAppendOrRemoveIfPresentModifier(EventModifiers em)
+        {
+            return (((Application.platform == RuntimePlatform.OSXEditor)  && (em & EventModifiers.Command) == EventModifiers.Command) ||
+                ((Application.platform != RuntimePlatform.OSXEditor) && (em & EventModifiers.Control) == EventModifiers.Control));
+        }
+
         const int HANDLE_PADDING = 8;
         const int LEFT_MOUSE_BUTTON = 0;
         const int MIDDLE_MOUSE_BUTTON = 2;
@@ -512,16 +523,13 @@ namespace UnityEditor.ProBuilder
                     ignorePicking.Add(go);
 
                 go = HandleUtility.PickGameObject(mousePosition, false, ignorePicking.ToArray());
-            } while (go != null && go.GetComponent<MeshFilter>() == null);
+            } while (go != null && (go.GetComponent<MeshFilter>() == null && go.GetComponent<Terrain>() == null));
 
             if (go != null)
             {
-                Mesh m = go.GetComponent<MeshFilter>().sharedMesh;
-
-                if (m != null)
+                if (go.GetComponent<MeshFilter>() != null && go.GetComponent<MeshFilter>().sharedMesh != null)
                 {
                     RaycastHit hit;
-
                     if (UnityEngine.ProBuilder.HandleUtility.MeshRaycast(
                         HandleUtility.GUIPointToWorldRay(mousePosition),
                         go,
@@ -530,6 +538,15 @@ namespace UnityEditor.ProBuilder
                         plane = new Plane(
                             go.transform.TransformDirection(hit.normal),
                             go.transform.TransformPoint(hit.point));
+                        return true;
+                    }
+                }
+                else if (go.GetComponent<Terrain>() != null)
+                {
+                    UnityEngine.RaycastHit hit;
+                    if (Physics.Raycast(HandleUtility.GUIPointToWorldRay(mousePosition), out hit))
+                    {
+                        plane = new Plane(hit.normal,hit.point);
                         return true;
                     }
                 }

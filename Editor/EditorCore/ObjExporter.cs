@@ -176,15 +176,18 @@ namespace UnityEditor.ProBuilder
 
                 sb.AppendLine(string.Format("g {0}", model.name));
 
-                var positionIndexMap = AppendPositions(sb, positions, colors, true, options.vertexColors);
+                Dictionary<int, int> positionIndexMap;
+                var positionCount = AppendPositions(sb, positions, colors, true, options.vertexColors, out positionIndexMap);
 
                 sb.AppendLine();
 
-                var textureIndexMap = AppendArrayVec2(sb, textures0, "vt", true);
+                Dictionary<int, int> textureIndexMap;
+                var textureCount = AppendArrayVec2(sb, textures0, "vt", true, out textureIndexMap);
 
                 sb.AppendLine();
 
-                var normalIndexMap = AppendArrayVec3(sb, normals, "vn", true);
+                Dictionary<int, int> normalIndexMap;
+                var normalCount = AppendArrayVec3(sb, normals, "vn", true, out normalIndexMap);
 
                 sb.AppendLine();
 
@@ -192,11 +195,6 @@ namespace UnityEditor.ProBuilder
                 for (int submeshIndex = 0; submeshIndex < subMeshCount; submeshIndex++)
                 {
                     Submesh submesh = model.submeshes[submeshIndex];
-
-                    if (subMeshCount > 1)
-                        sb.AppendLine(string.Format("g {0}_{1}", model.name, submeshIndex));
-                    else
-                        sb.AppendLine(string.Format("g {0}", model.name));
 
                     string materialName = "";
 
@@ -256,9 +254,9 @@ namespace UnityEditor.ProBuilder
                     sb.AppendLine();
                 }
 
-                positionOffset += positionIndexMap.Count;
-                normalOffset += normalIndexMap.Count;
-                textureOffset += textureIndexMap.Count;
+                positionOffset += positionCount;
+                normalOffset += normalCount;
+                textureOffset += textureCount;
             }
 
             return sb.ToString();
@@ -389,7 +387,7 @@ namespace UnityEditor.ProBuilder
             {
                 if (ReferenceEquals(null, obj))
                     return false;
-                    
+
                 return obj is PositionColorKey && Equals(obj);
             }
 
@@ -403,19 +401,19 @@ namespace UnityEditor.ProBuilder
         }
 
         // AppendPositions separately from AppendArrayVec3 to support the non-spec color extension that some DCCs can read
-        static Dictionary<int, int> AppendPositions(StringBuilder sb, Vector3[] positions, Color[] colors, bool mergeCoincident, bool includeColors)
+        static int AppendPositions(StringBuilder sb, Vector3[] positions, Color[] colors, bool mergeCoincident, bool includeColors, out Dictionary<int, int> coincidentIndexMap)
         {
             var writeColors = includeColors && colors != null && colors.Length == positions.Length;
 
             Dictionary<PositionColorKey, int> common = new Dictionary<PositionColorKey, int>();
-            Dictionary<int, int> map = new Dictionary<int, int>();
+            coincidentIndexMap = new Dictionary<int, int>();
 
             int index = 0;
 
             for (int i = 0, c = positions.Length; i < c; i++)
             {
                 var position = positions[i];
-                var color = includeColors ? colors[i] : Color.white;
+                var color = writeColors ? colors[i] : Color.white;
 
                 var key = new PositionColorKey(position, color);
                 int vertexIndex;
@@ -429,16 +427,16 @@ namespace UnityEditor.ProBuilder
                     }
                     else
                     {
-                        map.Add(i, vertexIndex);
+                        coincidentIndexMap.Add(i, vertexIndex);
                         continue;
                     }
                 }
                 else
                 {
-                    vertexIndex = i;
+                    vertexIndex = index++;
                 }
 
-                map.Add(i, vertexIndex);
+                coincidentIndexMap.Add(i, vertexIndex);
 
                 if (writeColors)
                 {
@@ -459,16 +457,17 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            return map;
+            return index;
         }
 
-        static Dictionary<int, int> AppendArrayVec2(StringBuilder sb, Vector2[] array, string prefix, bool mergeCoincident)
+        static int AppendArrayVec2(StringBuilder sb, Vector2[] array, string prefix, bool mergeCoincident, out Dictionary<int, int> coincidentIndexMap)
         {
+            coincidentIndexMap = new Dictionary<int, int>();
+
             if (array == null)
-                return null;
+                return 0;
 
             Dictionary<IntVec2, int> common = new Dictionary<IntVec2, int>();
-            Dictionary<int, int> map = new Dictionary<int, int>();
             int index = 0;
 
             for (int i = 0, c = array.Length; i < c; i++)
@@ -486,16 +485,16 @@ namespace UnityEditor.ProBuilder
                     }
                     else
                     {
-                        map.Add(i, vertexIndex);
+                        coincidentIndexMap.Add(i, vertexIndex);
                         continue;
                     }
                 }
                 else
                 {
-                    vertexIndex = i;
+                    vertexIndex = index++;
                 }
 
-                map.Add(i, vertexIndex);
+                coincidentIndexMap.Add(i, vertexIndex);
 
                 sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "{0} {1} {2}",
                     prefix,
@@ -503,19 +502,23 @@ namespace UnityEditor.ProBuilder
                     texture.y));
             }
 
-            return map;
+            return index;
         }
 
-        static Dictionary<int, int> AppendArrayVec3(StringBuilder sb, Vector3[] array, string prefix, bool mergeCoincident)
+        static int AppendArrayVec3(StringBuilder sb, Vector3[] array, string prefix, bool mergeCoincident, out Dictionary<int, int> coincidentIndexMap)
         {
+            coincidentIndexMap = new Dictionary<int, int>();
+
+            if (array == null)
+                return 0;
+
             Dictionary<IntVec3, int> common = new Dictionary<IntVec3, int>();
-            Dictionary<int, int> map = new Dictionary<int, int>();
             int index = 0;
 
             for (int i = 0, c = array.Length; i < c; i++)
             {
-                var value = array[i];
-                var key = new IntVec3(value);
+                var vec = array[i];
+                var key = new IntVec3(vec);
                 int vertexIndex;
 
                 if (mergeCoincident)
@@ -527,25 +530,26 @@ namespace UnityEditor.ProBuilder
                     }
                     else
                     {
-                        map.Add(i, vertexIndex);
+                        coincidentIndexMap.Add(i, vertexIndex);
                         continue;
                     }
                 }
                 else
                 {
-                    vertexIndex = i;
+                    vertexIndex = index++;
                 }
 
-                map.Add(i, vertexIndex);
+                coincidentIndexMap.Add(i, vertexIndex);
 
                 sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "{0} {1} {2} {3}",
                     prefix,
-                    value.x,
-                    value.y,
-                    value.z));
+                    vec.x,
+                    vec.y,
+                    vec.z));
             }
 
-            return map;
+            return index;
         }
+
     }
 }

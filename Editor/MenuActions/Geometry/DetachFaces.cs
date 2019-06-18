@@ -107,8 +107,8 @@ namespace UnityEditor.ProBuilder.Actions
                 if (mesh.selectedFaceCount < 1 || mesh.selectedFaceCount == mesh.facesInternal.Length)
                     continue;
 
-                var primary = mesh.selectedFaceIndexes.ToArray();
-                detachedFaceCount += primary.Length;
+                var primary = mesh.selectedFaceIndexes;
+                detachedFaceCount += primary.Count;
 
                 List<int> inverse = new List<int>();
 
@@ -117,7 +117,7 @@ namespace UnityEditor.ProBuilder.Actions
                         inverse.Add(i);
 
                 ProBuilderMesh copy = Object.Instantiate(mesh.gameObject, mesh.transform.parent).GetComponent<ProBuilderMesh>();
-                copy.MakeUnique();
+                EditorUtility.SynchronizeWithMeshFilter(copy);
 
 #if !UNITY_2018_3_OR_NEWER
                 // if is prefab, break connection and destroy children
@@ -136,10 +136,6 @@ namespace UnityEditor.ProBuilder.Actions
 
                 Undo.RegisterCreatedObjectUndo(copy.gameObject, "Detach Selection");
 
-                copy.transform.position = mesh.transform.position;
-                copy.transform.localScale = mesh.transform.localScale;
-                copy.transform.localRotation = mesh.transform.localRotation;
-
                 mesh.DeleteFaces(primary);
                 copy.DeleteFaces(inverse);
 
@@ -152,11 +148,13 @@ namespace UnityEditor.ProBuilder.Actions
                 mesh.ClearSelection();
                 copy.ClearSelection();
 
-                copy.gameObject.name = mesh.gameObject.name + "-detach";
+                copy.SetSelectedFaces(copy.faces);
+
+                copy.gameObject.name = GameObjectUtility.GetUniqueNameForSibling(mesh.transform.parent, mesh.gameObject.name); ;
                 detached.Add(copy.gameObject);
             }
 
-            MeshSelection.SetSelection(detached.ToArray());
+            MeshSelection.SetSelection(detached);
             ProBuilderEditor.Refresh();
 
             if (detachedFaceCount > 0)

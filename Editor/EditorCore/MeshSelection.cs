@@ -77,6 +77,7 @@ namespace UnityEditor.ProBuilder
         internal static int selectedEdgeCountObjectMax { get; private set; }
         internal static int selectedVertexCountObjectMax { get; private set; }
         internal static int selectedSharedVertexCountObjectMax { get; private set; }
+        internal static int selectedCoincidentVertexCountMax { get; private set; }
 
         // Faces that need to be refreshed when moving or modifying the actual selection
         internal static Dictionary<ProBuilderMesh, List<Face>> selectedFacesInEditZone
@@ -175,6 +176,7 @@ namespace UnityEditor.ProBuilder
             selectedFaceCountObjectMax = 0;
             selectedVertexCountObjectMax = 0;
             selectedSharedVertexCountObjectMax = 0;
+            selectedCoincidentVertexCountMax = 0;
             selectedEdgeCountObjectMax = 0;
 
             RecalculateSelectedComponentCounts();
@@ -218,6 +220,7 @@ namespace UnityEditor.ProBuilder
 
                 selectedVertexCountObjectMax = System.Math.Max(selectedVertexCountObjectMax, mesh.selectedIndexesInternal.Length);
                 selectedSharedVertexCountObjectMax = System.Math.Max(selectedSharedVertexCountObjectMax, mesh.selectedSharedVerticesCount);
+                selectedCoincidentVertexCountMax = System.Math.Max(selectedCoincidentVertexCountMax, mesh.selectedCoincidentVertexCount);
                 selectedFaceCountObjectMax = System.Math.Max(selectedFaceCountObjectMax, mesh.selectedFaceCount);
                 selectedEdgeCountObjectMax = System.Math.Max(selectedEdgeCountObjectMax, mesh.selectedEdgeCount);
             }
@@ -370,7 +373,7 @@ namespace UnityEditor.ProBuilder
 
             Object[] temp = new Object[Selection.objects.Length - 1];
 
-            for (int i = 1; i < temp.Length; i++)
+            for (int i = 0; i < temp.Length; i++)
             {
                 if (i != ind)
                     temp[i] = Selection.objects[i];
@@ -380,6 +383,34 @@ namespace UnityEditor.ProBuilder
 
             if (Selection.activeGameObject == t)
                 Selection.activeObject = temp.FirstOrDefault();
+        }
+
+        internal static void MakeActiveObject(GameObject t)
+        {
+            if (t == null || !Selection.objects.Contains(t))
+                return;
+
+            int ind = System.Array.IndexOf(Selection.objects, t);
+            int len = Selection.objects.Length;
+
+            Object[] temp = new Object[len];
+
+            for (int i = 0; i < len - 1 ; i++)
+            {
+                if(i == ind)
+                {
+                    temp[i] = Selection.objects[len - 1];
+                }
+                else
+                {
+                    temp[i] = Selection.objects[i];
+                }
+            }
+
+            temp[len - 1] = t;
+
+            Selection.activeObject = t;
+            Selection.objects = temp;
         }
 
         internal static void RemoveMeshFromSelectionInternal(ProBuilderMesh mesh)
