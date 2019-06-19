@@ -83,14 +83,34 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 		static List<Vector2> s_UVTransformProjectionBuffer = new List<Vector2>(8);
 
-		/// <summary>
-		/// Attempt to calculate the UV transform for a face. In cases where the face is auto unwrapped
-		/// (manualUV = false), this returns the offset, rotation, and scale from <see cref="Face.uv"/>. If the face is
-		/// manually unwrapped, a transform will be calculated by trying to match an unmodified planar projection to the
-		/// current UVs. The results
-		/// </summary>
-		/// <returns></returns>
-		internal static UVTransform GetUVTransform(ProBuilderMesh mesh, Face face)
+        /// <summary>
+        /// Returns the auto unwrap settings for a face. In cases where the face is auto unwrapped
+        /// (manualUV = false), this returns the settings straight. If the face is
+        /// manually unwrapped, it returns the auto unwrap settings computed from GetUVTransform.
+        /// </summary>
+        /// <returns></returns>
+        internal static AutoUnwrapSettings GetAutoUnwrapSettings(ProBuilderMesh mesh, Face face)
+        {
+            if (!face.manualUV)
+                return new AutoUnwrapSettings(face.uv);
+
+            var trs = GetUVTransform(mesh, face);
+            var uvSettings = AutoUnwrapSettings.defaultAutoUnwrapSettings;
+            uvSettings.offset = trs.translation;
+            uvSettings.rotation = trs.rotation;
+            uvSettings.scale = trs.scale;
+
+            return uvSettings; 
+        }
+
+        /// <summary>
+        /// Attempt to calculate the UV transform for a face. In cases where the face is auto unwrapped
+        /// (manualUV = false), this returns the offset, rotation, and scale from <see cref="Face.uv"/>. If the face is
+        /// manually unwrapped, a transform will be calculated by trying to match an unmodified planar projection to the
+        /// current UVs. The results
+        /// </summary>
+        /// <returns></returns>
+        internal static UVTransform GetUVTransform(ProBuilderMesh mesh, Face face)
 		{
 			Projection.PlanarProject(mesh.positionsInternal, face.indexesInternal, Math.Normal(mesh, face), s_UVTransformProjectionBuffer);
 			return CalculateDelta(mesh.texturesInternal, face.indexesInternal, s_UVTransformProjectionBuffer, null);

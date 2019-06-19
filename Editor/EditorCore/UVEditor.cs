@@ -734,23 +734,14 @@ namespace UnityEditor.ProBuilder
         {
             // get first selected UV face
             ProBuilderMesh firstObj = MeshSelection.activeMesh;
-            Face[] source = new Face[1];
+            Face sourceFace = MeshSelection.activeFace;
             Face[] destination = new Face[1];
-            source[0] = MeshSelection.activeFace;
-            if (source[0] == null)
+            if (sourceFace == null)
                 return false;
 
             UndoUtility.RecordObject(pb, "Copy UV Settings");
             bool destinationWasManualUV = targetFace.manualUV;
-            bool sourceWasManualUV = source[0].manualUV;
-
-            if (sourceWasManualUV == true)
-            {
-                //We need to convert it to auto
-                firstObj.ToMesh();
-                UVEditing.SetAutoUV(firstObj, source, true);
-                firstObj.Refresh();
-            }
+            bool sourceWasManualUV = sourceFace.manualUV;
 
             pb.ToMesh();
             if (destinationWasManualUV)
@@ -761,8 +752,9 @@ namespace UnityEditor.ProBuilder
                 UVEditing.SetAutoUV(pb, destination, true);
             }
 
-            targetFace.uv = new AutoUnwrapSettings(source[0].uv);
-            targetFace.submeshIndex = source[0].submeshIndex;
+            targetFace.uv = UVEditing.GetAutoUnwrapSettings(firstObj, sourceFace);
+            destination[0] = targetFace;
+            targetFace.submeshIndex = sourceFace.submeshIndex;
             EditorUtility.ShowNotification("Copy UV Settings");
             pb.Refresh();
 
@@ -774,17 +766,7 @@ namespace UnityEditor.ProBuilder
                 UVEditing.SetAutoUV(pb, destination, false);
                 pb.Refresh();
             }
-
-            if (sourceWasManualUV == true)
-            {
-                //We need to convert it back to manual
-                firstObj.ToMesh();
-                UVEditing.SetAutoUV(firstObj, source, false);
-                firstObj.Refresh();
-            }
-
             pb.Optimize();
-            firstObj.Optimize();
 
             RefreshUVCoordinates();
             Repaint();
