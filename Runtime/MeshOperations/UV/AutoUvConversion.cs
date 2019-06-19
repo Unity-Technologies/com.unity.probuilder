@@ -98,7 +98,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             var uvSettings = AutoUnwrapSettings.defaultAutoUnwrapSettings;
             uvSettings.offset = trs.translation;
             uvSettings.rotation = 360 - trs.rotation;
-            uvSettings.scale = face.uv.scale;
+            uvSettings.scale = uvSettings.scale/trs.scale;
 
             return uvSettings; 
         }
