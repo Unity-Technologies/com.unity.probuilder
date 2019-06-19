@@ -86,7 +86,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <summary>
         /// Returns the auto unwrap settings for a face. In cases where the face is auto unwrapped
         /// (manualUV = false), this returns the settings straight. If the face is
-        /// manually unwrapped, it returns the auto unwrap settings computed from GetUVTransform.
+        /// manually unwrapped, it returns the default auto unwrap settings with the trs of face.
         /// </summary>
         /// <returns></returns>
         internal static AutoUnwrapSettings GetAutoUnwrapSettings(ProBuilderMesh mesh, Face face)
@@ -94,11 +94,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (!face.manualUV)
                 return new AutoUnwrapSettings(face.uv);
 
-            var trs = GetUVTransform(mesh, face);
             var uvSettings = AutoUnwrapSettings.defaultAutoUnwrapSettings;
-            uvSettings.offset = trs.translation;
-            uvSettings.rotation = trs.rotation;
-            uvSettings.scale = trs.scale;
+            uvSettings.offset = face.uv.offset;
+            uvSettings.rotation = face.uv.rotation;
+            uvSettings.scale = face.uv.scale;
 
             return uvSettings; 
         }
