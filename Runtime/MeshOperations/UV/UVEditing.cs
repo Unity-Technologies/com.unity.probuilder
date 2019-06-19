@@ -284,29 +284,30 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <summary>
         /// Finds the lower left UV coordinate of a set of an array of UVs
         /// </summary>
-        internal static Vector2 FindLowerLeftUV(Vector2[] uvs)
+        internal static Vector2 FindLowerLeftUV(Vector2[] uvs, int[] indices = null, float xMin = 0f, float yMin = 0f)
         {
-            float xMin = 0f, yMin = 0f;
-            bool first = true;
-            for (int i = 0; i < uvs.Length; ++i)
+            int nbElements = (indices == null ? uvs.Length : indices.Length);
+            bool first = (xMin == 0f && yMin == 0f);
+            for (int i = 0; i < nbElements; ++i)
             {
+                int currentIndex = (indices == null ? i : indices[i]);
                 if (first)
                 {
-                    xMin = uvs[i].x;
-                    yMin = uvs[i].y;
+                    xMin = uvs[currentIndex].x;
+                    yMin = uvs[currentIndex].y;
                     first = false;
                 }
                 else
                 {
-                    if (Math.Approx(uvs[i].x, xMin))
+                    if (Math.Approx(uvs[currentIndex].x, xMin))
                     {
-                        if (uvs[i].y < yMin)
-                            yMin = uvs[i].y;
+                        if (uvs[currentIndex].y < yMin)
+                            yMin = uvs[currentIndex].y;
                     }
-                    else if (uvs[i].x < xMin)
+                    else if (uvs[currentIndex].x < xMin)
                     {
-                        xMin = uvs[i].x;
-                        yMin = uvs[i].y;
+                        xMin = uvs[currentIndex].x;
+                        yMin = uvs[currentIndex].y;
                     }
                 }
             }

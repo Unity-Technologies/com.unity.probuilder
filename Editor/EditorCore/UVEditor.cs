@@ -2278,36 +2278,15 @@ namespace UnityEditor.ProBuilder
         /// <returns></returns>
         internal Vector2 UVSelectionLowerLeftUV()
         {
-            float xMin = 0f, yMin = 0f;
-            bool first = true;
+            Vector2 lowerLeftUV = new Vector2();
+            lowerLeftUV = Vector2.zero;
             for (int n = 0; n < selection.Length; n++)
             {
                 Vector2[] uv = selection[n].texturesInternal;
-
-                foreach (int i in m_DistinctIndexesSelection[n])
-                {
-                    if (first)
-                    {
-                        xMin = uv[i].x;
-                        yMin = uv[i].y;
-                        first = false;
-                    }
-                    else
-                    {
-                        if (uv[i].x < xMin)
-                        {
-                            xMin = uv[i].x;
-                            yMin = uv[i].y;
-                        }
-                        else if (uv[i].x == xMin && uv[i].y < yMin)
-                        {
-                            yMin = uv[i].y;
-                        }
-                    }
-                }
+                lowerLeftUV = UVEditing.FindLowerLeftUV(uv, m_DistinctIndexesSelection[n], lowerLeftUV.x, lowerLeftUV.y);
             }
 
-            return new Vector2(xMin, yMin);
+            return lowerLeftUV;
         }
 
         #endregion
