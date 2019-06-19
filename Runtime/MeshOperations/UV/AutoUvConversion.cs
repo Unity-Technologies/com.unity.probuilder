@@ -94,9 +94,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (!face.manualUV)
                 return new AutoUnwrapSettings(face.uv);
 
+            var trs = GetUVTransform(mesh, face);
             var uvSettings = AutoUnwrapSettings.defaultAutoUnwrapSettings;
-            uvSettings.offset = face.uv.offset;
-            uvSettings.rotation = face.uv.rotation;
+            uvSettings.offset = trs.translation;
+            uvSettings.rotation = 360 - trs.rotation;
             uvSettings.scale = face.uv.scale;
 
             return uvSettings; 
