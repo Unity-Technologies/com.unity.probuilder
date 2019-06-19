@@ -86,7 +86,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <summary>
         /// Returns the auto unwrap settings for a face. In cases where the face is auto unwrapped
         /// (manualUV = false), this returns the settings straight. If the face is
-        /// manually unwrapped, it returns the default auto unwrap settings with the trs of face.
+        /// manually unwrapped, it returns the auto unwrap settings computed from GetUVTransform.
         /// </summary>
         /// <returns></returns>
         internal static AutoUnwrapSettings GetAutoUnwrapSettings(ProBuilderMesh mesh, Face face)
