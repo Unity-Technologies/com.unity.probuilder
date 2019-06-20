@@ -59,7 +59,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             EditorGUILayout.HelpBox("How many vertices to insert on each selected edge.\n\nVertices will be equally spaced between one another and the boundaries of the edge.", MessageType.Info);
 
-            m_SubdivisionCount.value = (int)UI.EditorGUIUtility.FreeSlider("Subdivisions", m_SubdivisionCount, 1, 32);
+            m_SubdivisionCount.value = (int)UI.EditorGUIUtility.FreeSliderWithRange("Subdivisions", (int)m_SubdivisionCount.value, 1, 32, 1, 512);
 
             if (EditorGUI.EndChangeCheck())
                 ProBuilderSettings.Save();

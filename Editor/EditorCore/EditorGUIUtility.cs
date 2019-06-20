@@ -311,6 +311,60 @@ namespace UnityEditor.ProBuilder.UI
             return value;
         }
 
+        public static float FreeSliderWithRange(string content, int value, int min, int max, out int uiMin, out int uiMax, out bool expanded)
+        {
+            slider_guicontent.text = content;
+            return FreeSliderWithRange(slider_guicontent, value, uiMin, uiMax, min, max);
+        }
+
+        /**
+         * Similar to EditorGUILayoutUtility.Slider, except this allows for values outside of the uiMin/uiMin bounds via the int field.
+         */
+        public static float FreeSliderWithRange(GUIContent content, int value, int min, int max, int uiMin, int uiMax, out bool expanded)
+        {
+            float pixelsPerPoint = 1f;
+
+#if !UNITY_4_7 && !UNITY_5_0 && !UNITY_5_3
+            pixelsPerPoint = UnityEditor.EditorGUIUtility.pixelsPerPoint;
+#endif
+
+            float PAD = 8f / pixelsPerPoint;
+            const float SLIDER_HEIGHT = 16f;
+            const float MIN_LABEL_WIDTH = 0f;
+            const float MAX_LABEL_WIDTH = 128f;
+            const float MIN_FIELD_WIDTH = 48f;
+
+            GUILayoutUtility.GetRect(UnityEditor.EditorGUIUtility.currentViewWidth / pixelsPerPoint, 18);
+
+            Rect previousRect = GUILayoutUtility.GetLastRect();
+            float y = previousRect.y;
+
+            float labelWidth = content != null ? Mathf.Max(MIN_LABEL_WIDTH, Mathf.Min(GUI.skin.label.CalcSize(content).x + PAD, MAX_LABEL_WIDTH)) : 0f;
+            float remaining = ((Screen.width / pixelsPerPoint) - (PAD * 2f)) - labelWidth;
+            float sliderWidth = remaining - (MIN_FIELD_WIDTH + PAD);
+            float floatWidth = MIN_FIELD_WIDTH;
+
+            Rect labelRect = new Rect(PAD, y + 2f, labelWidth, SLIDER_HEIGHT);
+            Rect sliderRect = new Rect(labelRect.x + labelWidth, y + 1f, sliderWidth, SLIDER_HEIGHT);
+            Rect floatRect = new Rect(sliderRect.x + sliderRect.width + PAD, y + 1f, floatWidth, SLIDER_HEIGHT);
+
+            if (content != null)
+                GUI.Label(labelRect, content);
+
+            EditorGUI.BeginChangeCheck();
+
+            int controlID = GUIUtility.GetControlID(FocusType.Passive, sliderRect);
+            int tmp = value;
+            tmp = GUI.Slider(sliderRect, tmp, 0f, uiMin, uiMax, GUI.skin.horizontalSlider, (!EditorGUI.showMixedValue) ? GUI.skin.horizontalSliderThumb : "SliderMixed", true, controlID);
+
+            if (EditorGUI.EndChangeCheck())
+                value = Event.current.control ? 1f * Mathf.Round(tmp / 1f) : tmp;
+
+            value = EditorGUI.IntField(floatRect, value);
+
+            return Math.Clamp(value, min, max);
+        }
+
         public static bool ToolSettingsGUI(string text,
             string description,
             bool showSettings,
