@@ -282,9 +282,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Finds the lower left UV coordinate of a set of an array of UVs
+        /// Finds the minimal U and V coordinate of a set of an array of UVs
         /// </summary>
-        internal static Vector2 FindLowerLeftUV(Vector2[] uvs, int[] indices = null, float xMin = 0f, float yMin = 0f)
+        internal static Vector2 FindMinimalUV(Vector2[] uvs, int[] indices = null, float xMin = 0f, float yMin = 0f)
         {
             int nbElements = (indices == null ? uvs.Length : indices.Length);
             bool first = (xMin == 0f && yMin == 0f);
@@ -299,14 +299,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 }
                 else
                 {
-                    if (Math.Approx(uvs[currentIndex].x, xMin))
+                   
+                    if (uvs[currentIndex].x < xMin)
                     {
-                        if (uvs[currentIndex].y < yMin)
-                            yMin = uvs[currentIndex].y;
+                        xMin = uvs[currentIndex].x;                    
                     }
-                    else if (uvs[currentIndex].x < xMin)
+
+                    if (uvs[currentIndex].y < yMin)
                     {
-                        xMin = uvs[currentIndex].x;
                         yMin = uvs[currentIndex].y;
                     }
                 }
@@ -350,11 +350,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 Vector2[] uvs = Projection.PlanarProject(mesh.positionsInternal, distinct, Projection.ProjectionAxisToVector(kvp.Key));
 
 
-                Vector2 lowerLeftUV = FindLowerLeftUV(uvs);
-                Vector2 delta = lowerLeftUV - lowerLeftAnchor;
+                Vector2 minimalUV = FindMinimalUV(uvs);
 
                 for (int n = 0; n < distinct.Length; n++)
-                    uv[distinct[n]] = uvs[n] - delta;
+                    uv[distinct[n]] = uvs[n] - minimalUV;
 
                 SplitUVs(mesh, distinct);
             }

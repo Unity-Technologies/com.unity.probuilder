@@ -2273,20 +2273,20 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Returns the leftmost lowest coordinate of the current selection in UV space
+        /// Returns the miniaml u and v values of the current selection in UV space
         /// </summary>
         /// <returns></returns>
         internal Vector2 UVSelectionLowerLeftUV()
         {
-            Vector2 lowerLeftUV = new Vector2();
-            lowerLeftUV = Vector2.zero;
+            Vector2 minimalUV = new Vector2();
+            minimalUV = Vector2.zero;
             for (int n = 0; n < selection.Length; n++)
             {
                 Vector2[] uv = selection[n].texturesInternal;
-                lowerLeftUV = UVEditing.FindLowerLeftUV(uv, m_DistinctIndexesSelection[n], lowerLeftUV.x, lowerLeftUV.y);
+                minimalUV = UVEditing.FindMinimalUV(uv, m_DistinctIndexesSelection[n], minimalUV.x, minimalUV.y);
             }
 
-            return lowerLeftUV;
+            return minimalUV;
         }
 
         #endregion
