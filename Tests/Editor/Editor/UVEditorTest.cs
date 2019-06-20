@@ -53,8 +53,8 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
             selectedFaces.Add(m_cube.faces[2]);
             selectedFaces.Add(m_cube.faces[4]);
             selectedFaces.Add(m_cube.faces[5]);
-            m_cube.SetSelectedFaces(selectedFaces);
             MeshSelection.SetSelection(m_cube.gameObject);
+            m_cube.SetSelectedFaces(selectedFaces);
             MeshSelection.OnObjectSelectionChanged();
 
             foreach(Face f in selectedFaces)
@@ -65,7 +65,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
             //Select faces
             UVEditor.instance.Menu_SetManualUV();
 
-            foreach(Face f in selectedFaces)
+            foreach (Face f in selectedFaces)
             {
                 Assert.That(f.manualUV, Is.EqualTo(true));
             }
@@ -88,8 +88,8 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
             selectedFaces.Add(m_cube.faces[2]);
             selectedFaces.Add(m_cube.faces[4]);
             selectedFaces.Add(m_cube.faces[5]);
-            m_cube.SetSelectedFaces(selectedFaces);
             MeshSelection.SetSelection(m_cube.gameObject);
+            m_cube.SetSelectedFaces(selectedFaces);
             MeshSelection.OnObjectSelectionChanged();
 
             foreach (Face f in selectedFaces)
