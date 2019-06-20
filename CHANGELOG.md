@@ -5,14 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.1.0-preview.5] - 2019-06-03
+## [4.1.0-preview.5] - 2019-06-20
 
 ### Features
 
 - Added the option to export assets either as prefabs, or just the mesh.
 - Improved the naming of exported mesh assets.
 - Added API examples as a sample package.
-- Re-enabled FBX Exporter integration, adding support for quad export and automatical removal of ProBuilder components on export.
+- Re-enabled FBX Exporter integration, adding support for quad export and automatic removal of ProBuilder components on export.
 - Added ability to duplicate faces to a new game object or to new submesh.
 
 ### Bug Fixes
@@ -47,8 +47,34 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changes
 
 - ProBuilder assembly definitions now have `Auto Referenced` enabled.
-- Project layout restructured for compatibility with file protocol.
+- Project layout restructured such that the git url may now be used as a version in the project manifest.
 - Improved the default UV layout of Cone shape.
+
+### Changes since 4.1.0-preview.4
+
+- Settings Manager is now a dependency instead of bundled with code.
+- Fixed `Apply Material` not respecting the current face selection when editing UVs.
+- Fixed the dimensions overlay graphics not updating when modifying vertices.
+- Added the option to toggle the dimensions overlay between object and element bounds.
+- Added a shortcut to toggle the dimensions overlay between object, element, and off states.
+- Added a `Duplicate Face` action.
+- Changed the default value of `Apply Transforms` to false when exporting models.
+- Changed the default value of `As Group` to true when exporting models.
+- Fixed bug where selecting an element with the `shift` key held would not make it the active selection.
+- Fixed `Poly Shape` tool not clearing the mesh when an invalid path is created.
+- The UV Inspector is now resize-able from all sides and corners.
+- Fixed `Collapse Vertices` action showing as available in some cases where the action was not applicable.
+- Added the ability to set a `Poly Shape` height to `0` for a single face plane.
+- Fixed an issue where setting the toolbar to use icon or text mode would not immediately refresh the UI.
+- Add support for HDRP and LWRP pipelines through Samples packages (available in the Package Manager UI for ProBuilder).
+- Fixed bug where exporting an OBJ could fail if a mesh did not have vertex colors.
+- Added the ability to copy UV transform values between manual and auto unwrapped faces.
+- Fixed the shortcut for `Copy UVs` on macOS referencing `Control` instead of `Command`.
+- Fixed an issue where the ProBuilder toolbar font size would initially be very small, then later return to the correct size (specific to Unity 2019.3).
+- Fixed a bug that caused the `Material Editor` to not render the preview material on HDPI screens.
+- Added an explicit toggle to enable or disable rendering the background texture when exporting UV templates.
+- Fixed a null reference error when attempting to subdivide a face with non-contiguous triangles.
+- Added additional methods for testing and fixing face topology (`MeshValidation.ContainsNonContiguousTriangles` and `MeshValidation.EnsureFacesAreComposedOfContiguousTriangles`).
 
 ## [4.0.4] - 2019-03-13
 
