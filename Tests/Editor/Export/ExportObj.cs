@@ -13,6 +13,12 @@ namespace UnityEngine.ProBuilder.EditorTests.Export
 {
     class ExportObj : TemporaryAssetTest
     {
+        static readonly ObjOptions.Handedness[] k_Handedness = new[] { ObjOptions.Handedness.Right, ObjOptions.Handedness.Left };
+        static readonly bool[] k_CopyTextures = new[] { true, false };
+        static readonly bool[] k_ApplyTransforms = new[] { true, false };
+        static readonly bool[] k_VertexColors = new[] { true, false };
+        static readonly bool[] k_TextureOffsetScale = new[] { true, false };
+
         [Test]
         public static void SerializedValues_AreCultureInvariant()
         {
@@ -41,7 +47,13 @@ namespace UnityEngine.ProBuilder.EditorTests.Export
         }
 
         [Test]
-        public static void ExportSingleCube_CreatesUnityReadableMeshFile()
+        public static void ExportSingleCube_CreatesUnityReadableMeshFile(
+            [ValueSource("k_Handedness")] ObjOptions.Handedness handedness,
+            [ValueSource("k_CopyTextures")] bool copyTextures,
+            [ValueSource("k_ApplyTransforms")] bool applyTransforms,
+            [ValueSource("k_VertexColors")] bool vertexColors,
+            [ValueSource("k_TextureOffsetScale")] bool textureOffsetScale
+        )
         {
             var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
 
@@ -67,7 +79,6 @@ namespace UnityEngine.ProBuilder.EditorTests.Export
             var imported = AssetDatabase.LoadAssetAtPath(exportedPath, typeof(Mesh)) as Mesh;
 
             Assume.That(imported, Is.Not.Null);
-
             Assert.That(imported.vertexCount, Is.GreaterThan(0));
         }
 

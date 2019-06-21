@@ -21,18 +21,15 @@ namespace UnityEditor.ProBuilder
     public static class EditorUtility
     {
         const float k_DefaultNotificationDuration = 1f;
-        static float s_NotificationTimer = 0f;
+        static float s_NotificationTimer;
         static EditorWindow s_NotificationWindow;
-        static bool s_IsNotificationDisplayed = false;
+        static bool s_IsNotificationDisplayed;
 
         [UserSetting("General", "Show Action Notifications", "Enable or disable notification popups when performing actions.")]
         static Pref<bool> s_ShowNotifications = new Pref<bool>("editor.showEditorNotifications", false);
 
         [UserSetting("Mesh Settings", "Static Editor Flags", "Default static flags to apply to new shapes.")]
         static Pref<StaticEditorFlags> s_StaticEditorFlags = new Pref<StaticEditorFlags>("mesh.defaultStaticEditorFlags", 0);
-
-        [UserSetting("Mesh Settings", "Material", "The default material to be applied to newly created shapes.")]
-        static Pref<Material> s_DefaultMaterial = new Pref<Material>("mesh.userMaterial", null);
 
         [UserSetting("Mesh Settings", "Mesh Collider is Convex", "If a MeshCollider is set as the default collider component, this sets the convex setting.")]
         static Pref<bool> s_MeshColliderIsConvex = new Pref<bool>("mesh.meshColliderIsConvex", false);
@@ -306,7 +303,7 @@ namespace UnityEditor.ProBuilder
                 TrySnapToGrid(pb);
 
             pb.renderer.shadowCastingMode = s_ShadowCastingMode;
-            pb.renderer.sharedMaterial = GetUserMaterial();
+            pb.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
 
             GameObjectUtility.SetStaticEditorFlags(pb.gameObject, s_StaticEditorFlags);
 
@@ -572,16 +569,6 @@ namespace UnityEditor.ProBuilder
                 default:
                     return ComponentMode.Face;
             }
-        }
-
-        internal static Material GetUserMaterial()
-        {
-            var mat = (Material)s_DefaultMaterial;
-
-            if (mat != null)
-                return mat;
-
-            return BuiltinMaterials.defaultMaterial;
         }
 
         internal static bool IsDeveloperMode()

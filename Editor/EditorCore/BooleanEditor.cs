@@ -340,7 +340,7 @@ namespace UnityEditor.ProBuilder
 
             GameObject go = new GameObject();
 
-            go.AddComponent<MeshRenderer>().sharedMaterial = EditorUtility.GetUserMaterial();
+            go.AddComponent<MeshRenderer>().sharedMaterial = EditorMaterialUtility.GetUserMaterial();
             go.AddComponent<MeshFilter>().sharedMesh = c;
 
             ProBuilderMesh pb = InternalMeshUtility.CreateMeshWithTransform(go.transform, false);
