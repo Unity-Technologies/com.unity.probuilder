@@ -2273,13 +2273,12 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Returns the miniaml u and v values of the current selection in UV space
+        /// Returns the minimal u and v values of the current selection in UV space.
         /// </summary>
         /// <returns></returns>
-        internal Vector2 UVSelectionLowerLeftUV()
+        internal Vector2 UVSelectionMinimalUV()
         {
-            Vector2 minimalUV = new Vector2();
-            minimalUV = Vector2.zero;
+            Vector2 minimalUV = Vector2.zero;
             for (int n = 0; n < selection.Length; n++)
             {
                 Vector2[] uv = selection[n].texturesInternal;
@@ -3003,7 +3002,7 @@ namespace UnityEditor.ProBuilder
 
             if (projected > 0)
             {
-                CenterUVsAtPoint(UVSelectionLowerLeftUV(), LowerLeft);
+                CenterUVsAtPoint(UVSelectionMinimalUV(), LowerLeft);
                 ResetUserPivot();
             }
 
@@ -3310,11 +3309,11 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Moves the selected UVs to where the anchor is now point, where both anchor_position and point are in UV space. Does not call ToMesh or Refresh.
         /// </summary>
-        /// <param name="anchor_position"></param>
+        /// <param name="anchorPosition"></param>
         /// <param name="point"></param>
-        void CenterUVsAtPoint(Vector2 anchor_position,  Vector2 point)
+        void CenterUVsAtPoint(Vector2 anchorPosition,  Vector2 point)
         {
-            Vector2 delta = anchor_position - point;
+            Vector2 delta = anchorPosition - point;
 
             for (int i = 0; i < selection.Length; i++)
             {
