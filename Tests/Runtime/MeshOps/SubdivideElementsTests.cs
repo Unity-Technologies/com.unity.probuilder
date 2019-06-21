@@ -56,5 +56,24 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOperations
             foreach (var face in mesh.facesInternal.Where(x => !res.Contains(x)))
                 Assert.AreEqual(0, face.submeshIndex);
         }
+
+        [Test]
+        public static void SubdivideSplitFaces_SeparatesAndSubdivides()
+        {
+            var cube = TestUtility.CreateCubeWithNonContiguousMergedFace();
+
+            try
+            {
+                var res = Subdivision.Subdivide(cube.item1, new List<Face>() { cube.item2 });
+                // Expected result is that the invalid merged face will be split into two faces, then each face
+                // subdivided.
+                Assert.That(res, Has.Length.EqualTo(8));
+            }
+            finally
+            {
+                if(cube.item1 != null)
+                    UObject.DestroyImmediate(cube.item1.gameObject);
+            }
+        }
     }
 }

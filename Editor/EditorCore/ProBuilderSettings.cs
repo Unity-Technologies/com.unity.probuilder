@@ -1,3 +1,4 @@
+using System.IO;
 using UnityEditor.SettingsManagement;
 using UnityEngine.ProBuilder;
 
@@ -5,19 +6,15 @@ namespace UnityEditor.ProBuilder
 {
     static class ProBuilderSettings
     {
+        const string k_PackageName = "com.unity.probuilder";
+        internal const string k_DeprecatedSettingsPath = "ProjectSettings/ProBuilderSettings.json";
+        static Settings s_Instance;
+
         [InitializeOnLoadMethod]
         static void SaveSettingsOnExit()
         {
-            EditorApplication.quitting += () =>
-            {
-                Log.Info("Saving on quit");
-                Save();
-            };
+            EditorApplication.quitting += Save;
         }
-
-        internal const string k_DefaultSettingsPath = "ProjectSettings/ProBuilderSettings.json";
-
-        static Settings s_Instance;
 
         internal static Settings instance
         {
@@ -25,11 +22,8 @@ namespace UnityEditor.ProBuilder
             {
                 if (s_Instance == null)
                 {
-                    s_Instance = new Settings(new ISettingsRepository[]
-                    {
-                        new ProjectSettingsRepository(k_DefaultSettingsPath),
-                        new UserSettingsRepository(),
-                    });
+                    CheckForOldSettings();
+                    s_Instance = new Settings(k_PackageName);
                 }
 
                 return s_Instance;
@@ -59,6 +53,30 @@ namespace UnityEditor.ProBuilder
         public static void Delete<T>(string key, SettingsScope scope = SettingsScope.Project)
         {
             instance.DeleteKey<T>(key, scope);
+        }
+
+        static void CheckForOldSettings()
+        {
+            var newSettingsPath = PackageSettingsRepository.GetSettingsPath(k_PackageName);
+
+            // Do not overwrite new settings if they exist. VCS can restore old settings file after a successful upgrade,
+            // which will already be in use. In that case, just leave the old settings alone.
+            if (!File.Exists(newSettingsPath) && File.Exists(k_DeprecatedSettingsPath))
+            {
+                try
+                {
+                    var directory = Path.GetDirectoryName(newSettingsPath);
+
+                    if(!Directory.Exists(directory))
+                        Directory.CreateDirectory(Path.GetDirectoryName(newSettingsPath));
+
+                    File.Move(k_DeprecatedSettingsPath, newSettingsPath);
+                }
+                catch (System.Exception e)
+                {
+                    Log.Info("Failed moving ProBuilder settings file to new path.\n{0}", e.ToString());
+                }
+            }
         }
     }
 }

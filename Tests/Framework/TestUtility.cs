@@ -12,6 +12,8 @@ using UnityEditor;
 using System.Reflection;
 using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 #endif
+using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Tests.Framework
 {
@@ -501,6 +503,45 @@ namespace UnityEngine.ProBuilder.Tests.Framework
         public static Material greenMaterial
         {
             get { return AssetDatabase.LoadAssetAtPath<Material>(k_GreenMaterialPath); }
+        }
+
+        public static SimpleTuple<ProBuilderMesh, Face> CreateCubeWithNonContiguousMergedFace()
+        {
+            var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
+
+            Assume.That(cube, Is.Not.Null);
+
+            int index = 1;
+            Face a = cube.faces[0], b = cube.faces[index++];
+            Assume.That(a, Is.Not.Null);
+            Assume.That(b, Is.Not.Null);
+
+            while (FacesAreAdjacent(cube, a, b) && index < cube.faceCount)
+                b = cube.faces[index++];
+
+            Assume.That(FacesAreAdjacent(cube, a, b), Is.False);
+
+            var res = MergeElements.Merge(cube, new Face[] { a, b });
+
+            return new SimpleTuple<ProBuilderMesh, Face>(cube, res);
+        }
+
+        static bool FacesAreAdjacent(ProBuilderMesh mesh, Face a, Face b)
+        {
+            for (int i = 0, c = a.edgesInternal.Length; i < c; i++)
+            {
+                var ea = mesh.GetSharedVertexHandleEdge(a.edgesInternal[i]);
+
+                for (int n = 0; n < b.edgesInternal.Length; n++)
+                {
+                    var eb = mesh.GetSharedVertexHandleEdge(b.edgesInternal[n]);
+
+                    if (ea == eb)
+                        return true;
+                }
+            }
+
+            return false;
         }
     }
 }

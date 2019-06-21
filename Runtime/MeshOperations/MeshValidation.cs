@@ -77,6 +77,100 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
+        /// Tests that all triangles in a face are connected.
+        /// </summary>
+        /// <param name="mesh">The mesh that owns the face to be tested.</param>
+        /// <param name="face">The face to test.</param>
+        /// <returns>True if the face contains split triangles, false if the face is contiguous.</returns>
+        public static bool ContainsNonContiguousTriangles(this ProBuilderMesh mesh, Face face)
+        {
+            Edge current = face.edgesInternal[0], start = current;
+            int index = current.a;
+            int count = 1;
+
+            while (face.TryGetNextEdge(current, current.b, ref current, ref index)
+                && current != start
+                && count < face.edgesInternal.Length)
+            {
+                count++;
+            }
+
+            return count != face.edgesInternal.Length;
+        }
+
+        /// <summary>
+        /// Ensure that each face in faces is composed of contiguous triangle sets. If a face contains non-contiguous
+        /// triangles, it will be split into as many faces as necessary to ensure that each group of adjacent triangles
+        /// compose a single face.
+        /// </summary>
+        /// <param name="mesh">The mesh that contains the faces to test.</param>
+        /// <param name="faces">The faces to test for non-contiguous triangles.</param>
+        /// <returns>
+        /// A list of any newly created faces as a result of splitting non-contiguous triangles. Returns an
+        /// empty list if no faces required fixing.
+        /// </returns>
+        public static List<Face> EnsureFacesAreComposedOfContiguousTriangles(this ProBuilderMesh mesh, IEnumerable<Face> faces)
+        {
+            var appended = new List<Face>();
+
+            foreach (var face in faces)
+            {
+                if (ContainsNonContiguousTriangles(mesh, face))
+                {
+                    var groups = CollectFaceGroups(mesh, face);
+
+                    if (groups.Count() < 2)
+                        continue;
+
+                    face.SetIndexes(groups[0].SelectMany(x=>x.indices));
+
+                    for (int i = 1; i < groups.Count; i++)
+                    {
+                        var duplicate = new Face(face);
+                        duplicate.SetIndexes(groups[i].SelectMany(x => x.indices));
+                        appended.Add(duplicate);
+                    }
+                }
+            }
+
+            var rebuilt = new List<Face>(mesh.facesInternal);
+
+            rebuilt.AddRange(appended);
+
+            mesh.faces = rebuilt;
+
+            return appended;
+        }
+
+        internal static List<List<Triangle>> CollectFaceGroups(this ProBuilderMesh mesh, Face face)
+        {
+            var groups = new List<List<Triangle>>();
+            var indices = face.indexesInternal;
+
+            for (int i = 0; i < indices.Length; i += 3)
+            {
+                var triangle = new Triangle(indices[i], indices[i+1], indices[i+2]);
+                var matched = false;
+
+                for(int n = 0; n < groups.Count; n++)
+                {
+                    // this doesn't account for triangles that are adjacent through coincident vertices
+                    if (groups[n].Any(x => x.IsAdjacent(triangle)))
+                    {
+                        groups[n].Add(triangle);
+                        matched = true;
+                        break;
+                    }
+                }
+
+                if (!matched)
+                    groups.Add(new List<Triangle>() { triangle });
+            }
+
+            return groups;
+        }
+
+        /// <summary>
         /// Iterates through all faces in a mesh and removes triangles with an area less than float.Epsilon, or with
         /// indexes that point to the same vertex. This function also enforces the rule that a face must contain no
         /// coincident vertices.
@@ -270,15 +364,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if(indices != null && indices.Length > 0)
                 indices = RebuildIndexes(indices, rm).ToArray();
         }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <returns>
-        /// 0 if mesh is valid, or greater than 0 if corrections were made. If this method returns greater than 0, you will need to
-        /// rebuild the mesh using <see cref="ProBuilderMesh.ToMesh"/> and <see cref="ProBuilderMesh.Refresh"/>.
-        /// </returns>
-
 
         /// <summary>
         /// Check a mesh for degenerate triangles or unused vertices, and remove them if necessary.
