@@ -71,12 +71,12 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
             }
 
             //Modify those faces
-            Vector2  lowerLeftUV = UVEditor.instance.UVSelectionLowerLeftUV();
-            Assert.That(lowerLeftUV, !Is.EqualTo(UVEditor.LowerLeft));
+            Vector2 minimalUV = UVEditor.instance.UVSelectionMinimalUV();
+            Assert.That(minimalUV, !Is.EqualTo(UVEditor.LowerLeft));
 
             UVEditor.instance.Menu_BoxProject();
-            lowerLeftUV = UVEditor.instance.UVSelectionLowerLeftUV();
-            Assert.That(lowerLeftUV, Is.EqualTo(UVEditor.LowerLeft));
+            minimalUV = UVEditor.instance.UVSelectionMinimalUV();
+            Assert.That(minimalUV, Is.EqualTo(UVEditor.LowerLeft));
         }
 
         [Test]
@@ -107,12 +107,12 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
             }
 
             //Modify those faces
-            Vector2 lowerLeftUV = UVEditor.instance.UVSelectionLowerLeftUV();
-            Assert.That(lowerLeftUV, !Is.EqualTo(UVEditor.LowerLeft));
+            Vector2 minimalUV = UVEditor.instance.UVSelectionMinimalUV();
+            Assert.That(minimalUV, !Is.EqualTo(UVEditor.LowerLeft));
 
             UVEditor.instance.Menu_PlanarProject();
-            lowerLeftUV = UVEditor.instance.UVSelectionLowerLeftUV();
-            Assert.That(lowerLeftUV, Is.EqualTo(UVEditor.LowerLeft));
+            minimalUV = UVEditor.instance.UVSelectionMinimalUV();
+            Assert.That(minimalUV, Is.EqualTo(UVEditor.LowerLeft));
         }
     }
 }
