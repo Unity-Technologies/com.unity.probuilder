@@ -1181,7 +1181,7 @@ namespace UnityEditor.ProBuilder
                     continue;
 
                 var indexes = mesh.GetCoincidentVertices(mesh.selectedIndexesInternal);
-                Snapping.SnapVertices(mesh, indexes, Vector3.one * snapVal);
+                ProGridsSnapping.SnapVertices(mesh, indexes, Vector3.one * snapVal);
 
                 mesh.ToMesh();
                 mesh.Refresh();

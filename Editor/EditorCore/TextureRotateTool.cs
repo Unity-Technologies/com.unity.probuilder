@@ -37,9 +37,9 @@ namespace UnityEditor.ProBuilder
                     BeginEdit("Rotate Textures");
 
                 if (relativeSnapEnabled)
-                    m_Rotation = Snapping.SnapValue(m_Rotation, relativeSnapX);
+                    m_Rotation = ProGridsSnapping.SnapValue(m_Rotation, relativeSnapX);
                 else if (progridsSnapEnabled)
-                    m_Rotation = Snapping.SnapValue(m_Rotation, progridsSnapValue);
+                    m_Rotation = ProGridsSnapping.SnapValue(m_Rotation, progridsSnapValue);
 
                 foreach (var mesh in elementSelection)
                 {
