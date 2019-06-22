@@ -6,13 +6,15 @@ using UnityEngine;
 namespace UnityEditor.ProBuilder
 {
     [EditorTool("Edit Stairs", typeof(Stairs))]
-    public class EditStairsTool : EditShapeToolBase<Stairs>
+    public class EditStairsTool : EditShapeTool<Stairs>
     {
         protected override void DoShapeGUI(Stairs shape, Matrix4x4 l2w, Bounds bounds)
         {
+            base.DoShapeGUI(shape, l2w, bounds);
+            
             var center = l2w.inverse.MultiplyPoint3x4(bounds.center);
             var extents = bounds.extents;
-            var stepCountSliderOffset = 1f;
+            var stepCountSliderOffset = .1f;
 
             var start = center + new Vector3(extents.x, -extents.y + stepCountSliderOffset, -extents.z);
             var end = center + new Vector3(extents.x, extents.y + stepCountSliderOffset, extents.z);

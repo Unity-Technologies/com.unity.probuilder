@@ -8,12 +8,7 @@ using Math = UnityEngine.ProBuilder.Math;
 
 namespace UnityEditor.ProBuilder
 {
-    [EditorTool("Edit Shape", typeof(Shape))]
-    sealed class EditShapeTool : EditShapeToolBase<Shape>
-    {
-    }
-
-    public class EditShapeToolBase<T> : EditorTool where T : Shape
+    public abstract class EditShapeTool<T> : EditorTool where T : Shape
     {
         const int k_HotControlNone = 0;
         BoxBoundsHandle m_BoundsHandle;
@@ -68,7 +63,7 @@ namespace UnityEditor.ProBuilder
                     if(IsEditing(shape))
                         DoShapeGUI(shape, m_ActiveShapeState.localToWorldMatrix, m_ActiveShapeState.originalBounds);
                     else
-                        DoShapeGUI(shape, shape.transform.localToWorldMatrix, shape.bounds);
+                        DoShapeGUI(shape, shape.transform.localToWorldMatrix, shape.meshFilterBounds);
 
                     if(EditorGUI.EndChangeCheck())
                         BeginBoundsEditing(shape);

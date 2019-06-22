@@ -19,7 +19,7 @@ namespace UnityEngine.ProBuilder
         }
 
         // Bounds where center is in world space, size is mesh.bounds.size
-        internal Bounds bounds
+        internal Bounds meshFilterBounds
         {
             get
             {
@@ -52,5 +52,19 @@ namespace UnityEngine.ProBuilder
         }
 
         protected abstract void RebuildMesh();
+
+        // Assumes that mesh origin is {0,0,0}
+        protected void FitToSize()
+        {
+            if (mesh.vertexCount < 1)
+                return;
+            var actual = mesh.mesh.bounds.size;
+            var scale = size.DivideBy(actual);
+            var positions = mesh.positionsInternal;
+            for(int i = 0, c = mesh.vertexCount; i < c; i++)
+                positions[i].Scale(scale);
+            mesh.ToMesh();
+            mesh.Rebuild();
+        }
     }
 }

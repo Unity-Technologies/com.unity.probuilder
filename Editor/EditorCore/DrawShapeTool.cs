@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -31,9 +32,25 @@ namespace UnityEditor.ProBuilder
         Quaternion m_Rotation;
         Bounds m_Bounds;
 
+        GUIContent m_ShapeTitle;
+
+        TypeCache.TypeCollection m_AvailableShapeTypes;
+        string[] m_ShapeTypesPopupContent;
+
+        [SerializeField]
+        int m_ActiveShapeIndex;
+
+        Type activeShapeType
+        {
+            get { return m_ActiveShapeIndex < 0 ? typeof(Cube) : m_AvailableShapeTypes[m_ActiveShapeIndex]; }
+        }
+
         void OnEnable()
         {
             EditorTools.EditorTools.activeToolChanged += ActiveToolChanged;
+            m_ShapeTitle = new GUIContent("Draw Shape");
+            m_AvailableShapeTypes = TypeCache.GetTypesDerivedFrom<Shape>();
+            m_ShapeTypesPopupContent = m_AvailableShapeTypes.Select(x => x.ToString()).ToArray();
         }
 
         void OnDisable()
@@ -59,6 +76,25 @@ namespace UnityEditor.ProBuilder
             SceneView.RepaintAll();
         }
 
+        void SetActiveShapeType(Type type)
+        {
+            if(!typeof(Shape).IsAssignableFrom(type))
+                throw new ArgumentException("type must inherit UnityEngine.ProBuilder.Shape", "type");
+
+            m_ActiveShapeIndex = m_AvailableShapeTypes.IndexOf(type);
+
+            if(m_ActiveShapeIndex < 0)
+                throw new Exception("type must inherit UnityEngine.ProBuilder.Shape");
+
+            if (m_Shape != null)
+            {
+                DestroyImmediate(m_Shape.gameObject);
+
+                if(m_InputState != InputState.SelectPlane)
+                    RebuildShape();
+            }
+        }
+
         void RebuildShape()
         {
             RecalculateBounds();
@@ -68,7 +104,7 @@ namespace UnityEditor.ProBuilder
 
             if (m_Shape == null)
             {
-                m_Shape = new GameObject("Shape").AddComponent<Stairs>();
+                m_Shape = new GameObject("Shape").AddComponent(activeShapeType) as Shape;
                 UndoUtility.RegisterCreatedObjectUndo(m_Shape.gameObject, "Draw Shape");
                 EditorUtility.InitObject(m_Shape.mesh, false);
             }
@@ -80,7 +116,6 @@ namespace UnityEditor.ProBuilder
 
         void FinishShape()
         {
-            Debug.Log("complete shape: " + m_Bounds);
             m_Shape = null;
             m_InputState = InputState.SelectPlane;
         }
@@ -94,9 +129,10 @@ namespace UnityEditor.ProBuilder
 
         public override void OnToolGUI(EditorWindow window)
         {
-//            Handles.BeginGUI();
-//            GUILayout.Label("state: " + m_InputState);
-//            Handles.EndGUI();
+            SceneViewOverlay.Window(m_ShapeTitle, OnActiveToolGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle);
+
+            if (m_InputState != InputState.SelectPlane)
+                DrawBoundingBox();
 
             var evt = Event.current;
 
@@ -206,13 +242,24 @@ namespace UnityEditor.ProBuilder
             m_Bounds.center = ((m_OppositeCorner + m_Origin) * .5f) + m_Plane.normal * (height * .5f);
             m_Bounds.size = new Vector3(ri, height, fo);
             m_Rotation = Quaternion.LookRotation(m_Forward, m_Plane.normal);
+        }
 
+        void DrawBoundingBox()
+        {
             Handles.color = new Color(.2f, .4f, .8f, 1f);
             EditorHandleUtility.PushMatrix();
             Handles.matrix = Matrix4x4.TRS(m_Bounds.center, m_Rotation, Vector3.one);
             Handles.DrawWireCube(Vector3.zero, m_Bounds.size);
             EditorHandleUtility.PopMatrix();
             Handles.color = Color.white;
+        }
+
+        void OnActiveToolGUI(UObject target, SceneView view)
+        {
+            EditorGUI.BeginChangeCheck();
+            m_ActiveShapeIndex = EditorGUILayout.Popup(m_ActiveShapeIndex, m_ShapeTypesPopupContent);
+            if (EditorGUI.EndChangeCheck())
+                SetActiveShapeType(m_AvailableShapeTypes[m_ActiveShapeIndex]);
         }
     }
 }
