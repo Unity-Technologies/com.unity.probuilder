@@ -6,7 +6,7 @@ namespace UnityEngine.ProBuilder
     /// <summary>
     /// Snapping functions and ProGrids compatibility.
     /// </summary>
-    static class Snapping
+    static class ProGridsSnapping
     {
         const float k_MaxRaySnapDistance = Mathf.Infinity;
 

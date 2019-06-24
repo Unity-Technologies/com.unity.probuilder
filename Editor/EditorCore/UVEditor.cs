@@ -1323,7 +1323,7 @@ namespace UnityEditor.ProBuilder
 
                 if (ControlKey)
                 {
-                    handlePosition = Snapping.SnapValue(t_handlePosition, (Vector3) new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
+                    handlePosition = ProGridsSnapping.SnapValue(t_handlePosition, (Vector3) new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
                 }
                 else
                 {
@@ -1385,7 +1385,7 @@ namespace UnityEditor.ProBuilder
                 Vector2 newUVPosition = t_handlePosition;
 
                 if (ControlKey)
-                    newUVPosition = Snapping.SnapValue(newUVPosition, new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
+                    newUVPosition = ProGridsSnapping.SnapValue(newUVPosition, new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
 
                 for (int n = 0; n < selection.Length; n++)
                 {
@@ -1475,7 +1475,7 @@ namespace UnityEditor.ProBuilder
                 handlePosition.y += delta.y;
 
                 if (ControlKey)
-                    handlePosition = Snapping.SnapValue(handlePosition, new Vector3Mask((handlePosition - handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
+                    handlePosition = ProGridsSnapping.SnapValue(handlePosition, new Vector3Mask((handlePosition - handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
 
                 for (int n = 0; n < selection.Length; n++)
                 {
@@ -1507,7 +1507,7 @@ namespace UnityEditor.ProBuilder
                 }
 
                 if (ControlKey)
-                    uvRotation = Snapping.SnapValue(uvRotation, 15f);
+                    uvRotation = ProGridsSnapping.SnapValue(uvRotation, 15f);
 
                 // Do rotation around the handle pivot in manual mode
                 if (mode == UVMode.Mixed || mode == UVMode.Manual)
@@ -1555,7 +1555,7 @@ namespace UnityEditor.ProBuilder
             if (rotation != uvRotation)
             {
                 if (ControlKey)
-                    rotation = Snapping.SnapValue(rotation, 15f);
+                    rotation = ProGridsSnapping.SnapValue(rotation, 15f);
 
                 float delta = rotation - uvRotation;
                 uvRotation = rotation;
@@ -1614,7 +1614,7 @@ namespace UnityEditor.ProBuilder
             uvScale = EditorHandleUtility.ScaleHandle2d(2, UVToGUIPoint(handlePosition), uvScale, 128);
 
             if (ControlKey)
-                uvScale = Snapping.SnapValue(uvScale, s_GridSnapIncrement);
+                uvScale = ProGridsSnapping.SnapValue(uvScale, s_GridSnapIncrement);
 
             if (Math.Approx(uvScale.x, 0f, Mathf.Epsilon))
                 uvScale.x = .0001f;
@@ -1684,7 +1684,7 @@ namespace UnityEditor.ProBuilder
             previousScale.y = 1f / previousScale.y;
 
             if (ControlKey)
-                textureScale = Snapping.SnapValue(textureScale, s_GridSnapIncrement);
+                textureScale = ProGridsSnapping.SnapValue(textureScale, s_GridSnapIncrement);
 
             if (!modifyingUVs)
             {
@@ -3376,7 +3376,7 @@ namespace UnityEditor.ProBuilder
                 UVEditing.ApplyUVs(pb, uv, channel);
             }
         }
-       
+
         #endregion
         #region Screenshot Rendering
 
