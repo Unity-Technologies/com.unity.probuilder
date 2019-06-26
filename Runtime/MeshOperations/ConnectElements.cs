@@ -145,7 +145,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 for (int n = 0; n < appendFaces[i].newVertexIndexes.Count; n++)
                     newVertexIndexes.Add(lookup[appendFaces[i].newVertexIndexes[n] + (appendFaces[i].faceRebuildData.Offset() - removedVertexCount)]);
 
-            mesh.ToMesh();
+            mesh.Rebuild();
 
             return newVertexIndexes.Select(x => mesh.sharedVerticesInternal[x][0]).ToArray();
         }
@@ -283,7 +283,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             mesh.sharedTextures = new SharedVertex[0];
             int removedVertexCount = mesh.DeleteFaces(affected.Keys).Length;
             mesh.sharedVertices = SharedVertex.GetSharedVerticesWithPositions(mesh.positionsInternal);
-            mesh.ToMesh();
+            mesh.Rebuild();
 
             // figure out where the new edges where inserted
             if (returnEdges)

@@ -54,7 +54,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             mesh.ToMesh();
             mesh.TranslateVerticesInWorldSpace(mesh.mesh.triangles, dir);
-            mesh.Refresh();
+            mesh.Rebuild();
         }
 
         /// <summary>

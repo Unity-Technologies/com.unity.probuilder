@@ -143,8 +143,7 @@ namespace UnityEngine.ProBuilder
             mesh.faces = faces;
             mesh.sharedVertices = sharedVertices;
             mesh.sharedTextures = sharedTextures != null ? sharedTextures.ToArray() : null;
-            mesh.ToMesh();
-            mesh.Refresh();
+            mesh.Rebuild();
             return mesh;
         }
 
@@ -173,8 +172,7 @@ namespace UnityEngine.ProBuilder
             m_Faces = f;
             m_SharedVertices = SharedVertex.GetSharedVerticesWithPositions(points);
             InvalidateSharedVertexLookup();
-            ToMesh();
-            Refresh();
+            Rebuild();
         }
 
         /// <summary>
@@ -193,8 +191,7 @@ namespace UnityEngine.ProBuilder
             m_SharedVertices = SharedVertex.GetSharedVerticesWithPositions(m_Positions);
             InvalidateSharedVertexLookup();
             InvalidateSharedTextureLookup();
-            ToMesh();
-            Refresh();
+            Rebuild();
         }
 
         /// <summary>
@@ -221,6 +218,9 @@ namespace UnityEngine.ProBuilder
 
             int materialCount = MaterialUtility.GetMaterialCount(renderer);
 
+            if (mesh == null)
+                mesh = new Mesh();
+
             if (willCompileMesh != null && willCompileMesh(this, mesh, materialCount, MeshTopology.Quads))
                     return;
 
@@ -235,6 +235,7 @@ namespace UnityEngine.ProBuilder
         public void ToMesh(MeshTopology preferredTopology = MeshTopology.Triangles)
         {
             Mesh m = mesh;
+            Debug.Log("TOemsh");
 
             // if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
             if (m != null && m.vertexCount == m_Positions.Length)
@@ -281,8 +282,7 @@ namespace UnityEngine.ProBuilder
             // set a new UnityEngine.Mesh instance
             mesh = new Mesh();
 
-            ToMesh();
-            Refresh();
+            Rebuild();
         }
 
         /// <summary>
