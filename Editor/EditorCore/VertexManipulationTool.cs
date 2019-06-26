@@ -316,8 +316,7 @@ namespace UnityEditor.ProBuilder
 
             foreach (var mesh in selection)
             {
-                mesh.ToMesh();
-                mesh.Refresh();
+                mesh.AssignToMeshFilter();
                 mesh.Optimize();
             }
 

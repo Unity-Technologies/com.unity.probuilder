@@ -202,8 +202,7 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         internal void Rebuild()
         {
-            ToMesh();
-            Refresh();
+            AssignToMeshFilter();
         }
 
         public static event Func<ProBuilderMesh, Mesh, int, MeshTopology, bool> willCompileMesh;
