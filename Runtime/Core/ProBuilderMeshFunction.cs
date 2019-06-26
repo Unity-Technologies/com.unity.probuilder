@@ -235,7 +235,6 @@ namespace UnityEngine.ProBuilder
         public void ToMesh(MeshTopology preferredTopology = MeshTopology.Triangles)
         {
             Mesh m = mesh;
-            Debug.Log("TOemsh");
 
             // if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
             if (m != null && m.vertexCount == m_Positions.Length)
