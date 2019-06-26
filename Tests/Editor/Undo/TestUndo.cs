@@ -20,6 +20,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Undo
             cube.MergeVertices(new int[] { 0, 1 }, true);
             cube.ToMesh();
             cube.Refresh();
+            cube.AssignToMeshFilter();
 
             Assert.IsFalse(TestUtility.MeshesAreEqual(cube.mesh, duplicate.mesh));
 

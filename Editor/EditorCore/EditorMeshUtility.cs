@@ -35,6 +35,8 @@ namespace UnityEditor.ProBuilder
         /// <param name="generateLightmapUVs">If the Auto UV2 preference is disabled this parameter can be used to force UV2s to be built.</param>
         public static void Optimize(this ProBuilderMesh mesh, bool generateLightmapUVs = false)
         {
+            return;
+            
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 

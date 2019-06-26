@@ -206,6 +206,29 @@ namespace UnityEngine.ProBuilder
             Refresh();
         }
 
+        public static event Func<ProBuilderMesh, Mesh, int, MeshTopology, bool> willCompileMesh;
+
+        public void AssignToMeshFilter()
+        {
+            if (m_MeshFormatVersion < k_MeshFormatVersion)
+            {
+                if (m_MeshFormatVersion < k_MeshFormatVersionSubmeshMaterialRefactor)
+                    Submesh.MapFaceMaterialsToSubmeshIndex(this);
+
+                m_MeshFormatVersion = k_MeshFormatVersion;
+            }
+
+            m_MeshFormatVersion = k_MeshFormatVersion;
+
+            int materialCount = MaterialUtility.GetMaterialCount(renderer);
+
+            if (willCompileMesh != null && willCompileMesh(this, mesh, materialCount, MeshTopology.Quads))
+                    return;
+
+            ToMesh();
+            Refresh();
+        }
+
         /// <summary>
         /// Rebuild the mesh positions and submeshes. If vertex count matches new positions array the existing attributes are kept, otherwise the mesh is cleared. UV2 is the exception, it is always cleared.
         /// </summary>
@@ -224,16 +247,6 @@ namespace UnityEngine.ProBuilder
 
             m.vertices = m_Positions;
             m.uv2 = null;
-
-            if (m_MeshFormatVersion < k_MeshFormatVersion)
-            {
-                if (m_MeshFormatVersion < k_MeshFormatVersionSubmeshMaterialRefactor)
-                    Submesh.MapFaceMaterialsToSubmeshIndex(this);
-
-                m_MeshFormatVersion = k_MeshFormatVersion;
-            }
-
-            m_MeshFormatVersion = k_MeshFormatVersion;
 
             int materialCount = MaterialUtility.GetMaterialCount(renderer);
 
