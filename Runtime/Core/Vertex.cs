@@ -246,6 +246,8 @@ namespace UnityEngine.ProBuilder
             if (ReferenceEquals(other, null))
                 return false;
 
+            return Equals(other, MeshArrays.Position);
+
             return Math.Approx3(m_Position, other.m_Position) &&
                 Math.ApproxC(m_Color, other.m_Color) &&
                 Math.Approx3(m_Normal, other.m_Normal) &&
@@ -281,8 +283,8 @@ namespace UnityEngine.ProBuilder
             unchecked
             {
                 int hash = 783 + VectorHash.GetHashCode(position);
-                hash = hash * 29 + VectorHash.GetHashCode(uv0);
-                hash = hash * 31 + VectorHash.GetHashCode(normal);
+//                hash = hash * 29 + VectorHash.GetHashCode(uv0);
+//                hash = hash * 31 + VectorHash.GetHashCode(normal);
                 return hash;
             }
         }
