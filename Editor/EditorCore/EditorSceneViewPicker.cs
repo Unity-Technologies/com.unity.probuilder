@@ -25,7 +25,7 @@ namespace UnityEditor.ProBuilder
         static bool s_AppendModifierPreviousState = false;
         static SceneSelection s_Selection = new SceneSelection();
         static List<VertexPickerEntry> s_NearestVertices = new List<VertexPickerEntry>();
-        static List<GameObject> s_OverlappingGameObjects = new List<GameObject>();
+        static HashSet<GameObject> s_OverlappingGameObjects = new HashSet<GameObject>();
         static readonly List<int> s_IndexBuffer = new List<int>(16);
         static List<Edge> s_EdgeBuffer = new List<Edge>(32);
 
@@ -164,7 +164,7 @@ namespace UnityEditor.ProBuilder
                 else if (s_Selection.vertex > -1)
                 {
                     int ind = Array.IndexOf(mesh.selectedIndexesInternal, s_Selection.vertex);
-                    
+
                     UndoUtility.RecordSelection(mesh, "Select Vertex");
 
                     if (ind > -1)
@@ -181,7 +181,7 @@ namespace UnityEditor.ProBuilder
                             s_IndexBuffer.Add(index);
                         }
                         s_IndexBuffer.Sort();
-                        
+
                         if (!appendModifier || addOrRemoveIfPresentFromSelectionModifier ||
                            (addToSelectionModifier && s_Selection.vertex == mesh.GetActiveVertex() && !activeObjectSelectionChanged))
                         {
@@ -217,7 +217,7 @@ namespace UnityEditor.ProBuilder
                 }
 
                 if(activeObjectSelectionChanged)
-                { 
+                {
                     MeshSelection.MakeActiveObject(candidateNewActiveObject);
                 }
                 else
@@ -423,13 +423,21 @@ namespace UnityEditor.ProBuilder
             else
                 EditorHandleUtility.GetAllOverlapping(mousePosition, s_OverlappingGameObjects);
 
+            // hack to get picking working on subdivided meshes that have click-able surface area that is not rendered
+            foreach (var mesh in MeshSelection.topInternal)
+                s_OverlappingGameObjects.Add(mesh.gameObject);
+
             selection.Clear();
 
             float distance = Mathf.Infinity;
 
-            for (int i = 0, next = 0, pickedCount = s_OverlappingGameObjects.Count; i < pickedCount; i++)
+//            for (int i = 0, next = 0, pickedCount = s_OverlappingGameObjects.Count; i < pickedCount; i++)
+            int pickedCount = s_OverlappingGameObjects.Count;
+            int next = 0;
+            int i = 0;
+            foreach(var go in s_OverlappingGameObjects)
             {
-                var go = s_OverlappingGameObjects[i];
+//                var go = s_OverlappingGameObjects[i];
                 var mesh = go.GetComponent<ProBuilderMesh>();
                 Face face = null;
 
@@ -469,6 +477,8 @@ namespace UnityEditor.ProBuilder
                     if (next != 0)
                         break;
                 }
+
+                i++;
             }
 
             if (!isPreview)

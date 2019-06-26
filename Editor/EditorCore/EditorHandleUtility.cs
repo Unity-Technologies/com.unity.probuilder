@@ -330,7 +330,7 @@ namespace UnityEditor.ProBuilder
             return scale;
         }
 
-        internal static void GetAllOverlapping(Vector2 mousePosition, List<GameObject> list)
+        internal static void GetAllOverlapping(Vector2 mousePosition, ICollection<GameObject> list)
         {
             list.Clear();
 
@@ -348,7 +348,7 @@ namespace UnityEditor.ProBuilder
             while (nearestGameObject != null);
         }
 
-        internal static void GetHovered(Vector2 mousePosition, List<GameObject> list)
+        internal static void GetHovered(Vector2 mousePosition, ICollection<GameObject> list)
         {
             list.Clear();
             var go = HandleUtility.PickGameObject(mousePosition, false);
