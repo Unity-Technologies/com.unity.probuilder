@@ -59,8 +59,7 @@ namespace UnityEditor.ProBuilder.Actions
                 pb.DeleteFaces(pb.selectedFacesInternal);
                 count += pb.selectedFaceCount;
 
-                pb.ToMesh();
-                pb.Refresh();
+                pb.Rebuild();
                 pb.Optimize();
             }
 

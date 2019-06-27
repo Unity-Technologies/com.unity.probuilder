@@ -56,8 +56,7 @@ namespace UnityEditor.ProBuilder.Actions
 
                 attempts++;
 
-                pb.ToMesh();
-                pb.Refresh();
+                pb.Rebuild();
                 pb.Optimize();
             }
 

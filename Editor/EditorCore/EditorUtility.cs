@@ -12,6 +12,9 @@ using UnityEngine.SceneManagement;
 #if !UNITY_2019_1_OR_NEWER
 using System.Reflection;
 #endif
+#if OPEN_SUBDIV_ENABLED
+using UnityEngine.OSD;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -45,6 +48,11 @@ namespace UnityEditor.ProBuilder
 
         [UserSetting("Mesh Settings", "Collider Type", "What type of Collider to apply to new Shapes.")]
         static Pref<ColliderType> s_ColliderType = new Pref<ColliderType>("mesh.newShapeColliderType", ColliderType.MeshCollider);
+
+#if OPEN_SUBDIV_ENABLED
+        internal static Pref<bool> s_SubdivisionEnabled = new Pref<bool>("mesh.subdivisionEnabled", false);
+        internal static Pref<SubdivisionSettings> s_SubdivisionSettings = new Pref<SubdivisionSettings>("mesh.subdivisionSettings", SubdivisionSettings.defaultSettings);
+#endif
 
         internal static PivotLocation newShapePivotLocation
         {
@@ -318,6 +326,13 @@ namespace UnityEditor.ProBuilder
             }
 
             pb.unwrapParameters = new UnwrapParameters(Lightmapping.s_UnwrapParameters);
+
+            pb.subdivisionEnabled = s_SubdivisionEnabled;
+            pb.subdivisionSettings = s_SubdivisionSettings;
+
+            // this is a little crap
+            if(pb.subdivisionEnabled)
+                pb.Rebuild();
 
             pb.Optimize();
 

@@ -1,5 +1,8 @@
-﻿#if OPEN_SUBDIV_ENABLED
+﻿
 
+using System.Linq;
+using UnityEditor.ShortcutManagement;
+#if OPEN_SUBDIV_ENABLED
 using UnityEngine.ProBuilder;
 using UnityEngine;
 using UnityEngine.OSD;
@@ -22,6 +25,20 @@ namespace UnityEditor.ProBuilder.OpenSubdiv
                 if (value != s_ShowSubdivSettings.value)
                     s_ShowSubdivSettings.SetValue(value, true);
             }
+        }
+
+        [Shortcut("ProBuilder/Toggle Object Subdivision", typeof(SceneView), KeyCode.S, ShortcutModifiers.None)]
+        static void ToggleSubdivideEnabled()
+        {
+            var anyNotEnabled = MeshSelection.topInternal.Any(x => !x.subdivisionEnabled);
+
+            foreach (var mesh in MeshSelection.topInternal)
+            {
+                mesh.subdivisionEnabled = anyNotEnabled;
+                mesh.Rebuild();
+            }
+
+            SceneView.RepaintAll();
         }
 
         Editor m_Editor;
@@ -72,33 +89,44 @@ namespace UnityEditor.ProBuilder.OpenSubdiv
 
         void SettingsGUI(Object target, SceneView view)
         {
-            const int k_SettingsIconPad = 2;
-            Vector2 settingsSize = EditorStyles.iconButton.CalcSize(EditorGUI.GUIContents.titleSettingsIcon);
-            Rect settingsRect = new Rect(300 - 4 - k_SettingsIconPad - settingsSize.x, 4 + k_SettingsIconPad, settingsSize.x, settingsSize.y);
-
-            if (GUI.Button(settingsRect, EditorGUI.GUIContents.titleSettingsIcon, EditorStyles.iconButton))
+            using (new EditorGUI.DisabledScope(MeshSelection.selectedObjectCount < 1))
             {
-                var menu = new GenericMenu();
+                GUILayout.BeginHorizontal();
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button(EditorGUI.GUIContents.titleSettingsIcon, EditorStyles.iconButton))
+                {
+                    var menu = new GenericMenu();
+                    menu.AddItem(new GUIContent("Reset"), false, Reset);
+                    menu.AddItem(new GUIContent("Set Default"), false, SetDefault);
+                    menu.ShowAsContext();
+                }
 
-                menu.AddItem(new GUIContent("Reset"), false, Reset);
-                menu.AddItem(new GUIContent("Set Default"), false, SetDefault);
+                GUILayout.EndHorizontal();
+
+                // this is terrible
+                GUILayout.Label(GUIContent.none, GUIStyle.none, GUILayout.MinWidth(300));
+
+                // this is less terrible, but we should avoid the ToArray
+                Editor.CreateCachedEditor(MeshSelection.topInternal.ToArray(), typeof(OpenSubdivEditor), ref m_Editor);
+                if (m_Editor)
+                    m_Editor.OnInspectorGUI();
             }
-
-            // this is terrible
-            GUILayout.Label(GUIContent.none, GUIStyle.none, GUILayout.MinWidth(300));
-
-            // this is less terrible, but we should avoid the ToArray
-            Editor.CreateCachedEditor(MeshSelection.topInternal.ToArray(), typeof(OpenSubdivEditor), ref m_Editor);
-            if(m_Editor)
-                m_Editor.OnInspectorGUI();
         }
 
         static void Reset()
         {
+            foreach(var mesh in MeshSelection.topInternal)
+                mesh.subdivisionSettings = SubdivisionSettings.defaultSettings;
 
+            foreach(var mesh in MeshSelection.topInternal)
+                mesh.subdivisionEnabled = false;
         }
 
-        static void SetDefault() { }
+        static void SetDefault()
+        {
+            EditorUtility.s_SubdivisionEnabled.SetValue(MeshSelection.activeMesh.subdivisionEnabled, true);
+            EditorUtility.s_SubdivisionSettings.SetValue(MeshSelection.activeMesh.subdivisionSettings, true);
+        }
     }
 }
 #endif
