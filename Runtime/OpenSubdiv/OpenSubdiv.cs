@@ -18,6 +18,8 @@ namespace UnityEngine.ProBuilder
 
 			output.subMeshCount = submeshes.Length;
 
+            input.Refresh(RefreshMask.UV);
+
 			Vector3[] positions = input.positionsInternal;
 			Color[] colors = input.HasArrays(MeshArrays.Color) ? input.colorsInternal : null;
 			Vector2[] textures = input.HasArrays(MeshArrays.Texture0) ? input.texturesInternal : null;

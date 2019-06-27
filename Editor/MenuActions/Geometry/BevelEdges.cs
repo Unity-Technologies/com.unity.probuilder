@@ -65,15 +65,13 @@ namespace UnityEditor.ProBuilder.Actions
 
             foreach (ProBuilderMesh pb in MeshSelection.topInternal)
             {
-                pb.ToMesh();
-
                 List<Face> faces = Bevel.BevelEdges(pb, pb.selectedEdges, m_BevelSize);
                 res = faces != null ? new ActionResult(ActionResult.Status.Success, "Bevel Edges") : new ActionResult(ActionResult.Status.Failure, "Failed Bevel Edges");
 
                 if (res)
                     pb.SetSelectedFaces(faces);
 
-                pb.Refresh();
+                pb.Rebuild();
                 pb.Optimize();
             }
 

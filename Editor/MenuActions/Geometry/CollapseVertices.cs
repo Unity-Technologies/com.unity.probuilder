@@ -92,8 +92,7 @@ namespace UnityEditor.ProBuilder.Actions
                     if (success)
                         mesh.SetSelectedVertices(new int[] { newIndex });
 
-                    mesh.ToMesh();
-                    mesh.Refresh();
+                    mesh.Rebuild();
                     mesh.Optimize();
                 }
             }

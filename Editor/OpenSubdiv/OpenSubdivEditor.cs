@@ -31,7 +31,7 @@ namespace UnityEditor.ProBuilder.OpenSubdiv
 
             EditorGUILayout.PropertyField(m_SubdivisionMethod);
 
-            EditorGUILayout.IntSlider(m_SubdivisionLevel, 0, 6, GUILayout.MinWidth(300));
+            EditorGUILayout.IntSlider(m_SubdivisionLevel, 0, 5, GUILayout.MinWidth(300));
 
             EditorGUILayout.PropertyField(m_GenerateBoundaryVertexWeights);
             EditorGUI.indentLevel++;

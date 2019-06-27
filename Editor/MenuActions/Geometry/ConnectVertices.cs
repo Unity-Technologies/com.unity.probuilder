@@ -36,12 +36,11 @@ namespace UnityEditor.ProBuilder.Actions
 
             foreach (var mesh in MeshSelection.topInternal)
             {
-                mesh.ToMesh();
                 int[] splits = mesh.Connect(mesh.selectedIndexesInternal);
 
                 if (splits != null)
                 {
-                    mesh.Refresh();
+                    mesh.Rebuild();
                     mesh.Optimize();
                     mesh.SetSelectedVertices(splits);
                     res = new ActionResult(ActionResult.Status.Success, "Connect Edges");

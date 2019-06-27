@@ -55,8 +55,7 @@ namespace UnityEditor.ProBuilder.Actions
                     if (mesh.Bridge(mesh.selectedEdges[0], mesh.selectedEdges[1], ProBuilderEditor.s_AllowNonManifoldActions) != null)
                     {
                         success = true;
-                        mesh.ToMesh();
-                        mesh.Refresh();
+                        mesh.Rebuild();
                         mesh.Optimize();
                     }
                 }
