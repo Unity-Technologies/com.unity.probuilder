@@ -231,6 +231,12 @@ namespace UnityEngine.ProBuilder
 
             ToMesh();
             Refresh();
+
+            mesh.uv = m_Textures0;
+            if (HasArrays(MeshArrays.Texture2))
+                mesh.SetUVs(2, m_Textures2);
+            if (HasArrays(MeshArrays.Texture3))
+                mesh.SetUVs(3, m_Textures3);
         }
 
         /// <summary>
@@ -417,12 +423,11 @@ namespace UnityEngine.ProBuilder
                     UvUnwrapping.ProjectTextureGroup(this, textureGroup, face.uv);
             }
 
-            mesh.uv = m_Textures0;
-
-            if (HasArrays(MeshArrays.Texture2))
-                mesh.SetUVs(2, m_Textures2);
-            if (HasArrays(MeshArrays.Texture3))
-                mesh.SetUVs(3, m_Textures3);
+//            mesh.uv = m_Textures0;
+//            if (HasArrays(MeshArrays.Texture2))
+//                mesh.SetUVs(2, m_Textures2);
+//            if (HasArrays(MeshArrays.Texture3))
+//                mesh.SetUVs(3, m_Textures3);
         }
 
         internal void SetGroupUV(AutoUnwrapSettings settings, int group)

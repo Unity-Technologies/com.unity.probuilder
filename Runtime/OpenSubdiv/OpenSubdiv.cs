@@ -33,7 +33,7 @@ namespace UnityEngine.ProBuilder
                     refiner.autoPopulateBoundaryVertices = settings.generateBoundaryVertexWeights;
 					refiner.defaultBoundaryVertexWeight = settings.generatedBoundaryVertexWeight;
 
-					refiner.SetInputIndices(submesh.m_Indexes, submesh.topology);
+                    refiner.SetInputIndices(submesh.m_Indexes, submesh.topology);
 					refiner.SetInputChannel(VertexAttribute.Position, positions);
 
 					if (input.HasArrays(MeshArrays.Color))
@@ -48,7 +48,7 @@ namespace UnityEngine.ProBuilder
 					int[] indices;
 					MeshTopology topo;
 
-					if (!refiner.GetOutputChannelVector3(VertexAttribute.Position, out positions)
+					if (!refiner.GetOutputChannel(VertexAttribute.Position, out positions)
 						|| !refiner.GetOutputIndices(out indices, out topo))
 						return false;
 
@@ -56,10 +56,10 @@ namespace UnityEngine.ProBuilder
 					submesh.m_Indexes = indices;
 
 					if (input.HasArrays(MeshArrays.Color))
-						refiner.GetOutputChannelColor(VertexAttribute.Color, out colors);
+						refiner.GetOutputChannel(VertexAttribute.Color, out colors);
 
 					if (input.HasArrays(MeshArrays.Texture0))
-						refiner.GetOutputChannelVector2(VertexAttribute.TexCoord0, out textures);
+						refiner.GetOutputChannel(VertexAttribute.TexCoord0, out textures);
 				}
 			}
 
