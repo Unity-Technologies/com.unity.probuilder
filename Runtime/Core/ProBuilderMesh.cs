@@ -126,6 +126,9 @@ namespace UnityEngine.ProBuilder
         internal string assetGuid;
 
 #if OPEN_SUBDIV_ENABLED
+        // todo demo only
+        internal static bool globalEnableSubdivide = true;
+
         [SerializeField]
         bool m_SubdivisionEnabled;
 

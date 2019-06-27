@@ -1,8 +1,6 @@
-﻿
-
-using System.Linq;
+﻿#if OPEN_SUBDIV_ENABLED
 using UnityEditor.ShortcutManagement;
-#if OPEN_SUBDIV_ENABLED
+using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEngine;
 using UnityEngine.OSD;
@@ -37,6 +35,22 @@ namespace UnityEditor.ProBuilder.OpenSubdiv
                 mesh.subdivisionEnabled = anyNotEnabled;
                 mesh.Rebuild();
             }
+
+            SceneView.RepaintAll();
+        }
+
+        [Shortcut("ProBuilder/Toggle Subdivision Enabled", typeof(SceneView), KeyCode.S, ShortcutModifiers.Alt)]
+        static void ToggleGlobalSubdivideEnabled()
+        {
+                SetSmoothingVisibility(!ProBuilderMesh.globalEnableSubdivide);
+        }
+
+        static void SetSmoothingVisibility(bool visible)
+        {
+            ProBuilderMesh.globalEnableSubdivide = visible;
+
+            foreach (var mesh in Object.FindObjectsOfType<ProBuilderMesh>())
+                mesh.Rebuild();
 
             SceneView.RepaintAll();
         }
@@ -102,7 +116,15 @@ namespace UnityEditor.ProBuilder.OpenSubdiv
                 }
 
                 GUILayout.EndHorizontal();
+            }
 
+            EditorGUI.BeginChangeCheck();
+            ProBuilderMesh.globalEnableSubdivide = EditorGUILayout.Toggle("Smoothing Visibility", ProBuilderMesh.globalEnableSubdivide);
+            if (EditorGUI.EndChangeCheck())
+                SetSmoothingVisibility(ProBuilderMesh.globalEnableSubdivide);
+
+            using (new EditorGUI.DisabledScope(MeshSelection.selectedObjectCount < 1))
+            {
                 // this is terrible
                 GUILayout.Label(GUIContent.none, GUIStyle.none, GUILayout.MinWidth(300));
 

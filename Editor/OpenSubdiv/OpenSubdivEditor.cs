@@ -33,11 +33,11 @@ namespace UnityEditor.ProBuilder.OpenSubdiv
 
             EditorGUILayout.IntSlider(m_SubdivisionLevel, 0, 5, GUILayout.MinWidth(300));
 
-            EditorGUILayout.PropertyField(m_GenerateBoundaryVertexWeights);
-            EditorGUI.indentLevel++;
-            using (new EditorGUI.DisabledScope(!m_GenerateBoundaryVertexWeights.boolValue))
-                EditorGUILayout.Slider(m_GeneratedBoundaryVertexWeight, 0f, 10f);
-            EditorGUI.indentLevel--;
+//            EditorGUILayout.PropertyField(m_GenerateBoundaryVertexWeights);
+//            EditorGUI.indentLevel++;
+//            using (new EditorGUI.DisabledScope(!m_GenerateBoundaryVertexWeights.boolValue))
+//                EditorGUILayout.Slider(m_GeneratedBoundaryVertexWeight, 0f, 10f);
+//            EditorGUI.indentLevel--;
 
             var rebuild = serializedObject.hasModifiedProperties;
 

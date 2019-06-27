@@ -222,7 +222,7 @@ namespace UnityEngine.ProBuilder
                 mesh = new Mesh();
 
 #if OPEN_SUBDIV_ENABLED
-            if (subdivisionEnabled)
+            if (subdivisionEnabled && globalEnableSubdivide)
             {
                 OpenSubdiv.CompileMesh(this, mesh, materialCount, MeshTopology.Quads);
                 return;
