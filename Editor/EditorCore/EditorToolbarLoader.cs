@@ -136,36 +136,22 @@ namespace UnityEditor.ProBuilder
 
         static void SearchForMenuAttributes(List<MenuAction> list)
         {
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            var actions = TypeCache.GetTypesWithAttribute<ProBuilderMenuActionAttribute>();
+
+            foreach (var action in actions)
             {
+                if (!typeof(MenuAction).IsAssignableFrom(action) || action.IsAbstract)
+                    continue;
+
                 try
                 {
-                    var menuActionTypes = assembly.GetTypes().Where(x =>
-                        {
-                            if (!typeof(MenuAction).IsAssignableFrom(x)
-                                || x.IsAbstract
-                                || !Attribute.IsDefined(x, typeof(ProBuilderMenuActionAttribute)))
-                                return false;
-
-                            var constructors = x.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-
-                            if (!constructors.Any(y => y.GetParameters().Length < 1))
-                            {
-                                Log.Error("{0} type does not contain a parameterless constructor. Only parameterless constructors are invoked with creating MenuItem instances.", x.ToString());
-                                return false;
-                            }
-
-                            if (constructors.Any(z => z.GetParameters().Length > 0))
-                                Log.Warning("{0} type contains a non-parameterless constructor. Only parameterless constructors are invoked with creating MenuItem instances.", x.ToString());
-
-                            return true;
-                        });
-
-                    list.AddRange(menuActionTypes.Select(x => (MenuAction)Activator.CreateInstance(x)));
+                    var instance = Activator.CreateInstance(action) as MenuAction;
+                    if (instance != null)
+                        list.Add(instance);
                 }
                 catch
                 {
-                    // some assemblies cannot be reflected (jetbrains plugin, for example)
+                    Debug.LogWarning($"Failed initializing menu item \"{action.ToString()}\". Is the constructor private?");
                 }
             }
         }

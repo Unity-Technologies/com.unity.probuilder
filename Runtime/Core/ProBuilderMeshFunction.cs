@@ -221,8 +221,13 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 mesh = new Mesh();
 
-            if (willCompileMesh != null && willCompileMesh(this, mesh, materialCount, MeshTopology.Quads))
-                    return;
+#if OPEN_SUBDIV_ENABLED
+            if (subdivisionEnabled)
+            {
+                OpenSubdiv.CompileMesh(this, mesh, materialCount, MeshTopology.Quads);
+                return;
+            }
+#endif
 
             ToMesh();
             Refresh();

@@ -5,6 +5,10 @@ using UnityEngine.Serialization;
 using System;
 using System.Collections.ObjectModel;
 
+#if OPEN_SUBDIV_ENABLED
+using UnityEngine.OSD;
+#endif
+
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
@@ -120,6 +124,26 @@ namespace UnityEngine.ProBuilder
         /// </value>
         [SerializeField]
         internal string assetGuid;
+
+#if OPEN_SUBDIV_ENABLED
+        [SerializeField]
+        bool m_SubdivisionEnabled;
+
+        [SerializeField]
+        SubdivisionSettings m_SubdivisionSettings = SubdivisionSettings.defaultSettings;
+
+        public SubdivisionSettings subdivisionSettings
+        {
+            get { return m_SubdivisionSettings; }
+            set { m_SubdivisionSettings = value; }
+        }
+
+        public bool subdivisionEnabled
+        {
+            get { return m_SubdivisionEnabled; }
+            set { m_SubdivisionEnabled = value; }
+        }
+#endif
 
         [NonSerialized]
         MeshRenderer m_MeshRenderer;

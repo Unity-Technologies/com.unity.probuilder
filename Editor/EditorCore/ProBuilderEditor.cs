@@ -529,6 +529,8 @@ namespace UnityEditor.ProBuilder
                 Menu_ToggleIconMode);
             menu.AddItem(new GUIContent("Use Text Mode", ""), !s_IsIconGui,
                 Menu_ToggleIconMode);
+
+            s_EditorToolbar.Reload();
         }
 
         void SetIsUtilityWindow(bool isUtilityWindow)

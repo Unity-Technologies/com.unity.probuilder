@@ -45,6 +45,11 @@ namespace UnityEditor.ProBuilder
             this.window = win;
         }
 
+        internal void Reload()
+        {
+            m_Actions = EditorToolbarLoader.GetActions(true);
+        }
+
         void OnEnable()
         {
             m_Actions = EditorToolbarLoader.GetActions(true);
