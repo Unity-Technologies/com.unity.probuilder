@@ -4,7 +4,6 @@
         "Unity.ProBuilder",
         "Unity.ProBuilder.Editor"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
     ],
@@ -12,5 +11,7 @@
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": true
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
 }
