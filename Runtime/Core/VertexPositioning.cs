@@ -87,7 +87,7 @@ namespace UnityEngine.ProBuilder
                 for (i = 0; i < s_CoincidentVertices.Count; i++)
                 {
                     var v = l2w.MultiplyPoint3x4(verts[s_CoincidentVertices[i]] + localOffset);
-                    verts[s_CoincidentVertices[i]] = w2l.MultiplyPoint3x4(Snapping.SnapValue(v, ((Vector3)mask) * snapValue));
+                    verts[s_CoincidentVertices[i]] = w2l.MultiplyPoint3x4(ProGridsSnapping.SnapValue(v, ((Vector3)mask) * snapValue));
                 }
             }
             else
