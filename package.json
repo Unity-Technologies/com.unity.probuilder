@@ -52,7 +52,7 @@
     "com.unity.settings-manager":"1.0.0"
   },
   "relatedPackages": {
-    "com.unity.probuilder.tests": "4.0.4"
+    "com.unity.probuilder.tests": "4.1.0"
   },
   "repository": {
     "type": "git",
