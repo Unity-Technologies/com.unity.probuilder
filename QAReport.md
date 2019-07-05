@@ -13,6 +13,7 @@ Test strategy & current info for ProBuilder.
 |Latest Test Rail Result - Unity 2018.3 | [PB 4.0.4p11, Unity 2018.3.9f1](https://qatestrail.hq.unity3d.com/index.php?/runs/view/12271) |
 |Latest Test Rail Result - Unity 2019.1 | [PB 4.0.4p11, Unity 2019.1.0b7](https://qatestrail.hq.unity3d.com/index.php?/runs/view/12090) |
 |Latest Test Rail Result - Unity 2019.2 | [PB 4.0.4p11, Unity 2019.2.0a8](https://qatestrail.hq.unity3d.com/index.php?/runs/view/12266) |
+|Latest Test Rail Result - Unity 2019.3 | [PB 4.1.0p6, Unity 2019.3.0a8](https://qatestrail.hq.unity3d.com/index.php?/runs/view/13888) |
 | Known Bugs | [JIRA - World Building](https://unity3d.atlassian.net/secure/RapidBoard.jspa?rapidView=73&projectKey=WB&view=planning&selectedIssue=WB-1106&epics=visible) |
 | Planning | [JIRA - World Building Epics](https://unity3d.atlassian.net/secure/RapidBoard.jspa?rapidView=73&projectKey=WB&view=planning&selectedIssue=WB-1106&epics=visible) |
 
