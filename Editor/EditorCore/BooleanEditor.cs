@@ -1,3 +1,4 @@
+#if PROBUILDER_EXPERIMENTAL_FEATURES
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Experimental.CSG;
@@ -376,3 +377,4 @@ namespace UnityEditor.ProBuilder
         }
     }
 }
+#endif
