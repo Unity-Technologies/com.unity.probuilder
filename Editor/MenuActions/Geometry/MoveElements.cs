@@ -58,11 +58,73 @@ namespace UnityEditor.ProBuilder.Actions
 
             var dist = s_MoveDistance.value;
             var coord = s_CoordinateSpace.value;
+            
+            int theCoord = 0;
+            float theAmount = 1f;
+            string[] coordNames = new string[] {"Use Handle Mode", "World", "Local", "Planar"};
+            
+            bool followActive = false;
+            bool multiplyScale = false;
+            bool useHandle = true;
 
             EditorGUI.BeginChangeCheck();
 
-            coord = (CoordinateSpace) EditorGUILayout.EnumPopup("Space", coord);
-            dist = EditorGUILayout.Vector3Field("Move", dist);
+            //coord = (CoordinateSpace) EditorGUILayout.EnumPopup("Coordinate Space", coord);
+
+            
+            theCoord = EditorGUILayout.Popup("Coordinate Space", theCoord, coordNames);
+            followActive = EditorGUILayout.Toggle("Follow Active Element", followActive);
+            multiplyScale = EditorGUILayout.Toggle("Multiply by Scale", multiplyScale);
+            //dist = EditorGUILayout.Vector3Field("Move", dist);
+
+            EditorGUILayout.BeginHorizontal();
+
+            EditorGUILayout.BeginVertical("box");
+                
+                EditorGUILayout.BeginHorizontal();
+                    GUILayout.Label("X", GUILayout.Width(16));
+                    theAmount = EditorGUILayout.FloatField(theAmount);
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.BeginHorizontal();
+                    GUILayout.Space(19);
+                    GUILayout.Button("<-", EditorStyles.miniButtonLeft);
+                    GUILayout.Button("->", EditorStyles.miniButtonRight);
+                EditorGUILayout.EndHorizontal();
+            
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.BeginVertical("box");
+                
+                EditorGUILayout.BeginHorizontal();
+                    GUILayout.Label("Y", GUILayout.Width(16));
+                    theAmount = EditorGUILayout.FloatField(theAmount);
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.BeginHorizontal();
+                    GUILayout.Space(19);
+                    GUILayout.Button("<-", EditorStyles.miniButtonLeft);
+                    GUILayout.Button("->", EditorStyles.miniButtonRight);
+                EditorGUILayout.EndHorizontal();
+            
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.BeginVertical("box");
+                
+                EditorGUILayout.BeginHorizontal();
+                    GUILayout.Label("Z", GUILayout.Width(16));
+                    theAmount = EditorGUILayout.FloatField(theAmount);
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.BeginHorizontal();
+                    GUILayout.Space(19);
+                    GUILayout.Button("<-", EditorStyles.miniButtonLeft);
+                    GUILayout.Button("->", EditorStyles.miniButtonRight);
+                EditorGUILayout.EndHorizontal();
+            
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.EndHorizontal();
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -72,7 +134,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             GUILayout.FlexibleSpace();
 
-            if (GUILayout.Button("Move Selection"))
+            if (GUILayout.Button("Move All Axis"))
                 EditorUtility.ShowNotification(DoAction().notification);
         }
 
