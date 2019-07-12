@@ -247,7 +247,7 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Perform whatever action this menu item is supposed to do. You are resposible for implementing Undo.
+        /// Perform whatever action this menu item is supposed to do. You are responsible for implementing Undo.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
         public abstract ActionResult DoAction();
