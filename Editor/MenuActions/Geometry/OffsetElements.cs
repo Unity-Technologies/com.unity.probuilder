@@ -1,11 +1,12 @@
+using System;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-    sealed class MoveElements : MenuAction
+    sealed class OffsetElements : MenuAction
     {
-        enum CoordinateSpace
+        internal enum CoordinateSpace
         {
             World,
             Local,
@@ -13,12 +14,12 @@ namespace UnityEditor.ProBuilder.Actions
             Handle
         }
 
-        static readonly TooltipContent s_TooltipFace = new TooltipContent ( "Move Faces", "Move the selected elements by a set amount." );
-        static readonly TooltipContent s_TooltipEdge = new TooltipContent ( "Move Edges", "Move the selected elements by a set amount." );
-        static readonly TooltipContent s_TooltipVert = new TooltipContent ( "Move Vertices", "Move the selected elements by a set amount." );
+        static readonly TooltipContent s_TooltipFace = new TooltipContent ( "Offset Faces", "Move the selected elements by a set amount." );
+        static readonly TooltipContent s_TooltipEdge = new TooltipContent ( "Offset Edges", "Move the selected elements by a set amount." );
+        static readonly TooltipContent s_TooltipVert = new TooltipContent ( "Offset Vertices", "Move the selected elements by a set amount." );
 
-        static Pref<Vector3> s_MoveDistance = new Pref<Vector3>("MoveElements.s_MoveDistance", Vector3.up);
-        static Pref<CoordinateSpace> s_CoordinateSpace = new Pref<CoordinateSpace>("MoveElements.s_CoordinateSpace", CoordinateSpace.World);
+        internal static Pref<Vector3> s_Translation = new Pref<Vector3>("MoveElements.s_Translation", Vector3.up);
+        internal static Pref<CoordinateSpace> s_CoordinateSpace = new Pref<CoordinateSpace>("MoveElements.s_CoordinateSpace", CoordinateSpace.World);
 
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 
@@ -54,28 +55,9 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
-        protected override void OnSettingsGUI()
+        protected override void DoAlternateAction()
         {
-            GUILayout.Label("Move Settings", EditorStyles.boldLabel);
-
-            var dist = s_MoveDistance.value;
-            var coord = s_CoordinateSpace.value;
-
-            EditorGUI.BeginChangeCheck();
-
-            coord = (CoordinateSpace) EditorGUILayout.EnumPopup("Space", coord);
-            dist = EditorGUILayout.Vector3Field("Move", dist);
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                s_MoveDistance.SetValue(dist, true);
-                s_CoordinateSpace.SetValue(coord);
-            }
-
-            GUILayout.FlexibleSpace();
-
-            if (GUILayout.Button("Move Selection"))
-                EditorUtility.ShowNotification(DoAction().notification);
+            ConfigurableWindow.GetWindow<MoveElementsSettings>("Offset Settings", true, true);
         }
 
         public override ActionResult DoAction()
@@ -83,7 +65,7 @@ namespace UnityEditor.ProBuilder.Actions
             if (MeshSelection.selectedObjectCount < 1)
                 return ActionResult.NoSelection;
 
-            UndoUtility.RecordSelection("Move Elements(s)");
+            UndoUtility.RecordSelection("Offset Elements(s)");
 
             var handleRotation = MeshSelection.GetHandleRotation();
 
@@ -91,7 +73,7 @@ namespace UnityEditor.ProBuilder.Actions
             {
                 var mesh = group.mesh;
                 var positions = mesh.positionsInternal;
-                var offset = s_MoveDistance.value;
+                var offset = s_Translation.value;
 
                 switch (s_CoordinateSpace.value)
                 {
@@ -144,5 +126,41 @@ namespace UnityEditor.ProBuilder.Actions
                 return new ActionResult(ActionResult.Status.Success, "Move " + MeshSelection.selectedFaceCount + (MeshSelection.selectedFaceCount > 1 ? " Faces" : " Face"));
             return new ActionResult(ActionResult.Status.Success, "Move " + MeshSelection.selectedVertexCount + (MeshSelection.selectedVertexCount > 1 ? " Vertices" : " Vertex"));
         }
+    }
+
+    class MoveElementsSettings : ConfigurableWindow
+    {
+        void OnEnable()
+        {
+            titleContent.text = L10n.Tr("Offset Element Settings");
+        }
+
+        void OnGUI()
+        {
+            DoContextMenu();
+
+            var dist = OffsetElements.s_Translation.value;
+            var coord = OffsetElements.s_CoordinateSpace.value;
+
+            EditorGUI.BeginChangeCheck();
+
+            coord = (OffsetElements.CoordinateSpace) EditorGUILayout.EnumPopup("Coordinate Space", coord);
+            dist = EditorGUILayout.Vector3Field("Translate", dist);
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                OffsetElements.s_Translation.SetValue(dist, true);
+                OffsetElements.s_CoordinateSpace.SetValue(coord);
+            }
+
+            GUILayout.FlexibleSpace();
+
+            if (GUILayout.Button(L10n.Tr("Offset Selection")))
+            {
+                var instance = EditorToolbarLoader.GetInstance<OffsetElements>();
+                EditorUtility.ShowNotification(instance.DoAction().notification);
+            }
+        }
+
     }
 }

@@ -325,22 +325,22 @@ namespace UnityEditor.ProBuilder
 				EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-        [MenuItem(k_MenuPrefix + "Geometry/Duplicate Faces ", true)]
-        static bool MenuVerify_DuplicateFaces()
-        {
-            var instance = EditorToolbarLoader.GetInstance<DuplicateFaces>();
-            return instance != null && instance.enabled;
-        }
+		[MenuItem(k_MenuPrefix + "Geometry/Duplicate Faces ", true)]
+		static bool MenuVerify_DuplicateFaces()
+		{
+			var instance = EditorToolbarLoader.GetInstance<DuplicateFaces>();
+			return instance != null && instance.enabled;
+		}
 
-        [MenuItem(k_MenuPrefix + "Geometry/Duplicate Faces", false, PreferenceKeys.menuGeometry + 3)]
-        static void MenuPerform_DuplicateFaces()
-        {
-            var instance = EditorToolbarLoader.GetInstance<DuplicateFaces>();
-            if (instance != null && instance.enabled)
-                EditorUtility.ShowNotification(instance.DoAction().notification);
-        }
+		[MenuItem(k_MenuPrefix + "Geometry/Duplicate Faces", false, PreferenceKeys.menuGeometry + 3)]
+		static void MenuPerform_DuplicateFaces()
+		{
+			var instance = EditorToolbarLoader.GetInstance<DuplicateFaces>();
+			if(instance != null && instance.enabled)
+				EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
 
-        [MenuItem(k_MenuPrefix + "Geometry/Extrude ", true)]
+		[MenuItem(k_MenuPrefix + "Geometry/Extrude ", true)]
 		static bool MenuVerify_Extrude()
 		{
 			var instance = EditorToolbarLoader.GetInstance<Extrude>();
@@ -430,17 +430,17 @@ namespace UnityEditor.ProBuilder
 				EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(k_MenuPrefix + "Geometry/Move Elements ", true)]
-		static bool MenuVerify_MoveElements()
+		[MenuItem(k_MenuPrefix + "Geometry/Offset Elements ", true)]
+		static bool MenuVerify_OffsetElements()
 		{
-			var instance = EditorToolbarLoader.GetInstance<MoveElements>();
+			var instance = EditorToolbarLoader.GetInstance<OffsetElements>();
 			return instance != null && instance.enabled;
 		}
 
-		[MenuItem(k_MenuPrefix + "Geometry/Move Elements", false, PreferenceKeys.menuGeometry + 3)]
-		static void MenuPerform_MoveElements()
+		[MenuItem(k_MenuPrefix + "Geometry/Offset Elements", false, PreferenceKeys.menuGeometry + 3)]
+		static void MenuPerform_OffsetElements()
 		{
-			var instance = EditorToolbarLoader.GetInstance<MoveElements>();
+			var instance = EditorToolbarLoader.GetInstance<OffsetElements>();
 			if(instance != null && instance.enabled)
 				EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
