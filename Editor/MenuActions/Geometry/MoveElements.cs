@@ -85,6 +85,8 @@ namespace UnityEditor.ProBuilder.Actions
 
             UndoUtility.RecordSelection("Move Elements(s)");
 
+            var handleRotation = MeshSelection.GetHandleRotation();
+
             foreach (var group in MeshSelection.elementSelection)
             {
                 var mesh = group.mesh;
@@ -100,7 +102,7 @@ namespace UnityEditor.ProBuilder.Actions
                         var post = mesh.transform.worldToLocalMatrix;
 
                         if (s_CoordinateSpace.value == CoordinateSpace.Handle)
-                            offset = MeshSelection.GetHandleRotation() * offset;
+                            offset = handleRotation * offset;
 
                         foreach (var index in mesh.selectedCoincidentVertices)
                         {
