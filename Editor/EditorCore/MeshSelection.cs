@@ -200,10 +200,7 @@ namespace UnityEditor.ProBuilder
             if (activeTool != null)
             {
                 foreach (var mesh in s_TopSelection)
-                {
-                    s_ElementSelection.Add(activeTool.GetElementSelection(mesh,
-                        VertexManipulationTool.pivotPoint, VertexManipulationTool.handleOrientation));
-                }
+                    s_ElementSelection.Add(activeTool.GetElementSelection(mesh, VertexManipulationTool.pivotPoint));
             }
         }
 
@@ -446,18 +443,39 @@ namespace UnityEditor.ProBuilder
         {
             var active = GetActiveSelectionGroup();
 
-            return active != null && active.elementGroups.Count > 0
-                ? active.elementGroups.Last().position
-                : Vector3.zero;
+            if(active == null || active.mesh == null)
+                return Vector3.zero;
+
+            switch (VertexManipulationTool.pivotPoint)
+            {
+                case PivotPoint.ActiveElement:
+                case PivotPoint.IndividualOrigins:
+                    return active.elementGroups.Last().position;
+
+                case PivotPoint.Center:
+                default:
+                    return bounds.center;
+            }
         }
 
         internal static Quaternion GetHandleRotation()
         {
             var active = GetActiveSelectionGroup();
 
-            return active != null && active.elementGroups.Count > 0
-                ? active.elementGroups.Last().rotation
-                : Quaternion.identity;
+            if(active == null || active.mesh == null)
+                return Quaternion.identity;
+
+            switch (VertexManipulationTool.handleOrientation)
+            {
+                case HandleOrientation.ActiveObject:
+                    return active.mesh.transform.rotation;
+
+                case HandleOrientation.ActiveElement:
+                    return active.elementGroups.Last().rotation;
+
+                default:
+                    return Quaternion.identity;
+            }
         }
 
         internal static MeshAndElementSelection GetActiveSelectionGroup()

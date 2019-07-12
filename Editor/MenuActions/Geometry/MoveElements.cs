@@ -7,8 +7,10 @@ namespace UnityEditor.ProBuilder.Actions
     {
         enum CoordinateSpace
         {
+            World,
             Local,
-            World
+            Element,
+            Handle
         }
 
         static readonly TooltipContent s_TooltipFace = new TooltipContent ( "Move Faces", "Move the selected elements by a set amount." );
@@ -19,7 +21,7 @@ namespace UnityEditor.ProBuilder.Actions
         static Pref<CoordinateSpace> s_CoordinateSpace = new Pref<CoordinateSpace>("MoveElements.s_CoordinateSpace", CoordinateSpace.World);
 
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-        
+
         public override Texture2D icon
         {
             get { return IconUtility.GetIcon("Toolbar/Offset", IconSkin.Pro); }
@@ -83,16 +85,51 @@ namespace UnityEditor.ProBuilder.Actions
 
             UndoUtility.RecordSelection("Move Elements(s)");
 
-            foreach (var mesh in MeshSelection.topInternal)
+            foreach (var group in MeshSelection.elementSelection)
             {
+                var mesh = group.mesh;
                 var positions = mesh.positionsInternal;
+                var offset = s_MoveDistance.value;
 
-                var offset = s_CoordinateSpace.value == CoordinateSpace.World
-                    ? mesh.transform.InverseTransformDirection(s_MoveDistance.value)
-                    : s_MoveDistance.value;
+                switch (s_CoordinateSpace.value)
+                {
+                    case CoordinateSpace.World:
+                    case CoordinateSpace.Handle:
+                    {
+                        var pre = mesh.transform.localToWorldMatrix;
+                        var post = mesh.transform.worldToLocalMatrix;
 
-                foreach (var i in mesh.selectedCoincidentVertices)
-                    positions[i] += offset;
+                        if (s_CoordinateSpace.value == CoordinateSpace.Handle)
+                            offset = MeshSelection.GetHandleRotation() * offset;
+
+                        foreach (var index in mesh.selectedCoincidentVertices)
+                        {
+                            var p = pre.MultiplyPoint3x4(positions[index]);
+                            p += offset;
+                            positions[index] = post.MultiplyPoint3x4(p);
+                        }
+                        break;
+                    }
+
+                    case CoordinateSpace.Local:
+                    {
+                        foreach (var index in mesh.selectedCoincidentVertices)
+                            positions[index] += offset;
+                        break;
+                    }
+
+                    case CoordinateSpace.Element:
+                    {
+                        foreach (var elements in group.elementGroups)
+                        {
+                            var rotation = Quaternion.Inverse(mesh.transform.rotation) * elements.rotation;
+                            var o = rotation * offset;
+                            foreach (var index in elements.indices)
+                                positions[index] += o;
+                        }
+                        break;
+                    }
+                }
 
                 mesh.Rebuild();
                 mesh.Optimize();
