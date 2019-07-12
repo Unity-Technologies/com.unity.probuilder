@@ -88,7 +88,7 @@ namespace UnityEditor.ProBuilder
                 get { return m_Origins; }
             }
 
-            public MeshAndTextures(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation) : base(mesh, pivot, orientation, k_CollectCoincidentVertices)
+            public MeshAndTextures(ProBuilderMesh mesh, PivotPoint pivot) : base(mesh, pivot, k_CollectCoincidentVertices)
             {
                 m_Textures = new List<Vector4>();
                 mesh.GetUVs(k_TextureChannel, m_Textures);
@@ -137,9 +137,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        internal override MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation)
+        internal override MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot)
         {
-            return new MeshAndTextures(mesh, pivot, orientation);
+            return new MeshAndTextures(mesh, pivot);
         }
     }
 }

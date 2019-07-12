@@ -21,8 +21,8 @@ namespace UnityEditor.ProBuilder
                 get { return m_FaceAndScale; }
             }
 
-            public TranslateTextureSelection(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation)
-                : base(mesh, pivot, orientation)
+            public TranslateTextureSelection(ProBuilderMesh mesh, PivotPoint pivot)
+                : base(mesh, pivot)
             {
                 var faces = mesh.faces;
 
@@ -32,9 +32,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        internal override MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation)
+        internal override MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot)
         {
-            return new TranslateTextureSelection(mesh, pivot, orientation);
+            return new TranslateTextureSelection(mesh, pivot);
         }
 
         protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
