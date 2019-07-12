@@ -489,6 +489,8 @@ namespace UnityEditor.ProBuilder
             {
                 case PivotPoint.ActiveElement:
                 case PivotPoint.IndividualOrigins:
+                    if (!active.elementGroups.Any())
+                        goto case default;
                     return active.elementGroups.Last().position;
 
                 case PivotPoint.Center:
@@ -510,6 +512,8 @@ namespace UnityEditor.ProBuilder
                     return active.mesh.transform.rotation;
 
                 case HandleOrientation.ActiveElement:
+                    if (!active.elementGroups.Any())
+                        goto case HandleOrientation.ActiveObject;
                     return active.elementGroups.Last().rotation;
 
                 default:
