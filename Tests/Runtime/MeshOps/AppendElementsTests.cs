@@ -93,5 +93,63 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOperations
             nrm = Math.Normal(m_pb, m_pb.facesInternal[0]);
             Assert.That(nrm, Is.EqualTo(Vector3.up));
         }
+
+        [Test]
+        public void CreateShapeFromPolygon_Holes_Success()
+        {
+            // Test that creating a valid shape with a hole gives a result of Success
+            m_Poly.m_Points.Add(new Vector3(0, 0, 0));
+            m_Poly.m_Points.Add(new Vector3(0, 0, 2));
+            m_Poly.m_Points.Add(new Vector3(2, 0, 2));
+            m_Poly.m_Points.Add(new Vector3(2, 0, 0));
+
+            Vector3[][] holes = new Vector3[2][];
+            holes[0] = new[]
+            {
+                new Vector3(0.1f, 0, 0.1f),
+                new Vector3(0.1f, 0, 1.9f),
+                new Vector3(0.9f, 0, 1.9f),
+                new Vector3(0.9f, 0, 0.1f)
+            };
+
+            holes[1] = new[]
+            {
+                new Vector3(1.1f, 0, 0.1f),
+                new Vector3(1.9f, 0, 0.1f),
+                new Vector3(1.9f, 0, 1.9f),
+            };
+
+            var result = m_pb.CreateShapeFromPolygon(m_Poly.m_Points, m_Poly.extrude, m_Poly.flipNormals, Vector3.up, holes);
+            Assert.That(result.status, Is.EqualTo(ActionResult.Status.Success));            
+        }
+
+        [Test]
+        public void CreateShapeFromPolygon_CreateMeshFailure_TooFewPointsInHole()
+        {
+            // Test that creating a shape with an invalid holes parameter does nothing and reports an error.
+            m_Poly.m_Points.Add(new Vector3(0, 0, 0));
+            m_Poly.m_Points.Add(new Vector3(0, 0, 2));
+            m_Poly.m_Points.Add(new Vector3(2, 0, 2));
+            m_Poly.m_Points.Add(new Vector3(2, 0, 0));
+
+            Vector3[][] holes = new Vector3[2][];
+            holes[0] = new[]
+            {
+                new Vector3(0.1f, 0, 0.1f),
+                new Vector3(0.1f, 0, 1.9f),
+                new Vector3(0.9f, 0, 1.9f),
+                new Vector3(0.9f, 0, 0.1f)
+            };
+
+            holes[1] = new[]
+            {
+                new Vector3(1.1f, 0, 0.1f),
+                new Vector3(1.9f, 0, 0.1f),
+            };
+
+            var result = m_pb.CreateShapeFromPolygon(m_Poly.m_Points, m_Poly.extrude, m_Poly.flipNormals, Vector3.up, holes);
+            Assert.That(result.status, Is.EqualTo(ActionResult.Status.NoChange));
+            Assert.That(result.notification, Is.EqualTo("Too Few Points in hole 1"));
+        }
     }
 }
