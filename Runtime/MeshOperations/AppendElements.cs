@@ -254,8 +254,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="extrude">The distance to extrude.</param>
         /// <param name="flipNormals">If true the faces will be inverted at creation.</param>
         /// <param name="cameraLookAt">If the normal of the polygon of the first face is facing in the same direction of the camera lookat it will be inverted at creation, so it is facing the camera.</param>
+        /// <param name="holePoints">Holes in the polygon.</param>
         /// <returns>An ActionResult with the status of the operation.</returns>
-        public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh mesh, IList<Vector3> points, float extrude, bool flipNormals, Vector3 cameraLookAt)
+        public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh mesh, IList<Vector3> points, float extrude, bool flipNormals, Vector3 cameraLookAt, IList<IList<Vector3>> holePoints = null)
         {
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -267,15 +268,47 @@ namespace UnityEngine.ProBuilder.MeshOperations
             }
 
             Vector3[] vertices = points.ToArray();
+
+            Vector3[][] holeVertices = null;
+            if (holePoints != null && holePoints.Count > 0)
+            {
+                holeVertices = new Vector3[holePoints.Count][];
+                for (int i = 0; i < holePoints.Count; i++)
+                {
+                    if(holePoints[i] == null || holePoints[i].Count < 3)
+                    {
+                        ClearAndRefreshMesh(mesh);
+                        return new ActionResult(ActionResult.Status.NoChange, "Too Few Points in hole " + i);
+                    }
+                    holeVertices[i] = holePoints[i].ToArray();
+                }
+            }
+            
             List<int> triangles;
 
             Log.PushLogLevel(LogLevel.Error);
 
-            if (Triangulation.TriangulateVertices(vertices, out triangles, false))
+            if (Triangulation.TriangulateVertices(vertices, out triangles, holeVertices))
             {
+                Vector3[] combinedVertices = null;
+                if (holeVertices != null)
+                {
+                    combinedVertices = new Vector3[vertices.Length + holeVertices.Sum(arr => arr.Length)];
+                    Array.Copy(vertices, combinedVertices, vertices.Length);
+                    int destinationIndex = vertices.Length;
+                    foreach (var hole in holeVertices)
+                    {
+                        Array.ConstrainedCopy(hole, 0, combinedVertices, destinationIndex, hole.Length);
+                        destinationIndex += hole.Length;
+                    }
+                }
+                else
+                {
+                    combinedVertices = vertices;
+                }
                 int[] indexes = triangles.ToArray();
                 
-                if (Math.PolygonArea(vertices, indexes) < Mathf.Epsilon)
+                if (Math.PolygonArea(combinedVertices, indexes) < Mathf.Epsilon)
                 {
                     ClearAndRefreshMesh(mesh);
                     Log.PopLogLevel();
@@ -284,14 +317,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
                 mesh.Clear();
 
-                mesh.positionsInternal = vertices;
+                mesh.positionsInternal = combinedVertices;
                 var newFace = new Face(indexes);
                 mesh.facesInternal = new[] { newFace };
-                mesh.sharedVerticesInternal = SharedVertex.GetSharedVerticesWithPositions(vertices);
+                mesh.sharedVerticesInternal = SharedVertex.GetSharedVerticesWithPositions(combinedVertices);
                 mesh.InvalidateCaches();
 
                 // check that all points are represented in the triangulation
-                if (newFace.distinctIndexesInternal.Length != vertices.Length)
+                if (newFace.distinctIndexesInternal.Length != combinedVertices.Length)
                 {
                     ClearAndRefreshMesh(mesh);
                     Log.PopLogLevel();
