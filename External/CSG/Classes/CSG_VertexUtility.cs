@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Parabox.CSG
+namespace UnityEngine.ProBuilder.Csg
 {
 	static class CSG_VertexUtility
 	{

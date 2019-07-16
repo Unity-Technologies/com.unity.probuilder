@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Parabox.CSG
+namespace UnityEngine.ProBuilder.Csg
 {
     /// <summary>
     /// Represents a polygon face with an arbitrary number of vertices.

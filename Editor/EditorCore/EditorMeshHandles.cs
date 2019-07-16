@@ -212,6 +212,9 @@ namespace UnityEditor.ProBuilder
 
         static Material CreateMaterial(Shader shader, string materialName)
         {
+            if (shader == null)
+                shader = BuiltinMaterials.defaultMaterial.shader;
+
             Material mat = new Material(shader);
             mat.name = materialName;
             mat.hideFlags = k_MeshHideFlags;

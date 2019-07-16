@@ -1,10 +1,10 @@
-namespace Parabox.CSG
+namespace UnityEngine.ProBuilder.Csg
 {
     /// <summary>
     /// Mesh attributes bitmask.
     /// </summary>
     [System.Flags]
-    public enum CSG_VertexAttributes
+    enum CSG_VertexAttributes
     {
         /// <summary>
         /// Vertex positions.

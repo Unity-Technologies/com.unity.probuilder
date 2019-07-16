@@ -3,14 +3,14 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parabox.CSG
+namespace UnityEngine.ProBuilder.Csg
 {
     /// <summary>
     /// Representation of a mesh in CSG terms. Contains methods for translating to and from UnityEngine.Mesh.
     /// </summary>
-    sealed class CSG_Model
+    public sealed class CSG_Model
     {
-        public List<CSG_Vertex> vertices;
+        internal List<CSG_Vertex> vertices;
         List<Material> m_Materials;
         List<List<int>> m_Indices;
 
@@ -18,6 +18,11 @@ namespace Parabox.CSG
         {
             get { return m_Materials; }
             set { m_Materials = value; }
+        }
+
+        public Mesh mesh
+        {
+            get { return (Mesh)this; }
         }
 
         public CSG_Model()
@@ -58,7 +63,7 @@ namespace Parabox.CSG
             }
         }
 
-        public CSG_Model(List<CSG_Polygon> list)
+        internal CSG_Model(List<CSG_Polygon> list)
         {
             vertices = new List<CSG_Vertex>();
             Dictionary<Material, List<int>> submeshes = new Dictionary<Material, List<int>>();
@@ -90,7 +95,7 @@ namespace Parabox.CSG
             m_Indices = submeshes.Values.ToList();
         }
 
-        public List<CSG_Polygon> ToPolygons()
+        internal List<CSG_Polygon> ToPolygons()
         {
             List<CSG_Polygon> list = new List<CSG_Polygon>();
 
@@ -119,8 +124,15 @@ namespace Parabox.CSG
             var mesh = new Mesh();
             CSG_VertexUtility.SetMesh(mesh, model.vertices);
             mesh.subMeshCount = model.m_Indices.Count;
-            for(int i = 0, c = mesh.subMeshCount; i < c; i++)
+            for (int i = 0, c = mesh.subMeshCount; i < c; i++)
+            {
+#if UNITY_2019_3_OR_NEWER
                 mesh.SetIndices(model.m_Indices[i], MeshTopology.Triangles, i);
+#else
+                mesh.SetIndices(model.m_Indices[i].ToArray(), MeshTopology.Triangles, i);
+#endif
+            }
+
             return mesh;
         }
     }

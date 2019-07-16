@@ -1,10 +1,7 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine.ProBuilder;
 
-namespace Parabox.CSG
+namespace UnityEngine.ProBuilder.Csg
 {
     sealed class CSG_Node
     {

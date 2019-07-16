@@ -1,7 +1,7 @@
 #if PROBUILDER_EXPERIMENTAL_FEATURES
 using UnityEngine;
 using UnityEngine.ProBuilder;
-using Parabox.CSG;
+using UnityEngine.ProBuilder.Csg;
 using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
@@ -323,15 +323,15 @@ namespace UnityEditor.ProBuilder
             switch (operation)
             {
                 case BooleanOperation.Union:
-                    result = CSG.Union(lhs.gameObject, rhs.gameObject);
+                    result = Boolean.Union(lhs.gameObject, rhs.gameObject);
                     break;
 
                 case BooleanOperation.Subtract:
-                    result = CSG.Subtract(lhs.gameObject, rhs.gameObject);
+                    result = Boolean.Subtract(lhs.gameObject, rhs.gameObject);
                     break;
 
                 default:
-                    result = CSG.Intersect(lhs.gameObject, rhs.gameObject);
+                    result = Boolean.Intersect(lhs.gameObject, rhs.gameObject);
                     break;
             }
 
@@ -340,6 +340,8 @@ namespace UnityEditor.ProBuilder
             pb.GetComponent<MeshRenderer>().sharedMaterials = materials;
             MeshImporter importer = new MeshImporter(pb);
             importer.Import((Mesh)result, materials, new MeshImportSettings() { quads = true, smoothing = true, smoothingAngle = 1f });
+            pb.Rebuild();
+            pb.CenterPivot(null);
             Selection.objects = new Object[] { pb.gameObject };
 
             return new ActionResult(ActionResult.Status.Success, op_string);

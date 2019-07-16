@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Parabox.CSG
+namespace UnityEngine.ProBuilder.Csg
 {
     /// <summary>
     /// Holds information about a single vertex, and provides methods for averaging between many.
