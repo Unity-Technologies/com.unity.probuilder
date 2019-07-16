@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
 
-namespace UnityEngine.ProBuilder.Experimental.CSG
+namespace Parabox.CSG
 {
     sealed class CSG_Node
     {

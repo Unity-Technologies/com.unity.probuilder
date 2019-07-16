@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace UnityEngine.ProBuilder.Experimental.CSG
+namespace Parabox.CSG
 {
     /// <summary>
     /// Represents a polygon face with an arbitrary number of vertices.
@@ -10,16 +10,18 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
     {
         public List<CSG_Vertex> vertices;
         public CSG_Plane plane;
+        public Material material;
 
-        public CSG_Polygon(List<CSG_Vertex> list)
+        public CSG_Polygon(List<CSG_Vertex> list, Material mat)
         {
-            this.vertices = list;
-            this.plane = new CSG_Plane(list[0].position, list[1].position, list[2].position);
+            vertices = list;
+            plane = new CSG_Plane(list[0].position, list[1].position, list[2].position);
+            material = mat;
         }
 
         public void Flip()
         {
-            this.vertices.Reverse();
+            vertices.Reverse();
 
             for (int i = 0; i < vertices.Count; i++)
                 vertices[i].Flip();
@@ -29,16 +31,7 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
 
         public override string ToString()
         {
-            // return System.String.Format("V: {0}, {1}, {2}\nN: ({3}, {4}, {5})",
-            //  new object[] {
-            //          vertices[0].position.ToString(),
-            //          vertices[1].position.ToString(),
-            //          vertices[2].position.ToString(),
-            //          plane.normal.x,
-            //          plane.normal.y,
-            //          plane.normal.z
-            //  });
-            return "N: " + plane.normal;
+            return "normal: " + plane.normal;
         }
     }
 }

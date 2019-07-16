@@ -37,9 +37,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
         {
             Mesh m = t.GetComponent<MeshFilter>().sharedMesh;
 
-            Vector3[] m_vertices = MeshUtility.GetMeshChannel<Vector3[]>(t.gameObject, x => x.vertices);
-            Color[] m_colors = MeshUtility.GetMeshChannel<Color[]>(t.gameObject, x => x.colors);
-            Vector2[] m_uvs = MeshUtility.GetMeshChannel<Vector2[]>(t.gameObject, x => x.uv);
+            Vector3[] m_vertices = MeshUtility.GetMeshChannel(t.gameObject, x => x.vertices);
+            Color[] m_colors = MeshUtility.GetMeshChannel(t.gameObject, x => x.colors);
+            Vector2[] m_uvs = MeshUtility.GetMeshChannel(t.gameObject, x => x.uv);
 
             List<Vector3> verts = preserveFaces ? new List<Vector3>(m.vertices) : new List<Vector3>();
             List<Color> cols = preserveFaces ? new List<Color>(m.colors) : new List<Color>();
@@ -49,6 +49,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             for (int n = 0; n < m.subMeshCount; n++)
             {
                 int[] tris = m.GetTriangles(n);
+
                 for (int i = 0; i < tris.Length; i += 3)
                 {
                     int index = -1;

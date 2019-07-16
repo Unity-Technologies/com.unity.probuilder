@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
-namespace UnityEngine.ProBuilder.Experimental.CSG
+namespace Parabox.CSG
 {
 	static class CSG_VertexUtility
 	{
@@ -32,7 +33,7 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
             out List<Vector4> uv3,
             out List<Vector4> uv4)
         {
-            GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4, MeshArrays.All);
+            GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4, CSG_VertexAttributes.All);
         }
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
             out Vector2[] uv2,
             out List<Vector4> uv3,
             out List<Vector4> uv4,
-            MeshArrays attributes)
+            CSG_VertexAttributes attributes)
         {
             if (vertices == null)
                 throw new ArgumentNullException("vertices");
@@ -71,14 +72,14 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
             int vc = vertices.Count;
             var first = vc < 1 ? new CSG_Vertex() : vertices[0];
 
-            bool hasPosition = ((attributes & MeshArrays.Position) == MeshArrays.Position) && first.hasPosition;
-            bool hasColor = ((attributes & MeshArrays.Color) == MeshArrays.Color) && first.hasColor;
-            bool hasUv0 = ((attributes & MeshArrays.Texture0) == MeshArrays.Texture0) && first.hasUV0;
-            bool hasNormal = ((attributes & MeshArrays.Normal) == MeshArrays.Normal) && first.hasNormal;
-            bool hasTangent = ((attributes & MeshArrays.Tangent) == MeshArrays.Tangent) && first.hasTangent;
-            bool hasUv2 = ((attributes & MeshArrays.Texture1) == MeshArrays.Texture1) && first.hasUV2;
-            bool hasUv3 = ((attributes & MeshArrays.Texture2) == MeshArrays.Texture2) && first.hasUV3;
-            bool hasUv4 = ((attributes & MeshArrays.Texture3) == MeshArrays.Texture3) && first.hasUV4;
+            bool hasPosition = ((attributes & CSG_VertexAttributes.Position) == CSG_VertexAttributes.Position) && first.hasPosition;
+            bool hasColor = ((attributes & CSG_VertexAttributes.Color) == CSG_VertexAttributes.Color) && first.hasColor;
+            bool hasUv0 = ((attributes & CSG_VertexAttributes.Texture0) == CSG_VertexAttributes.Texture0) && first.hasUV0;
+            bool hasNormal = ((attributes & CSG_VertexAttributes.Normal) == CSG_VertexAttributes.Normal) && first.hasNormal;
+            bool hasTangent = ((attributes & CSG_VertexAttributes.Tangent) == CSG_VertexAttributes.Tangent) && first.hasTangent;
+            bool hasUv2 = ((attributes & CSG_VertexAttributes.Texture1) == CSG_VertexAttributes.Texture1) && first.hasUV2;
+            bool hasUv3 = ((attributes & CSG_VertexAttributes.Texture2) == CSG_VertexAttributes.Texture2) && first.hasUV3;
+            bool hasUv4 = ((attributes & CSG_VertexAttributes.Texture3) == CSG_VertexAttributes.Texture3) && first.hasUV4;
 
             position = hasPosition ? new Vector3[vc] : null;
             color = hasColor ? new Color[vc] : null;
@@ -298,28 +299,28 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
         {
             var v = new CSG_Vertex();
 
-            if (vertex.HasArrays(MeshArrays.Position))
+            if (vertex.HasArrays(CSG_VertexAttributes.Position))
                 v.position = transform.TransformPoint(vertex.position);
 
-            if (vertex.HasArrays(MeshArrays.Color))
+            if (vertex.HasArrays(CSG_VertexAttributes.Color))
                 v.color = vertex.color;
 
-            if (vertex.HasArrays(MeshArrays.Normal))
+            if (vertex.HasArrays(CSG_VertexAttributes.Normal))
                 v.normal = transform.TransformDirection(vertex.normal);
 
-            if (vertex.HasArrays(MeshArrays.Tangent))
+            if (vertex.HasArrays(CSG_VertexAttributes.Tangent))
                 v.tangent = transform.rotation * vertex.tangent;
 
-            if (vertex.HasArrays(MeshArrays.Texture0))
+            if (vertex.HasArrays(CSG_VertexAttributes.Texture0))
                 v.uv0 = vertex.uv0;
 
-            if (vertex.HasArrays(MeshArrays.Texture1))
+            if (vertex.HasArrays(CSG_VertexAttributes.Texture1))
                 v.uv2 = vertex.uv2;
 
-            if (vertex.HasArrays(MeshArrays.Texture2))
+            if (vertex.HasArrays(CSG_VertexAttributes.Texture2))
                 v.uv3 = vertex.uv3;
 
-            if (vertex.HasArrays(MeshArrays.Texture3))
+            if (vertex.HasArrays(CSG_VertexAttributes.Texture3))
                 v.uv4 = vertex.uv4;
 
             return v;

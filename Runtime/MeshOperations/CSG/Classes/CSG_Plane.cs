@@ -1,9 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-using UnityEngine.ProBuilder;
-
-namespace UnityEngine.ProBuilder.Experimental.CSG
+namespace Parabox.CSG
 {
     /// <summary>
     /// Represents a plane in 3d space.
@@ -126,12 +124,12 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
 
                     if (f.Count >= 3)
                     {
-                        front.Add(new CSG_Polygon(f));
+                        front.Add(new CSG_Polygon(f, polygon.material));
                     }
 
                     if (b.Count >= 3)
                     {
-                        back.Add(new CSG_Polygon(b));
+                        back.Add(new CSG_Polygon(b, polygon.material));
                     }
                 }
                 break;
