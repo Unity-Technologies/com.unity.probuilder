@@ -1,4 +1,4 @@
 using System.Runtime.CompilerServices;
 
-[assembly:InternalsVisibleTo("UnityEngine.ProBuilder")]
-[assembly:InternalsVisibleTo("UnityEditor.ProBuilder")]
+[assembly:InternalsVisibleTo("Unity.ProBuilder")]
+[assembly:InternalsVisibleTo("Unity.ProBuilder.Editor")]
