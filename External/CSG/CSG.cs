@@ -22,7 +22,7 @@ namespace UnityEngine.ProBuilder.Csg
     /// Base class for CSG operations. Contains GameObject level methods for Subtraction, Intersection, and Union operations.
     /// The GameObjects passed to these functions will not be modified.
     /// </summary>
-    public static class Boolean
+    static class Boolean
     {
         // Tolerance used by `splitPolygon()` to decide if a point is on the plane.
         internal const float k_Epsilon = 0.00001f;

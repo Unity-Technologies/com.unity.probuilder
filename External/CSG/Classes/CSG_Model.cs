@@ -8,7 +8,7 @@ namespace UnityEngine.ProBuilder.Csg
     /// <summary>
     /// Representation of a mesh in CSG terms. Contains methods for translating to and from UnityEngine.Mesh.
     /// </summary>
-    public sealed class CSG_Model
+    sealed class CSG_Model
     {
         internal List<CSG_Vertex> vertices;
         List<Material> m_Materials;
