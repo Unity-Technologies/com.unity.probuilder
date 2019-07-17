@@ -261,7 +261,8 @@ namespace UnityEditor.ProBuilder
 
         internal static void ResetToLastSelectMode()
         {
-            selectMode = s_Instance.m_LastComponentMode;
+            if (s_Instance != null)
+                selectMode = s_Instance.m_LastComponentMode;
         }
 
         static class SceneStyles
