@@ -17,6 +17,7 @@ namespace UnityEditor.ProBuilder
         Pref<Color> m_BackgroundColor = new Pref<Color>("UVRenderOptions.backgroundColor", Color.black, SettingsScope.User);
         Pref<bool> m_TransparentBackground = new Pref<bool>("UVRenderOptions.transparentBackground", false, SettingsScope.User);
         Pref<bool> m_HideGrid = new Pref<bool>("UVRenderOptions.hideGrid", true, SettingsScope.User);
+        Pref<bool> m_RenderTexture = new Pref<bool>("UVRenderOptions.renderTexture", true, SettingsScope.User);
 
         enum ImageSize
         {
@@ -27,7 +28,7 @@ namespace UnityEditor.ProBuilder
             _4096 = 4096,
         };
 
-        public delegate void ScreenshotFunc(int ImageSize, bool HideGrid, Color LineColor, bool TransparentBackground, Color BackgroundColor);
+        public delegate void ScreenshotFunc(int ImageSize, bool HideGrid, Color LineColor, bool TransparentBackground, Color BackgroundColor, bool RenderTexture);
         public ScreenshotFunc screenFunc;
 
         void OnGUI()
@@ -42,6 +43,8 @@ namespace UnityEditor.ProBuilder
             m_HideGrid.value = EditorGUILayout.Toggle(new GUIContent("Hide Grid", "Hide or show the grid lines."), m_HideGrid);
 
             m_LineColor.value = EditorGUILayout.ColorField(new GUIContent("Line Color", "The color of the template lines."), m_LineColor);
+
+            m_RenderTexture.value = EditorGUILayout.Toggle(new GUIContent("Include Texture", "If true, a preview image of the first selected face's material will be rendered as part of the UV template.\n\nNote that this depends on the Material's shader having a _mainTexture property."), m_RenderTexture);
 
             m_TransparentBackground.value = EditorGUILayout.Toggle(new GUIContent("Transparent Background", "If true, only the template lines will be rendered, leaving the background fully transparent."), m_TransparentBackground);
 
@@ -58,7 +61,7 @@ namespace UnityEditor.ProBuilder
                     return;
                 }
 
-                screenFunc((int)m_ImageSize.value, m_HideGrid, m_LineColor, m_TransparentBackground, m_BackgroundColor);
+                screenFunc((int)m_ImageSize.value, m_HideGrid, m_LineColor, m_TransparentBackground, m_BackgroundColor, m_RenderTexture);
                 this.Close();
             }
         }

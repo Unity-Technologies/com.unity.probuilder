@@ -282,6 +282,87 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
+        /// Finds the minimal U and V coordinate of a set of an array of UVs
+        /// </summary>
+        internal static Vector2 FindMinimalUV(Vector2[] uvs, int[] indices = null, float xMin = 0f, float yMin = 0f)
+        {
+            int nbElements = (indices == null ? uvs.Length : indices.Length);
+            bool first = (xMin == 0f && yMin == 0f);
+            for (int i = 0; i < nbElements; ++i)
+            {
+                int currentIndex = (indices == null ? i : indices[i]);
+                if (first)
+                {
+                    xMin = uvs[currentIndex].x;
+                    yMin = uvs[currentIndex].y;
+                    first = false;
+                }
+                else
+                {
+                   
+                    if (uvs[currentIndex].x < xMin)
+                    {
+                        xMin = uvs[currentIndex].x;                    
+                    }
+
+                    if (uvs[currentIndex].y < yMin)
+                    {
+                        yMin = uvs[currentIndex].y;
+                    }
+                }
+            }
+
+            return new Vector2(xMin, yMin);
+        }
+
+        /// <summary>
+        /// Projects UVs for each face using the closest normal on a box and then place the lower left coordinate at the anchor position.
+        /// </summary>
+        /// <param name="mesh"></param>
+        /// <param name="faces"></param>
+        /// <param name="lowerLeftAnchor"></param>
+        /// <param name="channel"></param>
+        public static void ProjectFacesBox(ProBuilderMesh mesh, Face[] faces, Vector2 lowerLeftAnchor, int channel = 0)
+        {
+            Vector2[] uv = GetUVs(mesh, channel);
+
+            Dictionary<ProjectionAxis, List<Face>> sorted = new Dictionary<ProjectionAxis, List<Face>>();
+
+            for (int i = 0; i < faces.Length; i++)
+            {
+                Vector3 nrm = Math.Normal(mesh, faces[i]);
+                ProjectionAxis axis = Projection.VectorToProjectionAxis(nrm);
+
+                if (sorted.ContainsKey(axis))
+                    sorted[axis].Add(faces[i]);
+                else
+                    sorted.Add(axis, new List<Face>() { faces[i] });
+
+                // clean up UV stuff - no shared UV indexes and remove element group
+                faces[i].elementGroup = -1;
+                faces[i].manualUV = true;
+            }
+
+            foreach (KeyValuePair<ProjectionAxis, List<Face>> kvp in sorted)
+            {
+                int[] distinct = kvp.Value.SelectMany(x => x.distinctIndexesInternal).ToArray();
+
+                Vector2[] uvs = Projection.PlanarProject(mesh.positionsInternal, distinct, Projection.ProjectionAxisToVector(kvp.Key));
+
+
+                Vector2 minimalUV = FindMinimalUV(uvs);
+
+                for (int n = 0; n < distinct.Length; n++)
+                    uv[distinct[n]] = uvs[n] - minimalUV;
+
+                SplitUVs(mesh, distinct);
+            }
+
+            /* and set the msh uv array using the new coordintaes */
+            ApplyUVs(mesh, uv, channel);
+        }
+
+        /// <summary>
         /// Projects UVs for each face using the closest normal on a sphere.
         /// </summary>
         /// <param name="pb"></param>

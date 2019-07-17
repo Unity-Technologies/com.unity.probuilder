@@ -109,6 +109,7 @@ namespace UnityEditor.ProBuilder
         }
 
         Pref<bool> m_ShowPreviewMaterial = new Pref<bool>("UVEditor.showPreviewMaterial", true, SettingsScope.Project);
+        bool m_ShowPreviewMaterialCacheDuringScreenshot;
 
         // Show a preview texture for the first selected face in UV space 0,1?
 #if PB_DEBUG
@@ -245,7 +246,7 @@ namespace UnityEditor.ProBuilder
                     this.position.y + 32,
                     0,
                     0),
-                new Vector2(256, 152));
+                new Vector2(256, 172));
 #endif
         }
 
@@ -718,6 +719,62 @@ namespace UnityEditor.ProBuilder
             Repaint();
         }
 
+        bool IsCopyUVSettingsModifiers(EventModifiers modifiers)
+        {
+#if UNITY_STANDALONE_OSX
+            return (modifiers == (EventModifiers.Command | EventModifiers.Shift));
+#else
+            return (modifiers == (EventModifiers.Control | EventModifiers.Shift));
+#endif
+        }
+
+        /**
+         * returns true if a copy of UV settings occured from the first selected face to the target face
+         */
+        bool CopyFaceUVSettings(ProBuilderMesh pb, Face targetFace)
+        {
+            // get first selected UV face
+            ProBuilderMesh firstObj = MeshSelection.activeMesh;
+            Face sourceFace = MeshSelection.activeFace;
+            Face[] destination = new Face[1];
+            if (sourceFace == null)
+                return false;
+
+            UndoUtility.RecordObject(pb, "Copy UV Settings");
+            bool destinationWasManualUV = targetFace.manualUV;
+            bool sourceWasManualUV = sourceFace.manualUV;
+
+            pb.ToMesh();
+            if (destinationWasManualUV)
+            {
+                //We are going to paste auto settings therefore target face
+                //should be in auto prior to paste
+                destination[0] = targetFace;
+                UVEditing.SetAutoUV(pb, destination, true);
+            }
+
+            targetFace.uv = UVEditing.GetAutoUnwrapSettings(firstObj, sourceFace);
+            destination[0] = targetFace;
+            targetFace.submeshIndex = sourceFace.submeshIndex;
+            EditorUtility.ShowNotification("Copy UV Settings");
+            pb.Refresh();
+
+            if (sourceWasManualUV)
+            {
+                //Ensure UV mode of target face matches source face UV mode.
+                destination[0] = targetFace;
+                pb.ToMesh();
+                UVEditing.SetAutoUV(pb, destination, false);
+                pb.Refresh();
+            }
+            pb.Optimize();
+
+            RefreshUVCoordinates();
+            Repaint();
+
+            return true;
+        }
+
         /**
          * return true if shortcut should eat the event
          */
@@ -726,36 +783,9 @@ namespace UnityEditor.ProBuilder
             Event e = Event.current;
 
             // Copy UV settings
-            if (e.modifiers == (EventModifiers.Control | EventModifiers.Shift))
+            if (IsCopyUVSettingsModifiers(e.modifiers))
             {
-                // get first selected Auto UV face
-                ProBuilderMesh firstObj;
-                Face source;
-
-                ProBuilderEditor.instance.GetFirstSelectedFace(out firstObj, out source);
-
-                if (source != null)
-                {
-                    UndoUtility.RecordObject(pb, "Copy UV Settings");
-
-                    selectedFace.uv = new AutoUnwrapSettings(source.uv);
-                    selectedFace.submeshIndex = source.submeshIndex;
-                    EditorUtility.ShowNotification("Copy UV Settings");
-
-                    pb.ToMesh();
-                    pb.Refresh();
-                    pb.Optimize();
-
-                    RefreshUVCoordinates();
-
-                    Repaint();
-
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return CopyFaceUVSettings(pb, selectedFace);
             }
             else if (e.modifiers == EventModifiers.Control)
             {
@@ -905,6 +935,21 @@ namespace UnityEditor.ProBuilder
                         }
                         else
                         {
+                            if ((ProBuilderEditor.selectMode == SelectMode.Face || ProBuilderEditor.selectMode == SelectMode.TextureFace) &&
+                                editor && IsCopyUVSettingsModifiers(e.modifiers))
+                            {
+                                Face targetFace;
+                                for (int i = 0; i < selection.Length; i++)
+                                {
+                                    if (GetFaceFromMousePosition(e.mousePosition, selection[i], out targetFace))
+                                    {
+                                        CopyFaceUVSettings(selection[i], targetFace);
+                                        return;
+                                    }
+                                }
+                                break;
+                            }
+
                             UndoUtility.RecordSelection(selection, "Change Selection");
 
                             if (Event.current.modifiers == (EventModifiers)0 && editor)
@@ -1150,6 +1195,21 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        bool GetFaceFromMousePosition(Vector2 mousePosition, ProBuilderMesh pb, out Face faceSelected)
+        {
+            Vector2 mpos = GUIToUVPoint(mousePosition);
+            for (int i = 0; i < pb.facesInternal.Length; i++)
+            {
+                if (Math.PointInPolygon(pb.texturesInternal, mpos, pb.facesInternal[i].edgesInternal.AllTriangles()))
+                {
+                    faceSelected = pb.facesInternal[i];
+                    return true;
+                }
+            }
+            faceSelected = new Face();
+            return false;
+        }
+
         void OnMouseClick(Vector2 mousePosition)
         {
             if (selection == null)
@@ -1177,33 +1237,21 @@ namespace UnityEditor.ProBuilder
                 case SelectMode.Face:
                 case SelectMode.TextureFace:
 
-                    Vector2 mpos = GUIToUVPoint(mousePosition);
-                    bool superBreak = false;
+                    Face tempFace;
                     for (int i = 0; i < selection.Length; i++)
                     {
-                        HashSet<Face> selectedFaces = new HashSet<Face>(selection[i].selectedFacesInternal);
-
-                        for (int n = 0; n < selection[i].facesInternal.Length; n++)
+                        if (GetFaceFromMousePosition(mousePosition, selection[i], out tempFace))
                         {
-                            if (Math.PointInPolygon(selection[i].texturesInternal, mpos, selection[i].facesInternal[n].edgesInternal.AllTriangles()))
-                            {
-                                if (selectedFaces.Contains(selection[i].facesInternal[n]))
-                                    selectedFaces.Remove(selection[i].facesInternal[n]);
-                                else
-                                    selectedFaces.Add(selection[i].facesInternal[n]);
+                            HashSet<Face> selectedFaces = new HashSet<Face>(selection[i].selectedFacesInternal);
+                            if (selectedFaces.Contains(tempFace))
+                                selectedFaces.Remove(tempFace);
+                            else
+                                selectedFaces.Add(tempFace);
 
-                                // Only select one face per click
-                                superBreak = true;
-                                break;
-                            }
-                        }
-
-                        selection[i].SetSelectedFaces(selectedFaces.ToArray());
-
-                        if (superBreak)
+                            selection[i].SetSelectedFaces(selectedFaces.ToArray());
                             break;
+                        }
                     }
-
                     break;
 
                 case SelectMode.Vertex:
@@ -1275,7 +1323,7 @@ namespace UnityEditor.ProBuilder
 
                 if (ControlKey)
                 {
-                    handlePosition = Snapping.SnapValue(t_handlePosition, (Vector3) new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
+                    handlePosition = ProGridsSnapping.SnapValue(t_handlePosition, (Vector3) new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
                 }
                 else
                 {
@@ -1337,7 +1385,7 @@ namespace UnityEditor.ProBuilder
                 Vector2 newUVPosition = t_handlePosition;
 
                 if (ControlKey)
-                    newUVPosition = Snapping.SnapValue(newUVPosition, new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
+                    newUVPosition = ProGridsSnapping.SnapValue(newUVPosition, new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
 
                 for (int n = 0; n < selection.Length; n++)
                 {
@@ -1427,7 +1475,7 @@ namespace UnityEditor.ProBuilder
                 handlePosition.y += delta.y;
 
                 if (ControlKey)
-                    handlePosition = Snapping.SnapValue(handlePosition, new Vector3Mask((handlePosition - handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
+                    handlePosition = ProGridsSnapping.SnapValue(handlePosition, new Vector3Mask((handlePosition - handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
 
                 for (int n = 0; n < selection.Length; n++)
                 {
@@ -1459,7 +1507,7 @@ namespace UnityEditor.ProBuilder
                 }
 
                 if (ControlKey)
-                    uvRotation = Snapping.SnapValue(uvRotation, 15f);
+                    uvRotation = ProGridsSnapping.SnapValue(uvRotation, 15f);
 
                 // Do rotation around the handle pivot in manual mode
                 if (mode == UVMode.Mixed || mode == UVMode.Manual)
@@ -1507,7 +1555,7 @@ namespace UnityEditor.ProBuilder
             if (rotation != uvRotation)
             {
                 if (ControlKey)
-                    rotation = Snapping.SnapValue(rotation, 15f);
+                    rotation = ProGridsSnapping.SnapValue(rotation, 15f);
 
                 float delta = rotation - uvRotation;
                 uvRotation = rotation;
@@ -1566,7 +1614,7 @@ namespace UnityEditor.ProBuilder
             uvScale = EditorHandleUtility.ScaleHandle2d(2, UVToGUIPoint(handlePosition), uvScale, 128);
 
             if (ControlKey)
-                uvScale = Snapping.SnapValue(uvScale, s_GridSnapIncrement);
+                uvScale = ProGridsSnapping.SnapValue(uvScale, s_GridSnapIncrement);
 
             if (Math.Approx(uvScale.x, 0f, Mathf.Epsilon))
                 uvScale.x = .0001f;
@@ -1636,7 +1684,7 @@ namespace UnityEditor.ProBuilder
             previousScale.y = 1f / previousScale.y;
 
             if (ControlKey)
-                textureScale = Snapping.SnapValue(textureScale, s_GridSnapIncrement);
+                textureScale = ProGridsSnapping.SnapValue(textureScale, s_GridSnapIncrement);
 
             if (!modifyingUVs)
             {
@@ -1693,10 +1741,10 @@ namespace UnityEditor.ProBuilder
         // private class UVGraphCoordinates
         // {
         // Remember that Unity GUI coordinates Y origin is the bottom
-        private static Vector2 UpperLeft = new Vector2(0f, -1f);
-        private static Vector2 UpperRight = new Vector2(1f, -1f);
-        private static Vector2 LowerLeft = new Vector2(0f, 0f);
-        private static Vector2 LowerRight = new Vector2(1f, 0f);
+        internal static Vector2 UpperLeft = new Vector2(0f, -1f);
+        internal static Vector2 UpperRight = new Vector2(1f, -1f);
+        internal static Vector2 LowerLeft = new Vector2(0f, 0f);
+        internal static Vector2 LowerRight = new Vector2(1f, 0f);
 
         private Rect UVGraphZeroZero = new Rect(0, 0, 40, 40);
         private Rect UVGraphOneOne = new Rect(0, 0, 40, 40);
@@ -2270,6 +2318,22 @@ namespace UnityEditor.ProBuilder
             }
 
             return new Bounds2D(new Vector2((xMin + xMax) / 2f, (yMin + yMax) / 2f), new Vector2(xMax - xMin, yMax - yMin));
+        }
+
+        /// <summary>
+        /// Returns the minimal u and v values of the current selection in UV space.
+        /// </summary>
+        /// <returns></returns>
+        internal Vector2 UVSelectionMinimalUV()
+        {
+            Vector2 minimalUV = Vector2.zero;
+            for (int n = 0; n < selection.Length; n++)
+            {
+                Vector2[] uv = selection[n].texturesInternal;
+                minimalUV = UVEditing.FindMinimalUV(uv, m_DistinctIndexesSelection[n], minimalUV.x, minimalUV.y);
+            }
+
+            return minimalUV;
         }
 
         #endregion
@@ -2960,7 +3024,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Planar project UVs on all selected faces in selection.
         /// </summary>
-        void Menu_PlanarProject()
+        internal void Menu_PlanarProject()
         {
             UndoUtility.RecordSelection(selection, "Planar Project Faces");
             int projected = 0;
@@ -2986,7 +3050,7 @@ namespace UnityEditor.ProBuilder
 
             if (projected > 0)
             {
-                CenterUVsAtPoint(handlePosition);
+                CenterUVsAtPoint(UVSelectionMinimalUV(), LowerLeft);
                 ResetUserPivot();
             }
 
@@ -3017,7 +3081,7 @@ namespace UnityEditor.ProBuilder
 
                 if (selection[i].selectedFacesInternal.Length > 0)
                 {
-                    UVEditing.ProjectFacesBox(selection[i], selection[i].selectedFacesInternal, channel);
+                    UVEditing.ProjectFacesBox(selection[i], selection[i].selectedFacesInternal, LowerLeft, channel);
                     p++;
                 }
             }
@@ -3026,7 +3090,6 @@ namespace UnityEditor.ProBuilder
 
             if (p > 0)
             {
-                CenterUVsAtPoint(handlePosition);
                 ResetUserPivot();
             }
 
@@ -3066,7 +3129,7 @@ namespace UnityEditor.ProBuilder
 
             if (p > 0)
             {
-                CenterUVsAtPoint(handlePosition);
+                CenterUVsAtPoint(UVSelectionBounds().center, handlePosition);
                 ResetUserPivot();
             }
 
@@ -3292,13 +3355,13 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Moves the selected UVs to where their bounds center is now point, where point is in UV space. Does not call ToMesh or Refresh.
+        /// Moves the selected UVs to where the anchor is now point, where both anchor_position and point are in UV space. Does not call ToMesh or Refresh.
         /// </summary>
+        /// <param name="anchorPosition"></param>
         /// <param name="point"></param>
-        void CenterUVsAtPoint(Vector2 point)
+        void CenterUVsAtPoint(Vector2 anchorPosition,  Vector2 point)
         {
-            Vector2 uv_cen = UVSelectionBounds().center;
-            Vector2 delta = uv_cen - point;
+            Vector2 delta = anchorPosition - point;
 
             for (int i = 0; i < selection.Length; i++)
             {
@@ -3336,7 +3399,7 @@ namespace UnityEditor.ProBuilder
         readonly Color UV_FILL_COLOR = new Color(.192f, .192f, .192f, 1f);
 
         ///< This is the default background of the UV editor - used to compare bacground pixels when rendering UV template
-        void InitiateScreenshot(int ImageSize, bool HideGrid, Color LineColor, bool TransparentBackground, Color BackgroundColor)
+        void InitiateScreenshot(int ImageSize, bool HideGrid, Color LineColor, bool TransparentBackground, Color BackgroundColor, bool RenderTexture)
         {
             screenshot_size = ImageSize;
             screenshot_hideGrid = HideGrid;
@@ -3359,6 +3422,8 @@ namespace UnityEditor.ProBuilder
             if (string.IsNullOrEmpty(screenShotPath))
                 return;
 
+            m_ShowPreviewMaterialCacheDuringScreenshot = m_ShowPreviewMaterial;
+            m_ShowPreviewMaterial.value = RenderTexture;
             screenshotStatus = ScreenshotStatus.Done;
             DoScreenshot();
         }
@@ -3491,6 +3556,7 @@ namespace UnityEditor.ProBuilder
 
         void SaveUVRender()
         {
+            m_ShowPreviewMaterial.value = m_ShowPreviewMaterialCacheDuringScreenshot;
             if (screenshot && !string.IsNullOrEmpty(screenShotPath))
             {
                 FileUtility.SaveTexture(screenshot, screenShotPath);

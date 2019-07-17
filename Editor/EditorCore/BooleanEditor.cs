@@ -1,3 +1,4 @@
+#if PROBUILDER_EXPERIMENTAL_FEATURES
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Experimental.CSG;
@@ -131,8 +132,16 @@ namespace UnityEditor.ProBuilder
             ProBuilderMesh lpb = m_LeftGameObject != null ? m_LeftGameObject.GetComponent<ProBuilderMesh>() : null;
             ProBuilderMesh rpb = m_RightGameObject != null ? m_RightGameObject.GetComponent<ProBuilderMesh>() : null;
 
+            EditorGUI.BeginChangeCheck();
+
             lpb = (ProBuilderMesh)EditorGUILayout.ObjectField(lpb, typeof(ProBuilderMesh), true);
             rpb = (ProBuilderMesh)EditorGUILayout.ObjectField(rpb, typeof(ProBuilderMesh), true);
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                DestroyImmediate(m_LeftPreviewEditor);
+                DestroyImmediate(m_RightPreviewEditor);
+            }
 
             m_LeftGameObject = lpb != null ? lpb.gameObject : null;
             m_RightGameObject = rpb != null ? rpb.gameObject : null;
@@ -340,7 +349,7 @@ namespace UnityEditor.ProBuilder
 
             GameObject go = new GameObject();
 
-            go.AddComponent<MeshRenderer>().sharedMaterial = EditorUtility.GetUserMaterial();
+            go.AddComponent<MeshRenderer>().sharedMaterial = EditorMaterialUtility.GetUserMaterial();
             go.AddComponent<MeshFilter>().sharedMesh = c;
 
             ProBuilderMesh pb = InternalMeshUtility.CreateMeshWithTransform(go.transform, false);
@@ -376,3 +385,4 @@ namespace UnityEditor.ProBuilder
         }
     }
 }
+#endif

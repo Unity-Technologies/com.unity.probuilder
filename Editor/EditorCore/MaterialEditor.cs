@@ -192,9 +192,9 @@ namespace UnityEditor.ProBuilder
 
             GUILayout.Label("Quick Material", EditorStyles.boldLabel);
             Rect r = GUILayoutUtility.GetLastRect();
-            int left = Screen.width - 68;
+            int left = (int)position.width - 68;
 
-            GUILayout.BeginHorizontal(GUILayout.MaxWidth(Screen.width - 74));
+            GUILayout.BeginHorizontal(GUILayout.MaxWidth(position.width - 74));
             GUILayout.BeginVertical();
 
             m_QueuedMaterial = (Material)EditorGUILayout.ObjectField(m_QueuedMaterial, typeof(Material), true);

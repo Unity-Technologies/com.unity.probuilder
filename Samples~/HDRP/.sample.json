@@ -1,0 +1,5 @@
+{
+	"displayName":"HDRP Support",
+	"description": "Shaders and materials for the High Definition Render Pipeline.",
+	"createSeparatePackage": false
+}
