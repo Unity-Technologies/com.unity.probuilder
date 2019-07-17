@@ -31,6 +31,20 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
 
 #endif
 
+#if !UNITY_2019_1_OR_NEWER
+        [Test]
+        public static void ShowWindowPopupWithMode()
+        {
+            var mi = typeof(EditorWindow).GetMethod(
+                "ShowPopupWithMode",
+                BindingFlags.NonPublic | BindingFlags.Instance,
+                null, new[] { ShowModeType, typeof(bool), },
+                null);
+            Assert.IsNotNull(mi);
+        }
+
+#endif
+
         [Test]
         public static void ApplyWireMaterial()
         {
