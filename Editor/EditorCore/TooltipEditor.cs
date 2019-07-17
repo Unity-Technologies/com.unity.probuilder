@@ -13,6 +13,23 @@ namespace UnityEditor.ProBuilder
     /// </summary>
     sealed class TooltipEditor : EditorWindow
     {
+#if !UNITY_2019_1_OR_NEWER
+        static TooltipEditor()
+        {
+            s_ShowModeEnum = ReflectionUtility.GetType("UnityEditor.ShowMode");
+            s_ShowPopupWithModeMethod = typeof(EditorWindow).GetMethod(
+                "ShowPopupWithMode",
+                BindingFlags.NonPublic | BindingFlags.Instance,
+                null,
+                new[] { s_ShowModeEnum, typeof(bool) },
+                null);
+            Assert.IsNotNull(s_ShowPopupWithModeMethod, "Failed to get method UnityEditor.EditorWindow.ShowPopupWithMode. ");
+        }
+
+        static readonly Type s_ShowModeEnum;
+        static readonly MethodInfo s_ShowPopupWithModeMethod;
+#endif
+
         static readonly Color BasicBackgroundColor = new Color(.87f, .87f, .87f, 1f);
         const int k_PositionPadding = 4;
 
@@ -52,20 +69,7 @@ namespace UnityEditor.ProBuilder
 #if UNITY_2019_1_OR_NEWER
                 s_Instance.ShowTooltip();
 #else
-                var ShowModeType = ReflectionUtility.GetType("UnityEditor.ShowMode");
-                var showMethodInfo = typeof(EditorWindow).GetMethod(  
-                    "ShowPopupWithMode",
-                    BindingFlags.NonPublic | BindingFlags.Instance,  
-                    null,
-                    new []
-                    {
-                        ShowModeType,
-                        typeof(bool),
-                    },
-                    null);
-
-                Assert.IsNotNull(showMethodInfo, "Failed to get method UnityEditor.EditorWindow.ShowPopupWithMode. ");
-                showMethodInfo.Invoke(s_Instance, new [] { Enum.ToObject(ShowModeType, 1), false }); 
+                s_ShowPopupWithModeMethod.Invoke(s_Instance, new [] { Enum.ToObject(ShowModeType, 1), false }); 
 #endif
 
                 object parent = ReflectionUtility.GetValue(s_Instance, s_Instance.GetType(), "m_Parent");
