@@ -17,12 +17,11 @@ namespace UnityEditor.ProBuilder
         static TooltipEditor()
         {
             s_ShowModeEnum = ReflectionUtility.GetType("UnityEditor.ShowMode");
+            Assert.IsNotNull(s_ShowModeEnum, "Failed to get ShowMode enum");
+
             s_ShowPopupWithModeMethod = typeof(EditorWindow).GetMethod(
                 "ShowPopupWithMode",
-                BindingFlags.NonPublic | BindingFlags.Instance,
-                null,
-                new[] { s_ShowModeEnum, typeof(bool) },
-                null);
+                BindingFlags.NonPublic | BindingFlags.Instance);
             Assert.IsNotNull(s_ShowPopupWithModeMethod, "Failed to get method UnityEditor.EditorWindow.ShowPopupWithMode. ");
         }
 
@@ -69,7 +68,7 @@ namespace UnityEditor.ProBuilder
 #if UNITY_2019_1_OR_NEWER
                 s_Instance.ShowTooltip();
 #else
-                s_ShowPopupWithModeMethod.Invoke(s_Instance, new [] { Enum.ToObject(ShowModeType, 1), false }); 
+                s_ShowPopupWithModeMethod.Invoke(s_Instance, new [] { Enum.ToObject(s_ShowModeEnum, 1), false}); 
 #endif
 
                 object parent = ReflectionUtility.GetValue(s_Instance, s_Instance.GetType(), "m_Parent");

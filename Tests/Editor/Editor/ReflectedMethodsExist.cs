@@ -37,9 +37,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
         {
             var mi = typeof(EditorWindow).GetMethod(
                 "ShowPopupWithMode",
-                BindingFlags.NonPublic | BindingFlags.Instance,
-                null, new[] { ShowModeType, typeof(bool), },
-                null);
+                BindingFlags.NonPublic | BindingFlags.Instance);
             Assert.IsNotNull(mi);
         }
 
