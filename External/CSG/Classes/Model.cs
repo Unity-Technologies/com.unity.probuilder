@@ -69,16 +69,16 @@ namespace UnityEngine.ProBuilder.Csg
             }
         }
 
-        internal Model(List<Polygon> list)
+        internal Model(List<Polygon> polygons)
         {
             m_Vertices = new List<Vertex>();
             Dictionary<Material, List<int>> submeshes = new Dictionary<Material, List<int>>();
 
             int p = 0;
 
-            for (int i = 0; i < list.Count; i++)
+            for (int i = 0; i < polygons.Count; i++)
             {
-                Polygon poly = list[i];
+                Polygon poly = polygons[i];
                 List<int> indices;
 
                 if (!submeshes.TryGetValue(poly.material, out indices))
