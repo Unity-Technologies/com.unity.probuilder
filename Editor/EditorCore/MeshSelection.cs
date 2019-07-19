@@ -370,7 +370,7 @@ namespace UnityEditor.ProBuilder
 
             Object[] temp = new Object[Selection.objects.Length - 1];
 
-            for (int i = 1; i < temp.Length; i++)
+            for (int i = 0; i < temp.Length; i++)
             {
                 if (i != ind)
                     temp[i] = Selection.objects[i];
@@ -380,6 +380,34 @@ namespace UnityEditor.ProBuilder
 
             if (Selection.activeGameObject == t)
                 Selection.activeObject = temp.FirstOrDefault();
+        }
+
+        internal static void MakeActiveObject(GameObject t)
+        {
+            if (t == null || !Selection.objects.Contains(t))
+                return;
+
+            int ind = System.Array.IndexOf(Selection.objects, t);
+            int len = Selection.objects.Length;
+
+            Object[] temp = new Object[len];
+
+            for (int i = 0; i < len - 1 ; i++)
+            {
+                if(i == ind)
+                {
+                    temp[i] = Selection.objects[len - 1];
+                }
+                else
+                {
+                    temp[i] = Selection.objects[i];
+                }
+            }
+
+            temp[len - 1] = t;
+
+            Selection.activeObject = t;
+            Selection.objects = temp;
         }
 
         internal static void RemoveMeshFromSelectionInternal(ProBuilderMesh mesh)

@@ -214,10 +214,23 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// Create a poly shape from a set of points on a plane. The points must be ordered.
         /// </summary>
         /// <param name="poly"></param>
+        /// <param name="cameraLookAt">If the normal of the polygon of the first face is facing in the same direction of the camera lookat it will be inverted at creation, so it is facing the camera.</param>
         /// <returns>An action result indicating the status of the operation.</returns>
-        internal static ActionResult CreateShapeFromPolygon(this PolyShape poly)
+        internal static ActionResult CreateShapeFromPolygon(this PolyShape poly, Vector3 cameraLookAt)
         {
-            return poly.mesh.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals);
+            return poly.mesh.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals, cameraLookAt);
+        }
+
+
+        /// <summary>
+        /// Clear and refresh mesh in case of failure to create a shape.
+        /// </summary>
+        /// <param name="mesh"></param>
+        internal static void ClearAndRefreshMesh(this ProBuilderMesh mesh)
+        {
+            mesh.Clear();
+            mesh.ToMesh();
+            mesh.Refresh();
         }
 
         /// <summary>
@@ -230,53 +243,110 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <returns>An ActionResult with the status of the operation.</returns>
         public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh mesh, IList<Vector3> points, float extrude, bool flipNormals)
         {
+            return CreateShapeFromPolygon(mesh, points, extrude, flipNormals, Vector3.up);
+        }
+
+        /// <summary>
+        /// Rebuild a mesh from an ordered set of points.
+        /// </summary>
+        /// <param name="mesh">The target mesh. The mesh values will be cleared and repopulated with the shape extruded from points.</param>
+        /// <param name="points">A path of points to triangulate and extrude.</param>
+        /// <param name="extrude">The distance to extrude.</param>
+        /// <param name="flipNormals">If true the faces will be inverted at creation.</param>
+        /// <param name="cameraLookAt">If the normal of the polygon of the first face is facing in the same direction of the camera lookat it will be inverted at creation, so it is facing the camera.</param>
+        /// <param name="holePoints">Holes in the polygon.</param>
+        /// <returns>An ActionResult with the status of the operation.</returns>
+        public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh mesh, IList<Vector3> points, float extrude, bool flipNormals, Vector3 cameraLookAt, IList<IList<Vector3>> holePoints = null)
+        {
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
             if (points == null || points.Count < 3)
             {
-                mesh.Clear();
-                mesh.ToMesh();
-                mesh.Refresh();
+                ClearAndRefreshMesh(mesh);
                 return new ActionResult(ActionResult.Status.NoChange, "Too Few Points");
             }
 
             Vector3[] vertices = points.ToArray();
+
+            Vector3[][] holeVertices = null;
+            if (holePoints != null && holePoints.Count > 0)
+            {
+                holeVertices = new Vector3[holePoints.Count][];
+                for (int i = 0; i < holePoints.Count; i++)
+                {
+                    if(holePoints[i] == null || holePoints[i].Count < 3)
+                    {
+                        ClearAndRefreshMesh(mesh);
+                        return new ActionResult(ActionResult.Status.NoChange, "Too Few Points in hole " + i);
+                    }
+                    holeVertices[i] = holePoints[i].ToArray();
+                }
+            }
+            
             List<int> triangles;
 
             Log.PushLogLevel(LogLevel.Error);
 
-            if (Triangulation.TriangulateVertices(vertices, out triangles, false))
+            if (Triangulation.TriangulateVertices(vertices, out triangles, holeVertices))
             {
-                int[] indexes = triangles.ToArray();
-
-                if (Math.PolygonArea(vertices, indexes) < Mathf.Epsilon)
+                Vector3[] combinedVertices = null;
+                if (holeVertices != null)
                 {
-                    mesh.Clear();
+                    combinedVertices = new Vector3[vertices.Length + holeVertices.Sum(arr => arr.Length)];
+                    Array.Copy(vertices, combinedVertices, vertices.Length);
+                    int destinationIndex = vertices.Length;
+                    foreach (var hole in holeVertices)
+                    {
+                        Array.ConstrainedCopy(hole, 0, combinedVertices, destinationIndex, hole.Length);
+                        destinationIndex += hole.Length;
+                    }
+                }
+                else
+                {
+                    combinedVertices = vertices;
+                }
+                int[] indexes = triangles.ToArray();
+                
+                if (Math.PolygonArea(combinedVertices, indexes) < Mathf.Epsilon)
+                {
+                    ClearAndRefreshMesh(mesh);
                     Log.PopLogLevel();
                     return new ActionResult(ActionResult.Status.Failure, "Polygon Area < Epsilon");
                 }
 
                 mesh.Clear();
 
-                mesh.positionsInternal = vertices;
-                mesh.facesInternal = new[] { new Face(indexes) };
-                mesh.sharedVerticesInternal = SharedVertex.GetSharedVerticesWithPositions(vertices);
+                mesh.positionsInternal = combinedVertices;
+                var newFace = new Face(indexes);
+                mesh.facesInternal = new[] { newFace };
+                mesh.sharedVerticesInternal = SharedVertex.GetSharedVerticesWithPositions(combinedVertices);
                 mesh.InvalidateCaches();
 
-                Vector3 nrm = Math.Normal(mesh, mesh.facesInternal[0]);
+                // check that all points are represented in the triangulation
+                if (newFace.distinctIndexesInternal.Length != combinedVertices.Length)
+                {
+                    ClearAndRefreshMesh(mesh);
+                    Log.PopLogLevel();
+                    return new ActionResult(ActionResult.Status.Failure, "Triangulation missing points");
+                }
 
-                if (Vector3.Dot(Vector3.up, nrm) > 0f)
+                Vector3 nrm = Math.Normal(mesh, mesh.facesInternal[0]);
+                cameraLookAt.Normalize();
+                if ((flipNormals ? Vector3.Dot(cameraLookAt, nrm) < 0f : Vector3.Dot(cameraLookAt, nrm) > 0f))
                     mesh.facesInternal[0].Reverse();
 
-                mesh.DuplicateAndFlip(mesh.facesInternal);
-
-                mesh.Extrude(new Face[] { mesh.facesInternal[1] }, ExtrudeMethod.IndividualFaces, extrude);
-
-                if ((extrude < 0f && !flipNormals) || (extrude > 0f && flipNormals))
+                if (extrude != 0.0f)
                 {
-                    foreach (var face in mesh.facesInternal)
-                        face.Reverse();
+                    mesh.DuplicateAndFlip(mesh.facesInternal);
+
+                    mesh.Extrude(new Face[] { (flipNormals ? mesh.facesInternal[1] : mesh.facesInternal[0]) }, ExtrudeMethod.IndividualFaces, extrude);
+
+                    if ((extrude < 0f && !flipNormals) || (extrude > 0f && flipNormals))
+                    {
+                        foreach (var face in mesh.facesInternal)
+                            face.Reverse();
+                    }
                 }
 
                 mesh.ToMesh();
@@ -284,6 +354,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
             }
             else
             {
+                // clear mesh instead of showing an invalid one
+                ClearAndRefreshMesh(mesh);
                 Log.PopLogLevel();
                 return new ActionResult(ActionResult.Status.Failure, "Failed Triangulating Points");
             }

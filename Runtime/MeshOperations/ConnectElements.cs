@@ -1,8 +1,6 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.ProBuilder;
 using System;
 
 namespace UnityEngine.ProBuilder.MeshOperations
@@ -20,7 +18,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             this.faceRebuildData = faceRebuildData;
             this.newVertexIndexes = newVertexIndexes;
         }
-    };
+    }
 
     /// <summary>
     /// Utility class for connecting edges, faces, and vertices.
@@ -35,8 +33,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <returns>The faces created as a result of inserting new edges.</returns>
         public static Face[] Connect(this ProBuilderMesh mesh, IEnumerable<Face> faces)
         {
-            IEnumerable<Edge> edges = faces.SelectMany(x => x.edgesInternal);
+            var split = MeshValidation.EnsureFacesAreComposedOfContiguousTriangles(mesh, faces);
             HashSet<Face> mask = new HashSet<Face>(faces);
+            if (split.Count > 0)
+            {
+                foreach (var face in split)
+                    mask.Add(face);
+            }
+            IEnumerable<Edge> edges = mask.SelectMany(x => x.edgesInternal);
             Edge[] empty;
             Face[] res;
             Connect(mesh, edges, out res, out empty, true, false, mask);

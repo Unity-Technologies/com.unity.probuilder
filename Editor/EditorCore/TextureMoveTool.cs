@@ -76,13 +76,13 @@ namespace UnityEditor.ProBuilder
 
                 if (relativeSnapEnabled)
                 {
-                    m_Position.x = Snapping.SnapValue(m_Position.x, relativeSnapX);
-                    m_Position.y = Snapping.SnapValue(m_Position.y, relativeSnapY);
+                    m_Position.x = ProGridsSnapping.SnapValue(m_Position.x, relativeSnapX);
+                    m_Position.y = ProGridsSnapping.SnapValue(m_Position.y, relativeSnapY);
                 }
                 else if (progridsSnapEnabled)
                 {
-                    m_Position.x = Snapping.SnapValue(m_Position.x, progridsSnapValue);
-                    m_Position.y = Snapping.SnapValue(m_Position.y, progridsSnapValue);
+                    m_Position.x = ProGridsSnapping.SnapValue(m_Position.x, progridsSnapValue);
+                    m_Position.y = ProGridsSnapping.SnapValue(m_Position.y, progridsSnapValue);
                 }
 
                 // invert `y` because to users it's confusing that "up" in UV space visually moves the texture down
