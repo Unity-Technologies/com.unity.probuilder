@@ -7,7 +7,7 @@ namespace UnityEngine.ProBuilder.Csg
     /// Represents a plane in 3d space.
     /// <remarks>Does not include position.</remarks>
     /// </summary>
-    sealed class CSG_Plane
+    sealed class Plane
     {
         public Vector3 normal;
         public float w;
@@ -21,13 +21,13 @@ namespace UnityEngine.ProBuilder.Csg
             Spanning    = 3         /// 3 is Front | Back - not a separate entry
         };
 
-        public CSG_Plane()
+        public Plane()
         {
             normal = Vector3.zero;
             w = 0f;
         }
 
-        public CSG_Plane(Vector3 a, Vector3 b, Vector3 c)
+        public Plane(Vector3 a, Vector3 b, Vector3 c)
         {
             normal = Vector3.Cross(b - a, c - a);//.normalized;
             w = Vector3.Dot(normal, a);
@@ -49,7 +49,7 @@ namespace UnityEngine.ProBuilder.Csg
         // `coplanarFront` or `coplanarBack` depending on their orientation with
         // respect to this plane. Polygons in front or in back of this plane go into
         // either `front` or `back`.
-        public void SplitPolygon(CSG_Polygon polygon, List<CSG_Polygon> coplanarFront, List<CSG_Polygon> coplanarBack, List<CSG_Polygon> front, List<CSG_Polygon> back)
+        public void SplitPolygon(Polygon polygon, List<Polygon> coplanarFront, List<Polygon> coplanarBack, List<Polygon> front, List<Polygon> back)
         {
             // Classify each point as well as the entire polygon into one of the above
             // four classes.
@@ -90,8 +90,8 @@ namespace UnityEngine.ProBuilder.Csg
 
                 case EPolygonType.Spanning:
                 {
-                    List<CSG_Vertex> f = new List<CSG_Vertex>();
-                    List<CSG_Vertex> b = new List<CSG_Vertex>();
+                    List<Vertex> f = new List<Vertex>();
+                    List<Vertex> b = new List<Vertex>();
 
                     for (int i = 0; i < polygon.vertices.Count; i++)
                     {
@@ -99,7 +99,7 @@ namespace UnityEngine.ProBuilder.Csg
 
                         EPolygonType ti = types[i], tj = types[j];
 
-                        CSG_Vertex vi = polygon.vertices[i], vj = polygon.vertices[j];
+                        Vertex vi = polygon.vertices[i], vj = polygon.vertices[j];
 
                         if (ti != EPolygonType.Back)
                         {
@@ -115,7 +115,7 @@ namespace UnityEngine.ProBuilder.Csg
                         {
                             float t = (this.w - Vector3.Dot(this.normal, vi.position)) / Vector3.Dot(this.normal, vj.position - vi.position);
 
-                            CSG_Vertex v = CSG_VertexUtility.Mix(vi, vj, t);
+                            Vertex v = VertexUtility.Mix(vi, vj, t);
 
                             f.Add(v);
                             b.Add(v);
@@ -124,12 +124,12 @@ namespace UnityEngine.ProBuilder.Csg
 
                     if (f.Count >= 3)
                     {
-                        front.Add(new CSG_Polygon(f, polygon.material));
+                        front.Add(new Polygon(f, polygon.material));
                     }
 
                     if (b.Count >= 3)
                     {
-                        back.Add(new CSG_Polygon(b, polygon.material));
+                        back.Add(new Polygon(b, polygon.material));
                     }
                 }
                 break;

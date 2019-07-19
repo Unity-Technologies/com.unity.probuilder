@@ -33,17 +33,17 @@ namespace UnityEngine.ProBuilder.Csg
         /// <param name="lhs">The base mesh of the boolean operation.</param>
         /// <param name="rhs">The input mesh of the boolean operation.</param>
         /// <returns>A new mesh if the operation succeeds, or null if an error occurs.</returns>
-        public static CSG_Model Union(GameObject lhs, GameObject rhs)
+        public static Model Union(GameObject lhs, GameObject rhs)
         {
-            CSG_Model csg_model_a = new CSG_Model(lhs);
-            CSG_Model csg_model_b = new CSG_Model(rhs);
+            Model csg_model_a = new Model(lhs);
+            Model csg_model_b = new Model(rhs);
 
-            CSG_Node a = new CSG_Node(csg_model_a.ToPolygons());
-            CSG_Node b = new CSG_Node(csg_model_b.ToPolygons());
+            Node a = new Node(csg_model_a.ToPolygons());
+            Node b = new Node(csg_model_b.ToPolygons());
 
-            List<CSG_Polygon> polygons = CSG_Node.Union(a, b).AllPolygons();
+            List<Polygon> polygons = Node.Union(a, b).AllPolygons();
 
-            return new CSG_Model(polygons);
+            return new Model(polygons);
         }
 
         /// <summary>
@@ -52,17 +52,17 @@ namespace UnityEngine.ProBuilder.Csg
         /// <param name="lhs">The base mesh of the boolean operation.</param>
         /// <param name="rhs">The input mesh of the boolean operation.</param>
         /// <returns>A new mesh if the operation succeeds, or null if an error occurs.</returns>
-        public static CSG_Model Subtract(GameObject lhs, GameObject rhs)
+        public static Model Subtract(GameObject lhs, GameObject rhs)
         {
-            CSG_Model csg_model_a = new CSG_Model(lhs);
-            CSG_Model csg_model_b = new CSG_Model(rhs);
+            Model csg_model_a = new Model(lhs);
+            Model csg_model_b = new Model(rhs);
 
-            CSG_Node a = new CSG_Node(csg_model_a.ToPolygons());
-            CSG_Node b = new CSG_Node(csg_model_b.ToPolygons());
+            Node a = new Node(csg_model_a.ToPolygons());
+            Node b = new Node(csg_model_b.ToPolygons());
 
-            List<CSG_Polygon> polygons = CSG_Node.Subtract(a, b).AllPolygons();
+            List<Polygon> polygons = Node.Subtract(a, b).AllPolygons();
 
-            return new CSG_Model(polygons);
+            return new Model(polygons);
         }
 
         /// <summary>
@@ -71,17 +71,17 @@ namespace UnityEngine.ProBuilder.Csg
         /// <param name="lhs">The base mesh of the boolean operation.</param>
         /// <param name="rhs">The input mesh of the boolean operation.</param>
         /// <returns>A new mesh if the operation succeeds, or null if an error occurs.</returns>
-        public static CSG_Model Intersect(GameObject lhs, GameObject rhs)
+        public static Model Intersect(GameObject lhs, GameObject rhs)
         {
-            CSG_Model csg_model_a = new CSG_Model(lhs);
-            CSG_Model csg_model_b = new CSG_Model(rhs);
+            Model csg_model_a = new Model(lhs);
+            Model csg_model_b = new Model(rhs);
 
-            CSG_Node a = new CSG_Node(csg_model_a.ToPolygons());
-            CSG_Node b = new CSG_Node(csg_model_b.ToPolygons());
+            Node a = new Node(csg_model_a.ToPolygons());
+            Node b = new Node(csg_model_b.ToPolygons());
 
-            List<CSG_Polygon> polygons = CSG_Node.Intersect(a, b).AllPolygons();
+            List<Polygon> polygons = Node.Intersect(a, b).AllPolygons();
 
-            return new CSG_Model(polygons);
+            return new Model(polygons);
         }
     }
 }

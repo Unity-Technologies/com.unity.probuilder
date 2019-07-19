@@ -326,7 +326,7 @@ namespace UnityEditor.ProBuilder
 
             UndoUtility.RecordSelection(sel, op_string);
 
-            CSG_Model result;
+            UnityEngine.ProBuilder.Csg.Model result;
 
             switch (operation)
             {
