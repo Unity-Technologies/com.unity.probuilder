@@ -147,6 +147,7 @@ namespace UnityEditor.ProBuilder
         bool m_IsEditing;
 
         float m_ProgridsSnapValue = .25f;
+        // Snap only on active axis when true
         bool m_SnapAxisConstraint = true;
         bool m_ProgridsSnapEnabled;
         static bool s_Initialized;
@@ -192,6 +193,9 @@ namespace UnityEditor.ProBuilder
             get { return m_ProgridsSnapValue; }
         }
 
+        /// <summary>
+        /// Snap only on the active axes when true.
+        /// </summary>
         protected bool snapAxisConstraint
         {
             get { return m_SnapAxisConstraint; }

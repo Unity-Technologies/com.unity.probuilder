@@ -21,10 +21,15 @@ namespace UnityEditor.ProBuilder
 
         protected override void OnToolEngaged()
         {
-            // If grids are enabled and "snap on all axes" is on, initialize active axes to all.
-            m_ActiveAxesModel = progridsSnapEnabled && !snapAxisConstraint
+            // If grids are enabled and `snapAxisConstraint` is off:
+            //     - `snapAsGroup: false` handle is snapped on active axis only, and vertices are snapped to all axes
+            //     - `snapAsGroup: true` handle is snapped on all axes, and vertices are not snapped
+            // by snapping the handle OR vertices, we avoid double-snapping problems that can cause vertex positions to
+            // be rounded to incorrect values.
+            m_ActiveAxesModel = progridsSnapEnabled && !snapAxisConstraint && m_SnapAsGroup
                 ? Vector3Mask.XYZ
                 : new Vector3Mask(0x0);
+            m_ActiveAxesModel = new Vector3Mask(0x0);
 
 #if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
             m_DirectionOriginInitialized = false;
@@ -81,7 +86,8 @@ namespace UnityEditor.ProBuilder
                 }
                 else if (progridsSnapEnabled)
                 {
-                    if (snapAxisConstraint)
+                    // Handle is only snapped on all axes in the case where `snapAxisConstraint == false && snapAsGroup == true`
+                    if (snapAxisConstraint || !m_SnapAsGroup)
                     {
                         m_ActiveAxesModel |= new Vector3Mask(handleRotationOriginInverse * delta, k_CardinalAxisError);
                         m_ActiveAxesWorld = new Vector3Mask(handleRotation * m_ActiveAxesModel);
@@ -170,7 +176,9 @@ namespace UnityEditor.ProBuilder
                             }
                             else
                             {
-                                var wp = postApplyMatrix.MultiplyPoint3x4(translation + preApplyMatrix.MultiplyPoint3x4(origins[index]));
+                                var origin = origins[index];
+                                var preApply = preApplyMatrix.MultiplyPoint3x4(origin);
+                                var wp = postApplyMatrix.MultiplyPoint3x4(translation + preApply);
                                 var snap = ProGridsSnapping.SnapValue(wp, Vector3.one * progridsSnapValue);
                                 positions[index] = worldToLocal.MultiplyPoint3x4(snap);
                             }
