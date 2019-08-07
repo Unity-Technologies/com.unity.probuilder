@@ -326,11 +326,12 @@ namespace UnityEditor.ProBuilder
             }
             else
             {
-                GUI.backgroundColor = ToolbarGroupUtility.GetColor(group);
-
                 // in text mode always use the vertical layout.
                 isHorizontal = false;
                 GUILayout.BeginHorizontal(MenuActionStyles.rowStyleVertical, layoutOptions);
+
+                GUI.backgroundColor = ToolbarGroupUtility.GetColor(group);
+
                 if (GUILayout.Button(menuTitle, MenuActionStyles.buttonStyleVertical))
                 {
                     ActionResult res = DoAction();
