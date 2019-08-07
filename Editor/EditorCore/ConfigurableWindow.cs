@@ -23,7 +23,7 @@ namespace UnityEditor.ProBuilder
 
         public static new T GetWindow<T>(string title, bool focus = true) where T : ConfigurableWindow
         {
-            return GetWindow<T>(IsUtilityWindow<T>(), title, focus);
+            return EditorWindow.GetWindow<T>(IsUtilityWindow<T>(), title, focus);
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         public static new T GetWindow<T>(bool utility, string title, bool focus) where T : ConfigurableWindow
         {
-            return GetWindow<T>(IsUtilityWindow<T>(utility), title, focus);
+            return EditorWindow.GetWindow<T>(IsUtilityWindow<T>(utility), title, focus);
         }
 
         public virtual void AddItemsToMenu(GenericMenu menu)
