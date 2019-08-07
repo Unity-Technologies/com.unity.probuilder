@@ -261,7 +261,8 @@ namespace UnityEditor.ProBuilder
 
         internal static void ResetToLastSelectMode()
         {
-            selectMode = s_Instance.m_LastComponentMode;
+            if (s_Instance != null)
+                selectMode = s_Instance.m_LastComponentMode;
         }
 
         static class SceneStyles
@@ -1181,7 +1182,7 @@ namespace UnityEditor.ProBuilder
                     continue;
 
                 var indexes = mesh.GetCoincidentVertices(mesh.selectedIndexesInternal);
-                Snapping.SnapVertices(mesh, indexes, Vector3.one * snapVal);
+                ProGridsSnapping.SnapVertices(mesh, indexes, Vector3.one * snapVal);
 
                 mesh.ToMesh();
                 mesh.Refresh();

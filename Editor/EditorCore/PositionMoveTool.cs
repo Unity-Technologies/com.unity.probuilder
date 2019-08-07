@@ -88,7 +88,7 @@ namespace UnityEditor.ProBuilder
 
                         if (m_ActiveAxesWorld.active == 1)
                         {
-                            m_HandlePosition = Snapping.SnapValueOnRay(
+                            m_HandlePosition = ProGridsSnapping.SnapValueOnRay(
                                 new Ray(handlePositionOrigin, delta),
                                 delta.magnitude,
                                 progridsSnapValue,
@@ -96,12 +96,12 @@ namespace UnityEditor.ProBuilder
                         }
                         else
                         {
-                            m_HandlePosition = Snapping.SnapValue(m_HandlePosition, progridsSnapValue);
+                            m_HandlePosition = ProGridsSnapping.SnapValue(m_HandlePosition, progridsSnapValue);
                         }
                     }
                     else
                     {
-                        m_HandlePosition = Snapping.SnapValue(m_HandlePosition, progridsSnapValue);
+                        m_HandlePosition = ProGridsSnapping.SnapValue(m_HandlePosition, progridsSnapValue);
                     }
 
                     delta = m_HandlePosition - handlePositionOrigin;
@@ -160,7 +160,7 @@ namespace UnityEditor.ProBuilder
                             {
                                 var wp = postApplyMatrix.MultiplyPoint3x4(preApplyMatrix.MultiplyPoint3x4(origins[index]));
 
-                                var snap = Snapping.SnapValueOnRay(
+                                var snap = ProGridsSnapping.SnapValueOnRay(
                                     new Ray(wp, m_RawHandleDelta),
                                     translationMagnitude,
                                     progridsSnapValue,
@@ -171,7 +171,7 @@ namespace UnityEditor.ProBuilder
                             else
                             {
                                 var wp = postApplyMatrix.MultiplyPoint3x4(translation + preApplyMatrix.MultiplyPoint3x4(origins[index]));
-                                var snap = Snapping.SnapValue(wp, Vector3.one * progridsSnapValue);
+                                var snap = ProGridsSnapping.SnapValue(wp, Vector3.one * progridsSnapValue);
                                 positions[index] = worldToLocal.MultiplyPoint3x4(snap);
                             }
                         }
