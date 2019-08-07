@@ -57,7 +57,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         protected override void DoAlternateAction()
         {
-            ConfigurableWindow.GetWindow<MoveElementsSettings>("Offset Settings", true, true);
+            ConfigurableWindow.GetWindow<MoveElementsSettings>(true, "Offset Settings", true);
         }
 
         public override ActionResult DoAction()
