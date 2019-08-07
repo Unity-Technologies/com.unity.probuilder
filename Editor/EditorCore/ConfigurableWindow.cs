@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Get or create an instance of EditorWindow. Note that `utility` may be overridden by user set preference.
         /// </summary>
-        public static new T GetWindow<T>(string title, bool utility, bool focus) where T : ConfigurableWindow
+        public static new T GetWindow<T>(bool utility, string title, bool focus) where T : ConfigurableWindow
         {
             return GetWindow<T>(IsUtilityWindow<T>(utility), title, focus);
         }
