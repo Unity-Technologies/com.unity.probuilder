@@ -270,9 +270,7 @@ namespace UnityEditor.ProBuilder.UI
         {
             float pixelsPerPoint = 1f;
 
-            #if !UNITY_4_7 && !UNITY_5_0 && !UNITY_5_3
             pixelsPerPoint = UnityEditor.EditorGUIUtility.pixelsPerPoint;
-            #endif
 
             float PAD = 8f / pixelsPerPoint;
             const float SLIDER_HEIGHT = 16f;
@@ -325,11 +323,9 @@ namespace UnityEditor.ProBuilder.UI
         {
             float pixelsPerPoint = 1f;
 
-#if !UNITY_4_7 && !UNITY_5_0 && !UNITY_5_3
             pixelsPerPoint = UnityEditor.EditorGUIUtility.pixelsPerPoint;
-#endif
 
-            float PAD = 8f / pixelsPerPoint;
+            float PAD = 6f / pixelsPerPoint;
             const float SLIDER_HEIGHT = 16f;
             const float MIN_LABEL_WIDTH = 0f;
             const float MAX_LABEL_WIDTH = 128f;
@@ -341,17 +337,17 @@ namespace UnityEditor.ProBuilder.UI
             float y = previousRect.y;
 
             float labelWidth = content != null ? Mathf.Max(MIN_LABEL_WIDTH, Mathf.Min(GUI.skin.label.CalcSize(content).x + PAD, MAX_LABEL_WIDTH)) : 0f;
-            float remaining = ((Screen.width / pixelsPerPoint) - (PAD * 2f)) - labelWidth;
+            float remaining = ((Screen.width / pixelsPerPoint) - (PAD * 4f)) - labelWidth;
             float sliderWidth = remaining - (MIN_FIELD_WIDTH + PAD);
             float intWidth = MIN_FIELD_WIDTH;
             float indentOffset = EditorGUI.indentLevel * 15f;
 
             Rect labelRect = new Rect(PAD, y + 2f, labelWidth, SLIDER_HEIGHT);
-            Rect sliderRect = new Rect(labelRect.x + labelWidth, y + 1f, sliderWidth, SLIDER_HEIGHT);
+            Rect sliderRect = new Rect(labelRect.x + labelWidth + 2*PAD, y + 1f, sliderWidth, SLIDER_HEIGHT);
             Rect intRect = new Rect(sliderRect.x + sliderRect.width + PAD, y + 1f, intWidth, SLIDER_HEIGHT);
             
-            Rect totalRect = GUILayoutUtility.GetRect(1, UnityEditor.EditorGUIUtility.singleLineHeight);            
-            Rect foldoutRect = new Rect(labelRect.xMax - 10, labelRect.y, 8, totalRect.height);
+            Rect totalRect = GUILayoutUtility.GetRect(1, UnityEditor.EditorGUIUtility.singleLineHeight);
+            Rect foldoutRect = new Rect(labelRect.xMax - PAD, labelRect.y, 8, totalRect.height);
 
             if (content != null)
                 GUI.Label(labelRect, content);
@@ -367,7 +363,13 @@ namespace UnityEditor.ProBuilder.UI
             if (EditorGUI.EndChangeCheck())
                 value = (int) (Event.current.control ? 1 * Mathf.Round(tmp / 1f) :  tmp);
 
-            value = EditorGUI.IntField(intRect, value);
+            value = EditorGUI.DelayedIntField(intRect, value);
+
+            if (value > uiMax)
+                uiMax = value;
+
+            if (value < uiMin)
+                uiMin = value;
 
             expanded = EditorGUI.Foldout(foldoutRect, expanded, GUIContent.none);
             if (expanded)
@@ -377,10 +379,14 @@ namespace UnityEditor.ProBuilder.UI
                 Rect maxRect = new Rect(intRect.x, sliderRect.yMax, intRect.width, intRect.height);
 
                 EditorGUI.PrefixLabel(rangeLabelRect, new GUIContent("Range:"));
-                uiMin = UnityEditor.EditorGUI.IntField(minRect, uiMin);
+                uiMin = UnityEditor.EditorGUI.DelayedIntField(minRect, uiMin);
                 uiMin = UnityEngine.ProBuilder.Math.Clamp(uiMin, min, uiMax);
-                uiMax = UnityEditor.EditorGUI.IntField(maxRect, uiMax);
+                if (value < uiMin)
+                    value = uiMin;
+                uiMax = UnityEditor.EditorGUI.DelayedIntField(maxRect, uiMax);
                 uiMax = UnityEngine.ProBuilder.Math.Clamp(uiMax, uiMin + 1, max);
+                if (value > uiMax)
+                    value = uiMax;
             }
 
             return UnityEngine.ProBuilder.Math.Clamp(value, min, max);
