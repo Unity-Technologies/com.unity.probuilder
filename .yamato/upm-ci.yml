@@ -9,7 +9,7 @@ test_platforms:
   - name: win
     type: Unity::VM
     image: package-ci/win10:stable
-    flavor: m1.large
+    flavor: b1.large
   - name: mac
     type: Unity::VM::osx
     image: buildfarm/mac:stable
@@ -20,17 +20,17 @@ pack:
   agent:
     type: Unity::VM
     image: package-ci/win10:stable
-    flavor: m1.large
+    flavor: b1.large
   commands:
-    - npm install upm-ci-utils -g --registry https://api.bintray.com/npm/unity/unity-npm
+    - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
     - upm-ci package pack
   artifacts:
     packages:
       paths:
-        - "upm-ci~/packages/**/*"
+        - "upm-ci~/**/*"
 
-  {% for editor in test_editors %}
-  {% for platform in test_platforms %}
+{% for editor in test_editors %}
+{% for platform in test_platforms %}
 test_{{ platform.name }}_{{ editor.version }}:
   name : Test {{ editor.version }} on {{ platform.name }}
   agent:
@@ -38,23 +38,23 @@ test_{{ platform.name }}_{{ editor.version }}:
     image: {{ platform.image }}
     flavor: {{ platform.flavor}}
   commands:
-    - npm install upm-ci-utils -g --registry https://api.bintray.com/npm/unity/unity-npm
+    - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
     - upm-ci package test --unity-version {{ editor.version }}
   artifacts:
-    logs.zip:
+    logs:
       paths:
         - "upm-ci~/test-results/**/*"
   dependencies:
     - .yamato/upm-ci.yml#pack
-  {% endfor %}
-  {% endfor %}
+{% endfor %}
+{% endfor %}
 
 test_trigger:
   name: Tests Trigger
   agent:
     type: Unity::VM
     image: package-ci/win10:stable
-    flavor: m1.large
+    flavor: b1.large
   commands:
     - dir
   triggers:
@@ -77,20 +77,20 @@ test_trigger:
     {% endfor %}
 
 publish:
-  name: Publish
+  name: Publish to Internal Registry
   agent:
     type: Unity::VM
     image: package-ci/win10:stable
-    flavor: m1.large
+    flavor: b1.large
   commands:
-    - npm install upm-ci-utils -g --registry https://api.bintray.com/npm/unity/unity-npm
+    - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
     - upm-ci package publish
   triggers:
     tags:
       only:
-        - /^(v|V)\d+\.\d+\.\d+(-preview(\.\d+)?)?$/
+        - /^(r|R)(c|C)-\d+\.\d+\.\d+(-preview(\.\d+)?)?$/
   artifacts:
-    artifacts.zip:
+    artifacts:
       paths:
         - "upm-ci~/packages/*.tgz"
   dependencies:
