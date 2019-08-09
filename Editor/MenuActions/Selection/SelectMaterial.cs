@@ -78,20 +78,40 @@ namespace UnityEditor.ProBuilder.Actions
 
             UndoUtility.RecordSelection("Select Faces with Material");
 
-            HashSet<int> sel = new HashSet<int>(
-                    MeshSelection.topInternal
-                    .SelectMany(x => x.selectedFacesInternal.Select(y => y.submeshIndex)));
+            //Need to go from submesh index to material
+            List<Material> selectedMaterials = new List<Material>();
+            foreach(var pb in MeshSelection.topInternal)
+            {
+                HashSet<int> submeshIndex = new HashSet<int>(pb.selectedFacesInternal.Select(y => y.submeshIndex));
+                foreach(var index in submeshIndex)
+                {
+                    if(!selectedMaterials.Contains(pb.renderer.sharedMaterials[index]))
+                    {
+                        selectedMaterials.Add(pb.renderer.sharedMaterials[index]);
+                    }
+                }
+            }
 
             List<GameObject> newSelection = new List<GameObject>();
-
             foreach (var pb in selection)
             {
-                IEnumerable<Face> matches = pb.facesInternal.Where(x => sel.Contains(x.submeshIndex));
-
-                if (matches.Any())
+                List<int> subMeshIndices = new List<int>();
+                for (int matIndex = 0; matIndex < pb.renderer.sharedMaterials.Length; ++matIndex)
                 {
-                    newSelection.Add(pb.gameObject);
-                    pb.SetSelectedFaces(matches);
+                    if(selectedMaterials.Contains(pb.renderer.sharedMaterials[matIndex]))
+                    {
+                        subMeshIndices.Add(matIndex);
+                    }
+                }
+
+                if(subMeshIndices.Count > 0)
+                {
+                    IEnumerable<Face> matches = pb.facesInternal.Where(x => subMeshIndices.Contains(x.submeshIndex));
+                    if (matches.Any())
+                    {
+                        newSelection.Add(pb.gameObject);
+                        pb.SetSelectedFaces(matches);
+                    }
                 }
             }
 
