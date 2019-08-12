@@ -8,7 +8,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
     /// Methods for merging multiple <see cref="ProBuilderMesh"/> objects to a single mesh.
     /// </summary>
 	public static class CombineMeshes
-	{
+    {
         /// <summary>
         /// Merge a collection of <see cref="ProBuilderMesh"/> objects to as few meshes as possible. This may result in
         /// more than one mesh due to a max vertex count limit of 65535.
@@ -112,6 +112,196 @@ namespace UnityEngine.ProBuilder.MeshOperations
             }
 
             return res;
+        }
+
+        /// <summary>
+        /// Merge a collection of <see cref="ProBuilderMesh"/> objects to as few meshes as possible. It will re-use the meshTarget object as the first
+        /// destination for the first 65535 vertices. If the sum of vertices is above 65535 it will generate new meshes unless there is a single mesh left in which
+        /// case it will append it to the return list.
+        /// </summary>
+        /// <param name="meshTarget">A polybrush mesh for which we will be re-using the target mesh of the previous.</param>
+        /// <param name="meshes">A collection of meshes to be merged.</param>
+        /// <returns>
+        /// A list of merged meshes. In most cases this will be a single mesh corresponding to meshTarget. However it can be multiple in cases
+        /// where the resulting vertex count exceeds the maximum allowable value.
+        /// </returns>
+        public static List<ProBuilderMesh> Combine(ProBuilderMesh meshTarget, IEnumerable<ProBuilderMesh> meshes)
+        {
+            if (meshes == null)
+                throw new ArgumentNullException("meshes");
+
+            if (meshTarget == null)
+                throw new ArgumentNullException("meshTarget");
+
+            if (!meshes.Any() || meshes.Count() < 2 )
+                return null;
+
+            var vertices = new List<Vertex>();
+            var faces = new List<Face>();
+            var autoUvFaces = new List<Face>();
+            var sharedVertices = new List<SharedVertex>();
+            var sharedTextures = new List<SharedVertex>();
+            int offset = 0;
+            var materialMap = new List<Material>();
+            var targetTransform = meshTarget.transform;
+
+
+            //First pass put the meshTarget as first vertices
+            foreach (var mesh in meshes)
+            {
+                if (mesh == meshTarget)
+                {
+                    var meshVertexCount = mesh.vertexCount;
+                    var meshVertices = mesh.GetVertices();
+                    var meshFaces = mesh.facesInternal;
+                    var meshSharedVertices = mesh.sharedVertices;
+                    var meshSharedTextures = mesh.sharedTextures;
+                    var materials = mesh.renderer.sharedMaterials;
+                    var materialCount = materials.Length;
+
+                    for (int i = 0; i < meshVertexCount; i++)
+                        vertices.Add(meshVertices[i]);
+
+                    foreach (var face in meshFaces)
+                    {
+                        faces.Add(face);
+                    }
+
+                    foreach (var sv in meshSharedVertices)
+                    {                   
+                        sharedVertices.Add(sv);
+                    }
+
+                    foreach (var st in meshSharedTextures)
+                    {
+                        sharedTextures.Add(st);
+                    }
+
+                    foreach (var mat in materials)
+                    {
+                        materialMap.Add(mat);
+                    }
+
+                    offset += meshVertexCount;
+                    break;
+                }
+            }
+
+            var firstMeshContributors = new List<ProBuilderMesh>();
+            var remainderMeshContributors = new List<ProBuilderMesh>();
+
+            var currentMeshVertexCount = offset;
+            foreach (var mesh in meshes)
+            {
+                if (mesh != meshTarget)
+                {
+                    if (currentMeshVertexCount + mesh.vertexCount < ProBuilderMesh.maxVertexCount)
+                    {
+                        currentMeshVertexCount += mesh.vertexCount;
+                        firstMeshContributors.Add(mesh);
+                    }
+                    else
+                    {
+                        remainderMeshContributors.Add(mesh);
+                    }
+                }
+            }
+
+            foreach (var mesh in firstMeshContributors)
+            {
+                if (mesh == meshTarget)
+                    continue;
+
+                var meshVertexCount = mesh.vertexCount;
+                var transform = mesh.transform;
+                var meshVertices = mesh.GetVertices();
+                var meshFaces = mesh.facesInternal;
+                var meshSharedVertices = mesh.sharedVertices;
+                var meshSharedTextures = mesh.sharedTextures;
+                var materials = mesh.renderer.sharedMaterials;
+                var materialCount = materials.Length;
+
+                for (int i = 0; i < meshVertexCount; i++)
+                {
+                    var worldVertex = transform.TransformVertex(meshVertices[i]);
+                    vertices.Add(targetTransform.InverseTransformVertex(worldVertex));
+                }
+
+
+                foreach (var face in meshFaces)
+                {
+                    var newFace = new Face(face);
+                    newFace.ShiftIndexes(offset);
+
+                    // prevents uvs from shifting when being converted from local coords to world space
+                    if (!newFace.manualUV && !newFace.uv.useWorldSpace)
+                    {
+                        newFace.manualUV = true;
+                        autoUvFaces.Add(newFace);
+                    }
+                    var material = materials[Math.Clamp(face.submeshIndex, 0, materialCount - 1)];
+                    var submeshIndex = materialMap.IndexOf(material);
+
+                    if (submeshIndex > -1)
+                    {
+                        newFace.submeshIndex = submeshIndex;
+                    }
+                    else
+                    {
+                        if (material == null)
+                        {
+                            newFace.submeshIndex = 0;
+                        }
+                        else
+                        {
+                            newFace.submeshIndex = materialMap.Count;
+                            materialMap.Add(material);
+                        }
+                    }
+
+                    faces.Add(newFace);
+                }
+
+                foreach (var sv in meshSharedVertices)
+                {
+                    var nsv = new SharedVertex(sv);
+                    nsv.ShiftIndexes(offset);
+                    sharedVertices.Add(nsv);
+                }
+
+                foreach (var st in meshSharedTextures)
+                {
+                    var nst = new SharedVertex(st);
+                    nst.ShiftIndexes(offset);
+                    sharedTextures.Add(nst);
+                }
+
+                offset += meshVertexCount;
+            }
+
+            meshTarget.SetVertices(vertices);
+            meshTarget.faces = faces;
+            meshTarget.sharedVertices = sharedVertices;
+            meshTarget.sharedVertices = sharedTextures != null ? sharedTextures.ToArray() : null;
+            meshTarget.renderer.sharedMaterials = materialMap.ToArray();
+            meshTarget.ToMesh();
+            meshTarget.Refresh();
+
+            var returnedMesh = new List<ProBuilderMesh>() { meshTarget };
+            if (remainderMeshContributors.Count > 1)
+            {
+                var newMeshes = Combine(remainderMeshContributors);
+                foreach(var mesh in newMeshes)
+                {
+                    returnedMesh.Add(mesh);
+                }
+            }
+            else if(remainderMeshContributors.Count == 1)
+            {
+                returnedMesh.Add(remainderMeshContributors[0]);
+            }
+
+            return returnedMesh;
         }
 
         static ProBuilderMesh CreateMeshFromSplit(List<Vertex> vertices,

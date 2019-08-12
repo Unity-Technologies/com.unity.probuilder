@@ -43,22 +43,27 @@ namespace UnityEditor.ProBuilder.Actions
                 return new ActionResult(ActionResult.Status.Canceled, "Must Select 2+ Objects");
 
             var selected = MeshSelection.top.ToArray();
-            List<ProBuilderMesh> res = CombineMeshes.Combine(MeshSelection.topInternal);
+            ProBuilderMesh currentMesh = MeshSelection.activeMesh;
+            UndoUtility.RecordObject(currentMesh, "Merge Objects");
+            List<ProBuilderMesh> res = CombineMeshes.Combine(currentMesh, MeshSelection.topInternal);
 
             if (res != null)
             {
                 foreach (var mesh in res)
                 {
                     mesh.Optimize();
-                    mesh.gameObject.name = Selection.activeGameObject.name + "-Merged";
-                    UndoUtility.RegisterCreatedObjectUndo(mesh.gameObject, "Merge Objects");
-                    Selection.objects = res.Select(x => x.gameObject).ToArray();
+                    if (mesh != currentMesh)
+                    {
+                        mesh.gameObject.name = Selection.activeGameObject.name + "-Merged";
+                        UndoUtility.RegisterCreatedObjectUndo(mesh.gameObject, "Merge Objects");
+                        Selection.objects = res.Select(x => x.gameObject).ToArray();
+                    }
                 }
 
-                // Delete donor objects
+                // Delete donor objects if they are not part of the result 
                 for (int i = 0; i < selected.Length; i++)
                 {
-                    if (selected[i] != null)
+                    if (selected[i] != null && res.Contains(selected[i]) == false)
                         UndoUtility.DestroyImmediate(selected[i].gameObject);
                 }
             }
@@ -69,3 +74,4 @@ namespace UnityEditor.ProBuilder.Actions
         }
     }
 }
+
