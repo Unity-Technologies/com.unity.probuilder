@@ -1,15 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEditor.SettingsManagement;
-
-#if !UNITY_2018_3_OR_NEWER
-using UnityEditor.SettingsManagement;
-#endif
 
 #if DEBUG_HANDLES
 using UnityEngine.Rendering;

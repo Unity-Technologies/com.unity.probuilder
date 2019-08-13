@@ -87,25 +87,18 @@ namespace UnityEditor.ProBuilder
                 else if (progridsSnapEnabled)
                 {
                     // Handle is only snapped on all axes in the case where `snapAxisConstraint == false && snapAsGroup == true`
-                    if (snapAxisConstraint || !m_SnapAsGroup)
+                    if (m_SnapAsGroup && snapAxisConstraint && m_ActiveAxesWorld.active == 1)// || !m_SnapAsGroup)
                     {
                         m_ActiveAxesModel |= new Vector3Mask(handleRotationOriginInverse * delta, k_CardinalAxisError);
                         m_ActiveAxesWorld = new Vector3Mask(handleRotation * m_ActiveAxesModel);
 
-                        if (m_ActiveAxesWorld.active == 1)
-                        {
-                            m_HandlePosition = ProGridsSnapping.SnapValueOnRay(
-                                new Ray(handlePositionOrigin, delta),
-                                delta.magnitude,
-                                progridsSnapValue,
-                                m_ActiveAxesWorld);
-                        }
-                        else
-                        {
-                            m_HandlePosition = ProGridsSnapping.SnapValue(m_HandlePosition, progridsSnapValue);
-                        }
+                        m_HandlePosition = ProGridsSnapping.SnapValueOnRay(
+                            new Ray(handlePositionOrigin, delta),
+                            delta.magnitude,
+                            progridsSnapValue,
+                            m_ActiveAxesWorld);
                     }
-                    else
+                    else if(m_SnapAsGroup)
                     {
                         m_HandlePosition = ProGridsSnapping.SnapValue(m_HandlePosition, progridsSnapValue);
                     }
@@ -125,7 +118,6 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 #endif
-
                 ApplyTranslation(handleRotationOriginInverse * delta);
             }
 
@@ -170,7 +162,8 @@ namespace UnityEditor.ProBuilder
                                     new Ray(wp, m_RawHandleDelta),
                                     translationMagnitude,
                                     progridsSnapValue,
-                                    m_ActiveAxesWorld);
+                                    m_ActiveAxesWorld,
+                                    false);
 
                                 positions[index] = worldToLocal.MultiplyPoint3x4(snap);
                             }

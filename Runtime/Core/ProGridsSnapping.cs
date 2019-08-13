@@ -33,9 +33,22 @@ namespace UnityEngine.ProBuilder
         /// <returns></returns>
         public static float SnapValue(float val, float snpVal)
         {
-            if (snpVal < Mathf.Epsilon)
+            var abs = Mathf.Abs(snpVal);
+            if (abs < Mathf.Epsilon)
                 return val;
-            return snpVal * Mathf.Round(val / snpVal);
+            return snpVal * Mathf.Round(val / abs);
+        }
+
+        internal static float SnapDirection(float value, float snap)
+        {
+            var abs = Mathf.Abs(snap);
+
+            if (Mathf.Abs(abs) < Mathf.Epsilon)
+                return value;
+            if (snap < 0f)
+                return abs * Mathf.Floor(value / abs);
+
+            return abs * Mathf.Ceil(value / abs);
         }
 
         /// <summary>
@@ -56,43 +69,12 @@ namespace UnityEngine.ProBuilder
             return v;
         }
 
-        public static Vector3 Floor(Vector3 vertex, Vector3 snap)
-        {
-            float x = vertex.x, y = vertex.y, z = vertex.z;
-            Vector3 v = new Vector3(
-                    (Mathf.Abs(snap.x) < 0.0001f ? x : snap.x * Mathf.Floor(x / snap.x)),
-                    (Mathf.Abs(snap.y) < 0.0001f ? y : snap.y * Mathf.Floor(y / snap.y)),
-                    (Mathf.Abs(snap.z) < 0.0001f ? z : snap.z * Mathf.Floor(z / snap.z))
-                    );
-            return v;
-        }
-
-        public static Vector3 Ceil(Vector3 vertex, Vector3 snap)
-        {
-            float x = vertex.x, y = vertex.y, z = vertex.z;
-            Vector3 v = new Vector3(
-                    (Mathf.Abs(snap.x) < 0.0001f ? x : snap.x * Mathf.Ceil(x / snap.x)),
-                    (Mathf.Abs(snap.y) < 0.0001f ? y : snap.y * Mathf.Ceil(y / snap.y)),
-                    (Mathf.Abs(snap.z) < 0.0001f ? z : snap.z * Mathf.Ceil(z / snap.z))
-                    );
-            return v;
-        }
-
-        public static Vector3 Ceil(Vector3 vertex, float snpVal)
+        public static Vector3 SnapDirection(Vector3 point, Vector3 snap)
         {
             return new Vector3(
-                snpVal * Mathf.Ceil(vertex.x / snpVal),
-                snpVal * Mathf.Ceil(vertex.y / snpVal),
-                snpVal * Mathf.Ceil(vertex.z / snpVal));
-        }
-
-        public static Vector3 Floor(Vector3 vertex, float snpVal)
-        {
-            // snapValue is a global setting that comes from ProGrids
-            return new Vector3(
-                snpVal * Mathf.Floor(vertex.x / snpVal),
-                snpVal * Mathf.Floor(vertex.y / snpVal),
-                snpVal * Mathf.Floor(vertex.z / snpVal));
+                SnapDirection(point.x, snap.x),
+                SnapDirection(point.y, snap.y),
+                SnapDirection(point.z, snap.z));
         }
 
         /// <summary>
@@ -117,7 +99,7 @@ namespace UnityEngine.ProBuilder
                 (Mathf.Approximately(Mathf.Abs(normal.z), 1f)) ? 0f : 1f);
         }
 
-        internal static Vector3 SnapValueOnRay(Ray ray, float distance, float snap, Vector3Mask mask)
+        internal static Vector3 SnapValueOnRay(Ray ray, float distance, float snap, Vector3Mask mask, bool allowBackwardsSnap = true)
         {
             var nearest = k_MaxRaySnapDistance;
 
@@ -135,7 +117,9 @@ namespace UnityEngine.ProBuilder
                         dir * Mathf.Sign(ray.direction[i]));
 
                     var pnt = ray.origin + prj;
-                    var plane = new Plane(dir, SnapValue(pnt, dir * snap));
+                    var dirMag = (dir * Mathf.Sign(ray.direction[i]));
+                    var snapPlaneDir = SnapDirection(pnt, dirMag * snap);
+                    var plane = new Plane(dir, allowBackwardsSnap ? SnapValue(pnt, dir * snap) : snapPlaneDir);
 
                     if(Mathf.Abs(plane.GetDistanceToPoint(ray.origin)) < .0001f)
                     {

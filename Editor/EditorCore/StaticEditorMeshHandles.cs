@@ -5,6 +5,7 @@ using UObject = UnityEngine.Object;
 using UnityEngine.ProBuilder;
 using System.Reflection;
 using UnityEngine.Rendering;
+using Math = UnityEngine.ProBuilder.Math;
 
 namespace UnityEditor.ProBuilder
 {
@@ -54,6 +55,17 @@ namespace UnityEditor.ProBuilder
             Handles.DotHandleCap(0, p + matrix.MultiplyVector(direction) * d, Quaternion.identity, s * dotCapSize, e);
             Handles.DrawLine(p, p + matrix.MultiplyVector(direction) * d);
             Handles.color = Color.white;
+        }
+
+        internal static void DrawPlane(Vector3 normal, Vector3 origin, float size)
+        {
+            if (Event.current.type == EventType.Repaint)
+            {
+                var rot = Quaternion.LookRotation(normal, Vector3.up);
+                Handles.RectangleHandleCap(0, origin, rot, size, EventType.Repaint);
+                Handles.DotHandleCap(0, origin, rot, size * .05f, EventType.Repaint);
+                Handles.Slider(origin, normal);
+            }
         }
 
         internal struct PointDrawingScope : IDisposable
