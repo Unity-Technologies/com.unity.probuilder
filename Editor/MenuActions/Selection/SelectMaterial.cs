@@ -9,7 +9,7 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class SelectMaterial : MenuAction
     {
         GUIContent gc_restrictToSelection = new GUIContent("Current Selection", "Optionally restrict the matches to only those faces on currently selected objects.");
-        Pref<bool> m_RestrictToSelectedObjects = new Pref<bool>("SelectMaterial.restrictToSelectedObjects", false, SettingsScope.Project);
+        internal Pref<bool> m_RestrictToSelectedObjects = new Pref<bool>("SelectMaterial.restrictToSelectedObjects", false, SettingsScope.Project);
 
         public override ToolbarGroup group
         {
@@ -79,16 +79,13 @@ namespace UnityEditor.ProBuilder.Actions
             UndoUtility.RecordSelection("Select Faces with Material");
 
             //Need to go from submesh index to material
-            List<Material> selectedMaterials = new List<Material>();
+            HashSet<Material> selectedMaterials = new HashSet<Material>();
             foreach(var pb in MeshSelection.topInternal)
             {
                 HashSet<int> submeshIndex = new HashSet<int>(pb.selectedFacesInternal.Select(y => y.submeshIndex));
-                foreach(var index in submeshIndex)
+                foreach (var index in submeshIndex)
                 {
-                    if(!selectedMaterials.Contains(pb.renderer.sharedMaterials[index]))
-                    {
-                        selectedMaterials.Add(pb.renderer.sharedMaterials[index]);
-                    }
+                    selectedMaterials.Add(pb.renderer.sharedMaterials[index]);
                 }
             }
 
