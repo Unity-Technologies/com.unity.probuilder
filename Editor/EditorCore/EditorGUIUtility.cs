@@ -347,7 +347,7 @@ namespace UnityEditor.ProBuilder.UI
             Rect intRect = new Rect(sliderRect.x + sliderRect.width + PAD, y + 1f, intWidth, SLIDER_HEIGHT);
             
             Rect totalRect = GUILayoutUtility.GetRect(1, UnityEditor.EditorGUIUtility.singleLineHeight);
-            Rect foldoutRect = new Rect(labelRect.xMax - PAD, labelRect.y, 8, totalRect.height);
+            Rect foldoutRect = new Rect(labelRect.xMax - PAD, labelRect.y, 15, totalRect.height);
 
             if (content != null)
                 GUI.Label(labelRect, content);
@@ -375,7 +375,7 @@ namespace UnityEditor.ProBuilder.UI
             if (expanded)
             {
                 Rect rangeLabelRect = new Rect(sliderRect.x, sliderRect.yMax, sliderRect.width / 2, intRect.height);
-                Rect minRect = new Rect(intRect.x - (intRect.width + indentOffset), sliderRect.yMax, intRect.width, intRect.height);
+                Rect minRect = new Rect(intRect.x - (intRect.width + indentOffset + PAD), sliderRect.yMax, intRect.width, intRect.height);
                 Rect maxRect = new Rect(intRect.x, sliderRect.yMax, intRect.width, intRect.height);
 
                 EditorGUI.PrefixLabel(rangeLabelRect, new GUIContent("Range:"));
