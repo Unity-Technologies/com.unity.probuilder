@@ -34,6 +34,23 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override ActionResult DoAction()
         {
+            var inspWindow = EditorWindow.GetWindow<InspectorWindow>();
+            if (inspWindow != null && inspWindow.isLocked == true)
+            {
+                if (UnityEditor.EditorUtility.DisplayDialog(
+                                    "Inspector Locked",
+                                    "To create new Poly Shape you need access to the Inspector, which is currently locked. Do you wish to unlock the Inpsector?",
+                                    "Unlock",
+                                    "Cancel"))
+                {
+                    inspWindow.isLocked = false;
+                }
+                else
+                {
+                    return new ActionResult(ActionResult.Status.Canceled, "Canceled Create Poly Shape");
+                }
+            }
+
             GameObject go = new GameObject();
             PolyShape poly = go.AddComponent<PolyShape>();
             ProBuilderMesh pb = poly.gameObject.AddComponent<ProBuilderMesh>();
@@ -45,13 +62,12 @@ namespace UnityEditor.ProBuilder.Actions
             if (ProGridsInterface.SnapEnabled() || ProGridsInterface.GridVisible())
             {
                 Vector3 pivot;
-                if(ProGridsInterface.GetPivot(out pivot))
+                if (ProGridsInterface.GetPivot(out pivot))
                     go.transform.position = pivot;
             }
             MeshSelection.SetSelection(go);
             UndoUtility.RegisterCreatedObjectUndo(go, "Create Poly Shape");
             poly.polyEditMode = PolyShape.PolyEditMode.Path;
-
 
             return new ActionResult(ActionResult.Status.Success, "Create Poly Shape");
         }
