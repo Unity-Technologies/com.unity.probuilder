@@ -136,56 +136,16 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (!meshes.Any() || meshes.Count() < 2 )
                 return null;
 
-            var vertices = new List<Vertex>();
-            var faces = new List<Face>();
-            var autoUvFaces = new List<Face>();
-            var sharedVertices = new List<SharedVertex>();
-            var sharedTextures = new List<SharedVertex>();
-            int offset = 0;
-            var materialMap = new List<Material>();
+            if (!meshes.Contains(meshTarget))
+                return null;
+
+            var vertices = new List<Vertex>(meshTarget.GetVertices());
+            var faces = new List<Face>(meshTarget.facesInternal);            
+            var sharedVertices = new List<SharedVertex>(meshTarget.sharedVertices);
+            var sharedTextures = new List<SharedVertex>(meshTarget.sharedTextures);
+            int offset = meshTarget.vertexCount;
+            var materialMap = new List<Material>(meshTarget.renderer.sharedMaterials);
             var targetTransform = meshTarget.transform;
-
-
-            //First pass put the meshTarget as first vertices
-            foreach (var mesh in meshes)
-            {
-                if (mesh == meshTarget)
-                {
-                    var meshVertexCount = mesh.vertexCount;
-                    var meshVertices = mesh.GetVertices();
-                    var meshFaces = mesh.facesInternal;
-                    var meshSharedVertices = mesh.sharedVertices;
-                    var meshSharedTextures = mesh.sharedTextures;
-                    var materials = mesh.renderer.sharedMaterials;
-                    var materialCount = materials.Length;
-
-                    for (int i = 0; i < meshVertexCount; i++)
-                        vertices.Add(meshVertices[i]);
-
-                    foreach (var face in meshFaces)
-                    {
-                        faces.Add(face);
-                    }
-
-                    foreach (var sv in meshSharedVertices)
-                    {                   
-                        sharedVertices.Add(sv);
-                    }
-
-                    foreach (var st in meshSharedTextures)
-                    {
-                        sharedTextures.Add(st);
-                    }
-
-                    foreach (var mat in materials)
-                    {
-                        materialMap.Add(mat);
-                    }
-
-                    offset += meshVertexCount;
-                    break;
-                }
-            }
 
             var firstMeshContributors = new List<ProBuilderMesh>();
             var remainderMeshContributors = new List<ProBuilderMesh>();
@@ -207,6 +167,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 }
             }
 
+            var autoUvFaces = new List<Face>();
             foreach (var mesh in firstMeshContributors)
             {
                 if (mesh == meshTarget)
@@ -286,6 +247,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             meshTarget.renderer.sharedMaterials = materialMap.ToArray();
             meshTarget.ToMesh();
             meshTarget.Refresh();
+            UVEditing.SetAutoAndAlignUnwrapParamsToUVs(meshTarget, autoUvFaces);
 
             var returnedMesh = new List<ProBuilderMesh>() { meshTarget };
             if (remainderMeshContributors.Count > 1)
