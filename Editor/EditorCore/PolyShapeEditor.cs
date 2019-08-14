@@ -360,7 +360,12 @@ namespace UnityEditor.ProBuilder
                         if (polygon.m_Points.Count < 1)
                         {
                             polygon.transform.position = polygon.isOnGrid ? ProGridsInterface.ProGridsSnap(hit) : hit;
-                            polygon.transform.rotation = Quaternion.LookRotation(m_Plane.normal) * Quaternion.Euler(new Vector3(90f, 0f, 0f));
+
+                            Vector3 cameraFacingPlaneNormal = m_Plane.normal;
+                            if (Vector3.Dot(cameraFacingPlaneNormal, SceneView.lastActiveSceneView.camera.transform.forward) > 0f)
+                                cameraFacingPlaneNormal *= -1;
+
+                            polygon.transform.rotation = Quaternion.LookRotation(cameraFacingPlaneNormal) * Quaternion.Euler(new Vector3(90f, 0f, 0f));
                         }
 
                         Vector3 point = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(hit), Vector3.one);
