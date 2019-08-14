@@ -2,6 +2,7 @@ using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEditor;
+using System.Reflection;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEditor.ProBuilder.UI;
 using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
@@ -32,41 +33,51 @@ namespace UnityEditor.ProBuilder.Actions
             get { return true; }
         }
 
-        public override ActionResult DoAction()
+        bool CanCreateNewPolyShape()
         {
-#if UNITY_2019_1_OR_NEWER
+            //If inspector is locked we cannot create new PolyShape.
             //First created inspector seems to hold a specific semantic where
             //if not unlocked no matter how many inspectors are present they will
             //not allow the creation of new PolyShape.
-            var inspWindows = InspectorWindow.GetInspectors();
+            var inspectorType = typeof(Editor).Assembly.GetType("UnityEditor.InspectorWindow");
+            var inspWindows = Resources.FindObjectsOfTypeAll(inspectorType);
+            var isLocked = inspectorType.GetProperty("isLocked", BindingFlags.Instance | BindingFlags.Public);
             bool someInspectorLocked = false;
-            foreach(var insp in inspWindows)
+            foreach (var insp in inspWindows)
             {
-                if (insp.isLocked)
+                if ((bool)isLocked.GetGetMethod().Invoke(insp, null))
                 {
                     someInspectorLocked = true;
+
                     break;
                 }
             }
             if (someInspectorLocked == true)
             {
                 if (UnityEditor.EditorUtility.DisplayDialog(
-                                    L10n.Tr("Inspector Locked"),
-                                    L10n.Tr("To create new Poly Shape you need access to all Inspectors, which are currently locked. Do you wish to unlock all Inpsectors?"),
-                                    L10n.Tr("Unlock"),
-                                    L10n.Tr("Cancel")))
+                                    "Inspector Locked",
+                                    "To create new Poly Shape you need access to all Inspectors, which are currently locked. Do you wish to unlock all Inpsectors?",
+                                    "Unlock",
+                                    "Cancel"))
                 {
                     foreach (var insp in inspWindows)
                     {
-                        insp.isLocked = false;
+                        isLocked.GetSetMethod().Invoke(insp, new object[] { false });
                     }
                 }
                 else
                 {
-                    return new ActionResult(ActionResult.Status.Canceled, "Canceled Create Poly Shape");
+                    return false;
                 }
             }
-#endif
+
+            return true;
+        }
+
+        public override ActionResult DoAction()
+        {
+            if (!CanCreateNewPolyShape())
+                return new ActionResult(ActionResult.Status.Canceled, "Canceled Create Poly Shape");
 
             GameObject go = new GameObject();
             PolyShape poly = go.AddComponent<PolyShape>();
