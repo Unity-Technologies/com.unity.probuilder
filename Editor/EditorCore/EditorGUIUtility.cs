@@ -375,8 +375,8 @@ namespace UnityEditor.ProBuilder.UI
             if (expanded)
             {
                 Rect rangeLabelRect = new Rect(sliderRect.x, sliderRect.yMax, sliderRect.width / 2, intRect.height);
-                Rect minRect = new Rect(intRect.x - (intRect.width + indentOffset + PAD), sliderRect.yMax, intRect.width, intRect.height);
-                Rect maxRect = new Rect(intRect.x, sliderRect.yMax, intRect.width, intRect.height);
+                Rect minRect = new Rect(intRect.x - (intRect.width + indentOffset + PAD), sliderRect.yMax + 2f, intRect.width, intRect.height);
+                Rect maxRect = new Rect(intRect.x, sliderRect.yMax + 2f, intRect.width, intRect.height);
 
                 EditorGUI.PrefixLabel(rangeLabelRect, new GUIContent("Range:"));
                 uiMin = UnityEditor.EditorGUI.DelayedIntField(minRect, uiMin);
