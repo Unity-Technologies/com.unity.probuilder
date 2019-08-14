@@ -186,6 +186,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
                     var worldVertex = transform.TransformVertex(meshVertices[i]);
                     if (targetTransform != null)
                         vertices.Add(targetTransform.InverseTransformVertex(worldVertex));
+                    else
+                        vertices.Add(worldVertex);
                 }
 
 
