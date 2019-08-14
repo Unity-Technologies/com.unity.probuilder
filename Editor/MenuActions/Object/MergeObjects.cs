@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder.Actions
             var selected = MeshSelection.top.ToArray();
             ProBuilderMesh currentMesh = MeshSelection.activeMesh;
             UndoUtility.RecordObject(currentMesh, "Merge Objects");
-            List<ProBuilderMesh> res = CombineMeshes.Combine(currentMesh, MeshSelection.topInternal);
+            List<ProBuilderMesh> res = CombineMeshes.Combine(MeshSelection.topInternal, currentMesh);
 
             if (res != null)
             {

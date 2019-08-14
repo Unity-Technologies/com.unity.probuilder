@@ -18,100 +18,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// A list of merged meshes. In most cases this will be a single mesh. However it can be multiple in cases
         /// where the resulting vertex count exceeds the maximum allowable value.
         /// </returns>
+        [Obsolete("Combine(IEnumerable<ProBuilderMesh> meshes) is deprecated. Plase use Combine(IEnumerable<ProBuilderMesh> meshes, ProBuilderMesh meshTarget).")]
         public static List<ProBuilderMesh> Combine(IEnumerable<ProBuilderMesh> meshes)
         {
-            if (meshes == null)
-                throw new ArgumentNullException("meshes");
-
-            if (!meshes.Any() || meshes.Count() < 2)
-                return null;
-
-            var vertices = new List<Vertex>();
-            var faces = new List<Face>();
-            var autoUvFaces = new List<Face>();
-            var sharedVertices = new List<SharedVertex>();
-            var sharedTextures = new List<SharedVertex>();
-            int offset = 0;
-            var materialMap = new List<Material>();
-
-            foreach (var mesh in meshes)
-            {
-                var meshVertexCount = mesh.vertexCount;
-                var transform = mesh.transform;
-                var meshVertices = mesh.GetVertices();
-                var meshFaces = mesh.facesInternal;
-                var meshSharedVertices = mesh.sharedVertices;
-                var meshSharedTextures = mesh.sharedTextures;
-                var materials = mesh.renderer.sharedMaterials;
-                var materialCount = materials.Length;
-
-                for (int i = 0; i < meshVertexCount; i++)
-                    vertices.Add(transform.TransformVertex(meshVertices[i]));
-
-                foreach (var face in meshFaces)
-                {
-                    var newFace = new Face(face);
-                    newFace.ShiftIndexes(offset);
-
-                    // prevents uvs from shifting when being converted from local coords to world space
-                    if (!newFace.manualUV && !newFace.uv.useWorldSpace)
-                    {
-                        newFace.manualUV = true;
-                        autoUvFaces.Add(newFace);
-                    }
-                    var material = materials[Math.Clamp(face.submeshIndex, 0, materialCount - 1)];
-                    var submeshIndex = materialMap.IndexOf(material);
-
-                    if (submeshIndex > -1)
-                    {
-                        newFace.submeshIndex = submeshIndex;
-                    }
-                    else
-                    {
-                        if (material == null)
-                        {
-                            newFace.submeshIndex = 0;
-                        }
-                        else
-                        {
-                            newFace.submeshIndex = materialMap.Count;
-                            materialMap.Add(material);
-                        }
-                    }
-
-                    faces.Add(newFace);
-                }
-
-                foreach (var sv in meshSharedVertices)
-                {
-                    var nsv = new SharedVertex(sv);
-                    nsv.ShiftIndexes(offset);
-                    sharedVertices.Add(nsv);
-                }
-
-                foreach (var st in meshSharedTextures)
-                {
-                    var nst = new SharedVertex(st);
-                    nst.ShiftIndexes(offset);
-                    sharedTextures.Add(nst);
-                }
-
-                offset += meshVertexCount;
-            }
-
-            var res = SplitByMaxVertexCount(vertices, faces, sharedVertices, sharedTextures);
-            var pivot = meshes.LastOrDefault().transform.position;
-
-            foreach (var m in res)
-            {
-                m.renderer.sharedMaterials = materialMap.ToArray();
-                InternalMeshUtility.FilterUnusedSubmeshIndexes(m);
-                m.SetPivot(pivot);
-                UVEditing.SetAutoAndAlignUnwrapParamsToUVs(m, autoUvFaces);
-
-            }
-
-            return res;
+            return CombineToNewMeshes(meshes);
         }
 
         /// <summary>
@@ -119,13 +29,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// destination for the first 65535 vertices. If the sum of vertices is above 65535 it will generate new meshes unless there is a single mesh left in which
         /// case it will append it to the return list.
         /// </summary>
-        /// <param name="meshTarget">A polybrush mesh for which we will be re-using the target mesh of the previous.</param>
         /// <param name="meshes">A collection of meshes to be merged.</param>
+        /// <param name="meshTarget">A mesh which will be used as the starting point for merging and which will be kept as reference/target.</param>
         /// <returns>
         /// A list of merged meshes. In most cases this will be a single mesh corresponding to meshTarget. However it can be multiple in cases
         /// where the resulting vertex count exceeds the maximum allowable value.
         /// </returns>
-        public static List<ProBuilderMesh> Combine(ProBuilderMesh meshTarget, IEnumerable<ProBuilderMesh> meshes)
+        public static List<ProBuilderMesh> Combine(IEnumerable<ProBuilderMesh> meshes, ProBuilderMesh meshTarget)
         {
             if (meshes == null)
                 throw new ArgumentNullException("meshes");
@@ -168,11 +78,100 @@ namespace UnityEngine.ProBuilder.MeshOperations
             }
 
             var autoUvFaces = new List<Face>();
-            foreach (var mesh in firstMeshContributors)
-            {
-                if (mesh == meshTarget)
-                    continue;
+            AccumulateMeshesInfo(
+                firstMeshContributors,
+                offset,
+                ref vertices,
+                ref faces,
+                ref autoUvFaces,
+                ref sharedVertices,
+                ref sharedTextures,
+                ref materialMap,
+                targetTransform
+            );
 
+            meshTarget.SetVertices(vertices);
+            meshTarget.faces = faces;
+            meshTarget.sharedVertices = sharedVertices;
+            meshTarget.sharedVertices = sharedTextures != null ? sharedTextures.ToArray() : null;
+            meshTarget.renderer.sharedMaterials = materialMap.ToArray();
+            meshTarget.ToMesh();
+            meshTarget.Refresh();
+            UVEditing.SetAutoAndAlignUnwrapParamsToUVs(meshTarget, autoUvFaces);
+
+            var returnedMesh = new List<ProBuilderMesh>() { meshTarget };
+            if (remainderMeshContributors.Count > 1)
+            {
+                var newMeshes = CombineToNewMeshes(remainderMeshContributors);
+                foreach(var mesh in newMeshes)
+                {
+                    returnedMesh.Add(mesh);
+                }
+            }
+            else if(remainderMeshContributors.Count == 1)
+            {
+                returnedMesh.Add(remainderMeshContributors[0]);
+            }
+
+            return returnedMesh;
+        }
+
+        static List<ProBuilderMesh> CombineToNewMeshes(IEnumerable<ProBuilderMesh> meshes)
+        {
+            if (meshes == null)
+                throw new ArgumentNullException("meshes");
+
+            if (!meshes.Any() || meshes.Count() < 2)
+                return null;
+
+            var vertices = new List<Vertex>();
+            var faces = new List<Face>();
+            var autoUvFaces = new List<Face>();
+            var sharedVertices = new List<SharedVertex>();
+            var sharedTextures = new List<SharedVertex>();
+            int offset = 0;
+            var materialMap = new List<Material>();
+
+            AccumulateMeshesInfo(
+               meshes,
+               offset,
+               ref vertices,
+               ref faces,
+               ref autoUvFaces,
+               ref sharedVertices,
+               ref sharedTextures,
+               ref materialMap
+           );
+
+            var res = SplitByMaxVertexCount(vertices, faces, sharedVertices, sharedTextures);
+            var pivot = meshes.LastOrDefault().transform.position;
+
+            foreach (var m in res)
+            {
+                m.renderer.sharedMaterials = materialMap.ToArray();
+                InternalMeshUtility.FilterUnusedSubmeshIndexes(m);
+                m.SetPivot(pivot);
+                UVEditing.SetAutoAndAlignUnwrapParamsToUVs(m, autoUvFaces);
+
+            }
+
+            return res;
+        }
+
+        static void AccumulateMeshesInfo(
+                IEnumerable<ProBuilderMesh> meshes,
+                int offset,
+                ref List<Vertex> vertices,
+                ref List<Face> faces,
+                ref List<Face> autoUvFaces,
+                ref List<SharedVertex> sharedVertices,
+                ref List<SharedVertex> sharedTextures,
+                ref List<Material> materialMap,
+                Transform targetTransform = null
+            )
+        {
+            foreach (var mesh in meshes)
+            {
                 var meshVertexCount = mesh.vertexCount;
                 var transform = mesh.transform;
                 var meshVertices = mesh.GetVertices();
@@ -185,7 +184,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 for (int i = 0; i < meshVertexCount; i++)
                 {
                     var worldVertex = transform.TransformVertex(meshVertices[i]);
-                    vertices.Add(targetTransform.InverseTransformVertex(worldVertex));
+                    if (targetTransform != null)
+                        vertices.Add(targetTransform.InverseTransformVertex(worldVertex));
                 }
 
 
@@ -239,31 +239,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
                 offset += meshVertexCount;
             }
-
-            meshTarget.SetVertices(vertices);
-            meshTarget.faces = faces;
-            meshTarget.sharedVertices = sharedVertices;
-            meshTarget.sharedVertices = sharedTextures != null ? sharedTextures.ToArray() : null;
-            meshTarget.renderer.sharedMaterials = materialMap.ToArray();
-            meshTarget.ToMesh();
-            meshTarget.Refresh();
-            UVEditing.SetAutoAndAlignUnwrapParamsToUVs(meshTarget, autoUvFaces);
-
-            var returnedMesh = new List<ProBuilderMesh>() { meshTarget };
-            if (remainderMeshContributors.Count > 1)
-            {
-                var newMeshes = Combine(remainderMeshContributors);
-                foreach(var mesh in newMeshes)
-                {
-                    returnedMesh.Add(mesh);
-                }
-            }
-            else if(remainderMeshContributors.Count == 1)
-            {
-                returnedMesh.Add(remainderMeshContributors[0]);
-            }
-
-            return returnedMesh;
         }
 
         static ProBuilderMesh CreateMeshFromSplit(List<Vertex> vertices,

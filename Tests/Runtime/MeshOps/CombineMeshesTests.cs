@@ -43,7 +43,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOperations
             meshes.Add(m_mesh2);
             meshes.Add(m_mesh3);
 
-            var newMeshes = CombineMeshes.Combine(m_mesh1, meshes);
+            var newMeshes = CombineMeshes.Combine(meshes, m_mesh1);
             Assert.That(newMeshes.Count, Is.EqualTo(1));
             Assert.That(newMeshes[0], Is.EqualTo(m_mesh1));
             Assert.That(newMeshes[0].gameObject.GetComponent<BoxCollider>, !Is.EqualTo(null));
