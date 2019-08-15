@@ -51,7 +51,7 @@ namespace UnityEditor.ProBuilder
                 get { return m_Positions; }
             }
 
-            public MeshAndPositions(ProBuilderMesh mesh, PivotPoint pivot) : base(mesh, pivot, k_CollectCoincidentVertices)
+            public MeshAndPositions(ProBuilderMesh mesh, PivotPoint pivot) : base(mesh, k_CollectCoincidentVertices)
             {
                 m_Positions = mesh.positions.ToArray();
 

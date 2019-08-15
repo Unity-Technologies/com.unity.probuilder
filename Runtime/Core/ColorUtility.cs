@@ -123,6 +123,12 @@ namespace UnityEngine.ProBuilder
             return Mathf.Abs(lhs - rhs) < Mathf.Epsilon;
         }
 
+        public static Color GetColor(Vector3 vec)
+        {
+            vec.Normalize();
+            return new Color(Mathf.Abs(vec.x), Mathf.Abs(vec.y), Mathf.Abs(vec.z), 1f);
+        }
+
         /// <summary>
         /// Convert RGBA color to XYZ
         /// </summary>
