@@ -39,6 +39,36 @@ namespace UnityEditor.ProBuilder.Actions
             //First created inspector seems to hold a specific semantic where
             //if not unlocked no matter how many inspectors are present they will
             //not allow the creation of new PolyShape.
+#if UNITY_2019_1_OR_NEWER           
+            var inspWindows = InspectorWindow.GetInspectors();
+            bool someInspectorLocked = false;
+            foreach (var insp in inspWindows)
+            {
+                if (insp.isLocked)
+                {
+                    someInspectorLocked = true;
+                    break;
+                }
+            }
+            if (someInspectorLocked == true)
+            {
+                if (UnityEditor.EditorUtility.DisplayDialog(                                   
+                                    L10n.Tr("Inspector Locked"),
+                                    L10n.Tr("To create new Poly Shape you need access to all Inspectors, which are currently locked. Do you wish to unlock all Inpsectors?"),
+                                    L10n.Tr("Unlock"),
+                                    L10n.Tr("Cancel")))
+                {
+                    foreach (var insp in inspWindows)
+                    {
+                        insp.isLocked = false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+#else
             var inspectorType = typeof(Editor).Assembly.GetType("UnityEditor.InspectorWindow");
             var inspWindows = Resources.FindObjectsOfTypeAll(inspectorType);
             var isLocked = inspectorType.GetProperty("isLocked", BindingFlags.Instance | BindingFlags.Public);
@@ -48,7 +78,6 @@ namespace UnityEditor.ProBuilder.Actions
                 if ((bool)isLocked.GetGetMethod().Invoke(insp, null))
                 {
                     someInspectorLocked = true;
-
                     break;
                 }
             }
@@ -70,7 +99,7 @@ namespace UnityEditor.ProBuilder.Actions
                     return false;
                 }
             }
-
+#endif
             return true;
         }
 
