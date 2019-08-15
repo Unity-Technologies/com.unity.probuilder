@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using PHandleUtility = UnityEngine.ProBuilder.HandleUtility;
 
 namespace UnityEditor.ProBuilder
 {
@@ -24,7 +25,7 @@ namespace UnityEditor.ProBuilder
             get { return m_ElementGroups; }
         }
 
-        public MeshAndElementSelection(ProBuilderMesh mesh, PivotPoint pivot, bool collectCoincidentIndices)
+        public MeshAndElementSelection(ProBuilderMesh mesh, bool collectCoincidentIndices)
         {
             m_Mesh = mesh;
             m_ElementGroups = ElementGroup.GetElementGroups(mesh, collectCoincidentIndices);
@@ -38,7 +39,7 @@ namespace UnityEditor.ProBuilder
         Quaternion m_Rotation;
 
         /// <value>
-        /// Center of this selection in world space.
+        /// The pivot of this selection in world space.
         /// </value>
         public Vector3 position
         {
@@ -58,10 +59,10 @@ namespace UnityEditor.ProBuilder
             get { return m_Indices; }
         }
 
-        public ElementGroup(List<int> indices, Vector3 position, Quaternion rotation)
+        public ElementGroup(List<int> indices, Vector3 pivot, Quaternion rotation)
         {
             m_Indices = indices;
-            m_Position = position;
+            m_Position = pivot;
             m_Rotation = rotation;
         }
 
@@ -74,8 +75,8 @@ namespace UnityEditor.ProBuilder
             {
                 foreach (var list in GetVertexSelectionGroups(mesh, collectCoincident))
                 {
-                    var pos = UnityEngine.ProBuilder.HandleUtility.GetActiveElementPosition(mesh, list);
-                    var rot = UnityEngine.ProBuilder.HandleUtility.GetVertexRotation(mesh, HandleOrientation.ActiveElement, list);
+                    var pos = PHandleUtility.GetActiveElementPosition(mesh, list);
+                    var rot = PHandleUtility.GetVertexRotation(mesh, HandleOrientation.ActiveElement, list);
                     groups.Add(new ElementGroup(list, pos, rot));
                 }
             }
@@ -83,8 +84,8 @@ namespace UnityEditor.ProBuilder
             {
                 foreach (var list in GetEdgeSelectionGroups(mesh))
                 {
-                    var pos = UnityEngine.ProBuilder.HandleUtility.GetActiveElementPosition(mesh, list);
-                    var rot = UnityEngine.ProBuilder.HandleUtility.GetEdgeRotation(mesh, HandleOrientation.ActiveElement, list);
+                    var pos = PHandleUtility.GetActiveElementPosition(mesh, list);
+                    var rot = PHandleUtility.GetEdgeRotation(mesh, HandleOrientation.ActiveElement, list);
 
                     List<int> indices;
 
@@ -105,8 +106,8 @@ namespace UnityEditor.ProBuilder
             {
                 foreach (var list in GetFaceSelectionGroups(mesh))
                 {
-                    var pos = UnityEngine.ProBuilder.HandleUtility.GetActiveElementPosition(mesh, list);
-                    var rot = UnityEngine.ProBuilder.HandleUtility.GetFaceRotation(mesh, HandleOrientation.ActiveElement, list);
+                    var pos = PHandleUtility.GetActiveElementPosition(mesh, list);
+                    var rot = PHandleUtility.GetFaceRotation(mesh, HandleOrientation.ActiveElement, list);
                     List<int> indices;
 
                     if (collectCoincident)

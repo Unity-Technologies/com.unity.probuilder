@@ -1,6 +1,9 @@
 using System;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.Rendering;
+using ColorUtility = UnityEngine.ProBuilder.ColorUtility;
+using Math = UnityEngine.ProBuilder.Math;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -133,11 +136,19 @@ namespace UnityEditor.ProBuilder.Actions
         void OnEnable()
         {
             titleContent.text = L10n.Tr("Offset Element Settings");
+            SceneView.duringSceneGui += OnSceneGUI;
+        }
+
+        void OnDisable()
+        {
+            SceneView.duringSceneGui -= OnSceneGUI;
         }
 
         void OnGUI()
         {
             DoContextMenu();
+
+            EditorGUI.BeginChangeCheck();
 
             var dist = OffsetElements.s_Translation.value;
             var coord = OffsetElements.s_CoordinateSpace.value;
@@ -160,7 +171,60 @@ namespace UnityEditor.ProBuilder.Actions
                 var instance = EditorToolbarLoader.GetInstance<OffsetElements>();
                 EditorUtility.ShowNotification(instance.DoAction().notification);
             }
+
+            if (EditorGUI.EndChangeCheck())
+                SceneView.RepaintAll();
         }
 
+        void OnSceneGUI(SceneView view)
+        {
+            var coord = OffsetElements.s_CoordinateSpace.value;
+            var offset = OffsetElements.s_Translation.value;
+            var handleRotation = MeshSelection.GetHandleRotation();
+            var camera = view.camera.transform.forward * -.01f;
+
+            var lines = new EditorMeshHandles.LineDrawingScope(ColorUtility.GetColor(offset));
+            var points = new EditorMeshHandles.PointDrawingScope(ColorUtility.GetColor(offset));
+
+            foreach (var selection in MeshSelection.elementSelection)
+            {
+                var mesh = selection.mesh;
+
+                if (coord == OffsetElements.CoordinateSpace.Element)
+                {
+                    foreach (var elements in selection.elementGroups)
+                        DrawOffsetPreview(lines, points, elements.position + camera, elements.rotation * offset);
+                }
+                else
+                {
+                    var preview = offset;
+
+                    if (coord == OffsetElements.CoordinateSpace.Handle)
+                        preview = handleRotation * offset;
+                    else if (coord == OffsetElements.CoordinateSpace.Local)
+                        preview = mesh.transform.TransformDirection(offset);
+
+                    foreach (var elements in selection.elementGroups)
+                        DrawOffsetPreview(lines, points, elements.position + camera, preview);
+                }
+
+                lines.Dispose();
+                points.Dispose();
+            }
+        }
+
+        static void DrawOffsetPreview(
+            EditorMeshHandles.LineDrawingScope lines,
+            EditorMeshHandles.PointDrawingScope points,
+            Vector3 origin,
+            Vector3 direction)
+        {
+            lines.DrawLine(origin, origin + direction);
+            var old = points.color;
+            points.color = Color.gray;
+            points.Draw(origin);
+            points.color = old;
+            points.Draw(origin + direction);
+        }
     }
 }

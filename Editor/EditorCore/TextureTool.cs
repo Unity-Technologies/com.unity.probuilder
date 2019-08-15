@@ -88,7 +88,7 @@ namespace UnityEditor.ProBuilder
                 get { return m_Origins; }
             }
 
-            public MeshAndTextures(ProBuilderMesh mesh, PivotPoint pivot) : base(mesh, pivot, k_CollectCoincidentVertices)
+            public MeshAndTextures(ProBuilderMesh mesh, PivotPoint pivot) : base(mesh, k_CollectCoincidentVertices)
             {
                 m_Textures = new List<Vector4>();
                 mesh.GetUVs(k_TextureChannel, m_Textures);
