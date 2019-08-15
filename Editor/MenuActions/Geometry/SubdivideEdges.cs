@@ -8,6 +8,11 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class SubdivideEdges : MenuAction
     {
         Pref<int> m_SubdivisionCount = new Pref<int>("SubdivideEdges.subdivisions", 1);
+        Pref<int> m_SubdivisionUIMin = new Pref<int>("SubdivideEdges.subdivisionsUIMin", 1);
+        Pref<int> m_SubdivisionUIMax = new Pref<int>("SubdivideEdges.subdivisionsUIMax", 32);
+        Pref<bool> m_SubdivisionRangeExpanded = new Pref<bool>("SubdivideEdges.rangeExpanded", false);
+        const int m_SubdivisionMin = 1;
+        const int m_SubdivisionMax = 512;
 
         public override ToolbarGroup group
         {
@@ -58,8 +63,14 @@ namespace UnityEditor.ProBuilder.Actions
             EditorGUI.BeginChangeCheck();
 
             EditorGUILayout.HelpBox("How many vertices to insert on each selected edge.\n\nVertices will be equally spaced between one another and the boundaries of the edge.", MessageType.Info);
+            int minUIRange = m_SubdivisionUIMin.value;
+            int maxUIRange = m_SubdivisionUIMax.value;
+            bool expanded = m_SubdivisionRangeExpanded.value;
+            m_SubdivisionCount.value = (int)UI.EditorGUIUtility.FreeSliderWithRange("Subdivisions", (int)m_SubdivisionCount.value, m_SubdivisionMin, m_SubdivisionMax, ref minUIRange, ref maxUIRange, ref expanded);
+            m_SubdivisionUIMin.value = minUIRange;
+            m_SubdivisionUIMax.value = maxUIRange;
+            m_SubdivisionRangeExpanded.value = expanded;
 
-            m_SubdivisionCount.value = (int)UI.EditorGUIUtility.FreeSlider("Subdivisions", m_SubdivisionCount, 1, 32);
 
             if (EditorGUI.EndChangeCheck())
                 ProBuilderSettings.Save();
