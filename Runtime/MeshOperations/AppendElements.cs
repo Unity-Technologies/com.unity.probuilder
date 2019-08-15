@@ -334,10 +334,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 Vector3 nrm = Math.Normal(mesh, mesh.facesInternal[0]);
                 nrm = mesh.gameObject.transform.TransformDirection(nrm);
                 cameraLookAt.Normalize();
-                bool faceWasFlipped = false;
                 if ((flipNormals ? Vector3.Dot(cameraLookAt, nrm) < 0f : Vector3.Dot(cameraLookAt, nrm) > 0f))
                 {
-                    faceWasFlipped = true;
                     mesh.facesInternal[0].Reverse();
                 }
 
@@ -345,7 +343,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 {
                     mesh.DuplicateAndFlip(mesh.facesInternal);
 
-                    mesh.Extrude(new Face[] { (faceWasFlipped ? mesh.facesInternal[1] : mesh.facesInternal[0]) }, ExtrudeMethod.IndividualFaces, extrude);
+                    mesh.Extrude(new Face[] { (flipNormals ? mesh.facesInternal[1] : mesh.facesInternal[0]) }, ExtrudeMethod.IndividualFaces, extrude);
 
                     if ((extrude < 0f && !flipNormals) || (extrude > 0f && flipNormals))
                     {
