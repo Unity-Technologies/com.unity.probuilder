@@ -27,7 +27,7 @@ namespace UnityEditor.ProBuilder.Actions
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
                 "Freeze Transform",
-                @"Set the pivot point to world coordinates (0,0,0) and clear all Transform values while keeping the mesh in place."
+                @"Set the pivot point to world/parent coordinates (0,0,0) and clear Transform values while keeping the mesh in place."
             );
 
         public override bool enabled
@@ -44,17 +44,20 @@ namespace UnityEditor.ProBuilder.Actions
 
             var selection = MeshSelection.topInternal;
             Vector3[][] positions = new Vector3[selection.Count][];
+            
 
             for (int i = 0, c = selection.Count; i < c; i++)
-                positions[i] = selection[i].VerticesInWorldSpace();
+                positions[i] = selection[i].VerticesInParentSpace();
 
+            //Note need to sort from children to parent.
             for (int i = 0, c = selection.Count; i < c; i++)
-            {
+            {                
                 ProBuilderMesh pb = selection[i];
+                bool inParentSpace = (pb.transform.parent != null);
 
-                pb.transform.position = Vector3.zero;
-                pb.transform.rotation = Quaternion.identity;
-                pb.transform.localScale = Vector3.one;
+                pb.transform.position = (inParentSpace  ? pb.transform.parent.position : Vector3.zero);
+                pb.transform.rotation = (inParentSpace ? pb.transform.parent.rotation : Quaternion.identity);
+                pb.transform.localScale = (inParentSpace ? pb.transform.parent.localScale : Vector3.one);
 
                 foreach (Face face in pb.facesInternal)
                     face.manualUV = true;

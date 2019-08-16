@@ -34,6 +34,31 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
+        /// Get a copy of a mesh positions array transformed into parent coordinates or world if no parents.
+        /// </summary>
+        /// <param name="mesh">The source mesh.</param>
+        /// <returns>An array containing all vertex positions in world space.</returns>
+        public static Vector3[] VerticesInParentSpace(this ProBuilderMesh mesh)
+        {
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+            int len = mesh.vertexCount;
+            Vector3[] parentSpacePoints = new Vector3[len];
+            Vector3[] localPoints = mesh.positionsInternal;
+            Transform parentTransform = mesh.transform.parent;
+
+            for (int i = 0; i < len; i++)
+            {
+                parentSpacePoints[i] = mesh.transform.TransformPoint(localPoints[i]);
+                if (parentTransform)
+                    parentSpacePoints[i] = parentTransform.InverseTransformPoint(parentSpacePoints[i]);
+            }
+
+            return parentSpacePoints;
+        }
+
+        /// <summary>
         /// Translate a set of vertices with a world space offset.
         /// <br />
         /// Unlike most other mesh operations, this function applies the mesh positions to both ProBuilderMesh and the UnityEngine.Mesh.
