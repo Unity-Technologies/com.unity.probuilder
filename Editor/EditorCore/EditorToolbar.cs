@@ -325,7 +325,8 @@ namespace UnityEditor.ProBuilder
             GUILayout.BeginHorizontal();
 
             // e.mousePosition != mpos at this point - @todo figure out why
-            bool windowContainsMouse =  mpos.x > 0 && mpos.x < window.position.width &&
+            bool windowContainsMouse =  window == EditorWindow.mouseOverWindow
+                && mpos.x > 0 && mpos.x < window.position.width &&
                 mpos.y > 0 && mpos.y < window.position.height;
 
             int columnCount = 0;
@@ -356,7 +357,7 @@ namespace UnityEditor.ProBuilder
                             if (showTooltipTimer)
                             {
                                 tooltipShown = true;
-                                ShowTooltip(optionRect, "Alt + Click for Options", m_Scroll);
+                                ShowTooltip(optionRect, "Alt + Click for Options ", m_Scroll);
                             }
                         }
                     }
