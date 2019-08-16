@@ -34,10 +34,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get a copy of a mesh positions array transformed into parent coordinates or world if no parents.
+        /// Get a copy of a mesh positions array transformed into parent coordinates or world if no parent.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
-        /// <returns>An array containing all vertex positions in world space.</returns>
+        /// <returns>An array containing all vertex positions in parent space(or world if no parent).</returns>
         public static Vector3[] VerticesInParentSpace(this ProBuilderMesh mesh)
         {
             if (mesh == null)

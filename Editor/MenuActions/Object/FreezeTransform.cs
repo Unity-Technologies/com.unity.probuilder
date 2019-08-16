@@ -27,7 +27,7 @@ namespace UnityEditor.ProBuilder.Actions
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
                 "Freeze Transform",
-                @"Set the pivot point to world/parent coordinates (0,0,0) and clear Transform values while keeping the mesh in place."
+                @"Set the pivot point to world/parent coordinates (0,0,0) and clear all Transform values while keeping the mesh in place."
             );
 
         public override bool enabled
