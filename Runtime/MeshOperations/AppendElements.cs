@@ -242,7 +242,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <returns>An ActionResult with the status of the operation.</returns>
         public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh mesh, IList<Vector3> points, float extrude, bool flipNormals)
         {
-            return CreateShapeFromPolygon(mesh, points, extrude, flipNormals, Vector3.up);
+            return CreateShapeFromPolygon(mesh, points, extrude, flipNormals, null);
         }
 
         /// <summary>
@@ -255,7 +255,22 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="cameraLookAt">This argument is now ignored.</param>
         /// <param name="holePoints">Holes in the polygon.</param>
         /// <returns>An ActionResult with the status of the operation.</returns>
+        [Obsolete("Face.CreateShapeFromPolygon is deprecated as it no longer relies on camera look at.")]
         public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh mesh, IList<Vector3> points, float extrude, bool flipNormals, Vector3 cameraLookAt, IList<IList<Vector3>> holePoints = null)
+        {
+            return CreateShapeFromPolygon(mesh, points, extrude, flipNormals, null);
+        }
+
+        /// <summary>
+        /// Rebuild a mesh from an ordered set of points.
+        /// </summary>
+        /// <param name="mesh">The target mesh. The mesh values will be cleared and repopulated with the shape extruded from points.</param>
+        /// <param name="points">A path of points to triangulate and extrude.</param>
+        /// <param name="extrude">The distance to extrude.</param>
+        /// <param name="flipNormals">If true the faces will be inverted at creation.</param>        
+        /// <param name="holePoints">Holes in the polygon. If null this will be ignored.</param>
+        /// <returns>An ActionResult with the status of the operation.</returns>
+        public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh mesh, IList<Vector3> points, float extrude, bool flipNormals, IList<IList<Vector3>> holePoints)
         {
             if (mesh == null)
                 throw new ArgumentNullException("mesh");

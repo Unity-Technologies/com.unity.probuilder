@@ -82,14 +82,14 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOperations
             m_Poly.m_Points.Add(new Vector3(0, 0, 2));
             m_Poly.m_Points.Add(new Vector3(2, 0, 0));
             m_Poly.extrude = 0.0f;
-            m_pb.CreateShapeFromPolygon(m_Poly.m_Points, m_Poly.extrude, m_Poly.flipNormals, Vector3.down);
+            m_pb.CreateShapeFromPolygon(m_Poly.m_Points, m_Poly.extrude, m_Poly.flipNormals);
             Vector3 nrm = Math.Normal(m_pb, m_pb.facesInternal[0]);
             Assert.That(nrm, Is.EqualTo(Vector3.up));
 
             m_pb.Clear();
             //Changing the winding order should lead to a norml in the other direction
             m_Poly.m_Points.Reverse();
-            m_pb.CreateShapeFromPolygon(m_Poly.m_Points, m_Poly.extrude, m_Poly.flipNormals, Vector3.down);
+            m_pb.CreateShapeFromPolygon(m_Poly.m_Points, m_Poly.extrude, m_Poly.flipNormals);
             nrm = Math.Normal(m_pb, m_pb.facesInternal[0]);
             Assert.That(nrm, Is.EqualTo(Vector3.up));
         }
@@ -119,7 +119,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOperations
                 new Vector3(1.9f, 0, 1.9f),
             };
 
-            var result = m_pb.CreateShapeFromPolygon(m_Poly.m_Points, m_Poly.extrude, m_Poly.flipNormals, Vector3.up, holes);
+            var result = m_pb.CreateShapeFromPolygon(m_Poly.m_Points, m_Poly.extrude, m_Poly.flipNormals, holes);
             Assert.That(result.status, Is.EqualTo(ActionResult.Status.Success));            
         }
 
@@ -147,7 +147,7 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOperations
                 new Vector3(1.9f, 0, 0.1f),
             };
 
-            var result = m_pb.CreateShapeFromPolygon(m_Poly.m_Points, m_Poly.extrude, m_Poly.flipNormals, Vector3.up, holes);
+            var result = m_pb.CreateShapeFromPolygon(m_Poly.m_Points, m_Poly.extrude, m_Poly.flipNormals, holes);
             Assert.That(result.status, Is.EqualTo(ActionResult.Status.NoChange));
             Assert.That(result.notification, Is.EqualTo("Too Few Points in hole 1"));
         }
