@@ -43,17 +43,14 @@ namespace UnityEditor.ProBuilder.Actions
             UndoUtility.RecordMeshAndTransformSelection("Freeze Transforms");
 
             var selection = MeshSelection.topInternal;
-            Vector3[][] positions = new Vector3[selection.Count][];
-            
+                
 
-            for (int i = 0, c = selection.Count; i < c; i++)
-                positions[i] = selection[i].VerticesInParentSpace();
-
-            //Note need to sort from children to parent.
             for (int i = 0, c = selection.Count; i < c; i++)
             {                
                 ProBuilderMesh pb = selection[i];
+                TransformUtility.UnparentChildren(pb.transform);
                 bool inParentSpace = (pb.transform.parent != null);
+                Vector3[] positions = pb.VerticesInParentSpace();
 
                 pb.transform.position = (inParentSpace  ? pb.transform.parent.position : Vector3.zero);
                 pb.transform.rotation = (inParentSpace ? pb.transform.parent.rotation : Quaternion.identity);
@@ -62,11 +59,12 @@ namespace UnityEditor.ProBuilder.Actions
                 foreach (Face face in pb.facesInternal)
                     face.manualUV = true;
 
-                pb.positions = positions[i];
+                pb.positions = positions;
 
                 pb.ToMesh();
                 pb.Refresh();
                 pb.Optimize();
+                TransformUtility.ReparentChildren(pb.transform);
             }
 
             ProBuilderEditor.Refresh();
