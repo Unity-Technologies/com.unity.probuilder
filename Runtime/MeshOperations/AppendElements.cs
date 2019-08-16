@@ -214,11 +214,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// Create a poly shape from a set of points on a plane. The points must be ordered.
         /// </summary>
         /// <param name="poly"></param>
-        /// <param name="cameraLookAt">If the normal of the polygon of the first face is facing in the same direction of the camera lookat it will be inverted at creation, so it is facing the camera.</param>
         /// <returns>An action result indicating the status of the operation.</returns>
-        internal static ActionResult CreateShapeFromPolygon(this PolyShape poly, Vector3 cameraLookAt)
+        internal static ActionResult CreateShapeFromPolygon(this PolyShape poly)
         {
-            return poly.mesh.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals, cameraLookAt);
+            return poly.mesh.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals);
         }
 
 
@@ -253,7 +252,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="points">A path of points to triangulate and extrude.</param>
         /// <param name="extrude">The distance to extrude.</param>
         /// <param name="flipNormals">If true the faces will be inverted at creation.</param>
-        /// <param name="cameraLookAt">If the normal of the polygon of the first face is facing in the same direction of the camera lookat it will be inverted at creation, so it is facing the camera.</param>
+        /// <param name="cameraLookAt">This argument is now ignored.</param>
         /// <param name="holePoints">Holes in the polygon.</param>
         /// <returns>An ActionResult with the status of the operation.</returns>
         public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh mesh, IList<Vector3> points, float extrude, bool flipNormals, Vector3 cameraLookAt, IList<IList<Vector3>> holePoints = null)
@@ -333,8 +332,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
                 Vector3 nrm = Math.Normal(mesh, mesh.facesInternal[0]);
                 nrm = mesh.gameObject.transform.TransformDirection(nrm);
-                cameraLookAt.Normalize();
-                if ((flipNormals ? Vector3.Dot(cameraLookAt, nrm) < 0f : Vector3.Dot(cameraLookAt, nrm) > 0f))
+                if ((flipNormals ? Vector3.Dot(mesh.gameObject.transform.up, nrm) > 0f : Vector3.Dot(mesh.gameObject.transform.up, nrm) < 0f))
                 {
                     mesh.facesInternal[0].Reverse();
                 }
