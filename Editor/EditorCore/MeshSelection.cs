@@ -118,7 +118,18 @@ namespace UnityEditor.ProBuilder
         /// </value>
         public static ProBuilderMesh activeMesh
         {
-            get { return s_ActiveMesh; }
+            get
+            {
+                //If shift selecting between objects already selected there won't be an OnObjectSelectionChanged
+                //triggered which might lead to Selection.activeGameObject and s_ActiveMesh to be out of sync.
+                //This check below is to handle this situation.
+                GameObject currentActiveMeshGameObject = (s_ActiveMesh ? s_ActiveMesh.gameObject : null); 
+                if (currentActiveMeshGameObject != Selection.activeGameObject)
+                {
+                    s_ActiveMesh = Selection.activeGameObject.GetComponent<ProBuilderMesh>();
+                }
+                return s_ActiveMesh;
+            }
         }
 
         internal static Face activeFace
@@ -514,7 +525,7 @@ namespace UnityEditor.ProBuilder
         {
             foreach (var pair in elementSelection)
             {
-                if (pair.mesh == s_ActiveMesh)
+                if (pair.mesh == activeMesh)
                     return pair;
             }
 
