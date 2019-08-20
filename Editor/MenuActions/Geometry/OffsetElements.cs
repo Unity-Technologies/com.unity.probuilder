@@ -207,10 +207,10 @@ namespace UnityEditor.ProBuilder.Actions
                     foreach (var elements in selection.elementGroups)
                         DrawOffsetPreview(lines, points, elements.position + camera, preview);
                 }
-
-                lines.Dispose();
-                points.Dispose();
             }
+
+            lines.Dispose();
+            points.Dispose();
         }
 
         static void DrawOffsetPreview(
