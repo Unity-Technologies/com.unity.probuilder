@@ -136,12 +136,20 @@ namespace UnityEditor.ProBuilder.Actions
         void OnEnable()
         {
             titleContent.text = L10n.Tr("Offset Element Settings");
+#if UNITY_2019_1_OR_NEWER
             SceneView.duringSceneGui += OnSceneGUI;
+#else
+            SceneView.onSceneGUI += OnSceneGUI;
+#endif
         }
 
         void OnDisable()
         {
+#if UNITY_2019_1_OR_NEWER
             SceneView.duringSceneGui -= OnSceneGUI;
+#else
+            SceneView.onSceneGUI -= OnSceneGUI;
+#endif
         }
 
         void OnGUI()
