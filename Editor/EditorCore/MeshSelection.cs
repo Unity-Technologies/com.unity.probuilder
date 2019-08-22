@@ -124,8 +124,9 @@ namespace UnityEditor.ProBuilder
                 // triggered which might lead to Selection.activeGameObject and s_ActiveMesh to be out of sync.
                 // This check below is to handle this situation.
                 GameObject activeGo = (s_ActiveMesh ? s_ActiveMesh.gameObject : null);
+
                 if (activeGo != Selection.activeGameObject)
-                    s_ActiveMesh = activeGo != null ? Selection.activeGameObject.GetComponent<ProBuilderMesh>() : null;
+                    s_ActiveMesh = Selection.activeGameObject != null ? Selection.activeGameObject.GetComponent<ProBuilderMesh>() : null;
 
                 return s_ActiveMesh;
             }
