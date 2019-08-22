@@ -140,7 +140,7 @@ namespace UnityEditor.ProBuilder.Actions
 #if UNITY_2019_1_OR_NEWER
             SceneView.duringSceneGui += OnSceneGUI;
 #else
-            SceneView.onSceneGUI += OnSceneGUI;
+            SceneView.onSceneGUIDelegate += OnSceneGUI;
 #endif
         }
 
@@ -149,7 +149,7 @@ namespace UnityEditor.ProBuilder.Actions
 #if UNITY_2019_1_OR_NEWER
             SceneView.duringSceneGui -= OnSceneGUI;
 #else
-            SceneView.onSceneGUI -= OnSceneGUI;
+            SceneView.onSceneGUIDelegate -= OnSceneGUI;
 #endif
         }
 
