@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.Rendering;
@@ -184,15 +185,16 @@ namespace UnityEditor.ProBuilder.Actions
                 SceneView.RepaintAll();
         }
 
+        static List<Vector3> s_Points = new List<Vector3>();
+
         void OnSceneGUI(SceneView view)
         {
+            s_Points.Clear();
+
             var coord = OffsetElements.s_CoordinateSpace.value;
             var offset = OffsetElements.s_Translation.value;
             var handleRotation = MeshSelection.GetHandleRotation();
             var camera = view.camera.transform.forward * -.01f;
-
-            var lines = new EditorMeshHandles.LineDrawingScope(ColorUtility.GetColor(offset));
-            var points = new EditorMeshHandles.PointDrawingScope(ColorUtility.GetColor(offset));
 
             foreach (var selection in MeshSelection.elementSelection)
             {
@@ -201,7 +203,10 @@ namespace UnityEditor.ProBuilder.Actions
                 if (coord == OffsetElements.CoordinateSpace.Element)
                 {
                     foreach (var elements in selection.elementGroups)
-                        DrawOffsetPreview(lines, points, elements.position + camera, elements.rotation * offset);
+                    {
+                        s_Points.Add(elements.position + camera);
+                        s_Points.Add(elements.rotation * offset);
+                    }
                 }
                 else
                 {
@@ -213,26 +218,30 @@ namespace UnityEditor.ProBuilder.Actions
                         preview = mesh.transform.TransformDirection(offset);
 
                     foreach (var elements in selection.elementGroups)
-                        DrawOffsetPreview(lines, points, elements.position + camera, preview);
+                    {
+                        s_Points.Add(elements.position + camera);
+                        s_Points.Add(preview);
+                    }
                 }
             }
 
-            lines.Dispose();
-            points.Dispose();
-        }
+            using (var lines = new EditorMeshHandles.LineDrawingScope(ColorUtility.GetColor(offset)))
+            {
+                for (int i = 0; i < s_Points.Count; i += 2)
+                    lines.DrawLine(s_Points[i], s_Points[i] + s_Points[i + 1]);
+            }
 
-        static void DrawOffsetPreview(
-            EditorMeshHandles.LineDrawingScope lines,
-            EditorMeshHandles.PointDrawingScope points,
-            Vector3 origin,
-            Vector3 direction)
-        {
-            lines.DrawLine(origin, origin + direction);
-            var old = points.color;
-            points.color = Color.gray;
-            points.Draw(origin);
-            points.color = old;
-            points.Draw(origin + direction);
+            using (var points = new EditorMeshHandles.PointDrawingScope(Color.gray))
+            {
+                for (int i = 0; i < s_Points.Count; i += 2)
+                    points.Draw(s_Points[i]);
+            }
+
+            using(var points = new EditorMeshHandles.PointDrawingScope(ColorUtility.GetColor(offset)))
+            {
+                for (int i = 0; i < s_Points.Count; i += 2)
+                    points.Draw(s_Points[i] + s_Points[i+1]);
+            }
         }
     }
 }
