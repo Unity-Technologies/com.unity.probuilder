@@ -123,11 +123,10 @@ namespace UnityEditor.ProBuilder
                 //If shift selecting between objects already selected there won't be an OnObjectSelectionChanged
                 //triggered which might lead to Selection.activeGameObject and s_ActiveMesh to be out of sync.
                 //This check below is to handle this situation.
-                GameObject currentActiveMeshGameObject = (s_ActiveMesh ? s_ActiveMesh.gameObject : null); 
-                if (currentActiveMeshGameObject != Selection.activeGameObject)
-                {
-                    s_ActiveMesh = Selection.activeGameObject.GetComponent<ProBuilderMesh>();
-                }
+                GameObject activeGo = (s_ActiveMesh ? s_ActiveMesh.gameObject : null);
+                if (activeGo != Selection.activeGameObject)
+                    s_ActiveMesh = activeGo != null ? Selection.activeGameObject.GetComponent<ProBuilderMesh>() : null;
+
                 return s_ActiveMesh;
             }
         }
