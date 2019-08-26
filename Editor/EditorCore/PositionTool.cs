@@ -51,7 +51,7 @@ namespace UnityEditor.ProBuilder
                 get { return m_Positions; }
             }
 
-            public MeshAndPositions(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation) : base(mesh, pivot, orientation, k_CollectCoincidentVertices)
+            public MeshAndPositions(ProBuilderMesh mesh, PivotPoint pivot) : base(mesh, k_CollectCoincidentVertices)
             {
                 m_Positions = mesh.positions.ToArray();
 
@@ -62,9 +62,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        internal override MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation)
+        internal override MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot)
         {
-            return new MeshAndPositions(mesh, pivot, orientation);
+            return new MeshAndPositions(mesh, pivot);
         }
 
         internal Matrix4x4 GetPostApplyMatrix(ElementGroup group)

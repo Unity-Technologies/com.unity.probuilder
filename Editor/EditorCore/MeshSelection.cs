@@ -120,14 +120,14 @@ namespace UnityEditor.ProBuilder
         {
             get
             {
-                //If shift selecting between objects already selected there won't be an OnObjectSelectionChanged
-                //triggered which might lead to Selection.activeGameObject and s_ActiveMesh to be out of sync.
-                //This check below is to handle this situation.
-                GameObject currentActiveMeshGameObject = (s_ActiveMesh ? s_ActiveMesh.gameObject : null); 
-                if (currentActiveMeshGameObject != Selection.activeGameObject)
-                {
-                    s_ActiveMesh = Selection.activeGameObject.GetComponent<ProBuilderMesh>();
-                }
+                // If shift selecting between objects already selected there won't be an OnObjectSelectionChanged
+                // triggered which might lead to Selection.activeGameObject and s_ActiveMesh to be out of sync.
+                // This check below is to handle this situation.
+                GameObject activeGo = (s_ActiveMesh ? s_ActiveMesh.gameObject : null);
+
+                if (activeGo != Selection.activeGameObject)
+                    s_ActiveMesh = Selection.activeGameObject != null ? Selection.activeGameObject.GetComponent<ProBuilderMesh>() : null;
+
                 return s_ActiveMesh;
             }
         }
@@ -211,10 +211,7 @@ namespace UnityEditor.ProBuilder
             if (activeTool != null)
             {
                 foreach (var mesh in s_TopSelection)
-                {
-                    s_ElementSelection.Add(activeTool.GetElementSelection(mesh,
-                        VertexManipulationTool.pivotPoint, VertexManipulationTool.handleOrientation));
-                }
+                    s_ElementSelection.Add(activeTool.GetElementSelection(mesh, VertexManipulationTool.pivotPoint));
             }
         }
 
@@ -485,18 +482,43 @@ namespace UnityEditor.ProBuilder
         {
             var active = GetActiveSelectionGroup();
 
-            return active != null && active.elementGroups.Count > 0
-                ? active.elementGroups.Last().position
-                : Vector3.zero;
+            if(active == null || active.mesh == null)
+                return Vector3.zero;
+
+            switch (VertexManipulationTool.pivotPoint)
+            {
+                case PivotPoint.ActiveElement:
+                case PivotPoint.IndividualOrigins:
+                    if (!active.elementGroups.Any())
+                        goto case default;
+                    return active.elementGroups.Last().position;
+
+                case PivotPoint.Center:
+                default:
+                    return bounds.center;
+            }
         }
 
         internal static Quaternion GetHandleRotation()
         {
             var active = GetActiveSelectionGroup();
 
-            return active != null && active.elementGroups.Count > 0
-                ? active.elementGroups.Last().rotation
-                : Quaternion.identity;
+            if(active == null || active.mesh == null)
+                return Quaternion.identity;
+
+            switch (VertexManipulationTool.handleOrientation)
+            {
+                case HandleOrientation.ActiveObject:
+                    return active.mesh.transform.rotation;
+
+                case HandleOrientation.ActiveElement:
+                    if (!active.elementGroups.Any())
+                        goto case HandleOrientation.ActiveObject;
+                    return active.elementGroups.Last().rotation;
+
+                default:
+                    return Quaternion.identity;
+            }
         }
 
         internal static MeshAndElementSelection GetActiveSelectionGroup()
