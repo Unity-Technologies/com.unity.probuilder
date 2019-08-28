@@ -255,7 +255,7 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            this.minSize = new Vector2(500f, 300f);
+            this.minSize = new Vector2(520f, 300f);
 
             InitGUI();
 
