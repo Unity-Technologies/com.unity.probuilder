@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -5,27 +6,42 @@ using UnityEngine.Rendering;
 
 namespace ProBuilder.Examples
 {
-	static class Handles
-	{
+	class Handles : MonoBehaviour
+    {
+        static Handles s_Instance;
 		static bool s_Initialized;
-		static Material s_EdgeMaterial;
+#pragma warning disable 649
+        public Shader m_FaceHighlight;
+        public Shader m_LineBillboard;
+        public Shader m_PointBillboard;
+        public Shader m_VertexShader;
+#pragma warning restore 649
+        static Material s_EdgeMaterial;
 		static Material s_VertMaterial;
 		static Material s_FaceMaterial;
 		static Face[] s_FaceArray = new Face[1];
 
-		static void Init()
-		{
+        void Awake()
+        {
+            s_Instance = this;
+        }
+
+        static void Init()
+        {
+            if (s_Instance == null)
+                Debug.LogError("No Handles object found in scene");
+
 			if (s_Initialized)
 				return;
 
 			s_Initialized = true;
 
-			var lineShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.lineShader : BuiltinMaterials.wireShader;
-			var vertShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.pointShader : BuiltinMaterials.dotShader;
+			var lineShader = BuiltinMaterials.geometryShadersSupported ? s_Instance.m_LineBillboard : s_Instance.m_FaceHighlight;
+			var vertShader = BuiltinMaterials.geometryShadersSupported ? s_Instance.m_PointBillboard : s_Instance.m_VertexShader;
 
-			s_EdgeMaterial = new Material(Shader.Find(lineShader));
-			s_VertMaterial = new Material(Shader.Find(vertShader));
-			s_FaceMaterial = new Material(Shader.Find(BuiltinMaterials.faceShader));
+			s_EdgeMaterial = new Material(lineShader);
+			s_VertMaterial = new Material(vertShader);
+			s_FaceMaterial = new Material(s_Instance.m_FaceHighlight);
 			s_FaceMaterial.SetFloat("_Dither", 1f);
 		}
 
