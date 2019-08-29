@@ -43,7 +43,7 @@ namespace ProBuilder.Examples
 			s_VertMaterial = new Material(vertShader);
 			s_FaceMaterial = new Material(s_Instance.m_FaceHighlight);
 			s_FaceMaterial.SetFloat("_Dither", 1f);
-		}
+        }
 
 		public static Material edgeMaterial
 		{
@@ -118,7 +118,8 @@ namespace ProBuilder.Examples
 		{
 			edgeMaterial.SetColor("_Color", color);
 			edgeMaterial.SetInt("_HandleZTest", (int) compareFunction);
-
+			if (BuiltinMaterials.geometryShadersSupported)
+				edgeMaterial.SetFloat("_Scale", .2f);
 			if (!edgeMaterial.SetPass(0))
 				return;
 
