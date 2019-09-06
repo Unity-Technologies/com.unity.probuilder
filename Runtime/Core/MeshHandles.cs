@@ -20,6 +20,12 @@ namespace UnityEngine.ProBuilder
 
         internal static void CreateEdgeMesh(ProBuilderMesh mesh, Mesh target)
         {
+            if (!BuiltinMaterials.geometryShadersSupported)
+            {
+                CreateEdgeBillboardMesh(mesh, target);
+                return;
+            }
+
             int edgeCount = 0;
             int faceCount = mesh.faceCount;
 
@@ -55,6 +61,12 @@ namespace UnityEngine.ProBuilder
 
         internal static void CreateEdgeMesh(ProBuilderMesh mesh, Mesh target, Edge[] edges)
         {
+            if (!BuiltinMaterials.geometryShadersSupported)
+            {
+                CreateEdgeBillboardMesh(mesh, target, edges);
+                return;
+            }
+            
             int edgeCount = System.Math.Min(edges.Length, ushort.MaxValue / 2 - 1);
             int[] indexes = new int[edgeCount * 2];
 
@@ -211,13 +223,121 @@ namespace UnityEngine.ProBuilder
         /// Draw a set of vertices.
         /// </summary>
         static void BuildVertexMeshInternal(ProBuilderMesh mesh, Mesh target, IEnumerable<int> indexes)
-
         {
             target.Clear();
             target.name = "pb_ElementGraphics::PointMesh";
             target.vertices = mesh.positionsInternal;
             target.subMeshCount = 1;
             target.SetIndices(indexes as int[] ?? indexes.ToArray(), MeshTopology.Points, 0);
+        }
+
+        internal static void CreateEdgeBillboardMesh(ProBuilderMesh mesh, Mesh target)
+        {
+            target.Clear();
+
+            const ushort k_MaxPointCountUShort = ushort.MaxValue / 4;
+
+            var lineCount = mesh.edgeCount;
+
+            target.indexFormat = lineCount > k_MaxPointCountUShort
+                ? Rendering.IndexFormat.UInt32
+                : Rendering.IndexFormat.UInt16;
+
+            var vertices = mesh.positionsInternal;
+
+            Vector3[] positions = new Vector3[lineCount * 4];
+            Vector4[] nextVertex = new Vector4[lineCount * 4];
+
+            int[] t_tris = new int[lineCount * 6];
+
+            int n = 0;
+            int t = 0;
+
+            foreach(var face in mesh.facesInternal)
+            {
+                foreach (var edge in face.edgesInternal)
+                {
+                    Vector3 a = vertices[edge.a], b = vertices[edge.b];
+                    Vector3 c = b + (b - a);
+
+                    positions[t + 0] = a;
+                    positions[t + 1] = a;
+                    positions[t + 2] = b;
+                    positions[t + 3] = b;
+
+                    nextVertex[t + 0] = new Vector4(b.x, b.y, b.z, 1f);
+                    nextVertex[t + 1] = new Vector4(b.x, b.y, b.z, -1f);
+                    nextVertex[t + 2] = new Vector4(c.x, c.y, c.z, 1f);
+                    nextVertex[t + 3] = new Vector4(c.x, c.y, c.z, -1f);
+
+                    t_tris[n + 0] = t + 0;
+                    t_tris[n + 1] = t + 1;
+                    t_tris[n + 2] = t + 2;
+                    t_tris[n + 3] = t + 1;
+                    t_tris[n + 4] = t + 3;
+                    t_tris[n + 5] = t + 2;
+
+                    t += 4;
+                    n += 6;
+                }
+            }
+
+            target.vertices = positions;
+            target.tangents = nextVertex;
+            target.triangles = t_tris;
+        }
+
+        internal static void CreateEdgeBillboardMesh(ProBuilderMesh mesh, Mesh target, ICollection<Edge> edges)
+        {
+            target.Clear();
+
+            const ushort k_MaxPointCountUShort = ushort.MaxValue / 4;
+
+            var lineCount = edges.Count;
+
+            target.indexFormat = lineCount > k_MaxPointCountUShort
+                ? Rendering.IndexFormat.UInt32
+                : Rendering.IndexFormat.UInt16;
+
+            var vertices = mesh.positionsInternal;
+
+            Vector3[] positions = new Vector3[lineCount * 4];
+            Vector4[] nextVertex = new Vector4[lineCount * 4];
+
+            int[] t_tris = new int[lineCount * 6];
+
+            int n = 0;
+            int t = 0;
+
+            foreach (var edge in edges)
+            {
+                Vector3 a = vertices[edge.a], b = vertices[edge.b];
+                Vector3 c = b + (b - a);
+
+                positions[t + 0] = a;
+                positions[t + 1] = a;
+                positions[t + 2] = b;
+                positions[t + 3] = b;
+
+                nextVertex[t + 0] = new Vector4(b.x, b.y, b.z, 1f);
+                nextVertex[t + 1] = new Vector4(b.x, b.y, b.z, -1f);
+                nextVertex[t + 2] = new Vector4(c.x, c.y, c.z, 1f);
+                nextVertex[t + 3] = new Vector4(c.x, c.y, c.z, -1f);
+
+                t_tris[n + 0] = t + 0;
+                t_tris[n + 1] = t + 1;
+                t_tris[n + 2] = t + 2;
+                t_tris[n + 3] = t + 1;
+                t_tris[n + 4] = t + 3;
+                t_tris[n + 5] = t + 2;
+
+                t += 4;
+                n += 6;
+            }
+
+            target.vertices = positions;
+            target.tangents = nextVertex;
+            target.triangles = t_tris;
         }
     }
 }

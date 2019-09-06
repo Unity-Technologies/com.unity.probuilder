@@ -34,6 +34,12 @@ namespace UnityEngine.ProBuilder
         public const string lineShader = "Hidden/ProBuilder/LineBillboard";
 
         /// <value>
+        /// A line shader for use with CreateEdgeBillboardMesh when geometry shaders are not available. Prefer to use
+        /// <see cref="lineShader"/> where possible.
+        /// </value>
+        public const string lineShaderMetal = "Hidden/ProBuilder/LineBillboardMetal";
+
+        /// <value>
         /// A shader used to draw camera facing billboards from a single vertex.
         /// </value>
         /// <remarks>

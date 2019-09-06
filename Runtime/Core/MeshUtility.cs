@@ -12,7 +12,6 @@ namespace UnityEngine.ProBuilder
     /// </summary>
     public static class MeshUtility
     {
-
         /// <summary>
         /// Create an array of @"UnityEngine.ProBuilder.Vertex" values that are ordered as individual triangles. This modifies the source mesh to match the new individual triangles format.
         /// </summary>

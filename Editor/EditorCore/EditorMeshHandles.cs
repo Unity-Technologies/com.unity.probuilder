@@ -79,23 +79,9 @@ namespace UnityEditor.ProBuilder
             }
 
             s_DepthTestHandles.value = SettingsGUILayout.SettingsToggle("Depth Test", s_DepthTestHandles, searchContext);
-
             s_VertexPointSize.value = SettingsGUILayout.SettingsSlider("Vertex Size", s_VertexPointSize, 1f, 10f, searchContext);
-
-            bool geoLine = BuiltinMaterials.geometryShadersSupported;
-
-            if (geoLine)
-            {
-                s_EdgeLineSize.value = SettingsGUILayout.SettingsSlider("Line Size", s_EdgeLineSize, 0f, 3f, searchContext);
-                s_WireframeLineSize.value = SettingsGUILayout.SettingsSlider("Wireframe Size", s_WireframeLineSize, 0f, 3f, searchContext);
-            }
-            else
-            {
-                GUI.enabled = false;
-                SettingsGUILayout.SearchableSlider("Line Size", 0f, 0f, 3f, searchContext);
-                SettingsGUILayout.SearchableSlider("Wireframe Size", 0f, 0f, 3f, searchContext);
-                GUI.enabled = true;
-            }
+            s_EdgeLineSize.value = SettingsGUILayout.SettingsSlider("Line Size", s_EdgeLineSize, 0f, 10f, searchContext);
+            s_WireframeLineSize.value = SettingsGUILayout.SettingsSlider("Wireframe Size", s_WireframeLineSize, 0f, 10f, searchContext);
         }
 
         static Color s_FaceSelectedColor;
@@ -109,7 +95,9 @@ namespace UnityEditor.ProBuilder
         Material m_EdgeMaterial;
         // Can be either point geo shader or the older vertex shader
         Material m_VertMaterial;
+        // Can be either point geo shader or the older vertex shader
         Material m_WireMaterial;
+        // Used by LineRenderingScope
         Material m_LineMaterial;
         Material m_FaceMaterial;
 
@@ -137,12 +125,13 @@ namespace UnityEditor.ProBuilder
             m_SelectedEdgeHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
             m_SelectedVertexHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
 
-            var lineShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.lineShader : BuiltinMaterials.wireShader;
+            var wireShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.lineShader : BuiltinMaterials.wireShader;
+            var lineShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.lineShader : BuiltinMaterials.lineShaderMetal;
             var vertShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.pointShader : BuiltinMaterials.dotShader;
 
             m_EdgeMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::LineMaterial");
             m_WireMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::WireMaterial");
-            m_LineMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::GeneralUseLineMaterial");
+            m_LineMaterial = CreateMaterial(Shader.Find(wireShader), "ProBuilder::GeneralUseLineMaterial");
             m_VertMaterial = CreateMaterial(Shader.Find(vertShader), "ProBuilder::VertexMaterial");
 
             m_FaceMaterial = CreateMaterial(Shader.Find(BuiltinMaterials.faceShader), "ProBuilder::FaceMaterial");
@@ -218,7 +207,7 @@ namespace UnityEditor.ProBuilder
             return mat;
         }
 
-        Mesh CreateMesh()
+        static Mesh CreateMesh()
         {
             var mesh = new Mesh();
             mesh.name = "EditorMeshHandles.MeshHandle" + mesh.GetInstanceID();
@@ -226,7 +215,7 @@ namespace UnityEditor.ProBuilder
             return mesh;
         }
 
-        void DestroyMesh(Mesh mesh)
+        static void DestroyMesh(Mesh mesh)
         {
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -376,8 +365,16 @@ namespace UnityEditor.ProBuilder
         {
             if (!selectionOrVertexCountChanged)
             {
-                foreach (var handle in m_WireHandles)
-                    handle.Value.mesh.vertices = handle.Key.positionsInternal;
+                if (BuiltinMaterials.geometryShadersSupported)
+                {
+                    foreach (var handle in m_WireHandles)
+                        handle.Value.mesh.vertices = handle.Key.positionsInternal;
+                }
+                else
+                {
+                    foreach (var handle in m_WireHandles)
+                        MeshHandles.CreateEdgeBillboardMesh(handle.Key, handle.Value.mesh);
+                }
 
                 switch (selectionMode)
                 {
@@ -482,12 +479,8 @@ namespace UnityEditor.ProBuilder
         void SetMaterialsScaleAttribute()
         {
             m_VertMaterial.SetFloat("_Scale", s_VertexPointSize * EditorGUIUtility.pixelsPerPoint);
-
-            if (BuiltinMaterials.geometryShadersSupported)
-            {
-                m_WireMaterial.SetFloat("_Scale", s_WireframeLineSize * EditorGUIUtility.pixelsPerPoint);
-                m_EdgeMaterial.SetFloat("_Scale", s_EdgeLineSize * EditorGUIUtility.pixelsPerPoint);
-            }
+            m_WireMaterial.SetFloat("_Scale", s_WireframeLineSize * EditorGUIUtility.pixelsPerPoint);
+            m_EdgeMaterial.SetFloat("_Scale", s_EdgeLineSize * EditorGUIUtility.pixelsPerPoint);
         }
     }
 }
