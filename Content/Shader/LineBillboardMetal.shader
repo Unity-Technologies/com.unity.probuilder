@@ -37,14 +37,13 @@ Shader "Hidden/ProBuilder/LineBillboardMetal"
             struct appdata
             {
                 float4 vertex : POSITION;
+                // next vertex is stored in rgb, and direction to move current vertex is w
                 float4 color : COLOR;
-                float4 tangent : TANGENT;
             };
 
             struct v2f
             {
                 float4 pos : SV_POSITION;
-                float4 color : COLOR;
             };
 
             v2f vert (appdata v)
@@ -57,19 +56,18 @@ Shader "Hidden/ProBuilder/LineBillboardMetal"
                 float4 clip = o.pos;
 
                 float4 a = ClipToScreen(o.pos);
-                float4 b = ClipToScreen(UnityObjectToClipPosWithOffset(v.tangent.xyz));
+                float4 b = ClipToScreen(UnityObjectToClipPosWithOffset(v.color.xyz));
                 float2 d = normalize(b-a).xy;
                 float2 p = float2(-d.y, d.x);
-                a.xy += p * v.tangent.w * _Scale;
+                a.xy += p * v.color.w * _Scale;
 
                 o.pos = ScreenToClip(a);
-                o.color = v.color;
                 return o;
             }
 
             half4 frag (v2f i) : COLOR
             {
-                return _Color * i.color;
+                return _Color;
             }
 
             ENDCG

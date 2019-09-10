@@ -125,13 +125,12 @@ namespace UnityEditor.ProBuilder
             m_SelectedEdgeHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
             m_SelectedVertexHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
 
-            var wireShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.lineShader : BuiltinMaterials.wireShader;
             var lineShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.lineShader : BuiltinMaterials.lineShaderMetal;
             var vertShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.pointShader : BuiltinMaterials.dotShader;
 
             m_EdgeMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::LineMaterial");
             m_WireMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::WireMaterial");
-            m_LineMaterial = CreateMaterial(Shader.Find(wireShader), "ProBuilder::GeneralUseLineMaterial");
+            m_LineMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::GeneralUseLineMaterial");
             m_VertMaterial = CreateMaterial(Shader.Find(vertShader), "ProBuilder::VertexMaterial");
 
             m_FaceMaterial = CreateMaterial(Shader.Find(BuiltinMaterials.faceShader), "ProBuilder::FaceMaterial");

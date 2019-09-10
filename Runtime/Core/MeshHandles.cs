@@ -66,7 +66,7 @@ namespace UnityEngine.ProBuilder
                 CreateEdgeBillboardMesh(mesh, target, edges);
                 return;
             }
-            
+
             int edgeCount = System.Math.Min(edges.Length, ushort.MaxValue / 2 - 1);
             int[] indexes = new int[edgeCount * 2];
 
@@ -234,9 +234,7 @@ namespace UnityEngine.ProBuilder
         internal static void CreateEdgeBillboardMesh(ProBuilderMesh mesh, Mesh target)
         {
             target.Clear();
-
             const ushort k_MaxPointCountUShort = ushort.MaxValue / 4;
-
             var lineCount = mesh.edgeCount;
 
             target.indexFormat = lineCount > k_MaxPointCountUShort
@@ -246,12 +244,10 @@ namespace UnityEngine.ProBuilder
             var vertices = mesh.positionsInternal;
 
             Vector3[] positions = new Vector3[lineCount * 4];
-            Vector4[] nextVertex = new Vector4[lineCount * 4];
+            Color[] nextVertex = new Color[lineCount * 4];
 
-            int[] t_tris = new int[lineCount * 6];
-
+            int[] quads = new int[lineCount * 4];
             int n = 0;
-            int t = 0;
 
             foreach(var face in mesh.facesInternal)
             {
@@ -260,31 +256,29 @@ namespace UnityEngine.ProBuilder
                     Vector3 a = vertices[edge.a], b = vertices[edge.b];
                     Vector3 c = b + (b - a);
 
-                    positions[t + 0] = a;
-                    positions[t + 1] = a;
-                    positions[t + 2] = b;
-                    positions[t + 3] = b;
+                    positions[n + 0] = a;
+                    positions[n + 1] = a;
+                    positions[n + 2] = b;
+                    positions[n + 3] = b;
 
-                    nextVertex[t + 0] = new Vector4(b.x, b.y, b.z, 1f);
-                    nextVertex[t + 1] = new Vector4(b.x, b.y, b.z, -1f);
-                    nextVertex[t + 2] = new Vector4(c.x, c.y, c.z, 1f);
-                    nextVertex[t + 3] = new Vector4(c.x, c.y, c.z, -1f);
+                    nextVertex[n + 0] = new Color(b.x, b.y, b.z, 1f);
+                    nextVertex[n + 1] = new Color(b.x, b.y, b.z, -1f);
+                    nextVertex[n + 2] = new Color(c.x, c.y, c.z, 1f);
+                    nextVertex[n + 3] = new Color(c.x, c.y, c.z, -1f);
 
-                    t_tris[n + 0] = t + 0;
-                    t_tris[n + 1] = t + 1;
-                    t_tris[n + 2] = t + 2;
-                    t_tris[n + 3] = t + 1;
-                    t_tris[n + 4] = t + 3;
-                    t_tris[n + 5] = t + 2;
+                    quads[n + 0] = n + 0;
+                    quads[n + 1] = n + 1;
+                    quads[n + 2] = n + 3;
+                    quads[n + 3] = n + 2;
 
-                    t += 4;
-                    n += 6;
+                    n += 4;
                 }
             }
 
             target.vertices = positions;
-            target.tangents = nextVertex;
-            target.triangles = t_tris;
+            target.colors = nextVertex;
+            target.subMeshCount = 1;
+            target.SetIndices(quads, MeshTopology.Quads, 0);
         }
 
         internal static void CreateEdgeBillboardMesh(ProBuilderMesh mesh, Mesh target, ICollection<Edge> edges)
@@ -302,42 +296,39 @@ namespace UnityEngine.ProBuilder
             var vertices = mesh.positionsInternal;
 
             Vector3[] positions = new Vector3[lineCount * 4];
-            Vector4[] nextVertex = new Vector4[lineCount * 4];
+            Color[] nextVertex = new Color[lineCount * 4];
 
-            int[] t_tris = new int[lineCount * 6];
+            int[] quads = new int[lineCount * 6];
 
             int n = 0;
-            int t = 0;
 
             foreach (var edge in edges)
             {
                 Vector3 a = vertices[edge.a], b = vertices[edge.b];
                 Vector3 c = b + (b - a);
 
-                positions[t + 0] = a;
-                positions[t + 1] = a;
-                positions[t + 2] = b;
-                positions[t + 3] = b;
+                positions[n + 0] = a;
+                positions[n + 1] = a;
+                positions[n + 2] = b;
+                positions[n + 3] = b;
 
-                nextVertex[t + 0] = new Vector4(b.x, b.y, b.z, 1f);
-                nextVertex[t + 1] = new Vector4(b.x, b.y, b.z, -1f);
-                nextVertex[t + 2] = new Vector4(c.x, c.y, c.z, 1f);
-                nextVertex[t + 3] = new Vector4(c.x, c.y, c.z, -1f);
+                nextVertex[n + 0] = new Color(b.x, b.y, b.z, 1f);
+                nextVertex[n + 1] = new Color(b.x, b.y, b.z, -1f);
+                nextVertex[n + 2] = new Color(c.x, c.y, c.z, 1f);
+                nextVertex[n + 3] = new Color(c.x, c.y, c.z, -1f);
 
-                t_tris[n + 0] = t + 0;
-                t_tris[n + 1] = t + 1;
-                t_tris[n + 2] = t + 2;
-                t_tris[n + 3] = t + 1;
-                t_tris[n + 4] = t + 3;
-                t_tris[n + 5] = t + 2;
+                quads[n + 0] = n + 0;
+                quads[n + 1] = n + 1;
+                quads[n + 2] = n + 3;
+                quads[n + 3] = n + 2;
 
-                t += 4;
-                n += 6;
+                n += 4;
             }
 
             target.vertices = positions;
-            target.tangents = nextVertex;
-            target.triangles = t_tris;
+            target.colors = nextVertex;
+            target.subMeshCount = 1;
+            target.SetIndices(quads, MeshTopology.Quads, 0);
         }
     }
 }
