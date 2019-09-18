@@ -1,3 +1,7 @@
+![ReleaseBadge](https://badges.cds.internal.unity3d.com/packages/com.unity.probuilder/release-badge.svg)
+![ReleaseBadge](https://badges.cds.internal.unity3d.com/packages/com.unity.probuilder/candidates-badge.svg)
+
+
 ## Table of Contents
 
 - [About](#about)
