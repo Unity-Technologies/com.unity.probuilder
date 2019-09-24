@@ -1157,8 +1157,6 @@ namespace UnityEditor.ProBuilder
                     overrideWireframe
                         ? k_DefaultSelectedRenderState & ~(EditorSelectedRenderState.Wireframe)
                         : k_DefaultSelectedRenderState);
-
-                EditorUtility.SynchronizeWithMeshFilter(mesh);
             }
 
             SceneView.RepaintAll();

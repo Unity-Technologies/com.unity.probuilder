@@ -30,7 +30,7 @@ namespace UnityEditor.ProBuilder
 
                     // if it is cached but not a prefab instance or root, destroy the mesh in the cache
                     // otherwise go ahead and destroy as usual
-                    if (EditorMeshUtility.GetCachedMesh(mesh, out cache_path, out cache_mesh))
+                    if (MeshCache.GetCachedMesh(mesh, out cache_path, out cache_mesh))
                     {
                         // on entering / exiting play mode unity instances everything and destroys the scene,
                         // which nukes the mesh cache.  don't do this.

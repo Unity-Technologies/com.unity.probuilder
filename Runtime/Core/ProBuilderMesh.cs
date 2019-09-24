@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine.Serialization;
 using System;
 using System.Collections.ObjectModel;
+using UnityEngine.Rendering;
 
 namespace UnityEngine.ProBuilder
 {
@@ -793,18 +794,59 @@ namespace UnityEngine.ProBuilder
         {
             get
             {
-                if (mesh == null)
-                    return MeshSyncState.Null;
+                var sharedMesh = mesh;
+                bool meshIsNull = sharedMesh == null;
+                var state = meshIsNull ? MeshSyncState.Null : MeshSyncState.None;
 
-                int meshNo;
+                if (m_AssetInfo.objectId != id)
+                    state |= MeshSyncState.InstanceIDMismatch;
 
-                int.TryParse(mesh.name.Replace("pb_Mesh", ""), out meshNo);
+                if (sharedMesh != assetInfo.mesh)
+                    state |= MeshSyncState.MeshReferenceMismatch;
 
-                if (meshNo != id)
-                    return MeshSyncState.InstanceIDMismatch;
-
-                return mesh.uv2 == null ? MeshSyncState.Lightmap : MeshSyncState.InSync;
+#if UNITY_2019_3_OR_NEWER
+                if (!meshIsNull && !mesh.HasVertexAttribute(VertexAttribute.TexCoord1))
+                    state |= MeshSyncState.Lightmap;
+#else
+                if(!meshIsNull && mesh.uv2 == null)
+                    state |= MeshSyncState.Lightmap;
+#endif
+                return state;
             }
         }
+
+        internal string meshAssetName
+        {
+            get { return $"ProBuilderMesh " + id; }
+        }
+
+//        internal AssetInfo DecodeMeshAssetName(Mesh mesh)
+//        {
+//            if(mesh == null)
+//                return new AssetInfo(id);
+//
+//            var name = mesh.name;
+//
+//            // If the mesh wasn't named with encoded AssetInfo, it is coming from an older version of probuilder.
+//            if (string.IsNullOrEmpty(name))
+//            {
+//                var info = new AssetInfo(id);
+//                Debug.Log(id + " null mesh, set guid: " + assetInfo.guid + " -> " + info.guid);
+//                return info;
+//            }
+//            if (name.StartsWith("pb_Mesh"))
+//            {
+//
+//                int meshNo;
+//                if (int.TryParse(name.Replace("pb_Mesh", ""), out meshNo))
+//                {
+//                    var info = new AssetInfo(meshNo);
+//                    Debug.Log(id + " existing mesh, set guid: " + assetInfo.guid + " -> " + info.guid);
+//                    return info;
+//                };
+//            }
+//
+//            return JsonUtility.FromJson<AssetInfo>(name);
+//        }
     }
 }

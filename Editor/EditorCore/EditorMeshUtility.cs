@@ -15,9 +15,6 @@ namespace UnityEditor.ProBuilder
     /// </summary>
     public static class EditorMeshUtility
     {
-        const string k_MeshCacheDirectoryName = "ProBuilderMeshCache";
-        static string k_MeshCacheDirectory = "Assets/ProBuilder Data/ProBuilderMeshCache";
-
         [UserSetting("Mesh Editing", "Auto Resize Colliders", "Automatically resize colliders with mesh bounds as you edit.")]
         static Pref<bool> s_AutoResizeCollisions = new Pref<bool>("editor.autoRecalculateCollisions", false, SettingsScope.Project);
 
@@ -102,126 +99,9 @@ namespace UnityEditor.ProBuilder
                 meshOptimized(mesh, umesh);
 
             if (Experimental.meshesAreAssets)
-                TryCacheMesh(mesh);
+                MeshCache.TryCacheMesh(mesh);
 
             UnityEditor.EditorUtility.SetDirty(mesh);
-        }
-
-        internal static void TryCacheMesh(ProBuilderMesh pb)
-        {
-            Mesh mesh = pb.mesh;
-
-            // check for an existing mesh in the mesh cache and update or create a new one so
-            // as not to clutter the scene yaml.
-            string meshAssetPath = AssetDatabase.GetAssetPath(mesh);
-
-            // if mesh is already an asset any changes will already have been applied since
-            // pb_Object is directly modifying the mesh asset
-            if (string.IsNullOrEmpty(meshAssetPath))
-            {
-                // at the moment the asset_guid is only used to name the mesh something unique
-                string guid = pb.assetGuid;
-
-                if (string.IsNullOrEmpty(guid))
-                {
-                    guid = Guid.NewGuid().ToString("N");
-                    pb.assetGuid = guid;
-                }
-
-                string meshCacheDirectory = GetMeshCacheDirectory(true);
-
-                string path = string.Format("{0}/{1}.asset", meshCacheDirectory, guid);
-
-                Mesh m = AssetDatabase.LoadAssetAtPath<Mesh>(path);
-
-                // a mesh already exists in the cache for this pb_Object
-                if (m != null)
-                {
-                    if (mesh != m)
-                    {
-                        // prefab instances should always point to the same mesh
-                        if (EditorUtility.IsPrefabInstance(pb.gameObject) || EditorUtility.IsPrefabAsset(pb.gameObject))
-                        {
-                            // Debug.Log("reconnect prefab to mesh");
-
-                            // use the most recent mesh iteration (when undoing for example)
-                            UnityEngine.ProBuilder.MeshUtility.CopyTo(mesh, m);
-
-                            UnityEngine.Object.DestroyImmediate(mesh);
-                            pb.gameObject.GetComponent<MeshFilter>().sharedMesh = m;
-
-                            // also set the MeshCollider if it exists
-                            MeshCollider mc = pb.gameObject.GetComponent<MeshCollider>();
-                            if (mc != null) mc.sharedMesh = m;
-                            return;
-                        }
-                        else
-                        {
-                            // duplicate mesh
-                            // Debug.Log("create new mesh in cache from disconnect");
-                            pb.assetGuid = Guid.NewGuid().ToString("N");
-                            path = string.Format("{0}/{1}.asset", meshCacheDirectory, pb.assetGuid);
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogWarning("Mesh found in cache and scene mesh references match, but pb.asset_guid doesn't point to asset.  Please report the circumstances leading to this event to Karl.");
-                    }
-                }
-
-                AssetDatabase.CreateAsset(mesh, path);
-            }
-        }
-
-        internal static bool GetCachedMesh(ProBuilderMesh pb, out string path, out Mesh mesh)
-        {
-            if (pb.mesh != null)
-            {
-                string meshPath = AssetDatabase.GetAssetPath(pb.mesh);
-
-                if (!string.IsNullOrEmpty(meshPath))
-                {
-                    path = meshPath;
-                    mesh = pb.mesh;
-
-                    return true;
-                }
-            }
-
-            string meshCacheDirectory = GetMeshCacheDirectory(false);
-            string guid = pb.assetGuid;
-
-            path = string.Format("{0}/{1}.asset", meshCacheDirectory, guid);
-            mesh = AssetDatabase.LoadAssetAtPath<Mesh>(path);
-
-            return mesh != null;
-        }
-
-        static string GetMeshCacheDirectory(bool initializeIfMissing = false)
-        {
-            if (Directory.Exists(k_MeshCacheDirectory))
-                return k_MeshCacheDirectory;
-
-            string[] results = Directory.GetDirectories("Assets", k_MeshCacheDirectoryName, SearchOption.AllDirectories);
-
-            if (results.Length < 1)
-            {
-                if (initializeIfMissing)
-                {
-                    k_MeshCacheDirectory = FileUtility.GetLocalDataDirectory() + "/" + k_MeshCacheDirectoryName;
-                    Directory.CreateDirectory(k_MeshCacheDirectory);
-                }
-                else
-                {
-                    k_MeshCacheDirectory = null;
-                }
-            }
-            else
-            {
-                k_MeshCacheDirectory = results.First();
-            }
-
-            return k_MeshCacheDirectory;
         }
 
         /// <summary>

@@ -101,12 +101,13 @@ namespace UnityEditor.ProBuilder
 #if PB_DEBUG
             GUILayout.TextField(string.IsNullOrEmpty(pb.asset_guid) ? "null" : pb.asset_guid);
 #endif
-
             serializedObject.Update();
-
             LightmapStaticSettings();
-
             serializedObject.ApplyModifiedProperties();
+
+            GUI.skin.label.richText = true;
+            GUILayout.Label("<b>Instance ID:</b> " + m_Mesh.id);
+            GUILayout.Space(4);
 
 #if DEVELOPER_MODE
             GUILayout.Label("Compiled Mesh Information", EditorStyles.boldLabel);
@@ -115,6 +116,15 @@ namespace UnityEditor.ProBuilder
                 GUILayout.Label("Vertex Count: " + m_Mesh.mesh.vertexCount);
                 GUILayout.Label("Submesh Count: " + m_Mesh.mesh.subMeshCount);
             }
+            GUILayout.Space(4);
+
+            GUILayout.Label("ProBuilderMesh", EditorStyles.boldLabel);
+            GUILayout.Label(m_Mesh.assetInfo.ToString());
+            GUILayout.Space(4);
+            GUILayout.Label("MeshFilter", EditorStyles.boldLabel);
+            var m = m_Mesh.mesh;
+            GUILayout.Label(m == null ? "null" : m.name);
+            GUI.skin.label.richText = false;
 #endif
         }
 

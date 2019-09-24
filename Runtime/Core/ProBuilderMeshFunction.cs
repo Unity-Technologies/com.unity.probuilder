@@ -11,7 +11,28 @@ namespace UnityEngine.ProBuilder
     public sealed partial class ProBuilderMesh
 #endif
     {
+        [SerializeField]
+        AssetInfo m_AssetInfo;
+
+        internal AssetInfo assetInfo
+        {
+            get
+            {
+                if(m_AssetInfo.objectId == 0)
+                    m_AssetInfo = new AssetInfo(id);
+                return m_AssetInfo;
+            }
+        }
+
+        // Reset the AssetInfo.objectId property without modifying the Guid
+        internal void ResetAssetInfoObjectId()
+        {
+            m_AssetInfo = new AssetInfo(id);
+        }
+
 #if UNITY_EDITOR
+        internal static event Action<ProBuilderMesh> beforeMeshAwake = delegate(ProBuilderMesh builderMesh) {  };
+
         public void OnBeforeSerialize() {}
 
         public void OnAfterDeserialize()
@@ -45,10 +66,15 @@ namespace UnityEngine.ProBuilder
 
         void Awake()
         {
+#if UNITY_EDITOR
+            // In the editor there is some special handling to allow the sharing of mesh assets
+            beforeMeshAwake(this);
+#else
             if (vertexCount > 0
                 && faceCount > 0
                 && meshSyncState == MeshSyncState.Null)
                 Rebuild();
+#endif
         }
 
         void OnDestroy()
@@ -206,24 +232,43 @@ namespace UnityEngine.ProBuilder
             Refresh();
         }
 
+        // Editor-only event for handling mesh synchronization
+        internal static event Action<ProBuilderMesh> ensureSharedMeshIsOwnedByComponent = delegate(ProBuilderMesh builderMesh) {  };
+
+        void EnsureSharedMeshIsOwnedByComponent()
+        {
+#if UNITY_EDITOR
+            ensureSharedMeshIsOwnedByComponent(this);
+#endif
+            ResetAssetInfoObjectId();
+        }
+
+        internal Mesh CreateNewSharedMesh()
+        {
+            return mesh = new Mesh() { name = meshAssetName };
+        }
+
         /// <summary>
         /// Rebuild the mesh positions and submeshes. If vertex count matches new positions array the existing attributes are kept, otherwise the mesh is cleared. UV2 is the exception, it is always cleared.
         /// </summary>
         /// <param name="preferredTopology">Triangles and Quads are supported.</param>
         public void ToMesh(MeshTopology preferredTopology = MeshTopology.Triangles)
         {
-            Mesh m = mesh;
+            // Ensure assetInfo has unique id
+            EnsureSharedMeshIsOwnedByComponent();
 
-            // if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
-            if (m != null && m.vertexCount == m_Positions.Length)
-                m = mesh;
-            else if (m == null)
-                m = new Mesh();
-            else
+            var m = mesh;
+
+            if (m == null)
+                m = CreateNewSharedMesh();
+            else if (m.vertexCount != vertexCount)
                 m.Clear();
+            else
+                m.uv2 = null;
 
+            m_AssetInfo.mesh = m;
+            
             m.vertices = m_Positions;
-            m.uv2 = null;
 
             if (m_MeshFormatVersion < k_MeshFormatVersion)
             {
@@ -252,7 +297,6 @@ namespace UnityEngine.ProBuilder
                 m.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
             }
 
-            m.name = string.Format("pb_Mesh{0}", id);
             filter.sharedMesh = m;
         }
 

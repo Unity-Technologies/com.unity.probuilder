@@ -3,6 +3,7 @@
 using UnityEngine;
 using System.Linq;
 using System;
+using System.ComponentModel;
 using UnityEditor.Experimental.SceneManagement;
 using UnityEngine.ProBuilder;
 using UnityEngine.Rendering;
@@ -136,10 +137,10 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        internal static bool IsPrefab(ProBuilderMesh mesh)
+        internal static bool IsPrefab(UnityEngine.Object gameObject)
         {
 #if UNITY_2018_3_OR_NEWER
-            return PrefabUtility.GetPrefabAssetType(mesh.gameObject) != PrefabAssetType.NotAPrefab;
+            return PrefabUtility.GetPrefabAssetType(gameObject) != PrefabAssetType.NotAPrefab;
 #else
             PrefabType type = PrefabUtility.GetPrefabType(mesh.gameObject);
             return type == PrefabType.Prefab || type == PrefabType.PrefabInstance || type == PrefabType.DisconnectedPrefabInstance;
@@ -149,12 +150,12 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Returns true if this object is a prefab instanced in the scene.
         /// </summary>
-        /// <param name="go"></param>
+        /// <param name="obj"></param>
         /// <returns></returns>
-        internal static bool IsPrefabInstance(GameObject go)
+        internal static bool IsPrefabInstance(UnityEngine.Object obj)
         {
 #if UNITY_2018_3_OR_NEWER
-            var status = PrefabUtility.GetPrefabInstanceStatus(go);
+            var status = PrefabUtility.GetPrefabInstanceStatus(obj);
             return status == PrefabInstanceStatus.Connected || status == PrefabInstanceStatus.Disconnected;
 #else
             return PrefabUtility.GetPrefabType(go) == PrefabType.PrefabInstance;
@@ -186,70 +187,11 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         /// <param name="mesh">The component to test.</param>
         /// <seealso cref="ProBuilderMesh.meshSyncState"/>
+//        [Obsolete("Use MeshSynchronization.SynchronizeWithMeshFilter")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static void SynchronizeWithMeshFilter(ProBuilderMesh mesh)
         {
-            if (mesh == null)
-                throw new ArgumentNullException("mesh");
-
-            Mesh oldMesh = mesh.mesh;
-            MeshSyncState state = mesh.meshSyncState;
-            bool meshesAreAssets = Experimental.meshesAreAssets;
-
-            if (state != MeshSyncState.InSync)
-            {
-                if (state == MeshSyncState.Null)
-                {
-                    mesh.Rebuild();
-                    mesh.Optimize();
-                }
-                else
-                /**
-                 * If the mesh ID doesn't match the gameObject Id, it could mean two things -
-                 * 1. The object was just duplicated, and then made unique
-                 * 2. The scene was reloaded, and gameObject ids were recalculated.
-                 * If the latter, we need to clean up the old mesh.  If the former,
-                 * the old mesh needs to *not* be destroyed.
-                 */
-                if (oldMesh)
-                {
-                    int meshNo = -1;
-                    int.TryParse(oldMesh.name.Replace("pb_Mesh", ""), out meshNo);
-
-                    UnityEngine.Object dup = UnityEditor.EditorUtility.InstanceIDToObject(meshNo);
-                    GameObject go = dup as GameObject;
-
-                    if (go == null)
-                    {
-                        // Debug.Log("scene reloaded - false positive.");
-                        mesh.mesh.name = "pb_Mesh" + mesh.id;
-                    }
-                    else
-                    {
-                        // Debug.Log("duplicate mesh");
-
-                        if (!meshesAreAssets || !(EditorUtility.IsPrefabAsset(mesh.gameObject) || IsPrefabInstance(mesh.gameObject)))
-                        {
-                            // deep copy arrays & ToMesh/Refresh
-                            mesh.MakeUnique();
-                            mesh.Optimize();
-                        }
-                    }
-                }
-                else
-                {
-                    // old mesh didn't exist, so this is probably a prefab being instanced
-
-                    if (EditorUtility.IsPrefabAsset(mesh.gameObject))
-                        mesh.mesh.hideFlags = (HideFlags)(1 | 2 | 4 | 8);
-
-                    mesh.Optimize();
-                }
-            }
-            else
-            {
-                if (meshesAreAssets)
-                    EditorMeshUtility.TryCacheMesh(mesh);
-            }
+            MeshSynchronization.SynchronizeWithMeshFilter(mesh);
         }
 
         /// <summary>

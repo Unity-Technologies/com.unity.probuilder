@@ -288,26 +288,45 @@ namespace UnityEngine.ProBuilder
     /// <summary>
     /// Describes why a @"UnityEngine.ProBuilder.ProBuilderMesh" is considered to be out of sync with it's UnityEngine.MeshFilter component.
     /// </summary>
+    [System.Flags]
     public enum MeshSyncState
     {
+        None = 0,
         /// <summary>
         /// The MeshFilter mesh is null.
         /// </summary>
-        Null,
+        Null = 1 << 0,
         /// <summary>
-        /// The MeshFilter mesh is not owned by the ProBuilderMesh component. Use @"UnityEngine.ProBuilder.ProBuilderMesh.MakeUnique" to remedy.
+        /// The MeshFilter sharedMesh is not owned by the ProBuilderMesh component.
+        /// Use <see cref="ProBuilderMesh.MakeUnique"/> to create a new mesh owned by this ProBuilderMesh.
         /// </summary>
         /// <remarks>This is only used in editor.</remarks>
-        InstanceIDMismatch,
+        InstanceIDMismatch = 1 << 1,
         /// <summary>
         /// The mesh is valid, but does not have a UV2 channel.
         /// </summary>
         /// <remarks>This is only used in editor.</remarks>
-        Lightmap,
+        Lightmap = 1 << 2,
         /// <summary>
         /// The mesh is in sync.
         /// </summary>
-        InSync
+        [System.Obsolete]
+        InSync = 1 << 3,
+        /// <summary>
+        /// The MeshFilter sharedMesh is not owned by this ProBuilderMesh.
+        /// Use <see cref="ProBuilderMesh.MakeUnique"/> to create a new mesh owned by this ProBuilderMesh.
+        /// </summary>
+        MeshReferenceMismatch = 1 << 4
+    }
+
+    [System.Flags]
+    public enum MeshFilterState
+    {
+        Null = 1 << 0,
+        InstanceIdMismatch = 1 << 1,
+        GuidMismatch = 1 << 2,
+        MissingLightmap = 1 << 3,
+        InSync = 1 << 4
     }
 
     /// <summary>

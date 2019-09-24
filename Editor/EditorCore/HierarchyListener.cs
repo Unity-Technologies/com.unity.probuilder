@@ -28,16 +28,16 @@ namespace UnityEditor.ProBuilder
             PrefabUtility.prefabInstanceUpdated += PrefabInstanceUpdated;
         }
 
+        // Only called when prefab modifications are applied, not when reverting.
         static void PrefabInstanceUpdated(GameObject go)
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode)
                 return;
 
-            foreach (ProBuilderMesh pb in go.GetComponentsInChildren<ProBuilderMesh>())
+            foreach (var mesh in go.GetComponentsInChildren<ProBuilderMesh>())
             {
-                pb.ToMesh();
-                pb.Refresh();
-                pb.Optimize();
+                mesh.Rebuild();
+                mesh.Optimize();
             }
         }
 
@@ -45,21 +45,27 @@ namespace UnityEditor.ProBuilder
          * Used to catch prefab modifications that otherwise wouldn't be registered on the usual 'Awake' verify.
          *  - Dragging prefabs out of Project
          *  - 'Revert' prefab changes
-         *  - 'Apply' prefab changes
          */
         static void HierarchyWindowChanged()
         {
-            if (!EditorApplication.isPlaying)
+            foreach (var mesh in MeshSelection.top)
             {
-                bool meshesAreAssets = Experimental.meshesAreAssets;
+                var state = MeshSynchronization.ValidateSharedMeshAndAssetInfo(mesh);
 
-                // on duplication, or copy paste, this rebuilds the mesh structures of the new objects
-                foreach (ProBuilderMesh pb in Selection.transforms.GetComponents<ProBuilderMesh>())
-                {
-                    if (!meshesAreAssets)
-                        EditorUtility.SynchronizeWithMeshFilter(pb);
-                }
+                if(state != MeshSyncState.None)
+                    ProBuilderEditor.Refresh();
             }
+//            if (!EditorApplication.isPlaying)
+//            {
+//                bool meshesAreAssets = Experimental.meshesAreAssets;
+//
+//                // on duplication, or copy paste, this rebuilds the mesh structures of the new objects
+//                foreach (ProBuilderMesh pb in Selection.transforms.GetComponents<ProBuilderMesh>())
+//                {
+//                    if (!meshesAreAssets)
+//                        EditorUtility.SynchronizeWithMeshFilter(pb);
+//                }
+//            }
         }
     }
 }
