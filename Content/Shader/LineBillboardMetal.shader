@@ -12,7 +12,8 @@ Shader "Hidden/ProBuilder/LineBillboardMetal"
         Tags
         {
             "IgnoreProjector"="True"
-            "RenderType"="Transparent"
+            "RenderType"="Geometry"
+            "Queue"="Geometry"
             "DisableBatching"="True"
         }
 

@@ -20,12 +20,6 @@ namespace UnityEngine.ProBuilder
 
         internal static void CreateEdgeMesh(ProBuilderMesh mesh, Mesh target)
         {
-            if (!BuiltinMaterials.geometryShadersSupported)
-            {
-                CreateEdgeBillboardMesh(mesh, target);
-                return;
-            }
-
             int edgeCount = 0;
             int faceCount = mesh.faceCount;
 
@@ -61,12 +55,6 @@ namespace UnityEngine.ProBuilder
 
         internal static void CreateEdgeMesh(ProBuilderMesh mesh, Mesh target, Edge[] edges)
         {
-            if (!BuiltinMaterials.geometryShadersSupported)
-            {
-                CreateEdgeBillboardMesh(mesh, target, edges);
-                return;
-            }
-
             int edgeCount = System.Math.Min(edges.Length, ushort.MaxValue / 2 - 1);
             int[] indexes = new int[edgeCount * 2];
 

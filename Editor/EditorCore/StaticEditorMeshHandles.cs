@@ -224,7 +224,7 @@ namespace UnityEditor.ProBuilder
 
             void Begin()
             {
-                m_Wire = thickness < .01f || Get().m_LineMaterial == null;
+                m_Wire = thickness < k_MinLineWidthForGeometryShader || Get().m_LineMaterial == null;
 
                 if (!m_Wire)
                 {
@@ -257,7 +257,7 @@ namespace UnityEditor.ProBuilder
                 }
 
                 GL.PushMatrix();
-                GL.Begin(BuiltinMaterials.geometryShadersSupported ? GL.LINES : GL.QUADS);
+                GL.Begin(m_Wire || BuiltinMaterials.geometryShadersSupported ? GL.LINES : GL.QUADS);
             }
 
             void End()
