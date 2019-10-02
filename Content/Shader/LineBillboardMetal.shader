@@ -5,6 +5,7 @@ Shader "Hidden/ProBuilder/LineBillboardMetal"
         _Scale("Scale", Range(1,7)) = 3.3
         _Color ("Color", Color) = (1,1,1,1)
         _HandleZTest ("_HandleZTest", Int) = 8
+        _HandleZWrite("_HandleZWrite", Int) = 1
     }
 
     SubShader
@@ -19,7 +20,7 @@ Shader "Hidden/ProBuilder/LineBillboardMetal"
 
         Lighting Off
         ZTest [_HandleZTest]
-        ZWrite On
+        ZWrite [_HandleZWrite]
         Cull Off
         Blend Off
         Offset -1,-1

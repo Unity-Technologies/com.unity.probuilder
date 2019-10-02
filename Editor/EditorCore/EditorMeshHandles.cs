@@ -307,29 +307,29 @@ namespace UnityEditor.ProBuilder
                 case SelectMode.Edge:
                 case SelectMode.TextureEdge:
                 {
-                    // render wireframe with edge material in edge mode so that the size change is reflected
-                    Render(m_WireHandles, m_ForceWireframeLinesGL ? m_GlWireMaterial : m_WireMaterial, s_EdgeUnselectedColor);
-                    Render(m_SelectedEdgeHandles, m_ForceEdgeLinesGL ? m_GlWireMaterial : m_EdgeMaterial, s_EdgeSelectedColor, s_DepthTestHandles);
+                    // When in Edge mode, use the same material for wireframe
+                    Render(m_WireHandles, m_ForceWireframeLinesGL ? m_GlWireMaterial : m_EdgeMaterial, s_EdgeUnselectedColor, CompareFunction.LessEqual, false);
+                    Render(m_SelectedEdgeHandles, m_ForceEdgeLinesGL ? m_GlWireMaterial : m_EdgeMaterial, s_EdgeSelectedColor, s_DepthTestHandles ? CompareFunction.LessEqual : CompareFunction.Always, true);
                     break;
                 }
                 case SelectMode.Face:
                 case SelectMode.TextureFace:
                 {
-                    Render(m_WireHandles, m_ForceWireframeLinesGL ? m_GlWireMaterial : m_WireMaterial, s_WireframeColor);
+                    Render(m_WireHandles, m_ForceWireframeLinesGL ? m_GlWireMaterial : m_WireMaterial, s_WireframeColor, CompareFunction.LessEqual, false);
                     Render(m_SelectedFaceHandles, m_FaceMaterial, s_FaceSelectedColor, s_DepthTestHandles);
                     break;
                 }
                 case SelectMode.Vertex:
                 case SelectMode.TextureVertex:
                 {
-                    Render(m_WireHandles, m_ForceWireframeLinesGL ? m_GlWireMaterial : m_WireMaterial, s_WireframeColor);
+                    Render(m_WireHandles, m_ForceWireframeLinesGL ? m_GlWireMaterial : m_WireMaterial, s_WireframeColor, CompareFunction.LessEqual, false);
                     Render(m_VertexHandles, m_VertMaterial, s_VertexUnselectedColor);
                     Render(m_SelectedVertexHandles, m_VertMaterial, s_VertexSelectedColor, s_DepthTestHandles);
                     break;
                 }
                 default:
                 {
-                    Render(m_WireHandles, m_ForceWireframeLinesGL ? m_GlWireMaterial : m_WireMaterial, s_WireframeColor);
+                    Render(m_WireHandles, m_ForceWireframeLinesGL ? m_GlWireMaterial : m_WireMaterial, s_WireframeColor, CompareFunction.LessEqual, false);
                     break;
                 }
             }
@@ -337,12 +337,13 @@ namespace UnityEditor.ProBuilder
 
         static void Render(Dictionary<ProBuilderMesh, MeshHandle> handles, Material material, Color color, bool depthTest = true)
         {
-            Render(handles, material, color, depthTest ? CompareFunction.LessEqual : CompareFunction.Always);
+            Render(handles, material, color, depthTest ? CompareFunction.LessEqual : CompareFunction.Always, false);
         }
 
-        static void Render(Dictionary<ProBuilderMesh, MeshHandle> handles, Material material, Color color, CompareFunction func)
+        static void Render(Dictionary<ProBuilderMesh, MeshHandle> handles, Material material, Color color, CompareFunction func, bool zWrite)
         {
             material.SetInt("_HandleZTest", (int) func);
+            material.SetInt("_HandleZWrite", zWrite ? 1 : 0);
             material.SetColor("_Color", color);
 
             if (material.SetPass(0))
@@ -516,9 +517,6 @@ namespace UnityEditor.ProBuilder
 
         void SetMaterialsScaleAttribute()
         {
-            m_WireMaterial.SetFloat("_CameraOffset", .5f);
-            m_EdgeMaterial.SetFloat("_CameraOffset", .1f);
-
             m_VertMaterial.SetFloat("_Scale", s_VertexPointSize * EditorGUIUtility.pixelsPerPoint);
             m_WireMaterial.SetFloat("_Scale", s_WireframeLineSize * EditorGUIUtility.pixelsPerPoint);
             m_EdgeMaterial.SetFloat("_Scale", s_EdgeLineSize * EditorGUIUtility.pixelsPerPoint);
