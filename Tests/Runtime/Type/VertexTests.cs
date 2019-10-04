@@ -3,7 +3,6 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using UnityEngine.ProBuilder;
 
 namespace UnityEngine.ProBuilder.RuntimeTests.Type
 {
