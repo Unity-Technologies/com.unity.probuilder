@@ -308,7 +308,7 @@ namespace UnityEditor.ProBuilder
                 case SelectMode.TextureEdge:
                 {
                     // When in Edge mode, use the same material for wireframe
-                    Render(m_WireHandles, m_ForceWireframeLinesGL ? m_GlWireMaterial : m_EdgeMaterial, s_EdgeUnselectedColor, CompareFunction.LessEqual, false);
+                    Render(m_WireHandles, m_ForceEdgeLinesGL ? m_GlWireMaterial : m_EdgeMaterial, s_EdgeUnselectedColor, CompareFunction.LessEqual, false);
                     Render(m_SelectedEdgeHandles, m_ForceEdgeLinesGL ? m_GlWireMaterial : m_EdgeMaterial, s_EdgeSelectedColor, s_DepthTestHandles ? CompareFunction.LessEqual : CompareFunction.Always, true);
                     break;
                 }
@@ -323,7 +323,7 @@ namespace UnityEditor.ProBuilder
                 case SelectMode.TextureVertex:
                 {
                     Render(m_WireHandles, m_ForceWireframeLinesGL ? m_GlWireMaterial : m_WireMaterial, s_WireframeColor, CompareFunction.LessEqual, false);
-                    Render(m_VertexHandles, m_VertMaterial, s_VertexUnselectedColor);
+                    Render(m_VertexHandles, m_VertMaterial, s_VertexUnselectedColor, CompareFunction.LessEqual, false);
                     Render(m_SelectedVertexHandles, m_VertMaterial, s_VertexSelectedColor, s_DepthTestHandles);
                     break;
                 }
@@ -337,7 +337,7 @@ namespace UnityEditor.ProBuilder
 
         static void Render(Dictionary<ProBuilderMesh, MeshHandle> handles, Material material, Color color, bool depthTest = true)
         {
-            Render(handles, material, color, depthTest ? CompareFunction.LessEqual : CompareFunction.Always, false);
+            Render(handles, material, color, depthTest ? CompareFunction.LessEqual : CompareFunction.Always, true);
         }
 
         static void Render(Dictionary<ProBuilderMesh, MeshHandle> handles, Material material, Color color, CompareFunction func, bool zWrite)
@@ -367,93 +367,17 @@ namespace UnityEditor.ProBuilder
             ClearHandlesInternal(m_SelectedVertexHandles);
         }
 
-        public static void RebuildSelectedHandles(
-            IEnumerable<ProBuilderMesh> meshes,
-            SelectMode selectionMode,
-            bool selectionOrVertexCountChanged = true)
+        public static void RebuildSelectedHandles( IEnumerable<ProBuilderMesh> meshes, SelectMode selectionMode)
         {
-            Get().RebuildSelectedHandlesInternal(meshes, selectionMode, selectionOrVertexCountChanged);
+            Get().RebuildSelectedHandlesInternal(meshes, selectionMode);
         }
 
-        void RebuildSelectedHandlesInternal(IEnumerable<ProBuilderMesh> meshes, SelectMode selectionMode, bool selectionOrVertexCountChanged = true)
+        void RebuildSelectedHandlesInternal(IEnumerable<ProBuilderMesh> meshes, SelectMode selectionMode)
         {
-            // todo Write overloads of MeshHandles.Create... methods that just overwrite position data.
-            // For now this optimization only applies to platforms with geometry shader support.
-            if (!selectionOrVertexCountChanged)
-            {
-                if (m_ForceWireframeLinesGL || BuiltinMaterials.geometryShadersSupported)
-                {
-                    foreach (var handle in m_WireHandles)
-                        handle.Value.mesh.vertices = handle.Key.positionsInternal;
-                }
-                else
-                {
-                    foreach (var handle in m_WireHandles)
-                        MeshHandles.CreateEdgeBillboardMesh(handle.Key, handle.Value.mesh);
-                }
-
-                switch (selectionMode)
-                {
-                    case SelectMode.Vertex:
-                    case SelectMode.TextureVertex:
-                    {
-                        if (BuiltinMaterials.geometryShadersSupported)
-                        {
-                            foreach (var handle in m_VertexHandles)
-                                handle.Value.mesh.vertices = handle.Key.positionsInternal;
-                            foreach (var handle in m_SelectedVertexHandles)
-                                handle.Value.mesh.vertices = handle.Key.positionsInternal;
-                        }
-                        else
-                        {
-                            foreach (var handle in m_VertexHandles)
-                                MeshHandles.CreateVertexMesh(handle.Key, handle.Value.mesh);
-                            foreach (var handle in m_SelectedVertexHandles)
-                                MeshHandles.CreateVertexMesh(handle.Key, handle.Value.mesh, handle.Key.selectedIndexesInternal);
-                        }
-
-                        break;
-                    }
-
-                    case SelectMode.Edge:
-                    case SelectMode.TextureEdge:
-                    {
-                        if (m_ForceEdgeLinesGL || BuiltinMaterials.geometryShadersSupported)
-                        {
-                            foreach (var handle in m_SelectedEdgeHandles)
-                                handle.Value.mesh.vertices = handle.Key.positionsInternal;
-                        }
-                        else
-                        {
-                            foreach (var handle in m_SelectedEdgeHandles)
-                                MeshHandles.CreateEdgeBillboardMesh(handle.Key, handle.Value.mesh);
-                        }
-
-                        break;
-                    }
-
-                    case SelectMode.Face:
-                    case SelectMode.TextureFace:
-                    {
-                        foreach (var handle in m_SelectedFaceHandles)
-                            handle.Value.mesh.vertices = handle.Key.positionsInternal;
-                        break;
-                    }
-                }
-
-                return;
-            }
-
             ClearHandles();
 
             foreach (var mesh in meshes)
             {
-                // always do wireframe
-                if(m_ForceWireframeLinesGL || BuiltinMaterials.geometryShadersSupported)
-                    RebuildMeshHandle(mesh, m_WireHandles, MeshHandles.CreateEdgeMesh);
-                else
-                    RebuildMeshHandle(mesh, m_WireHandles, MeshHandles.CreateEdgeBillboardMesh);
-
                 switch (selectionMode)
                 {
                     case SelectMode.Vertex:
@@ -462,12 +386,17 @@ namespace UnityEditor.ProBuilder
                         RebuildMeshHandle(mesh, m_VertexHandles, MeshHandles.CreateVertexMesh);
                         var handle = GetMeshHandle(mesh, m_SelectedVertexHandles);
                         MeshHandles.CreateVertexMesh(mesh, handle.mesh, mesh.selectedIndexesInternal);
-                        break;
+                        goto default;
                     }
 
                     case SelectMode.Edge:
                     case SelectMode.TextureEdge:
                     {
+                        if(m_ForceEdgeLinesGL || BuiltinMaterials.geometryShadersSupported)
+                            RebuildMeshHandle(mesh, m_WireHandles, MeshHandles.CreateEdgeMesh);
+                        else
+                            RebuildMeshHandle(mesh, m_WireHandles, MeshHandles.CreateEdgeBillboardMesh);
+
                         var handle = GetMeshHandle(mesh, m_SelectedEdgeHandles);
 
                         if(m_ForceEdgeLinesGL || BuiltinMaterials.geometryShadersSupported)
@@ -482,8 +411,15 @@ namespace UnityEditor.ProBuilder
                     case SelectMode.TextureFace:
                     {
                         RebuildMeshHandle(mesh, m_SelectedFaceHandles, MeshHandles.CreateFaceMesh);
-                        break;
+                        goto default;
                     }
+
+                    default:
+                        if(m_ForceWireframeLinesGL || BuiltinMaterials.geometryShadersSupported)
+                            RebuildMeshHandle(mesh, m_WireHandles, MeshHandles.CreateEdgeMesh);
+                        else
+                            RebuildMeshHandle(mesh, m_WireHandles, MeshHandles.CreateEdgeBillboardMesh);
+                        break;
                 }
             }
         }
