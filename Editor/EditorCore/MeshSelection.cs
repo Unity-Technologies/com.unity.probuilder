@@ -142,11 +142,13 @@ namespace UnityEditor.ProBuilder
         /// </value>
         public static event System.Action objectSelectionChanged;
 
+        static HashSet<ProBuilderMesh> s_UnitySelectionChangeMeshes = new HashSet<ProBuilderMesh>();
+
         internal static void OnObjectSelectionChanged()
         {
             // GameObjects returns both parent and child when both are selected, where transforms only returns the top-most
             // transform.
-            s_TopSelection.Clear();
+            s_UnitySelectionChangeMeshes.Clear();
             s_ElementSelection.Clear();
             s_ActiveMesh = null;
 
@@ -154,22 +156,43 @@ namespace UnityEditor.ProBuilder
 
             for (int i = 0, c = gameObjects.Length; i < c; i++)
             {
+#if UNITY_2019_3_OR_NEWER
+                ProBuilderMesh mesh;
+                if(gameObjects[i].TryGetComponent<ProBuilderMesh>(out mesh))
+#else
                 var mesh = gameObjects[i].GetComponent<ProBuilderMesh>();
-
                 if (mesh != null)
+#endif
                 {
                     if (gameObjects[i] == Selection.activeGameObject)
                         s_ActiveMesh = mesh;
 
-                    s_TopSelection.Add(mesh);
+                    s_UnitySelectionChangeMeshes.Add(mesh);
                 }
             }
 
+            for (int i = 0, c = s_TopSelection.Count; i < c; i++)
+            {
+                if (!s_UnitySelectionChangeMeshes.Contains(s_TopSelection[i]))
+                {
+                    UndoUtility.RecordSelection(s_TopSelection[i], "Selection Change");
+                    s_TopSelection[i].ClearSelection();
+                }
+            }
+
+            s_TopSelection.Clear();
+
+            foreach (var i in s_UnitySelectionChangeMeshes)
+                s_TopSelection.Add(i);
+
             selectedObjectCount = s_TopSelection.Count;
+
             OnComponentSelectionChanged();
 
             if (objectSelectionChanged != null)
                 objectSelectionChanged();
+
+            s_UnitySelectionChangeMeshes.Clear();
         }
 
         internal static void OnComponentSelectionChanged()

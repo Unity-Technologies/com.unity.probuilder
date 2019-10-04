@@ -1,6 +1,3 @@
-// When enabled, a mouse click on an unselected mesh will select both the GameObject and the mesh element picked.
-//#define FIRST_CLICK_SELECTS_MESH_ELEMENT
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,11 +28,8 @@ namespace UnityEditor.ProBuilder
         static readonly List<int> s_IndexBuffer = new List<int>(16);
         static List<Edge> s_EdgeBuffer = new List<Edge>(32);
 
-#if FIRST_CLICK_SELECTS_MESH_ELEMENT
+        // When enabled, a mouse click on an unselected mesh will select both the GameObject and the mesh element picked.
         const bool k_AllowUnselected = true;
-#else
-        const bool k_AllowUnselected = false;
-#endif
 
         public static ProBuilderMesh DoMouseClick(Event evt, SelectMode selectionMode, ScenePickerPreferences pickerPreferences)
         {
@@ -55,7 +49,10 @@ namespace UnityEditor.ProBuilder
             evt.Use();
 
             if (!appendModifier)
+            {
+                s_Selection.mesh.ClearSelection();
                 MeshSelection.SetSelection((GameObject)null);
+            }
 
             if (pickedElementDistance > pickerPreferences.maxPointerDistance)
             {
