@@ -1,22 +1,16 @@
 using System;
 using UnityEngine.Rendering;
 using System.Reflection;
-using UnityEditor;
 
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// Access the built-in materials that ProBuilder uses.
+    /// Access the built-in materials that ProBuilder uses. In the editor, see
+    /// <see cref="UnityEditor.ProBuilder.EditorMaterialUtility"/> for access to the full array of provided materials
+    /// and shaders.
     /// </summary>
     public static class BuiltinMaterials
     {
-        // Names of the Standard Vertex Color materials included in the SRP sample packages.
-        internal static readonly string[] k_StandardRenderPipelineMaterials = new string[]
-        {
-            "ProBuilder Default LWRP",
-            "ProBuilder Default HDRP"
-        };
-
         static bool s_IsInitialized;
 
         /// <value>
