@@ -5,17 +5,53 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.1.1-preview.1] - 2019-08-27
+## [4.2.0-preview.0] - 2019-09-06
 
-## [4.1.0-preview.5] - 2019-06-03
+## Features
+
+- Added the `Offset Elements` action to quickly move selected mesh elements in world, local, or element space.
+- Added the ability to set a custom range in the `Subdivide Edges` options window.
+
+## Bug Fixes
+
+- Fixed `Boolean Editor` menu item not respecting the Experimental Features Enabled preference.
+- Fixed `Boolean Editor` preview images not updating with selection changes.
+- Fixed potential error when pressing the `Object Mode` shortcut without a `ProBuilder Editor` instance available.
+- Fixed an issue where a currently editing text field would lose focus when a ProBuilder tooltip was shown.
+- Fixed a case where `Weld Vertices` could leave the mesh selection in an invalid state.
+- Fixed an issue where a ProBuilder tooltip could appear when hovering on a window on top of the toolbar.
+- Fixed the ProBuilder toolbar background color applying to entire button (Unity 2019.3 only).
+- Fixed `Select by Material` sometimes returning incorrect results.
+- Fixed `Merge Objects` not retaining active `GameObject` components and properties.
+- Added a dialog when `New Poly Shape` fails to find an unlocked `Inspector` window.
+- Fixed case where `New Poly Shape` could create a mis-aligned object when used with ProGrids.
+- Fixed edge case where the ProBuilder selection could become desynchronized with the Unity selection.
+- Fixed `UV Editor` window minimum width not being sufficient to accommodate the toolbar.
+
+## Changes
+
+- Added support for holes when creating shapes from a polygon (API only).
+- [Samples] Remove obsolete references from `EventSystem` GameObject.
+- [Samples] Remove `GUILayer` components from `Camera`.
+
+## [4.1.0] - 2019-07-03
 
 ### Features
 
 - Added the option to export assets either as prefabs, or just the mesh.
 - Improved the naming of exported mesh assets.
 - Added API examples as a sample package.
-- Re-enabled FBX Exporter integration, adding support for quad export and automatical removal of ProBuilder components on export.
+- Re-enabled FBX Exporter integration, adding support for quad export and automatic removal of ProBuilder components on export.
 - Added ability to duplicate faces to a new game object or to new submesh.
+- Added the option to toggle the dimensions overlay between object and element bounds.
+- Added a shortcut to toggle the dimensions overlay between object, element, and off states.
+- Added a `Duplicate Face` action.
+- The UV Inspector is now resize-able from all sides and corners.
+- Added the ability to set a `Poly Shape` height to `0` for a single face plane.
+- Add support for HDRP and LWRP pipelines through Samples packages (available in the Package Manager UI for ProBuilder).
+- Added the ability to copy UV transform values between manual and auto unwrapped faces.
+- Added an explicit toggle to enable or disable rendering the background texture when exporting UV templates.
+- Added additional methods for testing and fixing face topology (`MeshValidation.ContainsNonContiguousTriangles` and `MeshValidation.EnsureFacesAreComposedOfContiguousTriangles`).
 
 ### Bug Fixes
 
@@ -45,12 +81,28 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed case where `Poly Shape` could leave the active tool in an invalid state.
 - Fixed case where drag selecting a single vertex would enable "Collapse Vertices" in toolbar
 - Fixed case where drag-and-dropping material onto selected faces applies material to all faces if "Edit UVs in Scene" enabled
+- Fixed `Box Project UVs` not resetting UV coordinates to origin.
+- Fixed naming conflict with `UnityEngine.Snapping` in Unity 2019.3.
+- Fixed `Apply Material` not respecting the current face selection when editing UVs.
+- Fixed the dimensions overlay graphics not updating when modifying vertices.
+- Fixed bug where selecting an element with the `shift` key held would not make it the active selection.
+- Fixed `Poly Shape` tool not clearing the mesh when an invalid path is created.
+- Fixed `Collapse Vertices` action showing as available in some cases where the action was not applicable.
+- Fixed an issue where setting the toolbar to use icon or text mode would not immediately refresh the UI.
+- Fixed bug where exporting an OBJ could fail if a mesh did not have vertex colors.
+- Fixed the shortcut for `Copy UVs` on macOS referencing `Control` instead of `Command`.
+- Fixed an issue where the ProBuilder toolbar font size would initially be very small, then later return to the correct size (specific to Unity 2019.3).
+- Fixed a bug that caused the `Material Editor` to not render the preview material on HDPI screens.
+- Fixed a null reference error when attempting to subdivide a face with non-contiguous triangles.
 
 ### Changes
 
-- ProBuilder assembly definitions now have `Auto Referenced` enabled.
-- Project layout restructured for compatibility with file protocol.
+- Assembly definitions now have `Auto Referenced` enabled, meaning it is no longer required that a project use Assembly Definition files in order to access the ProBuilder API.
+- Project layout restructured such that the git url may now be used as a version in the project manifest.
 - Improved the default UV layout of Cone shape.
+- Settings Manager is now a dependency instead of bundled with code.
+- Changed the default value of `Apply Transforms` to false when exporting models.
+- Changed the default value of `As Group` to true when exporting models.
 
 ## [4.0.4] - 2019-03-13
 
