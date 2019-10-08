@@ -68,8 +68,8 @@ namespace UnityEditor.ProBuilder
 
         [UserSetting("Toolbar", "Toolbar Location", "Where the Object, Face, Edge, and Vertex toolbar will be shown in the Scene View.")]
         static Pref<SceneToolbarLocation> s_SceneToolbarLocation = new Pref<SceneToolbarLocation>("editor.sceneToolbarLocation", SceneToolbarLocation.UpperCenter, SettingsScope.User);
-        
-        const float k_PickingDistance = 128f;
+
+        const float k_PickingDistance = 40f;
 
         static Pref<bool> s_WindowIsFloating = new Pref<bool>("UnityEngine.ProBuilder.ProBuilderEditor-isUtilityWindow", false, SettingsScope.Project);
         static Pref<bool> m_BackfaceSelectEnabled = new Pref<bool>("editor.backFaceSelectEnabled", false);
@@ -1055,7 +1055,7 @@ namespace UnityEditor.ProBuilder
 
             try
             {
-                EditorMeshHandles.RebuildSelectedHandles(MeshSelection.topInternal, selectMode, selectionOrVertexCountChanged);
+                EditorMeshHandles.RebuildSelectedHandles(MeshSelection.topInternal, selectMode);
             }
             catch
             {
