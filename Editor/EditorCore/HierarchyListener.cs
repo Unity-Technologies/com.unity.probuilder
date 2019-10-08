@@ -35,6 +35,7 @@ namespace UnityEditor.ProBuilder
 
             foreach (ProBuilderMesh pb in go.GetComponentsInChildren<ProBuilderMesh>())
             {
+                EditorUtility.SynchronizeWithMeshFilter(pb);
                 pb.ToMesh();
                 pb.Refresh();
                 pb.Optimize();
