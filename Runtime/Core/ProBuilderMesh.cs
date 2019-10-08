@@ -285,6 +285,8 @@ namespace UnityEngine.ProBuilder
             {
                 if ((m_CacheValid & CacheValidState.SharedVertex) != CacheValidState.SharedVertex)
                 {
+                    if (m_SharedVertexLookup == null)
+                        m_SharedVertexLookup = new Dictionary<int, int>();
                     SharedVertex.GetSharedVertexLookup(m_SharedVertices, m_SharedVertexLookup);
                     m_CacheValid |= CacheValidState.SharedVertex;
                 }
