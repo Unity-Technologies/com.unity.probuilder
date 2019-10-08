@@ -50,7 +50,8 @@ namespace UnityEditor.ProBuilder
 
             if (!appendModifier)
             {
-                s_Selection.mesh.ClearSelection();
+                if(s_Selection.mesh != null)
+                    s_Selection.mesh.ClearSelection();
                 MeshSelection.SetSelection((GameObject)null);
             }
 
