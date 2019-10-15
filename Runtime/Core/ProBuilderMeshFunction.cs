@@ -18,20 +18,25 @@ namespace UnityEngine.ProBuilder
         {
             get
             {
-                if(m_AssetInfo.objectId == 0)
-                    m_AssetInfo = new AssetInfo(id);
+                if(m_AssetInfo.instanceId == 0)
+                    m_AssetInfo = new AssetInfo(id, mesh);
                 return m_AssetInfo;
             }
         }
 
-        // Reset the AssetInfo.objectId property without modifying the Guid
-        internal void ResetAssetInfoObjectId()
+        // Create a new AssetInfo with this object's instanceID and a new GUID
+        internal void UpdateAssetInfoInstanceID()
         {
-            m_AssetInfo = new AssetInfo(id);
+            m_AssetInfo.instanceId = id;
+        }
+
+        internal void NewAssetInfo()
+        {
+            m_AssetInfo = new AssetInfo(id, mesh);
         }
 
 #if UNITY_EDITOR
-        internal static event Action<ProBuilderMesh> beforeMeshAwake = delegate(ProBuilderMesh builderMesh) {  };
+        internal static event Action<ProBuilderMesh> beforeMeshAwake = delegate {};
 
         public void OnBeforeSerialize() {}
 
@@ -240,7 +245,7 @@ namespace UnityEngine.ProBuilder
 #if UNITY_EDITOR
             ensureSharedMeshIsOwnedByComponent(this);
 #endif
-            ResetAssetInfoObjectId();
+            UpdateAssetInfoInstanceID();
         }
 
         internal Mesh CreateNewSharedMesh()
@@ -267,7 +272,7 @@ namespace UnityEngine.ProBuilder
                 m.uv2 = null;
 
             m_AssetInfo.mesh = m;
-            
+
             m.vertices = m_Positions;
 
             if (m_MeshFormatVersion < k_MeshFormatVersion)

@@ -62,20 +62,34 @@ namespace UnityEditor.ProBuilder
             // the cache is not in use).
             //
             // Known issue - when reverting prefab changes a mesh is unreferenced and leaked.
-            if (!useMeshCache && (state & MeshSyncState.InstanceIDMismatch) == MeshSyncState.InstanceIDMismatch)
+            if ((state & MeshSyncState.InstanceIDMismatch) == MeshSyncState.InstanceIDMismatch)
             {
                 // Check if the old instance ID exists in the scene. If it does, then this is a duplicate event and it
                 // is necessary to rebuild the mesh. If it does not exist, then the instance IDs were just cycled (as a
                 // result of a scene reload, for example).
-                var obj = UnityEditor.EditorUtility.InstanceIDToObject(mesh.assetInfo.objectId);
+                var obj = UnityEditor.EditorUtility.InstanceIDToObject(mesh.assetInfo.instanceId);
+                bool isDuplicate = obj != null && !(EditorUtility.IsPrefab(obj) || EditorUtility.IsPrefabInstance(obj));
 
-                if (obj != null && !(EditorUtility.IsPrefab(obj) || EditorUtility.IsPrefabInstance(obj)))
-                    meshNeedsRebuild = true;
+                if (isDuplicate)
+                {
+                    Debug.Log(mesh.assetInfo + " is a duplicate");
+
+                    if (useMeshCache)
+                    {
+                        mesh.NewAssetInfo();
+                        // register with MeshCache here
+                        MeshCache.Register(mesh);
+                    }
+                    else
+                        meshNeedsRebuild = true;
+                }
                 else
-                    mesh.ResetAssetInfoObjectId();
+                {
+                    mesh.UpdateAssetInfoInstanceID();
+                }
             }
 
-            if (meshNeedsRebuild)
+            if(meshNeedsRebuild)
             {
                 mesh.Rebuild();
                 mesh.Optimize();
@@ -97,7 +111,7 @@ namespace UnityEditor.ProBuilder
                 {
                     var sb = new System.Text.StringBuilder();
 
-                    sb.AppendLine("<b><color=\"#ff00ffff\">CreateNewSharedMesh</color></b>  <i>" + mesh.assetInfo.objectId + " -> " + mesh.id + "</i>");
+                    sb.AppendLine("<b><color=\"#ff00ffff\">CreateNewSharedMesh</color></b>  <i>" + mesh.assetInfo.instanceId + " -> " + mesh.id + "</i>");
                     if ((state & MeshSyncState.Null) == MeshSyncState.Null)
                         sb.AppendLine("<b>MeshSyncState.Null</b>");
                     if((state & MeshSyncState.InstanceIDMismatch) == MeshSyncState.InstanceIDMismatch)

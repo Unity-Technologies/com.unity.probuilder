@@ -102,8 +102,10 @@ namespace UnityEditor.ProBuilder
             GUILayout.TextField(string.IsNullOrEmpty(pb.asset_guid) ? "null" : pb.asset_guid);
 #endif
             serializedObject.Update();
+            EditorGUI.BeginChangeCheck();
             LightmapStaticSettings();
-            serializedObject.ApplyModifiedProperties();
+            if(EditorGUI.EndChangeCheck())
+                serializedObject.ApplyModifiedProperties();
 
             GUI.skin.label.richText = true;
             GUILayout.Label("<b>Instance ID:</b> " + m_Mesh.id);
@@ -119,7 +121,9 @@ namespace UnityEditor.ProBuilder
             GUILayout.Space(4);
 
             GUILayout.Label("ProBuilderMesh", EditorStyles.boldLabel);
-            GUILayout.Label(m_Mesh.assetInfo.ToString());
+            var ai = m_Mesh.assetInfo;
+            var mn = ai.mesh != null ? ai.mesh.name : "null";
+            GUILayout.Label($"<b>id: </b> {ai.instanceId}\n<b>guid: </b> {ai.guid}\n<b>mesh: </b>{mn}");
             GUILayout.Space(4);
             GUILayout.Label("MeshFilter", EditorStyles.boldLabel);
             var m = m_Mesh.mesh;

@@ -119,6 +119,7 @@ namespace UnityEngine.ProBuilder
         /// <value>
         /// If "Meshes are Assets" feature is enabled, this is used to relate pb_Objects to stored meshes.
         /// </value>
+        [Obsolete("Use assetInfo")]
         [SerializeField]
         internal string assetGuid;
 
@@ -798,7 +799,7 @@ namespace UnityEngine.ProBuilder
                 bool meshIsNull = sharedMesh == null;
                 var state = meshIsNull ? MeshSyncState.Null : MeshSyncState.None;
 
-                if (m_AssetInfo.objectId != id)
+                if (m_AssetInfo.instanceId != id)
                     state |= MeshSyncState.InstanceIDMismatch;
 
                 if (sharedMesh != assetInfo.mesh)
