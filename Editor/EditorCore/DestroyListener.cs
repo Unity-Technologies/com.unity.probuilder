@@ -19,34 +19,23 @@ namespace UnityEditor.ProBuilder
         {
             if (Experimental.meshesAreAssets)
             {
-                if (EditorUtility.IsPrefab(mesh))
+                // on entering / exiting play mode unity instances everything and destroys the scene
+                bool isPlaying = EditorApplication.isPlaying;
+                bool orWillPlay = EditorApplication.isPlayingOrWillChangePlaymode;
+
+                if (isPlaying || orWillPlay)
+                    return;
+
+                Mesh asset = mesh.mesh;
+
+                if (asset == null)
+                    return;
+
+                if (!EditorUtility.IsPrefab(mesh))
                 {
-                    // Debug.Log("will not destroy prefab mesh");
-                }
-                else
-                {
-                    string cache_path;
-                    Mesh cache_mesh;
-
-                    // if it is cached but not a prefab instance or root, destroy the mesh in the cache
-                    // otherwise go ahead and destroy as usual
-                    if (MeshCache.GetCachedMesh(mesh, out cache_path, out cache_mesh))
-                    {
-                        // on entering / exiting play mode unity instances everything and destroys the scene,
-                        // which nukes the mesh cache.  don't do this.
-                        bool isPlaying = EditorApplication.isPlaying;
-                        bool orWillPlay = EditorApplication.isPlayingOrWillChangePlaymode;
-
-                        if (isPlaying || orWillPlay)
-                            return;
-
-                        SelectionUtility.Remove(mesh);
-                        AssetDatabase.DeleteAsset(cache_path);
-                    }
-                    else
-                    {
-                        Object.DestroyImmediate(mesh.mesh);
-                    }
+                    // if the asset is not in the mesh cache, still destroy it
+                    if(!MeshCache.Destroy(mesh))
+                        Object.DestroyImmediate(asset);
                 }
             }
             else

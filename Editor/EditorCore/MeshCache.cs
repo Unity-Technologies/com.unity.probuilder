@@ -13,6 +13,36 @@ namespace UnityEditor.ProBuilder
         // todo Release mesh from MeshCache.m_MeshLibrary when deleting
         // todo Update meshLibrary when instance IDs are changed
 
+        [Serializable]
+        struct MeshAndReferenceList
+        {
+            public Mesh mesh;
+            public List<ProBuilderGuid> references;
+        }
+
+        const string k_MeshCacheDirectoryName = "ProBuilderMeshCache";
+        static string k_MeshCacheDirectory = "Assets/ProBuilder Data/ProBuilderMeshCache";
+
+        [SerializeField]
+        MeshAndReferenceList[] m_MeshLibrarySerialized;
+
+        internal Dictionary<Mesh, List<ProBuilderGuid>> m_MeshLibrary;
+
+        public void OnBeforeSerialize()
+        {
+            m_MeshLibrarySerialized = new MeshAndReferenceList[m_MeshLibrary.Count];
+            int n = 0;
+            foreach(var kvp in m_MeshLibrary)
+                m_MeshLibrarySerialized[n++] = new MeshAndReferenceList() { mesh = kvp.Key, references = kvp.Value };
+        }
+
+        public void OnAfterDeserialize()
+        {
+            m_MeshLibrary = new Dictionary<Mesh, List<ProBuilderGuid>>();
+            foreach (var kvp in m_MeshLibrarySerialized)
+                m_MeshLibrary.Add(kvp.mesh, new List<ProBuilderGuid>(kvp.references));
+        }
+
         internal static void InternalReset()
         {
             instance.m_MeshLibrary.Clear();
@@ -25,29 +55,91 @@ namespace UnityEditor.ProBuilder
             instance.Save(true);
         }
 
-        const string k_MeshCacheDirectoryName = "ProBuilderMeshCache";
-        static string k_MeshCacheDirectory = "Assets/ProBuilder Data/ProBuilderMeshCache";
-
-        [Serializable]
-        struct MeshAndReferenceList
-        {
-            public Mesh mesh;
-            public List<ProBuilderGuid> references;
-        }
-
-        [SerializeField]
-        MeshAndReferenceList[] m_MeshLibrarySerialized;
-
-        Dictionary<Mesh, List<ProBuilderGuid>> m_MeshLibrary = new Dictionary<Mesh, List<ProBuilderGuid>>();
-
-        static List<ProBuilderGuid> s_MeshReferences;
-
         internal static void Register(ProBuilderMesh mesh)
         {
-            if (instance.m_MeshLibrary.TryGetValue(mesh.mesh, out s_MeshReferences))
-                s_MeshReferences.Add(mesh.assetInfo.guid);
+            Debug.Log($"register {mesh.assetInfo}");
+            var asset = mesh.mesh;
+
+            if (asset == null)
+                throw new ArgumentNullException("mesh", "attempting to register a ProBuilderMesh with null asset");
+
+            if (instance.m_MeshLibrary.ContainsKey(asset))
+            {
+                var list = instance.m_MeshLibrary[asset];
+                if(!list.Contains(mesh.assetInfo.guid))
+                    list.Add(mesh.assetInfo.guid);
+            }
             else
+            {
                 instance.m_MeshLibrary.Add(mesh.mesh, new List<ProBuilderGuid>() { mesh.assetInfo.guid });
+            }
+        }
+
+        internal static void Remove(ProBuilderMesh mesh)
+        {
+            var asset = mesh.mesh;
+            if (asset == null)
+                return;
+            Debug.Log($"remove {mesh.assetInfo}");
+            var references = instance.m_MeshLibrary[asset];
+            references.Remove(mesh.assetInfo.guid);
+        }
+
+        /// <summary>
+        /// Destroy the asset associated with a <see cref="ProBuilderMesh"/> key. If the MeshCache is not aware of the key,
+        /// the asset will not be destroyed.
+        /// </summary>
+        /// <param name="mesh"></param>
+        /// <returns>Returns true if the asset was found in the cache and successfully destroyed. Returns false if the key is not contained in the cache.</returns>
+        internal static bool Destroy(ProBuilderMesh mesh)
+        {
+            var asset = mesh.mesh;
+
+            if (asset == null)
+                return false;
+
+            if (Contains(asset))
+            {
+                ProBuilderGuid guid = mesh.assetInfo.guid;
+                var references = instance.m_MeshLibrary[asset];
+                bool isMeshAssociatedToAsset =  references.Contains(guid);
+
+#if DEVELOPER_MODE
+                if(!isMeshAssociatedToAsset)
+                    Debug.LogError($"Attempting to destroy an un-associated mesh asset! {mesh.assetInfo}");
+#endif
+                if (isMeshAssociatedToAsset)
+                    references.Remove(guid);
+
+                if (references.Count < 1)
+                {
+                    Debug.Log($"release {mesh.assetInfo}");
+                    instance.m_MeshLibrary.Remove(asset);
+                    var path = AssetDatabase.GetAssetPath(asset);
+
+                    if(!string.IsNullOrEmpty(path))
+                        AssetDatabase.DeleteAsset(path);
+                    else
+                        DestroyImmediate(asset, true);
+                }
+                else
+                    Debug.Log($"decrement retain count {mesh.assetInfo}");
+
+                return true;
+            }
+            else
+            {
+                Debug.LogError($"Attempting to destroy un-registered mesh asset: {mesh.assetInfo}");
+            }
+
+            return false;
+        }
+
+        internal static bool Contains(Mesh asset)
+        {
+            if (asset == null)
+                throw new ArgumentNullException("asset");
+            return instance.m_MeshLibrary.ContainsKey(asset);
         }
 
         internal static void EnsureMeshAssetIsOwnedByComponent(ProBuilderMesh mesh)
@@ -55,59 +147,53 @@ namespace UnityEditor.ProBuilder
             if (mesh.mesh == null)
                 mesh.CreateNewSharedMesh();
 
-            var meshAsset = mesh.mesh;
+            var asset = mesh.mesh;
             var guid = mesh.assetInfo.guid;
 
-            if (instance.m_MeshLibrary.TryGetValue(meshAsset, out s_MeshReferences))
+            if(instance.m_MeshLibrary.ContainsKey(asset))
             {
-                if (s_MeshReferences.Count < 2)
+                var references = instance.m_MeshLibrary[asset];
+
+                if (references.Count < 2)
                     return;
 
-                if (s_MeshReferences.Contains(guid))
-                    s_MeshReferences.Remove(guid);
+                if (references.Contains(guid))
+                    references.Remove(guid);
 
                 mesh.CreateNewSharedMesh();
             }
 
-            if (instance.m_MeshLibrary.TryGetValue(meshAsset, out s_MeshReferences))
-                s_MeshReferences.Add(guid);
-            else
-                instance.m_MeshLibrary.Add(meshAsset, new List<ProBuilderGuid>() { guid });
+            Register(mesh);
         }
 
         internal static void TryCacheMesh(ProBuilderMesh mesh)
         {
-            Mesh meshAsset = mesh.mesh;
+            Mesh asset = mesh.mesh;
 
             // check for an existing mesh in the mesh cache and update or create a new one so
             // as not to clutter the scene yaml.
-            string meshAssetPath = AssetDatabase.GetAssetPath(meshAsset);
+            string assetPath = AssetDatabase.GetAssetPath(asset);
 
             // if mesh is already an asset any changes will already have been applied since
             // pb_Object is directly modifying the mesh asset
-            if (string.IsNullOrEmpty(meshAssetPath))
+            if (string.IsNullOrEmpty(assetPath))
             {
-                // at the moment the asset_guid is only used to name the mesh something unique
-                Guid guid = mesh.assetInfo.guid;
-
                 string meshCacheDirectory = GetMeshCacheDirectory(true);
-
-                string path = string.Format("{0}/{1}.asset", meshCacheDirectory, guid);
-
+                string path = AssetDatabase.GenerateUniqueAssetPath(string.Format("{0}/{1}.asset", meshCacheDirectory, asset.name));
                 Mesh m = AssetDatabase.LoadAssetAtPath<Mesh>(path);
 
                 // a mesh already exists in the cache for this pb_Object
                 if (m != null)
                 {
-                    if (meshAsset != m)
+                    if (asset != m)
                     {
                         // prefab instances should always point to the same mesh
                         if (EditorUtility.IsPrefabInstance(mesh.gameObject) || EditorUtility.IsPrefabAsset(mesh.gameObject))
                         {
                             // Debug.Log("reconnect prefab to mesh");
                             // use the most recent mesh iteration (when undoing for example)
-                            UnityEngine.ProBuilder.MeshUtility.CopyTo(meshAsset, m);
-                            DestroyImmediate(meshAsset);
+                            UnityEngine.ProBuilder.MeshUtility.CopyTo(asset, m);
+                            DestroyImmediate(asset);
                             mesh.gameObject.GetComponent<MeshFilter>().sharedMesh = m;
 
                             // also set the MeshCollider if it exists
@@ -129,33 +215,8 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
-                AssetDatabase.CreateAsset(meshAsset, path);
+                AssetDatabase.CreateAsset(asset, path);
             }
-        }
-
-        internal static bool GetCachedMesh(ProBuilderMesh pb, out string path, out Mesh mesh)
-        {
-            mesh = pb.assetInfo.mesh != null ? pb.assetInfo.mesh : pb.mesh;
-
-            if (mesh != null)
-            {
-                string meshPath = AssetDatabase.GetAssetPath(mesh);
-
-                if (!string.IsNullOrEmpty(meshPath))
-                {
-                    path = meshPath;
-                    return true;
-                }
-            }
-
-            // Legacy path
-            string meshCacheDirectory = GetMeshCacheDirectory(false);
-            Guid guid = pb.assetInfo.guid;// assetGuid;
-
-            path = string.Format("{0}/{1}.asset", meshCacheDirectory, guid);
-            mesh = AssetDatabase.LoadAssetAtPath<Mesh>(path);
-
-            return mesh != null;
         }
 
         static string GetMeshCacheDirectory(bool initializeIfMissing = false)
@@ -183,21 +244,6 @@ namespace UnityEditor.ProBuilder
             }
 
             return k_MeshCacheDirectory;
-        }
-
-        public void OnBeforeSerialize()
-        {
-            m_MeshLibrarySerialized = new MeshAndReferenceList[m_MeshLibrary.Count];
-            int n = 0;
-            foreach(var kvp in m_MeshLibrary)
-                m_MeshLibrarySerialized[n++] = new MeshAndReferenceList() { mesh = kvp.Key, references = kvp.Value };
-        }
-
-        public void OnAfterDeserialize()
-        {
-            m_MeshLibrary.Clear();
-            foreach (var kvp in m_MeshLibrarySerialized)
-                m_MeshLibrary.Add(kvp.mesh, kvp.references);
         }
     }
 }

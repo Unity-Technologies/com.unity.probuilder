@@ -116,7 +116,7 @@ namespace UnityEngine.ProBuilder
         public override string ToString()
         {
             var meshName = mesh == null ? "null" : mesh.name;
-            return $"<b>id:</b> {instanceId} <b>guid:</b> {guid.ToString("N")}  <b>mesh</b>{meshName}";
+            return $"<b>id:</b> {instanceId} <b>guid:</b> {guid.ToString("N")}  <b>mesh:</b> {meshName}";
         }
 
         public bool Equals(AssetInfo other)

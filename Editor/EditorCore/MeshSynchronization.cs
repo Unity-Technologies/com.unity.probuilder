@@ -42,12 +42,10 @@ namespace UnityEditor.ProBuilder
             ValidateSharedMeshAndAssetInfo(mesh);
         }
 
-        // Ensure that the mesh.assetInfo is in-sync with the current scene id, and rebuild the MeshFilter sharedMesh
-        // asset if it is necessary.
         /// <summary>
-        ///
+        /// Ensure that the mesh.assetInfo is in-sync with the current scene id, and rebuild the MeshFilter sharedMesh
+        /// asset if it is necessary.
         /// </summary>
-        /// <param name="mesh"></param>
         /// <returns>The <see cref="MeshSyncState"/> of this Mesh prior to validation.</returns>
         internal static MeshSyncState ValidateSharedMeshAndAssetInfo(ProBuilderMesh mesh)
         {

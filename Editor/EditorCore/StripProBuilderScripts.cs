@@ -89,11 +89,8 @@ namespace UnityEditor.ProBuilder.Actions
                     return;
                 }
 
-                string cachedMeshPath;
-                Mesh cachedMesh;
-
                 // if meshes are assets and the mesh cache is valid don't duplicate the mesh to an instance.
-                if (Experimental.meshesAreAssets && MeshCache.GetCachedMesh(pb, out cachedMeshPath, out cachedMesh))
+                if (Experimental.meshesAreAssets && MeshCache.Contains(pb.mesh))
                 {
                     pb.preserveMeshAssetOnDestroy = true;
                     DestroyImmediate(pb);
