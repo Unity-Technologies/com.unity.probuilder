@@ -34,7 +34,7 @@ namespace UnityEditor.ProBuilder
                 if (!EditorUtility.IsPrefab(mesh))
                 {
                     // if the asset is not in the mesh cache, still destroy it
-                    if(!MeshCache.Destroy(mesh))
+                    if(!MeshCache.Release(mesh))
                         Object.DestroyImmediate(asset);
                 }
             }

@@ -70,7 +70,7 @@ namespace UnityEditor.ProBuilder
 
                 if (isDuplicate)
                 {
-                    Debug.Log(mesh.assetInfo + " is a duplicate");
+                    Debug.Log($"duplicate detected: {mesh.assetInfo}");
 
                     if (useMeshCache)
                     {

@@ -20,21 +20,42 @@ namespace UnityEditor.ProBuilder
             if (SceneDragAndDropListener.isDragging)
                 return;
 
+            foreach (var mesh in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
+            {
+                // If the asset is null, the asset was unique at the time of destruction (or meshesAreAssets is disabled).
+                // during an undo/redo, the assetInfo may have been reverted to point at a shared mesh asset. first
+                // check that the asset referenced by assetInfo is null, then fall back to rebuilding the asset.
+                if (mesh.mesh == null)
+                {
+                    // In this case, we're undoing an action that resulted in the MeshCache branching a new asset from a
+                    // previously shared reference. Here we need to let the MeshCache know that not only was a ProBuilderMesh
+                    // reverted to it's original asset reference, but also to check if we should delete the branched asset.
+                    if (mesh.assetInfo.mesh != null)
+                    {
+                        mesh.GetComponent<MeshFilter>().sharedMesh = mesh.assetInfo.mesh;
+                        MeshCache.Register(mesh);
+//                        MeshCache.CleanUp();
+                    }
+                    else
+                    {
+                        mesh.Rebuild();
+                        mesh.Optimize();
+                    }
+                }
+                else
+                {
+                    // If the object was deleted and restored, we need to re-register with the MeshCache. Register is smart
+                    // enough not to double-register already known assets.
+                    MeshCache.Register(mesh);
+                }
+            }
+
             // Synchronize just checks that the mesh is not null, and UV2 is still valid. This should be very cheap except
             // for the FindObjectsOfType call.
             foreach (var mesh in Object.FindObjectsOfType<ProBuilderMesh>())
             {
                 MeshSynchronization.SynchronizeWithMeshFilter(mesh);
                 mesh.InvalidateCaches();
-            }
-
-            foreach (var mesh in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
-            {
-                // If the object was deleted and restored, re-register with the MeshCache. Register is smart enough not
-                // to double-register already known assets.
-                MeshCache.Register(mesh);
-//                mesh.Rebuild();
-//                mesh.Optimize();
             }
 
             ProBuilderEditor.Refresh();
