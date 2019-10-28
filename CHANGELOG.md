@@ -5,13 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.2.0-preview.0] - 2019-10-11
+## [4.2.0-preview.1] - 2019-10-28
 
 ## Features
 
 - Added the `Offset Elements` action to quickly move selected mesh elements in world, local, or element space.
 - Added the ability to set a custom range in the `Subdivide Edges` options window.
-- [macOS] Added the ability to set wireframe and edge line width when using Metal for graphics.
+- Added the ability to set wireframe and edge line width on macOS when using Metal as the graphics backend.
 
 ## Bug Fixes
 
