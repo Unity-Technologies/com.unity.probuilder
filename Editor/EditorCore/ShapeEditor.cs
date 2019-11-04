@@ -6,6 +6,9 @@ using UnityEngine.ProBuilder;
 using UnityEditor.SettingsManagement;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.SceneManagement;
+#if !UNITY_2019_3_OR_NEWER
+using System.Reflection;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -179,7 +182,13 @@ namespace UnityEditor.ProBuilder
                 // When entering play mode the editor tracker isn't rebuilt before the Inspector redraws, meaning the
                 // preview object is still assumed to be in the selection. Flush the selection changes by rebuilding
                 // active editor tracker fixes this.
+#if UNITY_2019_3_OR_NEWER
                 ActiveEditorTracker.RebuildAllIfNecessary();
+#else
+                var rebuildAllTrackers = typeof(ActiveEditorTracker).GetMethod("Internal_RebuildAllIfNecessary", BindingFlags.Static | BindingFlags.NonPublic);
+                if(rebuildAllTrackers != null)
+                    rebuildAllTrackers.Invoke(null, null);
+#endif
             }
         }
 
@@ -560,12 +569,12 @@ namespace UnityEditor.ProBuilder
         [Serializable]
         class Arch : ShapeBuilder
         {
-            static Pref<float> s_Angle = new Pref<float>("ShapeBuilder.Arch.s_Angle", 180.0f);
-            static Pref<float> s_Radius = new Pref<float>("ShapeBuilder.Arch.s_Radius", 3.0f);
-            static Pref<float> s_Width = new Pref<float>("ShapeBuilder.Arch.s_Width", 0.50f);
-            static Pref<float> s_Depth = new Pref<float>("ShapeBuilder.Arch.s_Depth", 1f);
-            static Pref<int> s_RadiusSegments = new Pref<int>("ShapeBuilder.Arch.s_RadiusSegments", 6);
-            static Pref<bool> s_EndCaps = new Pref<bool>("ShapeBuilder.Arch.s_EndCaps", true);
+            static Pref<float> s_Angle = new Pref<float>("ShapeBuilder.Arch.s_Angle", 180.0f, SettingsScope.User);
+            static Pref<float> s_Radius = new Pref<float>("ShapeBuilder.Arch.s_Radius", 3.0f, SettingsScope.User);
+            static Pref<float> s_Width = new Pref<float>("ShapeBuilder.Arch.s_Width", 0.50f, SettingsScope.User);
+            static Pref<float> s_Depth = new Pref<float>("ShapeBuilder.Arch.s_Depth", 1f, SettingsScope.User);
+            static Pref<int> s_RadiusSegments = new Pref<int>("ShapeBuilder.Arch.s_RadiusSegments", 6, SettingsScope.User);
+            static Pref<bool> s_EndCaps = new Pref<bool>("ShapeBuilder.Arch.s_EndCaps", true, SettingsScope.User);
 
             const bool k_InsideFaces = true;
             const bool k_OutsideFaces = true;
