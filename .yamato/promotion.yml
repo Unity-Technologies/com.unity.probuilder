@@ -10,6 +10,10 @@ test_platforms:
     type: Unity::VM
     image: package-ci/win10:stable
     flavor: b1.large
+  - name: mac
+    type: Unity::VM::osx
+    image: buildfarm/mac:stable
+    flavor: m1.mac
 ---
 {% for editor in test_editors %}
 {% for platform in test_platforms %}

@@ -267,7 +267,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="mesh">The target mesh. The mesh values will be cleared and repopulated with the shape extruded from points.</param>
         /// <param name="points">A path of points to triangulate and extrude.</param>
         /// <param name="extrude">The distance to extrude.</param>
-        /// <param name="flipNormals">If true the faces will be inverted at creation.</param>        
+        /// <param name="flipNormals">If true the faces will be inverted at creation.</param>
         /// <param name="holePoints">Holes in the polygon. If null this will be ignored.</param>
         /// <returns>An ActionResult with the status of the operation.</returns>
         public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh mesh, IList<Vector3> points, float extrude, bool flipNormals, IList<IList<Vector3>> holePoints)
@@ -297,7 +297,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                     holeVertices[i] = holePoints[i].ToArray();
                 }
             }
-            
+
             List<int> triangles;
 
             Log.PushLogLevel(LogLevel.Error);
@@ -321,7 +321,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                     combinedVertices = vertices;
                 }
                 int[] indexes = triangles.ToArray();
-                
+
                 if (Math.PolygonArea(combinedVertices, indexes) < Mathf.Epsilon)
                 {
                     ClearAndRefreshMesh(mesh);
@@ -395,7 +395,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             {
                 FaceRebuildData data = new FaceRebuildData();
                 data.vertices = vertices;
-                data.face = new Face(triangles.ToArray());
+                data.face = new Face(triangles);
                 return data;
             }
 

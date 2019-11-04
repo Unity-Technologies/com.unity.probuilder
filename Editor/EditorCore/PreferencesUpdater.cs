@@ -90,7 +90,9 @@ namespace UnityEditor.ProBuilder
             new FormerPreferenceKeyMap("", "lightmapping.autoUnwrapLightmapUV", typeof(System.Boolean), SettingsScope.Project),
             new FormerPreferenceKeyMap(PreferenceKeys.pbShowMissingLightmapUvWarning, "lightmapping.showMissingLightmapWarning", typeof(System.Boolean), SettingsScope.User),
             new FormerPreferenceKeyMap("", "lightmapping.defaultLightmapUnwrapParameters", typeof(UnityEngine.ProBuilder.UnwrapParameters), SettingsScope.Project),
+#pragma warning disable 618
             new FormerPreferenceKeyMap("", "lightmapping.giWorkflowMode", typeof(UnityEditor.Lightmapping.GIWorkflowMode), SettingsScope.User),
+#pragma warning restore 618
             new FormerPreferenceKeyMap("pb_Log::m_LogLevel", "log.level", typeof(UnityEngine.ProBuilder.LogLevel), SettingsScope.Project),
             new FormerPreferenceKeyMap("pb_Log::m_Output", "log.output", typeof(UnityEngine.ProBuilder.LogOutput), SettingsScope.Project),
             new FormerPreferenceKeyMap("pb_Log::m_LogFilePath", "log.path", typeof(System.String), SettingsScope.Project),

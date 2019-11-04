@@ -412,17 +412,12 @@ namespace UnityEditor.ProBuilder
 
             GUILayout.BeginHorizontal(EditorStyles.toolbar);
 
-            if (GUILayout.Button("Settings",
-                    s_ShowSettings ? UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
-                s_ShowSettings.SetValue(!s_ShowSettings, true);
-
-            if (GUILayout.Button("Preview",
-                    s_ShowPreview ? UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
-                s_ShowPreview.SetValue(!s_ShowPreview, true);
-
-            if (GUILayout.Button("Normals",
-                    s_ShowNormals ? UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
-                s_ShowNormals.SetValue(!s_ShowNormals, true);
+            EditorGUI.BeginChangeCheck();
+            s_ShowSettings.value = GUILayout.Toggle(s_ShowSettings.value, "Settings", EditorStyles.toolbarButton);
+            s_ShowPreview.value = GUILayout.Toggle(s_ShowPreview.value, "Preview", EditorStyles.toolbarButton);
+            s_ShowNormals.value = GUILayout.Toggle(s_ShowNormals.value, "Normals", EditorStyles.toolbarButton);
+            if(EditorGUI.EndChangeCheck())
+                ProBuilderSettings.Save();
 
             if (s_ShowNormals)
             {

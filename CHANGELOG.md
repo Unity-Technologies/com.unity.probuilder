@@ -5,12 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.2.0-preview.0] - 2019-09-06
+## [4.2.0-preview.1] - 2019-10-28
 
 ## Features
 
 - Added the `Offset Elements` action to quickly move selected mesh elements in world, local, or element space.
 - Added the ability to set a custom range in the `Subdivide Edges` options window.
+- Added the ability to set wireframe and edge line width on macOS when using Metal as the graphics backend.
 
 ## Bug Fixes
 
@@ -27,9 +28,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed case where `New Poly Shape` could create a mis-aligned object when used with ProGrids.
 - Fixed edge case where the ProBuilder selection could become desynchronized with the Unity selection.
 - Fixed `UV Editor` window minimum width not being sufficient to accommodate the toolbar.
+- Fixed a case where duplicate `ProBuilderMesh` components could share a reference to the same `Mesh`.
+- Fixed an issue that caused mesh element picking to stop working for some users.
+- Fixed the `Smooth Group` window toolbar buttons not showing active state correctly.
+- Fixed a case where selecting a previously edited `ProBuilderMesh` could append to the prior selection instead of replacing it.
 
 ## Changes
 
+- [Samples] Rename LWRP to Universal Render Pipeline.
 - Added support for holes when creating shapes from a polygon (API only).
 - [Samples] Remove obsolete references from `EventSystem` GameObject.
 - [Samples] Remove `GUILayer` components from `Camera`.
