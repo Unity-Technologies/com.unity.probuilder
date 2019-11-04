@@ -48,11 +48,13 @@ namespace UnityEditor.ProBuilder.Tests.Slow
         [UnityTest]
         public IEnumerator DefaultUnwrapParamsDoNotOverlap()
         {
+#pragma warning disable 618
             var lightmapMode = Lightmapping.giWorkflowMode;
 
             try
             {
                 Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.OnDemand;
+#pragma warning restore 618
 
 #if UNITY_2019_2_OR_NEWER
                 Lightmapping.bakeStarted += LightmappingStarted;
@@ -102,7 +104,9 @@ namespace UnityEditor.ProBuilder.Tests.Slow
                 Lightmapping.started -= LightmappingStarted;
                 Lightmapping.completed -= LightmappingCompleted;
 #endif
+#pragma warning disable 618
                 Lightmapping.giWorkflowMode = lightmapMode;
+#pragma warning restore 618
                 Cleanup();
             }
         }
