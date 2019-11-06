@@ -81,5 +81,43 @@ namespace UnityEngine.ProBuilder
 
             return v;
         }
+
+
+        /// <summary>
+        /// Transform a vertex fromw world space to local space.
+        /// </summary>
+        /// <param name="transform">The transform to apply.</param>
+        /// <param name="vertex">A world space vertex.</param>
+        /// <returns>A new vertex in transform coordinate space.</returns>
+        public static Vertex InverseTransformVertex(this Transform transform, Vertex vertex)
+        {
+            var v = new Vertex();
+
+            if (vertex.HasArrays(MeshArrays.Position))
+                v.position = transform.InverseTransformPoint(vertex.position);
+
+            if (vertex.HasArrays(MeshArrays.Color))
+                v.color = vertex.color;
+
+            if (vertex.HasArrays(MeshArrays.Normal))
+                v.normal = transform.InverseTransformDirection(vertex.normal);
+
+            if (vertex.HasArrays(MeshArrays.Tangent))
+                v.tangent = transform.InverseTransformDirection(vertex.tangent);
+
+            if (vertex.HasArrays(MeshArrays.Texture0))
+                v.uv0 = vertex.uv0;
+
+            if (vertex.HasArrays(MeshArrays.Texture1))
+                v.uv2 = vertex.uv2;
+
+            if (vertex.HasArrays(MeshArrays.Texture2))
+                v.uv3 = vertex.uv3;
+
+            if (vertex.HasArrays(MeshArrays.Texture3))
+                v.uv4 = vertex.uv4;
+
+            return v;
+        }
     }
 }

@@ -6,19 +6,32 @@ namespace UnityEditor.ProBuilder
 {
     abstract class ConfigurableWindow : EditorWindow, IHasCustomMenu
     {
+        protected virtual bool defaultIsUtilityWindow
+        {
+            get { return false; }
+        }
+
         string utilityWindowKey
         {
             get { return GetType().ToString() + "-isUtilityWindow"; }
         }
 
-        protected static bool IsUtilityWindow<T>() where T : ConfigurableWindow
+        protected static bool IsUtilityWindow<T>(bool defaultIsUtility = false) where T : ConfigurableWindow
         {
-            return ProBuilderSettings.Get<bool>(typeof(T).ToString() + "-isUtilityWindow", SettingsScope.Project, false);
+            return ProBuilderSettings.Get<bool>(typeof(T).ToString() + "-isUtilityWindow", SettingsScope.Project, defaultIsUtility);
         }
 
         public static new T GetWindow<T>(string title, bool focus = true) where T : ConfigurableWindow
         {
-            return GetWindow<T>(IsUtilityWindow<T>(), title, focus);
+            return EditorWindow.GetWindow<T>(IsUtilityWindow<T>(), title, focus);
+        }
+
+        /// <summary>
+        /// Get or create an instance of EditorWindow. Note that `utility` may be overridden by user set preference.
+        /// </summary>
+        public static new T GetWindow<T>(bool utility, string title, bool focus) where T : ConfigurableWindow
+        {
+            return EditorWindow.GetWindow<T>(IsUtilityWindow<T>(utility), title, focus);
         }
 
         public virtual void AddItemsToMenu(GenericMenu menu)
@@ -27,7 +40,7 @@ namespace UnityEditor.ProBuilder
 
             if (menu.GetItemCount() > 1)
                 menu.AddSeparator("");
-                
+
             menu.AddItem(new GUIContent("Open as Floating Window", ""), floating, () => SetIsUtilityWindow(true));
             menu.AddItem(new GUIContent("Open as Dockable Window", ""), !floating, () => SetIsUtilityWindow(false));
 

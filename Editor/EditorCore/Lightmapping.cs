@@ -30,9 +30,9 @@ namespace UnityEditor.ProBuilder
 
         [UserSetting]
         internal static Pref<UnwrapParameters> s_UnwrapParameters = new Pref<UnwrapParameters>("lightmapping.defaultLightmapUnwrapParameters", new UnwrapParameters());
-
+#pragma warning disable 618
         static Pref<UL.GIWorkflowMode> s_GiWorkflowMode = new Pref<UL.GIWorkflowMode>("lightmapping.giWorkflowMode", UL.GIWorkflowMode.Iterative, SettingsScope.User);
-
+#pragma warning restore 618
         static class Styles
         {
             public static readonly GUIContent hardAngle = new GUIContent("Hard Angle", "Angle between neighbor triangles that will generate seam.");
@@ -237,7 +237,7 @@ namespace UnityEditor.ProBuilder
 
             return param;
         }
-
+#pragma warning disable 618
         internal static void PushGIWorkflowMode()
         {
             s_GiWorkflowMode.SetValue(UL.giWorkflowMode, true);
@@ -250,5 +250,6 @@ namespace UnityEditor.ProBuilder
         {
             UL.giWorkflowMode = s_GiWorkflowMode;
         }
+#pragma warning restore 618
     }
 }

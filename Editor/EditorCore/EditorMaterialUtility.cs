@@ -9,6 +9,7 @@ namespace UnityEditor.ProBuilder
     {
         static readonly string[] k_StandardRenderPipelineDefaultMaterials = new string[]
         {
+            "ProBuilder Default URP",
             "ProBuilder Default LWRP",
             "ProBuilder Default HDRP"
         };

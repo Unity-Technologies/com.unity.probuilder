@@ -118,6 +118,8 @@ namespace UnityEditor.ProBuilder
 
         void OnGUI()
         {
+            DoContextMenu();
+
             GUILayout.BeginHorizontal(EditorStyles.toolbar);
 
             GUILayout.FlexibleSpace();

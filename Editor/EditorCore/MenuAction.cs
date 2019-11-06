@@ -247,7 +247,7 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Perform whatever action this menu item is supposed to do. You are resposible for implementing Undo.
+        /// Perform whatever action this menu item is supposed to do. You are responsible for implementing Undo.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
         public abstract ActionResult DoAction();
@@ -326,11 +326,12 @@ namespace UnityEditor.ProBuilder
             }
             else
             {
-                GUI.backgroundColor = ToolbarGroupUtility.GetColor(group);
-
                 // in text mode always use the vertical layout.
                 isHorizontal = false;
                 GUILayout.BeginHorizontal(MenuActionStyles.rowStyleVertical, layoutOptions);
+
+                GUI.backgroundColor = ToolbarGroupUtility.GetColor(group);
+
                 if (GUILayout.Button(menuTitle, MenuActionStyles.buttonStyleVertical))
                 {
                     ActionResult res = DoAction();

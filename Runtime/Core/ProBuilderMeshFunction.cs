@@ -222,6 +222,7 @@ namespace UnityEngine.ProBuilder
             else
                 m.Clear();
 
+            m.indexFormat = vertexCount > ushort.MaxValue ? Rendering.IndexFormat.UInt32 : Rendering.IndexFormat.UInt16;
             m.vertices = m_Positions;
             m.uv2 = null;
 
@@ -257,18 +258,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Deep copy the mesh attribute arrays back to itself. Useful when copy/paste creates duplicate references.
+        /// Ensure that the UnityEngine.Mesh associated with this object is unique
         /// </summary>
         internal void MakeUnique()
         {
-            // deep copy arrays of reference types
-            sharedVertices = sharedVerticesInternal;
-            SetSharedTextures(sharedTextureLookup);
-            facesInternal = faces.Select(x => new Face(x)).ToArray();
-
             // set a new UnityEngine.Mesh instance
             mesh = new Mesh();
-
             ToMesh();
             Refresh();
         }

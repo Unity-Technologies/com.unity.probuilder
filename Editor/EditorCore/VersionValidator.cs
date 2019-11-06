@@ -1,6 +1,6 @@
-﻿using UnityEngine.ProBuilder.AssetIdRemapUtility;
+﻿using UnityEngine;
+using UnityEngine.ProBuilder.AssetIdRemapUtility;
 using UnityEngine.ProBuilder;
-using Version = UnityEngine.ProBuilder.Version;
 
 namespace UnityEditor.ProBuilder
 {
@@ -29,7 +29,11 @@ namespace UnityEditor.ProBuilder
 
         static void ValidateVersion()
         {
-            var currentVersion = Version.currentInfo;
+            SemVer currentVersion;
+
+            if (!Version.TryGetPackageVersion(out currentVersion))
+                return;
+
             var oldVersion = (SemVer) s_StoredVersionInfo;
             bool isNewVersion = currentVersion != oldVersion;
 

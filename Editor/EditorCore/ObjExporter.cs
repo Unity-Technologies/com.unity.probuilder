@@ -115,7 +115,12 @@ namespace UnityEditor.ProBuilder
 
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine("# ProBuilder " + Version.currentInfo.MajorMinorPatch);
+            SemVer version;
+
+            if(Version.TryGetPackageVersion(out version))
+                sb.AppendLine("# ProBuilder " + version.MajorMinorPatch);
+            else
+                sb.AppendLine("# ProBuilder");
             sb.AppendLine("# https://unity3d.com/unity/features/worldbuilding/probuilder");
             sb.AppendLine(string.Format("# {0}", System.DateTime.Now));
             sb.AppendLine();

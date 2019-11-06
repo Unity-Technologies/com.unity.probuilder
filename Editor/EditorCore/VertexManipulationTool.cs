@@ -217,7 +217,7 @@ namespace UnityEditor.ProBuilder
                     BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
         }
 
-        internal abstract MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation);
+        internal abstract MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot);
 
         public void OnSceneGUI(Event evt)
         {

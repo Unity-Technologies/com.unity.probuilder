@@ -431,15 +431,9 @@ namespace UnityEngine.ProBuilder
             switch (orientation)
             {
                 case HandleOrientation.ActiveElement:
-
-                    if (mesh.selectedFaceCount < 1)
-                        goto case HandleOrientation.ActiveObject;
-
-                    var face = faces.First();
-
                     // Intentionally not using coincident vertices here. We want the normal of just the face, not an
                     // average of it's neighbors.
-                    return GetRotation(mesh, face.distinctIndexesInternal);
+                    return GetFaceRotation(mesh, faces.Last());
 
                 case HandleOrientation.ActiveObject:
                     return mesh.transform.rotation;
@@ -447,6 +441,30 @@ namespace UnityEngine.ProBuilder
                 default:
                     return Quaternion.identity;
             }
+        }
+
+        /// <summary>
+        /// Get the rotation of a face in world space.
+        /// </summary>
+        /// <param name="mesh">The mesh that face belongs to.</param>
+        /// <param name="face">The face calculate rotation for.</param>
+        /// <returns>The rotation of face in world space coordinates.</returns>
+        public static Quaternion GetFaceRotation(ProBuilderMesh mesh, Face face)
+        {
+            if (mesh == null)
+                return Quaternion.identity;
+
+            if (face == null)
+                return mesh.transform.rotation;
+
+            // Intentionally not using coincident vertices here. We want the normal of just the face, not an
+            // average of it's neighbors.
+            Normal nrm = Math.NormalTangentBitangent(mesh, face);
+
+            if (nrm.normal == Vector3.zero || nrm.bitangent == Vector3.zero)
+                return mesh.transform.rotation;
+
+            return mesh.transform.rotation * Quaternion.LookRotation(nrm.normal, nrm.bitangent);
         }
 
         /// <summary>
@@ -465,24 +483,11 @@ namespace UnityEngine.ProBuilder
             switch (orientation)
             {
                 case HandleOrientation.ActiveElement:
-                    if (mesh.selectedEdgeCount < 1)
-                        goto case HandleOrientation.ActiveObject;
-
                     // Getting an average of the edge normals isn't very helpful in real world uses, so we just use the
                     // first selected edge for orientation.
                     // This function accepts an enumerable because in the future we may want to do something more
                     // sophisticated, and it's convenient because selections are stored as collections.
-                    var face = EdgeUtility.GetFace(mesh, edges.First());
-
-                    if (face == null)
-                        goto case HandleOrientation.ActiveObject;
-
-                    Normal nrm = Math.NormalTangentBitangent(mesh, face);
-
-                    if (nrm.normal == Vector3.zero || nrm.bitangent == Vector3.zero)
-                        goto case HandleOrientation.ActiveObject;
-
-                    return mesh.transform.rotation * Quaternion.LookRotation(nrm.normal, nrm.bitangent);
+                    return GetEdgeRotation(mesh, edges.Last());
 
                 case HandleOrientation.ActiveObject:
                     return mesh.transform.rotation;
@@ -490,6 +495,20 @@ namespace UnityEngine.ProBuilder
                 default:
                     return Quaternion.identity;
             }
+        }
+
+        /// <summary>
+        /// Get the rotation of an edge in world space.
+        /// </summary>
+        /// <param name="mesh">The mesh that edge belongs to.</param>
+        /// <param name="edge">The edge calculate rotation for.</param>
+        /// <returns>The rotation of edge in world space coordinates.</returns>
+        public static Quaternion GetEdgeRotation(ProBuilderMesh mesh, Edge edge)
+        {
+            if (mesh == null)
+                return Quaternion.identity;
+
+            return GetFaceRotation(mesh, EdgeUtility.GetFace(mesh, edge));
         }
 
         /// <summary>
@@ -510,7 +529,6 @@ namespace UnityEngine.ProBuilder
                 case HandleOrientation.ActiveElement:
                     if (mesh.selectedVertexCount < 1)
                         goto case HandleOrientation.ActiveObject;
-
                     return GetRotation(mesh, vertices);
 
                 case HandleOrientation.ActiveObject:
@@ -519,6 +537,39 @@ namespace UnityEngine.ProBuilder
                 default:
                     return Quaternion.identity;
             }
+        }
+
+        /// <summary>
+        /// Get the rotation of a vertex in world space.
+        /// </summary>
+        /// <param name="mesh">The mesh that `vertex` belongs to.</param>
+        /// <param name="vertex">The vertex to calculate rotation for.</param>
+        /// <returns>The rotation of a vertex normal in world space coordinates.</returns>
+        public static Quaternion GetVertexRotation(ProBuilderMesh mesh, int vertex)
+        {
+            if (mesh == null)
+                return Quaternion.identity;
+
+            if (vertex < 0)
+                return mesh.transform.rotation;
+
+            return GetRotation(mesh, new int[] { vertex });
+        }
+
+        internal static Vector3 GetActiveElementPosition(ProBuilderMesh mesh, IEnumerable<Face> faces)
+        {
+            return mesh.transform.TransformPoint(Math.GetBounds(mesh.positionsInternal, faces.Last().distinctIndexesInternal).center);
+        }
+
+        internal static Vector3 GetActiveElementPosition(ProBuilderMesh mesh, IEnumerable<Edge> edges)
+        {
+            var edge = edges.Last();
+            return mesh.transform.TransformPoint(Math.GetBounds(mesh.positionsInternal, new int[] { edge.a, edge.b }).center);
+        }
+
+        internal static Vector3 GetActiveElementPosition(ProBuilderMesh mesh, IEnumerable<int> vertices)
+        {
+            return mesh.transform.TransformPoint(mesh.positionsInternal[vertices.First()]);
         }
     }
 }
