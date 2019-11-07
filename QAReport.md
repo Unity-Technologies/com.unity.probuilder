@@ -2,7 +2,7 @@
 
 Test strategy & current info for ProBuilder.
 
-- QA Owner: [gabrielw](gabrielw@unity3d.com)
+- QA Owner: [joelf](joelf@unity3d.com)
 - UX Owner: [gabrielw](gabrielw@unity3d.com), [karlh](karlh@unity3d.com)
 
 ## Package Status

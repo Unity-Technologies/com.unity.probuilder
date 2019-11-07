@@ -1,5 +1,4 @@
 using UnityEditor.SettingsManagement;
-using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
