@@ -107,6 +107,7 @@ namespace UnityEditor.ProBuilder
         static MeshSelection()
         {
             Selection.selectionChanged += OnObjectSelectionChanged;
+            Undo.undoRedoPerformed += EnsureMeshSelectionIsValid;
             ProBuilderMesh.elementSelectionChanged += ElementSelectionChanged;
             EditorMeshUtility.meshOptimized += (x, y) => { s_TotalElementCountCacheIsDirty = true; };
             ProBuilderMesh.componentWillBeDestroyed += RemoveMeshFromSelectionInternal;
@@ -175,7 +176,8 @@ namespace UnityEditor.ProBuilder
             {
                 if (!s_UnitySelectionChangeMeshes.Contains(s_TopSelection[i]))
                 {
-                    UndoUtility.RecordSelection(s_TopSelection[i], "Selection Change");
+                    if(s_TopSelection[i] != null)
+                        UndoUtility.RecordSelection(s_TopSelection[i], "Selection Change");
                     s_TopSelection[i].ClearSelection();
                 }
             }
@@ -214,6 +216,22 @@ namespace UnityEditor.ProBuilder
             selectedEdgeCountObjectMax = 0;
 
             RecalculateSelectedComponentCounts();
+        }
+
+        /// <summary>
+        /// Ensure the mesh selection matches the current Unity selection. Called after Undo/Redo, as adding or removing
+        /// mesh components can cause the selection to de-sync without emitting a selection changed event.
+        /// </summary>
+        internal static void EnsureMeshSelectionIsValid()
+        {
+            for (int i = 0; i < topInternal.Count; i++)
+            {
+                if (topInternal[i] == null || !Selection.Contains(topInternal[i].gameObject))
+                {
+                    EditorApplication.delayCall += OnObjectSelectionChanged;
+                    break;
+                }
+            }
         }
 
         static void ElementSelectionChanged(ProBuilderMesh mesh)
