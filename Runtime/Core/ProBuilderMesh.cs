@@ -732,7 +732,13 @@ namespace UnityEngine.ProBuilder
         /// </value>
         public int edgeCount
         {
-            get { return m_Faces.Sum(x => x.edgesInternal.Length); }
+            get
+            {
+                int count = 0;
+                for (int i = 0, c = faceCount; i < c; i++)
+                    count += facesInternal[i].edgesInternal.Length;
+                return count;
+            }
         }
 
         /// <value>

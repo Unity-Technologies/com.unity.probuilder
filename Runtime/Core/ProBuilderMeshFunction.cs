@@ -222,6 +222,7 @@ namespace UnityEngine.ProBuilder
             else
                 m.Clear();
 
+            m.indexFormat = vertexCount > ushort.MaxValue ? Rendering.IndexFormat.UInt32 : Rendering.IndexFormat.UInt16;
             m.vertices = m_Positions;
             m.uv2 = null;
 
