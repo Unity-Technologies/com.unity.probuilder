@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.2.0-preview.2] - 2019-11-13
+## [4.2.0-preview.3] - 2019-11-14
 
 ## Features
 
@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed an issue that caused errors to thrown when entering play mode with the `Shape Tool` window open.
 - Fixed the `Shape Tool` destroying and recreating the preview `GameObject` when adjusting settings.
 - Fixed an issue where the `Poly Shape` editor would destroy the `GameObject` if initialized with an invalid path.
+- Fixed a potential error when undoing a `ProBuilderize` action.
 
 ## Changes
 
