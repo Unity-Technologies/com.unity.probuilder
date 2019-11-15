@@ -512,7 +512,6 @@ namespace UnityEditor.ProBuilder
         {
             return (target & value) != SelectMode.None;
         }
-
         internal static SelectMode GetSelectMode(EditLevel edit, ComponentMode component)
         {
             switch (edit)

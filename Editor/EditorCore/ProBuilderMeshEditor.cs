@@ -110,10 +110,16 @@ namespace UnityEditor.ProBuilder
 
 #if DEVELOPER_MODE
             GUILayout.Label("Compiled Mesh Information", EditorStyles.boldLabel);
-            if (m_Mesh != null && m_Mesh.mesh != null)
+            MeshFilter filter = m_Mesh == null ? null : m_Mesh.GetComponent<MeshFilter>();
+            Mesh sharedMesh = filter == null ? null : filter.sharedMesh;
+            if (sharedMesh != null)
             {
-                GUILayout.Label("Vertex Count: " + m_Mesh.mesh.vertexCount);
-                GUILayout.Label("Submesh Count: " + m_Mesh.mesh.subMeshCount);
+                GUILayout.Label("Vertex Count: " + sharedMesh.vertexCount);
+                GUILayout.Label("Submesh Count: " + sharedMesh.subMeshCount);
+            }
+            else
+            {
+                GUILayout.Label("No compiled mesh", EditorStyles.centeredGreyMiniLabel);
             }
 #endif
         }

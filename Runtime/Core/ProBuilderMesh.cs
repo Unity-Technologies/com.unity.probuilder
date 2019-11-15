@@ -145,7 +145,17 @@ namespace UnityEngine.ProBuilder
             get
             {
                 if (m_MeshFilter == null)
-                    m_MeshFilter = GetComponent<MeshFilter>();
+                {
+#if UNITY_2019_3_OR_NEWER
+                    if(!TryGetComponent<MeshFilter>(out m_MeshFilter))
+                        m_MeshFilter = gameObject.AddComponent<MeshFilter>();
+#else
+                    if((m_MeshFilter = GetComponent<MeshFilter>()) == null)
+                        m_MeshFilter = gameObject.AddComponent<MeshFilter>();
+#endif
+                    m_MeshFilter.hideFlags = HideFlags.DontSave;
+                }
+
                 return m_MeshFilter;
             }
         }
@@ -758,7 +768,8 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// In the editor, when a ProBuilderMesh is destroyed it will also destroy the MeshFilter.sharedMesh that is found with the parent GameObject. You may override this behaviour by subscribing to onDestroyObject.
+        /// In the editor, when a ProBuilderMesh is destroyed it will also destroy the MeshFilter.sharedMesh that is
+        /// found with the parent GameObject. You may override this behaviour by subscribing to onDestroyObject.
         /// </summary>
         /// <value>
         /// If onDestroyObject has a subscriber ProBuilder will invoke it instead of cleaning up unused meshes by itself.

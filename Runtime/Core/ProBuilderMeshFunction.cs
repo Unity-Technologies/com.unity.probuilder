@@ -2,6 +2,9 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace UnityEngine.ProBuilder
 {
@@ -319,20 +322,28 @@ namespace UnityEngine.ProBuilder
             if ((mask & RefreshMask.Tangents) > 0)
                 RefreshTangents();
 
+#pragma warning disable 618
             if ((mask & RefreshMask.Collisions) > 0)
                 RefreshCollisions();
+#pragma warning restore 618
         }
 
+        // @todo Remove in next major version increment (use EditorMeshUtility.RebuildColliders
         void RefreshCollisions()
         {
             mesh.RecalculateBounds();
 
-            var meshCollider = GetComponent<MeshCollider>();
+            MeshCollider meshCollider;
 
-            if (meshCollider != null)
+#if UNITY_2019_3_OR_NEWER
+            if(TryGetComponent(out meshCollider))
+#else
+            if ((meshCollider = GetComponent<MeshCollider>()) != null)
+#endif
             {
-                gameObject.GetComponent<MeshCollider>().sharedMesh = null;
-                gameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
+                meshCollider.sharedMesh = null;
+                meshCollider.sharedMesh = mesh;
+                SerializationUtility.RegisterDrivenProperty(this, meshCollider, "m_Mesh");
             }
         }
 
