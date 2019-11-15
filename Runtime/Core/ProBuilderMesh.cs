@@ -287,6 +287,8 @@ namespace UnityEngine.ProBuilder
             {
                 if ((m_CacheValid & CacheValidState.SharedVertex) != CacheValidState.SharedVertex)
                 {
+                    if (m_SharedVertexLookup == null)
+                        m_SharedVertexLookup = new Dictionary<int, int>();
                     SharedVertex.GetSharedVertexLookup(m_SharedVertices, m_SharedVertexLookup);
                     m_CacheValid |= CacheValidState.SharedVertex;
                 }
@@ -732,7 +734,13 @@ namespace UnityEngine.ProBuilder
         /// </value>
         public int edgeCount
         {
-            get { return m_Faces.Sum(x => x.edgesInternal.Length); }
+            get
+            {
+                int count = 0;
+                for (int i = 0, c = faceCount; i < c; i++)
+                    count += facesInternal[i].edgesInternal.Length;
+                return count;
+            }
         }
 
         /// <value>

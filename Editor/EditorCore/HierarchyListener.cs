@@ -36,6 +36,7 @@ namespace UnityEditor.ProBuilder
 
             foreach (var mesh in go.GetComponentsInChildren<ProBuilderMesh>())
             {
+                EditorUtility.SynchronizeWithMeshFilter(mesh);
                 mesh.Rebuild();
                 mesh.Optimize();
             }

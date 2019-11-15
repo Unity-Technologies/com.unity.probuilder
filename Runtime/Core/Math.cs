@@ -167,6 +167,11 @@ namespace UnityEngine.ProBuilder
             return tp;
         }
 
+        internal static Vector2 Perpendicular(Vector2 value)
+        {
+            return new Vector2(-value.y, value.x);
+        }
+
         /// <summary>
         /// Reflects a point across a line segment.
         /// </summary>

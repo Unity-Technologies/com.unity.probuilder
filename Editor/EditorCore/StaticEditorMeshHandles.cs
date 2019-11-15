@@ -129,12 +129,11 @@ namespace UnityEditor.ProBuilder
 
                     m_Mesh.SetVertices(m_Points);
 
-                    // NoAllocHelpers is internal API, and there is no SetIndices overload that accepts a list like
-                    // SetVertices or SetUVs.
-//#if UNITY_2019_1_OR_NEWER
-//                    m_Mesh.SetIndices(NoAllocHelpers.ExtractArrayFromListT(m_Indices), MeshTopology.Points, 0, false);
-//#else
+#if UNITY_2019_3_OR_NEWER
+                    m_Mesh.SetIndices(m_Indices, MeshTopology.Points, 0, false);
+#else
                     m_Mesh.SetIndices(m_Indices.ToArray(), MeshTopology.Points, 0, false);
+#endif
                 }
                 else
                 {
@@ -224,7 +223,7 @@ namespace UnityEditor.ProBuilder
 
             void Begin()
             {
-                m_Wire = thickness < .01f || !BuiltinMaterials.geometryShadersSupported;
+                m_Wire = thickness < k_MinLineWidthForGeometryShader || Get().m_LineMaterial == null;
 
                 if (!m_Wire)
                 {
@@ -257,7 +256,7 @@ namespace UnityEditor.ProBuilder
                 }
 
                 GL.PushMatrix();
-                GL.Begin(GL.LINES);
+                GL.Begin(m_Wire || BuiltinMaterials.geometryShadersSupported ? GL.LINES : GL.QUADS);
             }
 
             void End()
@@ -269,10 +268,29 @@ namespace UnityEditor.ProBuilder
             public void DrawLine(Vector3 a, Vector3 b)
             {
                 if (m_Wire)
+                {
                     GL.Color(color);
+                    GL.Vertex(a);
+                    GL.Vertex(b);
+                }
+                else if (!BuiltinMaterials.geometryShadersSupported)
+                {
+                    Vector3 c = b + (b - a);
 
-                GL.Vertex(a);
-                GL.Vertex(b);
+                    GL.Color(new Color(b.x, b.y, b.z, 1f));
+                    GL.Vertex(a);
+                    GL.Color(new Color(b.x, b.y, b.z, -1f));
+                    GL.Vertex(a);
+                    GL.Color(new Color(c.x, c.y, c.z, -1f));
+                    GL.Vertex(b);
+                    GL.Color(new Color(c.x, c.y, c.z, 1f));
+                    GL.Vertex(b);
+                }
+                else
+                {
+                    GL.Vertex(a);
+                    GL.Vertex(b);
+                }
             }
 
             public void Dispose()
