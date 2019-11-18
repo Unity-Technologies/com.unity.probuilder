@@ -40,7 +40,7 @@ namespace UnityEditor.ProBuilder
             get { return target as PolyShape; }
         }
 
-        Material CreateHighlightLineMaterial()
+        static Material CreateHighlightLineMaterial()
         {
             Material mat = new Material(Shader.Find("Hidden/ProBuilder/ScrollHighlight"));
             mat.SetColor("_Highlight", k_LineMaterialHighlightColor);
@@ -79,16 +79,6 @@ namespace UnityEditor.ProBuilder
             DestroyImmediate(m_LineMaterial);
             EditorApplication.update -= Update;
             Undo.undoRedoPerformed -= UndoRedoPerformed;
-
-            // Delete the created Polyshape if path is empty.
-            if (polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Path && polygon.m_Points.Count == 0)
-                DiscardIncompleteShape();
-        }
-
-        void DiscardIncompleteShape()
-        {
-            if(polygon != null && polygon.gameObject != null)
-                Undo.DestroyObjectImmediate(polygon.gameObject);
         }
 
         public override void OnInspectorGUI()
@@ -650,18 +640,8 @@ namespace UnityEditor.ProBuilder
 
                 case KeyCode.Escape:
                 {
-                    if (polygon.polyEditMode == PolyShape.PolyEditMode.Path ||
-                        polygon.polyEditMode == PolyShape.PolyEditMode.Height)
-                    {
-                        DiscardIncompleteShape();
-                        evt.Use();
-                    }
-                    else if (polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
-                    {
-                        SetPolyEditMode(PolyShape.PolyEditMode.None);
-                        evt.Use();
-                    }
-
+                    SetPolyEditMode(PolyShape.PolyEditMode.None);
+                    evt.Use();
                     break;
                 }
             }
