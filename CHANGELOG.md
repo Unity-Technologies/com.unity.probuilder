@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [4.1.1] - 2019-11-21
+
+### Bug Fixes
+
+- Fixed an issue where the Poly Shape editor would destroy the GameObject if initialized with an invalid path.
+- Fixed Boolean Editor menu item not respecting the Experimental Features Enabled preference.
+
 ## [4.1.0] - 2019-07-03
 
 ### Features
