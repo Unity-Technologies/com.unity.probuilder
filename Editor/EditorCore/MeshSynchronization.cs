@@ -60,6 +60,7 @@ namespace UnityEditor.ProBuilder
             // the cache is not in use).
             //
             // Known issue - when reverting prefab changes a mesh is unreferenced and leaked.
+            // Known issue - duplicate, modify duplicate, then undo leaves a null key in the MeshCache
             if ((state & MeshSyncState.InstanceIDMismatch) == MeshSyncState.InstanceIDMismatch)
             {
                 // Check if the old instance ID exists in the scene. If it does, then this is a duplicate event and it
@@ -70,8 +71,6 @@ namespace UnityEditor.ProBuilder
 
                 if (isDuplicate)
                 {
-                    Debug.Log($"duplicate detected: {mesh.assetInfo}");
-
                     if (useMeshCache)
                     {
                         mesh.NewAssetInfo();

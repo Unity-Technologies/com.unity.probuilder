@@ -67,15 +67,62 @@ namespace UnityEditor.ProBuilder
         internal static void CleanUp()
         {
             var rep = new Dictionary<Mesh, List<ProBuilderGuid>>();
+            var library = instance.m_MeshLibrary;
 
-            foreach (var kvp in instance.m_MeshLibrary)
+            /**
+             * Remove null keys
+             */
+            foreach (var kvp in library)
             {
                 // because Mesh represents an unmanaged object, this situation is possible (tests "unity" null)
                 if(kvp.Key != null)
                     rep.Add(kvp.Key, kvp.Value);
             }
 
-            instance.m_MeshLibrary = rep;
+            int oldKeyCount = library.Count;
+            instance.m_MeshLibrary = library = rep;
+
+            /**
+             * Remove unreferenced meshes
+             */
+            var files = Directory.EnumerateFiles(k_MeshCacheDirectory, "*.asset");
+            var remove = new List<string>();
+
+            foreach (var file in files)
+            {
+                var path = FileUtility.GetRelativePath(file);
+                var mesh = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+                // Not a mesh, what is it doing in our *mesh* cache?
+                if (mesh == null)
+                    continue;
+                if (!library.ContainsKey(mesh))
+                    remove.Add(path);
+            }
+
+            for (int i = 0, c = remove.Count; i < c; i++)
+                AssetDatabase.DeleteAsset(remove[i]);
+
+            Debug.Log($"removed {oldKeyCount - library.Count} null keys\nremoved {remove.Count} orphaned meshes");
+
+        }
+
+        internal static void EnsureGuidIsUniqueToKey(ProBuilderGuid guid, Mesh key)
+        {
+            var remove = new List<KeyValuePair<Mesh, ProBuilderGuid>>();
+
+            foreach (var pair in instance.m_MeshLibrary)
+            {
+                if (pair.Key == key)
+                    continue;
+
+                if (pair.Value.Contains(guid))
+                    remove.Add(new KeyValuePair<Mesh, ProBuilderGuid>(pair.Key, guid));
+            }
+
+            Debug.Log($"removed {remove.Count} mis-linked guids");
+
+            foreach (var pair in remove)
+                Release(pair.Key, pair.Value);
         }
 
         internal static void Register(ProBuilderMesh mesh)
@@ -125,42 +172,42 @@ namespace UnityEditor.ProBuilder
 
             SelectionUtility.Remove(mesh);
 
-            if (Contains(asset))
+            return Release(asset, mesh.assetInfo.guid);
+        }
+
+        internal static bool Release(Mesh key, ProBuilderGuid guid)
+        {
+            List<ProBuilderGuid> references;
+
+            if (instance.m_MeshLibrary.TryGetValue(key, out references))
             {
-                ProBuilderGuid guid = mesh.assetInfo.guid;
-                var references = instance.m_MeshLibrary[asset];
                 bool isMeshAssociatedToAsset =  references.Contains(guid);
 
 #if DEVELOPER_MODE
-                if(!isMeshAssociatedToAsset)
-                    Debug.LogError($"Attempting to destroy an un-associated mesh asset! {mesh.assetInfo}");
+                if (!references.Contains(guid))
+                    Debug.LogError($"Attempting to destroy an un-associated mesh asset! {key} {guid}");
 #endif
-                if (isMeshAssociatedToAsset)
-                {
-                    Debug.Log($"removing {mesh.assetInfo}");
-                    references.Remove(guid);
-                }
 
-                if (references.Count < 1)
+                // If no references to this key remain, destroy the asset
+                if (references.Remove(guid) && references.Count < 1)
                 {
-                    Debug.Log($"release {mesh.assetInfo}");
-                    instance.m_MeshLibrary.Remove(asset);
-                    var path = AssetDatabase.GetAssetPath(asset);
+                    Debug.Log($"<b><color=\"#ff0000\">MeshCache::Release(Destroy)</color> {key}, {references.Count}</b>\n<b>releasing guid:</b> {guid}");
+
+                    instance.m_MeshLibrary.Remove(key);
+                    var path = AssetDatabase.GetAssetPath(key);
 
                     if(!string.IsNullOrEmpty(path))
                         AssetDatabase.DeleteAsset(path);
                     else
-                        DestroyImmediate(asset, true);
+                        DestroyImmediate(key, true);
                 }
                 else
-                    Debug.Log($"decrement retain count {mesh.assetInfo}");
+                    Debug.Log($"<b><color=\"#ffff00\">MeshCache::Release(Decrement)</color> {key}, {references.Count}</b>\n<b>releasing guid:</b> {guid}");
 
                 return true;
             }
-            else
-            {
-                Debug.LogError($"Attempting to destroy un-registered mesh asset: {mesh.assetInfo}");
-            }
+
+            Debug.LogError($"Attempting to destroy un-registered mesh asset: {key} {guid}");
 
             return false;
         }
@@ -193,8 +240,8 @@ namespace UnityEditor.ProBuilder
                     references.Remove(guid);
                 }
 
-                asset = mesh.CreateNewSharedMesh();
-                Undo.RegisterCreatedObjectUndo(asset, "Create new Mesh Asset");
+                Undo.RecordObject(mesh.filter, "Create new Mesh Asset");
+                mesh.CreateNewSharedMesh();
             }
 
             Register(mesh);

@@ -32,9 +32,11 @@ namespace UnityEditor.ProBuilder
                     // reverted to it's original asset reference, but also to check if we should delete the branched asset.
                     if (mesh.assetInfo.mesh != null)
                     {
+                        Debug.Log($"old mesh: {mesh.mesh} -> {mesh.assetInfo}");
                         mesh.GetComponent<MeshFilter>().sharedMesh = mesh.assetInfo.mesh;
                         MeshCache.Register(mesh);
-//                        MeshCache.CleanUp();
+                        // Undo can result in the cache containing null keys pointing to valid AssetInfo. Remove those entries.
+                        MeshCache.CleanUp();
                     }
                     else
                     {
@@ -48,6 +50,11 @@ namespace UnityEditor.ProBuilder
                     // enough not to double-register already known assets.
                     MeshCache.Register(mesh);
                 }
+
+                // Remove mismatched Mesh -> AssetInfo pairs.
+                // Occurs after an Undo re-links a mesh to a shared asset
+                // todo - Is this light enough to run on Register instead?
+                MeshCache.EnsureGuidIsUniqueToKey(mesh.assetInfo.guid, mesh.assetInfo.mesh);
             }
 
             // Synchronize just checks that the mesh is not null, and UV2 is still valid. This should be very cheap except

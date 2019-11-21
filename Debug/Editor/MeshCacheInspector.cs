@@ -25,6 +25,13 @@ namespace UnityEditor.ProBuilder
             MeshCache.Save();
         }
 
+        [MenuItem("Tools/Clean MeshCache Asset", false, 1200)]
+        static void CleanMeshCache()
+        {
+            MeshCache.CleanUp();
+            MeshCache.Save();
+        }
+
         [MenuItem("Tools/Open MeshCache Window", false, 1200)]
         static void OpenWindow()
         {
@@ -38,6 +45,16 @@ namespace UnityEditor.ProBuilder
 
         void OnGUI()
         {
+            GUILayout.BeginHorizontal(EditorStyles.toolbar);
+            if(GUILayout.Button("Reset", EditorStyles.toolbarButton))
+                ResetMeshCache();
+            if(GUILayout.Button("Save", EditorStyles.toolbarButton))
+                SaveMeshCache();
+            if(GUILayout.Button("Clean", EditorStyles.toolbarButton))
+                CleanMeshCache();
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
             var cache = MeshCache.instance;
 
             foreach (var keyValuePair in cache.m_MeshLibrary)
