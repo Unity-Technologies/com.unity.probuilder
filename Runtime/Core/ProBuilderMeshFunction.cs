@@ -14,6 +14,8 @@ namespace UnityEngine.ProBuilder
     public sealed partial class ProBuilderMesh
 #endif
     {
+        static HashSet<int> s_CachedHashSet = new HashSet<int>();
+
 #if UNITY_EDITOR
         public void OnBeforeSerialize() {}
 
@@ -23,7 +25,37 @@ namespace UnityEngine.ProBuilder
         }
 #endif
 
-        static HashSet<int> s_CachedHashSet = new HashSet<int>();
+        [SerializeField]
+        Mesh m_Mesh;
+
+        void Awake()
+        {
+            if (vertexCount > 0
+                && faceCount > 0
+                && meshSyncState == MeshSyncState.Null)
+            {
+                Rebuild();
+            }
+        }
+
+        void OnDestroy()
+        {
+            if (componentWillBeDestroyed != null)
+                componentWillBeDestroyed(this);
+
+            // Time.frameCount is zero when loading scenes in the Editor. It's the only way I could figure to
+            // differentiate between OnDestroy invoked from user delete & editor scene loading.
+            if (!preserveMeshAssetOnDestroy &&
+                Application.isEditor &&
+                !Application.isPlaying &&
+                Time.frameCount > 0)
+            {
+                if (meshWillBeDestroyed != null)
+                    meshWillBeDestroyed(this);
+                else
+                    DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
+            }
+        }
 
         /// <summary>
         /// Reset all the attribute arrays on this object.
@@ -44,33 +76,6 @@ namespace UnityEngine.ProBuilder
             InvalidateSharedTextureLookup();
             m_Colors = null;
             ClearSelection();
-        }
-
-        void Awake()
-        {
-            if (vertexCount > 0
-                && faceCount > 0
-                && meshSyncState == MeshSyncState.Null)
-                Rebuild();
-        }
-
-        void OnDestroy()
-        {
-            if (componentWillBeDestroyed != null)
-                componentWillBeDestroyed(this);
-
-            // Time.frameCount is zero when loading scenes in the Editor. It's the only way I could figure to
-            // differentiate between OnDestroy invoked from user delete & editor scene loading.
-            if (!preserveMeshAssetOnDestroy &&
-                Application.isEditor &&
-                !Application.isPlaying &&
-                Time.frameCount > 0)
-            {
-                if (meshWillBeDestroyed != null)
-                    meshWillBeDestroyed(this);
-                else
-                    DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
-            }
         }
 
         internal static ProBuilderMesh CreateInstanceWithPoints(Vector3[] positions)
@@ -328,7 +333,7 @@ namespace UnityEngine.ProBuilder
 #pragma warning restore 618
         }
 
-        // @todo Remove in next major version increment (use EditorMeshUtility.RebuildColliders
+        // todo Remove in next major version increment (use EditorMeshUtility.RebuildColliders)
         void RefreshCollisions()
         {
             mesh.RecalculateBounds();
@@ -343,7 +348,7 @@ namespace UnityEngine.ProBuilder
             {
                 meshCollider.sharedMesh = null;
                 meshCollider.sharedMesh = mesh;
-                SerializationUtility.RegisterDrivenProperty(this, meshCollider, "m_Mesh");
+                SerializationUtility.RegisterDrivenProperty(filter, meshCollider, "m_Mesh");
             }
         }
 

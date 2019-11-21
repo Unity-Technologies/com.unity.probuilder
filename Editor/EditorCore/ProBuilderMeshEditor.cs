@@ -98,10 +98,6 @@ namespace UnityEditor.ProBuilder
             Vector3 bounds = m_MeshRenderer != null ? m_MeshRenderer.bounds.size : Vector3.zero;
             EditorGUILayout.Vector3Field("Object Size (read only)", bounds);
 
-#if PB_DEBUG
-            GUILayout.TextField(string.IsNullOrEmpty(pb.asset_guid) ? "null" : pb.asset_guid);
-#endif
-
             serializedObject.Update();
 
             LightmapStaticSettings();
