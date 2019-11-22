@@ -262,6 +262,7 @@ namespace UnityEngine.ProBuilder
             }
 
             m.name = string.Format("pb_Mesh{0}", id);
+            filter.hideFlags = HideFlags.DontSave;
             filter.sharedMesh = m;
         }
 
@@ -346,9 +347,10 @@ namespace UnityEngine.ProBuilder
             if ((meshCollider = GetComponent<MeshCollider>()) != null)
 #endif
             {
+                DrivenPropertyManager.UnregisterProperty(this, meshCollider, "m_Mesh");
+                DrivenPropertyManager.RegisterProperty(this, meshCollider, "m_Mesh");
                 meshCollider.sharedMesh = null;
                 meshCollider.sharedMesh = mesh;
-                SerializationUtility.RegisterDrivenProperty(filter, meshCollider, "m_Mesh");
             }
         }
 

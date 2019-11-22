@@ -58,10 +58,7 @@ namespace UnityEditor.ProBuilder
                 foreach (ProBuilderMesh pb in Selection.transforms.GetComponents<ProBuilderMesh>())
                 {
                     if (!meshesAreAssets)
-                    {
                         EditorUtility.SynchronizeWithMeshFilter(pb);
-                        pb.filter.hideFlags = HideFlags.DontSave;
-                    }
                 }
             }
         }
