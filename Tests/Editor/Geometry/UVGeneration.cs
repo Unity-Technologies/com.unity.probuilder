@@ -1,15 +1,15 @@
 ﻿using UObject = UnityEngine.Object;
 using NUnit.Framework;
+using UnityEngine.ProBuilder;
 
-
-namespace UnityEngine.ProBuilder.EditorTests.Geometry
+namespace UnityEditor.ProBuilder.Tests
 {
     public class UVGeneration
     {
         ProBuilderMesh m_PBMesh = null;
 
         static int[] s_ConeSubDivAxes = new int[] { 6, 3, 5, 20 };
-        
+
         [TearDown]
         public void Term()
         {
@@ -18,12 +18,12 @@ namespace UnityEngine.ProBuilder.EditorTests.Geometry
                 UObject.DestroyImmediate(m_PBMesh.gameObject);
             }
         }
-        
+
         [Test, TestCaseSource(typeof(UVGeneration), "s_ConeSubDivAxes")]
         public void NewShape_CreateCone_FaceUVsAreConsistent(int subDivAxis)
         {
             m_PBMesh = ShapeGenerator.GenerateCone(PivotLocation.Center, 0.5f, 1f, subDivAxis);
-            
+
             var faces = m_PBMesh.facesInternal;
             var uvs = m_PBMesh.texturesInternal;
 

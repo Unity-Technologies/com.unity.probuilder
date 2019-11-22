@@ -2,9 +2,8 @@
 
 using System.Reflection;
 using NUnit.Framework;
-using UnityEditor.ProBuilder;
 
-namespace UnityEngine.ProBuilder.EditorTests.ProGrids
+namespace UnityEditor.ProBuilder.Tests
 {
     static class ProGridsMethodsExist
     {

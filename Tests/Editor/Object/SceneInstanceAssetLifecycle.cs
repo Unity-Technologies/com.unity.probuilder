@@ -1,22 +1,21 @@
-using System;
 using System.Collections;
-using UnityEngine;
-using UObject = UnityEngine.Object;
 using NUnit.Framework;
-using UnityEditor;
-using UnityObject = UnityEngine.Object;
-using UnityEditor.ProBuilder;
+using UnityEngine;
+using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Tests.Framework;
 using UnityEngine.TestTools;
+using UObject = UnityEngine.Object;
 
-namespace UnityEngine.ProBuilder.EditorTests.Object
+namespace UnityEditor.ProBuilder.Tests
 {
-    class MeshAssetManagement
+    public class SceneInstanceMeshAssetLifecycle
     {
         EditorWindow m_SceneView;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
+            Experimental.meshesAreAssets = false;
             m_SceneView = EditorWindow.GetWindow<SceneView>();
         }
 
@@ -63,6 +62,47 @@ namespace UnityEngine.ProBuilder.EditorTests.Object
                 UObject.DestroyImmediate(original.gameObject);
                 UObject.DestroyImmediate(copy.gameObject);
             }
+        }
+
+        [Test]
+        public static void DestroyGameObject_AlsoDestroysMesh()
+        {
+            var pb = ShapeGenerator.CreateShape(ShapeType.Cube);
+            Mesh mesh = pb.GetComponent<MeshFilter>().sharedMesh;
+            UObject.DestroyImmediate(pb.gameObject);
+            // IsNull doesn't work due to c#/c++ goofiness
+            Assert.IsTrue(mesh == null);
+        }
+
+        [Test]
+        public static void Destroy_WithNoDeleteFlag_PreservesMesh()
+        {
+            var pb = ShapeGenerator.CreateShape(ShapeType.Cube);
+
+            try
+            {
+                Mesh mesh = pb.GetComponent<MeshFilter>().sharedMesh;
+                pb.preserveMeshAssetOnDestroy = true;
+                UObject.DestroyImmediate(pb.gameObject);
+                Assert.IsFalse(mesh == null);
+            }
+            finally
+            {
+                if (pb != null)
+                    UObject.DestroyImmediate(pb.gameObject);
+            }
+        }
+
+        [Test]
+        public static void DestroyDoesNotDeleteMeshBackByAsset()
+        {
+            var pb = ShapeGenerator.CreateShape(ShapeType.Cube);
+            string path = TestUtility.SaveAssetTemporary<Mesh>(pb.mesh);
+            Mesh mesh = pb.GetComponent<MeshFilter>().sharedMesh;
+            UObject.DestroyImmediate(pb.gameObject);
+            Assert.IsFalse(mesh == null);
+            AssetDatabase.DeleteAsset(path);
+            LogAssert.NoUnexpectedReceived();
         }
     }
 }

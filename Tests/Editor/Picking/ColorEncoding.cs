@@ -2,7 +2,7 @@ using UnityEngine;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 
-namespace UnityEngine.ProBuilder.EditorTests.Picking
+namespace UnityEditor.ProBuilder.Tests
 {
     static class ColorEncoding
     {

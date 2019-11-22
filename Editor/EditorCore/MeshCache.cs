@@ -21,7 +21,7 @@ namespace UnityEditor.ProBuilder
         }
 
         const string k_MeshCacheDirectoryName = "ProBuilderMeshCache";
-        static string k_MeshCacheDirectory = "Assets/ProBuilder Data/ProBuilderMeshCache";
+        internal static string k_MeshCacheDirectory = "Assets/ProBuilder Data/ProBuilderMeshCache";
 
         [SerializeField]
         MeshAndReferenceList[] m_MeshLibrarySerialized;
@@ -131,6 +131,8 @@ namespace UnityEditor.ProBuilder
 
             if (asset == null)
                 throw new ArgumentNullException("mesh", "attempting to register a ProBuilderMesh with null asset");
+
+            TryCacheMesh(mesh);
 
             if (instance.m_MeshLibrary.ContainsKey(asset))
             {

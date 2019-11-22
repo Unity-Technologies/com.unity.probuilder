@@ -250,7 +250,7 @@ namespace UnityEngine.ProBuilder
 
         internal Mesh CreateNewSharedMesh()
         {
-            Debug.Log($"CreateNewSharedMesh {assetInfo}");
+            Log.Debug($"CreateNewSharedMesh {assetInfo}");
             return mesh = new Mesh() { name = meshAssetName };
         }
 

@@ -1,18 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
-using UnityEditor;
-using UnityEngine.TestTools;
 
-namespace UnityEngine.ProBuilder.EditorTests.Selection
+namespace UnityEditor.ProBuilder.Tests
 {
     class SelectMaterial
     {
-       
+
         ProBuilderMesh[] selectables;
 
         [SetUp]

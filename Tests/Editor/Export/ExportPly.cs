@@ -1,12 +1,12 @@
 using System.Globalization;
 using System.Linq;
 using UnityEngine;
-using UnityEditor.ProBuilder;
+using UnityEngine.ProBuilder;
 using NUnit.Framework;
 using System.Threading;
 using UnityEngine.ProBuilder.Tests.Framework;
 
-namespace UnityEngine.ProBuilder.EditorTests.Export
+namespace UnityEditor.ProBuilder.Tests
 {
     class ExportPly : TemporaryAssetTest
     {

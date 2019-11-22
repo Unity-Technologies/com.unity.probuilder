@@ -1,15 +1,10 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
-using UnityEditor;
-using UnityEngine.TestTools;
 
-
-namespace UnityEngine.ProBuilder.EditorTests.Geometry
+namespace UnityEditor.ProBuilder.Tests
 {
     class DuplicateFacesTest
     {
@@ -50,7 +45,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Geometry
             MeshSelection.SetSelection(mesh.gameObject);
             MeshSelection.OnObjectSelectionChanged();
 
-            
+
             UnityEditor.ProBuilder.Actions.DuplicateFaces duplicateFaces = new UnityEditor.ProBuilder.Actions.DuplicateFaces();
             ProBuilderSettings.Set<UnityEditor.ProBuilder.Actions.DuplicateFaces.DuplicateFaceSetting>("DuplicateFaces.target", UnityEditor.ProBuilder.Actions.DuplicateFaces.DuplicateFaceSetting.GameObject);
             duplicateFaces.DoAction();

@@ -2,7 +2,7 @@ using UnityEngine;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 
-namespace UnityEngine.ProBuilder.EditorTests.Type
+namespace UnityEditor.ProBuilder.Tests
 {
     static class TestVertex
     {

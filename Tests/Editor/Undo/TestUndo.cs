@@ -1,9 +1,10 @@
 using UnityEngine;
 using NUnit.Framework;
+using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Tests.Framework;
 
-namespace UnityEngine.ProBuilder.EditorTests.Undo
+namespace UnityEditor.ProBuilder.Tests
 {
     static class TestUndo
     {
@@ -16,7 +17,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Undo
 
             TestUtility.AssertAreEqual(cube.mesh, duplicate.mesh);
 
-            UnityEditor.Undo.RegisterCompleteObjectUndo(new[] { cube }, "Merge Vertices");
+            Undo.RegisterCompleteObjectUndo(new[] { cube }, "Merge Vertices");
             cube.MergeVertices(new int[] { 0, 1 }, true);
             cube.ToMesh();
             cube.Refresh();

@@ -4,7 +4,7 @@ using NUnit.Framework;
 using System;
 using UnityEditor.ProBuilder;
 
-namespace UnityEngine.ProBuilder.EditorTests.Editor
+namespace UnityEditor.ProBuilder.Tests
 {
     static class TestSelectionRenderState
     {

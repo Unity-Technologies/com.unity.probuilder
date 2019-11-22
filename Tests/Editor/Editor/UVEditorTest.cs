@@ -2,18 +2,14 @@
 using UObject = UnityEngine.Object;
 using System.Collections.Generic;
 using NUnit.Framework;
-using UnityEditor.ProBuilder;
-using UnityEditor;
+using UnityEngine.ProBuilder;
 using UnityEngine;
-using UnityEngine.TestTools;
-using System.Collections;
 
-
-namespace UnityEngine.ProBuilder.EditorTests.Editor
+namespace UnityEditor.ProBuilder.Tests
 {
     public class UVEditorTest
     {
-        bool m_OpenedWindow = false;        
+        bool m_OpenedWindow = false;
         ProBuilderMesh m_cube;
 
         [SetUp]
@@ -48,7 +44,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
         public void UVEditor_Manual_BoxProjection()
         {
             //Select faces
-            
+
             List<Face> selectedFaces = new List<Face>();
             selectedFaces.Add(m_cube.faces[2]);
             selectedFaces.Add(m_cube.faces[4]);
@@ -61,7 +57,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
             {
                 Assert.That(f.manualUV, Is.EqualTo(false));
             }
-            
+
             //Select faces
             UVEditor.instance.Menu_SetManualUV();
 

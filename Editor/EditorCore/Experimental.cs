@@ -13,15 +13,30 @@ namespace UnityEditor.ProBuilder
         internal static bool meshesAreAssets
         {
             get { return experimentalFeaturesEnabled && s_MeshesAreAssets; }
+            set { s_MeshesAreAssets.value = value; }
         }
 
         internal static bool experimentalFeaturesEnabled
         {
+            get
+            {
 #if PROBUILDER_EXPERIMENTAL_FEATURES
-            get { return true; }
+                return true;
 #else
-            get { return false; }
+                return false;
 #endif
+            }
+
+            set
+            {
+#if PROBUILDER_EXPERIMENTAL_FEATURES
+                if(!value)
+                    ScriptingSymbolManager.RemoveScriptingDefine(k_ExperimentalFeaturesEnabled);
+#else
+                if(value)
+                    ScriptingSymbolManager.AddScriptingDefine(k_ExperimentalFeaturesEnabled);
+#endif
+            }
         }
 
         [UserSettingBlock("Experimental")]

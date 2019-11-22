@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using UnityEngine.ProBuilder;
@@ -293,6 +294,44 @@ namespace UnityEditor.ProBuilder
             System.IO.File.WriteAllBytes(path, bytes);
             AssetDatabase.Refresh();
             return true;
+        }
+
+        /// <summary>
+        /// Do not use for anything other than tests
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal static void CleanUpDataDirectory()
+        {
+            var path = GetLocalDataDirectory(false);
+
+            if(Directory.Exists(path))
+                RemoveEmptyDirectories(path);
+
+            if(GetFileSystemCountExcludingMetaFiles(path) < 1)
+                Directory.Delete(path);
+        }
+
+        static void RemoveEmptyDirectories(string path)
+        {
+            foreach (var dir in Directory.GetDirectories(path))
+            {
+                RemoveEmptyDirectories(dir);
+
+                try
+                {
+                    if (GetFileSystemCountExcludingMetaFiles(dir) < 1)
+                        Directory.Delete(dir);
+                }
+                // In the case where file permissions prevent us from deleting the data directory, just move on
+                catch { }
+            }
+        }
+
+        static int GetFileSystemCountExcludingMetaFiles(string dir)
+        {
+            var all = Directory.GetFileSystemEntries(dir).Length;
+            var meta = Directory.GetFileSystemEntries(dir, "*.meta").Length;
+            return all - meta;
         }
     }
 }

@@ -4,11 +4,9 @@ using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
-using UnityEditor;
 using UnityEngine.TestTools;
 
-namespace UnityEngine.ProBuilder.EditorTests.Picking
+namespace UnityEditor.ProBuilder.Tests
 {
     class RectSelection
     {

@@ -1,10 +1,9 @@
 ﻿using System.Linq;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
-using UnityEditor.ProBuilder;
-using UnityEditor;
+using UnityEngine.ProBuilder;
 
-namespace UnityEngine.ProBuilder.EditorTests.Geometry
+namespace UnityEditor.ProBuilder.Tests
 {
     public class CollapseVerticesTest
     {

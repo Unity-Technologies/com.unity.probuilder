@@ -1,14 +1,12 @@
 ﻿using System.Linq;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
-using UnityEditor.ProBuilder;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
 using System.Collections;
 
 
-namespace UnityEngine.ProBuilder.EditorTests
+namespace UnityEditor.ProBuilder.Tests
 {
     public class PreferencesTest
     {

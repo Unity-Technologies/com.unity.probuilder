@@ -6,7 +6,7 @@ using System.Threading;
 using UnityEngine.ProBuilder.Stl;
 using UnityEngine.ProBuilder.Tests.Framework;
 
-namespace UnityEngine.ProBuilder.EditorTests.Export
+namespace UnityEditor.ProBuilder.Tests
 {
     class ExportStl : TemporaryAssetTest
     {

@@ -4,12 +4,11 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder.Tests.Framework;
-using UnityEditor.ProBuilder;
+using UnityEngine.ProBuilder;
 using NUnit.Framework;
 using System.Threading;
-using UnityEditor;
 
-namespace UnityEngine.ProBuilder.EditorTests.Export
+namespace UnityEditor.ProBuilder.Tests
 {
     class ExportObj : TemporaryAssetTest
     {

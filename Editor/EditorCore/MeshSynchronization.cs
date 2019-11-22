@@ -23,7 +23,9 @@ namespace UnityEditor.ProBuilder
                 // components.
                 EditorApplication.delayCall += () =>
                 {
-                    ValidateSharedMeshAndAssetInfo(mesh);
+                    // Occurs when meshes are created and destroyed in a single frame (ex, tests)
+                    if(mesh != null)
+                        ValidateSharedMeshAndAssetInfo(mesh);
                 };
             };
         }
@@ -116,7 +118,7 @@ namespace UnityEditor.ProBuilder
                     if((state & MeshSyncState.MeshReferenceMismatch) == MeshSyncState.MeshReferenceMismatch)
                         sb.AppendLine("<b>MeshSyncState.GuidMismatch</b>");
 
-                    Debug.Log(sb.ToString());
+                    Log.Debug(sb.ToString());
 
                     mesh.CreateNewSharedMesh();
                 }
