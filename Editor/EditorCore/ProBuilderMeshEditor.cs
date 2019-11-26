@@ -47,7 +47,16 @@ namespace UnityEditor.ProBuilder
             get { return ProBuilderEditor.instance; }
         }
 
+        internal override string targetTitle
+        {
+            get { return "ProBuilder MeshFilter"; }
+        }
+
         Renderer m_MeshRenderer = null;
+
+        protected override void OnHeaderGUI()
+        {
+        }
 
         void OnEnable()
         {
@@ -101,11 +110,11 @@ namespace UnityEditor.ProBuilder
             if (!EditorUtility.IsPrefabAsset(m_Mesh.gameObject))
             {
                 // When inspecting a prefab asset the AssetDatabase continually loops on some very expensive operations
-            serializedObject.Update();
+                serializedObject.Update();
                 EditorGUI.BeginChangeCheck();
-            LightmapStaticSettings();
+                LightmapStaticSettings();
                 if (EditorGUI.EndChangeCheck())
-            serializedObject.ApplyModifiedProperties();
+                    serializedObject.ApplyModifiedProperties();
             }
 
 #if DEVELOPER_MODE
@@ -121,6 +130,14 @@ namespace UnityEditor.ProBuilder
             {
                 GUILayout.Label("No compiled mesh", EditorStyles.centeredGreyMiniLabel);
             }
+
+            GUILayout.Label("HideFlags & Driven Properties", EditorStyles.boldLabel);
+
+            GUILayout.Label($"MeshFilter {m_Mesh.filter.hideFlags}");
+
+            MeshCollider collider;
+            if (m_Mesh.TryGetComponent(out collider))
+                GUILayout.Label($"MeshCollider.m_Mesh {DrivenPropertyManagerInternal.IsDriven(collider, "m_Mesh")}");
 #endif
         }
 
