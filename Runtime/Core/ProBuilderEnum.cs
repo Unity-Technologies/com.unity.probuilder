@@ -392,14 +392,11 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Re-assign the MeshCollider sharedMesh.
         /// </summary>
-        [Obsolete("Use EditorMeshUtility.RebuildColliders")]
         Collisions = 0x10,
         /// <summary>
         /// Refresh all optional mesh attributes.
         /// </summary>
-#pragma warning disable 618
         All = UV | Colors | Normals | Tangents | Collisions
-#pragma warning restore 618
     };
 
     /// <summary>
