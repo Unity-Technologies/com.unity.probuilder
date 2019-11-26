@@ -10,10 +10,6 @@ using UnityEditor.SceneManagement;
 
 namespace UnityEngine.ProBuilder
 {
-    /// <summary>
-    /// A series of handy extensions.
-    /// todo Clean up and move to appropriate classes.
-    /// </summary>
     static class InternalUtility
     {
         [Obsolete]
@@ -46,11 +42,11 @@ namespace UnityEngine.ProBuilder
             go.transform.position           = t.position;
             go.transform.localRotation      = t.localRotation;
             go.transform.localScale         = t.localScale;
-            
+
             #if UNITY_EDITOR
             StageUtility.PlaceGameObjectInCurrentStage(go);
             #endif
-            
+
             return go;
         }
 
@@ -154,5 +150,12 @@ namespace UnityEngine.ProBuilder
             }
             return v.ToArray();
         }
+
+#if !UNITY_2019_3_OR_NEWER
+        public static bool TryGetComponent2<T>(this Component source, out T component)
+        {
+            return (component = source.GetComponent<T>()) != null;
+        }
+#endif
     }
 }

@@ -17,6 +17,8 @@ namespace UnityEngine.ProBuilder
     [ExecuteInEditMode]
     public sealed partial class ProBuilderMesh : MonoBehaviour
     {
+        internal const HideFlags k_MeshFilterHideFlags = HideFlags.DontSave;// | HideFlags.HideInInspector | HideFlags.NotEditable;
+
         /// <summary>
         /// Max number of UV channels that ProBuilderMesh format supports.
         /// </summary>
@@ -153,7 +155,7 @@ namespace UnityEngine.ProBuilder
                     if((m_MeshFilter = GetComponent<MeshFilter>()) == null)
                         m_MeshFilter = gameObject.AddComponent<MeshFilter>();
 #endif
-                    m_MeshFilter.hideFlags = HideFlags.DontSave;
+                    m_MeshFilter.hideFlags = k_MeshFilterHideFlags;
                 }
 
                 return m_MeshFilter;

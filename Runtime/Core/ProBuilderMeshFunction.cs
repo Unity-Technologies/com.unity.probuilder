@@ -50,6 +50,11 @@ namespace UnityEngine.ProBuilder
                 !Application.isPlaying &&
                 Time.frameCount > 0)
             {
+                MeshCollider collider;
+
+                if(TryGetComponent<MeshCollider>(out collider))
+                    DrivenPropertyManager.UnregisterProperty(this, collider, "m_Mesh");
+
                 if (meshWillBeDestroyed != null)
                     meshWillBeDestroyed(this);
                 else
@@ -262,7 +267,6 @@ namespace UnityEngine.ProBuilder
             }
 
             m.name = string.Format("pb_Mesh{0}", id);
-            filter.hideFlags = HideFlags.DontSave;
             filter.sharedMesh = m;
         }
 
@@ -328,10 +332,8 @@ namespace UnityEngine.ProBuilder
             if ((mask & RefreshMask.Tangents) > 0)
                 RefreshTangents();
 
-#pragma warning disable 618
             if ((mask & RefreshMask.Collisions) > 0)
                 RefreshCollisions();
-#pragma warning restore 618
         }
 
         // todo Remove in next major version increment (use EditorMeshUtility.RebuildColliders)
@@ -339,18 +341,14 @@ namespace UnityEngine.ProBuilder
         {
             mesh.RecalculateBounds();
 
-            MeshCollider meshCollider;
+            MeshCollider collider;
 
-#if UNITY_2019_3_OR_NEWER
-            if(TryGetComponent(out meshCollider))
-#else
-            if ((meshCollider = GetComponent<MeshCollider>()) != null)
-#endif
+            if(TryGetComponent<MeshCollider>(out collider))
             {
-                DrivenPropertyManager.UnregisterProperty(this, meshCollider, "m_Mesh");
-                DrivenPropertyManager.RegisterProperty(this, meshCollider, "m_Mesh");
-                meshCollider.sharedMesh = null;
-                meshCollider.sharedMesh = mesh;
+                DrivenPropertyManager.UnregisterProperty(this, collider, "m_Mesh");
+                DrivenPropertyManager.RegisterProperty(this, collider, "m_Mesh");
+                collider.sharedMesh = null;
+                collider.sharedMesh = mesh;
             }
         }
 

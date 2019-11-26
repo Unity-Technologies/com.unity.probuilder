@@ -260,8 +260,7 @@ namespace UnityEditor.ProBuilder
                 }
                 else if (t == typeof(MeshCollider))
                 {
-                    ((MeshCollider)collider).sharedMesh = null;
-                    ((MeshCollider)collider).sharedMesh = mesh.mesh;
+                    mesh.Refresh(RefreshMask.Collisions);
                 }
             }
         }

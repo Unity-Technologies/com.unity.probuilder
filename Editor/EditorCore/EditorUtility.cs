@@ -191,12 +191,17 @@ namespace UnityEditor.ProBuilder
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            Mesh oldMesh = mesh.mesh;
+            // In a perfect world this wouldn't be here. However, when instantiating a prefab there is a step after the
+            // frame has run that resets the component hideflags. I have not been able to find an alternative callback
+            // for instantiation events that circumvents this issue.
+            mesh.filter.hideFlags = ProBuilderMesh.k_MeshFilterHideFlags;
             MeshSyncState state = mesh.meshSyncState;
             bool meshesAreAssets = Experimental.meshesAreAssets;
 
             if (state != MeshSyncState.InSync)
             {
+                Mesh oldMesh;
+
                 if (state == MeshSyncState.Null)
                 {
                     mesh.Rebuild();
@@ -210,7 +215,7 @@ namespace UnityEditor.ProBuilder
                  * If the latter, we need to clean up the old mesh.  If the former,
                  * the old mesh needs to *not* be destroyed.
                  */
-                if (oldMesh)
+                if ((oldMesh = mesh.mesh) != null)
                 {
                     int meshNo = -1;
                     int.TryParse(oldMesh.name.Replace("pb_Mesh", ""), out meshNo);
@@ -218,15 +223,14 @@ namespace UnityEditor.ProBuilder
                     UnityEngine.Object dup = UnityEditor.EditorUtility.InstanceIDToObject(meshNo);
                     GameObject go = dup as GameObject;
 
+                    // Scene reload, just rename the mesh to the correct ID
                     if (go == null)
                     {
-                        // Debug.Log("scene reloaded - false positive.");
                         mesh.mesh.name = "pb_Mesh" + mesh.id;
                     }
                     else
                     {
-                        // Debug.Log("duplicate mesh");
-
+                        // Mesh was duplicated, need to instantiate a unique mesh asset
                         if (!meshesAreAssets || !(EditorUtility.IsPrefabAsset(mesh.gameObject) || IsPrefabInstance(mesh.gameObject)))
                         {
                             // deep copy arrays & ToMesh/Refresh
@@ -238,7 +242,6 @@ namespace UnityEditor.ProBuilder
                 else
                 {
                     // old mesh didn't exist, so this is probably a prefab being instanced
-
                     if (EditorUtility.IsPrefabAsset(mesh.gameObject))
                         mesh.mesh.hideFlags = (HideFlags)(1 | 2 | 4 | 8);
 

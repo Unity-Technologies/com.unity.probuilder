@@ -98,11 +98,15 @@ namespace UnityEditor.ProBuilder
             Vector3 bounds = m_MeshRenderer != null ? m_MeshRenderer.bounds.size : Vector3.zero;
             EditorGUILayout.Vector3Field("Object Size (read only)", bounds);
 
+            if (!EditorUtility.IsPrefabAsset(m_Mesh.gameObject))
+            {
+                // When inspecting a prefab asset the AssetDatabase continually loops on some very expensive operations
             serializedObject.Update();
-
+                EditorGUI.BeginChangeCheck();
             LightmapStaticSettings();
-
+                if (EditorGUI.EndChangeCheck())
             serializedObject.ApplyModifiedProperties();
+            }
 
 #if DEVELOPER_MODE
             GUILayout.Label("Compiled Mesh Information", EditorStyles.boldLabel);

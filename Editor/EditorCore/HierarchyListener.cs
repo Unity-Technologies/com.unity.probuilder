@@ -61,6 +61,8 @@ namespace UnityEditor.ProBuilder
                         EditorUtility.SynchronizeWithMeshFilter(pb);
                 }
             }
+
+                ProBuilderEditor.Refresh();
         }
     }
 }
