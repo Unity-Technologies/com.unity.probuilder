@@ -345,8 +345,8 @@ namespace UnityEngine.ProBuilder
 
             if(TryGetComponent<MeshCollider>(out collider))
             {
-                DrivenPropertyManager.UnregisterProperty(this, collider, "m_Mesh");
-                DrivenPropertyManager.RegisterProperty(this, collider, "m_Mesh");
+                SerializationUtility.UnregisterDrivenProperty(this, collider, "m_Mesh");
+                SerializationUtility.RegisterDrivenProperty(this, collider, "m_Mesh");
                 collider.sharedMesh = null;
                 collider.sharedMesh = mesh;
             }
