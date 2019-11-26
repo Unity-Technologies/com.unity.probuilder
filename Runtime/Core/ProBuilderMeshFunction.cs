@@ -53,7 +53,7 @@ namespace UnityEngine.ProBuilder
                 MeshCollider collider;
 
                 if(TryGetComponent<MeshCollider>(out collider))
-                    DrivenPropertyManager.UnregisterProperty(this, collider, "m_Mesh");
+                    SerializationUtility.UnregisterDrivenProperty(this, collider, "m_Mesh");
 
                 if (meshWillBeDestroyed != null)
                     meshWillBeDestroyed(this);
