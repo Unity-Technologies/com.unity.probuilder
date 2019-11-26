@@ -107,21 +107,19 @@ namespace UnityEditor.ProBuilder
             Vector3 bounds = m_MeshRenderer != null ? m_MeshRenderer.bounds.size : Vector3.zero;
             EditorGUILayout.Vector3Field("Object Size (read only)", bounds);
 
-            if (!EditorUtility.IsPrefabAsset(m_Mesh.gameObject))
-            {
-                // When inspecting a prefab asset the AssetDatabase continually loops on some very expensive operations
-                serializedObject.Update();
-                EditorGUI.BeginChangeCheck();
-                LightmapStaticSettings();
-                if (EditorGUI.EndChangeCheck())
-                    serializedObject.ApplyModifiedProperties();
-            }
+            serializedObject.Update();
+            EditorGUI.BeginChangeCheck();
+            LightmapStaticSettings();
+            if (EditorGUI.EndChangeCheck())
+                serializedObject.ApplyModifiedProperties();
 
 #if DEVELOPER_MODE
             GUILayout.Label("Compiled Mesh Information", EditorStyles.boldLabel);
-            MeshFilter filter = m_Mesh == null ? null : m_Mesh.GetComponent<MeshFilter>();
-            Mesh sharedMesh = filter == null ? null : filter.sharedMesh;
-            if (sharedMesh != null)
+
+            MeshFilter filter;
+            Mesh sharedMesh = null;
+
+            if (m_Mesh.TryGetComponent(out filter) && (sharedMesh = filter.sharedMesh) != null)
             {
                 GUILayout.Label("Vertex Count: " + sharedMesh.vertexCount);
                 GUILayout.Label("Submesh Count: " + sharedMesh.subMeshCount);
@@ -133,9 +131,13 @@ namespace UnityEditor.ProBuilder
 
             GUILayout.Label("HideFlags & Driven Properties", EditorStyles.boldLabel);
 
-            GUILayout.Label($"MeshFilter {m_Mesh.filter.hideFlags}");
+            if(filter)
+                GUILayout.Label($"MeshFilter {filter.hideFlags}");
+            else
+                GUILayout.Label($"MeshFilter (null)");
 
             MeshCollider collider;
+
             if (m_Mesh.TryGetComponent(out collider))
                 GUILayout.Label($"MeshCollider.m_Mesh {DrivenPropertyManagerInternal.IsDriven(collider, "m_Mesh")}");
 #endif

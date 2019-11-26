@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine.Serialization;
 using System;
 using System.Collections.ObjectModel;
+using UnityEngine.Rendering;
 
 namespace UnityEngine.ProBuilder
 {
@@ -131,8 +132,8 @@ namespace UnityEngine.ProBuilder
         {
             get
             {
-                if (m_MeshRenderer == null)
-                    m_MeshRenderer = GetComponent<MeshRenderer>();
+                if (!TryGetComponent<MeshRenderer>(out m_MeshRenderer))
+                    return null;
                 return m_MeshRenderer;
             }
         }
@@ -148,13 +149,8 @@ namespace UnityEngine.ProBuilder
             {
                 if (m_MeshFilter == null)
                 {
-#if UNITY_2019_3_OR_NEWER
-                    if(!TryGetComponent<MeshFilter>(out m_MeshFilter))
-                        m_MeshFilter = gameObject.AddComponent<MeshFilter>();
-#else
-                    if((m_MeshFilter = GetComponent<MeshFilter>()) == null)
-                        m_MeshFilter = gameObject.AddComponent<MeshFilter>();
-#endif
+                    if (!TryGetComponent<MeshFilter>(out m_MeshFilter))
+                        return null;
                     m_MeshFilter.hideFlags = k_MeshFilterHideFlags;
                 }
 
@@ -194,10 +190,14 @@ namespace UnityEngine.ProBuilder
 
             // UV2 is a special case. It is not stored in ProBuilderMesh, does not necessarily match the vertex count,
             // at it has a cost to check.
-            if ((channels & MeshArrays.Texture1) == MeshArrays.Texture1)
+            if ((channels & MeshArrays.Texture1) == MeshArrays.Texture1 && m_Mesh != null)
             {
-                var m_Textures1 = mesh != null ? mesh.uv2 : null;
+#if UNITY_2019_3_OR_NEWER
+                missing |= !m_Mesh.HasVertexAttribute(VertexAttribute.TexCoord1);
+#else
+                var m_Textures1 = m_Mesh.uv2;
                 missing |= (m_Textures1 == null || m_Textures1.Length < 3);
+#endif
             }
 
             return !missing;
@@ -797,8 +797,14 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         internal Mesh mesh
         {
-            get { return filter.sharedMesh; }
-            set { filter.sharedMesh = value; }
+            get { return filter != null ? filter.sharedMesh : null; }
+            
+            set
+            {
+                if (filter == null)
+                    throw new NullReferenceException("MeshFilter");
+                filter.sharedMesh = value;
+            }
         }
 
         internal int id
