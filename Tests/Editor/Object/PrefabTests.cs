@@ -61,17 +61,18 @@ public class PrefabTests
             AssetDatabase.DeleteAsset(prefabPath);
     }
 
-    [Test]
-    public void Prefab_HasNoOverrides_WhenInstantiated()
+    [UnityTest]
+    public IEnumerable Prefab_HasNoOverrides_WhenInstantiated()
     {
         var prefab = CreatePrefab();
         var instanced = Object.Instantiate(prefab);
+        yield return null;
         Assert.That(PrefabUtility.HasPrefabInstanceAnyOverrides(instanced, true), Is.False);
         DestroyPrefab(prefab);
     }
 
     [UnityTest]
-    public static IEnumerator ModifyPrefabInstance_DoesNotSetDirty_MeshFilter()
+    public IEnumerable ModifyPrefabInstance_DoesNotSetDirty_MeshFilter()
     {
         var prefab = CreatePrefab();
         var instanced = Object.Instantiate(prefab);
@@ -80,20 +81,33 @@ public class PrefabTests
         mesh.Extrude(new [] { mesh.faces.First() }, ExtrudeMethod.FaceNormal, 1f);
         mesh.ToMesh();
         mesh.Refresh();
-        EditorUtility.SetDirty(mesh);
+
+        // Let serialization run so that things are marked dirty
         yield return null;
 
-        Assume.That(PrefabUtility.HasPrefabInstanceAnyOverrides(instanced, true), Is.True);
+        Assert.That(PrefabUtility.HasPrefabInstanceAnyOverrides(instanced, true), Is.True);
+        Assert.That(PrefabUtility.GetPropertyModifications(instanced), Has.Some.Matches<PropertyModification>(x => x.objectReference is ProBuilderMesh));
 
         DestroyPrefab(prefab);
     }
 
-    [Test]
-    public void ModifyPrefabInstance_DoesNotSetDirty_MeshCollider_SharedMesh()
+    [UnityTest]
+    public IEnumerable ModifyPrefabInstance_DoesNotSetDirty_MeshCollider_SharedMesh()
     {
         var prefab = CreatePrefab();
         var instanced = Object.Instantiate(prefab);
+        var mesh = instanced.GetComponent<ProBuilderMesh>();
+
         Assert.That(PrefabUtility.HasPrefabInstanceAnyOverrides(instanced, true), Is.False);
+
+        mesh.Extrude(new [] { mesh.faces.First() }, ExtrudeMethod.FaceNormal, 1f);
+        mesh.ToMesh();
+        mesh.Refresh();
+
+        yield return null;
+
+        Assert.That(PrefabUtility.HasPrefabInstanceAnyOverrides(instanced, true), Is.False);
+
         DestroyPrefab(prefab);
     }
 }

@@ -82,9 +82,8 @@ namespace UnityEngine.ProBuilder
             return v;
         }
 
-
         /// <summary>
-        /// Transform a vertex fromw world space to local space.
+        /// Transform a vertex from world space to local space.
         /// </summary>
         /// <param name="transform">The transform to apply.</param>
         /// <param name="vertex">A world space vertex.</param>

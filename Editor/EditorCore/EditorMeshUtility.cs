@@ -149,8 +149,8 @@ namespace UnityEditor.ProBuilder
                             pb.gameObject.GetComponent<MeshFilter>().sharedMesh = m;
 
                             // also set the MeshCollider if it exists
-                            MeshCollider mc = pb.gameObject.GetComponent<MeshCollider>();
-                            if (mc != null) mc.sharedMesh = m;
+                            pb.Refresh(RefreshMask.Collisions);
+                            
                             return;
                         }
                         else

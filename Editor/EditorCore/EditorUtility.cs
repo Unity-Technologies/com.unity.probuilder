@@ -194,7 +194,9 @@ namespace UnityEditor.ProBuilder
             // In a perfect world this wouldn't be here. However, when instantiating a prefab there is a step after the
             // frame has run that resets the component hideflags. I have not been able to find an alternative callback
             // for instantiation events that circumvents this issue.
-            mesh.filter.hideFlags = ProBuilderMesh.k_MeshFilterHideFlags;
+            MeshFilter filter = mesh.gameObject.DemandComponent<MeshFilter>();
+            filter.hideFlags = ProBuilderMesh.k_MeshFilterHideFlags;
+
             MeshSyncState state = mesh.meshSyncState;
             bool meshesAreAssets = Experimental.meshesAreAssets;
 
@@ -316,7 +318,15 @@ namespace UnityEditor.ProBuilder
                     break;
 
                 case ColliderType.MeshCollider:
-                    pb.gameObject.AddComponent<MeshCollider>().convex = s_MeshColliderIsConvex;
+                    var collider = pb.gameObject.DemandComponent<MeshCollider>();
+                    // This little dance is required to prevent the Prefab system from detecting an overridden property
+                    // before ProBuilderMesh.RefreshCollisions has a chance to mark the MeshCollider.sharedMesh property
+                    // as driven. "AddComponent<MeshCollider>" constructs the MeshCollider and simultaneously assigns
+                    // the "m_Mesh" property, marking the property dirty. So we undo that change, here then assign the
+                    // mesh through our own method.
+                    collider.sharedMesh = null;
+                    collider.convex = s_MeshColliderIsConvex;
+                    pb.Refresh(RefreshMask.Collisions);
                     break;
             }
 

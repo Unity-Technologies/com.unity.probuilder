@@ -25,15 +25,13 @@ namespace UnityEngine.ProBuilder
         }
 #endif
 
-        [SerializeField]
-        Mesh m_Mesh;
-
         void Awake()
         {
             if (vertexCount > 0
                 && faceCount > 0
                 && meshSyncState == MeshSyncState.Null)
             {
+                m_MeshFilter = gameObject.DemandComponent<MeshFilter>();
                 Rebuild();
             }
         }
@@ -336,11 +334,9 @@ namespace UnityEngine.ProBuilder
                 RefreshCollisions();
         }
 
-        // todo Remove in next major version increment (use EditorMeshUtility.RebuildColliders)
         void RefreshCollisions()
         {
             mesh.RecalculateBounds();
-
             MeshCollider collider;
 
             if(TryGetComponent<MeshCollider>(out collider))

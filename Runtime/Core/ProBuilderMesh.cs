@@ -11,14 +11,15 @@ namespace UnityEngine.ProBuilder
     /// <summary>
     /// This component is responsible for storing all the data necessary for editing and compiling UnityEngine.Mesh objects.
     /// </summary>
-    [AddComponentMenu("")]
+    // The double "//" sets this component as hidden in the menu, but is used by ObjectNames.cs to get the component name.
+    [AddComponentMenu("//ProBuilder MeshFilter")]
     [DisallowMultipleComponent]
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
     [ExecuteInEditMode]
     public sealed partial class ProBuilderMesh : MonoBehaviour
     {
-        internal const HideFlags k_MeshFilterHideFlags = HideFlags.DontSave;// | HideFlags.HideInInspector | HideFlags.NotEditable;
+        internal const HideFlags k_MeshFilterHideFlags = HideFlags.DontSave | HideFlags.HideInInspector | HideFlags.NotEditable;
 
         /// <summary>
         /// Max number of UV channels that ProBuilderMesh format supports.
@@ -190,10 +191,10 @@ namespace UnityEngine.ProBuilder
 
             // UV2 is a special case. It is not stored in ProBuilderMesh, does not necessarily match the vertex count,
             // at it has a cost to check.
-            if ((channels & MeshArrays.Texture1) == MeshArrays.Texture1 && m_Mesh != null)
+            if ((channels & MeshArrays.Texture1) == MeshArrays.Texture1 && mesh != null)
             {
 #if UNITY_2019_3_OR_NEWER
-                missing |= !m_Mesh.HasVertexAttribute(VertexAttribute.TexCoord1);
+                missing |= !mesh.HasVertexAttribute(VertexAttribute.TexCoord1);
 #else
                 var m_Textures1 = m_Mesh.uv2;
                 missing |= (m_Textures1 == null || m_Textures1.Length < 3);
@@ -798,7 +799,7 @@ namespace UnityEngine.ProBuilder
         internal Mesh mesh
         {
             get { return filter != null ? filter.sharedMesh : null; }
-            
+
             set
             {
                 if (filter == null)
