@@ -151,7 +151,7 @@ namespace UnityEngine.ProBuilder
             return v.ToArray();
         }
 
-#if !UNITY_2019_3_OR_NEWER
+#if !UNITY_2019_2_OR_NEWER
         public static bool TryGetComponent<T>(this Component source, out T component)
         {
             return (component = source.GetComponent<T>()) != null;
