@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [4.3.0] - TBD
 
+## Bug Fixes
+
+- Fixed `MeshFilter` and `MeshCollider` always showing properties as "Overridden" on Prefab instances.
+
+## Changes
+
+- The `MeshFilter` component is now hidden by default on GameObjects created by ProBuilder, and the `ProBuilderMesh` component is renamed in the Inspector to `ProBuilder MeshFilter`.
 
 ## [4.2.1] - 2019-11-22
 
