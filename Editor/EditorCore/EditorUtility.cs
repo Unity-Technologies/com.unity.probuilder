@@ -191,12 +191,7 @@ namespace UnityEditor.ProBuilder
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            // In a perfect world this wouldn't be here. However, when instantiating a prefab there is a step after the
-            // frame has run that resets the component hideflags. I have not been able to find an alternative callback
-            // for instantiation events that circumvents this issue.
-            MeshFilter filter = mesh.gameObject.DemandComponent<MeshFilter>();
-            filter.hideFlags = ProBuilderMesh.k_MeshFilterHideFlags;
-
+            mesh.EnsureMeshFilterIsAssigned();
             MeshSyncState state = mesh.meshSyncState;
             bool meshesAreAssets = Experimental.meshesAreAssets;
 

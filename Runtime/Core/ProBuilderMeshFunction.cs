@@ -27,13 +27,12 @@ namespace UnityEngine.ProBuilder
 
         void Awake()
         {
+            EnsureMeshFilterIsAssigned();
+
             if (vertexCount > 0
                 && faceCount > 0
                 && meshSyncState == MeshSyncState.Null)
-            {
-                m_MeshFilter = gameObject.DemandComponent<MeshFilter>();
                 Rebuild();
-            }
         }
 
         void OnDestroy()
@@ -48,10 +47,10 @@ namespace UnityEngine.ProBuilder
                 !Application.isPlaying &&
                 Time.frameCount > 0)
             {
-                MeshCollider collider;
-
-                if(TryGetComponent<MeshCollider>(out collider))
-                    SerializationUtility.UnregisterDrivenProperty(this, collider, "m_Mesh");
+                SerializationUtility.UnregisterDrivenProperty(this, this, "m_Mesh");
+                MeshCollider meshCollider;
+                if(TryGetComponent<MeshCollider>(out meshCollider))
+                    SerializationUtility.UnregisterDrivenProperty(this, meshCollider, "m_Mesh");
 
                 if (meshWillBeDestroyed != null)
                     meshWillBeDestroyed(this);
@@ -79,6 +78,14 @@ namespace UnityEngine.ProBuilder
             InvalidateSharedTextureLookup();
             m_Colors = null;
             ClearSelection();
+        }
+
+        internal void EnsureMeshFilterIsAssigned()
+        {
+            if (filter == null)
+                m_MeshFilter = gameObject.AddComponent<MeshFilter>();
+            m_MeshFilter.hideFlags = k_MeshFilterHideFlags;
+            filter.sharedMesh = m_Mesh;
         }
 
         internal static ProBuilderMesh CreateInstanceWithPoints(Vector3[] positions)
@@ -223,19 +230,15 @@ namespace UnityEngine.ProBuilder
         /// <param name="preferredTopology">Triangles and Quads are supported.</param>
         public void ToMesh(MeshTopology preferredTopology = MeshTopology.Triangles)
         {
-            Mesh m = mesh;
-
             // if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
-            if (m != null && m.vertexCount == m_Positions.Length)
-                m = mesh;
-            else if (m == null)
-                m = new Mesh();
-            else
-                m.Clear();
+            if (m_Mesh == null)
+                mesh = new Mesh();
+            else if(m_Mesh.vertexCount != vertexCount)
+                m_Mesh.Clear();
 
-            m.indexFormat = vertexCount > ushort.MaxValue ? Rendering.IndexFormat.UInt32 : Rendering.IndexFormat.UInt16;
-            m.vertices = m_Positions;
-            m.uv2 = null;
+            m_Mesh.indexFormat = vertexCount > ushort.MaxValue ? Rendering.IndexFormat.UInt32 : Rendering.IndexFormat.UInt16;
+            m_Mesh.vertices = m_Positions;
+            m_Mesh.uv2 = null;
 
             if (m_MeshFormatVersion < k_MeshFormatVersion)
             {
@@ -251,9 +254,9 @@ namespace UnityEngine.ProBuilder
 
             Submesh[] submeshes = Submesh.GetSubmeshes(facesInternal, materialCount, preferredTopology);
 
-            m.subMeshCount = materialCount;
+            m_Mesh.subMeshCount = materialCount;
 
-            for (int i = 0; i < m.subMeshCount; i++)
+            for (int i = 0; i < m_Mesh.subMeshCount; i++)
             {
 #if DEVELOPER_MODE
                 if (i >= materialCount)
@@ -261,11 +264,12 @@ namespace UnityEngine.ProBuilder
                 if (submeshes[i] == null)
                     throw new Exception("Attempting to assign a null submesh. " + i + "/" + materialCount);
 #endif
-                m.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
+                m_Mesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
             }
 
-            m.name = string.Format("pb_Mesh{0}", id);
-            filter.sharedMesh = m;
+            m_Mesh.name = string.Format("pb_Mesh{0}", id);
+
+            EnsureMeshFilterIsAssigned();
         }
 
         /// <summary>

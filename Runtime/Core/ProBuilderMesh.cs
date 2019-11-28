@@ -14,9 +14,9 @@ namespace UnityEngine.ProBuilder
     // The double "//" sets this component as hidden in the menu, but is used by ObjectNames.cs to get the component name.
     [AddComponentMenu("//ProBuilder MeshFilter")]
     [DisallowMultipleComponent]
-    [RequireComponent(typeof(MeshFilter))]
-    [RequireComponent(typeof(MeshRenderer))]
     [ExecuteInEditMode]
+    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+    [MonoBehaviourIcon("Packages/com.unity.probuilder/Content/Icons/Scripts/ProBuilderMesh@64.png")]
     public sealed partial class ProBuilderMesh : MonoBehaviour
     {
         internal const HideFlags k_MeshFilterHideFlags = HideFlags.DontSave | HideFlags.HideInInspector | HideFlags.NotEditable;
@@ -124,6 +124,9 @@ namespace UnityEngine.ProBuilder
         /// </value>
         [SerializeField]
         internal string assetGuid;
+
+        [SerializeField]
+        Mesh m_Mesh;
 
         [NonSerialized]
         MeshRenderer m_MeshRenderer;
@@ -793,18 +796,14 @@ namespace UnityEngine.ProBuilder
         /// <seealso cref="SetSelectedEdges"/>
         public static event Action<ProBuilderMesh> elementSelectionChanged;
 
-        /// <summary>
-        /// Convenience property for getting the mesh from the MeshFilter component.
-        /// </summary>
         internal Mesh mesh
         {
-            get { return filter != null ? filter.sharedMesh : null; }
-
+            get { return m_Mesh; }
             set
             {
-                if (filter == null)
-                    throw new NullReferenceException("MeshFilter");
-                filter.sharedMesh = value;
+                SerializationUtility.UnregisterDrivenProperty(this, this, "m_Mesh");
+                SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
+                m_Mesh = value;
             }
         }
 
