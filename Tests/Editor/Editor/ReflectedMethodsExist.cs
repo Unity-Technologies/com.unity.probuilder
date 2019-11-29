@@ -62,7 +62,18 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
             var mi = typeof(Material).GetMethod("GetDefaultMaterial", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
             Assert.IsNotNull(mi);
         }
-
 #endif
+
+        [Test]
+        public static void DrivenPropertyManager_RegisterProperty()
+        {
+            Assert.That(SerializationUtility.registerProperty, Is.Not.Null);
+        }
+
+        public static void DrivenPropertyManager_UnregisterProperty()
+        {
+            Assert.That(SerializationUtility.unregisterProperty, Is.Not.Null);
+        }
+
     }
 }

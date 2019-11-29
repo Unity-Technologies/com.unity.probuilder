@@ -23,6 +23,23 @@ namespace UnityEngine.ProBuilder
         {
             InvalidateCaches();
         }
+
+        // Using the internal callbacks here to avoid registering this component as "enable-able"
+        void OnEnableINTERNAL()
+        {
+            SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
+        }
+
+        void OnDisableINTERNAL()
+        {
+            // Don't call DrivenPropertyManager.Unregister in OnDestroy. At that point GameObject::m_ActivationState is
+            // already set to kDestroying, and DrivenPropertyManager.Unregister will try to revert the driven values to
+            // their previous state (which will assert that the object is _not_ being destroyed)
+            SerializationUtility.UnregisterDrivenProperty(this, this, "m_Mesh");
+            MeshCollider meshCollider;
+            if(TryGetComponent(out meshCollider))
+                SerializationUtility.UnregisterDrivenProperty(this, meshCollider, "m_Mesh");
+        }
 #endif
 
         void Awake()
@@ -47,11 +64,6 @@ namespace UnityEngine.ProBuilder
                 !Application.isPlaying &&
                 Time.frameCount > 0)
             {
-                SerializationUtility.UnregisterDrivenProperty(this, this, "m_Mesh");
-                MeshCollider meshCollider;
-                if(TryGetComponent<MeshCollider>(out meshCollider))
-                    SerializationUtility.UnregisterDrivenProperty(this, meshCollider, "m_Mesh");
-
                 if (meshWillBeDestroyed != null)
                     meshWillBeDestroyed(this);
                 else
@@ -231,14 +243,14 @@ namespace UnityEngine.ProBuilder
         public void ToMesh(MeshTopology preferredTopology = MeshTopology.Triangles)
         {
             // if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
-            if (m_Mesh == null)
+            if (mesh == null)
                 mesh = new Mesh();
-            else if(m_Mesh.vertexCount != vertexCount)
-                m_Mesh.Clear();
+            else if(mesh.vertexCount != vertexCount)
+                mesh.Clear();
 
-            m_Mesh.indexFormat = vertexCount > ushort.MaxValue ? Rendering.IndexFormat.UInt32 : Rendering.IndexFormat.UInt16;
-            m_Mesh.vertices = m_Positions;
-            m_Mesh.uv2 = null;
+            mesh.indexFormat = vertexCount > ushort.MaxValue ? Rendering.IndexFormat.UInt32 : Rendering.IndexFormat.UInt16;
+            mesh.vertices = m_Positions;
+            mesh.uv2 = null;
 
             if (m_MeshFormatVersion < k_MeshFormatVersion)
             {
@@ -254,9 +266,9 @@ namespace UnityEngine.ProBuilder
 
             Submesh[] submeshes = Submesh.GetSubmeshes(facesInternal, materialCount, preferredTopology);
 
-            m_Mesh.subMeshCount = materialCount;
+            mesh.subMeshCount = materialCount;
 
-            for (int i = 0; i < m_Mesh.subMeshCount; i++)
+            for (int i = 0; i < mesh.subMeshCount; i++)
             {
 #if DEVELOPER_MODE
                 if (i >= materialCount)
@@ -264,11 +276,10 @@ namespace UnityEngine.ProBuilder
                 if (submeshes[i] == null)
                     throw new Exception("Attempting to assign a null submesh. " + i + "/" + materialCount);
 #endif
-                m_Mesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
+                mesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
             }
 
-            m_Mesh.name = string.Format("pb_Mesh{0}", id);
-
+            mesh.name = string.Format("pb_Mesh{0}", id);
             EnsureMeshFilterIsAssigned();
         }
 

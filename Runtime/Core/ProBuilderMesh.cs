@@ -16,7 +16,7 @@ namespace UnityEngine.ProBuilder
     [DisallowMultipleComponent]
     [ExecuteInEditMode]
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
-    [MonoBehaviourIcon("Packages/com.unity.probuilder/Content/Icons/Scripts/ProBuilderMesh@64.png")]
+//    [MonoBehaviourIcon("Packages/com.unity.probuilder/Content/Icons/Scripts/ProBuilderMesh@64.png")]
     public sealed partial class ProBuilderMesh : MonoBehaviour
     {
         internal const HideFlags k_MeshFilterHideFlags = HideFlags.DontSave | HideFlags.HideInInspector | HideFlags.NotEditable;
@@ -798,13 +798,14 @@ namespace UnityEngine.ProBuilder
 
         internal Mesh mesh
         {
-            get { return m_Mesh; }
-            set
+            get
             {
-                SerializationUtility.UnregisterDrivenProperty(this, this, "m_Mesh");
-                SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
-                m_Mesh = value;
+                if (m_Mesh == null && filter != null)
+                    m_Mesh = filter.sharedMesh;
+                return m_Mesh;
             }
+
+            set { m_Mesh = value; }
         }
 
         internal int id
