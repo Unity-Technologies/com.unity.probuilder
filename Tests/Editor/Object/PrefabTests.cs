@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using UnityEditor;
@@ -66,7 +67,13 @@ public class PrefabTests
         var prefab = CreatePrefab();
         var instanced = (GameObject) PrefabUtility.InstantiatePrefab(prefab);
         yield return null;
-        Assert.That(PrefabUtility.HasPrefabInstanceAnyOverrides(instanced, false), Is.False);
+        PrintPrefabModifications(new [] { instanced });
+        Assert.That(PrefabUtility.GetObjectOverrides(instanced), Is.Empty);
+        Assert.That(PrefabUtility.GetPropertyModifications(instanced), Has.None.Matches<PropertyModification>(
+            x => x.objectReference is ProBuilderMesh
+                || x.objectReference is MeshCollider
+                || x.objectReference is MeshFilter
+        ));
         DestroyPrefab(prefab);
     }
 
@@ -102,8 +109,6 @@ public class PrefabTests
         var instanced = (GameObject) PrefabUtility.InstantiatePrefab(prefab);
         var mesh = instanced.GetComponent<ProBuilderMesh>();
 
-        Assert.That(PrefabUtility.HasPrefabInstanceAnyOverrides(instanced, false), Is.False);
-
         Undo.RecordObject(mesh, "Extrude");
         mesh.Extrude(new [] { mesh.faces.First() }, ExtrudeMethod.FaceNormal, 1f);
         mesh.ToMesh();
@@ -120,5 +125,21 @@ public class PrefabTests
         Assert.That(modifications, Has.None.Matches<PropertyModification>(x => x.objectReference is MeshCollider && x.propertyPath == "m_Mesh"));
 
         DestroyPrefab(prefab);
+    }
+
+    static void PrintPrefabModifications(IEnumerable<GameObject> selection)
+    {
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        foreach (var mesh in selection)
+        {
+            sb.AppendLine("Object Overrides");
+            foreach (var ride in PrefabUtility.GetObjectOverrides(mesh))
+                sb.AppendLine(ride.instanceObject.ToString());
+            sb.AppendLine("\nProperty Modifications");
+            foreach (var modification in PrefabUtility.GetPropertyModifications(mesh))
+                sb.AppendLine(modification.objectReference + "->" + modification.propertyPath + " = " + modification.value);
+        }
+
+        Debug.Log(sb.ToString());
     }
 }

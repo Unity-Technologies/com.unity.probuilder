@@ -299,7 +299,9 @@ namespace UnityEditor.ProBuilder
             MoveToActiveScene(pb.gameObject);
             ScreenCenter(pb.gameObject);
             SetPivotLocationAndSnap(pb);
+#if UNITY_2019_1_OR_NEWER
             ComponentUtility.MoveComponentRelativeToComponent(pb, pb.transform, false);
+#endif
 
             pb.renderer.shadowCastingMode = s_ShadowCastingMode;
             pb.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
@@ -579,6 +581,24 @@ namespace UnityEditor.ProBuilder
         internal static bool IsDeveloperMode()
         {
             return EditorPrefs.GetBool("DeveloperMode", false);
+        }
+
+        public static void SetGizmoIconEnabled(Type script, bool enabled)
+        {
+#if UNITY_2019_1_OR_NEWER
+            var annotations = AnnotationUtility.GetAnnotations();
+            var annotation = annotations.FirstOrDefault(x => x.scriptClass.Contains(script.Name));
+            AnnotationUtility.SetIconEnabled(annotation.classID, annotation.scriptClass, 0);
+#else
+            Type annotationUtility = typeof(Editor).Assembly.GetType("UnityEditor.AnnotationUtility");
+            MethodInfo setGizmoIconEnabled = annotationUtility.GetMethod("SetIconEnabled",
+                BindingFlags.Static | BindingFlags.NonPublic,
+                null,
+                new Type[] { typeof(int), typeof(string), typeof(int) },
+                null);
+            var name = script.Name;
+            setGizmoIconEnabled.Invoke(null, new object[] { 114, name, enabled ? 1 : 0});
+#endif
         }
     }
 }

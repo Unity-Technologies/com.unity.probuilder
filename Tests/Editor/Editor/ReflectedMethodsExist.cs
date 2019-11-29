@@ -12,28 +12,14 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
 
 #if !UNITY_2019_1_OR_NEWER
         [Test]
-        public static void OnPreSceneGUIDelegate()
+        public static void SceneView_OnPreSceneGUIDelegate()
         {
             var fi = typeof(SceneView).GetField("onPreSceneGUIDelegate", k_BindingFlagsAll);
             Assert.IsNotNull(fi);
         }
 
-#endif
-
-#if !UNITY_2018_2_OR_NEWER
         [Test]
-        public static void ResetOnSceneGUIState()
-        {
-            // no longer necessary as of 2018.2
-            var mi = typeof(SceneView).GetMethod("ResetOnSceneGUIState", BindingFlags.Instance | BindingFlags.NonPublic);
-            Assert.IsNotNull(mi);
-        }
-
-#endif
-
-#if !UNITY_2019_1_OR_NEWER
-        [Test]
-        public static void ShowWindowPopupWithMode()
+        public static void EditorWindow_ShowWindowPopupWithMode()
         {
             var mi = typeof(EditorWindow).GetMethod(
                 "ShowPopupWithMode",
@@ -44,7 +30,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
 #endif
 
         [Test]
-        public static void ApplyWireMaterial()
+        public static void HandleUtility_ApplyWireMaterial()
         {
             var m_ApplyWireMaterial = typeof(UnityEditor.HandleUtility).GetMethod(
                     "ApplyWireMaterial",
@@ -55,14 +41,12 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
             Assert.IsNotNull(m_ApplyWireMaterial);
         }
 
-#if UNITY_2018_2_OR_NEWER
         [Test]
         public static void GetDefaultMaterial()
         {
             var mi = typeof(Material).GetMethod("GetDefaultMaterial", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
             Assert.IsNotNull(mi);
         }
-#endif
 
         [Test]
         public static void DrivenPropertyManager_RegisterProperty()
@@ -70,10 +54,19 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
             Assert.That(SerializationUtility.registerProperty, Is.Not.Null);
         }
 
+        [Test]
         public static void DrivenPropertyManager_UnregisterProperty()
         {
             Assert.That(SerializationUtility.unregisterProperty, Is.Not.Null);
         }
 
+        [Test]
+        public static void AnnotationUtility_SetIconEnabled()
+        {
+            Assert.DoesNotThrow(() =>
+            {
+                UnityEditor.ProBuilder.EditorUtility.SetGizmoIconEnabled(typeof(ProBuilderMesh), false);
+            });
+        }
     }
 }
