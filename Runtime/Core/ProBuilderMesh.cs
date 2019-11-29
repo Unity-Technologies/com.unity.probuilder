@@ -136,7 +136,7 @@ namespace UnityEngine.ProBuilder
         {
             get
             {
-                if (!TryGetComponent<MeshRenderer>(out m_MeshRenderer))
+                if (!gameObject.TryGetComponent<MeshRenderer>(out m_MeshRenderer))
                     return null;
                 return m_MeshRenderer;
             }
@@ -153,7 +153,7 @@ namespace UnityEngine.ProBuilder
             {
                 if (m_MeshFilter == null)
                 {
-                    if (!TryGetComponent<MeshFilter>(out m_MeshFilter))
+                    if (!gameObject.TryGetComponent<MeshFilter>(out m_MeshFilter))
                         return null;
                     m_MeshFilter.hideFlags = k_MeshFilterHideFlags;
                 }

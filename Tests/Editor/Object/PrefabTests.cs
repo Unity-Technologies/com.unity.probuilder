@@ -2,6 +2,7 @@
 using System.Linq;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
@@ -40,9 +41,7 @@ public class PrefabTests
         var prefabPath = AssetDatabase.GenerateUniqueAssetPath("Assets/PrefabTest.prefab");
         var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
 
-        MeshCollider collider;
-        if (!mesh.gameObject.TryGetComponent(out collider))
-            collider = mesh.gameObject.AddComponent<MeshCollider>();
+        MeshCollider collider = mesh.DemandComponent<MeshCollider>();
         mesh.Refresh(RefreshMask.Collisions);
 
         Assume.That(mesh.GetComponent<MeshCollider>(), Is.Not.Null);
@@ -62,22 +61,23 @@ public class PrefabTests
     }
 
     [UnityTest]
-    public IEnumerable Prefab_HasNoOverrides_WhenInstantiated()
+    public IEnumerator Prefab_HasNoOverrides_WhenInstantiated()
     {
         var prefab = CreatePrefab();
-        var instanced = Object.Instantiate(prefab);
+        var instanced = (GameObject) PrefabUtility.InstantiatePrefab(prefab);
         yield return null;
-        Assert.That(PrefabUtility.HasPrefabInstanceAnyOverrides(instanced, true), Is.False);
+        Assert.That(PrefabUtility.HasPrefabInstanceAnyOverrides(instanced, false), Is.False);
         DestroyPrefab(prefab);
     }
 
     [UnityTest]
-    public IEnumerable ModifyPrefabInstance_DoesNotSetDirty_MeshFilter()
+    public IEnumerator ModifyPrefabInstance_DoesNotSetDirty_MeshFilter()
     {
         var prefab = CreatePrefab();
-        var instanced = Object.Instantiate(prefab);
+        var instanced = (GameObject) PrefabUtility.InstantiatePrefab(prefab);
         var mesh = instanced.GetComponent<ProBuilderMesh>();
 
+        Undo.RecordObject(mesh, "Extrude");
         mesh.Extrude(new [] { mesh.faces.First() }, ExtrudeMethod.FaceNormal, 1f);
         mesh.ToMesh();
         mesh.Refresh();
@@ -85,28 +85,39 @@ public class PrefabTests
         // Let serialization run so that things are marked dirty
         yield return null;
 
-        Assert.That(PrefabUtility.HasPrefabInstanceAnyOverrides(instanced, true), Is.True);
-        Assert.That(PrefabUtility.GetPropertyModifications(instanced), Has.Some.Matches<PropertyModification>(x => x.objectReference is ProBuilderMesh));
+        Assume.That(PrefabUtility.HasPrefabInstanceAnyOverrides(instanced, false), Is.True);
+        var overrides = PrefabUtility.GetObjectOverrides(instanced);
+        Assume.That(overrides, Is.Not.Null);
+        Assume.That(overrides, Has.Some.Matches<ObjectOverride>(x => x.instanceObject is ProBuilderMesh));
+
+        Assert.That(overrides, Has.None.Matches<ObjectOverride>(x => x.instanceObject is MeshFilter));
 
         DestroyPrefab(prefab);
     }
 
     [UnityTest]
-    public IEnumerable ModifyPrefabInstance_DoesNotSetDirty_MeshCollider_SharedMesh()
+    public IEnumerator ModifyPrefabInstance_DoesNotSetDirty_MeshCollider_SharedMesh()
     {
         var prefab = CreatePrefab();
-        var instanced = Object.Instantiate(prefab);
+        var instanced = (GameObject) PrefabUtility.InstantiatePrefab(prefab);
         var mesh = instanced.GetComponent<ProBuilderMesh>();
 
-        Assert.That(PrefabUtility.HasPrefabInstanceAnyOverrides(instanced, true), Is.False);
+        Assert.That(PrefabUtility.HasPrefabInstanceAnyOverrides(instanced, false), Is.False);
 
+        Undo.RecordObject(mesh, "Extrude");
         mesh.Extrude(new [] { mesh.faces.First() }, ExtrudeMethod.FaceNormal, 1f);
         mesh.ToMesh();
         mesh.Refresh();
 
         yield return null;
 
-        Assert.That(PrefabUtility.HasPrefabInstanceAnyOverrides(instanced, true), Is.False);
+        var overrides = PrefabUtility.GetObjectOverrides(instanced);
+        Assume.That(overrides, Is.Not.Null);
+        Assume.That(overrides, Has.Some.Matches<ObjectOverride>(x => x.instanceObject is ProBuilderMesh));
+        Assert.That(overrides, Has.None.Matches<ObjectOverride>(x => x.instanceObject is MeshCollider));
+
+        var modifications = PrefabUtility.GetPropertyModifications(instanced);
+        Assert.That(modifications, Has.None.Matches<PropertyModification>(x => x.objectReference is MeshCollider && x.propertyPath == "m_Mesh"));
 
         DestroyPrefab(prefab);
     }

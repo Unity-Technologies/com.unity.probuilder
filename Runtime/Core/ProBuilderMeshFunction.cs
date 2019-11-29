@@ -25,11 +25,6 @@ namespace UnityEngine.ProBuilder
         }
 
         // Using the internal callbacks here to avoid registering this component as "enable-able"
-        void OnEnableINTERNAL()
-        {
-            SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
-        }
-
         void OnDisableINTERNAL()
         {
             // Don't call DrivenPropertyManager.Unregister in OnDestroy. At that point GameObject::m_ActivationState is
@@ -37,13 +32,16 @@ namespace UnityEngine.ProBuilder
             // their previous state (which will assert that the object is _not_ being destroyed)
             SerializationUtility.UnregisterDrivenProperty(this, this, "m_Mesh");
             MeshCollider meshCollider;
-            if(TryGetComponent(out meshCollider))
+            if(gameObject.TryGetComponent(out meshCollider))
                 SerializationUtility.UnregisterDrivenProperty(this, meshCollider, "m_Mesh");
         }
 #endif
 
         void Awake()
         {
+            // Register driven properties and set hide flags in Awake because OnEnable is called after serialization has
+            // had a chance to register changes
+            SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
             EnsureMeshFilterIsAssigned();
 
             if (vertexCount > 0
@@ -354,7 +352,7 @@ namespace UnityEngine.ProBuilder
             mesh.RecalculateBounds();
             MeshCollider collider;
 
-            if(TryGetComponent<MeshCollider>(out collider))
+            if(gameObject.TryGetComponent<MeshCollider>(out collider))
             {
                 SerializationUtility.UnregisterDrivenProperty(this, collider, "m_Mesh");
                 SerializationUtility.RegisterDrivenProperty(this, collider, "m_Mesh");

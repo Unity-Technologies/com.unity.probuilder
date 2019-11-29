@@ -152,7 +152,12 @@ namespace UnityEngine.ProBuilder
         }
 
 #if !UNITY_2019_2_OR_NEWER
-        public static bool TryGetComponent<T>(this Component source, out T component)
+        public static bool TryGetComponent<T>(this Component source, out T component) where T : Component
+        {
+            return (component = source.GetComponent<T>()) != null;
+        }
+
+        public static bool TryGetComponent<T>(this GameObject source, out T component) where T : Component
         {
             return (component = source.GetComponent<T>()) != null;
         }
@@ -161,6 +166,11 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Get a reference to an existing component, or add a new component if one does not already exist.
         /// </summary>
+        public static T DemandComponent<T>(this Component component) where T : Component
+        {
+            return component.gameObject.DemandComponent<T>();
+        }
+
         public static T DemandComponent<T>(this GameObject gameObject) where T : Component
         {
             T component;
