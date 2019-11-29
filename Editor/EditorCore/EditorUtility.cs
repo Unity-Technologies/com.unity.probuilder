@@ -8,6 +8,7 @@ using UnityEngine.ProBuilder;
 using UnityEngine.Rendering;
 using UObject = UnityEngine.Object;
 using UnityEditor.SettingsManagement;
+using UnityEditorInternal;
 using UnityEngine.SceneManagement;
 #if !UNITY_2019_1_OR_NEWER
 using System.Reflection;
@@ -296,10 +297,9 @@ namespace UnityEditor.ProBuilder
         internal static void InitObject(ProBuilderMesh pb)
         {
             MoveToActiveScene(pb.gameObject);
-
             ScreenCenter(pb.gameObject);
-
             SetPivotLocationAndSnap(pb);
+            ComponentUtility.MoveComponentRelativeToComponent(pb, pb.transform, false);
 
             pb.renderer.shadowCastingMode = s_ShadowCastingMode;
             pb.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
