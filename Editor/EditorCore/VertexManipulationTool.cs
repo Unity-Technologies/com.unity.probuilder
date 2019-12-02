@@ -206,7 +206,7 @@ namespace UnityEditor.ProBuilder
 
         protected bool relativeSnapEnabled
         {
-            get { return EditorSnapSettings.incrementalSnapActive; }
+            get { return ProBuilderSnapSettings.snapMode == SnapMode.Relative; }
         }
 
         protected float GetSnapValueForAxis(Vector3Mask axes)
@@ -299,7 +299,7 @@ namespace UnityEditor.ProBuilder
 
             m_WorldSnapEnabled = ProBuilderSnapSettings.snapMode == SnapMode.World;
             m_SnapAxisConstraint = ProBuilderSnapSettings.snapMethod == SnapAxis.ActiveAxis; ProGridsInterface.UseAxisConstraints();
-            m_MoveSnapValue = m_WorldSnapEnabled ? ProBuilderSnapSettings.worldSnapMoveValue : ProBuilderSnapSettings.incrementalSnapMoveValue2;
+            m_MoveSnapValue = m_WorldSnapEnabled ? ProBuilderSnapSettings.worldSnapMoveValue : ProBuilderSnapSettings.incrementalSnapMoveValue;
 
             foreach (var mesh in selection)
             {

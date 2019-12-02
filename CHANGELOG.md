@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [4.3.0] - 1111-11-11
 
+## Features
+
+- The Move tool is now compatible with grid snapping (Unity 2019.3 and higher).
 
 ## [4.2.1] - 2019-11-22
 

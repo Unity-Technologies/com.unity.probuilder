@@ -22,24 +22,36 @@ namespace UnityEditor.ProBuilder
         World
     }
 
-    // Snap settings for ProBuilder tools. If ProGrids is imported to the project, ProGrids settings will take priority.
+    // Snap settings for ProBuilder tools. If ProGrids is active, ProGrids settings will take priority.
     static class ProBuilderSnapSettings
     {
+#if UNITY_2019_3_OR_NEWER
         [UserSetting("Snap Settings", "Snap as Group", "When enabled, selected mesh elements will keep their relative offsets when snapping to the grid. When disabled, every element in the selection is snapped to grid independently.")]
+#endif
         static Pref<bool> s_SnapAsGroup = new Pref<bool>("ProBuilder.SnapSettings.s_SnapAsGroup", true, SettingsScope.User);
 
+#if UNITY_2019_3_OR_NEWER
         [UserSetting("Snap Settings", "Snap Axis", "When an Editor Tool is modifying vertices, this setting determines in which directions the affected vertices will snap.")]
+#endif
         static Pref<SnapAxis> s_SnapAxis = new Pref<SnapAxis>("ProBuilder.SnapSettings.s_SnapAxis", SnapAxis.ActiveAxis, SettingsScope.User);
 
         public static SnapMode snapMode
         {
             get
             {
+#if UNITY_2019_3_OR_NEWER
                 if (EditorSnapSettings.incrementalSnapActive)
                     return SnapMode.Relative;
                 if (ProGridsInterface.IsActive() || EditorSnapSettings.gridSnapEnabled)
                     return SnapMode.World;
                 return SnapMode.None;
+#else
+                if (Event.current != null && EditorGUI.actionKey)
+                    return SnapMode.Relative;
+                if (ProGridsInterface.IsActive())
+                    return SnapMode.World;
+                return SnapMode.None;
+#endif
             }
         }
 
@@ -53,12 +65,12 @@ namespace UnityEditor.ProBuilder
             get { return ProGridsInterface.IsActive() ? ProGridsInterface.GetSnapMethod() : s_SnapAxis.value; }
         }
 
-        public static Vector3 incrementalSnapMoveValue2
+        public static Vector3 incrementalSnapMoveValue
         {
 #if UNITY_2019_3_OR_NEWER
             get { return EditorSnapSettings.move; }
 #else
-            get { return new Vector3(relativeSnapX, relativeSnapY, relativeSnapZ);
+            get { return new Vector3(relativeSnapX, relativeSnapY, relativeSnapZ); }
 #endif
         }
 
@@ -66,12 +78,10 @@ namespace UnityEditor.ProBuilder
         {
             get
             {
-                return ProGridsInterface.IsActive()
-                    ? ProGridsInterface.SnapValue() * Vector3.one
 #if UNITY_2019_3_OR_NEWER
-                    : GridSettings.size;
+                return ProGridsInterface.IsActive() ? ProGridsInterface.SnapValue() * Vector3.one : GridSettings.size;
 #else
-                    : Vector3.zero
+                return ProGridsInterface.IsActive() ? ProGridsInterface.SnapValue() * Vector3.one : Vector3.zero;
 #endif
             }
         }

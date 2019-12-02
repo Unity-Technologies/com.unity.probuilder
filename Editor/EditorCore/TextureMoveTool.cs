@@ -76,8 +76,8 @@ namespace UnityEditor.ProBuilder
 
                 if (relativeSnapEnabled)
                 {
-                    m_Position.x = ProBuilderSnapping.SnapValue(m_Position.x, ProBuilderSnapSettings.incrementalSnapMoveValue2.x);
-                    m_Position.y = ProBuilderSnapping.SnapValue(m_Position.y, ProBuilderSnapSettings.incrementalSnapMoveValue2.y);
+                    m_Position.x = ProBuilderSnapping.SnapValue(m_Position.x, ProBuilderSnapSettings.incrementalSnapMoveValue.x);
+                    m_Position.y = ProBuilderSnapping.SnapValue(m_Position.y, ProBuilderSnapSettings.incrementalSnapMoveValue.y);
                 }
                 else if (worldSnapEnabled)
                 {
