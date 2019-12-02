@@ -51,6 +51,11 @@ namespace UnityEditor.ProBuilder
                 s_ProGridsType = ReflectionUtility.GetType(ProGridsEditorTypeNames[i]);
         }
 
+        public static bool IsImported()
+        {
+            return s_ProGridsType != null;
+        }
+
         /// <summary>
         /// Get a pg_Editor type.
         /// </summary>
@@ -74,7 +79,7 @@ namespace UnityEditor.ProBuilder
             return null;
         }
 
-        public static bool GetProGridsSnapAsGroup()
+        public static bool GetSnapAsGroup()
         {
             if (GetProGridsType() == null)
                 return false;
@@ -96,7 +101,7 @@ namespace UnityEditor.ProBuilder
         /// True if ProGrids is open in scene.
         /// </summary>
         /// <returns></returns>
-        public static bool ProGridsActive()
+        public static bool IsActive()
         {
             if (GetProGridsType() == null)
                 return false;
@@ -135,7 +140,7 @@ namespace UnityEditor.ProBuilder
         public static bool UseAxisConstraints()
         {
             if (GetProGridsType() == null)
-                return false;
+                return true;
 
             if (s_UseAxisConstraintDelegate == null)
                 s_UseAxisConstraintDelegate = (Func<bool>)ReflectionUtility.GetOpenDelegate<Func<bool>>(GetProGridsType(), "UseAxisConstraints");
@@ -143,7 +148,12 @@ namespace UnityEditor.ProBuilder
             if (s_UseAxisConstraintDelegate != null)
                 return s_UseAxisConstraintDelegate();
 
-            return false;
+            return true;
+        }
+
+        public static SnapAxis GetSnapMethod()
+        {
+            return UseAxisConstraints() ? SnapAxis.ActiveAxis : SnapAxis.AllAxes;
         }
 
         /// <summary>
@@ -152,7 +162,7 @@ namespace UnityEditor.ProBuilder
         /// <returns></returns>
         public static bool SnapEnabled()
         {
-            if (GetProGridsType() == null || !ProGridsActive())
+            if (GetProGridsType() == null || !IsActive())
                 return false;
 
             if (s_SnapEnabledDelegate == null)
@@ -216,7 +226,7 @@ namespace UnityEditor.ProBuilder
                 pivot = s_GetPivotDelegate();
 
                 // earlier version of progrids return a non-snapped pivot point
-                pivot = ProGridsSnapping.SnapValue(pivot, SnapValue());
+                pivot = ProBuilderSnapping.SnapValue(pivot, SnapValue());
                 return true;
             }
 
@@ -360,7 +370,7 @@ namespace UnityEditor.ProBuilder
                 return point;
 
             if (SnapEnabled())
-                return ProGridsSnapping.SnapValue(point, ProGridsInterface.SnapValue());
+                return ProBuilderSnapping.SnapValue(point, ProGridsInterface.SnapValue());
 
             return point;
         }
@@ -378,7 +388,7 @@ namespace UnityEditor.ProBuilder
             if (ProGridsInterface.SnapEnabled())
             {
                 float snap = ProGridsInterface.SnapValue();
-                return ProGridsSnapping.SnapValue(point, snap);
+                return ProBuilderSnapping.SnapValue(point, snap);
             }
 
             return point;
@@ -398,7 +408,7 @@ namespace UnityEditor.ProBuilder
             if (ProGridsInterface.SnapEnabled())
             {
                 float snap = ProGridsInterface.SnapValue();
-                return ProGridsSnapping.SnapValue(point, mask * snap);
+                return ProBuilderSnapping.SnapValue(point, mask * snap);
             }
 
             return point;

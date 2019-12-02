@@ -4,9 +4,9 @@ using UnityEngine;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// Snapping functions and ProGrids compatibility.
+    /// Snapping functions
     /// </summary>
-    static class ProGridsSnapping
+    static class ProBuilderSnapping
     {
         const float k_MaxRaySnapDistance = Mathf.Infinity;
 
@@ -54,45 +54,6 @@ namespace UnityEngine.ProBuilder
                     (Mathf.Abs(snap.z) < 0.0001f ? z : snap.z * Mathf.Round(z / snap.z))
                     );
             return v;
-        }
-
-        public static Vector3 Floor(Vector3 vertex, Vector3 snap)
-        {
-            float x = vertex.x, y = vertex.y, z = vertex.z;
-            Vector3 v = new Vector3(
-                    (Mathf.Abs(snap.x) < 0.0001f ? x : snap.x * Mathf.Floor(x / snap.x)),
-                    (Mathf.Abs(snap.y) < 0.0001f ? y : snap.y * Mathf.Floor(y / snap.y)),
-                    (Mathf.Abs(snap.z) < 0.0001f ? z : snap.z * Mathf.Floor(z / snap.z))
-                    );
-            return v;
-        }
-
-        public static Vector3 Ceil(Vector3 vertex, Vector3 snap)
-        {
-            float x = vertex.x, y = vertex.y, z = vertex.z;
-            Vector3 v = new Vector3(
-                    (Mathf.Abs(snap.x) < 0.0001f ? x : snap.x * Mathf.Ceil(x / snap.x)),
-                    (Mathf.Abs(snap.y) < 0.0001f ? y : snap.y * Mathf.Ceil(y / snap.y)),
-                    (Mathf.Abs(snap.z) < 0.0001f ? z : snap.z * Mathf.Ceil(z / snap.z))
-                    );
-            return v;
-        }
-
-        public static Vector3 Ceil(Vector3 vertex, float snpVal)
-        {
-            return new Vector3(
-                snpVal * Mathf.Ceil(vertex.x / snpVal),
-                snpVal * Mathf.Ceil(vertex.y / snpVal),
-                snpVal * Mathf.Ceil(vertex.z / snpVal));
-        }
-
-        public static Vector3 Floor(Vector3 vertex, float snpVal)
-        {
-            // snapValue is a global setting that comes from ProGrids
-            return new Vector3(
-                snpVal * Mathf.Floor(vertex.x / snpVal),
-                snpVal * Mathf.Floor(vertex.y / snpVal),
-                snpVal * Mathf.Floor(vertex.z / snpVal));
         }
 
         /// <summary>
