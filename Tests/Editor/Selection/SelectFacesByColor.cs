@@ -5,134 +5,127 @@ using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
-using UnityEditor;
-using UnityEngine.TestTools;
 
-
-namespace UnityEngine.ProBuilder.EditorTests.Selection
+class SelectFacesByColor
 {
-    class SelectFacesByColor
+    ProBuilderMesh[] selectables;
+    List<Color> faceColors;
+
+    void Setup(bool withColor = false)
     {
-        ProBuilderMesh[] selectables;
-        List<Color> faceColors;
+        ProBuilderMesh shape1 = ShapeGenerator.CreateShape(ShapeType.Cube);
+        shape1.transform.position = Vector3.zero - shape1.GetComponent<MeshRenderer>().bounds.center;
 
-        void Setup(bool withColor = false)
+        ProBuilderMesh shape2 = ShapeGenerator.CreateShape(ShapeType.Cube);
+        shape2.transform.position = Vector3.zero - shape2.GetComponent<MeshRenderer>().bounds.center;
+
+        if (withColor)
         {
-            ProBuilderMesh shape1 = ShapeGenerator.CreateShape(ShapeType.Cube);
-            shape1.transform.position = Vector3.zero - shape1.GetComponent<MeshRenderer>().bounds.center;
+            //Cube has 6 faces
+            faceColors = new List<Color>();
+            faceColors.Add(Color.red);
+            faceColors.Add(Color.green);
+            faceColors.Add(Color.blue);
+            faceColors.Add(Color.grey);
+            faceColors.Add(Color.cyan);
+            faceColors.Add(Color.black);
 
-            ProBuilderMesh shape2 = ShapeGenerator.CreateShape(ShapeType.Cube);
-            shape2.transform.position = Vector3.zero - shape2.GetComponent<MeshRenderer>().bounds.center;
-
-            if (withColor)
+            for (var i = 0; i < 6; ++i)
             {
-                //Cube has 6 faces
-                faceColors = new List<Color>();
-                faceColors.Add(Color.red);
-                faceColors.Add(Color.green);
-                faceColors.Add(Color.blue);
-                faceColors.Add(Color.grey);
-                faceColors.Add(Color.cyan);
-                faceColors.Add(Color.black);
-
-                for(var i = 0; i < 6; ++i)
-                {
-                    shape1.SetFaceColor(shape1.facesInternal[i], faceColors[i]);
-                }
-
-                for (var i = 0; i < 6; ++i)
-                {
-                    shape2.SetFaceColor(shape2.facesInternal[i], faceColors[i]);
-                }                
+                shape1.SetFaceColor(shape1.facesInternal[i], faceColors[i]);
             }
 
-            selectables = new ProBuilderMesh[]
+            for (var i = 0; i < 6; ++i)
             {
-                shape1,
-                shape2
-            };
-        }
-
-        [TearDown]
-        public void Cleanup()
-        {
-            for (int i = 0; i < selectables.Length; i++)
-            {
-                UObject.DestroyImmediate(selectables[i].gameObject);
+                shape2.SetFaceColor(shape2.facesInternal[i], faceColors[i]);
             }
         }
 
-        [Test]
-        public void SelectFaces_WithoutColor()
+        selectables = new ProBuilderMesh[]
         {
-            Setup();
-            //Make first faces selected
-            ProBuilderMesh mesh = selectables[0];
-            Assert.IsNotNull(mesh.faces);
-            Face face = selectables[0].faces[0];
-            List<Face> selectedFaces = new List<Face>();
-            selectedFaces.Add(face);
-            mesh.SetSelectedFaces(selectedFaces);
-            Assert.AreEqual(mesh.selectedFaceCount, 1);
-            MeshSelection.SetSelection(mesh.gameObject);
-            MeshSelection.OnObjectSelectionChanged();
+            shape1,
+            shape2
+        };
+    }
 
-            foreach (var currObject in selectables)
-            {
-                //Validate that prior not all faces are selected
-                Assert.AreNotEqual(currObject.selectedFacesInternal.Length, 6);
-            }
+    [TearDown]
+    public void Cleanup()
+    {
+        for (int i = 0; i < selectables.Length; i++)
+            UObject.DestroyImmediate(selectables[i].gameObject);
+    }
 
-            UnityEditor.ProBuilder.Actions.SelectVertexColor selectColorAction = new UnityEditor.ProBuilder.Actions.SelectVertexColor();
-            selectColorAction.DoAction();
+    [Test]
+    public void SelectFaces_WithoutColor()
+    {
+        Setup();
 
-            foreach(var currObject in selectables)
-            {
-                //All selectable object should have all faces selected
-                Assert.AreEqual(currObject.selectedFacesInternal.Length, 6);
-            }            
+        //Make first faces selected
+        ProBuilderMesh mesh = selectables[0];
+        Assert.IsNotNull(mesh.faces);
+        Face face = selectables[0].faces[0];
+        List<Face> selectedFaces = new List<Face>();
+        selectedFaces.Add(face);
+        mesh.SetSelectedFaces(selectedFaces);
+        Assert.AreEqual(mesh.selectedFaceCount, 1);
+        MeshSelection.SetSelection(mesh.gameObject);
+        MeshSelection.OnObjectSelectionChanged();
+
+        foreach (var currObject in selectables)
+        {
+            //Validate that prior not all faces are selected
+            Assert.AreNotEqual(currObject.selectedFacesInternal.Length, 6);
         }
 
-        [Test]
-        public void SelectFaces_WithColor()
+        UnityEditor.ProBuilder.Actions.SelectVertexColor selectColorAction = new UnityEditor.ProBuilder.Actions.SelectVertexColor();
+        selectColorAction.DoAction();
+
+        foreach (var currObject in selectables)
         {
-            Setup(true/*with color*/);
-            //Make first faces selected
-            ProBuilderMesh mesh = selectables[0];
-            Assert.IsNotNull(mesh.faces);
-            Face face = selectables[0].faces[0];
-            List<Face> selectedFaces = new List<Face>();
-            selectedFaces.Add(face);
-            mesh.SetSelectedFaces(selectedFaces);
-            Assert.AreEqual(mesh.selectedFaceCount, 1);
-            MeshSelection.SetSelection(mesh.gameObject);
-            MeshSelection.OnObjectSelectionChanged();
+            //All selectable object should have all faces selected
+            Assert.AreEqual(currObject.selectedFacesInternal.Length, 6);
+        }
+    }
 
-            //Validate that prior only a face on first cube is selected
-            Assert.AreEqual(selectables[0].selectedFacesInternal.Length, 1);
-            Assert.AreEqual(selectables[1].selectedFacesInternal.Length, 0);
+    [Test]
+    public void SelectFaces_WithColor()
+    {
+        Setup(true /*with color*/);
 
-            UnityEditor.ProBuilder.Actions.SelectVertexColor selectColorAction = new UnityEditor.ProBuilder.Actions.SelectVertexColor();
-            selectColorAction.DoAction();
+        //Make first faces selected
+        ProBuilderMesh mesh = selectables[0];
+        Assert.IsNotNull(mesh.faces);
+        Face face = selectables[0].faces[0];
+        List<Face> selectedFaces = new List<Face>();
+        selectedFaces.Add(face);
+        mesh.SetSelectedFaces(selectedFaces);
+        Assert.AreEqual(mesh.selectedFaceCount, 1);
+        MeshSelection.SetSelection(mesh.gameObject);
+        MeshSelection.OnObjectSelectionChanged();
 
-            //Validate that after a face is selected on both cube
-            Color[] colors0 = selectables[0].colorsInternal;
-            Color[] colors1 = selectables[1].colorsInternal;
+        //Validate that prior only a face on first cube is selected
+        Assert.AreEqual(selectables[0].selectedFacesInternal.Length, 1);
+        Assert.AreEqual(selectables[1].selectedFacesInternal.Length, 0);
 
-            Assert.AreEqual(selectables[0].selectedFacesInternal.Length, 1);
-            Assert.AreEqual(selectables[1].selectedFacesInternal.Length, 1);
+        UnityEditor.ProBuilder.Actions.SelectVertexColor selectColorAction = new UnityEditor.ProBuilder.Actions.SelectVertexColor();
+        selectColorAction.DoAction();
 
-            int[] tris0 = selectables[0].selectedFacesInternal[0].distinctIndexesInternal;
-            int[] tris1 = selectables[1].selectedFacesInternal[0].distinctIndexesInternal;
-            Assert.AreEqual(tris0.Length, tris1.Length);
+        //Validate that after a face is selected on both cube
+        Color[] colors0 = selectables[0].colorsInternal;
+        Color[] colors1 = selectables[1].colorsInternal;
 
-            //Validate that the face match
-            for (int n = 0; n < tris0.Length; n++)
-            {
-                Assert.AreEqual(colors0[tris0[n]], colors1[tris1[n]]);
-                Assert.AreEqual(colors0[tris0[n]], faceColors[0]);
-            }
+        Assert.AreEqual(selectables[0].selectedFacesInternal.Length, 1);
+        Assert.AreEqual(selectables[1].selectedFacesInternal.Length, 1);
+
+        int[] tris0 = selectables[0].selectedFacesInternal[0].distinctIndexesInternal;
+        int[] tris1 = selectables[1].selectedFacesInternal[0].distinctIndexesInternal;
+        Assert.AreEqual(tris0.Length, tris1.Length);
+
+        //Validate that the face match
+        for (int n = 0; n < tris0.Length; n++)
+        {
+            Assert.AreEqual(colors0[tris0[n]], colors1[tris1[n]]);
+            Assert.AreEqual(colors0[tris0[n]], faceColors[0]);
         }
     }
 }
-
