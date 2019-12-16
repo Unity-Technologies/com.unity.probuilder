@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [4.3.0-preview.1] - 2019-12-16
+
+## Bug Fixes
+
+- Fixed an issue where an invalid selection on `ProBuilderMesh` could prevent the selected mesh from being edited due to errors.
+
 ## [4.3.0-preview.0] - 2019-12-16
 
 ## Bug Fixes
