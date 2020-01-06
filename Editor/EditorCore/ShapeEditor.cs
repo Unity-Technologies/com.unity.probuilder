@@ -196,7 +196,8 @@ namespace UnityEditor.ProBuilder
         {
             ApplyPreviewTransform(mesh);
             Mesh umesh = mesh.mesh;
-            umesh.hideFlags = HideFlags.DontSave;
+            if(umesh != null)
+                umesh.hideFlags = HideFlags.DontSave;
 
             if (m_PreviewObject)
             {
