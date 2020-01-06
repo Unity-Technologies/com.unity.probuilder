@@ -450,7 +450,7 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            if (channel == 0 && UpdateNearestElement(Event.current.mousePosition))
+            if (GUIUtility.hotControl == 0 && channel == 0 && UpdateNearestElement(Event.current.mousePosition))
                 Repaint();
 
             if (m_mouseDragging && EditorHandleUtility.CurrentID < 0 && !m_draggingCanvas && !m_rightMouseDrag)
