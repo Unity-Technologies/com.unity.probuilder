@@ -253,7 +253,7 @@ namespace UnityEngine.ProBuilder
 
         internal static Material GetDefaultMaterial()
         {
-            Material material;
+            Material material = null;
 
             if (GraphicsSettings.renderPipelineAsset != null)
             {
@@ -263,9 +263,10 @@ namespace UnityEngine.ProBuilder
                     material = GraphicsSettings.renderPipelineAsset.GetDefaultMaterial();
 #endif
             }
-            else
+
+            if (material == null)
             {
-                material = (Material)Resources.Load("Materials/ProBuilderDefault", typeof(Material));
+                material = (Material) Resources.Load("Materials/ProBuilderDefault", typeof(Material));
 
                 if (material == null || !material.shader.isSupported)
                     material = GetLegacyDiffuse();
