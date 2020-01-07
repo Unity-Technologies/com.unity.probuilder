@@ -157,26 +157,17 @@ namespace UnityEditor.ProBuilder.Actions
                     continue;
 
                 GameObject go = mf.gameObject;
-                Mesh originalMesh = mf.sharedMesh;
+                Mesh sourceMesh = mf.sharedMesh;
+                Material[] sourceMaterials = go.GetComponent<MeshRenderer>()?.sharedMaterials;
 
                 try
                 {
-                    ProBuilderMesh pb = Undo.AddComponent<ProBuilderMesh>(go);
+                    var destination = Undo.AddComponent<ProBuilderMesh>(go);
+                    var meshImporter = new MeshImporter(sourceMesh, sourceMaterials, destination);
+                    meshImporter.Import(settings);
 
-                    MeshImporter meshImporter = new MeshImporter(pb);
-                    meshImporter.Import(go, settings);
-
-                    // if this was previously a pb_Object, or similarly any other instance asset, destroy it.
-                    // if it is backed by saved asset, leave the mesh asset alone but assign a new mesh to the
-                    // renderer so that we don't modify the asset.
-                    if (string.IsNullOrEmpty(AssetDatabase.GetAssetPath(originalMesh)))
-                        Undo.DestroyObjectImmediate(originalMesh);
-                    else
-                        go.GetComponent<MeshFilter>().sharedMesh = new Mesh();
-
-                    pb.ToMesh();
-                    pb.Refresh();
-                    pb.Optimize();
+                    destination.Rebuild();
+                    destination.Optimize();
 
                     i++;
                 }

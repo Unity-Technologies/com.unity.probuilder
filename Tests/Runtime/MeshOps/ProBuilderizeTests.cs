@@ -16,9 +16,11 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOperations
 
             try
             {
+#pragma warning disable 612
                 var dup = new GameObject().AddComponent<ProBuilderMesh>();
                 var importer = new MeshImporter(dup);
                 importer.Import(pb.gameObject);
+#pragma warning restore 612
                 dup.ToMesh();
                 dup.Refresh();
                 TestUtility.AssertAreEqual(pb.mesh, dup.mesh, message: pb.name);
@@ -47,15 +49,20 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOperations
             Assert.IsNotNull(source);
 
             var instance = (GameObject)UObject.Instantiate(source);
+            var mf = instance.gameObject.GetComponent<MeshFilter>();
+            var mr = instance.gameObject.GetComponent<MeshRenderer>();
             var result = new GameObject().AddComponent<ProBuilderMesh>();
-            var importer = new MeshImporter(result);
+            var importer = new MeshImporter(mf.sharedMesh, mr.sharedMaterials, result);
 
-            Assert.IsTrue(importer.Import(instance, new MeshImportSettings()
+            Assert.DoesNotThrow(() =>
             {
-                quads = true,
-                smoothing = false,
-                smoothingAngle = 1f
-            }), "Failed importing mesh");
+                importer.Import(new MeshImportSettings()
+                {
+                    quads = true,
+                    smoothing = false,
+                    smoothingAngle = 1f
+                });
+            });
 
             result.Rebuild();
 
@@ -79,14 +86,17 @@ namespace UnityEngine.ProBuilder.RuntimeTests.MeshOperations
             Assert.AreEqual(MeshTopology.Quads, quadMesh.GetTopology(0));
 
             result = new GameObject().AddComponent<ProBuilderMesh>();
-            importer = new MeshImporter(result);
+            importer = new MeshImporter(quadMesh, null, result);
 
-            Assert.IsTrue(importer.Import(instance, new MeshImportSettings()
+            Assert.DoesNotThrow(() =>
             {
-                quads = true,
-                smoothing = false,
-                smoothingAngle = 1f
-            }), "Failed importing mesh");
+                importer.Import(new MeshImportSettings()
+                {
+                    quads = true,
+                    smoothing = false,
+                    smoothingAngle = 1f
+                });
+            });
 
             result.Rebuild();
 
