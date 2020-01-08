@@ -60,6 +60,7 @@ namespace UnityEditor.ProBuilder
             m_LineMesh = new Mesh();
             m_LineMaterial = CreateHighlightLineMaterial();
             Undo.undoRedoPerformed += UndoRedoPerformed;
+            SceneView.duringSceneGui += DuringSceneGUI;
             DrawPolyLine(polygon.m_Points);
             EditorApplication.update += Update;
 
@@ -75,6 +76,7 @@ namespace UnityEditor.ProBuilder
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
 
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+            SceneView.duringSceneGui -= DuringSceneGUI;
             DestroyImmediate(m_LineMesh);
             DestroyImmediate(m_LineMaterial);
             EditorApplication.update -= Update;
@@ -240,8 +242,8 @@ namespace UnityEditor.ProBuilder
             // advantage of the `vertexCountChanged = false` optimization here.
             ProBuilderEditor.Refresh();
         }
-
-        void OnSceneGUI()
+        
+        void DuringSceneGUI(SceneView sceneView)
         {
             if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
                 return;
@@ -291,8 +293,9 @@ namespace UnityEditor.ProBuilder
                 return;
 
             int controlID = GUIUtility.GetControlID(FocusType.Passive);
-            HandleUtility.AddDefaultControl(controlID);
-
+            if (evt.type == EventType.Layout)
+                HandleUtility.AddDefaultControl(controlID);
+            
             DoPointPlacement();
         }
 
