@@ -234,7 +234,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                         {
                             var w = it.Current;
 
-                            if (!newHoles.Contains(w.opposite.face))
+                            if (w.opposite != null && !newHoles.Contains(w.opposite.face))
                             {
                                 w.face.submeshIndex = w.opposite.face.submeshIndex;
                                 w.face.uv = new AutoUnwrapSettings(w.opposite.face.uv);
