@@ -220,16 +220,11 @@ namespace UnityEditor.ProBuilder
                 }
 
                 if(activeObjectSelectionChanged)
-                {
                     MeshSelection.MakeActiveObject(candidateNewActiveObject);
-                }
                 else
-                {
                     MeshSelection.AddToSelection(candidateNewActiveObject);
-                }
 
-
-            return mesh;
+                return mesh;
             }
 
             return null;
