@@ -507,7 +507,7 @@ namespace UnityEditor.ProBuilder
                 global::UnityEditor.ProBuilder.UI.EditorGUILayout.EndRow();
 
                 if (GUILayout.Button("Open Documentation"))
-                    Application.OpenURL("https://docs.unity3d.com/Packages/com.unity.probuilder@4.2/manual/workflow-edit-smoothing.html");
+                    Application.OpenURL("https://docs.unity3d.com/Packages/com.unity.probuilder@latest/index.html?subfolder=/manual/workflow-edit-smoothing.html");
 
                 GUILayout.EndVertical();
             }
