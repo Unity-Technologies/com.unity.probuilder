@@ -11,8 +11,9 @@ namespace UnityEditor.ProBuilder
 {
     struct ScenePickerPreferences
     {
-        public float maxPointerDistance;
-        public float offPointerMultiplier;
+        public const float maxPointerDistance = 40f;
+        public const float offPointerMultiplier = .01f;
+
         public CullingMode cullMode;
         public SelectionModifierBehavior selectionModifierBehavior;
         public RectSelectMode rectSelectMode;
@@ -55,7 +56,7 @@ namespace UnityEditor.ProBuilder
                 MeshSelection.SetSelection((GameObject)null);
             }
 
-            if (pickedElementDistance > pickerPreferences.maxPointerDistance)
+            if (pickedElementDistance > ScenePickerPreferences.maxPointerDistance)
             {
                 if (appendModifier && Selection.gameObjects.Contains(s_Selection.gameObject))
                     MeshSelection.RemoveFromSelection(s_Selection.gameObject);
@@ -507,7 +508,7 @@ namespace UnityEditor.ProBuilder
             selection.Clear();
             s_NearestVertices.Clear();
             selection.gameObject = HandleUtility.PickGameObject(mousePosition, false);
-            float maxDistance = pickerOptions.maxPointerDistance * pickerOptions.maxPointerDistance;
+            float maxDistance = ScenePickerPreferences.maxPointerDistance * ScenePickerPreferences.maxPointerDistance;
             ProBuilderMesh hoveredMesh = selection.gameObject != null ? selection.gameObject.GetComponent<ProBuilderMesh>() : null;
 
             if (allowUnselected && selection.gameObject != null)
@@ -525,7 +526,7 @@ namespace UnityEditor.ProBuilder
                     if (!mesh.selectable)
                         continue;
 
-                    GetNearestVertices(mesh, mousePosition, s_NearestVertices, maxDistance, hoveredMesh == mesh || hoveredMesh == null ? 1.0f : pickerOptions.offPointerMultiplier);
+                    GetNearestVertices(mesh, mousePosition, s_NearestVertices, maxDistance, hoveredMesh == mesh || hoveredMesh == null ? 1.0f : ScenePickerPreferences.offPointerMultiplier);
                 }
             }
 
@@ -605,7 +606,7 @@ namespace UnityEditor.ProBuilder
 
                     // If the nearest edge was acquired by a raycast, then the distance to mesh is 0f.
                     if (hoveredIsInSelection)
-                        return 0f; // tup.distance;
+                        return tup.distance;
                 }
             }
 
@@ -619,7 +620,7 @@ namespace UnityEditor.ProBuilder
                 // object hovered over the currently selected
                 var distMultiplier = (hoveredMesh == mesh || hoveredMesh == null)
                     ? 1.0f
-                    : pickerPrefs.offPointerMultiplier;
+                    : ScenePickerPreferences.offPointerMultiplier;
 
                 foreach (var face in mesh.facesInternal)
                 {
@@ -636,7 +637,7 @@ namespace UnityEditor.ProBuilder
 
                         // best distance isn't set to maxPointerDistance because we want to preserve an unselected
                         // gameobject over a selected gameobject with an out of bounds edge.
-                        if (d > pickerPrefs.maxPointerDistance)
+                        if (d > ScenePickerPreferences.maxPointerDistance)
                             continue;
 
                         // account for stacked edges
