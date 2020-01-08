@@ -625,9 +625,8 @@ namespace UnityEditor.ProBuilder
             {
                 m_Hovering.CopyTo(m_HoveringPrevious);
 
-                if (GUIUtility.hotControl == 0)
-                    EditorSceneViewPicker.MouseRayHitTest(m_CurrentEvent.mousePosition, selectMode, m_ScenePickerPreferences, m_Hovering);
-                else
+                if (GUIUtility.hotControl != 0 ||
+                    EditorSceneViewPicker.MouseRayHitTest(m_CurrentEvent.mousePosition, selectMode, m_ScenePickerPreferences, m_Hovering) > ScenePickerPreferences.maxPointerDistance)
                     m_Hovering.Clear();
 
                 if (!m_Hovering.Equals(m_HoveringPrevious))
