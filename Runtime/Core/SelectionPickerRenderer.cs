@@ -1,6 +1,5 @@
 //#define PB_RENDER_PICKER_TEXTURE
 
-using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UObject = UnityEngine.Object;
@@ -235,6 +234,7 @@ namespace UnityEngine.ProBuilder
             int imageHeight = tex.height;
             int width = Mathf.FloorToInt(pickerRect.width);
             int height = Mathf.FloorToInt(pickerRect.height);
+
             UObject.DestroyImmediate(tex);
 
             SimpleTuple<ProBuilderMesh, int> hit;
@@ -835,6 +835,12 @@ namespace UnityEngine.ProBuilder
             renderCam.forceIntoRenderTexture = true;
 #endif
 
+#if HDRP_7_1_0_OR_NEWER
+            Rendering.HighDefinition.HDAdditionalCameraData hdCamData = go.AddComponent<Rendering.HighDefinition.HDAdditionalCameraData >();
+            hdCamData.flipYMode = Rendering.HighDefinition.HDAdditionalCameraData.FlipYMode.ForceFlipY;
+            hdCamData.customRender += CustomRenderPass;
+#endif
+
 #if UNITY_2017_1_OR_NEWER
             RenderTextureDescriptor descriptor = new RenderTextureDescriptor() {
                 width = _width,
@@ -883,7 +889,6 @@ namespace UnityEngine.ProBuilder
                 RenderTexture.active.width));
                 */
 #endif
-
             renderCam.RenderWithShader(shader, tag);
 
             Texture2D img = new Texture2D(_width, _height, textureFormat, false, false);
@@ -897,5 +902,28 @@ namespace UnityEngine.ProBuilder
 
             return img;
         }
+
+#if HDRP_7_1_0_OR_NEWER
+        static void CustomRenderPass(Rendering.ScriptableRenderContext ctx, Rendering.HighDefinition.HDCamera camera)
+        {
+            ctx.SetupCameraProperties(camera.camera);
+
+            Rendering.CommandBuffer cb = new Rendering.CommandBuffer();
+            cb.ClearRenderTarget(true, true, Color.white);
+            ctx.ExecuteCommandBuffer(cb);
+            ctx.Submit();
+
+            Rendering.DrawingSettings drawSettings = new Rendering.DrawingSettings();
+            drawSettings.SetShaderPassName(0, new Rendering.ShaderTagId("Always"));
+
+            Rendering.FilteringSettings filterSettings = Rendering.FilteringSettings.defaultValue;
+
+            if (camera.camera.TryGetCullingParameters(out Rendering.ScriptableCullingParameters cullParams))
+            {
+                Rendering.CullingResults cullResuts = ctx.Cull(ref cullParams);
+                ctx.DrawRenderers(cullResuts, ref drawSettings, ref filterSettings);
+            }
+        }
+#endif
     }
 }
