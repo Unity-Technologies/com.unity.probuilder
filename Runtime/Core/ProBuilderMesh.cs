@@ -230,12 +230,23 @@ namespace UnityEngine.ProBuilder
             m_CacheValid &= ~CacheValidState.SharedTexture;
         }
 
+        internal void InvalidateFaces()
+        {
+            if (m_Faces == null)
+            {
+                m_Faces = new Face[0];
+                return;
+            }
+
+            foreach (var face in faces)
+                face.InvalidateCache();
+        }
+
         internal void InvalidateCaches()
         {
             InvalidateSharedVertexLookup();
             InvalidateSharedTextureLookup();
-            foreach (var face in faces)
-                face.InvalidateCache();
+            InvalidateFaces();
             m_SelectedCacheDirty = true;
         }
 

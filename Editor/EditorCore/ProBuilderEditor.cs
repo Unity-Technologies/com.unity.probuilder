@@ -661,6 +661,10 @@ namespace UnityEditor.ProBuilder
             if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent) || m_CurrentEvent.isKey)
             {
                 m_IsDragging = false;
+
+                if (GUIUtility.hotControl == m_DefaultControl)
+                    GUIUtility.hotControl = 0;
+
                 return;
             }
 
@@ -706,6 +710,9 @@ namespace UnityEditor.ProBuilder
 
                 if (m_WasDoubleClick)
                     m_WasDoubleClick = false;
+
+                if (GUIUtility.hotControl == m_DefaultControl)
+                    GUIUtility.hotControl = 0;
             }
 
             if (m_CurrentEvent.type == EventType.MouseUp && GUIUtility.hotControl == m_DefaultControl)
@@ -736,6 +743,9 @@ namespace UnityEditor.ProBuilder
                             UVEditor.instance.ResetUserPivot();
 
                         EditorSceneViewPicker.DoMouseDrag(m_MouseDragRect, selectMode, m_ScenePickerPreferences);
+
+                        if (GUIUtility.hotControl == m_DefaultControl)
+                            GUIUtility.hotControl = 0;
                     }
                 }
             }
