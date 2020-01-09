@@ -297,6 +297,8 @@ namespace UnityEditor.ProBuilder
         {
             MoveToActiveScene(pb.gameObject);
 
+            GameObjectUtility.EnsureUniqueNameForSibling(pb.gameObject);
+
             ScreenCenter(pb.gameObject);
 
             SetPivotLocationAndSnap(pb);
