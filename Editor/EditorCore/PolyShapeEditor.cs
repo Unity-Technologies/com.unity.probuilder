@@ -61,7 +61,11 @@ namespace UnityEditor.ProBuilder
             m_LineMesh = new Mesh();
             m_LineMaterial = CreateHighlightLineMaterial();
             Undo.undoRedoPerformed += UndoRedoPerformed;
+#if UNITY_2019_1_OR_NEWER
             SceneView.duringSceneGui += DuringSceneGUI;
+#else
+            SceneView.onSceneGUIDelegate += DuringSceneGUI;
+#endif
             DrawPolyLine(polygon.m_Points);
             EditorApplication.update += Update;
 
@@ -77,7 +81,11 @@ namespace UnityEditor.ProBuilder
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
 
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+#if UNITY_2019_1_OR_NEWER
             SceneView.duringSceneGui -= DuringSceneGUI;
+#else
+            SceneView.onSceneGUIDelegate -= DuringSceneGUI;
+#endif
             DestroyImmediate(m_LineMesh);
             DestroyImmediate(m_LineMaterial);
             EditorApplication.update -= Update;
