@@ -51,23 +51,10 @@ test_{{ platform.name }}_{{ editor.version }}:
 
 test_trigger:
   name: Tests Trigger
-  agent:
-    type: Unity::VM
-    image: package-ci/win10:stable
-    flavor: b1.large
-  commands:
-    - dir
   triggers:
     branches:
       only:
         - "/.*/"
-  artifacts:
-    logs:
-      paths:
-        - "upm-ci~/test-results/**/*"
-    packages:
-      paths:
-        - "upm-ci~/packages/**/*"
   dependencies:
     - .yamato/upm-ci.yml#pack
     {% for editor in test_editors %}
