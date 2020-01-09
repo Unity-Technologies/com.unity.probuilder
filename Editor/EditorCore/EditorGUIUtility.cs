@@ -278,7 +278,7 @@ namespace UnityEditor.ProBuilder.UI
             const float MAX_LABEL_WIDTH = 128f;
             const float MIN_FIELD_WIDTH = 48f;
             
-            Rect rect = UnityEditor.EditorGUILayout.GetSliderRect(true);
+            Rect rect = EditorGUILayout.GetSliderRect(true);
             float y = rect.y;
 
             float labelWidth = content != null ? Mathf.Max(MIN_LABEL_WIDTH, Mathf.Min(GUI.skin.label.CalcSize(content).x + PAD, MAX_LABEL_WIDTH)) : 0f;
