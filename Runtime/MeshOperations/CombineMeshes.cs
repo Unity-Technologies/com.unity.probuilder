@@ -93,7 +93,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             meshTarget.SetVertices(vertices);
             meshTarget.faces = faces;
             meshTarget.sharedVertices = sharedVertices;
-            meshTarget.sharedVertices = sharedTextures != null ? sharedTextures.ToArray() : null;
+            meshTarget.sharedTextures = sharedTextures != null ? sharedTextures.ToArray() : null;
             meshTarget.renderer.sharedMaterials = materialMap.ToArray();
             meshTarget.ToMesh();
             meshTarget.Refresh();
