@@ -4,7 +4,7 @@ namespace UnityEngine.ProBuilder
 {
     internal partial class SelectionPickerRenderer
     {
-        internal class SelectionPickerRendererURP: ISelectionPickerRenderer
+        internal class SelectionPickerRendererStandard: ISelectionPickerRenderer
         {
             /// <summary>
             /// Render the camera with a replacement shader and return the resulting image.

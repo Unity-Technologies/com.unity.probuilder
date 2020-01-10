@@ -132,6 +132,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Returns an appropriate implementation based on the graphic pipeline
         /// to generate the lookup texture.
+        /// URP and Standard pipeline share the same picker implementation for now.
         /// </summary>
         static ISelectionPickerRenderer pickerRenderer
         {
@@ -141,7 +142,7 @@ namespace UnityEngine.ProBuilder
                     s_PickerRenderer =
                         ShouldUseHDRP()?
                         (ISelectionPickerRenderer)new SelectionPickerRendererHDRP()
-                        : new SelectionPickerRendererURP();
+                        : new SelectionPickerRendererStandard();
                 return s_PickerRenderer;
             }
         }
