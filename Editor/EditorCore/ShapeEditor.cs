@@ -168,8 +168,8 @@ namespace UnityEditor.ProBuilder
             mesh.preserveMeshAssetOnDestroy = true;
             var umesh = mesh.mesh;
             DestroyImmediate(mesh);
-
-            umesh.hideFlags = HideFlags.DontSave;
+            if(umesh != null)
+                umesh.hideFlags = HideFlags.DontSave;
             m_PreviewObject.hideFlags = HideFlags.DontSave;
             m_PreviewObject.GetComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.ShapePreviewMaterial;
 
