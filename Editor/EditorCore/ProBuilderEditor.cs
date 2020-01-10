@@ -661,6 +661,10 @@ namespace UnityEditor.ProBuilder
             if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent) || m_CurrentEvent.isKey)
             {
                 m_IsDragging = false;
+
+                if (GUIUtility.hotControl == m_DefaultControl)
+                    GUIUtility.hotControl = 0;
+
                 return;
             }
 
@@ -669,7 +673,7 @@ namespace UnityEditor.ProBuilder
             m_DefaultControl = GUIUtility.GetControlID(FocusType.Passive);
             HandleUtility.AddDefaultControl(m_DefaultControl);
 
-            if (m_CurrentEvent.type == EventType.MouseDown)
+            if (m_CurrentEvent.type == EventType.MouseDown && HandleUtility.nearestControl == m_DefaultControl)
             {
                 // double clicking object
                 if (m_CurrentEvent.clickCount > 1)
@@ -681,9 +685,11 @@ namespace UnityEditor.ProBuilder
                 // readyForMouseDrag prevents a bug wherein after ending a drag an errant
                 // MouseDrag event is sent with no corresponding MouseDown/MouseUp event.
                 m_IsReadyForMouseDrag = true;
+
+                GUIUtility.hotControl = m_DefaultControl;
             }
 
-            if (m_CurrentEvent.type == EventType.MouseDrag && m_IsReadyForMouseDrag)
+            if (m_CurrentEvent.type == EventType.MouseDrag && m_IsReadyForMouseDrag && GUIUtility.hotControl == m_DefaultControl)
             {
                 if (!m_IsDragging && Vector2.Distance(m_CurrentEvent.mousePosition, m_InitialMousePosition) > k_MouseDragThreshold)
                 {
@@ -703,10 +709,15 @@ namespace UnityEditor.ProBuilder
 
                 if (m_WasDoubleClick)
                     m_WasDoubleClick = false;
+
+                if (GUIUtility.hotControl == m_DefaultControl)
+                    GUIUtility.hotControl = 0;
             }
 
-            if (m_CurrentEvent.type == EventType.MouseUp)
+            if (m_CurrentEvent.type == EventType.MouseUp && GUIUtility.hotControl == m_DefaultControl)
             {
+                GUIUtility.hotControl = 0;
+
                 if (m_WasDoubleClick)
                 {
                     m_WasDoubleClick = false;
@@ -731,6 +742,9 @@ namespace UnityEditor.ProBuilder
                             UVEditor.instance.ResetUserPivot();
 
                         EditorSceneViewPicker.DoMouseDrag(m_MouseDragRect, selectMode, m_ScenePickerPreferences);
+
+                        if (GUIUtility.hotControl == m_DefaultControl)
+                            GUIUtility.hotControl = 0;
                     }
                 }
             }
