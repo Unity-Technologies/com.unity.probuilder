@@ -51,6 +51,15 @@ namespace UnityEngine.ProBuilder
                 Rebuild();
         }
 
+#if UNITY_EDITOR
+        void Reset()
+        {
+            // Prevent reset from Unity Editor as it would put this component in a weird state.
+            if (meshSyncState != MeshSyncState.Null)
+                UnityEditor.Undo.PerformUndo();
+        }
+#endif
+
         void OnDestroy()
         {
             if (componentWillBeDestroyed != null)
