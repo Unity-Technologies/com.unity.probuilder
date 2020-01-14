@@ -297,6 +297,10 @@ namespace UnityEditor.ProBuilder
         {
             MoveToActiveScene(pb.gameObject);
 
+            var name = pb.gameObject.name;
+            if (name.EndsWith("-preview"))
+                pb.gameObject.name = name.Substring(0, name.Length - "-preview".Length);
+
             GameObjectUtility.EnsureUniqueNameForSibling(pb.gameObject);
 
             ScreenCenter(pb.gameObject);
