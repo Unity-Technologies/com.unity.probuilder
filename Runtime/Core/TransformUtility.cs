@@ -17,8 +17,8 @@ namespace UnityEngine.ProBuilder
         internal static void UnparentChildren(Transform t)
         {
             Transform[] children = new Transform[t.childCount];
-
-            for (int i = 0; i < t.childCount; i++)
+            
+            for (int i = t.childCount - 1; i >= 0; --i)
             {
                 Transform child = t.GetChild(i);
                 children[i] = child;
@@ -36,8 +36,8 @@ namespace UnityEngine.ProBuilder
         {
             Transform[] children;
 
-            if (s_ChildStack.TryGetValue(t, out children))
-            {
+            if (s_ChildStack.TryGetValue(t, out children)) 
+            { 
                 foreach (Transform c in children)
                     c.SetParent(t, true);
 
