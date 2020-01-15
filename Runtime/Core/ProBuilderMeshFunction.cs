@@ -50,6 +50,16 @@ namespace UnityEngine.ProBuilder
                 Rebuild();
         }
 
+        void Reset()
+        {
+            if (meshSyncState != MeshSyncState.Null && meshSyncState != MeshSyncState.InstanceIDMismatch)
+            {
+                Rebuild();
+                if (componentHasBeenReset != null)
+                    componentHasBeenReset(this);
+            }
+        }
+
         void OnDestroy()
         {
             if (componentWillBeDestroyed != null)
