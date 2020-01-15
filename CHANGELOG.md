@@ -9,7 +9,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Bug Fixes
 
-- Fixed `MeshFilter` and `MeshCollider` always showing properties as "Overridden" on Prefab instances.
+- [case: 1198568] Fixed `MeshFilter` and `MeshCollider` always showing properties as "Overridden" on Prefab instances.
+- [case: 1204088] Fixed `UV Editor` actions window not using the mouse event, allowing inactive window properties to appear as interactable.
+- [case: 1183101] Fixed broken help link in `Smoothing Editor` window.
+- [case: 1173650] Fixed an issue that resulted in vertices and edges becoming unselectable on macOS in some cases.
+- Fixed `Edge` pre-selection highlight not rendering on macOS when using Metal as a graphics backend.
+- [case: 1198568] Fixed issues with prefab overrides not being applied to `ProBuilderMesh` components correctly.
+- [case: 1198568] Fixed `MeshFilter` and `ProBuilderMesh` components incorrectly showing instance overrides on un-modified prefab instances.
+- [case: 1194858] Fixed `Bevel Edges` throwing `NullReferenceException` in some cases.
+- [case: 1208475] Fixed `Set Pivot` and `Center Pivot` actions throwing `NullReferenceException` if the selected mesh contains children.
+- [case: 1183100] Fixed the `Shape Editor` `Stair` slider fields appearing too small to contain the text when Android is the selected build target.
+- [case: 1206302] Fixed an issue with the `Merge` action that could result in invalid geometry.
+- [case: 1161998] Fixed an issue where ProBuilder meshes could be selected through overlaying Editor windows.
+- [case: 1198588] Fixed a rare case where `ProBuilderMesh` could throw errors due to an invalid internal state.
+
+## Changes
+
+- The `ProBuilder Mesh` component is now shown as a replacement for the `Mesh Filter` component in the Inspector.
+- The `ProBuilder Mesh` component now has an icon in the Inspector.
+
+## Known Issues
+
+- Element selection changes to an instantiated prefab still register as overrides. This will be addressed in a follow-up PR that moves the selection out of the `ProBuilderMesh` class.
+- The `ProBuilderMesh` icon is always the Pro Skin version.
+- The `ProBuilderMesh` icon is toggle-able in the Gizmos window (initial value is 'Off').
 
 ## Changes
 
