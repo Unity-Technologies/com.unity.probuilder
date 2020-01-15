@@ -85,9 +85,8 @@ namespace UnityEngine.ProBuilder
                 ctx.Submit();
 
                 Rendering.DrawingSettings drawSettings = new Rendering.DrawingSettings();
-                drawSettings.SetShaderPassName(0, new Rendering.ShaderTagId("ProBuilderPickerPass"));
-                
-                
+                drawSettings.SetShaderPassName(0, new Rendering.ShaderTagId("Always"));
+
                 Rendering.FilteringSettings filterSettings = Rendering.FilteringSettings.defaultValue;
 
                 if (camera.camera.TryGetCullingParameters(out Rendering.ScriptableCullingParameters cullParams))
@@ -97,6 +96,6 @@ namespace UnityEngine.ProBuilder
                 }
             }
 #endif
-        }
+            }
     }
 }
