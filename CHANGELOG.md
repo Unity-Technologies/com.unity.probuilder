@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1206302] Fixed an issue with the `Merge` action that could result in invalid geometry.
 - [case: 1161998] Fixed an issue where ProBuilder meshes could be selected through overlaying Editor windows.
 - [case: 1198588] Fixed a rare case where `ProBuilderMesh` could throw errors due to an invalid internal state.
+- [case: 1196134] Fixed an issue where resetting component data on a `ProBuilderMesh` through the Inspector window would not update the `MeshFilter` and scene gizmos.
 
 ## Changes
 
