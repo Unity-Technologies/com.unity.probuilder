@@ -1,4 +1,4 @@
-//#define PB_RENDER_PICKER_TEXTURE
+#define PB_RENDER_PICKER_TEXTURE
 
 using System.Collections.Generic;
 using System.Linq;
@@ -425,7 +425,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns></returns>
-        static Texture2D RenderSelectionPickerTexture(
+        internal static Texture2D RenderSelectionPickerTexture(
             Camera camera,
             IList<ProBuilderMesh> selection,
             out Dictionary<uint, SimpleTuple<ProBuilderMesh, Face>> map,
@@ -457,7 +457,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns></returns>
-        static Texture2D RenderSelectionPickerTexture(
+        internal static Texture2D RenderSelectionPickerTexture(
             Camera camera,
             IList<ProBuilderMesh> selection,
             bool doDepthTest,
@@ -500,7 +500,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns></returns>
-        static Texture2D RenderSelectionPickerTexture(
+        internal static Texture2D RenderSelectionPickerTexture(
             Camera camera,
             IList<ProBuilderMesh> selection,
             bool doDepthTest,
