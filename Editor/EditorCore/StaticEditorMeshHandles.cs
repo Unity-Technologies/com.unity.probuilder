@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using UnityEngine.ProBuilder;
-using System.Reflection;
 using UnityEngine.Rendering;
 
 namespace UnityEditor.ProBuilder
@@ -20,9 +19,9 @@ namespace UnityEditor.ProBuilder
             using (var lineDrawer = new LineDrawingScope(Color.green, -1f, CompareFunction.Always))
             {
                 lineDrawer.DrawLine(p, p + rotation * Vector3.up * size);
-                lineDrawer.color = Color.red;
+                lineDrawer.SetColor(Color.red);
                 lineDrawer.DrawLine(p, p + rotation * Vector3.right * size);
-                lineDrawer.color = Color.blue;
+                lineDrawer.SetColor(Color.blue);
                 lineDrawer.DrawLine(p, p + rotation * Vector3.forward * size);
             }
         }
@@ -35,9 +34,9 @@ namespace UnityEditor.ProBuilder
             using (var lineDrawer = new LineDrawingScope(Color.green, -1f, CompareFunction.Always))
             {
                 lineDrawer.DrawLine(p, p + matrix.MultiplyVector(Vector3.up) * size);
-                lineDrawer.color = Color.red;
+                lineDrawer.SetColor(Color.red);
                 lineDrawer.DrawLine(p, p + matrix.MultiplyVector(Vector3.right) * size);
-                lineDrawer.color = Color.blue;
+                lineDrawer.SetColor(Color.blue);
                 lineDrawer.DrawLine(p, p + matrix.MultiplyVector(Vector3.forward) * size);
             }
         }
@@ -56,7 +55,7 @@ namespace UnityEditor.ProBuilder
             Handles.color = Color.white;
         }
 
-        internal struct PointDrawingScope : IDisposable
+        public struct PointDrawingScope : IDisposable
         {
             Color m_Color;
             CompareFunction m_ZTest;
@@ -162,69 +161,71 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        internal class LineDrawingScope : IDisposable
+        public struct LineDrawingScope : IDisposable
         {
             bool m_Wire;
+            bool m_LineTopology;
             Color m_Color;
             float m_Thickness;
             CompareFunction m_ZTest;
+            Matrix4x4 m_Matrix;
             bool m_IsDisposed;
+
+            Mesh m_LineMesh;
+            List<Vector3> m_Positions;
+            List<Vector4> m_Tangents;
+            List<Color> m_Colors;
+            List<int> m_Indices;
 
             public Color color
             {
                 get { return m_Color; }
+            }
 
-                set
-                {
-                    if (!m_Wire)
-                        End();
-
-                    m_Color = value;
-
-                    if (!m_Wire)
-                        Begin();
-                }
+            public void SetColor(Color color)
+            {
+                if (!m_Wire)
+                    End();
+                m_Color = color;
+                if (!m_Wire)
+                    Begin();
             }
 
             public float thickness
             {
                 get { return m_Thickness; }
-
-                set
-                {
-                    End();
-                    if (value < Mathf.Epsilon)
-                        m_Thickness = s_EdgeLineSize;
-                    else
-                        m_Thickness = value;
-                    Begin();
-                }
             }
 
             public CompareFunction zTest
             {
                 get { return m_ZTest; }
-
-                set
-                {
-                    End();
-                    m_ZTest = value;
-                    Begin();
-                }
             }
 
             public LineDrawingScope(Color color, float thickness = -1f, CompareFunction zTest = CompareFunction.LessEqual)
+                : this(color, Matrix4x4.identity, thickness, zTest) { }
+
+            public LineDrawingScope(Color color, Matrix4x4 matrix, float thickness = -1f, CompareFunction zTest = CompareFunction.LessEqual)
             {
+                m_LineMesh = Get().m_MeshPool.Get();
+                m_IsDisposed = false;
+                m_Matrix = matrix;
                 m_Color = color;
                 m_Thickness = thickness < 0f ? s_EdgeLineSize : thickness;
                 m_ZTest = zTest;
+
+                m_Positions = new List<Vector3>(4);
+                m_Tangents = new List<Vector4>(4);
+                m_Colors = new List<Color>(4);
+                m_Indices = new List<int>(4);
+
+                m_Wire = m_Thickness < k_MinLineWidthForGeometryShader || Get().m_LineMaterial == null;
+                m_LineTopology = m_Wire || BuiltinMaterials.geometryShadersSupported;
+
                 Begin();
             }
 
             void Begin()
             {
-                m_Wire = thickness < k_MinLineWidthForGeometryShader || Get().m_LineMaterial == null;
-
                 if (!m_Wire)
                 {
                     Get().m_LineMaterial.SetColor("_Color", color);
@@ -241,7 +242,7 @@ namespace UnityEditor.ProBuilder
                     {
                         s_ApplyWireMaterial = typeof(HandleUtility).GetMethod(
                                 "ApplyWireMaterial",
-                                BindingFlags.Static | BindingFlags.NonPublic,
+                                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic,
                                 null,
                                 new System.Type[] { typeof(CompareFunction) },
                                 null);
@@ -254,42 +255,64 @@ namespace UnityEditor.ProBuilder
                     s_ApplyWireMaterial.Invoke(null, s_ApplyWireMaterialArgs);
 #endif
                 }
-
-                GL.PushMatrix();
-                GL.Begin(m_Wire || BuiltinMaterials.geometryShadersSupported ? GL.LINES : GL.QUADS);
             }
 
             void End()
             {
-                GL.End();
-                GL.PopMatrix();
+                m_LineMesh.Clear();
+                m_LineMesh.SetVertices(m_Positions);
+                if(m_Wire)
+                    m_LineMesh.SetColors(m_Colors);
+                else
+                    m_LineMesh.SetTangents(m_Tangents);
+                m_LineMesh.subMeshCount = 1;
+#if UNITY_2019_3_OR_NEWER
+                m_LineMesh.SetIndices(m_Indices, m_LineTopology ? MeshTopology.Lines : MeshTopology.Quads, 0);
+#else
+                m_LineMesh.SetIndices(m_Indices.ToArray(), m_LineTopology ? MeshTopology.Lines : MeshTopology.Quads, 0);
+#endif
+
+                Graphics.DrawMeshNow(m_LineMesh, m_Matrix);
+
+                m_Positions.Clear();
+                m_Tangents.Clear();
+                m_Colors.Clear();
+                m_Indices.Clear();
             }
 
             public void DrawLine(Vector3 a, Vector3 b)
             {
-                if (m_Wire)
-                {
-                    GL.Color(color);
-                    GL.Vertex(a);
-                    GL.Vertex(b);
-                }
-                else if (!BuiltinMaterials.geometryShadersSupported)
+                var count = m_Positions.Count;
+
+                if (!m_Wire && !m_LineTopology)
                 {
                     Vector3 c = b + (b - a);
 
-                    GL.Color(new Color(b.x, b.y, b.z, 1f));
-                    GL.Vertex(a);
-                    GL.Color(new Color(b.x, b.y, b.z, -1f));
-                    GL.Vertex(a);
-                    GL.Color(new Color(c.x, c.y, c.z, -1f));
-                    GL.Vertex(b);
-                    GL.Color(new Color(c.x, c.y, c.z, 1f));
-                    GL.Vertex(b);
+                    m_Tangents.Add(new Vector4(b.x, b.y, b.z, 1f));
+                    m_Positions.Add(a);
+                    m_Indices.Add(count + 0);
+
+                    m_Tangents.Add(new Vector4(b.x, b.y, b.z, -1f));
+                    m_Positions.Add(a);
+                    m_Indices.Add(count + 1);
+
+                    m_Tangents.Add(new Vector4(c.x, c.y, c.z, -1f));
+                    m_Positions.Add(b);
+                    m_Indices.Add(count + 2);
+
+                    m_Tangents.Add(new Vector4(c.x, c.y, c.z, 1f));
+                    m_Positions.Add(b);
+                    m_Indices.Add(count + 3);
                 }
                 else
                 {
-                    GL.Vertex(a);
-                    GL.Vertex(b);
+                    m_Colors.Add(color);
+                    m_Positions.Add(a);
+                    m_Indices.Add(count + 0);
+
+                    m_Colors.Add(color);
+                    m_Positions.Add(b);
+                    m_Indices.Add(count + 1);
                 }
             }
 
@@ -298,8 +321,9 @@ namespace UnityEditor.ProBuilder
                 if (m_IsDisposed)
                     return;
                 m_IsDisposed = true;
-
                 End();
+                if(m_LineMesh != null)
+                    Get().m_MeshPool.Put(m_LineMesh);
             }
         }
 

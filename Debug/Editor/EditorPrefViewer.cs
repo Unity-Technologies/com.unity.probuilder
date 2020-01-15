@@ -42,7 +42,7 @@ public class EditorPrefBrowser : EditorWindow, IHasCustomMenu
         get { return !string.IsNullOrEmpty(m_Filter); }
     }
 
-    [MenuItem("Window/Plugins/Editor Pref Browser")]
+    [MenuItem("Tools/Debug/Editor Pref Browser")]
     public static void ShowWindow()
     {
         GetWindow<EditorPrefBrowser>().titleContent = new GUIContent("Editor Pref");

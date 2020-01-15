@@ -185,7 +185,11 @@ namespace UnityEditor.ProBuilder
             s_TopSelection.Clear();
 
             foreach (var i in s_UnitySelectionChangeMeshes)
-                s_TopSelection.Add(i);
+            {
+                // don't add prefabs or assets to the mesh selection
+                if(string.IsNullOrEmpty(AssetDatabase.GetAssetPath(i.gameObject)))
+                    s_TopSelection.Add(i);
+            }
 
             selectedObjectCount = s_TopSelection.Count;
 
