@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Bug Fixes
 
- - Fixed the `Custom Shape` field in the `Shape Editor` throwing errors on invalid input.
+- [case: 1204742] Fixed the `Custom Shape` field in the `Shape Editor` throwing errors on invalid input.
+- [case: 1173650] Fixed an issue that resulted in vertices and edges becoming unselectable on macOS in some cases.
+- Fixed Edge pre-selection highlight not rendering on macOS when using Metal as a graphics backend.
 
 ## [4.2.1] - 2019-11-22
 
