@@ -1,9 +1,17 @@
+#if UNITY_2019_1_OR_NEWER
+#define UNITY_INTERNALS_VISIBLE
+#endif
+
 using System;
 using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.ProBuilder;
 using System.Collections.Generic;
+using UnityEngine.Assertions;
+#if !UNITY_INTERNALS_VISIBLE
+using System.Reflection;
+#endif
 
 namespace UnityEditor.ProBuilder.UI
 {
@@ -12,6 +20,21 @@ namespace UnityEditor.ProBuilder.UI
     /// </summary>
     static class EditorGUILayout
     {
+#if !UNITY_INTERNALS_VISIBLE
+        static readonly object[] s_GetSliderRectParams = new object[2];
+        static readonly MethodInfo s_GetSliderRectMethod;
+
+        static EditorGUILayout()
+        {
+            s_GetSliderRectMethod = typeof(UnityEditor.EditorGUILayout).GetMethod(
+                "GetSliderRect",
+                BindingFlags.Static | BindingFlags.NonPublic,
+                null, CallingConventions.Any, new [] { typeof(bool), typeof(GUILayoutOption[])}, null);
+
+            Assert.IsNotNull(s_GetSliderRectMethod, "Couldn't find internal method EditorGUILayout.GetSliderRect(bool, GUILayoutOption) in UnityEditor namespace");
+        }
+#endif
+
         static bool s_RowToggle = true;
         static readonly Color s_RowOddColor = new Color(.45f, .45f, .45f, .2f);
         static readonly Color s_RowEvenColor = new Color(.30f, .30f, .30f, .2f);
@@ -258,6 +281,20 @@ namespace UnityEditor.ProBuilder.UI
             }
 
             return rect;
+        }
+
+        public static Rect GetSliderRect(bool hasLabel, params GUILayoutOption[] options)
+        {
+#if UNITY_INTERNALS_VISIBLE
+            return UnityEditor.EditorGUILayout.GetSliderRect(hasLabel, options);
+#else
+            if (s_GetSliderRectMethod == null)
+                return Rect.zero;
+
+            s_GetSliderRectParams[0] = hasLabel;
+            s_GetSliderRectParams[1] = options;
+            return (Rect)s_GetSliderRectMethod.Invoke(null, s_GetSliderRectParams);
+#endif
         }
     }
 }
