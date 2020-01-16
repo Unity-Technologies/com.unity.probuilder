@@ -214,6 +214,7 @@ namespace UnityEditor.ProBuilder
                 mesh.preserveMeshAssetOnDestroy = true;
                 DestroyImmediate(mesh);
                 Selection.activeTransform = m_PreviewObject.transform;
+                m_PreviewObject.name += "-preview";
             }
 
             m_PreviewObject.GetComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.ShapePreviewMaterial;

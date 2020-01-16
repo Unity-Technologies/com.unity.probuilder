@@ -197,7 +197,7 @@ namespace UnityEngine.ProBuilder
                 pb = GenerateCube(pivotType, Vector3.one);
             }
 
-            pb.gameObject.name = shape.ToString()+"-preview";
+            pb.gameObject.name = shape.ToString();
             pb.renderer.sharedMaterial = BuiltinMaterials.defaultMaterial;
 
             return pb;
