@@ -20,7 +20,8 @@ class RectSelectionPicker
     GameObject[] sceneObjects;
     Camera camera;
 
-    void Setup()
+    [SetUp]
+    public void Setup()
     {
         camera = new GameObject("Camera", typeof(Camera)).GetComponent<Camera>();
         camera.transform.position = Vector3.zero;
@@ -47,7 +48,8 @@ class RectSelectionPicker
 #endif
     }
 
-    void Cleanup()
+    [TearDown]
+    public void Cleanup()
     {
         for (int i = 0; i < sceneObjects.Length; ++i)
         {
@@ -65,8 +67,6 @@ class RectSelectionPicker
     [Test]
     public void RectSelection_LookupTexture_RenderPickingObjectsOnly()
     {
-        Setup();
-
         Rect selectionRect = new Rect(camera.pixelRect);
         selectionRect.width /= EditorGUIUtility.pixelsPerPoint;
         selectionRect.height /= EditorGUIUtility.pixelsPerPoint;
@@ -83,15 +83,11 @@ class RectSelectionPicker
             );
 
         Assert.That(tex.GetPixels(), Is.All.EqualTo(Color.white), "Lookup textures is not entirely white. Must have rendered something wrong.");       
-        
-        Cleanup();
     }
 
     [Test]
     public void RectSelection_FaceLookupTexture_RenderPickingObjectsOnly()
     {
-        Setup();
-
         Rect selectionRect = new Rect(camera.pixelRect);
         selectionRect.width /= EditorGUIUtility.pixelsPerPoint;
         selectionRect.height /= EditorGUIUtility.pixelsPerPoint;
@@ -107,15 +103,11 @@ class RectSelectionPicker
             );
 
         Assert.That(tex.GetPixels(), Is.All.EqualTo(Color.white), "Lookup textures is not entirely white. Must have rendered something wrong.");
-
-        Cleanup();
     }
 
     [Test]
     public void RectSelection_EdgeLookupTexture_RenderPickingObjectsOnly()
     {
-        Setup();
-
         Rect selectionRect = new Rect(camera.pixelRect);
         selectionRect.width /= EditorGUIUtility.pixelsPerPoint;
         selectionRect.height /= EditorGUIUtility.pixelsPerPoint;
@@ -132,7 +124,5 @@ class RectSelectionPicker
             );
 
         Assert.That(tex.GetPixels(), Is.All.EqualTo(Color.white), "Lookup textures is not entirely white. Must have rendered something wrong.");
-
-        Cleanup();
     }
 }
