@@ -663,7 +663,8 @@ namespace UnityEditor.ProBuilder
             // This prevents us from selecting other objects in the scene,
             // and allows for the selection of faces / vertices.
             m_DefaultControl = GUIUtility.GetControlID(FocusType.Passive);
-            HandleUtility.AddDefaultControl(m_DefaultControl);
+            if (Event.current.type == EventType.Layout)
+                HandleUtility.AddDefaultControl(m_DefaultControl);
 
             if (m_CurrentEvent.type == EventType.MouseDown && HandleUtility.nearestControl == m_DefaultControl)
             {
