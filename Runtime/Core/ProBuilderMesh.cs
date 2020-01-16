@@ -800,6 +800,11 @@ namespace UnityEngine.ProBuilder
         internal static event Action<ProBuilderMesh> componentWillBeDestroyed;
 
         /// <value>
+        /// Invoked from ProBuilderMesh.Reset after component is rebuilt.
+        /// </value>
+        internal static event Action<ProBuilderMesh> componentHasBeenReset;
+
+        /// <value>
         /// Invoked when the element selection changes on any ProBuilderMesh.
         /// </value>
         /// <seealso cref="SetSelectedFaces"/>
