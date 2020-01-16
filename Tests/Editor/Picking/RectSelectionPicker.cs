@@ -41,8 +41,10 @@ class RectSelectionPicker
         {
         };
 
+#if UNITY_2019_1_OR_NEWER
         foreach (SceneView sv in SceneView.sceneViews)
             sv.drawGizmos = true;
+#endif
     }
 
     void Cleanup()
