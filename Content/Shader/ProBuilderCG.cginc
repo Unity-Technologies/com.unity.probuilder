@@ -27,3 +27,22 @@ inline float4 UnityObjectToClipPosWithOffset(float3 pos)
     ret *= lerp(.99, .95, ORTHO);
     return mul(UNITY_MATRIX_P, ret);
 }
+
+inline float4 GetPickerColor(float4 pos, float2 texcoord1)
+{
+    // convert vertex to screen space, add pixel-unit xy to vertex, then transform back to clip space.
+    float4 clip = pos;
+
+    clip.xy /= clip.w;
+    clip.xy = clip.xy * .5 + .5;
+    clip.xy *= _ScreenParams.xy;
+
+    clip.xy += texcoord1.xy * 3.5;
+    clip.z -= .0001 * (1 - UNITY_MATRIX_P[3][3]);
+
+    clip.xy /= _ScreenParams.xy;
+    clip.xy = (clip.xy - .5) / .5;
+    clip.xy *= clip.w;
+
+    return clip;
+}

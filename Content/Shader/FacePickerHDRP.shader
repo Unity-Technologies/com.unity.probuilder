@@ -1,10 +1,10 @@
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "Hidden/ProBuilder/FacePicker"
+Shader "Hidden/ProBuilder/FacePickerHDRP"
 {
     SubShader
     {
-        Tags { "ProBuilderPicker"="Base"}
+        Tags { "ProBuilderPicker"="Base" "LightMode"="Always"}
         Lighting Off
         ZTest LEqual
         ZWrite On

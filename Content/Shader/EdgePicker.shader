@@ -9,7 +9,6 @@ Shader "Hidden/ProBuilder/EdgePicker"
             "ProBuilderPicker"="EdgePass"
             "IgnoreProjector"="True"
             "DisableBatching"="True"
-            "LightMode"="Always"
         }
 
         Lighting Off
