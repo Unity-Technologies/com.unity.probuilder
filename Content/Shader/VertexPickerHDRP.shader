@@ -33,10 +33,6 @@ CGPROGRAM
             // Is the camera in orthographic mode? (1 yes, 0 no)
             #define ORTHO (1 - UNITY_MATRIX_P[3][3])
 
-#ifdef HDRP_ENABLED
-
-#endif
-
             struct appdata
             {
                 float4 vertex : POSITION;
