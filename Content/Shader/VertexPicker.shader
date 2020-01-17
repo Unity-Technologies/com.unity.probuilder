@@ -10,6 +10,7 @@ Shader "Hidden/ProBuilder/VertexPicker"
             "RenderType"="Transparent"
             "IgnoreProjector"="True"
             "DisableBatching"="True"
+            "LightMode"="Always"
         }
 
         Lighting Off
