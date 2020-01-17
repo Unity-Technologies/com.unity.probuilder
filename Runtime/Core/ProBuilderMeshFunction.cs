@@ -2,6 +2,9 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace UnityEngine.ProBuilder
 {
@@ -11,6 +14,8 @@ namespace UnityEngine.ProBuilder
     public sealed partial class ProBuilderMesh
 #endif
     {
+        static HashSet<int> s_CachedHashSet = new HashSet<int>();
+
 #if UNITY_EDITOR
         public void OnBeforeSerialize() {}
 
@@ -18,9 +23,61 @@ namespace UnityEngine.ProBuilder
         {
             InvalidateCaches();
         }
+
+        // Using the internal callbacks here to avoid registering this component as "enable-able"
+        void OnDisableINTERNAL()
+        {
+            // Don't call DrivenPropertyManager.Unregister in OnDestroy. At that point GameObject::m_ActivationState is
+            // already set to kDestroying, and DrivenPropertyManager.Unregister will try to revert the driven values to
+            // their previous state (which will assert that the object is _not_ being destroyed)
+            SerializationUtility.UnregisterDrivenProperty(this, this, "m_Mesh");
+            MeshCollider meshCollider;
+            if(gameObject.TryGetComponent(out meshCollider))
+                SerializationUtility.UnregisterDrivenProperty(this, meshCollider, "m_Mesh");
+        }
 #endif
 
-        static HashSet<int> s_CachedHashSet = new HashSet<int>();
+        void Awake()
+        {
+            // Register driven properties and set hide flags in Awake because OnEnable is called after serialization has
+            // had a chance to register changes
+            SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
+            EnsureMeshFilterIsAssigned();
+
+            if (vertexCount > 0
+                && faceCount > 0
+                && meshSyncState == MeshSyncState.Null)
+                Rebuild();
+        }
+
+        void Reset()
+        {
+            if (meshSyncState != MeshSyncState.Null && meshSyncState != MeshSyncState.InstanceIDMismatch)
+            {
+                Rebuild();
+                if (componentHasBeenReset != null)
+                    componentHasBeenReset(this);
+            }
+        }
+
+        void OnDestroy()
+        {
+            if (componentWillBeDestroyed != null)
+                componentWillBeDestroyed(this);
+
+            // Time.frameCount is zero when loading scenes in the Editor. It's the only way I could figure to
+            // differentiate between OnDestroy invoked from user delete & editor scene loading.
+            if (!preserveMeshAssetOnDestroy &&
+                Application.isEditor &&
+                !Application.isPlaying &&
+                Time.frameCount > 0)
+            {
+                if (meshWillBeDestroyed != null)
+                    meshWillBeDestroyed(this);
+                else
+                    DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
+            }
+        }
 
         /// <summary>
         /// Reset all the attribute arrays on this object.
@@ -43,31 +100,12 @@ namespace UnityEngine.ProBuilder
             ClearSelection();
         }
 
-        void Awake()
+        internal void EnsureMeshFilterIsAssigned()
         {
-            if (vertexCount > 0
-                && faceCount > 0
-                && meshSyncState == MeshSyncState.Null)
-                Rebuild();
-        }
-
-        void OnDestroy()
-        {
-            if (componentWillBeDestroyed != null)
-                componentWillBeDestroyed(this);
-
-            // Time.frameCount is zero when loading scenes in the Editor. It's the only way I could figure to
-            // differentiate between OnDestroy invoked from user delete & editor scene loading.
-            if (!preserveMeshAssetOnDestroy &&
-                Application.isEditor &&
-                !Application.isPlaying &&
-                Time.frameCount > 0)
-            {
-                if (meshWillBeDestroyed != null)
-                    meshWillBeDestroyed(this);
-                else
-                    DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
-            }
+            if (filter == null)
+                m_MeshFilter = gameObject.AddComponent<MeshFilter>();
+            m_MeshFilter.hideFlags = k_MeshFilterHideFlags;
+            filter.sharedMesh = m_Mesh;
         }
 
         internal static ProBuilderMesh CreateInstanceWithPoints(Vector3[] positions)
@@ -212,19 +250,15 @@ namespace UnityEngine.ProBuilder
         /// <param name="preferredTopology">Triangles and Quads are supported.</param>
         public void ToMesh(MeshTopology preferredTopology = MeshTopology.Triangles)
         {
-            Mesh m = mesh;
-
             // if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
-            if (m != null && m.vertexCount == m_Positions.Length)
-                m = mesh;
-            else if (m == null)
-                m = new Mesh();
-            else
-                m.Clear();
+            if (mesh == null)
+                mesh = new Mesh();
+            else if(mesh.vertexCount != vertexCount)
+                mesh.Clear();
 
-            m.indexFormat = vertexCount > ushort.MaxValue ? Rendering.IndexFormat.UInt32 : Rendering.IndexFormat.UInt16;
-            m.vertices = m_Positions;
-            m.uv2 = null;
+            mesh.indexFormat = vertexCount > ushort.MaxValue ? Rendering.IndexFormat.UInt32 : Rendering.IndexFormat.UInt16;
+            mesh.vertices = m_Positions;
+            mesh.uv2 = null;
 
             if (m_MeshFormatVersion < k_MeshFormatVersion)
             {
@@ -240,9 +274,9 @@ namespace UnityEngine.ProBuilder
 
             Submesh[] submeshes = Submesh.GetSubmeshes(facesInternal, materialCount, preferredTopology);
 
-            m.subMeshCount = materialCount;
+            mesh.subMeshCount = materialCount;
 
-            for (int i = 0; i < m.subMeshCount; i++)
+            for (int i = 0; i < mesh.subMeshCount; i++)
             {
 #if DEVELOPER_MODE
                 if (i >= materialCount)
@@ -250,11 +284,11 @@ namespace UnityEngine.ProBuilder
                 if (submeshes[i] == null)
                     throw new Exception("Attempting to assign a null submesh. " + i + "/" + materialCount);
 #endif
-                m.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
+                mesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
             }
 
-            m.name = string.Format("pb_Mesh{0}", id);
-            filter.sharedMesh = m;
+            mesh.name = string.Format("pb_Mesh{0}", id);
+            EnsureMeshFilterIsAssigned();
         }
 
         /// <summary>
@@ -326,13 +360,14 @@ namespace UnityEngine.ProBuilder
         void RefreshCollisions()
         {
             mesh.RecalculateBounds();
+            MeshCollider collider;
 
-            var meshCollider = GetComponent<MeshCollider>();
-
-            if (meshCollider != null)
+            if(gameObject.TryGetComponent<MeshCollider>(out collider))
             {
-                gameObject.GetComponent<MeshCollider>().sharedMesh = null;
-                gameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
+                SerializationUtility.UnregisterDrivenProperty(this, collider, "m_Mesh");
+                SerializationUtility.RegisterDrivenProperty(this, collider, "m_Mesh");
+                collider.sharedMesh = null;
+                collider.sharedMesh = mesh;
             }
         }
 

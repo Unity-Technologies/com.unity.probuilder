@@ -1,11 +1,9 @@
 using UnityEngine;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor.SettingsManagement;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
 using Math = UnityEngine.ProBuilder.Math;
 
 namespace UnityEditor.ProBuilder
@@ -151,8 +149,8 @@ namespace UnityEditor.ProBuilder
                             pb.gameObject.GetComponent<MeshFilter>().sharedMesh = m;
 
                             // also set the MeshCollider if it exists
-                            MeshCollider mc = pb.gameObject.GetComponent<MeshCollider>();
-                            if (mc != null) mc.sharedMesh = m;
+                            pb.Refresh(RefreshMask.Collisions);
+                            
                             return;
                         }
                         else
@@ -262,8 +260,7 @@ namespace UnityEditor.ProBuilder
                 }
                 else if (t == typeof(MeshCollider))
                 {
-                    ((MeshCollider)collider).sharedMesh = null;
-                    ((MeshCollider)collider).sharedMesh = mesh.mesh;
+                    mesh.Refresh(RefreshMask.Collisions);
                 }
             }
         }
