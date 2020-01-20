@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## Changes
+
+- [case: 1203585] Removed `Custom Shape` option from the `Shape Editor` window.
+
 ## [4.3.0-preview.2] - 2020-01-15
 
 ## Bug Fixes
