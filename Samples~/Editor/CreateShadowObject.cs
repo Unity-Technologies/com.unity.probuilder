@@ -179,6 +179,7 @@ namespace ProBuilder.ExampleActions
 			}
 
 			ProBuilderMesh newShadowMesh = ProBuilderMesh.Create();
+            newShadowMesh.ToMesh();
 			newShadowMesh.CopyFrom(mesh);
 			newShadowMesh.name = string.Format("{0}-ShadowVolume", mesh.name);
 			newShadowMesh.transform.SetParent(mesh.transform, false);
