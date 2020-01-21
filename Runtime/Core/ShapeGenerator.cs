@@ -332,7 +332,7 @@ namespace UnityEngine.ProBuilder
             }
 
             ProBuilderMesh pb = ProBuilderMesh.Create(vertices, faces);
-            pb.gameObject.name = "Stairs-preview";
+            pb.gameObject.name = "Stairs";
             pb.SetPivot(pivotType);
 
             return pb;
@@ -550,7 +550,7 @@ namespace UnityEngine.ProBuilder
 
             ProBuilderMesh pb = ProBuilderMesh.Create(positions, faces);
 
-            pb.gameObject.name = "Stairs-preview";
+            pb.gameObject.name = "Stairs";
             pb.SetPivot(pivotType);
 
             return pb;
@@ -629,7 +629,7 @@ namespace UnityEngine.ProBuilder
             }
 
             ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(verts.ToArray());
-            pb.gameObject.name = "Stairs-preview";
+            pb.gameObject.name = "Stairs";
             pb.SetPivot(pivotType);
 
             return pb;
@@ -649,7 +649,7 @@ namespace UnityEngine.ProBuilder
                 points[i] = Vector3.Scale(k_CubeVertices[k_CubeTriangles[i]], size);
 
             ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(points);
-            pb.gameObject.name = "Cube-preview";
+            pb.gameObject.name = "Cube";
             pb.SetPivot(pivotType);
 
             return pb;
@@ -778,7 +778,7 @@ namespace UnityEngine.ProBuilder
             }
 
             ProBuilderMesh pb = ProBuilderMesh.Create(verts, faces);
-            pb.gameObject.name = "Cylinder-preview";
+            pb.gameObject.name = "Cylinder";
             pb.SetPivot(pivotType);
 
             return pb;
@@ -840,7 +840,7 @@ namespace UnityEngine.ProBuilder
             };
 
             ProBuilderMesh pb = ProBuilderMesh.Create(v, f);
-            pb.gameObject.name = "Prism-preview";
+            pb.gameObject.name = "Prism";
             pb.SetPivot(pivotType);
 
             return pb;
@@ -938,7 +938,7 @@ namespace UnityEngine.ProBuilder
             points.Add(template[5] - Vector3.forward * depth);
 
             ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(points.ToArray());
-            pb.gameObject.name = "Door-preview";
+            pb.gameObject.name = "Door";
             pb.SetPivot(pivotType);
 
             return pb;
@@ -1024,7 +1024,7 @@ namespace UnityEngine.ProBuilder
             }
 
             ProBuilderMesh pb = ProBuilderMesh.Create(v, f);
-            pb.gameObject.name = "Plane-preview";
+            pb.gameObject.name = "Plane";
             pb.SetPivot(pivotType);
 
             return pb;
@@ -1126,7 +1126,7 @@ namespace UnityEngine.ProBuilder
 
             ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(v.ToArray());
 
-            pb.gameObject.name = "Pipe-preview";
+            pb.gameObject.name = "Pipe";
             pb.SetPivot(pivotType, 1);
 
             return pb;
@@ -1178,7 +1178,7 @@ namespace UnityEngine.ProBuilder
             }
 
             ProBuilderMesh pb = ProBuilderMesh.Create(v.ToArray(), f.ToArray());
-            pb.gameObject.name = "Cone-preview";
+            pb.gameObject.name = "Cone";
             pb.SetPivot(pivotType);
             pb.unwrapParameters = new UnwrapParameters()
             {
@@ -1333,7 +1333,7 @@ namespace UnityEngine.ProBuilder
 
             ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(v.ToArray());
 
-            pb.gameObject.name = "Arch-preview";
+            pb.gameObject.name = "Arch";
             pb.SetPivot(pivotType);
 
             return pb;
@@ -1436,7 +1436,7 @@ namespace UnityEngine.ProBuilder
 
             pb.ToMesh();
             pb.Refresh();
-            pb.gameObject.name = "Icosphere-preview";
+            pb.gameObject.name = "Icosphere";
             pb.SetPivot(pivotType, bottomMostVertexIndex);
 
             pb.unwrapParameters = new UnwrapParameters()
@@ -1585,7 +1585,7 @@ namespace UnityEngine.ProBuilder
             }
 
             ProBuilderMesh pb = ProBuilderMesh.Create(vertices.ToArray(), faces.ToArray());
-            pb.gameObject.name = "Torus-preview";
+            pb.gameObject.name = "Torus";
             pb.SetPivot(pivotType);
 
             return pb;
