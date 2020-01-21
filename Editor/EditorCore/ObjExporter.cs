@@ -351,10 +351,17 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
-                if (mat.HasProperty("_Color"))
+                Color color = mat.color;
+                if (mat.HasProperty("_BaseColorMap") || mat.HasProperty("_BaseMap")) // HDRP || URP
                 {
-                    Color color = mat.color;
-
+                    color = mat.GetColor("_BaseColor");
+                    // Diffuse
+                    sb.AppendLine(string.Format("Kd {0}", string.Format(CultureInfo.InvariantCulture, "{0} {1} {2}", color.r, color.g, color.b)));
+                    // Transparency
+                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "d {0}", color.a));
+                }
+                else if (mat.HasProperty("_Color"))
+                {
                     // Diffuse
                     sb.AppendLine(string.Format("Kd {0}", string.Format(CultureInfo.InvariantCulture, "{0} {1} {2}", color.r, color.g, color.b)));
                     // Transparency

@@ -56,8 +56,7 @@ namespace UnityEditor.ProBuilder
             new Cone(),
             new Arch(),
             new Sphere(),
-            new Torus(),
-            new Custom()
+            new Torus()
         };
 
         string[] m_ShapeTypes;
@@ -196,7 +195,8 @@ namespace UnityEditor.ProBuilder
         {
             ApplyPreviewTransform(mesh);
             Mesh umesh = mesh.mesh;
-            umesh.hideFlags = HideFlags.DontSave;
+            if(umesh != null)
+                umesh.hideFlags = HideFlags.DontSave;
 
             if (m_PreviewObject)
             {
@@ -723,35 +723,6 @@ namespace UnityEditor.ProBuilder
                 UVEditing.ProjectFacesBox(mesh, mesh.facesInternal);
 
                 return mesh;
-            }
-        }
-
-        [Serializable]
-        class Custom : ShapeBuilder
-        {
-            static Pref<Vector2> scrollbar = new Pref<Vector2>("ShapeBuilder.Custom.scrollbar", new Vector2(0f, 0f), SettingsScope.User);
-            static Pref<string> verts = new Pref<string>("ShapeBuilder.Custom.verts", "//Vertical Plane\n0, 0, 0\n1, 0, 0\n0, 1, 0\n1, 1, 0\n", SettingsScope.User);
-
-            public override void OnGUI()
-            {
-                GUILayout.Label("Custom Geometry", EditorStyles.boldLabel);
-                EditorGUILayout.HelpBox("Vertices must be wound in faces, and counter-clockwise.\n(Think horizontally reversed Z)", MessageType.Info);
-
-                scrollbar.value = GUILayout.BeginScrollView(scrollbar);
-                verts.value = EditorGUILayout.TextArea(verts, GUILayout.MinHeight(160));
-                GUILayout.EndScrollView();
-            }
-
-            public override ProBuilderMesh Build(bool isPreview = false)
-            {
-                var positions = InternalUtility.StringToVector3Array(verts);
-
-                if (positions.Length % 4 == 0)
-                    return ProBuilderMesh.CreateInstanceWithPoints(
-                        InternalUtility.StringToVector3Array(verts)
-                        );
-
-                return ProBuilderMesh.Create();
             }
         }
     }
