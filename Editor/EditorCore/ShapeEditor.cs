@@ -206,6 +206,8 @@ namespace UnityEditor.ProBuilder
                 m_PreviewObject.GetComponent<MeshFilter>().sharedMesh = umesh;
                 mesh.preserveMeshAssetOnDestroy = true;
                 m_PreviewObject.name = mesh.gameObject.name;
+                if (!m_PreviewObject.name.EndsWith("-preview"))
+                    m_PreviewObject.name += "-preview";
                 DestroyImmediate(mesh.gameObject);
             }
             else
@@ -214,6 +216,7 @@ namespace UnityEditor.ProBuilder
                 mesh.preserveMeshAssetOnDestroy = true;
                 DestroyImmediate(mesh);
                 Selection.activeTransform = m_PreviewObject.transform;
+                m_PreviewObject.name += "-preview";
             }
 
             m_PreviewObject.GetComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.ShapePreviewMaterial;

@@ -297,6 +297,7 @@ namespace UnityEditor.ProBuilder
         internal static void InitObject(ProBuilderMesh pb)
         {
             MoveToActiveScene(pb.gameObject);
+            GameObjectUtility.EnsureUniqueNameForSibling(pb.gameObject);
             ScreenCenter(pb.gameObject);
             SetPivotLocationAndSnap(pb);
 #if UNITY_2019_1_OR_NEWER
