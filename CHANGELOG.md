@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - [case: 1203585] Removed `Custom Shape` option from the `Shape Editor` window.
 
+
+## [4.3.0-preview.3 - 2020-01-28
+
 ## [4.3.0-preview.2] - 2020-01-15
 
 ## Bug Fixes
