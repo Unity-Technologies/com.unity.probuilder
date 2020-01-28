@@ -321,8 +321,8 @@ namespace UnityEngine.ProBuilder
 
             for (var i = 0; i < k_UVChannelCount; i++)
             {
-                other.GetUVs(1, uvs);
-                SetUVs(1, uvs);
+                other.GetUVs(i, uvs);
+                SetUVs(i, uvs);
             }
 
             tangents = other.tangents;
