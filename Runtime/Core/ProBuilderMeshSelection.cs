@@ -107,18 +107,25 @@ namespace UnityEngine.ProBuilder
                 m_SelectedSharedVerticesCount = 0;
                 m_SelectedCoincidentVertexCount = 0;
 
-                foreach (var i in m_SelectedVertices)
+                try
                 {
-                    if (m_SelectedSharedVertices.Add(lookup[i]))
+                    foreach (var i in m_SelectedVertices)
                     {
-                        var coincident = sharedVerticesInternal[lookup[i]];
+                        if (m_SelectedSharedVertices.Add(lookup[i]))
+                        {
+                            var coincident = sharedVerticesInternal[lookup[i]];
 
-                        m_SelectedSharedVerticesCount++;
-                        m_SelectedCoincidentVertexCount += coincident.Count;
+                            m_SelectedSharedVerticesCount++;
+                            m_SelectedCoincidentVertexCount += coincident.Count;
 
-                        foreach (var n in coincident)
-                            m_SelectedCoincidentVertices.Add(n);
+                            foreach (var n in coincident)
+                                m_SelectedCoincidentVertices.Add(n);
+                        }
                     }
+                }
+                catch
+                {
+                    ClearSelection();
                 }
             }
         }
@@ -294,7 +301,6 @@ namespace UnityEngine.ProBuilder
             m_SelectedFaces = new int[0];
             m_SelectedEdges = new Edge[0];
             m_SelectedVertices = new int[0];
-
             m_SelectedCacheDirty = true;
         }
     }

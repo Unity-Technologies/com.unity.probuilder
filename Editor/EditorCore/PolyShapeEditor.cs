@@ -25,6 +25,7 @@ namespace UnityEditor.ProBuilder
 
         Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
 
+        int m_ControlId;
         bool m_PlacingPoint = false;
         int m_SelectedIndex = -2;
         float m_DistanceFromHeightHandle;
@@ -60,6 +61,11 @@ namespace UnityEditor.ProBuilder
             m_LineMesh = new Mesh();
             m_LineMaterial = CreateHighlightLineMaterial();
             Undo.undoRedoPerformed += UndoRedoPerformed;
+#if UNITY_2019_1_OR_NEWER
+            SceneView.duringSceneGui += DuringSceneGUI;
+#else
+            SceneView.onSceneGUIDelegate += DuringSceneGUI;
+#endif
             DrawPolyLine(polygon.m_Points);
             EditorApplication.update += Update;
 
@@ -75,6 +81,11 @@ namespace UnityEditor.ProBuilder
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
 
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+#if UNITY_2019_1_OR_NEWER
+            SceneView.duringSceneGui -= DuringSceneGUI;
+#else
+            SceneView.onSceneGUIDelegate -= DuringSceneGUI;
+#endif
             DestroyImmediate(m_LineMesh);
             DestroyImmediate(m_LineMaterial);
             EditorApplication.update -= Update;
@@ -240,8 +251,8 @@ namespace UnityEditor.ProBuilder
             // advantage of the `vertexCountChanged = false` optimization here.
             ProBuilderEditor.Refresh();
         }
-
-        void OnSceneGUI()
+        
+        void DuringSceneGUI(SceneView sceneView)
         {
             if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
                 return;
@@ -290,9 +301,10 @@ namespace UnityEditor.ProBuilder
             if (EditorHandleUtility.SceneViewInUse(evt))
                 return;
 
-            int controlID = GUIUtility.GetControlID(FocusType.Passive);
-            HandleUtility.AddDefaultControl(controlID);
-
+            m_ControlId = GUIUtility.GetControlID(FocusType.Passive);
+            if (evt.type == EventType.Layout)
+                HandleUtility.AddDefaultControl(m_ControlId);
+            
             DoPointPlacement();
         }
 
@@ -332,7 +344,7 @@ namespace UnityEditor.ProBuilder
             }
             else if (polygon.polyEditMode == PolyShape.PolyEditMode.Path)
             {
-                if (eventType == EventType.MouseDown)
+                if (eventType == EventType.MouseDown && HandleUtility.nearestControl == m_ControlId)
                 {
                     if (polygon.m_Points.Count < 1)
                         SetupInputPlane(evt.mousePosition);
@@ -405,7 +417,7 @@ namespace UnityEditor.ProBuilder
                         Handles.color = Color.green;
                         Handles.DotHandleCap(-1, wp, Quaternion.identity, HandleUtility.GetHandleSize(wp) * k_HandleSize, evt.type);
 
-                        if (evt.type == EventType.MouseDown)
+                        if (evt.type == EventType.MouseDown && HandleUtility.nearestControl == m_ControlId)
                         {
                             evt.Use();
 

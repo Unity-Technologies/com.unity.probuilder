@@ -8,6 +8,7 @@ using UnityEngine.ProBuilder;
 using UnityEngine.Rendering;
 using UObject = UnityEngine.Object;
 using UnityEditor.SettingsManagement;
+using UnityEditorInternal;
 using UnityEngine.SceneManagement;
 #if !UNITY_2019_1_OR_NEWER
 using System.Reflection;
@@ -191,12 +192,14 @@ namespace UnityEditor.ProBuilder
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            Mesh oldMesh = mesh.mesh;
+            mesh.EnsureMeshFilterIsAssigned();
             MeshSyncState state = mesh.meshSyncState;
             bool meshesAreAssets = Experimental.meshesAreAssets;
 
             if (state != MeshSyncState.InSync)
             {
+                Mesh oldMesh;
+
                 if (state == MeshSyncState.Null)
                 {
                     mesh.Rebuild();
@@ -210,7 +213,7 @@ namespace UnityEditor.ProBuilder
                  * If the latter, we need to clean up the old mesh.  If the former,
                  * the old mesh needs to *not* be destroyed.
                  */
-                if (oldMesh)
+                if ((oldMesh = mesh.mesh) != null)
                 {
                     int meshNo = -1;
                     int.TryParse(oldMesh.name.Replace("pb_Mesh", ""), out meshNo);
@@ -218,15 +221,14 @@ namespace UnityEditor.ProBuilder
                     UnityEngine.Object dup = UnityEditor.EditorUtility.InstanceIDToObject(meshNo);
                     GameObject go = dup as GameObject;
 
+                    // Scene reload, just rename the mesh to the correct ID
                     if (go == null)
                     {
-                        // Debug.Log("scene reloaded - false positive.");
                         mesh.mesh.name = "pb_Mesh" + mesh.id;
                     }
                     else
                     {
-                        // Debug.Log("duplicate mesh");
-
+                        // Mesh was duplicated, need to instantiate a unique mesh asset
                         if (!meshesAreAssets || !(EditorUtility.IsPrefabAsset(mesh.gameObject) || IsPrefabInstance(mesh.gameObject)))
                         {
                             // deep copy arrays & ToMesh/Refresh
@@ -238,7 +240,6 @@ namespace UnityEditor.ProBuilder
                 else
                 {
                     // old mesh didn't exist, so this is probably a prefab being instanced
-
                     if (EditorUtility.IsPrefabAsset(mesh.gameObject))
                         mesh.mesh.hideFlags = (HideFlags)(1 | 2 | 4 | 8);
 
@@ -296,10 +297,12 @@ namespace UnityEditor.ProBuilder
         internal static void InitObject(ProBuilderMesh pb)
         {
             MoveToActiveScene(pb.gameObject);
-
+            GameObjectUtility.EnsureUniqueNameForSibling(pb.gameObject);
             ScreenCenter(pb.gameObject);
-
             SetPivotLocationAndSnap(pb);
+#if UNITY_2019_1_OR_NEWER
+            ComponentUtility.MoveComponentRelativeToComponent(pb, pb.transform, false);
+#endif
 
             pb.renderer.shadowCastingMode = s_ShadowCastingMode;
             pb.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
@@ -313,7 +316,15 @@ namespace UnityEditor.ProBuilder
                     break;
 
                 case ColliderType.MeshCollider:
-                    pb.gameObject.AddComponent<MeshCollider>().convex = s_MeshColliderIsConvex;
+                    var collider = pb.gameObject.DemandComponent<MeshCollider>();
+                    // This little dance is required to prevent the Prefab system from detecting an overridden property
+                    // before ProBuilderMesh.RefreshCollisions has a chance to mark the MeshCollider.sharedMesh property
+                    // as driven. "AddComponent<MeshCollider>" constructs the MeshCollider and simultaneously assigns
+                    // the "m_Mesh" property, marking the property dirty. So we undo that change, here then assign the
+                    // mesh through our own method.
+                    collider.sharedMesh = null;
+                    collider.convex = s_MeshColliderIsConvex;
+                    pb.Refresh(RefreshMask.Collisions);
                     break;
             }
 
@@ -512,7 +523,6 @@ namespace UnityEditor.ProBuilder
         {
             return (target & value) != SelectMode.None;
         }
-
         internal static SelectMode GetSelectMode(EditLevel edit, ComponentMode component)
         {
             switch (edit)
@@ -572,6 +582,24 @@ namespace UnityEditor.ProBuilder
         internal static bool IsDeveloperMode()
         {
             return EditorPrefs.GetBool("DeveloperMode", false);
+        }
+
+        public static void SetGizmoIconEnabled(Type script, bool enabled)
+        {
+#if UNITY_2019_1_OR_NEWER
+            var annotations = AnnotationUtility.GetAnnotations();
+            var annotation = annotations.FirstOrDefault(x => x.scriptClass.Contains(script.Name));
+            AnnotationUtility.SetIconEnabled(annotation.classID, annotation.scriptClass, 0);
+#else
+            Type annotationUtility = typeof(Editor).Assembly.GetType("UnityEditor.AnnotationUtility");
+            MethodInfo setGizmoIconEnabled = annotationUtility.GetMethod("SetIconEnabled",
+                BindingFlags.Static | BindingFlags.NonPublic,
+                null,
+                new Type[] { typeof(int), typeof(string), typeof(int) },
+                null);
+            var name = script.Name;
+            setGizmoIconEnabled.Invoke(null, new object[] { 114, name, enabled ? 1 : 0});
+#endif
         }
     }
 }

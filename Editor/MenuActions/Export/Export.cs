@@ -121,7 +121,7 @@ namespace UnityEditor.ProBuilder.Actions
             GUILayout.FlexibleSpace();
 
             if (GUILayout.Button("Export"))
-                DoAction();
+                EditorUtility.ShowNotification(DoAction().notification);
         }
 
         void ObjExportOptions()
@@ -216,7 +216,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             PingExportedModel(res);
 
-            return new ActionResult(ActionResult.Status.Success, "Export " + m_ExportFormat.value);
+            return new ActionResult(ActionResult.Status.Success, "Exported " + m_ExportFormat.value);
         }
 
         internal static void PingExportedModel(string path)

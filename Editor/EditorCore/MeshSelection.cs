@@ -111,6 +111,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderMesh.elementSelectionChanged += ElementSelectionChanged;
             EditorMeshUtility.meshOptimized += (x, y) => { s_TotalElementCountCacheIsDirty = true; };
             ProBuilderMesh.componentWillBeDestroyed += RemoveMeshFromSelectionInternal;
+            ProBuilderMesh.componentHasBeenReset += RefreshSelectionAfterComponentReset;
             OnObjectSelectionChanged();
         }
 
@@ -185,7 +186,11 @@ namespace UnityEditor.ProBuilder
             s_TopSelection.Clear();
 
             foreach (var i in s_UnitySelectionChangeMeshes)
-                s_TopSelection.Add(i);
+            {
+                // don't add prefabs or assets to the mesh selection
+                if(string.IsNullOrEmpty(AssetDatabase.GetAssetPath(i.gameObject)))
+                    s_TopSelection.Add(i);
+            }
 
             selectedObjectCount = s_TopSelection.Count;
 
@@ -466,6 +471,11 @@ namespace UnityEditor.ProBuilder
         {
             if (s_TopSelection.Contains(mesh))
                 s_TopSelection.Remove(mesh);
+        }
+
+        internal static void RefreshSelectionAfterComponentReset(ProBuilderMesh mesh)
+        {
+            ProBuilderEditor.Refresh(true);
         }
 
         internal static void SetSelection(IList<GameObject> newSelection)

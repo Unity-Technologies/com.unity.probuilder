@@ -18,8 +18,8 @@ namespace UnityEditor.ProBuilder
             static bool s_Initialized;
             public static GUIStyle miniButton;
 
-            public static readonly GUIContent lightmapStatic = new GUIContent("Lightmap Static", "Controls whether the geometry will be marked as Static for lightmapping purposes. When enabled, this mesh will be present in lightmap calculations.");
-            public static readonly GUIContent lightmapUVs = new GUIContent("Generate Lightmap UVs");
+            public static readonly GUIContent lightmapStatic = EditorGUIUtility.TrTextContent("Lightmap Static", "Controls whether the geometry will be marked as Static for lightmapping purposes. When enabled, this mesh will be present in lightmap calculations.");
+            public static readonly GUIContent sharedMesh = EditorGUIUtility.TrTextContent("Mesh");
 
             public static void Init()
             {
@@ -48,6 +48,10 @@ namespace UnityEditor.ProBuilder
         }
 
         Renderer m_MeshRenderer = null;
+
+        protected override void OnHeaderGUI()
+        {
+        }
 
         void OnEnable()
         {
@@ -95,26 +99,53 @@ namespace UnityEditor.ProBuilder
             if (GUILayout.Button("Open ProBuilder"))
                 ProBuilderEditor.MenuOpenWindow();
 
+            GUILayout.Box("Mesh property is driven by the ProBuilder component.", EditorStyles.helpBox);
+            var guiEnabled = GUI.enabled;
+            GUI.enabled = false;
+            var guiStateMixed = EditorGUI.showMixedValue;
+            EditorGUI.showMixedValue = targets.Length > 1;
+            EditorGUILayout.ObjectField(Styles.sharedMesh, m_Mesh.mesh, typeof(Mesh), false);
+            EditorGUI.showMixedValue = guiStateMixed;
+            GUI.enabled = guiEnabled;
+
             Vector3 bounds = m_MeshRenderer != null ? m_MeshRenderer.bounds.size : Vector3.zero;
             EditorGUILayout.Vector3Field("Object Size (read only)", bounds);
 
-#if PB_DEBUG
-            GUILayout.TextField(string.IsNullOrEmpty(pb.asset_guid) ? "null" : pb.asset_guid);
-#endif
-
             serializedObject.Update();
-
+            EditorGUI.BeginChangeCheck();
             LightmapStaticSettings();
-
-            serializedObject.ApplyModifiedProperties();
+            if (EditorGUI.EndChangeCheck())
+                serializedObject.ApplyModifiedProperties();
 
 #if DEVELOPER_MODE
             GUILayout.Label("Compiled Mesh Information", EditorStyles.boldLabel);
-            if (m_Mesh != null && m_Mesh.mesh != null)
+
+            MeshFilter filter;
+            Mesh sharedMesh = null;
+
+            if (m_Mesh.TryGetComponent(out filter) && (sharedMesh = filter.sharedMesh) != null)
             {
-                GUILayout.Label("Vertex Count: " + m_Mesh.mesh.vertexCount);
-                GUILayout.Label("Submesh Count: " + m_Mesh.mesh.subMeshCount);
+                GUILayout.Label("Vertex Count: " + sharedMesh.vertexCount);
+                GUILayout.Label("Submesh Count: " + sharedMesh.subMeshCount);
             }
+            else
+            {
+                GUILayout.Label("No compiled mesh", EditorStyles.centeredGreyMiniLabel);
+            }
+
+            GUILayout.Label("HideFlags & Driven Properties", EditorStyles.boldLabel);
+
+            if(filter)
+                GUILayout.Label($"MeshFilter {filter.hideFlags}");
+            else
+                GUILayout.Label($"MeshFilter (null)");
+
+            MeshCollider collider;
+
+#if UNITY_2019_1_OR_NEWER
+            if (m_Mesh.TryGetComponent(out collider))
+                GUILayout.Label($"MeshCollider.m_Mesh {DrivenPropertyManagerInternal.IsDriven(collider, "m_Mesh")}");
+#endif
 #endif
         }
 
