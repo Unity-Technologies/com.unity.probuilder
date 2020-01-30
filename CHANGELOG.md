@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## Changes
 
 - [case: 1203585] Removed `Custom Shape` option from the `Shape Editor` window.
+- [case: 1201746] The Move tool is now compatible with grid snapping (Unity 2019.3 and higher).
 
 ## [4.3.0-preview.2] - 2020-01-15
 

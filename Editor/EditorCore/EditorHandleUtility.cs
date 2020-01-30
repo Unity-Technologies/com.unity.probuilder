@@ -557,7 +557,7 @@ namespace UnityEditor.ProBuilder
 
         static bool GetPlaneFromProGridsAxis(Vector2 mousePosition, out Plane plane)
         {
-            if (!ProGridsInterface.ProGridsActive() || !ProGridsInterface.GridVisible())
+            if (!ProGridsInterface.IsActive() || !ProGridsInterface.GridVisible())
             {
                 plane = default(Plane);
                 return false;

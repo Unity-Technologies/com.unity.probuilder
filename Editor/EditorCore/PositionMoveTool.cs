@@ -22,7 +22,7 @@ namespace UnityEditor.ProBuilder
         protected override void OnToolEngaged()
         {
             // If grids are enabled and "snap on all axes" is on, initialize active axes to all.
-            m_ActiveAxesModel = progridsSnapEnabled && !snapAxisConstraint
+            m_ActiveAxesModel = worldSnapEnabled && !snapAxisConstraint
                 ? Vector3Mask.XYZ
                 : new Vector3Mask(0x0);
 
@@ -30,7 +30,8 @@ namespace UnityEditor.ProBuilder
             m_DirectionOriginInitialized = false;
 #endif
 
-            m_SnapAsGroup = progridsSnapEnabled && ProGridsInterface.GetProGridsSnapAsGroup();
+            // Snap as group preference is only respected when snap mode is "World"
+            m_SnapAsGroup = worldSnapEnabled && ProBuilderSnapSettings.snapAsGroup;
         }
 
         protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
@@ -79,7 +80,7 @@ namespace UnityEditor.ProBuilder
                         }
                     }
                 }
-                else if (progridsSnapEnabled)
+                else if (worldSnapEnabled)
                 {
                     if (snapAxisConstraint)
                     {
@@ -88,20 +89,20 @@ namespace UnityEditor.ProBuilder
 
                         if (m_ActiveAxesWorld.active == 1)
                         {
-                            m_HandlePosition = ProGridsSnapping.SnapValueOnRay(
+                            m_HandlePosition = ProBuilderSnapping.SnapValueOnRay(
                                 new Ray(handlePositionOrigin, delta),
                                 delta.magnitude,
-                                progridsSnapValue,
+                                GetSnapValueForAxis(m_ActiveAxesModel),
                                 m_ActiveAxesWorld);
                         }
                         else
                         {
-                            m_HandlePosition = ProGridsSnapping.SnapValue(m_HandlePosition, progridsSnapValue);
+                            m_HandlePosition = ProBuilderSnapping.SnapValue(m_HandlePosition, snapValue);
                         }
                     }
                     else
                     {
-                        m_HandlePosition = ProGridsSnapping.SnapValue(m_HandlePosition, progridsSnapValue);
+                        m_HandlePosition = ProBuilderSnapping.SnapValue(m_HandlePosition, snapValue);
                     }
 
                     delta = m_HandlePosition - handlePositionOrigin;
@@ -154,16 +155,16 @@ namespace UnityEditor.ProBuilder
                         // res += translation
                         // res = Group post-apply matrix * res
                         // positions[i] = mesh.worldToLocal * res
-                        if (progridsSnapEnabled && !m_SnapAsGroup)
+                        if (worldSnapEnabled && !m_SnapAsGroup)
                         {
                             if (snapAxisConstraint && m_ActiveAxesWorld.active == 1)
                             {
                                 var wp = postApplyMatrix.MultiplyPoint3x4(preApplyMatrix.MultiplyPoint3x4(origins[index]));
 
-                                var snap = ProGridsSnapping.SnapValueOnRay(
+                                var snap = ProBuilderSnapping.SnapValueOnRay(
                                     new Ray(wp, m_RawHandleDelta),
                                     translationMagnitude,
-                                    progridsSnapValue,
+                                    GetSnapValueForAxis(m_ActiveAxesWorld),
                                     m_ActiveAxesWorld);
 
                                 positions[index] = worldToLocal.MultiplyPoint3x4(snap);
@@ -171,7 +172,7 @@ namespace UnityEditor.ProBuilder
                             else
                             {
                                 var wp = postApplyMatrix.MultiplyPoint3x4(translation + preApplyMatrix.MultiplyPoint3x4(origins[index]));
-                                var snap = ProGridsSnapping.SnapValue(wp, Vector3.one * progridsSnapValue);
+                                var snap = ProBuilderSnapping.SnapValue(wp, snapValue);
                                 positions[index] = worldToLocal.MultiplyPoint3x4(snap);
                             }
                         }

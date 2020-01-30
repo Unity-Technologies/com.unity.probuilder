@@ -11,37 +11,6 @@ namespace UnityEditor.ProBuilder
         const bool k_CollectCoincidentVertices = false;
         protected const int k_TextureChannel = 0;
 
-        const string UnityMoveSnapX = "MoveSnapX";
-        const string UnityMoveSnapY = "MoveSnapY";
-        const string UnityMoveSnapZ = "MoveSnapZ";
-        const string UnityScaleSnap = "ScaleSnap";
-        const string UnityRotateSnap = "RotationSnap";
-
-        protected static float relativeSnapX
-        {
-            get { return EditorPrefs.GetFloat(UnityMoveSnapX, 1f); }
-        }
-
-        protected static float relativeSnapY
-        {
-            get { return EditorPrefs.GetFloat(UnityMoveSnapY, 1f); }
-        }
-
-        protected static float relativeSnapZ
-        {
-            get { return EditorPrefs.GetFloat(UnityMoveSnapZ, 1f); }
-        }
-
-        protected static float relativeSnapScale
-        {
-            get { return EditorPrefs.GetFloat(UnityScaleSnap, .1f); }
-        }
-
-        protected static float relativeSnapRotation
-        {
-            get { return EditorPrefs.GetFloat(UnityRotateSnap, 15f); }
-        }
-
         protected class MeshAndTextures : MeshAndElementSelection
         {
             List<Vector4> m_Origins;

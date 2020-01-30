@@ -548,7 +548,7 @@ namespace UnityEditor.ProBuilder
                     {
                         UndoUtility.RecordObject(polygon, "Move Polygon Shape Point");
 
-                        Vector3 snapMask = ProGridsSnapping.GetSnappingMaskBasedOnNormalVector(m_Plane.normal);
+                        Vector3 snapMask = ProBuilderSnapping.GetSnappingMaskBasedOnNormalVector(m_Plane.normal);
                         polygon.m_Points[ii] = ProGridsInterface.ProGridsSnap(trs.InverseTransformPoint(point), snapMask);
                         OnBeginVertexMovement();
                         RebuildPolyShapeMesh(false);

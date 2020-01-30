@@ -1180,7 +1180,7 @@ namespace UnityEditor.ProBuilder
                     continue;
 
                 var indexes = mesh.GetCoincidentVertices(mesh.selectedIndexesInternal);
-                ProGridsSnapping.SnapVertices(mesh, indexes, Vector3.one * snapVal);
+                ProBuilderSnapping.SnapVertices(mesh, indexes, Vector3.one * snapVal);
 
                 mesh.ToMesh();
                 mesh.Refresh();
@@ -1192,7 +1192,7 @@ namespace UnityEditor.ProBuilder
 
         void ProGridsToolbarOpen(bool menuOpen)
         {
-            bool active = ProGridsInterface.ProGridsActive();
+            bool active = ProGridsInterface.IsActive();
             m_SceneInfoRect.y = active && !menuOpen ? 28 : 10;
             m_SceneInfoRect.x = active ? (menuOpen ? 64 : 8) : 10;
         }
