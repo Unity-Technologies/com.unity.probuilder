@@ -154,7 +154,7 @@ namespace UnityEditor.ProBuilder
             UI.EditorGUIUtility.DrawSeparator(2);
             GUI.backgroundColor = Color.white;
 
-            operation = (BooleanOp)EditorGUILayout.EnumPopup("Operation", operation);
+            operation = (BooleanOp) EditorGUILayout.EnumPopup("Operation", operation);
 
             if (GUILayout.Button("Apply"))
             {
@@ -345,9 +345,10 @@ namespace UnityEditor.ProBuilder
 
             var materials = result.materials.ToArray();
             ProBuilderMesh pb = ProBuilderMesh.Create();
+            pb.GetComponent<MeshFilter>().sharedMesh = (Mesh) result;
             pb.GetComponent<MeshRenderer>().sharedMaterials = materials;
-            MeshImporter importer = new MeshImporter(pb);
-            importer.Import((Mesh)result, materials, new MeshImportSettings() { quads = true, smoothing = true, smoothingAngle = 1f });
+            MeshImporter importer = new MeshImporter(pb.gameObject);
+            importer.Import(new MeshImportSettings() { quads = true, smoothing = true, smoothingAngle = 1f });
             pb.Rebuild();
             pb.CenterPivot(null);
             Selection.objects = new Object[] { pb.gameObject };
