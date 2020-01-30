@@ -101,11 +101,11 @@ namespace UnityEditor.ProBuilder
         public void ShowInternal(Rect rect, TooltipContent content)
         {
             this.content = content;
-
             Vector2 size = content.CalcSize();
 
             Vector2 p = new Vector2(rect.x + rect.width + k_PositionPadding, rect.y);
-            // if(p.x > Screen.width) p.x = rect.x - POSITION_PADDING - size.x;
+             if((p.x + size.x) > Screen.currentResolution.width)
+                p.x = rect.x - k_PositionPadding - size.x;
 
             this.minSize = size;
             this.maxSize = size;

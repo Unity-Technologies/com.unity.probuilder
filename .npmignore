@@ -1,4 +1,5 @@
 # Template
+
 upm-ci~/**
 .Editor/**
 .yamato/**
@@ -23,5 +24,7 @@ UpgradeProjects~
 # Internal package files
 QAReport.md
 QAReport.md.meta
+COMPATIBILITY.md
+COMPATIBILITY.md.meta
 
 TestRunnerOptions.json

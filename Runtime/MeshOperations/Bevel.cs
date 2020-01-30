@@ -199,8 +199,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 else
                 {
                     List<int> holePath = WingedEdge.SortCommonIndexesByAdjacency(modified, h);
-                    List<Vertex> v = new List<Vertex>(mesh.GetVertices(holePath.Select(x => sharedIndexes[x][0]).ToList()));
-                    holeFaces.AddRange(AppendElements.TentCapWithVertices(v));
+                    if (holePath != null)
+                    {
+                        List<Vertex> v =
+                            new List<Vertex>(mesh.GetVertices(holePath.Select(x => sharedIndexes[x][0]).ToList()));
+                        holeFaces.AddRange(AppendElements.TentCapWithVertices(v));
+                    }
                 }
             }
 
@@ -234,7 +238,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                         {
                             var w = it.Current;
 
-                            if (!newHoles.Contains(w.opposite.face))
+                            if (w.opposite != null && !newHoles.Contains(w.opposite.face))
                             {
                                 w.face.submeshIndex = w.opposite.face.submeshIndex;
                                 w.face.uv = new AutoUnwrapSettings(w.opposite.face.uv);

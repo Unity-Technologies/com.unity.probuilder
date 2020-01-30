@@ -1332,6 +1332,11 @@ namespace UnityEngine.ProBuilder
             return (int)Mathf.Abs(mask.x) + (int)Mathf.Abs(mask.y) + (int)Mathf.Abs(mask.z);
         }
 
+        internal static float Sum(this Vector3 v)
+        {
+            return Mathf.Abs(v.x) + Mathf.Abs(v.y) + Mathf.Abs(v.z);
+        }
+
         /// <summary>
         /// Non-allocating cross product.
         /// </summary>

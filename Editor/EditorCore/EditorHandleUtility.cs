@@ -17,7 +17,6 @@ namespace UnityEditor.ProBuilder
         {
             return e.alt
                 || Tools.current == Tool.View
-                || GUIUtility.hotControl > 0
                 || (e.isMouse && e.button > 0)
                 || Tools.viewTool == ViewTool.FPS
                 || Tools.viewTool == ViewTool.Orbit;
@@ -558,7 +557,7 @@ namespace UnityEditor.ProBuilder
 
         static bool GetPlaneFromProGridsAxis(Vector2 mousePosition, out Plane plane)
         {
-            if (!ProGridsInterface.ProGridsActive() || !ProGridsInterface.GridVisible())
+            if (!ProGridsInterface.IsActive() || !ProGridsInterface.GridVisible())
             {
                 plane = default(Plane);
                 return false;

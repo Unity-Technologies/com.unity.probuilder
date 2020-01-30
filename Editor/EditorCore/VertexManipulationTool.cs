@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -19,6 +18,8 @@ namespace UnityEditor.ProBuilder
 {
     abstract class VertexManipulationTool
     {
+        const float k_DefaultSnapValue = .25f;
+
         static Pref<HandleOrientation> s_HandleOrientation = new Pref<HandleOrientation>("editor.handleOrientation", HandleOrientation.World, SettingsScope.User);
         static Pref<PivotPoint> s_PivotPoint = new Pref<PivotPoint>("editor.pivotPoint", PivotPoint.Center, SettingsScope.User);
 
@@ -146,9 +147,10 @@ namespace UnityEditor.ProBuilder
         Quaternion m_HandleRotationOrigin;
         bool m_IsEditing;
 
-        float m_ProgridsSnapValue = .25f;
+        Vector3 m_MoveSnapValue = new Vector3(k_DefaultSnapValue, k_DefaultSnapValue, k_DefaultSnapValue);
         bool m_SnapAxisConstraint = true;
-        bool m_ProgridsSnapEnabled;
+        bool m_WorldSnapEnabled;
+
         static bool s_Initialized;
         static FieldInfo s_VertexDragging;
         static MethodInfo s_FindNearestVertex;
@@ -187,9 +189,9 @@ namespace UnityEditor.ProBuilder
             get { return m_HandleRotationOrigin; }
         }
 
-        protected float progridsSnapValue
+        protected Vector3 snapValue
         {
-            get { return m_ProgridsSnapValue; }
+            get { return m_MoveSnapValue; }
         }
 
         protected bool snapAxisConstraint
@@ -197,14 +199,19 @@ namespace UnityEditor.ProBuilder
             get { return m_SnapAxisConstraint; }
         }
 
-        protected bool progridsSnapEnabled
+        protected bool worldSnapEnabled
         {
-            get { return m_ProgridsSnapEnabled; }
+            get { return m_WorldSnapEnabled; }
         }
 
         protected bool relativeSnapEnabled
         {
-            get { return currentEvent.control; }
+            get { return ProBuilderSnapSettings.snapMode == SnapMode.Relative; }
+        }
+
+        protected float GetSnapValueForAxis(Vector3Mask axes)
+        {
+            return UnityEngine.ProBuilder.Math.Sum(axes * snapValue);
         }
 
         static void Init()
@@ -290,9 +297,9 @@ namespace UnityEditor.ProBuilder
 
             m_IsEditing = true;
 
-            m_ProgridsSnapEnabled = ProGridsInterface.SnapEnabled();
-            m_ProgridsSnapValue = ProGridsInterface.SnapValue();
-            m_SnapAxisConstraint = ProGridsInterface.UseAxisConstraints();
+            m_WorldSnapEnabled = ProBuilderSnapSettings.snapMode == SnapMode.World;
+            m_SnapAxisConstraint = ProBuilderSnapSettings.snapMethod == SnapAxis.ActiveAxis; ProGridsInterface.UseAxisConstraints();
+            m_MoveSnapValue = m_WorldSnapEnabled ? ProBuilderSnapSettings.worldSnapMoveValue : ProBuilderSnapSettings.incrementalSnapMoveValue;
 
             foreach (var mesh in selection)
             {

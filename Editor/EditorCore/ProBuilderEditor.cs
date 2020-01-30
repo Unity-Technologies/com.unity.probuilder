@@ -23,9 +23,6 @@ namespace UnityEditor.ProBuilder
         // Match the value set in RectSelection.cs
         const float k_MouseDragThreshold = 6f;
 
-        //Off pointer multiplier is a percentage of the picking distance
-        const float k_OffPointerMultiplierPercent = 0.1f;
-
         /// <value>
         /// Raised any time the ProBuilder editor refreshes the selection. This is called every frame when interacting with mesh elements, and after any mesh operation.
         /// </value>
@@ -68,8 +65,6 @@ namespace UnityEditor.ProBuilder
 
         [UserSetting("Toolbar", "Toolbar Location", "Where the Object, Face, Edge, and Vertex toolbar will be shown in the Scene View.")]
         static Pref<SceneToolbarLocation> s_SceneToolbarLocation = new Pref<SceneToolbarLocation>("editor.sceneToolbarLocation", SceneToolbarLocation.UpperCenter, SettingsScope.User);
-
-        const float k_PickingDistance = 40f;
 
         static Pref<bool> s_WindowIsFloating = new Pref<bool>("UnityEngine.ProBuilder.ProBuilderEditor-isUtilityWindow", false, SettingsScope.Project);
         static Pref<bool> m_BackfaceSelectEnabled = new Pref<bool>("editor.backFaceSelectEnabled", false);
@@ -398,8 +393,6 @@ namespace UnityEditor.ProBuilder
 
             m_ScenePickerPreferences = new ScenePickerPreferences()
             {
-                offPointerMultiplier = k_PickingDistance * k_OffPointerMultiplierPercent,
-                maxPointerDistance = k_PickingDistance,
                 cullMode = m_BackfaceSelectEnabled ? CullingMode.None : CullingMode.Back,
                 selectionModifierBehavior = m_SelectModifierBehavior,
                 rectSelectMode = m_DragSelectRectMode
@@ -632,9 +625,8 @@ namespace UnityEditor.ProBuilder
             {
                 m_Hovering.CopyTo(m_HoveringPrevious);
 
-                if (GUIUtility.hotControl == 0)
-                    EditorSceneViewPicker.MouseRayHitTest(m_CurrentEvent.mousePosition, selectMode, m_ScenePickerPreferences, m_Hovering);
-                else
+                if (GUIUtility.hotControl != 0 ||
+                    EditorSceneViewPicker.MouseRayHitTest(m_CurrentEvent.mousePosition, selectMode, m_ScenePickerPreferences, m_Hovering) > ScenePickerPreferences.maxPointerDistance)
                     m_Hovering.Clear();
 
                 if (!m_Hovering.Equals(m_HoveringPrevious))
@@ -661,15 +653,20 @@ namespace UnityEditor.ProBuilder
             if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent) || m_CurrentEvent.isKey)
             {
                 m_IsDragging = false;
+
+                if (GUIUtility.hotControl == m_DefaultControl)
+                    GUIUtility.hotControl = 0;
+
                 return;
             }
 
             // This prevents us from selecting other objects in the scene,
             // and allows for the selection of faces / vertices.
             m_DefaultControl = GUIUtility.GetControlID(FocusType.Passive);
-            HandleUtility.AddDefaultControl(m_DefaultControl);
+            if (Event.current.type == EventType.Layout)
+                HandleUtility.AddDefaultControl(m_DefaultControl);
 
-            if (m_CurrentEvent.type == EventType.MouseDown)
+            if (m_CurrentEvent.type == EventType.MouseDown && HandleUtility.nearestControl == m_DefaultControl)
             {
                 // double clicking object
                 if (m_CurrentEvent.clickCount > 1)
@@ -681,9 +678,11 @@ namespace UnityEditor.ProBuilder
                 // readyForMouseDrag prevents a bug wherein after ending a drag an errant
                 // MouseDrag event is sent with no corresponding MouseDown/MouseUp event.
                 m_IsReadyForMouseDrag = true;
+
+                GUIUtility.hotControl = m_DefaultControl;
             }
 
-            if (m_CurrentEvent.type == EventType.MouseDrag && m_IsReadyForMouseDrag)
+            if (m_CurrentEvent.type == EventType.MouseDrag && m_IsReadyForMouseDrag && GUIUtility.hotControl == m_DefaultControl)
             {
                 if (!m_IsDragging && Vector2.Distance(m_CurrentEvent.mousePosition, m_InitialMousePosition) > k_MouseDragThreshold)
                 {
@@ -703,10 +702,15 @@ namespace UnityEditor.ProBuilder
 
                 if (m_WasDoubleClick)
                     m_WasDoubleClick = false;
+
+                if (GUIUtility.hotControl == m_DefaultControl)
+                    GUIUtility.hotControl = 0;
             }
 
-            if (m_CurrentEvent.type == EventType.MouseUp)
+            if (m_CurrentEvent.type == EventType.MouseUp && GUIUtility.hotControl == m_DefaultControl)
             {
+                GUIUtility.hotControl = 0;
+
                 if (m_WasDoubleClick)
                 {
                     m_WasDoubleClick = false;
@@ -731,6 +735,9 @@ namespace UnityEditor.ProBuilder
                             UVEditor.instance.ResetUserPivot();
 
                         EditorSceneViewPicker.DoMouseDrag(m_MouseDragRect, selectMode, m_ScenePickerPreferences);
+
+                        if (GUIUtility.hotControl == m_DefaultControl)
+                            GUIUtility.hotControl = 0;
                     }
                 }
             }
@@ -1173,7 +1180,7 @@ namespace UnityEditor.ProBuilder
                     continue;
 
                 var indexes = mesh.GetCoincidentVertices(mesh.selectedIndexesInternal);
-                ProGridsSnapping.SnapVertices(mesh, indexes, Vector3.one * snapVal);
+                ProBuilderSnapping.SnapVertices(mesh, indexes, Vector3.one * snapVal);
 
                 mesh.ToMesh();
                 mesh.Refresh();
@@ -1185,7 +1192,7 @@ namespace UnityEditor.ProBuilder
 
         void ProGridsToolbarOpen(bool menuOpen)
         {
-            bool active = ProGridsInterface.ProGridsActive();
+            bool active = ProGridsInterface.IsActive();
             m_SceneInfoRect.y = active && !menuOpen ? 28 : 10;
             m_SceneInfoRect.x = active ? (menuOpen ? 64 : 8) : 10;
         }
