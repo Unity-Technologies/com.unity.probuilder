@@ -315,6 +315,7 @@ namespace UnityEditor.ProBuilder
             ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
             ProGridsInterface.SubscribeToolbarEvent(ProGridsToolbarOpen);
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
+            ProBuilderMesh.elementSelectionChanged += OnElementSelectionChanged;
 
             ProGridsToolbarOpen(ProGridsInterface.SceneToolbarIsExtended());
 
@@ -344,7 +345,7 @@ namespace UnityEditor.ProBuilder
             if (s_EditorToolbar != null)
                 DestroyImmediate(s_EditorToolbar);
 
-            ClearElementSelection();
+            MeshSelection.ClearElementSelection();
 
             UpdateSelection();
 
@@ -1085,14 +1086,6 @@ namespace UnityEditor.ProBuilder
                     MeshSelection.selectedVertexCount.ToString());
         }
 
-        internal void ClearElementSelection()
-        {
-            foreach (ProBuilderMesh pb in selection)
-                pb.ClearSelection();
-
-            m_Hovering.Clear();
-        }
-
         /// <summary>
         /// If dragging a texture aroudn, this method ensures that if it's a member of a texture group it's cronies are also selected
         /// </summary>
@@ -1138,6 +1131,12 @@ namespace UnityEditor.ProBuilder
             m_Hovering.Clear();
             UpdateSelection();
             SetOverrideWireframe(true);
+        }
+
+        void OnElementSelectionChanged(ProBuilderMesh mesh)
+        {
+            m_Hovering.Clear();
+            UpdateSelection();
         }
 
         /// <summary>

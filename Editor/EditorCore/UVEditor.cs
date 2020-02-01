@@ -953,7 +953,7 @@ namespace UnityEditor.ProBuilder
                             UndoUtility.RecordSelection(selection, "Change Selection");
 
                             if (Event.current.modifiers == (EventModifiers)0 && editor)
-                                editor.ClearElementSelection();
+                                MeshSelection.ClearElementSelection();
 
                             OnMouseClick(e.mousePosition);
 
@@ -1278,7 +1278,7 @@ namespace UnityEditor.ProBuilder
             if (editor && !e.shift && !e.control && !e.command)
             {
                 UndoUtility.RecordSelection(selection, "Change Selection");
-                editor.ClearElementSelection();
+                MeshSelection.ClearElementSelection();
             }
 
             RefreshUVCoordinates(dragRect, false);

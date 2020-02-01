@@ -112,7 +112,7 @@ namespace UnityEditor.ProBuilder
             EditorMeshUtility.meshOptimized += (x, y) => { s_TotalElementCountCacheIsDirty = true; };
             ProBuilderMesh.componentWillBeDestroyed += RemoveMeshFromSelectionInternal;
             ProBuilderMesh.componentHasBeenReset += RefreshSelectionAfterComponentReset;
-            OnObjectSelectionChanged();
+            EditorApplication.delayCall += OnObjectSelectionChanged;
         }
 
         /// <value>
@@ -146,10 +146,29 @@ namespace UnityEditor.ProBuilder
 
         static HashSet<ProBuilderMesh> s_UnitySelectionChangeMeshes = new HashSet<ProBuilderMesh>();
 
+        static void Internal_Clear()
+        {
+            s_TopSelection.Clear();
+            s_ElementSelection.Clear();
+            s_ActiveMesh = null;
+            selectedObjectCount = 0;
+            s_SelectionBoundsDirty = true;
+
+            InvalidateElementSelection();
+
+            s_TotalElementCountCacheIsDirty = true;
+            s_SelectedFacesInEditAreaDirty = true;
+            s_SelectedElementGroupsDirty = true;
+            s_SelectionBoundsDirty = true;
+
+        }
+
         internal static void OnObjectSelectionChanged()
         {
-            // GameObjects returns both parent and child when both are selected, where transforms only returns the top-most
-            // transform.
+            Debug.Log("OnObjectSelectionChanged");
+
+            // GameObjects returns both parent and child when both are selected, where transforms only returns the
+            // top-most transform.
             s_UnitySelectionChangeMeshes.Clear();
             s_ElementSelection.Clear();
             s_ActiveMesh = null;
@@ -419,9 +438,16 @@ namespace UnityEditor.ProBuilder
             Selection.objects = temp;
         }
 
-        internal static void RemoveFromSelection(GameObject t)
+        internal static void RemoveFromSelection(ProBuilderMesh mesh)
         {
-            int ind = System.Array.IndexOf(Selection.objects, t);
+            RemoveGameObjectFromSelection(mesh.gameObject);
+            RemoveMeshFromSelectionInternal(mesh);
+        }
+
+        internal static void RemoveGameObjectFromSelection(GameObject gameObject)
+        {
+            int ind = System.Array.IndexOf(Selection.objects, gameObject);
+
             if (ind < 0)
                 return;
 
@@ -435,7 +461,7 @@ namespace UnityEditor.ProBuilder
 
             Selection.objects = temp;
 
-            if (Selection.activeGameObject == t)
+            if (Selection.activeGameObject == gameObject)
                 Selection.activeObject = temp.FirstOrDefault();
         }
 
@@ -471,6 +497,7 @@ namespace UnityEditor.ProBuilder
         {
             if (s_TopSelection.Contains(mesh))
                 s_TopSelection.Remove(mesh);
+            SelectionManager.instance.Remove(mesh);
         }
 
         internal static void RefreshSelectionAfterComponentReset(ProBuilderMesh mesh)
@@ -512,11 +539,8 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         public static void ClearElementSelection()
         {
-            if (ProBuilderEditor.instance)
-                ProBuilderEditor.instance.ClearElementSelection();
+            SelectionManager.instance.Clear();
             s_TotalElementCountCacheIsDirty = true;
-            if (objectSelectionChanged != null)
-                objectSelectionChanged();
         }
 
         /// <summary>
@@ -524,9 +548,9 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         public static void ClearElementAndObjectSelection()
         {
-            if (ProBuilderEditor.instance)
-                ProBuilderEditor.instance.ClearElementSelection();
             Selection.objects = new Object[0];
+            s_TopSelection.Clear();
+            SelectionManager.instance.Clear();
         }
 
         internal static Vector3 GetHandlePosition()

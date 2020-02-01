@@ -171,7 +171,7 @@ namespace UnityEditor.ProBuilder
             if (m_PreviewObject != null)
             {
                 if (Selection.Contains(m_PreviewObject.gameObject))
-                    MeshSelection.RemoveFromSelection(m_PreviewObject.gameObject);
+                    MeshSelection.RemoveGameObjectFromSelection(m_PreviewObject.gameObject);
 
                 if (m_PreviewObject.GetComponent<MeshFilter>().sharedMesh != null)
                     DestroyImmediate(m_PreviewObject.GetComponent<MeshFilter>().sharedMesh);

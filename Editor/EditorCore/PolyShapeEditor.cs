@@ -140,8 +140,7 @@ namespace UnityEditor.ProBuilder
             {
                 if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
                 {
-                    if (ProBuilderEditor.instance != null)
-                        ProBuilderEditor.instance.ClearElementSelection();
+                    MeshSelection.ClearElementSelection();
 
                     UndoUtility.RecordObject(polygon, "Change Polygon Shape Settings");
                     UndoUtility.RecordObject(polygon.mesh, "Change Polygon Shape Settings");
@@ -180,8 +179,7 @@ namespace UnityEditor.ProBuilder
                 // not intentional user can revert.
                 if (polygon.polyEditMode == PolyShape.PolyEditMode.None && polygon.m_Points.Count > 2)
                 {
-                    if (ProBuilderEditor.instance != null)
-                        ProBuilderEditor.instance.ClearElementSelection();
+                    MeshSelection.ClearElementSelection();
 
                     UndoUtility.RecordObject(polygon, "Edit Polygon Shape");
                     UndoUtility.RecordObject(polygon.mesh, "Edit Polygon Shape");
@@ -251,7 +249,7 @@ namespace UnityEditor.ProBuilder
             // advantage of the `vertexCountChanged = false` optimization here.
             ProBuilderEditor.Refresh();
         }
-        
+
         void DuringSceneGUI(SceneView sceneView)
         {
             if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
@@ -304,7 +302,7 @@ namespace UnityEditor.ProBuilder
             m_ControlId = GUIUtility.GetControlID(FocusType.Passive);
             if (evt.type == EventType.Layout)
                 HandleUtility.AddDefaultControl(m_ControlId);
-            
+
             DoPointPlacement();
         }
 

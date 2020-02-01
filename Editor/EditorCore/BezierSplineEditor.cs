@@ -256,12 +256,9 @@ namespace UnityEditor.ProBuilder
 
             if (isEditing && !m_IsEditing)
             {
-                if (ProBuilderEditor.instance != null)
-                    ProBuilderEditor.instance.ClearElementSelection();
-
+                MeshSelection.ClearElementSelection();
                 UndoUtility.RecordObject(m_Target, "Edit Bezier Shape");
                 UndoUtility.RecordObject(m_Target.mesh, "Edit Bezier Shape");
-
                 UpdateMesh(true);
             }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine.Serialization;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using UnityEngine.Rendering;
 
 namespace UnityEngine.ProBuilder
@@ -130,6 +131,18 @@ namespace UnityEngine.ProBuilder
 
         [NonSerialized]
         MeshRenderer m_MeshRenderer;
+
+        [SerializeField]
+        bool m_IsSelectable = true;
+
+        /// <value>
+        /// If false mesh elements will not be selectable. This is used by @"UnityEditor.ProBuilder.ProBuilderEditor".
+        /// </value>
+        public bool selectable
+        {
+            get { return m_IsSelectable; }
+            set { m_IsSelectable = value; }
+        }
 
 #pragma warning disable 109
         internal new MeshRenderer renderer
@@ -263,7 +276,7 @@ namespace UnityEngine.ProBuilder
             InvalidateSharedVertexLookup();
             InvalidateSharedTextureLookup();
             InvalidateFaces();
-            m_SelectedCacheDirty = true;
+            selection.InvalidateCache();
         }
 
         internal SharedVertex[] sharedVerticesInternal
@@ -810,7 +823,17 @@ namespace UnityEngine.ProBuilder
         /// <seealso cref="SetSelectedFaces"/>
         /// <seealso cref="SetSelectedVertices"/>
         /// <seealso cref="SetSelectedEdges"/>
+        [Obsolete("Use MeshSelection.elementSelectionChanged")]
         public static event Action<ProBuilderMesh> elementSelectionChanged;
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal void InvokeElementSelectionChanged()
+        {
+#pragma warning disable 619
+            if (elementSelectionChanged != null)
+                elementSelectionChanged(this);
+#pragma warning restore
+        }
 
         internal Mesh mesh
         {

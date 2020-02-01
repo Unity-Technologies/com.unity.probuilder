@@ -37,6 +37,7 @@ namespace UnityEditor.ProBuilder
 		}
 
 		static bool s_DisplayElementGroups = true;
+        static bool s_DisplaySelection = true;
 
 		void OnEnable()
 		{
@@ -73,6 +74,28 @@ namespace UnityEditor.ProBuilder
 					}
 				}
 			}
+
+            s_DisplaySelection = EditorGUILayout.Foldout(s_DisplaySelection, "Selection");
+
+            if (s_DisplaySelection)
+            {
+                foreach (var kvp in SelectionManager.instance.selection)
+                {
+                    GUILayout.Label(kvp.Key.name);
+
+                    var collection = kvp.Value;
+                    Styles.BeginRow();
+                    GUILayout.Label($"Faces: {collection.selectedFaceCount}");
+                    Styles.EndRow();
+                    Styles.BeginRow();
+                    GUILayout.Label($"Edges: {collection.selectedEdgeCount}");
+                    Styles.EndRow();
+                    Styles.BeginRow();
+                    GUILayout.Label($"Verts: {collection.selectedVertexCount}");
+                    Styles.EndRow();
+                }
+            }
+
 		}
 	}
 }

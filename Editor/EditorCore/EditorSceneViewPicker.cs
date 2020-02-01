@@ -51,15 +51,13 @@ namespace UnityEditor.ProBuilder
 
             if (!appendModifier)
             {
-                if(s_Selection.mesh != null)
-                    s_Selection.mesh.ClearSelection();
                 MeshSelection.SetSelection((GameObject)null);
             }
 
             if (pickedElementDistance > ScenePickerPreferences.maxPointerDistance)
             {
                 if (appendModifier && Selection.gameObjects.Contains(s_Selection.gameObject))
-                    MeshSelection.RemoveFromSelection(s_Selection.gameObject);
+                    MeshSelection.RemoveFromSelection(s_Selection.mesh);
                 else
                     MeshSelection.AddToSelection(s_Selection.gameObject);
 

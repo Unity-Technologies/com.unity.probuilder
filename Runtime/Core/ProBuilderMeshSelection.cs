@@ -2,35 +2,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Collections.ObjectModel;
+using UnityEditor.ProBuilder;
 
 namespace UnityEngine.ProBuilder
 {
     public sealed partial class ProBuilderMesh
     {
-        [SerializeField]
-        bool m_IsSelectable = true;
-
-        // Serialized for undo in the editor
-        [SerializeField]
-        int[] m_SelectedFaces = new int[] {};
-        [SerializeField]
-        Edge[] m_SelectedEdges = new Edge[] {};
-        [SerializeField]
-        int[] m_SelectedVertices = new int[] {};
-
-        bool m_SelectedCacheDirty;
-        int m_SelectedSharedVerticesCount = 0;
-        int m_SelectedCoincidentVertexCount = 0;
-        HashSet<int> m_SelectedSharedVertices = new HashSet<int>();
-        List<int> m_SelectedCoincidentVertices = new List<int>();
-
-        /// <value>
-        /// If false mesh elements will not be selectable. This is used by @"UnityEditor.ProBuilder.ProBuilderEditor".
-        /// </value>
-        public bool selectable
+        internal ElementCollection selection
         {
-            get { return m_IsSelectable; }
-            set { m_IsSelectable = value; }
+            get { return SelectionManager.instance.GetOrCreateSelection(this); }
         }
 
         /// <value>
@@ -38,7 +18,7 @@ namespace UnityEngine.ProBuilder
         /// </value>
         public int selectedFaceCount
         {
-            get { return m_SelectedFaces.Length; }
+            get { return selection.selectedFaceCount; }
         }
 
         /// <value>
@@ -46,7 +26,7 @@ namespace UnityEngine.ProBuilder
         /// </value>
         public int selectedVertexCount
         {
-            get { return m_SelectedVertices.Length; }
+            get { return selection.selectedVertexCount; }
         }
 
         /// <value>
@@ -54,34 +34,22 @@ namespace UnityEngine.ProBuilder
         /// </value>
         public int selectedEdgeCount
         {
-            get { return m_SelectedEdges.Length; }
+            get { return selection.selectedEdgeCount; }
         }
 
         internal int selectedSharedVerticesCount
         {
-            get
-            {
-                CacheSelection();
-                return m_SelectedSharedVerticesCount;
-            }
+            get { return selection.selectedSharedVerticesCount; }
         }
 
         internal int selectedCoincidentVertexCount
         {
-            get
-            {
-                CacheSelection();
-                return m_SelectedCoincidentVertexCount;
-            }
+            get { return selection.selectedCoincidentVertexCount; }
         }
 
         internal IEnumerable<int> selectedSharedVertices
         {
-            get
-            {
-                CacheSelection();
-                return m_SelectedSharedVertices;
-            }
+            get { return selection.selectedSharedVertices; }
         }
 
         /// <summary>
@@ -89,45 +57,7 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         internal IEnumerable<int> selectedCoincidentVertices
         {
-            get
-            {
-                CacheSelection();
-                return m_SelectedCoincidentVertices;
-            }
-        }
-
-        void CacheSelection()
-        {
-            if (m_SelectedCacheDirty)
-            {
-                m_SelectedCacheDirty = false;
-                m_SelectedSharedVertices.Clear();
-                m_SelectedCoincidentVertices.Clear();
-                var lookup = sharedVertexLookup;
-                m_SelectedSharedVerticesCount = 0;
-                m_SelectedCoincidentVertexCount = 0;
-
-                try
-                {
-                    foreach (var i in m_SelectedVertices)
-                    {
-                        if (m_SelectedSharedVertices.Add(lookup[i]))
-                        {
-                            var coincident = sharedVerticesInternal[lookup[i]];
-
-                            m_SelectedSharedVerticesCount++;
-                            m_SelectedCoincidentVertexCount += coincident.Count;
-
-                            foreach (var n in coincident)
-                                m_SelectedCoincidentVertices.Add(n);
-                        }
-                    }
-                }
-                catch
-                {
-                    ClearSelection();
-                }
-            }
+            get { return selection.selectedCoincidentVertices; }
         }
 
         /// <summary>
@@ -135,11 +65,7 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         public Face[] GetSelectedFaces()
         {
-            int len = m_SelectedFaces.Length;
-            var selected = new Face[len];
-            for (var i = 0; i < len; i++)
-                selected[i] = m_Faces[m_SelectedFaces[i]];
-            return selected;
+            return selection.GetSelectedFaces();
         }
 
         /// <value>
@@ -147,7 +73,7 @@ namespace UnityEngine.ProBuilder
         /// </value>
         public ReadOnlyCollection<int> selectedFaceIndexes
         {
-            get { return new ReadOnlyCollection<int>(m_SelectedFaces); }
+            get { return selection.selectedFaceIndexes; }
         }
 
         /// <value>
@@ -155,7 +81,7 @@ namespace UnityEngine.ProBuilder
         /// </value>
         public ReadOnlyCollection<int> selectedVertices
         {
-            get { return new ReadOnlyCollection<int>(m_SelectedVertices); }
+            get { return selection.selectedVertices; }
         }
 
         /// <value>
@@ -163,31 +89,31 @@ namespace UnityEngine.ProBuilder
         /// </value>
         public ReadOnlyCollection<Edge> selectedEdges
         {
-            get { return new ReadOnlyCollection<Edge>(m_SelectedEdges); }
+            get { return selection.selectedEdges; }
         }
 
         internal Face[] selectedFacesInternal
         {
-            get { return GetSelectedFaces(); }
-            set { m_SelectedFaces = value.Select(x => Array.IndexOf(m_Faces, x)).ToArray(); }
+            get { return selection.selectedFacesInternal; }
+            set { selection.selectedFacesInternal = value; }
         }
 
         internal int[] selectedFaceIndicesInternal
         {
-            get { return m_SelectedFaces; }
-            set { m_SelectedFaces = value; }
+            get { return selection.selectedFaceIndicesInternal; }
+            set { selection.selectedFaceIndicesInternal = value; }
         }
 
         internal Edge[] selectedEdgesInternal
         {
-            get { return m_SelectedEdges; }
-            set { m_SelectedEdges = value; }
+            get { return selection.selectedEdgesInternal; }
+            set { selection.selectedEdgesInternal = value; }
         }
 
         internal int[] selectedIndexesInternal
         {
-            get { return m_SelectedVertices; }
-            set { m_SelectedVertices = value; }
+            get { return selection.selectedIndexesInternal; }
+            set { selection.selectedIndexesInternal = value; }
         }
 
         internal Face GetActiveFace()
@@ -199,22 +125,17 @@ namespace UnityEngine.ProBuilder
 
         internal Edge GetActiveEdge()
         {
-            if (selectedEdgeCount < 1)
-                return Edge.Empty;
-            return m_SelectedEdges[selectedEdgeCount - 1];
+            return selection.GetActiveEdge();
         }
 
         internal int GetActiveVertex()
         {
-            if (selectedVertexCount < 1)
-                return -1;
-            return m_SelectedVertices[selectedVertexCount - 1];
+            return selection.GetActiveVertex();
         }
 
         internal void AddToFaceSelection(int index)
         {
-            if (index > -1)
-                SetSelectedFaces(m_SelectedFaces.Add(index));
+            selection.AddToFaceSelection(index);
         }
 
         /// <summary>
@@ -228,21 +149,7 @@ namespace UnityEngine.ProBuilder
 
         internal void SetSelectedFaces(IEnumerable<int> selected)
         {
-            if (selected == null)
-            {
-                ClearSelection();
-            }
-            else
-            {
-                m_SelectedFaces = selected.ToArray();
-                m_SelectedVertices = m_SelectedFaces.SelectMany(x => facesInternal[x].distinctIndexesInternal).ToArray();
-                m_SelectedEdges = m_SelectedFaces.SelectMany(x => facesInternal[x].edges).ToArray();
-            }
-
-            m_SelectedCacheDirty = true;
-
-            if (elementSelectionChanged != null)
-                elementSelectionChanged(this);
+            selection.SetSelectedFaces(selected);
         }
 
         /// <summary>
@@ -251,21 +158,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="edges">The new edge selection.</param>
         public void SetSelectedEdges(IEnumerable<Edge> edges)
         {
-            if (edges == null)
-            {
-                ClearSelection();
-            }
-            else
-            {
-                m_SelectedFaces = new int[0];
-                m_SelectedEdges = edges.ToArray();
-                m_SelectedVertices = m_SelectedEdges.AllTriangles();
-            }
-
-            m_SelectedCacheDirty = true;
-
-            if (elementSelectionChanged != null)
-                elementSelectionChanged(this);
+            selection.SetSelectedEdges(edges);
         }
 
         /// <summary>
@@ -274,14 +167,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="vertices">The new vertex selection.</param>
         public void SetSelectedVertices(IEnumerable<int> vertices)
         {
-            m_SelectedFaces = new int[0];
-            m_SelectedEdges = new Edge[0];
-            m_SelectedVertices = vertices != null ? vertices.Distinct().ToArray() : new int[0];
-
-            m_SelectedCacheDirty = true;
-
-            if (elementSelectionChanged != null)
-                elementSelectionChanged(this);
+            selection.SetSelectedVertices(vertices);
         }
 
         /// <summary>
@@ -290,7 +176,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="index"></param>
         internal void RemoveFromFaceSelectionAtIndex(int index)
         {
-            SetSelectedFaces(m_SelectedFaces.RemoveAt(index));
+            selection.RemoveFromFaceSelectionAtIndex(index);
         }
 
         /// <summary>
@@ -298,10 +184,7 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         public void ClearSelection()
         {
-            m_SelectedFaces = new int[0];
-            m_SelectedEdges = new Edge[0];
-            m_SelectedVertices = new int[0];
-            m_SelectedCacheDirty = true;
+            selection.ClearSelection();
         }
     }
 }
