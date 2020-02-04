@@ -67,6 +67,9 @@ namespace UnityEditor.ProBuilder
 
                 Object.DestroyImmediate(mesh);
                 Object.DestroyImmediate(entity);
+
+                var filter = go.DemandComponent<MeshFilter>();
+                filter.hideFlags = HideFlags.None;
             }
         }
 
