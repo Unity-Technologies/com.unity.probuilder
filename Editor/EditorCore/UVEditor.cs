@@ -547,7 +547,7 @@ namespace UnityEditor.ProBuilder
             Lightmapping.PushGIWorkflowMode();
 
             modifyingUVs = true;
-
+            GUI.FocusControl(string.Empty);
             bool update = false;
 
             // Make sure all TextureGroups are auto-selected
@@ -1535,6 +1535,10 @@ namespace UnityEditor.ProBuilder
                         {
                             var uv = face.uv;
                             uv.rotation += uvRotation - t_uvRotation;
+                            if (uv.rotation > 360f)
+                                uv.rotation = uv.rotation % 360f;
+                            else if (uv.rotation < 0f)
+                                uv.rotation = 360f + (uv.rotation % 360f);
                             face.uv = uv;
                         }
 
