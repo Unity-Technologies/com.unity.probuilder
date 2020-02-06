@@ -1,15 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-using UnityEngine.ProBuilder;
-
-namespace UnityEngine.ProBuilder.Experimental.CSG
+namespace UnityEngine.ProBuilder.Csg
 {
     /// <summary>
     /// Represents a plane in 3d space.
     /// <remarks>Does not include position.</remarks>
     /// </summary>
-    sealed class CSG_Plane
+    sealed class Plane
     {
         public Vector3 normal;
         public float w;
@@ -23,13 +21,13 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
             Spanning    = 3         /// 3 is Front | Back - not a separate entry
         };
 
-        public CSG_Plane()
+        public Plane()
         {
             normal = Vector3.zero;
             w = 0f;
         }
 
-        public CSG_Plane(Vector3 a, Vector3 b, Vector3 c)
+        public Plane(Vector3 a, Vector3 b, Vector3 c)
         {
             normal = Vector3.Cross(b - a, c - a);//.normalized;
             w = Vector3.Dot(normal, a);
@@ -51,7 +49,7 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
         // `coplanarFront` or `coplanarBack` depending on their orientation with
         // respect to this plane. Polygons in front or in back of this plane go into
         // either `front` or `back`.
-        public void SplitPolygon(CSG_Polygon polygon, List<CSG_Polygon> coplanarFront, List<CSG_Polygon> coplanarBack, List<CSG_Polygon> front, List<CSG_Polygon> back)
+        public void SplitPolygon(Polygon polygon, List<Polygon> coplanarFront, List<Polygon> coplanarBack, List<Polygon> front, List<Polygon> back)
         {
             // Classify each point as well as the entire polygon into one of the above
             // four classes.
@@ -61,7 +59,7 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
             for (int i = 0; i < polygon.vertices.Count; i++)
             {
                 float t = Vector3.Dot(this.normal, polygon.vertices[i].position) - this.w;
-                EPolygonType type = (t < -CSG.EPSILON) ? EPolygonType.Back : ((t > CSG.EPSILON) ? EPolygonType.Front : EPolygonType.Coplanar);
+                EPolygonType type = (t < -Boolean.k_Epsilon) ? EPolygonType.Back : ((t > Boolean.k_Epsilon) ? EPolygonType.Front : EPolygonType.Coplanar);
                 polygonType |= type;
                 types.Add(type);
             }
@@ -92,8 +90,8 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
 
                 case EPolygonType.Spanning:
                 {
-                    List<CSG_Vertex> f = new List<CSG_Vertex>();
-                    List<CSG_Vertex> b = new List<CSG_Vertex>();
+                    List<Vertex> f = new List<Vertex>();
+                    List<Vertex> b = new List<Vertex>();
 
                     for (int i = 0; i < polygon.vertices.Count; i++)
                     {
@@ -101,7 +99,7 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
 
                         EPolygonType ti = types[i], tj = types[j];
 
-                        CSG_Vertex vi = polygon.vertices[i], vj = polygon.vertices[j];
+                        Vertex vi = polygon.vertices[i], vj = polygon.vertices[j];
 
                         if (ti != EPolygonType.Back)
                         {
@@ -117,7 +115,7 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
                         {
                             float t = (this.w - Vector3.Dot(this.normal, vi.position)) / Vector3.Dot(this.normal, vj.position - vi.position);
 
-                            CSG_Vertex v = CSG_VertexUtility.Mix(vi, vj, t);
+                            Vertex v = VertexUtility.Mix(vi, vj, t);
 
                             f.Add(v);
                             b.Add(v);
@@ -126,12 +124,12 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
 
                     if (f.Count >= 3)
                     {
-                        front.Add(new CSG_Polygon(f));
+                        front.Add(new Polygon(f, polygon.material));
                     }
 
                     if (b.Count >= 3)
                     {
-                        back.Add(new CSG_Polygon(b));
+                        back.Add(new Polygon(b, polygon.material));
                     }
                 }
                 break;

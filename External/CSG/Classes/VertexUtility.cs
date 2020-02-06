@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
-namespace UnityEngine.ProBuilder.Experimental.CSG
+namespace UnityEngine.ProBuilder.Csg
 {
-	static class CSG_VertexUtility
+	static class VertexUtility
 	{
         /// <summary>
         /// Allocate and fill all attribute arrays. This method will fill all arrays, regardless of whether or not real data populates the values (check what attributes a Vertex contains with HasAttribute()).
@@ -22,7 +23,7 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
         /// <param name="uv3">A new array of the vertex uv3 values.</param>
         /// <param name="uv4">A new array of the vertex uv4 values.</param>
         public static void GetArrays(
-            IList<CSG_Vertex> vertices,
+            IList<Vertex> vertices,
             out Vector3[] position,
             out Color[] color,
             out Vector2[] uv0,
@@ -32,7 +33,7 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
             out List<Vector4> uv3,
             out List<Vector4> uv4)
         {
-            GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4, MeshArrays.All);
+            GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4, VertexAttributes.All);
         }
 
         /// <summary>
@@ -54,7 +55,7 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
         /// <param name="attributes">A flag with the MeshAttributes requested.</param>
         /// <seealso cref="HasArrays"/>
         public static void GetArrays(
-            IList<CSG_Vertex> vertices,
+            IList<Vertex> vertices,
             out Vector3[] position,
             out Color[] color,
             out Vector2[] uv0,
@@ -63,22 +64,22 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
             out Vector2[] uv2,
             out List<Vector4> uv3,
             out List<Vector4> uv4,
-            MeshArrays attributes)
+            VertexAttributes attributes)
         {
             if (vertices == null)
                 throw new ArgumentNullException("vertices");
 
             int vc = vertices.Count;
-            var first = vc < 1 ? new CSG_Vertex() : vertices[0];
+            var first = vc < 1 ? new Vertex() : vertices[0];
 
-            bool hasPosition = ((attributes & MeshArrays.Position) == MeshArrays.Position) && first.hasPosition;
-            bool hasColor = ((attributes & MeshArrays.Color) == MeshArrays.Color) && first.hasColor;
-            bool hasUv0 = ((attributes & MeshArrays.Texture0) == MeshArrays.Texture0) && first.hasUV0;
-            bool hasNormal = ((attributes & MeshArrays.Normal) == MeshArrays.Normal) && first.hasNormal;
-            bool hasTangent = ((attributes & MeshArrays.Tangent) == MeshArrays.Tangent) && first.hasTangent;
-            bool hasUv2 = ((attributes & MeshArrays.Texture1) == MeshArrays.Texture1) && first.hasUV2;
-            bool hasUv3 = ((attributes & MeshArrays.Texture2) == MeshArrays.Texture2) && first.hasUV3;
-            bool hasUv4 = ((attributes & MeshArrays.Texture3) == MeshArrays.Texture3) && first.hasUV4;
+            bool hasPosition = ((attributes & VertexAttributes.Position) == VertexAttributes.Position) && first.hasPosition;
+            bool hasColor = ((attributes & VertexAttributes.Color) == VertexAttributes.Color) && first.hasColor;
+            bool hasUv0 = ((attributes & VertexAttributes.Texture0) == VertexAttributes.Texture0) && first.hasUV0;
+            bool hasNormal = ((attributes & VertexAttributes.Normal) == VertexAttributes.Normal) && first.hasNormal;
+            bool hasTangent = ((attributes & VertexAttributes.Tangent) == VertexAttributes.Tangent) && first.hasTangent;
+            bool hasUv2 = ((attributes & VertexAttributes.Texture1) == VertexAttributes.Texture1) && first.hasUV2;
+            bool hasUv3 = ((attributes & VertexAttributes.Texture2) == VertexAttributes.Texture2) && first.hasUV3;
+            bool hasUv4 = ((attributes & VertexAttributes.Texture3) == VertexAttributes.Texture3) && first.hasUV4;
 
             position = hasPosition ? new Vector3[vc] : null;
             color = hasColor ? new Color[vc] : null;
@@ -110,13 +111,13 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
             }
         }
 
-        public static CSG_Vertex[] GetVertices(this Mesh mesh)
+        public static Vertex[] GetVertices(this Mesh mesh)
         {
             if (mesh == null)
                 return null;
 
             int vertexCount = mesh.vertexCount;
-            CSG_Vertex[] v = new CSG_Vertex[vertexCount];
+            Vertex[] v = new Vertex[vertexCount];
 
             Vector3[] positions = mesh.vertices;
             Color[] colors = mesh.colors;
@@ -140,7 +141,7 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
 
             for (int i = 0; i < vertexCount; i++)
             {
-                v[i] = new CSG_Vertex();
+                v[i] = new Vertex();
 
                 if (_hasPositions)
                     v[i].position = positions[i];
@@ -175,7 +176,7 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
         /// </summary>
         /// <param name="mesh">The target mesh.</param>
         /// <param name="vertices">The vertices to replace the mesh attributes with.</param>
-        public static void SetMesh(Mesh mesh, IList<CSG_Vertex> vertices)
+        public static void SetMesh(Mesh mesh, IList<Vertex> vertices)
         {
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -203,7 +204,7 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
 
             mesh.Clear();
 
-            CSG_Vertex first = vertices[0];
+            Vertex first = vertices[0];
 
             if (first.hasPosition) mesh.vertices = positions;
             if (first.hasColor) mesh.colors = colors;
@@ -228,11 +229,11 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
         /// <param name="y">Right parameter.</param>
         /// <param name="weight">The weight of the interpolation. 0 is fully x, 1 is fully y.</param>
         /// <returns>A new vertex interpolated by weight between x and y.</returns>
-        public static CSG_Vertex Mix(this CSG_Vertex x, CSG_Vertex y, float weight)
+        public static Vertex Mix(this Vertex x, Vertex y, float weight)
         {
             float i = 1f - weight;
 
-            CSG_Vertex v = new CSG_Vertex();
+            Vertex v = new Vertex();
 
             v.position = x.position * i + y.position * weight;
 
@@ -294,32 +295,32 @@ namespace UnityEngine.ProBuilder.Experimental.CSG
         /// <param name="transform">The transform to apply.</param>
         /// <param name="vertex">A model space vertex.</param>
         /// <returns>A new vertex in world coordinate space.</returns>
-        public static CSG_Vertex TransformVertex(this Transform transform, CSG_Vertex vertex)
+        public static Vertex TransformVertex(this Transform transform, Vertex vertex)
         {
-            var v = new CSG_Vertex();
+            var v = new Vertex();
 
-            if (vertex.HasArrays(MeshArrays.Position))
+            if (vertex.HasArrays(VertexAttributes.Position))
                 v.position = transform.TransformPoint(vertex.position);
 
-            if (vertex.HasArrays(MeshArrays.Color))
+            if (vertex.HasArrays(VertexAttributes.Color))
                 v.color = vertex.color;
 
-            if (vertex.HasArrays(MeshArrays.Normal))
+            if (vertex.HasArrays(VertexAttributes.Normal))
                 v.normal = transform.TransformDirection(vertex.normal);
 
-            if (vertex.HasArrays(MeshArrays.Tangent))
+            if (vertex.HasArrays(VertexAttributes.Tangent))
                 v.tangent = transform.rotation * vertex.tangent;
 
-            if (vertex.HasArrays(MeshArrays.Texture0))
+            if (vertex.HasArrays(VertexAttributes.Texture0))
                 v.uv0 = vertex.uv0;
 
-            if (vertex.HasArrays(MeshArrays.Texture1))
+            if (vertex.HasArrays(VertexAttributes.Texture1))
                 v.uv2 = vertex.uv2;
 
-            if (vertex.HasArrays(MeshArrays.Texture2))
+            if (vertex.HasArrays(VertexAttributes.Texture2))
                 v.uv3 = vertex.uv3;
 
-            if (vertex.HasArrays(MeshArrays.Texture3))
+            if (vertex.HasArrays(VertexAttributes.Texture3))
                 v.uv4 = vertex.uv4;
 
             return v;

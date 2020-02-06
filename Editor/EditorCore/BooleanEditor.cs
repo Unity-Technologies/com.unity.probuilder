@@ -1,7 +1,7 @@
 #if PROBUILDER_EXPERIMENTAL_FEATURES
 using UnityEngine;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.Experimental.CSG;
+using UnityEngine.ProBuilder.Csg;
 using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
@@ -134,8 +134,8 @@ namespace UnityEditor.ProBuilder
 
             EditorGUI.BeginChangeCheck();
 
-            lpb = (ProBuilderMesh)EditorGUILayout.ObjectField(lpb, typeof(ProBuilderMesh), true);
-            rpb = (ProBuilderMesh)EditorGUILayout.ObjectField(rpb, typeof(ProBuilderMesh), true);
+            lpb = (ProBuilderMesh) EditorGUILayout.ObjectField(lpb, typeof(ProBuilderMesh), true);
+            rpb = (ProBuilderMesh) EditorGUILayout.ObjectField(rpb, typeof(ProBuilderMesh), true);
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -154,7 +154,7 @@ namespace UnityEditor.ProBuilder
             UI.EditorGUIUtility.DrawSeparator(2);
             GUI.backgroundColor = Color.white;
 
-            operation = (BooleanOp)EditorGUILayout.EnumPopup("Operation", operation);
+            operation = (BooleanOp) EditorGUILayout.EnumPopup("Operation", operation);
 
             if (GUILayout.Button("Apply"))
             {
@@ -228,20 +228,16 @@ namespace UnityEditor.ProBuilder
             // Show text summary
             if (m_LeftGameObject && m_RightGameObject)
             {
-                switch (operation)
-                {
-                    case BooleanOp.Intersection:
-                        GUI.Label(new Rect(k_Padding + 2, k_Padding + 2, screen.x, 128), m_LeftGameObject.name + " Intersects " + m_RightGameObject.name, EditorStyles.boldLabel);
-                        break;
+                var title = UI.EditorGUIUtility.TempContent(
+                    operation == BooleanOp.Intersection
+                        ? m_LeftGameObject.name + " Intersects " + m_RightGameObject.name
+                        : operation == BooleanOp.Union
+                            ? m_LeftGameObject.name + " Union " + m_RightGameObject.name
+                            : m_LeftGameObject.name + " Subtracts " + m_RightGameObject.name);
 
-                    case BooleanOp.Union:
-                        GUI.Label(new Rect(k_Padding + 2, k_Padding + 2, screen.x, 128), m_LeftGameObject.name + " Union " + m_RightGameObject.name, EditorStyles.boldLabel);
-                        break;
+                var size = EditorStyles.boldLabel.CalcSize(title);
 
-                    case BooleanOp.Subtraction:
-                        GUI.Label(new Rect(k_Padding + 2, k_Padding + 2, screen.x, 128), m_LeftGameObject.name + " Subtracts " + m_RightGameObject.name, EditorStyles.boldLabel);
-                        break;
-                }
+                GUI.Label(new Rect(k_Padding + 2, k_Padding + 2, screen.x, size.y), title, EditorStyles.boldLabel);
             }
 
             // http://xahlee.info/comp/unicode_arrows.html
@@ -330,31 +326,31 @@ namespace UnityEditor.ProBuilder
 
             UndoUtility.RecordSelection(sel, op_string);
 
-            Mesh c;
+            UnityEngine.ProBuilder.Csg.Model result;
 
             switch (operation)
             {
                 case BooleanOperation.Union:
-                    c = CSG.Union(lhs.gameObject, rhs.gameObject);
+                    result = Boolean.Union(lhs.gameObject, rhs.gameObject);
                     break;
 
                 case BooleanOperation.Subtract:
-                    c = CSG.Subtract(lhs.gameObject, rhs.gameObject);
+                    result = Boolean.Subtract(lhs.gameObject, rhs.gameObject);
                     break;
 
                 default:
-                    c = CSG.Intersect(lhs.gameObject, rhs.gameObject);
+                    result = Boolean.Intersect(lhs.gameObject, rhs.gameObject);
                     break;
             }
 
-            GameObject go = new GameObject();
-
-            go.AddComponent<MeshRenderer>().sharedMaterial = EditorMaterialUtility.GetUserMaterial();
-            go.AddComponent<MeshFilter>().sharedMesh = c;
-
-            ProBuilderMesh pb = InternalMeshUtility.CreateMeshWithTransform(go.transform, false);
-            DestroyImmediate(go);
-
+            var materials = result.materials.ToArray();
+            ProBuilderMesh pb = ProBuilderMesh.Create();
+            pb.GetComponent<MeshFilter>().sharedMesh = (Mesh) result;
+            pb.GetComponent<MeshRenderer>().sharedMaterials = materials;
+            MeshImporter importer = new MeshImporter(pb.gameObject);
+            importer.Import(new MeshImportSettings() { quads = true, smoothing = true, smoothingAngle = 1f });
+            pb.Rebuild();
+            pb.CenterPivot(null);
             Selection.objects = new Object[] { pb.gameObject };
 
             return new ActionResult(ActionResult.Status.Success, op_string);
