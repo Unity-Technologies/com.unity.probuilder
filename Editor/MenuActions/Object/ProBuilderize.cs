@@ -119,8 +119,10 @@ namespace UnityEditor.ProBuilder.Actions
                 else
                     return ActionResult.UserCanceled;
             }
-
-            return DoProBuilderize(all, settings);
+            else
+            {
+                return DoProBuilderize(all, settings);
+            }
         }
 
         [System.Obsolete("Please use DoProBuilderize(IEnumerable<MeshFilter>, pb_MeshImporter.Settings")]
@@ -146,50 +148,45 @@ namespace UnityEditor.ProBuilder.Actions
             IEnumerable<MeshFilter> selected,
             MeshImportSettings settings)
         {
-
             int i = 0;
             float count = selected.Count();
 
-            // Return immediately from the action so that the GUI can resolve. Displaying a progress bar interrupts the
-            // event loop causing a layoutting error.
-            EditorApplication.delayCall += () =>
+            foreach (var mf in selected)
             {
-                foreach (var mf in selected)
+                if (mf.sharedMesh == null)
+                    continue;
+
+                GameObject go = mf.gameObject;
+                Mesh sourceMesh = mf.sharedMesh;
+                Material[] sourceMaterials = go.GetComponent<MeshRenderer>()?.sharedMaterials;
+
+                try
                 {
-                    if (mf.sharedMesh == null)
-                        continue;
+                    var destination = Undo.AddComponent<ProBuilderMesh>(go);
+                    var meshImporter = new MeshImporter(sourceMesh, sourceMaterials, destination);
+                    meshImporter.Import(settings);
 
-                    GameObject go = mf.gameObject;
-                    Mesh sourceMesh = mf.sharedMesh;
-                    Material[] sourceMaterials = go.GetComponent<MeshRenderer>()?.sharedMaterials;
+                    destination.Rebuild();
+                    destination.Optimize();
 
-                    try
-                    {
-                        var destination = Undo.AddComponent<ProBuilderMesh>(go);
-                        var meshImporter = new MeshImporter(sourceMesh, sourceMaterials, destination);
-                        meshImporter.Import(settings);
-
-                        destination.Rebuild();
-                        destination.Optimize();
-
-                        i++;
-                    }
-                    catch (System.Exception e)
-                    {
-                        Debug.LogWarning("Failed ProBuilderizing: " + go.name + "\n" + e.ToString());
-                    }
-
-                    UnityEditor.EditorUtility.DisplayProgressBar("ProBuilderizing", mf.gameObject.name, i / count);
+                    i++;
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogWarning("Failed ProBuilderizing: " + go.name + "\n" + e.ToString());
                 }
 
-                UnityEditor.EditorUtility.ClearProgressBar();
-                MeshSelection.OnObjectSelectionChanged();
-                ProBuilderEditor.Refresh();
-            };
+                UnityEditor.EditorUtility.DisplayProgressBar("ProBuilderizing", mf.gameObject.name, i / count);
+            }
+
+            UnityEditor.EditorUtility.ClearProgressBar();
+            MeshSelection.OnObjectSelectionChanged();
+            ProBuilderEditor.Refresh();
 
             if (i < 1)
                 return new ActionResult(ActionResult.Status.Canceled, "Nothing Selected");
-            return new ActionResult(ActionResult.Status.Success, "ProBuilderize " + i + (i > 1 ? " Objects" : " Object").ToString());
+            else
+                return new ActionResult(ActionResult.Status.Success, "ProBuilderize " + i + (i > 1 ? " Objects" : " Object").ToString());
         }
     }
 }
