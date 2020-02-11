@@ -12,7 +12,7 @@ namespace UnityEditor.ProBuilder
     struct ScenePickerPreferences
     {
         public const float maxPointerDistance = 40f;
-        public const float offPointerMultiplier = .01f;
+        public const float offPointerMultiplier = 1.2f;
 
         public CullingMode cullMode;
         public SelectionModifierBehavior selectionModifierBehavior;
