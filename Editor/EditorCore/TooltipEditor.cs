@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder
         static TooltipEditor()
         {
             s_ShowModeEnum = ReflectionUtility.GetType("UnityEditor.ShowMode");
-        
+
             s_ShowPopupWithModeMethod = typeof(EditorWindow).GetMethod(
                 "ShowPopupWithMode",
                 BindingFlags.NonPublic | BindingFlags.Instance);
@@ -58,12 +58,13 @@ namespace UnityEditor.ProBuilder
         {
             if (s_Instance == null)
             {
-                s_Instance = ScriptableObject.CreateInstance<TooltipEditor>();
+                s_Instance = CreateInstance<TooltipEditor>();
                 s_Instance.minSize = Vector2.zero;
                 s_Instance.maxSize = Vector2.zero;
                 s_Instance.hideFlags = HideFlags.HideAndDontSave;
 #if UNITY_2019_1_OR_NEWER
                 s_Instance.ShowTooltip();
+                s_Instance.m_Parent.window.SetAlpha(1f);
 #else
                 if (s_ShowPopupWithModeMethod != null && s_ShowModeEnum != null)
                     s_ShowPopupWithModeMethod.Invoke(s_Instance, new [] { Enum.ToObject(s_ShowModeEnum, 1), false});
