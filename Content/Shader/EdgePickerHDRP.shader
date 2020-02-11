@@ -1,26 +1,32 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-Shader "Hidden/ProBuilder/FacePicker"
+Shader "Hidden/ProBuilder/EdgePicker"
 {
+    Properties {}
+
     SubShader
     {
-        Tags { "ProBuilderPicker"="Base"}
+        Tags
+        {
+            "ProBuilderPicker"="EdgePass"
+            "IgnoreProjector"="True"
+            "DisableBatching"="True"
+            "LightMode"="Always"
+        }
+
         Lighting Off
         ZTest LEqual
         ZWrite On
-        Cull Back
+        Cull Off
         Blend Off
 
         Pass
         {
-            Name "Base"
+            Name "Edges"
+            AlphaTest Greater .25
 
-            CGPROGRAM
+CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
-
-            float4 _Tint;
 
             struct appdata
             {
@@ -37,9 +43,9 @@ Shader "Hidden/ProBuilder/FacePicker"
             v2f vert (appdata v)
             {
                 v2f o;
-
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.color = v.color;
+
                 return o;
             }
 
@@ -47,8 +53,7 @@ Shader "Hidden/ProBuilder/FacePicker"
             {
                 return i.color;
             }
-
-            ENDCG
+ENDCG
         }
     }
 }
