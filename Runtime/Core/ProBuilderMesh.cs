@@ -124,8 +124,7 @@ namespace UnityEngine.ProBuilder
         /// </value>
         [SerializeField]
         internal string assetGuid;
-
-        [SerializeField]
+        
         Mesh m_Mesh;
 
         [NonSerialized]

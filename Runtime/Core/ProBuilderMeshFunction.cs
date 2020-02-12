@@ -30,7 +30,6 @@ namespace UnityEngine.ProBuilder
             // Don't call DrivenPropertyManager.Unregister in OnDestroy. At that point GameObject::m_ActivationState is
             // already set to kDestroying, and DrivenPropertyManager.Unregister will try to revert the driven values to
             // their previous state (which will assert that the object is _not_ being destroyed)
-            SerializationUtility.UnregisterDrivenProperty(this, this, "m_Mesh");
             MeshCollider meshCollider;
             if(gameObject.TryGetComponent(out meshCollider))
                 SerializationUtility.UnregisterDrivenProperty(this, meshCollider, "m_Mesh");
@@ -41,7 +40,6 @@ namespace UnityEngine.ProBuilder
         {
             // Register driven properties and set hide flags in Awake because OnEnable is called after serialization has
             // had a chance to register changes
-            SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
             EnsureMeshFilterIsAssigned();
 
             if (vertexCount > 0

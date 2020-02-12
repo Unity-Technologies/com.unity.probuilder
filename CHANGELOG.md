@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## Bug Fixes
+
+- [case: 1217930] Fixed duplicated objects shape reverts to original's mesh when entering play mode
+
 ## Changes
 
 - [case: 1203585] Removed `Custom Shape` option from the `Shape Editor` window.
