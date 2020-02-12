@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1201746] The Move tool is now compatible with grid snapping (Unity 2019.3 and higher).
 - [case: 1214103] Fixed ProBuilder created meshes not rendering in project builds.
 - [case: 1217024] Fixed inverted picking bias when cursor is not hovering selected object.
+- [case: 1195261] Fixed an issue where the `ProBuilderize` action could cause the toolbar to emit `GUILayout Group` errors.
 - [case: 1211721] Fixed tooltips in the ProBuilder toolbar not rendering on macOS.
 
 ## [4.3.0-preview.3] - 2020-01-28
