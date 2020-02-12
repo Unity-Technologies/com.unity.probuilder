@@ -5,22 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [4.3.0-preview.3] - 2020-02-12
+
+## Features
+
+- [case: 1201746] The Move tool is now compatible with grid snapping (Unity 2019.3 and higher).
 
 ## Bug Fixes
 
 - [case: 1217930] Fixed duplicated objects shape reverts to original's mesh when entering play mode
-
-## Changes
-
-- [case: 1203585] Removed `Custom Shape` option from the `Shape Editor` window.
-- [case: 1201746] The Move tool is now compatible with grid snapping (Unity 2019.3 and higher).
 - [case: 1214103] Fixed ProBuilder created meshes not rendering in project builds.
 - [case: 1217024] Fixed inverted picking bias when cursor is not hovering selected object.
 - [case: 1195261] Fixed an issue where the `ProBuilderize` action could cause the toolbar to emit `GUILayout Group` errors.
 - [case: 1211721] Fixed tooltips in the ProBuilder toolbar not rendering on macOS.
+- [case: 1167627] Fixed boolean operations not retaining material information.
+- [case: 1210096] Fixed `UV Editor` rotation field allowing values outside of 360°.
+- [case: 1214103] Fixed ProBuilder created meshes not appearing in built projects.
+- [case: 1211169] Fixed `Generate Shadow Object` example throwing a `Null Reference Exception` when invoked.
+- [case: 1209864] Fixed `New Shape` tool creating new GameObjects with the same name.
+- [case: 1201858] Fixed `Export` action not showing a warning when attempting to export an empty selection.
+- [case: 1205318] Fixed OBJ export not retaining material color information when Scriptable Render Pipeline is active.
+- [case: 1194858] Fixed a `Null Reference Exception` in some cases when using the `Bevel` tool.
+- [case: 1204731] Fixed marquee selection of mesh elements when using the High Definition Render Pipeline.
+- [case: 1211096] Fixed tooltips rendering off screen in some cases.
+- [case: 1203685] Fixed `Poly Shape` creation tool not accepting input when Scene View gizmos are disabled.
+- [case: 1161998] Fixed an issue where scene objects could be selected through modal windows.
 
-## [4.3.0-preview.3] - 2020-01-28
+## Changes
+
+- [case: 1203585] Removed `Custom Shape` option from the `Shape Editor` window.
+
+## Known Issues
+
+- Marquee selection when the Universal Render Pipeline is enabled does not work (currently blocked due to URP missing required functionality).
 
 ## [4.3.0-preview.2] - 2020-01-15
 
