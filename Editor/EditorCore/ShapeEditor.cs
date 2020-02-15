@@ -17,7 +17,6 @@ namespace UnityEditor.ProBuilder
     /// </summary>
     sealed class ShapeEditor : ConfigurableWindow
     {
-        [Serializable]
         abstract class ShapeBuilder
         {
             public virtual string name
@@ -36,14 +35,15 @@ namespace UnityEditor.ProBuilder
         }
 
         Vector2 m_Scroll = Vector2.zero;
+        [SettingsKey("ShapeEditor.s_CurrentIndex")]
         static Pref<int> s_CurrentIndex = new Pref<int>("ShapeEditor.s_CurrentIndex", 0, SettingsScope.User);
         [UserSetting("Toolbar", "Close Shape Window after Build", "When true the shape window will close after hitting the build button.")]
+        [SettingsKey("editor.closeWindowAfterShapeCreation")]
         static Pref<bool> s_CloseWindowAfterCreateShape = new Pref<bool>("editor.closeWindowAfterShapeCreation", false);
         [SerializeField]
         GameObject m_PreviewObject;
 
-        [SerializeField]
-        ShapeBuilder[] m_ShapeBuilders = new ShapeBuilder[]
+        static ShapeBuilder[] s_ShapeBuilders = new ShapeBuilder[]
         {
             new Cube(),
             new Sprite(),
@@ -66,10 +66,10 @@ namespace UnityEditor.ProBuilder
         {
             PrefabStage.prefabStageOpened += PrefabStageOpened;
             PrefabStage.prefabStageClosing += PrefabStageClosing;
-            m_ShapeTypes = m_ShapeBuilders.Select(x => x.name).ToArray();
+            m_ShapeTypes = s_ShapeBuilders.Select(x => x.name).ToArray();
             // Delaying the call til end of frame fixes an issue where entering play mode would cause the preview object
             // to not appear in the Hierarchy until the Shape Editor is interacted with.
-            EditorApplication.delayCall += () => SetPreviewMesh(m_ShapeBuilders[s_CurrentIndex].Build());
+            EditorApplication.delayCall += () => SetPreviewMesh(s_ShapeBuilders[s_CurrentIndex].Build());
             EditorApplication.playModeStateChanged += PlayModeStateChanged;
         }
 
@@ -84,7 +84,7 @@ namespace UnityEditor.ProBuilder
         void PlayModeStateChanged(PlayModeStateChange state)
         {
             if(state == PlayModeStateChange.EnteredEditMode)
-                SetPreviewMesh(m_ShapeBuilders[s_CurrentIndex].Build());
+                SetPreviewMesh(s_ShapeBuilders[s_CurrentIndex].Build());
         }
 
         void PrefabStageOpened(PrefabStage stage)
@@ -128,7 +128,7 @@ namespace UnityEditor.ProBuilder
 
             m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
 
-            var shape = m_ShapeBuilders[s_CurrentIndex];
+            var shape = s_ShapeBuilders[s_CurrentIndex];
 
             shape.OnGUI();
 
@@ -148,7 +148,7 @@ namespace UnityEditor.ProBuilder
 
         void CreateSelectedShape(bool forceCloseWindow = false)
         {
-            var res = m_ShapeBuilders[s_CurrentIndex].Build();
+            var res = s_ShapeBuilders[s_CurrentIndex].Build();
             EditorUtility.InitObject(res);
             ApplyPreviewTransform(res);
             DestroyPreviewObject(true);
@@ -245,9 +245,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        [Serializable]
         class Cube : ShapeBuilder
         {
+            [SettingsKey("ShapeBuilder.Cube.s_CubeSize")]
             static Pref<Vector3> s_CubeSize = new Pref<Vector3>("ShapeBuilder.Cube.s_CubeSize", Vector3.one, SettingsScope.User);
 
             public override void OnGUI()
@@ -262,9 +262,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        [Serializable]
         class Sprite : ShapeBuilder
         {
+            [SettingsKey("ShapeBuilder.Sprite.s_Axis")]
             static Pref<Axis> s_Axis = new Pref<Axis>("ShapeBuilder.Sprite.s_Axis", Axis.Forward, SettingsScope.User);
 
             public override void OnGUI()
@@ -278,9 +278,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        [Serializable]
         class Prism : ShapeBuilder
         {
+            [SettingsKey("ShapeBuilder.Prism.s_PrismSize")]
             static Pref<Vector3> s_PrismSize = new Pref<Vector3>("ShapeBuilder.Prism.s_PrismSize", Vector3.one, SettingsScope.User);
 
             public override void OnGUI()
@@ -295,13 +295,17 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        [Serializable]
         class Stair : ShapeBuilder
         {
+            [SettingsKey("ShapeBuilder.Stair.s_Steps")]
             static Pref<int> s_Steps = new Pref<int>("ShapeBuilder.Stair.s_Steps", 6, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Stair.s_Size")]
             static Pref<Vector3> s_Size = new Pref<Vector3>("ShapeBuilder.Stair.s_Size", new Vector3(2f, 2.5f, 4f), SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Stair.s_Circumference")]
             static Pref<float> s_Circumference = new Pref<float>("ShapeBuilder.Stair.s_Circumference", 0f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Stair.s_Sides")]
             static Pref<bool> s_Sides = new Pref<bool>("ShapeBuilder.Stair.s_Sides", true, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Stair.s_Mirror")]
             static Pref<bool> s_Mirror = new Pref<bool>("ShapeBuilder.Stair.s_Mirror", false, SettingsScope.User);
 
             public override void OnGUI()
@@ -367,13 +371,17 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        [Serializable]
         class Cylinder : ShapeBuilder
         {
+            [SettingsKey("ShapeBuilder.Cylinder.s_AxisSegments")]
             static Pref<int> s_AxisSegments = new Pref<int>("ShapeBuilder.Cylinder.s_AxisSegments", 8, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Cylinder.s_Radius")]
             static Pref<float> s_Radius = new Pref<float>("ShapeBuilder.Cylinder.s_Radius", .5f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Cylinder.s_Height")]
             static Pref<float> s_Height = new Pref<float>("ShapeBuilder.Cylinder.s_Height", 1f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Cylinder.s_HeightSegments")]
             static Pref<int> s_HeightSegments = new Pref<int>("ShapeBuilder.Cylinder.s_HeightSegments", 0, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Cylinder.s_Smooth")]
             static Pref<bool> s_Smooth = new Pref<bool>("ShapeBuilder.Cylinder.s_Smooth", true, SettingsScope.User);
 
             public override void OnGUI()
@@ -410,13 +418,17 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        [Serializable]
         class Door : ShapeBuilder
         {
+            [SettingsKey("ShapeBuilder.Door.s_Width")]
             static Pref<float> s_Width = new Pref<float>("ShapeBuilder.Door.s_Width", 4.0f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Door.s_Height")]
             static Pref<float> s_Height = new Pref<float>("ShapeBuilder.Door.s_Height", 4.0f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Door.s_LedgeHeight")]
             static Pref<float> s_LedgeHeight = new Pref<float>("ShapeBuilder.Door.s_LedgeHeight", 1.0f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Door.s_LegWidth")]
             static Pref<float> s_LegWidth = new Pref<float>("ShapeBuilder.Door.s_LegWidth", 1.0f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Door.s_Depth")]
             static Pref<float> s_Depth = new Pref<float>("ShapeBuilder.Door.s_Depth", 0.5f, SettingsScope.User);
 
             public override void OnGUI()
@@ -449,13 +461,17 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        [Serializable]
         class Plane : ShapeBuilder
         {
+            [SettingsKey("ShapeBuilder.Plane.s_Height")]
             static Pref<float> s_Height = new Pref<float>("ShapeBuilder.Plane.s_Height", 10, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Plane.s_Width")]
             static Pref<float> s_Width = new Pref<float>("ShapeBuilder.Plane.s_Width", 10, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Plane.s_HeightSegments")]
             static Pref<int> s_HeightSegments = new Pref<int>("ShapeBuilder.Plane.s_HeightSegments", 3, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Plane.s_WidthSegments")]
             static Pref<int> s_WidthSegments = new Pref<int>("ShapeBuilder.Plane.s_WidthSegments", 3, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Plane.s_Axis")]
             static Pref<Axis> s_Axis = new Pref<Axis>("ShapeBuilder.Plane.s_Axis", Axis.Up, SettingsScope.User);
 
             public override void OnGUI()
@@ -493,13 +509,17 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        [Serializable]
         class Pipe : ShapeBuilder
         {
+            [SettingsKey("ShapeBuilder.Pipe.s_Radius")]
             static Pref<float> s_Radius = new Pref<float>("ShapeBuilder.Pipe.s_Radius", 1f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Pipe.s_Height")]
             static Pref<float> s_Height = new Pref<float>("ShapeBuilder.Pipe.s_Height", 2f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Pipe.s_Thickness")]
             static Pref<float> s_Thickness = new Pref<float>("ShapeBuilder.Pipe.s_Thickness", .2f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Pipe.s_AxisSegments")]
             static Pref<int> s_AxisSegments = new Pref<int>("ShapeBuilder.Pipe.s_AxisSegments", 6, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Pipe.s_HeightSegments")]
             static Pref<int> s_HeightSegments = new Pref<int>("ShapeBuilder.Pipe.s_HeightSegments", 1, SettingsScope.User);
 
             public override void OnGUI()
@@ -534,11 +554,13 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        [Serializable]
         class Cone : ShapeBuilder
         {
+            [SettingsKey("ShapeBuilder.Cone.s_Radius")]
             static Pref<float> s_Radius = new Pref<float>("ShapeBuilder.Cone.s_Radius", 1f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Cone.s_Height")]
             static Pref<float> s_Height = new Pref<float>("ShapeBuilder.Cone.s_Height", 2f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Cone.s_AxisSegments")]
             static Pref<int> s_AxisSegments = new Pref<int>("ShapeBuilder.Cone.s_AxisSegments", 6, SettingsScope.User);
 
             public override void OnGUI()
@@ -567,14 +589,19 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        [Serializable]
         class Arch : ShapeBuilder
         {
+            [SettingsKey("ShapeBuilder.Arch.s_Angle")]
             static Pref<float> s_Angle = new Pref<float>("ShapeBuilder.Arch.s_Angle", 180.0f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Arch.s_Radius")]
             static Pref<float> s_Radius = new Pref<float>("ShapeBuilder.Arch.s_Radius", 3.0f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Arch.s_Width")]
             static Pref<float> s_Width = new Pref<float>("ShapeBuilder.Arch.s_Width", 0.50f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Arch.s_Depth")]
             static Pref<float> s_Depth = new Pref<float>("ShapeBuilder.Arch.s_Depth", 1f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Arch.s_RadiusSegments")]
             static Pref<int> s_RadiusSegments = new Pref<int>("ShapeBuilder.Arch.s_RadiusSegments", 6, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Arch.s_EndCaps")]
             static Pref<bool> s_EndCaps = new Pref<bool>("ShapeBuilder.Arch.s_EndCaps", true, SettingsScope.User);
 
             const bool k_InsideFaces = true;
@@ -623,11 +650,12 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        [Serializable]
         class Sphere : ShapeBuilder
         {
+            [SettingsKey("ShapeBuilder.Sphere.s_Radius")]
             static Pref<float> s_Radius = new Pref<float>("ShapeBuilder.Sphere.s_Radius", 1f, SettingsScope.User);
-            static Pref<int> s_Subdivisions =new Pref<int>("ShapeBuilder.Sphere.s_Subdivisions",  1, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Sphere.s_Subdivisions")]
+            static Pref<int> s_Subdivisions = new Pref<int>("ShapeBuilder.Sphere.s_Subdivisions", 1, SettingsScope.User);
 
             public override void OnGUI()
             {
@@ -654,17 +682,25 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        [Serializable]
         class Torus : ShapeBuilder
         {
+            [SettingsKey("ShapeBuilder.Torus.s_Radius")]
             static Pref<float> s_Radius = new Pref<float>("ShapeBuilder.Torus.s_Radius", 1f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Torus.s_TubeRadius")]
             static Pref<float> s_TubeRadius = new Pref<float>("ShapeBuilder.Torus.s_TubeRadius", .3f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Torus.s_Rows")]
             static Pref<int> s_Rows = new Pref<int>("ShapeBuilder.Torus.s_Rows", 16, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Torus.s_Columns")]
             static Pref<int> s_Columns = new Pref<int>("ShapeBuilder.Torus.s_Columns", 24, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Torus.s_Smooth")]
             static Pref<bool> s_Smooth = new Pref<bool>("ShapeBuilder.Torus.s_Smooth", true, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Torus.s_HorizontalCircumference")]
             static Pref<float> s_HorizontalCircumference = new Pref<float>("ShapeBuilder.Torus.s_HorizontalCircumference", 360f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Torus.s_VerticalCircumference")]
             static Pref<float> s_VerticalCircumference = new Pref<float>("ShapeBuilder.Torus.s_VerticalCircumference", 360f, SettingsScope.User);
+            [SettingsKey("ShapeBuilder.Torus.s_InnerOuter")]
             static Pref<Vector2> s_InnerOuter = new Pref<Vector2>("ShapeBuilder.Torus.s_InnerOuter", new Vector2(1f, .7f), SettingsScope.User);
+            [SettingsKey("shape.torusDefinesInnerOuter")]
             static Pref<bool> s_UseInnerOuterMethod = new Pref<bool>("shape.torusDefinesInnerOuter", false, SettingsScope.User);
 
             public override void OnGUI()
