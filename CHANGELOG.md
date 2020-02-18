@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [UNRELEASED]
+
+### Bug Fixes
+
+- [case: 1158748] Fixed `Export` and `Strip Scripts` actions leaving `Mesh Filter` component hidden on resulting GameObjects.
+
 ## [4.3.0-preview.3] - 2020-02-12
 
 ## Features
