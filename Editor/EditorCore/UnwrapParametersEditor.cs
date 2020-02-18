@@ -21,6 +21,8 @@ namespace UnityEditor.ProBuilder
 
         public override void OnInspectorGUI()
         {
+            if (!serializedObject.isValid)
+                return;
             serializedObject.Update();
             EditorGUILayout.PropertyField(m_UnwrapParametersProperty, m_UnwrapParametersContent, true);
             serializedObject.ApplyModifiedProperties();
