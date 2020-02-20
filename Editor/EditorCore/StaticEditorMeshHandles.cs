@@ -41,6 +41,25 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        internal static void DrawPlane(Plane plane, Vector3 position, Color color, float size = -1f)
+        {
+            var p = position;
+            var rotation = Quaternion.LookRotation(plane.normal, Vector3.up);
+            size = HandleUtility.GetHandleSize(p) * size < 0f ? k_DefaultGizmoSize : size;
+            var x = rotation * Vector3.right * size;
+            var z = rotation * Vector3.up * size;
+
+            using (var lineDrawer = new LineDrawingScope(color, -1f, CompareFunction.Always))
+            {
+                // 2 3
+                // 0 1
+                lineDrawer.DrawLine(p - x - z, p + x - z); // 0 - 1
+                lineDrawer.DrawLine(p - x + z, p + x + z); // 2 - 3
+                lineDrawer.DrawLine(p - x - z, p - x + z); // 0 - 2
+                lineDrawer.DrawLine(p + x - z, p + x + z); // 1 - 3
+            }
+        }
+
         internal static void DrawTransformOriginGizmo(Matrix4x4 matrix, Vector3 direction,  float size = -1f)
         {
             var p = matrix.MultiplyPoint(Vector3.zero);
