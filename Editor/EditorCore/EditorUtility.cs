@@ -309,11 +309,14 @@ namespace UnityEditor.ProBuilder
             switch (s_ColliderType.value)
             {
                 case ColliderType.BoxCollider:
-                    pb.gameObject.AddComponent<BoxCollider>();
+                    if(!pb.gameObject.TryGetComponent<BoxCollider>(out _))
+                        Undo.AddComponent(pb.gameObject, typeof(BoxCollider));
                     break;
 
                 case ColliderType.MeshCollider:
-                    pb.gameObject.AddComponent<MeshCollider>().convex = s_MeshColliderIsConvex;
+                    MeshCollider collider;
+                    if (!pb.gameObject.TryGetComponent<MeshCollider>(out collider))
+                        collider = Undo.AddComponent<MeshCollider>(pb.gameObject);
                     break;
             }
 
