@@ -10,7 +10,6 @@ agent:
   flavor: b1.xlarge
   name: Coverity Windows
 commands:
-  - bee.exe
   - pip install unity-downloader-cli --extra-index-url https://artifactory.eu-cph-1.unityops.net/api/pypi/common-python/simple
   - unity-downloader-cli -u {{meta.UNITY_TRUNK_HASH}} -c editor -c windows
   - git clone git@github.com:Unity-Technologies/com.unity.probuilder.git c:/Users/bokken/com.unity.probuilder
