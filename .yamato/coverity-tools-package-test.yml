@@ -1,0 +1,27 @@
+meta:
+  NOTE: "This pipeline acts as documentation and verification of how package analysis should work."
+  UNITY_TRUNK_HASH: 0f450763b42dcb89a5a14efb9762f16ac1bbb0cd
+  PB_PACKAGE_HASH: cbd84953a4a885aeff87b3d56b6c80705923c9cb
+---
+name: Coverity Tools - Demonstrate Package
+agent:
+  type: Unity::VM
+  image: sustained-engineering/coverity-bokken-image-win:stable
+  flavor: b1.xlarge
+  name: Coverity Windows
+commands:
+  - bee.exe
+  - pip install unity-downloader-cli --extra-index-url https://artifactory.eu-cph-1.unityops.net/api/pypi/common-python/simple
+  - unity-downloader-cli -u {{meta.UNITY_TRUNK_HASH}} -c editor -c windows
+  - git clone git@github.com:Unity-Technologies/com.unity.probuilder.git c:/Users/bokken/com.unity.probuilder
+  - git -C c:\Users\bokken\com.unity.probuilder checkout {{meta.PB_PACKAGE_HASH}}
+  - >
+    CoverityTools.exe --target=c:\Users\bokken\com.unity.probuilder\coveritytests
+    --repo=c:\Users\bokken\com.unity.probuilder\coveritytests
+    --verbose
+    --non-interactive
+    --host=coverity.test.cds.internal.unity3d.com
+    --auth-key-file=c:/Users/bokken/bokken_key
+    --project=com.unity.probuilder
+    --unity-path=c:\build\output\unity\CoverityTools\.Editor\Unity.exe
+
