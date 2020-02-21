@@ -1,7 +1,7 @@
 meta:
   NOTE: "This pipeline acts as documentation and verification of how package analysis should work."
   UNITY_TRUNK_HASH: 0f450763b42dcb89a5a14efb9762f16ac1bbb0cd
-  PB_PACKAGE_HASH: cbd84953a4a885aeff87b3d56b6c80705923c9cb
+  PB_PACKAGE_HASH: 29e1780c7f55281d547591d24e2e0d0dcdd69dec
 ---
 name: Coverity Tools - Demonstrate Package
 agent:
