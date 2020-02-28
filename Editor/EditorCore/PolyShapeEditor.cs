@@ -737,8 +737,6 @@ namespace UnityEditor.ProBuilder
 
         void UndoRedoPerformed()
         {
-            // If undoing after entering poly shape edit mode, make sure to also reset the Tool with the current
-            // PolyEditMode
             if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
                 ProBuilderEditor.selectMode = ProBuilderEditor.selectMode & ~(SelectMode.InputTool);
             else
