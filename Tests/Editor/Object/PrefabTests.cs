@@ -137,7 +137,7 @@ public class PrefabTests
                 sb.AppendLine(ride.instanceObject.ToString());
             sb.AppendLine("\nProperty Modifications");
             foreach (var modification in PrefabUtility.GetPropertyModifications(mesh))
-                sb.AppendLine(modification.objectReference + "->" + modification.propertyPath + " = " + modification.value);
+                sb.AppendLine($"  - Object Reference: {modification.objectReference}\n  - Property Path: {modification.propertyPath}\n  - Modified Value: {modification.value}");
         }
 
         Debug.Log(sb.ToString());

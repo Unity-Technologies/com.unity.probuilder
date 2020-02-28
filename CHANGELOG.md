@@ -5,10 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [UNRELEASED]
+## [Unreleased]
 
 ### Bug Fixes
 
+- [case: 1221121] Fixed a crash when undoing the creation of a `Poly Shape` object.
+- Fixed `Shape Editor` preferences not respecting "Reset All Preferences".
+- [case: 1132509] Fixed `Bevel` sometimes resulting in non-conforming face normals.
 - [case: 1158748] Fixed `Export` and `Strip Scripts` actions leaving `Mesh Filter` component hidden on resulting GameObjects.
 
 ## [4.3.0-preview.3] - 2020-02-12

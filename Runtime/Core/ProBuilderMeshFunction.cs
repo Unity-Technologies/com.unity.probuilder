@@ -25,13 +25,19 @@ namespace UnityEngine.ProBuilder
         }
 
         // Using the internal callbacks here to avoid registering this component as "enable-able"
+        void OnEnableINTERNAL()
+        {
+            SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
+        }
+
         void OnDisableINTERNAL()
         {
             // Don't call DrivenPropertyManager.Unregister in OnDestroy. At that point GameObject::m_ActivationState is
             // already set to kDestroying, and DrivenPropertyManager.Unregister will try to revert the driven values to
             // their previous state (which will assert that the object is _not_ being destroyed)
-            MeshCollider meshCollider;
-            if(gameObject.TryGetComponent(out meshCollider))
+            // if(m_Mesh != null)
+            SerializationUtility.UnregisterDrivenProperty(this, this, "m_Mesh");
+            if(gameObject != null && gameObject.TryGetComponent(out MeshCollider meshCollider))
                 SerializationUtility.UnregisterDrivenProperty(this, meshCollider, "m_Mesh");
         }
 #endif
@@ -41,6 +47,7 @@ namespace UnityEngine.ProBuilder
             // Register driven properties and set hide flags in Awake because OnEnable is called after serialization has
             // had a chance to register changes
             EnsureMeshFilterIsAssigned();
+            SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
 
             if (vertexCount > 0
                 && faceCount > 0
@@ -106,6 +113,7 @@ namespace UnityEngine.ProBuilder
         {
             if (filter == null)
                 m_MeshFilter = gameObject.AddComponent<MeshFilter>();
+
             m_MeshFilter.hideFlags = k_MeshFilterHideFlags;
             filter.sharedMesh = m_Mesh;
         }
@@ -254,9 +262,14 @@ namespace UnityEngine.ProBuilder
         {
             // if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
             if (mesh == null)
+            {
+                SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
                 mesh = new Mesh();
-            else if(mesh.vertexCount != vertexCount)
+            }
+            else if (mesh.vertexCount != vertexCount)
+            {
                 mesh.Clear();
+            }
 
             mesh.indexFormat = vertexCount > ushort.MaxValue ? Rendering.IndexFormat.UInt32 : Rendering.IndexFormat.UInt16;
             mesh.vertices = m_Positions;
@@ -366,7 +379,6 @@ namespace UnityEngine.ProBuilder
 
             if(gameObject.TryGetComponent<MeshCollider>(out collider))
             {
-                SerializationUtility.UnregisterDrivenProperty(this, collider, "m_Mesh");
                 SerializationUtility.RegisterDrivenProperty(this, collider, "m_Mesh");
                 collider.sharedMesh = null;
                 collider.sharedMesh = mesh;
