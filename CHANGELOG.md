@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Bug Fixes
 
 - [case: 1221121] Fixed a crash when undoing the creation of a `Poly Shape` object.
+- Fixed `Shape Editor` preferences not respecting "Reset All Preferences".
 
 ## [4.3.0-preview.3] - 2020-02-12
 
