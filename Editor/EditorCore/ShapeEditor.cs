@@ -148,11 +148,10 @@ namespace UnityEditor.ProBuilder
         void CreateSelectedShape(bool forceCloseWindow = false)
         {
             var res = s_ShapeBuilders[s_CurrentIndex].Build();
+            Undo.RegisterCreatedObjectUndo(res.gameObject, "Create Shape");
             EditorUtility.InitObject(res);
             ApplyPreviewTransform(res);
             DestroyPreviewObject(true);
-
-            Undo.RegisterCreatedObjectUndo(res.gameObject, "Create Shape");
 
             if (forceCloseWindow || s_CloseWindowAfterCreateShape)
                 Close();

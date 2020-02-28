@@ -251,7 +251,7 @@ namespace UnityEditor.ProBuilder
             // advantage of the `vertexCountChanged = false` optimization here.
             ProBuilderEditor.Refresh();
         }
-        
+
         void DuringSceneGUI(SceneView sceneView)
         {
             if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
@@ -304,7 +304,7 @@ namespace UnityEditor.ProBuilder
             m_ControlId = GUIUtility.GetControlID(FocusType.Passive);
             if (evt.type == EventType.Layout)
                 HandleUtility.AddDefaultControl(m_ControlId);
-            
+
             DoPointPlacement();
         }
 
@@ -729,8 +729,6 @@ namespace UnityEditor.ProBuilder
 
         void UndoRedoPerformed()
         {
-            // If undoing after entering poly shape edit mode, make sure to also reset the Tool with the current
-            // PolyEditMode
             if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
                 ProBuilderEditor.selectMode = ProBuilderEditor.selectMode & ~(SelectMode.InputTool);
             else
