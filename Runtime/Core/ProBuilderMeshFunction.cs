@@ -37,7 +37,7 @@ namespace UnityEngine.ProBuilder
             // their previous state (which will assert that the object is _not_ being destroyed)
             // if(m_Mesh != null)
             SerializationUtility.UnregisterDrivenProperty(this, this, "m_Mesh");
-            if(gameObject.TryGetComponent(out MeshCollider meshCollider))
+            if(gameObject != null && gameObject.TryGetComponent(out MeshCollider meshCollider))
                 SerializationUtility.UnregisterDrivenProperty(this, meshCollider, "m_Mesh");
         }
 #endif
