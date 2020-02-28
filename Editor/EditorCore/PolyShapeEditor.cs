@@ -308,6 +308,20 @@ namespace UnityEditor.ProBuilder
             DoPointPlacement();
         }
 
+        // Returns a local space point,
+        Vector3 GetPointInLocalSpace(Vector3 point)
+        {
+            var trs = polygon.transform;
+
+            if (polygon.isOnGrid)
+            {
+                Vector3 snapMask = ProBuilderSnapping.GetSnappingMaskBasedOnNormalVector(m_Plane.normal);
+                return trs.InverseTransformPoint(ProGridsInterface.ProGridsSnap(point, snapMask));
+            }
+
+            return trs.InverseTransformPoint(point);
+        }
+
         void DoPointPlacement()
         {
             Event evt = Event.current;
@@ -324,8 +338,7 @@ namespace UnityEditor.ProBuilder
                     if (m_Plane.Raycast(ray, out hitDistance))
                     {
                         evt.Use();
-
-                        polygon.m_Points[m_SelectedIndex] = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)), Vector3.one);
+                        polygon.m_Points[m_SelectedIndex] = GetPointInLocalSpace(ray.GetPoint(hitDistance));
                         RebuildPolyShapeMesh(false);
                         SceneView.RepaintAll();
                     }
@@ -370,7 +383,7 @@ namespace UnityEditor.ProBuilder
                             polygon.transform.rotation = Quaternion.LookRotation(cameraFacingPlaneNormal) * Quaternion.Euler(new Vector3(90f, 0f, 0f));
                         }
 
-                        Vector3 point = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(hit), Vector3.one);
+                        Vector3 point = GetPointInLocalSpace(hit);
 
                         if (polygon.m_Points.Count > 2 && Math.Approx3(polygon.m_Points[0], point))
                         {
@@ -438,13 +451,6 @@ namespace UnityEditor.ProBuilder
         void SetupInputPlane(Vector2 mousePosition)
         {
             m_Plane = EditorHandleUtility.FindBestPlane(mousePosition);
-
-            if (ProGridsInterface.SnapEnabled())
-            {
-                m_Plane.SetNormalAndPosition(
-                    m_Plane.normal,
-                    ProGridsInterface.ProGridsSnap(m_Plane.normal * -m_Plane.distance));
-            }
 
             var planeNormal = m_Plane.normal;
             var planeCenter = m_Plane.normal * -m_Plane.distance;
@@ -547,9 +553,7 @@ namespace UnityEditor.ProBuilder
                     if (EditorGUI.EndChangeCheck())
                     {
                         UndoUtility.RecordObject(polygon, "Move Polygon Shape Point");
-
-                        Vector3 snapMask = ProBuilderSnapping.GetSnappingMaskBasedOnNormalVector(m_Plane.normal);
-                        polygon.m_Points[ii] = ProGridsInterface.ProGridsSnap(trs.InverseTransformPoint(point), snapMask);
+                        polygon.m_Points[ii] = GetPointInLocalSpace(point);
                         OnBeginVertexMovement();
                         RebuildPolyShapeMesh(false);
                     }
