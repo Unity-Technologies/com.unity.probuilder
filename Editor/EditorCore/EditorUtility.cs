@@ -312,11 +312,14 @@ namespace UnityEditor.ProBuilder
             switch (s_ColliderType.value)
             {
                 case ColliderType.BoxCollider:
-                    pb.gameObject.AddComponent<BoxCollider>();
+                    if(!pb.gameObject.TryGetComponent<BoxCollider>(out _))
+                        Undo.AddComponent(pb.gameObject, typeof(BoxCollider));
                     break;
 
                 case ColliderType.MeshCollider:
-                    var collider = pb.gameObject.DemandComponent<MeshCollider>();
+                    MeshCollider collider;
+                    if (!pb.gameObject.TryGetComponent<MeshCollider>(out collider))
+                        collider = Undo.AddComponent<MeshCollider>(pb.gameObject);
                     // This little dance is required to prevent the Prefab system from detecting an overridden property
                     // before ProBuilderMesh.RefreshCollisions has a chance to mark the MeshCollider.sharedMesh property
                     // as driven. "AddComponent<MeshCollider>" constructs the MeshCollider and simultaneously assigns

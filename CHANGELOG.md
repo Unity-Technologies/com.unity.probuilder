@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Bug Fixes
+
+- [case: 1221121] Fixed a crash when undoing the creation of a `Poly Shape` object.
+
 ## [4.3.0-preview.3] - 2020-02-12
 
 ## Features
