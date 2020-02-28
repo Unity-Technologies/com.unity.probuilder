@@ -178,7 +178,7 @@ namespace UnityEditor.ProBuilder
                 DestroyImmediate(m_PreviewObject);
 
                 // When entering play mode the editor tracker isn't rebuilt before the Inspector redraws, meaning the
-                // preview object is still assumed to be in the selection. Flush the selection changes by rebuilding
+                // preview object is still assumed to be in the selection. Flushing the selection changes by rebuilding
                 // active editor tracker fixes this.
 #if UNITY_2019_3_OR_NEWER
                 ActiveEditorTracker.RebuildAllIfNecessary();
@@ -199,8 +199,9 @@ namespace UnityEditor.ProBuilder
 
             if (m_PreviewObject)
             {
-                var mf = m_PreviewObject.GetComponent<MeshFilter>();
-                if (mf.sharedMesh != null)
+                if (!m_PreviewObject.TryGetComponent(out MeshFilter mf))
+                    mf = m_PreviewObject.AddComponent<MeshFilter>();
+                if(mf.sharedMesh != null)
                     DestroyImmediate(mf.sharedMesh);
                 m_PreviewObject.GetComponent<MeshFilter>().sharedMesh = umesh;
                 mesh.preserveMeshAssetOnDestroy = true;
