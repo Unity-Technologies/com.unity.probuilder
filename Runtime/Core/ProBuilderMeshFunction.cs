@@ -67,6 +67,10 @@ namespace UnityEngine.ProBuilder
 
         void OnDestroy()
         {
+            // Always re-enable the MeshFilter when the ProBuilderMesh component is removed
+            if (m_MeshFilter != null || TryGetComponent(out m_MeshFilter))
+                m_MeshFilter.hideFlags = HideFlags.None;
+
             if (componentWillBeDestroyed != null)
                 componentWillBeDestroyed(this);
 

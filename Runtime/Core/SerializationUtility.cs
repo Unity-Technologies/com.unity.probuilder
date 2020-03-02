@@ -38,9 +38,7 @@ namespace UnityEngine.ProBuilder
 
         [Conditional("UNITY_EDITOR")]
         public static void RegisterDrivenProperty(Object driver, Object target, string property)
-        {    
-            UnregisterDrivenProperty(driver, target, property);
-
+        {
 #if UNITY_2020_1_OR_NEWER && RUNTIME_VISIBLE_TO_PROBUILDER_LANDED
             DrivenPropertyManager.RegisterProperty(driver, target, property);
 #else
