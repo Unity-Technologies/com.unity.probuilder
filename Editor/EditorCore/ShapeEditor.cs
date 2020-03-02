@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEditor.Experimental.SceneManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using PMath = UnityEngine.ProBuilder.Math;
 using UnityEditor.SettingsManagement;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.SceneManagement;
@@ -34,6 +35,8 @@ namespace UnityEditor.ProBuilder
             GetWindow<ShapeEditor>("Shape Tool");
         }
 
+        static readonly Vector3 k_MinShapeDimensions = new Vector3(.001f, .001f, .001f);
+        static readonly Vector3 k_MaxShapeDimensions = new Vector3(1000000f, 1000000f, 1000000f);
         Vector2 m_Scroll = Vector2.zero;
         [SettingsKey("ShapeEditor.s_CurrentIndex")]
         static Pref<int> s_CurrentIndex = new Pref<int>("ShapeEditor.s_CurrentIndex", 0, SettingsScope.User);
@@ -178,7 +181,7 @@ namespace UnityEditor.ProBuilder
                 DestroyImmediate(m_PreviewObject);
 
                 // When entering play mode the editor tracker isn't rebuilt before the Inspector redraws, meaning the
-                // preview object is still assumed to be in the selection. Flush the selection changes by rebuilding
+                // preview object is still assumed to be in the selection. Flushing the selection changes by rebuilding
                 // active editor tracker fixes this.
 #if UNITY_2019_3_OR_NEWER
                 ActiveEditorTracker.RebuildAllIfNecessary();
@@ -199,8 +202,9 @@ namespace UnityEditor.ProBuilder
 
             if (m_PreviewObject)
             {
-                var mf = m_PreviewObject.GetComponent<MeshFilter>();
-                if (mf.sharedMesh != null)
+                if (!m_PreviewObject.TryGetComponent(out MeshFilter mf))
+                    mf = m_PreviewObject.AddComponent<MeshFilter>();
+                if(mf.sharedMesh != null)
                     DestroyImmediate(mf.sharedMesh);
                 m_PreviewObject.GetComponent<MeshFilter>().sharedMesh = umesh;
                 mesh.preserveMeshAssetOnDestroy = true;
@@ -254,7 +258,7 @@ namespace UnityEditor.ProBuilder
             public override void OnGUI()
             {
                 s_CubeSize.value = EditorGUILayout.Vector3Field("Size", s_CubeSize);
-                s_CubeSize.value = Vector3.Max(s_CubeSize.value, new Vector3(.001f, .001f, .001f));
+                s_CubeSize.value = Vector3.Min(Vector3.Max(s_CubeSize.value, k_MinShapeDimensions), k_MaxShapeDimensions);
             }
 
             public override ProBuilderMesh Build(bool preview = false)
@@ -287,7 +291,7 @@ namespace UnityEditor.ProBuilder
             public override void OnGUI()
             {
                 s_PrismSize.value = EditorGUILayout.Vector3Field("Size", s_PrismSize);
-                s_PrismSize.value = Vector3.Max(s_PrismSize.value, new Vector3(.001f, .001f, .001f));
+                s_PrismSize.value = Vector3.Min(Vector3.Max(s_PrismSize.value, k_MinShapeDimensions), k_MaxShapeDimensions);
             }
 
             public override ProBuilderMesh Build(bool preview = false)
@@ -312,6 +316,7 @@ namespace UnityEditor.ProBuilder
             public override void OnGUI()
             {
                 s_Steps.value = (int)Mathf.Max(UI.EditorGUIUtility.FreeSlider("Steps", s_Steps, 2, 64), 2);
+                s_Steps.value = PMath.Clamp(s_Steps, 2, 512);
                 s_Sides.value = EditorGUILayout.Toggle("Build Sides", s_Sides);
                 s_Circumference.value = EditorGUILayout.Slider("Curvature", s_Circumference, 0f, 360f);
 
@@ -347,7 +352,7 @@ namespace UnityEditor.ProBuilder
                     size.z = UI.EditorGUIUtility.FreeSlider("Depth", size.z, 0.01f, 10f);
                 }
 
-                s_Size.value = size;
+                s_Size.value = PMath.Clamp(size, k_MinShapeDimensions, k_MaxShapeDimensions);
             }
 
             public override ProBuilderMesh Build(bool preview = false)
@@ -388,15 +393,17 @@ namespace UnityEditor.ProBuilder
             public override void OnGUI()
             {
                 s_Radius.value = EditorGUILayout.FloatField("Radius", s_Radius);
-                s_Radius.value = Mathf.Clamp(s_Radius, .01f, Mathf.Infinity);
+                s_Radius.value = Mathf.Clamp(s_Radius, k_MinShapeDimensions.x, k_MinShapeDimensions.x);
 
                 s_AxisSegments.value = EditorGUILayout.IntField("Number of Sides", s_AxisSegments);
-                s_AxisSegments.value = UnityEngine.ProBuilder.Math.Clamp(s_AxisSegments, 4, 48);
+                s_AxisSegments.value = PMath.Clamp(s_AxisSegments, 4, 128);
 
                 s_Height.value = EditorGUILayout.FloatField("Height", s_Height);
+                s_Height.value = Mathf.Clamp(s_Height.value, k_MinShapeDimensions.x, k_MaxShapeDimensions.x);
 
                 s_HeightSegments.value = EditorGUILayout.IntField("Height Segments", s_HeightSegments);
                 s_HeightSegments.value = UnityEngine.ProBuilder.Math.Clamp(s_HeightSegments, 0, 48);
+                s_HeightSegments.value = Mathf.Clamp(s_HeightSegments.value, 0, 128);
 
                 s_Smooth.value = EditorGUILayout.Toggle("Smooth", s_Smooth);
 
@@ -481,21 +488,14 @@ namespace UnityEditor.ProBuilder
 
                 s_Width.value = EditorGUILayout.FloatField("Width", s_Width);
                 s_Height.value = EditorGUILayout.FloatField("Length", s_Height);
-
-                if (s_Height < 1f)
-                    s_Height.value = 1f;
-
-                if (s_Width < 1f)
-                    s_Width.value = 1f;
+                s_Width.value = Mathf.Clamp(s_Width.value, k_MinShapeDimensions.x, k_MaxShapeDimensions.x);
+                s_Height.value = Mathf.Clamp(s_Height.value, k_MinShapeDimensions.x, k_MaxShapeDimensions.x);
 
                 s_WidthSegments.value = EditorGUILayout.IntField("Width Segments", s_WidthSegments);
                 s_HeightSegments.value = EditorGUILayout.IntField("Length Segments", s_HeightSegments);
 
-                if (s_WidthSegments < 0)
-                    s_WidthSegments.value = 0;
-
-                if (s_HeightSegments < 0)
-                    s_HeightSegments.value = 0;
+                s_WidthSegments.value = PMath.Clamp(s_WidthSegments.value, 0, 512);
+                s_HeightSegments.value = PMath.Clamp(s_HeightSegments.value, 0, 512);
             }
 
             public override ProBuilderMesh Build(bool preview = false)
@@ -531,15 +531,12 @@ namespace UnityEditor.ProBuilder
                 s_AxisSegments.value = EditorGUILayout.IntField("Number of Sides", s_AxisSegments);
                 s_HeightSegments.value = EditorGUILayout.IntField("Height Segments", s_HeightSegments);
 
-                if (s_Radius < .1f)
-                    s_Radius.value = .1f;
-
-                if (s_Height < .1f)
-                    s_Height.value = .1f;
-
+                s_Radius.value = Mathf.Clamp(s_Radius.value, k_MinShapeDimensions.x, k_MaxShapeDimensions.x);
+                s_Height.value = Mathf.Clamp(s_Height.value, k_MinShapeDimensions.x, k_MaxShapeDimensions.x);
                 s_HeightSegments.value = (int)Mathf.Clamp(s_HeightSegments, 0f, 32f);
                 s_Thickness.value = Mathf.Clamp(s_Thickness, .01f, s_Radius - .01f);
-                s_AxisSegments.value = (int)Mathf.Clamp(s_AxisSegments, 3f, 32f);
+                s_AxisSegments.value = PMath.Clamp(s_AxisSegments, 3, 64);
+                s_HeightSegments.value = PMath.Clamp(s_HeightSegments.value, 0, 128);
             }
 
             public override ProBuilderMesh Build(bool preview = false)
@@ -570,13 +567,9 @@ namespace UnityEditor.ProBuilder
                 s_Height.value = EditorGUILayout.FloatField("Height", s_Height);
                 s_AxisSegments.value = EditorGUILayout.IntField("Number of Sides", s_AxisSegments);
 
-                if (s_Radius < .1f)
-                    s_Radius.value = .1f;
-
-                if (s_Height < .1f)
-                    s_Height.value = .1f;
-
-                s_AxisSegments.value = (int)Mathf.Clamp(s_AxisSegments, 3f, 32f);
+                s_Radius.value = Mathf.Clamp(s_Radius.value, k_MinShapeDimensions.x, k_MaxShapeDimensions.x);
+                s_Height.value = Mathf.Clamp(s_Height.value, k_MinShapeDimensions.x, k_MaxShapeDimensions.x);
+                s_AxisSegments.value = PMath.Clamp(s_AxisSegments, 3, 64);
             }
 
             public override ProBuilderMesh Build(bool preview = false)
@@ -660,8 +653,9 @@ namespace UnityEditor.ProBuilder
 
             public override void OnGUI()
             {
-                s_Radius.value = EditorGUILayout.Slider("Radius", s_Radius, 0.01f, 10f);
-                s_Subdivisions.value = (int) EditorGUILayout.Slider("Subdivisions", s_Subdivisions, 0, 4);
+                s_Radius.value = EditorGUILayout.FloatField("Radius", s_Radius.value);
+                s_Radius.value = Mathf.Clamp(s_Radius.value, k_MinShapeDimensions.x, k_MaxShapeDimensions.x);
+                s_Subdivisions.value = (int) EditorGUILayout.Slider("Subdivisions", s_Subdivisions, 0, 5);
             }
 
             public override ProBuilderMesh Build(bool preview = false)
@@ -706,10 +700,10 @@ namespace UnityEditor.ProBuilder
 
             public override void OnGUI()
             {
-                s_Rows.value = (int)EditorGUILayout.IntSlider(
+                s_Rows.value = EditorGUILayout.IntSlider(
                         new GUIContent("Rows", "How many rows the torus will have.  More equates to smoother geometry."),
                         s_Rows, 3, 32);
-                s_Columns.value = (int)EditorGUILayout.IntSlider(
+                s_Columns.value = EditorGUILayout.IntSlider(
                         new GUIContent("Columns",
                             "How many columns the torus will have.  More equates to smoother geometry."), s_Columns, 3, 64);
 
@@ -718,11 +712,9 @@ namespace UnityEditor.ProBuilder
                 if (!s_UseInnerOuterMethod)
                 {
                     s_Radius.value = EditorGUILayout.FloatField("Radius", s_Radius);
-
-                    if (s_Radius < .001f)
-                        s_Radius.value = .001f;
-
+                    s_Radius.value = Mathf.Clamp(s_Radius.value, k_MinShapeDimensions.x, k_MaxShapeDimensions.x);
                     s_TubeRadius.value = UI.EditorGUIUtility.Slider(new GUIContent("Tube Radius", "How thick the donut will be."), s_TubeRadius, .01f, s_Radius);
+                    s_TubeRadius.value = Mathf.Clamp(s_TubeRadius.value, k_MinShapeDimensions.x, k_MaxShapeDimensions.x);
                 }
                 else
                 {

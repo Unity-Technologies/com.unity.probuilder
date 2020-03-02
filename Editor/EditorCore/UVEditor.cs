@@ -569,7 +569,7 @@ namespace UnityEditor.ProBuilder
 
             if (update)
             {
-                /// UpdateSelection clears handlePosition
+                // UpdateSelection clears handlePosition
                 Vector2 storedHandlePosition = handlePosition;
                 ProBuilderEditor.Refresh();
                 SetHandlePosition(storedHandlePosition, true);
@@ -577,6 +577,16 @@ namespace UnityEditor.ProBuilder
 
             CopySelectionUVs(out uv_origins);
             uvOrigin = handlePosition;
+
+            m_AutoUnwrapSettingsPreModification = new AutoUnwrapSettings[selection.Length][];
+            for (int i = 0, c = m_AutoUnwrapSettingsPreModification.Length; i < c; i++)
+            {
+                int[] selected = selection[i].selectedFaceIndicesInternal;
+                Face[] faces = selection[i].facesInternal;
+                m_AutoUnwrapSettingsPreModification[i] = new AutoUnwrapSettings[selected.Length];
+                for (int n = 0, fc = selected.Length; n < fc; n++)
+                    m_AutoUnwrapSettingsPreModification[i][n] = faces[selected[n]].uv;
+            }
         }
 
         /**
@@ -590,78 +600,6 @@ namespace UnityEditor.ProBuilder
 
             if ((tool == Tool.Rotate || tool == Tool.Scale) && userPivot)
                 SetHandlePosition(handlePosition, true);
-
-            if (mode == UVMode.Mixed || mode == UVMode.Auto)
-            {
-                UndoUtility.RegisterCompleteObjectUndo(selection, (tool == Tool.Move ? "Translate UVs" : tool == Tool.Rotate ? "Rotate UVs" : "Scale UVs"));
-
-                foreach (ProBuilderMesh pb in selection)
-                {
-                    if (pb.selectedFaceCount > 0)
-                    {
-                        // Sort faces into texture groups for re-projection
-                        Dictionary<int, List<Face>> textureGroups = new Dictionary<int, List<Face>>();
-
-                        int n = -2;
-                        foreach (Face face in System.Array.FindAll(pb.selectedFacesInternal, x => !x.manualUV))
-                        {
-                            if (textureGroups.ContainsKey(face.textureGroup))
-                                textureGroups[face.textureGroup].Add(face);
-                            else
-                                textureGroups.Add(face.textureGroup > 0 ? face.textureGroup : n--, new List<Face>() { face });
-                        }
-
-                        foreach (KeyValuePair<int, List<Face>> kvp in textureGroups)
-                        {
-                            if (tool == Tool.Move)
-                            {
-                                foreach (Face face in kvp.Value)
-                                {
-                                    var uv = face.uv;
-                                    uv.offset -= handlePosition - handlePosition_origin;
-                                    face.uv = uv;
-                                }
-                            }
-                            else if (tool == Tool.Rotate)
-                            {
-                                foreach (Face face in kvp.Value)
-                                {
-                                    var uv = face.uv;
-
-                                    if (uv.rotation > 360f)
-                                        uv.rotation = uv.rotation % 360f;
-                                    else if (uv.rotation < 0f)
-                                        uv.rotation = 360f + (uv.rotation % 360f);
-
-                                    face.uv = uv;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        FlagSelectedFacesAsManual(pb);
-                    }
-                }
-            }
-            else if (mode == UVMode.Manual)
-            {
-                foreach (ProBuilderMesh pb in selection)
-                {
-                    if (pb.selectedFaceCount > 0)
-                    {
-                        foreach (Face face in pb.selectedFacesInternal)
-                        {
-                            face.textureGroup = -1;
-                            face.manualUV = true;
-                        }
-                    }
-                    else
-                    {
-                        FlagSelectedFacesAsManual(pb);
-                    }
-                }
-            }
 
             // Regenerate UV2s
             foreach (ProBuilderMesh pb in selection)
@@ -1293,6 +1231,7 @@ namespace UnityEditor.ProBuilder
         Vector2 uvOrigin = Vector2.zero;
 
         Vector2[][] uv_origins = null;
+        AutoUnwrapSettings[][] m_AutoUnwrapSettingsPreModification;
         Vector2 handlePosition = Vector2.zero,
                 handlePosition_origin = Vector2.zero,
                 handlePosition_offset = Vector2.zero;
@@ -1314,9 +1253,7 @@ namespace UnityEditor.ProBuilder
             if (!e.isMouse)
                 return;
 
-            /**
-             *  Setting a custom pivot
-             */
+            // Setting a custom pivot
             if ((e.button == RIGHT_MOUSE_BUTTON || (e.alt && e.button == LEFT_MOUSE_BUTTON)) && !Math.Approx2(t_handlePosition, handlePosition, .0001f))
             {
                 userPivot = true; // flag the handle as having been user set.
@@ -1362,20 +1299,15 @@ namespace UnityEditor.ProBuilder
                 return;
             }
 
-            /**
-             *  Tool activated - moving some UVs around.
-             *  Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
-             *  in OnFinishUVModification, not at real time.
-             */
+            // Tool activated - moving some UVs around.
+            // Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
+            // in OnFinishUVModification, not at real time.
             if (!Math.Approx2(t_handlePosition, handlePosition, Math.handleEpsilon))
             {
                 // Start of move UV operation
                 if (!modifyingUVs)
                 {
-                    // if auto uvs, the changes are applied after action is complete
-                    if (mode != UVMode.Auto)
-                        UndoUtility.RegisterCompleteObjectUndo(selection, "Translate UVs");
-
+                    UndoUtility.RecordSelection(selection, "Translate UVs");
                     handlePosition_origin = handlePosition;
                     OnBeginUVModification();
                 }
@@ -1448,6 +1380,23 @@ namespace UnityEditor.ProBuilder
                 }
 
                 RefreshSelectedUVCoordinates();
+
+                // Update the auto uv parameters
+                for(int i = 0, c = selection.Length; i < c; i++)
+                {
+                    var mesh = selection[i];
+                    var selected = mesh.selectedFaceIndicesInternal;
+                    var faces = mesh.facesInternal;
+                    for(int n = 0, f = mesh.selectedFaceCount; n < f; n++)
+                    {
+                        var face = faces[selected[n]];
+                        if (face.manualUV)
+                            continue;
+                        var uv = face.uv;
+                        uv.offset = m_AutoUnwrapSettingsPreModification[i][n].offset - (handlePosition - handlePosition_origin);
+                        face.uv = uv;
+                    }
+                }
             }
         }
 

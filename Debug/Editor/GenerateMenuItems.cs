@@ -153,17 +153,17 @@ namespace UnityEditor.ProBuilder
 
         static void AppendMenuItem(StringBuilder sb, MenuActionData data)
         {
+            var category = GetActionCategory(data.path);
+            var priority = GetMenuPriority(category);
+            var menuItemShortcut = GetMenuFormattedShortcut(data.menuItemShortcut);
+
             // Verify
-            sb.AppendLine($"\t\t[MenuItem(k_MenuPrefix + \"{data.path} \", true)]");
+            sb.AppendLine($"\t\t[MenuItem(k_MenuPrefix + \"{data.path}{menuItemShortcut}\", true, {priority})]");
             sb.AppendLine($"\t\tstatic bool MenuVerify_{data.typeString}()");
             sb.AppendLine( "\t\t{");
             sb.AppendLine($"\t\t\tvar instance = EditorToolbarLoader.GetInstance<{data.typeString}>();");
             sb.AppendLine( "\t\t\treturn instance != null && instance.enabled;");
             sb.AppendLine( "\t\t}");
-
-            var category = GetActionCategory(data.path);
-            var priority = GetMenuPriority(category);
-            var menuItemShortcut = GetMenuFormattedShortcut(data.menuItemShortcut);
 
             sb.AppendLine();
 
