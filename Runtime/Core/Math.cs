@@ -1313,6 +1313,11 @@ namespace UnityEngine.ProBuilder
             return value<lowerBound? lowerBound : value> upperBound ? upperBound : value;
         }
 
+        internal static Vector3 Clamp(Vector3 value, Vector3 lowerBound, Vector3 upperBound)
+        {
+            return Vector3.Max(Vector3.Min(value, upperBound), lowerBound);
+        }
+
         internal static Vector3 ToSignedMask(this Vector3 vec, float delta = k_FltEpsilon)
         {
             return new Vector3(

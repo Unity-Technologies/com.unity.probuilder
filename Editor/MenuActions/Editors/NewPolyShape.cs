@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEngine;
@@ -33,35 +34,25 @@ namespace UnityEditor.ProBuilder.Actions
             get { return true; }
         }
 
-        bool CanCreateNewPolyShape()
+        static bool CanCreateNewPolyShape()
         {
             //If inspector is locked we cannot create new PolyShape.
             //First created inspector seems to hold a specific semantic where
             //if not unlocked no matter how many inspectors are present they will
             //not allow the creation of new PolyShape.
-#if UNITY_2019_1_OR_NEWER           
+#if UNITY_2019_1_OR_NEWER
             var inspWindows = InspectorWindow.GetInspectors();
-            bool someInspectorLocked = false;
-            foreach (var insp in inspWindows)
+
+            if (inspWindows.Any(x => x.isLocked))
             {
-                if (insp.isLocked)
-                {
-                    someInspectorLocked = true;
-                    break;
-                }
-            }
-            if (someInspectorLocked == true)
-            {
-                if (UnityEditor.EditorUtility.DisplayDialog(                                   
+                if (UnityEditor.EditorUtility.DisplayDialog(
                                     L10n.Tr("Inspector Locked"),
                                     L10n.Tr("To create new Poly Shape you need access to all Inspectors, which are currently locked. Do you wish to unlock all Inpsectors?"),
                                     L10n.Tr("Unlock"),
                                     L10n.Tr("Cancel")))
                 {
                     foreach (var insp in inspWindows)
-                    {
                         insp.isLocked = false;
-                    }
                 }
                 else
                 {
@@ -109,8 +100,9 @@ namespace UnityEditor.ProBuilder.Actions
                 return new ActionResult(ActionResult.Status.Canceled, "Canceled Create Poly Shape");
 
             GameObject go = new GameObject();
-            PolyShape poly = go.AddComponent<PolyShape>();
-            ProBuilderMesh pb = poly.gameObject.AddComponent<ProBuilderMesh>();
+            UndoUtility.RegisterCreatedObjectUndo(go, "Create Poly Shape");
+            PolyShape poly = Undo.AddComponent<PolyShape>(go);
+            ProBuilderMesh pb = Undo.AddComponent<ProBuilderMesh>(go);
             pb.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals);
             EditorUtility.InitObject(pb);
 
@@ -123,7 +115,6 @@ namespace UnityEditor.ProBuilder.Actions
                     go.transform.position = pivot;
             }
             MeshSelection.SetSelection(go);
-            UndoUtility.RegisterCreatedObjectUndo(go, "Create Poly Shape");
             poly.polyEditMode = PolyShape.PolyEditMode.Path;
 
             return new ActionResult(ActionResult.Status.Success, "Create Poly Shape");

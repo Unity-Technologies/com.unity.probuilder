@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## Bug Fixes
 
 - [case: 1209522] Fixed `Poly Shape` component allowing incompatible Preset feature.
+- [case: 1213742] Fixed bug where `Delete` menu item would incorrectly shows as available with no selection.
+- [case: 1192479] Fixed an issue where translating UV positions in the `UV Editor` with a handle would not update the Inspector offset values.
+- [case: 1176370] Fixed entering Play Mode with the `Shape Editor` open creating a new shape in the scene.
+- [case: 1218413] Fixed `Poly Shape` input incorrectly snapping vertices when input plane is not on a grid.
+- [case: 1221121] Fixed a crash when undoing the creation of a `Poly Shape` object.
+- Fixed `Shape Editor` preferences not respecting "Reset All Preferences".
+- [case: 1132509] Fixed `Bevel` sometimes resulting in non-conforming face normals.
+- [case: 1158748] Fixed `Export` and `Strip Scripts` actions leaving `Mesh Filter` component hidden on resulting GameObjects.
 
 ## [4.3.0-preview.3] - 2020-02-12
 
