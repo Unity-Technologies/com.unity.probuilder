@@ -213,13 +213,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <summary>
         /// Create a poly shape from a set of points on a plane. The points must be ordered.
         /// </summary>
-        /// <param name="poly"></param>
+        /// <param name="poly">The <see cref="PolyShape"/> component to rebuild.</param>
         /// <returns>An action result indicating the status of the operation.</returns>
-        internal static ActionResult CreateShapeFromPolygon(this PolyShape poly)
+        public static ActionResult CreateShapeFromPolygon(this PolyShape poly)
         {
             return poly.mesh.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals);
         }
-
 
         /// <summary>
         /// Clear and refresh mesh in case of failure to create a shape.
