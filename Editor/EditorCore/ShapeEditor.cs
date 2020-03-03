@@ -214,8 +214,9 @@ namespace UnityEditor.ProBuilder
                 DestroyImmediate(mesh.gameObject);
             }
             else
-            {
+            { 
                 m_PreviewObject = mesh.gameObject;
+                m_PreviewObject.hideFlags = HideFlags.DontSave;
                 mesh.preserveMeshAssetOnDestroy = true;
                 DestroyImmediate(mesh);
                 Selection.activeTransform = m_PreviewObject.transform;
