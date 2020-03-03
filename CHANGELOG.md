@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1132509] Fixed `Bevel` sometimes resulting in non-conforming face normals.
 - [case: 1158748] Fixed `Export` and `Strip Scripts` actions leaving `Mesh Filter` component hidden on resulting GameObjects.
 
+### Changes
+
+- Expose and document `Poly Shape` component.
+
 ## [4.3.0-preview.3] - 2020-02-12
 
 ## Features
