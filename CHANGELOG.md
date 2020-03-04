@@ -5,31 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [4.3.0-preview.4] - 2020-03-04
 
-## Bug Fixes
+### Features
+
+- Make public and document the `Poly Shape` component.
+
+### Bug Fixes
 
 - [case: 1209522] Fixed `Poly Shape` component allowing incompatible Preset feature.
 - [case: 1213742] Fixed bug where `Delete` menu item would incorrectly shows as available with no selection.
 - [case: 1192479] Fixed an issue where translating UV positions in the `UV Editor` with a handle would not update the Inspector offset values.
 - [case: 1176370] Fixed entering Play Mode with the `Shape Editor` open creating a new shape in the scene.
 - [case: 1218413] Fixed `Poly Shape` input incorrectly snapping vertices when input plane is not on a grid.
-- [case: 1221121] Fixed a crash when undoing the creation of a `Poly Shape` object.
+- [case: 1223330] Fixed a crash when undoing the creation of a `Poly Shape` object.
 - Fixed `Shape Editor` preferences not respecting "Reset All Preferences".
 - [case: 1132509] Fixed `Bevel` sometimes resulting in non-conforming face normals.
 - [case: 1158748] Fixed `Export` and `Strip Scripts` actions leaving `Mesh Filter` component hidden on resulting GameObjects.
-
-### Changes
-
-- Expose and document `Poly Shape` component.
+- [case: 1224413] Fixed `Shape Editor` leaving behind a preview object if window is closed during play mode.
 
 ## [4.3.0-preview.3] - 2020-02-12
 
-## Features
+### Features
 
 - [case: 1201746] The Move tool is now compatible with grid snapping (Unity 2019.3 and higher).
 
-## Bug Fixes
+### Bug Fixes
 
 - [case: 1217930] Fixed duplicated objects shape reverts to original's mesh when entering play mode
 - [case: 1214103] Fixed ProBuilder created meshes not rendering in project builds.
@@ -49,17 +50,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1203685] Fixed `Poly Shape` creation tool not accepting input when Scene View gizmos are disabled.
 - [case: 1161998] Fixed an issue where scene objects could be selected through modal windows.
 
-## Changes
+### Changes
 
 - [case: 1203585] Removed `Custom Shape` option from the `Shape Editor` window.
 
-## Known Issues
+### Known Issues
 
 - Marquee selection when the Universal Render Pipeline is enabled does not work (currently blocked due to URP missing required functionality).
 
 ## [4.3.0-preview.2] - 2020-01-15
 
-## Bug Fixes
+### Bug Fixes
 
 - [case: 1198568] Fixed `MeshFilter` and `MeshCollider` always showing properties as "Overridden" on Prefab instances.
 - [case: 1204088] Fixed `UV Editor` actions window not using the mouse event, allowing inactive window properties to appear as interactable.
@@ -76,42 +77,42 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1198588] Fixed a rare case where `ProBuilderMesh` could throw errors due to an invalid internal state.
 - [case: 1196134] Fixed an issue where resetting component data on a `ProBuilderMesh` through the Inspector window would not update the `MeshFilter` and scene gizmos.
 
-## Changes
+### Changes
 
 - The `ProBuilder Mesh` component is now shown as a replacement for the `Mesh Filter` component in the Inspector.
 - The `ProBuilder Mesh` component now has an icon in the Inspector.
 
-## Known Issues
+### Known Issues
 
 - Element selection changes to an instantiated prefab still register as overrides. This will be addressed in a follow-up PR that moves the selection out of the `ProBuilderMesh` class.
 - The `ProBuilderMesh` icon is always the Pro Skin version.
 - The `ProBuilderMesh` icon is toggle-able in the Gizmos window (initial value is 'Off').
 
-## Changes
+### Changes
 
 - The `MeshFilter` component is now hidden by default on GameObjects created by ProBuilder, and the `ProBuilderMesh` component is renamed in the Inspector to `ProBuilder MeshFilter`.
 
 ## [4.3.0-preview.1] - 2019-12-16
 
-## Bug Fixes
+### Bug Fixes
 
 - Fixed an issue where an invalid selection on `ProBuilderMesh` could prevent the selected mesh from being edited due to errors.
 
 ## [4.3.0-preview.0] - 2019-12-16
 
-## Bug Fixes
+### Bug Fixes
 
 - Fixed case where the default material could fail to initialize when a Scriptable Render Pipeline is in use at runtime.
 
 ## [4.2.1] - 2019-11-22
 
-## Features
+### Features
 
 - Added the `Offset Elements` action to quickly move selected mesh elements in world, local, or element space.
 - Added the ability to set a custom range in the `Subdivide Edges` options window.
 - Added the ability to set wireframe and edge line width on macOS when using Metal as the graphics backend.
 
-## Bug Fixes
+### Bug Fixes
 
 - Fixed `Boolean Editor` menu item not respecting the Experimental Features Enabled preference.
 - Fixed `Boolean Editor` preview images not updating with selection changes.
@@ -137,7 +138,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed a potential error when undoing a `ProBuilderize` action.
 - Fixed a warning when importing ProBuilder to macOS projects using Metal as the rendering backend.
 
-## Changes
+### Changes
 
 - [Samples] Rename LWRP to Universal Render Pipeline.
 - Added support for holes when creating shapes from a polygon (API only).
