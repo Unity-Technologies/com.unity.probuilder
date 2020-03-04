@@ -13,9 +13,8 @@ namespace UnityEngine.ProBuilder
     /// </summary>
     // The double "//" sets this component as hidden in the menu, but is used by ObjectNames.cs to get the component name.
     [AddComponentMenu("//ProBuilder MeshFilter")]
-    [DisallowMultipleComponent]
-    [ExecuteInEditMode]
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+    [DisallowMultipleComponent, ExecuteInEditMode, ExcludeFromPreset, ExcludeFromObjectFactory]
 //    [MonoBehaviourIcon("Packages/com.unity.probuilder/Content/Icons/Scripts/ProBuilderMesh@64.png")]
     public sealed partial class ProBuilderMesh : MonoBehaviour
     {
