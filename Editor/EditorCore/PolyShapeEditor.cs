@@ -213,7 +213,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        void RebuildPolyShapeMesh(bool vertexCountChanged = false)
+        public void RebuildPolyShapeMesh(bool vertexCountChanged = false)
         {
             // If Undo is called immediately after creation this situation can occur
             if (polygon == null)
