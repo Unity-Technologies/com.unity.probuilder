@@ -11,6 +11,7 @@ namespace UnityEngine.ProBuilder
     /// </summary>
     [AddComponentMenu("")]
     [DisallowMultipleComponent]
+    [ExcludeFromPreset, ExcludeFromObjectFactory]
     [ProGridsConditionalSnap]
     public sealed class PolyShape : MonoBehaviour
     {
