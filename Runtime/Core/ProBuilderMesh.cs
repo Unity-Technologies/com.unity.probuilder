@@ -352,6 +352,8 @@ namespace UnityEngine.ProBuilder
                 if ((m_CacheValid & CacheValidState.SharedTexture) != CacheValidState.SharedTexture)
                 {
                     m_CacheValid |= CacheValidState.SharedTexture;
+                    if (m_SharedTextureLookup == null)
+                        m_SharedTextureLookup = new Dictionary<int, int>();
                     SharedVertex.GetSharedVertexLookup(m_SharedTextures, m_SharedTextureLookup);
                 }
 
