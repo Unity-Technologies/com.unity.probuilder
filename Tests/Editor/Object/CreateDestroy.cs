@@ -50,4 +50,14 @@ static class CreateDestroy
         AssetDatabase.DeleteAsset(path);
         LogAssert.NoUnexpectedReceived();
     }
+
+    [Test]
+    public static void CreatePrimitive_SetsMeshFilterHideFlags_DontSave()
+    {
+        var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
+        Assume.That(mesh, Is.Not.Null);
+        Assume.That(mesh.filter, Is.Not.Null);
+        Assert.That(mesh.filter.hideFlags & HideFlags.DontSave, Is.EqualTo(HideFlags.DontSave));
+        UObject.DestroyImmediate(mesh.gameObject);
+    }
 }
