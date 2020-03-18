@@ -36,6 +36,26 @@ public class PrefabTests
         DestroyPrefab(prefab);
     }
 
+    // this is just a smoke test to make sure that prefab behaviour hasn't changed. if this does not fail but
+    // CreatePrefab_DoesNot_SerializeMeshFilter does, then it's a probuilder problem.
+    [Test]
+    public void CreatePrefab_FromUnityPrimitive_DoesNotInclude_ComponentsWith_HideFlagsDontSave()
+    {
+        var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        var mf = go.GetComponent<MeshFilter>();
+        mf.hideFlags = HideFlags.DontSave;
+
+        var prefabPath = AssetDatabase.GenerateUniqueAssetPath("Assets/PrefabTest.prefab");
+        Assume.That(prefabPath, Is.Not.Empty);
+        var prefab = PrefabUtility.SaveAsPrefabAsset(go, prefabPath);
+        Assume.That(prefab, Is.Not.Null);
+        Assume.That(AssetDatabase.GetAssetPath(prefab), Is.EqualTo(prefabPath));
+        Assert.That(prefab.GetComponent<MeshFilter>(), Is.Null);
+
+        Object.DestroyImmediate(go);
+        AssetDatabase.DeleteAsset(prefabPath);
+    }
+
     [Test]
     public void CreatePrefab_DoesNot_SerializeMeshColliderMeshProperty()
     {
