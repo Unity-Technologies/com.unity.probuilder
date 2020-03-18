@@ -116,7 +116,6 @@ public class PrefabTests
         var overrides = PrefabUtility.GetObjectOverrides(instanced);
         Assume.That(overrides, Is.Not.Null);
         Assume.That(overrides, Has.Some.Matches<ObjectOverride>(x => x.instanceObject is ProBuilderMesh));
-
         Assert.That(overrides, Has.None.Matches<ObjectOverride>(x => x.instanceObject is MeshFilter));
 
         DestroyPrefab(prefab);
