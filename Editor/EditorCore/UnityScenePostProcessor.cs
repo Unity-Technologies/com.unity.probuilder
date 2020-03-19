@@ -52,24 +52,26 @@ namespace UnityEditor.ProBuilder
 
             foreach (var mesh in Object.FindObjectsOfType<ProBuilderMesh>())
             {
-                GameObject go = mesh.gameObject;
+                GameObject gameObject = mesh.gameObject;
 
-                var entity = ProcessLegacyEntity(go);
+                var entity = ProcessLegacyEntity(gameObject);
 
-                // clear hideflags on prefab meshes
+                // clear editor-only hideflags and serialization ignores
                 if (mesh.mesh != null)
                     mesh.mesh.hideFlags = HideFlags.None;
+                SerializationUtility.UnregisterDrivenProperty(mesh, mesh, "m_Mesh");
+                if(gameObject != null && gameObject.TryGetComponent(out MeshCollider meshCollider))
+                    SerializationUtility.UnregisterDrivenProperty(mesh, meshCollider, "m_Mesh");
+                var filter = gameObject.DemandComponent<MeshFilter>();
+                filter.hideFlags = HideFlags.None;
 
+                // early out if we're not planning to remove the ProBuilderMesh component
                 if (m_ScriptStripping == false)
                     continue;
 
                 mesh.preserveMeshAssetOnDestroy = true;
-
                 Object.DestroyImmediate(mesh);
                 Object.DestroyImmediate(entity);
-
-                var filter = go.DemandComponent<MeshFilter>();
-                filter.hideFlags = HideFlags.None;
             }
         }
 

@@ -206,13 +206,10 @@ namespace UnityEditor.ProBuilder
                     mesh.Optimize();
                 }
                 else
-                /**
-                 * If the mesh ID doesn't match the gameObject Id, it could mean two things -
-                 * 1. The object was just duplicated, and then made unique
-                 * 2. The scene was reloaded, and gameObject ids were recalculated.
-                 * If the latter, we need to clean up the old mesh.  If the former,
-                 * the old mesh needs to *not* be destroyed.
-                 */
+                // If the mesh ID doesn't match the gameObject Id, it could mean two things:
+                //   1. The object was just duplicated, and then made unique
+                //   2. The scene was reloaded, and gameObject ids were recalculated.
+                // If (2) we need to clean up the old mesh. If the (1) the old mesh needs to *not* be destroyed.
                 if ((oldMesh = mesh.mesh) != null)
                 {
                     int meshNo = -1;
@@ -229,7 +226,7 @@ namespace UnityEditor.ProBuilder
                     else
                     {
                         // Mesh was duplicated, need to instantiate a unique mesh asset
-                        if (!meshesAreAssets || !(EditorUtility.IsPrefabAsset(mesh.gameObject) || IsPrefabInstance(mesh.gameObject)))
+                        if (!meshesAreAssets || !(IsPrefabAsset(mesh.gameObject) || IsPrefabInstance(mesh.gameObject)))
                         {
                             // deep copy arrays & ToMesh/Refresh
                             mesh.MakeUnique();
@@ -240,7 +237,7 @@ namespace UnityEditor.ProBuilder
                 else
                 {
                     // old mesh didn't exist, so this is probably a prefab being instanced
-                    if (EditorUtility.IsPrefabAsset(mesh.gameObject))
+                    if (IsPrefabAsset(mesh.gameObject))
                         mesh.mesh.hideFlags = (HideFlags)(1 | 2 | 4 | 8);
 
                     mesh.Optimize();

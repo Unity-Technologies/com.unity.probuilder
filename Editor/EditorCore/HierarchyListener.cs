@@ -67,7 +67,7 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-                ProBuilderEditor.Refresh();
+            ProBuilderEditor.Refresh();
         }
     }
 }

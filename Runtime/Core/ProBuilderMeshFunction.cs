@@ -28,6 +28,8 @@ namespace UnityEngine.ProBuilder
         void OnEnableINTERNAL()
         {
             SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
+            if(gameObject != null && gameObject.TryGetComponent(out MeshCollider meshCollider))
+                SerializationUtility.RegisterDrivenProperty(this, meshCollider, "m_Mesh");
         }
 
         void OnDisableINTERNAL()
@@ -44,10 +46,7 @@ namespace UnityEngine.ProBuilder
 
         void Awake()
         {
-            // Register driven properties and set hide flags in Awake because OnEnable is called after serialization has
-            // had a chance to register changes
             EnsureMeshFilterIsAssigned();
-            SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
 
             if (vertexCount > 0
                 && faceCount > 0
@@ -113,8 +112,13 @@ namespace UnityEngine.ProBuilder
         {
             if (filter == null)
                 m_MeshFilter = gameObject.AddComponent<MeshFilter>();
+#if UNITY_EDITOR
             m_MeshFilter.hideFlags = k_MeshFilterHideFlags;
+#endif
             filter.sharedMesh = m_Mesh;
+
+            if (m_Mesh && TryGetComponent(out MeshCollider meshCollider))
+                RefreshCollisions();
         }
 
         internal static ProBuilderMesh CreateInstanceWithPoints(Vector3[] positions)
@@ -374,9 +378,8 @@ namespace UnityEngine.ProBuilder
         void RefreshCollisions()
         {
             mesh.RecalculateBounds();
-            MeshCollider collider;
 
-            if(gameObject.TryGetComponent<MeshCollider>(out collider))
+            if(gameObject.TryGetComponent<MeshCollider>(out MeshCollider collider))
             {
                 SerializationUtility.RegisterDrivenProperty(this, collider, "m_Mesh");
                 collider.sharedMesh = null;
