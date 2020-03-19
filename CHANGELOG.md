@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Fix `ProBuilderMesh.sharedTextureLookup` throwing a null reference exception when accessed from runtime.
 - [case: 1225427] Fixed `UV Editor` exporting the UV template offset by 11 pixels when the editor window was dockable.
+- [case: 1228271] [Preview] Fixed `Shape Editor` clamping values Cylinder radius value to `.001`.
 
 ## [4.3.0-preview.5] - 2020-03-05
 
