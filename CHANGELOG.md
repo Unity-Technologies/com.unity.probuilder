@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Bug Fixes
+
+- [case: 1225427] Fixed `UV Editor` exporting the UV template offset by 11 pixels when the editor window was dockable.
+
 ## [4.3.0-preview.5] - 2020-03-05
 
 ### Features

@@ -3334,9 +3334,8 @@ namespace UnityEditor.ProBuilder
         #region Screenshot Rendering
 
         float curUvScale = 0f;
-        ///< Store the user set positioning and scale before modifying them for a screenshot
+        // Store the user set positioning and scale before modifying them for a screenshot
         Vector2 curUvPosition = Vector2.zero;
-        ///< ditto ^
         Texture2D screenshot;
         Rect screenshotCanvasRect = new Rect(0, 0, 0, 0);
         Vector2 screenshotTexturePosition = Vector2.zero;
@@ -3351,7 +3350,7 @@ namespace UnityEditor.ProBuilder
 
         readonly Color UV_FILL_COLOR = new Color(.192f, .192f, .192f, 1f);
 
-        ///< This is the default background of the UV editor - used to compare bacground pixels when rendering UV template
+        // This is the default background of the UV editor - used to compare bacground pixels when rendering UV template
         void InitiateScreenshot(int ImageSize, bool HideGrid, Color LineColor, bool TransparentBackground, Color BackgroundColor, bool RenderTexture)
         {
             screenshot_size = ImageSize;
@@ -3381,17 +3380,6 @@ namespace UnityEditor.ProBuilder
             DoScreenshot();
         }
 
-        // Unity 5 changes the starting y position of a window now account for the tab
-        float editorWindowTabOffset
-        {
-            get
-            {
-                if (IsUtilityWindow<UVEditor>())
-                    return 0;
-                return 11;
-            }
-        }
-
         void DoScreenshot()
         {
             switch (screenshotStatus)
@@ -3408,7 +3396,7 @@ namespace UnityEditor.ProBuilder
 #endif
 
                     // always begin texture grabs at bottom left
-                    uvGraphOffset = new Vector2(-ScreenRect.width / 2f, ScreenRect.height / 2f - editorWindowTabOffset);
+                    uvGraphOffset = new Vector2(-ScreenRect.width / 2f, ScreenRect.height / 2f);
 
                     screenshot = new Texture2D(screenshot_size, screenshot_size);
                     screenshot.hideFlags = (HideFlags)(1 | 2 | 4);
@@ -3459,10 +3447,10 @@ namespace UnityEditor.ProBuilder
                                 // Move right, reset Y
 #if RETINA_ENABLED
                                 uvGraphOffset.x -= screenshotCanvasRect.width / EditorGUIUtility.pixelsPerPoint;
-                                uvGraphOffset.y = (ScreenRect.height / 2f - editorWindowTabOffset);
+                                uvGraphOffset.y = (ScreenRect.height / 2f);
 #else
                                 uvGraphOffset.x -= screenshotCanvasRect.width;
-                                uvGraphOffset.y = ScreenRect.height / 2f - editorWindowTabOffset;
+                                uvGraphOffset.y = ScreenRect.height / 2f;
                             #endif
                                 screenshotCanvasRect.width = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.x, ScreenRect.width);
                                 screenshotTexturePosition.y = 0;
