@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Bug Fixes
 
 - [case: 1225223] Fixed `Mesh Collider` component missing a reference to the mesh in builds.
+- [case: 1225427] Fixed `UV Editor` exporting the UV template offset by 11 pixels when the editor window was dockable.
+- Fix `ProBuilderMesh.sharedTextureLookup` throwing a null reference exception when accessed from runtime.
 
 ## [4.3.0-preview.5] - 2020-03-05
 
