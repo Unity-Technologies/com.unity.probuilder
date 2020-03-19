@@ -117,7 +117,7 @@ namespace UnityEngine.ProBuilder
 #endif
             filter.sharedMesh = m_Mesh;
 
-            if (m_Mesh && TryGetComponent(out MeshCollider meshCollider))
+            if (m_Mesh && this.TryGetComponent(out MeshCollider meshCollider))
                 RefreshCollisions();
         }
 
