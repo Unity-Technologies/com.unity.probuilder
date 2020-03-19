@@ -214,7 +214,7 @@ namespace UnityEditor.ProBuilder
                 DestroyImmediate(mesh.gameObject);
             }
             else
-            { 
+            {
                 m_PreviewObject = mesh.gameObject;
                 m_PreviewObject.hideFlags = HideFlags.DontSave;
                 mesh.preserveMeshAssetOnDestroy = true;
@@ -394,7 +394,7 @@ namespace UnityEditor.ProBuilder
             public override void OnGUI()
             {
                 s_Radius.value = EditorGUILayout.FloatField("Radius", s_Radius);
-                s_Radius.value = Mathf.Clamp(s_Radius, k_MinShapeDimensions.x, k_MinShapeDimensions.x);
+                s_Radius.value = Mathf.Clamp(s_Radius, k_MinShapeDimensions.x, k_MaxShapeDimensions.x);
 
                 s_AxisSegments.value = EditorGUILayout.IntField("Number of Sides", s_AxisSegments);
                 s_AxisSegments.value = PMath.Clamp(s_AxisSegments, 4, 128);
