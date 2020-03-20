@@ -52,18 +52,25 @@ namespace UnityEditor.ProBuilder
 
             foreach (var mesh in Object.FindObjectsOfType<ProBuilderMesh>())
             {
+                EditorUtility.SynchronizeWithMeshFilter(mesh);
+
+                if (mesh.mesh == null)
+                    continue;
+
                 GameObject gameObject = mesh.gameObject;
-
                 var entity = ProcessLegacyEntity(gameObject);
-
-                // clear editor-only hideflags and serialization ignores
-                if (mesh.mesh != null)
-                    mesh.mesh.hideFlags = HideFlags.None;
-                SerializationUtility.UnregisterDrivenProperty(mesh, mesh, "m_Mesh");
-                if(gameObject != null && gameObject.TryGetComponent(out MeshCollider meshCollider))
-                    SerializationUtility.UnregisterDrivenProperty(mesh, meshCollider, "m_Mesh");
                 var filter = gameObject.DemandComponent<MeshFilter>();
+
+                // clear editor-only HideFlags and serialization ignores
+                mesh.ClearDrivenProperties();
                 filter.hideFlags = HideFlags.None;
+                mesh.mesh.hideFlags = HideFlags.None;
+
+                // Reassign the MeshFilter and MeshCollider properties _after_ clearing HideFlags and driven properties
+                // to ensure that they are dirtied for serialization and thus included in the build
+                filter.sharedMesh = mesh.mesh;
+                if (mesh.TryGetComponent(out MeshCollider collider))
+                    collider.sharedMesh = mesh.mesh;
 
                 // early out if we're not planning to remove the ProBuilderMesh component
                 if (m_ScriptStripping == false)
