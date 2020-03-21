@@ -118,6 +118,8 @@ namespace UnityEditor.ProBuilder
                 serializedObject.ApplyModifiedProperties();
 
 #if DEVELOPER_MODE
+            GUILayout.Space(4);
+
             GUILayout.Label("Compiled Mesh Information", EditorStyles.boldLabel);
 
             MeshFilter filter;
@@ -133,6 +135,8 @@ namespace UnityEditor.ProBuilder
                 GUILayout.Label("No compiled mesh", EditorStyles.centeredGreyMiniLabel);
             }
 
+            GUILayout.Space(4);
+
             GUILayout.Label("HideFlags & Driven Properties", EditorStyles.boldLabel);
 
             if(filter)
@@ -146,6 +150,15 @@ namespace UnityEditor.ProBuilder
             if (m_Mesh.TryGetComponent(out collider))
                 GUILayout.Label($"MeshCollider.m_Mesh {DrivenPropertyManagerInternal.IsDriven(collider, "m_Mesh")}");
 #endif
+
+            GUILayout.Space(4);
+
+            GUILayout.Label("Identifiers", EditorStyles.boldLabel);
+            EditorGUI.showMixedValue = targets.Length > 1;
+            EditorGUILayout.IntField("ProBuilderMesh", m_Mesh.GetInstanceID());
+            EditorGUILayout.IntField("UnityEngine.Mesh", sharedMesh != null ? sharedMesh.GetInstanceID() : -1);
+            EditorGUILayout.TextField("UnityEngine.Mesh.name", sharedMesh != null ? sharedMesh.name : "null");
+            EditorGUI.showMixedValue = false;
 #endif
         }
 

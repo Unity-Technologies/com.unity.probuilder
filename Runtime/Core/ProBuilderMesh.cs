@@ -133,7 +133,8 @@ namespace UnityEngine.ProBuilder
         MeshRenderer m_MeshRenderer;
 
 #pragma warning disable 109
-        internal new MeshRenderer renderer {
+        internal new MeshRenderer renderer
+        {
             get
             {
                 if (!gameObject.TryGetComponent<MeshRenderer>(out m_MeshRenderer))
@@ -155,7 +156,9 @@ namespace UnityEngine.ProBuilder
                 {
                     if (!gameObject.TryGetComponent<MeshFilter>(out m_MeshFilter))
                         return null;
+#if UNITY_EDITOR
                     m_MeshFilter.hideFlags = k_MeshFilterHideFlags;
+#endif
                 }
 
                 return m_MeshFilter;
