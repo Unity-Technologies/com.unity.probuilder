@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Bug Fixes
+
+- Fixed `New Shape` menu item always creating a Cube instead of the last selected shape.
+
 ## [4.3.0-preview.6] - 2020-03-23
 
 ### Bug Fixes
