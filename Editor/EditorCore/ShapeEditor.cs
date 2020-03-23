@@ -150,14 +150,24 @@ namespace UnityEditor.ProBuilder
 
         void CreateSelectedShape(bool forceCloseWindow = false)
         {
-            var res = s_ShapeBuilders[s_CurrentIndex].Build();
-            Undo.RegisterCreatedObjectUndo(res.gameObject, "Create Shape");
-            EditorUtility.InitObject(res);
+            var res = CreateActiveShape();
             ApplyPreviewTransform(res);
             DestroyPreviewObject(true);
 
             if (forceCloseWindow || s_CloseWindowAfterCreateShape)
                 Close();
+        }
+
+        /// <summary>
+        /// Create a shape with the last set <see cref="ShapeEditor"/> parameters.
+        /// </summary>
+        /// <returns>A reference to the <see cref="ProBuilderMesh"/> of the newly created GameObject.</returns>
+        public static ProBuilderMesh CreateActiveShape()
+        {
+            var res = s_ShapeBuilders[PMath.Clamp(s_CurrentIndex, 0, s_ShapeBuilders.Length - 1)].Build();
+            Undo.RegisterCreatedObjectUndo(res.gameObject, "Create Shape");
+            EditorUtility.InitObject(res);
+            return res;
         }
 
         void DestroyPreviewObject(bool immediate)

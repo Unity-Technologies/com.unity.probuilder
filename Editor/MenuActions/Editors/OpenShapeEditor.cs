@@ -34,7 +34,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override ActionResult DoAction()
         {
-            ShapeEditor.MenuCreateCube();
+            ShapeEditor.CreateActiveShape();
             return new ActionResult(ActionResult.Status.Success, "Create Shape");
         }
 
