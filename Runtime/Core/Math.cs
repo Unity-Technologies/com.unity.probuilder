@@ -1310,7 +1310,11 @@ namespace UnityEngine.ProBuilder
         /// <returns>A value clamped with the range of lowerBound and upperBound.</returns>
         public static int Clamp(int value, int lowerBound, int upperBound)
         {
-            return value<lowerBound? lowerBound : value> upperBound ? upperBound : value;
+            return value < lowerBound
+                ? lowerBound
+                : value > upperBound
+                    ? upperBound
+                    : value;
         }
 
         internal static Vector3 Clamp(Vector3 value, Vector3 lowerBound, Vector3 upperBound)
