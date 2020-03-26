@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Features
+
+- Added UI to reset `Shape Editor` parameters.
+
 ### Bug Fixes
 
 - Fixed `New Shape` menu item always creating a Cube instead of the last selected shape.
