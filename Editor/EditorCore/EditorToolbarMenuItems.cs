@@ -292,7 +292,7 @@ namespace UnityEditor.ProBuilder
 				EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(k_MenuPrefix + "Geometry/Delete Faces [⌫]", true, PreferenceKeys.menuGeometry + 3)]
+		[MenuItem(k_MenuPrefix + "Geometry/Delete Faces [backspace]", true, PreferenceKeys.menuGeometry + 3)]
 		static bool MenuVerify_DeleteFaces()
 		{
 			var instance = EditorToolbarLoader.GetInstance<DeleteFaces>();
@@ -302,7 +302,7 @@ namespace UnityEditor.ProBuilder
 #if SHORTCUT_MANAGER
 		[Shortcut(k_ShortcutPrefix + "Geometry/Delete Faces", typeof(UnityEditor.SceneView), (KeyCode) 8, (ShortcutModifiers) 0)]
 #endif
-		[MenuItem(k_MenuPrefix + "Geometry/Delete Faces [⌫]", false, PreferenceKeys.menuGeometry + 3)]
+		[MenuItem(k_MenuPrefix + "Geometry/Delete Faces [backspace]", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_DeleteFaces()
 		{
 			var instance = EditorToolbarLoader.GetInstance<DeleteFaces>();
@@ -774,21 +774,6 @@ namespace UnityEditor.ProBuilder
 		static void MenuPerform_GrowSelection()
 		{
 			var instance = EditorToolbarLoader.GetInstance<GrowSelection>();
-			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
-		}
-
-		[MenuItem(k_MenuPrefix + "Selection/Invert Selection %#i", true, PreferenceKeys.menuSelection + 0)]
-		static bool MenuVerify_InvertSelection()
-		{
-			var instance = EditorToolbarLoader.GetInstance<InvertSelection>();
-			return instance != null && instance.enabled;
-		}
-
-		[MenuItem(k_MenuPrefix + "Selection/Invert Selection %#i", false, PreferenceKeys.menuSelection + 0)]
-		static void MenuPerform_InvertSelection()
-		{
-			var instance = EditorToolbarLoader.GetInstance<InvertSelection>();
 			if(instance != null && instance.enabled)
 				EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
