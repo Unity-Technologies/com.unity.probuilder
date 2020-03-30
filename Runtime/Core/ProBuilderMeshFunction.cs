@@ -123,7 +123,7 @@ namespace UnityEngine.ProBuilder
         {
             if (filter == null)
                 m_MeshFilter = gameObject.AddComponent<MeshFilter>();
-#if UNITY_EDITOR && ENABLE_DRIVEN_PROPERTIES
+#if UNITY_EDITOR
             m_MeshFilter.hideFlags = k_MeshFilterHideFlags;
 #endif
             filter.sharedMesh = m_Mesh;

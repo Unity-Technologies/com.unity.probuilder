@@ -22,6 +22,8 @@ namespace UnityEngine.ProBuilder
     {
 #if ENABLE_DRIVEN_PROPERTIES
         internal const HideFlags k_MeshFilterHideFlags = HideFlags.DontSave | HideFlags.HideInInspector | HideFlags.NotEditable;
+#else
+        internal const HideFlags k_MeshFilterHideFlags = HideFlags.HideInInspector | HideFlags.NotEditable;
 #endif
 
         /// <summary>
@@ -158,7 +160,7 @@ namespace UnityEngine.ProBuilder
                 {
                     if (!gameObject.TryGetComponent<MeshFilter>(out m_MeshFilter))
                         return null;
-#if UNITY_EDITOR && ENABLE_DRIVEN_PROPERTIES
+#if UNITY_EDITOR
                     m_MeshFilter.hideFlags = k_MeshFilterHideFlags;
 #endif
                 }
