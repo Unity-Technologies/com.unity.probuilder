@@ -636,6 +636,38 @@ namespace UnityEditor.ProBuilder
             if (Tools.current == Tool.View)
                 return;
 
+            switch (m_CurrentEvent.type)
+            {
+                case EventType.ValidateCommand:
+                case EventType.ExecuteCommand:
+                    bool execute = m_CurrentEvent.type == EventType.ExecuteCommand;
+                    switch (m_CurrentEvent.commandName)
+                    {
+                        case "SelectAll":
+                            if (execute)
+                            {
+                                SelectAll();
+                            }
+                            m_CurrentEvent.Use();
+                            break;
+                        case "DeselectAll":
+                            if (execute)
+                            {
+                                DeselectAll();
+                            }
+                            m_CurrentEvent.Use();
+                            break;
+                        case "InvertSelection":
+                            if (execute)
+                            {
+                                InvertSelection();
+                            }
+                            m_CurrentEvent.Use();
+                            break;
+                    }
+                    break;
+            }
+
             // Overrides the toolbar transform tools
             if (Tools.current != Tool.None && Tools.current != m_CurrentTool)
                 SetTool_Internal(Tools.current);
@@ -741,6 +773,161 @@ namespace UnityEditor.ProBuilder
                     }
                 }
             }
+        }
+
+        void SelectAll()
+        {
+            if (MeshSelection.selectedObjectCount < 1)
+                return;
+
+            UndoUtility.RecordSelection("Select all");
+
+            switch (selectMode)
+            {
+                case SelectMode.Vertex:
+                    foreach (var mesh in MeshSelection.topInternal)
+                    {
+                        var sharedIndexes = mesh.sharedVerticesInternal;
+                        var all = new List<int>();
+
+                        for (var i = 0; i < sharedIndexes.Length; i++)
+                        {
+                            all.Add(sharedIndexes[i][0]);
+                        }
+
+                        mesh.SetSelectedVertices(all);
+                    }
+                    break;
+
+                case SelectMode.Face:
+                case SelectMode.TextureFace:
+                    foreach (var mesh in MeshSelection.topInternal)
+                    {
+                        mesh.SetSelectedFaces(mesh.facesInternal);
+                    }
+                    break;
+
+                case SelectMode.Edge:
+
+                    foreach (var mesh in MeshSelection.topInternal)
+                    {
+                        var universalEdges = mesh.GetSharedVertexHandleEdges(mesh.facesInternal.SelectMany(x => x.edges)).ToArray();
+                        var all = new Edge[universalEdges.Length];
+
+                        for (var n = 0; n < universalEdges.Length; n++)
+                            all[n] = new Edge(mesh.sharedVerticesInternal[universalEdges[n].a][0], mesh.sharedVerticesInternal[universalEdges[n].b][0]);
+
+                        mesh.SetSelectedEdges(all);
+                    }
+                    break;
+            }
+
+            Refresh();
+            SceneView.RepaintAll();
+        }
+
+        void DeselectAll()
+        {
+            if (MeshSelection.selectedObjectCount < 1)
+                return;
+
+            UndoUtility.RecordSelection("Deselect All");
+
+            switch (selectMode)
+            {
+                case SelectMode.Vertex:
+                    foreach (var mesh in MeshSelection.topInternal)
+                    {
+                        mesh.SetSelectedVertices(null);
+                    }
+                    break;
+
+                case SelectMode.Face:
+                case SelectMode.TextureFace:
+                    foreach (var mesh in MeshSelection.topInternal)
+                    {
+                        mesh.SetSelectedFaces((IEnumerable<Face>) null);
+                    }
+                    break;
+
+                case SelectMode.Edge:
+
+                    foreach (var mesh in MeshSelection.topInternal)
+                    {
+                        mesh.SetSelectedEdges(null);
+                    }
+                    break;
+            }
+
+            Refresh();
+            SceneView.RepaintAll();
+        }
+
+        void InvertSelection()
+        {
+            if (MeshSelection.selectedObjectCount < 1)
+                return;
+
+            UndoUtility.RecordSelection("Invert Selection");
+
+            switch (selectMode)
+            {
+                case SelectMode.Vertex:
+                    foreach (var mesh in MeshSelection.topInternal)
+                    {
+                        var sharedIndexes = mesh.sharedVerticesInternal;
+                        var selectedSharedIndexes = new List<int>();
+
+                        foreach (int i in mesh.selectedIndexesInternal)
+                            selectedSharedIndexes.Add(mesh.GetSharedVertexHandle(i));
+
+                        var inverse = new List<int>();
+
+                        for (int i = 0; i < sharedIndexes.Length; i++)
+                        {
+                            if (!selectedSharedIndexes.Contains(i))
+                                inverse.Add(sharedIndexes[i][0]);
+                        }
+
+                        mesh.SetSelectedVertices(inverse.ToArray());
+                    }
+
+                    break;
+
+                case SelectMode.Face:
+                case SelectMode.TextureFace:
+                    foreach (var mesh in MeshSelection.topInternal)
+                    {
+                        var inverse = mesh.facesInternal.Where(x => !mesh.selectedFacesInternal.Contains(x));
+                        mesh.SetSelectedFaces(inverse.ToArray());
+                    }
+
+                    break;
+
+                case SelectMode.Edge:
+
+                    foreach (var mesh in MeshSelection.topInternal)
+                    {
+                        var universalEdges =
+                            mesh.GetSharedVertexHandleEdges(mesh.facesInternal.SelectMany(x => x.edges)).ToArray();
+                        var universalSelectedEdges =
+                            EdgeUtility.GetSharedVertexHandleEdges(mesh, mesh.selectedEdges).Distinct();
+                        var inverseUniversal =
+                            System.Array.FindAll(universalEdges, x => !universalSelectedEdges.Contains(x));
+                        var inverse = new Edge[inverseUniversal.Length];
+
+                        for (var n = 0; n < inverseUniversal.Length; n++)
+                            inverse[n] = new Edge(mesh.sharedVerticesInternal[inverseUniversal[n].a][0],
+                                mesh.sharedVerticesInternal[inverseUniversal[n].b][0]);
+
+                        mesh.SetSelectedEdges(inverse);
+                    }
+
+                    break;
+            }
+
+            Refresh();
+            SceneView.RepaintAll();
         }
 
         void DoubleClick(Event e)

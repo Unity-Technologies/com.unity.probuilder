@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Bug Fixes
 
+- [case: 1230069] Fixed selection commands not being remapped to ProBuilder when in edge/face/vertex mode (Select All/Invert Selection/Deselect All)
 - [case: 1225223] Fixed `Mesh Collider` component missing a reference to the mesh in builds.
 - [case: 1225427] Fixed `UV Editor` exporting the UV template offset by 11 pixels when the editor window was dockable.
 - [case: 1228271] [Preview] Fixed `Shape Editor` clamping values Cylinder radius value to `.001`.
