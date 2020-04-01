@@ -28,7 +28,7 @@ public class PrefabTests
         AssetDatabase.DeleteAsset(path);
     }
 
-    [Test]
+    [Test, Ignore("Requires ENABLE_DRIVEN_PROPERTIES feature")]
     public void CreatePrefab_DoesNot_SerializeMeshFilter()
     {
         var prefab = CreatePrefab();
@@ -38,7 +38,7 @@ public class PrefabTests
 
     // this is just a smoke test to make sure that prefab behaviour hasn't changed. if this does not fail but
     // CreatePrefab_DoesNot_SerializeMeshFilter does, then it's a probuilder problem.
-    [Test]
+    [Test, Ignore("Requires ENABLE_DRIVEN_PROPERTIES feature")]
     public void CreatePrefab_FromUnityPrimitive_DoesNotInclude_ComponentsWith_HideFlagsDontSave()
     {
         var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -56,7 +56,7 @@ public class PrefabTests
         AssetDatabase.DeleteAsset(prefabPath);
     }
 
-    [Test]
+    [Test, Ignore("Requires ENABLE_DRIVEN_PROPERTIES feature")]
     public void CreatePrefab_DoesNot_SerializeMeshColliderMeshProperty()
     {
         var prefabPath = AssetDatabase.GenerateUniqueAssetPath("Assets/PrefabTest.prefab");
@@ -81,7 +81,7 @@ public class PrefabTests
             AssetDatabase.DeleteAsset(prefabPath);
     }
 
-    [UnityTest]
+    [UnityTest, Ignore("Requires ENABLE_DRIVEN_PROPERTIES feature")]
     public IEnumerator Prefab_HasNoOverrides_WhenInstantiated()
     {
         var prefab = CreatePrefab();
@@ -97,7 +97,7 @@ public class PrefabTests
         DestroyPrefab(prefab);
     }
 
-    [UnityTest]
+    [UnityTest, Ignore("Requires ENABLE_DRIVEN_PROPERTIES feature")]
     public IEnumerator ModifyPrefabInstance_DoesNotSetDirty_MeshFilter()
     {
         var prefab = CreatePrefab();
@@ -121,7 +121,7 @@ public class PrefabTests
         DestroyPrefab(prefab);
     }
 
-    [UnityTest]
+    [UnityTest, Ignore("Requires ENABLE_DRIVEN_PROPERTIES feature")]
     public IEnumerator ModifyPrefabInstance_DoesNotSetDirty_MeshCollider_SharedMesh()
     {
         var prefab = CreatePrefab();

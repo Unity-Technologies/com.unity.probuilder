@@ -24,6 +24,7 @@ namespace UnityEngine.ProBuilder
             InvalidateCaches();
         }
 
+#if ENABLE_DRIVEN_PROPERTIES
         // Using the internal callbacks here to avoid registering this component as "enable-able"
         void OnEnableINTERNAL()
         {
@@ -51,6 +52,7 @@ namespace UnityEngine.ProBuilder
             if(gameObject != null && gameObject.TryGetComponent(out MeshCollider meshCollider))
                 SerializationUtility.UnregisterDrivenProperty(this, meshCollider, "m_Mesh");
         }
+#endif
 #endif
 
         void Awake()
@@ -275,7 +277,9 @@ namespace UnityEngine.ProBuilder
             // if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
             if (mesh == null)
             {
+#if ENABLE_DRIVEN_PROPERTIES
                 SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
+#endif
                 mesh = new Mesh();
             }
             else if (mesh.vertexCount != vertexCount)
@@ -390,7 +394,9 @@ namespace UnityEngine.ProBuilder
 
             if(gameObject.TryGetComponent<MeshCollider>(out MeshCollider collider))
             {
+#if ENABLE_DRIVEN_PROPERTIES
                 SerializationUtility.RegisterDrivenProperty(this, collider, "m_Mesh");
+#endif
                 collider.sharedMesh = null;
                 collider.sharedMesh = mesh;
             }

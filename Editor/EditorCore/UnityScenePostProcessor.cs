@@ -59,10 +59,11 @@ namespace UnityEditor.ProBuilder
 
                 GameObject gameObject = mesh.gameObject;
                 var entity = ProcessLegacyEntity(gameObject);
-                var filter = gameObject.DemandComponent<MeshFilter>();
 
+#if ENABLE_DRIVEN_PROPERTIES
                 // clear editor-only HideFlags and serialization ignores
                 mesh.ClearDrivenProperties();
+                var filter = gameObject.DemandComponent<MeshFilter>();
                 filter.hideFlags = HideFlags.None;
                 mesh.mesh.hideFlags = HideFlags.None;
 
@@ -71,6 +72,7 @@ namespace UnityEditor.ProBuilder
                 filter.sharedMesh = mesh.mesh;
                 if (mesh.TryGetComponent(out MeshCollider collider))
                     collider.sharedMesh = mesh.mesh;
+#endif
 
                 // early out if we're not planning to remove the ProBuilderMesh component
                 if (m_ScriptStripping == false)

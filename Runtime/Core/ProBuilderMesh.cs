@@ -20,7 +20,11 @@ namespace UnityEngine.ProBuilder
 //    [MonoBehaviourIcon("Packages/com.unity.probuilder/Content/Icons/Scripts/ProBuilderMesh@64.png")]
     public sealed partial class ProBuilderMesh : MonoBehaviour
     {
+#if ENABLE_DRIVEN_PROPERTIES
         internal const HideFlags k_MeshFilterHideFlags = HideFlags.DontSave | HideFlags.HideInInspector | HideFlags.NotEditable;
+#else
+        internal const HideFlags k_MeshFilterHideFlags = HideFlags.HideInInspector | HideFlags.NotEditable;
+#endif
 
         /// <summary>
         /// Max number of UV channels that ProBuilderMesh format supports.

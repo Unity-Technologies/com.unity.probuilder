@@ -48,6 +48,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
             Assert.IsNotNull(mi);
         }
 
+#if ENABLE_DRIVEN_PROPERTIES
         [Test]
         public static void DrivenPropertyManager_RegisterProperty()
         {
@@ -59,6 +60,7 @@ namespace UnityEngine.ProBuilder.EditorTests.Editor
         {
             Assert.That(SerializationUtility.unregisterProperty, Is.Not.Null);
         }
+#endif
 
         [Test]
         public static void AnnotationUtility_SetIconEnabled()

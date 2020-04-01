@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Fixed `New Shape` menu item always creating a Cube instead of the last selected shape.
 
+### Changes
+
+- [Preview] Reverted fix for prefabs showing `MeshFilter` and `ProBuilderMesh.mesh` values as consistently dirty.
+
 ## [4.3.0-preview.6] - 2020-03-23
 
 ### Bug Fixes
