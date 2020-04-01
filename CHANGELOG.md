@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [4.3.0-preview.7] - 2020-04-01
 
 ### Features
 
@@ -18,6 +18,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changes
 
 - [Preview] Reverted fix for prefabs showing `MeshFilter` and `ProBuilderMesh.mesh` values as consistently dirty.
+
+### Known Issues
+
+- Certain properties on `ProBuilderMesh`, `MeshFilter`, and `MeshCollider` always show as overridden on prefab instances.
+- The `ProBuilderMesh` icon is always the Pro Skin version.
+- The `ProBuilderMesh` icon is toggle-able in the Gizmos window (initial value is 'Off').
+- Marquee selection when the Universal Render Pipeline is enabled does not work (currently blocked due to URP missing required functionality).
 
 ## [4.3.0-preview.6] - 2020-03-23
 
