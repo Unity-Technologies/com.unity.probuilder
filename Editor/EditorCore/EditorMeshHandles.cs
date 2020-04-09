@@ -11,13 +11,11 @@ using System.Reflection;
 
 namespace UnityEditor.ProBuilder
 {
-    partial class EditorMeshHandles : IHasPreferences
+    partial class EditorMeshHandles : ScriptableSingleton<EditorMeshHandles>, IHasPreferences
     {
-        const HideFlags k_MeshHideFlags = (HideFlags)(1 | 2 | 4 | 8);
+        const HideFlags k_ResourceHideFlags = HideFlags.HideAndDontSave;
         const float k_MinLineWidthForGeometryShader = .01f;
 
-        static EditorMeshHandles s_Instance;
-        bool m_Initialized;
         ObjectPool<Mesh> m_MeshPool;
 
         Dictionary<ProBuilderMesh, MeshHandle> m_WireHandles;
@@ -116,18 +114,8 @@ namespace UnityEditor.ProBuilder
             get { return s_VertexPointSize * .0125f; }
         }
 
-        EditorMeshHandles()
+        void OnEnable()
         {
-            Init();
-        }
-
-        void Init()
-        {
-            if (m_Initialized)
-                return;
-
-            m_Initialized = true;
-
             m_MeshPool = new ObjectPool<Mesh>(0, 8, CreateMesh, DestroyMesh);
             m_WireHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
             m_VertexHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
@@ -150,27 +138,19 @@ namespace UnityEditor.ProBuilder
             ReloadPreferences();
         }
 
-        static EditorMeshHandles Get()
-        {
-            if(s_Instance == null)
-                s_Instance = new EditorMeshHandles();
-            return s_Instance;
-        }
-
-        void DestroyResources()
+        void OnDisable()
         {
             ClearHandles();
             m_MeshPool.Dispose();
-            UObject.DestroyImmediate(m_EdgeMaterial);
-            UObject.DestroyImmediate(m_WireMaterial);
-            UObject.DestroyImmediate(m_VertMaterial);
-            UObject.DestroyImmediate(m_FaceMaterial);
-            m_Initialized = false;
+            DestroyImmediate(m_EdgeMaterial);
+            DestroyImmediate(m_WireMaterial);
+            DestroyImmediate(m_VertMaterial);
+            DestroyImmediate(m_FaceMaterial);
         }
 
         internal static void ResetPreferences()
         {
-            Get().ReloadPreferences();
+            instance.ReloadPreferences();
         }
 
         public void ReloadPreferences()
@@ -219,7 +199,7 @@ namespace UnityEditor.ProBuilder
 
             Material mat = new Material(shader);
             mat.name = materialName;
-            mat.hideFlags = k_MeshHideFlags;
+            mat.hideFlags = k_ResourceHideFlags;
             return mat;
         }
 
@@ -293,7 +273,7 @@ namespace UnityEditor.ProBuilder
 
         public static void DrawSceneHandles(SelectMode mode)
         {
-            Get().DrawSceneHandlesInternal(mode);
+            instance.DrawSceneHandlesInternal(mode);
         }
 
         void DrawSceneHandlesInternal(SelectMode mode)
@@ -357,7 +337,7 @@ namespace UnityEditor.ProBuilder
 
         public static void ClearHandles()
         {
-            Get().ClearHandlesInternal();
+            instance.ClearHandlesInternal();
         }
 
         void ClearHandlesInternal()
@@ -371,7 +351,7 @@ namespace UnityEditor.ProBuilder
 
         public static void RebuildSelectedHandles( IEnumerable<ProBuilderMesh> meshes, SelectMode selectionMode)
         {
-            Get().RebuildSelectedHandlesInternal(meshes, selectionMode);
+            instance.RebuildSelectedHandlesInternal(meshes, selectionMode);
         }
 
         void RebuildSelectedHandlesInternal(IEnumerable<ProBuilderMesh> meshes, SelectMode selectionMode)
@@ -432,7 +412,7 @@ namespace UnityEditor.ProBuilder
 
             if (!cache.TryGetValue(mesh, out handle))
             {
-                var m = m_MeshPool.Get();
+                var m = m_MeshPool.Dequeue();
                 handle = new MeshHandle(mesh.transform, m);
                 cache.Add(mesh, handle);
             }
@@ -449,7 +429,7 @@ namespace UnityEditor.ProBuilder
         void ClearHandlesInternal(Dictionary<ProBuilderMesh, MeshHandle> handles)
         {
             foreach (var kvp in handles)
-                m_MeshPool.Put(kvp.Value.mesh);
+                m_MeshPool.Enqueue(kvp.Value.mesh);
             handles.Clear();
         }
 
