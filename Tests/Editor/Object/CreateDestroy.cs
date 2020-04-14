@@ -51,7 +51,7 @@ static class CreateDestroy
         LogAssert.NoUnexpectedReceived();
     }
 
-    [Test]
+    [Test, Ignore("Requires ENABLE_DRIVEN_PROPERTIES feature")]
     public static void CreatePrimitive_SetsMeshFilterHideFlags_DontSave()
     {
         var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);

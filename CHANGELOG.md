@@ -5,10 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [4.3.0-preview.7] - 2020-04-01
+
+### Features
+
+- Added UI to reset `Shape Editor` parameters.
+
+### Bug Fixes
+
+- Fixed `New Shape` menu item always creating a Cube instead of the last selected shape.
+- [case: 1237636] Fixed exception being thrown when stripping pb components and smooth groups editor is open
+
+### Changes
+
+- [Preview] Reverted fix for prefabs showing `MeshFilter` and `ProBuilderMesh.mesh` values as consistently dirty.
+
+### Known Issues
+
+- Certain properties on `ProBuilderMesh`, `MeshFilter`, and `MeshCollider` always show as overridden on prefab instances.
+- The `ProBuilderMesh` icon is always the Pro Skin version.
+- The `ProBuilderMesh` icon is toggle-able in the Gizmos window (initial value is 'Off').
+- Marquee selection when the Universal Render Pipeline is enabled does not work (currently blocked due to URP missing required functionality).
+
 ## [4.3.0-preview.6] - 2020-03-23
 
 ### Bug Fixes
-- [case: 1237636] Fixed exception being thrown when stripping pb components and smooth groups editor is open
 - [case: 1225223] Fixed `Mesh Collider` component missing a reference to the mesh in builds.
 - [case: 1225427] Fixed `UV Editor` exporting the UV template offset by 11 pixels when the editor window was dockable.
 - [case: 1228271] [Preview] Fixed `Shape Editor` clamping values Cylinder radius value to `.001`.

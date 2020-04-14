@@ -54,7 +54,6 @@ namespace UnityEditor.ProBuilder
                 // selection
                 new Actions.GrowSelection(),
                 new Actions.ShrinkSelection(),
-                new Actions.InvertSelection(),
                 new Actions.SelectEdgeLoop(),
                 new Actions.SelectEdgeRing(),
                 new Actions.SelectFaceLoop(),

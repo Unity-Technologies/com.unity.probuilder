@@ -1,3 +1,4 @@
+#if ENABLE_DRIVEN_PROPERTIES
 using System.Reflection;
 using System;
 using System.Diagnostics;
@@ -57,3 +58,4 @@ namespace UnityEngine.ProBuilder
         }
     }
 }
+#endif

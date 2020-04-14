@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using UnityEditor.Experimental.SceneManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -18,6 +19,11 @@ namespace UnityEditor.ProBuilder
     /// </summary>
     sealed class ShapeEditor : ConfigurableWindow
     {
+        static class Styles
+        {
+            public static readonly GUIStyle options = "PaneOptions";
+        }
+
         abstract class ShapeBuilder
         {
             public virtual string name
@@ -28,6 +34,22 @@ namespace UnityEditor.ProBuilder
             public abstract void OnGUI();
 
             public abstract ProBuilderMesh Build(bool isPreview = false);
+
+            public void ResetParameters()
+            {
+                var members = GetType().GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+
+                foreach (var fi in members)
+                {
+                    if(fi.GetValue(this) is IUserSetting setting)
+                        setting.Reset();
+                    // if(fi.FieldType.BaseType?.GetGenericTypeDefinition() == typeof(UserSetting<>))
+                    // {
+                    //     var setting = fi.GetValue(this) as IUserSetting;
+                    //     Debug.Log($"Name: {fi.Name}\nType: {fi.FieldType}\nValue {fi.GetValue(this)}");
+                    // }
+                }
+            }
         }
 
         public static void MenuOpenShapeCreator()
@@ -71,7 +93,7 @@ namespace UnityEditor.ProBuilder
             m_ShapeTypes = s_ShapeBuilders.Select(x => x.name).ToArray();
             // Delaying the call til end of frame fixes an issue where entering play mode would cause the preview object
             // to not appear in the Hierarchy until the Shape Editor is interacted with.
-            EditorApplication.delayCall += () => SetPreviewMesh(s_ShapeBuilders[s_CurrentIndex].Build());
+            EditorApplication.delayCall += () => SetPreviewMesh(GetActiveShapeBuilder().Build());
             EditorApplication.playModeStateChanged += PlayModeStateChanged;
         }
 
@@ -86,7 +108,7 @@ namespace UnityEditor.ProBuilder
         void PlayModeStateChanged(PlayModeStateChange state)
         {
             if(state == PlayModeStateChange.EnteredEditMode)
-                SetPreviewMesh(s_ShapeBuilders[s_CurrentIndex].Build());
+                SetPreviewMesh(GetActiveShapeBuilder().Build());
         }
 
         void PrefabStageOpened(PrefabStage stage)
@@ -126,11 +148,16 @@ namespace UnityEditor.ProBuilder
 
             s_CurrentIndex.value = EditorGUILayout.Popup(s_CurrentIndex, m_ShapeTypes);
 
+            GUILayout.BeginHorizontal();
             GUILayout.Label("Shape Settings", EditorStyles.boldLabel);
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button(GUIContent.none, Styles.options))
+                ShapeBuilderOptions(GetActiveShapeBuilder());
+            GUILayout.EndHorizontal();
 
             m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
 
-            var shape = s_ShapeBuilders[s_CurrentIndex];
+            var shape = GetActiveShapeBuilder();
 
             shape.OnGUI();
 
@@ -150,14 +177,41 @@ namespace UnityEditor.ProBuilder
 
         void CreateSelectedShape(bool forceCloseWindow = false)
         {
-            var res = s_ShapeBuilders[s_CurrentIndex].Build();
-            Undo.RegisterCreatedObjectUndo(res.gameObject, "Create Shape");
-            EditorUtility.InitObject(res);
+            var res = CreateActiveShape();
             ApplyPreviewTransform(res);
             DestroyPreviewObject(true);
 
-            if (forceCloseWindow || s_CloseWindowAfterCreateShape)
+            if(forceCloseWindow || s_CloseWindowAfterCreateShape)
                 Close();
+            else
+                ResetPreviewAfterShapeCreation(res);
+        }
+
+        /// <summary>
+        /// Create a shape with the last set <see cref="ShapeEditor"/> parameters.
+        /// </summary>
+        /// <returns>A reference to the <see cref="ProBuilderMesh"/> of the newly created GameObject.</returns>
+        public static ProBuilderMesh CreateActiveShape()
+        {
+            var res = s_ShapeBuilders[PMath.Clamp(s_CurrentIndex, 0, s_ShapeBuilders.Length - 1)].Build();
+            Undo.RegisterCreatedObjectUndo(res.gameObject, "Create Shape");
+            EditorUtility.InitObject(res);
+            return res;
+        }
+
+        // Reinitialize the shape preview and move it to the right a bit so that it is visible
+        void ResetPreviewAfterShapeCreation(ProBuilderMesh lastInstantiatedMesh)
+        {
+            RebuildPreview();
+
+            if(lastInstantiatedMesh != null)
+            {
+                var src = lastInstantiatedMesh.transform;
+                var dst = m_PreviewObject.transform;
+                dst.position = src.position + Vector3.right;
+                dst.localRotation = src.localRotation;
+                dst.localScale = src.localScale;
+            }
         }
 
         void DestroyPreviewObject(bool immediate)
@@ -166,6 +220,27 @@ namespace UnityEditor.ProBuilder
                 DestroyPreviewObjectInternal();
             else
                 EditorApplication.delayCall += DestroyPreviewObjectInternal;
+        }
+
+        void ShapeBuilderOptions(ShapeBuilder builder)
+        {
+            var menu = new GenericMenu();
+            menu.AddItem(new GUIContent("Reset", "Reset the selected Shape parameters."), false, () =>
+            {
+                builder.ResetParameters();
+                RebuildPreview();
+            });
+            menu.ShowAsContext();
+        }
+
+        static ShapeBuilder GetActiveShapeBuilder()
+        {
+            return s_ShapeBuilders[PMath.Clamp(s_CurrentIndex, 0, s_ShapeBuilders.Length - 1)];
+        }
+
+        public void RebuildPreview()
+        {
+            SetPreviewMesh(GetActiveShapeBuilder().Build());
         }
 
         void DestroyPreviewObjectInternal()
@@ -229,20 +304,14 @@ namespace UnityEditor.ProBuilder
 
         void ApplyPreviewTransform(ProBuilderMesh mesh)
         {
-            var position = Vector3.zero;
-            var scale = Vector3.one;
-            var rotation = Quaternion.identity;
             var previous = m_PreviewObject != null;
 
             if (previous)
             {
-                position = m_PreviewObject.transform.position;
-                rotation = m_PreviewObject.transform.localRotation;
-                scale = m_PreviewObject.transform.localScale;
-
-                mesh.transform.position = position;
-                mesh.transform.localRotation = rotation;
-                mesh.transform.localScale = scale;
+                var trs = mesh.transform;
+                trs.position = m_PreviewObject.transform.position;
+                trs.localRotation = m_PreviewObject.transform.localRotation;
+                trs.localScale = m_PreviewObject.transform.localScale;
             }
             else
             {
