@@ -721,5 +721,13 @@ namespace UnityEditor.ProBuilder
             new Color32(255, 255, 255, 255),    // White
             new Color32(0, 0, 0, 255),          // Black
         };
+
+        public static void Refresh()
+        {
+            foreach (var editor in Resources.FindObjectsOfTypeAll<SmoothGroupEditor>())
+            {
+                editor.ClearSmoothGroupData();
+            }
+        }
     }
 }

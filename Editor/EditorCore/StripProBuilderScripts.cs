@@ -61,6 +61,7 @@ namespace UnityEditor.ProBuilder.Actions
             UnityEditor.EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "Successfully stripped out all ProBuilder components.", "Okay");
 
             ProBuilderEditor.Refresh();
+            SmoothGroupEditor.Refresh();
         }
 
         public static void DoStrip(ProBuilderMesh pb)
