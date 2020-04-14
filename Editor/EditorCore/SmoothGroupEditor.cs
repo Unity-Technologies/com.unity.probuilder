@@ -335,7 +335,7 @@ namespace UnityEditor.ProBuilder
 #else
             SceneView.onSceneGUIDelegate += OnSceneGUI;
 #endif
-            Selection.selectionChanged += OnSelectionChanged;
+            MeshSelection.objectSelectionChanged += OnSelectionChanged;
             Undo.undoRedoPerformed += OnSelectionChanged;
             ProBuilderMesh.elementSelectionChanged += OnElementSelectionChanged;
             VertexManipulationTool.beforeMeshModification += OnBeginVertexMovement;
@@ -357,7 +357,7 @@ namespace UnityEditor.ProBuilder
 #else
             SceneView.onSceneGUIDelegate -= OnSceneGUI;
 #endif
-            Selection.selectionChanged -= OnSelectionChanged;
+            MeshSelection.objectSelectionChanged -= OnSelectionChanged;
             Undo.undoRedoPerformed -= OnSelectionChanged;
             ProBuilderMesh.elementSelectionChanged -= OnElementSelectionChanged;
             ClearSmoothGroupData();
@@ -721,13 +721,5 @@ namespace UnityEditor.ProBuilder
             new Color32(255, 255, 255, 255),    // White
             new Color32(0, 0, 0, 255),          // Black
         };
-
-        public static void Refresh()
-        {
-            foreach (var editor in Resources.FindObjectsOfTypeAll<SmoothGroupEditor>())
-            {
-                editor.ClearSmoothGroupData();
-            }
-        }
     }
 }
