@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Bug Fixes
 
 - [case: 1230949] Fixed `EditorMeshHandles` losing material references in some cases.
+- [case: 1232389] Fixed Null Reference Exception thrown on applying Subdivide Object on complex New Poly Shape
 
 ## [4.3.0-preview.7] - 2020-04-01
 
