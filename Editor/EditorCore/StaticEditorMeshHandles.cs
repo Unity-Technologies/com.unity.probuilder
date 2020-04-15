@@ -99,7 +99,7 @@ namespace UnityEditor.ProBuilder
                 m_Color = color;
                 m_ZTest = zTest;
                 m_IsDisposed = false;
-                m_Mesh = Get().m_MeshPool.Get();
+                m_Mesh = instance.m_MeshPool.Dequeue();
                 m_Points = new List<Vector3>(64);
                 m_Indices = new List<int>(64);
                 m_Matrix = Matrix4x4.identity;
@@ -108,10 +108,10 @@ namespace UnityEditor.ProBuilder
 
             void Begin()
             {
-                Get().m_VertMaterial.SetColor("_Color", color);
-                Get().m_VertMaterial.SetInt("_HandleZTest", (int)zTest);
+                instance.m_VertMaterial.SetColor("_Color", color);
+                instance.m_VertMaterial.SetInt("_HandleZTest", (int)zTest);
 
-                if (!Get().m_VertMaterial.SetPass(0))
+                if (!instance.m_VertMaterial.SetPass(0))
                     throw new Exception("Failed initializing vertex material.");
 
                 m_Points.Clear();
@@ -152,7 +152,7 @@ namespace UnityEditor.ProBuilder
                 End();
 
                 if(m_Mesh != null)
-                    Get().m_MeshPool.Put(m_Mesh);
+                    instance.m_MeshPool.Enqueue(m_Mesh);
             }
 
             public void Draw(Vector3 point)
@@ -206,7 +206,7 @@ namespace UnityEditor.ProBuilder
 
             public LineDrawingScope(Color color, Matrix4x4 matrix, float thickness = -1f, CompareFunction zTest = CompareFunction.LessEqual)
             {
-                m_LineMesh = Get().m_MeshPool.Get();
+                m_LineMesh = instance.m_MeshPool.Dequeue();
                 m_IsDisposed = false;
                 m_Matrix = matrix;
                 m_Color = color;
@@ -218,7 +218,7 @@ namespace UnityEditor.ProBuilder
                 m_Colors = new List<Color>(4);
                 m_Indices = new List<int>(4);
 
-                m_Wire = m_Thickness < k_MinLineWidthForGeometryShader || Get().m_LineMaterial == null;
+                m_Wire = m_Thickness < k_MinLineWidthForGeometryShader || instance.m_LineMaterial == null;
                 m_LineTopology = m_Wire || BuiltinMaterials.geometryShadersSupported;
 
                 Begin();
@@ -228,12 +228,12 @@ namespace UnityEditor.ProBuilder
             {
                 if (!m_Wire)
                 {
-                    Get().m_LineMaterial.SetColor("_Color", color);
-                    Get().m_LineMaterial.SetFloat("_Scale", thickness * EditorGUIUtility.pixelsPerPoint);
-                    Get().m_LineMaterial.SetInt("_HandleZTest", (int)zTest);
+                    instance.m_LineMaterial.SetColor("_Color", color);
+                    instance.m_LineMaterial.SetFloat("_Scale", thickness * EditorGUIUtility.pixelsPerPoint);
+                    instance.m_LineMaterial.SetInt("_HandleZTest", (int)zTest);
                 }
 
-                if (m_Wire || !Get().m_LineMaterial.SetPass(0))
+                if (m_Wire || !instance.m_LineMaterial.SetPass(0))
                 {
 #if UNITY_2019_1_OR_NEWER
                     HandleUtility.ApplyWireMaterial(zTest);
@@ -323,7 +323,7 @@ namespace UnityEditor.ProBuilder
                 m_IsDisposed = true;
                 End();
                 if(m_LineMesh != null)
-                    Get().m_MeshPool.Put(m_LineMesh);
+                    instance.m_MeshPool.Enqueue(m_LineMesh);
             }
         }
 
@@ -365,10 +365,10 @@ namespace UnityEditor.ProBuilder
 
             void Begin()
             {
-                Get().m_FaceMaterial.SetColor("_Color", color);
-                Get().m_FaceMaterial.SetInt("_HandleZTest", (int)zTest);
+                instance.m_FaceMaterial.SetColor("_Color", color);
+                instance.m_FaceMaterial.SetInt("_HandleZTest", (int)zTest);
 
-                if (!Get().m_FaceMaterial.SetPass(0))
+                if (!instance.m_FaceMaterial.SetPass(0))
                     throw new Exception("Failed initializing face material.");
 
                 GL.PushMatrix();
