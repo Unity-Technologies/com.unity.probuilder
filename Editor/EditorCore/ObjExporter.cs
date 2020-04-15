@@ -351,10 +351,9 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
-                Color color = mat.color;
                 if (mat.HasProperty("_BaseColorMap") || mat.HasProperty("_BaseMap")) // HDRP || URP
                 {
-                    color = mat.GetColor("_BaseColor");
+                    var color = mat.GetColor("_BaseColor");
                     // Diffuse
                     sb.AppendLine(string.Format("Kd {0}", string.Format(CultureInfo.InvariantCulture, "{0} {1} {2}", color.r, color.g, color.b)));
                     // Transparency
@@ -362,6 +361,7 @@ namespace UnityEditor.ProBuilder
                 }
                 else if (mat.HasProperty("_Color"))
                 {
+                    Color color = mat.color;
                     // Diffuse
                     sb.AppendLine(string.Format("Kd {0}", string.Format(CultureInfo.InvariantCulture, "{0} {1} {2}", color.r, color.g, color.b)));
                     // Transparency
