@@ -47,6 +47,8 @@ namespace UnityEditor.ProBuilder.Actions
 
                 if (pb.Subdivide())
                     success++;
+                else
+                    Debug.LogError($"Subidivision of [{pb.name}] failed, complex concave objects are not supported");
 
                 pb.Refresh();
                 pb.Optimize();
