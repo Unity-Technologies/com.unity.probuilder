@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - [case: 1230949] Fixed `EditorMeshHandles` losing material references in some cases.
 - [case: 1232389] Fixed Null Reference Exception thrown on applying Subdivide Object on complex New Poly Shape
+- [case: 1238115] Fixed Exception thrown on selecting UV 2 mode with "Lock the SceneView handle tools" is enabled in the UV Editor
 
 ## [4.3.0-preview.7] - 2020-04-01
 
@@ -21,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Bug Fixes
 
 - Fixed `New Shape` menu item always creating a Cube instead of the last selected shape.
+- [case: 1237636] Fixed exception being thrown when stripping pb components and smooth groups editor is open
 
 ### Changes
 
@@ -36,7 +38,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [4.3.0-preview.6] - 2020-03-23
 
 ### Bug Fixes
-
 - [case: 1230069] Fixed selection commands not being remapped to ProBuilder when in edge/face/vertex mode (Select All/Invert Selection/Deselect All)
 - [case: 1225223] Fixed `Mesh Collider` component missing a reference to the mesh in builds.
 - [case: 1225427] Fixed `UV Editor` exporting the UV template offset by 11 pixels when the editor window was dockable.

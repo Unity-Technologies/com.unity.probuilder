@@ -389,25 +389,27 @@ namespace UnityEngine.ProBuilder
                     yMin = 0f,
                     yMax = 0f;
 
-            var first = indexes.First();
-
-            xMin = points[first].x;
-            yMin = points[first].y;
-            xMax = xMin;
-            yMax = yMin;
-
-            foreach(var index in indexes)
+            if (indexes.Any())
             {
-                float x = points[index].x;
-                float y = points[index].y;
+                var first = indexes.First();
 
-                if (x < xMin) xMin = x;
-                if (x > xMax) xMax = x;
+                xMin = points[first].x;
+                yMin = points[first].y;
+                xMax = xMin;
+                yMax = yMin;
 
-                if (y < yMin) yMin = y;
-                if (y > yMax) yMax = y;
+                foreach (var index in indexes)
+                {
+                    float x = points[index].x;
+                    float y = points[index].y;
+
+                    if (x < xMin) xMin = x;
+                    if (x > xMax) xMax = x;
+
+                    if (y < yMin) yMin = y;
+                    if (y > yMax) yMax = y;
+                }
             }
-
             return new Vector2((xMin + xMax) / 2f, (yMin + yMax) / 2f);
         }
 
