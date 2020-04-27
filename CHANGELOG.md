@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Bug Fixes
 
 - [case: 1230949] Fixed `EditorMeshHandles` losing material references in some cases.
+- [case: 1232389] Fixed Null Reference Exception thrown on applying Subdivide Object on complex New Poly Shape
 - [case: 1238115] Fixed Exception thrown on selecting UV 2 mode with "Lock the SceneView handle tools" is enabled in the UV Editor
 
 ## [4.3.0-preview.7] - 2020-04-01
