@@ -27,4 +27,7 @@ QAReport.md.meta
 COMPATIBILITY.md
 COMPATIBILITY.md.meta
 
+upm-ci.log
+upm-ci.log.meta
+
 TestRunnerOptions.json
