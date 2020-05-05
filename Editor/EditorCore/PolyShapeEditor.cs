@@ -219,6 +219,10 @@ namespace UnityEditor.ProBuilder
             if (polygon == null)
                 return;
 
+            // If strip ProBuilder scripts is called when selected this can occur
+            if (polygon.mesh == null)
+                return;
+
             DrawPolyLine(polygon.m_Points);
 
             if (polygon.polyEditMode != PolyShape.PolyEditMode.Path)
