@@ -87,6 +87,9 @@ namespace UnityEditor.ProBuilder.Actions
                     if (go.GetComponent<Entity>())
                         DestroyImmediate(go.GetComponent<Entity>());
 
+                    if (go.GetComponent<PolyShape>())
+                        DestroyImmediate(go.GetComponent<PolyShape>());
+
                     return;
                 }
 
