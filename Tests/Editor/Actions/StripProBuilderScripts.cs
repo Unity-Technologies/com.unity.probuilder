@@ -1,48 +1,36 @@
 ﻿using UObject = UnityEngine.Object;
-using System.Collections.Generic;
 using NUnit.Framework;
-using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder;
-using UnityEditor;
+using UnityEngine.ProBuilder.MeshOperations;
 
 public class StripProBuilderScripts
 {
-    bool m_OpenedWindow = false;
-    ProBuilderMesh m_cube;
-    GameObject m_cube_obj;
+    PolyShape m_Poly;
+    GameObject m_GO;
 
     [Test]
     public void Strip_ProBuilder_Scripts()
     {
-        // make sure the ProBuilder window is open
-        if (ProBuilderEditor.instance == null)
-        {
-            ProBuilderEditor.MenuOpenWindow();
-            m_OpenedWindow = true;
-        }
+        m_GO = new GameObject();
+        m_Poly = m_GO.AddComponent<PolyShape>();
+        m_GO.AddComponent<ProBuilderMesh>();
 
-        UVEditor.MenuOpenUVEditor();
+        m_Poly.m_Points.Add(new Vector3(0, 0, 0));
+        m_Poly.m_Points.Add(new Vector3(0, 0, 2));
+        m_Poly.m_Points.Add(new Vector3(2, 0, 2));
+        m_Poly.m_Points.Add(new Vector3(2, 0, 0));
 
-        m_cube = ShapeGenerator.CreateShape(ShapeType.Cube);
-        m_cube_obj = m_cube.gameObject;
-        UnityEditor.ProBuilder.EditorUtility.InitObject(m_cube);
+        var result = m_Poly.CreateShapeFromPolygon();
 
-        Assume.That(m_cube_obj.GetComponent<ProBuilderMesh>() != null);
-        Assume.That(m_cube_obj.GetComponent<PolyShape>() != null);
+        Assume.That(m_GO.GetComponent<ProBuilderMesh>() != null);
+        Assume.That(m_GO.GetComponent<PolyShape>() != null);
 
-        EditorApplication.ExecuteMenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip All ProBuilder Scripts in Scene");
+        UnityEditor.ProBuilder.Actions.StripProBuilderScripts.DoStrip(m_GO.GetComponent<ProBuilderMesh>());
 
-        Assert.That(m_cube_obj.GetComponent<ProBuilderMesh>() == null);
-        Assert.That(m_cube_obj.GetComponent<PolyShape>() == null);
+        Assert.That(m_GO.GetComponent<ProBuilderMesh>() == null);
+        Assert.That(m_GO.GetComponent<PolyShape>() == null);
 
-
-        // close editor window if we had to open it
-        if (m_OpenedWindow && ProBuilderEditor.instance != null)
-        {
-            ProBuilderEditor.instance.Close();
-        }
-
-        UObject.DestroyImmediate(m_cube_obj);
+        UObject.DestroyImmediate(m_GO);
     }
 }

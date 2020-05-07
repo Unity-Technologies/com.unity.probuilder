@@ -80,15 +80,15 @@ namespace UnityEditor.ProBuilder.Actions
 
                 EditorUtility.SynchronizeWithMeshFilter(pb);
 
+                if (go.GetComponent<PolyShape>())
+                    DestroyImmediate(go.GetComponent<PolyShape>());
+
                 if (pb.mesh == null)
                 {
                     DestroyImmediate(pb);
 
                     if (go.GetComponent<Entity>())
                         DestroyImmediate(go.GetComponent<Entity>());
-
-                    if (go.GetComponent<PolyShape>())
-                        DestroyImmediate(go.GetComponent<PolyShape>());
 
                     return;
                 }
