@@ -6,22 +6,13 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 public class StripProBuilderScripts
 {
-    PolyShape m_Poly;
-    GameObject m_GO;
-
     [Test]
-    public void Strip_ProBuilder_Scripts()
+    public void StripProBuilderScripts_RemovesMeshAndPolyShapeComponents()
     {
-        m_GO = new GameObject();
-        m_Poly = m_GO.AddComponent<PolyShape>();
+        var m_GO = new GameObject();
+        var m_Poly = m_GO.AddComponent<PolyShape>();
         m_GO.AddComponent<ProBuilderMesh>();
-
-        m_Poly.m_Points.Add(new Vector3(0, 0, 0));
-        m_Poly.m_Points.Add(new Vector3(0, 0, 2));
-        m_Poly.m_Points.Add(new Vector3(2, 0, 2));
-        m_Poly.m_Points.Add(new Vector3(2, 0, 0));
-
-        var result = m_Poly.CreateShapeFromPolygon();
+        m_Poly.CreateShapeFromPolygon();
 
         Assume.That(m_GO.GetComponent<ProBuilderMesh>() != null);
         Assume.That(m_GO.GetComponent<PolyShape>() != null);
