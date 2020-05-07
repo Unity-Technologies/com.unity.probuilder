@@ -9,19 +9,19 @@ public class StripProBuilderScripts
     [Test]
     public void StripProBuilderScripts_RemovesMeshAndPolyShapeComponents()
     {
-        var m_GO = new GameObject();
-        var m_Poly = m_GO.AddComponent<PolyShape>();
-        m_GO.AddComponent<ProBuilderMesh>();
-        m_Poly.CreateShapeFromPolygon();
+        var go = new GameObject();
+        var poly = go.AddComponent<PolyShape>();
+        go.AddComponent<ProBuilderMesh>();
+        poly.CreateShapeFromPolygon();
 
-        Assume.That(m_GO.GetComponent<ProBuilderMesh>() != null);
-        Assume.That(m_GO.GetComponent<PolyShape>() != null);
+        Assume.That(go.GetComponent<ProBuilderMesh>() != null);
+        Assume.That(go.GetComponent<PolyShape>() != null);
 
-        UnityEditor.ProBuilder.Actions.StripProBuilderScripts.DoStrip(m_GO.GetComponent<ProBuilderMesh>());
+        UnityEditor.ProBuilder.Actions.StripProBuilderScripts.DoStrip(go.GetComponent<ProBuilderMesh>());
 
-        Assert.That(m_GO.GetComponent<ProBuilderMesh>() == null);
-        Assert.That(m_GO.GetComponent<PolyShape>() == null);
+        Assert.That(go.GetComponent<ProBuilderMesh>() == null);
+        Assert.That(go.GetComponent<PolyShape>() == null);
 
-        UObject.DestroyImmediate(m_GO);
+        UObject.DestroyImmediate(go);
     }
 }
