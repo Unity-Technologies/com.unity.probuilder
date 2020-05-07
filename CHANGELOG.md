@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1242879] Fixed import error caused by UPM CI log file.
 - [case: 1242884] Fixed NullException with Strip ProBuilder action on PolyShape.
 
+### Features
+
+- Added iterative selection on edges
+
 ## [4.3.0-preview.8] - 2020-04-27
 
 ### Bug Fixes
