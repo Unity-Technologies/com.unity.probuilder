@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using System.Collections.Generic;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -76,7 +77,15 @@ namespace UnityEditor.ProBuilder.Actions
             foreach (ProBuilderMesh pb in MeshSelection.topInternal)
             {
                 Edge[] loop;
-                bool success = ElementSelection.GetEdgeLoop(pb, pb.selectedEdges, out loop, m_SelectIterative);
+                bool success = false;
+                if (m_SelectIterative)
+                {
+                    success = ElementSelection.GetEdgeLoopIterative(pb, pb.selectedEdges, out loop);
+                }
+                else
+                {
+                    success = ElementSelection.GetEdgeLoop(pb, pb.selectedEdges, out loop);
+                }
 
                 if (success)
                 {
