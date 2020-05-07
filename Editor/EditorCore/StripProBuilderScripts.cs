@@ -80,12 +80,16 @@ namespace UnityEditor.ProBuilder.Actions
 
                 EditorUtility.SynchronizeWithMeshFilter(pb);
 
+
+                if (go.TryGetComponent(out PolyShape polyShape))
+                    DestroyImmediate(polyShape);
+
                 if (pb.mesh == null)
                 {
                     DestroyImmediate(pb);
 
-                    if (go.GetComponent<Entity>())
-                        DestroyImmediate(go.GetComponent<Entity>());
+                    if (go.TryGetComponent(out Entity entity))
+                        DestroyImmediate(entity);
 
                     return;
                 }
@@ -98,8 +102,8 @@ namespace UnityEditor.ProBuilder.Actions
                 {
                     pb.preserveMeshAssetOnDestroy = true;
                     DestroyImmediate(pb);
-                    if (go.GetComponent<Entity>())
-                        DestroyImmediate(go.GetComponent<Entity>());
+                    if (go.TryGetComponent(out Entity entity))
+                        DestroyImmediate(entity);
                 }
                 else
                 {
@@ -107,12 +111,12 @@ namespace UnityEditor.ProBuilder.Actions
 
                     DestroyImmediate(pb);
 
-                    if (go.GetComponent<Entity>())
-                        DestroyImmediate(go.GetComponent<Entity>());
+                    if (go.TryGetComponent(out Entity entity))
+                        DestroyImmediate(entity);
 
                     go.GetComponent<MeshFilter>().sharedMesh = m;
-                    if (go.GetComponent<MeshCollider>())
-                        go.GetComponent<MeshCollider>().sharedMesh = m;
+                    if (go.TryGetComponent(out MeshCollider meshCollider))
+                        meshCollider.sharedMesh = m;
                 }
             }
             catch {}
