@@ -10,9 +10,6 @@ namespace UnityEditor.ProBuilder.Actions
 {
     sealed class SelectEdgeLoop : MenuAction
     {
-        Pref<bool> m_SelectIterative = new Pref<bool>("SelectEdgeLoop.selectIterative", false);
-        GUIContent gc_selectIterative = new GUIContent("Iterative Selection", "");
-
         public override ToolbarGroup group
         {
             get { return ToolbarGroup.Selection; }
@@ -50,15 +47,6 @@ namespace UnityEditor.ProBuilder.Actions
             get { return SelectMode.Edge; }
         }
 
-        protected override MenuActionState optionsMenuState {
-            get {
-                if (enabled && ProBuilderEditor.selectMode == SelectMode.Edge)
-                    return MenuActionState.VisibleAndEnabled;
-
-                return MenuActionState.Hidden;
-            }
-        }
-
         public override bool enabled
         {
             get { return base.enabled && MeshSelection.selectedEdgeCount > 0; }
@@ -76,7 +64,7 @@ namespace UnityEditor.ProBuilder.Actions
             foreach (ProBuilderMesh pb in MeshSelection.topInternal)
             {
                 Edge[] loop;
-                bool success = ElementSelection.GetEdgeLoop(pb, pb.selectedEdges, out loop, m_SelectIterative);
+                bool success = ElementSelection.GetEdgeLoop(pb, pb.selectedEdges, out loop);
 
                 if (success)
                 {
@@ -95,25 +83,6 @@ namespace UnityEditor.ProBuilder.Actions
                 return new ActionResult(ActionResult.Status.Success, "Select Edge Loop");
             else
                 return new ActionResult(ActionResult.Status.Failure, "Nothing to Loop");
-        }
-
-        protected override void OnSettingsGUI()
-        {
-            GUILayout.Label("Select Loop Edge Options", EditorStyles.boldLabel);
-
-            EditorGUI.BeginChangeCheck();
-            m_SelectIterative.value = EditorGUILayout.Toggle(gc_selectIterative, m_SelectIterative);
-
-            if (EditorGUI.EndChangeCheck())
-                ProBuilderSettings.Save();
-
-            GUILayout.FlexibleSpace();
-
-            if (GUILayout.Button("Select Edge Loop"))
-            {
-                DoAction();
-                SceneView.RepaintAll();
-            }
         }
     }
 }

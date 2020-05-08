@@ -384,7 +384,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="edges"></param>
         /// <param name="loop"></param>
         /// <returns></returns>
-        internal static bool GetEdgeLoop(ProBuilderMesh mesh, IEnumerable<Edge> edges, out Edge[] loop, bool isIterative = false)
+        internal static bool GetEdgeLoop(ProBuilderMesh mesh, IEnumerable<Edge> edges, out Edge[] loop)
         {
             List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh);
             IEnumerable<EdgeLookup> m_edgeLookup = EdgeLookup.GetEdgeLookup(edges, mesh.sharedVertexLookup);
@@ -393,21 +393,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             for (int i = 0; i < wings.Count; i++)
             {
-                if ((!isIterative && used.Contains(wings[i].edge)) || !sources.Contains(wings[i].edge))
+                if (used.Contains(wings[i].edge) || !sources.Contains(wings[i].edge))
                     continue;
 
-                if (isIterative)
-                {
-                    GetEdgeLoopInternalIterative(wings[i], wings[i].edge.common, used);
-                }
-                else
-                {
-                    bool completeLoop = GetEdgeLoopInternal(wings[i], wings[i].edge.common.b, used);
+                bool completeLoop = GetEdgeLoopInternal(wings[i], wings[i].edge.common.b, used);
 
-                    // loop didn't close
-                    if (!completeLoop)
-                        GetEdgeLoopInternal(wings[i], wings[i].edge.common.a, used);
-                }
+                // loop didn't close
+                if (!completeLoop)
+                    GetEdgeLoopInternal(wings[i], wings[i].edge.common.a, used);
             }
 
             loop = used.Select(x => x.local).ToArray();
@@ -437,36 +430,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
             while (cur != null && !used.Contains(cur.edge));
 
             return cur != null;
-        }
-
-        static bool GetEdgeLoopInternalIterative(WingedEdge start, Edge edge, HashSet<EdgeLookup> used)
-        {
-            int indA = edge.a;
-            int indB = edge.b;
-            WingedEdge cur = start;
-
-            if (!used.Contains(cur.edge))
-                used.Add(cur.edge);
-
-            List<WingedEdge> spokesA = GetSpokes(cur, indA, true).DistinctBy(x => x.edge.common).ToList();
-            List<WingedEdge> spokesB = GetSpokes(cur, indB, true).DistinctBy(x => x.edge.common).ToList();
-
-            if (spokesA != null && spokesA.Count == 4)
-            {
-                cur = spokesA[2];
-
-                if (!used.Contains(cur.edge))
-                    used.Add(cur.edge);
-            }
-            if (spokesB != null && spokesB.Count == 4)
-            {
-                cur = spokesB[2];
-
-                if (!used.Contains(cur.edge))
-                    used.Add(cur.edge);
-            }
-
-            return true;
         }
 
         static WingedEdge NextSpoke(WingedEdge wing, int pivot, bool opp)
