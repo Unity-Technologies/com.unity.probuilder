@@ -12,7 +12,7 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class SelectEdgeLoop : MenuAction
     {
         Pref<bool> m_SelectIterative = new Pref<bool>("SelectEdgeLoop.selectIterative", false);
-        GUIContent gc_selectIterative = new GUIContent("Iterative Selection", "");
+        GUIContent gc_selectIterative = new GUIContent("Iterative Selection", "Optionally restrict the selection to neighbors edges on the loop.");
 
         public override ToolbarGroup group
         {
