@@ -330,6 +330,67 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
+        /// Iterates through face edges and builds a list using the opposite edge.
+        /// </summary>
+        /// <param name="pb"></param>
+        /// <param name="edges"></param>
+        /// <returns></returns>
+        internal static IEnumerable<Edge> GetEdgeRingIterative(ProBuilderMesh pb, IEnumerable<Edge> edges)
+        {
+            List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
+            List<EdgeLookup> edgeLookup = EdgeLookup.GetEdgeLookup(edges, pb.sharedVertexLookup).ToList();
+            edgeLookup = edgeLookup.Distinct().ToList();
+
+            Dictionary<Edge, WingedEdge> wings_dic = new Dictionary<Edge, WingedEdge>();
+
+            for (int i = 0; i < wings.Count; i++)
+                if (!wings_dic.ContainsKey(wings[i].edge.common))
+                    wings_dic.Add(wings[i].edge.common, wings[i]);
+
+            HashSet<EdgeLookup> used = new HashSet<EdgeLookup>();
+
+            for (int i = 0, c = edgeLookup.Count; i < c; i++)
+            {
+                WingedEdge we;
+
+                if (!wings_dic.TryGetValue(edgeLookup[i].common, out we))
+                    continue;
+
+                WingedEdge cur = we;
+
+                used.Add(cur.edge);
+                //used.Add(cur.next.edge);
+                //used.Add(cur.previous.edge);
+                var next = EdgeRingNext(cur);
+                if (next != null && next.opposite != null)
+                    used.Add(next.edge);
+                var prev = EdgeRingNext(cur.opposite);
+                if (prev != null && prev.opposite != null)
+                    used.Add(prev.edge);
+
+                //while (cur != null)
+                //{
+                //    if (!used.Add(cur.edge)) break;
+                //    cur = EdgeRingNext(cur);
+                //    if (cur != null && cur.opposite != null) cur = cur.opposite;
+                //}
+
+                cur = EdgeRingNext(we.opposite);
+                if (cur != null && cur.opposite != null) cur = cur.opposite;
+
+                // run in both directions
+                //while (cur != null)
+                //{
+                //    if (!used.Add(cur.edge)) break;
+                //    cur = EdgeRingNext(cur);
+                //    if (cur != null && cur.opposite != null) cur = cur.opposite;
+                //}
+            }
+
+            return used.Select(x => x.local);
+        }
+
+        /// <summary>
         /// Attempts to find edges along an Edge loop.
         ///
         /// http://wiki.blender.org/index.php/Doc:2.4/Manual/Modeling/Meshes/Selecting/Edges says:

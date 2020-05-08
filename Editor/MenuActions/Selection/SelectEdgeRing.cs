@@ -10,6 +10,9 @@ namespace UnityEditor.ProBuilder.Actions
 {
     sealed class SelectEdgeRing : MenuAction
     {
+        Pref<bool> m_SelectIterative = new Pref<bool>("SelectEdgeRing.selectIterative", false);
+        GUIContent gc_selectIterative = new GUIContent("Iterative Selection", "");
+
         public override ToolbarGroup group
         {
             get { return ToolbarGroup.Selection; }
@@ -33,6 +36,15 @@ namespace UnityEditor.ProBuilder.Actions
         protected override bool hasFileMenuEntry
         {
             get { return false; }
+        }
+
+        protected override MenuActionState optionsMenuState {
+            get {
+                if (enabled && ProBuilderEditor.selectMode == SelectMode.Edge)
+                    return MenuActionState.VisibleAndEnabled;
+
+                return MenuActionState.Hidden;
+            }
         }
 
         private static readonly TooltipContent s_Tooltip = new TooltipContent
@@ -63,8 +75,17 @@ namespace UnityEditor.ProBuilder.Actions
 
             foreach (var mesh in MeshSelection.topInternal)
             {
-                Edge[] edges = ElementSelection.GetEdgeRing(mesh, mesh.selectedEdges).ToArray();
+                Edge[] edges;
 
+                if (m_SelectIterative)
+                {
+                    edges = ElementSelection.GetEdgeRingIterative(mesh, mesh.selectedEdges).ToArray();
+                }
+                else
+                {
+                    edges = ElementSelection.GetEdgeRing(mesh, mesh.selectedEdges).ToArray();
+                }
+               
                 if (edges.Length > mesh.selectedEdgeCount)
                     success = true;
 
@@ -79,6 +100,25 @@ namespace UnityEditor.ProBuilder.Actions
                 return new ActionResult(ActionResult.Status.Success, "Select Edge Ring");
 
             return new ActionResult(ActionResult.Status.Failure, "Nothing to Ring");
+        }
+
+        protected override void OnSettingsGUI()
+        {
+            GUILayout.Label("Select Ring Edge Options", EditorStyles.boldLabel);
+
+            EditorGUI.BeginChangeCheck();
+            m_SelectIterative.value = EditorGUILayout.Toggle(gc_selectIterative, m_SelectIterative);
+
+            if (EditorGUI.EndChangeCheck())
+                ProBuilderSettings.Save();
+
+            GUILayout.FlexibleSpace();
+
+            if (GUILayout.Button("Select Edge Ring"))
+            {
+                DoAction();
+                SceneView.RepaintAll();
+            }
         }
     }
 }
