@@ -361,10 +361,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 if (!used.Contains(cur.edge))
                     used.Add(cur.edge);
                 var next = EdgeRingNext(cur);
-                if (next != null && next.opposite != null && used.Contains(next.edge))
+                if (next != null && next.opposite != null && !used.Contains(next.edge))
                     used.Add(next.edge);
                 var prev = EdgeRingNext(cur.opposite);
-                if (prev != null && prev.opposite != null && used.Contains(prev.edge))
+                if (prev != null && prev.opposite != null && !used.Contains(prev.edge))
                     used.Add(prev.edge);
             }
 
