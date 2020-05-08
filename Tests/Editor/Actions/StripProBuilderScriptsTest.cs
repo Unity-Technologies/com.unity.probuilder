@@ -30,8 +30,10 @@ public class StripProBuilderScriptsTest
     public void StripProBuilderScripts_RemovesMeshAndBezierComponents()
     {
         var go = new GameObject();
-        go.AddComponent<BezierShape>();
         go.AddComponent<ProBuilderMesh>();
+        var bezier = go.AddComponent<BezierShape>();
+        bezier.Init();
+        bezier.Refresh();
 
         Assume.That(go.GetComponent<ProBuilderMesh>() != null);
         Assume.That(go.GetComponent<BezierShape>() != null);
