@@ -11,7 +11,7 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class SelectEdgeRing : MenuAction
     {
         Pref<bool> m_SelectIterative = new Pref<bool>("SelectEdgeRing.selectIterative", false);
-        GUIContent gc_selectIterative = new GUIContent("Iterative Selection", "");
+        GUIContent gc_selectIterative = new GUIContent("Iterative Selection", "Optionally restrict the selection to neighbors edges on the ring.");
 
         public override ToolbarGroup group
         {
@@ -38,7 +38,8 @@ namespace UnityEditor.ProBuilder.Actions
             get { return false; }
         }
 
-        protected override MenuActionState optionsMenuState {
+        protected override MenuActionState optionsMenuState
+        {
             get {
                 if (enabled && ProBuilderEditor.selectMode == SelectMode.Edge)
                     return MenuActionState.VisibleAndEnabled;

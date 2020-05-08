@@ -330,7 +330,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Iterates through face edges and builds a list using the opposite edge.
+        /// Iterates through face edges and builds a list using the opposite edge, iteratively.
         /// </summary>
         /// <param name="pb"></param>
         /// <param name="edges"></param>
@@ -358,33 +358,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
                 WingedEdge cur = we;
 
-                used.Add(cur.edge);
-                //used.Add(cur.next.edge);
-                //used.Add(cur.previous.edge);
+                if (!used.Contains(cur.edge))
+                    used.Add(cur.edge);
                 var next = EdgeRingNext(cur);
-                if (next != null && next.opposite != null)
+                if (next != null && next.opposite != null && used.Contains(next.edge))
                     used.Add(next.edge);
                 var prev = EdgeRingNext(cur.opposite);
-                if (prev != null && prev.opposite != null)
+                if (prev != null && prev.opposite != null && used.Contains(prev.edge))
                     used.Add(prev.edge);
-
-                //while (cur != null)
-                //{
-                //    if (!used.Add(cur.edge)) break;
-                //    cur = EdgeRingNext(cur);
-                //    if (cur != null && cur.opposite != null) cur = cur.opposite;
-                //}
-
-                cur = EdgeRingNext(we.opposite);
-                if (cur != null && cur.opposite != null) cur = cur.opposite;
-
-                // run in both directions
-                //while (cur != null)
-                //{
-                //    if (!used.Add(cur.edge)) break;
-                //    cur = EdgeRingNext(cur);
-                //    if (cur != null && cur.opposite != null) cur = cur.opposite;
-                //}
             }
 
             return used.Select(x => x.local);
