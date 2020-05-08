@@ -384,7 +384,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="edges"></param>
         /// <param name="loop"></param>
         /// <returns></returns>
-        internal static bool GetEdgeLoop(ProBuilderMesh mesh, IEnumerable<Edge> edges, out Edge[] loop)
+        internal static bool GetEdgeLoop(ProBuilderMesh mesh, IEnumerable<Edge> edges, out Edge[] loop, bool isIterative = false)
         {
             List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh);
             IEnumerable<EdgeLookup> m_edgeLookup = EdgeLookup.GetEdgeLookup(edges, mesh.sharedVertexLookup);
@@ -393,43 +393,21 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             for (int i = 0; i < wings.Count; i++)
             {
-                if (used.Contains(wings[i].edge) || !sources.Contains(wings[i].edge))
+                if ((!isIterative && used.Contains(wings[i].edge)) || !sources.Contains(wings[i].edge))
                     continue;
 
-                bool completeLoop = GetEdgeLoopInternal(wings[i], wings[i].edge.common.b, used);
+                if (isIterative)
+                {
+                    GetEdgeLoopInternalIterative(wings[i], wings[i].edge.common, used);
+                }
+                else
+                {
+                    bool completeLoop = GetEdgeLoopInternal(wings[i], wings[i].edge.common.b, used);
 
-                // loop didn't close
-                if (!completeLoop)
-                    GetEdgeLoopInternal(wings[i], wings[i].edge.common.a, used);
-            }
-
-            loop = used.Select(x => x.local).ToArray();
-
-            return true;
-        }
-
-        /// <summary>
-        /// Attempts to find edges along an Edge loop in an iterative way
-        ///
-        /// Adds two edges to the selection, one at each extremity
-        /// </summary>
-        /// <param name="mesh"></param>
-        /// <param name="lastEdgesAdded"></param>
-        /// <param name="loop"></param>
-        /// <returns></returns>
-        internal static bool GetEdgeLoopIterative(ProBuilderMesh mesh, IEnumerable<Edge> edges, out Edge[] loop)
-        {
-            List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh);
-            IEnumerable<EdgeLookup> m_edgeLookup = EdgeLookup.GetEdgeLookup(edges, mesh.sharedVertexLookup);
-            HashSet<EdgeLookup> sources = new HashSet<EdgeLookup>(m_edgeLookup);
-            HashSet<EdgeLookup> used = new HashSet<EdgeLookup>();
-
-            for (int i = 0; i < wings.Count; i++)
-            {
-                if (!sources.Contains(wings[i].edge))
-                    continue;
-
-                GetEdgeLoopInternalIterative(wings[i], wings[i].edge.common, used);
+                    // loop didn't close
+                    if (!completeLoop)
+                        GetEdgeLoopInternal(wings[i], wings[i].edge.common.a, used);
+                }
             }
 
             loop = used.Select(x => x.local).ToArray();
@@ -461,7 +439,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             return cur != null;
         }
 
-        static void GetEdgeLoopInternalIterative(WingedEdge start, Edge edge, HashSet<EdgeLookup> used)
+        static bool GetEdgeLoopInternalIterative(WingedEdge start, Edge edge, HashSet<EdgeLookup> used)
         {
             int indA = edge.a;
             int indB = edge.b;
@@ -487,6 +465,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 if (!used.Contains(cur.edge))
                     used.Add(cur.edge);
             }
+
+            return true;
         }
 
         static WingedEdge NextSpoke(WingedEdge wing, int pivot, bool opp)
