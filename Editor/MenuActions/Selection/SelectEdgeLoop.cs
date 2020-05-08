@@ -51,7 +51,8 @@ namespace UnityEditor.ProBuilder.Actions
             get { return SelectMode.Edge; }
         }
 
-        protected override MenuActionState optionsMenuState {
+        protected override MenuActionState optionsMenuState
+        {
             get {
                 if (enabled && ProBuilderEditor.selectMode == SelectMode.Edge)
                     return MenuActionState.VisibleAndEnabled;
