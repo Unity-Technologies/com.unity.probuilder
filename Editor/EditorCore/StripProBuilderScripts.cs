@@ -84,6 +84,9 @@ namespace UnityEditor.ProBuilder.Actions
                 if (go.TryGetComponent(out PolyShape polyShape))
                     DestroyImmediate(polyShape);
 
+                if (go.TryGetComponent(out BezierShape bezierShape))
+                    DestroyImmediate(bezierShape);
+
                 if (pb.mesh == null)
                 {
                     DestroyImmediate(pb);
