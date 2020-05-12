@@ -6,6 +6,7 @@ using UnityEngine.ProBuilder;
 using PHandleUtility = UnityEngine.ProBuilder.HandleUtility;
 using UHandleUtility = UnityEditor.HandleUtility;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
+using UnityEditor.ProBuilder.Actions;
 
 namespace UnityEditor.ProBuilder
 {
@@ -37,6 +38,7 @@ namespace UnityEditor.ProBuilder
             bool appendModifier = EditorHandleUtility.IsAppendModifier(evt.modifiers);
             bool addToSelectionModifier = EditorHandleUtility.IsSelectionAddModifier(evt.modifiers);
             bool addOrRemoveIfPresentFromSelectionModifier = EditorHandleUtility.IsSelectionAppendOrRemoveIfPresentModifier(evt.modifiers);
+            bool pathSelectionModifier = EditorHandleUtility.IsSelectionPathModifier(evt.modifiers);
 
             float pickedElementDistance;
 
@@ -120,6 +122,16 @@ namespace UnityEditor.ProBuilder
                         {
                             mesh.selectedFaceIndicesInternal = mesh.selectedFaceIndicesInternal.Remove(ind);
                             mesh.SetSelectedFaces(mesh.selectedFaceIndicesInternal.Add(ind));
+                        }
+                    }
+                    else if (pathSelectionModifier && mesh.GetActiveFace() != null)
+                    {
+                        Debug.Log("pathfind :)");
+                        var pathFaces = SelectPathFaces.GetPath(mesh.GetActiveFace(), s_Selection.face);
+                        foreach (var pathFace in pathFaces)
+                        {
+                            var index = Array.IndexOf<Face>(faces, s_Selection.face);
+                            mesh.AddToFaceSelection(index);
                         }
                     }
                     else
