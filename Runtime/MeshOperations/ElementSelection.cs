@@ -332,9 +332,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <summary>
         /// Iterates through face edges and builds a list using the opposite edge, iteratively.
         /// </summary>
-        /// <param name="pb"></param>
-        /// <param name="edges"></param>
-        /// <returns></returns>
+        /// <param name="pb">The probuilder mesh</param>
+        /// <param name="edges">The edges already selected</param>
+        /// <returns>The new selected edges</returns>
         internal static IEnumerable<Edge> GetEdgeRingIterative(ProBuilderMesh pb, IEnumerable<Edge> edges)
         {
             List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
