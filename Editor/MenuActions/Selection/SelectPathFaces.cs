@@ -9,8 +9,7 @@ namespace UnityEditor.ProBuilder.Actions
 {
     public static class SelectPathFaces
     {
-        private static List<int> visited = new List<int>();
-        private static List<int> unvisited = new List<int>();
+        // cache the nodes ?
 
         public static List<int> GetPath(int start, int end, ProBuilderMesh mesh)
         {
@@ -20,12 +19,12 @@ namespace UnityEditor.ProBuilder.Actions
 
         private static int[] Dijkstra(int start, int end, ProBuilderMesh mesh)
         {
-            visited.Clear();
-            unvisited.Clear();
+            List<int> visited = new List<int>();
+            List<int> unvisited = new List<int>();
             int faceCount = mesh.faceCount;
          
             double[] weights = new double[faceCount];
-            int[] P = new int[faceCount];
+            int[] predecessors = new int[faceCount];
             List<Node> nodes = GetNodes(start, mesh);
 
             for (int i = 0; i < faceCount; i++)
@@ -34,30 +33,29 @@ namespace UnityEditor.ProBuilder.Actions
                 unvisited.Add(i);
             }
 
-          
-            int u = start;
-            weights[u] = 0;
-            visited.Add(u);
-            unvisited.Remove(u);
+            int current = start;
+            weights[current] = 0;
+            visited.Add(current);
+            unvisited.Remove(current);
 
             do
             {
-                for (int v = 0; v < unvisited.Count; v++)
+                for (int other = 0; other < unvisited.Count; other++)
                 {
-                    var node = nodes.Where(x => x.Start == u && x.End == unvisited[v]).FirstOrDefault();
+                    var node = nodes.Where(x => x.Start == current && x.End == unvisited[other]).FirstOrDefault();
                     if (node.Weight == 0)
                         continue;
-                    if (weights[u] + node.Weight < weights[unvisited[v]])
+                    if (weights[current] + node.Weight < weights[unvisited[other]])
                     {
-                        var idx = unvisited[v];
-                        var idxU = u;
-                        weights[unvisited[v]] = weights[u] + node.Weight;
-                        P[unvisited[v]] = u;
+                        var idx = unvisited[other];
+                        var idxU = current;
+                        weights[unvisited[other]] = weights[current] + node.Weight;
+                        predecessors[unvisited[other]] = current;
                     }
                     else
                     {
-                        var idx = unvisited[v];
-                        var idxU = u;
+                        var idx = unvisited[other];
+                        var idxU = current;
                     }
                 }
 
@@ -73,17 +71,17 @@ namespace UnityEditor.ProBuilder.Actions
                         if (node.Weight < min)
                         {
                             min = node.Weight;
-                            u = unvisited[j];
+                            current = unvisited[j];
                         }
                     }
                 }
 
-                visited.Add(u);
-                unvisited.Remove(u);
+                visited.Add(current);
+                unvisited.Remove(current);
 
             } while (visited.Count < faceCount && !visited.Contains(end));
 
-            return P;
+            return predecessors;
         }
 
         private static List<Node> GetNodes(int start, ProBuilderMesh mesh)
@@ -102,7 +100,7 @@ namespace UnityEditor.ProBuilder.Actions
                         {
                             if (neighbor.item1 != other)
                                 continue;
-                            Node node = new Node(mesh.faces.IndexOf(face), mesh.faces.IndexOf(neighbor.item1), 1);
+                            Node node = new Node(mesh.faces.IndexOf(face), mesh.faces.IndexOf(neighbor.item1), GetWeight(face, neighbor.item1));
                             list.Add(node);
                         }
                     }
@@ -118,17 +116,17 @@ namespace UnityEditor.ProBuilder.Actions
             double normalCost = 2.0;
             double distCost = 3.0;
 
-            return 0.0;
+            return 1.0;
         }
 
-        private static List<int> GetMinimalPath(int[] P, int start, int end)
+        private static List<int> GetMinimalPath(int[] predecessors, int start, int end)
         {
             List<int> list = new List<int>();
             list.Add(end);
             int a = end;
             while (a != start)
             {
-                a = P[a];
+                a = predecessors[a];
                 list.Add(a);
             }
             for (int i = 0, j = list.Count - 1; i < j; i++)
@@ -147,7 +145,7 @@ namespace UnityEditor.ProBuilder.Actions
             public int End { get; private set; }
             public double Weight { get; private set; }
 
-            public Node(int start, int end, int weight)
+            public Node(int start, int end, double weight)
             {
                 Start = start;
                 End = end;
