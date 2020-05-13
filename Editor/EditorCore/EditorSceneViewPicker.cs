@@ -126,12 +126,11 @@ namespace UnityEditor.ProBuilder
                     }
                     else if (pathSelectionModifier && mesh.GetActiveFace() != null)
                     {
-                        Debug.Log("pathfind :)");
-                        var pathFaces = SelectPathFaces.GetPath(mesh.GetActiveFace(), s_Selection.face);
+                        var pathFaces = SelectPathFaces.GetPath(Array.IndexOf<Face>(faces, mesh.GetActiveFace()),
+                            Array.IndexOf<Face>(faces, s_Selection.face), mesh);
                         foreach (var pathFace in pathFaces)
                         {
-                            var index = Array.IndexOf<Face>(faces, s_Selection.face);
-                            mesh.AddToFaceSelection(index);
+                            mesh.AddToFaceSelection(pathFace);
                         }
                     }
                     else
