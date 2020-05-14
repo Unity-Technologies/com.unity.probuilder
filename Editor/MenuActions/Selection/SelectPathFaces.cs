@@ -27,15 +27,16 @@ namespace UnityEditor.ProBuilder.Actions
             {
                 List<int> visited = new List<int>();
                 List<int> unvisited = new List<int>();
-                int faceCount = mesh.faceCount;
+                var wings = WingedEdge.GetWingedEdges(mesh, true);
+                int wingCount = wings.Count;
 
-                double[] weights = new double[faceCount];
-                int[] predecessors = new int[faceCount];
+                float[] weights = new float[wingCount];
+                int[] predecessors = new int[wingCount];
                 List<Node> nodes = GetNodes(start, mesh);
 
-                for (int i = 0; i < faceCount; i++)
+                for (int i = 0; i < wingCount; i++)
                 {
-                    weights[i] = double.MaxValue;
+                    weights[i] = float.MaxValue;
                     unvisited.Add(i);
                 }
 
@@ -43,8 +44,6 @@ namespace UnityEditor.ProBuilder.Actions
                 weights[current] = 0;
                 visited.Add(current);
                 unvisited.Remove(current);
-
-       
 
                 do
                 {
@@ -57,8 +56,11 @@ namespace UnityEditor.ProBuilder.Actions
 
                             foreach (var nodei in nodes)
                             {
-                                if (nodei.Start == current && nodei.End == unvisited[other])
-                                    node = nodei;
+                                //if (nodei.Start == current && nodei.End == unvisited[other])
+                                //{
+                                //    node = nodei;
+                                //    break;
+                                //}
                             }
 
                             if (node.Weight == 0)
@@ -87,7 +89,7 @@ namespace UnityEditor.ProBuilder.Actions
                     visited.Add(current);
                     unvisited.Remove(current);
 
-                } while (visited.Count < faceCount && !visited.Contains(end));
+                } while (visited.Count < wingCount && !visited.Contains(end));
 
                 return predecessors;
             }
@@ -97,29 +99,56 @@ namespace UnityEditor.ProBuilder.Actions
         {
             using (new ProfilerMarker("Select path GetNodes").Auto())
             {
-                List<Node> list = new List<Node>(mesh.facesInternal.Length * 4);
-                List<SimpleTuple<Face, Edge>> neighbors = new List<SimpleTuple<Face, Edge>>(8);
-                foreach (var face in mesh.facesInternal)
-                {
-                    foreach (var edge in face.edgesInternal)
-                    {
-                        neighbors = ElementSelection.GetNeighborFaces(mesh, edge);
-                        foreach (var neighbor in neighbors)
-                        {
-                            if (neighbor.item1 == face)
-                                continue;
-                            Node node = new Node(Array.IndexOf<Face>(mesh.facesInternal, face), Array.IndexOf<Face>(mesh.facesInternal, neighbor.item1), GetWeight(face, neighbor.item1, mesh));
-                            list.Add(node);
-                        }
-                    }
+                //var wings = WingedEdge.GetWingedEdges(mesh, true);
+                //var wing = wings.First(x => x.face == mesh.facesInternal[start]);
 
-                }
-
-                return list;
+                //List<Node> list = new List<Node>(mesh.facesInternal.Length * 4);
+                //List<SimpleTuple<Face, Edge>> neighbors = new List<SimpleTuple<Face, Edge>>(8);
+                //foreach (var face in mesh.facesInternal)
+                //{
+                //    foreach (var edge in face.edgesInternal)
+                //    {
+                //        neighbors = ElementSelection.GetNeighborFaces(mesh, edge);
+                //        foreach (var neighbor in neighbors)
+                //        {
+                //            if (neighbor.item1 == face)
+                //                continue;
+                //            Node node = new Node(Array.IndexOf<Face>(mesh.facesInternal, face), GetWeight(face, neighbor.item1, mesh));
+                //            list.Add(node);
+                //        }
+                //    }
+                //}
+                List<Node> list = new List<Node>(mesh.facesInternal.Length * 4); var wings = WingedEdge.GetWingedEdges(mesh, true);
+                var wing = wings.First(x => x.face == mesh.facesInternal[start]);
+                var visitedFaces = new List<Face>();
+                return GetNodeRecursive(wing, ref visitedFaces);
             }
         }
 
-        private static double GetWeight(Face face1, Face face2, ProBuilderMesh mesh)
+        private static List<Node> GetNodeRecursive(WingedEdge current, ref List<Face> visitedFaces)
+        {
+            List<Node> list = new List<Node>();
+            visitedFaces.Add(current.face);
+            var edge = current;
+            do
+            {
+                var node = new Node(edge, 1);
+                list.Add(node);
+
+                if (edge.opposite != null && !visitedFaces.Contains(edge.opposite.face))
+                {
+                    list.AddRange(GetNodeRecursive(edge.opposite, ref visitedFaces));
+                }
+
+
+                edge = edge.next;
+
+            } while (edge != current);
+
+            return list;
+        }
+
+        private static float GetWeight(Face face1, Face face2, ProBuilderMesh mesh)
         {
             double baseCost = 10.0;
             double normalCost = 2.0;
@@ -136,7 +165,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             //var p1 = Math.Average(mesh.positionsInternal[face1.indexesInternal)
 
-            return 1.0;
+            return 1f;
         }
 
         private static List<int> GetMinimalPath(int[] predecessors, int start, int end)
@@ -163,14 +192,12 @@ namespace UnityEditor.ProBuilder.Actions
 
         private struct Node
         {
-            public int Start { get; private set; }
-            public int End { get; private set; }
-            public double Weight { get; private set; }
+            public WingedEdge WingedEdge { get; private set; }
+            public float Weight { get; private set; }
 
-            public Node(int start, int end, double weight)
+            public Node(WingedEdge wingedEdge,float weight)
             {
-                Start = start;
-                End = end;
+                WingedEdge = wingedEdge;
                 Weight = weight;
             }
         }
