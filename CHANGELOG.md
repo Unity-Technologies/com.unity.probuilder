@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1242879] Fixed import error caused by UPM CI log file.
 - [case: 1242884] Fixed NullException with Strip ProBuilder action on PolyShape.
 - [case: 1245491] Fixed NullException with Strip ProBuilder action on BezierShape.
+- [case: 1242945] Fixed NullException with Strip ProBuilder action on PolyShape.
 
 ## [4.3.0-preview.8] - 2020-04-27
 
