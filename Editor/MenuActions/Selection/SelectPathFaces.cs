@@ -49,11 +49,10 @@ namespace UnityEditor.ProBuilder.Actions
 
                 do
                 {
-                    var currentWing = wings[current];
-                    var otherWing = wings[current];
-                    var otherNode = current;
                     using (new ProfilerMarker("Select path Dijkstra first loop").Auto())
                     {
+                        var currentWing = wings[current];
+                        var otherWing = currentWing;
                         do
                         {
                             var opposite = otherWing.opposite;
@@ -100,23 +99,23 @@ namespace UnityEditor.ProBuilder.Actions
             //double normalCost = 2.0;
             //double distCost = 3.0;
 
-            //var n1 = UnityEngine.ProBuilder.Math.Normal(mesh, mesh.facesInternal[face1]);
-            //var n2 = UnityEngine.ProBuilder.Math.Normal(mesh, mesh.facesInternal[face2]);
+            var n1 = UnityEngine.ProBuilder.Math.Normal(mesh, mesh.facesInternal[face1]);
+            var n2 = UnityEngine.ProBuilder.Math.Normal(mesh, mesh.facesInternal[face2]);
 
-            //float normalCost = (1f - Vector3.Dot(n1.normalized, n2.normalized)) * 2f;
+            float normalCost = (1f - Vector3.Dot(n1.normalized, n2.normalized)) * 2f;
 
-            //Vector3 p1 = Vector3.zero;
-            //Vector3 p2 = Vector3.zero;
-            //foreach (var point in mesh.facesInternal[face1].indexesInternal)
-            //{
-            //    p1 += mesh.positionsInternal[point] / mesh.facesInternal[face1].indexesInternal.Count();
-            //}
-            //foreach (var point in mesh.facesInternal[face2].indexesInternal)
-            //{
-            //    p2 += mesh.positionsInternal[point] / mesh.facesInternal[face2].indexesInternal.Count();
-            //}
+            Vector3 p1 = Vector3.zero;
+            Vector3 p2 = Vector3.zero;
+            foreach (var point in mesh.facesInternal[face1].indexesInternal)
+            {
+                p1 += mesh.positionsInternal[point] / mesh.facesInternal[face1].indexesInternal.Count();
+            }
+            foreach (var point in mesh.facesInternal[face2].indexesInternal)
+            {
+                p2 += mesh.positionsInternal[point] / mesh.facesInternal[face2].indexesInternal.Count();
+            }
 
-            //float distCost = (p2 - p1).magnitude;
+            float distCost = (p2 - p1).magnitude;
 
             return 1f;
         }
