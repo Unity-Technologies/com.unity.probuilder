@@ -22,17 +22,19 @@ namespace UnityEditor.ProBuilder.Actions
 
         private static int[] Dijkstra(int start, int end, ProBuilderMesh mesh)
         {
-            Debug.Log("??");
             using (new ProfilerMarker("Select path Dijkstra").Auto())
             {
-                List<int> visited = new List<int>();
-                List<int> unvisited = new List<int>();
-                var wings = WingedEdge.GetWingedEdges(mesh, true);
+                List<WingedEdge> wings;
+                using (new ProfilerMarker("Select path Dijkstra WingedEdge").Auto())
+                {
+                    wings = WingedEdge.GetWingedEdges(mesh, true);
+                }
                 int wingCount = wings.Count;
+                HashSet<int> visited = new HashSet<int>();
+                List<int> unvisited = new List<int>(wingCount);
 
                 float[] weights = new float[wingCount];
                 int[] predecessors = new int[wingCount];
-                List<Node> nodes = GetNodes(start, mesh);
 
                 for (int i = 0; i < wingCount; i++)
                 {
@@ -47,41 +49,38 @@ namespace UnityEditor.ProBuilder.Actions
 
                 do
                 {
+                    var currentWing = wings[current];
+                    var otherWing = wings[current];
+                    var otherNode = current;
                     using (new ProfilerMarker("Select path Dijkstra first loop").Auto())
                     {
-                        for (int other = 0; other < unvisited.Count; other++)
+                        do
                         {
-                            //var node = nodes.Where(x => x.Start == current && x.End == unvisited[other]).FirstOrDefault();
-                            Node node = new Node();
-
-                            foreach (var nodei in nodes)
-                            {
-                                //if (nodei.Start == current && nodei.End == unvisited[other])
-                                //{
-                                //    node = nodei;
-                                //    break;
-                                //}
-                            }
-
-                            if (node.Weight == 0)
+                            var opposite = otherWing.opposite;
+                            if (opposite == null)
                                 continue;
-                            if (weights[current] + node.Weight < weights[unvisited[other]])
+
+                            var idx = Array.IndexOf(mesh.facesInternal, opposite.face);
+                            var weight = GetWeight(current, idx, mesh);
+                            if (weights[current] + weight < weights[idx])
                             {
-                                weights[unvisited[other]] = weights[current] + node.Weight;
-                                predecessors[unvisited[other]] = current;
+                                weights[idx] = weights[current] + weight;
+                                predecessors[idx] = current;
                             }
-                        }
+
+                            otherWing = otherWing.next;
+                        } while (otherWing != currentWing);
                     }
 
                     double min = double.MaxValue;
                     using (new ProfilerMarker("Select path Dijkstra second loop").Auto())
                     {
-                        for (int i = 0; i < unvisited.Count; i++)
+                        foreach (var i in unvisited)
                         {
-                            if (weights[unvisited[i]] < min)
+                            if (weights[i] < min)
                             {
-                                min = weights[unvisited[i]];
-                                current = unvisited[i];
+                                min = weights[i];
+                                current = i;
                             }
                         }
                     }
@@ -95,75 +94,29 @@ namespace UnityEditor.ProBuilder.Actions
             }
         }
 
-        private static List<Node> GetNodes(int start, ProBuilderMesh mesh)
-        {
-            using (new ProfilerMarker("Select path GetNodes").Auto())
-            {
-                //var wings = WingedEdge.GetWingedEdges(mesh, true);
-                //var wing = wings.First(x => x.face == mesh.facesInternal[start]);
-
-                //List<Node> list = new List<Node>(mesh.facesInternal.Length * 4);
-                //List<SimpleTuple<Face, Edge>> neighbors = new List<SimpleTuple<Face, Edge>>(8);
-                //foreach (var face in mesh.facesInternal)
-                //{
-                //    foreach (var edge in face.edgesInternal)
-                //    {
-                //        neighbors = ElementSelection.GetNeighborFaces(mesh, edge);
-                //        foreach (var neighbor in neighbors)
-                //        {
-                //            if (neighbor.item1 == face)
-                //                continue;
-                //            Node node = new Node(Array.IndexOf<Face>(mesh.facesInternal, face), GetWeight(face, neighbor.item1, mesh));
-                //            list.Add(node);
-                //        }
-                //    }
-                //}
-                List<Node> list = new List<Node>(mesh.facesInternal.Length * 4); var wings = WingedEdge.GetWingedEdges(mesh, true);
-                var wing = wings.First(x => x.face == mesh.facesInternal[start]);
-                var visitedFaces = new List<Face>();
-                return GetNodeRecursive(wing, ref visitedFaces);
-            }
-        }
-
-        private static List<Node> GetNodeRecursive(WingedEdge current, ref List<Face> visitedFaces)
-        {
-            List<Node> list = new List<Node>();
-            visitedFaces.Add(current.face);
-            var edge = current;
-            do
-            {
-                var node = new Node(edge, 1);
-                list.Add(node);
-
-                if (edge.opposite != null && !visitedFaces.Contains(edge.opposite.face))
-                {
-                    list.AddRange(GetNodeRecursive(edge.opposite, ref visitedFaces));
-                }
-
-
-                edge = edge.next;
-
-            } while (edge != current);
-
-            return list;
-        }
-
-        private static float GetWeight(Face face1, Face face2, ProBuilderMesh mesh)
+        private static float GetWeight(int face1, int face2, ProBuilderMesh mesh)
         {
             double baseCost = 10.0;
-            double normalCost = 2.0;
-            double distCost = 3.0;
+            //double normalCost = 2.0;
+            //double distCost = 3.0;
 
-           // var n1 = UnityEngine.ProBuilder.Math.Normal(mesh, face1);
-          //  var n2 = UnityEngine.ProBuilder.Math.Normal(mesh, face2);
+            //var n1 = UnityEngine.ProBuilder.Math.Normal(mesh, mesh.facesInternal[face1]);
+            //var n2 = UnityEngine.ProBuilder.Math.Normal(mesh, mesh.facesInternal[face2]);
 
+            //float normalCost = (1f - Vector3.Dot(n1.normalized, n2.normalized)) * 2f;
 
-            //foreach ()
+            //Vector3 p1 = Vector3.zero;
+            //Vector3 p2 = Vector3.zero;
+            //foreach (var point in mesh.facesInternal[face1].indexesInternal)
             //{
-
+            //    p1 += mesh.positionsInternal[point] / mesh.facesInternal[face1].indexesInternal.Count();
+            //}
+            //foreach (var point in mesh.facesInternal[face2].indexesInternal)
+            //{
+            //    p2 += mesh.positionsInternal[point] / mesh.facesInternal[face2].indexesInternal.Count();
             //}
 
-            //var p1 = Math.Average(mesh.positionsInternal[face1.indexesInternal)
+            //float distCost = (p2 - p1).magnitude;
 
             return 1f;
         }
