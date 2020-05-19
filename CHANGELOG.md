@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Added iterative selection on edges
 
+### Bug Fixes
+
+- [case: 1248708] Fixed physx error when welding all vertices to a singularity.
+- Fixed tooltips always clamping to the left of the screen on secondary monitors.
+- Fixed `EditorUtility.SetIconEnabled` not respecting the enabled parameter.
+- Reduced the amount of repaints in ProBuilder window.
+
 ## [4.3.0-preview.9] - 2020-05-03
 
 ### Bug Fixes
