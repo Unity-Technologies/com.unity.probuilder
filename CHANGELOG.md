@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Added iterative selection on edges
 
+### Bug Fixes
+
+- [case: 1241105] Fixed an issue where `Select Edge Loop` could overflow when encountering certain non-manifold geometry.
+
 ## [4.3.0-preview.9] - 2020-05-03
 
 ### Bug Fixes

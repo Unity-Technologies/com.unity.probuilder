@@ -79,14 +79,11 @@ namespace UnityEditor.ProBuilder.Actions
             {
                 Edge[] loop;
                 bool success = false;
+
                 if (m_SelectIterative)
-                {
                     success = ElementSelection.GetEdgeLoopIterative(pb, pb.selectedEdges, out loop);
-                }
                 else
-                {
                     success = ElementSelection.GetEdgeLoop(pb, pb.selectedEdges, out loop);
-                }
 
                 if (success)
                 {
