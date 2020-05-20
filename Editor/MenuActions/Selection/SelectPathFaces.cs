@@ -1,11 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
 using System.Linq;
-using Unity.Profiling;
-using System;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -14,10 +10,16 @@ namespace UnityEditor.ProBuilder.Actions
         private static int[] lastPredecessors;
         private static int lastStart;
         private static ProBuilderMesh lastMesh;
-        private static List<WingedEdge> lastEdges;
-        private static Dictionary<Face, int> facesIndex;
+        private static List<WingedEdge> lastWings;
+        private static Dictionary<Face, int> lastFacesIndex = new Dictionary<Face, int>();
 
-
+        /// <summary>
+        /// Calculates the indexes of all faces in the shortest path between start and end
+        /// </summary>
+        /// <param name="start">The index of the starting face</param>
+        /// <param name="end">The index of the ending face</param>
+        /// <param name="mesh">The mesh of the object</param>
+        /// <returns>The indexes of all faces </returns>
         public static List<int> GetPath(int start, int end, ProBuilderMesh mesh)
         {
             if (start == lastStart && mesh == lastMesh)
@@ -37,27 +39,20 @@ namespace UnityEditor.ProBuilder.Actions
 
         private static int[] Dijkstra(int start, int end, ProBuilderMesh mesh)
         {
-            List<WingedEdge> wings;
-            using (new ProfilerMarker("Select path Dijkstra WingedEdge").Auto())
-            {
-                wings = lastMesh == mesh ? lastEdges : WingedEdge.GetWingedEdges(mesh, true);
-                lastEdges = wings;
-            }
+            HashSet<int> visited = new HashSet<int>();
+            HashSet<int> toVisit = new HashSet<int>();
+            lastWings = lastMesh == mesh ? lastWings : WingedEdge.GetWingedEdges(mesh, true);
+            int wingCount = lastWings.Count;
 
             if (mesh != lastMesh)
             {
-                facesIndex = new Dictionary<Face, int>();
+                lastFacesIndex.Clear();
 
                 for (int i = 0; i < mesh.facesInternal.Length; i++)
                 {
-                    facesIndex.Add(mesh.facesInternal[i], i);
+                    lastFacesIndex.Add(mesh.facesInternal[i], i);
                 }
             }
-          
-
-            int wingCount = wings.Count;
-            HashSet<int> visited = new HashSet<int>();
-            HashSet<int> toVisit = new HashSet<int>();
 
             float[] weights = new float[wingCount];
             int[] predecessors = new int[wingCount];
@@ -71,125 +66,92 @@ namespace UnityEditor.ProBuilder.Actions
             weights[current] = 0;
             visited.Add(current);
 
-            do
+            // Construct the paths between the start face and every other faces
+            while (visited.Count < wingCount)
             {
-                using (new ProfilerMarker("Select path Dijkstra update weights").Auto())
+                var currentWing = lastWings[current];
+                var otherWing = currentWing;
+                // Update the weight array for each face next to the current one
+                do
                 {
-                    var currentWing = wings[current];
-                    var otherWing = currentWing;
-                    do
+                    var opposite = otherWing.opposite;
+                    if (opposite == null)
+                        continue;
+
+                    var idx = lastFacesIndex[opposite.face];
+                    var weight = GetWeight(current, idx, mesh);
+                    // Change the predecessor and weight if the new path found if shorter
+                    if (weights[current] + weight < weights[idx])
                     {
-                        var opposite = otherWing.opposite;
-                        if (opposite == null)
-                            continue;
+                        weights[idx] = weights[current] + weight;
+                        predecessors[idx] = current;
+                    }
+                    // Add the face to the ones we can visit next, if not yet visited
+                    if (!toVisit.Contains(idx) && !visited.Contains(idx))
+                    {
+                        toVisit.Add(idx);
+                    }
 
-                        var idx = 0;
-                        using (new ProfilerMarker("Select path Dijkstra index of").Auto())
-                        {
-                          //  idx = Array.IndexOf(mesh.facesInternal, opposite.face);
-                            idx = facesIndex[opposite.face];
-                        }
-                        var weight = GetWeight(current, idx, mesh);
-                        if (weights[current] + weight < weights[idx])
-                        {
-                            weights[idx] = weights[current] + weight;
-                            predecessors[idx] = current;
-                        }
-                        using (new ProfilerMarker("Select path Dijkstra Cotains").Auto())
-                        {
-                            if (!toVisit.Contains(idx) && !visited.Contains(idx))
-                            {
-                                toVisit.Add(idx);
-                            }
-                        }
+                    otherWing = otherWing.next;
 
-                        otherWing = otherWing.next;
-                    } while (otherWing != currentWing);
-                }
+                } while (otherWing != currentWing);
 
+                // Look for the next face to visit, choosing the one with less weight
                 double min = double.MaxValue;
-                using (new ProfilerMarker("Select path Dijkstra select next face").Auto())
+                foreach (var i in toVisit)
                 {
-                    foreach (var i in toVisit)
+                    if (weights[i] < min)
                     {
-                        // Add unvisited for only neighbords
-                        if (weights[i] < min)
-                        {
-                            min = weights[i];
-                            current = i;
-                        }
+                        min = weights[i];
+                        current = i;
                     }
                 }
-
                 visited.Add(current);
                 toVisit.Remove(current);
-
-            } while (visited.Count < wingCount/* && !visited.Contains(end)*/);
+            } 
 
             return predecessors;
-
         }
 
         private static float GetWeight(int face1, int face2, ProBuilderMesh mesh)
         {
-            using (new ProfilerMarker("Select path GetWeight").Auto())
+            float baseCost = 10f;
+            float normalMult = 2f;
+            float distMult = 1f;
+
+            // Calculates the difference between the normals of the faces
+            var n1 = Math.Normal(mesh, mesh.facesInternal[face1]);
+            var n2 = Math.Normal(mesh, mesh.facesInternal[face2]);
+            float normalCost = (1f - Vector3.Dot(n1.normalized, n2.normalized)) * normalMult;
+
+            // Calculates the distance between the center of the faces
+            Vector3 p1 = Vector3.zero;
+            Vector3 p2 = Vector3.zero;
+            foreach (var point in mesh.facesInternal[face1].indexesInternal)
             {
-                float baseCost = 10f;
-
-                var n1 = UnityEngine.ProBuilder.Math.Normal(mesh, mesh.facesInternal[face1]);
-                var n2 = UnityEngine.ProBuilder.Math.Normal(mesh, mesh.facesInternal[face2]);
-
-                float normalCost = (1f - Vector3.Dot(n1.normalized, n2.normalized)) * 2f;
-
-                Vector3 p1 = Vector3.zero;
-                Vector3 p2 = Vector3.zero;
-                foreach (var point in mesh.facesInternal[face1].indexesInternal)
-                {
-                    p1 += mesh.positionsInternal[point] / mesh.facesInternal[face1].indexesInternal.Count();
-                }
-                foreach (var point in mesh.facesInternal[face2].indexesInternal)
-                {
-                    p2 += mesh.positionsInternal[point] / mesh.facesInternal[face2].indexesInternal.Count();
-                }
-
-                float distCost = (p2 - p1).magnitude;
-
-                return baseCost + distCost + normalCost;
+                p1 += mesh.positionsInternal[point] / mesh.facesInternal[face1].indexesInternal.Count();
             }
+            foreach (var point in mesh.facesInternal[face2].indexesInternal)
+            {
+                p2 += mesh.positionsInternal[point] / mesh.facesInternal[face2].indexesInternal.Count();
+            }
+
+            float distCost = (p2 - p1).magnitude * distMult;
+
+            return baseCost + distCost + normalCost;
         }
 
         private static List<int> GetMinimalPath(int[] predecessors, int start, int end)
         {
-            using (new ProfilerMarker("Select path MinimalPath").Auto())
+            Stack<int> list = new Stack<int>();
+            list.Push(end);
+            int a = end;
+            while (a != start)
             {
-                List<int> list = new List<int>();
-                list.Add(end);
-                int a = end;
-                while (a != start)
-                {
-                    a = predecessors[a];
-                    list.Add(a);
-                }
-                for (int i = 0, j = list.Count - 1; i < j; i++)
-                {
-                    var item = list[j];
-                    list.Remove(item);
-                    list.Insert(i, item);
-                }
-                return list;
+                a = predecessors[a];
+                list.Push(a);
             }
-        }
-
-        private struct Node
-        {
-            public WingedEdge WingedEdge { get; private set; }
-            public float Weight { get; private set; }
-
-            public Node(WingedEdge wingedEdge, float weight)
-            {
-                WingedEdge = wingedEdge;
-                Weight = weight;
-            }
+            return list.ToList();
         }
     }
 }
