@@ -9,15 +9,35 @@ using System;
 
 namespace UnityEditor.ProBuilder.Actions
 {
+    //public enum VisitedType
+    //{
+    //    Visited,
+    //    Univisted,
+    //    ToVisit
+    //}
+
     public static class SelectPathFaces
     {
-        // cache the nodes ?
-        // cache the weight array
+        private static int[] lastPredecessors;
+        private static int lastStart;
+        private static ProBuilderMesh lastMesh;
+
 
         public static List<int> GetPath(int start, int end, ProBuilderMesh mesh)
         {
-            var path = GetMinimalPath(Dijkstra(start, end, mesh), start, end);
-            return path;
+            if (start == lastStart && mesh == lastMesh)
+            {
+                return GetMinimalPath(lastPredecessors, start, end);
+            }
+            else
+            {
+                var predecessors = Dijkstra(start, end, mesh);
+                var path = GetMinimalPath(predecessors, start, end);
+                lastPredecessors = predecessors;
+                lastStart = start;
+                lastMesh = mesh;
+                return path;
+            }
         }
 
         private static int[] Dijkstra(int start, int end, ProBuilderMesh mesh)
@@ -29,7 +49,7 @@ namespace UnityEditor.ProBuilder.Actions
             }
             int wingCount = wings.Count;
             HashSet<int> visited = new HashSet<int>();
-            List<int> unvisited = new List<int>(wingCount);
+            HashSet<int> unvisited = new HashSet<int>();
 
             float[] weights = new float[wingCount];
             int[] predecessors = new int[wingCount];
@@ -37,13 +57,13 @@ namespace UnityEditor.ProBuilder.Actions
             for (int i = 0; i < wingCount; i++)
             {
                 weights[i] = float.MaxValue;
-                unvisited.Add(i);
+                //unvisited.Add(i);
             }
 
             int current = start;
             weights[current] = 0;
             visited.Add(current);
-            unvisited.Remove(current);
+            //unvisited.Remove(current);
 
             do
             {
@@ -65,6 +85,11 @@ namespace UnityEditor.ProBuilder.Actions
                             predecessors[idx] = current;
                         }
 
+                        if (!unvisited.Contains(idx) && !visited.Contains(idx))
+                        {
+                            unvisited.Add(idx);
+                        }
+
                         otherWing = otherWing.next;
                     } while (otherWing != currentWing);
                 }
@@ -74,6 +99,7 @@ namespace UnityEditor.ProBuilder.Actions
                 {
                     foreach (var i in unvisited)
                     {
+                        // Add unvisited for only neighbords
                         if (weights[i] < min)
                         {
                             min = weights[i];
@@ -85,7 +111,7 @@ namespace UnityEditor.ProBuilder.Actions
                 visited.Add(current);
                 unvisited.Remove(current);
 
-            } while (visited.Count < wingCount && !visited.Contains(end));
+            } while (visited.Count < wingCount/* && !visited.Contains(end)*/);
 
             return predecessors;
 
