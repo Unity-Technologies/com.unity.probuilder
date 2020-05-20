@@ -26,7 +26,7 @@ public class PathToolTests
         var mesh = go.GetComponent<ProBuilderMesh>();
         Assume.That(mesh != null);
 
-        Measure.Method(() => SelectPathFaces.GetPath(start, end, mesh)).Run();
+        Measure.Method(() => SelectPathFaces.GetPath(mesh, start, end)).Run();
     }
 
 }

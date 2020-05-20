@@ -7,11 +7,12 @@ namespace UnityEditor.ProBuilder.Actions
 {
     public static class SelectPathFaces
     {
-        private static int[] lastPredecessors;
-        private static int lastStart;
-        private static ProBuilderMesh lastMesh;
-        private static List<WingedEdge> lastWings;
-        private static Dictionary<Face, int> lastFacesIndex = new Dictionary<Face, int>();
+        static int[] s_cachedPredecessors;
+        static int s_cachedStart;
+        static ProBuilderMesh s_cachedMesh;
+        static int s_cachedFacesCount;
+        static List<WingedEdge> s_cachedWings;
+        static Dictionary<Face, int> s_cachedFacesIndex = new Dictionary<Face, int>();
 
         /// <summary>
         /// Calculates the indexes of all faces in the shortest path between start and end
@@ -20,39 +21,66 @@ namespace UnityEditor.ProBuilder.Actions
         /// <param name="end">The index of the ending face</param>
         /// <param name="mesh">The mesh of the object</param>
         /// <returns>The indexes of all faces </returns>
-        public static List<int> GetPath(int start, int end, ProBuilderMesh mesh)
+        public static List<int> GetPath(ProBuilderMesh mesh, int start, int end)
         {
-            if (start == lastStart && mesh == lastMesh)
+            if (mesh == null)
             {
-                return GetMinimalPath(lastPredecessors, start, end);
+                throw new System.ArgumentException("Parameter cannot be null", "mesh");
+            }
+            if (start < 0 || start > mesh.faceCount - 1)
+            {
+                throw new System.ArgumentException("Parameter is out of bounds", "start");
+            }
+            if (end < 0 || end > mesh.faceCount - 1)
+            {
+                throw new System.ArgumentException("Parameter is out of bounds", "end");
+            }
+
+            List<int> path;
+            if (start == s_cachedStart && mesh == s_cachedMesh &&  mesh.faceCount == s_cachedFacesCount)
+            {
+                path = GetMinimalPath(s_cachedPredecessors, start, end);
             }
             else
             {
-                var predecessors = Dijkstra(start, end, mesh);
-                var path = GetMinimalPath(predecessors, start, end);
-                lastPredecessors = predecessors;
-                lastStart = start;
-                lastMesh = mesh;
-                return path;
+                var predecessors = Dijkstra(mesh, start);
+                path = GetMinimalPath(predecessors, start, end);
+                s_cachedPredecessors = predecessors;
+                s_cachedStart = start;
+                s_cachedMesh = mesh;
             }
+
+            if (path == null)
+            {
+                throw new System.ArgumentException($"There is no path between the faces {start} and {end}", "start, end");
+            }
+
+            return path;
         }
 
-        private static int[] Dijkstra(int start, int end, ProBuilderMesh mesh)
+        /// <summary>
+        /// Builds a list of predecessors from a given face index to all other faces
+        /// Uses the Djikstra pathfinding algorithm
+        /// </summary>
+        /// <param name="mesh">The mesh of the object</param>
+        /// <param name="start">The index of the starting face</param>
+        /// <returns>A list of predecessors from a face index to all other faces</returns>
+        private static int[] Dijkstra(ProBuilderMesh mesh, int start)
         {
             HashSet<int> visited = new HashSet<int>();
             HashSet<int> toVisit = new HashSet<int>();
-            lastWings = lastMesh == mesh ? lastWings : WingedEdge.GetWingedEdges(mesh, true);
-            int wingCount = lastWings.Count;
-
-            if (mesh != lastMesh)
+            if (s_cachedMesh != mesh || s_cachedFacesCount != mesh.faceCount)
             {
-                lastFacesIndex.Clear();
+                s_cachedWings = WingedEdge.GetWingedEdges(mesh, true);
+                s_cachedFacesIndex.Clear();
+                s_cachedFacesCount = mesh.faceCount;
 
                 for (int i = 0; i < mesh.facesInternal.Length; i++)
                 {
-                    lastFacesIndex.Add(mesh.facesInternal[i], i);
+                    s_cachedFacesIndex.Add(mesh.facesInternal[i], i);
                 }
             }
+            int wingCount = s_cachedWings.Count;
 
             float[] weights = new float[wingCount];
             int[] predecessors = new int[wingCount];
@@ -60,6 +88,7 @@ namespace UnityEditor.ProBuilder.Actions
             for (int i = 0; i < wingCount; i++)
             {
                 weights[i] = float.MaxValue;
+                predecessors[i] = -1;
             }
 
             int current = start;
@@ -69,16 +98,19 @@ namespace UnityEditor.ProBuilder.Actions
             // Construct the paths between the start face and every other faces
             while (visited.Count < wingCount)
             {
-                var currentWing = lastWings[current];
+                var currentWing = s_cachedWings[current];
                 var otherWing = currentWing;
                 // Update the weight array for each face next to the current one
                 do
                 {
                     var opposite = otherWing.opposite;
                     if (opposite == null)
+                    {
+                        otherWing = otherWing.next;
                         continue;
+                    }
 
-                    var idx = lastFacesIndex[opposite.face];
+                    var idx = s_cachedFacesIndex[opposite.face];
                     var weight = GetWeight(current, idx, mesh);
                     // Change the predecessor and weight if the new path found if shorter
                     if (weights[current] + weight < weights[idx])
@@ -96,8 +128,13 @@ namespace UnityEditor.ProBuilder.Actions
 
                 } while (otherWing != currentWing);
 
+                // This means there is an isolated face
+                if (toVisit.Count == 0)
+                {
+                    return predecessors;
+                }
                 // Look for the next face to visit, choosing the one with less weight
-                double min = double.MaxValue;
+                float min = float.MaxValue;
                 foreach (var i in toVisit)
                 {
                     if (weights[i] < min)
@@ -115,9 +152,9 @@ namespace UnityEditor.ProBuilder.Actions
 
         private static float GetWeight(int face1, int face2, ProBuilderMesh mesh)
         {
-            float baseCost = 10f;
-            float normalMult = 2f;
-            float distMult = 1f;
+            const float baseCost = 10f;
+            const float normalMult = 2f;
+            const float distMult = 1f;
 
             // Calculates the difference between the normals of the faces
             var n1 = Math.Normal(mesh, mesh.facesInternal[face1]);
@@ -143,6 +180,10 @@ namespace UnityEditor.ProBuilder.Actions
 
         private static List<int> GetMinimalPath(int[] predecessors, int start, int end)
         {
+            if (predecessors[end] == -1)
+            {
+                return null;
+            }
             Stack<int> list = new Stack<int>();
             list.Push(end);
             int a = end;

@@ -126,8 +126,8 @@ namespace UnityEditor.ProBuilder
                     }
                     else if (pathSelectionModifier && mesh.GetActiveFace() != null)
                     {
-                        var pathFaces = SelectPathFaces.GetPath(Array.IndexOf<Face>(faces, mesh.GetActiveFace()),
-                            Array.IndexOf<Face>(faces, s_Selection.face), mesh);
+                        var pathFaces = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, mesh.GetActiveFace()),
+                            Array.IndexOf<Face>(faces, s_Selection.face));
                         foreach (var pathFace in pathFaces)
                         {
                             mesh.AddToFaceSelection(pathFace);

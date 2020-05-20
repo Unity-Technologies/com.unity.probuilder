@@ -38,7 +38,8 @@ namespace UnityEditor.ProBuilder
         public static bool IsSelectionPathModifier(EventModifiers em)
         {
             return (em & EventModifiers.Shift) == EventModifiers.Shift &&
-               (em & EventModifiers.Control) == EventModifiers.Control;
+               ((em & EventModifiers.Control) == EventModifiers.Control ||
+               (em & EventModifiers.Command) == EventModifiers.Command);
         }
 
         public static bool IsSelectionAppendOrRemoveIfPresentModifier(EventModifiers em)
