@@ -9,18 +9,13 @@ using System;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-    //public enum VisitedType
-    //{
-    //    Visited,
-    //    Univisted,
-    //    ToVisit
-    //}
-
     public static class SelectPathFaces
     {
         private static int[] lastPredecessors;
         private static int lastStart;
         private static ProBuilderMesh lastMesh;
+        private static List<WingedEdge> lastEdges;
+        private static Dictionary<Face, int> facesIndex;
 
 
         public static List<int> GetPath(int start, int end, ProBuilderMesh mesh)
@@ -45,11 +40,24 @@ namespace UnityEditor.ProBuilder.Actions
             List<WingedEdge> wings;
             using (new ProfilerMarker("Select path Dijkstra WingedEdge").Auto())
             {
-                wings = WingedEdge.GetWingedEdges(mesh, true);
+                wings = lastMesh == mesh ? lastEdges : WingedEdge.GetWingedEdges(mesh, true);
+                lastEdges = wings;
             }
+
+            if (mesh != lastMesh)
+            {
+                facesIndex = new Dictionary<Face, int>();
+
+                for (int i = 0; i < mesh.facesInternal.Length; i++)
+                {
+                    facesIndex.Add(mesh.facesInternal[i], i);
+                }
+            }
+          
+
             int wingCount = wings.Count;
             HashSet<int> visited = new HashSet<int>();
-            HashSet<int> unvisited = new HashSet<int>();
+            HashSet<int> toVisit = new HashSet<int>();
 
             float[] weights = new float[wingCount];
             int[] predecessors = new int[wingCount];
@@ -57,13 +65,11 @@ namespace UnityEditor.ProBuilder.Actions
             for (int i = 0; i < wingCount; i++)
             {
                 weights[i] = float.MaxValue;
-                //unvisited.Add(i);
             }
 
             int current = start;
             weights[current] = 0;
             visited.Add(current);
-            //unvisited.Remove(current);
 
             do
             {
@@ -77,17 +83,24 @@ namespace UnityEditor.ProBuilder.Actions
                         if (opposite == null)
                             continue;
 
-                        var idx = Array.IndexOf(mesh.facesInternal, opposite.face);
+                        var idx = 0;
+                        using (new ProfilerMarker("Select path Dijkstra index of").Auto())
+                        {
+                          //  idx = Array.IndexOf(mesh.facesInternal, opposite.face);
+                            idx = facesIndex[opposite.face];
+                        }
                         var weight = GetWeight(current, idx, mesh);
                         if (weights[current] + weight < weights[idx])
                         {
                             weights[idx] = weights[current] + weight;
                             predecessors[idx] = current;
                         }
-
-                        if (!unvisited.Contains(idx) && !visited.Contains(idx))
+                        using (new ProfilerMarker("Select path Dijkstra Cotains").Auto())
                         {
-                            unvisited.Add(idx);
+                            if (!toVisit.Contains(idx) && !visited.Contains(idx))
+                            {
+                                toVisit.Add(idx);
+                            }
                         }
 
                         otherWing = otherWing.next;
@@ -97,7 +110,7 @@ namespace UnityEditor.ProBuilder.Actions
                 double min = double.MaxValue;
                 using (new ProfilerMarker("Select path Dijkstra select next face").Auto())
                 {
-                    foreach (var i in unvisited)
+                    foreach (var i in toVisit)
                     {
                         // Add unvisited for only neighbords
                         if (weights[i] < min)
@@ -109,7 +122,7 @@ namespace UnityEditor.ProBuilder.Actions
                 }
 
                 visited.Add(current);
-                unvisited.Remove(current);
+                toVisit.Remove(current);
 
             } while (visited.Count < wingCount/* && !visited.Contains(end)*/);
 
