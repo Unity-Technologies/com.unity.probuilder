@@ -6,9 +6,7 @@
         "Unity.ProBuilder.Editor",
         "Unity.ProBuilder.Stl",
         "Unity.Settings.Editor",
-        "Unity.PerformanceTesting",
-        "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner"
+        "Unity.PerformanceTesting"
     ],
     "includePlatforms": [
         "Editor"
@@ -30,5 +28,6 @@
             "define": "PERFORMANCE_TESTS_ENABLED"
         }
     ],
-    "noEngineReferences": false
+    "noEngineReferences": false,
+    "optionalUnityReferences": [ "TestAssemblies" ]
 }
