@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using System.Linq;
 
-namespace UnityEditor.ProBuilder.Actions
+namespace UnityEngine.ProBuilder
 {
     public static class SelectPathFaces
     {

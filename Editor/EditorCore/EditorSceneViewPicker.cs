@@ -6,7 +6,6 @@ using UnityEngine.ProBuilder;
 using PHandleUtility = UnityEngine.ProBuilder.HandleUtility;
 using UHandleUtility = UnityEditor.HandleUtility;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
-using UnityEditor.ProBuilder.Actions;
 
 namespace UnityEditor.ProBuilder
 {

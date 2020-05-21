@@ -4,7 +4,6 @@ using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.PerformanceTesting;
-using UnityEditor.ProBuilder.Actions;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
