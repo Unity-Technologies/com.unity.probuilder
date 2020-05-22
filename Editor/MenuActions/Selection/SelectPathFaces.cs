@@ -185,12 +185,11 @@ namespace UnityEngine.ProBuilder
                 return null;
             }
             Stack<int> list = new Stack<int>();
-            list.Push(end);
             int a = end;
             while (a != start)
             {
-                a = predecessors[a];
                 list.Push(a);
+                a = predecessors[a];
             }
             return list.ToList();
         }

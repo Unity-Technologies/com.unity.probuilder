@@ -624,15 +624,23 @@ namespace UnityEditor.ProBuilder
                 && selectMode.IsMeshElementMode())
             {
                 m_Hovering.CopyTo(m_HoveringPrevious);
-
+                bool pathSelectionModifier = EditorHandleUtility.IsSelectionPathModifier(m_CurrentEvent.modifiers);
                 if (GUIUtility.hotControl != 0 ||
                     EditorSceneViewPicker.MouseRayHitTest(m_CurrentEvent.mousePosition, selectMode, m_ScenePickerPreferences, m_Hovering) > ScenePickerPreferences.maxPointerDistance)
                     m_Hovering.Clear();
 
                 if (!m_Hovering.Equals(m_HoveringPrevious))
+                {
+                    if (pathSelectionModifier)
+                    {
+                        EditorSceneViewPicker.DoMouseHover(m_Hovering);
+                    }
                     SceneView.RepaintAll();
+                }
+                 
             }
 
+           
             if (Tools.current == Tool.View)
                 return;
 

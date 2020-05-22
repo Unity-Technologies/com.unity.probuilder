@@ -28,9 +28,32 @@ namespace UnityEditor.ProBuilder
         static List<GameObject> s_OverlappingGameObjects = new List<GameObject>();
         static readonly List<int> s_IndexBuffer = new List<int>(16);
         static List<Edge> s_EdgeBuffer = new List<Edge>(32);
+        static Face s_lastHoveredFace;
 
         // When enabled, a mouse click on an unselected mesh will select both the GameObject and the mesh element picked.
         const bool k_AllowUnselected = true;
+
+        public static void DoMouseHover(SceneSelection selection)
+        {
+            if (selection.faces.Count == 0)
+                return;
+            var mesh = selection.mesh;
+            var face = selection.faces[0];
+            var activeFace = mesh.GetActiveFace();
+            if (activeFace == null || activeFace == face)
+                return;
+
+            var faces = mesh.facesInternal;
+
+            var pathFaces = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, mesh.GetActiveFace()),
+                                 Array.IndexOf<Face>(faces, face));
+            List<Face> list = new List<Face>();
+            foreach(var path in pathFaces)
+            {
+                list.Add(faces[path]);
+            }
+            selection.faces.AddRange(list);
+        }
 
         public static ProBuilderMesh DoMouseClick(Event evt, SelectMode selectionMode, ScenePickerPreferences pickerPreferences)
         {
@@ -74,21 +97,21 @@ namespace UnityEditor.ProBuilder
             {
                 var mesh = s_Selection.mesh;
 
-                if (s_Selection.face != null)
+                foreach (var face in s_Selection.faces)
                 {
                     // Check for other editor mouse shortcuts first (todo proper event handling for mouse shortcuts)
                     MaterialEditor matEditor = MaterialEditor.instance;
 
-                    if (matEditor != null && matEditor.ClickShortcutCheck(Event.current.modifiers, mesh, s_Selection.face))
+                    if (matEditor != null && matEditor.ClickShortcutCheck(Event.current.modifiers, mesh, s_Selection.faces))
                         return null;
 
                     UVEditor uvEditor = UVEditor.instance;
 
-                    if (uvEditor != null && uvEditor.ClickShortcutCheck(mesh, s_Selection.face))
+                    if (uvEditor != null && uvEditor.ClickShortcutCheck(mesh, face))
                         return null;
 
                     var faces = mesh.faces as Face[] ?? mesh.faces.ToArray();
-                    var ind = Array.IndexOf<Face>(faces, s_Selection.face);
+                    var ind = Array.IndexOf<Face>(faces, face);
                     var sel = mesh.selectedFaceIndexes.IndexOf(ind);
 
                     UndoUtility.RecordSelection(mesh, "Select Face");
@@ -96,7 +119,7 @@ namespace UnityEditor.ProBuilder
                     if (sel > -1)
                     {
                         if (!appendModifier || addOrRemoveIfPresentFromSelectionModifier ||
-                            (addToSelectionModifier && s_Selection.face == mesh.GetActiveFace() && !activeObjectSelectionChanged))
+                            (addToSelectionModifier && face == mesh.GetActiveFace() && !activeObjectSelectionChanged))
                         {
                             mesh.RemoveFromFaceSelectionAtIndex(sel);
 
@@ -126,7 +149,7 @@ namespace UnityEditor.ProBuilder
                     else if (pathSelectionModifier && mesh.GetActiveFace() != null)
                     {
                         var pathFaces = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, mesh.GetActiveFace()),
-                            Array.IndexOf<Face>(faces, s_Selection.face));
+                            Array.IndexOf<Face>(faces, face));
                         foreach (var pathFace in pathFaces)
                         {
                             mesh.AddToFaceSelection(pathFace);
@@ -135,16 +158,17 @@ namespace UnityEditor.ProBuilder
                     else
                         mesh.AddToFaceSelection(ind);
                 }
-                else if (s_Selection.edge != Edge.Empty)
+
+                foreach(var edge in s_Selection.edges)
                 {
-                    int ind = mesh.IndexOf(mesh.selectedEdges, s_Selection.edge);
+                    int ind = mesh.IndexOf(mesh.selectedEdges, edge);
 
                     UndoUtility.RecordSelection(mesh, "Select Edge");
 
                     if (ind > -1)
                     {
                         if (!appendModifier || addOrRemoveIfPresentFromSelectionModifier ||
-                            (addToSelectionModifier && s_Selection.edge == mesh.GetActiveEdge() && !activeObjectSelectionChanged))
+                            (addToSelectionModifier && edge == mesh.GetActiveEdge() && !activeObjectSelectionChanged))
                         {
                             mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().RemoveAt(ind));
 
@@ -167,27 +191,27 @@ namespace UnityEditor.ProBuilder
                         }
                         else
                         {
-                            mesh.selectedEdgesInternal = mesh.selectedEdgesInternal.Remove(s_Selection.edge);
-                            mesh.SetSelectedEdges(mesh.selectedEdgesInternal.Add(s_Selection.edge));
+                            mesh.selectedEdgesInternal = mesh.selectedEdgesInternal.Remove(s_Selection.edges);
+                            mesh.SetSelectedEdges(mesh.selectedEdgesInternal.Add(edge));
                         }
                     }
                     else
-                        mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().Add(s_Selection.edge));
+                        mesh.SetSelectedEdges(mesh.selectedEdges.ToArray().Add(edge));
                 }
-                else if (s_Selection.vertex > -1)
+                foreach(var vertex in s_Selection.vertexes)
                 {
-                    int ind = Array.IndexOf(mesh.selectedIndexesInternal, s_Selection.vertex);
+                    int ind = Array.IndexOf(mesh.selectedIndexesInternal, s_Selection.vertexes);
 
                     UndoUtility.RecordSelection(mesh, "Select Vertex");
 
                     if (ind > -1)
                     {
-                        var sharedIndex = mesh.sharedVertexLookup[s_Selection.vertex];
+                        var sharedIndex = mesh.sharedVertexLookup[vertex];
                         var sharedVertex = mesh.sharedVerticesInternal[sharedIndex];
                         s_IndexBuffer.Clear();
-                        foreach (var vertex in sharedVertex)
+                        foreach (var sVertex in sharedVertex)
                         {
-                            var index = Array.IndexOf(mesh.selectedIndexesInternal, vertex);
+                            var index = Array.IndexOf(mesh.selectedIndexesInternal, sVertex);
                             if (index < 0)
                                 continue;
 
@@ -196,7 +220,7 @@ namespace UnityEditor.ProBuilder
                         s_IndexBuffer.Sort();
 
                         if (!appendModifier || addOrRemoveIfPresentFromSelectionModifier ||
-                           (addToSelectionModifier && s_Selection.vertex == mesh.GetActiveVertex() && !activeObjectSelectionChanged))
+                           (addToSelectionModifier && vertex == mesh.GetActiveVertex() && !activeObjectSelectionChanged))
                         {
                             mesh.selectedIndexesInternal = mesh.selectedIndexesInternal.SortedRemoveAt(s_IndexBuffer);
                             mesh.SetSelectedVertices(mesh.selectedIndexesInternal);
@@ -221,12 +245,12 @@ namespace UnityEditor.ProBuilder
                         else
                         {
                             mesh.selectedIndexesInternal = mesh.selectedIndexesInternal.SortedRemoveAt(s_IndexBuffer);
-                            mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(s_Selection.vertex));
+                            mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(vertex));
                         }
 
                     }
                     else
-                        mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(s_Selection.vertex));
+                        mesh.SetSelectedVertices(mesh.selectedIndexesInternal.Add(vertex));
                 }
 
                 if(activeObjectSelectionChanged)
@@ -492,7 +516,7 @@ namespace UnityEditor.ProBuilder
                     {
                         selection.gameObject = pickedGo;
                         selection.mesh = pickedPb;
-                        selection.face = pickedFace;
+                        selection.faces = new List<Face> { pickedFace };
 
                         return Mathf.Sqrt(distance);
                     }
@@ -543,7 +567,7 @@ namespace UnityEditor.ProBuilder
                 {
                     selection.gameObject = s_NearestVertices[i].mesh.gameObject;
                     selection.mesh = s_NearestVertices[i].mesh;
-                    selection.vertex = s_NearestVertices[i].vertex;
+                    selection.vertexes = new List<int> { s_NearestVertices[i].vertex }; 
 
                     return Mathf.Sqrt(s_NearestVertices[i].screenDistance);
                 }
@@ -606,7 +630,7 @@ namespace UnityEditor.ProBuilder
                 {
                     selection.gameObject = hoveredMesh.gameObject;
                     selection.mesh = hoveredMesh;
-                    selection.edge = tup.edge;
+                    selection.edges = new List<Edge> { tup.edge };
                     bestDistance = tup.distance;
 
                     // If the nearest edge was acquired by a raycast, then the distance to mesh is 0f.
@@ -657,7 +681,7 @@ namespace UnityEditor.ProBuilder
 
                             selection.gameObject = mesh.gameObject;
                             selection.mesh = mesh;
-                            selection.edge = new Edge(x, y);
+                            selection.edges = new List<Edge> { new Edge(x, y) };
                             bestDistance = d;
                         }
                     }
@@ -666,7 +690,7 @@ namespace UnityEditor.ProBuilder
                 // If more than 1 edge is closest, the closest is one of the vertex.
                 // Get closest edge to the camera.
                 if (s_EdgeBuffer.Count > 1)
-                    selection.edge = GetClosestEdgeToCamera(positions, s_EdgeBuffer);
+                    selection.edges = new List<Edge> { GetClosestEdgeToCamera(positions, s_EdgeBuffer) };
             }
 
             return selection.gameObject != null ? bestDistance : Mathf.Infinity;
