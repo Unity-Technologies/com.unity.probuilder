@@ -102,7 +102,7 @@ namespace UnityEditor.ProBuilder
                     // Check for other editor mouse shortcuts first (todo proper event handling for mouse shortcuts)
                     MaterialEditor matEditor = MaterialEditor.instance;
 
-                    if (matEditor != null && matEditor.ClickShortcutCheck(Event.current.modifiers, mesh, s_Selection.faces))
+                    if (matEditor != null && matEditor.ClickShortcutCheck(Event.current.modifiers, mesh, face))
                         return null;
 
                     UVEditor uvEditor = UVEditor.instance;
