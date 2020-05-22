@@ -637,7 +637,6 @@ namespace UnityEditor.ProBuilder
                     }
                     SceneView.RepaintAll();
                 }
-                 
             }
 
            

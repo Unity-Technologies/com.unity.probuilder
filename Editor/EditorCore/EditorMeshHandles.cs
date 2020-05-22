@@ -238,14 +238,11 @@ namespace UnityEditor.ProBuilder
             var positions = mesh.positionsInternal;
 
             // Draw nearest edge
-            var faces = selection.faces;
-            foreach (var face in faces)
+            foreach (var face in selection.faces)
             {
                 using (new TriangleDrawingScope(s_PreselectionColor))
                 {
                     GL.MultMatrix(mesh.transform.localToWorldMatrix);
-
-
                     var ind = face.indexes;
 
                     for (int i = 0, c = ind.Count; i < c; i += 3)

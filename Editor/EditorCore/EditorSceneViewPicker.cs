@@ -44,7 +44,6 @@ namespace UnityEditor.ProBuilder
                 return;
 
             var faces = mesh.facesInternal;
-
             var pathFaces = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, mesh.GetActiveFace()),
                                  Array.IndexOf<Face>(faces, face));
             List<Face> list = new List<Face>();
@@ -191,7 +190,7 @@ namespace UnityEditor.ProBuilder
                         }
                         else
                         {
-                            mesh.selectedEdgesInternal = mesh.selectedEdgesInternal.Remove(s_Selection.edges);
+                            mesh.selectedEdgesInternal = mesh.selectedEdgesInternal.Remove(edge);
                             mesh.SetSelectedEdges(mesh.selectedEdgesInternal.Add(edge));
                         }
                     }
@@ -200,7 +199,7 @@ namespace UnityEditor.ProBuilder
                 }
                 foreach(var vertex in s_Selection.vertexes)
                 {
-                    int ind = Array.IndexOf(mesh.selectedIndexesInternal, s_Selection.vertexes);
+                    int ind = Array.IndexOf(mesh.selectedIndexesInternal, vertex);
 
                     UndoUtility.RecordSelection(mesh, "Select Vertex");
 
