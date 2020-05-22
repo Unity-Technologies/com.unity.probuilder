@@ -28,7 +28,6 @@ namespace UnityEditor.ProBuilder
         static List<GameObject> s_OverlappingGameObjects = new List<GameObject>();
         static readonly List<int> s_IndexBuffer = new List<int>(16);
         static List<Edge> s_EdgeBuffer = new List<Edge>(32);
-        static Face s_lastHoveredFace;
 
         // When enabled, a mouse click on an unselected mesh will select both the GameObject and the mesh element picked.
         const bool k_AllowUnselected = true;
@@ -46,12 +45,10 @@ namespace UnityEditor.ProBuilder
             var faces = mesh.facesInternal;
             var pathFaces = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, mesh.GetActiveFace()),
                                  Array.IndexOf<Face>(faces, face));
-            List<Face> list = new List<Face>();
             foreach(var path in pathFaces)
             {
-                list.Add(faces[path]);
+                selection.faces.Add(faces[path]);
             }
-            selection.faces.AddRange(list);
         }
 
         public static ProBuilderMesh DoMouseClick(Event evt, SelectMode selectionMode, ScenePickerPreferences pickerPreferences)
