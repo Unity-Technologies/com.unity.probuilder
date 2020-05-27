@@ -389,7 +389,7 @@ namespace UnityEditor.ProBuilder
 
         void LoadSettings()
         {
-            EditorMeshHandles.ResetPreferences();
+            EditorApplication.delayCall += EditorMeshHandles.ResetPreferences;
 
             m_ScenePickerPreferences = new ScenePickerPreferences()
             {

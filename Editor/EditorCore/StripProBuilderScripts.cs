@@ -42,6 +42,7 @@ namespace UnityEditor.ProBuilder.Actions
                 foreach (ProBuilderMesh pb in t.GetComponentsInChildren<ProBuilderMesh>(true))
                     DoStrip(pb);
             }
+            MeshSelection.OnObjectSelectionChanged();
         }
 
         public static void Strip(ProBuilderMesh[] all)

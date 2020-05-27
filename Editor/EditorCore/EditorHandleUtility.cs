@@ -92,25 +92,30 @@ namespace UnityEditor.ProBuilder
             Rect handleRectUp = new Rect(position.x - width / 2, position.y - size - HANDLE_PADDING, width, size + HANDLE_PADDING);
             Rect handleRectRight = new Rect(position.x, position.y - width / 2, size, width + HANDLE_PADDING);
 
-            Handles.color = Color.yellow;
-            Handles.CircleHandleCap(-1, position, Quaternion.identity, width / 2f, Event.current.type);
-            Handles.color = k_HandleColorUp;
+            if (evt.type == EventType.Repaint)
+            {
+                Handles.color = Color.yellow;
+                Handles.CircleHandleCap(id, position, Quaternion.identity, width / 2f, evt.type);
+                Handles.color = k_HandleColorUp;
 
-            // Y Line
-            Handles.DrawLine(position, position - Vector2.up * size);
+                // Y Line
+                Handles.DrawLine(position, position - Vector2.up * size);
 
-            // Y Cone
-            if (position.y - size > 0f)
-                Handles.ConeHandleCap(0, ((Vector3)((position - Vector2.up * size))) - ConeDepth, QuaternionUp, width / 2, evt.type);
+                // Y Cone
+                if (position.y - size > 0f)
+                    Handles.ConeHandleCap(id, ((Vector3) ((position - Vector2.up * size))) - ConeDepth, QuaternionUp,
+                        width / 2, evt.type);
 
-            Handles.color = k_HandleColorRight;
+                Handles.color = k_HandleColorRight;
 
-            // X Line
-            Handles.DrawLine(position, position + Vector2.right * size);
+                // X Line
+                Handles.DrawLine(position, position + Vector2.right * size);
 
-            // X Cap
-            if (position.y > 0f)
-                Handles.ConeHandleCap(0, ((Vector3)((position + Vector2.right * size))) - ConeDepth, QuaternionRight, width / 2, evt.type);
+                // X Cap
+                if (position.y > 0f)
+                    Handles.ConeHandleCap(id, ((Vector3) ((position + Vector2.right * size))) - ConeDepth,
+                        QuaternionRight, width / 2, evt.type);
+            }
 
             // If a Tool already is engaged and it's not this one, bail.
             if (currentId >= 0 && currentId != id)
@@ -243,29 +248,34 @@ namespace UnityEditor.ProBuilder
             Vector2 mousePosition = evt.mousePosition;
             int width = size / 4;
 
-            Handles.color = k_HandleColorUp;
-            Handles.DrawLine(position, position - Vector2.up * size * scale.y);
+            if (evt.type == EventType.Repaint)
+            {
+                Handles.color = k_HandleColorUp;
+                Handles.DrawLine(position, position - Vector2.up * size * scale.y);
 
-            if (position.y - size > 0f)
-                Handles.CubeHandleCap(0, ((Vector3)((position - Vector2.up * scale.y * size))) - Vector3.forward * 16, QuaternionUp, width / 3, evt.type);
+                if (position.y - size > 0f)
+                    Handles.CubeHandleCap(0,
+                        ((Vector3) ((position - Vector2.up * scale.y * size))) - Vector3.forward * 16, QuaternionUp,
+                        width / 3, evt.type);
 
-            Handles.color = k_HandleColorRight;
-            Handles.DrawLine(position, position + Vector2.right * size * scale.x);
+                Handles.color = k_HandleColorRight;
+                Handles.DrawLine(position, position + Vector2.right * size * scale.x);
 
-            if (position.y > 0f)
+                if (position.y > 0f)
+                    Handles.CubeHandleCap(0,
+                        ((Vector3) ((position + Vector2.right * scale.x * size))) - Vector3.forward * 16,
+                        Quaternion.Euler(Vector3.up * 90f),
+                        width / 3f,
+                        evt.type);
+
+                Handles.color = k_HandleColorScale;
+
                 Handles.CubeHandleCap(0,
-                    ((Vector3)((position + Vector2.right * scale.x * size))) - Vector3.forward * 16,
-                    Quaternion.Euler(Vector3.up * 90f),
-                    width / 3f,
+                    ((Vector3) position) - Vector3.forward * 16,
+                    QuaternionUp,
+                    width / 2f,
                     evt.type);
-
-            Handles.color = k_HandleColorScale;
-
-            Handles.CubeHandleCap(0,
-                ((Vector3)position) - Vector3.forward * 16,
-                QuaternionUp,
-                width / 2f,
-                evt.type);
+            }
 
             // If a Tool already is engaged and it's not this one, bail.
             if (currentId >= 0 && currentId != id)
