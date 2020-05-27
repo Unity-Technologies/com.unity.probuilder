@@ -132,13 +132,34 @@ namespace UnityEditor.ProBuilder
             var wings = WingedEdge.GetWingedEdges(mesh, mesh.selectedFacesInternal, true);
             var filter = new HashSet<Face>();
             var groups = new List<List<Face>>();
+            var groupIdx = -1;
+            var i = -1;
 
             foreach (var wing in wings)
             {
                 var group = new List<Face>() {};
                 CollectAdjacentFaces(wing, filter, group);
                 if (group.Count > 0)
+                {
+                    // Make sure the last selected face is the last in the group
+                    var idx = group.IndexOf(mesh.selectedFacesInternal[mesh.selectedFacesInternal.Length - 1]);
+                    if (idx != -1 && idx <= group.Count - 1)
+                    {
+                        var item = group[idx];
+                        groupIdx = i;
+                        group.RemoveAt(idx);
+                        group.Add(item);
+                    }
                     groups.Add(group);
+                    i++;
+                }
+            }
+            // Make sure the last selected face's group is the last in the groups
+            if (groupIdx != -1 && groupIdx <= groups.Count - 1)
+            {
+                var item = groups[groupIdx];
+                groups.RemoveAt(groupIdx);
+                groups.Add(item);
             }
 
             return groups;
