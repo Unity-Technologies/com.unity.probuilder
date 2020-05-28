@@ -141,25 +141,25 @@ namespace UnityEditor.ProBuilder
                 CollectAdjacentFaces(wing, filter, group);
                 if (group.Count > 0)
                 {
+                    i++;
                     // Make sure the last selected face is the last in the group
                     var idx = group.IndexOf(mesh.selectedFacesInternal[mesh.selectedFacesInternal.Length - 1]);
-                    if (idx != -1 && idx <= group.Count - 1)
+                    if (idx != -1 && idx < group.Count)
                     {
                         var item = group[idx];
                         groupIdx = i;
-                        group.RemoveAt(idx);
-                        group.Add(item);
+                        group[idx] = group[group.Count - 1];
+                        group[group.Count - 1] = item;
                     }
                     groups.Add(group);
-                    i++;
                 }
             }
             // Make sure the last selected face's group is the last in the groups
-            if (groupIdx != -1 && groupIdx <= groups.Count - 1)
+            if (groupIdx != -1 && groupIdx < groups.Count)
             {
                 var item = groups[groupIdx];
-                groups.RemoveAt(groupIdx);
-                groups.Add(item);
+                groups[groupIdx] = groups[groups.Count - 1];
+                groups[groups.Count - 1] = item;
             }
 
             return groups;
