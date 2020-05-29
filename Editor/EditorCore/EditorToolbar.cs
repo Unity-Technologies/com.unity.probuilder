@@ -131,7 +131,7 @@ namespace UnityEditor.ProBuilder
                         if (!showTooltipTimer)
                         {
                             showTooltipTimer = true;
-                            ImmediateRepaint();
+                            RepaintIfFocused();
                         }
                     }
                     else
@@ -150,7 +150,7 @@ namespace UnityEditor.ProBuilder
                 if (scrollTimer >= scrollTotalTime)
                     doAnimateScroll = false;
 
-                ImmediateRepaint();
+                RepaintIfFocused();
             }
         }
 
@@ -443,7 +443,7 @@ namespace UnityEditor.ProBuilder
             m_WantsRepaint = true;
         }
 
-        void ImmediateRepaint()
+        void RepaintIfFocused()
         {
             if(Application.isFocused)
                 window.Repaint();
