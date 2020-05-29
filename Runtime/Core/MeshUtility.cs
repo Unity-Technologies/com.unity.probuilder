@@ -12,7 +12,6 @@ namespace UnityEngine.ProBuilder
     /// </summary>
     public static class MeshUtility
     {
-
         /// <summary>
         /// Create an array of @"UnityEngine.ProBuilder.Vertex" values that are ordered as individual triangles. This modifies the source mesh to match the new individual triangles format.
         /// </summary>
@@ -277,6 +276,8 @@ namespace UnityEngine.ProBuilder
 
             if (positions != null && positions.Count() != mesh.vertexCount)
                 positions = null;
+            if (normals != null && normals.Count() != mesh.vertexCount)
+                normals = null;
             if (colors != null && colors.Count() != mesh.vertexCount)
                 colors = null;
             if (tangents != null && tangents.Count() != mesh.vertexCount)
@@ -290,9 +291,11 @@ namespace UnityEngine.ProBuilder
             if (uv4.Count() != mesh.vertexCount)
                 uv4 = null;
 
+            sb.AppendLine("# Attributes");
+
             for (int i = 0, c = mesh.vertexCount; i < c; i++)
             {
-                sb.AppendLine(string.Format("{8,-5}{0,-28}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}{7,-28}",
+                sb.AppendLine(string.Format("\t{8,-5}{0,-28}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}{7,-28}",
                         positions == null   ? "null" : string.Format("{0:F3}, {1:F3}, {2:F3}", positions[i].x, positions[i].y, positions[i].z),
                         normals == null     ? "null" : string.Format("{0:F3}, {1:F3}, {2:F3}", normals[i].x, normals[i].y, normals[i].z),
                         colors == null      ? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", colors[i].r, colors[i].g, colors[i].b, colors[i].a),
@@ -304,8 +307,34 @@ namespace UnityEngine.ProBuilder
                         i));
             }
 
-            for (int i = 0; i < mesh.triangles.Length; i += 3)
-                sb.AppendLine(string.Format("{0}, {1}, {2}", mesh.triangles[i], mesh.triangles[i + 1], mesh.triangles[i + 2]));
+            sb.AppendLine("# Topology");
+
+            for (int i = 0; i < mesh.subMeshCount; i++)
+            {
+                var topo = mesh.GetTopology(i);
+                var submesh = mesh.GetIndices(i);
+                sb.AppendLine($"  Submesh[{i}] ({topo})");
+
+                switch (topo)
+                {
+                    case MeshTopology.Points:
+                        for (int n = 0; n < submesh.Length; n += 1)
+                            sb.AppendLine(string.Format("\t{0}", submesh[n]));
+                        break;
+                    case MeshTopology.Lines:
+                        for (int n = 0; n < submesh.Length; n += 2)
+                            sb.AppendLine(string.Format("\t{0}, {1}", submesh[n], submesh[n + 1]));
+                        break;
+                    case MeshTopology.Triangles:
+                        for (int n = 0; n < submesh.Length; n += 3)
+                            sb.AppendLine(string.Format("\t{0}, {1}, {2}", submesh[n], submesh[n + 1], submesh[n + 2]));
+                        break;
+                    case MeshTopology.Quads:
+                        for (int n = 0; n < submesh.Length; n += 4)
+                            sb.AppendLine(string.Format("\t{0}, {1}, {2}, {3}", submesh[n], submesh[n + 1], submesh[n + 2], submesh[n + 3]));
+                        break;
+                }
+            }
 
             return sb.ToString();
         }

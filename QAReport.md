@@ -2,20 +2,25 @@
 
 Test strategy & current info for ProBuilder.
 
-- QA Owner: [gabrielw](gabrielw@unity3d.com)
-- UX Owner: [gabrielw](gabrielw@unity3d.com), [karlh](karlh@unity3d.com)
+- QA Owner: [joelf](joelf@unity3d.com)
 
-## Package Status
-
-| | |
-|--|--|
-|Test Rail | [ProBuilder Test Rail - Master](https://qatestrail.hq.unity3d.com/index.php?/projects/overview/32) |
-|Latest Test Rail Result - Unity 2018.3 | [PB 4.0.4p11, Unity 2018.3.9f1](https://qatestrail.hq.unity3d.com/index.php?/runs/view/12271) |
-|Latest Test Rail Result - Unity 2019.1 | [PB 4.0.4p11, Unity 2019.1.0b7](https://qatestrail.hq.unity3d.com/index.php?/runs/view/12090) |
-|Latest Test Rail Result - Unity 2019.2 | [PB 4.0.4p11, Unity 2019.2.0a8](https://qatestrail.hq.unity3d.com/index.php?/runs/view/12266) |
-|Latest Test Rail Result - Unity 2019.3 | [PB 4.1.0p6, Unity 2019.3.0a8](https://qatestrail.hq.unity3d.com/index.php?/runs/view/13888) |
-| Known Bugs | [JIRA - World Building](https://unity3d.atlassian.net/secure/RapidBoard.jspa?rapidView=73&projectKey=WB&view=planning&selectedIssue=WB-1106&epics=visible) |
-| Planning | [JIRA - World Building Epics](https://unity3d.atlassian.net/secure/RapidBoard.jspa?rapidView=73&projectKey=WB&view=planning&selectedIssue=WB-1106&epics=visible) |
+## ProBuilder v4.2.0 QA Pass
+​
+- New added functionalities tested (from changelog list)
+  - Offset Elements action
+  - Subdivide Edges custom range
+  - Metal shader for macOS
+- Bug fixes and improvements validated (from changelog list)
+  - Boolean Editor fixes and improvements
+  - PolyShape Inspector glitch and ProGrids interaction
+  - Various UI layout adjustments accros the tool dialogs
+- Samples packages validated
+  - Rename of everything mentioning LWRP for Universal RP
+  - Example scene using materials problems were fixed on the spot and should be now in the final version.
+​
+NOTE
+​
+Multiple levels of subdivision that was causing lost of geometry was also fixed and should be included in this version. To be added in the changelog.
 
 ## Test Strategy
 

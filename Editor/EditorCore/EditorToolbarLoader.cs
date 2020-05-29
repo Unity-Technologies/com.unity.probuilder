@@ -55,7 +55,6 @@ namespace UnityEditor.ProBuilder
                 // selection
                 new Actions.GrowSelection(),
                 new Actions.ShrinkSelection(),
-                new Actions.InvertSelection(),
                 new Actions.SelectEdgeLoop(),
                 new Actions.SelectEdgeRing(),
                 new Actions.SelectFaceLoop(),
@@ -86,6 +85,7 @@ namespace UnityEditor.ProBuilder
 
                 // All
                 new Actions.SetPivotToSelection(),
+                new Actions.OffsetElements(),
 
                 // Faces (All)
                 new Actions.DeleteFaces(),

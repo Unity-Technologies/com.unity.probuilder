@@ -10,10 +10,6 @@ using UnityEditor.SceneManagement;
 
 namespace UnityEngine.ProBuilder
 {
-    /// <summary>
-    /// A series of handy extensions.
-    /// todo Clean up and move to appropriate classes.
-    /// </summary>
     static class InternalUtility
     {
         [Obsolete]
@@ -46,11 +42,11 @@ namespace UnityEngine.ProBuilder
             go.transform.position           = t.position;
             go.transform.localRotation      = t.localRotation;
             go.transform.localScale         = t.localScale;
-            
+
             #if UNITY_EDITOR
             StageUtility.PlaceGameObjectInCurrentStage(go);
             #endif
-            
+
             return go;
         }
 
@@ -153,6 +149,34 @@ namespace UnityEngine.ProBuilder
                 v.Add(new Vector3(v0, v1, v2));
             }
             return v.ToArray();
+        }
+
+#if !UNITY_2019_2_OR_NEWER
+        public static bool TryGetComponent<T>(this Component source, out T component) where T : Component
+        {
+            return (component = source.GetComponent<T>()) != null;
+        }
+
+        public static bool TryGetComponent<T>(this GameObject source, out T component) where T : Component
+        {
+            return (component = source.GetComponent<T>()) != null;
+        }
+#endif
+
+        /// <summary>
+        /// Get a reference to an existing component, or add a new component if one does not already exist.
+        /// </summary>
+        public static T DemandComponent<T>(this Component component) where T : Component
+        {
+            return component.gameObject.DemandComponent<T>();
+        }
+
+        public static T DemandComponent<T>(this GameObject gameObject) where T : Component
+        {
+            T component;
+            if (!gameObject.TryGetComponent<T>(out component))
+                component = gameObject.AddComponent<T>();
+            return component;
         }
     }
 }

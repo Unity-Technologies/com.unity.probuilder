@@ -167,6 +167,11 @@ namespace UnityEngine.ProBuilder
             return tp;
         }
 
+        internal static Vector2 Perpendicular(Vector2 value)
+        {
+            return new Vector2(-value.y, value.x);
+        }
+
         /// <summary>
         /// Reflects a point across a line segment.
         /// </summary>
@@ -1305,7 +1310,16 @@ namespace UnityEngine.ProBuilder
         /// <returns>A value clamped with the range of lowerBound and upperBound.</returns>
         public static int Clamp(int value, int lowerBound, int upperBound)
         {
-            return value<lowerBound? lowerBound : value> upperBound ? upperBound : value;
+            return value < lowerBound
+                ? lowerBound
+                : value > upperBound
+                    ? upperBound
+                    : value;
+        }
+
+        internal static Vector3 Clamp(Vector3 value, Vector3 lowerBound, Vector3 upperBound)
+        {
+            return Vector3.Max(Vector3.Min(value, upperBound), lowerBound);
         }
 
         internal static Vector3 ToSignedMask(this Vector3 vec, float delta = k_FltEpsilon)
@@ -1325,6 +1339,11 @@ namespace UnityEngine.ProBuilder
         internal static int IntSum(this Vector3 mask)
         {
             return (int)Mathf.Abs(mask.x) + (int)Mathf.Abs(mask.y) + (int)Mathf.Abs(mask.z);
+        }
+
+        internal static float Sum(this Vector3 v)
+        {
+            return Mathf.Abs(v.x) + Mathf.Abs(v.y) + Mathf.Abs(v.z);
         }
 
         /// <summary>

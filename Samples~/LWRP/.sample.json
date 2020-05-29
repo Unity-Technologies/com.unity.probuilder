@@ -1,5 +1,0 @@
-{
-	"displayName":"LWRP Support",
-	"description": "Shaders and materials for the Light Weight Render Pipeline.",
-	"createSeparatePackage": false
-}

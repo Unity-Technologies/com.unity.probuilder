@@ -162,6 +162,11 @@ namespace UnityEngine.ProBuilder
             return new Vector3(mask.x * value, mask.y * value, mask.z * value);
         }
 
+        public static Vector3 operator*(Vector3Mask mask, Vector3 value)
+        {
+            return new Vector3(mask.x * value.x, mask.y * value.y, mask.z * value.z);
+        }
+
         public static Vector3 operator*(Quaternion rotation, Vector3Mask mask)
         {
             var active = mask.active;

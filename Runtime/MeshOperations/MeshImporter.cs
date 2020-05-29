@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace UnityEngine.ProBuilder.MeshOperations
@@ -71,45 +72,56 @@ namespace UnityEngine.ProBuilder.MeshOperations
             smoothingAngle = 1f
         };
 
-        ProBuilderMesh m_Mesh;
+        Mesh m_SourceMesh;
+        Material[] m_SourceMaterials;
+        ProBuilderMesh m_Destination;
         Vertex[] m_Vertices;
 
-        /// <summary>
-        /// Create a new MeshImporter instance.
-        /// </summary>
-        /// <param name="target">The ProBuilderMesh component that will be initialized with the imported mesh attributes.</param>
-        public MeshImporter(ProBuilderMesh target)
+        public MeshImporter(GameObject gameObject)
         {
-            m_Mesh = target;
+            MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
+            m_SourceMesh = meshFilter.sharedMesh;
+            if(m_SourceMesh == null)
+                throw new ArgumentNullException("gameObject", "GameObject does not contain a valid MeshFilter.sharedMesh.");
+            m_Destination = gameObject.DemandComponent<ProBuilderMesh>();
+            m_SourceMaterials = gameObject.GetComponent<MeshRenderer>()?.sharedMaterials;
         }
 
         /// <summary>
-        /// Import mesh data from a GameObject's MeshFilter.sharedMesh and MeshRenderer.sharedMaterials.
+        /// Create a new ProBuilderMesh importer instance.
         /// </summary>
-        /// <param name="gameObject">The GameObject to search for MeshFilter and MeshRenderer data.</param>
-        /// <param name="importSettings">Optional settings parameter defines import customization properties.</param>
-        /// <returns>True if the mesh data was successfully translated to the ProBuilderMesh target, false if something went wrong.</returns>
-        internal bool Import(GameObject gameObject, MeshImportSettings importSettings = null)
+        /// <param name="sourceMesh">The Mesh asset to import vertex data from.</param>
+        /// <param name="sourceMaterials">The materials to assign to the ProBuilderMesh renderer.</param>
+        /// <param name="destination">The ProBuilderMesh asset to write vertex data to.</param>
+        public MeshImporter(Mesh sourceMesh, Material[] sourceMaterials, ProBuilderMesh destination)
         {
-            if (gameObject == null)
-                throw new ArgumentNullException("gameObject");
+            if(sourceMesh == null)
+                throw new ArgumentNullException("sourceMesh");
+            if(destination == null)
+                throw new ArgumentNullException("destination");
+            m_SourceMesh = sourceMesh;
+            m_SourceMaterials = sourceMaterials;
+            m_Destination = destination;
+        }
 
-            MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
-            MeshRenderer mr = gameObject.GetComponent<MeshRenderer>();
+        [Obsolete, EditorBrowsable(EditorBrowsableState.Never)]
+        public MeshImporter(ProBuilderMesh destination)
+        {
+            m_Destination = destination;
+        }
 
-            if (meshFilter == null || meshFilter.sharedMesh == null)
-            {
-                Log.Error("GameObject does not contain a valid MeshFilter or sharedMesh.");
-                return false;
-            }
-
+        [Obsolete, EditorBrowsable(EditorBrowsableState.Never)]
+        public bool Import(GameObject go, MeshImportSettings importSettings = null)
+        {
             try
             {
-                Import(meshFilter.sharedMesh, mr ? mr.sharedMaterials : null, importSettings);
+                m_SourceMesh = go.GetComponent<MeshFilter>().sharedMesh;
+                m_SourceMaterials = go.GetComponent<MeshRenderer>()?.sharedMaterials;
+                Import(importSettings);
             }
             catch (Exception e)
             {
-                Log.Warning(e.ToString());
+                Log.Error(e.ToString());
                 return false;
             }
 
@@ -123,33 +135,30 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="materials">The materials array corresponding to the originalMesh submeshes.</param>
         /// <param name="importSettings">Optional settings parameter defines import customization properties.</param>
         /// <exception cref="NotSupportedException">Import only supports triangle and quad mesh topologies.</exception>
-        public void Import(Mesh originalMesh, Material[] materials = null, MeshImportSettings importSettings = null)
+        public void Import(MeshImportSettings importSettings = null)
         {
-            if (originalMesh == null)
-                throw new ArgumentNullException("originalMesh");
-
             if (importSettings == null)
                 importSettings = k_DefaultImportSettings;
 
             // When importing the mesh is always split into triangles with no vertices shared
             // between faces. In a later step co-incident vertices are collapsed (eg, before
             // leaving the Import function).
-            Vertex[] sourceVertices = originalMesh.GetVertices();
+            Vertex[] sourceVertices = m_SourceMesh.GetVertices();
             List<Vertex> splitVertices = new List<Vertex>();
             List<Face> faces = new List<Face>();
 
             // Fill in Faces array with just the position indexes. In the next step we'll
             // figure out smoothing groups & merging
             int vertexIndex = 0;
-            int materialCount = materials != null ? materials.Length : 0;
+            int materialCount = m_SourceMaterials != null ? m_SourceMaterials.Length : 0;
 
-            for (int submeshIndex = 0; submeshIndex < originalMesh.subMeshCount; submeshIndex++)
+            for (int submeshIndex = 0; submeshIndex < m_SourceMesh.subMeshCount; submeshIndex++)
             {
-                switch (originalMesh.GetTopology(submeshIndex))
+                switch (m_SourceMesh.GetTopology(submeshIndex))
                 {
                     case MeshTopology.Triangles:
                     {
-                        int[] indexes = originalMesh.GetIndices(submeshIndex);
+                        int[] indexes = m_SourceMesh.GetIndices(submeshIndex);
 
                         for (int tri = 0; tri < indexes.Length; tri += 3)
                         {
@@ -173,7 +182,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
                     case MeshTopology.Quads:
                     {
-                        int[] indexes = originalMesh.GetIndices(submeshIndex);
+                        int[] indexes = m_SourceMesh.GetIndices(submeshIndex);
 
                         for (int quad = 0; quad < indexes.Length; quad += 4)
                         {
@@ -206,17 +215,17 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             m_Vertices = splitVertices.ToArray();
 
-            m_Mesh.Clear();
-            m_Mesh.SetVertices(m_Vertices);
-            m_Mesh.faces = faces;
-            m_Mesh.sharedVertices = SharedVertex.GetSharedVerticesWithPositions(m_Mesh.positionsInternal);
-            m_Mesh.sharedTextures = new SharedVertex[0];
+            m_Destination.Clear();
+            m_Destination.SetVertices(m_Vertices);
+            m_Destination.faces = faces;
+            m_Destination.sharedVertices = SharedVertex.GetSharedVerticesWithPositions(m_Destination.positionsInternal);
+            m_Destination.sharedTextures = new SharedVertex[0];
 
             HashSet<Face> processed = new HashSet<Face>();
 
             if (importSettings.quads)
             {
-                List<WingedEdge> wings = WingedEdge.GetWingedEdges(m_Mesh, m_Mesh.facesInternal, true);
+                List<WingedEdge> wings = WingedEdge.GetWingedEdges(m_Destination, m_Destination.facesInternal, true);
 
                 // build a lookup of the strength of edge connections between triangle faces
                 Dictionary<EdgeLookup, float> connections = new Dictionary<EdgeLookup, float>();
@@ -279,18 +288,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 }
 
                 // don't collapse coincident vertices if smoothing is enabled, we need the original normals intact
-                MergeElements.MergePairs(m_Mesh, quads, !importSettings.smoothing);
+                MergeElements.MergePairs(m_Destination, quads, !importSettings.smoothing);
             }
 
             if (importSettings.smoothing)
             {
-                Smoothing.ApplySmoothingGroups(m_Mesh, m_Mesh.facesInternal, importSettings.smoothingAngle, m_Vertices.Select(x => x.normal).ToArray());
+                Smoothing.ApplySmoothingGroups(m_Destination, m_Destination.facesInternal, importSettings.smoothingAngle, m_Vertices.Select(x => x.normal).ToArray());
                 // After smoothing has been applied go back and weld coincident vertices created by MergePairs.
-                MergeElements.CollapseCoincidentVertices(m_Mesh, m_Mesh.facesInternal);
+                MergeElements.CollapseCoincidentVertices(m_Destination, m_Destination.facesInternal);
             }
         }
 
-        Face GetBestQuadConnection(WingedEdge wing, Dictionary<EdgeLookup, float> connections)
+        static Face GetBestQuadConnection(WingedEdge wing, Dictionary<EdgeLookup, float> connections)
         {
             float score = 0f;
             Face face = null;

@@ -335,7 +335,7 @@ namespace UnityEditor.ProBuilder
 #else
             SceneView.onSceneGUIDelegate += OnSceneGUI;
 #endif
-            Selection.selectionChanged += OnSelectionChanged;
+            MeshSelection.objectSelectionChanged += OnSelectionChanged;
             Undo.undoRedoPerformed += OnSelectionChanged;
             ProBuilderMesh.elementSelectionChanged += OnElementSelectionChanged;
             VertexManipulationTool.beforeMeshModification += OnBeginVertexMovement;
@@ -357,7 +357,7 @@ namespace UnityEditor.ProBuilder
 #else
             SceneView.onSceneGUIDelegate -= OnSceneGUI;
 #endif
-            Selection.selectionChanged -= OnSelectionChanged;
+            MeshSelection.objectSelectionChanged -= OnSelectionChanged;
             Undo.undoRedoPerformed -= OnSelectionChanged;
             ProBuilderMesh.elementSelectionChanged -= OnElementSelectionChanged;
             ClearSmoothGroupData();
@@ -412,17 +412,12 @@ namespace UnityEditor.ProBuilder
 
             GUILayout.BeginHorizontal(EditorStyles.toolbar);
 
-            if (GUILayout.Button("Settings",
-                    s_ShowSettings ? UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
-                s_ShowSettings.SetValue(!s_ShowSettings, true);
-
-            if (GUILayout.Button("Preview",
-                    s_ShowPreview ? UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
-                s_ShowPreview.SetValue(!s_ShowPreview, true);
-
-            if (GUILayout.Button("Normals",
-                    s_ShowNormals ? UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
-                s_ShowNormals.SetValue(!s_ShowNormals, true);
+            EditorGUI.BeginChangeCheck();
+            s_ShowSettings.value = GUILayout.Toggle(s_ShowSettings.value, "Settings", EditorStyles.toolbarButton);
+            s_ShowPreview.value = GUILayout.Toggle(s_ShowPreview.value, "Preview", EditorStyles.toolbarButton);
+            s_ShowNormals.value = GUILayout.Toggle(s_ShowNormals.value, "Normals", EditorStyles.toolbarButton);
+            if(EditorGUI.EndChangeCheck())
+                ProBuilderSettings.Save();
 
             if (s_ShowNormals)
             {
@@ -512,7 +507,7 @@ namespace UnityEditor.ProBuilder
                 global::UnityEditor.ProBuilder.UI.EditorGUILayout.EndRow();
 
                 if (GUILayout.Button("Open Documentation"))
-                    Application.OpenURL("http://procore3d.github.io/probuilder2/toolbar/tool-panels/#smoothing-groups");
+                    Application.OpenURL("https://docs.unity3d.com/Packages/com.unity.probuilder@latest/index.html?subfolder=/manual/workflow-edit-smoothing.html");
 
                 GUILayout.EndVertical();
             }

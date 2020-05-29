@@ -4,19 +4,28 @@ using System.Linq;
 using UnityEngine.Serialization;
 using System;
 using System.Collections.ObjectModel;
+using UnityEngine.Rendering;
 
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
     /// This component is responsible for storing all the data necessary for editing and compiling UnityEngine.Mesh objects.
     /// </summary>
-    [AddComponentMenu("")]
-    [DisallowMultipleComponent]
-    [RequireComponent(typeof(MeshFilter))]
+    // The double "//" sets this component as hidden in the menu, but is used by ObjectNames.cs to get the component name.
+    [AddComponentMenu("//ProBuilder MeshFilter")]
+    // Don't include MeshFilter in the required components because it gets registered with serialization before we have a
+    // chance to mark it with the correct HideFlags.
     [RequireComponent(typeof(MeshRenderer))]
-    [ExecuteInEditMode]
+    [DisallowMultipleComponent, ExecuteInEditMode, ExcludeFromPreset, ExcludeFromObjectFactory]
+//    [MonoBehaviourIcon("Packages/com.unity.probuilder/Content/Icons/Scripts/ProBuilderMesh@64.png")]
     public sealed partial class ProBuilderMesh : MonoBehaviour
     {
+#if ENABLE_DRIVEN_PROPERTIES
+        internal const HideFlags k_MeshFilterHideFlags = HideFlags.DontSave | HideFlags.HideInInspector | HideFlags.NotEditable;
+#else
+        internal const HideFlags k_MeshFilterHideFlags = HideFlags.HideInInspector | HideFlags.NotEditable;
+#endif
+
         /// <summary>
         /// Max number of UV channels that ProBuilderMesh format supports.
         /// </summary>
@@ -121,6 +130,9 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         internal string assetGuid;
 
+        [SerializeField]
+        Mesh m_Mesh;
+
         [NonSerialized]
         MeshRenderer m_MeshRenderer;
 
@@ -129,8 +141,8 @@ namespace UnityEngine.ProBuilder
         {
             get
             {
-                if (m_MeshRenderer == null)
-                    m_MeshRenderer = GetComponent<MeshRenderer>();
+                if (!gameObject.TryGetComponent<MeshRenderer>(out m_MeshRenderer))
+                    return null;
                 return m_MeshRenderer;
             }
         }
@@ -145,7 +157,14 @@ namespace UnityEngine.ProBuilder
             get
             {
                 if (m_MeshFilter == null)
-                    m_MeshFilter = GetComponent<MeshFilter>();
+                {
+                    if (!gameObject.TryGetComponent<MeshFilter>(out m_MeshFilter))
+                        return null;
+#if UNITY_EDITOR
+                    m_MeshFilter.hideFlags = k_MeshFilterHideFlags;
+#endif
+                }
+
                 return m_MeshFilter;
             }
         }
@@ -182,10 +201,14 @@ namespace UnityEngine.ProBuilder
 
             // UV2 is a special case. It is not stored in ProBuilderMesh, does not necessarily match the vertex count,
             // at it has a cost to check.
-            if ((channels & MeshArrays.Texture1) == MeshArrays.Texture1)
+            if ((channels & MeshArrays.Texture1) == MeshArrays.Texture1 && mesh != null)
             {
-                var m_Textures1 = mesh != null ? mesh.uv2 : null;
+#if UNITY_2019_3_OR_NEWER
+                missing |= !mesh.HasVertexAttribute(VertexAttribute.TexCoord1);
+#else
+                var m_Textures1 = m_Mesh.uv2;
                 missing |= (m_Textures1 == null || m_Textures1.Length < 3);
+#endif
             }
 
             return !missing;
@@ -230,12 +253,23 @@ namespace UnityEngine.ProBuilder
             m_CacheValid &= ~CacheValidState.SharedTexture;
         }
 
+        internal void InvalidateFaces()
+        {
+            if (m_Faces == null)
+            {
+                m_Faces = new Face[0];
+                return;
+            }
+
+            foreach (var face in faces)
+                face.InvalidateCache();
+        }
+
         internal void InvalidateCaches()
         {
             InvalidateSharedVertexLookup();
             InvalidateSharedTextureLookup();
-            foreach (var face in faces)
-                face.InvalidateCache();
+            InvalidateFaces();
             m_SelectedCacheDirty = true;
         }
 
@@ -285,6 +319,8 @@ namespace UnityEngine.ProBuilder
             {
                 if ((m_CacheValid & CacheValidState.SharedVertex) != CacheValidState.SharedVertex)
                 {
+                    if (m_SharedVertexLookup == null)
+                        m_SharedVertexLookup = new Dictionary<int, int>();
                     SharedVertex.GetSharedVertexLookup(m_SharedVertices, m_SharedVertexLookup);
                     m_CacheValid |= CacheValidState.SharedVertex;
                 }
@@ -325,6 +361,8 @@ namespace UnityEngine.ProBuilder
                 if ((m_CacheValid & CacheValidState.SharedTexture) != CacheValidState.SharedTexture)
                 {
                     m_CacheValid |= CacheValidState.SharedTexture;
+                    if (m_SharedTextureLookup == null)
+                        m_SharedTextureLookup = new Dictionary<int, int>();
                     SharedVertex.GetSharedVertexLookup(m_SharedTextures, m_SharedTextureLookup);
                 }
 
@@ -730,7 +768,13 @@ namespace UnityEngine.ProBuilder
         /// </value>
         public int edgeCount
         {
-            get { return m_Faces.Sum(x => x.edgesInternal.Length); }
+            get
+            {
+                int count = 0;
+                for (int i = 0, c = faceCount; i < c; i++)
+                    count += facesInternal[i].edgesInternal.Length;
+                return count;
+            }
         }
 
         /// <value>
@@ -750,7 +794,8 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// In the editor, when a ProBuilderMesh is destroyed it will also destroy the MeshFilter.sharedMesh that is found with the parent GameObject. You may override this behaviour by subscribing to onDestroyObject.
+        /// In the editor, when a ProBuilderMesh is destroyed it will also destroy the MeshFilter.sharedMesh that is
+        /// found with the parent GameObject. You may override this behaviour by subscribing to onDestroyObject.
         /// </summary>
         /// <value>
         /// If onDestroyObject has a subscriber ProBuilder will invoke it instead of cleaning up unused meshes by itself.
@@ -764,6 +809,11 @@ namespace UnityEngine.ProBuilder
         internal static event Action<ProBuilderMesh> componentWillBeDestroyed;
 
         /// <value>
+        /// Invoked from ProBuilderMesh.Reset after component is rebuilt.
+        /// </value>
+        internal static event Action<ProBuilderMesh> componentHasBeenReset;
+
+        /// <value>
         /// Invoked when the element selection changes on any ProBuilderMesh.
         /// </value>
         /// <seealso cref="SetSelectedFaces"/>
@@ -771,13 +821,16 @@ namespace UnityEngine.ProBuilder
         /// <seealso cref="SetSelectedEdges"/>
         public static event Action<ProBuilderMesh> elementSelectionChanged;
 
-        /// <summary>
-        /// Convenience property for getting the mesh from the MeshFilter component.
-        /// </summary>
         internal Mesh mesh
         {
-            get { return filter.sharedMesh; }
-            set { filter.sharedMesh = value; }
+            get
+            {
+                if (m_Mesh == null && filter != null)
+                    m_Mesh = filter.sharedMesh;
+                return m_Mesh;
+            }
+
+            set { m_Mesh = value; }
         }
 
         internal int id

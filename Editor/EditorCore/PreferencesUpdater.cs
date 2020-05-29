@@ -24,9 +24,9 @@ namespace UnityEditor.ProBuilder
         {
             // this exists to force update preferences when updating packages
             var stored = s_PreferencesVersion.value;
-            var current = Version.currentInfo;
+            SemVer current;
 
-            if (!stored.Equals(current))
+            if (Version.TryGetPackageVersion(out current) && !stored.Equals(current))
             {
                 s_PreferencesVersion.SetValue(current);
 

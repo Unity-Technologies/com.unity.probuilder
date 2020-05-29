@@ -480,6 +480,10 @@ namespace UnityEditor.ProBuilder
                 {
                     var uv = q.uv;
                     uv.rotation = rot;
+                    if (uv.rotation > 360f)
+                        uv.rotation = uv.rotation % 360f;
+                    else if (uv.rotation < 0f)
+                        uv.rotation = 360f + (uv.rotation % 360f);
                     q.uv = uv;
                     sel[i].SetGroupUV(uv, q.textureGroup);
                 }

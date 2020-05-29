@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
@@ -26,19 +25,17 @@ namespace UnityEditor.ProBuilder
             Handles.matrix = Matrix4x4.TRS(handlePosition, handleRotation, Vector3.one);
 
             var snap = relativeSnapEnabled
-                ? relativeSnapScale
-                : progridsSnapEnabled
-                ? progridsSnapValue
-                : 0f;
+                ? Vector3.one * ProBuilderSnapSettings.incrementalSnapScaleValue
+                : worldSnapEnabled ? snapValue : Vector3.zero;
 
             Handles.color = Color.red;
-            m_Scale.x = Handles.ScaleSlider(m_Scale.x, Vector3.zero, Vector3.right, Quaternion.identity, size, snap);
+            m_Scale.x = Handles.ScaleSlider(m_Scale.x, Vector3.zero, Vector3.right, Quaternion.identity, size, snap.x);
 
             Handles.color = Color.green;
-            m_Scale.y = Handles.ScaleSlider(m_Scale.y, Vector3.zero, Vector3.up, Quaternion.identity, size, snap);
+            m_Scale.y = Handles.ScaleSlider(m_Scale.y, Vector3.zero, Vector3.up, Quaternion.identity, size, snap.y);
 
             Handles.color = Color.blue;
-            m_UniformScale = Handles.ScaleValueHandle(m_UniformScale, Vector3.zero, Quaternion.identity, size, Handles.CubeHandleCap, snap);
+            m_UniformScale = Handles.ScaleValueHandle(m_UniformScale, Vector3.zero, Quaternion.identity, size, Handles.CubeHandleCap, snap.x);
 
             EditorHandleUtility.PopMatrix();
 

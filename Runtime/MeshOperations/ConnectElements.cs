@@ -258,23 +258,35 @@ namespace UnityEngine.ProBuilder.MeshOperations
                         usedTextureGroups.Add(newTextureGroupIndex);
                     }
 
-                    foreach (ConnectFaceRebuildData c in res)
+
+                    if (res == null)
                     {
-                        connectedFaces.Add(c.faceRebuildData.face);
-
-                        Vector3 fn = Math.Normal(c.faceRebuildData.vertices, c.faceRebuildData.face.indexesInternal);
-
-                        if (Vector3.Dot(nrm, fn) < 0)
-                            c.faceRebuildData.face.Reverse();
-
-                        c.faceRebuildData.face.textureGroup = face.textureGroup < 0 ? newTextureGroupIndex : face.textureGroup;
-                        c.faceRebuildData.face.uv = new AutoUnwrapSettings(face.uv);
-                        c.faceRebuildData.face.submeshIndex = face.submeshIndex;
-                        c.faceRebuildData.face.smoothingGroup = face.smoothingGroup;
-                        c.faceRebuildData.face.manualUV = face.manualUV;
+                        connections = null;
+                        addedFaces = null;
+                        return new ActionResult(ActionResult.Status.Failure, "Unable to connect faces");
                     }
+                    else
+                    {
+                        foreach (ConnectFaceRebuildData c in res)
+                        {
+                            connectedFaces.Add(c.faceRebuildData.face);
 
-                    results.AddRange(res);
+                            Vector3 fn = Math.Normal(c.faceRebuildData.vertices,
+                                c.faceRebuildData.face.indexesInternal);
+
+                            if (Vector3.Dot(nrm, fn) < 0)
+                                c.faceRebuildData.face.Reverse();
+
+                            c.faceRebuildData.face.textureGroup =
+                                face.textureGroup < 0 ? newTextureGroupIndex : face.textureGroup;
+                            c.faceRebuildData.face.uv = new AutoUnwrapSettings(face.uv);
+                            c.faceRebuildData.face.submeshIndex = face.submeshIndex;
+                            c.faceRebuildData.face.smoothingGroup = face.smoothingGroup;
+                            c.faceRebuildData.face.manualUV = face.manualUV;
+                        }
+
+                        results.AddRange(res);
+                    }
                 }
             }
 
@@ -426,6 +438,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
             for (int i = 0; i < n_vertices.Count; i++)
             {
                 FaceRebuildData f = AppendElements.FaceWithVertices(n_vertices[i], false);
+                if (f == null)
+                {
+                    faces.Clear();
+                    return null;
+                }
                 faces.Add(new ConnectFaceRebuildData(f, n_indexes[i]));
             }
 

@@ -273,24 +273,22 @@ namespace UnityEditor.ProBuilder.UI
             pixelsPerPoint = UnityEditor.EditorGUIUtility.pixelsPerPoint;
 
             float PAD = 8f / pixelsPerPoint;
-            const float SLIDER_HEIGHT = 16f;
+            float sliderHeight = UnityEditor.EditorGUIUtility.singleLineHeight;
             const float MIN_LABEL_WIDTH = 0f;
             const float MAX_LABEL_WIDTH = 128f;
             const float MIN_FIELD_WIDTH = 48f;
-
-            GUILayoutUtility.GetRect(UnityEditor.EditorGUIUtility.currentViewWidth / pixelsPerPoint, 18);
-
-            Rect previousRect = GUILayoutUtility.GetLastRect();
-            float y = previousRect.y;
+            
+            Rect rect = EditorGUILayout.GetSliderRect(true);
+            float y = rect.y;
 
             float labelWidth = content != null ? Mathf.Max(MIN_LABEL_WIDTH, Mathf.Min(GUI.skin.label.CalcSize(content).x + PAD, MAX_LABEL_WIDTH)) : 0f;
             float remaining = ((Screen.width / pixelsPerPoint) - (PAD * 2f)) - labelWidth;
             float sliderWidth = remaining - (MIN_FIELD_WIDTH + PAD);
             float floatWidth = MIN_FIELD_WIDTH;
 
-            Rect labelRect = new Rect(PAD, y + 2f, labelWidth, SLIDER_HEIGHT);
-            Rect sliderRect = new Rect(labelRect.x + labelWidth, y + 1f, sliderWidth, SLIDER_HEIGHT);
-            Rect floatRect = new Rect(sliderRect.x + sliderRect.width + PAD, y + 1f, floatWidth, SLIDER_HEIGHT);
+            Rect labelRect = new Rect(PAD, y + 2f, labelWidth, sliderHeight);
+            Rect sliderRect = new Rect(labelRect.x + labelWidth, y + 1f, sliderWidth, sliderHeight);
+            Rect floatRect = new Rect(sliderRect.x + sliderRect.width + PAD, y + 1f, floatWidth, sliderHeight);
 
             if (content != null)
                 GUI.Label(labelRect, content);

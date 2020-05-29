@@ -1,6 +1,5 @@
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,7 +9,7 @@ namespace UnityEngine.ProBuilder
     /// A winged-edge data structure holds references to an edge, the previous and next edge in it's triangle, it's connected face, and the opposite edge (common).
     /// </summary>
     /// <example>
-    ///  ```
+    /// ```
     /// .       /   (face)    /
     /// . prev /             / next
     /// .     /    edge     /
@@ -26,6 +25,8 @@ namespace UnityEngine.ProBuilder
     /// <inheritdoc cref="IEnumerable{T}" />
     public sealed class WingedEdge : IEquatable<WingedEdge>
     {
+        static readonly Dictionary<Edge, WingedEdge> k_OppositeEdgeDictionary = new Dictionary<Edge, WingedEdge>();
+
         /// <value>
         /// The local and shared edge that this edge belongs to.
         /// </value>
@@ -336,8 +337,8 @@ namespace UnityEngine.ProBuilder
             var lookup = mesh.sharedVertexLookup;
 
             List<WingedEdge> winged = new List<WingedEdge>();
-            Dictionary<Edge, WingedEdge> opposites = new Dictionary<Edge, WingedEdge>();
-
+            k_OppositeEdgeDictionary.Clear();
+            
             foreach (Face f in faces)
             {
                 List<Edge> edges = SortEdgesByAdjacency(f);
@@ -370,7 +371,7 @@ namespace UnityEngine.ProBuilder
 
                     WingedEdge opp;
 
-                    if (opposites.TryGetValue(w.edge.common, out opp))
+                    if (k_OppositeEdgeDictionary.TryGetValue(w.edge.common, out opp))
                     {
                         opp.opposite = w;
                         w.opposite = opp;
@@ -378,7 +379,7 @@ namespace UnityEngine.ProBuilder
                     else
                     {
                         w.opposite = null;
-                        opposites.Add(w.edge.common, w);
+                        k_OppositeEdgeDictionary.Add(w.edge.common, w);
                     }
 
                     if (!oneWingPerFace || n < 1)

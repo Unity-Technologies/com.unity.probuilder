@@ -11,37 +11,6 @@ namespace UnityEditor.ProBuilder
         const bool k_CollectCoincidentVertices = false;
         protected const int k_TextureChannel = 0;
 
-        const string UnityMoveSnapX = "MoveSnapX";
-        const string UnityMoveSnapY = "MoveSnapY";
-        const string UnityMoveSnapZ = "MoveSnapZ";
-        const string UnityScaleSnap = "ScaleSnap";
-        const string UnityRotateSnap = "RotationSnap";
-
-        protected static float relativeSnapX
-        {
-            get { return EditorPrefs.GetFloat(UnityMoveSnapX, 1f); }
-        }
-
-        protected static float relativeSnapY
-        {
-            get { return EditorPrefs.GetFloat(UnityMoveSnapY, 1f); }
-        }
-
-        protected static float relativeSnapZ
-        {
-            get { return EditorPrefs.GetFloat(UnityMoveSnapZ, 1f); }
-        }
-
-        protected static float relativeSnapScale
-        {
-            get { return EditorPrefs.GetFloat(UnityScaleSnap, .1f); }
-        }
-
-        protected static float relativeSnapRotation
-        {
-            get { return EditorPrefs.GetFloat(UnityRotateSnap, 15f); }
-        }
-
         protected class MeshAndTextures : MeshAndElementSelection
         {
             List<Vector4> m_Origins;
@@ -88,7 +57,7 @@ namespace UnityEditor.ProBuilder
                 get { return m_Origins; }
             }
 
-            public MeshAndTextures(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation) : base(mesh, pivot, orientation, k_CollectCoincidentVertices)
+            public MeshAndTextures(ProBuilderMesh mesh, PivotPoint pivot) : base(mesh, k_CollectCoincidentVertices)
             {
                 m_Textures = new List<Vector4>();
                 mesh.GetUVs(k_TextureChannel, m_Textures);
@@ -137,9 +106,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        internal override MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation)
+        internal override MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot)
         {
-            return new MeshAndTextures(mesh, pivot, orientation);
+            return new MeshAndTextures(mesh, pivot);
         }
     }
 }

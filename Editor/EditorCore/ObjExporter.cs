@@ -115,7 +115,12 @@ namespace UnityEditor.ProBuilder
 
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine("# ProBuilder " + Version.currentInfo.MajorMinorPatch);
+            SemVer version;
+
+            if(Version.TryGetPackageVersion(out version))
+                sb.AppendLine("# ProBuilder " + version.MajorMinorPatch);
+            else
+                sb.AppendLine("# ProBuilder");
             sb.AppendLine("# https://unity3d.com/unity/features/worldbuilding/probuilder");
             sb.AppendLine(string.Format("# {0}", System.DateTime.Now));
             sb.AppendLine();
@@ -346,10 +351,17 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
-                if (mat.HasProperty("_Color"))
+                if (mat.HasProperty("_BaseColorMap") || mat.HasProperty("_BaseMap")) // HDRP || URP
+                {
+                    var color = mat.GetColor("_BaseColor");
+                    // Diffuse
+                    sb.AppendLine(string.Format("Kd {0}", string.Format(CultureInfo.InvariantCulture, "{0} {1} {2}", color.r, color.g, color.b)));
+                    // Transparency
+                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "d {0}", color.a));
+                }
+                else if (mat.HasProperty("_Color"))
                 {
                     Color color = mat.color;
-
                     // Diffuse
                     sb.AppendLine(string.Format("Kd {0}", string.Format(CultureInfo.InvariantCulture, "{0} {1} {2}", color.r, color.g, color.b)));
                     // Transparency

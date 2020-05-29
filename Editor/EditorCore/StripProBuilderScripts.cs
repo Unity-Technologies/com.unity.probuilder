@@ -42,6 +42,7 @@ namespace UnityEditor.ProBuilder.Actions
                 foreach (ProBuilderMesh pb in t.GetComponentsInChildren<ProBuilderMesh>(true))
                     DoStrip(pb);
             }
+            MeshSelection.OnObjectSelectionChanged();
         }
 
         public static void Strip(ProBuilderMesh[] all)
@@ -61,6 +62,7 @@ namespace UnityEditor.ProBuilder.Actions
             UnityEditor.EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "Successfully stripped out all ProBuilder components.", "Okay");
 
             ProBuilderEditor.Refresh();
+            MeshSelection.OnObjectSelectionChanged();
         }
 
         public static void DoStrip(ProBuilderMesh pb)
@@ -79,12 +81,19 @@ namespace UnityEditor.ProBuilder.Actions
 
                 EditorUtility.SynchronizeWithMeshFilter(pb);
 
+
+                if (go.TryGetComponent(out PolyShape polyShape))
+                    DestroyImmediate(polyShape);
+
+                if (go.TryGetComponent(out BezierShape bezierShape))
+                    DestroyImmediate(bezierShape);
+
                 if (pb.mesh == null)
                 {
                     DestroyImmediate(pb);
 
-                    if (go.GetComponent<Entity>())
-                        DestroyImmediate(go.GetComponent<Entity>());
+                    if (go.TryGetComponent(out Entity entity))
+                        DestroyImmediate(entity);
 
                     return;
                 }
@@ -97,8 +106,8 @@ namespace UnityEditor.ProBuilder.Actions
                 {
                     pb.preserveMeshAssetOnDestroy = true;
                     DestroyImmediate(pb);
-                    if (go.GetComponent<Entity>())
-                        DestroyImmediate(go.GetComponent<Entity>());
+                    if (go.TryGetComponent(out Entity entity))
+                        DestroyImmediate(entity);
                 }
                 else
                 {
@@ -106,12 +115,12 @@ namespace UnityEditor.ProBuilder.Actions
 
                     DestroyImmediate(pb);
 
-                    if (go.GetComponent<Entity>())
-                        DestroyImmediate(go.GetComponent<Entity>());
+                    if (go.TryGetComponent(out Entity entity))
+                        DestroyImmediate(entity);
 
                     go.GetComponent<MeshFilter>().sharedMesh = m;
-                    if (go.GetComponent<MeshCollider>())
-                        go.GetComponent<MeshCollider>().sharedMesh = m;
+                    if (go.TryGetComponent(out MeshCollider meshCollider))
+                        meshCollider.sharedMesh = m;
                 }
             }
             catch {}

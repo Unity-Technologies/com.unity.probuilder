@@ -4,266 +4,262 @@ using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 using UnityEditor;
 using UnityEngine.TestTools;
 
-namespace UnityEngine.ProBuilder.EditorTests.Picking
+class RectSelection
 {
-    class RectSelection
+    ProBuilderMesh[] selectables;
+    Camera camera;
+
+    void Setup()
     {
-        ProBuilderMesh[] selectables;
-        Camera camera;
+        camera = new GameObject("Camera", typeof(Camera)).GetComponent<Camera>();
+        camera.transform.position = new Vector3(.3f, 2.2f, -3f);
 
-        void Setup()
+        ProBuilderMesh shape = ShapeGenerator.CreateShape(ShapeType.Torus);
+        shape.transform.position = Vector3.zero - shape.GetComponent<MeshRenderer>().bounds.center;
+
+        camera.transform.LookAt(shape.transform);
+
+        selectables = new ProBuilderMesh[]
         {
-            camera = new GameObject("Camera", typeof(Camera)).GetComponent<Camera>();
-            camera.transform.position = new Vector3(.3f, 2.2f, -3f);
+            shape
+        };
+    }
 
-            ProBuilderMesh shape = ShapeGenerator.CreateShape(ShapeType.Torus);
-            shape.transform.position = Vector3.zero - shape.GetComponent<MeshRenderer>().bounds.center;
-
-            camera.transform.LookAt(shape.transform);
-
-            selectables = new ProBuilderMesh[]
-            {
-                shape
-            };
+    void Cleanup()
+    {
+        for (int i = 0; i < selectables.Length; i++)
+        {
+            UObject.DestroyImmediate(selectables[i].gameObject);
         }
 
-        void Cleanup()
+        UObject.DestroyImmediate(camera.gameObject);
+    }
+
+    Dictionary<ProBuilderMesh, HashSet<int>> TestVertexPick(PickerOptions options)
+    {
+        try
         {
-            for (int i = 0; i < selectables.Length; i++)
-            {
-                UObject.DestroyImmediate(selectables[i].gameObject);
-            }
+            Rect selectionRect = new Rect(camera.pixelRect);
+            selectionRect.width /= EditorGUIUtility.pixelsPerPoint;
+            selectionRect.height /= EditorGUIUtility.pixelsPerPoint;
 
-            UObject.DestroyImmediate(camera.gameObject);
+            var vertices = UnityEngine.ProBuilder.SelectionPicker.PickVerticesInRect(
+                camera,
+                selectionRect,
+                selectables,
+                options,
+                EditorGUIUtility.pixelsPerPoint);
+
+            LogAssert.NoUnexpectedReceived();
+
+            return vertices;
         }
-
-        Dictionary<ProBuilderMesh, HashSet<int>> TestVertexPick(PickerOptions options)
+        catch
         {
-            try
-            {
-                Rect selectionRect = new Rect(camera.pixelRect);
-                selectionRect.width /= EditorGUIUtility.pixelsPerPoint;
-                selectionRect.height /= EditorGUIUtility.pixelsPerPoint;
-
-                var vertices = UnityEngine.ProBuilder.SelectionPicker.PickVerticesInRect(
-                        camera,
-                        selectionRect,
-                        selectables,
-                        options,
-                        EditorGUIUtility.pixelsPerPoint);
-
-                LogAssert.NoUnexpectedReceived();
-
-                return vertices;
-            }
-            catch
-            {
-                return null;
-            }
+            return null;
         }
+    }
 
-        Dictionary<ProBuilderMesh, HashSet<Edge>> TestEdgePick(PickerOptions options)
+    Dictionary<ProBuilderMesh, HashSet<Edge>> TestEdgePick(PickerOptions options)
+    {
+        try
         {
-            try
-            {
-                Rect selectionRect = new Rect(camera.pixelRect);
-                selectionRect.width /= EditorGUIUtility.pixelsPerPoint;
-                selectionRect.height /= EditorGUIUtility.pixelsPerPoint;
+            Rect selectionRect = new Rect(camera.pixelRect);
+            selectionRect.width /= EditorGUIUtility.pixelsPerPoint;
+            selectionRect.height /= EditorGUIUtility.pixelsPerPoint;
 
-                var edges = UnityEngine.ProBuilder.SelectionPicker.PickEdgesInRect(
-                        camera,
-                        selectionRect,
-                        selectables,
-                        options,
-                        EditorGUIUtility.pixelsPerPoint);
+            var edges = UnityEngine.ProBuilder.SelectionPicker.PickEdgesInRect(
+                camera,
+                selectionRect,
+                selectables,
+                options,
+                EditorGUIUtility.pixelsPerPoint);
 
-                LogAssert.NoUnexpectedReceived();
+            LogAssert.NoUnexpectedReceived();
 
-                return edges;
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError(e.ToString());
-                return null;
-            }
+            return edges;
         }
-
-        Dictionary<ProBuilderMesh, HashSet<Face>> TestFacePick(PickerOptions options)
+        catch (System.Exception e)
         {
-            try
-            {
-                Rect selectionRect = new Rect(camera.pixelRect);
-                selectionRect.width /= EditorGUIUtility.pixelsPerPoint;
-                selectionRect.height /= EditorGUIUtility.pixelsPerPoint;
-
-                var faces = UnityEngine.ProBuilder.SelectionPicker.PickFacesInRect(
-                        camera,
-                        selectionRect,
-                        selectables,
-                        options,
-                        EditorGUIUtility.pixelsPerPoint);
-
-                LogAssert.NoUnexpectedReceived();
-
-                return faces;
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError(e.ToString());
-                return null;
-            }
+            Debug.LogError(e.ToString());
+            return null;
         }
+    }
 
-        [Test]
-        public void PickVertices_DepthTestOn()
+    Dictionary<ProBuilderMesh, HashSet<Face>> TestFacePick(PickerOptions options)
+    {
+        try
         {
-            Setup();
-            var vertices = TestVertexPick(new PickerOptions() { depthTest = true });
-            var selection = vertices.FirstOrDefault();
-            Assert.IsNotNull(selection);
-            HashSet<int> selectedElements = selection.Value;
-            Assert.Less(selectedElements.Count, selection.Key.sharedVertices.Count());
-            Assert.Greater(selectedElements.Count, 0);
-            Cleanup();
-        }
+            Rect selectionRect = new Rect(camera.pixelRect);
+            selectionRect.width /= EditorGUIUtility.pixelsPerPoint;
+            selectionRect.height /= EditorGUIUtility.pixelsPerPoint;
 
-        [Test]
-        public void PickVertices_DepthTestOff()
+            var faces = UnityEngine.ProBuilder.SelectionPicker.PickFacesInRect(
+                camera,
+                selectionRect,
+                selectables,
+                options,
+                EditorGUIUtility.pixelsPerPoint);
+
+            LogAssert.NoUnexpectedReceived();
+
+            return faces;
+        }
+        catch (System.Exception e)
         {
-            Setup();
-            var vertices = TestVertexPick(new PickerOptions() { depthTest = false });
-            var selection = vertices.FirstOrDefault();
-            Assert.IsNotNull(selection);
-            HashSet<int> selectedElements = selection.Value;
-            Assert.AreEqual(selectedElements.Count, selection.Key.sharedVertices.Count());
-            Cleanup();
+            Debug.LogError(e.ToString());
+            return null;
         }
+    }
 
-        [Test]
-        public void PickEdges_DepthTestOff_RectSelectPartial()
-        {
-            Setup();
-            var edges = TestEdgePick(new PickerOptions() { depthTest = false, rectSelectMode = RectSelectMode.Partial });
-            Assert.IsNotNull(edges, "Selection is null");
-            var selection = edges.FirstOrDefault();
-            Assert.IsNotNull(selection, "Selection is null");
-            HashSet<Edge> selectedElements = selection.Value;
-            Assert.Greater(selectedElements.Count, 0);
+    [Test]
+    public void PickVertices_DepthTestOn()
+    {
+        Setup();
+        var vertices = TestVertexPick(new PickerOptions() { depthTest = true });
+        var selection = vertices.FirstOrDefault();
+        Assert.IsNotNull(selection);
+        HashSet<int> selectedElements = selection.Value;
+        Assert.Less(selectedElements.Count, selection.Key.sharedVertices.Count());
+        Assert.Greater(selectedElements.Count, 0);
+        Cleanup();
+    }
 
-            Dictionary<int, int> commonLookup = selection.Key.sharedVertexLookup;
-            var allEdges = EdgeLookup.GetEdgeLookupHashSet(selection.Key.facesInternal.SelectMany(x => x.edgesInternal), commonLookup);
-            var selectedEdges = EdgeLookup.GetEdgeLookupHashSet(selectedElements, commonLookup);
-            Assert.AreEqual(allEdges.Count, selectedEdges.Count);
+    [Test]
+    public void PickVertices_DepthTestOff()
+    {
+        Setup();
+        var vertices = TestVertexPick(new PickerOptions() { depthTest = false });
+        var selection = vertices.FirstOrDefault();
+        Assert.IsNotNull(selection);
+        HashSet<int> selectedElements = selection.Value;
+        Assert.AreEqual(selectedElements.Count, selection.Key.sharedVertices.Count());
+        Cleanup();
+    }
 
-            Cleanup();
-        }
+    [Test]
+    public void PickEdges_DepthTestOff_RectSelectPartial()
+    {
+        Setup();
+        var edges = TestEdgePick(new PickerOptions() { depthTest = false, rectSelectMode = RectSelectMode.Partial });
+        Assert.IsNotNull(edges, "Selection is null");
+        var selection = edges.FirstOrDefault();
+        Assert.IsNotNull(selection, "Selection is null");
+        HashSet<Edge> selectedElements = selection.Value;
+        Assert.Greater(selectedElements.Count, 0);
 
-        [Test]
-        public void PickEdges_DepthTestOn_RectSelectPartial()
-        {
-            Setup();
-            var edges = TestEdgePick(new PickerOptions() { depthTest = true, rectSelectMode = RectSelectMode.Partial });
-            var selection = edges.FirstOrDefault();
-            Assert.IsNotNull(selection);
-            HashSet<Edge> selectedElements = selection.Value;
-            Assert.Greater(selectedElements.Count, 0);
-            Assert.Less(selectedElements.Count, selection.Key.facesInternal.Sum(x => x.edgesInternal.Length));
+        Dictionary<int, int> commonLookup = selection.Key.sharedVertexLookup;
+        var allEdges = EdgeLookup.GetEdgeLookupHashSet(selection.Key.facesInternal.SelectMany(x => x.edgesInternal), commonLookup);
+        var selectedEdges = EdgeLookup.GetEdgeLookupHashSet(selectedElements, commonLookup);
+        Assert.AreEqual(allEdges.Count, selectedEdges.Count);
 
-            Cleanup();
-        }
+        Cleanup();
+    }
 
-        [Test]
-        public void PickEdges_DepthTestOff_RectSelectComplete()
-        {
-            Setup();
-            var edges = TestEdgePick(new PickerOptions() { depthTest = false, rectSelectMode = RectSelectMode.Complete });
-            Assert.IsNotNull(edges, "Selection is null");
-            var selection = edges.FirstOrDefault();
-            Assert.IsNotNull(selection, "Selection is null");
-            HashSet<Edge> selectedElements = selection.Value;
-            Assert.Greater(selectedElements.Count, 0);
+    [Test]
+    public void PickEdges_DepthTestOn_RectSelectPartial()
+    {
+        Setup();
+        var edges = TestEdgePick(new PickerOptions() { depthTest = true, rectSelectMode = RectSelectMode.Partial });
+        var selection = edges.FirstOrDefault();
+        Assert.IsNotNull(selection);
+        HashSet<Edge> selectedElements = selection.Value;
+        Assert.Greater(selectedElements.Count, 0);
+        Assert.Less(selectedElements.Count, selection.Key.facesInternal.Sum(x => x.edgesInternal.Length));
 
-            Dictionary<int, int> commonLookup = selection.Key.sharedVertexLookup;
-            var allEdges = EdgeLookup.GetEdgeLookupHashSet(selection.Key.facesInternal.SelectMany(x => x.edgesInternal), commonLookup);
-            var selectedEdges = EdgeLookup.GetEdgeLookupHashSet(selectedElements, commonLookup);
-            Assert.AreEqual(allEdges.Count, selectedEdges.Count);
+        Cleanup();
+    }
 
-            Cleanup();
-        }
+    [Test]
+    public void PickEdges_DepthTestOff_RectSelectComplete()
+    {
+        Setup();
+        var edges = TestEdgePick(new PickerOptions() { depthTest = false, rectSelectMode = RectSelectMode.Complete });
+        Assert.IsNotNull(edges, "Selection is null");
+        var selection = edges.FirstOrDefault();
+        Assert.IsNotNull(selection, "Selection is null");
+        HashSet<Edge> selectedElements = selection.Value;
+        Assert.Greater(selectedElements.Count, 0);
 
-        [Test]
-        public void PickEdges_DepthTestOn_RectSelectComplete()
-        {
-            Setup();
-            var edges = TestEdgePick(new PickerOptions() { depthTest = true, rectSelectMode = RectSelectMode.Complete });
-            var selection = edges.FirstOrDefault();
-            Assert.IsNotNull(selection);
-            HashSet<Edge> selectedElements = selection.Value;
-            Assert.Greater(selectedElements.Count, 0);
-            Assert.Less(selectedElements.Count, selection.Key.facesInternal.Sum(x => x.edgesInternal.Length));
+        Dictionary<int, int> commonLookup = selection.Key.sharedVertexLookup;
+        var allEdges = EdgeLookup.GetEdgeLookupHashSet(selection.Key.facesInternal.SelectMany(x => x.edgesInternal), commonLookup);
+        var selectedEdges = EdgeLookup.GetEdgeLookupHashSet(selectedElements, commonLookup);
+        Assert.AreEqual(allEdges.Count, selectedEdges.Count);
 
-            Cleanup();
-        }
+        Cleanup();
+    }
 
-        [Test]
-        public void PickFaces_DepthTestOff_RectSelectPartial()
-        {
-            Setup();
-            var faces = TestFacePick(new PickerOptions() { depthTest = false, rectSelectMode = RectSelectMode.Partial });
-            Assert.IsNotNull(faces, "Selection is null");
-            var selection = faces.FirstOrDefault();
-            Assert.IsNotNull(selection, "Selection is null");
-            HashSet<Face> selectedElements = selection.Value;
-            Assert.Greater(selectedElements.Count, 0);
-            Assert.AreEqual(selection.Key.faceCount, selectedElements.Count);
-            Cleanup();
-        }
+    [Test]
+    public void PickEdges_DepthTestOn_RectSelectComplete()
+    {
+        Setup();
+        var edges = TestEdgePick(new PickerOptions() { depthTest = true, rectSelectMode = RectSelectMode.Complete });
+        var selection = edges.FirstOrDefault();
+        Assert.IsNotNull(selection);
+        HashSet<Edge> selectedElements = selection.Value;
+        Assert.Greater(selectedElements.Count, 0);
+        Assert.Less(selectedElements.Count, selection.Key.facesInternal.Sum(x => x.edgesInternal.Length));
 
-        [Test]
-        public void PickFaces_DepthTestOn_RectSelectPartial()
-        {
-            Setup();
-            var faces = TestFacePick(new PickerOptions() { depthTest = true, rectSelectMode = RectSelectMode.Partial });
-            Assert.IsNotNull(faces, "Face pick returned null");
-            var selection = faces.FirstOrDefault();
-            Assert.IsNotNull(selection);
-            HashSet<Face> selectedElements = selection.Value;
-            Assert.Greater(selectedElements.Count, 0);
-            Assert.Less(selectedElements.Count, selection.Key.faceCount);
+        Cleanup();
+    }
 
-            Cleanup();
-        }
+    [Test]
+    public void PickFaces_DepthTestOff_RectSelectPartial()
+    {
+        Setup();
+        var faces = TestFacePick(new PickerOptions() { depthTest = false, rectSelectMode = RectSelectMode.Partial });
+        Assert.IsNotNull(faces, "Selection is null");
+        var selection = faces.FirstOrDefault();
+        Assert.IsNotNull(selection, "Selection is null");
+        HashSet<Face> selectedElements = selection.Value;
+        Assert.Greater(selectedElements.Count, 0);
+        Assert.AreEqual(selection.Key.faceCount, selectedElements.Count);
+        Cleanup();
+    }
 
-        [Test]
-        public void PickFaces_DepthTestOff_RectSelectComplete()
-        {
-            Setup();
-            var faces = TestFacePick(new PickerOptions() { depthTest = false, rectSelectMode = RectSelectMode.Complete });
-            Assert.IsNotNull(faces, "Selection is null");
-            var selection = faces.FirstOrDefault();
-            Assert.IsNotNull(selection, "Selection is null");
-            HashSet<Face> selectedElements = selection.Value;
-            Assert.Greater(selectedElements.Count, 0);
-            Assert.AreEqual(selection.Key.faceCount, selectedElements.Count);
-            Cleanup();
-        }
+    [Test]
+    public void PickFaces_DepthTestOn_RectSelectPartial()
+    {
+        Setup();
+        var faces = TestFacePick(new PickerOptions() { depthTest = true, rectSelectMode = RectSelectMode.Partial });
+        Assert.IsNotNull(faces, "Face pick returned null");
+        var selection = faces.FirstOrDefault();
+        Assert.IsNotNull(selection);
+        HashSet<Face> selectedElements = selection.Value;
+        Assert.Greater(selectedElements.Count, 0);
+        Assert.Less(selectedElements.Count, selection.Key.faceCount);
 
-        [Test]
-        public void PickFaces_DepthTestOn_RectSelectComplete()
-        {
-            Setup();
-            var faces = TestFacePick(new PickerOptions() { depthTest = true, rectSelectMode = RectSelectMode.Complete });
-            var selection = faces.FirstOrDefault();
-            Assert.IsNotNull(selection);
-            HashSet<Face> selectedElements = selection.Value;
-            Assert.Greater(selectedElements.Count, 0);
-            Assert.Less(selectedElements.Count, selection.Key.faceCount);
+        Cleanup();
+    }
 
-            Cleanup();
-        }
+    [Test]
+    public void PickFaces_DepthTestOff_RectSelectComplete()
+    {
+        Setup();
+        var faces = TestFacePick(new PickerOptions() { depthTest = false, rectSelectMode = RectSelectMode.Complete });
+        Assert.IsNotNull(faces, "Selection is null");
+        var selection = faces.FirstOrDefault();
+        Assert.IsNotNull(selection, "Selection is null");
+        HashSet<Face> selectedElements = selection.Value;
+        Assert.Greater(selectedElements.Count, 0);
+        Assert.AreEqual(selection.Key.faceCount, selectedElements.Count);
+        Cleanup();
+    }
+
+    [Test]
+    public void PickFaces_DepthTestOn_RectSelectComplete()
+    {
+        Setup();
+        var faces = TestFacePick(new PickerOptions() { depthTest = true, rectSelectMode = RectSelectMode.Complete });
+        var selection = faces.FirstOrDefault();
+        Assert.IsNotNull(selection);
+        HashSet<Face> selectedElements = selection.Value;
+        Assert.Greater(selectedElements.Count, 0);
+        Assert.Less(selectedElements.Count, selection.Key.faceCount);
+
+        Cleanup();
     }
 }

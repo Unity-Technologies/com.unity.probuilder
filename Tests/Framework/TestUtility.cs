@@ -12,7 +12,6 @@ using UnityEditor;
 using System.Reflection;
 using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 #endif
-using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Tests.Framework

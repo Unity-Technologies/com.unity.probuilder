@@ -11,12 +11,11 @@ using System.Reflection;
 
 namespace UnityEditor.ProBuilder
 {
-    partial class EditorMeshHandles : IHasPreferences
+    partial class EditorMeshHandles : ScriptableSingleton<EditorMeshHandles>, IHasPreferences
     {
-        const HideFlags k_MeshHideFlags = (HideFlags)(1 | 2 | 4 | 8);
+        const HideFlags k_ResourceHideFlags = HideFlags.HideAndDontSave;
+        const float k_MinLineWidthForGeometryShader = .01f;
 
-        static EditorMeshHandles s_Instance;
-        bool m_Initialized;
         ObjectPool<Mesh> m_MeshPool;
 
         Dictionary<ProBuilderMesh, MeshHandle> m_WireHandles;
@@ -61,6 +60,8 @@ namespace UnityEditor.ProBuilder
         [UserSettingBlock("Graphics")]
         static void HandleColorPreferences(string searchContext)
         {
+            EditorGUI.BeginChangeCheck();
+
             s_UseUnityColors.value = SettingsGUILayout.SettingsToggle("Use Unity Colors", s_UseUnityColors, searchContext);
 
             if (!s_UseUnityColors.value)
@@ -79,23 +80,12 @@ namespace UnityEditor.ProBuilder
             }
 
             s_DepthTestHandles.value = SettingsGUILayout.SettingsToggle("Depth Test", s_DepthTestHandles, searchContext);
-
             s_VertexPointSize.value = SettingsGUILayout.SettingsSlider("Vertex Size", s_VertexPointSize, 1f, 10f, searchContext);
+            s_EdgeLineSize.value = SettingsGUILayout.SettingsSlider("Line Size", s_EdgeLineSize, 0f, 10f, searchContext);
+            s_WireframeLineSize.value = SettingsGUILayout.SettingsSlider("Wireframe Size", s_WireframeLineSize, 0f, 10f, searchContext);
 
-            bool geoLine = BuiltinMaterials.geometryShadersSupported;
-
-            if (geoLine)
-            {
-                s_EdgeLineSize.value = SettingsGUILayout.SettingsSlider("Line Size", s_EdgeLineSize, 0f, 3f, searchContext);
-                s_WireframeLineSize.value = SettingsGUILayout.SettingsSlider("Wireframe Size", s_WireframeLineSize, 0f, 3f, searchContext);
-            }
-            else
-            {
-                GUI.enabled = false;
-                SettingsGUILayout.SearchableSlider("Line Size", 0f, 0f, 3f, searchContext);
-                SettingsGUILayout.SearchableSlider("Wireframe Size", 0f, 0f, 3f, searchContext);
-                GUI.enabled = true;
-            }
+            if(EditorGUI.EndChangeCheck())
+                ProBuilderEditor.UpdateMeshHandles(true);
         }
 
         static Color s_FaceSelectedColor;
@@ -106,30 +96,26 @@ namespace UnityEditor.ProBuilder
         static Color s_VertexSelectedColor;
         static Color s_VertexUnselectedColor;
 
+        // Edge, vert, wire, and line materials Can be either point to a geometry shader or an alternative for devices
+        // without geometry shader support
         Material m_EdgeMaterial;
-        // Can be either point geo shader or the older vertex shader
         Material m_VertMaterial;
         Material m_WireMaterial;
         Material m_LineMaterial;
         Material m_FaceMaterial;
+        Material m_GlWireMaterial;
+
+        // Force line rendering to use GL.LINE without geometry shader billboards
+        bool m_ForceEdgeLinesGL;
+        bool m_ForceWireframeLinesGL;
 
         internal static float dotCapSize
         {
             get { return s_VertexPointSize * .0125f; }
         }
 
-        EditorMeshHandles()
+        void OnEnable()
         {
-            Init();
-        }
-
-        void Init()
-        {
-            if (m_Initialized)
-                return;
-
-            m_Initialized = true;
-
             m_MeshPool = new ObjectPool<Mesh>(0, 8, CreateMesh, DestroyMesh);
             m_WireHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
             m_VertexHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
@@ -137,41 +123,34 @@ namespace UnityEditor.ProBuilder
             m_SelectedEdgeHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
             m_SelectedVertexHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
 
-            var lineShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.lineShader : BuiltinMaterials.wireShader;
+            var lineShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.lineShader : BuiltinMaterials.lineShaderMetal;
             var vertShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.pointShader : BuiltinMaterials.dotShader;
 
             m_EdgeMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::LineMaterial");
             m_WireMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::WireMaterial");
             m_LineMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::GeneralUseLineMaterial");
             m_VertMaterial = CreateMaterial(Shader.Find(vertShader), "ProBuilder::VertexMaterial");
-
+            m_GlWireMaterial = CreateMaterial(Shader.Find(BuiltinMaterials.faceShader), "ProBuilder::GLWire");
             m_FaceMaterial = CreateMaterial(Shader.Find(BuiltinMaterials.faceShader), "ProBuilder::FaceMaterial");
+
             m_FaceMaterial.SetFloat("_Dither", (s_UseUnityColors || s_DitherFaceHandle) ? 1f : 0f);
 
             ReloadPreferences();
         }
 
-        static EditorMeshHandles Get()
-        {
-            if(s_Instance == null)
-                s_Instance = new EditorMeshHandles();
-            return s_Instance;
-        }
-
-        void DestroyResources()
+        void OnDisable()
         {
             ClearHandles();
             m_MeshPool.Dispose();
-            UObject.DestroyImmediate(m_EdgeMaterial);
-            UObject.DestroyImmediate(m_WireMaterial);
-            UObject.DestroyImmediate(m_VertMaterial);
-            UObject.DestroyImmediate(m_FaceMaterial);
-            m_Initialized = false;
+            DestroyImmediate(m_EdgeMaterial);
+            DestroyImmediate(m_WireMaterial);
+            DestroyImmediate(m_VertMaterial);
+            DestroyImmediate(m_FaceMaterial);
         }
 
         internal static void ResetPreferences()
         {
-            Get().ReloadPreferences();
+            instance.ReloadPreferences();
         }
 
         public void ReloadPreferences()
@@ -204,6 +183,9 @@ namespace UnityEditor.ProBuilder
                 s_VertexUnselectedColor = s_UnselectedVertexColorPref;
             }
 
+            m_ForceEdgeLinesGL = s_EdgeLineSize.value < k_MinLineWidthForGeometryShader;
+            m_ForceWireframeLinesGL = s_WireframeLineSize.value < k_MinLineWidthForGeometryShader;
+
             m_WireMaterial.SetColor("_Color", s_WireframeColor);
             m_WireMaterial.SetInt("_HandleZTest", (int)CompareFunction.LessEqual);
 
@@ -212,13 +194,16 @@ namespace UnityEditor.ProBuilder
 
         static Material CreateMaterial(Shader shader, string materialName)
         {
+            if (shader == null)
+                shader = BuiltinMaterials.defaultMaterial.shader;
+
             Material mat = new Material(shader);
             mat.name = materialName;
-            mat.hideFlags = k_MeshHideFlags;
+            mat.hideFlags = k_ResourceHideFlags;
             return mat;
         }
 
-        Mesh CreateMesh()
+        static Mesh CreateMesh()
         {
             var mesh = new Mesh();
             mesh.name = "EditorMeshHandles.MeshHandle" + mesh.GetInstanceID();
@@ -226,7 +211,7 @@ namespace UnityEditor.ProBuilder
             return mesh;
         }
 
-        void DestroyMesh(Mesh mesh)
+        static void DestroyMesh(Mesh mesh)
         {
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -244,11 +229,6 @@ namespace UnityEditor.ProBuilder
 #endif
 
         public static void DrawSceneSelection(SceneSelection selection)
-        {
-            Get().DrawSceneSelectionInternal(selection);
-        }
-
-        void DrawSceneSelectionInternal(SceneSelection selection)
         {
             var mesh = selection.mesh;
 
@@ -277,9 +257,8 @@ namespace UnityEditor.ProBuilder
             }
             else if (selection.edge != Edge.Empty)
             {
-                using (var drawingScope = new LineDrawingScope(s_PreselectionColor, -1f, CompareFunction.Always))
+                using (var drawingScope = new LineDrawingScope(s_PreselectionColor, mesh.transform.localToWorldMatrix, -1f, CompareFunction.Always))
                 {
-                    GL.MultMatrix(mesh.transform.localToWorldMatrix);
                     drawingScope.DrawLine(positions[selection.edge.a], positions[selection.edge.b]);
                 }
             }
@@ -294,7 +273,7 @@ namespace UnityEditor.ProBuilder
 
         public static void DrawSceneHandles(SelectMode mode)
         {
-            Get().DrawSceneHandlesInternal(mode);
+            instance.DrawSceneHandlesInternal(mode);
         }
 
         void DrawSceneHandlesInternal(SelectMode mode)
@@ -310,29 +289,29 @@ namespace UnityEditor.ProBuilder
                 case SelectMode.Edge:
                 case SelectMode.TextureEdge:
                 {
-                    // render wireframe with edge material in edge mode so that the size change is reflected
-                    Render(m_WireHandles, m_EdgeMaterial, s_EdgeUnselectedColor);
-                    Render(m_SelectedEdgeHandles, m_EdgeMaterial, s_EdgeSelectedColor, s_DepthTestHandles);
+                    // When in Edge mode, use the same material for wireframe
+                    Render(m_WireHandles, m_ForceEdgeLinesGL ? m_GlWireMaterial : m_EdgeMaterial, s_EdgeUnselectedColor, CompareFunction.LessEqual, false);
+                    Render(m_SelectedEdgeHandles, m_ForceEdgeLinesGL ? m_GlWireMaterial : m_EdgeMaterial, s_EdgeSelectedColor, s_DepthTestHandles ? CompareFunction.LessEqual : CompareFunction.Always, true);
                     break;
                 }
                 case SelectMode.Face:
                 case SelectMode.TextureFace:
                 {
-                    Render(m_WireHandles, m_WireMaterial, s_WireframeColor);
+                    Render(m_WireHandles, m_ForceWireframeLinesGL ? m_GlWireMaterial : m_WireMaterial, s_WireframeColor, CompareFunction.LessEqual, false);
                     Render(m_SelectedFaceHandles, m_FaceMaterial, s_FaceSelectedColor, s_DepthTestHandles);
                     break;
                 }
                 case SelectMode.Vertex:
                 case SelectMode.TextureVertex:
                 {
-                    Render(m_WireHandles, m_WireMaterial, s_WireframeColor);
-                    Render(m_VertexHandles, m_VertMaterial, s_VertexUnselectedColor);
+                    Render(m_WireHandles, m_ForceWireframeLinesGL ? m_GlWireMaterial : m_WireMaterial, s_WireframeColor, CompareFunction.LessEqual, false);
+                    Render(m_VertexHandles, m_VertMaterial, s_VertexUnselectedColor, CompareFunction.LessEqual, false);
                     Render(m_SelectedVertexHandles, m_VertMaterial, s_VertexSelectedColor, s_DepthTestHandles);
                     break;
                 }
                 default:
                 {
-                    Render(m_WireHandles, m_WireMaterial, s_WireframeColor);
+                    Render(m_WireHandles, m_ForceWireframeLinesGL ? m_GlWireMaterial : m_WireMaterial, s_WireframeColor, CompareFunction.LessEqual, false);
                     break;
                 }
             }
@@ -340,7 +319,13 @@ namespace UnityEditor.ProBuilder
 
         static void Render(Dictionary<ProBuilderMesh, MeshHandle> handles, Material material, Color color, bool depthTest = true)
         {
-            material.SetInt("_HandleZTest", (int) (depthTest ? CompareFunction.LessEqual : CompareFunction.Always));
+            Render(handles, material, color, depthTest ? CompareFunction.LessEqual : CompareFunction.Always, true);
+        }
+
+        static void Render(Dictionary<ProBuilderMesh, MeshHandle> handles, Material material, Color color, CompareFunction func, bool zWrite)
+        {
+            material.SetInt("_HandleZTest", (int) func);
+            material.SetInt("_HandleZWrite", zWrite ? 1 : 0);
             material.SetColor("_Color", color);
 
             if (material.SetPass(0))
@@ -352,7 +337,7 @@ namespace UnityEditor.ProBuilder
 
         public static void ClearHandles()
         {
-            Get().ClearHandlesInternal();
+            instance.ClearHandlesInternal();
         }
 
         void ClearHandlesInternal()
@@ -364,87 +349,43 @@ namespace UnityEditor.ProBuilder
             ClearHandlesInternal(m_SelectedVertexHandles);
         }
 
-        public static void RebuildSelectedHandles(
-            IEnumerable<ProBuilderMesh> meshes,
-            SelectMode selectionMode,
-            bool selectionOrVertexCountChanged = true)
+        public static void RebuildSelectedHandles( IEnumerable<ProBuilderMesh> meshes, SelectMode selectionMode)
         {
-            Get().RebuildSelectedHandlesInternal(meshes, selectionMode, selectionOrVertexCountChanged);
+            instance.RebuildSelectedHandlesInternal(meshes, selectionMode);
         }
 
-        void RebuildSelectedHandlesInternal(IEnumerable<ProBuilderMesh> meshes, SelectMode selectionMode, bool selectionOrVertexCountChanged = true)
+        void RebuildSelectedHandlesInternal(IEnumerable<ProBuilderMesh> meshes, SelectMode selectionMode)
         {
-            if (!selectionOrVertexCountChanged)
-            {
-                foreach (var handle in m_WireHandles)
-                    handle.Value.mesh.vertices = handle.Key.positionsInternal;
-
-                switch (selectionMode)
-                {
-                    case SelectMode.Vertex:
-                    case SelectMode.TextureVertex:
-                    {
-                        if (BuiltinMaterials.geometryShadersSupported)
-                        {
-                            foreach (var handle in m_VertexHandles)
-                                handle.Value.mesh.vertices = handle.Key.positionsInternal;
-                            foreach (var handle in m_SelectedVertexHandles)
-                                handle.Value.mesh.vertices = handle.Key.positionsInternal;
-                        }
-                        else
-                        {
-                            foreach (var handle in m_VertexHandles)
-                                MeshHandles.CreateVertexMesh(handle.Key, handle.Value.mesh);
-                            foreach (var handle in m_SelectedVertexHandles)
-                                MeshHandles.CreateVertexMesh(handle.Key, handle.Value.mesh, handle.Key.selectedIndexesInternal);
-                        }
-
-                        break;
-                    }
-
-                    case SelectMode.Edge:
-                    case SelectMode.TextureEdge:
-                    {
-                        foreach (var handle in m_SelectedEdgeHandles)
-                            handle.Value.mesh.vertices = handle.Key.positionsInternal;
-                        break;
-                    }
-
-                    case SelectMode.Face:
-                    case SelectMode.TextureFace:
-                    {
-                        foreach (var handle in m_SelectedFaceHandles)
-                            handle.Value.mesh.vertices = handle.Key.positionsInternal;
-                        break;
-                    }
-                }
-
-                return;
-            }
-
             ClearHandles();
 
             foreach (var mesh in meshes)
             {
-                // always do wireframe
-                RebuildMeshHandle(mesh, m_WireHandles, MeshHandles.CreateEdgeMesh);
-
                 switch (selectionMode)
                 {
                     case SelectMode.Vertex:
                     case SelectMode.TextureVertex:
                     {
                         RebuildMeshHandle(mesh, m_VertexHandles, MeshHandles.CreateVertexMesh);
-                        RebuildMeshHandle(mesh, m_SelectedVertexHandles,
-                            (x, y) => { MeshHandles.CreateVertexMesh(x, y, x.selectedIndexesInternal); });
-                        break;
+                        var handle = GetMeshHandle(mesh, m_SelectedVertexHandles);
+                        MeshHandles.CreateVertexMesh(mesh, handle.mesh, mesh.selectedIndexesInternal);
+                        goto default;
                     }
 
                     case SelectMode.Edge:
                     case SelectMode.TextureEdge:
                     {
-                        RebuildMeshHandle(mesh, m_SelectedEdgeHandles,
-                            (x, y) => { MeshHandles.CreateEdgeMesh(x, y, x.selectedEdgesInternal); });
+                        if(m_ForceEdgeLinesGL || BuiltinMaterials.geometryShadersSupported)
+                            RebuildMeshHandle(mesh, m_WireHandles, MeshHandles.CreateEdgeMesh);
+                        else
+                            RebuildMeshHandle(mesh, m_WireHandles, MeshHandles.CreateEdgeBillboardMesh);
+
+                        var handle = GetMeshHandle(mesh, m_SelectedEdgeHandles);
+
+                        if(m_ForceEdgeLinesGL || BuiltinMaterials.geometryShadersSupported)
+                            MeshHandles.CreateEdgeMesh(mesh, handle.mesh, mesh.selectedEdgesInternal);
+                        else
+                            MeshHandles.CreateEdgeBillboardMesh(mesh, handle.mesh, mesh.selectedEdgesInternal);
+
                         break;
                     }
 
@@ -452,42 +393,51 @@ namespace UnityEditor.ProBuilder
                     case SelectMode.TextureFace:
                     {
                         RebuildMeshHandle(mesh, m_SelectedFaceHandles, MeshHandles.CreateFaceMesh);
-                        break;
+                        goto default;
                     }
+
+                    default:
+                        if(m_ForceWireframeLinesGL || BuiltinMaterials.geometryShadersSupported)
+                            RebuildMeshHandle(mesh, m_WireHandles, MeshHandles.CreateEdgeMesh);
+                        else
+                            RebuildMeshHandle(mesh, m_WireHandles, MeshHandles.CreateEdgeBillboardMesh);
+                        break;
                 }
             }
         }
 
-        void RebuildMeshHandle(ProBuilderMesh mesh, Dictionary<ProBuilderMesh, MeshHandle> list, Action<ProBuilderMesh, Mesh> ctor)
+        MeshHandle GetMeshHandle(ProBuilderMesh mesh, Dictionary<ProBuilderMesh, MeshHandle> cache)
         {
             MeshHandle handle;
 
-            if (!list.TryGetValue(mesh, out handle))
+            if (!cache.TryGetValue(mesh, out handle))
             {
-                var m = m_MeshPool.Get();
+                var m = m_MeshPool.Dequeue();
                 handle = new MeshHandle(mesh.transform, m);
-                list.Add(mesh, handle);
+                cache.Add(mesh, handle);
             }
 
+            return handle;
+        }
+
+        void RebuildMeshHandle(ProBuilderMesh mesh, Dictionary<ProBuilderMesh, MeshHandle> list, Action<ProBuilderMesh, Mesh> ctor)
+        {
+            var handle = GetMeshHandle(mesh, list);
             ctor(mesh, handle.mesh);
         }
 
         void ClearHandlesInternal(Dictionary<ProBuilderMesh, MeshHandle> handles)
         {
             foreach (var kvp in handles)
-                m_MeshPool.Put(kvp.Value.mesh);
+                m_MeshPool.Enqueue(kvp.Value.mesh);
             handles.Clear();
         }
 
         void SetMaterialsScaleAttribute()
         {
             m_VertMaterial.SetFloat("_Scale", s_VertexPointSize * EditorGUIUtility.pixelsPerPoint);
-
-            if (BuiltinMaterials.geometryShadersSupported)
-            {
-                m_WireMaterial.SetFloat("_Scale", s_WireframeLineSize * EditorGUIUtility.pixelsPerPoint);
-                m_EdgeMaterial.SetFloat("_Scale", s_EdgeLineSize * EditorGUIUtility.pixelsPerPoint);
-            }
+            m_WireMaterial.SetFloat("_Scale", s_WireframeLineSize * EditorGUIUtility.pixelsPerPoint);
+            m_EdgeMaterial.SetFloat("_Scale", s_EdgeLineSize * EditorGUIUtility.pixelsPerPoint);
         }
     }
 }

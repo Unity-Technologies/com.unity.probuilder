@@ -209,10 +209,10 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Initialize a Face with a set of triangles and default values.
         /// </summary>
-        /// <param name="array">The new triangles array.</param>
-        public Face(int[] array)
+        /// <param name="indices">The new triangles array.</param>
+        public Face(IEnumerable<int> indices)
         {
-            SetIndexes(array);
+            SetIndexes(indices);
             m_Uv = AutoUnwrapSettings.tile;
             m_Material = BuiltinMaterials.defaultMaterial;
             m_SmoothingGroup = Smoothing.smoothingGroupNone;
@@ -234,7 +234,7 @@ namespace UnityEngine.ProBuilder
             m_SubmeshIndex = 0;
         }
 
-        internal Face(int[] triangles, int submeshIndex, AutoUnwrapSettings u, int smoothing, int texture, int element, bool manualUVs)
+        internal Face(IEnumerable<int> triangles, int submeshIndex, AutoUnwrapSettings u, int smoothing, int texture, int element, bool manualUVs)
         {
             SetIndexes(triangles);
             m_Uv = new AutoUnwrapSettings(u);

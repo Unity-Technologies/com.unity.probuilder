@@ -23,9 +23,6 @@ namespace UnityEditor.ProBuilder
         // Match the value set in RectSelection.cs
         const float k_MouseDragThreshold = 6f;
 
-        //Off pointer multiplier is a percentage of the picking distance
-        const float k_OffPointerMultiplierPercent = 0.1f;
-
         /// <value>
         /// Raised any time the ProBuilder editor refreshes the selection. This is called every frame when interacting with mesh elements, and after any mesh operation.
         /// </value>
@@ -68,9 +65,6 @@ namespace UnityEditor.ProBuilder
 
         [UserSetting("Toolbar", "Toolbar Location", "Where the Object, Face, Edge, and Vertex toolbar will be shown in the Scene View.")]
         static Pref<SceneToolbarLocation> s_SceneToolbarLocation = new Pref<SceneToolbarLocation>("editor.sceneToolbarLocation", SceneToolbarLocation.UpperCenter, SettingsScope.User);
-
-        [UserSetting]
-        static Pref<float> s_PickingDistance = new Pref<float>("picking.pickingDistance", 128f, SettingsScope.User);
 
         static Pref<bool> s_WindowIsFloating = new Pref<bool>("UnityEngine.ProBuilder.ProBuilderEditor-isUtilityWindow", false, SettingsScope.Project);
         static Pref<bool> m_BackfaceSelectEnabled = new Pref<bool>("editor.backFaceSelectEnabled", false);
@@ -238,14 +232,6 @@ namespace UnityEditor.ProBuilder
 
         Stack<SelectMode> m_SelectModeHistory = new Stack<SelectMode>();
 
-        [UserSettingBlock(UserSettingsProvider.developerModeCategory)]
-        static void PickingPreferences(string searchContext)
-        {
-            s_PickingDistance.value = SettingsGUILayout.SearchableSlider(
-                new GUIContent("Picking Distance", "Distance to an object before it's considered hovered."),
-                s_PickingDistance.value, 1, 150, searchContext);
-        }
-
         internal static void PushSelectMode(SelectMode mode)
         {
             s_Instance.m_SelectModeHistory.Push(selectMode);
@@ -403,12 +389,10 @@ namespace UnityEditor.ProBuilder
 
         void LoadSettings()
         {
-            EditorMeshHandles.ResetPreferences();
+            EditorApplication.delayCall += EditorMeshHandles.ResetPreferences;
 
             m_ScenePickerPreferences = new ScenePickerPreferences()
             {
-                offPointerMultiplier = s_PickingDistance * k_OffPointerMultiplierPercent,
-                maxPointerDistance = s_PickingDistance,
                 cullMode = m_BackfaceSelectEnabled ? CullingMode.None : CullingMode.Back,
                 selectionModifierBehavior = m_SelectModifierBehavior,
                 rectSelectMode = m_DragSelectRectMode
@@ -641,9 +625,8 @@ namespace UnityEditor.ProBuilder
             {
                 m_Hovering.CopyTo(m_HoveringPrevious);
 
-                if (GUIUtility.hotControl == 0)
-                    EditorSceneViewPicker.MouseRayHitTest(m_CurrentEvent.mousePosition, selectMode, m_ScenePickerPreferences, m_Hovering);
-                else
+                if (GUIUtility.hotControl != 0 ||
+                    EditorSceneViewPicker.MouseRayHitTest(m_CurrentEvent.mousePosition, selectMode, m_ScenePickerPreferences, m_Hovering) > ScenePickerPreferences.maxPointerDistance)
                     m_Hovering.Clear();
 
                 if (!m_Hovering.Equals(m_HoveringPrevious))
@@ -652,6 +635,38 @@ namespace UnityEditor.ProBuilder
 
             if (Tools.current == Tool.View)
                 return;
+
+            switch (m_CurrentEvent.type)
+            {
+                case EventType.ValidateCommand:
+                case EventType.ExecuteCommand:
+                    bool execute = m_CurrentEvent.type == EventType.ExecuteCommand;
+                    switch (m_CurrentEvent.commandName)
+                    {
+                        case "SelectAll":
+                            if (execute)
+                            {
+                                SelectAll();
+                            }
+                            m_CurrentEvent.Use();
+                            break;
+                        case "DeselectAll":
+                            if (execute)
+                            {
+                                DeselectAll();
+                            }
+                            m_CurrentEvent.Use();
+                            break;
+                        case "InvertSelection":
+                            if (execute)
+                            {
+                                InvertSelection();
+                            }
+                            m_CurrentEvent.Use();
+                            break;
+                    }
+                    break;
+            }
 
             // Overrides the toolbar transform tools
             if (Tools.current != Tool.None && Tools.current != m_CurrentTool)
@@ -670,15 +685,20 @@ namespace UnityEditor.ProBuilder
             if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent) || m_CurrentEvent.isKey)
             {
                 m_IsDragging = false;
+
+                if (GUIUtility.hotControl == m_DefaultControl)
+                    GUIUtility.hotControl = 0;
+
                 return;
             }
 
             // This prevents us from selecting other objects in the scene,
             // and allows for the selection of faces / vertices.
             m_DefaultControl = GUIUtility.GetControlID(FocusType.Passive);
-            HandleUtility.AddDefaultControl(m_DefaultControl);
+            if (Event.current.type == EventType.Layout)
+                HandleUtility.AddDefaultControl(m_DefaultControl);
 
-            if (m_CurrentEvent.type == EventType.MouseDown)
+            if (m_CurrentEvent.type == EventType.MouseDown && HandleUtility.nearestControl == m_DefaultControl)
             {
                 // double clicking object
                 if (m_CurrentEvent.clickCount > 1)
@@ -690,9 +710,11 @@ namespace UnityEditor.ProBuilder
                 // readyForMouseDrag prevents a bug wherein after ending a drag an errant
                 // MouseDrag event is sent with no corresponding MouseDown/MouseUp event.
                 m_IsReadyForMouseDrag = true;
+
+                GUIUtility.hotControl = m_DefaultControl;
             }
 
-            if (m_CurrentEvent.type == EventType.MouseDrag && m_IsReadyForMouseDrag)
+            if (m_CurrentEvent.type == EventType.MouseDrag && m_IsReadyForMouseDrag && GUIUtility.hotControl == m_DefaultControl)
             {
                 if (!m_IsDragging && Vector2.Distance(m_CurrentEvent.mousePosition, m_InitialMousePosition) > k_MouseDragThreshold)
                 {
@@ -712,10 +734,15 @@ namespace UnityEditor.ProBuilder
 
                 if (m_WasDoubleClick)
                     m_WasDoubleClick = false;
+
+                if (GUIUtility.hotControl == m_DefaultControl)
+                    GUIUtility.hotControl = 0;
             }
 
-            if (m_CurrentEvent.type == EventType.MouseUp)
+            if (m_CurrentEvent.type == EventType.MouseUp && GUIUtility.hotControl == m_DefaultControl)
             {
+                GUIUtility.hotControl = 0;
+
                 if (m_WasDoubleClick)
                 {
                     m_WasDoubleClick = false;
@@ -740,9 +767,167 @@ namespace UnityEditor.ProBuilder
                             UVEditor.instance.ResetUserPivot();
 
                         EditorSceneViewPicker.DoMouseDrag(m_MouseDragRect, selectMode, m_ScenePickerPreferences);
+
+                        if (GUIUtility.hotControl == m_DefaultControl)
+                            GUIUtility.hotControl = 0;
                     }
                 }
             }
+        }
+
+        void SelectAll()
+        {
+            if (MeshSelection.selectedObjectCount < 1)
+                return;
+
+            UndoUtility.RecordSelection("Select all");
+
+            switch (selectMode)
+            {
+                case SelectMode.Vertex:
+                    foreach (var mesh in MeshSelection.topInternal)
+                    {
+                        var sharedIndexes = mesh.sharedVerticesInternal;
+                        var all = new List<int>();
+
+                        for (var i = 0; i < sharedIndexes.Length; i++)
+                        {
+                            all.Add(sharedIndexes[i][0]);
+                        }
+
+                        mesh.SetSelectedVertices(all);
+                    }
+                    break;
+
+                case SelectMode.Face:
+                case SelectMode.TextureFace:
+                    foreach (var mesh in MeshSelection.topInternal)
+                    {
+                        mesh.SetSelectedFaces(mesh.facesInternal);
+                    }
+                    break;
+
+                case SelectMode.Edge:
+
+                    foreach (var mesh in MeshSelection.topInternal)
+                    {
+                        var universalEdges = mesh.GetSharedVertexHandleEdges(mesh.facesInternal.SelectMany(x => x.edges)).ToArray();
+                        var all = new Edge[universalEdges.Length];
+
+                        for (var n = 0; n < universalEdges.Length; n++)
+                            all[n] = new Edge(mesh.sharedVerticesInternal[universalEdges[n].a][0], mesh.sharedVerticesInternal[universalEdges[n].b][0]);
+
+                        mesh.SetSelectedEdges(all);
+                    }
+                    break;
+            }
+
+            Refresh();
+            SceneView.RepaintAll();
+        }
+
+        void DeselectAll()
+        {
+            if (MeshSelection.selectedObjectCount < 1)
+                return;
+
+            UndoUtility.RecordSelection("Deselect All");
+
+            switch (selectMode)
+            {
+                case SelectMode.Vertex:
+                    foreach (var mesh in MeshSelection.topInternal)
+                    {
+                        mesh.SetSelectedVertices(null);
+                    }
+                    break;
+
+                case SelectMode.Face:
+                case SelectMode.TextureFace:
+                    foreach (var mesh in MeshSelection.topInternal)
+                    {
+                        mesh.SetSelectedFaces((IEnumerable<Face>) null);
+                    }
+                    break;
+
+                case SelectMode.Edge:
+
+                    foreach (var mesh in MeshSelection.topInternal)
+                    {
+                        mesh.SetSelectedEdges(null);
+                    }
+                    break;
+            }
+
+            Refresh();
+            SceneView.RepaintAll();
+        }
+
+        void InvertSelection()
+        {
+            if (MeshSelection.selectedObjectCount < 1)
+                return;
+
+            UndoUtility.RecordSelection("Invert Selection");
+
+            switch (selectMode)
+            {
+                case SelectMode.Vertex:
+                    foreach (var mesh in MeshSelection.topInternal)
+                    {
+                        var sharedIndexes = mesh.sharedVerticesInternal;
+                        var selectedSharedIndexes = new List<int>();
+
+                        foreach (int i in mesh.selectedIndexesInternal)
+                            selectedSharedIndexes.Add(mesh.GetSharedVertexHandle(i));
+
+                        var inverse = new List<int>();
+
+                        for (int i = 0; i < sharedIndexes.Length; i++)
+                        {
+                            if (!selectedSharedIndexes.Contains(i))
+                                inverse.Add(sharedIndexes[i][0]);
+                        }
+
+                        mesh.SetSelectedVertices(inverse.ToArray());
+                    }
+
+                    break;
+
+                case SelectMode.Face:
+                case SelectMode.TextureFace:
+                    foreach (var mesh in MeshSelection.topInternal)
+                    {
+                        var inverse = mesh.facesInternal.Where(x => !mesh.selectedFacesInternal.Contains(x));
+                        mesh.SetSelectedFaces(inverse.ToArray());
+                    }
+
+                    break;
+
+                case SelectMode.Edge:
+
+                    foreach (var mesh in MeshSelection.topInternal)
+                    {
+                        var universalEdges =
+                            mesh.GetSharedVertexHandleEdges(mesh.facesInternal.SelectMany(x => x.edges)).ToArray();
+                        var universalSelectedEdges =
+                            EdgeUtility.GetSharedVertexHandleEdges(mesh, mesh.selectedEdges).Distinct();
+                        var inverseUniversal =
+                            System.Array.FindAll(universalEdges, x => !universalSelectedEdges.Contains(x));
+                        var inverse = new Edge[inverseUniversal.Length];
+
+                        for (var n = 0; n < inverseUniversal.Length; n++)
+                            inverse[n] = new Edge(mesh.sharedVerticesInternal[inverseUniversal[n].a][0],
+                                mesh.sharedVerticesInternal[inverseUniversal[n].b][0]);
+
+                        mesh.SetSelectedEdges(inverse);
+                    }
+
+                    break;
+            }
+
+            Refresh();
+            SceneView.RepaintAll();
         }
 
         void DoubleClick(Event e)
@@ -1064,7 +1249,7 @@ namespace UnityEditor.ProBuilder
 
             try
             {
-                EditorMeshHandles.RebuildSelectedHandles(MeshSelection.topInternal, selectMode, selectionOrVertexCountChanged);
+                EditorMeshHandles.RebuildSelectedHandles(MeshSelection.topInternal, selectMode);
             }
             catch
             {
@@ -1182,7 +1367,7 @@ namespace UnityEditor.ProBuilder
                     continue;
 
                 var indexes = mesh.GetCoincidentVertices(mesh.selectedIndexesInternal);
-                ProGridsSnapping.SnapVertices(mesh, indexes, Vector3.one * snapVal);
+                ProBuilderSnapping.SnapVertices(mesh, indexes, Vector3.one * snapVal);
 
                 mesh.ToMesh();
                 mesh.Refresh();
@@ -1194,7 +1379,7 @@ namespace UnityEditor.ProBuilder
 
         void ProGridsToolbarOpen(bool menuOpen)
         {
-            bool active = ProGridsInterface.ProGridsActive();
+            bool active = ProGridsInterface.IsActive();
             m_SceneInfoRect.y = active && !menuOpen ? 28 : 10;
             m_SceneInfoRect.x = active ? (menuOpen ? 64 : 8) : 10;
         }

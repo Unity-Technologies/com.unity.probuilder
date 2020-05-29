@@ -119,10 +119,8 @@ namespace UnityEditor.ProBuilder.Actions
                 else
                     return ActionResult.UserCanceled;
             }
-            else
-            {
-                return DoProBuilderize(all, settings);
-            }
+
+            return DoProBuilderize(all, settings);
         }
 
         [System.Obsolete("Please use DoProBuilderize(IEnumerable<MeshFilter>, pb_MeshImporter.Settings")]
@@ -148,54 +146,50 @@ namespace UnityEditor.ProBuilder.Actions
             IEnumerable<MeshFilter> selected,
             MeshImportSettings settings)
         {
+
             int i = 0;
             float count = selected.Count();
 
-            foreach (var mf in selected)
+            // Return immediately from the action so that the GUI can resolve. Displaying a progress bar interrupts the
+            // event loop causing a layoutting error.
+            EditorApplication.delayCall += () =>
             {
-                if (mf.sharedMesh == null)
-                    continue;
-
-                GameObject go = mf.gameObject;
-                Mesh originalMesh = mf.sharedMesh;
-
-                try
+                foreach (var mf in selected)
                 {
-                    ProBuilderMesh pb = Undo.AddComponent<ProBuilderMesh>(go);
+                    if (mf.sharedMesh == null)
+                        continue;
 
-                    MeshImporter meshImporter = new MeshImporter(pb);
-                    meshImporter.Import(go, settings);
+                    GameObject go = mf.gameObject;
+                    Mesh sourceMesh = mf.sharedMesh;
+                    Material[] sourceMaterials = go.GetComponent<MeshRenderer>()?.sharedMaterials;
 
-                    // if this was previously a pb_Object, or similarly any other instance asset, destroy it.
-                    // if it is backed by saved asset, leave the mesh asset alone but assign a new mesh to the
-                    // renderer so that we don't modify the asset.
-                    if (string.IsNullOrEmpty(AssetDatabase.GetAssetPath(originalMesh)))
-                        Undo.DestroyObjectImmediate(originalMesh);
-                    else
-                        go.GetComponent<MeshFilter>().sharedMesh = new Mesh();
+                    try
+                    {
+                        var destination = Undo.AddComponent<ProBuilderMesh>(go);
+                        var meshImporter = new MeshImporter(sourceMesh, sourceMaterials, destination);
+                        meshImporter.Import(settings);
 
-                    pb.ToMesh();
-                    pb.Refresh();
-                    pb.Optimize();
+                        destination.Rebuild();
+                        destination.Optimize();
 
-                    i++;
-                }
-                catch (System.Exception e)
-                {
-                    Debug.LogWarning("Failed ProBuilderizing: " + go.name + "\n" + e.ToString());
+                        i++;
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogWarning("Failed ProBuilderizing: " + go.name + "\n" + e.ToString());
+                    }
+
+                    UnityEditor.EditorUtility.DisplayProgressBar("ProBuilderizing", mf.gameObject.name, i / count);
                 }
 
-                UnityEditor.EditorUtility.DisplayProgressBar("ProBuilderizing", mf.gameObject.name, i / count);
-            }
-
-            UnityEditor.EditorUtility.ClearProgressBar();
-            MeshSelection.OnObjectSelectionChanged();
-            ProBuilderEditor.Refresh();
+                UnityEditor.EditorUtility.ClearProgressBar();
+                MeshSelection.OnObjectSelectionChanged();
+                ProBuilderEditor.Refresh();
+            };
 
             if (i < 1)
                 return new ActionResult(ActionResult.Status.Canceled, "Nothing Selected");
-            else
-                return new ActionResult(ActionResult.Status.Success, "ProBuilderize " + i + (i > 1 ? " Objects" : " Object").ToString());
+            return new ActionResult(ActionResult.Status.Success, "ProBuilderize " + i + (i > 1 ? " Objects" : " Object").ToString());
         }
     }
 }

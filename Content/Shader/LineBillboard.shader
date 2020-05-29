@@ -35,7 +35,9 @@ Shader "Hidden/ProBuilder/LineBillboard"
             #pragma vertex vert
             #pragma geometry geo
             #pragma fragment frag
+            #pragma exclude_renderers metal
             #include "UnityCG.cginc"
+            #include "ProBuilderCG.cginc"
 
             struct appdata
             {
@@ -49,30 +51,8 @@ Shader "Hidden/ProBuilder/LineBillboard"
                 fixed4 color : COLOR;
             };
 
-            // Is the camera in orthographic mode? (1 yes, 0 no)
-            #define ORTHO (1 - UNITY_MATRIX_P[3][3])
-
-            // How far to pull vertices towards camera in orthographic mode
-            const float ORTHO_CAM_OFFSET = .0001;
             float _Scale;
             float4 _Color;
-
-            float4 ClipToScreen(float4 v)
-            {
-                v.xy /= v.w;
-                v.xy = v.xy * .5 + .5;
-                v.xy *= _ScreenParams.xy;
-                return v;
-            }
-
-            float4 ScreenToClip(float4 v)
-            {
-                v.z -= ORTHO_CAM_OFFSET * ORTHO;
-                v.xy /= _ScreenParams.xy;
-                v.xy = (v.xy - .5) / .5;
-                v.xy *= v.w;
-                return v;
-            }
 
             v2f vert (appdata v)
             {
@@ -121,4 +101,6 @@ Shader "Hidden/ProBuilder/LineBillboard"
             ENDCG
         }
     }
+
+    Fallback Off
 }

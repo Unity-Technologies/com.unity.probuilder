@@ -93,22 +93,25 @@ namespace UnityEngine.ProBuilder.MeshOperations
             meshTarget.SetVertices(vertices);
             meshTarget.faces = faces;
             meshTarget.sharedVertices = sharedVertices;
-            meshTarget.sharedVertices = sharedTextures != null ? sharedTextures.ToArray() : null;
+            meshTarget.sharedTextures = sharedTextures != null ? sharedTextures.ToArray() : null;
             meshTarget.renderer.sharedMaterials = materialMap.ToArray();
             meshTarget.ToMesh();
             meshTarget.Refresh();
             UVEditing.SetAutoAndAlignUnwrapParamsToUVs(meshTarget, autoUvFaces);
 
+            MeshValidation.EnsureMeshIsValid(meshTarget, out int removedVertices);
+
             var returnedMesh = new List<ProBuilderMesh>() { meshTarget };
             if (remainderMeshContributors.Count > 1)
             {
                 var newMeshes = CombineToNewMeshes(remainderMeshContributors);
-                foreach(var mesh in newMeshes)
+                foreach (var mesh in newMeshes)
                 {
+                    MeshValidation.EnsureMeshIsValid(mesh, out removedVertices);
                     returnedMesh.Add(mesh);
                 }
             }
-            else if(remainderMeshContributors.Count == 1)
+            else if (remainderMeshContributors.Count == 1)
             {
                 returnedMesh.Add(remainderMeshContributors[0]);
             }
@@ -189,7 +192,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
                     else
                         vertices.Add(worldVertex);
                 }
-
 
                 foreach (var face in meshFaces)
                 {

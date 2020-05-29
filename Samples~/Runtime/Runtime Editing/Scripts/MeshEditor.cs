@@ -14,12 +14,14 @@ namespace ProBuilder.Examples
 
         class MeshState
         {
+            public ProBuilderMesh mesh;
             public Vector3[] vertices;
             public Vector3[] origins;
             public List<int> indices;
 
             public MeshState(ProBuilderMesh mesh, IList<int> selectedIndices)
             {
+                this.mesh = mesh;
                 vertices = mesh.positions.ToArray();
                 indices = mesh.GetCoincidentVertices(selectedIndices);
                 origins = new Vector3[indices.Count];
@@ -108,7 +110,7 @@ namespace ProBuilder.Examples
 
         void BeginDrag()
         {
-            if (m_DragState.active)
+            if (m_DragState.active || m_Selection.mesh == null || m_Selection.face == null)
                 return;
 
             m_DragState.active = true;
@@ -133,19 +135,19 @@ namespace ProBuilder.Examples
         {
             var distance = GetDragDistance() - m_DragState.offset;
 
+            var mesh = m_Selection.mesh;
             var indices = m_DragState.meshState.indices;
             var vertices = m_DragState.meshState.vertices;
             var origins = m_DragState.meshState.origins;
             // Constraint is in world coordinates, but we need model space when applying changes to mesh values.
-            var direction = m_Selection.mesh.transform.InverseTransformDirection(m_DragState.constraint.direction);
+            var direction = mesh.transform.InverseTransformDirection(m_DragState.constraint.direction);
 
             for (int i = 0, c = indices.Count; i < c; i++)
                 vertices[indices[i]] = origins[i] + direction * distance;
 
-            m_Selection.mesh.positions = vertices;
-
-            m_Selection.mesh.ToMesh();
-            m_Selection.mesh.Refresh();
+            mesh.positions = vertices;
+            mesh.ToMesh();
+            mesh.Refresh();
         }
 
         float GetDragDistance()

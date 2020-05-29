@@ -13,18 +13,17 @@ namespace UnityEditor.ProBuilder
         static SettingsProvider CreateSettingsProvider()
         {
             var provider = new UserSettingsProvider(k_PreferencesPath,
-                    ProBuilderSettings.instance,
-                    new[] { typeof(ProBuilderSettingsProvider).Assembly });
+                ProBuilderSettings.instance,
+                new[] { typeof(ProBuilderSettingsProvider).Assembly });
 
             ProBuilderSettings.instance.afterSettingsSaved += () =>
-                {
-                    if (ProBuilderEditor.instance != null)
-                        ProBuilderEditor.ReloadSettings();
-                };
+            {
+                if(ProBuilderEditor.instance != null)
+                    ProBuilderEditor.ReloadSettings();
+            };
 
             return provider;
         }
-
 #else
 
         [NonSerialized]

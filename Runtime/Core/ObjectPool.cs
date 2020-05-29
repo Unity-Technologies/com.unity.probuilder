@@ -33,14 +33,14 @@ namespace UnityEngine.ProBuilder
                 m_Pool.Enqueue(constructor());
         }
 
-        public T Get()
+        public T Dequeue()
         {
             if (m_Pool.Count > 0)
                 return m_Pool.Dequeue();
             return constructor();
         }
 
-        public void Put(T obj)
+        public void Enqueue(T obj)
         {
             if (m_Pool.Count < desiredSize)
                 m_Pool.Enqueue(obj);

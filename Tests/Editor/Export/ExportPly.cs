@@ -4,34 +4,32 @@ using UnityEngine;
 using UnityEditor.ProBuilder;
 using NUnit.Framework;
 using System.Threading;
+using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Tests.Framework;
 
-namespace UnityEngine.ProBuilder.EditorTests.Export
+class ExportPly : TemporaryAssetTest
 {
-    class ExportPly : TemporaryAssetTest
+    [Test]
+    public static void NumbersAreCultureInvariant()
     {
-        [Test]
-        public static void NumbersAreCultureInvariant()
+        var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var current = Thread.CurrentThread.CurrentCulture;
+
+        try
         {
-            var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
-            var current = Thread.CurrentThread.CurrentCulture;
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("de-DE");
 
-            try
+            string ply;
+
+            if (PlyExporter.Export(new ProBuilderMesh[] { cube }, out ply))
             {
-                Thread.CurrentThread.CurrentCulture = new CultureInfo("de-DE");
-
-                string ply;
-
-                if (PlyExporter.Export(new ProBuilderMesh[] { cube }, out ply))
-                {
-                    Assert.IsFalse(ply.Any(x => x.Equals(',')));
-                }
+                Assert.IsFalse(ply.Any(x => x.Equals(',')));
             }
-            finally
-            {
-                Thread.CurrentThread.CurrentCulture = current;
-                UnityEngine.Object.DestroyImmediate(cube);
-            }
+        }
+        finally
+        {
+            Thread.CurrentThread.CurrentCulture = current;
+            UnityEngine.Object.DestroyImmediate(cube);
         }
     }
 }

@@ -34,6 +34,7 @@ Shader "Hidden/ProBuilder/PointBillboard"
                 #pragma vertex vert
                 #pragma fragment frag
                 #pragma geometry geo
+                #pragma exclude_renderers metal
                 #include "UnityCG.cginc"
 
                 struct appdata
@@ -124,4 +125,6 @@ Shader "Hidden/ProBuilder/PointBillboard"
             ENDCG
         }
     }
+
+    Fallback Off
 }

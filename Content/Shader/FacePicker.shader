@@ -4,7 +4,7 @@ Shader "Hidden/ProBuilder/FacePicker"
 {
     SubShader
     {
-        Tags { "ProBuilderPicker"="Base" }
+        Tags { "ProBuilderPicker"="Base"}
         Lighting Off
         ZTest LEqual
         ZWrite On

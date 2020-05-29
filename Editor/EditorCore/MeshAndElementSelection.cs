@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using PHandleUtility = UnityEngine.ProBuilder.HandleUtility;
 
 namespace UnityEditor.ProBuilder
 {
@@ -24,10 +25,10 @@ namespace UnityEditor.ProBuilder
             get { return m_ElementGroups; }
         }
 
-        public MeshAndElementSelection(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation, bool collectCoincidentIndices)
+        public MeshAndElementSelection(ProBuilderMesh mesh, bool collectCoincidentIndices)
         {
             m_Mesh = mesh;
-            m_ElementGroups = ElementGroup.GetElementGroups(mesh, pivot, orientation, collectCoincidentIndices);
+            m_ElementGroups = ElementGroup.GetElementGroups(mesh, collectCoincidentIndices);
         }
     }
 
@@ -38,7 +39,7 @@ namespace UnityEditor.ProBuilder
         Quaternion m_Rotation;
 
         /// <value>
-        /// Center of this selection in world space.
+        /// The pivot of this selection in world space.
         /// </value>
         public Vector3 position
         {
@@ -46,7 +47,7 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <value>
-        /// Rotation of this selection in world space.
+        /// The rotation of this element group in world space.
         /// </value>
         public Quaternion rotation
         {
@@ -58,180 +59,68 @@ namespace UnityEditor.ProBuilder
             get { return m_Indices; }
         }
 
-        public ElementGroup(List<int> indices, Vector3 position, Quaternion rotation)
+        public ElementGroup(List<int> indices, Vector3 pivot, Quaternion rotation)
         {
             m_Indices = indices;
-
-            m_Position = position;
+            m_Position = pivot;
             m_Rotation = rotation;
         }
 
-        internal static List<int> GetSelectedIndicesForSelectMode(ProBuilderMesh mesh, SelectMode mode, bool collectCoincident)
-        {
-            if (mode.ContainsFlag(SelectMode.Face | SelectMode.TextureFace))
-            {
-                List<int> indices = new List<int>();
-
-                if (collectCoincident)
-                    mesh.GetCoincidentVertices(mesh.selectedFacesInternal, indices);
-                else
-                    Face.GetDistinctIndices(mesh.selectedFacesInternal, indices);
-
-                return indices;
-            }
-            else if(mode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
-            {
-                List<int> indices = new List<int>();
-
-                if (collectCoincident)
-                    mesh.GetCoincidentVertices(mesh.selectedEdgesInternal, indices);
-                else
-                    Edge.GetIndices(mesh.selectedEdgesInternal, indices);
-
-                return indices;
-            }
-
-            return collectCoincident
-                ? mesh.GetCoincidentVertices(mesh.selectedIndexesInternal)
-                : new List<int>(mesh.selectedIndexesInternal);
-        }
-
-        public static List<ElementGroup> GetElementGroups(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation, bool collectCoincident)
+        public static List<ElementGroup> GetElementGroups(ProBuilderMesh mesh, bool collectCoincident)
         {
             var groups = new List<ElementGroup>();
-            var trs = mesh.transform.localToWorldMatrix;
             var selectMode = ProBuilderEditor.selectMode;
 
-            switch (pivot)
+            if (selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.TextureVertex))
             {
-                case PivotPoint.IndividualOrigins:
+                foreach (var list in GetVertexSelectionGroups(mesh, collectCoincident))
                 {
-                    if (selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.TextureVertex))
-                    {
-                        foreach (var list in GetVertexSelectionGroups(mesh, collectCoincident))
-                        {
-                            var bounds = Math.GetBounds(mesh.positionsInternal, list);
-                            var rot = UnityEngine.ProBuilder.HandleUtility.GetVertexRotation(mesh, orientation, list);
-                            groups.Add(new ElementGroup(list, trs.MultiplyPoint3x4(bounds.center), rot));
-                        }
-                    }
-                    else if (selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
-                    {
-                        foreach (var list in GetEdgeSelectionGroups(mesh))
-                        {
-                            var bounds = Math.GetBounds(mesh.positionsInternal, list);
-                            var rot = UnityEngine.ProBuilder.HandleUtility.GetEdgeRotation(mesh, orientation, list);
-
-                            List<int> indices;
-
-                            if (collectCoincident)
-                            {
-                                indices = new List<int>();
-                                mesh.GetCoincidentVertices(list, indices);
-                            }
-                            else
-                            {
-                                indices = list.SelectMany(x => new int[] { x.a, x.b }).ToList();
-                            }
-
-                            groups.Add(new ElementGroup(indices, trs.MultiplyPoint3x4(bounds.center), rot));
-                        }
-                    }
-                    else if (selectMode.ContainsFlag(SelectMode.Face | SelectMode.TextureFace))
-                    {
-                        foreach (var list in GetFaceSelectionGroups(mesh))
-                        {
-                            var bounds = Math.GetBounds(mesh.positionsInternal, list);
-                            var rot = UnityEngine.ProBuilder.HandleUtility.GetFaceRotation(mesh, orientation, list);
-                            List<int> indices;
-
-                            if (collectCoincident)
-                            {
-                                indices = new List<int>();
-                                mesh.GetCoincidentVertices(list, indices);
-                            }
-                            else
-                            {
-                                indices = list.SelectMany(x => x.distinctIndexesInternal).ToList();
-                            }
-
-                            groups.Add(new ElementGroup(indices, trs.MultiplyPoint3x4(bounds.center), rot));
-                        }
-                    }
-                    break;
+                    var pos = PHandleUtility.GetActiveElementPosition(mesh, list);
+                    var rot = PHandleUtility.GetVertexRotation(mesh, HandleOrientation.ActiveElement, list);
+                    groups.Add(new ElementGroup(list, pos, rot));
                 }
-
-                case PivotPoint.ActiveElement:
+            }
+            else if (selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
+            {
+                foreach (var list in GetEdgeSelectionGroups(mesh))
                 {
-                    var indices = GetSelectedIndicesForSelectMode(mesh, selectMode, collectCoincident);
-                    var position = mesh.transform.position;
-                    var rotation = mesh.transform.rotation;
+                    var pos = PHandleUtility.GetActiveElementPosition(mesh, list);
+                    var rot = PHandleUtility.GetEdgeRotation(mesh, HandleOrientation.ActiveElement, list);
 
-                    if (selectMode.ContainsFlag(SelectMode.Face | SelectMode.TextureFace))
+                    List<int> indices;
+
+                    if (collectCoincident)
                     {
-                        var face = mesh.GetActiveFace();
-
-                        if (face != null)
-                        {
-                            position = trs.MultiplyPoint3x4(Math.GetBounds(mesh.positionsInternal, face.distinctIndexesInternal).center);
-                            rotation = UnityEngine.ProBuilder.HandleUtility.GetFaceRotation(mesh, orientation, new Face[] { face });
-                        }
+                        indices = new List<int>();
+                        mesh.GetCoincidentVertices(list, indices);
                     }
-                    else if (selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
+                    else
                     {
-                        var edge = mesh.GetActiveEdge();
-
-                        if (edge != Edge.Empty)
-                        {
-                            position = trs.MultiplyPoint3x4(Math.GetBounds(mesh.positionsInternal, new int [] { edge.a, edge.b }).center);
-                            rotation = UnityEngine.ProBuilder.HandleUtility.GetEdgeRotation(mesh, orientation, new Edge[] { edge });
-                        }
-                    }
-                    else if (selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.TextureVertex))
-                    {
-                        var vertex = mesh.GetActiveVertex();
-
-                        if (vertex > -1)
-                        {
-                            position = trs.MultiplyPoint3x4(mesh.positionsInternal[vertex]);
-                            rotation = UnityEngine.ProBuilder.HandleUtility.GetVertexRotation(mesh, orientation, new int[] { vertex });
-                        }
+                        indices = list.SelectMany(x => new int[] { x.a, x.b }).ToList();
                     }
 
-                    groups.Add(new ElementGroup(indices, position, rotation));
-                    break;
+                    groups.Add(new ElementGroup(indices, pos, rot));
                 }
-
-                default:
+            }
+            else if (selectMode.ContainsFlag(SelectMode.Face | SelectMode.TextureFace))
+            {
+                foreach (var list in GetFaceSelectionGroups(mesh))
                 {
-                    var indices = GetSelectedIndicesForSelectMode(mesh, selectMode, collectCoincident);
-                    var position = MeshSelection.bounds.center;
-                    var rotation = Quaternion.identity;
+                    var pos = PHandleUtility.GetActiveElementPosition(mesh, list);
+                    var rot = PHandleUtility.GetFaceRotation(mesh, HandleOrientation.ActiveElement, list);
+                    List<int> indices;
 
-                    if (selectMode.ContainsFlag(SelectMode.Face | SelectMode.TextureFace))
+                    if (collectCoincident)
                     {
-                        var face = mesh.GetActiveFace();
-
-                        if (face != null)
-                            rotation = UnityEngine.ProBuilder.HandleUtility.GetFaceRotation(mesh, orientation, new Face[] { face });
+                        indices = new List<int>();
+                        mesh.GetCoincidentVertices(list, indices);
                     }
-                    else if (selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
+                    else
                     {
-                        var edge = mesh.GetActiveEdge();
-
-                        if (edge != Edge.Empty)
-                            rotation = UnityEngine.ProBuilder.HandleUtility.GetEdgeRotation(mesh, orientation, new Edge[] { edge });
-                    }
-                    else if (selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.TextureVertex))
-                    {
-                        var vertex = mesh.GetActiveVertex();
-
-                        if (vertex > -1)
-                            rotation = UnityEngine.ProBuilder.HandleUtility.GetVertexRotation(mesh, orientation, new int[] { vertex });
+                        indices = list.SelectMany(x => x.distinctIndexesInternal).ToList();
                     }
 
-                    groups.Add(new ElementGroup( indices, position, rotation));
-                    break;
+                    groups.Add(new ElementGroup(indices, pos, rot));
                 }
             }
 

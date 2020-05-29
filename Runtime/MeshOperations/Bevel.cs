@@ -199,8 +199,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 else
                 {
                     List<int> holePath = WingedEdge.SortCommonIndexesByAdjacency(modified, h);
-                    List<Vertex> v = new List<Vertex>(mesh.GetVertices(holePath.Select(x => sharedIndexes[x][0]).ToList()));
-                    holeFaces.AddRange(AppendElements.TentCapWithVertices(v));
+                    if (holePath != null)
+                    {
+                        List<Vertex> v =
+                            new List<Vertex>(mesh.GetVertices(holePath.Select(x => sharedIndexes[x][0]).ToList()));
+                        holeFaces.AddRange(AppendElements.TentCapWithVertices(v));
+                    }
                 }
             }
 
@@ -211,19 +215,20 @@ namespace UnityEngine.ProBuilder.MeshOperations
             // get a hash of just the adjacent and bridge faces
             // HashSet<pb_Face> adjacent = new HashSet<pb_Face>(appendFaces.Select(x => x.face));
             // and also just the filled holes
-            HashSet<Face> newHoles = new HashSet<Face>(holeFaces.Select(x => x.face));
+            HashSet<Face> newFaces = new HashSet<Face>(holeFaces.Select(x => x.face));
+            newFaces.UnionWith(createdFaces);
             // now append filled holes to the full list of added faces
             appendFaces.AddRange(holeFaces);
 
             List<WingedEdge> allNewFaceEdges = WingedEdge.GetWingedEdges(mesh, appendFaces.Select(x => x.face));
 
-            for (int i = 0; i < allNewFaceEdges.Count && newHoles.Count > 0; i++)
+            for (int i = 0; i < allNewFaceEdges.Count && newFaces.Count > 0; i++)
             {
                 WingedEdge wing = allNewFaceEdges[i];
 
-                if (newHoles.Contains(wing.face))
+                if (newFaces.Contains(wing.face))
                 {
-                    newHoles.Remove(wing.face);
+                    newFaces.Remove(wing.face);
 
                     // find first edge whose opposite face isn't a filled hole* then
                     // conform normal by that.
@@ -234,7 +239,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                         {
                             var w = it.Current;
 
-                            if (!newHoles.Contains(w.opposite.face))
+                            if (w.opposite != null && !newFaces.Contains(w.opposite.face))
                             {
                                 w.face.submeshIndex = w.opposite.face.submeshIndex;
                                 w.face.uv = new AutoUnwrapSettings(w.opposite.face.uv);

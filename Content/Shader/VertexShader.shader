@@ -12,8 +12,8 @@ Shader "Hidden/ProBuilder/VertexShader"
         Tags
         {
             "IgnoreProjector"="True"
-            "RenderType"="Transparent"
-            "DisableBatching"="True"
+            "RenderType"="Geometry"
+            "Queue"="Geometry"
         }
 
         Lighting Off
@@ -36,17 +36,12 @@ Shader "Hidden/ProBuilder/VertexShader"
             struct appdata
             {
                 float4 vertex : POSITION;
-                float3 normal : NORMAL;
-                float4 color : COLOR;
                 float2 texcoord : TEXCOORD0;
-                float2 texcoord1 : TEXCOORD1;
             };
 
             struct v2f
             {
                 float4 pos : SV_POSITION;
-                float2 uv : TEXCOORD0;
-                float4 color : COLOR;
             };
 
             v2f vert (appdata v)
@@ -65,23 +60,19 @@ Shader "Hidden/ProBuilder/VertexShader"
                 clip.xy = clip.xy * .5 + .5;
                 clip.xy *= _ScreenParams.xy;
 
-                clip.xy += v.texcoord1.xy * _Scale;
-                clip.z -= (.0001 + v.normal.x) * ortho;
-
+                clip.xy += v.texcoord.xy * _Scale;
                 clip.xy /= _ScreenParams.xy;
                 clip.xy = (clip.xy - .5) / .5;
                 clip.xy *= clip.w;
 
                 o.pos = clip;
-                o.uv = v.texcoord.xy;
-                o.color = v.color;
 
                 return o;
             }
 
             half4 frag (v2f i) : COLOR
             {
-                return _Color * i.color;
+                return _Color;
             }
 
             ENDCG

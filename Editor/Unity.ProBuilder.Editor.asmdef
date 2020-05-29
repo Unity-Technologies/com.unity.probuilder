@@ -4,7 +4,8 @@
         "Unity.ProBuilder",
         "Unity.ProBuilder.AssetIdRemapUtility",
         "Unity.ProBuilder.Stl",
-        "Unity.Settings.Editor"
+        "Unity.Settings.Editor",
+        "Unity.ProBuilder.Csg"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [

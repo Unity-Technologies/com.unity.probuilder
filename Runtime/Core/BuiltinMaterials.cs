@@ -1,22 +1,16 @@
 using System;
 using UnityEngine.Rendering;
 using System.Reflection;
-using UnityEditor;
 
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// Access the built-in materials that ProBuilder uses.
+    /// Access the built-in materials that ProBuilder uses. In the editor, see
+    /// <see cref="UnityEditor.ProBuilder.EditorMaterialUtility"/> for access to the full array of provided materials
+    /// and shaders.
     /// </summary>
     public static class BuiltinMaterials
     {
-        // Names of the Standard Vertex Color materials included in the SRP sample packages.
-        internal static readonly string[] k_StandardRenderPipelineMaterials = new string[]
-        {
-            "ProBuilder Default LWRP",
-            "ProBuilder Default HDRP"
-        };
-
         static bool s_IsInitialized;
 
         /// <value>
@@ -32,6 +26,12 @@ namespace UnityEngine.ProBuilder
         /// Use <see cref="wireShader"/> in that case.
         /// </remarks>
         public const string lineShader = "Hidden/ProBuilder/LineBillboard";
+
+        /// <value>
+        /// A line shader for use with CreateEdgeBillboardMesh when geometry shaders are not available. Prefer to use
+        /// <see cref="lineShader"/> where possible.
+        /// </value>
+        public const string lineShaderMetal = "Hidden/ProBuilder/LineBillboardMetal";
 
         /// <value>
         /// A shader used to draw camera facing billboards from a single vertex.
@@ -68,6 +68,25 @@ namespace UnityEngine.ProBuilder
         static Material s_UnlitVertexColorMaterial;
         static Material s_ShapePreviewMaterial;
 
+
+#if HDRP_7_1_0_OR_NEWER
+        static string k_EdgePickerMaterial = "Materials/EdgePickerHDRP";
+        static string k_FacePickerMaterial = "Materials/FacePickerHDRP";
+        static string k_VertexPickerMaterial = "Materials/VertexPickerHDRP";
+
+        static string k_EdgePickerShader = "Hidden/ProBuilder/EdgePickerHDRP";
+        static string k_FacePickerShader = "Hidden/ProBuilder/FacePickerHDRP";
+        static string k_VertexPickerShader = "Hidden/ProBuilder/VertexPickerHDRP";
+#else
+        static string k_EdgePickerMaterial = "Materials/EdgePicker";
+        static string k_FacePickerMaterial = "Materials/FacePicker";
+        static string k_VertexPickerMaterial = "Materials/VertexPicker";
+
+        static string k_EdgePickerShader = "Hidden/ProBuilder/EdgePicker";
+        static string k_FacePickerShader = "Hidden/ProBuilder/FacePicker";
+        static string k_VertexPickerShader = "Hidden/ProBuilder/VertexPicker";
+#endif
+
         static void Init()
         {
             if (s_IsInitialized)
@@ -83,22 +102,22 @@ namespace UnityEngine.ProBuilder
             // SelectionPicker shader
             s_SelectionPickerShader = (Shader)Shader.Find("Hidden/ProBuilder/SelectionPicker");
 
-            if ((s_FacePickerMaterial = Resources.Load<Material>("Materials/FacePicker")) == null)
+            if ((s_FacePickerMaterial = Resources.Load<Material>(k_FacePickerMaterial)) == null)
             {
                 Log.Error("FacePicker material not loaded... please re-install ProBuilder to fix this error.");
-                s_FacePickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/FacePicker"));
+                s_FacePickerMaterial = new Material(Shader.Find(k_FacePickerShader));
             }
 
-            if ((s_VertexPickerMaterial = Resources.Load<Material>("Materials/VertexPicker")) == null)
+            if ((s_VertexPickerMaterial = Resources.Load<Material>(k_VertexPickerMaterial)) == null)
             {
                 Log.Error("VertexPicker material not loaded... please re-install ProBuilder to fix this error.");
-                s_VertexPickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/VertexPicker"));
-            }
+                s_VertexPickerMaterial = new Material(Shader.Find(k_VertexPickerShader));
+        }
 
-            if ((s_EdgePickerMaterial = Resources.Load<Material>("Materials/EdgePicker")) == null)
+            if ((s_EdgePickerMaterial = Resources.Load<Material>(k_EdgePickerMaterial)) == null)
             {
                 Log.Error("EdgePicker material not loaded... please re-install ProBuilder to fix this error.");
-                s_EdgePickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/EdgePicker"));
+                s_EdgePickerMaterial = new Material(Shader.Find(k_EdgePickerShader));
             }
 
             s_UnlitVertexColorMaterial = (Material)Resources.Load("Materials/UnlitVertexColor", typeof(Material));
@@ -253,7 +272,7 @@ namespace UnityEngine.ProBuilder
 
         internal static Material GetDefaultMaterial()
         {
-            Material material;
+            Material material = null;
 
             if (GraphicsSettings.renderPipelineAsset != null)
             {
@@ -263,9 +282,10 @@ namespace UnityEngine.ProBuilder
                     material = GraphicsSettings.renderPipelineAsset.GetDefaultMaterial();
 #endif
             }
-            else
+
+            if (material == null)
             {
-                material = (Material)Resources.Load("Materials/ProBuilderDefault", typeof(Material));
+                material = (Material) Resources.Load("Materials/ProBuilderDefault", typeof(Material));
 
                 if (material == null || !material.shader.isSupported)
                     material = GetLegacyDiffuse();

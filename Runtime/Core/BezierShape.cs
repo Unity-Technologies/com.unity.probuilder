@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace UnityEngine.ProBuilder
 {
     [AddComponentMenu("")]
-    [DisallowMultipleComponent]
+    [DisallowMultipleComponent, ExcludeFromPreset, ExcludeFromObjectFactory]
     [RequireComponent(typeof(ProBuilderMesh))]
     sealed class BezierShape : MonoBehaviour
     {

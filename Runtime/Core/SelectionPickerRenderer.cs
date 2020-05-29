@@ -1,6 +1,5 @@
 //#define PB_RENDER_PICKER_TEXTURE
 
-using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UObject = UnityEngine.Object;
@@ -75,8 +74,13 @@ namespace UnityEngine.ProBuilder
     /// <summary>
     /// Functions for picking elements in a view by rendering a picker texture and testing pixels.
     /// </summary>
-    static class SelectionPickerRenderer
+    static partial class SelectionPickerRenderer
     {
+        internal interface ISelectionPickerRenderer
+        {
+            Texture2D RenderLookupTexture(Camera camera, Shader shader, string tag, int width, int height);
+        }
+
         const string k_FacePickerOcclusionTintUniform = "_Tint";
         static readonly Color k_Blackf = new Color(0f, 0f, 0f, 1f);
         static readonly Color k_Whitef = new Color(1f, 1f, 1f, 1f);
@@ -86,6 +90,7 @@ namespace UnityEngine.ProBuilder
         const uint k_MinEdgePixelsForValidSelection = 1;
 
         static bool s_Initialized = false;
+        static ISelectionPickerRenderer s_PickerRenderer = null;
 
         static RenderTextureFormat renderTextureFormat
         {
@@ -123,6 +128,24 @@ namespace UnityEngine.ProBuilder
             RenderTextureFormat.ARGBFloat,
 #endif
         };
+
+        /// <summary>
+        /// Returns an appropriate implementation based on the graphic pipeline
+        /// to generate the lookup texture.
+        /// URP and Standard pipeline share the same picker implementation for now.
+        /// </summary>
+        static ISelectionPickerRenderer pickerRenderer
+        {
+            get
+            {
+                if (s_PickerRenderer == null)
+                    s_PickerRenderer =
+                        ShouldUseHDRP()?
+                        (ISelectionPickerRenderer)new SelectionPickerRendererHDRP()
+                        : new SelectionPickerRendererStandard();
+                return s_PickerRenderer;
+            }
+        }
 
         /// <summary>
         /// Given a camera and selection rect (in screen space) return a Dictionary containing the number of faces touched by the rect.
@@ -235,6 +258,7 @@ namespace UnityEngine.ProBuilder
             int imageHeight = tex.height;
             int width = Mathf.FloorToInt(pickerRect.width);
             int height = Mathf.FloorToInt(pickerRect.height);
+
             UObject.DestroyImmediate(tex);
 
             SimpleTuple<ProBuilderMesh, int> hit;
@@ -401,7 +425,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns></returns>
-        static Texture2D RenderSelectionPickerTexture(
+        internal static Texture2D RenderSelectionPickerTexture(
             Camera camera,
             IList<ProBuilderMesh> selection,
             out Dictionary<uint, SimpleTuple<ProBuilderMesh, Face>> map,
@@ -412,7 +436,7 @@ namespace UnityEngine.ProBuilder
 
             BuiltinMaterials.facePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Whitef);
 
-            Texture2D tex = RenderWithReplacementShader(camera, BuiltinMaterials.selectionPickerShader, "ProBuilderPicker", width, height);
+            Texture2D tex = pickerRenderer.RenderLookupTexture(camera, BuiltinMaterials.selectionPickerShader, "ProBuilderPicker", width, height);
 
             foreach (GameObject go in pickerObjects)
             {
@@ -433,7 +457,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns></returns>
-        static Texture2D RenderSelectionPickerTexture(
+        internal static Texture2D RenderSelectionPickerTexture(
             Camera camera,
             IList<ProBuilderMesh> selection,
             bool doDepthTest,
@@ -447,7 +471,7 @@ namespace UnityEngine.ProBuilder
 
             BuiltinMaterials.facePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Blackf);
 
-            Texture2D tex = RenderWithReplacementShader(camera, BuiltinMaterials.selectionPickerShader, "ProBuilderPicker", width, height);
+            Texture2D tex = pickerRenderer.RenderLookupTexture(camera, BuiltinMaterials.selectionPickerShader, "ProBuilderPicker", width, height);
 
             for (int i = 0, c = pickerObjects.Length; i < c; i++)
             {
@@ -476,7 +500,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns></returns>
-        static Texture2D RenderSelectionPickerTexture(
+        internal static Texture2D RenderSelectionPickerTexture(
             Camera camera,
             IList<ProBuilderMesh> selection,
             bool doDepthTest,
@@ -489,7 +513,7 @@ namespace UnityEngine.ProBuilder
 
             BuiltinMaterials.facePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Blackf);
 
-            Texture2D tex = RenderWithReplacementShader(camera, BuiltinMaterials.selectionPickerShader, "ProBuilderPicker", width, height);
+            Texture2D tex = pickerRenderer.RenderLookupTexture(camera, BuiltinMaterials.selectionPickerShader, "ProBuilderPicker", width, height);
 
             for (int i = 0, c = pickerObjects.Length; i < c; i++)
             {
@@ -799,103 +823,13 @@ namespace UnityEngine.ProBuilder
                     (byte)(255));
         }
 
-        /// <summary>
-        /// Render the camera with a replacement shader and return the resulting image.
-        /// RenderTexture is always initialized with no gamma conversion (RenderTextureReadWrite.Linear)
-        /// </summary>
-        /// <param name="camera"></param>
-        /// <param name="shader"></param>
-        /// <param name="tag"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <returns></returns>
-        static Texture2D RenderWithReplacementShader(
-            Camera camera,
-            Shader shader,
-            string tag,
-            int width = -1,
-            int height = -1)
+        static bool ShouldUseHDRP()
         {
-            bool autoSize = width < 0 || height < 0;
-
-            int _width = autoSize ? (int)camera.pixelRect.width : width;
-            int _height = autoSize ? (int)camera.pixelRect.height : height;
-
-            GameObject go = new GameObject();
-            Camera renderCam = go.AddComponent<Camera>();
-            renderCam.CopyFrom(camera);
-
-            renderCam.renderingPath = RenderingPath.Forward;
-            renderCam.enabled = false;
-            renderCam.clearFlags = CameraClearFlags.SolidColor;
-            renderCam.backgroundColor = Color.white;
-#if UNITY_5_6_OR_NEWER
-            renderCam.allowHDR = false;
-            renderCam.allowMSAA = false;
-            renderCam.forceIntoRenderTexture = true;
-#endif
-
-#if UNITY_2017_1_OR_NEWER
-            RenderTextureDescriptor descriptor = new RenderTextureDescriptor() {
-                width = _width,
-                height = _height,
-                colorFormat = renderTextureFormat,
-                autoGenerateMips = false,
-                depthBufferBits = 16,
-                dimension = UnityEngine.Rendering.TextureDimension.Tex2D,
-                enableRandomWrite = false,
-                memoryless = RenderTextureMemoryless.None,
-                sRGB = false,
-                useMipMap = false,
-                volumeDepth = 1,
-                msaaSamples = 1
-            };
-            RenderTexture rt = RenderTexture.GetTemporary(descriptor);
+#if HDRP_7_1_0_OR_NEWER
+            return true;
 #else
-            RenderTexture rt = RenderTexture.GetTemporary(
-                    _width,
-                    _height,
-                    16,
-                    renderTextureFormat,
-                    RenderTextureReadWrite.Linear,
-                    1);
+            return false;
 #endif
-
-            RenderTexture prev = RenderTexture.active;
-            renderCam.targetTexture = rt;
-            RenderTexture.active = rt;
-
-#if PB_DEBUG
-            /* Debug.Log(string.Format("antiAliasing {0}\nautoGenerateMips {1}\ncolorBuffer {2}\ndepth {3}\ndepthBuffer {4}\ndimension {5}\nenableRandomWrite {6}\nformat {7}\nheight {8}\nmemorylessMode {9}\nsRGB {10}\nuseMipMap {11}\nvolumeDepth {12}\nwidth {13}",
-                RenderTexture.active.antiAliasing,
-                RenderTexture.active.autoGenerateMips,
-                RenderTexture.active.colorBuffer,
-                RenderTexture.active.depth,
-                RenderTexture.active.depthBuffer,
-                RenderTexture.active.dimension,
-                RenderTexture.active.enableRandomWrite,
-                RenderTexture.active.format,
-                RenderTexture.active.height,
-                RenderTexture.active.memorylessMode,
-                RenderTexture.active.sRGB,
-                RenderTexture.active.useMipMap,
-                RenderTexture.active.volumeDepth,
-                RenderTexture.active.width));
-                */
-#endif
-
-            renderCam.RenderWithShader(shader, tag);
-
-            Texture2D img = new Texture2D(_width, _height, textureFormat, false, false);
-            img.ReadPixels(new Rect(0, 0, _width, _height), 0, 0);
-            img.Apply();
-
-            RenderTexture.active = prev;
-            RenderTexture.ReleaseTemporary(rt);
-
-            UObject.DestroyImmediate(go);
-
-            return img;
         }
     }
 }

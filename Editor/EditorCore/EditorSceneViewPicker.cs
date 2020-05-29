@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.SettingsManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using PHandleUtility = UnityEngine.ProBuilder.HandleUtility;
@@ -12,8 +11,9 @@ namespace UnityEditor.ProBuilder
 {
     struct ScenePickerPreferences
     {
-        public float maxPointerDistance;
-        public float offPointerMultiplier;
+        public const float maxPointerDistance = 40f;
+        public const float offPointerMultiplier = 1.2f;
+
         public CullingMode cullMode;
         public SelectionModifierBehavior selectionModifierBehavior;
         public RectSelectMode rectSelectMode;
@@ -29,27 +29,34 @@ namespace UnityEditor.ProBuilder
         static readonly List<int> s_IndexBuffer = new List<int>(16);
         static List<Edge> s_EdgeBuffer = new List<Edge>(32);
 
+        // When enabled, a mouse click on an unselected mesh will select both the GameObject and the mesh element picked.
+        const bool k_AllowUnselected = true;
+
         public static ProBuilderMesh DoMouseClick(Event evt, SelectMode selectionMode, ScenePickerPreferences pickerPreferences)
         {
             bool appendModifier = EditorHandleUtility.IsAppendModifier(evt.modifiers);
             bool addToSelectionModifier = EditorHandleUtility.IsSelectionAddModifier(evt.modifiers);
             bool addOrRemoveIfPresentFromSelectionModifier = EditorHandleUtility.IsSelectionAppendOrRemoveIfPresentModifier(evt.modifiers);
 
-            if (!appendModifier)
-                MeshSelection.SetSelection((GameObject)null);
-
-            float pickedElementDistance = Mathf.Infinity;
+            float pickedElementDistance;
 
             if (selectionMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
-                pickedElementDistance = EdgeRaycast(evt.mousePosition, pickerPreferences, true, s_Selection);
+                pickedElementDistance = EdgeRaycast(evt.mousePosition, pickerPreferences, k_AllowUnselected, s_Selection);
             else if (selectionMode.ContainsFlag(SelectMode.Vertex | SelectMode.TextureVertex))
-                pickedElementDistance = VertexRaycast(evt.mousePosition, pickerPreferences, true, s_Selection);
+                pickedElementDistance = VertexRaycast(evt.mousePosition, pickerPreferences, k_AllowUnselected, s_Selection);
             else
-                pickedElementDistance = FaceRaycast(evt.mousePosition, pickerPreferences, true, s_Selection, evt.clickCount > 1 ? -1 : 0, false);
+                pickedElementDistance = FaceRaycast(evt.mousePosition, pickerPreferences, k_AllowUnselected, s_Selection, evt.clickCount > 1 ? -1 : 0, false);
 
             evt.Use();
 
-            if (pickedElementDistance > pickerPreferences.maxPointerDistance)
+            if (!appendModifier)
+            {
+                if(s_Selection.mesh != null)
+                    s_Selection.mesh.ClearSelection();
+                MeshSelection.SetSelection((GameObject)null);
+            }
+
+            if (pickedElementDistance > ScenePickerPreferences.maxPointerDistance)
             {
                 if (appendModifier && Selection.gameObjects.Contains(s_Selection.gameObject))
                     MeshSelection.RemoveFromSelection(s_Selection.gameObject);
@@ -60,11 +67,7 @@ namespace UnityEditor.ProBuilder
             }
 
             GameObject candidateNewActiveObject = s_Selection.gameObject;
-            bool activeObjectSelectionChanged = false;
-            if (Selection.gameObjects.Contains(s_Selection.gameObject) && s_Selection.gameObject != Selection.activeGameObject)
-            {
-                activeObjectSelectionChanged = true;
-            }
+            bool activeObjectSelectionChanged = Selection.gameObjects.Contains(s_Selection.gameObject) && s_Selection.gameObject != Selection.activeGameObject;
 
             if (s_Selection.mesh != null)
             {
@@ -164,7 +167,7 @@ namespace UnityEditor.ProBuilder
                 else if (s_Selection.vertex > -1)
                 {
                     int ind = Array.IndexOf(mesh.selectedIndexesInternal, s_Selection.vertex);
-                    
+
                     UndoUtility.RecordSelection(mesh, "Select Vertex");
 
                     if (ind > -1)
@@ -181,7 +184,7 @@ namespace UnityEditor.ProBuilder
                             s_IndexBuffer.Add(index);
                         }
                         s_IndexBuffer.Sort();
-                        
+
                         if (!appendModifier || addOrRemoveIfPresentFromSelectionModifier ||
                            (addToSelectionModifier && s_Selection.vertex == mesh.GetActiveVertex() && !activeObjectSelectionChanged))
                         {
@@ -217,16 +220,11 @@ namespace UnityEditor.ProBuilder
                 }
 
                 if(activeObjectSelectionChanged)
-                { 
                     MeshSelection.MakeActiveObject(candidateNewActiveObject);
-                }
                 else
-                {
                     MeshSelection.AddToSelection(candidateNewActiveObject);
-                }
 
-
-            return mesh;
+                return mesh;
             }
 
             return null;
@@ -505,7 +503,7 @@ namespace UnityEditor.ProBuilder
             selection.Clear();
             s_NearestVertices.Clear();
             selection.gameObject = HandleUtility.PickGameObject(mousePosition, false);
-            float maxDistance = pickerOptions.maxPointerDistance * pickerOptions.maxPointerDistance;
+            float maxDistance = ScenePickerPreferences.maxPointerDistance * ScenePickerPreferences.maxPointerDistance;
             ProBuilderMesh hoveredMesh = selection.gameObject != null ? selection.gameObject.GetComponent<ProBuilderMesh>() : null;
 
             if (allowUnselected && selection.gameObject != null)
@@ -523,7 +521,7 @@ namespace UnityEditor.ProBuilder
                     if (!mesh.selectable)
                         continue;
 
-                    GetNearestVertices(mesh, mousePosition, s_NearestVertices, maxDistance, hoveredMesh == mesh || hoveredMesh == null ? 1.0f : pickerOptions.offPointerMultiplier);
+                    GetNearestVertices(mesh, mousePosition, s_NearestVertices, maxDistance, hoveredMesh == mesh || hoveredMesh == null ? 1.0f : ScenePickerPreferences.offPointerMultiplier);
                 }
             }
 
@@ -587,7 +585,7 @@ namespace UnityEditor.ProBuilder
             selection.gameObject = UHandleUtility.PickGameObject(mousePosition, false);
             var hoveredMesh = selection.gameObject != null ? selection.gameObject.GetComponent<ProBuilderMesh>() : null;
 
-            float bestDistance = pickerPrefs.maxPointerDistance;
+            float bestDistance = Mathf.Infinity;
             bool hoveredIsInSelection = MeshSelection.topInternal.Contains(hoveredMesh);
 
             if (hoveredMesh != null && (allowUnselected || hoveredIsInSelection))
@@ -603,7 +601,7 @@ namespace UnityEditor.ProBuilder
 
                     // If the nearest edge was acquired by a raycast, then the distance to mesh is 0f.
                     if (hoveredIsInSelection)
-                        return 0f; // tup.distance;
+                        return tup.distance;
                 }
             }
 
@@ -617,7 +615,7 @@ namespace UnityEditor.ProBuilder
                 // object hovered over the currently selected
                 var distMultiplier = (hoveredMesh == mesh || hoveredMesh == null)
                     ? 1.0f
-                    : pickerPrefs.offPointerMultiplier;
+                    : ScenePickerPreferences.offPointerMultiplier;
 
                 foreach (var face in mesh.facesInternal)
                 {
@@ -631,6 +629,11 @@ namespace UnityEditor.ProBuilder
                                 trs.TransformPoint(positions[y]));
 
                         d *= distMultiplier;
+
+                        // best distance isn't set to maxPointerDistance because we want to preserve an unselected
+                        // gameobject over a selected gameobject with an out of bounds edge.
+                        if (d > ScenePickerPreferences.maxPointerDistance)
+                            continue;
 
                         // account for stacked edges
                         if (Mathf.Approximately(d, bestDistance))

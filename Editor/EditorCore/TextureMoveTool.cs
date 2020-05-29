@@ -21,8 +21,8 @@ namespace UnityEditor.ProBuilder
                 get { return m_FaceAndScale; }
             }
 
-            public TranslateTextureSelection(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation)
-                : base(mesh, pivot, orientation)
+            public TranslateTextureSelection(ProBuilderMesh mesh, PivotPoint pivot)
+                : base(mesh, pivot)
             {
                 var faces = mesh.faces;
 
@@ -32,9 +32,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        internal override MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot, HandleOrientation orientation)
+        internal override MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot)
         {
-            return new TranslateTextureSelection(mesh, pivot, orientation);
+            return new TranslateTextureSelection(mesh, pivot);
         }
 
         protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
@@ -76,13 +76,13 @@ namespace UnityEditor.ProBuilder
 
                 if (relativeSnapEnabled)
                 {
-                    m_Position.x = ProGridsSnapping.SnapValue(m_Position.x, relativeSnapX);
-                    m_Position.y = ProGridsSnapping.SnapValue(m_Position.y, relativeSnapY);
+                    m_Position.x = ProBuilderSnapping.SnapValue(m_Position.x, ProBuilderSnapSettings.incrementalSnapMoveValue.x);
+                    m_Position.y = ProBuilderSnapping.SnapValue(m_Position.y, ProBuilderSnapSettings.incrementalSnapMoveValue.y);
                 }
-                else if (progridsSnapEnabled)
+                else if (worldSnapEnabled)
                 {
-                    m_Position.x = ProGridsSnapping.SnapValue(m_Position.x, progridsSnapValue);
-                    m_Position.y = ProGridsSnapping.SnapValue(m_Position.y, progridsSnapValue);
+                    m_Position.x = ProBuilderSnapping.SnapValue(m_Position.x, snapValue.x);
+                    m_Position.y = ProBuilderSnapping.SnapValue(m_Position.y, snapValue.y);
                 }
 
                 // invert `y` because to users it's confusing that "up" in UV space visually moves the texture down

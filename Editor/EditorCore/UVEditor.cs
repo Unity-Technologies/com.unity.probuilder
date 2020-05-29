@@ -255,7 +255,7 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            this.minSize = new Vector2(500f, 300f);
+            this.minSize = new Vector2(520f, 300f);
 
             InitGUI();
 
@@ -450,7 +450,7 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            if (channel == 0 && UpdateNearestElement(Event.current.mousePosition))
+            if (GUIUtility.hotControl == 0 && channel == 0 && UpdateNearestElement(Event.current.mousePosition))
                 Repaint();
 
             if (m_mouseDragging && EditorHandleUtility.CurrentID < 0 && !m_draggingCanvas && !m_rightMouseDrag)
@@ -547,7 +547,7 @@ namespace UnityEditor.ProBuilder
             Lightmapping.PushGIWorkflowMode();
 
             modifyingUVs = true;
-
+            GUI.FocusControl(string.Empty);
             bool update = false;
 
             // Make sure all TextureGroups are auto-selected
@@ -569,7 +569,7 @@ namespace UnityEditor.ProBuilder
 
             if (update)
             {
-                /// UpdateSelection clears handlePosition
+                // UpdateSelection clears handlePosition
                 Vector2 storedHandlePosition = handlePosition;
                 ProBuilderEditor.Refresh();
                 SetHandlePosition(storedHandlePosition, true);
@@ -577,6 +577,16 @@ namespace UnityEditor.ProBuilder
 
             CopySelectionUVs(out uv_origins);
             uvOrigin = handlePosition;
+
+            m_AutoUnwrapSettingsPreModification = new AutoUnwrapSettings[selection.Length][];
+            for (int i = 0, c = m_AutoUnwrapSettingsPreModification.Length; i < c; i++)
+            {
+                int[] selected = selection[i].selectedFaceIndicesInternal;
+                Face[] faces = selection[i].facesInternal;
+                m_AutoUnwrapSettingsPreModification[i] = new AutoUnwrapSettings[selected.Length];
+                for (int n = 0, fc = selected.Length; n < fc; n++)
+                    m_AutoUnwrapSettingsPreModification[i][n] = faces[selected[n]].uv;
+            }
         }
 
         /**
@@ -590,78 +600,6 @@ namespace UnityEditor.ProBuilder
 
             if ((tool == Tool.Rotate || tool == Tool.Scale) && userPivot)
                 SetHandlePosition(handlePosition, true);
-
-            if (mode == UVMode.Mixed || mode == UVMode.Auto)
-            {
-                UndoUtility.RegisterCompleteObjectUndo(selection, (tool == Tool.Move ? "Translate UVs" : tool == Tool.Rotate ? "Rotate UVs" : "Scale UVs"));
-
-                foreach (ProBuilderMesh pb in selection)
-                {
-                    if (pb.selectedFaceCount > 0)
-                    {
-                        // Sort faces into texture groups for re-projection
-                        Dictionary<int, List<Face>> textureGroups = new Dictionary<int, List<Face>>();
-
-                        int n = -2;
-                        foreach (Face face in System.Array.FindAll(pb.selectedFacesInternal, x => !x.manualUV))
-                        {
-                            if (textureGroups.ContainsKey(face.textureGroup))
-                                textureGroups[face.textureGroup].Add(face);
-                            else
-                                textureGroups.Add(face.textureGroup > 0 ? face.textureGroup : n--, new List<Face>() { face });
-                        }
-
-                        foreach (KeyValuePair<int, List<Face>> kvp in textureGroups)
-                        {
-                            if (tool == Tool.Move)
-                            {
-                                foreach (Face face in kvp.Value)
-                                {
-                                    var uv = face.uv;
-                                    uv.offset -= handlePosition - handlePosition_origin;
-                                    face.uv = uv;
-                                }
-                            }
-                            else if (tool == Tool.Rotate)
-                            {
-                                foreach (Face face in kvp.Value)
-                                {
-                                    var uv = face.uv;
-
-                                    if (uv.rotation > 360f)
-                                        uv.rotation = uv.rotation % 360f;
-                                    else if (uv.rotation < 0f)
-                                        uv.rotation = 360f + (uv.rotation % 360f);
-
-                                    face.uv = uv;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        FlagSelectedFacesAsManual(pb);
-                    }
-                }
-            }
-            else if (mode == UVMode.Manual)
-            {
-                foreach (ProBuilderMesh pb in selection)
-                {
-                    if (pb.selectedFaceCount > 0)
-                    {
-                        foreach (Face face in pb.selectedFacesInternal)
-                        {
-                            face.textureGroup = -1;
-                            face.manualUV = true;
-                        }
-                    }
-                    else
-                    {
-                        FlagSelectedFacesAsManual(pb);
-                    }
-                }
-            }
 
             // Regenerate UV2s
             foreach (ProBuilderMesh pb in selection)
@@ -1293,6 +1231,7 @@ namespace UnityEditor.ProBuilder
         Vector2 uvOrigin = Vector2.zero;
 
         Vector2[][] uv_origins = null;
+        AutoUnwrapSettings[][] m_AutoUnwrapSettingsPreModification;
         Vector2 handlePosition = Vector2.zero,
                 handlePosition_origin = Vector2.zero,
                 handlePosition_offset = Vector2.zero;
@@ -1314,16 +1253,14 @@ namespace UnityEditor.ProBuilder
             if (!e.isMouse)
                 return;
 
-            /**
-             *  Setting a custom pivot
-             */
+            // Setting a custom pivot
             if ((e.button == RIGHT_MOUSE_BUTTON || (e.alt && e.button == LEFT_MOUSE_BUTTON)) && !Math.Approx2(t_handlePosition, handlePosition, .0001f))
             {
                 userPivot = true; // flag the handle as having been user set.
 
                 if (ControlKey)
                 {
-                    handlePosition = ProGridsSnapping.SnapValue(t_handlePosition, (Vector3) new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
+                    handlePosition = ProBuilderSnapping.SnapValue(t_handlePosition, (Vector3) new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
                 }
                 else
                 {
@@ -1362,20 +1299,15 @@ namespace UnityEditor.ProBuilder
                 return;
             }
 
-            /**
-             *  Tool activated - moving some UVs around.
-             *  Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
-             *  in OnFinishUVModification, not at real time.
-             */
+            // Tool activated - moving some UVs around.
+            // Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
+            // in OnFinishUVModification, not at real time.
             if (!Math.Approx2(t_handlePosition, handlePosition, Math.handleEpsilon))
             {
                 // Start of move UV operation
                 if (!modifyingUVs)
                 {
-                    // if auto uvs, the changes are applied after action is complete
-                    if (mode != UVMode.Auto)
-                        UndoUtility.RegisterCompleteObjectUndo(selection, "Translate UVs");
-
+                    UndoUtility.RecordSelection(selection, "Translate UVs");
                     handlePosition_origin = handlePosition;
                     OnBeginUVModification();
                 }
@@ -1385,7 +1317,7 @@ namespace UnityEditor.ProBuilder
                 Vector2 newUVPosition = t_handlePosition;
 
                 if (ControlKey)
-                    newUVPosition = ProGridsSnapping.SnapValue(newUVPosition, new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
+                    newUVPosition = ProBuilderSnapping.SnapValue(newUVPosition, new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
 
                 for (int n = 0; n < selection.Length; n++)
                 {
@@ -1448,6 +1380,23 @@ namespace UnityEditor.ProBuilder
                 }
 
                 RefreshSelectedUVCoordinates();
+
+                // Update the auto uv parameters
+                for(int i = 0, c = selection.Length; i < c; i++)
+                {
+                    var mesh = selection[i];
+                    var selected = mesh.selectedFaceIndicesInternal;
+                    var faces = mesh.facesInternal;
+                    for(int n = 0, f = mesh.selectedFaceCount; n < f; n++)
+                    {
+                        var face = faces[selected[n]];
+                        if (face.manualUV)
+                            continue;
+                        var uv = face.uv;
+                        uv.offset = m_AutoUnwrapSettingsPreModification[i][n].offset - (handlePosition - handlePosition_origin);
+                        face.uv = uv;
+                    }
+                }
             }
         }
 
@@ -1475,7 +1424,7 @@ namespace UnityEditor.ProBuilder
                 handlePosition.y += delta.y;
 
                 if (ControlKey)
-                    handlePosition = ProGridsSnapping.SnapValue(handlePosition, new Vector3Mask((handlePosition - handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
+                    handlePosition = ProBuilderSnapping.SnapValue(handlePosition, new Vector3Mask((handlePosition - handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
 
                 for (int n = 0; n < selection.Length; n++)
                 {
@@ -1507,7 +1456,7 @@ namespace UnityEditor.ProBuilder
                 }
 
                 if (ControlKey)
-                    uvRotation = ProGridsSnapping.SnapValue(uvRotation, 15f);
+                    uvRotation = ProBuilderSnapping.SnapValue(uvRotation, 15f);
 
                 // Do rotation around the handle pivot in manual mode
                 if (mode == UVMode.Mixed || mode == UVMode.Manual)
@@ -1535,6 +1484,10 @@ namespace UnityEditor.ProBuilder
                         {
                             var uv = face.uv;
                             uv.rotation += uvRotation - t_uvRotation;
+                            if (uv.rotation > 360f)
+                                uv.rotation = uv.rotation % 360f;
+                            else if (uv.rotation < 0f)
+                                uv.rotation = 360f + (uv.rotation % 360f);
                             face.uv = uv;
                         }
 
@@ -1555,7 +1508,7 @@ namespace UnityEditor.ProBuilder
             if (rotation != uvRotation)
             {
                 if (ControlKey)
-                    rotation = ProGridsSnapping.SnapValue(rotation, 15f);
+                    rotation = ProBuilderSnapping.SnapValue(rotation, 15f);
 
                 float delta = rotation - uvRotation;
                 uvRotation = rotation;
@@ -1614,7 +1567,7 @@ namespace UnityEditor.ProBuilder
             uvScale = EditorHandleUtility.ScaleHandle2d(2, UVToGUIPoint(handlePosition), uvScale, 128);
 
             if (ControlKey)
-                uvScale = ProGridsSnapping.SnapValue(uvScale, s_GridSnapIncrement);
+                uvScale = ProBuilderSnapping.SnapValue(uvScale, s_GridSnapIncrement);
 
             if (Math.Approx(uvScale.x, 0f, Mathf.Epsilon))
                 uvScale.x = .0001f;
@@ -1684,7 +1637,7 @@ namespace UnityEditor.ProBuilder
             previousScale.y = 1f / previousScale.y;
 
             if (ControlKey)
-                textureScale = ProGridsSnapping.SnapValue(textureScale, s_GridSnapIncrement);
+                textureScale = ProBuilderSnapping.SnapValue(textureScale, s_GridSnapIncrement);
 
             if (!modifyingUVs)
             {
@@ -3381,9 +3334,8 @@ namespace UnityEditor.ProBuilder
         #region Screenshot Rendering
 
         float curUvScale = 0f;
-        ///< Store the user set positioning and scale before modifying them for a screenshot
+        // Store the user set positioning and scale before modifying them for a screenshot
         Vector2 curUvPosition = Vector2.zero;
-        ///< ditto ^
         Texture2D screenshot;
         Rect screenshotCanvasRect = new Rect(0, 0, 0, 0);
         Vector2 screenshotTexturePosition = Vector2.zero;
@@ -3398,7 +3350,7 @@ namespace UnityEditor.ProBuilder
 
         readonly Color UV_FILL_COLOR = new Color(.192f, .192f, .192f, 1f);
 
-        ///< This is the default background of the UV editor - used to compare bacground pixels when rendering UV template
+        // This is the default background of the UV editor - used to compare bacground pixels when rendering UV template
         void InitiateScreenshot(int ImageSize, bool HideGrid, Color LineColor, bool TransparentBackground, Color BackgroundColor, bool RenderTexture)
         {
             screenshot_size = ImageSize;
@@ -3428,17 +3380,6 @@ namespace UnityEditor.ProBuilder
             DoScreenshot();
         }
 
-        // Unity 5 changes the starting y position of a window now account for the tab
-        float editorWindowTabOffset
-        {
-            get
-            {
-                if (IsUtilityWindow<UVEditor>())
-                    return 0;
-                return 11;
-            }
-        }
-
         void DoScreenshot()
         {
             switch (screenshotStatus)
@@ -3455,7 +3396,7 @@ namespace UnityEditor.ProBuilder
 #endif
 
                     // always begin texture grabs at bottom left
-                    uvGraphOffset = new Vector2(-ScreenRect.width / 2f, ScreenRect.height / 2f - editorWindowTabOffset);
+                    uvGraphOffset = new Vector2(-ScreenRect.width / 2f, ScreenRect.height / 2f);
 
                     screenshot = new Texture2D(screenshot_size, screenshot_size);
                     screenshot.hideFlags = (HideFlags)(1 | 2 | 4);
@@ -3506,10 +3447,10 @@ namespace UnityEditor.ProBuilder
                                 // Move right, reset Y
 #if RETINA_ENABLED
                                 uvGraphOffset.x -= screenshotCanvasRect.width / EditorGUIUtility.pixelsPerPoint;
-                                uvGraphOffset.y = (ScreenRect.height / 2f - editorWindowTabOffset);
+                                uvGraphOffset.y = (ScreenRect.height / 2f);
 #else
                                 uvGraphOffset.x -= screenshotCanvasRect.width;
-                                uvGraphOffset.y = ScreenRect.height / 2f - editorWindowTabOffset;
+                                uvGraphOffset.y = ScreenRect.height / 2f;
                             #endif
                                 screenshotCanvasRect.width = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.x, ScreenRect.width);
                                 screenshotTexturePosition.y = 0;

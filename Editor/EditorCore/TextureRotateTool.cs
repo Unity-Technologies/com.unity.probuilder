@@ -25,7 +25,7 @@ namespace UnityEditor.ProBuilder
             Handles.color = Color.blue;
             m_Euler.z = m_Rotation;
             m_Quaternion = Quaternion.Euler(m_Euler);
-            m_Quaternion = Handles.Disc(m_Quaternion, Vector3.zero, Vector3.forward, size, relativeSnapEnabled, relativeSnapRotation);
+            m_Quaternion = Handles.Disc(m_Quaternion, Vector3.zero, Vector3.forward, size, relativeSnapEnabled, ProBuilderSnapSettings.incrementalSnapRotateValue);
             m_Euler = m_Quaternion.eulerAngles;
             m_Rotation = m_Euler.z;
 
@@ -37,9 +37,7 @@ namespace UnityEditor.ProBuilder
                     BeginEdit("Rotate Textures");
 
                 if (relativeSnapEnabled)
-                    m_Rotation = ProGridsSnapping.SnapValue(m_Rotation, relativeSnapX);
-                else if (progridsSnapEnabled)
-                    m_Rotation = ProGridsSnapping.SnapValue(m_Rotation, progridsSnapValue);
+                    m_Rotation = ProBuilderSnapping.SnapValue(m_Rotation, ProBuilderSnapSettings.incrementalSnapRotateValue);
 
                 foreach (var mesh in elementSelection)
                 {

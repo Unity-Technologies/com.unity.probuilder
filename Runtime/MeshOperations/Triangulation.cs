@@ -12,6 +12,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
     /// </summary>
     static class Triangulation
     {
+        static TriangulationContext s_TriangulationContext;
+
+        static TriangulationContext triangulationContext
+        {
+            get
+            {
+                if(s_TriangulationContext == null)
+                    s_TriangulationContext = new DTSweepContext();
+                return s_TriangulationContext;
+            }
+        }
+
         /// <summary>
         /// Given a set of points this method will format the points into a boundary contour and triangulate, returning
         /// a set of indexes that corresponds to the original ordering.
@@ -132,7 +144,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             try
             {
-                P2T.Triangulate(TriangulationAlgorithm.DTSweep, soup);
+                triangulationContext.Clear();
+                triangulationContext.PrepareTriangulation(soup);
+                DTSweep.Triangulate((DTSweepContext)triangulationContext);
             }
             catch (System.Exception e)
             {
@@ -157,9 +171,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             // if the re-triangulated first tri doesn't match the winding order of the original
             // vertices, flip 'em
-            
+
             if (SurfaceTopology.GetWindingOrder(new Vector2[3]
-            {                
+            {
                 points[indexes[0]],
                 points[indexes[1]],
                 points[indexes[2]],
@@ -199,7 +213,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             try
             {
-                P2T.Triangulate(TriangulationAlgorithm.DTSweep, polygon);
+                triangulationContext.Clear();
+                triangulationContext.PrepareTriangulation(polygon);
+                DTSweep.Triangulate((DTSweepContext)triangulationContext);
             }
             catch (System.Exception e)
             {

@@ -94,3 +94,10 @@ mesh.Optimize();
 **All contributions are subject to the [Unity Contribution Agreement(UCA)](https://unity3d.com/legal/licenses/Unity_Contribution_Agreement).**
 
 By making a pull request, you are confirming agreement to the terms and conditions of the UCA, including that your Contributions are your original creation and that you have complete right and authority to make your Contributions.
+
+**Pull Requests**
+
+Please include an entry to the changelog for any PR, along with a Fogbugz ticket number if applicable.
+
+New logs should be placed under the `## [Unreleased]` header at the top of the changelog. See [Contributing](CONTRIBUTING.md) for more details.
+
