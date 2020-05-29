@@ -327,7 +327,7 @@ namespace UnityEditor.ProBuilder
 
             LoadSettings();
             InitGUI();
-            UpdateSelection();
+            EditorApplication.delayCall += () => UpdateSelection();
             SetOverrideWireframe(true);
 
             if (selectModeChanged != null)
