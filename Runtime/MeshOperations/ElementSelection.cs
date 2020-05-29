@@ -330,6 +330,48 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
+        /// Iterates through face edges and builds a list using the opposite edge, iteratively.
+        /// </summary>
+        /// <param name="pb">The probuilder mesh</param>
+        /// <param name="edges">The edges already selected</param>
+        /// <returns>The new selected edges</returns>
+        internal static IEnumerable<Edge> GetEdgeRingIterative(ProBuilderMesh pb, IEnumerable<Edge> edges)
+        {
+            List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
+            List<EdgeLookup> edgeLookup = EdgeLookup.GetEdgeLookup(edges, pb.sharedVertexLookup).ToList();
+            edgeLookup = edgeLookup.Distinct().ToList();
+
+            Dictionary<Edge, WingedEdge> wings_dic = new Dictionary<Edge, WingedEdge>();
+
+            for (int i = 0; i < wings.Count; i++)
+                if (!wings_dic.ContainsKey(wings[i].edge.common))
+                    wings_dic.Add(wings[i].edge.common, wings[i]);
+
+            HashSet<EdgeLookup> used = new HashSet<EdgeLookup>();
+
+            for (int i = 0, c = edgeLookup.Count; i < c; i++)
+            {
+                WingedEdge we;
+
+                if (!wings_dic.TryGetValue(edgeLookup[i].common, out we))
+                    continue;
+
+                WingedEdge cur = we;
+
+                if (!used.Contains(cur.edge))
+                    used.Add(cur.edge);
+                var next = EdgeRingNext(cur);
+                if (next != null && next.opposite != null && !used.Contains(next.edge))
+                    used.Add(next.edge);
+                var prev = EdgeRingNext(cur.opposite);
+                if (prev != null && prev.opposite != null && !used.Contains(prev.edge))
+                    used.Add(prev.edge);
+            }
+
+            return used.Select(x => x.local);
+        }
+
+        /// <summary>
         /// Attempts to find edges along an Edge loop.
         ///
         /// http://wiki.blender.org/index.php/Doc:2.4/Manual/Modeling/Meshes/Selecting/Edges says:
