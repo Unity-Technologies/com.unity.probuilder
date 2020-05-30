@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Bug Fixes
 
+- [case: 1241105] Fixed an issue where `Select Edge Loop` could overflow when encountering certain non-manifold geometry.
 - [case: 1242263] Fixed `UV Editor` `Move` and `Rotate` tools throwing null reference exceptions as of Unity 2020.2.0a9.
 - Fixed exception on script reloads in the `EditorMeshHandles` class.
 
