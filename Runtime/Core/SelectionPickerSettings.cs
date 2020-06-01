@@ -11,33 +11,6 @@ namespace UnityEngine.ProBuilder
         public List<Edge> edges;
         public List<Face> faces;
 
-        public Face face
-        {
-            set
-            {
-                faces.Clear();
-                faces.Add(value);
-            }
-        }
-
-        public int vertex
-        {
-            set
-            {
-                faces.Clear();
-                vertexes.Add(value);
-            }
-        }
-
-        public Edge edge
-        {
-            set
-            {
-                faces.Clear();
-                edges.Add(value);
-            }
-        }
-
         public SceneSelection(GameObject gameObject = null)
         {
             this.gameObject = gameObject;
@@ -68,6 +41,24 @@ namespace UnityEngine.ProBuilder
             vertexes = new List<int>();
             edges = new List<Edge>();
             this.faces = faces;
+        }
+
+        public void SetSingleFace(Face face)
+        {
+            faces.Clear();
+            faces.Add(face);
+        }
+
+        public void SetSingleVertex(int vertex)
+        {
+            vertexes.Clear();
+            vertexes.Add(vertex);
+        }
+
+        public void SetSingleEdge(Edge edge)
+        {
+            edges.Clear();
+            edges.Add(edge);
         }
 
         public void Clear()
