@@ -450,7 +450,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
                 cur = null;
 
-                if (spokes != null && spokes.Count == 4)
+                if (spokes.Count == 4)
                 {
                     cur = spokes[2];
                     ind = cur.edge.common.a == ind ? cur.edge.common.b : cur.edge.common.a;
@@ -473,14 +473,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
             List<WingedEdge> spokesA = GetSpokes(cur, indA, true).DistinctBy(x => x.edge.common).ToList();
             List<WingedEdge> spokesB = GetSpokes(cur, indB, true).DistinctBy(x => x.edge.common).ToList();
 
-            if (spokesA != null && spokesA.Count == 4)
+            if (spokesA.Count == 4)
             {
                 cur = spokesA[2];
 
                 if (!used.Contains(cur.edge))
                     used.Add(cur.edge);
             }
-            if (spokesB != null && spokesB.Count == 4)
+            if (spokesB.Count == 4)
             {
                 cur = spokesB[2];
 
@@ -493,12 +493,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
         {
             if (opp)
                 return wing.opposite;
-            else if (wing.next.edge.common.Contains(pivot))
+            if (wing.next.edge.common.Contains(pivot))
                 return wing.next;
-            else if (wing.previous.edge.common.Contains(pivot))
+            if (wing.previous.edge.common.Contains(pivot))
                 return wing.previous;
-            else
-                return null;
+            return null;
         }
 
         /// <summary>
@@ -516,6 +515,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             do
             {
+                // https://fogbugz.unity3d.com/f/cases/1241105/
+                if (spokes.Contains(cur))
+                    return spokes;
+
                 spokes.Add(cur);
                 cur = NextSpoke(cur, sharedIndex, opp);
                 opp = !opp;

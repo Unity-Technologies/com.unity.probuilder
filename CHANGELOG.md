@@ -5,17 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [4.4.0-preview.1] - 2020-06-29
 
 ### Features
 
-- Added iterative selection on edges
+- Added iterative selection on edges.
 
 ### Bug Fixes
 
+- [case: 1241105] Fixed an issue where `Select Edge Loop` could overflow when encountering certain non-manifold geometry.
 - [case: 1242263] Fixed `UV Editor` `Move` and `Rotate` tools throwing null reference exceptions as of Unity 2020.2.0a9.
+- [case: 1251289] Fixed exception on script reloads in the `EditorMeshHandles` class.
 - Fixed exception on script reloads in the `EditorMeshHandles` class.
 - [case: 1249071] Fixed Shift selection being inconsistent
+- [case: 1249056] Fixed Ctrl selection being inconsistent.
 
 ## [4.3.0-preview.9] - 2020-05-03
 

@@ -327,7 +327,7 @@ namespace UnityEditor.ProBuilder
 
             LoadSettings();
             InitGUI();
-            UpdateSelection();
+            EditorApplication.delayCall += () => UpdateSelection();
             SetOverrideWireframe(true);
 
             if (selectModeChanged != null)
@@ -682,7 +682,7 @@ namespace UnityEditor.ProBuilder
                     tool.OnSceneGUI(m_CurrentEvent);
             }
 
-            if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent) || m_CurrentEvent.isKey)
+            if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent) || m_CurrentEvent.isKey && m_IsDragging)
             {
                 m_IsDragging = false;
 
