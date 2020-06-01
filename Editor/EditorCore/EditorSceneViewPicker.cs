@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder
                 return;
 
             var faces = mesh.facesInternal;
-            var pathFaces = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, mesh.GetActiveFace()),
+            var pathFaces = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, activeFace),
                                  Array.IndexOf<Face>(faces, face));
             foreach(var path in pathFaces)
             {

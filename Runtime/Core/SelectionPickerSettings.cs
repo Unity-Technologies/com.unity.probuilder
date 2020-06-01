@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UnityEngine.ProBuilder
 {
@@ -74,9 +75,9 @@ namespace UnityEngine.ProBuilder
         {
             dst.gameObject = gameObject;
             dst.mesh = mesh;
-            dst.faces = faces;
-            dst.edges = edges;
-            dst.vertexes = vertexes;
+            dst.faces = faces.ConvertAll(x => x);
+            dst.edges = edges.ConvertAll(x => x);
+            dst.vertexes = vertexes.ConvertAll(x => x);
         }
 
         public override string ToString()
@@ -96,9 +97,9 @@ namespace UnityEngine.ProBuilder
             if (ReferenceEquals(this, other)) return true;
             return Equals(gameObject, other.gameObject)
                 && Equals(mesh, other.mesh)
-                && vertexes == other.vertexes
-                && edges.Equals(other.edges)
-                && Equals(faces, other.faces);
+                && Enumerable.SequenceEqual(vertexes, other.vertexes)
+                && Enumerable.SequenceEqual(edges, other.edges)
+                && Enumerable.SequenceEqual(faces, other.faces);
         }
 
         public override bool Equals(object obj)
@@ -115,8 +116,8 @@ namespace UnityEngine.ProBuilder
             {
                 int hashCode = (gameObject != null ? gameObject.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (mesh != null ? mesh.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ vertexes.GetHashCode();
-                hashCode = (hashCode * 397) ^ edges.GetHashCode();
+                hashCode = (hashCode * 397) ^ (vertexes != null ? vertexes.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (edges != null ? edges.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (faces != null ? faces.GetHashCode() : 0);
                 return hashCode;
             }
