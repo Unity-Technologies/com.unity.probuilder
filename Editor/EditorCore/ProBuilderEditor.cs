@@ -329,7 +329,7 @@ namespace UnityEditor.ProBuilder
 
             LoadSettings();
             InitGUI();
-            UpdateSelection();
+            EditorApplication.delayCall += () => UpdateSelection();
             SetOverrideWireframe(true);
 
             if (selectModeChanged != null)
@@ -391,7 +391,7 @@ namespace UnityEditor.ProBuilder
 
         void LoadSettings()
         {
-            EditorMeshHandles.ResetPreferences();
+            EditorApplication.delayCall += EditorMeshHandles.ResetPreferences;
 
             m_ScenePickerPreferences = new ScenePickerPreferences()
             {
@@ -694,7 +694,7 @@ namespace UnityEditor.ProBuilder
                     tool.OnSceneGUI(m_CurrentEvent);
             }
 
-            if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent) || m_CurrentEvent.isKey)
+            if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent) || m_CurrentEvent.isKey && m_IsDragging)
             {
                 m_IsDragging = false;
 

@@ -11,7 +11,7 @@ test_platforms:
     flavor: b1.large
   - name: mac
     type: Unity::VM::osx
-    image: buildfarm/mac:stable
+    image: package-ci/mac:stable
     flavor: m1.mac
 ---
 {% for editor in test_editors %}
