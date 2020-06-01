@@ -626,7 +626,7 @@ namespace UnityEditor.ProBuilder
             if (s_ShowHoverHighlight
                 && selectMode.IsMeshElementMode()
                 && (m_CurrentEvent.type == EventType.MouseMove
-                || (m_wasSelectingPath != pathSelectionModifier && (m_CurrentEvent.type == EventType.KeyDown || m_CurrentEvent.type == EventType.KeyUp))))
+                || (m_wasSelectingPath != pathSelectionModifier && m_CurrentEvent.isKey)))
             {
                 m_Hovering.CopyTo(m_HoveringPrevious);
                 if (GUIUtility.hotControl != 0 ||
@@ -636,9 +636,8 @@ namespace UnityEditor.ProBuilder
                 if (!m_Hovering.Equals(m_HoveringPrevious))
                 {
                     if (pathSelectionModifier)
-                    {
                         EditorSceneViewPicker.DoMouseHover(m_Hovering);
-                    }
+
                     SceneView.RepaintAll();
                 }
             }

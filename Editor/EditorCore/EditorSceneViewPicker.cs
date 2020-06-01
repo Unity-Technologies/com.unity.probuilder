@@ -512,7 +512,7 @@ namespace UnityEditor.ProBuilder
                     {
                         selection.gameObject = pickedGo;
                         selection.mesh = pickedPb;
-                        selection.faces = new List<Face> { pickedFace };
+                        selection.face = pickedFace;
 
                         return Mathf.Sqrt(distance);
                     }
@@ -563,7 +563,7 @@ namespace UnityEditor.ProBuilder
                 {
                     selection.gameObject = s_NearestVertices[i].mesh.gameObject;
                     selection.mesh = s_NearestVertices[i].mesh;
-                    selection.vertexes = new List<int> { s_NearestVertices[i].vertex }; 
+                    selection.vertex = s_NearestVertices[i].vertex; 
 
                     return Mathf.Sqrt(s_NearestVertices[i].screenDistance);
                 }
@@ -626,7 +626,7 @@ namespace UnityEditor.ProBuilder
                 {
                     selection.gameObject = hoveredMesh.gameObject;
                     selection.mesh = hoveredMesh;
-                    selection.edges = new List<Edge> { tup.edge };
+                    selection.edge = tup.edge;
                     bestDistance = tup.distance;
 
                     // If the nearest edge was acquired by a raycast, then the distance to mesh is 0f.
@@ -677,7 +677,7 @@ namespace UnityEditor.ProBuilder
 
                             selection.gameObject = mesh.gameObject;
                             selection.mesh = mesh;
-                            selection.edges = new List<Edge> { new Edge(x, y) };
+                            selection.edge = new Edge(x, y);
                             bestDistance = d;
                         }
                     }
@@ -686,7 +686,7 @@ namespace UnityEditor.ProBuilder
                 // If more than 1 edge is closest, the closest is one of the vertex.
                 // Get closest edge to the camera.
                 if (s_EdgeBuffer.Count > 1)
-                    selection.edges = new List<Edge> { GetClosestEdgeToCamera(positions, s_EdgeBuffer) };
+                    selection.edge = GetClosestEdgeToCamera(positions, s_EdgeBuffer);
             }
 
             return selection.gameObject != null ? bestDistance : Mathf.Infinity;

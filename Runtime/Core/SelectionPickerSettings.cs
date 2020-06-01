@@ -11,6 +11,33 @@ namespace UnityEngine.ProBuilder
         public List<Edge> edges;
         public List<Face> faces;
 
+        public Face face
+        {
+            set
+            {
+                faces.Clear();
+                faces.Add(value);
+            }
+        }
+
+        public int vertex
+        {
+            set
+            {
+                faces.Clear();
+                vertexes.Add(value);
+            }
+        }
+
+        public Edge edge
+        {
+            set
+            {
+                faces.Clear();
+                edges.Add(value);
+            }
+        }
+
         public SceneSelection(GameObject gameObject = null)
         {
             this.gameObject = gameObject;
