@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1242263] Fixed `UV Editor` `Move` and `Rotate` tools throwing null reference exceptions as of Unity 2020.2.0a9.
 - [case: 1251289] Fixed exception on script reloads in the `EditorMeshHandles` class.
 - Fixed exception on script reloads in the `EditorMeshHandles` class.
+- [case: 1249071] Fixed Shift selection being inconsistent
 - [case: 1249056] Fixed Ctrl selection being inconsistent.
 
 ## [4.3.0-preview.9] - 2020-05-03
