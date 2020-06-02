@@ -238,9 +238,9 @@ namespace UnityEditor.ProBuilder
             var positions = mesh.positionsInternal;
 
             // Draw nearest edge
-            foreach (var face in selection.faces)
+            using (new TriangleDrawingScope(s_PreselectionColor))
             {
-                using (new TriangleDrawingScope(s_PreselectionColor))
+                foreach (var face in selection.faces)
                 {
                     GL.MultMatrix(mesh.transform.localToWorldMatrix);
                     var ind = face.indexes;
@@ -253,17 +253,19 @@ namespace UnityEditor.ProBuilder
                     }
                 }
             }
-            foreach (var edge in selection.edges)
+            using (var drawingScope = new LineDrawingScope(s_PreselectionColor, mesh.transform.localToWorldMatrix, -1f, CompareFunction.Always))
             {
-                using (var drawingScope = new LineDrawingScope(s_PreselectionColor, mesh.transform.localToWorldMatrix, -1f, CompareFunction.Always))
+                foreach (var edge in selection.edges)
                 {
+
                     drawingScope.DrawLine(positions[edge.a], positions[edge.b]);
                 }
             }
-            foreach (var vertex in selection.vertexes)
+            using (var drawingScope = new PointDrawingScope(s_PreselectionColor, CompareFunction.Always) { matrix = mesh.transform.localToWorldMatrix })
             {
-                using (var drawingScope = new PointDrawingScope(s_PreselectionColor, CompareFunction.Always) { matrix = mesh.transform.localToWorldMatrix })
+                foreach (var vertex in selection.vertexes)
                 {
+
                     drawingScope.Draw(positions[vertex]);
                 }
             }
