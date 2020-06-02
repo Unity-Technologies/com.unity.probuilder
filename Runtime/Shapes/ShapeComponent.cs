@@ -1,10 +1,45 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 namespace UnityEngine.ProBuilder
 {
+    [CustomEditor(typeof(ShapeComponent))]
+    public class ShapeComponentEditor : Editor
+    {
+        SerializedProperty m_shape;
+        static int s_CurrentIndex = 0;
+        string[] m_ShapeTypes;
+
+        TypeCache.TypeCollection m_AvailableShapeTypes;
+
+        private void OnEnable()
+        {
+            m_AvailableShapeTypes = TypeCache.GetTypesDerivedFrom<Shape>();
+            m_ShapeTypes = m_AvailableShapeTypes.Select(x => x.ToString()).ToArray();
+            m_shape = serializedObject.FindProperty("m_shape");
+        }
+
+        public override void OnInspectorGUI()
+        {
+            serializedObject.Update();
+            EditorGUI.BeginChangeCheck();
+            s_CurrentIndex = EditorGUILayout.Popup(s_CurrentIndex, m_ShapeTypes);
+            if (EditorGUI.EndChangeCheck())
+            {
+                foreach(var target in targets)
+                {
+                    ((ShapeComponent)target).SetShape(m_AvailableShapeTypes[s_CurrentIndex]);
+                }
+            }
+            EditorGUILayout.PropertyField(m_shape, true);
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
+
     [AddComponentMenu("")]
     [RequireComponent(typeof(ProBuilderMesh))]
     public class ShapeComponent : MonoBehaviour
@@ -13,7 +48,6 @@ namespace UnityEngine.ProBuilder
         Shape m_shape = new Cube();
 
         ProBuilderMesh m_Mesh;
-
         Transform m_Transform;
 
         [HideInInspector]
@@ -67,11 +101,14 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentException("Type needs to derive from Shape");
 
             m_shape = Activator.CreateInstance(type) as Shape;
+            Rebuild();
         }
 
         public void SetShape<T>() where T : Shape, new()
         {
             m_shape = new T();
+            Rebuild();
+            FitToSize();
         }
 
         // Assumes that mesh origin is {0,0,0}
