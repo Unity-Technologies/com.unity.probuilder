@@ -8,7 +8,7 @@ using Math = UnityEngine.ProBuilder.Math;
 
 namespace UnityEditor.ProBuilder
 {
-    public abstract class EditShapeTool<T> : EditorTool where T : Shape
+    public abstract class EditShapeTool: EditorTool
     {
         const int k_HotControlNone = 0;
         BoxBoundsHandle m_BoundsHandle;
@@ -19,7 +19,7 @@ namespace UnityEditor.ProBuilder
 
         protected struct ShapeState
         {
-            public Shape shape;
+            public ShapeComponent shape;
             public Matrix4x4 localToWorldMatrix;
             public Matrix4x4 positionAndRotationMatrix;
             public Bounds boundsHandleValue;
@@ -34,9 +34,9 @@ namespace UnityEditor.ProBuilder
             get { return PrimitiveBoundsHandle.editModeButton; }
         }
 
-        bool IsEditing(Shape shape)
+        bool IsEditing(ShapeComponent shape)
         {
-            return m_BoundsHandleActive && shape == m_ActiveShapeState.shape;
+            return m_BoundsHandleActive;
         }
 
         void OnEnable()
@@ -48,7 +48,7 @@ namespace UnityEditor.ProBuilder
         {
             foreach (var obj in targets)
             {
-                var shape = obj as T;
+                var shape = obj as ShapeComponent;
 
                 if (shape != null)
                 {
@@ -71,7 +71,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        protected virtual void DoShapeGUI(T shape, Matrix4x4 localToWorldMatrix, Bounds bounds)
+        protected virtual void DoShapeGUI(ShapeComponent shape, Matrix4x4 localToWorldMatrix, Bounds bounds)
         {
             var matrix = IsEditing(shape)
                 ? m_ActiveShapeState.positionAndRotationMatrix
@@ -95,7 +95,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        void BeginBoundsEditing(Shape shape)
+        void BeginBoundsEditing(ShapeComponent shape)
         {
             if (m_BoundsHandleActive)
                 return;
@@ -136,7 +136,7 @@ namespace UnityEditor.ProBuilder
             return scaleVector;
         }
 
-        void CopyColliderPropertiesToHandle(Shape shape)
+        void CopyColliderPropertiesToHandle(ShapeComponent shape)
         {
             // when editing a shape, we don't bother doing the conversion from handle space bounds to model for the
             // active handle
@@ -155,7 +155,7 @@ namespace UnityEditor.ProBuilder
             m_BoundsHandle.size = Vector3.Scale(bounds.size, lossyScale);
         }
 
-        void CopyHandlePropertiesToCollider(Shape shape)
+        void CopyHandlePropertiesToCollider(ShapeComponent shape)
         {
             m_ActiveShapeState.boundsHandleValue = new Bounds(m_BoundsHandle.center, m_BoundsHandle.size);
 
@@ -171,7 +171,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.Refresh(false);
         }
 
-        protected void RebuildShape(Shape shape, Bounds bounds, Quaternion rotation)
+        protected void RebuildShape(ShapeComponent shape, Bounds bounds, Quaternion rotation)
         {
             shape.Rebuild(bounds, rotation);
             shape.mesh.SetPivot(EditorUtility.newShapePivotLocation);

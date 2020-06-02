@@ -20,12 +20,12 @@ namespace UnityEngine.ProBuilder
             set { m_Sides = value; }
         }
 
-        public float stepHeight
-        {
-            get { return (1f / m_Steps) * size.y; }
-        }
+        //public float stepHeight
+        //{
+        //    get { return (1f / m_Steps) * size.y; }
+        //}
 
-        protected override void RebuildMesh()
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
             // 4 vertices per quad, 2 quads per step.
             Vector3[] vertices = new Vector3[4 * steps * 2];

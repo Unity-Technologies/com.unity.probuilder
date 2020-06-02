@@ -11,7 +11,7 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         int smoothing = -1;
 
-        protected override void RebuildMesh()
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
             var radius = Mathf.Max(size.x, size.z) * .5f;
             var height = size.y;
@@ -130,7 +130,7 @@ namespace UnityEngine.ProBuilder
 
             mesh.RebuildWithPositionsAndFaces(verts, faces);
 
-            FitToSize();
+           // FitToSize();
         }
     }
 }

@@ -21,7 +21,7 @@ namespace UnityEditor.ProBuilder
         [SerializeField]
         InputState m_InputState;
 
-        Shape m_Shape;
+        ShapeComponent m_Shape;
 
         // plane of interaction
         Plane m_Plane;
@@ -104,7 +104,8 @@ namespace UnityEditor.ProBuilder
 
             if (m_Shape == null)
             {
-                m_Shape = new GameObject("Shape").AddComponent(activeShapeType) as Shape;
+                m_Shape = new GameObject("Shape").AddComponent<ShapeComponent>();
+                m_Shape.SetShape(activeShapeType);
                 UndoUtility.RegisterCreatedObjectUndo(m_Shape.gameObject, "Draw Shape");
                 EditorUtility.InitObject(m_Shape.mesh, false);
             }
