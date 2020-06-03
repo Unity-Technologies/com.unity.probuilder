@@ -8,7 +8,8 @@ using Math = UnityEngine.ProBuilder.Math;
 
 namespace UnityEditor.ProBuilder
 {
-    public abstract class EditShapeTool: EditorTool
+    [EditorTool("Edit Shape", typeof(ShapeComponent))]
+    public sealed class EditShapeTool: EditorTool
     {
         const int k_HotControlNone = 0;
         BoxBoundsHandle m_BoundsHandle;
@@ -17,7 +18,7 @@ namespace UnityEditor.ProBuilder
         // Don't recalculate the active bounds during an edit operation, it causes the handles to drift
         ShapeState m_ActiveShapeState;
 
-        protected struct ShapeState
+        struct ShapeState
         {
             public ShapeComponent shape;
             public Matrix4x4 localToWorldMatrix;
@@ -71,7 +72,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        protected virtual void DoShapeGUI(ShapeComponent shape, Matrix4x4 localToWorldMatrix, Bounds bounds)
+        void DoShapeGUI(ShapeComponent shape, Matrix4x4 localToWorldMatrix, Bounds bounds)
         {
             var matrix = IsEditing(shape)
                 ? m_ActiveShapeState.positionAndRotationMatrix
