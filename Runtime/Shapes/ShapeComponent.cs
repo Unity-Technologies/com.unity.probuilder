@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
@@ -21,6 +22,18 @@ namespace UnityEngine.ProBuilder
             m_AvailableShapeTypes = TypeCache.GetTypesDerivedFrom<Shape>();
             m_ShapeTypes = m_AvailableShapeTypes.Select(x => x.ToString()).ToArray();
             m_shape = serializedObject.FindProperty("m_shape");
+            var fullName = m_shape.managedReferenceFullTypename;
+            var typeName = fullName.Substring(fullName.LastIndexOf(' ') + 1);
+            Type type = null;
+            foreach(var shapeType in m_AvailableShapeTypes)
+            {
+                if(shapeType.ToString() == typeName)
+                {
+                    type = shapeType;
+                    break;
+                }
+            }
+            s_CurrentIndex = m_AvailableShapeTypes.IndexOf(type);
         }
 
         public override void OnInspectorGUI()
@@ -53,7 +66,6 @@ namespace UnityEngine.ProBuilder
         [HideInInspector]
         [SerializeField]
         Vector3 m_Size;
-
 
         public Vector3 size {
             get { return m_Size; }
