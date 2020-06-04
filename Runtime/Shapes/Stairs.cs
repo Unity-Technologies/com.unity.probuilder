@@ -2,6 +2,7 @@ namespace UnityEngine.ProBuilder
 {
     public class Stairs : Shape
     {
+        [Min(1)]
         [SerializeField]
         int m_Steps = 10;
 

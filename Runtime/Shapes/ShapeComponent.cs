@@ -1,58 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using UnityEditor;
-using UnityEngine;
 
 namespace UnityEngine.ProBuilder
 {
-    [CustomEditor(typeof(ShapeComponent))]
-    public class ShapeComponentEditor : Editor
-    {
-        SerializedProperty m_shape;
-        static int s_CurrentIndex = 0;
-        string[] m_ShapeTypes;
-
-        TypeCache.TypeCollection m_AvailableShapeTypes;
-
-        private void OnEnable()
-        {
-            m_AvailableShapeTypes = TypeCache.GetTypesDerivedFrom<Shape>();
-            m_ShapeTypes = m_AvailableShapeTypes.Select(x => x.ToString()).ToArray();
-            m_shape = serializedObject.FindProperty("m_shape");
-            var fullName = m_shape.managedReferenceFullTypename;
-            var typeName = fullName.Substring(fullName.LastIndexOf(' ') + 1);
-            Type type = null;
-            foreach(var shapeType in m_AvailableShapeTypes)
-            {
-                if(shapeType.ToString() == typeName)
-                {
-                    type = shapeType;
-                    break;
-                }
-            }
-            s_CurrentIndex = m_AvailableShapeTypes.IndexOf(type);
-        }
-
-        public override void OnInspectorGUI()
-        {
-            serializedObject.Update();
-            EditorGUI.BeginChangeCheck();
-            s_CurrentIndex = EditorGUILayout.Popup(s_CurrentIndex, m_ShapeTypes);
-            if (EditorGUI.EndChangeCheck())
-            {
-                foreach(var target in targets)
-                {
-                    ((ShapeComponent)target).SetShape(m_AvailableShapeTypes[s_CurrentIndex]);
-                }
-            }
-            EditorGUILayout.PropertyField(m_shape, true);
-            serializedObject.ApplyModifiedProperties();
-        }
-    }
-
     [AddComponentMenu("")]
     [RequireComponent(typeof(ProBuilderMesh))]
     public class ShapeComponent : MonoBehaviour
@@ -93,19 +42,16 @@ namespace UnityEngine.ProBuilder
             size = Math.Abs(bounds.size);
             transform.position = bounds.center;
             transform.rotation = rotation;
-            RebuildMesh();
+            Rebuild();
+            Debug.Log("rebuild spec");
         }
 
         public void Rebuild()
         {
-            RebuildMesh();
-        }
-
-        private void RebuildMesh()
-        {
+     //       transform.position = meshFilterBounds.center;
             m_shape.RebuildMesh(mesh, size);
+            FitToSize();
         }
-
 
         public void SetShape(Type type)
         {
@@ -120,11 +66,10 @@ namespace UnityEngine.ProBuilder
         {
             m_shape = new T();
             Rebuild();
-            FitToSize();
         }
 
         // Assumes that mesh origin is {0,0,0}
-        protected void FitToSize()
+        void FitToSize()
         {
             if (mesh.vertexCount < 1)
                 return;

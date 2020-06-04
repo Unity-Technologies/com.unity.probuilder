@@ -2,9 +2,11 @@ namespace UnityEngine.ProBuilder
 {
     public class Cylinder : Shape
     {
+        [Min(4)]
         [SerializeField]
         int axisDivisions = 6;
 
+        [Min(0)]
         [SerializeField]
         int heightCuts = 0;
 
