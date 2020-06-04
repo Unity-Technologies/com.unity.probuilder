@@ -2,7 +2,6 @@
 
 namespace UnityEngine.ProBuilder
 {
-    [AddComponentMenu("")]
     [RequireComponent(typeof(ProBuilderMesh))]
     public class ShapeComponent : MonoBehaviour
     {
@@ -16,22 +15,27 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         Vector3 m_Size;
 
-        public Vector3 size {
+        public Vector3 size
+        {
             get { return m_Size; }
             set { m_Size = value; }
         }
 
-        public ProBuilderMesh mesh {
+        public ProBuilderMesh mesh
+        {
             get { return m_Mesh == null ? m_Mesh = GetComponent<ProBuilderMesh>() : m_Mesh; }
         }
 
-        public Transform transform {
+        public Transform transform
+        {
             get { return m_Transform == null ? m_Transform = GetComponent<Transform>() : m_Transform; }
         }
 
         // Bounds where center is in world space, size is mesh.bounds.size
-        internal Bounds meshFilterBounds {
-            get {
+        internal Bounds meshFilterBounds
+        {
+            get
+            {
                 var mb = mesh.mesh.bounds;
                 return new Bounds(transform.TransformPoint(mb.center), mb.size);
             }
@@ -43,12 +47,10 @@ namespace UnityEngine.ProBuilder
             transform.position = bounds.center;
             transform.rotation = rotation;
             Rebuild();
-            Debug.Log("rebuild spec");
         }
 
         public void Rebuild()
         {
-     //       transform.position = meshFilterBounds.center;
             m_shape.RebuildMesh(mesh, size);
             FitToSize();
         }
@@ -64,8 +66,7 @@ namespace UnityEngine.ProBuilder
 
         public void SetShape<T>() where T : Shape, new()
         {
-            m_shape = new T();
-            Rebuild();
+            SetShape(typeof(T));
         }
 
         // Assumes that mesh origin is {0,0,0}
