@@ -37,6 +37,7 @@ namespace UnityEditor.ProBuilder
             bool appendModifier = EditorHandleUtility.IsAppendModifier(evt.modifiers);
             bool addToSelectionModifier = EditorHandleUtility.IsSelectionAddModifier(evt.modifiers);
             bool addOrRemoveIfPresentFromSelectionModifier = EditorHandleUtility.IsSelectionAppendOrRemoveIfPresentModifier(evt.modifiers);
+            bool pathSelectionModifier = EditorHandleUtility.IsSelectionPathModifier(evt.modifiers);
 
             float pickedElementDistance;
 
@@ -120,6 +121,15 @@ namespace UnityEditor.ProBuilder
                         {
                             mesh.selectedFaceIndicesInternal = mesh.selectedFaceIndicesInternal.Remove(ind);
                             mesh.SetSelectedFaces(mesh.selectedFaceIndicesInternal.Add(ind));
+                        }
+                    }
+                    else if (pathSelectionModifier && mesh.GetActiveFace() != null)
+                    {
+                        var pathFaces = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, mesh.GetActiveFace()),
+                            Array.IndexOf<Face>(faces, s_Selection.face));
+                        foreach (var pathFace in pathFaces)
+                        {
+                            mesh.AddToFaceSelection(pathFace);
                         }
                     }
                     else

@@ -5,18 +5,29 @@
         "Unity.ProBuilder",
         "Unity.ProBuilder.Editor",
         "Unity.ProBuilder.Stl",
-        "Unity.Settings.Editor"
-    ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
+        "Unity.Settings.Editor",
+        "Unity.PerformanceTesting"
     ],
     "includePlatforms": [
         "Editor"
     ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
     "autoReferenced": false,
-    "defineConstraints": []
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.test-framework.performance",
+            "expression": "2.1.0-preview",
+            "define": "PERFORMANCE_TESTS_ENABLED"
+        }
+    ],
+    "noEngineReferences": false,
+    "optionalUnityReferences": [ "TestAssemblies" ]
 }
