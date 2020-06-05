@@ -171,8 +171,6 @@ namespace UnityEditor.ProBuilder
 
         Event m_CurrentEvent;
 
-        List<KeyCode> m_KeyPressed = new List<KeyCode>();
-
         internal bool isFloatingWindow { get; private set; }
 
         /// <value>
@@ -586,33 +584,13 @@ namespace UnityEditor.ProBuilder
             DrawHandleGUI(sceneView);
 
 #if SHORTCUT_MANAGER
-            //bool that can be used to manage the first KeyDown even
-            //in a different way than repeated occurence of the same event
-            //(Otherwise KeyDown event is repeated as long as the key is pressed)
-            bool keyPressedForFirstTime = false;
-            if (m_CurrentEvent.isKey)
+            if (m_CurrentEvent.type == EventType.KeyDown)
             {
-                if (m_CurrentEvent.type == EventType.KeyDown)
+                // Escape isn't assignable as a shortcut
+                if (m_CurrentEvent.keyCode == KeyCode.Escape && selectMode != SelectMode.Object)
                 {
-                    // Escape isn't assignable as a shortcut
-                    if (m_CurrentEvent.keyCode == KeyCode.Escape && selectMode != SelectMode.Object)
-                    {
-                        selectMode = SelectMode.Object;
-                        m_CurrentEvent.Use();
-                    }
-                    // In order to a repeated use of the keydown event, we check if this
-                    // event has already been performed
-                    else if (!m_KeyPressed.Contains(m_CurrentEvent.keyCode))
-                    {
-                        keyPressedForFirstTime = true;
-                        m_KeyPressed.Add(m_CurrentEvent.keyCode);
-                    }
-                }
-
-                if (m_CurrentEvent.type == EventType.KeyUp)
-                {
-                    // when the key is unpressed, the key is deleted from the pressed key list
-                    m_KeyPressed.Remove(m_CurrentEvent.keyCode);
+                    selectMode = SelectMode.Object;
+                    m_CurrentEvent.Use();
                 }
             }
 #else
@@ -705,9 +683,10 @@ namespace UnityEditor.ProBuilder
                     tool.OnSceneGUI(m_CurrentEvent);
             }
 
-             if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent) || keyPressedForFirstTime && m_IsDragging)
+             if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent))
              {
-                 m_IsDragging = false;
+                 if(m_IsDragging)
+                    m_IsDragging = false;
 
                  if (GUIUtility.hotControl == m_DefaultControl)
                      GUIUtility.hotControl = 0;
