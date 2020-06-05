@@ -111,7 +111,7 @@ namespace UnityEditor.ProBuilder
             }
 
             m_Shape.Rebuild(m_Bounds, m_Rotation);
-            m_Shape.mesh.SetPivot(EditorUtility.newShapePivotLocation);
+            m_Shape.mesh.SetPivot(PivotLocation.Center);
             ProBuilderEditor.Refresh(false);
         }
 
