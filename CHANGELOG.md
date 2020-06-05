@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [UNRELEASED]
 
 ### Bug Fixes
-- [case: 1252394] Fixed dragging selection with Ctrl problem.
+- [case: 1252394] Fixed dragging selection with Ctrl problem (and key pressed problem in general).
 
 ## [4.4.0-preview.1] - 2020-06-29
 
