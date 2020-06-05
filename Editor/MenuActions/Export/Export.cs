@@ -71,7 +71,8 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override bool enabled
         {
-            get { return Selection.gameObjects != null && Selection.gameObjects.Length > 0; }
+            get { return MeshSelection.selectedObjectCount > 0; }
+            //get { return Selection.gameObjects != null && Selection.gameObjects.Length > 0; }
         }
 
         protected override MenuActionState optionsMenuState
@@ -178,7 +179,7 @@ namespace UnityEditor.ProBuilder.Actions
             List<ProBuilderMesh> meshes = m_ExportRecursive ? MeshSelection.deep.ToList() : MeshSelection.topInternal;
 
             if (meshes == null || !meshes.Any())
-                return new ActionResult(ActionResult.Status.Canceled, "No Meshes Selected");
+                return new ActionResult(ActionResult.Status.Canceled, "No ProBuilder Mesh");
 
             if (m_ExportFormat == ExportFormat.Obj)
             {
