@@ -10,6 +10,7 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         int heightCuts = 0;
 
+        [Min(-1)]
         [SerializeField]
         int smoothing = -1;
 
@@ -131,8 +132,6 @@ namespace UnityEngine.ProBuilder
             }
 
             mesh.RebuildWithPositionsAndFaces(verts, faces);
-
-           // FitToSize();
         }
     }
 }
