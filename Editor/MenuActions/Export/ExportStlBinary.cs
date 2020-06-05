@@ -28,7 +28,6 @@ namespace UnityEditor.ProBuilder.Actions
         public override bool enabled
         {
             get { return MeshSelection.selectedObjectCount > 0; }
-            //get { return Selection.gameObjects != null && Selection.gameObjects.Length > 0; }
         }
 
         public override ActionResult DoAction()
