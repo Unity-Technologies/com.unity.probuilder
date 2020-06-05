@@ -240,9 +240,9 @@ namespace UnityEditor.ProBuilder
             // Draw nearest edge
             using (new TriangleDrawingScope(s_PreselectionColor))
             {
+                GL.MultMatrix(mesh.transform.localToWorldMatrix);
                 foreach (var face in selection.faces)
                 {
-                    GL.MultMatrix(mesh.transform.localToWorldMatrix);
                     var ind = face.indexes;
 
                     for (int i = 0, c = ind.Count; i < c; i += 3)
@@ -257,7 +257,6 @@ namespace UnityEditor.ProBuilder
             {
                 foreach (var edge in selection.edges)
                 {
-
                     drawingScope.DrawLine(positions[edge.a], positions[edge.b]);
                 }
             }
@@ -265,7 +264,6 @@ namespace UnityEditor.ProBuilder
             {
                 foreach (var vertex in selection.vertexes)
                 {
-
                     drawingScope.Draw(positions[vertex]);
                 }
             }

@@ -75,9 +75,15 @@ namespace UnityEngine.ProBuilder
         {
             dst.gameObject = gameObject;
             dst.mesh = mesh;
-            dst.faces = faces.ConvertAll(x => x);
-            dst.edges = edges.ConvertAll(x => x);
-            dst.vertexes = vertexes.ConvertAll(x => x);
+            dst.faces.Clear();
+            dst.edges.Clear();
+            dst.vertexes.Clear();
+            foreach (var x in faces)
+                dst.faces.Add(x);
+            foreach (var x in edges)
+                dst.edges.Add(x);
+            foreach (var x in vertexes)
+                dst.vertexes.Add(x);
         }
 
         public override string ToString()
