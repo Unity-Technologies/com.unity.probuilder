@@ -10,7 +10,6 @@ namespace UnityEditor.ProBuilder
         SerializedProperty m_shape;
         static int s_CurrentIndex = 0;
         string[] m_ShapeTypes;
-
         TypeCache.TypeCollection m_AvailableShapeTypes;
 
         private void OnEnable()
@@ -53,5 +52,4 @@ namespace UnityEditor.ProBuilder
             serializedObject.ApplyModifiedProperties();
         }
     }
-
 }

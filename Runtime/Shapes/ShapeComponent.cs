@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder
 {
@@ -77,8 +78,21 @@ namespace UnityEngine.ProBuilder
             var actual = mesh.mesh.bounds.size;
             var scale = size.DivideBy(actual);
             var positions = mesh.positionsInternal;
+            if (System.Math.Abs(size.x) < 0.01f)
+            {
+                scale.x = 0;
+            }
+            if (System.Math.Abs(size.y) < 0.01f)
+            {
+                scale.y = 0;
+            }
+            if (System.Math.Abs(size.z) < 0.01f)
+            {
+                scale.z = 0;
+            }
             for (int i = 0, c = mesh.vertexCount; i < c; i++)
                 positions[i].Scale(scale);
+
             mesh.ToMesh();
             mesh.Rebuild();
         }
