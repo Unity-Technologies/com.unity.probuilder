@@ -23,7 +23,7 @@ namespace UnityEngine.ProBuilder
         {
             var radialCuts = numberOfSides;
             var angle = archDegrees;
-            var width = size.x;
+            var width = thickness;
             var radius = size.y;
             var depth = size.z;
             Vector2[] templateOut = new Vector2[radialCuts];
@@ -31,15 +31,15 @@ namespace UnityEngine.ProBuilder
 
             for (int i = 0; i < radialCuts; i++)
             {
-                templateOut[i] = Math.PointInCircumference(radius, i * (angle / (radialCuts - 1)), Vector2.zero);
-                templateIn[i] = Math.PointInCircumference(radius - width, i * (angle / (radialCuts - 1)), Vector2.zero);
+                templateOut[i] = Math.PointInCircumference(radius, i * (angle / (radialCuts - 1)), Vector2.zero) + new Vector2(0, -radius/2f);
+                templateIn[i] = Math.PointInCircumference(radius - width, i * (angle / (radialCuts - 1)), Vector2.zero) + new Vector2(0, -radius/2f);
             }
 
             List<Vector3> v = new List<Vector3>();
 
             Vector2 tmp, tmp2, tmp3, tmp4;
 
-            float y = 0;
+            float y = -depth;
 
             for (int n = 0; n < radialCuts - 1; n++)
             {
@@ -100,7 +100,40 @@ namespace UnityEngine.ProBuilder
                         });
                     }
                 }
+
+
             }
+
+            // build front and back faces
+            for (int i = 0; i < radialCuts - 1; i++)
+            {
+                tmp = templateOut[i];
+                tmp2 = (i < radialCuts - 1) ? templateOut[i + 1] : templateOut[i];
+                tmp3 = templateIn[i];
+                tmp4 = (i < radialCuts - 1) ? templateIn[i + 1] : templateIn[i];
+
+                // front
+                Vector3[] tpb = new Vector3[4]
+                {
+                    new Vector3(tmp.x, tmp.y, depth),
+                    new Vector3(tmp2.x, tmp2.y, depth),
+                    new Vector3(tmp3.x, tmp3.y, depth),
+                    new Vector3(tmp4.x, tmp4.y, depth),
+                };
+
+                // back
+                Vector3[] tpt = new Vector3[4]
+                {
+                    new Vector3(tmp2.x, tmp2.y, y),
+                    new Vector3(tmp.x,  tmp.y, y),
+                    new Vector3(tmp4.x, tmp4.y, y),
+                    new Vector3(tmp3.x, tmp3.y, y)
+                };
+
+                v.AddRange(tpb);
+                v.AddRange(tpt);
+            }
+
             mesh.GeometryWithPoints(v.ToArray());
         }
     }
