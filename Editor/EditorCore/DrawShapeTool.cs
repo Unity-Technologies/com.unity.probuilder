@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Linq;
 using UnityEditor.EditorTools;
 using UnityEngine;
@@ -102,17 +103,21 @@ namespace UnityEditor.ProBuilder
             if (m_Bounds.size.sqrMagnitude < .01f)
                 return;
 
+            bool init = false;
             if (m_Shape == null)
             {
+                init = true;
                 m_Shape = new GameObject("Shape").AddComponent<ShapeComponent>();
                 m_Shape.SetShape(activeShapeType);
                 UndoUtility.RegisterCreatedObjectUndo(m_Shape.gameObject, "Draw Shape");
-                EditorUtility.InitObject(m_Shape.mesh, false);
             }
 
             m_Shape.Rebuild(m_Bounds, m_Rotation);
             m_Shape.mesh.SetPivot(PivotLocation.Center);
             ProBuilderEditor.Refresh(false);
+
+            if (init)
+                EditorUtility.InitObject(m_Shape.mesh, false);
         }
 
         void FinishShape()
