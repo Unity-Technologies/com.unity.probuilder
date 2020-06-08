@@ -4,11 +4,11 @@ namespace UnityEngine.ProBuilder
 {
     public class Door : Shape
     {
-        [Range(0.01f, 2f)]
+        [Min(0.01f)]
         [SerializeField]
         float doorHeight = .5f;
 
-        [Range(0.01f, 2f)]
+        [Min(0.01f)]
         [SerializeField]
         float legWidth = .75f;
 
@@ -19,9 +19,11 @@ namespace UnityEngine.ProBuilder
             float depth = size.z;
 
             float xLegCoord = totalWidth / 2f;
-            legWidth = xLegCoord - legWidth;
+            var legWidth = xLegCoord - this.legWidth;
             var ledgeHeight = totalHeight - doorHeight;
 
+            var baseY = -totalHeight;
+            var front = depth / 2f;
             // 8---9---10--11
             // |           |
             // 4   5---6   7
@@ -29,18 +31,18 @@ namespace UnityEngine.ProBuilder
             // 0   1   2   3
             Vector3[] template = new Vector3[12]
             {
-                new Vector3(-xLegCoord, 0f, depth),           // 0
-                new Vector3(-legWidth, 0f, depth),            // 1
-                new Vector3(legWidth, 0f, depth),             // 2
-                new Vector3(xLegCoord, 0f, depth),            // 3
-                new Vector3(-xLegCoord, ledgeHeight, depth),  // 4
-                new Vector3(-legWidth, ledgeHeight, depth),   // 5
-                new Vector3(legWidth, ledgeHeight, depth),    // 6
-                new Vector3(xLegCoord, ledgeHeight, depth),   // 7
-                new Vector3(-xLegCoord, totalHeight, depth),  // 8
-                new Vector3(-legWidth, totalHeight, depth),   // 9
-                new Vector3(legWidth, totalHeight, depth),    // 10
-                new Vector3(xLegCoord, totalHeight, depth)    // 11
+                new Vector3(-xLegCoord, baseY, front),           // 0
+                new Vector3(-legWidth, baseY, front),            // 1
+                new Vector3(legWidth, baseY, front),             // 2
+                new Vector3(xLegCoord, baseY, front),            // 3
+                new Vector3(-xLegCoord, ledgeHeight, front),  // 4
+                new Vector3(-legWidth, ledgeHeight, front),   // 5
+                new Vector3(legWidth, ledgeHeight, front),    // 6
+                new Vector3(xLegCoord, ledgeHeight, front),   // 7
+                new Vector3(-xLegCoord, totalHeight, front),  // 8
+                new Vector3(-legWidth, totalHeight, front),   // 9
+                new Vector3(legWidth, totalHeight, front),    // 10
+                new Vector3(xLegCoord, totalHeight, front)    // 11
             };
 
             List<Vector3> points = new List<Vector3>();
@@ -96,6 +98,7 @@ namespace UnityEngine.ProBuilder
             points.Add(template[1] - Vector3.forward * depth);
             points.Add(template[5]);
             points.Add(template[5] - Vector3.forward * depth);
+
 
             mesh.GeometryWithPoints(points.ToArray());
         }
