@@ -32,14 +32,14 @@ namespace UnityEngine.ProBuilder
             }
 
             List<Vector3> v = new List<Vector3>();
-
+            var baseY = height / 2f;
             // build out sides
             Vector2 tmp, tmp2, tmp3, tmp4;
             for (int i = 0; i < heightSeigments; i++)
             {
                 // height subdivisions
-                float y = i * (height / heightSeigments);
-                float y2 = (i + 1) * (height / heightSeigments);
+                float y = i * (height / heightSeigments) - baseY;
+                float y2 = (i + 1) * (height / heightSeigments) - baseY;
 
                 for (int n = 0; n < numberOfSlides; n++)
                 {
@@ -82,19 +82,19 @@ namespace UnityEngine.ProBuilder
                 // top
                 Vector3[] tpt = new Vector3[4]
                 {
-                    new Vector3(tmp2.x, height, tmp2.y),
-                    new Vector3(tmp.x,  height, tmp.y),
-                    new Vector3(tmp4.x, height, tmp4.y),
-                    new Vector3(tmp3.x, height, tmp3.y)
+                    new Vector3(tmp2.x, height-baseY, tmp2.y),
+                    new Vector3(tmp.x,  height-baseY, tmp.y),
+                    new Vector3(tmp4.x, height-baseY, tmp4.y),
+                    new Vector3(tmp3.x, height-baseY, tmp3.y)
                 };
 
                 // top
                 Vector3[] tpb = new Vector3[4]
                 {
-                    new Vector3(tmp.x, 0f, tmp.y),
-                    new Vector3(tmp2.x, 0f, tmp2.y),
-                    new Vector3(tmp3.x, 0f, tmp3.y),
-                    new Vector3(tmp4.x, 0f, tmp4.y),
+                    new Vector3(tmp.x, -baseY, tmp.y),
+                    new Vector3(tmp2.x, -baseY, tmp2.y),
+                    new Vector3(tmp3.x, -baseY, tmp3.y),
+                    new Vector3(tmp4.x, -baseY, tmp4.y),
                 };
 
                 v.AddRange(tpb);
