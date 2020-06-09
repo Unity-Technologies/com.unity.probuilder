@@ -96,8 +96,6 @@ namespace UnityEditor.ProBuilder
                 }
                 //update on rotate !
 
-                //Handles.DrawWireArc(m_BoundsHandle.center + new Vector3(bounds.extents.x,0,0), shape.transform.up, shape.transform.right, 180f, 10f);
-
                 if (Camera.current != null)
                 {
                     //for(int i = 0; i < 3; i++)
@@ -130,52 +128,29 @@ namespace UnityEditor.ProBuilder
                     var angle = 180f;
                     var radius = 1.5f;
 
-                    if (x >= 1)
+                    var pos = m_BoundsHandle.center + new Vector3(bounds.extents.x, 0, 0) * (x >= 1 ? -1f : 1f);
+                    var rot = Quaternion.LookRotation(shape.transform.right * (x >= 1 ? 1f : -1f), shape.transform.up);
+
+                    if (RotateBoundsHandle(pos, rot, angle, radius, Handles.xAxisColor))
                     {
-                        if (RotateBoundsHandle(m_BoundsHandle.center - new Vector3(bounds.extents.x, 0, 0), Quaternion.LookRotation(shape.transform.right, shape.transform.up), angle, radius, Handles.xAxisColor))
-                        {
-                            MirrorObjects.Mirror(shape.GetComponent<ProBuilderMesh>(), new Vector3(-1f, 1f, 1f),false);
-                        }
-                    }
-                    else
-                    {
-                        if (RotateBoundsHandle(m_BoundsHandle.center + new Vector3(bounds.extents.x, 0, 0), Quaternion.LookRotation(-shape.transform.right, shape.transform.up), angle, radius, Handles.xAxisColor))
-                        {
-                            MirrorObjects.Mirror(shape.GetComponent<ProBuilderMesh>(), new Vector3(-1f, 1f, 1f), false);
-                        }
+                        MirrorObjects.Mirror(shape.GetComponent<ProBuilderMesh>(), new Vector3(-1f, 1f, 1f), false);
                     }
 
-                    if (y >= 1)
+                    pos = m_BoundsHandle.center + new Vector3(0, bounds.extents.y, 0) * (y >= 1 ? -1f : 1f);
+                    rot = Quaternion.LookRotation(shape.transform.right * (y >= 1 ? 1f : -1f), shape.transform.forward);
+
+                    if (RotateBoundsHandle(pos, rot, angle, radius, Handles.yAxisColor))
                     {
-                        if (RotateBoundsHandle(m_BoundsHandle.center - new Vector3(0, bounds.extents.y, 0), Quaternion.LookRotation(shape.transform.right, shape.transform.forward), angle, radius, Handles.yAxisColor))
-                        {
-                            MirrorObjects.Mirror(shape.GetComponent<ProBuilderMesh>(), new Vector3(1f, -1f, 1f), false);
-                        }
-                    }
-                    else
-                    {
-                        if (RotateBoundsHandle(m_BoundsHandle.center + new Vector3(0, bounds.extents.y, 0), Quaternion.LookRotation(-shape.transform.right, shape.transform.forward), angle, radius, Handles.yAxisColor))
-                        {
-                            MirrorObjects.Mirror(shape.GetComponent<ProBuilderMesh>(), new Vector3(1f, -1f, 1f), false);
-                        }
+                        MirrorObjects.Mirror(shape.GetComponent<ProBuilderMesh>(), new Vector3(1f, -1f, 1f), false);
                     }
 
-                    if (z >= 1)
-                    {
-                        if (RotateBoundsHandle(m_BoundsHandle.center - new Vector3(0, 0, bounds.extents.z), Quaternion.LookRotation(-shape.transform.up, shape.transform.forward), angle, radius, Handles.zAxisColor))
-                        {
-                            MirrorObjects.Mirror(shape.GetComponent<ProBuilderMesh>(), new Vector3(1f, 1f, -1f), false);
-                        }
-                    }
-                    else
-                    {
-                        if (RotateBoundsHandle(m_BoundsHandle.center + new Vector3(0, 0, bounds.extents.z), Quaternion.LookRotation(shape.transform.up, shape.transform.forward), angle, radius, Handles.zAxisColor))
-                        {
-                            MirrorObjects.Mirror(shape.GetComponent<ProBuilderMesh>(), new Vector3(1f, 1f, -1f), false);
-                        }
-                    }
+                    pos = m_BoundsHandle.center + new Vector3(0, 0, bounds.extents.z) * (z >= 1 ? -1f : 1f);
+                    rot = Quaternion.LookRotation(shape.transform.up * (z >= 1 ? -1f : 1f), shape.transform.forward);
 
-                    //Debug.Log(new Vector3(x, y, z));
+                    if (RotateBoundsHandle(pos, rot, angle, radius, Handles.zAxisColor))
+                    {
+                        MirrorObjects.Mirror(shape.GetComponent<ProBuilderMesh>(), new Vector3(1f, 1f, -1f), false);
+                    }
                 }
             }
         }
