@@ -590,6 +590,10 @@ namespace UnityEditor.ProBuilder
                 if (m_CurrentEvent.keyCode == KeyCode.Escape && selectMode != SelectMode.Object)
                 {
                     selectMode = SelectMode.Object;
+
+                    m_IsDragging = false;
+                    m_IsReadyForMouseDrag = false;
+                    
                     m_CurrentEvent.Use();
                 }
             }
