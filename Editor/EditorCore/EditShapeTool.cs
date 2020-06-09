@@ -5,6 +5,7 @@ using UnityEngine.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
 using Math = UnityEngine.ProBuilder.Math;
+using UnityEditor.ProBuilder.Actions;
 
 namespace UnityEditor.ProBuilder
 {
@@ -93,7 +94,131 @@ namespace UnityEditor.ProBuilder
                     BeginBoundsEditing(shape);
                     CopyHandlePropertiesToCollider(shape);
                 }
+                //update on rotate !
+
+                //Handles.DrawWireArc(m_BoundsHandle.center + new Vector3(bounds.extents.x,0,0), shape.transform.up, shape.transform.right, 180f, 10f);
+
+                if (Camera.current != null)
+                {
+                    //for(int i = 0; i < 3; i++)
+                    //{
+                    //    var x = 
+                    //    for(int j = 0; j < 2; j++)
+                    //    {
+
+                    //    }
+                    //}
+
+                    //Vector3 worldTangent = Handles.matrix.MultiplyVector(Vector3.up);
+                    //Vector3 worldBinormal = Handles.matrix.MultiplyVector(Vector3.forward);
+                    //Vector3 worldDir = Vector3.Cross(worldTangent, worldBinormal).normalized;
+
+                    // adjust color if handle is back facing
+                    //float cosV;
+
+                    //if (Camera.current.orthographic)
+                    //    cosV = Vector3.Dot(-Camera.current.transform.forward, worldDir);
+                    //else
+                    //    cosV = Vector3.Dot((Camera.current.transform.position - Handles.matrix.MultiplyPoint(m_BoundsHandle.center + new Vector3(bounds.extents.x, 0, 0))).normalized, worldDir);
+
+                    //Debug.Log(cosV);
+
+                    var x = Mathf.CeilToInt(Vector3.Dot(Camera.current.transform.forward, shape.transform.right));
+                    var y = Mathf.CeilToInt(Vector3.Dot(Camera.current.transform.forward, shape.transform.up));
+                    var z = Mathf.CeilToInt(Vector3.Dot(Camera.current.transform.forward, shape.transform.forward));
+
+                    var angle = 180f;
+                    var radius = 1.5f;
+
+                    if (x >= 1)
+                    {
+                        if (RotateBoundsHandle(m_BoundsHandle.center - new Vector3(bounds.extents.x, 0, 0), Quaternion.LookRotation(shape.transform.right, shape.transform.up), angle, radius, Handles.xAxisColor))
+                        {
+                            MirrorObjects.Mirror(shape.GetComponent<ProBuilderMesh>(), new Vector3(-1f, 1f, 1f),false);
+                        }
+                    }
+                    else
+                    {
+                        if (RotateBoundsHandle(m_BoundsHandle.center + new Vector3(bounds.extents.x, 0, 0), Quaternion.LookRotation(-shape.transform.right, shape.transform.up), angle, radius, Handles.xAxisColor))
+                        {
+                            MirrorObjects.Mirror(shape.GetComponent<ProBuilderMesh>(), new Vector3(-1f, 1f, 1f), false);
+                        }
+                    }
+
+                    if (y >= 1)
+                    {
+                        if (RotateBoundsHandle(m_BoundsHandle.center - new Vector3(0, bounds.extents.y, 0), Quaternion.LookRotation(shape.transform.right, shape.transform.forward), angle, radius, Handles.yAxisColor))
+                        {
+                            MirrorObjects.Mirror(shape.GetComponent<ProBuilderMesh>(), new Vector3(1f, -1f, 1f), false);
+                        }
+                    }
+                    else
+                    {
+                        if (RotateBoundsHandle(m_BoundsHandle.center + new Vector3(0, bounds.extents.y, 0), Quaternion.LookRotation(-shape.transform.right, shape.transform.forward), angle, radius, Handles.yAxisColor))
+                        {
+                            MirrorObjects.Mirror(shape.GetComponent<ProBuilderMesh>(), new Vector3(1f, -1f, 1f), false);
+                        }
+                    }
+
+                    if (z >= 1)
+                    {
+                        if (RotateBoundsHandle(m_BoundsHandle.center - new Vector3(0, 0, bounds.extents.z), Quaternion.LookRotation(-shape.transform.up, shape.transform.forward), angle, radius, Handles.zAxisColor))
+                        {
+                            MirrorObjects.Mirror(shape.GetComponent<ProBuilderMesh>(), new Vector3(1f, 1f, -1f), false);
+                        }
+                    }
+                    else
+                    {
+                        if (RotateBoundsHandle(m_BoundsHandle.center + new Vector3(0, 0, bounds.extents.z), Quaternion.LookRotation(shape.transform.up, shape.transform.forward), angle, radius, Handles.zAxisColor))
+                        {
+                            MirrorObjects.Mirror(shape.GetComponent<ProBuilderMesh>(), new Vector3(1f, 1f, -1f), false);
+                        }
+                    }
+
+                    //Debug.Log(new Vector3(x, y, z));
+                }
             }
+        }
+
+        bool RotateBoundsHandle(Vector3 position, Quaternion rotation, float angle, float size, Color handleColor)
+        {
+            Event evt = Event.current;
+            int controlID = GUIUtility.GetControlID(FocusType.Passive);
+            switch (evt.GetTypeForControl(controlID))
+            {
+                case EventType.Layout:
+                    HandleUtility.AddControl(controlID, HandleUtility.DistanceToArc(position, rotation * Vector3.forward, rotation * Vector3.up, angle, size));
+                    break;
+                case EventType.Repaint:
+                    using (new Handles.DrawingScope(HandleUtility.nearestControl == controlID ? Handles.preselectionColor : handleColor))
+                    {
+                        Handles.DrawWireArc(position, rotation * Vector3.forward, rotation * Vector3.up, angle, size);
+                        break;
+                    }
+                case EventType.MouseDown:
+                    if (HandleUtility.nearestControl == controlID && (evt.button == 0 || evt.button == 2))
+                    {
+                        GUIUtility.hotControl = controlID; // Grab mouse focus
+                        evt.Use();
+                    }
+                    break;
+                case EventType.MouseUp:
+                    if (GUIUtility.hotControl == controlID && (evt.button == 0 || evt.button == 2))
+                    {
+                        GUIUtility.hotControl = 0;
+                        evt.Use();
+
+                        if (HandleUtility.nearestControl == controlID)
+                            return true;
+                    }
+                    break;
+                case EventType.MouseMove:
+
+                  //  if (HandleUtility.nearestControl == controlID)
+                        HandleUtility.Repaint();
+                    break;
+            }
+            return false;
         }
 
         void BeginBoundsEditing(ShapeComponent shape)

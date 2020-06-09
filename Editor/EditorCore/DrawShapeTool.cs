@@ -41,8 +41,7 @@ namespace UnityEditor.ProBuilder
         [SerializeField]
         int m_ActiveShapeIndex;
 
-        Type activeShapeType
-        {
+        Type activeShapeType {
             get { return m_ActiveShapeIndex < 0 ? typeof(Cube) : m_AvailableShapeTypes[m_ActiveShapeIndex]; }
         }
 
@@ -79,19 +78,19 @@ namespace UnityEditor.ProBuilder
 
         void SetActiveShapeType(Type type)
         {
-            if(!typeof(Shape).IsAssignableFrom(type))
+            if (!typeof(Shape).IsAssignableFrom(type))
                 throw new ArgumentException("type must inherit UnityEngine.ProBuilder.Shape", "type");
 
             m_ActiveShapeIndex = m_AvailableShapeTypes.IndexOf(type);
 
-            if(m_ActiveShapeIndex < 0)
+            if (m_ActiveShapeIndex < 0)
                 throw new Exception("type must inherit UnityEngine.ProBuilder.Shape");
 
             if (m_Shape != null)
             {
                 DestroyImmediate(m_Shape.gameObject);
 
-                if(m_InputState != InputState.SelectPlane)
+                if (m_InputState != InputState.SelectPlane)
                     RebuildShape();
             }
         }
@@ -128,7 +127,7 @@ namespace UnityEditor.ProBuilder
 
         void CancelShape()
         {
-            if(m_Shape != null)
+            if (m_Shape != null)
                 DestroyImmediate(m_Shape.gameObject);
             m_InputState = InputState.SelectPlane;
         }
@@ -189,28 +188,28 @@ namespace UnityEditor.ProBuilder
             switch (evt.type)
             {
                 case EventType.MouseDrag:
-                {
-                    Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
-                    float distance;
-
-                    if (m_Plane.Raycast(ray, out distance))
                     {
-                        m_OppositeCorner = ray.GetPoint(distance);
-                        m_HeightCorner = m_OppositeCorner;
-                        RebuildShape();
-                        SceneView.RepaintAll();
+                        Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
+                        float distance;
+
+                        if (m_Plane.Raycast(ray, out distance))
+                        {
+                            m_OppositeCorner = ray.GetPoint(distance);
+                            m_HeightCorner = m_OppositeCorner;
+                            RebuildShape();
+                            SceneView.RepaintAll();
+                        }
+                        break;
                     }
-                    break;
-                }
 
                 case EventType.MouseUp:
-                {
-                    if (Vector3.Distance(m_OppositeCorner, m_Origin) < .1f)
-                        CancelShape();
-                    else
-                        AdvanceInputState();
-                    break;
-                }
+                    {
+                        if (Vector3.Distance(m_OppositeCorner, m_Origin) < .1f)
+                            CancelShape();
+                        else
+                            AdvanceInputState();
+                        break;
+                    }
             }
         }
 
@@ -220,20 +219,20 @@ namespace UnityEditor.ProBuilder
             {
                 case EventType.MouseMove:
                 case EventType.MouseDrag:
-                {
-                    Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
-                    m_HeightCorner = Math.GetNearestPointRayRay(m_OppositeCorner, m_Plane.normal, ray.origin, ray.direction);
-                    RebuildShape();
-                    SceneView.RepaintAll();
-                    break;
-                }
+                    {
+                        Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
+                        m_HeightCorner = Math.GetNearestPointRayRay(m_OppositeCorner, m_Plane.normal, ray.origin, ray.direction);
+                        RebuildShape();
+                        SceneView.RepaintAll();
+                        break;
+                    }
 
                 case EventType.MouseUp:
-                {
-                    RebuildShape();
-                    AdvanceInputState();
-                    break;
-                }
+                    {
+                        RebuildShape();
+                        AdvanceInputState();
+                        break;
+                    }
             }
         }
 
@@ -252,7 +251,7 @@ namespace UnityEditor.ProBuilder
 
         void DrawBoundingBox()
         {
-            Handles.color = new Color(.2f, .4f, .8f, 1f);
+            Handles.color = new Color(.2f, .4f, .8f, .2f);
             EditorHandleUtility.PushMatrix();
             Handles.matrix = Matrix4x4.TRS(m_Bounds.center, m_Rotation, Vector3.one);
             Handles.DrawWireCube(Vector3.zero, m_Bounds.size);
