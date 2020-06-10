@@ -16,9 +16,11 @@ namespace UnityEditor.ProBuilder
         {
             m_AvailableShapeTypes = TypeCache.GetTypesDerivedFrom<Shape>();
             m_ShapeTypes = m_AvailableShapeTypes.Select(x => x.ToString()).ToArray();
+
             m_shape = serializedObject.FindProperty("m_shape");
             var fullName = m_shape.managedReferenceFullTypename;
             var typeName = fullName.Substring(fullName.LastIndexOf(' ') + 1);
+
             Type type = null;
             foreach (var shapeType in m_AvailableShapeTypes)
             {
@@ -28,21 +30,24 @@ namespace UnityEditor.ProBuilder
                     break;
                 }
             }
-            s_CurrentIndex = m_AvailableShapeTypes.IndexOf(type);
+
+            if (type != null)
+            {
+                s_CurrentIndex = m_AvailableShapeTypes.IndexOf(type);
+            }
         }
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
+
             EditorGUI.BeginChangeCheck();
             s_CurrentIndex = EditorGUILayout.Popup(s_CurrentIndex, m_ShapeTypes);
             if (EditorGUI.EndChangeCheck())
             {
-                foreach (var target in targets)
-                {
-                    ((ShapeComponent)target).SetShape(m_AvailableShapeTypes[s_CurrentIndex]);
-                }
+                ((ShapeComponent)target).SetShape(m_AvailableShapeTypes[s_CurrentIndex]);
             }
+
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(m_shape, true);
             if (EditorGUI.EndChangeCheck())

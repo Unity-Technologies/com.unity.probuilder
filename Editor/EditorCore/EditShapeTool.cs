@@ -289,7 +289,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.Refresh(false);
         }
 
-        protected void RebuildShape(ShapeComponent shape, Bounds bounds, Quaternion rotation)
+        void RebuildShape(ShapeComponent shape, Bounds bounds, Quaternion rotation)
         {
             shape.Rebuild(bounds, rotation);
             shape.mesh.SetPivot(EditorUtility.newShapePivotLocation);
