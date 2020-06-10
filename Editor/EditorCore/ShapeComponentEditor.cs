@@ -46,6 +46,7 @@ namespace UnityEditor.ProBuilder
             if (EditorGUI.EndChangeCheck())
             {
                 ((ShapeComponent)target).SetShape(m_AvailableShapeTypes[s_CurrentIndex]);
+                ProBuilderEditor.Refresh(false);
             }
 
             EditorGUI.BeginChangeCheck();
