@@ -98,61 +98,78 @@ namespace UnityEditor.ProBuilder
 
                 if (Camera.current != null)
                 {
-                    //for(int i = 0; i < 3; i++)
-                    //{
-                    //    var x = 
-                    //    for(int j = 0; j < 2; j++)
-                    //    {
-
-                    //    }
-                    //}
-
-                    //Vector3 worldTangent = Handles.matrix.MultiplyVector(Vector3.up);
-                    //Vector3 worldBinormal = Handles.matrix.MultiplyVector(Vector3.forward);
-                    //Vector3 worldDir = Vector3.Cross(worldTangent, worldBinormal).normalized;
-
-                    // adjust color if handle is back facing
-                    //float cosV;
-
-                    //if (Camera.current.orthographic)
-                    //    cosV = Vector3.Dot(-Camera.current.transform.forward, worldDir);
-                    //else
-                    //    cosV = Vector3.Dot((Camera.current.transform.position - Handles.matrix.MultiplyPoint(m_BoundsHandle.center + new Vector3(bounds.extents.x, 0, 0))).normalized, worldDir);
-
-                    //Debug.Log(cosV);
-
-                    var x = Mathf.CeilToInt(Vector3.Dot(Camera.current.transform.forward, shape.transform.right));
-                    var y = Mathf.CeilToInt(Vector3.Dot(Camera.current.transform.forward, shape.transform.up));
-                    var z = Mathf.CeilToInt(Vector3.Dot(Camera.current.transform.forward, shape.transform.forward));
+                    Vector3 xAxis = Vector3.right;
+                    Vector3 yAxis = Vector3.up;
+                    Vector3 zAxis = Vector3.forward;
 
                     var angle = 180f;
-                    var radius = 1.5f;
+                    var radius = 5f;
 
-                    var pos = m_BoundsHandle.center + new Vector3(bounds.extents.x, 0, 0) * (x >= 1 ? -1f : 1f);
-                    var rot = Quaternion.LookRotation(shape.transform.right * (x >= 1 ? 1f : -1f), shape.transform.up);
-
-                    if (RotateBoundsHandle(pos, rot, angle, radius, Handles.xAxisColor))
+                    // +X
+                    var pos = m_BoundsHandle.center - new Vector3(bounds.extents.x, 0, 0);
+                    var rot = Quaternion.LookRotation(shape.transform.right, shape.transform.up);
+                    if (IsFaceVisible(pos, yAxis, zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.xAxisColor))
                     {
-                        MirrorObjects.Mirror(shape.GetComponent<ProBuilderMesh>(), new Vector3(-1f, 1f, 1f), false);
+                        shape.Rotate(new Vector3(90f, 0f, 0f));
                     }
 
-                    pos = m_BoundsHandle.center + new Vector3(0, bounds.extents.y, 0) * (y >= 1 ? -1f : 1f);
-                    rot = Quaternion.LookRotation(shape.transform.right * (y >= 1 ? 1f : -1f), shape.transform.forward);
-
-                    if (RotateBoundsHandle(pos, rot, angle, radius, Handles.yAxisColor))
+                    // -X
+                    pos = m_BoundsHandle.center + new Vector3(bounds.extents.x, 0, 0);
+                    rot = Quaternion.LookRotation(-shape.transform.right, shape.transform.up);
+                    if (IsFaceVisible(pos, yAxis, -zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.xAxisColor))
                     {
-                        MirrorObjects.Mirror(shape.GetComponent<ProBuilderMesh>(), new Vector3(1f, -1f, 1f), false);
+                        shape.Rotate(new Vector3(-90f, 0f, 0f));
                     }
 
-                    pos = m_BoundsHandle.center + new Vector3(0, 0, bounds.extents.z) * (z >= 1 ? -1f : 1f);
-                    rot = Quaternion.LookRotation(shape.transform.up * (z >= 1 ? -1f : 1f), shape.transform.forward);
-
-                    if (RotateBoundsHandle(pos, rot, angle, radius, Handles.zAxisColor))
+                    // +Y
+                    pos = m_BoundsHandle.center - new Vector3(0, bounds.extents.y, 0);
+                    rot = Quaternion.LookRotation(shape.transform.right, shape.transform.forward);
+                    if (IsFaceVisible(pos, xAxis, -zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.yAxisColor))
                     {
-                        MirrorObjects.Mirror(shape.GetComponent<ProBuilderMesh>(), new Vector3(1f, 1f, -1f), false);
+                        shape.Rotate(new Vector3(0f, 90f, 0f));
+                    }
+
+                    // -Y
+                    pos = m_BoundsHandle.center + new Vector3(0, bounds.extents.y, 0);
+                    rot = Quaternion.LookRotation(-shape.transform.right, shape.transform.forward);
+                    if (IsFaceVisible(pos, xAxis, zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.yAxisColor))
+                    {
+                        shape.Rotate(new Vector3(0f, -90f, 0f));
+                    }
+
+                    // +Z
+                    pos = m_BoundsHandle.center - new Vector3(0, 0, bounds.extents.z);
+                    rot = Quaternion.LookRotation(-shape.transform.up, shape.transform.forward);
+                    if (IsFaceVisible(pos, yAxis, -xAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.zAxisColor))
+                    {
+                        shape.Rotate(new Vector3(0f, 0f, 90f));
+                    }
+
+                    // -Z
+                    pos = m_BoundsHandle.center + new Vector3(0, 0, bounds.extents.z);
+                    rot = Quaternion.LookRotation(shape.transform.up, shape.transform.forward);
+                    if (IsFaceVisible(pos, yAxis, xAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.zAxisColor))
+                    {
+                        shape.Rotate(new Vector3(0f, 0f, -90f));
                     }
                 }
             }
+        }
+
+        bool IsFaceVisible(Vector3 facePosition, Vector3 localTangeant, Vector3 localBinormal)
+        {
+            Vector3 worldTangent = Handles.matrix.MultiplyVector(localTangeant);
+            Vector3 worldBinormal = Handles.matrix.MultiplyVector(localBinormal);
+            Vector3 worldDir = Vector3.Cross(worldTangent, worldBinormal).normalized;
+
+            float cosV;
+
+            if (Camera.current.orthographic)
+                cosV = Vector3.Dot(-Camera.current.transform.forward, worldDir);
+            else
+                cosV = Vector3.Dot((Camera.current.transform.position - Handles.matrix.MultiplyPoint(facePosition)).normalized, worldDir);
+
+            return cosV < 0;
         }
 
         bool RotateBoundsHandle(Vector3 position, Quaternion rotation, float angle, float size, Color handleColor)

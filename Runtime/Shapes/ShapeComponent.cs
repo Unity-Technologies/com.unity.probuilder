@@ -16,6 +16,10 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         Vector3 m_Size;
 
+        [HideInInspector]
+        [SerializeField]
+        Matrix4x4 m_RotationMatrix = Matrix4x4.identity;
+
         public Vector3 size
         {
             get { return m_Size; }
@@ -53,7 +57,9 @@ namespace UnityEngine.ProBuilder
         public void Rebuild()
         {
             m_shape.RebuildMesh(mesh, size);
+        
             FitToSize();
+            Rotate();
         }
 
         public void SetShape(Type type)
@@ -95,6 +101,36 @@ namespace UnityEngine.ProBuilder
 
             mesh.ToMesh();
             mesh.Rebuild();
+        }
+
+        public void Rotate(Vector3 eulerAngles)
+        {
+            Quaternion rotation = Quaternion.Euler(eulerAngles.x, eulerAngles.y, eulerAngles.z);
+            m_RotationMatrix = Matrix4x4.Rotate(rotation);
+
+            Rotate();
+        }
+
+        private void Rotate()
+        {
+            Debug.Log("rotate!" + m_RotationMatrix);
+            if (m_RotationMatrix == Matrix4x4.identity)
+            {
+                return;
+            }
+            Vector3[] origVerts;
+            Vector3[] newVerts;
+
+            origVerts = mesh.mesh.vertices;
+            newVerts = new Vector3[origVerts.Length];
+
+            int i = 0;
+            while (i < origVerts.Length)
+            {
+                newVerts[i] = m_RotationMatrix.MultiplyPoint3x4(origVerts[i]);
+                i++;
+            }
+            mesh.mesh.vertices = newVerts;
         }
     }
 }
