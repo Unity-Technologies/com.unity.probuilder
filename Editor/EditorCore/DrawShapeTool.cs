@@ -252,12 +252,13 @@ namespace UnityEditor.ProBuilder
 
         void DrawBoundingBox()
         {
-            Handles.color = new Color(.2f, .4f, .8f, 1f);
-            EditorHandleUtility.PushMatrix();
-            Handles.matrix = Matrix4x4.TRS(m_Bounds.center, m_Rotation, Vector3.one);
-            Handles.DrawWireCube(Vector3.zero, m_Bounds.size);
-            EditorHandleUtility.PopMatrix();
-            Handles.color = Color.white;
+            using (new Handles.DrawingScope(new Color(.2f, .4f, .8f, 1f)))
+            {
+                EditorHandleUtility.PushMatrix();
+                Handles.matrix = Matrix4x4.TRS(m_Bounds.center, m_Rotation, Vector3.one);
+                Handles.DrawWireCube(Vector3.zero, m_Bounds.size);
+                EditorHandleUtility.PopMatrix();
+            }
         }
 
         void OnActiveToolGUI(UObject target, SceneView view)
