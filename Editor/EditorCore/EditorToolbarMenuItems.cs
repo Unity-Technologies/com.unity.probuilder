@@ -505,6 +505,21 @@ namespace UnityEditor.ProBuilder
 				EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
+        [MenuItem(k_MenuPrefix + "Geometry/Point to Point Cut &p", true, PreferenceKeys.menuGeometry + 3)]
+        static bool MenuVerify_PointToPointCut()
+        {
+            var instance = EditorToolbarLoader.GetInstance<PointToPointCut>();
+            return instance != null && instance.enabled;
+        }
+
+        [MenuItem(k_MenuPrefix + "Geometry/PointToPointCut &p", false, PreferenceKeys.menuGeometry + 3)]
+        static void MenuPerform_PointToPointCut()
+        {
+            var instance = EditorToolbarLoader.GetInstance<PointToPointCut>();
+            if(instance != null && instance.enabled)
+                EditorUtility.ShowNotification(instance.DoAction().notification);
+        }
+
 		[MenuItem(k_MenuPrefix + "Geometry/Triangulate Faces", true, PreferenceKeys.menuGeometry + 3)]
 		static bool MenuVerify_TriangulateFaces()
 		{

@@ -664,7 +664,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="face">The face to append points to.</param>
         /// <param name="points">Points to added to the face.</param>
         /// <returns>The face created by appending the points.</returns>
-        public static Face AppendVerticesToFace(this ProBuilderMesh mesh, Face face, Vector3[] points)
+        public static Face AppendVerticesToFace(this ProBuilderMesh mesh, Face face, Vector3[] points, bool insertOnEdge = true)
         {
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -708,45 +708,66 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 }
             }
 
-            // now insert the new points on the nearest edge
-            for (int i = 0; i < points.Length; i++)
+            if (insertOnEdge)
             {
-                int index = -1;
-                float best = Mathf.Infinity;
-                Vector3 p = points[i];
-                int vc = n_vertices.Count;
-
-                for (int n = 0; n < vc; n++)
+                // now insert the new points on the nearest edge
+                for (int i = 0; i < points.Length; i++)
                 {
-                    Vector3 v = n_vertices[n].position;
-                    Vector3 w = n_vertices[(n + 1) % vc].position;
+                    int index = -1;
+                    float best = Mathf.Infinity;
+                    Vector3 p = points[i];
+                    int vc = n_vertices.Count;
 
-                    float dist = Math.DistancePointLineSegment(p, v, w);
-
-                    if (dist < best)
+                    for (int n = 0; n < vc; n++)
                     {
-                        best = dist;
-                        index = n;
+                        Vector3 v = n_vertices[n].position;
+                        Vector3 w = n_vertices[(n + 1) % vc].position;
+
+                        float dist = Math.DistancePointLineSegment(p, v, w);
+
+                        if (dist < best)
+                        {
+                            best = dist;
+                            index = n;
+                        }
                     }
+
+                    Vertex left = n_vertices[index], right = n_vertices[(index + 1) % vc];
+
+                    float x = (p - left.position).sqrMagnitude;
+                    float y = (p - right.position).sqrMagnitude;
+
+                    Vertex insert = Vertex.Mix(left, right, x / (x + y));
+
+                    n_vertices.Insert((index + 1) % vc, insert);
+                    n_shared.Insert((index + 1) % vc, -1);
+                    if (n_sharedUV != null) n_sharedUV.Insert((index + 1) % vc, -1);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < points.Length; i++)
+                {
+                    int index = -1;
+                    float best = Mathf.Infinity;
+                    Vector3 p = points[i];
+                    int vc = n_vertices.Count;
+
+                    Vertex insert = new Vertex();//Vertex.Mix(left, right, x / (x + y));
+                    insert.position = p;
+
+                    n_vertices.Insert((index + 1) % vc, insert);
+                    n_shared.Insert((index + 1) % vc, -1);
+                    if (n_sharedUV != null) n_sharedUV.Insert((index + 1) % vc, -1);
                 }
 
-                Vertex left = n_vertices[index], right = n_vertices[(index + 1) % vc];
-
-                float x = (p - left.position).sqrMagnitude;
-                float y = (p - right.position).sqrMagnitude;
-
-                Vertex insert = Vertex.Mix(left, right, x / (x + y));
-
-                n_vertices.Insert((index + 1) % vc, insert);
-                n_shared.Insert((index + 1) % vc, -1);
-                if (n_sharedUV != null) n_sharedUV.Insert((index + 1) % vc, -1);
             }
 
             List<int> triangles;
 
             try
             {
-                Triangulation.TriangulateVertices(n_vertices, out triangles, false);
+                Triangulation.TriangulateVertices(n_vertices, out triangles, true);
             }
             catch
             {
