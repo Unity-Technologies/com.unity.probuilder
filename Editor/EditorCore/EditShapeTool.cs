@@ -103,7 +103,7 @@ namespace UnityEditor.ProBuilder
                     Vector3 zAxis = Vector3.forward;
 
                     var angle = 180f;
-                    var radius = 5f;
+                    var radius = 10f;
 
                     // +X
                     var pos = m_BoundsHandle.center - new Vector3(bounds.extents.x, 0, 0);
@@ -179,12 +179,12 @@ namespace UnityEditor.ProBuilder
             switch (evt.GetTypeForControl(controlID))
             {
                 case EventType.Layout:
-                    HandleUtility.AddControl(controlID, HandleUtility.DistanceToArc(position, rotation * Vector3.forward, rotation * Vector3.up, angle, size));
+                    HandleUtility.AddControl(controlID, HandleUtility.DistanceToArc(position, rotation * Vector3.right, rotation * Vector3.up, angle, size));
                     break;
                 case EventType.Repaint:
                     using (new Handles.DrawingScope(HandleUtility.nearestControl == controlID ? Handles.preselectionColor : handleColor))
                     {
-                        Handles.DrawWireArc(position, rotation * Vector3.forward, rotation * Vector3.up, angle, size);
+                        Handles.DrawWireArc(position, rotation * Vector3.right, rotation * Vector3.up, angle, size);
                         break;
                     }
                 case EventType.MouseDown:
