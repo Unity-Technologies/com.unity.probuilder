@@ -17,10 +17,12 @@ namespace UnityEditor.ProBuilder.Actions
         {
             MeshSelection.objectSelectionChanged += () =>
                 {
-                    // can't just check if any MeshFilter is present because we need to know whether or not it's already a
-                    // probuilder mesh
+                    // can't just check if any MeshFilter is present because we need to know whether
+                    // or not it's already a probuilder mesh
+                    // New version : compare number of MeshFilters to number of ProBuilderMeshes
                     int meshCount = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Count();
-                    m_Enabled = meshCount > 0 && meshCount != MeshSelection.selectedObjectCount;
+                    int probuilderMeshCount = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<ProBuilderMesh>()).Count();
+                    m_Enabled = meshCount > 0 && meshCount != probuilderMeshCount;
                 };
         }
 
@@ -156,7 +158,7 @@ namespace UnityEditor.ProBuilder.Actions
             {
                 foreach (var mf in selected)
                 {
-                    if (mf.sharedMesh == null)
+                    if (mf.sharedMesh == null || mf.GetComponent<ProBuilderMesh>() != null)
                         continue;
 
                     GameObject go = mf.gameObject;

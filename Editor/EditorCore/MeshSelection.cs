@@ -187,8 +187,13 @@ namespace UnityEditor.ProBuilder
 
             foreach (var i in s_UnitySelectionChangeMeshes)
             {
-                // don't add prefabs or assets to the mesh selection
-                if(string.IsNullOrEmpty(AssetDatabase.GetAssetPath(i.gameObject)))
+
+                // don't add prefabs or assets from the Project view to the mesh selection
+                bool hasPersistentPath = string.IsNullOrEmpty(AssetDatabase.GetAssetPath(i.gameObject));
+                // don't add objects that are part of an encapsulated prefab as they are not editable
+                bool isEncapsulatedPrefabInstance = PrefabUtility.IsPartOfEncapsulatedPrefabInstance(i.gameObject);
+
+                if(hasPersistentPath && !isEncapsulatedPrefabInstance)
                     s_TopSelection.Add(i);
             }
 
