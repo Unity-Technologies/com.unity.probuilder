@@ -56,9 +56,9 @@ namespace UnityEngine.ProBuilder
         public void Rebuild()
         {
             m_shape.RebuildMesh(mesh, size);
-        
-            FitToSize();
             Rotate();
+            FitToSize();
+         
         }
 
         public void SetShape(Type type)
@@ -104,11 +104,11 @@ namespace UnityEngine.ProBuilder
             m_RotationMatrix = Matrix4x4.Rotate(rotation);
 
             Rotate();
+            FitToSize();
         }
 
         private void Rotate()
         {
-            Debug.Log("rotate!" + m_RotationMatrix);
             if (m_RotationMatrix == Matrix4x4.identity)
             {
                 return;
@@ -126,6 +126,7 @@ namespace UnityEngine.ProBuilder
                 i++;
             }
             mesh.mesh.vertices = newVerts;
+            mesh.GeometryWithPoints(newVerts);
         }
     }
 }
