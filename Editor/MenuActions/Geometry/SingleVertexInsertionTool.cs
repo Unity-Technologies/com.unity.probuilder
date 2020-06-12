@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEditor;
+using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
@@ -10,140 +12,74 @@ using UHandleUtility = UnityEditor.HandleUtility;
 
 namespace UnityEditor.ProBuilder
 {
-    [CustomEditor(typeof(SubdivideOnVertex))]
-    public class SubdivideOnVertexEditor : Editor
+    [EditorTool("Vertex Insertion", typeof(ProBuilderMesh))]
+    public class SingleVertexInsertionTool : EditorTool
     {
-
-        SubdivideOnVertex vertexOnFace
-        {
-            get { return target as SubdivideOnVertex; }
-        }
-
-        private int m_ControlId;
 
         void OnEnable()
         {
-            if (vertexOnFace == null)
-            {
-                DestroyImmediate(this);
-                return;
-            }
+            //Selection.selectionChanged += SelectionChanged;
+            //MeshSelection.objectSelectionChanged += MeshSelectionChanged;
+        }
 
-            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+        private void SelectionChanged()
+        {
+            Debug.Log("Selection Changed");
+        }
 
-            Undo.undoRedoPerformed += UndoRedoPerformed;
-#if UNITY_2019_1_OR_NEWER
-            SceneView.duringSceneGui += DuringSceneGUI;
-#else
-            SceneView.onSceneGUIDelegate += DuringSceneGUI;
-#endif
+        private void MeshSelectionChanged()
+        {
+            Debug.Log("Mesh Selection Changed");
         }
 
         void OnDisable()
         {
-            // Quit Edit mode when the object gets de-selected.
-            if (vertexOnFace != null && vertexOnFace.vertexEditMode == SubdivideOnVertex.VertexEditMode.Edit)
-                vertexOnFace.vertexEditMode = SubdivideOnVertex.VertexEditMode.None;
-
-            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
-#if UNITY_2019_1_OR_NEWER
-            SceneView.duringSceneGui -= DuringSceneGUI;
-#else
-            SceneView.onSceneGUIDelegate -= DuringSceneGUI;
-#endif
-            Undo.undoRedoPerformed -= UndoRedoPerformed;
-
-            //Removing the script from the object
-            DestroyImmediate(vertexOnFace);
+            //Selection.selectionChanged -= SelectionChanged;
+            //MeshSelection.objectSelectionChanged -= MeshSelectionChanged;
         }
 
-
-        private void DuringSceneGUI(SceneView obj)
+        // This is called for each window that your tool is active in. Put the functionality of your tool here.
+        public override void OnToolGUI(EditorWindow window)
         {
-            if (vertexOnFace.vertexEditMode == SubdivideOnVertex.VertexEditMode.None)
-                return;
-
             Event currentEvent = Event.current;
-
-            if (currentEvent.type == EventType.KeyDown)
-                HandleKeyEvent(currentEvent);
 
             if (EditorHandleUtility.SceneViewInUse(currentEvent))
                 return;
 
-            m_ControlId = GUIUtility.GetControlID(FocusType.Passive);
-            if (currentEvent.type == EventType.Layout)
-                HandleUtility.AddDefaultControl(m_ControlId);
-
             DoPointPlacement();
+
+            ProBuilderEditor.Refresh();
+            //ProBuilderEditor.UpdateMeshHandles(true);
         }
 
-        private void UndoRedoPerformed()
-        {
-            //throw new System.NotImplementedException();
-        }
-
-        private void OnSelectModeChanged(SelectMode obj)
-        {
-            //throw new System.NotImplementedException();
-        }
 
         private void DoPointPlacement()
         {
             Event evt = Event.current;
             EventType evtType = evt.type;
 
-            if (vertexOnFace.vertexEditMode == SubdivideOnVertex.VertexEditMode.Edit)
+            if (evtType == EventType.MouseDown)
             {
-                if (evtType == EventType.MouseDown && HandleUtility.nearestControl == m_ControlId)
+                Debug.Log("Mesh selection active : " +target.name);
+                float hitDistance = Mathf.Infinity;
+
+                Ray ray = UHandleUtility.GUIPointToWorldRay(evt.mousePosition);
+                RaycastHit pbHit;
+
+                ProBuilderMesh targetedMesh = MeshSelection.activeMesh;
+                if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, targetedMesh, out pbHit))
                 {
-                    float hitDistance = Mathf.Infinity;
+                    UndoUtility.RecordObject(targetedMesh.gameObject, "Add Vertex On Face");
 
-                    Ray ray = UHandleUtility.GUIPointToWorldRay(evt.mousePosition);
-                    RaycastHit pbHit;
+                    Face hitFace = targetedMesh.faces[pbHit.face];
 
-                    if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, vertexOnFace.mesh, out pbHit))
-                    {
-                        UndoUtility.RecordObject(vertexOnFace, "Add Vertex On Face");
+                    AddVerticesToFace(targetedMesh,hitFace, pbHit.point);
 
-                        Face hitFace = vertexOnFace.mesh.faces[pbHit.face];
-                        vertexOnFace.m_vertexToAdd = new SimpleTuple<Face, Vector3>(hitFace,pbHit.point);
+                    Debug.Log("Insertion Done");
 
-                        UpdateProBuilderMesh();
-
-                        evt.Use();
-                    }
-                }
-            }
-        }
-
-
-        void HandleKeyEvent(Event evt)
-        {
-            KeyCode key = evt.keyCode;
-
-            switch (key)
-            {
-                case KeyCode.Escape:
-                {
-                    DestroyImmediate(vertexOnFace);
                     evt.Use();
-                    break;
                 }
             }
-        }
-
-        public void UpdateProBuilderMesh()
-        {
-            UndoUtility.RecordObject(vertexOnFace.mesh, "Add Vertex to ProBuilder Mesh");
-
-            //vertexOnFace.mesh.AppendVerticesToFace(vertexOnFace.m_vertexToAdd.item1, new Vector3[]{vertexOnFace.m_vertexToAdd.item2},false);
-            AddVerticesToFace(vertexOnFace.mesh,vertexOnFace.m_vertexToAdd.item1, vertexOnFace.m_vertexToAdd.item2);
-
-            UndoUtility.RecordObject(vertexOnFace, "Removing Script from ProBuilder Object");
-            DestroyImmediate(vertexOnFace);
-
-            Debug.Log("Insertion Done");
         }
 
 
@@ -262,11 +198,11 @@ namespace UnityEditor.ProBuilder
                     newFace.Reverse();
             }
 
-
-
             mesh.DeleteFace(face);
 
             return newFaces;
         }
+
     }
+
 }
