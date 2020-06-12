@@ -214,7 +214,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             mesh.SetSharedVertices(lookup);
             mesh.SetVertices(vertices);
-            mesh.ToMesh();
             return welds;
         }
 
