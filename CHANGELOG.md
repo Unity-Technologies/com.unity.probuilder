@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Bug Fixes
+
+- [case: 1247270] Fixed `Null Reference Exception` when entering Prefab Stage after merging multiple `ProBuilderMesh`.
+
+
+### Known Issues
+
+- Prefab Stage does not work properly when `ProBuilderMesh` contains overrides that append geometry.
+
 ## [4.4.0-preview.1] - 2020-06-29
 
 ### Features
