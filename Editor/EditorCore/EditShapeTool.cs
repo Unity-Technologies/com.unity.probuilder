@@ -94,7 +94,6 @@ namespace UnityEditor.ProBuilder
                     BeginBoundsEditing(shape);
                     CopyHandlePropertiesToCollider(shape);
                 }
-                //update on rotate !
 
                 if (Camera.current != null)
                 {
@@ -102,8 +101,8 @@ namespace UnityEditor.ProBuilder
                     Vector3 yAxis = Vector3.up;
                     Vector3 zAxis = Vector3.forward;
 
-                    var angle = 180f;
-                    var radius = 10f;
+                    const float angle = 180f;
+                    const float radius = 10f;
 
                     // +X
                     var pos = m_BoundsHandle.center - new Vector3(bounds.extents.x, 0, 0);
@@ -207,8 +206,7 @@ namespace UnityEditor.ProBuilder
                     }
                     break;
                 case EventType.MouseMove:
-
-                  //  if (HandleUtility.nearestControl == controlID)
+                    if (HandleUtility.nearestControl == controlID)
                         HandleUtility.Repaint();
                     break;
             }
