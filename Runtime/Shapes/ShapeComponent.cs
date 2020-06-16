@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder
 {
@@ -86,7 +87,10 @@ namespace UnityEngine.ProBuilder
                 scale.z = 0;
 
             for (int i = 0, c = mesh.vertexCount; i < c; i++)
+            {
+                positions[i] -= mesh.mesh.bounds.center;
                 positions[i].Scale(scale);
+            }
 
             mesh.ToMesh();
             mesh.Rebuild();
