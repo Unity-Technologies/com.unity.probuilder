@@ -49,14 +49,12 @@ namespace UnityEditor.ProBuilder
                 ProBuilderEditor.Refresh(false);
             }
 
-            EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(m_shape, true);
-            if (EditorGUI.EndChangeCheck())
+            if (serializedObject.ApplyModifiedProperties())
             {
                 ((ShapeComponent)target).Rebuild();
                 ProBuilderEditor.Refresh(false);
             }
-            serializedObject.ApplyModifiedProperties();
         }
     }
 }

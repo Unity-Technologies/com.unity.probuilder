@@ -10,7 +10,6 @@ namespace UnityEngine.ProBuilder
         Shape m_shape = new Cube();
 
         ProBuilderMesh m_Mesh;
-        Transform m_Transform;
 
         [HideInInspector]
         [SerializeField]
@@ -25,11 +24,6 @@ namespace UnityEngine.ProBuilder
         public ProBuilderMesh mesh
         {
             get { return m_Mesh == null ? m_Mesh = GetComponent<ProBuilderMesh>() : m_Mesh; }
-        }
-
-        public Transform transform
-        {
-            get { return m_Transform == null ? m_Transform = GetComponent<Transform>() : m_Transform; }
         }
 
         // Bounds where center is in world space, size is mesh.bounds.size
