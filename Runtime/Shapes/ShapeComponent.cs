@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder
 {

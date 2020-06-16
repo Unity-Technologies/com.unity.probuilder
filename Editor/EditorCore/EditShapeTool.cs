@@ -5,7 +5,6 @@ using UnityEngine.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
 using Math = UnityEngine.ProBuilder.Math;
-using UnityEditor.ProBuilder.Actions;
 
 namespace UnityEditor.ProBuilder
 {
