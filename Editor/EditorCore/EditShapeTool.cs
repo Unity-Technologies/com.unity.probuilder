@@ -95,65 +95,70 @@ namespace UnityEditor.ProBuilder
                     CopyHandlePropertiesToCollider(shape);
                 }
 
-                if (Camera.current != null)
+                DoRotateHandlesGUI(shape, bounds);
+            }
+        }
+
+        void DoRotateHandlesGUI(ShapeComponent shape, Bounds bounds)
+        {
+            if (Camera.current != null)
+            {
+                Vector3 xAxis = Vector3.right;
+                Vector3 yAxis = Vector3.up;
+                Vector3 zAxis = Vector3.forward;
+
+                const float angle = 180f;
+                const float radius = 10f;
+
+                // +X
+                var pos = m_BoundsHandle.center - new Vector3(bounds.extents.x, 0, 0);
+                var rot = Quaternion.LookRotation(shape.transform.right, shape.transform.up);
+                if (IsFaceVisible(pos, yAxis, zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.xAxisColor))
                 {
-                    Vector3 xAxis = Vector3.right;
-                    Vector3 yAxis = Vector3.up;
-                    Vector3 zAxis = Vector3.forward;
-
-                    const float angle = 180f;
-                    const float radius = 10f;
-
-                    // +X
-                    var pos = m_BoundsHandle.center - new Vector3(bounds.extents.x, 0, 0);
-                    var rot = Quaternion.LookRotation(shape.transform.right, shape.transform.up);
-                    if (IsFaceVisible(pos, yAxis, zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.xAxisColor))
-                    {
-                        shape.Rotate(new Vector3(90f, 0f, 0f));
-                    }
-
-                    // -X
-                    pos = m_BoundsHandle.center + new Vector3(bounds.extents.x, 0, 0);
-                    rot = Quaternion.LookRotation(-shape.transform.right, shape.transform.up);
-                    if (IsFaceVisible(pos, yAxis, -zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.xAxisColor))
-                    {
-                        shape.Rotate(new Vector3(-90f, 0f, 0f));
-                    }
-
-                    // +Y
-                    pos = m_BoundsHandle.center - new Vector3(0, bounds.extents.y, 0);
-                    rot = Quaternion.LookRotation(shape.transform.right, shape.transform.forward);
-                    if (IsFaceVisible(pos, xAxis, -zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.yAxisColor))
-                    {
-                        shape.Rotate(new Vector3(0f, 90f, 0f));
-                    }
-
-                    // -Y
-                    pos = m_BoundsHandle.center + new Vector3(0, bounds.extents.y, 0);
-                    rot = Quaternion.LookRotation(-shape.transform.right, shape.transform.forward);
-                    if (IsFaceVisible(pos, xAxis, zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.yAxisColor))
-                    {
-                        shape.Rotate(new Vector3(0f, -90f, 0f));
-                    }
-
-                    // +Z
-                    pos = m_BoundsHandle.center - new Vector3(0, 0, bounds.extents.z);
-                    rot = Quaternion.LookRotation(-shape.transform.up, shape.transform.forward);
-                    if (IsFaceVisible(pos, yAxis, -xAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.zAxisColor))
-                    {
-                        shape.Rotate(new Vector3(0f, 0f, 90f));
-                    }
-
-                    // -Z
-                    pos = m_BoundsHandle.center + new Vector3(0, 0, bounds.extents.z);
-                    rot = Quaternion.LookRotation(shape.transform.up, shape.transform.forward);
-                    if (IsFaceVisible(pos, yAxis, xAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.zAxisColor))
-                    {
-                        shape.Rotate(new Vector3(0f, 0f, -90f));
-                    }
-
-                    ProBuilderEditor.Refresh(false);
+                    shape.Rotate(new Vector3(90f, 0f, 0f));
                 }
+
+                // -X
+                pos = m_BoundsHandle.center + new Vector3(bounds.extents.x, 0, 0);
+                rot = Quaternion.LookRotation(-shape.transform.right, shape.transform.up);
+                if (IsFaceVisible(pos, yAxis, -zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.xAxisColor))
+                {
+                    shape.Rotate(new Vector3(-90f, 0f, 0f));
+                }
+
+                // +Y
+                pos = m_BoundsHandle.center - new Vector3(0, bounds.extents.y, 0);
+                rot = Quaternion.LookRotation(shape.transform.right, shape.transform.forward);
+                if (IsFaceVisible(pos, xAxis, -zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.yAxisColor))
+                {
+                    shape.Rotate(new Vector3(0f, 90f, 0f));
+                }
+
+                // -Y
+                pos = m_BoundsHandle.center + new Vector3(0, bounds.extents.y, 0);
+                rot = Quaternion.LookRotation(-shape.transform.right, shape.transform.forward);
+                if (IsFaceVisible(pos, xAxis, zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.yAxisColor))
+                {
+                    shape.Rotate(new Vector3(0f, -90f, 0f));
+                }
+
+                // +Z
+                pos = m_BoundsHandle.center - new Vector3(0, 0, bounds.extents.z);
+                rot = Quaternion.LookRotation(-shape.transform.up, shape.transform.forward);
+                if (IsFaceVisible(pos, yAxis, -xAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.zAxisColor))
+                {
+                    shape.Rotate(new Vector3(0f, 0f, 90f));
+                }
+
+                // -Z
+                pos = m_BoundsHandle.center + new Vector3(0, 0, bounds.extents.z);
+                rot = Quaternion.LookRotation(shape.transform.up, shape.transform.forward);
+                if (IsFaceVisible(pos, yAxis, xAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.zAxisColor))
+                {
+                    shape.Rotate(new Vector3(0f, 0f, -90f));
+                }
+
+                ProBuilderEditor.Refresh(false);
             }
         }
 
