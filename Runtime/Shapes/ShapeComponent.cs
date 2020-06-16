@@ -51,7 +51,7 @@ namespace UnityEngine.ProBuilder
         public void Rebuild()
         {
             m_shape.RebuildMesh(mesh, size);
-            Rotate();
+            Rotate(m_RotationMatrix);
             FitToSize();
         }
 
@@ -95,21 +95,23 @@ namespace UnityEngine.ProBuilder
             mesh.Rebuild();
         }
 
-        public void Rotate(Vector3 eulerAngles)
+        public void RotateBy(Vector3 eulerAngles)
         {
             Quaternion rotation = Quaternion.Euler(eulerAngles.x, eulerAngles.y, eulerAngles.z);
-            m_RotationMatrix = Matrix4x4.Rotate(rotation);
+            var matrix = Matrix4x4.Rotate(rotation);
+            m_RotationMatrix = matrix * m_RotationMatrix;
 
-            Rotate();
+            Rotate(matrix);
             FitToSize();
         }
 
-        private void Rotate()
+        private void Rotate(Matrix4x4 matrix)
         {
-            if (m_RotationMatrix == Matrix4x4.identity)
+            if (matrix == Matrix4x4.identity)
             {
                 return;
             }
+
             Vector3[] origVerts;
             Vector3[] newVerts;
 
@@ -119,7 +121,7 @@ namespace UnityEngine.ProBuilder
             int i = 0;
             while (i < origVerts.Length)
             {
-                newVerts[i] = m_RotationMatrix.MultiplyPoint3x4(origVerts[i]);
+                newVerts[i] = matrix.MultiplyPoint3x4(origVerts[i]);
                 i++;
             }
             mesh.mesh.vertices = newVerts;

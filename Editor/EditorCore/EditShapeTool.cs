@@ -115,7 +115,7 @@ namespace UnityEditor.ProBuilder
                 var rot = Quaternion.LookRotation(shape.transform.right, shape.transform.up);
                 if (IsFaceVisible(pos, yAxis, zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.xAxisColor))
                 {
-                    shape.Rotate(new Vector3(90f, 0f, 0f));
+                    shape.RotateBy(new Vector3(90f, 0f, 0f));
                 }
 
                 // -X
@@ -123,7 +123,7 @@ namespace UnityEditor.ProBuilder
                 rot = Quaternion.LookRotation(-shape.transform.right, shape.transform.up);
                 if (IsFaceVisible(pos, yAxis, -zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.xAxisColor))
                 {
-                    shape.Rotate(new Vector3(-90f, 0f, 0f));
+                    shape.RotateBy(new Vector3(-90f, 0f, 0f));
                 }
 
                 // +Y
@@ -131,7 +131,7 @@ namespace UnityEditor.ProBuilder
                 rot = Quaternion.LookRotation(shape.transform.right, shape.transform.forward);
                 if (IsFaceVisible(pos, xAxis, -zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.yAxisColor))
                 {
-                    shape.Rotate(new Vector3(0f, 90f, 0f));
+                    shape.RotateBy(new Vector3(0f, 90f, 0f));
                 }
 
                 // -Y
@@ -139,7 +139,7 @@ namespace UnityEditor.ProBuilder
                 rot = Quaternion.LookRotation(-shape.transform.right, shape.transform.forward);
                 if (IsFaceVisible(pos, xAxis, zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.yAxisColor))
                 {
-                    shape.Rotate(new Vector3(0f, -90f, 0f));
+                    shape.RotateBy(new Vector3(0f, -90f, 0f));
                 }
 
                 // +Z
@@ -147,7 +147,7 @@ namespace UnityEditor.ProBuilder
                 rot = Quaternion.LookRotation(-shape.transform.up, shape.transform.forward);
                 if (IsFaceVisible(pos, yAxis, -xAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.zAxisColor))
                 {
-                    shape.Rotate(new Vector3(0f, 0f, 90f));
+                    shape.RotateBy(new Vector3(0f, 0f, 90f));
                 }
 
                 // -Z
@@ -155,7 +155,7 @@ namespace UnityEditor.ProBuilder
                 rot = Quaternion.LookRotation(shape.transform.up, shape.transform.forward);
                 if (IsFaceVisible(pos, yAxis, xAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.zAxisColor))
                 {
-                    shape.Rotate(new Vector3(0f, 0f, -90f));
+                    shape.RotateBy(new Vector3(0f, 0f, -90f));
                 }
 
                 ProBuilderEditor.Refresh(false);
