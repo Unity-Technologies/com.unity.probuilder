@@ -12,7 +12,7 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         int numberOfSides = 6;
 
-        [Range(0, 360)]
+        [Range(1, 360)]
         [SerializeField]
         float archDegrees = 180;
 
