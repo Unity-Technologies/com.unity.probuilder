@@ -52,8 +52,9 @@ namespace UnityEditor.ProBuilder.Actions
                 return new ActionResult(ActionResult.Status.Failure, "Only one ProBuilder object must be selected");
 
             ProBuilderMesh firstObj = MeshSelection.activeMesh;
-            VertexOnFace voFace = Undo.AddComponent<VertexOnFace>(firstObj.gameObject);
-            voFace.vertexEditMode = VertexOnFace.VertexEditMode.Add;
+            //UndoUtility.RegisterCreatedObjectUndo(firstObj.gameObject, "Create Polygonal Cut");
+            PolygonalCut voFace = Undo.AddComponent<PolygonalCut>(firstObj.gameObject);
+            voFace.polygonEditMode = PolygonalCut.PolygonEditMode.Add;
 
             return new ActionResult(ActionResult.Status.Success,"Vertex On Face Insertion");
         }
