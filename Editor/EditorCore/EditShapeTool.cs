@@ -290,14 +290,14 @@ namespace UnityEditor.ProBuilder
             bounds.size = Math.Abs(Vector3.Scale(m_BoundsHandle.size, InvertScaleVector(trs.lossyScale)));
 
             shape.Rebuild(bounds, shape.transform.rotation);
-            shape.mesh.SetPivot(EditorUtility.newShapePivotLocation);
+            shape.mesh.SetPivot(shape.transform.position);
             ProBuilderEditor.Refresh(false);
         }
 
         void RebuildShape(ShapeComponent shape, Bounds bounds, Quaternion rotation)
         {
             shape.Rebuild(bounds, rotation);
-            shape.mesh.SetPivot(EditorUtility.newShapePivotLocation);
+            shape.mesh.SetPivot(shape.transform.position);
             ProBuilderEditor.Refresh();
         }
     }
