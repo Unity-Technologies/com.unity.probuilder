@@ -54,6 +54,7 @@ namespace UnityEditor.ProBuilder
             if (EditorGUI.EndChangeCheck())
             {
                 ((ShapeComponent)target).Rebuild();
+                ProBuilderEditor.Refresh(false);
             }
             serializedObject.ApplyModifiedProperties();
         }
