@@ -53,7 +53,6 @@ namespace UnityEngine.ProBuilder
             m_shape.RebuildMesh(mesh, size);
             Rotate();
             FitToSize();
-         
         }
 
         public void SetShape(Type type)

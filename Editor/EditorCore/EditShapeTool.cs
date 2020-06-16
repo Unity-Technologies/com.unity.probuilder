@@ -152,6 +152,8 @@ namespace UnityEditor.ProBuilder
                     {
                         shape.Rotate(new Vector3(0f, 0f, -90f));
                     }
+
+                    ProBuilderEditor.Refresh(false);
                 }
             }
         }
