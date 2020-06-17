@@ -472,7 +472,6 @@ namespace UnityEditor.ProBuilder
                 s_Height.value = Mathf.Clamp(s_Height.value, k_MinShapeDimensions.x, k_MaxShapeDimensions.x);
 
                 s_HeightSegments.value = EditorGUILayout.IntField("Height Segments", s_HeightSegments);
-                s_HeightSegments.value = UnityEngine.ProBuilder.Math.Clamp(s_HeightSegments, 0, 48);
                 s_HeightSegments.value = Mathf.Clamp(s_HeightSegments.value, 0, 128);
 
                 s_Smooth.value = EditorGUILayout.Toggle("Smooth", s_Smooth);
