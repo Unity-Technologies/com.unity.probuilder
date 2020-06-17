@@ -39,7 +39,7 @@ namespace UnityEditor.ProBuilder
             {
                 // tools
                 new Actions.OpenShapeEditor(),
-                new Actions.DrawShapeEditor(),
+              //  new Actions.DrawShapeEditor(),
                 new Actions.NewBezierShape(),
                 new Actions.NewPolyShape(),
                 new Actions.OpenMaterialEditor(),

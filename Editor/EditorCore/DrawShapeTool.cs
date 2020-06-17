@@ -211,8 +211,17 @@ namespace UnityEditor.ProBuilder
                     {
                         if (!m_IsDragging)
                         {
-                            CancelShape();
-                            ShapeEditor.CreateActiveShape();
+                            m_IsDragging = true;
+                            Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
+                            float distance;
+
+                            if (m_Plane.Raycast(ray, out distance))
+                            {
+                                var pos = ray.GetPoint(distance);
+                                CancelShape();
+                                var shape = ShapeEditor.CreateActiveShape();
+                                shape.transform.position = pos;
+                            }
                         }
                         else if (Vector3.Distance(m_OppositeCorner, m_Origin) < .1f)
                             CancelShape();
@@ -256,8 +265,8 @@ namespace UnityEditor.ProBuilder
             var height = direction.magnitude * Mathf.Sign(Vector3.Dot(m_Plane.normal, direction));
 
             m_Bounds.center = ((m_OppositeCorner + m_Origin) * .5f) + m_Plane.normal * (height * .5f);
-            m_Bounds.size = new Vector3(ri, height, fo);
-            m_Rotation = Quaternion.LookRotation(m_Forward, m_Plane.normal);
+            m_Bounds.size = new Vector3(fo, height, ri);
+            m_Rotation = Quaternion.identity;// Quaternion.LookRotation(m_Forward, m_Plane.normal);
         }
 
         void DrawBoundingBox()
