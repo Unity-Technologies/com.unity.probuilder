@@ -130,7 +130,8 @@ namespace UnityEditor.ProBuilder
                 ProBuilderSettings.Save();
              //   SetPreviewMesh(shape.Build());
             }
-
+            var rect = EditorGUILayout.GetControlRect(false, 45);
+            EditorGUI.HelpBox(rect, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu laoreet sapien. Phasellus convallis pulvinar ultrices. Proin et sapien vel dui vulputate mattis.", MessageType.Info);
 
             if (GUILayout.Button("Build"))
                 CreateSelectedShape();

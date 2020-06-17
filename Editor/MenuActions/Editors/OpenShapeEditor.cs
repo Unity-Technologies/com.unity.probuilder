@@ -38,6 +38,8 @@ namespace UnityEditor.ProBuilder.Actions
         protected override void DoAlternateAction()
         {
             ShapeEditor.MenuOpenShapeCreator();
+            ProBuilderEditor.selectMode = SelectMode.Object;
+            EditorTools.EditorTools.SetActiveTool<DrawShapeTool>();
         }
     }
 }

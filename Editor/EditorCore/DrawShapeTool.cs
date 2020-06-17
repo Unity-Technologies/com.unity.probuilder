@@ -33,6 +33,8 @@ namespace UnityEditor.ProBuilder
         Quaternion m_Rotation;
         Bounds m_Bounds;
 
+        bool m_IsDragging;
+
         GUIContent m_ShapeTitle;
 
         TypeCache.TypeCollection m_AvailableShapeTypes;
@@ -166,6 +168,7 @@ namespace UnityEditor.ProBuilder
         {
             if (evt.type == EventType.MouseDown)
             {
+                m_IsDragging = false;
                 var res = EditorHandleUtility.FindBestPlaneAndBitangent(evt.mousePosition);
 
                 Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
@@ -189,28 +192,35 @@ namespace UnityEditor.ProBuilder
             switch (evt.type)
             {
                 case EventType.MouseDrag:
-                {
-                    Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
-                    float distance;
-
-                    if (m_Plane.Raycast(ray, out distance))
                     {
-                        m_OppositeCorner = ray.GetPoint(distance);
-                        m_HeightCorner = m_OppositeCorner;
-                        RebuildShape();
-                        SceneView.RepaintAll();
+                        m_IsDragging = true;
+                        Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
+                        float distance;
+
+                        if (m_Plane.Raycast(ray, out distance))
+                        {
+                            m_OppositeCorner = ray.GetPoint(distance);
+                            m_HeightCorner = m_OppositeCorner;
+                            RebuildShape();
+                            SceneView.RepaintAll();
+                        }
+                        break;
                     }
-                    break;
-                }
 
                 case EventType.MouseUp:
-                {
-                    if (Vector3.Distance(m_OppositeCorner, m_Origin) < .1f)
-                        CancelShape();
-                    else
-                        AdvanceInputState();
-                    break;
-                }
+                    {
+                        if (!m_IsDragging)
+                        {
+                            CancelShape();
+                            ShapeEditor.CreateActiveShape();
+                        }
+                        else if (Vector3.Distance(m_OppositeCorner, m_Origin) < .1f)
+                            CancelShape();
+                        else
+                            AdvanceInputState();
+                        break;
+
+                    }
             }
         }
 
