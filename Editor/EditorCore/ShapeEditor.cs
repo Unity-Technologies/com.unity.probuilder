@@ -163,32 +163,6 @@ namespace UnityEditor.ProBuilder
             EditorUtility.InitObject(res, false);
             return res;
         }
-
-        void DestroyPreviewObjectInternal()
-        {
-            if (m_PreviewObject != null)
-            {
-                if (Selection.Contains(m_PreviewObject.gameObject))
-                    MeshSelection.RemoveFromSelection(m_PreviewObject.gameObject);
-
-                if (m_PreviewObject.GetComponent<MeshFilter>().sharedMesh != null)
-                    DestroyImmediate(m_PreviewObject.GetComponent<MeshFilter>().sharedMesh);
-
-                DestroyImmediate(m_PreviewObject);
-
-                // When entering play mode the editor tracker isn't rebuilt before the Inspector redraws, meaning the
-                // preview object is still assumed to be in the selection. Flushing the selection changes by rebuilding
-                // active editor tracker fixes this.
-#if UNITY_2019_3_OR_NEWER
-                ActiveEditorTracker.RebuildAllIfNecessary();
-#else
-                var rebuildAllTrackers = typeof(ActiveEditorTracker).GetMethod("Internal_RebuildAllIfNecessary", BindingFlags.Static | BindingFlags.NonPublic);
-                if(rebuildAllTrackers != null)
-                    rebuildAllTrackers.Invoke(null, null);
-#endif
-            }
-        }
-
       
         //class Cube : ShapeBuilder
         //{

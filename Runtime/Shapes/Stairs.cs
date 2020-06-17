@@ -1,3 +1,5 @@
+using UnityEditor;
+
 namespace UnityEngine.ProBuilder
 {
     public class Stairs : Shape
@@ -21,13 +23,17 @@ namespace UnityEngine.ProBuilder
             set { m_Sides = value; }
         }
 
-        //public float stepHeight
-        //{
-        //    get { return (1f / m_Steps) * size.y; }
-        //}
+        public Stairs()
+        {
+            m_Steps = EditorPrefs.GetInt("ShapeBuilder.Stair.m_Steps", 10);
+            m_Sides = EditorPrefs.GetBool("ShapeBuilder.Stair.m_Sides", true);
+        }
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
+            EditorPrefs.SetInt("ShapeBuilder.Stair.m_Steps", m_Steps);
+            EditorPrefs.SetBool("ShapeBuilder.Stair.m_Sides", m_Sides);
+
             // 4 vertices per quad, 2 quads per step.
             Vector3[] vertices = new Vector3[4 * steps * 2];
             Face[] faces = new Face[steps * 2];
