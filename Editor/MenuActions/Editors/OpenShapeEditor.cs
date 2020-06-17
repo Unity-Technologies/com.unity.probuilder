@@ -31,7 +31,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override ActionResult DoAction()
         {
-            ShapeEditor.CreateActiveShape();
+            ShapeEditor.CreateActiveShape(Vector3.one * 100);
             return new ActionResult(ActionResult.Status.Success, "Create Shape");
         }
 

@@ -139,7 +139,7 @@ namespace UnityEditor.ProBuilder
 
         void CreateSelectedShape(bool forceCloseWindow = false)
         {
-            var res = CreateActiveShape();
+            var res = CreateActiveShape(Vector3.one * 100);
 
             if(forceCloseWindow || s_CloseWindowAfterCreateShape)
                 Close();
@@ -149,14 +149,14 @@ namespace UnityEditor.ProBuilder
         /// Create a shape with the last set <see cref="ShapeEditor"/> parameters.
         /// </summary>
         /// <returns>A reference to the <see cref="ProBuilderMesh"/> of the newly created GameObject.</returns>
-        public static ProBuilderMesh CreateActiveShape()
+        public static ProBuilderMesh CreateActiveShape(Vector3 size)
         {
             var type = m_AvailableShapeTypes[PMath.Clamp(s_CurrentIndex, 0, m_AvailableShapeTypes.Count - 1)];
             var shape = new GameObject("Shape").AddComponent<ShapeComponent>();
             shape.SetShape(type);
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape");
             //TODO: Get desfualt size/rot
-            Bounds bounds = new Bounds(Vector3.zero, Vector3.one * 100);
+            Bounds bounds = new Bounds(Vector3.zero, size);
             shape.Rebuild(bounds, Quaternion.identity);
             shape.mesh.SetPivot(PivotLocation.Center);
             ProBuilderEditor.Refresh(false);

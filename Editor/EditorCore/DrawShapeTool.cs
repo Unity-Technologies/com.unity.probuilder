@@ -219,7 +219,7 @@ namespace UnityEditor.ProBuilder
                             {
                                 var pos = ray.GetPoint(distance);
                                 CancelShape();
-                                var shape = ShapeEditor.CreateActiveShape();
+                                var shape = ShapeEditor.CreateActiveShape(Vector3.one * distance / 5f);
                                 shape.transform.position = pos;
                             }
                         }
