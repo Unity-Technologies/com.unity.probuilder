@@ -5,19 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-### Bug Fixes
-
-- [case: 1247270] Fixed `Null Reference Exception` when entering Prefab Stage after merging multiple `ProBuilderMesh`.
-- [case: 1252394] Fixed dragging selection with Ctrl problem (and key pressed problem in general).
-- Fixed Cylinder shape clamping segments to 48.
-
-### Known Issues
-
-- Prefab Stage does not work properly when `ProBuilderMesh` contains overrides that append geometry.
-
-## [4.4.0-preview.1] - 2020-06-29
+## [4.4.0-preview.1] - 2020-06-21
 
 ### Features
 
@@ -35,158 +23,96 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Reduced the amount of repaints in ProBuilder window.
 - [case: 1249071] Fixed Shift selection being inconsistent.
 - [case: 1249056] Fixed Ctrl selection being inconsistent.
+- [case: 1247270] Fixed `Null Reference Exception` when entering Prefab Stage after merging multiple `ProBuilderMesh`.
+- [case: 1252394] Fixed dragging selection with Ctrl problem (and key pressed problem in general).
+- Fixed Cylinder shape clamping segments to 48.
 
-## [4.3.0-preview.9] - 2020-05-03
+### Known Issues
+
+- Prefab Stage does not work properly when `ProBuilderMesh` contains overrides that append geometry.
+
+## [4.3.1] - 2020-06-01
+
+### Bug Fixes
+
+- [case: 1251289] Fixed exception on script reloads in the EditorMeshHandles class.
+
+## [4.3.0] - 2020-05-15
+
+### Features
+
+- Added UI to reset Shape Editor parameters.
+- Make public and document the Poly Shape component.
 
 ### Bug Fixes
 
 - [case: 1242879] Fixed import error caused by UPM CI log file.
-- [case: 1242884] Fixed NullException with Strip ProBuilder action on PolyShape.
-- [case: 1245491] Fixed NullException with Strip ProBuilder action on BezierShape.
-- [case: 1242945] Fixed NullException with Strip ProBuilder action on PolyShape.
-
-## [4.3.0-preview.8] - 2020-04-27
-
-### Bug Fixes
-
-- [case: 1230949] Fixed `EditorMeshHandles` losing material references in some cases.
+- [case: 1230949] Fixed EditorMeshHandles losing material references in some cases.
 - [case: 1232389] Fixed Null Reference Exception thrown on applying Subdivide Object on complex New Poly Shape
 - [case: 1238115] Fixed Exception thrown on selecting UV 2 mode with "Lock the SceneView handle tools" is enabled in the UV Editor
-
-## [4.3.0-preview.7] - 2020-04-01
-
-### Features
-
-- Added UI to reset `Shape Editor` parameters.
-
-### Bug Fixes
-
-- Fixed `New Shape` menu item always creating a Cube instead of the last selected shape.
+- Fixed New Shape menu item always creating a Cube instead of the last selected shape.
 - [case: 1237636] Fixed exception being thrown when stripping pb components and smooth groups editor is open
-
-### Changes
-
-- [Preview] Reverted fix for prefabs showing `MeshFilter` and `ProBuilderMesh.mesh` values as consistently dirty.
-
-### Known Issues
-
-- Certain properties on `ProBuilderMesh`, `MeshFilter`, and `MeshCollider` always show as overridden on prefab instances.
-- The `ProBuilderMesh` icon is always the Pro Skin version.
-- The `ProBuilderMesh` icon is toggle-able in the Gizmos window (initial value is 'Off').
-- Marquee selection when the Universal Render Pipeline is enabled does not work (currently blocked due to URP missing required functionality).
-
-## [4.3.0-preview.6] - 2020-03-23
-
-### Bug Fixes
 - [case: 1230069] Fixed selection commands not being remapped to ProBuilder when in edge/face/vertex mode (Select All/Invert Selection/Deselect All)
-- [case: 1225223] Fixed `Mesh Collider` component missing a reference to the mesh in builds.
-- [case: 1225427] Fixed `UV Editor` exporting the UV template offset by 11 pixels when the editor window was dockable.
-- [case: 1228271] [Preview] Fixed `Shape Editor` clamping values Cylinder radius value to `.001`.
-- Fix `ProBuilderMesh.sharedTextureLookup` throwing a null reference exception when accessed from runtime.
-
-## [4.3.0-preview.5] - 2020-03-05
-
-### Features
-
-- Make public and document the `Poly Shape` component.
-
-### Bug Fixes
-
-- [case: 1209522] Fixed `Poly Shape` component allowing incompatible Preset feature.
-
-## [4.3.0-preview.4] - 2020-03-04
-
-### Bug Fixes
-
-- [case: 1213742] Fixed bug where `Delete` menu item would incorrectly shows as available with no selection.
-- [case: 1192479] Fixed an issue where translating UV positions in the `UV Editor` with a handle would not update the Inspector offset values.
-- [case: 1176370] Fixed entering Play Mode with the `Shape Editor` open creating a new shape in the scene.
-- [case: 1218413] Fixed `Poly Shape` input incorrectly snapping vertices when input plane is not on a grid.
-- [case: 1223330] Fixed a crash when undoing the creation of a `Poly Shape` object.
-- Fixed `Shape Editor` preferences not respecting "Reset All Preferences".
-- [case: 1132509] Fixed `Bevel` sometimes resulting in non-conforming face normals.
-- [case: 1158748] Fixed `Export` and `Strip Scripts` actions leaving `Mesh Filter` component hidden on resulting GameObjects.
-- [case: 1224413] Fixed `Shape Editor` leaving behind a preview object if window is closed during play mode.
-
-## [4.3.0-preview.3] - 2020-02-12
-
-### Features
-
+- [case: 1225223] Fixed Mesh Collider component missing a reference to the mesh in builds.
+- [case: 1225427] Fixed UV Editor exporting the UV template offset by 11 pixels when the editor window was dockable.
+- Fix ProBuilderMesh.sharedTextureLookup throwing a null reference exception when accessed from runtime.
+- [case: 1209522] Fixed Poly Shape component allowing incompatible Preset feature.
+- [case: 1213742] Fixed bug where Delete menu item would incorrectly shows as available with no selection.
+- [case: 1192479] Fixed an issue where translating UV positions in the UV Editor with a handle would not update the Inspector offset values.
+- [case: 1176370] Fixed entering Play Mode with the Shape Editor open creating a new shape in the scene.
+- [case: 1218413] Fixed Poly Shape input incorrectly snapping vertices when input plane is not on a grid.
+- [case: 1223330] Fixed a crash when undoing the creation of a Poly Shape object.
+- Fixed Shape Editor preferences not respecting "Reset All Preferences".
+- [case: 1132509] Fixed Bevel sometimes resulting in non-conforming face normals.
+- [case: 1158748] Fixed Export and Strip Scripts actions leaving Mesh Filter component hidden on resulting GameObjects.
+- [case: 1224413] Fixed Shape Editor leaving behind a preview object if window is closed during play mode.
 - [case: 1201746] The Move tool is now compatible with grid snapping (Unity 2019.3 and higher).
-
-### Bug Fixes
-
 - [case: 1217930] Fixed duplicated objects shape reverts to original's mesh when entering play mode
 - [case: 1214103] Fixed ProBuilder created meshes not rendering in project builds.
 - [case: 1217024] Fixed inverted picking bias when cursor is not hovering selected object.
-- [case: 1195261] Fixed an issue where the `ProBuilderize` action could cause the toolbar to emit `GUILayout Group` errors.
+- [case: 1195261] Fixed an issue where the ProBuilderize action could cause the toolbar to emit GUILayout Group errors.
 - [case: 1211721] Fixed tooltips in the ProBuilder toolbar not rendering on macOS.
 - [case: 1167627] Fixed boolean operations not retaining material information.
-- [case: 1210096] Fixed `UV Editor` rotation field allowing values outside of 360°.
+- [case: 1210096] Fixed UV Editor rotation field allowing values outside of 360°.
 - [case: 1214103] Fixed ProBuilder created meshes not appearing in built projects.
-- [case: 1211169] Fixed `Generate Shadow Object` example throwing a `Null Reference Exception` when invoked.
-- [case: 1209864] Fixed `New Shape` tool creating new GameObjects with the same name.
-- [case: 1201858] Fixed `Export` action not showing a warning when attempting to export an empty selection.
+- [case: 1211169] Fixed Generate Shadow Object example throwing a Null Reference Exception when invoked.
+- [case: 1209864] Fixed New Shape tool creating new GameObjects with the same name.
+- [case: 1201858] Fixed Export action not showing a warning when attempting to export an empty selection.
 - [case: 1205318] Fixed OBJ export not retaining material color information when Scriptable Render Pipeline is active.
-- [case: 1194858] Fixed a `Null Reference Exception` in some cases when using the `Bevel` tool.
+- [case: 1194858] Fixed a Null Reference Exception in some cases when using the Bevel tool.
 - [case: 1204731] Fixed marquee selection of mesh elements when using the High Definition Render Pipeline.
 - [case: 1211096] Fixed tooltips rendering off screen in some cases.
-- [case: 1203685] Fixed `Poly Shape` creation tool not accepting input when Scene View gizmos are disabled.
+- [case: 1203685] Fixed Poly Shape creation tool not accepting input when Scene View gizmos are disabled.
 - [case: 1161998] Fixed an issue where scene objects could be selected through modal windows.
-
-### Changes
-
-- [case: 1203585] Removed `Custom Shape` option from the `Shape Editor` window.
-
-### Known Issues
-
-- Marquee selection when the Universal Render Pipeline is enabled does not work (currently blocked due to URP missing required functionality).
-
-## [4.3.0-preview.2] - 2020-01-15
-
-### Bug Fixes
-
-- [case: 1198568] Fixed `MeshFilter` and `MeshCollider` always showing properties as "Overridden" on Prefab instances.
-- [case: 1204088] Fixed `UV Editor` actions window not using the mouse event, allowing inactive window properties to appear as interactable.
-- [case: 1183101] Fixed broken help link in `Smoothing Editor` window.
+- [case: 1198568] Fixed MeshFilter and MeshCollider always showing properties as "Overridden" on Prefab instances.
+- [case: 1204088] Fixed UV Editor actions window not using the mouse event, allowing inactive window properties to appear as interactable.
+- [case: 1183101] Fixed broken help link in Smoothing Editor window.
 - [case: 1173650] Fixed an issue that resulted in vertices and edges becoming unselectable on macOS in some cases.
-- Fixed `Edge` pre-selection highlight not rendering on macOS when using Metal as a graphics backend.
-- [case: 1198568] Fixed issues with prefab overrides not being applied to `ProBuilderMesh` components correctly.
-- [case: 1198568] Fixed `MeshFilter` and `ProBuilderMesh` components incorrectly showing instance overrides on un-modified prefab instances.
-- [case: 1194858] Fixed `Bevel Edges` throwing `NullReferenceException` in some cases.
-- [case: 1208475] Fixed `Set Pivot` and `Center Pivot` actions throwing `NullReferenceException` if the selected mesh contains children.
-- [case: 1183100] Fixed the `Shape Editor` `Stair` slider fields appearing too small to contain the text when Android is the selected build target.
-- [case: 1206302] Fixed an issue with the `Merge` action that could result in invalid geometry.
+- Fixed Edge pre-selection highlight not rendering on macOS when using Metal as a graphics backend.
+- [case: 1198568] Fixed issues with prefab overrides not being applied to ProBuilderMesh components correctly.
+- [case: 1198568] Fixed MeshFilter and ProBuilderMesh components incorrectly showing instance overrides on un-modified prefab instances.
+- [case: 1194858] Fixed Bevel Edges throwing NullReferenceException in some cases.
+- [case: 1208475] Fixed Set Pivot and Center Pivot actions throwing NullReferenceException if the selected mesh contains children.
+- [case: 1183100] Fixed the Shape Editor Stair slider fields appearing too small to contain the text when Android is the selected build target.
+- [case: 1206302] Fixed an issue with the Merge action that could result in invalid geometry.
 - [case: 1161998] Fixed an issue where ProBuilder meshes could be selected through overlaying Editor windows.
-- [case: 1198588] Fixed a rare case where `ProBuilderMesh` could throw errors due to an invalid internal state.
-- [case: 1196134] Fixed an issue where resetting component data on a `ProBuilderMesh` through the Inspector window would not update the `MeshFilter` and scene gizmos.
+- [case: 1198588] Fixed a rare case where ProBuilderMesh could throw errors due to an invalid internal state.
+- [case: 1196134] Fixed an issue where resetting component data on a ProBuilderMesh through the Inspector window would not update the MeshFilter and scene gizmos.
+- Fixed an issue where an invalid selection on ProBuilderMesh could prevent the selected mesh from being edited due to errors.
+- Fixed case where the default material could fail to initialize when a Scriptable Render Pipeline is in use at runtime.
 
 ### Changes
 
-- The `ProBuilder Mesh` component is now shown as a replacement for the `Mesh Filter` component in the Inspector.
-- The `ProBuilder Mesh` component now has an icon in the Inspector.
+- [case: 1203585] Removed Custom Shape option from the Shape Editor window.
+- The ProBuilder Mesh component now has an icon in the Inspector.
+- The MeshFilter component is now hidden by default on GameObjects created by ProBuilder, and the ProBuilderMesh component is renamed in the Inspector to ProBuilder MeshFilter.
 
 ### Known Issues
 
-- Element selection changes to an instantiated prefab still register as overrides. This will be addressed in a follow-up PR that moves the selection out of the `ProBuilderMesh` class.
-- The `ProBuilderMesh` icon is always the Pro Skin version.
-- The `ProBuilderMesh` icon is toggle-able in the Gizmos window (initial value is 'Off').
-
-### Changes
-
-- The `MeshFilter` component is now hidden by default on GameObjects created by ProBuilder, and the `ProBuilderMesh` component is renamed in the Inspector to `ProBuilder MeshFilter`.
-
-## [4.3.0-preview.1] - 2019-12-16
-
-### Bug Fixes
-
-- Fixed an issue where an invalid selection on `ProBuilderMesh` could prevent the selected mesh from being edited due to errors.
-
-## [4.3.0-preview.0] - 2019-12-16
-
-### Bug Fixes
-
-- Fixed case where the default material could fail to initialize when a Scriptable Render Pipeline is in use at runtime.
+- Certain properties on ProBuilderMesh, MeshFilter, and MeshCollider always show as overridden on prefab instances.
+- The ProBuilderMesh icon is always the Pro Skin version.
+- The ProBuilderMesh icon is toggle-able in the Gizmos window (initial value is 'Off').
+- Marquee selection when the Universal Render Pipeline is enabled does not work (currently blocked due to URP missing required functionality).
 
 ## [4.2.1] - 2019-11-22
 
