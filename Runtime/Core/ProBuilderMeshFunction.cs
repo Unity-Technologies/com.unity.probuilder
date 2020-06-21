@@ -451,7 +451,7 @@ namespace UnityEngine.ProBuilder
 
             foreach (var face in facesToRefresh)
             {
-                if (face.manualUV)
+                if (face.manualUV || face.indexesInternal?.Length < 3)
                     continue;
 
                 int textureGroup = face.textureGroup;
