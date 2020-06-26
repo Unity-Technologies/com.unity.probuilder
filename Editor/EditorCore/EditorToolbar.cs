@@ -67,6 +67,8 @@ namespace UnityEditor.ProBuilder
             isIconMode = ProBuilderEditor.s_IsIconGui;
             this.window = ProBuilderEditor.instance;
             CalculateMaxIconSize();
+
+            MeshSelection.ClearElementSelection();
         }
 
         void OnDisable()
