@@ -6,6 +6,26 @@ namespace UnityEditor.ProBuilder.Actions
 {
     sealed class VertexInsertion : MenuAction
     {
+        static Pref<bool> m_EndOnEdgeConnection = new Pref<bool>("VertexInsertion.endOnEdgeConnection", true);
+        static Pref<bool> m_EndOnClicToStartPoint = new Pref<bool>("VertexInsertion.endOnClicToStartPoint", false);
+        static Pref<bool> m_ConnectToStartPoint = new Pref<bool>("VertexInsertion.autoConnectToStartPoint", true);
+
+        public static bool EndOnEdgeConnection
+        {
+            get { return m_EndOnEdgeConnection; }
+        }
+
+        public static bool EndOnClicToStartPoint
+        {
+            get { return m_EndOnClicToStartPoint; }
+        }
+
+        public static bool ConnectToStartPoint
+        {
+            get { return m_ConnectToStartPoint; }
+        }
+
+
         public override ToolbarGroup group
         {
             get { return ToolbarGroup.Geometry; }
@@ -41,6 +61,38 @@ namespace UnityEditor.ProBuilder.Actions
         public override bool enabled
         {
             get { return base.enabled && MeshSelection.selectedObjectCount > 0; }
+        }
+
+        protected override MenuActionState optionsMenuState
+        {
+            get { return MenuActionState.VisibleAndEnabled; }
+        }
+
+
+        protected override void OnSettingsGUI()
+        {
+            GUILayout.Label("Point-to-point Cut - Settings", EditorStyles.boldLabel);
+
+            EditorGUILayout.HelpBox("TODO.", MessageType.Info);
+
+            EditorGUI.BeginChangeCheck();
+
+            m_ConnectToStartPoint.value = EditorGUILayout.Toggle("Connect End to Start Point", m_ConnectToStartPoint);
+
+            m_EndOnClicToStartPoint.value = EditorGUILayout.Toggle("Selecting Start Point is ending cut", m_EndOnClicToStartPoint);
+
+            m_EndOnEdgeConnection.value = EditorGUILayout.Toggle("EdgeToEdgeCut", m_EndOnEdgeConnection);
+
+            if (EditorGUI.EndChangeCheck())
+                ProBuilderSettings.Save();
+
+            GUILayout.FlexibleSpace();
+
+            if (GUILayout.Button("Start Vertices Insertion"))
+                DoAction();
+
+            // if (GUILayout.Button("Do Point-to-point Cut"))
+            //     DoAction();
         }
 
         public override ActionResult DoAction()

@@ -1119,9 +1119,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
                         vertices[originalEdge.a].position;
             Vector3 b = vertices[originalEdge.b].position -
                         vertices[originalEdge.a].position;
-            newVertex.position = b / Vector3.Magnitude(b);
-            newVertex.position *= Vector3.Magnitude(a) * Mathf.Cos(Vector3.Angle(b, a) * Mathf.Deg2Rad);
+
+            float ratio = Vector3.Magnitude(a) * Mathf.Cos(Vector3.Angle(b, a) * Mathf.Deg2Rad) / Vector3.Magnitude(b);
+            newVertex.position = b;
+            newVertex.position *= ratio;
             newVertex.position += vertices[originalEdge.a].position;
+
+            newVertex.normal = ratio * vertices[originalEdge.a].normal + (1 - ratio) * vertices[originalEdge.b].normal;
+            newVertex.normal.Normalize();
 
             List<SimpleTuple<Face, Edge>> adjacentFaces = ElementSelection.GetNeighborFaces(mesh, originalEdge);
 
@@ -1158,7 +1163,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
                 data.vertices.Add(newVertex);
                 data.sharedIndexes.Add(originalSharedIndexesCount);
-                data.sharedIndexesUV.Add(-1);
+                data.sharedIndexesUV.Add(originalSharedIndexesCount);
             }
 
             // now apply the changes
@@ -1228,7 +1233,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="face">The face to append points to.</param>
         /// <param name="point">Point to added to the face.</param>
         /// <returns>The face created by appending the points.</returns>
-        public static Vertex InsertVertexInMeshSimple(this ProBuilderMesh mesh, Vector3 point)
+        public static Vertex InsertVertexInMeshSimple(this ProBuilderMesh mesh, Vector3 point, Vector3 normal)
         {
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -1252,6 +1257,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             Vertex newVertex = new Vertex();
             newVertex.position = point;
+            newVertex.normal = normal.normalized;
             vertices.Add(newVertex);
 
             lookup.Add(originalSharedIndexesCount,originalSharedIndexesCount);

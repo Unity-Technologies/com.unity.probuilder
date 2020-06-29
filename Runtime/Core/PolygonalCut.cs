@@ -24,12 +24,14 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Describes the different vertex types on the path.
         /// </summary>
+        [System.Flags]
         public enum VertexType
         {
-            None,
-            NewVertex,
-            AddedOnEdge,
-            ExistingVertex
+            None = 0 << 0,
+            NewVertex = 1 << 0,
+            AddedOnEdge = 1 << 1,
+            ExistingVertex = 1 << 2,
+            VertexInShape = 1 << 3
         }
 
         [Serializable]
@@ -55,6 +57,17 @@ namespace UnityEngine.ProBuilder
 
         [SerializeField]
         internal List<InsertedVertexData> m_verticesToAdd = new List<InsertedVertexData>();
+
+        public bool IsALoop
+        {
+            get
+            {
+                if (m_verticesToAdd.Count < 3)
+                    return false;
+                else
+                    return m_verticesToAdd[0].m_Vertex.Equals(m_verticesToAdd[m_verticesToAdd.Count - 1].m_Vertex);
+            }
+        }
 
         [SerializeField]
         PolygonEditMode m_EditMode;

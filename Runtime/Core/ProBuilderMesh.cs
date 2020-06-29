@@ -497,6 +497,7 @@ namespace UnityEngine.ProBuilder
 
             m_Positions = position;
             m_Colors = color;
+            m_Normals = normal;
             m_Tangents = tangent;
             m_Textures0 = uv0;
             m_Textures2 = uv3;
