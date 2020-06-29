@@ -15,6 +15,7 @@ namespace UnityEditor.ProBuilder
     {
         const HideFlags k_ResourceHideFlags = HideFlags.HideAndDontSave;
         const float k_MinLineWidthForGeometryShader = .01f;
+        static readonly Color k_OccludedTint = new Color(.75f, .75f, .75f, 1f);
 
         ObjectPool<Mesh> m_MeshPool;
 
@@ -54,7 +55,7 @@ namespace UnityEditor.ProBuilder
         [UserSetting]
         static Pref<float> s_VertexPointSize = new Pref<float>("graphics.vertexPointSize", 3f, SettingsScope.User);
 
-        [UserSetting]
+        [Obsolete]
         static Pref<bool> s_DepthTestHandles = new Pref<bool>("graphics.handleZTest", true, SettingsScope.User);
 
         [UserSettingBlock("Graphics")]
@@ -79,7 +80,6 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            s_DepthTestHandles.value = SettingsGUILayout.SettingsToggle("Depth Test", s_DepthTestHandles, searchContext);
             s_VertexPointSize.value = SettingsGUILayout.SettingsSlider("Vertex Size", s_VertexPointSize, 1f, 10f, searchContext);
             s_EdgeLineSize.value = SettingsGUILayout.SettingsSlider("Line Size", s_EdgeLineSize, 0f, 10f, searchContext);
             s_WireframeLineSize.value = SettingsGUILayout.SettingsSlider("Wireframe Size", s_WireframeLineSize, 0f, 10f, searchContext);
@@ -291,14 +291,16 @@ namespace UnityEditor.ProBuilder
                 {
                     // When in Edge mode, use the same material for wireframe
                     Render(m_WireHandles, m_ForceEdgeLinesGL ? m_GlWireMaterial : m_EdgeMaterial, s_EdgeUnselectedColor, CompareFunction.LessEqual, false);
-                    Render(m_SelectedEdgeHandles, m_ForceEdgeLinesGL ? m_GlWireMaterial : m_EdgeMaterial, s_EdgeSelectedColor, s_DepthTestHandles ? CompareFunction.LessEqual : CompareFunction.Always, true);
+                    Render(m_SelectedEdgeHandles, m_ForceEdgeLinesGL ? m_GlWireMaterial : m_EdgeMaterial, s_EdgeSelectedColor * k_OccludedTint, CompareFunction.Greater);
+                    Render(m_SelectedEdgeHandles, m_ForceEdgeLinesGL ? m_GlWireMaterial : m_EdgeMaterial, s_EdgeSelectedColor, CompareFunction.LessEqual);
                     break;
                 }
                 case SelectMode.Face:
                 case SelectMode.TextureFace:
                 {
                     Render(m_WireHandles, m_ForceWireframeLinesGL ? m_GlWireMaterial : m_WireMaterial, s_WireframeColor, CompareFunction.LessEqual, false);
-                    Render(m_SelectedFaceHandles, m_FaceMaterial, s_FaceSelectedColor, s_DepthTestHandles);
+                    Render(m_SelectedFaceHandles, m_FaceMaterial, s_FaceSelectedColor * k_OccludedTint, CompareFunction.Greater);
+                    Render(m_SelectedFaceHandles, m_FaceMaterial, s_FaceSelectedColor, CompareFunction.LessEqual);
                     break;
                 }
                 case SelectMode.Vertex:
@@ -306,7 +308,8 @@ namespace UnityEditor.ProBuilder
                 {
                     Render(m_WireHandles, m_ForceWireframeLinesGL ? m_GlWireMaterial : m_WireMaterial, s_WireframeColor, CompareFunction.LessEqual, false);
                     Render(m_VertexHandles, m_VertMaterial, s_VertexUnselectedColor, CompareFunction.LessEqual, false);
-                    Render(m_SelectedVertexHandles, m_VertMaterial, s_VertexSelectedColor, s_DepthTestHandles);
+                    Render(m_SelectedVertexHandles, m_VertMaterial, s_VertexSelectedColor * k_OccludedTint, CompareFunction.Greater, false);
+                    Render(m_SelectedVertexHandles, m_VertMaterial, s_VertexSelectedColor, CompareFunction.LessEqual, false);
                     break;
                 }
                 default:
@@ -319,10 +322,10 @@ namespace UnityEditor.ProBuilder
 
         static void Render(Dictionary<ProBuilderMesh, MeshHandle> handles, Material material, Color color, bool depthTest = true)
         {
-            Render(handles, material, color, depthTest ? CompareFunction.LessEqual : CompareFunction.Always, true);
+            Render(handles, material, color, depthTest ? CompareFunction.LessEqual : CompareFunction.Always, false);
         }
 
-        static void Render(Dictionary<ProBuilderMesh, MeshHandle> handles, Material material, Color color, CompareFunction func, bool zWrite)
+        static void Render(Dictionary<ProBuilderMesh, MeshHandle> handles, Material material, Color color, CompareFunction func, bool zWrite = false)
         {
             material.SetInt("_HandleZTest", (int) func);
             material.SetInt("_HandleZWrite", zWrite ? 1 : 0);
