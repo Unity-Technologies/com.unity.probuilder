@@ -240,6 +240,19 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
+        /// Rebuilds the mesh with different vertices positions but same faces
+        /// </summary>
+        /// <param name="points">New vertices positions</param>
+        internal void ReplaceVertices(Vector3[] points)
+        {
+            positions = points;
+            m_SharedVertices = SharedVertex.GetSharedVerticesWithPositions(points);
+            InvalidateSharedVertexLookup();
+            ToMesh();
+            Refresh();
+        }
+
+        /// <summary>
         /// Clear all mesh attributes and reinitialize with new positions and face collections.
         /// </summary>
         /// <param name="vertices">Vertex positions array.</param>

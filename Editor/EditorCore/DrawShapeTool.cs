@@ -184,6 +184,20 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        Vector3 ToEularAngles(Vector3 diff)
+        {
+            Vector3 angles = Vector3.zero;
+            if (diff.y < 0)
+            {
+                angles.z = -180f;
+            }
+            if (diff.z < 0)
+            {
+                angles.y = -180f;
+            }
+            return angles;
+        }
+
         void SetWidthAndDepth(Event evt)
         {
             switch (evt.type)
@@ -196,7 +210,12 @@ namespace UnityEditor.ProBuilder
                     if (m_Plane.Raycast(ray, out distance))
                     {
                         m_OppositeCorner = ray.GetPoint(distance);
+                        var diff = m_OppositeCorner - m_Origin;
                         m_HeightCorner = m_OppositeCorner;
+
+                        if (m_Shape != null)
+                            m_Shape.RotateBy(ToEularAngles(diff), true);
+
                         RebuildShape();
                         SceneView.RepaintAll();
                     }
@@ -223,6 +242,12 @@ namespace UnityEditor.ProBuilder
                 {
                     Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
                     m_HeightCorner = Math.GetNearestPointRayRay(m_OppositeCorner, m_Plane.normal, ray.origin, ray.direction);
+
+                    var diff = m_HeightCorner - m_Origin;
+
+                    if (m_Shape != null)
+                        m_Shape.RotateBy(ToEularAngles(diff), true);
+
                     RebuildShape();
                     SceneView.RepaintAll();
                     break;
@@ -246,8 +271,8 @@ namespace UnityEditor.ProBuilder
             var height = direction.magnitude * Mathf.Sign(Vector3.Dot(m_Plane.normal, direction));
 
             m_Bounds.center = ((m_OppositeCorner + m_Origin) * .5f) + m_Plane.normal * (height * .5f);
-            m_Bounds.size = new Vector3(ri, height, fo);
-            m_Rotation = Quaternion.LookRotation(m_Forward, m_Plane.normal);
+            m_Bounds.size = new Vector3(fo, height, ri);
+            m_Rotation = Quaternion.identity;
         }
 
         void DrawBoundingBox()

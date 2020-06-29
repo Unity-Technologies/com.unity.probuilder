@@ -50,7 +50,7 @@ namespace UnityEngine.ProBuilder
         public void Rebuild()
         {
             m_shape.RebuildMesh(mesh, size);
-            RotateTo(m_RotationMatrix);
+            RotateBy(m_RotationMatrix);
             FitToSize();
         }
 
@@ -97,17 +97,21 @@ namespace UnityEngine.ProBuilder
         /// Rotates the Shape by a given set of eular angles
         /// </summary>
         /// <param name="eulerAngles">The angles to rotate by</param>
-        public void RotateBy(Vector3 eulerAngles)
+        public void RotateBy(Vector3 eulerAngles, bool reset = false)
         {
+            if (reset)
+            {
+                m_RotationMatrix = m_RotationMatrix.inverse * m_RotationMatrix;
+            }
             Quaternion rotation = Quaternion.Euler(eulerAngles.x, eulerAngles.y, eulerAngles.z);
             var matrix = Matrix4x4.Rotate(rotation);
             m_RotationMatrix = matrix * m_RotationMatrix;
 
-            RotateTo(matrix);
+            RotateBy(matrix);
             FitToSize();
         }
 
-        void RotateTo(Matrix4x4 matrix)
+        void RotateBy(Matrix4x4 matrix)
         {
             if (matrix == Matrix4x4.identity)
             {
@@ -127,7 +131,7 @@ namespace UnityEngine.ProBuilder
                 i++;
             }
             mesh.mesh.vertices = newVerts;
-            mesh.GeometryWithPoints(newVerts);
+            mesh.ReplaceVertices(newVerts);
         }
     }
 }
