@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY_EDITOR
+using UnityEditor;
+#endif
+using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
 {
@@ -6,45 +9,51 @@ namespace UnityEngine.ProBuilder
     {
         [Min(0.01f)]
         [SerializeField]
-        float thickness = .25f;
+        float m_Thickness = .25f;
 
         [Range(3, 64)]
         [SerializeField]
-        int numberOfSlides = 6;
+        int m_NumberOfSlides = 6;
 
         [Range(0, 32)]
         [SerializeField]
-        int heightSeigments = 1;
+        int m_HeightSeigments = 1;
 
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
+#if UNITY_EDITOR
+            EditorPrefs.SetInt("ShapeBuilder.Pipe.m_HeightSeigments", m_HeightSeigments);
+            EditorPrefs.SetInt("ShapeBuilder.Pipe.m_NumberOfSlides", m_NumberOfSlides);
+            EditorPrefs.SetFloat("ShapeBuilder.Pipe.m_Thickness", m_Thickness);
+#endif
+
             var height = size.y;
             var radius = System.Math.Min(size.x, size.z);
             // template is outer ring - radius refers to outer ring always
-            Vector2[] templateOut = new Vector2[numberOfSlides];
-            Vector2[] templateIn = new Vector2[numberOfSlides];
+            Vector2[] templateOut = new Vector2[m_NumberOfSlides];
+            Vector2[] templateIn = new Vector2[m_NumberOfSlides];
 
-            for (int i = 0; i < numberOfSlides; i++)
+            for (int i = 0; i < m_NumberOfSlides; i++)
             {
-                templateOut[i] = Math.PointInCircumference(radius, i * (360f / numberOfSlides), Vector2.zero);
-                templateIn[i] = Math.PointInCircumference(radius - thickness, i * (360f / numberOfSlides), Vector2.zero);
+                templateOut[i] = Math.PointInCircumference(radius, i * (360f / m_NumberOfSlides), Vector2.zero);
+                templateIn[i] = Math.PointInCircumference(radius - m_Thickness, i * (360f / m_NumberOfSlides), Vector2.zero);
             }
 
             List<Vector3> v = new List<Vector3>();
             var baseY = height / 2f;
             // build out sides
             Vector2 tmp, tmp2, tmp3, tmp4;
-            for (int i = 0; i < heightSeigments; i++)
+            for (int i = 0; i < m_HeightSeigments; i++)
             {
                 // height subdivisions
-                float y = i * (height / heightSeigments) - baseY;
-                float y2 = (i + 1) * (height / heightSeigments) - baseY;
+                float y = i * (height / m_HeightSeigments) - baseY;
+                float y2 = (i + 1) * (height / m_HeightSeigments) - baseY;
 
-                for (int n = 0; n < numberOfSlides; n++)
+                for (int n = 0; n < m_NumberOfSlides; n++)
                 {
                     tmp = templateOut[n];
-                    tmp2 = n < (numberOfSlides - 1) ? templateOut[n + 1] : templateOut[0];
+                    tmp2 = n < (m_NumberOfSlides - 1) ? templateOut[n + 1] : templateOut[0];
 
                     // outside quads
                     Vector3[] qvo = new Vector3[4]
@@ -57,7 +66,7 @@ namespace UnityEngine.ProBuilder
 
                     // inside quad
                     tmp = templateIn[n];
-                    tmp2 = n < (numberOfSlides - 1) ? templateIn[n + 1] : templateIn[0];
+                    tmp2 = n < (m_NumberOfSlides - 1) ? templateIn[n + 1] : templateIn[0];
                     Vector3[] qvi = new Vector3[4]
                     {
                         new Vector3(tmp.x, y, tmp.y),
@@ -72,12 +81,12 @@ namespace UnityEngine.ProBuilder
             }
 
             // build top and bottom
-            for (int i = 0; i < numberOfSlides; i++)
+            for (int i = 0; i < m_NumberOfSlides; i++)
             {
                 tmp = templateOut[i];
-                tmp2 = (i < numberOfSlides - 1) ? templateOut[i + 1] : templateOut[0];
+                tmp2 = (i < m_NumberOfSlides - 1) ? templateOut[i + 1] : templateOut[0];
                 tmp3 = templateIn[i];
-                tmp4 = (i < numberOfSlides - 1) ? templateIn[i + 1] : templateIn[0];
+                tmp4 = (i < m_NumberOfSlides - 1) ? templateIn[i + 1] : templateIn[0];
 
                 // top
                 Vector3[] tpt = new Vector3[4]

@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY_EDITOR
+using UnityEditor;
+#endif
+using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
 {
@@ -6,37 +9,46 @@ namespace UnityEngine.ProBuilder
     {
         [Range(3, 64)]
         [SerializeField]
-        int rows = 16;
+        int m_Rows = 16;
 
         [Range(3, 64)]
         [SerializeField]
-        int columns = 24;
+        int m_Columns = 24;
 
         [Min(0.01f)]
         [SerializeField]
-        float innerRadius = 30;
+        float m_InnerRadius = 30;
 
         [Range(0, 360)]
         [SerializeField]
-        float horizontalCircumference = 360;
+        float m_HorizontalCircumference = 360;
 
         [Range(0, 360)]
         [SerializeField]
-        float verticalCircumference = 360;
+        float m_VerticalCircumference = 360;
 
         [SerializeField]
-        bool smooth = true;
+        bool m_Smooth = true;
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
+#if UNITY_EDITOR
+            EditorPrefs.SetInt("ShapeBuilder.Torus.m_Rows", m_Rows);
+            EditorPrefs.SetInt("ShapeBuilder.Torus.m_Columns", m_Columns);
+            EditorPrefs.SetFloat("ShapeBuilder.Torus.m_InnerRadius", m_InnerRadius);
+            EditorPrefs.SetFloat("ShapeBuilder.Torus.m_HorizontalCircumference", m_HorizontalCircumference);
+            EditorPrefs.SetFloat("ShapeBuilder.Torus.m_VerticalCircumference", m_VerticalCircumference);
+            EditorPrefs.SetBool("ShapeBuilder.Torus.m_Smooth", m_Smooth);
+#endif
+
             var outerRadius = System.Math.Min(size.x, size.z);
-            int clampedRows = (int)Mathf.Clamp(rows + 1, 4, 128);
-            int clampedColumns = (int)Mathf.Clamp(columns + 1, 4, 128);
-            float clampedRadius = Mathf.Clamp(innerRadius, .01f, 2048f);
+            int clampedRows = (int)Mathf.Clamp(m_Rows + 1, 4, 128);
+            int clampedColumns = (int)Mathf.Clamp(m_Columns + 1, 4, 128);
+            float clampedRadius = Mathf.Clamp(m_InnerRadius, .01f, 2048f);
             float clampedTubeRadius = Mathf.Clamp(outerRadius, .01f, clampedRadius - .001f);
             clampedRadius -= clampedTubeRadius;
-            float clampedHorizontalCircumference = Mathf.Clamp(horizontalCircumference, .01f, 360f);
-            float clampedVerticalCircumference = Mathf.Clamp(verticalCircumference, .01f, 360f);
+            float clampedHorizontalCircumference = Mathf.Clamp(m_HorizontalCircumference, .01f, 360f);
+            float clampedVerticalCircumference = Mathf.Clamp(m_VerticalCircumference, .01f, 360f);
 
             List<Vector3> vertices = new List<Vector3>();
 
@@ -68,7 +80,7 @@ namespace UnityEngine.ProBuilder
                     int d = (i + 1) * ((clampedRows - 1) * 2) + (n * 2) + 1;
 
                     faces.Add(new Face(new int[] { a, b, c, b, d, c }));
-                    faces[fc].smoothingGroup = smooth ? 1 : -1;
+                    faces[fc].smoothingGroup = m_Smooth ? 1 : -1;
                     faces[fc].manualUV = true;
 
                     fc++;

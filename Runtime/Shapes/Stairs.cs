@@ -29,15 +29,11 @@ namespace UnityEngine.ProBuilder
             set { m_Sides = value; }
         }
 
-        //public float stepHeight
-        //{
-        //    get { return (1f / m_Steps) * size.y; }
-        //}
-
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
 #if UNITY_EDITOR
             EditorPrefs.SetInt("ShapeBuilder.Stair.m_Steps", m_Steps);
+            EditorPrefs.SetFloat("ShapeBuilder.Stair.m_Circumference", m_Circumference);
             EditorPrefs.SetBool("ShapeBuilder.Stair.m_Sides", m_Sides);
 #endif
 
