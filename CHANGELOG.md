@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Features
 
 - Added iterative selection on edges.
+- Added a selection preview when using the Select Path tool
 
 ### Bug Fixes
 

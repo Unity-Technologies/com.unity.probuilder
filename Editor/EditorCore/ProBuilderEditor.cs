@@ -159,6 +159,8 @@ namespace UnityEditor.ProBuilder
 
         Rect m_SceneInfoRect = new Rect(10, 10, 200, 40);
 
+        bool m_wasSelectingPath;
+
 #if !UNITY_2018_2_OR_NEWER
         static MethodInfo s_ResetOnSceneGUIState = null;
 #endif
@@ -623,20 +625,29 @@ namespace UnityEditor.ProBuilder
             if (selectMode == SelectMode.Object)
                 return;
 
+            bool pathSelectionModifier = EditorHandleUtility.IsSelectionPathModifier(m_CurrentEvent.modifiers);
+
             // Check mouse position in scene and determine if we should highlight something
             if (s_ShowHoverHighlight
-                && m_CurrentEvent.type == EventType.MouseMove
-                && selectMode.IsMeshElementMode())
+                && selectMode.IsMeshElementMode()
+                && (m_CurrentEvent.type == EventType.MouseMove
+                || (m_wasSelectingPath != pathSelectionModifier && m_CurrentEvent.isKey)))
             {
                 m_Hovering.CopyTo(m_HoveringPrevious);
-
                 if (GUIUtility.hotControl != 0 ||
                     EditorSceneViewPicker.MouseRayHitTest(m_CurrentEvent.mousePosition, selectMode, m_ScenePickerPreferences, m_Hovering) > ScenePickerPreferences.maxPointerDistance)
                     m_Hovering.Clear();
 
                 if (!m_Hovering.Equals(m_HoveringPrevious))
+                {
+                    if (pathSelectionModifier)
+                        EditorSceneViewPicker.DoMouseHover(m_Hovering);
+
                     SceneView.RepaintAll();
+                }
             }
+            m_wasSelectingPath = pathSelectionModifier;
+
 
             if (Tools.current == Tool.View)
                 return;
