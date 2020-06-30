@@ -320,11 +320,6 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        static void Render(Dictionary<ProBuilderMesh, MeshHandle> handles, Material material, Color color, bool depthTest = true)
-        {
-            Render(handles, material, color, depthTest ? CompareFunction.LessEqual : CompareFunction.Always, false);
-        }
-
         static void Render(Dictionary<ProBuilderMesh, MeshHandle> handles, Material material, Color color, CompareFunction func, bool zWrite = false)
         {
             material.SetInt("_HandleZTest", (int) func);
