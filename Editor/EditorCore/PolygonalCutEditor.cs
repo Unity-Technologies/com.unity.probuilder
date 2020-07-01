@@ -277,7 +277,6 @@ namespace UnityEditor.ProBuilder
 
             List<Vertex> vertices = polygonalCut.mesh.GetVertices().ToList();
             List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_CurrentFace);
-            //if (m_TargetFace == null || m_CurrentFace == m_TargetFace)
             if(m_TargetFace != null && m_CurrentFace != m_TargetFace)
                 peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_TargetFace);
 
@@ -494,9 +493,9 @@ namespace UnityEditor.ProBuilder
 
         if (VertexInsertion.EndOnEdgeConnection)
         {
-            return (polygonalCut.m_verticesToAdd[0].m_Type 
+            return (polygonalCut.m_verticesToAdd[0].m_Type
                         & (PolygonalCut.VertexType.AddedOnEdge | PolygonalCut.VertexType.ExistingVertex)) != 0
-                   && (polygonalCut.m_verticesToAdd[polygonalCut.m_verticesToAdd.Count - 1].m_Type 
+                   && (polygonalCut.m_verticesToAdd[polygonalCut.m_verticesToAdd.Count - 1].m_Type
                        & (PolygonalCut.VertexType.AddedOnEdge | PolygonalCut.VertexType.ExistingVertex)) != 0;
         }
 
@@ -730,7 +729,6 @@ namespace UnityEditor.ProBuilder
         void HandleKeyEvent(Event evt)
         {
             KeyCode key = evt.keyCode;
-            Debug.Log("KeyPressed ! "+key);
 
             switch (key)
             {

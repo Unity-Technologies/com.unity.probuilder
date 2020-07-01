@@ -1093,7 +1093,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="mesh">The source mesh.</param>
         /// <param name="edge">The edge on which adding the point.</param>
         /// <param name="point">The point to insert on the edge.</param>
-        /// <returns>The new edges created by the point insertion.</returns>
+        /// <returns>The new edges created by the point insertion.</returns>//
         public static Vertex InsertVertexOnEdge(this ProBuilderMesh mesh, Edge originalEdge, Vector3 point)
         {
             if (mesh == null)
@@ -1106,7 +1106,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
             Dictionary<int, int> lookup = mesh.sharedVertexLookup;
             Dictionary<int, int> lookupUV = mesh.sharedTextureLookup;
             List<int> indexesToDelete = new List<int>();
-
             Dictionary<Face, FaceRebuildData> modifiedFaces = new Dictionary<Face, FaceRebuildData>();
 
             int originalSharedIndexesCount = lookup.Count();
@@ -1129,6 +1128,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
             newVertex.normal.Normalize();
 
             List<SimpleTuple<Face, Edge>> adjacentFaces = ElementSelection.GetNeighborFaces(mesh, originalEdge);
+            Edge uni = new Edge(lookup[originalEdge.a], lookup[originalEdge.b]);
+            Edge e = new Edge();
 
             // foreach face attached to common edge, append vertices
             foreach (SimpleTuple<Face, Edge> tup in adjacentFaces)
@@ -1162,30 +1163,58 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 }
 
                 data.vertices.Add(newVertex);
+
                 data.sharedIndexes.Add(originalSharedIndexesCount);
-                data.sharedIndexesUV.Add(originalSharedIndexesCount);
+                data.sharedIndexesUV.Add(-1);
+
+                List<Vertex> orderedVertices = new List<Vertex>();
+                List<int> orderedSharedIndexes = new List<int>();
+                List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(face);
+
+                bool canAdd = true;
+                for (int i = 0; i < peripheralEdges.Count; i++)
+                {
+                    e.a = peripheralEdges[i].a;
+                    e.b = peripheralEdges[i].b;
+
+                    orderedVertices.Add(vertices[e.a]);
+
+                    int shared;
+                    if (lookup.TryGetValue(e.a, out shared))
+                        orderedSharedIndexes.Add(shared);
+
+                    if (canAdd &&
+                        (uni.a == lookup[e.a] && uni.b == lookup[e.b]) ||
+                        (uni.a == lookup[e.b] && uni.b == lookup[e.a]))
+                    {
+                        canAdd = false;
+                        orderedVertices.Add(data.vertices[data.vertices.Count-1]);
+                        orderedSharedIndexes.Add(originalSharedIndexesCount);
+                    }
+                }
+
+                data.vertices = orderedVertices;
+                data.sharedIndexes = orderedSharedIndexes;
             }
 
             // now apply the changes
             List<Face> dic_face = modifiedFaces.Keys.ToList();
             List<FaceRebuildData> dic_data = modifiedFaces.Values.ToList();
-            List<EdgeLookup> appendedEdges = new List<EdgeLookup>();
 
             for (int i = 0; i < dic_face.Count; i++)
             {
                 Face face = dic_face[i];
                 FaceRebuildData data = dic_data[i];
 
-                Vector3 nrm = Math.Normal(mesh, face);
-                Vector2[] projection = Projection.PlanarProject(data.vertices.Select(x => x.position).ToArray(), null, nrm);
-
                 int vertexCount = vertices.Count;
 
                 // triangulate and set new face indexes to end of current vertex list
-                List<int> indexes;
+                List<int> triangles;
 
-                if (Triangulation.SortAndTriangulate(projection, out indexes))
-                    data.face.indexesInternal = indexes.ToArray();
+                if (Triangulation.TriangulateVertices(data.vertices, out triangles, false))
+                {
+                    data.face = new Face(triangles);
+                }
                 else
                     continue;
 
@@ -1203,28 +1232,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
                 vertices.AddRange(data.vertices);
 
-                foreach (Edge e in face.edgesInternal)
-                {
-                    EdgeLookup el = new EdgeLookup(new Edge(lookup[e.a], lookup[e.b]), e);
-
-                    if (el.common.a >= originalSharedIndexesCount || el.common.b >= originalSharedIndexesCount)
-                        appendedEdges.Add(el);
-                }
             }
 
             indexesToDelete = indexesToDelete.Distinct().ToList();
-            int delCount = indexesToDelete.Count;
-
-            var newEdges = appendedEdges.Distinct().Select(x => x.local - delCount).ToList();
 
             mesh.SetVertices(vertices);
             mesh.SetSharedVertices(lookup);
             mesh.SetSharedTextures(lookupUV);
             mesh.DeleteVertices(indexesToDelete);
 
+
             return newVertex;
         }
-
 
         /// <summary>
         /// Add a point to a face and retriangulate.
@@ -1242,10 +1261,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 throw new ArgumentNullException("point");
 
             List<Vertex> vertices = mesh.GetVertices().ToList();
-            // List<Face> faces = new List<Face>(mesh.facesInternal);
             Dictionary<int, int> lookup = mesh.sharedVertexLookup;
             Dictionary<int, int> lookupUV = null;
-            //
+
             // List<int> indexesToDelete = new List<int>();
             int originalSharedIndexesCount = lookup.Count();
 
