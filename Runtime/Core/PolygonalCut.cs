@@ -58,6 +58,14 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         internal List<InsertedVertexData> m_verticesToAdd = new List<InsertedVertexData>();
 
+        private bool m_CutEnded = false;
+
+        public bool CutEnded
+        {
+            get => m_CutEnded;
+            set => m_CutEnded = value;
+        }
+
         public bool IsALoop
         {
             get
@@ -66,6 +74,14 @@ namespace UnityEngine.ProBuilder
                     return false;
                 else
                     return m_verticesToAdd[0].m_Vertex.Equals(m_verticesToAdd[m_verticesToAdd.Count - 1].m_Vertex);
+            }
+        }
+
+        public int ConnectionsToFaceBordersCount
+        {
+            get
+            {
+                return m_verticesToAdd.Count(data => (data.m_Type & (VertexType.AddedOnEdge | VertexType.ExistingVertex)) != 0 );
             }
         }
 

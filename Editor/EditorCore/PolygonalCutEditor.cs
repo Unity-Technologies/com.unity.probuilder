@@ -132,6 +132,10 @@ namespace UnityEditor.ProBuilder
                 m_LineMaterial.SetFloat("_EditorTime", (float)EditorApplication.timeSinceStartup);
             if (polygonalCut.mesh != null && polygonalCut.polygonEditMode == PolygonalCut.PolygonEditMode.Add && m_ClosingLineMaterial != null)
                 m_ClosingLineMaterial.SetFloat("_EditorTime", (float)EditorApplication.timeSinceStartup);
+
+
+            if (polygonalCut.CutEnded)
+                DoPolygonalCut();
         }
 
 #endregion
@@ -486,6 +490,9 @@ namespace UnityEditor.ProBuilder
         if (m_TargetFace == null || polygonalCut.m_verticesToAdd.Count < 2)
             return false;
 
+        if (polygonalCut.CutEnded)
+            return true;
+
         if (VertexInsertion.EndOnClicToStartPoint)
         {
             return UnityEngine.ProBuilder.Math.Approx3(polygonalCut.m_verticesToAdd[0].Position,polygonalCut.m_verticesToAdd[polygonalCut.m_verticesToAdd.Count - 1].Position);
@@ -508,6 +515,8 @@ namespace UnityEditor.ProBuilder
         {
             Debug.LogError("Not enough points to define a cutting shape");
         }
+
+        int connectionsToFaceBorder = polygonalCut.ConnectionsToFaceBordersCount;
 
         List<int[]> verticesIndexes = ComputePolygons();
 
@@ -544,14 +553,17 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        //Get Vertices from the mesh
         List<Vertex> meshVertices = polygonalCut.mesh.GetVertices().ToList();
+        //Get Vertices from the cut
         List<Vertex> polygonVertices = polygonalCut.m_verticesToAdd.Select(ivd => ivd.m_Vertex).ToList();
 
         Dictionary<int, int> sharedToUnique = polygonalCut.mesh.sharedVertexLookup;
         List<int> polygonSharedVerticesIndexes = polygonVertices.Select(vert => sharedToUnique[meshVertices.IndexOf(vert)]).ToList();
 
+        //Parse peripheral edges to unique id and find a common point between the mesh and the cut
         List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_TargetFace);
-        List<Edge> peripheralEdgesSharedIndex = new List<Edge>();
+        List<Edge> peripheralEdgesUnique = new List<Edge>();
         int startIndex = -1;
         for (int i = 0; i < peripheralEdges.Count; i++)
         {
@@ -560,28 +572,29 @@ namespace UnityEditor.ProBuilder
             eShared.a = sharedToUnique[e.a];
             eShared.b = sharedToUnique[e.b];
 
-            peripheralEdgesSharedIndex.Add(eShared);
+            peripheralEdgesUnique.Add(eShared);
 
             if (polygonSharedVerticesIndexes.Contains(eShared.a) && startIndex == -1)
                 startIndex = i;
         }
 
+        //Create a polygon for each cut reaching the mesh edges
         List<int> polygon = new List<int>();
         Edge previousEdge = new Edge(-1,-1);
-        for (int i = startIndex; i <= peripheralEdgesSharedIndex.Count + startIndex; i++)
+        for (int i = startIndex; i <= peripheralEdgesUnique.Count + startIndex; i++)
         {
-             Edge e = peripheralEdgesSharedIndex[i % peripheralEdgesSharedIndex.Count];
+             Edge e = peripheralEdgesUnique[i % peripheralEdgesUnique.Count];
 
-             polygon.Add(peripheralEdges[i % peripheralEdgesSharedIndex.Count].a);
+             polygon.Add(peripheralEdges[i % peripheralEdgesUnique.Count].a);
              if(polygon.Count > 1 && polygonSharedVerticesIndexes.Contains(e.a)) // get next vertex
              {
-                 List<int> closure = ClosePolygonCut(previousEdge, e.a, polygonSharedVerticesIndexes);
+                 List<int> closure = ClosePolygonCut(polygon[0], previousEdge, e.a, polygonSharedVerticesIndexes);
                  polygon.AddRange(closure);
                  polygons.Add(polygon.ToArray());
 
                  //Start a new polygon
                  polygon = new List<int>();
-                 polygon.Add(peripheralEdges[i % peripheralEdgesSharedIndex.Count].a);
+                 polygon.Add(peripheralEdges[i % peripheralEdgesUnique.Count].a);
              }
 
              previousEdge = e;
@@ -590,7 +603,7 @@ namespace UnityEditor.ProBuilder
         return polygons;
     }
 
-    private List<int> ClosePolygonCut(Edge previousEdge, int currentIndex, List<int> polygonIndexes)
+    private List<int> ClosePolygonCut(int polygonFirstVertex ,Edge previousEdge, int currentIndex, List<int> polygonIndexes)
     {
         List<int> closure = new List<int>();
         List<Vertex> meshVertices = polygonalCut.mesh.GetVertices().ToList();
@@ -645,13 +658,14 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        Dictionary<int, int> sharedToUnique = polygonalCut.mesh.sharedVertexLookup;
         if (successorDirection == -1)
         {
             for (int i = bestSuccessorIndex; i > (bestSuccessorIndex - polygonIndexes.Count); i--)
             {
-                closure.Add(uniqueIdToVertexIndex[polygonIndexes[(i + polygonIndexes.Count) % polygonIndexes.Count]][0]);
-                if ((polygonalCut.m_verticesToAdd[i].m_Type &
-                     (PolygonalCut.VertexType.ExistingVertex | PolygonalCut.VertexType.AddedOnEdge)) != 0)
+                int vertexIndex = uniqueIdToVertexIndex[polygonIndexes[(i + polygonIndexes.Count) % polygonIndexes.Count]][0];
+                closure.Add(vertexIndex);
+                if(sharedToUnique[vertexIndex] == sharedToUnique[polygonFirstVertex])
                     break;
             }
         }
@@ -659,9 +673,9 @@ namespace UnityEditor.ProBuilder
         {
             for (int i = bestSuccessorIndex; i < (bestSuccessorIndex + polygonIndexes.Count); i++)
             {
-                closure.Add(uniqueIdToVertexIndex[polygonIndexes[i %  polygonIndexes.Count]][0]);
-                if ((polygonalCut.m_verticesToAdd[i].m_Type &
-                     (PolygonalCut.VertexType.ExistingVertex | PolygonalCut.VertexType.AddedOnEdge)) != 0)
+                int vertexIndex = uniqueIdToVertexIndex[polygonIndexes[i % polygonIndexes.Count]][0];
+                closure.Add(vertexIndex);
+                if(sharedToUnique[vertexIndex] == sharedToUnique[polygonFirstVertex])
                     break;
             }
         }

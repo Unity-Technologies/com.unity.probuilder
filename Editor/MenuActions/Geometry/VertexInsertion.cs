@@ -68,6 +68,8 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
+        private PolygonalCut m_CutTarget;
+
 
         protected override void OnSettingsGUI()
         {
@@ -88,11 +90,16 @@ namespace UnityEditor.ProBuilder.Actions
 
             GUILayout.FlexibleSpace();
 
-            if (GUILayout.Button("Start Vertices Insertion"))
-                DoAction();
-
-            // if (GUILayout.Button("Do Point-to-point Cut"))
-            //     DoAction();
+            if (m_CutTarget == null)
+            {
+                if (GUILayout.Button("Start Vertices Insertion"))
+                    DoAction();
+            }
+            else
+            {
+                if (GUILayout.Button("Compute Cut"))
+                    ComputeCut();
+            }
         }
 
         public override ActionResult DoAction()
@@ -104,11 +111,16 @@ namespace UnityEditor.ProBuilder.Actions
                 return new ActionResult(ActionResult.Status.Failure, "Only one ProBuilder object must be selected");
 
             ProBuilderMesh firstObj = MeshSelection.activeMesh;
-            //UndoUtility.RegisterCreatedObjectUndo(firstObj.gameObject, "Create Polygonal Cut");
-            PolygonalCut voFace = Undo.AddComponent<PolygonalCut>(firstObj.gameObject);
-            voFace.polygonEditMode = PolygonalCut.PolygonEditMode.Add;
+
+            m_CutTarget = Undo.AddComponent<PolygonalCut>(firstObj.gameObject);
+            m_CutTarget.polygonEditMode = PolygonalCut.PolygonEditMode.Add;
 
             return new ActionResult(ActionResult.Status.Success,"Vertex On Face Insertion");
+        }
+
+        private void ComputeCut()
+        {
+            m_CutTarget.CutEnded = true;
         }
     }
 }
