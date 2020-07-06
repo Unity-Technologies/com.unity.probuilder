@@ -6,6 +6,7 @@ using UnityEditor.ProBuilder.Actions;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.TestTools.Utils;
 using Math = System.Math;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 using UHandleUtility = UnityEditor.HandleUtility;
@@ -464,14 +465,13 @@ namespace UnityEditor.ProBuilder
         return false;
     }
 
-    private void DoPolygonalCut()
+    private List<Face> DoPolygonalCut()
     {
         if (m_TargetFace == null || polygonalCut.m_verticesToAdd.Count < 2)
         {
-            Debug.LogError("Not enough points to define a cutting shape");
+            Debug.LogError("Not enough points to define a cut");
+            return null;
         }
-
-        int connectionsToFaceBorder = polygonalCut.ConnectionsToFaceBordersCount;
 
         if (!polygonalCut.IsALoop)
         {
@@ -490,21 +490,51 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        List<Face> newFaces = new List<Face>();
+
         UndoUtility.RecordObject(polygonalCut.mesh, "Add Face To Mesh");
 
-        List<Vertex> vertices = InsertVertices();
+        List<Vertex> cutVertices = InsertVertices();
 
-        List<int[]> verticesIndexes = ComputePolygons(vertices);
-
-        foreach (int[] polygon in verticesIndexes)
+        if (polygonalCut.IsALoop)
         {
-            Face newFace = polygonalCut.mesh.CreatePolygon(polygon,false);
+            List<Vertex> meshVertices = polygonalCut.mesh.GetVertices().ToList();
+            int[] loopCut = cutVertices.Select(vert => meshVertices.IndexOf(vert)).ToArray();
+            Face f = polygonalCut.mesh.CreatePolygon(loopCut, false);
+
+            Vector3 fNormal = UnityEngine.ProBuilder.Math.Normal(polygonalCut.mesh, f);
+            Vector3 targetNormal = UnityEngine.ProBuilder.Math.Normal(polygonalCut.mesh, m_TargetFace);
+            if(Vector3.Dot(fNormal,targetNormal) < 0f)
+                f.Reverse();
+            
+            newFaces.Add(f);
+        }
+
+        int connectionsToFaceBorders = polygonalCut.ConnectionsToFaceBordersCount;
+
+        switch (connectionsToFaceBorders)
+        {
+            case 0:
+                newFaces.Add( CreateFaceWithHole(m_TargetFace, cutVertices) );
+                break;
+            default:
+                List<int[]> verticesIndexes = ComputePolygons(m_TargetFace, cutVertices);
+
+                foreach (int[] polygon in verticesIndexes)
+                {
+                    newFaces.Add(polygonalCut.mesh.CreatePolygon(polygon,false));
+                }
+            break;
         }
 
         polygonalCut.mesh.DeleteFace(m_TargetFace);
 
         DestroyImmediate(polygonalCut);
+
+        return newFaces;
     }
+
+
 
     private List<Vertex> InsertVertices()
     {
@@ -573,7 +603,24 @@ namespace UnityEditor.ProBuilder
         return v;
     }
 
-    private List<int[]> ComputePolygons(List<Vertex> cutVertices)
+    private Face CreateFaceWithHole(Face face, List<Vertex> cutVertices)
+    {
+        List<Vertex> meshVertices = polygonalCut.mesh.GetVertices().ToList();
+
+        List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(face);
+        List<int> indexes = peripheralEdges.Select(edge => edge.a).ToList();
+
+        IList<IList<int>> holes = new List<IList<int>>();
+        List<int> hole = cutVertices.Select(vert => meshVertices.IndexOf(vert)).ToList();
+        holes.Add(hole);
+
+        Face newFace = polygonalCut.mesh.CreatePolygonWithHole(indexes, holes);
+
+        return newFace;
+    }
+
+
+    private List<int[]> ComputePolygons(Face face, List<Vertex> cutVertices)
     {
         List<int[]> polygons =new List<int[]>();
 
@@ -584,7 +631,7 @@ namespace UnityEditor.ProBuilder
         List<int> cutVerticesSharedIndex = cutVertices.Select(vert => sharedToUnique[meshVertices.IndexOf(vert)]).ToList();
 
         //Parse peripheral edges to unique id and find a common point between the mesh and the cut
-        List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_TargetFace);
+        List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(face);
         List<Edge> peripheralEdgesUnique = new List<Edge>();
         int startIndex = -1;
         for (int i = 0; i < peripheralEdges.Count; i++)

@@ -210,6 +210,65 @@ namespace UnityEngine.ProBuilder.MeshOperations
             return null;
         }
 
+
+        /// <summary>
+        /// Create a new face connecting existing vertices.
+        /// </summary>
+        /// <param name="mesh">The source mesh.</param>
+        /// <param name="indexes">The indexes of the vertices to join with the new polygon.</param>
+        /// <param name="unordered">Are the indexes in an ordered path (false), or not (true)? If indexes are not ordered this function will treat the polygon as a convex shape. Ordered paths will be triangulated allowing concave shapes.</param>
+        /// <returns>The new face created if the action was successfull, null if action failed.</returns>
+        public static Face CreatePolygonWithHole(this ProBuilderMesh mesh, IList<int> indexes, IList<IList<int>> holes)
+        {
+            if (mesh == null)
+                throw new ArgumentNullException("mesh");
+
+            SharedVertex[] sharedIndexes = mesh.sharedVerticesInternal;
+            Dictionary<int, int> lookup = mesh.sharedVertexLookup;
+            List<Vertex> vertices = new List<Vertex>(mesh.GetVertices());
+
+            HashSet<int> commonVertices = mesh.GetSharedVertexHandles(indexes);
+            List<Vertex> appendVertices = new List<Vertex>();
+            foreach (int i in commonVertices)
+            {
+                int index = sharedIndexes[i][0];
+                appendVertices.Add(new Vertex(vertices[index]));
+            }
+
+            HashSet<int> common = commonVertices;
+            List< HashSet<int> > commonHoles = new List<HashSet<int>>();
+            List< List<Vertex> > appendHoles = new List<List<Vertex>>();
+            for (int i = 0; i < holes.Count; i++)
+            {
+                commonHoles.Add(mesh.GetSharedVertexHandles(holes[i]));
+                List<Vertex> currentHole = new List<Vertex>();
+                appendHoles.Add(currentHole);
+
+                foreach (int j in commonHoles[i])
+                {
+                    common.Add(j);
+                    int index = sharedIndexes[j][0];
+                    currentHole.Add(new Vertex(vertices[index]));
+                }
+            }
+
+            FaceRebuildData data = FaceWithVerticesAndHole(appendVertices, appendHoles);
+
+            if (data != null)
+            {
+                data.sharedIndexes = common.ToList();
+                List<Face> faces = new List<Face>(mesh.facesInternal);
+                FaceRebuildData.Apply(new FaceRebuildData[] { data }, vertices, faces, lookup, null);
+                mesh.SetVertices(vertices);
+                mesh.faces = faces;
+                mesh.SetSharedVertices(lookup);
+
+                return data.face;
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Create a poly shape from a set of points on a plane. The points must be ordered.
         /// </summary>
@@ -400,6 +459,43 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             return null;
         }
+
+        /// <summary>
+        /// Create a new face given a set of ordered vertices and vertices making holes in the face.
+        /// </summary>
+        /// <param name="vertices"></param>
+        /// <param name="holes"></param>
+        /// <returns></returns>
+        internal static FaceRebuildData FaceWithVerticesAndHole(List<Vertex> borderVertices, List<List<Vertex>> holes)
+        {
+            List<int> triangles;
+
+            Vector3[] verticesV3 = borderVertices.Select(v => v.position).ToArray();
+            Vector3[][] holesV3 = new Vector3[holes.Count][];
+
+            for (int i = 0; i < holesV3.Length; i++)
+            {
+                holesV3[i] = holes[i].Select(v => v.position).ToArray();
+            }
+
+            if (Triangulation.TriangulateVertices(verticesV3, out triangles, holesV3))
+            {
+                List<Vertex> vertices = new List<Vertex>();
+                vertices.AddRange(borderVertices);
+                foreach (var hole in holes)
+                {
+                    vertices.AddRange(hole);
+                }
+
+                FaceRebuildData data = new FaceRebuildData();
+                data.vertices = vertices;
+                data.face = new Face(triangles);
+                return data;
+            }
+
+            return null;
+        }
+
 
         /// <summary>
         /// Given a path of vertices, inserts a new vertex in the center inserts triangles along the path.
