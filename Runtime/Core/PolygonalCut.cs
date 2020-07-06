@@ -37,18 +37,21 @@ namespace UnityEngine.ProBuilder
         [Serializable]
         public class InsertedVertexData
         {
-            public Vertex m_Vertex;
+            public Vector3 m_Position;
+            public Vector3 m_Normal;
             public VertexType m_Type;
 
-            public Vector3 Position
+            public InsertedVertexData(Vector3 position, VertexType type = VertexType.None)
             {
-                set {m_Vertex.position = value;}
-                get { return m_Vertex.position; }
+                m_Position = position;
+                m_Normal = Vector3.up;
+                m_Type = type;
             }
 
-            public InsertedVertexData(Vertex vertex, VertexType type = VertexType.None)
+            public InsertedVertexData(Vector3 position, Vector3 normal, VertexType type = VertexType.None)
             {
-                m_Vertex = vertex;
+                m_Position = position;
+                m_Normal = normal;
                 m_Type = type;
             }
         }
@@ -73,7 +76,8 @@ namespace UnityEngine.ProBuilder
                 if (m_verticesToAdd.Count < 3)
                     return false;
                 else
-                    return m_verticesToAdd[0].m_Vertex.Equals(m_verticesToAdd[m_verticesToAdd.Count - 1].m_Vertex);
+                    return Math.Approx3(m_verticesToAdd[0].m_Position,
+                        m_verticesToAdd[m_verticesToAdd.Count - 1].m_Position);
             }
         }
 
