@@ -37,22 +37,26 @@ namespace UnityEditor.ProBuilder
 
         GUIContent m_ShapeTitle;
 
-        TypeCache.TypeCollection m_AvailableShapeTypes;
+        static TypeCache.TypeCollection m_AvailableShapeTypes;
         string[] m_ShapeTypesPopupContent;
 
         [SerializeField]
-        int m_ActiveShapeIndex;
+        static int m_ActiveShapeIndex;
 
-        Type activeShapeType
+        static Type activeShapeType
         {
             get { return m_ActiveShapeIndex < 0 ? typeof(Cube) : m_AvailableShapeTypes[m_ActiveShapeIndex]; }
+        }
+
+        static DrawShapeTool()
+        {
+            m_AvailableShapeTypes = TypeCache.GetTypesDerivedFrom<Shape>();
         }
 
         void OnEnable()
         {
             EditorTools.EditorTools.activeToolChanged += ActiveToolChanged;
             m_ShapeTitle = new GUIContent("Draw Shape");
-            m_AvailableShapeTypes = TypeCache.GetTypesDerivedFrom<Shape>();
             m_ShapeTypesPopupContent = m_AvailableShapeTypes.Select(x => x.ToString()).ToArray();
         }
 
@@ -219,7 +223,7 @@ namespace UnityEditor.ProBuilder
                             {
                                 var pos = ray.GetPoint(distance);
                                 CancelShape();
-                                var shape = ShapeEditor.CreateActiveShape(Vector3.one * distance / 5f);
+                                var shape = CreateActiveShape(Vector3.one * distance / 5f);
                                 shape.transform.position = pos;
                             }
                         }
@@ -231,6 +235,22 @@ namespace UnityEditor.ProBuilder
 
                     }
             }
+        }
+
+        public static ProBuilderMesh CreateActiveShape(Vector3 size)
+        {
+            var type = activeShapeType;
+            var shape = new GameObject("Shape").AddComponent<ShapeComponent>();
+            shape.SetShape(type);
+            UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape");
+            //TODO: Get desfualt size/rot
+            Bounds bounds = new Bounds(Vector3.zero, size);
+            shape.Rebuild(bounds, Quaternion.identity);
+            shape.mesh.SetPivot(PivotLocation.Center);
+            ProBuilderEditor.Refresh(false);
+            var res = shape.GetComponent<ProBuilderMesh>();
+            EditorUtility.InitObject(res, false);
+            return res;
         }
 
         void SetHeight(Event evt)
@@ -282,10 +302,27 @@ namespace UnityEditor.ProBuilder
 
         void OnActiveToolGUI(UObject target, SceneView view)
         {
+         //   Debug.Log("target: " + target);
+            //if (target == null)
+            //    return;
+         //   var serializedObject = new SerializedObject(target);
             EditorGUI.BeginChangeCheck();
             m_ActiveShapeIndex = EditorGUILayout.Popup(m_ActiveShapeIndex, m_ShapeTypesPopupContent);
             if (EditorGUI.EndChangeCheck())
                 SetActiveShapeType(m_AvailableShapeTypes[m_ActiveShapeIndex]);
+
+            //var test = new Cube();
+            ////var serializedObject2 = new SerializedProperty();
+            ////serializedObject2.
+            //var shape = serializedObject.FindProperty("m_shape");
+            //EditorGUILayout.PropertyField(shape, true);
+            //if (serializedObject.ApplyModifiedProperties())
+            //{
+            //    ((ShapeComponent)target).Rebuild();
+            //    ProBuilderEditor.Refresh(false);
+            //}
+            var rect = EditorGUILayout.GetControlRect(false, 45);
+            EditorGUI.HelpBox(rect, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu laoreet sapien. Phasellus convallis pulvinar ultrices. Proin et sapien vel dui vulputate mattis.", MessageType.Info);
         }
     }
 }
