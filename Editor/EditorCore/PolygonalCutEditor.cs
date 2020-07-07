@@ -506,7 +506,7 @@ namespace UnityEditor.ProBuilder
             Vector3 targetNormal = UnityEngine.ProBuilder.Math.Normal(polygonalCut.mesh, m_TargetFace);
             if(Vector3.Dot(fNormal,targetNormal) < 0f)
                 f.Reverse();
-            
+
             newFaces.Add(f);
         }
 
@@ -516,6 +516,31 @@ namespace UnityEditor.ProBuilder
         {
             case 0:
                 newFaces.Add( CreateFaceWithHole(m_TargetFace, cutVertices) );
+                break;
+            case 1:
+                List<int[]> indexes = ComputePolygons(m_TargetFace, cutVertices);
+                //indexes = DuplicateSingularityVertex(indexes);
+                foreach (int[] polygon in indexes)
+                {
+                    Face face = polygonalCut.mesh.CreatePolygon(polygon,false);
+
+                    int[] complementaryPolygon = GetComplementaryPolygons(polygon);
+                    if (complementaryPolygon != null)
+                    {
+                        Face compFace = polygonalCut.mesh.CreatePolygon(complementaryPolygon, false);
+
+                        Face mergeFace = MergeElements.Merge(polygonalCut.mesh, new[] {face, compFace});
+
+                        //newFaces.Add(face);
+                        //newFaces.Add(compFace);
+                        newFaces.Add(mergeFace);
+                    }
+                    else
+                    {
+                        newFaces.Add(face);
+                    }
+                }
+
                 break;
             default:
                 List<int[]> verticesIndexes = ComputePolygons(m_TargetFace, cutVertices);
@@ -534,6 +559,64 @@ namespace UnityEditor.ProBuilder
         return newFaces;
     }
 
+    private int[] GetComplementaryPolygons(int[] indexes)
+    {
+        for (int i = 0; i < indexes.Length; i++)
+        {
+            for (int j = i+1; j < indexes.Length; j++)
+            {
+                //Is it the vertex to duplicate?
+                if (indexes[i] == indexes[j])
+                {
+                    int[] complementaryPoly = new int[3];
+                    complementaryPoly[0] = indexes[j - 1];
+                    complementaryPoly[1] = indexes[j];
+                    complementaryPoly[2] = indexes[j + 1];
+                    return complementaryPoly;
+                }
+            }
+        }
+        return null;
+    }
+
+    // private List<int[]> DuplicateSingularityVertex(List<int[]> indexes)
+    // {
+    //     List<int[]> newIndexes = new List<int[]>(indexes.Count);
+    //     foreach (var poly in indexes)
+    //     {
+    //         List<int> polyList = poly.ToList();
+    //         if (polyList[0] == polyList[polyList.Count - 1])
+    //             polyList.RemoveAt(polyList.Count - 1);
+    //
+    //         List<int> newPolyList = new List<int>(polyList);
+    //         for (int i = 0; i < polyList.Count; i++)
+    //         {
+    //             for (int j = i+1; j < polyList.Count; j++)
+    //             {
+    //                 //Is it the vertex to duplicate?
+    //                 if (polyList[i] == polyList[j])
+    //                 {
+    //                     Vertex[] vertices = polygonalCut.mesh.GetVertices();
+    //                     SharedVertex[] sharedIndexes = polygonalCut.mesh.sharedVerticesInternal;
+    //                     HashSet<int> common = polygonalCut.mesh.GetSharedVertexHandles(new []{polyList[j]});
+    //
+    //                     int index = sharedIndexes[common.ToList()[0]][0];
+    //                     Vertex currentVertex = vertices[index];
+    //                     Vertex newVertex = polygonalCut.mesh.InsertVertexInMeshSimple(currentVertex.position, currentVertex.normal);
+    //
+    //                     vertices = polygonalCut.mesh.GetVertices();
+    //                     //Dictionary<int, int> sharedToUnique = polygonalCut.mesh.sharedVertexLookup;
+    //                     int newIndex = vertices.ToList().LastIndexOf(newVertex);
+    //                     polyList[j] = newIndex;
+    //                     newPolyList[j] = newIndex;
+    //                 }
+    //             }
+    //         }
+    //         newIndexes.Add(newPolyList.ToArray());
+    //     }
+    //
+    //     return newIndexes;
+    // }
 
 
     private List<Vertex> InsertVertices()
