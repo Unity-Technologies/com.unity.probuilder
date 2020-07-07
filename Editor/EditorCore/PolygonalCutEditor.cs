@@ -32,7 +32,6 @@ namespace UnityEditor.ProBuilder
         static Color k_ClosingLineMaterialBaseColor = new Color(136f / 255f, 1f, 0f, 1f);
         static Color k_ClosingLineMaterialHighlightColor = new Color(1f, 170f / 200f, 0f, 1f);
 
-
         static Color k_InvalidLineMaterialColor = Color.red;
 
         Material m_LineMaterial;
@@ -66,10 +65,11 @@ namespace UnityEditor.ProBuilder
         private Face m_CurrentFace;
         private Vector3 m_CurrentPositionToAdd = Vector3.positiveInfinity;
         private Vector3 m_CurrentPositionNormal = Vector3.up;
-        public PolygonalCut.VertexType m_VertexType = PolygonalCut.VertexType.None;
+        public PolygonalCut.VertexType m_CurrentVertexType = PolygonalCut.VertexType.None;
 
         private int m_ControlId;
         bool m_PlacingPoint = false;
+        bool m_SnapPoint = false;
         int m_SelectedIndex = -2;
 
         #endregion
@@ -134,9 +134,10 @@ namespace UnityEditor.ProBuilder
             if (polygonalCut.mesh != null && polygonalCut.polygonEditMode == PolygonalCut.PolygonEditMode.Add && m_ClosingLineMaterial != null)
                 m_ClosingLineMaterial.SetFloat("_EditorTime", (float)EditorApplication.timeSinceStartup);
 
-
             if (polygonalCut.CutEnded)
                 DoPolygonalCut();
+
+            Debug.Log("Snap ? "+m_SnapPoint);
         }
 
 #endregion
@@ -216,65 +217,80 @@ namespace UnityEditor.ProBuilder
             if (evtType== EventType.Repaint
                 && polygonalCut.polygonEditMode == PolygonalCut.PolygonEditMode.Add)
             {
-                Ray ray = UHandleUtility.GUIPointToWorldRay(evt.mousePosition);
-                RaycastHit pbHit;
-
-                m_CurrentFace = null;
-
-                if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, polygonalCut.mesh, out pbHit))
+                m_SnapPoint = Event.current.shift;
+                if (GetPointPlacement())
                 {
-                    m_CurrentPositionToAdd = pbHit.point;
-                    m_CurrentPositionNormal = pbHit.normal;
-                    m_CurrentFace = polygonalCut.mesh.faces[pbHit.face];
-                    m_VertexType = PolygonalCut.VertexType.None;
-
-                    CheckPointProjectionInPolyshape();
-
-                    if(m_VertexType == PolygonalCut.VertexType.None)
-                        CheckPointProjectionInMesh();
-
                     Vector3 point = polygonalCut.transform.TransformPoint(m_CurrentPositionToAdd);
                     float size = HandleUtility.GetHandleSize(point) * k_HandleSize;
 
-                    if (!m_PlacingPoint)
-                    {
-                        if(m_VertexType == PolygonalCut.VertexType.ExistingVertex
-                           || m_VertexType == PolygonalCut.VertexType.VertexInShape)
-                            Handles.color = k_HandleColorUseExistingVertex;
-                        else if(m_VertexType == PolygonalCut.VertexType.AddedOnEdge)
-                            Handles.color = k_HandleColorUseExistingVertex;
-                        else
-                            Handles.color = k_HandleColorAddNewVertex;
-                    }
+                    if(m_CurrentVertexType == PolygonalCut.VertexType.ExistingVertex
+                       || m_CurrentVertexType == PolygonalCut.VertexType.VertexInShape)
+                        Handles.color = k_HandleColorUseExistingVertex;
+                    else if(m_CurrentVertexType == PolygonalCut.VertexType.AddedOnEdge)
+                        Handles.color = k_HandleColorAddVertexOnEdge;
+                    else
+                        Handles.color = k_HandleColorAddNewVertex;
 
                     Handles.DotHandleCap(-1, point, Quaternion.identity, size, evtType);
                 }
                 else
                 {
                     m_CurrentPositionToAdd = Vector3.positiveInfinity;
-                    m_VertexType = PolygonalCut.VertexType.None;
+                    m_CurrentVertexType = PolygonalCut.VertexType.None;
                 }
             }
         }
 
+        private bool GetPointPlacement()
+        {
+            Event evt = Event.current;
+
+            Ray ray = UHandleUtility.GUIPointToWorldRay(evt.mousePosition);
+            RaycastHit pbHit;
+
+            m_CurrentFace = null;
+
+            if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, polygonalCut.mesh, out pbHit))
+            {
+                m_CurrentPositionToAdd = pbHit.point;
+                m_CurrentPositionNormal = pbHit.normal;
+                m_CurrentFace = polygonalCut.mesh.faces[pbHit.face];
+                m_CurrentVertexType = PolygonalCut.VertexType.None;
+
+                if(m_SnapPoint)
+                    CheckPointProjectionInPolyshape();
+
+                if (m_CurrentVertexType == PolygonalCut.VertexType.None)
+                    CheckPointProjectionInMesh();
+
+                return true;
+            }
+
+            return false;
+        }
+
         private void CheckPointProjectionInPolyshape()
         {
-            foreach (PolygonalCut.InsertedVertexData vertexData in polygonalCut.m_verticesToAdd)
+            for (int i = 0; i < polygonalCut.m_verticesToAdd.Count; i++)
             {
+                if (i == m_SelectedIndex)
+                    continue;
+
+                PolygonalCut.InsertedVertexData vertexData = polygonalCut.m_verticesToAdd[i];
                 float snapDistance = 0.1f;
                 if (UnityEngine.ProBuilder.Math.Approx3(vertexData.m_Position,
                     m_CurrentPositionToAdd,
                     snapDistance))
                 {
                     m_CurrentPositionToAdd = vertexData.m_Position;
-                    m_VertexType = vertexData.m_Type | PolygonalCut.VertexType.VertexInShape;
+                    m_CurrentVertexType = vertexData.m_Type | PolygonalCut.VertexType.VertexInShape;
                 }
             }
         }
 
         private void CheckPointProjectionInMesh()
         {
-            m_VertexType = PolygonalCut.VertexType.NewVertex;
+            m_CurrentVertexType = PolygonalCut.VertexType.NewVertex;
             bool snapedOnVertex = false;
             int bestIndex = -1;
             float snapDistance = 0.1f;
@@ -282,12 +298,12 @@ namespace UnityEditor.ProBuilder
 
             List<Vertex> vertices = polygonalCut.mesh.GetVertices().ToList();
             List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_CurrentFace);
-            if(m_TargetFace != null && m_CurrentFace != m_TargetFace)
+            if (m_TargetFace != null && m_CurrentFace != m_TargetFace)
                 peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_TargetFace);
 
             for (int i = 0; i < peripheralEdges.Count; i++)
             {
-                if (m_TargetFace == null || m_TargetFace == m_CurrentFace)
+                if (m_TargetFace == null || (m_TargetFace == m_CurrentFace && m_SnapPoint))
                 {
                     if (UnityEngine.ProBuilder.Math.Approx3(vertices[peripheralEdges[i].a].position,
                         m_CurrentPositionToAdd,
@@ -311,7 +327,7 @@ namespace UnityEditor.ProBuilder
                         }
                     }
                 }
-                else //if(m_CurrentFace != m_TargetFace)
+                else if(m_CurrentFace != m_TargetFace)
                 {
                     float edgeDist = UnityEngine.ProBuilder.Math.DistancePointLineSegment(m_CurrentPositionToAdd,
                         vertices[peripheralEdges[i].a].position,
@@ -340,7 +356,7 @@ namespace UnityEditor.ProBuilder
             if (snapedOnVertex)
             {
                 m_CurrentPositionToAdd = vertices[peripheralEdges[bestIndex].a].position;
-                m_VertexType = PolygonalCut.VertexType.ExistingVertex;
+                m_CurrentVertexType = PolygonalCut.VertexType.ExistingVertex;
             }
             //If not, did we found a close edge?
             else if (bestIndex >= 0)
@@ -367,7 +383,7 @@ namespace UnityEditor.ProBuilder
                     m_CurrentPositionToAdd += vertices[peripheralEdges[bestIndex].a].position;
                 }
 
-                m_VertexType = PolygonalCut.VertexType.AddedOnEdge;
+                m_CurrentVertexType = PolygonalCut.VertexType.AddedOnEdge;
             }
         }
 
@@ -378,19 +394,16 @@ namespace UnityEditor.ProBuilder
 
             if (m_PlacingPoint)
             {
-                Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
-
                 if (evtType == EventType.MouseDrag)
                 {
-                    // float hitDistance = Mathf.Infinity;
-                    //
-                    // if (m_Plane.Raycast(ray, out hitDistance))
-                    // {
-                    //     evt.Use();
-                    //     //polygonalCut.m_Points[m_SelectedIndex] = GetPointInLocalSpace(ray.GetPoint(hitDistance));
-                    //     RebuildPolygonalShape(false);
-                    //     SceneView.RepaintAll();
-                    // }
+                    if (GetPointPlacement())
+                    {
+                        evt.Use();
+                        polygonalCut.m_verticesToAdd[m_SelectedIndex].m_Position = m_CurrentPositionToAdd;
+                        RebuildPolygonalShape(false);
+                        SceneView.RepaintAll();
+                    }
+
                 }
 
                 if (evtType == EventType.MouseUp ||
@@ -402,6 +415,11 @@ namespace UnityEditor.ProBuilder
                     m_PlacingPoint = false;
                     m_SelectedIndex = -1;
                     SceneView.RepaintAll();
+
+                    if (CheckForEditionEnd())
+                    {
+                        DoPolygonalCut();
+                    }
                 }
             }
             else
@@ -416,7 +434,10 @@ namespace UnityEditor.ProBuilder
                         if (m_TargetFace == null)
                             m_TargetFace = m_CurrentFace;
 
-                        polygonalCut.m_verticesToAdd.Add(new PolygonalCut.InsertedVertexData(m_CurrentPositionToAdd,m_CurrentPositionNormal, m_VertexType));
+                        polygonalCut.m_verticesToAdd.Add(new PolygonalCut.InsertedVertexData(m_CurrentPositionToAdd,m_CurrentPositionNormal, m_CurrentVertexType));
+
+                        m_PlacingPoint = true;
+                        m_SelectedIndex = polygonalCut.m_verticesToAdd.Count - 1;
 
                         RebuildPolygonalShape();
 
@@ -425,6 +446,7 @@ namespace UnityEditor.ProBuilder
                             DoPolygonalCut();
                         }
 
+                        evt.Use();
                     }
                 }
             }
@@ -438,6 +460,79 @@ namespace UnityEditor.ProBuilder
         }
 
 #endregion
+
+#region Vertex Insertion
+
+    private List<Vertex> InsertVertices()
+    {
+        List<Vertex> newVertices = new List<Vertex>();
+
+        foreach (PolygonalCut.InsertedVertexData vertexData in polygonalCut.m_verticesToAdd)
+        {
+            Vertex vertex = null;
+            switch (vertexData.m_Type)
+            {
+                case PolygonalCut.VertexType.ExistingVertex:
+                case PolygonalCut.VertexType.VertexInShape:
+                    newVertices.Add(InsertVertexOnExistingVertex(vertexData.m_Position));
+                    break;
+                case PolygonalCut.VertexType.AddedOnEdge:
+                    newVertices.Add(InsertVertexOnEdge(vertexData.m_Position));
+                    break;
+                case PolygonalCut.VertexType.NewVertex:
+                    newVertices.Add(polygonalCut.mesh.InsertVertexInMeshSimple(vertexData.m_Position,vertexData.m_Normal));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return newVertices;
+    }
+
+    private Vertex InsertVertexOnExistingVertex(Vector3 position)
+    {
+        Vertex vertex = null;
+        List<Vertex> vertices = polygonalCut.mesh.GetVertices().ToList();
+        for (int vertIndex = 0; vertIndex < vertices.Count; vertIndex++)
+        {
+            if (UnityEngine.ProBuilder.Math.Approx3(vertices[vertIndex].position, position))
+            {
+                vertex = vertices[vertIndex];
+                break;
+            }
+        }
+
+        return vertex;
+    }
+
+    private Vertex InsertVertexOnEdge(Vector3 vertexPosition)
+    {
+        List<Vertex> vertices = polygonalCut.mesh.GetVertices().ToList();
+        List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_TargetFace);
+
+        int bestIndex = -1;
+        float bestDistance = Mathf.Infinity;
+        for (int i = 0; i < peripheralEdges.Count; i++)
+        {
+            float dist = UnityEngine.ProBuilder.Math.DistancePointLineSegment(vertexPosition,
+                    vertices[peripheralEdges[i].a].position,
+                    vertices[peripheralEdges[i].b].position);
+
+            if (dist < bestDistance)
+            {
+                bestIndex = i;
+                bestDistance = dist;
+            }
+        }
+
+        Vertex v = polygonalCut.mesh.InsertVertexOnEdge(peripheralEdges[bestIndex], vertexPosition);
+        return v;
+    }
+
+#endregion
+
+
 
 #region Do Cut
 
@@ -519,7 +614,6 @@ namespace UnityEditor.ProBuilder
                 break;
             case 1:
                 List<int[]> indexes = ComputePolygons(m_TargetFace, cutVertices);
-                //indexes = DuplicateSingularityVertex(indexes);
                 foreach (int[] polygon in indexes)
                 {
                     Face face = polygonalCut.mesh.CreatePolygon(polygon,false);
@@ -531,8 +625,6 @@ namespace UnityEditor.ProBuilder
 
                         Face mergeFace = MergeElements.Merge(polygonalCut.mesh, new[] {face, compFace});
 
-                        //newFaces.Add(face);
-                        //newFaces.Add(compFace);
                         newFaces.Add(mergeFace);
                     }
                     else
@@ -559,133 +651,6 @@ namespace UnityEditor.ProBuilder
         return newFaces;
     }
 
-    private int[] GetComplementaryPolygons(int[] indexes)
-    {
-        for (int i = 0; i < indexes.Length; i++)
-        {
-            for (int j = i+1; j < indexes.Length; j++)
-            {
-                //Is it the vertex to duplicate?
-                if (indexes[i] == indexes[j])
-                {
-                    int[] complementaryPoly = new int[3];
-                    complementaryPoly[0] = indexes[j - 1];
-                    complementaryPoly[1] = indexes[j];
-                    complementaryPoly[2] = indexes[j + 1];
-                    return complementaryPoly;
-                }
-            }
-        }
-        return null;
-    }
-
-    // private List<int[]> DuplicateSingularityVertex(List<int[]> indexes)
-    // {
-    //     List<int[]> newIndexes = new List<int[]>(indexes.Count);
-    //     foreach (var poly in indexes)
-    //     {
-    //         List<int> polyList = poly.ToList();
-    //         if (polyList[0] == polyList[polyList.Count - 1])
-    //             polyList.RemoveAt(polyList.Count - 1);
-    //
-    //         List<int> newPolyList = new List<int>(polyList);
-    //         for (int i = 0; i < polyList.Count; i++)
-    //         {
-    //             for (int j = i+1; j < polyList.Count; j++)
-    //             {
-    //                 //Is it the vertex to duplicate?
-    //                 if (polyList[i] == polyList[j])
-    //                 {
-    //                     Vertex[] vertices = polygonalCut.mesh.GetVertices();
-    //                     SharedVertex[] sharedIndexes = polygonalCut.mesh.sharedVerticesInternal;
-    //                     HashSet<int> common = polygonalCut.mesh.GetSharedVertexHandles(new []{polyList[j]});
-    //
-    //                     int index = sharedIndexes[common.ToList()[0]][0];
-    //                     Vertex currentVertex = vertices[index];
-    //                     Vertex newVertex = polygonalCut.mesh.InsertVertexInMeshSimple(currentVertex.position, currentVertex.normal);
-    //
-    //                     vertices = polygonalCut.mesh.GetVertices();
-    //                     //Dictionary<int, int> sharedToUnique = polygonalCut.mesh.sharedVertexLookup;
-    //                     int newIndex = vertices.ToList().LastIndexOf(newVertex);
-    //                     polyList[j] = newIndex;
-    //                     newPolyList[j] = newIndex;
-    //                 }
-    //             }
-    //         }
-    //         newIndexes.Add(newPolyList.ToArray());
-    //     }
-    //
-    //     return newIndexes;
-    // }
-
-
-    private List<Vertex> InsertVertices()
-    {
-        List<Vertex> newVertices = new List<Vertex>();
-
-        foreach (PolygonalCut.InsertedVertexData vertexData in polygonalCut.m_verticesToAdd)
-        {
-            Vertex vertex = null;
-            switch (vertexData.m_Type)
-            {
-                case PolygonalCut.VertexType.ExistingVertex:
-                case PolygonalCut.VertexType.VertexInShape:
-                    newVertices.Add(InsertVertexOnExistingVertex(vertexData.m_Position));
-                    break;
-                case PolygonalCut.VertexType.AddedOnEdge:
-                    newVertices.Add(InsertVertexOnEdge(vertexData.m_Position));
-                    break;
-                case PolygonalCut.VertexType.NewVertex:
-                    newVertices.Add(polygonalCut.mesh.InsertVertexInMeshSimple(vertexData.m_Position,vertexData.m_Normal));
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        return newVertices;
-    }
-
-    private Vertex InsertVertexOnExistingVertex(Vector3 position)
-    {
-        Vertex vertex = null;
-        List<Vertex> vertices = polygonalCut.mesh.GetVertices().ToList();
-        for (int vertIndex = 0; vertIndex < vertices.Count; vertIndex++)
-        {
-            if (UnityEngine.ProBuilder.Math.Approx3(vertices[vertIndex].position, position))
-            {
-                vertex = vertices[vertIndex];
-                break;
-            }
-        }
-
-        return vertex;
-    }
-
-    private Vertex InsertVertexOnEdge(Vector3 vertexPosition)
-    {
-        List<Vertex> vertices = polygonalCut.mesh.GetVertices().ToList();
-        List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_TargetFace);
-
-        int bestIndex = -1;
-        float bestDistance = Mathf.Infinity;
-        for (int i = 0; i < peripheralEdges.Count; i++)
-        {
-            float dist = UnityEngine.ProBuilder.Math.DistancePointLineSegment(vertexPosition,
-                    vertices[peripheralEdges[i].a].position,
-                    vertices[peripheralEdges[i].b].position);
-
-            if (dist < bestDistance)
-            {
-                bestIndex = i;
-                bestDistance = dist;
-            }
-        }
-
-        Vertex v = polygonalCut.mesh.InsertVertexOnEdge(peripheralEdges[bestIndex], vertexPosition);
-        return v;
-    }
-
     private Face CreateFaceWithHole(Face face, List<Vertex> cutVertices)
     {
         List<Vertex> meshVertices = polygonalCut.mesh.GetVertices().ToList();
@@ -701,7 +666,6 @@ namespace UnityEditor.ProBuilder
 
         return newFace;
     }
-
 
     private List<int[]> ComputePolygons(Face face, List<Vertex> cutVertices)
     {
@@ -835,46 +799,25 @@ namespace UnityEditor.ProBuilder
         return closure;
     }
 
-    /// <summary>
-    /// Divide the drawn shapes in 'cuts' (segments). Each cut starts and end to a vertex
-    /// or edge of the current face.
-    /// </summary>
-    private List<List<int>> GetPolygonCuts()
+
+    private int[] GetComplementaryPolygons(int[] indexes)
     {
-        List<List<int>> cuts = new List<List<int>>();
-
-        int edgecutCount = polygonalCut.m_verticesToAdd.Count(points =>
-            (points.m_Type & (PolygonalCut.VertexType.ExistingVertex | PolygonalCut.VertexType.AddedOnEdge)) != 0);
-
-        //No cut from edge/vertex to edge/vertex
-        if (edgecutCount < 2)
+        for (int i = 0; i < indexes.Length; i++)
         {
-            cuts.Add(new List<int>(polygonalCut.m_verticesToAdd.Count));
-            for(int i = 0; i<polygonalCut.m_verticesToAdd.Count; i++)
-                cuts[0].Add(i);
-        }
-        else
-        {
-            List<int> currentCut = new List<int>();
-            currentCut.Add(0);
-            cuts.Add(currentCut);
-            for (int i = 1; i < polygonalCut.m_verticesToAdd.Count; i++)
+            for (int j = i+1; j < indexes.Length; j++)
             {
-                PolygonalCut.InsertedVertexData vert = polygonalCut.m_verticesToAdd[i];
-                currentCut.Add(i);
-
-                if( (vert.m_Type & (PolygonalCut.VertexType.ExistingVertex | PolygonalCut.VertexType.AddedOnEdge)) != 0
-                    && i != polygonalCut.m_verticesToAdd.Count - 1 )
+                //Is it the vertex to duplicate?
+                if (indexes[i] == indexes[j])
                 {
-                    currentCut = new List<int>();
-                    cuts.Add(currentCut);
-                    currentCut.Add(i);
+                    int[] complementaryPoly = new int[3];
+                    complementaryPoly[0] = indexes[j - 1];
+                    complementaryPoly[1] = indexes[j];
+                    complementaryPoly[2] = indexes[j + 1];
+                    return complementaryPoly;
                 }
             }
         }
-
-
-        return cuts;
+        return null;
     }
 
     //Check if the cut is connected to the face edges on its 2 sides
