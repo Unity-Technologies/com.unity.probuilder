@@ -11,14 +11,9 @@ namespace UnityEngine.ProBuilder
 
         ProBuilderMesh m_Mesh;
 
-        [HideInInspector]
-        [SerializeField]
-        Vector3 m_Size;
-
         public Vector3 size
         {
-            get { return m_Size; }
-            set { m_Size = value; }
+            get { return m_shape.size; }
         }
 
         public ProBuilderMesh mesh
@@ -38,15 +33,16 @@ namespace UnityEngine.ProBuilder
 
         public void Rebuild(Bounds bounds, Quaternion rotation)
         {
-            size = Math.Abs(bounds.size);
+            var size = Math.Abs(bounds.size);
             transform.position = bounds.center;
             transform.rotation = rotation;
-            Rebuild();
+            m_shape.RebuildMesh(mesh, size);
+            FitToSize();
         }
 
         public void Rebuild()
         {
-            m_shape.RebuildMesh(mesh, size);
+            m_shape.RebuildMesh(mesh);
             FitToSize();
         }
 

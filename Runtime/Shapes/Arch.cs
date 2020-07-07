@@ -22,7 +22,7 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         bool m_EndCaps = true;
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
+        public override void RebuildMesh(ProBuilderMesh mesh)
         {
 #if UNITY_EDITOR
             EditorPrefs.SetFloat("ShapeBuilder.Arch.m_Thickness", m_Thickness);
@@ -33,8 +33,8 @@ namespace UnityEngine.ProBuilder
             var radialCuts = m_NumberOfSides;
             var angle = m_ArchDegrees;
             var width = m_Thickness;
-            var radius = size.y;
-            var depth = size.z;
+            var radius = m_Size.y;
+            var depth = m_Size.z;
             Vector2[] templateOut = new Vector2[radialCuts];
             Vector2[] templateIn = new Vector2[radialCuts];
 

@@ -19,8 +19,7 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         int m_HeightSeigments = 1;
 
-
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
+        public override void RebuildMesh(ProBuilderMesh mesh)
         {
 #if UNITY_EDITOR
             EditorPrefs.SetInt("ShapeBuilder.Pipe.m_HeightSeigments", m_HeightSeigments);
@@ -28,8 +27,8 @@ namespace UnityEngine.ProBuilder
             EditorPrefs.SetFloat("ShapeBuilder.Pipe.m_Thickness", m_Thickness);
 #endif
 
-            var height = size.y;
-            var radius = System.Math.Min(size.x, size.z);
+            var height = m_Size.y;
+            var radius = System.Math.Min(m_Size.x, m_Size.z);
             // template is outer ring - radius refers to outer ring always
             Vector2[] templateOut = new Vector2[m_NumberOfSlides];
             Vector2[] templateIn = new Vector2[m_NumberOfSlides];

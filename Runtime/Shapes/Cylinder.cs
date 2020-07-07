@@ -18,7 +18,7 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         int m_Smoothing = -1;
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
+        public override void RebuildMesh(ProBuilderMesh mesh)
         {
 #if UNITY_EDITOR
             EditorPrefs.SetInt("ShapeBuilder.Cylinder.m_AxisDivisions", m_AxisDivisions);
@@ -26,8 +26,8 @@ namespace UnityEngine.ProBuilder
             EditorPrefs.SetInt("ShapeBuilder.Cylinder.m_Smoothing", m_Smoothing);
 #endif
 
-            var radius = Mathf.Max(size.x, size.z) * .5f;
-            var height = size.y;
+            var radius = Mathf.Max(m_Size.x, m_Size.z) * .5f;
+            var height = m_Size.y;
 
             if (m_AxisDivisions % 2 != 0)
                 m_AxisDivisions++;

@@ -30,7 +30,7 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         bool m_Smooth = true;
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
+        public override void RebuildMesh(ProBuilderMesh mesh)
         {
 #if UNITY_EDITOR
             EditorPrefs.SetInt("ShapeBuilder.Torus.m_Rows", m_Rows);
@@ -41,7 +41,7 @@ namespace UnityEngine.ProBuilder
             EditorPrefs.SetBool("ShapeBuilder.Torus.m_Smooth", m_Smooth);
 #endif
 
-            var outerRadius = System.Math.Min(size.x, size.z);
+            var outerRadius = System.Math.Min(m_Size.x, m_Size.z);
             int clampedRows = (int)Mathf.Clamp(m_Rows + 1, 4, 128);
             int clampedColumns = (int)Mathf.Clamp(m_Columns + 1, 4, 128);
             float clampedRadius = Mathf.Clamp(m_InnerRadius, .01f, 2048f);
