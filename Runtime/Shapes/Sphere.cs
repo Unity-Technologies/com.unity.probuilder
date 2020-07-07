@@ -55,13 +55,13 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         int m_Subdivisions = 3;
 
-        public override void RebuildMesh(ProBuilderMesh mesh)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
 #if UNITY_EDITOR
             EditorPrefs.SetInt("ShapeBuilder.Sphere.m_Subdivisions", m_Subdivisions);
 #endif
 
-            var radius = System.Math.Min(System.Math.Min(m_Size.x, m_Size.y), m_Size.z);
+            var radius = System.Math.Min(System.Math.Min(size.x, size.y), size.z);
             // http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
 
             Vector3[] v = new Vector3[k_IcosphereTriangles.Length];

@@ -2,19 +2,19 @@
 {
     public class Prism : Shape
     {
-        public override void RebuildMesh(ProBuilderMesh mesh)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
-            var baseY = new Vector3(0, m_Size.y / 2f, 0);
-            m_Size.y *= 2f;
+            var baseY = new Vector3(0, size.y / 2f, 0);
+            size.y *= 2f;
 
             Vector3[] template = new Vector3[6]
             {
-                Vector3.Scale(new Vector3(-.5f, 0f, -.5f),  m_Size) - baseY,
-                Vector3.Scale(new Vector3(.5f, 0f, -.5f),   m_Size) - baseY,
-                Vector3.Scale(new Vector3(0f, .5f, -.5f),   m_Size) - baseY,
-                Vector3.Scale(new Vector3(-.5f, 0f, .5f),   m_Size) - baseY,
-                Vector3.Scale(new Vector3(0.5f, 0f, .5f),   m_Size) - baseY,
-                Vector3.Scale(new Vector3(0f, .5f, .5f),    m_Size) - baseY
+                Vector3.Scale(new Vector3(-.5f, 0f, -.5f),  size) - baseY,
+                Vector3.Scale(new Vector3(.5f, 0f, -.5f),   size) - baseY,
+                Vector3.Scale(new Vector3(0f, .5f, -.5f),   size) - baseY,
+                Vector3.Scale(new Vector3(-.5f, 0f, .5f),   size) - baseY,
+                Vector3.Scale(new Vector3(0.5f, 0f, .5f),   size) - baseY,
+                Vector3.Scale(new Vector3(0f, .5f, .5f),    size) - baseY
             };
 
             Vector3[] v = new Vector3[18]

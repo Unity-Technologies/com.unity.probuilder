@@ -15,16 +15,16 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         float m_LegWidth = .75f;
 
-        public override void RebuildMesh(ProBuilderMesh mesh)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
 #if UNITY_EDITOR
             EditorPrefs.SetFloat("ShapeBuilder.Door.m_AxisDivisions", m_DoorHeight);
             EditorPrefs.SetFloat("ShapeBuilder.Door.m_HeightCuts", m_LegWidth);
 #endif
 
-            float totalWidth = m_Size.x;
-            float totalHeight = m_Size.y;
-            float depth = m_Size.z;
+            float totalWidth = size.x;
+            float totalHeight = size.y;
+            float depth = size.z;
 
             float xLegCoord = totalWidth / 2f;
             var legWidth = xLegCoord - this.m_LegWidth;

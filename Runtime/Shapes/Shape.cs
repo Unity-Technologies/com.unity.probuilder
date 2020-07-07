@@ -6,17 +6,7 @@ namespace UnityEngine.ProBuilder
 {
     public abstract class Shape
     {
-        public void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
-        {
-            m_Size = size;
-            RebuildMesh(mesh);
-        }
-
-        public abstract void RebuildMesh(ProBuilderMesh mesh);
-
-        [SerializeField]
-        protected Vector3 m_Size;
-        public Vector3 size => m_Size;
+        public abstract void RebuildMesh(ProBuilderMesh mesh, Vector3 size);
 
 #if UNITY_EDITOR
         public virtual string name

@@ -43,6 +43,11 @@ namespace UnityEditor.ProBuilder
         [SerializeField]
         static int m_ActiveShapeIndex;
 
+        Vector3 m_Size;
+
+        ScriptableShape m_ShapeData;
+        SerializedObject m_Object;
+
         static Type activeShapeType
         {
             get { return m_ActiveShapeIndex < 0 ? typeof(Cube) : m_AvailableShapeTypes[m_ActiveShapeIndex]; }
@@ -55,6 +60,8 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
+            m_ShapeData = ScriptableObject.CreateInstance<ScriptableShape>();
+            m_Object = new SerializedObject(m_ShapeData);
             EditorTools.EditorTools.activeToolChanged += ActiveToolChanged;
             m_ShapeTitle = new GUIContent("Draw Shape");
             m_ShapeTypesPopupContent = m_AvailableShapeTypes.Select(x => x.ToString()).ToArray();
@@ -62,6 +69,7 @@ namespace UnityEditor.ProBuilder
 
         void OnDisable()
         {
+            DestroyImmediate(m_ShapeData);
             EditorTools.EditorTools.activeToolChanged -= ActiveToolChanged;
         }
 
@@ -309,20 +317,29 @@ namespace UnityEditor.ProBuilder
             EditorGUI.BeginChangeCheck();
             m_ActiveShapeIndex = EditorGUILayout.Popup(m_ActiveShapeIndex, m_ShapeTypesPopupContent);
             if (EditorGUI.EndChangeCheck())
+            {
                 SetActiveShapeType(m_AvailableShapeTypes[m_ActiveShapeIndex]);
+                m_ShapeData.Shape = new Cube();
+            }
+
+            m_Size = EditorGUILayout.Vector3Field("Size", m_Size);
+
+            ////var obj = new ScriptableObject();
+
+
 
             //var test = new Cube();
             ////var serializedObject2 = new SerializedProperty();
             ////serializedObject2.
-            //var shape = serializedObject.FindProperty("m_shape");
+            //var shape = m_Object.FindProperty("m_shape");
             //EditorGUILayout.PropertyField(shape, true);
-            //if (serializedObject.ApplyModifiedProperties())
+            //if (m_Object.ApplyModifiedProperties())
             //{
             //    ((ShapeComponent)target).Rebuild();
             //    ProBuilderEditor.Refresh(false);
             //}
             var rect = EditorGUILayout.GetControlRect(false, 45);
-            EditorGUI.HelpBox(rect, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu laoreet sapien. Phasellus convallis pulvinar ultrices. Proin et sapien vel dui vulputate mattis.", MessageType.Info);
+            EditorGUI.HelpBox(rect, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu laoreet sapien.", MessageType.Info);
         }
     }
 }

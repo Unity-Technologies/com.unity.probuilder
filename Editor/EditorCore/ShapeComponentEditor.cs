@@ -66,7 +66,16 @@ namespace UnityEditor.ProBuilder
                 ProBuilderEditor.Refresh(false);
             });
 
+            var vector = new Vector3Field("Size");
+            vector.BindProperty(serializedObject.FindProperty("m_Size"));
+            vector.RegisterValueChangedCallback(evt =>
+            {
+                ((ShapeComponent)target).Rebuild();
+                ProBuilderEditor.Refresh(false);
+            });
+
             root.Add(popup);
+            root.Add(vector);
             root.Add(shapeField);
             return root;
         }

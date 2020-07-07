@@ -29,7 +29,7 @@ namespace UnityEngine.ProBuilder
             set { m_Sides = value; }
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
 #if UNITY_EDITOR
             EditorPrefs.SetInt("ShapeBuilder.Stair.m_Steps", m_Steps);
@@ -38,9 +38,9 @@ namespace UnityEngine.ProBuilder
 #endif
 
             if (m_Circumference > 0)
-                BuildCurvedStairs(mesh, m_Size);
+                BuildCurvedStairs(mesh, size);
             else
-                BuildStairs(mesh, m_Size);
+                BuildStairs(mesh, size);
         }
 
         private void BuildStairs(ProBuilderMesh mesh, Vector3 size)
