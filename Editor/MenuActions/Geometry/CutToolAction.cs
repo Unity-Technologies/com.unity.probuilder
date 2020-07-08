@@ -1,28 +1,27 @@
 ﻿using UnityEngine;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
     sealed class CutToolAction : MenuAction
     {
-        static Pref<bool> m_EdgeToEdge = new Pref<bool>("VertexInsertion.edgeToEdge", true);
-        static Pref<bool> m_EndOnClicToStart = new Pref<bool>("VertexInsertion.endOnClicToStart", false);
-        static Pref<bool> m_ConnectToStart = new Pref<bool>("VertexInsertion.connectToStart", true);
+        static Pref<bool> s_EdgeToEdge = new Pref<bool>("VertexInsertion.edgeToEdge", true);
+        static Pref<bool> s_EndOnClicToStart = new Pref<bool>("VertexInsertion.endOnClicToStart", false);
+        static Pref<bool> s_ConnectToStart = new Pref<bool>("VertexInsertion.connectToStart", true);
 
         public static bool EdgeToEdge
         {
-            get { return m_EdgeToEdge; }
+            get { return s_EdgeToEdge; }
         }
 
         public static bool EndOnClicToStart
         {
-            get { return m_EndOnClicToStart; }
+            get { return s_EndOnClicToStart; }
         }
 
         public static bool ConnectToStart
         {
-            get { return m_ConnectToStart; }
+            get { return s_ConnectToStart; }
         }
 
 
@@ -68,8 +67,8 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
-        private PolygonalCut m_CutTarget;
 
+        PolygonalCut m_CutTarget;
 
         /// <summary>
         /// Called when the settings window is closed.
@@ -90,11 +89,11 @@ namespace UnityEditor.ProBuilder.Actions
 
             EditorGUI.BeginChangeCheck();
 
-            m_ConnectToStart.value = EditorGUILayout.Toggle("Connect End to Start Point", m_ConnectToStart);
+            s_ConnectToStart.value = EditorGUILayout.Toggle("Connect End to Start Point", s_ConnectToStart);
 
-            m_EndOnClicToStart.value = EditorGUILayout.Toggle("Selecting Start Point is ending cut", m_EndOnClicToStart);
+            s_EndOnClicToStart.value = EditorGUILayout.Toggle("Selecting Start Point is ending cut", s_EndOnClicToStart);
 
-            m_EdgeToEdge.value = EditorGUILayout.Toggle("Cut From Edge To Edge", m_EdgeToEdge);
+            s_EdgeToEdge.value = EditorGUILayout.Toggle("Cut From Edge To Edge", s_EdgeToEdge);
 
             if (EditorGUI.EndChangeCheck())
                 ProBuilderSettings.Save();
@@ -109,7 +108,7 @@ namespace UnityEditor.ProBuilder.Actions
             else
             {
                 if (GUILayout.Button("Compute Cut"))
-                    ComputeCut();
+                    DoCut();
             }
         }
 
@@ -128,9 +127,9 @@ namespace UnityEditor.ProBuilder.Actions
             return new ActionResult(ActionResult.Status.Success,"Vertex On Face Insertion");
         }
 
-        private void ComputeCut()
+        private void DoCut()
         {
-            m_CutTarget.CutEnded = true;
+            m_CutTarget.doCut = true;
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 
@@ -16,34 +14,52 @@ namespace UnityEngine.ProBuilder
         /// Describes the different vertex types on the path.
         /// </summary>
         [System.Flags]
-        public enum VertexType
+        public enum VertexTypes
         {
             None = 0 << 0,
             NewVertex = 1 << 0,
             AddedOnEdge = 1 << 1,
             ExistingVertex = 1 << 2,
-            VertexInShape = 1 << 3
+            VertexInShape = 1 << 3,
         }
 
         [Serializable]
         public class InsertedVertexData
         {
-            public Vector3 m_Position;
-            public Vector3 m_Normal;
-            public VertexType m_Type;
+            Vector3 m_Position;
+            Vector3 m_Normal;
+            VertexTypes m_Types;
 
-            public InsertedVertexData(Vector3 position, VertexType type = VertexType.None)
+            public Vector3 position
+            {
+                get => m_Position;
+                set => m_Position = value;
+            }
+
+            public Vector3 normal
+            {
+                get => m_Normal;
+                set => m_Normal = value;
+            }
+
+            public VertexTypes types
+            {
+                get => m_Types;
+                set => m_Types = value;
+            }
+
+            public InsertedVertexData(Vector3 position, VertexTypes types = VertexTypes.None)
             {
                 m_Position = position;
                 m_Normal = Vector3.up;
-                m_Type = type;
+                m_Types = types;
             }
 
-            public InsertedVertexData(Vector3 position, Vector3 normal, VertexType type = VertexType.None)
+            public InsertedVertexData(Vector3 position, Vector3 normal, VertexTypes types = VertexTypes.None)
             {
                 m_Position = position;
                 m_Normal = normal;
-                m_Type = type;
+                m_Types = types;
             }
         }
 
@@ -52,12 +68,11 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         internal List<InsertedVertexData> m_cutPath = new List<InsertedVertexData>();
 
-        private bool m_CutEnded = false;
-
-        public bool CutEnded
+        bool m_DoCut = false;
+        public bool doCut
         {
-            get => m_CutEnded;
-            set => m_CutEnded = value;
+            get => m_DoCut;
+            set => m_DoCut = value;
         }
 
         public bool IsALoop
@@ -67,8 +82,8 @@ namespace UnityEngine.ProBuilder
                 if (m_cutPath.Count < 3)
                     return false;
                 else
-                    return Math.Approx3(m_cutPath[0].m_Position,
-                        m_cutPath[m_cutPath.Count - 1].m_Position);
+                    return Math.Approx3(m_cutPath[0].position,
+                        m_cutPath[m_cutPath.Count - 1].position);
             }
         }
 
@@ -76,7 +91,7 @@ namespace UnityEngine.ProBuilder
         {
             get
             {
-                return m_cutPath.Count(data => (data.m_Type & (VertexType.AddedOnEdge | VertexType.ExistingVertex)) != 0 );
+                return m_cutPath.Count(data => (data.types & (VertexTypes.AddedOnEdge | VertexTypes.ExistingVertex)) != 0 );
             }
         }
 
