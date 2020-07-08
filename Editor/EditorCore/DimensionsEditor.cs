@@ -13,7 +13,9 @@ using Object = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder
 {
+#if UNITY_2019_1_OR_NEWER
     [FilePath("Library/Probuilder/DimensionsOverlay", FilePathAttribute.Location.ProjectFolder)]
+#endif
     sealed class DimensionsEditor : ScriptableSingleton<DimensionsEditor>
     {
         struct Trs : IEquatable<Trs>
@@ -80,7 +82,9 @@ namespace UnityEditor.ProBuilder
                 else
                     OnHid();
 
+#if UNITY_2019_1_OR_NEWER
                 Save(true);
+#endif
             }
         }
 
