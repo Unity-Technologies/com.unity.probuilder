@@ -21,8 +21,9 @@ namespace UnityEditor.ProBuilder
         static Color k_HandleColor = new Color(.8f, .8f, .8f, 1f);
         static Color k_HandleColorAddNewVertex = new Color(.01f, .9f, .3f, 1f);
         static Color k_HandleColorAddVertexOnEdge = new Color(.3f, .01f, .9f, 1f);
-        static Color k_HandleColorUseExistingVertex = new Color(.9f, .3f, .01f, 1f);
-        static Color k_HandleSelectedColor = new Color(.01f, .8f, .98f, 1f);
+        static Color k_HandleColorUseExistingVertex = new Color(.01f, .5f, 1f, 1f);
+        static Color k_HandleColorModifyVertex = new Color(1f, .75f, .0f, 1f);
+
 
         const float k_HandleSize = .05f;
 
@@ -39,6 +40,8 @@ namespace UnityEditor.ProBuilder
 
         Material m_ClosingLineMaterial;
         Mesh m_ClosingLineMesh = null;
+
+        Color m_CurrentHandleColor = k_HandleColor;
 
         static Material CreateHighlightLineMaterial()
         {
@@ -70,6 +73,7 @@ namespace UnityEditor.ProBuilder
         private int m_ControlId;
         bool m_PlacingPoint = false;
         bool m_SnapPoint = false;
+        bool m_ModifyPoint = false;
         int m_SelectedIndex = -2;
 
         #endregion
@@ -136,8 +140,6 @@ namespace UnityEditor.ProBuilder
 
             if (polygonalCut.CutEnded)
                 DoPolygonalCut();
-
-            Debug.Log("Snap ? "+m_SnapPoint);
         }
 
 #endregion
@@ -198,6 +200,9 @@ namespace UnityEditor.ProBuilder
             m_ClosingLineMesh = new Mesh();
             m_ClosingLineMaterial = CreateClosingLineMaterial();
 
+            if(polygonalCut.m_verticesToAdd.Count == 0)
+                m_TargetFace = null;
+
             RebuildPolygonalShape(polygonalCut);
         }
 
@@ -217,31 +222,31 @@ namespace UnityEditor.ProBuilder
             if (evtType== EventType.Repaint
                 && polygonalCut.polygonEditMode == PolygonalCut.PolygonEditMode.Add)
             {
-                m_SnapPoint = Event.current.shift;
-                if (GetPointPlacement())
+                m_SnapPoint = (evt.modifiers & EventModifiers.Control) != 0;
+                m_ModifyPoint = evt.shift;
+
+                if(!m_SnapPoint && !m_ModifyPoint && !m_PlacingPoint)
+                    m_SelectedIndex = -1;
+
+                if (UpdateHitPosition())
                 {
-                    Vector3 point = polygonalCut.transform.TransformPoint(m_CurrentPositionToAdd);
-                    float size = HandleUtility.GetHandleSize(point) * k_HandleSize;
-
-                    if(m_CurrentVertexType == PolygonalCut.VertexType.ExistingVertex
-                       || m_CurrentVertexType == PolygonalCut.VertexType.VertexInShape)
-                        Handles.color = k_HandleColorUseExistingVertex;
-                    else if(m_CurrentVertexType == PolygonalCut.VertexType.AddedOnEdge)
-                        Handles.color = k_HandleColorAddVertexOnEdge;
+                    if( (m_CurrentVertexType & (PolygonalCut.VertexType.ExistingVertex | PolygonalCut.VertexType.VertexInShape)) != 0)
+                        m_CurrentHandleColor = m_ModifyPoint ? k_HandleColorModifyVertex : k_HandleColorUseExistingVertex;
+                    else if ((m_CurrentVertexType & PolygonalCut.VertexType.AddedOnEdge) != 0)
+                        m_CurrentHandleColor = k_HandleColorAddVertexOnEdge;
                     else
-                        Handles.color = k_HandleColorAddNewVertex;
-
-                    Handles.DotHandleCap(-1, point, Quaternion.identity, size, evtType);
+                        m_CurrentHandleColor = k_HandleColorAddNewVertex;
                 }
                 else
                 {
                     m_CurrentPositionToAdd = Vector3.positiveInfinity;
                     m_CurrentVertexType = PolygonalCut.VertexType.None;
+                    m_CurrentHandleColor = k_HandleColor;
                 }
             }
         }
 
-        private bool GetPointPlacement()
+        private bool UpdateHitPosition()
         {
             Event evt = Event.current;
 
@@ -257,10 +262,10 @@ namespace UnityEditor.ProBuilder
                 m_CurrentFace = polygonalCut.mesh.faces[pbHit.face];
                 m_CurrentVertexType = PolygonalCut.VertexType.None;
 
-                if(m_SnapPoint)
+                if(m_SnapPoint || m_ModifyPoint)
                     CheckPointProjectionInPolyshape();
 
-                if (m_CurrentVertexType == PolygonalCut.VertexType.None)
+                if (m_CurrentVertexType == PolygonalCut.VertexType.None && !m_ModifyPoint)
                     CheckPointProjectionInMesh();
 
                 return true;
@@ -271,19 +276,19 @@ namespace UnityEditor.ProBuilder
 
         private void CheckPointProjectionInPolyshape()
         {
+            float snapDistance = 0.1f;
             for (int i = 0; i < polygonalCut.m_verticesToAdd.Count; i++)
             {
-                if (i == m_SelectedIndex)
-                    continue;
-
                 PolygonalCut.InsertedVertexData vertexData = polygonalCut.m_verticesToAdd[i];
-                float snapDistance = 0.1f;
                 if (UnityEngine.ProBuilder.Math.Approx3(vertexData.m_Position,
                     m_CurrentPositionToAdd,
                     snapDistance))
                 {
-                    m_CurrentPositionToAdd = vertexData.m_Position;
+                    snapDistance = Vector3.Distance(vertexData.m_Position, m_CurrentPositionToAdd);
+                    if(!m_ModifyPoint)
+                        m_CurrentPositionToAdd = vertexData.m_Position;
                     m_CurrentVertexType = vertexData.m_Type | PolygonalCut.VertexType.VertexInShape;
+                    m_SelectedIndex = i;
                 }
             }
         }
@@ -292,8 +297,8 @@ namespace UnityEditor.ProBuilder
         {
             m_CurrentVertexType = PolygonalCut.VertexType.NewVertex;
             bool snapedOnVertex = false;
-            int bestIndex = -1;
             float snapDistance = 0.1f;
+            int bestIndex = -1;
             float bestDistance = Mathf.Infinity;
 
             List<Vertex> vertices = polygonalCut.mesh.GetVertices().ToList();
@@ -357,6 +362,7 @@ namespace UnityEditor.ProBuilder
             {
                 m_CurrentPositionToAdd = vertices[peripheralEdges[bestIndex].a].position;
                 m_CurrentVertexType = PolygonalCut.VertexType.ExistingVertex;
+                m_SelectedIndex = -1;
             }
             //If not, did we found a close edge?
             else if (bestIndex >= 0)
@@ -384,6 +390,7 @@ namespace UnityEditor.ProBuilder
                 }
 
                 m_CurrentVertexType = PolygonalCut.VertexType.AddedOnEdge;
+                m_SelectedIndex = -1;
             }
         }
 
@@ -392,11 +399,11 @@ namespace UnityEditor.ProBuilder
             Event evt = Event.current;
             EventType evtType = evt.type;
 
-            if (m_PlacingPoint)
+            if (m_PlacingPoint || m_ModifyPoint)
             {
                 if (evtType == EventType.MouseDrag)
                 {
-                    if (GetPointPlacement())
+                    if (UpdateHitPosition())
                     {
                         evt.Use();
                         polygonalCut.m_verticesToAdd[m_SelectedIndex].m_Position = m_CurrentPositionToAdd;
@@ -415,39 +422,35 @@ namespace UnityEditor.ProBuilder
                     m_PlacingPoint = false;
                     m_SelectedIndex = -1;
                     SceneView.RepaintAll();
+                }
+            }
+            else
+            if (polygonalCut.polygonEditMode == PolygonalCut.PolygonEditMode.Add
+                && evtType == EventType.MouseDown
+                && HandleUtility.nearestControl == m_ControlId)
+            {
+                int polyCount = polygonalCut.m_verticesToAdd.Count;
+                if (m_CurrentPositionToAdd != Vector3.positiveInfinity
+                    && (polyCount == 0 || m_SelectedIndex != polyCount - 1))
+                {
+                    UndoUtility.RecordObject(polygonalCut, "Add Vertex On Face");
+
+                    if (m_TargetFace == null)
+                        m_TargetFace = m_CurrentFace;
+
+                    polygonalCut.m_verticesToAdd.Add(new PolygonalCut.InsertedVertexData(m_CurrentPositionToAdd,m_CurrentPositionNormal, m_CurrentVertexType));
+
+                    m_PlacingPoint = true;
+                    m_SelectedIndex = polygonalCut.m_verticesToAdd.Count - 1;
+
+                    RebuildPolygonalShape();
 
                     if (CheckForEditionEnd())
                     {
                         DoPolygonalCut();
                     }
-                }
-            }
-            else
-            if (polygonalCut.polygonEditMode == PolygonalCut.PolygonEditMode.Add)
-            {
-                if (evtType == EventType.MouseDown && HandleUtility.nearestControl == m_ControlId)
-                {
-                    if (m_CurrentPositionToAdd != Vector3.positiveInfinity)
-                    {
-                        UndoUtility.RecordObject(polygonalCut, "Add Vertex On Face");
 
-                        if (m_TargetFace == null)
-                            m_TargetFace = m_CurrentFace;
-
-                        polygonalCut.m_verticesToAdd.Add(new PolygonalCut.InsertedVertexData(m_CurrentPositionToAdd,m_CurrentPositionNormal, m_CurrentVertexType));
-
-                        m_PlacingPoint = true;
-                        m_SelectedIndex = polygonalCut.m_verticesToAdd.Count - 1;
-
-                        RebuildPolygonalShape();
-
-                        if (CheckForEditionEnd())
-                        {
-                            DoPolygonalCut();
-                        }
-
-                        evt.Use();
-                    }
+                    evt.Use();
                 }
             }
         }
@@ -560,12 +563,12 @@ namespace UnityEditor.ProBuilder
         return false;
     }
 
-    private List<Face> DoPolygonalCut()
+    private ActionResult DoPolygonalCut()
     {
         if (m_TargetFace == null || polygonalCut.m_verticesToAdd.Count < 2)
         {
-            Debug.LogError("Not enough points to define a cut");
-            return null;
+            //Debug.LogError("Not enough points to define a cut");
+            return ActionResult.NoSelection;
         }
 
         if (!polygonalCut.IsALoop)
@@ -578,14 +581,13 @@ namespace UnityEditor.ProBuilder
             }
             else
             {
+//                PruneOrphans();
 //                while ( (polygonalCut.m_verticesToAdd[0].m_Type & (PolygonalCut.VertexType.ExistingVertex | PolygonalCut.VertexType.AddedOnEdge)) == 0)
 //                {
 //                    remove and destroy polygonalCut.m_verticesToAdd[0]
 //                }
             }
         }
-
-        List<Face> newFaces = new List<Face>();
 
         UndoUtility.RecordObject(polygonalCut.mesh, "Add Face To Mesh");
 
@@ -597,12 +599,13 @@ namespace UnityEditor.ProBuilder
             int[] loopCut = cutVertices.Select(vert => meshVertices.IndexOf(vert)).ToArray();
             Face f = polygonalCut.mesh.CreatePolygon(loopCut, false);
 
-            Vector3 fNormal = UnityEngine.ProBuilder.Math.Normal(polygonalCut.mesh, f);
-            Vector3 targetNormal = UnityEngine.ProBuilder.Math.Normal(polygonalCut.mesh, m_TargetFace);
-            if(Vector3.Dot(fNormal,targetNormal) < 0f)
-                f.Reverse();
+            if(f == null)
+                return new ActionResult(ActionResult.Status.Failure, "Cut Shape is not valid");
 
-            newFaces.Add(f);
+            Vector3 nrm = UnityEngine.ProBuilder.Math.Normal(polygonalCut.mesh, f);
+            Vector3 targetNrm = UnityEngine.ProBuilder.Math.Normal(polygonalCut.mesh, m_TargetFace);
+            if(Vector3.Dot(nrm,targetNrm) < 0f)
+                f.Reverse();
         }
 
         int connectionsToFaceBorders = polygonalCut.ConnectionsToFaceBordersCount;
@@ -610,7 +613,7 @@ namespace UnityEditor.ProBuilder
         switch (connectionsToFaceBorders)
         {
             case 0:
-                newFaces.Add( CreateFaceWithHole(m_TargetFace, cutVertices) );
+                CreateFaceWithHole(m_TargetFace, cutVertices);
                 break;
             case 1:
                 List<int[]> indexes = ComputePolygons(m_TargetFace, cutVertices);
@@ -622,24 +625,16 @@ namespace UnityEditor.ProBuilder
                     if (complementaryPolygon != null)
                     {
                         Face compFace = polygonalCut.mesh.CreatePolygon(complementaryPolygon, false);
-
-                        Face mergeFace = MergeElements.Merge(polygonalCut.mesh, new[] {face, compFace});
-
-                        newFaces.Add(mergeFace);
-                    }
-                    else
-                    {
-                        newFaces.Add(face);
+                        MergeElements.Merge(polygonalCut.mesh, new[] {face, compFace});
                     }
                 }
-
                 break;
             default:
                 List<int[]> verticesIndexes = ComputePolygons(m_TargetFace, cutVertices);
 
                 foreach (int[] polygon in verticesIndexes)
                 {
-                    newFaces.Add(polygonalCut.mesh.CreatePolygon(polygon,false));
+                    polygonalCut.mesh.CreatePolygon(polygon,false);
                 }
             break;
         }
@@ -648,7 +643,7 @@ namespace UnityEditor.ProBuilder
 
         DestroyImmediate(polygonalCut);
 
-        return newFaces;
+        return ActionResult.Success;
     }
 
     private Face CreateFaceWithHole(Face face, List<Vertex> cutVertices)
@@ -843,10 +838,14 @@ namespace UnityEditor.ProBuilder
             {
                 case KeyCode.Backspace:
                 {
-                    UndoUtility.RecordObject(polygonalCut, "Delete Selected Points");
-                    polygonalCut.m_verticesToAdd.RemoveAt(m_SelectedIndex);
-                    RebuildPolygonalShape(true);
-                    evt.Use();
+                    if (m_SelectedIndex >= 0)
+                    {
+                        UndoUtility.RecordObject(polygonalCut, "Delete Selected Points");
+                        polygonalCut.m_verticesToAdd.RemoveAt(m_SelectedIndex);
+                        m_SelectedIndex = polygonalCut.m_verticesToAdd.Count - 1;
+                        RebuildPolygonalShape(true);
+                        evt.Use();
+                    }
                     break;
                 }
 
@@ -869,11 +868,6 @@ namespace UnityEditor.ProBuilder
             Transform trs = polygonalCut.transform;
             int len = polygonalCut.m_verticesToAdd.Count;
 
-            Vector3 up = polygonalCut.transform.up;
-            Vector3 right = polygonalCut.transform.right;
-            Vector3 forward = polygonalCut.transform.forward;
-            Vector3 center = Vector3.zero;
-
             Event evt = Event.current;
 
             bool used = evt.type == EventType.Used;
@@ -883,45 +877,45 @@ namespace UnityEditor.ProBuilder
                  evt.button == 0 &&
                  !EditorHandleUtility.IsAppendModifier(evt.modifiers)))
             {
+                m_SelectedIndex = -1;
                 Repaint();
             }
 
-            if (polygonalCut.polygonEditMode == PolygonalCut.PolygonEditMode.Add)
+            if (evt.type == EventType.Repaint)
             {
-                for (int index = 0; index < len; index++)
+                if (polygonalCut.polygonEditMode == PolygonalCut.PolygonEditMode.Add)
                 {
-                    Vector3 point = trs.TransformPoint(polygonalCut.m_verticesToAdd[index].m_Position);
-
-                    center.x += point.x;
-                    center.y += point.y;
-                    center.z += point.z;
-
-                    float size = HandleUtility.GetHandleSize(point) * k_HandleSize;
-
-                    Handles.color = k_HandleSelectedColor;
-
-                    EditorGUI.BeginChangeCheck();
-
-                    Handles.DotHandleCap(-1, point, Quaternion.identity, size, evt.type);
-                    //point = Handles.Slider2D(point, up, right, forward, size, Handles.DotHandleCap, Vector2.zero, true);
-
-                    if (EditorGUI.EndChangeCheck())
+                    for (int index = 0; index < len; index++)
                     {
-                        UndoUtility.RecordObject(polygonalCut, "Move Polygon Vertex On Face");
-                        polygonalCut.m_verticesToAdd[index].m_Position = GetPointInLocalSpace(point);
+                        Vector3 point = trs.TransformPoint(polygonalCut.m_verticesToAdd[index].m_Position);
+                        float size = HandleUtility.GetHandleSize(point) * k_HandleSize;
 
-                        RebuildPolygonalShape(false);
+                        Handles.color = k_HandleColor;
+                        Handles.DotHandleCap(-1, point, Quaternion.identity, size, evt.type);
+
+                        // "clicked" a button
+                        if (!used && evt.type == EventType.Used)
+                        {
+                            used = true;
+                        }
                     }
 
-                    // "clicked" a button
-                    if (!used && evt.type == EventType.Used)
+                    if (!m_CurrentPositionToAdd.Equals(Vector3.negativeInfinity))
                     {
-                        used = true;
+                        Vector3 point = trs.TransformPoint(m_CurrentPositionToAdd);
+                        //if(m_ModifyPoint && m_SelectedIndex !=0 )
+                        if(m_SelectedIndex >= 0 )
+                            point = trs.TransformPoint(polygonalCut.m_verticesToAdd[m_SelectedIndex].m_Position);
+
+                        float size = HandleUtility.GetHandleSize(point) * k_HandleSize;
+
+                        Handles.color = m_CurrentHandleColor;
+
+                        Handles.DotHandleCap(-1, point, Quaternion.identity, size, evt.type);
                     }
 
+                    Handles.color = Color.white;
                 }
-
-                Handles.color = Color.white;
             }
         }
 
@@ -965,7 +959,7 @@ namespace UnityEditor.ProBuilder
             }
 
             m_LineMesh.Clear();
-            m_LineMesh.name = "Poly Shape Guide";
+            m_LineMesh.name = "Cut Guide";
             m_LineMesh.vertices = ver;
             m_LineMesh.uv = uvs;
             m_LineMesh.SetIndices(indexes, MeshTopology.LineStrip, 0);
@@ -976,7 +970,7 @@ namespace UnityEditor.ProBuilder
                 Vector3 a = points[vc - 1], b = points[0];
 
                 m_ClosingLineMesh.Clear();
-                m_ClosingLineMesh.name = "Poly Shape End";
+                m_ClosingLineMesh.name = "Cut Closure";
                 m_ClosingLineMesh.vertices = new Vector3[]{ a , b };
                 m_ClosingLineMesh.uv = new Vector2[]{new Vector2(0,1), Vector2.one };;
                 m_ClosingLineMesh.SetIndices(new int[]{0,1}, MeshTopology.LineStrip, 0);

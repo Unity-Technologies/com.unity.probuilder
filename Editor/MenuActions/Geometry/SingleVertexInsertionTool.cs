@@ -60,7 +60,6 @@ namespace UnityEditor.ProBuilder
 
             if (evtType == EventType.MouseDown)
             {
-                Debug.Log("Mesh selection active : " +target.name);
                 float hitDistance = Mathf.Infinity;
 
                 Ray ray = UHandleUtility.GUIPointToWorldRay(evt.mousePosition);
