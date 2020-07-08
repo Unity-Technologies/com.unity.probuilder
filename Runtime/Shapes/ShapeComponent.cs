@@ -58,6 +58,12 @@ namespace UnityEngine.ProBuilder
             Rebuild();
         }
 
+        public void SetShape(Shape shape)
+        {
+            m_shape = shape;
+            Rebuild();
+        }
+
         public void SetShape<T>() where T : Shape, new()
         {
             SetShape(typeof(T));

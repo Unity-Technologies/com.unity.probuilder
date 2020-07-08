@@ -43,9 +43,9 @@ namespace UnityEditor.ProBuilder
         [SerializeField]
         static int m_ActiveShapeIndex;
 
-        Vector3 m_Size;
+        static Vector3 m_Size;
 
-        ScriptableShape m_ShapeData;
+        static ScriptableShape m_ShapeData;
         SerializedObject m_Object;
 
         static Type activeShapeType
@@ -60,7 +60,9 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
+            Debug.Log("enable");
             m_ShapeData = ScriptableObject.CreateInstance<ScriptableShape>();
+            m_ShapeData.m_Shape = Activator.CreateInstance(activeShapeType) as Shape;
             m_Object = new SerializedObject(m_ShapeData);
             EditorTools.EditorTools.activeToolChanged += ActiveToolChanged;
             m_ShapeTitle = new GUIContent("Draw Shape");
@@ -69,6 +71,7 @@ namespace UnityEditor.ProBuilder
 
         void OnDisable()
         {
+            Debug.Log("disable");
             DestroyImmediate(m_ShapeData);
             EditorTools.EditorTools.activeToolChanged -= ActiveToolChanged;
         }
@@ -122,7 +125,7 @@ namespace UnityEditor.ProBuilder
             {
                 init = true;
                 m_Shape = new GameObject("Shape").AddComponent<ShapeComponent>();
-                m_Shape.SetShape(activeShapeType);
+                m_Shape.SetShape(m_ShapeData.m_Shape);
                 UndoUtility.RegisterCreatedObjectUndo(m_Shape.gameObject, "Draw Shape");
             }
 
@@ -245,14 +248,34 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        public static ProBuilderMesh CreateActiveShape(Vector3 size)
+        public static ProBuilderMesh CreateLastShape(Vector3 defaultSize)
         {
+            if (m_Size == Vector3.zero)
+                m_Size = defaultSize;
             var type = activeShapeType;
             var shape = new GameObject("Shape").AddComponent<ShapeComponent>();
+            // create with data
             shape.SetShape(type);
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape");
-            //TODO: Get desfualt size/rot
-            Bounds bounds = new Bounds(Vector3.zero, size);
+            Bounds bounds = new Bounds(Vector3.zero, m_Size);
+            shape.Rebuild(bounds, Quaternion.identity);
+            shape.mesh.SetPivot(PivotLocation.Center);
+            ProBuilderEditor.Refresh(false);
+            var res = shape.GetComponent<ProBuilderMesh>();
+            EditorUtility.InitObject(res, false);
+            return res;
+        }
+
+        public ProBuilderMesh CreateActiveShape(Vector3 defaultSize)
+        {
+            if (m_Size == Vector3.zero)
+                m_Size = defaultSize;
+            var type = activeShapeType;
+            var shape = new GameObject("Shape").AddComponent<ShapeComponent>();
+            // create with data
+            shape.SetShape(m_ShapeData.m_Shape);
+            UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape");
+            Bounds bounds = new Bounds(Vector3.zero, m_Size);
             shape.Rebuild(bounds, Quaternion.identity);
             shape.mesh.SetPivot(PivotLocation.Center);
             ProBuilderEditor.Refresh(false);
@@ -310,36 +333,31 @@ namespace UnityEditor.ProBuilder
 
         void OnActiveToolGUI(UObject target, SceneView view)
         {
-         //   Debug.Log("target: " + target);
-            //if (target == null)
-            //    return;
-         //   var serializedObject = new SerializedObject(target);
             EditorGUI.BeginChangeCheck();
+            m_Object.Update();
             m_ActiveShapeIndex = EditorGUILayout.Popup(m_ActiveShapeIndex, m_ShapeTypesPopupContent);
             if (EditorGUI.EndChangeCheck())
             {
-                SetActiveShapeType(m_AvailableShapeTypes[m_ActiveShapeIndex]);
-                m_ShapeData.Shape = new Cube();
+                var type = m_AvailableShapeTypes[m_ActiveShapeIndex];
+                SetActiveShapeType(type);
+                // Undo record
+                m_ShapeData.m_Shape = Activator.CreateInstance(type) as Shape;
+                UndoUtility.RegisterCompleteObjectUndo(m_ShapeData, "Change Shape");
+
             }
 
             m_Size = EditorGUILayout.Vector3Field("Size", m_Size);
 
-            ////var obj = new ScriptableObject();
+            var shape = m_Object.FindProperty("m_Shape");
+            EditorGUILayout.PropertyField(shape, true);
+            if (m_Object.ApplyModifiedProperties() && m_Shape != null)
+            {
+                m_Shape.Rebuild();
+                ProBuilderEditor.Refresh(false);
+            }
 
-
-
-            //var test = new Cube();
-            ////var serializedObject2 = new SerializedProperty();
-            ////serializedObject2.
-            //var shape = m_Object.FindProperty("m_shape");
-            //EditorGUILayout.PropertyField(shape, true);
-            //if (m_Object.ApplyModifiedProperties())
-            //{
-            //    ((ShapeComponent)target).Rebuild();
-            //    ProBuilderEditor.Refresh(false);
-            //}
             var rect = EditorGUILayout.GetControlRect(false, 45);
-            EditorGUI.HelpBox(rect, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu laoreet sapien.", MessageType.Info);
+            EditorGUI.HelpBox(rect, "Click to create the shape. Hold and drag to create the shape while controlling the size.", MessageType.Info);
         }
     }
 }
