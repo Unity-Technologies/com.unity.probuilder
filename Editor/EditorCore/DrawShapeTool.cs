@@ -230,14 +230,13 @@ namespace UnityEditor.ProBuilder
                         {
                             m_OppositeCorner = ray.GetPoint(distance);
                             m_HeightCorner = m_OppositeCorner;
+                            var diff = m_OppositeCorner - m_Origin;
+                            if (m_Shape != null)
+                                m_Shape.RotateBy(ToEularAngles(diff), true);
                             RebuildShape();
                             SceneView.RepaintAll();
                         }
                         break;
-                            var diff = m_OppositeCorner - m_Origin;
-                            if (m_Shape != null)
-                                m_Shape.RotateBy(ToEularAngles(diff), true);
-                        
                     }
 
                 case EventType.MouseUp:
