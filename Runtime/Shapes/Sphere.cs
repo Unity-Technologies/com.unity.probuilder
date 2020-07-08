@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace UnityEngine.ProBuilder
 {
-
-
     public class Sphere : Shape
     {
         static readonly Vector3[] k_IcosphereVertices = new Vector3[12]
-    {
+        {
             new Vector3(-1f,  Math.phi,  0f),
             new Vector3(1f,  Math.phi,  0f),
             new Vector3(-1f, -Math.phi,  0f),
@@ -22,10 +22,10 @@ namespace UnityEngine.ProBuilder
             new Vector3(Math.phi, 0f,  1f),
             new Vector3(-Math.phi, 0f, -1f),
             new Vector3(-Math.phi, 0f,  1f)
-    };
+        };
 
         static readonly int[] k_IcosphereTriangles = new int[60]
-    {
+        {
             0, 11, 5,
             0, 5, 1,
             0, 1, 7,
@@ -49,14 +49,18 @@ namespace UnityEngine.ProBuilder
             6, 2, 10,
             8, 6, 7,
             9, 8, 1
-    };
+        };
 
         [Range(1, 5)]
         [SerializeField]
-        int subdivisions = 3;
+        int m_Subdivisions = 3;
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
+#if UNITY_EDITOR
+            EditorPrefs.SetInt("ShapeBuilder.Sphere.m_Subdivisions", m_Subdivisions);
+#endif
+
             var radius = System.Math.Min(System.Math.Min(size.x, size.y), size.z);
             // http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
 
@@ -70,7 +74,7 @@ namespace UnityEngine.ProBuilder
                 v[i + 2] = k_IcosphereVertices[k_IcosphereTriangles[i + 2]].normalized * radius;
             }
 
-            for (int i = 0; i < subdivisions; i++)
+            for (int i = 0; i < m_Subdivisions; i++)
             {
                 v = SubdivideIcosahedron(v, radius);
             }

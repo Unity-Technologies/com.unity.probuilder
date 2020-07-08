@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY_EDITOR
+using UnityEditor;
+#endif
+using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
 {
@@ -6,24 +9,30 @@ namespace UnityEngine.ProBuilder
     {
         [Min(0.01f)]
         [SerializeField]
-        float thickness = .1f;
+        float m_Thickness = .1f;
 
         [Range(3, 200)]
         [SerializeField]
-        int numberOfSides = 6;
+        int m_NumberOfSides = 6;
 
         [Range(1, 360)]
         [SerializeField]
-        float archDegrees = 180;
+        float m_ArchDegrees = 180;
 
         [SerializeField]
-        bool endCaps = true;
+        bool m_EndCaps = true;
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
-            var radialCuts = numberOfSides;
-            var angle = archDegrees;
-            var width = thickness;
+#if UNITY_EDITOR
+            EditorPrefs.SetFloat("ShapeBuilder.Arch.m_Thickness", m_Thickness);
+            EditorPrefs.SetInt("ShapeBuilder.Arch.m_NumberOfSides", m_NumberOfSides);
+            EditorPrefs.SetFloat("ShapeBuilder.Arch.m_ArchDegrees", m_ArchDegrees);
+            EditorPrefs.SetBool("ShapeBuilder.Arch.m_EndCaps", m_EndCaps);
+#endif
+            var radialCuts = m_NumberOfSides;
+            var angle = m_ArchDegrees;
+            var width = m_Thickness;
             var radius = size.y;
             var depth = size.z;
             Vector2[] templateOut = new Vector2[radialCuts];
@@ -73,7 +82,7 @@ namespace UnityEngine.ProBuilder
                     v.AddRange(qvi);
 
                 // left side bottom face
-                if (angle < 360f && endCaps)
+                if (angle < 360f && m_EndCaps)
                 {
                     if (n == 0)
                     {

@@ -33,29 +33,46 @@ namespace UnityEditor.ProBuilder
         Quaternion m_Rotation;
         Bounds m_Bounds;
 
+        bool m_IsDragging;
+
         GUIContent m_ShapeTitle;
 
-        TypeCache.TypeCollection m_AvailableShapeTypes;
+        static TypeCache.TypeCollection m_AvailableShapeTypes;
         string[] m_ShapeTypesPopupContent;
 
         [SerializeField]
-        int m_ActiveShapeIndex;
+        static int m_ActiveShapeIndex;
 
-        Type activeShapeType
+        static Vector3 m_Size;
+
+        static ScriptableShape m_ShapeData;
+        SerializedObject m_Object;
+
+        static Type activeShapeType
         {
             get { return m_ActiveShapeIndex < 0 ? typeof(Cube) : m_AvailableShapeTypes[m_ActiveShapeIndex]; }
         }
 
+        static DrawShapeTool()
+        {
+            m_AvailableShapeTypes = TypeCache.GetTypesDerivedFrom<Shape>();
+        }
+
         void OnEnable()
         {
+            Debug.Log("enable");
+            m_ShapeData = ScriptableObject.CreateInstance<ScriptableShape>();
+            m_ShapeData.m_Shape = Activator.CreateInstance(activeShapeType) as Shape;
+            m_Object = new SerializedObject(m_ShapeData);
             EditorTools.EditorTools.activeToolChanged += ActiveToolChanged;
             m_ShapeTitle = new GUIContent("Draw Shape");
-            m_AvailableShapeTypes = TypeCache.GetTypesDerivedFrom<Shape>();
             m_ShapeTypesPopupContent = m_AvailableShapeTypes.Select(x => x.ToString()).ToArray();
         }
 
         void OnDisable()
         {
+            Debug.Log("disable");
+            DestroyImmediate(m_ShapeData);
             EditorTools.EditorTools.activeToolChanged -= ActiveToolChanged;
         }
 
@@ -108,7 +125,7 @@ namespace UnityEditor.ProBuilder
             {
                 init = true;
                 m_Shape = new GameObject("Shape").AddComponent<ShapeComponent>();
-                m_Shape.SetShape(activeShapeType);
+                m_Shape.SetShape(m_ShapeData.m_Shape);
                 UndoUtility.RegisterCreatedObjectUndo(m_Shape.gameObject, "Draw Shape");
             }
 
@@ -166,6 +183,7 @@ namespace UnityEditor.ProBuilder
         {
             if (evt.type == EventType.MouseDown)
             {
+                m_IsDragging = false;
                 var res = EditorHandleUtility.FindBestPlaneAndBitangent(evt.mousePosition);
 
                 Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
@@ -203,34 +221,85 @@ namespace UnityEditor.ProBuilder
             switch (evt.type)
             {
                 case EventType.MouseDrag:
-                {
-                    Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
-                    float distance;
-
-                    if (m_Plane.Raycast(ray, out distance))
                     {
-                        m_OppositeCorner = ray.GetPoint(distance);
-                        var diff = m_OppositeCorner - m_Origin;
-                        m_HeightCorner = m_OppositeCorner;
+                        m_IsDragging = true;
+                        Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
+                        float distance;
 
-                        if (m_Shape != null)
-                            m_Shape.RotateBy(ToEularAngles(diff), true);
-
-                        RebuildShape();
-                        SceneView.RepaintAll();
+                        if (m_Plane.Raycast(ray, out distance))
+                        {
+                            m_OppositeCorner = ray.GetPoint(distance);
+                            m_HeightCorner = m_OppositeCorner;
+                            RebuildShape();
+                            SceneView.RepaintAll();
+                        }
+                        break;
+                            var diff = m_OppositeCorner - m_Origin;
+                            if (m_Shape != null)
+                                m_Shape.RotateBy(ToEularAngles(diff), true);
+                        
                     }
-                    break;
-                }
 
                 case EventType.MouseUp:
-                {
-                    if (Vector3.Distance(m_OppositeCorner, m_Origin) < .1f)
-                        CancelShape();
-                    else
-                        AdvanceInputState();
-                    break;
-                }
+                    {
+                        if (!m_IsDragging)
+                        {
+                            m_IsDragging = true;
+                            Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
+                            float distance;
+
+                            if (m_Plane.Raycast(ray, out distance))
+                            {
+                                var pos = ray.GetPoint(distance);
+                                CancelShape();
+                                var shape = CreateActiveShape(Vector3.one * distance / 5f);
+                                shape.transform.position = pos;
+                            }
+                        }
+                        else if (Vector3.Distance(m_OppositeCorner, m_Origin) < .1f)
+                            CancelShape();
+                        else
+                            AdvanceInputState();
+                        break;
+
+                    }
             }
+        }
+
+        public static ProBuilderMesh CreateLastShape(Vector3 defaultSize)
+        {
+            if (m_Size == Vector3.zero)
+                m_Size = defaultSize;
+            var type = activeShapeType;
+            var shape = new GameObject("Shape").AddComponent<ShapeComponent>();
+            // create with data
+            shape.SetShape(type);
+            UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape");
+            Bounds bounds = new Bounds(Vector3.zero, m_Size);
+            shape.Rebuild(bounds, Quaternion.identity);
+            shape.mesh.SetPivot(PivotLocation.Center);
+            ProBuilderEditor.Refresh(false);
+            var res = shape.GetComponent<ProBuilderMesh>();
+            EditorUtility.InitObject(res, false);
+            return res;
+        }
+
+        public ProBuilderMesh CreateActiveShape(Vector3 defaultSize)
+        {
+            if (m_Size == Vector3.zero)
+                m_Size = defaultSize;
+            var type = activeShapeType;
+            var shape = new GameObject("Shape").AddComponent<ShapeComponent>();
+            // create with data
+            shape.SetShape(m_ShapeData.m_Shape);
+            UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape");
+            Bounds bounds = new Bounds(Vector3.zero, m_Size);
+            shape.Rebuild(bounds, Quaternion.identity);
+            shape.mesh.SetPivot(PivotLocation.Center);
+            ProBuilderEditor.Refresh(false);
+            var res = shape.GetComponent<ProBuilderMesh>();
+            EditorUtility.InitObject(res, false);
+            return res;
         }
 
         void SetHeight(Event evt)
@@ -289,9 +358,30 @@ namespace UnityEditor.ProBuilder
         void OnActiveToolGUI(UObject target, SceneView view)
         {
             EditorGUI.BeginChangeCheck();
+            m_Object.Update();
             m_ActiveShapeIndex = EditorGUILayout.Popup(m_ActiveShapeIndex, m_ShapeTypesPopupContent);
             if (EditorGUI.EndChangeCheck())
-                SetActiveShapeType(m_AvailableShapeTypes[m_ActiveShapeIndex]);
+            {
+                var type = m_AvailableShapeTypes[m_ActiveShapeIndex];
+                SetActiveShapeType(type);
+                // Undo record
+                m_ShapeData.m_Shape = Activator.CreateInstance(type) as Shape;
+                UndoUtility.RegisterCompleteObjectUndo(m_ShapeData, "Change Shape");
+
+            }
+
+            m_Size = EditorGUILayout.Vector3Field("Size", m_Size);
+
+            var shape = m_Object.FindProperty("m_Shape");
+            EditorGUILayout.PropertyField(shape, true);
+            if (m_Object.ApplyModifiedProperties() && m_Shape != null)
+            {
+                m_Shape.Rebuild();
+                ProBuilderEditor.Refresh(false);
+            }
+
+            var rect = EditorGUILayout.GetControlRect(false, 45);
+            EditorGUI.HelpBox(rect, "Click to create the shape. Hold and drag to create the shape while controlling the size.", MessageType.Info);
         }
     }
 }

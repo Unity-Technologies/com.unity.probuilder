@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY_EDITOR
+using UnityEditor;
+#endif
+using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
 {
@@ -6,21 +9,26 @@ namespace UnityEngine.ProBuilder
     {
         [Min(0.01f)]
         [SerializeField]
-        float doorHeight = .5f;
+        float m_DoorHeight = .5f;
 
         [Min(0.01f)]
         [SerializeField]
-        float legWidth = .75f;
+        float m_LegWidth = .75f;
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
+#if UNITY_EDITOR
+            EditorPrefs.SetFloat("ShapeBuilder.Door.m_AxisDivisions", m_DoorHeight);
+            EditorPrefs.SetFloat("ShapeBuilder.Door.m_HeightCuts", m_LegWidth);
+#endif
+
             float totalWidth = size.x;
             float totalHeight = size.y;
             float depth = size.z;
 
             float xLegCoord = totalWidth / 2f;
-            var legWidth = xLegCoord - this.legWidth;
-            var ledgeHeight = totalHeight - doorHeight;
+            var legWidth = xLegCoord - this.m_LegWidth;
+            var ledgeHeight = totalHeight - m_DoorHeight;
 
             var baseY = -totalHeight;
             var front = depth / 2f;

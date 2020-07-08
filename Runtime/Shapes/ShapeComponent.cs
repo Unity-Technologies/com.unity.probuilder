@@ -10,7 +10,6 @@ namespace UnityEngine.ProBuilder
 
         ProBuilderMesh m_Mesh;
 
-        [HideInInspector]
         [SerializeField]
         Vector3 m_Size;
 
@@ -44,7 +43,8 @@ namespace UnityEngine.ProBuilder
             size = Math.Abs(bounds.size);
             transform.position = bounds.center;
             transform.rotation = rotation;
-            Rebuild();
+            m_shape.RebuildMesh(mesh, size);
+            FitToSize();
         }
 
         public void Rebuild()
@@ -60,6 +60,12 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentException("Type needs to derive from Shape");
 
             m_shape = Activator.CreateInstance(type) as Shape;
+            Rebuild();
+        }
+
+        public void SetShape(Shape shape)
+        {
+            m_shape = shape;
             Rebuild();
         }
 

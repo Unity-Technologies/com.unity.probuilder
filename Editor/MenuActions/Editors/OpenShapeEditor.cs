@@ -1,4 +1,4 @@
-using UnityEngine.ProBuilder;
+﻿using UnityEngine.ProBuilder;
 using UnityEngine;
 
 namespace UnityEditor.ProBuilder.Actions
@@ -19,25 +19,24 @@ namespace UnityEditor.ProBuilder.Actions
                 keyCommandSuper, keyCommandShift, 'K'
             );
 
-        public override bool enabled
-        {
+        public override bool enabled {
             get { return true; }
         }
 
-        protected override MenuActionState optionsMenuState
-        {
+        protected override MenuActionState optionsMenuState {
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
         public override ActionResult DoAction()
         {
-            ShapeEditor.CreateActiveShape();
+            DrawShapeTool.CreateLastShape(Vector3.one * 100);
             return new ActionResult(ActionResult.Status.Success, "Create Shape");
         }
 
         protected override void DoAlternateAction()
         {
-            ShapeEditor.MenuOpenShapeCreator();
+            ProBuilderEditor.selectMode = SelectMode.Object;
+            EditorTools.EditorTools.SetActiveTool<DrawShapeTool>();
         }
     }
 }

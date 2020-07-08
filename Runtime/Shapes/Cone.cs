@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY_EDITOR
+using UnityEditor;
+#endif
+using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
 {
@@ -6,11 +9,14 @@ namespace UnityEngine.ProBuilder
     {
         [Range(3,64)]
         [SerializeField]
-        int numberOfSides = 6;
+        int m_NumberOfSides = 6;
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
-            var subdivAxis = numberOfSides;
+#if UNITY_EDITOR
+            EditorPrefs.SetInt("ShapeBuilder.Cone.m_NumberOfSides", m_NumberOfSides);
+#endif
+            var subdivAxis = m_NumberOfSides;
             var radius = System.Math.Min(size.x, size.z);
             var height = size.y;
             // template is outer ring - radius refers to outer ring always
