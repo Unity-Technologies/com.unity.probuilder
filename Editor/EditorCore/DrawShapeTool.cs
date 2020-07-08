@@ -60,7 +60,6 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            Debug.Log("enable");
             m_ShapeData = ScriptableObject.CreateInstance<ScriptableShape>();
             m_ShapeData.m_Shape = Activator.CreateInstance(activeShapeType) as Shape;
             m_Object = new SerializedObject(m_ShapeData);
@@ -71,7 +70,6 @@ namespace UnityEditor.ProBuilder
 
         void OnDisable()
         {
-            Debug.Log("disable");
             DestroyImmediate(m_ShapeData);
             EditorTools.EditorTools.activeToolChanged -= ActiveToolChanged;
         }

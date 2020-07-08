@@ -43,8 +43,7 @@ namespace UnityEngine.ProBuilder
             size = Math.Abs(bounds.size);
             transform.position = bounds.center;
             transform.rotation = rotation;
-            m_shape.RebuildMesh(mesh, size);
-            FitToSize();
+            Rebuild();
         }
 
         public void Rebuild()
