@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1247270] Fixed `Null Reference Exception` when entering Prefab Stage after merging multiple `ProBuilderMesh`.
 - [case: 1252394] Fixed dragging selection with Ctrl problem (and key pressed problem in general).
 - Fixed Cylinder shape clamping segments to 48.
+- Ensure "ProBuilderize" action is enabled for current selection on opening main window
 
 ### Known Issues
 
