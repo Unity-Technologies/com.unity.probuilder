@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1249056] Fixed Ctrl selection being inconsistent.
 - [case: 1247270] Fixed `Null Reference Exception` when entering Prefab Stage after merging multiple `ProBuilderMesh`.
 - [case: 1252394] Fixed dragging selection with Ctrl problem (and key pressed problem in general).
+- [case: 1259845] Fixed dimension overlay being hidden on playmode or reboot of the editor.
 - Fixed Cylinder shape clamping segments to 48.
 
 ### Known Issues
