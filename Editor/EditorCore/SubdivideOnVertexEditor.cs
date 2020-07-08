@@ -97,8 +97,6 @@ namespace UnityEditor.ProBuilder
             {
                 if (evtType == EventType.MouseDown && HandleUtility.nearestControl == m_ControlId)
                 {
-                    float hitDistance = Mathf.Infinity;
-
                     Ray ray = UHandleUtility.GUIPointToWorldRay(evt.mousePosition);
                     RaycastHit pbHit;
 

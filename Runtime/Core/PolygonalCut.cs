@@ -13,15 +13,6 @@ namespace UnityEngine.ProBuilder
     public sealed class PolygonalCut : MonoBehaviour
     {
         /// <summary>
-        /// Describes the different input states this tool operates in.
-        /// </summary>
-        internal enum PolygonEditMode
-        {
-            None,
-            Add
-        }
-
-        /// <summary>
         /// Describes the different vertex types on the path.
         /// </summary>
         [System.Flags]
@@ -59,7 +50,7 @@ namespace UnityEngine.ProBuilder
         ProBuilderMesh m_Mesh;
 
         [SerializeField]
-        internal List<InsertedVertexData> m_verticesToAdd = new List<InsertedVertexData>();
+        internal List<InsertedVertexData> m_cutPath = new List<InsertedVertexData>();
 
         private bool m_CutEnded = false;
 
@@ -73,11 +64,11 @@ namespace UnityEngine.ProBuilder
         {
             get
             {
-                if (m_verticesToAdd.Count < 3)
+                if (m_cutPath.Count < 3)
                     return false;
                 else
-                    return Math.Approx3(m_verticesToAdd[0].m_Position,
-                        m_verticesToAdd[m_verticesToAdd.Count - 1].m_Position);
+                    return Math.Approx3(m_cutPath[0].m_Position,
+                        m_cutPath[m_cutPath.Count - 1].m_Position);
             }
         }
 
@@ -85,17 +76,8 @@ namespace UnityEngine.ProBuilder
         {
             get
             {
-                return m_verticesToAdd.Count(data => (data.m_Type & (VertexType.AddedOnEdge | VertexType.ExistingVertex)) != 0 );
+                return m_cutPath.Count(data => (data.m_Type & (VertexType.AddedOnEdge | VertexType.ExistingVertex)) != 0 );
             }
-        }
-
-        [SerializeField]
-        PolygonEditMode m_EditMode;
-
-        internal PolygonEditMode polygonEditMode
-        {
-            get { return m_EditMode; }
-            set { m_EditMode = value; }
         }
 
         internal ProBuilderMesh mesh

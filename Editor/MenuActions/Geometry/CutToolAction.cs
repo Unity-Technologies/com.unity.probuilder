@@ -4,25 +4,25 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-    sealed class VertexInsertion : MenuAction
+    sealed class CutToolAction : MenuAction
     {
-        static Pref<bool> m_EndOnEdgeConnection = new Pref<bool>("VertexInsertion.endOnEdgeConnection", true);
-        static Pref<bool> m_EndOnClicToStartPoint = new Pref<bool>("VertexInsertion.endOnClicToStartPoint", false);
-        static Pref<bool> m_ConnectToStartPoint = new Pref<bool>("VertexInsertion.autoConnectToStartPoint", true);
+        static Pref<bool> m_EdgeToEdge = new Pref<bool>("VertexInsertion.edgeToEdge", true);
+        static Pref<bool> m_EndOnClicToStart = new Pref<bool>("VertexInsertion.endOnClicToStart", false);
+        static Pref<bool> m_ConnectToStart = new Pref<bool>("VertexInsertion.connectToStart", true);
 
-        public static bool EndOnEdgeConnection
+        public static bool EdgeToEdge
         {
-            get { return m_EndOnEdgeConnection; }
+            get { return m_EdgeToEdge; }
         }
 
-        public static bool EndOnClicToStartPoint
+        public static bool EndOnClicToStart
         {
-            get { return m_EndOnClicToStartPoint; }
+            get { return m_EndOnClicToStart; }
         }
 
-        public static bool ConnectToStartPoint
+        public static bool ConnectToStart
         {
-            get { return m_ConnectToStartPoint; }
+            get { return m_ConnectToStart; }
         }
 
 
@@ -53,8 +53,8 @@ namespace UnityEditor.ProBuilder.Actions
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
         (
-            "Vertex Insertion",
-            @"Inserts a vertex in a face at a desire position and creates new edges accordingly.",
+            "Cut Tool",
+            @"Inserts vertices in a face and subdivide it accordingly.",
             keyCommandAlt, keyCommandShift, 'V'
         );
 
@@ -71,19 +71,30 @@ namespace UnityEditor.ProBuilder.Actions
         private PolygonalCut m_CutTarget;
 
 
+        /// <summary>
+        /// Called when the settings window is closed.
+        /// </summary>
+        protected override void OnSettingsDisable()
+        {
+            if (m_CutTarget != null)
+                Undo.DestroyObjectImmediate(m_CutTarget);
+        }
+
         protected override void OnSettingsGUI()
         {
             GUILayout.Label("Point-to-point Cut - Settings", EditorStyles.boldLabel);
 
-            EditorGUILayout.HelpBox("TODO.", MessageType.Info);
+            EditorGUILayout.HelpBox("Add new vertices in the selected face. Press ESC to validate the shape. " +
+                                    "\nUsing CTRL key allows to snap the selection to existing edges and vertices. " +
+                                    "\nUsing SHIFT key allows to move points of the cut shape.", MessageType.Info);
 
             EditorGUI.BeginChangeCheck();
 
-            m_ConnectToStartPoint.value = EditorGUILayout.Toggle("Connect End to Start Point", m_ConnectToStartPoint);
+            m_ConnectToStart.value = EditorGUILayout.Toggle("Connect End to Start Point", m_ConnectToStart);
 
-            m_EndOnClicToStartPoint.value = EditorGUILayout.Toggle("Selecting Start Point is ending cut", m_EndOnClicToStartPoint);
+            m_EndOnClicToStart.value = EditorGUILayout.Toggle("Selecting Start Point is ending cut", m_EndOnClicToStart);
 
-            m_EndOnEdgeConnection.value = EditorGUILayout.Toggle("EdgeToEdgeCut", m_EndOnEdgeConnection);
+            m_EdgeToEdge.value = EditorGUILayout.Toggle("Cut From Edge To Edge", m_EdgeToEdge);
 
             if (EditorGUI.EndChangeCheck())
                 ProBuilderSettings.Save();
@@ -113,7 +124,6 @@ namespace UnityEditor.ProBuilder.Actions
             ProBuilderMesh firstObj = MeshSelection.activeMesh;
 
             m_CutTarget = Undo.AddComponent<PolygonalCut>(firstObj.gameObject);
-            m_CutTarget.polygonEditMode = PolygonalCut.PolygonEditMode.Add;
 
             return new ActionResult(ActionResult.Status.Success,"Vertex On Face Insertion");
         }

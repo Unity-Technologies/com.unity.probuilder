@@ -60,8 +60,6 @@ namespace UnityEditor.ProBuilder
 
             if (evtType == EventType.MouseDown)
             {
-                float hitDistance = Mathf.Infinity;
-
                 Ray ray = UHandleUtility.GUIPointToWorldRay(evt.mousePosition);
                 RaycastHit pbHit;
 

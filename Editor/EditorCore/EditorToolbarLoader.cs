@@ -115,7 +115,7 @@ namespace UnityEditor.ProBuilder
                 new Actions.FillHole(),
                 // new Actions.CreatePolygon(),
                 new Actions.SplitVertices(),
-                new Actions.VertexInsertion(),
+                new Actions.CutToolAction(),
                 new Actions.VertexInsertionSingle(),
 
                 // Entity
