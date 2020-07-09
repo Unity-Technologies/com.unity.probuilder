@@ -1206,8 +1206,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             int originalSharedIndexesCount = lookup.Count();
 
-            Vertex newVertex = new Vertex();
-
             //Ensure the new point is on the edge
             //Using Scalar projection
             Vector3 a = point -
@@ -1215,13 +1213,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
             Vector3 b = vertices[originalEdge.b].position -
                         vertices[originalEdge.a].position;
 
-            float ratio = Vector3.Magnitude(a) * Mathf.Cos(Vector3.Angle(b, a) * Mathf.Deg2Rad) / Vector3.Magnitude(b);
-            newVertex.position = b;
-            newVertex.position *= ratio;
-            newVertex.position += vertices[originalEdge.a].position;
+            float weight = Vector3.Magnitude(a) * Mathf.Cos(Vector3.Angle(b, a) * Mathf.Deg2Rad) / Vector3.Magnitude(b);
 
-            newVertex.normal = ratio * vertices[originalEdge.a].normal + (1 - ratio) * vertices[originalEdge.b].normal;
-            newVertex.normal.Normalize();
+            Vertex newVertex = Vertex.Mix(vertices[originalEdge.a], vertices[originalEdge.b], weight);
 
             List<SimpleTuple<Face, Edge>> adjacentFaces = ElementSelection.GetNeighborFaces(mesh, originalEdge);
             Edge uni = new Edge(lookup[originalEdge.a], lookup[originalEdge.b]);

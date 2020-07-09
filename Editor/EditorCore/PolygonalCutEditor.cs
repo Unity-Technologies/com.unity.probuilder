@@ -81,6 +81,8 @@ namespace UnityEditor.ProBuilder
                 return;
             }
 
+
+            ProBuilderEditor.selectMode = ProBuilderEditor.selectMode | SelectMode.InputTool;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
             m_LineMesh = new Mesh();
@@ -118,6 +120,7 @@ namespace UnityEditor.ProBuilder
 
             //Removing the script from the object
             DestroyImmediate(polygonalCut);
+            ProBuilderEditor.selectMode = ProBuilderEditor.selectMode & ~(SelectMode.InputTool);
         }
 
         void Update()
@@ -202,6 +205,11 @@ namespace UnityEditor.ProBuilder
 
         private void OnSelectModeChanged(SelectMode mode)
         {
+            ActionResult result = DoCut();
+
+            if (result.status != ActionResult.Status.Success)
+                EditorApplication.delayCall = () =>  DestroyImmediate(polygonalCut);
+
         }
 
         void DoPointPrePlacement()
@@ -559,25 +567,25 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        UndoUtility.RecordObject(polygonalCut.mesh, "Add Face To Mesh");
+        ProBuilderMesh pb = polygonalCut.mesh;
+        UndoUtility.RecordObject(pb, "Add Face To Mesh");
 
         List<Vertex> cutVertices = InsertVertices();
-        List<Vertex> meshVertices = polygonalCut.mesh.GetVertices().ToList();
+        List<Vertex> meshVertices = pb.GetVertices().ToList();
         int[] cutIndexes = cutVertices.Select(vert => meshVertices.IndexOf(vert)).ToArray();
 
         // If the cut defines a loop in the face, create the polygon corresponding to that loop
         if (polygonalCut.IsALoop)
         {
-            Face f = polygonalCut.mesh.CreatePolygon(cutIndexes, false);
+            Face f = pb.CreatePolygon(cutIndexes, false);
 
             if(f == null)
                 return new ActionResult(ActionResult.Status.Failure, "Cut Shape is not valid");
 
-            Vector3 nrm = UnityEngine.ProBuilder.Math.Normal(polygonalCut.mesh, f);
-            Vector3 targetNrm = UnityEngine.ProBuilder.Math.Normal(polygonalCut.mesh, m_TargetFace);
             // If the shape is define in the wrong orientation compared to the former face, reverse it
-            if(Vector3.Dot(nrm,targetNrm) < 0f)
+            if(pb.GetWindingOrder(m_TargetFace) != pb.GetWindingOrder(f))
                 f.Reverse();
+
         }
 
         switch (polygonalCut.ConnectionsToFaceBordersCount)
@@ -594,16 +602,20 @@ namespace UnityEditor.ProBuilder
                 foreach (var polygon in indexes)
                 {
                     //Create the face with a missing triangle
-                    Face face = polygonalCut.mesh.CreatePolygon(polygon,false);
+                    Face face = pb.CreatePolygon(polygon,false);
 
                     //Compute the missing triangle/polygon
                     int[] complementaryPolygon = GetComplementaryPolygons(polygon);
                     if (complementaryPolygon != null)
                     {
                         //Create the missing triangle
-                        Face compFace = polygonalCut.mesh.CreatePolygon(complementaryPolygon, false);
+                        Face compFace = pb.CreatePolygon(complementaryPolygon, false);
                         //Merge the face plus the missing triangle that define together the full face
-                        MergeElements.Merge(polygonalCut.mesh, new[] {face, compFace});
+                        //Face mergedFace = MergeElements.Merge(polygonalCut.mesh, new[] {face, compFace});
+                        pb.ToMesh();
+                        var triangulatedFaces = pb.ToTriangles(new Face[]{face,compFace});
+                        pb.Refresh();
+                        pb.Optimize();
                     }
                 }
                 break;
@@ -614,17 +626,17 @@ namespace UnityEditor.ProBuilder
                 //Create these new polygonal faces
                 foreach (var polygon in verticesIndexes)
                 {
-                    polygonalCut.mesh.CreatePolygon(polygon,false);
+                    pb.CreatePolygon(polygon,false);
                 }
             break;
         }
 
         //Delete former face
-        polygonalCut.mesh.DeleteFace(m_TargetFace);
+        pb.DeleteFace(m_TargetFace);
 
-        polygonalCut.mesh.ToMesh();
-        polygonalCut.mesh.Refresh();
-        polygonalCut.mesh.Optimize();
+        pb.ToMesh();
+        pb.Refresh();
+        pb.Optimize();
 
         EditorApplication.delayCall = () =>  DestroyImmediate(polygonalCut);
 
@@ -827,12 +839,12 @@ namespace UnityEditor.ProBuilder
                     break;
                 }
 
-                case KeyCode.Escape:
-                {
-                    evt.Use();
-                    DoCut();
-                    break;
-                }
+                // Not possible to use as PBEditor overrides this
+                // case KeyCode.Escape:
+                //
+                //     evt.Use();
+                //     break;
+                // }
 
             }
         }
