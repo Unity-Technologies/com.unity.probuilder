@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Bug Fixes
+
+- [case: 1258421] Fixed an issue where GI UV streams would be lost at runtime due to `ProBuilderMesh` assigning a new `Mesh` to the statically combined `MeshFilter`.
+
 ## [4.4.0-preview.1] - 2020-06-21
 
 ### Features
