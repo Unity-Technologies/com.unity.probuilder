@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added a selection preview when using the Select Path tool
 
 ### Bug Fixes
-
+- [case: 1258589] Fixed error in runtime sample examples.
 - [case: 1248708] Fixed physx error when welding all vertices to a singularity.
 - Fixed tooltips always clamping to the left of the screen on secondary monitors.
 - Fixed `EditorUtility.SetIconEnabled` not respecting the enabled parameter.
