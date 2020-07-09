@@ -297,7 +297,7 @@ namespace UnityEditor.ProBuilder
 
             for (int i = 0; i < peripheralEdges.Count; i++)
             {
-                if (m_TargetFace == null || (m_TargetFace == m_CurrentFace && m_SnapPoint))
+                if ((m_TargetFace == null || m_TargetFace == m_CurrentFace) && m_SnapPoint)
                 {
                     if (UnityEngine.ProBuilder.Math.Approx3(vertices[peripheralEdges[i].a].position,
                         m_CurrentPositionToAdd,
@@ -321,7 +321,7 @@ namespace UnityEditor.ProBuilder
                         }
                     }
                 }
-                else if(m_CurrentFace != m_TargetFace)
+                else if(m_CurrentFace != m_TargetFace && m_TargetFace != null )
                 {
                     float edgeDist = UnityEngine.ProBuilder.Math.DistancePointLineSegment(m_CurrentPositionToAdd,
                         vertices[peripheralEdges[i].a].position,
