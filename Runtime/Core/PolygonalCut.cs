@@ -24,10 +24,13 @@ namespace UnityEngine.ProBuilder
         }
 
         [Serializable]
-        public class InsertedVertexData
+        public struct InsertedVertexData
         {
+            [SerializeField]
             Vector3 m_Position;
+            [SerializeField]
             Vector3 m_Normal;
+            [SerializeField]
             VertexTypes m_Types;
 
             public Vector3 position
@@ -71,7 +74,16 @@ namespace UnityEngine.ProBuilder
         bool m_DoCut = false;
         public bool doCut
         {
-            get => m_DoCut;
+            get
+            {
+                if (m_DoCut)
+                {
+                    m_DoCut = false;
+                    return true;
+                }
+
+                return false;
+            }
             set => m_DoCut = value;
         }
 

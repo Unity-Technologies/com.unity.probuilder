@@ -195,7 +195,9 @@ namespace UnityEditor.ProBuilder
             if(polygonalCut.m_cutPath.Count == 0)
                 m_TargetFace = null;
 
-            RebuildPolygonalShape(polygonalCut);
+            m_SelectedIndex = -1;
+
+            EditorApplication.delayCall = () => RebuildPolygonalShape(polygonalCut);
         }
 
         private void OnSelectModeChanged(SelectMode mode)
@@ -393,7 +395,9 @@ namespace UnityEditor.ProBuilder
                     if (UpdateHitPosition())
                     {
                         evt.Use();
-                        polygonalCut.m_cutPath[m_SelectedIndex].position = m_CurrentPositionToAdd;
+                        InsertedVertexData data = polygonalCut.m_cutPath[m_SelectedIndex];
+                        data.position = m_CurrentPositionToAdd;
+                        polygonalCut.m_cutPath[m_SelectedIndex] = data;
                         RebuildPolygonalShape(false);
                         SceneView.RepaintAll();
                     }
@@ -539,7 +543,7 @@ namespace UnityEditor.ProBuilder
 
         if (!polygonalCut.IsALoop)
         {
-            if (CutToolAction.ConnectToStart)
+            if (CutToolAction.ConnectToStart && polygonalCut.m_cutPath.Count > 2)
             {
                 polygonalCut.m_cutPath.Add(new InsertedVertexData(
                     polygonalCut.m_cutPath[0].position,
@@ -618,7 +622,11 @@ namespace UnityEditor.ProBuilder
         //Delete former face
         polygonalCut.mesh.DeleteFace(m_TargetFace);
 
-        DestroyImmediate(polygonalCut);
+        polygonalCut.mesh.ToMesh();
+        polygonalCut.mesh.Refresh();
+        polygonalCut.mesh.Optimize();
+
+        EditorApplication.delayCall = () =>  DestroyImmediate(polygonalCut);
 
         return ActionResult.Success;
     }
@@ -868,7 +876,7 @@ namespace UnityEditor.ProBuilder
                 if (!m_CurrentPositionToAdd.Equals(Vector3.negativeInfinity))
                 {
                     Vector3 point = trs.TransformPoint(m_CurrentPositionToAdd);
-                    if(m_SelectedIndex >= 0 )
+                    if(m_SelectedIndex >= 0 && m_SelectedIndex < polygonalCut.m_cutPath.Count)
                         point = trs.TransformPoint(polygonalCut.m_cutPath[m_SelectedIndex].position);
 
                     float size = HandleUtility.GetHandleSize(point) * k_HandleSize;
