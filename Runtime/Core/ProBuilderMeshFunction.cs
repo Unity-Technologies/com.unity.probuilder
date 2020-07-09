@@ -58,6 +58,7 @@ namespace UnityEngine.ProBuilder
         void Awake()
         {
             EnsureMeshFilterIsAssigned();
+            EnsureMeshColliderIsAssigned();
 
             if (vertexCount > 0
                 && faceCount > 0
@@ -123,13 +124,13 @@ namespace UnityEngine.ProBuilder
         {
             if (filter == null)
                 m_MeshFilter = gameObject.AddComponent<MeshFilter>();
+
 #if UNITY_EDITOR
             m_MeshFilter.hideFlags = k_MeshFilterHideFlags;
 #endif
-            filter.sharedMesh = m_Mesh;
 
-            if(mesh && gameObject.TryGetComponent<MeshCollider>(out MeshCollider collider))
-                EnsureMeshColliderIsAssigned();
+            if (!renderer.isPartOfStaticBatch && filter.sharedMesh != m_Mesh)
+                filter.sharedMesh = m_Mesh;
         }
 
         internal static ProBuilderMesh CreateInstanceWithPoints(Vector3[] positions)
@@ -319,6 +320,7 @@ namespace UnityEngine.ProBuilder
             }
 
             mesh.name = string.Format("pb_Mesh{0}", id);
+
             EnsureMeshFilterIsAssigned();
         }
 
@@ -388,17 +390,18 @@ namespace UnityEngine.ProBuilder
                 EnsureMeshColliderIsAssigned();
         }
 
-        void EnsureMeshColliderIsAssigned()
+        internal void EnsureMeshColliderIsAssigned()
         {
-            mesh.RecalculateBounds();
-
             if(gameObject.TryGetComponent<MeshCollider>(out MeshCollider collider))
             {
 #if ENABLE_DRIVEN_PROPERTIES
                 SerializationUtility.RegisterDrivenProperty(this, collider, "m_Mesh");
 #endif
-                collider.sharedMesh = null;
-                collider.sharedMesh = mesh;
+                if (collider.sharedMesh != mesh)
+                {
+                    collider.sharedMesh = null;
+                    collider.sharedMesh = mesh;
+                }
             }
         }
 
