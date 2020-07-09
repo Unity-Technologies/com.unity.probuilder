@@ -229,9 +229,9 @@ namespace UnityEditor.ProBuilder
                             m_OppositeCorner = ray.GetPoint(distance);
                             m_HeightCorner = m_OppositeCorner;
                             var diff = m_OppositeCorner - m_Origin;
+                            RebuildShape();
                             if (m_Shape != null)
                                 m_Shape.RotateBy(ToEularAngles(diff), true);
-                            RebuildShape();
                             SceneView.RepaintAll();
                         }
                         break;
@@ -310,11 +310,10 @@ namespace UnityEditor.ProBuilder
                     m_HeightCorner = Math.GetNearestPointRayRay(m_OppositeCorner, m_Plane.normal, ray.origin, ray.direction);
 
                     var diff = m_HeightCorner - m_Origin;
-
                     if (m_Shape != null)
                         m_Shape.RotateBy(ToEularAngles(diff), true);
-
                     RebuildShape();
+                
                     SceneView.RepaintAll();
                     break;
                 }
