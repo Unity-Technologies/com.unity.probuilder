@@ -582,8 +582,10 @@ namespace UnityEditor.ProBuilder
             if(f == null)
                 return new ActionResult(ActionResult.Status.Failure, "Cut Shape is not valid");
 
+            Vector3 nrm = UnityEngine.ProBuilder.Math.Normal(polygonalCut.mesh, f);
+            Vector3 targetNrm = UnityEngine.ProBuilder.Math.Normal(polygonalCut.mesh, m_TargetFace);
             // If the shape is define in the wrong orientation compared to the former face, reverse it
-            if(pb.GetWindingOrder(m_TargetFace) != pb.GetWindingOrder(f))
+            if(Vector3.Dot(nrm,targetNrm) < 0f)
                 f.Reverse();
 
         }
@@ -612,10 +614,10 @@ namespace UnityEditor.ProBuilder
                         Face compFace = pb.CreatePolygon(complementaryPolygon, false);
                         //Merge the face plus the missing triangle that define together the full face
                         //Face mergedFace = MergeElements.Merge(polygonalCut.mesh, new[] {face, compFace});
-                        pb.ToMesh();
+
+                        //For safety, triangulate the new surface and make quad geometry from there
                         var triangulatedFaces = pb.ToTriangles(new Face[]{face,compFace});
-                        pb.Refresh();
-                        pb.Optimize();
+                        pb.ToQuad(triangulatedFaces);
                     }
                 }
                 break;
@@ -651,7 +653,12 @@ namespace UnityEditor.ProBuilder
         IList<IList<int>> holes = new List<IList<int>>();
         holes.Add(cutVertexIndexes);
 
-        Face newFace = polygonalCut.mesh.CreatePolygonWithHole(borderIndexes, holes);
+        ProBuilderMesh pb = polygonalCut.mesh;
+        Face newFace = pb.CreatePolygonWithHole(borderIndexes, holes);
+
+        //For safety, triangulate the new surface and make quad geometry from there
+        var triangulatedFaces = pb.ToTriangles(new Face[]{newFace});
+        pb.ToQuad(triangulatedFaces);
 
         return newFace;
     }
