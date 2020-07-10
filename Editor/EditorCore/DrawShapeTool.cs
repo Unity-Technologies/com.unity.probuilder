@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Linq;
 using UnityEditor.EditorTools;
 using UnityEngine;
@@ -200,7 +199,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        Vector3 ToEularAngles(Vector3 diff)
+        Vector3 ToRotationAngles(Vector3 diff)
         {
             Vector3 angles = Vector3.zero;
             if (diff.y < 0)
@@ -230,8 +229,6 @@ namespace UnityEditor.ProBuilder
                             m_HeightCorner = m_OppositeCorner;
                             var diff = m_OppositeCorner - m_Origin;
                             RebuildShape();
-                            if (m_Shape != null)
-                                m_Shape.RotateBy(ToEularAngles(diff), true);
                             SceneView.RepaintAll();
                         }
                         break;
@@ -311,7 +308,7 @@ namespace UnityEditor.ProBuilder
 
                     var diff = m_HeightCorner - m_Origin;
                     if (m_Shape != null)
-                        m_Shape.RotateBy(ToEularAngles(diff), true);
+                        m_Shape.RotateBy(ToRotationAngles(diff), true);
                     RebuildShape();
                 
                     SceneView.RepaintAll();
