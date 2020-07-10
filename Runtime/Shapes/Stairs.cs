@@ -1,7 +1,3 @@
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 namespace UnityEngine.ProBuilder
 {
     public class Stairs : Shape
@@ -31,12 +27,6 @@ namespace UnityEngine.ProBuilder
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
-#if UNITY_EDITOR
-            EditorPrefs.SetInt("ShapeBuilder.Stair.m_Steps", m_Steps);
-            EditorPrefs.SetFloat("ShapeBuilder.Stair.m_Circumference", m_Circumference);
-            EditorPrefs.SetBool("ShapeBuilder.Stair.m_Sides", m_Sides);
-#endif
-
             if (m_Circumference > 0)
                 BuildCurvedStairs(mesh, size);
             else

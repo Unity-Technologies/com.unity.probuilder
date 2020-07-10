@@ -1,7 +1,4 @@
-﻿#if UNITY_EDITOR
-using UnityEditor;
-#endif
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
 {
@@ -32,15 +29,6 @@ namespace UnityEngine.ProBuilder
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
-#if UNITY_EDITOR
-            EditorPrefs.SetInt("ShapeBuilder.Torus.m_Rows", m_Rows);
-            EditorPrefs.SetInt("ShapeBuilder.Torus.m_Columns", m_Columns);
-            EditorPrefs.SetFloat("ShapeBuilder.Torus.m_InnerRadius", m_InnerRadius);
-            EditorPrefs.SetFloat("ShapeBuilder.Torus.m_HorizontalCircumference", m_HorizontalCircumference);
-            EditorPrefs.SetFloat("ShapeBuilder.Torus.m_VerticalCircumference", m_VerticalCircumference);
-            EditorPrefs.SetBool("ShapeBuilder.Torus.m_Smooth", m_Smooth);
-#endif
-
             var outerRadius = System.Math.Min(size.x, size.z);
             int clampedRows = (int)Mathf.Clamp(m_Rows + 1, 4, 128);
             int clampedColumns = (int)Mathf.Clamp(m_Columns + 1, 4, 128);

@@ -360,20 +360,23 @@ namespace UnityEditor.ProBuilder
             {
                 var type = m_AvailableShapeTypes[m_ActiveShapeIndex];
                 SetActiveShapeType(type);
-                // Undo record
                 m_ShapeData.m_Shape = Activator.CreateInstance(type) as Shape;
+                m_ShapeData.m_Shape.SetToLastParams();
                 UndoUtility.RegisterCompleteObjectUndo(m_ShapeData, "Change Shape");
-
             }
 
             m_Size = EditorGUILayout.Vector3Field("Size", m_Size);
 
             var shape = m_Object.FindProperty("m_Shape");
             EditorGUILayout.PropertyField(shape, true);
-            if (m_Object.ApplyModifiedProperties() && m_Shape != null)
+            if (m_Object.ApplyModifiedProperties())
             {
-                m_Shape.Rebuild();
-                ProBuilderEditor.Refresh(false);
+                m_ShapeData.m_Shape.SaveParams();
+                if (m_Shape != null)
+                {
+                    m_Shape.Rebuild();
+                    ProBuilderEditor.Refresh(false);
+                }
             }
 
             var rect = EditorGUILayout.GetControlRect(false, 45);

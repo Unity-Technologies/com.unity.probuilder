@@ -1,7 +1,3 @@
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 namespace UnityEngine.ProBuilder
 {
     public class Cylinder : Shape
@@ -20,12 +16,6 @@ namespace UnityEngine.ProBuilder
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
-#if UNITY_EDITOR
-            EditorPrefs.SetInt("ShapeBuilder.Cylinder.m_AxisDivisions", m_AxisDivisions);
-            EditorPrefs.SetInt("ShapeBuilder.Cylinder.m_HeightCuts", m_HeightCuts);
-            EditorPrefs.SetInt("ShapeBuilder.Cylinder.m_Smoothing", m_Smoothing);
-#endif
-
             var radius = Mathf.Max(size.x, size.z) * .5f;
             var height = size.y;
 

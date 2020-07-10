@@ -1,7 +1,4 @@
-﻿#if UNITY_EDITOR
-using UnityEditor;
-#endif
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
 {
@@ -17,11 +14,6 @@ namespace UnityEngine.ProBuilder
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
-#if UNITY_EDITOR
-            EditorPrefs.SetFloat("ShapeBuilder.Door.m_AxisDivisions", m_DoorHeight);
-            EditorPrefs.SetFloat("ShapeBuilder.Door.m_HeightCuts", m_LegWidth);
-#endif
-
             float totalWidth = size.x;
             float totalHeight = size.y;
             float depth = size.z;

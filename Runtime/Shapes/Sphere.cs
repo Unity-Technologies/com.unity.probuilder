@@ -1,8 +1,4 @@
-﻿#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
-namespace UnityEngine.ProBuilder
+﻿namespace UnityEngine.ProBuilder
 {
     public class Sphere : Shape
     {
@@ -57,10 +53,6 @@ namespace UnityEngine.ProBuilder
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
-#if UNITY_EDITOR
-            EditorPrefs.SetInt("ShapeBuilder.Sphere.m_Subdivisions", m_Subdivisions);
-#endif
-
             var radius = System.Math.Min(System.Math.Min(size.x, size.y), size.z);
             // http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
 

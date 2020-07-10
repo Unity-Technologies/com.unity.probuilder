@@ -1,7 +1,4 @@
-﻿#if UNITY_EDITOR
-using UnityEditor;
-#endif
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
 {
@@ -13,9 +10,6 @@ namespace UnityEngine.ProBuilder
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
-#if UNITY_EDITOR
-            EditorPrefs.SetInt("ShapeBuilder.Cone.m_NumberOfSides", m_NumberOfSides);
-#endif
             var subdivAxis = m_NumberOfSides;
             var radius = System.Math.Min(size.x, size.z);
             var height = size.y;

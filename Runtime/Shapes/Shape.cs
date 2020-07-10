@@ -1,4 +1,6 @@
 #if UNITY_EDITOR
+using System;
+using System.Reflection;
 using UnityEditor;
 #endif
 
@@ -8,28 +10,34 @@ namespace UnityEngine.ProBuilder
     public abstract class Shape
     {
         public abstract void RebuildMesh(ProBuilderMesh mesh, Vector3 size);
-
 #if UNITY_EDITOR
         public virtual string name
         {
             get { return ObjectNames.NicifyVariableName(GetType().Name); }
         }
 
-        //public void ResetParameters()
-        //{
-        //    var members = GetType().GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+        public void SetToLastParams()
+        {
+            var name = "ShapeBuilder." + GetType().Name;
+            var data = JsonUtility.FromJson(EditorPrefs.GetString(name), GetType());
+            if (data == null)
+                return;
+            var members = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+            foreach (var fi in members)
+            {
+                var value = fi.GetValue(data);
+                if (value == null)
+                    continue;
+                fi.SetValue(this, value);
+            }
+        }
 
-        //    foreach (var fi in members)
-        //    {
-        //        if (fi.GetValue(this) is IUserSetting setting)
-        //            setting.Reset();
-        //        // if(fi.FieldType.BaseType?.GetGenericTypeDefinition() == typeof(UserSetting<>))
-        //        // {
-        //        //     var setting = fi.GetValue(this) as IUserSetting;
-        //        //     Debug.Log($"Name: {fi.Name}\nType: {fi.FieldType}\nValue {fi.GetValue(this)}");
-        //        // }
-        //    }
-        //}
+        public void SaveParams()
+        {
+            var name = "ShapeBuilder." + GetType().Name;
+            var data = JsonUtility.ToJson(this);
+            EditorPrefs.SetString(name, data);
+        }
 #endif
     }
 }

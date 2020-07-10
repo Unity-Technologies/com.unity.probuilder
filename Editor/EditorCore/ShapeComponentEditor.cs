@@ -86,6 +86,7 @@ namespace UnityEditor.ProBuilder
             EditorGUILayout.PropertyField(m_shape, true);
             if (serializedObject.ApplyModifiedProperties())
             {
+                ((ShapeComponent)target).m_Shape.SaveParams();
                 ((ShapeComponent)target).Rebuild();
                 ProBuilderEditor.Refresh(false);
             }

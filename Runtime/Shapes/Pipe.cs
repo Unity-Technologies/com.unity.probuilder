@@ -1,7 +1,4 @@
-﻿#if UNITY_EDITOR
-using UnityEditor;
-#endif
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
 {
@@ -21,12 +18,6 @@ namespace UnityEngine.ProBuilder
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
-#if UNITY_EDITOR
-            EditorPrefs.SetInt("ShapeBuilder.Pipe.m_HeightSeigments", m_HeightSeigments);
-            EditorPrefs.SetInt("ShapeBuilder.Pipe.m_NumberOfSlides", m_NumberOfSlides);
-            EditorPrefs.SetFloat("ShapeBuilder.Pipe.m_Thickness", m_Thickness);
-#endif
-
             var height = size.y;
             var radius = System.Math.Min(size.x, size.z);
             // template is outer ring - radius refers to outer ring always

@@ -1,7 +1,4 @@
-﻿#if UNITY_EDITOR
-using UnityEditor;
-#endif
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
 {
@@ -24,12 +21,6 @@ namespace UnityEngine.ProBuilder
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
-#if UNITY_EDITOR
-            EditorPrefs.SetFloat("ShapeBuilder.Arch.m_Thickness", m_Thickness);
-            EditorPrefs.SetInt("ShapeBuilder.Arch.m_NumberOfSides", m_NumberOfSides);
-            EditorPrefs.SetFloat("ShapeBuilder.Arch.m_ArchDegrees", m_ArchDegrees);
-            EditorPrefs.SetBool("ShapeBuilder.Arch.m_EndCaps", m_EndCaps);
-#endif
             var radialCuts = m_NumberOfSides;
             var angle = m_ArchDegrees;
             var width = m_Thickness;

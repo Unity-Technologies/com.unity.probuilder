@@ -8,6 +8,8 @@ namespace UnityEngine.ProBuilder
         [SerializeReference]
         Shape m_shape = new Cube();
 
+        public Shape m_Shape => m_shape;
+
         ProBuilderMesh m_Mesh;
 
         [SerializeField]
@@ -59,12 +61,14 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentException("Type needs to derive from Shape");
 
             m_shape = Activator.CreateInstance(type) as Shape;
+            m_shape.SetToLastParams();
             Rebuild();
         }
 
         public void SetShape(Shape shape)
         {
             m_shape = shape;
+            m_shape.SetToLastParams();
             Rebuild();
         }
 
