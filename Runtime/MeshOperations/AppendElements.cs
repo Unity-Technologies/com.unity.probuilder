@@ -959,6 +959,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
                     verticesToAppend.Add(Vertex.Mix(vertices[localEdge.a], vertices[localEdge.b], (i + 1) / ((float)count + 1)));
 
                 List<SimpleTuple<Face, Edge>> adjacentFaces = ElementSelection.GetNeighborFaces(mesh, localEdge);
+                Edge edgeLookUp = new Edge(lookup[localEdge.a], lookup[localEdge.b]);
+                Edge e = new Edge();
 
                 // foreach face attached to common edge, append vertices
                 foreach (SimpleTuple<Face, Edge> tup in adjacentFaces)
@@ -989,18 +991,104 @@ namespace UnityEngine.ProBuilder.MeshOperations
                         indexesToDelete.AddRange(face.distinctIndexesInternal);
 
                         modifiedFaces.Add(face, data);
+
+                        List<Vertex> orderedVertices = new List<Vertex>();
+                        List<int> orderedSharedIndexes = new List<int>();
+                        List<int> orderedSharedUVIndexes = new List<int>();
+                        List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(face);
+
+                        for (int i = 0; i < peripheralEdges.Count; i++)
+                        {
+                            e.a = peripheralEdges[i].a;
+                            e.b = peripheralEdges[i].b;
+
+                            orderedVertices.Add(vertices[e.a]);
+
+                            int shared;
+                            if (lookup.TryGetValue(e.a, out shared))
+                                orderedSharedIndexes.Add(shared);
+
+                            if (lookupUV.TryGetValue(i, out shared))
+                                data.sharedIndexesUV.Add(shared);
+
+                            if (edgeLookUp.a == lookup[e.a] && edgeLookUp.b == lookup[e.b])
+                            {
+                                for (int j = 0; j < count; j++)
+                                {
+                                    orderedVertices.Add(verticesToAppend[j]);
+                                    orderedSharedIndexes.Add(sharedIndexesCount + j);
+                                    orderedSharedUVIndexes.Add(-1);
+                                }
+                            }
+                            else if (edgeLookUp.a == lookup[e.b] && edgeLookUp.b == lookup[e.a])
+                            {
+                                for (int j = count - 1; j >=0 ; j--)
+                                {
+                                    orderedVertices.Add(verticesToAppend[j]);
+                                    orderedSharedIndexes.Add(sharedIndexesCount + j);
+                                    orderedSharedUVIndexes.Add(-1);
+                                }
+                            }
+                        }
+
+                        data.vertices = orderedVertices;
+                        data.sharedIndexes = orderedSharedIndexes;
+                        data.sharedIndexesUV = orderedSharedUVIndexes;
                     }
-
-                    data.vertices.AddRange(verticesToAppend);
-
-                    for (int i = 0; i < count; i++)
+                    else
                     {
-                        data.sharedIndexes.Add(sharedIndexesCount + i);
-                        data.sharedIndexesUV.Add(-1);
+                        List<Vertex> orderedVertices = data.vertices;
+                        List<int> orderedSharedIndexes = data.sharedIndexes;
+                        List<int> orderedSharedUVIndexes = data.sharedIndexesUV;
+
+                        for (int i = 0; i < orderedVertices.Count; i++)
+                        {
+                            Vertex edgeStart = orderedVertices[i];
+                            int edgeStartIndex = vertices.IndexOf(edgeStart);
+
+                            Vertex edgeEnd  =  orderedVertices[(i+1)%orderedVertices.Count];
+                            int edgeEndIndex = vertices.IndexOf(edgeEnd);
+
+                            if(edgeStartIndex == -1 || edgeEndIndex == -1)
+                                 continue;
+
+                            if (lookup[edgeStartIndex] == lookup[localEdge.a] && lookup[edgeEndIndex] == lookup[localEdge.b])
+                            {
+                                orderedVertices.InsertRange(i+1,verticesToAppend);
+                                for (int j = 0; j < count; j++)
+                                {
+                                    orderedSharedIndexes.Insert( i+j+1, sharedIndexesCount + j );
+                                    orderedSharedUVIndexes.Add(-1);
+                                    //orderedVertices.Add(verticesToAppend[j]);
+                                    //orderedSharedIndexes.Add(sharedIndexesCount + j);
+                                    //orderedSharedUVIndexes.Add(-1);
+                                }
+
+                            }
+                            else if (lookup[edgeStartIndex] == lookup[localEdge.b] && lookup[edgeEndIndex] == lookup[localEdge.a])
+                            {
+                                verticesToAppend.Reverse();
+                                orderedVertices.InsertRange(i+1,verticesToAppend);
+                                for (int j = count - 1; j >=0 ; j--)
+                                {
+                                    orderedSharedIndexes.Insert( i+1, sharedIndexesCount + j );
+                                    orderedSharedUVIndexes.Add(-1);
+                                    //orderedVertices.Add(verticesToAppend[j]);
+                                    //orderedSharedIndexes.Add(sharedIndexesCount + j);
+                                    //orderedSharedUVIndexes.Add(-1);
+                                }
+                            }
+                        }
+
+                        data.vertices = orderedVertices;
+                        data.sharedIndexes = orderedSharedIndexes;
+                        data.sharedIndexesUV = orderedSharedUVIndexes;
+
                     }
                 }
 
                 sharedIndexesCount += count;
+
             }
 
             // now apply the changes
@@ -1013,16 +1101,25 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 Face face = dic_face[i];
                 FaceRebuildData data = dic_data[i];
 
-                Vector3 nrm = Math.Normal(mesh, face);
-                Vector2[] projection = Projection.PlanarProject(data.vertices.Select(x => x.position).ToArray(), null, nrm);
+                // Vector3 nrm = Math.Normal(mesh, face);
+                // Vector2[] projection = Projection.PlanarProject(data.vertices.Select(x => x.position).ToArray(), null, nrm);
+                //
+                // int vertexCount = vertices.Count;
+                //
+                // // triangulate and set new face indexes to end of current vertex list
+                // List<int> indexes;
+                //
+                // if (Triangulation.SortAndTriangulate(projection, out indexes))
+                //      data.face.indexesInternal = indexes.ToArray();
+                // else
+                //     continue;
 
                 int vertexCount = vertices.Count;
-
                 // triangulate and set new face indexes to end of current vertex list
-                List<int> indexes;
+                List<int> triangles;
 
-                if (Triangulation.SortAndTriangulate(projection, out indexes))
-                    data.face.indexesInternal = indexes.ToArray();
+                if (Triangulation.TriangulateVertices(data.vertices, out triangles, false))
+                    data.face = new Face(triangles);
                 else
                     continue;
 
@@ -1302,9 +1399,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 List<int> triangles;
 
                 if (Triangulation.TriangulateVertices(data.vertices, out triangles, false))
-                {
                     data.face = new Face(triangles);
-                }
                 else
                     continue;
 
