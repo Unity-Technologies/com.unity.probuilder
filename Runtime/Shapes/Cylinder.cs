@@ -104,14 +104,15 @@ namespace UnityEngine.ProBuilder
             for (int n = 0; n < m_AxisDivisions; n++)
             {
                 // bottom faces
-                verts[ind + 0] = new Vector3(circle[n].x, 0f, circle[n].z);
+                var bottomCapHeight = -height * .5f;
+                verts[ind + 0] = new Vector3(circle[n].x, bottomCapHeight, circle[n].z);
 
-                verts[ind + 1] = Vector3.zero;
+                verts[ind + 1] = new Vector3(0f, bottomCapHeight, 0f);
 
                 if (n != m_AxisDivisions - 1)
-                    verts[ind + 2] = new Vector3(circle[n + 1].x, 0f, circle[n + 1].z);
+                    verts[ind + 2] = new Vector3(circle[n + 1].x, bottomCapHeight, circle[n + 1].z);
                 else
-                    verts[ind + 2] = new Vector3(circle[000].x, 0f, circle[000].z);
+                    verts[ind + 2] = new Vector3(circle[000].x, bottomCapHeight, circle[000].z);
 
                 faces[f_ind + n] = new Face(new int[3] { ind + 2, ind + 1, ind + 0 });
 
