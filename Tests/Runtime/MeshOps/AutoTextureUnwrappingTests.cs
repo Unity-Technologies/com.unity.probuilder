@@ -7,10 +7,10 @@ using UnityEngine.ProBuilder.Tests.Framework;
 
 static class AutoTextureUnwrappingTests
 {
-    static readonly ShapeType[] offsetRotationShapes = new ShapeType[]
+    static readonly Type[] offsetRotationShapes = new Type[]
     {
-        ShapeType.Sprite,
-        ShapeType.Stair
+        typeof(UnityEngine.ProBuilder.Sprite),
+        typeof(Stairs)
     };
 
     static readonly Vector2[] offsetValues = new Vector2[]
@@ -29,7 +29,7 @@ static class AutoTextureUnwrappingTests
 
     [Test]
     public static void SetOffsetAndRotate_InLocalSpace_IsAppliedToMesh(
-        [ValueSource("offsetRotationShapes")] ShapeType shape,
+        [ValueSource("offsetRotationShapes")] Type shape,
         [ValueSource("offsetValues")] Vector2 offset,
         [ValueSource("rotationValues")] float rotation)
     {
@@ -79,7 +79,7 @@ static class AutoTextureUnwrappingTests
     [Test]
     public static void SetAnchor_IsAppliedToMesh([ValueSource("anchorValues")] AutoUnwrapSettings.Anchor anchor)
     {
-        var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var mesh = ShapeGenerator.CreateShape<Cube>();
 
         Assume.That(mesh, Is.Not.Null);
 
@@ -123,7 +123,7 @@ static class AutoTextureUnwrappingTests
     [Test]
     public static void SetFillMode_IsAppliedToMesh([ValueSource("fillModeValues")] AutoUnwrapSettings.Fill fill)
     {
-        var shape = ShapeGenerator.CreateShape(ShapeType.Sprite);
+        var shape = ShapeGenerator.CreateShape<UnityEngine.ProBuilder.Sprite>();
 
         Assume.That(shape, Is.Not.Null);
 
@@ -176,7 +176,7 @@ static class AutoTextureUnwrappingTests
     public static void SetWorldSpace_IsAppliedToMesh()
     {
         // Stair includes texture groups and non-grouped faces
-        var shape = ShapeGenerator.CreateShape(ShapeType.Stair);
+        var shape = ShapeGenerator.CreateShape<Stairs>();
 
         foreach (var face in shape.faces)
         {

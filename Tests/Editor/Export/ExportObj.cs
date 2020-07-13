@@ -54,7 +54,7 @@ class ExportObj : TemporaryAssetTest
         [ValueSource("k_TextureOffsetScale")] bool textureOffsetScale
     )
     {
-        var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var cube = ShapeGenerator.CreateShape<Cube>();
 
         string obj;
         string mtl;
@@ -84,8 +84,8 @@ class ExportObj : TemporaryAssetTest
     [Test]
     public static void ExportMultipleMeshes_CreatesModelWithTwoGroups()
     {
-        var cube1 = new Model("Cube A", ShapeGenerator.CreateShape(ShapeType.Cube));
-        var cube2 = new Model("Cube B", ShapeGenerator.CreateShape(ShapeType.Cube));
+        var cube1 = new Model("Cube A", ShapeGenerator.CreateShape<Cube>());
+        var cube2 = new Model("Cube B", ShapeGenerator.CreateShape<Cube>());
         string exportedPath = TestUtility.temporarySavedAssetsDirectory + "ObjGroup.obj";
 
         UnityEditor.ProBuilder.Actions.ExportObj.DoExport(exportedPath, new Model[] { cube1, cube2 }, new ObjOptions()

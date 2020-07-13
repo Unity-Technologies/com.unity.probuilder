@@ -22,7 +22,7 @@ public class CollapseVerticesTest
         }
 
         Assert.That(ProBuilderEditor.instance, Is.Not.Null);
-        m_PBMesh = ShapeGenerator.CreateShape(ShapeType.Cube);
+        m_PBMesh = ShapeGenerator.CreateShape<Cube>();
         m_PreviousSelectMode = ProBuilderEditor.selectMode;
         ProBuilderEditor.selectMode = SelectMode.Vertex;
     }

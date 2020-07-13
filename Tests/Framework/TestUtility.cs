@@ -83,7 +83,7 @@ namespace UnityEngine.ProBuilder.Tests.Framework
 
             public static ProBuilderMesh[] GetBasicShapes()
             {
-                var shapes = Enum.GetValues(typeof(ShapeType)) as ShapeType[];
+                var shapes = Enum.GetValues(typeof(Shape)) as Shape[];
                 ProBuilderMesh[] primitives = new ProBuilderMesh[shapes.Length];
                 for (int i = 0, c = shapes.Length; i < c; i++)
                 {
@@ -506,7 +506,7 @@ namespace UnityEngine.ProBuilder.Tests.Framework
 
         public static SimpleTuple<ProBuilderMesh, Face> CreateCubeWithNonContiguousMergedFace()
         {
-            var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
+            var cube = ShapeGenerator.CreateShape<Cube>();
 
             Assume.That(cube, Is.Not.Null);
 

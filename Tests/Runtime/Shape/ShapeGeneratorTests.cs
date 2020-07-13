@@ -2,16 +2,28 @@ using UnityEngine;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Tests.Framework;
+using System.Collections.Generic;
+using System;
 
 class ShapeGeneratorTests
 {
-    public static ShapeType[] shapeTypes
-    {
-        get { return (ShapeType[])typeof(ShapeType).GetEnumValues(); }
+    public static List<Type> shapeTypes {
+        get {
+            var list = new List<Type>();
+            var types = typeof(Shape).Assembly.GetTypes();
+            foreach (var type in types)
+            {
+                if (typeof(Shape).IsAssignableFrom(type) && !type.IsAbstract)
+                {
+                    list.Add(type);
+                }
+            }
+            return list;
+        }
     }
 
     [Test]
-    public void ShapeGenerator_MatchesTemplate([ValueSource("shapeTypes")] ShapeType type)
+    public void ShapeGenerator_MatchesTemplate([ValueSource("shapeTypes")] Type type)
     {
         ProBuilderMesh pb = ShapeGenerator.CreateShape(type);
 
@@ -34,13 +46,13 @@ class ShapeGeneratorTests
         }
         finally
         {
-            Object.DestroyImmediate(pb.gameObject);
+            UnityEngine.Object.DestroyImmediate(pb.gameObject);
         }
 #endif
     }
 
     [Test]
-    public static void MeshAttributes_AreValid([ValueSource("shapeTypes")] ShapeType shape)
+    public static void MeshAttributes_AreValid([ValueSource("shapeTypes")] Type shape)
     {
         var mesh = ShapeGenerator.CreateShape(shape);
 

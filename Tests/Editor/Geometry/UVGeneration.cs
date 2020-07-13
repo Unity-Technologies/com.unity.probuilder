@@ -19,7 +19,7 @@ public class UVGeneration
     [Test, TestCaseSource(typeof(UVGeneration), "s_ConeSubDivAxes")]
     public void NewShape_CreateCone_FaceUVsAreConsistent(int subDivAxis)
     {
-        m_PBMesh = ShapeGenerator.GenerateCone(PivotLocation.Center, 0.5f, 1f, subDivAxis);
+        m_PBMesh = ShapeGenerator.CreateShape<Cone>();
 
         var faces = m_PBMesh.facesInternal;
         var uvs = m_PBMesh.texturesInternal;

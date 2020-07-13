@@ -12,7 +12,7 @@ static class CreateDestroy
     [Test]
     public static void DestroyDeletesMesh()
     {
-        var pb = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var pb = ShapeGenerator.CreateShape<Cube>();
         Mesh mesh = pb.GetComponent<MeshFilter>().sharedMesh;
         UObject.DestroyImmediate(pb.gameObject);
 
@@ -23,7 +23,7 @@ static class CreateDestroy
     [Test]
     public static void DestroyWithNoDeleteFlagPreservesMesh()
     {
-        var pb = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var pb = ShapeGenerator.CreateShape<Cube>();
 
         try
         {
@@ -42,7 +42,7 @@ static class CreateDestroy
     [Test]
     public static void DestroyDoesNotDeleteMeshBackByAsset()
     {
-        var pb = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var pb = ShapeGenerator.CreateShape<Cube>();
         string path = TestUtility.SaveAssetTemporary<Mesh>(pb.mesh);
         Mesh mesh = pb.GetComponent<MeshFilter>().sharedMesh;
         UObject.DestroyImmediate(pb.gameObject);
@@ -54,7 +54,7 @@ static class CreateDestroy
     [Test, Ignore("Requires ENABLE_DRIVEN_PROPERTIES feature")]
     public static void CreatePrimitive_SetsMeshFilterHideFlags_DontSave()
     {
-        var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var mesh = ShapeGenerator.CreateShape<Cube>();
         Assume.That(mesh, Is.Not.Null);
         Assume.That(mesh.filter, Is.Not.Null);
         Assert.That(mesh.filter.hideFlags & HideFlags.DontSave, Is.EqualTo(HideFlags.DontSave));

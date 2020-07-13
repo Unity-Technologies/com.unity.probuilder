@@ -13,10 +13,10 @@ class SelectFacesByColor
 
     void Setup(bool withColor = false)
     {
-        ProBuilderMesh shape1 = ShapeGenerator.CreateShape(ShapeType.Cube);
+        ProBuilderMesh shape1 = ShapeGenerator.CreateShape<Cube>();
         shape1.transform.position = Vector3.zero - shape1.GetComponent<MeshRenderer>().bounds.center;
 
-        ProBuilderMesh shape2 = ShapeGenerator.CreateShape(ShapeType.Cube);
+        ProBuilderMesh shape2 = ShapeGenerator.CreateShape<Cube>();
         shape2.transform.position = Vector3.zero - shape2.GetComponent<MeshRenderer>().bounds.center;
 
         if (withColor)

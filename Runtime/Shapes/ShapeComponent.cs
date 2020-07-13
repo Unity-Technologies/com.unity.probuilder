@@ -85,11 +85,11 @@ namespace UnityEngine.ProBuilder
             var scale = size.DivideBy(mesh.mesh.bounds.size);
             var positions = mesh.positionsInternal;
 
-            if (System.Math.Abs(size.x) < 0.01f)
+            if (System.Math.Abs(mesh.mesh.bounds.size.x) < 0.01f)
                 scale.x = 0;
-            if (System.Math.Abs(size.y) < 0.01f)
+            if (System.Math.Abs(mesh.mesh.bounds.size.y) < 0.01f)
                 scale.y = 0;
-            if (System.Math.Abs(size.z) < 0.01f)
+            if (System.Math.Abs(mesh.mesh.bounds.size.z) < 0.01f)
                 scale.z = 0;
 
             for (int i = 0, c = mesh.vertexCount; i < c; i++)

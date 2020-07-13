@@ -11,9 +11,19 @@ using Object = UnityEngine.Object;
 
 class ExtrudeTests
 {
-    public static ShapeType[] shapeTypes
-    {
-        get { return (ShapeType[])typeof(ShapeType).GetEnumValues(); }
+    public static List<Type> m_AvailableShapeTypes {
+        get {
+            var list = new List<Type>();
+            var types = typeof(Shape).Assembly.GetTypes();
+            foreach (var type in types)
+            {
+                if (typeof(Shape).IsAssignableFrom(type) && !type.IsAbstract)
+                {
+                    list.Add(type);
+                }
+            }
+            return list;
+        }
     }
 
     static System.Random m_Random = new System.Random();
@@ -21,7 +31,7 @@ class ExtrudeTests
     [Test]
     public static void Extrude_OneEdge_CreatesValidGeometry()
     {
-        var pb = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var pb = ShapeGenerator.CreateShape<Cube>();
 
         try
         {
@@ -46,7 +56,7 @@ class ExtrudeTests
     [Test]
     public static void Extrude_MultipleEdges_CreatesValidGeometry()
     {
-        var pb = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var pb = ShapeGenerator.CreateShape<Cube>();
 
         try
         {
@@ -69,7 +79,7 @@ class ExtrudeTests
     }
 
     [Test]
-    public static void ExtrudeAllFaces_FaceNormal([ValueSource("shapeTypes")] ShapeType shape)
+    public static void ExtrudeAllFaces_FaceNormal([ValueSource("shapeTypes")] Type shape)
     {
         var mesh = ShapeGenerator.CreateShape(shape);
 
@@ -98,7 +108,7 @@ class ExtrudeTests
     }
 
     [Test]
-    public static void ExtrudeAllFaces_IndividualFaces([ValueSource("shapeTypes")] ShapeType shape)
+    public static void ExtrudeAllFaces_IndividualFaces([ValueSource("shapeTypes")] Type shape)
     {
         var mesh = ShapeGenerator.CreateShape(shape);
 
@@ -129,7 +139,7 @@ class ExtrudeTests
     }
 
     [Test]
-    public static void ExtrudeAllFaces_VertexNormal([ValueSource("shapeTypes")] ShapeType shape)
+    public static void ExtrudeAllFaces_VertexNormal([ValueSource("shapeTypes")] Type shape)
     {
         var mesh = ShapeGenerator.CreateShape(shape);
 
@@ -166,7 +176,7 @@ class ExtrudeTests
 
     [Test]
     public void Extrude_Face_CreatesValidGeometry(
-        [ValueSource("shapeTypes")] ShapeType shape,
+        [ValueSource("shapeTypes")] Type shape,
         [ValueSource("extrudeMethods")] ExtrudeMethod extrudeMethod,
         [ValueSource("extrudeDistance")] float distance)
     {
@@ -198,7 +208,7 @@ class ExtrudeTests
     }
 
     [Test]
-    public static void Extrude_Face_MultipleTimes_CreatesValidGeometry([ValueSource("shapeTypes")] ShapeType shape)
+    public static void Extrude_Face_MultipleTimes_CreatesValidGeometry([ValueSource("shapeTypes")] Type shape)
     {
         var mesh = ShapeGenerator.CreateShape(shape);
 

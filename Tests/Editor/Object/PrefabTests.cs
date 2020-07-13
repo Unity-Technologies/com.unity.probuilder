@@ -14,7 +14,7 @@ public class PrefabTests
     static GameObject CreatePrefab()
     {
         var prefabPath = AssetDatabase.GenerateUniqueAssetPath("Assets/PrefabTest.prefab");
-        var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var mesh = ShapeGenerator.CreateShape<Cube>();
         var prefab = PrefabUtility.SaveAsPrefabAsset(mesh.gameObject, prefabPath);
         Assume.That(prefab, Is.Not.Null);
         Assume.That(AssetDatabase.GetAssetPath(prefab), Is.EqualTo(prefabPath));
@@ -60,7 +60,7 @@ public class PrefabTests
     public void CreatePrefab_DoesNot_SerializeMeshColliderMeshProperty()
     {
         var prefabPath = AssetDatabase.GenerateUniqueAssetPath("Assets/PrefabTest.prefab");
-        var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var mesh = ShapeGenerator.CreateShape<Cube>();
 
         MeshCollider collider = mesh.DemandComponent<MeshCollider>();
         mesh.Refresh(RefreshMask.Collisions);
