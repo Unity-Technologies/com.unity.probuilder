@@ -59,19 +59,19 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            if (m_ShapeData == null)
-            {
-                m_ShapeData = ScriptableObject.CreateInstance<ScriptableShape>();
-                m_ShapeData.m_Shape = Activator.CreateInstance(activeShapeType) as Shape;
-                m_Object = new SerializedObject(m_ShapeData);
-            }
+            m_ActiveShapeIndex = EditorPrefs.GetInt("ShapeBuilder.ActiveShapeIndex");
+            m_ShapeData = ScriptableObject.CreateInstance<ScriptableShape>();
+            m_ShapeData.m_Shape = Activator.CreateInstance(activeShapeType) as Shape;
+            m_ShapeData.m_Shape.SetToLastParams();
+            m_Object = new SerializedObject(m_ShapeData);
             EditorTools.EditorTools.activeToolChanged += ActiveToolChanged;
             m_ShapeTitle = new GUIContent("Draw Shape");
-            m_ShapeTypesPopupContent = m_AvailableShapeTypes.Select(x => x.Name).ToArray();
+            m_ShapeTypesPopupContent = m_AvailableShapeTypes.Select(x => x.Name).ToArray(); 
         }
-
+         
         void OnDisable()
         {
+            DestroyImmediate(m_ShapeData);
             EditorTools.EditorTools.activeToolChanged -= ActiveToolChanged;
         }
 
@@ -99,8 +99,9 @@ namespace UnityEditor.ProBuilder
                 throw new ArgumentException("type must inherit UnityEngine.ProBuilder.Shape", "type");
 
             m_ActiveShapeIndex = m_AvailableShapeTypes.IndexOf(type);
+            EditorPrefs.SetInt("ShapeBuilder.ActiveShapeIndex", m_ActiveShapeIndex);
 
-            if(m_ActiveShapeIndex < 0)
+            if (m_ActiveShapeIndex < 0)
                 throw new Exception("type must inherit UnityEngine.ProBuilder.Shape");
 
             if (m_Shape != null)
@@ -350,6 +351,8 @@ namespace UnityEditor.ProBuilder
             EditorGUI.BeginChangeCheck();
             m_Object.Update();
             m_ActiveShapeIndex = EditorGUILayout.Popup(m_ActiveShapeIndex, m_ShapeTypesPopupContent);
+            EditorPrefs.SetInt("ShapeBuilder.ActiveShapeIndex", m_ActiveShapeIndex);
+
             if (EditorGUI.EndChangeCheck())
             {
                 var type = m_AvailableShapeTypes[m_ActiveShapeIndex];
