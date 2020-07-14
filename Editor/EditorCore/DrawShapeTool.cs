@@ -59,17 +59,19 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            m_ShapeData = ScriptableObject.CreateInstance<ScriptableShape>();
-            m_ShapeData.m_Shape = Activator.CreateInstance(activeShapeType) as Shape;
-            m_Object = new SerializedObject(m_ShapeData);
+            if (m_ShapeData == null)
+            {
+                m_ShapeData = ScriptableObject.CreateInstance<ScriptableShape>();
+                m_ShapeData.m_Shape = Activator.CreateInstance(activeShapeType) as Shape;
+                m_Object = new SerializedObject(m_ShapeData);
+            }
             EditorTools.EditorTools.activeToolChanged += ActiveToolChanged;
             m_ShapeTitle = new GUIContent("Draw Shape");
-            m_ShapeTypesPopupContent = m_AvailableShapeTypes.Select(x => x.ToString()).ToArray();
+            m_ShapeTypesPopupContent = m_AvailableShapeTypes.Select(x => x.Name).ToArray();
         }
 
         void OnDisable()
         {
-            DestroyImmediate(m_ShapeData);
             EditorTools.EditorTools.activeToolChanged -= ActiveToolChanged;
         }
 
@@ -121,8 +123,7 @@ namespace UnityEditor.ProBuilder
             if (m_Shape == null)
             {
                 init = true;
-                m_Shape = new GameObject("Shape").AddComponent<ShapeComponent>();
-                m_Shape.SetShape(m_ShapeData.m_Shape);
+                m_Shape = ShapeGenerator.CreateShape(m_ShapeData.m_Shape).GetComponent<ShapeComponent>();
                 UndoUtility.RegisterCreatedObjectUndo(m_Shape.gameObject, "Draw Shape");
             }
 
@@ -265,9 +266,7 @@ namespace UnityEditor.ProBuilder
             if (m_Size == Vector3.zero)
                 m_Size = defaultSize;
             var type = activeShapeType;
-            var shape = new GameObject("Shape").AddComponent<ShapeComponent>();
-            // create with data
-            shape.SetShape(type);
+            var shape = ShapeGenerator.CreateShape(type).GetComponent<ShapeComponent>();
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape");
             Bounds bounds = new Bounds(Vector3.zero, m_Size);
             shape.Rebuild(bounds, Quaternion.identity);
@@ -283,9 +282,7 @@ namespace UnityEditor.ProBuilder
             if (m_Size == Vector3.zero)
                 m_Size = defaultSize;
             var type = activeShapeType;
-            var shape = new GameObject("Shape").AddComponent<ShapeComponent>();
-            // create with data
-            shape.SetShape(m_ShapeData.m_Shape);
+            var shape = ShapeGenerator.CreateShape(m_ShapeData.m_Shape).GetComponent<ShapeComponent>();
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape");
             Bounds bounds = new Bounds(Vector3.zero, m_Size);
             shape.Rebuild(bounds, Quaternion.identity);

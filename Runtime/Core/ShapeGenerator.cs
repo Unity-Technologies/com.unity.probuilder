@@ -68,7 +68,7 @@ namespace UnityEngine.ProBuilder
                 UVEditing.ProjectFacesBox(pb, pb.facesInternal);
             }
 
-            pb.gameObject.name = shape.ToString();
+            pb.gameObject.name = shape.name;
             pb.renderer.sharedMaterial = BuiltinMaterials.defaultMaterial;
 
             return pb;
