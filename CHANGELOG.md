@@ -7,8 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Features
+
+- Added a selection preview when using the Select Path tool.
+
 ### Bug Fixes
 
+- Ensure "ProBuilderize" action is enabled for current selection on opening main window
+- [case: 1258589] Fixed error in runtime sample examples.
 - [case: 1251289] Fixed `m_WireMaterial null reference exception` when re-importing ProBuilder.
 
 ## [4.4.0-preview.1] - 2020-06-21
@@ -16,10 +22,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Features
 
 - Added iterative selection on edges.
-- Added a selection preview when using the Select Path tool
 
 ### Bug Fixes
-- [case: 1258589] Fixed error in runtime sample examples.
+
 - [case: 1248708] Fixed physx error when welding all vertices to a singularity.
 - Fixed tooltips always clamping to the left of the screen on secondary monitors.
 - Fixed `EditorUtility.SetIconEnabled` not respecting the enabled parameter.
@@ -33,7 +38,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1247270] Fixed `Null Reference Exception` when entering Prefab Stage after merging multiple `ProBuilderMesh`.
 - [case: 1252394] Fixed dragging selection with Ctrl problem (and key pressed problem in general).
 - Fixed Cylinder shape clamping segments to 48.
-- Ensure "ProBuilderize" action is enabled for current selection on opening main window
 
 ### Known Issues
 
