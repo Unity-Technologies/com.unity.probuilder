@@ -7,8 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Features
+
+- Added a selection preview when using the Select Path tool.
+
 ### Bug Fixes
 
+- Ensure "ProBuilderize" action is enabled for current selection on opening main window
+- [case: 1258589] Fixed error in runtime sample examples.
 - [case: 1258421] Fixed an issue where GI UV streams would be lost at runtime due to `ProBuilderMesh` assigning a new `Mesh` to the statically combined `MeshFilter`.
 
 ## [4.4.0-preview.1] - 2020-06-21
@@ -16,7 +22,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Features
 
 - Added iterative selection on edges.
-- Added a selection preview when using the Select Path tool
 
 ### Bug Fixes
 
