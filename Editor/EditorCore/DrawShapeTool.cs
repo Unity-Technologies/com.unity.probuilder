@@ -348,33 +348,74 @@ namespace UnityEditor.ProBuilder
 
         void OnActiveToolGUI(UObject target, SceneView view)
         {
-            EditorGUI.BeginChangeCheck();
-            m_Object.Update();
-            m_ActiveShapeIndex = EditorGUILayout.Popup(m_ActiveShapeIndex, m_ShapeTypesPopupContent);
-            EditorPrefs.SetInt("ShapeBuilder.ActiveShapeIndex", m_ActiveShapeIndex);
-
-            if (EditorGUI.EndChangeCheck())
+            if (Selection.activeTransform?.gameObject.GetComponent<ShapeComponent>() != null && m_Shape == null)
             {
-                var type = m_AvailableShapeTypes[m_ActiveShapeIndex];
-                SetActiveShapeType(type);
-                m_ShapeData.m_Shape = Activator.CreateInstance(type) as Shape;
-                m_ShapeData.m_Shape.SetToLastParams();
-                UndoUtility.RegisterCompleteObjectUndo(m_ShapeData, "Change Shape");
-            }
+                Debug.Log("no m shape");
+                var shapeComp = Selection.activeTransform?.gameObject.GetComponent<ShapeComponent>();
+                var shape = shapeComp.m_Shape;
+                EditorGUI.BeginChangeCheck();
+                m_Object.Update();
+                m_ActiveShapeIndex = m_AvailableShapeTypes.IndexOf(shape.GetType());
+                m_ActiveShapeIndex = EditorGUILayout.Popup(m_ActiveShapeIndex, m_ShapeTypesPopupContent);
+                EditorPrefs.SetInt("ShapeBuilder.ActiveShapeIndex", m_ActiveShapeIndex);
 
-            m_Size = EditorGUILayout.Vector3Field("Size", m_Size);
-
-            var shape = m_Object.FindProperty("m_Shape");
-            EditorGUILayout.PropertyField(shape, true);
-            if (m_Object.ApplyModifiedProperties())
-            {
-                m_ShapeData.m_Shape.SaveParams();
-                if (m_Shape != null)
+                if (EditorGUI.EndChangeCheck())
                 {
-                    m_Shape.Rebuild();
+                    var type = m_AvailableShapeTypes[m_ActiveShapeIndex];
+                    SetActiveShapeType(type);
+                    shapeComp.SetShape(type);
                     ProBuilderEditor.Refresh(false);
+                    UndoUtility.RegisterCompleteObjectUndo(shapeComp, "Change Shape");
+                }
+
+                shapeComp.size = EditorGUILayout.Vector3Field("Size", shapeComp.size);
+                m_Size = shapeComp.size;
+
+                var serObject = new SerializedObject(shapeComp);
+                var shapeProperty = serObject.FindProperty("m_shape");
+                EditorGUILayout.PropertyField(shapeProperty, true);
+                if (serObject.ApplyModifiedProperties())
+                {
+                    shapeComp.m_Shape.SaveParams();
+                    if (shapeComp != null)
+                    {
+                        shapeComp.Rebuild();
+                        ProBuilderEditor.Refresh(false);
+                    }
                 }
             }
+            else
+            {
+                EditorGUI.BeginChangeCheck();
+                m_Object.Update();
+                m_ActiveShapeIndex = EditorGUILayout.Popup(m_ActiveShapeIndex, m_ShapeTypesPopupContent);
+                EditorPrefs.SetInt("ShapeBuilder.ActiveShapeIndex", m_ActiveShapeIndex);
+
+                if (EditorGUI.EndChangeCheck())
+                {
+                    var type = m_AvailableShapeTypes[m_ActiveShapeIndex];
+                    SetActiveShapeType(type);
+                    m_ShapeData.m_Shape = Activator.CreateInstance(type) as Shape;
+                    m_ShapeData.m_Shape.SetToLastParams();
+                    UndoUtility.RegisterCompleteObjectUndo(m_ShapeData, "Change Shape");
+                }
+
+                m_Size = EditorGUILayout.Vector3Field("Size", m_Size);
+
+                var shape = m_Object.FindProperty("m_Shape");
+                EditorGUILayout.PropertyField(shape, true);
+                if (m_Object.ApplyModifiedProperties())
+                {
+                    m_ShapeData.m_Shape.SaveParams();
+                    if (m_Shape != null)
+                    {
+                        m_Shape.Rebuild();
+                        ProBuilderEditor.Refresh(false);
+                    }
+                }
+            }
+            
+           
 
             var rect = EditorGUILayout.GetControlRect(false, 45);
             EditorGUI.HelpBox(rect, "Click to create the shape. Hold and drag to create the shape while controlling the size.", MessageType.Info);

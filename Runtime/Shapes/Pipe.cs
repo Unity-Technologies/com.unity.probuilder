@@ -12,7 +12,7 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         int m_NumberOfSlides = 6;
 
-        [Range(0, 32)]
+        [Range(1, 32)]
         [SerializeField]
         int m_HeightSeigments = 1;
 
