@@ -334,7 +334,7 @@ namespace UnityEditor.ProBuilder
 
             for (int actionIndex = 0; actionIndex < m_ActionsLength; actionIndex++)
             {
-                MenuAction action = m_Actions[actionIndex];
+                var action = m_Actions[actionIndex];
 
                 if (!IsActionValid(action))
                     continue;
