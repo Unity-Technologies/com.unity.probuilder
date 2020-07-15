@@ -232,7 +232,11 @@ namespace UnityEditor.ProBuilder
                     else if ((m_CurrentVertexTypes & VertexTypes.AddedOnEdge) != 0)
                         m_CurrentHandleColor = k_HandleColorAddVertexOnEdge;
                     else
+                    {
                         m_CurrentHandleColor = k_HandleColorAddNewVertex;
+                        if(!m_PlacingPoint)
+                            m_SelectedIndex = -1;
+                    }
                 }
                 else
                 {
@@ -277,12 +281,12 @@ namespace UnityEditor.ProBuilder
             for (int i = 0; i < polygonalCut.m_cutPath.Count; i++)
             {
                 var vertexData = polygonalCut.m_cutPath[i];
-                if (UnityEngine.ProBuilder.Math.Approx3(vertexData.position,
+                if( UnityEngine.ProBuilder.Math.Approx3( vertexData.position,
                     m_CurrentPositionToAdd,
-                    snapDistance))
+                    snapDistance ) )
                 {
-                    snapDistance = Vector3.Distance(vertexData.position, m_CurrentPositionToAdd);
-                    if(!m_ModifyPoint)
+                    snapDistance = Vector3.Distance( vertexData.position, m_CurrentPositionToAdd );
+                    if( !m_ModifyPoint )
                         m_CurrentPositionToAdd = vertexData.position;
                     m_CurrentVertexTypes = vertexData.types | VertexTypes.VertexInShape;
                     m_SelectedIndex = i;
@@ -398,6 +402,13 @@ namespace UnityEditor.ProBuilder
 
             if (m_PlacingPoint || m_ModifyPoint)
             {
+
+                if( evtType == EventType.MouseDown
+                    && HandleUtility.nearestControl == m_ControlId )
+                {
+                    m_PlacingPoint = true;
+                }
+
                 if (evtType == EventType.MouseDrag)
                 {
                     if (UpdateHitPosition())

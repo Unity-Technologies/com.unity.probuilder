@@ -733,10 +733,10 @@ namespace UnityEditor.ProBuilder
 
         void UndoRedoPerformed()
         {
-            if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
-                ProBuilderEditor.selectMode = ProBuilderEditor.selectMode & ~(SelectMode.InputTool);
-            else
-                ProBuilderEditor.selectMode = ProBuilderEditor.selectMode | SelectMode.InputTool;
+            // if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
+            //     ProBuilderEditor.selectMode = ProBuilderEditor.selectMode & ~(SelectMode.InputTool);
+            // else
+            //     ProBuilderEditor.selectMode = ProBuilderEditor.selectMode | SelectMode.InputTool;
 
             if (polygon.polyEditMode != PolyShape.PolyEditMode.None)
                 Tools.current = Tool.None;
