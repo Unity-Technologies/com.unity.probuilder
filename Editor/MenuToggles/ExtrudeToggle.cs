@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEngine;
+using UObject = UnityEngine.Object;
 
 
 namespace UnityEditor.ProBuilder
@@ -55,22 +56,31 @@ namespace UnityEditor.ProBuilder
             keyCommandSuper, 'E'
         );
 
+        GUIContent m_ShapeTitle;
+
 
         public override ActionResult StartActivation()
         {
             Debug.Log( "Menu Tool Activation - Start" );
+            GUIContent m_ShapeTitle = new GUIContent("Toggle Tool");
             return ActionResult.Success;
         }
 
         public override void UpdateAction()
         {
              Debug.Log( "Menu Tool Activation - Update" );
+             //SceneViewOverlay.Window(m_ShapeTitle, OnOverlayGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle);
         }
 
         public override ActionResult EndActivation()
         {
             Debug.Log( "Menu Tool Activation - End" );
             return ActionResult.Success;
+        }
+
+        void OnOverlayGUI(UObject target, SceneView view)
+        {
+
         }
     }
 }
