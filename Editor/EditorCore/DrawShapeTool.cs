@@ -120,6 +120,10 @@ namespace UnityEditor.ProBuilder
             if (m_Bounds.size.sqrMagnitude < .01f)
                 return;
 
+            // The sphere doesn't like being built before its height is set
+            if (m_ShapeData.m_Shape is Sphere && System.Math.Abs(m_Bounds.size.y) < 0.01f)
+                return;
+
             bool init = false;
             if (m_Shape == null)
             {
