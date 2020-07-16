@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Ensure "ProBuilderize" action is enabled for current selection on opening main window
 - [case: 1258589] Fixed error in runtime sample examples.
+- Fixed warning in `ShapeEditor` caused by duplicate using statements.
 
 ## [4.4.0-preview.1] - 2020-06-21
 
