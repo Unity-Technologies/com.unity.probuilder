@@ -15,13 +15,17 @@ namespace UnityEditor.ProBuilder.Actions
 
         public ProBuilderize()
         {
-            MeshSelection.objectSelectionChanged += () =>
-                {
-                    // can't just check if any MeshFilter is present because we need to know whether or not it's already a
-                    // probuilder mesh
-                    int meshCount = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Count();
-                    m_Enabled = meshCount > 0 && meshCount != MeshSelection.selectedObjectCount;
-                };
+            MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
+
+            OnObjectSelectionChanged(); // invoke once as we might already have a selection in Hierarchy
+        }
+
+        private void OnObjectSelectionChanged()
+        {
+            // can't just check if any MeshFilter is present because we need to know whether or not it's already a
+            // probuilder mesh
+            int meshCount = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Count();
+            m_Enabled = meshCount > 0 && meshCount != MeshSelection.selectedObjectCount;
         }
 
         public override ToolbarGroup group
