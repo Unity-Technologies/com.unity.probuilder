@@ -7,7 +7,7 @@ using UObject = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder
 {
-    public class ExtrudeToggle : MenuToggle
+    public class MenuToggleTool : MenuToggle
     {
         ExtrudeMethod extrudeMethod
         {
@@ -29,12 +29,12 @@ namespace UnityEditor.ProBuilder
 
         public override Texture2D icon
         {
-            get { return IconUtility.GetIcon(GetExtrudeIconString(extrudeMethod), IconSkin.Pro); }
+            get { return IconUtility.GetIcon("Toolbar/ExtrudeFace_Individual", IconSkin.Pro); }
         }
 
         protected override Texture2D disabledIcon
         {
-            get { return IconUtility.GetIcon(string.Format("{0}_disabled", GetExtrudeIconString(extrudeMethod)), IconSkin.Pro); }
+            get { return IconUtility.GetIcon(string.Format("{0}_disabled", "Toolbar/ExtrudeFace_Individual"), IconSkin.Pro); }
         }
 
         public override TooltipContent tooltip
@@ -51,9 +51,9 @@ namespace UnityEditor.ProBuilder
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
         (
-            "Extrude Toggle",
-            "Extrude selected faces, either as a group or individually.\n\nAlt + Click this button to show additional Extrude options.",
-            keyCommandSuper, 'E'
+            "Menu Toggle",
+            "This is an example of menu toggle in opposition to menu action.",
+            keyCommandSuper, 'M'
         );
 
         GUIContent m_ShapeTitle;
