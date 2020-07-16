@@ -5,12 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Features
+
+- Added a selection preview when using the Select Path tool.
+
+### Bug Fixes
+
+- Ensure "ProBuilderize" action is enabled for current selection on opening main window
+- [case: 1258589] Fixed error in runtime sample examples.
+
 ## [4.4.0-preview.1] - 2020-06-21
 
 ### Features
 
 - Added iterative selection on edges.
-- Added a selection preview when using the Select Path tool
 
 ### Bug Fixes
 
