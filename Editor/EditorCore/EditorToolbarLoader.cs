@@ -91,7 +91,6 @@ namespace UnityEditor.ProBuilder
                 new Actions.DetachFaces(),
                 new Actions.DuplicateFaces(),
                 new Actions.ExtrudeFaces(),
-                new MenuToggleTool(),
 
                 // Face
                 new Actions.ConformFaceNormals(),
@@ -116,7 +115,7 @@ namespace UnityEditor.ProBuilder
                 new Actions.FillHole(),
                 // new Actions.CreatePolygon(),
                 new Actions.SplitVertices(),
-                new Actions.CutToolAction(),
+                new Actions.CutToolToggle(),
                 new Actions.VertexInsertionSingle(),
 
                 // Entity

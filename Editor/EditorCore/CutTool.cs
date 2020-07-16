@@ -152,7 +152,6 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            EditorTools.EditorTools.activeToolChanged += ActiveToolChanged;
             m_OverlayTitle = new GUIContent("Cut Tool");
             m_EdgeToEdge = EditorPrefs.GetBool( k_EdgeToEdgePrefKey, false );
             m_ConnectToStart = EditorPrefs.GetBool( k_ConnectToStart, false );
@@ -162,6 +161,7 @@ namespace UnityEditor.ProBuilder
 
             //ProBuilderEditor.selectMode = ProBuilderEditor.selectMode| SelectMode.InputTool;
 
+            EditorTools.EditorTools.activeToolChanged += ActiveToolChanged;
             EditorApplication.update += Update;
             Undo.undoRedoPerformed += UndoRedoPerformed;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
@@ -195,6 +195,9 @@ namespace UnityEditor.ProBuilder
 
         void CloseTool()
         {
+            if(m_ToolInUse)
+                DoCut();
+
             if(m_LineMesh)
                 DestroyImmediate(m_LineMesh);
             if(m_LineMaterial)
@@ -267,7 +270,7 @@ namespace UnityEditor.ProBuilder
 
             m_SelectedIndex = -1;
 
-            EditorApplication.delayCall = () => RebuildPolygonalShape();
+            EditorApplication.delayCall = () => RebuildCutShape();
         }
 
         private void OnSelectModeChanged(SelectMode mode)
@@ -299,7 +302,7 @@ namespace UnityEditor.ProBuilder
                 if(m_ClosingLineMaterial == null && m_ConnectToStart)
                 {
                     m_ClosingLineMaterial = CreateClosingLineMaterial();
-                    RebuildPolygonalShape();
+                    RebuildCutShape();
                 }
 
                 if(m_ClosingLineMaterial != null && m_ConnectToStart)
@@ -432,7 +435,7 @@ namespace UnityEditor.ProBuilder
                         InsertedVertexData data = m_cutPath[m_SelectedIndex];
                         data.position = m_CurrentPositionToAdd;
                         m_cutPath[m_SelectedIndex] = data;
-                        RebuildPolygonalShape(false);
+                        RebuildCutShape(false);
                         SceneView.RepaintAll();
                     }
 
@@ -467,7 +470,7 @@ namespace UnityEditor.ProBuilder
                     m_PlacingPoint = true;
                     m_SelectedIndex = m_cutPath.Count - 1;
 
-                    RebuildPolygonalShape();
+                    RebuildCutShape();
 
                     if (CheckForEditionEnd())
                         DoCut();
@@ -514,7 +517,7 @@ namespace UnityEditor.ProBuilder
 
             if (!IsALoop)
             {
-                if (CutToolAction.ConnectToStart && m_cutPath.Count > 2)
+                if (m_ConnectToStart && m_cutPath.Count > 2)
                 {
                     m_cutPath.Add(new InsertedVertexData(m_cutPath[0].position, VertexTypes.VertexInShape));
                 }
@@ -599,6 +602,9 @@ namespace UnityEditor.ProBuilder
             m_Mesh.ToMesh();
             m_Mesh.Refresh();
             m_Mesh.Optimize();
+
+            m_cutPath.Clear();
+            RebuildCutShape(true);
 
             m_Mesh = null;
             m_TargetFace = null;
@@ -971,12 +977,12 @@ namespace UnityEditor.ProBuilder
         if (m_TargetFace == null || m_cutPath.Count < 2)
             return false;
 
-        if (CutToolAction.EndOnClicToStart)
+        if (m_EndOnClicToStart)
         {
             return Math.Approx3(m_cutPath[0].position,m_cutPath[m_cutPath.Count - 1].position);
         }
 
-        if (CutToolAction.EdgeToEdge)
+        if (m_EdgeToEdge)
         {
             return (m_cutPath[0].types
                         & (VertexTypes.AddedOnEdge | VertexTypes.ExistingVertex)) != 0
@@ -1001,7 +1007,7 @@ namespace UnityEditor.ProBuilder
                         UndoUtility.RecordObject(m_Mesh, "Delete Selected Points");
                         m_cutPath.RemoveAt(m_SelectedIndex);
                         m_SelectedIndex = m_cutPath.Count - 1;
-                        RebuildPolygonalShape(true);
+                        RebuildCutShape(true);
                         evt.Use();
                     }
                     break;
@@ -1068,7 +1074,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        public void RebuildPolygonalShape(bool vertexCountChanged = false)
+        public void RebuildCutShape(bool vertexCountChanged = false)
         {
             // If Undo is called immediately after creation this situation can occur
             if (m_Mesh == null)
@@ -1083,6 +1089,11 @@ namespace UnityEditor.ProBuilder
 
         void DrawPolyLine(List<Vector3> points)
         {
+            if(m_LineMesh)
+                m_LineMesh.Clear();
+            if(m_ClosingLineMesh)
+                m_ClosingLineMesh.Clear();
+
             if (points.Count < 2)
                 return;
 
@@ -1107,7 +1118,6 @@ namespace UnityEditor.ProBuilder
                 indexes[i] = i;
             }
 
-            m_LineMesh.Clear();
             m_LineMesh.name = "Cut Guide";
             m_LineMesh.vertices = ver;
             m_LineMesh.uv = uvs;
@@ -1118,7 +1128,6 @@ namespace UnityEditor.ProBuilder
             {
                 Vector3 a = points[vc - 1], b = points[0];
 
-                m_ClosingLineMesh.Clear();
                 m_ClosingLineMesh.name = "Cut Closure";
                 m_ClosingLineMesh.vertices = new Vector3[]{ a , b };
                 m_ClosingLineMesh.uv = new Vector2[]{new Vector2(0,1), Vector2.one };;

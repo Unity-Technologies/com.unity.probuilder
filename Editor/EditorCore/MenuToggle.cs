@@ -132,10 +132,13 @@ namespace UnityEditor.ProBuilder
                 {
                     m_CurrentState = isToggled ? MenuToggleState.Active : MenuToggleState.Inactive;
 
+                    ActionResult result;
                     if( m_CurrentState == MenuToggleState.Active )
-                        StartActivation();
+                        result = StartActivation();
                     else
-                        EndActivation();
+                        result = EndActivation();
+
+                    EditorUtility.ShowNotification(result.notification);
                 }
                 MenuActionState altState = optionsMenuState;
 
