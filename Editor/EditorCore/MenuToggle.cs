@@ -3,6 +3,7 @@
 #define SHORTCUT_MANAGER
 #endif
 
+using System;
 using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -23,6 +24,9 @@ namespace UnityEditor.ProBuilder
 
         MenuToggleState m_CurrentState;
 
+        protected delegate void StartEndCallBack();
+
+
         protected MenuToggle()
         {
             iconMode = ProBuilderEditor.s_IsIconGui;
@@ -37,13 +41,25 @@ namespace UnityEditor.ProBuilder
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
         public override ActionResult DoAction() {return ActionResult.Success;}
 
+        protected void OnStart()
+        {
+            m_CurrentState = MenuToggleState.Active;
+        }
+
+        protected void OnEnd()
+        {
+            m_CurrentState = MenuToggleState.Inactive;
+        }
 
         /// <summary>
-        /// Perform whatever action this menu item is supposed to do. You are responsible for implementing Undo.
+        /// Perform whatever action this menu item is supposed to do when starting. You are responsible for implementing Undo.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
-        public abstract ActionResult StartActivation();
+        protected abstract ActionResult StartActivation(StartEndCallBack callback);
 
+        /// <summary>
+        /// Call the Update for the current tool.
+        /// </summary>
         public void OnUpdate()
         {
             if(m_CurrentState == MenuToggleState.Active)
@@ -51,16 +67,15 @@ namespace UnityEditor.ProBuilder
         }
 
         // /// <summary>
-        // /// Perform whatever action this menu item is supposed to do. You are responsible for implementing Undo.
+        // /// Perform whatever action this menu item is supposed to do during its update. You are responsible for implementing Undo.
         // /// </summary>
-        // /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
-        public abstract void UpdateAction();
+        protected virtual void UpdateAction(){}
 
         /// <summary>
-        /// Perform whatever action this menu item is supposed to do. You are responsible for implementing Undo.
+        /// Perform whatever action this menu item is supposed to do when ending. You are responsible for implementing Undo.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
-        public abstract ActionResult EndActivation();
+        protected abstract ActionResult EndActivation(StartEndCallBack callback);
 
         /// <summary>
         /// Draw a menu button.  Returns true if the button is active and settings are enabled, false if settings are not enabled.
@@ -132,10 +147,8 @@ namespace UnityEditor.ProBuilder
                 {
                     m_CurrentState = isToggled ? MenuToggleState.Active : MenuToggleState.Inactive;
 
-                    if( m_CurrentState == MenuToggleState.Active )
-                        StartActivation();
-                    else
-                        EndActivation();
+                    ActionResult result = (m_CurrentState == MenuToggleState.Active) ? StartActivation(OnStart) : EndActivation(OnEnd);
+                    EditorUtility.ShowNotification(result.notification);
                 }
                 MenuActionState altState = optionsMenuState;
 

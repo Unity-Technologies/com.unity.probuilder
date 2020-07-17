@@ -91,7 +91,6 @@ namespace UnityEditor.ProBuilder
                 new Actions.DetachFaces(),
                 new Actions.DuplicateFaces(),
                 new Actions.ExtrudeFaces(),
-                new MenuToggleTool(),
 
                 // Face
                 new Actions.ConformFaceNormals(),
