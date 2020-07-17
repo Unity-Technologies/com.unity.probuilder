@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.EditorTools;
+using UnityEditor.Graphs;
 using UnityEditor.ProBuilder.Actions;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using Edge = UnityEngine.ProBuilder.Edge;
 using Math = UnityEngine.ProBuilder.Math;
 using UObject = UnityEngine.Object;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
@@ -78,8 +80,8 @@ namespace UnityEditor.ProBuilder
 
         static readonly Color k_HandleColor = new Color(.8f, .8f, .8f, 1f);
         static readonly Color k_HandleColorAddNewVertex = new Color(.01f, .9f, .3f, 1f);
-        static readonly Color k_HandleColorAddVertexOnEdge = new Color(.3f, .01f, .9f, 1f);
-        static readonly Color k_HandleColorUseExistingVertex = new Color(.01f, .5f, 1f, 1f);
+        static readonly Color k_HandleColorAddVertexOnEdge = EditorMeshHandles.vertexSelectedColor;//new Color(.3f, .01f, .9f, 1f);
+        static readonly Color k_HandleColorUseExistingVertex = EditorMeshHandles.edgeSelectedColor;//new Color(.01f, .5f, 1f, 1f);
         static readonly Color k_HandleColorModifyVertex = new Color(1f, .75f, .0f, 1f);
         const float k_HandleSize = .05f;
 
@@ -285,10 +287,10 @@ namespace UnityEditor.ProBuilder
         {
             SceneViewOverlay.Window( m_OverlayTitle, OnOverlayGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle );
 
-            if(m_Mesh)
+            if(m_Mesh != null)
             {
-                //Cursor.SetCursor(m_CutCursorTexture, Vector2.zero, CursorMode.Auto);
-                //EditorGUIUtility.AddCursorRect(new Rect(0,0,10,10), MouseCursor.CustomCursor );
+                EditorMeshHandles.HighlightVertices(m_Mesh, m_Mesh.sharedVertexLookup.Keys.ToArray(), EditorMeshHandles.vertexUnselectedColor);
+                EditorMeshHandles.HighlightEdges(m_Mesh, m_Mesh.faces.SelectMany(f => f.edges).ToArray(), EditorMeshHandles.edgeUnselectedColor);
 
                 if(m_LineMaterial != null)
                 {
@@ -312,6 +314,15 @@ namespace UnityEditor.ProBuilder
                 }
 
                 DoExistingPointsGUI();
+            }
+            else
+            {
+                if(MeshSelection.activeMesh != null)
+                {
+                    ProBuilderMesh mesh = MeshSelection.activeMesh;
+                    EditorMeshHandles.HighlightVertices(mesh, mesh.sharedVertexLookup.Keys.ToArray(), EditorMeshHandles.vertexUnselectedColor);
+                    EditorMeshHandles.HighlightEdges(mesh, mesh.faces.SelectMany(f => f.edges).ToArray(), EditorMeshHandles.edgeUnselectedColor);
+                }
             }
 
             var currentEvent = Event.current;
@@ -883,6 +894,8 @@ namespace UnityEditor.ProBuilder
                 m_CurrentPositionToAdd = vertices[peripheralEdges[bestIndex].a].position;
                 m_CurrentVertexTypes = VertexTypes.ExistingVertex;
                 m_SelectedIndex = -1;
+
+                EditorMeshHandles.HighlightVertices(m_Mesh, new int[]{peripheralEdges[bestIndex].a});
             }
             //If not, did we found a close edge?
             else if (bestIndex >= 0)
@@ -908,6 +921,8 @@ namespace UnityEditor.ProBuilder
                     m_CurrentPositionToAdd = Vector3.Magnitude(a) * Mathf.Cos(angle * Mathf.Deg2Rad) * b / Vector3.Magnitude(b);
                     m_CurrentPositionToAdd += vertices[peripheralEdges[bestIndex].a].position;
                 }
+
+                EditorMeshHandles.HighlightEdges(m_Mesh, new Edge[]{peripheralEdges[bestIndex]});
 
                 m_CurrentVertexTypes = VertexTypes.AddedOnEdge;
                 m_SelectedIndex = -1;
@@ -1049,6 +1064,11 @@ namespace UnityEditor.ProBuilder
 
             if (evt.type == EventType.Repaint)
             {
+                if(m_Mesh != null && m_TargetFace == null && m_CurrentFace != null)
+                {
+                    EditorMeshHandles.HighlightFaces(m_Mesh, new Face[]{m_CurrentFace}, Color.Lerp(Color.blue, Color.cyan, 0.5f));
+                }
+
                 for (int index = 0; index < len; index++)
                 {
                     Vector3 point = trs.TransformPoint(m_cutPath[index].position);
