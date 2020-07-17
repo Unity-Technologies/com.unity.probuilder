@@ -3,7 +3,7 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-    sealed class CutToolToggle : MenuToggle
+    public class CutToolToggle : MenuToggle
     {
         SelectMode m_PreviousMode;
         Tool m_PreviousTool;
@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return base.enabled && MeshSelection.selectedObjectCount > 0; }
         }
 
-        public override ActionResult StartActivation()
+        protected override ActionResult StartActivation(StartEndCallBack onStart)
         {
             m_PreviousMode = ProBuilderEditor.selectMode;
             ProBuilderEditor.selectMode = SelectMode.Object;
@@ -56,12 +56,11 @@ namespace UnityEditor.ProBuilder.Actions
             EditorTools.EditorTools.activeToolChanged += ActiveToolChanged;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
+            onStart();
             return new ActionResult(ActionResult.Status.Success,"Cut Tool Starts");
         }
 
-        public override void UpdateAction(){}
-
-        public override ActionResult EndActivation()
+        protected override ActionResult EndActivation(StartEndCallBack onEnd)
         {
             EditorTools.EditorTools.activeToolChanged -= ActiveToolChanged;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
@@ -69,17 +68,24 @@ namespace UnityEditor.ProBuilder.Actions
             ProBuilderEditor.selectMode = m_PreviousMode;
             Tools.current = m_PreviousTool;
 
+            onEnd();
             return new ActionResult(ActionResult.Status.Success,"Cut Tool Ends");
         }
 
         void OnSelectModeChanged(SelectMode obj)
         {
-            EndActivation();
+            LeaveTool();
         }
 
         void ActiveToolChanged()
         {
-            EndActivation();
+            EditorApplication.delayCall += () => LeaveTool();
+        }
+
+        void LeaveTool()
+        {
+            ActionResult result = EndActivation(OnEnd);
+            EditorUtility.ShowNotification(result.notification);
         }
     }
 }

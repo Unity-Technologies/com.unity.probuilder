@@ -196,7 +196,7 @@ namespace UnityEditor.ProBuilder
         void CloseTool()
         {
             if(m_ToolInUse)
-                DoCut();
+                ExecuteCut();
 
             if(m_LineMesh)
                 DestroyImmediate(m_LineMesh);
@@ -473,7 +473,7 @@ namespace UnityEditor.ProBuilder
                     RebuildCutShape();
 
                     if (CheckForEditionEnd())
-                        DoCut();
+                        ExecuteCut();
 
                     evt.Use();
                 }
@@ -508,11 +508,17 @@ namespace UnityEditor.ProBuilder
             return false;
         }
 
+        private void ExecuteCut()
+        {
+            ActionResult result = DoCut();
+            EditorUtility.ShowNotification(result.notification);
+        }
+
         private ActionResult DoCut()
         {
             if (m_TargetFace == null || m_cutPath.Count < 2)
             {
-                return ActionResult.NoSelection;
+                return new ActionResult(ActionResult.Status.Canceled, "Not enough elements selected for a cut");
             }
 
             if (!IsALoop)
@@ -610,6 +616,9 @@ namespace UnityEditor.ProBuilder
             m_TargetFace = null;
             m_CurrentFace = null;
 
+            m_PlacingPoint = false;
+
+            m_CurrentCutCursor = null;
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
 
             return ActionResult.Success;
@@ -905,94 +914,93 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-    private List<Vertex> InsertVertices()
-    {
-        List<Vertex> newVertices = new List<Vertex>();
-
-        foreach (var vertexData in m_cutPath)
+        private List<Vertex> InsertVertices()
         {
-            switch (vertexData.types)
+            List<Vertex> newVertices = new List<Vertex>();
+
+            foreach (var vertexData in m_cutPath)
             {
-                case VertexTypes.ExistingVertex:
-                case VertexTypes.VertexInShape:
-                    newVertices.Add(InsertVertexOnExistingVertex(vertexData.position));
-                    break;
-                case VertexTypes.AddedOnEdge:
-                    newVertices.Add(InsertVertexOnExistingEdge(vertexData.position));
-                    break;
-                case VertexTypes.NewVertex:
-                    newVertices.Add(m_Mesh.InsertVertexInMeshSimple(vertexData.position,vertexData.normal));
-                    break;
-                default:
-                    break;
+                switch (vertexData.types)
+                {
+                    case VertexTypes.ExistingVertex:
+                    case VertexTypes.VertexInShape:
+                        newVertices.Add(InsertVertexOnExistingVertex(vertexData.position));
+                        break;
+                    case VertexTypes.AddedOnEdge:
+                        newVertices.Add(InsertVertexOnExistingEdge(vertexData.position));
+                        break;
+                    case VertexTypes.NewVertex:
+                        newVertices.Add(m_Mesh.InsertVertexInMeshSimple(vertexData.position,vertexData.normal));
+                        break;
+                    default:
+                        break;
+                }
             }
+
+            return newVertices;
         }
 
-        return newVertices;
-    }
-
-    private Vertex InsertVertexOnExistingVertex(Vector3 vertexPosition)
-    {
-        Vertex vertex = null;
-
-        List<Vertex> vertices = m_Mesh.GetVertices().ToList();
-        for (int vertIndex = 0; vertIndex < vertices.Count; vertIndex++)
+        private Vertex InsertVertexOnExistingVertex(Vector3 vertexPosition)
         {
-            if (UnityEngine.ProBuilder.Math.Approx3(vertices[vertIndex].position, vertexPosition))
+            Vertex vertex = null;
+
+            List<Vertex> vertices = m_Mesh.GetVertices().ToList();
+            for (int vertIndex = 0; vertIndex < vertices.Count; vertIndex++)
             {
-                vertex = vertices[vertIndex];
-                break;
+                if (UnityEngine.ProBuilder.Math.Approx3(vertices[vertIndex].position, vertexPosition))
+                {
+                    vertex = vertices[vertIndex];
+                    break;
+                }
             }
+
+            return vertex;
         }
 
-        return vertex;
-    }
-
-    private Vertex InsertVertexOnExistingEdge(Vector3 vertexPosition)
-    {
-        List<Vertex> vertices = m_Mesh.GetVertices().ToList();
-        List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_TargetFace);
-
-        int bestIndex = -1;
-        float bestDistance = Mathf.Infinity;
-        for (int i = 0; i < peripheralEdges.Count; i++)
+        private Vertex InsertVertexOnExistingEdge(Vector3 vertexPosition)
         {
-            float dist = UnityEngine.ProBuilder.Math.DistancePointLineSegment(vertexPosition,
-                    vertices[peripheralEdges[i].a].position,
-                    vertices[peripheralEdges[i].b].position);
+            List<Vertex> vertices = m_Mesh.GetVertices().ToList();
+            List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_TargetFace);
 
-            if (dist < bestDistance)
+            int bestIndex = -1;
+            float bestDistance = Mathf.Infinity;
+            for (int i = 0; i < peripheralEdges.Count; i++)
             {
-                bestIndex = i;
-                bestDistance = dist;
+                float dist = UnityEngine.ProBuilder.Math.DistancePointLineSegment(vertexPosition,
+                        vertices[peripheralEdges[i].a].position,
+                        vertices[peripheralEdges[i].b].position);
+
+                if (dist < bestDistance)
+                {
+                    bestIndex = i;
+                    bestDistance = dist;
+                }
             }
+
+            Vertex v = m_Mesh.InsertVertexOnEdge(peripheralEdges[bestIndex], vertexPosition);
+            return v;
         }
 
-        Vertex v = m_Mesh.InsertVertexOnEdge(peripheralEdges[bestIndex], vertexPosition);
-        return v;
-    }
+        private bool CheckForEditionEnd()
+        {
+            if (m_TargetFace == null || m_cutPath.Count < 2)
+                return false;
 
-    private bool CheckForEditionEnd()
-    {
-        if (m_TargetFace == null || m_cutPath.Count < 2)
+            if (m_EndOnClicToStart)
+            {
+                return Math.Approx3(m_cutPath[0].position,m_cutPath[m_cutPath.Count - 1].position);
+            }
+
+            if (m_EdgeToEdge)
+            {
+                return (m_cutPath[0].types
+                            & (VertexTypes.AddedOnEdge | VertexTypes.ExistingVertex)) != 0
+                       && (m_cutPath[m_cutPath.Count - 1].types
+                           & (VertexTypes.AddedOnEdge | VertexTypes.ExistingVertex)) != 0;
+            }
+
             return false;
-
-        if (m_EndOnClicToStart)
-        {
-            return Math.Approx3(m_cutPath[0].position,m_cutPath[m_cutPath.Count - 1].position);
         }
-
-        if (m_EdgeToEdge)
-        {
-            return (m_cutPath[0].types
-                        & (VertexTypes.AddedOnEdge | VertexTypes.ExistingVertex)) != 0
-                   && (m_cutPath[m_cutPath.Count - 1].types
-                       & (VertexTypes.AddedOnEdge | VertexTypes.ExistingVertex)) != 0;
-        }
-
-        return false;
-    }
-
 
         void HandleKeyEvent(Event evt)
         {
@@ -1013,13 +1021,12 @@ namespace UnityEditor.ProBuilder
                     break;
                 }
 
-                // Not possible to use as PBEditor overrides this
-                // case KeyCode.Escape:
-                //
-                //     evt.Use();
-                //     break;
-                // }
-
+                case KeyCode.Escape:
+                    evt.Use();
+                    ExecuteCut();
+                    //Leave the current tool
+                    Tools.current = Tool.None;
+                    break;
             }
         }
 
@@ -1038,7 +1045,6 @@ namespace UnityEditor.ProBuilder
                  !EditorHandleUtility.IsAppendModifier(evt.modifiers)))
             {
                 m_SelectedIndex = -1;
-                //Repaint();
             }
 
             if (evt.type == EventType.Repaint)
