@@ -1,9 +1,10 @@
 ﻿using UnityEngine.ProBuilder;
 using UnityEngine;
+using System;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-    sealed class OpenShapeEditor : MenuAction
+    sealed class OpenShapeEditor : MenuToggle
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_Shapes", IconSkin.Pro); } }
@@ -11,6 +12,8 @@ namespace UnityEditor.ProBuilder.Actions
         public override string menuTitle { get { return "New Shape"; } }
         public override int toolbarPriority { get { return 0; } }
         protected override bool hasFileMenuEntry { get { return false; } }
+
+        Type m_lastActiveTool;
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
@@ -27,16 +30,23 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
-        public override ActionResult DoAction()
-        {
-            DrawShapeTool.CreateLastShape(Vector3.one * 100);
-            return new ActionResult(ActionResult.Status.Success, "Create Shape");
-        }
-
         protected override void DoAlternateAction()
         {
+            DrawShapeTool.CreateLastShape(Vector3.one * 100);
+        }
+
+        protected override ActionResult StartActivation(StartEndCallBack callback)
+        {
             ProBuilderEditor.selectMode = SelectMode.Object;
+            m_lastActiveTool = EditorTools.EditorTools.activeToolType;
             EditorTools.EditorTools.SetActiveTool<DrawShapeTool>();
+            return new ActionResult(ActionResult.Status.Success, "Open ahape editor");
+        }
+
+        protected override ActionResult EndActivation(StartEndCallBack callback)
+        {
+            EditorTools.EditorTools.SetActiveTool(m_lastActiveTool);
+            return ActionResult.Success;
         }
     }
 }
