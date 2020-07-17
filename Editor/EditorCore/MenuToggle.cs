@@ -96,7 +96,18 @@ namespace UnityEditor.ProBuilder
 
             if (iconMode)
             {
-                if (GUILayout.Button(buttonEnabled || !disabledIcon ? icon : disabledIcon, ToolbarGroupUtility.GetStyle(group, isHorizontal), layoutOptions))
+                GUIStyle style = ToolbarGroupUtility.GetStyle(group, isHorizontal);
+
+                Texture2D normalTex = style.normal.background;
+                Texture2D hoverTex = style.hover.background;
+                if( m_CurrentState == MenuToggleState.Active )
+                {
+                    style.normal.background = hoverTex;
+                    style.hover.background = normalTex;
+                }
+
+                bool isToggled = GUILayout.Toggle( m_CurrentState == MenuToggleState.Active, buttonEnabled || !disabledIcon ? icon : disabledIcon, style, layoutOptions);
+                if(isToggled != (m_CurrentState == MenuToggleState.Active))
                 {
                     if (showOptions && (optionsMenuState & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
                     {
@@ -104,19 +115,14 @@ namespace UnityEditor.ProBuilder
                     }
                     else
                     {
-                        ActionResult result = DoAction();
+                        m_CurrentState = isToggled ? MenuToggleState.Active : MenuToggleState.Inactive;
+                        ActionResult result = (m_CurrentState == MenuToggleState.Active) ? StartActivation(OnStart) : EndActivation(OnEnd);
                         EditorUtility.ShowNotification(result.notification);
                     }
                 }
 
-                bool isToggled = GUILayout.Toggle( m_CurrentState == MenuToggleState.Active, menuTitle, style);
-                if (isToggled != (m_CurrentState == MenuToggleState.Active))
-                {
-                    m_CurrentState = isToggled ? MenuToggleState.Active : MenuToggleState.Inactive;
-                    ActionResult result = (m_CurrentState == MenuToggleState.Active) ? StartActivation(OnStart) : EndActivation(OnEnd);
-                    EditorUtility.ShowNotification(result.notification);
-                }
-
+                style.normal.background = normalTex;
+                style.hover.background = hoverTex;
 
                 if ((optionsMenuState & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
                 {
