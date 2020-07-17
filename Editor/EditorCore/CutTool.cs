@@ -109,6 +109,9 @@ namespace UnityEditor.ProBuilder
         bool m_ModifyingPoint;
         int m_SelectedIndex = -2;
 
+        int m_SnapedVertexId = -1;
+        Edge m_SnapedEdge = Edge.Empty;
+
         bool m_ToolInUse;
 
         [SerializeField]
@@ -314,9 +317,6 @@ namespace UnityEditor.ProBuilder
 
             if(m_Mesh != null)
             {
-                EditorMeshHandles.HighlightVertices(m_Mesh, m_Mesh.sharedVertexLookup.Keys.ToArray(), false);
-                EditorMeshHandles.HighlightEdges(m_Mesh, m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray(), false);
-
                 if(m_LineMaterial != null)
                 {
                     m_LineMaterial.SetPass(0);
@@ -340,15 +340,6 @@ namespace UnityEditor.ProBuilder
 
                 DoExistingPointsGUI();
             }
-            else
-            {
-                if(MeshSelection.activeMesh != null)
-                {
-                    ProBuilderMesh mesh = MeshSelection.activeMesh;
-                    EditorMeshHandles.HighlightVertices(mesh, mesh.sharedVertexLookup.Keys.ToArray(), false);
-                    EditorMeshHandles.HighlightEdges(mesh, mesh.faces.SelectMany(f => f.edges).ToArray(), false);
-                }
-            }
 
             var currentEvent = Event.current;
 
@@ -362,6 +353,41 @@ namespace UnityEditor.ProBuilder
                      HandleUtility.AddDefaultControl(m_ControlId);
 
                  DoPointPlacement();
+                 DoVisualCues();
+            }
+        }
+
+        private void DoVisualCues()
+        {
+            if(m_Mesh != null)
+            {
+                if(m_TargetFace == null)
+                {
+                    EditorMeshHandles.HighlightVertices(m_Mesh, m_Mesh.sharedVertexLookup.Keys.ToArray(), false);
+                    EditorMeshHandles.HighlightEdges(m_Mesh, m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray(),
+                        false);
+
+                    if(m_CurrentFace != null)
+                            EditorMeshHandles.HighlightFaces(m_Mesh, new Face[]{m_CurrentFace}, Color.Lerp(Color.blue, Color.cyan, 0.5f));
+                }
+                else
+                {
+                    var edges = m_TargetFace.edges;
+                    EditorMeshHandles.HighlightVertices(m_Mesh, edges.Select(e => e.a).ToArray(), false);
+                    EditorMeshHandles.HighlightEdges(m_Mesh, edges.ToArray(), false);
+
+                    if(m_SnapedVertexId != -1)
+                        EditorMeshHandles.HighlightVertices(m_Mesh, new int[]{m_SnapedVertexId});
+
+                    if(m_SnapedEdge != Edge.Empty)
+                        EditorMeshHandles.HighlightEdges(m_Mesh, new Edge[]{m_SnapedEdge});
+                }
+            }
+            else if(MeshSelection.activeMesh != null)
+            {
+                ProBuilderMesh mesh = MeshSelection.activeMesh;
+                EditorMeshHandles.HighlightVertices(mesh, mesh.sharedVertexLookup.Keys.ToArray(), false);
+                EditorMeshHandles.HighlightEdges(mesh, mesh.faces.SelectMany(f => f.edges).ToArray(), false);
             }
         }
 
@@ -854,6 +880,9 @@ namespace UnityEditor.ProBuilder
             int bestIndex = -1;
             float bestDistance = Mathf.Infinity;
 
+            m_SnapedVertexId = -1;
+            m_SnapedEdge = Edge.Empty;
+
             List<Vertex> vertices = m_Mesh.GetVertices().ToList();
             List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_CurrentFace);
             if (m_TargetFace != null && m_CurrentFace != m_TargetFace)
@@ -917,7 +946,7 @@ namespace UnityEditor.ProBuilder
                 m_CurrentVertexTypes = VertexTypes.ExistingVertex;
                 m_SelectedIndex = -1;
 
-                EditorMeshHandles.HighlightVertices(m_Mesh, new int[]{peripheralEdges[bestIndex].a});
+                m_SnapedVertexId = peripheralEdges[bestIndex].a;
             }
             //If not, did we found a close edge?
             else if (bestIndex >= 0)
@@ -944,7 +973,7 @@ namespace UnityEditor.ProBuilder
                     m_CurrentPositionToAdd += vertices[peripheralEdges[bestIndex].a].position;
                 }
 
-                EditorMeshHandles.HighlightEdges(m_Mesh, new Edge[]{peripheralEdges[bestIndex]});
+                m_SnapedEdge = peripheralEdges[bestIndex];
 
                 m_CurrentVertexTypes = VertexTypes.AddedOnEdge;
                 m_SelectedIndex = -1;
@@ -1086,11 +1115,6 @@ namespace UnityEditor.ProBuilder
 
             if (evt.type == EventType.Repaint)
             {
-                if(m_Mesh != null && m_TargetFace == null && m_CurrentFace != null)
-                {
-                    EditorMeshHandles.HighlightFaces(m_Mesh, new Face[]{m_CurrentFace}, Color.Lerp(Color.blue, Color.cyan, 0.5f));
-                }
-
                 for (int index = 0; index < len; index++)
                 {
                     Vector3 point = trs.TransformPoint(m_cutPath[index].position);

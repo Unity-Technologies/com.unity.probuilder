@@ -109,6 +109,15 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
+                bool isToggled = GUILayout.Toggle( m_CurrentState == MenuToggleState.Active, menuTitle, style);
+                if (isToggled != (m_CurrentState == MenuToggleState.Active))
+                {
+                    m_CurrentState = isToggled ? MenuToggleState.Active : MenuToggleState.Inactive;
+                    ActionResult result = (m_CurrentState == MenuToggleState.Active) ? StartActivation(OnStart) : EndActivation(OnEnd);
+                    EditorUtility.ShowNotification(result.notification);
+                }
+
+
                 if ((optionsMenuState & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
                 {
                     Rect r = GUILayoutUtility.GetLastRect();
@@ -142,14 +151,13 @@ namespace UnityEditor.ProBuilder
                 }
 
                 bool isToggled = GUILayout.Toggle( m_CurrentState == MenuToggleState.Active, menuTitle, style);
-
                 if (isToggled != (m_CurrentState == MenuToggleState.Active))
                 {
                     m_CurrentState = isToggled ? MenuToggleState.Active : MenuToggleState.Inactive;
-
                     ActionResult result = (m_CurrentState == MenuToggleState.Active) ? StartActivation(OnStart) : EndActivation(OnEnd);
                     EditorUtility.ShowNotification(result.notification);
                 }
+
                 MenuActionState altState = optionsMenuState;
 
                 if ((altState & MenuActionState.Visible) == MenuActionState.Visible)
