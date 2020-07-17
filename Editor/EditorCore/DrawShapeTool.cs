@@ -252,7 +252,7 @@ namespace UnityEditor.ProBuilder
                             {
                                 var pos = ray.GetPoint(distance);
                                 CancelShape();
-                                var shape = CreateActiveShape(Vector3.one * distance / 5f);
+                                var shape = CreateLastShape(Vector3.one * distance / 5f);
                                 shape.transform.position = pos;
                             }
                         }
@@ -272,22 +272,6 @@ namespace UnityEditor.ProBuilder
                 m_Size = defaultSize;
             var type = activeShapeType;
             var shape = ShapeGenerator.CreateShape(type).GetComponent<ShapeComponent>();
-            UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape");
-            Bounds bounds = new Bounds(Vector3.zero, m_Size);
-            shape.Rebuild(bounds, Quaternion.identity);
-            shape.mesh.SetPivot(PivotLocation.Center);
-            ProBuilderEditor.Refresh(false);
-            var res = shape.GetComponent<ProBuilderMesh>();
-            EditorUtility.InitObject(res, false);
-            return res;
-        }
-
-        public ProBuilderMesh CreateActiveShape(Vector3 defaultSize)
-        {
-            if (m_Size == Vector3.zero)
-                m_Size = defaultSize;
-            var type = activeShapeType;
-            var shape = ShapeGenerator.CreateShape(m_ShapeData.m_Shape).GetComponent<ShapeComponent>();
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape");
             Bounds bounds = new Bounds(Vector3.zero, m_Size);
             shape.Rebuild(bounds, Quaternion.identity);
