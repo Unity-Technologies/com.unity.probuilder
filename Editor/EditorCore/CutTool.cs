@@ -80,8 +80,8 @@ namespace UnityEditor.ProBuilder
 
         static readonly Color k_HandleColor = new Color(.8f, .8f, .8f, 1f);
         static readonly Color k_HandleColorAddNewVertex = new Color(.01f, .9f, .3f, 1f);
-        static readonly Color k_HandleColorAddVertexOnEdge = EditorMeshHandles.vertexSelectedColor;//new Color(.3f, .01f, .9f, 1f);
-        static readonly Color k_HandleColorUseExistingVertex = EditorMeshHandles.edgeSelectedColor;//new Color(.01f, .5f, 1f, 1f);
+        static Color k_HandleColorAddVertexOnEdge = new Color(.3f, .01f, .9f, 1f);
+        static Color k_HandleColorUseExistingVertex = new Color(.01f, .5f, 1f, 1f);
         static readonly Color k_HandleColorModifyVertex = new Color(1f, .75f, .0f, 1f);
         const float k_HandleSize = .05f;
 
@@ -154,6 +154,9 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
+            k_HandleColorUseExistingVertex = Handles.selectedColor;
+            k_HandleColorAddVertexOnEdge = Handles.selectedColor;
+
             m_OverlayTitle = new GUIContent("Cut Tool");
             m_EdgeToEdge = EditorPrefs.GetBool( k_EdgeToEdgePrefKey, false );
             m_ConnectToStart = EditorPrefs.GetBool( k_ConnectToStart, false );
@@ -177,9 +180,7 @@ namespace UnityEditor.ProBuilder
             m_ClosingLineMesh = new Mesh();
             m_ClosingLineMaterial = CreateClosingLineMaterial();
 
-            m_Mesh = null;
-            m_TargetFace = null;
-            m_CurrentFace = null;
+            Clear();
 
             m_ToolInUse = true;
         }
@@ -210,12 +211,36 @@ namespace UnityEditor.ProBuilder
             if(m_ClosingLineMaterial)
                 DestroyImmediate(m_ClosingLineMaterial);
 
+            Clear();
+
+            m_ToolInUse = false;
+        }
+
+        void Clear()
+        {
             m_Mesh = null;
             m_TargetFace = null;
             m_CurrentFace = null;
+            m_PlacingPoint = false;
+            m_CurrentCutCursor = null;
 
-            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-            m_ToolInUse = false;
+            if (m_LineMesh != null)
+                DestroyImmediate(m_LineMesh);
+
+            if (m_LineMaterial != null)
+                DestroyImmediate(m_LineMaterial);
+
+            m_LineMesh = new Mesh();
+            m_LineMaterial = CreateHighlightLineMaterial();
+
+            if (m_ClosingLineMesh != null)
+                DestroyImmediate(m_ClosingLineMesh);
+
+            if (m_ClosingLineMaterial != null)
+                DestroyImmediate(m_ClosingLineMaterial);
+
+            m_ClosingLineMesh = new Mesh();
+            m_ClosingLineMaterial = CreateClosingLineMaterial();
         }
 
         static Material CreateHighlightLineMaterial()
@@ -289,8 +314,8 @@ namespace UnityEditor.ProBuilder
 
             if(m_Mesh != null)
             {
-                EditorMeshHandles.HighlightVertices(m_Mesh, m_Mesh.sharedVertexLookup.Keys.ToArray(), EditorMeshHandles.vertexUnselectedColor);
-                EditorMeshHandles.HighlightEdges(m_Mesh, m_Mesh.faces.SelectMany(f => f.edges).ToArray(), EditorMeshHandles.edgeUnselectedColor);
+                EditorMeshHandles.HighlightVertices(m_Mesh, m_Mesh.sharedVertexLookup.Keys.ToArray(), false);
+                EditorMeshHandles.HighlightEdges(m_Mesh, m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray(), false);
 
                 if(m_LineMaterial != null)
                 {
@@ -320,8 +345,8 @@ namespace UnityEditor.ProBuilder
                 if(MeshSelection.activeMesh != null)
                 {
                     ProBuilderMesh mesh = MeshSelection.activeMesh;
-                    EditorMeshHandles.HighlightVertices(mesh, mesh.sharedVertexLookup.Keys.ToArray(), EditorMeshHandles.vertexUnselectedColor);
-                    EditorMeshHandles.HighlightEdges(mesh, mesh.faces.SelectMany(f => f.edges).ToArray(), EditorMeshHandles.edgeUnselectedColor);
+                    EditorMeshHandles.HighlightVertices(mesh, mesh.sharedVertexLookup.Keys.ToArray(), false);
+                    EditorMeshHandles.HighlightEdges(mesh, mesh.faces.SelectMany(f => f.edges).ToArray(), false);
                 }
             }
 
@@ -378,6 +403,10 @@ namespace UnityEditor.ProBuilder
                 if(GUILayout.Button("Compute Cut"))
                 {
                     DoCut();
+                }
+                if(GUILayout.Button("Cancel"))
+                {
+                    Clear();
                 }
             }
 
@@ -623,14 +652,7 @@ namespace UnityEditor.ProBuilder
             m_cutPath.Clear();
             RebuildCutShape(true);
 
-            m_Mesh = null;
-            m_TargetFace = null;
-            m_CurrentFace = null;
-
-            m_PlacingPoint = false;
-
-            m_CurrentCutCursor = null;
-            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+            Clear();
 
             return ActionResult.Success;
         }

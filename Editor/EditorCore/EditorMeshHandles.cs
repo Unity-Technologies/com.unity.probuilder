@@ -538,9 +538,9 @@ namespace UnityEditor.ProBuilder
             Render(m_TemporaryHandles, m_FaceMaterial, highlightColor, s_DepthTestHandles);
         }
 
-        public static void HighlightEdges(ProBuilderMesh mesh, IList<Edge> edges)
+        public static void HighlightEdges(ProBuilderMesh mesh, IList<Edge> edges,  bool highlight = true)
         {
-            instance.HighlightEdgesInternal(mesh, edges, s_EdgeSelectedColor);
+            instance.HighlightEdgesInternal(mesh, edges, highlight ? s_EdgeSelectedColor : s_EdgeUnselectedColor);
         }
 
         public static void HighlightEdges(ProBuilderMesh mesh, IList<Edge> edges, Color highlightColor)
@@ -560,9 +560,9 @@ namespace UnityEditor.ProBuilder
             Render(m_TemporaryHandles, m_EdgeMaterial, highlightColor, s_DepthTestHandles);
         }
 
-        public static void HighlightVertices(ProBuilderMesh mesh, IList<int> vertexIndexes)
+        public static void HighlightVertices(ProBuilderMesh mesh, IList<int> vertexIndexes, bool highlight = true)
         {
-            instance.HighlightVerticesInternal(mesh, vertexIndexes, s_VertexSelectedColor);
+            instance.HighlightVerticesInternal(mesh, vertexIndexes, highlight ? s_VertexSelectedColor : s_VertexUnselectedColor);
         }
 
         public static void HighlightVertices(ProBuilderMesh mesh, IList<int> vertexIndexes, Color highlightColor)
