@@ -22,10 +22,15 @@ namespace UnityEditor.ProBuilder.Actions
 
         private void OnObjectSelectionChanged()
         {
-            // can't just check if any MeshFilter is present because we need to know whether or not it's already a
-            // probuilder mesh
-            int meshCount = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Count();
-            m_Enabled = meshCount > 0 && meshCount != MeshSelection.selectedObjectCount;
+            //remove from selection every gameobject that is part of an encapsulated prefab
+            List<MeshFilter> editableSelection = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).ToList()
+                .Where(t => !PrefabUtility.IsPartOfEncapsulatedPrefabInstance(t.gameObject)).ToList();
+            // can't just check if any MeshFilter is present because we need to know whether
+            // or not it's already a probuilder mesh
+            // New version : compare number of MeshFilters to number of ProBuilderMeshes
+            int meshCount = editableSelection.Count();
+            int probuilderMeshCount = editableSelection.Where(x => x.GetComponent<ProBuilderMesh>() != null).Count();
+            m_Enabled = meshCount > 0 && meshCount != probuilderMeshCount;
         }
 
         public override ToolbarGroup group
