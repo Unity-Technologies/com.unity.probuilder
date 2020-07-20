@@ -11,6 +11,7 @@ using UnityEngine.ProBuilder;
 using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
 using UObject = UnityEngine.Object;
 using UnityEditor.SettingsManagement;
+using UnityEditor.ShortcutManagement;
 using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
@@ -157,6 +158,8 @@ namespace UnityEditor.ProBuilder
         GUIContent m_SceneInfo = new GUIContent();
 
         Rect m_SceneInfoRect = new Rect(10, 10, 200, 40);
+
+        bool m_wasSelectingPath;
 
 #if !UNITY_2018_2_OR_NEWER
         static MethodInfo s_ResetOnSceneGUIState = null;
@@ -583,12 +586,16 @@ namespace UnityEditor.ProBuilder
             DrawHandleGUI(sceneView);
 
 #if SHORTCUT_MANAGER
-            // Escape isn't assignable as a shortcut
             if (m_CurrentEvent.type == EventType.KeyDown)
             {
+                // Escape isn't assignable as a shortcut
                 if (m_CurrentEvent.keyCode == KeyCode.Escape && selectMode != SelectMode.Object)
                 {
                     selectMode = SelectMode.Object;
+
+                    m_IsDragging = false;
+                    m_IsReadyForMouseDrag = false;
+                    
                     m_CurrentEvent.Use();
                 }
             }
@@ -618,20 +625,29 @@ namespace UnityEditor.ProBuilder
             if (selectMode == SelectMode.Object)
                 return;
 
+            bool pathSelectionModifier = EditorHandleUtility.IsSelectionPathModifier(m_CurrentEvent.modifiers);
+
             // Check mouse position in scene and determine if we should highlight something
             if (s_ShowHoverHighlight
-                && m_CurrentEvent.type == EventType.MouseMove
-                && selectMode.IsMeshElementMode())
+                && selectMode.IsMeshElementMode()
+                && (m_CurrentEvent.type == EventType.MouseMove
+                || (m_wasSelectingPath != pathSelectionModifier && m_CurrentEvent.isKey)))
             {
                 m_Hovering.CopyTo(m_HoveringPrevious);
-
                 if (GUIUtility.hotControl != 0 ||
                     EditorSceneViewPicker.MouseRayHitTest(m_CurrentEvent.mousePosition, selectMode, m_ScenePickerPreferences, m_Hovering) > ScenePickerPreferences.maxPointerDistance)
                     m_Hovering.Clear();
 
                 if (!m_Hovering.Equals(m_HoveringPrevious))
+                {
+                    if (pathSelectionModifier)
+                        EditorSceneViewPicker.DoMouseHover(m_Hovering);
+
                     SceneView.RepaintAll();
+                }
             }
+            m_wasSelectingPath = pathSelectionModifier;
+
 
             if (Tools.current == Tool.View)
                 return;
@@ -682,14 +698,15 @@ namespace UnityEditor.ProBuilder
                     tool.OnSceneGUI(m_CurrentEvent);
             }
 
-            if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent) || m_CurrentEvent.isKey && m_IsDragging)
-            {
-                m_IsDragging = false;
+             if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent))
+             {
+                 if(m_IsDragging)
+                    m_IsDragging = false;
 
-                if (GUIUtility.hotControl == m_DefaultControl)
-                    GUIUtility.hotControl = 0;
+                 if (GUIUtility.hotControl == m_DefaultControl)
+                     GUIUtility.hotControl = 0;
 
-                return;
+                 return;
             }
 
             // This prevents us from selecting other objects in the scene,
@@ -1342,8 +1359,6 @@ namespace UnityEditor.ProBuilder
                     overrideWireframe
                         ? k_DefaultSelectedRenderState & ~(EditorSelectedRenderState.Wireframe)
                         : k_DefaultSelectedRenderState);
-
-                EditorUtility.SynchronizeWithMeshFilter(mesh);
             }
 
             SceneView.RepaintAll();

@@ -15,15 +15,17 @@ namespace UnityEditor.ProBuilder.Actions
 
         public ProBuilderize()
         {
-            MeshSelection.objectSelectionChanged += () =>
-                {
-                    // can't just check if any MeshFilter is present because we need to know whether
-                    // or not it's already a probuilder mesh
-                    // New version : compare number of MeshFilters to number of ProBuilderMeshes
-                    int meshCount = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Count();
-                    int probuilderMeshCount = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<ProBuilderMesh>()).Count();
-                    m_Enabled = meshCount > 0 && meshCount != probuilderMeshCount;
-                };
+            MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
+
+            OnObjectSelectionChanged(); // invoke once as we might already have a selection in Hierarchy
+        }
+
+        private void OnObjectSelectionChanged()
+        {
+            // can't just check if any MeshFilter is present because we need to know whether or not it's already a
+            // probuilder mesh
+            int meshCount = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Count();
+            m_Enabled = meshCount > 0 && meshCount != MeshSelection.selectedObjectCount;
         }
 
         public override ToolbarGroup group
@@ -158,7 +160,7 @@ namespace UnityEditor.ProBuilder.Actions
             {
                 foreach (var mf in selected)
                 {
-                    if (mf.sharedMesh == null || mf.GetComponent<ProBuilderMesh>() != null)
+                    if (mf.sharedMesh == null)
                         continue;
 
                     GameObject go = mf.gameObject;

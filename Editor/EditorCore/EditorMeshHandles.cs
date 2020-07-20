@@ -227,7 +227,7 @@ namespace UnityEditor.ProBuilder
             CompareFunction.Always
         };
 #endif
-
+       
         public static void DrawSceneSelection(SceneSelection selection)
         {
             var mesh = selection.mesh;
@@ -238,35 +238,33 @@ namespace UnityEditor.ProBuilder
             var positions = mesh.positionsInternal;
 
             // Draw nearest edge
-            if (selection.face != null)
+            using (new TriangleDrawingScope(s_PreselectionColor))
             {
-                using (new TriangleDrawingScope(s_PreselectionColor))
+                GL.MultMatrix(mesh.transform.localToWorldMatrix);
+                foreach (var face in selection.faces)
                 {
-                    GL.MultMatrix(mesh.transform.localToWorldMatrix);
-
-                    var face = selection.face;
                     var ind = face.indexes;
 
                     for (int i = 0, c = ind.Count; i < c; i += 3)
                     {
                         GL.Vertex(positions[ind[i]]);
-                        GL.Vertex(positions[ind[i+1]]);
-                        GL.Vertex(positions[ind[i+2]]);
+                        GL.Vertex(positions[ind[i + 1]]);
+                        GL.Vertex(positions[ind[i + 2]]);
                     }
                 }
             }
-            else if (selection.edge != Edge.Empty)
+            using (var drawingScope = new LineDrawingScope(s_PreselectionColor, mesh.transform.localToWorldMatrix, -1f, CompareFunction.Always))
             {
-                using (var drawingScope = new LineDrawingScope(s_PreselectionColor, mesh.transform.localToWorldMatrix, -1f, CompareFunction.Always))
+                foreach (var edge in selection.edges)
                 {
-                    drawingScope.DrawLine(positions[selection.edge.a], positions[selection.edge.b]);
+                    drawingScope.DrawLine(positions[edge.a], positions[edge.b]);
                 }
             }
-            else if (selection.vertex > -1)
+            using (var drawingScope = new PointDrawingScope(s_PreselectionColor, CompareFunction.Always) { matrix = mesh.transform.localToWorldMatrix })
             {
-                using (var drawingScope = new PointDrawingScope(s_PreselectionColor, CompareFunction.Always) { matrix = mesh.transform.localToWorldMatrix })
+                foreach (var vertex in selection.vertexes)
                 {
-                    drawingScope.Draw(positions[selection.vertex]);
+                    drawingScope.Draw(positions[vertex]);
                 }
             }
         }
