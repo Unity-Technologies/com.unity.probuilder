@@ -5,6 +5,7 @@ using UnityEditor.EditorTools;
 using UnityEditor.Graphs;
 using UnityEditor.ProBuilder.Actions;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using Edge = UnityEngine.ProBuilder.Edge;
@@ -12,6 +13,11 @@ using Math = UnityEngine.ProBuilder.Math;
 using UObject = UnityEngine.Object;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 using UHandleUtility = UnityEditor.HandleUtility;
+
+
+#if !UNITY_2020_2_OR_NEWER
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -92,14 +98,19 @@ namespace UnityEditor.ProBuilder
 
         Material m_ClosingLineMaterial;
         Mesh m_ClosingLineMesh = null;
-        static readonly Color k_ClosingLineMaterialBaseColor = new Color(136f / 255f, 1f, 0f, 1f);
-        static readonly Color k_ClosingLineMaterialHighlightColor = new Color(1f, 170f / 200f, 0f, 1f);
+        static readonly Color k_ClosingLineMaterialBaseColor = new Color(1f, 170/200f, 0f, 1f);
+        static readonly Color k_ClosingLineMaterialHighlightColor = new Color(1f, 100f / 200f, 0f, 1f);
+
+        Material m_DrawingLineMaterial;
+        Mesh m_DrawingLineMesh = null;
+        static readonly Color k_DrawingLineMaterialBaseColor = new Color(0.01f, .9f, 0.3f, 1f);
+        static readonly Color k_DrawingLineMaterialHighlightColor = new Color(0f, 1f, 0f, 1f);
 
         Color m_CurrentHandleColor = k_HandleColor;
 
         Face m_TargetFace;
         Face m_CurrentFace;
-        Vector3 m_CurrentPositionToAdd = Vector3.positiveInfinity;
+        Vector3 m_CurrentPosition = Vector3.positiveInfinity;
         Vector3 m_CurrentPositionNormal = Vector3.up;
         VertexTypes m_CurrentVertexTypes = VertexTypes.None;
 
@@ -149,7 +160,7 @@ namespace UnityEditor.ProBuilder
 
         void ActiveToolChanged()
         {
-            if(EditorTools.EditorTools.IsActiveTool(this))
+            if(ToolManager.IsActiveTool(this))
                 InitTool();
             else
                 CloseTool();
@@ -169,7 +180,7 @@ namespace UnityEditor.ProBuilder
 
             //ProBuilderEditor.selectMode = ProBuilderEditor.selectMode| SelectMode.InputTool;
 
-            EditorTools.EditorTools.activeToolChanged += ActiveToolChanged;
+            ToolManager.activeToolChanged += ActiveToolChanged;
             EditorApplication.update += Update;
             Undo.undoRedoPerformed += UndoRedoPerformed;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
@@ -177,20 +188,13 @@ namespace UnityEditor.ProBuilder
 
         void InitTool()
         {
-            m_LineMesh = new Mesh();
-            m_LineMaterial = CreateHighlightLineMaterial();
-
-            m_ClosingLineMesh = new Mesh();
-            m_ClosingLineMaterial = CreateClosingLineMaterial();
-
-            Clear();
-
+            InitLineRenderers();
             m_ToolInUse = true;
         }
 
         void OnDisable()
         {
-            EditorTools.EditorTools.activeToolChanged -= ActiveToolChanged;
+            ToolManager.activeToolChanged -= ActiveToolChanged;
 
             EditorApplication.update -= Update;
             Undo.undoRedoPerformed -= UndoRedoPerformed;
@@ -204,6 +208,30 @@ namespace UnityEditor.ProBuilder
             if(m_ToolInUse)
                 ExecuteCut();
 
+            Clear();
+
+            m_ToolInUse = false;
+
+        }
+
+        void InitLineRenderers()
+        {
+            m_LineMesh = new Mesh();
+            m_LineMaterial = CreateLineMaterial(k_LineMaterialBaseColor, k_LineMaterialHighlightColor);
+
+            if(m_ConnectToStart)
+            {
+                m_ClosingLineMesh = new Mesh();
+                m_ClosingLineMaterial =
+                    CreateLineMaterial(k_ClosingLineMaterialBaseColor, k_ClosingLineMaterialHighlightColor);
+            }
+
+            m_DrawingLineMesh = new Mesh();
+            m_DrawingLineMaterial = CreateLineMaterial(k_DrawingLineMaterialBaseColor, k_DrawingLineMaterialHighlightColor);
+        }
+
+        void ClearLineRenderers()
+        {
             if(m_LineMesh)
                 DestroyImmediate(m_LineMesh);
             if(m_LineMaterial)
@@ -214,51 +242,34 @@ namespace UnityEditor.ProBuilder
             if(m_ClosingLineMaterial)
                 DestroyImmediate(m_ClosingLineMaterial);
 
-            Clear();
-
-            m_ToolInUse = false;
+            if(m_DrawingLineMesh != null)
+                DestroyImmediate(m_DrawingLineMesh);
+            if(m_DrawingLineMaterial != null)
+                DestroyImmediate(m_DrawingLineMaterial);
         }
 
         void Clear()
         {
+            ClearLineRenderers();
+
             m_Mesh = null;
             m_TargetFace = null;
             m_CurrentFace = null;
             m_PlacingPoint = false;
             m_CurrentCutCursor = null;
-
-            if (m_LineMesh != null)
-                DestroyImmediate(m_LineMesh);
-
-            if (m_LineMaterial != null)
-                DestroyImmediate(m_LineMaterial);
-
-            m_LineMesh = new Mesh();
-            m_LineMaterial = CreateHighlightLineMaterial();
-
-            if (m_ClosingLineMesh != null)
-                DestroyImmediate(m_ClosingLineMesh);
-
-            if (m_ClosingLineMaterial != null)
-                DestroyImmediate(m_ClosingLineMaterial);
-
-            m_ClosingLineMesh = new Mesh();
-            m_ClosingLineMaterial = CreateClosingLineMaterial();
         }
 
-        static Material CreateHighlightLineMaterial()
+        void Reset()
         {
-            Material mat = new Material(Shader.Find("Hidden/ProBuilder/ScrollHighlight"));
-            mat.SetColor("_Highlight", k_LineMaterialHighlightColor);
-            mat.SetColor("_Base", k_LineMaterialBaseColor);
-            return mat;
+            Clear();
+            InitLineRenderers();
         }
 
-        static Material CreateClosingLineMaterial()
+        static Material CreateLineMaterial(Color baseColor, Color highlightColor)
         {
             Material mat = new Material(Shader.Find("Hidden/ProBuilder/ScrollHighlight"));
-            mat.SetColor("_Highlight", k_ClosingLineMaterialHighlightColor);
-            mat.SetColor("_Base", k_ClosingLineMaterialBaseColor);
+            mat.SetColor("_Base", baseColor);
+            mat.SetColor("_Highlight", highlightColor);
             return mat;
         }
 
@@ -277,23 +288,8 @@ namespace UnityEditor.ProBuilder
 
         private void UndoRedoPerformed()
         {
-            if (m_LineMesh != null)
-                DestroyImmediate(m_LineMesh);
-
-            if (m_LineMaterial != null)
-                DestroyImmediate(m_LineMaterial);
-
-            m_LineMesh = new Mesh();
-            m_LineMaterial = CreateHighlightLineMaterial();
-
-            if (m_ClosingLineMesh != null)
-                DestroyImmediate(m_ClosingLineMesh);
-
-            if (m_ClosingLineMaterial != null)
-                DestroyImmediate(m_ClosingLineMaterial);
-
-            m_ClosingLineMesh = new Mesh();
-            m_ClosingLineMaterial = CreateClosingLineMaterial();
+            ClearLineRenderers();
+            InitLineRenderers();
 
             if(m_cutPath.Count == 0)
                 m_TargetFace = null;
@@ -323,12 +319,22 @@ namespace UnityEditor.ProBuilder
                     Graphics.DrawMeshNow(m_LineMesh, m_Mesh.transform.localToWorldMatrix, 0);
                 }
 
+                if(m_DrawingLineMaterial != null)
+                {
+                    bool drawline = DrawGuideLine();
+                    if(drawline)
+                    {
+                    m_DrawingLineMaterial.SetPass(0);
+                    Graphics.DrawMeshNow(m_DrawingLineMesh, m_Mesh.transform.localToWorldMatrix, 0);
+                    }
+                }
+
                 if(!m_ConnectToStart && m_ClosingLineMaterial)
                     DestroyImmediate(m_ClosingLineMaterial);
 
                 if(m_ClosingLineMaterial == null && m_ConnectToStart)
                 {
-                    m_ClosingLineMaterial = CreateClosingLineMaterial();
+                    m_ClosingLineMaterial = CreateLineMaterial(k_LineMaterialBaseColor, k_ClosingLineMaterialHighlightColor);
                     RebuildCutShape();
                 }
 
@@ -432,7 +438,7 @@ namespace UnityEditor.ProBuilder
                 }
                 if(GUILayout.Button("Cancel"))
                 {
-                    Clear();
+                    Reset();
                 }
             }
 
@@ -479,7 +485,7 @@ namespace UnityEditor.ProBuilder
                 else
                 {
                     m_CurrentCutCursor = null;
-                    m_CurrentPositionToAdd = Vector3.positiveInfinity;
+                    m_CurrentPosition = Vector3.positiveInfinity;
                     m_CurrentVertexTypes = VertexTypes.None;
                     m_CurrentHandleColor = k_HandleColor;
                 }
@@ -499,7 +505,7 @@ namespace UnityEditor.ProBuilder
                     {
                         evt.Use();
                         InsertedVertexData data = m_cutPath[m_SelectedIndex];
-                        data.position = m_CurrentPositionToAdd;
+                        data.position = m_CurrentPosition;
                         m_cutPath[m_SelectedIndex] = data;
                         RebuildCutShape(false);
                         SceneView.RepaintAll();
@@ -523,7 +529,7 @@ namespace UnityEditor.ProBuilder
                 && HandleUtility.nearestControl == m_ControlId)
             {
                 int polyCount = m_cutPath.Count;
-                if (m_CurrentPositionToAdd != Vector3.positiveInfinity
+                if (!m_CurrentPosition.Equals(Vector3.positiveInfinity)
                     && (polyCount == 0 || m_SelectedIndex != polyCount - 1))
                 {
                     UndoUtility.RecordObject(this, "Add Vertex On Path");
@@ -531,7 +537,7 @@ namespace UnityEditor.ProBuilder
                     if (m_TargetFace == null)
                         m_TargetFace = m_CurrentFace;
 
-                    m_cutPath.Add(new InsertedVertexData(m_CurrentPositionToAdd,m_CurrentPositionNormal, m_CurrentVertexTypes));
+                    m_cutPath.Add(new InsertedVertexData(m_CurrentPosition,m_CurrentPositionNormal, m_CurrentVertexTypes));
 
                     m_PlacingPoint = true;
                     m_SelectedIndex = m_cutPath.Count - 1;
@@ -557,7 +563,7 @@ namespace UnityEditor.ProBuilder
 
             if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, m_Mesh, out pbHit))
             {
-                m_CurrentPositionToAdd = pbHit.point;
+                m_CurrentPosition = pbHit.point;
                 m_CurrentPositionNormal = pbHit.normal;
                 m_CurrentFace = m_Mesh.faces[pbHit.face];
                 m_CurrentVertexTypes = VertexTypes.None;
@@ -678,7 +684,7 @@ namespace UnityEditor.ProBuilder
             m_cutPath.Clear();
             RebuildCutShape(true);
 
-            Clear();
+            Reset();
 
             return ActionResult.Success;
         }
@@ -860,12 +866,12 @@ namespace UnityEditor.ProBuilder
             {
                 var vertexData = m_cutPath[i];
                 if( Math.Approx3( vertexData.position,
-                    m_CurrentPositionToAdd,
+                    m_CurrentPosition,
                     snapDistance ) )
                 {
-                    snapDistance = Vector3.Distance( vertexData.position, m_CurrentPositionToAdd );
+                    snapDistance = Vector3.Distance( vertexData.position, m_CurrentPosition );
                     if( !m_ModifyingPoint )
-                        m_CurrentPositionToAdd = vertexData.position;
+                        m_CurrentPosition = vertexData.position;
                     m_CurrentVertexTypes = vertexData.types | VertexTypes.VertexInShape;
                     m_SelectedIndex = i;
                 }
@@ -893,7 +899,7 @@ namespace UnityEditor.ProBuilder
                 if ((m_TargetFace == null || m_TargetFace == m_CurrentFace) && m_SnapingPoint)
                 {
                     if (Math.Approx3(vertices[peripheralEdges[i].a].position,
-                        m_CurrentPositionToAdd,
+                        m_CurrentPosition,
                         snapDistance))
                     {
                         bestIndex = i;
@@ -903,7 +909,7 @@ namespace UnityEditor.ProBuilder
                     else
                     {
                         float dist = Math.DistancePointLineSegment(
-                            m_CurrentPositionToAdd,
+                            m_CurrentPosition,
                             vertices[peripheralEdges[i].a].position,
                             vertices[peripheralEdges[i].b].position);
 
@@ -916,11 +922,11 @@ namespace UnityEditor.ProBuilder
                 }
                 else if(m_CurrentFace != m_TargetFace && m_TargetFace != null )
                 {
-                    float edgeDist = Math.DistancePointLineSegment(m_CurrentPositionToAdd,
+                    float edgeDist = Math.DistancePointLineSegment(m_CurrentPosition,
                         vertices[peripheralEdges[i].a].position,
                         vertices[peripheralEdges[i].b].position);
 
-                    float vertexDist = Vector3.Distance(m_CurrentPositionToAdd,
+                    float vertexDist = Vector3.Distance(m_CurrentPosition,
                         vertices[peripheralEdges[i].a].position);
 
                     if (edgeDist < vertexDist && edgeDist < bestDistance)
@@ -942,7 +948,7 @@ namespace UnityEditor.ProBuilder
             //We found a close vertex
             if (snapedOnVertex)
             {
-                m_CurrentPositionToAdd = vertices[peripheralEdges[bestIndex].a].position;
+                m_CurrentPosition = vertices[peripheralEdges[bestIndex].a].position;
                 m_CurrentVertexTypes = VertexTypes.ExistingVertex;
                 m_SelectedIndex = -1;
 
@@ -956,21 +962,21 @@ namespace UnityEditor.ProBuilder
                     Vector3 left = vertices[peripheralEdges[bestIndex].a].position,
                         right = vertices[peripheralEdges[bestIndex].b].position;
 
-                    float x = (m_CurrentPositionToAdd - left).magnitude;
-                    float y = (m_CurrentPositionToAdd - right).magnitude;
+                    float x = (m_CurrentPosition - left).magnitude;
+                    float y = (m_CurrentPosition - right).magnitude;
 
-                    m_CurrentPositionToAdd = left + (x / (x + y)) * (right - left);
+                    m_CurrentPosition = left + (x / (x + y)) * (right - left);
                 }
                 else //if(m_CurrentFace != m_TargetFace)
                 {
-                    Vector3 a = m_CurrentPositionToAdd -
+                    Vector3 a = m_CurrentPosition -
                                 vertices[peripheralEdges[bestIndex].a].position;
                     Vector3 b = vertices[peripheralEdges[bestIndex].b].position -
                                 vertices[peripheralEdges[bestIndex].a].position;
 
                     float angle = Vector3.Angle(b, a);
-                    m_CurrentPositionToAdd = Vector3.Magnitude(a) * Mathf.Cos(angle * Mathf.Deg2Rad) * b / Vector3.Magnitude(b);
-                    m_CurrentPositionToAdd += vertices[peripheralEdges[bestIndex].a].position;
+                    m_CurrentPosition = Vector3.Magnitude(a) * Mathf.Cos(angle * Mathf.Deg2Rad) * b / Vector3.Magnitude(b);
+                    m_CurrentPosition += vertices[peripheralEdges[bestIndex].a].position;
                 }
 
                 m_SnapedEdge = peripheralEdges[bestIndex];
@@ -1130,9 +1136,9 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
-                if (!m_CurrentPositionToAdd.Equals(Vector3.negativeInfinity))
+                if (!m_CurrentPosition.Equals(Vector3.positiveInfinity))
                 {
-                    Vector3 point = trs.TransformPoint(m_CurrentPositionToAdd);
+                    Vector3 point = trs.TransformPoint(m_CurrentPosition);
                     if(m_SelectedIndex >= 0 && m_SelectedIndex < m_cutPath.Count)
                         point = trs.TransformPoint(m_cutPath[m_SelectedIndex].position);
 
@@ -1165,6 +1171,7 @@ namespace UnityEditor.ProBuilder
                 m_LineMesh.Clear();
             if(m_ClosingLineMesh)
                 m_ClosingLineMesh.Clear();
+
 
             if (points.Count < 2)
                 return;
@@ -1212,6 +1219,67 @@ namespace UnityEditor.ProBuilder
                 m_ClosingLineMesh.name = "Poly Shape End";
             }
 
+        }
+
+        bool DrawGuideLine()
+        {
+            if(m_DrawingLineMesh)
+                m_DrawingLineMesh.Clear();
+
+            if(m_CurrentPosition.Equals(Vector3.positiveInfinity))
+                return false;
+
+            Vector3[] ver;
+            Vector2[] uvs;
+            int[] indexes;
+            float lineLength = 0.1f, spaceLength = 0.05f;
+            if(m_cutPath.Count > 0)
+            {
+                Vector3 lastPosition = m_cutPath[m_cutPath.Count - 1].position;
+                Vector3 currentPosition = m_CurrentPosition;
+
+                float d = Vector3.Distance(lastPosition, currentPosition);
+                Vector3 dir = ( currentPosition - lastPosition ).normalized;
+                int sections = (int)(d / (lineLength + spaceLength));
+
+                ver = new Vector3[2 * sections + 2];
+                uvs = new Vector2[2 * sections + 2];
+                indexes = new int[2 * sections + 2];
+                for(int i = 0; i < sections; i++)
+                {
+                    ver[2*i] = lastPosition + i * (lineLength + spaceLength) * dir;
+                    ver[2*i+1] = lastPosition + (i * (lineLength + spaceLength) + lineLength) * dir;
+
+                    uvs[2*i] = new Vector2( ver[i].magnitude/ d, 1f);
+                    uvs[2*i+1] = new Vector2( ver[i+1].magnitude/ d, 1f);
+
+                    indexes[2*i] = 2*i;
+                    indexes[2*i+1] = 2*i+1;
+                }
+
+                int len = ver.Length;
+                ver[len - 2] = lastPosition + sections * (lineLength + spaceLength) * dir;
+                uvs[len - 2] = new Vector2( ver[len - 2].magnitude/ d, 1f);
+                indexes[len - 2] = len - 2;
+
+
+                if(d - (sections * ( lineLength + spaceLength )) > lineLength)
+                    ver[len - 1] = lastPosition + ( sections * ( lineLength + spaceLength ) + lineLength ) * dir;
+                else
+                    ver[len - 1] = currentPosition;
+                uvs[len - 1] = new Vector2( 1f, 1f);
+                indexes[len - 1] = len - 1;
+
+                m_DrawingLineMesh.name = "Drawing Guide";
+                m_DrawingLineMesh.vertices = ver;
+                m_DrawingLineMesh.uv = uvs;
+                m_DrawingLineMesh.SetIndices(indexes, MeshTopology.Lines, 0);
+                m_DrawingLineMaterial.SetFloat("_LineDistance", 1f);
+
+                return true;
+            }
+
+            return false;
         }
 
     }

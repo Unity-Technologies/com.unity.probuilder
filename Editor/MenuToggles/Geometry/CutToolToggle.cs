@@ -1,6 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.ProBuilder;
 
+
+#if !UNITY_2020_2_OR_NEWER
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+#endif
+
 namespace UnityEditor.ProBuilder.Actions
 {
     public class CutToolToggle : MenuToggle
@@ -51,9 +56,9 @@ namespace UnityEditor.ProBuilder.Actions
             ProBuilderEditor.selectMode = SelectMode.Object;
 
             m_PreviousTool = Tools.current;
-            EditorTools.EditorTools.SetActiveTool<CutTool>();
+            ToolManager.SetActiveTool<CutTool>();
 
-            EditorTools.EditorTools.activeToolChanged += ActiveToolChanged;
+            ToolManager.activeToolChanged += ActiveToolChanged;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
             onStart();
@@ -62,7 +67,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         protected override ActionResult EndActivation(StartEndCallBack onEnd)
         {
-            EditorTools.EditorTools.activeToolChanged -= ActiveToolChanged;
+            ToolManager.activeToolChanged -= ActiveToolChanged;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
 
             ProBuilderEditor.selectMode = m_PreviousMode;
