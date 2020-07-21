@@ -4,6 +4,8 @@ using UnityEngine.ProBuilder;
 
 #if !UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.EditorTools;
+#else
+using ToolManager = UnityEditor.EditorTools.ToolManager;
 #endif
 
 namespace UnityEditor.ProBuilder.Actions
@@ -12,6 +14,7 @@ namespace UnityEditor.ProBuilder.Actions
     {
         SelectMode m_PreviousMode;
         Tool m_PreviousTool;
+        CutTool m_Tool;
 
         public override ToolbarGroup group
         {
@@ -56,7 +59,10 @@ namespace UnityEditor.ProBuilder.Actions
             ProBuilderEditor.selectMode = SelectMode.Object;
 
             m_PreviousTool = Tools.current;
-            ToolManager.SetActiveTool<CutTool>();
+            m_Tool = ScriptableObject.CreateInstance<CutTool>();
+            ToolManager.SetActiveTool(m_Tool);
+
+            Undo.RegisterCreatedObjectUndo(m_Tool, "Open Cut Tool");
 
             ToolManager.activeToolChanged += ActiveToolChanged;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
@@ -69,6 +75,8 @@ namespace UnityEditor.ProBuilder.Actions
         {
             ToolManager.activeToolChanged -= ActiveToolChanged;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+
+            Object.DestroyImmediate(m_Tool);
 
             ProBuilderEditor.selectMode = m_PreviousMode;
             Tools.current = m_PreviousTool;

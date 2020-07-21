@@ -26,6 +26,9 @@ namespace UnityEditor.ProBuilder
         ProBuilderMesh m_Mesh;
 
         Texture2D m_CutCursorTexture;
+        Texture2D m_CutAddCursorTexture;
+        Texture2D m_CutMagnetCursorTexture;
+        Texture2D m_CutAddMagnetCursorTexture;
         Texture2D m_CurrentCutCursor = null;
 
         /// <summary>
@@ -116,7 +119,7 @@ namespace UnityEditor.ProBuilder
 
         int m_ControlId;
         bool m_PlacingPoint;
-        bool m_SnapingPoint;
+        bool m_SnappingPoint;
         bool m_ModifyingPoint;
         int m_SelectedIndex = -2;
 
@@ -130,12 +133,16 @@ namespace UnityEditor.ProBuilder
         GUIContent m_OverlayTitle;
 
         const string k_EdgeToEdgePrefKey = "VertexInsertion.edgeToEdge";
-        const string k_ConnectToStart = "VertexInsertion.connectToStart";
-        const string k_EndOnClicToStart = "VertexInsertion.endOnClicToStart";
+        const string k_ConnectToStartPrefKey = "VertexInsertion.connectToStart";
+        const string k_EndOnClicToStartPrefKey = "VertexInsertion.endOnClicToStart";
+        const string k_SnapToGeometryPrefKey = "VertexInsertion.snapToGeometry";
+        const string k_SnappingDistancePrefKey = "VertexInsertion.snappingDistance";
 
         bool m_EdgeToEdge;
         bool m_ConnectToStart;
         bool m_EndOnClicToStart;
+        bool m_SnapToGeometry;
+        float m_SnappingDistance;
 
         public bool IsALoop
         {
@@ -173,10 +180,15 @@ namespace UnityEditor.ProBuilder
 
             m_OverlayTitle = new GUIContent("Cut Tool");
             m_EdgeToEdge = EditorPrefs.GetBool( k_EdgeToEdgePrefKey, false );
-            m_ConnectToStart = EditorPrefs.GetBool( k_ConnectToStart, false );
-            m_EndOnClicToStart = EditorPrefs.GetBool( k_EndOnClicToStart, false );
+            m_ConnectToStart = EditorPrefs.GetBool( k_ConnectToStartPrefKey, false );
+            m_EndOnClicToStart = EditorPrefs.GetBool( k_EndOnClicToStartPrefKey, false );
+            m_SnapToGeometry = EditorPrefs.GetBool( k_SnapToGeometryPrefKey, false );
+            m_SnappingDistance = EditorPrefs.GetFloat( k_SnappingDistancePrefKey, 0.1f );
 
             m_CutCursorTexture = Resources.Load<Texture2D>("Cursors/cutCursor");
+            m_CutAddCursorTexture = Resources.Load<Texture2D>("Cursors/cutCursor-add");
+            m_CutMagnetCursorTexture = Resources.Load<Texture2D>("Cursors/cutCursor-magnet");
+            m_CutAddMagnetCursorTexture = Resources.Load<Texture2D>("Cursors/cutCursor-add-magnet");
 
             //ProBuilderEditor.selectMode = ProBuilderEditor.selectMode| SelectMode.InputTool;
 
@@ -184,6 +196,9 @@ namespace UnityEditor.ProBuilder
             EditorApplication.update += Update;
             Undo.undoRedoPerformed += UndoRedoPerformed;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+
+            if(MeshSelection.selectedObjectCount == 1)
+                m_Mesh = MeshSelection.activeMesh;
         }
 
         void InitTool()
@@ -278,12 +293,15 @@ namespace UnityEditor.ProBuilder
             if(!m_ToolInUse)
                 return;
 
-            Cursor.SetCursor(m_CurrentCutCursor, Vector2.zero, CursorMode.Auto);
+            //Cursor.SetCursor(m_CurrentCutCursor, Vector2.zero, CursorMode.ForceSoftware);
+            //Cursor.SetCursor(m_CurrentCutCursor, Vector2.zero, CursorMode.Auto);
 
             if (m_Mesh != null && m_LineMaterial != null)
                 m_LineMaterial.SetFloat("_EditorTime", (float) EditorApplication.timeSinceStartup);
             if (m_Mesh != null && m_ClosingLineMaterial != null)
                 m_ClosingLineMaterial.SetFloat("_EditorTime", (float)EditorApplication.timeSinceStartup);
+            if (m_Mesh != null && m_DrawingLineMaterial != null)
+                m_DrawingLineMaterial.SetFloat("_EditorTime", (float)EditorApplication.timeSinceStartup);
         }
 
         private void UndoRedoPerformed()
@@ -309,6 +327,18 @@ namespace UnityEditor.ProBuilder
 
         public override void OnToolGUI( EditorWindow window )
         {
+            if(Event.current.type == EventType.Repaint)
+            {
+                Cursor.SetCursor(m_CurrentCutCursor, Vector2.zero, CursorMode.Auto);
+                if(m_CurrentCutCursor != null)
+                {
+                    Rect sceneViewRect = window.position;
+                    sceneViewRect.x = 0;
+                    sceneViewRect.y = 0;
+                    SceneView.AddCursorRect(sceneViewRect, MouseCursor.CustomCursor);
+                }
+            }
+            
             SceneViewOverlay.Window( m_OverlayTitle, OnOverlayGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle );
 
             if(m_Mesh != null)
@@ -363,43 +393,11 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        private void DoVisualCues()
-        {
-            if(m_Mesh != null)
-            {
-                if(m_TargetFace == null)
-                {
-                    EditorMeshHandles.HighlightVertices(m_Mesh, m_Mesh.sharedVertexLookup.Keys.ToArray(), false);
-                    EditorMeshHandles.HighlightEdges(m_Mesh, m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray(),
-                        false);
 
-                    if(m_CurrentFace != null)
-                            EditorMeshHandles.HighlightFaces(m_Mesh, new Face[]{m_CurrentFace}, Color.Lerp(Color.blue, Color.cyan, 0.5f));
-                }
-                else
-                {
-                    var edges = m_TargetFace.edges;
-                    EditorMeshHandles.HighlightVertices(m_Mesh, edges.Select(e => e.a).ToArray(), false);
-                    EditorMeshHandles.HighlightEdges(m_Mesh, edges.ToArray(), false);
-
-                    if(m_SnapedVertexId != -1)
-                        EditorMeshHandles.HighlightVertices(m_Mesh, new int[]{m_SnapedVertexId});
-
-                    if(m_SnapedEdge != Edge.Empty)
-                        EditorMeshHandles.HighlightEdges(m_Mesh, new Edge[]{m_SnapedEdge});
-                }
-            }
-            else if(MeshSelection.activeMesh != null)
-            {
-                ProBuilderMesh mesh = MeshSelection.activeMesh;
-                EditorMeshHandles.HighlightVertices(mesh, mesh.sharedVertexLookup.Keys.ToArray(), false);
-                EditorMeshHandles.HighlightEdges(mesh, mesh.faces.SelectMany(f => f.edges).ToArray(), false);
-            }
-        }
 
         void OnOverlayGUI(UObject target, SceneView view)
         {
-            var rect = EditorGUILayout.GetControlRect(false, 45);
+            var rect = EditorGUILayout.GetControlRect(false, 45, GUILayout.Width(250));
             if (MeshSelection.selectedObjectCount < 1)
                 EditorGUI.HelpBox(rect, "A ProBuilderMesh must be selected to start a cut.", MessageType.Info);
             else if (MeshSelection.selectedObjectCount > 1)
@@ -407,16 +405,50 @@ namespace UnityEditor.ProBuilder
             else
                 EditorGUI.HelpBox(rect, "Click to start inserting new vertices in the shape.", MessageType.Info);
 
-            EditorGUILayout.LabelField( "Number of selected objects : "+MeshSelection.selectedObjectCount );
+            using(new GUILayout.HorizontalScope())
+            {
+                EditorGUILayout.LabelField("Cut From Edge To Edge", GUILayout.Width(225));
+                GUILayout.FlexibleSpace();
+                m_EdgeToEdge = EditorGUILayout.Toggle(m_EdgeToEdge);
+                EditorPrefs.SetBool( k_EdgeToEdgePrefKey,m_EdgeToEdge );
+            }
 
-            m_EdgeToEdge = EditorGUILayout.Toggle("Cut From Edge To Edge", m_EdgeToEdge);
-            EditorPrefs.SetBool( k_EdgeToEdgePrefKey,m_EdgeToEdge );
+            using(new GUILayout.HorizontalScope())
+            {
+                EditorGUILayout.LabelField("Connect End to Start Point", GUILayout.Width(225));
+                GUILayout.FlexibleSpace();
+                m_ConnectToStart = EditorGUILayout.Toggle(m_ConnectToStart);
+                EditorPrefs.SetBool(k_ConnectToStartPrefKey, m_ConnectToStart);
+            }
 
-            m_ConnectToStart = EditorGUILayout.Toggle("Connect End to Start Point", m_ConnectToStart);
-            EditorPrefs.SetBool( k_ConnectToStart, m_ConnectToStart );
+            using(new GUILayout.HorizontalScope())
+            {
+                EditorGUILayout.LabelField("Selecting Start Point is ending cut", GUILayout.Width(225));
+                GUILayout.FlexibleSpace();
+                m_EndOnClicToStart = EditorGUILayout.Toggle(m_EndOnClicToStart);
+                EditorPrefs.SetBool(k_EndOnClicToStartPrefKey, m_EndOnClicToStart);
+            }
 
-            m_EndOnClicToStart = EditorGUILayout.Toggle("Selecting Start Point is ending cut", m_EndOnClicToStart);
-            EditorPrefs.SetBool( k_EndOnClicToStart, m_EndOnClicToStart );
+            using(new GUILayout.HorizontalScope())
+            {
+                EditorGUILayout.LabelField("Snap to existing edges and vertices", GUILayout.Width(225));
+                GUILayout.FlexibleSpace();
+                m_SnapToGeometry = EditorGUILayout.Toggle(m_SnapToGeometry);
+                EditorPrefs.SetBool(k_SnapToGeometryPrefKey, m_SnapToGeometry);
+            }
+
+            if(!m_SnapToGeometry)
+                GUI.enabled = false;
+            EditorGUI.indentLevel++;
+            using(new GUILayout.HorizontalScope())
+            {
+                EditorGUILayout.LabelField("Snapping distance", GUILayout.Width(200));
+                m_SnappingDistance = EditorGUILayout.FloatField(m_SnappingDistance);
+                EditorPrefs.SetFloat( k_SnappingDistancePrefKey, m_SnappingDistance);
+            }
+            EditorGUI.indentLevel--;
+
+            GUI.enabled = true;
 
             if(MeshSelection.selectedObjectCount != 1)
                 GUI.enabled = false;
@@ -446,31 +478,38 @@ namespace UnityEditor.ProBuilder
             GUI.enabled = true;
         }
 
+        Texture2D GetCursorTexture()
+        {
+            Texture2D texture = m_CutCursorTexture;
+            if(m_ModifyingPoint)
+                return texture;
+
+            if(m_cutPath.Count > 0)
+                texture = m_SnapToGeometry ? m_CutAddMagnetCursorTexture : m_CutAddCursorTexture;
+            else if(m_SnapToGeometry)
+                texture = m_CutMagnetCursorTexture;
+
+            return texture;
+        }
+
         private void DoPointPlacement()
         {
             Event evt = Event.current;
             EventType evtType = evt.type;
 
             bool hasHitPosition = UpdateHitPosition();
-            // if(hasHitPosition)
-            //     Cursor.SetCursor(m_CutCursorTexture, Vector2.zero, CursorMode.Auto);
-            // else
-            // {
-            //     Debug.Log("Resetting the cursor");
-            //     Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-            // }
 
             if (evtType== EventType.Repaint)
             {
-                m_SnapingPoint = (evt.modifiers & EventModifiers.Control) != 0;
+                m_SnappingPoint = m_SnapToGeometry || (evt.modifiers & EventModifiers.Control) != 0;
                 m_ModifyingPoint = evt.shift;
 
-                if(!m_SnapingPoint && !m_ModifyingPoint && !m_PlacingPoint)
+                if(!m_SnappingPoint && !m_ModifyingPoint && !m_PlacingPoint)
                     m_SelectedIndex = -1;
 
                 if (hasHitPosition)
                 {
-                    m_CurrentCutCursor = m_CutCursorTexture;
+                    m_CurrentCutCursor = GetCursorTexture();
                     if( (m_CurrentVertexTypes & (VertexTypes.ExistingVertex | VertexTypes.VertexInShape)) != 0)
                         m_CurrentHandleColor = m_ModifyingPoint ? k_HandleColorModifyVertex : k_HandleColorUseExistingVertex;
                     else if ((m_CurrentVertexTypes & VertexTypes.AddedOnEdge) != 0)
@@ -501,7 +540,7 @@ namespace UnityEditor.ProBuilder
 
                 if (evtType == EventType.MouseDrag)
                 {
-                    if (hasHitPosition)
+                    if (hasHitPosition && m_SelectedIndex >= 0)
                     {
                         evt.Use();
                         InsertedVertexData data = m_cutPath[m_SelectedIndex];
@@ -568,7 +607,7 @@ namespace UnityEditor.ProBuilder
                 m_CurrentFace = m_Mesh.faces[pbHit.face];
                 m_CurrentVertexTypes = VertexTypes.None;
 
-                if(m_SnapingPoint || m_ModifyingPoint)
+                if(m_SnappingPoint || m_ModifyingPoint)
                     CheckPointInCutPath();
 
                 if (m_CurrentVertexTypes == VertexTypes.None && !m_ModifyingPoint)
@@ -861,7 +900,7 @@ namespace UnityEditor.ProBuilder
 
         private void CheckPointInCutPath()
         {
-            float snapDistance = 0.1f;
+            float snapDistance = m_SnappingDistance;
             for (int i = 0; i < m_cutPath.Count; i++)
             {
                 var vertexData = m_cutPath[i];
@@ -882,7 +921,7 @@ namespace UnityEditor.ProBuilder
         {
             m_CurrentVertexTypes = VertexTypes.NewVertex;
             bool snapedOnVertex = false;
-            float snapDistance = 0.1f;
+            float snapDistance = m_SnappingDistance;
             int bestIndex = -1;
             float bestDistance = Mathf.Infinity;
 
@@ -896,7 +935,7 @@ namespace UnityEditor.ProBuilder
 
             for (int i = 0; i < peripheralEdges.Count; i++)
             {
-                if ((m_TargetFace == null || m_TargetFace == m_CurrentFace) && m_SnapingPoint)
+                if ((m_TargetFace == null || m_TargetFace == m_CurrentFace) && m_SnappingPoint)
                 {
                     if (Math.Approx3(vertices[peripheralEdges[i].a].position,
                         m_CurrentPosition,
@@ -1152,6 +1191,40 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        private void DoVisualCues()
+        {
+            if(m_Mesh != null)
+            {
+                if(m_TargetFace == null)
+                {
+                    EditorMeshHandles.HighlightVertices(m_Mesh, m_Mesh.sharedVertexLookup.Keys.ToArray(), false);
+                    EditorMeshHandles.HighlightEdges(m_Mesh, m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray(),
+                        false);
+
+                    if(m_CurrentFace != null)
+                        EditorMeshHandles.HighlightFaces(m_Mesh, new Face[]{m_CurrentFace}, Color.Lerp(Color.blue, Color.cyan, 0.5f));
+                }
+                else
+                {
+                    var edges = m_TargetFace.edges;
+                    EditorMeshHandles.HighlightVertices(m_Mesh, edges.Select(e => e.a).ToArray(), false);
+                    EditorMeshHandles.HighlightEdges(m_Mesh, edges.ToArray(), false);
+
+                    if(m_SnapedVertexId != -1)
+                        EditorMeshHandles.HighlightVertices(m_Mesh, new int[]{m_SnapedVertexId});
+
+                    if(m_SnapedEdge != Edge.Empty)
+                        EditorMeshHandles.HighlightEdges(m_Mesh, new Edge[]{m_SnapedEdge});
+                }
+            }
+            else if(MeshSelection.activeMesh != null)
+            {
+                ProBuilderMesh mesh = MeshSelection.activeMesh;
+                EditorMeshHandles.HighlightVertices(mesh, mesh.sharedVertexLookup.Keys.ToArray(), false);
+                EditorMeshHandles.HighlightEdges(mesh, mesh.faces.SelectMany(f => f.edges).ToArray(), false);
+            }
+        }
+
         public void RebuildCutShape(bool vertexCountChanged = false)
         {
             // If Undo is called immediately after creation this situation can occur
@@ -1226,7 +1299,8 @@ namespace UnityEditor.ProBuilder
             if(m_DrawingLineMesh)
                 m_DrawingLineMesh.Clear();
 
-            if(m_CurrentPosition.Equals(Vector3.positiveInfinity))
+            if(m_CurrentPosition.Equals(Vector3.positiveInfinity)
+            || m_ModifyingPoint)
                 return false;
 
             Vector3[] ver;
