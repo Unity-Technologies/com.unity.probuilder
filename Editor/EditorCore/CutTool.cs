@@ -508,7 +508,7 @@ namespace UnityEditor.ProBuilder
                         CutVertexData data = m_CutPath[m_SelectedIndex];
                         data.position = m_CurrentPosition;
                         m_CutPath[m_SelectedIndex] = data;
-                        RebuildCutShape(false);
+                        RebuildCutShape();
                         SceneView.RepaintAll();
                     }
 
@@ -642,7 +642,10 @@ namespace UnityEditor.ProBuilder
                 case 0:
                     //If the cut does not touches the face edges, it will create a hole in the face
                     //The creation of this shape is specific and different from others
-                    var faces  = CreateHoleInFace(m_TargetFace, cutIndexes);
+                    if(cutIndexes.Length > 2)
+                    {
+                        var faces = CreateHoleInFace(m_TargetFace, cutIndexes);
+                    }
                     break;
                 case 1:
                     //If only one vertex touches the edge of the face, it means the outter shape
@@ -686,7 +689,7 @@ namespace UnityEditor.ProBuilder
             m_Mesh.Optimize();
 
             m_CutPath.Clear();
-            RebuildCutShape(true);
+            RebuildCutShape();
 
             Reset();
 
