@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder
         }
 
         [Serializable]
-        public struct InsertedVertexData
+        public struct CutVertexData
         {
             [SerializeField]
             Vector3 m_Position;
@@ -72,14 +72,14 @@ namespace UnityEditor.ProBuilder
                 set => m_Types = value;
             }
 
-            public InsertedVertexData(Vector3 position, VertexTypes types = VertexTypes.None)
+            public CutVertexData(Vector3 position, VertexTypes types = VertexTypes.None)
             {
                 m_Position = position;
                 m_Normal = Vector3.up;
                 m_Types = types;
             }
 
-            public InsertedVertexData(Vector3 position, Vector3 normal, VertexTypes types = VertexTypes.None)
+            public CutVertexData(Vector3 position, Vector3 normal, VertexTypes types = VertexTypes.None)
             {
                 m_Position = position;
                 m_Normal = normal;
@@ -126,10 +126,10 @@ namespace UnityEditor.ProBuilder
         int m_SnapedVertexId = -1;
         Edge m_SnapedEdge = Edge.Empty;
 
-        bool m_ToolInUse;
+        //bool m_ToolInUse;
 
         [SerializeField]
-        internal List<InsertedVertexData> m_cutPath = new List<InsertedVertexData>();
+        internal List<CutVertexData> m_cutPath = new List<CutVertexData>();
         GUIContent m_OverlayTitle;
 
         const string k_EdgeToEdgePrefKey = "VertexInsertion.edgeToEdge";
@@ -165,13 +165,13 @@ namespace UnityEditor.ProBuilder
         }
 
 
-        void ActiveToolChanged()
-        {
-            if(ToolManager.IsActiveTool(this))
-                InitTool();
-            else
-                CloseTool();
-        }
+        // void ActiveToolChanged()
+        // {
+        //     if(ToolManager.IsActiveTool(this))
+        //         InitTool();
+        //     else
+        //         CloseTool();
+        // }
 
         void OnEnable()
         {
@@ -190,43 +190,43 @@ namespace UnityEditor.ProBuilder
             m_CutMagnetCursorTexture = Resources.Load<Texture2D>("Cursors/cutCursor-magnet");
             m_CutAddMagnetCursorTexture = Resources.Load<Texture2D>("Cursors/cutCursor-add-magnet");
 
-            //ProBuilderEditor.selectMode = ProBuilderEditor.selectMode| SelectMode.InputTool;
-
-            ToolManager.activeToolChanged += ActiveToolChanged;
+            //ToolManager.activeToolChanged += ActiveToolChanged;
             EditorApplication.update += Update;
             Undo.undoRedoPerformed += UndoRedoPerformed;
-            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+            //ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
             if(MeshSelection.selectedObjectCount == 1)
                 m_Mesh = MeshSelection.activeMesh;
+
+            InitLineRenderers();
+            //InitTool();
         }
 
-        void InitTool()
-        {
-            InitLineRenderers();
-            m_ToolInUse = true;
-        }
+        // void InitTool()
+        // {
+        //     InitLineRenderers();
+        //     m_ToolInUse = true;
+        // }
 
         void OnDisable()
         {
-            ToolManager.activeToolChanged -= ActiveToolChanged;
+            //ToolManager.activeToolChanged -= ActiveToolChanged;
 
             EditorApplication.update -= Update;
             Undo.undoRedoPerformed -= UndoRedoPerformed;
-            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+            //ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
 
             CloseTool();
         }
 
         void CloseTool()
         {
-            if(m_ToolInUse)
+            //if(m_ToolInUse)
                 ExecuteCut();
 
             Clear();
 
-            m_ToolInUse = false;
-
+            //m_ToolInUse = false;
         }
 
         void InitLineRenderers()
@@ -290,8 +290,8 @@ namespace UnityEditor.ProBuilder
 
         void Update()
         {
-            if(!m_ToolInUse)
-                return;
+            //if(!m_ToolInUse)
+            //    return;
 
             //Cursor.SetCursor(m_CurrentCutCursor, Vector2.zero, CursorMode.ForceSoftware);
             //Cursor.SetCursor(m_CurrentCutCursor, Vector2.zero, CursorMode.Auto);
@@ -317,13 +317,13 @@ namespace UnityEditor.ProBuilder
             EditorApplication.delayCall = () => RebuildCutShape();
         }
 
-        private void OnSelectModeChanged(SelectMode mode)
-        {
-            if(!m_ToolInUse)
-                return;
-
-            //ActionResult result = DoCut();
-        }
+        // private void OnSelectModeChanged(SelectMode mode)
+        // {
+        //     if(!m_ToolInUse)
+        //         return;
+        //
+        //     //ActionResult result = DoCut();
+        // }
 
         public override void OnToolGUI( EditorWindow window )
         {
@@ -338,7 +338,7 @@ namespace UnityEditor.ProBuilder
                     SceneView.AddCursorRect(sceneViewRect, MouseCursor.CustomCursor);
                 }
             }
-            
+
             SceneViewOverlay.Window( m_OverlayTitle, OnOverlayGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle );
 
             if(m_Mesh != null)
@@ -543,7 +543,7 @@ namespace UnityEditor.ProBuilder
                     if (hasHitPosition && m_SelectedIndex >= 0)
                     {
                         evt.Use();
-                        InsertedVertexData data = m_cutPath[m_SelectedIndex];
+                        CutVertexData data = m_cutPath[m_SelectedIndex];
                         data.position = m_CurrentPosition;
                         m_cutPath[m_SelectedIndex] = data;
                         RebuildCutShape(false);
@@ -576,7 +576,7 @@ namespace UnityEditor.ProBuilder
                     if (m_TargetFace == null)
                         m_TargetFace = m_CurrentFace;
 
-                    m_cutPath.Add(new InsertedVertexData(m_CurrentPosition,m_CurrentPositionNormal, m_CurrentVertexTypes));
+                    m_cutPath.Add(new CutVertexData(m_CurrentPosition,m_CurrentPositionNormal, m_CurrentVertexTypes));
 
                     m_PlacingPoint = true;
                     m_SelectedIndex = m_cutPath.Count - 1;
@@ -636,7 +636,7 @@ namespace UnityEditor.ProBuilder
             {
                 if (m_ConnectToStart && m_cutPath.Count > 2)
                 {
-                    m_cutPath.Add(new InsertedVertexData(m_cutPath[0].position, VertexTypes.VertexInShape));
+                    m_cutPath.Add(new CutVertexData(m_cutPath[0].position, VertexTypes.VertexInShape));
                 }
                 else
                 {
@@ -900,6 +900,12 @@ namespace UnityEditor.ProBuilder
 
         private void CheckPointInCutPath()
         {
+            //For now the method is only used to moved points of the cut Path
+            //The idea is to extend it to be able to create a cut that crosses a
+            //single vertex multiple times
+            if(!m_ModifyingPoint)
+                return;
+
             float snapDistance = m_SnappingDistance;
             for (int i = 0; i < m_cutPath.Count; i++)
             {
@@ -1121,14 +1127,10 @@ namespace UnityEditor.ProBuilder
             {
                 case KeyCode.Backspace:
                 {
-                    if (m_SelectedIndex >= 0)
-                    {
-                        UndoUtility.RecordObject(m_Mesh, "Delete Selected Points");
-                        m_cutPath.RemoveAt(m_SelectedIndex);
-                        m_SelectedIndex = m_cutPath.Count - 1;
-                        RebuildCutShape(true);
-                        evt.Use();
-                    }
+                    UndoUtility.RecordObject(m_Mesh, "Delete Selected Points");
+                    m_cutPath.RemoveAt(m_cutPath.Count-1);
+                    RebuildCutShape(true);
+                    evt.Use();
                     break;
                 }
 
@@ -1245,7 +1247,6 @@ namespace UnityEditor.ProBuilder
             if(m_ClosingLineMesh)
                 m_ClosingLineMesh.Clear();
 
-
             if (points.Count < 2)
                 return;
 
@@ -1288,8 +1289,11 @@ namespace UnityEditor.ProBuilder
             }
             else
             {
-                m_ClosingLineMesh.Clear();
-                m_ClosingLineMesh.name = "Poly Shape End";
+                if(m_ClosingLineMesh != null)
+                {
+                    m_ClosingLineMesh.Clear();
+                    m_ClosingLineMesh.name = "Poly Shape End";
+                }
             }
 
         }

@@ -12,9 +12,13 @@ namespace UnityEditor.ProBuilder.Actions
 {
     public class CutToolToggle : MenuToggle
     {
-        SelectMode m_PreviousMode;
-        Tool m_PreviousTool;
         CutTool m_Tool;
+
+        bool m_RestorePreviousMode;
+        SelectMode m_PreviousMode;
+
+        bool m_RestorePreviousTool;
+        Tool m_PreviousTool;
 
         public override ToolbarGroup group
         {
@@ -55,9 +59,11 @@ namespace UnityEditor.ProBuilder.Actions
 
         protected override ActionResult StartActivation(StartEndCallBack onStart)
         {
+            m_RestorePreviousMode = true;
             m_PreviousMode = ProBuilderEditor.selectMode;
             ProBuilderEditor.selectMode = SelectMode.Object;
 
+            m_RestorePreviousTool = true;
             m_PreviousTool = Tools.current;
             m_Tool = ScriptableObject.CreateInstance<CutTool>();
             ToolManager.SetActiveTool(m_Tool);
@@ -78,8 +84,10 @@ namespace UnityEditor.ProBuilder.Actions
 
             Object.DestroyImmediate(m_Tool);
 
-            ProBuilderEditor.selectMode = m_PreviousMode;
-            Tools.current = m_PreviousTool;
+            if(m_RestorePreviousMode)
+                ProBuilderEditor.selectMode = m_PreviousMode;
+            if(m_RestorePreviousTool)
+                Tools.current = m_PreviousTool;
 
             onEnd();
             return new ActionResult(ActionResult.Status.Success,"Cut Tool Ends");
@@ -87,12 +95,15 @@ namespace UnityEditor.ProBuilder.Actions
 
         void OnSelectModeChanged(SelectMode obj)
         {
+            m_RestorePreviousMode = false;
             LeaveTool();
         }
 
         void ActiveToolChanged()
         {
-            EditorApplication.delayCall += () => LeaveTool();
+            m_RestorePreviousTool = false;
+            LeaveTool();
+            //EditorApplication.delayCall += () => LeaveTool();
         }
 
         void LeaveTool()
