@@ -5,7 +5,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 {
     public static class QuadUtility
     {
-        public static void ToQuad(this ProBuilderMesh mesh, IList<Face> faces, bool smoothing = true)
+        public static void ToQuads(this ProBuilderMesh mesh, IList<Face> faces, bool smoothing = true)
         {
             HashSet<Face> processed = new HashSet<Face>();
 

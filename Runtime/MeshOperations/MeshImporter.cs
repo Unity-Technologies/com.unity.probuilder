@@ -223,7 +223,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             if (importSettings.quads)
             {
-                m_Destination.ToQuad(m_Destination.facesInternal, !importSettings.smoothing);
+                m_Destination.ToQuads(m_Destination.facesInternal, !importSettings.smoothing);
             }
 
             if (importSettings.smoothing)
