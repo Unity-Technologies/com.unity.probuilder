@@ -392,7 +392,7 @@ namespace UnityEditor.ProBuilder
 
         void LoadSettings()
         {
-            EditorApplication.delayCall += EditorMeshHandles.ResetPreferences;
+            EditorApplication.delayCall += EditorHandleDrawing.ResetPreferences;
 
             m_ScenePickerPreferences = new ScenePickerPreferences()
             {
@@ -581,7 +581,7 @@ namespace UnityEditor.ProBuilder
 
             m_CurrentEvent = Event.current;
 
-            EditorMeshHandles.DrawSceneHandles(SceneDragAndDropListener.isDragging ? SelectMode.None : selectMode);
+            EditorHandleDrawing.DrawSceneHandles(SceneDragAndDropListener.isDragging ? SelectMode.None : selectMode);
 
             DrawHandleGUI(sceneView);
 
@@ -997,7 +997,7 @@ namespace UnityEditor.ProBuilder
             {
                 try
                 {
-                    EditorMeshHandles.DrawSceneSelection(m_Hovering);
+                    EditorHandleDrawing.DrawSceneSelection(m_Hovering);
                 }
                 catch
                 {
@@ -1266,12 +1266,12 @@ namespace UnityEditor.ProBuilder
 
             try
             {
-                EditorMeshHandles.RebuildSelectedHandles(MeshSelection.topInternal, selectMode);
+                EditorHandleDrawing.RebuildSelectedHandles(MeshSelection.topInternal, selectMode);
             }
             catch
             {
                 // happens on undo when c++ object is gone but c# isn't in the know
-                EditorMeshHandles.ClearHandles();
+                EditorHandleDrawing.ClearHandles();
             }
         }
 
