@@ -94,16 +94,19 @@ namespace UnityEditor.ProBuilder
         static readonly Color k_HandleColorModifyVertex = new Color(1f, .75f, .0f, 1f);
         const float k_HandleSize = .05f;
 
+        // Line renderer for the current cut path
         Material m_LineMaterial;
         Mesh m_LineMesh = null;
         static readonly Color k_LineMaterialBaseColor = new Color(0f, 136f / 255f, 1f, 1f);
         static readonly Color k_LineMaterialHighlightColor = new Color(0f, 200f / 255f, 170f / 200f, 1f);
 
+        // Line renderer between the last point of the cut and the first one to close the shape if the option is activated
         Material m_ClosingLineMaterial;
         Mesh m_ClosingLineMesh = null;
         static readonly Color k_ClosingLineMaterialBaseColor = new Color(1f, 170/200f, 0f, 1f);
         static readonly Color k_ClosingLineMaterialHighlightColor = new Color(1f, 50f / 200f, 0f, 1f);
 
+        // Line renderer to provide a preview to the user of the next cut section
         Material m_DrawingLineMaterial;
         Mesh m_DrawingLineMesh = null;
         static readonly Color k_DrawingLineMaterialBaseColor = new Color(0.01f, .9f, 0.3f, 1f);
@@ -124,8 +127,6 @@ namespace UnityEditor.ProBuilder
 
         int m_SnapedVertexId = -1;
         Edge m_SnapedEdge = Edge.Empty;
-
-        //bool m_ToolInUse;
 
         [SerializeField]
         internal List<CutVertexData> m_CutPath = new List<CutVertexData>();
@@ -196,12 +197,18 @@ namespace UnityEditor.ProBuilder
             CloseTool();
         }
 
+        /// <summary>
+        ///  Close the tool and try to apply the current cut before leaving
+        /// </summary>
         void CloseTool()
         {
             ExecuteCut();
             Clear();
         }
 
+        /// <summary>
+        /// Create line renderers for the current cut
+        /// </summary>
         void InitLineRenderers()
         {
             m_LineMesh = new Mesh();
@@ -218,6 +225,9 @@ namespace UnityEditor.ProBuilder
             m_DrawingLineMaterial = CreateLineMaterial(k_DrawingLineMaterialBaseColor, k_DrawingLineMaterialBaseColor);
         }
 
+        /// <summary>
+        /// Clear all line renderers
+        /// </summary>
         void ClearLineRenderers()
         {
             if(m_LineMesh)
@@ -236,6 +246,9 @@ namespace UnityEditor.ProBuilder
                 DestroyImmediate(m_DrawingLineMaterial);
         }
 
+        /// <summary>
+        /// Clear all data from the cut tool
+        /// </summary>
         void Clear()
         {
             ClearLineRenderers();
@@ -247,12 +260,21 @@ namespace UnityEditor.ProBuilder
             m_CurrentCutCursor = null;
         }
 
+        /// <summary>
+        /// Reset tool data and line renderers
+        /// </summary>
         void Reset()
         {
             Clear();
             InitLineRenderers();
         }
 
+        /// <summary>
+        /// Instantiate Line Materials, all are based on the same base Material with different colors
+        /// </summary>
+        /// <param name="baseColor">base color to apply to the line</param>
+        /// <param name="highlightColor">highlight color to apply to the line</param>
+        /// <returns></returns>
         static Material CreateLineMaterial(Color baseColor, Color highlightColor)
         {
             Material mat = new Material(Shader.Find("Hidden/ProBuilder/ScrollHighlight"));
@@ -261,6 +283,9 @@ namespace UnityEditor.ProBuilder
             return mat;
         }
 
+        /// <summary>
+        /// Update method that handles the update of line renderers
+        /// </summary>
         void Update()
         {
             if(m_Mesh != null)
@@ -274,6 +299,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Undo/Redo callback: Reset and recompute lines, and update the targeted face if needed
+        /// </summary>
         private void UndoRedoPerformed()
         {
             ClearLineRenderers();
@@ -287,6 +315,10 @@ namespace UnityEditor.ProBuilder
             EditorApplication.delayCall = () => RebuildCutShape();
         }
 
+        /// <summary>
+        /// Main GUI update for the tool, calls every secondary methods to place points, update lines and compute the cut
+        /// </summary>
+        /// <param name="window">current window calling the tool : SceneView</param>
         public override void OnToolGUI( EditorWindow window )
         {
             SceneViewOverlay.Window( m_OverlayTitle, OnOverlayGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle );
@@ -321,13 +353,18 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Overlay GUI
+        /// </summary>
+        /// <param name="target">the target of this overlay</param>
+        /// <param name="view">the current SceneView where to display the overlay</param>
         void OnOverlayGUI(UObject target, SceneView view)
         {
-            var rect = EditorGUILayout.GetControlRect(false, 45, GUILayout.Width(250));
-            if (MeshSelection.selectedObjectCount < 1)
-                EditorGUI.HelpBox(rect, "A ProBuilderMesh must be selected to start a cut.", MessageType.Info);
-            else if (MeshSelection.selectedObjectCount > 1)
-                EditorGUI.HelpBox(rect, "Only one ProBuilder mesh must be selected.", MessageType.Warning);
+            if(MeshSelection.selectedObjectCount != 1)
+            {
+                var rect = EditorGUILayout.GetControlRect(false, 45, GUILayout.Width(250));
+                EditorGUI.HelpBox(rect, "One and only one ProBuilder mesh must be selected.", MessageType.Warning);
+            }
             // else
             //     EditorGUI.HelpBox(rect, "Click to start inserting new vertices in the shape.", MessageType.Info);
 
@@ -378,6 +415,12 @@ namespace UnityEditor.ProBuilder
             GUI.enabled = true;
         }
 
+        /// <summary>
+        /// Creates a toggle for cut tool overlays
+        /// </summary>
+        /// <param name="label">toggle title</param>
+        /// <param name="val">starting value for the toggle</param>
+        /// <returns>new toggle value</returns>
         bool DoOverlayToggle(string label, bool val)
         {
             using(new GUILayout.HorizontalScope())
@@ -388,6 +431,10 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Update the mouse cursor depending on the tool status
+        /// </summary>
+        /// <returns>the texture to use as a cursor</returns>
         Texture2D GetCursorTexture()
         {
             Texture2D texture = m_CutCursorTexture;
@@ -402,6 +449,11 @@ namespace UnityEditor.ProBuilder
             return texture;
         }
 
+        /// <summary>
+        /// Compute the placement of the designated position, this method takes into account the snapping option
+        /// And check as well if the user is moving existing positions of the cut path.
+        /// The method is also in charge to add the new positions to the CutPath on user clicks
+        /// </summary>
         void DoPointPlacement()
         {
             Event evt = Event.current;
@@ -501,6 +553,10 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Compute the position designated by the user in the current mesh/face taking into account snapping
+        /// </summary>
+        /// <returns>true is a valid position is computed in the mesh</returns>
         bool UpdateHitPosition()
         {
             Event evt = Event.current;
@@ -529,12 +585,22 @@ namespace UnityEditor.ProBuilder
             return false;
         }
 
+        /// <summary>
+        /// Compute the cut result and display a notification
+        /// </summary>
         void ExecuteCut()
         {
             ActionResult result = DoCut();
             EditorUtility.ShowNotification(result.notification);
         }
 
+        /// <summary>
+        /// Compute the faces resulting from the cut:
+        /// - First inserts points defining the cut as vertices in the face
+        /// - Compute the central polygon is the cut is creating a closed polygon in the face
+        /// - Update the rest of the face accordingly to the cut and the central polygon
+        /// </summary>
+        /// <returns>ActionResult success if it was possible to create the cut</returns>
         ActionResult DoCut()
         {
             if (m_TargetFace == null || m_CutPath.Count < 2)
@@ -576,7 +642,7 @@ namespace UnityEditor.ProBuilder
                 case 0:
                     //If the cut does not touches the face edges, it will create a hole in the face
                     //The creation of this shape is specific and different from others
-                    DoFaceWithHole(m_TargetFace, cutIndexes);
+                    var faces  = CreateHoleInFace(m_TargetFace, cutIndexes);
                     break;
                 case 1:
                     //If only one vertex touches the edge of the face, it means the outter shape
@@ -598,7 +664,7 @@ namespace UnityEditor.ProBuilder
 
                             //For safety, triangulate the new surface and make quad geometry from there
                             var triangulatedFaces = m_Mesh.ToTriangles(new Face[]{face,compFace});
-                            m_Mesh.ToQuads(triangulatedFaces);
+                            var newFaces = m_Mesh.ToQuads(triangulatedFaces);
                         }
                     }
                     break;
@@ -627,7 +693,15 @@ namespace UnityEditor.ProBuilder
             return ActionResult.Success;
         }
 
-        Face DoFaceWithHole(Face face, IList<int> cutVertexIndexes)
+        /// <summary>
+        /// Create a list of new faces from a original face by adding a hole in the face
+        /// Creating several faces instead of one preserves a nice geometry of the mesh
+        /// for future mesh operations
+        /// </summary>
+        /// <param name="face">Original face to modify</param>
+        /// <param name="cutVertexIndexes">indexes of the vertices that defines a hole in the face</param>
+        /// <returns>List of new faces created by the hole insertion in the face</returns>
+        List<Face> CreateHoleInFace(Face face, IList<int> cutVertexIndexes)
         {
             List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(face);
             List<int> borderIndexes = peripheralEdges.Select(edge => edge.a).ToList();
@@ -639,12 +713,22 @@ namespace UnityEditor.ProBuilder
 
             //For safety, triangulate the new surface and make quad geometry from there
             var triangulatedFaces = m_Mesh.ToTriangles(new Face[]{newFace});
-            m_Mesh.ToQuads(triangulatedFaces);
+            var newFaces = m_Mesh.ToQuads(triangulatedFaces);
 
-            return newFace;
+            return newFaces;
         }
 
 
+        /// <summary>
+        /// Based on the new vertices inserted in the face, this method computes the different polygons
+        /// created between the cut and the original face (external to the cut if it makes a loop)
+        ///
+        /// The polygons are created by parsing the edges that defines the border of the face. Is an edge ends on a
+        /// vertex that is part of the cut, we close this polygon using the cut (though ClosePolygonalCut method)
+        /// </summary>
+        /// <param name="face">Original face to modify</param>
+        /// <param name="cutVertexIndexes">Indexes of the new vertices inserted in the face</param>
+        /// <returns>The list of polygons to create (defined by their vertices indexes)</returns>
         List<int[]> ComputePolygonsIndexes(Face face, IList<int> cutVertexIndexes)
         {
             var polygons =new List<int[]>();
@@ -694,6 +778,14 @@ namespace UnityEditor.ProBuilder
             return polygons;
         }
 
+        /// <summary>
+        ///    The method compute which vertices of the cut are defining the end of the current polygon
+        /// </summary>
+        /// <param name="polygonFirstVertex">Index of the first vertex to know when to end the cut</param>
+        /// <param name="previousEdge">Previous edge in the face</param>
+        /// <param name="currentIndex">Current vertex index</param>
+        /// <param name="cutIndexes">Indexes of the vertices defining the cut</param>
+        /// <returns>the indexes of the vertices ending the designated polygon</returns>
         List<int> ClosePolygonalCut(int polygonFirstVertex ,Edge previousEdge, int currentIndex, List<int> cutIndexes)
         {
             List<int> closure = new List<int>();
@@ -775,6 +867,13 @@ namespace UnityEditor.ProBuilder
         }
 
 
+        /// <summary>
+        /// A problem raises when a same vertex is participating twice to the same polygon ('singularity') as it is
+        /// not supported by the triangulation. To avoid this, we split the polygon in a main one a second one that just
+        /// remove the second participation of the vertex. This method compute the second polygon from the original one.
+        /// </summary>
+        /// <param name="indexes">The current polygon</param>
+        /// <returns>the indexes of the secondary polygon</returns>
         int[] GetComplementaryPolygons(int[] indexes)
         {
             for (int i = 0; i < indexes.Length; i++)
@@ -795,6 +894,9 @@ namespace UnityEditor.ProBuilder
             return null;
         }
 
+        /// <summary>
+        /// Check whether the current position (m_CurrentPosition) can be associated/snapped to an existing position of the path
+        /// </summary>
         void CheckPointInCutPath()
         {
             //For now the method is only used to moved points of the cut Path
@@ -820,6 +922,10 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Check whether the current position (m_CurrentPosition) can be associated/snapped to an existing
+        /// edge or vertex of the current face
+        /// </summary>
         void CheckPointInMesh()
         {
             m_CurrentVertexTypes = VertexTypes.NewVertex;
@@ -928,6 +1034,10 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Insert all position from the cut path to the current faces as new vertices
+        /// </summary>
+        /// <returns>The list of Vertex inserted in the face</returns>
         List<Vertex> InsertVertices()
         {
             List<Vertex> newVertices = new List<Vertex>();
@@ -944,7 +1054,7 @@ namespace UnityEditor.ProBuilder
                         newVertices.Add(InsertVertexOnExistingEdge(vertexData.position));
                         break;
                     case VertexTypes.NewVertex:
-                        newVertices.Add(m_Mesh.InsertVertexInMeshSimple(vertexData.position,vertexData.normal));
+                        newVertices.Add(m_Mesh.InsertVertexInMesh(vertexData.position,vertexData.normal));
                         break;
                     default:
                         break;
@@ -954,6 +1064,11 @@ namespace UnityEditor.ProBuilder
             return newVertices;
         }
 
+        /// <summary>
+        /// Method to retrieve a vertex already existing in the face to avoid duplicated
+        /// </summary>
+        /// <param name="vertexPosition">The vertex position</param>
+        /// <returns>The retrieved vertex</returns>
         Vertex InsertVertexOnExistingVertex(Vector3 vertexPosition)
         {
             Vertex vertex = null;
@@ -961,7 +1076,7 @@ namespace UnityEditor.ProBuilder
             List<Vertex> vertices = m_Mesh.GetVertices().ToList();
             for (int vertIndex = 0; vertIndex < vertices.Count; vertIndex++)
             {
-                if (UnityEngine.ProBuilder.Math.Approx3(vertices[vertIndex].position, vertexPosition))
+                if (Math.Approx3(vertices[vertIndex].position, vertexPosition))
                 {
                     vertex = vertices[vertIndex];
                     break;
@@ -971,6 +1086,11 @@ namespace UnityEditor.ProBuilder
             return vertex;
         }
 
+        /// <summary>
+        /// Insert the vertex in an exiting edge
+        /// </summary>
+        /// <param name="vertexPosition">The position of the vertex to insert</param>
+        /// <returns>The inew vertex inserted</returns>
         Vertex InsertVertexOnExistingEdge(Vector3 vertexPosition)
         {
             List<Vertex> vertices = m_Mesh.GetVertices().ToList();
@@ -995,15 +1115,17 @@ namespace UnityEditor.ProBuilder
             return v;
         }
 
+        /// <summary>
+        /// Method that checks whether the cut edition is over
+        /// </summary>
+        /// <returns>True if the cut is over and need to be computed</returns>
         bool CheckForEditionEnd()
         {
             if (m_TargetFace == null || m_CutPath.Count < 2)
                 return false;
 
             if (m_EndOnClicToStart)
-            {
                 return Math.Approx3(m_CutPath[0].position,m_CutPath[m_CutPath.Count - 1].position);
-            }
 
             if (m_EdgeToEdge)
             {
@@ -1016,6 +1138,10 @@ namespace UnityEditor.ProBuilder
             return false;
         }
 
+        /// <summary>
+        /// Handle key events
+        /// </summary>
+        /// <param name="evt">the current event to check</param>
         void HandleKeyEvent(Event evt)
         {
             KeyCode key = evt.keyCode;
@@ -1026,7 +1152,7 @@ namespace UnityEditor.ProBuilder
                 {
                     UndoUtility.RecordObject(m_Mesh, "Delete Selected Points");
                     m_CutPath.RemoveAt(m_CutPath.Count-1);
-                    RebuildCutShape(true);
+                    RebuildCutShape();
                     evt.Use();
                     break;
                 }
@@ -1040,6 +1166,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Display existing points of the cut
+        /// </summary>
         void DoExistingPointsGUI()
         {
             Transform trs = m_Mesh.transform;
@@ -1090,6 +1219,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Display lines of the cut shape
+        /// </summary>
         void DoExistingLinesGUI()
         {
             if(m_LineMaterial != null)
@@ -1122,6 +1254,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Visual indications to help the user: highlighting faces, edges and vertices when snapping on them
+        /// </summary>
         void DoVisualCues()
         {
             if(m_Mesh != null)
@@ -1156,7 +1291,10 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        void RebuildCutShape(bool vertexCountChanged = false)
+        /// <summary>
+        /// Rebuild the line mesh when updated
+        /// </summary>
+        void RebuildCutShape()
         {
             // If Undo is called immediately after creation this situation can occur
             if (m_Mesh == null)
@@ -1169,6 +1307,10 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.Refresh();
         }
 
+        /// <summary>
+        /// Draw the line corresponding to the cut and the closure if needed
+        /// </summary>
+        /// <param name="points">Positions of the cut points</param>
         void DrawPolyLine(List<Vector3> points)
         {
             if(m_LineMesh)
@@ -1227,6 +1369,10 @@ namespace UnityEditor.ProBuilder
 
         }
 
+        /// <summary>
+        /// Draw a helper line between the last point of the cut and the current position of the mouse cursor
+        /// </summary>
+        /// <returns>true if the line can be traced (the position of the cursor must be valid and the cut have one point minimum)</returns>
         bool DrawGuideLine()
         {
             if(m_DrawingLineMesh)
@@ -1285,7 +1431,6 @@ namespace UnityEditor.ProBuilder
 
                 return true;
             }
-
             return false;
         }
 

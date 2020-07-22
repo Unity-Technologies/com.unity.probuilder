@@ -1437,7 +1437,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="face">The face to append points to.</param>
         /// <param name="point">Point to added to the face.</param>
         /// <returns>The face created by appending the points.</returns>
-        public static Vertex InsertVertexInMeshSimple(this ProBuilderMesh mesh, Vector3 point, Vector3 normal)
+        public static Vertex InsertVertexInMesh(this ProBuilderMesh mesh, Vector3 point, Vector3 normal)
         {
             if (mesh == null)
                 throw new ArgumentNullException("mesh");

@@ -5,7 +5,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 {
     public static class QuadUtility
     {
-        public static void ToQuads(this ProBuilderMesh mesh, IList<Face> faces, bool smoothing = true)
+        public static List<Face> ToQuads(this ProBuilderMesh mesh, IList<Face> faces, bool smoothing = true)
         {
             HashSet<Face> processed = new HashSet<Face>();
 
@@ -72,8 +72,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             }
 
             // don't collapse coincident vertices if smoothing is enabled, we need the original normals intact
-            //MergeElements.MergePairs(mesh, quads, !importSettings.smoothing);
-            MergeElements.MergePairs(mesh, quads, smoothing);
+            return MergeElements.MergePairs(mesh, quads, smoothing);
         }
 
         static Face GetBestQuadConnection(WingedEdge wing, Dictionary<EdgeLookup, float> connections)
