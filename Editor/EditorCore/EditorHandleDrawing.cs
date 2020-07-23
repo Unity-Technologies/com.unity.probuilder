@@ -175,8 +175,8 @@ namespace UnityEditor.ProBuilder
 
         internal static void ResetPreferences()
         {
-            m_FaceMaterial.SetFloat("_Dither", (s_UseUnityColors || s_DitherFaceHandle) ? 1f : 0f);
-            
+            faceMaterial.SetFloat("_Dither", (s_UseUnityColors || s_DitherFaceHandle) ? 1f : 0f);
+
             m_ForceEdgeLinesGL = s_EdgeLineSize.value < k_MinLineWidthForGeometryShader;
             m_ForceWireframeLinesGL = s_WireframeLineSize.value < k_MinLineWidthForGeometryShader;
 
