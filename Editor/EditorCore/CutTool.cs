@@ -622,6 +622,8 @@ namespace UnityEditor.ProBuilder
             List<Vertex> meshVertices = m_Mesh.GetVertices().ToList();
             int[] cutIndexes = cutVertices.Select(vert => meshVertices.IndexOf(vert)).ToArray();
 
+            List<Face> newFaces = new List<Face>();
+
             // If the cut defines a loop in the face, create the polygon corresponding to that loop
             if (IsALoop)
             {
@@ -635,6 +637,8 @@ namespace UnityEditor.ProBuilder
                 // If the shape is define in the wrong orientation compared to the former face, reverse it
                 if(Vector3.Dot(nrm,targetNrm) < 0f)
                     f.Reverse();
+
+                newFaces.Add(f);
             }
 
             switch (ConnectionsToFaceBordersCount)
@@ -644,7 +648,9 @@ namespace UnityEditor.ProBuilder
                     //The creation of this shape is specific and different from others
                     if(cutIndexes.Length > 2)
                     {
-                        var faces = CreateHoleInFace(m_TargetFace, cutIndexes);
+                        var holeFaces = CreateHoleInFace(m_TargetFace, cutIndexes);
+                        if(!IsALoop)
+                            newFaces = holeFaces;
                     }
                     break;
                 case 1:
@@ -667,7 +673,14 @@ namespace UnityEditor.ProBuilder
 
                             //For safety, triangulate the new surface and make quad geometry from there
                             var triangulatedFaces = m_Mesh.ToTriangles(new Face[]{face,compFace});
-                            var newFaces = m_Mesh.ToQuads(triangulatedFaces);
+                            var faces = m_Mesh.ToQuads(triangulatedFaces);
+
+                            //Adding faces tht haven't been transformed to quad to the new faces
+                            triangulatedFaces = triangulatedFaces.ToList().Where(f => m_Mesh.facesInternal.Contains(f)).ToArray();
+                            faces.AddRange(triangulatedFaces);
+
+                            if(!IsALoop)
+                                newFaces = faces;
                         }
                     }
                     break;
@@ -676,9 +689,14 @@ namespace UnityEditor.ProBuilder
                     var verticesIndexes = ComputePolygonsIndexes(m_TargetFace, cutIndexes);
 
                     //Create these new polygonal faces
-                    foreach (var polygon in verticesIndexes)
-                        m_Mesh.CreatePolygon(polygon,false);
-                break;
+                    foreach(var polygon in verticesIndexes)
+                    {
+                        Face newFace = m_Mesh.CreatePolygon(polygon, false);
+                        if(!IsALoop)
+                            newFaces.Add(newFace);
+                    }
+
+                    break;
             }
 
             //Delete former face
@@ -687,6 +705,9 @@ namespace UnityEditor.ProBuilder
             m_Mesh.ToMesh();
             m_Mesh.Refresh();
             m_Mesh.Optimize();
+
+            MeshSelection.ClearElementSelection();
+            m_Mesh.SetSelectedFaces(newFaces);
 
             m_CutPath.Clear();
             RebuildCutShape();
@@ -717,6 +738,10 @@ namespace UnityEditor.ProBuilder
             //For safety, triangulate the new surface and make quad geometry from there
             var triangulatedFaces = m_Mesh.ToTriangles(new Face[]{newFace});
             var newFaces = m_Mesh.ToQuads(triangulatedFaces);
+
+            //Adding faces tht haven't been transformed to quad to the new faces
+            triangulatedFaces = triangulatedFaces.ToList().Where(f => m_Mesh.facesInternal.Contains(f)).ToArray();
+            newFaces.AddRange(triangulatedFaces);
 
             return newFaces;
         }
