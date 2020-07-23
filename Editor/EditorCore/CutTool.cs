@@ -654,35 +654,9 @@ namespace UnityEditor.ProBuilder
                     }
                     break;
                 case 1:
-                    //If only one vertex touches the edge of the face, it means the outter shape
-                    //will have a singularity point, then the face creation is split in 2 phases
-                    var indexes = ComputePolygonsIndexes(m_TargetFace, cutIndexes);
-                    foreach (var polygon in indexes)
-                    {
-                        //Create the face with a missing triangle
-                        Face face = m_Mesh.CreatePolygon(polygon,false);
-
-                        //Compute the missing triangle/polygon
-                        var complementaryPolygon = GetComplementaryPolygons(polygon);
-                        if (complementaryPolygon != null)
-                        {
-                            //Create the missing triangle
-                            Face compFace = m_Mesh.CreatePolygon(complementaryPolygon, false);
-                            //Merge the face plus the missing triangle that define together the full face
-                            //Face mergedFace = MergeElements.Merge(polygonalCut.mesh, new[] {face, compFace});
-
-                            //For safety, triangulate the new surface and make quad geometry from there
-                            var triangulatedFaces = m_Mesh.ToTriangles(new Face[]{face,compFace});
-                            var faces = m_Mesh.ToQuads(triangulatedFaces);
-
-                            //Adding faces tht haven't been transformed to quad to the new faces
-                            triangulatedFaces = triangulatedFaces.ToList().Where(f => m_Mesh.facesInternal.Contains(f)).ToArray();
-                            faces.AddRange(triangulatedFaces);
-
-                            if(!IsALoop)
-                                newFaces = faces;
-                        }
-                    }
+                    var faces = CreateFacesWithSingularityPoint(cutIndexes);
+                    if(!IsALoop)
+                        newFaces = faces;
                     break;
                 default:
                     //Compute the polygons defined in the face
@@ -715,6 +689,40 @@ namespace UnityEditor.ProBuilder
             Reset();
 
             return ActionResult.Success;
+        }
+
+        List<Face> CreateFacesWithSingularityPoint(int[] cutIndexes)
+        {
+            List<Face> faces = new List<Face>();
+
+            //If only one vertex touches the edge of the face, it means the outter shape
+            //will have a singularity point, then the face creation is split in 2 phases
+            var indexes = ComputePolygonsIndexes(m_TargetFace, cutIndexes);
+            foreach(var polygon in indexes)
+            {
+                //Create the face with a missing triangle
+                Face face = m_Mesh.CreatePolygon(polygon, false);
+
+                //Compute the missing triangle/polygon
+                var complementaryPolygon = GetComplementaryPolygons(polygon);
+                if(complementaryPolygon != null)
+                {
+                    //Create the missing triangle
+                    Face compFace = m_Mesh.CreatePolygon(complementaryPolygon, false);
+                    //Merge the face plus the missing triangle that define together the full face
+                    //Face mergedFace = MergeElements.Merge(polygonalCut.mesh, new[] {face, compFace});
+
+                    //For safety, triangulate the new surface and make quad geometry from there
+                    var triangulatedFaces = m_Mesh.ToTriangles(new Face[] { face, compFace });
+                    faces = m_Mesh.ToQuads(triangulatedFaces);
+
+                    //Adding faces tht haven't been transformed to quad to the new faces
+                    triangulatedFaces = triangulatedFaces.ToList().Where(f => m_Mesh.facesInternal.Contains(f)).ToArray();
+                    faces.AddRange(triangulatedFaces);
+                }
+            }
+
+            return faces;
         }
 
         /// <summary>

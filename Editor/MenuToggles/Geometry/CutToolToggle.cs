@@ -27,7 +27,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            get { return IconUtility.GetIcon("Toolbar/Face_Subdivide", IconSkin.Pro); }
+            get { return IconUtility.GetIcon("Toolbar/CutTool", IconSkin.Pro); }
         }
 
         public override TooltipContent tooltip
@@ -48,8 +48,8 @@ namespace UnityEditor.ProBuilder.Actions
         static readonly TooltipContent s_Tooltip = new TooltipContent
         (
             "Cut Tool",
-            @"Inserts vertices in a face and subdivide it accordingly.",
-            keyCommandAlt, keyCommandShift, 'V'
+            @"Create a cut in a face to subdivide it.",
+            keyCommandAlt, keyCommandShift, 'C'
         );
 
         public override bool enabled
