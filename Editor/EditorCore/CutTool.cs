@@ -1246,7 +1246,9 @@ namespace UnityEditor.ProBuilder
                 DestroyImmediate(m_ClosingLineMaterial);
             else if(m_ConnectToStart && m_ClosingLineMaterial == null)
             {
-                m_ClosingLineMaterial = CreateLineMaterial(k_LineMaterialBaseColor, k_ClosingLineMaterialHighlightColor);
+                m_ClosingLineMaterial = CreateLineMaterial(k_ClosingLineMaterialBaseColor, k_ClosingLineMaterialHighlightColor);
+                if(m_ClosingLineMesh == null)
+                    m_ClosingLineMesh = new Mesh();
                 RebuildCutShape();
             }
 
