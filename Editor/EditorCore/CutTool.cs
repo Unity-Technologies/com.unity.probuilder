@@ -594,13 +594,8 @@ namespace UnityEditor.ProBuilder
                 return new ActionResult(ActionResult.Status.Canceled, "Not enough elements selected for a cut");
             }
 
-            if (!IsALoop)
-            {
-                if (m_ConnectToStart && m_CutPath.Count > 2)
-                {
-                    m_CutPath.Add(new CutVertexData(m_CutPath[0].position, VertexTypes.VertexInShape));
-                }
-            }
+            if (!IsALoop && (m_ConnectToStart || ConnectionsToFaceBordersCount == 1) && m_CutPath.Count > 2)
+                m_CutPath.Add(new CutVertexData(m_CutPath[0].position, VertexTypes.VertexInShape));
 
             UndoUtility.RecordObject(m_Mesh, "Add Face To Mesh");
 
