@@ -57,7 +57,7 @@ namespace UnityEditor.ProBuilder.Actions
                 DoAction();
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult DoAction_Internal()
         {
             ActionResult res = ActionResult.NoSelection;
 

@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.EditorTools;
-using UnityEditor.Graphs;
-using UnityEditor.ProBuilder.Actions;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using Edge = UnityEngine.ProBuilder.Edge;
@@ -14,10 +11,6 @@ using UObject = UnityEngine.Object;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 using UHandleUtility = UnityEditor.HandleUtility;
 
-
-#if !UNITY_2020_2_OR_NEWER
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -194,17 +187,10 @@ namespace UnityEditor.ProBuilder
             EditorApplication.update -= Update;
             Undo.undoRedoPerformed -= UndoRedoPerformed;
 
-            CloseTool();
-        }
-
-        /// <summary>
-        ///  Close the tool and try to apply the current cut before leaving
-        /// </summary>
-        void CloseTool()
-        {
             ExecuteCut();
             Clear();
         }
+
 
         /// <summary>
         /// Create line renderers for the current cut

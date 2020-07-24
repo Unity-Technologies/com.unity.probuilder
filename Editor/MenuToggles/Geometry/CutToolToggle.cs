@@ -103,7 +103,6 @@ namespace UnityEditor.ProBuilder.Actions
         {
             m_RestorePreviousTool = false;
             LeaveTool();
-            //EditorApplication.delayCall += () => LeaveTool();
         }
 
         void LeaveTool()
