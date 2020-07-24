@@ -8,6 +8,6 @@ namespace UnityEditor.ProBuilder
     class ScriptableShape : ScriptableObject
     {
         [SerializeReference]
-        public Shape m_Shape;
+        public Shape m_shape;
     }
 }

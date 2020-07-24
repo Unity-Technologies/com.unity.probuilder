@@ -67,7 +67,7 @@ namespace UnityEngine.ProBuilder
                 UVEditing.ProjectFacesBox(pb, pb.facesInternal);
             }
 
-            pb.gameObject.name = shape.name;
+            pb.gameObject.name = shape.GetType().ToString();
 
             return pb;
         }

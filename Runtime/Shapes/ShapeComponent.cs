@@ -17,7 +17,8 @@ namespace UnityEngine.ProBuilder
 
         [HideInInspector]
         [SerializeField]
-        Matrix4x4 m_RotationMatrix = Matrix4x4.identity;
+        Quaternion m_RotationQuaternion = Quaternion.identity;
+        Vector3[] m_OrigVertex;
 
         public Vector3 size
         {
@@ -51,14 +52,14 @@ namespace UnityEngine.ProBuilder
         public void Rebuild()
         {
             m_shape.RebuildMesh(mesh, size);
-            RotateBy(m_RotationMatrix);
+            m_OrigVertex = mesh.mesh.vertices;
+            RotateTo(m_RotationQuaternion);
             FitToSize();
         }
 
         public void SetShape(Shape shape)
         {
             m_shape = shape;
-            // Shape should already have its good params
             Rebuild();
         }
 
@@ -68,7 +69,9 @@ namespace UnityEngine.ProBuilder
                 return;
 
             var scale = size.DivideBy(mesh.mesh.bounds.size);
-            //skips if scale == 1 && center
+            if (scale == Vector3.one)
+                return;
+
             var positions = mesh.positionsInternal;
 
             if (System.Math.Abs(mesh.mesh.bounds.size.x) < 0.001f)
@@ -89,42 +92,40 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
+        /// Set the rotation of the Shape to a given set of eular angles, then rotates it
+        /// </summary>
+        /// <param name="eulerAngles">The angles to rotate by</param>
+        public void SetRotation(Vector3 eulerAngles)
+        {
+            m_RotationQuaternion = Quaternion.Euler(eulerAngles.x, eulerAngles.y, eulerAngles.z);
+            RotateTo(m_RotationQuaternion);
+        }
+
+        /// <summary>
         /// Rotates the Shape by a given set of eular angles
         /// </summary>
         /// <param name="eulerAngles">The angles to rotate by</param>
-        public void RotateBy(Vector3 eulerAngles, bool reset = false)
+        public void RotateBy(Vector3 eulerAngles)
         {
-            if (reset)
-            {
-                m_RotationMatrix = Matrix4x4.identity;
-            }
-            // Use Quaternion instead of Matrix4x4
             Quaternion rotation = Quaternion.Euler(eulerAngles.x, eulerAngles.y, eulerAngles.z);
-            var matrix = Matrix4x4.Rotate(rotation);
-            m_RotationMatrix = matrix * m_RotationMatrix;
-            // Make more clear and seperate SetRotation (check Quaternion)
-
-            RotateBy(matrix);
+            m_RotationQuaternion = rotation * m_RotationQuaternion;
+            RotateTo(m_RotationQuaternion);
             FitToSize();
         }
 
-        void RotateBy(Matrix4x4 matrix)
+        void RotateTo(Quaternion angles)
         {
-            if (matrix == Matrix4x4.identity)
+            if (angles == Quaternion.identity)
             {
                 return;
             }
 
-            Vector3[] origVerts;
-            Vector3[] newVerts;
-
-            origVerts = mesh.mesh.vertices;
-            newVerts = new Vector3[origVerts.Length];
+           var newVerts = new Vector3[m_OrigVertex.Length];
 
             int i = 0;
-            while (i < origVerts.Length)
+            while (i < m_OrigVertex.Length)
             {
-                newVerts[i] = matrix.MultiplyPoint3x4(origVerts[i]);
+                newVerts[i] = angles * m_OrigVertex[i];
                 i++;
             }
             mesh.mesh.vertices = newVerts;

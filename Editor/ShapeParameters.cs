@@ -12,9 +12,10 @@ namespace UnityEditor.ProBuilder
         static Dictionary<string, ShapeSave> s_Prefs = new Dictionary<string, ShapeSave>();
 
         static ShapeParameters()
-        { 
+        {
             var list = new List<Type>();
             var types = typeof(Shape).Assembly.GetTypes();
+            s_Prefs = new Dictionary<string, ShapeSave>();
 
             foreach (var type in types)
             {
@@ -25,7 +26,7 @@ namespace UnityEditor.ProBuilder
                     s_Prefs.Add(type.Name, pref);
                 }
             }
-            foreach (var save in s_PrefList.value)
+            foreach (var save in s_PrefList.value) 
             {
                 if (s_Prefs.ContainsKey(save.name))
                 {
