@@ -62,7 +62,9 @@ namespace UnityEditor.ProBuilder
             popup.RegisterValueChangedCallback(evt =>
             {
                 s_CurrentIndex = s_ShapeTypes.ToList().IndexOf(evt.newValue);
-                ((ShapeComponent)target).SetShape(s_AvailableShapeTypes[s_CurrentIndex]);
+                var temp = Activator.CreateInstance(s_AvailableShapeTypes[s_CurrentIndex]) as Shape;
+                ShapeParameters.SetToLastParams(ref temp);
+                ((ShapeComponent)target).SetShape(temp);
                 ProBuilderEditor.Refresh(false);
             });
 
@@ -86,7 +88,7 @@ namespace UnityEditor.ProBuilder
             EditorGUILayout.PropertyField(m_shape, true);
             if (serializedObject.ApplyModifiedProperties())
             {
-                ((ShapeComponent)target).m_Shape.SaveParams();
+                ShapeParameters.SaveParams(((ShapeComponent)target).m_Shape);
                 ((ShapeComponent)target).Rebuild();
                 ProBuilderEditor.Refresh(false);
             }

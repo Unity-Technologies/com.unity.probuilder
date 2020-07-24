@@ -62,7 +62,7 @@ namespace UnityEditor.ProBuilder
             m_ActiveShapeIndex = EditorPrefs.GetInt("ShapeBuilder.ActiveShapeIndex");
             m_ShapeData = ScriptableObject.CreateInstance<ScriptableShape>();
             m_ShapeData.m_Shape = Activator.CreateInstance(activeShapeType) as Shape;
-            m_ShapeData.m_Shape.SetToLastParams();
+            ShapeParameters.SetToLastParams(ref m_ShapeData.m_Shape);
             m_Object = new SerializedObject(m_ShapeData);
             EditorTools.EditorTools.activeToolChanged += ActiveToolChanged;
             m_ShapeTitle = new GUIContent("Draw Shape");
@@ -79,7 +79,7 @@ namespace UnityEditor.ProBuilder
         {
             if (EditorTools.EditorTools.IsActiveTool(this))
                 m_InputState = InputState.SelectPlane;
-        }
+        } 
 
         void AdvanceInputState()
         {
@@ -128,6 +128,7 @@ namespace UnityEditor.ProBuilder
             if (m_Shape == null)
             {
                 init = true;
+                ShapeParameters.SetToLastParams(ref m_ShapeData.m_Shape);
                 m_Shape = ShapeGenerator.CreateShape(m_ShapeData.m_Shape).GetComponent<ShapeComponent>();
                 UndoUtility.RegisterCreatedObjectUndo(m_Shape.gameObject, "Draw Shape");
             }
@@ -205,6 +206,11 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <summary>
+        /// PUT A SUMMARY
+        /// </summary>
+        /// <param name="diff"></param>
+        /// <returns></returns>
         Vector3 ToRotationAngles(Vector3 diff)
         {
             Vector3 angles = Vector3.zero;
@@ -336,7 +342,7 @@ namespace UnityEditor.ProBuilder
 
         void OnActiveToolGUI(UObject target, SceneView view)
         {
-            if (Selection.activeTransform?.gameObject.GetComponent<ShapeComponent>() != null && m_Shape == null)
+            if (Selection.activeGameObject != null && Selection.activeGameObject.GetComponent<ShapeComponent>() != null && m_Shape == null)
             {
                 DrawModifyShapeGUI();
             }
@@ -344,7 +350,7 @@ namespace UnityEditor.ProBuilder
             {
                 DrawNewShapeGUI();
             }
-
+            // Use differents arrows when dragging (resize etc)
             EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.ArrowPlus);
             var rect = EditorGUILayout.GetControlRect(false, 45);
             EditorGUI.HelpBox(rect, "Click to create the shape. Hold and drag to create the shape while controlling the size.", MessageType.Info);
@@ -355,14 +361,17 @@ namespace UnityEditor.ProBuilder
             m_Object.Update();
             EditorGUI.BeginChangeCheck();
             m_ActiveShapeIndex = EditorGUILayout.Popup(m_ActiveShapeIndex, m_ShapeTypesPopupContent);
+            //use Settings Manager    Pref<float>
+            //ShapeParameters.SaveParams(m_ShapeData.m_Shape);
             EditorPrefs.SetInt("ShapeBuilder.ActiveShapeIndex", m_ActiveShapeIndex);
 
             if (EditorGUI.EndChangeCheck())
             {
                 var type = m_AvailableShapeTypes[m_ActiveShapeIndex];
                 SetActiveShapeType(type);
+                // Handle erros, wrap
                 m_ShapeData.m_Shape = Activator.CreateInstance(type) as Shape;
-                m_ShapeData.m_Shape.SetToLastParams();
+                ShapeParameters.SetToLastParams(ref m_ShapeData.m_Shape);
                 UndoUtility.RegisterCompleteObjectUndo(m_ShapeData, "Change Shape");
             }
 
@@ -372,7 +381,7 @@ namespace UnityEditor.ProBuilder
             EditorGUILayout.PropertyField(shape, true);
             if (m_Object.ApplyModifiedProperties())
             {
-                m_ShapeData.m_Shape.SaveParams();
+                ShapeParameters.SaveParams(m_ShapeData.m_Shape);
                 if (m_Shape != null)
                 {
                     m_Shape.Rebuild();
@@ -394,7 +403,9 @@ namespace UnityEditor.ProBuilder
             {
                 var type = m_AvailableShapeTypes[m_ActiveShapeIndex];
                 SetActiveShapeType(type);
-                shapeComp.SetShape(type);
+                var temp = Activator.CreateInstance(type) as Shape;
+                ShapeParameters.SetToLastParams(ref temp);
+                shapeComp.SetShape(temp);
                 ProBuilderEditor.Refresh(false);
                 UndoUtility.RegisterCompleteObjectUndo(shapeComp, "Change Shape");
             }
@@ -407,7 +418,7 @@ namespace UnityEditor.ProBuilder
             EditorGUILayout.PropertyField(shapeProperty, true);
             if (serObject.ApplyModifiedProperties())
             {
-                shapeComp.m_Shape.SaveParams();
+                ShapeParameters.SaveParams(shapeComp.m_Shape);
                 if (shapeComp != null)
                 {
                     shapeComp.Rebuild();

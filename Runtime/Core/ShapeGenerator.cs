@@ -1,5 +1,3 @@
-using UnityEngine;
-using System.Collections.Generic;
 using UnityEngine.ProBuilder.MeshOperations;
 using System;
 
@@ -52,6 +50,7 @@ namespace UnityEngine.ProBuilder
         {
             ProBuilderMesh pb = null;
             var obj = new GameObject("Shape").AddComponent<ShapeComponent>();
+
             obj.SetShape(shape);
             pb = obj.mesh;
 
@@ -69,7 +68,6 @@ namespace UnityEngine.ProBuilder
             }
 
             pb.gameObject.name = shape.name;
-            pb.renderer.sharedMaterial = BuiltinMaterials.defaultMaterial;
 
             return pb;
         }

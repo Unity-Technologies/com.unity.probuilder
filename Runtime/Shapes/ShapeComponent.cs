@@ -55,26 +55,11 @@ namespace UnityEngine.ProBuilder
             FitToSize();
         }
 
-        public void SetShape(Type type)
-        {
-            if (type.IsAssignableFrom(typeof(Shape)))
-                throw new ArgumentException("Type needs to derive from Shape");
-
-            m_shape = Activator.CreateInstance(type) as Shape;
-            m_shape.SetToLastParams();
-            Rebuild();
-        }
-
         public void SetShape(Shape shape)
         {
             m_shape = shape;
-            m_shape.SetToLastParams();
+            // Shape should already have its good params
             Rebuild();
-        }
-
-        public void SetShape<T>() where T : Shape, new()
-        {
-            SetShape(typeof(T));
         }
 
         void FitToSize()
@@ -83,13 +68,14 @@ namespace UnityEngine.ProBuilder
                 return;
 
             var scale = size.DivideBy(mesh.mesh.bounds.size);
+            //skips if scale == 1 && center
             var positions = mesh.positionsInternal;
 
-            if (System.Math.Abs(mesh.mesh.bounds.size.x) < 0.01f)
+            if (System.Math.Abs(mesh.mesh.bounds.size.x) < 0.001f)
                 scale.x = 0;
-            if (System.Math.Abs(mesh.mesh.bounds.size.y) < 0.01f)
+            if (System.Math.Abs(mesh.mesh.bounds.size.y) < 0.001f)
                 scale.y = 0;
-            if (System.Math.Abs(mesh.mesh.bounds.size.z) < 0.01f)
+            if (System.Math.Abs(mesh.mesh.bounds.size.z) < 0.001f)
                 scale.z = 0;
 
             for (int i = 0, c = mesh.vertexCount; i < c; i++)
@@ -110,11 +96,13 @@ namespace UnityEngine.ProBuilder
         {
             if (reset)
             {
-                m_RotationMatrix = m_RotationMatrix.inverse * m_RotationMatrix;
+                m_RotationMatrix = Matrix4x4.identity;
             }
+            // Use Quaternion instead of Matrix4x4
             Quaternion rotation = Quaternion.Euler(eulerAngles.x, eulerAngles.y, eulerAngles.z);
             var matrix = Matrix4x4.Rotate(rotation);
             m_RotationMatrix = matrix * m_RotationMatrix;
+            // Make more clear and seperate SetRotation (check Quaternion)
 
             RotateBy(matrix);
             FitToSize();

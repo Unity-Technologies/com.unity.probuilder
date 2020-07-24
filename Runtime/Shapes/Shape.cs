@@ -1,5 +1,4 @@
 #if UNITY_EDITOR
-using System;
 using System.Reflection;
 using UnityEditor;
 #endif
@@ -16,23 +15,16 @@ namespace UnityEngine.ProBuilder
             get { return ObjectNames.NicifyVariableName(GetType().Name); }
         }
 
-        public void SetToLastParams()
+
+        // Put in an editor class - SettingsManager
+        // Only use in DrawShapeTool
+        internal void SetToLastParams()
         {
             var name = "ShapeBuilder." + GetType().Name;
-            var data = JsonUtility.FromJson(EditorPrefs.GetString(name), GetType());
-            if (data == null)
-                return;
-            var members = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
-            foreach (var fi in members)
-            {
-                var value = fi.GetValue(data);
-                if (value == null)
-                    continue;
-                fi.SetValue(this, value);
-            }
+            JsonUtility.FromJsonOverwrite(EditorPrefs.GetString(name), this);
         }
 
-        public void SaveParams()
+        internal void SaveParams()
         {
             var name = "ShapeBuilder." + GetType().Name;
             var data = JsonUtility.ToJson(this);
