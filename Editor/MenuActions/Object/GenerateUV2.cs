@@ -41,7 +41,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult DoAction_Internal()
         {
             var res = Lightmapping.RebuildMissingLightmapUVs(Object.FindObjectsOfType<ProBuilderMesh>(), true);
 

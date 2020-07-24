@@ -70,7 +70,7 @@ namespace UnityEditor.ProBuilder.Actions
             };
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult DoAction_Internal()
         {
             handleOrientation = InternalUtility.NextEnumValue(handleOrientation);
             return new ActionResult(ActionResult.Status.Success, "Set Handle Orientation\n" + k_Tooltips[(int)handleOrientation].title);

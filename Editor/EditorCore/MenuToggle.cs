@@ -35,11 +35,20 @@ namespace UnityEditor.ProBuilder
             EditorApplication.update += OnUpdate;
         }
 
+        public override void OnActionChanged(MenuAction action)
+        {
+            if(m_CurrentState == MenuToggleState.Active && !this.Equals(action))
+            {
+                Debug.Log("Changing menu action! Deactivating current toggle");
+                EndActivation(OnEnd);
+            }
+        }
+
         /// <summary>
         /// Not used for MenuToggle.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
-        public override ActionResult DoAction() {return ActionResult.Success;}
+        protected override ActionResult DoAction_Internal() {return ActionResult.Success;}
 
         protected void OnStart()
         {

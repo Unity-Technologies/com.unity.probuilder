@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return true; }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult DoAction_Internal()
         {
             var opt = s_ExportAssetOptions.value;
             var res = ExportWithFileDialog(MeshSelection.topInternal, opt);

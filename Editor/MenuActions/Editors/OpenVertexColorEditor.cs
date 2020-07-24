@@ -21,7 +21,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ProBuilderEditor.instance != null; }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult DoAction_Internal()
         {
             VertexColorPalette.MenuOpenWindow();
             return new ActionResult(ActionResult.Status.Success, "Open Vertex Color Window");

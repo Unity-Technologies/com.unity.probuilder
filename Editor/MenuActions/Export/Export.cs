@@ -171,7 +171,7 @@ namespace UnityEditor.ProBuilder.Actions
                 ExportAsset.s_ExportAssetOptions.SetValue(options);
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult DoAction_Internal()
         {
             string res = null;
 

@@ -3,7 +3,9 @@
 #define SHORTCUT_MANAGER
 #endif
 
+using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
@@ -246,11 +248,31 @@ namespace UnityEditor.ProBuilder
             get { return MenuActionState.Hidden; }
         }
 
+        public static UnityAction<MenuAction> actionChanged;
+        public virtual void OnActionChanged(MenuAction action)
+        {
+            // Debug.Log("Action Changed");
+            // if(this.Equals(action))
+            // {
+            //     Debug.Log("Action changed to me : "+action.GetType());
+            // }
+        }
+
         /// <summary>
         /// Perform whatever action this menu item is supposed to do. You are responsible for implementing Undo.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
-        public abstract ActionResult DoAction();
+        public ActionResult DoAction()
+        {
+            actionChanged(this);
+            return DoAction_Internal();
+        }
+
+        /// <summary>
+        /// Perform whatever action this menu item is supposed to do. You are responsible for implementing Undo.
+        /// </summary>
+        /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
+        protected abstract ActionResult DoAction_Internal();
 
         protected virtual void DoAlternateAction()
         {

@@ -82,7 +82,7 @@ namespace UnityEditor.ProBuilder.Actions
                 EditorUtility.ShowNotification(DoAction().notification);
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult DoAction_Internal()
         {
             Vector3 scale = new Vector3(
                     (m_MirrorAxes & MirrorSettings.X) > 0 ? -1f : 1f,

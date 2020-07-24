@@ -40,7 +40,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return true; }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult DoAction_Internal()
         {
             switch (ProBuilderEditor.selectMode)
             {

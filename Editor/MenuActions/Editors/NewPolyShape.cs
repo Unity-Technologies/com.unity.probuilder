@@ -94,7 +94,7 @@ namespace UnityEditor.ProBuilder.Actions
             return true;
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult DoAction_Internal()
         {
             if (!CanCreateNewPolyShape())
                 return new ActionResult(ActionResult.Status.Canceled, "Canceled Create Poly Shape");
