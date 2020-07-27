@@ -13,6 +13,7 @@ namespace UnityEditor.ProBuilder
 
         static ShapeParameters()
         {
+            //ProBuilderSettings.
             var list = new List<Type>();
             var types = typeof(Shape).Assembly.GetTypes();
             s_Prefs = new Dictionary<string, ShapeSave>();

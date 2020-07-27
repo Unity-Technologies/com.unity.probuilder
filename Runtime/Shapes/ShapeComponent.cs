@@ -18,7 +18,6 @@ namespace UnityEngine.ProBuilder
         [HideInInspector]
         [SerializeField]
         Quaternion m_RotationQuaternion = Quaternion.identity;
-        Vector3[] m_OrigVertex;
 
         public Vector3 size
         {
@@ -52,8 +51,7 @@ namespace UnityEngine.ProBuilder
         public void Rebuild()
         {
             m_shape.RebuildMesh(mesh, size);
-            m_OrigVertex = mesh.mesh.vertices;
-            RotateTo(m_RotationQuaternion);
+            SetRotation(m_RotationQuaternion);
             FitToSize();
         }
 
@@ -97,39 +95,38 @@ namespace UnityEngine.ProBuilder
         /// <param name="eulerAngles">The angles to rotate by</param>
         public void SetRotation(Vector3 eulerAngles)
         {
-            m_RotationQuaternion = Quaternion.Euler(eulerAngles.x, eulerAngles.y, eulerAngles.z);
-            RotateTo(m_RotationQuaternion);
+            m_RotationQuaternion = Quaternion.Euler(eulerAngles);
+            SetRotation(m_RotationQuaternion);
         }
 
         /// <summary>
         /// Rotates the Shape by a given set of eular angles
         /// </summary>
         /// <param name="eulerAngles">The angles to rotate by</param>
-        public void RotateBy(Vector3 eulerAngles)
+        public void Rotate(Vector3 eulerAngles)
         {
-            Quaternion rotation = Quaternion.Euler(eulerAngles.x, eulerAngles.y, eulerAngles.z);
+            Quaternion rotation = Quaternion.Euler(eulerAngles);
             m_RotationQuaternion = rotation * m_RotationQuaternion;
-            RotateTo(m_RotationQuaternion);
+            SetRotation(m_RotationQuaternion);
             FitToSize();
         }
 
-        void RotateTo(Quaternion angles)
+        void SetRotation(Quaternion rotation)
         {
-            if (angles == Quaternion.identity)
+            if (rotation == Quaternion.identity)
             {
                 return;
             }
+            Rebuild();
 
-           var newVerts = new Vector3[m_OrigVertex.Length];
+            var origVerts = mesh.positionsInternal;
 
-            int i = 0;
-            while (i < m_OrigVertex.Length)
+            for (int i = 0; i < origVerts.Length; ++i)
             {
-                newVerts[i] = angles * m_OrigVertex[i];
-                i++;
+                origVerts[i] = rotation * origVerts[i];
             }
-            mesh.mesh.vertices = newVerts;
-            mesh.ReplaceVertices(newVerts);
+            mesh.mesh.vertices = origVerts;
+            //mesh.ReplaceVertices(origVerts);
         }
     }
 }

@@ -360,16 +360,26 @@ namespace UnityEditor.ProBuilder
             }
             // Use differents arrows when dragging (resize etc)
             EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.ArrowPlus);
-            var rect = EditorGUILayout.GetControlRect(false, 45);
-            EditorGUI.HelpBox(rect, "Click to create the shape. Hold and drag to create the shape while controlling its size.", MessageType.Info);
+            EditorGUILayout.HelpBox("Click to create the shape. Hold and drag to create the shape while controlling its size.", MessageType.Info);
         }
 
         void DrawShapeGUI(bool isNew)
         {
+            // create gameobject with new shape
+            // flag hidden don't save
+            var go = new GameObject();
+            go.hideFlags = HideFlags.HideAndDontSave;
+            //if visible, hide meshRenderer
+            // test with new scene
+            go.hideFlags = HideFlags.None;
+
+
+
             m_Object.Update();
             EditorGUI.BeginChangeCheck();
-
-            var shapeComp = isNew ? m_Shape : Selection.activeTransform?.gameObject.GetComponent<ShapeComponent>();
+            if (isNew && Selection.activeGameObject == null)
+                return;
+            var shapeComp = isNew ? m_Shape : Selection.activeGameObject.GetComponent<ShapeComponent>();
             var shape = shapeComp.m_Shape;
             var serObject = isNew ? m_Object : new SerializedObject(shapeComp);
             var shapeProperty = serObject.FindProperty("m_shape");
