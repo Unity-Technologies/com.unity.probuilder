@@ -225,19 +225,19 @@ namespace UnityEditor.ProBuilder.Actions
                 }
             }
 
-            using (var lines = new EditorMeshHandles.LineDrawingScope(ColorUtility.GetColor(offset)))
+            using (var lines = new EditorHandleDrawing.LineDrawingScope(ColorUtility.GetColor(offset)))
             {
                 for (int i = 0; i < s_Points.Count; i += 2)
                     lines.DrawLine(s_Points[i], s_Points[i] + s_Points[i + 1]);
             }
 
-            using (var points = new EditorMeshHandles.PointDrawingScope(Color.gray))
+            using (var points = new EditorHandleDrawing.PointDrawingScope(Color.gray))
             {
                 for (int i = 0; i < s_Points.Count; i += 2)
                     points.Draw(s_Points[i]);
             }
 
-            using(var points = new EditorMeshHandles.PointDrawingScope(ColorUtility.GetColor(offset)))
+            using(var points = new EditorHandleDrawing.PointDrawingScope(ColorUtility.GetColor(offset)))
             {
                 for (int i = 0; i < s_Points.Count; i += 2)
                     points.Draw(s_Points[i] + s_Points[i+1]);
