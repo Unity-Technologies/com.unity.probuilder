@@ -193,6 +193,7 @@ namespace UnityEditor.ProBuilder
                 throw new ArgumentNullException("mesh");
 
             mesh.EnsureMeshFilterIsAssigned();
+            mesh.EnsureMeshColliderIsAssigned();
             MeshSyncState state = mesh.meshSyncState;
             bool meshesAreAssets = Experimental.meshesAreAssets;
 
