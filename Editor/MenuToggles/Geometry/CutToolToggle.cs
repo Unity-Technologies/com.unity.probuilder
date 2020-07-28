@@ -101,8 +101,9 @@ namespace UnityEditor.ProBuilder.Actions
 
         void ActiveToolChanged()
         {
-            m_RestorePreviousTool = false;
-            LeaveTool();
+            if(Tools.current != Tool.None)
+                m_RestorePreviousTool = false;
+            EditorApplication.delayCall += () => LeaveTool();
         }
 
         void LeaveTool()

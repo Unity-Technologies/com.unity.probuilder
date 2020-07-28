@@ -94,10 +94,9 @@ namespace UnityEditor.ProBuilder
         static readonly Color k_LineMaterialHighlightColor = new Color(0f, 200f / 255f, 170f / 200f, 1f);
 
         // Line renderer between the last point of the cut and the first one to close the shape if the option is activated
-        Material m_ClosingLineMaterial;
-        Mesh m_ClosingLineMesh = null;
-        static readonly Color k_ClosingLineMaterialBaseColor = new Color(1f, 170/200f, 0f, 1f);
-        static readonly Color k_ClosingLineMaterialHighlightColor = new Color(1f, 50f / 200f, 0f, 1f);
+        Material m_ConnectionsLineMaterial;
+        Mesh m_ConnectionsLineMesh = null;
+        static readonly Color k_ConnectionsLineMaterialBaseColor = new Color(0f, 200f / 255f, 170f / 200f, 1f);
 
         // Line renderer to provide a preview to the user of the next cut section
         Material m_DrawingLineMaterial;
@@ -123,19 +122,16 @@ namespace UnityEditor.ProBuilder
 
         [SerializeField]
         internal List<CutVertexData> m_CutPath = new List<CutVertexData>();
-        GUIContent m_OverlayTitle;
+        List<SimpleTuple<int, int>> m_MeshConnections = new List<SimpleTuple<int, int>>();
 
-        const string k_EdgeToEdgePrefKey = "VertexInsertion.edgeToEdge";
-        const string k_ConnectToStartPrefKey = "VertexInsertion.connectToStart";
-        const string k_EndOnClicToStartPrefKey = "VertexInsertion.endOnClicToStart";
+        GUIContent m_OverlayTitle;
         const string k_SnapToGeometryPrefKey = "VertexInsertion.snapToGeometry";
         const string k_SnappingDistancePrefKey = "VertexInsertion.snappingDistance";
 
-        bool m_EdgeToEdge;
-        bool m_ConnectToStart;
-        bool m_EndOnClicToStart;
         bool m_SnapToGeometry;
         float m_SnappingDistance;
+
+        bool m_Ended = false;
 
         public bool IsALoop
         {
@@ -149,7 +145,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        public int ConnectionsToFaceBordersCount
+        public int ConnectionsToBordersCount
         {
             get
             {
@@ -163,9 +159,6 @@ namespace UnityEditor.ProBuilder
             k_HandleColorAddVertexOnEdge = Handles.selectedColor;
 
             m_OverlayTitle = new GUIContent("Cut Tool");
-            m_EdgeToEdge = EditorPrefs.GetBool( k_EdgeToEdgePrefKey, false );
-            m_ConnectToStart = EditorPrefs.GetBool( k_ConnectToStartPrefKey, false );
-            m_EndOnClicToStart = EditorPrefs.GetBool( k_EndOnClicToStartPrefKey, false );
             m_SnapToGeometry = EditorPrefs.GetBool( k_SnapToGeometryPrefKey, false );
             m_SnappingDistance = EditorPrefs.GetFloat( k_SnappingDistancePrefKey, 0.1f );
 
@@ -200,12 +193,9 @@ namespace UnityEditor.ProBuilder
             m_LineMesh = new Mesh();
             m_LineMaterial = CreateLineMaterial(k_LineMaterialBaseColor, k_LineMaterialHighlightColor);
 
-            if(m_ConnectToStart)
-            {
-                m_ClosingLineMesh = new Mesh();
-                m_ClosingLineMaterial =
-                    CreateLineMaterial(k_ClosingLineMaterialBaseColor, k_ClosingLineMaterialHighlightColor);
-            }
+            m_ConnectionsLineMesh = new Mesh();
+            m_ConnectionsLineMaterial =
+                CreateLineMaterial(k_ConnectionsLineMaterialBaseColor, k_ConnectionsLineMaterialBaseColor);
 
             m_DrawingLineMesh = new Mesh();
             m_DrawingLineMaterial = CreateLineMaterial(k_DrawingLineMaterialBaseColor, k_DrawingLineMaterialBaseColor);
@@ -221,10 +211,10 @@ namespace UnityEditor.ProBuilder
             if(m_LineMaterial)
                 DestroyImmediate(m_LineMaterial);
 
-            if(m_ClosingLineMesh)
-                DestroyImmediate(m_ClosingLineMesh);
-            if(m_ClosingLineMaterial)
-                DestroyImmediate(m_ClosingLineMaterial);
+            if(m_ConnectionsLineMesh)
+                DestroyImmediate(m_ConnectionsLineMesh);
+            if(m_ConnectionsLineMaterial)
+                DestroyImmediate(m_ConnectionsLineMaterial);
 
             if(m_DrawingLineMesh != null)
                 DestroyImmediate(m_DrawingLineMesh);
@@ -244,6 +234,9 @@ namespace UnityEditor.ProBuilder
             m_CurrentFace = null;
             m_PlacingPoint = false;
             m_CurrentCutCursor = null;
+            m_Ended = false;
+            m_CutPath.Clear();
+            m_MeshConnections.Clear();
         }
 
         /// <summary>
@@ -278,10 +271,6 @@ namespace UnityEditor.ProBuilder
             {
                 if(m_LineMaterial != null)
                     m_LineMaterial.SetFloat("_EditorTime", (float) EditorApplication.timeSinceStartup);
-                if(m_ClosingLineMaterial != null)
-                    m_ClosingLineMaterial.SetFloat("_EditorTime", (float) EditorApplication.timeSinceStartup);
-                if(m_DrawingLineMaterial != null)
-                    m_DrawingLineMaterial.SetFloat("_EditorTime", (float) EditorApplication.timeSinceStartup);
             }
         }
 
@@ -354,15 +343,6 @@ namespace UnityEditor.ProBuilder
             // else
             //     EditorGUI.HelpBox(rect, "Click to start inserting new vertices in the shape.", MessageType.Info);
 
-            m_EdgeToEdge = DoOverlayToggle("Cut From Edge To Edge", m_EdgeToEdge);
-            EditorPrefs.SetBool( k_EdgeToEdgePrefKey,m_EdgeToEdge );
-
-            m_ConnectToStart = DoOverlayToggle("Connect End to Start Point",m_ConnectToStart);
-            EditorPrefs.SetBool(k_ConnectToStartPrefKey, m_ConnectToStart);
-
-            m_EndOnClicToStart = DoOverlayToggle("Selecting Start Point is ending cut", m_EndOnClicToStart);
-            EditorPrefs.SetBool(k_EndOnClicToStartPrefKey, m_EndOnClicToStart);
-
             m_SnapToGeometry = DoOverlayToggle("Snap to existing edges and vertices", m_SnapToGeometry);
             EditorPrefs.SetBool(k_SnapToGeometryPrefKey, m_SnapToGeometry);
 
@@ -384,16 +364,19 @@ namespace UnityEditor.ProBuilder
 
             if(m_Mesh == null)
             {
-                if(GUILayout.Button("Start Cut"))
+                if(GUILayout.Button("Start"))
                 {
                     m_Mesh = MeshSelection.activeMesh;
                     if(m_CutPath.Count > 0)
+                    {
                         m_CutPath.Clear();
+                        m_MeshConnections.Clear();
+                    }
                 }
             }
             else
             {
-                if(GUILayout.Button("Compute Cut"))
+                if(GUILayout.Button("Cut"))
                     DoCut();
                 if(GUILayout.Button("Cancel"))
                     Reset();
@@ -525,14 +508,12 @@ namespace UnityEditor.ProBuilder
                         m_TargetFace = m_CurrentFace;
 
                     m_CutPath.Add(new CutVertexData(m_CurrentPosition,m_CurrentPositionNormal, m_CurrentVertexTypes));
+                    UpdateMeshConnections();
 
                     m_PlacingPoint = true;
                     m_SelectedIndex = m_CutPath.Count - 1;
 
                     RebuildCutShape();
-
-                    if (CheckForEditionEnd())
-                        ExecuteCut();
 
                     evt.Use();
                 }
@@ -559,8 +540,7 @@ namespace UnityEditor.ProBuilder
                 m_CurrentFace = m_Mesh.faces[pbHit.face];
                 m_CurrentVertexTypes = VertexTypes.None;
 
-                if(m_SnappingPoint || m_ModifyingPoint)
-                    CheckPointInCutPath();
+                CheckPointInCutPath();
 
                 if (m_CurrentVertexTypes == VertexTypes.None && !m_ModifyingPoint)
                     CheckPointInMesh();
@@ -569,6 +549,78 @@ namespace UnityEditor.ProBuilder
             }
 
             return false;
+        }
+
+        void UpdateMeshConnections()
+        {
+            m_MeshConnections.Clear();
+            Vertex[] vertices = m_Mesh.GetVertices();
+            if(!IsALoop)
+            {
+                float minDistToStart = Single.PositiveInfinity;
+                float minDistToEnd = Single.PositiveInfinity;
+                int bestVertexToStart = -1, bestVertexToEnd = -1;
+                float dist;
+                foreach(var vertexIndex in m_TargetFace.distinctIndexes)
+                {
+                    Vertex v = vertices[vertexIndex];
+                    if(( m_CutPath[0].types & VertexTypes.NewVertex ) != 0)
+                    {
+                        dist = Vector3.Distance(v.position, m_CutPath[0].position);
+                        if(dist < minDistToStart)
+                        {
+                            minDistToStart = dist;
+                            bestVertexToStart = vertexIndex;
+                        }
+                    }
+                    if(m_CutPath.Count > 1 && ( m_CutPath[m_CutPath.Count - 1].types & VertexTypes.NewVertex ) != 0)
+                    {
+                        dist = Vector3.Distance(v.position, m_CutPath[m_CutPath.Count - 1].position);
+                        if(dist < minDistToEnd)
+                        {
+                            minDistToEnd = dist;
+                            bestVertexToEnd = vertexIndex;
+                        }
+                    }
+                }
+
+                if(bestVertexToStart >= 0)
+                    m_MeshConnections.Add(new SimpleTuple<int, int>(0,bestVertexToStart));
+
+                if(bestVertexToEnd >= 0)
+                    m_MeshConnections.Add(new SimpleTuple<int, int>(m_CutPath.Count - 1,bestVertexToEnd));
+            }
+            else if(IsALoop && ConnectionsToBordersCount < 2)
+            {
+                foreach(var vertexIndex in m_TargetFace.distinctIndexes)
+                {
+                    Vertex v = vertices[vertexIndex];
+                    int pathIndex = 0;
+                    float minDistance = Vector3.Distance(v.position, m_CutPath[pathIndex].position);
+                    for(int i = 1; i < m_CutPath.Count; i++)
+                    {
+                        if(( m_CutPath[i].types & VertexTypes.AddedOnEdge ) == 0)
+                        {
+                            float dist = Vector3.Distance(v.position, m_CutPath[i].position);
+                            if(dist < minDistance)
+                            {
+                                minDistance = dist;
+                                pathIndex = i;
+                            }
+                        }
+                    }
+                    m_MeshConnections.Add(new SimpleTuple<int, int>(pathIndex, vertexIndex));
+                }
+
+                m_MeshConnections.Sort((a,b) =>
+                    (int)Mathf.Sign(Vector3.Distance(m_CutPath[a.item1].position, vertices[a.item2].position)
+                                    - Vector3.Distance(m_CutPath[b.item1].position, vertices[b.item2].position)));
+
+                int connectionsCount = 2 - ConnectionsToBordersCount;
+                m_MeshConnections.RemoveRange(connectionsCount,m_MeshConnections.Count - connectionsCount);
+            }
+
+            UpdateMeshConnectionsLines();
         }
 
         /// <summary>
@@ -594,14 +646,26 @@ namespace UnityEditor.ProBuilder
                 return new ActionResult(ActionResult.Status.Canceled, "Not enough elements selected for a cut");
             }
 
-            if (!IsALoop && (m_ConnectToStart || ConnectionsToFaceBordersCount == 1) && m_CutPath.Count > 2)
-                m_CutPath.Add(new CutVertexData(m_CutPath[0].position, VertexTypes.VertexInShape));
-
             UndoUtility.RecordObject(m_Mesh, "Add Face To Mesh");
 
-            List<Vertex> cutVertices = InsertVertices();
             List<Vertex> meshVertices = m_Mesh.GetVertices().ToList();
+            Vertex[] formerVertices = new Vertex[m_MeshConnections.Count];
+            for(int i = 0; i < m_MeshConnections.Count; i++)
+            {
+                formerVertices[i] = meshVertices[m_MeshConnections[i].item2];
+            }
+
+            List<Vertex> cutVertices = InsertVertices();
+            meshVertices = m_Mesh.GetVertices().ToList();
             int[] cutIndexes = cutVertices.Select(vert => meshVertices.IndexOf(vert)).ToArray();
+
+            for(int i = 0; i<m_MeshConnections.Count; i++)
+            {
+                SimpleTuple<int, int> connection = m_MeshConnections[i];
+                connection.item1 = meshVertices.IndexOf(cutVertices[connection.item1]);
+                connection.item2 = meshVertices.IndexOf(formerVertices[i]);
+                m_MeshConnections[i] = connection;
+            }
 
             List<Face> newFaces = new List<Face>();
 
@@ -622,36 +686,15 @@ namespace UnityEditor.ProBuilder
                 newFaces.Add(f);
             }
 
-            switch (ConnectionsToFaceBordersCount)
+            //Compute the polygons defined in the face
+            var verticesIndexes = ComputePolygonsIndexes(m_TargetFace, cutIndexes);
+
+            //Create these new polygonal faces
+            foreach(var polygon in verticesIndexes)
             {
-                case 0:
-                    //If the cut does not touches the face edges, it will create a hole in the face
-                    //The creation of this shape is specific and different from others
-                    if(cutIndexes.Length > 2)
-                    {
-                        var holeFaces = CreateHoleInFace(m_TargetFace, cutIndexes);
-                        if(!IsALoop)
-                            newFaces = holeFaces;
-                    }
-                    break;
-                case 1:
-                    var faces = CreateFacesWithSingularityPoint(cutIndexes);
-                    if(!IsALoop)
-                        newFaces = faces;
-                    break;
-                default:
-                    //Compute the polygons defined in the face
-                    var verticesIndexes = ComputePolygonsIndexes(m_TargetFace, cutIndexes);
-
-                    //Create these new polygonal faces
-                    foreach(var polygon in verticesIndexes)
-                    {
-                        Face newFace = m_Mesh.CreatePolygon(polygon, false);
-                        if(!IsALoop)
-                            newFaces.Add(newFace);
-                    }
-
-                    break;
+                Face newFace = m_Mesh.CreatePolygon(polygon, false);
+                if(!IsALoop)
+                    newFaces.Add(newFace);
             }
 
             //Delete former face
@@ -664,75 +707,9 @@ namespace UnityEditor.ProBuilder
             MeshSelection.ClearElementSelection();
             m_Mesh.SetSelectedFaces(newFaces);
 
-            m_CutPath.Clear();
-            RebuildCutShape();
-
             Reset();
 
             return ActionResult.Success;
-        }
-
-        List<Face> CreateFacesWithSingularityPoint(int[] cutIndexes)
-        {
-            List<Face> faces = new List<Face>();
-
-            //If only one vertex touches the edge of the face, it means the outter shape
-            //will have a singularity point, then the face creation is split in 2 phases
-            var indexes = ComputePolygonsIndexes(m_TargetFace, cutIndexes);
-            foreach(var polygon in indexes)
-            {
-                //Create the face with a missing triangle
-                Face face = m_Mesh.CreatePolygon(polygon, false);
-
-                //Compute the missing triangle/polygon
-                var complementaryPolygon = GetComplementaryPolygons(polygon);
-                if(complementaryPolygon != null)
-                {
-                    //Create the missing triangle
-                    Face compFace = m_Mesh.CreatePolygon(complementaryPolygon, false);
-                    //Merge the face plus the missing triangle that define together the full face
-                    //Face mergedFace = MergeElements.Merge(polygonalCut.mesh, new[] {face, compFace});
-
-                    //For safety, triangulate the new surface and make quad geometry from there
-                    var triangulatedFaces = m_Mesh.ToTriangles(new Face[] { face, compFace });
-                    faces = m_Mesh.ToQuads(triangulatedFaces);
-
-                    //Adding faces tht haven't been transformed to quad to the new faces
-                    triangulatedFaces = triangulatedFaces.ToList().Where(f => m_Mesh.facesInternal.Contains(f)).ToArray();
-                    faces.AddRange(triangulatedFaces);
-                }
-            }
-
-            return faces;
-        }
-
-        /// <summary>
-        /// Create a list of new faces from a original face by adding a hole in the face
-        /// Creating several faces instead of one preserves a nice geometry of the mesh
-        /// for future mesh operations
-        /// </summary>
-        /// <param name="face">Original face to modify</param>
-        /// <param name="cutVertexIndexes">indexes of the vertices that defines a hole in the face</param>
-        /// <returns>List of new faces created by the hole insertion in the face</returns>
-        List<Face> CreateHoleInFace(Face face, IList<int> cutVertexIndexes)
-        {
-            List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(face);
-            List<int> borderIndexes = peripheralEdges.Select(edge => edge.a).ToList();
-
-            IList<IList<int>> holes = new List<IList<int>>();
-            holes.Add(cutVertexIndexes);
-
-            Face newFace = m_Mesh.CreatePolygonWithHole(borderIndexes, holes);
-
-            //For safety, triangulate the new surface and make quad geometry from there
-            var triangulatedFaces = m_Mesh.ToTriangles(new Face[]{newFace});
-            var newFaces = m_Mesh.ToQuads(triangulatedFaces);
-
-            //Adding faces tht haven't been transformed to quad to the new faces
-            triangulatedFaces = triangulatedFaces.ToList().Where(f => m_Mesh.facesInternal.Contains(f)).ToArray();
-            newFaces.AddRange(triangulatedFaces);
-
-            return newFaces;
         }
 
 
@@ -755,6 +732,14 @@ namespace UnityEditor.ProBuilder
 
             var cutVertexSharedIndexes = cutVertexIndexes.Select(ind => sharedToUnique[ind]).ToList();
 
+            // for(int i = 0; i<m_MeshConnections.Count; i++)
+            // {
+            //     SimpleTuple<int, int> connection = m_MeshConnections[i];
+            //     connection.item1 = sharedToUnique[connection.item1];
+            //     connection.item2 = sharedToUnique[connection.item2];
+            //     m_MeshConnections[i] = connection;
+            // }
+
             //Parse peripheral edges to unique id and find a common point between the peripheral edges and the cut
             var peripheralEdges = WingedEdge.SortEdgesByAdjacency(face);
             var peripheralEdgesUnique = new List<Edge>();
@@ -762,10 +747,11 @@ namespace UnityEditor.ProBuilder
             for (int i = 0; i < peripheralEdges.Count; i++)
             {
                 Edge e = peripheralEdges[i];
-                Edge eShared = new Edge(sharedToUnique[e.a], sharedToUnique[e.b]);
-                peripheralEdgesUnique.Add(eShared);
+                Edge eUnique = new Edge(sharedToUnique[e.a], sharedToUnique[e.b]);
+                peripheralEdgesUnique.Add(eUnique);
 
-                if (startIndex == -1 && cutVertexSharedIndexes.Contains(eShared.a))
+                if (startIndex == -1 && ( cutVertexSharedIndexes.Contains(eUnique.a)
+                                          || m_MeshConnections.Exists(tup => sharedToUnique[tup.item2] == eUnique.a)))
                     startIndex = i;
             }
 
@@ -777,6 +763,21 @@ namespace UnityEditor.ProBuilder
                  Edge e = peripheralEdgesUnique[i % peripheralEdgesUnique.Count];
 
                  polygon.Add(peripheralEdges[i % peripheralEdgesUnique.Count].a);
+
+                 if(polygon.Count > 1 && m_MeshConnections.Exists(tup => sharedToUnique[tup.item2] == e.a))
+                 {
+                     SimpleTuple<int, int> connection = m_MeshConnections.Find(tup => sharedToUnique[tup.item2] == e.a);
+
+                     polygon.Add(connection.item1);
+                     List<int> closure = ClosePolygonalCut(polygon[0], previousEdge, sharedToUnique[connection.item1], cutVertexSharedIndexes);
+                     polygon.AddRange(closure);
+                     polygons.Add(polygon.ToArray());
+
+                     //Start a new polygon
+                     polygon = new List<int>();
+                     polygon.Add(peripheralEdges[i % peripheralEdgesUnique.Count].a);
+                 }
+
                  if(polygon.Count > 1 && cutVertexSharedIndexes.Contains(e.a)) // get next vertex
                  {
                      List<int> closure = ClosePolygonalCut(polygon[0], previousEdge, e.a, cutVertexSharedIndexes);
@@ -865,7 +866,8 @@ namespace UnityEditor.ProBuilder
                 {
                     int vertexIndex = uniqueIdToVertexIndex[cutIndexes[(i + cutIndexes.Count) % cutIndexes.Count]][0];
                     closure.Add(vertexIndex);
-                    if(sharedToUnique[vertexIndex] == sharedToUnique[polygonFirstVertex])
+                    if(sharedToUnique[vertexIndex] == sharedToUnique[polygonFirstVertex]
+                    || m_MeshConnections.Exists(tup => tup.item1 == vertexIndex && tup.item2 ==  polygonFirstVertex))
                         break;
                 }
             }
@@ -875,7 +877,8 @@ namespace UnityEditor.ProBuilder
                 {
                     int vertexIndex = uniqueIdToVertexIndex[cutIndexes[i % cutIndexes.Count]][0];
                     closure.Add(vertexIndex);
-                    if(sharedToUnique[vertexIndex] == sharedToUnique[polygonFirstVertex])
+                    if(sharedToUnique[vertexIndex] == sharedToUnique[polygonFirstVertex]
+                       || m_MeshConnections.Exists(tup => tup.item1 == vertexIndex && tup.item2 == polygonFirstVertex))
                         break;
                 }
             }
@@ -883,58 +886,41 @@ namespace UnityEditor.ProBuilder
             return closure;
         }
 
-
-        /// <summary>
-        /// A problem raises when a same vertex is participating twice to the same polygon ('singularity') as it is
-        /// not supported by the triangulation. To avoid this, we split the polygon in a main one a second one that just
-        /// remove the second participation of the vertex. This method compute the second polygon from the original one.
-        /// </summary>
-        /// <param name="indexes">The current polygon</param>
-        /// <returns>the indexes of the secondary polygon</returns>
-        int[] GetComplementaryPolygons(int[] indexes)
-        {
-            for (int i = 0; i < indexes.Length; i++)
-            {
-                for (int j = i+1; j < indexes.Length; j++)
-                {
-                    //Is it the vertex to duplicate?
-                    if (indexes[i] == indexes[j])
-                    {
-                        int[] complementaryPoly = new int[3];
-                        complementaryPoly[0] = indexes[j - 1];
-                        complementaryPoly[1] = indexes[j];
-                        complementaryPoly[2] = indexes[j + 1];
-                        return complementaryPoly;
-                    }
-                }
-            }
-            return null;
-        }
-
         /// <summary>
         /// Check whether the current position (m_CurrentPosition) can be associated/snapped to an existing position of the path
         /// </summary>
         void CheckPointInCutPath()
         {
-            //For now the method is only used to moved points of the cut Path
-            //The idea is to extend it to be able to create a cut that crosses a
-            //single vertex multiple times
-            if(!m_ModifyingPoint)
-                return;
-
-            float snapDistance = m_SnappingDistance;
-            for (int i = 0; i < m_CutPath.Count; i++)
+            //Check if trying to reach the start point
+            if(!m_ModifyingPoint && m_CutPath.Count > 1)
             {
-                var vertexData = m_CutPath[i];
-                if( Math.Approx3( vertexData.position,
-                    m_CurrentPosition,
-                    snapDistance ) )
+                float snapDistance = 0.1f;
+                var vertexData = m_CutPath[0];
+                if(Math.Approx3(vertexData.position, m_CurrentPosition, snapDistance))
                 {
-                    snapDistance = Vector3.Distance( vertexData.position, m_CurrentPosition );
-                    if( !m_ModifyingPoint )
-                        m_CurrentPosition = vertexData.position;
+                    m_CurrentPosition = vertexData.position;
                     m_CurrentVertexTypes = vertexData.types | VertexTypes.VertexInShape;
-                    m_SelectedIndex = i;
+                    m_SelectedIndex = 0;
+
+                    m_Ended = true;
+                }
+            }
+            else if (m_SnappingPoint || m_ModifyingPoint)
+            {
+                float snapDistance = m_SnappingDistance;
+                for(int i = 0; i < m_CutPath.Count; i++)
+                {
+                    var vertexData = m_CutPath[i];
+                    if(Math.Approx3(vertexData.position,
+                        m_CurrentPosition,
+                        snapDistance))
+                    {
+                        snapDistance = Vector3.Distance(vertexData.position, m_CurrentPosition);
+                        if(!m_ModifyingPoint)
+                            m_CurrentPosition = vertexData.position;
+                        m_CurrentVertexTypes = vertexData.types | VertexTypes.VertexInShape;
+                        m_SelectedIndex = i;
+                    }
                 }
             }
         }
@@ -1133,29 +1119,6 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Method that checks whether the cut edition is over
-        /// </summary>
-        /// <returns>True if the cut is over and need to be computed</returns>
-        bool CheckForEditionEnd()
-        {
-            if (m_TargetFace == null || m_CutPath.Count < 2)
-                return false;
-
-            if (m_EndOnClicToStart)
-                return Math.Approx3(m_CutPath[0].position,m_CutPath[m_CutPath.Count - 1].position);
-
-            if (m_EdgeToEdge)
-            {
-                return (m_CutPath[0].types
-                            & (VertexTypes.AddedOnEdge | VertexTypes.ExistingVertex)) != 0
-                       && (m_CutPath[m_CutPath.Count - 1].types
-                           & (VertexTypes.AddedOnEdge | VertexTypes.ExistingVertex)) != 0;
-            }
-
-            return false;
-        }
-
-        /// <summary>
         /// Handle key events
         /// </summary>
         /// <param name="evt">the current event to check</param>
@@ -1169,12 +1132,22 @@ namespace UnityEditor.ProBuilder
                 {
                     UndoUtility.RecordObject(m_Mesh, "Delete Selected Points");
                     m_CutPath.RemoveAt(m_CutPath.Count-1);
+                    UpdateMeshConnections();
                     RebuildCutShape();
                     evt.Use();
                     break;
                 }
 
                 case KeyCode.Escape:
+                    evt.Use();
+                    Clear();
+                    //Leave the current tool
+                    Tools.current = Tool.None;
+                    break;
+
+                case KeyCode.KeypadEnter:
+                case KeyCode.Return:
+                case KeyCode.Space:
                     evt.Use();
                     ExecuteCut();
                     //Leave the current tool
@@ -1215,9 +1188,7 @@ namespace UnityEditor.ProBuilder
 
                     // "clicked" a button
                     if (!used && evt.type == EventType.Used)
-                    {
                         used = true;
-                    }
                 }
 
                 if (!m_CurrentPosition.Equals(Vector3.positiveInfinity))
@@ -1227,9 +1198,7 @@ namespace UnityEditor.ProBuilder
                         point = trs.TransformPoint(m_CutPath[m_SelectedIndex].position);
 
                     float size = HandleUtility.GetHandleSize(point) * k_HandleSize;
-
                     Handles.color = m_CurrentHandleColor;
-
                     Handles.DotHandleCap(-1, point, Quaternion.identity, size, evt.type);
                 }
                 Handles.color = Color.white;
@@ -1247,6 +1216,12 @@ namespace UnityEditor.ProBuilder
                 Graphics.DrawMeshNow(m_LineMesh, m_Mesh.transform.localToWorldMatrix, 0);
             }
 
+            if(m_ConnectionsLineMesh != null)
+            {
+                m_ConnectionsLineMaterial.SetPass(0);
+                Graphics.DrawMeshNow(m_ConnectionsLineMesh, m_Mesh.transform.localToWorldMatrix, 0);
+            }
+
             if(m_DrawingLineMaterial != null)
             {
                 if(DrawGuideLine())
@@ -1254,22 +1229,6 @@ namespace UnityEditor.ProBuilder
                     m_DrawingLineMaterial.SetPass(0);
                     Graphics.DrawMeshNow(m_DrawingLineMesh, m_Mesh.transform.localToWorldMatrix, 0);
                 }
-            }
-
-            if(!m_ConnectToStart && m_ClosingLineMaterial)
-                DestroyImmediate(m_ClosingLineMaterial);
-            else if(m_ConnectToStart && m_ClosingLineMaterial == null)
-            {
-                m_ClosingLineMaterial = CreateLineMaterial(k_ClosingLineMaterialBaseColor, k_ClosingLineMaterialHighlightColor);
-                if(m_ClosingLineMesh == null)
-                    m_ClosingLineMesh = new Mesh();
-                RebuildCutShape();
-            }
-
-            if(m_ClosingLineMaterial != null && m_ConnectToStart)
-            {
-                m_ClosingLineMaterial.SetPass(0);
-                Graphics.DrawMeshNow(m_ClosingLineMesh, m_Mesh.transform.localToWorldMatrix, 0);
             }
         }
 
@@ -1334,8 +1293,6 @@ namespace UnityEditor.ProBuilder
         {
             if(m_LineMesh)
                 m_LineMesh.Clear();
-            if(m_ClosingLineMesh)
-                m_ClosingLineMesh.Clear();
 
             if (points.Count < 2)
                 return;
@@ -1366,27 +1323,52 @@ namespace UnityEditor.ProBuilder
             m_LineMesh.uv = uvs;
             m_LineMesh.SetIndices(indexes, MeshTopology.LineStrip, 0);
             m_LineMaterial.SetFloat("_LineDistance", distance);
-
-            if (m_ConnectToStart && points.Count > 2)
-            {
-                Vector3 a = points[vc - 1], b = points[0];
-
-                m_ClosingLineMesh.name = "Cut Closure";
-                m_ClosingLineMesh.vertices = new Vector3[]{ a , b };
-                m_ClosingLineMesh.uv = new Vector2[]{new Vector2(0,1), Vector2.one };;
-                m_ClosingLineMesh.SetIndices(new int[]{0,1}, MeshTopology.LineStrip, 0);
-                m_ClosingLineMaterial.SetFloat("_LineDistance", Vector3.Distance(a, b));
-            }
-            else
-            {
-                if(m_ClosingLineMesh != null)
-                {
-                    m_ClosingLineMesh.Clear();
-                    m_ClosingLineMesh.name = "Poly Shape End";
-                }
-            }
-
         }
+
+        void UpdateDashedLine(Mesh lineMesh, Vector3 fromPoint, Vector3 toPoint)
+        {
+            float lineLength = 0.1f, spaceLength = 0.05f;
+            List<Vector3> ver = lineMesh.vertices.ToList();
+            List<Vector2> uvs = lineMesh.uv.ToList();
+
+            List<int> indexes = new List<int>();
+            lineMesh.GetIndices(indexes,0);
+
+            float d = Vector3.Distance(fromPoint, toPoint);
+            Vector3 dir = ( toPoint - fromPoint ).normalized;
+            int sections = (int)(d / (lineLength + spaceLength));
+
+            int offset = ver.Count;
+            for(int i = 0; i < sections; i++)
+            {
+                ver.Add(fromPoint + i * (lineLength + spaceLength) * dir);
+                ver.Add(fromPoint + (i * (lineLength + spaceLength) + lineLength) * dir);
+
+                uvs.Add(new Vector2( 1f, 1f));
+                uvs.Add(new Vector2( 1f, 1f));
+
+                indexes.Add(2*i + offset);
+                indexes.Add(2*i+1 + offset);
+            }
+
+            ver.Add(fromPoint + sections * (lineLength + spaceLength) * dir);
+            uvs.Add(new Vector2( 1f, 1f));
+            indexes.Add(2 * sections + offset);
+
+
+            if(d - (sections * ( lineLength + spaceLength )) > lineLength)
+                ver.Add(fromPoint + ( sections * ( lineLength + spaceLength ) + lineLength ) * dir);
+            else
+                ver.Add(toPoint);
+            uvs.Add(new Vector2( 1f, 1f));
+            indexes.Add(2 * sections + 1 + offset);
+
+            lineMesh.name = "DashedLine";
+            lineMesh.vertices = ver.ToArray();
+            lineMesh.uv = uvs.ToArray();
+            lineMesh.SetIndices(indexes, MeshTopology.Lines, 0);
+        }
+
 
         /// <summary>
         /// Draw a helper line between the last point of the cut and the current position of the mouse cursor
@@ -1398,59 +1380,39 @@ namespace UnityEditor.ProBuilder
                 m_DrawingLineMesh.Clear();
 
             if(m_CurrentPosition.Equals(Vector3.positiveInfinity)
-            || m_ModifyingPoint)
+               || m_ModifyingPoint)
                 return false;
 
-            Vector3[] ver;
-            Vector2[] uvs;
-            int[] indexes;
-            float lineLength = 0.1f, spaceLength = 0.05f;
             if(m_CutPath.Count > 0)
             {
                 Vector3 lastPosition = m_CutPath[m_CutPath.Count - 1].position;
                 Vector3 currentPosition = m_CurrentPosition;
 
-                float d = Vector3.Distance(lastPosition, currentPosition);
-                Vector3 dir = ( currentPosition - lastPosition ).normalized;
-                int sections = (int)(d / (lineLength + spaceLength));
-
-                ver = new Vector3[2 * sections + 2];
-                uvs = new Vector2[2 * sections + 2];
-                indexes = new int[2 * sections + 2];
-                for(int i = 0; i < sections; i++)
-                {
-                    ver[2*i] = lastPosition + i * (lineLength + spaceLength) * dir;
-                    ver[2*i+1] = lastPosition + (i * (lineLength + spaceLength) + lineLength) * dir;
-
-                    uvs[2*i] = new Vector2( ver[i].magnitude/ d, 1f);
-                    uvs[2*i+1] = new Vector2( ver[i+1].magnitude/ d, 1f);
-
-                    indexes[2*i] = 2*i;
-                    indexes[2*i+1] = 2*i+1;
-                }
-
-                int len = ver.Length;
-                ver[len - 2] = lastPosition + sections * (lineLength + spaceLength) * dir;
-                uvs[len - 2] = new Vector2( ver[len - 2].magnitude/ d, 1f);
-                indexes[len - 2] = len - 2;
-
-
-                if(d - (sections * ( lineLength + spaceLength )) > lineLength)
-                    ver[len - 1] = lastPosition + ( sections * ( lineLength + spaceLength ) + lineLength ) * dir;
-                else
-                    ver[len - 1] = currentPosition;
-                uvs[len - 1] = new Vector2( 1f, 1f);
-                indexes[len - 1] = len - 1;
-
-                m_DrawingLineMesh.name = "Drawing Guide";
-                m_DrawingLineMesh.vertices = ver;
-                m_DrawingLineMesh.uv = uvs;
-                m_DrawingLineMesh.SetIndices(indexes, MeshTopology.Lines, 0);
+                UpdateDashedLine(m_DrawingLineMesh, lastPosition, currentPosition);
                 m_DrawingLineMaterial.SetFloat("_LineDistance", 1f);
-
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Draw a helper line between the last point of the cut and the current position of the mouse cursor
+        /// </summary>
+        /// <returns>true if the line can be traced (the position of the cursor must be valid and the cut have one point minimum)</returns>
+        void UpdateMeshConnectionsLines()
+        {
+            if(m_ConnectionsLineMesh)
+                m_ConnectionsLineMesh.Clear();
+
+            if(m_MeshConnections.Count > 0)
+            {
+                Vertex[] vertices = m_Mesh.GetVertices();
+                foreach(var connection in m_MeshConnections)
+                {
+                    UpdateDashedLine(m_ConnectionsLineMesh, m_CutPath[connection.item1].position, vertices[connection.item2].position);
+                }
+                m_ConnectionsLineMaterial.SetFloat("_LineDistance", 1f);
+            }
         }
 
     }
