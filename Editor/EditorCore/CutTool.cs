@@ -1239,31 +1239,31 @@ namespace UnityEditor.ProBuilder
             {
                 if(m_TargetFace == null)
                 {
-                    EditorMeshHandles.HighlightVertices(m_Mesh, m_Mesh.sharedVertexLookup.Keys.ToArray(), false);
-                    EditorMeshHandles.HighlightEdges(m_Mesh, m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray(),
+                    EditorHandleDrawing.HighlightVertices(m_Mesh, m_Mesh.sharedVertexLookup.Keys.ToArray(), false);
+                    EditorHandleDrawing.HighlightEdges(m_Mesh, m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray(),
                         false);
 
                     if(m_CurrentFace != null)
-                        EditorMeshHandles.HighlightFaces(m_Mesh, new Face[]{m_CurrentFace}, Color.Lerp(Color.blue, Color.cyan, 0.5f));
+                        EditorHandleDrawing.HighlightFaces(m_Mesh, new Face[]{m_CurrentFace}, Color.Lerp(Color.blue, Color.cyan, 0.5f));
                 }
                 else
                 {
                     var edges = m_TargetFace.edges;
-                    EditorMeshHandles.HighlightVertices(m_Mesh, edges.Select(e => e.a).ToArray(), false);
-                    EditorMeshHandles.HighlightEdges(m_Mesh, edges.ToArray(), false);
+                    EditorHandleDrawing.HighlightVertices(m_Mesh, edges.Select(e => e.a).ToArray(), false);
+                    EditorHandleDrawing.HighlightEdges(m_Mesh, edges.ToArray(), false);
 
                     if(m_SnapedVertexId != -1)
-                        EditorMeshHandles.HighlightVertices(m_Mesh, new int[]{m_SnapedVertexId});
+                        EditorHandleDrawing.HighlightVertices(m_Mesh, new int[]{m_SnapedVertexId});
 
                     if(m_SnapedEdge != Edge.Empty)
-                        EditorMeshHandles.HighlightEdges(m_Mesh, new Edge[]{m_SnapedEdge});
+                        EditorHandleDrawing.HighlightEdges(m_Mesh, new Edge[]{m_SnapedEdge});
                 }
             }
             else if(MeshSelection.activeMesh != null)
             {
                 ProBuilderMesh mesh = MeshSelection.activeMesh;
-                EditorMeshHandles.HighlightVertices(mesh, mesh.sharedVertexLookup.Keys.ToArray(), false);
-                EditorMeshHandles.HighlightEdges(mesh, mesh.faces.SelectMany(f => f.edges).ToArray(), false);
+                EditorHandleDrawing.HighlightVertices(mesh, mesh.sharedVertexLookup.Keys.ToArray(), false);
+                EditorHandleDrawing.HighlightEdges(mesh, mesh.faces.SelectMany(f => f.edges).ToArray(), false);
             }
         }
 
