@@ -193,6 +193,7 @@ namespace UnityEditor.ProBuilder
                 throw new ArgumentNullException("mesh");
 
             mesh.EnsureMeshFilterIsAssigned();
+            mesh.EnsureMeshColliderIsAssigned();
             MeshSyncState state = mesh.meshSyncState;
             bool meshesAreAssets = Experimental.meshesAreAssets;
 
@@ -589,7 +590,7 @@ namespace UnityEditor.ProBuilder
 #if UNITY_2019_1_OR_NEWER
             var annotations = AnnotationUtility.GetAnnotations();
             var annotation = annotations.FirstOrDefault(x => x.scriptClass.Contains(script.Name));
-            AnnotationUtility.SetIconEnabled(annotation.classID, annotation.scriptClass, 0);
+            AnnotationUtility.SetIconEnabled(annotation.classID, annotation.scriptClass, enabled ? 1 : 0);
 #else
             Type annotationUtility = typeof(Editor).Assembly.GetType("UnityEditor.AnnotationUtility");
             MethodInfo setGizmoIconEnabled = annotationUtility.GetMethod("SetIconEnabled",

@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Reflection;
 using UnityEditor.Experimental.SceneManagement;
@@ -8,9 +7,6 @@ using PMath = UnityEngine.ProBuilder.Math;
 using UnityEditor.SettingsManagement;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.SceneManagement;
-#if !UNITY_2019_3_OR_NEWER
-using System.Reflection;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -472,7 +468,6 @@ namespace UnityEditor.ProBuilder
                 s_Height.value = Mathf.Clamp(s_Height.value, k_MinShapeDimensions.x, k_MaxShapeDimensions.x);
 
                 s_HeightSegments.value = EditorGUILayout.IntField("Height Segments", s_HeightSegments);
-                s_HeightSegments.value = UnityEngine.ProBuilder.Math.Clamp(s_HeightSegments, 0, 48);
                 s_HeightSegments.value = Mathf.Clamp(s_HeightSegments.value, 0, 128);
 
                 s_Smooth.value = EditorGUILayout.Toggle("Smooth", s_Smooth);

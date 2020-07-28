@@ -1,8 +1,8 @@
-using UnityEngine;
-using UnityEditor;
-using System.Reflection;
+#if !UNITY_2019_1_OR_NEWER
 using System;
-using UnityEngine.ProBuilder;
+using System.Reflection;
+#endif
+using UnityEngine;
 
 namespace UnityEditor.ProBuilder
 {
@@ -32,27 +32,6 @@ namespace UnityEditor.ProBuilder
         static TooltipEditor s_Instance;
         static Rect s_WindowRect = new Rect(0, 0, 0, 0);
 
-        static GUIStyle s_ProOnlyStyle = null;
-        static GUIStyle proOnlyStyle
-        {
-            get
-            {
-                if (s_ProOnlyStyle == null)
-                {
-                    s_ProOnlyStyle = new GUIStyle(EditorStyles.largeLabel);
-                    Color c = s_ProOnlyStyle.normal.textColor;
-                    c.a = .20f;
-                    s_ProOnlyStyle.normal.textColor = c;
-                    s_ProOnlyStyle.fontStyle = FontStyle.Bold;
-                    s_ProOnlyStyle.alignment = TextAnchor.UpperRight;
-                    s_ProOnlyStyle.fontSize += 22;
-                    s_ProOnlyStyle.padding.top += 1;
-                    s_ProOnlyStyle.padding.right += 4;
-                }
-                return s_ProOnlyStyle;
-            }
-        }
-
         // much like highlander, there can only be one
         public static TooltipEditor instance()
         {
@@ -81,17 +60,10 @@ namespace UnityEditor.ProBuilder
             return s_Instance;
         }
 
-        // unlike highlander, this will hide
         public static void Hide()
         {
-            TooltipEditor[] windows = Resources.FindObjectsOfTypeAll<TooltipEditor>();
-
-            for (int i = 0; i < windows.Length; i++)
-            {
-                windows[i].Close();
-                GameObject.DestroyImmediate(windows[i]);
-                windows[i] = null;
-            }
+            if (s_Instance != null)
+                s_Instance.Close();
         }
 
         public static void Show(Rect rect, TooltipContent content)
@@ -105,13 +77,13 @@ namespace UnityEditor.ProBuilder
             Vector2 size = content.CalcSize();
 
             Vector2 p = new Vector2(rect.x + rect.width + k_PositionPadding, rect.y);
-             if((p.x + size.x) > Screen.currentResolution.width)
+             if(((p.x % Screen.currentResolution.width) + size.x) > Screen.currentResolution.width)
                 p.x = rect.x - k_PositionPadding - size.x;
 
-            this.minSize = size;
-            this.maxSize = size;
+            minSize = size;
+            maxSize = size;
 
-            this.position = new Rect(
+            position = new Rect(
                     p.x,
                     p.y,
                     size.x,
