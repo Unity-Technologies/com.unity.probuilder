@@ -149,7 +149,8 @@ namespace UnityEditor.ProBuilder
         {
             get
             {
-                return m_CutPath.Count(data => (data.types & (VertexTypes.AddedOnEdge | VertexTypes.ExistingVertex)) != 0 );
+                return m_CutPath.Count(data => (data.types & (VertexTypes.AddedOnEdge | VertexTypes.ExistingVertex)) != 0
+                                                    && (data.types & VertexTypes.VertexInShape) == 0);
             }
         }
 
@@ -340,8 +341,6 @@ namespace UnityEditor.ProBuilder
                 var rect = EditorGUILayout.GetControlRect(false, 45, GUILayout.Width(250));
                 EditorGUI.HelpBox(rect, "One and only one ProBuilder mesh must be selected.", MessageType.Warning);
             }
-            // else
-            //     EditorGUI.HelpBox(rect, "Click to start inserting new vertices in the shape.", MessageType.Info);
 
             m_SnapToGeometry = DoOverlayToggle("Snap to existing edges and vertices", m_SnapToGeometry);
             EditorPrefs.SetBool(k_SnapToGeometryPrefKey, m_SnapToGeometry);
@@ -378,8 +377,6 @@ namespace UnityEditor.ProBuilder
             {
                 if(GUILayout.Button("Cut"))
                     DoCut();
-                if(GUILayout.Button("Cancel"))
-                    Reset();
             }
             GUI.enabled = true;
         }
@@ -551,6 +548,9 @@ namespace UnityEditor.ProBuilder
             return false;
         }
 
+        /// <summary>
+        /// Updates the connections between the cut path and the mesh vertices
+        /// </summary>
         void UpdateMeshConnections()
         {
             m_MeshConnections.Clear();
@@ -668,7 +668,6 @@ namespace UnityEditor.ProBuilder
             }
 
             List<Face> newFaces = new List<Face>();
-
             // If the cut defines a loop in the face, create the polygon corresponding to that loop
             if (IsALoop)
             {
@@ -688,7 +687,6 @@ namespace UnityEditor.ProBuilder
 
             //Compute the polygons defined in the face
             var verticesIndexes = ComputePolygonsIndexes(m_TargetFace, cutIndexes);
-
             //Create these new polygonal faces
             foreach(var polygon in verticesIndexes)
             {
@@ -1396,9 +1394,8 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Draw a helper line between the last point of the cut and the current position of the mouse cursor
+        /// Draw a helper line to show which vertices of the face are connected to points of the cut shape
         /// </summary>
-        /// <returns>true if the line can be traced (the position of the cursor must be valid and the cut have one point minimum)</returns>
         void UpdateMeshConnectionsLines()
         {
             if(m_ConnectionsLineMesh)

@@ -86,6 +86,7 @@ namespace UnityEditor.ProBuilder
                 // All
                 new Actions.SetPivotToSelection(),
                 new Actions.OffsetElements(),
+                new Actions.CutToolToggle(),
 
                 // Faces (All)
                 new Actions.DeleteFaces(),
@@ -116,8 +117,6 @@ namespace UnityEditor.ProBuilder
                 new Actions.FillHole(),
                 // new Actions.CreatePolygon(),
                 new Actions.SplitVertices(),
-                new Actions.CutToolToggle(),
-                new Actions.VertexInsertionSingle(),
 
                 // Entity
 #if ENABLE_ENTITY_TYPES
