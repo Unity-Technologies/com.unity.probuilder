@@ -38,7 +38,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return base.enabled && MeshSelection.selectedFaceCount > 0; }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult DoAction_Internal()
         {
             ActionResult res = ActionResult.NoSelection;
 

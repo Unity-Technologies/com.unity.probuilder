@@ -56,7 +56,7 @@ namespace UnityEditor.ProBuilder.Actions
             }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult DoAction_Internal()
         {
             if (ProBuilderEditor.selectMode == SelectMode.Edge)
                 return EditorToolbarLoader.GetInstance<SelectEdgeRing>().DoAction();

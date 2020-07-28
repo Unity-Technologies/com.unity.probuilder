@@ -32,7 +32,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult DoAction_Internal()
         {
             ShapeEditor.CreateActiveShape();
             return new ActionResult(ActionResult.Status.Success, "Create Shape");

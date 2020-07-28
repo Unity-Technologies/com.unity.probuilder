@@ -30,7 +30,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return base.enabled && MeshSelection.selectedFaceCountObjectMax > 1; }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult DoAction_Internal()
         {
             var selection = MeshSelection.topInternal;
 

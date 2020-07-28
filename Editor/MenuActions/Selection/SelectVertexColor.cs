@@ -75,7 +75,7 @@ namespace UnityEditor.ProBuilder.Actions
             }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult DoAction_Internal()
         {
             UndoUtility.RecordSelection("Select Faces with Vertex Colors");
 
@@ -115,7 +115,7 @@ namespace UnityEditor.ProBuilder.Actions
                         foreach(var face in faces)
                         {
                             matches.Add(face);
-                        }                        
+                        }
 
                         if (matches.Count > 0)
                         {
