@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1259506] Fixed shortcut not being saved in 2018.4.
 - Fixed vertex colors not applying gamma-correct value when color space is Linear.
 
+### Changes
+
+- Update to Settings Manager 1.0.3.
+
 ## [4.4.0-preview.1] - 2020-06-21
 
 ### Features
