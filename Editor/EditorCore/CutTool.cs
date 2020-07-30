@@ -105,15 +105,15 @@ namespace UnityEditor.ProBuilder
 
         Color m_CurrentHandleColor = k_HandleColor;
 
-        Face m_TargetFace;
-        Face m_CurrentFace;
-        Vector3 m_CurrentPosition = Vector3.positiveInfinity;
-        Vector3 m_CurrentPositionNormal = Vector3.up;
-        VertexTypes m_CurrentVertexTypes = VertexTypes.None;
+        internal Face m_TargetFace;
+        internal Face m_CurrentFace;
+        internal Vector3 m_CurrentPosition = Vector3.positiveInfinity;
+        internal Vector3 m_CurrentPositionNormal = Vector3.up;
+        internal VertexTypes m_CurrentVertexTypes = VertexTypes.None;
 
         int m_ControlId;
         bool m_PlacingPoint;
-        bool m_SnappingPoint;
+        internal bool m_SnappingPoint;
         bool m_ModifyingPoint;
         int m_SelectedIndex = -2;
 
@@ -122,7 +122,7 @@ namespace UnityEditor.ProBuilder
 
         [SerializeField]
         internal List<CutVertexData> m_CutPath = new List<CutVertexData>();
-        List<SimpleTuple<int, int>> m_MeshConnections = new List<SimpleTuple<int, int>>();
+        internal List<SimpleTuple<int, int>> m_MeshConnections = new List<SimpleTuple<int, int>>();
 
         GUIContent m_OverlayTitle;
         const string k_SnapToGeometryPrefKey = "VertexInsertion.snapToGeometry";
@@ -477,7 +477,6 @@ namespace UnityEditor.ProBuilder
                         RebuildCutShape();
                         SceneView.RepaintAll();
                     }
-
                 }
 
                 if (evtType == EventType.MouseUp ||
@@ -499,22 +498,27 @@ namespace UnityEditor.ProBuilder
                 if (!m_CurrentPosition.Equals(Vector3.positiveInfinity)
                     && (polyCount == 0 || m_SelectedIndex != polyCount - 1))
                 {
-                    UndoUtility.RecordObject(this, "Add Vertex On Path");
-
-                    if (m_TargetFace == null)
-                        m_TargetFace = m_CurrentFace;
-
-                    m_CutPath.Add(new CutVertexData(m_CurrentPosition,m_CurrentPositionNormal, m_CurrentVertexTypes));
-                    UpdateMeshConnections();
-
-                    m_PlacingPoint = true;
-                    m_SelectedIndex = m_CutPath.Count - 1;
-
-                    RebuildCutShape();
+                    AddCurrentPositionToPath();
 
                     evt.Use();
                 }
             }
+        }
+
+        internal void AddCurrentPositionToPath()
+        {
+            UndoUtility.RecordObject(this, "Add Vertex On Path");
+
+            if(m_TargetFace == null)
+                m_TargetFace = m_CurrentFace;
+
+            m_CutPath.Add(new CutVertexData(m_CurrentPosition, m_CurrentPositionNormal, m_CurrentVertexTypes));
+            UpdateMeshConnections();
+
+            m_PlacingPoint = true;
+            m_SelectedIndex = m_CutPath.Count - 1;
+
+            RebuildCutShape();
         }
 
         /// <summary>
@@ -532,16 +536,7 @@ namespace UnityEditor.ProBuilder
 
             if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, m_Mesh, out pbHit))
             {
-                m_CurrentPosition = pbHit.point;
-                m_CurrentPositionNormal = pbHit.normal;
-                m_CurrentFace = m_Mesh.faces[pbHit.face];
-                m_CurrentVertexTypes = VertexTypes.None;
-
-                CheckPointInCutPath();
-
-                if (m_CurrentVertexTypes == VertexTypes.None && !m_ModifyingPoint)
-                    CheckPointInMesh();
-
+                UpdateCurrentPosition(m_Mesh.faces[pbHit.face], pbHit.point ,pbHit.normal);
                 return true;
             }
 
@@ -549,9 +544,25 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
+        /// Add the position in the face to the cut taking into account snapping
+        /// </summary>
+        internal void UpdateCurrentPosition(Face face, Vector3 position, Vector3 normal)
+        {
+            m_CurrentPosition = position;
+            m_CurrentPositionNormal = normal;
+            m_CurrentFace = face;
+            m_CurrentVertexTypes = VertexTypes.None;
+
+            CheckPointInCutPath();
+
+            if (m_CurrentVertexTypes == VertexTypes.None && !m_ModifyingPoint)
+                CheckPointInMesh();
+        }
+
+        /// <summary>
         /// Updates the connections between the cut path and the mesh vertices
         /// </summary>
-        void UpdateMeshConnections()
+        internal void UpdateMeshConnections()
         {
             m_MeshConnections.Clear();
             Vertex[] vertices = m_Mesh.GetVertices();
@@ -595,9 +606,9 @@ namespace UnityEditor.ProBuilder
                 foreach(var vertexIndex in m_TargetFace.distinctIndexes)
                 {
                     Vertex v = vertices[vertexIndex];
-                    int pathIndex = 0;
-                    float minDistance = Vector3.Distance(v.position, m_CutPath[pathIndex].position);
-                    for(int i = 1; i < m_CutPath.Count; i++)
+                    int pathIndex = -1;
+                    float minDistance = Single.MaxValue;
+                    for(int i = 0; i < m_CutPath.Count; i++)
                     {
                         if(( m_CutPath[i].types & VertexTypes.AddedOnEdge ) == 0)
                         {
@@ -609,7 +620,8 @@ namespace UnityEditor.ProBuilder
                             }
                         }
                     }
-                    m_MeshConnections.Add(new SimpleTuple<int, int>(pathIndex, vertexIndex));
+                    if(pathIndex >= 0)
+                        m_MeshConnections.Add(new SimpleTuple<int, int>(pathIndex, vertexIndex));
                 }
 
                 m_MeshConnections.Sort((a,b) =>
@@ -639,7 +651,7 @@ namespace UnityEditor.ProBuilder
         /// - Update the rest of the face accordingly to the cut and the central polygon
         /// </summary>
         /// <returns>ActionResult success if it was possible to create the cut</returns>
-        ActionResult DoCut()
+        internal ActionResult DoCut()
         {
             if (m_TargetFace == null || m_CutPath.Count < 2)
             {
@@ -724,19 +736,12 @@ namespace UnityEditor.ProBuilder
         List<int[]> ComputePolygonsIndexes(Face face, IList<int> cutVertexIndexes)
         {
             var polygons =new List<int[]>();
+            var vertices = m_Mesh.GetVertices();
 
             //Get Vertices from the mesh
             Dictionary<int, int> sharedToUnique = m_Mesh.sharedVertexLookup;
-
+            IList<SharedVertex> uniqueIdToVertexIndex = m_Mesh.sharedVertices;
             var cutVertexSharedIndexes = cutVertexIndexes.Select(ind => sharedToUnique[ind]).ToList();
-
-            // for(int i = 0; i<m_MeshConnections.Count; i++)
-            // {
-            //     SimpleTuple<int, int> connection = m_MeshConnections[i];
-            //     connection.item1 = sharedToUnique[connection.item1];
-            //     connection.item2 = sharedToUnique[connection.item2];
-            //     m_MeshConnections[i] = connection;
-            // }
 
             //Parse peripheral edges to unique id and find a common point between the peripheral edges and the cut
             var peripheralEdges = WingedEdge.SortEdgesByAdjacency(face);
@@ -744,8 +749,8 @@ namespace UnityEditor.ProBuilder
             int startIndex = -1;
             for (int i = 0; i < peripheralEdges.Count; i++)
             {
-                Edge e = peripheralEdges[i];
-                Edge eUnique = new Edge(sharedToUnique[e.a], sharedToUnique[e.b]);
+                Edge eShared = peripheralEdges[i];
+                Edge eUnique = new Edge(sharedToUnique[eShared.a], sharedToUnique[eShared.b]);
                 peripheralEdgesUnique.Add(eUnique);
 
                 if (startIndex == -1 && ( cutVertexSharedIndexes.Contains(eUnique.a)
@@ -766,8 +771,13 @@ namespace UnityEditor.ProBuilder
                  {
                      SimpleTuple<int, int> connection = m_MeshConnections.Find(tup => sharedToUnique[tup.item2] == e.a);
 
+                     Vector3 connectionDirection = vertices[connection.item1].position - vertices[uniqueIdToVertexIndex[e.a][0]].position;
+                     Vector3 previousEdgeDirection =
+                         vertices[uniqueIdToVertexIndex[previousEdge.b][0]].position - vertices[uniqueIdToVertexIndex[previousEdge.a][0]].position;
+                     Vector3 normal = Vector3.Cross(previousEdgeDirection, connectionDirection);
+                     List<int> closure = ClosePolygonalCut(polygon[0], connectionDirection, sharedToUnique[connection.item1], cutVertexSharedIndexes, normal);
+
                      polygon.Add(connection.item1);
-                     List<int> closure = ClosePolygonalCut(polygon[0], previousEdge, sharedToUnique[connection.item1], cutVertexSharedIndexes);
                      polygon.AddRange(closure);
                      polygons.Add(polygon.ToArray());
 
@@ -778,7 +788,9 @@ namespace UnityEditor.ProBuilder
 
                  if(polygon.Count > 1 && cutVertexSharedIndexes.Contains(e.a)) // get next vertex
                  {
-                     List<int> closure = ClosePolygonalCut(polygon[0], previousEdge, e.a, cutVertexSharedIndexes);
+                     Vector3 previousEdgeDirection =
+                         vertices[uniqueIdToVertexIndex[previousEdge.b][0]].position - vertices[uniqueIdToVertexIndex[previousEdge.a][0]].position;
+                     List<int> closure = ClosePolygonalCut(polygon[0], previousEdgeDirection, e.a, cutVertexSharedIndexes, vertices[uniqueIdToVertexIndex[previousEdge.a][0]].normal);
                      polygon.AddRange(closure);
                      polygons.Add(polygon.ToArray());
 
@@ -802,15 +814,15 @@ namespace UnityEditor.ProBuilder
         /// <param name="currentIndex">Current vertex index</param>
         /// <param name="cutIndexes">Indexes of the vertices defining the cut</param>
         /// <returns>the indexes of the vertices ending the designated polygon</returns>
-        List<int> ClosePolygonalCut(int polygonFirstVertex ,Edge previousEdge, int currentIndex, List<int> cutIndexes)
+        List<int> ClosePolygonalCut(int polygonFirstVertex , Vector3 previousEdgeDirection, int currentIndex, List<int> cutIndexes, Vector3 normal)
         {
             List<int> closure = new List<int>();
             List<Vertex> meshVertices = m_Mesh.GetVertices().ToList();
             IList<SharedVertex> uniqueIdToVertexIndex = m_Mesh.sharedVertices;
 
-            Vector3 previousEdgeDir = meshVertices[uniqueIdToVertexIndex[previousEdge.b][0]].position -
-                                      meshVertices[uniqueIdToVertexIndex[previousEdge.a][0]].position;
-            previousEdgeDir.Normalize();
+            // Vector3 previousEdgeDir = meshVertices[uniqueIdToVertexIndex[previousEdge.b][0]].position -
+            //                           meshVertices[uniqueIdToVertexIndex[previousEdge.a][0]].position;
+            previousEdgeDirection.Normalize();
 
             int bestSuccessorIndex = -1;
             int successorDirection = 0;
@@ -828,10 +840,11 @@ namespace UnityEditor.ProBuilder
                                                     meshVertices[uniqueIdToVertexIndex[currentIndex][0]].position;
                         previousVertexDir.Normalize();
 
-                        float similarityToPrevious = Vector3.Dot(previousEdgeDir, previousVertexDir);
-                        if (similarityToPrevious < bestCandidate) //Go to previous
+                        //float similarityToPrevious = Vector3.Dot(previousEdgeDirection, previousVertexDir);
+                        float angle = Vector3.SignedAngle(previousVertexDir, previousEdgeDirection, normal);
+                        if (angle < bestCandidate) //Go to previous
                         {
-                            bestCandidate = similarityToPrevious;
+                            bestCandidate = angle;
                             bestSuccessorIndex = previousIndex;
                             successorDirection = -1;
                         }
@@ -845,10 +858,11 @@ namespace UnityEditor.ProBuilder
                                                 meshVertices[uniqueIdToVertexIndex[currentIndex][0]].position;
                         nextVertexDir.Normalize();
 
-                        float similarityToNext = Vector3.Dot(previousEdgeDir, nextVertexDir);
-                        if (similarityToNext < bestCandidate) // Go to next
+                        //float similarityToNext = Vector3.Dot(previousEdgeDirection, nextVertexDir);
+                        float angle = Vector3.SignedAngle(nextVertexDir, previousEdgeDirection, normal);
+                        if (angle < bestCandidate) // Go to next
                         {
-                            bestCandidate = similarityToNext;
+                            bestCandidate = angle;
                             bestSuccessorIndex = nextIndex;
                             successorDirection = 1;
                         }
@@ -865,7 +879,8 @@ namespace UnityEditor.ProBuilder
                     int vertexIndex = uniqueIdToVertexIndex[cutIndexes[(i + cutIndexes.Count) % cutIndexes.Count]][0];
                     closure.Add(vertexIndex);
                     if(sharedToUnique[vertexIndex] == sharedToUnique[polygonFirstVertex]
-                    || m_MeshConnections.Exists(tup => tup.item1 == vertexIndex && tup.item2 ==  polygonFirstVertex))
+                    || m_MeshConnections.Exists(tup => sharedToUnique[tup.item1] == sharedToUnique[vertexIndex]
+                                                       && sharedToUnique[tup.item2] ==  sharedToUnique[polygonFirstVertex]))
                         break;
                 }
             }
@@ -876,7 +891,8 @@ namespace UnityEditor.ProBuilder
                     int vertexIndex = uniqueIdToVertexIndex[cutIndexes[i % cutIndexes.Count]][0];
                     closure.Add(vertexIndex);
                     if(sharedToUnique[vertexIndex] == sharedToUnique[polygonFirstVertex]
-                       || m_MeshConnections.Exists(tup => tup.item1 == vertexIndex && tup.item2 == polygonFirstVertex))
+                       || m_MeshConnections.Exists(tup => sharedToUnique[tup.item1] == sharedToUnique[vertexIndex]
+                                                          && sharedToUnique[tup.item2] ==  sharedToUnique[polygonFirstVertex]))
                         break;
                 }
             }
@@ -942,7 +958,6 @@ namespace UnityEditor.ProBuilder
             List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_CurrentFace);
             if (m_TargetFace != null && m_CurrentFace != m_TargetFace)
                 peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_TargetFace);
-
             for (int i = 0; i < peripheralEdges.Count; i++)
             {
                 if ((m_TargetFace == null || m_TargetFace == m_CurrentFace) && m_SnappingPoint)
@@ -963,6 +978,31 @@ namespace UnityEditor.ProBuilder
                             vertices[peripheralEdges[i].b].position);
 
                         if (dist < Mathf.Min(snapDistance, bestDistance))
+                        {
+                            bestIndex = i;
+                            bestDistance = dist;
+                        }
+                    }
+                }
+                //Even with no snapping, try to detect if the first point is on a existing geometry
+                else if(m_TargetFace == null && !m_SnappingPoint)
+                {
+                    if (Math.Approx3(vertices[peripheralEdges[i].a].position,
+                        m_CurrentPosition,
+                        0.01f))
+                    {
+                        bestIndex = i;
+                        snapedOnVertex = true;
+                        break;
+                    }
+                    else
+                    {
+                        float dist = Math.DistancePointLineSegment(
+                            m_CurrentPosition,
+                            vertices[peripheralEdges[i].a].position,
+                            vertices[peripheralEdges[i].b].position);
+
+                        if (dist < Mathf.Min(0.01f, bestDistance))
                         {
                             bestIndex = i;
                             bestDistance = dist;

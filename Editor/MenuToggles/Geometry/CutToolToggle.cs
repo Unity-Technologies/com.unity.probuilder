@@ -12,7 +12,7 @@ namespace UnityEditor.ProBuilder.Actions
 {
     public class CutToolToggle : MenuToggle
     {
-        CutTool m_Tool;
+        internal CutTool m_Tool;
 
         bool m_RestorePreviousMode;
         SelectMode m_PreviousMode;
@@ -57,7 +57,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return base.enabled && MeshSelection.selectedObjectCount > 0; }
         }
 
-        protected override ActionResult StartActivation(StartEndCallBack onStart)
+        public override ActionResult StartActivation(StartEndCallBack onStart)
         {
             m_RestorePreviousMode = true;
             m_PreviousMode = ProBuilderEditor.selectMode;
@@ -77,7 +77,7 @@ namespace UnityEditor.ProBuilder.Actions
             return new ActionResult(ActionResult.Status.Success,"Cut Tool Starts");
         }
 
-        protected override ActionResult EndActivation(StartEndCallBack onEnd)
+        public override ActionResult EndActivation(StartEndCallBack onEnd)
         {
             ToolManager.activeToolChanged -= ActiveToolChanged;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;

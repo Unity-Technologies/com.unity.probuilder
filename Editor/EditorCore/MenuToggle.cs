@@ -22,9 +22,9 @@ namespace UnityEditor.ProBuilder
             Active,
         };
 
-        MenuToggleState m_CurrentState;
+        internal MenuToggleState m_CurrentState;
 
-        protected delegate void StartEndCallBack();
+        public delegate void StartEndCallBack();
 
 
         protected MenuToggle()
@@ -47,12 +47,12 @@ namespace UnityEditor.ProBuilder
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
         protected override ActionResult DoAction_Internal() {return ActionResult.Success;}
 
-        protected void OnStart()
+        internal void OnStart()
         {
             m_CurrentState = MenuToggleState.Active;
         }
 
-        protected void OnEnd()
+        internal void OnEnd()
         {
             m_CurrentState = MenuToggleState.Inactive;
         }
@@ -61,7 +61,7 @@ namespace UnityEditor.ProBuilder
         /// Perform whatever action this menu item is supposed to do when starting. You are responsible for implementing Undo.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
-        protected abstract ActionResult StartActivation(StartEndCallBack callback);
+        public abstract ActionResult StartActivation(StartEndCallBack callback);
 
         /// <summary>
         /// Call the Update for the current tool.
@@ -81,7 +81,7 @@ namespace UnityEditor.ProBuilder
         /// Perform whatever action this menu item is supposed to do when ending. You are responsible for implementing Undo.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
-        protected abstract ActionResult EndActivation(StartEndCallBack callback);
+        public abstract ActionResult EndActivation(StartEndCallBack callback);
 
         /// <summary>
         /// Draw a menu button.  Returns true if the button is active and settings are enabled, false if settings are not enabled.
