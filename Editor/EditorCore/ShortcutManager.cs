@@ -88,6 +88,7 @@ namespace UnityEditor.ProBuilder
 
         static void ShortcutEditPanel()
         {
+            EditorGUI.BeginChangeCheck();
             s_SelectedIndex = Math.Min(Math.Max(0, s_SelectedIndex), s_Shortcuts.Length - 1);
 
             GUILayout.Label("Key", EditorStyles.boldLabel);
@@ -105,6 +106,8 @@ namespace UnityEditor.ProBuilder
             GUILayout.Label("Description", EditorStyles.boldLabel);
 
             GUILayout.Label(s_Shortcuts[s_SelectedIndex].description, EditorStyles.wordWrappedLabel);
+            if (EditorGUI.EndChangeCheck())
+                ProBuilderEditor.s_Shortcuts.ApplyModifiedProperties();
         }
     }
 }
