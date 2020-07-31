@@ -697,15 +697,9 @@ namespace UnityEditor.ProBuilder
                 newFaces.Add(f);
             }
 
-            //Compute the polygons defined in the face
-            var verticesIndexes = ComputePolygonsIndexes(m_TargetFace, cutIndexes);
-            //Create these new polygonal faces
-            foreach(var polygon in verticesIndexes)
-            {
-                Face newFace = m_Mesh.CreatePolygon(polygon, false);
-                if(!IsALoop)
-                    newFaces.Add(newFace);
-            }
+            List<Face> faces = ComputeNewFaces(m_TargetFace, cutIndexes);
+            if(!IsALoop)
+                newFaces.AddRange(faces);
 
             //Delete former face
             m_Mesh.DeleteFace(m_TargetFace);
@@ -724,23 +718,22 @@ namespace UnityEditor.ProBuilder
 
 
         /// <summary>
-        /// Based on the new vertices inserted in the face, this method computes the different polygons
+        /// Based on the new vertices inserted in the face, this method computes the different faces
         /// created between the cut and the original face (external to the cut if it makes a loop)
         ///
-        /// The polygons are created by parsing the edges that defines the border of the face. Is an edge ends on a
-        /// vertex that is part of the cut, we close this polygon using the cut (though ClosePolygonalCut method)
+        /// The faces are created by parsing the edges that defines the border of the original face. Is an edge ends on a
+        /// vertex that is part of the cut, or belongs to a connection between the cut and the face,
+        /// we close the defined polygon using the cut (though ComputeFaceClosure method) and create a face out of this polygon
         /// </summary>
         /// <param name="face">Original face to modify</param>
         /// <param name="cutVertexIndexes">Indexes of the new vertices inserted in the face</param>
         /// <returns>The list of polygons to create (defined by their vertices indexes)</returns>
-        List<int[]> ComputePolygonsIndexes(Face face, IList<int> cutVertexIndexes)
+        List<Face> ComputeNewFaces(Face face, IList<int> cutVertexIndexes)
         {
-            var polygons =new List<int[]>();
-            var vertices = m_Mesh.GetVertices();
+            List<Face> newFaces = new List<Face>();
 
             //Get Vertices from the mesh
             Dictionary<int, int> sharedToUnique = m_Mesh.sharedVertexLookup;
-            IList<SharedVertex> uniqueIdToVertexIndex = m_Mesh.sharedVertices;
             var cutVertexSharedIndexes = cutVertexIndexes.Select(ind => sharedToUnique[ind]).ToList();
 
             //Parse peripheral edges to unique id and find a common point between the peripheral edges and the cut
@@ -758,146 +751,156 @@ namespace UnityEditor.ProBuilder
                     startIndex = i;
             }
 
+            Debug.Log(" 0 : "+m_Mesh.faces.Count);
             //Create a polygon for each cut reaching the mesh edges
+            List<Face> facesToDelete = new List<Face>();
             List<int> polygon = new List<int>();
-            Edge previousEdge = Edge.Empty;
             for (int i = startIndex; i <= peripheralEdgesUnique.Count + startIndex; i++)
             {
+                 polygon.Add(peripheralEdges[i % peripheralEdgesUnique.Count].a);
                  Edge e = peripheralEdgesUnique[i % peripheralEdgesUnique.Count];
 
-                 polygon.Add(peripheralEdges[i % peripheralEdgesUnique.Count].a);
-
-                 if(polygon.Count > 1 && m_MeshConnections.Exists(tup => sharedToUnique[tup.item2] == e.a))
+                 if(polygon.Count > 1)
                  {
-                     SimpleTuple<int, int> connection = m_MeshConnections.Find(tup => sharedToUnique[tup.item2] == e.a);
+                     int index = -1;
+                     if(cutVertexSharedIndexes.Contains(e.a)) // get next vertex
+                     {
+                         index = e.a;
+                     }
+                     else if(m_MeshConnections.Exists(tup => sharedToUnique[tup.item2] == e.a))
+                     {
+                         SimpleTuple<int, int> connection = m_MeshConnections.Find(tup => sharedToUnique[tup.item2] == e.a);
+                         polygon.Add(connection.item1);
+                         index = sharedToUnique[connection.item1];
+                     }
 
-                     Vector3 connectionDirection = vertices[connection.item1].position - vertices[uniqueIdToVertexIndex[e.a][0]].position;
-                     Vector3 previousEdgeDirection =
-                         vertices[uniqueIdToVertexIndex[previousEdge.b][0]].position - vertices[uniqueIdToVertexIndex[previousEdge.a][0]].position;
-                     Vector3 normal = Vector3.Cross(previousEdgeDirection, connectionDirection);
-                     List<int> closure = ClosePolygonalCut(polygon[0], connectionDirection, sharedToUnique[connection.item1], cutVertexSharedIndexes, normal);
+                     if(index >= 0)
+                     {
+                         List<Face> toDelete;
+                         Face newFace = ComputeFaceClosure(polygon, index, cutVertexSharedIndexes, out toDelete);
+                         Debug.Log(" 1 : "+m_Mesh.faces.Count);
 
-                     polygon.Add(connection.item1);
-                     polygon.AddRange(closure);
-                     polygons.Add(polygon.ToArray());
+                         newFaces.Add(newFace);
+                         facesToDelete.AddRange(toDelete);
 
-                     //Start a new polygon
-                     polygon = new List<int>();
-                     polygon.Add(peripheralEdges[i % peripheralEdgesUnique.Count].a);
+                         //Start a new polygon
+                         polygon = new List<int>();
+                         polygon.Add(peripheralEdges[i % peripheralEdgesUnique.Count].a);
+                     }
                  }
-
-                 if(polygon.Count > 1 && cutVertexSharedIndexes.Contains(e.a)) // get next vertex
-                 {
-                     Vector3 previousEdgeDirection =
-                         vertices[uniqueIdToVertexIndex[previousEdge.b][0]].position - vertices[uniqueIdToVertexIndex[previousEdge.a][0]].position;
-                     List<int> closure = ClosePolygonalCut(polygon[0], previousEdgeDirection, e.a, cutVertexSharedIndexes, vertices[uniqueIdToVertexIndex[previousEdge.a][0]].normal);
-                     polygon.AddRange(closure);
-                     polygons.Add(polygon.ToArray());
-
-                     //Start a new polygon
-                     polygon = new List<int>();
-                     polygon.Add(peripheralEdges[i % peripheralEdgesUnique.Count].a);
-                 }
-
-                 previousEdge = e;
             }
             polygon.Clear();
 
-            return polygons;
+            Debug.Log(" 2 : "+m_Mesh.faces.Count);
+            m_Mesh.DeleteFaces(facesToDelete);
+            Debug.Log(" 3 : "+m_Mesh.faces.Count);
+
+            return newFaces;
         }
 
         /// <summary>
-        ///    The method compute which vertices of the cut are defining the end of the current polygon
+        ///    The method computes all the possible faces that can be made starting by the vertices in polygonStart and ending with the cut
+        /// This method creates faces that are not the final one and that must be deleted at the end. These invalid faces are returned in facesToDelete
+        /// The only valid face is returned from this method. From all defined faces, the valid face is the one with the smaller area
+        /// (otherwise it means it covers another face of the mesh).
         /// </summary>
-        /// <param name="polygonFirstVertex">Index of the first vertex to know when to end the cut</param>
-        /// <param name="previousEdge">Previous edge in the face</param>
-        /// <param name="currentIndex">Current vertex index</param>
+        /// <param name="polygonStart">Indexes of the first vertices of the new Face to define, these vertices are coming from the original face only</param>
+        /// <param name="currentIndex">Current vertex index in the cut</param>
         /// <param name="cutIndexes">Indexes of the vertices defining the cut</param>
-        /// <returns>the indexes of the vertices ending the designated polygon</returns>
-        List<int> ClosePolygonalCut(int polygonFirstVertex , Vector3 previousEdgeDirection, int currentIndex, List<int> cutIndexes, Vector3 normal)
+        /// <param name="cutIndexes">out : extra faces created by this method that will need to be deleted after
+        /// (these faces cannot be deleted directly as it will break the m_MeshConnections by deleting some indexes before the end of the algorithm)
+        /// <returns>the valid face that need to be kept in the resulting mesh</returns>
+        Face ComputeFaceClosure( List<int> polygonStart, int currentIndex, List<int> cutIndexes, out List<Face> facesToDelete)
         {
-            List<int> closure = new List<int>();
             List<Vertex> meshVertices = m_Mesh.GetVertices().ToList();
             IList<SharedVertex> uniqueIdToVertexIndex = m_Mesh.sharedVertices;
-
-            // Vector3 previousEdgeDir = meshVertices[uniqueIdToVertexIndex[previousEdge.b][0]].position -
-            //                           meshVertices[uniqueIdToVertexIndex[previousEdge.a][0]].position;
-            previousEdgeDirection.Normalize();
-
-            int bestSuccessorIndex = -1;
-            int successorDirection = 0;
-            float bestCandidate = Mathf.Infinity;
-            for (int i = 0; i < cutIndexes.Count; i++)
-            {
-                //Find the current point in the polygon
-                if (cutIndexes[i] == currentIndex)
-                {
-                    if (i > 0 || IsALoop)
-                    {
-                        int previousIndex = (i > 0) ? i - 1 : (cutIndexes.Count - 1);
-                        int previousVertexIndex = cutIndexes[previousIndex];
-                        Vector3 previousVertexDir = meshVertices[uniqueIdToVertexIndex[previousVertexIndex][0]].position -
-                                                    meshVertices[uniqueIdToVertexIndex[currentIndex][0]].position;
-                        previousVertexDir.Normalize();
-
-                        //float similarityToPrevious = Vector3.Dot(previousEdgeDirection, previousVertexDir);
-                        float angle = Vector3.SignedAngle(previousVertexDir, previousEdgeDirection, normal);
-                        if (angle < bestCandidate) //Go to previous
-                        {
-                            bestCandidate = angle;
-                            bestSuccessorIndex = previousIndex;
-                            successorDirection = -1;
-                        }
-                    }
-
-                    if (i < cutIndexes.Count - 1 || IsALoop)
-                    {
-                        int nextIndex = (i < cutIndexes.Count - 1) ? i + 1 : 0;
-                        int nextVertexIndex = cutIndexes[nextIndex];
-                        Vector3 nextVertexDir = meshVertices[uniqueIdToVertexIndex[nextVertexIndex][0]].position -
-                                                meshVertices[uniqueIdToVertexIndex[currentIndex][0]].position;
-                        nextVertexDir.Normalize();
-
-                        //float similarityToNext = Vector3.Dot(previousEdgeDirection, nextVertexDir);
-                        float angle = Vector3.SignedAngle(nextVertexDir, previousEdgeDirection, normal);
-                        if (angle < bestCandidate) // Go to next
-                        {
-                            bestCandidate = angle;
-                            bestSuccessorIndex = nextIndex;
-                            successorDirection = 1;
-                        }
-                    }
-
-                }
-            }
-
             Dictionary<int, int> sharedToUnique = m_Mesh.sharedVertexLookup;
-            if (successorDirection == -1)
+
+            int polygonFirstVertex = polygonStart[0];
+            int startIndex = cutIndexes.IndexOf(currentIndex);
+
+            SimpleTuple<int,int> connection = m_MeshConnections.Find(tup => sharedToUnique[tup.item2] == sharedToUnique[polygonFirstVertex]);
+
+            List<List<int>> closureCandidates = new List<List<int>>();
+
+            int index;
+            int finalIndex = IsALoop ?(startIndex - cutIndexes.Count) : 0;
+            bool connected = false;
+            List<int> candidate = new List<int>();
+            for(index = startIndex - 1; index >= finalIndex; index--)
             {
-                for (int i = bestSuccessorIndex; i > (bestSuccessorIndex - cutIndexes.Count); i--)
+                int vertexIndex = uniqueIdToVertexIndex[cutIndexes[(index + cutIndexes.Count) % cutIndexes.Count]][0];
+                candidate.Add(vertexIndex);
+                if(sharedToUnique[vertexIndex] == sharedToUnique[polygonFirstVertex] ||
+                   sharedToUnique[vertexIndex] == sharedToUnique[connection.item1])
                 {
-                    int vertexIndex = uniqueIdToVertexIndex[cutIndexes[(i + cutIndexes.Count) % cutIndexes.Count]][0];
-                    closure.Add(vertexIndex);
-                    if(sharedToUnique[vertexIndex] == sharedToUnique[polygonFirstVertex]
-                    || m_MeshConnections.Exists(tup => sharedToUnique[tup.item1] == sharedToUnique[vertexIndex]
-                                                       && sharedToUnique[tup.item2] ==  sharedToUnique[polygonFirstVertex]))
-                        break;
-                }
-            }
-            else if (successorDirection == 1)
-            {
-                for (int i = bestSuccessorIndex; i < (bestSuccessorIndex + cutIndexes.Count); i++)
-                {
-                    int vertexIndex = uniqueIdToVertexIndex[cutIndexes[i % cutIndexes.Count]][0];
-                    closure.Add(vertexIndex);
-                    if(sharedToUnique[vertexIndex] == sharedToUnique[polygonFirstVertex]
-                       || m_MeshConnections.Exists(tup => sharedToUnique[tup.item1] == sharedToUnique[vertexIndex]
-                                                          && sharedToUnique[tup.item2] ==  sharedToUnique[polygonFirstVertex]))
-                        break;
+                    connected = true;
+                    break;
                 }
             }
 
-            return closure;
+            if(connected)
+                closureCandidates.Add(candidate);
+
+            finalIndex = IsALoop ? (startIndex + cutIndexes.Count) : cutIndexes.Count;
+            connected = false;
+            candidate = new List<int>();
+            for(index = startIndex + 1; index < finalIndex; index++)
+            {
+                int vertexIndex = uniqueIdToVertexIndex[cutIndexes[index % cutIndexes.Count]][0];
+                candidate.Add(vertexIndex);
+                if(sharedToUnique[vertexIndex] == sharedToUnique[polygonFirstVertex] ||
+                   sharedToUnique[vertexIndex] == sharedToUnique[connection.item1])
+                {
+                    connected = true;
+                    break;
+                }
+            }
+
+            if(connected)
+                closureCandidates.Add(candidate);
+
+            facesToDelete = new List<Face>();
+            Face bestFace = null;
+            float bestArea = 0f;
+            foreach(var closure in closureCandidates)
+            {
+                closure.AddRange(polygonStart);
+
+                Face face = m_Mesh.CreatePolygon(closure, false);
+                meshVertices = m_Mesh.GetVertices().ToList();
+                uniqueIdToVertexIndex = m_Mesh.sharedVertices;
+                sharedToUnique = m_Mesh.sharedVertexLookup;
+
+                if(bestFace != null)
+                {
+                    //Vector3[] vertices = closure.Select(i => meshVertices[i].position).ToArray();
+                    Vector3[] vertices = meshVertices.Select(vertex => vertex.position).ToArray();
+                    int[] indexes = face.indexesInternal.Select(i => uniqueIdToVertexIndex[sharedToUnique[i]][0]).ToArray();
+                    float area = Math.PolygonArea(vertices, indexes);
+                    if(area < bestArea)
+                    {
+                        //m_Mesh.DeleteFace(bestFace);
+                        facesToDelete.Add(bestFace);
+                        bestArea = area;
+                        bestFace = face;
+                    }
+                    else
+                        //m_Mesh.DeleteFace(face);
+                    facesToDelete.Add(face);
+                }
+                else
+                {
+                    bestFace = face;
+                    // Vector3[] vertices = closure.Select(i => meshVertices[i].position).ToArray();
+                    // int[] indexes = face.indexesInternal;
+                    Vector3[] vertices = meshVertices.Select(vertex => vertex.position).ToArray();
+                    int[] indexes = face.indexesInternal.Select(i => uniqueIdToVertexIndex[sharedToUnique[i]][0]).ToArray();
+                    bestArea = Math.PolygonArea(vertices, indexes);
+                }
+            }
+
+            return bestFace;
         }
 
         /// <summary>
