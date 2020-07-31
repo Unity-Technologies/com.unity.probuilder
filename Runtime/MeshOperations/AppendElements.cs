@@ -845,7 +845,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 for (int i = 0; i < points.Length; i++)
                 {
                     int index = -1;
-                    float best = Mathf.Infinity;
                     Vector3 p = points[i];
                     int vc = n_vertices.Count;
 

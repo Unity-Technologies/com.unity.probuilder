@@ -131,8 +131,6 @@ namespace UnityEditor.ProBuilder
         bool m_SnapToGeometry;
         float m_SnappingDistance;
 
-        bool m_Ended = false;
-
         public bool IsALoop
         {
             get
@@ -235,7 +233,6 @@ namespace UnityEditor.ProBuilder
             m_CurrentFace = null;
             m_PlacingPoint = false;
             m_CurrentCutCursor = null;
-            m_Ended = false;
             m_CutPath.Clear();
             m_MeshConnections.Clear();
         }
@@ -913,8 +910,6 @@ namespace UnityEditor.ProBuilder
                     m_CurrentPosition = vertexData.position;
                     m_CurrentVertexTypes = vertexData.types | VertexTypes.VertexInShape;
                     m_SelectedIndex = 0;
-
-                    m_Ended = true;
                 }
             }
             else if (m_SnappingPoint || m_ModifyingPoint)

@@ -7,6 +7,12 @@ using UnityEngine.Assertions.Must;
 using UnityEngine.ProBuilder;
 using UObject = UnityEngine.Object;
 
+#if !UNITY_2020_2_OR_NEWER
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+#else
+using ToolManager = UnityEditor.EditorTools.ToolManager;
+#endif
+
 public class CutToolTest
 {
     ProBuilderMesh m_PBMesh;
