@@ -751,7 +751,6 @@ namespace UnityEditor.ProBuilder
                     startIndex = i;
             }
 
-            Debug.Log(" 0 : "+m_Mesh.faces.Count);
             //Create a polygon for each cut reaching the mesh edges
             List<Face> facesToDelete = new List<Face>();
             List<int> polygon = new List<int>();
@@ -778,7 +777,6 @@ namespace UnityEditor.ProBuilder
                      {
                          List<Face> toDelete;
                          Face newFace = ComputeFaceClosure(polygon, index, cutVertexSharedIndexes, out toDelete);
-                         Debug.Log(" 1 : "+m_Mesh.faces.Count);
 
                          newFaces.Add(newFace);
                          facesToDelete.AddRange(toDelete);
@@ -791,10 +789,7 @@ namespace UnityEditor.ProBuilder
             }
             polygon.Clear();
 
-            Debug.Log(" 2 : "+m_Mesh.faces.Count);
             m_Mesh.DeleteFaces(facesToDelete);
-            Debug.Log(" 3 : "+m_Mesh.faces.Count);
-
             return newFaces;
         }
 
