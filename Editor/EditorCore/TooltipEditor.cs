@@ -60,17 +60,10 @@ namespace UnityEditor.ProBuilder
             return s_Instance;
         }
 
-        // unlike highlander, this will hide
         public static void Hide()
         {
-            TooltipEditor[] windows = Resources.FindObjectsOfTypeAll<TooltipEditor>();
-
-            for (int i = 0; i < windows.Length; i++)
-            {
-                windows[i].Close();
-                GameObject.DestroyImmediate(windows[i]);
-                windows[i] = null;
-            }
+            if (s_Instance != null)
+                s_Instance.Close();
         }
 
         public static void Show(Rect rect, TooltipContent content)
