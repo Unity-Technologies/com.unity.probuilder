@@ -28,7 +28,7 @@ namespace UnityEditor.ProBuilder
         private void OnEnable()
         {
             m_ShapeComponent = target as ShapeComponent;
-            m_shape = serializedObject.FindProperty("m_shape");
+            m_shape = serializedObject.FindProperty("shape");
             var fullName = m_shape.managedReferenceFullTypename;
             var typeName = fullName.Substring(fullName.LastIndexOf(' ') + 1);
 
@@ -88,7 +88,7 @@ namespace UnityEditor.ProBuilder
             EditorGUILayout.PropertyField(m_shape, true);
             if (serializedObject.ApplyModifiedProperties())
             {
-                ShapeParameters.SaveParams(((ShapeComponent)target).m_Shape);
+                ShapeParameters.SaveParams(((ShapeComponent)target).shape);
                 ((ShapeComponent)target).Rebuild();
                 ProBuilderEditor.Refresh(false);
             }

@@ -6,9 +6,7 @@ namespace UnityEngine.ProBuilder
     public class ShapeComponent : MonoBehaviour
     {
         [SerializeReference]
-        Shape m_shape = new Cube();
-
-        public Shape m_Shape => m_shape;
+        public Shape shape = new Cube();
 
         ProBuilderMesh m_Mesh;
 
@@ -19,22 +17,18 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         Quaternion m_RotationQuaternion = Quaternion.identity;
 
-        public Vector3 size
-        {
+        public Vector3 size {
             get { return m_Size; }
             set { m_Size = value; }
         }
 
-        public ProBuilderMesh mesh
-        {
+        public ProBuilderMesh mesh {
             get { return m_Mesh == null ? m_Mesh = GetComponent<ProBuilderMesh>() : m_Mesh; }
         }
 
         // Bounds where center is in world space, size is mesh.bounds.size
-        internal Bounds meshFilterBounds
-        {
-            get
-            {
+        internal Bounds meshFilterBounds {
+            get {
                 var mb = mesh.mesh.bounds;
                 return new Bounds(transform.TransformPoint(mb.center), mb.size);
             }
@@ -50,14 +44,14 @@ namespace UnityEngine.ProBuilder
 
         public void Rebuild()
         {
-            m_shape.RebuildMesh(mesh, size);
+            shape.RebuildMesh(mesh, size);
             SetRotation(m_RotationQuaternion);
             FitToSize();
         }
 
         public void SetShape(Shape shape)
         {
-            m_shape = shape;
+            this.shape = shape;
             Rebuild();
         }
 
