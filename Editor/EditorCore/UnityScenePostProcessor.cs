@@ -78,6 +78,12 @@ namespace UnityEditor.ProBuilder
                 if (m_ScriptStripping == false)
                     continue;
 
+                if(mesh.TryGetComponent<BezierShape>(out BezierShape bezier))
+                    Object.DestroyImmediate(bezier);
+
+                if(mesh.TryGetComponent<PolyShape>(out PolyShape poly))
+                    Object.DestroyImmediate(poly);
+
                 mesh.preserveMeshAssetOnDestroy = true;
                 Object.DestroyImmediate(mesh);
                 Object.DestroyImmediate(entity);
