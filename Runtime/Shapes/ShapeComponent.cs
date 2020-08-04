@@ -8,6 +8,8 @@ namespace UnityEngine.ProBuilder
         [SerializeReference]
         public Shape shape = new Cube();
 
+        public bool isInit;
+
         ProBuilderMesh m_Mesh;
 
         [SerializeField]
@@ -20,7 +22,7 @@ namespace UnityEngine.ProBuilder
         public Vector3 size {
             get { return m_Size; }
             set { m_Size = value; }
-        }
+        } 
 
         public ProBuilderMesh mesh {
             get { return m_Mesh == null ? m_Mesh = GetComponent<ProBuilderMesh>() : m_Mesh; }

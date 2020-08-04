@@ -45,9 +45,6 @@ namespace UnityEditor.ProBuilder
 
         static Vector3 m_Size;
 
-        SerializedObject m_NewObject;
-        ShapeComponent m_NewShape;
-
         static Type activeShapeType {
             get { return m_ActiveShapeIndex < 0 ? typeof(Cube) : m_AvailableShapeTypes[m_ActiveShapeIndex]; }
         }
@@ -59,25 +56,27 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            //   m_Shape = 
-            m_NewShape = new GameObject().AddComponent<ShapeComponent>();
-            m_NewShape.gameObject.hideFlags = HideFlags.HideAndDontSave;
-            m_NewShape.SetShape(CreateShape(activeShapeType));
-            m_NewObject = new SerializedObject(m_NewShape.gameObject);
-
-            //m_ActiveShapeIndex = EditorPrefs.GetInt("ShapeBuilder.ActiveShapeIndex");
-            //m_ShapeData = ScriptableObject.CreateInstance<ScriptableShape>();
-            //m_ShapeData.m_shape = CreateShape(activeShapeType);
-            //m_Object = new SerializedObject(m_ShapeData);
-
+            InitNewShape();
             EditorTools.EditorTools.activeToolChanged += ActiveToolChanged;
             m_ShapeTitle = new GUIContent("Draw Shape");
             m_ShapeTypesPopupContent = m_AvailableShapeTypes.Select(x => x.Name).ToArray();
         }
 
+        void InitNewShape()
+        {
+            m_Shape = new GameObject().AddComponent<ShapeComponent>();
+            m_Shape.gameObject.hideFlags = HideFlags.HideAndDontSave;
+            m_Shape.hideFlags = HideFlags.None;
+            m_Shape.SetShape(CreateShape(activeShapeType));
+            m_Object = new SerializedObject(m_Shape);
+        }
+
         void OnDisable()
         {
-            DestroyImmediate(m_NewShape);
+            if (m_Shape.gameObject.hideFlags == HideFlags.HideAndDontSave)
+            {
+                DestroyImmediate(m_Shape.gameObject);
+            }
             EditorTools.EditorTools.activeToolChanged -= ActiveToolChanged;
         }
 
@@ -119,8 +118,6 @@ namespace UnityEditor.ProBuilder
 
             if (m_Shape != null)
             {
-                DestroyImmediate(m_Shape.gameObject);
-
                 if (m_InputState != InputState.SelectPlane)
                     RebuildShape();
             }
@@ -138,10 +135,12 @@ namespace UnityEditor.ProBuilder
                 return;
 
             bool init = false;
-            if (m_Shape == null)
+            if (!m_Shape.isInit)
             {
                 init = true;
+                m_Shape.isInit = true;
                 ShapeParameters.SetToLastParams(ref m_Shape.shape);
+                m_Shape.gameObject.hideFlags = HideFlags.None;
                 UndoUtility.RegisterCreatedObjectUndo(m_Shape.gameObject, "Draw Shape");
             }
 
@@ -156,6 +155,7 @@ namespace UnityEditor.ProBuilder
         void FinishShape()
         {
             m_Shape = null;
+            InitNewShape();
             m_InputState = InputState.SelectPlane;
         }
 
@@ -163,6 +163,7 @@ namespace UnityEditor.ProBuilder
         {
             if (m_Shape != null)
                 DestroyImmediate(m_Shape.gameObject);
+            InitNewShape();
             m_InputState = InputState.SelectPlane;
         }
 
@@ -313,8 +314,8 @@ namespace UnityEditor.ProBuilder
                         m_HeightCorner = Math.GetNearestPointRayRay(m_OppositeCorner, m_Plane.normal, ray.origin, ray.direction);
 
                         var diff = m_HeightCorner - m_Origin;
-                        if (m_Shape != null)
-                            m_Shape.SetRotation(ToRotationAngles(diff));
+                        //if (m_Shape != null)
+                        //    m_Shape.SetRotation(ToRotationAngles(diff));
                         RebuildShape();
 
                         SceneView.RepaintAll();
@@ -356,42 +357,31 @@ namespace UnityEditor.ProBuilder
 
         void OnActiveToolGUI(UObject target, SceneView view)
         {
-            if (Selection.activeGameObject != null && Selection.activeGameObject.GetComponent<ShapeComponent>() != null && m_Shape == null)
+            if (Selection.activeGameObject != null && Selection.activeGameObject.GetComponent<ShapeComponent>() != null && Selection.activeGameObject.hideFlags != HideFlags.HideAndDontSave)
             {
                 var shape = Selection.activeGameObject.GetComponent<ShapeComponent>();
-                m_Object = m_Shape == shape ? m_Object : new SerializedObject(shape.gameObject);
-                m_Shape = shape;
+                DrawShapeGUI(shape, new SerializedObject(shape));
             }
             else
             {
-                m_Shape = m_NewShape;
-                m_Object = m_NewObject;
+                DrawShapeGUI(m_Shape, m_Object);
             }
-            DrawShapeGUI();
+       
             // Use differents arrows when dragging (resize etc)
             EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.ArrowPlus);
             EditorGUILayout.HelpBox("Click to create the shape. Hold and drag to create the shape while controlling its size.", MessageType.Info);
         }
 
-        void DrawShapeGUI()
+        void DrawShapeGUI(ShapeComponent shapeComp, SerializedObject obj)
         {
-            if (m_Shape == null)
+            if (shapeComp == null || obj == null)
                 return;
-            var shape = m_Shape.shape;
-            //// create gameobject with new shape
-            //// flag hidden don't save
-            //var go = new GameObject();
-            //go.hideFlags = HideFlags.HideAndDontSave;
-            ////if visible, hide meshRenderer
-            //// test with new scene
-            //go.hideFlags = HideFlags.None;
 
+            var shape = shapeComp.shape;
+            obj.Update();
+            EditorGUI.BeginChangeCheck(); 
 
-
-            m_Object.Update();
-            EditorGUI.BeginChangeCheck();
-
-            var shapeProperty = m_Object.FindProperty("shape");
+            var shapeProperty = obj.FindProperty("shape");
             m_ActiveShapeIndex = m_AvailableShapeTypes.IndexOf(shape.GetType());
             m_ActiveShapeIndex = EditorGUILayout.Popup(m_ActiveShapeIndex, m_ShapeTypesPopupContent);
 
@@ -401,28 +391,25 @@ namespace UnityEditor.ProBuilder
             {
                 var type = m_AvailableShapeTypes[m_ActiveShapeIndex];
                 SetActiveShapeType(type);
-                var temp = CreateShape(type);
-
-
-                m_Shape.SetShape(temp);
-
-                UndoUtility.RegisterCompleteObjectUndo(m_Shape, "Change Shape");
+                shapeComp.SetShape(CreateShape(type));
+                shapeComp.Rebuild();
+                ProBuilderEditor.Refresh(false);
+                UndoUtility.RegisterCompleteObjectUndo(shapeComp, "Change Shape");
             }
 
-            m_Shape.size = EditorGUILayout.Vector3Field("Size", m_Shape.size);
-            m_Size = m_Shape.size;
+            shapeComp.size = EditorGUILayout.Vector3Field("Size", shapeComp.size);
+            m_Size = shapeComp.size;
 
             EditorGUILayout.PropertyField(shapeProperty, true);
-            if (m_Object.ApplyModifiedProperties())
+            if (obj.ApplyModifiedProperties())
             {
-                ShapeParameters.SaveParams(m_Shape.shape);
-                if (m_Shape != null)
+                ShapeParameters.SaveParams(shapeComp.shape);
+                if (shapeComp != null)
                 {
-                    m_Shape.Rebuild();
+                    shapeComp.Rebuild();
                     ProBuilderEditor.Refresh(false);
                 }
             }
-            m_Shape.SetShape((Shape)shape);
         }
     }
 }

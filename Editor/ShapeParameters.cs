@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder
             }
             foreach (var save in s_PrefList.value) 
             {
-                if (s_Prefs.ContainsKey(save.name))
+                if (save.name != null && s_Prefs.ContainsKey(save.name))
                 {
                     s_Prefs[save.name] = save;
                 }
