@@ -291,6 +291,7 @@ namespace UnityEditor.ProBuilder
                 m_Size = defaultSize;
             var type = activeShapeType;
             var shape = ShapeGenerator.CreateShape(type).GetComponent<ShapeComponent>();
+            ShapeParameters.SetToLastParams(ref shape.shape);
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape");
 
             Bounds bounds = new Bounds(Vector3.zero, m_Size);
@@ -314,8 +315,8 @@ namespace UnityEditor.ProBuilder
                         m_HeightCorner = Math.GetNearestPointRayRay(m_OppositeCorner, m_Plane.normal, ray.origin, ray.direction);
 
                         var diff = m_HeightCorner - m_Origin;
-                        //if (m_Shape != null)
-                        //    m_Shape.SetRotation(ToRotationAngles(diff));
+                        if (m_Shape != null)
+                            m_Shape.SetRotation(ToRotationAngles(diff));
                         RebuildShape();
 
                         SceneView.RepaintAll();

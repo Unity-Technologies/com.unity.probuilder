@@ -113,7 +113,7 @@ namespace UnityEngine.ProBuilder
             {
                 return;
             }
-            Rebuild();
+            shape.RebuildMesh(mesh, size);
 
             var origVerts = mesh.positionsInternal;
 
@@ -122,7 +122,7 @@ namespace UnityEngine.ProBuilder
                 origVerts[i] = rotation * origVerts[i];
             }
             mesh.mesh.vertices = origVerts;
-            //mesh.ReplaceVertices(origVerts);
+            mesh.ReplaceVertices(origVerts);
         }
     }
 }
