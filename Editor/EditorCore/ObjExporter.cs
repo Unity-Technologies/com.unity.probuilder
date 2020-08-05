@@ -96,7 +96,7 @@ namespace UnityEditor.ProBuilder
                 return false;
             }
 
-            if (models.Where(m => m.vertices.Any()).Count() < 1)
+            if (models.Where(m => m.vertexCount > 0).Count() < 1)
             {
                 Debug.LogWarning("Trying to export an empty model : "+name+". This model won't be exported.");
                 objContents = null;
