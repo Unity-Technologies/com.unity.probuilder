@@ -3406,7 +3406,7 @@ namespace UnityEditor.ProBuilder
                     // set the current rect pixel bounds to the largest possible size.  if some parts are out of focus, they'll be grabbed in subsequent passes
                     if((bool) ReflectionUtility.GetValue(this, this.GetType(), "docked"))
                     {
-                        m_HorizontalOffset = 4;
+                        m_HorizontalOffset = 1;
                         m_VerticalOffset = 2;
                     }
 
