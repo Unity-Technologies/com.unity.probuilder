@@ -8,61 +8,41 @@ namespace UnityEditor.ProBuilder
 {
     internal static class ShapeParameters
     {
-        static Pref<ShapeSave[]> s_PrefList = new Pref<ShapeSave[]>("ShapeBuilder.ShapesSettings", new ShapeSave[]{ });
-        static Dictionary<string, ShapeSave> s_Prefs = new Dictionary<string, ShapeSave>();
+        static Dictionary<string, Shape> s_Prefs = new Dictionary<string, Shape>();
 
         static ShapeParameters()
         {
-            //ProBuilderSettings.
-            var list = new List<Type>();
             var types = typeof(Shape).Assembly.GetTypes();
-            s_Prefs = new Dictionary<string, ShapeSave>();
 
             foreach (var type in types)
             {
                 if (typeof(Shape).IsAssignableFrom(type) && !type.IsAbstract)
                 {
                     var name = "ShapeBuilder." + type.Name;
-                    var pref = new ShapeSave { name = type.Name, shape = Activator.CreateInstance(type) as Shape };
-                    s_Prefs.Add(type.Name, pref);
+                    var pref = ProBuilderSettings.Get(name, SettingsScope.Project, (Shape)Activator.CreateInstance(type));
+                    s_Prefs.Add(name, pref);
                 }
             }
-            foreach (var save in s_PrefList.value) 
-            {
-                if (save.name != null && s_Prefs.ContainsKey(save.name))
-                {
-                    s_Prefs[save.name] = save;
-                }
-            }
-            s_PrefList.value = s_Prefs.Values.ToArray();
         }
 
         public static void SaveParams<T>(T shape) where T : Shape
         {
-            if (s_Prefs.TryGetValue(shape.GetType().Name, out var data))
+            var name = "ShapeBuilder." + shape.GetType().Name;
+            if (s_Prefs.TryGetValue(name, out var data))
             {
-                data.shape = shape;
-                s_PrefList.value = s_PrefList.value;
+                data = shape;
+                ProBuilderSettings.Set(name, data);
             }
         }
 
         public static void SetToLastParams<T>(ref T shape) where T : Shape
         {
-            if (s_Prefs.TryGetValue(shape.GetType().Name, out var data))
+            var name = "ShapeBuilder." + shape.GetType().Name;
+            if (s_Prefs.TryGetValue(name, out var data))
             {
-                if (data != null && data.shape != null)
-                    shape = (T)data.shape;
+                if (data != null && data != null)
+                    shape = (T)data;
             }  
         }
-    }
-
-    [Serializable]
-    class ShapeSave
-    {
-        [SerializeField]
-        public string name;
-
-        [SerializeReference]
-        public Shape shape;
     }
 }

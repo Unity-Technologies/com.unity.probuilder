@@ -40,8 +40,7 @@ namespace UnityEditor.ProBuilder
         static TypeCache.TypeCollection m_AvailableShapeTypes;
         string[] m_ShapeTypesPopupContent;
 
-        [SerializeField]
-        static int m_ActiveShapeIndex;
+        static Pref<int> m_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
 
         static Vector3 m_Size;
 
@@ -110,7 +109,7 @@ namespace UnityEditor.ProBuilder
             if (!typeof(Shape).IsAssignableFrom(type))
                 throw new ArgumentException("type must inherit UnityEngine.ProBuilder.Shape", "type");
 
-            m_ActiveShapeIndex = m_AvailableShapeTypes.IndexOf(type);
+            m_ActiveShapeIndex.value = m_AvailableShapeTypes.IndexOf(type);
             EditorPrefs.SetInt("ShapeBuilder.ActiveShapeIndex", m_ActiveShapeIndex);
 
             if (m_ActiveShapeIndex < 0)
@@ -383,19 +382,16 @@ namespace UnityEditor.ProBuilder
             EditorGUI.BeginChangeCheck(); 
 
             var shapeProperty = obj.FindProperty("shape");
-            m_ActiveShapeIndex = m_AvailableShapeTypes.IndexOf(shape.GetType());
-            m_ActiveShapeIndex = EditorGUILayout.Popup(m_ActiveShapeIndex, m_ShapeTypesPopupContent);
-
-            EditorPrefs.SetInt("ShapeBuilder.ActiveShapeIndex", m_ActiveShapeIndex);
+            m_ActiveShapeIndex.value = Mathf.Max(0, m_AvailableShapeTypes.IndexOf(shape.GetType()));
+            m_ActiveShapeIndex.value = EditorGUILayout.Popup(m_ActiveShapeIndex, m_ShapeTypesPopupContent);
 
             if (EditorGUI.EndChangeCheck())
             {
+                UndoUtility.RegisterCompleteObjectUndo(shapeComp, "Change Shape");
                 var type = m_AvailableShapeTypes[m_ActiveShapeIndex];
                 SetActiveShapeType(type);
                 shapeComp.SetShape(CreateShape(type));
-                shapeComp.Rebuild();
-                ProBuilderEditor.Refresh(false);
-                UndoUtility.RegisterCompleteObjectUndo(shapeComp, "Change Shape");
+                ProBuilderEditor.Refresh();
             }
 
             shapeComp.size = EditorGUILayout.Vector3Field("Size", shapeComp.size);
@@ -408,7 +404,7 @@ namespace UnityEditor.ProBuilder
                 if (shapeComp != null)
                 {
                     shapeComp.Rebuild();
-                    ProBuilderEditor.Refresh(false);
+                    ProBuilderEditor.Refresh();
                 }
             }
         }

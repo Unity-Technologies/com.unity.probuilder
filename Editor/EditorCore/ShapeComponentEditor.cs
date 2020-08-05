@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -15,14 +16,14 @@ namespace UnityEditor.ProBuilder
 
         SerializedProperty m_shape;
         static int s_CurrentIndex = 0;
-        static string[] s_ShapeTypes;
+        static List<string> s_ShapeTypes;
         static TypeCache.TypeCollection s_AvailableShapeTypes;
 
 
         static ShapeComponentEditor()
         {
             s_AvailableShapeTypes = TypeCache.GetTypesDerivedFrom<Shape>();
-            s_ShapeTypes = s_AvailableShapeTypes.Select(x => x.ToString()).ToArray();
+            s_ShapeTypes = s_AvailableShapeTypes.Select(x => x.ToString()).ToList();
         }
 
         private void OnEnable()
@@ -56,16 +57,18 @@ namespace UnityEditor.ProBuilder
         VisualElement GetShapeVisual()
         {
             var root = new VisualElement();
-            var popup = new PopupField<string>(s_ShapeTypes.ToList(), s_CurrentIndex);
+            var popup = new PopupField<string>(s_ShapeTypes, s_CurrentIndex);
             var shapeField = new IMGUIContainer(OnShapeGUI);
 
             popup.RegisterValueChangedCallback(evt =>
             {
-                s_CurrentIndex = s_ShapeTypes.ToList().IndexOf(evt.newValue);
+                s_CurrentIndex = Mathf.Max(0, s_ShapeTypes.IndexOf(evt.newValue));
+                // try catch if no constructor
+                // make it one place (also in drawshapetool)
                 var temp = Activator.CreateInstance(s_AvailableShapeTypes[s_CurrentIndex]) as Shape;
                 ShapeParameters.SetToLastParams(ref temp);
                 ((ShapeComponent)target).SetShape(temp);
-                ProBuilderEditor.Refresh(false);
+                ProBuilderEditor.Refresh();
             });
 
             var vector = new Vector3Field("Size");
@@ -90,7 +93,7 @@ namespace UnityEditor.ProBuilder
             {
                 ShapeParameters.SaveParams(((ShapeComponent)target).shape);
                 ((ShapeComponent)target).Rebuild();
-                ProBuilderEditor.Refresh(false);
+                ProBuilderEditor.Refresh();
             }
         }
     }
