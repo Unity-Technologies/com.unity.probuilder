@@ -376,21 +376,19 @@ namespace UnityEditor.ProBuilder
         {
             if (screenshotStatus != ScreenshotStatus.Done)
             {
-                minSize = new Vector2(ScreenRect.width, ScreenRect.height);
-                maxSize = new Vector2(ScreenRect.width, ScreenRect.height);
+                // minSize = new Vector2(ScreenRect.width, ScreenRect.height);
+                // maxSize = new Vector2(ScreenRect.width, ScreenRect.height);
 
-                UI.EditorGUIUtility.DrawSolidColor(new Rect(-1, -1, ScreenRect.width + 10, ScreenRect.height + 10), screenshot_backgroundColor);
-
+                UI.EditorGUIUtility.DrawSolidColor(new Rect(-5, -5, ScreenRect.width + 10, ScreenRect.height + 10), screenshot_backgroundColor);
                 DrawUVGraph(graphRect);
 
                 if (screenshotStatus == ScreenshotStatus.PrepareCanvas)
                 {
-                    if (Event.current.type == EventType.Repaint)
+                    if(Event.current.type == EventType.Repaint)
                     {
                         screenshotStatus = ScreenshotStatus.CanvasReady;
                         DoScreenshot();
                     }
-
                     return;
                 }
                 else
@@ -3339,6 +3337,8 @@ namespace UnityEditor.ProBuilder
         Texture2D screenshot;
         Rect screenshotCanvasRect = new Rect(0, 0, 0, 0);
         Vector2 screenshotTexturePosition = Vector2.zero;
+        int m_HorizontalOffset = 0;
+        int m_VerticalOffset = 0;
 
         // settings
         int screenshot_size = 1024;
@@ -3394,7 +3394,6 @@ namespace UnityEditor.ProBuilder
 #if RETINA_ENABLED
                     uvGraphScale /= EditorGUIUtility.pixelsPerPoint;
 #endif
-
                     // always begin texture grabs at bottom left
                     uvGraphOffset = new Vector2(-ScreenRect.width / 2f, ScreenRect.height / 2f);
 
@@ -3402,11 +3401,18 @@ namespace UnityEditor.ProBuilder
                     screenshot.hideFlags = (HideFlags)(1 | 2 | 4);
                     screenshotStatus = ScreenshotStatus.PrepareCanvas;
 
+                    m_HorizontalOffset = 0;
+                    m_VerticalOffset = 0;
                     // set the current rect pixel bounds to the largest possible size.  if some parts are out of focus, they'll be grabbed in subsequent passes
-                    if ((bool)ReflectionUtility.GetValue(this, this.GetType(), "docked"))
-                        screenshotCanvasRect = new Rect(4, 2, (int)Mathf.Min(screenshot_size, ScreenRect.width - 4), (int)Mathf.Min(screenshot_size, ScreenRect.height - 2));
-                    else
-                        screenshotCanvasRect = new Rect(0, 0, (int)Mathf.Min(screenshot_size, ScreenRect.width), (int)Mathf.Min(screenshot_size, ScreenRect.height));
+                    if((bool) ReflectionUtility.GetValue(this, this.GetType(), "docked"))
+                    {
+                        m_HorizontalOffset = 4;
+                        m_VerticalOffset = 2;
+                    }
+
+                    screenshotCanvasRect = new Rect(m_HorizontalOffset, m_VerticalOffset,
+                        (int)Mathf.Min(screenshot_size, ScreenRect.width - m_HorizontalOffset),
+                        (int)Mathf.Min(screenshot_size, ScreenRect.height - m_VerticalOffset));
 
                     screenshotTexturePosition = new Vector2(0, 0);
 
@@ -3417,12 +3423,10 @@ namespace UnityEditor.ProBuilder
                     return;
 
                 case ScreenshotStatus.CanvasReady:
-
                     // take screenshots vertically, then move right, repeat if necessary
                     if (screenshotTexturePosition.y < screenshot_size)
                     {
                         screenshot.ReadPixels(screenshotCanvasRect, (int)screenshotTexturePosition.x, (int)screenshotTexturePosition.y);
-
                         screenshotTexturePosition.y += screenshotCanvasRect.height;
 
                         if (screenshotTexturePosition.y < screenshot_size)
@@ -3432,8 +3436,9 @@ namespace UnityEditor.ProBuilder
                             uvGraphOffset.y += screenshotCanvasRect.height / EditorGUIUtility.pixelsPerPoint;
 #else
                             uvGraphOffset.y += screenshotCanvasRect.height;
+
                         #endif
-                            screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.y, ScreenRect.height - 12);
+                            screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.y , ScreenRect.height - m_VerticalOffset);
                             screenshotStatus = ScreenshotStatus.PrepareCanvas;
                             Repaint();
                             return;
@@ -3451,10 +3456,11 @@ namespace UnityEditor.ProBuilder
 #else
                                 uvGraphOffset.x -= screenshotCanvasRect.width;
                                 uvGraphOffset.y = ScreenRect.height / 2f;
-                            #endif
-                                screenshotCanvasRect.width = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.x, ScreenRect.width);
+#endif
+
                                 screenshotTexturePosition.y = 0;
-                                screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.y, ScreenRect.height - 12);
+                                screenshotCanvasRect.width = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.x, ScreenRect.width - m_HorizontalOffset);
+                                screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size, ScreenRect.height - m_VerticalOffset);
                                 screenshotStatus = ScreenshotStatus.PrepareCanvas;
                                 Repaint();
                                 return;
