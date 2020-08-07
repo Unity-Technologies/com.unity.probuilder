@@ -35,21 +35,18 @@ namespace UnityEngine.ProBuilder
             set { m_Faces = value; }
         }
 
-        [Obsolete("Use SetSingleVertex")]
         public int vertex
         {
             get { return m_Vertices != null && m_Vertices.Count > 0 ? m_Vertices[0] : -1; }
             set { SetSingleVertex(value); }
         }
 
-        [Obsolete("Use SetSingleEdge")]
         public Edge edge
         {
             get { return edges != null && edges.Count > 0 ? edges[0] : Edge.Empty; }
             set { SetSingleEdge(value); }
         }
 
-        [Obsolete("Use SetSingleFace")]
         public Face face
         {
             get { return faces != null && faces.Count > 0 ? faces[0] : null; }
@@ -64,13 +61,10 @@ namespace UnityEngine.ProBuilder
             m_Faces = new List<Face>();
         }
 
-        [Obsolete("Use SceneSelection(ProBuilderMesh, List<int>)")]
         public SceneSelection(ProBuilderMesh mesh, int vertex) : this(mesh, new List<int>() { vertex }) { }
 
-        [Obsolete("Use SceneSelection(ProBuilderMesh, List<Edge>)")]
         public SceneSelection(ProBuilderMesh mesh, Edge edge) : this(mesh, new List<Edge>() { edge }) { }
 
-        [Obsolete("Use SceneSelection(ProBuilderMesh, List<Face>)")]
         public SceneSelection(ProBuilderMesh mesh, Face face) : this(mesh, new List<Face>() { face }) { }
 
         internal SceneSelection(ProBuilderMesh mesh, List<int> vertexes) : this(mesh != null ? mesh.gameObject : null)
