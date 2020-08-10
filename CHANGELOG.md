@@ -5,29 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [4.4.0] - 2020-07-07
 
 ### Features
 
-- Added a selection preview when using the Select Path tool.
-
-### Bug Fixes
-
-- Ensure "ProBuilderize" action is enabled for current selection on opening main window
-- [case: 1258589] Fixed error in runtime sample examples.
-- [case: 1258421] Fixed an issue where GI UV streams would be lost at runtime due to `ProBuilderMesh` assigning a new `Mesh` to the statically combined `MeshFilter`.
-- [case: 1251289] Fixed `m_WireMaterial null reference exception` when re-importing ProBuilder.
-- Fixed `TooltipEditor.Hide` affecting performance linearly with scene size.
-- [case: 1259506] Fixed shortcut not being saved in 2018.4.
-
-## [4.4.0-preview.1] - 2020-06-21
-
-### Features
-
+- Added a `Select Path` tool. The default shortcut is `Ctrl + Shift + Click` or `Cmd + Shift + Click`.
 - Added iterative selection on edges.
 
 ### Bug Fixes
 
+- Ensure "ProBuilderize" action is enabled for current selection on opening main window.
+- [case: 1258589] Fixed error in runtime sample examples.
+- Fixed warning in `ShapeEditor` caused by duplicate using statements.
+- [case: 1258421] Fixed an issue where GI UV streams would be lost at runtime due to `ProBuilderMesh` assigning a new `Mesh` to the statically combined `MeshFilter`.
+- [case: 1251289] Fixed `m_WireMaterial null reference exception` when re-importing ProBuilder.
+- Fixed `TooltipEditor.Hide` affecting performance linearly with scene size.
+- [case: 1259506] Fixed shortcut not being saved in 2018.4.
+- Fixed vertex colors not applying gamma-correct value when color space is Linear.
+- [case: 1251574] Disable export options when no probuilder meshes are selected
 - [case: 1248708] Fixed physx error when welding all vertices to a singularity.
 - Fixed tooltips always clamping to the left of the screen on secondary monitors.
 - Fixed `EditorUtility.SetIconEnabled` not respecting the enabled parameter.
@@ -41,6 +36,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1247270] Fixed `Null Reference Exception` when entering Prefab Stage after merging multiple `ProBuilderMesh`.
 - [case: 1252394] Fixed dragging selection with Ctrl problem (and key pressed problem in general).
 - Fixed Cylinder shape clamping segments to 48.
+
+### Changes
+
+- Update to Settings Manager 1.0.3.
 
 ### Known Issues
 
