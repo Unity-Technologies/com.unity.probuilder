@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder.UI;
@@ -42,6 +43,28 @@ namespace UnityEditor.ProBuilder
         Mesh m_LineMesh = null;
 
         Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
+
+        Plane plane
+        {
+            set
+            {
+                m_Plane = value;
+            }
+            get
+            {
+                if(m_Polygon.m_Points.Count >= 3 &&
+                   m_Plane.distance.Equals(0) &&
+                   m_Plane.normal.Equals(Vector3.up))
+                {
+                    Transform trs = m_Polygon.transform;
+                    m_Plane = new Plane(trs.TransformPoint(m_Polygon.m_Points[0]),
+                        trs.TransformPoint(m_Polygon.m_Points[1]),
+                        trs.TransformPoint(m_Polygon.m_Points[2]));
+                }
+
+                return m_Plane;
+            }
+        }
 
         int m_ControlId;
         int m_SelectedIndex = -2;
@@ -141,17 +164,9 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         void Update()
         {
-//            if (m_Polygon != null && m_Polygon.polyEditMode == PolyShape.PolyEditMode.Path && m_LineMaterial != null)
-//                m_LineMaterial.SetFloat("_EditorTime", (float)EditorApplication.timeSinceStartup);
+            if (m_Polygon != null && m_Polygon.polyEditMode != PolyShape.PolyEditMode.None && m_LineMaterial != null)
+                m_LineMaterial.SetFloat("_EditorTime", (float)EditorApplication.timeSinceStartup);
         }
-
-        // void OnActiveToolChanged()
-        // {
-        //     if (!ToolManager.IsActiveTool(this) && m_Polygon!=null)
-        //     {
-        //         SetPolyEditMode(PolyShape.PolyEditMode.None);
-        //     }
-        // }
 
         /// <summary>
         /// Main GUI update for the tool, calls every secondary methods to place points, update lines and compute the cut
@@ -373,7 +388,7 @@ namespace UnityEditor.ProBuilder
 
             if (m_Polygon.isOnGrid)
             {
-                Vector3 snapMask = ProBuilderSnapping.GetSnappingMaskBasedOnNormalVector(m_Plane.normal);
+                Vector3 snapMask = ProBuilderSnapping.GetSnappingMaskBasedOnNormalVector(plane.normal);
                 return trs.InverseTransformPoint(ProGridsInterface.ProGridsSnap(point, snapMask));
             }
 
@@ -393,7 +408,7 @@ namespace UnityEditor.ProBuilder
                 {
                     float hitDistance = Mathf.Infinity;
 
-                    if (m_Plane.Raycast(ray, out hitDistance))
+                    if (plane.Raycast(ray, out hitDistance))
                     {
                         evt.Use();
                         m_Polygon.m_Points[m_SelectedIndex] = GetPointInLocalSpace(ray.GetPoint(hitDistance));
@@ -424,7 +439,7 @@ namespace UnityEditor.ProBuilder
 
                     Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
 
-                    if (m_Plane.Raycast(ray, out hitDistance))
+                    if (plane.Raycast(ray, out hitDistance))
                     {
                         UndoUtility.RecordObject(m_Polygon, "Add Polygon Shape Point");
 
@@ -434,7 +449,7 @@ namespace UnityEditor.ProBuilder
                         {
                             m_Polygon.transform.position = m_Polygon.isOnGrid ? ProGridsInterface.ProGridsSnap(hit) : hit;
 
-                            Vector3 cameraFacingPlaneNormal = m_Plane.normal;
+                            Vector3 cameraFacingPlaneNormal = plane.normal;
                             if (Vector3.Dot(cameraFacingPlaneNormal, SceneView.lastActiveSceneView.camera.transform.forward) > 0f)
                                 cameraFacingPlaneNormal *= -1;
 
@@ -463,7 +478,7 @@ namespace UnityEditor.ProBuilder
                     float hitDistance = Mathf.Infinity;
                     Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
 
-                    if(m_Plane.Raycast(ray, out hitDistance))
+                    if(plane.Raycast(ray, out hitDistance))
                     {
                         Vector3 hit = ray.GetPoint(hitDistance);
                         m_CurrentPosition = GetPointInLocalSpace(hit);
@@ -484,7 +499,7 @@ namespace UnityEditor.ProBuilder
                     Vector2 mouse = evt.mousePosition;
                     Ray ray = HandleUtility.GUIPointToWorldRay(mouse);
                     float hitDistance = Mathf.Infinity;
-                    if(m_Plane.Raycast(ray, out hitDistance))
+                    if(plane.Raycast(ray, out hitDistance))
                     {
                         Vector3 hit = ray.GetPoint(hitDistance);
                         Vector3 point = GetPointInLocalSpace(hit);
@@ -541,10 +556,10 @@ namespace UnityEditor.ProBuilder
 
         void SetupInputPlane(Vector2 mousePosition)
         {
-            m_Plane = EditorHandleUtility.FindBestPlane(mousePosition);
+            plane = EditorHandleUtility.FindBestPlane(mousePosition);
 
-            var planeNormal = m_Plane.normal;
-            var planeCenter = m_Plane.normal * -m_Plane.distance;
+            var planeNormal = plane.normal;
+            var planeCenter = plane.normal * -plane.distance;
 
             // if hit point on plane is cardinal axis and on grid, snap to grid.
             if (Math.IsCardinalAxis(planeNormal))
@@ -700,24 +715,26 @@ namespace UnityEditor.ProBuilder
         }
 
 
-
         /// <summary>
         /// Display lines of the poly shape
         /// </summary>
         void DoExistingLinesGUI()
         {
-            if(m_LineMaterial != null)
+            if(Event.current.type == EventType.Repaint)
             {
-                m_LineMaterial.SetPass(0);
-                Graphics.DrawMeshNow(m_LineMesh, m_Polygon.transform.localToWorldMatrix, 0);
-            }
-
-            if(m_DrawingLineMaterial != null && m_Polygon.polyEditMode == PolyShape.PolyEditMode.Path)
-            {
-                if(DrawGuideLine())
+                if(m_LineMaterial != null)
                 {
-                    m_DrawingLineMaterial.SetPass(0);
-                    Graphics.DrawMeshNow(m_DrawingLineMesh, m_Polygon.transform.localToWorldMatrix, 0);
+                    m_LineMaterial.SetPass(0);
+                    Graphics.DrawMeshNow(m_LineMesh, m_Polygon.transform.localToWorldMatrix, 0);
+                }
+
+                if(m_DrawingLineMaterial != null && m_Polygon.polyEditMode == PolyShape.PolyEditMode.Path)
+                {
+                    if(DrawGuideLine())
+                    {
+                        m_DrawingLineMaterial.SetPass(0);
+                        Graphics.DrawMeshNow(m_DrawingLineMesh, m_Polygon.transform.localToWorldMatrix, 0);
+                    }
                 }
             }
         }
