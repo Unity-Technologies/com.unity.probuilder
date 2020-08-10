@@ -197,7 +197,7 @@ namespace UnityEditor.ProBuilder
         Vector2 s_StartMousePosition;
         Vector3 s_StartPosition;
         Quaternion s_LastRotation;
-        int s_CurrentId;
+        int s_CurrentId = -1;
         bool s_IsMouseDown;
 
         Quaternion RotateBoundsHandle(Vector3 pointA, Vector3 pointB, Vector3 axis)
@@ -237,7 +237,7 @@ namespace UnityEditor.ProBuilder
                     HandleUtility.AddControl(controlID, HandleUtility.DistanceToLine(pointA, pointB));
                     break;
                 case EventType.Repaint:
-                    bool isSelected = HandleUtility.nearestControl == controlID || s_CurrentId == controlID;
+                    bool isSelected = (HandleUtility.nearestControl == controlID && s_CurrentId == -1) || s_CurrentId == controlID;
                     using (new Handles.DrawingScope(isSelected ? Color.white : Color.green))
                     {
                         Handles.DrawAAPolyLine(isSelected ? 10f : 3f, pointA, pointB);

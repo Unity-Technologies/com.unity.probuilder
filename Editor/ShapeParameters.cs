@@ -31,6 +31,7 @@ namespace UnityEditor.ProBuilder
             if (s_Prefs.TryGetValue(name, out var data))
             {
                 data = shape;
+                s_Prefs[name] = data;
                 ProBuilderSettings.Set(name, data);
             }
         }
@@ -40,7 +41,7 @@ namespace UnityEditor.ProBuilder
             var name = "ShapeBuilder." + shape.GetType().Name;
             if (s_Prefs.TryGetValue(name, out var data))
             {
-                if (data != null && data != null)
+                if (data != null)
                     shape = (T)data;
             }  
         }
