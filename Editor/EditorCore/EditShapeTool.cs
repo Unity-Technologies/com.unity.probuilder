@@ -98,104 +98,124 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        FaceData[] GetFaces(Vector3 extents)
+        {
+            Vector3 xAxis = Vector3.right;
+            Vector3 yAxis = Vector3.up;
+            Vector3 zAxis = Vector3.forward;
+            var faces = new FaceData[6];
+            var edges = new EdgeData[4];
+
+            // +X
+            var pos = m_BoundsHandle.center - new Vector3(extents.x, 0, 0);
+            edges[0] = new EdgeData(new Vector3(-extents.x, extents.y, extents.z), new Vector3(-extents.x, -extents.y, extents.z));
+            edges[1] = new EdgeData(new Vector3(-extents.x, extents.y, extents.z), new Vector3(-extents.x, extents.y, -extents.z));
+            edges[2] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(-extents.x, -extents.y, extents.z));
+            edges[3] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(-extents.x, extents.y, -extents.z));
+            faces[0] = new FaceData(pos, xAxis, (EdgeData[])edges.Clone());
+           
+            // -X
+            pos = m_BoundsHandle.center + new Vector3(extents.x, 0, 0);
+            edges[0] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(extents.x, -extents.y, extents.z));
+            edges[1] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(extents.x, extents.y, -extents.z));
+            edges[2] = new EdgeData(new Vector3(extents.x, -extents.y, -extents.z), new Vector3(extents.x, -extents.y, extents.z));
+            edges[3] = new EdgeData(new Vector3(extents.x, -extents.y, -extents.z), new Vector3(extents.x, extents.y, -extents.z));
+            faces[1] = new FaceData(pos, -xAxis, (EdgeData[])edges.Clone());
+
+            // +Y
+            pos = m_BoundsHandle.center - new Vector3(0, extents.y, 0);
+            edges[0] = new EdgeData(new Vector3(extents.x, -extents.y, extents.z), new Vector3(-extents.x, -extents.y, extents.z));
+            edges[1] = new EdgeData(new Vector3(extents.x, -extents.y, extents.z), new Vector3(extents.x, -extents.y, -extents.z));
+            edges[2] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(-extents.x, -extents.y, extents.z));
+            edges[3] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(extents.x, -extents.y, -extents.z));
+            faces[2] = new FaceData(pos, yAxis, (EdgeData[])edges.Clone());
+
+            // -Y
+            pos = m_BoundsHandle.center + new Vector3(0, extents.y, 0);
+            edges[0] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(-extents.x, extents.y, extents.z));
+            edges[1] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(extents.x, extents.y, -extents.z));
+            edges[2] = new EdgeData(new Vector3(-extents.x, extents.y, -extents.z), new Vector3(-extents.x, extents.y, extents.z));
+            edges[3] = new EdgeData(new Vector3(-extents.x, extents.y, -extents.z), new Vector3(extents.x, extents.y, -extents.z));
+            faces[3] = new FaceData(pos, -yAxis, (EdgeData[])edges.Clone());
+
+            // +Z
+            pos = m_BoundsHandle.center - new Vector3(0, 0, extents.z);
+            edges[0] = new EdgeData(new Vector3(extents.x, extents.y, -extents.z), new Vector3(-extents.x, extents.y, -extents.z));
+            edges[1] = new EdgeData(new Vector3(extents.x, extents.y, -extents.z), new Vector3(extents.x, -extents.y, -extents.z));
+            edges[2] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(-extents.x, extents.y, -extents.z));
+            edges[3] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(extents.x, -extents.y, -extents.z));
+            faces[4] = new FaceData(pos, zAxis, (EdgeData[])edges.Clone());
+
+            // -Z
+            pos = m_BoundsHandle.center + new Vector3(0, 0, extents.z);
+            edges[0] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(-extents.x, extents.y, extents.z));
+            edges[1] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(extents.x, -extents.y, extents.z));
+            edges[2] = new EdgeData(new Vector3(-extents.x, -extents.y, extents.z), new Vector3(-extents.x, extents.y, extents.z));
+            edges[3] = new EdgeData(new Vector3(-extents.x, -extents.y, extents.z), new Vector3(extents.x, -extents.y, extents.z));
+            faces[5] = new FaceData(pos, -zAxis, (EdgeData[])edges.Clone());
+
+            return faces;
+        }
+
         void DoRotateHandlesGUI(ShapeComponent shape, Bounds bounds)
         {
-            if (Camera.current != null)
+            var matrix = shape.gameObject.transform.localToWorldMatrix;
+            var extents = bounds.extents;
+
+            using (new Handles.DrawingScope(matrix))
             {
-                Vector3 xAxis = Vector3.right;
-                Vector3 yAxis = Vector3.up;
-                Vector3 zAxis = Vector3.forward;
-
-                const float angle = 180f;
-                const float radius = 10f;
-
-                // +X
-                var pos = m_BoundsHandle.center - new Vector3(bounds.extents.x, 0, 0);
-                var rot = Quaternion.LookRotation(shape.transform.right, shape.transform.up);
-                if (IsFaceVisible(pos, yAxis, zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.xAxisColor))
+                var faces = GetFaces(extents);
+                foreach(var face in faces)
                 {
-                    shape.Rotate(new Vector3(90f, 0f, 0f));
+                    if (IsFaceVisible(face))
+                    {
+                        foreach (var edge in face.Edges)
+                        {
+                            var rot = RotateBoundsHandle(edge.PointA, edge.PointB, edge.PointA - edge.PointB);
+                            shape.Rotate(rot);
+                            ProBuilderEditor.Refresh();
+                        }
+                    }
                 }
-
-                // -X
-                pos = m_BoundsHandle.center + new Vector3(bounds.extents.x, 0, 0);
-                rot = Quaternion.LookRotation(-shape.transform.right, shape.transform.up);
-                if (IsFaceVisible(pos, yAxis, -zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.xAxisColor))
-                {
-                    shape.Rotate(new Vector3(-90f, 0f, 0f));
-                }
-
-                // +Y
-                pos = m_BoundsHandle.center - new Vector3(0, bounds.extents.y, 0);
-                rot = Quaternion.LookRotation(shape.transform.right, shape.transform.forward);
-                if (IsFaceVisible(pos, xAxis, -zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.yAxisColor))
-                {
-                    shape.Rotate(new Vector3(0f, 90f, 0f));
-                }
-
-                // -Y
-                pos = m_BoundsHandle.center + new Vector3(0, bounds.extents.y, 0);
-                rot = Quaternion.LookRotation(-shape.transform.right, shape.transform.forward);
-                if (IsFaceVisible(pos, xAxis, zAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.yAxisColor))
-                {
-                    shape.Rotate(new Vector3(0f, -90f, 0f));
-                }
-
-                // +Z
-                pos = m_BoundsHandle.center - new Vector3(0, 0, bounds.extents.z);
-                rot = Quaternion.LookRotation(-shape.transform.up, shape.transform.forward);
-                if (IsFaceVisible(pos, yAxis, -xAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.zAxisColor))
-                {
-                    shape.Rotate(new Vector3(0f, 0f, 90f));
-                }
-
-                // -Z
-                pos = m_BoundsHandle.center + new Vector3(0, 0, bounds.extents.z);
-                rot = Quaternion.LookRotation(shape.transform.up, shape.transform.forward);
-                if (IsFaceVisible(pos, yAxis, xAxis) && RotateBoundsHandle(pos, rot, angle, radius, Handles.zAxisColor))
-                {
-                    shape.Rotate(new Vector3(0f, 0f, -90f));
-                }
-
-                ProBuilderEditor.Refresh(false);
             }
         }
 
-        bool IsFaceVisible(Vector3 facePosition, Vector3 localTangeant, Vector3 localBinormal)
+        bool IsFaceVisible(FaceData face)
         {
-            Vector3 worldTangent = Handles.matrix.MultiplyVector(localTangeant);
-            Vector3 worldBinormal = Handles.matrix.MultiplyVector(localBinormal);
-            Vector3 worldDir = Vector3.Cross(worldTangent, worldBinormal).normalized;
+            Vector3 worldDir = Handles.matrix.MultiplyVector(face.Normal).normalized;
 
             float cosV;
 
             if (Camera.current.orthographic)
                 cosV = Vector3.Dot(-Camera.current.transform.forward, worldDir);
             else
-                cosV = Vector3.Dot((Camera.current.transform.position - Handles.matrix.MultiplyPoint(facePosition)).normalized, worldDir);
+                cosV = Vector3.Dot((Camera.current.transform.position - Handles.matrix.MultiplyPoint(face.CenterPosition)).normalized, worldDir);
 
             return cosV < 0;
         }
 
-        bool RotateBoundsHandle(Vector3 position, Quaternion rotation, float angle, float size, Color handleColor)
+        Vector2 s_StartMousePosition;
+        Vector3 s_StartPosition;
+        Quaternion s_LastRotation;
+        int s_CurrentId;
+        bool s_IsMouseDown;
+
+        Quaternion RotateBoundsHandle(Vector3 pointA, Vector3 pointB, Vector3 axis)
         {
             Event evt = Event.current;
             int controlID = GUIUtility.GetControlID(FocusType.Passive);
+            Quaternion rotation = Quaternion.identity;
             switch (evt.GetTypeForControl(controlID))
             {
-                case EventType.Layout:
-                    HandleUtility.AddControl(controlID, HandleUtility.DistanceToArc(position, rotation * Vector3.right, rotation * Vector3.up, angle, size));
-                    break;
-                case EventType.Repaint:
-                    using (new Handles.DrawingScope(HandleUtility.nearestControl == controlID ? Handles.preselectionColor : handleColor))
-                    {
-                        Handles.DrawWireArc(position, rotation * Vector3.right, rotation * Vector3.up, angle, size);
-                        break;
-                    }
                 case EventType.MouseDown:
                     if (HandleUtility.nearestControl == controlID && (evt.button == 0 || evt.button == 2))
                     {
-                        GUIUtility.hotControl = controlID; // Grab mouse focus
+                        s_CurrentId = controlID;
+                        s_LastRotation = Quaternion.identity;
+                        s_StartMousePosition = Event.current.mousePosition;
+                        s_StartPosition = HandleUtility.ClosestPointToPolyLine(pointA, pointB);
+                        s_IsMouseDown = true;
+                        GUIUtility.hotControl = controlID;
                         evt.Use();
                     }
                     break;
@@ -204,17 +224,38 @@ namespace UnityEditor.ProBuilder
                     {
                         GUIUtility.hotControl = 0;
                         evt.Use();
-
-                        if (HandleUtility.nearestControl == controlID)
-                            return true;
+                        s_IsMouseDown = false;
+                        s_CurrentId = -1;
                     }
                     break;
                 case EventType.MouseMove:
                     if (HandleUtility.nearestControl == controlID)
                         HandleUtility.Repaint();
+           
                     break;
+                case EventType.Layout:
+                    HandleUtility.AddControl(controlID, HandleUtility.DistanceToLine(pointA, pointB));
+                    break;
+                case EventType.Repaint:
+                    bool isSelected = HandleUtility.nearestControl == controlID || s_CurrentId == controlID;
+                    using (new Handles.DrawingScope(isSelected ? Color.white : Color.green))
+                    {
+                        Handles.DrawAAPolyLine(isSelected ? 10f : 3f, pointA, pointB);
+                        break;
+                    }
+                case EventType.MouseDrag:
+                    if (s_IsMouseDown && s_CurrentId == controlID)
+                    {
+                        Vector3 direction = Vector3.Cross(Vector3.Cross(pointA, pointB).normalized, axis).normalized;
+                        var rotDist = HandleUtility.CalcLineTranslation(s_StartMousePosition, Event.current.mousePosition, s_StartPosition, direction);
+                        rotDist = Handles.SnapValue(rotDist, 90f);
+                        var rot = Quaternion.AngleAxis(rotDist * -1, axis);
+                        rotation = s_LastRotation * Quaternion.Inverse(rot);
+                        s_LastRotation = rot;
+                    }
+                        break;
             }
-            return false;
+            return rotation;
         }
 
         void BeginBoundsEditing(ShapeComponent shape)
@@ -298,6 +339,32 @@ namespace UnityEditor.ProBuilder
             shape.Rebuild(bounds, rotation);
             shape.mesh.SetPivot(shape.transform.position);
             ProBuilderEditor.Refresh();
+        }
+
+        struct FaceData
+        {
+            public FaceData(Vector3 centerPosition, Vector3 normal, EdgeData[] edges)
+            {
+                CenterPosition = centerPosition;
+                Normal = normal;
+                Edges = edges;
+            }
+
+            public Vector3 CenterPosition { get; private set; }
+            public Vector3 Normal { get; private set; }
+            public EdgeData[] Edges { get; private set; }
+        }
+
+        struct EdgeData
+        {
+            public EdgeData(Vector3 pointA, Vector3 pointB)
+            {
+                PointA = pointA;
+                PointB = pointB;
+            }
+
+            public Vector3 PointA { get; private set; }
+            public Vector3 PointB { get; private set; }
         }
     }
 }

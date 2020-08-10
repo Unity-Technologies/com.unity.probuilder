@@ -107,6 +107,21 @@ namespace UnityEngine.ProBuilder
             FitToSize();
         }
 
+        /// <summary>
+        /// Rotates the Shape by a given set of eular angles
+        /// </summary>
+        /// <param name="eulerAngles">The angles to rotate by</param>
+        public void Rotate(Quaternion rotation)
+        {
+            if (rotation == Quaternion.identity)
+            {
+                return;
+            }
+            m_RotationQuaternion = rotation * m_RotationQuaternion;
+            SetRotation(m_RotationQuaternion);
+            FitToSize();
+        }
+
         void SetRotation(Quaternion rotation)
         {
             if (rotation == Quaternion.identity)
