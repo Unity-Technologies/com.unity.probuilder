@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder.UI;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using Math = UnityEngine.ProBuilder.Math;
 using UObject = UnityEngine.Object;
 
 #if !UNITY_2020_2_OR_NEWER
@@ -49,6 +51,8 @@ namespace UnityEditor.ProBuilder
         bool m_PlacingPoint = false;
         float m_DistanceFromHeightHandle;
 
+        MouseCursor m_MouseCursor;
+
         static float s_HeightMouseOffset;
         // should the height change handles be visible?
         bool m_DrawHeightHandles = true;
@@ -91,23 +95,17 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
             Undo.undoRedoPerformed += UndoRedoPerformed;
             EditorApplication.update += Update;
-            //ToolManager.activeToolChanged += OnActiveToolChanged;
 
             InitLineRenderers();
         }
 
         void OnDisable()
         {
-            // // Quit Edit mode when the object gets de-selected.
-            // if (m_Polygon != null && m_Polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
-            //     SetPolyEditMode(PolyShape.PolyEditMode.None);
-
             ClearLineRenderers();
 
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
             EditorApplication.update -= Update;
             Undo.undoRedoPerformed -= UndoRedoPerformed;
-            //ToolManager.activeToolChanged -= OnActiveToolChanged;
         }
 
         /// <summary>
@@ -161,16 +159,7 @@ namespace UnityEditor.ProBuilder
         /// <param name="window">current window calling the tool : SceneView</param>
         public override void OnToolGUI(EditorWindow window)
         {
-            //Debug.Log("Current window = "+window.GetType()+"isInFocus = "+window.hasFocus);
-            //Debug.Log("Control ID "+m_ControlId);
-            //Debug.Log(Event.current.type);
-
             Event evt = Event.current;
-            if(evt.type == EventType.ExecuteCommand)
-            {
-                Debug.Log("Executecommand : "+evt.commandName);
-            }
-
             SceneViewOverlay.Window( m_OverlayTitle, OnOverlayGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle );
 
             if (m_Polygon.polyEditMode == PolyShape.PolyEditMode.None)
@@ -215,9 +204,24 @@ namespace UnityEditor.ProBuilder
             if(evt.type == EventType.Layout)
                 HandleUtility.AddDefaultControl(m_ControlId);
 
+            if(m_Polygon.polyEditMode == PolyShape.PolyEditMode.Path && !m_PlacingPoint)
+                m_MouseCursor = MouseCursor.ArrowPlus;
+            else if((GUIUtility.hotControl != 0) || m_PlacingPoint)
+                m_MouseCursor = MouseCursor.MoveArrow;
+            else
+                m_MouseCursor = MouseCursor.Arrow;
+
             DoPointPlacement();
             DoExistingPointsGUI();
             DoExistingLinesGUI();
+
+            if(evt.type == EventType.Repaint)
+            {
+                Rect sceneViewRect = window.position;
+                sceneViewRect.x = 0;
+                sceneViewRect.y = 0;
+                SceneView.AddCursorRect(sceneViewRect, m_MouseCursor);
+            }
         }
 
         /// <summary>
@@ -477,41 +481,59 @@ namespace UnityEditor.ProBuilder
                 if (m_DistanceFromHeightHandle > PreferenceKeys.k_MaxPointDistanceFromControl)
                 {
                     // point insertion
-                    int index;
-                    float distanceToLine;
-
-                    Vector3 p = EditorHandleUtility.ClosestPointToPolyLine(m_Polygon.m_Points, out index, out distanceToLine, true, m_Polygon.transform);
-                    Vector3 wp = m_Polygon.transform.TransformPoint(p);
-
-                    Vector2 ga = HandleUtility.WorldToGUIPoint(m_Polygon.transform.TransformPoint(m_Polygon.m_Points[index % m_Polygon.m_Points.Count]));
-                    Vector2 gb = HandleUtility.WorldToGUIPoint(m_Polygon.transform.TransformPoint(m_Polygon.m_Points[(index - 1)]));
-
                     Vector2 mouse = evt.mousePosition;
-
-                    float distanceToVertex = Mathf.Min(Vector2.Distance(mouse, ga), Vector2.Distance(mouse, gb));
-
-                    if (distanceToVertex > PreferenceKeys.k_MaxPointDistanceFromControl && distanceToLine < PreferenceKeys.k_MaxPointDistanceFromControl)
+                    Ray ray = HandleUtility.GUIPointToWorldRay(mouse);
+                    float hitDistance = Mathf.Infinity;
+                    if(m_Plane.Raycast(ray, out hitDistance))
                     {
-                        if(evt.type == EventType.Repaint)
+                        Vector3 hit = ray.GetPoint(hitDistance);
+                        Vector3 point = GetPointInLocalSpace(hit);
+
+                        int polyCount = m_Polygon.m_Points.Count;
+
+                        float distToLineInGUI;
+                        int index;
+                        Vector3 pInGUI = EditorHandleUtility.ClosestPointToPolyLine(m_Polygon.m_Points, out index, out distToLineInGUI, true, m_Polygon.transform);
+
+                        Vector3 aToPoint = point - m_Polygon.m_Points[index - 1];
+                        Vector3 aToB = m_Polygon.m_Points[index % polyCount] - m_Polygon.m_Points[index - 1];
+
+                        float ratio = Vector3.Dot(aToPoint, aToB.normalized) / aToB.magnitude;
+                        Vector3 wp =  Vector3.Lerp(m_Polygon.m_Points[index - 1], m_Polygon.m_Points[index % polyCount], ratio);
+                        wp = m_Polygon.transform.TransformPoint(wp);
+
+                        Vector2 aInGUI = HandleUtility.WorldToGUIPoint(m_Polygon.transform.TransformPoint(m_Polygon.m_Points[index - 1]));
+                        Vector2 bInGUI = HandleUtility.WorldToGUIPoint(m_Polygon.transform.TransformPoint(m_Polygon.m_Points[index % polyCount]));
+                        float distanceToVertex = Mathf.Min(Vector2.Distance(mouse, aInGUI), Vector2.Distance(mouse, bInGUI));
+
+                        if (distanceToVertex > PreferenceKeys.k_MaxPointDistanceFromControl && distToLineInGUI < PreferenceKeys.k_MaxPointDistanceFromControl)
                         {
-                            Handles.color = Color.green;
-                            Handles.DotHandleCap(-1, wp, Quaternion.identity,
-                                HandleUtility.GetHandleSize(wp) * k_HandleSize, evt.type);
+                            m_MouseCursor = MouseCursor.ArrowPlus;
+
+                            if(evt.type == EventType.Repaint)
+                            {
+                                Handles.color = Color.green;
+                                Handles.DotHandleCap(-1, wp, Quaternion.identity,
+                                    HandleUtility.GetHandleSize(wp) * k_HandleSize, evt.type);
+                            }
+
+                            if (evt.type == EventType.MouseDown && HandleUtility.nearestControl == m_ControlId)
+                            {
+                                evt.Use();
+
+                                UndoUtility.RecordObject(m_Polygon, "Insert Point");
+                                m_Polygon.m_Points.Insert(index, point);
+                                m_SelectedIndex = index;
+                                m_PlacingPoint = true;
+                                RebuildPolyShapeMesh(true);
+                                OnBeginVertexMovement();
+                            }
+
+                            Handles.color = Color.white;
                         }
 
-                        if (evt.type == EventType.MouseDown && HandleUtility.nearestControl == m_ControlId)
-                        {
-                            evt.Use();
-
-                            UndoUtility.RecordObject(m_Polygon, "Insert Point");
-                            m_Polygon.m_Points.Insert(index, p);
-                            m_SelectedIndex = index;
-                            m_PlacingPoint = true;
-                            RebuildPolyShapeMesh(true);
-                            OnBeginVertexMovement();
-                        }
-
-                        Handles.color = Color.white;
+                        if(evt.type != EventType.Repaint)
+                            SceneView.RepaintAll();
                     }
                 }
             }
