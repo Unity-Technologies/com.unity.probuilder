@@ -397,6 +397,8 @@ namespace UnityEditor.ProBuilder
             shapeComp.size = EditorGUILayout.Vector3Field("Size", shapeComp.size);
             m_Size = shapeComp.size;
 
+            shapeComp.rotationQuaternion = Quaternion.Euler(EditorGUILayout.Vector3Field("Rotation", shapeComp.rotationQuaternion.eulerAngles));
+
             EditorGUILayout.PropertyField(shapeProperty, true);
             if (obj.ApplyModifiedProperties())
             {

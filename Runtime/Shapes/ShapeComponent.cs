@@ -18,17 +18,16 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         Vector3 m_Rotation;
 
-        Quaternion rotationQuaternion;
-
-        [HideInInspector]
         [SerializeField]
-        Quaternion m_RotationQuaternion {
+        Quaternion m_RotationQuaternion;
+
+        public Quaternion rotationQuaternion {
             get {
-                return rotationQuaternion;
+                return m_RotationQuaternion;
             }
             set {
-                rotationQuaternion = value;
-                m_Rotation = rotationQuaternion.eulerAngles;
+                m_RotationQuaternion = value;
+                m_Rotation = m_RotationQuaternion.eulerAngles;
             }
         }
 
@@ -60,7 +59,7 @@ namespace UnityEngine.ProBuilder
         public void Rebuild()
         {
             shape.RebuildMesh(mesh, size);
-            ApplyRotation(m_RotationQuaternion);
+            ApplyRotation(rotationQuaternion);
             FitToSize();
         }
 
@@ -104,8 +103,8 @@ namespace UnityEngine.ProBuilder
         /// <param name="eulerAngles">The angles to rotate by</param>
         public void SetRotation(Quaternion angles)
         {
-            m_RotationQuaternion = angles;
-            ApplyRotation(m_RotationQuaternion);
+            rotationQuaternion = angles;
+            ApplyRotation(rotationQuaternion);
         }
 
         /// <summary>
@@ -118,8 +117,8 @@ namespace UnityEngine.ProBuilder
             {
                 return;
             }
-            m_RotationQuaternion = rotation * m_RotationQuaternion;
-            ApplyRotation(m_RotationQuaternion);
+            rotationQuaternion = rotation * rotationQuaternion;
+            ApplyRotation(rotationQuaternion);
             FitToSize();
         }
 
