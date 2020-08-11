@@ -347,6 +347,9 @@ namespace UnityEditor.ProBuilder
 
                 RebuildPolyShapeMesh(polygon);
 
+                //Dirty the polygon for serialization (fix for transition between prefab and scene mode)
+                UnityEditor.EditorUtility.SetDirty(polygon);
+                
                 if(mode == PolyShape.PolyEditMode.None)
                 {
                     DestroyImmediate(this);
