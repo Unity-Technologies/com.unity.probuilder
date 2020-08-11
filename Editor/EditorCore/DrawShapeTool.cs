@@ -223,7 +223,7 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         /// <param name="diff">Difference between point A and point B</param>
         /// <returns></returns>
-        Vector3 ToRotationAngles(Vector3 diff)
+        Quaternion ToRotationAngles(Vector3 diff)
         {
             Vector3 angles = Vector3.zero;
             if (diff.y < 0)
@@ -234,7 +234,7 @@ namespace UnityEditor.ProBuilder
             {
                 angles.y = -180f;
             }
-            return angles;
+            return Quaternion.Euler(angles);
         }
 
         void SetWidthAndDepth(Event evt)

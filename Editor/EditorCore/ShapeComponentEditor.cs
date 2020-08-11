@@ -79,8 +79,18 @@ namespace UnityEditor.ProBuilder
                 ProBuilderEditor.Refresh(false);
             });
 
+            var rotation = new Vector3Field("Rotation");
+            rotation.BindProperty(serializedObject.FindProperty("m_Rotation"));
+            rotation.RegisterValueChangedCallback(evt =>
+            {
+                ((ShapeComponent)target).SetRotation(Quaternion.Euler(evt.newValue));
+                ((ShapeComponent)target).Rebuild();
+                ProBuilderEditor.Refresh(false);
+            });
+
             root.Add(popup);
             root.Add(vector);
+            root.Add(rotation);
             root.Add(shapeField);
             return root;
         }

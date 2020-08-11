@@ -238,6 +238,10 @@ namespace UnityEditor.ProBuilder
                     break;
                 case EventType.Repaint:
                     bool isSelected = (HandleUtility.nearestControl == controlID && s_CurrentId == -1) || s_CurrentId == controlID;
+                    if (isSelected)
+                    {
+                        EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.RotateArrow);
+                    }
                     using (new Handles.DrawingScope(isSelected ? Color.white : Color.green))
                     {
                         Handles.DrawAAPolyLine(isSelected ? 10f : 3f, pointA, pointB);

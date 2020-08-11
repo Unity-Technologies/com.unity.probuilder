@@ -15,9 +15,22 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         Vector3 m_Size;
 
+        [SerializeField]
+        Vector3 m_Rotation;
+
+        Quaternion rotationQuaternion;
+
         [HideInInspector]
         [SerializeField]
-        Quaternion m_RotationQuaternion = Quaternion.identity;
+        Quaternion m_RotationQuaternion {
+            get {
+                return rotationQuaternion;
+            }
+            set {
+                rotationQuaternion = value;
+                m_Rotation = rotationQuaternion.eulerAngles;
+            }
+        }
 
         public Vector3 size {
             get { return m_Size; }
@@ -47,7 +60,7 @@ namespace UnityEngine.ProBuilder
         public void Rebuild()
         {
             shape.RebuildMesh(mesh, size);
-            SetRotation(m_RotationQuaternion);
+            ApplyRotation(m_RotationQuaternion);
             FitToSize();
         }
 
@@ -89,22 +102,10 @@ namespace UnityEngine.ProBuilder
         /// Set the rotation of the Shape to a given set of eular angles, then rotates it
         /// </summary>
         /// <param name="eulerAngles">The angles to rotate by</param>
-        public void SetRotation(Vector3 eulerAngles)
+        public void SetRotation(Quaternion angles)
         {
-            m_RotationQuaternion = Quaternion.Euler(eulerAngles);
-            SetRotation(m_RotationQuaternion);
-        }
-
-        /// <summary>
-        /// Rotates the Shape by a given set of eular angles
-        /// </summary>
-        /// <param name="eulerAngles">The angles to rotate by</param>
-        public void Rotate(Vector3 eulerAngles)
-        {
-            Quaternion rotation = Quaternion.Euler(eulerAngles);
-            m_RotationQuaternion = rotation * m_RotationQuaternion;
-            SetRotation(m_RotationQuaternion);
-            FitToSize();
+            m_RotationQuaternion = angles;
+            ApplyRotation(m_RotationQuaternion);
         }
 
         /// <summary>
@@ -118,11 +119,11 @@ namespace UnityEngine.ProBuilder
                 return;
             }
             m_RotationQuaternion = rotation * m_RotationQuaternion;
-            SetRotation(m_RotationQuaternion);
+            ApplyRotation(m_RotationQuaternion);
             FitToSize();
         }
 
-        void SetRotation(Quaternion rotation)
+        void ApplyRotation(Quaternion rotation)
         {
             if (rotation == Quaternion.identity)
             {
