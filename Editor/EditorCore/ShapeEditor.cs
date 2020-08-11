@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Reflection;
 using UnityEditor.Experimental.SceneManagement;
@@ -8,9 +7,6 @@ using PMath = UnityEngine.ProBuilder.Math;
 using UnityEditor.SettingsManagement;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.SceneManagement;
-#if !UNITY_2019_3_OR_NEWER
-using System.Reflection;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
