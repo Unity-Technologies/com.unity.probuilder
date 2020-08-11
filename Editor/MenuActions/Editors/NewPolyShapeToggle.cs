@@ -21,7 +21,7 @@ namespace UnityEditor.ProBuilder.Actions
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/NewPolyShape", IconSkin.Pro); } }
         public override TooltipContent tooltip { get { return _tooltip; } }
-        public override string menuTitle { get { return "New Poly Shape Toggle"; } }
+        public override string menuTitle { get { return "New Poly Shape"; } }
         public override int toolbarPriority { get { return 1; } }
 
         static readonly TooltipContent _tooltip = new TooltipContent

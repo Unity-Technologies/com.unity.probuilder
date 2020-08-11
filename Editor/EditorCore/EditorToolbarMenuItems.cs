@@ -40,14 +40,14 @@ namespace UnityEditor.ProBuilder
 		[MenuItem(k_MenuPrefix + "Editors/New Poly Shape", true, PreferenceKeys.menuEditor + 1)]
 		static bool MenuVerify_NewPolyShape()
 		{
-			var instance = EditorToolbarLoader.GetInstance<NewPolyShape>();
+			var instance = EditorToolbarLoader.GetInstance<NewPolyShapeToggle>();
 			return instance != null && instance.enabled;
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/New Poly Shape", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuPerform_NewPolyShape()
 		{
-			var instance = EditorToolbarLoader.GetInstance<NewPolyShape>();
+			var instance = EditorToolbarLoader.GetInstance<NewPolyShapeToggle>();
 			if(instance != null && instance.enabled)
 				EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
