@@ -15,15 +15,15 @@ namespace UnityEditor.ProBuilder
         private IMGUIContainer m_ShapeField;
 
         SerializedProperty m_shape;
-        static int s_CurrentIndex = 0;
-        static List<string> s_ShapeTypes;
+        static string[] s_ShapeTypes;
         static TypeCache.TypeCollection s_AvailableShapeTypes;
 
+        static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
 
         static ShapeComponentEditor()
         {
             s_AvailableShapeTypes = TypeCache.GetTypesDerivedFrom<Shape>();
-            s_ShapeTypes = s_AvailableShapeTypes.Select(x => x.ToString()).ToList();
+            s_ShapeTypes = s_AvailableShapeTypes.Select(x => x.ToString()).ToArray();
         }
 
         private void OnEnable()
@@ -45,65 +45,64 @@ namespace UnityEditor.ProBuilder
 
             if (type != null)
             {
-                s_CurrentIndex = s_AvailableShapeTypes.IndexOf(type);
+                s_ActiveShapeIndex.value = s_AvailableShapeTypes.IndexOf(type);
             }
         }
 
-        public override VisualElement CreateInspectorGUI()
+        public override void OnInspectorGUI()
         {
-            return GetShapeVisual();
+            DrawShapeGUI((ShapeComponent)target, serializedObject);
         }
 
-        VisualElement GetShapeVisual()
+        static Shape CreateShape(Type type)
         {
-            var root = new VisualElement();
-            var popup = new PopupField<string>(s_ShapeTypes, s_CurrentIndex);
-            var shapeField = new IMGUIContainer(OnShapeGUI);
-
-            popup.RegisterValueChangedCallback(evt =>
-            {
-                s_CurrentIndex = Mathf.Max(0, s_ShapeTypes.IndexOf(evt.newValue));
-                // try catch if no constructor
-                // make it one place (also in drawshapetool)
-                var temp = Activator.CreateInstance(s_AvailableShapeTypes[s_CurrentIndex]) as Shape;
-                ShapeParameters.SetToLastParams(ref temp);
-                ((ShapeComponent)target).SetShape(temp);
-                ProBuilderEditor.Refresh();
-            });
-
-            var vector = new Vector3Field("Size");
-            vector.BindProperty(serializedObject.FindProperty("m_Size"));
-            vector.RegisterValueChangedCallback(evt =>
-            {
-                ((ShapeComponent)target).Rebuild();
-                ProBuilderEditor.Refresh(false);
-            });
-
-            var rotation = new Vector3Field("Rotation");
-            rotation.BindProperty(serializedObject.FindProperty("m_Rotation"));
-            rotation.RegisterValueChangedCallback(evt =>
-            {
-                ((ShapeComponent)target).SetRotation(Quaternion.Euler(evt.newValue));
-                ((ShapeComponent)target).Rebuild();
-                ProBuilderEditor.Refresh(false);
-            });
-
-            root.Add(popup);
-            root.Add(vector);
-            root.Add(rotation);
-            root.Add(shapeField);
-            return root;
+            var shape = Activator.CreateInstance(type) as Shape;
+            ShapeParameters.SetToLastParams(ref shape);
+            return shape;
         }
 
-        void OnShapeGUI()
+        public static void DrawShapeGUI(ShapeComponent shapeComp, SerializedObject obj)
         {
-            serializedObject.Update();
-            EditorGUILayout.PropertyField(m_shape, true);
-            if (serializedObject.ApplyModifiedProperties())
+            if (shapeComp == null || obj == null)
+                return;
+
+            var shape = shapeComp.shape;
+            obj.Update();
+            EditorGUI.BeginChangeCheck();
+
+            var shapeProperty = obj.FindProperty("shape");
+            s_ActiveShapeIndex.value = Mathf.Max(0, s_AvailableShapeTypes.IndexOf(shape.GetType()));
+            s_ActiveShapeIndex.value = EditorGUILayout.Popup(s_ActiveShapeIndex, s_ShapeTypes);
+
+            if (EditorGUI.EndChangeCheck())
             {
-                ShapeParameters.SaveParams(((ShapeComponent)target).shape);
-                ((ShapeComponent)target).Rebuild();
+                UndoUtility.RegisterCompleteObjectUndo(shapeComp, "Change Shape");
+                var type = s_AvailableShapeTypes[s_ActiveShapeIndex];
+             //   SetActiveShapeType(type);
+                shapeComp.SetShape(CreateShape(type));
                 ProBuilderEditor.Refresh();
+            }
+
+            EditorGUI.BeginChangeCheck();
+            shapeComp.size = EditorGUILayout.Vector3Field("Size", shapeComp.size);
+            //m_Size = shapeComp.size;
+            shapeComp.SetRotation(Quaternion.Euler(EditorGUILayout.Vector3Field("Rotation", shapeComp.rotationQuaternion.eulerAngles)));
+            if (EditorGUI.EndChangeCheck())
+            {
+                Debug.Log("changed");
+                shapeComp.Rebuild();
+                ProBuilderEditor.Refresh();
+            }
+
+            EditorGUILayout.PropertyField(shapeProperty, true);
+            if (obj.ApplyModifiedProperties())
+            {
+                ShapeParameters.SaveParams(shapeComp.shape);
+                if (shapeComp != null)
+                {
+                    shapeComp.Rebuild();
+                    ProBuilderEditor.Refresh();
+                }
             }
         }
     }

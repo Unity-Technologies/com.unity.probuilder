@@ -59,7 +59,7 @@ namespace UnityEngine.ProBuilder
         public void Rebuild()
         {
             shape.RebuildMesh(mesh, size);
-            ApplyRotation(rotationQuaternion);
+           // ApplyRotation(rotationQuaternion);
             FitToSize();
         }
 
@@ -105,6 +105,7 @@ namespace UnityEngine.ProBuilder
         {
             rotationQuaternion = angles;
             ApplyRotation(rotationQuaternion);
+            FitToSize();
         }
 
         /// <summary>

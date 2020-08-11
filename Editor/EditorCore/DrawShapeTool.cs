@@ -360,55 +360,16 @@ namespace UnityEditor.ProBuilder
             if (Selection.activeGameObject != null && Selection.activeGameObject.GetComponent<ShapeComponent>() != null && Selection.activeGameObject.hideFlags != HideFlags.HideAndDontSave)
             {
                 var shape = Selection.activeGameObject.GetComponent<ShapeComponent>();
-                DrawShapeGUI(shape, new SerializedObject(shape));
+                ShapeComponentEditor.DrawShapeGUI(shape, new SerializedObject(shape));
             }
             else
             {
-                DrawShapeGUI(m_Shape, m_Object);
+                ShapeComponentEditor.DrawShapeGUI(m_Shape, m_Object);
             }
-       
+
             // Use differents arrows when dragging (resize etc)
             EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.ArrowPlus);
             EditorGUILayout.HelpBox("Click to create the shape. Hold and drag to create the shape while controlling its size.", MessageType.Info);
-        }
-
-        void DrawShapeGUI(ShapeComponent shapeComp, SerializedObject obj)
-        {
-            if (shapeComp == null || obj == null)
-                return;
-
-            var shape = shapeComp.shape;
-            obj.Update();
-            EditorGUI.BeginChangeCheck(); 
-
-            var shapeProperty = obj.FindProperty("shape");
-            m_ActiveShapeIndex.value = Mathf.Max(0, m_AvailableShapeTypes.IndexOf(shape.GetType()));
-            m_ActiveShapeIndex.value = EditorGUILayout.Popup(m_ActiveShapeIndex, m_ShapeTypesPopupContent);
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                UndoUtility.RegisterCompleteObjectUndo(shapeComp, "Change Shape");
-                var type = m_AvailableShapeTypes[m_ActiveShapeIndex];
-                SetActiveShapeType(type);
-                shapeComp.SetShape(CreateShape(type));
-                ProBuilderEditor.Refresh();
-            }
-
-            shapeComp.size = EditorGUILayout.Vector3Field("Size", shapeComp.size);
-            m_Size = shapeComp.size;
-
-            shapeComp.rotationQuaternion = Quaternion.Euler(EditorGUILayout.Vector3Field("Rotation", shapeComp.rotationQuaternion.eulerAngles));
-
-            EditorGUILayout.PropertyField(shapeProperty, true);
-            if (obj.ApplyModifiedProperties())
-            {
-                ShapeParameters.SaveParams(shapeComp.shape);
-                if (shapeComp != null)
-                {
-                    shapeComp.Rebuild();
-                    ProBuilderEditor.Refresh();
-                }
-            }
         }
     }
 }
