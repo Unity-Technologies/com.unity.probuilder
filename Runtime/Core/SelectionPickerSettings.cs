@@ -35,23 +35,14 @@ namespace UnityEngine.ProBuilder
             set { m_Faces = value; }
         }
 
-        public int vertex
-        {
-            get { return m_Vertices != null && m_Vertices.Count > 0 ? m_Vertices[0] : -1; }
-            set { SetSingleVertex(value); }
-        }
+        [Obsolete("Use SetSingleVertex")]
+        public int vertex;
 
-        public Edge edge
-        {
-            get { return edges != null && edges.Count > 0 ? edges[0] : Edge.Empty; }
-            set { SetSingleEdge(value); }
-        }
-
-        public Face face
-        {
-            get { return faces != null && faces.Count > 0 ? faces[0] : null; }
-            set { SetSingleFace(value); }
-        }
+        [Obsolete("Use SetSingleEdge")]
+        public Edge edge;
+        
+        [Obsolete("Use SetSingleFace")]
+        public Face face;
 
         public SceneSelection(GameObject gameObject = null)
         {
