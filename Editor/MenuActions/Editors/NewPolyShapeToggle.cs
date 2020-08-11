@@ -146,7 +146,7 @@ namespace UnityEditor.ProBuilder.Actions
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
 
             if(m_Tool != null)
-                Object.DestroyImmediate(m_Tool);
+                m_Tool.End();
 
             if(m_RestorePreviousMode)
                 ProBuilderEditor.selectMode = m_PreviousMode;

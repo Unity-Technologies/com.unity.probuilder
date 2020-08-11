@@ -52,14 +52,14 @@ namespace UnityEditor.ProBuilder
             }
             get
             {
-                if(m_Polygon.m_Points.Count >= 3 &&
+                if(polygon.m_Points.Count >= 3 &&
                    m_Plane.distance.Equals(0) &&
                    m_Plane.normal.Equals(Vector3.up))
                 {
-                    Transform trs = m_Polygon.transform;
-                    m_Plane = new Plane(trs.TransformPoint(m_Polygon.m_Points[0]),
-                        trs.TransformPoint(m_Polygon.m_Points[1]),
-                        trs.TransformPoint(m_Polygon.m_Points[2]));
+                    Transform trs = polygon.transform;
+                    m_Plane = new Plane(trs.TransformPoint(polygon.m_Points[0]),
+                        trs.TransformPoint(polygon.m_Points[1]),
+                        trs.TransformPoint(polygon.m_Points[2]));
                 }
 
                 return m_Plane;
@@ -93,6 +93,10 @@ namespace UnityEditor.ProBuilder
                 PolyShape.PolyEditMode mode = m_Polygon.polyEditMode;
                 m_Polygon.polyEditMode = PolyShape.PolyEditMode.None;
                 SetPolyEditMode(mode);
+            }
+            get
+            {
+                return m_Polygon;
             }
         }
 
@@ -131,6 +135,14 @@ namespace UnityEditor.ProBuilder
             Undo.undoRedoPerformed -= UndoRedoPerformed;
         }
 
+        public void End()
+        {
+            if(polygon.polyEditMode != PolyShape.PolyEditMode.None)
+                SetPolyEditMode(PolyShape.PolyEditMode.None);
+            else
+                DestroyImmediate(this);
+        }
+
         /// <summary>
         /// Create line renderers for the current cut
         /// </summary>
@@ -164,7 +176,7 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         void Update()
         {
-            if (m_Polygon != null && m_Polygon.polyEditMode != PolyShape.PolyEditMode.None && m_LineMaterial != null)
+            if (polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None && m_LineMaterial != null)
                 m_LineMaterial.SetFloat("_EditorTime", (float)EditorApplication.timeSinceStartup);
         }
 
@@ -177,10 +189,10 @@ namespace UnityEditor.ProBuilder
             Event evt = Event.current;
             SceneViewOverlay.Window( m_OverlayTitle, OnOverlayGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle );
 
-            if (m_Polygon.polyEditMode == PolyShape.PolyEditMode.None)
+            if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
                 return;
 
-            if (m_Polygon == null)
+            if (polygon == null)
             {
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
                 return;
@@ -219,7 +231,7 @@ namespace UnityEditor.ProBuilder
             if(evt.type == EventType.Layout)
                 HandleUtility.AddDefaultControl(m_ControlId);
 
-            if(m_Polygon.polyEditMode == PolyShape.PolyEditMode.Path && !m_PlacingPoint)
+            if(polygon.polyEditMode == PolyShape.PolyEditMode.Path && !m_PlacingPoint)
                 m_MouseCursor = MouseCursor.ArrowPlus;
             else if((GUIUtility.hotControl != 0) || m_PlacingPoint)
                 m_MouseCursor = MouseCursor.MoveArrow;
@@ -246,7 +258,7 @@ namespace UnityEditor.ProBuilder
         /// <param name="view">the current SceneView where to display the overlay</param>
         void OnOverlayGUI(UObject target, SceneView view)
         {
-            switch (m_Polygon.polyEditMode)
+            switch (polygon.polyEditMode)
             {
                 case PolyShape.PolyEditMode.Path:
                 {
@@ -271,37 +283,37 @@ namespace UnityEditor.ProBuilder
 
             EditorGUI.BeginChangeCheck();
 
-            float extrude = m_Polygon.extrude;
+            float extrude = polygon.extrude;
             extrude = EditorGUILayout.FloatField("Extrusion", extrude);
 
-            bool flipNormals = m_Polygon.flipNormals;
+            bool flipNormals = polygon.flipNormals;
             flipNormals = EditorGUILayout.Toggle("Flip Normals", flipNormals);
 
             if (EditorGUI.EndChangeCheck())
             {
-                if (m_Polygon.polyEditMode == PolyShape.PolyEditMode.None)
+                if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
                 {
                     if (ProBuilderEditor.instance != null)
                         ProBuilderEditor.instance.ClearElementSelection();
 
-                    UndoUtility.RecordObject(m_Polygon, "Change Polygon Shape Settings");
-                    UndoUtility.RecordObject(m_Polygon.mesh, "Change Polygon Shape Settings");
+                    UndoUtility.RecordObject(polygon, "Change Polygon Shape Settings");
+                    UndoUtility.RecordObject(polygon.mesh, "Change Polygon Shape Settings");
                 }
                 else
                 {
-                    UndoUtility.RecordObject(m_Polygon, "Change Polygon Shape Settings");
+                    UndoUtility.RecordObject(polygon, "Change Polygon Shape Settings");
                 }
 
-                m_Polygon.extrude = extrude;
-                m_Polygon.flipNormals = flipNormals;
+                polygon.extrude = extrude;
+                polygon.flipNormals = flipNormals;
 
-                RebuildPolyShapeMesh(m_Polygon);
+                RebuildPolyShapeMesh(polygon);
             }
         }
 
         void SetPolyEditMode(PolyShape.PolyEditMode mode)
         {
-            PolyShape.PolyEditMode old = m_Polygon.polyEditMode;
+            PolyShape.PolyEditMode old = polygon.polyEditMode;
 
             if (mode != old)
             {
@@ -310,30 +322,30 @@ namespace UnityEditor.ProBuilder
                 // Entering edit mode after the shape has been finalized once before, which means
                 // possibly reverting manual changes.  Store undo state so that if this was
                 // not intentional user can revert.
-                if (m_Polygon.polyEditMode == PolyShape.PolyEditMode.None && m_Polygon.m_Points.Count > 2)
+                if (polygon.polyEditMode == PolyShape.PolyEditMode.None && polygon.m_Points.Count > 2)
                 {
                     if (ProBuilderEditor.instance != null)
                         ProBuilderEditor.instance.ClearElementSelection();
 
-                    UndoUtility.RecordObject(m_Polygon, "Edit Polygon Shape");
-                    UndoUtility.RecordObject(m_Polygon.mesh, "Edit Polygon Shape");
+                    UndoUtility.RecordObject(polygon, "Edit Polygon Shape");
+                    UndoUtility.RecordObject(polygon.mesh, "Edit Polygon Shape");
                 }
 
-                m_Polygon.polyEditMode = mode;
+                polygon.polyEditMode = mode;
 
                 // If coming from Path -> Height set the mouse / origin offset
                 if (old == PolyShape.PolyEditMode.Path && mode == PolyShape.PolyEditMode.Height && Event.current != null)
                 {
-                    Vector3 up = m_Polygon.transform.up;
-                    Vector3 origin = m_Polygon.transform.TransformPoint(Math.Average(m_Polygon.m_Points));
+                    Vector3 up = polygon.transform.up;
+                    Vector3 origin = polygon.transform.TransformPoint(Math.Average(polygon.m_Points));
                     Ray r = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
                     Vector3 p = Math.GetNearestPointRayRay(origin, up, r.origin, r.direction);
-                    s_HeightMouseOffset = m_Polygon.extrude -
+                    s_HeightMouseOffset = polygon.extrude -
                                           ProGridsInterface.ProGridsSnap(
                                               Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p - origin, up)));
                 }
 
-                RebuildPolyShapeMesh(m_Polygon);
+                RebuildPolyShapeMesh(polygon);
 
                 if(mode == PolyShape.PolyEditMode.None)
                 {
@@ -345,14 +357,14 @@ namespace UnityEditor.ProBuilder
         public void RebuildPolyShapeMesh(bool vertexCountChanged = false)
         {
             // If Undo is called immediately after creation this situation can occur
-            if (m_Polygon == null)
+            if (polygon == null)
                 return;
 
-            DrawPolyLine(m_Polygon.m_Points);
+            DrawPolyLine(polygon.m_Points);
 
-            if (m_Polygon.polyEditMode != PolyShape.PolyEditMode.Path)
+            if (polygon.polyEditMode != PolyShape.PolyEditMode.Path)
             {
-                var result = m_Polygon.CreateShapeFromPolygon();
+                var result = polygon.CreateShapeFromPolygon();
                 if(result.status == ActionResult.Status.Failure)
                 {
                     m_LineMaterial.SetColor("_Highlight", k_InvalidLineMaterialColor);
@@ -362,7 +374,7 @@ namespace UnityEditor.ProBuilder
                     m_DrawHeightHandles = false;
 
                     // skip height edit mode if the mesh is invalid
-                    if(m_Polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+                    if(polygon.polyEditMode == PolyShape.PolyEditMode.Height)
                     {
                         SetPolyEditMode(PolyShape.PolyEditMode.Edit);
                     }
@@ -384,9 +396,9 @@ namespace UnityEditor.ProBuilder
         // Returns a local space point,
         Vector3 GetPointInLocalSpace(Vector3 point)
         {
-            var trs = m_Polygon.transform;
+            var trs = polygon.transform;
 
-            if (m_Polygon.isOnGrid)
+            if (polygon.isOnGrid)
             {
                 Vector3 snapMask = ProBuilderSnapping.GetSnappingMaskBasedOnNormalVector(plane.normal);
                 return trs.InverseTransformPoint(ProGridsInterface.ProGridsSnap(point, snapMask));
@@ -411,7 +423,7 @@ namespace UnityEditor.ProBuilder
                     if (plane.Raycast(ray, out hitDistance))
                     {
                         evt.Use();
-                        m_Polygon.m_Points[m_SelectedIndex] = GetPointInLocalSpace(ray.GetPoint(hitDistance));
+                        polygon.m_Points[m_SelectedIndex] = GetPointInLocalSpace(ray.GetPoint(hitDistance));
                         RebuildPolyShapeMesh(false);
                         SceneView.RepaintAll();
                     }
@@ -428,11 +440,11 @@ namespace UnityEditor.ProBuilder
                     SceneView.RepaintAll();
                 }
             }
-            else if (m_Polygon.polyEditMode == PolyShape.PolyEditMode.Path)
+            else if (polygon.polyEditMode == PolyShape.PolyEditMode.Path)
             {
                 if (eventType == EventType.MouseDown && HandleUtility.nearestControl == m_ControlId)
                 {
-                    if (m_Polygon.m_Points.Count < 1)
+                    if (polygon.m_Points.Count < 1)
                         SetupInputPlane(evt.mousePosition);
 
                     float hitDistance = Mathf.Infinity;
@@ -441,34 +453,34 @@ namespace UnityEditor.ProBuilder
 
                     if (plane.Raycast(ray, out hitDistance))
                     {
-                        UndoUtility.RecordObject(m_Polygon, "Add Polygon Shape Point");
+                        UndoUtility.RecordObject(polygon, "Add Polygon Shape Point");
 
                         Vector3 hit = ray.GetPoint(hitDistance);
 
-                        if (m_Polygon.m_Points.Count < 1)
+                        if (polygon.m_Points.Count < 1)
                         {
-                            m_Polygon.transform.position = m_Polygon.isOnGrid ? ProGridsInterface.ProGridsSnap(hit) : hit;
+                            polygon.transform.position = m_Polygon.isOnGrid ? ProGridsInterface.ProGridsSnap(hit) : hit;
 
                             Vector3 cameraFacingPlaneNormal = plane.normal;
                             if (Vector3.Dot(cameraFacingPlaneNormal, SceneView.lastActiveSceneView.camera.transform.forward) > 0f)
                                 cameraFacingPlaneNormal *= -1;
 
-                            m_Polygon.transform.rotation = Quaternion.LookRotation(cameraFacingPlaneNormal) * Quaternion.Euler(new Vector3(90f, 0f, 0f));
+                            polygon.transform.rotation = Quaternion.LookRotation(cameraFacingPlaneNormal) * Quaternion.Euler(new Vector3(90f, 0f, 0f));
                         }
 
                         Vector3 point = GetPointInLocalSpace(hit);
 
-                        if (m_Polygon.m_Points.Count > 2 && Math.Approx3(m_Polygon.m_Points[0], point))
+                        if (polygon.m_Points.Count > 2 && Math.Approx3(polygon.m_Points[0], point))
                         {
                             m_NextMouseUpAdvancesMode = true;
                             return;
                         }
 
-                        m_Polygon.m_Points.Add(point);
+                        polygon.m_Points.Add(point);
 
                         m_PlacingPoint = true;
-                        m_SelectedIndex = m_Polygon.m_Points.Count - 1;
-                        RebuildPolyShapeMesh(m_Polygon);
+                        m_SelectedIndex = polygon.m_Points.Count - 1;
+                        RebuildPolyShapeMesh(polygon);
 
                         evt.Use();
                     }
@@ -485,9 +497,9 @@ namespace UnityEditor.ProBuilder
                     }
                 }
             }
-            else if (m_Polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
+            else if (polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
             {
-                if (m_Polygon.m_Points.Count < 3)
+                if (polygon.m_Points.Count < 3)
                 {
                     SetPolyEditMode(PolyShape.PolyEditMode.Path);
                     return;
@@ -504,21 +516,21 @@ namespace UnityEditor.ProBuilder
                         Vector3 hit = ray.GetPoint(hitDistance);
                         Vector3 point = GetPointInLocalSpace(hit);
 
-                        int polyCount = m_Polygon.m_Points.Count;
+                        int polyCount = polygon.m_Points.Count;
 
                         float distToLineInGUI;
                         int index;
-                        Vector3 pInGUI = EditorHandleUtility.ClosestPointToPolyLine(m_Polygon.m_Points, out index, out distToLineInGUI, true, m_Polygon.transform);
+                        Vector3 pInGUI = EditorHandleUtility.ClosestPointToPolyLine(polygon.m_Points, out index, out distToLineInGUI, true, polygon.transform);
 
-                        Vector3 aToPoint = point - m_Polygon.m_Points[index - 1];
-                        Vector3 aToB = m_Polygon.m_Points[index % polyCount] - m_Polygon.m_Points[index - 1];
+                        Vector3 aToPoint = point - polygon.m_Points[index - 1];
+                        Vector3 aToB = polygon.m_Points[index % polyCount] - polygon.m_Points[index - 1];
 
                         float ratio = Vector3.Dot(aToPoint, aToB.normalized) / aToB.magnitude;
-                        Vector3 wp =  Vector3.Lerp(m_Polygon.m_Points[index - 1], m_Polygon.m_Points[index % polyCount], ratio);
-                        wp = m_Polygon.transform.TransformPoint(wp);
+                        Vector3 wp =  Vector3.Lerp(polygon.m_Points[index - 1], polygon.m_Points[index % polyCount], ratio);
+                        wp = polygon.transform.TransformPoint(wp);
 
-                        Vector2 aInGUI = HandleUtility.WorldToGUIPoint(m_Polygon.transform.TransformPoint(m_Polygon.m_Points[index - 1]));
-                        Vector2 bInGUI = HandleUtility.WorldToGUIPoint(m_Polygon.transform.TransformPoint(m_Polygon.m_Points[index % polyCount]));
+                        Vector2 aInGUI = HandleUtility.WorldToGUIPoint(polygon.transform.TransformPoint(polygon.m_Points[index - 1]));
+                        Vector2 bInGUI = HandleUtility.WorldToGUIPoint(polygon.transform.TransformPoint(polygon.m_Points[index % polyCount]));
                         float distanceToVertex = Mathf.Min(Vector2.Distance(mouse, aInGUI), Vector2.Distance(mouse, bInGUI));
 
                         if (distanceToVertex > PreferenceKeys.k_MaxPointDistanceFromControl && distToLineInGUI < PreferenceKeys.k_MaxPointDistanceFromControl)
@@ -536,8 +548,8 @@ namespace UnityEditor.ProBuilder
                             {
                                 evt.Use();
 
-                                UndoUtility.RecordObject(m_Polygon, "Insert Point");
-                                m_Polygon.m_Points.Insert(index, point);
+                                UndoUtility.RecordObject(polygon, "Insert Point");
+                                polygon.m_Points.Insert(index, point);
                                 m_SelectedIndex = index;
                                 m_PlacingPoint = true;
                                 RebuildPolyShapeMesh(true);
@@ -567,18 +579,18 @@ namespace UnityEditor.ProBuilder
                 const float epsilon = .00001f;
                 float snapVal = Mathf.Abs(ProGridsInterface.SnapValue());
                 float rem = Mathf.Abs(snapVal - (Vector3.Scale(planeNormal, planeCenter).magnitude % snapVal));
-                m_Polygon.isOnGrid = (rem < epsilon || Mathf.Abs(snapVal - rem) < epsilon);
+                polygon.isOnGrid = (rem < epsilon || Mathf.Abs(snapVal - rem) < epsilon);
             }
             else
             {
-                m_Polygon.isOnGrid = false;
+                polygon.isOnGrid = false;
             }
         }
 
         void DoExistingPointsGUI()
         {
-            Transform trs = m_Polygon.transform;
-            int len = m_Polygon.m_Points.Count;
+            Transform trs = polygon.transform;
+            int len = polygon.m_Points.Count;
 
             Vector3 up = trs.up;
             Vector3 right = trs.right;
@@ -597,7 +609,7 @@ namespace UnityEditor.ProBuilder
                 m_SelectedIndex = -1;
             }
 
-            if (m_Polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+            if (polygon.polyEditMode == PolyShape.PolyEditMode.Height)
             {
                 if (!used && evt.type == EventType.MouseUp && evt.button == 0 && !EditorHandleUtility.IsAppendModifier(evt.modifiers))
                 {
@@ -608,8 +620,8 @@ namespace UnityEditor.ProBuilder
                 bool sceneInUse = EditorHandleUtility.SceneViewInUse(evt);
                 Ray r = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
 
-                Vector3 origin = m_Polygon.transform.TransformPoint(Math.Average(m_Polygon.m_Points));
-                float extrude = m_Polygon.extrude;
+                Vector3 origin = polygon.transform.TransformPoint(Math.Average(polygon.m_Points));
+                float extrude = polygon.extrude;
 
                 if (evt.type == EventType.MouseMove && !sceneInUse)
                 {
@@ -629,10 +641,10 @@ namespace UnityEditor.ProBuilder
                     Handles.color = Color.white;
                 }
 
-                if (!sceneInUse && m_Polygon.extrude != extrude)
+                if (!sceneInUse && polygon.extrude != extrude)
                 {
                     OnBeginVertexMovement();
-                    m_Polygon.extrude = extrude;
+                    polygon.extrude = extrude;
                     RebuildPolyShapeMesh(false);
                 }
             }
@@ -641,7 +653,7 @@ namespace UnityEditor.ProBuilder
                 // vertex dots
                 for (int ii = 0; ii < len; ii++)
                 {
-                    Vector3 point = trs.TransformPoint(m_Polygon.m_Points[ii]);
+                    Vector3 point = trs.TransformPoint(polygon.m_Points[ii]);
 
                     center.x += point.x;
                     center.y += point.y;
@@ -657,8 +669,8 @@ namespace UnityEditor.ProBuilder
 
                     if (EditorGUI.EndChangeCheck())
                     {
-                        UndoUtility.RecordObject(m_Polygon, "Move Polygon Shape Point");
-                        m_Polygon.m_Points[ii] = GetPointInLocalSpace(point);
+                        UndoUtility.RecordObject(polygon, "Move Polygon Shape Point");
+                        polygon.m_Points[ii] = GetPointInLocalSpace(point);
                         OnBeginVertexMovement();
                         RebuildPolyShapeMesh(false);
                     }
@@ -666,7 +678,7 @@ namespace UnityEditor.ProBuilder
                     // "clicked" a button
                     if (!used && evt.type == EventType.Used)
                     {
-                        if (ii == 0 && m_Polygon.m_Points.Count > 2 && m_Polygon.polyEditMode == PolyShape.PolyEditMode.Path)
+                        if (ii == 0 && polygon.m_Points.Count > 2 && polygon.polyEditMode == PolyShape.PolyEditMode.Path)
                         {
                             m_NextMouseUpAdvancesMode = true;
                             return;
@@ -682,13 +694,13 @@ namespace UnityEditor.ProBuilder
                 Handles.color = Color.white;
 
                 // height setting
-                if (m_Polygon.polyEditMode != PolyShape.PolyEditMode.Path && m_Polygon.m_Points.Count > 2)
+                if (polygon.polyEditMode != PolyShape.PolyEditMode.Path && polygon.m_Points.Count > 2)
                 {
                     center.x /= (float)len;
                     center.y /= (float)len;
                     center.z /= (float)len;
 
-                    Vector3 extrude = center + (up * m_Polygon.extrude);
+                    Vector3 extrude = center + (up * polygon.extrude);
                     m_DistanceFromHeightHandle = Vector2.Distance(HandleUtility.WorldToGUIPoint(extrude), evt.mousePosition);
 
                     EditorGUI.BeginChangeCheck();
@@ -705,8 +717,8 @@ namespace UnityEditor.ProBuilder
 
                     if (EditorGUI.EndChangeCheck())
                     {
-                        UndoUtility.RecordObject(m_Polygon, "Set Polygon Shape Height");
-                        m_Polygon.extrude = ProGridsInterface.ProGridsSnap(Vector3.Distance(extrude, center) * Mathf.Sign(Vector3.Dot(up, extrude - center)));
+                        UndoUtility.RecordObject(polygon, "Set Polygon Shape Height");
+                        polygon.extrude = ProGridsInterface.ProGridsSnap(Vector3.Distance(extrude, center) * Mathf.Sign(Vector3.Dot(up, extrude - center)));
                         OnBeginVertexMovement();
                         RebuildPolyShapeMesh(false);
                     }
@@ -725,15 +737,15 @@ namespace UnityEditor.ProBuilder
                 if(m_LineMaterial != null)
                 {
                     m_LineMaterial.SetPass(0);
-                    Graphics.DrawMeshNow(m_LineMesh, m_Polygon.transform.localToWorldMatrix, 0);
+                    Graphics.DrawMeshNow(m_LineMesh, polygon.transform.localToWorldMatrix, 0);
                 }
 
-                if(m_DrawingLineMaterial != null && m_Polygon.polyEditMode == PolyShape.PolyEditMode.Path)
+                if(m_DrawingLineMaterial != null && polygon.polyEditMode == PolyShape.PolyEditMode.Path)
                 {
                     if(DrawGuideLine())
                     {
                         m_DrawingLineMaterial.SetPass(0);
-                        Graphics.DrawMeshNow(m_DrawingLineMesh, m_Polygon.transform.localToWorldMatrix, 0);
+                        Graphics.DrawMeshNow(m_DrawingLineMesh, polygon.transform.localToWorldMatrix, 0);
                     }
                 }
             }
@@ -744,7 +756,7 @@ namespace UnityEditor.ProBuilder
             if (points.Count < 2)
                 return;
 
-            int vc = m_Polygon.polyEditMode == PolyShape.PolyEditMode.Path ? points.Count : points.Count + 1;
+            int vc = polygon.polyEditMode == PolyShape.PolyEditMode.Path ? points.Count : points.Count + 1;
 
             Vector3[] ver = new Vector3[vc];
             Vector2[] uvs = new Vector2[vc];
@@ -829,9 +841,9 @@ namespace UnityEditor.ProBuilder
             if(m_CurrentPosition.Equals(Vector3.positiveInfinity) || m_PlacingPoint)
                 return false;
 
-            if(m_Polygon.controlPoints.Count > 0)
+            if(polygon.controlPoints.Count > 0)
             {
-                Vector3 lastPosition = m_Polygon.controlPoints[m_Polygon.controlPoints.Count - 1];
+                Vector3 lastPosition = polygon.controlPoints[polygon.controlPoints.Count - 1];
                 Vector3 currentPosition = m_CurrentPosition;
 
                 UpdateDashedLine(m_DrawingLineMesh, lastPosition, currentPosition);
@@ -850,7 +862,7 @@ namespace UnityEditor.ProBuilder
                 case KeyCode.Space:
                 case KeyCode.Return:
                 {
-                    if (m_Polygon.polyEditMode == PolyShape.PolyEditMode.Path)
+                    if (polygon.polyEditMode == PolyShape.PolyEditMode.Path)
                     {
                         if (SceneCameraIsAlignedWithPolyUp())
                             SetPolyEditMode(PolyShape.PolyEditMode.Edit);
@@ -859,12 +871,12 @@ namespace UnityEditor.ProBuilder
 
                         evt.Use();
                     }
-                    else if (m_Polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+                    else if (polygon.polyEditMode == PolyShape.PolyEditMode.Height)
                     {
                         SetPolyEditMode(PolyShape.PolyEditMode.Edit);
                         evt.Use();
                     }
-                    else if (m_Polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
+                    else if (polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
                     {
                         SetPolyEditMode(PolyShape.PolyEditMode.None);
                         evt.Use();
@@ -877,10 +889,10 @@ namespace UnityEditor.ProBuilder
                 {
                     if (m_SelectedIndex > -1)
                     {
-                        UndoUtility.RecordObject(m_Polygon, "Delete Selected Points");
-                        m_Polygon.m_Points.RemoveAt(m_SelectedIndex);
+                        UndoUtility.RecordObject(polygon, "Delete Selected Points");
+                        polygon.m_Points.RemoveAt(m_SelectedIndex);
                         m_SelectedIndex = -1;
-                        RebuildPolyShapeMesh(m_Polygon);
+                        RebuildPolyShapeMesh(polygon);
                         evt.Use();
                     }
                     break;
@@ -888,7 +900,7 @@ namespace UnityEditor.ProBuilder
 
                 case KeyCode.Escape:
                 {
-                    m_Polygon.m_Points.Clear();
+                    polygon.m_Points.Clear();
                     SetPolyEditMode(PolyShape.PolyEditMode.None);
                     evt.Use();
                     break;
@@ -904,15 +916,15 @@ namespace UnityEditor.ProBuilder
          */
         bool SceneCameraIsAlignedWithPolyUp()
         {
-            float dot = Vector3.Dot(SceneView.lastActiveSceneView.camera.transform.forward, m_Polygon.transform.up);
+            float dot = Vector3.Dot(SceneView.lastActiveSceneView.camera.transform.forward, polygon.transform.up);
             return Mathf.Abs(Mathf.Abs(dot) - 1f) < .01f;
         }
 
         void OnSelectModeChanged(SelectMode selectMode)
         {
             // User changed select mode manually, remove InputTool flag
-            if (m_Polygon != null
-                && m_Polygon.polyEditMode != PolyShape.PolyEditMode.None
+            if (polygon != null
+                && polygon.polyEditMode != PolyShape.PolyEditMode.None
                 && !selectMode.ContainsFlag(SelectMode.InputTool))
             {
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
@@ -928,7 +940,7 @@ namespace UnityEditor.ProBuilder
         void OnFinishVertexMovement()
         {
             m_IsModifyingVertices = false;
-            RebuildPolyShapeMesh(m_Polygon);
+            RebuildPolyShapeMesh(polygon);
         }
 
         void UndoRedoPerformed()
@@ -936,8 +948,8 @@ namespace UnityEditor.ProBuilder
             ClearLineRenderers();
             InitLineRenderers();
 
-            if (m_Polygon.polyEditMode != PolyShape.PolyEditMode.None)
-                RebuildPolyShapeMesh(m_Polygon);
+            if (polygon.polyEditMode != PolyShape.PolyEditMode.None)
+                RebuildPolyShapeMesh(polygon);
         }
     }
 }
