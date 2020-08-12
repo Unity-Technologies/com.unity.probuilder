@@ -76,8 +76,7 @@ namespace UnityEditor.ProBuilder
                      if (ProBuilderEditor.instance != null)
                          ProBuilderEditor.instance.ClearElementSelection();
 
-                     UndoUtility.RecordObject(polygon, "Change Polygon Shape Settings");
-                     UndoUtility.RecordObject(polygon.mesh, "Change Polygon Shape Settings");
+                     UndoUtility.RecordComponents<ProBuilderMesh,PolyShape>(polygon.GetComponents(typeof(Component)), "Edit Polygon Shape");
                  }
                  else
                  {

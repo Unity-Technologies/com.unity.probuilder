@@ -329,8 +329,7 @@ namespace UnityEditor.ProBuilder
                     if (ProBuilderEditor.instance != null)
                         ProBuilderEditor.instance.ClearElementSelection();
 
-                    UndoUtility.RecordObject(polygon, "Edit Polygon Shape");
-                    UndoUtility.RecordObject(polygon.mesh, "Edit Polygon Shape");
+                    UndoUtility.RecordComponents<ProBuilderMesh,PolyShape>(polygon.GetComponents(typeof(Component)), "Edit Polygon Shape");
                 }
 
                 polygon.polyEditMode = mode;
