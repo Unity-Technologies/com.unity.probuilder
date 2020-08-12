@@ -39,7 +39,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return base.enabled && VerifyShrinkSelection(); }
         }
 
-        protected override ActionResult DoAction_Internal()
+        public override ActionResult DoAction()
         {
             var selection = MeshSelection.topInternal;
             var selectionCount = MeshSelection.selectedObjectCount;

@@ -68,7 +68,7 @@ namespace UnityEditor.ProBuilder.Actions
             };
         }
 
-        protected override ActionResult DoAction_Internal()
+        public override ActionResult DoAction()
         {
             int current = (int)pivotPoint + 1;
 

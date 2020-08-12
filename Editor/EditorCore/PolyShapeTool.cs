@@ -965,10 +965,10 @@ namespace UnityEditor.ProBuilder
 
         void UndoRedoPerformed()
         {
-            ClearLineRenderers();
-            InitLineRenderers();
+            // ClearLineRenderers();
+            // InitLineRenderers();
 
-            if (polygon.polyEditMode != PolyShape.PolyEditMode.None)
+            if (polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None)
                 RebuildPolyShapeMesh(polygon);
         }
     }

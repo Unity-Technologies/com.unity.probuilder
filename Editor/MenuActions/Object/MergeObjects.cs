@@ -37,7 +37,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return base.enabled && MeshSelection.selectedObjectCount > 1 && MeshSelection.activeMesh != null; }
         }
 
-        protected override ActionResult DoAction_Internal()
+        public override ActionResult DoAction()
         {
             if (MeshSelection.selectedObjectCount < 2)
                 return new ActionResult(ActionResult.Status.Canceled, "Must Select 2+ Objects");

@@ -33,6 +33,7 @@ namespace UnityEditor.ProBuilder
                          PolyShapeTool tool = ScriptableObject.CreateInstance<PolyShapeTool>();
                          tool.polygon = polygon;
                          ToolManager.SetActiveTool(tool);
+                         Undo.RegisterCreatedObjectUndo(tool, "Open Cut Tool");
                      }
 
                      EditorGUILayout.HelpBox(

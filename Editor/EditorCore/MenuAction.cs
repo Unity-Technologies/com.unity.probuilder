@@ -5,7 +5,6 @@
 
 using System;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
@@ -222,9 +221,11 @@ namespace UnityEditor.ProBuilder
         {
             get
             {
+                //Disable the menu action whenever a custom EditorTool is enabled
                 return ProBuilderEditor.instance != null
-                    && ProBuilderEditor.selectMode.ContainsFlag(validSelectModes)
-                    && !ProBuilderEditor.selectMode.ContainsFlag(SelectMode.InputTool);
+                       && ProBuilderEditor.selectMode.ContainsFlag(validSelectModes)
+                       && !ProBuilderEditor.selectMode.ContainsFlag(SelectMode.InputTool)
+                       && Tools.current != Tool.Custom;
             }
         }
 
@@ -248,31 +249,11 @@ namespace UnityEditor.ProBuilder
             get { return MenuActionState.Hidden; }
         }
 
-        public static UnityAction<MenuAction> actionChanged;
-        public virtual void OnActionChanged(MenuAction action)
-        {
-            // Debug.Log("Action Changed");
-            // if(this.Equals(action))
-            // {
-            //     Debug.Log("Action changed to me : "+action.GetType());
-            // }
-        }
-
         /// <summary>
         /// Perform whatever action this menu item is supposed to do. You are responsible for implementing Undo.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
-        public ActionResult DoAction()
-        {
-            actionChanged(this);
-            return DoAction_Internal();
-        }
-
-        /// <summary>
-        /// Perform whatever action this menu item is supposed to do. You are responsible for implementing Undo.
-        /// </summary>
-        /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
-        protected abstract ActionResult DoAction_Internal();
+        public abstract ActionResult DoAction();
 
         protected virtual void DoAlternateAction()
         {

@@ -101,7 +101,7 @@ namespace UnityEditor.ProBuilder.Actions
             return true;
         }
 
-        protected override ActionResult StartActivation(Action onStartCallback)
+        protected internal override ActionResult StartActivation(Action onStartCallback)
         {
             if (!CanCreateNewPolyShape())
                 return new ActionResult(ActionResult.Status.Canceled, "Canceled Create Poly Shape");
@@ -141,7 +141,7 @@ namespace UnityEditor.ProBuilder.Actions
             return new ActionResult(ActionResult.Status.Success,"Create Poly Shape");
         }
 
-        protected override ActionResult EndActivation(Action onEndCallback)
+        protected internal override ActionResult EndActivation(Action onEndCallback)
         {
             ToolManager.activeToolChanged -= ActiveToolChanged;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
