@@ -220,9 +220,11 @@ namespace UnityEditor.ProBuilder
         {
             get
             {
+                //Disable the menu action whenever a custom EditorTool is enabled
                 return ProBuilderEditor.instance != null
                     && ProBuilderEditor.selectMode.ContainsFlag(validSelectModes)
-                    && !ProBuilderEditor.selectMode.ContainsFlag(SelectMode.InputTool);
+                    && !ProBuilderEditor.selectMode.ContainsFlag(SelectMode.InputTool)
+                    && Tools.current != Tool.Custom;
             }
         }
 

@@ -1,13 +1,6 @@
-﻿
-#if UNITY_2019_1_OR_NEWER
-#define SHORTCUT_MANAGER
-#endif
-
-using System;
-using System.Diagnostics;
+﻿using System;
 using UnityEngine;
 using UnityEngine.ProBuilder;
-using Debug = UnityEngine.Debug;
 
 namespace UnityEditor.ProBuilder
 {
@@ -16,7 +9,7 @@ namespace UnityEditor.ProBuilder
     /// </summary>
     public abstract class MenuToggle: MenuAction
     {
-        public enum MenuToggleState
+        private enum MenuToggleState
         {
             Inactive,
             Active,
@@ -24,15 +17,10 @@ namespace UnityEditor.ProBuilder
 
         MenuToggleState m_CurrentState;
 
-        protected delegate void StartEndCallBack();
-
-
         protected MenuToggle()
         {
             iconMode = ProBuilderEditor.s_IsIconGui;
             m_CurrentState = MenuToggleState.Inactive;
-
-            EditorApplication.update += OnUpdate;
         }
 
         /// <summary>
@@ -55,27 +43,13 @@ namespace UnityEditor.ProBuilder
         /// Perform whatever action this menu item is supposed to do when starting. You are responsible for implementing Undo.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
-        protected abstract ActionResult StartActivation(StartEndCallBack callback);
-
-        /// <summary>
-        /// Call the Update for the current tool.
-        /// </summary>
-        public void OnUpdate()
-        {
-            if(m_CurrentState == MenuToggleState.Active)
-                UpdateAction();
-        }
-
-        // /// <summary>
-        // /// Perform whatever action this menu item is supposed to do during its update. You are responsible for implementing Undo.
-        // /// </summary>
-        protected virtual void UpdateAction(){}
+        protected abstract ActionResult StartActivation(Action onStartCallback);
 
         /// <summary>
         /// Perform whatever action this menu item is supposed to do when ending. You are responsible for implementing Undo.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
-        protected abstract ActionResult EndActivation(StartEndCallBack callback);
+        protected abstract ActionResult EndActivation(Action onEndCallback);
 
         /// <summary>
         /// Draw a menu button.  Returns true if the button is active and settings are enabled, false if settings are not enabled.
@@ -184,6 +158,5 @@ namespace UnityEditor.ProBuilder
                 return false;
             }
         }
-
     }
 }
