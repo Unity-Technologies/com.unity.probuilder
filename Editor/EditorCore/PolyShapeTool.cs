@@ -225,6 +225,11 @@ namespace UnityEditor.ProBuilder
             if (evt.type == EventType.KeyDown)
                 HandleKeyEvent(evt);
 
+            //The user can press a key to exit editing mode,
+            //leading to null polygon at this point
+            if (polygon == null)
+                return;
+
              if (EditorHandleUtility.SceneViewInUse(evt))
                  return;
 
@@ -904,8 +909,18 @@ namespace UnityEditor.ProBuilder
 
                 case KeyCode.Escape:
                 {
-                    polygon.m_Points.Clear();
-                    SetPolyEditMode(PolyShape.PolyEditMode.None);
+                    if(polygon.polyEditMode == PolyShape.PolyEditMode.Path)
+                    {
+                        DestroyImmediate(polygon.gameObject);
+                        DestroyImmediate(this);
+                    }
+                    else
+                    {
+                        SetPolyEditMode(PolyShape.PolyEditMode.None);
+                    }
+
+                    //polygon.m_Points.Clear();
+                    //SetPolyEditMode(PolyShape.PolyEditMode.None);
                     evt.Use();
                     break;
                 }
