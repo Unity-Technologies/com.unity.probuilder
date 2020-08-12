@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.ProBuilder;
-
-
+using Object = UnityEngine.Object;
 #if !UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.EditorTools;
 #else
@@ -57,7 +57,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return base.enabled && MeshSelection.selectedObjectCount > 0; }
         }
 
-        public override ActionResult StartActivation(StartEndCallBack onStart)
+        internal override ActionResult StartActivation(Action onStartCallback)
         {
             m_RestorePreviousMode = true;
             m_PreviousMode = ProBuilderEditor.selectMode;
@@ -73,11 +73,11 @@ namespace UnityEditor.ProBuilder.Actions
             ToolManager.activeToolChanged += ActiveToolChanged;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
-            onStart();
+            onStartCallback();
             return new ActionResult(ActionResult.Status.Success,"Cut Tool Starts");
         }
 
-        public override ActionResult EndActivation(StartEndCallBack onEnd)
+        internal override ActionResult EndActivation(Action onEndCallback)
         {
             ToolManager.activeToolChanged -= ActiveToolChanged;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
@@ -89,7 +89,7 @@ namespace UnityEditor.ProBuilder.Actions
             if(m_RestorePreviousTool)
                 Tools.current = m_PreviousTool;
 
-            onEnd();
+            onEndCallback();
             return new ActionResult(ActionResult.Status.Success,"Cut Tool Ends");
         }
 

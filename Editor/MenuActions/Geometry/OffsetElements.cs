@@ -64,7 +64,7 @@ namespace UnityEditor.ProBuilder.Actions
             ConfigurableWindow.GetWindow<MoveElementsSettings>(true, "Offset Settings", true);
         }
 
-        protected override ActionResult DoAction_Internal()
+        public override ActionResult DoAction()
         {
             if (MeshSelection.selectedObjectCount < 1)
                 return ActionResult.NoSelection;

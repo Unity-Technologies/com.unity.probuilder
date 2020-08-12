@@ -26,7 +26,7 @@ ProBuilder decides which edges should be smoothed by checking for neighboring fa
             get { return ProBuilderEditor.instance != null; }
         }
 
-        protected override ActionResult DoAction_Internal()
+        public override ActionResult DoAction()
         {
             SmoothGroupEditor.MenuOpenSmoothGroupEditor();
             return new ActionResult(ActionResult.Status.Success, "Open Smoothing Groups Editor");

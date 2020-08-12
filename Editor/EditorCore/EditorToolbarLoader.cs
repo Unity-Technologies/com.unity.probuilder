@@ -133,8 +133,6 @@ namespace UnityEditor.ProBuilder
 
             s_LoadedMenuActions.Sort(MenuAction.CompareActionsByGroupAndPriority);
 
-            s_LoadedMenuActions.ForEach(action => MenuAction.actionChanged += action.OnActionChanged);
-
             return s_LoadedMenuActions;
         }
 

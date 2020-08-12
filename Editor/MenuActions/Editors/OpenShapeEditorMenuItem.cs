@@ -27,7 +27,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return true; }
         }
 
-        protected override ActionResult DoAction_Internal()
+        public override ActionResult DoAction()
         {
             ShapeEditor.MenuOpenShapeCreator();
             return new ActionResult(ActionResult.Status.Success, "Open Shape Editor");

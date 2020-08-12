@@ -49,7 +49,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override string menuTitle { get { return mode == RectSelectMode.Complete ? "Rect: Complete" : "Rect: Intersect"; } }
 
-        protected override ActionResult DoAction_Internal()
+        public override ActionResult DoAction()
         {
             mode = InternalUtility.NextEnumValue(mode);
 

@@ -34,7 +34,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MeshSelection.selectedObjectCount > 0; }
         }
 
-        protected override ActionResult DoAction_Internal()
+        public override ActionResult DoAction()
         {
             var res = ExportWithFileDialog(Selection.gameObjects, FileType.Ascii);
 

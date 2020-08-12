@@ -23,7 +23,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ProBuilderEditor.instance != null; }
         }
 
-        protected override ActionResult DoAction_Internal()
+        public override ActionResult DoAction()
         {
             UVEditor.MenuOpenUVEditor();
             return new ActionResult(ActionResult.Status.Success, "Open UV Window");
