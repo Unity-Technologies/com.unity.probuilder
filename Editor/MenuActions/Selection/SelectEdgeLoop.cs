@@ -66,7 +66,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return base.enabled && MeshSelection.selectedEdgeCount > 0; }
         }
 
-        protected override ActionResult DoAction_Internal()
+        public override ActionResult DoAction()
         {
             if (MeshSelection.selectedObjectCount < 1)
                 return ActionResult.NoSelection;

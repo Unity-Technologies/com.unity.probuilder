@@ -30,7 +30,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return Selection.gameObjects != null && Selection.gameObjects.Length > 0; }
         }
 
-        protected override ActionResult DoAction_Internal()
+        public override ActionResult DoAction()
         {
             var res = ExportStlAscii.ExportWithFileDialog(Selection.gameObjects, FileType.Binary);
 

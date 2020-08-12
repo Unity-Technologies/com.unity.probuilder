@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using System.Linq;
 using System.Reflection;
-using UnityEditor.EditorTools;
 
 namespace UnityEditor.ProBuilder
 {
@@ -131,8 +130,6 @@ namespace UnityEditor.ProBuilder
             SearchForMenuAttributes(s_LoadedMenuActions);
 
             s_LoadedMenuActions.Sort(MenuAction.CompareActionsByGroupAndPriority);
-
-            s_LoadedMenuActions.ForEach(action => MenuAction.actionChanged += action.OnActionChanged);
 
             return s_LoadedMenuActions;
         }

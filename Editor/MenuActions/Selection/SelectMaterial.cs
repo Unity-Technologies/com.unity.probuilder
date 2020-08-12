@@ -67,7 +67,7 @@ namespace UnityEditor.ProBuilder.Actions
             }
         }
 
-        protected override ActionResult DoAction_Internal()
+        public override ActionResult DoAction()
         {
             IEnumerable<ProBuilderMesh> selection;
 
