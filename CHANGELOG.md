@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.4.0] - 2020-07-07
+## [4.4.0] - 2020-08-12
 
 ### Features
 
@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Known Issues
 
 - Prefab Stage does not work properly when `ProBuilderMesh` contains overrides that append geometry.
+- Changelog dates pre-2.4.11-f.0+r4081 are incorrect. These releases were made from SVN, and the history was lost when converting to Git.
 
 ## [4.3.1] - 2020-06-01
 
