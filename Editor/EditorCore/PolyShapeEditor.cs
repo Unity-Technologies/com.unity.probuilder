@@ -1,7 +1,8 @@
+using UnityEditor.EditorTools;
 using UnityEngine;
 //using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder;
-
+using UnityEngine.ProBuilder.MeshOperations;
 #if !UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.EditorTools;
 #else
@@ -59,6 +60,62 @@ namespace UnityEditor.ProBuilder
                      break;
                  }
              }
+
+             EditorGUI.BeginChangeCheck();
+
+             float extrude = polygon.extrude;
+             extrude = EditorGUILayout.FloatField("Extrusion", extrude);
+
+             bool flipNormals = polygon.flipNormals;
+             flipNormals = EditorGUILayout.Toggle("Flip Normals", flipNormals);
+
+             if (EditorGUI.EndChangeCheck())
+             {
+                 if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
+                 {
+                     if (ProBuilderEditor.instance != null)
+                         ProBuilderEditor.instance.ClearElementSelection();
+
+                     UndoUtility.RecordObject(polygon, "Change Polygon Shape Settings");
+                     UndoUtility.RecordObject(polygon.mesh, "Change Polygon Shape Settings");
+                 }
+                 else
+                 {
+                     UndoUtility.RecordObject(polygon, "Change Polygon Shape Settings");
+                 }
+
+                 polygon.extrude = extrude;
+                 polygon.flipNormals = flipNormals;
+
+                 RebuildPolyShapeMesh(polygon);
+             }
+         }
+
+         void RebuildPolyShapeMesh(bool vertexCountChanged = false)
+         {
+             // If Undo is called immediately after creation this situation can occur
+             if (polygon == null)
+                 return;
+
+             if(ToolManager.activeToolType == typeof(PolyShapeTool))
+             {
+                 PolyShapeTool tool = ((PolyShapeTool)EditorToolContext.activeTool);
+                 if(tool.polygon == polygon)
+                     tool.RebuildPolyShapeMesh(vertexCountChanged);
+             }
+
+
+             {
+                 if (polygon.polyEditMode != PolyShape.PolyEditMode.Path)
+                 {
+                     var result = polygon.CreateShapeFromPolygon();
+                 }
+
+                 // While the vertex count may not change, the triangle winding might. So unfortunately we can't take
+                 // advantage of the `vertexCountChanged = false` optimization here.
+                 ProBuilderEditor.Refresh();
+             }
+
          }
 
     }

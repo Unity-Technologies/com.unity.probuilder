@@ -24,9 +24,6 @@ namespace UnityEditor.ProBuilder
 
         MenuToggleState m_CurrentState;
 
-        protected delegate void StartEndCallBack();
-
-
         protected MenuToggle()
         {
             iconMode = ProBuilderEditor.s_IsIconGui;
@@ -64,7 +61,7 @@ namespace UnityEditor.ProBuilder
         /// Perform whatever action this menu item is supposed to do when starting. You are responsible for implementing Undo.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
-        protected abstract ActionResult StartActivation(StartEndCallBack callback);
+        protected abstract ActionResult StartActivation(Action onStartCallback);
 
         /// <summary>
         /// Call the Update for the current tool.
@@ -84,7 +81,7 @@ namespace UnityEditor.ProBuilder
         /// Perform whatever action this menu item is supposed to do when ending. You are responsible for implementing Undo.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
-        protected abstract ActionResult EndActivation(StartEndCallBack callback);
+        protected abstract ActionResult EndActivation(Action onEndCallback);
 
         /// <summary>
         /// Draw a menu button.  Returns true if the button is active and settings are enabled, false if settings are not enabled.

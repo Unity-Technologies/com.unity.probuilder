@@ -120,6 +120,7 @@ namespace UnityEditor.ProBuilder
             m_OverlayTitle = new GUIContent("Poly Shape Tool");
 
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+            MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
             Undo.undoRedoPerformed += UndoRedoPerformed;
             EditorApplication.update += Update;
 
@@ -131,6 +132,7 @@ namespace UnityEditor.ProBuilder
             ClearLineRenderers();
 
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+            MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
             EditorApplication.update -= Update;
             Undo.undoRedoPerformed -= UndoRedoPerformed;
         }
@@ -349,7 +351,7 @@ namespace UnityEditor.ProBuilder
 
                 //Dirty the polygon for serialization (fix for transition between prefab and scene mode)
                 UnityEditor.EditorUtility.SetDirty(polygon);
-                
+
                 if(mode == PolyShape.PolyEditMode.None)
                 {
                     DestroyImmediate(this);
@@ -931,6 +933,22 @@ namespace UnityEditor.ProBuilder
                 && !selectMode.ContainsFlag(SelectMode.InputTool))
             {
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
+            }
+        }
+
+        private void OnObjectSelectionChanged()
+        {
+            if(polygon == null)
+                return;
+
+            if(MeshSelection.activeMesh)
+            {
+                PolyShape shape = MeshSelection.activeMesh.GetComponent<PolyShape>();
+                if(shape != null && shape != polygon)
+                {
+                    //Quit Polygon edit mode and deactivate the tool
+                    SetPolyEditMode(PolyShape.PolyEditMode.None);
+                }
             }
         }
 

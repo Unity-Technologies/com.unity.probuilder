@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
@@ -100,7 +101,7 @@ namespace UnityEditor.ProBuilder.Actions
             return true;
         }
 
-        protected override ActionResult StartActivation(StartEndCallBack onStart)
+        protected override ActionResult StartActivation(Action onStartCallback)
         {
             if (!CanCreateNewPolyShape())
                 return new ActionResult(ActionResult.Status.Canceled, "Canceled Create Poly Shape");
@@ -136,11 +137,11 @@ namespace UnityEditor.ProBuilder.Actions
             ToolManager.activeToolChanged += ActiveToolChanged;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
-            onStart();
+            onStartCallback();
             return new ActionResult(ActionResult.Status.Success,"Create Poly Shape");
         }
 
-        protected override ActionResult EndActivation(StartEndCallBack onEnd)
+        protected override ActionResult EndActivation(Action onEndCallback)
         {
             ToolManager.activeToolChanged -= ActiveToolChanged;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
@@ -151,7 +152,7 @@ namespace UnityEditor.ProBuilder.Actions
             if(m_RestorePreviousMode)
                 ProBuilderEditor.selectMode = m_PreviousMode;
 
-            onEnd();
+            onEndCallback();
             return new ActionResult(ActionResult.Status.Success,"End Poly Shape");
         }
 
