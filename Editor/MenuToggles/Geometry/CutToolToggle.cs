@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using Object = UnityEngine.Object;
@@ -22,7 +23,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override ToolbarGroup group
         {
-            get { return ToolbarGroup.Geometry; }
+            get { return ToolbarGroup.Tool; }
         }
 
         public override Texture2D icon
@@ -54,7 +55,11 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override bool enabled
         {
-            get { return base.enabled && MeshSelection.selectedObjectCount > 0; }
+            get
+            {
+                return MeshSelection.selectedObjectCount > 0
+                       && ( Tools.current != Tool.Custom || ToolManager.activeToolType == typeof(CutTool) );
+            }
         }
 
         internal override ActionResult StartActivation(Action onStartCallback)

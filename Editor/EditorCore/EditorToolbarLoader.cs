@@ -46,6 +46,7 @@ namespace UnityEditor.ProBuilder
                 new Actions.OpenUVEditor(),
                 new Actions.OpenVertexColorEditor(),
                 new Actions.OpenSmoothingEditor(),
+                new Actions.CutToolToggle(),
 
                 new Actions.ToggleSelectBackFaces(),
                 new Actions.ToggleHandleOrientation(),
@@ -86,7 +87,6 @@ namespace UnityEditor.ProBuilder
                 // All
                 new Actions.SetPivotToSelection(),
                 new Actions.OffsetElements(),
-                new Actions.CutToolToggle(),
 
                 // Faces (All)
                 new Actions.DeleteFaces(),
