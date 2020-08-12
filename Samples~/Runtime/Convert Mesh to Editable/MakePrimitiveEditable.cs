@@ -11,21 +11,20 @@ namespace ProBuilder.Examples
 	{
 		void Start()
 		{
-			var filter = GetComponent<MeshFilter>();
-
-			// Add a new uninitialized pb_Object
-			var mesh = gameObject.AddComponent<ProBuilderMesh>();
-
-			// Create a new MeshImporter
-			var importer = new MeshImporter(mesh);
-
 			// Import from a GameObject. In this case we're loading and assigning to the same GameObject, but you may
 			// load and apply to different Objects as well.
-			importer.Import(filter.sharedMesh);
+
+			// Create a new MeshImporter
+			var importer = new MeshImporter(gameObject);
+			importer.Import();
 
 			// Since we're loading and setting from the same object, it is necessary to create a new mesh to avoid
 			// overwriting the mesh that is being read from.
+			var filter = GetComponent<MeshFilter>();
 			filter.sharedMesh = new Mesh();
+
+			//Retrieve the create PB Mesh
+			var mesh = gameObject.GetComponent<ProBuilderMesh>();
 
 			// Do something with the pb_Object. Here we're extruding every face on the object by .25.
 			mesh.Extrude(mesh.faces, ExtrudeMethod.IndividualFaces, .25f);
