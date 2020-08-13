@@ -162,6 +162,8 @@ namespace UnityEditor.ProBuilder
 
         public static void SetFaceColors(Color col)
         {
+            col = PlayerSettings.colorSpace == ColorSpace.Linear ? col.linear : col;
+
             ProBuilderMesh[] selection = InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms);
 
             UndoUtility.RecordSelection(selection, "Apply Vertex Colors");
