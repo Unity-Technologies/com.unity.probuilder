@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Features
+
+- Added MenuToggle in ProBuilder menu to better handle EditorTools.
+
 ## [4.4.0] - 2020-08-12
 
 ### Features
