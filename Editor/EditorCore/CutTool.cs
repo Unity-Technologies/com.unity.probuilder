@@ -65,13 +65,6 @@ namespace UnityEditor.ProBuilder
                 set => m_Types = value;
             }
 
-            public CutVertexData(Vector3 position, VertexTypes types = VertexTypes.None)
-            {
-                m_Position = position;
-                m_Normal = Vector3.up;
-                m_Types = types;
-            }
-
             public CutVertexData(Vector3 position, Vector3 normal, VertexTypes types = VertexTypes.None)
             {
                 m_Position = position;
@@ -105,31 +98,38 @@ namespace UnityEditor.ProBuilder
 
         Color m_CurrentHandleColor = k_HandleColor;
 
-        internal Face m_TargetFace;
-        internal Face m_CurrentFace;
-        internal Vector3 m_CurrentPosition = Vector3.positiveInfinity;
-        internal Vector3 m_CurrentPositionNormal = Vector3.up;
-        internal VertexTypes m_CurrentVertexTypes = VertexTypes.None;
-
+        //Handles and point placement
         int m_ControlId;
         bool m_PlacingPoint;
         internal bool m_SnappingPoint;
         bool m_ModifyingPoint;
         int m_SelectedIndex = -2;
 
+        //Cut tool elements
+        internal Face m_TargetFace;
+        internal Face m_CurrentFace;
+        internal Vector3 m_CurrentPosition = Vector3.positiveInfinity;
+        internal Vector3 m_CurrentPositionNormal = Vector3.up;
+        internal VertexTypes m_CurrentVertexTypes = VertexTypes.None;
+
+        //Path composed of position that define a cut in the face
+        [SerializeField]
+        internal List<CutVertexData> m_CutPath = new List<CutVertexData>();
+        //Connection between the path and the mesh vertices to get a 'safe' cut
+        internal List<SimpleTuple<int, int>> m_MeshConnections = new List<SimpleTuple<int, int>>();
+
+        //Snapping
         int m_SnapedVertexId = -1;
         Edge m_SnapedEdge = Edge.Empty;
 
-        [SerializeField]
-        internal List<CutVertexData> m_CutPath = new List<CutVertexData>();
-        internal List<SimpleTuple<int, int>> m_MeshConnections = new List<SimpleTuple<int, int>>();
+        bool m_SnapToGeometry;
+        float m_SnappingDistance;
 
+        //Overlay fields
         GUIContent m_OverlayTitle;
         const string k_SnapToGeometryPrefKey = "VertexInsertion.snapToGeometry";
         const string k_SnappingDistancePrefKey = "VertexInsertion.snappingDistance";
 
-        bool m_SnapToGeometry;
-        float m_SnappingDistance;
 
         public bool IsALoop
         {
@@ -183,6 +183,31 @@ namespace UnityEditor.ProBuilder
             Clear();
         }
 
+        /// <summary>
+        /// Update method that handles the update of line renderers
+        /// </summary>
+        void Update()
+        {
+            if(m_Mesh != null)
+            {
+                if(m_LineMaterial != null)
+                    m_LineMaterial.SetFloat("_EditorTime", (float) EditorApplication.timeSinceStartup);
+            }
+        }
+
+        /// <summary>
+        /// Instantiate Line Materials, all are based on the same base Material with different colors
+        /// </summary>
+        /// <param name="baseColor">base color to apply to the line</param>
+        /// <param name="highlightColor">highlight color to apply to the line</param>
+        /// <returns></returns>
+        static Material CreateLineMaterial(Color baseColor, Color highlightColor)
+        {
+            Material mat = new Material(Shader.Find("Hidden/ProBuilder/ScrollHighlight"));
+            mat.SetColor("_Base", baseColor);
+            mat.SetColor("_Highlight", highlightColor);
+            return mat;
+        }
 
         /// <summary>
         /// Create line renderers for the current cut
@@ -226,8 +251,6 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         void Clear()
         {
-            ClearLineRenderers();
-
             m_Mesh = null;
             m_TargetFace = null;
             m_CurrentFace = null;
@@ -235,41 +258,6 @@ namespace UnityEditor.ProBuilder
             m_CurrentCutCursor = null;
             m_CutPath.Clear();
             m_MeshConnections.Clear();
-        }
-
-        /// <summary>
-        /// Reset tool data and line renderers
-        /// </summary>
-        void Reset()
-        {
-            Clear();
-            InitLineRenderers();
-        }
-
-        /// <summary>
-        /// Instantiate Line Materials, all are based on the same base Material with different colors
-        /// </summary>
-        /// <param name="baseColor">base color to apply to the line</param>
-        /// <param name="highlightColor">highlight color to apply to the line</param>
-        /// <returns></returns>
-        static Material CreateLineMaterial(Color baseColor, Color highlightColor)
-        {
-            Material mat = new Material(Shader.Find("Hidden/ProBuilder/ScrollHighlight"));
-            mat.SetColor("_Base", baseColor);
-            mat.SetColor("_Highlight", highlightColor);
-            return mat;
-        }
-
-        /// <summary>
-        /// Update method that handles the update of line renderers
-        /// </summary>
-        void Update()
-        {
-            if(m_Mesh != null)
-            {
-                if(m_LineMaterial != null)
-                    m_LineMaterial.SetFloat("_EditorTime", (float) EditorApplication.timeSinceStartup);
-            }
         }
 
         /// <summary>
@@ -424,6 +412,7 @@ namespace UnityEditor.ProBuilder
 
             bool hasHitPosition = UpdateHitPosition();
 
+            //Updating visual helpers to get the right position and color to help in the placement
             if (evtType== EventType.Repaint)
             {
                 m_SnappingPoint = m_SnapToGeometry || (evt.modifiers & EventModifiers.Control) != 0;
@@ -455,6 +444,7 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
+            //If the user is moving an existing point
             if (m_PlacingPoint || m_ModifyingPoint)
             {
                 if( evtType == EventType.MouseDown
@@ -487,16 +477,15 @@ namespace UnityEditor.ProBuilder
                     SceneView.RepaintAll();
                 }
             }
-            else
-            if (evtType == EventType.MouseDown
-                && HandleUtility.nearestControl == m_ControlId)
+            //If the user is adding the current position to the cut
+            else if (evtType == EventType.MouseDown
+                     && HandleUtility.nearestControl == m_ControlId)
             {
                 int polyCount = m_CutPath.Count;
                 if (!m_CurrentPosition.Equals(Vector3.positiveInfinity)
                     && (polyCount == 0 || m_SelectedIndex != polyCount - 1))
                 {
                     AddCurrentPositionToPath();
-
                     evt.Use();
                 }
             }
@@ -565,6 +554,7 @@ namespace UnityEditor.ProBuilder
             Vertex[] vertices = m_Mesh.GetVertices();
             if(!IsALoop)
             {
+                //Connects to start and the end of the path to create a loop
                 float minDistToStart = Single.PositiveInfinity;
                 float minDistToEnd = Single.PositiveInfinity;
                 int bestVertexToStart = -1, bestVertexToEnd = -1;
@@ -600,6 +590,7 @@ namespace UnityEditor.ProBuilder
             }
             else if(IsALoop && ConnectionsToBordersCount < 2)
             {
+                //The path must have minimum connections with the face borders, find the closest vertices
                 foreach(var vertexIndex in m_TargetFace.distinctIndexes)
                 {
                     Vertex v = vertices[vertexIndex];
@@ -655,7 +646,7 @@ namespace UnityEditor.ProBuilder
                 return new ActionResult(ActionResult.Status.Canceled, "Not enough elements selected for a cut");
             }
 
-            UndoUtility.RecordObject(m_Mesh, "Add Face To Mesh");
+            UndoUtility.RecordObject(m_Mesh, "Do Cut To Mesh");
 
             List<Vertex> meshVertices = m_Mesh.GetVertices().ToList();
             Vertex[] formerVertices = new Vertex[m_MeshConnections.Count];
@@ -664,10 +655,13 @@ namespace UnityEditor.ProBuilder
                 formerVertices[i] = meshVertices[m_MeshConnections[i].item2];
             }
 
+            //Insert cut vertices in the mesh
             List<Vertex> cutVertices = InsertVertices();
             meshVertices = m_Mesh.GetVertices().ToList();
+            //Retrieve indexes of the cut points in the mesh vertices
             int[] cutIndexes = cutVertices.Select(vert => meshVertices.IndexOf(vert)).ToArray();
 
+            //Update mesh connections with new indexes
             for(int i = 0; i<m_MeshConnections.Count; i++)
             {
                 SimpleTuple<int, int> connection = m_MeshConnections[i];
@@ -694,6 +688,7 @@ namespace UnityEditor.ProBuilder
                 newFaces.Add(f);
             }
 
+            //Compute the rest of the new faces (faces outside of the loop or division of the original face)
             List<Face> faces = ComputeNewFaces(m_TargetFace, cutIndexes);
             if(!IsALoop)
                 newFaces.AddRange(faces);
@@ -705,10 +700,11 @@ namespace UnityEditor.ProBuilder
             m_Mesh.Refresh();
             m_Mesh.Optimize();
 
+            //Update mesh selection after the cut has been performed
             MeshSelection.ClearElementSelection();
             m_Mesh.SetSelectedFaces(newFaces);
 
-            Reset();
+            Clear();
 
             return ActionResult.Success;
         }
@@ -1360,7 +1356,6 @@ namespace UnityEditor.ProBuilder
         {
             float lineLength = 0.1f, spaceLength = 0.05f;
             List<Vector3> ver = lineMesh.vertices.ToList();
-            List<Vector2> uvs = lineMesh.uv.ToList();
 
             List<int> indexes = new List<int>();
             lineMesh.GetIndices(indexes,0);
@@ -1375,15 +1370,11 @@ namespace UnityEditor.ProBuilder
                 ver.Add(fromPoint + i * (lineLength + spaceLength) * dir);
                 ver.Add(fromPoint + (i * (lineLength + spaceLength) + lineLength) * dir);
 
-                uvs.Add(new Vector2( 1f, 1f));
-                uvs.Add(new Vector2( 1f, 1f));
-
                 indexes.Add(2*i + offset);
                 indexes.Add(2*i+1 + offset);
             }
 
             ver.Add(fromPoint + sections * (lineLength + spaceLength) * dir);
-            uvs.Add(new Vector2( 1f, 1f));
             indexes.Add(2 * sections + offset);
 
 
@@ -1391,12 +1382,10 @@ namespace UnityEditor.ProBuilder
                 ver.Add(fromPoint + ( sections * ( lineLength + spaceLength ) + lineLength ) * dir);
             else
                 ver.Add(toPoint);
-            uvs.Add(new Vector2( 1f, 1f));
             indexes.Add(2 * sections + 1 + offset);
 
             lineMesh.name = "DashedLine";
             lineMesh.vertices = ver.ToArray();
-            lineMesh.uv = uvs.ToArray();
             lineMesh.SetIndices(indexes, MeshTopology.Lines, 0);
         }
 
@@ -1420,7 +1409,6 @@ namespace UnityEditor.ProBuilder
                 Vector3 currentPosition = m_CurrentPosition;
 
                 UpdateDashedLine(m_DrawingLineMesh, lastPosition, currentPosition);
-                m_DrawingLineMaterial.SetFloat("_LineDistance", 1f);
                 return true;
             }
             return false;
@@ -1441,7 +1429,6 @@ namespace UnityEditor.ProBuilder
                 {
                     UpdateDashedLine(m_ConnectionsLineMesh, m_CutPath[connection.item1].position, vertices[connection.item2].position);
                 }
-                m_ConnectionsLineMaterial.SetFloat("_LineDistance", 1f);
             }
         }
 
