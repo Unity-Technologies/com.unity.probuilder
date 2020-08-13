@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Bug Fixes
+
+- [case: 1256246] Ensuring edges subdivision is not creating hole and that arch shapes does not create degenerated triangles
+
+### Changes
+
+- Modified the AppendVerticesToEdge to handle edges split for non-convex faces.
+
 ## [4.4.0] - 2020-08-12
 
 ### Features
