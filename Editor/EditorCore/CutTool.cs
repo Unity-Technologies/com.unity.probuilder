@@ -14,7 +14,7 @@ using UHandleUtility = UnityEditor.HandleUtility;
 
 namespace UnityEditor.ProBuilder
 {
-    public class CutTool : EditorTool
+    internal class CutTool : EditorTool
     {
         ProBuilderMesh m_Mesh;
 
@@ -38,14 +38,11 @@ namespace UnityEditor.ProBuilder
         }
 
         [Serializable]
-        public struct CutVertexData
+        internal struct CutVertexData
         {
-            [SerializeField]
-            Vector3 m_Position;
-            [SerializeField]
-            Vector3 m_Normal;
-            [SerializeField]
-            VertexTypes m_Types;
+            public Vector3 m_Position;
+            public Vector3 m_Normal;
+            public VertexTypes m_Types;
 
             public Vector3 position
             {
@@ -56,13 +53,11 @@ namespace UnityEditor.ProBuilder
             public Vector3 normal
             {
                 get => m_Normal;
-                set => m_Normal = value;
             }
 
             public VertexTypes types
             {
                 get => m_Types;
-                set => m_Types = value;
             }
 
             public CutVertexData(Vector3 position, Vector3 normal, VertexTypes types = VertexTypes.None)
@@ -75,8 +70,8 @@ namespace UnityEditor.ProBuilder
 
         static readonly Color k_HandleColor = new Color(.8f, .8f, .8f, 1f);
         static readonly Color k_HandleColorAddNewVertex = new Color(.01f, .9f, .3f, 1f);
-        static Color k_HandleColorAddVertexOnEdge = new Color(.3f, .01f, .9f, 1f);
-        static Color k_HandleColorUseExistingVertex = new Color(.01f, .5f, 1f, 1f);
+        static Color s_HandleColorAddVertexOnEdge = new Color(.3f, .01f, .9f, 1f);
+        static Color s_HandleColorUseExistingVertex = new Color(.01f, .5f, 1f, 1f);
         static readonly Color k_HandleColorModifyVertex = new Color(1f, .75f, .0f, 1f);
         const float k_HandleSize = .05f;
 
@@ -102,7 +97,7 @@ namespace UnityEditor.ProBuilder
         int m_ControlId;
         bool m_PlacingPoint;
         internal bool m_SnappingPoint;
-        bool m_ModifyingPoint;
+        bool m_ModifyingPoint; // State machine instead? //Status
         int m_SelectedIndex = -2;
 
         //Cut tool elements
@@ -130,7 +125,6 @@ namespace UnityEditor.ProBuilder
         const string k_SnapToGeometryPrefKey = "VertexInsertion.snapToGeometry";
         const string k_SnappingDistancePrefKey = "VertexInsertion.snappingDistance";
 
-
         public bool IsALoop
         {
             get
@@ -154,8 +148,8 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            k_HandleColorUseExistingVertex = Handles.selectedColor;
-            k_HandleColorAddVertexOnEdge = Handles.selectedColor;
+            s_HandleColorUseExistingVertex = Handles.selectedColor;
+            s_HandleColorAddVertexOnEdge = Handles.selectedColor;
 
             m_OverlayTitle = new GUIContent("Cut Tool");
             m_SnapToGeometry = EditorPrefs.GetBool( k_SnapToGeometryPrefKey, false );
@@ -265,8 +259,8 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         private void UndoRedoPerformed()
         {
-            ClearLineRenderers();
-            InitLineRenderers();
+            // ClearLineRenderers();
+            // InitLineRenderers();
 
             if(m_CutPath.Count == 0)
                 m_TargetFace = null;
@@ -324,10 +318,10 @@ namespace UnityEditor.ProBuilder
             if(MeshSelection.selectedObjectCount != 1)
             {
                 var rect = EditorGUILayout.GetControlRect(false, 45, GUILayout.Width(250));
-                EditorGUI.HelpBox(rect, "One and only one ProBuilder mesh must be selected.", MessageType.Warning);
+                EditorGUI.HelpBox(rect, L10n.Tr("One and only one ProBuilder mesh must be selected."), MessageType.Warning);
             }
 
-            m_SnapToGeometry = DoOverlayToggle("Snap to existing edges and vertices", m_SnapToGeometry);
+            m_SnapToGeometry = DoOverlayToggle(L10n.Tr("Snap to existing edges and vertices"), m_SnapToGeometry);
             EditorPrefs.SetBool(k_SnapToGeometryPrefKey, m_SnapToGeometry);
 
             if(!m_SnapToGeometry)
@@ -335,7 +329,7 @@ namespace UnityEditor.ProBuilder
             EditorGUI.indentLevel++;
             using(new GUILayout.HorizontalScope())
             {
-                EditorGUILayout.LabelField("Snapping distance", GUILayout.Width(200));
+                EditorGUILayout.LabelField(L10n.Tr("Snapping distance"), GUILayout.Width(200));
                 m_SnappingDistance = EditorGUILayout.FloatField(m_SnappingDistance);
                 EditorPrefs.SetFloat( k_SnappingDistancePrefKey, m_SnappingDistance);
             }
@@ -425,9 +419,9 @@ namespace UnityEditor.ProBuilder
                 {
                     m_CurrentCutCursor = GetCursorTexture();
                     if( (m_CurrentVertexTypes & (VertexTypes.ExistingVertex | VertexTypes.VertexInShape)) != 0)
-                        m_CurrentHandleColor = m_ModifyingPoint ? k_HandleColorModifyVertex : k_HandleColorUseExistingVertex;
+                        m_CurrentHandleColor = m_ModifyingPoint ? k_HandleColorModifyVertex : s_HandleColorUseExistingVertex;
                     else if ((m_CurrentVertexTypes & VertexTypes.AddedOnEdge) != 0)
-                        m_CurrentHandleColor = k_HandleColorAddVertexOnEdge;
+                        m_CurrentHandleColor = s_HandleColorAddVertexOnEdge;
                     else
                     {
                         m_CurrentHandleColor = k_HandleColorAddNewVertex;
@@ -555,9 +549,9 @@ namespace UnityEditor.ProBuilder
             if(!IsALoop)
             {
                 //Connects to start and the end of the path to create a loop
-                float minDistToStart = Single.PositiveInfinity;
-                float minDistToEnd = Single.PositiveInfinity;
-                int bestVertexToStart = -1, bestVertexToEnd = -1;
+                float minDistToStart = Single.PositiveInfinity, minDistToStart2 = Single.PositiveInfinity;
+                float minDistToEnd = Single.PositiveInfinity, minDistToEnd2 = Single.PositiveInfinity;
+                int bestVertexIndexToStart = -1, bestVertexIndexToStart2 = -1, bestVertexIndexToEnd = -1,  bestVertexIndexToEnd2 = -1;
                 float dist;
                 foreach(var vertexIndex in m_TargetFace.distinctIndexes)
                 {
@@ -567,8 +561,14 @@ namespace UnityEditor.ProBuilder
                         dist = Vector3.Distance(v.position, m_CutPath[0].position);
                         if(dist < minDistToStart)
                         {
+                            minDistToStart2 = minDistToStart;
+                            bestVertexIndexToStart2 = bestVertexIndexToStart;
                             minDistToStart = dist;
-                            bestVertexToStart = vertexIndex;
+                            bestVertexIndexToStart = vertexIndex;
+                        }else if(dist < minDistToStart2)
+                        {
+                            minDistToStart2 = dist;
+                            bestVertexIndexToStart2 = vertexIndex;
                         }
                     }
                     if(m_CutPath.Count > 1 && ( m_CutPath[m_CutPath.Count - 1].types & VertexTypes.NewVertex ) != 0)
@@ -576,17 +576,33 @@ namespace UnityEditor.ProBuilder
                         dist = Vector3.Distance(v.position, m_CutPath[m_CutPath.Count - 1].position);
                         if(dist < minDistToEnd)
                         {
+                            minDistToEnd2 = minDistToEnd;
+                            bestVertexIndexToEnd2 = bestVertexIndexToEnd;
                             minDistToEnd = dist;
-                            bestVertexToEnd = vertexIndex;
+                            bestVertexIndexToEnd = vertexIndex;
+                        }
+                        else if(dist < minDistToEnd2)
+                        {
+                            minDistToEnd2 = dist;
+                            bestVertexIndexToEnd2 = vertexIndex;
                         }
                     }
                 }
 
-                if(bestVertexToStart >= 0)
-                    m_MeshConnections.Add(new SimpleTuple<int, int>(0,bestVertexToStart));
+                //Do not connect the 2 extremities to the same point
+                if(bestVertexIndexToStart == bestVertexIndexToEnd)
+                {
+                    if(minDistToStart2 < minDistToEnd2)
+                        bestVertexIndexToStart = bestVertexIndexToStart2;
+                    else
+                        bestVertexIndexToEnd = bestVertexIndexToEnd2;
+                }
 
-                if(bestVertexToEnd >= 0)
-                    m_MeshConnections.Add(new SimpleTuple<int, int>(m_CutPath.Count - 1,bestVertexToEnd));
+                if(bestVertexIndexToStart >= 0)
+                    m_MeshConnections.Add(new SimpleTuple<int, int>(0,bestVertexIndexToStart));
+
+                if(bestVertexIndexToEnd >= 0)
+                    m_MeshConnections.Add(new SimpleTuple<int, int>(m_CutPath.Count - 1,bestVertexIndexToEnd));
             }
             else if(IsALoop && ConnectionsToBordersCount < 2)
             {
@@ -648,7 +664,8 @@ namespace UnityEditor.ProBuilder
 
             UndoUtility.RecordObject(m_Mesh, "Do Cut To Mesh");
 
-            List<Vertex> meshVertices = m_Mesh.GetVertices().ToList();
+            List<Vertex> meshVertices = new List<Vertex>();
+            m_Mesh.GetVerticesInList(meshVertices);
             Vertex[] formerVertices = new Vertex[m_MeshConnections.Count];
             for(int i = 0; i < m_MeshConnections.Count; i++)
             {
@@ -657,7 +674,7 @@ namespace UnityEditor.ProBuilder
 
             //Insert cut vertices in the mesh
             List<Vertex> cutVertices = InsertVertices();
-            meshVertices = m_Mesh.GetVertices().ToList();
+            m_Mesh.GetVerticesInList(meshVertices);
             //Retrieve indexes of the cut points in the mesh vertices
             int[] cutIndexes = cutVertices.Select(vert => meshVertices.IndexOf(vert)).ToArray();
 
@@ -692,6 +709,16 @@ namespace UnityEditor.ProBuilder
             List<Face> faces = ComputeNewFaces(m_TargetFace, cutIndexes);
             if(!IsALoop)
                 newFaces.AddRange(faces);
+
+            //Remove inserted vertices only if they were inserted for the process
+            List<int> verticesIndexesToDelete = new List<int>();
+            for(int i = 0; i < m_CutPath.Count; i++)
+            {
+                if(( m_CutPath[i].types & VertexTypes.NewVertex ) != 0
+                && ( m_CutPath[i].types & VertexTypes.VertexInShape ) == 0)
+                    verticesIndexesToDelete.Add(cutIndexes[i]);
+            }
+            m_Mesh.DeleteVertices(verticesIndexesToDelete);
 
             //Delete former face
             m_Mesh.DeleteFace(m_TargetFace);
@@ -800,7 +827,7 @@ namespace UnityEditor.ProBuilder
         /// <returns>the valid face that need to be kept in the resulting mesh</returns>
         Face ComputeFaceClosure( List<int> polygonStart, int currentIndex, List<int> cutIndexes, out List<Face> facesToDelete)
         {
-            List<Vertex> meshVertices = m_Mesh.GetVertices().ToList();
+            List<Vertex> meshVertices = new List<Vertex>();
             IList<SharedVertex> uniqueIdToVertexIndex = m_Mesh.sharedVertices;
             Dictionary<int, int> sharedToUnique = m_Mesh.sharedVertexLookup;
 
@@ -856,32 +883,27 @@ namespace UnityEditor.ProBuilder
                 closure.AddRange(polygonStart);
 
                 Face face = m_Mesh.CreatePolygon(closure, false);
-                meshVertices = m_Mesh.GetVertices().ToList();
+                m_Mesh.GetVerticesInList(meshVertices);
                 uniqueIdToVertexIndex = m_Mesh.sharedVertices;
                 sharedToUnique = m_Mesh.sharedVertexLookup;
 
                 if(bestFace != null)
                 {
-                    //Vector3[] vertices = closure.Select(i => meshVertices[i].position).ToArray();
                     Vector3[] vertices = meshVertices.Select(vertex => vertex.position).ToArray();
                     int[] indexes = face.indexesInternal.Select(i => uniqueIdToVertexIndex[sharedToUnique[i]][0]).ToArray();
                     float area = Math.PolygonArea(vertices, indexes);
                     if(area < bestArea)
                     {
-                        //m_Mesh.DeleteFace(bestFace);
                         facesToDelete.Add(bestFace);
                         bestArea = area;
                         bestFace = face;
                     }
                     else
-                        //m_Mesh.DeleteFace(face);
-                    facesToDelete.Add(face);
+                        facesToDelete.Add(face);
                 }
                 else
                 {
                     bestFace = face;
-                    // Vector3[] vertices = closure.Select(i => meshVertices[i].position).ToArray();
-                    // int[] indexes = face.indexesInternal;
                     Vector3[] vertices = meshVertices.Select(vertex => vertex.position).ToArray();
                     int[] indexes = face.indexesInternal.Select(i => uniqueIdToVertexIndex[sharedToUnique[i]][0]).ToArray();
                     bestArea = Math.PolygonArea(vertices, indexes);
@@ -943,7 +965,7 @@ namespace UnityEditor.ProBuilder
             m_SnapedVertexId = -1;
             m_SnapedEdge = Edge.Empty;
 
-            List<Vertex> vertices = m_Mesh.GetVertices().ToList();
+            Vertex[] vertices = m_Mesh.GetVertices();
             List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_CurrentFace);
             if (m_TargetFace != null && m_CurrentFace != m_TargetFace)
                 peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_TargetFace);
@@ -1306,6 +1328,7 @@ namespace UnityEditor.ProBuilder
                 return;
 
             DrawPolyLine(m_CutPath.Select(tup => tup.position).ToList());
+            UpdateMeshConnections();
 
             // While the vertex count may not change, the triangle winding might. So unfortunately we can't take
             // advantage of the `vertexCountChanged = false` optimization here.

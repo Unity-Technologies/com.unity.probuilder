@@ -1430,7 +1430,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Add a point to a face and retriangulate.
+        /// Add a point to a face.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="face">The face to append points to.</param>

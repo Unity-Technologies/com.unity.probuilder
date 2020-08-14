@@ -18,12 +18,9 @@ namespace UnityEditor.ProBuilder.Actions
         bool m_RestorePreviousMode;
         SelectMode m_PreviousMode;
 
-        bool m_RestorePreviousTool;
-        Tool m_PreviousTool;
-
         public override ToolbarGroup group
         {
-            get { return ToolbarGroup.Tool; }
+            get { return ToolbarGroup.Geometry; }
         }
 
         public override Texture2D icon
@@ -68,14 +65,12 @@ namespace UnityEditor.ProBuilder.Actions
             m_PreviousMode = ProBuilderEditor.selectMode;
             ProBuilderEditor.selectMode = SelectMode.Object;
 
-            m_RestorePreviousTool = true;
-            m_PreviousTool = Tools.current;
             m_Tool = ScriptableObject.CreateInstance<CutTool>();
             ToolManager.SetActiveTool(m_Tool);
 
             Undo.RegisterCreatedObjectUndo(m_Tool, "Open Cut Tool");
 
-            ToolManager.activeToolChanged += ActiveToolChanged;
+            ToolManager.activeToolChanging += LeaveTool;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
             onStartCallback();
@@ -84,15 +79,13 @@ namespace UnityEditor.ProBuilder.Actions
 
         internal override ActionResult EndActivation(Action onEndCallback)
         {
-            ToolManager.activeToolChanged -= ActiveToolChanged;
+            ToolManager.activeToolChanging -= LeaveTool;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
 
             Object.DestroyImmediate(m_Tool);
 
             if(m_RestorePreviousMode)
                 ProBuilderEditor.selectMode = m_PreviousMode;
-            if(m_RestorePreviousTool)
-                Tools.current = m_PreviousTool;
 
             onEndCallback();
             return new ActionResult(ActionResult.Status.Success,"Cut Tool Ends");
@@ -102,13 +95,6 @@ namespace UnityEditor.ProBuilder.Actions
         {
             m_RestorePreviousMode = false;
             LeaveTool();
-        }
-
-        void ActiveToolChanged()
-        {
-            if(Tools.current != Tool.None)
-                m_RestorePreviousTool = false;
-            EditorApplication.delayCall += () => LeaveTool();
         }
 
         void LeaveTool()
