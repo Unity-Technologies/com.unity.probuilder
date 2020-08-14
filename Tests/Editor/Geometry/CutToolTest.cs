@@ -52,25 +52,6 @@ public class CutToolTest
     }
 
     [Test]
-    public void CutTool_CutToolCreation_NotNull()
-    {
-        Assert.NotNull(m_PBMesh);
-        CutToolToggle toggle = new CutToolToggle();
-
-        Assert.NotNull(toggle);
-        Assert.That(toggle.enabled, Is.True);
-        Assert.AreEqual(toggle.m_CurrentState, CutToolToggle.MenuToggleState.Inactive);
-
-        toggle.StartActivation(toggle.OnStart);
-        Assert.AreEqual(toggle.m_CurrentState, CutToolToggle.MenuToggleState.Active);
-
-        CutTool tool = toggle.m_Tool;
-        Assert.NotNull(tool);
-
-        Object.DestroyImmediate(tool);
-    }
-
-    [Test]
     public void CutTool_EdgeToEdgeCut_TestInsertOnEdge_TestCreatesTwoFaces()
     {
         CutTool tool = ScriptableObject.CreateInstance<CutTool>();

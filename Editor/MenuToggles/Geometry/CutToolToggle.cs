@@ -11,10 +11,8 @@ using ToolManager = UnityEditor.EditorTools.ToolManager;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-    public class CutToolToggle : MenuToggle
+    public class CutToolToggle : MenuToolToggle
     {
-        internal CutTool m_Tool;
-
         bool m_RestorePreviousMode;
         SelectMode m_PreviousMode;
 
@@ -59,7 +57,7 @@ namespace UnityEditor.ProBuilder.Actions
             }
         }
 
-        internal override ActionResult StartActivation(Action onStartCallback)
+        internal override ActionResult StartActivation()
         {
             m_RestorePreviousMode = true;
             m_PreviousMode = ProBuilderEditor.selectMode;
@@ -73,11 +71,10 @@ namespace UnityEditor.ProBuilder.Actions
             ToolManager.activeToolChanging += LeaveTool;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
-            onStartCallback();
             return new ActionResult(ActionResult.Status.Success,"Cut Tool Starts");
         }
 
-        internal override ActionResult EndActivation(Action onEndCallback)
+        internal override ActionResult EndActivation()
         {
             ToolManager.activeToolChanging -= LeaveTool;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
@@ -87,7 +84,6 @@ namespace UnityEditor.ProBuilder.Actions
             if(m_RestorePreviousMode)
                 ProBuilderEditor.selectMode = m_PreviousMode;
 
-            onEndCallback();
             return new ActionResult(ActionResult.Status.Success,"Cut Tool Ends");
         }
 
@@ -99,7 +95,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         void LeaveTool()
         {
-            ActionResult result = EndActivation(OnEnd);
+            ActionResult result = EndActivation();
             EditorUtility.ShowNotification(result.notification);
         }
     }

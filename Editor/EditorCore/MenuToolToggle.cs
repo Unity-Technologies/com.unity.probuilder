@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder
     /// </summary>
     public abstract class MenuToolToggle: MenuAction
     {
-        EditorTool m_Tool;
+        protected EditorTool m_Tool;
 
         protected MenuToolToggle()
         {
@@ -82,7 +82,7 @@ namespace UnityEditor.ProBuilder
                     }
                     else
                     {
-                        var result = isActiveTool ? StartActivation() : EndActivation();
+                        var result = isActiveTool ? EndActivation() : StartActivation();
                         EditorUtility.ShowNotification(result.notification);
                     }
                 }
@@ -125,7 +125,7 @@ namespace UnityEditor.ProBuilder
                 bool isToggled = GUILayout.Toggle( isActiveTool, menuTitle, style);
                 if (isToggled != isActiveTool)
                 {
-                    var result = isActiveTool ? StartActivation() : EndActivation();
+                    var result = isActiveTool ? EndActivation() : StartActivation();
                     EditorUtility.ShowNotification(result.notification);
                 }
 
