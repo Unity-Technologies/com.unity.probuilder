@@ -82,7 +82,7 @@ namespace UnityEditor.ProBuilder
                     }
                     else
                     {
-                        var result = isActiveTool ? StartActivation() : EndActivation();
+                        var result = isActiveTool ? EndActivation() : StartActivation();
                         EditorUtility.ShowNotification(result.notification);
                     }
                 }
@@ -125,7 +125,7 @@ namespace UnityEditor.ProBuilder
                 bool isToggled = GUILayout.Toggle( isActiveTool, menuTitle, style);
                 if (isToggled != isActiveTool)
                 {
-                    var result = isActiveTool ? StartActivation() : EndActivation();
+                    var result = isActiveTool ? EndActivation() : StartActivation();
                     EditorUtility.ShowNotification(result.notification);
                 }
 
