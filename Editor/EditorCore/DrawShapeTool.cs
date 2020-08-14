@@ -75,6 +75,7 @@ namespace UnityEditor.ProBuilder
             if (m_Shape.gameObject.hideFlags == HideFlags.HideAndDontSave)
             {
                 DestroyImmediate(m_Shape.gameObject);
+                InitNewShape();
             }
             EditorTools.EditorTools.activeToolChanged -= ActiveToolChanged;
         }
