@@ -89,7 +89,6 @@ namespace UnityEditor.ProBuilder
             shapeComp.SetRotation(Quaternion.Euler(EditorGUILayout.Vector3Field("Rotation", shapeComp.rotationQuaternion.eulerAngles)));
             if (EditorGUI.EndChangeCheck())
             {
-                Debug.Log("changed");
                 shapeComp.Rebuild();
                 ProBuilderEditor.Refresh();
             }

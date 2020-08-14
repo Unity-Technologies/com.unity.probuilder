@@ -15,6 +15,12 @@ namespace UnityEditor.ProBuilder
         BoxBoundsHandle m_BoundsHandle;
         bool m_BoundsHandleActive;
 
+        Vector2 s_StartMousePosition;
+        Vector3 s_StartPosition;
+        Quaternion s_LastRotation;
+        int s_CurrentId = -1;
+        bool s_IsMouseDown;
+
         // Don't recalculate the active bounds during an edit operation, it causes the handles to drift
         ShapeState m_ActiveShapeState;
 
@@ -28,6 +34,36 @@ namespace UnityEditor.ProBuilder
             public Bounds originalBounds;
             // rotation in world space
             public Quaternion originalRotation;
+        }
+
+        sealed class FaceData
+        {
+            public Vector3 CenterPosition;
+            public Vector3 Normal;
+            public EdgeData[] Edges;
+
+            public FaceData()
+            {
+                Edges = new EdgeData[4];
+            }
+
+            public void SetData(Vector3 centerPosition, Vector3 normal)
+            {
+                CenterPosition = centerPosition;
+                Normal = normal;
+            }
+        }
+
+        struct EdgeData
+        {
+            public Vector3 PointA;
+            public Vector3 PointB;
+
+            public EdgeData(Vector3 pointA, Vector3 pointB)
+            {
+                PointA = pointA;
+                PointB = pointB;
+            }
         }
 
         public override GUIContent toolbarIcon
@@ -94,67 +130,73 @@ namespace UnityEditor.ProBuilder
                     CopyHandlePropertiesToCollider(shape);
                 }
 
-                DoRotateHandlesGUI(shape, bounds);
+                DoRotateHandlesGUI(shape, m_ActiveShapeState.boundsHandleValue);
             }
         }
 
+        FaceData[] m_Faces = new FaceData[6];
+
+
         FaceData[] GetFaces(Vector3 extents)
         {
+            for (int i = 0; i < m_Faces.Length; i++)
+            {
+                m_Faces[i] = new FaceData();
+            }
+
             Vector3 xAxis = Vector3.right;
             Vector3 yAxis = Vector3.up;
             Vector3 zAxis = Vector3.forward;
-            var faces = new FaceData[6];
-            var edges = new EdgeData[4];
 
             // +X
             var pos = m_BoundsHandle.center - new Vector3(extents.x, 0, 0);
-            edges[0] = new EdgeData(new Vector3(-extents.x, extents.y, extents.z), new Vector3(-extents.x, -extents.y, extents.z));
-            edges[1] = new EdgeData(new Vector3(-extents.x, extents.y, extents.z), new Vector3(-extents.x, extents.y, -extents.z));
-            edges[2] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(-extents.x, -extents.y, extents.z));
-            edges[3] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(-extents.x, extents.y, -extents.z));
-            faces[0] = new FaceData(pos, xAxis, (EdgeData[])edges.Clone());
-           
+            m_Faces[0].SetData(pos, xAxis);
+            m_Faces[0].Edges[0] = new EdgeData(new Vector3(-extents.x, extents.y, extents.z), new Vector3(-extents.x, -extents.y, extents.z));
+            m_Faces[0].Edges[1] = new EdgeData(new Vector3(-extents.x, extents.y, extents.z), new Vector3(-extents.x, extents.y, -extents.z));
+            m_Faces[0].Edges[2] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(-extents.x, -extents.y, extents.z));
+            m_Faces[0].Edges[3] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(-extents.x, extents.y, -extents.z));
+
             // -X
             pos = m_BoundsHandle.center + new Vector3(extents.x, 0, 0);
-            edges[0] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(extents.x, -extents.y, extents.z));
-            edges[1] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(extents.x, extents.y, -extents.z));
-            edges[2] = new EdgeData(new Vector3(extents.x, -extents.y, -extents.z), new Vector3(extents.x, -extents.y, extents.z));
-            edges[3] = new EdgeData(new Vector3(extents.x, -extents.y, -extents.z), new Vector3(extents.x, extents.y, -extents.z));
-            faces[1] = new FaceData(pos, -xAxis, (EdgeData[])edges.Clone());
+            m_Faces[1].SetData(pos, -xAxis);
+            m_Faces[1].Edges[0] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(extents.x, -extents.y, extents.z));
+            m_Faces[1].Edges[1] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(extents.x, extents.y, -extents.z));
+            m_Faces[1].Edges[2] = new EdgeData(new Vector3(extents.x, -extents.y, -extents.z), new Vector3(extents.x, -extents.y, extents.z));
+            m_Faces[1].Edges[3] = new EdgeData(new Vector3(extents.x, -extents.y, -extents.z), new Vector3(extents.x, extents.y, -extents.z));
 
             // +Y
             pos = m_BoundsHandle.center - new Vector3(0, extents.y, 0);
-            edges[0] = new EdgeData(new Vector3(extents.x, -extents.y, extents.z), new Vector3(-extents.x, -extents.y, extents.z));
-            edges[1] = new EdgeData(new Vector3(extents.x, -extents.y, extents.z), new Vector3(extents.x, -extents.y, -extents.z));
-            edges[2] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(-extents.x, -extents.y, extents.z));
-            edges[3] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(extents.x, -extents.y, -extents.z));
-            faces[2] = new FaceData(pos, yAxis, (EdgeData[])edges.Clone());
+            m_Faces[2].SetData(pos, yAxis);
+            m_Faces[2].Edges[0] = new EdgeData(new Vector3(extents.x, -extents.y, extents.z), new Vector3(-extents.x, -extents.y, extents.z));
+            m_Faces[2].Edges[1] = new EdgeData(new Vector3(extents.x, -extents.y, extents.z), new Vector3(extents.x, -extents.y, -extents.z));
+            m_Faces[2].Edges[2] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(-extents.x, -extents.y, extents.z));
+            m_Faces[2].Edges[3] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(extents.x, -extents.y, -extents.z));
 
             // -Y
             pos = m_BoundsHandle.center + new Vector3(0, extents.y, 0);
-            edges[0] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(-extents.x, extents.y, extents.z));
-            edges[1] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(extents.x, extents.y, -extents.z));
-            edges[2] = new EdgeData(new Vector3(-extents.x, extents.y, -extents.z), new Vector3(-extents.x, extents.y, extents.z));
-            edges[3] = new EdgeData(new Vector3(-extents.x, extents.y, -extents.z), new Vector3(extents.x, extents.y, -extents.z));
-            faces[3] = new FaceData(pos, -yAxis, (EdgeData[])edges.Clone());
+            m_Faces[3].SetData(pos, -yAxis);
+            m_Faces[3].Edges[0] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(-extents.x, extents.y, extents.z));
+            m_Faces[3].Edges[1] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(extents.x, extents.y, -extents.z));
+            m_Faces[3].Edges[2] = new EdgeData(new Vector3(-extents.x, extents.y, -extents.z), new Vector3(-extents.x, extents.y, extents.z));
+            m_Faces[3].Edges[3] = new EdgeData(new Vector3(-extents.x, extents.y, -extents.z), new Vector3(extents.x, extents.y, -extents.z));
 
             // +Z
             pos = m_BoundsHandle.center - new Vector3(0, 0, extents.z);
-            edges[0] = new EdgeData(new Vector3(extents.x, extents.y, -extents.z), new Vector3(-extents.x, extents.y, -extents.z));
-            edges[1] = new EdgeData(new Vector3(extents.x, extents.y, -extents.z), new Vector3(extents.x, -extents.y, -extents.z));
-            edges[2] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(-extents.x, extents.y, -extents.z));
-            edges[3] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(extents.x, -extents.y, -extents.z));
-            faces[4] = new FaceData(pos, zAxis, (EdgeData[])edges.Clone());
+            m_Faces[4].SetData(pos, zAxis);
+            m_Faces[4].Edges[0] = new EdgeData(new Vector3(extents.x, extents.y, -extents.z), new Vector3(-extents.x, extents.y, -extents.z));
+            m_Faces[4].Edges[1] = new EdgeData(new Vector3(extents.x, extents.y, -extents.z), new Vector3(extents.x, -extents.y, -extents.z));
+            m_Faces[4].Edges[2] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(-extents.x, extents.y, -extents.z));
+            m_Faces[4].Edges[3] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(extents.x, -extents.y, -extents.z));
 
             // -Z
             pos = m_BoundsHandle.center + new Vector3(0, 0, extents.z);
-            edges[0] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(-extents.x, extents.y, extents.z));
-            edges[1] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(extents.x, -extents.y, extents.z));
-            edges[2] = new EdgeData(new Vector3(-extents.x, -extents.y, extents.z), new Vector3(-extents.x, extents.y, extents.z));
-            edges[3] = new EdgeData(new Vector3(-extents.x, -extents.y, extents.z), new Vector3(extents.x, -extents.y, extents.z));
-            faces[5] = new FaceData(pos, -zAxis, (EdgeData[])edges.Clone());
+            m_Faces[5].SetData(pos, -zAxis);
+            m_Faces[5].Edges[0] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(-extents.x, extents.y, extents.z));
+            m_Faces[5].Edges[1] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(extents.x, -extents.y, extents.z));
+            m_Faces[5].Edges[2] = new EdgeData(new Vector3(-extents.x, -extents.y, extents.z), new Vector3(-extents.x, extents.y, extents.z));
+            m_Faces[5].Edges[3] = new EdgeData(new Vector3(-extents.x, -extents.y, extents.z), new Vector3(extents.x, -extents.y, extents.z));
 
-            return faces;
+            return m_Faces;
         }
 
         void DoRotateHandlesGUI(ShapeComponent shape, Bounds bounds)
@@ -194,11 +236,7 @@ namespace UnityEditor.ProBuilder
             return cosV < 0;
         }
 
-        Vector2 s_StartMousePosition;
-        Vector3 s_StartPosition;
-        Quaternion s_LastRotation;
-        int s_CurrentId = -1;
-        bool s_IsMouseDown;
+        
 
         Quaternion RotateBoundsHandle(Vector3 pointA, Vector3 pointB, Vector3 axis)
         {
@@ -231,7 +269,6 @@ namespace UnityEditor.ProBuilder
                 case EventType.MouseMove:
                     if (HandleUtility.nearestControl == controlID)
                         HandleUtility.Repaint();
-           
                     break;
                 case EventType.Layout:
                     HandleUtility.AddControl(controlID, HandleUtility.DistanceToLine(pointA, pointB));
@@ -343,32 +380,6 @@ namespace UnityEditor.ProBuilder
             shape.Rebuild(bounds, rotation);
             shape.mesh.SetPivot(shape.transform.position);
             ProBuilderEditor.Refresh();
-        }
-
-        struct FaceData
-        {
-            public FaceData(Vector3 centerPosition, Vector3 normal, EdgeData[] edges)
-            {
-                CenterPosition = centerPosition;
-                Normal = normal;
-                Edges = edges;
-            }
-
-            public Vector3 CenterPosition { get; private set; }
-            public Vector3 Normal { get; private set; }
-            public EdgeData[] Edges { get; private set; }
-        }
-
-        struct EdgeData
-        {
-            public EdgeData(Vector3 pointA, Vector3 pointB)
-            {
-                PointA = pointA;
-                PointB = pointB;
-            }
-
-            public Vector3 PointA { get; private set; }
-            public Vector3 PointB { get; private set; }
         }
     }
 }
