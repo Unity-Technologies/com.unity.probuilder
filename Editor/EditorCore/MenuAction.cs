@@ -284,7 +284,7 @@ namespace UnityEditor.ProBuilder
         /// <param name="optionsRect"></param>
         /// <param name="layoutOptions"></param>
         /// <returns></returns>
-        public virtual bool DoButton(bool isHorizontal, bool showOptions, ref Rect optionsRect, params GUILayoutOption[] layoutOptions)
+        internal virtual bool DoButton(bool isHorizontal, bool showOptions, ref Rect optionsRect, params GUILayoutOption[] layoutOptions)
         {
             bool wasEnabled = GUI.enabled;
             bool buttonEnabled = (menuActionState & MenuActionState.Enabled) == MenuActionState.Enabled;
