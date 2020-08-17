@@ -37,20 +37,20 @@ namespace UnityEditor.ProBuilder
 
         GUIContent m_ShapeTitle;
 
-        static TypeCache.TypeCollection m_AvailableShapeTypes;
+        static TypeCache.TypeCollection s_AvailableShapeTypes;
         string[] m_ShapeTypesPopupContent;
 
-        static Pref<int> m_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
+        static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
 
-        static Vector3 m_Size;
+        static Vector3 s_Size;
 
         static Type activeShapeType {
-            get { return m_ActiveShapeIndex < 0 ? typeof(Cube) : m_AvailableShapeTypes[m_ActiveShapeIndex]; }
+            get { return s_ActiveShapeIndex < 0 ? typeof(Cube) : s_AvailableShapeTypes[s_ActiveShapeIndex]; }
         }
 
         static DrawShapeTool()
         {
-            m_AvailableShapeTypes = TypeCache.GetTypesDerivedFrom<Shape>();
+            s_AvailableShapeTypes = TypeCache.GetTypesDerivedFrom<Shape>();
         }
 
         void OnEnable()
@@ -58,12 +58,12 @@ namespace UnityEditor.ProBuilder
             InitNewShape();
             EditorTools.EditorTools.activeToolChanged += ActiveToolChanged;
             m_ShapeTitle = new GUIContent("Draw Shape");
-            m_ShapeTypesPopupContent = m_AvailableShapeTypes.Select(x => x.Name).ToArray();
+            m_ShapeTypesPopupContent = s_AvailableShapeTypes.Select(x => x.Name).ToArray();
         }
 
         void InitNewShape()
         {
-            m_Shape = new GameObject().AddComponent<ShapeComponent>();
+            m_Shape = new GameObject("Shape", typeof(ShapeComponent)).GetComponent<ShapeComponent>();
             m_Shape.gameObject.hideFlags = HideFlags.HideAndDontSave;
             m_Shape.hideFlags = HideFlags.None;
             m_Shape.SetShape(CreateShape(activeShapeType));
@@ -110,10 +110,9 @@ namespace UnityEditor.ProBuilder
             if (!typeof(Shape).IsAssignableFrom(type))
                 throw new ArgumentException("type must inherit UnityEngine.ProBuilder.Shape", "type");
 
-            m_ActiveShapeIndex.value = m_AvailableShapeTypes.IndexOf(type);
-            EditorPrefs.SetInt("ShapeBuilder.ActiveShapeIndex", m_ActiveShapeIndex);
+            s_ActiveShapeIndex.value = s_AvailableShapeTypes.IndexOf(type);
 
-            if (m_ActiveShapeIndex < 0)
+            if (s_ActiveShapeIndex < 0)
                 throw new Exception("type must inherit UnityEngine.ProBuilder.Shape");
 
             if (m_Shape != null)
@@ -287,14 +286,14 @@ namespace UnityEditor.ProBuilder
 
         public static ProBuilderMesh CreateLastShape(Vector3 defaultSize)
         {
-            if (m_Size == Vector3.zero)
-                m_Size = defaultSize;
+            if (s_Size == Vector3.zero)
+                s_Size = defaultSize;
             var type = activeShapeType;
             var shape = ShapeGenerator.CreateShape(type).GetComponent<ShapeComponent>();
             ShapeParameters.SetToLastParams(ref shape.shape);
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape");
 
-            Bounds bounds = new Bounds(Vector3.zero, m_Size);
+            Bounds bounds = new Bounds(Vector3.zero, s_Size);
             shape.Rebuild(bounds, Quaternion.identity);
             shape.mesh.SetPivot(PivotLocation.Center);
             ProBuilderEditor.Refresh(false);
@@ -334,14 +333,14 @@ namespace UnityEditor.ProBuilder
 
         void RecalculateBounds()
         {
-            var fo = HandleUtility.PointOnLineParameter(m_OppositeCorner, m_Origin, m_Forward);
-            var ri = HandleUtility.PointOnLineParameter(m_OppositeCorner, m_Origin, m_Right);
+            var forward = HandleUtility.PointOnLineParameter(m_OppositeCorner, m_Origin, m_Forward);
+            var right = HandleUtility.PointOnLineParameter(m_OppositeCorner, m_Origin, m_Right);
 
             var direction = m_HeightCorner - m_OppositeCorner;
             var height = direction.magnitude * Mathf.Sign(Vector3.Dot(m_Plane.normal, direction));
 
             m_Bounds.center = ((m_OppositeCorner + m_Origin) * .5f) + m_Plane.normal * (height * .5f);
-            m_Bounds.size = new Vector3(fo, height, ri);
+            m_Bounds.size = new Vector3(forward, height, right);
             m_Rotation = Quaternion.identity;
         }
 
@@ -370,7 +369,7 @@ namespace UnityEditor.ProBuilder
 
             // Use differents arrows when dragging (resize etc)
             EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.ArrowPlus);
-            EditorGUILayout.HelpBox("Click to create the shape. Hold and drag to create the shape while controlling its size.", MessageType.Info);
+            EditorGUILayout.HelpBox(L10n.Tr("Click to create the shape. Hold and drag to create the shape while controlling its size."), MessageType.Info);
         }
     }
 }

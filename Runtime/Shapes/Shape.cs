@@ -1,8 +1,3 @@
-#if UNITY_EDITOR
-using System.Reflection;
-using UnityEditor;
-#endif
-
 namespace UnityEngine.ProBuilder
 {
     [System.Serializable]

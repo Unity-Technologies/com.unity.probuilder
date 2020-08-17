@@ -78,14 +78,12 @@ namespace UnityEditor.ProBuilder
             {
                 UndoUtility.RegisterCompleteObjectUndo(shapeComp, "Change Shape");
                 var type = s_AvailableShapeTypes[s_ActiveShapeIndex];
-             //   SetActiveShapeType(type);
                 shapeComp.SetShape(CreateShape(type));
                 ProBuilderEditor.Refresh();
             }
 
             EditorGUI.BeginChangeCheck();
             shapeComp.size = EditorGUILayout.Vector3Field("Size", shapeComp.size);
-            //m_Size = shapeComp.size;
             shapeComp.SetRotation(Quaternion.Euler(EditorGUILayout.Vector3Field("Rotation", shapeComp.rotationQuaternion.eulerAngles)));
             if (EditorGUI.EndChangeCheck())
             {

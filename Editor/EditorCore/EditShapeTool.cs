@@ -71,7 +71,7 @@ namespace UnityEditor.ProBuilder
             get { return PrimitiveBoundsHandle.editModeButton; }
         }
 
-        bool IsEditing(ShapeComponent shape)
+        bool IsEditing()
         {
             return m_BoundsHandleActive;
         }
@@ -97,7 +97,7 @@ namespace UnityEditor.ProBuilder
 
                     EditorGUI.BeginChangeCheck();
 
-                    if(IsEditing(shape))
+                    if(IsEditing(a))
                         DoShapeGUI(shape, m_ActiveShapeState.localToWorldMatrix, m_ActiveShapeState.originalBounds);
                     else
                         DoShapeGUI(shape, shape.transform.localToWorldMatrix, shape.meshFilterBounds);
@@ -110,7 +110,7 @@ namespace UnityEditor.ProBuilder
 
         void DoShapeGUI(ShapeComponent shape, Matrix4x4 localToWorldMatrix, Bounds bounds)
         {
-            var matrix = IsEditing(shape)
+            var matrix = IsEditing()
                 ? m_ActiveShapeState.positionAndRotationMatrix
                 : Matrix4x4.TRS(shape.transform.position, shape.transform.rotation, Vector3.one);
 
@@ -203,6 +203,7 @@ namespace UnityEditor.ProBuilder
         {
             var matrix = shape.gameObject.transform.localToWorldMatrix;
             var extents = bounds.extents;
+            bool hasRotated = false;
 
             using (new Handles.DrawingScope(matrix))
             {
@@ -215,10 +216,12 @@ namespace UnityEditor.ProBuilder
                         {
                             var rot = RotateBoundsHandle(edge.PointA, edge.PointB, edge.PointA - edge.PointB);
                             shape.Rotate(rot);
-                            ProBuilderEditor.Refresh();
+                            hasRotated = hasRotated || rot != Quaternion.identity;
                         }
                     }
                 }
+                if (hasRotated)
+                    ProBuilderEditor.Refresh();
             }
         }
 
@@ -344,7 +347,7 @@ namespace UnityEditor.ProBuilder
         {
             // when editing a shape, we don't bother doing the conversion from handle space bounds to model for the
             // active handle
-            if (IsEditing(shape))
+            if (IsEditing())
             {
                 m_BoundsHandle.center = m_ActiveShapeState.boundsHandleValue.center;
                 m_BoundsHandle.size = m_ActiveShapeState.boundsHandleValue.size;
