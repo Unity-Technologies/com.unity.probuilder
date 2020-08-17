@@ -76,19 +76,16 @@ namespace UnityEditor.ProBuilder
         const float k_HandleSize = .05f;
 
         // Line renderer for the current cut path
-        Material m_LineMaterial;
-        Mesh m_LineMesh = null;
+        PBLineRenderer m_PBLine;
         static readonly Color k_LineMaterialBaseColor = new Color(0f, 136f / 255f, 1f, 1f);
         static readonly Color k_LineMaterialHighlightColor = new Color(0f, 200f / 255f, 170f / 200f, 1f);
 
         // Line renderer between the last point of the cut and the first one to close the shape if the option is activated
-        Material m_ConnectionsLineMaterial;
-        Mesh m_ConnectionsLineMesh = null;
+        PBLineRenderer m_ConnectionsPBLine;
         static readonly Color k_ConnectionsLineMaterialBaseColor = new Color(0f, 200f / 255f, 170f / 200f, 1f);
 
         // Line renderer to provide a preview to the user of the next cut section
-        Material m_DrawingLineMaterial;
-        Mesh m_DrawingLineMesh = null;
+        PBLineRenderer m_DrawingPBLine;
         static readonly Color k_DrawingLineMaterialBaseColor = new Color(0.01f, .9f, 0.3f, 1f);
 
         Color m_CurrentHandleColor = k_HandleColor;
@@ -175,6 +172,7 @@ namespace UnityEditor.ProBuilder
 
             ExecuteCut();
             Clear();
+            ClearLineRenderers();
         }
 
         /// <summary>
@@ -184,23 +182,9 @@ namespace UnityEditor.ProBuilder
         {
             if(m_Mesh != null)
             {
-                if(m_LineMaterial != null)
-                    m_LineMaterial.SetFloat("_EditorTime", (float) EditorApplication.timeSinceStartup);
+                if(m_PBLine != null)
+                    m_PBLine.UpdateLineRenderer();
             }
-        }
-
-        /// <summary>
-        /// Instantiate Line Materials, all are based on the same base Material with different colors
-        /// </summary>
-        /// <param name="baseColor">base color to apply to the line</param>
-        /// <param name="highlightColor">highlight color to apply to the line</param>
-        /// <returns></returns>
-        static Material CreateLineMaterial(Color baseColor, Color highlightColor)
-        {
-            Material mat = new Material(Shader.Find("Hidden/ProBuilder/ScrollHighlight"));
-            mat.SetColor("_Base", baseColor);
-            mat.SetColor("_Highlight", highlightColor);
-            return mat;
         }
 
         /// <summary>
@@ -208,15 +192,10 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         void InitLineRenderers()
         {
-            m_LineMesh = new Mesh();
-            m_LineMaterial = CreateLineMaterial(k_LineMaterialBaseColor, k_LineMaterialHighlightColor);
-
-            m_ConnectionsLineMesh = new Mesh();
-            m_ConnectionsLineMaterial =
-                CreateLineMaterial(k_ConnectionsLineMaterialBaseColor, k_ConnectionsLineMaterialBaseColor);
-
-            m_DrawingLineMesh = new Mesh();
-            m_DrawingLineMaterial = CreateLineMaterial(k_DrawingLineMaterialBaseColor, k_DrawingLineMaterialBaseColor);
+            Transform trf = m_Mesh.transform;
+            m_PBLine = new PBLineRenderer(trf, k_LineMaterialBaseColor, k_LineMaterialHighlightColor);
+            m_ConnectionsPBLine = new PBLineRenderer(trf, true, k_ConnectionsLineMaterialBaseColor);
+            m_DrawingPBLine = new PBLineRenderer(trf, true, k_DrawingLineMaterialBaseColor);
         }
 
         /// <summary>
@@ -224,20 +203,9 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         void ClearLineRenderers()
         {
-            if(m_LineMesh)
-                DestroyImmediate(m_LineMesh);
-            if(m_LineMaterial)
-                DestroyImmediate(m_LineMaterial);
-
-            if(m_ConnectionsLineMesh)
-                DestroyImmediate(m_ConnectionsLineMesh);
-            if(m_ConnectionsLineMaterial)
-                DestroyImmediate(m_ConnectionsLineMaterial);
-
-            if(m_DrawingLineMesh != null)
-                DestroyImmediate(m_DrawingLineMesh);
-            if(m_DrawingLineMaterial != null)
-                DestroyImmediate(m_DrawingLineMaterial);
+            m_PBLine.Dispose();
+            m_ConnectionsPBLine.Dispose();
+            m_DrawingPBLine.Dispose();
         }
 
         /// <summary>
@@ -259,9 +227,6 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         private void UndoRedoPerformed()
         {
-            // ClearLineRenderers();
-            // InitLineRenderers();
-
             if(m_CutPath.Count == 0)
                 m_TargetFace = null;
 
@@ -545,6 +510,9 @@ namespace UnityEditor.ProBuilder
         internal void UpdateMeshConnections()
         {
             m_MeshConnections.Clear();
+            if(m_CutPath.Count < 2)
+                return;
+
             Vertex[] vertices = m_Mesh.GetVertices();
             if(!IsALoop)
             {
@@ -624,8 +592,22 @@ namespace UnityEditor.ProBuilder
                             }
                         }
                     }
+
                     if(pathIndex >= 0)
-                        m_MeshConnections.Add(new SimpleTuple<int, int>(pathIndex, vertexIndex));
+                    {
+                        if(m_MeshConnections.Exists(tup => tup.item1 == pathIndex))
+                        {
+                            var tuple = m_MeshConnections.Find(tup => tup.item1 == pathIndex);
+                            if(Vector3.Distance(m_CutPath[tuple.item1].position, vertices[tuple.item2].position)
+                               > Vector3.Distance(m_CutPath[pathIndex].position, vertices[vertexIndex].position))
+                            {
+                                m_MeshConnections.Remove(tuple);
+                                m_MeshConnections.Add(new SimpleTuple<int, int>(pathIndex, vertexIndex));
+                            }
+                        }
+                        else
+                            m_MeshConnections.Add(new SimpleTuple<int, int>(pathIndex, vertexIndex));
+                    }
                 }
 
                 m_MeshConnections.Sort((a,b) =>
@@ -838,6 +820,7 @@ namespace UnityEditor.ProBuilder
 
             List<List<int>> closureCandidates = new List<List<int>>();
 
+            //Go through the cut in reverse direction
             int index;
             int finalIndex = IsALoop ?(startIndex - cutIndexes.Count) : 0;
             bool connected = false;
@@ -854,9 +837,11 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
+            //If we find a valid candidate for the connection, add it to the list
             if(connected)
                 closureCandidates.Add(candidate);
 
+            //Go through the cut in forward direction
             finalIndex = IsALoop ? (startIndex + cutIndexes.Count) : cutIndexes.Count;
             connected = false;
             candidate = new List<int>();
@@ -872,9 +857,11 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
+            //If we find a valid candidate for the connection, add it to the list
             if(connected)
                 closureCandidates.Add(candidate);
 
+            //Go through the different candidate and keep the best one
             facesToDelete = new List<Face>();
             Face bestFace = null;
             float bestArea = 0f;
@@ -1259,26 +1246,12 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         void DoExistingLinesGUI()
         {
-            if(m_LineMaterial != null)
-            {
-                m_LineMaterial.SetPass(0);
-                Graphics.DrawMeshNow(m_LineMesh, m_Mesh.transform.localToWorldMatrix, 0);
-            }
-
-            if(m_ConnectionsLineMesh != null)
-            {
-                m_ConnectionsLineMaterial.SetPass(0);
-                Graphics.DrawMeshNow(m_ConnectionsLineMesh, m_Mesh.transform.localToWorldMatrix, 0);
-            }
-
-            if(m_DrawingLineMaterial != null)
-            {
-                if(DrawGuideLine())
-                {
-                    m_DrawingLineMaterial.SetPass(0);
-                    Graphics.DrawMeshNow(m_DrawingLineMesh, m_Mesh.transform.localToWorldMatrix, 0);
-                }
-            }
+            if(m_PBLine != null)
+                m_PBLine.DrawLineGUI();
+            if(m_ConnectionsPBLine != null)
+                m_ConnectionsPBLine.DrawLineGUI();
+            if(m_DrawingPBLine != null && DrawGuideLine())
+                m_DrawingPBLine.DrawLineGUI();
         }
 
         /// <summary>
@@ -1327,7 +1300,7 @@ namespace UnityEditor.ProBuilder
             if (m_Mesh == null)
                 return;
 
-            DrawPolyLine(m_CutPath.Select(tup => tup.position).ToList());
+            m_PBLine.SetPositions(m_CutPath.Select(tup => tup.position).ToList());
             UpdateMeshConnections();
 
             // While the vertex count may not change, the triangle winding might. So unfortunately we can't take
@@ -1336,102 +1309,24 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Draw the line corresponding to the cut and the closure if needed
-        /// </summary>
-        /// <param name="points">Positions of the cut points</param>
-        void DrawPolyLine(List<Vector3> points)
-        {
-            if(m_LineMesh)
-                m_LineMesh.Clear();
-
-            if (points.Count < 2)
-                return;
-
-            int vc = points.Count;
-
-            Vector3[] ver = new Vector3[vc];
-            Vector2[] uvs = new Vector2[vc];
-            int[] indexes = new int[vc];
-            int cnt = points.Count;
-            float distance = 0f;
-
-            for (int i = 0; i < vc; i++)
-            {
-                Vector3 a = points[i % cnt];
-                Vector3 b = points[i < 1 ? 0 : i - 1];
-
-                float d = Vector3.Distance(a, b);
-                distance += d;
-
-                ver[i] = points[i % cnt];
-                uvs[i] = new Vector2(distance, 1f);
-                indexes[i] = i;
-            }
-
-            m_LineMesh.name = "Cut Guide";
-            m_LineMesh.vertices = ver;
-            m_LineMesh.uv = uvs;
-            m_LineMesh.SetIndices(indexes, MeshTopology.LineStrip, 0);
-            m_LineMaterial.SetFloat("_LineDistance", distance);
-        }
-
-        void UpdateDashedLine(Mesh lineMesh, Vector3 fromPoint, Vector3 toPoint)
-        {
-            float lineLength = 0.1f, spaceLength = 0.05f;
-            List<Vector3> ver = lineMesh.vertices.ToList();
-
-            List<int> indexes = new List<int>();
-            lineMesh.GetIndices(indexes,0);
-
-            float d = Vector3.Distance(fromPoint, toPoint);
-            Vector3 dir = ( toPoint - fromPoint ).normalized;
-            int sections = (int)(d / (lineLength + spaceLength));
-
-            int offset = ver.Count;
-            for(int i = 0; i < sections; i++)
-            {
-                ver.Add(fromPoint + i * (lineLength + spaceLength) * dir);
-                ver.Add(fromPoint + (i * (lineLength + spaceLength) + lineLength) * dir);
-
-                indexes.Add(2*i + offset);
-                indexes.Add(2*i+1 + offset);
-            }
-
-            ver.Add(fromPoint + sections * (lineLength + spaceLength) * dir);
-            indexes.Add(2 * sections + offset);
-
-
-            if(d - (sections * ( lineLength + spaceLength )) > lineLength)
-                ver.Add(fromPoint + ( sections * ( lineLength + spaceLength ) + lineLength ) * dir);
-            else
-                ver.Add(toPoint);
-            indexes.Add(2 * sections + 1 + offset);
-
-            lineMesh.name = "DashedLine";
-            lineMesh.vertices = ver.ToArray();
-            lineMesh.SetIndices(indexes, MeshTopology.Lines, 0);
-        }
-
-
-        /// <summary>
         /// Draw a helper line between the last point of the cut and the current position of the mouse cursor
         /// </summary>
         /// <returns>true if the line can be traced (the position of the cursor must be valid and the cut have one point minimum)</returns>
         bool DrawGuideLine()
         {
-            if(m_DrawingLineMesh)
-                m_DrawingLineMesh.Clear();
-
             if(m_CurrentPosition.Equals(Vector3.positiveInfinity)
                || m_ModifyingPoint)
+            {
+                m_DrawingPBLine.Clear();
                 return false;
+            }
 
             if(m_CutPath.Count > 0)
             {
-                Vector3 lastPosition = m_CutPath[m_CutPath.Count - 1].position;
-                Vector3 currentPosition = m_CurrentPosition;
-
-                UpdateDashedLine(m_DrawingLineMesh, lastPosition, currentPosition);
+                List<Vector3> pos = new List<Vector3>();
+                pos.Add(m_CutPath[m_CutPath.Count - 1].position);
+                pos.Add(m_CurrentPosition);
+                m_DrawingPBLine.SetPositions(pos);
                 return true;
             }
             return false;
@@ -1442,17 +1337,19 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         void UpdateMeshConnectionsLines()
         {
-            if(m_ConnectionsLineMesh)
-                m_ConnectionsLineMesh.Clear();
-
             if(m_MeshConnections.Count > 0)
             {
                 Vertex[] vertices = m_Mesh.GetVertices();
+                List<Vector3> pos = new List<Vector3>();
                 foreach(var connection in m_MeshConnections)
                 {
-                    UpdateDashedLine(m_ConnectionsLineMesh, m_CutPath[connection.item1].position, vertices[connection.item2].position);
+                    pos.Add(m_CutPath[connection.item1].position);
+                    pos.Add(vertices[connection.item2].position);
                 }
+                m_ConnectionsPBLine.SetPositions(pos);
             }
+            else
+                m_ConnectionsPBLine.Clear();
         }
 
     }
