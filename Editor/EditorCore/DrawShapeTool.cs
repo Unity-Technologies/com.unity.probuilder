@@ -7,6 +7,12 @@ using UnityEngine.ProBuilder.MeshOperations;
 using Math = UnityEngine.ProBuilder.Math;
 using UObject = UnityEngine.Object;
 
+//#if UNITY_2020_2_OR_NEWER
+//using ToolManager = UnityEditor.EditorTools.ToolManager;
+//#else
+//using ToolManager = UnityEditor.EditorTools.EditorTools;
+//#endif
+
 namespace UnityEditor.ProBuilder
 {
     class DrawShapeTool : EditorTool
@@ -133,11 +139,8 @@ namespace UnityEditor.ProBuilder
             if (m_Shape.shape is Sphere && System.Math.Abs(m_Bounds.size.y) < 0.01f)
                 return;
 
-            bool init = false;
             if (!m_Shape.isInit)
             {
-                init = true;
-                m_Shape.isInit = true;
                 ShapeParameters.SetToLastParams(ref m_Shape.shape);
                 m_Shape.gameObject.hideFlags = HideFlags.None;
                 UndoUtility.RegisterCreatedObjectUndo(m_Shape.gameObject, "Draw Shape");
@@ -147,8 +150,11 @@ namespace UnityEditor.ProBuilder
             m_Shape.mesh.SetPivot(PivotLocation.Center);
             ProBuilderEditor.Refresh(false);
 
-            if (init)
+            if (!m_Shape.isInit)
+            {
                 EditorUtility.InitObject(m_Shape.mesh, false);
+                m_Shape.isInit = true;
+            }
         }
 
         void FinishShape()
