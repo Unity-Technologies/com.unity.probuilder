@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using UnityEditor.EditorTools;
+using UnityEditor.Graphs;
 using UnityEditor.ProBuilder.UI;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -21,26 +22,19 @@ namespace UnityEditor.ProBuilder
 {
     public class PolyShapeTool : EditorTool
     {
-        static Color k_HandleColor = new Color(.8f, .8f, .8f, 1f);
-        static Color k_HandleColorGreen = new Color(.01f, .9f, .3f, 1f);
-        static Color k_HandleSelectedColor = new Color(.01f, .8f, .98f, 1f);
+        static readonly Color k_HandleColor = new Color(.8f, .8f, .8f, 1f);
+        static readonly Color k_HandleColorGreen = new Color(.01f, .9f, .3f, 1f);
+        static readonly Color k_HandleSelectedColor = new Color(.01f, .8f, .98f, 1f);
 
-        static Color k_LineMaterialBaseColor = new Color(0f, 136f / 255f, 1f, 1f);
-        static Color k_LineMaterialHighlightColor = new Color(0f, 200f / 255f, 170f / 200f, 1f);
+        static readonly Color k_LineColor = new Color(0f, 55f / 255f, 1f, 1f);
+        static readonly Color k_InvalidLineColor = Color.red;
+        static readonly Color k_DrawingLineColor = new Color(0.01f, .9f, 0.3f, 1f);
 
-        static Color k_InvalidLineMaterialColor = Color.red;
-
-        // Line renderer to provide a preview to the user of the next cut section
-        Material m_DrawingLineMaterial;
-        Mesh m_DrawingLineMesh = null;
-        static readonly Color k_DrawingLineMaterialBaseColor = new Color(0.01f, .9f, 0.3f, 1f);
+        Color m_CurrentLineColor = k_LineColor;
 
         const float k_HandleSize = .05f;
 
         GUIContent m_OverlayTitle;
-
-        Material m_LineMaterial;
-        Mesh m_LineMesh = null;
 
         Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
 
@@ -88,7 +82,6 @@ namespace UnityEditor.ProBuilder
             set
             {
                 m_Polygon = value;
-                DrawPolyLine(m_Polygon.m_Points);
 
                 PolyShape.PolyEditMode mode = m_Polygon.polyEditMode;
                 m_Polygon.polyEditMode = PolyShape.PolyEditMode.None;
@@ -122,18 +115,12 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
             Undo.undoRedoPerformed += UndoRedoPerformed;
-            EditorApplication.update += Update;
-
-            InitLineRenderers();
         }
 
         void OnDisable()
         {
-            ClearLineRenderers();
-
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
-            EditorApplication.update -= Update;
             Undo.undoRedoPerformed -= UndoRedoPerformed;
         }
 
@@ -143,43 +130,6 @@ namespace UnityEditor.ProBuilder
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
             else
                 DestroyImmediate(this);
-        }
-
-        /// <summary>
-        /// Create line renderers for the current cut
-        /// </summary>
-        void InitLineRenderers()
-        {
-            m_LineMesh = new Mesh();
-            m_LineMaterial = CreateLineMaterial(k_LineMaterialBaseColor, k_LineMaterialHighlightColor);
-
-            m_DrawingLineMesh = new Mesh();
-            m_DrawingLineMaterial = CreateLineMaterial(k_DrawingLineMaterialBaseColor, k_DrawingLineMaterialBaseColor);
-        }
-
-        /// <summary>
-        /// Clear all line renderers
-        /// </summary>
-        void ClearLineRenderers()
-        {
-            if(m_LineMesh)
-                DestroyImmediate(m_LineMesh);
-            if(m_LineMaterial)
-                DestroyImmediate(m_LineMaterial);
-
-            if(m_DrawingLineMesh)
-                DestroyImmediate(m_DrawingLineMesh);
-            if(m_DrawingLineMaterial)
-                DestroyImmediate(m_DrawingLineMaterial);
-        }
-
-        /// <summary>
-        /// Update method that handles the update of line renderers
-        /// </summary>
-        void Update()
-        {
-            if (polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None && m_LineMaterial != null)
-                m_LineMaterial.SetFloat("_EditorTime", (float)EditorApplication.timeSinceStartup);
         }
 
         /// <summary>
@@ -245,12 +195,15 @@ namespace UnityEditor.ProBuilder
             else
                 m_MouseCursor = MouseCursor.Arrow;
 
+            if(evt.type == EventType.MouseMove)
+                SceneView.RepaintAll();
+
             DoPointPlacement();
             DoExistingPointsGUI();
-            DoExistingLinesGUI();
 
             if(evt.type == EventType.Repaint)
             {
+                DoExistingLinesGUI();
                 Rect sceneViewRect = window.position;
                 sceneViewRect.x = 0;
                 sceneViewRect.y = 0;
@@ -369,30 +322,23 @@ namespace UnityEditor.ProBuilder
             if (polygon == null)
                 return;
 
-            DrawPolyLine(polygon.m_Points);
-
             if (polygon.polyEditMode != PolyShape.PolyEditMode.Path)
             {
                 var result = polygon.CreateShapeFromPolygon();
                 if(result.status == ActionResult.Status.Failure)
                 {
-                    m_LineMaterial.SetColor("_Highlight", k_InvalidLineMaterialColor);
-                    m_LineMaterial.SetColor("_Base", k_InvalidLineMaterialColor);
-
+                    m_CurrentLineColor = k_InvalidLineColor;
                     // hide the handle to change the height of the invalid mesh
                     m_DrawHeightHandles = false;
 
                     // skip height edit mode if the mesh is invalid
                     if(polygon.polyEditMode == PolyShape.PolyEditMode.Height)
-                    {
                         SetPolyEditMode(PolyShape.PolyEditMode.Edit);
-                    }
                 }
                 else
                 {
                     // make sure everything set to normal if polygon creation succeeded
-                    m_LineMaterial.SetColor("_Highlight", k_LineMaterialHighlightColor);
-                    m_LineMaterial.SetColor("_Base", k_LineMaterialBaseColor);
+                    m_CurrentLineColor = k_LineColor;
                     m_DrawHeightHandles = true;
                 }
             }
@@ -741,125 +687,47 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         void DoExistingLinesGUI()
         {
-            if(Event.current.type == EventType.Repaint)
-            {
-                if(m_LineMaterial != null)
-                {
-                    m_LineMaterial.SetPass(0);
-                    Graphics.DrawMeshNow(m_LineMesh, polygon.transform.localToWorldMatrix, 0);
-                }
-
-                if(m_DrawingLineMaterial != null && polygon.polyEditMode == PolyShape.PolyEditMode.Path)
-                {
-                    if(DrawGuideLine())
-                    {
-                        m_DrawingLineMaterial.SetPass(0);
-                        Graphics.DrawMeshNow(m_DrawingLineMesh, polygon.transform.localToWorldMatrix, 0);
-                    }
-                }
-            }
+            DrawPolyLine();
+            DrawGuideLine();
         }
 
-        void DrawPolyLine(List<Vector3> points)
+        void DrawPolyLine()
         {
-            if (points.Count < 2)
+            if (m_Polygon.m_Points.Count < 2)
                 return;
 
-            int vc = polygon.polyEditMode == PolyShape.PolyEditMode.Path ? points.Count : points.Count + 1;
+            int count = m_Polygon.m_Points.Count;
+            int vc = polygon.polyEditMode == PolyShape.PolyEditMode.Path ? count : count + 1;
+            Vector3[] verticesPositions = new Vector3[vc];
 
-            Vector3[] ver = new Vector3[vc];
-            Vector2[] uvs = new Vector2[vc];
-            int[] indexes = new int[vc];
-            int cnt = points.Count;
-            float distance = 0f;
-
-            for (int i = 0; i < vc; i++)
+            for(int i = 0; i < vc; i++)
             {
-                Vector3 a = points[i % cnt];
-                Vector3 b = points[i < 1 ? 0 : i - 1];
-
-                float d = Vector3.Distance(a, b);
-                distance += d;
-
-                ver[i] = points[i % cnt];
-                uvs[i] = new Vector2(distance, 1f);
-                indexes[i] = i;
+                verticesPositions[i] = m_Polygon.transform.TransformPoint(m_Polygon.m_Points[i % count]);
             }
 
-            m_LineMesh.Clear();
-            m_LineMesh.name = "Poly Shape Guide";
-            m_LineMesh.vertices = ver;
-            m_LineMesh.uv = uvs;
-            m_LineMesh.SetIndices(indexes, MeshTopology.LineStrip, 0);
-            m_LineMaterial.SetFloat("_LineDistance", distance);
-        }
-
-        void UpdateDashedLine(Mesh lineMesh, Vector3 fromPoint, Vector3 toPoint)
-        {
-            float lineLength = 0.1f, spaceLength = 0.05f;
-            List<Vector3> ver = lineMesh.vertices.ToList();
-            List<Vector2> uvs = lineMesh.uv.ToList();
-
-            List<int> indexes = new List<int>();
-            lineMesh.GetIndices(indexes,0);
-
-            float d = Vector3.Distance(fromPoint, toPoint);
-            Vector3 dir = ( toPoint - fromPoint ).normalized;
-            int sections = (int)(d / (lineLength + spaceLength));
-
-            int offset = ver.Count;
-            for(int i = 0; i < sections; i++)
-            {
-                ver.Add(fromPoint + i * (lineLength + spaceLength) * dir);
-                ver.Add(fromPoint + (i * (lineLength + spaceLength) + lineLength) * dir);
-
-                uvs.Add(new Vector2( 1f, 1f));
-                uvs.Add(new Vector2( 1f, 1f));
-
-                indexes.Add(2*i + offset);
-                indexes.Add(2*i+1 + offset);
-            }
-
-            ver.Add(fromPoint + sections * (lineLength + spaceLength) * dir);
-            uvs.Add(new Vector2( 1f, 1f));
-            indexes.Add(2 * sections + offset);
-
-
-            if(d - (sections * ( lineLength + spaceLength )) > lineLength)
-                ver.Add(fromPoint + ( sections * ( lineLength + spaceLength ) + lineLength ) * dir);
-            else
-                ver.Add(toPoint);
-            uvs.Add(new Vector2( 1f, 1f));
-            indexes.Add(2 * sections + 1 + offset);
-
-            lineMesh.name = "DashedLine";
-            lineMesh.vertices = ver.ToArray();
-            lineMesh.uv = uvs.ToArray();
-            lineMesh.SetIndices(indexes, MeshTopology.Lines, 0);
+            Handles.color = m_CurrentLineColor;
+            Handles.DrawPolyLine(verticesPositions);
+            Handles.color = Color.white;
         }
 
         /// <summary>
         /// Draw a helper line between the last point of the cut and the current position of the mouse cursor
         /// </summary>
         /// <returns>true if the line can be traced (the position of the cursor must be valid and the cut have one point minimum)</returns>
-        bool DrawGuideLine()
+        void DrawGuideLine()
         {
-            if(m_DrawingLineMesh)
-                m_DrawingLineMesh.Clear();
-
-            if(m_CurrentPosition.Equals(Vector3.positiveInfinity) || m_PlacingPoint)
-                return false;
+            if(m_CurrentPosition.Equals(Vector3.positiveInfinity)
+               || m_PlacingPoint
+               || polygon.polyEditMode != PolyShape.PolyEditMode.Path)
+                return;
 
             if(polygon.controlPoints.Count > 0)
             {
-                Vector3 lastPosition = polygon.controlPoints[polygon.controlPoints.Count - 1];
-                Vector3 currentPosition = m_CurrentPosition;
-
-                UpdateDashedLine(m_DrawingLineMesh, lastPosition, currentPosition);
-                m_DrawingLineMaterial.SetFloat("_LineDistance", 1f);
-                return true;
+                Handles.color = k_DrawingLineColor;
+                Handles.DrawDottedLine(m_Polygon.transform.TransformPoint(polygon.controlPoints[polygon.controlPoints.Count - 1]),
+                    m_Polygon.transform.TransformPoint(m_CurrentPosition), 5f);
+                Handles.color = Color.white;
             }
-            return false;
         }
 
         void HandleKeyEvent(Event evt)
@@ -980,9 +848,6 @@ namespace UnityEditor.ProBuilder
 
         void UndoRedoPerformed()
         {
-            // ClearLineRenderers();
-            // InitLineRenderers();
-
             if (polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None)
                 RebuildPolyShapeMesh(polygon);
         }
