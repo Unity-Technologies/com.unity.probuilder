@@ -75,18 +75,9 @@ namespace UnityEditor.ProBuilder
         static readonly Color k_HandleColorModifyVertex = new Color(1f, .75f, .0f, 1f);
         const float k_HandleSize = .05f;
 
-        // Line renderer for the current cut path
-        PBLineRenderer m_PBLine;
-        static readonly Color k_LineMaterialBaseColor = new Color(0f, 136f / 255f, 1f, 1f);
-        static readonly Color k_LineMaterialHighlightColor = new Color(0f, 200f / 255f, 170f / 200f, 1f);
-
-        // Line renderer between the last point of the cut and the first one to close the shape if the option is activated
-        PBLineRenderer m_ConnectionsPBLine;
-        static readonly Color k_ConnectionsLineMaterialBaseColor = new Color(0f, 200f / 255f, 170f / 200f, 1f);
-
-        // Line renderer to provide a preview to the user of the next cut section
-        PBLineRenderer m_DrawingPBLine;
-        static readonly Color k_DrawingLineMaterialBaseColor = new Color(0.01f, .9f, 0.3f, 1f);
+        static readonly Color k_LineColor = new Color(0f, 55f / 255f, 1f, 1f);
+        static readonly Color k_ConnectionsLineColor = new Color(0f, 200f / 255f, 170f / 200f, 1f);
+        static readonly Color k_DrawingLineColor = new Color(0.01f, .9f, 0.3f, 1f);
 
         Color m_CurrentHandleColor = k_HandleColor;
 
@@ -157,55 +148,17 @@ namespace UnityEditor.ProBuilder
             m_CutMagnetCursorTexture = Resources.Load<Texture2D>("Cursors/cutCursor-magnet");
             m_CutAddMagnetCursorTexture = Resources.Load<Texture2D>("Cursors/cutCursor-add-magnet");
 
-            EditorApplication.update += Update;
             Undo.undoRedoPerformed += UndoRedoPerformed;
             if(MeshSelection.selectedObjectCount == 1)
                 m_Mesh = MeshSelection.activeMesh;
-
-            InitLineRenderers();
         }
 
         void OnDisable()
         {
-            EditorApplication.update -= Update;
             Undo.undoRedoPerformed -= UndoRedoPerformed;
 
             ExecuteCut();
             Clear();
-            ClearLineRenderers();
-        }
-
-        /// <summary>
-        /// Update method that handles the update of line renderers
-        /// </summary>
-        void Update()
-        {
-            if(m_Mesh != null)
-            {
-                if(m_PBLine != null)
-                    m_PBLine.UpdateLineRenderer();
-            }
-        }
-
-        /// <summary>
-        /// Create line renderers for the current cut
-        /// </summary>
-        void InitLineRenderers()
-        {
-            Transform trf = m_Mesh.transform;
-            m_PBLine = new PBLineRenderer(trf, k_LineMaterialBaseColor, k_LineMaterialHighlightColor);
-            m_ConnectionsPBLine = new PBLineRenderer(trf, true, k_ConnectionsLineMaterialBaseColor);
-            m_DrawingPBLine = new PBLineRenderer(trf, true, k_DrawingLineMaterialBaseColor);
-        }
-
-        /// <summary>
-        /// Clear all line renderers
-        /// </summary>
-        void ClearLineRenderers()
-        {
-            m_PBLine.Dispose();
-            m_ConnectionsPBLine.Dispose();
-            m_DrawingPBLine.Dispose();
         }
 
         /// <summary>
@@ -231,6 +184,7 @@ namespace UnityEditor.ProBuilder
                 m_TargetFace = null;
 
             m_SelectedIndex = -1;
+            m_MeshConnections.Clear();
 
             EditorApplication.delayCall = () => RebuildCutShape();
         }
@@ -254,6 +208,9 @@ namespace UnityEditor.ProBuilder
                     HandleUtility.AddDefaultControl(m_ControlId);
 
                 DoPointPlacement();
+
+                if(currentEvent.type == EventType.MouseMove)
+                    SceneView.RepaintAll();
 
                 if(currentEvent.type == EventType.Repaint)
                 {
@@ -421,7 +378,6 @@ namespace UnityEditor.ProBuilder
                         data.position = m_CurrentPosition;
                         m_CutPath[m_SelectedIndex] = data;
                         RebuildCutShape();
-                        SceneView.RepaintAll();
                     }
                 }
 
@@ -433,8 +389,9 @@ namespace UnityEditor.ProBuilder
                     evt.Use();
                     m_PlacingPoint = false;
                     m_SelectedIndex = -1;
-                    SceneView.RepaintAll();
                 }
+
+                SceneView.RepaintAll();
             }
             //If the user is adding the current position to the cut
             else if (evtType == EventType.MouseDown
@@ -617,8 +574,6 @@ namespace UnityEditor.ProBuilder
                 int connectionsCount = 2 - ConnectionsToBordersCount;
                 m_MeshConnections.RemoveRange(connectionsCount,m_MeshConnections.Count - connectionsCount);
             }
-
-            UpdateMeshConnectionsLines();
         }
 
         /// <summary>
@@ -1242,19 +1197,6 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Display lines of the cut shape
-        /// </summary>
-        void DoExistingLinesGUI()
-        {
-            if(m_PBLine != null)
-                m_PBLine.DrawLineGUI();
-            if(m_ConnectionsPBLine != null)
-                m_ConnectionsPBLine.DrawLineGUI();
-            if(m_DrawingPBLine != null && DrawGuideLine())
-                m_DrawingPBLine.DrawLineGUI();
-        }
-
-        /// <summary>
         /// Visual indications to help the user: highlighting faces, edges and vertices when snapping on them
         /// </summary>
         void DoVisualCues()
@@ -1300,7 +1242,6 @@ namespace UnityEditor.ProBuilder
             if (m_Mesh == null)
                 return;
 
-            m_PBLine.SetPositions(m_CutPath.Select(tup => tup.position).ToList());
             UpdateMeshConnections();
 
             // While the vertex count may not change, the triangle winding might. So unfortunately we can't take
@@ -1309,47 +1250,59 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
+        /// Display lines of the cut shape
+        /// </summary>
+        void DoExistingLinesGUI()
+        {
+            DrawCutLine();
+            DrawGuideLine();
+            DrawMeshConnectionsHandles();
+        }
+
+
+        /// <summary>
+        /// Draw the line corresponding to the current cut path in the face
+        /// </summary>
+        void DrawCutLine()
+        {
+            Handles.color = k_LineColor;
+            Handles.DrawPolyLine(m_CutPath.Select(tup => m_Mesh.transform.TransformPoint(tup.position)).ToArray());
+            Handles.color = Color.white;
+        }
+
+        /// <summary>
         /// Draw a helper line between the last point of the cut and the current position of the mouse cursor
         /// </summary>
-        /// <returns>true if the line can be traced (the position of the cursor must be valid and the cut have one point minimum)</returns>
-        bool DrawGuideLine()
+        void DrawGuideLine()
         {
-            if(m_CurrentPosition.Equals(Vector3.positiveInfinity)
-               || m_ModifyingPoint)
-            {
-                m_DrawingPBLine.Clear();
-                return false;
-            }
+            if(m_CurrentPosition.Equals(Vector3.positiveInfinity) || m_ModifyingPoint)
+                return ;
 
             if(m_CutPath.Count > 0)
             {
-                List<Vector3> pos = new List<Vector3>();
-                pos.Add(m_CutPath[m_CutPath.Count - 1].position);
-                pos.Add(m_CurrentPosition);
-                m_DrawingPBLine.SetPositions(pos);
-                return true;
+                Handles.color = k_DrawingLineColor;
+                Handles.DrawDottedLine(m_Mesh.transform.TransformPoint(m_CutPath[m_CutPath.Count - 1].position),
+                                        m_Mesh.transform.TransformPoint(m_CurrentPosition), 5f);
+                Handles.color = Color.white;
             }
-            return false;
         }
 
         /// <summary>
         /// Draw a helper line to show which vertices of the face are connected to points of the cut shape
         /// </summary>
-        void UpdateMeshConnectionsLines()
+        void DrawMeshConnectionsHandles()
         {
             if(m_MeshConnections.Count > 0)
             {
                 Vertex[] vertices = m_Mesh.GetVertices();
-                List<Vector3> pos = new List<Vector3>();
                 foreach(var connection in m_MeshConnections)
                 {
-                    pos.Add(m_CutPath[connection.item1].position);
-                    pos.Add(vertices[connection.item2].position);
+                    Handles.color = k_ConnectionsLineColor;
+                    Handles.DrawDottedLine(m_Mesh.transform.TransformPoint(m_CutPath[connection.item1].position),
+                                            m_Mesh.transform.TransformPoint(vertices[connection.item2].position), 5f);
+                    Handles.color = Color.white;
                 }
-                m_ConnectionsPBLine.SetPositions(pos);
             }
-            else
-                m_ConnectionsPBLine.Clear();
         }
 
     }
