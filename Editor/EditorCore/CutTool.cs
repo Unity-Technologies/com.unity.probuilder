@@ -76,6 +76,7 @@ namespace UnityEditor.ProBuilder
         const float k_HandleSize = .05f;
 
         static readonly Color k_LineColor = new Color(0f, 55f / 255f, 1f, 1f);
+        static readonly Color k_InvalidLineColor = Color.red;
         static readonly Color k_ConnectionsLineColor = new Color(0f, 200f / 255f, 170f / 200f, 1f);
         static readonly Color k_DrawingLineColor = new Color(0.01f, .9f, 0.3f, 1f);
 
@@ -87,6 +88,7 @@ namespace UnityEditor.ProBuilder
         internal bool m_SnappingPoint;
         bool m_ModifyingPoint; // State machine instead? //Status
         int m_SelectedIndex = -2;
+        bool m_IsCutValid = true;
 
         //Cut tool elements
         internal Face m_TargetFace;
@@ -277,7 +279,7 @@ namespace UnityEditor.ProBuilder
             else
             {
                 if(GUILayout.Button("Cut"))
-                    DoCut();
+                    ExecuteCut();
             }
             GUI.enabled = true;
         }
@@ -596,7 +598,12 @@ namespace UnityEditor.ProBuilder
         {
             if (m_TargetFace == null || m_CutPath.Count < 2)
             {
-                return new ActionResult(ActionResult.Status.Canceled, "Not enough elements selected for a cut");
+                return new ActionResult(ActionResult.Status.Canceled, L10n.Tr("Not enough elements selected for a cut"));
+            }
+
+            if(!m_IsCutValid)
+            {
+                return new ActionResult(ActionResult.Status.Failure, L10n.Tr("The current cut overlaps itself"));
             }
 
             UndoUtility.RecordObject(m_Mesh, "Do Cut To Mesh");
@@ -631,7 +638,7 @@ namespace UnityEditor.ProBuilder
                 Face f = m_Mesh.CreatePolygon(cutIndexes, false);
 
                 if(f == null)
-                    return new ActionResult(ActionResult.Status.Failure, "Cut Shape is not valid");
+                    return new ActionResult(ActionResult.Status.Failure, L10n.Tr("Cut Shape is not valid"));
 
                 Vector3 nrm = Math.Normal(m_Mesh, f);
                 Vector3 targetNrm = Math.Normal(m_Mesh, m_TargetFace);
@@ -670,7 +677,7 @@ namespace UnityEditor.ProBuilder
 
             Clear();
 
-            return ActionResult.Success;
+            return new ActionResult(ActionResult.Status.Success, L10n.Tr("Cut executed"));
         }
 
 
@@ -1243,10 +1250,74 @@ namespace UnityEditor.ProBuilder
                 return;
 
             UpdateMeshConnections();
+            ValidateCutShape();
 
             // While the vertex count may not change, the triangle winding might. So unfortunately we can't take
             // advantage of the `vertexCountChanged = false` optimization here.
             ProBuilderEditor.Refresh();
+            SceneView.RepaintAll();
+        }
+
+        void ValidateCutShape()
+        {
+            Vertex[] vertices = m_Mesh.GetVertices();
+
+            m_IsCutValid = true;
+
+            //For all segments of the current cut
+            for(int i = 0; i < m_CutPath.Count-1 && m_IsCutValid; i++)
+            {
+                Vector2 segment1Start2D = HandleUtility.WorldToGUIPoint(m_Mesh.transform.TransformPoint(m_CutPath[i].position));
+                Vector2 segment1End2D = HandleUtility.WorldToGUIPoint(m_Mesh.transform.TransformPoint(m_CutPath[i+1].position));
+
+                //Test intersections with the rest of the cut path
+                for(int j = i + 2; j < m_CutPath.Count-1 && m_IsCutValid; j++)
+                {
+                    Vector2 segment2Start2D = HandleUtility.WorldToGUIPoint(m_Mesh.transform.TransformPoint(m_CutPath[j].position));
+                    Vector2 segment2End2D = HandleUtility.WorldToGUIPoint(m_Mesh.transform.TransformPoint(m_CutPath[j+1].position));
+
+                    m_IsCutValid = !Math.GetLineSegmentIntersect(segment1Start2D, segment1End2D, segment2Start2D, segment2End2D);
+                }
+
+                //Test intersections with the connections to the face vertices
+                for(int j = 0; j < m_MeshConnections.Count && m_IsCutValid; j++)
+                {
+                    SimpleTuple<int,int> connection = m_MeshConnections[j];
+
+                    if(connection.item1 != i && connection.item1 != i + 1)
+                    {
+                        Vector2 segment2Start2D =
+                            HandleUtility.WorldToGUIPoint(
+                                m_Mesh.transform.TransformPoint(m_CutPath[connection.item1].position));
+                        Vector2 segment2End2D =
+                            HandleUtility.WorldToGUIPoint(
+                                m_Mesh.transform.TransformPoint(vertices[connection.item2].position));
+
+                        m_IsCutValid = !Math.GetLineSegmentIntersect(segment1Start2D, segment1End2D, segment2Start2D,
+                            segment2End2D);
+                    }
+                }
+            }
+
+            //For all connections to the face vertices
+            for(int i = 0; i <  m_MeshConnections.Count-1 && m_IsCutValid; i++)
+            {
+                SimpleTuple<int,int> connection1 = m_MeshConnections[i];
+                Vector2 segment1Start2D = HandleUtility.WorldToGUIPoint( m_Mesh.transform.TransformPoint(m_CutPath[connection1.item1].position) );
+                Vector2 segment1End2D = HandleUtility.WorldToGUIPoint(m_Mesh.transform.TransformPoint(vertices[connection1.item2].position));
+
+                //Test intersection with the other connections to the face vertices
+                for(int j = i+1; j < m_MeshConnections.Count && m_IsCutValid; j++)
+                {
+                    SimpleTuple<int,int> connection2 = m_MeshConnections[j];
+
+                    Vector2 segment2Start2D = HandleUtility.WorldToGUIPoint( m_Mesh.transform.TransformPoint(m_CutPath[connection2.item1].position) );
+                    Vector2 segment2End2D = HandleUtility.WorldToGUIPoint(m_Mesh.transform.TransformPoint(vertices[connection2.item2].position));
+
+                    m_IsCutValid = !Math.GetLineSegmentIntersect(segment1Start2D, segment1End2D, segment2Start2D, segment2End2D);
+                }
+            }
+
         }
 
         /// <summary>
@@ -1265,7 +1336,7 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         void DrawCutLine()
         {
-            Handles.color = k_LineColor;
+            Handles.color = m_IsCutValid ? k_LineColor : k_InvalidLineColor;
             Handles.DrawPolyLine(m_CutPath.Select(tup => m_Mesh.transform.TransformPoint(tup.position)).ToArray());
             Handles.color = Color.white;
         }
