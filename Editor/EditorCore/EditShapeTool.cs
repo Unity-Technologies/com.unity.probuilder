@@ -97,7 +97,7 @@ namespace UnityEditor.ProBuilder
 
                     EditorGUI.BeginChangeCheck();
 
-                    if(IsEditing(a))
+                    if(IsEditing())
                         DoShapeGUI(shape, m_ActiveShapeState.localToWorldMatrix, m_ActiveShapeState.originalBounds);
                     else
                         DoShapeGUI(shape, shape.transform.localToWorldMatrix, shape.meshFilterBounds);

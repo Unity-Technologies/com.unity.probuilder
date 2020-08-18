@@ -6,12 +6,11 @@ using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using Math = UnityEngine.ProBuilder.Math;
 using UObject = UnityEngine.Object;
-
-//#if UNITY_2020_2_OR_NEWER
-//using ToolManager = UnityEditor.EditorTools.ToolManager;
-//#else
-//using ToolManager = UnityEditor.EditorTools.EditorTools;
-//#endif
+#if UNITY_2020_2_OR_NEWER
+using ToolManager = UnityEditor.EditorTools.ToolManager;
+#else
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -62,7 +61,7 @@ namespace UnityEditor.ProBuilder
         void OnEnable()
         {
             InitNewShape();
-            EditorTools.EditorTools.activeToolChanged += ActiveToolChanged;
+            ToolManager.activeToolChanged += ActiveToolChanged;
             m_ShapeTitle = new GUIContent("Draw Shape");
             m_ShapeTypesPopupContent = s_AvailableShapeTypes.Select(x => x.Name).ToArray();
         }
@@ -83,7 +82,7 @@ namespace UnityEditor.ProBuilder
                 DestroyImmediate(m_Shape.gameObject);
                 InitNewShape();
             }
-            EditorTools.EditorTools.activeToolChanged -= ActiveToolChanged;
+            ToolManager.activeToolChanged -= ActiveToolChanged;
         }
 
         Shape CreateShape(Type type)
@@ -95,7 +94,7 @@ namespace UnityEditor.ProBuilder
 
         void ActiveToolChanged()
         {
-            if (EditorTools.EditorTools.IsActiveTool(this))
+            if (ToolManager.IsActiveTool(this))
                 m_InputState = InputState.SelectPlane;
         }
 
