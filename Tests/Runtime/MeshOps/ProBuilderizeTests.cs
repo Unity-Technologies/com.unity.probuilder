@@ -32,7 +32,7 @@ class ProBuilderizeTests : TemporaryAssetTest
     }
 
     [Test]
-    public static void ImportMeshWithQuads_MatchesWindingOrder()
+    public static void ImportQuads_MatchesWindingOrder()
     {
         var srcPath = TestUtility.temporarySavedAssetsDirectory + "maya-cube-quads.fbx";
 

@@ -1,60 +1,127 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 
 namespace UnityEngine.ProBuilder
 {
+    // This should not be public until there is something meaningful that can be done with it. However it has been
+    // public in the past, so we can't change it until the next major version increment.
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public class SceneSelection : IEquatable<SceneSelection>
     {
         public GameObject gameObject;
         public ProBuilderMesh mesh;
+
+        List<int> m_Vertices;
+        List<Edge> m_Edges;
+        List<Face> m_Faces;
+
+        public List<int> vertexes
+        {
+            get { return m_Vertices; }
+            set { m_Vertices = value; }
+        }
+
+        public List<Edge> edges
+        {
+            get { return m_Edges; }
+            set { m_Edges = value; }
+        }
+
+        public List<Face> faces
+        {
+            get { return m_Faces; }
+            set { m_Faces = value; }
+        }
+
+        [Obsolete("Use SetSingleVertex")]
         public int vertex;
+
+        [Obsolete("Use SetSingleEdge")]
         public Edge edge;
+        
+        [Obsolete("Use SetSingleFace")]
         public Face face;
 
         public SceneSelection(GameObject gameObject = null)
         {
             this.gameObject = gameObject;
+            m_Vertices = new List<int>();
+            m_Edges = new List<Edge>();
+            m_Faces = new List<Face>();
         }
 
-        public SceneSelection(ProBuilderMesh mesh, int vertex) : this(mesh != null ? mesh.gameObject : null)
+        public SceneSelection(ProBuilderMesh mesh, int vertex) : this(mesh, new List<int>() { vertex }) { }
+
+        public SceneSelection(ProBuilderMesh mesh, Edge edge) : this(mesh, new List<Edge>() { edge }) { }
+
+        public SceneSelection(ProBuilderMesh mesh, Face face) : this(mesh, new List<Face>() { face }) { }
+
+        internal SceneSelection(ProBuilderMesh mesh, List<int> vertexes) : this(mesh != null ? mesh.gameObject : null)
         {
             this.mesh = mesh;
-            this.vertex = vertex;
-            edge = Edge.Empty;
-            face = null;
+            m_Vertices = vertexes;
+            m_Edges = new List<Edge>();
+            m_Faces = new List<Face>();
         }
 
-        public SceneSelection(ProBuilderMesh mesh, Edge edge) : this(mesh != null ? mesh.gameObject : null)
+        internal SceneSelection(ProBuilderMesh mesh, List<Edge> edges) : this(mesh != null ? mesh.gameObject : null)
         {
             this.mesh = mesh;
-            vertex = -1;
-            this.edge = edge;
-            face = null;
+            vertexes = new List<int>();
+            this.edges = edges;
+            faces = new List<Face>();
         }
 
-        public SceneSelection(ProBuilderMesh mesh, Face face) : this(mesh != null ? mesh.gameObject : null)
+        internal SceneSelection(ProBuilderMesh mesh, List<Face> faces) : this(mesh != null ? mesh.gameObject : null)
         {
             this.mesh = mesh;
-            vertex = -1;
-            edge = Edge.Empty;
-            this.face = face;
+            vertexes = new List<int>();
+            edges = new List<Edge>();
+            this.faces = faces;
+        }
+
+        public void SetSingleFace(Face face)
+        {
+            faces.Clear();
+            faces.Add(face);
+        }
+
+        public void SetSingleVertex(int vertex)
+        {
+            vertexes.Clear();
+            vertexes.Add(vertex);
+        }
+
+        public void SetSingleEdge(Edge edge)
+        {
+            edges.Clear();
+            edges.Add(edge);
         }
 
         public void Clear()
         {
             gameObject = null;
             mesh = null;
-            face = null;
-            edge = Edge.Empty;
-            vertex = -1;
+            faces.Clear();
+            edges.Clear();
+            vertexes.Clear();
         }
 
         public void CopyTo(SceneSelection dst)
         {
             dst.gameObject = gameObject;
             dst.mesh = mesh;
-            dst.face = face;
-            dst.edge = edge;
-            dst.vertex = vertex;
+            dst.faces.Clear();
+            dst.edges.Clear();
+            dst.vertexes.Clear();
+            foreach (var x in faces)
+                dst.faces.Add(x);
+            foreach (var x in edges)
+                dst.edges.Add(x);
+            foreach (var x in vertexes)
+                dst.vertexes.Add(x);
         }
 
         public override string ToString()
@@ -62,9 +129,9 @@ namespace UnityEngine.ProBuilder
             var sb = new System.Text.StringBuilder();
             sb.AppendLine("GameObject: " + (gameObject != null ? gameObject.name : null));
             sb.AppendLine("ProBuilderMesh: " + (mesh != null ? mesh.name : null));
-            sb.AppendLine("Face: " + (face != null ? face.ToString() : null));
-            sb.AppendLine("Edge: " + edge.ToString());
-            sb.AppendLine("Vertex: " + vertex);
+            sb.AppendLine("Face: " + (faces != null ? faces.ToString() : null));
+            sb.AppendLine("Edge: " + edges.ToString());
+            sb.AppendLine("Vertex: " + vertexes);
             return sb.ToString();
         }
 
@@ -74,9 +141,9 @@ namespace UnityEngine.ProBuilder
             if (ReferenceEquals(this, other)) return true;
             return Equals(gameObject, other.gameObject)
                 && Equals(mesh, other.mesh)
-                && vertex == other.vertex
-                && edge.Equals(other.edge)
-                && Equals(face, other.face);
+                && Enumerable.SequenceEqual(vertexes, other.vertexes)
+                && Enumerable.SequenceEqual(edges, other.edges)
+                && Enumerable.SequenceEqual(faces, other.faces);
         }
 
         public override bool Equals(object obj)
@@ -93,9 +160,9 @@ namespace UnityEngine.ProBuilder
             {
                 int hashCode = (gameObject != null ? gameObject.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (mesh != null ? mesh.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ vertex;
-                hashCode = (hashCode * 397) ^ edge.GetHashCode();
-                hashCode = (hashCode * 397) ^ (face != null ? face.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (vertexes != null ? vertexes.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (edges != null ? edges.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (faces != null ? faces.GetHashCode() : 0);
                 return hashCode;
             }
         }

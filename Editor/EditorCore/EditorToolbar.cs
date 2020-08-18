@@ -131,7 +131,7 @@ namespace UnityEditor.ProBuilder
                         if (!showTooltipTimer)
                         {
                             showTooltipTimer = true;
-                            window.Repaint();
+                            RepaintIfFocused();
                         }
                     }
                     else
@@ -150,7 +150,7 @@ namespace UnityEditor.ProBuilder
                 if (scrollTimer >= scrollTotalTime)
                     doAnimateScroll = false;
 
-                window.Repaint();
+                RepaintIfFocused();
             }
         }
 
@@ -212,6 +212,8 @@ namespace UnityEditor.ProBuilder
         int m_Columns;
         int m_Rows;
 
+        bool m_WantsRepaint;
+
         bool IsActionValid(MenuAction action)
         {
             return !action.hidden && (!isIconMode || action.icon != null);
@@ -219,9 +221,8 @@ namespace UnityEditor.ProBuilder
 
         public void OnGUI()
         {
-            Event e = Event.current;
-            Vector2 mpos = e.mousePosition;
-            bool forceRepaint = false;
+            Event evt = Event.current;
+            Vector2 mpos = evt.mousePosition;
 
             // if icon mode and no actions are found, that probably means icons failed to load. revert to text mode.
             int menuActionsCount = 0;
@@ -246,7 +247,7 @@ namespace UnityEditor.ProBuilder
             if (m_IsHorizontalMenu != isHorizontal || m_Rows < 1 || m_Columns < 1)
                 CalculateMaxIconSize();
 
-            if (e.type == EventType.Layout)
+            if (evt.type == EventType.Layout)
             {
                 if (isHorizontal)
                 {
@@ -275,10 +276,10 @@ namespace UnityEditor.ProBuilder
                 availableWidth -= SCROLL_BTN_SIZE * 2;
             }
 
-            if (isHorizontal && e.type == EventType.ScrollWheel && e.delta.sqrMagnitude > .001f)
+            if (isHorizontal && evt.type == EventType.ScrollWheel && evt.delta.sqrMagnitude > .001f)
             {
-                m_Scroll.value = new Vector2(m_Scroll.value.x + e.delta.y * 10f, m_Scroll.value.y);
-                forceRepaint = true;
+                m_Scroll.value = new Vector2(m_Scroll.value.x + evt.delta.y * 10f, m_Scroll.value.y);
+               ScheduleRepaint();
             }
 
             // the math for matching layout group width for icons is easy enough, but text
@@ -288,7 +289,7 @@ namespace UnityEditor.ProBuilder
             int maxVerticalScroll = contentHeight - availableHeight;
 
             // only change before a layout event
-            if (m_ShowScrollButtons != showScrollButtons && e.type == EventType.Layout)
+            if (m_ShowScrollButtons != showScrollButtons && evt.type == EventType.Layout)
                 m_ShowScrollButtons = showScrollButtons;
 
             if (m_ShowScrollButtons)
@@ -317,10 +318,10 @@ namespace UnityEditor.ProBuilder
 
             m_Scroll.value = GUILayout.BeginScrollView(m_Scroll.value, false, false, GUIStyle.none, GUIStyle.none, GUIStyle.none);
 
-            bool    tooltipShown = false,
-                    hovering = false;
+            bool tooltipShown = false,
+                hovering = false;
 
-            Rect optionRect = new Rect(0f, 0f, 0f, 0f);
+                Rect optionRect = new Rect(0f, 0f, 0f, 0f);
 
             GUILayout.BeginHorizontal();
 
@@ -340,15 +341,15 @@ namespace UnityEditor.ProBuilder
 
                 if (isIconMode)
                 {
-                    if (action.DoButton(isHorizontal, e.alt, ref optionRect, GUILayout.MaxHeight(m_ContentHeight + 12)) && !e.shift)
+                    if (action.DoButton(isHorizontal, evt.alt, ref optionRect, GUILayout.MaxHeight(m_ContentHeight + 12)) && !evt.shift)
                     {
                         // test for alt click / hover
                         optionRect.x -= m_Scroll.value.x;
                         optionRect.y -= m_Scroll.value.y;
 
                         if (windowContainsMouse &&
-                            e.type != EventType.Layout &&
-                            optionRect.Contains(e.mousePosition))
+                            evt.type != EventType.Layout &&
+                            optionRect.Contains(evt.mousePosition))
                         {
                             hoveringTooltipName = action.tooltip.title + "_alt";
                             tooltipTimerRefresh = .5f;
@@ -365,29 +366,28 @@ namespace UnityEditor.ProBuilder
                 else
                 {
                     if (m_Columns < 2)
-                        action.DoButton(isHorizontal, e.alt, ref optionRect);
+                        action.DoButton(isHorizontal, evt.alt, ref optionRect);
                     else
-                        action.DoButton(isHorizontal, e.alt, ref optionRect, GUILayout.MinWidth(m_ContentWidth));
+                        action.DoButton(isHorizontal, evt.alt, ref optionRect, GUILayout.MinWidth(m_ContentWidth));
                 }
 
                 Rect buttonRect = GUILayoutUtility.GetLastRect();
 
                 if (windowContainsMouse &&
-                    e.type != EventType.Layout &&
+                    evt.type != EventType.Layout &&
                     !hovering &&
-                    buttonRect.Contains(e.mousePosition))
+                    buttonRect.Contains(evt.mousePosition))
                 {
                     hoveringTooltipName = action.tooltip.title;
                     tooltipTimerRefresh = 1f;
 
-                    if (e.shift || showTooltipTimer)
+                    if (evt.shift || showTooltipTimer)
                     {
                         tooltipShown = true;
                         ShowTooltip(buttonRect, action.tooltip, m_Scroll);
                     }
 
                     hovering = true;
-                    forceRepaint = true;
                 }
 
                 if (++columnCount >= m_Columns)
@@ -424,13 +424,28 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            if ((e.type == EventType.Repaint || e.type == EventType.MouseMove) && !tooltipShown)
+            if ((evt.type == EventType.Repaint || evt.type == EventType.MouseMove) && !tooltipShown)
                 TooltipEditor.Hide();
 
-            if (e.type != EventType.Layout && !hovering)
+            if (evt.type != EventType.Layout && !hovering)
                 tooltipTimer.item1 = "";
 
-            if (forceRepaint || (EditorWindow.mouseOverWindow == this && e.delta.sqrMagnitude > .001f) || e.isMouse)
+            m_WantsRepaint |= EditorWindow.mouseOverWindow == window && evt.type == EventType.MouseMove;
+
+            if (Application.isFocused && m_WantsRepaint)
+                window.Repaint();
+
+            m_WantsRepaint = false;
+        }
+
+        void ScheduleRepaint()
+        {
+            m_WantsRepaint = true;
+        }
+
+        void RepaintIfFocused()
+        {
+            if(Application.isFocused)
                 window.Repaint();
         }
     }

@@ -132,13 +132,34 @@ namespace UnityEditor.ProBuilder
             var wings = WingedEdge.GetWingedEdges(mesh, mesh.selectedFacesInternal, true);
             var filter = new HashSet<Face>();
             var groups = new List<List<Face>>();
+            var groupIdx = -1;
+            var i = -1;
 
             foreach (var wing in wings)
             {
                 var group = new List<Face>() {};
                 CollectAdjacentFaces(wing, filter, group);
                 if (group.Count > 0)
+                {
+                    i++;
+                    // Make sure the last selected face is the last in the group
+                    var idx = group.IndexOf(mesh.selectedFacesInternal[mesh.selectedFacesInternal.Length - 1]);
+                    if (idx != -1 && idx < group.Count)
+                    {
+                        var item = group[idx];
+                        groupIdx = i;
+                        group[idx] = group[group.Count - 1];
+                        group[group.Count - 1] = item;
+                    }
                     groups.Add(group);
+                }
+            }
+            // Make sure the last selected face's group is the last in the groups
+            if (groupIdx != -1 && groupIdx < groups.Count)
+            {
+                var item = groups[groupIdx];
+                groups[groupIdx] = groups[groups.Count - 1];
+                groups[groups.Count - 1] = item;
             }
 
             return groups;
@@ -152,12 +173,31 @@ namespace UnityEditor.ProBuilder
             var shared = mesh.selectedSharedVertices;
 
             var groups = new List<List<int>>();
-
+            var groupIdx = -1;
+            var i = -1;
             foreach (var index in shared)
             {
                 var coincident = new List<int>();
                 mesh.GetCoincidentVertices(mesh.sharedVerticesInternal[index][0], coincident);
                 groups.Add(coincident);
+                i++;
+                // Make sure the last selected vertic is the last in the group
+                var idx = coincident.IndexOf(mesh.selectedIndexesInternal[mesh.selectedIndexesInternal.Length - 1]);
+                if (idx != -1 && idx < coincident.Count)
+                {
+                    var item = coincident[idx];
+                    groupIdx = i;
+                    coincident[idx] = coincident[coincident.Count - 1];
+                    coincident[coincident.Count - 1] = item;
+                }
+            }
+
+            // Make sure the last selected vertic's group is the last in the groups
+            if (groupIdx != -1 && groupIdx < groups.Count)
+            {
+                var item = groups[groupIdx];
+                groups[groupIdx] = groups[groups.Count - 1];
+                groups[groups.Count - 1] = item;
             }
 
             return groups;
@@ -194,8 +234,10 @@ namespace UnityEditor.ProBuilder
             // becomes one)
             var res = new List<List<Edge>>();
             var overlap = new HashSet<int>();
+            var j = -1;
+            var groupIdx = -1;
 
-            for(int i = 0, c = groups.Count; i < c; i++)
+            for (int i = 0, c = groups.Count; i < c; i++)
             {
                 if (overlap.Contains(i))
                     continue;
@@ -210,8 +252,25 @@ namespace UnityEditor.ProBuilder
                         grp.AddRange(groups[n].item2);
                     }
                 }
-
+                j++;
+                // Make sure the last selected edge is the last in the group
+                var idx = grp.IndexOf(mesh.selectedEdgesInternal[mesh.selectedEdgesInternal.Length - 1]);
+                if (idx != -1 && idx < grp.Count)
+                {
+                    var item = grp[idx];
+                    groupIdx = j;
+                    grp[idx] = grp[grp.Count - 1];
+                    grp[grp.Count - 1] = item;
+                }
                 res.Add(grp);
+            }
+
+            // Make sure the last selected edge's group is the last in the groups
+            if (groupIdx != -1 && groupIdx < res.Count)
+            {
+                var item = res[groupIdx];
+                res[groupIdx] = res[res.Count - 1];
+                res[res.Count - 1] = item;
             }
 
             return res;
