@@ -3,10 +3,12 @@ using UnityEngine;
 //using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
-#if !UNITY_2020_2_OR_NEWER
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#else
+#if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
+using EditorToolManager = UnityEditor.EditorTools.EditorToolManager;
+#else
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+using EditorToolManager = UnityEditor.EditorTools.EditorToolContext;
 #endif
 
 
@@ -99,23 +101,19 @@ namespace UnityEditor.ProBuilder
 
              if(ToolManager.activeToolType == typeof(PolyShapeTool))
              {
-                 PolyShapeTool tool = ((PolyShapeTool)EditorToolContext.activeTool);
+                 PolyShapeTool tool = ((PolyShapeTool)EditorToolManager.activeTool);
                  if(tool.polygon == polygon)
                      tool.RebuildPolyShapeMesh(vertexCountChanged);
              }
 
-
+             if (polygon.polyEditMode != PolyShape.PolyEditMode.Path)
              {
-                 if (polygon.polyEditMode != PolyShape.PolyEditMode.Path)
-                 {
-                     var result = polygon.CreateShapeFromPolygon();
-                 }
-
-                 // While the vertex count may not change, the triangle winding might. So unfortunately we can't take
-                 // advantage of the `vertexCountChanged = false` optimization here.
-                 ProBuilderEditor.Refresh();
+                 var result = polygon.CreateShapeFromPolygon();
              }
 
+             // While the vertex count may not change, the triangle winding might. So unfortunately we can't take
+             // advantage of the `vertexCountChanged = false` optimization here.
+             ProBuilderEditor.Refresh();
          }
 
     }
