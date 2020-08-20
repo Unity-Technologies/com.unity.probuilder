@@ -175,7 +175,7 @@ namespace UnityEditor.ProBuilder
         {
             SceneViewOverlay.Window(m_ShapeTitle, OnActiveToolGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle);
 
-            if (m_InputState != InputState.SelectPlane)
+            if (m_InputState != InputState.SelectPlane && m_IsDragging)
                 DrawBoundingBox();
 
             var evt = Event.current;
