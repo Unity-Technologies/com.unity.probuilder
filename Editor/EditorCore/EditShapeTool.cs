@@ -130,7 +130,7 @@ namespace UnityEditor.ProBuilder
                     CopyHandlePropertiesToCollider(shape);
                 }
 
-                DoRotateHandlesGUI(shape, m_ActiveShapeState.boundsHandleValue);
+                DoRotateHandlesGUI(shape, shape.meshFilterBounds);
             }
         }
 
@@ -270,7 +270,6 @@ namespace UnityEditor.ProBuilder
                     }
                     break;
                 case EventType.MouseMove:
-                    if (HandleUtility.nearestControl == controlID)
                         HandleUtility.Repaint();
                     break;
                 case EventType.Layout:
