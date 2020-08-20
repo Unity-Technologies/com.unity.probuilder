@@ -1,15 +1,15 @@
-using UnityEngine;
-using UnityEngine.ProBuilder;
+﻿using UnityEngine;
 
 namespace UnityEditor.ProBuilder
 {
-    class PositionScaleTool : PositionTool
+    internal class ProBuilderMeshScaleTool : ProBuilderMeshTool
     {
         Vector3 m_Scale;
 
-        protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
+        // This is called for each window that your tool is active in. Put the functionality of your tool here.
+        public override void OnToolGUI(EditorWindow window)
         {
-            base.DoTool(handlePosition, handleRotation);
+            base.OnToolGUI(window);
 
             if (showHandleInfo && isEditing)
                 DrawDeltaInfo("Scale: " + m_Scale.ToString("0.00"));
@@ -19,10 +19,10 @@ namespace UnityEditor.ProBuilder
 
             EditorGUI.BeginChangeCheck();
 
-            var size = HandleUtility.GetHandleSize(handlePosition);
+            var size = HandleUtility.GetHandleSize(m_HandlePosition);
 
             EditorHandleUtility.PushMatrix();
-            Handles.matrix = Matrix4x4.TRS(handlePosition, handleRotation, Vector3.one);
+            Handles.matrix = Matrix4x4.TRS(m_HandlePosition, m_HandleRotation, Vector3.one);
             m_Scale = Handles.ScaleHandle(m_Scale, Vector3.zero, Quaternion.identity, size);
             EditorHandleUtility.PopMatrix();
 

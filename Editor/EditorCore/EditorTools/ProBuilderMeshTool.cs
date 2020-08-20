@@ -1,13 +1,12 @@
-//#define DEBUG_HANDLES
-
-using System.Linq;
+﻿using System.Linq;
+using UnityEditor.EditorTools;
 using UnityEditor.SettingsManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-    abstract class PositionTool : VertexManipulationTool
+    internal abstract class ProBuilderMeshTool : ProBuilderEditorTool
     {
         [UserSetting("General", "Show Handle Info", "Toggle the display of information of move, rotate, and scale deltas.")]
         static Pref<bool> s_ShowHandleInfo = new Pref<bool>("editor.showHandleDelta", false, SettingsScope.User);
@@ -64,7 +63,7 @@ namespace UnityEditor.ProBuilder
 
         internal override MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot)
         {
-            return new MeshAndPositions(mesh, pivot);
+            return new ProBuilderMeshTool.MeshAndPositions(mesh, pivot);
         }
 
         internal Matrix4x4 GetPostApplyMatrix(ElementGroup group)
@@ -85,8 +84,10 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
+        // This is called for each window that your tool is active in. Put the functionality of your tool here.
+        public override void OnToolGUI(EditorWindow window)
         {
+            base.OnToolGUI(window);
 #if DEBUG_HANDLES
             if (isEditing && currentEvent.type == EventType.Repaint)
             {
@@ -132,10 +133,10 @@ namespace UnityEditor.ProBuilder
 
             foreach (var key in elementSelection)
             {
-                if (!(key is MeshAndPositions))
+                if (!(key is ProBuilderMeshTool.MeshAndPositions))
                     continue;
 
-                var kvp = (MeshAndPositions)key;
+                var kvp = (ProBuilderMeshTool.MeshAndPositions)key;
                 var mesh = kvp.mesh;
                 var worldToLocal = mesh.transform.worldToLocalMatrix;
                 var origins = kvp.positions;
@@ -161,5 +162,6 @@ namespace UnityEditor.ProBuilder
 
             ProBuilderEditor.Refresh(false);
         }
+
     }
 }

@@ -11,8 +11,8 @@ namespace UnityEditor.ProBuilder.Actions
 
         ExtrudeMethod extrudeMethod
         {
-            get { return VertexManipulationTool.s_ExtrudeMethod; }
-            set { VertexManipulationTool.s_ExtrudeMethod.value = value; }
+            get { return ProBuilderEditorTool.s_ExtrudeMethod; }
+            set { ProBuilderEditorTool.s_ExtrudeMethod.value = value; }
         }
 
         static string GetExtrudeIconString(ExtrudeMethod m)
@@ -126,7 +126,7 @@ namespace UnityEditor.ProBuilder.Actions
                 var selectedFaces = mesh.GetSelectedFaces();
 
                 mesh.Extrude(selectedFaces,
-                    VertexManipulationTool.s_ExtrudeMethod,
+                    ProBuilderEditorTool.s_ExtrudeMethod,
                     m_ExtrudeDistance);
 
                 mesh.SetSelectedFaces(selectedFaces);

@@ -19,7 +19,7 @@ namespace UnityEditor.ProBuilder
         static void OnSceneGUI(SceneView view)
         {
             if (!EditorUtility.IsDeveloperMode()
-                || !VertexManipulationTool.showHandleSettingsInScene
+                || !ProBuilderEditorTool.showHandleSettingsInScene
                 || view != SceneView.lastActiveSceneView)
                 return;
 
@@ -41,8 +41,8 @@ namespace UnityEditor.ProBuilder
                 GUILayout.BeginHorizontal();
                 EditorGUIUtility.labelWidth = 80;
 
-                EditorGUILayout.EnumPopup("Pivot Point", VertexManipulationTool.pivotPoint);
-                EditorGUILayout.EnumPopup("Orientation", VertexManipulationTool.handleOrientation);
+                //EditorGUILayout.EnumPopup("Pivot Point", VertexManipulationTool.pivotPoint);
+                //EditorGUILayout.EnumPopup("Orientation", VertexManipulationTool.handleOrientation);
 
                 EditorGUIUtility.labelWidth = 0;
                 GUILayout.EndHorizontal();

@@ -10,10 +10,10 @@ namespace UnityEditor.ProBuilder.Actions
 
         HandleOrientation handleOrientation
         {
-            get { return VertexManipulationTool.handleOrientation; }
+            get { return ProBuilderEditorTool.handleOrientation; }
             set
             {
-                VertexManipulationTool.handleOrientation = value;
+                ProBuilderEditorTool.handleOrientation = value;
                 ProBuilderEditor.Refresh(false);
             }
         }

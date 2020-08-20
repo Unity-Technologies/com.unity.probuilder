@@ -69,14 +69,14 @@ namespace UnityEditor.ProBuilder
             m_StaticEditorFlags = m_GameObjectsSerializedObject.FindProperty("m_StaticEditorFlags");
             m_MeshRenderer = m_Mesh.gameObject.GetComponent<Renderer>();
 
-            VertexManipulationTool.beforeMeshModification += OnBeginMeshModification;
-            VertexManipulationTool.afterMeshModification += OnFinishMeshModification;
+            ProBuilderEditorTool.beforeMeshModification += OnBeginMeshModification;
+            ProBuilderEditorTool.afterMeshModification += OnFinishMeshModification;
         }
 
         void OnDisable()
         {
-            VertexManipulationTool.beforeMeshModification -= OnBeginMeshModification;
-            VertexManipulationTool.afterMeshModification -= OnFinishMeshModification;
+            ProBuilderEditorTool.beforeMeshModification -= OnBeginMeshModification;
+            ProBuilderEditorTool.afterMeshModification -= OnFinishMeshModification;
         }
 
         void OnBeginMeshModification(IEnumerable<ProBuilderMesh> selection)
