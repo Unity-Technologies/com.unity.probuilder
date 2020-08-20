@@ -373,9 +373,13 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         Collisions = 0x10,
         /// <summary>
+        /// Bounds will be recalculated.
+        /// </summary>
+        Bounds = 0x16,
+        /// <summary>
         /// Refresh all optional mesh attributes.
         /// </summary>
-        All = UV | Colors | Normals | Tangents | Collisions
+        All = UV | Colors | Normals | Tangents | Collisions | Bounds
     };
 
     /// <summary>

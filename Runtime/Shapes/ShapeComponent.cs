@@ -19,7 +19,7 @@ namespace UnityEngine.ProBuilder
         Vector3 m_Rotation;
 
         [SerializeField]
-        Quaternion m_RotationQuaternion;
+        Quaternion m_RotationQuaternion = Quaternion.identity;
 
         public Quaternion rotationQuaternion {
             get {

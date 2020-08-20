@@ -401,6 +401,9 @@ namespace UnityEngine.ProBuilder
 
             if ((mask & RefreshMask.Collisions) > 0)
                 EnsureMeshColliderIsAssigned();
+
+            if ((mask & RefreshMask.Bounds) > 0)
+                mesh.RecalculateBounds();
         }
 
         internal void EnsureMeshColliderIsAssigned()
