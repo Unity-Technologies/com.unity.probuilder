@@ -34,7 +34,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override ActionResult DoAction()
         {
-            DrawShapeTool.CreateLastShape(Vector3.one * 100);
+            DrawShapeTool.CreateLastShape();
             return new ActionResult(ActionResult.Status.Success, "Create Shape");
         }
 

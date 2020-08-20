@@ -46,8 +46,7 @@ namespace UnityEditor.ProBuilder
         string[] m_ShapeTypesPopupContent;
 
         static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
-
-        static Vector3 s_Size;
+        static Pref<Vector3> s_Size = new Pref<Vector3>("ShapeBuilder.Size", Vector3.one * 100);
 
         static Type activeShapeType {
             get { return s_ActiveShapeIndex < 0 ? typeof(Cube) : s_AvailableShapeTypes[s_ActiveShapeIndex]; }
@@ -158,6 +157,7 @@ namespace UnityEditor.ProBuilder
 
         void FinishShape()
         {
+            s_Size.value = m_Shape.size;
             m_Shape = null;
             InitNewShape();
             m_InputState = InputState.SelectPlane;
@@ -275,7 +275,7 @@ namespace UnityEditor.ProBuilder
                             {
                                 var pos = ray.GetPoint(distance);
                                 CancelShape();
-                                var shape = CreateLastShape(Vector3.one * distance / 5f);
+                                var shape = CreateLastShape();
                                 shape.transform.position = pos;
                             }
                         }
@@ -289,10 +289,8 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        public static ProBuilderMesh CreateLastShape(Vector3 defaultSize)
+        public static ProBuilderMesh CreateLastShape()
         {
-            if (s_Size == Vector3.zero)
-                s_Size = defaultSize;
             var type = activeShapeType;
             var shape = ShapeGenerator.CreateShape(type).GetComponent<ShapeComponent>();
             ShapeParameters.SetToLastParams(ref shape.shape);

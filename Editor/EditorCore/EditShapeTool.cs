@@ -239,8 +239,6 @@ namespace UnityEditor.ProBuilder
             return cosV < 0;
         }
 
-        
-
         Quaternion RotateBoundsHandle(Vector3 pointA, Vector3 pointB, Vector3 axis)
         {
             Event evt = Event.current;
