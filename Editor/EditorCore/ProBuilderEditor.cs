@@ -6,6 +6,7 @@ using System;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder.Actions;
 using UnityEngine.ProBuilder;
 using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
@@ -150,7 +151,6 @@ namespace UnityEditor.ProBuilder
 #if !SHORTCUT_MANAGER
         bool m_IsRightMouseDown;
 #endif
-        static Dictionary<Type, VertexManipulationTool> s_EditorTools = new Dictionary<Type, VertexManipulationTool>();
 
         Vector3[][] m_VertexPositions;
         Vector3[] m_VertexOffset;
@@ -534,39 +534,49 @@ namespace UnityEditor.ProBuilder
             {
                 return s_Instance == null
                     ? null
-                    : s_Instance.GetToolForSelectMode(s_Instance.m_CurrentTool, s_SelectMode);
+                    : (VertexManipulationTool)EditorToolContext.activeTool;
             }
         }
 
-        VertexManipulationTool GetTool<T>() where T : VertexManipulationTool, new()
+        void SetTool<T>() where T : VertexManipulationTool, new()
         {
-            VertexManipulationTool tool;
+            //If the type is already active do nothing
+            if(typeof(T) == EditorTools.EditorTools.activeToolType)
+                return;
 
-            if (s_EditorTools.TryGetValue(typeof(T), out tool))
-                return tool;
-            tool = new T();
-            s_EditorTools.Add(typeof(T), tool);
-            return tool;
+            VertexManipulationTool formerTool = null;
+
+            if(EditorToolContext.activeTool is VertexManipulationTool)
+                formerTool = (VertexManipulationTool)EditorToolContext.activeTool;
+            EditorTools.EditorTools.SetActiveTool(ScriptableObject.CreateInstance<T>());
+            if(formerTool != null)
+                DestroyImmediate(formerTool);
         }
 
-        VertexManipulationTool GetToolForSelectMode(Tool tool, SelectMode mode)
+        void SetToolForSelectMode(Tool tool, SelectMode mode)
         {
             switch (tool)
             {
                 case Tool.Move:
-                    return mode.IsTextureMode()
-                        ? GetTool<TextureMoveTool>()
-                        : GetTool<PositionMoveTool>();
+                    if(mode.IsTextureMode())
+                        SetTool<TextureMoveTool>();
+                    else
+                        SetTool<PositionMoveTool>();
+                    break;
                 case Tool.Rotate:
-                    return mode.IsTextureMode()
-                        ? GetTool<TextureRotateTool>()
-                        : GetTool<PositionRotateTool>();
+                    if(mode.IsTextureMode())
+                        SetTool<TextureRotateTool>();
+                    else
+                        SetTool<PositionRotateTool>();
+                    break;
                 case Tool.Scale:
-                    return mode.IsTextureMode()
-                        ? GetTool<TextureScaleTool>()
-                        : GetTool<PositionScaleTool>();
+                    if(mode.IsTextureMode())
+                        SetTool<TextureScaleTool>();
+                    else
+                        SetTool<PositionScaleTool>();
+                    break;
                 default:
-                    return null;
+                    break;
             }
         }
 
@@ -595,7 +605,7 @@ namespace UnityEditor.ProBuilder
 
                     m_IsDragging = false;
                     m_IsReadyForMouseDrag = false;
-                    
+
                     m_CurrentEvent.Use();
                 }
             }
@@ -685,17 +695,12 @@ namespace UnityEditor.ProBuilder
             }
 
             // Overrides the toolbar transform tools
-            if (Tools.current != Tool.None && Tools.current != m_CurrentTool)
+            if (Tools.current != Tool.None && Tools.current != Tool.Custom && Tools.current != m_CurrentTool)
                 SetTool_Internal(Tools.current);
-
-            Tools.current = Tool.None;
 
             if (selectMode.IsMeshElementMode() && MeshSelection.selectedVertexCount > 0)
             {
-                var tool = GetToolForSelectMode(m_CurrentTool, s_SelectMode);
-
-                if (tool != null)
-                    tool.OnSceneGUI(m_CurrentEvent);
+                SetToolForSelectMode(m_CurrentTool, s_SelectMode);
             }
 
              if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent))

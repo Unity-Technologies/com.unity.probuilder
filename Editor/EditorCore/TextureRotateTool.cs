@@ -9,18 +9,19 @@ namespace UnityEditor.ProBuilder
         Vector3 m_Euler;
         Quaternion m_Quaternion;
 
-        protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
+        public override void OnToolGUI(EditorWindow window)
         {
+            base.OnToolGUI(window);
             if (!isEditing)
                 m_Rotation = 0f;
 
             EditorGUI.BeginChangeCheck();
 
-            var size = HandleUtility.GetHandleSize(handlePosition);
+            var size = HandleUtility.GetHandleSize(m_HandlePosition);
 
             EditorHandleUtility.PushMatrix();
 
-            Handles.matrix = Matrix4x4.TRS(handlePosition, handleRotation, Vector3.one);
+            Handles.matrix = Matrix4x4.TRS(m_HandlePosition, m_HandleRotation, Vector3.one);
 
             Handles.color = Color.blue;
             m_Euler.z = m_Rotation;

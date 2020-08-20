@@ -85,8 +85,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
+        public override void OnToolGUI(EditorWindow window)
         {
+            base.OnToolGUI(window);
 #if DEBUG_HANDLES
             if (isEditing && currentEvent.type == EventType.Repaint)
             {
