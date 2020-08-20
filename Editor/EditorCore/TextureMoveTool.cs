@@ -1,11 +1,12 @@
-﻿using System.Linq;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
-    internal class UVTextureMoveTool : UVTextureTool
+    class TextureMoveTool : TextureTool
     {
         static readonly float k_Vector3Magnitude = Vector3.one.magnitude;
 
@@ -36,16 +37,14 @@ namespace UnityEditor.ProBuilder
             return new TranslateTextureSelection(mesh, pivot);
         }
 
-        public override void OnToolGUI(EditorWindow window)
+        protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
         {
-            base.OnToolGUI(window);
-
             if (!isEditing)
                 m_Position = Vector3.zero;
 
             EditorHandleUtility.PushMatrix();
 
-            Handles.matrix = Matrix4x4.TRS(m_HandlePosition, m_HandleRotation, Vector3.one);
+            Handles.matrix = Matrix4x4.TRS(handlePosition, handleRotation, Vector3.one);
 
             EditorGUI.BeginChangeCheck();
 

@@ -151,8 +151,8 @@ namespace UnityEditor.ProBuilder
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged += OnElementSelectionChanged;
             ProBuilderEditor.selectionUpdated += OnEditingMeshSelection;
-            ProBuilderEditorTool.beforeMeshModification += OnBeginMeshModification;
-            ProBuilderEditorTool.afterMeshModification += OnFinishMeshModification;
+            VertexManipulationTool.beforeMeshModification += OnBeginMeshModification;
+            VertexManipulationTool.afterMeshModification += OnFinishMeshModification;
 
             RebuildBounds();
         }
@@ -162,8 +162,8 @@ namespace UnityEditor.ProBuilder
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged -= OnElementSelectionChanged;
             ProBuilderEditor.selectionUpdated -= OnEditingMeshSelection;
-            ProBuilderEditorTool.beforeMeshModification -= OnBeginMeshModification;
-            ProBuilderEditorTool.afterMeshModification -= OnFinishMeshModification;
+            VertexManipulationTool.beforeMeshModification -= OnBeginMeshModification;
+            VertexManipulationTool.afterMeshModification -= OnFinishMeshModification;
 
 #if UNITY_2019_1_OR_NEWER
             SceneView.duringSceneGui -= OnSceneGUI;

@@ -1,29 +1,26 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-    internal class UVTextureRotateTool : UVTextureTool
+    class TextureRotateTool : TextureTool
     {
-
         float m_Rotation;
         Vector3 m_Euler;
         Quaternion m_Quaternion;
 
-        public override void OnToolGUI(EditorWindow window)
+        protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
         {
-            base.OnToolGUI(window);
-
             if (!isEditing)
                 m_Rotation = 0f;
 
             EditorGUI.BeginChangeCheck();
 
-            var size = HandleUtility.GetHandleSize(m_HandlePosition);
+            var size = HandleUtility.GetHandleSize(handlePosition);
 
             EditorHandleUtility.PushMatrix();
 
-            Handles.matrix = Matrix4x4.TRS(m_HandlePosition, m_HandleRotation, Vector3.one);
+            Handles.matrix = Matrix4x4.TRS(handlePosition, handleRotation, Vector3.one);
 
             Handles.color = Color.blue;
             m_Euler.z = m_Rotation;

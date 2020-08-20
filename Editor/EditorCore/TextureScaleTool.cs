@@ -1,16 +1,14 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace UnityEditor.ProBuilder
 {
-    internal class UVTextureScaleTool : UVTextureTool
+    class TextureScaleTool : TextureTool
     {
         Vector2 m_Scale;
         float m_UniformScale;
 
-        public override void OnToolGUI(EditorWindow window)
+        protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
         {
-            base.OnToolGUI(window);
-
             if (!isEditing)
             {
                 m_Scale.x = 1f;
@@ -20,11 +18,11 @@ namespace UnityEditor.ProBuilder
 
             EditorGUI.BeginChangeCheck();
 
-            var size = HandleUtility.GetHandleSize(m_HandlePosition);
+            var size = HandleUtility.GetHandleSize(handlePosition);
 
             EditorHandleUtility.PushMatrix();
 
-            Handles.matrix = Matrix4x4.TRS(m_HandlePosition, m_HandleRotation, Vector3.one);
+            Handles.matrix = Matrix4x4.TRS(handlePosition, handleRotation, Vector3.one);
 
             var snap = relativeSnapEnabled
                 ? Vector3.one * ProBuilderSnapSettings.incrementalSnapScaleValue

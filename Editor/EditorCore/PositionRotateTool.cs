@@ -1,16 +1,15 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-    internal class ProBuilderMeshRotateTool : ProBuilderMeshTool
+    class PositionRotateTool : PositionTool
     {
         Quaternion m_Rotation;
 
-        // This is called for each window that your tool is active in. Put the functionality of your tool here.
-        public override void OnToolGUI(EditorWindow window)
+        protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
         {
-            base.OnToolGUI(window);
+            base.DoTool(handlePosition, handleRotation);
 
             if (showHandleInfo && isEditing)
             {
@@ -28,7 +27,7 @@ namespace UnityEditor.ProBuilder
                 m_Rotation = Quaternion.identity;
 
             var hm = Handles.matrix;
-            Handles.matrix = Matrix4x4.TRS(m_HandlePosition, m_HandleRotation, Vector3.one);
+            Handles.matrix = Matrix4x4.TRS(handlePosition, handleRotation, Vector3.one);
             m_Rotation = Handles.RotationHandle(m_Rotation, Vector3.zero);
             Handles.matrix = hm;
 
@@ -74,6 +73,5 @@ namespace UnityEditor.ProBuilder
 
             ProBuilderEditor.Refresh(false);
         }
-
     }
 }

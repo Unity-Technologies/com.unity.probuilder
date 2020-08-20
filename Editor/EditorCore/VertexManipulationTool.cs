@@ -1,18 +1,23 @@
-﻿
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using UnityEditor.EditorTools;
-using UnityEditor.SettingsManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEditor.SettingsManagement;
+
+#if !UNITY_2018_3_OR_NEWER
+using UnityEditor.SettingsManagement;
+#endif
+
+#if DEBUG_HANDLES
+using UnityEngine.Rendering;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
-    internal abstract class ProBuilderEditorTool : EditorTool
+    abstract class VertexManipulationTool
     {
-
         const float k_DefaultSnapValue = .25f;
 
         static Pref<HandleOrientation> s_HandleOrientation = new Pref<HandleOrientation>("editor.handleOrientation", HandleOrientation.World, SettingsScope.User);
@@ -136,8 +141,8 @@ namespace UnityEditor.ProBuilder
         internal static Pref<bool> s_ExtrudeEdgesAsGroup = new Pref<bool>("editor.extrudeEdgesAsGroup", true);
         internal static Pref<ExtrudeMethod> s_ExtrudeMethod = new Pref<ExtrudeMethod>("editor.extrudeMethod", ExtrudeMethod.FaceNormal);
 
-        protected Vector3 m_HandlePosition;
-        protected Quaternion m_HandleRotation;
+        Vector3 m_HandlePosition;
+        Quaternion m_HandleRotation;
         Vector3 m_HandlePositionOrigin;
         Quaternion m_HandleRotationOrigin;
         bool m_IsEditing;
@@ -146,6 +151,7 @@ namespace UnityEditor.ProBuilder
         bool m_SnapAxisConstraint = true;
         bool m_WorldSnapEnabled;
 
+        static bool s_Initialized;
         static FieldInfo s_VertexDragging;
         static MethodInfo s_FindNearestVertex;
         static object[] s_FindNearestVertexArguments = new object[] { null, null, null };
@@ -155,10 +161,11 @@ namespace UnityEditor.ProBuilder
             get { return MeshSelection.elementSelection; }
         }
 
-        protected bool vertexDragging
+        protected static bool vertexDragging
         {
             get
             {
+                Init();
                 return s_VertexDragging != null && (bool)s_VertexDragging.GetValue(null);
             }
         }
@@ -207,36 +214,27 @@ namespace UnityEditor.ProBuilder
             return UnityEngine.ProBuilder.Math.Sum(axes * snapValue);
         }
 
-        void OnEnable()
+        static void Init()
         {
+            if (s_Initialized)
+                return;
+            s_Initialized = true;
             s_VertexDragging = typeof(Tools).GetField("vertexDragging", BindingFlags.NonPublic | BindingFlags.Static);
             s_FindNearestVertex = typeof(HandleUtility).GetMethod("FindNearestVertex",
                     BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
-
-            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
-        }
-
-        void OnSelectModeChanged(SelectMode mode)
-        {
-            if(!mode.IsMeshElementMode() && ToolManager.activeContextType != typeof(GameObjectToolContext))
-                ToolManager.SetActiveContext<GameObjectToolContext>();
-            if(mode.IsPositionMode() && ToolManager.activeContextType != typeof(ProBuilderMeshContext))
-                ToolManager.SetActiveContext<ProBuilderMeshContext>();
-            else if(mode.IsTextureMode() && ToolManager.activeContextType != typeof(UVTextureContext))
-                ToolManager.SetActiveContext<UVTextureContext>();
         }
 
         internal abstract MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot);
 
-        public override void OnToolGUI(EditorWindow window)
+        public void OnSceneGUI(Event evt)
         {
             // necessary because there is no callback on toolbar changes
             SyncPivotPoint();
             SyncPivotRotation();
 
-            currentEvent = Event.current;
+            currentEvent = evt;
 
-            if (currentEvent.type == EventType.MouseUp || currentEvent.type == EventType.Ignore)
+            if (evt.type == EventType.MouseUp || evt.type == EventType.Ignore)
                 FinishEdit();
 
             switch (ProBuilderEditor.selectMode)
@@ -270,7 +268,10 @@ namespace UnityEditor.ProBuilder
                 handleRotationOriginInverse = Quaternion.Inverse(m_HandleRotation);
             }
 
+            DoTool(m_HandlePosition, m_HandleRotation);
         }
+
+        protected abstract void DoTool(Vector3 handlePosition, Quaternion handleRotation);
 
         protected virtual void OnToolEngaged() {}
 

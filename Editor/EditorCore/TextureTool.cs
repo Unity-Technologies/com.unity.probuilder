@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -6,7 +6,7 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
-    internal class UVTextureTool : ProBuilderEditorTool
+    abstract class TextureTool : VertexManipulationTool
     {
         const bool k_CollectCoincidentVertices = false;
         protected const int k_TextureChannel = 0;

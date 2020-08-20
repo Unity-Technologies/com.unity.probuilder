@@ -1,13 +1,13 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-    internal class ProBuilderMeshMoveTool : ProBuilderMeshTool
+    class PositionMoveTool : PositionTool
     {
         const float k_CardinalAxisError = .001f;
         const float k_MinTranslateDeltaSqrMagnitude = .00001f;
-        Vector3 m_Position;
+        Vector3 m_HandlePosition;
         Vector3 m_RawHandleDelta;
         Vector3Mask m_ActiveAxesModel;
         Vector3Mask m_ActiveAxesWorld;
@@ -34,13 +34,12 @@ namespace UnityEditor.ProBuilder
             m_SnapAsGroup = worldSnapEnabled && ProBuilderSnapSettings.snapAsGroup;
         }
 
-        // This is called for each window that your tool is active in. Put the functionality of your tool here.
-        public override void OnToolGUI(EditorWindow window)
+        protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
         {
-            base.OnToolGUI(window);
+            base.DoTool(handlePosition, handleRotation);
 
             if (!isEditing)
-                m_Position = m_HandlePosition;
+                m_HandlePosition = handlePosition;
 
 #if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
             if (isEditing)
@@ -49,9 +48,9 @@ namespace UnityEditor.ProBuilder
 
             EditorGUI.BeginChangeCheck();
 
-            m_Position = Handles.PositionHandle(m_Position, m_HandleRotation);
+            m_HandlePosition = Handles.PositionHandle(m_HandlePosition, handleRotation);
 
-            m_RawHandleDelta = m_Position - handlePositionOrigin;
+            m_RawHandleDelta = m_HandlePosition - handlePositionOrigin;
 
             var delta = m_RawHandleDelta;
 
@@ -73,11 +72,11 @@ namespace UnityEditor.ProBuilder
                         {
                             var rotationDirection = handleRotationOrigin * dir * 10000f;
 
-                            m_Position = HandleUtility.ProjectPointLine(nearest,
+                            m_HandlePosition = HandleUtility.ProjectPointLine(nearest,
                                 handlePositionOrigin + rotationDirection,
                                 handlePositionOrigin - rotationDirection);
 
-                            delta = m_Position - handlePositionOrigin;
+                            delta = m_HandlePosition - handlePositionOrigin;
                         }
                     }
                 }
@@ -86,11 +85,11 @@ namespace UnityEditor.ProBuilder
                     if (snapAxisConstraint)
                     {
                         m_ActiveAxesModel |= new Vector3Mask(handleRotationOriginInverse * delta, k_CardinalAxisError);
-                        m_ActiveAxesWorld = new Vector3Mask(m_HandleRotation * m_ActiveAxesModel);
+                        m_ActiveAxesWorld = new Vector3Mask(handleRotation * m_ActiveAxesModel);
 
                         if (m_ActiveAxesWorld.active == 1)
                         {
-                            m_Position = ProBuilderSnapping.SnapValueOnRay(
+                            m_HandlePosition = ProBuilderSnapping.SnapValueOnRay(
                                 new Ray(handlePositionOrigin, delta),
                                 delta.magnitude,
                                 GetSnapValueForAxis(m_ActiveAxesModel),
@@ -98,15 +97,15 @@ namespace UnityEditor.ProBuilder
                         }
                         else
                         {
-                            m_Position = ProBuilderSnapping.SnapValue(m_Position, snapValue);
+                            m_HandlePosition = ProBuilderSnapping.SnapValue(m_HandlePosition, snapValue);
                         }
                     }
                     else
                     {
-                        m_Position = ProBuilderSnapping.SnapValue(m_Position, snapValue);
+                        m_HandlePosition = ProBuilderSnapping.SnapValue(m_HandlePosition, snapValue);
                     }
 
-                    delta = m_Position - handlePositionOrigin;
+                    delta = m_HandlePosition - handlePositionOrigin;
                 }
 
 #if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
@@ -209,6 +208,5 @@ namespace UnityEditor.ProBuilder
             }
         }
 #endif
-
     }
 }

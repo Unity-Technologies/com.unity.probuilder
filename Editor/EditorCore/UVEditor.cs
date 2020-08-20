@@ -10,7 +10,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityEditor.EditorTools;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEditor.SettingsManagement;
@@ -2552,7 +2551,7 @@ namespace UnityEditor.ProBuilder
                         ProBuilderEditor.selectMode = ProBuilderEditor.selectMode.GetPositionMode();
                     else
                     {
-                        ProBuilderEditorTool.handleOrientation = HandleOrientation.ActiveElement;
+                        VertexManipulationTool.handleOrientation = HandleOrientation.ActiveElement;
                         ProBuilderEditor.selectMode = ProBuilderEditor.selectMode.GetTextureMode();
                     }
 

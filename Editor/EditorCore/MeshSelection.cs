@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using UnityEditor.EditorTools;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
@@ -253,12 +252,12 @@ namespace UnityEditor.ProBuilder
             s_SelectedElementGroupsDirty = false;
             s_ElementSelection.Clear();
 
-            ProBuilderEditorTool activeTool = (ProBuilderEditorTool)EditorToolManager.activeTool;
+            var activeTool = ProBuilderEditor.activeTool;
 
             if (activeTool != null)
             {
                 foreach (var mesh in s_TopSelection)
-                    s_ElementSelection.Add(activeTool.GetElementSelection(mesh, ProBuilderEditorTool.pivotPoint));
+                    s_ElementSelection.Add(activeTool.GetElementSelection(mesh, VertexManipulationTool.pivotPoint));
             }
         }
 
@@ -537,7 +536,7 @@ namespace UnityEditor.ProBuilder
             if(active == null || active.mesh == null)
                 return Vector3.zero;
 
-            switch (ProBuilderEditorTool.pivotPoint)
+            switch (VertexManipulationTool.pivotPoint)
             {
                 case PivotPoint.ActiveElement:
                 case PivotPoint.IndividualOrigins:
@@ -558,7 +557,7 @@ namespace UnityEditor.ProBuilder
             if(active == null || active.mesh == null)
                 return Quaternion.identity;
 
-            switch (ProBuilderEditorTool.handleOrientation)
+            switch (VertexManipulationTool.handleOrientation)
             {
                 case HandleOrientation.ActiveObject:
                     return active.mesh.transform.rotation;
