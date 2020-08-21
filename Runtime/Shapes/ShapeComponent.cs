@@ -63,41 +63,13 @@ namespace UnityEngine.ProBuilder
         {
             m_Shape.RebuildMesh(mesh, size);
             ApplyRotation(rotationQuaternion);
-            FitToSize();
+            MeshUtility.FitToSize(mesh, size);
         }
 
         public void SetShape(Shape shape)
         {
             this.m_Shape = shape;
             Rebuild();
-        }
-
-        void FitToSize()
-        {
-            if (mesh.vertexCount < 1)
-                return;
-
-            var scale = size.DivideBy(mesh.mesh.bounds.size);
-            if (scale == Vector3.one)
-                return;
-
-            var positions = mesh.positionsInternal;
-
-            if (System.Math.Abs(mesh.mesh.bounds.size.x) < 0.001f)
-                scale.x = 0;
-            if (System.Math.Abs(mesh.mesh.bounds.size.y) < 0.001f)
-                scale.y = 0;
-            if (System.Math.Abs(mesh.mesh.bounds.size.z) < 0.001f)
-                scale.z = 0;
-
-            for (int i = 0, c = mesh.vertexCount; i < c; i++)
-            {
-                positions[i] -= mesh.mesh.bounds.center;
-                positions[i].Scale(scale);
-            }
-
-            mesh.ToMesh();
-            mesh.Rebuild();
         }
 
         /// <summary>
@@ -108,7 +80,7 @@ namespace UnityEngine.ProBuilder
         {
             rotationQuaternion = angles;
             ApplyRotation(rotationQuaternion);
-            FitToSize();
+            MeshUtility.FitToSize(mesh, size);
         }
 
         /// <summary>
@@ -123,7 +95,7 @@ namespace UnityEngine.ProBuilder
             }
             rotationQuaternion = rotation * rotationQuaternion;
             ApplyRotation(rotationQuaternion);
-            FitToSize();
+            MeshUtility.FitToSize(mesh, size);
         }
 
         void ApplyRotation(Quaternion rotation)

@@ -333,13 +333,6 @@ namespace UnityEditor.ProBuilder
             return Handles.inverseMatrix * (localToWorldMatrix * colliderCenter);
         }
 
-        static Vector3 InvertScaleVector(Vector3 scaleVector)
-        {
-            for (int axis = 0; axis < 3; ++axis)
-                scaleVector[axis] = scaleVector[axis] == 0f ? 0f : 1f / scaleVector[axis];
-            return scaleVector;
-        }
-
         void CopyColliderPropertiesToHandle(ShapeComponent shape)
         {
             // when editing a shape, we don't bother doing the conversion from handle space bounds to model for the
@@ -368,7 +361,7 @@ namespace UnityEditor.ProBuilder
             var trs = shape.transform;
 
             bounds.center = Handles.matrix.MultiplyPoint3x4(m_BoundsHandle.center);
-            bounds.size = Math.Abs(Vector3.Scale(m_BoundsHandle.size, InvertScaleVector(trs.lossyScale)));
+            bounds.size = Math.Abs(Vector3.Scale(m_BoundsHandle.size, Math.InvertScaleVector(trs.lossyScale)));
 
             shape.Rebuild(bounds, shape.transform.rotation);
             shape.mesh.SetPivot(shape.transform.position);

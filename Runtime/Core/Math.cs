@@ -1185,6 +1185,13 @@ namespace UnityEngine.ProBuilder
             return sum / len;
         }
 
+        public static Vector3 InvertScaleVector(Vector3 scaleVector)
+        {
+            for (int axis = 0; axis < 3; ++axis)
+                scaleVector[axis] = scaleVector[axis] == 0f ? 0f : 1f / scaleVector[axis];
+            return scaleVector;
+        }
+
         public static Vector4 Average(IList<Vector4> v, IList<int> indexes = null)
         {
             Vector4 sum = Vector4.zero;
