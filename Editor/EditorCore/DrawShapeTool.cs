@@ -143,12 +143,12 @@ namespace UnityEditor.ProBuilder
                 return;
 
             // The sphere doesn't like being built before its height is set
-            if (m_Shape.shape is Sphere && System.Math.Abs(m_Bounds.size.y) < 0.01f)
+            if (m_Shape.m_Shape is Sphere && System.Math.Abs(m_Bounds.size.y) < 0.01f)
                 return;
 
             if (!m_IsInit)
             {
-                ShapeParameters.SetToLastParams(ref m_Shape.shape);
+                ShapeParameters.SetToLastParams(ref m_Shape.m_Shape);
                 m_Shape.gameObject.hideFlags = HideFlags.None;
                 UndoUtility.RegisterCreatedObjectUndo(m_Shape.gameObject, "Draw Shape");
             }
@@ -159,7 +159,7 @@ namespace UnityEditor.ProBuilder
 
             if (!m_IsInit)
             {
-                EditorUtility.InitObject(m_Shape.mesh, false);
+                EditorUtility.InitObject(m_Shape.mesh);
                 m_IsInit = true;
             }
         }
@@ -167,7 +167,7 @@ namespace UnityEditor.ProBuilder
         void FinishShape()
         {
             s_Size.value = m_Shape.size;
-            s_ActiveShapeIndex.value = s_AvailableShapeTypes.IndexOf(m_Shape.shape.GetType());
+            s_ActiveShapeIndex.value = s_AvailableShapeTypes.IndexOf(m_Shape.m_Shape.GetType());
             m_Shape = null;
             InitNewShape();
             m_InputState = InputState.SelectPlane;
@@ -303,7 +303,7 @@ namespace UnityEditor.ProBuilder
         {
             var type = activeShapeType;
             var shape = ShapeGenerator.CreateShape(type).GetComponent<ShapeComponent>();
-            ShapeParameters.SetToLastParams(ref shape.shape);
+            ShapeParameters.SetToLastParams(ref shape.m_Shape);
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape");
 
             Bounds bounds = new Bounds(Vector3.zero, s_Size);

@@ -11,8 +11,8 @@ namespace UnityEditor.ProBuilder
     [CustomEditor(typeof(ShapeComponent))]
     public class ShapeComponentEditor : Editor
     {
-        private ShapeComponent m_ShapeComponent;
-        private IMGUIContainer m_ShapeField;
+        ShapeComponent m_ShapeComponent;
+        IMGUIContainer m_ShapeField;
 
         SerializedProperty m_shape;
         static string[] s_ShapeTypes;
@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder
         private void OnEnable()
         {
             m_ShapeComponent = target as ShapeComponent;
-            m_shape = serializedObject.FindProperty("shape");
+            m_shape = serializedObject.FindProperty("m_Shape");
             var fullName = m_shape.managedReferenceFullTypename;
             var typeName = fullName.Substring(fullName.LastIndexOf(' ') + 1);
 
@@ -56,7 +56,15 @@ namespace UnityEditor.ProBuilder
 
         static Shape CreateShape(Type type)
         {
-            var shape = Activator.CreateInstance(type) as Shape;
+            Shape shape = null;
+            try
+            {
+                shape = Activator.CreateInstance(type) as Shape;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Cannot create shape of type { type.ToString() } because it doesn't have a default constructor.");
+            }
             ShapeParameters.SetToLastParams(ref shape);
             return shape;
         }
@@ -66,11 +74,11 @@ namespace UnityEditor.ProBuilder
             if (shapeComp == null || obj == null)
                 return;
 
-            var shape = shapeComp.shape;
+            var shape = shapeComp.m_Shape;
             obj.Update();
             EditorGUI.BeginChangeCheck();
 
-            var shapeProperty = obj.FindProperty("shape");
+            var shapeProperty = obj.FindProperty("m_Shape");
             s_ActiveShapeIndex = Mathf.Max(0, s_AvailableShapeTypes.IndexOf(shape.GetType()));
             s_ActiveShapeIndex = EditorGUILayout.Popup(s_ActiveShapeIndex, s_ShapeTypes);
 
@@ -94,7 +102,7 @@ namespace UnityEditor.ProBuilder
             EditorGUILayout.PropertyField(shapeProperty, true);
             if (obj.ApplyModifiedProperties())
             {
-                ShapeParameters.SaveParams(shapeComp.shape);
+                ShapeParameters.SaveParams(shapeComp.m_Shape);
                 if (shapeComp != null)
                 {
                     shapeComp.Rebuild();

@@ -12,7 +12,7 @@ namespace UnityEditor.ProBuilder
 
         static ShapeParameters()
         {
-            var types = typeof(Shape).Assembly.GetTypes();
+            var types = TypeCache.GetTypesDerivedFrom<Shape>();
 
             foreach (var type in types)
             {

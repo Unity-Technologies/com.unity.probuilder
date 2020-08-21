@@ -211,7 +211,7 @@ namespace UnityEngine.ProBuilder
             return mesh;
         }
 
-        internal void GeometryWithPoints(Vector3[] points)
+        public void GeometryWithPoints(Vector3[] points)
         {
             // Wrap in faces
             Face[] f = new Face[points.Length / 4];

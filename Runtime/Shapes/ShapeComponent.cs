@@ -6,7 +6,12 @@ namespace UnityEngine.ProBuilder
     public class ShapeComponent : MonoBehaviour
     {
         [SerializeReference]
-        public Shape shape = new Cube();
+        public Shape m_Shape = new Cube();
+
+        public Shape shape {
+            get { return m_Shape; }
+            set { m_Shape = value; }
+        }
 
         ProBuilderMesh m_Mesh;
 
@@ -56,14 +61,14 @@ namespace UnityEngine.ProBuilder
 
         public void Rebuild()
         {
-            shape.RebuildMesh(mesh, size);
+            m_Shape.RebuildMesh(mesh, size);
             ApplyRotation(rotationQuaternion);
             FitToSize();
         }
 
         public void SetShape(Shape shape)
         {
-            this.shape = shape;
+            this.m_Shape = shape;
             Rebuild();
         }
 
@@ -96,9 +101,9 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Set the rotation of the Shape to a given set of eular angles, then rotates it
+        /// Set the rotation of the Shape to a given quaternion, then rotates it while respecting the bounds
         /// </summary>
-        /// <param name="eulerAngles">The angles to rotate by</param>
+        /// <param name="angles">The angles to rotate by</param>
         public void SetRotation(Quaternion angles)
         {
             rotationQuaternion = angles;
@@ -107,9 +112,9 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Rotates the Shape by a given set of eular angles
+        /// Rotates the Shape by a given quaternion while respecting the bounds
         /// </summary>
-        /// <param name="eulerAngles">The angles to rotate by</param>
+        /// <param name="rotation">The angles to rotate by</param>
         public void Rotate(Quaternion rotation)
         {
             if (rotation == Quaternion.identity)
@@ -127,7 +132,7 @@ namespace UnityEngine.ProBuilder
             {
                 return;
             }
-            shape.RebuildMesh(mesh, size);
+            m_Shape.RebuildMesh(mesh, size);
 
             var origVerts = mesh.positionsInternal;
 
