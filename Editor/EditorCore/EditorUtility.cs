@@ -477,9 +477,9 @@ namespace UnityEditor.ProBuilder
         internal static bool IsPositionMode(this SelectMode mode)
         {
             return mode.ContainsFlag(
-                SelectMode.TextureEdge
-                | SelectMode.TextureFace
-                | SelectMode.TextureVertex
+                SelectMode.Edge
+                | SelectMode.Face
+                | SelectMode.Vertex
                 );
         }
 

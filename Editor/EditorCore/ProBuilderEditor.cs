@@ -231,6 +231,8 @@ namespace UnityEditor.ProBuilder
                 if (value == SelectMode.Object)
                     Tools.current = s_Instance.m_CurrentTool;
 
+                UpdateToolContext();
+
                 if (selectModeChanged != null)
                     selectModeChanged(value);
 
@@ -533,6 +535,17 @@ namespace UnityEditor.ProBuilder
             res.titleContent = windowTitle;
         }
 
+#if UNITY_2020_2_OR_NEWER
+        static void UpdateToolContext()
+        {
+            if(!selectMode.IsMeshElementMode() && ToolManager.activeContextType != typeof(GameObjectToolContext))
+                ToolManager.SetActiveContext<GameObjectToolContext>();
+            if(selectMode.IsPositionMode() && ToolManager.activeContextType != typeof(PositionToolContext))
+                ToolManager.SetActiveContext<PositionToolContext>();
+            else if(selectMode.IsTextureMode() && ToolManager.activeContextType != typeof(TextureToolContext))
+                ToolManager.SetActiveContext<TextureToolContext>();
+        }
+#else
         internal static VertexManipulationTool activeTool
         {
             get
@@ -584,6 +597,7 @@ namespace UnityEditor.ProBuilder
                     break;
             }
         }
+#endif
 
         void OnSceneGUI(SceneView sceneView)
         {
@@ -699,6 +713,7 @@ namespace UnityEditor.ProBuilder
                     break;
             }
 
+#if !UNITY_2020_2_OR_NEWER
             // Overrides the toolbar transform tools
             if (Tools.current != Tool.None && Tools.current != Tool.Custom && Tools.current != m_CurrentTool)
                 SetTool_Internal(Tools.current);
@@ -707,6 +722,7 @@ namespace UnityEditor.ProBuilder
             {
                 SetToolForSelectMode(m_CurrentTool, s_SelectMode);
             }
+#endif
 
              if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent))
              {
