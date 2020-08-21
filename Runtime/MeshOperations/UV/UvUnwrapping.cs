@@ -9,7 +9,7 @@ namespace UnityEngine.ProBuilder
 
         internal static void Unwrap(ProBuilderMesh mesh, Face face, Vector3 projection = default)
         {
-            Projection.PlanarProject(mesh, face, projection != Vector3.zero? projection : Vector3.zero);
+            Projection.PlanarProject(mesh, face, projection != Vector3.zero ? projection : Vector3.zero);
             ApplyUVSettings(mesh.texturesInternal, face.distinctIndexesInternal, face.uv);
         }
 
@@ -64,14 +64,18 @@ namespace UnityEngine.ProBuilder
             }
 
             // Apply transform last, so that fill and justify don't override it.
-            if (uvSettings.scale.x != 1f ||
-                uvSettings.scale.y != 1f ||
-                uvSettings.rotation != 0f)
+            if (uvSettings.scale.x != 1f || uvSettings.scale.y != 1f || uvSettings.rotation != 0f)
             {
                 Vector2 center = Bounds2D.Center(uvs, indexes);
+                // apply an offset to the positions relative to UV scale before rotation or scale is applied so that
+                // UVs remain static in UV space
+                Vector2 scaledCenter = center * uvSettings.scale;
+                Vector2 delta = center - scaledCenter;
+                center = scaledCenter;
 
                 for (int i = 0; i < len; i++)
                 {
+                    uvs[indexes[i]] -= delta;
                     uvs[indexes[i]] = uvs[indexes[i]].ScaleAroundPoint(center, uvSettings.scale);
                     uvs[indexes[i]] = uvs[indexes[i]].RotateAroundPoint(center, uvSettings.rotation);
                 }
@@ -79,7 +83,7 @@ namespace UnityEngine.ProBuilder
 
             if (!uvSettings.useWorldSpace && uvSettings.anchor != AutoUnwrapSettings.Anchor.None)
                 ApplyUVAnchor(uvs, indexes, uvSettings.anchor);
-            
+
             if (uvSettings.flipU || uvSettings.flipV || uvSettings.swapUV)
             {
                 for (int i = 0; i < len; i++)
