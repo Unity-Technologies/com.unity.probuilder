@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder
         static string[] s_ShapeTypes;
         static TypeCache.TypeCollection s_AvailableShapeTypes;
 
-        static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
+        static int s_ActiveShapeIndex = 0;
 
         static ShapeComponentEditor()
         {
@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder
 
             if (type != null)
             {
-                s_ActiveShapeIndex.value = s_AvailableShapeTypes.IndexOf(type);
+                s_ActiveShapeIndex = s_AvailableShapeTypes.IndexOf(type);
             }
         }
 
@@ -71,8 +71,8 @@ namespace UnityEditor.ProBuilder
             EditorGUI.BeginChangeCheck();
 
             var shapeProperty = obj.FindProperty("shape");
-            s_ActiveShapeIndex.value = Mathf.Max(0, s_AvailableShapeTypes.IndexOf(shape.GetType()));
-            s_ActiveShapeIndex.value = EditorGUILayout.Popup(s_ActiveShapeIndex, s_ShapeTypes);
+            s_ActiveShapeIndex = Mathf.Max(0, s_AvailableShapeTypes.IndexOf(shape.GetType()));
+            s_ActiveShapeIndex = EditorGUILayout.Popup(s_ActiveShapeIndex, s_ShapeTypes);
 
             if (EditorGUI.EndChangeCheck())
             {

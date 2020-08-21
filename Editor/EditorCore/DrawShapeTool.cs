@@ -165,6 +165,7 @@ namespace UnityEditor.ProBuilder
         void FinishShape()
         {
             s_Size.value = m_Shape.size;
+            s_ActiveShapeIndex.value = s_AvailableShapeTypes.IndexOf(m_Shape.shape.GetType());
             m_Shape = null;
             InitNewShape();
             m_InputState = InputState.SelectPlane;
