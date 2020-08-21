@@ -311,7 +311,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.Refresh(false);
 
             var res = shape.GetComponent<ProBuilderMesh>();
-            EditorUtility.InitObject(res, false);
+            EditorUtility.InitObject(res);
             return res;
         }
 

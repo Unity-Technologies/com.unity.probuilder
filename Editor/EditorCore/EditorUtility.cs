@@ -292,14 +292,13 @@ namespace UnityEditor.ProBuilder
         /// Initialize this object with the various editor-only parameters, and invoke the object creation callback.
         /// </summary>
         /// <param name="pb"></param>
-        internal static void InitObject(ProBuilderMesh pb, bool snapToGrid = true)
+        internal static void InitObject(ProBuilderMesh pb)
         {
             MoveToActiveScene(pb.gameObject);
             GameObjectUtility.EnsureUniqueNameForSibling(pb.gameObject);
             ScreenCenter(pb.gameObject);
             
-            if(snapToGrid)
-                TrySnapToGrid(pb);
+            TrySnapToGrid(pb);
 
 #if UNITY_2019_1_OR_NEWER
             ComponentUtility.MoveComponentRelativeToComponent(pb, pb.transform, false);
