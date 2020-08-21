@@ -36,14 +36,19 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        public static void SetToLastParams<T>(ref T shape) where T : Shape
+        public static Shape GetLastParams(Type type)
         {
-            var name = "ShapeBuilder." + shape.GetType().Name;
+            if (!typeof(Shape).IsAssignableFrom(type))
+            {
+                throw new ArgumentException(nameof(type));
+            }
+            var name = "ShapeBuilder." + type.Name;
             if (s_Prefs.TryGetValue(name, out var data))
             {
                 if (data != null)
-                    shape = (T)data;
-            }  
+                    return (Shape)data;
+            }
+            return default;
         }
     }
 }

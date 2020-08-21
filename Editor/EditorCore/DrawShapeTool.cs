@@ -96,7 +96,7 @@ namespace UnityEditor.ProBuilder
             {
                 Debug.LogError($"Cannot create shape of type { type.ToString() } because it doesn't have a default constructor.");
             }
-            ShapeParameters.SetToLastParams(ref shape);
+            shape = ShapeParameters.GetLastParams(shape.GetType());
             return shape;
         }
 
@@ -143,12 +143,12 @@ namespace UnityEditor.ProBuilder
                 return;
 
             // The sphere doesn't like being built before its height is set
-            if (m_Shape.m_Shape is Sphere && System.Math.Abs(m_Bounds.size.y) < 0.01f)
+            if (m_Shape.shape is Sphere && System.Math.Abs(m_Bounds.size.y) < 0.01f)
                 return;
 
             if (!m_IsInit)
             {
-                ShapeParameters.SetToLastParams(ref m_Shape.m_Shape);
+                m_Shape.shape = ShapeParameters.GetLastParams(m_Shape.shape.GetType());
                 m_Shape.gameObject.hideFlags = HideFlags.None;
                 UndoUtility.RegisterCreatedObjectUndo(m_Shape.gameObject, "Draw Shape");
             }
@@ -167,7 +167,7 @@ namespace UnityEditor.ProBuilder
         void FinishShape()
         {
             s_Size.value = m_Shape.size;
-            s_ActiveShapeIndex.value = s_AvailableShapeTypes.IndexOf(m_Shape.m_Shape.GetType());
+            s_ActiveShapeIndex.value = s_AvailableShapeTypes.IndexOf(m_Shape.shape.GetType());
             m_Shape = null;
             InitNewShape();
             m_InputState = InputState.SelectPlane;
@@ -303,7 +303,7 @@ namespace UnityEditor.ProBuilder
         {
             var type = activeShapeType;
             var shape = ShapeGenerator.CreateShape(type).GetComponent<ShapeComponent>();
-            ShapeParameters.SetToLastParams(ref shape.m_Shape);
+            shape.shape = ShapeParameters.GetLastParams(shape.shape.GetType());
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape");
 
             Bounds bounds = new Bounds(Vector3.zero, s_Size);

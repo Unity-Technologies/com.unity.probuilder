@@ -65,7 +65,7 @@ namespace UnityEditor.ProBuilder
             {
                 Debug.LogError($"Cannot create shape of type { type.ToString() } because it doesn't have a default constructor.");
             }
-            ShapeParameters.SetToLastParams(ref shape);
+            shape = ShapeParameters.GetLastParams(type);
             return shape;
         }
 
@@ -74,7 +74,7 @@ namespace UnityEditor.ProBuilder
             if (shapeComp == null || obj == null)
                 return;
 
-            var shape = shapeComp.m_Shape;
+            var shape = shapeComp.shape;
             obj.Update();
             EditorGUI.BeginChangeCheck();
 
@@ -102,7 +102,7 @@ namespace UnityEditor.ProBuilder
             EditorGUILayout.PropertyField(shapeProperty, true);
             if (obj.ApplyModifiedProperties())
             {
-                ShapeParameters.SaveParams(shapeComp.m_Shape);
+                ShapeParameters.SaveParams(shapeComp.shape);
                 if (shapeComp != null)
                 {
                     shapeComp.Rebuild();
