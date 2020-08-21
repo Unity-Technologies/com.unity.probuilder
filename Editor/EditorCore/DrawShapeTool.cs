@@ -72,7 +72,7 @@ namespace UnityEditor.ProBuilder
             m_Shape = new GameObject("Shape", typeof(ShapeComponent)).GetComponent<ShapeComponent>();
             m_Shape.gameObject.hideFlags = HideFlags.HideAndDontSave;
             m_Shape.hideFlags = HideFlags.None;
-            m_Shape.SetShape(CreateShape(activeShapeType));
+            m_Shape.SetShape(EditorShapeUtility.CreateShape(activeShapeType));
             m_Object = new SerializedObject(m_Shape);
         }
 
@@ -83,21 +83,6 @@ namespace UnityEditor.ProBuilder
                 DestroyImmediate(m_Shape.gameObject);
             }
             ToolManager.activeToolChanged -= ActiveToolChanged;
-        }
-
-        Shape CreateShape(Type type)
-        {
-            Shape shape = null;
-            try
-            {
-                shape = Activator.CreateInstance(type) as Shape;
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Cannot create shape of type { type.ToString() } because it doesn't have a default constructor.");
-            }
-            shape = ShapeParameters.GetLastParams(shape.GetType());
-            return shape;
         }
 
         void ActiveToolChanged()
@@ -148,7 +133,7 @@ namespace UnityEditor.ProBuilder
 
             if (!m_IsInit)
             {
-                m_Shape.shape = ShapeParameters.GetLastParams(m_Shape.shape.GetType());
+                m_Shape.shape = EditorShapeUtility.GetLastParams(m_Shape.shape.GetType());
                 m_Shape.gameObject.hideFlags = HideFlags.None;
                 UndoUtility.RegisterCreatedObjectUndo(m_Shape.gameObject, "Draw Shape");
             }
@@ -303,7 +288,7 @@ namespace UnityEditor.ProBuilder
         {
             var type = activeShapeType;
             var shape = ShapeGenerator.CreateShape(type).GetComponent<ShapeComponent>();
-            shape.shape = ShapeParameters.GetLastParams(shape.shape.GetType());
+            shape.shape = EditorShapeUtility.GetLastParams(shape.shape.GetType());
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape");
 
             Bounds bounds = new Bounds(Vector3.zero, s_Size);

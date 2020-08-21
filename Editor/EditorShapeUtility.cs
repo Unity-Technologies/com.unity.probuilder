@@ -6,11 +6,11 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-    internal static class ShapeParameters
+    internal static class EditorShapeUtility
     {
         static Dictionary<string, Shape> s_Prefs = new Dictionary<string, Shape>();
 
-        static ShapeParameters()
+        static EditorShapeUtility()
         {
             var types = TypeCache.GetTypesDerivedFrom<Shape>();
 
@@ -48,7 +48,30 @@ namespace UnityEditor.ProBuilder
                 if (data != null)
                     return (Shape)data;
             }
+            try
+            {
+                return Activator.CreateInstance(type) as Shape;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Cannot create shape of type { type.ToString() } because it doesn't have a default constructor.");
+            }
             return default;
+        }
+
+        public static Shape CreateShape(Type type)
+        {
+            Shape shape = null;
+            try
+            {
+                shape = Activator.CreateInstance(type) as Shape;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Cannot create shape of type { type.ToString() } because it doesn't have a default constructor.");
+            }
+            shape = GetLastParams(shape.GetType()); 
+            return shape;
         }
     }
 }

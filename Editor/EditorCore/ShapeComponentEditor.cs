@@ -30,23 +30,7 @@ namespace UnityEditor.ProBuilder
         {
             m_ShapeComponent = target as ShapeComponent;
             m_shape = serializedObject.FindProperty("m_Shape");
-            var fullName = m_shape.managedReferenceFullTypename;
-            var typeName = fullName.Substring(fullName.LastIndexOf(' ') + 1);
-
-            Type type = null;
-            foreach (var shapeType in s_AvailableShapeTypes)
-            {
-                if (shapeType.ToString() == typeName)
-                {
-                    type = shapeType;
-                    break;
-                }
-            }
-
-            if (type != null)
-            {
-                s_ActiveShapeIndex = s_AvailableShapeTypes.IndexOf(type);
-            }
+            s_ActiveShapeIndex = s_AvailableShapeTypes.IndexOf(m_ShapeComponent.shape.GetType());
         }
 
         public override void OnInspectorGUI()
@@ -54,27 +38,12 @@ namespace UnityEditor.ProBuilder
             DrawShapeGUI((ShapeComponent)target, serializedObject);
         }
 
-        static Shape CreateShape(Type type)
-        {
-            Shape shape = null;
-            try
-            {
-                shape = Activator.CreateInstance(type) as Shape;
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Cannot create shape of type { type.ToString() } because it doesn't have a default constructor.");
-            }
-            shape = ShapeParameters.GetLastParams(type);
-            return shape;
-        }
-
         public static void DrawShapeGUI(ShapeComponent shapeComp, SerializedObject obj)
         {
             if (shapeComp == null || obj == null)
                 return;
 
-            var shape = shapeComp.shape;
+            var shape = shapeComp.shape; 
             obj.Update();
             EditorGUI.BeginChangeCheck();
 
@@ -86,7 +55,7 @@ namespace UnityEditor.ProBuilder
             {
                 UndoUtility.RegisterCompleteObjectUndo(shapeComp, "Change Shape");
                 var type = s_AvailableShapeTypes[s_ActiveShapeIndex];
-                shapeComp.SetShape(CreateShape(type));
+                shapeComp.SetShape(EditorShapeUtility.CreateShape(type));
                 ProBuilderEditor.Refresh();
             }
 
@@ -102,7 +71,7 @@ namespace UnityEditor.ProBuilder
             EditorGUILayout.PropertyField(shapeProperty, true);
             if (obj.ApplyModifiedProperties())
             {
-                ShapeParameters.SaveParams(shapeComp.shape);
+                EditorShapeUtility.SaveParams(shapeComp.shape);
                 if (shapeComp != null)
                 {
                     shapeComp.Rebuild();
