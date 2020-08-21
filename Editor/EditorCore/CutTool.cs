@@ -1273,10 +1273,16 @@ namespace UnityEditor.ProBuilder
                 //Test intersections with the rest of the cut path
                 for(int j = i + 2; j < m_CutPath.Count-1 && m_IsCutValid; j++)
                 {
-                    Vector2 segment2Start2D = HandleUtility.WorldToGUIPoint(m_Mesh.transform.TransformPoint(m_CutPath[j].position));
-                    Vector2 segment2End2D = HandleUtility.WorldToGUIPoint(m_Mesh.transform.TransformPoint(m_CutPath[j+1].position));
+                    if(((m_CutPath[j].types | m_CutPath[j+1].types) & VertexTypes.VertexInShape) == 0)
+                    {
+                        Vector2 segment2Start2D =
+                            HandleUtility.WorldToGUIPoint(m_Mesh.transform.TransformPoint(m_CutPath[j].position));
+                        Vector2 segment2End2D =
+                            HandleUtility.WorldToGUIPoint(m_Mesh.transform.TransformPoint(m_CutPath[j + 1].position));
 
-                    m_IsCutValid = !Math.GetLineSegmentIntersect(segment1Start2D, segment1End2D, segment2Start2D, segment2End2D);
+                        m_IsCutValid = !Math.GetLineSegmentIntersect(segment1Start2D, segment1End2D, segment2Start2D,
+                            segment2End2D);
+                    }
                 }
 
                 //Test intersections with the connections to the face vertices
