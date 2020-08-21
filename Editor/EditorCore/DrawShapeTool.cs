@@ -79,14 +79,21 @@ namespace UnityEditor.ProBuilder
             if (m_Shape.gameObject.hideFlags == HideFlags.HideAndDontSave)
             {
                 DestroyImmediate(m_Shape.gameObject);
-                InitNewShape();
             }
             ToolManager.activeToolChanged -= ActiveToolChanged;
         }
 
         Shape CreateShape(Type type)
         {
-            var shape = Activator.CreateInstance(type) as Shape;
+            Shape shape = null;
+            try
+            {
+                shape = Activator.CreateInstance(type) as Shape;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Cannot create shape of type { type.ToString() } because it doesn't have a default constructor.");
+            }
             ShapeParameters.SetToLastParams(ref shape);
             return shape;
         }
