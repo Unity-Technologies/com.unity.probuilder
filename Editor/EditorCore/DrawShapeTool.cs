@@ -39,6 +39,7 @@ namespace UnityEditor.ProBuilder
         Bounds m_Bounds;
 
         bool m_IsDragging;
+        bool m_IsInit;
 
         GUIContent m_ShapeTitle;
 
@@ -67,6 +68,7 @@ namespace UnityEditor.ProBuilder
 
         void InitNewShape()
         {
+            m_IsInit = false;
             m_Shape = new GameObject("Shape", typeof(ShapeComponent)).GetComponent<ShapeComponent>();
             m_Shape.gameObject.hideFlags = HideFlags.HideAndDontSave;
             m_Shape.hideFlags = HideFlags.None;
@@ -144,7 +146,7 @@ namespace UnityEditor.ProBuilder
             if (m_Shape.shape is Sphere && System.Math.Abs(m_Bounds.size.y) < 0.01f)
                 return;
 
-            if (!m_Shape.isInit)
+            if (!m_IsInit)
             {
                 ShapeParameters.SetToLastParams(ref m_Shape.shape);
                 m_Shape.gameObject.hideFlags = HideFlags.None;
@@ -155,10 +157,10 @@ namespace UnityEditor.ProBuilder
             m_Shape.mesh.SetPivot(PivotLocation.Center);
             ProBuilderEditor.Refresh(false);
 
-            if (!m_Shape.isInit)
+            if (!m_IsInit)
             {
                 EditorUtility.InitObject(m_Shape.mesh, false);
-                m_Shape.isInit = true;
+                m_IsInit = true;
             }
         }
 
@@ -306,7 +308,6 @@ namespace UnityEditor.ProBuilder
 
             Bounds bounds = new Bounds(Vector3.zero, s_Size);
             shape.Rebuild(bounds, Quaternion.identity);
-            shape.mesh.SetPivot(PivotLocation.Center);
             ProBuilderEditor.Refresh(false);
 
             var res = shape.GetComponent<ProBuilderMesh>();
@@ -357,12 +358,9 @@ namespace UnityEditor.ProBuilder
 
         void DrawBoundingBox()
         {
-            using (new Handles.DrawingScope(new Color(.2f, .4f, .8f, 1f)))
+            using (new Handles.DrawingScope(new Color(.2f, .4f, .8f, 1f), Matrix4x4.TRS(m_Bounds.center, m_Rotation, Vector3.one)))
             {
-                EditorHandleUtility.PushMatrix();
-                Handles.matrix = Matrix4x4.TRS(m_Bounds.center, m_Rotation, Vector3.one);
                 Handles.DrawWireCube(Vector3.zero, m_Bounds.size);
-                EditorHandleUtility.PopMatrix();
             }
         }
 

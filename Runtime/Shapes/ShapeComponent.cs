@@ -8,8 +8,6 @@ namespace UnityEngine.ProBuilder
         [SerializeReference]
         public Shape shape = new Cube();
 
-        public bool isInit;
-
         ProBuilderMesh m_Mesh;
 
         [SerializeField]
