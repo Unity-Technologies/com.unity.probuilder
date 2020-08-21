@@ -277,7 +277,7 @@ namespace UnityEditor.ProBuilder
         {
             instance = null;
 
-            if (ProBuilderEditor.selectMode == SelectMode.TextureFace)
+            if (ProBuilderEditor.selectMode.IsTextureMode())
                 ProBuilderEditor.ResetToLastSelectMode();
 
             if (uv2Editor != null)

@@ -7,13 +7,18 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEditor.EditorTools;
-using UnityEditor.ProBuilder.Actions;
 using UnityEngine.ProBuilder;
 using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
 using UObject = UnityEngine.Object;
 using UnityEditor.SettingsManagement;
-using UnityEditor.ShortcutManagement;
-using UnityEngine.ProBuilder.MeshOperations;
+
+#if UNITY_2020_2_OR_NEWER
+using EditorToolManager = UnityEditor.EditorTools.EditorToolManager;
+using ToolManager = UnityEditor.EditorTools.ToolManager;
+#else
+using EditorToolManager = UnityEditor.EditorTools.EditorToolContext;
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -489,7 +494,7 @@ namespace UnityEditor.ProBuilder
             if (s_EditorToolbar != null)
                 DestroyImmediate(s_EditorToolbar);
 
-            s_EditorToolbar = ScriptableObject.CreateInstance<EditorToolbar>();
+            s_EditorToolbar = CreateInstance<EditorToolbar>();
             s_EditorToolbar.hideFlags = HideFlags.HideAndDontSave;
             s_EditorToolbar.InitWindowProperties(this);
         }
@@ -534,21 +539,21 @@ namespace UnityEditor.ProBuilder
             {
                 return s_Instance == null
                     ? null
-                    : (VertexManipulationTool)EditorToolContext.activeTool;
+                    : (VertexManipulationTool)EditorToolManager.activeTool;
             }
         }
 
         void SetTool<T>() where T : VertexManipulationTool, new()
         {
             //If the type is already active do nothing
-            if(typeof(T) == EditorTools.EditorTools.activeToolType)
+            if(typeof(T) == ToolManager.activeToolType)
                 return;
 
             VertexManipulationTool formerTool = null;
 
-            if(EditorToolContext.activeTool is VertexManipulationTool)
-                formerTool = (VertexManipulationTool)EditorToolContext.activeTool;
-            EditorTools.EditorTools.SetActiveTool(ScriptableObject.CreateInstance<T>());
+            if(EditorToolManager.activeTool is VertexManipulationTool)
+                formerTool = (VertexManipulationTool)EditorToolManager.activeTool;
+            ToolManager.SetActiveTool(CreateInstance<T>());
             if(formerTool != null)
                 DestroyImmediate(formerTool);
         }
