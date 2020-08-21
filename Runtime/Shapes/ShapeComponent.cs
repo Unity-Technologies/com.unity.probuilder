@@ -6,7 +6,7 @@ namespace UnityEngine.ProBuilder
     public class ShapeComponent : MonoBehaviour
     {
         [SerializeReference]
-        public Shape m_Shape = new Cube();
+        Shape m_Shape = new Cube();
 
         public Shape shape {
             get { return m_Shape; }
