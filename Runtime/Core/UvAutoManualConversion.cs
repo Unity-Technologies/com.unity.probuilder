@@ -3,12 +3,12 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace UnityEngine.ProBuilder.MeshOperations
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// UV actions.
 	/// </summary>
-	static partial class UVEditing
+	static partial class UvUnwrapping
 	{
 		/// <summary>
 		/// Sets the passed faces to use Auto or Manual UVs, and (if previously manual) splits any vertex connections.
@@ -178,6 +178,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 	        }
 
 	        return new Vector2(xMax - xMin, yMax - yMin);
+        }
+
+        internal static Vector2 CalculateAutoUVScaleOffset(ProBuilderMesh mesh, Face face)
+        {
+            Projection.PlanarProject(mesh.positionsInternal, face.indexesInternal, Math.Normal(mesh, face), s_UVTransformProjectionBuffer);
+            var center = Bounds2D.Center(s_UVTransformProjectionBuffer);
+            Vector2 scaledCenter = center * face.uv.scale;
+            return center - scaledCenter;
         }
 	}
 }

@@ -296,7 +296,8 @@ namespace UnityEngine.ProBuilder
             {
                 if (m_MeshFormatVersion < k_MeshFormatVersionSubmeshMaterialRefactor)
                     Submesh.MapFaceMaterialsToSubmeshIndex(this);
-
+                if (m_MeshFormatVersion < k_MeshFormatVersionAutoUVScaleOffset)
+                    UvUnwrapping.UpgradeAutoUVScaleOffset(this);
                 m_MeshFormatVersion = k_MeshFormatVersion;
             }
 

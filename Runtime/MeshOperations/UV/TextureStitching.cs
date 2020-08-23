@@ -33,7 +33,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (AlignEdges(mesh, f2, sharedEdge.edge.local, sharedEdge.opposite.edge.local, channel))
             {
                 if (!f2.manualUV)
-                    SetAutoAndAlignUnwrapParamsToUVs(mesh, new [] { f2 });
+                    UvUnwrapping.SetAutoAndAlignUnwrapParamsToUVs(mesh, new [] { f2 });
 
                 return true;
             }

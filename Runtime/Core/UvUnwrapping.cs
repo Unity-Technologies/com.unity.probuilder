@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
 {
-    static class UvUnwrapping
+    static partial class UvUnwrapping
     {
         static Vector2 s_TempVector2 = Vector2.zero;
         static readonly List<int> s_IndexBuffer = new List<int>(64);
@@ -181,6 +181,20 @@ namespace UnityEngine.ProBuilder
             {
                 uvs[indexes[i]].x -= s_TempVector2.x;
                 uvs[indexes[i]].y -= s_TempVector2.y;
+            }
+        }
+
+        // 2020/8/23 - scaled auto UV faces now have an offset applied to their projected coordinates so that they
+        // remain static in UV space when the mesh geometry is modified
+        internal static void UpgradeAutoUVScaleOffset(ProBuilderMesh mesh)
+        {
+            foreach (var face in mesh.facesInternal)
+            {
+                if (face.manualUV)
+                    continue;
+                var auto = face.uv;
+                auto.offset -= CalculateAutoUVScaleOffset(mesh, face);
+                face.uv = auto;
             }
         }
     }

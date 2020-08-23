@@ -1,8 +1,6 @@
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
@@ -27,7 +25,7 @@ namespace UnityEditor.ProBuilder
                 var faces = mesh.faces;
 
                 m_FaceAndScale = mesh.selectedFaceIndexes.Select(x =>
-                    new SimpleTuple<Face, Vector2>(faces[x], UVEditing.GetUVTransform(mesh, faces[x]).scale))
+                    new SimpleTuple<Face, Vector2>(faces[x], UvUnwrapping.GetUVTransform(mesh, faces[x]).scale))
                         .ToArray();
             }
         }
