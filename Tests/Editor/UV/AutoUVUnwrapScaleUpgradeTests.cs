@@ -1,8 +1,5 @@
-using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using UnityEditor;
-using UnityEditor.ProBuilder;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -13,14 +10,9 @@ public class AutoUVUnwrapScaleUpgradeTests
     const float k_AllowedFloatError = .00001f;
 
     static Scene s_Scene;
+    // ValueSource doesn't work when the array is populated in setup, hence the index workaround
     static ProBuilderMesh[] s_Meshes = new ProBuilderMesh[4];
-    // ValueSource doesn't work when the array is populated in setup
     static int[] s_MeshIndex = new int[] { 0, 1, 2, 3 };
-
-    static IEnumerable<GameObject> rootGameObjects
-    {
-        get { return s_Scene.GetRootGameObjects(); }
-    }
 
     [OneTimeSetUp]
     public void PrepareSceneView()
@@ -29,9 +21,13 @@ public class AutoUVUnwrapScaleUpgradeTests
         var root = s_Scene.GetRootGameObjects();
 
         s_Meshes[0] = root[0].GetComponent<ProBuilderMesh>();
+        Assume.That(s_Meshes[0], Is.Not.Null);
         s_Meshes[1] = root[1].GetComponent<ProBuilderMesh>();
+        Assume.That(s_Meshes[1], Is.Not.Null);
         s_Meshes[2] = root[2].GetComponent<ProBuilderMesh>();
+        Assume.That(s_Meshes[2], Is.Not.Null);
         s_Meshes[3] = root[3].GetComponent<ProBuilderMesh>();
+        Assume.That(s_Meshes[3], Is.Not.Null);
     }
 
     [Test]
