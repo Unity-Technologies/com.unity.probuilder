@@ -36,11 +36,7 @@ public class AutoUVUnwrapScaleUpgradeTests
     {
         var mesh = s_Meshes[index];
         var original = mesh.textures.ToArray();
-
-        Assume.That(mesh.meshFormatVersion < ProBuilderMesh.k_MeshFormatVersionAutoUVScaleOffset, mesh.gameObject.name);
         mesh.Rebuild();
-        Assert.That(mesh.meshFormatVersion >= ProBuilderMesh.k_MeshFormatVersionAutoUVScaleOffset, mesh.gameObject.name);
-
         var textures = mesh.texturesInternal;
 
         foreach (var face in mesh.facesInternal)
@@ -48,5 +44,15 @@ public class AutoUVUnwrapScaleUpgradeTests
             for (int i = 0; i < face.indexesInternal.Length; i++)
                 Assert.That(Mathf.Abs((original[i] - textures[i]).magnitude) < k_AllowedFloatError, $"{face.uv}\nAt index {i} {original[i]} != {mesh.textures[i]}");
         }
+    }
+
+    [Test]
+    public void LegacyUVs_UpgradeIncrementsMeshVersion()
+    {
+        var mesh = s_Meshes[0];
+        Assume.That(mesh, Is.Not.Null);
+        Assume.That(mesh.meshFormatVersion < ProBuilderMesh.k_MeshFormatVersionAutoUVScaleOffset);
+        mesh.Rebuild();
+        Assert.That(mesh.meshFormatVersion >= ProBuilderMesh.k_MeshFormatVersionAutoUVScaleOffset);
     }
 }

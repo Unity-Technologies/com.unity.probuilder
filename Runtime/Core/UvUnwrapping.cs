@@ -60,11 +60,11 @@ namespace UnityEngine.ProBuilder
                 case AutoUnwrapSettings.Fill.Fit:
                     var max = Mathf.Max(bounds.size.x, bounds.size.y);
                     ScaleUVs(uvs, indexes, new Vector2(max, max), bounds);
-                    bounds.SetWithPoints(uvs, indexes);
+                    bounds.center /= max;
                     break;
                 case AutoUnwrapSettings.Fill.Stretch:
                     ScaleUVs(uvs, indexes, bounds.size, bounds);
-                    bounds.SetWithPoints(uvs, indexes);
+                    bounds.center /= bounds.size;
                     break;
             }
 
