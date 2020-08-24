@@ -179,13 +179,5 @@ namespace UnityEngine.ProBuilder
 
 	        return new Vector2(xMax - xMin, yMax - yMin);
         }
-
-        internal static Vector2 CalculateAutoUVScaleOffset(ProBuilderMesh mesh, Face face)
-        {
-            Projection.PlanarProject(mesh.positionsInternal, face.indexesInternal, Math.Normal(mesh, face), s_UVTransformProjectionBuffer);
-            var center = Bounds2D.Center(s_UVTransformProjectionBuffer);
-            Vector2 scaledCenter = center * face.uv.scale;
-            return center - scaledCenter;
-        }
 	}
 }

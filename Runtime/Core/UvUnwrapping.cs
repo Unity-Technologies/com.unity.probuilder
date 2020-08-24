@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UnityEngine.ProBuilder
 {
@@ -50,28 +51,31 @@ namespace UnityEngine.ProBuilder
         static void ApplyUVSettings(Vector2[] uvs, IList<int> indexes, AutoUnwrapSettings uvSettings)
         {
             int len = indexes.Count;
+            Bounds2D bounds = new Bounds2D(uvs, indexes);
 
             switch (uvSettings.fill)
             {
                 case AutoUnwrapSettings.Fill.Tile:
                     break;
                 case AutoUnwrapSettings.Fill.Fit:
-                    FitUVs(uvs, indexes);
+                    var max = Mathf.Max(bounds.size.x, bounds.size.y);
+                    ScaleUVs(uvs, indexes, new Vector2(max, max), bounds);
+                    bounds.SetWithPoints(uvs, indexes);
                     break;
                 case AutoUnwrapSettings.Fill.Stretch:
-                    StretchUVs(uvs, indexes);
+                    ScaleUVs(uvs, indexes, bounds.size, bounds);
+                    bounds.SetWithPoints(uvs, indexes);
                     break;
             }
 
             // Apply transform last, so that fill and justify don't override it.
             if (uvSettings.scale.x != 1f || uvSettings.scale.y != 1f || uvSettings.rotation != 0f)
             {
-                Vector2 center = Bounds2D.Center(uvs, indexes);
                 // apply an offset to the positions relative to UV scale before rotation or scale is applied so that
                 // UVs remain static in UV space
-                Vector2 scaledCenter = center * uvSettings.scale;
-                Vector2 delta = center - scaledCenter;
-                center = scaledCenter;
+                Vector2 scaledCenter = bounds.center * uvSettings.scale;
+                Vector2 delta = bounds.center - scaledCenter;
+                Vector2 center = scaledCenter;
 
                 for (int i = 0; i < len; i++)
                 {
@@ -117,38 +121,18 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        static void StretchUVs(Vector2[] uvs, IList<int> indexes)
+        static void ScaleUVs(Vector2[] uvs, IList<int> indexes, Vector2 scale, Bounds2D bounds)
         {
-            var bounds = new Bounds2D();
-            bounds.SetWithPoints(uvs, indexes);
-            var c = bounds.center;
-            var s = bounds.size;
+            var center = bounds.center;
+            Vector2 scaledCenter = center / scale;
+            Vector2 delta = center - scaledCenter;
+            center = scaledCenter;
 
             for (int i = 0; i < indexes.Count; i++)
             {
-                var uv = uvs[indexes[i]];
-
-                uv.x = ((uv.x - c.x) / s.x) + c.x;
-                uv.y = ((uv.y - c.y) / s.y) + c.y;
-
-                uvs[indexes[i]] = uv;
-            }
-        }
-
-        static void FitUVs(Vector2[] uvs, IList<int> indexes)
-        {
-            var bounds = new Bounds2D();
-            bounds.SetWithPoints(uvs, indexes);
-            var c = bounds.center;
-            var s = Mathf.Max(bounds.size.x, bounds.size.y);
-
-            for (int i = 0; i < indexes.Count; i++)
-            {
-                var uv = uvs[indexes[i]];
-
-                uv.x = ((uv.x - c.x) / s) + c.x;
-                uv.y = ((uv.y - c.y) / s) + c.y;
-
+                var uv = uvs[indexes[i]] - delta;
+                uv.x = ((uv.x - center.x) / scale.x) + center.x;
+                uv.y = ((uv.y - center.y) / scale.y) + center.y;
                 uvs[indexes[i]] = uv;
             }
         }
@@ -188,12 +172,17 @@ namespace UnityEngine.ProBuilder
         // remain static in UV space when the mesh geometry is modified
         internal static void UpgradeAutoUVScaleOffset(ProBuilderMesh mesh)
         {
+            var original = mesh.textures.ToArray();
+            mesh.RefreshUV(mesh.facesInternal);
+            var textures = mesh.texturesInternal;
+
             foreach (var face in mesh.facesInternal)
             {
                 if (face.manualUV)
                     continue;
+                var utrs = CalculateDelta(original, face.indexesInternal, textures, face.indexesInternal);
                 var auto = face.uv;
-                auto.offset -= CalculateAutoUVScaleOffset(mesh, face);
+                auto.offset += utrs.translation;
                 face.uv = auto;
             }
         }

@@ -15,7 +15,7 @@ public class AutoUVUnwrapScaleUpgradeTests
     static ProBuilderMesh[] s_Meshes = new ProBuilderMesh[4];
     static int[] s_MeshIndex = new int[] { 0, 1, 2, 3 };
 
-    [OneTimeSetUp]
+    [SetUp]
     public void PrepareSceneView()
     {
         s_Scene = EditorSceneManager.OpenScene($"{TestUtility.testsRootDirectory}/Scenes/AutoUVScaleUpgrade.unity");
@@ -36,12 +36,17 @@ public class AutoUVUnwrapScaleUpgradeTests
     {
         var mesh = s_Meshes[index];
         var original = mesh.textures.ToArray();
-        Assert.That(mesh.meshFormatVersion < ProBuilderMesh.k_MeshFormatVersionAutoUVScaleOffset, mesh.gameObject.name);
-        mesh.Rebuild();
 
-        for (int i = 0; i < original.Length; i++)
-            Assert.That(Mathf.Abs((original[i] - mesh.textures[i]).magnitude) < k_AllowedFloatError, $"At index {i} {original[i]} != {mesh.textures[i]}");
-        // Wasn't able to get Vec2 comparison working with Within constraint, not sure why
-        // Assert.That(mesh.textures, Is.EqualTo(original).Within(k_AllowedFloatError), $"{mesh.gameObject.name}");
+        Assume.That(mesh.meshFormatVersion < ProBuilderMesh.k_MeshFormatVersionAutoUVScaleOffset, mesh.gameObject.name);
+        mesh.Rebuild();
+        Assert.That(mesh.meshFormatVersion >= ProBuilderMesh.k_MeshFormatVersionAutoUVScaleOffset, mesh.gameObject.name);
+
+        var textures = mesh.texturesInternal;
+
+        foreach (var face in mesh.facesInternal)
+        {
+            for (int i = 0; i < face.indexesInternal.Length; i++)
+                Assert.That(Mathf.Abs((original[i] - textures[i]).magnitude) < k_AllowedFloatError, $"{face.uv}\nAt index {i} {original[i]} != {mesh.textures[i]}");
+        }
     }
 }
