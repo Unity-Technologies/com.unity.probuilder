@@ -40,7 +40,7 @@ public class AutoUVUnwrapScaleUpgradeTests
         mesh.Rebuild();
 
         for (int i = 0; i < original.Length; i++)
-            Assert.That(Mathf.Abs((original[i] - mesh.textures[i]).magnitude) < k_AllowedFloatError);
+            Assert.That(Mathf.Abs((original[i] - mesh.textures[i]).magnitude) < k_AllowedFloatError, $"At index {i} {original[i]} != {mesh.textures[i]}");
         // Wasn't able to get Vec2 comparison working with Within constraint, not sure why
         // Assert.That(mesh.textures, Is.EqualTo(original).Within(k_AllowedFloatError), $"{mesh.gameObject.name}");
     }
