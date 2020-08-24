@@ -3,6 +3,7 @@ using NUnit.Framework;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Tests.Framework;
 using UnityEngine.SceneManagement;
 
 public class AutoUVUnwrapScaleUpgradeTests
@@ -17,7 +18,7 @@ public class AutoUVUnwrapScaleUpgradeTests
     [OneTimeSetUp]
     public void PrepareSceneView()
     {
-        s_Scene = EditorSceneManager.OpenScene("Packages/com.unity.probuilder/Tests/Scenes/AutoUVScaleUpgrade.unity");
+        s_Scene = EditorSceneManager.OpenScene($"{TestUtility.testsRootDirectory}/Scenes/AutoUVScaleUpgrade.unity");
         var root = s_Scene.GetRootGameObjects();
 
         s_Meshes[0] = root[0].GetComponent<ProBuilderMesh>();
