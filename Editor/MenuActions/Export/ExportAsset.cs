@@ -244,14 +244,11 @@ namespace UnityEditor.ProBuilder.Actions
                 meshCollider.sharedMesh = meshAsset;
             }
 
-#if UNITY_2018_3_OR_NEWER
             if (replaceOriginal)
                 PrefabUtility.SaveAsPrefabAssetAndConnect(go, prefabPath, InteractionMode.UserAction);
             else
                 PrefabUtility.SaveAsPrefabAsset(go, prefabPath);
-#else
-            PrefabUtility.CreatePrefab(prefabPath, go, ReplacePrefabOptions.Default);
-#endif
+
             if (!replaceOriginal)
             {
                 pb.mesh = null;

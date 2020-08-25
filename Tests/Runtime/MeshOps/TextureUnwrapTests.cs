@@ -5,7 +5,7 @@ using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Tests.Framework;
 
-static class AutoTextureUnwrappingTests
+static class TextureUnwrapTests
 {
     static readonly ShapeType[] offsetRotationShapes = new ShapeType[]
     {
