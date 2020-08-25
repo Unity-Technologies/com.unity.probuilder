@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1267383] Fixed `Bezier Shape` and `Poly Shape` component preventing build when `Script Stripping` was enabled.
 - [case: 1256246] Ensuring edges subdivision is not creating hole and that arch shapes does not create degenerated triangles
 - [case: 1265623] Ensure that ProGrids snapping is enabled (not only active) when using snapping in ProBuilder
+- [case: 1256154] Fixed StackOverflow Error when smoothing mesh in Probuilderize, also fixed an error in the display of edges when count > ushort.maxValue.
 
 ### Changes
 
