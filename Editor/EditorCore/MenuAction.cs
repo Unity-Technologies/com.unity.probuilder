@@ -1,7 +1,4 @@
 // #define GENERATE_DESATURATED_ICONS
-#if UNITY_2019_1_OR_NEWER
-#define SHORTCUT_MANAGER
-#endif
 
 using UnityEngine;
 using UnityEngine.ProBuilder;
