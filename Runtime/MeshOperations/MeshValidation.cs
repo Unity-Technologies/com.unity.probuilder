@@ -456,19 +456,21 @@ namespace UnityEngine.ProBuilder.MeshOperations
             {
                 shared = instanceSharedVertices[sharedVertexGroupIndex];
                 refPosition = instanceVertexPositions[shared[0]];
-                for(int i = 1; i < shared.Count; i++)
-                {
-                    sharedPosition = instanceVertexPositions[shared[i]];
-                    if(refPosition != sharedPosition)
-                    {
-                        //Problem => update the positions accordingly
-                        isCoherent = false;
 
-                        if(prefabVertexPositions.Exists(pos => pos == refPosition))
-                            instanceVertexPositions[shared[i]] = refPosition;
-                        else
-                            instanceVertexPositions[shared[0]] = sharedPosition;
+                List<int> sharedIndexes = shared.arrayInternal.ToList();
+
+                if(sharedIndexes.Exists(posIndex => instanceVertexPositions[posIndex] != refPosition))
+                {
+                    //Problem => update the positions accordingly
+                    isCoherent = false;
+
+                    if(!prefabVertexPositions.Exists(pos => pos == refPosition))
+                    {
+                        int otherPosIndex = sharedIndexes.Find(posIndex => instanceVertexPositions[posIndex] != refPosition);
+                        refPosition = instanceVertexPositions[otherPosIndex];
                     }
+
+                    sharedIndexes.ForEach(posIndex => instanceVertexPositions[posIndex] = refPosition);
                 }
             }
 
