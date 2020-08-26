@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1258589] Fixed error in runtime sample examples.
 - Fixed `TooltipEditor.Hide` affecting performance linearly with scene size.
 - [case: 1259506] Fixed shortcut not being saved in 2018.4.
+- Fixes prefab instance containing an overridden ProBuilderMesh breaks when modifying the original prefab
 
 ## [4.4.0-preview.1] - 2020-06-21
 

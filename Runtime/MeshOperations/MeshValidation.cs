@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
@@ -397,6 +398,87 @@ namespace UnityEngine.ProBuilder.MeshOperations
             }
 
             return true;
+        }
+        /// <summary>
+        /// Check a prefab mesh instance after the prefab has been modified to avoid breaking shared vertices table.
+        /// </summary>
+        /// <param name="instance">The instance to validate</param>
+        /// <returns>Returns true if no problems were found, false if topology issues were discovered and fixed.</returns>
+        internal static bool EnsureCoherenceWithPrefab(GameObject instance)
+        {
+            if(!PrefabUtility.HasPrefabInstanceAnyOverrides(instance, false))
+                return true;
+
+            bool isPrefabInstance = PrefabUtility.GetPrefabAssetType(instance) != PrefabAssetType.NotAPrefab;
+            if(!isPrefabInstance)
+                return true;
+
+            GameObject prefabInstance = PrefabUtility.GetNearestPrefabInstanceRoot(instance);
+            GameObject prefab = PrefabUtility.GetCorrespondingObjectFromSource(prefabInstance);
+
+            ProBuilderMesh[] prefabInstanceMeshes = prefabInstance.GetComponentsInChildren<ProBuilderMesh>();
+            List<ProBuilderMesh> prefabMeshes = prefab.GetComponentsInChildren<ProBuilderMesh>().ToList();
+
+            if(prefabInstanceMeshes.Length != prefabMeshes.Count)
+                return false;
+
+            bool coherentMesh = true;
+            for(int i = 0; i < prefabInstanceMeshes.Length; i++)
+            {
+                var prefabMesh = prefabMeshes[i];
+
+                 coherentMesh &= EnsureMeshIsCoherentWithPrefab(prefabInstanceMeshes[i], prefabMesh);
+            }
+            return coherentMesh;
+        }
+
+        /// <summary>
+        /// Check if all the shared vertices of a mesh are coherent (i.e. all vertices of the same SharedVertex group
+        /// have the same position).
+        /// If not, the prefab asset modification might have broke that, so we are comparing if one of the 2 positions is
+        /// also in the prefab, and in this case we are setting the position to this value
+        /// </summary>
+        /// <param name="instanceMesh">The instance to validate</param>
+        /// <param name="prefabMesh">The prefab asset to compare to</param>
+        /// <returns>Returns true if no problems were found, false if position issues were discovered and fixed.</returns>
+        internal static bool EnsureMeshIsCoherentWithPrefab(ProBuilderMesh instanceMesh, ProBuilderMesh prefabMesh)
+        {
+            IList<SharedVertex> instanceSharedVertices = instanceMesh.sharedVertices;
+            List<Vector3> instanceVertexPositions = new List<Vector3>(instanceMesh.positions);
+            List<Vector3> prefabVertexPositions = prefabMesh.positions.ToList();
+
+            bool isCoherent = true;
+            SharedVertex shared;
+            Vector3 refPosition, sharedPosition;
+            for(int sharedVertexGroupIndex = 0;
+                sharedVertexGroupIndex < instanceSharedVertices.Count;
+                sharedVertexGroupIndex++)
+            {
+                shared = instanceSharedVertices[sharedVertexGroupIndex];
+                refPosition = instanceVertexPositions[shared[0]];
+                for(int i = 1; i < shared.Count; i++)
+                {
+                    sharedPosition = instanceVertexPositions[shared[i]];
+                    if(refPosition != sharedPosition)
+                    {
+                        //Problem => update the positions accordingly
+                        isCoherent = false;
+
+                        if(prefabVertexPositions.Exists(pos => pos == refPosition))
+                            instanceVertexPositions[shared[i]] = refPosition;
+                        else
+                            instanceVertexPositions[shared[0]] = sharedPosition;
+                    }
+                }
+            }
+
+            if(!isCoherent)
+            {
+                instanceMesh.positions = instanceVertexPositions;
+                instanceMesh.Rebuild();
+            }
+
+            return isCoherent;
         }
 	}
 }

@@ -6,7 +6,9 @@ using System;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using UnityEditor.Experimental.SceneManagement;
 using UnityEditor.ProBuilder.Actions;
+using UnityEditor.SceneManagement;
 using UnityEngine.ProBuilder;
 using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
 using UObject = UnityEngine.Object;
@@ -319,6 +321,8 @@ namespace UnityEditor.ProBuilder
             ProGridsInterface.SubscribeToolbarEvent(ProGridsToolbarOpen);
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
 
+            PrefabUtility.prefabInstanceUpdated += OnPrefabInstanceUpdated;
+
             ProGridsToolbarOpen(ProGridsInterface.SceneToolbarIsExtended());
 
 #if !UNITY_2018_2_OR_NEWER
@@ -595,7 +599,7 @@ namespace UnityEditor.ProBuilder
 
                     m_IsDragging = false;
                     m_IsReadyForMouseDrag = false;
-                    
+
                     m_CurrentEvent.Use();
                 }
             }
@@ -1430,5 +1434,13 @@ namespace UnityEditor.ProBuilder
 
             return true;
         }
+
+        void OnPrefabInstanceUpdated(GameObject go)
+        {
+            ProBuilderMesh[] meshesInPrefab = go.GetComponentsInChildren<ProBuilderMesh>();
+            if(meshesInPrefab.Length > 0)
+                MeshValidation.EnsureCoherenceWithPrefab(go);
+        }
+
     }
 }
