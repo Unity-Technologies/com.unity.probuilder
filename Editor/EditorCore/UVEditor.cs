@@ -1,11 +1,3 @@
-#if UNITY_2019_1_OR_NEWER
-#define SHORTCUT_MANAGER
-#endif
-
-#if UNITY_5_5_OR_NEWER
-#define RETINA_ENABLED
-#endif
-
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +5,7 @@ using System.Reflection;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEditor.SettingsManagement;
-#if SHORTCUT_MANAGER
 using UnityEditor.ShortcutManagement;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -72,14 +62,12 @@ namespace UnityEditor.ProBuilder
             s_GridSnapIncrement.value = SettingsGUILayout.SettingsSlider(UI.EditorGUIUtility.TempContent("Grid Size"), s_GridSnapIncrement, .015625f, 2f, searchContext);
         }
 
-#if SHORTCUT_MANAGER
         [Shortcut("ProBuilder/UV Editor/Reset Canvas", typeof(UVEditor), KeyCode.Alpha0)]
         static void ResetCanvasShortcut()
         {
             if(instance != null)
                 instance.ResetCanvas();
         }
-#endif
 
         static readonly Color DRAG_BOX_COLOR_BASIC = new Color(0f, .7f, 1f, .2f);
         static readonly Color DRAG_BOX_COLOR_PRO = new Color(0f, .7f, 1f, 1f);
@@ -959,52 +947,7 @@ namespace UnityEditor.ProBuilder
                 eatNextKeyUp = false;
                 return;
             }
-
-#if SHORTCUT_MANAGER
         }
-#else
-            bool used = false;
-
-            switch (e.keyCode)
-            {
-                case KeyCode.Keypad0:
-                case KeyCode.Alpha0:
-                    ResetCanvas();
-                    e.Use();
-                    needsRepaint = true;
-                    used = true;
-                    break;
-
-                case KeyCode.Q:
-                    SetTool_Internal(Tool.View);
-                    used = true;
-                    break;
-
-                case KeyCode.W:
-                    SetTool_Internal(Tool.Move);
-                    used = true;
-                    break;
-
-                case KeyCode.E:
-                    SetTool_Internal(Tool.Rotate);
-                    used = true;
-                    break;
-
-                case KeyCode.R:
-                    SetTool_Internal(Tool.Scale);
-                    used = true;
-                    break;
-
-                case KeyCode.F:
-                    FrameSelection();
-                    used = true;
-                    break;
-            }
-
-            if (!used && ProBuilderEditor.instance)
-                ProBuilderEditor.instance.ShortcutCheck(e);
-        }
-#endif
 
         /**
          * Finds the nearest edge to the mouse and sets the `nearestEdge` struct with it's info
@@ -3390,10 +3333,7 @@ namespace UnityEditor.ProBuilder
                     curUvPosition = uvGraphOffset;
 
                     uvGraphScale = screenshot_size / 256;
-
-#if RETINA_ENABLED
                     uvGraphScale /= EditorGUIUtility.pixelsPerPoint;
-#endif
 
                     // always begin texture grabs at bottom left
                     uvGraphOffset = new Vector2(-ScreenRect.width / 2f, ScreenRect.height / 2f);
@@ -3428,11 +3368,7 @@ namespace UnityEditor.ProBuilder
                         if (screenshotTexturePosition.y < screenshot_size)
                         {
                             // reposition canvas
-#if RETINA_ENABLED
                             uvGraphOffset.y += screenshotCanvasRect.height / EditorGUIUtility.pixelsPerPoint;
-#else
-                            uvGraphOffset.y += screenshotCanvasRect.height;
-                        #endif
                             screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.y, ScreenRect.height - 12);
                             screenshotStatus = ScreenshotStatus.PrepareCanvas;
                             Repaint();
@@ -3445,13 +3381,8 @@ namespace UnityEditor.ProBuilder
                             if (screenshotTexturePosition.x < screenshot_size)
                             {
                                 // Move right, reset Y
-#if RETINA_ENABLED
                                 uvGraphOffset.x -= screenshotCanvasRect.width / EditorGUIUtility.pixelsPerPoint;
                                 uvGraphOffset.y = (ScreenRect.height / 2f);
-#else
-                                uvGraphOffset.x -= screenshotCanvasRect.width;
-                                uvGraphOffset.y = ScreenRect.height / 2f;
-                            #endif
                                 screenshotCanvasRect.width = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.x, ScreenRect.width);
                                 screenshotTexturePosition.y = 0;
                                 screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.y, ScreenRect.height - 12);

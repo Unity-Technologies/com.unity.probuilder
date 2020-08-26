@@ -1,9 +1,5 @@
 #if !NET_LEGACY
 
-#if UNITY_2019_1_OR_NEWER
-#define SHORTCUT_MANAGER
-#endif
-
 using UnityEngine;
 using System.Collections.Generic;
 using System.Text;
@@ -132,16 +128,11 @@ namespace UnityEditor.ProBuilder
  *  This is a generated file. Any changes will be overwritten.
  *  See Debug/GenerateMenuItems to make modifications.
  */
-#if UNITY_2019_1_OR_NEWER
-#define SHORTCUT_MANAGER
-#endif
 
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.Actions;
-#if SHORTCUT_MANAGER
 using UnityEditor.ShortcutManagement;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -167,13 +158,10 @@ namespace UnityEditor.ProBuilder
 
             sb.AppendLine();
 
-#if SHORTCUT_MANAGER
             var shortcutInfo = data.type.GetCustomAttribute<MenuActionShortcutAttribute>();
 
             if (shortcutInfo != null)
             {
-                sb.AppendLine("#if SHORTCUT_MANAGER");
-
                 var key = GetShortcutAttributeKeyBindingArgs(shortcutInfo.key, shortcutInfo.modifiers);
                 var ctx = shortcutInfo.context == null ? "null" : $"typeof({shortcutInfo.context})";
 
@@ -181,10 +169,7 @@ namespace UnityEditor.ProBuilder
                     sb.AppendLine($"\t\t[Shortcut(k_ShortcutPrefix + \"{data.path}\", {ctx}, {key})]");
                 else
                     sb.AppendLine($"\t\t[Shortcut(k_ShortcutPrefix + \"{data.path}\", {ctx})]");
-
-                sb.AppendLine("#endif");
             }
-#endif
 
             // Action
             sb.AppendLine($"\t\t[MenuItem(k_MenuPrefix + \"{data.path}{menuItemShortcut}\", false, {priority})]");
@@ -262,8 +247,6 @@ namespace UnityEditor.ProBuilder
             return res;
         }
 
-#if SHORTCUT_MANAGER
-
         static string GetShortcutAttributeKeyBindingArgs(KeyCode key, EventModifiers modifiers)
         {
             if(key == KeyCode.None)
@@ -296,7 +279,6 @@ namespace UnityEditor.ProBuilder
             return modifiers;
         }
 
-#endif
     }
 }
 

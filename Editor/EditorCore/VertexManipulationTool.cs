@@ -6,10 +6,6 @@ using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEditor.SettingsManagement;
 
-#if !UNITY_2018_3_OR_NEWER
-using UnityEditor.SettingsManagement;
-#endif
-
 #if DEBUG_HANDLES
 using UnityEngine.Rendering;
 #endif
