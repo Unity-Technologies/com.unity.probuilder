@@ -8,8 +8,11 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-    sealed class OpenShapeEditor : MenuAction
+    sealed class OpenShapeEditor : MenuToolToggle
     {
+        bool m_RestorePreviousMode;
+        SelectMode m_PreviousMode;
+
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_Shapes", IconSkin.Pro); } }
         public override TooltipContent tooltip { get { return s_Tooltip; } }
@@ -28,20 +31,57 @@ namespace UnityEditor.ProBuilder.Actions
             get { return true; }
         }
 
-        protected override MenuActionState optionsMenuState {
-            get { return MenuActionState.VisibleAndEnabled; }
-        }
+        // protected override MenuActionState optionsMenuState {
+        //     get { return MenuActionState.VisibleAndEnabled; }
+        // }
 
-        public override ActionResult DoAction()
-        {
-            DrawShapeTool.CreateLastShape();
-            return new ActionResult(ActionResult.Status.Success, "Create Shape");
-        }
+        // protected override void DoAlternateAction()
+        // {
+        //     DrawShapeTool.CreateLastShape();
+        //     return new ActionResult(ActionResult.Status.Success, "Create Shape");
+        // }
 
-        protected override void DoAlternateAction()
+        internal override ActionResult StartActivation()
         {
+            m_RestorePreviousMode = true;
+            m_PreviousMode = ProBuilderEditor.selectMode;
             ProBuilderEditor.selectMode = SelectMode.Object;
-            ToolManager.SetActiveTool<DrawShapeTool>();
+
+            m_Tool = ScriptableObject.CreateInstance<DrawShapeTool>();
+            ToolManager.SetActiveTool(m_Tool);
+
+            Undo.RegisterCreatedObjectUndo(m_Tool, "Open Draw Shape Tool");
+
+            ToolManager.activeToolChanging += LeaveTool;
+            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+
+            return new ActionResult(ActionResult.Status.Success,"Draw Shape Tool Starts");
         }
+
+        internal override ActionResult EndActivation()
+        {
+            ToolManager.activeToolChanging -= LeaveTool;
+            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+
+            Object.DestroyImmediate(m_Tool);
+
+            if(m_RestorePreviousMode)
+                ProBuilderEditor.selectMode = m_PreviousMode;
+
+            return new ActionResult(ActionResult.Status.Success,"Draw Shape Tool Ends");
+        }
+
+        void OnSelectModeChanged(SelectMode obj)
+        {
+            m_RestorePreviousMode = false;
+            LeaveTool();
+        }
+
+        void LeaveTool()
+        {
+            ActionResult result = EndActivation();
+            EditorUtility.ShowNotification(result.notification);
+        }
+
     }
 }
