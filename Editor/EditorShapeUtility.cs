@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -70,7 +69,7 @@ namespace UnityEditor.ProBuilder
             {
                 Debug.LogError($"Cannot create shape of type { type.ToString() } because it doesn't have a default constructor.");
             }
-            shape = GetLastParams(shape.GetType()); 
+            shape = GetLastParams(shape.GetType());
             return shape;
         }
     }

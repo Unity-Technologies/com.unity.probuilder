@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEditor.UIElements;
+﻿using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.UIElements;
@@ -9,7 +6,7 @@ using UnityEngine.UIElements;
 namespace UnityEditor.ProBuilder
 {
     [CustomEditor(typeof(ShapeComponent))]
-    public class ShapeComponentEditor : Editor
+    class ShapeComponentEditor : Editor
     {
         ShapeComponent m_ShapeComponent;
         IMGUIContainer m_ShapeField;
@@ -43,7 +40,7 @@ namespace UnityEditor.ProBuilder
             if (shapeComp == null || obj == null)
                 return;
 
-            var shape = shapeComp.shape; 
+            var shape = shapeComp.shape;
             obj.Update();
             EditorGUI.BeginChangeCheck();
 
@@ -61,7 +58,7 @@ namespace UnityEditor.ProBuilder
 
             EditorGUI.BeginChangeCheck();
             shapeComp.size = EditorGUILayout.Vector3Field("Size", shapeComp.size);
-            shapeComp.SetRotation(Quaternion.Euler(EditorGUILayout.Vector3Field("Rotation", shapeComp.rotationQuaternion.eulerAngles)));
+            shapeComp.SetRotation(Quaternion.Euler(EditorGUILayout.Vector3Field("Rotation", shapeComp.rotation.eulerAngles)));
             if (EditorGUI.EndChangeCheck())
             {
                 shapeComp.Rebuild();

@@ -1,17 +1,10 @@
-﻿using System;
-
-namespace UnityEngine.ProBuilder
+﻿namespace UnityEngine.ProBuilder
 {
     [RequireComponent(typeof(ProBuilderMesh))]
-    public class ShapeComponent : MonoBehaviour
+    public sealed class ShapeComponent : MonoBehaviour
     {
         [SerializeReference]
         Shape m_Shape = new Cube();
-
-        public Shape shape {
-            get { return m_Shape; }
-            set { m_Shape = value; }
-        }
 
         ProBuilderMesh m_Mesh;
 
@@ -19,33 +12,39 @@ namespace UnityEngine.ProBuilder
         Vector3 m_Size;
 
         [SerializeField]
-        Vector3 m_Rotation;
+        Quaternion m_Rotation = Quaternion.identity;
 
-        [SerializeField]
-        Quaternion m_RotationQuaternion = Quaternion.identity;
-
-        public Quaternion rotationQuaternion {
-            get {
-                return m_RotationQuaternion;
-            }
-            set {
-                m_RotationQuaternion = value;
-                m_Rotation = m_RotationQuaternion.eulerAngles;
-            }
+        public Shape shape
+        {
+            get { return m_Shape; }
+            set { m_Shape = value; }
         }
 
-        public Vector3 size {
+        public Quaternion rotation
+        {
+            get { return m_Rotation; }
+            set { m_Rotation = value; }
+        }
+
+        public Vector3 size
+        {
             get { return m_Size; }
             set { m_Size = value; }
-        } 
+        }
 
-        public ProBuilderMesh mesh {
+        /// <summary>
+        /// Reference to the <see cref="ProBuilderMesh"/> that this component is creating.
+        /// </summary>
+        public ProBuilderMesh mesh
+        {
             get { return m_Mesh == null ? m_Mesh = GetComponent<ProBuilderMesh>() : m_Mesh; }
         }
 
         // Bounds where center is in world space, size is mesh.bounds.size
-        internal Bounds meshFilterBounds {
-            get {
+        internal Bounds meshFilterBounds
+        {
+            get
+            {
                 var mb = mesh.mesh.bounds;
                 return new Bounds(transform.TransformPoint(mb.center), mb.size);
             }
@@ -62,13 +61,13 @@ namespace UnityEngine.ProBuilder
         public void Rebuild()
         {
             m_Shape.RebuildMesh(mesh, size);
-            ApplyRotation(rotationQuaternion);
+            ApplyRotation(rotation);
             MeshUtility.FitToSize(mesh, size);
         }
 
         public void SetShape(Shape shape)
         {
-            this.m_Shape = shape;
+            m_Shape = shape;
             Rebuild();
         }
 
@@ -78,8 +77,8 @@ namespace UnityEngine.ProBuilder
         /// <param name="angles">The angles to rotate by</param>
         public void SetRotation(Quaternion angles)
         {
-            rotationQuaternion = angles;
-            ApplyRotation(rotationQuaternion);
+            rotation = angles;
+            ApplyRotation(rotation);
             MeshUtility.FitToSize(mesh, size);
         }
 
@@ -90,11 +89,9 @@ namespace UnityEngine.ProBuilder
         public void Rotate(Quaternion rotation)
         {
             if (rotation == Quaternion.identity)
-            {
                 return;
-            }
-            rotationQuaternion = rotation * rotationQuaternion;
-            ApplyRotation(rotationQuaternion);
+            this.rotation = rotation * this.rotation;
+            ApplyRotation(this.rotation);
             MeshUtility.FitToSize(mesh, size);
         }
 
