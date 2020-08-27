@@ -1,7 +1,3 @@
-#if UNITY_2019_1_OR_NEWER
-#define SHORTCUT_MANAGER
-#endif
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +9,7 @@ using Object = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder
 {
-#if UNITY_2019_1_OR_NEWER
     [FilePath("Library/Probuilder/DimensionsOverlay", FilePathAttribute.Location.ProjectFolder)]
-#endif
     sealed class DimensionsEditor : ScriptableSingleton<DimensionsEditor>
     {
         struct Trs : IEquatable<Trs>
@@ -82,9 +76,7 @@ namespace UnityEditor.ProBuilder
                 else
                     OnHid();
 
-#if UNITY_2019_1_OR_NEWER
                 Save(true);
-#endif
             }
         }
 
@@ -123,7 +115,6 @@ namespace UnityEditor.ProBuilder
             "of the selected mesh elements (vertices, faces, edges).")]
         static Pref<BoundsDisplay> s_BoundsDisplay = new Pref<BoundsDisplay>("s_BoundsDisplay", BoundsDisplay.Object, SettingsScope.User);
 
-#if SHORTCUT_MANAGER
         [Shortcut("ProBuilder/Dimensions Overlay/Toggle Overlay", typeof(SceneView))]
         static void ToggleUseElementBounds()
         {
@@ -158,7 +149,6 @@ namespace UnityEditor.ProBuilder
 
             SceneView.RepaintAll();
         }
-#endif
 
         void OnEnable()
         {
@@ -166,7 +156,7 @@ namespace UnityEditor.ProBuilder
             m_DisplayMaterial = new Material(Shader.Find("ProBuilder/UnlitVertexColor"));
             m_DisplayMesh.hideFlags = HideFlags.DontSave;
             m_DisplayMaterial.hideFlags = HideFlags.DontSave;
-
+            
             if (m_Visible)
                 EditorApplication.delayCall += OnShowed; //Rebuild bounds on the first frame after entering play mode returns no bounds (the selection isn't valid yet)
         }
@@ -179,11 +169,7 @@ namespace UnityEditor.ProBuilder
 
         void OnShowed()
         {
-#if UNITY_2019_1_OR_NEWER
             SceneView.duringSceneGui += OnSceneGUI;
-#else
-            SceneView.onSceneGUIDelegate += OnSceneGUI;
-#endif
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged += OnElementSelectionChanged;
             ProBuilderEditor.selectionUpdated += OnEditingMeshSelection;
@@ -200,12 +186,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.selectionUpdated -= OnEditingMeshSelection;
             VertexManipulationTool.beforeMeshModification -= OnBeginMeshModification;
             VertexManipulationTool.afterMeshModification -= OnFinishMeshModification;
-
-#if UNITY_2019_1_OR_NEWER
             SceneView.duringSceneGui -= OnSceneGUI;
-#else
-            SceneView.onSceneGUIDelegate -= OnSceneGUI;
-#endif
         }
 
         static void OnBeginMeshModification(IEnumerable<ProBuilderMesh> meshes)
@@ -368,11 +349,7 @@ namespace UnityEditor.ProBuilder
 
         void OnSceneGUI(SceneView scnview)
         {
-#if UNITY_2019_1_OR_NEWER
             if (Selection.count > 0 && m_HasBounds)
-#else
-            if(Selection.objects.Length > 0 && m_HasBounds)
-#endif
             {
                 foreach (var m in m_Selected)
                 {

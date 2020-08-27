@@ -22,7 +22,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="face">A face with the new triangle indexes. The indexes should be 0 indexed.</param>
         /// <param name="common"></param>
         /// <returns>The new face as referenced on the mesh.</returns>
-        internal static Face AppendFace(this ProBuilderMesh mesh, Vector3[] positions, Color[] colors, Vector2[] uvs, Face face, int[] common)
+        internal static Face AppendFace(this ProBuilderMesh mesh, Vector3[] positions, Color[] colors, Vector2[] uvs,
+            Face face, int[] common)
         {
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -59,14 +60,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             if (mc || fc)
             {
-                Array.Copy(mc ? mesh.colorsInternal : ArrayUtility.Fill(Color.white, vertexCount), 0, newColors, 0, vertexCount);
-                Array.Copy(fc ? colors : ArrayUtility.Fill(Color.white, faceVertexCount), 0, newColors, vertexCount, colors.Length);
+                Array.Copy(mc ? mesh.colorsInternal : ArrayUtility.Fill(Color.white, vertexCount), 0, newColors, 0,
+                    vertexCount);
+                Array.Copy(fc ? colors : ArrayUtility.Fill(Color.white, faceVertexCount), 0, newColors, vertexCount,
+                    colors.Length);
             }
 
             if (mt || ft)
             {
-                Array.Copy(mt ? mesh.texturesInternal : ArrayUtility.Fill(Vector2.zero, vertexCount), 0, newTextures, 0, vertexCount);
-                Array.Copy(ft ? uvs : ArrayUtility.Fill(Vector2.zero, faceVertexCount), 0, newTextures, mesh.texturesInternal.Length, faceVertexCount);
+                Array.Copy(mt ? mesh.texturesInternal : ArrayUtility.Fill(Vector2.zero, vertexCount), 0, newTextures, 0,
+                    vertexCount);
+                Array.Copy(ft ? uvs : ArrayUtility.Fill(Vector2.zero, faceVertexCount), 0, newTextures,
+                    mesh.texturesInternal.Length, faceVertexCount);
             }
 
             face.ShiftIndexesToZero();
@@ -77,7 +82,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             for (int i = 0; i < common.Length; i++)
             {
                 if (common[i] < 0)
-                    mesh.AddSharedVertex(new SharedVertex(new int[] { i + vertexCount }));
+                    mesh.AddSharedVertex(new SharedVertex(new int[] {i + vertexCount}));
                 else
                     mesh.AddToSharedVertex(common[i], i + vertexCount);
             }
@@ -194,7 +199,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             {
                 data.sharedIndexes = common.ToList();
                 List<Face> faces = new List<Face>(mesh.facesInternal);
-                FaceRebuildData.Apply(new FaceRebuildData[] { data }, vertices, faces, lookup, null);
+                FaceRebuildData.Apply(new FaceRebuildData[] {data}, vertices, faces, lookup, null);
                 mesh.SetVertices(vertices);
                 mesh.faces = faces;
                 mesh.SetSharedVertices(lookup);
@@ -239,7 +244,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="extrude">The distance to extrude.</param>
         /// <param name="flipNormals">If true the faces will be inverted at creation.</param>
         /// <returns>An ActionResult with the status of the operation.</returns>
-        public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh mesh, IList<Vector3> points, float extrude, bool flipNormals)
+        public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh mesh, IList<Vector3> points,
+            float extrude, bool flipNormals)
         {
             return CreateShapeFromPolygon(mesh, points, extrude, flipNormals, null);
         }
@@ -255,7 +261,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="holePoints">Holes in the polygon.</param>
         /// <returns>An ActionResult with the status of the operation.</returns>
         [Obsolete("Face.CreateShapeFromPolygon is deprecated as it no longer relies on camera look at.")]
-        public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh mesh, IList<Vector3> points, float extrude, bool flipNormals, Vector3 cameraLookAt, IList<IList<Vector3>> holePoints = null)
+        public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh mesh, IList<Vector3> points,
+            float extrude, bool flipNormals, Vector3 cameraLookAt, IList<IList<Vector3>> holePoints = null)
         {
             return CreateShapeFromPolygon(mesh, points, extrude, flipNormals, null);
         }
@@ -269,7 +276,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="flipNormals">If true the faces will be inverted at creation.</param>
         /// <param name="holePoints">Holes in the polygon. If null this will be ignored.</param>
         /// <returns>An ActionResult with the status of the operation.</returns>
-        public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh mesh, IList<Vector3> points, float extrude, bool flipNormals, IList<IList<Vector3>> holePoints)
+        public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh mesh, IList<Vector3> points,
+            float extrude, bool flipNormals, IList<IList<Vector3>> holePoints)
         {
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -288,11 +296,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 holeVertices = new Vector3[holePoints.Count][];
                 for (int i = 0; i < holePoints.Count; i++)
                 {
-                    if(holePoints[i] == null || holePoints[i].Count < 3)
+                    if (holePoints[i] == null || holePoints[i].Count < 3)
                     {
                         ClearAndRefreshMesh(mesh);
                         return new ActionResult(ActionResult.Status.NoChange, "Too Few Points in hole " + i);
                     }
+
                     holeVertices[i] = holePoints[i].ToArray();
                 }
             }
@@ -319,6 +328,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 {
                     combinedVertices = vertices;
                 }
+
                 int[] indexes = triangles.ToArray();
 
                 if (Math.PolygonArea(combinedVertices, indexes) < Mathf.Epsilon)
@@ -332,7 +342,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
                 mesh.positionsInternal = combinedVertices;
                 var newFace = new Face(indexes);
-                mesh.facesInternal = new[] { newFace };
+                mesh.facesInternal = new[] {newFace};
                 mesh.sharedVerticesInternal = SharedVertex.GetSharedVerticesWithPositions(combinedVertices);
                 mesh.InvalidateCaches();
 
@@ -346,7 +356,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
                 Vector3 nrm = Math.Normal(mesh, mesh.facesInternal[0]);
                 nrm = mesh.gameObject.transform.TransformDirection(nrm);
-                if ((flipNormals ? Vector3.Dot(mesh.gameObject.transform.up, nrm) > 0f : Vector3.Dot(mesh.gameObject.transform.up, nrm) < 0f))
+                if ((flipNormals
+                    ? Vector3.Dot(mesh.gameObject.transform.up, nrm) > 0f
+                    : Vector3.Dot(mesh.gameObject.transform.up, nrm) < 0f))
                 {
                     mesh.facesInternal[0].Reverse();
                 }
@@ -355,7 +367,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 {
                     mesh.DuplicateAndFlip(mesh.facesInternal);
 
-                    mesh.Extrude(new Face[] { (flipNormals ? mesh.facesInternal[1] : mesh.facesInternal[0]) }, ExtrudeMethod.IndividualFaces, extrude);
+                    mesh.Extrude(new Face[] {(flipNormals ? mesh.facesInternal[1] : mesh.facesInternal[0])},
+                        ExtrudeMethod.IndividualFaces, extrude);
 
                     if ((extrude < 0f && !flipNormals) || (extrude > 0f && flipNormals))
                     {
@@ -423,7 +436,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
                 FaceRebuildData data = new FaceRebuildData();
                 data.vertices = vertices;
-                data.face = new Face(new int[] {0 , 1, 2});
+                data.face = new Face(new int[] {0, 1, 2});
 
                 faces.Add(data);
             }
@@ -501,7 +514,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
             // Check to see if a face already exists
             if (!allowNonManifoldGeometry)
             {
-                if (ElementSelection.GetNeighborFaces(mesh, a).Count > 1 || ElementSelection.GetNeighborFaces(mesh, b).Count > 1)
+                if (ElementSelection.GetNeighborFaces(mesh, a).Count > 1 ||
+                    ElementSelection.GetNeighborFaces(mesh, b).Count > 1)
                 {
                     return null;
                 }
@@ -529,7 +543,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
             // Get material and UV stuff from the first edge face
             SimpleTuple<Face, Edge> faceAndEdge;
 
-            if (EdgeUtility.ValidateEdge(mesh, a, out faceAndEdge) || EdgeUtility.ValidateEdge(mesh, b, out faceAndEdge))
+            if (EdgeUtility.ValidateEdge(mesh, a, out faceAndEdge) ||
+                EdgeUtility.ValidateEdge(mesh, b, out faceAndEdge))
             {
                 uvs = new AutoUnwrapSettings(faceAndEdge.item1.uv);
                 submeshIndex = faceAndEdge.item1.submeshIndex;
@@ -601,7 +616,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
                     v,
                     hasColors ? c : null,
                     new Vector2[v.Length],
-                    new Face(axbx || axby ? new int[3] {2, 1, 0} : new int[3] {0, 1, 2}, submeshIndex, uvs, 0, -1, -1, false),
+                    new Face(axbx || axby ? new int[3] {2, 1, 0} : new int[3] {0, 1, 2}, submeshIndex, uvs, 0, -1, -1,
+                        false),
                     s);
             }
 
@@ -621,7 +637,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
             s[1] = mesh.GetSharedVertexHandle(a.b);
 
             Vector3 nrm = Vector3.Cross(positions[b.a] - positions[a.a], positions[a.b] - positions[a.a]).normalized;
-            Vector2[] planed = Projection.PlanarProject(new Vector3[4] { positions[a.a], positions[a.b], positions[b.a], positions[b.b] }, null, nrm);
+            Vector2[] planed =
+                Projection.PlanarProject(
+                    new Vector3[4] {positions[a.a], positions[a.b], positions[b.a], positions[b.b]}, null, nrm);
 
             Vector2 ipoint = Vector2.zero;
             bool intersects = Math.GetLineSegmentIntersect(planed[0], planed[2], planed[1], planed[3], ref ipoint);
@@ -653,7 +671,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 v,
                 hasColors ? c : null,
                 new Vector2[v.Length],
-                new Face(new int[6] {2, 1, 0, 2, 3, 1 }, submeshIndex, uvs, 0, -1, -1, false),
+                new Face(new int[6] {2, 1, 0, 2, 3, 1}, submeshIndex, uvs, 0, -1, -1, false),
                 s);
         }
 
@@ -756,12 +774,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             FaceRebuildData data = new FaceRebuildData();
 
-            data.face = new Face(triangles.ToArray(), face.submeshIndex, new AutoUnwrapSettings(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
-            data.vertices           = n_vertices;
-            data.sharedIndexes      = n_shared;
-            data.sharedIndexesUV    = n_sharedUV;
+            data.face = new Face(triangles.ToArray(), face.submeshIndex, new AutoUnwrapSettings(face.uv),
+                face.smoothingGroup, face.textureGroup, -1, face.manualUV);
+            data.vertices = n_vertices;
+            data.sharedIndexes = n_shared;
+            data.sharedIndexesUV = n_sharedUV;
 
-            FaceRebuildData.Apply(new List<FaceRebuildData>() { data },
+            FaceRebuildData.Apply(new List<FaceRebuildData>() {data},
                 vertices,
                 faces,
                 lookup,
@@ -795,7 +814,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <returns>The new edges created by inserting points.</returns>
         public static List<Edge> AppendVerticesToEdge(this ProBuilderMesh mesh, Edge edge, int count)
         {
-            return AppendVerticesToEdge(mesh, new Edge[] { edge }, count);
+            return AppendVerticesToEdge(mesh, new Edge[] {edge}, count);
         }
 
         /// <summary>
@@ -839,9 +858,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 List<Vertex> verticesToAppend = new List<Vertex>(count);
 
                 for (int i = 0; i < count; i++)
-                    verticesToAppend.Add(Vertex.Mix(vertices[localEdge.a], vertices[localEdge.b], (i + 1) / ((float)count + 1)));
+                    verticesToAppend.Add(Vertex.Mix(vertices[localEdge.a], vertices[localEdge.b],
+                        (i + 1) / ((float) count + 1)));
 
                 List<SimpleTuple<Face, Edge>> adjacentFaces = ElementSelection.GetNeighborFaces(mesh, localEdge);
+                Edge edgeLookUp = new Edge(lookup[localEdge.a], lookup[localEdge.b]);
+                Edge e = new Edge();
 
                 // foreach face attached to common edge, append vertices
                 foreach (SimpleTuple<Face, Edge> tup in adjacentFaces)
@@ -853,8 +875,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
                     if (!modifiedFaces.TryGetValue(face, out data))
                     {
                         data = new FaceRebuildData();
-                        data.face = new Face(new int[0], face.submeshIndex, new AutoUnwrapSettings(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
-                        data.vertices = new List<Vertex>(ArrayUtility.ValuesWithIndexes(vertices, face.distinctIndexesInternal));
+                        data.face = new Face(new int[0], face.submeshIndex, new AutoUnwrapSettings(face.uv),
+                            face.smoothingGroup, face.textureGroup, -1, face.manualUV);
+                        data.vertices =
+                            new List<Vertex>(ArrayUtility.ValuesWithIndexes(vertices, face.distinctIndexesInternal));
                         data.sharedIndexes = new List<int>();
                         data.sharedIndexesUV = new List<int>();
 
@@ -872,18 +896,102 @@ namespace UnityEngine.ProBuilder.MeshOperations
                         indexesToDelete.AddRange(face.distinctIndexesInternal);
 
                         modifiedFaces.Add(face, data);
+
+                        //Ordering vertices in the new face
+                        List<Vertex> orderedVertices = new List<Vertex>();
+                        List<int> orderedSharedIndexes = new List<int>();
+                        List<int> orderedSharedUVIndexes = new List<int>();
+                        List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(face);
+
+                        for (int i = 0; i < peripheralEdges.Count; i++)
+                        {
+                            e.a = peripheralEdges[i].a;
+                            e.b = peripheralEdges[i].b;
+
+                            orderedVertices.Add(vertices[e.a]);
+
+                            int shared;
+                            if (lookup.TryGetValue(e.a, out shared))
+                                orderedSharedIndexes.Add(shared);
+
+                            if (lookupUV.TryGetValue(i, out shared))
+                                data.sharedIndexesUV.Add(shared);
+
+                            if (edgeLookUp.a == lookup[e.a] && edgeLookUp.b == lookup[e.b])
+                            {
+                                for (int j = 0; j < count; j++)
+                                {
+                                    orderedVertices.Add(verticesToAppend[j]);
+                                    orderedSharedIndexes.Add(sharedIndexesCount + j);
+                                    orderedSharedUVIndexes.Add(-1);
+                                }
+                            }
+                            else if (edgeLookUp.a == lookup[e.b] && edgeLookUp.b == lookup[e.a])
+                            {
+                                for (int j = count - 1; j >= 0; j--)
+                                {
+                                    orderedVertices.Add(verticesToAppend[j]);
+                                    orderedSharedIndexes.Add(sharedIndexesCount + j);
+                                    orderedSharedUVIndexes.Add(-1);
+                                }
+                            }
+                        }
+
+                        data.vertices = orderedVertices;
+                        data.sharedIndexes = orderedSharedIndexes;
+                        data.sharedIndexesUV = orderedSharedUVIndexes;
                     }
-
-                    data.vertices.AddRange(verticesToAppend);
-
-                    for (int i = 0; i < count; i++)
+                    else
                     {
-                        data.sharedIndexes.Add(sharedIndexesCount + i);
-                        data.sharedIndexesUV.Add(-1);
+                        //Get ordered vertices in the existing face and add new ones
+                        List<Vertex> orderedVertices = data.vertices;
+                        List<int> orderedSharedIndexes = data.sharedIndexes;
+                        List<int> orderedSharedUVIndexes = data.sharedIndexesUV;
+
+                        for (int i = 0; i < orderedVertices.Count; i++)
+                        {
+                            Vertex edgeStart = orderedVertices[i];
+                            int edgeStartIndex = vertices.IndexOf(edgeStart);
+
+                            Vertex edgeEnd = orderedVertices[(i + 1) % orderedVertices.Count];
+                            int edgeEndIndex = vertices.IndexOf(edgeEnd);
+
+                            if (edgeStartIndex == -1 || edgeEndIndex == -1)
+                                continue;
+
+                            if (lookup[edgeStartIndex] == lookup[localEdge.a] &&
+                                lookup[edgeEndIndex] == lookup[localEdge.b])
+                            {
+                                orderedVertices.InsertRange(i + 1, verticesToAppend);
+                                for (int j = 0; j < count; j++)
+                                {
+                                    orderedSharedIndexes.Insert(i + j + 1, sharedIndexesCount + j);
+                                    orderedSharedUVIndexes.Add(-1);
+                                }
+
+                            }
+                            else if (lookup[edgeStartIndex] == lookup[localEdge.b] &&
+                                     lookup[edgeEndIndex] == lookup[localEdge.a])
+                            {
+                                verticesToAppend.Reverse();
+                                orderedVertices.InsertRange(i + 1, verticesToAppend);
+                                for (int j = count - 1; j >= 0; j--)
+                                {
+                                    orderedSharedIndexes.Insert(i + 1, sharedIndexesCount + j);
+                                    orderedSharedUVIndexes.Add(-1);
+                                }
+                            }
+                        }
+
+                        data.vertices = orderedVertices;
+                        data.sharedIndexes = orderedSharedIndexes;
+                        data.sharedIndexesUV = orderedSharedUVIndexes;
+
                     }
                 }
 
                 sharedIndexesCount += count;
+
             }
 
             // now apply the changes
@@ -896,16 +1004,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 Face face = dic_face[i];
                 FaceRebuildData data = dic_data[i];
 
-                Vector3 nrm = Math.Normal(mesh, face);
-                Vector2[] projection = Projection.PlanarProject(data.vertices.Select(x => x.position).ToArray(), null, nrm);
-
                 int vertexCount = vertices.Count;
-
                 // triangulate and set new face indexes to end of current vertex list
-                List<int> indexes;
+                List<int> triangles;
 
-                if (Triangulation.SortAndTriangulate(projection, out indexes))
-                    data.face.indexesInternal = indexes.ToArray();
+                if (Triangulation.TriangulateVertices(data.vertices, out triangles, false))
+                    data.face = new Face(triangles);
                 else
                     continue;
 
