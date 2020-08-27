@@ -199,6 +199,10 @@ namespace UnityEditor.ProBuilder
             get { return s_Instance != null ? EditorUtility.GetComponentMode(s_SelectMode) : ComponentMode.Face; }
         }
 
+#if !UNITY_2020_2_OR_NEWER
+        bool m_CheckForToolUpdate = false;
+#endif
+
         /// <value>
         /// Get and set the current SelectMode.
         /// </value>
@@ -688,7 +692,6 @@ namespace UnityEditor.ProBuilder
             }
             m_wasSelectingPath = pathSelectionModifier;
 
-
             if (Tools.current == Tool.View)
                 return;
 
@@ -723,6 +726,14 @@ namespace UnityEditor.ProBuilder
                     }
                     break;
             }
+
+#if !UNITY_2020_2_OR_NEWER
+            if(m_CheckForToolUpdate)
+            {
+                SetToolForSelectMode(m_CurrentTool);
+                m_CheckForToolUpdate = false;
+            }
+#endif
 
              if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent))
              {
@@ -1251,9 +1262,8 @@ namespace UnityEditor.ProBuilder
                     UVEditor.instance.SetTool(m_CurrentTool);
 
 #if !UNITY_2020_2_OR_NEWER
-                //the call has to be delayed as it is not possible to change the Tool.current on the ActiveToolChanged callback
-                EditorApplication.delayCall += () => SetToolForSelectMode(m_CurrentTool);
-                SceneView.RepaintAll();
+                //Call for tool update in the next GUI loop
+                m_CheckForToolUpdate = true;
 #endif
             }
         }
