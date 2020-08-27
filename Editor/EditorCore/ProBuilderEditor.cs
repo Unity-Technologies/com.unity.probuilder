@@ -234,7 +234,7 @@ namespace UnityEditor.ProBuilder
 #if UNITY_2020_2_OR_NEWER
                 UpdateToolContext();
 #else
-                SetToolForSelectMode(Tools.current, s_SelectMode);
+                SetToolForSelectMode(Tools.current);
 #endif
 
                 if (selectModeChanged != null)
@@ -339,7 +339,7 @@ namespace UnityEditor.ProBuilder
             VertexManipulationTool.beforeMeshModification += BeforeMeshModification;
             VertexManipulationTool.afterMeshModification += AfterMeshModification;
 
-            ToolManager.activeToolChanged += OnActiveToolChanged;
+            ToolManager.activeToolChanged += ActiveToolChanged;
 
             LoadSettings();
             InitGUI();
@@ -354,7 +354,7 @@ namespace UnityEditor.ProBuilder
         {
             s_Instance = null;
 
-            ToolManager.activeToolChanged -= OnActiveToolChanged;
+            ToolManager.activeToolChanged -= ActiveToolChanged;
 
             VertexManipulationTool.beforeMeshModification -= BeforeMeshModification;
             VertexManipulationTool.afterMeshModification -= AfterMeshModification;
@@ -579,7 +579,7 @@ namespace UnityEditor.ProBuilder
                 DestroyImmediate(formerTool);
         }
 
-        static void SetToolForSelectMode(Tool tool, SelectMode mode)
+        static void SetToolForSelectMode(Tool tool)
         {
             if(!selectMode.IsMeshElementMode())
                 return;
@@ -587,19 +587,19 @@ namespace UnityEditor.ProBuilder
             switch (tool)
             {
                 case Tool.Move:
-                    if(mode.IsTextureMode())
+                    if(selectMode.IsTextureMode())
                         SetTool<TextureMoveTool>();
                     else
                         SetTool<PositionMoveTool>();
                     break;
                 case Tool.Rotate:
-                    if(mode.IsTextureMode())
+                    if(selectMode.IsTextureMode())
                         SetTool<TextureRotateTool>();
                     else
                         SetTool<PositionRotateTool>();
                     break;
                 case Tool.Scale:
-                    if(mode.IsTextureMode())
+                    if(selectMode.IsTextureMode())
                         SetTool<TextureScaleTool>();
                     else
                         SetTool<PositionScaleTool>();
@@ -723,13 +723,6 @@ namespace UnityEditor.ProBuilder
                     }
                     break;
             }
-
-#if !UNITY_2020_2_OR_NEWER
-            // Overrides the toolbar transform tools
-            SetTool_Internal(Tools.current);
-
-            SetToolForSelectMode(m_CurrentTool, s_SelectMode);
-#endif
 
              if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent))
              {
@@ -1247,15 +1240,21 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Update current tool, then Updates the UV Editor window if applicable.
         /// </summary>
-        private void OnActiveToolChanged()
+        private void ActiveToolChanged()
         {
             //Recording the last persistent tool in m_CurrentTool if need to restore it in object select mode
-            if(Tools.current != Tool.None && Tools.current != Tool.Custom && Tools.current != m_CurrentTool)
+            if(Tools.current != Tool.None && Tools.current != Tool.Custom)
             {
                 m_CurrentTool = Tools.current;
 
                 if(UVEditor.instance != null)
                     UVEditor.instance.SetTool(m_CurrentTool);
+
+#if !UNITY_2020_2_OR_NEWER
+                //the call has to be delayed as it is not possible to change the Tool.current on the ActiveToolChanged callback
+                EditorApplication.delayCall += () => SetToolForSelectMode(m_CurrentTool);
+                SceneView.RepaintAll();
+#endif
             }
         }
 
