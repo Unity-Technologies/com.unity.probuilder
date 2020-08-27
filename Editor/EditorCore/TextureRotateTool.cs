@@ -9,9 +9,8 @@ namespace UnityEditor.ProBuilder
         Vector3 m_Euler;
         Quaternion m_Quaternion;
 
-        public override void OnToolGUI(EditorWindow window)
+        protected override void DoToolGUI()
         {
-            base.OnToolGUI(window);
             if (!isEditing)
                 m_Rotation = 0f;
 

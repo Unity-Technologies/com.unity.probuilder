@@ -37,10 +37,8 @@ namespace UnityEditor.ProBuilder
             return new TranslateTextureSelection(mesh, pivot);
         }
 
-        public override void OnToolGUI(EditorWindow window)
+        protected override void DoToolGUI()
         {
-            base.OnToolGUI(window);
-
             if (!isEditing)
                 m_Position = Vector3.zero;
 

@@ -7,10 +7,8 @@ namespace UnityEditor.ProBuilder
     {
         Vector3 m_Scale;
 
-        public override void OnToolGUI(EditorWindow window)
+        protected override void DoToolGUI()
         {
-            base.OnToolGUI(window);
-
             if (showHandleInfo && isEditing)
                 DrawDeltaInfo("Scale: " + m_Scale.ToString("0.00"));
 

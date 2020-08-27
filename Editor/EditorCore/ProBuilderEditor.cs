@@ -231,7 +231,11 @@ namespace UnityEditor.ProBuilder
                 if (value == SelectMode.Object)
                     Tools.current = s_Instance.m_CurrentTool;
 
+#if UNITY_2020_2_OR_NEWER
                 UpdateToolContext();
+#else
+                SetToolForSelectMode(Tools.current, s_SelectMode);
+#endif
 
                 if (selectModeChanged != null)
                     selectModeChanged(value);
@@ -335,6 +339,8 @@ namespace UnityEditor.ProBuilder
             VertexManipulationTool.beforeMeshModification += BeforeMeshModification;
             VertexManipulationTool.afterMeshModification += AfterMeshModification;
 
+            ToolManager.activeToolChanged += OnActiveToolChanged;
+
             LoadSettings();
             InitGUI();
             EditorApplication.delayCall += () => UpdateSelection();
@@ -347,6 +353,8 @@ namespace UnityEditor.ProBuilder
         void OnDisable()
         {
             s_Instance = null;
+
+            ToolManager.activeToolChanged -= OnActiveToolChanged;
 
             VertexManipulationTool.beforeMeshModification -= BeforeMeshModification;
             VertexManipulationTool.afterMeshModification -= AfterMeshModification;
@@ -538,12 +546,12 @@ namespace UnityEditor.ProBuilder
 #if UNITY_2020_2_OR_NEWER
         static void UpdateToolContext()
         {
-            if(!selectMode.IsMeshElementMode() && ToolManager.activeContextType != typeof(GameObjectToolContext))
-                ToolManager.SetActiveContext<GameObjectToolContext>();
             if(selectMode.IsPositionMode() && ToolManager.activeContextType != typeof(PositionToolContext))
                 ToolManager.SetActiveContext<PositionToolContext>();
             else if(selectMode.IsTextureMode() && ToolManager.activeContextType != typeof(TextureToolContext))
                 ToolManager.SetActiveContext<TextureToolContext>();
+            else if ( !selectMode.IsPositionMode() )
+                ToolManager.SetActiveContext<GameObjectToolContext>();
         }
 #else
         internal static VertexManipulationTool activeTool
@@ -556,7 +564,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        void SetTool<T>() where T : VertexManipulationTool, new()
+        static void SetTool<T>() where T : VertexManipulationTool, new()
         {
             //If the type is already active do nothing
             if(typeof(T) == ToolManager.activeToolType)
@@ -571,8 +579,11 @@ namespace UnityEditor.ProBuilder
                 DestroyImmediate(formerTool);
         }
 
-        void SetToolForSelectMode(Tool tool, SelectMode mode)
+        static void SetToolForSelectMode(Tool tool, SelectMode mode)
         {
+            if(!selectMode.IsMeshElementMode())
+                return;
+
             switch (tool)
             {
                 case Tool.Move:
@@ -715,13 +726,9 @@ namespace UnityEditor.ProBuilder
 
 #if !UNITY_2020_2_OR_NEWER
             // Overrides the toolbar transform tools
-            if (Tools.current != Tool.None && Tools.current != Tool.Custom && Tools.current != m_CurrentTool)
-                SetTool_Internal(Tools.current);
+            SetTool_Internal(Tools.current);
 
-            if (selectMode.IsMeshElementMode() && MeshSelection.selectedVertexCount > 0)
-            {
-                SetToolForSelectMode(m_CurrentTool, s_SelectMode);
-            }
+            SetToolForSelectMode(m_CurrentTool, s_SelectMode);
 #endif
 
              if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent))
@@ -1238,24 +1245,18 @@ namespace UnityEditor.ProBuilder
 #endif
 
         /// <summary>
-        /// Allows another window to tell the Editor what Tool is now in use. Does *not* update any other windows.
+        /// Update current tool, then Updates the UV Editor window if applicable.
         /// </summary>
-        /// <param name="newTool"></param>
-        internal void SetTool(Tool newTool)
+        private void OnActiveToolChanged()
         {
-            m_CurrentTool = newTool;
-        }
+            //Recording the last persistent tool in m_CurrentTool if need to restore it in object select mode
+            if(Tools.current != Tool.None && Tools.current != Tool.Custom && Tools.current != m_CurrentTool)
+            {
+                m_CurrentTool = Tools.current;
 
-        /// <summary>
-        /// Calls SetTool(), then Updates the UV Editor window if applicable.
-        /// </summary>
-        /// <param name="newTool"></param>
-        void SetTool_Internal(Tool newTool)
-        {
-            SetTool(newTool);
-
-            if (UVEditor.instance != null)
-                UVEditor.instance.SetTool(newTool);
+                if(UVEditor.instance != null)
+                    UVEditor.instance.SetTool(m_CurrentTool);
+            }
         }
 
         /// <summary>

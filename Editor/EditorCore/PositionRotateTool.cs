@@ -7,10 +7,8 @@ namespace UnityEditor.ProBuilder
     {
         Quaternion m_Rotation;
 
-        public override void OnToolGUI(EditorWindow window)
+        protected override void DoToolGUI()
         {
-            base.OnToolGUI(window);
-
             if (showHandleInfo && isEditing)
             {
                 var euler = m_Rotation.eulerAngles;

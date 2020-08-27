@@ -152,21 +152,9 @@ namespace UnityEditor.ProBuilder
         bool m_SnapAxisConstraint = true;
         bool m_WorldSnapEnabled;
 
-        static FieldInfo s_VertexDragging;
-        static MethodInfo s_FindNearestVertex;
-        static object[] s_FindNearestVertexArguments = new object[] { null, null, null };
-
         internal IEnumerable<MeshAndElementSelection> elementSelection
         {
             get { return MeshSelection.elementSelection; }
-        }
-
-        protected static bool vertexDragging
-        {
-            get
-            {
-                return s_VertexDragging != null && (bool)s_VertexDragging.GetValue(null);
-            }
         }
 
         protected bool isEditing
@@ -213,18 +201,13 @@ namespace UnityEditor.ProBuilder
             return UnityEngine.ProBuilder.Math.Sum(axes * snapValue);
         }
 
-        void OnEnable()
-        {
-            s_VertexDragging = typeof(Tools).GetField("vertexDragging", BindingFlags.NonPublic | BindingFlags.Static);
-            s_FindNearestVertex = typeof(HandleUtility).GetMethod("FindNearestVertex",
-                    BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
-
-        }
-
         internal abstract MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot);
 
         public override void OnToolGUI(EditorWindow window)
         {
+            if(MeshSelection.selectedVertexCount == 0)
+                return;
+
             // necessary because there is no callback on toolbar changes
             SyncPivotPoint();
             SyncPivotRotation();
@@ -264,7 +247,11 @@ namespace UnityEditor.ProBuilder
                 m_HandleRotationOrigin = m_HandleRotation;
                 handleRotationOriginInverse = Quaternion.Inverse(m_HandleRotation);
             }
+
+            DoToolGUI();
         }
+
+        protected virtual void DoToolGUI() {}
 
         protected virtual void OnToolEngaged() {}
 
@@ -388,15 +375,10 @@ namespace UnityEditor.ProBuilder
         /// <returns></returns>
         protected static bool FindNearestVertex(Vector2 mousePosition, out Vector3 vertex)
         {
-            s_FindNearestVertexArguments[0] = mousePosition;
-
-            if (s_FindNearestVertex == null)
-                s_FindNearestVertex = typeof(HandleUtility).GetMethod("findNearestVertex",
-                        BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
-
-            object result = s_FindNearestVertex.Invoke(null, s_FindNearestVertexArguments);
-            vertex = (bool)result ? (Vector3)s_FindNearestVertexArguments[2] : Vector3.zero;
-            return (bool)result;
+            Vector3 nearest = Vector3.zero;
+            bool result = HandleUtility.FindNearestVertex(mousePosition, null, out nearest);
+            vertex = result ? nearest : Vector3.zero;
+            return result;
         }
     }
 }

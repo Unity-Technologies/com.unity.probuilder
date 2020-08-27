@@ -1115,22 +1115,12 @@ namespace UnityEditor.ProBuilder
         }
 
         /**
-         * Sets the global Tool.current and updates any other windows.
+         * Sets the global Tool.current and update current window.
          */
         private void SetTool_Internal(Tool tool)
         {
+            Tools.current = tool;
             SetTool(tool);
-
-            if (tool == Tool.View)
-                Tools.current = Tool.View;
-            else
-                Tools.current = Tool.None;
-
-            if (editor)
-            {
-                editor.SetTool(tool);
-                SceneView.RepaintAll();
-            }
         }
 
         bool GetFaceFromMousePosition(Vector2 mousePosition, ProBuilderMesh pb, out Face faceSelected)

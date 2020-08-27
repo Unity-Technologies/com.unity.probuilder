@@ -34,10 +34,8 @@ namespace UnityEditor.ProBuilder
             m_SnapAsGroup = worldSnapEnabled && ProBuilderSnapSettings.snapAsGroup;
         }
 
-        public override void OnToolGUI(EditorWindow window)
+        protected override void DoToolGUI()
         {
-            base.OnToolGUI(window);
-
             if (!isEditing)
                 m_Position = m_HandlePosition;
 
@@ -59,7 +57,7 @@ namespace UnityEditor.ProBuilder
                 if (!isEditing)
                     BeginEdit("Translate Selection");
 
-                if (vertexDragging)
+                if (Tools.vertexDragging)
                 {
                     Vector3 nearest;
 

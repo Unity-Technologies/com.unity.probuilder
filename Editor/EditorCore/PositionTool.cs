@@ -85,9 +85,8 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        public override void OnToolGUI(EditorWindow window)
+        protected override void DoToolGUI()
         {
-            base.OnToolGUI(window);
 #if DEBUG_HANDLES
             if (isEditing && currentEvent.type == EventType.Repaint)
             {

@@ -8,9 +8,8 @@ namespace UnityEditor.ProBuilder
         float m_UniformScale;
 
 
-        public override void OnToolGUI(EditorWindow window)
+        protected override void DoToolGUI()
         {
-            base.OnToolGUI(window);
             if (!isEditing)
             {
                 m_Scale.x = 1f;
