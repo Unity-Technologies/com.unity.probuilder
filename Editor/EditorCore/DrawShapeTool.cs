@@ -82,10 +82,9 @@ namespace UnityEditor.ProBuilder
             var heightDirection = m_HeightCorner - m_OppositeCorner;
             var height = heightDirection.magnitude * Mathf.Sign(Vector3.Dot(m_Plane.normal, heightDirection));
 
-            m_Bounds.size = height * m_Plane.normal + forward * m_Forward + right * m_Right;
-            m_Bounds.center = m_Origin + 0.5f * (m_OppositeCorner - m_Origin) + m_Plane.normal * (height * .5f);
-            m_Rotation = Quaternion.identity;
-            //m_Rotation = Quaternion.LookRotation(m_Forward,m_Plane.normal);
+            m_Bounds.size = forward * Vector3.forward + right * Vector3.right + height * Vector3.up;
+            m_Bounds.center = m_Origin + 0.5f * ( m_OppositeCorner - m_Origin ) + m_Plane.normal * (height * .5f);
+            m_Rotation = Quaternion.LookRotation(m_Forward,m_Plane.normal);
         }
 
         internal void RebuildShape()
