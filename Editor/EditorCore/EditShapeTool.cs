@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEditor.EditorTools;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine.ProBuilder;
@@ -15,32 +16,44 @@ namespace UnityEditor.ProBuilder
         BoxBoundsHandle m_BoundsHandle;
         bool m_BoundsHandleActive;
 
-        Vector2 s_StartMousePosition;
-        Vector3 s_StartPosition;
-        Quaternion s_LastRotation;
-        int s_CurrentId = -1;
-        bool s_IsMouseDown;
+        Vector2 m_StartMousePosition;
+        Vector3 m_StartPosition;
+        Quaternion m_LastRotation;
+        int m_CurrentId = -1;
+        bool m_IsMouseDown;
 
         // Don't recalculate the active bounds during an edit operation, it causes the handles to drift
         ShapeState m_ActiveShapeState;
 
         struct ShapeState
         {
-            public ShapeComponent shape;
-            public Matrix4x4 localToWorldMatrix;
             public Matrix4x4 positionAndRotationMatrix;
             public Bounds boundsHandleValue;
-            // bounds in world space position, with size
-            public Bounds originalBounds;
-            // rotation in world space
-            public Quaternion originalRotation;
         }
+
+        FaceData[] m_Faces = new FaceData[6];
 
         sealed class FaceData
         {
             public Vector3 CenterPosition;
             public Vector3 Normal;
             public EdgeData[] Edges;
+
+            public bool IsVisible
+            {
+                get
+                {
+                    Vector3 worldDir = Handles.matrix.MultiplyVector(Normal).normalized;
+
+                    Vector3 cameraDir;
+                    if (Camera.current.orthographic)
+                        cameraDir = -Camera.current.transform.forward;
+                    else
+                        cameraDir = (Camera.current.transform.position - Handles.matrix.MultiplyPoint(CenterPosition)).normalized;
+
+                    return Vector3.Dot(cameraDir, worldDir) < 0;
+                }
+            }
 
             public FaceData()
             {
@@ -66,19 +79,37 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        //hashset to avoid drawing twice the same edge
+        HashSet<EdgeData> edgesToDraw = new HashSet<EdgeData>(new EdgeDataComparer());
+
+        //Comparer for the edgesToDraw hashset
+        class EdgeDataComparer : IEqualityComparer<EdgeData>
+        {
+            public bool Equals(EdgeData edge1, EdgeData edge2)
+            {
+                bool result = edge1.PointA == edge2.PointA && edge1.PointB == edge2.PointB;
+                result |= edge1.PointA == edge2.PointB && edge1.PointB == edge2.PointA;
+                return result;
+            }
+
+            //Don't wan't to compare hashcode, only using equals
+            public int GetHashCode(EdgeData edge) {return 0;}
+        }
+
         public override GUIContent toolbarIcon
         {
             get { return PrimitiveBoundsHandle.editModeButton; }
         }
 
-        bool IsEditing()
-        {
-            return m_BoundsHandleActive;
-        }
+        bool IsEditing => m_BoundsHandleActive;
 
         void OnEnable()
         {
             m_BoundsHandle = new BoxBoundsHandle();
+            for (int i = 0; i < m_Faces.Length; i++)
+            {
+                m_Faces[i] = new FaceData();
+            }
         }
 
         public override void OnToolGUI(EditorWindow window)
@@ -95,22 +126,14 @@ namespace UnityEditor.ProBuilder
                     if (Mathf.Approximately(shape.transform.lossyScale.sqrMagnitude, 0f))
                         return;
 
-                    EditorGUI.BeginChangeCheck();
-
-                    if(IsEditing())
-                        DoShapeGUI(shape, m_ActiveShapeState.localToWorldMatrix, m_ActiveShapeState.originalBounds);
-                    else
-                        DoShapeGUI(shape, shape.transform.localToWorldMatrix, shape.meshFilterBounds);
-
-                    if(EditorGUI.EndChangeCheck())
-                        BeginBoundsEditing(shape);
+                    DoShapeGUI(shape);
                 }
             }
         }
 
-        void DoShapeGUI(ShapeComponent shape, Matrix4x4 localToWorldMatrix, Bounds bounds)
+        void DoShapeGUI(ShapeComponent shape)
         {
-            var matrix = IsEditing()
+            var matrix = IsEditing
                 ? m_ActiveShapeState.positionAndRotationMatrix
                 : Matrix4x4.TRS(shape.transform.position, shape.transform.rotation, Vector3.one);
 
@@ -134,112 +157,89 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        FaceData[] m_Faces = new FaceData[6];
 
-
-        FaceData[] GetFaces(Vector3 extents)
+        void UpdateFaces(Vector3 extents)
         {
-            for (int i = 0; i < m_Faces.Length; i++)
-            {
-                m_Faces[i] = new FaceData();
-            }
-
-            Vector3 xAxis = Vector3.right;
-            Vector3 yAxis = Vector3.up;
-            Vector3 zAxis = Vector3.forward;
-
-            // +X
+            // -X
             var pos = m_BoundsHandle.center - new Vector3(extents.x, 0, 0);
-            m_Faces[0].SetData(pos, xAxis);
+            m_Faces[0].SetData(pos, Vector3.right);
             m_Faces[0].Edges[0] = new EdgeData(new Vector3(-extents.x, extents.y, extents.z), new Vector3(-extents.x, -extents.y, extents.z));
             m_Faces[0].Edges[1] = new EdgeData(new Vector3(-extents.x, extents.y, extents.z), new Vector3(-extents.x, extents.y, -extents.z));
             m_Faces[0].Edges[2] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(-extents.x, -extents.y, extents.z));
             m_Faces[0].Edges[3] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(-extents.x, extents.y, -extents.z));
 
-            // -X
+            // +X
             pos = m_BoundsHandle.center + new Vector3(extents.x, 0, 0);
-            m_Faces[1].SetData(pos, -xAxis);
+            m_Faces[1].SetData(pos, -Vector3.right);
             m_Faces[1].Edges[0] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(extents.x, -extents.y, extents.z));
             m_Faces[1].Edges[1] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(extents.x, extents.y, -extents.z));
             m_Faces[1].Edges[2] = new EdgeData(new Vector3(extents.x, -extents.y, -extents.z), new Vector3(extents.x, -extents.y, extents.z));
             m_Faces[1].Edges[3] = new EdgeData(new Vector3(extents.x, -extents.y, -extents.z), new Vector3(extents.x, extents.y, -extents.z));
 
-            // +Y
+            // -Y
             pos = m_BoundsHandle.center - new Vector3(0, extents.y, 0);
-            m_Faces[2].SetData(pos, yAxis);
+            m_Faces[2].SetData(pos, Vector3.up);
             m_Faces[2].Edges[0] = new EdgeData(new Vector3(extents.x, -extents.y, extents.z), new Vector3(-extents.x, -extents.y, extents.z));
             m_Faces[2].Edges[1] = new EdgeData(new Vector3(extents.x, -extents.y, extents.z), new Vector3(extents.x, -extents.y, -extents.z));
             m_Faces[2].Edges[2] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(-extents.x, -extents.y, extents.z));
             m_Faces[2].Edges[3] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(extents.x, -extents.y, -extents.z));
 
-            // -Y
+            // +Y
             pos = m_BoundsHandle.center + new Vector3(0, extents.y, 0);
-            m_Faces[3].SetData(pos, -yAxis);
+            m_Faces[3].SetData(pos, -Vector3.up);
             m_Faces[3].Edges[0] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(-extents.x, extents.y, extents.z));
             m_Faces[3].Edges[1] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(extents.x, extents.y, -extents.z));
             m_Faces[3].Edges[2] = new EdgeData(new Vector3(-extents.x, extents.y, -extents.z), new Vector3(-extents.x, extents.y, extents.z));
             m_Faces[3].Edges[3] = new EdgeData(new Vector3(-extents.x, extents.y, -extents.z), new Vector3(extents.x, extents.y, -extents.z));
 
-            // +Z
+            // -Z
             pos = m_BoundsHandle.center - new Vector3(0, 0, extents.z);
-            m_Faces[4].SetData(pos, zAxis);
+            m_Faces[4].SetData(pos, Vector3.forward);
             m_Faces[4].Edges[0] = new EdgeData(new Vector3(extents.x, extents.y, -extents.z), new Vector3(-extents.x, extents.y, -extents.z));
             m_Faces[4].Edges[1] = new EdgeData(new Vector3(extents.x, extents.y, -extents.z), new Vector3(extents.x, -extents.y, -extents.z));
             m_Faces[4].Edges[2] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(-extents.x, extents.y, -extents.z));
             m_Faces[4].Edges[3] = new EdgeData(new Vector3(-extents.x, -extents.y, -extents.z), new Vector3(extents.x, -extents.y, -extents.z));
 
-            // -Z
+            // +Z
             pos = m_BoundsHandle.center + new Vector3(0, 0, extents.z);
-            m_Faces[5].SetData(pos, -zAxis);
+            m_Faces[5].SetData(pos, -Vector3.forward);
             m_Faces[5].Edges[0] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(-extents.x, extents.y, extents.z));
             m_Faces[5].Edges[1] = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(extents.x, -extents.y, extents.z));
             m_Faces[5].Edges[2] = new EdgeData(new Vector3(-extents.x, -extents.y, extents.z), new Vector3(-extents.x, extents.y, extents.z));
             m_Faces[5].Edges[3] = new EdgeData(new Vector3(-extents.x, -extents.y, extents.z), new Vector3(extents.x, -extents.y, extents.z));
-
-            return m_Faces;
         }
 
         void DoRotateHandlesGUI(ShapeComponent shape, Bounds bounds)
         {
             var matrix = shape.gameObject.transform.localToWorldMatrix;
-            var extents = bounds.extents;
             bool hasRotated = false;
 
+            edgesToDraw.Clear();
+            UpdateFaces(bounds.extents);
             using (new Handles.DrawingScope(matrix))
             {
-                var faces = GetFaces(extents);
-                foreach(var face in faces)
+                foreach(var face in m_Faces)
                 {
-                    if (IsFaceVisible(face))
+                    if (face.IsVisible)
                     {
                         foreach (var edge in face.Edges)
-                        {
-                            var rot = RotateBoundsHandle(edge.PointA, edge.PointB, edge.PointA - edge.PointB);
-                            shape.Rotate(rot);
-                            hasRotated = hasRotated || rot != Quaternion.identity;
-                        }
+                            edgesToDraw.Add(edge);
                     }
                 }
+
+                foreach(var edgeData in edgesToDraw)
+                {
+                    var rot = RotateEdgeHandle(edgeData);
+                    shape.Rotate(rot);
+                    hasRotated |= (rot != Quaternion.identity);
+                }
+
                 if (hasRotated)
                     ProBuilderEditor.Refresh();
             }
         }
 
-        bool IsFaceVisible(FaceData face)
-        {
-            Vector3 worldDir = Handles.matrix.MultiplyVector(face.Normal).normalized;
-
-            float cosV;
-
-            if (Camera.current.orthographic)
-                cosV = Vector3.Dot(-Camera.current.transform.forward, worldDir);
-            else
-                cosV = Vector3.Dot((Camera.current.transform.position - Handles.matrix.MultiplyPoint(face.CenterPosition)).normalized, worldDir);
-
-            return cosV < 0;
-        }
-
-        Quaternion RotateBoundsHandle(Vector3 pointA, Vector3 pointB, Vector3 axis)
+        Quaternion RotateEdgeHandle(EdgeData edge)
         {
             Event evt = Event.current;
             int controlID = GUIUtility.GetControlID(FocusType.Passive);
@@ -249,11 +249,11 @@ namespace UnityEditor.ProBuilder
                 case EventType.MouseDown:
                     if (HandleUtility.nearestControl == controlID && (evt.button == 0 || evt.button == 2))
                     {
-                        s_CurrentId = controlID;
-                        s_LastRotation = Quaternion.identity;
-                        s_StartMousePosition = Event.current.mousePosition;
-                        s_StartPosition = HandleUtility.ClosestPointToPolyLine(pointA, pointB);
-                        s_IsMouseDown = true;
+                        m_CurrentId = controlID;
+                        m_LastRotation = Quaternion.identity;
+                        m_StartMousePosition = Event.current.mousePosition;
+                        m_StartPosition = HandleUtility.ClosestPointToPolyLine(edge.PointA, edge.PointB);
+                        m_IsMouseDown = true;
                         GUIUtility.hotControl = controlID;
                         evt.Use();
                     }
@@ -263,38 +263,38 @@ namespace UnityEditor.ProBuilder
                     {
                         GUIUtility.hotControl = 0;
                         evt.Use();
-                        s_IsMouseDown = false;
-                        s_CurrentId = -1;
+                        m_IsMouseDown = false;
+                        m_CurrentId = -1;
                     }
                     break;
                 case EventType.MouseMove:
-                        HandleUtility.Repaint();
+                    HandleUtility.Repaint();
                     break;
                 case EventType.Layout:
-                    HandleUtility.AddControl(controlID, HandleUtility.DistanceToLine(pointA, pointB));
+                    HandleUtility.AddControl(controlID, HandleUtility.DistanceToLine(edge.PointA, edge.PointB));
                     break;
                 case EventType.Repaint:
-                    bool isSelected = (HandleUtility.nearestControl == controlID && s_CurrentId == -1) || s_CurrentId == controlID;
+                    bool isSelected = (HandleUtility.nearestControl == controlID && m_CurrentId == -1) || m_CurrentId == controlID;
                     if (isSelected)
-                    {
                         EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.RotateArrow);
-                    }
                     using (new Handles.DrawingScope(isSelected ? Color.white : Color.green))
                     {
-                        Handles.DrawAAPolyLine(isSelected ? 10f : 3f, pointA, pointB);
-                        break;
+                        Handles.DrawAAPolyLine(isSelected ? 10f : 3f, edge.PointA, edge.PointB);
                     }
+                    break;
                 case EventType.MouseDrag:
-                    if (s_IsMouseDown && s_CurrentId == controlID)
+                    if (m_IsMouseDown && m_CurrentId == controlID)
                     {
-                        Vector3 direction = Vector3.Cross(Vector3.Cross(pointA, pointB).normalized, axis).normalized;
-                        var rotDist = HandleUtility.CalcLineTranslation(s_StartMousePosition, Event.current.mousePosition, s_StartPosition, direction);
+                        Vector3 axis = edge.PointA - edge.PointB;
+                        //Get a direction orthogonal to both direction to camera and edge direction
+                        Vector3 direction = Vector3.Cross(-Camera.current.transform.forward, axis).normalized;
+                        var rotDist = HandleUtility.CalcLineTranslation(m_StartMousePosition, Event.current.mousePosition, m_StartPosition, direction);
                         rotDist = Handles.SnapValue(rotDist, 90f);
                         var rot = Quaternion.AngleAxis(rotDist * -1, axis);
-                        rotation = s_LastRotation * Quaternion.Inverse(rot);
-                        s_LastRotation = rot;
+                        rotation = m_LastRotation * Quaternion.Inverse(rot);
+                        m_LastRotation = rot;
                     }
-                        break;
+                    break;
             }
             return rotation;
         }
@@ -309,17 +309,11 @@ namespace UnityEditor.ProBuilder
                 string.Format("Modify {0}", ObjectNames.NicifyVariableName(target.GetType().Name)));
 
             m_BoundsHandleActive = true;
-
             var localBounds = shape.mesh.mesh.bounds;
-
             m_ActiveShapeState = new ShapeState()
             {
-                shape = shape,
-                localToWorldMatrix = shape.transform.localToWorldMatrix,
                 positionAndRotationMatrix = Matrix4x4.TRS(shape.transform.position, shape.transform.rotation, Vector3.one),
                 boundsHandleValue = localBounds,
-                originalBounds = new Bounds(shape.transform.TransformPoint(localBounds.center), shape.size),
-                originalRotation = shape.transform.rotation
             };
         }
 
@@ -337,7 +331,7 @@ namespace UnityEditor.ProBuilder
         {
             // when editing a shape, we don't bother doing the conversion from handle space bounds to model for the
             // active handle
-            if (IsEditing())
+            if (IsEditing)
             {
                 m_BoundsHandle.center = m_ActiveShapeState.boundsHandleValue.center;
                 m_BoundsHandle.size = m_ActiveShapeState.boundsHandleValue.size;
@@ -368,11 +362,5 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.Refresh(false);
         }
 
-        void RebuildShape(ShapeComponent shape, Bounds bounds, Quaternion rotation)
-        {
-            shape.Rebuild(bounds, rotation);
-            shape.mesh.SetPivot(shape.transform.position);
-            ProBuilderEditor.Refresh();
-        }
     }
 }
