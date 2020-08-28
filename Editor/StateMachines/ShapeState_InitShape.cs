@@ -8,7 +8,7 @@ namespace UnityEditor.ProBuilder
     {
         protected override void InitState()
         {
-            tool.m_IsInit = false;
+            tool.m_IsShapeInit = false;
             tool.m_Shape = new GameObject("Shape", typeof(ShapeComponent)).GetComponent<ShapeComponent>();
             tool.m_Shape.gameObject.hideFlags = HideFlags.HideAndDontSave;
             tool.m_Shape.hideFlags = HideFlags.None;

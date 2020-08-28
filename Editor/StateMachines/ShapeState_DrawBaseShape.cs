@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
@@ -42,7 +43,7 @@ namespace UnityEditor.ProBuilder
                         if (tool.m_Plane.Raycast(ray, out distance))
                         {
                             var pos = ray.GetPoint(distance);
-                            var shape = tool.CreateLastShape(pos);
+                            var shape = CreateLastShape(pos);
 
                             return ResetState();
                         }
@@ -56,6 +57,23 @@ namespace UnityEditor.ProBuilder
             }
 
             return this;
+        }
+
+        public ProBuilderMesh CreateLastShape(Vector3 position)
+        {
+            var shape = ShapeGenerator.CreateShape(DrawShapeTool.activeShapeType).GetComponent<ShapeComponent>();
+            shape.shape = EditorShapeUtility.GetLastParams(shape.shape.GetType());
+            UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
+
+            Bounds bounds = new Bounds(Vector3.zero, DrawShapeTool.s_Size);
+            shape.Rebuild(bounds, Quaternion.identity);
+            ProBuilderEditor.Refresh(false);
+
+            var res = shape.GetComponent<ProBuilderMesh>();
+            EditorUtility.InitObject(res);
+            res.transform.position = position;
+
+            return res;
         }
     }
 }

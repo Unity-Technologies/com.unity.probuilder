@@ -18,6 +18,7 @@ namespace UnityEditor.ProBuilder
         ShapeState m_CurrentState;
 
         internal ShapeComponent m_Shape;
+        internal bool m_IsShapeInit;
 
         Editor m_ShapeEditor;
 
@@ -30,8 +31,7 @@ namespace UnityEditor.ProBuilder
         Quaternion m_Rotation;
         Bounds m_Bounds;
 
-        internal bool m_IsInit;
-        GUIContent m_ShapeTitle;
+        readonly GUIContent k_ShapeTitle = new GUIContent("Draw Shape");
 
         internal static TypeCache.TypeCollection s_AvailableShapeTypes;
         internal static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
@@ -50,7 +50,6 @@ namespace UnityEditor.ProBuilder
         void OnEnable()
         {
             m_CurrentState = InitStateMachine();
-            m_ShapeTitle = new GUIContent("Draw Shape");
         }
 
         ShapeState InitStateMachine()
@@ -95,7 +94,7 @@ namespace UnityEditor.ProBuilder
             if (m_Bounds.size.sqrMagnitude < .01f)
                 return;
 
-            if (!m_IsInit)
+            if (!m_IsShapeInit)
             {
                 m_Shape.shape = EditorShapeUtility.GetLastParams(m_Shape.shape.GetType());
                 m_Shape.gameObject.hideFlags = HideFlags.None;
@@ -106,10 +105,10 @@ namespace UnityEditor.ProBuilder
             m_Shape.mesh.SetPivot(PivotLocation.Center);
             ProBuilderEditor.Refresh(false);
 
-            if (!m_IsInit)
+            if (!m_IsShapeInit)
             {
                 EditorUtility.InitObject(m_Shape.mesh);
-                m_IsInit = true;
+                m_IsShapeInit = true;
             }
 
             SceneView.RepaintAll();
@@ -117,9 +116,7 @@ namespace UnityEditor.ProBuilder
 
         public override void OnToolGUI(EditorWindow window)
         {
-            Debug.Log("Current State = "+m_CurrentState);
-
-            SceneViewOverlay.Window(m_ShapeTitle, OnActiveToolGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle);
+            SceneViewOverlay.Window(k_ShapeTitle, OnActiveToolGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle);
 
             var evt = Event.current;
 
@@ -138,24 +135,6 @@ namespace UnityEditor.ProBuilder
             {
                 Handles.DrawWireCube(Vector3.zero, m_Bounds.size);
             }
-        }
-
-        public ProBuilderMesh CreateLastShape(Vector3 position)
-        {
-            var type = activeShapeType;
-            var shape = ShapeGenerator.CreateShape(type).GetComponent<ShapeComponent>();
-            shape.shape = EditorShapeUtility.GetLastParams(shape.shape.GetType());
-            UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
-
-            Bounds bounds = new Bounds(Vector3.zero, s_Size);
-            shape.Rebuild(bounds, Quaternion.identity);
-            ProBuilderEditor.Refresh(false);
-
-            var res = shape.GetComponent<ProBuilderMesh>();
-            EditorUtility.InitObject(res);
-            shape.transform.position = position;
-
-            return res;
         }
 
         void OnActiveToolGUI(UObject overlayTarget, SceneView view)
