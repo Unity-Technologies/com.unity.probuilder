@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder
         {
             EndState();
             if(m_nextState == null)
-                ResetState();
+                return ResetState();
 
             m_nextState.InitState();
             SceneView.RepaintAll();

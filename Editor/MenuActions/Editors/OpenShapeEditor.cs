@@ -31,16 +31,6 @@ namespace UnityEditor.ProBuilder.Actions
             get { return true; }
         }
 
-        // protected override MenuActionState optionsMenuState {
-        //     get { return MenuActionState.VisibleAndEnabled; }
-        // }
-
-        // protected override void DoAlternateAction()
-        // {
-        //     DrawShapeTool.CreateLastShape();
-        //     return new ActionResult(ActionResult.Status.Success, "Create Shape");
-        // }
-
         internal override ActionResult StartActivation()
         {
             m_RestorePreviousMode = true;
@@ -68,6 +58,7 @@ namespace UnityEditor.ProBuilder.Actions
             if(m_RestorePreviousMode)
                 ProBuilderEditor.selectMode = m_PreviousMode;
 
+            SceneView.RepaintAll();
             return new ActionResult(ActionResult.Status.Success,"Draw Shape Tool Ends");
         }
 

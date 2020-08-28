@@ -117,6 +117,8 @@ namespace UnityEditor.ProBuilder
 
         public override void OnToolGUI(EditorWindow window)
         {
+            Debug.Log("Current State = "+m_CurrentState);
+
             SceneViewOverlay.Window(m_ShapeTitle, OnActiveToolGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle);
 
             var evt = Event.current;

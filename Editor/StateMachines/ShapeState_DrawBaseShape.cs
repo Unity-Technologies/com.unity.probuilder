@@ -44,7 +44,7 @@ namespace UnityEditor.ProBuilder
                             var pos = ray.GetPoint(distance);
                             var shape = tool.CreateLastShape(pos);
 
-                            ResetState();
+                            return ResetState();
                         }
                     }
                     else if(Vector3.Distance(tool.m_OppositeCorner, tool.m_Origin) < .1f)
