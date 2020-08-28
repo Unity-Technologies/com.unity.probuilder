@@ -22,8 +22,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="face">A face with the new triangle indexes. The indexes should be 0 indexed.</param>
         /// <param name="common"></param>
         /// <returns>The new face as referenced on the mesh.</returns>
-        internal static Face AppendFace(this ProBuilderMesh mesh, Vector3[] positions, Color[] colors, Vector2[] uvs,
-            Face face, int[] common)
+        internal static Face AppendFace(
+			this ProBuilderMesh mesh, 
+			Vector3[] positions, 
+			Color[] colors, 
+			Vector2[] uv0s,
+			Vector4[] uv2s,
+			Vector4[] uv3s,
+            Face face, 
+			int[] common)
         {
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -47,12 +54,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             var mc = mesh.HasArrays(MeshArrays.Color);
             var fc = colors != null;
-            var mt = mesh.HasArrays(MeshArrays.Texture0);
-            var ft = uvs != null;
+            var mt0 = mesh.HasArrays(MeshArrays.Texture0);
+            var ft0 = uv0s != null;
+			var mt2 = mesh.HasArrays(MeshArrays.Texture2);
+            var ft2 = uv2s != null;
+			var mt3 = mesh.HasArrays(MeshArrays.Texture3);
+            var ft3 = uv3s != null;
 
             Vector3[] newPositions = new Vector3[vertexCount + faceVertexCount];
             Color[] newColors = (mc || fc) ? new Color[vertexCount + faceVertexCount] : null;
-            Vector2[] newTextures = (mt || ft) ? new Vector2[vertexCount + faceVertexCount] : null;
+            Vector2[] newTexture0s = (mt0 || ft0) ? new Vector2[vertexCount + faceVertexCount] : null;
+            Vector4[] newTexture2s = (mt2 || ft2) ? new Vector4[vertexCount + faceVertexCount] : null;
+            Vector4[] newTexture3s = (mt3 || ft3) ? new Vector4[vertexCount + faceVertexCount] : null;
 
             List<Face> faces = new List<Face>(mesh.facesInternal);
             Array.Copy(mesh.positionsInternal, 0, newPositions, 0, vertexCount);
@@ -66,11 +79,27 @@ namespace UnityEngine.ProBuilder.MeshOperations
                     colors.Length);
             }
 
-            if (mt || ft)
+            if (mt0 || ft0)
             {
-                Array.Copy(mt ? mesh.texturesInternal : ArrayUtility.Fill(Vector2.zero, vertexCount), 0, newTextures, 0,
+                Array.Copy(mt0 ? mesh.texturesInternal : ArrayUtility.Fill(Vector2.zero, vertexCount), 0, newTexture0s, 0,
                     vertexCount);
-                Array.Copy(ft ? uvs : ArrayUtility.Fill(Vector2.zero, faceVertexCount), 0, newTextures,
+                Array.Copy(ft0 ? uv0s : ArrayUtility.Fill(Vector2.zero, faceVertexCount), 0, newTexture0s,
+                    mesh.texturesInternal.Length, faceVertexCount);
+            }
+
+			if (mt2 || ft2)
+            {
+                Array.Copy(mt2 ? mesh.textures2Internal : ArrayUtility.Fill(Vector4.zero, vertexCount), 0, newTexture2s, 0,
+                    vertexCount);
+                Array.Copy(ft2 ? uv2s : ArrayUtility.Fill(Vector4.zero, faceVertexCount), 0, newTexture2s,
+                    mesh.texturesInternal.Length, faceVertexCount);
+            }
+
+			if (mt3 || ft3)
+            {
+                Array.Copy(mt3 ? mesh.textures3Internal : ArrayUtility.Fill(Vector4.zero, vertexCount), 0, newTexture3s, 0,
+                    vertexCount);
+                Array.Copy(ft3 ? uv3s : ArrayUtility.Fill(Vector4.zero, faceVertexCount), 0, newTexture3s,
                     mesh.texturesInternal.Length, faceVertexCount);
             }
 
@@ -89,8 +118,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             mesh.positions = newPositions;
             mesh.colors = newColors;
-            mesh.textures = newTextures;
+            mesh.textures = newTexture0s;
             mesh.faces = faces;
+			mesh.texture2s = newTexture2s;
+			mesh.texture3s = newTexture3s;
 
             return face;
         }
@@ -616,6 +647,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
                     v,
                     hasColors ? c : null,
                     new Vector2[v.Length],
+                    new Vector4[v.Length],
+                    new Vector4[v.Length],
                     new Face(axbx || axby ? new int[3] {2, 1, 0} : new int[3] {0, 1, 2}, submeshIndex, uvs, 0, -1, -1,
                         false),
                     s);
@@ -671,6 +704,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 v,
                 hasColors ? c : null,
                 new Vector2[v.Length],
+                new Vector4[v.Length],
+                new Vector4[v.Length],
                 new Face(new int[6] {2, 1, 0, 2, 3, 1}, submeshIndex, uvs, 0, -1, -1, false),
                 s);
         }

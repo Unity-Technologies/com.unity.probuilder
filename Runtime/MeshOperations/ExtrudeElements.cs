@@ -137,6 +137,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
                         positions,
                         colors,
                         new Vector2[4],
+                        new Vector4[4],
+                        new Vector4[4],
                         new Face(new int[6] { 2, 1, 0, 2, 3, 1 }, face.submeshIndex, AutoUnwrapSettings.tile, 0, -1, -1, false),
                         new int[4] { x_sharedIndex, y_sharedIndex, -1, -1 });
 
