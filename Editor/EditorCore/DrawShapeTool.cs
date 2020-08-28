@@ -79,12 +79,13 @@ namespace UnityEditor.ProBuilder
             var forward = HandleUtility.PointOnLineParameter(m_OppositeCorner, m_Origin, m_Forward);
             var right = HandleUtility.PointOnLineParameter(m_OppositeCorner, m_Origin, m_Right);
 
-            var direction = m_HeightCorner - m_OppositeCorner;
-            var height = direction.magnitude * Mathf.Sign(Vector3.Dot(m_Plane.normal, direction));
+            var heightDirection = m_HeightCorner - m_OppositeCorner;
+            var height = heightDirection.magnitude * Mathf.Sign(Vector3.Dot(m_Plane.normal, heightDirection));
 
-            m_Bounds.center = ((m_OppositeCorner + m_Origin) * .5f) + m_Plane.normal * (height * .5f);
-            m_Bounds.size = new Vector3(forward, height, right);
+            m_Bounds.size = height * m_Plane.normal + forward * m_Forward + right * m_Right;
+            m_Bounds.center = m_Origin + 0.5f * (m_OppositeCorner - m_Origin) + m_Plane.normal * (height * .5f);
             m_Rotation = Quaternion.identity;
+            //m_Rotation = Quaternion.LookRotation(m_Forward,m_Plane.normal);
         }
 
         internal void RebuildShape()
