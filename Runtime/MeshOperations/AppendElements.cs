@@ -64,8 +64,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
             Vector3[] newPositions = new Vector3[vertexCount + faceVertexCount];
             Color[] newColors = (mc || fc) ? new Color[vertexCount + faceVertexCount] : null;
             Vector2[] newTexture0s = (mt0 || ft0) ? new Vector2[vertexCount + faceVertexCount] : null;
-            Vector4[] newTexture2s = (mt2 || ft2) ? new Vector4[vertexCount + faceVertexCount] : null;
-            Vector4[] newTexture3s = (mt3 || ft3) ? new Vector4[vertexCount + faceVertexCount] : null;
+            List<Vector4> newTexture2s = (mt2 || ft2) ? new List<Vector4>() : null;
+            List<Vector4> newTexture3s = (mt3 || ft3) ? new List<Vector4>() : null;
 
             List<Face> faces = new List<Face>(mesh.facesInternal);
             Array.Copy(mesh.positionsInternal, 0, newPositions, 0, vertexCount);
@@ -89,18 +89,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			if (mt2 || ft2)
             {
-                Array.Copy(mt2 ? mesh.textures2Internal : ArrayUtility.Fill(Vector4.zero, vertexCount), 0, newTexture2s, 0,
-                    vertexCount);
-                Array.Copy(ft2 ? uv2s : ArrayUtility.Fill(Vector4.zero, faceVertexCount), 0, newTexture2s,
-                    mesh.texturesInternal.Length, faceVertexCount);
+				newTexture2s.AddRange(mesh.textures2Internal);
+				newTexture2s.AddRange(new Vector4[faceVertexCount]);
             }
 
 			if (mt3 || ft3)
             {
-                Array.Copy(mt3 ? mesh.textures3Internal : ArrayUtility.Fill(Vector4.zero, vertexCount), 0, newTexture3s, 0,
-                    vertexCount);
-                Array.Copy(ft3 ? uv3s : ArrayUtility.Fill(Vector4.zero, faceVertexCount), 0, newTexture3s,
-                    mesh.texturesInternal.Length, faceVertexCount);
+				newTexture3s.AddRange(mesh.textures3Internal);
+				newTexture3s.AddRange(new Vector4[faceVertexCount]);
             }
 
             face.ShiftIndexesToZero();
@@ -120,8 +116,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
             mesh.colors = newColors;
             mesh.textures = newTexture0s;
             mesh.faces = faces;
-			mesh.texture2s = newTexture2s;
-			mesh.texture3s = newTexture3s;
+			mesh.textures2Internal = newTexture2s;
+			mesh.textures3Internal = newTexture3s;
 
             return face;
         }

@@ -641,16 +641,16 @@ namespace UnityEngine.ProBuilder
             set { m_Textures0 = value; }
         }
 
-		internal Vector4[] textures2Internal
+		internal List<Vector4> textures2Internal
         {
-            get { return m_Textures2.ToArray(); }
-            set { m_Textures2 = value.ToList(); }
+            get { return m_Textures2; }
+            set { m_Textures2 = value; }
         }
 
-		internal Vector4[] textures3Internal
+		internal List<Vector4> textures3Internal
         {
-            get { return m_Textures3.ToArray(); }
-            set { m_Textures3 = value.ToList(); }
+            get { return m_Textures3; }
+            set { m_Textures3 = value; }
         }
 
         /// <value>
@@ -668,34 +668,6 @@ namespace UnityEngine.ProBuilder
                     throw new ArgumentOutOfRangeException("value");
                 else
                     m_Textures0 = value.ToArray();
-            }
-        }
-
-		public IList<Vector4> texture2s
-        {
-            get { return m_Textures2 != null ? new ReadOnlyCollection<Vector4>(m_Textures2) : null; }
-            set
-            {
-                if (value == null)
-                    m_Textures2 = null;
-                else if (value.Count() != vertexCount)
-                    throw new ArgumentOutOfRangeException("value");
-                else
-                    m_Textures2 = value.ToList();
-            }
-        }
-
-		public IList<Vector4> texture3s
-        {
-            get { return m_Textures3 != null ? new ReadOnlyCollection<Vector4>(m_Textures3) : null; }
-            set
-            {
-                if (value == null)
-                    m_Textures3 = null;
-                else if (value.Count() != vertexCount)
-                    throw new ArgumentOutOfRangeException("value");
-                else
-                    m_Textures3 = value.ToList();
             }
         }
 
