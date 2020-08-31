@@ -117,6 +117,7 @@ namespace UnityEngine.ProBuilder
             InvalidateSharedVertexLookup();
             InvalidateSharedTextureLookup();
             m_Colors = null;
+            m_MeshFormatVersion = k_MeshFormatVersion;
             ClearSelection();
         }
 
