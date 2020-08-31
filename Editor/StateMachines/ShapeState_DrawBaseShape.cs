@@ -66,12 +66,12 @@ namespace UnityEditor.ProBuilder
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
 
             Bounds bounds = new Bounds(Vector3.zero, DrawShapeTool.s_Size);
-            shape.Rebuild(bounds, Quaternion.identity);
+            shape.Rebuild(bounds, Quaternion.LookRotation(tool.m_Forward,tool.m_Plane.normal));
             ProBuilderEditor.Refresh(false);
 
             var res = shape.GetComponent<ProBuilderMesh>();
             EditorUtility.InitObject(res);
-            res.transform.position = position;
+            res.transform.position = position + tool.m_Plane.normal * bounds.extents.y;
 
             return res;
         }
