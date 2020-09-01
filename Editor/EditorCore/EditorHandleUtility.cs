@@ -354,7 +354,8 @@ namespace UnityEditor.ProBuilder
 
             do
             {
-                nearestGameObject = HandleUtility.PickGameObject(mousePosition, false, list.ToArray());
+                int materialIndex;
+                nearestGameObject = HandleUtility.PickGameObject(mousePosition, false, list.ToArray(), null, out materialIndex);
 
                 if (nearestGameObject != null)
                     list.Add(nearestGameObject);
@@ -538,7 +539,8 @@ namespace UnityEditor.ProBuilder
                 if (go != null)
                     ignorePicking.Add(go);
 
-                go = HandleUtility.PickGameObject(mousePosition, false, ignorePicking.ToArray());
+                int materialIndex;
+                go = HandleUtility.PickGameObject(mousePosition, false, ignorePicking.ToArray(), null, out materialIndex);
             } while (go != null && (go.GetComponent<MeshFilter>() == null && go.GetComponent<Terrain>() == null));
 
             if (go != null)
