@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changes
 
+- Modified PickGameObject calls to fit Unity API modifications
 - Removing preprocessor directives for Unity 2018 and below for Probuilder 5.0  
 - Modified the AppendVerticesToEdge to handle edges split for non-convex faces.
 
