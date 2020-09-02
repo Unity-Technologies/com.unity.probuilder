@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Bug Fixes
 
+- Fixed PolyShape in Prefab mode: PolyShapeMode was not serialized when exiting prefab mode. Update point insertion visualization.
 - [case: 1259845] Fixed dimension overlay being hidden on playmode or reboot of the editor.
 - [case: 1267383] Fixed `Bezier Shape` and `Poly Shape` component preventing build when `Script Stripping` was enabled.
 - [case: 1256246] Ensuring edges subdivision is not creating hole and that arch shapes does not create degenerated triangles
