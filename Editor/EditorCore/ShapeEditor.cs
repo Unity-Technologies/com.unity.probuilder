@@ -674,7 +674,7 @@ namespace UnityEditor.ProBuilder
                 s_Radius.value = s_Radius <= 0f ? .01f : s_Radius;
 
                 s_Width.value = EditorGUILayout.FloatField("Thickness", s_Width);
-                s_Width.value = Mathf.Clamp(s_Width, 0.01f, 100f);
+                s_Width.value = Mathf.Clamp(s_Width, 0.01f, s_Radius);
 
                 s_Depth.value = EditorGUILayout.FloatField("Depth", s_Depth);
                 s_Depth.value = Mathf.Clamp(s_Depth, 0.1f, 500.0f);

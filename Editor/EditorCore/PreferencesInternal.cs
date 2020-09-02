@@ -1,6 +1,3 @@
-#if UNITY_2019_1_OR_NEWER
-#define SHORTCUT_MANAGER
-#endif
 
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -251,10 +248,6 @@ namespace UnityEditor.ProBuilder
                 value = GetInt(key);
             else if (type == typeof(string))
                 value = GetString(key);
-#if !SHORTCUT_MANAGER
-            else if (type == typeof(Shortcut[]))
-                value = Shortcut.ParseShortcuts(EditorPrefs.GetString(key));
-#endif
             else if (type == typeof(Color))
                 value = GetColor(key);
             else if (type == typeof(Material))
@@ -274,19 +267,6 @@ namespace UnityEditor.ProBuilder
 
             return true;
         }
-
-#if !SHORTCUT_MANAGER
-        /// <summary>
-        /// Retrieve stored shortcuts from preferences in an IEnumerable format.
-        /// </summary>
-        /// <returns></returns>
-        public static IEnumerable<Shortcut> GetShortcuts()
-        {
-            return EditorPrefs.HasKey(PreferenceKeys.pbDefaultShortcuts)
-                ? Shortcut.ParseShortcuts(EditorPrefs.GetString(PreferenceKeys.pbDefaultShortcuts))
-                : Shortcut.DefaultShortcuts();
-        }
-#endif
 
         /// <summary>
         /// Associate key with int value.

@@ -1,12 +1,4 @@
-#if UNITY_2019_1_OR_NEWER
-#define SHORTCUT_MANAGER
-#endif
-
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEditor.SettingsManagement;
 
@@ -102,9 +94,6 @@ namespace UnityEditor.ProBuilder
             new FormerPreferenceKeyMap("", "editor.allowNonManifoldActions", typeof(System.Boolean), SettingsScope.User),
             new FormerPreferenceKeyMap(PreferenceKeys.pbToolbarLocation, "editor.sceneToolbarLocation", typeof(UnityEditor.ProBuilder.SceneToolbarLocation), SettingsScope.User),
             new FormerPreferenceKeyMap("", "UnityEngine.ProBuilder.ProBuilderEditor-isUtilityWindow", typeof(System.Boolean), SettingsScope.Project),
-#if !SHORTCUT_MANAGER
-            new FormerPreferenceKeyMap(PreferenceKeys.pbDefaultShortcuts, "editor.sceneViewShortcuts", typeof(UnityEngine.ProBuilder.Shortcut[]), SettingsScope.Project),
-#endif
             new FormerPreferenceKeyMap(PreferenceKeys.pbShowPreselectionHighlight, "editor.showPreselectionHighlight", typeof(System.Boolean), SettingsScope.User),
             new FormerPreferenceKeyMap(PreferenceKeys.pbCloseShapeWindow, "editor.closeWindowAfterShapeCreation", typeof(System.Boolean), SettingsScope.Project),
             new FormerPreferenceKeyMap("", "shape.torusDefinesInnerOuter", typeof(System.Boolean), SettingsScope.User),

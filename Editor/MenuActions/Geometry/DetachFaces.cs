@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
@@ -118,12 +117,6 @@ namespace UnityEditor.ProBuilder.Actions
 
                 ProBuilderMesh copy = Object.Instantiate(mesh.gameObject, mesh.transform.parent).GetComponent<ProBuilderMesh>();
                 EditorUtility.SynchronizeWithMeshFilter(copy);
-
-#if !UNITY_2018_3_OR_NEWER
-                // if is prefab, break connection and destroy children
-                if (EditorUtility.IsPrefabInstance(copy.gameObject) || EditorUtility.IsPrefabAsset(copy.gameObject))
-                    PrefabUtility.DisconnectPrefabInstance(copy.gameObject);
-#endif
 
                 if (copy.transform.childCount > 0)
                 {

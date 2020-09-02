@@ -1,9 +1,3 @@
-#if UNITY_2019_1_OR_NEWER
-#define SHORTCUT_MANAGER
-#endif
-
-#if SHORTCUT_MANAGER
-
 using UnityEditor.ShortcutManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -56,5 +50,3 @@ namespace UnityEditor.ProBuilder
 		}
 	}
 }
-
-#endif
