@@ -330,11 +330,7 @@ namespace UnityEditor.ProBuilder
         {
             ProBuilderEditor.selectMode = SelectMode.Face;
 
-#if UNITY_2019_1_OR_NEWER
             SceneView.duringSceneGui += OnSceneGUI;
-#else
-            SceneView.onSceneGUIDelegate += OnSceneGUI;
-#endif
             MeshSelection.objectSelectionChanged += OnSelectionChanged;
             Undo.undoRedoPerformed += OnSelectionChanged;
             ProBuilderMesh.elementSelectionChanged += OnElementSelectionChanged;
@@ -352,11 +348,7 @@ namespace UnityEditor.ProBuilder
 
         void OnDisable()
         {
-#if UNITY_2019_1_OR_NEWER
             SceneView.duringSceneGui -= OnSceneGUI;
-#else
-            SceneView.onSceneGUIDelegate -= OnSceneGUI;
-#endif
             MeshSelection.objectSelectionChanged -= OnSelectionChanged;
             Undo.undoRedoPerformed -= OnSelectionChanged;
             ProBuilderMesh.elementSelectionChanged -= OnElementSelectionChanged;
