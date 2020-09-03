@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Features
+
+- MergeElements.Merge moved to public API
+
 ### Bug Fixes
 
 - Fixed PolyShape in Prefab mode: PolyShapeMode was not serialized when exiting prefab mode. Update point insertion visualization.
@@ -19,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changes
 
+- Adding a new MenuAction sample to merge faces from edges selection 
 - Removing preprocessor directives for Unity 2018 and below for Probuilder 5.0  
 - Modified the AppendVerticesToEdge to handle edges split for non-convex faces.
 
