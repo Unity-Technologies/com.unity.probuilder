@@ -2624,11 +2624,7 @@ namespace UnityEditor.ProBuilder
                 RefreshSelectedUVCoordinates();
             }
 
-#if UNITY_2017_3_OR_NEWER
             if (isKeyDown && Event.current.type == EventType.Used)
-#else
-            if (isKeyDown && Event.current.type == EventType.used)
-#endif
                 eatNextKeyUp = true;
         }
 
