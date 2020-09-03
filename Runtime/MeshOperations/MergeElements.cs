@@ -8,7 +8,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
     /// <summary>
     /// Merging faces together.
     /// </summary>
-    static class MergeElements
+    public static class MergeElements
     {
         /// <summary>
         /// Merge each pair of faces to a single face. Indexes are combined, but otherwise the properties of the first face in the pair take precedence. Returns a list of the new faces created.

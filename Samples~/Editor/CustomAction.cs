@@ -1,6 +1,5 @@
 ﻿// This script demonstrates how to create a new action that can be accessed from the ProBuilder toolbar.
 // A new menu item is registered under "Geometry" actions called "Make Double-Sided".
-// To enable, remove the #if PROBUILDER_API_EXAMPLE and #endif directives.
 
 using System.Linq;
 using UnityEngine;
@@ -14,6 +13,7 @@ namespace ProBuilder.ExampleActions
 	/// <summary>
 	/// This is the actual action that will be executed.
 	/// </summary>
+	[ProBuilderMenuAction]
 	public class MakeFacesDoubleSided : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
