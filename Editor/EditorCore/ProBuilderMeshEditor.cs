@@ -146,10 +146,8 @@ namespace UnityEditor.ProBuilder
 
             MeshCollider collider;
 
-#if UNITY_2019_1_OR_NEWER
             if (m_Mesh.TryGetComponent(out collider))
                 GUILayout.Label($"MeshCollider.m_Mesh {DrivenPropertyManagerInternal.IsDriven(collider, "m_Mesh")}");
-#endif
 
             GUILayout.Space(4);
 

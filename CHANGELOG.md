@@ -7,13 +7,32 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Bug Fixes
+
+- [case: 1254339] Correct offset when rendering UVs and correct export when UV Editor is docked.
+- Fixed PolyShape in Prefab mode: PolyShapeMode was not serialized when exiting prefab mode. Update point insertion visualization.
+- [case: 1259845] Fixed dimension overlay being hidden on playmode or reboot of the editor.
+- [case: 1267383] Fixed `Bezier Shape` and `Poly Shape` component preventing build when `Script Stripping` was enabled.
+- [case: 1256246] Ensuring edges subdivision is not creating hole and that arch shapes does not create degenerated triangles
+- [case: 1265623] Ensure that ProGrids snapping is enabled (not only active) when using snapping in ProBuilder
+- [case: 1256154] Fixed StackOverflow Error when smoothing mesh in Probuilderize, also fixed an error in the display of edges when count > ushort.maxValue.
+- [case: 1262236] Ensure PolyShape is not empty to avoid nullref while exporting.
+
+### Changes
+
+- Removing preprocessor directives for Unity 2018 and below for Probuilder 5.0  
+- Modified the AppendVerticesToEdge to handle edges split for non-convex faces.
+
+## [4.4.0] - 2020-08-12
+
 ### Features
 
-- Added a selection preview when using the Select Path tool.
+- Added a `Select Path` tool. The default shortcut is `Ctrl + Shift + Click` or `Cmd + Shift + Click`.
+- Added iterative selection on edges.
 
 ### Bug Fixes
 
-- Ensure "ProBuilderize" action is enabled for current selection on opening main window
+- Ensure "ProBuilderize" action is enabled for current selection on opening main window.
 - [case: 1258589] Fixed error in runtime sample examples.
 - Fixed warning in `ShapeEditor` caused by duplicate using statements.
 - [case: 1258421] Fixed an issue where GI UV streams would be lost at runtime due to `ProBuilderMesh` assigning a new `Mesh` to the statically combined `MeshFilter`.
@@ -22,20 +41,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1259506] Fixed shortcut not being saved in 2018.4.
 - Fixed vertex colors not applying gamma-correct value when color space is Linear.
 - [case: 1251574] Disable export options when no probuilder meshes are selected
-- [case: 1254339] Correct offset when rendering UVs and correct export when UV Editor is docked.
-
-### Changes
-
-- Update to Settings Manager 1.0.3.
-
-## [4.4.0-preview.1] - 2020-06-21
-
-### Features
-
-- Added iterative selection on edges.
-
-### Bug Fixes
-
 - [case: 1248708] Fixed physx error when welding all vertices to a singularity.
 - Fixed tooltips always clamping to the left of the screen on secondary monitors.
 - Fixed `EditorUtility.SetIconEnabled` not respecting the enabled parameter.
@@ -50,9 +55,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1252394] Fixed dragging selection with Ctrl problem (and key pressed problem in general).
 - Fixed Cylinder shape clamping segments to 48.
 
+### Changes
+
+- Update to Settings Manager 1.0.3.
+
 ### Known Issues
 
 - Prefab Stage does not work properly when `ProBuilderMesh` contains overrides that append geometry.
+- Changelog dates pre-2.4.11-f.0+r4081 are incorrect. These releases were made from SVN, and the history was lost when converting to Git.
 
 ## [4.3.1] - 2020-06-01
 
@@ -1055,7 +1065,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Remove option to display Mode Toolbar in the Inspector window.
 - ProBuilder2.Math namespace removed, pb_Math now belongs to ProBuilder2.Common.
 
-## [2.4.11-f.0+r4081] - 0000-00-00
+## [2.4.11-f.0+r4081] - 2016-04-07
 
 ### Bug Fixes
 
@@ -1065,7 +1075,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Add `onEditLevelChanged` delegate to pb_Editor to notify other classes of edit level changes (Polybrush compatibility).
 
-## [2.4.10-f.2+r4027] - 0000-00-00
+## [2.4.10-f.2+r4027] - 2016-04-07
 
 ### Features
 
@@ -1085,7 +1095,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Remove various `Get{Vertices, UVs, Triangles}` functions from `pb_Object`.  Use `pbUtil.ValuesWithIndices` directly instead.
 - Remove Instantiation API Example (there's nothing special about instantiating ProBuilder meshes anymore).
 
-## [2.4.9-f.1+r3978] - 0000-00-00
+## [2.4.9-f.1+r3978] - 2016-04-07
 
 ### Features
 
@@ -1098,7 +1108,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix missing namespace errors in Unity 5.3.
 - Increase the resolution with which vertex positions are compared to avoid incorrectly merging distinct vertices (often causing trouble when modeling at very small dimensions).
 
-## [2.4.8-f.1+r3764] - 0000-00-00
+## [2.4.8-f.1+r3764] - 2016-04-07
 
 ### Features
 
@@ -1123,7 +1133,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Don't show tangents and bitangents when Show Normals is enabled in the smoothing editor.
 - Prototype becomes ProBuilder Basic.
 
-## [2.4.7-f.0+r3664] - 0000-00-00
+## [2.4.7-f.0+r3664] - 2016-04-07
 
 ### Changes
 
@@ -1135,7 +1145,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Additional error checking when stripping pb_Objects from scene added.
 - When ProBuilder-izing objects, ask user whether or not to traverse children.
 
-## [2.4.6-f.0+r3616] - 0000-00-00
+## [2.4.6-f.0+r3616] - 2016-04-07
 
 ### Features
 
@@ -1162,13 +1172,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix bug where prefabs would not "Apply" changes to all children equally.
 - Improve performance when editing scenes with many ProBuilder object prefabs.
 
-## [2.4.5-p.0+r3531] - 0000-00-00
+## [2.4.5-p.0+r3531] - 2016-04-07
 
 ### Bug Fixes
 
 - Fix bugs in Copy UV Settings and Quick Apply Material shortcuts.
 
-## [2.4.5-f.1+r3519] - 0000-00-00
+## [2.4.5-f.1+r3519] - 2016-04-07
 
 ### Features
 
@@ -1213,7 +1223,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - On pb_Object::Start, call ToMesh before Refresh since Refresh could try to set UVs or Colors to a mesh that has inconsistent vertex counts.
 - Remove most functions accepting a pb_IntArray[] sharedIndex cache and replace with Dictionary versions.
 
-## [2.4.4-p.1+r3425] - 0000-00-00
+## [2.4.4-p.1+r3425] - 2016-04-07
 
 ### Features
 
@@ -1225,7 +1235,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix errors when building a project with geometry containing null materials.
 - Fix rare null reference error when switching scenes.
 
-## [2.4.4-f.1+r3385] - 0000-00-00
+## [2.4.4-f.1+r3385] - 2016-04-07
 
 ### Features
 
@@ -1307,7 +1317,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix ProGrids not affecting vertices / faces / edges in Edit mode.
 - Minor tweak to vertex handle color.
 
-## [2.4.3-p.0+r3216] - 0000-00-00
+## [2.4.3-p.0+r3216] - 2016-04-07
 
 ### Features
 
@@ -1318,7 +1328,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix weird arch geometry near caps, noticeable when inserting edge loops.
 - Improve 'Flip Normals' shortcut context awareness.
 
-## [2.4.3-f.0+r3202] - 0000-00-00
+## [2.4.3-f.0+r3202] - 2016-04-07
 
 ### Features
 
@@ -1331,7 +1341,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix 'Look Rotation is Zero' console logs when selecting a face with degenerate triangles.
 - Fix bug where sometimes clicking a face would not register due to a culled face intercepting the raycast.
 
-## [2.4.2-f.0+r3202] - 0000-00-00
+## [2.4.2-f.0+r3202] - 2016-04-07
 
 ### Features
 
@@ -1346,7 +1356,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix bug where texture rotation handle in the scene view would not snap correctly on finishing a UV adjustment.
 - Fix bug where drag selecting edges or faces could select elements behind the scene camera.
 
-## [2.4.1-f.1+r3174] - 0000-00-00
+## [2.4.1-f.1+r3174] - 2016-04-07
 
 ### Features
 
@@ -1362,7 +1372,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix null ref when deleting multiple faces.
 
 
-## [2.4.0-f.4+r3132] - 0000-00-00
+## [2.4.0-f.4+r3132] - 2016-04-07
 
 ### Features
 
@@ -1428,7 +1438,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix issue where "Repair Missing Script References" script could get stuck on prefab instances.
 - Silence cast exception error in pb_Object_Editor.
 
-## [2.3.3-f.1+r2970] - 0000-00-00
+## [2.3.3-f.1+r2970] - 2016-04-07
 
 ### Features
 
@@ -1439,7 +1449,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix incorrect language in Plane generator.
 - Fix bug that resulted in mangled vertices when Welding.
 
-## [2.3.2-f.2+r2947] - 0000-00-00
+## [2.3.2-f.2+r2947] - 2016-04-07
 
 ### Features
 
@@ -1456,7 +1466,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Pressing 'F' while a single vertex is selected no longer frames the entire object.
 - Vertex colors are now copied when stripping ProBuilder scripts.
 
-## [2.3.1-f.1+r2900] - 0000-00-00
+## [2.3.1-f.1+r2900] - 2016-04-07
 
 ### Features
 
@@ -1495,7 +1505,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix error when opening Material Editor after assigning a Substance Material.
 - Handle position is now calculated as the center of selection bounding box.
 
-## [2.3.0-f.14+r2861] - 0000-00-00
+## [2.3.0-f.14+r2861] - 2016-04-07
 
 ### Features
 
@@ -1620,7 +1630,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - 'J' key toggles UV editor open / closed.
 - Visgroup status is now retained during playmode state changes.
 
-## [2.2.5-f.5] - 0000-00-00
+## [2.2.5-f.5] - 2016-04-07
 
 ### Features
 
@@ -1682,14 +1692,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Move many of ProBuilder's classes to namespaces (ProBuilder2.Common, ProBuilder2.MeshOperations, etc).
 - New ClassesEditing segment of Classes folder contains all non-essential files.  This allows for a single ProBuilderCore.dll that can be redistributed with ProBuilder objects allowing users without ProBuilder to view and load ProBuilder objects.
 
-## [2.2.4-f.0] - 0000-00-00
+## [2.2.4-f.0] - 2016-04-07
 
 ### Bug Fixes
 
 - Fix 'Null Reference Error' when editing objects at runtime.
 - Fix crash at runtime when ProBuilder object is selected.
 
-## [2.2.3-f.0] - 0000-00-00
+## [2.2.3-f.0] - 2016-04-07
 
 ### Features
 
@@ -1706,7 +1716,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Move and rename pb_Object::MeshWithMesh to pbMeshUtils.DeepCopyMesh.
 - Fix PlaneNormal not returning a normalized vector (yikes!).
 
-## [2.2.2-f.4] - 0000-00-00
+## [2.2.2-f.4] - 2016-04-07
 
 ### Features
 
@@ -1759,7 +1769,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Move most MenuItems to ProBuilder2.Actions namespace (exceptions being Windowed items).
 - New pbUndo class replaces #if > UNITY_4_3 junk.
 
-## [2.2.0-f.4] - 0000-00-00
+## [2.2.0-f.4] - 2016-04-07
 
 ### Features
 
@@ -1878,7 +1888,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unity inserts an additional Undo when selecting a new face on an already selected object.
 - Can't shift-click to deselect edges.
 
-## [2.1.4-f.0] - 0000-00-00
+## [2.1.4-f.0] - 2016-04-07
 
 ### Features
 
@@ -1915,7 +1925,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - ProBuilder.Shortcut is now pb_Shortcut.
 - Add pb_Upgrade_Utility as a base class for all updating operations.
 
-## [2.1.3] - 0000-00-00
+## [2.1.3] - 2016-04-07
 
 ### Features
 
@@ -1950,7 +1960,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Update to SVN 1.7, small adjustments to build scripts.
 - Add shell script to build distributable packages on OSX.
 
-## [2.1.2] - 0000-00-00
+## [2.1.2] - 2016-04-07
 
 ### Features
 
@@ -1988,7 +1998,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Implement SixBySeven shared library.
 
-## [2.1.1] - 0000-00-00
+## [2.1.1] - 2016-04-07
 
 ### Features
 
@@ -2032,7 +2042,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add DrawAllFaceNormals to #DEBUG flagged pb_Editor.
 - Update Sublime Extension to version 3.
 
-## [2.1.0] - 0000-00-00
+## [2.1.0] - 2016-04-07
 
 ### Features
 

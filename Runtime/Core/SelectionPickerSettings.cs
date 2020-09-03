@@ -1,34 +1,72 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace UnityEngine.ProBuilder
 {
+    // This should not be public until there is something meaningful that can be done with it. However it has been
+    // public in the past, so we can't change it until the next major version increment.
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public class SceneSelection : IEquatable<SceneSelection>
     {
         public GameObject gameObject;
         public ProBuilderMesh mesh;
-        public List<int> vertexes;
-        public List<Edge> edges;
-        public List<Face> faces;
+
+        List<int> m_Vertices;
+        List<Edge> m_Edges;
+        List<Face> m_Faces;
+
+        public List<int> vertexes
+        {
+            get { return m_Vertices; }
+            set { m_Vertices = value; }
+        }
+
+        public List<Edge> edges
+        {
+            get { return m_Edges; }
+            set { m_Edges = value; }
+        }
+
+        public List<Face> faces
+        {
+            get { return m_Faces; }
+            set { m_Faces = value; }
+        }
+
+        [Obsolete("Use SetSingleVertex")]
+        public int vertex;
+
+        [Obsolete("Use SetSingleEdge")]
+        public Edge edge;
+        
+        [Obsolete("Use SetSingleFace")]
+        public Face face;
 
         public SceneSelection(GameObject gameObject = null)
         {
             this.gameObject = gameObject;
-            vertexes = new List<int>();
-            edges = new List<Edge>();
-            faces = new List<Face>();
+            m_Vertices = new List<int>();
+            m_Edges = new List<Edge>();
+            m_Faces = new List<Face>();
         }
 
-        public SceneSelection(ProBuilderMesh mesh, List<int> vertexes) : this(mesh != null ? mesh.gameObject : null)
+        public SceneSelection(ProBuilderMesh mesh, int vertex) : this(mesh, new List<int>() { vertex }) { }
+
+        public SceneSelection(ProBuilderMesh mesh, Edge edge) : this(mesh, new List<Edge>() { edge }) { }
+
+        public SceneSelection(ProBuilderMesh mesh, Face face) : this(mesh, new List<Face>() { face }) { }
+
+        internal SceneSelection(ProBuilderMesh mesh, List<int> vertexes) : this(mesh != null ? mesh.gameObject : null)
         {
             this.mesh = mesh;
-            this.vertexes = vertexes;
-            edges = new List<Edge>();
-            faces = new List<Face>();
+            m_Vertices = vertexes;
+            m_Edges = new List<Edge>();
+            m_Faces = new List<Face>();
         }
 
-        public SceneSelection(ProBuilderMesh mesh, List<Edge> edges) : this(mesh != null ? mesh.gameObject : null)
+        internal SceneSelection(ProBuilderMesh mesh, List<Edge> edges) : this(mesh != null ? mesh.gameObject : null)
         {
             this.mesh = mesh;
             vertexes = new List<int>();
@@ -36,7 +74,7 @@ namespace UnityEngine.ProBuilder
             faces = new List<Face>();
         }
 
-        public SceneSelection(ProBuilderMesh mesh, List<Face> faces) : this(mesh != null ? mesh.gameObject : null)
+        internal SceneSelection(ProBuilderMesh mesh, List<Face> faces) : this(mesh != null ? mesh.gameObject : null)
         {
             this.mesh = mesh;
             vertexes = new List<int>();

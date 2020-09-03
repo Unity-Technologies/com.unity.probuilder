@@ -43,11 +43,12 @@ namespace UnityEditor.ProBuilder
                 return;
 
             var faces = mesh.facesInternal;
-            var pathFaces = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, activeFace),
-                                 Array.IndexOf<Face>(faces, face));
-            foreach(var path in pathFaces)
+            var pathFaces = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, activeFace), Array.IndexOf<Face>(faces, face));
+
+            if (pathFaces != null)
             {
-                selection.faces.Add(faces[path]);
+                foreach (var path in pathFaces)
+                    selection.faces.Add(faces[path]);
             }
         }
 
@@ -563,7 +564,7 @@ namespace UnityEditor.ProBuilder
                 {
                     selection.gameObject = s_NearestVertices[i].mesh.gameObject;
                     selection.mesh = s_NearestVertices[i].mesh;
-                    selection.SetSingleVertex(s_NearestVertices[i].vertex); 
+                    selection.SetSingleVertex(s_NearestVertices[i].vertex);
 
                     return Mathf.Sqrt(s_NearestVertices[i].screenDistance);
                 }
