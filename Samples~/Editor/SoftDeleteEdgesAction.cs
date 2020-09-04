@@ -56,23 +56,28 @@ namespace UnityEditor.ProBuilder.Actions
 			var selection = MeshSelection.top.ToArray();
 			Undo.RecordObjects(selection, "Removing edges");
 
-			//List<SimpleTuple<Vector3, Vector3>> edgesBounds;
 			List<Face> edgeFaces = new List<Face>();
+
+			Dictionary<Face, int> faceToMergeGroup = new Dictionary<Face, int>();
+			HashSet<int> mergeGroupIDs = new HashSet<int>();
+			List<List<Face>> mergeGroups = new List<List<Face>>();
+
 			foreach (ProBuilderMesh pbMesh in selection)
 			{
 				if(pbMesh.selectedEdgeCount > 0)
 				{
 					var selectedEdges = pbMesh.selectedEdges;
+					faceToMergeGroup.Clear();
 
-					Dictionary<Face, int> faceToMergeGroup = new Dictionary<Face, int>();
-					HashSet<int> mergeGroupIDs = new HashSet<int>();
-					List<List<Face>> mergeGroups = new List<List<Face>>();
 					foreach(var edge in selectedEdges)
 					{
 						edgeFaces.Clear();
+						mergeGroupIDs.Clear();
+
+						//Retrieving impacted faces from edge
 						ElementSelection.GetNeighborFaces(pbMesh, edge, edgeFaces);
 
-						mergeGroupIDs.Clear();
+						//Chacking all edges status
 						foreach(var face in edgeFaces)
 						{
 							if(faceToMergeGroup.ContainsKey(face))
@@ -141,7 +146,7 @@ namespace UnityEditor.ProBuilder.Actions
 			}
 
 			MeshSelection.ClearElementSelection();
-			
+
 			// Rebuild the pb_Editor caches
 			ProBuilderEditor.Refresh();
 
