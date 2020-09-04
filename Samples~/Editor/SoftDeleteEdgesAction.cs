@@ -55,44 +55,99 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			var selection = MeshSelection.top.ToArray();
 			Undo.RecordObjects(selection, "Removing edges");
-			
-			List<SimpleTuple<Vector3, Vector3>> edgesBounds;
+
+			//List<SimpleTuple<Vector3, Vector3>> edgesBounds;
+			List<Face> edgeFaces = new List<Face>();
 			foreach (ProBuilderMesh pbMesh in selection)
 			{
 				if(pbMesh.selectedEdgeCount > 0)
 				{
 					var selectedEdges = pbMesh.selectedEdges;
-					
-					edgesBounds = selectedEdges.Select(edge => new SimpleTuple<Vector3,Vector3>(pbMesh.positions[edge.a], pbMesh.positions[edge.b])).ToList();
-					
-					for(int i= 0; i < edgesBounds.Count; i++)
-					{	
-						List<Face> facesToMerge = pbMesh.faces.Where(face => face.edges.ToList().Exists(e => IsEdgeEquivalent(pbMesh, e, edgesBounds[i]))).ToList();
-						Face f = MergeElements.Merge(pbMesh, facesToMerge);
-						
-						pbMesh.ToMesh();
-						pbMesh.Refresh();
-						pbMesh.Optimize();
+
+					Dictionary<Face, int> faceToMergeGroup = new Dictionary<Face, int>();
+					HashSet<int> mergeGroupIDs = new HashSet<int>();
+					List<List<Face>> mergeGroups = new List<List<Face>>();
+					foreach(var edge in selectedEdges)
+					{
+						edgeFaces.Clear();
+						ElementSelection.GetNeighborFaces(pbMesh, edge, edgeFaces);
+
+						mergeGroupIDs.Clear();
+						foreach(var face in edgeFaces)
+						{
+							if(faceToMergeGroup.ContainsKey(face))
+								mergeGroupIDs.Add(faceToMergeGroup[face]);
+							else
+								faceToMergeGroup.Add(face, -1);
+						}
+
+						//These faces haven't been seen before
+						if(mergeGroupIDs.Count == 0)
+						{
+							foreach(var face in edgeFaces)
+								faceToMergeGroup[face] = mergeGroups.Count;
+							mergeGroups.Add(new List<Face>(edgeFaces));
+						}
+						//If only a face should already be merge, add other faces to the same merge group
+						else if(mergeGroupIDs.Count == 1)
+						{
+							foreach(var face in edgeFaces)
+							{
+								if(faceToMergeGroup[face] == -1)
+								{
+									int index = mergeGroupIDs.First();
+									faceToMergeGroup[face] = index;
+									mergeGroups[index].Add(face);
+								}
+							}
+						}
+						//If more than a face already belongs to a merge group, merge these groups together
+						else
+						{
+							//Group the different mergeGroups together
+							List<Face> facesToMerge = new List<Face>();
+							foreach(var groupID in mergeGroupIDs)
+							{
+								facesToMerge.AddRange(mergeGroups[groupID]);
+								mergeGroups[groupID] = null;
+							}
+
+							foreach(var face in edgeFaces)
+								if(!facesToMerge.Contains(face))
+									facesToMerge.Add(face);
+
+							//Remove unnecessary groups
+							mergeGroups.RemoveAll(group => group == null);
+							//Add newly created one
+							mergeGroups.Add(facesToMerge);
+
+							//Update groups references
+							for(int i = 0; i < mergeGroups.Count; i++)
+							{
+								foreach(var face in mergeGroups[i])
+									faceToMergeGroup[face] = i;
+							}
+						}
 					}
-					
-					edgesBounds.Clear();		
+
+					foreach(var mergeGroup in mergeGroups)
+						MergeElements.Merge(pbMesh, mergeGroup);
+
+					pbMesh.ToMesh();
+					pbMesh.Refresh();
+					pbMesh.Optimize();
+
 				}
 			}
-			
-			MeshSelection.ClearElementSelection();
 
+			MeshSelection.ClearElementSelection();
+			
 			// Rebuild the pb_Editor caches
 			ProBuilderEditor.Refresh();
 
 			return new ActionResult(ActionResult.Status.Success, "Edges removed");
 		}
-		
-		bool IsEdgeEquivalent(ProBuilderMesh mesh, Edge edge1, SimpleTuple<Vector3, Vector3> edge2)
-		{
-			Vector3 edge1A = mesh.positions[edge1.a];
-			Vector3 edge1B = mesh.positions[edge1.b];
-			return ( edge1A == edge2.item1 && edge1B == edge2.item2 ) || ( edge1A == edge2.item2 && edge1B == edge2.item1 );
-		}
-		
+
+
 	}
 }
