@@ -5,9 +5,7 @@ using UnityEngine.ProBuilder;
 using System.Collections.Generic;
 using UnityEngine.Rendering;
 using UnityEditor.SettingsManagement;
-#if !UNITY_2019_1_OR_NEWER
 using System.Reflection;
-#endif
 using UnityObject = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder
