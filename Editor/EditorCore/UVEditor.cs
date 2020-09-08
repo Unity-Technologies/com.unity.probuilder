@@ -2629,8 +2629,26 @@ namespace UnityEditor.ProBuilder
         }
 
         bool tool_weldButton = false;
-
         Vector2 scroll = Vector2.zero;
+
+        static readonly GUIContent gc_PlanarProject = EditorGUIUtility.TrTextContent("Planar",
+            "Project UVs from the angle most closely matching the average selection normal.");
+        static readonly GUIContent gc_BoxProject = EditorGUIUtility.TrTextContent("Box",
+            "Project UVs from a cardinal angle most closely matching the average selection normal.");
+        static readonly GUIContent gc_SelectIsland = EditorGUIUtility.TrTextContent("Select Island",
+            "Select all UVs connected to the current selection.");
+        static readonly GUIContent gc_SelectFace = EditorGUIUtility.TrTextContent("Select Face",
+            "Select all UVs in the face of the current selection.");
+        static readonly GUIContent gc_CollapseUVs = EditorGUIUtility.TrTextContent("Collapse UVs",
+            "Merge all selected UVs to a single point.");
+        static readonly GUIContent gc_SplitUVs = EditorGUIUtility.TrTextContent("Split UVs",
+            "Separate all selected UVs to individual points.");
+        static readonly GUIContent gc_FlipHorizontal = EditorGUIUtility.TrTextContent("Flip Horizontal",
+            "Mirror UVs on the horizontal axis.");
+        static readonly GUIContent gc_FlipVertical = EditorGUIUtility.TrTextContent("Flip Vertical",
+            "Mirror UVs on the vertical axis.");
+        static readonly GUIContent gc_FitUVs = EditorGUIUtility.TrTextContent("Fit UVs",
+            "Resize the selected UVs to fit within normalized UV coordinates (0 - 1).");
 
         void DrawManualModeUI()
         {
@@ -2645,37 +2663,31 @@ namespace UnityEditor.ProBuilder
             scroll = EditorGUILayout.BeginScrollView(scroll);
             GUI.enabled = MeshSelection.selectedFaceCount > 0;
 
-            /**
-             * Projection Methods
-             */
+            // Projection Methods
             GUILayout.Label("Project UVs", EditorStyles.miniBoldLabel);
 
             GUILayout.BeginHorizontal();
 
-            if (GUILayout.Button("Planar", EditorStyles.miniButton))
+            if (GUILayout.Button(gc_PlanarProject, EditorStyles.miniButton))
                 Menu_PlanarProject();
 
-            if (GUILayout.Button("Box", EditorStyles.miniButton))
+            if (GUILayout.Button(gc_BoxProject, EditorStyles.miniButton))
                 Menu_BoxProject();
 
             GUILayout.EndHorizontal();
 
-            /**
-             * Selection
-             */
+            // Selection
             GUI.enabled = MeshSelection.selectedVertexCount > 0;
             GUILayout.Label("Selection", EditorStyles.miniBoldLabel);
 
-            if (GUILayout.Button("Select Island", EditorStyles.miniButton))
+            if (GUILayout.Button(gc_SelectIsland, EditorStyles.miniButton))
                 Menu_SelectUVIsland();
 
             GUI.enabled = MeshSelection.selectedVertexCount > 0 && ProBuilderEditor.selectMode != SelectMode.Face;
-            if (GUILayout.Button("Select Face", EditorStyles.miniButton))
+            if (GUILayout.Button(gc_SelectFace, EditorStyles.miniButton))
                 Menu_SelectUVFace();
 
-            /**
-             * Edit
-             */
+            // Edit
             GUILayout.Label("Edit", EditorStyles.miniBoldLabel);
 
             GUI.enabled = MeshSelection.selectedVertexCount > 1;
@@ -2686,24 +2698,24 @@ namespace UnityEditor.ProBuilder
                     WeldButtonGUI,
                     selection);
 
-            if (GUILayout.Button("Collapse UVs", EditorStyles.miniButton))
+            if (GUILayout.Button(gc_CollapseUVs, EditorStyles.miniButton))
                 Menu_CollapseUVs();
 
             GUI.enabled = MeshSelection.selectedVertexCount > 1;
-            if (GUILayout.Button("Split UVs", EditorStyles.miniButton))
+            if (GUILayout.Button(gc_SplitUVs, EditorStyles.miniButton))
                 Menu_SplitUVs();
 
             GUILayout.Space(4);
 
-            if (GUILayout.Button("Flip Horizontal", EditorStyles.miniButton))
+            if (GUILayout.Button(gc_FlipHorizontal, EditorStyles.miniButton))
                 Menu_FlipUVs(Vector2.up);
 
-            if (GUILayout.Button("Flip Vertical", EditorStyles.miniButton))
+            if (GUILayout.Button(gc_FlipVertical, EditorStyles.miniButton))
                 Menu_FlipUVs(Vector2.right);
 
             GUILayout.Space(4);
 
-            if (GUILayout.Button("Fit UVs", EditorStyles.miniButton))
+            if (GUILayout.Button(gc_FitUVs, EditorStyles.miniButton))
                 Menu_FitUVs();
 
             GUI.enabled = true;
