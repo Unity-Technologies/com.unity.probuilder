@@ -364,21 +364,16 @@ namespace UnityEditor.ProBuilder
         {
             if (screenshotStatus != ScreenshotStatus.Done)
             {
-                minSize = new Vector2(ScreenRect.width, ScreenRect.height);
-                maxSize = new Vector2(ScreenRect.width, ScreenRect.height);
-
-                UI.EditorGUIUtility.DrawSolidColor(new Rect(-1, -1, ScreenRect.width + 10, ScreenRect.height + 10), screenshot_backgroundColor);
-
+                UI.EditorGUIUtility.DrawSolidColor(new Rect(-5, -5, ScreenRect.width + 10, ScreenRect.height + 10), screenshot_backgroundColor);
                 DrawUVGraph(graphRect);
 
                 if (screenshotStatus == ScreenshotStatus.PrepareCanvas)
                 {
-                    if (Event.current.type == EventType.Repaint)
+                    if(Event.current.type == EventType.Repaint)
                     {
                         screenshotStatus = ScreenshotStatus.CanvasReady;
                         DoScreenshot();
                     }
-
                     return;
                 }
                 else
@@ -2629,11 +2624,7 @@ namespace UnityEditor.ProBuilder
                 RefreshSelectedUVCoordinates();
             }
 
-#if UNITY_2017_3_OR_NEWER
             if (isKeyDown && Event.current.type == EventType.Used)
-#else
-            if (isKeyDown && Event.current.type == EventType.used)
-#endif
                 eatNextKeyUp = true;
         }
 
@@ -3282,6 +3273,8 @@ namespace UnityEditor.ProBuilder
         Texture2D screenshot;
         Rect screenshotCanvasRect = new Rect(0, 0, 0, 0);
         Vector2 screenshotTexturePosition = Vector2.zero;
+        int m_HorizontalOffset = 0;
+        int m_VerticalOffset = 0;
 
         // settings
         int screenshot_size = 1024;
@@ -3323,6 +3316,7 @@ namespace UnityEditor.ProBuilder
             DoScreenshot();
         }
 
+        bool m_Docked;
         void DoScreenshot()
         {
             switch (screenshotStatus)
@@ -3342,11 +3336,29 @@ namespace UnityEditor.ProBuilder
                     screenshot.hideFlags = (HideFlags)(1 | 2 | 4);
                     screenshotStatus = ScreenshotStatus.PrepareCanvas;
 
+                    m_HorizontalOffset = 0;
+
+#if UNITY_2019_3_OR_NEWER
+                    m_VerticalOffset = 0;
+#else
+                    m_VerticalOffset = 1;
+#endif
+
+                    m_Docked = (bool) ReflectionUtility.GetValue(this, this.GetType(), "docked");
                     // set the current rect pixel bounds to the largest possible size.  if some parts are out of focus, they'll be grabbed in subsequent passes
-                    if ((bool)ReflectionUtility.GetValue(this, this.GetType(), "docked"))
-                        screenshotCanvasRect = new Rect(4, 2, (int)Mathf.Min(screenshot_size, ScreenRect.width - 4), (int)Mathf.Min(screenshot_size, ScreenRect.height - 2));
-                    else
-                        screenshotCanvasRect = new Rect(0, 0, (int)Mathf.Min(screenshot_size, ScreenRect.width), (int)Mathf.Min(screenshot_size, ScreenRect.height));
+                    if(m_Docked)
+                    {
+#if UNITY_2019_3_OR_NEWER
+                        m_HorizontalOffset = 1;
+#else
+                        m_HorizontalOffset = 2;
+#endif
+                        m_VerticalOffset = 2;
+                    }
+
+                    screenshotCanvasRect = new Rect(m_HorizontalOffset, m_Docked ? m_VerticalOffset : 0,
+                        (int)Mathf.Min(screenshot_size, ScreenRect.width - m_HorizontalOffset),
+                        (int)Mathf.Min(screenshot_size, ScreenRect.height - m_VerticalOffset));
 
                     screenshotTexturePosition = new Vector2(0, 0);
 
@@ -3357,19 +3369,18 @@ namespace UnityEditor.ProBuilder
                     return;
 
                 case ScreenshotStatus.CanvasReady:
-
                     // take screenshots vertically, then move right, repeat if necessary
                     if (screenshotTexturePosition.y < screenshot_size)
                     {
                         screenshot.ReadPixels(screenshotCanvasRect, (int)screenshotTexturePosition.x, (int)screenshotTexturePosition.y);
-
                         screenshotTexturePosition.y += screenshotCanvasRect.height;
 
                         if (screenshotTexturePosition.y < screenshot_size)
                         {
                             // reposition canvas
                             uvGraphOffset.y += screenshotCanvasRect.height / EditorGUIUtility.pixelsPerPoint;
-                            screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.y, ScreenRect.height - 12);
+                            screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.y , ScreenRect.height - m_VerticalOffset);
+
                             screenshotStatus = ScreenshotStatus.PrepareCanvas;
                             Repaint();
                             return;
@@ -3383,14 +3394,14 @@ namespace UnityEditor.ProBuilder
                                 // Move right, reset Y
                                 uvGraphOffset.x -= screenshotCanvasRect.width / EditorGUIUtility.pixelsPerPoint;
                                 uvGraphOffset.y = (ScreenRect.height / 2f);
-                                screenshotCanvasRect.width = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.x, ScreenRect.width);
                                 screenshotTexturePosition.y = 0;
-                                screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.y, ScreenRect.height - 12);
+                                screenshotCanvasRect.width = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.x, ScreenRect.width - m_HorizontalOffset);
+                                screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size, ScreenRect.height - m_VerticalOffset);
                                 screenshotStatus = ScreenshotStatus.PrepareCanvas;
                                 Repaint();
                                 return;
                             }
-                        }
+                         }
                     }
 
                     // reset the canvas to it's original position and scale

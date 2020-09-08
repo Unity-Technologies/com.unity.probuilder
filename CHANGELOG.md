@@ -9,12 +9,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Bug Fixes
 
+- [case: 1254339] Correct offset when rendering UVs and correct export when UV Editor is docked.
+- Fixed PolyShape in Prefab mode: PolyShapeMode was not serialized when exiting prefab mode. Update point insertion visualization.
 - [case: 1259845] Fixed dimension overlay being hidden on playmode or reboot of the editor.
 - [case: 1267383] Fixed `Bezier Shape` and `Poly Shape` component preventing build when `Script Stripping` was enabled.
 - [case: 1256246] Ensuring edges subdivision is not creating hole and that arch shapes does not create degenerated triangles
 - [case: 1265623] Ensure that ProGrids snapping is enabled (not only active) when using snapping in ProBuilder
 - [case: 1256154] Fixed StackOverflow Error when smoothing mesh in Probuilderize, also fixed an error in the display of edges when count > ushort.maxValue.
 - [case: 1252668] Replaced mesh template tests for `Connect Edges` with more stable methods.
+- [case: 1262236] Ensure PolyShape is not empty to avoid nullref while exporting.
 
 ### Changes
 
