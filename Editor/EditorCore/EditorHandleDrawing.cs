@@ -3,8 +3,10 @@ using UnityEngine;
 using UObject = UnityEngine.Object;
 using UnityEngine.ProBuilder;
 using System.Collections.Generic;
+using UnityEditor.ProBuilder.Actions;
 using UnityEngine.Rendering;
 using UnityEditor.SettingsManagement;
+using UnityEditor.ShortcutManagement;
 #if !UNITY_2019_1_OR_NEWER
 using System.Reflection;
 #endif
@@ -16,7 +18,7 @@ namespace UnityEditor.ProBuilder
     {
         const HideFlags k_ResourceHideFlags = HideFlags.HideAndDontSave;
         const float k_MinLineWidthForGeometryShader = .01f;
-        static readonly Color k_OccludedTint = new Color(.5f, .5f, .5f, 1f);
+        static readonly Color k_OccludedTint = new Color(.75f, .75f, .75f, 1f);
 
         static bool s_Initialized;
 
@@ -99,10 +101,14 @@ namespace UnityEditor.ProBuilder
         [Obsolete]
         static Pref<bool> s_DepthTestHandles = new Pref<bool>("graphics.handleZTest", true, SettingsScope.User);
 
+        static readonly GUIContent k_XRaySetting = new GUIContent("Selection X-Ray", "When enabled, selected mesh elements that are occluded by geometry will be rendered with a faded appearance.");
+
         [UserSettingBlock("Graphics")]
         static void HandleColorPreferences(string searchContext)
         {
             EditorGUI.BeginChangeCheck();
+
+            s_XRayView.value = SettingsGUILayout.SettingsToggle(k_XRaySetting, s_XRayView, searchContext);
 
             s_UseUnityColors.value = SettingsGUILayout.SettingsToggle("Use Unity Colors", s_UseUnityColors, searchContext);
 

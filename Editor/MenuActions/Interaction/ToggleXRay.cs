@@ -25,6 +25,9 @@ namespace UnityEditor.ProBuilder.Actions
             get { return 1; }
         }
 
+        // Menu bar item only access for now
+        public override bool hidden => true;
+
         static readonly TooltipContent k_Tooltip = new TooltipContent
             (
                 "Toggle X-Ray View",
