@@ -364,21 +364,16 @@ namespace UnityEditor.ProBuilder
         {
             if (screenshotStatus != ScreenshotStatus.Done)
             {
-                minSize = new Vector2(ScreenRect.width, ScreenRect.height);
-                maxSize = new Vector2(ScreenRect.width, ScreenRect.height);
-
-                UI.EditorGUIUtility.DrawSolidColor(new Rect(-1, -1, ScreenRect.width + 10, ScreenRect.height + 10), screenshot_backgroundColor);
-
+                UI.EditorGUIUtility.DrawSolidColor(new Rect(-5, -5, ScreenRect.width + 10, ScreenRect.height + 10), screenshot_backgroundColor);
                 DrawUVGraph(graphRect);
 
                 if (screenshotStatus == ScreenshotStatus.PrepareCanvas)
                 {
-                    if (Event.current.type == EventType.Repaint)
+                    if(Event.current.type == EventType.Repaint)
                     {
                         screenshotStatus = ScreenshotStatus.CanvasReady;
                         DoScreenshot();
                     }
-
                     return;
                 }
                 else
@@ -2629,17 +2624,31 @@ namespace UnityEditor.ProBuilder
                 RefreshSelectedUVCoordinates();
             }
 
-#if UNITY_2017_3_OR_NEWER
             if (isKeyDown && Event.current.type == EventType.Used)
-#else
-            if (isKeyDown && Event.current.type == EventType.used)
-#endif
                 eatNextKeyUp = true;
         }
 
         bool tool_weldButton = false;
-
         Vector2 scroll = Vector2.zero;
+
+        static readonly GUIContent gc_PlanarProject = EditorGUIUtility.TrTextContent("Planar",
+            "Project UVs from the angle most closely matching the average selection normal.");
+        static readonly GUIContent gc_BoxProject = EditorGUIUtility.TrTextContent("Box",
+            "Project UVs from a cardinal angle most closely matching the average selection normal.");
+        static readonly GUIContent gc_SelectIsland = EditorGUIUtility.TrTextContent("Select Island",
+            "Select all UVs connected to the current selection.");
+        static readonly GUIContent gc_SelectFace = EditorGUIUtility.TrTextContent("Select Face",
+            "Select all UVs in the face of the current selection.");
+        static readonly GUIContent gc_CollapseUVs = EditorGUIUtility.TrTextContent("Collapse UVs",
+            "Merge all selected UVs to a single point.");
+        static readonly GUIContent gc_SplitUVs = EditorGUIUtility.TrTextContent("Split UVs",
+            "Separate all selected UVs to individual points.");
+        static readonly GUIContent gc_FlipHorizontal = EditorGUIUtility.TrTextContent("Flip Horizontal",
+            "Mirror UVs on the horizontal axis.");
+        static readonly GUIContent gc_FlipVertical = EditorGUIUtility.TrTextContent("Flip Vertical",
+            "Mirror UVs on the vertical axis.");
+        static readonly GUIContent gc_FitUVs = EditorGUIUtility.TrTextContent("Fit UVs",
+            "Resize the selected UVs to fit within normalized UV coordinates (0 - 1).");
 
         void DrawManualModeUI()
         {
@@ -2654,37 +2663,31 @@ namespace UnityEditor.ProBuilder
             scroll = EditorGUILayout.BeginScrollView(scroll);
             GUI.enabled = MeshSelection.selectedFaceCount > 0;
 
-            /**
-             * Projection Methods
-             */
+            // Projection Methods
             GUILayout.Label("Project UVs", EditorStyles.miniBoldLabel);
 
             GUILayout.BeginHorizontal();
 
-            if (GUILayout.Button("Planar", EditorStyles.miniButton))
+            if (GUILayout.Button(gc_PlanarProject, EditorStyles.miniButton))
                 Menu_PlanarProject();
 
-            if (GUILayout.Button("Box", EditorStyles.miniButton))
+            if (GUILayout.Button(gc_BoxProject, EditorStyles.miniButton))
                 Menu_BoxProject();
 
             GUILayout.EndHorizontal();
 
-            /**
-             * Selection
-             */
+            // Selection
             GUI.enabled = MeshSelection.selectedVertexCount > 0;
             GUILayout.Label("Selection", EditorStyles.miniBoldLabel);
 
-            if (GUILayout.Button("Select Island", EditorStyles.miniButton))
+            if (GUILayout.Button(gc_SelectIsland, EditorStyles.miniButton))
                 Menu_SelectUVIsland();
 
             GUI.enabled = MeshSelection.selectedVertexCount > 0 && ProBuilderEditor.selectMode != SelectMode.Face;
-            if (GUILayout.Button("Select Face", EditorStyles.miniButton))
+            if (GUILayout.Button(gc_SelectFace, EditorStyles.miniButton))
                 Menu_SelectUVFace();
 
-            /**
-             * Edit
-             */
+            // Edit
             GUILayout.Label("Edit", EditorStyles.miniBoldLabel);
 
             GUI.enabled = MeshSelection.selectedVertexCount > 1;
@@ -2695,24 +2698,24 @@ namespace UnityEditor.ProBuilder
                     WeldButtonGUI,
                     selection);
 
-            if (GUILayout.Button("Collapse UVs", EditorStyles.miniButton))
+            if (GUILayout.Button(gc_CollapseUVs, EditorStyles.miniButton))
                 Menu_CollapseUVs();
 
             GUI.enabled = MeshSelection.selectedVertexCount > 1;
-            if (GUILayout.Button("Split UVs", EditorStyles.miniButton))
+            if (GUILayout.Button(gc_SplitUVs, EditorStyles.miniButton))
                 Menu_SplitUVs();
 
             GUILayout.Space(4);
 
-            if (GUILayout.Button("Flip Horizontal", EditorStyles.miniButton))
+            if (GUILayout.Button(gc_FlipHorizontal, EditorStyles.miniButton))
                 Menu_FlipUVs(Vector2.up);
 
-            if (GUILayout.Button("Flip Vertical", EditorStyles.miniButton))
+            if (GUILayout.Button(gc_FlipVertical, EditorStyles.miniButton))
                 Menu_FlipUVs(Vector2.right);
 
             GUILayout.Space(4);
 
-            if (GUILayout.Button("Fit UVs", EditorStyles.miniButton))
+            if (GUILayout.Button(gc_FitUVs, EditorStyles.miniButton))
                 Menu_FitUVs();
 
             GUI.enabled = true;
@@ -3282,6 +3285,8 @@ namespace UnityEditor.ProBuilder
         Texture2D screenshot;
         Rect screenshotCanvasRect = new Rect(0, 0, 0, 0);
         Vector2 screenshotTexturePosition = Vector2.zero;
+        int m_HorizontalOffset = 0;
+        int m_VerticalOffset = 0;
 
         // settings
         int screenshot_size = 1024;
@@ -3323,6 +3328,7 @@ namespace UnityEditor.ProBuilder
             DoScreenshot();
         }
 
+        bool m_Docked;
         void DoScreenshot()
         {
             switch (screenshotStatus)
@@ -3342,11 +3348,29 @@ namespace UnityEditor.ProBuilder
                     screenshot.hideFlags = (HideFlags)(1 | 2 | 4);
                     screenshotStatus = ScreenshotStatus.PrepareCanvas;
 
+                    m_HorizontalOffset = 0;
+
+#if UNITY_2019_3_OR_NEWER
+                    m_VerticalOffset = 0;
+#else
+                    m_VerticalOffset = 1;
+#endif
+
+                    m_Docked = (bool) ReflectionUtility.GetValue(this, this.GetType(), "docked");
                     // set the current rect pixel bounds to the largest possible size.  if some parts are out of focus, they'll be grabbed in subsequent passes
-                    if ((bool)ReflectionUtility.GetValue(this, this.GetType(), "docked"))
-                        screenshotCanvasRect = new Rect(4, 2, (int)Mathf.Min(screenshot_size, ScreenRect.width - 4), (int)Mathf.Min(screenshot_size, ScreenRect.height - 2));
-                    else
-                        screenshotCanvasRect = new Rect(0, 0, (int)Mathf.Min(screenshot_size, ScreenRect.width), (int)Mathf.Min(screenshot_size, ScreenRect.height));
+                    if(m_Docked)
+                    {
+#if UNITY_2019_3_OR_NEWER
+                        m_HorizontalOffset = 1;
+#else
+                        m_HorizontalOffset = 2;
+#endif
+                        m_VerticalOffset = 2;
+                    }
+
+                    screenshotCanvasRect = new Rect(m_HorizontalOffset, m_Docked ? m_VerticalOffset : 0,
+                        (int)Mathf.Min(screenshot_size, ScreenRect.width - m_HorizontalOffset),
+                        (int)Mathf.Min(screenshot_size, ScreenRect.height - m_VerticalOffset));
 
                     screenshotTexturePosition = new Vector2(0, 0);
 
@@ -3357,19 +3381,18 @@ namespace UnityEditor.ProBuilder
                     return;
 
                 case ScreenshotStatus.CanvasReady:
-
                     // take screenshots vertically, then move right, repeat if necessary
                     if (screenshotTexturePosition.y < screenshot_size)
                     {
                         screenshot.ReadPixels(screenshotCanvasRect, (int)screenshotTexturePosition.x, (int)screenshotTexturePosition.y);
-
                         screenshotTexturePosition.y += screenshotCanvasRect.height;
 
                         if (screenshotTexturePosition.y < screenshot_size)
                         {
                             // reposition canvas
                             uvGraphOffset.y += screenshotCanvasRect.height / EditorGUIUtility.pixelsPerPoint;
-                            screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.y, ScreenRect.height - 12);
+                            screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.y , ScreenRect.height - m_VerticalOffset);
+
                             screenshotStatus = ScreenshotStatus.PrepareCanvas;
                             Repaint();
                             return;
@@ -3383,14 +3406,14 @@ namespace UnityEditor.ProBuilder
                                 // Move right, reset Y
                                 uvGraphOffset.x -= screenshotCanvasRect.width / EditorGUIUtility.pixelsPerPoint;
                                 uvGraphOffset.y = (ScreenRect.height / 2f);
-                                screenshotCanvasRect.width = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.x, ScreenRect.width);
                                 screenshotTexturePosition.y = 0;
-                                screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.y, ScreenRect.height - 12);
+                                screenshotCanvasRect.width = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.x, ScreenRect.width - m_HorizontalOffset);
+                                screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size, ScreenRect.height - m_VerticalOffset);
                                 screenshotStatus = ScreenshotStatus.PrepareCanvas;
                                 Repaint();
                                 return;
                             }
-                        }
+                         }
                     }
 
                     // reset the canvas to it's original position and scale

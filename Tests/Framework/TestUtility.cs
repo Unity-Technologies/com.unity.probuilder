@@ -542,5 +542,13 @@ namespace UnityEngine.ProBuilder.Tests.Framework
 
             return false;
         }
+
+        public static void AssertMeshIsValid(ProBuilderMesh mesh)
+        {
+            Assert.That(mesh, Is.Not.Null);
+            Assert.That(mesh.vertexCount > 0);
+            Assert.That(mesh.positionsInternal.Length, Is.EqualTo(mesh.vertexCount));
+            Assert.That(mesh.faceCount, Is.GreaterThan(0));
+        }
     }
 }

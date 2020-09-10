@@ -96,6 +96,15 @@ namespace UnityEditor.ProBuilder
                 return false;
             }
 
+            if (models.Where(m => m.vertexCount > 0).Count() < 1)
+            {
+                Debug.LogWarning("Trying to export an empty model : "+name+". This model won't be exported.");
+                objContents = null;
+                mtlContents = null;
+                textures = null;
+                return false;
+            }
+
             Dictionary<Material, string> materialMap = null;
 
             if (options == null)
