@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1262236] Ensure PolyShape is not empty to avoid nullref while exporting.
 - [case: 1276085] Fixed `UV Actions` window allowing resize events outside of the containing window.
 - [case: 1276074] Fixed a case where `Fit UVs` action could result in `NaN` values.
+- Fixed rect selection not working with Universal Render Pipeline.
 
 ### Changes
 
