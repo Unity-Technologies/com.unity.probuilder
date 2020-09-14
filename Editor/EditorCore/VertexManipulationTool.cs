@@ -391,6 +391,9 @@ namespace UnityEditor.ProBuilder
         /// <returns></returns>
         protected static bool FindNearestVertex(Vector2 mousePosition, out Vector3 vertex)
         {
+#if UNITY_2020_2_OR_NEWER
+            return HandleUtility.FindNearestVertex(mousePosition, out vertex);
+#else
             s_FindNearestVertexArguments[0] = mousePosition;
 
             if (s_FindNearestVertex == null)
@@ -400,6 +403,7 @@ namespace UnityEditor.ProBuilder
             object result = s_FindNearestVertex.Invoke(null, s_FindNearestVertexArguments);
             vertex = (bool)result ? (Vector3)s_FindNearestVertexArguments[2] : Vector3.zero;
             return (bool)result;
+#endif
         }
     }
 }
