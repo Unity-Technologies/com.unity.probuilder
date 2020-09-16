@@ -1,7 +1,10 @@
+using System;
 using UnityEngine;
+using UnityEditor;
 using UnityEngine.ProBuilder.MeshOperations;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
+using Math = UnityEngine.ProBuilder.Math;
 using MeshTopology = UnityEngine.MeshTopology;
 
 namespace UnityEditor.ProBuilder
@@ -210,6 +213,9 @@ namespace UnityEditor.ProBuilder
                 }
 
                 RebuildPolyShapeMesh(polygon);
+
+                //Dirty the polygon for serialization (fix for transition between prefab and scene mode)
+                UnityEditor.EditorUtility.SetDirty(polygon);
             }
         }
 
@@ -426,11 +432,18 @@ namespace UnityEditor.ProBuilder
                     float distanceToVertex = Mathf.Min(Vector2.Distance(mouse, ga), Vector2.Distance(mouse, gb));
 
                     if (distanceToVertex > PreferenceKeys.k_MaxPointDistanceFromControl && distanceToLine < PreferenceKeys.k_MaxPointDistanceFromControl)
-                    {
-                        Handles.color = Color.green;
-                        Handles.DotHandleCap(-1, wp, Quaternion.identity, HandleUtility.GetHandleSize(wp) * k_HandleSize, evt.type);
 
-                        if (evt.type == EventType.MouseDown && HandleUtility.nearestControl == m_ControlId)
+                    if(distanceToVertex > PreferenceKeys.k_MaxPointDistanceFromControl &&
+                       distanceToLine < PreferenceKeys.k_MaxPointDistanceFromControl)
+                    {
+                        if(evt.type == EventType.Repaint)
+                        {
+                            Handles.color = Color.green;
+                            Handles.DotHandleCap(-1, wp, Quaternion.identity,
+                                HandleUtility.GetHandleSize(wp) * k_HandleSize, evt.type);
+                        }
+
+                        if(evt.type == EventType.MouseDown && HandleUtility.nearestControl == m_ControlId)
                         {
                             evt.Use();
 
@@ -444,6 +457,10 @@ namespace UnityEditor.ProBuilder
 
                         Handles.color = Color.white;
                     }
+
+                    if(evt.type != EventType.Repaint)
+                        SceneView.RepaintAll();
+
                 }
             }
         }

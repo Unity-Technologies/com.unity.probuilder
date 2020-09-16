@@ -306,9 +306,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
-            #if UNITY_2018_3_OR_NEWER
             GUILayout.Space(16);
-            #endif
             GUI.enabled = true;
         }
 

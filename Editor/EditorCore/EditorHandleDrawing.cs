@@ -7,11 +7,7 @@ using System.Linq;
 using UnityEditor.Graphs;
 using UnityEngine.Rendering;
 using UnityEditor.SettingsManagement;
-using Edge = UnityEngine.ProBuilder.Edge;
-
-#if !UNITY_2019_1_OR_NEWER
 using System.Reflection;
-#endif
 using UnityObject = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder
