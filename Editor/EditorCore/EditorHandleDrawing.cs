@@ -1,14 +1,12 @@
 using System;
 using UnityEngine;
-using UObject = UnityEngine.Object;
 using UnityEngine.ProBuilder;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.Graphs;
 using UnityEngine.Rendering;
 using UnityEditor.SettingsManagement;
-using System.Reflection;
 using UnityObject = UnityEngine.Object;
+using Edge = UnityEngine.ProBuilder.Edge;
 
 namespace UnityEditor.ProBuilder
 {
@@ -243,7 +241,7 @@ namespace UnityEditor.ProBuilder
             if(mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            UObject.DestroyImmediate(mesh);
+            UnityObject.DestroyImmediate(mesh);
         }
 
 #if !UNITY_2019_1_OR_NEWER

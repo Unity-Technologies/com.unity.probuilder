@@ -203,6 +203,15 @@ namespace UnityEditor.ProBuilder
             if (currentEvent.type == EventType.KeyDown)
                 HandleKeyEvent(currentEvent);
 
+            if(currentEvent.type == EventType.Repaint)
+            {
+                DoExistingLinesGUI();
+                DoExistingPointsGUI();
+            }
+
+            if (EditorHandleUtility.SceneViewInUse(currentEvent))
+                return;
+
             if(m_Mesh != null)
             {
                 m_ControlId = GUIUtility.GetControlID(FocusType.Passive);
@@ -216,8 +225,8 @@ namespace UnityEditor.ProBuilder
 
                 if(currentEvent.type == EventType.Repaint)
                 {
-                    DoExistingLinesGUI();
-                    DoExistingPointsGUI();
+                    DrawGuideLine();
+                    DoCurrentPointsGUI();
                     DoVisualCues();
 
                     Cursor.SetCursor(m_CurrentCutCursor, Vector2.zero, CursorMode.Auto);
@@ -1184,16 +1193,6 @@ namespace UnityEditor.ProBuilder
 
             Event evt = Event.current;
 
-            bool used = evt.type == EventType.Used;
-
-            if (!used &&
-                (evt.type == EventType.MouseDown &&
-                 evt.button == 0 &&
-                 !EditorHandleUtility.IsAppendModifier(evt.modifiers)))
-            {
-                m_SelectedIndex = -1;
-            }
-
             if (evt.type == EventType.Repaint)
             {
                 for (int index = 0; index < len; index++)
@@ -1203,12 +1202,24 @@ namespace UnityEditor.ProBuilder
 
                     Handles.color = k_HandleColor;
                     Handles.DotHandleCap(-1, point, Quaternion.identity, size, evt.type);
-
-                    // "clicked" a button
-                    if (!used && evt.type == EventType.Used)
-                        used = true;
                 }
 
+                Handles.color = Color.white;
+            }
+        }
+
+        /// <summary>
+        /// Display current position to potentially add to the cut
+        /// </summary>
+        void DoCurrentPointsGUI()
+        {
+            Transform trs = m_Mesh.transform;
+            int len = m_CutPath.Count;
+
+            Event evt = Event.current;
+
+            if (evt.type == EventType.Repaint)
+            {
                 if (!m_CurrentPosition.Equals(Vector3.positiveInfinity))
                 {
                     Vector3 point = trs.TransformPoint(m_CurrentPosition);
@@ -1357,7 +1368,6 @@ namespace UnityEditor.ProBuilder
         void DoExistingLinesGUI()
         {
             DrawCutLine();
-            DrawGuideLine();
             DrawMeshConnectionsHandles();
         }
 
