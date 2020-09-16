@@ -472,6 +472,10 @@ namespace UnityEditor.ProBuilder
             if(m_CutPath.Count < 2)
                 return;
 
+            List<Vector3> existingVerticesInCut =
+                m_CutPath.Where(v => ( v.types | VertexTypes.ExistingVertex ) != 0)
+                         .Select(v => v.position).ToList();
+
             Vertex[] vertices = m_Mesh.GetVertices();
             if(!IsALoop)
             {
@@ -483,6 +487,13 @@ namespace UnityEditor.ProBuilder
                 foreach(var vertexIndex in m_TargetFace.distinctIndexes)
                 {
                     Vertex v = vertices[vertexIndex];
+
+                    if(existingVerticesInCut.Count > 0)
+                    {
+                        if(existingVerticesInCut.Exists(vert => Math.Approx3(v.position, vert)))
+                            continue;
+                    }
+
                     if(( m_CutPath[0].types & VertexTypes.NewVertex ) != 0)
                     {
                         dist = Vector3.Distance(v.position, m_CutPath[0].position);
@@ -537,11 +548,18 @@ namespace UnityEditor.ProBuilder
                 foreach(var vertexIndex in m_TargetFace.distinctIndexes)
                 {
                     Vertex v = vertices[vertexIndex];
+
+                    if(existingVerticesInCut.Count > 0)
+                    {
+                        if(existingVerticesInCut.Exists(vert => Math.Approx3(v.position, vert)))
+                            continue;
+                    }
+
                     int pathIndex = -1;
                     float minDistance = Single.MaxValue;
                     for(int i = 0; i < m_CutPath.Count; i++)
                     {
-                        if(( m_CutPath[i].types & VertexTypes.AddedOnEdge ) == 0)
+                        if(( m_CutPath[i].types & (VertexTypes.AddedOnEdge | VertexTypes.ExistingVertex) ) == 0)
                         {
                             float dist = Vector3.Distance(v.position, m_CutPath[i].position);
                             if(dist < minDistance)
@@ -1002,6 +1020,7 @@ namespace UnityEditor.ProBuilder
                 m_SelectedIndex = -1;
 
                 m_SnapedVertexId = peripheralEdges[bestIndex].a;
+                CheckPointInCutPath();
             }
             //If not, did we found a close edge?
             else if (bestIndex >= 0)
@@ -1077,7 +1096,8 @@ namespace UnityEditor.ProBuilder
             List<Vertex> vertices = m_Mesh.GetVertices().ToList();
             for (int vertIndex = 0; vertIndex < vertices.Count; vertIndex++)
             {
-                if (Math.Approx3(vertices[vertIndex].position, vertexPosition))
+                if (Math.Approx3(vertices[vertIndex].position, vertexPosition)
+                    && !float.IsNaN(vertices[vertIndex].normal.x) )
                 {
                     vertex = vertices[vertIndex];
                     break;
@@ -1270,8 +1290,9 @@ namespace UnityEditor.ProBuilder
                 Vector2 segment1Start2D = HandleUtility.WorldToGUIPoint(m_Mesh.transform.TransformPoint(m_CutPath[i].position));
                 Vector2 segment1End2D = HandleUtility.WorldToGUIPoint(m_Mesh.transform.TransformPoint(m_CutPath[i+1].position));
 
+                int lastVertexIndex = (IsALoop && i == 0) ? m_CutPath.Count-2 : m_CutPath.Count-1;
                 //Test intersections with the rest of the cut path
-                for(int j = i + 2; j < m_CutPath.Count-1 && m_IsCutValid; j++)
+                for(int j = i + 2; j < lastVertexIndex && m_IsCutValid; j++)
                 {
                     if(((m_CutPath[j].types | m_CutPath[j+1].types) & VertexTypes.VertexInShape) == 0)
                     {
@@ -1285,22 +1306,26 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
-                //Test intersections with the connections to the face vertices
-                for(int j = 0; j < m_MeshConnections.Count && m_IsCutValid; j++)
+                if(( (m_CutPath[i].types| m_CutPath[i+1].types) & VertexTypes.VertexInShape ) == 0)
                 {
-                    SimpleTuple<int,int> connection = m_MeshConnections[j];
-
-                    if(connection.item1 != i && connection.item1 != i + 1)
+                    //Test intersections with the connections to the face vertices
+                    for(int j = 0; j < m_MeshConnections.Count && m_IsCutValid; j++)
                     {
-                        Vector2 segment2Start2D =
-                            HandleUtility.WorldToGUIPoint(
-                                m_Mesh.transform.TransformPoint(m_CutPath[connection.item1].position));
-                        Vector2 segment2End2D =
-                            HandleUtility.WorldToGUIPoint(
-                                m_Mesh.transform.TransformPoint(vertices[connection.item2].position));
+                        SimpleTuple<int, int> connection = m_MeshConnections[j];
 
-                        m_IsCutValid = !Math.GetLineSegmentIntersect(segment1Start2D, segment1End2D, segment2Start2D,
-                            segment2End2D);
+                        if(connection.item1 != i && connection.item1 != i + 1)
+                        {
+                            Vector2 segment2Start2D =
+                                HandleUtility.WorldToGUIPoint(
+                                    m_Mesh.transform.TransformPoint(m_CutPath[connection.item1].position));
+                            Vector2 segment2End2D =
+                                HandleUtility.WorldToGUIPoint(
+                                    m_Mesh.transform.TransformPoint(vertices[connection.item2].position));
+
+                            m_IsCutValid = !Math.GetLineSegmentIntersect(segment1Start2D, segment1End2D,
+                                segment2Start2D,
+                                segment2End2D);
+                        }
                     }
                 }
             }
