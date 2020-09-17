@@ -250,11 +250,20 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Move a GameObject to the active scene, where active scene may be a prefab stage.
+        /// Move a GameObject to the proper active root.
+        /// If a default parent exist, otherwise it adds the object as a root of the active scene, which can be a prefab stage.
         /// </summary>
         /// <param name="gameObject"></param>
-        internal static void MoveToActiveScene(GameObject gameObject)
+        internal static void MoveToActiveRoot(GameObject gameObject)
         {
+#if UNITY_2021_1_OR_NEWER
+            var parent = SceneView.GetDefaultParentObjectIfSet();
+            if (parent != null)
+            {
+                gameObject.transform.SetParent(parent);
+                return;
+            }
+#endif
             var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
             var activeScene = SceneManager.GetActiveScene();
 
@@ -281,7 +290,8 @@ namespace UnityEditor.ProBuilder
         /// <param name="pb"></param>
         internal static void InitObject(ProBuilderMesh pb)
         {
-            MoveToActiveScene(pb.gameObject);
+            MoveToActiveRoot(pb.gameObject);
+
             GameObjectUtility.EnsureUniqueNameForSibling(pb.gameObject);
             ScreenCenter(pb.gameObject);
             SetPivotLocationAndSnap(pb);
