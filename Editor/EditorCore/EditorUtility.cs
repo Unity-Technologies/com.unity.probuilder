@@ -251,7 +251,7 @@ namespace UnityEditor.ProBuilder
 
         /// <summary>
         /// Move a GameObject to the proper active root.
-        /// If a default parent exist, otherwise it adds the object as a root of the active scene, which can be a prefab stage.
+        /// Checks if a default parent exists, otherwise it adds the object as a root of the active scene, which can be a prefab stage.
         /// </summary>
         /// <param name="gameObject"></param>
         internal static void MoveToActiveRoot(GameObject gameObject)
