@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder.Actions
 		/// </summary>
 		static readonly TooltipContent k_Tooltip = new TooltipContent
 		(
-			"Remove edges soft",
+			"Remove Edges",
 			"Remove selected edges and merge faces."
 		);
 
@@ -54,7 +54,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ActionResult DoAction()
 		{
 			var selection = MeshSelection.top.ToArray();
-			Undo.RecordObjects(selection, "Removing edges");
+			Undo.RecordObjects(selection, "Removing Edges");
 
 			List<Face> edgeFaces = new List<Face>();
 
@@ -141,7 +141,6 @@ namespace UnityEditor.ProBuilder.Actions
 					pbMesh.ToMesh();
 					pbMesh.Refresh();
 					pbMesh.Optimize();
-
 				}
 			}
 
@@ -150,7 +149,7 @@ namespace UnityEditor.ProBuilder.Actions
 			// Rebuild the pb_Editor caches
 			ProBuilderEditor.Refresh();
 
-			return new ActionResult(ActionResult.Status.Success, "Edges removed");
+			return new ActionResult(ActionResult.Status.Success, "Edges Removed");
 		}
 
 
