@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1256154] Fixed StackOverflow Error when smoothing mesh in Probuilderize, also fixed an error in the display of edges when count > ushort.maxValue.
 - [case: 1252668] Replaced mesh template tests for `Connect Edges` with more stable methods.
 - [case: 1262236] Ensure PolyShape is not empty to avoid nullref while exporting.
+- [case: 1184921] Add a custom preview for `ProBuilderMesh` prefabs.
 
 ### Changes
 
