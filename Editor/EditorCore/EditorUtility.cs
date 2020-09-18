@@ -256,7 +256,7 @@ namespace UnityEditor.ProBuilder
         /// <param name="gameObject"></param>
         internal static void MoveToActiveRoot(GameObject gameObject)
         {
-#if UNITY_2021_1_OR_NEWER
+#if UNITY_2020_2_OR_NEWER
             var parent = SceneView.GetDefaultParentObjectIfSet();
             if (parent != null)
             {
