@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Features
+
+- MergeElements.Merge moved to public API
+
 ### Bug Fixes
 
 - [case: 1254339] Correct offset when rendering UVs and correct export when UV Editor is docked.
@@ -23,7 +27,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changes
 
 - Modified VertexManipulationTool to inherit from EditorTool 
-- Removing preprocessor directives for Unity 2018 and below for Probuilder 5.0
+- Adding a new MenuAction in Samples to merge faces from edges selection 
+- Removing preprocessor directives for Unity 2018 and below for Probuilder 5.0  
 - Modified the AppendVerticesToEdge to handle edges split for non-convex faces.
 
 ## [4.4.0] - 2020-08-12
