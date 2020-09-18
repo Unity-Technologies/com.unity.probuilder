@@ -110,12 +110,12 @@ namespace UnityEditor.ProBuilder
         void PrefabStageOpened(PrefabStage stage)
         {
             if(m_PreviewObject != null)
-                EditorUtility.MoveToActiveScene(m_PreviewObject);
+                EditorUtility.MoveToActiveRoot(m_PreviewObject);
         }
 
         void PrefabStageClosing(PrefabStage stage)
         {
-            // Closing is called while the PrefabStage is still open, so we can't use EditorUtility.MoveToActiveScene
+            // Closing is called while the PrefabStage is still open, so we can't use EditorUtility.MoveToActiveRoot
             if (m_PreviewObject != null)
             {
                 m_PreviewObject.transform.SetParent(null);
@@ -295,7 +295,7 @@ namespace UnityEditor.ProBuilder
             }
 
             m_PreviewObject.GetComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.ShapePreviewMaterial;
-            EditorUtility.MoveToActiveScene(m_PreviewObject.gameObject);
+            EditorUtility.MoveToActiveRoot(m_PreviewObject.gameObject);
         }
 
         void ApplyPreviewTransform(ProBuilderMesh mesh)
