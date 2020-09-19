@@ -36,13 +36,10 @@ namespace UnityEngine.ProBuilder
                 renderCam.enabled = false;
                 renderCam.clearFlags = CameraClearFlags.SolidColor;
                 renderCam.backgroundColor = Color.white;
-#if UNITY_5_6_OR_NEWER
                 renderCam.allowHDR = false;
                 renderCam.allowMSAA = false;
                 renderCam.forceIntoRenderTexture = true;
-#endif
 
-#if UNITY_2017_1_OR_NEWER
                 RenderTextureDescriptor descriptor = new RenderTextureDescriptor()
                 {
                     width = _width,
@@ -59,15 +56,6 @@ namespace UnityEngine.ProBuilder
                     msaaSamples = 1
                 };
                 RenderTexture rt = RenderTexture.GetTemporary(descriptor);
-#else
-            RenderTexture rt = RenderTexture.GetTemporary(
-                    _width,
-                    _height,
-                    16,
-                    renderTextureFormat,
-                    RenderTextureReadWrite.Linear,
-                    1);
-#endif
 
                 RenderTexture prev = RenderTexture.active;
                 renderCam.targetTexture = rt;
