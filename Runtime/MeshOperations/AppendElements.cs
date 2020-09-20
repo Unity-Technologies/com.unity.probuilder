@@ -89,14 +89,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			if (mt2 || ft2)
             {
-				newTexture2s.AddRange(mesh.textures2Internal);
-				newTexture2s.AddRange(new Vector4[faceVertexCount]);
+				newTexture2s.AddRange(mt2 ? mesh.textures2Internal : new Vector4[vertexCount].ToList());
+				newTexture2s.AddRange(ft2 ? uv2s : new Vector4[faceVertexCount]);
             }
 
 			if (mt3 || ft3)
             {
-				newTexture3s.AddRange(mesh.textures3Internal);
-				newTexture3s.AddRange(new Vector4[faceVertexCount]);
+				newTexture3s.AddRange(mt3 ? mesh.textures3Internal : new Vector4[vertexCount].ToList());
+				newTexture3s.AddRange(ft3 ? uv3s : new Vector4[faceVertexCount]);
             }
 
             face.ShiftIndexesToZero();
