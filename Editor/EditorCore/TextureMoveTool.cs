@@ -35,14 +35,14 @@ namespace UnityEditor.ProBuilder
             return new TranslateTextureSelection(mesh, pivot);
         }
 
-        protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
+        protected override void DoToolGUI()
         {
             if (!isEditing)
                 m_Position = Vector3.zero;
 
             EditorHandleUtility.PushMatrix();
 
-            Handles.matrix = Matrix4x4.TRS(handlePosition, handleRotation, Vector3.one);
+            Handles.matrix = Matrix4x4.TRS(m_HandlePosition, m_HandleRotation, Vector3.one);
 
             EditorGUI.BeginChangeCheck();
 

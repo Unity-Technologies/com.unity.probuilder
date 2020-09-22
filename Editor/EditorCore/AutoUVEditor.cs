@@ -54,6 +54,21 @@ namespace UnityEditor.ProBuilder
 
         #region ONGUI
 
+        static readonly GUIContent gc_FillMode = EditorGUIUtility.TrTextContent("Fill Mode", "How the projected UVs are tiled or stretched.");
+        static readonly GUIContent gc_Anchor = EditorGUIUtility.TrTextContent("Anchor", "After the initial projection into 2D space, UVs will be translated to the anchor position. Next, the offset and rotation are applied, followed by the various other settings.");
+        static readonly GUIContent gc_Offset = EditorGUIUtility.TrTextContent("Offset", "Translation applied to UVs after projection into 2D space.");
+        static readonly GUIContent gc_Rotation = EditorGUIUtility.TrTextContent("Rotation", "Rotation around the center of face UV bounds.");
+        static readonly GUIContent gc_Tiling = EditorGUIUtility.TrTextContent("Tiling", "Scaling applied to UVs after projection into 2D space");
+        static readonly GUIContent gc_WorldSpace = EditorGUIUtility.TrTextContent("World Space", "When enabled UVs are projected using their world space coordinates.");
+        static readonly GUIContent gc_FlipU = EditorGUIUtility.TrTextContent("Flip U", "Mirror UV coordinates horizontally.");
+        static readonly GUIContent gc_FlipV = EditorGUIUtility.TrTextContent("Flip V", "Mirror UV coordinates vertically.");
+        static readonly GUIContent gc_SwapUV = EditorGUIUtility.TrTextContent("Swap U/V", "Flips the U and V components. UV becomes VU.");
+        static readonly GUIContent gc_TextureGroup = EditorGUIUtility.TrTextContent("Texture Group", "Faces in a texture group will be UV mapped as a group, just as though you had selected these faces and used the \"Planar Project\" action");
+        static readonly GUIContent gc_GroupSelected = EditorGUIUtility.TrTextContent("Group Selected Faces", "This sets all selected faces to share a texture group.  What that means is that the UVs on these faces will all be projected as though they are a single plane.  Ideal candidates for texture groups are floors with multiple faces, walls with edge loops, flat surfaces, etc.");
+        static readonly GUIContent gc_BreakSelected = EditorGUIUtility.TrTextContent("Break Selected Groups", "This resets all the selected face Texture Groups.");
+        static readonly GUIContent gc_SelectGroup = EditorGUIUtility.TrTextContent("Select Texture Group", "Selects all faces contained in this texture group.");
+        static readonly GUIContent gc_Reset = EditorGUIUtility.TrTextContent("Reset UVs", "Reset UV projection parameters.");
+
         public static bool OnGUI(ProBuilderMesh[] selection, float width)
         {
             UpdateDiffDictionary(selection);
@@ -63,14 +78,12 @@ namespace UnityEditor.ProBuilder
 
             EditorGUI.BeginChangeCheck();
 
-            /**
-             * Set Tile mode
-             */
+             // Set Tile mode
             GUILayout.Label("Tiling & Alignment", EditorStyles.boldLabel);
 
             GUILayout.BeginHorizontal();
             EditorGUI.showMixedValue = s_AutoUVSettingsDiff["fill"];
-            GUILayout.Label("Fill Mode", GUILayout.MaxWidth(80), GUILayout.MinWidth(80));
+            GUILayout.Label(gc_FillMode, GUILayout.MaxWidth(80), GUILayout.MinWidth(80));
             EditorGUI.BeginChangeCheck();
             s_AutoUVSettings.fill = (AutoUnwrapSettings.Fill)EditorGUILayout.EnumPopup(s_AutoUVSettings.fill);
             if (EditorGUI.EndChangeCheck())
@@ -82,7 +95,7 @@ namespace UnityEditor.ProBuilder
             GUI.enabled = !s_AutoUVSettings.useWorldSpace;
             EditorGUI.showMixedValue = s_AutoUVSettingsDiff["anchor"];
             EditorGUI.BeginChangeCheck();
-            GUILayout.Label("Anchor", GUILayout.MaxWidth(80), GUILayout.MinWidth(80));
+            GUILayout.Label(gc_Anchor, GUILayout.MaxWidth(80), GUILayout.MinWidth(80));
             s_AutoUVSettings.anchor = (AutoUnwrapSettings.Anchor)EditorGUILayout.EnumPopup(s_AutoUVSettings.anchor);
             if (EditorGUI.EndChangeCheck())
                 SetAnchor(s_AutoUVSettings.anchor, selection);
@@ -95,36 +108,30 @@ namespace UnityEditor.ProBuilder
 
             GUILayout.Label("Transform", EditorStyles.boldLabel);
 
-            /**
-             * Offset
-             */
+            //Offset
             EditorGUI.showMixedValue = s_AutoUVSettingsDiff["offsetx"] || s_AutoUVSettingsDiff["offsety"];
             var tempVec2 = s_AutoUVSettings.offset;
             UnityEngine.GUI.SetNextControlName("offset");
-            s_AutoUVSettings.offset = EditorGUILayout.Vector2Field("Offset", s_AutoUVSettings.offset, GUILayout.MaxWidth(width));
+            s_AutoUVSettings.offset = EditorGUILayout.Vector2Field(gc_Offset, s_AutoUVSettings.offset, GUILayout.MaxWidth(width));
             if (tempVec2.x != s_AutoUVSettings.offset.x) { SetOffset(s_AutoUVSettings.offset, Axis2D.X, selection); }
             if (tempVec2.y != s_AutoUVSettings.offset.y) { SetOffset(s_AutoUVSettings.offset, Axis2D.Y, selection); }
 
-            /**
-             * Rotation
-             */
+            // Rotation
             tempFloat = s_AutoUVSettings.rotation;
             EditorGUI.showMixedValue = s_AutoUVSettingsDiff["rotation"];
-            GUILayout.Label(new GUIContent("Rotation", "Rotation around the center of face UV bounds."), GUILayout.MaxWidth(width - 64));
+            GUILayout.Label(gc_Rotation, GUILayout.MaxWidth(width - 64));
             UnityEngine.GUI.SetNextControlName("rotation");
             EditorGUI.BeginChangeCheck();
             tempFloat = EditorGUILayout.Slider(tempFloat, 0f, 360f, GUILayout.MaxWidth(width));
             if (EditorGUI.EndChangeCheck())
                 SetRotation(tempFloat, selection);
 
-            /**
-             * Scale
-             */
+            // Scale
             EditorGUI.showMixedValue = s_AutoUVSettingsDiff["scalex"] || s_AutoUVSettingsDiff["scaley"];
             tempVec2 = s_AutoUVSettings.scale;
             GUI.SetNextControlName("scale");
             EditorGUI.BeginChangeCheck();
-            s_AutoUVSettings.scale = EditorGUILayout.Vector2Field("Tiling", s_AutoUVSettings.scale, GUILayout.MaxWidth(width));
+            s_AutoUVSettings.scale = EditorGUILayout.Vector2Field(gc_Tiling, s_AutoUVSettings.scale, GUILayout.MaxWidth(width));
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -148,14 +155,12 @@ namespace UnityEditor.ProBuilder
             UI.EditorGUIUtility.DrawSeparator(1);
             UnityEngine.GUI.backgroundColor = Color.white;
 
-            /**
-             * Special
-             */
+            // Special
             GUILayout.Label("Special", EditorStyles.boldLabel);
 
             EditorGUI.showMixedValue = s_AutoUVSettingsDiff["useWorldSpace"];
             EditorGUI.BeginChangeCheck();
-            s_AutoUVSettings.useWorldSpace = EditorGUILayout.Toggle("World Space", s_AutoUVSettings.useWorldSpace);
+            s_AutoUVSettings.useWorldSpace = EditorGUILayout.Toggle(gc_WorldSpace, s_AutoUVSettings.useWorldSpace);
             if (EditorGUI.EndChangeCheck())
                 SetUseWorldSpace(s_AutoUVSettings.useWorldSpace, selection);
 
@@ -167,33 +172,31 @@ namespace UnityEditor.ProBuilder
             // Flip U
             EditorGUI.showMixedValue = s_AutoUVSettingsDiff["flipU"];
             EditorGUI.BeginChangeCheck();
-            s_AutoUVSettings.flipU = EditorGUILayout.Toggle("Flip U", s_AutoUVSettings.flipU);
+            s_AutoUVSettings.flipU = EditorGUILayout.Toggle(gc_FlipU, s_AutoUVSettings.flipU);
             if (EditorGUI.EndChangeCheck())
                 SetFlipU(s_AutoUVSettings.flipU, selection);
 
             // Flip V
             EditorGUI.showMixedValue = s_AutoUVSettingsDiff["flipV"];
             EditorGUI.BeginChangeCheck();
-            s_AutoUVSettings.flipV = EditorGUILayout.Toggle("Flip V", s_AutoUVSettings.flipV);
+            s_AutoUVSettings.flipV = EditorGUILayout.Toggle(gc_FlipV, s_AutoUVSettings.flipV);
             if (EditorGUI.EndChangeCheck())
                 SetFlipV(s_AutoUVSettings.flipV, selection);
 
             EditorGUI.showMixedValue = s_AutoUVSettingsDiff["swapUV"];
             EditorGUI.BeginChangeCheck();
-            s_AutoUVSettings.swapUV = EditorGUILayout.Toggle("Swap U/V", s_AutoUVSettings.swapUV);
+            s_AutoUVSettings.swapUV = EditorGUILayout.Toggle(gc_SwapUV, s_AutoUVSettings.swapUV);
             if (EditorGUI.EndChangeCheck())
                 SetSwapUV(s_AutoUVSettings.swapUV, selection);
 
-            /**
-             * Texture Groups
-             */
+            // Texture Groups
             GUILayout.Label("Texture Groups", EditorStyles.boldLabel);
 
             EditorGUI.BeginChangeCheck();
             EditorGUI.showMixedValue = s_AutoUVSettingsDiff["textureGroup"];
 
             GUI.SetNextControlName("textureGroup");
-            textureGroup = UI.EditorGUIUtility.IntFieldConstrained(new GUIContent("Texture Group", "Faces in a texture group will be UV mapped as a group, just as though you had selected these faces and used the \"Planar Project\" action"), textureGroup, (int)width);
+            textureGroup = UI.EditorGUIUtility.IntFieldConstrained(gc_TextureGroup, textureGroup, (int)width);
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -207,7 +210,7 @@ namespace UnityEditor.ProBuilder
                 s_AutoUVSettingsDiff["textureGroup"] = false;
             }
 
-            if (GUILayout.Button(new GUIContent("Group Selected Faces", "This sets all selected faces to share a texture group.  What that means is that the UVs on these faces will all be projected as though they are a single plane.  Ideal candidates for texture groups are floors with multiple faces, walls with edge loops, flat surfaces, etc.")))
+            if (GUILayout.Button(gc_GroupSelected))
             {
                 for (int i = 0; i < selection.Length; i++)
                     TextureGroupSelectedFaces(selection[i]);
@@ -215,7 +218,7 @@ namespace UnityEditor.ProBuilder
                 ProBuilderEditor.Refresh();
             }
 
-            if (GUILayout.Button(new GUIContent("Break Selected Groups", "This resets all the selected face Texture Groups.")))
+            if (GUILayout.Button(gc_BreakSelected))
             {
                 SetTextureGroup(selection, -1);
 
@@ -234,7 +237,7 @@ namespace UnityEditor.ProBuilder
             }
 
             /* Select all in current texture group */
-            if (GUILayout.Button(new GUIContent("Select Texture Group", "Selects all faces contained in this texture group.")))
+            if (GUILayout.Button(gc_SelectGroup))
             {
                 for (int i = 0; i < selection.Length; i++)
                     selection[i].SetSelectedFaces(System.Array.FindAll(selection[i].facesInternal, x => x.textureGroup == textureGroup));
@@ -242,7 +245,7 @@ namespace UnityEditor.ProBuilder
                 ProBuilderEditor.Refresh();
             }
 
-            if (GUILayout.Button(new GUIContent("Reset UVs", "Reset UV projection parameters.")))
+            if (GUILayout.Button(gc_Reset))
             {
                 UndoUtility.RecordSelection(selection, "Reset UVs");
 
@@ -265,9 +268,6 @@ namespace UnityEditor.ProBuilder
             UI.EditorGUIUtility.DrawSeparator(1);
             GUI.backgroundColor = Color.white;
 
-            /**
-             * Clean up
-             */
             GUILayout.EndScrollView();
             EditorGUI.showMixedValue = false;
 
