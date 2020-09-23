@@ -2583,7 +2583,12 @@ namespace UnityEditor.ProBuilder
             }
 
             GUI.DragWindow(ActionWindowDragRect);
+
             actionWindowRect = UI.EditorGUILayout.DoResizeHandle(actionWindowRect, minimumInspectorWidth, minimumInspectorHeight);
+            actionWindowRect.x = Mathf.Clamp(actionWindowRect.x, 0, position.width - minimumInspectorWidth);
+            actionWindowRect.y = Mathf.Clamp(actionWindowRect.y, 0, position.height - minimumInspectorHeight);
+            actionWindowRect.width = Mathf.Clamp(actionWindowRect.width, minimumInspectorWidth, position.width - actionWindowRect.x - 8);
+            actionWindowRect.height = Mathf.Clamp(actionWindowRect.height, minimumInspectorHeight, position.height - actionWindowRect.y - 8);
         }
 
         bool modifyingUVs_AutoPanel = false;
