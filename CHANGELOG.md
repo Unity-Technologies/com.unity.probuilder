@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Features
+
+- MergeElements.Merge moved to public API
+
 ### Bug Fixes
 
 - [case: 1254339] Correct offset when rendering UVs and correct export when UV Editor is docked.
@@ -14,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1259845] Fixed dimension overlay being hidden on playmode or reboot of the editor.
 - [case: 1267383] Fixed `Bezier Shape` and `Poly Shape` component preventing build when `Script Stripping` was enabled.
 - [case: 1256246] Ensuring edges subdivision is not creating hole and that arch shapes does not create degenerated triangles
+- Scaled Auto UVs now remain in place when modifying geometry.
 - [case: 1265296] Add tooltips to UV Actions window.
 - [case: 1265623] Ensure that ProGrids snapping is enabled (not only active) when using snapping in ProBuilder
 - [case: 1256154] Fixed StackOverflow Error when smoothing mesh in Probuilderize, also fixed an error in the display of edges when count > ushort.maxValue.
@@ -25,7 +30,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changes
 
-- Removing preprocessor directives for Unity 2018 and below for Probuilder 5.0
+- Modified VertexManipulationTool to inherit from EditorTool 
+- Adding a new MenuAction in Samples to merge faces from edges selection 
+- Removing preprocessor directives for Unity 2018 and below for Probuilder 5.0  
 - Modified the AppendVerticesToEdge to handle edges split for non-convex faces.
 
 ## [4.4.0] - 2020-08-12

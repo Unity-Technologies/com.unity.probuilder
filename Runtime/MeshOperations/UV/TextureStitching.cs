@@ -33,9 +33,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (AlignEdges(mesh, f2, sharedEdge.edge.local, sharedEdge.opposite.edge.local, channel))
             {
                 if (!f2.manualUV)
-                {
-                    SetAutoAndAlignUnwrapParamsToUVs(mesh, new [] { f2 });
-                }
+                    UvUnwrapping.SetAutoAndAlignUnwrapParamsToUVs(mesh, new [] { f2 });
 
                 return true;
             }
@@ -87,23 +85,17 @@ namespace UnityEngine.ProBuilder.MeshOperations
             foreach (int i in faceToMove.distinctIndexesInternal)
                 uvs[i] = uvs[i].ScaleAroundPoint(Vector2.zero, Vector2.one * scale);
 
-            /**
-             * Figure out where the center of each edge is so that we can move the f2 edge to match f1's origin
-             */
+            // Figure out where the center of each edge is so that we can move the f2 edge to match f1's origin
             Vector2 f1_center = (uvs[edgeToAlignTo.a] + uvs[edgeToAlignTo.b]) / 2f;
             Vector2 f2_center = (uvs[edgeToBeAligned.a] + uvs[edgeToBeAligned.b]) / 2f;
 
             Vector2 diff = f1_center - f2_center;
 
-            /**
-             * Move f2 face to where it's matching edge center is on top of f1's center
-             */
+            // Move f2 face to where it's matching edge center is on top of f1's center
             foreach (int i in faceToMove.distinctIndexesInternal)
                 uvs[i] += diff;
 
-            /**
-             * Now that the edge's centers are matching, rotate f2 to match f1's angle
-             */
+            // Now that the edge's centers are matching, rotate f2 to match f1's angle
             Vector2 angle1 = uvs[matchY[0]] - uvs[matchX[0]];
             Vector2 angle2 = uvs[matchY[1]] - uvs[matchX[1]];
 

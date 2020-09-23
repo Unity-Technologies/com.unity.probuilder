@@ -6,9 +6,9 @@ using UnityEngine.ProBuilder;
 namespace UnityEngine.ProBuilder.MeshOperations
 {
     /// <summary>
-    /// Merging faces together.
+    /// Methods for merging multiple faces of a <see cref="ProBuilderMesh"/> to a single face.
     /// </summary>
-    static class MergeElements
+    public static class MergeElements
     {
         /// <summary>
         /// Merge each pair of faces to a single face. Indexes are combined, but otherwise the properties of the first face in the pair take precedence. Returns a list of the new faces created.

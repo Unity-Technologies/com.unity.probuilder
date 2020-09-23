@@ -57,6 +57,7 @@ namespace UnityEngine.ProBuilder
                     volumeDepth = 1,
                     msaaSamples = 1
                 };
+              
                 RenderTexture rt = RenderTexture.GetTemporary(descriptor);
                 RenderTexture prev = RenderTexture.active;
                 renderCam.targetTexture = rt;
