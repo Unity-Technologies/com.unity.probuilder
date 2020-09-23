@@ -26,6 +26,11 @@ namespace UnityEditor.ProBuilder
         [UserSetting(UserSettingsProvider.developerModeCategory, "Show Internal Pivot and Orientation")]
         static Pref<bool> s_ShowHandleSettingsInScene = new Pref<bool>("developer.showHandleSettingsInScene", false, SettingsScope.User);
 
+#if !UNITY_2020_2_OR_NEWER
+        static object[] s_FindNearestVertexArguments = new object[3];
+        static MethodInfo s_FindNearestVertex;
+#endif
+
         internal static PivotPoint pivotModePivotEquivalent
         {
             get { return s_PivotModePivotEquivalent; }
@@ -375,9 +380,10 @@ namespace UnityEditor.ProBuilder
             return HandleUtility.FindNearestVertex(mousePosition, out vertex);
 #else
             s_FindNearestVertexArguments[0] = mousePosition;
+            s_FindNearestVertexArguments[1] = null;
 
             if (s_FindNearestVertex == null)
-                s_FindNearestVertex = typeof(HandleUtility).GetMethod("findNearestVertex",
+                s_FindNearestVertex = typeof(HandleUtility).GetMethod("FindNearestVertex",
                         BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
 
             object result = s_FindNearestVertex.Invoke(null, s_FindNearestVertexArguments);
