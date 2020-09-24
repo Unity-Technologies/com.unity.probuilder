@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
@@ -32,17 +30,16 @@ static class SubdivideElementsTests
 
         try
         {
+            var faceCount = pb.faceCount;
             var face = pb.facesInternal.FirstOrDefault();
             Subdivision.Subdivide(pb, new Face[] { face });
             pb.ToMesh();
             pb.Refresh();
-#if PB_CREATE_TEST_MESH_TEMPLATES
-            TestUtility.SaveAssetTemplate(pb.mesh, pb.name);
-#endif
+
+            TestUtility.AssertMeshIsValid(pb);
             TestUtility.AssertMeshAttributesValid(pb.mesh);
-            var template = TestUtility.GetAssetTemplate<Mesh>(pb.name);
-            Assert.IsNotNull(template);
-            TestUtility.AssertMeshesAreEqual(template, pb.mesh);
+
+            Assert.That(faceCount, Is.LessThan(pb.faceCount));
         }
         finally
         {

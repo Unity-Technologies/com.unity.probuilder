@@ -4,16 +4,10 @@
  *  This is a generated file. Any changes will be overwritten.
  *  See Debug/GenerateMenuItems to make modifications.
  */
-#if UNITY_2019_1_OR_NEWER
-#define SHORTCUT_MANAGER
-#endif
-
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.Actions;
-#if SHORTCUT_MANAGER
 using UnityEditor.ShortcutManagement;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -299,9 +293,7 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
 		[Shortcut(k_ShortcutPrefix + "Geometry/Delete Faces", typeof(UnityEditor.SceneView), (KeyCode) 8, (ShortcutModifiers) 0)]
-#endif
 		[MenuItem(k_MenuPrefix + "Geometry/Delete Faces [backspace]", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_DeleteFaces()
 		{
@@ -572,9 +564,7 @@ namespace UnityEditor.ProBuilder
 			return instance != null && instance.enabled;
 		}
 
-#if SHORTCUT_MANAGER
 		[Shortcut(k_ShortcutPrefix + "Interaction/Toggle Handle Orientation", typeof(UnityEditor.SceneView), (KeyCode) 112, (ShortcutModifiers) 0)]
-#endif
 		[MenuItem(k_MenuPrefix + "Interaction/Toggle Handle Orientation [p]", false, PreferenceKeys.menuSelection + 1)]
 		static void MenuPerform_ToggleHandleOrientation()
 		{

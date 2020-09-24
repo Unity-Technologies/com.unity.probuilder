@@ -139,12 +139,7 @@ namespace UnityEditor.ProBuilder
 
         internal static bool IsPrefab(ProBuilderMesh mesh)
         {
-#if UNITY_2018_3_OR_NEWER
             return PrefabUtility.GetPrefabAssetType(mesh.gameObject) != PrefabAssetType.NotAPrefab;
-#else
-            PrefabType type = PrefabUtility.GetPrefabType(mesh.gameObject);
-            return type == PrefabType.Prefab || type == PrefabType.PrefabInstance || type == PrefabType.DisconnectedPrefabInstance;
-#endif
         }
 
         /// <summary>
@@ -154,12 +149,8 @@ namespace UnityEditor.ProBuilder
         /// <returns></returns>
         internal static bool IsPrefabInstance(GameObject go)
         {
-#if UNITY_2018_3_OR_NEWER
             var status = PrefabUtility.GetPrefabInstanceStatus(go);
             return status == PrefabInstanceStatus.Connected || status == PrefabInstanceStatus.Disconnected;
-#else
-            return PrefabUtility.GetPrefabType(go) == PrefabType.PrefabInstance;
-#endif
         }
 
         /**
@@ -167,11 +158,7 @@ namespace UnityEditor.ProBuilder
          */
         internal static bool IsPrefabAsset(GameObject go)
         {
-#if UNITY_2018_3_OR_NEWER
             return PrefabUtility.IsPartOfPrefabAsset(go);
-#else
-            return PrefabUtility.GetPrefabType(go) == PrefabType.Prefab;
-#endif
         }
 
         /**
@@ -479,9 +466,9 @@ namespace UnityEditor.ProBuilder
         internal static bool IsPositionMode(this SelectMode mode)
         {
             return mode.ContainsFlag(
-                SelectMode.TextureEdge
-                | SelectMode.TextureFace
-                | SelectMode.TextureVertex
+                SelectMode.Edge
+                | SelectMode.Face
+                | SelectMode.Vertex
                 );
         }
 

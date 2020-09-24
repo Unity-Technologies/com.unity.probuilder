@@ -1,10 +1,8 @@
-using System;
 using System.Linq;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
 
 public class ConvertTextureUnwrappingAutoManualTests
 {
@@ -115,7 +113,7 @@ public class ConvertTextureUnwrappingAutoManualTests
 		Assume.That(face.manualUV, Is.EqualTo(true));
 
 		// This sets the manualFlag to false, sets the AutoUnwrap settings, and rebuilds UVs
-		UVEditing.SetAutoAndAlignUnwrapParamsToUVs(mesh, new [] { face });
+		UvUnwrapping.SetAutoAndAlignUnwrapParamsToUVs(mesh, new [] { face });
 
 		Assert.That(face.uv.offset.x, Is.EqualTo(offset.x).Within(.1f));
 		Assert.That(face.uv.offset.y, Is.EqualTo(offset.y).Within(.1f));

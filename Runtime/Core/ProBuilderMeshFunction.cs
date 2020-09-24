@@ -117,6 +117,7 @@ namespace UnityEngine.ProBuilder
             InvalidateSharedVertexLookup();
             InvalidateSharedTextureLookup();
             m_Colors = null;
+            m_MeshFormatVersion = k_MeshFormatVersion;
             ClearSelection();
         }
 
@@ -309,7 +310,8 @@ namespace UnityEngine.ProBuilder
             {
                 if (m_MeshFormatVersion < k_MeshFormatVersionSubmeshMaterialRefactor)
                     Submesh.MapFaceMaterialsToSubmeshIndex(this);
-
+                if (m_MeshFormatVersion < k_MeshFormatVersionAutoUVScaleOffset)
+                    UvUnwrapping.UpgradeAutoUVScaleOffset(this);
                 m_MeshFormatVersion = k_MeshFormatVersion;
             }
 

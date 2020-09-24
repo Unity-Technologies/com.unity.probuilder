@@ -25,27 +25,25 @@ static class ConnectElementsTests
     }
 
     [Test]
-    public static void ConnectEdges_MatchesTemplate([ValueSource("shapeTypes")] Type shapeType)
+    public static void ConnectEdges_CreatesValidGeometry([ValueSource("shapeTypes")] ShapeType shapeType)
     {
         var mesh = ShapeGenerator.CreateShape(shapeType);
 
         Assume.That(mesh, Is.Not.Null);
+        Assume.That(mesh.faceCount, Is.GreaterThan(0));
 
         try
         {
             var face = mesh.facesInternal[0];
+            var previousEdgeCount = mesh.edgeCount;
+            Assume.That(previousEdgeCount, Is.GreaterThan(0));
 
             mesh.Connect(new Edge[] { face.edgesInternal[0], face.edgesInternal[1] });
             mesh.ToMesh();
             mesh.Refresh();
 
-#if PB_CREATE_TEST_MESH_TEMPLATES
-            TestUtility.SaveAssetTemplate(mesh.mesh, mesh.name);
-#endif
-            TestUtility.AssertMeshAttributesValid(mesh.mesh);
-            var template = TestUtility.GetAssetTemplate<Mesh>(mesh.name);
-            Assert.IsNotNull(template);
-            TestUtility.AssertMeshesAreEqual(template, mesh.mesh);
+            TestUtility.AssertMeshIsValid(mesh);
+            Assert.That(previousEdgeCount, Is.LessThan(mesh.edgeCount));
         }
         catch (System.Exception e)
         {

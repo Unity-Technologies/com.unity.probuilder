@@ -1,4 +1,6 @@
-﻿using UObject = UnityEngine.Object;
+﻿using UnityEditor;
+using UnityEngine.Rendering;
+using UObject = UnityEngine.Object;
 
 namespace UnityEngine.ProBuilder
 {
@@ -36,13 +38,10 @@ namespace UnityEngine.ProBuilder
                 renderCam.enabled = false;
                 renderCam.clearFlags = CameraClearFlags.SolidColor;
                 renderCam.backgroundColor = Color.white;
-#if UNITY_5_6_OR_NEWER
                 renderCam.allowHDR = false;
                 renderCam.allowMSAA = false;
                 renderCam.forceIntoRenderTexture = true;
-#endif
 
-#if UNITY_2017_1_OR_NEWER
                 RenderTextureDescriptor descriptor = new RenderTextureDescriptor()
                 {
                     width = _width,
@@ -58,17 +57,8 @@ namespace UnityEngine.ProBuilder
                     volumeDepth = 1,
                     msaaSamples = 1
                 };
+              
                 RenderTexture rt = RenderTexture.GetTemporary(descriptor);
-#else
-            RenderTexture rt = RenderTexture.GetTemporary(
-                    _width,
-                    _height,
-                    16,
-                    renderTextureFormat,
-                    RenderTextureReadWrite.Linear,
-                    1);
-#endif
-
                 RenderTexture prev = RenderTexture.active;
                 renderCam.targetTexture = rt;
                 RenderTexture.active = rt;
@@ -91,7 +81,16 @@ namespace UnityEngine.ProBuilder
                 RenderTexture.active.width));
                 */
 #endif
+
+                // URP does not support replacement shaders or custom passes from code, so for now it is necessary to
+                // force the pipeline to built-in when rendering. In editor it may be possible to use Handles.DrawCamera
+                // to avoid disposing and re-assigning the pipeline, as the RenderEditorCamera function has some logic
+                // that switches rendering path if replacement shaders are in use, but I wasn't able to get that
+                // approach to work without also requiring that the drawing happen during a repaint event.
+                var currentRenderPipeline = GraphicsSettings.renderPipelineAsset;
+                GraphicsSettings.renderPipelineAsset = null;
                 renderCam.RenderWithShader(shader, tag);
+                GraphicsSettings.renderPipelineAsset = currentRenderPipeline;
 
                 Texture2D img = new Texture2D(_width, _height, textureFormat, false, false);
                 img.ReadPixels(new Rect(0, 0, _width, _height), 0, 0);
