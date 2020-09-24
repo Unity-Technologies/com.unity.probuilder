@@ -25,7 +25,7 @@ static class ConnectElementsTests
     }
 
     [Test]
-    public static void ConnectEdges_CreatesValidGeometry([ValueSource("shapeTypes")] ShapeType shapeType)
+    public static void ConnectEdges_CreatesValidGeometry([ValueSource("shapeTypes")] Type shapeType)
     {
         var mesh = ShapeGenerator.CreateShape(shapeType);
 
