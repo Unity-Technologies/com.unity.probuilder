@@ -12,11 +12,7 @@ namespace UnityEditor.ProBuilder
     {
         static EntityVisibility()
         {
-#if UNITY_2017_2_OR_NEWER
             EditorApplication.playModeStateChanged += x => { OnPlayModeStateChanged(); };
-#else
-            EditorApplication.playmodeStateChanged += OnPlayModeStateChanged;
-#endif
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 

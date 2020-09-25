@@ -7,7 +7,8 @@ namespace UnityEditor.ProBuilder
         Vector2 m_Scale;
         float m_UniformScale;
 
-        protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
+
+        protected override void DoToolGUI()
         {
             if (!isEditing)
             {
@@ -18,11 +19,11 @@ namespace UnityEditor.ProBuilder
 
             EditorGUI.BeginChangeCheck();
 
-            var size = HandleUtility.GetHandleSize(handlePosition);
+            var size = HandleUtility.GetHandleSize(m_HandlePosition);
 
             EditorHandleUtility.PushMatrix();
 
-            Handles.matrix = Matrix4x4.TRS(handlePosition, handleRotation, Vector3.one);
+            Handles.matrix = Matrix4x4.TRS(m_HandlePosition, m_HandleRotation, Vector3.one);
 
             var snap = relativeSnapEnabled
                 ? Vector3.one * ProBuilderSnapSettings.incrementalSnapScaleValue

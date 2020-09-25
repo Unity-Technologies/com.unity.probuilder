@@ -7,9 +7,7 @@ using UnityEditor.ProBuilder.Actions;
 using UnityEngine.Rendering;
 using UnityEditor.SettingsManagement;
 using UnityEditor.ShortcutManagement;
-#if !UNITY_2019_1_OR_NEWER
 using System.Reflection;
-#endif
 using UnityObject = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder

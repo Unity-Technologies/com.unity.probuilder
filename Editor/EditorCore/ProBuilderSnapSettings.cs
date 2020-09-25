@@ -42,7 +42,7 @@ namespace UnityEditor.ProBuilder
 #if UNITY_2019_3_OR_NEWER
                 if (EditorSnapSettings.incrementalSnapActive)
                     return SnapMode.Relative;
-                if (ProGridsInterface.IsActive() || EditorSnapSettings.gridSnapEnabled)
+                if (ProGridsInterface.SnapEnabled() || EditorSnapSettings.gridSnapEnabled)
                     return SnapMode.World;
                 return SnapMode.None;
 #else
