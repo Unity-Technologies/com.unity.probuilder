@@ -5,6 +5,7 @@ Shader "Hidden/ProBuilder/FaceHighlight"
         _Color ("Color Tint", Color) = (1,1,1,1)
         _Dither ("Dithering", float) = 0
         _HandleZTest ("_HandleZTest", Int) = 8
+        _HandleZWrite("_HandleZWrite", Int) = 0
     }
 
     SubShader
@@ -12,7 +13,7 @@ Shader "Hidden/ProBuilder/FaceHighlight"
         Tags { "IgnoreProjector"="True" "Queue"="Transparent" }
         Lighting Off
         ZTest [_HandleZTest]
-        ZWrite On
+        ZWrite [_HandleZWrite]
         Cull Off
         Blend SrcAlpha OneMinusSrcAlpha
 

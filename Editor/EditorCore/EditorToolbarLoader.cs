@@ -50,6 +50,7 @@ namespace UnityEditor.ProBuilder
                 new Actions.ToggleHandleOrientation(),
                 new Actions.ToggleDragSelectionMode(),
                 new Actions.ToggleDragRectMode(),
+                new Actions.ToggleXRay(),
 
                 // selection
                 new Actions.GrowSelection(),

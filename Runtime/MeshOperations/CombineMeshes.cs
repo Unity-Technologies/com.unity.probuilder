@@ -50,7 +50,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 return null;
 
             var vertices = new List<Vertex>(meshTarget.GetVertices());
-            var faces = new List<Face>(meshTarget.facesInternal);            
+            var faces = new List<Face>(meshTarget.facesInternal);
             var sharedVertices = new List<SharedVertex>(meshTarget.sharedVertices);
             var sharedTextures = new List<SharedVertex>(meshTarget.sharedTextures);
             int offset = meshTarget.vertexCount;
@@ -97,7 +97,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             meshTarget.renderer.sharedMaterials = materialMap.ToArray();
             meshTarget.ToMesh();
             meshTarget.Refresh();
-            UVEditing.SetAutoAndAlignUnwrapParamsToUVs(meshTarget, autoUvFaces);
+            UvUnwrapping.SetAutoAndAlignUnwrapParamsToUVs(meshTarget, autoUvFaces);
 
             MeshValidation.EnsureMeshIsValid(meshTarget, out int removedVertices);
 
@@ -154,8 +154,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 m.renderer.sharedMaterials = materialMap.ToArray();
                 InternalMeshUtility.FilterUnusedSubmeshIndexes(m);
                 m.SetPivot(pivot);
-                UVEditing.SetAutoAndAlignUnwrapParamsToUVs(m, autoUvFaces);
-
+                UvUnwrapping.SetAutoAndAlignUnwrapParamsToUVs(m, autoUvFaces);
             }
 
             return res;

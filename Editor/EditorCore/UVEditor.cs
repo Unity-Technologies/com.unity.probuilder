@@ -671,10 +671,10 @@ namespace UnityEditor.ProBuilder
                 //We are going to paste auto settings therefore target face
                 //should be in auto prior to paste
                 destination[0] = targetFace;
-                UVEditing.SetAutoUV(pb, destination, true);
+                UvUnwrapping.SetAutoUV(pb, destination, true);
             }
 
-            targetFace.uv = UVEditing.GetAutoUnwrapSettings(firstObj, sourceFace);
+            targetFace.uv = UvUnwrapping.GetAutoUnwrapSettings(firstObj, sourceFace);
             destination[0] = targetFace;
             targetFace.submeshIndex = sourceFace.submeshIndex;
             EditorUtility.ShowNotification("Copy UV Settings");
@@ -685,7 +685,7 @@ namespace UnityEditor.ProBuilder
                 //Ensure UV mode of target face matches source face UV mode.
                 destination[0] = targetFace;
                 pb.ToMesh();
-                UVEditing.SetAutoUV(pb, destination, false);
+                UvUnwrapping.SetAutoUV(pb, destination, false);
                 pb.Refresh();
             }
             pb.Optimize();
@@ -2583,7 +2583,12 @@ namespace UnityEditor.ProBuilder
             }
 
             GUI.DragWindow(ActionWindowDragRect);
+
             actionWindowRect = UI.EditorGUILayout.DoResizeHandle(actionWindowRect, minimumInspectorWidth, minimumInspectorHeight);
+            actionWindowRect.x = Mathf.Clamp(actionWindowRect.x, 0, position.width - minimumInspectorWidth);
+            actionWindowRect.y = Mathf.Clamp(actionWindowRect.y, 0, position.height - minimumInspectorHeight);
+            actionWindowRect.width = Mathf.Clamp(actionWindowRect.width, minimumInspectorWidth, position.width - actionWindowRect.x - 8);
+            actionWindowRect.height = Mathf.Clamp(actionWindowRect.height, minimumInspectorHeight, position.height - actionWindowRect.y - 8);
         }
 
         bool modifyingUVs_AutoPanel = false;
@@ -3059,7 +3064,7 @@ namespace UnityEditor.ProBuilder
             foreach (ProBuilderMesh pb in selection)
             {
                 pb.ToMesh();
-                UVEditing.SetAutoUV(pb, pb.selectedFacesInternal, !isManual);
+                UvUnwrapping.SetAutoUV(pb, pb.selectedFacesInternal, !isManual);
                 pb.Refresh();
                 pb.Optimize();
             }
