@@ -641,6 +641,18 @@ namespace UnityEngine.ProBuilder
             set { m_Textures0 = value; }
         }
 
+		internal List<Vector4> textures2Internal
+        {
+            get { return m_Textures2; }
+            set { m_Textures2 = value; }
+        }
+
+		internal List<Vector4> textures3Internal
+        {
+            get { return m_Textures3; }
+            set { m_Textures3 = value; }
+        }
+
         /// <value>
         /// The UV0 channel. Null if not present.
         /// </value>
