@@ -29,12 +29,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1276085] Fixed `UV Actions` window allowing resize events outside of the containing window.
 - [case: 1276074] Fixed a case where `Fit UVs` action could result in `NaN` values.
 - Fixed rect selection not working with Universal Render Pipeline.
+- [case: 1283107] Fixed `Bevel` settings slider disappearing when values exceed 1.
+- [case: 1283103] Fixed typo in `Center Pivot` tooltip.
 
 ### Changes
 
-- Modified VertexManipulationTool to inherit from EditorTool 
-- Adding a new MenuAction in Samples to merge faces from edges selection 
-- Removing preprocessor directives for Unity 2018 and below for Probuilder 5.0  
+- Modified VertexManipulationTool to inherit from EditorTool
+- Adding a new MenuAction in Samples to merge faces from edges selection
+- Removing preprocessor directives for Unity 2018 and below for Probuilder 5.0
 - Modified the AppendVerticesToEdge to handle edges split for non-convex faces.
 
 ## [4.4.0] - 2020-08-12
