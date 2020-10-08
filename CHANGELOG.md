@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed rect selection not working with Universal Render Pipeline.
 - [case: 1283107] Fixed `Bevel` settings slider disappearing when values exceed 1.
 - [case: 1283103] Fixed typo in `Center Pivot` tooltip.
+- [case: 1283067] Fixed `Export Prefab` throwing an error when overwriting the root asset of an exported prefab instance.
 
 ### Changes
 
