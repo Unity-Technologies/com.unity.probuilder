@@ -1,5 +1,6 @@
 // #define GENERATE_DESATURATED_ICONS
 
+using System;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
@@ -217,9 +218,11 @@ namespace UnityEditor.ProBuilder
         {
             get
             {
+                //Disable the menu action whenever a custom EditorTool is enabled
                 return ProBuilderEditor.instance != null
-                    && ProBuilderEditor.selectMode.ContainsFlag(validSelectModes)
-                    && !ProBuilderEditor.selectMode.ContainsFlag(SelectMode.InputTool);
+                       && ProBuilderEditor.selectMode.ContainsFlag(validSelectModes)
+                       && !ProBuilderEditor.selectMode.ContainsFlag(SelectMode.InputTool)
+                       && Tools.current != Tool.Custom;
             }
         }
 
@@ -279,7 +282,7 @@ namespace UnityEditor.ProBuilder
         /// <param name="optionsRect"></param>
         /// <param name="layoutOptions"></param>
         /// <returns></returns>
-        internal bool DoButton(bool isHorizontal, bool showOptions, ref Rect optionsRect, params GUILayoutOption[] layoutOptions)
+        internal virtual bool DoButton(bool isHorizontal, bool showOptions, ref Rect optionsRect, params GUILayoutOption[] layoutOptions)
         {
             bool wasEnabled = GUI.enabled;
             bool buttonEnabled = (menuActionState & MenuActionState.Enabled) == MenuActionState.Enabled;
@@ -353,7 +356,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        bool DoAltButton(params GUILayoutOption[] options)
+        protected bool DoAltButton(params GUILayoutOption[] options)
         {
             return GUILayout.Button(AltButtonContent, MenuActionStyles.altButtonStyle, options);
         }
