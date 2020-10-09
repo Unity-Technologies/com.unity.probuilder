@@ -11,7 +11,6 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 using EditorToolManager = UnityEditor.EditorTools.EditorToolContext;
 #endif
 
-
 namespace UnityEditor.ProBuilder
 {
     [CustomEditor(typeof(PolyShape))]
@@ -115,6 +114,5 @@ namespace UnityEditor.ProBuilder
              // advantage of the `vertexCountChanged = false` optimization here.
              ProBuilderEditor.Refresh();
          }
-
     }
 }

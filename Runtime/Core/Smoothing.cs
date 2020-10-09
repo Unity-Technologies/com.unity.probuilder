@@ -121,23 +121,29 @@ namespace UnityEngine.ProBuilder
             HashSet<Face> processed = new HashSet<Face>();
             List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh, faces, true);
 
-            foreach (WingedEdge wing in wings)
+            try
             {
-                // Already part of a group
-                if (!processed.Add(wing.face))
-                    continue;
-
-                wing.face.smoothingGroup = group;
-
-                if (FindSoftEdgesRecursive(normals, wing, threshold, processed))
+                foreach (WingedEdge wing in wings)
                 {
-                    used.Add(group);
-                    group = GetNextUnusedSmoothingGroup(group, used);
+                    // Already part of a group
+                    if (!processed.Add(wing.face))
+                        continue;
+
+                    wing.face.smoothingGroup = group;
+                    if(FindSoftEdgesRecursive(normals, wing, threshold, processed))
+                    {
+                        used.Add(group);
+                        group = GetNextUnusedSmoothingGroup(group, used);
+                    }
+                    else
+                    {
+                        wing.face.smoothingGroup = Smoothing.smoothingGroupNone;
+                    }
                 }
-                else
-                {
-                    wing.face.smoothingGroup = Smoothing.smoothingGroupNone;
-                }
+            }
+            catch
+            {
+                Debug.LogWarning("Smoothing has been aborted: Too many edges in the analyzed mesh");
             }
         }
 

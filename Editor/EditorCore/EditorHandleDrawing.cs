@@ -3,11 +3,11 @@ using UnityEngine;
 using UObject = UnityEngine.Object;
 using UnityEngine.ProBuilder;
 using System.Collections.Generic;
+using UnityEditor.ProBuilder.Actions;
 using UnityEngine.Rendering;
 using UnityEditor.SettingsManagement;
-#if !UNITY_2019_1_OR_NEWER
+using UnityEditor.ShortcutManagement;
 using System.Reflection;
-#endif
 using UnityObject = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder
@@ -16,6 +16,7 @@ namespace UnityEditor.ProBuilder
     {
         const HideFlags k_ResourceHideFlags = HideFlags.HideAndDontSave;
         const float k_MinLineWidthForGeometryShader = .01f;
+        static readonly Color k_OccludedTint = new Color(.75f, .75f, .75f, 1f);
 
         static bool s_Initialized;
 
@@ -93,12 +94,19 @@ namespace UnityEditor.ProBuilder
         static Pref<float> s_VertexPointSize = new Pref<float>("graphics.vertexPointSize", 3f, SettingsScope.User);
 
         [UserSetting]
+        static Pref<bool> s_XRayView = new Pref<bool>("graphics.xRayView", false, SettingsScope.User);
+
+        [Obsolete]
         static Pref<bool> s_DepthTestHandles = new Pref<bool>("graphics.handleZTest", true, SettingsScope.User);
+
+        static readonly GUIContent k_XRaySetting = new GUIContent("Selection X-Ray", "When enabled, selected mesh elements that are occluded by geometry will be rendered with a faded appearance.");
 
         [UserSettingBlock("Graphics")]
         static void HandleColorPreferences(string searchContext)
         {
             EditorGUI.BeginChangeCheck();
+
+            s_XRayView.value = SettingsGUILayout.SettingsToggle(k_XRaySetting, s_XRayView, searchContext);
 
             s_UseUnityColors.value = SettingsGUILayout.SettingsToggle("Use Unity Colors", s_UseUnityColors, searchContext);
 
@@ -117,7 +125,6 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            s_DepthTestHandles.value = SettingsGUILayout.SettingsToggle("Depth Test", s_DepthTestHandles, searchContext);
             s_VertexPointSize.value = SettingsGUILayout.SettingsSlider("Vertex Size", s_VertexPointSize, 1f, 10f, searchContext);
             s_EdgeLineSize.value = SettingsGUILayout.SettingsSlider("Line Size", s_EdgeLineSize, 0f, 10f, searchContext);
             s_WireframeLineSize.value = SettingsGUILayout.SettingsSlider("Wireframe Size", s_WireframeLineSize, 0f, 10f, searchContext);
@@ -129,6 +136,12 @@ namespace UnityEditor.ProBuilder
         internal static float dotCapSize
         {
             get { return s_VertexPointSize * .0125f; }
+        }
+
+        internal static bool xRay
+        {
+            get => s_XRayView;
+            set => s_XRayView.value = value;
         }
 
         static void Init()
@@ -278,22 +291,25 @@ namespace UnityEditor.ProBuilder
                 {
                     // When in Edge mode, use the same material for wireframe
                     Render(wireHandles, m_ForceEdgeLinesGL ? glWireMaterial : edgeMaterial, edgeUnselectedColor, CompareFunction.LessEqual, false);
-                    Render(selectedEdgeHandles, m_ForceEdgeLinesGL ? glWireMaterial : edgeMaterial, edgeSelectedColor, s_DepthTestHandles ? CompareFunction.LessEqual : CompareFunction.Always, true);
+                    if(xRay) Render(m_SelectedEdgeHandles, m_ForceEdgeLinesGL ? m_GlWireMaterial : m_EdgeMaterial, edgeSelectedColor * k_OccludedTint, CompareFunction.Greater);
+                    Render(m_SelectedEdgeHandles, m_ForceEdgeLinesGL ? m_GlWireMaterial : m_EdgeMaterial, edgeSelectedColor, CompareFunction.LessEqual);
                     break;
                 }
                 case SelectMode.Face:
                 case SelectMode.TextureFace:
                 {
                     Render(wireHandles, m_ForceWireframeLinesGL ? glWireMaterial : wireMaterial, wireframeColor, CompareFunction.LessEqual, false);
-                    Render(selectedFaceHandles, faceMaterial, faceSelectedColor, s_DepthTestHandles);
+                    if(xRay) Render(m_SelectedFaceHandles, m_FaceMaterial, faceSelectedColor * k_OccludedTint, CompareFunction.Greater);
+                    Render(m_SelectedFaceHandles, m_FaceMaterial, faceSelectedColor, CompareFunction.LessEqual);
                     break;
                 }
                 case SelectMode.Vertex:
                 case SelectMode.TextureVertex:
                 {
-                    Render(wireHandles, m_ForceWireframeLinesGL ? glWireMaterial : wireMaterial, wireframeColor, CompareFunction.LessEqual, false);
-                    Render(vertexHandles, vertMaterial, vertexUnselectedColor, CompareFunction.LessEqual, false);
-                    Render(selectedVertexHandles, vertMaterial, vertexSelectedColor, s_DepthTestHandles);
+                    Render(m_WireHandles, m_ForceWireframeLinesGL ? m_GlWireMaterial : m_WireMaterial, wireframeColor, CompareFunction.LessEqual, false);
+                    Render(m_VertexHandles, m_VertMaterial, vertexUnselectedColor, CompareFunction.LessEqual, false);
+                    if(xRay) Render(m_SelectedVertexHandles, m_VertMaterial, vertexSelectedColor * k_OccludedTint, CompareFunction.Greater, false);
+                    Render(m_SelectedVertexHandles, m_VertMaterial, vertexSelectedColor, CompareFunction.LessEqual, false);
                     break;
                 }
                 default:
@@ -304,12 +320,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        static void Render(Dictionary<ProBuilderMesh, MeshHandle> handles, Material material, Color color, bool depthTest = true)
-        {
-            Render(handles, material, color, depthTest ? CompareFunction.LessEqual : CompareFunction.Always, true);
-        }
-
-        static void Render(Dictionary<ProBuilderMesh, MeshHandle> handles, Material material, Color color, CompareFunction func, bool zWrite)
+        static void Render(Dictionary<ProBuilderMesh, MeshHandle> handles, Material material, Color color, CompareFunction func, bool zWrite = false)
         {
             material.SetInt("_HandleZTest", (int) func);
             material.SetInt("_HandleZWrite", zWrite ? 1 : 0);

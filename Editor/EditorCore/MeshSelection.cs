@@ -2,6 +2,9 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+#if UNITY_2020_2_OR_NEWER
+using UnityEditor.EditorTools;
+#endif
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
@@ -252,7 +255,14 @@ namespace UnityEditor.ProBuilder
             s_SelectedElementGroupsDirty = false;
             s_ElementSelection.Clear();
 
+#if UNITY_2020_2_OR_NEWER
+            VertexManipulationTool activeTool = null;
+            var editorTool = EditorToolManager.activeTool;
+            if(editorTool is VertexManipulationTool)
+                activeTool = (VertexManipulationTool)editorTool;
+#else
             var activeTool = ProBuilderEditor.activeTool;
+#endif
 
             if (activeTool != null)
             {

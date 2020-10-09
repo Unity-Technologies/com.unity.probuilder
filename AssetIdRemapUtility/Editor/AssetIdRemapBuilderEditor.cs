@@ -1,4 +1,4 @@
-#if PROBUILDER_DEBUG && UNITY_2018_2_OR_NEWER
+#if PROBUILDER_DEBUG
 
 using System;
 using System.Collections.Generic;

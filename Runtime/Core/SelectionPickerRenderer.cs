@@ -120,13 +120,8 @@ namespace UnityEngine.ProBuilder
 
         static RenderTextureFormat[] s_PreferredFormats = new RenderTextureFormat[]
         {
-#if UNITY_5_6
-            RenderTextureFormat.ARGBFloat,
-            RenderTextureFormat.ARGB32,
-#else
             RenderTextureFormat.ARGB32,
             RenderTextureFormat.ARGBFloat,
-#endif
         };
 
         /// <summary>

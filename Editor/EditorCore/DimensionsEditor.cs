@@ -1,7 +1,3 @@
-#if UNITY_2019_1_OR_NEWER
-#define SHORTCUT_MANAGER
-#endif
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +9,8 @@ using Object = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder
 {
-    sealed class DimensionsEditor : ScriptableObject
+    [FilePath("Library/Probuilder/DimensionsOverlay", FilePathAttribute.Location.ProjectFolder)]
+    sealed class DimensionsEditor : ScriptableSingleton<DimensionsEditor>
     {
         struct Trs : IEquatable<Trs>
         {
@@ -54,8 +51,7 @@ namespace UnityEditor.ProBuilder
                 }
             }
         }
-
-        static DimensionsEditor s_Instance;
+        
         bool m_HasBounds;
         Bounds m_Bounds;
         Dictionary<Transform, Trs> m_Selected = new Dictionary<Transform, Trs>();
@@ -63,29 +59,49 @@ namespace UnityEditor.ProBuilder
         // function know that Renderer.bounds is not to be trusted.
         static bool s_RecalculateMeshBounds;
 
+        [SerializeField]
+        bool m_Visible;
+
+        public bool visible
+        {
+            get => m_Visible;
+            set
+            {
+                if (m_Visible == value)
+                    return;
+
+                m_Visible = value;
+                if (m_Visible)
+                    OnShowed();
+                else
+                    OnHid();
+
+                Save(true);
+            }
+        }
+
         [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Dimensions Overlay/Hide", true, PreferenceKeys.menuEditor + 30)]
         static bool HideVerify()
         {
-            return s_Instance != null;
+            return instance.visible;
         }
 
         [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Dimensions Overlay/Hide", false, PreferenceKeys.menuEditor + 30)]
         static void Hide()
         {
-            if (s_Instance != null)
-                Object.DestroyImmediate(s_Instance);
+            instance.visible = false;
         }
 
         [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Dimensions Overlay/Show", true, PreferenceKeys.menuEditor + 30)]
-        static bool InitVerify()
+        static bool ShowVerify()
         {
-            return s_Instance == null;
+            return !instance.visible;
         }
 
         [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Dimensions Overlay/Show", false, PreferenceKeys.menuEditor + 30)]
-        static void Init()
+        static void Show()
         {
-            CreateInstance<DimensionsEditor>();
+            instance.visible = true;
         }
 
         enum BoundsDisplay
@@ -99,12 +115,11 @@ namespace UnityEditor.ProBuilder
             "of the selected mesh elements (vertices, faces, edges).")]
         static Pref<BoundsDisplay> s_BoundsDisplay = new Pref<BoundsDisplay>("s_BoundsDisplay", BoundsDisplay.Object, SettingsScope.User);
 
-#if SHORTCUT_MANAGER
         [Shortcut("ProBuilder/Dimensions Overlay/Toggle Overlay", typeof(SceneView))]
         static void ToggleUseElementBounds()
         {
             // toggle between { Off, Visible Object, Visible Selection }
-            if (s_Instance != null)
+            if (instance.visible)
             {
                 var display = s_BoundsDisplay.value;
 
@@ -113,18 +128,18 @@ namespace UnityEditor.ProBuilder
                     s_BoundsDisplay.SetValue(BoundsDisplay.Element, true);
                 // Visible Selection -> Off
                 else
-                    DestroyImmediate(s_Instance);
+                    instance.visible = false;
             }
             else
             {
                 // Off -> Visible Object
                 s_BoundsDisplay.SetValue(BoundsDisplay.Object, true);
-                Init();
+                Show();
             }
 
-            if (s_Instance != null)
+            if (instance.visible)
             {
-                s_Instance.RebuildBounds();
+                instance.RebuildBounds();
                 EditorUtility.ShowNotification("Dimensions Overlay\n" + s_BoundsDisplay.value.ToString());
             }
             else
@@ -134,20 +149,27 @@ namespace UnityEditor.ProBuilder
 
             SceneView.RepaintAll();
         }
-#endif
 
         void OnEnable()
         {
-            s_Instance = this;
             m_DisplayMesh = new Mesh();
             m_DisplayMaterial = new Material(Shader.Find("ProBuilder/UnlitVertexColor"));
             m_DisplayMesh.hideFlags = HideFlags.DontSave;
             m_DisplayMaterial.hideFlags = HideFlags.DontSave;
-#if UNITY_2019_1_OR_NEWER
+            
+            if (m_Visible)
+                EditorApplication.delayCall += OnShowed; //Rebuild bounds on the first frame after entering play mode returns no bounds (the selection isn't valid yet)
+        }
+
+        void OnDisable()
+        {
+            DestroyImmediate(m_DisplayMesh);
+            DestroyImmediate(m_DisplayMaterial);
+        }
+
+        void OnShowed()
+        {
             SceneView.duringSceneGui += OnSceneGUI;
-#else
-            SceneView.onSceneGUIDelegate += OnSceneGUI;
-#endif
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged += OnElementSelectionChanged;
             ProBuilderEditor.selectionUpdated += OnEditingMeshSelection;
@@ -157,21 +179,14 @@ namespace UnityEditor.ProBuilder
             RebuildBounds();
         }
 
-        void OnDisable()
+        void OnHid()
         {
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged -= OnElementSelectionChanged;
             ProBuilderEditor.selectionUpdated -= OnEditingMeshSelection;
             VertexManipulationTool.beforeMeshModification -= OnBeginMeshModification;
             VertexManipulationTool.afterMeshModification -= OnFinishMeshModification;
-
-#if UNITY_2019_1_OR_NEWER
             SceneView.duringSceneGui -= OnSceneGUI;
-#else
-            SceneView.onSceneGUIDelegate -= OnSceneGUI;
-#endif
-            DestroyImmediate(m_DisplayMesh);
-            DestroyImmediate(m_DisplayMaterial);
         }
 
         static void OnBeginMeshModification(IEnumerable<ProBuilderMesh> meshes)
@@ -334,11 +349,7 @@ namespace UnityEditor.ProBuilder
 
         void OnSceneGUI(SceneView scnview)
         {
-#if UNITY_2019_1_OR_NEWER
             if (Selection.count > 0 && m_HasBounds)
-#else
-            if(Selection.objects.Length > 0 && m_HasBounds)
-#endif
             {
                 foreach (var m in m_Selected)
                 {

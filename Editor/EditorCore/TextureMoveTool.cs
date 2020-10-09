@@ -1,8 +1,6 @@
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
@@ -27,7 +25,7 @@ namespace UnityEditor.ProBuilder
                 var faces = mesh.faces;
 
                 m_FaceAndScale = mesh.selectedFaceIndexes.Select(x =>
-                    new SimpleTuple<Face, Vector2>(faces[x], UVEditing.GetUVTransform(mesh, faces[x]).scale))
+                    new SimpleTuple<Face, Vector2>(faces[x], UvUnwrapping.GetUVTransform(mesh, faces[x]).scale))
                         .ToArray();
             }
         }
@@ -37,14 +35,14 @@ namespace UnityEditor.ProBuilder
             return new TranslateTextureSelection(mesh, pivot);
         }
 
-        protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
+        protected override void DoToolGUI()
         {
             if (!isEditing)
                 m_Position = Vector3.zero;
 
             EditorHandleUtility.PushMatrix();
 
-            Handles.matrix = Matrix4x4.TRS(handlePosition, handleRotation, Vector3.one);
+            Handles.matrix = Matrix4x4.TRS(m_HandlePosition, m_HandleRotation, Vector3.one);
 
             EditorGUI.BeginChangeCheck();
 

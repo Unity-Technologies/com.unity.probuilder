@@ -15,7 +15,7 @@ Shader "Hidden/ProBuilder/VertexPickerHDRP"
 
         Lighting Off
         ZTest LEqual
-        ZWrite On
+        ZWrite Off
         Cull Off
         Blend Off
         Offset -1, -1
