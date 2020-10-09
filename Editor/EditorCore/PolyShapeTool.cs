@@ -1,22 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using UnityEditor.EditorTools;
-using UnityEditor.Graphs;
-using UnityEditor.ProBuilder.UI;
+﻿using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using Math = UnityEngine.ProBuilder.Math;
 using UObject = UnityEngine.Object;
-
-#if UNITY_2020_2_OR_NEWER
-using ToolManager = UnityEditor.EditorTools.ToolManager;
-#else
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#endif
-
 
 namespace UnityEditor.ProBuilder
 {
@@ -92,21 +79,6 @@ namespace UnityEditor.ProBuilder
                 return m_Polygon;
             }
         }
-
-        /// <summary>
-        /// Instantiate Line Materials, all are based on the same base Material with different colors
-        /// </summary>
-        /// <param name="baseColor">base color to apply to the line</param>
-        /// <param name="highlightColor">highlight color to apply to the line</param>
-        /// <returns></returns>
-        static Material CreateLineMaterial(Color baseColor, Color highlightColor)
-        {
-            Material mat = new Material(Shader.Find("Hidden/ProBuilder/ScrollHighlight"));
-            mat.SetColor("_Base", baseColor);
-            mat.SetColor("_Highlight", highlightColor);
-            return mat;
-        }
-
 
         void OnEnable()
         {
@@ -299,9 +271,8 @@ namespace UnityEditor.ProBuilder
                     Vector3 origin = polygon.transform.TransformPoint(Math.Average(polygon.m_Points));
                     Ray r = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
                     Vector3 p = Math.GetNearestPointRayRay(origin, up, r.origin, r.direction);
-                    s_HeightMouseOffset = polygon.extrude -
-                                          ProGridsInterface.ProGridsSnap(
-                                              Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p - origin, up)));
+                    float extrude = Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p - origin, up));
+                    s_HeightMouseOffset = polygon.extrude - EditorSnapping.MoveSnap(extrude);
                 }
 
                 RebuildPolyShapeMesh(polygon);
@@ -356,7 +327,7 @@ namespace UnityEditor.ProBuilder
             if (polygon.isOnGrid)
             {
                 Vector3 snapMask = ProBuilderSnapping.GetSnappingMaskBasedOnNormalVector(plane.normal);
-                return trs.InverseTransformPoint(ProGridsInterface.ProGridsSnap(point, snapMask));
+                return trs.InverseTransformPoint(ProBuilderSnapping.Snap(point, Vector3.Scale(EditorSnapping.activeMoveSnapValue, snapMask)));
             }
 
             return trs.InverseTransformPoint(point);
@@ -414,7 +385,13 @@ namespace UnityEditor.ProBuilder
 
                         if (polygon.m_Points.Count < 1)
                         {
-                            polygon.transform.position = m_Polygon.isOnGrid ? ProGridsInterface.ProGridsSnap(hit) : hit;
+                            // this monstrosity exists so that grid and incremental snap work when possible, and
+                            // incremental is enabled when grid is not available.
+                            polygon.transform.position = m_Polygon.isOnGrid
+                                ? EditorSnapping.MoveSnap(hit)
+                                : EditorSnapping.snapMode == SnapMode.Relative
+                                    ? ProBuilderSnapping.Snap(hit, EditorSnapping.incrementalSnapMoveValue)
+                                    : hit;
 
                             Vector3 cameraFacingPlaneNormal = plane.normal;
                             if (Vector3.Dot(cameraFacingPlaneNormal, SceneView.lastActiveSceneView.camera.transform.forward) > 0f)
@@ -581,7 +558,7 @@ namespace UnityEditor.ProBuilder
                 if (evt.type == EventType.MouseMove && !sceneInUse)
                 {
                     Vector3 p = Math.GetNearestPointRayRay(origin, up, r.origin, r.direction);
-                    extrude = ProGridsInterface.ProGridsSnap(s_HeightMouseOffset + Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p - origin, up)));
+                    extrude = EditorSnapping.MoveSnap(s_HeightMouseOffset + Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p - origin, up)));
                 }
 
                 Vector3 extrudePoint = origin + (extrude * up);
@@ -673,7 +650,7 @@ namespace UnityEditor.ProBuilder
                     if (EditorGUI.EndChangeCheck())
                     {
                         UndoUtility.RecordObject(polygon, "Set Polygon Shape Height");
-                        polygon.extrude = ProGridsInterface.ProGridsSnap(Vector3.Distance(extrude, center) * Mathf.Sign(Vector3.Dot(up, extrude - center)));
+                        polygon.extrude = EditorSnapping.MoveSnap(Vector3.Distance(extrude, center) * Mathf.Sign(Vector3.Dot(up, extrude - center)));
                         OnBeginVertexMovement();
                         RebuildPolyShapeMesh(false);
                     }
