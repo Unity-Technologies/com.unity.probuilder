@@ -509,9 +509,12 @@ namespace UnityEditor.ProBuilder
             if (Math.IsCardinalAxis(planeNormal))
             {
                 const float epsilon = .00001f;
-                float snapVal = Mathf.Abs(ProGridsInterface.SnapValue());
-                float rem = Mathf.Abs(snapVal - (Vector3.Scale(planeNormal, planeCenter).magnitude % snapVal));
-                polygon.isOnGrid = (rem < epsilon || Mathf.Abs(snapVal - rem) < epsilon);
+                bool offGrid = false;
+                Vector3 snapVal = EditorSnapping.activeMoveSnapValue;
+                Vector3 center = Vector3.Scale(ProBuilderSnapping.GetSnappingMaskBasedOnNormalVector(planeNormal), planeCenter);
+                for (int i = 0; i < 3; i++)
+                    offGrid |= Mathf.Abs(snapVal[i] % center[i]) > epsilon;
+                polygon.isOnGrid = !offGrid;
             }
             else
             {
