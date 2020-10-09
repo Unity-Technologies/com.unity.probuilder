@@ -25,9 +25,7 @@ namespace UnityEditor.ProBuilder
 
             Handles.matrix = Matrix4x4.TRS(m_HandlePosition, m_HandleRotation, Vector3.one);
 
-            var snap = relativeSnapEnabled
-                ? Vector3.one * ProBuilderSnapSettings.incrementalSnapScaleValue
-                : worldSnapEnabled ? snapValue : Vector3.zero;
+            var snap = EditorSnapping.activeScaleSnapValue;
 
             Handles.color = Color.red;
             m_Scale.x = Handles.ScaleSlider(m_Scale.x, Vector3.zero, Vector3.right, Quaternion.identity, size, snap.x);
