@@ -15,7 +15,7 @@ public class AutoUVUnwrapScaleUpgradeTests
     static ProBuilderMesh[] s_Meshes = new ProBuilderMesh[4];
     static int[] s_MeshIndex = new int[] { 0, 1, 2, 3 };
 
-    [SetUp]
+    // [SetUp]
     public void PrepareSceneView()
     {
         s_Scene = EditorSceneManager.OpenScene($"{TestUtility.testsRootDirectory}/Scenes/AutoUVScaleUpgrade.unity");

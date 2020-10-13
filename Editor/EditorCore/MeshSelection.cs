@@ -151,8 +151,8 @@ namespace UnityEditor.ProBuilder
 
         internal static void OnObjectSelectionChanged()
         {
-            // GameObjects returns both parent and child when both are selected, where transforms only returns the top-most
-            // transform.
+            // GameObjects returns both parent and child when both are selected, where transforms only returns the
+            // top-most transform.
             s_UnitySelectionChangeMeshes.Clear();
             s_ElementSelection.Clear();
             s_ActiveMesh = null;
@@ -188,11 +188,14 @@ namespace UnityEditor.ProBuilder
 
             s_TopSelection.Clear();
 
-            foreach (var i in s_UnitySelectionChangeMeshes)
+            foreach (var mesh in s_UnitySelectionChangeMeshes)
             {
                 // don't add prefabs or assets to the mesh selection
-                if(string.IsNullOrEmpty(AssetDatabase.GetAssetPath(i.gameObject)))
-                    s_TopSelection.Add(i);
+                if (string.IsNullOrEmpty(AssetDatabase.GetAssetPath(mesh.gameObject)))
+                {
+                    EditorUtility.SynchronizeWithMeshFilter(mesh);
+                    s_TopSelection.Add(mesh);
+                }
             }
 
             selectedObjectCount = s_TopSelection.Count;
