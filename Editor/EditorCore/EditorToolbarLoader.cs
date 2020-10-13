@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using System.Linq;
 using System.Reflection;
+using UnityEditor.EditorTools;
 
 namespace UnityEditor.ProBuilder
 {
@@ -40,7 +41,7 @@ namespace UnityEditor.ProBuilder
                 // tools
                 new Actions.OpenShapeEditor(),
                 new Actions.NewBezierShape(),
-                new Actions.NewPolyShape(),
+                new Actions.NewPolyShapeToggle(),
                 new Actions.OpenMaterialEditor(),
                 new Actions.OpenUVEditor(),
                 new Actions.OpenVertexColorEditor(),
