@@ -312,6 +312,18 @@ namespace UnityEditor.ProBuilder
         static Pref<bool> s_PreviewDither = new Pref<bool>("smoothing.previewDither", false);
         static Pref<bool> s_ShowSettings = new Pref<bool>("smoothing.showSettings", false);
 
+        static readonly GUIContent g_Settings = EditorGUIUtility.TrTextContent("Settings", "Show the preferences for " +
+            "drawing smoothing group visuals in the Scene View.");
+        static readonly GUIContent g_Preview = EditorGUIUtility.TrTextContent("Preview", "Hide or show the in-scene" +
+            "face overlay for debugging smoothing groups.");
+        static readonly GUIContent g_Normals = EditorGUIUtility.TrTextContent("Normals", "Hide or show vertex nomals" +
+            "in the Scene View.");
+
+        static readonly GUIContent g_PreviewOpacity = EditorGUIUtility.TrTextContent("Preview Opacity", "The opacity" +
+            "that in-scene smoothing group visuals render with.");
+        static readonly GUIContent g_PreviewDither = EditorGUIUtility.TrTextContent("Preview Dither", "Enable this" +
+            "option for a dithering effect on the in-scene smoothing group visuals.");
+
         public static void MenuOpenSmoothGroupEditor()
         {
             GetWindow<SmoothGroupEditor>("Smooth Group Editor");
@@ -397,21 +409,19 @@ namespace UnityEditor.ProBuilder
 
             EditorGUI.BeginChangeCheck();
 
-            s_ShowSettings.value = GUILayout.Toggle(s_ShowSettings.value, "Settings", EditorStyles.toolbarButton);
-            s_ShowPreview.value = GUILayout.Toggle(s_ShowPreview.value, "Preview", EditorStyles.toolbarButton);
-            s_ShowNormals.value = GUILayout.Toggle(s_ShowNormals.value, "Normals", EditorStyles.toolbarButton);
+            s_ShowSettings.value = GUILayout.Toggle(s_ShowSettings.value, g_Settings, EditorStyles.toolbarButton);
+            s_ShowPreview.value = GUILayout.Toggle(s_ShowPreview.value, g_Preview, EditorStyles.toolbarButton);
+            s_ShowNormals.value = GUILayout.Toggle(s_ShowNormals.value, g_Normals, EditorStyles.toolbarButton);
 
             if (s_ShowNormals)
             {
                 EditorGUI.BeginChangeCheck();
-
                 s_NormalsSize.value = GUILayout.HorizontalSlider(
                         s_NormalsSize,
                         .001f,
                         1f,
                         GUILayout.MinWidth(30f),
                         GUILayout.MaxWidth(100f));
-
                 if (EditorGUI.EndChangeCheck())
                 {
                     foreach (var kvp in m_SmoothGroups)
@@ -439,8 +449,8 @@ namespace UnityEditor.ProBuilder
 
                 EditorGUI.BeginChangeCheck();
 
-                s_PreviewOpacity.value = EditorGUILayout.Slider("Preview Opacity", s_PreviewOpacity, .001f, 1f);
-                s_PreviewDither.value = EditorGUILayout.Toggle("Preview Dither", s_PreviewDither);
+                s_PreviewOpacity.value = EditorGUILayout.Slider(g_PreviewOpacity, s_PreviewOpacity, .001f, 1f);
+                s_PreviewDither.value = EditorGUILayout.Toggle(g_PreviewDither, s_PreviewDither);
 
                 if (EditorGUI.EndChangeCheck())
                 {
@@ -592,10 +602,6 @@ namespace UnityEditor.ProBuilder
             }
 
             EditorGUILayout.EndScrollView();
-
-            // This isn't great, but we need hover previews to work
-            if (mouseOverWindow == this)
-                Repaint();
         }
 
         void OnSceneGUI(SceneView view)
