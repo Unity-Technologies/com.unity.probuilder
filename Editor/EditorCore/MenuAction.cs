@@ -226,7 +226,7 @@ namespace UnityEditor.ProBuilder
                 return ProBuilderEditor.instance != null
                        && ProBuilderEditor.selectMode.ContainsFlag(validSelectModes)
                        && !ProBuilderEditor.selectMode.ContainsFlag(SelectMode.InputTool)
-                       && ToolManager.activeToolType.IsAssignableFrom(typeof(VertexManipulationTool));
+                       && typeof(VertexManipulationTool).IsAssignableFrom(ToolManager.activeToolType);
             }
         }
 
