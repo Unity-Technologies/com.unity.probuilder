@@ -70,7 +70,7 @@ namespace UnityEditor.ProBuilder
             if (Tools.pivotMode != unityPivot)
             {
                 s_PivotPoint.SetValue(Tools.pivotMode == PivotMode.Center ? PivotPoint.Center : s_PivotModePivotEquivalent.value, true);
-                MeshSelection.InvalidateElementSelection();
+                MeshSelection.InvalidateCaches();
             }
         }
 
@@ -93,7 +93,7 @@ namespace UnityEditor.ProBuilder
                         ? PivotRotation.Local
                         : PivotRotation.Global;
 
-                MeshSelection.InvalidateElementSelection();
+                MeshSelection.InvalidateCaches();
 
                 var toolbar = typeof(EditorWindow).Assembly.GetType("UnityEditor.Toolbar");
                 var repaint = toolbar.GetMethod("RepaintToolbar", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
@@ -110,7 +110,7 @@ namespace UnityEditor.ProBuilder
                     ? HandleOrientation.World
                     : HandleOrientation.ActiveObject);
                 s_PivotRotation = Tools.pivotRotation;
-                MeshSelection.InvalidateElementSelection();
+                MeshSelection.InvalidateCaches();
                 return;
             }
 
@@ -125,7 +125,7 @@ namespace UnityEditor.ProBuilder
                             ? HandleOrientation.World
                             : HandleOrientation.ActiveObject,
                         true);
-                    MeshSelection.InvalidateElementSelection();
+                    MeshSelection.InvalidateCaches();
                 }
             }
         }

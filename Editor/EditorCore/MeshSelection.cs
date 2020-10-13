@@ -20,7 +20,7 @@ namespace UnityEditor.ProBuilder
         static ProBuilderMesh s_ActiveMesh;
         static List<MeshAndElementSelection> s_ElementSelection = new List<MeshAndElementSelection>();
 
-        static bool s_TotalElementCountCacheIsDirty = true;
+        static bool s_ElementCountsDirty = true;
         static bool s_SelectedElementGroupsDirty = true;
         static bool s_SelectedFacesInEditAreaDirty = true;
         static bool s_SelectionBoundsDirty = true;
@@ -41,6 +41,18 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        static int s_SelectedObjectCount;
+        static int s_SelectedVertexCount;
+        static int s_SelectedSharedVertexCount;
+        static int s_SelectedFaceCount;
+        static int s_SelectedEdgeCount;
+
+        static int s_SelectedFaceCountObjectMax;
+        static int s_SelectedEdgeCountObjectMax;
+        static int s_SelectedVertexCountObjectMax;
+        static int s_SelectedSharedVertexCountObjectMax;
+        static int s_SelectedCoincidentVertexCountMax;
+
         static int s_TotalVertexCount;
         static int s_TotalFaceCount;
         static int s_TotalEdgeCount;
@@ -51,36 +63,36 @@ namespace UnityEditor.ProBuilder
         /// <value>
         /// How many ProBuilderMesh components are currently selected. Corresponds to the length of Top.
         /// </value>
-        public static int selectedObjectCount { get; private set; }
+        public static int selectedObjectCount { get { CacheElementCounts(); return s_SelectedObjectCount; } }
 
         /// <value>
         /// The sum of all selected ProBuilderMesh selected vertex counts.
         /// </value>
         /// <seealso cref="selectedSharedVertexCount"/>
-        public static int selectedVertexCount { get; private set; }
+        public static int selectedVertexCount { get { CacheElementCounts(); return s_SelectedVertexCount; } }
 
         /// <value>
         /// The sum of all selected ProBuilderMesh selected shared vertex counts.
         /// </value>
         /// <seealso cref="selectedVertexCount"/>
-        public static int selectedSharedVertexCount { get; private set; }
+        public static int selectedSharedVertexCount { get { CacheElementCounts(); return s_SelectedSharedVertexCount; } }
 
         /// <value>
         /// The sum of all selected ProBuilderMesh selected face counts.
         /// </value>
-        public static int selectedFaceCount { get; private set; }
+        public static int selectedFaceCount { get { CacheElementCounts(); return s_SelectedFaceCount; } }
 
         /// <value>
         /// The sum of all selected ProBuilderMesh selected edge counts.
         /// </value>
-        public static int selectedEdgeCount { get; private set; }
+        public static int selectedEdgeCount { get { CacheElementCounts(); return s_SelectedEdgeCount; } }
 
         // per-object selected element maxes
-        internal static int selectedFaceCountObjectMax { get; private set; }
-        internal static int selectedEdgeCountObjectMax { get; private set; }
-        internal static int selectedVertexCountObjectMax { get; private set; }
-        internal static int selectedSharedVertexCountObjectMax { get; private set; }
-        internal static int selectedCoincidentVertexCountMax { get; private set; }
+        internal static int selectedFaceCountObjectMax { get { CacheElementCounts(); return s_SelectedFaceCountObjectMax; } }
+        internal static int selectedEdgeCountObjectMax { get { CacheElementCounts(); return s_SelectedEdgeCountObjectMax; } }
+        internal static int selectedVertexCountObjectMax { get { CacheElementCounts(); return s_SelectedVertexCountObjectMax; } }
+        internal static int selectedSharedVertexCountObjectMax { get { CacheElementCounts(); return s_SelectedSharedVertexCountObjectMax; } }
+        internal static int selectedCoincidentVertexCountMax { get { CacheElementCounts(); return s_SelectedCoincidentVertexCountMax; } }
 
         // Faces that need to be refreshed when moving or modifying the actual selection
         internal static Dictionary<ProBuilderMesh, List<Face>> selectedFacesInEditZone
@@ -93,9 +105,12 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        internal static void InvalidateElementSelection()
+        internal static void InvalidateCaches()
         {
+            s_ElementCountsDirty = true;
             s_SelectedElementGroupsDirty = true;
+            s_SelectedFacesInEditAreaDirty = true;
+            s_SelectionBoundsDirty = true;
         }
 
         internal static IEnumerable<MeshAndElementSelection> elementSelection
@@ -112,7 +127,7 @@ namespace UnityEditor.ProBuilder
             Selection.selectionChanged += OnObjectSelectionChanged;
             Undo.undoRedoPerformed += EnsureMeshSelectionIsValid;
             ProBuilderMesh.elementSelectionChanged += ElementSelectionChanged;
-            EditorMeshUtility.meshOptimized += (x, y) => { s_TotalElementCountCacheIsDirty = true; };
+            EditorMeshUtility.meshOptimized += (x, y) => { s_ElementCountsDirty = true; };
             ProBuilderMesh.componentWillBeDestroyed += RemoveMeshFromSelectionInternal;
             ProBuilderMesh.componentHasBeenReset += RefreshSelectionAfterComponentReset;
             OnObjectSelectionChanged();
@@ -195,35 +210,12 @@ namespace UnityEditor.ProBuilder
                     s_TopSelection.Add(i);
             }
 
-            selectedObjectCount = s_TopSelection.Count;
-
-            OnComponentSelectionChanged();
+            InvalidateCaches();
 
             if (objectSelectionChanged != null)
                 objectSelectionChanged();
 
             s_UnitySelectionChangeMeshes.Clear();
-        }
-
-        internal static void OnComponentSelectionChanged()
-        {
-            s_TotalElementCountCacheIsDirty = true;
-            s_SelectedFacesInEditAreaDirty = true;
-            s_SelectedElementGroupsDirty = true;
-            s_SelectionBoundsDirty = true;
-
-            selectedVertexCount = 0;
-            selectedFaceCount = 0;
-            selectedEdgeCount = 0;
-            selectedSharedVertexCount = 0;
-
-            selectedFaceCountObjectMax = 0;
-            selectedVertexCountObjectMax = 0;
-            selectedSharedVertexCountObjectMax = 0;
-            selectedCoincidentVertexCountMax = 0;
-            selectedEdgeCountObjectMax = 0;
-
-            RecalculateSelectedComponentCounts();
         }
 
         /// <summary>
@@ -244,7 +236,7 @@ namespace UnityEditor.ProBuilder
 
         static void ElementSelectionChanged(ProBuilderMesh mesh)
         {
-            InvalidateElementSelection();
+            InvalidateCaches();
         }
 
         internal static void RecalculateSelectedElementGroups()
@@ -271,23 +263,56 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        internal static void RecalculateSelectedComponentCounts()
+        internal static void CacheElementCounts(bool forceRebuild = false)
         {
-            for (var i = 0; i < topInternal.Count; i++)
+            if (!s_ElementCountsDirty && !forceRebuild)
+                return;
+
+            s_SelectedFaceCount = 0;
+            s_SelectedEdgeCount = 0;
+            s_SelectedVertexCount = 0;
+            s_SelectedSharedVertexCount = 0;
+
+            s_SelectedVertexCountObjectMax = 0;
+            s_SelectedSharedVertexCountObjectMax = 0;
+            s_SelectedCoincidentVertexCountMax = 0;
+            s_SelectedFaceCountObjectMax = 0;
+            s_SelectedEdgeCountObjectMax = 0;
+
+            s_TotalVertexCount = 0;
+            s_TotalFaceCount = 0;
+            s_TotalEdgeCount = 0;
+            s_TotalCommonVertexCount = 0;
+            s_TotalVertexCountCompiled = 0;
+            s_TotalTriangleCountCompiled = 0;
+
+            s_SelectedObjectCount = topInternal.Count;
+
+            for (var i = 0; i < s_SelectedObjectCount; i++)
             {
                 var mesh = topInternal[i];
 
-                selectedFaceCount += mesh.selectedFaceCount;
-                selectedEdgeCount += mesh.selectedEdgeCount;
-                selectedVertexCount += mesh.selectedIndexesInternal.Length;
-                selectedSharedVertexCount += mesh.selectedSharedVerticesCount;
+                s_SelectedFaceCount += mesh.selectedFaceCount;
+                s_SelectedEdgeCount += mesh.selectedEdgeCount;
+                s_SelectedVertexCount += mesh.selectedIndexesInternal.Length;
+                s_SelectedSharedVertexCount += mesh.selectedSharedVerticesCount;
 
-                selectedVertexCountObjectMax = System.Math.Max(selectedVertexCountObjectMax, mesh.selectedIndexesInternal.Length);
-                selectedSharedVertexCountObjectMax = System.Math.Max(selectedSharedVertexCountObjectMax, mesh.selectedSharedVerticesCount);
-                selectedCoincidentVertexCountMax = System.Math.Max(selectedCoincidentVertexCountMax, mesh.selectedCoincidentVertexCount);
-                selectedFaceCountObjectMax = System.Math.Max(selectedFaceCountObjectMax, mesh.selectedFaceCount);
-                selectedEdgeCountObjectMax = System.Math.Max(selectedEdgeCountObjectMax, mesh.selectedEdgeCount);
+                s_SelectedVertexCountObjectMax = System.Math.Max(s_SelectedVertexCountObjectMax, mesh.selectedIndexesInternal.Length);
+                s_SelectedSharedVertexCountObjectMax = System.Math.Max(s_SelectedSharedVertexCountObjectMax, mesh.selectedSharedVerticesCount);
+                s_SelectedCoincidentVertexCountMax = System.Math.Max(s_SelectedCoincidentVertexCountMax, mesh.selectedCoincidentVertexCount);
+                s_SelectedFaceCountObjectMax = System.Math.Max(s_SelectedFaceCountObjectMax, mesh.selectedFaceCount);
+                s_SelectedEdgeCountObjectMax = System.Math.Max(s_SelectedEdgeCountObjectMax, mesh.selectedEdgeCount);
+
+                // element total counts
+                s_TotalVertexCount += mesh.vertexCount;
+                s_TotalFaceCount += mesh.faceCount;
+                s_TotalEdgeCount += mesh.edgeCount;
+                s_TotalCommonVertexCount += mesh.sharedVerticesInternal.Length;
+                s_TotalVertexCountCompiled += mesh.mesh == null ? 0 : mesh.mesh.vertexCount;
+                s_TotalTriangleCountCompiled += (int) UnityEngine.ProBuilder.MeshUtility.GetPrimitiveCount(mesh.mesh);
             }
+
+            s_ElementCountsDirty = false;
         }
 
         internal static void RecalculateSelectionBounds()
@@ -360,56 +385,35 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <value>
-        /// Get the number of all selected vertices across the selected ProBuilder meshes.
+        /// Get the sum of the vertex count of all selected meshes.
         /// </value>
         /// <remarks>
         /// This is the ProBuilderMesh.vertexCount, not UnityEngine.Mesh.vertexCount. To get the optimized mesh vertex count,
         /// see `totalVertexCountCompiled` for the vertex count as is rendered in the scene.
         /// </remarks>
-        public static int totalVertexCount { get { RebuildElementCounts(); return s_TotalVertexCount; } }
+        public static int totalVertexCount { get { CacheElementCounts(); return s_TotalVertexCount; } }
 
         /// <value>
         /// Get the number of all selected vertices across the selected ProBuilder meshes, excluding coincident duplicates.
         /// </value>
-        public static int totalCommonVertexCount { get { RebuildElementCounts(); return s_TotalCommonVertexCount; } }
+        public static int totalCommonVertexCount { get { CacheElementCounts(); return s_TotalCommonVertexCount; } }
 
-        internal static int totalVertexCountOptimized { get { RebuildElementCounts(); return s_TotalVertexCountCompiled; } }
+        internal static int totalVertexCountOptimized { get { CacheElementCounts(); return s_TotalVertexCountCompiled; } }
 
         /// <value>
         /// Sum of all selected ProBuilderMesh object faceCount properties.
         /// </value>
-        public static int totalFaceCount { get { RebuildElementCounts(); return s_TotalFaceCount; } }
+        public static int totalFaceCount { get { CacheElementCounts(); return s_TotalFaceCount; } }
 
         /// <value>
         /// Sum of all selected ProBuilderMesh object edgeCount properties.
         /// </value>
-        public static int totalEdgeCount { get { RebuildElementCounts(); return s_TotalEdgeCount; } }
+        public static int totalEdgeCount { get { CacheElementCounts(); return s_TotalEdgeCount; } }
 
         /// <value>
         /// Get the sum of all selected ProBuilder compiled mesh triangle counts (3 indexes make up a triangle, or 4 indexes if topology is quad).
         /// </value>
-        public static int totalTriangleCountCompiled { get { RebuildElementCounts(); return s_TotalTriangleCountCompiled; } }
-
-        static void RebuildElementCounts()
-        {
-            if (!s_TotalElementCountCacheIsDirty)
-                return;
-
-            try
-            {
-                s_TotalVertexCount = topInternal.Sum(x => x.vertexCount);
-                s_TotalFaceCount = topInternal.Sum(x => x.faceCount);
-                s_TotalEdgeCount = topInternal.Sum(x => x.edgeCount);
-                s_TotalCommonVertexCount = topInternal.Sum(x => x.sharedVerticesInternal.Length);
-                s_TotalVertexCountCompiled = topInternal.Sum(x => x.mesh == null ? 0 : x.mesh.vertexCount);
-                s_TotalTriangleCountCompiled = topInternal.Sum(x => (int)UnityEngine.ProBuilder.MeshUtility.GetPrimitiveCount(x.mesh));
-                s_TotalElementCountCacheIsDirty = false;
-            }
-            catch
-            {
-                // expected when UndoRedo is called
-            }
-        }
+        public static int totalTriangleCountCompiled { get { CacheElementCounts(); return s_TotalTriangleCountCompiled; } }
 
         internal static void AddToSelection(GameObject t)
         {
@@ -427,6 +431,7 @@ namespace UnityEditor.ProBuilder
 
             Selection.activeObject = t;
             Selection.objects = temp;
+            OnObjectSelectionChanged();
         }
 
         internal static void RemoveFromSelection(GameObject t)
@@ -447,6 +452,8 @@ namespace UnityEditor.ProBuilder
 
             if (Selection.activeGameObject == t)
                 Selection.activeObject = temp.FirstOrDefault();
+
+            OnObjectSelectionChanged();
         }
 
         internal static void MakeActiveObject(GameObject t)
@@ -475,6 +482,7 @@ namespace UnityEditor.ProBuilder
 
             Selection.activeObject = t;
             Selection.objects = temp;
+            OnObjectSelectionChanged();
         }
 
         internal static void RemoveMeshFromSelectionInternal(ProBuilderMesh mesh)
@@ -508,6 +516,8 @@ namespace UnityEditor.ProBuilder
             {
                 Selection.activeTransform = null;
             }
+
+            OnObjectSelectionChanged();
         }
 
         internal static void SetSelection(GameObject go)
@@ -524,7 +534,7 @@ namespace UnityEditor.ProBuilder
         {
             if (ProBuilderEditor.instance)
                 ProBuilderEditor.instance.ClearElementSelection();
-            s_TotalElementCountCacheIsDirty = true;
+            InvalidateCaches();
             if (objectSelectionChanged != null)
                 objectSelectionChanged();
         }
