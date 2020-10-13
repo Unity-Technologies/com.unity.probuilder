@@ -115,7 +115,7 @@ namespace UnityEditor.ProBuilder.Actions
                         foreach(var face in faces)
                         {
                             matches.Add(face);
-                        }                        
+                        }
 
                         if (matches.Count > 0)
                         {

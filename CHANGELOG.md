@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Features
 
+- Upgrading PolyShape tool to EditorTool and correct some features in it.
 - Added a selection preview when using the Select Path tool.
 - Added `Selection X Ray` option to highlight occluded element selections with a muted color. Default shortcut is `Alt + Shift + X` (modifiable in Shortcut Manager).
 - MergeElements.Merge moved to public API

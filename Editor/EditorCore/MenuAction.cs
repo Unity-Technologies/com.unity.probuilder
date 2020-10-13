@@ -2,6 +2,11 @@
 
 using UnityEngine;
 using UnityEngine.ProBuilder;
+#if UNITY_2020_2_OR_NEWER
+using ToolManager = UnityEditor.EditorTools.ToolManager;
+#else
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -217,9 +222,11 @@ namespace UnityEditor.ProBuilder
         {
             get
             {
+                //Disable the menu action whenever a custom EditorTool is enabled
                 return ProBuilderEditor.instance != null
-                    && ProBuilderEditor.selectMode.ContainsFlag(validSelectModes)
-                    && !ProBuilderEditor.selectMode.ContainsFlag(SelectMode.InputTool);
+                       && ProBuilderEditor.selectMode.ContainsFlag(validSelectModes)
+                       && !ProBuilderEditor.selectMode.ContainsFlag(SelectMode.InputTool)
+                       && typeof(VertexManipulationTool).IsAssignableFrom(ToolManager.activeToolType);
             }
         }
 
@@ -279,7 +286,7 @@ namespace UnityEditor.ProBuilder
         /// <param name="optionsRect"></param>
         /// <param name="layoutOptions"></param>
         /// <returns></returns>
-        internal bool DoButton(bool isHorizontal, bool showOptions, ref Rect optionsRect, params GUILayoutOption[] layoutOptions)
+        internal virtual bool DoButton(bool isHorizontal, bool showOptions, ref Rect optionsRect, params GUILayoutOption[] layoutOptions)
         {
             bool wasEnabled = GUI.enabled;
             bool buttonEnabled = (menuActionState & MenuActionState.Enabled) == MenuActionState.Enabled;
@@ -353,7 +360,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        bool DoAltButton(params GUILayoutOption[] options)
+        protected bool DoAltButton(params GUILayoutOption[] options)
         {
             return GUILayout.Button(AltButtonContent, MenuActionStyles.altButtonStyle, options);
         }

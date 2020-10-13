@@ -69,25 +69,16 @@ public class CollapseVerticesTest
     [Test]
     public void CollapseVertices_SelectedSharedVertices_ActionEnabled()
     {
-        // check that selecting two shared vertices will enable collapse vertices
-        Assert.That(m_PBMesh, Is.Not.Null);
-
-        var sharedVertices = m_PBMesh.sharedVerticesInternal;
-        Assert.That(sharedVertices, Is.Not.Null);
-        Assert.That(sharedVertices.Length, Is.GreaterThanOrEqualTo(2));
-
-        var selectedVertices = sharedVertices[0].Union(sharedVertices[1]);
-        Assert.That(selectedVertices.Count(), Is.GreaterThan(1));
-
-        // Set the selected vertices to two different shared vertices (collapsable)
-        m_PBMesh.SetSelectedVertices(selectedVertices);
-        Assert.That(m_PBMesh.selectedIndexesInternal.Length, Is.EqualTo(selectedVertices.Count()));
+        Assume.That(m_PBMesh, Is.Not.Null);
 
         MeshSelection.SetSelection(m_PBMesh.gameObject);
-        MeshSelection.OnObjectSelectionChanged();
+        int[] vertexSelection = new[] { 0, 1, 2, 3 };
+        m_PBMesh.SetSelectedVertices(vertexSelection);
 
-        UnityEditor.ProBuilder.Actions.CollapseVertices collapseVertices = new UnityEditor.ProBuilder.Actions.CollapseVertices();
+        Assume.That(m_PBMesh.selectedIndexesInternal, Is.EquivalentTo(vertexSelection));
+        Assume.That(MeshSelection.selectedVertexCount, Is.EqualTo(vertexSelection.Length));
 
-        Assert.That(collapseVertices.enabled, Is.True);
+        var collapseAction = new UnityEditor.ProBuilder.Actions.CollapseVertices();
+        Assert.That(collapseAction.enabled, Is.True);
     }
 }
