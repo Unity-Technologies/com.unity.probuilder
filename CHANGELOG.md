@@ -33,6 +33,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1283107] Fixed `Bevel` settings slider disappearing when values exceed 1.
 - [case: 1283103] Fixed typo in `Center Pivot` tooltip.
 - [case: 1283067] Fixed `Export Prefab` throwing an error when overwriting the root asset of an exported prefab instance.
+- [case: 1284735] Fixed a possible exception when creating a shape, undoing, then redoing while the `Smooth Group Editor` window is open.
+- [case: 1283111] Fixed `Poly Shape` tool not snapping placed vertices with grid snapping enabled.
+- [case: 1284741] Fixed missing tooltips for some items in the `Smooth Group Editor` window.
 
 ### Changes
 
@@ -40,6 +43,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Adding a new MenuAction in Samples to merge faces from edges selection
 - Removing preprocessor directives for Unity 2018 and below for Probuilder 5.0
 - Modified the AppendVerticesToEdge to handle edges split for non-convex faces.
+- Removed unused "About" images.
+- Removed unused HDRP shader variants.
 
 ## [4.4.0] - 2020-08-12
 
