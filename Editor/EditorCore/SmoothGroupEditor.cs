@@ -2,10 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder.UI;
-using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder
 {
@@ -405,11 +402,10 @@ namespace UnityEditor.ProBuilder
             GUILayout.BeginHorizontal(EditorStyles.toolbar);
 
             EditorGUI.BeginChangeCheck();
+
             s_ShowSettings.value = GUILayout.Toggle(s_ShowSettings.value, "Settings", EditorStyles.toolbarButton);
             s_ShowPreview.value = GUILayout.Toggle(s_ShowPreview.value, "Preview", EditorStyles.toolbarButton);
             s_ShowNormals.value = GUILayout.Toggle(s_ShowNormals.value, "Normals", EditorStyles.toolbarButton);
-            if(EditorGUI.EndChangeCheck())
-                ProBuilderSettings.Save();
 
             if (s_ShowNormals)
             {
@@ -424,12 +420,15 @@ namespace UnityEditor.ProBuilder
 
                 if (EditorGUI.EndChangeCheck())
                 {
-                    ProBuilderSettings.Save();
-
                     foreach (var kvp in m_SmoothGroups)
                         kvp.Value.RebuildNormalsMesh(kvp.Key);
-                    SceneView.RepaintAll();
                 }
+            }
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                ProBuilderSettings.Save();
+                SceneView.RepaintAll();
             }
 
             GUILayout.FlexibleSpace();
@@ -477,26 +476,26 @@ namespace UnityEditor.ProBuilder
                 GUILayout.Label("<b>To select</b> all faces in a group, Right+Click or Alt+Click a smooth group button.", wordWrappedRichText);
                 GUILayout.Space(2);
 
-                global::UnityEditor.ProBuilder.UI.EditorGUILayout.BeginRow();
+                UI.EditorGUILayout.BeginRow();
                 GUILayout.Button("1", groupButtonStyle);
                 GUILayout.Label("An unused smooth group", wordWrappedRichText);
-                global::UnityEditor.ProBuilder.UI.EditorGUILayout.EndRow();
+                UI.EditorGUILayout.EndRow();
 
-                global::UnityEditor.ProBuilder.UI.EditorGUILayout.BeginRow();
+                UI.EditorGUILayout.BeginRow();
                 GUILayout.Button("1", groupButtonInUseStyle);
                 GUILayout.Label("A smooth group that is in use, but not in the current selection", wordWrappedRichText);
-                global::UnityEditor.ProBuilder.UI.EditorGUILayout.EndRow();
+                UI.EditorGUILayout.EndRow();
 
-                global::UnityEditor.ProBuilder.UI.EditorGUILayout.BeginRow();
+                UI.EditorGUILayout.BeginRow();
                 GUILayout.Button("1", groupButtonSelectedStyle);
                 GUILayout.Label("A smooth group that is currently selected", wordWrappedRichText);
-                global::UnityEditor.ProBuilder.UI.EditorGUILayout.EndRow();
+                UI.EditorGUILayout.EndRow();
 
-                global::UnityEditor.ProBuilder.UI.EditorGUILayout.BeginRow();
+                UI.EditorGUILayout.BeginRow();
                 GUILayout.Button("1", groupButtonMixedSelectionStyle);
                 GUI.backgroundColor = Color.white;
                 GUILayout.Label("A smooth group is selected, but the selection also contains non-grouped faces", wordWrappedRichText);
-                global::UnityEditor.ProBuilder.UI.EditorGUILayout.EndRow();
+                UI.EditorGUILayout.EndRow();
 
                 if (GUILayout.Button("Open Documentation"))
                     Application.OpenURL("https://docs.unity3d.com/Packages/com.unity.probuilder@latest/index.html?subfolder=/manual/workflow-edit-smoothing.html");
