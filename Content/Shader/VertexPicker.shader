@@ -10,11 +10,13 @@ Shader "Hidden/ProBuilder/VertexPicker"
             "RenderType"="Transparent"
             "IgnoreProjector"="True"
             "DisableBatching"="True"
+            // needed by HDRP
+            "LightMode"="Always"
         }
 
         Lighting Off
         ZTest LEqual
-        ZWrite Off
+        ZWrite On
         Cull Off
         Blend Off
         Offset -1, -1
