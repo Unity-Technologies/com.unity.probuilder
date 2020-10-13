@@ -141,7 +141,7 @@ namespace UnityEngine.ProBuilder
                     }
                 }
             }
-            catch(System.StackOverflowException e)
+            catch
             {
                 Debug.LogWarning("Smoothing has been aborted: Too many edges in the analyzed mesh");
             }

@@ -588,6 +588,21 @@ namespace UnityEditor.ProBuilder
 				EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
+		[MenuItem(k_MenuPrefix + "Interaction/Toggle X Ray &#x", true, PreferenceKeys.menuSelection + 1)]
+		static bool MenuVerify_ToggleXRay()
+		{
+			var instance = EditorToolbarLoader.GetInstance<ToggleXRay>();
+			return instance != null && instance.enabled;
+		}
+
+		[MenuItem(k_MenuPrefix + "Interaction/Toggle X Ray &#x", false, PreferenceKeys.menuSelection + 1)]
+		static void MenuPerform_ToggleXRay()
+		{
+			var instance = EditorToolbarLoader.GetInstance<ToggleXRay>();
+			if(instance != null && instance.enabled)
+				EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
 		[MenuItem(k_MenuPrefix + "Object/Center Pivot", true, PreferenceKeys.menuGeometry + 2)]
 		static bool MenuVerify_CenterPivot()
 		{

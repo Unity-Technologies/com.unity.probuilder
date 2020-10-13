@@ -7,7 +7,7 @@ namespace UnityEditor.ProBuilder
     {
         const float k_CardinalAxisError = .001f;
         const float k_MinTranslateDeltaSqrMagnitude = .00001f;
-        Vector3 m_HandlePosition;
+        Vector3 m_Position;
         Vector3 m_RawHandleDelta;
         Vector3Mask m_ActiveAxesModel;
         Vector3Mask m_ActiveAxesWorld;
@@ -34,12 +34,10 @@ namespace UnityEditor.ProBuilder
             m_SnapAsGroup = worldSnapEnabled && ProBuilderSnapSettings.snapAsGroup;
         }
 
-        protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
+        protected override void DoToolGUI()
         {
-            base.DoTool(handlePosition, handleRotation);
-
             if (!isEditing)
-                m_HandlePosition = handlePosition;
+                m_Position = m_HandlePosition;
 
 #if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
             if (isEditing)
@@ -48,9 +46,9 @@ namespace UnityEditor.ProBuilder
 
             EditorGUI.BeginChangeCheck();
 
-            m_HandlePosition = Handles.PositionHandle(m_HandlePosition, handleRotation);
+            m_Position = Handles.PositionHandle(m_Position, m_HandleRotation);
 
-            m_RawHandleDelta = m_HandlePosition - handlePositionOrigin;
+            m_RawHandleDelta = m_Position - handlePositionOrigin;
 
             var delta = m_RawHandleDelta;
 
@@ -59,7 +57,7 @@ namespace UnityEditor.ProBuilder
                 if (!isEditing)
                     BeginEdit("Translate Selection");
 
-                if (vertexDragging)
+                if (Tools.vertexDragging)
                 {
                     Vector3 nearest;
 
@@ -72,11 +70,11 @@ namespace UnityEditor.ProBuilder
                         {
                             var rotationDirection = handleRotationOrigin * dir * 10000f;
 
-                            m_HandlePosition = HandleUtility.ProjectPointLine(nearest,
+                            m_Position = HandleUtility.ProjectPointLine(nearest,
                                 handlePositionOrigin + rotationDirection,
                                 handlePositionOrigin - rotationDirection);
 
-                            delta = m_HandlePosition - handlePositionOrigin;
+                            delta = m_Position - handlePositionOrigin;
                         }
                     }
                 }
@@ -85,11 +83,11 @@ namespace UnityEditor.ProBuilder
                     if (snapAxisConstraint)
                     {
                         m_ActiveAxesModel |= new Vector3Mask(handleRotationOriginInverse * delta, k_CardinalAxisError);
-                        m_ActiveAxesWorld = new Vector3Mask(handleRotation * m_ActiveAxesModel);
+                        m_ActiveAxesWorld = new Vector3Mask(m_HandleRotation * m_ActiveAxesModel);
 
                         if (m_ActiveAxesWorld.active == 1)
                         {
-                            m_HandlePosition = ProBuilderSnapping.SnapValueOnRay(
+                            m_Position = ProBuilderSnapping.SnapValueOnRay(
                                 new Ray(handlePositionOrigin, delta),
                                 delta.magnitude,
                                 GetSnapValueForAxis(m_ActiveAxesModel),
@@ -97,15 +95,15 @@ namespace UnityEditor.ProBuilder
                         }
                         else
                         {
-                            m_HandlePosition = ProBuilderSnapping.SnapValue(m_HandlePosition, snapValue);
+                            m_Position = ProBuilderSnapping.SnapValue(m_Position, snapValue);
                         }
                     }
                     else
                     {
-                        m_HandlePosition = ProBuilderSnapping.SnapValue(m_HandlePosition, snapValue);
+                        m_Position = ProBuilderSnapping.SnapValue(m_Position, snapValue);
                     }
 
-                    delta = m_HandlePosition - handlePositionOrigin;
+                    delta = m_Position - handlePositionOrigin;
                 }
 
 #if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO

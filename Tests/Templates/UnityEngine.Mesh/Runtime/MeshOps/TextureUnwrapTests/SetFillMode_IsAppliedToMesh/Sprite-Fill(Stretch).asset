@@ -7,7 +7,7 @@ Mesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Sprite-Fill(Stretch)
-  serializedVersion: 9
+  serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
@@ -17,8 +17,8 @@ Mesh:
     firstVertex: 0
     vertexCount: 4
     localAABB:
-      m_Center: {x: 1.5, y: 0, z: 1.3}
-      m_Extent: {x: 0.35000002, y: 0, z: 0.20000005}
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0, y: 0, z: 0}
   m_Shapes:
     vertices: []
     shapes: []
@@ -27,6 +27,9 @@ Mesh:
   m_BindPose: []
   m_BoneNameHashes: 
   m_RootBoneNameHash: 0
+  m_BonesAABB: []
+  m_VariableBoneCountWeights:
+    m_Data: 
   m_MeshCompression: 0
   m_IsReadable: 1
   m_KeepVertices: 1
@@ -34,7 +37,7 @@ Mesh:
   m_IndexFormat: 0
   m_IndexBuffer: 000001000200010003000200
   m_VertexData:
-    serializedVersion: 2
+    serializedVersion: 3
     m_VertexCount: 4
     m_Channels:
     - stream: 0
@@ -94,7 +97,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 192
-    _typelessdata: 3333933f00000000cccc8c3f000000000000803f000000000000803f0000000000000000000080bf0000803fcccc4c3f3333933f000000000000c03f000000000000803f000000000000803f0000000000000000000080bf0000803f6666e63fcdccec3f00000000cccc8c3f000000000000803f000000000000803f0000000000000000000080bf00000040cccc4c3fcdccec3f000000000000c03f000000000000803f000000000000803f0000000000000000000080bf000000406666e63f
+    _typelessdata: 3333933f00000000cccc8c3f000000000000803f000000000000803f0000000000000000000080bf2449d23ffcff2f403333933f000000000000c03f000000000000803f000000000000803f0000000000000000000080bf2449d23ffcff6f40cdccec3f00000000cccc8c3f000000000000803f000000000000803f0000000000000000000080bf91242940fcff2f40cdccec3f000000000000c03f000000000000803f000000000000803f0000000000000000000080bf91242940fcff6f40
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -148,15 +151,16 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: 1.5, y: 0, z: 1.3}
-    m_Extent: {x: 0.35000002, y: 0, z: 0.20000005}
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0.5, y: 0, z: 0.5}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
   m_MeshMetrics[0]: 1
   m_MeshMetrics[1]: 1
-  m_MeshOptimized: 0
+  m_MeshOptimizationFlags: 1
   m_StreamData:
+    serializedVersion: 2
     offset: 0
     size: 0
     path: 
