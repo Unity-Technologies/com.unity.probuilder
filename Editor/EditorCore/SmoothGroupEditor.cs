@@ -188,14 +188,8 @@ namespace UnityEditor.ProBuilder
                     s_GroupButtonStyle.normal.background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Normal");
                     s_GroupButtonStyle.hover.background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Hover");
                     s_GroupButtonStyle.active.background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Pressed");
-                    Font asap = FileUtility.LoadInternalAsset<Font>("About/Font/Asap-Regular.otf");
-                    if (asap != null)
-                    {
-                        s_GroupButtonStyle.font = asap;
-                        s_GroupButtonStyle.fontSize = 12;
-                        s_GroupButtonStyle.padding = new RectOffset(2, 2, 2, 2);
-                    }
                     s_GroupButtonStyle.border = new RectOffset(3, 3, 3, 3);
+                    s_GroupButtonStyle.clipping = TextClipping.Overflow;
                     s_GroupButtonStyle.margin = new RectOffset(4, 4, 4, 6);
                     s_GroupButtonStyle.alignment = TextAnchor.MiddleCenter;
                     s_GroupButtonStyle.fixedWidth = IconWidth;
