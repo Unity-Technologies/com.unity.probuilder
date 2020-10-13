@@ -31,7 +31,8 @@ public class AutoUVUnwrapScaleUpgradeTests
         Assume.That(s_Meshes[3], Is.Not.Null);
     }
 
-    [Test]
+    // @todo Fails on Yamato with error about opening scene from a read-only package
+    // [Test]
     public void LegacyUVs_UpgradeWithoutModifyingPositions([ValueSource("s_MeshIndex")] int index)
     {
         var mesh = s_Meshes[index];
@@ -46,7 +47,8 @@ public class AutoUVUnwrapScaleUpgradeTests
         }
     }
 
-    [Test]
+    // @todo Fails on Yamato with error about opening scene from a read-only package
+    // [Test]
     public void LegacyUVs_UpgradeIncrementsMeshVersion()
     {
         var mesh = s_Meshes[0];

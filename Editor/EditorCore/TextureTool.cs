@@ -68,7 +68,7 @@ namespace UnityEditor.ProBuilder
 
         protected override void OnToolEngaged()
         {
-            MeshSelection.InvalidateElementSelection();
+            MeshSelection.InvalidateCaches();
         }
 
         protected override void OnToolDisengaged()

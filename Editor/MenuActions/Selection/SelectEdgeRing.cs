@@ -86,7 +86,7 @@ namespace UnityEditor.ProBuilder.Actions
                 {
                     edges = ElementSelection.GetEdgeRing(mesh, mesh.selectedEdges).ToArray();
                 }
-               
+
                 if (edges.Length > mesh.selectedEdgeCount)
                     success = true;
 
