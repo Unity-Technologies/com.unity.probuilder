@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1284735] Fixed a possible exception when creating a shape, undoing, then redoing while the `Smooth Group Editor` window is open.
 - [case: 1283111] Fixed `Poly Shape` tool not snapping placed vertices with grid snapping enabled.
 - [case: 1284741] Fixed missing tooltips for some items in the `Smooth Group Editor` window.
+- [case: 1283167] Fixed `Mesh Collider` mesh value not updating with modifications.
 
 ### Changes
 
