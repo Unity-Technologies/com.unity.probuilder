@@ -2,11 +2,16 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-#if UNITY_2020_2_OR_NEWER
-using UnityEditor.EditorTools;
-#endif
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+
+#if UNITY_2020_2_OR_NEWER
+using EditorToolManager = UnityEditor.EditorTools.EditorToolManager;
+using ToolManager = UnityEditor.EditorTools.ToolManager;
+#else
+using EditorToolManager = UnityEditor.EditorTools.EditorToolContext;
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -130,6 +135,7 @@ namespace UnityEditor.ProBuilder
             EditorMeshUtility.meshOptimized += (x, y) => { s_ElementCountsDirty = true; };
             ProBuilderMesh.componentWillBeDestroyed += RemoveMeshFromSelectionInternal;
             ProBuilderMesh.componentHasBeenReset += RefreshSelectionAfterComponentReset;
+            ToolManager.activeToolChanged += ActiveToolChanged;
             OnObjectSelectionChanged();
         }
 
@@ -219,6 +225,11 @@ namespace UnityEditor.ProBuilder
                 objectSelectionChanged();
 
             s_UnitySelectionChangeMeshes.Clear();
+        }
+
+        static void ActiveToolChanged()
+        {
+            InvalidateCaches();
         }
 
         /// <summary>

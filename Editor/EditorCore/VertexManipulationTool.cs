@@ -148,8 +148,6 @@ namespace UnityEditor.ProBuilder
         Vector3 m_HandlePositionOrigin;
         Quaternion m_HandleRotationOrigin;
         bool m_IsEditing;
-
-        Vector3 m_MoveSnapValue = new Vector3(k_DefaultSnapValue, k_DefaultSnapValue, k_DefaultSnapValue);
         bool m_SnapAxisConstraint = true;
         bool m_WorldSnapEnabled;
 
