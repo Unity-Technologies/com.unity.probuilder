@@ -130,12 +130,13 @@ namespace UnityEditor.ProBuilder
         static MeshSelection()
         {
             Selection.selectionChanged += OnObjectSelectionChanged;
-            Undo.undoRedoPerformed += EnsureMeshSelectionIsValid;
+            Undo.undoRedoPerformed += UndoRedoPerformed;
             ProBuilderMesh.elementSelectionChanged += ElementSelectionChanged;
             EditorMeshUtility.meshOptimized += (x, y) => { s_ElementCountsDirty = true; };
             ProBuilderMesh.componentWillBeDestroyed += RemoveMeshFromSelectionInternal;
             ProBuilderMesh.componentHasBeenReset += RefreshSelectionAfterComponentReset;
             ToolManager.activeToolChanged += ActiveToolChanged;
+            VertexManipulationTool.afterMeshModification += AfterMeshModification;
             OnObjectSelectionChanged();
         }
 
@@ -232,11 +233,16 @@ namespace UnityEditor.ProBuilder
             InvalidateCaches();
         }
 
+        static void AfterMeshModification(IEnumerable<ProBuilderMesh> selection)
+        {
+            InvalidateCaches();
+        }
+
         /// <summary>
         /// Ensure the mesh selection matches the current Unity selection. Called after Undo/Redo, as adding or removing
         /// mesh components can cause the selection to de-sync without emitting a selection changed event.
         /// </summary>
-        internal static void EnsureMeshSelectionIsValid()
+        internal static void UndoRedoPerformed()
         {
             for (int i = 0; i < topInternal.Count; i++)
             {
@@ -246,6 +252,8 @@ namespace UnityEditor.ProBuilder
                     break;
                 }
             }
+
+            InvalidateCaches();
         }
 
         static void ElementSelectionChanged(ProBuilderMesh mesh)

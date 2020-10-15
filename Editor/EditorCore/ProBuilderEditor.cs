@@ -194,7 +194,7 @@ namespace UnityEditor.ProBuilder
                     var changed = ProBuilderToolManager.selectMode != value;
                     if (!changed)
                         return;
-                    tools.SetToolMode(value);
+                    tools.SetSelectMode(value);
                     if (selectModeChanged != null)
                         selectModeChanged(value);
                 }

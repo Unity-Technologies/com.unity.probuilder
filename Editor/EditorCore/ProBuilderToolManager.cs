@@ -18,7 +18,6 @@ namespace UnityEditor.ProBuilder
 
         // When tool contexts are fully implemented there should be no need for `SelectMode`
         static Pref<SelectMode> s_SelectMode = new Pref<SelectMode>("editor.selectMode", SelectMode.Object);
-        static Pref<SelectMode> s_PreviousMeshSelectMode = new Pref<SelectMode>("editor.lastMeshSelectMode", SelectMode.Face);
 
         public static SelectMode selectMode
         {
@@ -57,6 +56,8 @@ namespace UnityEditor.ProBuilder
             m_TextureTools[(int)Tool.Rotate] = ScriptableObject.CreateInstance<TextureRotateTool>();
             m_TextureTools[(int)Tool.Scale] = ScriptableObject.CreateInstance<TextureScaleTool>();
 #endif
+
+            SetSelectMode(selectMode);
         }
 
         public void Dispose()
@@ -80,7 +81,7 @@ namespace UnityEditor.ProBuilder
 #endif
         }
 
-        public void SetToolMode(SelectMode mode)
+        public void SetSelectMode(SelectMode mode)
         {
             if (mode == selectMode)
                 return;
@@ -96,6 +97,9 @@ namespace UnityEditor.ProBuilder
                 ToolManager.SetActiveContext<GameObjectToolContext>();
 #else
             var tool = Tools.current;
+
+            if (tool == Tool.None)
+                return;
 
             if(mode.IsPositionMode() && m_VertexTools[(int)tool] != null)
                 ToolManager.SetActiveTool(m_VertexTools[(int)tool]);
@@ -127,17 +131,19 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         static void ActiveToolChanged()
         {
-            //Recording the last persistent tool in m_CurrentTool if need to restore it in object select mode
-            if(Tools.current != Tool.None && Tools.current != Tool.Custom)
-            {
-                if(UVEditor.instance != null)
-                    UVEditor.instance.SetTool(Tools.current);
+            // todo Forward to UV Editor?
 
-#if !UNITY_2020_2_OR_NEWER
-                // Call for tool update in the next GUI loop
-                // m_CheckForToolUpdate = true;
-#endif
-            }
+//             //Recording the last persistent tool in m_CurrentTool if need to restore it in object select mode
+//             if(Tools.current != Tool.None && Tools.current != Tool.Custom)
+//             {
+//                 if(UVEditor.instance != null)
+//                     UVEditor.instance.SetTool(Tools.current);
+//
+// #if !UNITY_2020_2_OR_NEWER
+//                 // Call for tool update in the next GUI loop
+//                 // m_CheckForToolUpdate = true;
+// #endif
+//             }
         }
 
 #if !TOOL_CONTEXTS_ENABLED
