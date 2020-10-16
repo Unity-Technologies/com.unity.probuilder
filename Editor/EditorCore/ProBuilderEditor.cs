@@ -839,21 +839,6 @@ namespace UnityEditor.ProBuilder
 
             using (new HandleGUI())
             {
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-                GUILayout.Label($"this: {GetInstanceID()}\n" +
-                                $"instance: {(s_Instance != null ? s_Instance.GetInstanceID().ToString() : "null")}\n" +
-                                $"toolbar: {m_Toolbar}\n" +
-                                $"---\n" +
-                                $"last ctx: {s_LastActiveSelectMode.value}\n" +
-                                // $"active ctx: {ToolManager.activeContextType}\n" +
-                                $"active tool: {ToolManager.activeToolType}\n" +
-                                $"select mode: {ProBuilderToolManager.selectMode}");
-                EditorGUILayout.EndVertical();
-                GUILayout.FlexibleSpace();
-                EditorGUILayout.EndHorizontal();
-
-
                 int screenWidth = (int)sceneView.position.width;
                 int screenHeight = (int)sceneView.position.height;
 
