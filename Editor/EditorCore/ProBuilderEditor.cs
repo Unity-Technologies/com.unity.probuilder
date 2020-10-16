@@ -211,6 +211,7 @@ namespace UnityEditor.ProBuilder
             if (s_Instance == null)
                 return;
             instance.m_ToolManager.ResetToLastSelectMode();
+            Refresh();
         }
 
         static class SceneStyles
