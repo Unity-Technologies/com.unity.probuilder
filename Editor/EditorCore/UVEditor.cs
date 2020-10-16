@@ -272,6 +272,10 @@ namespace UnityEditor.ProBuilder
             if (uv2Editor != null)
                 DestroyImmediate(uv2Editor);
 
+            var selectMode = ProBuilderToolManager.selectMode;
+            if (selectMode.IsTextureMode())
+                ProBuilderToolManager.SetSelectMode(selectMode.GetPositionMode());
+
             ToolManager.activeToolChanged -= Repaint;
             MeshSelection.objectSelectionChanged -= ObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged -= ElementSelectionChanged;

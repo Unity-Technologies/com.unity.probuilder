@@ -190,11 +190,10 @@ namespace UnityEditor.ProBuilder
             {
                 if (s_Instance != null)
                 {
-                    var tools = s_Instance.m_ToolManager;
                     var changed = ProBuilderToolManager.selectMode != value;
                     if (!changed)
                         return;
-                    tools.SetSelectMode(value);
+                    ProBuilderToolManager.SetSelectMode(value);
                     if (selectModeChanged != null)
                         selectModeChanged(value);
                 }
