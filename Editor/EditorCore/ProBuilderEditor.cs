@@ -1048,7 +1048,7 @@ namespace UnityEditor.ProBuilder
                     UVEditor.instance.SetTool(m_CurrentTool);
 
 #if !UNITY_2020_2_OR_NEWER
-                //Call for tool update in the next GUI loop
+                // Call for tool update in the next GUI loop
                 m_CheckForToolUpdate = true;
 #endif
             }

@@ -1188,15 +1188,13 @@ namespace UnityEditor.ProBuilder
 
                 if (ControlKey)
                 {
-                    handlePosition = ProBuilderSnapping.SnapValue(t_handlePosition, (Vector3) new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
+                    handlePosition = ProBuilderSnapping.Snap(t_handlePosition, (Vector3) new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
                 }
                 else
                 {
                     handlePosition = t_handlePosition;
 
-                    /**
-                     * Attempt vertex proximity snap if shift key is held
-                     */
+                    // Attempt vertex proximity snap if shift key is held
                     if (ShiftKey)
                     {
                         float dist, minDist = MAX_PROXIMITY_SNAP_DIST_CANVAS;
@@ -1245,7 +1243,7 @@ namespace UnityEditor.ProBuilder
                 Vector2 newUVPosition = t_handlePosition;
 
                 if (ControlKey)
-                    newUVPosition = ProBuilderSnapping.SnapValue(newUVPosition, new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
+                    newUVPosition = ProBuilderSnapping.Snap(newUVPosition, new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
 
                 for (int n = 0; n < selection.Length; n++)
                 {
@@ -1352,7 +1350,7 @@ namespace UnityEditor.ProBuilder
                 handlePosition.y += delta.y;
 
                 if (ControlKey)
-                    handlePosition = ProBuilderSnapping.SnapValue(handlePosition, new Vector3Mask((handlePosition - handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
+                    handlePosition = ProBuilderSnapping.Snap(handlePosition, new Vector3Mask((handlePosition - handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
 
                 for (int n = 0; n < selection.Length; n++)
                 {
@@ -1384,7 +1382,7 @@ namespace UnityEditor.ProBuilder
                 }
 
                 if (ControlKey)
-                    uvRotation = ProBuilderSnapping.SnapValue(uvRotation, 15f);
+                    uvRotation = ProBuilderSnapping.Snap(uvRotation, EditorSnapping.incrementalSnapRotateValue);
 
                 // Do rotation around the handle pivot in manual mode
                 if (mode == UVMode.Mixed || mode == UVMode.Manual)
@@ -1436,7 +1434,7 @@ namespace UnityEditor.ProBuilder
             if (rotation != uvRotation)
             {
                 if (ControlKey)
-                    rotation = ProBuilderSnapping.SnapValue(rotation, 15f);
+                    rotation = ProBuilderSnapping.Snap(rotation, EditorSnapping.incrementalSnapRotateValue);
 
                 float delta = rotation - uvRotation;
                 uvRotation = rotation;
@@ -1495,7 +1493,7 @@ namespace UnityEditor.ProBuilder
             uvScale = EditorHandleUtility.ScaleHandle2d(2, UVToGUIPoint(handlePosition), uvScale, 128);
 
             if (ControlKey)
-                uvScale = ProBuilderSnapping.SnapValue(uvScale, s_GridSnapIncrement);
+                uvScale = ProBuilderSnapping.Snap(uvScale, Vector3.one * s_GridSnapIncrement);
 
             if (Math.Approx(uvScale.x, 0f, Mathf.Epsilon))
                 uvScale.x = .0001f;
@@ -1565,7 +1563,7 @@ namespace UnityEditor.ProBuilder
             previousScale.y = 1f / previousScale.y;
 
             if (ControlKey)
-                textureScale = ProBuilderSnapping.SnapValue(textureScale, s_GridSnapIncrement);
+                textureScale = ProBuilderSnapping.Snap(textureScale, Vector3.one * s_GridSnapIncrement);
 
             if (!modifyingUVs)
             {

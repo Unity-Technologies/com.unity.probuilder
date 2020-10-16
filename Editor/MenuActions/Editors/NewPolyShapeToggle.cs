@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;

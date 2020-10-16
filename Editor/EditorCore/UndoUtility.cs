@@ -18,9 +18,7 @@ namespace UnityEditor.ProBuilder
             // material preview when dragging in scene-view is done by applying then undoing changes. we don't want to
             // rebuild the mesh every single frame when dragging.
             if (SceneDragAndDropListener.isDragging)
-            {
                 return;
-            }
 
             // Synchronize just checks that the mesh is not null, and UV2 is still valid. This should be very cheap except
             // for the FindObjectsOfType call.

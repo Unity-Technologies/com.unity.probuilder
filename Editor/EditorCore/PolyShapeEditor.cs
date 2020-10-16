@@ -1,6 +1,4 @@
-using UnityEditor.EditorTools;
 using UnityEngine;
-//using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 #if UNITY_2020_2_OR_NEWER

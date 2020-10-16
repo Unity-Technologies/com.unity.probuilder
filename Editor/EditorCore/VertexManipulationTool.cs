@@ -177,24 +177,11 @@ namespace UnityEditor.ProBuilder
             get { return m_HandleRotationOrigin; }
         }
 
-        protected Vector3 snapValue
-        {
-            get { return m_MoveSnapValue; }
-        }
+        protected Vector3 snapValue => EditorSnapping.activeMoveSnapValue;
 
         protected bool snapAxisConstraint
         {
             get { return m_SnapAxisConstraint; }
-        }
-
-        protected bool worldSnapEnabled
-        {
-            get { return m_WorldSnapEnabled; }
-        }
-
-        protected bool relativeSnapEnabled
-        {
-            get { return ProBuilderSnapSettings.snapMode == SnapMode.Relative; }
         }
 
         protected float GetSnapValueForAxis(Vector3Mask axes)
@@ -278,9 +265,7 @@ namespace UnityEditor.ProBuilder
 
             m_IsEditing = true;
 
-            m_WorldSnapEnabled = ProBuilderSnapSettings.snapMode == SnapMode.World;
-            m_SnapAxisConstraint = ProBuilderSnapSettings.snapMethod == SnapAxis.ActiveAxis; ProGridsInterface.UseAxisConstraints();
-            m_MoveSnapValue = m_WorldSnapEnabled ? ProBuilderSnapSettings.worldSnapMoveValue : ProBuilderSnapSettings.incrementalSnapMoveValue;
+            m_SnapAxisConstraint = EditorSnapping.snapMethod == SnapAxis.ActiveAxis;
 
             foreach (var mesh in selection)
             {

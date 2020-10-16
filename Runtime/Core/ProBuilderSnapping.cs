@@ -1,59 +1,37 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// Snapping functions
+    /// Snapping functions (didn't exist in UnityEngine prior to 2019.3)
     /// </summary>
     static class ProBuilderSnapping
     {
         const float k_MaxRaySnapDistance = Mathf.Infinity;
 
-        /// <summary>
-        /// Round value to nearest snpVal increment.
-        /// </summary>
-        /// <param name="vertex"></param>
-        /// <param name="snpVal"></param>
-        /// <returns></returns>
-        public static Vector3 SnapValue(Vector3 vertex, float snpVal)
+        internal static bool IsCardinalDirection(Vector3 direction)
         {
-            // snapValue is a global setting that comes from ProGrids
-            return new Vector3(
-                snpVal * Mathf.Round(vertex.x / snpVal),
-                snpVal * Mathf.Round(vertex.y / snpVal),
-                snpVal * Mathf.Round(vertex.z / snpVal));
+            return
+                Mathf.Abs(direction.x) > 0f && Mathf.Approximately(direction.y, 0f) && Mathf.Approximately(direction.z, 0f)
+                || Mathf.Abs(direction.y) > 0f && Mathf.Approximately(direction.x, 0f) && Mathf.Approximately(direction.z, 0f)
+                || Mathf.Abs(direction.z) > 0f && Mathf.Approximately(direction.x, 0f) && Mathf.Approximately(direction.y, 0f);
         }
 
-        /// <summary>
-        /// Round value to nearest snpVal increment.
-        /// </summary>
-        /// <param name="val"></param>
-        /// <param name="snpVal"></param>
-        /// <returns></returns>
-        public static float SnapValue(float val, float snpVal)
+        public static float Snap(float val, float snap)
         {
-            if (snpVal < Mathf.Epsilon)
+            if (snap == 0)
                 return val;
-            return snpVal * Mathf.Round(val / snpVal);
+
+            return snap * Mathf.Round(val / snap);
         }
 
-        /// <summary>
-        /// An override that accepts a vector3 to use as a mask for which values to snap.  Ex;
-        /// Snap((.3f, 3f, 41f), (0f, 1f, .4f)) only snaps Y and Z values (to 1 & .4 unit increments).
-        /// </summary>
-        /// <param name="vertex"></param>
-        /// <param name="snap"></param>
-        /// <returns></returns>
-        public static Vector3 SnapValue(Vector3 vertex, Vector3 snap)
+        public static Vector3 Snap(Vector3 val, Vector3 snap)
         {
-            float x = vertex.x, y = vertex.y, z = vertex.z;
-            Vector3 v = new Vector3(
-                    (Mathf.Abs(snap.x) < 0.0001f ? x : snap.x * Mathf.Round(x / snap.x)),
-                    (Mathf.Abs(snap.y) < 0.0001f ? y : snap.y * Mathf.Round(y / snap.y)),
-                    (Mathf.Abs(snap.z) < 0.0001f ? z : snap.z * Mathf.Round(z / snap.z))
-                    );
-            return v;
+            return new Vector3(
+                (Mathf.Abs(snap.x) > 0.0001f) ? Snap(val.x, snap.x) : val.x,
+                (Mathf.Abs(snap.y) > 0.0001f) ? Snap(val.y, snap.y) : val.y,
+                (Mathf.Abs(snap.z) > 0.0001f) ? Snap(val.z, snap.z) : val.z
+            );
         }
 
         /// <summary>
@@ -67,7 +45,7 @@ namespace UnityEngine.ProBuilder
             Vector3[] verts = mesh.positionsInternal;
 
             foreach (var v in indexes)
-                verts[v] = mesh.transform.InverseTransformPoint(SnapValue(mesh.transform.TransformPoint(verts[v]), snap));
+                verts[v] = mesh.transform.InverseTransformPoint(Snap(mesh.transform.TransformPoint(verts[v]), snap));
         }
 
         internal static Vector3 GetSnappingMaskBasedOnNormalVector(Vector3 normal)
@@ -96,7 +74,7 @@ namespace UnityEngine.ProBuilder
                         dir * Mathf.Sign(ray.direction[i]));
 
                     var pnt = ray.origin + prj;
-                    var plane = new Plane(dir, SnapValue(pnt, dir * snap));
+                    var plane = new Plane(dir, Snap(pnt, dir * snap));
 
                     if(Mathf.Abs(plane.GetDistanceToPoint(ray.origin)) < .0001f)
                     {

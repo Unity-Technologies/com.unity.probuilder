@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
@@ -8,11 +7,14 @@ namespace UnityEditor.ProBuilder.Actions
 {
     sealed class BevelEdges : MenuAction
     {
+        const float k_MinBevelDistance = .0001f;
         Pref<float> m_BevelSize = new Pref<float>("BevelEdges.size", .2f);
 
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Bevel", IconSkin.Pro); } }
         public override TooltipContent tooltip { get { return s_Tooltip; } }
+
+        static readonly GUIContent gc_BevelDistance = new GUIContent("Distance", "The size of the bevel in meters.");
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
@@ -39,14 +41,14 @@ namespace UnityEditor.ProBuilder.Actions
         {
             GUILayout.Label("Bevel Edge Settings", EditorStyles.boldLabel);
 
-            EditorGUILayout.HelpBox("Amount determines how much space the bevel takes up.  Bigger value means more bevel action.", MessageType.Info);
+            EditorGUILayout.HelpBox("Amount determines how much space the bevel occupies. The value is clamped to the size of the smallest affected face.", MessageType.Info);
 
             EditorGUI.BeginChangeCheck();
 
-            m_BevelSize.value = UI.EditorGUIUtility.FreeSlider("Distance", m_BevelSize, .001f, .99f);
+            m_BevelSize.value = EditorGUILayout.FloatField(gc_BevelDistance, m_BevelSize);
 
-            if (m_BevelSize < .001f)
-                m_BevelSize.value = .001f;
+            if (m_BevelSize < k_MinBevelDistance)
+                m_BevelSize.value = k_MinBevelDistance;
 
             if (EditorGUI.EndChangeCheck())
                 ProBuilderSettings.Save();

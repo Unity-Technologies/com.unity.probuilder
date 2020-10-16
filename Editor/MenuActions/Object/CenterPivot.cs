@@ -24,7 +24,7 @@ namespace UnityEditor.ProBuilder.Actions
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
                 "Center Pivot",
-                @"Set the pivot point of this object to the center of it's bounds."
+                @"Set the pivot point of this object to the center of its bounds."
             );
 
         public override bool enabled

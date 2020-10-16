@@ -284,7 +284,8 @@ namespace UnityEditor.ProBuilder
             MoveToActiveScene(pb.gameObject);
             GameObjectUtility.EnsureUniqueNameForSibling(pb.gameObject);
             ScreenCenter(pb.gameObject);
-            SetPivotLocationAndSnap(pb);
+            SnapInstantiatedObject(pb);
+
 #if UNITY_2019_1_OR_NEWER
             ComponentUtility.MoveComponentRelativeToComponent(pb, pb.transform, false);
 #endif
@@ -324,17 +325,14 @@ namespace UnityEditor.ProBuilder
                 meshCreated(pb);
         }
 
-        internal static void SetPivotLocationAndSnap(ProBuilderMesh mesh)
+        // If s_SnapNewShapesToGrid is enabled, always snap to the grid size. If it is not, use the active snap  settings
+        internal static void SnapInstantiatedObject(ProBuilderMesh mesh)
         {
-            if (ProGridsInterface.SnapEnabled())
-                mesh.transform.position = ProBuilderSnapping.SnapValue(mesh.transform.position, ProGridsInterface.SnapValue());
-            else if (s_SnapNewShapesToGrid)
-                mesh.transform.position = ProBuilderSnapping.SnapValue(mesh.transform.position, new Vector3(
-                            EditorPrefs.GetFloat("MoveSnapX"),
-                            EditorPrefs.GetFloat("MoveSnapY"),
-                            EditorPrefs.GetFloat("MoveSnapZ")));
-
-            mesh.Optimize();
+            mesh.transform.position = ProBuilderSnapping.Snap(
+                mesh.transform.position,
+                s_SnapNewShapesToGrid
+                    ? EditorSnapping.worldSnapMoveValue
+                    : EditorSnapping.activeMoveSnapValue);
         }
 
         /**
