@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Diagnostics;
 using UnityEditor.EditorTools;
 using UnityEngine;
 using UObject = UnityEngine.Object;
@@ -165,14 +166,16 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-#if !TOOL_CONTEXTS_ENABLED
         // Can't do this in `activeToolChanged` because it is forbidden by ToolManager to prevent recursion
         internal void ForwardBuiltinToolCheck()
         {
+#if !TOOL_CONTEXTS_ENABLED
             if(selectMode.IsMeshElementMode() && GetProBuilderToolType(ToolManager.activeToolType, out EditorTool tool))
                 ToolManager.SetActiveTool(tool);
+#endif
         }
 
+#if !TOOL_CONTEXTS_ENABLED
         bool GetBuiltinToolType(Type type, out Type builtin)
         {
             for (int i = 0; i < k_BuiltinToolCount; i++)
