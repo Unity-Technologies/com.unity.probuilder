@@ -21,8 +21,6 @@ namespace UnityEditor.ProBuilder
         static Pref<SelectMode> s_SelectMode = new Pref<SelectMode>("editor.selectMode", SelectMode.Object);
         static Pref<SelectMode> s_LastMeshSelectMode = new Pref<SelectMode>("editor.lastMeshSelectMode", SelectMode.Object);
 
-        static ProBuilderToolManager s_Instance;
-
         public static SelectMode selectMode
         {
             get => s_SelectMode.value;
@@ -48,8 +46,6 @@ namespace UnityEditor.ProBuilder
 
         public ProBuilderToolManager()
         {
-            s_Instance = this;
-
 #if !TOOL_CONTEXTS_ENABLED
             EditorApplication.update += ForwardBuiltinToolCheck;
 
@@ -80,8 +76,7 @@ namespace UnityEditor.ProBuilder
             m_IsDisposed = true;
             GC.SuppressFinalize(this);
 
-            SetSelectModeInternal(SelectMode.Object);
-            s_Instance = null;
+            SetSelectMode(SelectMode.Object);
 
 #if !TOOL_CONTEXTS_ENABLED
             EditorApplication.update -= ForwardBuiltinToolCheck;
@@ -95,14 +90,7 @@ namespace UnityEditor.ProBuilder
 #endif
         }
 
-        public static void SetSelectMode(SelectMode mode)
-        {
-            if (s_Instance == null)
-                return;
-            s_Instance.SetSelectModeInternal(mode);
-        }
-
-        void SetSelectModeInternal(SelectMode mode)
+        public void SetSelectMode(SelectMode mode)
         {
             if (mode == selectMode)
                 return;

@@ -274,7 +274,7 @@ namespace UnityEditor.ProBuilder
 
             var selectMode = ProBuilderToolManager.selectMode;
             if (selectMode.IsTextureMode())
-                ProBuilderToolManager.SetSelectMode(selectMode.GetPositionMode());
+                ProBuilderEditor.selectMode = selectMode.GetPositionMode();
 
             ToolManager.activeToolChanged -= Repaint;
             MeshSelection.objectSelectionChanged -= ObjectSelectionChanged;

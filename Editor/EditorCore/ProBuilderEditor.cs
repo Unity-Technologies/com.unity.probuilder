@@ -180,9 +180,9 @@ namespace UnityEditor.ProBuilder
         {
             get
             {
+                // for backwards compatibility reasons `Object` is returned when editor is closed
                 if (s_Instance != null)
                     return ProBuilderToolManager.selectMode;
-                // for backwards compatibility reasons `Object` is returned when editor is closed
                 return SelectMode.Object;
             }
 
@@ -193,7 +193,8 @@ namespace UnityEditor.ProBuilder
                     var changed = ProBuilderToolManager.selectMode != value;
                     if (!changed)
                         return;
-                    ProBuilderToolManager.SetSelectMode(value);
+                    var tools = s_Instance.m_ToolManager;
+                    tools.SetSelectMode(value);
                     if (selectModeChanged != null)
                         selectModeChanged(value);
                 }
@@ -313,6 +314,14 @@ namespace UnityEditor.ProBuilder
             m_ToolManager.Dispose();
 
             SceneView.RepaintAll();
+        }
+
+        void OnFocus()
+        {
+            // maximize does this weird crap where it doesn't disable or enable windows in the current layout when
+            // entering or exiting maximized mode, but _does_ Enable/Disable the new maximized window instance. when
+            // that happens the ProBuilderEditor loses the s_Instance due to that maximized instance taking over.
+            s_Instance = this;
         }
 
         void BeforeMeshModification(IEnumerable<ProBuilderMesh> meshes)
@@ -437,7 +446,7 @@ namespace UnityEditor.ProBuilder
             {
                 return s_Instance == null
                     ? null
-                    : (VertexManipulationTool)EditorToolManager.activeTool;
+                    : (VertexManipulationTool) EditorToolManager.activeTool;
             }
         }
 
