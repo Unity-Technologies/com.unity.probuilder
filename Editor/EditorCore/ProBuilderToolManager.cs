@@ -71,13 +71,13 @@ namespace UnityEditor.ProBuilder
             m_DefaultTools[(int) Tool.Rotate] = typeof(RotateTool);
             m_DefaultTools[(int) Tool.Scale] = typeof(ScaleTool);
 
-            m_VertexTools[(int)Tool.Move] = ScriptableObject.CreateInstance<ProbuilderMoveTool>();
-            m_VertexTools[(int)Tool.Rotate] = ScriptableObject.CreateInstance<ProbuilderRotateTool>();
-            m_VertexTools[(int)Tool.Scale] = ScriptableObject.CreateInstance<ProbuilderScaleTool>();
+            m_VertexTools[(int) Tool.Move] = ScriptableObject.CreateInstance<ProbuilderMoveTool>();
+            m_VertexTools[(int) Tool.Rotate] = ScriptableObject.CreateInstance<ProbuilderRotateTool>();
+            m_VertexTools[(int) Tool.Scale] = ScriptableObject.CreateInstance<ProbuilderScaleTool>();
 
-            m_TextureTools[(int)Tool.Move] = ScriptableObject.CreateInstance<TextureMoveTool>();
-            m_TextureTools[(int)Tool.Rotate] = ScriptableObject.CreateInstance<TextureRotateTool>();
-            m_TextureTools[(int)Tool.Scale] = ScriptableObject.CreateInstance<TextureScaleTool>();
+            m_TextureTools[(int) Tool.Move] = ScriptableObject.CreateInstance<TextureMoveTool>();
+            m_TextureTools[(int) Tool.Rotate] = ScriptableObject.CreateInstance<TextureRotateTool>();
+            m_TextureTools[(int) Tool.Scale] = ScriptableObject.CreateInstance<TextureScaleTool>();
 #endif
         }
 
@@ -167,7 +167,7 @@ namespace UnityEditor.ProBuilder
 
 #if !TOOL_CONTEXTS_ENABLED
         // Can't do this in `activeToolChanged` because it is forbidden by ToolManager to prevent recursion
-        void ForwardBuiltinToolCheck()
+        internal void ForwardBuiltinToolCheck()
         {
             if(selectMode.IsMeshElementMode() && GetProBuilderToolType(ToolManager.activeToolType, out EditorTool tool))
                 ToolManager.SetActiveTool(tool);

@@ -204,6 +204,12 @@ namespace UnityEditor.ProBuilder
             Refresh();
         }
 
+        // used by tests for pre-override tools
+        internal static void SyncEditorToolSelectMode()
+        {
+            toolManager?.ForwardBuiltinToolCheck();
+        }
+
         static class SceneStyles
         {
             static bool s_Init = false;
