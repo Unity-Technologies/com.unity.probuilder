@@ -48,6 +48,7 @@ namespace UnityEditor.ProBuilder
         ProBuilderToolManager m_ToolManager;
         internal EditorToolbar toolbar => m_Toolbar; // used by unit tests
         static ProBuilderEditor s_Instance;
+        static Pref<SelectMode> s_LastActiveSelectMode = new Pref<SelectMode>("editor.lastActiveSelectMode", SelectMode.Face);
 
         GUIContent[] m_EditModeIcons;
         GUIStyle VertexTranslationInfoStyle;
@@ -189,16 +190,7 @@ namespace UnityEditor.ProBuilder
             set
             {
                 if (s_Instance != null)
-                {
-                    var changed = ProBuilderToolManager.selectMode != value;
-                    if (!changed)
-                        return;
-                    var tools = s_Instance.m_ToolManager;
-                    tools.SetSelectMode(value);
-                    if (selectModeChanged != null)
-                        selectModeChanged(value);
-                }
-
+                    s_Instance.m_ToolManager.SetSelectMode(value);
                 Refresh();
             }
         }
@@ -264,6 +256,8 @@ namespace UnityEditor.ProBuilder
         {
             s_Instance = this;
 
+            ProBuilderToolManager.selectModeChanged += OnSelectModeChanged;
+
             m_Toolbar = new EditorToolbar(this);
             m_ToolManager = new ProBuilderToolManager();
 
@@ -282,8 +276,7 @@ namespace UnityEditor.ProBuilder
             EditorApplication.delayCall += () => UpdateSelection();
             SetOverrideWireframe(true);
 
-            if (selectModeChanged != null)
-                selectModeChanged(selectMode);
+            selectMode = s_LastActiveSelectMode;
         }
 
         void OnDisable()
@@ -307,11 +300,10 @@ namespace UnityEditor.ProBuilder
 
             SetOverrideWireframe(false);
 
-            if (selectModeChanged != null)
-                selectModeChanged(SelectMode.Object);
-
+            s_LastActiveSelectMode.SetValue(ProBuilderToolManager.selectMode);
             m_Toolbar.Dispose();
             m_ToolManager.Dispose();
+            ProBuilderToolManager.selectModeChanged -= OnSelectModeChanged;
 
             SceneView.RepaintAll();
         }
@@ -322,6 +314,12 @@ namespace UnityEditor.ProBuilder
             // entering or exiting maximized mode, but _does_ Enable/Disable the new maximized window instance. when
             // that happens the ProBuilderEditor loses the s_Instance due to that maximized instance taking over.
             s_Instance = this;
+        }
+
+        void OnSelectModeChanged()
+        {
+            if (selectModeChanged != null)
+                selectModeChanged(ProBuilderToolManager.selectMode);
         }
 
         void BeforeMeshModification(IEnumerable<ProBuilderMesh> meshes)
@@ -850,6 +848,8 @@ namespace UnityEditor.ProBuilder
                                 $"instance: {(s_Instance != null ? s_Instance.GetInstanceID().ToString() : "null")}\n" +
                                 $"toolbar: {m_Toolbar}\n" +
                                 $"---\n" +
+                                $"last ctx: {s_LastActiveSelectMode.value}\n" +
+                                $"active ctx: {ToolManager.activeContextType}\n" +
                                 $"active tool: {ToolManager.activeToolType}\n" +
                                 $"select mode: {ProBuilderToolManager.selectMode}");
                 EditorGUILayout.EndVertical();
@@ -888,13 +888,15 @@ namespace UnityEditor.ProBuilder
                         break;
 
                     default:
-                    case SceneToolbarLocation.UpperCenter:
                         m_ElementModeToolbarRect.x = (screenWidth / 2 - 64);
                         m_ElementModeToolbarRect.y = 10;
                         break;
                 }
 
-                selectMode = UI.EditorGUIUtility.DoElementModeToolbar(m_ElementModeToolbarRect, selectMode);
+                var mode = selectMode;
+                mode = UI.EditorGUIUtility.DoElementModeToolbar(m_ElementModeToolbarRect, mode);
+                if (mode != selectMode)
+                    selectMode = mode;
 
                 if (s_ShowSceneInfo)
                 {
@@ -930,6 +932,7 @@ namespace UnityEditor.ProBuilder
         internal void ToggleSelectionMode()
         {
             ProBuilderToolManager.NextMeshSelectMode();
+            Refresh();
         }
 
         void UpdateSelection(bool selectionChanged = true)

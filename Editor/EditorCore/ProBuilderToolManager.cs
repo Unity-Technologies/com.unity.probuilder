@@ -3,20 +3,21 @@
 #endif
 
 using System;
-using System.Collections.Generic;
 using UnityEditor.EditorTools;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using UnityEngine.ProBuilder;
+#if UNITY_2020_2_OR_NEWER
+using ToolManager = UnityEditor.EditorTools.ToolManager;
+#else
 using ToolManager = UnityEditor.EditorTools.EditorTools;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
     // Handles forwarding the Unity tool to ProBuilder editor
     class ProBuilderToolManager : IDisposable
     {
-        const int k_BuiltinToolCount = (int) Tool.Custom + 1;
-
         // When tool contexts are fully implemented there should be no need for `SelectMode`
         static Pref<SelectMode> s_SelectMode = new Pref<SelectMode>("editor.selectMode", SelectMode.Object);
         static Pref<SelectMode> s_LastMeshSelectMode = new Pref<SelectMode>("editor.lastMeshSelectMode", SelectMode.Object);
@@ -24,12 +25,25 @@ namespace UnityEditor.ProBuilder
         public static SelectMode selectMode
         {
             get => s_SelectMode.value;
-            private set => s_SelectMode.SetValue(value);
+
+            private set
+            {
+                if (value.IsMeshElementMode())
+                    s_LastMeshSelectMode.SetValue(value);
+                Debug.Log($"selectMode = {value}");
+                s_SelectMode.SetValue(value);
+                ProBuilderSettings.Save();
+                if (selectModeChanged != null)
+                    selectModeChanged();
+            }
         }
+
+        public static event Action selectModeChanged = () => {};
 
         bool m_IsDisposed = false;
 
 #if !TOOL_CONTEXTS_ENABLED
+        const int k_BuiltinToolCount = (int) Tool.Custom + 1;
         Type[] m_DefaultTools;
         EditorTool[] m_VertexTools;
         EditorTool[] m_TextureTools;
@@ -65,8 +79,6 @@ namespace UnityEditor.ProBuilder
             m_TextureTools[(int)Tool.Rotate] = ScriptableObject.CreateInstance<TextureRotateTool>();
             m_TextureTools[(int)Tool.Scale] = ScriptableObject.CreateInstance<TextureScaleTool>();
 #endif
-
-            SetSelectMode(selectMode);
         }
 
         public void Dispose()
@@ -92,22 +104,20 @@ namespace UnityEditor.ProBuilder
 
         public void SetSelectMode(SelectMode mode)
         {
+            Debug.Log($"SetSelectMode({selectMode} -> {mode})");
             if (mode == selectMode)
                 return;
 
             selectMode = mode;
 
 #if TOOL_CONTEXTS_ENABLED
-            if(selectMode.IsPositionMode() && ToolManager.activeContextType != typeof(PositionToolContext))
+            if (selectMode.IsPositionMode() && ToolManager.activeContextType != typeof(PositionToolContext))
                 ToolManager.SetActiveContext<PositionToolContext>();
-            else if(selectMode.IsTextureMode() && ToolManager.activeContextType != typeof(TextureToolContext))
+            else if (selectMode.IsTextureMode() && ToolManager.activeContextType != typeof(TextureToolContext))
                 ToolManager.SetActiveContext<TextureToolContext>();
-            else if ( !selectMode.IsPositionMode() )
+            else if (!selectMode.IsMeshElementMode())
                 ToolManager.SetActiveContext<GameObjectToolContext>();
 #else
-            if (mode.IsMeshElementMode())
-                s_LastMeshSelectMode.SetValue(mode);
-
             var tool = activeTool;
 
             if (tool == Tool.None)
@@ -128,27 +138,35 @@ namespace UnityEditor.ProBuilder
 
         public static void NextMeshSelectMode()
         {
-            // todo
-            // if (s_SelectMode == SelectMode.Vertex)
-            //     selectMode = SelectMode.Edge;
-            // else if (s_SelectMode == SelectMode.Edge)
-            //     selectMode = SelectMode.Face;
-            // else if (s_SelectMode == SelectMode.Face)
-            //     selectMode = SelectMode.Vertex;
+            if (s_SelectMode == SelectMode.Vertex)
+                selectMode = SelectMode.Edge;
+            else if (s_SelectMode == SelectMode.Edge)
+                selectMode = SelectMode.Face;
+            else if (s_SelectMode == SelectMode.Face)
+                selectMode = SelectMode.Vertex;
+            if (s_SelectMode == SelectMode.TextureVertex)
+                selectMode = SelectMode.TextureEdge;
+            else if (s_SelectMode == SelectMode.TextureEdge)
+                selectMode = SelectMode.TextureFace;
+            else if (s_SelectMode == SelectMode.TextureFace)
+                selectMode = SelectMode.TextureVertex;
         }
 
         public static Tool activeTool
         {
             get
             {
+#if TOOL_CONTEXTS_ENABLED
+                return Tools.current;
+#else
                 if (k_ToolTypeMap.TryGetValue(ToolManager.activeToolType, out Tool tool))
                     return tool;
                 return Tools.current;
+#endif
             }
         }
 
 #if !TOOL_CONTEXTS_ENABLED
-
         // Can't do this in `activeToolChanged` because it is forbidden by ToolManager to prevent recursion
         void ForwardBuiltinToolCheck()
         {

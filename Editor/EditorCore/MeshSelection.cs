@@ -135,7 +135,11 @@ namespace UnityEditor.ProBuilder
             EditorMeshUtility.meshOptimized += (x, y) => { s_ElementCountsDirty = true; };
             ProBuilderMesh.componentWillBeDestroyed += RemoveMeshFromSelectionInternal;
             ProBuilderMesh.componentHasBeenReset += RefreshSelectionAfterComponentReset;
+            ProBuilderEditor.selectModeChanged += SelectModeChanged;
             ToolManager.activeToolChanged += ActiveToolChanged;
+#if UNITY_2020_2_OR_NEWER
+            ToolManager.activeContextChanged += ActiveToolChanged;
+#endif
             VertexManipulationTool.afterMeshModification += AfterMeshModification;
             OnObjectSelectionChanged();
         }
@@ -226,6 +230,11 @@ namespace UnityEditor.ProBuilder
                 objectSelectionChanged();
 
             s_UnitySelectionChangeMeshes.Clear();
+        }
+
+        static void SelectModeChanged(SelectMode mode)
+        {
+            InvalidateCaches();
         }
 
         static void ActiveToolChanged()
