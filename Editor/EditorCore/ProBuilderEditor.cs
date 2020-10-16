@@ -45,7 +45,8 @@ namespace UnityEditor.ProBuilder
         public static event Action<IEnumerable<ProBuilderMesh>> beforeMeshModification;
 
         EditorToolbar m_Toolbar;
-        ProBuilderToolManager m_ToolManager;
+        ProBuilderToolManager m_ToolManager; // never use this directly! use toolManager getter to avoid problems with multiple editor instances
+        static ProBuilderToolManager toolManager => s_Instance != null ? s_Instance.m_ToolManager : null;
         internal EditorToolbar toolbar => m_Toolbar; // used by unit tests
         static ProBuilderEditor s_Instance;
         static Pref<SelectMode> s_LastActiveSelectMode = new Pref<SelectMode>("editor.lastActiveSelectMode", SelectMode.Face);
@@ -189,8 +190,7 @@ namespace UnityEditor.ProBuilder
 
             set
             {
-                if (s_Instance != null)
-                    s_Instance.m_ToolManager.SetSelectMode(value);
+                toolManager?.SetSelectMode(value);
                 Refresh();
             }
         }
@@ -200,9 +200,7 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         public static void ResetToLastSelectMode()
         {
-            if (s_Instance == null)
-                return;
-            instance.m_ToolManager.ResetToLastSelectMode();
+            toolManager?.ResetToLastSelectMode();
             Refresh();
         }
 
@@ -254,12 +252,19 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            s_Instance = this;
+            // maximize does this weird crap where it doesn't disable or enable windows in the current layout when
+            // entering or exiting maximized mode, but _does_ Enable/Disable the new maximized window instance. when
+            // that happens the ProBuilderEditor loses the s_Instance due to that maximized instance taking over.
+            // so in order to prevent the problems that occur when multiple instances of ProBuilderEditor, instead
+            // ensure that there is always one true instance. we'll also skip initializing what are basically singleton
+            // managers as well (ex, tool manager)
+            if(s_Instance == null)
+                s_Instance = this;
 
             ProBuilderToolManager.selectModeChanged += OnSelectModeChanged;
 
             m_Toolbar = new EditorToolbar(this);
-            m_ToolManager = new ProBuilderToolManager();
+            m_ToolManager = s_Instance == this ? new ProBuilderToolManager() : null;
 
             SceneView.duringSceneGui += OnSceneGUI;
             ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
@@ -281,8 +286,6 @@ namespace UnityEditor.ProBuilder
 
         void OnDisable()
         {
-            s_Instance = null;
-
             VertexManipulationTool.beforeMeshModification -= BeforeMeshModification;
             VertexManipulationTool.afterMeshModification -= AfterMeshModification;
 
@@ -299,21 +302,15 @@ namespace UnityEditor.ProBuilder
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
 
             SetOverrideWireframe(false);
-
-            s_LastActiveSelectMode.SetValue(ProBuilderToolManager.selectMode);
             m_Toolbar.Dispose();
-            m_ToolManager.Dispose();
+            if(m_ToolManager != null)
+                m_ToolManager.Dispose();
             ProBuilderToolManager.selectModeChanged -= OnSelectModeChanged;
 
             SceneView.RepaintAll();
-        }
 
-        void OnFocus()
-        {
-            // maximize does this weird crap where it doesn't disable or enable windows in the current layout when
-            // entering or exiting maximized mode, but _does_ Enable/Disable the new maximized window instance. when
-            // that happens the ProBuilderEditor loses the s_Instance due to that maximized instance taking over.
-            s_Instance = this;
+            if(s_Instance == this)
+                s_Instance = null;
         }
 
         void OnSelectModeChanged()
@@ -849,7 +846,7 @@ namespace UnityEditor.ProBuilder
                                 $"toolbar: {m_Toolbar}\n" +
                                 $"---\n" +
                                 $"last ctx: {s_LastActiveSelectMode.value}\n" +
-                                $"active ctx: {ToolManager.activeContextType}\n" +
+                                // $"active ctx: {ToolManager.activeContextType}\n" +
                                 $"active tool: {ToolManager.activeToolType}\n" +
                                 $"select mode: {ProBuilderToolManager.selectMode}");
                 EditorGUILayout.EndVertical();
@@ -893,10 +890,7 @@ namespace UnityEditor.ProBuilder
                         break;
                 }
 
-                var mode = selectMode;
-                mode = UI.EditorGUIUtility.DoElementModeToolbar(m_ElementModeToolbarRect, mode);
-                if (mode != selectMode)
-                    selectMode = mode;
+                selectMode = UI.EditorGUIUtility.DoElementModeToolbar(m_ElementModeToolbarRect, selectMode);
 
                 if (s_ShowSceneInfo)
                 {

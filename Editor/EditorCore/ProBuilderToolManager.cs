@@ -11,6 +11,7 @@ using UnityEngine.ProBuilder;
 using ToolManager = UnityEditor.EditorTools.ToolManager;
 #else
 using ToolManager = UnityEditor.EditorTools.EditorTools;
+using System.Collections.Generic;
 #endif
 
 namespace UnityEditor.ProBuilder
@@ -30,7 +31,6 @@ namespace UnityEditor.ProBuilder
             {
                 if (value.IsMeshElementMode())
                     s_LastMeshSelectMode.SetValue(value);
-                Debug.Log($"selectMode = {value}");
                 s_SelectMode.SetValue(value);
                 ProBuilderSettings.Save();
                 if (selectModeChanged != null)
@@ -104,7 +104,6 @@ namespace UnityEditor.ProBuilder
 
         public void SetSelectMode(SelectMode mode)
         {
-            Debug.Log($"SetSelectMode({selectMode} -> {mode})");
             if (mode == selectMode)
                 return;
 
