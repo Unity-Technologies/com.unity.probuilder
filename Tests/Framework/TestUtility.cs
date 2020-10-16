@@ -49,7 +49,6 @@ namespace UnityEngine.ProBuilder.Tests.Framework
         {
             var tempPath = $"{tempDirectory}/{Path.GetFileName(path)}";
             AssetDatabase.CopyAsset(path, tempPath);
-            Debug.Log("opening: " + tempPath);
             return EditorSceneManager.OpenScene(tempPath);
         }
     }
