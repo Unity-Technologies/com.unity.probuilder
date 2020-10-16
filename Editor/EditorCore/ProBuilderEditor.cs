@@ -203,9 +203,14 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Set the <see cref="SelectMode"/> to the last used mesh element mode.
+        /// </summary>
         public static void ResetToLastSelectMode()
         {
-            ProBuilderToolManager.ResetToLastSelectMode();
+            if (s_Instance == null)
+                return;
+            instance.m_ToolManager.ResetToLastSelectMode();
         }
 
         static class SceneStyles
@@ -256,8 +261,6 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            Debug.Log($"OnEnable {GetInstanceID()}");
-
             s_Instance = this;
 
             m_Toolbar = new EditorToolbar(this);
@@ -284,7 +287,6 @@ namespace UnityEditor.ProBuilder
 
         void OnDisable()
         {
-            Debug.Log($"OnDisable {GetInstanceID()}");
             s_Instance = null;
 
             VertexManipulationTool.beforeMeshModification -= BeforeMeshModification;

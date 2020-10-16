@@ -2557,7 +2557,7 @@ namespace UnityEditor.ProBuilder
             }
             else if (channel == 1)
             {
-                EditorUtility.CreateCachedEditor<UnwrapParametersEditor>(selection, ref uv2Editor);
+                Editor.CreateCachedEditor(selection, typeof(UnwrapParametersEditor), ref uv2Editor);
 
                 if (uv2Editor != null)
                 {

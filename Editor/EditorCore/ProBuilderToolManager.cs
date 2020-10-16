@@ -18,6 +18,7 @@ namespace UnityEditor.ProBuilder
 
         // When tool contexts are fully implemented there should be no need for `SelectMode`
         static Pref<SelectMode> s_SelectMode = new Pref<SelectMode>("editor.selectMode", SelectMode.Object);
+        static Pref<SelectMode> s_LastMeshSelectMode = new Pref<SelectMode>("editor.lastMeshSelectMode", SelectMode.Object);
 
         public static SelectMode selectMode
         {
@@ -69,6 +70,8 @@ namespace UnityEditor.ProBuilder
 
             ToolManager.activeToolChanged -= ActiveToolChanged;
 
+            SetSelectMode(SelectMode.Object);
+
 #if !TOOL_CONTEXTS_ENABLED
             EditorApplication.update -= ForwardBuiltinToolCheck;
 
@@ -96,10 +99,13 @@ namespace UnityEditor.ProBuilder
             else if ( !selectMode.IsPositionMode() )
                 ToolManager.SetActiveContext<GameObjectToolContext>();
 #else
+            if (mode.IsMeshElementMode())
+                s_LastMeshSelectMode.SetValue(mode);
+
             var tool = Tools.current;
 
             if (tool == Tool.None)
-                return;
+                tool = Tool.Move;
 
             if(mode.IsPositionMode() && m_VertexTools[(int)tool] != null)
                 ToolManager.SetActiveTool(m_VertexTools[(int)tool]);
@@ -110,9 +116,9 @@ namespace UnityEditor.ProBuilder
 #endif
         }
 
-        public static void ResetToLastSelectMode()
+        public void ResetToLastSelectMode()
         {
-            // todo
+            SetSelectMode(s_LastMeshSelectMode);
         }
 
         public static void NextMeshSelectMode()
