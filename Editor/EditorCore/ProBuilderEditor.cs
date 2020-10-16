@@ -441,6 +441,7 @@ namespace UnityEditor.ProBuilder
                     : (VertexManipulationTool)EditorToolManager.activeTool;
             }
         }
+
         void OnSceneGUI(SceneView sceneView)
         {
             SceneStyles.Init();

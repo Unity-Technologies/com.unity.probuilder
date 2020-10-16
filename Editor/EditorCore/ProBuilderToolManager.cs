@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Collections.Generic;
 using UnityEditor.EditorTools;
 using UnityEngine;
 using UObject = UnityEngine.Object;
@@ -32,12 +33,19 @@ namespace UnityEditor.ProBuilder
         Type[] m_DefaultTools;
         EditorTool[] m_VertexTools;
         EditorTool[] m_TextureTools;
+        static readonly Dictionary<Type, Tool> k_ToolTypeMap = new Dictionary<Type, Tool>()
+        {
+            { typeof(ProbuilderMoveTool), Tool.Move },
+            { typeof(ProbuilderRotateTool), Tool.Rotate },
+            { typeof(ProbuilderScaleTool), Tool.Scale },
+            { typeof(TextureMoveTool), Tool.Move },
+            { typeof(TextureRotateTool), Tool.Rotate },
+            { typeof(TextureScaleTool), Tool.Scale }
+        };
 #endif
 
         public ProBuilderToolManager()
         {
-            ToolManager.activeToolChanged += ActiveToolChanged;
-
 #if !TOOL_CONTEXTS_ENABLED
             EditorApplication.update += ForwardBuiltinToolCheck;
 
@@ -67,8 +75,6 @@ namespace UnityEditor.ProBuilder
                 return;
             m_IsDisposed = true;
             GC.SuppressFinalize(this);
-
-            ToolManager.activeToolChanged -= ActiveToolChanged;
 
             SetSelectMode(SelectMode.Object);
 
@@ -102,12 +108,11 @@ namespace UnityEditor.ProBuilder
             if (mode.IsMeshElementMode())
                 s_LastMeshSelectMode.SetValue(mode);
 
-            var tool = Tools.current;
+            var tool = activeTool;
 
             if (tool == Tool.None)
-                tool = Tool.Move;
-
-            if(mode.IsPositionMode() && m_VertexTools[(int)tool] != null)
+                ToolManager.SetActiveTool<MoveTool>();
+            else  if(mode.IsPositionMode() && m_VertexTools[(int)tool] != null)
                 ToolManager.SetActiveTool(m_VertexTools[(int)tool]);
             else if(mode.IsTextureMode() && m_TextureTools[(int)tool] != null)
                 ToolManager.SetActiveTool(m_TextureTools[(int)tool]);
@@ -132,24 +137,14 @@ namespace UnityEditor.ProBuilder
             //     selectMode = SelectMode.Vertex;
         }
 
-        /// <summary>
-        /// Update current tool, then updates the UV Editor window if applicable.
-        /// </summary>
-        static void ActiveToolChanged()
+        public static Tool activeTool
         {
-            // todo Forward to UV Editor?
-
-//             //Recording the last persistent tool in m_CurrentTool if need to restore it in object select mode
-//             if(Tools.current != Tool.None && Tools.current != Tool.Custom)
-//             {
-//                 if(UVEditor.instance != null)
-//                     UVEditor.instance.SetTool(Tools.current);
-//
-// #if !UNITY_2020_2_OR_NEWER
-//                 // Call for tool update in the next GUI loop
-//                 // m_CheckForToolUpdate = true;
-// #endif
-//             }
+            get
+            {
+                if (k_ToolTypeMap.TryGetValue(ToolManager.activeToolType, out Tool tool))
+                    return tool;
+                return Tools.current;
+            }
         }
 
 #if !TOOL_CONTEXTS_ENABLED
@@ -157,7 +152,7 @@ namespace UnityEditor.ProBuilder
         // Can't do this in `activeToolChanged` because it is forbidden by ToolManager to prevent recursion
         void ForwardBuiltinToolCheck()
         {
-            if(selectMode.IsPositionMode() && GetProBuilderToolType(ToolManager.activeToolType, out EditorTool tool))
+            if(selectMode.IsMeshElementMode() && GetProBuilderToolType(ToolManager.activeToolType, out EditorTool tool))
                 ToolManager.SetActiveTool(tool);
         }
 
