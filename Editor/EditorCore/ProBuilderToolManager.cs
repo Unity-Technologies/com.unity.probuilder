@@ -1,4 +1,4 @@
-#if UNITY_2020_1_OR_NEWER
+#if UNITY_2020_2_OR_NEWER
 #define TOOL_CONTEXTS_ENABLED
 #endif
 
@@ -79,6 +79,12 @@ namespace UnityEditor.ProBuilder
             m_TextureTools[(int) Tool.Move] = ScriptableObject.CreateInstance<TextureMoveTool>();
             m_TextureTools[(int) Tool.Rotate] = ScriptableObject.CreateInstance<TextureRotateTool>();
             m_TextureTools[(int) Tool.Scale] = ScriptableObject.CreateInstance<TextureScaleTool>();
+
+            for (int i = (int) Tool.Move; i <= (int) Tool.Scale; i++)
+            {
+                m_VertexTools[i].hideFlags = HideFlags.HideAndDontSave;
+                m_TextureTools[i].hideFlags = HideFlags.HideAndDontSave;
+            }
 #endif
         }
 
