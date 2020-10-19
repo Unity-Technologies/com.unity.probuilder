@@ -3,7 +3,7 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-    class PositionMoveTool : PositionTool
+    class ProbuilderMoveTool : PositionTool
     {
         const float k_CardinalAxisError = .001f;
         const float k_MinTranslateDeltaSqrMagnitude = .00001f;

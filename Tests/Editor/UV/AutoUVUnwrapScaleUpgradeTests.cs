@@ -6,7 +6,7 @@ using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Tests.Framework;
 using UnityEngine.SceneManagement;
 
-public class AutoUVUnwrapScaleUpgradeTests
+class AutoUVUnwrapScaleUpgradeTests : TemporaryAssetTest
 {
     const float k_AllowedFloatError = .00001f;
 
@@ -15,10 +15,10 @@ public class AutoUVUnwrapScaleUpgradeTests
     static ProBuilderMesh[] s_Meshes = new ProBuilderMesh[4];
     static int[] s_MeshIndex = new int[] { 0, 1, 2, 3 };
 
-    // [SetUp]
+    [SetUp]
     public void PrepareSceneView()
     {
-        s_Scene = EditorSceneManager.OpenScene($"{TestUtility.testsRootDirectory}/Scenes/AutoUVScaleUpgrade.unity");
+        s_Scene = OpenScene($"{TestUtility.testsRootDirectory}/Scenes/AutoUVScaleUpgrade.unity");
         var root = s_Scene.GetRootGameObjects();
 
         s_Meshes[0] = root[0].GetComponent<ProBuilderMesh>();
@@ -31,8 +31,7 @@ public class AutoUVUnwrapScaleUpgradeTests
         Assume.That(s_Meshes[3], Is.Not.Null);
     }
 
-    // @todo Fails on Yamato with error about opening scene from a read-only package
-    // [Test]
+    [Test]
     public void LegacyUVs_UpgradeWithoutModifyingPositions([ValueSource("s_MeshIndex")] int index)
     {
         var mesh = s_Meshes[index];
@@ -47,8 +46,7 @@ public class AutoUVUnwrapScaleUpgradeTests
         }
     }
 
-    // @todo Fails on Yamato with error about opening scene from a read-only package
-    // [Test]
+    [Test]
     public void LegacyUVs_UpgradeIncrementsMeshVersion()
     {
         var mesh = s_Meshes[0];

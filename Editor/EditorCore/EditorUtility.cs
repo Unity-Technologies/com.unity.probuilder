@@ -415,24 +415,6 @@ namespace UnityEditor.ProBuilder
                 (int)platform == 128;
         }
 
-        /**
-         *  CreateCachedEditor didn't exist until 5.0, so recreate it's contents if necessary or pass it on.
-         */
-        internal static void CreateCachedEditor<T>(UnityEngine.Object[] targetObjects, ref UnityEditor.Editor previousEditor) where T : UnityEditor.Editor
-        {
-            #if UNITY_4_7
-            if (previousEditor != null && pbUtil.IsEqual(previousEditor.targets, targetObjects))
-                return;
-
-            if (previousEditor != null)
-                UnityEngine.Object.DestroyImmediate(previousEditor);
-
-            previousEditor = Editor.CreateEditor(targetObjects, typeof(T));
-            #else
-            UnityEditor.Editor.CreateCachedEditor(targetObjects, typeof(T), ref previousEditor);
-            #endif
-        }
-
         /// <summary>
         /// Is this mode one of the mesh element modes (vertex, edge, face, texture).
         /// </summary>

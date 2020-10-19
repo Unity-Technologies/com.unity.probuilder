@@ -14,7 +14,7 @@ namespace UnityEditor.ProBuilder.Actions
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Bevel", IconSkin.Pro); } }
         public override TooltipContent tooltip { get { return s_Tooltip; } }
 
-        static readonly GUIContent gc_BevelDistance = new GUIContent("Distance", "The size of the bevel in meters.");
+        static readonly GUIContent gc_BevelDistance = EditorGUIUtility.TrTextContent("Distance", "The size of the bevel in meters.");
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (

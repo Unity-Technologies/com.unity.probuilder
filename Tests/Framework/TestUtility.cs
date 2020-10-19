@@ -8,30 +8,34 @@ using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 #if UNITY_2019_2_OR_NEWER
 using System.Reflection;
 using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 #endif
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.SceneManagement;
 
 namespace UnityEngine.ProBuilder.Tests.Framework
 {
     abstract class TemporaryAssetTest
     {
+        public string tempDirectory => TestUtility.temporarySavedAssetsDirectory;
+
         [OneTimeSetUp]
-        public void OneTimeSetUp()
+        public virtual void OneTimeSetUp()
         {
-            if (!Directory.Exists(TestUtility.temporarySavedAssetsDirectory))
-                Directory.CreateDirectory(TestUtility.temporarySavedAssetsDirectory);
+            if (!Directory.Exists(tempDirectory))
+                Directory.CreateDirectory(tempDirectory);
         }
 
         [OneTimeTearDown]
-        public void OneTimeTearDown()
+        public virtual void OneTimeTearDown()
         {
-            if (Directory.Exists(TestUtility.temporarySavedAssetsDirectory))
-                Directory.Delete(TestUtility.temporarySavedAssetsDirectory, true);
+            if (Directory.Exists(tempDirectory))
+                Directory.Delete(tempDirectory, true);
 
-            var meta = TestUtility.temporarySavedAssetsDirectory;
+            var meta = tempDirectory;
 
             if (meta.EndsWith("/") || meta.EndsWith("\\"))
                 meta = meta.Substring(0, meta.Length - 1);
@@ -39,6 +43,13 @@ namespace UnityEngine.ProBuilder.Tests.Framework
             File.Delete(meta + ".meta");
 
             AssetDatabase.Refresh();
+        }
+
+        public Scene OpenScene(string path)
+        {
+            var tempPath = $"{tempDirectory}/{Path.GetFileName(path)}";
+            AssetDatabase.CopyAsset(path, tempPath);
+            return EditorSceneManager.OpenScene(tempPath);
         }
     }
 

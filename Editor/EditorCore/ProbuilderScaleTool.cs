@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace UnityEditor.ProBuilder
 {
-    class PositionScaleTool : PositionTool
+    class ProbuilderScaleTool : PositionTool
     {
         Vector3 m_Scale;
 

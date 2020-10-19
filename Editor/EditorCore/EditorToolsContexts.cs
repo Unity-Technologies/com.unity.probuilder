@@ -1,36 +1,32 @@
-#if UNITY_2020_2_OR_NEWER
 using System;
 using UnityEditor.EditorTools;
 
 namespace UnityEditor.ProBuilder
 {
-    public class PositionToolContext : EditorToolContext
+#if UNITY_2020_2_OR_NEWER
+    class PositionToolContext : EditorToolContext
     {
-        PositionToolContext()
-        {
-        }
+        PositionToolContext() { }
 
         protected override Type GetEditorToolType(Tool tool)
         {
             switch(tool)
             {
                 case Tool.Move:
-                    return typeof(PositionMoveTool);
+                    return typeof(ProbuilderMoveTool);
                 case Tool.Rotate:
-                    return typeof(PositionRotateTool);
+                    return typeof(ProbuilderRotateTool);
                 case Tool.Scale:
-                    return typeof(PositionScaleTool);
+                    return typeof(ProbuilderScaleTool);
                 default:
                     return null;
             }
         }
     }
 
-    public class TextureToolContext : EditorToolContext
+    class TextureToolContext : EditorToolContext
     {
-        TextureToolContext()
-        {
-        }
+        TextureToolContext() { }
 
         protected override Type GetEditorToolType(Tool tool)
         {
@@ -47,5 +43,5 @@ namespace UnityEditor.ProBuilder
             }
         }
     }
-}
 #endif
+}
