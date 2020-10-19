@@ -165,7 +165,7 @@ namespace UnityEditor.ProBuilder
 #if TOOL_CONTEXTS_ENABLED
                 return Tools.current;
 #else
-                if (k_ToolTypeMap.TryGetValue(ToolManager.activeToolType, out Tool tool))
+                if (ToolManager.activeToolType != null && k_ToolTypeMap.TryGetValue(ToolManager.activeToolType, out Tool tool))
                     return tool;
                 return Tools.current;
 #endif
