@@ -30,7 +30,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Describes the different vertex types on the path.
         /// </summary>
-        [System.Flags]
+        [Flags]
         public enum VertexTypes
         {
             None = 0 << 0,
@@ -235,9 +235,6 @@ namespace UnityEditor.ProBuilder
                     HandleUtility.AddDefaultControl(m_ControlId);
 
                 DoPointPlacement();
-
-                if(currentEvent.type == EventType.MouseMove)
-                    SceneView.RepaintAll();
 
                 if(currentEvent.type == EventType.Repaint)
                 {

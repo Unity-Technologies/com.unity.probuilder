@@ -62,6 +62,9 @@ namespace UnityEditor.ProBuilder.Actions
             ToolManager.activeToolChanging += LeaveTool;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
+            //Give the focus back to scene view to handle key inputs directly
+            SceneView.lastActiveSceneView.Focus();
+
             return new ActionResult(ActionResult.Status.Success,"Cut Tool Starts");
         }
 
