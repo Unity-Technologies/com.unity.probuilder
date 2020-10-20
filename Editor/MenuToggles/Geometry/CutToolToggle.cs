@@ -13,9 +13,6 @@ namespace UnityEditor.ProBuilder.Actions
 {
     public class CutToolToggle : MenuToolToggle
     {
-        bool m_RestorePreviousMode;
-        SelectMode m_PreviousMode;
-
         public override ToolbarGroup group
         {
             get { return ToolbarGroup.Geometry; }
@@ -50,17 +47,11 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override bool enabled
         {
-            get
-            {
-                return MeshSelection.selectedObjectCount > 0
-                       && ( Tools.current != Tool.Custom || ToolManager.activeToolType == typeof(CutTool) );
-            }
+            get => MeshSelection.selectedObjectCount > 0;
         }
 
         internal override ActionResult StartActivation()
         {
-            m_RestorePreviousMode = true;
-            m_PreviousMode = ProBuilderEditor.selectMode;
             ProBuilderEditor.selectMode = SelectMode.Object;
 
             m_Tool = ScriptableObject.CreateInstance<CutTool>();
@@ -81,15 +72,11 @@ namespace UnityEditor.ProBuilder.Actions
 
             Object.DestroyImmediate(m_Tool);
 
-            if(m_RestorePreviousMode)
-                ProBuilderEditor.selectMode = m_PreviousMode;
-
             return new ActionResult(ActionResult.Status.Success,"Cut Tool Ends");
         }
 
         void OnSelectModeChanged(SelectMode obj)
         {
-            m_RestorePreviousMode = false;
             LeaveTool();
         }
 

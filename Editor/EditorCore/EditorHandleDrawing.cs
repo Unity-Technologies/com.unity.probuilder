@@ -475,7 +475,7 @@ namespace UnityEditor.ProBuilder
         public static void HighlightFaces(ProBuilderMesh mesh, IList<Face> faces, Color highlightColor)
         {
             RebuildMeshHandleFromFaces(mesh, faces, temporaryHandles, MeshHandles.CreateFaceMeshFromFaces);
-            Render(temporaryHandles, m_FaceMaterial, highlightColor, s_DepthTestHandles);
+            Render(temporaryHandles, m_FaceMaterial, highlightColor,CompareFunction.LessEqual, false);
         }
 
         public static void HighlightEdges(ProBuilderMesh mesh, IList<Edge> edges, bool highlight = true)
@@ -492,7 +492,7 @@ namespace UnityEditor.ProBuilder
             else
                 MeshHandles.CreateEdgeBillboardMesh(mesh, handle.mesh, edges.ToArray());
 
-            Render(temporaryHandles, m_EdgeMaterial, highlightColor, s_DepthTestHandles);
+            Render(temporaryHandles, m_EdgeMaterial, highlightColor, CompareFunction.LessEqual, false);
         }
 
         public static void HighlightVertices(ProBuilderMesh mesh, IList<int> vertexIndexes, bool highlight = true)
@@ -505,7 +505,7 @@ namespace UnityEditor.ProBuilder
             var handle = GetMeshHandle(mesh, temporaryHandles);
             MeshHandles.CreateVertexMesh(mesh, handle.mesh, vertexIndexes);
 
-            Render(temporaryHandles, m_VertMaterial, highlightColor, s_DepthTestHandles);
+            Render(temporaryHandles, m_VertMaterial, highlightColor, CompareFunction.LessEqual, false);
         }
     }
 }

@@ -1169,7 +1169,7 @@ namespace UnityEditor.ProBuilder
                 case KeyCode.Escape:
                     evt.Use();
                     Clear();
-                    ToolManager.RestorePreviousTool();
+                    ProBuilderEditor.ResetToLastSelectMode();
                     break;
 
                 case KeyCode.KeypadEnter:
@@ -1177,7 +1177,7 @@ namespace UnityEditor.ProBuilder
                 case KeyCode.Space:
                     evt.Use();
                     ExecuteCut();
-                    ToolManager.RestorePreviousTool();
+                    ProBuilderEditor.ResetToLastSelectMode();
                     break;
             }
         }
@@ -1344,10 +1344,10 @@ namespace UnityEditor.ProBuilder
             for(int i = 0; i <  m_MeshConnections.Count-1 && m_IsCutValid; i++)
             {
                 SimpleTuple<int,int> connection1 = m_MeshConnections[i];
-                Vector2 segment1Start2D = 
-                    HandleUtility.WorldToGUIPoint( 
+                Vector2 segment1Start2D =
+                    HandleUtility.WorldToGUIPoint(
                         m_Mesh.transform.TransformPoint(m_CutPath[connection1.item1].position) );
-                Vector2 segment1End2D = 
+                Vector2 segment1End2D =
                     HandleUtility.WorldToGUIPoint(
                         m_Mesh.transform.TransformPoint(verticesPositions[connection1.item2]));
 
@@ -1356,10 +1356,10 @@ namespace UnityEditor.ProBuilder
                 {
                     SimpleTuple<int,int> connection2 = m_MeshConnections[j];
 
-                    Vector2 segment2Start2D = 
-                        HandleUtility.WorldToGUIPoint( 
+                    Vector2 segment2Start2D =
+                        HandleUtility.WorldToGUIPoint(
                             m_Mesh.transform.TransformPoint(m_CutPath[connection2.item1].position) );
-                    Vector2 segment2End2D = 
+                    Vector2 segment2End2D =
                         HandleUtility.WorldToGUIPoint(
                             m_Mesh.transform.TransformPoint(verticesPositions[connection2.item2]));
 
