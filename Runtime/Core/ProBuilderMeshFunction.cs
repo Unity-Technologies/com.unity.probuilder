@@ -117,6 +117,7 @@ namespace UnityEngine.ProBuilder
             InvalidateSharedVertexLookup();
             InvalidateSharedTextureLookup();
             m_Colors = null;
+            m_MeshFormatVersion = k_MeshFormatVersion;
             ClearSelection();
         }
 
@@ -296,7 +297,8 @@ namespace UnityEngine.ProBuilder
             {
                 if (m_MeshFormatVersion < k_MeshFormatVersionSubmeshMaterialRefactor)
                     Submesh.MapFaceMaterialsToSubmeshIndex(this);
-
+                if (m_MeshFormatVersion < k_MeshFormatVersionAutoUVScaleOffset)
+                    UvUnwrapping.UpgradeAutoUVScaleOffset(this);
                 m_MeshFormatVersion = k_MeshFormatVersion;
             }
 
@@ -397,11 +399,7 @@ namespace UnityEngine.ProBuilder
 #if ENABLE_DRIVEN_PROPERTIES
                 SerializationUtility.RegisterDrivenProperty(this, collider, "m_Mesh");
 #endif
-                if (collider.sharedMesh != mesh)
-                {
-                    collider.sharedMesh = null;
-                    collider.sharedMesh = mesh;
-                }
+                collider.sharedMesh = mesh;
             }
         }
 

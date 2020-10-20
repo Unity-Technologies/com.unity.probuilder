@@ -34,14 +34,14 @@ namespace UnityEditor.ProBuilder
 		[MenuItem(k_MenuPrefix + "Editors/New Poly Shape", true, PreferenceKeys.menuEditor + 1)]
 		static bool MenuVerify_NewPolyShape()
 		{
-			var instance = EditorToolbarLoader.GetInstance<NewPolyShape>();
+			var instance = EditorToolbarLoader.GetInstance<NewPolyShapeToggle>();
 			return instance != null && instance.enabled;
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/New Poly Shape", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuPerform_NewPolyShape()
 		{
-			var instance = EditorToolbarLoader.GetInstance<NewPolyShape>();
+			var instance = EditorToolbarLoader.GetInstance<NewPolyShapeToggle>();
 			if(instance != null && instance.enabled)
 				EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
@@ -584,6 +584,21 @@ namespace UnityEditor.ProBuilder
 		static void MenuPerform_ToggleSelectBackFaces()
 		{
 			var instance = EditorToolbarLoader.GetInstance<ToggleSelectBackFaces>();
+			if(instance != null && instance.enabled)
+				EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
+		[MenuItem(k_MenuPrefix + "Interaction/Toggle X Ray &#x", true, PreferenceKeys.menuSelection + 1)]
+		static bool MenuVerify_ToggleXRay()
+		{
+			var instance = EditorToolbarLoader.GetInstance<ToggleXRay>();
+			return instance != null && instance.enabled;
+		}
+
+		[MenuItem(k_MenuPrefix + "Interaction/Toggle X Ray &#x", false, PreferenceKeys.menuSelection + 1)]
+		static void MenuPerform_ToggleXRay()
+		{
+			var instance = EditorToolbarLoader.GetInstance<ToggleXRay>();
 			if(instance != null && instance.enabled)
 				EditorUtility.ShowNotification(instance.DoAction().notification);
 		}

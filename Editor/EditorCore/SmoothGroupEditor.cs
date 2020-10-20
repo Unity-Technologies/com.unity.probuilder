@@ -2,10 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder.UI;
-using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder
 {
@@ -191,14 +188,8 @@ namespace UnityEditor.ProBuilder
                     s_GroupButtonStyle.normal.background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Normal");
                     s_GroupButtonStyle.hover.background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Hover");
                     s_GroupButtonStyle.active.background = IconUtility.GetIcon("Toolbar/Background/RoundedRect_Pressed");
-                    Font asap = FileUtility.LoadInternalAsset<Font>("About/Font/Asap-Regular.otf");
-                    if (asap != null)
-                    {
-                        s_GroupButtonStyle.font = asap;
-                        s_GroupButtonStyle.fontSize = 12;
-                        s_GroupButtonStyle.padding = new RectOffset(2, 2, 2, 2);
-                    }
                     s_GroupButtonStyle.border = new RectOffset(3, 3, 3, 3);
+                    s_GroupButtonStyle.clipping = TextClipping.Overflow;
                     s_GroupButtonStyle.margin = new RectOffset(4, 4, 4, 6);
                     s_GroupButtonStyle.alignment = TextAnchor.MiddleCenter;
                     s_GroupButtonStyle.fixedWidth = IconWidth;
@@ -321,6 +312,18 @@ namespace UnityEditor.ProBuilder
         static Pref<bool> s_PreviewDither = new Pref<bool>("smoothing.previewDither", false);
         static Pref<bool> s_ShowSettings = new Pref<bool>("smoothing.showSettings", false);
 
+        static readonly GUIContent g_Settings = EditorGUIUtility.TrTextContent("Settings", "Show the preferences for " +
+            "drawing smoothing group visuals in the Scene View.");
+        static readonly GUIContent g_Preview = EditorGUIUtility.TrTextContent("Preview", "Hide or show the in-scene" +
+            "face overlay for debugging smoothing groups.");
+        static readonly GUIContent g_Normals = EditorGUIUtility.TrTextContent("Normals", "Hide or show vertex nomals" +
+            "in the Scene View.");
+
+        static readonly GUIContent g_PreviewOpacity = EditorGUIUtility.TrTextContent("Preview Opacity", "The opacity" +
+            "that in-scene smoothing group visuals render with.");
+        static readonly GUIContent g_PreviewDither = EditorGUIUtility.TrTextContent("Preview Dither", "Enable this" +
+            "option for a dithering effect on the in-scene smoothing group visuals.");
+
         public static void MenuOpenSmoothGroupEditor()
         {
             GetWindow<SmoothGroupEditor>("Smooth Group Editor");
@@ -405,31 +408,31 @@ namespace UnityEditor.ProBuilder
             GUILayout.BeginHorizontal(EditorStyles.toolbar);
 
             EditorGUI.BeginChangeCheck();
-            s_ShowSettings.value = GUILayout.Toggle(s_ShowSettings.value, "Settings", EditorStyles.toolbarButton);
-            s_ShowPreview.value = GUILayout.Toggle(s_ShowPreview.value, "Preview", EditorStyles.toolbarButton);
-            s_ShowNormals.value = GUILayout.Toggle(s_ShowNormals.value, "Normals", EditorStyles.toolbarButton);
-            if(EditorGUI.EndChangeCheck())
-                ProBuilderSettings.Save();
+
+            s_ShowSettings.value = GUILayout.Toggle(s_ShowSettings.value, g_Settings, EditorStyles.toolbarButton);
+            s_ShowPreview.value = GUILayout.Toggle(s_ShowPreview.value, g_Preview, EditorStyles.toolbarButton);
+            s_ShowNormals.value = GUILayout.Toggle(s_ShowNormals.value, g_Normals, EditorStyles.toolbarButton);
 
             if (s_ShowNormals)
             {
                 EditorGUI.BeginChangeCheck();
-
                 s_NormalsSize.value = GUILayout.HorizontalSlider(
                         s_NormalsSize,
                         .001f,
                         1f,
                         GUILayout.MinWidth(30f),
                         GUILayout.MaxWidth(100f));
-
                 if (EditorGUI.EndChangeCheck())
                 {
-                    ProBuilderSettings.Save();
-
                     foreach (var kvp in m_SmoothGroups)
                         kvp.Value.RebuildNormalsMesh(kvp.Key);
-                    SceneView.RepaintAll();
                 }
+            }
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                ProBuilderSettings.Save();
+                SceneView.RepaintAll();
             }
 
             GUILayout.FlexibleSpace();
@@ -446,8 +449,8 @@ namespace UnityEditor.ProBuilder
 
                 EditorGUI.BeginChangeCheck();
 
-                s_PreviewOpacity.value = EditorGUILayout.Slider("Preview Opacity", s_PreviewOpacity, .001f, 1f);
-                s_PreviewDither.value = EditorGUILayout.Toggle("Preview Dither", s_PreviewDither);
+                s_PreviewOpacity.value = EditorGUILayout.Slider(g_PreviewOpacity, s_PreviewOpacity, .001f, 1f);
+                s_PreviewDither.value = EditorGUILayout.Toggle(g_PreviewDither, s_PreviewDither);
 
                 if (EditorGUI.EndChangeCheck())
                 {
@@ -477,26 +480,26 @@ namespace UnityEditor.ProBuilder
                 GUILayout.Label("<b>To select</b> all faces in a group, Right+Click or Alt+Click a smooth group button.", wordWrappedRichText);
                 GUILayout.Space(2);
 
-                global::UnityEditor.ProBuilder.UI.EditorGUILayout.BeginRow();
+                UI.EditorGUILayout.BeginRow();
                 GUILayout.Button("1", groupButtonStyle);
                 GUILayout.Label("An unused smooth group", wordWrappedRichText);
-                global::UnityEditor.ProBuilder.UI.EditorGUILayout.EndRow();
+                UI.EditorGUILayout.EndRow();
 
-                global::UnityEditor.ProBuilder.UI.EditorGUILayout.BeginRow();
+                UI.EditorGUILayout.BeginRow();
                 GUILayout.Button("1", groupButtonInUseStyle);
                 GUILayout.Label("A smooth group that is in use, but not in the current selection", wordWrappedRichText);
-                global::UnityEditor.ProBuilder.UI.EditorGUILayout.EndRow();
+                UI.EditorGUILayout.EndRow();
 
-                global::UnityEditor.ProBuilder.UI.EditorGUILayout.BeginRow();
+                UI.EditorGUILayout.BeginRow();
                 GUILayout.Button("1", groupButtonSelectedStyle);
                 GUILayout.Label("A smooth group that is currently selected", wordWrappedRichText);
-                global::UnityEditor.ProBuilder.UI.EditorGUILayout.EndRow();
+                UI.EditorGUILayout.EndRow();
 
-                global::UnityEditor.ProBuilder.UI.EditorGUILayout.BeginRow();
+                UI.EditorGUILayout.BeginRow();
                 GUILayout.Button("1", groupButtonMixedSelectionStyle);
                 GUI.backgroundColor = Color.white;
                 GUILayout.Label("A smooth group is selected, but the selection also contains non-grouped faces", wordWrappedRichText);
-                global::UnityEditor.ProBuilder.UI.EditorGUILayout.EndRow();
+                UI.EditorGUILayout.EndRow();
 
                 if (GUILayout.Button("Open Documentation"))
                     Application.OpenURL("https://docs.unity3d.com/Packages/com.unity.probuilder@latest/index.html?subfolder=/manual/workflow-edit-smoothing.html");
@@ -599,10 +602,6 @@ namespace UnityEditor.ProBuilder
             }
 
             EditorGUILayout.EndScrollView();
-
-            // This isn't great, but we need hover previews to work
-            if (mouseOverWindow == this)
-                Repaint();
         }
 
         void OnSceneGUI(SceneView view)

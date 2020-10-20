@@ -26,7 +26,7 @@ class RectSelectionPicker
         camera = new GameObject("Camera", typeof(Camera)).GetComponent<Camera>();
         camera.transform.position = Vector3.zero;
         camera.transform.rotation = Quaternion.identity;
-        
+
         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         cube.transform.position = new Vector3(0, 0, 5f);
 
@@ -82,7 +82,7 @@ class RectSelectionPicker
             (int)selectionRect.height
             );
 
-        Assert.That(tex.GetPixels(), Is.All.EqualTo(Color.white), "Lookup textures is not entirely white. Must have rendered something wrong.");       
+        Assert.That(ComparePixelsToColor(tex.GetPixels(), Color.white), "Lookup textures is not entirely white. Must have rendered something wrong.");
     }
 
     [Test]
@@ -102,7 +102,7 @@ class RectSelectionPicker
             (int)selectionRect.height
             );
 
-        Assert.That(tex.GetPixels(), Is.All.EqualTo(Color.white), "Lookup textures is not entirely white. Must have rendered something wrong.");
+        Assert.That(ComparePixelsToColor(tex.GetPixels(), Color.white), "Lookup textures is not entirely white. Must have rendered something wrong.");
     }
 
     [Test]
@@ -123,6 +123,15 @@ class RectSelectionPicker
             (int)selectionRect.height
             );
 
-        Assert.That(tex.GetPixels(), Is.All.EqualTo(Color.white), "Lookup textures is not entirely white. Must have rendered something wrong.");
+        Assert.That(ComparePixelsToColor(tex.GetPixels(), Color.white), "Lookup textures is not entirely white. Must have rendered something wrong.");
+    }
+
+    // Assert is very slow vs. comparison
+    static bool ComparePixelsToColor(Color[] pixels, Color color)
+    {
+        for (int i = 0, c = 1; i < c; i++)
+            if (pixels[i] != color)
+                return false;
+        return true;
     }
 }

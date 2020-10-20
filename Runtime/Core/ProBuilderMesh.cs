@@ -34,9 +34,9 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// The current mesh format version. This is used to run expensive upgrade functions once in ToMesh().
         /// </summary>
-        const int k_MeshFormatVersion = 1;
-
-        const int k_MeshFormatVersionSubmeshMaterialRefactor = 1;
+        internal const int k_MeshFormatVersion = k_MeshFormatVersionAutoUVScaleOffset;
+        internal const int k_MeshFormatVersionSubmeshMaterialRefactor = 1;
+        internal const int k_MeshFormatVersionAutoUVScaleOffset = 2;
 
         /// <summary>
         /// The maximum number of vertices that a ProBuilderMesh can accomodate.
@@ -705,6 +705,18 @@ namespace UnityEngine.ProBuilder
             set { m_Textures0 = value; }
         }
 
+		internal List<Vector4> textures2Internal
+        {
+            get { return m_Textures2; }
+            set { m_Textures2 = value; }
+        }
+
+		internal List<Vector4> textures3Internal
+        {
+            get { return m_Textures3; }
+            set { m_Textures3 = value; }
+        }
+
         /// <value>
         /// The UV0 channel. Null if not present.
         /// </value>
@@ -923,5 +935,7 @@ namespace UnityEngine.ProBuilder
                 return mesh.uv2 == null ? MeshSyncState.Lightmap : MeshSyncState.InSync;
             }
         }
+
+        internal int meshFormatVersion => m_MeshFormatVersion;
     }
 }

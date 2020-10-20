@@ -1,30 +1,37 @@
 ﻿using UObject = UnityEngine.Object;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder;
-using System.Linq;
+#if UNITY_2020_2_OR_NEWER
+using ToolManager = UnityEditor.EditorTools.ToolManager;
+#else
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+#endif
 
 public class CollapseVerticesTest
 {
-    ProBuilderMesh m_PBMesh = null;
-    SelectMode m_PreviousSelectMode;
-    bool m_OpenedWindow = false;
+    ProBuilderMesh m_PBMesh;
+
+    static void CloseWindows<T>() where T : EditorWindow
+    {
+        var windows = Resources.FindObjectsOfTypeAll<T>();
+        for (int i = windows.Length - 1; i > -1; i--)
+            windows[i].Close();
+    }
 
     [SetUp]
     public void Setup()
     {
-        // make sure the ProBuilder window is open
-        if (ProBuilderEditor.instance == null)
-        {
-            ProBuilderEditor.MenuOpenWindow();
-            m_OpenedWindow = true;
-        }
-
+        CloseWindows<ProBuilderEditor>();
+        EditorWindow.GetWindow<ProBuilderEditor>();
         Assert.That(ProBuilderEditor.instance, Is.Not.Null);
         m_PBMesh = ShapeGenerator.CreateShape(ShapeType.Cube);
-        m_PreviousSelectMode = ProBuilderEditor.selectMode;
         ProBuilderEditor.selectMode = SelectMode.Vertex;
+        ProBuilderEditor.SyncEditorToolSelectMode();
+        Assume.That(ProBuilderEditor.selectMode, Is.EqualTo(SelectMode.Vertex));
+        Assume.That(typeof(VertexManipulationTool).IsAssignableFrom(ToolManager.activeToolType));
     }
 
     [TearDown]
@@ -32,14 +39,7 @@ public class CollapseVerticesTest
     {
         if (m_PBMesh != null)
             UObject.DestroyImmediate(m_PBMesh.gameObject);
-
-        ProBuilderEditor.selectMode = m_PreviousSelectMode;
-
-        // close editor window if we had to open it
-        if (m_OpenedWindow && ProBuilderEditor.instance != null)
-        {
-            ProBuilderEditor.instance.Close();
-        }
+        CloseWindows<ProBuilderEditor>();
     }
 
     [Test]
@@ -69,25 +69,16 @@ public class CollapseVerticesTest
     [Test]
     public void CollapseVertices_SelectedSharedVertices_ActionEnabled()
     {
-        // check that selecting two shared vertices will enable collapse vertices
-        Assert.That(m_PBMesh, Is.Not.Null);
-
-        var sharedVertices = m_PBMesh.sharedVerticesInternal;
-        Assert.That(sharedVertices, Is.Not.Null);
-        Assert.That(sharedVertices.Length, Is.GreaterThanOrEqualTo(2));
-
-        var selectedVertices = sharedVertices[0].Union(sharedVertices[1]);
-        Assert.That(selectedVertices.Count(), Is.GreaterThan(1));
-
-        // Set the selected vertices to two different shared vertices (collapsable)
-        m_PBMesh.SetSelectedVertices(selectedVertices);
-        Assert.That(m_PBMesh.selectedIndexesInternal.Length, Is.EqualTo(selectedVertices.Count()));
+        Assume.That(m_PBMesh, Is.Not.Null);
 
         MeshSelection.SetSelection(m_PBMesh.gameObject);
-        MeshSelection.OnObjectSelectionChanged();
+        int[] vertexSelection = new[] { 0, 1, 2, 3 };
+        m_PBMesh.SetSelectedVertices(vertexSelection);
 
-        UnityEditor.ProBuilder.Actions.CollapseVertices collapseVertices = new UnityEditor.ProBuilder.Actions.CollapseVertices();
+        Assume.That(m_PBMesh.selectedIndexesInternal, Is.EquivalentTo(vertexSelection));
+        Assume.That(MeshSelection.selectedVertexCount, Is.EqualTo(vertexSelection.Length));
 
-        Assert.That(collapseVertices.enabled, Is.True);
+        var collapseAction = new UnityEditor.ProBuilder.Actions.CollapseVertices();
+        Assert.That(collapseAction.enabled, Is.True);
     }
 }

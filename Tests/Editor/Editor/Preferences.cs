@@ -38,15 +38,15 @@ public class Preferences
     [UnityTest]
     public IEnumerator Preferences_IconWindowChanged()
     {
-        Assert.That(ProBuilderEditor.s_EditorToolbar, Is.Not.Null);
+        Assert.That(ProBuilderEditor.instance.toolbar, Is.Not.Null);
 
-        Assert.That(ProBuilderEditor.s_EditorToolbar, Is.Not.Null);
-        Assert.That(ProBuilderEditor.s_EditorToolbar.isIconMode, Is.EqualTo(m_ShowIconsInitialValue));
+        Assert.That(ProBuilderEditor.instance.toolbar, Is.Not.Null);
+        Assert.That(ProBuilderEditor.instance.toolbar.isIconMode, Is.EqualTo(m_ShowIconsInitialValue));
 
         ProBuilderEditor.s_IsIconGui.value = !m_ShowIconsInitialValue;
         ProBuilderEditor.instance.Repaint();
         ProBuilderEditor.Refresh();
         yield return null;
-        Assert.That(ProBuilderEditor.s_EditorToolbar.isIconMode, Is.EqualTo(!m_ShowIconsInitialValue));
+        Assert.That(ProBuilderEditor.instance.toolbar.isIconMode, Is.EqualTo(!m_ShowIconsInitialValue));
     }
 }

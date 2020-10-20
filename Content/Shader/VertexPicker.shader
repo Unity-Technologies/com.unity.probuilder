@@ -10,6 +10,8 @@ Shader "Hidden/ProBuilder/VertexPicker"
             "RenderType"="Transparent"
             "IgnoreProjector"="True"
             "DisableBatching"="True"
+            // needed by HDRP
+            "LightMode"="Always"
         }
 
         Lighting Off

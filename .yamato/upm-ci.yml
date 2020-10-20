@@ -10,7 +10,7 @@ test_platforms:
   - name: mac
     type: Unity::VM::osx
     image: package-ci/mac:stable
-    flavor: m1.mac
+    flavor: b1.mac
 ---
 pack:
   name: Pack

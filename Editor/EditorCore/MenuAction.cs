@@ -2,6 +2,11 @@
 
 using UnityEngine;
 using UnityEngine.ProBuilder;
+#if UNITY_2020_2_OR_NEWER
+using ToolManager = UnityEditor.EditorTools.ToolManager;
+#else
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -219,9 +224,9 @@ namespace UnityEditor.ProBuilder
             {
                 //Disable the menu action whenever a custom EditorTool is enabled
                 return ProBuilderEditor.instance != null
-                    && ProBuilderEditor.selectMode.ContainsFlag(validSelectModes)
-                    && !ProBuilderEditor.selectMode.ContainsFlag(SelectMode.InputTool)
-                    && Tools.current != Tool.Custom;
+                       && ProBuilderEditor.selectMode.ContainsFlag(validSelectModes)
+                       && !ProBuilderEditor.selectMode.ContainsFlag(SelectMode.InputTool)
+                       && typeof(VertexManipulationTool).IsAssignableFrom(ToolManager.activeToolType);
             }
         }
 

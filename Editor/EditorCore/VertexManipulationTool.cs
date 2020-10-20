@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
@@ -12,7 +13,7 @@ using UnityEngine.Rendering;
 
 namespace UnityEditor.ProBuilder
 {
-    abstract class VertexManipulationTool
+    abstract class VertexManipulationTool : EditorTool
     {
         const float k_DefaultSnapValue = .25f;
 
@@ -24,6 +25,11 @@ namespace UnityEditor.ProBuilder
 
         [UserSetting(UserSettingsProvider.developerModeCategory, "Show Internal Pivot and Orientation")]
         static Pref<bool> s_ShowHandleSettingsInScene = new Pref<bool>("developer.showHandleSettingsInScene", false, SettingsScope.User);
+
+#if !UNITY_2020_2_OR_NEWER
+        static object[] s_FindNearestVertexArguments = new object[3];
+        static MethodInfo s_FindNearestVertex;
+#endif
 
         internal static PivotPoint pivotModePivotEquivalent
         {
@@ -59,12 +65,12 @@ namespace UnityEditor.ProBuilder
 
         static void SyncPivotPoint()
         {
-            var unity = s_PivotPoint.value == PivotPoint.Center ? PivotMode.Center : PivotMode.Pivot;
+            var unityPivot = s_PivotPoint.value == PivotPoint.Center ? PivotMode.Center : PivotMode.Pivot;
 
-            if (Tools.pivotMode != unity)
+            if (Tools.pivotMode != unityPivot)
             {
                 s_PivotPoint.SetValue(Tools.pivotMode == PivotMode.Center ? PivotPoint.Center : s_PivotModePivotEquivalent.value, true);
-                MeshSelection.InvalidateElementSelection();
+                MeshSelection.InvalidateCaches();
             }
         }
 
@@ -87,7 +93,7 @@ namespace UnityEditor.ProBuilder
                         ? PivotRotation.Local
                         : PivotRotation.Global;
 
-                MeshSelection.InvalidateElementSelection();
+                MeshSelection.InvalidateCaches();
 
                 var toolbar = typeof(EditorWindow).Assembly.GetType("UnityEditor.Toolbar");
                 var repaint = toolbar.GetMethod("RepaintToolbar", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
@@ -104,7 +110,7 @@ namespace UnityEditor.ProBuilder
                     ? HandleOrientation.World
                     : HandleOrientation.ActiveObject);
                 s_PivotRotation = Tools.pivotRotation;
-                MeshSelection.InvalidateElementSelection();
+                MeshSelection.InvalidateCaches();
                 return;
             }
 
@@ -119,7 +125,7 @@ namespace UnityEditor.ProBuilder
                             ? HandleOrientation.World
                             : HandleOrientation.ActiveObject,
                         true);
-                    MeshSelection.InvalidateElementSelection();
+                    MeshSelection.InvalidateCaches();
                 }
             }
         }
@@ -137,33 +143,17 @@ namespace UnityEditor.ProBuilder
         internal static Pref<bool> s_ExtrudeEdgesAsGroup = new Pref<bool>("editor.extrudeEdgesAsGroup", true);
         internal static Pref<ExtrudeMethod> s_ExtrudeMethod = new Pref<ExtrudeMethod>("editor.extrudeMethod", ExtrudeMethod.FaceNormal);
 
-        Vector3 m_HandlePosition;
-        Quaternion m_HandleRotation;
+        protected Vector3 m_HandlePosition;
+        protected Quaternion m_HandleRotation;
         Vector3 m_HandlePositionOrigin;
         Quaternion m_HandleRotationOrigin;
         bool m_IsEditing;
-
-        Vector3 m_MoveSnapValue = new Vector3(k_DefaultSnapValue, k_DefaultSnapValue, k_DefaultSnapValue);
         bool m_SnapAxisConstraint = true;
         bool m_WorldSnapEnabled;
-
-        static bool s_Initialized;
-        static FieldInfo s_VertexDragging;
-        static MethodInfo s_FindNearestVertex;
-        static object[] s_FindNearestVertexArguments = new object[] { null, null, null };
 
         internal IEnumerable<MeshAndElementSelection> elementSelection
         {
             get { return MeshSelection.elementSelection; }
-        }
-
-        protected static bool vertexDragging
-        {
-            get
-            {
-                Init();
-                return s_VertexDragging != null && (bool)s_VertexDragging.GetValue(null);
-            }
         }
 
         protected bool isEditing
@@ -185,24 +175,11 @@ namespace UnityEditor.ProBuilder
             get { return m_HandleRotationOrigin; }
         }
 
-        protected Vector3 snapValue
-        {
-            get { return m_MoveSnapValue; }
-        }
+        protected Vector3 snapValue => EditorSnapping.activeMoveSnapValue;
 
         protected bool snapAxisConstraint
         {
             get { return m_SnapAxisConstraint; }
-        }
-
-        protected bool worldSnapEnabled
-        {
-            get { return m_WorldSnapEnabled; }
-        }
-
-        protected bool relativeSnapEnabled
-        {
-            get { return ProBuilderSnapSettings.snapMode == SnapMode.Relative; }
         }
 
         protected float GetSnapValueForAxis(Vector3Mask axes)
@@ -210,27 +187,20 @@ namespace UnityEditor.ProBuilder
             return UnityEngine.ProBuilder.Math.Sum(axes * snapValue);
         }
 
-        static void Init()
-        {
-            if (s_Initialized)
-                return;
-            s_Initialized = true;
-            s_VertexDragging = typeof(Tools).GetField("vertexDragging", BindingFlags.NonPublic | BindingFlags.Static);
-            s_FindNearestVertex = typeof(HandleUtility).GetMethod("FindNearestVertex",
-                    BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
-        }
-
         internal abstract MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot);
 
-        public void OnSceneGUI(Event evt)
+        public override void OnToolGUI(EditorWindow window)
         {
+            if(MeshSelection.selectedVertexCount == 0)
+                return;
+
             // necessary because there is no callback on toolbar changes
             SyncPivotPoint();
             SyncPivotRotation();
 
-            currentEvent = evt;
+            currentEvent = Event.current;
 
-            if (evt.type == EventType.MouseUp || evt.type == EventType.Ignore)
+            if (currentEvent.type == EventType.MouseUp || currentEvent.type == EventType.Ignore)
                 FinishEdit();
 
             switch (ProBuilderEditor.selectMode)
@@ -264,10 +234,10 @@ namespace UnityEditor.ProBuilder
                 handleRotationOriginInverse = Quaternion.Inverse(m_HandleRotation);
             }
 
-            DoTool(m_HandlePosition, m_HandleRotation);
+            DoToolGUI();
         }
 
-        protected abstract void DoTool(Vector3 handlePosition, Quaternion handleRotation);
+        protected virtual void DoToolGUI() {}
 
         protected virtual void OnToolEngaged() {}
 
@@ -293,9 +263,7 @@ namespace UnityEditor.ProBuilder
 
             m_IsEditing = true;
 
-            m_WorldSnapEnabled = ProBuilderSnapSettings.snapMode == SnapMode.World;
-            m_SnapAxisConstraint = ProBuilderSnapSettings.snapMethod == SnapAxis.ActiveAxis; ProGridsInterface.UseAxisConstraints();
-            m_MoveSnapValue = m_WorldSnapEnabled ? ProBuilderSnapSettings.worldSnapMoveValue : ProBuilderSnapSettings.incrementalSnapMoveValue;
+            m_SnapAxisConstraint = EditorSnapping.snapMethod == SnapAxis.ActiveAxis;
 
             foreach (var mesh in selection)
             {
@@ -391,15 +359,20 @@ namespace UnityEditor.ProBuilder
         /// <returns></returns>
         protected static bool FindNearestVertex(Vector2 mousePosition, out Vector3 vertex)
         {
+#if UNITY_2020_2_OR_NEWER
+            return HandleUtility.FindNearestVertex(mousePosition, out vertex);
+#else
             s_FindNearestVertexArguments[0] = mousePosition;
+            s_FindNearestVertexArguments[1] = null;
 
             if (s_FindNearestVertex == null)
-                s_FindNearestVertex = typeof(HandleUtility).GetMethod("findNearestVertex",
+                s_FindNearestVertex = typeof(HandleUtility).GetMethod("FindNearestVertex",
                         BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
 
             object result = s_FindNearestVertex.Invoke(null, s_FindNearestVertexArguments);
             vertex = (bool)result ? (Vector3)s_FindNearestVertexArguments[2] : Vector3.zero;
             return (bool)result;
+#endif
         }
     }
 }

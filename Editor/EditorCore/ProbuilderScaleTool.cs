@@ -1,16 +1,13 @@
 using UnityEngine;
-using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-    class PositionScaleTool : PositionTool
+    class ProbuilderScaleTool : PositionTool
     {
         Vector3 m_Scale;
 
-        protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
+        protected override void DoToolGUI()
         {
-            base.DoTool(handlePosition, handleRotation);
-
             if (showHandleInfo && isEditing)
                 DrawDeltaInfo("Scale: " + m_Scale.ToString("0.00"));
 
@@ -19,10 +16,10 @@ namespace UnityEditor.ProBuilder
 
             EditorGUI.BeginChangeCheck();
 
-            var size = HandleUtility.GetHandleSize(handlePosition);
+            var size = HandleUtility.GetHandleSize(m_HandlePosition);
 
             EditorHandleUtility.PushMatrix();
-            Handles.matrix = Matrix4x4.TRS(handlePosition, handleRotation, Vector3.one);
+            Handles.matrix = Matrix4x4.TRS(m_HandlePosition, m_HandleRotation, Vector3.one);
             m_Scale = Handles.ScaleHandle(m_Scale, Vector3.zero, Quaternion.identity, size);
             EditorHandleUtility.PopMatrix();
 
