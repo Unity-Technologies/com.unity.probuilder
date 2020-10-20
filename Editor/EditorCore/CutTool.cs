@@ -25,8 +25,6 @@ namespace UnityEditor.ProBuilder
 
         Texture2D m_CutCursorTexture;
         Texture2D m_CutAddCursorTexture;
-        Texture2D m_CutMagnetCursorTexture;
-        Texture2D m_CutAddMagnetCursorTexture;
         Texture2D m_CurrentCutCursor = null;
 
         /// <summary>
@@ -101,6 +99,8 @@ namespace UnityEditor.ProBuilder
         internal Vector3 m_CurrentPosition = Vector3.positiveInfinity;
         internal Vector3 m_CurrentPositionNormal = Vector3.up;
         internal VertexTypes m_CurrentVertexTypes = VertexTypes.None;
+        IList<Edge> m_SelectedEdges = null;
+        IList<int> m_SelectedVertices = null;
 
         //Path composed of position that define a cut in the face
         [SerializeField]
@@ -152,12 +152,15 @@ namespace UnityEditor.ProBuilder
 
             m_CutCursorTexture = Resources.Load<Texture2D>("Cursors/cutCursor");
             m_CutAddCursorTexture = Resources.Load<Texture2D>("Cursors/cutCursor-add");
-            m_CutMagnetCursorTexture = Resources.Load<Texture2D>("Cursors/cutCursor-magnet");
-            m_CutAddMagnetCursorTexture = Resources.Load<Texture2D>("Cursors/cutCursor-add-magnet");
 
             Undo.undoRedoPerformed += UndoRedoPerformed;
             if(MeshSelection.selectedObjectCount == 1)
+            {
                 m_Mesh = MeshSelection.activeMesh;
+
+                m_SelectedVertices = m_Mesh.sharedVertexLookup.Keys.ToArray();
+                m_SelectedEdges = m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray();
+            }
         }
 
         void OnDisable()
@@ -180,6 +183,9 @@ namespace UnityEditor.ProBuilder
             m_CurrentCutCursor = null;
             m_CutPath.Clear();
             m_MeshConnections.Clear();
+
+            m_SelectedVertices = null;
+            m_SelectedEdges = null;
         }
 
         /// <summary>
@@ -188,7 +194,12 @@ namespace UnityEditor.ProBuilder
         private void UndoRedoPerformed()
         {
             if(m_CutPath.Count == 0)
+            {
                 m_TargetFace = null;
+
+                m_SelectedVertices = m_Mesh.sharedVertexLookup.Keys.ToArray();
+                m_SelectedEdges = m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray();
+            }
 
             m_SelectedIndex = -1;
             m_MeshConnections.Clear();
@@ -283,6 +294,9 @@ namespace UnityEditor.ProBuilder
                 if(GUILayout.Button(EditorGUIUtility.TrTextContent("Start")))
                 {
                     m_Mesh = MeshSelection.activeMesh;
+                    m_SelectedVertices = m_Mesh.sharedVertexLookup.Keys.ToArray();
+                    m_SelectedEdges = m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray();
+
                     if(m_CutPath.Count > 0)
                     {
                         m_CutPath.Clear();
@@ -320,16 +334,10 @@ namespace UnityEditor.ProBuilder
         /// <returns>the texture to use as a cursor</returns>
         Texture2D GetCursorTexture()
         {
-            Texture2D texture = m_CutCursorTexture;
-            if(m_ModifyingPoint)
-                return texture;
-
             if(m_CutPath.Count > 0)
-                texture = m_SnapToGeometry ? m_CutAddMagnetCursorTexture : m_CutAddCursorTexture;
-            else if(m_SnapToGeometry)
-                texture = m_CutMagnetCursorTexture;
+                return m_CutAddCursorTexture;
 
-            return texture;
+            return m_CutCursorTexture;
         }
 
         /// <summary>
@@ -428,7 +436,13 @@ namespace UnityEditor.ProBuilder
             UndoUtility.RecordObject(this, "Add Vertex On Path");
 
             if(m_TargetFace == null)
+            {
                 m_TargetFace = m_CurrentFace;
+
+                var edges = m_TargetFace.edges;
+                m_SelectedVertices = edges.Select(e => e.a).ToArray();
+                m_SelectedEdges = edges.ToArray();
+            }
 
             m_CutPath.Add(new CutVertexData(m_CurrentPosition, m_CurrentPositionNormal, m_CurrentVertexTypes));
             UpdateMeshConnections();
@@ -1240,33 +1254,20 @@ namespace UnityEditor.ProBuilder
         {
             if(m_Mesh != null)
             {
-                if(m_TargetFace == null)
-                {
-                    EditorHandleDrawing.HighlightVertices(m_Mesh, m_Mesh.sharedVertexLookup.Keys.ToArray(), false);
-                    EditorHandleDrawing.HighlightEdges(m_Mesh, m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray(),
-                        false);
+                if(m_TargetFace == null && m_CurrentFace != null)
+                    EditorHandleDrawing.HighlightFaces(m_Mesh, new Face[]{m_CurrentFace}, Color.Lerp(Color.blue, Color.cyan, 0.5f));
 
-                    if(m_CurrentFace != null)
-                        EditorHandleDrawing.HighlightFaces(m_Mesh, new Face[]{m_CurrentFace}, Color.Lerp(Color.blue, Color.cyan, 0.5f));
-                }
-                else
-                {
-                    var edges = m_TargetFace.edges;
-                    EditorHandleDrawing.HighlightVertices(m_Mesh, edges.Select(e => e.a).ToArray(), false);
-                    EditorHandleDrawing.HighlightEdges(m_Mesh, edges.ToArray(), false);
+                EditorHandleDrawing.HighlightVertices(m_Mesh, m_SelectedVertices, false);
+                EditorHandleDrawing.HighlightEdges(m_Mesh, m_SelectedEdges,false);
 
+                if(m_TargetFace != null)
+                {
                     if(m_SnapedVertexId != -1)
-                        EditorHandleDrawing.HighlightVertices(m_Mesh, new int[]{m_SnapedVertexId});
+                        EditorHandleDrawing.HighlightVertices(m_Mesh, new int[] { m_SnapedVertexId });
 
                     if(m_SnapedEdge != Edge.Empty)
-                        EditorHandleDrawing.HighlightEdges(m_Mesh, new Edge[]{m_SnapedEdge});
+                        EditorHandleDrawing.HighlightEdges(m_Mesh, new Edge[] { m_SnapedEdge });
                 }
-            }
-            else if(MeshSelection.activeMesh != null)
-            {
-                ProBuilderMesh mesh = MeshSelection.activeMesh;
-                EditorHandleDrawing.HighlightVertices(mesh, mesh.sharedVertexLookup.Keys.ToArray(), false);
-                EditorHandleDrawing.HighlightEdges(mesh, mesh.faces.SelectMany(f => f.edges).ToArray(), false);
             }
         }
 
