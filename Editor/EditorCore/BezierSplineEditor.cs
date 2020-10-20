@@ -18,8 +18,6 @@ namespace UnityEditor.ProBuilder
         static Color bezierPositionHandleColor = new Color(.01f, .8f, .99f, 1f);
         static Color bezierTangentHandleColor = new Color(.6f, .6f, .6f, .8f);
 
-        static bool s_SnapTangents = true;
-
         [SerializeField]
         BezierHandle m_currentHandle = new BezierHandle(-1, false);
 
@@ -367,9 +365,6 @@ namespace UnityEditor.ProBuilder
 
             if (EditorGUI.EndChangeCheck())
                 UpdateMesh(true);
-
-            if (ProGridsInterface.GetProGridsType() != null)
-                s_SnapTangents = EditorGUILayout.Toggle("Snap Tangents", s_SnapTangents);
         }
 
         void UpdateMesh(bool vertexCountChanged)
@@ -458,7 +453,7 @@ namespace UnityEditor.ProBuilder
                             if (!m_IsMoving)
                                 OnBeginVertexModification();
 
-                            prev = ProGridsInterface.ProGridsSnap(prev);
+                            prev = EditorSnapping.MoveSnap(prev);
 
                             Vector3 dir = prev - point.position;
                             point.position = prev;
@@ -491,9 +486,7 @@ namespace UnityEditor.ProBuilder
                                 if (!m_IsMoving)
                                     OnBeginVertexModification();
 
-                                if (s_SnapTangents)
-                                    point.tangentIn = ProGridsInterface.ProGridsSnap(point.tangentIn);
-
+                                point.tangentIn = EditorSnapping.MoveSnap(point.tangentIn);
                                 point.EnforceTangentMode(BezierTangentDirection.In, m_TangentMode);
                             }
                             Handles.color = Color.blue;
@@ -509,9 +502,7 @@ namespace UnityEditor.ProBuilder
                                 if (!m_IsMoving)
                                     OnBeginVertexModification();
 
-                                if (s_SnapTangents)
-                                    point.tangentOut = ProGridsInterface.ProGridsSnap(point.tangentOut);
-
+                                point.tangentOut = EditorSnapping.MoveSnap(point.tangentOut);
                                 point.EnforceTangentMode(BezierTangentDirection.Out, m_TangentMode);
                             }
                             Handles.color = Color.red;
@@ -560,7 +551,7 @@ namespace UnityEditor.ProBuilder
                         if (!m_IsMoving)
                             OnBeginVertexModification();
 
-                        point.SetPosition(ProGridsInterface.ProGridsSnap(prev));
+                        point.SetPosition(EditorSnapping.MoveSnap(prev));
                     }
                 }
 
@@ -593,7 +584,7 @@ namespace UnityEditor.ProBuilder
                         {
                             if (!m_IsMoving)
                                 OnBeginVertexModification();
-                            point.tangentIn = s_SnapTangents ? ProGridsInterface.ProGridsSnap(prev) : prev;
+                            point.tangentIn = EditorSnapping.MoveSnap(prev);
                             point.EnforceTangentMode(BezierTangentDirection.In, m_TangentMode);
                         }
                     }
@@ -625,7 +616,7 @@ namespace UnityEditor.ProBuilder
                         {
                             if (!m_IsMoving)
                                 OnBeginVertexModification();
-                            point.tangentOut = s_SnapTangents ? ProGridsInterface.ProGridsSnap(prev) : prev;
+                            point.tangentOut = EditorSnapping.MoveSnap(prev);
                             point.EnforceTangentMode(BezierTangentDirection.Out, m_TangentMode);
                         }
                     }

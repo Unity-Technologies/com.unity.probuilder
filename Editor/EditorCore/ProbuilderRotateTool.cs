@@ -3,7 +3,7 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-    class PositionRotateTool : PositionTool
+    class ProbuilderRotateTool : PositionTool
     {
         Quaternion m_Rotation;
 

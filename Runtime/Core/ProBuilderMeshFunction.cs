@@ -415,11 +415,7 @@ namespace UnityEngine.ProBuilder
 #if ENABLE_DRIVEN_PROPERTIES
                 SerializationUtility.RegisterDrivenProperty(this, collider, "m_Mesh");
 #endif
-                if (collider.sharedMesh != mesh)
-                {
-                    collider.sharedMesh = null;
-                    collider.sharedMesh = mesh;
-                }
+                collider.sharedMesh = mesh;
             }
         }
 

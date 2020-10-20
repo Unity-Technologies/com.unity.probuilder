@@ -284,8 +284,7 @@ namespace UnityEditor.ProBuilder
             MoveToActiveScene(pb.gameObject);
             GameObjectUtility.EnsureUniqueNameForSibling(pb.gameObject);
             ScreenCenter(pb.gameObject);
-            
-            TrySnapToGrid(pb);
+            SnapInstantiatedObject(pb);
 
 #if UNITY_2019_1_OR_NEWER
             ComponentUtility.MoveComponentRelativeToComponent(pb, pb.transform, false);
@@ -325,18 +324,14 @@ namespace UnityEditor.ProBuilder
                 meshCreated(pb);
         }
 
-        // Snap new meshes to the grid if the preference is enabled, or progrids is active
-        internal static void TrySnapToGrid(ProBuilderMesh mesh)
+        // If s_SnapNewShapesToGrid is enabled, always snap to the grid size. If it is not, use the active snap  settings
+        internal static void SnapInstantiatedObject(ProBuilderMesh mesh)
         {
-            if (ProGridsInterface.SnapEnabled())
-                mesh.transform.position = ProBuilderSnapping.SnapValue(mesh.transform.position, ProGridsInterface.SnapValue());
-            else if (s_SnapNewShapesToGrid)
-                mesh.transform.position = ProBuilderSnapping.SnapValue(mesh.transform.position, new Vector3(
-                            EditorPrefs.GetFloat("MoveSnapX"),
-                            EditorPrefs.GetFloat("MoveSnapY"),
-                            EditorPrefs.GetFloat("MoveSnapZ")));
-
-            mesh.Optimize();
+            mesh.transform.position = ProBuilderSnapping.Snap(
+                mesh.transform.position,
+                s_SnapNewShapesToGrid
+                    ? EditorSnapping.worldSnapMoveValue
+                    : EditorSnapping.activeMoveSnapValue);
         }
 
         /**
@@ -417,24 +412,6 @@ namespace UnityEditor.ProBuilder
             return platform == System.PlatformID.MacOSX ||
                 platform == System.PlatformID.Unix ||
                 (int)platform == 128;
-        }
-
-        /**
-         *  CreateCachedEditor didn't exist until 5.0, so recreate it's contents if necessary or pass it on.
-         */
-        internal static void CreateCachedEditor<T>(UnityEngine.Object[] targetObjects, ref UnityEditor.Editor previousEditor) where T : UnityEditor.Editor
-        {
-            #if UNITY_4_7
-            if (previousEditor != null && pbUtil.IsEqual(previousEditor.targets, targetObjects))
-                return;
-
-            if (previousEditor != null)
-                UnityEngine.Object.DestroyImmediate(previousEditor);
-
-            previousEditor = Editor.CreateEditor(targetObjects, typeof(T));
-            #else
-            UnityEditor.Editor.CreateCachedEditor(targetObjects, typeof(T), ref previousEditor);
-            #endif
         }
 
         /// <summary>

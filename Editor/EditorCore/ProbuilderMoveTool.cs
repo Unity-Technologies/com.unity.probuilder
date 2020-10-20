@@ -3,7 +3,7 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-    class PositionMoveTool : PositionTool
+    class ProbuilderMoveTool : PositionTool
     {
         const float k_CardinalAxisError = .001f;
         const float k_MinTranslateDeltaSqrMagnitude = .00001f;
@@ -22,7 +22,7 @@ namespace UnityEditor.ProBuilder
         protected override void OnToolEngaged()
         {
             // If grids are enabled and "snap on all axes" is on, initialize active axes to all.
-            m_ActiveAxesModel = worldSnapEnabled && !snapAxisConstraint
+            m_ActiveAxesModel = EditorSnapping.snapMode == SnapMode.World && !snapAxisConstraint
                 ? Vector3Mask.XYZ
                 : new Vector3Mask(0x0);
 
@@ -31,7 +31,7 @@ namespace UnityEditor.ProBuilder
 #endif
 
             // Snap as group preference is only respected when snap mode is "World"
-            m_SnapAsGroup = worldSnapEnabled && ProBuilderSnapSettings.snapAsGroup;
+            m_SnapAsGroup = EditorSnapping.snapMode == SnapMode.World && EditorSnapping.snapAsGroup;
         }
 
         protected override void DoToolGUI()
@@ -78,7 +78,7 @@ namespace UnityEditor.ProBuilder
                         }
                     }
                 }
-                else if (worldSnapEnabled)
+                else if (EditorSnapping.snapMode == SnapMode.World)
                 {
                     if (snapAxisConstraint)
                     {
@@ -95,12 +95,12 @@ namespace UnityEditor.ProBuilder
                         }
                         else
                         {
-                            m_Position = ProBuilderSnapping.SnapValue(m_Position, snapValue);
+                            m_Position = ProBuilderSnapping.Snap(m_Position, snapValue);
                         }
                     }
                     else
                     {
-                        m_Position = ProBuilderSnapping.SnapValue(m_Position, snapValue);
+                        m_Position = ProBuilderSnapping.Snap(m_Position, snapValue);
                     }
 
                     delta = m_Position - handlePositionOrigin;
@@ -153,7 +153,7 @@ namespace UnityEditor.ProBuilder
                         // res += translation
                         // res = Group post-apply matrix * res
                         // positions[i] = mesh.worldToLocal * res
-                        if (worldSnapEnabled && !m_SnapAsGroup)
+                        if (EditorSnapping.snapMode == SnapMode.World && !m_SnapAsGroup)
                         {
                             if (snapAxisConstraint && m_ActiveAxesWorld.active == 1)
                             {
@@ -170,7 +170,7 @@ namespace UnityEditor.ProBuilder
                             else
                             {
                                 var wp = postApplyMatrix.MultiplyPoint3x4(translation + preApplyMatrix.MultiplyPoint3x4(origins[index]));
-                                var snap = ProBuilderSnapping.SnapValue(wp, snapValue);
+                                var snap = ProBuilderSnapping.Snap(wp, snapValue);
                                 positions[index] = worldToLocal.MultiplyPoint3x4(snap);
                             }
                         }

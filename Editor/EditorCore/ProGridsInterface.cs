@@ -51,11 +51,6 @@ namespace UnityEditor.ProBuilder
                 s_ProGridsType = ReflectionUtility.GetType(ProGridsEditorTypeNames[i]);
         }
 
-        public static bool IsImported()
-        {
-            return s_ProGridsType != null;
-        }
-
         /// <summary>
         /// Get a pg_Editor type.
         /// </summary>
@@ -226,7 +221,7 @@ namespace UnityEditor.ProBuilder
                 pivot = s_GetPivotDelegate();
 
                 // earlier version of progrids return a non-snapped pivot point
-                pivot = ProBuilderSnapping.SnapValue(pivot, SnapValue());
+                pivot = ProBuilderSnapping.Snap(pivot, Vector3.one * SnapValue());
                 return true;
             }
 
@@ -364,13 +359,14 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
+        [Obsolete("Use EditorSnapping.Snap")]
         public static float ProGridsSnap(float point)
         {
             if (GetProGridsType() == null)
                 return point;
 
             if (SnapEnabled())
-                return ProBuilderSnapping.SnapValue(point, ProGridsInterface.SnapValue());
+                return ProBuilderSnapping.Snap(point, SnapValue());
 
             return point;
         }
@@ -380,6 +376,7 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
+        [Obsolete("Use EditorSnapping.Snap")]
         public static Vector3 ProGridsSnap(Vector3 point)
         {
             if (GetProGridsType() == null)
@@ -387,8 +384,8 @@ namespace UnityEditor.ProBuilder
 
             if (ProGridsInterface.SnapEnabled())
             {
-                float snap = ProGridsInterface.SnapValue();
-                return ProBuilderSnapping.SnapValue(point, snap);
+                float snap = SnapValue();
+                return ProBuilderSnapping.Snap(point, Vector3.one * snap);
             }
 
             return point;
@@ -400,6 +397,7 @@ namespace UnityEditor.ProBuilder
         /// <param name="point"></param>
         /// <param name="mask"></param>
         /// <returns></returns>
+        [Obsolete("Use EditorSnapping.Snap")]
         public static Vector3 ProGridsSnap(Vector3 point, Vector3 mask)
         {
             if (GetProGridsType() == null)
@@ -408,7 +406,7 @@ namespace UnityEditor.ProBuilder
             if (ProGridsInterface.SnapEnabled())
             {
                 float snap = ProGridsInterface.SnapValue();
-                return ProBuilderSnapping.SnapValue(point, mask * snap);
+                return ProBuilderSnapping.Snap(point, mask * snap);
             }
 
             return point;

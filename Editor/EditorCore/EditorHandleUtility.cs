@@ -682,7 +682,7 @@ namespace UnityEditor.ProBuilder
                     axis = ProjectionAxis.Z;
             }
 
-            return new Plane(Projection.ProjectionAxisToVector(axis), SceneView.lastActiveSceneView.pivot);
+            return new Plane(Projection.ProjectionAxisToVector(axis), EditorSnapping.MoveSnap(SceneView.lastActiveSceneView.pivot));
         }
     }
 }

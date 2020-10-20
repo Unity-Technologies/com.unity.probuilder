@@ -106,6 +106,8 @@ namespace UnityEditor.ProBuilder.Actions
                     }
                 }
             }
+
+            ProBuilderEditor.Refresh();
             AssetDatabase.Refresh();
 
             return res;
@@ -240,14 +242,19 @@ namespace UnityEditor.ProBuilder.Actions
             go.GetComponent<MeshFilter>().sharedMesh = meshAsset;
             var meshCollider = go.GetComponent<MeshCollider>();
             if (meshCollider)
-            {
                 meshCollider.sharedMesh = meshAsset;
-            }
 
             if (replaceOriginal)
                 PrefabUtility.SaveAsPrefabAssetAndConnect(go, prefabPath, InteractionMode.UserAction);
             else
+            {
+                // if we're about to overwrite the prefab asset of the source mesh, first disconnect it so that we're not
+                // overwriting the instance
+                if (PrefabUtility.IsPartOfAnyPrefab(pb)
+                    && PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(pb) == prefabPath)
+                    PrefabUtility.UnpackPrefabInstance(pb.gameObject, PrefabUnpackMode.OutermostRoot, InteractionMode.AutomatedAction);
                 PrefabUtility.SaveAsPrefabAsset(go, prefabPath);
+            }
 
             if (!replaceOriginal)
             {
@@ -299,19 +306,18 @@ namespace UnityEditor.ProBuilder.Actions
         static T CreateOrReplaceAsset<T>(T asset, string path) where T : Object
         {
             T existingAsset = AssetDatabase.LoadAssetAtPath<T>(path);
+
             if (existingAsset == null)
             {
                 AssetDatabase.CreateAsset(asset, path);
                 return asset;
             }
-            else
-            {
-                var tempPath = AssetDatabase.GenerateUniqueAssetPath(path);
-                AssetDatabase.CreateAsset(asset, tempPath);
-                FileUtil.ReplaceFile(tempPath, path);
-                AssetDatabase.DeleteAsset(tempPath);
-                return existingAsset;
-            }
+
+            var tempPath = AssetDatabase.GenerateUniqueAssetPath(path);
+            AssetDatabase.CreateAsset(asset, tempPath);
+            FileUtil.ReplaceFile(tempPath, path);
+            AssetDatabase.DeleteAsset(tempPath);
+            return existingAsset;
         }
     }
 }

@@ -6,6 +6,11 @@ using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEditor.SettingsManagement;
 using UnityEditor.ShortcutManagement;
+#if UNITY_2020_2_OR_NEWER
+using ToolManager = UnityEditor.EditorTools.ToolManager;
+#else
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -166,8 +171,6 @@ namespace UnityEditor.ProBuilder
         // The first selected face's material.  Used to draw texture preview in 0,0 - 1,1 space.
         Material m_PreviewMaterial;
 
-        Tool tool = Tool.Move;
-
         GUIContent[] ToolIcons;
 
         struct ObjectElementIndex
@@ -254,6 +257,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.selectModeChanged += SelectModeChanged;
             ProBuilderMesh.elementSelectionChanged += ElementSelectionChanged;
             ProBuilderMeshEditor.onGetFrameBoundsEvent += OnGetFrameBoundsEvent;
+            ToolManager.activeToolChanged += Repaint;
             Undo.undoRedoPerformed += ObjectSelectionChanged;
 
             ObjectSelectionChanged();
@@ -265,12 +269,14 @@ namespace UnityEditor.ProBuilder
         {
             instance = null;
 
-            if (ProBuilderEditor.selectMode.IsTextureMode())
-                ProBuilderEditor.ResetToLastSelectMode();
-
             if (uv2Editor != null)
                 DestroyImmediate(uv2Editor);
 
+            var selectMode = ProBuilderToolManager.selectMode;
+            if (selectMode.IsTextureMode())
+                ProBuilderEditor.selectMode = selectMode.GetPositionMode();
+
+            ToolManager.activeToolChanged -= Repaint;
             MeshSelection.objectSelectionChanged -= ObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged -= ElementSelectionChanged;
             ProBuilderEditor.selectModeChanged -= SelectModeChanged;
@@ -382,7 +388,7 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            if (tool == Tool.View || m_draggingCanvas)
+            if (ProBuilderToolManager.activeTool == Tool.View || m_draggingCanvas)
                 EditorGUIUtility.AddCursorRect(new Rect(0, toolbarRect.y + toolbarRect.height, screenWidth, screenHeight), MouseCursor.Pan);
 
             ScreenRect.width = this.position.width;
@@ -417,7 +423,7 @@ namespace UnityEditor.ProBuilder
             // Draw AND update translation handles
             if (channel == 0 && selection != null && MeshSelection.selectedVertexCount > 0)
             {
-                switch (tool)
+                switch (ProBuilderToolManager.activeTool)
                 {
                     case Tool.Move:
                         MoveTool();
@@ -581,7 +587,7 @@ namespace UnityEditor.ProBuilder
 
             modifyingUVs = false;
 
-            if ((tool == Tool.Rotate || tool == Tool.Scale) && userPivot)
+            if ((ProBuilderToolManager.activeTool == Tool.Rotate || ProBuilderToolManager.activeTool == Tool.Scale) && userPivot)
                 SetHandlePosition(handlePosition, true);
 
             // Regenerate UV2s
@@ -949,7 +955,7 @@ namespace UnityEditor.ProBuilder
          */
         bool UpdateNearestElement(Vector2 mousePosition)
         {
-            if (selection == null || m_mouseDragging || modifyingUVs || tool == Tool.View) // || pb_Handle_Utility.CurrentID > -1)
+            if (selection == null || m_mouseDragging || modifyingUVs || ProBuilderToolManager.activeTool == Tool.View) // || pb_Handle_Utility.CurrentID > -1)
             {
                 if (nearestElement.valid)
                 {
@@ -1039,26 +1045,6 @@ namespace UnityEditor.ProBuilder
             }
 
             return !nearestElement.Equals(oei);
-        }
-
-        /**
-         * Allows another window to set the current tool.
-         * Does *not* update any other editor windows.
-         */
-        public void SetTool(Tool tool)
-        {
-            this.tool = tool;
-            nearestElement.Clear();
-            Repaint();
-        }
-
-        /**
-         * Sets the global Tool.current and update current window.
-         */
-        private void SetTool_Internal(Tool tool)
-        {
-            Tools.current = tool;
-            SetTool(tool);
         }
 
         bool GetFaceFromMousePosition(Vector2 mousePosition, ProBuilderMesh pb, out Face faceSelected)
@@ -1188,15 +1174,13 @@ namespace UnityEditor.ProBuilder
 
                 if (ControlKey)
                 {
-                    handlePosition = ProBuilderSnapping.SnapValue(t_handlePosition, (Vector3) new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
+                    handlePosition = ProBuilderSnapping.Snap(t_handlePosition, (Vector3) new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
                 }
                 else
                 {
                     handlePosition = t_handlePosition;
 
-                    /**
-                     * Attempt vertex proximity snap if shift key is held
-                     */
+                    // Attempt vertex proximity snap if shift key is held
                     if (ShiftKey)
                     {
                         float dist, minDist = MAX_PROXIMITY_SNAP_DIST_CANVAS;
@@ -1245,7 +1229,7 @@ namespace UnityEditor.ProBuilder
                 Vector2 newUVPosition = t_handlePosition;
 
                 if (ControlKey)
-                    newUVPosition = ProBuilderSnapping.SnapValue(newUVPosition, new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
+                    newUVPosition = ProBuilderSnapping.Snap(newUVPosition, new Vector3Mask((handlePosition - t_handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
 
                 for (int n = 0; n < selection.Length; n++)
                 {
@@ -1352,7 +1336,7 @@ namespace UnityEditor.ProBuilder
                 handlePosition.y += delta.y;
 
                 if (ControlKey)
-                    handlePosition = ProBuilderSnapping.SnapValue(handlePosition, new Vector3Mask((handlePosition - handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
+                    handlePosition = ProBuilderSnapping.Snap(handlePosition, new Vector3Mask((handlePosition - handlePosition), Math.handleEpsilon) * s_GridSnapIncrement);
 
                 for (int n = 0; n < selection.Length; n++)
                 {
@@ -1384,7 +1368,7 @@ namespace UnityEditor.ProBuilder
                 }
 
                 if (ControlKey)
-                    uvRotation = ProBuilderSnapping.SnapValue(uvRotation, 15f);
+                    uvRotation = ProBuilderSnapping.Snap(uvRotation, EditorSnapping.incrementalSnapRotateValue);
 
                 // Do rotation around the handle pivot in manual mode
                 if (mode == UVMode.Mixed || mode == UVMode.Manual)
@@ -1436,7 +1420,7 @@ namespace UnityEditor.ProBuilder
             if (rotation != uvRotation)
             {
                 if (ControlKey)
-                    rotation = ProBuilderSnapping.SnapValue(rotation, 15f);
+                    rotation = ProBuilderSnapping.Snap(rotation, EditorSnapping.incrementalSnapRotateValue);
 
                 float delta = rotation - uvRotation;
                 uvRotation = rotation;
@@ -1495,7 +1479,7 @@ namespace UnityEditor.ProBuilder
             uvScale = EditorHandleUtility.ScaleHandle2d(2, UVToGUIPoint(handlePosition), uvScale, 128);
 
             if (ControlKey)
-                uvScale = ProBuilderSnapping.SnapValue(uvScale, s_GridSnapIncrement);
+                uvScale = ProBuilderSnapping.Snap(uvScale, Vector3.one * s_GridSnapIncrement);
 
             if (Math.Approx(uvScale.x, 0f, Mathf.Epsilon))
                 uvScale.x = .0001f;
@@ -1565,7 +1549,7 @@ namespace UnityEditor.ProBuilder
             previousScale.y = 1f / previousScale.y;
 
             if (ControlKey)
-                textureScale = ProBuilderSnapping.SnapValue(textureScale, s_GridSnapIncrement);
+                textureScale = ProBuilderSnapping.Snap(textureScale, Vector3.one * s_GridSnapIncrement);
 
             if (!modifyingUVs)
             {
@@ -2455,14 +2439,10 @@ namespace UnityEditor.ProBuilder
                 commandStyle = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("Command");
 
             EditorGUI.BeginChangeCheck();
-
-            tool = (Tool)GUI.Toolbar(toolbarRect_tool, (int)tool < 0 ? 0 : (int)tool, ToolIcons, "Command");
-
+            int activeTool = (int) ProBuilderToolManager.activeTool;
+            activeTool = GUI.Toolbar(toolbarRect_tool, activeTool < 0 ? 0 : activeTool, ToolIcons, "Command");
             if (EditorGUI.EndChangeCheck())
-            {
-                SetTool_Internal(tool);
-                SceneView.RepaintAll();
-            }
+                Tools.current = (Tool) activeTool;
 
             ProBuilderEditor.selectMode = UI.EditorGUIUtility.DoElementModeToolbar(toolbarRect_select, ProBuilderEditor.selectMode);
 
@@ -2562,7 +2542,7 @@ namespace UnityEditor.ProBuilder
             }
             else if (channel == 1)
             {
-                EditorUtility.CreateCachedEditor<UnwrapParametersEditor>(selection, ref uv2Editor);
+                Editor.CreateCachedEditor(selection, typeof(UnwrapParametersEditor), ref uv2Editor);
 
                 if (uv2Editor != null)
                 {

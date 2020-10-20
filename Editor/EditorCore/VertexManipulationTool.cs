@@ -70,7 +70,7 @@ namespace UnityEditor.ProBuilder
             if (Tools.pivotMode != unityPivot)
             {
                 s_PivotPoint.SetValue(Tools.pivotMode == PivotMode.Center ? PivotPoint.Center : s_PivotModePivotEquivalent.value, true);
-                MeshSelection.InvalidateElementSelection();
+                MeshSelection.InvalidateCaches();
             }
         }
 
@@ -93,7 +93,7 @@ namespace UnityEditor.ProBuilder
                         ? PivotRotation.Local
                         : PivotRotation.Global;
 
-                MeshSelection.InvalidateElementSelection();
+                MeshSelection.InvalidateCaches();
 
                 var toolbar = typeof(EditorWindow).Assembly.GetType("UnityEditor.Toolbar");
                 var repaint = toolbar.GetMethod("RepaintToolbar", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
@@ -110,7 +110,7 @@ namespace UnityEditor.ProBuilder
                     ? HandleOrientation.World
                     : HandleOrientation.ActiveObject);
                 s_PivotRotation = Tools.pivotRotation;
-                MeshSelection.InvalidateElementSelection();
+                MeshSelection.InvalidateCaches();
                 return;
             }
 
@@ -125,7 +125,7 @@ namespace UnityEditor.ProBuilder
                             ? HandleOrientation.World
                             : HandleOrientation.ActiveObject,
                         true);
-                    MeshSelection.InvalidateElementSelection();
+                    MeshSelection.InvalidateCaches();
                 }
             }
         }
@@ -148,8 +148,6 @@ namespace UnityEditor.ProBuilder
         Vector3 m_HandlePositionOrigin;
         Quaternion m_HandleRotationOrigin;
         bool m_IsEditing;
-
-        Vector3 m_MoveSnapValue = new Vector3(k_DefaultSnapValue, k_DefaultSnapValue, k_DefaultSnapValue);
         bool m_SnapAxisConstraint = true;
         bool m_WorldSnapEnabled;
 
@@ -177,24 +175,11 @@ namespace UnityEditor.ProBuilder
             get { return m_HandleRotationOrigin; }
         }
 
-        protected Vector3 snapValue
-        {
-            get { return m_MoveSnapValue; }
-        }
+        protected Vector3 snapValue => EditorSnapping.activeMoveSnapValue;
 
         protected bool snapAxisConstraint
         {
             get { return m_SnapAxisConstraint; }
-        }
-
-        protected bool worldSnapEnabled
-        {
-            get { return m_WorldSnapEnabled; }
-        }
-
-        protected bool relativeSnapEnabled
-        {
-            get { return ProBuilderSnapSettings.snapMode == SnapMode.Relative; }
         }
 
         protected float GetSnapValueForAxis(Vector3Mask axes)
@@ -278,9 +263,7 @@ namespace UnityEditor.ProBuilder
 
             m_IsEditing = true;
 
-            m_WorldSnapEnabled = ProBuilderSnapSettings.snapMode == SnapMode.World;
-            m_SnapAxisConstraint = ProBuilderSnapSettings.snapMethod == SnapAxis.ActiveAxis; ProGridsInterface.UseAxisConstraints();
-            m_MoveSnapValue = m_WorldSnapEnabled ? ProBuilderSnapSettings.worldSnapMoveValue : ProBuilderSnapSettings.incrementalSnapMoveValue;
+            m_SnapAxisConstraint = EditorSnapping.snapMethod == SnapAxis.ActiveAxis;
 
             foreach (var mesh in selection)
             {

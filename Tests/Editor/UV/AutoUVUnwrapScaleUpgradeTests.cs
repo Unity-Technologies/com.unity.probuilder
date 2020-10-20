@@ -6,7 +6,7 @@ using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Tests.Framework;
 using UnityEngine.SceneManagement;
 
-public class AutoUVUnwrapScaleUpgradeTests
+class AutoUVUnwrapScaleUpgradeTests : TemporaryAssetTest
 {
     const float k_AllowedFloatError = .00001f;
 
@@ -18,7 +18,7 @@ public class AutoUVUnwrapScaleUpgradeTests
     [SetUp]
     public void PrepareSceneView()
     {
-        s_Scene = EditorSceneManager.OpenScene($"{TestUtility.testsRootDirectory}/Scenes/AutoUVScaleUpgrade.unity");
+        s_Scene = OpenScene($"{TestUtility.testsRootDirectory}/Scenes/AutoUVScaleUpgrade.unity");
         var root = s_Scene.GetRootGameObjects();
 
         s_Meshes[0] = root[0].GetComponent<ProBuilderMesh>();
