@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 
 namespace UnityEditor.ProBuilder
 {

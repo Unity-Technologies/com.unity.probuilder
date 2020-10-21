@@ -1,4 +1,4 @@
-namespace UnityEngine.ProBuilder
+namespace UnityEngine.ProBuilder.Shapes
 {
     [System.Serializable]
     public abstract class Shape

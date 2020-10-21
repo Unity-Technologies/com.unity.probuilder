@@ -1,4 +1,4 @@
-namespace UnityEngine.ProBuilder
+namespace UnityEngine.ProBuilder.Shapes
 {
     public class Cylinder : Shape
     {

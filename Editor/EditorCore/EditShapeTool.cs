@@ -1,10 +1,10 @@
-using System;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEditor.EditorTools;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine.ProBuilder;
-using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.Shapes;
 using Math = UnityEngine.ProBuilder.Math;
 
 namespace UnityEditor.ProBuilder

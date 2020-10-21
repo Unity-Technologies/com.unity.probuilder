@@ -1,6 +1,6 @@
 ﻿using UnityEngine.ProBuilder.MeshOperations;
 
-namespace UnityEngine.ProBuilder
+namespace UnityEngine.ProBuilder.Shapes
 {
     public class Sprite : Shape
     {

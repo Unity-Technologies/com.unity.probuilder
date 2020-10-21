@@ -1,4 +1,4 @@
-﻿namespace UnityEngine.ProBuilder
+﻿namespace UnityEngine.ProBuilder.Shapes
 {
     [RequireComponent(typeof(ProBuilderMesh))]
     public sealed class ShapeComponent : MonoBehaviour

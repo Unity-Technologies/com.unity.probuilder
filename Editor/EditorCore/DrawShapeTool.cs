@@ -3,6 +3,7 @@ using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.Shapes;
 using Math = UnityEngine.ProBuilder.Math;
 using UObject = UnityEngine.Object;
 #if UNITY_2020_2_OR_NEWER
@@ -23,7 +24,7 @@ namespace UnityEditor.ProBuilder
         Editor m_ShapeEditor;
 
         // plane of interaction
-        internal Plane m_Plane;
+        internal UnityEngine.Plane m_Plane;
         internal Vector3 m_Forward;
         internal Vector3 m_Right;
         internal Vector3 m_Origin, m_OppositeCorner, m_HeightCorner;

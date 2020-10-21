@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace UnityEngine.ProBuilder
+namespace UnityEngine.ProBuilder.Shapes
 {
     public class Cone : Shape
     {

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 
 namespace UnityEditor.ProBuilder
 {

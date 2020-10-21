@@ -1,6 +1,6 @@
-﻿namespace UnityEngine.ProBuilder
+﻿namespace UnityEngine.ProBuilder.Shapes
 {
-    public class PlaneShape : Shape
+    public class Plane : Shape
     {
         [Min(0)]
         [SerializeField]
@@ -15,33 +15,22 @@
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
+            if(size.y < float.Epsilon && m_Axis != Axis.Up && m_Axis != Axis.Down)
+            {
+                mesh.Clear();
+                if(mesh.mesh != null)
+                    mesh.mesh.Clear();
+                return;
+            }
+
             int w = m_WidthSegments + 1;
             int h = m_HeightSegments + 1;
 
             Vector2[] p = new Vector2[(w * h) * 4];
             Vector3[] v = new Vector3[(w * h) * 4];
 
-            float width = 0f, height = 0f;
-            switch(m_Axis)
-            {
-                case Axis.Forward:
-                case Axis.Backward:
-                    width = size.x;
-                    height = size.y > 0.01f ? size.y : 0.01f;
-                    break;
-                case Axis.Up:
-                case Axis.Down:
-                    width = size.x;
-                    height = size.z;
-                    break;
-                case Axis.Right:
-                case Axis.Left:
-                    width = size.z;
-                    height = size.y > 0.01f ? size.y : 0.01f;
-                    break;
-            }
-
-            int i = 0, j = 0;
+            float width = 1f, height = 1f;
+            int i = 0;
             {
                 for (int y = 0; y < h; y++)
                 {
@@ -62,6 +51,10 @@
                     }
                 }
             }
+
+            // Axis axis = m_Axis;
+            // if(size.y < float.Epsilon && axis != Axis.Up && axis != Axis.Down)
+            //     axis = Axis.Up;
 
             switch (m_Axis)
             {

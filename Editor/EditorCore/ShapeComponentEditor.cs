@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using UnityEngine;
-using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.UIElements;
 
 namespace UnityEditor.ProBuilder

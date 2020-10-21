@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UnityEngine.ProBuilder
+namespace UnityEngine.ProBuilder.Shapes
 {
     public class Sphere : Shape
     {
@@ -58,7 +58,7 @@ namespace UnityEngine.ProBuilder
             var radius = System.Math.Min(System.Math.Min(size.x, size.y), size.z);
             //avoid to create a degenerated sphere with a radius set to 0
             radius = radius < 0.001f ? 0.001f : radius;
-            
+
             // http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
 
             Vector3[] v = new Vector3[k_IcosphereTriangles.Length];

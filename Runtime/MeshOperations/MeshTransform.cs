@@ -7,6 +7,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
     {
         internal static void SetPivot(this ProBuilderMesh mesh, PivotLocation pivotType, int firstVertexIndex = 0)
         {
+            if(mesh.vertexCount == 0)
+                return;
+
             switch (pivotType)
             {
                 case PivotLocation.Center:
