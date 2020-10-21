@@ -1,5 +1,6 @@
 namespace UnityEngine.ProBuilder.Shapes
 {
+    [Shape("Cylinder")]
     public class Cylinder : Shape
     {
         [Min(4)]

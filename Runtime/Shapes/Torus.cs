@@ -2,6 +2,7 @@
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    [Shape("Torus")]
     public class Torus : Shape
     {
         [Range(3, 64)]

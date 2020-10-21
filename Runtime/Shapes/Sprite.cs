@@ -2,6 +2,7 @@
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    [Shape("Sprite")]
     public class Sprite : Shape
     {
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)

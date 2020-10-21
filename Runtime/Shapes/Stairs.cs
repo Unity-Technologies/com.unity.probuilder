@@ -1,5 +1,6 @@
 namespace UnityEngine.ProBuilder.Shapes
 {
+    [Shape("Stairs")]
     public class Stairs : Shape
     {
         [Min(1)]

@@ -2,6 +2,7 @@
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    [Shape("Pipe")]
     public class Pipe : Shape
     {
         [Min(0.01f)]

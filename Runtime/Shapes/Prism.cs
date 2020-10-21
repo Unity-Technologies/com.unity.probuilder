@@ -1,5 +1,6 @@
 ﻿namespace UnityEngine.ProBuilder.Shapes
 {
+    [Shape("Prism")]
     public class Prism : Shape
     {
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)

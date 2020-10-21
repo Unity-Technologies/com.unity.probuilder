@@ -2,6 +2,7 @@
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    [Shape("Arch")]
     public class Arch : Shape
     {
         [Min(0.01f)]

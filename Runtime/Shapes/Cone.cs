@@ -2,6 +2,7 @@
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    [Shape("Cone")]
     public class Cone : Shape
     {
         [Range(3,64)]

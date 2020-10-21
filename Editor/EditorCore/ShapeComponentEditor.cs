@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.UIElements;
@@ -20,7 +21,9 @@ namespace UnityEditor.ProBuilder
         static ShapeComponentEditor()
         {
             s_AvailableShapeTypes = TypeCache.GetTypesDerivedFrom<Shape>();
-            s_ShapeTypes = s_AvailableShapeTypes.Select(x => x.ToString()).ToArray();
+            s_ShapeTypes = s_AvailableShapeTypes.Select(
+                x => ((ShapeAttribute)System.Attribute.GetCustomAttribute(x, typeof(ShapeAttribute))).name)
+                .ToArray();
         }
 
         private void OnEnable()

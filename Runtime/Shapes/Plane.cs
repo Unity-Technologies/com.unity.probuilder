@@ -1,5 +1,6 @@
 ﻿namespace UnityEngine.ProBuilder.Shapes
 {
+    [Shape("Plane")]
     public class Plane : Shape
     {
         [Min(0)]

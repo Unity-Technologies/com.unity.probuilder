@@ -2,6 +2,7 @@
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    [Shape("Door")]
     public class Door : Shape
     {
         [Min(0.01f)]

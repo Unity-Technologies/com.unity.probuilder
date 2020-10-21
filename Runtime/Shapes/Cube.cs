@@ -1,5 +1,6 @@
 namespace UnityEngine.ProBuilder.Shapes
 {
+    [Shape("Cube")]
     public class Cube : Shape
     {
         /// <summary>

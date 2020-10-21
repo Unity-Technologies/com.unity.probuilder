@@ -2,6 +2,7 @@
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    [Shape("Sphere")]
     public class Sphere : Shape
     {
         static readonly Vector3[] k_IcosphereVertices = new Vector3[12]
