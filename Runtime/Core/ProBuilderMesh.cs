@@ -466,11 +466,11 @@ namespace UnityEngine.ProBuilder
             return v;
         }
 
-                /// <summary>
-        /// Creates a new array of vertices with values from a @"UnityEngine.ProBuilder.ProBuilderMesh" component.
+        /// <summary>
+        /// Get a list of vertices from a @"UnityEngine.ProBuilder.ProBuilderMesh" component.
         /// </summary>
-        /// <param name="indexes">An optional list of indexes pointing to the mesh attribute indexes to include in the returned Vertex array.</param>
-        /// <returns>An array of vertices.</returns>
+        /// <param name="vertices">The list that will be filled by the method.</param>
+        /// <returns></returns>
         public void GetVerticesInList(IList<Vertex> vertices)
         {
             int vc = vertexCount;

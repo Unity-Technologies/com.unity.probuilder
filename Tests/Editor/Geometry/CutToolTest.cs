@@ -26,7 +26,7 @@ public class CutToolTest
         if (ProBuilderEditor.instance == null)
             ProBuilderEditor.MenuOpenWindow();
 
-        Assert.That(ProBuilderEditor.instance, Is.Not.Null);
+        Assume.That(ProBuilderEditor.instance, Is.Not.Null);
 
         m_PBMesh = ShapeGenerator.CreateShape(ShapeType.Plane);
         MeshSelection.SetSelection(m_PBMesh.gameObject);
