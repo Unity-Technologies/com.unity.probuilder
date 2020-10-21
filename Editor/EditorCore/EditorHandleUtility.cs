@@ -534,7 +534,7 @@ namespace UnityEditor.ProBuilder
 
             var nrm = plane.normal;
 
-            bitangent = Vector3.Cross(nrm, Vector3.Cross(nrm, nrm == Vector3.right ? Vector3.forward : Vector3.right));
+            bitangent = Vector3.Cross(nrm, Vector3.Cross(nrm, nrm == -Vector3.forward ? -Vector3.right : -Vector3.forward));
 
             return new SimpleTuple<Plane, Vector3>(plane, bitangent);
         }
