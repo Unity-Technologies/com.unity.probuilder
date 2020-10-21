@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.ProBuilder.Shapes;
@@ -14,13 +15,13 @@ namespace UnityEditor.ProBuilder
 
         SerializedProperty m_shape;
         static string[] s_ShapeTypes;
-        static TypeCache.TypeCollection s_AvailableShapeTypes;
+        static Type[] s_AvailableShapeTypes;
 
         static int s_ActiveShapeIndex = 0;
 
         static ShapeComponentEditor()
         {
-            s_AvailableShapeTypes = TypeCache.GetTypesDerivedFrom<Shape>();
+            s_AvailableShapeTypes =  TypeCache.GetTypesWithAttribute<ShapeAttribute>().Where(t => t.BaseType == typeof(Shape)).ToArray();
             s_ShapeTypes = s_AvailableShapeTypes.Select(
                 x => ((ShapeAttribute)System.Attribute.GetCustomAttribute(x, typeof(ShapeAttribute))).name)
                 .ToArray();
@@ -30,7 +31,7 @@ namespace UnityEditor.ProBuilder
         {
             m_ShapeComponent = target as ShapeComponent;
             m_shape = serializedObject.FindProperty("m_Shape");
-            s_ActiveShapeIndex = s_AvailableShapeTypes.IndexOf(m_ShapeComponent.shape.GetType());
+            s_ActiveShapeIndex = Array.IndexOf( s_AvailableShapeTypes, m_ShapeComponent.shape.GetType());
         }
 
         public override void OnInspectorGUI()
@@ -48,7 +49,7 @@ namespace UnityEditor.ProBuilder
             EditorGUI.BeginChangeCheck();
 
             var shapeProperty = obj.FindProperty("m_Shape");
-            s_ActiveShapeIndex = Mathf.Max(0, s_AvailableShapeTypes.IndexOf(shape.GetType()));
+            s_ActiveShapeIndex = Mathf.Max(0, Array.IndexOf( s_AvailableShapeTypes, shape.GetType()));
             s_ActiveShapeIndex = EditorGUILayout.Popup(s_ActiveShapeIndex, s_ShapeTypes);
 
             if (EditorGUI.EndChangeCheck())
