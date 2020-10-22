@@ -14,11 +14,6 @@
         [SerializeField]
         Quaternion m_Rotation = Quaternion.identity;
 
-        [SerializeField]
-        Quaternion m_BasisRotation = Quaternion.identity;
-
-        [SerializeField] bool m_Flipped = false;
-
         public Shape shape
         {
             get { return m_Shape; }
@@ -59,7 +54,7 @@
         {
             size = Math.Abs(bounds.size);
             transform.position = bounds.center;
-            m_BasisRotation = rotation;
+            transform.rotation = rotation;
             Rebuild();
         }
 
@@ -102,8 +97,7 @@
 
         void ApplyRotation(Quaternion rotation)
         {
-            if (rotation == Quaternion.identity
-            && m_BasisRotation == Quaternion.identity)
+            if (rotation == Quaternion.identity)
             {
                 return;
             }
@@ -111,9 +105,13 @@
 
             var origVerts = mesh.positionsInternal;
 
+            // The Shape is flipped, pointing downwards, the rotation must be inverted
+            if(transform.up.y < 0)
+                rotation = Quaternion.Inverse(rotation);
+
             for (int i = 0; i < origVerts.Length; ++i)
             {
-                origVerts[i] = (rotation * m_BasisRotation) * origVerts[i];
+                origVerts[i] = rotation * origVerts[i];
             }
             mesh.mesh.vertices = origVerts;
             mesh.ReplaceVertices(origVerts);
