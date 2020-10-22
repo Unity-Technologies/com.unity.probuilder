@@ -14,6 +14,11 @@
         [SerializeField]
         Quaternion m_Rotation = Quaternion.identity;
 
+        [SerializeField]
+        Quaternion m_BasisRotation = Quaternion.identity;
+
+        [SerializeField] bool m_Flipped = false;
+
         public Shape shape
         {
             get { return m_Shape; }
@@ -54,7 +59,7 @@
         {
             size = Math.Abs(bounds.size);
             transform.position = bounds.center;
-            transform.rotation = rotation;
+            m_BasisRotation = rotation;
             Rebuild();
         }
 
@@ -97,7 +102,8 @@
 
         void ApplyRotation(Quaternion rotation)
         {
-            if (rotation == Quaternion.identity)
+            if (rotation == Quaternion.identity
+            && m_BasisRotation == Quaternion.identity)
             {
                 return;
             }
@@ -107,7 +113,7 @@
 
             for (int i = 0; i < origVerts.Length; ++i)
             {
-                origVerts[i] = rotation * origVerts[i];
+                origVerts[i] = (rotation * m_BasisRotation) * origVerts[i];
             }
             mesh.mesh.vertices = origVerts;
             mesh.ReplaceVertices(origVerts);
