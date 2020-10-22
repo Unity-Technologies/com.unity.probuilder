@@ -7,6 +7,14 @@ namespace UnityEngine.ProBuilder.Shapes
     {
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
+            if(size.y < float.Epsilon)
+            {
+                mesh.Clear();
+                if(mesh.mesh != null)
+                    mesh.mesh.Clear();
+                return;
+            }
+
             var width = size.x;
             var height = size.y;
             int w = 1;

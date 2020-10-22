@@ -14,6 +14,9 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         bool m_Sides = true;
 
+        [SerializeField]
+        bool m_UseXAxisAsForward = false;
+
         public int steps
         {
             get { return m_Steps; }
@@ -36,6 +39,9 @@ namespace UnityEngine.ProBuilder.Shapes
 
         private void BuildStairs(ProBuilderMesh mesh, Vector3 size)
         {
+            //if(m_UseXAxisAsForward)
+            //    size = new Vector3(size.z, size.y, size.x);
+
             // 4 vertices per quad, 2 quads per step.
             Vector3[] vertices = new Vector3[4 * steps * 2];
             Face[] faces = new Face[steps * 2];
@@ -153,6 +159,12 @@ namespace UnityEngine.ProBuilder.Shapes
                 });
 
                 faces = faces.Add(new Face(new int[] { v + 0, v + 1, v + 2, v + 1, v + 3, v + 2 }));
+            }
+
+            if(m_UseXAxisAsForward)
+            {
+                for(int i = 0; i < vertices.Length; i++)
+                    vertices[i] = new Vector3(vertices[i].z, vertices[i].y, -vertices[i].x);
             }
 
             mesh.RebuildWithPositionsAndFaces(vertices, faces);

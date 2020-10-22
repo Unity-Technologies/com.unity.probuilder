@@ -20,13 +20,16 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         bool m_EndCaps = true;
 
+        [SerializeField]
+        bool m_UseXAxisAsForward = false;
+
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
             var radialCuts = m_NumberOfSides;
             var angle = m_ArchDegrees;
             var width = m_Thickness;
             var radius = size.y;
-            var depth = size.z;
+            var depth = m_UseXAxisAsForward ? size.x : size.z;
             Vector2[] templateOut = new Vector2[radialCuts];
             Vector2[] templateIn = new Vector2[radialCuts];
 
@@ -48,25 +51,13 @@ namespace UnityEngine.ProBuilder.Shapes
                 tmp = templateOut[n];
                 tmp2 = n < (radialCuts - 1) ? templateOut[n + 1] : templateOut[n];
 
-                Vector3[] qvo = new Vector3[4]
-                {
-                    new Vector3(tmp.x, tmp.y, y),
-                    new Vector3(tmp2.x, tmp2.y, y),
-                    new Vector3(tmp.x, tmp.y, depth),
-                    new Vector3(tmp2.x, tmp2.y, depth)
-                };
+                Vector3[] qvo = GetFace(tmp, tmp2, -depth);
 
                 // inside faces
                 tmp = templateIn[n];
                 tmp2 = n < (radialCuts - 1) ? templateIn[n + 1] : templateIn[n];
 
-                Vector3[] qvi = new Vector3[4]
-                {
-                    new Vector3(tmp2.x, tmp2.y, y),
-                    new Vector3(tmp.x, tmp.y, y),
-                    new Vector3(tmp2.x, tmp2.y, depth),
-                    new Vector3(tmp.x, tmp.y, depth)
-                };
+                Vector3[] qvi = GetFace(tmp2, tmp, -depth);
 
                 v.AddRange(qvo);
 
@@ -77,29 +68,11 @@ namespace UnityEngine.ProBuilder.Shapes
                 if (angle < 360f && m_EndCaps)
                 {
                     if (n == 0)
-                    {
-                        v.AddRange(
-                            new Vector3[4]
-                        {
-                            new Vector3(templateOut[n].x, templateOut[n].y, depth),
-                            new Vector3(templateIn[n].x, templateIn[n].y, depth),
-                            new Vector3(templateOut[n].x, templateOut[n].y, y),
-                            new Vector3(templateIn[n].x, templateIn[n].y, y)
-                        });
-                    }
+                        v.AddRange(GetFace(templateOut[n], templateIn[n], depth));
 
                     // ride side bottom face
                     if (n == radialCuts - 2)
-                    {
-                        v.AddRange(
-                            new Vector3[4]
-                        {
-                            new Vector3(templateIn[n + 1].x, templateIn[n + 1].y, depth),
-                            new Vector3(templateOut[n + 1].x, templateOut[n + 1].y, depth),
-                            new Vector3(templateIn[n + 1].x, templateIn[n + 1].y, y),
-                            new Vector3(templateOut[n + 1].x, templateOut[n + 1].y, y)
-                        });
-                    }
+                        v.AddRange(GetFace(templateIn[n+1], templateOut[n+1], depth));
                 }
 
 
@@ -135,7 +108,24 @@ namespace UnityEngine.ProBuilder.Shapes
                 v.AddRange(tpt);
             }
 
+            if(m_UseXAxisAsForward)
+            {
+                for(int i = 0; i < v.Count; i++)
+                    v[i] = new Vector3(v[i].z, v[i].y, v[i].x);
+            }
+
             mesh.GeometryWithPoints(v.ToArray());
+        }
+
+        Vector3[] GetFace(Vector2 vertex1, Vector2 vertex2, float depth)
+        {
+            return new Vector3[4]
+            {
+                new Vector3(vertex1.x, vertex1.y, depth),
+                new Vector3(vertex2.x,  vertex2.y, depth),
+                new Vector3(vertex1.x, vertex1.y, -depth),
+                new Vector3(vertex2.x, vertex2.y, -depth)
+            };
         }
     }
 }
