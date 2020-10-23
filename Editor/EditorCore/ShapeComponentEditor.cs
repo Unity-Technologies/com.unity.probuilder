@@ -61,7 +61,7 @@ namespace UnityEditor.ProBuilder
             }
 
             if(GUILayout.Button("Reset Shape Modifications"))
-                shapeComp.Rebuild();
+                shapeComp.Rebuild(true);
 
             EditorGUI.BeginChangeCheck();
             shapeComp.size = EditorGUILayout.Vector3Field("Size", shapeComp.size);

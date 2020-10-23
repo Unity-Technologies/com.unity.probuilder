@@ -74,15 +74,17 @@ namespace UnityEngine.ProBuilder.Shapes
             Rebuild();
         }
 
-        public void Rebuild()
+        public void Rebuild(bool resetRotation = false)
         {
             m_Shape.RebuildMesh(mesh, m_Size);
+            m_Edited = false;
+
             m_MeshOriginalVertices = new Vector3[mesh.vertexCount];
             Array.Copy(mesh.positionsInternal,m_MeshOriginalVertices, mesh.vertexCount);
-            m_Edited = false;
-            Quaternion rotation = m_Rotation;
-            ApplyRotation(Quaternion.identity);
+
+            Quaternion rotation = resetRotation ? Quaternion.identity : m_Rotation;
             ApplyRotation(rotation);
+
             MeshUtility.FitToSize(mesh, m_Size);
         }
 
@@ -118,18 +120,11 @@ namespace UnityEngine.ProBuilder.Shapes
             if ( rotation.Equals(m_Rotation) )
                 return;
 
-            //m_Shape.RebuildMesh(mesh, m_Size);
             m_Rotation = rotation;
             m_Edited = false;
 
-            //var origVerts = mesh.positionsInternal;
-
             var origVerts = new Vector3[m_MeshOriginalVertices.Length];
             Array.Copy(m_MeshOriginalVertices, origVerts, m_MeshOriginalVertices.Length);
-
-            // The Shape is flipped, pointing downwards, the rotation must be inverted
-            if(transform.up.y < 0)
-                rotation = Quaternion.Inverse(rotation);
 
             for (int i = 0; i < origVerts.Length; ++i)
             {
