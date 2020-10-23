@@ -56,15 +56,15 @@ namespace UnityEngine.ProBuilder.Shapes
             points.Add(template[4]);
             points.Add(template[5]);
 
-            points.Add(template[2]);
-            points.Add(template[3]);
             points.Add(template[6]);
+            points.Add(template[2]);
             points.Add(template[7]);
+            points.Add(template[3]);
 
-            points.Add(template[4]);
-            points.Add(template[5]);
             points.Add(template[8]);
+            points.Add(template[4]);
             points.Add(template[9]);
+            points.Add(template[5]);
 
             points.Add(template[6]);
             points.Add(template[7]);

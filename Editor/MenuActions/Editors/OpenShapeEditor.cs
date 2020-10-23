@@ -10,9 +10,6 @@ namespace UnityEditor.ProBuilder.Actions
 {
     sealed class OpenShapeEditor : MenuToolToggle
     {
-        bool m_RestorePreviousMode;
-        SelectMode m_PreviousMode;
-
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_Shapes", IconSkin.Pro); } }
         public override TooltipContent tooltip { get { return s_Tooltip; } }
@@ -33,8 +30,6 @@ namespace UnityEditor.ProBuilder.Actions
 
         internal override ActionResult StartActivation()
         {
-            m_RestorePreviousMode = true;
-            m_PreviousMode = ProBuilderEditor.selectMode;
             ProBuilderEditor.selectMode = SelectMode.Object;
 
             m_Tool = ScriptableObject.CreateInstance<DrawShapeTool>();
@@ -55,16 +50,12 @@ namespace UnityEditor.ProBuilder.Actions
 
             Object.DestroyImmediate(m_Tool);
 
-            if(m_RestorePreviousMode)
-                ProBuilderEditor.selectMode = m_PreviousMode;
-
             SceneView.RepaintAll();
             return new ActionResult(ActionResult.Status.Success,"Draw Shape Tool Ends");
         }
 
         void OnSelectModeChanged(SelectMode obj)
         {
-            m_RestorePreviousMode = false;
             LeaveTool();
         }
 

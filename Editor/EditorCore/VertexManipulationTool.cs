@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEditor.SettingsManagement;
+using UnityEngine.ProBuilder.Shapes;
 
 #if DEBUG_HANDLES
 using UnityEngine.Rendering;
@@ -267,6 +268,10 @@ namespace UnityEditor.ProBuilder
 
             foreach (var mesh in selection)
             {
+                ShapeComponent shape;
+                if(mesh.gameObject.TryGetComponent(out shape))
+                    shape.edited = true;
+
                 mesh.ToMesh();
                 mesh.Refresh();
             }

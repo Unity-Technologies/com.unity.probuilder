@@ -387,6 +387,9 @@ namespace UnityEditor.ProBuilder
         // Don't recalculate the active bounds during an edit operation, it causes the handles to drift
         ShapeState m_ActiveShapeState;
 
+        const string k_dialogTitle = "Warning : Shape modified";
+        const string k_dialogText = "The current shape has been manually edited, by editing it you will loose all modifications.";
+
         struct ShapeState
         {
             public ShapeComponent shape;
@@ -448,8 +451,18 @@ namespace UnityEditor.ProBuilder
 
                     if(EditorGUI.EndChangeCheck())
                     {
-                        shape.SetRotation(rot);
-                        ProBuilderEditor.Refresh();
+                        if(shape.edited)
+                        {
+                            if(UnityEditor.EditorUtility.DisplayDialog(
+                                k_dialogTitle, k_dialogText,
+                                "Continue", "Cancel"))
+                                shape.edited = false;
+                        }
+                        else
+                        {
+                            shape.SetRotation(rot);
+                            ProBuilderEditor.Refresh();
+                        }
                     }
                 }
 

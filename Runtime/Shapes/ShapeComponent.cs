@@ -1,4 +1,8 @@
-﻿namespace UnityEngine.ProBuilder.Shapes
+﻿using System;
+using System.ComponentModel;
+using System.Linq;
+
+namespace UnityEngine.ProBuilder.Shapes
 {
     [RequireComponent(typeof(ProBuilderMesh))]
     public sealed class ShapeComponent : MonoBehaviour
@@ -12,7 +16,13 @@
         Vector3 m_Size;
 
         [SerializeField]
+        Vector3[] m_MeshOriginalVertices;
+
+        [SerializeField]
         Quaternion m_Rotation = Quaternion.identity;
+
+        [SerializeField]
+        bool m_Edited = false;
 
         public Shape shape
         {
@@ -30,6 +40,12 @@
         {
             get { return m_Size; }
             set { m_Size = value; }
+        }
+
+        public bool edited
+        {
+            get => m_Edited;
+            set => m_Edited = value;
         }
 
         /// <summary>
@@ -52,7 +68,7 @@
 
         public void Rebuild(Bounds bounds, Quaternion rotation)
         {
-            size = Math.Abs(bounds.size);
+            m_Size = Math.Abs(bounds.size);
             transform.position = bounds.center;
             transform.rotation = rotation;
             Rebuild();
@@ -60,9 +76,14 @@
 
         public void Rebuild()
         {
-            m_Shape.RebuildMesh(mesh, size);
+            m_Shape.RebuildMesh(mesh, m_Size);
+            m_MeshOriginalVertices = new Vector3[mesh.vertexCount];
+            Array.Copy(mesh.positionsInternal,m_MeshOriginalVertices, mesh.vertexCount);
+            m_Edited = false;
+            Quaternion rotation = m_Rotation;
+            ApplyRotation(Quaternion.identity);
             ApplyRotation(rotation);
-            MeshUtility.FitToSize(mesh, size);
+            MeshUtility.FitToSize(mesh, m_Size);
         }
 
         public void SetShape(Shape shape)
@@ -77,33 +98,34 @@
         /// <param name="angles">The angles to rotate by</param>
         public void SetRotation(Quaternion angles)
         {
-            rotation = angles;
-            ApplyRotation(rotation);
-            MeshUtility.FitToSize(mesh, size);
+            ApplyRotation(angles);
+            MeshUtility.FitToSize(mesh, m_Size);
         }
 
         /// <summary>
         /// Rotates the Shape by a given quaternion while respecting the bounds
         /// </summary>
         /// <param name="rotation">The angles to rotate by</param>
-        public void Rotate(Quaternion rotation)
+        public void Rotate(Quaternion deltaRotation)
         {
-            if (rotation == Quaternion.identity)
-                return;
-            this.rotation = rotation * this.rotation;
-            ApplyRotation(this.rotation);
-            MeshUtility.FitToSize(mesh, size);
+            Quaternion rotation = deltaRotation * m_Rotation;
+            ApplyRotation(rotation);
+            MeshUtility.FitToSize(mesh, m_Size);
         }
 
-        void ApplyRotation(Quaternion rotation)
+        private void ApplyRotation(Quaternion rotation)
         {
-            if (rotation == Quaternion.identity)
-            {
+            if ( rotation.Equals(m_Rotation) )
                 return;
-            }
-            m_Shape.RebuildMesh(mesh, size);
 
-            var origVerts = mesh.positionsInternal;
+            //m_Shape.RebuildMesh(mesh, m_Size);
+            m_Rotation = rotation;
+            m_Edited = false;
+
+            //var origVerts = mesh.positionsInternal;
+
+            var origVerts = new Vector3[m_MeshOriginalVertices.Length];
+            Array.Copy(m_MeshOriginalVertices, origVerts, m_MeshOriginalVertices.Length);
 
             // The Shape is flipped, pointing downwards, the rotation must be inverted
             if(transform.up.y < 0)
@@ -116,5 +138,6 @@
             mesh.mesh.vertices = origVerts;
             mesh.ReplaceVertices(origVerts);
         }
+
     }
 }

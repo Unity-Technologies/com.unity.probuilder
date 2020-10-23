@@ -60,12 +60,15 @@ namespace UnityEditor.ProBuilder
                 ProBuilderEditor.Refresh();
             }
 
+            if(GUILayout.Button("Reset Shape Modifications"))
+                shapeComp.Rebuild();
+
             EditorGUI.BeginChangeCheck();
             shapeComp.size = EditorGUILayout.Vector3Field("Size", shapeComp.size);
-            shapeComp.SetRotation(Quaternion.Euler(EditorGUILayout.Vector3Field("Rotation", shapeComp.rotation.eulerAngles)));
+            Vector3 rotation = EditorGUILayout.Vector3Field("Rotation", shapeComp.rotation.eulerAngles);
             if (EditorGUI.EndChangeCheck())
             {
-                shapeComp.Rebuild();
+                shapeComp.SetRotation(Quaternion.Euler(rotation));
                 ProBuilderEditor.Refresh();
             }
 
