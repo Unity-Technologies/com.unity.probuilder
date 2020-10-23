@@ -28,11 +28,11 @@ namespace UnityEditor.ProBuilder
                 if (res.item1.Raycast(ray, out hit))
                 {
                     tool.m_Plane = res.item1;
-                    tool.m_Forward = res.item2;
-                    tool.m_Right = Vector3.Cross(tool.m_Plane.normal, tool.m_Forward);
-                    tool.m_Origin = ray.GetPoint(hit);
-                    tool.m_HeightCorner = tool.m_Origin;
-                    tool.m_OppositeCorner = tool.m_Origin;
+                    tool.m_PlaneForward = res.item2;
+                    tool.m_PlaneRight = Vector3.Cross(tool.m_Plane.normal, tool.m_PlaneForward);
+                    tool.m_BB_Origin = ray.GetPoint(hit);
+                    tool.m_BB_HeightCorner = tool.m_BB_Origin;
+                    tool.m_BB_OppositeCorner = tool.m_BB_Origin;
                     return NextState();
                 }
             }

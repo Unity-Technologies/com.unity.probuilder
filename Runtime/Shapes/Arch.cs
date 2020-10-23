@@ -20,8 +20,16 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         bool m_EndCaps = true;
 
-        [SerializeField]
-        bool m_UseXAxisAsForward = false;
+        Vector3[] GetFace(Vector2 vertex1, Vector2 vertex2, float depth)
+        {
+            return new Vector3[4]
+            {
+                new Vector3(vertex1.x, vertex1.y, depth),
+                new Vector3(vertex2.x,  vertex2.y, depth),
+                new Vector3(vertex1.x, vertex1.y, -depth),
+                new Vector3(vertex2.x, vertex2.y, -depth)
+            };
+        }
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
@@ -29,7 +37,7 @@ namespace UnityEngine.ProBuilder.Shapes
             var angle = m_ArchDegrees;
             var width = m_Thickness;
             var radius = size.y;
-            var depth = m_UseXAxisAsForward ? size.x : size.z;
+            var depth = /*m_UseXAxisAsForward ? size.x :*/ size.z;
             Vector2[] templateOut = new Vector2[radialCuts];
             Vector2[] templateIn = new Vector2[radialCuts];
 
@@ -108,24 +116,13 @@ namespace UnityEngine.ProBuilder.Shapes
                 v.AddRange(tpt);
             }
 
-            if(m_UseXAxisAsForward)
+            if(m_Forward.z != 0)
             {
                 for(int i = 0; i < v.Count; i++)
                     v[i] = new Vector3(v[i].z, v[i].y, v[i].x);
             }
 
             mesh.GeometryWithPoints(v.ToArray());
-        }
-
-        Vector3[] GetFace(Vector2 vertex1, Vector2 vertex2, float depth)
-        {
-            return new Vector3[4]
-            {
-                new Vector3(vertex1.x, vertex1.y, depth),
-                new Vector3(vertex2.x,  vertex2.y, depth),
-                new Vector3(vertex1.x, vertex1.y, -depth),
-                new Vector3(vertex2.x, vertex2.y, -depth)
-            };
         }
     }
 }

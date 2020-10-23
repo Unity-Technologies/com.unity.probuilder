@@ -83,7 +83,7 @@ namespace UnityEngine.ProBuilder.Shapes
             Array.Copy(mesh.positionsInternal,m_MeshOriginalVertices, mesh.vertexCount);
 
             Quaternion rotation = resetRotation ? Quaternion.identity : m_Rotation;
-            ApplyRotation(rotation);
+            ApplyRotation(rotation, true);
 
             MeshUtility.FitToSize(mesh, m_Size);
         }
@@ -115,9 +115,9 @@ namespace UnityEngine.ProBuilder.Shapes
             MeshUtility.FitToSize(mesh, m_Size);
         }
 
-        private void ApplyRotation(Quaternion rotation)
+        private void ApplyRotation(Quaternion rotation, bool forceRotation = false)
         {
-            if ( rotation.Equals(m_Rotation) )
+            if ( !forceRotation && rotation.Equals(m_Rotation) )
                 return;
 
             m_Rotation = rotation;
@@ -127,9 +127,8 @@ namespace UnityEngine.ProBuilder.Shapes
             Array.Copy(m_MeshOriginalVertices, origVerts, m_MeshOriginalVertices.Length);
 
             for (int i = 0; i < origVerts.Length; ++i)
-            {
                 origVerts[i] = rotation * origVerts[i];
-            }
+
             mesh.mesh.vertices = origVerts;
             mesh.ReplaceVertices(origVerts);
         }

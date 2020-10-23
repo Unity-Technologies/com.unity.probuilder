@@ -14,9 +14,6 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         bool m_Sides = true;
 
-        [SerializeField]
-        bool m_UseXAxisAsForward = false;
-
         public int steps
         {
             get { return m_Steps; }
@@ -161,10 +158,20 @@ namespace UnityEngine.ProBuilder.Shapes
                 faces = faces.Add(new Face(new int[] { v + 0, v + 1, v + 2, v + 1, v + 3, v + 2 }));
             }
 
-            if(m_UseXAxisAsForward)
+            if(m_Forward.x < 0)
+            {
+                for(int i = 0; i < vertices.Length; i++)
+                    vertices[i] = new Vector3(-vertices[i].x, vertices[i].y, -vertices[i].z);
+            }
+            else if(m_Forward.z < 0)
             {
                 for(int i = 0; i < vertices.Length; i++)
                     vertices[i] = new Vector3(vertices[i].z, vertices[i].y, -vertices[i].x);
+            }
+            else if(m_Forward.z > 0)
+            {
+                for(int i = 0; i < vertices.Length; i++)
+                    vertices[i] = new Vector3(-vertices[i].z, vertices[i].y, vertices[i].x);
             }
 
             mesh.RebuildWithPositionsAndFaces(vertices, faces);
@@ -372,6 +379,22 @@ namespace UnityEngine.ProBuilder.Shapes
 
                 foreach (Face f in faces)
                     f.Reverse();
+            }
+
+            if(m_Forward.x < 0)
+            {
+                for(int i = 0; i < positions.Length; i++)
+                    positions[i] = new Vector3(-positions[i].x, positions[i].y, -positions[i].z);
+            }
+            else if(m_Forward.z < 0)
+            {
+                for(int i = 0; i < positions.Length; i++)
+                    positions[i] = new Vector3(positions[i].z, positions[i].y, -positions[i].x);
+            }
+            else if(m_Forward.z > 0)
+            {
+                for(int i = 0; i < positions.Length; i++)
+                    positions[i] = new Vector3(-positions[i].z, positions[i].y, positions[i].x);
             }
 
             mesh.RebuildWithPositionsAndFaces(positions, faces);

@@ -20,14 +20,15 @@ namespace UnityEditor.ProBuilder
 
         internal ShapeComponent m_Shape;
         internal bool m_IsShapeInit;
+        Vector3 m_ShapeForward;
 
         Editor m_ShapeEditor;
 
         // plane of interaction
         internal UnityEngine.Plane m_Plane;
-        internal Vector3 m_Forward;
-        internal Vector3 m_Right;
-        internal Vector3 m_Origin, m_OppositeCorner, m_HeightCorner;
+        internal Vector3 m_PlaneForward;
+        internal Vector3 m_PlaneRight;
+        internal Vector3 m_BB_Origin, m_BB_OppositeCorner, m_BB_HeightCorner;
 
         Quaternion m_Rotation;
         Bounds m_Bounds;
@@ -77,17 +78,29 @@ namespace UnityEditor.ProBuilder
 
         void RecalculateBounds()
         {
-            var forward = HandleUtility.PointOnLineParameter(m_OppositeCorner, m_Origin, m_Forward);
-            var right = HandleUtility.PointOnLineParameter(m_OppositeCorner, m_Origin, m_Right);
+            var forward = HandleUtility.PointOnLineParameter(m_BB_OppositeCorner, m_BB_Origin, m_PlaneForward);
+            var right = HandleUtility.PointOnLineParameter(m_BB_OppositeCorner, m_BB_Origin, m_PlaneRight);
 
-            var heightDirection = m_HeightCorner - m_OppositeCorner;
+            var heightDirection = m_BB_HeightCorner - m_BB_OppositeCorner;
             if(Mathf.Sign(Vector3.Dot(m_Plane.normal, heightDirection)) < 0)
                 m_Plane.Flip();
             var height = heightDirection.magnitude;
 
             m_Bounds.size = forward * Vector3.forward + right * Vector3.right + height * Vector3.up;
-            m_Bounds.center = m_Origin + 0.5f * ( m_OppositeCorner - m_Origin ) + m_Plane.normal * (height * .5f);
-            m_Rotation = Quaternion.LookRotation(m_Forward,m_Plane.normal);
+            m_Bounds.center = m_BB_Origin + 0.5f * ( m_BB_OppositeCorner - m_BB_Origin ) + m_Plane.normal * (height * .5f);
+            m_Rotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
+
+            var dragDirection = m_BB_OppositeCorner - m_BB_Origin;
+            float dragDotForward = Vector3.Dot(dragDirection, m_PlaneForward);
+            float dragDotRight = Vector3.Dot(dragDirection, m_PlaneRight);
+            if(dragDotForward < 0 && dragDotRight > 0 )
+                m_ShapeForward = -Vector3.forward;
+            else if(dragDotForward > 0 && dragDotRight < 0)
+                m_ShapeForward = Vector3.forward;
+            else if(dragDotForward < 0 && dragDotRight < 0 )
+                m_ShapeForward = -Vector3.right;
+            else if(dragDotForward > 0 && dragDotRight > 0)
+                m_ShapeForward = Vector3.right;
         }
 
         internal void RebuildShape()
@@ -104,6 +117,7 @@ namespace UnityEditor.ProBuilder
                 UndoUtility.RegisterCreatedObjectUndo(m_Shape.gameObject, "Draw Shape");
             }
 
+            m_Shape.shape.Forward = m_ShapeForward;
             m_Shape.Rebuild(m_Bounds, m_Rotation);
             m_Shape.mesh.SetPivot(PivotLocation.Center);
             ProBuilderEditor.Refresh(false);

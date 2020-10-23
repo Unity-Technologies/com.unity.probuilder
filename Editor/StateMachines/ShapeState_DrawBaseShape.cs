@@ -27,8 +27,8 @@ namespace UnityEditor.ProBuilder
 
                     if (tool.m_Plane.Raycast(ray, out distance))
                     {
-                        tool.m_OppositeCorner = ray.GetPoint(distance);
-                        tool.m_HeightCorner = tool.m_OppositeCorner;
+                        tool.m_BB_OppositeCorner = ray.GetPoint(distance);
+                        tool.m_BB_HeightCorner = tool.m_BB_OppositeCorner;
                         tool.RebuildShape();
                     }
                     break;
@@ -49,7 +49,7 @@ namespace UnityEditor.ProBuilder
                             return ResetState();
                         }
                     }
-                    else if(Vector3.Distance(tool.m_OppositeCorner, tool.m_Origin) < .1f)
+                    else if(Vector3.Distance(tool.m_BB_OppositeCorner, tool.m_BB_Origin) < .1f)
                         return ResetState();
                     else
                         return NextState();
@@ -67,7 +67,7 @@ namespace UnityEditor.ProBuilder
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
 
             Bounds bounds = new Bounds(Vector3.zero, DrawShapeTool.s_Size);
-            shape.Rebuild(bounds, Quaternion.LookRotation(tool.m_Forward,tool.m_Plane.normal));
+            shape.Rebuild(bounds, Quaternion.LookRotation(tool.m_PlaneForward,tool.m_Plane.normal));
             ProBuilderEditor.Refresh(false);
 
             var res = shape.GetComponent<ProBuilderMesh>();

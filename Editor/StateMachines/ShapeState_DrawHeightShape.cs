@@ -21,7 +21,7 @@ namespace UnityEditor.ProBuilder
                 case EventType.MouseMove:
                 case EventType.MouseDrag:
                     Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
-                    tool.m_HeightCorner = Math.GetNearestPointRayRay(tool.m_OppositeCorner, tool.m_Plane.normal, ray.origin, ray.direction);
+                    tool.m_BB_HeightCorner = Math.GetNearestPointRayRay(tool.m_BB_OppositeCorner, tool.m_Plane.normal, ray.origin, ray.direction);
                     tool.RebuildShape();
                     break;
 
