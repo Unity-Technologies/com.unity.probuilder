@@ -37,7 +37,7 @@ namespace UnityEngine.ProBuilder.Shapes
             var angle = m_ArchDegrees;
             var width = m_Thickness;
             var radius = size.y;
-            var depth = /*m_UseXAxisAsForward ? size.x :*/ size.z;
+            var depth = size.z;
             Vector2[] templateOut = new Vector2[radialCuts];
             Vector2[] templateIn = new Vector2[radialCuts];
 

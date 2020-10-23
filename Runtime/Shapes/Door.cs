@@ -13,14 +13,11 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         float m_LegWidth = .75f;
 
-        [SerializeField]
-        bool m_UseXAxisAsForward = false;
-
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
-            float totalWidth = m_UseXAxisAsForward ? size.z : size.x;
+            float totalWidth = m_Forward.z != 0 ? size.z : size.x;
             float totalHeight = size.y;
-            float depth = m_UseXAxisAsForward ? size.x : size.z;
+            float depth = m_Forward.z != 0 ? size.x : size.z;
 
             float xLegCoord = totalWidth / 2f;
             var legWidth = xLegCoord - this.m_LegWidth;
@@ -103,7 +100,8 @@ namespace UnityEngine.ProBuilder.Shapes
             points.Add(template[5]);
             points.Add(template[5] - Vector3.forward * depth);
 
-            if(m_UseXAxisAsForward)
+
+            if(m_Forward.z != 0)
             {
                 for(int i = 0; i < points.Count; i++)
                     points[i] = new Vector3(points[i].z, points[i].y, points[i].x);

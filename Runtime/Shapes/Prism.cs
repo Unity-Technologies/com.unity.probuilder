@@ -44,6 +44,12 @@
                 template[4]     // 17
             };
 
+            if(m_Forward.z != 0)
+            {
+                for(int i = 0; i < v.Length; i++)
+                    v[i] = new Vector3(v[i].z, v[i].y, -v[i].x);
+            }
+
             Face[] f = new Face[5]
             {
                 new Face(new int[3] {2, 1, 0}),          // x

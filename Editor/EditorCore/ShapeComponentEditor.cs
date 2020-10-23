@@ -60,7 +60,7 @@ namespace UnityEditor.ProBuilder
                 ProBuilderEditor.Refresh();
             }
 
-            if(GUILayout.Button("Reset Shape Modifications"))
+            if(GUILayout.Button("Reset Shape"))
                 shapeComp.Rebuild(true);
 
             EditorGUI.BeginChangeCheck();

@@ -36,9 +36,6 @@ namespace UnityEngine.ProBuilder.Shapes
 
         private void BuildStairs(ProBuilderMesh mesh, Vector3 size)
         {
-            //if(m_UseXAxisAsForward)
-            //    size = new Vector3(size.z, size.y, size.x);
-
             // 4 vertices per quad, 2 quads per step.
             Vector3[] vertices = new Vector3[4 * steps * 2];
             Face[] faces = new Face[steps * 2];
