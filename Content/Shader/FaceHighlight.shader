@@ -46,6 +46,8 @@ Shader "Hidden/ProBuilder/FaceHighlight"
                 o.pos.xyz *= .99;
                 o.pos = mul(UNITY_MATRIX_P, o.pos);
 
+                o.pos = o.pos * (1.0f - unity_OrthoParams.w) + UnityObjectToClipPos(v.vertex.xyz) * unity_OrthoParams.w;
+
                 return o;
             }
 
