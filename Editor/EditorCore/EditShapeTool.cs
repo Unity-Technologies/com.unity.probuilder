@@ -333,6 +333,7 @@ namespace UnityEditor.ProBuilder
                     break;
                 case EventType.Repaint:
                     bool isSelected = (HandleUtility.nearestControl == controlID && m_CurrentId == -1) || m_CurrentId == controlID;
+                    Color color = edge.Center.x == 0 ? Handles.s_XAxisColor : ( edge.Center.y == 0 ? Handles.s_YAxisColor : Handles.s_ZAxisColor );
                     if(isSelected)
                     {
                         EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.RotateArrow);
@@ -340,7 +341,7 @@ namespace UnityEditor.ProBuilder
                         Vector3 edgeToPrevious = m_EdgeDataToNeighborsEdges[edge].item1.Center - edge.Center;
                         Vector3 edgeToNext = m_EdgeDataToNeighborsEdges[edge].item2.Center - edge.Center;
                         Vector3 normal = Vector3.Cross(edgeToNext,edgeToPrevious).normalized;
-                        using(new Handles.DrawingScope(edge.Center.x == 0 ? Handles.s_XAxisColor : ( edge.Center.y == 0 ? Handles.s_YAxisColor : Handles.s_ZAxisColor )))
+                        using(new Handles.DrawingScope(color))
                         {
                              Handles.DrawWireArc(Vector3.zero,
                                  normal,
@@ -350,7 +351,7 @@ namespace UnityEditor.ProBuilder
                         }
                     }
 
-                    using (new Handles.DrawingScope(isSelected ? Color.white : Color.green))
+                    using (new Handles.DrawingScope(isSelected ? Color.white : color))
                     {
                         Handles.DrawAAPolyLine(isSelected ? 10f : 3f, edge.PointA, edge.PointB);
                     }
