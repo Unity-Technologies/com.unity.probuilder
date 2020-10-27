@@ -510,8 +510,12 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 throw new System.ArgumentNullException("mesh");
 
-            if (vertices == null)
+            bool hasCollapsedVertices = false;
+
+            if(vertices == null)
                 vertices = mesh.GetVertices();
+            else
+                hasCollapsedVertices = true;
 
             int smc = mesh.subMeshCount;
             List<Dictionary<Vertex, int>> subVertices = new List<Dictionary<Vertex, int>>();
@@ -544,10 +548,15 @@ namespace UnityEngine.ProBuilder
             }
 
             Vertex[] collapsed = subVertices.SelectMany(x => x.Keys).ToArray();
-            Vertex.SetMesh(mesh, collapsed);
-            mesh.subMeshCount = smc;
-            for (int i = 0; i < smc; i++)
-                mesh.SetTriangles(tris[i], i);
+            //Check if new vertices have been collapsed
+            hasCollapsedVertices |= (collapsed.Length != vertices.Length);
+            //if(hasCollapsedVertices)
+            {
+                Vertex.SetMesh(mesh, collapsed);
+                mesh.subMeshCount = smc;
+                for(int i = 0; i < smc; i++)
+                    mesh.SetTriangles(tris[i], i);
+            }
         }
 
         internal static string SanityCheck(ProBuilderMesh mesh)
