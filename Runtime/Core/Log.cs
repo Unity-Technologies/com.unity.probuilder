@@ -272,11 +272,7 @@ namespace UnityEngine.ProBuilder
             else if (type == LogType.Error)
                 UnityEngine.Debug.LogError(message);
             else if (type == LogType.Assert)
-#if UNITY_5_3_OR_NEWER
                 UnityEngine.Debug.LogAssertion(message);
-#else
-                UnityEngine.Debug.LogError(message);
-#endif
             else
                 UnityEngine.Debug.Log(message);
         }

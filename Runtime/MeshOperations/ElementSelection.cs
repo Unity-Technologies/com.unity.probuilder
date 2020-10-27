@@ -9,6 +9,38 @@ namespace UnityEngine.ProBuilder.MeshOperations
         const int k_MaxHoleIterations = 2048;
 
         /// <summary>
+        /// Fills a list of <![CDATA[Face]]> where each face is connected to the passed edge in the ProBuilderMesh.
+        /// </summary>
+        /// <param name="mesh">the ProBuilder mesh to consider</param>
+        /// <param name="edge">the edge ton consider</param>
+        ///<param name="neighborFaces"> The list filled by the method</param>
+        /// <returns></returns>
+        public static void GetNeighborFaces(ProBuilderMesh mesh, Edge edge, List<Face> neighborFaces)
+        {
+            var lookup = mesh.sharedVertexLookup;
+
+            Edge uni = new Edge(lookup[edge.a], lookup[edge.b]);
+            Edge e = new Edge(0, 0);
+
+            for (int i = 0; i < mesh.facesInternal.Length; i++)
+            {
+                Edge[] edges = mesh.facesInternal[i].edgesInternal;
+                for (int n = 0; n < edges.Length; n++)
+                {
+                    e.a = edges[n].a;
+                    e.b = edges[n].b;
+
+                    if ((uni.a == lookup[e.a] && uni.b == lookup[e.b]) ||
+                        (uni.a == lookup[e.b] && uni.b == lookup[e.a]))
+                    {
+                        neighborFaces.Add(mesh.facesInternal[i]);
+                        break;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Returns a list of <![CDATA[SimpleTuple<Face, Edge>]]> where each face is connected to the passed edge.
         /// </summary>
         /// <param name="mesh"></param>

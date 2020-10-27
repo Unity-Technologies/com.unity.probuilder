@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Features
+
+- Upgrading PolyShape tool to EditorTool and correct some features in it.
+- Added a selection preview when using the Select Path tool.
+- Added `Selection X Ray` option to highlight occluded element selections with a muted color. Default shortcut is `Alt + Shift + X` (modifiable in Shortcut Manager).
+- MergeElements.Merge moved to public API
+
 ### Bug Fixes
 
 - [case: 1254339] Correct offset when rendering UVs and correct export when UV Editor is docked.
@@ -14,17 +21,33 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1259845] Fixed dimension overlay being hidden on playmode or reboot of the editor.
 - [case: 1267383] Fixed `Bezier Shape` and `Poly Shape` component preventing build when `Script Stripping` was enabled.
 - [case: 1256246] Ensuring edges subdivision is not creating hole and that arch shapes does not create degenerated triangles
+- Scaled Auto UVs now remain in place when modifying geometry.
 - [case: 1265296] Add tooltips to UV Actions window.
 - [case: 1265623] Ensure that ProGrids snapping is enabled (not only active) when using snapping in ProBuilder
 - [case: 1256154] Fixed StackOverflow Error when smoothing mesh in Probuilderize, also fixed an error in the display of edges when count > ushort.maxValue.
 - [case: 1252668] Replaced mesh template tests for `Connect Edges` with more stable methods.
 - [case: 1262236] Ensure PolyShape is not empty to avoid nullref while exporting.
 - [case: 1184921] Add a custom preview for `ProBuilderMesh` prefabs.
+- [case: 1276085] Fixed `UV Actions` window allowing resize events outside of the containing window.
+- [case: 1276074] Fixed a case where `Fit UVs` action could result in `NaN` values.
+- [case: 1281254] Fixed shader warning in URP for UNITY_PASS_FORWARDBASE macro redefinition.
+- Fixed rect selection not working with Universal Render Pipeline.
+- [case: 1283107] Fixed `Bevel` settings slider disappearing when values exceed 1.
+- [case: 1283103] Fixed typo in `Center Pivot` tooltip.
+- [case: 1283067] Fixed `Export Prefab` throwing an error when overwriting the root asset of an exported prefab instance.
+- [case: 1284735] Fixed a possible exception when creating a shape, undoing, then redoing while the `Smooth Group Editor` window is open.
+- [case: 1283111] Fixed `Poly Shape` tool not snapping placed vertices with grid snapping enabled.
+- [case: 1284741] Fixed missing tooltips for some items in the `Smooth Group Editor` window.
+- [case: 1283167] Fixed `Mesh Collider` mesh value not updating with modifications.
 
 ### Changes
 
+- Modified VertexManipulationTool to inherit from EditorTool
+- Adding a new MenuAction in Samples to merge faces from edges selection
 - Removing preprocessor directives for Unity 2018 and below for Probuilder 5.0
 - Modified the AppendVerticesToEdge to handle edges split for non-convex faces.
+- Removed unused "About" images.
+- Removed unused HDRP shader variants.
 
 ## [4.4.0] - 2020-08-12
 

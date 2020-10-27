@@ -68,7 +68,7 @@ namespace UnityEditor.ProBuilder
 
         protected override void OnToolEngaged()
         {
-            MeshSelection.InvalidateElementSelection();
+            MeshSelection.InvalidateCaches();
         }
 
         protected override void OnToolDisengaged()
@@ -85,7 +85,7 @@ namespace UnityEditor.ProBuilder
 
                 if (isFaceMode)
                 {
-                    UVEditing.SetAutoAndAlignUnwrapParamsToUVs(mesh.mesh, mesh.mesh.selectedFacesInternal.Where(x => !x.manualUV));
+                    UvUnwrapping.SetAutoAndAlignUnwrapParamsToUVs(mesh.mesh, mesh.mesh.selectedFacesInternal.Where(x => !x.manualUV));
                 }
                 else
                 {

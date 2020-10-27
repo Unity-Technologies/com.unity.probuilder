@@ -1,14 +1,12 @@
-using System;
-using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace UnityEngine.ProBuilder.MeshOperations
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// UV actions.
 	/// </summary>
-	static partial class UVEditing
+	static partial class UvUnwrapping
 	{
 		/// <summary>
 		/// Sets the passed faces to use Auto or Manual UVs, and (if previously manual) splits any vertex connections.
@@ -84,9 +82,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		static List<Vector2> s_UVTransformProjectionBuffer = new List<Vector2>(8);
 
         /// <summary>
-        /// Returns the auto unwrap settings for a face. In cases where the face is auto unwrapped
-        /// (manualUV = false), this returns the settings straight. If the face is
-        /// manually unwrapped, it returns the auto unwrap settings computed from GetUVTransform.
+        /// Returns the auto unwrap settings for a face. In cases where the face is auto unwrapped (manualUV = false),
+        /// this returns an unmodified copy of the AutoUnwrapSettings. If the face is manually unwrapped, it returns
+        /// the auto unwrap settings computed from GetUVTransform.
         /// </summary>
         /// <returns></returns>
         internal static AutoUnwrapSettings GetAutoUnwrapSettings(ProBuilderMesh mesh, Face face)
@@ -98,9 +96,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
             var uvSettings = AutoUnwrapSettings.defaultAutoUnwrapSettings;
             uvSettings.offset = trs.translation;
             uvSettings.rotation = 360 - trs.rotation;
-            uvSettings.scale = uvSettings.scale/trs.scale;
+            uvSettings.scale = uvSettings.scale / trs.scale;
 
-            return uvSettings; 
+            return uvSettings;
         }
 
         /// <summary>
@@ -128,8 +126,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
 		internal static UVTransform CalculateDelta(IList<Vector2> src, IList<int> srcIndices, IList<Vector2> dst, IList<int> dstIndices)
         {
 	        // rotate to match target points by comparing the angle between old UV and new auto projection
-	        Vector2 dstAngle = dst[GetIndex(dstIndices, 1)] - dst[GetIndex(dstIndices, 0)];
 	        Vector2 srcAngle = src[GetIndex(srcIndices, 1)] - src[GetIndex(srcIndices, 0)];
+	        Vector2 dstAngle = dst[GetIndex(dstIndices, 1)] - dst[GetIndex(dstIndices, 0)];
 
 	        float rotation = Vector2.Angle(dstAngle, srcAngle);
 
@@ -140,12 +138,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 	        // inverse the rotation to get an axis-aligned scale
 	        Vector2 dstSize = GetRotatedSize(dst, dstIndices, dstCenter, -rotation);
-
-	        var srcBounds = srcIndices == null ? new Bounds2D(src) : new Bounds2D(src, srcIndices);
+	        Bounds2D srcBounds = srcIndices == null ? new Bounds2D(src) : new Bounds2D(src, srcIndices);
+            Vector2 scale = dstSize.DivideBy(srcBounds.size);
+            Vector2 srcCenter = srcBounds.center * scale;
 
 			return new UVTransform()
 			{
-				translation = dstCenter - srcBounds.center,
+				translation = dstCenter - srcCenter,
 				rotation = rotation,
 				scale = dstSize.DivideBy(srcBounds.size)
 			};

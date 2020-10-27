@@ -3,11 +3,11 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-    class PositionMoveTool : PositionTool
+    class ProbuilderMoveTool : PositionTool
     {
         const float k_CardinalAxisError = .001f;
         const float k_MinTranslateDeltaSqrMagnitude = .00001f;
-        Vector3 m_HandlePosition;
+        Vector3 m_Position;
         Vector3 m_RawHandleDelta;
         Vector3Mask m_ActiveAxesModel;
         Vector3Mask m_ActiveAxesWorld;
@@ -22,7 +22,7 @@ namespace UnityEditor.ProBuilder
         protected override void OnToolEngaged()
         {
             // If grids are enabled and "snap on all axes" is on, initialize active axes to all.
-            m_ActiveAxesModel = worldSnapEnabled && !snapAxisConstraint
+            m_ActiveAxesModel = EditorSnapping.snapMode == SnapMode.World && !snapAxisConstraint
                 ? Vector3Mask.XYZ
                 : new Vector3Mask(0x0);
 
@@ -31,15 +31,13 @@ namespace UnityEditor.ProBuilder
 #endif
 
             // Snap as group preference is only respected when snap mode is "World"
-            m_SnapAsGroup = worldSnapEnabled && ProBuilderSnapSettings.snapAsGroup;
+            m_SnapAsGroup = EditorSnapping.snapMode == SnapMode.World && EditorSnapping.snapAsGroup;
         }
 
-        protected override void DoTool(Vector3 handlePosition, Quaternion handleRotation)
+        protected override void DoToolGUI()
         {
-            base.DoTool(handlePosition, handleRotation);
-
             if (!isEditing)
-                m_HandlePosition = handlePosition;
+                m_Position = m_HandlePosition;
 
 #if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
             if (isEditing)
@@ -48,9 +46,9 @@ namespace UnityEditor.ProBuilder
 
             EditorGUI.BeginChangeCheck();
 
-            m_HandlePosition = Handles.PositionHandle(m_HandlePosition, handleRotation);
+            m_Position = Handles.PositionHandle(m_Position, m_HandleRotation);
 
-            m_RawHandleDelta = m_HandlePosition - handlePositionOrigin;
+            m_RawHandleDelta = m_Position - handlePositionOrigin;
 
             var delta = m_RawHandleDelta;
 
@@ -59,7 +57,7 @@ namespace UnityEditor.ProBuilder
                 if (!isEditing)
                     BeginEdit("Translate Selection");
 
-                if (vertexDragging)
+                if (Tools.vertexDragging)
                 {
                     Vector3 nearest;
 
@@ -72,24 +70,24 @@ namespace UnityEditor.ProBuilder
                         {
                             var rotationDirection = handleRotationOrigin * dir * 10000f;
 
-                            m_HandlePosition = HandleUtility.ProjectPointLine(nearest,
+                            m_Position = HandleUtility.ProjectPointLine(nearest,
                                 handlePositionOrigin + rotationDirection,
                                 handlePositionOrigin - rotationDirection);
 
-                            delta = m_HandlePosition - handlePositionOrigin;
+                            delta = m_Position - handlePositionOrigin;
                         }
                     }
                 }
-                else if (worldSnapEnabled)
+                else if (EditorSnapping.snapMode == SnapMode.World)
                 {
                     if (snapAxisConstraint)
                     {
                         m_ActiveAxesModel |= new Vector3Mask(handleRotationOriginInverse * delta, k_CardinalAxisError);
-                        m_ActiveAxesWorld = new Vector3Mask(handleRotation * m_ActiveAxesModel);
+                        m_ActiveAxesWorld = new Vector3Mask(m_HandleRotation * m_ActiveAxesModel);
 
                         if (m_ActiveAxesWorld.active == 1)
                         {
-                            m_HandlePosition = ProBuilderSnapping.SnapValueOnRay(
+                            m_Position = ProBuilderSnapping.SnapValueOnRay(
                                 new Ray(handlePositionOrigin, delta),
                                 delta.magnitude,
                                 GetSnapValueForAxis(m_ActiveAxesModel),
@@ -97,15 +95,15 @@ namespace UnityEditor.ProBuilder
                         }
                         else
                         {
-                            m_HandlePosition = ProBuilderSnapping.SnapValue(m_HandlePosition, snapValue);
+                            m_Position = ProBuilderSnapping.Snap(m_Position, snapValue);
                         }
                     }
                     else
                     {
-                        m_HandlePosition = ProBuilderSnapping.SnapValue(m_HandlePosition, snapValue);
+                        m_Position = ProBuilderSnapping.Snap(m_Position, snapValue);
                     }
 
-                    delta = m_HandlePosition - handlePositionOrigin;
+                    delta = m_Position - handlePositionOrigin;
                 }
 
 #if PROBUILDER_ENABLE_TRANSFORM_ORIGIN_GIZMO
@@ -155,7 +153,7 @@ namespace UnityEditor.ProBuilder
                         // res += translation
                         // res = Group post-apply matrix * res
                         // positions[i] = mesh.worldToLocal * res
-                        if (worldSnapEnabled && !m_SnapAsGroup)
+                        if (EditorSnapping.snapMode == SnapMode.World && !m_SnapAsGroup)
                         {
                             if (snapAxisConstraint && m_ActiveAxesWorld.active == 1)
                             {
@@ -172,7 +170,7 @@ namespace UnityEditor.ProBuilder
                             else
                             {
                                 var wp = postApplyMatrix.MultiplyPoint3x4(translation + preApplyMatrix.MultiplyPoint3x4(origins[index]));
-                                var snap = ProBuilderSnapping.SnapValue(wp, snapValue);
+                                var snap = ProBuilderSnapping.Snap(wp, snapValue);
                                 positions[index] = worldToLocal.MultiplyPoint3x4(snap);
                             }
                         }

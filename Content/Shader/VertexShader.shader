@@ -5,6 +5,7 @@ Shader "Hidden/ProBuilder/VertexShader"
         _Scale("Scale", Range(1,7)) = 3.3
         _Color ("Color", Color) = (1,1,1,1)
         _HandleZTest ("_HandleZTest", Int) = 8
+        _HandleZWrite("_HandleZWrite", Int) = 0
     }
 
     SubShader
@@ -18,7 +19,7 @@ Shader "Hidden/ProBuilder/VertexShader"
 
         Lighting Off
         ZTest [_HandleZTest]
-        ZWrite On
+        ZWrite [_HandleZWrite]
         Cull Off
         Blend Off
         Offset -1,-1

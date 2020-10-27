@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -299,10 +298,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 }
                 else
                 {
-                   
+
                     if (uvs[currentIndex].x < xMin)
                     {
-                        xMin = uvs[currentIndex].x;                    
+                        xMin = uvs[currentIndex].x;
                     }
 
                     if (uvs[currentIndex].y < yMin)
@@ -400,17 +399,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
             Vector2 smallestVector2 = Math.SmallestVector2(uvs);
 
             int i;
+
             for (i = 0; i < uvs.Length; i++)
-            {
                 uvs[i] -= smallestVector2;
-            }
 
-            float scale = Math.LargestValue(Math.LargestVector2(uvs));
+            float scale = Math.MakeNonZero(Math.LargestValue(Math.LargestVector2(uvs)));
 
             for (i = 0; i < uvs.Length; i++)
-            {
                 uvs[i] /= scale;
-            }
 
             return uvs;
         }

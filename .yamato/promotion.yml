@@ -13,7 +13,7 @@ test_platforms:
   - name: mac
     type: Unity::VM::osx
     image: package-ci/mac:stable
-    flavor: m1.mac
+    flavor: b1.mac
 ---
 {% for editor in test_editors %}
 {% for platform in test_platforms %}

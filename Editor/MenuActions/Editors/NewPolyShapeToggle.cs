@@ -1,17 +1,23 @@
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 using UnityEngine;
-using UnityEditor;
-using System.Reflection;
 using UnityEngine.ProBuilder.MeshOperations;
-using UnityEditor.ProBuilder.UI;
-using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
+
+
+using UObject = UnityEngine.Object;
+#if !UNITY_2020_2_OR_NEWER
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+#else
+using ToolManager = UnityEditor.EditorTools.ToolManager;
+#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
-    sealed class NewPolyShape : MenuAction
+    sealed class NewPolyShapeToggle : MenuToolToggle
     {
+        bool m_RestorePreviousMode;
+        SelectMode m_PreviousMode;
+
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/NewPolyShape", IconSkin.Pro); } }
         public override TooltipContent tooltip { get { return _tooltip; } }
@@ -40,7 +46,6 @@ namespace UnityEditor.ProBuilder.Actions
             //First created inspector seems to hold a specific semantic where
             //if not unlocked no matter how many inspectors are present they will
             //not allow the creation of new PolyShape.
-#if UNITY_2019_1_OR_NEWER
             var inspWindows = InspectorWindow.GetInspectors();
 
             if (inspWindows.Any(x => x.isLocked))
@@ -59,47 +64,16 @@ namespace UnityEditor.ProBuilder.Actions
                     return false;
                 }
             }
-#else
-            var inspectorType = typeof(Editor).Assembly.GetType("UnityEditor.InspectorWindow");
-            var inspWindows = Resources.FindObjectsOfTypeAll(inspectorType);
-            var isLocked = inspectorType.GetProperty("isLocked", BindingFlags.Instance | BindingFlags.Public);
-            bool someInspectorLocked = false;
-            foreach (var insp in inspWindows)
-            {
-                if ((bool)isLocked.GetGetMethod().Invoke(insp, null))
-                {
-                    someInspectorLocked = true;
-                    break;
-                }
-            }
-            if (someInspectorLocked == true)
-            {
-                if (UnityEditor.EditorUtility.DisplayDialog(
-                                    "Inspector Locked",
-                                    "To create new Poly Shape you need access to all Inspectors, which are currently locked. Do you wish to unlock all Inpsectors?",
-                                    "Unlock",
-                                    "Cancel"))
-                {
-                    foreach (var insp in inspWindows)
-                    {
-                        isLocked.GetSetMethod().Invoke(insp, new object[] { false });
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-            }
-#endif
+
             return true;
         }
 
-        public override ActionResult DoAction()
+        internal override ActionResult StartActivation()
         {
             if (!CanCreateNewPolyShape())
                 return new ActionResult(ActionResult.Status.Canceled, "Canceled Create Poly Shape");
 
-            GameObject go = new GameObject();
+            GameObject go = new GameObject("PolyShape");
             UndoUtility.RegisterCreatedObjectUndo(go, "Create Poly Shape");
             PolyShape poly = Undo.AddComponent<PolyShape>(go);
             ProBuilderMesh pb = Undo.AddComponent<ProBuilderMesh>(go);
@@ -117,7 +91,46 @@ namespace UnityEditor.ProBuilder.Actions
             MeshSelection.SetSelection(go);
             poly.polyEditMode = PolyShape.PolyEditMode.Path;
 
-            return new ActionResult(ActionResult.Status.Success, "Create Poly Shape");
+            m_RestorePreviousMode = true;
+            m_PreviousMode = ProBuilderEditor.selectMode;
+            ProBuilderEditor.selectMode = SelectMode.Object;
+
+            m_Tool = ScriptableObject.CreateInstance<PolyShapeTool>();
+            ((PolyShapeTool)m_Tool).polygon = poly;
+            ToolManager.SetActiveTool(m_Tool);
+
+            Undo.RegisterCreatedObjectUndo(m_Tool, "Open PolyShape Tool");
+
+            ToolManager.activeToolChanging += LeaveTool;
+            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+
+            return new ActionResult(ActionResult.Status.Success,"Create Poly Shape");
+        }
+
+        internal override ActionResult EndActivation()
+        {
+            ToolManager.activeToolChanging -= LeaveTool;
+            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+
+            ((PolyShapeTool)m_Tool).End();
+            UObject.DestroyImmediate(m_Tool);
+
+            if(m_RestorePreviousMode)
+                ProBuilderEditor.selectMode = m_PreviousMode;
+
+            return new ActionResult(ActionResult.Status.Success,"End Poly Shape");
+        }
+
+        void OnSelectModeChanged(SelectMode obj)
+        {
+            m_RestorePreviousMode = false;
+            LeaveTool();
+        }
+
+        void LeaveTool()
+        {
+            ActionResult result = EndActivation();
+            EditorUtility.ShowNotification(result.notification);
         }
     }
 }

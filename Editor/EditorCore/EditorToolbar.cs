@@ -1,6 +1,5 @@
+using System;
 using UnityEngine;
-using UnityEditor;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
@@ -8,11 +7,8 @@ using UnityEditor.SettingsManagement;
 
 namespace UnityEditor.ProBuilder
 {
-    [System.Serializable]
-    sealed class EditorToolbar : ScriptableObject
+    sealed class EditorToolbar : IDisposable
     {
-        EditorToolbar() {}
-
         Pref<Vector2> m_Scroll = new Pref<Vector2>("editor.scrollPosition", Vector2.zero, SettingsScope.User);
         public EditorWindow window;
 
@@ -35,23 +31,13 @@ namespace UnityEditor.ProBuilder
                     scrollIconRight = null,
                     scrollIconLeft = null;
 
-        [SerializeField] List<MenuAction> m_Actions;
-        [SerializeField] int m_ActionsLength = 0;
+        List<MenuAction> m_Actions;
+        int m_ActionsLength = 0;
 
-        public void InitWindowProperties(EditorWindow win)
-        {
-            win.wantsMouseMove = true;
-            win.autoRepaintOnSceneChange = true;
-            this.window = win;
-        }
-
-        void OnEnable()
+        public EditorToolbar(EditorWindow parent)
         {
             m_Actions = EditorToolbarLoader.GetActions(true);
             m_ActionsLength = m_Actions.Count();
-
-            ProBuilderEditor.selectionUpdated -= OnElementSelectionChange;
-            ProBuilderEditor.selectionUpdated += OnElementSelectionChange;
 
             EditorApplication.update -= Update;
             EditorApplication.update += Update;
@@ -65,32 +51,20 @@ namespace UnityEditor.ProBuilder
             scrollIconLeft  = IconUtility.GetIcon("Toolbar/ShowNextPage_Left");
 
             isIconMode = ProBuilderEditor.s_IsIconGui;
-            this.window = ProBuilderEditor.instance;
+
+            window = parent;
+            window.wantsMouseMove = true;
+            window.autoRepaintOnSceneChange = true;
+
             CalculateMaxIconSize();
         }
 
-        void OnDisable()
+        public void Dispose()
         {
             // don't unsubscribe here because on exiting playmode OnEnable/OnDisable
-            // is called.  no clue why.
+            // is called. no clue why.
             // EditorApplication.update -= Update;
-            ProBuilderEditor.selectionUpdated -= OnElementSelectionChange;
-        }
-
-        void OnDestroy()
-        {
-            // store the scroll in both disable & destroy because there are
-            // situations where one gets updated over the other and it's all
-            // screwy.  script reloads in particular?
             MenuActionStyles.ResetStyles();
-        }
-
-        void OnElementSelectionChange(IEnumerable<ProBuilderMesh> selection)
-        {
-            if (!window)
-                DestroyImmediate(this);
-            else
-                window.Repaint();
         }
 
         void ShowTooltip(Rect rect, string content, Vector2 scrollOffset)
@@ -334,7 +308,7 @@ namespace UnityEditor.ProBuilder
 
             for (int actionIndex = 0; actionIndex < m_ActionsLength; actionIndex++)
             {
-                MenuAction action = m_Actions[actionIndex];
+                var action = m_Actions[actionIndex];
 
                 if (!IsActionValid(action))
                     continue;

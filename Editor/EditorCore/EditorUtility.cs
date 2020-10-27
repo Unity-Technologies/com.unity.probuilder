@@ -284,7 +284,8 @@ namespace UnityEditor.ProBuilder
             MoveToActiveScene(pb.gameObject);
             GameObjectUtility.EnsureUniqueNameForSibling(pb.gameObject);
             ScreenCenter(pb.gameObject);
-            SetPivotLocationAndSnap(pb);
+            SnapInstantiatedObject(pb);
+
 #if UNITY_2019_1_OR_NEWER
             ComponentUtility.MoveComponentRelativeToComponent(pb, pb.transform, false);
 #endif
@@ -324,17 +325,14 @@ namespace UnityEditor.ProBuilder
                 meshCreated(pb);
         }
 
-        internal static void SetPivotLocationAndSnap(ProBuilderMesh mesh)
+        // If s_SnapNewShapesToGrid is enabled, always snap to the grid size. If it is not, use the active snap  settings
+        internal static void SnapInstantiatedObject(ProBuilderMesh mesh)
         {
-            if (ProGridsInterface.SnapEnabled())
-                mesh.transform.position = ProBuilderSnapping.SnapValue(mesh.transform.position, ProGridsInterface.SnapValue());
-            else if (s_SnapNewShapesToGrid)
-                mesh.transform.position = ProBuilderSnapping.SnapValue(mesh.transform.position, new Vector3(
-                            EditorPrefs.GetFloat("MoveSnapX"),
-                            EditorPrefs.GetFloat("MoveSnapY"),
-                            EditorPrefs.GetFloat("MoveSnapZ")));
-
-            mesh.Optimize();
+            mesh.transform.position = ProBuilderSnapping.Snap(
+                mesh.transform.position,
+                s_SnapNewShapesToGrid
+                    ? EditorSnapping.worldSnapMoveValue
+                    : EditorSnapping.activeMoveSnapValue);
         }
 
         /**
@@ -417,24 +415,6 @@ namespace UnityEditor.ProBuilder
                 (int)platform == 128;
         }
 
-        /**
-         *  CreateCachedEditor didn't exist until 5.0, so recreate it's contents if necessary or pass it on.
-         */
-        internal static void CreateCachedEditor<T>(UnityEngine.Object[] targetObjects, ref UnityEditor.Editor previousEditor) where T : UnityEditor.Editor
-        {
-            #if UNITY_4_7
-            if (previousEditor != null && pbUtil.IsEqual(previousEditor.targets, targetObjects))
-                return;
-
-            if (previousEditor != null)
-                UnityEngine.Object.DestroyImmediate(previousEditor);
-
-            previousEditor = Editor.CreateEditor(targetObjects, typeof(T));
-            #else
-            UnityEditor.Editor.CreateCachedEditor(targetObjects, typeof(T), ref previousEditor);
-            #endif
-        }
-
         /// <summary>
         /// Is this mode one of the mesh element modes (vertex, edge, face, texture).
         /// </summary>
@@ -464,9 +444,9 @@ namespace UnityEditor.ProBuilder
         internal static bool IsPositionMode(this SelectMode mode)
         {
             return mode.ContainsFlag(
-                SelectMode.TextureEdge
-                | SelectMode.TextureFace
-                | SelectMode.TextureVertex
+                SelectMode.Edge
+                | SelectMode.Face
+                | SelectMode.Vertex
                 );
         }
 
