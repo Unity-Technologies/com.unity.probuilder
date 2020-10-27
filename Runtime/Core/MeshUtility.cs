@@ -550,7 +550,7 @@ namespace UnityEngine.ProBuilder
             Vertex[] collapsed = subVertices.SelectMany(x => x.Keys).ToArray();
             //Check if new vertices have been collapsed
             hasCollapsedVertices |= (collapsed.Length != vertices.Length);
-            //if(hasCollapsedVertices)
+            if(hasCollapsedVertices)
             {
                 Vertex.SetMesh(mesh, collapsed);
                 mesh.subMeshCount = smc;
