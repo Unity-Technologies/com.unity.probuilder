@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1283111] Fixed `Poly Shape` tool not snapping placed vertices with grid snapping enabled.
 - [case: 1284741] Fixed missing tooltips for some items in the `Smooth Group Editor` window.
 - [case: 1283167] Fixed `Mesh Collider` mesh value not updating with modifications.
+- [case: 1285651] Fixed tooltip going out of screen when screen display is scale up
 
 ### Changes
 
