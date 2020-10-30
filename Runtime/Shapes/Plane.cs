@@ -11,19 +11,8 @@
         [SerializeField]
         int m_WidthSegments = 1;
 
-        [SerializeField]
-        Axis m_Axis = Axis.Up;
-
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
-            if(size.y < float.Epsilon && m_Axis != Axis.Up && m_Axis != Axis.Down)
-            {
-                mesh.Clear();
-                if(mesh.mesh != null)
-                    mesh.mesh.Clear();
-                return;
-            }
-
             int w = m_WidthSegments + 1;
             int h = m_HeightSegments + 1;
 
@@ -53,37 +42,8 @@
                 }
             }
 
-            // Axis axis = m_Axis;
-            // if(size.y < float.Epsilon && axis != Axis.Up && axis != Axis.Down)
-            //     axis = Axis.Up;
-
-            switch (m_Axis)
-            {
-                case Axis.Right:
-                    for (i = 0; i < v.Length; i++)
-                        v[i] = new Vector3(0f, p[i].x, p[i].y);
-                    break;
-                case Axis.Left:
-                    for (i = 0; i < v.Length; i++)
-                        v[i] = new Vector3(0f, p[i].y, p[i].x);
-                    break;
-                case Axis.Up:
-                    for (i = 0; i < v.Length; i++)
-                        v[i] = new Vector3(p[i].y, 0f, p[i].x);
-                    break;
-                case Axis.Down:
-                    for (i = 0; i < v.Length; i++)
-                        v[i] = new Vector3(p[i].x, 0f, p[i].y);
-                    break;
-                case Axis.Forward:
-                    for (i = 0; i < v.Length; i++)
-                        v[i] = new Vector3(p[i].x, p[i].y, 0f);
-                    break;
-                case Axis.Backward:
-                    for (i = 0; i < v.Length; i++)
-                        v[i] = new Vector3(p[i].y, p[i].x, 0f);
-                    break;
-            }
+            for (i = 0; i < v.Length; i++)
+                v[i] = new Vector3(p[i].y, 0f, p[i].x);
 
             mesh.GeometryWithPoints(v);
         }
