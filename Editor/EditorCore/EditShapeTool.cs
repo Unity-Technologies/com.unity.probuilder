@@ -146,7 +146,7 @@ namespace UnityEditor.ProBuilder
 
             using (new Handles.DrawingScope(matrix))
             {
-                m_BoundsHandle.SetColor(Handles.s_ColliderHandleColor);
+                m_BoundsHandle.SetColor(Handles.s_PreselectionColor);
 
                 CopyColliderPropertiesToHandle(shape);
 
@@ -351,7 +351,7 @@ namespace UnityEditor.ProBuilder
                         }
                     }
 
-                    using (new Handles.DrawingScope(isSelected ? Color.white : color))
+                    using (new Handles.DrawingScope(isSelected ? Color.white : Handles.s_PreselectionColor))
                     {
                         Handles.DrawAAPolyLine(isSelected ? 10f : 3f, edge.PointA, edge.PointB);
                     }
@@ -360,30 +360,20 @@ namespace UnityEditor.ProBuilder
                     if (m_IsMouseDown && m_CurrentId == controlID)
                     {
                         Vector3 axis = edge.PointA - edge.PointB;
-
-                        Vector3 axisToPreviousLocal = m_EdgeDataToNeighborsEdges[edge].item1.Center - edge.Center;
-                        Vector3 axisToNextLocal =  m_EdgeDataToNeighborsEdges[edge].item2.Center - edge.Center;
-
-                        Vector3 edgeCenterWorld = Handles.matrix * edge.Center;
-                        Vector3 axisToPreviousWorld = Handles.matrix * axisToPreviousLocal;
-                        Vector3 axisToNextWorld = Handles.matrix * axisToNextLocal;
+                        Vector3 axisToPrevious = Handles.matrix * (m_EdgeDataToNeighborsEdges[edge].item1.Center - edge.Center);
+                        Vector3 axisToNext =  Handles.matrix * (m_EdgeDataToNeighborsEdges[edge].item2.Center - edge.Center);
 
                         //Get a direction orthogonal to both direction to camera and edge direction
-                        Vector3 direction = Vector3.Cross(-Camera.current.transform.forward, axis).normalized;
-                        var rotDist = HandleUtility.CalcLineTranslation(m_StartMousePosition, Event.current.mousePosition, m_StartPosition, direction);
-                        var rotDistToPrevious = HandleUtility.CalcLineTranslation(m_StartMousePosition, Event.current.mousePosition, m_StartPosition, axisToPreviousWorld);
-                        var rotDistToNext = HandleUtility.CalcLineTranslation(m_StartMousePosition, Event.current.mousePosition, m_StartPosition, axisToNextWorld);
+                        var rotDistToPrevious = HandleUtility.CalcLineTranslation(m_StartMousePosition, Event.current.mousePosition, m_StartPosition, axisToPrevious);
+                        var rotDistToNext = HandleUtility.CalcLineTranslation(m_StartMousePosition, Event.current.mousePosition, m_StartPosition, axisToNext);
 
-                        //Debug.Log(rotDistToPrevious+" / "+rotDistToNext);
                         float mainRot = rotDistToNext;
                         if(Mathf.Abs(rotDistToPrevious) > Mathf.Abs(rotDistToNext))
                             mainRot = -rotDistToPrevious;
 
-                        mainRot = ( (int) ( mainRot * 10 ) ) * 10f;
+                        float snapAngle = 15f;
+                        mainRot = ( (int) ( mainRot * (90f / snapAngle) )) * snapAngle;
                         var rot = Quaternion.AngleAxis(mainRot, axis);
-
-                        //rotDist = Handles.SnapValue(rotDist, 90f);
-                        //var rot = Quaternion.AngleAxis(rotDist, axis);
 
                         rotation = m_LastRotation * Quaternion.Inverse(rot);
                         m_LastRotation = rot;
