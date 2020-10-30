@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.UIElements;
@@ -18,6 +19,9 @@ namespace UnityEditor.ProBuilder
         static Type[] s_AvailableShapeTypes;
 
         static int s_ActiveShapeIndex = 0;
+
+        const string k_dialogTitle = "Shape reset";
+        const string k_dialogText = "The current shape has been edited, you will loose all modifications.";
 
         static ShapeComponentEditor()
         {
@@ -60,8 +64,21 @@ namespace UnityEditor.ProBuilder
                 ProBuilderEditor.Refresh();
             }
 
-            if(GUILayout.Button("Reset Shape"))
-                shapeComp.Rebuild(true);
+            if(shapeComp.edited)
+            {
+                EditorGUILayout.BeginHorizontal();
+                if(GUILayout.Button("Reset Shape"))
+                {
+                    if(UnityEditor.EditorUtility.DisplayDialog(
+                        k_dialogTitle, k_dialogText,
+                        "Continue", "Cancel"))
+                    {
+                        shapeComp.edited = false;
+                        shapeComp.Rebuild();
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
+            }
 
             EditorGUI.BeginChangeCheck();
             shapeComp.size = EditorGUILayout.Vector3Field("Size", shapeComp.size);

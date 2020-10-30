@@ -25,6 +25,10 @@ namespace UnityEditor.ProBuilder
         // Don't recalculate the active bounds during an edit operation, it causes the handles to drift
         ShapeState m_ActiveShapeState;
 
+        bool m_AskingForReset = false;
+        const string k_dialogTitle = "Warning : Shape modified";
+        const string k_dialogText = "The current shape has been manually edited, by editing it you will loose all modifications.";
+
         struct ShapeState
         {
             public Matrix4x4 positionAndRotationMatrix;
@@ -127,19 +131,46 @@ namespace UnityEditor.ProBuilder
 
                 if (shape != null)
                 {
-                    if (m_BoundsHandleActive && GUIUtility.hotControl == k_HotControlNone)
+                    if(m_BoundsHandleActive && GUIUtility.hotControl == k_HotControlNone)
                         EndBoundsEditing();
 
-                    if (Mathf.Approximately(shape.transform.lossyScale.sqrMagnitude, 0f))
+                    if(Mathf.Approximately(shape.transform.lossyScale.sqrMagnitude, 0f))
                         return;
 
                     DoShapeGUI(shape);
                 }
             }
+
+        }
+
+        void DisplayShapeResetDialog(ShapeComponent shape)
+        {
+            if(UnityEditor.EditorUtility.DisplayDialog(
+                k_dialogTitle, k_dialogText,
+                "Continue", "Cancel"))
+            {
+                shape.edited = false;
+                shape.Rebuild();
+            }
+            else
+            {
+                ToolManager.RestorePreviousTool();
+            }
+            m_AskingForReset = false;
         }
 
         void DoShapeGUI(ShapeComponent shape)
         {
+            if(shape.edited)
+            {
+                if(!m_AskingForReset)
+                {
+                    m_AskingForReset = true;
+                    EditorApplication.delayCall += () => DisplayShapeResetDialog(shape);
+                }
+                return;
+            }
+
             var matrix = IsEditing
                 ? m_ActiveShapeState.positionAndRotationMatrix
                 : Matrix4x4.TRS(shape.transform.position, shape.transform.rotation, Vector3.one);
@@ -287,9 +318,12 @@ namespace UnityEditor.ProBuilder
 
                 foreach(var edgeData in edgesToDraw)
                 {
-                    var rot = RotateEdgeHandle(edgeData);
-                    shape.Rotate(rot);
-                    hasRotated |= (rot != Quaternion.identity);
+                    Quaternion rot;
+                    if(RotateEdgeHandle(shape, edgeData, out rot))
+                    {
+                        shape.Rotate(rot);
+                        hasRotated = true;
+                    }
                 }
 
                 if (hasRotated)
@@ -297,11 +331,12 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        Quaternion RotateEdgeHandle(EdgeData edge)
+        bool RotateEdgeHandle(ShapeComponent shape, EdgeData edge, out Quaternion rotation)
         {
             Event evt = Event.current;
             int controlID = GUIUtility.GetControlID(FocusType.Passive);
-            Quaternion rotation = Quaternion.identity;
+            bool hasRotated = false;
+            rotation = Quaternion.identity;
             switch (evt.GetTypeForControl(controlID))
             {
                 case EventType.MouseDown:
@@ -377,10 +412,12 @@ namespace UnityEditor.ProBuilder
 
                         rotation = m_LastRotation * Quaternion.Inverse(rot);
                         m_LastRotation = rot;
+
+                        hasRotated = true;
                     }
                     break;
             }
-            return rotation;
+            return hasRotated;
         }
 
         void BeginBoundsEditing(ShapeComponent shape)
@@ -537,12 +574,14 @@ namespace UnityEditor.ProBuilder
 //                     {
 //                         if(shape.edited)
 //                         {
-//                             if(UnityEditor.EditorUtility.DisplayDialog(
+//                             if(UnityEditor.EditorUtility.
+// (
 //                                 k_dialogTitle, k_dialogText,
 //                                 "Continue", "Cancel"))
 //                                 shape.edited = false;
 //                         }
 //                         else
+
 //                         {
 //                             shape.SetRotation(rot);
 //                             ProBuilderEditor.Refresh();
