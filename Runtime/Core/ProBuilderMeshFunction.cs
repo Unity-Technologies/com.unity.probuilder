@@ -59,6 +59,8 @@ namespace UnityEngine.ProBuilder
         {
             EnsureMeshFilterIsAssigned();
             EnsureMeshColliderIsAssigned();
+            //Ensure no element is selected at awake
+            ClearSelection();
 
             if (vertexCount > 0
                 && faceCount > 0
