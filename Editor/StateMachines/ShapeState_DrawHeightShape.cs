@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.ProBuilder;
+using Plane = UnityEngine.ProBuilder.Shapes.Plane;
 
 namespace UnityEditor.ProBuilder
 {
@@ -14,6 +15,12 @@ namespace UnityEditor.ProBuilder
 
         public override ShapeState DoState(Event evt)
         {
+            if(tool.m_Shape.shape is Plane)
+            {
+                //Skip Height definition for plane
+                return NextState();
+            }
+
             tool.DrawBoundingBox();
 
             switch (evt.type)
