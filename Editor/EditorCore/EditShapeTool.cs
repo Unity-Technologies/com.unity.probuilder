@@ -131,6 +131,27 @@ namespace UnityEditor.ProBuilder
             }
             m_OverlayTitle = new GUIContent("Poly Shape Tool");
             m_SnapAngleContent = new GUIContent("Snap Angle", L10n.Tr("Defines an angle in [1,90] to snap rotation."));
+
+            ToolManager.activeToolChanged += OnActiveToolChanged;
+        }
+
+        void OnActiveToolChanged()
+        {
+            if(ToolManager.IsActiveTool(this))
+            {
+                foreach(var obj in targets)
+                {
+                    var shapeComponent = obj as ShapeComponent;
+                    if(shapeComponent.edited)
+                    {
+                        UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Change Shape");
+                        shapeComponent.SetShape(EditorShapeUtility.CreateCustomShapeFromMesh(shapeComponent));
+                        shapeComponent.edited = false;
+                        ProBuilderEditor.Refresh(false);
+                    }
+                }
+
+            }
         }
 
         public override void OnToolGUI(EditorWindow window)
@@ -160,43 +181,43 @@ namespace UnityEditor.ProBuilder
             m_snapAngle = EditorGUILayout.IntSlider(m_SnapAngleContent, m_snapAngle, 1, 90);
         }
 
-        void DisplayShapeResetDialog(ShapeComponent shape)
-        {
-            if(UnityEditor.EditorUtility.DisplayDialog(
-                k_dialogTitle, k_dialogText,
-                "Continue", "Cancel"))
-            {
-                shape.edited = false;
-                shape.Rebuild();
-            }
-            else
-            {
-                ToolManager.RestorePreviousTool();
-            }
-            m_AskingForReset = false;
-        }
+        // void DisplayShapeResetDialog(ShapeComponent shape)
+        // {
+        //     if(UnityEditor.EditorUtility.DisplayDialog(
+        //         k_dialogTitle, k_dialogText,
+        //         "Continue", "Cancel"))
+        //     {
+        //         shape.edited = false;
+        //         shape.Rebuild();
+        //     }
+        //     else
+        //     {
+        //         ToolManager.RestorePreviousTool();
+        //     }
+        //     m_AskingForReset = false;
+        // }
 
-        void DoShapeGUI(ShapeComponent shape)
+        void DoShapeGUI(ShapeComponent shapeComponent)
         {
-            if(shape.edited)
-            {
-                if(!m_AskingForReset)
-                {
-                    m_AskingForReset = true;
-                    EditorApplication.delayCall += () => DisplayShapeResetDialog(shape);
-                }
-                return;
-            }
+            // if(shape.edited)
+            // {
+            //     if(!m_AskingForReset)
+            //     {
+            //         m_AskingForReset = true;
+            //         EditorApplication.delayCall += () => DisplayShapeResetDialog(shape);
+            //     }
+            //     return;
+            // }
 
             var matrix = IsEditing
                 ? m_ActiveShapeState.positionAndRotationMatrix
-                : Matrix4x4.TRS(shape.transform.position, shape.transform.rotation, Vector3.one);
+                : Matrix4x4.TRS(shapeComponent.transform.position, shapeComponent.transform.rotation, Vector3.one);
 
             using (new Handles.DrawingScope(matrix))
             {
                 m_BoundsHandle.SetColor(Handles.s_PreselectionColor);
 
-                CopyColliderPropertiesToHandle(shape);
+                CopyColliderPropertiesToHandle(shapeComponent);
 
                 EditorGUI.BeginChangeCheck();
 
@@ -204,11 +225,12 @@ namespace UnityEditor.ProBuilder
 
                 if (EditorGUI.EndChangeCheck())
                 {
-                    BeginBoundsEditing(shape);
-                    CopyHandlePropertiesToCollider(shape);
+                    BeginBoundsEditing(shapeComponent);
+                    UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Scale Shape");
+                    CopyHandlePropertiesToCollider(shapeComponent);
                 }
 
-                DoRotateHandlesGUI(shape, shape.meshFilterBounds);
+                DoRotateHandlesGUI(shapeComponent, shapeComponent.meshFilterBounds);
             }
         }
 
@@ -314,9 +336,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        void DoRotateHandlesGUI(ShapeComponent shape, Bounds bounds)
+        void DoRotateHandlesGUI(ShapeComponent shapeComponent, Bounds bounds)
         {
-            var matrix = shape.gameObject.transform.localToWorldMatrix;
+            var matrix = shapeComponent.gameObject.transform.localToWorldMatrix;
             bool hasRotated = false;
 
             edgesToDraw.Clear();
@@ -335,9 +357,10 @@ namespace UnityEditor.ProBuilder
                 foreach(var edgeData in edgesToDraw)
                 {
                     Quaternion rot;
-                    if(RotateEdgeHandle(shape, edgeData, out rot))
+                    if(RotateEdgeHandle(edgeData, out rot))
                     {
-                        shape.Rotate(rot);
+                        UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Rotate Shape");
+                        shapeComponent.Rotate(rot);
                         hasRotated = true;
                     }
                 }
@@ -347,7 +370,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        bool RotateEdgeHandle(ShapeComponent shape, EdgeData edge, out Quaternion rotation)
+        bool RotateEdgeHandle(EdgeData edge, out Quaternion rotation)
         {
             Event evt = Event.current;
             int controlID = GUIUtility.GetControlID(FocusType.Passive);

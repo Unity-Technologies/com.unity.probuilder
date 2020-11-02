@@ -13,18 +13,18 @@ namespace UnityEditor.ProBuilder
         IMGUIContainer m_ShapeField;
 
         SerializedProperty m_shape;
-        static string[] s_ShapeTypes;
-        static Type[] s_AvailableShapeTypes;
+        string[] m_ShapeTypes;
+        Type[] m_AvailableShapeTypes;
 
-        static int s_ActiveShapeIndex = 0;
+        int m_ActiveShapeIndex = 0;
 
         const string k_dialogTitle = "Shape reset";
         const string k_dialogText = "The current shape has been edited, you will loose all modifications.";
 
-        static ShapeComponentEditor()
+        ShapeComponentEditor()
         {
-            s_AvailableShapeTypes =  TypeCache.GetTypesWithAttribute<ShapeAttribute>().Where(t => t.BaseType == typeof(Shape)).ToArray();
-            s_ShapeTypes = s_AvailableShapeTypes.Select(
+            m_AvailableShapeTypes =  TypeCache.GetTypesWithAttribute<ShapeAttribute>().Where(t => t.BaseType == typeof(Shape)).ToArray();
+            m_ShapeTypes = m_AvailableShapeTypes.Select(
                 x => ((ShapeAttribute)System.Attribute.GetCustomAttribute(x, typeof(ShapeAttribute))).name)
                 .ToArray();
         }
@@ -33,14 +33,15 @@ namespace UnityEditor.ProBuilder
         {
             m_ShapeComponent = target as ShapeComponent;
             m_shape = serializedObject.FindProperty("m_Shape");
-            s_ActiveShapeIndex = Array.IndexOf( s_AvailableShapeTypes, m_ShapeComponent.shape.GetType());
+            m_ActiveShapeIndex = Array.IndexOf( m_AvailableShapeTypes, m_ShapeComponent.shape.GetType());
 
-            Undo.undoRedoPerformed += UndoRedoPerformed;
+            Undo.undoRedoPerformed += UndoRedoPerformedOnShapeEditor;
         }
 
-        void UndoRedoPerformed()
+        void UndoRedoPerformedOnShapeEditor()
         {
-            m_ShapeComponent.Rebuild();
+            if(m_ShapeComponent != null)
+                m_ShapeComponent.Rebuild();
         }
 
         public override void OnInspectorGUI()
@@ -48,7 +49,7 @@ namespace UnityEditor.ProBuilder
             DrawShapeGUI((ShapeComponent)target, serializedObject);
         }
 
-        public static void DrawShapeGUI(ShapeComponent shapeComp, SerializedObject obj)
+        public void DrawShapeGUI(ShapeComponent shapeComp, SerializedObject obj)
         {
             if (shapeComp == null || obj == null)
                 return;
@@ -61,13 +62,13 @@ namespace UnityEditor.ProBuilder
                 EditorGUILayout.HelpBox(L10n.Tr("You are using a Custom Shape. Selecting another shape will lose your changes"), MessageType.Info);
 
             var shapeProperty = obj.FindProperty("m_Shape");
-            s_ActiveShapeIndex = Mathf.Max(-1, Array.IndexOf( s_AvailableShapeTypes, shape.GetType()));
-            s_ActiveShapeIndex = EditorGUILayout.Popup(s_ActiveShapeIndex, s_ShapeTypes);
+            m_ActiveShapeIndex = Mathf.Max(-1, Array.IndexOf( m_AvailableShapeTypes, shape.GetType()));
+            m_ActiveShapeIndex = EditorGUILayout.Popup(m_ActiveShapeIndex, m_ShapeTypes);
 
             if (EditorGUI.EndChangeCheck())
             {
                 UndoUtility.RegisterCompleteObjectUndo(shapeComp, "Change Shape");
-                var type = s_AvailableShapeTypes[s_ActiveShapeIndex];
+                var type = m_AvailableShapeTypes[m_ActiveShapeIndex];
                 shapeComp.SetShape(EditorShapeUtility.CreateShape(type));
                 ProBuilderEditor.Refresh();
             }
@@ -75,11 +76,6 @@ namespace UnityEditor.ProBuilder
             if(shapeComp.edited)
             {
                 EditorGUILayout.BeginHorizontal();
-                if(GUILayout.Button("Save Custom Shape"))
-                {
-                    shapeComp.SetShape(EditorShapeUtility.CreateCustomShapeFromMesh(shapeComp));
-                    ProBuilderEditor.Refresh(false);
-                }
                 if(GUILayout.Button("Reset Shape"))
                 {
                     if(UnityEditor.EditorUtility.DisplayDialog(
