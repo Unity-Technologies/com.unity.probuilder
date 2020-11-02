@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
+using UnityEngine.TestTools.Utils;
 
 namespace UnityEditor.ProBuilder
 {
@@ -72,5 +75,31 @@ namespace UnityEditor.ProBuilder
             shape = GetLastParams(shape.GetType());
             return shape;
         }
+
+        public static CustomShape CreateCustomShapeFromMesh(ShapeComponent shapeComponent)
+        {
+            //Define new bounds
+            Bounds meshBounds = new Bounds();
+            meshBounds.extents = shapeComponent.mesh.mesh.bounds.extents;
+            Vector3 position = shapeComponent.transform.position;
+            Vector3 signs = new Vector3(Mathf.Sign(position.x),Mathf.Sign(position.y),Mathf.Sign(position.z));
+            Vector3 deltaBoundaries = ( ( meshBounds.size - shapeComponent.size ) / 2f );
+            meshBounds.center = position - Vector3.Scale(signs,deltaBoundaries);
+
+            ProBuilderMesh mesh = shapeComponent.mesh;
+            CustomShape newShape = new CustomShape();
+            newShape.SetGeometry(mesh);
+
+            //Reset rotation as current position is now the default rotation
+            shapeComponent.rotation = Quaternion.identity;
+
+            //Rebuild the whole shape
+            shapeComponent.Rebuild(meshBounds, shapeComponent.transform.rotation);
+            shapeComponent.mesh.SetPivot(PivotLocation.Center);
+            shapeComponent.edited = false;
+
+            return newShape;
+        }
     }
 }
+

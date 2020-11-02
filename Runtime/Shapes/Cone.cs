@@ -20,7 +20,7 @@ namespace UnityEngine.ProBuilder.Shapes
             for (int i = 0; i < subdivAxis; i++)
             {
                 Vector2 ct = Math.PointInCircumference(radius, i * (360f / subdivAxis), Vector2.zero);
-                template[i] = new Vector3(ct.x, -height, ct.y);
+                template[i] = new Vector3(ct.x, 0, ct.y);
             }
 
             List<Vector3> v = new List<Vector3>();
