@@ -76,8 +76,11 @@ namespace UnityEditor.ProBuilder
             this.content = content;
             Vector2 size = content.CalcSize();
 
+            var dpiRatio = Screen.dpi / 96f;
+            var screenWidth = Screen.currentResolution.width / dpiRatio;
+
             Vector2 p = new Vector2(rect.x + rect.width + k_PositionPadding, rect.y);
-             if(((p.x % Screen.currentResolution.width) + size.x) > Screen.currentResolution.width)
+             if((p.x + size.x) > screenWidth)
                 p.x = rect.x - k_PositionPadding - size.x;
 
             minSize = size;
