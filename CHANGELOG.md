@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1262236] Ensure PolyShape is not empty to avoid nullref while exporting.
 - [case: 1184921] Add a custom preview for `ProBuilderMesh` prefabs.
 - [case: 1276085] Fixed `UV Actions` window allowing resize events outside of the containing window.
+- [case: 1277788] Take into account the default parent object in Unity 2021 and up.
 - [case: 1276074] Fixed a case where `Fit UVs` action could result in `NaN` values.
 - [case: 1281254] Fixed shader warning in URP for UNITY_PASS_FORWARDBASE macro redefinition.
 - Fixed rect selection not working with Universal Render Pipeline.
