@@ -151,30 +151,41 @@ public class CutToolTest
         Vector3 pos_b = Math.Average(new Vector3[]{vertices[faceIndexes[1]].position, vertices[faceIndexes[2]].position, vertices[faceIndexes[3]].position});
         Vector3 pos_c = Math.Average(new Vector3[]{vertices[faceIndexes[0]].position, vertices[faceIndexes[1]].position, vertices[faceIndexes[3]].position});
 
+        //Creating a first new vertex
         tool.UpdateCurrentPosition(face, pos_a, Vector3.up);
         Assert.That(tool.m_CurrentVertexTypes, Is.EqualTo(CutTool.VertexTypes.NewVertex));
 
+        //Insert first vertex to the path
         tool.AddCurrentPositionToPath();
         Assert.That(tool.m_CutPath.Count, Is.EqualTo(1));
-        Assert.That(tool.m_MeshConnections.Count, Is.EqualTo(1));
+        //No connection is created yet
+        Assert.That(tool.m_MeshConnections.Count, Is.EqualTo(0));
 
+        //Creating a second new vertex
         tool.UpdateCurrentPosition(face, pos_b, Vector3.up);
         Assert.That(tool.m_CurrentVertexTypes, Is.EqualTo(CutTool.VertexTypes.NewVertex));
 
+        //Insert 2nd point to the path
         tool.AddCurrentPositionToPath();
         Assert.That(tool.m_CutPath.Count, Is.EqualTo(2));
+        //Check that the created path is connected twice to the containing face
         Assert.That(tool.m_MeshConnections.Count, Is.EqualTo(2));
 
+        //Creating a third new vertex
         tool.UpdateCurrentPosition(face, pos_c, Vector3.up);
         Assert.That(tool.m_CurrentVertexTypes, Is.EqualTo(CutTool.VertexTypes.NewVertex));
 
+        //Insert 3rd point to the path
         tool.AddCurrentPositionToPath();
         Assert.That(tool.m_CutPath.Count, Is.EqualTo(3));
+        //Check that the created path is connected twice to the containing face
         Assert.That(tool.m_MeshConnections.Count, Is.EqualTo(2));
 
+        //Creating a 4th new vertex already contained in the shape
         tool.UpdateCurrentPosition(face, pos_a, Vector3.up);
         Assert.That(tool.m_CurrentVertexTypes, Is.EqualTo(CutTool.VertexTypes.NewVertex|CutTool.VertexTypes.VertexInShape));
 
+        //Insert 4th point to the path
         tool.AddCurrentPositionToPath();
         Assert.That(tool.m_CutPath.Count, Is.EqualTo(4));
         Assert.That(tool.m_MeshConnections.Count, Is.EqualTo(2));
