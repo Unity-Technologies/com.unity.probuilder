@@ -132,10 +132,11 @@ namespace UnityEditor.ProBuilder
             m_OverlayTitle = new GUIContent("Poly Shape Tool");
             m_SnapAngleContent = new GUIContent("Snap Angle", L10n.Tr("Defines an angle in [1,90] to snap rotation."));
 
-            ToolManager.activeToolChanged += OnActiveToolChanged;
+            ToolManager.activeToolChanged += ValidateCurrentTargets;
+            MeshSelection.objectSelectionChanged += ValidateCurrentTargets;
         }
 
-        void OnActiveToolChanged()
+        void ValidateCurrentTargets()
         {
             if(ToolManager.IsActiveTool(this))
             {
@@ -150,7 +151,6 @@ namespace UnityEditor.ProBuilder
                         ProBuilderEditor.Refresh(false);
                     }
                 }
-
             }
         }
 

@@ -79,12 +79,7 @@ namespace UnityEditor.ProBuilder
         public static CustomShape CreateCustomShapeFromMesh(ShapeComponent shapeComponent)
         {
             //Define new bounds
-            Bounds meshBounds = new Bounds();
-            meshBounds.extents = shapeComponent.mesh.mesh.bounds.extents;
-            Vector3 position = shapeComponent.transform.position;
-            Vector3 signs = new Vector3(Mathf.Sign(position.x),Mathf.Sign(position.y),Mathf.Sign(position.z));
-            Vector3 deltaBoundaries = ( ( meshBounds.size - shapeComponent.size ) / 2f );
-            meshBounds.center = position - Vector3.Scale(signs,deltaBoundaries);
+            Bounds meshBounds = shapeComponent.meshFilterBounds;
 
             ProBuilderMesh mesh = shapeComponent.mesh;
             CustomShape newShape = new CustomShape();
