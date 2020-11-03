@@ -507,14 +507,21 @@ namespace UnityEditor.ProBuilder
 
         void CopyHandlePropertiesToCollider(ShapeComponent shape)
         {
-            m_ActiveShapeState.boundsHandleValue = new Bounds(m_BoundsHandle.center, m_BoundsHandle.size);
+            Vector3 snappedHandleSize = ProBuilderSnapping.Snap(m_BoundsHandle.size, EditorSnapping.activeMoveSnapValue);
+            //Find the scaling direction
+            Vector3 centerDiffSign = ( m_BoundsHandle.center - m_ActiveShapeState.boundsHandleValue.center ).normalized;
+            Vector3 sizeDiffSign = ( m_BoundsHandle.size - m_ActiveShapeState.boundsHandleValue.size ).normalized;
+            Vector3 globalSign = Vector3.Scale(centerDiffSign,sizeDiffSign);
+            //Set the center to the right position
+            Vector3 center = m_ActiveShapeState.boundsHandleValue.center + Vector3.Scale((snappedHandleSize - m_ActiveShapeState.boundsHandleValue.size)/2f,globalSign);
+            //Set new Bounding box value
+            m_ActiveShapeState.boundsHandleValue = new Bounds(center, snappedHandleSize);
 
             var bounds = new Bounds();
-
             var trs = shape.transform;
 
-            bounds.center = Handles.matrix.MultiplyPoint3x4(m_BoundsHandle.center);
-            bounds.size = Math.Abs(Vector3.Scale(m_BoundsHandle.size, Math.InvertScaleVector(trs.lossyScale)));
+            bounds.center = Handles.matrix.MultiplyPoint3x4(m_ActiveShapeState.boundsHandleValue.center);
+            bounds.size = Math.Abs(Vector3.Scale(m_ActiveShapeState.boundsHandleValue.size, Math.InvertScaleVector(trs.lossyScale)));
 
             shape.Rebuild(bounds, shape.transform.rotation);
             shape.mesh.SetPivot(shape.transform.position);
