@@ -30,6 +30,8 @@ namespace UnityEditor.ProBuilder
         internal Vector3 m_PlaneRight;
         internal Vector3 m_BB_Origin, m_BB_OppositeCorner, m_BB_HeightCorner;
 
+        internal bool m_IsOnGrid;
+
         Quaternion m_Rotation;
         Bounds m_Bounds;
 
@@ -76,6 +78,17 @@ namespace UnityEditor.ProBuilder
                 DestroyImmediate(m_Shape.gameObject);
         }
 
+        // Returns a local space point,
+        public Vector3 GetPoint(Vector3 point)
+        {
+            if (m_IsOnGrid)
+            {
+                Vector3 snapMask = ProBuilderSnapping.GetSnappingMaskBasedOnNormalVector(m_Plane.normal);
+                return ProBuilderSnapping.Snap(point, Vector3.Scale(EditorSnapping.activeMoveSnapValue, snapMask));
+            }
+            return point;
+        }
+
         void RecalculateBounds()
         {
             var forward = HandleUtility.PointOnLineParameter(m_BB_OppositeCorner, m_BB_Origin, m_PlaneForward);
@@ -107,7 +120,9 @@ namespace UnityEditor.ProBuilder
         {
             RecalculateBounds();
 
-            if (m_Bounds.size.sqrMagnitude < .01f)
+            if (m_Bounds.size.sqrMagnitude < .01f
+                || Mathf.Abs(m_Bounds.extents.x) == 0
+                || Mathf.Abs(m_Bounds.extents.z) == 0)
                 return;
 
             if (!m_IsShapeInit)

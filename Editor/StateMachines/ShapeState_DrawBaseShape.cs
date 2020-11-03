@@ -27,7 +27,7 @@ namespace UnityEditor.ProBuilder
 
                     if (tool.m_Plane.Raycast(ray, out distance))
                     {
-                        tool.m_BB_OppositeCorner = ray.GetPoint(distance);
+                        tool.m_BB_OppositeCorner = tool.GetPoint(ray.GetPoint(distance));
                         tool.m_BB_HeightCorner = tool.m_BB_OppositeCorner;
                         tool.RebuildShape();
                     }

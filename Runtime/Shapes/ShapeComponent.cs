@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -71,7 +72,15 @@ namespace UnityEngine.ProBuilder.Shapes
             m_Size = Math.Abs(bounds.size);
             transform.position = bounds.center;
             transform.rotation = rotation;
-            Rebuild();
+
+            // if(size.x < float.Epsilon || size.z < float.Epsilon)
+            // {
+            //     mesh.Clear();
+            //     if(mesh.mesh != null)
+            //         mesh.mesh.Clear();
+            // }
+            // else
+                Rebuild();
         }
 
         public void Rebuild(bool resetRotation = false)
