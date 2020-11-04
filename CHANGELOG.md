@@ -27,7 +27,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1256154] Fixed StackOverflow Error when smoothing mesh in Probuilderize, also fixed an error in the display of edges when count > ushort.maxValue.
 - [case: 1252668] Replaced mesh template tests for `Connect Edges` with more stable methods.
 - [case: 1262236] Ensure PolyShape is not empty to avoid nullref while exporting.
+- [case: 1184921] Add a custom preview for `ProBuilderMesh` prefabs.
 - [case: 1276085] Fixed `UV Actions` window allowing resize events outside of the containing window.
+- [case: 1277788] Take into account the default parent object in Unity 2021 and up.
 - [case: 1276074] Fixed a case where `Fit UVs` action could result in `NaN` values.
 - [case: 1281254] Fixed shader warning in URP for UNITY_PASS_FORWARDBASE macro redefinition.
 - Fixed rect selection not working with Universal Render Pipeline.
@@ -38,6 +40,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1283111] Fixed `Poly Shape` tool not snapping placed vertices with grid snapping enabled.
 - [case: 1284741] Fixed missing tooltips for some items in the `Smooth Group Editor` window.
 - [case: 1283167] Fixed `Mesh Collider` mesh value not updating with modifications.
+- [case: 1285651] Fixed tooltip going out of screen when screen display is scale up
+- [case: 1286045] Fixed selection cleaning problem after scene restart.
 
 ### Changes
 
