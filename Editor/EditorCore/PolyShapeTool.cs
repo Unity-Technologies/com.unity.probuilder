@@ -98,7 +98,7 @@ namespace UnityEditor.ProBuilder
 
         public void End()
         {
-            if(polygon.polyEditMode != PolyShape.PolyEditMode.None)
+            if(polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None)
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
             else
                 DestroyImmediate(this);
@@ -761,14 +761,13 @@ namespace UnityEditor.ProBuilder
                     {
                         DestroyImmediate(polygon.gameObject);
                         DestroyImmediate(this);
+                        ProBuilderEditor.ResetToLastSelectMode();
                     }
                     else
                     {
                         SetPolyEditMode(PolyShape.PolyEditMode.None);
                     }
 
-                    //polygon.m_Points.Clear();
-                    //SetPolyEditMode(PolyShape.PolyEditMode.None);
                     evt.Use();
                     break;
                 }

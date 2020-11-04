@@ -15,9 +15,6 @@ namespace UnityEditor.ProBuilder.Actions
 {
     sealed class NewPolyShapeToggle : MenuToolToggle
     {
-        bool m_RestorePreviousMode;
-        SelectMode m_PreviousMode;
-
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/NewPolyShape", IconSkin.Pro); } }
         public override TooltipContent tooltip { get { return _tooltip; } }
@@ -91,8 +88,6 @@ namespace UnityEditor.ProBuilder.Actions
             MeshSelection.SetSelection(go);
             poly.polyEditMode = PolyShape.PolyEditMode.Path;
 
-            m_RestorePreviousMode = true;
-            m_PreviousMode = ProBuilderEditor.selectMode;
             ProBuilderEditor.selectMode = SelectMode.Object;
 
             m_Tool = ScriptableObject.CreateInstance<PolyShapeTool>();
@@ -115,15 +110,11 @@ namespace UnityEditor.ProBuilder.Actions
             ((PolyShapeTool)m_Tool).End();
             UObject.DestroyImmediate(m_Tool);
 
-            if(m_RestorePreviousMode)
-                ProBuilderEditor.selectMode = m_PreviousMode;
-
             return new ActionResult(ActionResult.Status.Success,"End Poly Shape");
         }
 
         void OnSelectModeChanged(SelectMode obj)
         {
-            m_RestorePreviousMode = false;
             LeaveTool();
         }
 

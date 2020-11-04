@@ -467,6 +467,69 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
+        /// Get a list of vertices from a @"UnityEngine.ProBuilder.ProBuilderMesh" component.
+        /// </summary>
+        /// <param name="vertices">The list that will be filled by the method.</param>
+        /// <returns></returns>
+        public void GetVerticesInList(IList<Vertex> vertices)
+        {
+            int vc = vertexCount;
+
+            vertices.Clear();
+
+            Vector3[] positions = positionsInternal;
+            Color[] colors = colorsInternal;
+            Vector2[] uv0s = texturesInternal;
+            Vector4[] tangents = GetTangents();
+            Vector3[] normals = GetNormals();
+            Vector2[] uv2s = mesh != null ? mesh.uv2 : null;
+
+            List<Vector4> uv3s = new List<Vector4>();
+            List<Vector4> uv4s = new List<Vector4>();
+
+            GetUVs(2, uv3s);
+            GetUVs(3, uv4s);
+
+            bool _hasPositions = positions != null && positions.Count() == vc;
+            bool _hasColors = colors != null && colors.Count() == vc;
+            bool _hasNormals = normals != null && normals.Count() == vc;
+            bool _hasTangents = tangents != null && tangents.Count() == vc;
+            bool _hasUv0 = uv0s != null && uv0s.Count() == vc;
+            bool _hasUv2 = uv2s != null && uv2s.Count() == vc;
+            bool _hasUv3 = uv3s.Count() == vc;
+            bool _hasUv4 = uv4s.Count() == vc;
+
+            for (int i = 0; i < vc; i++)
+            {
+                vertices.Add(new Vertex());
+
+                if (_hasPositions)
+                    vertices[i].position = positions[i];
+
+                if (_hasColors)
+                    vertices[i].color = colors[i];
+
+                if (_hasNormals)
+                    vertices[i].normal = normals[i];
+
+                if (_hasTangents)
+                    vertices[i].tangent = tangents[i];
+
+                if (_hasUv0)
+                    vertices[i].uv0 = uv0s[i];
+
+                if (_hasUv2)
+                    vertices[i].uv2 = uv2s[i];
+
+                if (_hasUv3)
+                    vertices[i].uv3 = uv3s[i];
+
+                if (_hasUv4)
+                    vertices[i].uv4 = uv4s[i];
+            }
+        }
+
+        /// <summary>
         /// Set the vertex element arrays on this mesh.
         /// </summary>
         /// <param name="vertices">The new vertex array.</param>
@@ -497,6 +560,7 @@ namespace UnityEngine.ProBuilder
 
             m_Positions = position;
             m_Colors = color;
+            m_Normals = normal;
             m_Tangents = tangent;
             m_Textures0 = uv0;
             m_Textures2 = uv3;
