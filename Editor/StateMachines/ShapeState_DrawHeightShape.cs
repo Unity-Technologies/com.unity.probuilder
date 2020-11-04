@@ -8,6 +8,7 @@ namespace UnityEditor.ProBuilder
     {
         protected override void EndState()
         {
+            tool.RebuildShape();
             DrawShapeTool.s_Size.value = tool.m_Shape.size;
             DrawShapeTool.s_ActiveShapeIndex.value = DrawShapeTool.s_AvailableShapeTypes.IndexOf(tool.m_Shape.shape.GetType());
             tool.m_Shape = null;
@@ -23,21 +24,35 @@ namespace UnityEditor.ProBuilder
 
             tool.DrawBoundingBox();
 
-            switch (evt.type)
+            if(evt.type == EventType.KeyDown)
             {
-                case EventType.MouseMove:
-                case EventType.MouseDrag:
-                    Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
-                    Vector3 heightPoint = Math.GetNearestPointRayRay(tool.m_BB_OppositeCorner, tool.m_Plane.normal,
-                        ray.origin, ray.direction);
-                    tool.m_BB_HeightCorner = EditorSnapping.MoveSnap(heightPoint);
-                    tool.RebuildShape();
-                    break;
-
-                case EventType.MouseUp:
-                    tool.RebuildShape();
-                    return NextState();
+                switch(evt.keyCode)
+                {
+                    case KeyCode.Space:
+                    case KeyCode.Return:
+                    case KeyCode.Escape:
+                        return NextState();
+                }
             }
+
+            if(evt.isMouse)
+            {
+                switch(evt.type)
+                {
+                    case EventType.MouseMove:
+                    case EventType.MouseDrag:
+                        Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
+                        Vector3 heightPoint = Math.GetNearestPointRayRay(tool.m_BB_OppositeCorner, tool.m_Plane.normal,
+                            ray.origin, ray.direction);
+                        tool.m_BB_HeightCorner = EditorSnapping.MoveSnap(heightPoint);
+                        tool.RebuildShape();
+                        break;
+
+                    case EventType.MouseUp:
+                        return NextState();
+                }
+            }
+
             return this;
         }
     }

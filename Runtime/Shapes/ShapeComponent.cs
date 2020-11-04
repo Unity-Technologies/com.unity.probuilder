@@ -73,14 +73,7 @@ namespace UnityEngine.ProBuilder.Shapes
             transform.position = bounds.center;
             transform.rotation = rotation;
 
-            // if(size.x < float.Epsilon || size.z < float.Epsilon)
-            // {
-            //     mesh.Clear();
-            //     if(mesh.mesh != null)
-            //         mesh.mesh.Clear();
-            // }
-            // else
-                Rebuild();
+            Rebuild();
         }
 
         public void Rebuild(bool resetRotation = false)

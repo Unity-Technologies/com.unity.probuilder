@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
-using Math = UnityEngine.ProBuilder.Math;
 using UObject = UnityEngine.Object;
 #if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
@@ -39,7 +38,7 @@ namespace UnityEditor.ProBuilder
 
         internal static TypeCache.TypeCollection s_AvailableShapeTypes;
         internal static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
-        internal static Pref<Vector3> s_Size = new Pref<Vector3>("ShapeBuilder.Size", Vector3.one * 100);
+        internal static Pref<Vector3> s_Size = new Pref<Vector3>("ShapeBuilder.Size", Vector3.zero);
 
         public static Type activeShapeType
         {
@@ -54,6 +53,28 @@ namespace UnityEditor.ProBuilder
         void OnEnable()
         {
             m_CurrentState = InitStateMachine();
+            Undo.undoRedoPerformed += HandleUndoRedoPerformed;
+            MeshSelection.objectSelectionChanged += OnSelectionChanged;
+        }
+
+        void OnDestroy()
+        {
+            MeshSelection.objectSelectionChanged -= OnSelectionChanged;
+        }
+
+        void HandleUndoRedoPerformed()
+        {
+            if(ToolManager.IsActiveTool(this))
+                m_CurrentState = ShapeState.ResetState();
+        }
+
+        void OnSelectionChanged()
+        {
+            if(ToolManager.IsActiveTool(this))
+            {
+                if(MeshSelection.activeMesh != m_Shape.mesh)
+                    m_CurrentState = ShapeState.ResetState();
+            }
         }
 
         ShapeState InitStateMachine()
@@ -89,6 +110,17 @@ namespace UnityEditor.ProBuilder
             return point;
         }
 
+        internal void SetBounds(Vector3 size)
+        {
+            //Keep orientation created using mouse drag
+            var dragDirection = m_BB_OppositeCorner - m_BB_Origin;
+            float x = dragDirection.x < 0 ? -size.x : size.x;
+            float z = dragDirection.z < 0 ? -size.z : size.z;
+
+            m_BB_OppositeCorner = m_BB_Origin + new Vector3(x, 0, z);
+            m_BB_HeightCorner = m_BB_Origin + size;
+        }
+
         void RecalculateBounds()
         {
             var forward = HandleUtility.PointOnLineParameter(m_BB_OppositeCorner, m_BB_Origin, m_PlaneForward);
@@ -114,6 +146,12 @@ namespace UnityEditor.ProBuilder
                 m_ShapeForward = -Vector3.right;
             else if(dragDotForward > 0 && dragDotRight > 0)
                 m_ShapeForward = Vector3.right;
+        }
+
+        internal void SetBoundsOrigin(Vector3 position)
+        {
+            m_Bounds.center = position + (m_Bounds.size.y / 2f) * m_Plane.normal;
+            m_Rotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
         }
 
         internal void RebuildShape()
@@ -172,13 +210,13 @@ namespace UnityEditor.ProBuilder
         void OnActiveToolGUI(UObject overlayTarget, SceneView view)
         {
             EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.ArrowPlus);
-            EditorGUILayout.HelpBox(L10n.Tr("Click to create the shape. Hold and drag to create the shape while controlling its size."), MessageType.Info);
+            EditorGUILayout.HelpBox(L10n.Tr("Hold and drag to create a new shape while controlling its size. Click to duplicate the last created shape."), MessageType.Info);
 
             if (m_Shape == null)
                 return;
 
             Editor.CreateCachedEditor(m_Shape, typeof(ShapeComponentEditor), ref m_ShapeEditor);
-            m_ShapeEditor.OnInspectorGUI();
+            ((ShapeComponentEditor)m_ShapeEditor).DrawShapeGUI(this);
         }
     }
 }

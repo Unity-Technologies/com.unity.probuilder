@@ -4,6 +4,12 @@ using UnityEngine;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.UIElements;
 
+#if UNITY_2020_2_OR_NEWER
+using ToolManager = UnityEditor.EditorTools.ToolManager;
+#else
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+#endif
+
 namespace UnityEditor.ProBuilder
 {
     [CustomEditor(typeof(ShapeComponent))]
@@ -49,7 +55,12 @@ namespace UnityEditor.ProBuilder
             DrawShapeGUI((ShapeComponent)target, serializedObject);
         }
 
-        public void DrawShapeGUI(ShapeComponent shapeComp, SerializedObject obj)
+        public void DrawShapeGUI(DrawShapeTool tool)
+        {
+            DrawShapeGUI((ShapeComponent)target, serializedObject, tool);
+        }
+
+        private void DrawShapeGUI(ShapeComponent shapeComp, SerializedObject obj, DrawShapeTool tool = null)
         {
             if (shapeComp == null || obj == null)
                 return;
@@ -91,6 +102,15 @@ namespace UnityEditor.ProBuilder
 
             EditorGUI.BeginChangeCheck();
             shapeComp.size = EditorGUILayout.Vector3Field("Size", shapeComp.size);
+            if (EditorGUI.EndChangeCheck())
+            {
+                if(tool != null)
+                    tool.SetBounds(shapeComp.size);
+                shapeComp.Rebuild();
+                ProBuilderEditor.Refresh();
+            }
+
+            EditorGUI.BeginChangeCheck();
             Vector3 rotation = EditorGUILayout.Vector3Field("Rotation", shapeComp.rotation.eulerAngles);
             if (EditorGUI.EndChangeCheck())
             {

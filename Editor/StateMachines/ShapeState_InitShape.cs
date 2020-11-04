@@ -18,7 +18,10 @@ namespace UnityEditor.ProBuilder
 
         public override ShapeState DoState(Event evt)
         {
-            if (evt.type == EventType.MouseDown)
+            tool.DrawBoundingBox();
+
+            //if (evt.type == EventType.MouseDown)
+            if (evt.isMouse)
             {
                 var res = EditorHandleUtility.FindBestPlaneAndBitangent(evt.mousePosition);
 
@@ -51,11 +54,19 @@ namespace UnityEditor.ProBuilder
                         tool.m_IsOnGrid = false;
                     }
 
-                    //BB init
-                    tool.m_BB_Origin = tool.GetPoint(ray.GetPoint(hit));
-                    tool.m_BB_HeightCorner = tool.m_BB_Origin;
-                    tool.m_BB_OppositeCorner = tool.m_BB_Origin;
-                    return NextState();
+                    if(evt.type == EventType.MouseDown)
+                    {
+                        //BB init
+                        tool.m_BB_Origin = tool.GetPoint(ray.GetPoint(hit));
+                        tool.m_BB_HeightCorner = tool.m_BB_Origin;
+                        tool.m_BB_OppositeCorner = tool.m_BB_Origin;
+
+                        return NextState();
+                    }
+                    else
+                    {
+                        tool.SetBoundsOrigin(tool.GetPoint(ray.GetPoint(hit)));
+                    }
                 }
             }
             return this;

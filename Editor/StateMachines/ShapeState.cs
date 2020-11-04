@@ -50,7 +50,7 @@ namespace UnityEditor.ProBuilder
             return m_nextState;
         }
 
-        protected virtual ShapeState ResetState()
+        public static ShapeState ResetState()
         {
             if (tool.m_Shape != null)
                 UnityEngine.Object.DestroyImmediate(tool.m_Shape.gameObject);

@@ -54,7 +54,7 @@ namespace UnityEditor.ProBuilder
             {
                 return Activator.CreateInstance(type) as Shape;
             }
-            catch (Exception e)
+            catch
             {
                 Debug.LogError($"Cannot create shape of type { type.ToString() } because it doesn't have a default constructor.");
             }
@@ -68,7 +68,7 @@ namespace UnityEditor.ProBuilder
             {
                 shape = Activator.CreateInstance(type) as Shape;
             }
-            catch (Exception e)
+            catch
             {
                 Debug.LogError($"Cannot create shape of type { type.ToString() } because it doesn't have a default constructor.");
             }
