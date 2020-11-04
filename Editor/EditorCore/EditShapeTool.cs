@@ -31,7 +31,7 @@ namespace UnityEditor.ProBuilder
         // Don't recalculate the active bounds during an edit operation, it causes the handles to drift
         ShapeState m_ActiveShapeState;
 
-        bool m_AskingForReset = false;
+        //bool m_AskingForReset = false;
         const string k_dialogTitle = "Warning : Shape modified";
         const string k_dialogText = "The current shape has been manually edited, by editing it you will loose all modifications.";
 
@@ -366,7 +366,7 @@ namespace UnityEditor.ProBuilder
                     if(RotateEdgeHandle(edgeData, out rot))
                     {
                         UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Rotate Shape");
-                        shapeComponent.Rotate(rot);
+                        shapeComponent.RotateInsideBounds(rot);
                         hasRotated = true;
                     }
                 }
@@ -440,10 +440,9 @@ namespace UnityEditor.ProBuilder
                     if (m_IsMouseDown && m_CurrentId == controlID)
                     {
                         Vector3 axis = edge.PointA - edge.PointB;
-                        Vector3 axisToPrevious = Handles.matrix * (m_EdgeDataToNeighborsEdges[edge].item1.Center - edge.Center);
-                        Vector3 axisToNext =  Handles.matrix * (m_EdgeDataToNeighborsEdges[edge].item2.Center - edge.Center);
+                        Vector3 axisToPrevious = (m_EdgeDataToNeighborsEdges[edge].item1.Center - edge.Center);
+                        Vector3 axisToNext =  (m_EdgeDataToNeighborsEdges[edge].item2.Center - edge.Center);
 
-                        //Get a direction orthogonal to both direction to camera and edge direction
                         var rotDistToPrevious = HandleUtility.CalcLineTranslation(m_StartMousePosition, Event.current.mousePosition, m_StartPosition, axisToPrevious);
                         var rotDistToNext = HandleUtility.CalcLineTranslation(m_StartMousePosition, Event.current.mousePosition, m_StartPosition, axisToNext);
 

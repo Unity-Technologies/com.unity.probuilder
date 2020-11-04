@@ -107,7 +107,7 @@ namespace UnityEngine.ProBuilder.Shapes
         /// Set the rotation of the Shape to a given quaternion, then rotates it while respecting the bounds
         /// </summary>
         /// <param name="angles">The angles to rotate by</param>
-        public void SetRotation(Quaternion angles)
+        public void SetInnerBoundsRotation(Quaternion angles)
         {
             ApplyRotation(angles);
             MeshUtility.FitToSize(mesh, m_Size);
@@ -117,7 +117,7 @@ namespace UnityEngine.ProBuilder.Shapes
         /// Rotates the Shape by a given quaternion while respecting the bounds
         /// </summary>
         /// <param name="rotation">The angles to rotate by</param>
-        public void Rotate(Quaternion deltaRotation)
+        public void RotateInsideBounds(Quaternion deltaRotation)
         {
             Quaternion rotation = deltaRotation * m_Rotation;
             ApplyRotation(rotation);

@@ -94,7 +94,7 @@ namespace UnityEditor.ProBuilder
             Vector3 rotation = EditorGUILayout.Vector3Field("Rotation", shapeComp.rotation.eulerAngles);
             if (EditorGUI.EndChangeCheck())
             {
-                shapeComp.SetRotation(Quaternion.Euler(rotation));
+                shapeComp.SetInnerBoundsRotation(Quaternion.Euler(rotation));
                 ProBuilderEditor.Refresh();
             }
 
