@@ -1,14 +1,15 @@
 using System;
 using UnityEngine;
-using UObject = UnityEngine.Object;
 using UnityEngine.ProBuilder;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.ProBuilder.Actions;
 using UnityEngine.Rendering;
 using UnityEditor.SettingsManagement;
 using UnityEditor.ShortcutManagement;
 using System.Reflection;
 using UnityObject = UnityEngine.Object;
+using Edge = UnityEngine.ProBuilder.Edge;
 
 namespace UnityEditor.ProBuilder
 {
@@ -64,32 +65,46 @@ namespace UnityEditor.ProBuilder
         static bool m_ForceEdgeLinesGL;
         static bool m_ForceWireframeLinesGL;
 
+
+        static Dictionary<ProBuilderMesh, MeshHandle> temporaryHandles;
+
         static readonly Color k_VertexUnselectedDefault = new Color(.7f, .7f, .7f, 1f);
         static readonly Color k_WireframeDefault = new Color(94.0f / 255.0f, 119.0f / 255.0f, 155.0f / 255.0f, 1f);
 
-        [UserSetting]
-        static Pref<bool> s_UseUnityColors = new Pref<bool>("graphics.handlesUseUnityColors", true, SettingsScope.User);
-        [UserSetting]
-        static Pref<bool> s_DitherFaceHandle = new Pref<bool>("graphics.ditherFaceHandles", true, SettingsScope.User);
-        [UserSetting]
-        static Pref<Color> s_SelectedFaceColorPref = new Pref<Color>("graphics.userSelectedFaceColor", new Color(0f, 210f / 255f, 239f / 255f, 1f), SettingsScope.User);
-        [UserSetting]
-        static Pref<Color> s_WireframeColorPref = new Pref<Color>("graphics.userWireframeColor", new Color(125f / 255f, 155f / 255f, 185f / 255f, 1f), SettingsScope.User);
-        [UserSetting]
-        static Pref<Color> s_UnselectedEdgeColorPref = new Pref<Color>("graphics.userUnselectedEdgeColor", new Color(44f / 255f, 44f / 255f, 44f / 255f, 1f), SettingsScope.User);
-        [UserSetting]
-        static Pref<Color> s_SelectedEdgeColorPref = new Pref<Color>("graphics.userSelectedEdgeColor", new Color(0f, 210f / 255f, 239f / 255f, 1f), SettingsScope.User);
-        [UserSetting]
-        static Pref<Color> s_UnselectedVertexColorPref = new Pref<Color>("graphics.userUnselectedVertexColor", new Color(44f / 255f, 44f / 255f, 44f / 255f, 1f), SettingsScope.User);
-        [UserSetting]
-        static Pref<Color> s_SelectedVertexColorPref = new Pref<Color>("graphics.userSelectedVertexColor", new Color(0f, 210f / 255f, 239f / 255f, 1f), SettingsScope.User);
-        [UserSetting]
-        static Pref<Color> s_PreselectionColorPref = new Pref<Color>("graphics.userPreselectionColor", new Color(179f / 255f, 246f / 255f, 255f / 255f, 1f), SettingsScope.User);
+        [UserSetting] static Pref<bool> s_UseUnityColors =
+            new Pref<bool>("graphics.handlesUseUnityColors", true, SettingsScope.User);
+
+        [UserSetting] static Pref<bool> s_DitherFaceHandle =
+            new Pref<bool>("graphics.ditherFaceHandles", true, SettingsScope.User);
+
+        [UserSetting] static Pref<Color> s_SelectedFaceColorPref = new Pref<Color>("graphics.userSelectedFaceColor",
+            new Color(0f, 210f / 255f, 239f / 255f, 1f), SettingsScope.User);
+
+        [UserSetting] static Pref<Color> s_WireframeColorPref = new Pref<Color>("graphics.userWireframeColor",
+            new Color(125f / 255f, 155f / 255f, 185f / 255f, 1f), SettingsScope.User);
+
+        [UserSetting] static Pref<Color> s_UnselectedEdgeColorPref = new Pref<Color>("graphics.userUnselectedEdgeColor",
+            new Color(44f / 255f, 44f / 255f, 44f / 255f, 1f), SettingsScope.User);
+
+        [UserSetting] static Pref<Color> s_SelectedEdgeColorPref = new Pref<Color>("graphics.userSelectedEdgeColor",
+            new Color(0f, 210f / 255f, 239f / 255f, 1f), SettingsScope.User);
+
+        [UserSetting] static Pref<Color> s_UnselectedVertexColorPref = new Pref<Color>(
+            "graphics.userUnselectedVertexColor", new Color(44f / 255f, 44f / 255f, 44f / 255f, 1f),
+            SettingsScope.User);
+
+        [UserSetting] static Pref<Color> s_SelectedVertexColorPref = new Pref<Color>("graphics.userSelectedVertexColor",
+            new Color(0f, 210f / 255f, 239f / 255f, 1f), SettingsScope.User);
+
+        [UserSetting] static Pref<Color> s_PreselectionColorPref = new Pref<Color>("graphics.userPreselectionColor",
+            new Color(179f / 255f, 246f / 255f, 255f / 255f, 1f), SettingsScope.User);
+
+        [UserSetting] static Pref<float> s_WireframeLineSize =
+            new Pref<float>("graphics.wireframeLineSize", .5f, SettingsScope.User);
 
         [UserSetting]
-        static Pref<float> s_WireframeLineSize = new Pref<float>("graphics.wireframeLineSize", .5f, SettingsScope.User);
-        [UserSetting]
         static Pref<float> s_EdgeLineSize = new Pref<float>("graphics.edgeLineSize", 1f, SettingsScope.User);
+
         [UserSetting]
         static Pref<float> s_VertexPointSize = new Pref<float>("graphics.vertexPointSize", 3f, SettingsScope.User);
 
@@ -110,20 +125,29 @@ namespace UnityEditor.ProBuilder
 
             s_UseUnityColors.value = SettingsGUILayout.SettingsToggle("Use Unity Colors", s_UseUnityColors, searchContext);
 
-            if (!s_UseUnityColors.value)
+            if(!s_UseUnityColors.value)
             {
-                using (new SettingsGUILayout.IndentedGroup())
+                using(new SettingsGUILayout.IndentedGroup())
                 {
-                    s_DitherFaceHandle.value = SettingsGUILayout.SettingsToggle("Dither Face Overlay", s_DitherFaceHandle, searchContext);
-                    s_WireframeColorPref.value = SettingsGUILayout.SettingsColorField("Wireframe", s_WireframeColorPref, searchContext);
-                    s_PreselectionColorPref.value = SettingsGUILayout.SettingsColorField("Preselection", s_PreselectionColorPref, searchContext);
-                    s_SelectedFaceColorPref.value = SettingsGUILayout.SettingsColorField("Selected Face Color", s_SelectedFaceColorPref, searchContext);
-                    s_UnselectedEdgeColorPref.value = SettingsGUILayout.SettingsColorField("Unselected Edge Color", s_UnselectedEdgeColorPref, searchContext);
-                    s_SelectedEdgeColorPref.value = SettingsGUILayout.SettingsColorField("Selected Edge Color", s_SelectedEdgeColorPref, searchContext);
-                    s_UnselectedVertexColorPref.value = SettingsGUILayout.SettingsColorField("Unselected Vertex Color", s_UnselectedVertexColorPref, searchContext);
-                    s_SelectedVertexColorPref.value = SettingsGUILayout.SettingsColorField("Selected Vertex Color", s_SelectedVertexColorPref, searchContext);
+                    s_DitherFaceHandle.value =
+                        SettingsGUILayout.SettingsToggle("Dither Face Overlay", s_DitherFaceHandle, searchContext);
+                    s_WireframeColorPref.value =
+                        SettingsGUILayout.SettingsColorField("Wireframe", s_WireframeColorPref, searchContext);
+                    s_PreselectionColorPref.value =
+                        SettingsGUILayout.SettingsColorField("Preselection", s_PreselectionColorPref, searchContext);
+                    s_SelectedFaceColorPref.value = SettingsGUILayout.SettingsColorField("Selected Face Color",
+                        s_SelectedFaceColorPref, searchContext);
+                    s_UnselectedEdgeColorPref.value = SettingsGUILayout.SettingsColorField("Unselected Edge Color",
+                        s_UnselectedEdgeColorPref, searchContext);
+                    s_SelectedEdgeColorPref.value = SettingsGUILayout.SettingsColorField("Selected Edge Color",
+                        s_SelectedEdgeColorPref, searchContext);
+                    s_UnselectedVertexColorPref.value = SettingsGUILayout.SettingsColorField("Unselected Vertex Color",
+                        s_UnselectedVertexColorPref, searchContext);
+                    s_SelectedVertexColorPref.value = SettingsGUILayout.SettingsColorField("Selected Vertex Color",
+                        s_SelectedVertexColorPref, searchContext);
                 }
             }
+
 
             s_VertexPointSize.value = SettingsGUILayout.SettingsSlider("Vertex Size", s_VertexPointSize, 1f, 10f, searchContext);
             s_EdgeLineSize.value = SettingsGUILayout.SettingsSlider("Line Size", s_EdgeLineSize, 0f, 10f, searchContext);
@@ -160,8 +184,14 @@ namespace UnityEditor.ProBuilder
             m_SelectedEdgeHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
             m_SelectedVertexHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
 
-            var lineShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.lineShader : BuiltinMaterials.lineShaderMetal;
-            var vertShader = BuiltinMaterials.geometryShadersSupported ? BuiltinMaterials.pointShader : BuiltinMaterials.dotShader;
+            temporaryHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
+
+            var lineShader = BuiltinMaterials.geometryShadersSupported
+                ? BuiltinMaterials.lineShader
+                : BuiltinMaterials.lineShaderMetal;
+            var vertShader = BuiltinMaterials.geometryShadersSupported
+                ? BuiltinMaterials.pointShader
+                : BuiltinMaterials.dotShader;
 
             m_EdgeMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::LineMaterial");
             m_WireMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::WireMaterial");
@@ -201,7 +231,7 @@ namespace UnityEditor.ProBuilder
 
         static Material CreateMaterial(Shader shader, string materialName)
         {
-            if (shader == null)
+            if(shader == null)
                 shader = BuiltinMaterials.defaultMaterial.shader;
 
             Material mat = new Material(shader);
@@ -220,10 +250,10 @@ namespace UnityEditor.ProBuilder
 
         static void DestroyMesh(Mesh mesh)
         {
-            if (mesh == null)
+            if(mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            UObject.DestroyImmediate(mesh);
+            UnityObject.DestroyImmediate(mesh);
         }
 
 #if !UNITY_2019_1_OR_NEWER
@@ -239,7 +269,7 @@ namespace UnityEditor.ProBuilder
         {
             var mesh = selection.mesh;
 
-            if (mesh == null)
+            if(mesh == null)
                 return;
 
             var positions = mesh.positionsInternal;
@@ -248,11 +278,11 @@ namespace UnityEditor.ProBuilder
             using (new TriangleDrawingScope(preselectionColor))
             {
                 GL.MultMatrix(mesh.transform.localToWorldMatrix);
-                foreach (var face in selection.faces)
+                foreach(var face in selection.faces)
                 {
                     var ind = face.indexes;
 
-                    for (int i = 0, c = ind.Count; i < c; i += 3)
+                    for(int i = 0, c = ind.Count; i < c; i += 3)
                     {
                         GL.Vertex(positions[ind[i]]);
                         GL.Vertex(positions[ind[i + 1]]);
@@ -260,16 +290,17 @@ namespace UnityEditor.ProBuilder
                     }
                 }
             }
+
             using (var drawingScope = new LineDrawingScope(preselectionColor, mesh.transform.localToWorldMatrix, -1f, CompareFunction.Always))
             {
-                foreach (var edge in selection.edges)
+                foreach(var edge in selection.edges)
                 {
                     drawingScope.DrawLine(positions[edge.a], positions[edge.b]);
                 }
             }
             using (var drawingScope = new PointDrawingScope(preselectionColor, CompareFunction.Always) { matrix = mesh.transform.localToWorldMatrix })
             {
-                foreach (var vertex in selection.vertexes)
+                foreach(var vertex in selection.vertexes)
                 {
                     drawingScope.Draw(positions[vertex]);
                 }
@@ -284,7 +315,7 @@ namespace UnityEditor.ProBuilder
             // Update the scale based on EditorGUIUtility.pixelsPerPoints in case the DPI would have changed.
             SetMaterialsScaleAttribute();
 
-            switch (mode)
+            switch(mode)
             {
                 case SelectMode.Edge:
                 case SelectMode.TextureEdge:
@@ -320,15 +351,16 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+
         static void Render(Dictionary<ProBuilderMesh, MeshHandle> handles, Material material, Color color, CompareFunction func, bool zWrite = false)
         {
             material.SetInt("_HandleZTest", (int) func);
             material.SetInt("_HandleZWrite", zWrite ? 1 : 0);
             material.SetColor("_Color", color);
 
-            if (material.SetPass(0))
+            if(material.SetPass(0))
             {
-                foreach (var kvp in handles)
+                foreach(var kvp in handles)
                     kvp.Value.DrawMeshNow(0);
             }
         }
@@ -351,9 +383,9 @@ namespace UnityEditor.ProBuilder
         {
             ClearHandles();
 
-            foreach (var mesh in meshes)
+            foreach(var mesh in meshes)
             {
-                switch (selectionMode)
+                switch(selectionMode)
                 {
                     case SelectMode.Vertex:
                     case SelectMode.TextureVertex:
@@ -403,7 +435,7 @@ namespace UnityEditor.ProBuilder
         {
             MeshHandle handle;
 
-            if (!cache.TryGetValue(mesh, out handle))
+            if(!cache.TryGetValue(mesh, out handle))
             {
                 var m = meshPool.Dequeue();
                 handle = new MeshHandle(mesh.transform, m);
@@ -419,6 +451,13 @@ namespace UnityEditor.ProBuilder
             ctor(mesh, handle.mesh);
         }
 
+        static void RebuildMeshHandleFromFaces(ProBuilderMesh mesh, IList<Face> faces,
+            Dictionary<ProBuilderMesh, MeshHandle> list, Action<ProBuilderMesh, IList<Face>, Mesh> ctor)
+        {
+            var handle = GetMeshHandle(mesh, list);
+            ctor(mesh, faces, handle.mesh);
+        }
+
         static void ClearHandlesInternal(Dictionary<ProBuilderMesh, MeshHandle> handles)
         {
             foreach (var kvp in handles)
@@ -431,6 +470,42 @@ namespace UnityEditor.ProBuilder
             vertMaterial.SetFloat("_Scale", s_VertexPointSize * EditorGUIUtility.pixelsPerPoint);
             wireMaterial.SetFloat("_Scale", s_WireframeLineSize * EditorGUIUtility.pixelsPerPoint);
             edgeMaterial.SetFloat("_Scale", s_EdgeLineSize * EditorGUIUtility.pixelsPerPoint);
+        }
+
+        public static void HighlightFaces(ProBuilderMesh mesh, IList<Face> faces, Color highlightColor)
+        {
+            RebuildMeshHandleFromFaces(mesh, faces, temporaryHandles, MeshHandles.CreateFaceMeshFromFaces);
+            Render(temporaryHandles, m_FaceMaterial, highlightColor,CompareFunction.LessEqual, false);
+        }
+
+        public static void HighlightEdges(ProBuilderMesh mesh, IList<Edge> edges, bool highlight = true)
+        {
+            HighlightEdges(mesh,edges, highlight ? edgeSelectedColor : edgeUnselectedColor);
+        }
+
+        public static void HighlightEdges(ProBuilderMesh mesh, IList<Edge> edges, Color highlightColor)
+        {
+            var handle = GetMeshHandle(mesh, temporaryHandles);
+
+            if(m_ForceEdgeLinesGL || BuiltinMaterials.geometryShadersSupported)
+                MeshHandles.CreateEdgeMesh(mesh, handle.mesh, edges.ToArray());
+            else
+                MeshHandles.CreateEdgeBillboardMesh(mesh, handle.mesh, edges.ToArray());
+
+            Render(temporaryHandles, m_EdgeMaterial, highlightColor, CompareFunction.LessEqual, false);
+        }
+
+        public static void HighlightVertices(ProBuilderMesh mesh, IList<int> vertexIndexes, bool highlight = true)
+        {
+            HighlightVertices(mesh,vertexIndexes, highlight ? vertexSelectedColor : vertexUnselectedColor);
+        }
+
+        public static void HighlightVertices(ProBuilderMesh mesh, IList<int> vertexIndexes, Color highlightColor)
+        {
+            var handle = GetMeshHandle(mesh, temporaryHandles);
+            MeshHandles.CreateVertexMesh(mesh, handle.mesh, vertexIndexes);
+
+            Render(temporaryHandles, m_VertMaterial, highlightColor, CompareFunction.LessEqual, false);
         }
     }
 }

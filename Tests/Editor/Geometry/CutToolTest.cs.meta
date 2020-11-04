@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<< HEAD:Editor/EditorCore/CutTool.cs.meta
-guid: 1f26c4d173d1ff0488349210afd77fa2
-=======
-guid: 383df450877f67545992f9e965d40944
->>>>>>> master:Editor/EditorCore/EditorToolsContexts.cs.meta
+guid: b4278023ca35dfd449b66a2d0973c093
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
