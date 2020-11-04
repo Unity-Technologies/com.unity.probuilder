@@ -1,7 +1,11 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
+#if UNITY_2020_2_OR_NEWER
+using ToolManager = UnityEditor.EditorTools.ToolManager;
+#else
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -20,7 +24,16 @@ namespace UnityEditor.ProBuilder
         {
             tool.DrawBoundingBox();
 
-            //if (evt.type == EventType.MouseDown)
+            if(evt.type == EventType.KeyDown)
+            {
+                switch(evt.keyCode)
+                {
+                    case KeyCode.Escape:
+                        ToolManager.RestorePreviousTool();
+                        break;
+                }
+            }
+
             if (evt.isMouse)
             {
                 var res = EditorHandleUtility.FindBestPlaneAndBitangent(evt.mousePosition);

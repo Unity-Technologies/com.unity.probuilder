@@ -9,9 +9,15 @@ namespace UnityEditor.ProBuilder
         protected override void EndState()
         {
             tool.RebuildShape();
+            tool.m_Shape = null;
+        }
+
+        private ShapeState ValidateShape()
+        {
             DrawShapeTool.s_Size.value = tool.m_Shape.size;
             DrawShapeTool.s_ActiveShapeIndex.value = DrawShapeTool.s_AvailableShapeTypes.IndexOf(tool.m_Shape.shape.GetType());
-            tool.m_Shape = null;
+
+            return NextState();
         }
 
         public override ShapeState DoState(Event evt)
@@ -31,7 +37,7 @@ namespace UnityEditor.ProBuilder
                     case KeyCode.Space:
                     case KeyCode.Return:
                     case KeyCode.Escape:
-                        return NextState();
+                        return ValidateShape();
                 }
             }
 
@@ -49,7 +55,7 @@ namespace UnityEditor.ProBuilder
                         break;
 
                     case EventType.MouseUp:
-                        return NextState();
+                        return ValidateShape();
                 }
             }
 

@@ -150,7 +150,9 @@ namespace UnityEditor.ProBuilder
 
         internal void SetBoundsOrigin(Vector3 position)
         {
-            m_Bounds.center = position + (m_Bounds.size.y / 2f) * m_Plane.normal;
+            Vector3 size = s_Size.value;
+            m_Bounds.size = size;
+            m_Bounds.center = position + (size.y / 2f) * m_Plane.normal;
             m_Rotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
         }
 
