@@ -530,7 +530,7 @@ namespace UnityEditor.ProBuilder
                 return new SimpleTuple<Plane, Vector3>(plane, bitangent);
 
             if (!GetPlaneFromProGridsAxis(mousePosition, out plane))
-                plane = GetPlaneFromUnity();
+                plane = GetPlaneFromSceneView();
 
             var nrm = plane.normal;
 
@@ -667,7 +667,7 @@ namespace UnityEditor.ProBuilder
             return true;
         }
 
-        static Plane GetPlaneFromUnity()
+        static Plane GetPlaneFromSceneView()
         {
             Plane plane;
             Vector3 normal = Vector3.up;
