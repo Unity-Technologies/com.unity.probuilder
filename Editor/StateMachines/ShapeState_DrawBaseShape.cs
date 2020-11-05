@@ -80,13 +80,16 @@ namespace UnityEditor.ProBuilder
             shape.shape = EditorShapeUtility.GetLastParams(shape.shape.GetType());
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
 
-            Bounds bounds = new Bounds(Vector3.zero, DrawShapeTool.s_Size);
-            shape.Rebuild(bounds, Quaternion.LookRotation(tool.m_PlaneForward,tool.m_Plane.normal));
+            shape.Rebuild(tool.m_Bounds, tool.m_Rotation);
             ProBuilderEditor.Refresh(false);
 
             var res = shape.GetComponent<ProBuilderMesh>();
             EditorUtility.InitObject(res);
-            res.transform.position = position + tool.m_Plane.normal * bounds.extents.y;
+
+            var cornerPosition = position - tool.m_Bounds.extents;
+            cornerPosition.y = position.y;
+            cornerPosition = tool.GetPoint(cornerPosition);
+            res.transform.position = cornerPosition + new Vector3(tool.m_Bounds.extents.x,0, tool.m_Bounds.extents.z) + tool.m_Bounds.extents.y * tool.m_Plane.normal;
 
             return res;
         }

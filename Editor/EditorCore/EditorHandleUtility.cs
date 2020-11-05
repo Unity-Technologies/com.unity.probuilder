@@ -521,7 +521,7 @@ namespace UnityEditor.ProBuilder
             // Priority in finding the "best" plane for input from a mouse position:
             // 1. Take the plane from the first hit mesh.
             // 2. If ProGrids is drawing a grid, use the plane normal and raycast for position
-            // 3. Use the nearest matching plane based on the scene camera direction
+            // 3. Use the nearest matching plane based on the scene snapping settings or else the scene camera direction
 
             Plane plane;
             Vector3 bitangent;
@@ -530,11 +530,16 @@ namespace UnityEditor.ProBuilder
                 return new SimpleTuple<Plane, Vector3>(plane, bitangent);
 
             if (!GetPlaneFromProGridsAxis(mousePosition, out plane))
-                plane = GetPlaneFromCameraDirection();
+                plane = GetPlaneFromUnity();
 
             var nrm = plane.normal;
 
-            bitangent = Vector3.Cross(nrm, Vector3.Cross(nrm, nrm == -Vector3.forward ? -Vector3.right : -Vector3.forward));
+            var rhs =  -Vector3.forward;
+            if(nrm == -Vector3.forward || nrm == Vector3.forward)
+                rhs = -Vector3.right;
+
+            var cross1 = Vector3.Cross(nrm, rhs);
+            bitangent = Vector3.Cross(nrm, cross1);
 
             return new SimpleTuple<Plane, Vector3>(plane, bitangent);
         }
@@ -660,6 +665,45 @@ namespace UnityEditor.ProBuilder
             }
 
             return true;
+        }
+
+        static Plane GetPlaneFromUnity()
+        {
+            Plane plane;
+            Vector3 normal = Vector3.up;
+            if(EditorSnapSettings.gridSnapEnabled)
+            {
+                var sceneView = SceneView.lastActiveSceneView;
+                var cameraTransform = sceneView.camera.transform;
+                var axis = sceneView.sceneViewGrids.gridAxis;
+                var point = sceneView.sceneViewGrids.GetPivot(axis);
+
+                switch (axis)
+                {
+                    case SceneViewGrid.GridRenderAxis.X:
+                        normal = Vector3.right;
+                        break;
+
+                    case SceneViewGrid.GridRenderAxis.Y:
+                        normal = Vector3.up;
+                        break;
+                    case SceneViewGrid.GridRenderAxis.Z:
+                        normal = Vector3.forward;
+                        break;
+                }
+
+                //Invert normal if camera if facing the other side of the plane
+                if(Vector3.Dot(cameraTransform.forward, normal) > 0)
+                    normal *= -1f;
+
+                plane = new Plane(normal, point);
+
+                //If the camera if on the right side of the plane, return this plane
+                if(plane.GetSide(cameraTransform.position))
+                    return plane;
+            }
+
+            return GetPlaneFromCameraDirection();
         }
 
         static Plane GetPlaneFromCameraDirection()

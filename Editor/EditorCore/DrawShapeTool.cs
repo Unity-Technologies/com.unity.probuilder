@@ -31,8 +31,8 @@ namespace UnityEditor.ProBuilder
 
         internal bool m_IsOnGrid;
 
-        Quaternion m_Rotation;
-        Bounds m_Bounds;
+        internal Quaternion m_Rotation;
+        internal Bounds m_Bounds;
 
         readonly GUIContent k_ShapeTitle = new GUIContent("Draw Shape");
 
@@ -152,7 +152,10 @@ namespace UnityEditor.ProBuilder
         {
             Vector3 size = s_Size.value;
             m_Bounds.size = size;
-            m_Bounds.center = position + (size.y / 2f) * m_Plane.normal;
+            var cornerPosition = position - size / 2f;
+            cornerPosition.y = position.y;
+            cornerPosition = GetPoint(cornerPosition);
+            m_Bounds.center = cornerPosition + new Vector3(size.x/2f,0, size.z/2f) + (size.y / 2f) * m_Plane.normal;
             m_Rotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
         }
 

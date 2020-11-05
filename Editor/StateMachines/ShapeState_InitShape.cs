@@ -78,7 +78,7 @@ namespace UnityEditor.ProBuilder
                     }
                     else
                     {
-                        tool.SetBoundsOrigin(tool.GetPoint(ray.GetPoint(hit)));
+                        tool.SetBoundsOrigin(ray.GetPoint(hit));
                     }
                 }
             }
