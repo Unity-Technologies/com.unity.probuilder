@@ -5,12 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [5.0.0-preview.1]
 
 ### Features
 
 - Added Point-to-point Cut tool
-- Upgrading PolyShape tool to EditorTool and correct some features in it.
+- Upgrading PolyShape tool to `EditorTool` and correct some features in it.
+- Upgrading VertexManipulationTool to `EditorTool`
 - Added a selection preview when using the Select Path tool.
 - Added `Selection X Ray` option to highlight occluded element selections with a muted color. Default shortcut is `Alt + Shift + X` (modifiable in Shortcut Manager).
 - MergeElements.Merge moved to public API
@@ -46,12 +47,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changes
 
-- Modified VertexManipulationTool to inherit from EditorTool
 - Adding a new MenuAction in Samples to merge faces from edges selection
 - Removing preprocessor directives for Unity 2018 and below for Probuilder 5.0
 - Modified the AppendVerticesToEdge to handle edges split for non-convex faces.
 - Removed unused "About" images.
 - Removed unused HDRP shader variants.
+
+### Known issues 
+- Cursor pointer size is not right on Mac OS when using cut tool
 
 ## [4.4.0] - 2020-08-12
 
