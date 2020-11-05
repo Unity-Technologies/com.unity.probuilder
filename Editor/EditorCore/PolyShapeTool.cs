@@ -113,14 +113,14 @@ namespace UnityEditor.ProBuilder
             Event evt = Event.current;
             SceneViewOverlay.Window( m_OverlayTitle, OnOverlayGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle );
 
-            if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
-                return;
-
             if (polygon == null)
             {
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
                 return;
             }
+
+            if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
+                return;
 
             // used when finishing a loop by clicking the first created point
             if (m_NextMouseUpAdvancesMode && evt.type == EventType.MouseUp)
@@ -280,7 +280,8 @@ namespace UnityEditor.ProBuilder
                 RebuildPolyShapeMesh(polygon);
 
                 //Dirty the polygon for serialization (fix for transition between prefab and scene mode)
-                UnityEditor.EditorUtility.SetDirty(polygon);
+                if(polygon != null)
+                    UnityEditor.EditorUtility.SetDirty(polygon);
 
                 if(mode == PolyShape.PolyEditMode.None)
                 {
@@ -544,6 +545,14 @@ namespace UnityEditor.ProBuilder
                  !EditorHandleUtility.IsAppendModifier(evt.modifiers)))
             {
                 m_SelectedIndex = -1;
+            }
+
+            if(evt.type == EventType.Repaint)
+            {
+                Vector3 currentPos = polygon.transform.TransformPoint(m_CurrentPosition);
+                Handles.color = k_HandleColor;
+                Handles.DotHandleCap(-1, currentPos, Quaternion.identity, HandleUtility.GetHandleSize(currentPos) * k_HandleSize, evt.type);
+                Handles.color = Color.white;
             }
 
             if (polygon.polyEditMode == PolyShape.PolyEditMode.Height)
