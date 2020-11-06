@@ -86,18 +86,17 @@ namespace UnityEditor.ProBuilder
 
             if(shapeComp.edited)
             {
-                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.BeginVertical();
+                EditorGUILayout.HelpBox(L10n.Tr("You have manually modified the Shape. Revert manual changes to access to procedural parameters"), MessageType.Info);
+
                 if(GUILayout.Button("Reset Shape"))
                 {
-                    if(UnityEditor.EditorUtility.DisplayDialog(
-                        k_dialogTitle, k_dialogText,
-                        "Continue", "Cancel"))
-                    {
-                        shapeComp.edited = false;
-                        shapeComp.Rebuild();
-                    }
+                    shapeComp.edited = false;
+                    shapeComp.Rebuild();
                 }
                 EditorGUILayout.EndHorizontal();
+
+                GUI.enabled = false;
             }
 
             EditorGUI.BeginChangeCheck();
@@ -128,6 +127,8 @@ namespace UnityEditor.ProBuilder
                     ProBuilderEditor.Refresh();
                 }
             }
+
+            GUI.enabled = true;
         }
     }
 }

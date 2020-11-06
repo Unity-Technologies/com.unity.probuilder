@@ -125,6 +125,9 @@ namespace UnityEngine.ProBuilder.Shapes
             m_Rotation = rotation;
             m_Edited = false;
 
+            if(m_MeshOriginalVertices.Length == 0)
+                return;
+
             var origVerts = new Vector3[m_MeshOriginalVertices.Length];
             Array.Copy(m_MeshOriginalVertices, origVerts, m_MeshOriginalVertices.Length);
 

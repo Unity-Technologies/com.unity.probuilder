@@ -135,30 +135,30 @@ namespace UnityEditor.ProBuilder
             {
                 m_Faces[i] = new FaceData();
             }
-            m_OverlayTitle = new GUIContent("Poly Shape Tool");
+            m_OverlayTitle = new GUIContent("Edit Shape Tool");
             m_SnapAngleContent = new GUIContent("Snap Angle", L10n.Tr("Defines an angle in [1,90] to snap rotation."));
 
-            ToolManager.activeToolChanged += ValidateCurrentTargets;
-            MeshSelection.objectSelectionChanged += ValidateCurrentTargets;
+            // ToolManager.activeToolChanged += ValidateCurrentTargets;
+            // MeshSelection.objectSelectionChanged += ValidateCurrentTargets;
         }
 
-        void ValidateCurrentTargets()
-        {
-            if(ToolManager.IsActiveTool(this))
-            {
-                foreach(var obj in targets)
-                {
-                    var shapeComponent = obj as ShapeComponent;
-                    if(shapeComponent.edited)
-                    {
-                        UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Change Shape");
-                        shapeComponent.SetShape(EditorShapeUtility.CreateCustomShapeFromMesh(shapeComponent));
-                        shapeComponent.edited = false;
-                        ProBuilderEditor.Refresh(false);
-                    }
-                }
-            }
-        }
+        // void ValidateCurrentTargets()
+        // {
+        //     if(ToolManager.IsActiveTool(this))
+        //     {
+        //         foreach(var obj in targets)
+        //         {
+        //             var shapeComponent = obj as ShapeComponent;
+        //             if(shapeComponent.edited)
+        //             {
+        //                 UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Change Shape");
+        //                 shapeComponent.SetShape(EditorShapeUtility.CreateCustomShapeFromMesh(shapeComponent));
+        //                 shapeComponent.edited = false;
+        //                 ProBuilderEditor.Refresh(false);
+        //             }
+        //         }
+        //     }
+        // }
 
         public override void OnToolGUI(EditorWindow window)
         {
@@ -168,7 +168,7 @@ namespace UnityEditor.ProBuilder
             {
                 var shape = obj as ShapeComponent;
 
-                if (shape != null)
+                if (shape != null && !shape.edited)
                 {
                     if(m_BoundsHandleActive && GUIUtility.hotControl == k_HotControlNone)
                         EndBoundsEditing();
@@ -184,37 +184,23 @@ namespace UnityEditor.ProBuilder
 
         void OnOverlayGUI(Object target, SceneView view)
         {
+            foreach(var obj in targets)
+            {
+                var shapeComponent = obj as ShapeComponent;
+                if(shapeComponent.edited)
+                {
+                    EditorGUILayout.HelpBox(
+                        L10n.Tr(
+                            "You have manually modified one or more of the selected Shapes. Revert manual changes to use the tool."),
+                        MessageType.Info);
+                }
+            }
+
             m_snapAngle = EditorGUILayout.IntSlider(m_SnapAngleContent, m_snapAngle, 1, 90);
         }
 
-        // void DisplayShapeResetDialog(ShapeComponent shape)
-        // {
-        //     if(UnityEditor.EditorUtility.DisplayDialog(
-        //         k_dialogTitle, k_dialogText,
-        //         "Continue", "Cancel"))
-        //     {
-        //         shape.edited = false;
-        //         shape.Rebuild();
-        //     }
-        //     else
-        //     {
-        //         ToolManager.RestorePreviousTool();
-        //     }
-        //     m_AskingForReset = false;
-        // }
-
         void DoShapeGUI(ShapeComponent shapeComponent)
         {
-            // if(shape.edited)
-            // {
-            //     if(!m_AskingForReset)
-            //     {
-            //         m_AskingForReset = true;
-            //         EditorApplication.delayCall += () => DisplayShapeResetDialog(shape);
-            //     }
-            //     return;
-            // }
-
             var matrix = IsEditing
                 ? m_ActiveShapeState.positionAndRotationMatrix
                 : Matrix4x4.TRS(shapeComponent.transform.position, shapeComponent.transform.rotation, Vector3.one);

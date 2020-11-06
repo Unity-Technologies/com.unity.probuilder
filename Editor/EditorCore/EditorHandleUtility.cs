@@ -505,6 +505,15 @@ namespace UnityEditor.ProBuilder
             Handles.matrix = s_HandleMatrix.Pop();
         }
 
+        static Vector3 GetBitangent(Vector3 planeNormal)
+        {
+            var rhs = Vector3.forward;
+            if(Mathf.Abs(Vector3.Dot(planeNormal, rhs)) > .9f)
+                rhs = Vector3.right;
+
+            return Vector3.Cross(planeNormal, Vector3.Cross(planeNormal, rhs));
+        }
+
         /// <summary>
         /// Get a plane suitable for mouse input in a scene view.
         /// </summary>
@@ -526,20 +535,13 @@ namespace UnityEditor.ProBuilder
             Plane plane;
             Vector3 bitangent;
 
-            if (GetPlaneFromPickedObject(mousePosition, out plane, out bitangent))
+            if(GetPlaneFromPickedObject(mousePosition, out plane, out bitangent))
                 return new SimpleTuple<Plane, Vector3>(plane, bitangent);
 
             if (!GetPlaneFromProGridsAxis(mousePosition, out plane))
                 plane = GetPlaneFromSceneView();
 
-            var nrm = plane.normal;
-
-            var rhs =  -Vector3.forward;
-            if(nrm == -Vector3.forward || nrm == Vector3.forward)
-                rhs = -Vector3.right;
-
-            var cross1 = Vector3.Cross(nrm, rhs);
-            bitangent = Vector3.Cross(nrm, cross1);
+            bitangent = GetBitangent(plane.normal);
 
             return new SimpleTuple<Plane, Vector3>(plane, bitangent);
         }
@@ -570,9 +572,9 @@ namespace UnityEditor.ProBuilder
                         plane = new Plane(
                             go.transform.TransformDirection(hit.normal),
                             go.transform.TransformPoint(hit.point));
-                        var forward = go.transform.forward;
-                        var dot = Vector3.Dot(plane.normal, forward);
-                        bitangent = Mathf.Abs(dot) > .9f ? go.transform.up : forward;
+
+                        bitangent = GetBitangent(plane.normal);
+
                         return true;
                     }
                 }
