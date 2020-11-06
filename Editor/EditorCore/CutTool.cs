@@ -27,6 +27,12 @@ namespace UnityEditor.ProBuilder
         Texture2D m_CutAddCursorTexture;
         Texture2D m_CurrentCutCursor = null;
 
+        GUIContent m_IconContent;
+        public override GUIContent toolbarIcon
+        {
+            get { return m_IconContent; }
+        }
+
         /// <summary>
         /// Describes the different vertex types on the path.
         /// </summary>
@@ -143,6 +149,13 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
+            m_IconContent = new GUIContent()
+            {
+                image = EditorGUIUtility.LoadIconRequired("CustomTool"),
+                text = "Cut Tool",
+                tooltip = "Cut Tool"
+            };
+
             s_HandleColorUseExistingVertex = Handles.selectedColor;
             s_HandleColorAddVertexOnEdge = Handles.selectedColor;
 
