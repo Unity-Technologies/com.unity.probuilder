@@ -69,9 +69,6 @@ namespace UnityEditor.ProBuilder
             obj.Update();
             EditorGUI.BeginChangeCheck();
 
-            if(shape is CustomShape)
-                EditorGUILayout.HelpBox(L10n.Tr("You are using a Custom Shape. Selecting another shape will lose your changes"), MessageType.Info);
-
             var shapeProperty = obj.FindProperty("m_Shape");
             m_ActiveShapeIndex = Mathf.Max(-1, Array.IndexOf( m_AvailableShapeTypes, shape.GetType()));
             m_ActiveShapeIndex = EditorGUILayout.Popup(m_ActiveShapeIndex, m_ShapeTypes);

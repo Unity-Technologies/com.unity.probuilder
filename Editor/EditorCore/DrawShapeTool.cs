@@ -33,6 +33,7 @@ namespace UnityEditor.ProBuilder
 
         internal Quaternion m_Rotation;
         internal Bounds m_Bounds;
+        readonly Color k_BoundsColor = new Color(.2f, .4f, .8f, 1f);
 
         readonly GUIContent k_ShapeTitle = new GUIContent("Draw Shape");
 
@@ -206,7 +207,7 @@ namespace UnityEditor.ProBuilder
 
         internal void DrawBoundingBox()
         {
-            using (new Handles.DrawingScope(new Color(.2f, .4f, .8f, 1f), Matrix4x4.TRS(m_Bounds.center, m_Rotation.normalized, Vector3.one)))
+            using (new Handles.DrawingScope(k_BoundsColor, Matrix4x4.TRS(m_Bounds.center, m_Rotation.normalized, Vector3.one)))
             {
                 Handles.DrawWireCube(Vector3.zero, m_Bounds.size);
             }

@@ -75,25 +75,6 @@ namespace UnityEditor.ProBuilder
             return shape;
         }
 
-        public static CustomShape CreateCustomShapeFromMesh(ShapeComponent shapeComponent)
-        {
-            //Define new bounds
-            Bounds meshBounds = shapeComponent.meshFilterBounds;
-
-            ProBuilderMesh mesh = shapeComponent.mesh;
-            CustomShape newShape = new CustomShape();
-            newShape.SetGeometry(mesh);
-
-            //Reset rotation as current position is now the default rotation
-            shapeComponent.rotation = Quaternion.identity;
-
-            //Rebuild the whole shape
-            shapeComponent.Rebuild(meshBounds, shapeComponent.transform.rotation);
-            shapeComponent.mesh.SetPivot(PivotLocation.Center);
-            shapeComponent.edited = false;
-
-            return newShape;
-        }
     }
 }
 

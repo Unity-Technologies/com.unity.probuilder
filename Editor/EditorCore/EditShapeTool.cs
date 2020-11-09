@@ -14,6 +14,7 @@ namespace UnityEditor.ProBuilder
         {
             InitTool();
             m_OverlayTitle = new GUIContent("Edit Shape Tool");
+            m_BoundsHandleColor = new Color(.2f, .4f, .8f, 1f);
         }
 
         public override void OnToolGUI(EditorWindow window)
@@ -67,7 +68,7 @@ namespace UnityEditor.ProBuilder
 
             using (new Handles.DrawingScope(matrix))
             {
-                m_BoundsHandle.SetColor(Handles.s_PreselectionColor);
+                m_BoundsHandle.SetColor(m_BoundsHandleColor);
 
                 CopyColliderPropertiesToHandle(shapeComponent.transform, shapeComponent.mesh.mesh.bounds);
 

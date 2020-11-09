@@ -213,7 +213,7 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Use Grid Snapping", EditorSnapSettings.gridSnapEnabled);
+            //EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Use Grid Snapping", EditorSnapSettings.gridSnapEnabled);
 
             EditorGUI.BeginChangeCheck();
 

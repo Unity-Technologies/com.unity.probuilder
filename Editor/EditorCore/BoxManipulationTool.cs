@@ -5,7 +5,6 @@ using UnityEditor.EditorTools;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine.ProBuilder;
 
-
 namespace UnityEditor.ProBuilder
 {
     abstract class BoxManipulationTool : EditorTool
@@ -14,6 +13,7 @@ namespace UnityEditor.ProBuilder
 
         protected BoxBoundsHandle m_BoundsHandle;
         protected bool m_BoundsHandleActive;
+        protected Color m_BoundsHandleColor = Handles.s_SelectedColor;
 
         Vector2 m_StartMousePosition;
         Vector3 m_StartPosition;
@@ -28,7 +28,7 @@ namespace UnityEditor.ProBuilder
         protected GUIContent m_OverlayTitle;
         protected GUIContent m_SnapAngleContent;
 
-        protected FaceData[] m_Faces = new FaceData[6];
+        protected FaceData[] m_Faces;
 
         protected sealed class FaceData
         {
@@ -120,6 +120,7 @@ namespace UnityEditor.ProBuilder
         protected void InitTool()
         {
             m_BoundsHandle = new BoxBoundsHandle();
+            m_Faces = new FaceData[6];
             for (int i = 0; i < m_Faces.Length; i++)
             {
                 m_Faces[i] = new FaceData();
@@ -242,7 +243,7 @@ namespace UnityEditor.ProBuilder
                         }
                     }
 
-                    using (new Handles.DrawingScope(isSelected ? Color.white : Handles.s_PreselectionColor))
+                    using (new Handles.DrawingScope(isSelected ? Color.white : m_BoundsHandleColor))
                     {
                         Handles.DrawAAPolyLine(isSelected ? 10f : 3f, edge.PointA, edge.PointB);
                     }

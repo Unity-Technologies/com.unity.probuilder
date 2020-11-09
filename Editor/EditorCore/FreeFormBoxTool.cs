@@ -10,6 +10,13 @@ using Object = UnityEngine.Object;
 using PBMeshUtility = UnityEngine.ProBuilder.MeshUtility;
 using Math = UnityEngine.ProBuilder.Math;
 
+#if UNITY_2020_2_OR_NEWER
+using ToolManager = UnityEditor.EditorTools.ToolManager;
+#else
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+#endif
+
+
 namespace UnityEditor.ProBuilder
 {
     [EditorTool("Free Form Box", typeof(ProBuilderMesh))]
@@ -36,18 +43,34 @@ namespace UnityEditor.ProBuilder
             m_Modifications = new Dictionary<ProBuilderMesh, InternalModification>();
 
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
+
+#if !UNITY_2020_2_OR_NEWER
+            ToolManager.activeToolChanged += OnActiveToolChanged;
+            ToolManager.activeToolChanging += OnActiveToolChanging;
+#endif
         }
 
         void OnDisable()
         {
+#if !UNITY_2020_2_OR_NEWER
+            ToolManager.activeToolChanged -= OnActiveToolChanged;
+            ToolManager.activeToolChanging -= OnActiveToolChanging;
+#endif
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
         }
 
+#if UNITY_2020_2_OR_NEWER
         /// <summary>
         ///   <para>Invoked after this EditorTool becomes the active tool.</para>
         /// </summary>
         public override void OnActivated()
         {
+#else
+        public void OnActiveToolChanged()
+        {
+            if(!ToolManager.IsActiveTool(this))
+                return;
+#endif
             foreach(var obj in targets)
             {
                 var pbmesh = obj as ProBuilderMesh;
@@ -57,11 +80,18 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+#if UNITY_2020_2_OR_NEWER
         /// <summary>
         ///   <para>Invoked before this EditorTool stops being the active tool.</para>
         /// </summary>
         public override void OnWillBeDeactivated()
         {
+#else
+        public void OnActiveToolChanging()
+        {
+            if(!ToolManager.IsActiveTool(this))
+                return;
+#endif
             m_Modifications.Clear();
         }
 
@@ -124,7 +154,7 @@ namespace UnityEditor.ProBuilder
 
             using (new Handles.DrawingScope(matrix))
             {
-                m_BoundsHandle.SetColor(Handles.s_BoundingBoxHandleColor);
+                m_BoundsHandle.SetColor(m_BoundsHandleColor);
 
                 CopyColliderPropertiesToHandle(mesh.transform, mesh.mesh.bounds);
 
