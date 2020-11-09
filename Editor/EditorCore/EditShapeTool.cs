@@ -10,10 +10,6 @@ namespace UnityEditor.ProBuilder
     [EditorTool("Edit Shape", typeof(ShapeComponent))]
     sealed class EditShapeTool: BoxManipulationTool
     {
-        const int k_HotControlNone = 0;
-
-        bool IsEditing => m_BoundsHandleActive;
-
         void OnEnable()
         {
             InitTool();
@@ -52,6 +48,7 @@ namespace UnityEditor.ProBuilder
                         L10n.Tr(
                             "You have manually modified one or more of the selected Shapes. Revert manual changes to use the tool."),
                         MessageType.Info);
+                    break;
                 }
             }
 
@@ -72,7 +69,7 @@ namespace UnityEditor.ProBuilder
             {
                 m_BoundsHandle.SetColor(Handles.s_PreselectionColor);
 
-                CopyColliderPropertiesToHandle(shapeComponent);
+                CopyColliderPropertiesToHandle(shapeComponent.transform, shapeComponent.mesh.mesh.bounds);
 
                 EditorGUI.BeginChangeCheck();
 
@@ -85,7 +82,7 @@ namespace UnityEditor.ProBuilder
                     CopyHandlePropertiesToCollider(shapeComponent);
                 }
 
-                DoRotateHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.meshFilterBounds);
+                DoRotateHandlesGUI(toolTarget, shapeComponent.mesh, shapeComponent.meshFilterBounds);
             }
         }
 
@@ -98,31 +95,6 @@ namespace UnityEditor.ProBuilder
             UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Rotate Shape");
             shapeComponent.RotateInsideBounds(rotation);
             ProBuilderEditor.Refresh();
-        }
-
-
-        static Vector3 TransformColliderCenterToHandleSpace(Matrix4x4 localToWorldMatrix, Vector3 colliderCenter)
-        {
-            return Handles.inverseMatrix * (localToWorldMatrix * colliderCenter);
-        }
-
-        void CopyColliderPropertiesToHandle(ShapeComponent shape)
-        {
-            // when editing a shape, we don't bother doing the conversion from handle space bounds to model for the
-            // active handle
-            if (IsEditing)
-            {
-                m_BoundsHandle.center = m_ActiveBoundsState.boundsHandleValue.center;
-                m_BoundsHandle.size = m_ActiveBoundsState.boundsHandleValue.size;
-                return;
-            }
-
-            var bounds = shape.mesh.mesh.bounds;
-            var trs = shape.transform.localToWorldMatrix;
-            var lossyScale = shape.transform.lossyScale;
-
-            m_BoundsHandle.center = TransformColliderCenterToHandleSpace(trs, bounds.center);
-            m_BoundsHandle.size = Vector3.Scale(bounds.size, lossyScale);
         }
 
         void CopyHandlePropertiesToCollider(ShapeComponent shape)

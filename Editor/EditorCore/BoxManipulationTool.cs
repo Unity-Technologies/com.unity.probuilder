@@ -10,6 +10,8 @@ namespace UnityEditor.ProBuilder
 {
     abstract class BoxManipulationTool : EditorTool
     {
+        protected const int k_HotControlNone = 0;
+
         protected BoxBoundsHandle m_BoundsHandle;
         protected bool m_BoundsHandleActive;
 
@@ -88,6 +90,9 @@ namespace UnityEditor.ProBuilder
         // Don't recalculate the active bounds during an edit operation, it causes the handles to drift
         protected BoundsState m_ActiveBoundsState;
 
+        protected bool IsEditing => m_BoundsHandleActive;
+
+
         //hashset to avoid drawing twice the same edge
         protected HashSet<EdgeData> edgesToDraw = new HashSet<EdgeData>(new EdgeDataComparer());
 
@@ -143,7 +148,7 @@ namespace UnityEditor.ProBuilder
                 string.Format("Modify {0}", ObjectNames.NicifyVariableName(target.GetType().Name)));
 
             m_BoundsHandleActive = true;
-            var localBounds = mesh.mesh.bounds;
+            Bounds localBounds = mesh.mesh.bounds;
             m_ActiveBoundsState = new BoundsState()
             {
                 positionAndRotationMatrix = Matrix4x4.TRS(mesh.transform.position, mesh.transform.rotation, Vector3.one),
@@ -159,10 +164,9 @@ namespace UnityEditor.ProBuilder
         protected void DoRotateHandlesGUI(Object toolTarget, ProBuilderMesh mesh, Bounds bounds)
         {
             var matrix = mesh.transform.localToWorldMatrix;
-            bool hasRotated = false;
 
             edgesToDraw.Clear();
-            UpdateFaces(bounds.extents);
+            UpdateFaces(bounds);
             using (new Handles.DrawingScope(matrix))
             {
                 foreach(var face in m_Faces)
@@ -180,7 +184,6 @@ namespace UnityEditor.ProBuilder
                     if(RotateEdgeHandle(edgeData, out rot))
                         UpdateTargetRotation(toolTarget, rot);
                 }
-
             }
         }
 
@@ -271,22 +274,36 @@ namespace UnityEditor.ProBuilder
             return hasRotated;
         }
 
-        protected void UpdateFaces(Vector3 extents)
+        protected void UpdateFaces(Bounds bounds)
         {
-            EdgeData edgeX1 = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(-extents.x, extents.y, extents.z));
-            EdgeData edgeX2 = new EdgeData(new Vector3(extents.x, -extents.y, extents.z), new Vector3(-extents.x, -extents.y, extents.z));
-            EdgeData edgeX3 = new EdgeData(new Vector3(extents.x, extents.y, -extents.z), new Vector3(-extents.x, extents.y, -extents.z));
-            EdgeData edgeX4 = new EdgeData(new Vector3(extents.x, -extents.y, -extents.z), new Vector3(-extents.x, -extents.y, -extents.z));
+            Vector3 extents = bounds.extents;
 
-            EdgeData edgeY1 = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(extents.x, -extents.y, extents.z));
-            EdgeData edgeY2 = new EdgeData(new Vector3(-extents.x, extents.y, extents.z), new Vector3(-extents.x, -extents.y, extents.z));
-            EdgeData edgeY3 = new EdgeData(new Vector3(extents.x, extents.y, -extents.z), new Vector3(extents.x, -extents.y, -extents.z));
-            EdgeData edgeY4 = new EdgeData(new Vector3(-extents.x, extents.y, -extents.z), new Vector3(-extents.x, -extents.y, -extents.z));
+            EdgeData edgeX1 = new EdgeData(new Vector3(extents.x, extents.y, extents.z),
+                                new Vector3(-extents.x, extents.y, extents.z));
+            EdgeData edgeX2 = new EdgeData(new Vector3(extents.x, -extents.y, extents.z),
+                                new Vector3(-extents.x, -extents.y, extents.z));
+            EdgeData edgeX3 = new EdgeData(new Vector3(extents.x, extents.y, -extents.z),
+                                new Vector3(-extents.x, extents.y, -extents.z));
+            EdgeData edgeX4 = new EdgeData(new Vector3(extents.x, -extents.y, -extents.z),
+                                new Vector3(-extents.x, -extents.y, -extents.z));
 
-            EdgeData edgeZ1 = new EdgeData(new Vector3(extents.x, extents.y, extents.z), new Vector3(extents.x, extents.y, -extents.z));
-            EdgeData edgeZ2 = new EdgeData(new Vector3(-extents.x, extents.y, extents.z), new Vector3(-extents.x, extents.y, -extents.z));
-            EdgeData edgeZ3 = new EdgeData(new Vector3(extents.x, -extents.y, extents.z), new Vector3(extents.x, -extents.y, -extents.z));
-            EdgeData edgeZ4 = new EdgeData(new Vector3(-extents.x, -extents.y, extents.z), new Vector3(-extents.x, -extents.y, -extents.z));
+            EdgeData edgeY1 = new EdgeData(new Vector3(extents.x, extents.y, extents.z),
+                                new Vector3(extents.x, -extents.y, extents.z) );
+            EdgeData edgeY2 = new EdgeData(new Vector3(-extents.x, extents.y, extents.z),
+                                new Vector3(-extents.x, -extents.y, extents.z));
+            EdgeData edgeY3 = new EdgeData(new Vector3(extents.x, extents.y, -extents.z),
+                                new Vector3(extents.x, -extents.y, -extents.z));
+            EdgeData edgeY4 = new EdgeData(new Vector3(-extents.x, extents.y, -extents.z),
+                                new Vector3(-extents.x, -extents.y, -extents.z));
+
+            EdgeData edgeZ1 = new EdgeData(new Vector3(extents.x, extents.y, extents.z),
+                                new Vector3(extents.x, extents.y, -extents.z));
+            EdgeData edgeZ2 = new EdgeData(new Vector3(-extents.x, extents.y, extents.z),
+                                new Vector3(-extents.x, extents.y, -extents.z));
+            EdgeData edgeZ3 = new EdgeData(new Vector3(extents.x, -extents.y, extents.z),
+                                new Vector3(extents.x, -extents.y, -extents.z));
+            EdgeData edgeZ4 = new EdgeData(new Vector3(-extents.x, -extents.y, extents.z),
+                                new Vector3(-extents.x, -extents.y, -extents.z));
 
             // -X
             var pos = m_BoundsHandle.center - new Vector3(extents.x, 0, 0);
@@ -371,6 +388,24 @@ namespace UnityEditor.ProBuilder
                 m_EdgeDataToNeighborsEdges[edgeZ3]= new SimpleTuple<EdgeData, EdgeData>(edgeZ1, edgeZ4);
                 m_EdgeDataToNeighborsEdges[edgeZ4]= new SimpleTuple<EdgeData, EdgeData>(edgeZ3, edgeZ2);
             }
+        }
+
+        protected void CopyColliderPropertiesToHandle(Transform transform, Bounds bounds)
+        {
+            // when editing a shape, we don't bother doing the conversion from handle space bounds to model for the
+            // active handle
+            if (IsEditing)
+            {
+                m_BoundsHandle.center = m_ActiveBoundsState.boundsHandleValue.center;
+                m_BoundsHandle.size = m_ActiveBoundsState.boundsHandleValue.size;
+                return;
+            }
+
+            var localToWorld = transform.localToWorldMatrix;
+            var lossyScale = transform.lossyScale;
+
+            m_BoundsHandle.center = Handles.inverseMatrix * (localToWorld * bounds.center);
+            m_BoundsHandle.size = Vector3.Scale(bounds.size, lossyScale);
         }
 
     }
