@@ -17,6 +17,12 @@ namespace UnityEditor.ProBuilder
     {
         const float k_DefaultSnapValue = .25f;
 
+        GUIContent m_IconContent;
+        public override GUIContent toolbarIcon
+        {
+            get { return m_IconContent; }
+        }
+
         static Pref<HandleOrientation> s_HandleOrientation = new Pref<HandleOrientation>("editor.handleOrientation", HandleOrientation.World, SettingsScope.User);
         static Pref<PivotPoint> s_PivotPoint = new Pref<PivotPoint>("editor.pivotPoint", PivotPoint.Center, SettingsScope.User);
 
@@ -188,6 +194,16 @@ namespace UnityEditor.ProBuilder
         }
 
         internal abstract MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot);
+
+        void OnEnable()
+        {
+            m_IconContent = new GUIContent()
+            {
+                image = EditorGUIUtility.LoadIconRequired("CustomTool"),
+                text = "VertexManipulationTool",
+                tooltip = "VertexManipulationTool"
+            };
+        }
 
         public override void OnToolGUI(EditorWindow window)
         {

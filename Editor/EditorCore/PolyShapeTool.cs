@@ -23,6 +23,12 @@ namespace UnityEditor.ProBuilder
 
         GUIContent m_OverlayTitle;
 
+        GUIContent m_IconContent;
+        public override GUIContent toolbarIcon
+        {
+            get { return m_IconContent; }
+        }
+
         Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
 
         Plane plane
@@ -83,6 +89,13 @@ namespace UnityEditor.ProBuilder
         void OnEnable()
         {
             m_OverlayTitle = new GUIContent("Poly Shape Tool");
+
+            m_IconContent = new GUIContent()
+            {
+                image = EditorGUIUtility.LoadIconRequired("CustomTool"),
+                text = "PolyShape Tool",
+                tooltip = "PolyShape Tool"
+            };
 
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
