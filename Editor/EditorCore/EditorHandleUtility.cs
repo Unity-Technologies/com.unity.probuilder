@@ -511,7 +511,7 @@ namespace UnityEditor.ProBuilder
             if(Mathf.Abs(Vector3.Dot(planeNormal, rhs)) > .9f)
                 rhs = Vector3.right;
 
-            return Vector3.Cross(planeNormal, Vector3.Cross(planeNormal, rhs));
+            return Vector3.Cross(planeNormal, Vector3.Cross( rhs , planeNormal));
         }
 
         /// <summary>

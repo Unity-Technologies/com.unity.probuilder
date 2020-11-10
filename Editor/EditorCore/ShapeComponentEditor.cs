@@ -75,10 +75,13 @@ namespace UnityEditor.ProBuilder
 
             if (EditorGUI.EndChangeCheck())
             {
-                UndoUtility.RegisterCompleteObjectUndo(shapeComp, "Change Shape");
                 var type = m_AvailableShapeTypes[m_ActiveShapeIndex];
-                shapeComp.SetShape(EditorShapeUtility.CreateShape(type));
-                ProBuilderEditor.Refresh();
+                if(shape.GetType() != type)
+                {
+                    UndoUtility.RegisterCompleteObjectUndo(shapeComp, "Change Shape");
+                    shapeComp.SetShape(EditorShapeUtility.CreateShape(type));
+                    ProBuilderEditor.Refresh();
+                }
             }
 
             if(shapeComp.edited)

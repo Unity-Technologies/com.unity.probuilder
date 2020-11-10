@@ -78,6 +78,7 @@ namespace UnityEditor.ProBuilder
         {
             var shape = ShapeGenerator.CreateShape(DrawShapeTool.activeShapeType).GetComponent<ShapeComponent>();
             shape.shape = EditorShapeUtility.GetLastParams(shape.shape.GetType());
+            shape.shape.Forward = tool.m_ShapeForward;
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
 
             shape.Rebuild(tool.m_Bounds, tool.m_Rotation);

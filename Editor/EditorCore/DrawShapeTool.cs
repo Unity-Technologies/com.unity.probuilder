@@ -19,7 +19,7 @@ namespace UnityEditor.ProBuilder
 
         internal ShapeComponent m_Shape;
         internal bool m_IsShapeInit;
-        Vector3 m_ShapeForward;
+        internal Vector3 m_ShapeForward;
 
         Editor m_ShapeEditor;
 

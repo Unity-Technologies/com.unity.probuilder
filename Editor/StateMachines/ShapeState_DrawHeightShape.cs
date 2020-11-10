@@ -17,6 +17,8 @@ namespace UnityEditor.ProBuilder
             DrawShapeTool.s_Size.value = tool.m_Shape.size;
             DrawShapeTool.s_ActiveShapeIndex.value = DrawShapeTool.s_AvailableShapeTypes.IndexOf(tool.m_Shape.shape.GetType());
 
+            EditorShapeUtility.SaveParams(tool.m_Shape.shape);
+
             return NextState();
         }
 

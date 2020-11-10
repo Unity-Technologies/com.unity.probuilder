@@ -74,9 +74,7 @@ namespace UnityEditor.ProBuilder
             foreach(var obj in targets)
             {
                 var pbmesh = obj as ProBuilderMesh;
-                pbmesh.SetPivot(pbmesh.transform.position + pbmesh.mesh.bounds.center);
-
-                m_Modifications.Add(pbmesh, new InternalModification(pbmesh.positionsInternal));
+                RegisterMesh(pbmesh);
             }
         }
 
@@ -111,8 +109,7 @@ namespace UnityEditor.ProBuilder
                 var pbmesh = obj as ProBuilderMesh;
                 if(!m_Modifications.ContainsKey(pbmesh))
                 {
-                    pbmesh.SetPivot(pbmesh.transform.position + pbmesh.mesh.bounds.center);
-                    m_Modifications.Add(pbmesh, new InternalModification(pbmesh.positionsInternal));
+                    RegisterMesh(pbmesh);
                 }
             }
         }
@@ -164,6 +161,7 @@ namespace UnityEditor.ProBuilder
                 if (EditorGUI.EndChangeCheck())
                 {
                     BeginBoundsEditing(mesh);
+                    UndoUtility.RegisterCompleteObjectUndo(mesh, "Scale Mesh Bounds "+mesh.name);
                     CopyHandlePropertiesToCollider(mesh);
                 }
 
@@ -179,6 +177,8 @@ namespace UnityEditor.ProBuilder
 
             if ( rotation.Equals(Quaternion.identity) )
                 return;
+
+            UndoUtility.RegisterCompleteObjectUndo(mesh, "Rotate mesh "+mesh.name);
 
             InternalModification currentModification = m_Modifications[mesh];
             currentModification.rotation = rotation * currentModification.rotation;
@@ -199,6 +199,19 @@ namespace UnityEditor.ProBuilder
         protected override void OnOverlayGUI(Object target, SceneView view)
         {
             m_snapAngle = EditorGUILayout.IntSlider(m_SnapAngleContent, m_snapAngle, 1, 90);
+        }
+
+        void RegisterMesh(ProBuilderMesh pbmesh)
+        {
+            var boundsOffset = pbmesh.mesh.bounds.center;
+            if(boundsOffset.sqrMagnitude > float.Epsilon)
+            {
+                Undo.RecordObject(pbmesh, "Modifying Mesh Pivot");
+                pbmesh.SetPivot(pbmesh.transform.position
+                                + pbmesh.transform.TransformDirection(boundsOffset));
+            }
+
+            m_Modifications.Add(pbmesh, new InternalModification(pbmesh.positionsInternal));
         }
 
         void CopyHandlePropertiesToCollider(ProBuilderMesh mesh)
