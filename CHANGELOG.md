@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [4.4.1] - 2020-11-10
+
+- [case: 1286720] Fixed `Bezier Shape` and `Poly Shape` component preventing build when `Script Stripping` was enabled.
+
 ## [4.4.0] - 2020-08-12
 
 ### Features
@@ -23,7 +27,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1259506] Fixed shortcut not being saved in 2018.4.
 - Fixed vertex colors not applying gamma-correct value when color space is Linear.
 - [case: 1251574] Disable export options when no probuilder meshes are selected
-- [case: 1267383] Fixed `Bezier Shape` and `Poly Shape` component preventing build when `Script Stripping` was enabled.
 - [case: 1248708] Fixed physx error when welding all vertices to a singularity.
 - Fixed tooltips always clamping to the left of the screen on secondary monitors.
 - Fixed `EditorUtility.SetIconEnabled` not respecting the enabled parameter.
