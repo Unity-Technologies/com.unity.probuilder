@@ -178,7 +178,7 @@ namespace UnityEditor.ProBuilder
             if ( rotation.Equals(Quaternion.identity) )
                 return;
 
-            UndoUtility.RegisterCompleteObjectUndo(mesh, "Rotate mesh "+mesh.name);
+            UndoUtility.RegisterCompleteObjectUndo(mesh, "Rotate mesh");
 
             InternalModification currentModification = m_Modifications[mesh];
             currentModification.rotation = rotation * currentModification.rotation;

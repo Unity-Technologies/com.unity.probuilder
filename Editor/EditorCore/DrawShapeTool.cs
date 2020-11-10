@@ -41,6 +41,12 @@ namespace UnityEditor.ProBuilder
         internal static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
         internal static Pref<Vector3> s_Size = new Pref<Vector3>("ShapeBuilder.Size", Vector3.zero);
 
+        GUIContent m_IconContent;
+        public override GUIContent toolbarIcon
+        {
+            get { return m_IconContent; }
+        }
+
         public static Type activeShapeType
         {
             get { return s_ActiveShapeIndex < 0 ? typeof(Cube) : s_AvailableShapeTypes[s_ActiveShapeIndex]; }
@@ -54,6 +60,14 @@ namespace UnityEditor.ProBuilder
         void OnEnable()
         {
             m_CurrentState = InitStateMachine();
+
+            m_IconContent = new GUIContent()
+            {
+                image = EditorGUIUtility.LoadIconRequired("CustomTool"),
+                text = "Draw Shape Tool",
+                tooltip = "Draw Shape Tool"
+            };
+
             Undo.undoRedoPerformed += HandleUndoRedoPerformed;
             MeshSelection.objectSelectionChanged += OnSelectionChanged;
         }
