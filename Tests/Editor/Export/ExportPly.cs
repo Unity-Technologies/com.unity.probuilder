@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Linq;
-using UnityEngine;
 using UnityEditor.ProBuilder;
 using NUnit.Framework;
 using System.Threading;
@@ -30,7 +29,7 @@ class ExportPly : TemporaryAssetTest
         finally
         {
             Thread.CurrentThread.CurrentCulture = current;
-            UnityEngine.Object.DestroyImmediate(cube);
+            UnityEngine.Object.DestroyImmediate(cube.gameObject);
         }
     }
 }

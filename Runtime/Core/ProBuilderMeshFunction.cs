@@ -239,7 +239,7 @@ namespace UnityEngine.ProBuilder
             positions = points;
             m_Faces = f;
             m_SharedVertices = SharedVertex.GetSharedVerticesWithPositions(points);
-            InvalidateSharedVertexLookup();
+            InvalidateCaches();
             ToMesh();
             Refresh();
         }
