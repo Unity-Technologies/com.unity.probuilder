@@ -28,7 +28,7 @@ public class CollapseVerticesTest
         CloseWindows<ProBuilderEditor>();
         EditorWindow.GetWindow<ProBuilderEditor>();
         Assert.That(ProBuilderEditor.instance, Is.Not.Null);
-        m_PBMesh = ShapeGenerator.CreateShape(typeof(Cube));
+        m_PBMesh = ShapeFactory.Instantiate(typeof(Cube));
         ProBuilderEditor.selectMode = SelectMode.Vertex;
         ProBuilderEditor.SyncEditorToolSelectMode();
         Assume.That(ProBuilderEditor.selectMode, Is.EqualTo(SelectMode.Vertex));

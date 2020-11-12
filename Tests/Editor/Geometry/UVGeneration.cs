@@ -19,7 +19,7 @@ public class UVGeneration
 
     static ProBuilderMesh GenerateCone(PivotLocation pivotType, float radius, float height, int subdivAxis)
     {
-        ProBuilderMesh pb = ShapeGenerator.CreateShape(typeof(Cone), pivotType);
+        ProBuilderMesh pb = ShapeFactory.Instantiate(typeof(Cone), pivotType);
         Cone cone = pb.GetComponent<ShapeComponent>().shape as Cone;
         cone.m_NumberOfSides = subdivAxis;
         cone.RebuildMesh(pb, new Vector3(radius, height, radius));

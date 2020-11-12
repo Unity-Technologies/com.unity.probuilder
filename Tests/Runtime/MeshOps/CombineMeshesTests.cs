@@ -18,9 +18,9 @@ class CombineMeshesTests
     [SetUp]
     public void SetUp()
     {
-        m_mesh1 = ShapeGenerator.CreateShape<Cube>();
-        m_mesh2 = ShapeGenerator.CreateShape<Cone>();
-        m_mesh3 = ShapeGenerator.CreateShape<Cylinder>();
+        m_mesh1 = ShapeFactory.Instantiate<Cube>();
+        m_mesh2 = ShapeFactory.Instantiate<Cone>();
+        m_mesh3 = ShapeFactory.Instantiate<Cylinder>();
         m_mesh1.gameObject.AddComponent<BoxCollider>();
         m_meshScale = new Vector3(2.0f, 2.0f, 2.0f);
         m_mesh1.gameObject.transform.localScale = m_meshScale;;

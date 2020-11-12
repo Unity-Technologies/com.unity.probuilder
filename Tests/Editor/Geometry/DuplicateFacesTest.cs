@@ -14,7 +14,7 @@ class DuplicateFacesTest
     [SetUp]
     public void Setup()
     {
-        ProBuilderMesh shape1 = ShapeGenerator.CreateShape<Cube>();
+        ProBuilderMesh shape1 = ShapeFactory.Instantiate<Cube>();
         shape1.transform.position = Vector3.zero - shape1.GetComponent<MeshRenderer>().bounds.center;
 
         selectables = new ProBuilderMesh[]

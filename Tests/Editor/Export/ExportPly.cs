@@ -12,7 +12,7 @@ class ExportPly : TemporaryAssetTest
     [Test]
     public static void NumbersAreCultureInvariant()
     {
-        var cube = ShapeGenerator.CreateShape<Cube>();
+        var cube = ShapeFactory.Instantiate<Cube>();
         var current = Thread.CurrentThread.CurrentCulture;
 
         try

@@ -18,7 +18,7 @@ class RectSelection
         camera = new GameObject("Camera", typeof(Camera)).GetComponent<Camera>();
         camera.transform.position = new Vector3(.3f, 2.2f, -3f);
 
-        ProBuilderMesh shape = ShapeGenerator.CreateShape<Torus>();
+        ProBuilderMesh shape = ShapeFactory.Instantiate<Torus>();
         shape.transform.position = Vector3.zero - shape.GetComponent<MeshRenderer>().bounds.center;
 
         camera.transform.LookAt(shape.transform);

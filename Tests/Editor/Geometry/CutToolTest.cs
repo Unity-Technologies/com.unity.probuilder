@@ -30,7 +30,7 @@ public class CutToolTest
 
         Assume.That(ProBuilderEditor.instance, Is.Not.Null);
 
-        m_PBMesh = ShapeGenerator.CreateShape(typeof(UnityEngine.ProBuilder.Shapes.Plane));
+        m_PBMesh = ShapeFactory.Instantiate(typeof(UnityEngine.ProBuilder.Shapes.Plane));
         MeshSelection.SetSelection(m_PBMesh.gameObject);
         MeshSelection.OnObjectSelectionChanged();
 

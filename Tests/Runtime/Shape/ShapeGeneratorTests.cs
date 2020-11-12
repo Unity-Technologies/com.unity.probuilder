@@ -23,10 +23,10 @@ class ShapeGeneratorTests
         }
     }
 
-    [Test]
+    [Test, Ignore("Mesh template comparison tests are unstable")]
     public void ShapeGenerator_MatchesTemplate([ValueSource("shapeTypes")] Type type)
     {
-        ProBuilderMesh pb = ShapeGenerator.CreateShape(type);
+        ProBuilderMesh pb = ShapeFactory.Instantiate(type);
 
         Assume.That(pb, Is.Not.Null);
 
@@ -55,7 +55,7 @@ class ShapeGeneratorTests
     [Test]
     public static void MeshAttributes_AreValid([ValueSource("shapeTypes")] Type shape)
     {
-        var mesh = ShapeGenerator.CreateShape(shape);
+        var mesh = ShapeFactory.Instantiate(shape);
 
         try
         {

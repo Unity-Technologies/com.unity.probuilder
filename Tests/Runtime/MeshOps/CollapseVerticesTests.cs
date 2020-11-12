@@ -10,7 +10,7 @@ static class CollapseVerticesTests
     [Test]
     public static void CollapseToFirst_MatchesTemplate()
     {
-        var cube = ShapeGenerator.CreateShape<Cube>();
+        var cube = ShapeFactory.Instantiate<Cube>();
         var res = cube.MergeVertices(new[] { 0, 1 }, true);
 
         Assert.AreEqual(3, res);
@@ -33,7 +33,7 @@ static class CollapseVerticesTests
     [Test]
     public static void CollapseToCenter_MatchesTemplate()
     {
-        var cube = ShapeGenerator.CreateShape<Cube>();
+        var cube = ShapeFactory.Instantiate<Cube>();
         cube.MergeVertices(new[] { 0, 1 });
 
         cube.ToMesh();

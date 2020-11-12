@@ -32,7 +32,7 @@ static class DeleteElementsTests
     [Test, Ignore("Mesh template tests are unstable")]
     public static void DeleteFirstFace_CreatesValidMesh([ValueSource("shapeTypes")] Type shape)
     {
-        var mesh = ShapeGenerator.CreateShape(shape);
+        var mesh = ShapeFactory.Instantiate(shape);
 
         try
         {
@@ -62,7 +62,7 @@ static class DeleteElementsTests
     [Test]
     public static void DeleteRandomFace_CreatesValidMesh([ValueSource("shapeTypes")] Type shape)
     {
-        var mesh = ShapeGenerator.CreateShape(shape);
+        var mesh = ShapeFactory.Instantiate(shape);
 
         try
         {
@@ -89,7 +89,7 @@ static class DeleteElementsTests
     [Test]
     public static void DeleteAllFaces_CreatesValidMesh([ValueSource("shapeTypes")] Type shape)
     {
-        var mesh = ShapeGenerator.CreateShape(shape);
+        var mesh = ShapeFactory.Instantiate(shape);
 
         try
         {

@@ -28,7 +28,7 @@ static class SubdivideElementsTests
     [Test]
     public static void SubdivideFirstFace_CreatesValidMesh([ValueSource("shapeTypes")] Type shape)
     {
-        var pb = ShapeGenerator.CreateShape(shape);
+        var pb = ShapeFactory.Instantiate(shape);
 
         try
         {
@@ -52,7 +52,7 @@ static class SubdivideElementsTests
     [Test]
     public static void SubdivideObject_RetainsMaterial()
     {
-        var mesh = ShapeGenerator.CreateShape<Cube>();
+        var mesh = ShapeFactory.Instantiate<Cube>();
 
         mesh.facesInternal[0].submeshIndex = 1;
 

@@ -12,7 +12,7 @@ static class CopyPaste
     [Test]
     public static void CopyWithVerify_CreatesNewMeshAsset()
     {
-        var original = ShapeGenerator.CreateShape<Cube>();
+        var original = ShapeFactory.Instantiate<Cube>();
         var copy = UObject.Instantiate(original);
 
         try
@@ -35,7 +35,7 @@ static class CopyPaste
     [Test]
     public static void Copy_ReferencesOriginalMesh()
     {
-        var original = ShapeGenerator.CreateShape<Cube>();
+        var original = ShapeFactory.Instantiate<Cube>();
         var copy = UObject.Instantiate(original);
 
         try

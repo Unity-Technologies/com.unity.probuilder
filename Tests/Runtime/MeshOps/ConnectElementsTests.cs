@@ -28,7 +28,7 @@ static class ConnectElementsTests
     [Test]
     public static void ConnectEdges_CreatesValidGeometry([ValueSource("shapeTypes")] Type shapeType)
     {
-        var mesh = ShapeGenerator.CreateShape(shapeType);
+        var mesh = ShapeFactory.Instantiate(shapeType);
 
         Assume.That(mesh, Is.Not.Null);
         Assume.That(mesh.faceCount, Is.GreaterThan(0));
@@ -59,7 +59,7 @@ static class ConnectElementsTests
     [Test]
     public static void ConnectEdges_RetainsMaterial()
     {
-        var mesh = ShapeGenerator.CreateShape<Cube>();
+        var mesh = ShapeFactory.Instantiate<Cube>();
 
         mesh.renderer.sharedMaterials = new[]
         {

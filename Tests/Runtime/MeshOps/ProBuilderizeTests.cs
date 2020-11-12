@@ -13,7 +13,7 @@ class ProBuilderizeTests : TemporaryAssetTest
     [Test]
     public static void ImportCube_MatchesDefaultCube()
     {
-        var pb = ShapeGenerator.CreateShape<Cube>();
+        var pb = ShapeFactory.Instantiate<Cube>();
 
         try
         {

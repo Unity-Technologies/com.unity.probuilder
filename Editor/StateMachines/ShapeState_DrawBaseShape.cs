@@ -97,7 +97,7 @@ namespace UnityEditor.ProBuilder
 
         public void CreateLastShape(Vector3 position)
         {
-            var shape = ShapeGenerator.CreateShape(DrawShapeTool.activeShapeType).GetComponent<ShapeComponent>();
+            var shape = ShapeFactory.Instantiate(DrawShapeTool.activeShapeType).GetComponent<ShapeComponent>();
             shape.shape = EditorShapeUtility.GetLastParams(shape.shape.GetType());;
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
 

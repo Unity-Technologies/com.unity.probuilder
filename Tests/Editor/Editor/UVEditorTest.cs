@@ -23,7 +23,7 @@ public class UVEditorWindow
 
         UVEditor.MenuOpenUVEditor();
 
-        m_cube = ShapeGenerator.CreateShape<Cube>();
+        m_cube = ShapeFactory.Instantiate<Cube>();
         UnityEditor.ProBuilder.EditorUtility.InitObject(m_cube);
     }
 

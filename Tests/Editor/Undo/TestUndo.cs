@@ -10,7 +10,7 @@ static class UndoTests
     [Test]
     public static void RegisterComplete()
     {
-        var cube = ShapeGenerator.CreateShape<Cube>();
+        var cube = ShapeFactory.Instantiate<Cube>();
         var duplicate = UnityEngine.Object.Instantiate(cube.gameObject).GetComponent<ProBuilderMesh>();
         duplicate.MakeUnique();
 
