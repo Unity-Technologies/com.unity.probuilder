@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 #if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
 #else
@@ -27,7 +28,7 @@ public class CollapseVerticesTest
         CloseWindows<ProBuilderEditor>();
         EditorWindow.GetWindow<ProBuilderEditor>();
         Assert.That(ProBuilderEditor.instance, Is.Not.Null);
-        m_PBMesh = ShapeGenerator.CreateShape(ShapeType.Cube);
+        m_PBMesh = ShapeGenerator.CreateShape(typeof(Cube));
         ProBuilderEditor.selectMode = SelectMode.Vertex;
         ProBuilderEditor.SyncEditorToolSelectMode();
         Assume.That(ProBuilderEditor.selectMode, Is.EqualTo(SelectMode.Vertex));

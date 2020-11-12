@@ -9,6 +9,7 @@ using NUnit.Framework;
 using System.Threading;
 using UnityEditor;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 
 class ExportObj : TemporaryAssetTest
 {

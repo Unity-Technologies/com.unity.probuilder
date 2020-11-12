@@ -6,6 +6,7 @@ using UnityEngine.ProBuilder.Tests.Framework;
 using UnityEngine.TestTools;
 using UnityEditor;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 
 static class CreateDestroy
 {

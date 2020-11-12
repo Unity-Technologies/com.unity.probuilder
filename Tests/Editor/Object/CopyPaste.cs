@@ -5,6 +5,7 @@ using NUnit.Framework;
 using UnityEngine.ProBuilder.Tests.Framework;
 using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 
 static class CopyPaste
 {

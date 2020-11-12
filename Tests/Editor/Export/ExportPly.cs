@@ -6,6 +6,7 @@ using NUnit.Framework;
 using System.Threading;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Tests.Framework;
+using UnityEngine.ProBuilder.Shapes;
 
 class ExportPly : TemporaryAssetTest
 {

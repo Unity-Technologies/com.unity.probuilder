@@ -15,6 +15,7 @@ using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 #endif
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.SceneManagement;
+using UnityEngine.ProBuilder.Shapes;
 
 namespace UnityEngine.ProBuilder.Tests.Framework
 {

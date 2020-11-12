@@ -5,6 +5,7 @@ using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEditor;
+using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.TestTools;
 
 class RectSelection

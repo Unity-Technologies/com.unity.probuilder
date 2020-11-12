@@ -3,6 +3,7 @@ using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 using UObject = UnityEngine.Object;
 using UnityEngine.ProBuilder.Tests.Framework;
 

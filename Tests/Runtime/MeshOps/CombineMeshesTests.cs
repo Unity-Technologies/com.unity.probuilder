@@ -6,6 +6,7 @@ using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Tests.Framework;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.Shapes;
 
 class CombineMeshesTests
 {

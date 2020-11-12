@@ -3,6 +3,7 @@ using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 
 class SelectMaterial
 {

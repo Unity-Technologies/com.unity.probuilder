@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEngine;
+using UnityEngine.ProBuilder.Shapes;
 
 public class UVGeneration
 {

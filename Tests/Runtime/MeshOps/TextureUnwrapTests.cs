@@ -3,13 +3,15 @@ using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.ProBuilder.Tests.Framework;
+using Sprite = UnityEngine.Sprite;
 
 static class TextureUnwrapTests
 {
     static readonly Type[] offsetRotationShapes = new Type[]
     {
-        typeof(UnityEngine.ProBuilder.Sprite),
+        typeof(UnityEngine.ProBuilder.Shapes.Sprite),
         typeof(Stairs)
     };
 
@@ -123,7 +125,7 @@ static class TextureUnwrapTests
     [Test]
     public static void SetFillMode_IsAppliedToMesh([ValueSource("fillModeValues")] AutoUnwrapSettings.Fill fill)
     {
-        var shape = ShapeGenerator.CreateShape<UnityEngine.ProBuilder.Sprite>();
+        var shape = ShapeGenerator.CreateShape<UnityEngine.ProBuilder.Shapes.Sprite>();
 
         Assume.That(shape, Is.Not.Null);
 

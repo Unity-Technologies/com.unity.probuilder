@@ -7,6 +7,7 @@ using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Tests.Framework;
 using System.Collections.Generic;
+using UnityEngine.ProBuilder.Shapes;
 
 static class DeleteElementsTests
 {

@@ -4,6 +4,7 @@ using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Tests.Framework;
 using System.Collections.Generic;
 using System;
+using UnityEngine.ProBuilder.Shapes;
 
 class ShapeGeneratorTests
 {
