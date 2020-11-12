@@ -1,6 +1,4 @@
 using UnityEngine;
-using System.Linq;
-using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
