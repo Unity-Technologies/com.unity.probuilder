@@ -49,12 +49,12 @@ namespace UnityEngine.ProBuilder
         /// <returns>A new GameObject with the ProBuilderMesh initialized to the primitve shape.</returns>
         public static ProBuilderMesh CreateShape(Shape shape, PivotLocation pivotType = PivotLocation.Center)
         {
-            ProBuilderMesh pb = null;
-            var obj = new GameObject("Shape").AddComponent<ShapeComponent>();
+            var go = new GameObject("Shape");
+            ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
+            var obj = go.AddComponent<ShapeComponent>();
 
             obj.size = Vector3.one;
             obj.SetShape(shape);
-            pb = obj.mesh;
 
             if (pb == null)
             {
