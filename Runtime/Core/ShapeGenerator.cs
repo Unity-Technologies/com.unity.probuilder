@@ -1,6 +1,8 @@
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using System;
+using System.Globalization;
+using System.Reflection;
 
 namespace UnityEngine.ProBuilder
 {
@@ -34,11 +36,25 @@ namespace UnityEngine.ProBuilder
         /// <returns>A new GameObject with the ProBuilderMesh initialized to the primitve shape.</returns>
         public static ProBuilderMesh CreateShape(Type shapeType, PivotLocation pivotType = PivotLocation.Center)
         {
+            if (shapeType == null)
+                throw new ArgumentNullException("shapeType", "Cannot instantiate a null shape.");
+
             if (shapeType.IsAssignableFrom(typeof(Shape)))
                 throw new ArgumentException("Type needs to derive from Shape");
 
-            var shape = Activator.CreateInstance(shapeType) as Shape;
-            return CreateShape(shape, pivotType);
+            try
+            {
+                var shape = Activator.CreateInstance(shapeType,
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance,
+                    null, null, null, null) as Shape;
+                return CreateShape(shape, pivotType);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Failed creating shape \"{shapeType}\". Shapes must contain an empty constructor.\n{e}");
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -49,28 +65,23 @@ namespace UnityEngine.ProBuilder
         /// <returns>A new GameObject with the ProBuilderMesh initialized to the primitve shape.</returns>
         public static ProBuilderMesh CreateShape(Shape shape, PivotLocation pivotType = PivotLocation.Center)
         {
-            var go = new GameObject("Shape");
-            ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
-            var obj = go.AddComponent<ShapeComponent>();
+            if (shape == null)
+                throw new ArgumentNullException("shape", "Cannot instantiate a null shape.");
 
-            obj.size = Vector3.one;
-            obj.SetShape(shape);
+            var shapeComponent = new GameObject("Shape").AddComponent<ShapeComponent>();
+            shapeComponent.size = Vector3.one;
+            shapeComponent.SetShape(shape);
+            ProBuilderMesh pb = shapeComponent.mesh;
+            pb.renderer.sharedMaterial = BuiltinMaterials.defaultMaterial;
 
-            if (pb == null)
-            {
-#if DEBUG
-                Log.Error(shape.ToString() + " type has no default!");
-#endif
-                return null;
-            }
-
+            // Torus shape should implement this itself
             if (shape.GetType() == typeof(Torus))
-            {
                 UVEditing.ProjectFacesBox(pb, pb.facesInternal);
-            }
 
-            ShapeAttribute attribute = Attribute.GetCustomAttribute(shape.GetType(), typeof(ShapeAttribute)) as ShapeAttribute;
-            pb.gameObject.name = attribute != null ? attribute.name : shape.GetType().ToString();
+            var attribute = Attribute.GetCustomAttribute(shape.GetType(), typeof(ShapeAttribute));
+
+            if(attribute is ShapeAttribute shapeAttrib)
+                pb.gameObject.name = shapeAttrib.name;
 
             return pb;
         }
