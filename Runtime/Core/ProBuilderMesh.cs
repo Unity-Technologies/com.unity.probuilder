@@ -471,7 +471,7 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         /// <param name="vertices">The list that will be filled by the method.</param>
         /// <returns></returns>
-        public void GetVerticesInList(IList<Vertex> vertices)
+        internal void GetVerticesInList(IList<Vertex> vertices)
         {
             int vc = vertexCount;
 
