@@ -2,7 +2,6 @@
 
 namespace UnityEngine.ProBuilder.Shapes
 {
-    [RequireComponent(typeof(ProBuilderMesh))]
     public sealed class ShapeComponent : MonoBehaviour
     {
         [SerializeReference]
@@ -51,7 +50,15 @@ namespace UnityEngine.ProBuilder.Shapes
         /// </summary>
         public ProBuilderMesh mesh
         {
-            get { return m_Mesh == null ? m_Mesh = GetComponent<ProBuilderMesh>() : m_Mesh; }
+            get
+            {
+                if(m_Mesh == null)
+                    m_Mesh = GetComponent<ProBuilderMesh>();
+                if(m_Mesh == null)
+                    m_Mesh = gameObject.AddComponent<ProBuilderMesh>();
+
+                return m_Mesh;
+            }
         }
 
         // Bounds where center is in world space, size is mesh.bounds.size

@@ -52,6 +52,7 @@ namespace UnityEngine.ProBuilder
             ProBuilderMesh pb = null;
             var obj = new GameObject("Shape").AddComponent<ShapeComponent>();
 
+            obj.size = Vector3.one;
             obj.SetShape(shape);
             pb = obj.mesh;
 
