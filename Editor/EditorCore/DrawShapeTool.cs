@@ -19,7 +19,6 @@ namespace UnityEditor.ProBuilder
 
         internal ShapeComponent m_Shape;
         internal bool m_IsShapeInit;
-        internal Vector3 m_ShapeForward;
 
         Editor m_ShapeEditor;
 
@@ -27,11 +26,11 @@ namespace UnityEditor.ProBuilder
         internal UnityEngine.Plane m_Plane;
         internal Vector3 m_PlaneForward;
         internal Vector3 m_PlaneRight;
+        internal Quaternion m_PlaneRotation;
         internal Vector3 m_BB_Origin, m_BB_OppositeCorner, m_BB_HeightCorner;
 
         internal bool m_IsOnGrid;
 
-        internal Quaternion m_Rotation;
         internal Bounds m_Bounds;
         readonly Color k_BoundsColor = new Color(.2f, .4f, .8f, 1f);
 
@@ -148,19 +147,7 @@ namespace UnityEditor.ProBuilder
 
             m_Bounds.size = forward * Vector3.forward + right * Vector3.right + height * Vector3.up;
             m_Bounds.center = m_BB_Origin + 0.5f * ( m_BB_OppositeCorner - m_BB_Origin ) + m_Plane.normal * (height * .5f);
-            m_Rotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
-
-            var dragDirection = m_BB_OppositeCorner - m_BB_Origin;
-            float dragDotForward = Vector3.Dot(dragDirection, m_PlaneForward);
-            float dragDotRight = Vector3.Dot(dragDirection, m_PlaneRight);
-            if(dragDotForward < 0 && dragDotRight > 0 )
-                m_ShapeForward = -Vector3.forward;
-            else if(dragDotForward > 0 && dragDotRight < 0)
-                m_ShapeForward = Vector3.forward;
-            else if(dragDotForward < 0 && dragDotRight < 0 )
-                m_ShapeForward = -Vector3.right;
-            else if(dragDotForward > 0 && dragDotRight > 0)
-                m_ShapeForward = Vector3.right;
+            m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
         }
 
         internal void SetBoundsOrigin(Vector3 position)
@@ -171,7 +158,7 @@ namespace UnityEditor.ProBuilder
             cornerPosition.y = position.y;
             cornerPosition = GetPoint(cornerPosition);
             m_Bounds.center = cornerPosition + new Vector3(size.x/2f,0, size.z/2f) + (size.y / 2f) * m_Plane.normal;
-            m_Rotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
+            m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
         }
 
         internal void RebuildShape()
@@ -189,9 +176,8 @@ namespace UnityEditor.ProBuilder
                 m_Shape.gameObject.hideFlags = HideFlags.None;
                 UndoUtility.RegisterCreatedObjectUndo(m_Shape.gameObject, "Draw Shape");
             }
-
-            m_Shape.shape.Forward = m_ShapeForward;
-            m_Shape.Rebuild(m_Bounds, m_Rotation);
+;
+            m_Shape.Rebuild(m_Bounds, m_PlaneRotation);
             m_Shape.mesh.SetPivot(PivotLocation.Center);
             ProBuilderEditor.Refresh(false);
 
@@ -206,7 +192,7 @@ namespace UnityEditor.ProBuilder
 
         public override void OnToolGUI(EditorWindow window)
         {
-            SceneViewOverlay.Window(k_ShapeTitle, OnActiveToolGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle);
+            SceneViewOverlay.Window(k_ShapeTitle, OnOverlayGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle);
 
             var evt = Event.current;
 
@@ -221,13 +207,13 @@ namespace UnityEditor.ProBuilder
 
         internal void DrawBoundingBox()
         {
-            using (new Handles.DrawingScope(k_BoundsColor, Matrix4x4.TRS(m_Bounds.center, m_Rotation.normalized, Vector3.one)))
+            using (new Handles.DrawingScope(k_BoundsColor, Matrix4x4.TRS(m_Bounds.center, m_PlaneRotation.normalized, Vector3.one)))
             {
                 Handles.DrawWireCube(Vector3.zero, m_Bounds.size);
             }
         }
 
-        void OnActiveToolGUI(UObject overlayTarget, SceneView view)
+        void OnOverlayGUI(UObject overlayTarget, SceneView view)
         {
             EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.ArrowPlus);
             EditorGUILayout.HelpBox(L10n.Tr("Hold and drag to create a new shape while controlling its size. Click to duplicate the last created shape."), MessageType.Info);

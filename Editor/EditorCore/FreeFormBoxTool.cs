@@ -39,6 +39,7 @@ namespace UnityEditor.ProBuilder
         void OnEnable()
         {
             InitTool();
+            m_BoundsHandleColor = Handles.s_SelectedColor;
             m_OverlayTitle = new GUIContent("Free Form Box Tool");
             m_Modifications = new Dictionary<ProBuilderMesh, InternalModification>();
 

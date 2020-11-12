@@ -116,12 +116,6 @@ namespace UnityEngine.ProBuilder.Shapes
                 v.AddRange(tpt);
             }
 
-            if(m_Forward.z != 0)
-            {
-                for(int i = 0; i < v.Count; i++)
-                    v[i] = new Vector3(-v[i].z, v[i].y, v[i].x);
-            }
-
             mesh.GeometryWithPoints(v.ToArray());
         }
     }

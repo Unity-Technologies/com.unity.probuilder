@@ -1,15 +1,19 @@
+using System;
 using UnityEngine;
 using UnityEditor.EditorTools;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using Math = UnityEngine.ProBuilder.Math;
+using Object = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder
 {
     [EditorTool("Edit Shape", typeof(ShapeComponent))]
     sealed class EditShapeTool: BoxManipulationTool
     {
+        Editor m_ShapeEditor;
+
         void OnEnable()
         {
             InitTool();
@@ -17,41 +21,46 @@ namespace UnityEditor.ProBuilder
             m_BoundsHandleColor = new Color(.2f, .4f, .8f, 1f);
         }
 
+        void OnDisable()
+        {
+            if(m_ShapeEditor != null)
+                DestroyImmediate(m_ShapeEditor);
+        }
+
         public override void OnToolGUI(EditorWindow window)
         {
             base.OnToolGUI(window);
 
-            foreach (var obj in targets)
+            var shape = target as ShapeComponent;
+
+            if (shape != null && !shape.edited)
             {
-                var shape = obj as ShapeComponent;
+                if(m_BoundsHandleActive && GUIUtility.hotControl == k_HotControlNone)
+                    EndBoundsEditing();
 
-                if (shape != null && !shape.edited)
-                {
-                    if(m_BoundsHandleActive && GUIUtility.hotControl == k_HotControlNone)
-                        EndBoundsEditing();
+                if(Mathf.Approximately(shape.transform.lossyScale.sqrMagnitude, 0f))
+                    return;
 
-                    if(Mathf.Approximately(shape.transform.lossyScale.sqrMagnitude, 0f))
-                        return;
-
-                    DoManipulationGUI(shape);
-                }
+                DoManipulationGUI(shape);
             }
         }
 
-        protected override void OnOverlayGUI(Object target, SceneView view)
+        protected override void OnOverlayGUI(Object obj, SceneView view)
         {
-            foreach(var obj in targets)
+            var shapeComponent = target as ShapeComponent;
+            if(shapeComponent.edited)
             {
-                var shapeComponent = obj as ShapeComponent;
-                if(shapeComponent.edited)
-                {
-                    EditorGUILayout.HelpBox(
-                        L10n.Tr(
-                            "You have manually modified one or more of the selected Shapes. Revert manual changes to use the tool."),
-                        MessageType.Info);
-                    break;
-                }
+                EditorGUILayout.HelpBox(
+                    L10n.Tr(
+                        "You have manually modified the selected Shape. Revert manual changes to use the tool."),
+                    MessageType.Info);
+                return;
             }
+
+            Editor.CreateCachedEditor(shapeComponent, typeof(ShapeComponentEditor), ref m_ShapeEditor);
+            ((ShapeComponentEditor)m_ShapeEditor).DrawShapeGUI(null);
+
+            EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snap To Grid", EditorSnapSettings.gridSnapEnabled);
 
             m_snapAngle = EditorGUILayout.IntSlider(m_SnapAngleContent, m_snapAngle, 1, 90);
         }

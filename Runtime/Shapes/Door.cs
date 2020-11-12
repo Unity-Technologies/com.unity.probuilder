@@ -15,9 +15,9 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
-            float totalWidth = m_Forward.z != 0 ? size.z : size.x;
+            float totalWidth = size.x;
             float totalHeight = size.y;
-            float depth = m_Forward.z != 0 ? size.x : size.z;
+            float depth = size.z;
 
             float xLegCoord = totalWidth / 2f;
             var legWidth = xLegCoord - this.m_LegWidth;
@@ -99,13 +99,6 @@ namespace UnityEngine.ProBuilder.Shapes
             points.Add(template[1] - Vector3.forward * depth);
             points.Add(template[5]);
             points.Add(template[5] - Vector3.forward * depth);
-
-
-            if(m_Forward.z != 0)
-            {
-                for(int i = 0; i < points.Count; i++)
-                    points[i] = new Vector3(points[i].z, points[i].y, points[i].x);
-            }
 
             mesh.GeometryWithPoints(points.ToArray());
         }

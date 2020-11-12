@@ -8,6 +8,9 @@ namespace UnityEditor.ProBuilder
     {
         bool m_IsDragging = false;
 
+        Quaternion m_currentShapeRotation = Quaternion.identity;
+        static Quaternion s_LastShapeRotation = Quaternion.identity;
+
         protected override void InitState()
         {
             m_IsDragging = false;
@@ -37,11 +40,7 @@ namespace UnityEditor.ProBuilder
                         float distance;
 
                         if(tool.m_Plane.Raycast(ray, out distance))
-                        {
-                            tool.m_BB_OppositeCorner = tool.GetPoint(ray.GetPoint(distance));
-                            tool.m_BB_HeightCorner = tool.m_BB_OppositeCorner;
-                            tool.RebuildShape();
-                        }
+                            UpdateShapeBase(ray, distance);
 
                         break;
                     }
@@ -56,7 +55,7 @@ namespace UnityEditor.ProBuilder
                             if(tool.m_Plane.Raycast(ray, out distance))
                             {
                                 var pos = ray.GetPoint(distance);
-                                var shape = CreateLastShape(pos);
+                                CreateLastShape(pos);
 
                                 return ResetState();
                             }
@@ -64,7 +63,10 @@ namespace UnityEditor.ProBuilder
                         else if(Vector3.Distance(tool.m_BB_OppositeCorner, tool.m_BB_Origin) < .1f)
                             return ResetState();
                         else
+                        {
+                            s_LastShapeRotation = m_currentShapeRotation;
                             return NextState();
+                        }
 
                         break;
                     }
@@ -74,14 +76,34 @@ namespace UnityEditor.ProBuilder
             return this;
         }
 
+        void UpdateShapeBase(Ray ray, float distance)
+        {
+            tool.m_BB_OppositeCorner = tool.GetPoint(ray.GetPoint(distance));
+            tool.m_BB_HeightCorner = tool.m_BB_OppositeCorner;
+
+            var dragDirection = tool.m_BB_OppositeCorner - tool.m_BB_Origin;
+            float dragDotForward = Vector3.Dot(dragDirection, tool.m_PlaneForward);
+            float dragDotRight = Vector3.Dot(dragDirection, tool.m_PlaneRight);
+            m_currentShapeRotation = Quaternion.identity;
+            if(dragDotForward < 0 && dragDotRight > 0)
+                m_currentShapeRotation = Quaternion.Euler(0, 180, 0);
+            else if(dragDotForward < 0 && dragDotRight < 0)
+                m_currentShapeRotation = Quaternion.Euler(0, -90, 0);
+            else if(dragDotForward > 0 && dragDotRight > 0)
+                m_currentShapeRotation = Quaternion.Euler(0, 90, 0);
+
+            tool.m_Shape.SetInnerBoundsRotation(m_currentShapeRotation);
+            tool.RebuildShape();
+        }
+
         public ProBuilderMesh CreateLastShape(Vector3 position)
         {
             var shape = ShapeGenerator.CreateShape(DrawShapeTool.activeShapeType).GetComponent<ShapeComponent>();
-            shape.shape = EditorShapeUtility.GetLastParams(shape.shape.GetType());
-            shape.shape.Forward = tool.m_ShapeForward;
+            shape.shape = EditorShapeUtility.GetLastParams(shape.shape.GetType());;
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
 
-            shape.Rebuild(tool.m_Bounds, tool.m_Rotation);
+            shape.SetInnerBoundsRotation(s_LastShapeRotation);
+            shape.Rebuild(tool.m_Bounds, tool.m_PlaneRotation);
             ProBuilderEditor.Refresh(false);
 
             var res = shape.GetComponent<ProBuilderMesh>();

@@ -13,7 +13,7 @@ namespace UnityEditor.ProBuilder
 
         protected BoxBoundsHandle m_BoundsHandle;
         protected bool m_BoundsHandleActive;
-        protected Color m_BoundsHandleColor = Handles.s_SelectedColor;
+        protected Color m_BoundsHandleColor;
 
         Vector2 m_StartMousePosition;
         Vector3 m_StartPosition;
@@ -125,7 +125,7 @@ namespace UnityEditor.ProBuilder
             {
                 m_Faces[i] = new FaceData();
             }
-            m_SnapAngleContent = new GUIContent("Snap Angle", L10n.Tr("Defines an angle in [1,90] to snap rotation."));
+            m_SnapAngleContent = new GUIContent("Rotation Snap", L10n.Tr("Defines an angle in [1,90] to snap rotation."));
         }
 
         public override void OnToolGUI(EditorWindow window)
