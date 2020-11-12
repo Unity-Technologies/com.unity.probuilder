@@ -56,6 +56,29 @@ namespace UnityEngine.ProBuilder.Shapes
             }
 
             mesh.RebuildWithPositionsAndFaces(v, f);
+
+            mesh.unwrapParameters = new UnwrapParameters()
+            {
+                packMargin = 30f
+            };
+
+            // Set the UVs manually for the side faces, so that they are uniform.
+            // Calculate the UVs for the first face, then set the others to the same.
+            var firstFace = sideFaces[0];
+            var uv = firstFace.uv;
+            uv.anchor = AutoUnwrapSettings.Anchor.LowerLeft;
+            firstFace.uv = uv;
+            firstFace.manualUV = true;
+            // Always use up vector for projection of side faces.
+            // Otherwise the lines in the PB texture end up crooked.
+            UvUnwrapping.Unwrap(mesh, firstFace, projection: Vector3.up);
+            for (int i = 1; i < sideFaces.Count; i++)
+            {
+                var sideFace = sideFaces[i];
+                sideFace.manualUV = true;
+                UvUnwrapping.CopyUVs(mesh, firstFace, sideFace);
+            }
+            mesh.RefreshUV(sideFaces);
         }
     }
 }
