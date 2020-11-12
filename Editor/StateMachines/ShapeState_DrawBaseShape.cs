@@ -9,7 +9,6 @@ namespace UnityEditor.ProBuilder
         bool m_IsDragging = false;
 
         Quaternion m_currentShapeRotation = Quaternion.identity;
-        static Quaternion s_LastShapeRotation = Quaternion.identity;
 
         protected override void InitState()
         {
@@ -64,7 +63,7 @@ namespace UnityEditor.ProBuilder
                             return ResetState();
                         else
                         {
-                            s_LastShapeRotation = m_currentShapeRotation;
+                            DrawShapeTool.s_LastShapeRotation = m_currentShapeRotation;
                             return NextState();
                         }
 
@@ -102,7 +101,7 @@ namespace UnityEditor.ProBuilder
             shape.shape = EditorShapeUtility.GetLastParams(shape.shape.GetType());;
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
 
-            shape.SetInnerBoundsRotation(s_LastShapeRotation);
+            shape.SetInnerBoundsRotation(DrawShapeTool.s_LastShapeRotation);
             shape.Rebuild(tool.m_Bounds, tool.m_PlaneRotation);
             ProBuilderEditor.Refresh(false);
 

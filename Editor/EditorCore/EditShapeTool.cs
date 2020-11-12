@@ -79,7 +79,9 @@ namespace UnityEditor.ProBuilder
             {
                 m_BoundsHandle.SetColor(m_BoundsHandleColor);
 
-                CopyColliderPropertiesToHandle(shapeComponent.transform, shapeComponent.mesh.mesh.bounds);
+                EditorShapeUtility.CopyColliderPropertiesToHandle(
+                    shapeComponent.transform, shapeComponent.mesh.mesh.bounds,
+                    m_BoundsHandle, IsEditing, m_ActiveBoundsState);
 
                 EditorGUI.BeginChangeCheck();
 
@@ -89,7 +91,8 @@ namespace UnityEditor.ProBuilder
                 {
                     BeginBoundsEditing(shapeComponent.mesh);
                     UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Scale Shape");
-                    CopyHandlePropertiesToCollider(shapeComponent);
+                    EditorShapeUtility.CopyHandlePropertiesToCollider(m_BoundsHandle, m_ActiveBoundsState);
+                    ApplyProperties(shapeComponent, m_ActiveBoundsState);
                 }
 
                 DoRotateHandlesGUI(toolTarget, shapeComponent.mesh, shapeComponent.meshFilterBounds);
@@ -107,23 +110,13 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.Refresh();
         }
 
-        void CopyHandlePropertiesToCollider(ShapeComponent shape)
+        public static void ApplyProperties(ShapeComponent shape, EditorShapeUtility.BoundsState activeBoundsState)
         {
-            Vector3 snappedHandleSize = ProBuilderSnapping.Snap(m_BoundsHandle.size, EditorSnapping.activeMoveSnapValue);
-            //Find the scaling direction
-            Vector3 centerDiffSign = ( m_BoundsHandle.center - m_ActiveBoundsState.boundsHandleValue.center ).normalized;
-            Vector3 sizeDiffSign = ( m_BoundsHandle.size - m_ActiveBoundsState.boundsHandleValue.size ).normalized;
-            Vector3 globalSign = Vector3.Scale(centerDiffSign,sizeDiffSign);
-            //Set the center to the right position
-            Vector3 center = m_ActiveBoundsState.boundsHandleValue.center + Vector3.Scale((snappedHandleSize - m_ActiveBoundsState.boundsHandleValue.size)/2f,globalSign);
-            //Set new Bounding box value
-            m_ActiveBoundsState.boundsHandleValue = new Bounds(center, snappedHandleSize);
-
             var bounds = new Bounds();
             var trs = shape.transform;
 
-            bounds.center = Handles.matrix.MultiplyPoint3x4(m_ActiveBoundsState.boundsHandleValue.center);
-            bounds.size = Math.Abs(Vector3.Scale(m_ActiveBoundsState.boundsHandleValue.size, Math.InvertScaleVector(trs.lossyScale)));
+            bounds.center = Handles.matrix.MultiplyPoint3x4(activeBoundsState.boundsHandleValue.center);
+            bounds.size = Math.Abs(Vector3.Scale(activeBoundsState.boundsHandleValue.size, Math.InvertScaleVector(trs.lossyScale)));
 
             shape.Rebuild(bounds, shape.transform.rotation);
             shape.mesh.SetPivot(shape.transform.position);

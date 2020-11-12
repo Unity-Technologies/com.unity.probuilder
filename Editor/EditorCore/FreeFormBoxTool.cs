@@ -154,7 +154,9 @@ namespace UnityEditor.ProBuilder
             {
                 m_BoundsHandle.SetColor(m_BoundsHandleColor);
 
-                CopyColliderPropertiesToHandle(mesh.transform, mesh.mesh.bounds);
+                EditorShapeUtility.CopyColliderPropertiesToHandle(
+                    mesh.transform, mesh.mesh.bounds,
+                    m_BoundsHandle, IsEditing, m_ActiveBoundsState);
 
                 EditorGUI.BeginChangeCheck();
                 m_BoundsHandle.DrawHandle();
@@ -163,7 +165,8 @@ namespace UnityEditor.ProBuilder
                 {
                     BeginBoundsEditing(mesh);
                     UndoUtility.RegisterCompleteObjectUndo(mesh, "Scale Mesh Bounds "+mesh.name);
-                    CopyHandlePropertiesToCollider(mesh);
+                    EditorShapeUtility.CopyHandlePropertiesToCollider(m_BoundsHandle, m_ActiveBoundsState);
+                    ApplyProperties(mesh);
                 }
 
                 DoRotateHandlesGUI(toolTarget, mesh, mesh.mesh.bounds);
@@ -215,18 +218,8 @@ namespace UnityEditor.ProBuilder
             m_Modifications.Add(pbmesh, new InternalModification(pbmesh.positionsInternal));
         }
 
-        void CopyHandlePropertiesToCollider(ProBuilderMesh mesh)
+        void ApplyProperties(ProBuilderMesh mesh)
         {
-            Vector3 snappedHandleSize = ProBuilderSnapping.Snap(m_BoundsHandle.size, EditorSnapping.activeMoveSnapValue);
-            //Find the scaling direction
-            Vector3 centerDiffSign = ( m_BoundsHandle.center - m_ActiveBoundsState.boundsHandleValue.center ).normalized;
-            Vector3 sizeDiffSign = ( m_BoundsHandle.size - m_ActiveBoundsState.boundsHandleValue.size ).normalized;
-            Vector3 globalSign = Vector3.Scale(centerDiffSign,sizeDiffSign);
-            //Set the center to the right position
-            Vector3 center = m_ActiveBoundsState.boundsHandleValue.center + Vector3.Scale((snappedHandleSize - m_ActiveBoundsState.boundsHandleValue.size)/2f,globalSign);
-            //Set new Bounding box value
-            m_ActiveBoundsState.boundsHandleValue = new Bounds(center, snappedHandleSize);
-
             var trs = mesh.transform;
             var meshCenter = Handles.matrix.MultiplyPoint3x4(m_ActiveBoundsState.boundsHandleValue.center);
             var size = Math.Abs(Vector3.Scale(m_ActiveBoundsState.boundsHandleValue.size, Math.InvertScaleVector(trs.lossyScale)));

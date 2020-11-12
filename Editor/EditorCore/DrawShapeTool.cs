@@ -18,6 +18,7 @@ namespace UnityEditor.ProBuilder
         ShapeState m_CurrentState;
 
         internal ShapeComponent m_LastShapeCreated = null;
+        internal static Quaternion s_LastShapeRotation = Quaternion.identity;
 
         internal ShapeComponent m_ShapeComponent;
         internal bool m_IsShapeInit;
@@ -34,9 +35,16 @@ namespace UnityEditor.ProBuilder
         internal bool m_IsOnGrid;
 
         internal Bounds m_Bounds;
-        readonly Color k_BoundsColor = new Color(.2f, .4f, .8f, 1f);
+        internal static readonly Color k_BoundsColor = new Color(.2f, .4f, .8f, 1f);
 
         readonly GUIContent k_ShapeTitle = new GUIContent("Draw Shape");
+        GUIContent m_SnapAngleContent;
+
+        [Range(1,90)]
+        [SerializeField]
+        protected int m_snapAngle = 15;
+
+        public float snapAngle => (float)m_snapAngle;
 
         internal static TypeCache.TypeCollection s_AvailableShapeTypes;
         internal static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
@@ -68,6 +76,8 @@ namespace UnityEditor.ProBuilder
                 text = "Draw Shape Tool",
                 tooltip = "Draw Shape Tool"
             };
+
+            m_SnapAngleContent = new GUIContent("Rotation Snap", L10n.Tr("Defines an angle in [1,90] to snap rotation."));
 
             Undo.undoRedoPerformed += HandleUndoRedoPerformed;
             MeshSelection.objectSelectionChanged += OnSelectionChanged;
@@ -137,6 +147,17 @@ namespace UnityEditor.ProBuilder
             m_BB_HeightCorner = m_BB_Origin + size;
         }
 
+        internal void SetBoundsOrigin(Vector3 position)
+        {
+            Vector3 size = s_Size.value;
+            m_Bounds.size = size;
+            var cornerPosition = position - size / 2f;
+            cornerPosition.y = position.y;
+            cornerPosition = GetPoint(cornerPosition);
+            m_Bounds.center = cornerPosition + new Vector3(size.x/2f,0, size.z/2f) + (size.y / 2f) * m_Plane.normal;
+            m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
+        }
+
         void RecalculateBounds()
         {
             var forward = HandleUtility.PointOnLineParameter(m_BB_OppositeCorner, m_BB_Origin, m_PlaneForward);
@@ -152,16 +173,7 @@ namespace UnityEditor.ProBuilder
             m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
         }
 
-        internal void SetBoundsOrigin(Vector3 position)
-        {
-            Vector3 size = s_Size.value;
-            m_Bounds.size = size;
-            var cornerPosition = position - size / 2f;
-            cornerPosition.y = position.y;
-            cornerPosition = GetPoint(cornerPosition);
-            m_Bounds.center = cornerPosition + new Vector3(size.x/2f,0, size.z/2f) + (size.y / 2f) * m_Plane.normal;
-            m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
-        }
+
 
         internal void RebuildShape()
         {
@@ -228,6 +240,7 @@ namespace UnityEditor.ProBuilder
             ( (ShapeComponentEditor) m_ShapeEditor ).DrawShapeGUI(this);
 
             EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snap to Grid", EditorSnapSettings.gridSnapEnabled);
+            m_snapAngle = EditorGUILayout.IntSlider(m_SnapAngleContent, m_snapAngle, 1, 90);
         }
     }
 }
