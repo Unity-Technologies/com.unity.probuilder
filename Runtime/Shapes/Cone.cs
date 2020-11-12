@@ -7,13 +7,19 @@ namespace UnityEngine.ProBuilder.Shapes
     {
         [Range(3,64)]
         [SerializeField]
-        int m_NumberOfSides = 6;
+        internal int m_NumberOfSides = 6;
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
-            var subdivAxis = m_NumberOfSides;
             var radius = System.Math.Min(size.x, size.z);
             var height = size.y;
+
+            RebuildMesh(mesh, radius, height);
+        }
+
+        public void RebuildMesh(ProBuilderMesh mesh, float radius, float height)
+        {
+            var subdivAxis = m_NumberOfSides;
             // template is outer ring - radius refers to outer ring always
             Vector3[] template = new Vector3[subdivAxis];
 

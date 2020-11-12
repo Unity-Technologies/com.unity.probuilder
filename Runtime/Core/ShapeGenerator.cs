@@ -74,5 +74,26 @@ namespace UnityEngine.ProBuilder
 
             return pb;
         }
+
+
+        /// <summary>
+        /// Create a new cone shape.
+        /// </summary>
+        /// <param name="pivotType">Where the shape's pivot will be.</param>
+        /// <param name="radius">Radius of the generated cone.</param>
+        /// <param name="height">How tall the cone will be.</param>
+        /// <param name="subdivAxis">How many subdivisions on the axis.</param>
+        /// <returns>A new GameObject with a reference to the ProBuilderMesh component.</returns>
+        public static ProBuilderMesh GenerateCone(PivotLocation pivotType, float radius, float height, int subdivAxis)
+        {
+            ProBuilderMesh pb = CreateShape(typeof(Cone), pivotType);
+            Cone cone = pb.GetComponent<ShapeComponent>().shape as Cone;
+            cone.m_NumberOfSides = subdivAxis;
+            cone.RebuildMesh(pb, new Vector3(radius, height, radius));
+
+            pb.RefreshUV(pb.faces);
+            return pb;
+        }
+
     }
 }
