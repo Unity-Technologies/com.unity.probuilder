@@ -9,22 +9,23 @@ namespace UnityEditor.ProBuilder
         protected override void EndState()
         {
             tool.RebuildShape();
-            tool.m_Shape = null;
+            tool.m_LastShapeCreated = tool.m_ShapeComponent;
+            tool.m_ShapeComponent = null;
         }
 
         private ShapeState ValidateShape()
         {
-            DrawShapeTool.s_Size.value = tool.m_Shape.size;
-            DrawShapeTool.s_ActiveShapeIndex.value = DrawShapeTool.s_AvailableShapeTypes.IndexOf(tool.m_Shape.shape.GetType());
+            DrawShapeTool.s_Size.value = tool.m_ShapeComponent.size;
+            DrawShapeTool.s_ActiveShapeIndex.value = DrawShapeTool.s_AvailableShapeTypes.IndexOf(tool.m_ShapeComponent.shape.GetType());
 
-            EditorShapeUtility.SaveParams(tool.m_Shape.shape);
+            EditorShapeUtility.SaveParams(tool.m_ShapeComponent.shape);
 
             return NextState();
         }
 
         public override ShapeState DoState(Event evt)
         {
-            if(tool.m_Shape.shape is Plane)
+            if(tool.m_ShapeComponent.shape is Plane)
             {
                 //Skip Height definition for plane
                 return NextState();

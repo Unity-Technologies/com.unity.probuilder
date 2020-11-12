@@ -17,7 +17,9 @@ namespace UnityEditor.ProBuilder
     {
         ShapeState m_CurrentState;
 
-        internal ShapeComponent m_Shape;
+        internal ShapeComponent m_LastShapeCreated = null;
+
+        internal ShapeComponent m_ShapeComponent;
         internal bool m_IsShapeInit;
 
         Editor m_ShapeEditor;
@@ -86,7 +88,7 @@ namespace UnityEditor.ProBuilder
         {
             if(ToolManager.IsActiveTool(this))
             {
-                if(MeshSelection.activeMesh != m_Shape.mesh)
+                if(MeshSelection.activeMesh != m_ShapeComponent.mesh)
                     m_CurrentState = ShapeState.ResetState();
             }
         }
@@ -109,8 +111,8 @@ namespace UnityEditor.ProBuilder
         {
             if(m_ShapeEditor != null)
                 DestroyImmediate(m_ShapeEditor);
-            if (m_Shape.gameObject.hideFlags == HideFlags.HideAndDontSave)
-                DestroyImmediate(m_Shape.gameObject);
+            if (m_ShapeComponent.gameObject.hideFlags == HideFlags.HideAndDontSave)
+                DestroyImmediate(m_ShapeComponent.gameObject);
         }
 
         // Returns a local space point,
@@ -172,18 +174,18 @@ namespace UnityEditor.ProBuilder
 
             if (!m_IsShapeInit)
             {
-                m_Shape.shape = EditorShapeUtility.GetLastParams(m_Shape.shape.GetType());
-                m_Shape.gameObject.hideFlags = HideFlags.None;
-                UndoUtility.RegisterCreatedObjectUndo(m_Shape.gameObject, "Draw Shape");
+                m_ShapeComponent.shape = EditorShapeUtility.GetLastParams(m_ShapeComponent.shape.GetType());
+                m_ShapeComponent.gameObject.hideFlags = HideFlags.None;
+                UndoUtility.RegisterCreatedObjectUndo(m_ShapeComponent.gameObject, "Draw Shape");
             }
 ;
-            m_Shape.Rebuild(m_Bounds, m_PlaneRotation);
-            m_Shape.mesh.SetPivot(PivotLocation.Center);
+            m_ShapeComponent.Rebuild(m_Bounds, m_PlaneRotation);
+            m_ShapeComponent.mesh.SetPivot(PivotLocation.Center);
             ProBuilderEditor.Refresh(false);
 
             if (!m_IsShapeInit)
             {
-                EditorUtility.InitObject(m_Shape.mesh);
+                EditorUtility.InitObject(m_ShapeComponent.mesh);
                 m_IsShapeInit = true;
             }
 
@@ -218,13 +220,14 @@ namespace UnityEditor.ProBuilder
             EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.ArrowPlus);
             EditorGUILayout.HelpBox(L10n.Tr("Hold and drag to create a new shape while controlling its size. Click to duplicate the last created shape."), MessageType.Info);
 
-            EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Use Grid Snapping", EditorSnapSettings.gridSnapEnabled);
+            if(( m_CurrentState is ShapeState_InitShape ) && m_LastShapeCreated != null)
+                Editor.CreateCachedEditor(m_LastShapeCreated, typeof(ShapeComponentEditor), ref m_ShapeEditor);
+            else if(m_ShapeComponent != null)
+                Editor.CreateCachedEditor(m_ShapeComponent, typeof(ShapeComponentEditor), ref m_ShapeEditor);
 
-            if (m_Shape == null)
-                return;
+            ( (ShapeComponentEditor) m_ShapeEditor ).DrawShapeGUI(this);
 
-            Editor.CreateCachedEditor(m_Shape, typeof(ShapeComponentEditor), ref m_ShapeEditor);
-            ((ShapeComponentEditor)m_ShapeEditor).DrawShapeGUI(this);
+            EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snap to Grid", EditorSnapSettings.gridSnapEnabled);
         }
     }
 }

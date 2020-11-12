@@ -78,6 +78,8 @@ namespace UnityEditor.ProBuilder
                 var type = m_AvailableShapeTypes[m_ActiveShapeIndex];
                 if(shape.GetType() != type)
                 {
+                    if(tool != null)
+                        DrawShapeTool.s_ActiveShapeIndex.value = m_ActiveShapeIndex;
                     UndoUtility.RegisterCompleteObjectUndo(shapeComp, "Change Shape");
                     shapeComp.SetShape(EditorShapeUtility.CreateShape(type));
                     ProBuilderEditor.Refresh();
@@ -106,6 +108,7 @@ namespace UnityEditor.ProBuilder
                 if(tool != null)
                     tool.SetBounds(shapeComp.size);
                 shapeComp.Rebuild();
+                EditorShapeUtility.SaveParams(shape);
                 ProBuilderEditor.Refresh();
             }
 
@@ -114,18 +117,16 @@ namespace UnityEditor.ProBuilder
             if (EditorGUI.EndChangeCheck())
             {
                 shapeComp.SetInnerBoundsRotation(Quaternion.Euler(rotation));
+                EditorShapeUtility.SaveParams(shape);
                 ProBuilderEditor.Refresh();
             }
 
             EditorGUILayout.PropertyField(shapeProperty, true);
             if (obj.ApplyModifiedProperties())
             {
-                EditorShapeUtility.SaveParams(shapeComp.shape);
-                if (shapeComp != null)
-                {
-                    shapeComp.Rebuild();
-                    ProBuilderEditor.Refresh();
-                }
+                shapeComp.Rebuild();
+                EditorShapeUtility.SaveParams(shape);
+                ProBuilderEditor.Refresh();
             }
 
             GUI.enabled = true;

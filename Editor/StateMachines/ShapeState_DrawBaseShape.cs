@@ -92,11 +92,11 @@ namespace UnityEditor.ProBuilder
             else if(dragDotForward > 0 && dragDotRight > 0)
                 m_currentShapeRotation = Quaternion.Euler(0, 90, 0);
 
-            tool.m_Shape.SetInnerBoundsRotation(m_currentShapeRotation);
+            tool.m_ShapeComponent.SetInnerBoundsRotation(m_currentShapeRotation);
             tool.RebuildShape();
         }
 
-        public ProBuilderMesh CreateLastShape(Vector3 position)
+        public void CreateLastShape(Vector3 position)
         {
             var shape = ShapeGenerator.CreateShape(DrawShapeTool.activeShapeType).GetComponent<ShapeComponent>();
             shape.shape = EditorShapeUtility.GetLastParams(shape.shape.GetType());;
@@ -114,7 +114,7 @@ namespace UnityEditor.ProBuilder
             cornerPosition = tool.GetPoint(cornerPosition);
             res.transform.position = cornerPosition + new Vector3(tool.m_Bounds.extents.x,0, tool.m_Bounds.extents.z) + tool.m_Bounds.extents.y * tool.m_Plane.normal;
 
-            return res;
+            tool.m_LastShapeCreated = shape;
         }
     }
 }

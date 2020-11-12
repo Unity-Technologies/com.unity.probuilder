@@ -1,7 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
