@@ -8,6 +8,7 @@ using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Tests.Framework;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder.Shapes;
+using UnityEngine.TestTools;
 
 static class DeleteElementsTests
 {
@@ -28,7 +29,7 @@ static class DeleteElementsTests
         }
     }
 
-    [Test]
+    [Test, Ignore("Mesh template tests are unstable")]
     public static void DeleteFirstFace_CreatesValidMesh([ValueSource("shapeTypes")] Type shape)
     {
         var mesh = ShapeGenerator.CreateShape(shape);
