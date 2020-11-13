@@ -4,8 +4,24 @@ namespace UnityEngine.ProBuilder.Shapes
 {
     sealed class ShapeComponent : MonoBehaviour
     {
+        [Serializable]
+        class ShapeBoxProperties
+        {
+            [SerializeField]
+            internal float m_Width = 1;
+            [SerializeField]
+            internal float m_Length = 2;
+            [SerializeField]
+            internal float m_Height = 3;
+            [SerializeField]
+            internal Vector3 m_Rotation = Vector3.zero;
+        }
+
         [SerializeReference]
         Shape m_Shape = new Cube();
+
+        [SerializeField]
+        ShapeBoxProperties m_Properties = new ShapeBoxProperties();
 
         ProBuilderMesh m_Mesh;
 
@@ -69,6 +85,23 @@ namespace UnityEngine.ProBuilder.Shapes
                 var mb = mesh.mesh.bounds;
                 return new Bounds(transform.TransformPoint(mb.center), mb.size);
             }
+        }
+
+        public void UpdateProperties()
+        {
+            m_Properties.m_Width = m_Size.x;
+            m_Properties.m_Height = m_Size.y;
+            m_Properties.m_Length = m_Size.z;
+            m_Properties.m_Rotation = m_Rotation.eulerAngles;
+        }
+
+        public void UpdateComponent()
+        {
+            m_Size = new Vector3(m_Properties.m_Width, m_Properties.m_Height, m_Properties.m_Length);
+            m_Rotation = Quaternion.Euler(m_Properties.m_Rotation);
+
+            SetInnerBoundsRotation(m_Rotation);
+            Rebuild();
         }
 
         public void Rebuild(Bounds bounds, Quaternion rotation)

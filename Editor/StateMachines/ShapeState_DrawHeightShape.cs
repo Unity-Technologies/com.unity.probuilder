@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using UnityEngine.ProBuilder;
+﻿using System;
+using UnityEngine;
+using Math = UnityEngine.ProBuilder.Math;
 using Plane = UnityEngine.ProBuilder.Shapes.Plane;
 
 namespace UnityEditor.ProBuilder
@@ -16,7 +17,7 @@ namespace UnityEditor.ProBuilder
         private ShapeState ValidateShape()
         {
             DrawShapeTool.s_Size.value = tool.m_ShapeComponent.size;
-            DrawShapeTool.s_ActiveShapeIndex.value = DrawShapeTool.s_AvailableShapeTypes.IndexOf(tool.m_ShapeComponent.shape.GetType());
+            DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes,tool.m_ShapeComponent.shape.GetType());
 
             EditorShapeUtility.SaveParams(tool.m_ShapeComponent.shape);
 

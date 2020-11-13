@@ -59,6 +59,7 @@ namespace UnityEditor.ProBuilder
 
             Editor.CreateCachedEditor(shapeComponent, typeof(ShapeComponentEditor), ref m_ShapeEditor);
             ((ShapeComponentEditor)m_ShapeEditor).DrawShapeGUI(null);
+            ((ShapeComponentEditor)m_ShapeEditor).DrawShapeParametersGUI(null);
 
             EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snap To Grid", EditorSnapSettings.gridSnapEnabled);
 

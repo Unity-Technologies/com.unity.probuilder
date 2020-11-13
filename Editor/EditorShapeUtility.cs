@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -10,6 +11,31 @@ namespace UnityEditor.ProBuilder
     internal static class EditorShapeUtility
     {
         static Dictionary<string, Shape> s_Prefs = new Dictionary<string, Shape>();
+
+        static Type[] s_AvailableShapeTypes = null;
+
+        public static Type[] availableShapeTypes
+        {
+            get
+            {
+                if(s_AvailableShapeTypes == null)
+                    s_AvailableShapeTypes = TypeCache.GetTypesWithAttribute<ShapeAttribute>().Where(t => t.BaseType == typeof(Shape)).ToArray();
+                return s_AvailableShapeTypes;
+            }
+        }
+
+        static string[] s_ShapeTypes;
+
+        public static string[] shapeTypes
+        {
+            get
+            {
+                if( s_ShapeTypes == null)
+                    s_ShapeTypes = availableShapeTypes.Select(x => ((ShapeAttribute)System.Attribute.GetCustomAttribute(x, typeof(ShapeAttribute))).name)
+                        .ToArray();
+                return s_ShapeTypes;
+            }
+        }
 
         static EditorShapeUtility()
         {

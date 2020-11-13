@@ -46,9 +46,9 @@ namespace UnityEditor.ProBuilder
 
         public float snapAngle => (float)m_snapAngle;
 
-        internal static TypeCache.TypeCollection s_AvailableShapeTypes;
         internal static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
         internal static Pref<Vector3> s_Size = new Pref<Vector3>("ShapeBuilder.Size", Vector3.zero);
+        internal static Pref<bool> s_SettingsEnabled = new Pref<bool>("ShapeBuilder.SettingsEnabled", false);
 
         GUIContent m_IconContent;
         public override GUIContent toolbarIcon
@@ -58,12 +58,11 @@ namespace UnityEditor.ProBuilder
 
         public static Type activeShapeType
         {
-            get { return s_ActiveShapeIndex < 0 ? typeof(Cube) : s_AvailableShapeTypes[s_ActiveShapeIndex]; }
+            get { return s_ActiveShapeIndex < 0 ? typeof(Cube) : EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex]; }
         }
 
         static DrawShapeTool()
         {
-            s_AvailableShapeTypes = TypeCache.GetTypesDerivedFrom<Shape>();
         }
 
         void OnEnable()
@@ -232,15 +231,55 @@ namespace UnityEditor.ProBuilder
             EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.ArrowPlus);
             EditorGUILayout.HelpBox(L10n.Tr("Hold and drag to create a new shape while controlling its size. Click to duplicate the last created shape."), MessageType.Info);
 
+            string foldoutName = "New Shape Settings";
             if(( m_CurrentState is ShapeState_InitShape ) && m_LastShapeCreated != null)
+            {
+                foldoutName = "Settings (" + m_LastShapeCreated.name + ")";
                 Editor.CreateCachedEditor(m_LastShapeCreated, typeof(ShapeComponentEditor), ref m_ShapeEditor);
+            }
             else if(m_ShapeComponent != null)
                 Editor.CreateCachedEditor(m_ShapeComponent, typeof(ShapeComponentEditor), ref m_ShapeEditor);
 
             ( (ShapeComponentEditor) m_ShapeEditor ).DrawShapeGUI(this);
 
-            EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snap to Grid", EditorSnapSettings.gridSnapEnabled);
+            EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snapping", EditorSnapSettings.gridSnapEnabled);
             m_snapAngle = EditorGUILayout.IntSlider(m_SnapAngleContent, m_snapAngle, 1, 90);
+
+            GUIStyle style = new GUIStyle(EditorStyles.frameBox);
+            //EditorStyles.frameBox
+            Rect r = (Rect)EditorGUILayout.BeginVertical(style);
+            s_SettingsEnabled.value = EditorGUILayout.Foldout(s_SettingsEnabled.value, foldoutName);
+            if(s_SettingsEnabled)
+            {
+                EditorGUI.indentLevel++;
+                ( (ShapeComponentEditor) m_ShapeEditor ).DrawShapeParametersGUI(this);
+                EditorGUI.indentLevel--;
+            }
+            EditorGUILayout.EndVertical();
+        }
+
+        private void DrawShapeGUI(ShapeComponent shapeComp, SerializedObject obj)
+        {
+            if(shapeComp == null || obj == null)
+                return;
+
+            var shape = shapeComp.shape;
+            obj.Update();
+            EditorGUI.BeginChangeCheck();
+
+            s_ActiveShapeIndex.value = Mathf.Max(-1, Array.IndexOf(EditorShapeUtility.availableShapeTypes, shape.GetType()));
+            s_ActiveShapeIndex.value = EditorGUILayout.Popup(s_ActiveShapeIndex, EditorShapeUtility.shapeTypes);
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                var type = EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex];
+                if(shape.GetType() != type)
+                {
+                    UndoUtility.RegisterCompleteObjectUndo(shapeComp, "Change Shape");
+                    shapeComp.SetShape(EditorShapeUtility.CreateShape(type));
+                    ProBuilderEditor.Refresh();
+                }
+            }
         }
     }
 }
