@@ -20,7 +20,7 @@ namespace UnityEngine.ProBuilder.Shapes
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
             var height = size.y;
-            var radius = System.Math.Min(size.x, size.z);
+            var radius = System.Math.Min(size.x, size.z) / 2f;
             // template is outer ring - radius refers to outer ring always
             Vector2[] templateOut = new Vector2[m_NumberOfSlides];
             Vector2[] templateIn = new Vector2[m_NumberOfSlides];

@@ -137,7 +137,7 @@ namespace UnityEditor.ProBuilder
                 m_BoundsHandle.SetColor(DrawShapeTool.k_BoundsColor);
 
                 EditorShapeUtility.CopyColliderPropertiesToHandle(
-                    shapeComponent.transform, shapeComponent.mesh.mesh.bounds,
+                    shapeComponent.transform, shapeComponent.editionBounds,
                     m_BoundsHandle, m_BoundsHandleActive, m_ActiveBoundsState);
 
                 EditorGUI.BeginChangeCheck();
@@ -147,28 +147,28 @@ namespace UnityEditor.ProBuilder
                 if (EditorGUI.EndChangeCheck())
                 {
                     if(!m_BoundsHandleActive)
-                        BeginBoundsEditing(shapeComponent.mesh);
+                        BeginBoundsEditing(shapeComponent);
                     UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Scale Shape");
                     EditorShapeUtility.CopyHandlePropertiesToCollider(m_BoundsHandle, m_ActiveBoundsState);
                     EditShapeTool.ApplyProperties(shapeComponent, m_ActiveBoundsState);
                     DrawShapeTool.s_Size.value = m_BoundsHandle.size;
                 }
 
-                DoRotateHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.meshFilterBounds);
+                DoRotateHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
             }
         }
 
-        void BeginBoundsEditing(ProBuilderMesh mesh)
+        void BeginBoundsEditing(ShapeComponent shape)
         {
-            UndoUtility.RecordComponents<ProBuilderMesh, Transform>(
-                new[] { mesh },
-                string.Format("Modify {0}", ObjectNames.NicifyVariableName(mesh.gameObject.GetType().Name)));
+            UndoUtility.RecordComponents<ShapeComponent, ProBuilderMesh, Transform>(
+                new[] { shape },
+                string.Format("Modify {0}", ObjectNames.NicifyVariableName(shape.mesh.gameObject.GetType().Name)));
 
             m_BoundsHandleActive = true;
-            Bounds localBounds = mesh.mesh.bounds;
+            Bounds localBounds = shape.editionBounds;
             m_ActiveBoundsState = new EditorShapeUtility.BoundsState()
             {
-                positionAndRotationMatrix = Matrix4x4.TRS(mesh.transform.position, mesh.transform.rotation, Vector3.one),
+                positionAndRotationMatrix = Matrix4x4.TRS(shape.transform.position, shape.transform.rotation, Vector3.one),
                 boundsHandleValue = localBounds,
             };
         }
