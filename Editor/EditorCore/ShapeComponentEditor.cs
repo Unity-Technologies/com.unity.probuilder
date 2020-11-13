@@ -76,6 +76,8 @@ namespace UnityEditor.ProBuilder
 
             m_ActiveShapeIndex = HasMultipleShapeTypes ? -1 : Mathf.Max(-1, Array.IndexOf(EditorShapeUtility.availableShapeTypes, m_CurrentShapeType));
 
+
+
             m_ActiveShapeIndex = EditorGUILayout.Popup(m_ActiveShapeIndex, EditorShapeUtility.shapeTypes);
 
             if(EditorGUI.EndChangeCheck())
@@ -96,24 +98,38 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            // if(shapeComp.edited)
-            // {
-            //     EditorGUILayout.BeginVertical();
-            //     EditorGUILayout.HelpBox(
-            //         L10n.Tr(
-            //             "You have manually modified the Shape. Revert manual changes to access to procedural parameters"),
-            //         MessageType.Info);
-            //
-            //     if(GUILayout.Button("Reset Shape"))
-            //     {
-            //         shapeComp.edited = false;
-            //         shapeComp.Rebuild();
-            //     }
-            //
-            //     EditorGUILayout.EndHorizontal();
-            //
-            //     GUI.enabled = false;
-            // }
+            //bool edited = false;
+            int editedShapesCount = 0;
+            foreach(var comp in targets)
+                editedShapesCount += ( (ShapeComponent) comp ).edited ? 1 : 0;
+
+            if(editedShapesCount > 0)
+            {
+                EditorGUILayout.BeginVertical();
+                EditorGUILayout.HelpBox(
+                    L10n.Tr(
+                        "You have manually modified Shape(s). Revert manual changes to access to procedural parameters"),
+                    MessageType.Info);
+
+                if(GUILayout.Button("Reset Shape"))
+                {
+                    foreach(var comp in targets)
+                    {
+                        var shapeComponent = comp as ShapeComponent;
+                        if( shapeComponent.edited )
+                        {
+                            shapeComponent.edited = false;
+                            shapeComponent.Rebuild();
+                        }
+                    }
+                }
+
+                EditorGUILayout.EndHorizontal();
+            }
+
+            if(editedShapesCount == targets.Length)
+                GUI.enabled = false;
+
         }
 
         public void DrawShapeParametersGUI(DrawShapeTool tool = null)
@@ -138,11 +154,14 @@ namespace UnityEditor.ProBuilder
                 foreach(var comp in targets)
                 {
                     var shapeComponent = comp as ShapeComponent;
-                    shapeComponent.UpdateComponent();
-                    if(tool != null)
-                        tool.SetBounds(shapeComponent.size);
-                    EditorShapeUtility.SaveParams(shapeComponent.shape);
-                    ProBuilderEditor.Refresh();
+                    if(!shapeComponent.edited)
+                    {
+                        shapeComponent.UpdateComponent();
+                        if(tool != null)
+                            tool.SetBounds(shapeComponent.size);
+                        EditorShapeUtility.SaveParams(shapeComponent.shape);
+                        ProBuilderEditor.Refresh();
+                    }
                 }
             }
 

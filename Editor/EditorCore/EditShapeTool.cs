@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 using UnityEditor.EditorTools;
 using UnityEngine.ProBuilder;
@@ -31,35 +32,28 @@ namespace UnityEditor.ProBuilder
         {
             base.OnToolGUI(window);
 
-            var shape = target as ShapeComponent;
-
-            if (shape != null && !shape.edited)
+            foreach(var obj in targets)
             {
-                if(m_BoundsHandleActive && GUIUtility.hotControl == k_HotControlNone)
-                    EndBoundsEditing();
+                var shape = obj as ShapeComponent;
 
-                if(Mathf.Approximately(shape.transform.lossyScale.sqrMagnitude, 0f))
-                    return;
+                if (shape != null && !shape.edited)
+                {
+                    if(m_BoundsHandleActive && GUIUtility.hotControl == k_HotControlNone)
+                        EndBoundsEditing();
 
-                DoManipulationGUI(shape);
+                    if(Mathf.Approximately(shape.transform.lossyScale.sqrMagnitude, 0f))
+                        return;
+
+                    DoManipulationGUI(shape);
+                }
             }
         }
 
         protected override void OnOverlayGUI(Object obj, SceneView view)
         {
-            var shapeComponent = target as ShapeComponent;
-            if(shapeComponent.edited)
-            {
-                EditorGUILayout.HelpBox(
-                    L10n.Tr(
-                        "You have manually modified the selected Shape. Revert manual changes to use the tool."),
-                    MessageType.Info);
-                return;
-            }
-
-            Editor.CreateCachedEditor(shapeComponent, typeof(ShapeComponentEditor), ref m_ShapeEditor);
-            ((ShapeComponentEditor)m_ShapeEditor).DrawShapeGUI(null);
-            ((ShapeComponentEditor)m_ShapeEditor).DrawShapeParametersGUI(null);
+            Editor.CreateCachedEditor(targets.ToArray(), typeof(ShapeComponentEditor), ref m_ShapeEditor);
+            ( (ShapeComponentEditor) m_ShapeEditor ).DrawShapeGUI(null);
+            ( (ShapeComponentEditor) m_ShapeEditor ).DrawShapeParametersGUI(null);
 
             EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snap To Grid", EditorSnapSettings.gridSnapEnabled);
 
