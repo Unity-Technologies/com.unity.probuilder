@@ -291,12 +291,11 @@ namespace UnityEditor.ProBuilder
                 if(shape.GetType() != type)
                 {
                     if(currentShapeInOverlay == m_LastShapeCreated)
-                    {
                         m_LastShapeCreated = null;
-                        UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
-                        currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type));
-                        ProBuilderEditor.Refresh();
-                    }
+
+                    UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
+                    currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type));
+                    ProBuilderEditor.Refresh();
                 }
             }
         }

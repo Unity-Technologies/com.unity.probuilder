@@ -116,7 +116,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public void Rebuild(bool resetRotation = false)
         {
-            if(gameObject.hideFlags != HideFlags.None)
+            if( gameObject== null ||gameObject.hideFlags != HideFlags.None )
                 return;
 
             m_Shape.RebuildMesh(mesh, m_Size);
@@ -166,7 +166,7 @@ namespace UnityEngine.ProBuilder.Shapes
             m_Rotation = rotation;
             m_Edited = false;
 
-            if(m_MeshOriginalVertices.Length == 0)
+            if(m_MeshOriginalVertices == null || m_MeshOriginalVertices.Length == 0)
                 return;
 
             var origVerts = new Vector3[m_MeshOriginalVertices.Length];
