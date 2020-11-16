@@ -555,7 +555,7 @@ namespace UnityEngine.ProBuilder
             if (mesh.vertexCount < 1)
                 return;
 
-            var scale = size.DivideBy(mesh.mesh.bounds.size);
+            var scale = size;//.DivideBy(mesh.mesh.bounds.size);
             if (scale == Vector3.one)
                 return;
 
