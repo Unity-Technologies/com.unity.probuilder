@@ -1013,7 +1013,44 @@ namespace UnityEngine.ProBuilder
             return sum / len;
         }
 
-        public static Vector3 InvertScaleVector(Vector3 scaleVector)
+        /// <summary>
+        /// Gets the average of a vector array.
+        /// </summary>
+        /// <param name="array">The array.</param>
+        /// <param name="indexes">If provided the average is the sum of all points contained in the indexes array. If not, the entire v array is used.</param>
+        /// <returns>Average Vector4 of passed vertex array.</returns>
+        public static Vector4 Average(IList<Vector4> array, IList<int> indexes = null)
+        {
+            if (array == null)
+                throw new ArgumentNullException("array");
+
+            Vector4 sum = Vector3.zero;
+
+            float len = indexes == null ? array.Count : indexes.Count;
+
+            if (indexes == null)
+            {
+                for (int i = 0; i < len; i++)
+                {
+                    sum.x += array[i].x;
+                    sum.y += array[i].y;
+                    sum.z += array[i].z;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < len; i++)
+                {
+                    sum.x += array[indexes[i]].x;
+                    sum.y += array[indexes[i]].y;
+                    sum.z += array[indexes[i]].z;
+                }
+            }
+
+            return sum / len;
+        }
+
+        internal static Vector3 InvertScaleVector(Vector3 scaleVector)
         {
             for (int axis = 0; axis < 3; ++axis)
                 scaleVector[axis] = scaleVector[axis] == 0f ? 0f : 1f / scaleVector[axis];
