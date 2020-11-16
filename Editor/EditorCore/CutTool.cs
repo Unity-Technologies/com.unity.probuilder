@@ -85,6 +85,9 @@ namespace UnityEditor.ProBuilder
 
         Color m_CurrentHandleColor = k_HandleColor;
 
+        //Control to check if mouse is in scene view
+        bool m_ProcessMouseEvents = true;
+
         //Handles and point placement
         int m_ControlId;
         bool m_PlacingPoint;
@@ -219,6 +222,14 @@ namespace UnityEditor.ProBuilder
             if (currentEvent.type == EventType.KeyDown)
                 HandleKeyEvent(currentEvent);
 
+            if(currentEvent.type == EventType.MouseLeaveWindow)
+                m_ProcessMouseEvents = false;
+            else if(currentEvent.type == EventType.MouseEnterWindow)
+                m_ProcessMouseEvents = true;
+
+            if(!m_ProcessMouseEvents)
+                return;
+
             if(currentEvent.type == EventType.Repaint && m_Mesh != null)
             {
                 DoExistingLinesGUI();
@@ -267,27 +278,12 @@ namespace UnityEditor.ProBuilder
                 EditorGUI.HelpBox(rect, L10n.Tr("One and only one ProBuilder mesh must be selected."), MessageType.Warning);
             }
 
-            m_SnapToGeometry = DoOverlayToggle(L10n.Tr("Snap to existing edges and vertices"), m_SnapToGeometry);
-            EditorPrefs.SetBool(k_SnapToGeometryPrefKey, m_SnapToGeometry);
-
-            if(!m_SnapToGeometry)
-                GUI.enabled = false;
-            EditorGUI.indentLevel++;
-            using(new GUILayout.HorizontalScope())
-            {
-                EditorGUILayout.LabelField(L10n.Tr("Snapping distance"), GUILayout.Width(200));
-                m_SnappingDistance = EditorGUILayout.FloatField(m_SnappingDistance);
-                EditorPrefs.SetFloat( k_SnappingDistancePrefKey, m_SnappingDistance);
-            }
-            EditorGUI.indentLevel--;
-
-            GUI.enabled = true;
-
             if(MeshSelection.selectedObjectCount != 1)
                 GUI.enabled = false;
 
             if(m_Mesh == null)
             {
+                EditorGUILayout.BeginHorizontal();
                 if(GUILayout.Button(EditorGUIUtility.TrTextContent("Start")))
                 {
                     m_Mesh = MeshSelection.activeMesh;
@@ -300,12 +296,38 @@ namespace UnityEditor.ProBuilder
                         m_MeshConnections.Clear();
                     }
                 }
+
+                if(GUILayout.Button(EditorGUIUtility.TrTextContent("Exit")))
+                    ToolManager.RestorePreviousTool();
+
+                EditorGUILayout.EndHorizontal();
             }
             else
             {
-                if(GUILayout.Button(EditorGUIUtility.TrTextContent("Cut")))
+                EditorGUILayout.BeginHorizontal();
+                if(GUILayout.Button(EditorGUIUtility.TrTextContent("Complete")))
                     ExecuteCut();
+
+                if(GUILayout.Button(EditorGUIUtility.TrTextContent("Cancel")))
+                    Clear();
+                EditorGUILayout.EndHorizontal();
             }
+            GUI.enabled = true;
+
+            m_SnapToGeometry = DoOverlayToggle(L10n.Tr("Snapping"), m_SnapToGeometry);
+            EditorPrefs.SetBool(k_SnapToGeometryPrefKey, m_SnapToGeometry);
+
+            if(!m_SnapToGeometry)
+                GUI.enabled = false;
+            EditorGUI.indentLevel++;
+            using(new GUILayout.HorizontalScope())
+            {
+                EditorGUILayout.LabelField(L10n.Tr("Snap distance"), GUILayout.Width(200));
+                m_SnappingDistance = EditorGUILayout.FloatField(m_SnappingDistance);
+                EditorPrefs.SetFloat( k_SnappingDistancePrefKey, m_SnappingDistance);
+            }
+            EditorGUI.indentLevel--;
+
             GUI.enabled = true;
         }
 
