@@ -101,6 +101,7 @@ namespace UnityEngine.ProBuilder.Shapes
             m_Rotation = Quaternion.Euler(m_Properties.m_Rotation);
 
             SetInnerBoundsRotation(m_Rotation);
+
             Rebuild();
         }
 
@@ -115,6 +116,9 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public void Rebuild(bool resetRotation = false)
         {
+            if(gameObject.hideFlags != HideFlags.None)
+                return;
+
             m_Shape.RebuildMesh(mesh, m_Size);
             m_Edited = false;
 

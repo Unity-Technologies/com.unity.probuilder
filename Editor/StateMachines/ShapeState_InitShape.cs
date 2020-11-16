@@ -32,10 +32,6 @@ namespace UnityEditor.ProBuilder
         protected override void InitState()
         {
             tool.m_IsShapeInit = false;
-            tool.m_ShapeComponent = new GameObject("Shape", typeof(ShapeComponent)).GetComponent<ShapeComponent>();
-            tool.m_ShapeComponent.gameObject.hideFlags = HideFlags.HideAndDontSave;
-            tool.m_ShapeComponent.hideFlags = HideFlags.None;
-            tool.m_ShapeComponent.SetShape(EditorShapeUtility.CreateShape(DrawShapeTool.activeShapeType));
 
             //Init edition tool
             m_BoundsHandle = new BoxBoundsHandle();
@@ -103,8 +99,6 @@ namespace UnityEditor.ProBuilder
                     //Click has been done => Define a plane for the tool
                     if(evt.type == EventType.MouseDown)
                     {
-                        //Update Shape type
-                        tool.m_ShapeComponent.SetShape(EditorShapeUtility.CreateShape(DrawShapeTool.activeShapeType));
                         //BB init
                         tool.m_BB_Origin = tool.GetPoint(ray.GetPoint(hit));
                         tool.m_BB_HeightCorner = tool.m_BB_Origin;

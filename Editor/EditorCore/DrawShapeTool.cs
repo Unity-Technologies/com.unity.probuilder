@@ -61,6 +61,24 @@ namespace UnityEditor.ProBuilder
             get { return s_ActiveShapeIndex < 0 ? typeof(Cube) : EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex]; }
         }
 
+        ShapeComponent currentShapeInOverlay
+        {
+            get
+            {
+                if(( m_CurrentState is ShapeState_InitShape ) && m_LastShapeCreated != null)
+                    return m_LastShapeCreated;
+
+                if(m_ShapeComponent == null)
+                {
+                    m_ShapeComponent = new GameObject("Shape", typeof(ShapeComponent)).GetComponent<ShapeComponent>();
+                    m_ShapeComponent.gameObject.hideFlags = HideFlags.HideAndDontSave;
+                    m_ShapeComponent.hideFlags = HideFlags.None;
+                    m_ShapeComponent.SetShape(EditorShapeUtility.CreateShape(activeShapeType));
+                }
+                return m_ShapeComponent;
+            }
+        }
+
         static DrawShapeTool()
         {
         }
@@ -97,7 +115,7 @@ namespace UnityEditor.ProBuilder
         {
             if(ToolManager.IsActiveTool(this))
             {
-                if(MeshSelection.activeMesh != m_ShapeComponent.mesh)
+                if(m_ShapeComponent != null && MeshSelection.activeMesh != m_ShapeComponent.mesh)
                     m_CurrentState = ShapeState.ResetState();
             }
         }
@@ -120,7 +138,7 @@ namespace UnityEditor.ProBuilder
         {
             if(m_ShapeEditor != null)
                 DestroyImmediate(m_ShapeEditor);
-            if (m_ShapeComponent.gameObject.hideFlags == HideFlags.HideAndDontSave)
+            if (m_ShapeComponent != null && m_ShapeComponent.gameObject.hideFlags == HideFlags.HideAndDontSave)
                 DestroyImmediate(m_ShapeComponent.gameObject);
         }
 
@@ -144,6 +162,8 @@ namespace UnityEditor.ProBuilder
 
             m_BB_OppositeCorner = m_BB_Origin + new Vector3(x, 0, z);
             m_BB_HeightCorner = m_BB_Origin + size;
+
+            s_Size.value = size;
         }
 
         internal void SetBoundsOrigin(Vector3 position)
@@ -231,40 +251,35 @@ namespace UnityEditor.ProBuilder
             EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.ArrowPlus);
             EditorGUILayout.HelpBox(L10n.Tr("Hold and drag to create a new shape while controlling its size. Click to duplicate the last created shape."), MessageType.Info);
 
-            string foldoutName = "New Shape Settings";
-            if(( m_CurrentState is ShapeState_InitShape ) && m_LastShapeCreated != null)
-            {
-                foldoutName = "Settings (" + m_LastShapeCreated.name + ")";
-                Editor.CreateCachedEditor(m_LastShapeCreated, typeof(ShapeComponentEditor), ref m_ShapeEditor);
-            }
-            else if(m_ShapeComponent != null)
-                Editor.CreateCachedEditor(m_ShapeComponent, typeof(ShapeComponentEditor), ref m_ShapeEditor);
-
-            ( (ShapeComponentEditor) m_ShapeEditor ).DrawShapeGUI(this);
+            DrawShapeGUI();
 
             EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snapping", EditorSnapSettings.gridSnapEnabled);
             m_snapAngle = EditorGUILayout.IntSlider(m_SnapAngleContent, m_snapAngle, 1, 90);
 
+            string foldoutName = "New Shape Settings";
+            if(currentShapeInOverlay != null &&  currentShapeInOverlay == m_LastShapeCreated)
+                foldoutName = "Settings (" + m_LastShapeCreated.name + ")";
+
+            Editor.CreateCachedEditor(currentShapeInOverlay, typeof(ShapeComponentEditor), ref m_ShapeEditor);
+
             GUIStyle style = new GUIStyle(EditorStyles.frameBox);
-            //EditorStyles.frameBox
-            Rect r = (Rect)EditorGUILayout.BeginVertical(style);
-            s_SettingsEnabled.value = EditorGUILayout.Foldout(s_SettingsEnabled.value, foldoutName);
-            if(s_SettingsEnabled)
+
+            using(new EditorGUILayout.VerticalScope(style))
             {
-                EditorGUI.indentLevel++;
-                ( (ShapeComponentEditor) m_ShapeEditor ).DrawShapeParametersGUI(this);
-                EditorGUI.indentLevel--;
+                s_SettingsEnabled.value = EditorGUILayout.Foldout(s_SettingsEnabled.value, foldoutName);
+                if(s_SettingsEnabled)
+                {
+                    EditorGUI.indentLevel++;
+                    ( (ShapeComponentEditor) m_ShapeEditor ).DrawShapeParametersGUI(this);
+                    EditorGUI.indentLevel--;
+                }
             }
-            EditorGUILayout.EndVertical();
         }
 
-        private void DrawShapeGUI(ShapeComponent shapeComp, SerializedObject obj)
+        void DrawShapeGUI()
         {
-            if(shapeComp == null || obj == null)
-                return;
+            var shape = currentShapeInOverlay.shape;
 
-            var shape = shapeComp.shape;
-            obj.Update();
             EditorGUI.BeginChangeCheck();
 
             s_ActiveShapeIndex.value = Mathf.Max(-1, Array.IndexOf(EditorShapeUtility.availableShapeTypes, shape.GetType()));
@@ -275,9 +290,13 @@ namespace UnityEditor.ProBuilder
                 var type = EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex];
                 if(shape.GetType() != type)
                 {
-                    UndoUtility.RegisterCompleteObjectUndo(shapeComp, "Change Shape");
-                    shapeComp.SetShape(EditorShapeUtility.CreateShape(type));
-                    ProBuilderEditor.Refresh();
+                    if(currentShapeInOverlay == m_LastShapeCreated)
+                    {
+                        m_LastShapeCreated = null;
+                        UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
+                        currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type));
+                        ProBuilderEditor.Refresh();
+                    }
                 }
             }
         }
