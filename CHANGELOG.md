@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Internal
 
 - Remove backwards compatibility breaking API changes.
+- Fix `Material.SetInt` deprecation warnings.
+- Fix failing `Undo` tests on macOS.
 
 ## [5.0.0-pre.6] - 2020-11-12
 
