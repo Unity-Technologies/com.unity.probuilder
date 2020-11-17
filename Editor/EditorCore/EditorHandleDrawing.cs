@@ -224,7 +224,7 @@ namespace UnityEditor.ProBuilder
             m_ForceWireframeLinesGL = s_WireframeLineSize.value < k_MinLineWidthForGeometryShader;
 
             wireMaterial.SetColor("_Color", wireframeColor);
-            wireMaterial.SetInt("_HandleZTest", (int)CompareFunction.LessEqual);
+            wireMaterial.SetFloat("_HandleZTest", (int)CompareFunction.LessEqual);
 
             SetMaterialsScaleAttribute();
         }
@@ -354,8 +354,8 @@ namespace UnityEditor.ProBuilder
 
         static void Render(Dictionary<ProBuilderMesh, MeshHandle> handles, Material material, Color color, CompareFunction func, bool zWrite = false)
         {
-            material.SetInt("_HandleZTest", (int) func);
-            material.SetInt("_HandleZWrite", zWrite ? 1 : 0);
+            material.SetFloat("_HandleZTest", (int) func);
+            material.SetFloat("_HandleZWrite", zWrite ? 1 : 0);
             material.SetColor("_Color", color);
 
             if(material.SetPass(0))
