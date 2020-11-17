@@ -55,8 +55,11 @@ namespace UnityEditor.ProBuilder
 
         void UndoRedoPerformedOnShapeEditor()
         {
-            foreach(var shapeComponent in targets)
-                ((ShapeComponent)shapeComponent).Rebuild();
+            // the `==` comparison is necessary because `is` does not handle native object lifetime. this is apparent
+            // when performing an undo / redo in tests and the editor tracker invokes callbacks with null native objects.
+            foreach(var component in targets)
+                if(component is ShapeComponent shape && shape != null)
+                    shape.Rebuild();
         }
 
         public override void OnInspectorGUI()
@@ -75,8 +78,6 @@ namespace UnityEditor.ProBuilder
             EditorGUI.BeginChangeCheck();
 
             m_ActiveShapeIndex = HasMultipleShapeTypes ? -1 : Mathf.Max(-1, Array.IndexOf(EditorShapeUtility.availableShapeTypes, m_CurrentShapeType));
-
-
 
             m_ActiveShapeIndex = EditorGUILayout.Popup(m_ActiveShapeIndex, EditorShapeUtility.shapeTypes);
 

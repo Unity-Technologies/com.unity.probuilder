@@ -1,7 +1,6 @@
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using System;
-using System.Globalization;
 using System.Reflection;
 
 namespace UnityEngine.ProBuilder
