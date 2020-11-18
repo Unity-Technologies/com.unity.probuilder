@@ -15,7 +15,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
         [Min(0.01f)]
         [SerializeField]
-        float m_InnerRadius = 30;
+        float m_TubeRadius = .1f;
 
         [Range(0, 360)]
         [SerializeField]
@@ -30,12 +30,14 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
-            var outerRadius = System.Math.Min(size.x, size.z);
+            var xOuterRadius = Mathf.Clamp(size.x /2f ,.01f, 2048f);
+            var yOuterRadius = Mathf.Clamp(size.z /2f ,.01f, 2048f);
             int clampedRows = (int)Mathf.Clamp(m_Rows + 1, 4, 128);
             int clampedColumns = (int)Mathf.Clamp(m_Columns + 1, 4, 128);
-            float clampedRadius = Mathf.Clamp(m_InnerRadius, .01f, 2048f);
-            float clampedTubeRadius = Mathf.Clamp(outerRadius, .01f, clampedRadius - .001f);
-            clampedRadius -= clampedTubeRadius;
+            float clampedTubeRadius = Mathf.Clamp(m_TubeRadius, .01f, Mathf.Min(xOuterRadius, yOuterRadius) - .001f);
+
+            xOuterRadius -= clampedTubeRadius;
+            yOuterRadius -= clampedTubeRadius;
             float clampedHorizontalCircumference = Mathf.Clamp(m_HorizontalCircumference, .01f, 360f);
             float clampedVerticalCircumference = Mathf.Clamp(m_VerticalCircumference, .01f, 360f);
 
@@ -43,17 +45,27 @@ namespace UnityEngine.ProBuilder.Shapes
 
             int col = clampedColumns - 1;
 
-            Vector3[] cir = GetCirclePoints(clampedRows, clampedTubeRadius, clampedVerticalCircumference, Quaternion.Euler(Vector3.up * 0f * clampedHorizontalCircumference), clampedRadius);
+            float clampedRadius = xOuterRadius;
+            Vector3[] cir = GetCirclePoints(clampedRows, clampedTubeRadius, clampedVerticalCircumference, Quaternion.Euler(0,0,0), clampedRadius);
 
+            Vector2 ellipseCoord;
             for (int i = 1; i < clampedColumns; i++)
             {
                 vertices.AddRange(cir);
-                Quaternion rotation = Quaternion.Euler(Vector3.up * ((i / (float)col) * clampedHorizontalCircumference));
-                cir = GetCirclePoints(clampedRows, clampedTubeRadius, clampedVerticalCircumference, rotation, clampedRadius);
+                float angle = (i / (float)col) * clampedHorizontalCircumference;
+                //Compute the coordinates of the current point
+                ellipseCoord = new Vector2( xOuterRadius * Mathf.Cos(Mathf.Deg2Rad * angle),
+                                            yOuterRadius * Mathf.Sin(Mathf.Deg2Rad * angle) );
+
+                //Compute the tangent direction to know how to orient the current slice
+                var tangent = new Vector2( -ellipseCoord.y / (yOuterRadius * yOuterRadius), ellipseCoord.x / (xOuterRadius * xOuterRadius));
+                Quaternion rotation =  Quaternion.Euler(Vector3.up * Vector2.SignedAngle(Vector2.up, tangent.normalized));
+
+                //Get the slice/circle that must be placed at this position
+                cir = GetCirclePoints(clampedRows, clampedTubeRadius, clampedVerticalCircumference, rotation, new Vector3(ellipseCoord.x, 0, -ellipseCoord.y));
                 vertices.AddRange(cir);
             }
 
-            // List<int> ind = new List<int>();
             List<Face> faces = new List<Face>();
             int fc = 0;
 
@@ -77,6 +89,8 @@ namespace UnityEngine.ProBuilder.Shapes
             }
 
             mesh.RebuildWithPositionsAndFaces(vertices, faces);
+
+            m_ShapeBox = mesh.mesh.bounds;
         }
 
 
@@ -93,12 +107,9 @@ namespace UnityEngine.ProBuilder.Shapes
 
             int n = 2;
 
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-
             for (int i = 2; i < segments; i++)
             {
                 float rad = ((i / seg) * circumference) * Mathf.Deg2Rad;
-                sb.AppendLine(rad.ToString());
 
                 v[n + 0] = v[n - 1];
                 v[n + 1] = rotation * (new Vector3(Mathf.Cos(rad) * radius, Mathf.Sin(rad) * radius, 0f) + Vector3.right * offset);
@@ -108,5 +119,32 @@ namespace UnityEngine.ProBuilder.Shapes
 
             return v;
         }
+
+        static Vector3[] GetCirclePoints(int segments, float radius, float circumference, Quaternion rotation, Vector3 offset)
+        {
+            float seg = (float)segments - 1;
+
+            Vector3[] v = new Vector3[(segments - 1) * 2];
+            v[0] = new Vector3(Mathf.Cos(((0f / seg) * circumference) * Mathf.Deg2Rad) * radius, Mathf.Sin(((0f / seg) * circumference) * Mathf.Deg2Rad) * radius, 0f);
+            v[1] = new Vector3(Mathf.Cos(((1f / seg) * circumference) * Mathf.Deg2Rad) * radius, Mathf.Sin(((1f / seg) * circumference) * Mathf.Deg2Rad) * radius, 0f);
+
+            v[0] = rotation * v[0] + offset;
+            v[1] = rotation * v[1] + offset;
+
+            int n = 2;
+
+            for (int i = 2; i < segments; i++)
+            {
+                float rad = ((i / seg) * circumference) * Mathf.Deg2Rad;
+
+                v[n + 0] = v[n - 1];
+                v[n + 1] = rotation * new Vector3(Mathf.Cos(rad) * radius, Mathf.Sin(rad) * radius, 0f) + offset;
+
+                n += 2;
+            }
+
+            return v;
+        }
+
     }
 }

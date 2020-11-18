@@ -45,6 +45,60 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
+        /// Get a point on the circumference of an ellipse.
+        /// </summary>
+        /// <param name="xRadius">The radius of the circle on the x-axis.</param>
+        /// <param name="yRadius">The radius of the circle on the y-axis.</param>
+        /// <param name="angleInDegrees">Where along the circle should the point be projected. Angle is in degrees.</param>
+        /// <param name="origin">The center point of the ellipse</param>
+        /// <param name="tangent">Out: the resulting at the computed position</param>
+        /// <returns></returns>
+        internal static Vector2 PointInEllipseCircumference(float xRadius, float yRadius, float angleInDegrees, Vector2 origin, out Vector2 tangent)
+        {
+            // Convert from degrees to radians via multiplication by PI/180
+            var cosA = Mathf.Cos(Mathf.Deg2Rad * angleInDegrees);
+            var sinA = Mathf.Sin(Mathf.Deg2Rad * angleInDegrees);
+
+            float x = (float)(xRadius * cosA) + origin.x;
+            float y = (float)(yRadius * sinA) + origin.y;
+
+            tangent = new Vector2( -y / (yRadius * yRadius), x / (xRadius * xRadius));
+            tangent.Normalize();
+
+            return new Vector2(x,y);
+        }
+
+        /// <summary>
+        /// Get a point on the circumference of an ellipse.
+        /// </summary>
+        /// <param name="xRadius">The radius of the circle on the x-axis.</param>
+        /// <param name="yRadius">The radius of the circle on the y-axis.</param>
+        /// <param name="angleInDegrees">Where along the circle should the point be projected. Angle is in degrees.</param>
+        /// <param name="origin">The center point of the ellipse</param>
+        /// <param name="tangent">Out: the resulting at the computed position</param>
+        /// <returns></returns>
+        internal static Vector2 PointInEllipseCircumferenceWithConstantAngle(float xRadius, float yRadius, float angleInDegrees, Vector2 origin, out Vector2 tangent)
+        {
+            // Convert from degrees to radians via multiplication by PI/180
+            var cosA = Mathf.Cos(Mathf.Deg2Rad * angleInDegrees);
+            var sinA = Mathf.Sin(Mathf.Deg2Rad * angleInDegrees);
+
+            float tan = Mathf.Tan(Mathf.Deg2Rad * angleInDegrees);
+            float tan2 = tan * tan;
+            float newX = ( xRadius * yRadius ) / Mathf.Sqrt(yRadius * yRadius + xRadius * xRadius * tan2);
+            if(cosA < 0)
+                newX = -newX;
+            float newY = ( xRadius * yRadius ) / Mathf.Sqrt(xRadius * xRadius + yRadius * yRadius / tan2);
+            if(sinA < 0)
+                newY = -newY;
+
+            tangent = new Vector2( -newY / (yRadius * yRadius), newX / (xRadius * xRadius));
+            tangent.Normalize();
+
+            return new Vector2(newX, newY);
+        }
+
+        /// <summary>
         /// Provided a radius, latitudinal and longitudinal angle, return a position.
         /// </summary>
         /// <param name="radius"></param>

@@ -20,15 +20,20 @@ namespace UnityEngine.ProBuilder.Shapes
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
             var height = size.y;
-            var radius = System.Math.Min(size.x, size.z) / 2f;
+            var xRadius = size.x / 2f;
+            var zRadius = size.z / 2f;
             // template is outer ring - radius refers to outer ring always
             Vector2[] templateOut = new Vector2[m_NumberOfSlides];
             Vector2[] templateIn = new Vector2[m_NumberOfSlides];
 
+            Vector2 tangent;
             for (int i = 0; i < m_NumberOfSlides; i++)
             {
-                templateOut[i] = Math.PointInCircumference(radius, i * (360f / m_NumberOfSlides), Vector2.zero);
-                templateIn[i] = Math.PointInCircumference(radius - m_Thickness, i * (360f / m_NumberOfSlides), Vector2.zero);
+                float angle = i * ( 360f / m_NumberOfSlides );
+                templateOut[i] = Math.PointInEllipseCircumference(xRadius, zRadius, angle, Vector2.zero, out tangent);
+
+                Vector2 tangentOrtho = new Vector2(-tangent.y, tangent.x);
+                templateIn[i] = templateOut[i] + (m_Thickness * tangentOrtho);
             }
 
             List<Vector3> v = new List<Vector3>();
@@ -101,6 +106,8 @@ namespace UnityEngine.ProBuilder.Shapes
                 v.AddRange(tpt);
             }
             mesh.GeometryWithPoints(v.ToArray());
+
+            m_ShapeBox = mesh.mesh.bounds;
         }
     }
 }

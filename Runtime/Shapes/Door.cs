@@ -19,9 +19,11 @@ namespace UnityEngine.ProBuilder.Shapes
             float totalHeight = size.y;
             float depth = size.z;
 
+            Debug.Log(m_LegWidth+" / "+m_DoorHeight);
+
             float xLegCoord = totalWidth / 2f;
-            var legWidth = xLegCoord - this.m_LegWidth;
-            var ledgeHeight = totalHeight - m_DoorHeight;
+            var legWidth = xLegCoord - m_LegWidth;
+            var ledgeHeight = totalHeight - m_DoorHeight*2f;
 
             var baseY = -totalHeight;
             var front = depth / 2f;
@@ -101,6 +103,8 @@ namespace UnityEngine.ProBuilder.Shapes
             points.Add(template[5] - Vector3.forward * depth);
 
             mesh.GeometryWithPoints(points.ToArray());
+
+            m_ShapeBox = mesh.mesh.bounds;
         }
     }
 }

@@ -54,6 +54,8 @@
             };
 
             mesh.RebuildWithPositionsAndFaces(v, f);
+
+            m_ShapeBox = mesh.mesh.bounds;
         }
     }
 }

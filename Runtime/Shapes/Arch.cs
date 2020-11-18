@@ -117,6 +117,8 @@ namespace UnityEngine.ProBuilder.Shapes
             }
 
             mesh.GeometryWithPoints(v.ToArray());
+
+            m_ShapeBox = mesh.mesh.bounds;
         }
     }
 }

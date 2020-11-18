@@ -275,10 +275,13 @@ namespace UnityEditor.ProBuilder
                         mainRot = ( (int) ( mainRot * (90f / tool.snapAngle) )) * tool.snapAngle;
                         var rot = Quaternion.AngleAxis(mainRot, axis);
 
-                        rotation = m_LastRotation * Quaternion.Inverse(rot);
-                        m_LastRotation = rot;
+                        if(!rot.Equals(Quaternion.identity) && !rot.Equals(m_LastRotation))
+                        {
+                            rotation = m_LastRotation * Quaternion.Inverse(rot);
+                            m_LastRotation = rot;
 
-                        hasRotated = true;
+                            hasRotated = true;
+                        }
                     }
                     break;
             }

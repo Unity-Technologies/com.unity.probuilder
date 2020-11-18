@@ -17,7 +17,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
-            var radius = Mathf.Max(size.x, size.z) * .5f;
+            var radius = Mathf.Min(size.x, size.z) * .5f;
             var height = size.y;
 
             if (m_AxisDivisions % 2 != 0)
@@ -131,6 +131,11 @@ namespace UnityEngine.ProBuilder.Shapes
             }
 
             mesh.RebuildWithPositionsAndFaces(verts, faces);
+
+            m_ShapeBox = mesh.mesh.bounds;
+            Vector3 boxSize = m_ShapeBox.size;
+            boxSize.x = boxSize.z = Mathf.Max(boxSize.x, boxSize.z);
+            m_ShapeBox.size = boxSize;
         }
     }
 }

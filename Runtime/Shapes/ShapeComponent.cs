@@ -8,11 +8,11 @@ namespace UnityEngine.ProBuilder.Shapes
         class ShapeBoxProperties
         {
             [SerializeField]
-            internal float m_Width = 1;
+            internal float m_Width ;
             [SerializeField]
-            internal float m_Length = 2;
+            internal float m_Length ;
             [SerializeField]
-            internal float m_Height = 3;
+            internal float m_Height ;
             [SerializeField]
             internal Vector3 m_Rotation = Vector3.zero;
         }
@@ -130,9 +130,8 @@ namespace UnityEngine.ProBuilder.Shapes
             if( gameObject== null ||gameObject.hideFlags != HideFlags.None )
                 return;
 
-            //m_Shape.RebuildMesh(mesh, m_Size);
-            m_Shape.RebuildMesh(mesh, Vector3.one);
-            
+            m_Shape.RebuildMesh(mesh, m_Size);
+
             m_Edited = false;
 
             m_MeshOriginalVertices = new Vector3[mesh.vertexCount];
@@ -141,7 +140,7 @@ namespace UnityEngine.ProBuilder.Shapes
             Quaternion rotation = resetRotation ? Quaternion.identity : m_Rotation;
             ApplyRotation(rotation, true);
 
-            MeshUtility.FitToSize(mesh, m_Size);
+            MeshUtility.FitToSize(mesh, m_Shape.shapeBox, m_Size);
         }
 
         public void SetShape(Shape shape)
@@ -156,9 +155,9 @@ namespace UnityEngine.ProBuilder.Shapes
         /// <param name="angles">The angles to rotate by</param>
         public void SetInnerBoundsRotation(Quaternion angles)
         {
-            MeshUtility.FitToSize(mesh, new Vector3(Vector3.one.x / m_Size.x, Vector3.one.y / m_Size.y, Vector3.one.z / m_Size.z));
+            //MeshUtility.FitToSize(mesh, new Vector3(Vector3.one.x / m_Size.x, Vector3.one.y / m_Size.y, Vector3.one.z / m_Size.z));
             ApplyRotation(angles);
-            MeshUtility.FitToSize(mesh, m_Size);
+            MeshUtility.FitToSize(mesh, m_Shape.shapeBox, m_Size);
         }
 
         /// <summary>
@@ -167,13 +166,13 @@ namespace UnityEngine.ProBuilder.Shapes
         /// <param name="rotation">The angles to rotate by</param>
         public void RotateInsideBounds(Quaternion deltaRotation)
         {
-            MeshUtility.FitToSize(mesh, new Vector3(Vector3.one.x / m_Size.x, Vector3.one.y / m_Size.y, Vector3.one.z / m_Size.z));
+            //MeshUtility.FitToSize(mesh, new Vector3(Vector3.one.x / m_Size.x, Vector3.one.y / m_Size.y, Vector3.one.z / m_Size.z));
             Quaternion rotation = deltaRotation * m_Rotation;
             ApplyRotation(rotation);
-            MeshUtility.FitToSize(mesh, m_Size);
+            MeshUtility.FitToSize(mesh, m_Shape.shapeBox, m_Size);
         }
 
-        private void ApplyRotation(Quaternion rotation, bool forceRotation = false)
+        void ApplyRotation(Quaternion rotation, bool forceRotation = false)
         {
             if ( !forceRotation && rotation.Equals(m_Rotation) )
                 return;

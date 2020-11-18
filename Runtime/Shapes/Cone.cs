@@ -79,6 +79,11 @@ namespace UnityEngine.ProBuilder.Shapes
                 UvUnwrapping.CopyUVs(mesh, firstFace, sideFace);
             }
             mesh.RefreshUV(sideFaces);
+
+            m_ShapeBox = mesh.mesh.bounds;
+            Vector3 boxSize = m_ShapeBox.size;
+            boxSize.x = boxSize.z = Mathf.Max(boxSize.x, boxSize.z);
+            m_ShapeBox.size = boxSize;
         }
     }
 }

@@ -106,6 +106,11 @@ namespace UnityEngine.ProBuilder.Shapes
 
 
             mesh.RebuildWithPositionsAndFaces(v, f);
+
+            m_ShapeBox = mesh.mesh.bounds;
+            Vector3 boxSize = m_ShapeBox.size;
+            boxSize.x = boxSize.y = boxSize.z = Mathf.Max(boxSize.x, Mathf.Max(boxSize.y, boxSize.z));
+            m_ShapeBox.size = boxSize;
         }
 
 

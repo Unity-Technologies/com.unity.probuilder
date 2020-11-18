@@ -172,6 +172,8 @@ namespace UnityEngine.ProBuilder.Shapes
             //}
 
             mesh.RebuildWithPositionsAndFaces(vertices, faces);
+
+            m_ShapeBox = mesh.mesh.bounds;
         }
 
         private void BuildCurvedStairs(ProBuilderMesh mesh, Vector3 size)
@@ -395,6 +397,8 @@ namespace UnityEngine.ProBuilder.Shapes
             // }
 
             mesh.RebuildWithPositionsAndFaces(positions, faces);
+
+            m_ShapeBox = mesh.mesh.bounds;
         }
     }
 }

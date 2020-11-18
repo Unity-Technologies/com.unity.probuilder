@@ -38,6 +38,8 @@ namespace UnityEngine.ProBuilder.Shapes
                 points[i] = Vector3.Scale(k_CubeVertices[k_CubeTriangles[i]], size);
 
             mesh.GeometryWithPoints(points);
+
+            m_ShapeBox = mesh.mesh.bounds;
         }
     }
 }

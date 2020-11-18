@@ -46,6 +46,8 @@
                 v[i] = new Vector3(p[i].y, 0f, p[i].x);
 
             mesh.GeometryWithPoints(v);
+
+            m_ShapeBox = mesh.mesh.bounds;
         }
     }
 }
