@@ -73,7 +73,7 @@ publish:
   triggers:
     tags:
       only:
-        - /^(r|R)(c|C)-\d+\.\d+\.\d+(-preview(\.\d+)?)?$/
+        - /^(r|R)(c|C)-\d+\.\d+\.\d+(-pre(\.\d+)?)?$/
   artifacts:
     artifacts:
       paths:

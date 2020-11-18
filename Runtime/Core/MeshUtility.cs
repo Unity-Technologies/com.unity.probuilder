@@ -550,6 +550,11 @@ namespace UnityEngine.ProBuilder
                 mesh.SetTriangles(tris[i], i);
         }
 
+        /// <summary>
+        /// Scale mesh vertices to fit within a bounds size.
+        /// </summary>
+        /// <param name="mesh">The mesh to apply scaling to.</param>
+        /// <param name="size">The size to fit mesh contents within.</param>
         public static void FitToSize(ProBuilderMesh mesh, Vector3 size)
         {
             if (mesh.vertexCount < 1)
