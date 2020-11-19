@@ -25,6 +25,28 @@ namespace UnityEditor.ProBuilder
 
         Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
 
+        Plane plane
+        {
+            set
+            {
+                m_Plane = value;
+            }
+            get
+            {
+                if (polygon.m_Points.Count >= 3 &&
+                    m_Plane.distance.Equals(0) &&
+                    m_Plane.normal.Equals(Vector3.up))
+                {
+                    Transform trs = polygon.transform;
+                    m_Plane = new Plane(trs.TransformPoint(polygon.m_Points[0]),
+                        trs.TransformPoint(polygon.m_Points[1]),
+                        trs.TransformPoint(polygon.m_Points[2]));
+                }
+
+                return m_Plane;
+            }
+        }
+
         int m_ControlId;
         bool m_PlacingPoint = false;
         int m_SelectedIndex = -2;
@@ -315,7 +337,7 @@ namespace UnityEditor.ProBuilder
 
             if (polygon.isOnGrid)
             {
-                Vector3 snapMask = ProBuilderSnapping.GetSnappingMaskBasedOnNormalVector(m_Plane.normal);
+                Vector3 snapMask = ProBuilderSnapping.GetSnappingMaskBasedOnNormalVector(plane.normal);
                 return trs.InverseTransformPoint(ProGridsInterface.ProGridsSnap(point, snapMask));
             }
 
@@ -335,7 +357,7 @@ namespace UnityEditor.ProBuilder
                 {
                     float hitDistance = Mathf.Infinity;
 
-                    if (m_Plane.Raycast(ray, out hitDistance))
+                    if (plane.Raycast(ray, out hitDistance))
                     {
                         evt.Use();
                         polygon.m_Points[m_SelectedIndex] = GetPointInLocalSpace(ray.GetPoint(hitDistance));
@@ -366,7 +388,7 @@ namespace UnityEditor.ProBuilder
 
                     Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
 
-                    if (m_Plane.Raycast(ray, out hitDistance))
+                    if (plane.Raycast(ray, out hitDistance))
                     {
                         UndoUtility.RecordObject(polygon, "Add Polygon Shape Point");
 
@@ -376,7 +398,7 @@ namespace UnityEditor.ProBuilder
                         {
                             polygon.transform.position = polygon.isOnGrid ? ProGridsInterface.ProGridsSnap(hit) : hit;
 
-                            Vector3 cameraFacingPlaneNormal = m_Plane.normal;
+                            Vector3 cameraFacingPlaneNormal = plane.normal;
                             if (Vector3.Dot(cameraFacingPlaneNormal, SceneView.lastActiveSceneView.camera.transform.forward) > 0f)
                                 cameraFacingPlaneNormal *= -1;
 
@@ -412,37 +434,57 @@ namespace UnityEditor.ProBuilder
                 if (m_DistanceFromHeightHandle > PreferenceKeys.k_MaxPointDistanceFromControl)
                 {
                     // point insertion
-                    int index;
-                    float distanceToLine;
-
-                    Vector3 p = EditorHandleUtility.ClosestPointToPolyLine(polygon.m_Points, out index, out distanceToLine, true, polygon.transform);
-                    Vector3 wp = polygon.transform.TransformPoint(p);
-
-                    Vector2 ga = HandleUtility.WorldToGUIPoint(polygon.transform.TransformPoint(polygon.m_Points[index % polygon.m_Points.Count]));
-                    Vector2 gb = HandleUtility.WorldToGUIPoint(polygon.transform.TransformPoint(polygon.m_Points[(index - 1)]));
-
                     Vector2 mouse = evt.mousePosition;
-
-                    float distanceToVertex = Mathf.Min(Vector2.Distance(mouse, ga), Vector2.Distance(mouse, gb));
-
-                    if (distanceToVertex > PreferenceKeys.k_MaxPointDistanceFromControl && distanceToLine < PreferenceKeys.k_MaxPointDistanceFromControl)
+                    Ray ray = HandleUtility.GUIPointToWorldRay(mouse);
+                    float hitDistance = Mathf.Infinity;
+                    if (plane.Raycast(ray, out hitDistance))
                     {
-                        Handles.color = Color.green;
-                        Handles.DotHandleCap(-1, wp, Quaternion.identity, HandleUtility.GetHandleSize(wp) * k_HandleSize, evt.type);
+                        Vector3 hit = ray.GetPoint(hitDistance);
+                        Vector3 point = GetPointInLocalSpace(hit);
 
-                        if (evt.type == EventType.MouseDown && HandleUtility.nearestControl == m_ControlId)
+                        int polyCount = polygon.m_Points.Count;
+
+                        float distToLineInGUI;
+                        int index;
+                        EditorHandleUtility.ClosestPointToPolyLine(polygon.m_Points, out index, out distToLineInGUI, true, polygon.transform);
+
+                        Vector3 aToPoint = point - polygon.m_Points[index - 1];
+                        Vector3 aToB = polygon.m_Points[index % polyCount] - polygon.m_Points[index - 1];
+
+                        float ratio = Vector3.Dot(aToPoint, aToB.normalized) / aToB.magnitude;
+                        Vector3 wp = Vector3.Lerp(polygon.m_Points[index - 1], polygon.m_Points[index % polyCount], ratio);
+                        wp = polygon.transform.TransformPoint(wp);
+
+                        Vector2 aInGUI = HandleUtility.WorldToGUIPoint(polygon.transform.TransformPoint(polygon.m_Points[index - 1]));
+                        Vector2 bInGUI = HandleUtility.WorldToGUIPoint(polygon.transform.TransformPoint(polygon.m_Points[index % polyCount]));
+                        float distanceToVertex = Mathf.Min(Vector2.Distance(mouse, aInGUI), Vector2.Distance(mouse, bInGUI));
+
+                        if (distanceToVertex > PreferenceKeys.k_MaxPointDistanceFromControl && distToLineInGUI < PreferenceKeys.k_MaxPointDistanceFromControl)
                         {
-                            evt.Use();
+                            if (evt.type == EventType.Repaint)
+                            {
+                                Handles.color = Color.green;
+                                Handles.DotHandleCap(-1, wp, Quaternion.identity,
+                                    HandleUtility.GetHandleSize(wp) * k_HandleSize, evt.type);
+                            }
 
-                            UndoUtility.RecordObject(polygon, "Insert Point");
-                            polygon.m_Points.Insert(index, p);
-                            m_SelectedIndex = index;
-                            m_PlacingPoint = true;
-                            RebuildPolyShapeMesh(true);
-                            OnBeginVertexMovement();
+                            if (evt.type == EventType.MouseDown && HandleUtility.nearestControl == m_ControlId)
+                            {
+                                evt.Use();
+
+                                UndoUtility.RecordObject(polygon, "Insert Point");
+                                polygon.m_Points.Insert(index, point);
+                                m_SelectedIndex = index;
+                                m_PlacingPoint = true;
+                                RebuildPolyShapeMesh(true);
+                                OnBeginVertexMovement();
+                            }
+
+                            Handles.color = Color.white;
                         }
 
-                        Handles.color = Color.white;
+                        if (evt.type != EventType.Repaint)
+                            SceneView.RepaintAll();
                     }
                 }
             }
@@ -450,10 +492,10 @@ namespace UnityEditor.ProBuilder
 
         void SetupInputPlane(Vector2 mousePosition)
         {
-            m_Plane = EditorHandleUtility.FindBestPlane(mousePosition);
+            plane = EditorHandleUtility.FindBestPlane(mousePosition);
 
-            var planeNormal = m_Plane.normal;
-            var planeCenter = m_Plane.normal * -m_Plane.distance;
+            var planeNormal = plane.normal;
+            var planeCenter = plane.normal * -plane.distance;
 
             // if hit point on plane is cardinal axis and on grid, snap to grid.
             if (Math.IsCardinalAxis(planeNormal))
