@@ -295,20 +295,32 @@ namespace UnityEditor.ProBuilder
 
             if(edgeToNeighborsEdges.Count ==0)
             {
-                edgeToNeighborsEdges.Add(edgeX1, new SimpleTuple<EdgeData, EdgeData>(edgeX2, edgeX3));
-                edgeToNeighborsEdges.Add(edgeX2, new SimpleTuple<EdgeData, EdgeData>(edgeX4, edgeX1));
-                edgeToNeighborsEdges.Add(edgeX3, new SimpleTuple<EdgeData, EdgeData>(edgeX1, edgeX4));
-                edgeToNeighborsEdges.Add(edgeX4, new SimpleTuple<EdgeData, EdgeData>(edgeX3, edgeX2));
+                if(!edgeToNeighborsEdges.ContainsKey(edgeX1))
+                    edgeToNeighborsEdges.Add(edgeX1, new SimpleTuple<EdgeData, EdgeData>(edgeX2, edgeX3));
+                if(!edgeToNeighborsEdges.ContainsKey(edgeX2))
+                    edgeToNeighborsEdges.Add(edgeX2, new SimpleTuple<EdgeData, EdgeData>(edgeX4, edgeX1));
+                if(!edgeToNeighborsEdges.ContainsKey(edgeX3))
+                    edgeToNeighborsEdges.Add(edgeX3, new SimpleTuple<EdgeData, EdgeData>(edgeX1, edgeX4));
+                if(!edgeToNeighborsEdges.ContainsKey(edgeX4))
+                    edgeToNeighborsEdges.Add(edgeX4, new SimpleTuple<EdgeData, EdgeData>(edgeX3, edgeX2));
 
-                edgeToNeighborsEdges.Add(edgeY1, new SimpleTuple<EdgeData, EdgeData>(edgeY3, edgeY2));
-                edgeToNeighborsEdges.Add(edgeY2, new SimpleTuple<EdgeData, EdgeData>(edgeY1, edgeY4));
-                edgeToNeighborsEdges.Add(edgeY3, new SimpleTuple<EdgeData, EdgeData>(edgeY4, edgeY1));
-                edgeToNeighborsEdges.Add(edgeY4, new SimpleTuple<EdgeData, EdgeData>(edgeY2, edgeY3));
+                if(!edgeToNeighborsEdges.ContainsKey(edgeY1))
+                    edgeToNeighborsEdges.Add(edgeY1, new SimpleTuple<EdgeData, EdgeData>(edgeY3, edgeY2));
+                if(!edgeToNeighborsEdges.ContainsKey(edgeY2))
+                    edgeToNeighborsEdges.Add(edgeY2, new SimpleTuple<EdgeData, EdgeData>(edgeY1, edgeY4));
+                if(!edgeToNeighborsEdges.ContainsKey(edgeY3))
+                    edgeToNeighborsEdges.Add(edgeY3, new SimpleTuple<EdgeData, EdgeData>(edgeY4, edgeY1));
+                if(!edgeToNeighborsEdges.ContainsKey(edgeY4))
+                    edgeToNeighborsEdges.Add(edgeY4, new SimpleTuple<EdgeData, EdgeData>(edgeY2, edgeY3));
 
-                edgeToNeighborsEdges.Add(edgeZ1, new SimpleTuple<EdgeData, EdgeData>(edgeZ2, edgeZ3));
-                edgeToNeighborsEdges.Add(edgeZ2, new SimpleTuple<EdgeData, EdgeData>(edgeZ4, edgeZ1));
-                edgeToNeighborsEdges.Add(edgeZ3, new SimpleTuple<EdgeData, EdgeData>(edgeZ1, edgeZ4));
-                edgeToNeighborsEdges.Add(edgeZ4, new SimpleTuple<EdgeData, EdgeData>(edgeZ3, edgeZ2));
+                if(!edgeToNeighborsEdges.ContainsKey(edgeZ1))
+                    edgeToNeighborsEdges.Add(edgeZ1, new SimpleTuple<EdgeData, EdgeData>(edgeZ2, edgeZ3));
+                if(!edgeToNeighborsEdges.ContainsKey(edgeZ2))
+                    edgeToNeighborsEdges.Add(edgeZ2, new SimpleTuple<EdgeData, EdgeData>(edgeZ4, edgeZ1));
+                if(!edgeToNeighborsEdges.ContainsKey(edgeZ3))
+                    edgeToNeighborsEdges.Add(edgeZ3, new SimpleTuple<EdgeData, EdgeData>(edgeZ1, edgeZ4));
+                if(!edgeToNeighborsEdges.ContainsKey(edgeZ4))
+                    edgeToNeighborsEdges.Add(edgeZ4, new SimpleTuple<EdgeData, EdgeData>(edgeZ3, edgeZ2));
             }
             else
             {
