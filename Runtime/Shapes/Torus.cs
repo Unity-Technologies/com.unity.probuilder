@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -145,6 +146,36 @@ namespace UnityEngine.ProBuilder.Shapes
 
             return v;
         }
-
     }
+
+    [CustomPropertyDrawer(typeof(Torus))]
+    public class TorusDrawer : PropertyDrawer
+    {
+        static bool s_foldoutEnabled = true;
+
+        const bool k_ToggleOnLabelClick = true;
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            EditorGUI.BeginProperty(position, label, property);
+
+            s_foldoutEnabled = EditorGUI.Foldout(position, s_foldoutEnabled, "Torus Settings", k_ToggleOnLabelClick);
+
+            EditorGUI.indentLevel++;
+
+            if(s_foldoutEnabled)
+            {
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Rows"), new GUIContent("Rows"));
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Columns"), new GUIContent("Columns"));
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_TubeRadius"), new GUIContent("Tube Radius"));
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HorizontalCircumference"), new GUIContent("Horizontal Circumference"));
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_VerticalCircumference"), new GUIContent("Vertical Circumference"));
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smooth"), new GUIContent("Smooth"));
+            }
+
+            EditorGUI.indentLevel--;
+            EditorGUI.EndProperty();
+        }
+    }
+
 }

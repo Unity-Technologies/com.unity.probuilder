@@ -445,7 +445,7 @@ namespace UnityEngine.ProBuilder.Shapes
     [CustomPropertyDrawer(typeof(Stairs))]
     public class StairsDrawer : PropertyDrawer
     {
-        static bool s_foldoutEnabled = false;
+        static bool s_foldoutEnabled = true;
 
         const bool k_ToggleOnLabelClick = true;
 
@@ -459,8 +459,6 @@ namespace UnityEngine.ProBuilder.Shapes
 
             if(s_foldoutEnabled)
             {
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_ShapeBox"), new GUIContent("Shape Box"));
-
                 var typePpty = property.FindPropertyRelative("m_StepGenerationType");
                 EditorGUILayout.PropertyField(typePpty, new GUIContent("Steps Generation"));
                 if(typePpty.enumValueIndex == (int)Stairs.StepGenerationType.Count)

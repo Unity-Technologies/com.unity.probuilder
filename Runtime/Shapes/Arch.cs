@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -119,6 +120,34 @@ namespace UnityEngine.ProBuilder.Shapes
             mesh.GeometryWithPoints(v.ToArray());
 
             m_ShapeBox = mesh.mesh.bounds;
+        }
+    }
+
+    [CustomPropertyDrawer(typeof(Arch))]
+    public class ArchDrawer : PropertyDrawer
+    {
+        static bool s_foldoutEnabled = true;
+
+        const bool k_ToggleOnLabelClick = true;
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            EditorGUI.BeginProperty(position, label, property);
+
+            s_foldoutEnabled = EditorGUI.Foldout(position, s_foldoutEnabled, "Arch Settings", k_ToggleOnLabelClick);
+
+            EditorGUI.indentLevel++;
+
+            if(s_foldoutEnabled)
+            {
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Thickness"), new GUIContent("Thickness"));
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_NumberOfSides"), new GUIContent("Sides Count"));
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_ArchDegrees"), new GUIContent("Arch Circumference"));
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_EndCaps"), new GUIContent("End Caps"));
+            }
+
+            EditorGUI.indentLevel--;
+            EditorGUI.EndProperty();
         }
     }
 }

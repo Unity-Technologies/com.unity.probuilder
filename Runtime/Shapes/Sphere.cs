@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -163,5 +164,29 @@ namespace UnityEngine.ProBuilder.Shapes
         }
     }
 
+    [CustomPropertyDrawer(typeof(Sphere))]
+    public class SphereDrawer : PropertyDrawer
+    {
+        static bool s_foldoutEnabled = true;
+
+        const bool k_ToggleOnLabelClick = true;
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            EditorGUI.BeginProperty(position, label, property);
+
+            s_foldoutEnabled = EditorGUI.Foldout(position, s_foldoutEnabled, "Sphere Settings", k_ToggleOnLabelClick);
+
+            EditorGUI.indentLevel++;
+
+            if(s_foldoutEnabled)
+            {
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Subdivisions"), new GUIContent("Subdivisions"));
+            }
+
+            EditorGUI.indentLevel--;
+            EditorGUI.EndProperty();
+        }
+    }
 
 }

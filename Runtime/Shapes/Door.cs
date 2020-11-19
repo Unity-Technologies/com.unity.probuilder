@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -18,8 +19,6 @@ namespace UnityEngine.ProBuilder.Shapes
             float totalWidth = size.x;
             float totalHeight = size.y;
             float depth = size.z;
-
-            Debug.Log(m_LegWidth+" / "+m_DoorHeight);
 
             float xLegCoord = totalWidth / 2f;
             var legWidth = xLegCoord - m_LegWidth;
@@ -105,6 +104,33 @@ namespace UnityEngine.ProBuilder.Shapes
             mesh.GeometryWithPoints(points.ToArray());
 
             m_ShapeBox = mesh.mesh.bounds;
+        }
+    }
+
+
+    [CustomPropertyDrawer(typeof(Door))]
+    public class DoorDrawer : PropertyDrawer
+    {
+        static bool s_foldoutEnabled = true;
+
+        const bool k_ToggleOnLabelClick = true;
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            EditorGUI.BeginProperty(position, label, property);
+
+            s_foldoutEnabled = EditorGUI.Foldout(position, s_foldoutEnabled, "Door Settings", k_ToggleOnLabelClick);
+
+            EditorGUI.indentLevel++;
+
+            if(s_foldoutEnabled)
+            {
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_DoorHeight"), new GUIContent("Pediment Height"));
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_LegWidth"), new GUIContent("Side Width"));
+            }
+
+            EditorGUI.indentLevel--;
+            EditorGUI.EndProperty();
         }
     }
 }

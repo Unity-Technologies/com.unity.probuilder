@@ -1,3 +1,5 @@
+using UnityEditor;
+
 namespace UnityEngine.ProBuilder.Shapes
 {
     [Shape("Cylinder")]
@@ -136,6 +138,33 @@ namespace UnityEngine.ProBuilder.Shapes
             Vector3 boxSize = m_ShapeBox.size;
             boxSize.x = boxSize.z = Mathf.Max(boxSize.x, boxSize.z);
             m_ShapeBox.size = boxSize;
+        }
+    }
+
+    [CustomPropertyDrawer(typeof(Cylinder))]
+    public class CylinderDrawer : PropertyDrawer
+    {
+        static bool s_foldoutEnabled = true;
+
+        const bool k_ToggleOnLabelClick = true;
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            EditorGUI.BeginProperty(position, label, property);
+
+            s_foldoutEnabled = EditorGUI.Foldout(position, s_foldoutEnabled, "Cylinder Settings", k_ToggleOnLabelClick);
+
+            EditorGUI.indentLevel++;
+
+            if(s_foldoutEnabled)
+            {
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_AxisDivisions"), new GUIContent("Sides Count"));
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HeightCuts"), new GUIContent("Height Cuts"));
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smoothing"), new GUIContent("Smoothing Group"));
+            }
+
+            EditorGUI.indentLevel--;
+            EditorGUI.EndProperty();
         }
     }
 }

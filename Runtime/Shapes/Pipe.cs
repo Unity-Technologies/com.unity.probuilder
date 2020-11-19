@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -11,11 +12,11 @@ namespace UnityEngine.ProBuilder.Shapes
 
         [Range(3, 64)]
         [SerializeField]
-        int m_NumberOfSlides = 6;
+        int m_NumberOfSides = 6;
 
         [Range(1, 32)]
         [SerializeField]
-        int m_HeightSeigments = 1;
+        int m_HeightSegments = 1;
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
@@ -23,13 +24,13 @@ namespace UnityEngine.ProBuilder.Shapes
             var xRadius = size.x / 2f;
             var zRadius = size.z / 2f;
             // template is outer ring - radius refers to outer ring always
-            Vector2[] templateOut = new Vector2[m_NumberOfSlides];
-            Vector2[] templateIn = new Vector2[m_NumberOfSlides];
+            Vector2[] templateOut = new Vector2[m_NumberOfSides];
+            Vector2[] templateIn = new Vector2[m_NumberOfSides];
 
             Vector2 tangent;
-            for (int i = 0; i < m_NumberOfSlides; i++)
+            for (int i = 0; i < m_NumberOfSides; i++)
             {
-                float angle = i * ( 360f / m_NumberOfSlides );
+                float angle = i * ( 360f / m_NumberOfSides );
                 templateOut[i] = Math.PointInEllipseCircumference(xRadius, zRadius, angle, Vector2.zero, out tangent);
 
                 Vector2 tangentOrtho = new Vector2(-tangent.y, tangent.x);
@@ -40,16 +41,16 @@ namespace UnityEngine.ProBuilder.Shapes
             var baseY = height / 2f;
             // build out sides
             Vector2 tmp, tmp2, tmp3, tmp4;
-            for (int i = 0; i < m_HeightSeigments; i++)
+            for (int i = 0; i < m_HeightSegments; i++)
             {
                 // height subdivisions
-                float y = i * (height / m_HeightSeigments) - baseY;
-                float y2 = (i + 1) * (height / m_HeightSeigments) - baseY;
+                float y = i * (height / m_HeightSegments) - baseY;
+                float y2 = (i + 1) * (height / m_HeightSegments) - baseY;
 
-                for (int n = 0; n < m_NumberOfSlides; n++)
+                for (int n = 0; n < m_NumberOfSides; n++)
                 {
                     tmp = templateOut[n];
-                    tmp2 = n < (m_NumberOfSlides - 1) ? templateOut[n + 1] : templateOut[0];
+                    tmp2 = n < (m_NumberOfSides - 1) ? templateOut[n + 1] : templateOut[0];
 
                     // outside quads
                     Vector3[] qvo = new Vector3[4]
@@ -62,7 +63,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
                     // inside quad
                     tmp = templateIn[n];
-                    tmp2 = n < (m_NumberOfSlides - 1) ? templateIn[n + 1] : templateIn[0];
+                    tmp2 = n < (m_NumberOfSides - 1) ? templateIn[n + 1] : templateIn[0];
                     Vector3[] qvi = new Vector3[4]
                     {
                         new Vector3(tmp.x, y, tmp.y),
@@ -77,12 +78,12 @@ namespace UnityEngine.ProBuilder.Shapes
             }
 
             // build top and bottom
-            for (int i = 0; i < m_NumberOfSlides; i++)
+            for (int i = 0; i < m_NumberOfSides; i++)
             {
                 tmp = templateOut[i];
-                tmp2 = (i < m_NumberOfSlides - 1) ? templateOut[i + 1] : templateOut[0];
+                tmp2 = (i < m_NumberOfSides - 1) ? templateOut[i + 1] : templateOut[0];
                 tmp3 = templateIn[i];
-                tmp4 = (i < m_NumberOfSlides - 1) ? templateIn[i + 1] : templateIn[0];
+                tmp4 = (i < m_NumberOfSides - 1) ? templateIn[i + 1] : templateIn[0];
 
                 // top
                 Vector3[] tpt = new Vector3[4]
@@ -108,6 +109,33 @@ namespace UnityEngine.ProBuilder.Shapes
             mesh.GeometryWithPoints(v.ToArray());
 
             m_ShapeBox = mesh.mesh.bounds;
+        }
+    }
+
+    [CustomPropertyDrawer(typeof(Pipe))]
+    public class PipeDrawer : PropertyDrawer
+    {
+        static bool s_foldoutEnabled = true;
+
+        const bool k_ToggleOnLabelClick = true;
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            EditorGUI.BeginProperty(position, label, property);
+
+            s_foldoutEnabled = EditorGUI.Foldout(position, s_foldoutEnabled, "Pipe Settings", k_ToggleOnLabelClick);
+
+            EditorGUI.indentLevel++;
+
+            if(s_foldoutEnabled)
+            {
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Thickness"), new GUIContent("Thickness"));
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_NumberOfSides"), new GUIContent("Sides Count"));
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HeightSegments"), new GUIContent("Height Subdivisions"));
+            }
+
+            EditorGUI.indentLevel--;
+            EditorGUI.EndProperty();
         }
     }
 }

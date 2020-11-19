@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -86,4 +87,30 @@ namespace UnityEngine.ProBuilder.Shapes
             m_ShapeBox.size = boxSize;
         }
     }
+
+    [CustomPropertyDrawer(typeof(Cone))]
+    public class ConeDrawer : PropertyDrawer
+    {
+        static bool s_foldoutEnabled = true;
+
+        const bool k_ToggleOnLabelClick = true;
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            EditorGUI.BeginProperty(position, label, property);
+
+            s_foldoutEnabled = EditorGUI.Foldout(position, s_foldoutEnabled, "Cone Settings", k_ToggleOnLabelClick);
+
+            EditorGUI.indentLevel++;
+
+            if(s_foldoutEnabled)
+            {
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_NumberOfSides"), new GUIContent("Sides Count"));
+            }
+
+            EditorGUI.indentLevel--;
+            EditorGUI.EndProperty();
+        }
+    }
+
 }

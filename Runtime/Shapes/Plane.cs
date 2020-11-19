@@ -1,4 +1,6 @@
-﻿namespace UnityEngine.ProBuilder.Shapes
+﻿using UnityEditor;
+
+namespace UnityEngine.ProBuilder.Shapes
 {
     [Shape("Plane")]
     public class Plane : Shape
@@ -48,6 +50,32 @@
             mesh.GeometryWithPoints(v);
 
             m_ShapeBox = mesh.mesh.bounds;
+        }
+    }
+
+    [CustomPropertyDrawer(typeof(Plane))]
+    public class PlaneDrawer : PropertyDrawer
+    {
+        static bool s_foldoutEnabled = true;
+
+        const bool k_ToggleOnLabelClick = true;
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            EditorGUI.BeginProperty(position, label, property);
+
+            s_foldoutEnabled = EditorGUI.Foldout(position, s_foldoutEnabled, "Plane Settings", k_ToggleOnLabelClick);
+
+            EditorGUI.indentLevel++;
+
+            if(s_foldoutEnabled)
+            {
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HeightSegments"), new GUIContent("Height Segments"));
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_WidthSegments"), new GUIContent("Width Segments"));
+            }
+
+            EditorGUI.indentLevel--;
+            EditorGUI.EndProperty();
         }
     }
 }

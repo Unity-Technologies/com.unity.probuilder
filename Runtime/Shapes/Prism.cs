@@ -1,4 +1,6 @@
-﻿namespace UnityEngine.ProBuilder.Shapes
+﻿using UnityEditor;
+
+namespace UnityEngine.ProBuilder.Shapes
 {
     [Shape("Prism")]
     public class Prism : Shape
@@ -56,6 +58,23 @@
             mesh.RebuildWithPositionsAndFaces(v, f);
 
             m_ShapeBox = mesh.mesh.bounds;
+        }
+    }
+
+    [CustomPropertyDrawer(typeof(Prism))]
+    public class PrismDrawer : PropertyDrawer
+    {
+        static bool s_foldoutEnabled = false;
+
+        const bool k_ToggleOnLabelClick = true;
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            EditorGUI.BeginProperty(position, label, property);
+
+            s_foldoutEnabled = EditorGUI.Foldout(position, s_foldoutEnabled, "Prism Settings", k_ToggleOnLabelClick);
+
+            EditorGUI.EndProperty();
         }
     }
 }

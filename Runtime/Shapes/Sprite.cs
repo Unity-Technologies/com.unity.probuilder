@@ -1,4 +1,5 @@
-﻿using UnityEngine.ProBuilder.MeshOperations;
+﻿using UnityEditor;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -61,4 +62,29 @@ namespace UnityEngine.ProBuilder.Shapes
             mesh.SetPivot(PivotLocation.Center);
         }
     }
+
+    [CustomPropertyDrawer(typeof(Sprite))]
+    public class SpriteDrawer : PropertyDrawer
+    {
+        static bool s_foldoutEnabled = true;
+
+        const bool k_ToggleOnLabelClick = true;
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            EditorGUI.BeginProperty(position, label, property);
+
+            s_foldoutEnabled = EditorGUI.Foldout(position, s_foldoutEnabled, "Sprite Settings", k_ToggleOnLabelClick);
+
+            EditorGUI.indentLevel++;
+
+            if(s_foldoutEnabled)
+            {
+            }
+
+            EditorGUI.indentLevel--;
+            EditorGUI.EndProperty();
+        }
+    }
+
 }
