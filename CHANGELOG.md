@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+- Fixed the insertion of new points on a Poly Shape being unreliable. 
+
 ## [4.4.1] - 2020-11-10
 
 - [case: 1286720] Fixed `Bezier Shape` and `Poly Shape` component preventing build when `Script Stripping` was enabled.
