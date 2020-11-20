@@ -111,17 +111,55 @@ namespace UnityEditor.ProBuilder
             {
                 get
                 {
+                    if(Normal == Vector3.up || Normal == Vector3.down)
+                        return false;
+
                     Vector3 worldDir = Handles.matrix.MultiplyVector(Normal).normalized;
 
                     Vector3 cameraDir;
                     if (Camera.current.orthographic)
-                        cameraDir = -Camera.current.transform.forward;
+                        cameraDir = Camera.current.transform.forward;
                     else
-                        cameraDir = (Camera.current.transform.position - Handles.matrix.MultiplyPoint(CenterPosition)).normalized;
+                        cameraDir = (Handles.matrix.MultiplyPoint(CenterPosition) - Camera.current.transform.position).normalized;
 
                     return Vector3.Dot(cameraDir, worldDir) < 0;
                 }
             }
+
+            public Vector3 PlacementPosition
+            {
+                get
+                {
+                    float minDist = Single.PositiveInfinity;
+                    Vector3 closestEdgeCorner = Vector3.zero;
+                    foreach(var edge in Edges)
+                    {
+                        float dist1 = Vector3.Distance(Camera.current.transform.position, Handles.matrix.MultiplyPoint(edge.PointA));
+                        float dist2 = Vector3.Distance(Camera.current.transform.position, Handles.matrix.MultiplyPoint(edge.PointB));
+                        if(dist1 < dist2 && dist1 < minDist)
+                        {
+                            minDist = dist1;
+                            closestEdgeCorner = edge.PointA;
+                        }
+                        else if(dist2 < dist1 && dist2 < minDist)
+                        {
+                            minDist = dist2;
+                            closestEdgeCorner = edge.PointB;
+                        }
+                    }
+
+                    if(minDist < Single.PositiveInfinity)
+                    {
+                        return ( CenterPosition + closestEdgeCorner ) / 2f;
+                    }
+
+                    return CenterPosition;
+                }
+            }
+
+            public string m_Label = "None";
+            public Color m_Color = Color.white;
+            public GUIStyle m_Style = new GUIStyle(EditorStyles.label);
 
             public FaceData()
             {
@@ -132,6 +170,39 @@ namespace UnityEditor.ProBuilder
             {
                 CenterPosition = centerPosition;
                 Normal = normal;
+
+                if(Normal == Vector3.up)
+                {
+                    m_Color = Color.green;
+                    m_Label = "Top";
+                }
+                else if(Normal == Vector3.down)
+                {
+                    m_Color = Color.green;
+                    m_Label = "Down";
+                }
+                else if(Normal == Vector3.right)
+                {
+                    m_Color = Color.red;
+                    m_Label = "Right";
+                }
+                else if(Normal == Vector3.left)
+                {
+                    m_Color = Color.red;
+                    m_Label = "Left";
+                }
+                else if(Normal == Vector3.forward)
+                {
+                    m_Color = Color.blue;
+                    m_Label = "Forward";
+                }
+                else if(Normal == Vector3.back)
+                {
+                    m_Color = Color.blue;
+                    m_Label = "Back";
+                }
+
+                m_Style.normal.textColor = m_Color;
             }
         }
 
@@ -244,7 +315,7 @@ namespace UnityEditor.ProBuilder
 
             // -X
             var pos =  - new Vector3(extents.x, 0, 0);
-            faces[0].SetData(pos, Vector3.right);
+            faces[0].SetData(pos, -Vector3.right);
             faces[0].Edges[0] = edgeY2;
             faces[0].Edges[1] = edgeZ2;
             faces[0].Edges[2] = edgeZ4;
@@ -252,7 +323,7 @@ namespace UnityEditor.ProBuilder
 
             // +X
             pos = new Vector3(extents.x, 0, 0);
-            faces[1].SetData(pos, -Vector3.right);
+            faces[1].SetData(pos, Vector3.right);
             faces[1].Edges[0] = edgeY1;
             faces[1].Edges[1] = edgeZ1;
             faces[1].Edges[2] = edgeZ3;
@@ -260,7 +331,7 @@ namespace UnityEditor.ProBuilder
 
             // -Y
             pos = - new Vector3(0, extents.y, 0);
-            faces[2].SetData(pos, Vector3.up);
+            faces[2].SetData(pos, -Vector3.up);
             faces[2].Edges[0] = edgeX2;
             faces[2].Edges[1] = edgeZ3;
             faces[2].Edges[2] = edgeZ4;
@@ -268,7 +339,7 @@ namespace UnityEditor.ProBuilder
 
             // +Y
             pos = new Vector3(0, extents.y, 0);
-            faces[3].SetData(pos, -Vector3.up);
+            faces[3].SetData(pos, Vector3.up);
             faces[3].Edges[0] = edgeX1;
             faces[3].Edges[1] = edgeZ1;
             faces[3].Edges[2] = edgeZ2;
@@ -276,7 +347,7 @@ namespace UnityEditor.ProBuilder
 
             // -Z
             pos = - new Vector3(0, 0, extents.z);
-            faces[4].SetData(pos, Vector3.forward);
+            faces[4].SetData(pos, -Vector3.forward);
             faces[4].Edges[0] = edgeX3;
             faces[4].Edges[1] = edgeY3;
             faces[4].Edges[2] = edgeY4;
@@ -284,7 +355,7 @@ namespace UnityEditor.ProBuilder
 
             // +Z
             pos = new Vector3(0, 0, extents.z);
-            faces[5].SetData(pos, -Vector3.forward);
+            faces[5].SetData(pos, Vector3.forward);
             faces[5].Edges[0] = edgeX1;
             faces[5].Edges[1] = edgeY1;
             faces[5].Edges[2] = edgeY2;

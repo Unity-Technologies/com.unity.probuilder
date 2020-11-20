@@ -140,7 +140,7 @@ namespace UnityEngine.ProBuilder.Shapes
             Quaternion rotation = resetRotation ? Quaternion.identity : m_Rotation;
             ApplyRotation(rotation, true);
 
-            MeshUtility.FitToSize(mesh, m_Shape.shapeBox, m_Size);
+            MeshUtility.FitToSize(mesh, GetRotatedBounds(), m_Size);
         }
 
         public void SetShape(Shape shape)
@@ -149,15 +149,25 @@ namespace UnityEngine.ProBuilder.Shapes
             Rebuild();
         }
 
+        Bounds GetRotatedBounds()
+        {
+            Bounds bounds = m_Shape.shapeBox;
+            var size = m_Rotation * m_Shape.shapeBox.size;
+            size.x = Mathf.Abs(size.x);
+            size.y = Mathf.Abs(size.y);
+            size.z = Mathf.Abs(size.z);
+            bounds.size = size;
+            return bounds;
+        }
+
         /// <summary>
         /// Set the rotation of the Shape to a given quaternion, then rotates it while respecting the bounds
         /// </summary>
         /// <param name="angles">The angles to rotate by</param>
         public void SetInnerBoundsRotation(Quaternion angles)
         {
-            //MeshUtility.FitToSize(mesh, new Vector3(Vector3.one.x / m_Size.x, Vector3.one.y / m_Size.y, Vector3.one.z / m_Size.z));
             ApplyRotation(angles);
-            MeshUtility.FitToSize(mesh, m_Shape.shapeBox, m_Size);
+            MeshUtility.FitToSize(mesh, GetRotatedBounds(), m_Size);
         }
 
         /// <summary>
@@ -166,10 +176,9 @@ namespace UnityEngine.ProBuilder.Shapes
         /// <param name="rotation">The angles to rotate by</param>
         public void RotateInsideBounds(Quaternion deltaRotation)
         {
-            //MeshUtility.FitToSize(mesh, new Vector3(Vector3.one.x / m_Size.x, Vector3.one.y / m_Size.y, Vector3.one.z / m_Size.z));
             Quaternion rotation = deltaRotation * m_Rotation;
             ApplyRotation(rotation);
-            MeshUtility.FitToSize(mesh, m_Shape.shapeBox, m_Size);
+            MeshUtility.FitToSize(mesh, GetRotatedBounds(), m_Size);
         }
 
         void ApplyRotation(Quaternion rotation, bool forceRotation = false)
