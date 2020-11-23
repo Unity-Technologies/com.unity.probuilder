@@ -111,9 +111,6 @@ namespace UnityEditor.ProBuilder
             {
                 get
                 {
-                    if(Normal == Vector3.up || Normal == Vector3.down)
-                        return false;
-
                     Vector3 worldDir = Handles.matrix.MultiplyVector(Normal).normalized;
 
                     Vector3 cameraDir;

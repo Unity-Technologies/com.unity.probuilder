@@ -27,9 +27,12 @@ namespace UnityEditor.ProBuilder
         //Handle Manipulation
         Vector2 m_StartMousePosition;
         Vector3 m_StartPosition;
+        Vector3 m_CurrentHandlePos;
         Quaternion m_LastRotation;
+        Quaternion m_ShapeRotation = Quaternion.identity;
         int m_CurrentId = -1;
         bool m_IsMouseDown;
+        int m_hotControl;
 
         protected override void InitState()
         {
@@ -138,9 +141,12 @@ namespace UnityEditor.ProBuilder
 
                 EditorGUI.BeginChangeCheck();
 
-                m_BoundsHandle.DrawHandle();
+                DoRotateHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
+                
+                if(m_hotControl == 0)
+                    m_BoundsHandle.DrawHandle();
 
-                if (EditorGUI.EndChangeCheck())
+                if(EditorGUI.EndChangeCheck())
                 {
                     if(!m_BoundsHandleActive)
                         BeginBoundsEditing(shapeComponent);
@@ -150,7 +156,6 @@ namespace UnityEditor.ProBuilder
                     DrawShapeTool.s_Size.value = m_BoundsHandle.size;
                 }
 
-                DoRotateHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
             }
         }
 
@@ -204,10 +209,6 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        Vector3 m_CurrentHandlePos;
-        int m_hotControl;
-        Quaternion m_ShapeRotation = Quaternion.identity;
-
         bool FaceOrientationHandle(EditorShapeUtility.FaceData face)
         {
             if(face.IsVisible)
@@ -250,17 +251,18 @@ namespace UnityEditor.ProBuilder
                         var hoverDistance = Single.PositiveInfinity;
                         foreach(var otherFace in m_Faces)
                         {
-                            if(otherFace != face && otherFace.Normal != Vector3.up && otherFace.Normal != Vector3.down)
+                            if(otherFace != face)
                             {
-                                //Solution 1 : display direction around the current position -> less distance
-                                // var angle = Vector3.SignedAngle(face.Normal, otherFace.Normal, Vector3.up);
-                                // var sinAngle = Mathf.Sin(angle * Mathf.Deg2Rad);
-                                // var currentDir =   Mathf.Abs(sinAngle) > 0.1f ?
-                                //                 -Mathf.Sign(sinAngle) * camRightToHandle.normalized :
-                                //                 -0.5f * camUpToHandle.normalized;
+                                // //Solution 1 : display direction around the current position -> less distance
+                                //  var angle = Vector3.SignedAngle(face.Normal, otherFace.Normal, Vector3.up);
+                                //  var sinAngle = Mathf.Sin(angle * Mathf.Deg2Rad);
+                                //  var currentDir =   Mathf.Abs(sinAngle) > 0.1f ?
+                                //                  -Mathf.Sign(sinAngle) * camRightToHandle.normalized :
+                                //                  -0.5f * camUpToHandle.normalized;
                                 //
-                                // var currentPos = pos + 10f * handleSize * currentDir;
-                                //bool isHovered = Vector3.Distance(currentPos, m_CurrentHandlePos) < 5f * handleSize * currentDir.magnitude;
+                                //  var currentPos = pos + 10f * handleSize * currentDir;
+                                //  var dist = Vector3.Distance(currentPos, m_CurrentHandlePos);
+                                // bool isHovered = dist < 5f * handleSize * currentDir.magnitude;
 
                                 //Solution 2 position coherent to faces places
                                 var currentPos = otherFace.PlacementPosition;
@@ -276,21 +278,40 @@ namespace UnityEditor.ProBuilder
 
                                 var dist = Vector3.Distance(currentPos, m_CurrentHandlePos);
                                 bool isHovered = dist < 5f * handleSize && dist < hoverDistance;
+
                                 if(isHovered)
                                 {
                                     hoverDistance = dist;
-                                    m_ShapeRotation = Quaternion.AngleAxis(
-                                        Vector3.SignedAngle(face.Normal, otherFace.Normal, Vector3.up), Vector3.up);
+                                    if(Mathf.Abs(Vector3.Dot(face.Normal, Vector3.up)) < Mathf.Epsilon &&
+                                       Mathf.Abs(Vector3.Dot(otherFace.Normal, Vector3.up)) < Mathf.Epsilon)
+                                    {
+                                        m_ShapeRotation = Quaternion.AngleAxis(
+                                            Vector3.SignedAngle(face.Normal, otherFace.Normal, Vector3.up), Vector3.up);
+                                    }
+                                    else
+                                    {
+                                        if(Mathf.Abs(Vector3.Dot(face.Normal, otherFace.Normal)) < Mathf.Epsilon)
+                                        {
+                                            Vector3 rotationAxis = Vector3.Cross(face.Normal, otherFace.Normal);
+
+                                            m_ShapeRotation = Quaternion.AngleAxis(
+                                                Vector3.SignedAngle(face.Normal, otherFace.Normal, rotationAxis), rotationAxis);
+                                        }
+                                        else // both normals are on the Y axis, rotate around X axis
+                                        {
+                                            m_ShapeRotation = Quaternion.AngleAxis(
+                                                Vector3.SignedAngle(face.Normal, otherFace.Normal, Vector3.right), Vector3.right);
+                                        }
+                                    }
                                 }
-                                //Handles.Label(currentPos, otherFace.m_Label,isHovered ? otherFace.m_Style : GUI.skin.label);
                             }
                         }
 
                         foreach(var otherFace in m_Faces)
                         {
-                            if(otherFace != face && otherFace.Normal != Vector3.up && otherFace.Normal != Vector3.down)
+                            if(otherFace != face)
                             {
-                                //Solution 1 : display direction around the current position -> less distance
+                                // //Solution 1 : display direction around the current position -> less distance
                                 // var angle = Vector3.SignedAngle(face.Normal, otherFace.Normal, Vector3.up);
                                 // var sinAngle = Mathf.Sin(angle * Mathf.Deg2Rad);
                                 // var currentDir =   Mathf.Abs(sinAngle) > 0.1f ?
@@ -298,7 +319,8 @@ namespace UnityEditor.ProBuilder
                                 //                 -0.5f * camUpToHandle.normalized;
                                 //
                                 // var currentPos = pos + 10f * handleSize * currentDir;
-                                //bool isHovered = Vector3.Distance(currentPos, m_CurrentHandlePos) < 5f * handleSize * currentDir.magnitude;
+                                // var dist = Vector3.Distance(currentPos, m_CurrentHandlePos);
+                                // bool isHovered = dist < 5f * handleSize * currentDir.magnitude;
 
                                 //Solution 2 position coherent to faces places
                                 var currentPos = otherFace.PlacementPosition;
@@ -314,6 +336,7 @@ namespace UnityEditor.ProBuilder
 
                                 var dist = Vector3.Distance(currentPos, m_CurrentHandlePos);
                                 bool isHovered = Math.Approx(dist,hoverDistance);
+
                                 Handles.Label(currentPos, otherFace.m_Label,isHovered ? otherFace.m_Style : GUI.skin.label);
                             }
                         }
