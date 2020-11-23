@@ -139,10 +139,10 @@ namespace UnityEditor.ProBuilder
                     shapeComponent.transform, shapeComponent.editionBounds,
                     m_BoundsHandle, m_BoundsHandleActive, m_ActiveBoundsState);
 
+                DoRotateHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
+
                 EditorGUI.BeginChangeCheck();
 
-                DoRotateHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
-                
                 if(m_hotControl == 0)
                     m_BoundsHandle.DrawHandle();
 
@@ -213,6 +213,10 @@ namespace UnityEditor.ProBuilder
         {
             if(face.IsVisible)
             {
+                bool mouseUp = false;
+                if(Event.current.type == EventType.MouseUp)
+                    mouseUp = true;
+
                 int controlID = GUIUtility.GetControlID(FocusType.Passive);
                 if(m_hotControl == 0 || m_hotControl == controlID)
                 {
@@ -342,12 +346,12 @@ namespace UnityEditor.ProBuilder
                         }
                     }
                 }
-            }
 
-            if (m_hotControl != 0 && (Event.current.type == EventType.MouseUp || Event.current.type == EventType.MouseLeaveWindow))
-            {
-                m_hotControl = 0;
-                return m_ShapeRotation != Quaternion.identity;
+                if (m_hotControl != 0 && (mouseUp || Event.current.type == EventType.MouseLeaveWindow))
+                {
+                    m_hotControl = 0;
+                    return m_ShapeRotation != Quaternion.identity;
+                }
             }
 
             return false;
