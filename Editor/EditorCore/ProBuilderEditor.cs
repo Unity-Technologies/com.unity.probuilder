@@ -191,7 +191,6 @@ namespace UnityEditor.ProBuilder
             set
             {
                 toolManager?.SetSelectMode(value);
-                Refresh();
             }
         }
 
@@ -321,6 +320,7 @@ namespace UnityEditor.ProBuilder
 
         void OnSelectModeChanged()
         {
+            Refresh();
             if (selectModeChanged != null)
                 selectModeChanged(ProBuilderToolManager.selectMode);
         }
