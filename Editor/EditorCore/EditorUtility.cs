@@ -593,6 +593,16 @@ namespace UnityEditor.ProBuilder
             AnnotationUtility.SetIconEnabled(annotation.classID, annotation.scriptClass, enabled ? 1 : 0);
 #else
             Type annotationUtility = typeof(Editor).Assembly.GetType("UnityEditor.AnnotationUtility");
+
+            //Case 1294866 : Seems that getting the annotation array remove the warning
+            //Might be initializing something that is missing otherwise
+            MethodInfo getAnnotations = annotationUtility.GetMethod("GetAnnotations",
+            BindingFlags.Static | BindingFlags.NonPublic,
+             null,
+             new Type[] { },
+             null);
+            var annotations = getAnnotations.Invoke(null, new object[] {});
+
             MethodInfo setGizmoIconEnabled = annotationUtility.GetMethod("SetIconEnabled",
                 BindingFlags.Static | BindingFlags.NonPublic,
                 null,
