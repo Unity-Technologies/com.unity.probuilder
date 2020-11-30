@@ -189,19 +189,30 @@ namespace UnityEditor.ProBuilder
 
             m_Bounds.size = forward * Vector3.forward + right * Vector3.right + height * Vector3.up;
             m_Bounds.center = m_BB_Origin + 0.5f * ( m_BB_OppositeCorner - m_BB_Origin ) + m_Plane.normal * (height * .5f);
+
+            //Prevent Z-fighting with the drawing surface
+            if(Mathf.Abs(m_Bounds.center.y) < 0.0001f)
+                m_Bounds.center = m_Bounds.center + 0.0001f * Vector3.up;
+
             m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
         }
-
-
 
         internal void RebuildShape()
         {
             RecalculateBounds();
 
-            if (m_Bounds.size.sqrMagnitude < .01f
-                || Mathf.Abs(m_Bounds.extents.x) == 0
-                || Mathf.Abs(m_Bounds.extents.z) == 0)
+            if(m_Bounds.size.sqrMagnitude < .01f
+               || Mathf.Abs(m_Bounds.extents.x) < 0.001f
+               || Mathf.Abs(m_Bounds.extents.z) < 0.001f)
+            {
+                if(m_ShapeComponent.mesh.vertexCount > 0)
+                {
+                    m_ShapeComponent.mesh.Clear();
+                    m_ShapeComponent.mesh.Rebuild();
+                    ProBuilderEditor.Refresh(true);
+                }
                 return;
+            }
 
             if (!m_IsShapeInit)
             {
