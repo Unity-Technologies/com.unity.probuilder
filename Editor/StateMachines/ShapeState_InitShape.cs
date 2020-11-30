@@ -194,7 +194,10 @@ namespace UnityEditor.ProBuilder
                 {
                     if(FaceOrientationHandle(face))
                     {
+                        UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Rotate Shape");
                         shapeComponent.RotateInsideBounds(m_ShapeRotation);
+                        DrawShapeTool.s_LastShapeRotation = shapeComponent.rotation;
+                        ProBuilderEditor.Refresh();
                     }
                 }
 

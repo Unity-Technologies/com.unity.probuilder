@@ -580,7 +580,6 @@ namespace UnityEngine.ProBuilder
                 positions[i].Scale(scale);
             }
 
-            mesh.ToMesh();
             mesh.Rebuild();
         }
 
