@@ -95,8 +95,6 @@ namespace UnityEditor.ProBuilder
             m_IsDisposed = true;
             GC.SuppressFinalize(this);
 
-            SetSelectMode(SelectMode.Object);
-
 #if !TOOL_CONTEXTS_ENABLED
             EditorApplication.update -= ForwardBuiltinToolCheck;
 
