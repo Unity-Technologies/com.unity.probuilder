@@ -250,6 +250,47 @@ namespace UnityEditor.ProBuilder
 
         }
 
+        internal static bool PointerIsInFace(EditorShapeUtility.FaceData face)
+        {
+            Vector2[] face2D = new Vector2[4];
+            for(int i = 0; i < face.Points.Length; i++)
+            {
+                face2D[i] = HandleUtility.WorldToGUIPoint(face.Points[i]);
+            }
+            return PointInQuad2D(Event.current.mousePosition, face2D);
+        }
+
+        static bool PointInQuad2D(Vector2 point, Vector2[] quadPoints)
+        {
+            bool inQuad = true;
+
+            Vector2[] points = { point, quadPoints[2], quadPoints[3] };
+            inQuad &= SameSide(quadPoints[0], quadPoints[1], points);
+            points[1] =  quadPoints[0]; // { point, quadPoints[0], quadPoints[3]};
+            inQuad &= SameSide(quadPoints[1], quadPoints[2], points);
+            points[2] =  quadPoints[1]; // { point, quadPoints[0], quadPoints[1]};
+            inQuad &= SameSide(quadPoints[2], quadPoints[3], points);
+            points[1] =  quadPoints[2]; // { point, quadPoints[2], quadPoints[1]};
+            inQuad &= SameSide(quadPoints[3], quadPoints[0], points);
+
+            return inQuad;
+        }
+
+        static bool SameSide(Vector2 pStart, Vector2 pEnd, Vector2[] points)
+        {
+            if(points.Length < 2)
+                return true;
+
+            var cpRef = Vector3.Cross(pEnd - pStart, points[0] - pStart);
+            for(int i = 1; i < points.Length; i++)
+            {
+                var cp = Vector3.Cross(pEnd - pStart, points[i] - pStart);
+                if(Vector3.Dot(cpRef, cp) < 0)
+                    return false;
+            }
+            return true;
+        }
+
     }
 }
 

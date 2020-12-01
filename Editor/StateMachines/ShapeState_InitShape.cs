@@ -22,15 +22,11 @@ namespace UnityEditor.ProBuilder
         EditorShapeUtility.FaceData[] m_Faces;
 
         //Handle Manipulation
-        Vector2 m_StartMousePosition;
-        Vector3 m_StartPosition;
-        Vector3 m_CurrentHandlePos;
-        Quaternion m_LastRotation;
         Quaternion m_ShapeRotation = Quaternion.identity;
-        int m_CurrentId = -1;
-        bool m_IsMouseDown;
         bool m_IsMouseOver = false;
-        int m_hotControl;
+        int m_CurrentId = -1;
+        Vector3 m_CurrentHandlePosition = Vector3.zero;
+        EditorShapeUtility.FaceData m_CurrentTargetedFace = null;
 
         protected override void InitState()
         {
@@ -41,10 +37,7 @@ namespace UnityEditor.ProBuilder
 
             m_Faces = new EditorShapeUtility.FaceData[6];
             for (int i = 0; i < m_Faces.Length; i++)
-            {
                 m_Faces[i] = new EditorShapeUtility.FaceData();
-            }
-            //m_EdgeDataToNeighborsEdges = new Dictionary<EditorShapeUtility.EdgeData, SimpleTuple<EditorShapeUtility.EdgeData, EditorShapeUtility.EdgeData>>();
         }
 
         public override ShapeState DoState(Event evt)
@@ -151,7 +144,7 @@ namespace UnityEditor.ProBuilder
                 {
                     EditorGUI.BeginChangeCheck();
 
-                    if(m_hotControl == 0)
+                    if(m_CurrentId == -1)
                         m_BoundsHandle.DrawHandle();
 
                     if(EditorGUI.EndChangeCheck())
@@ -190,7 +183,9 @@ namespace UnityEditor.ProBuilder
             EditorShapeUtility.UpdateFaces(bounds, Vector3.zero, m_Faces);
             using (new Handles.DrawingScope(matrix))
             {
-                m_IsMouseOver = false;
+                if(Event.current.type == EventType.Repaint)
+                    m_IsMouseOver = false;
+
                 foreach(var face in m_Faces)
                 {
                     if(DoOrientationHandle(face))
@@ -203,9 +198,6 @@ namespace UnityEditor.ProBuilder
                 }
             }
         }
-
-        Vector3 m_CurrentHandlePosition;
-        EditorShapeUtility.FaceData m_CurrentTargetedFace;
 
         bool DoOrientationHandle(EditorShapeUtility.FaceData face)
         {
@@ -222,9 +214,8 @@ namespace UnityEditor.ProBuilder
                         if (HandleUtility.nearestControl == controlID && (evt.button == 0 || evt.button == 2))
                         {
                             m_CurrentId = controlID;
-                            m_LastRotation = Quaternion.identity;
-                            m_IsMouseDown = true;
                             m_CurrentTargetedFace = null;
+                            m_CurrentHandlePosition = Vector3.zero;
                             GUIUtility.hotControl = controlID;
                             evt.Use();
                         }
@@ -234,7 +225,6 @@ namespace UnityEditor.ProBuilder
                         {
                             GUIUtility.hotControl = 0;
                             evt.Use();
-                            m_IsMouseDown = false;
                             m_CurrentId = -1;
 
                             if(m_CurrentTargetedFace != null && m_CurrentTargetedFace != face)
@@ -245,6 +235,7 @@ namespace UnityEditor.ProBuilder
                             }
 
                             m_CurrentTargetedFace = null;
+                            m_CurrentHandlePosition = Vector3.zero;
                         }
                         break;
                     case EventType.MouseMove:
@@ -255,6 +246,8 @@ namespace UnityEditor.ProBuilder
                         break;
                     case EventType.Repaint:
                         bool isSelected = (HandleUtility.nearestControl == controlID && m_CurrentId == -1) || m_CurrentId == controlID;
+                        m_IsMouseOver |= isSelected;
+
                         using(new Handles.DrawingScope(DrawShapeTool.k_BoundsColor))
                         {
                             int pointsCount = face.Points.Length;
@@ -268,33 +261,19 @@ namespace UnityEditor.ProBuilder
                                 ? EditorHandleDrawing.edgeSelectedColor
                                 : face.m_Color))
                             {
-                                Handles.DrawLine(face.CenterPosition,
-                                    face.CenterPosition + face.Normal * handleSize);
-                                Handles.CircleHandleCap(controlID, face.CenterPosition,
-                                    Quaternion.LookRotation(face.Normal), handleSize, EventType.Repaint);
+                                var position = isSelected && m_CurrentHandlePosition != Vector3.zero ? m_CurrentHandlePosition : face.CenterPosition;
+                                var normal = isSelected && m_CurrentTargetedFace != null ? m_CurrentTargetedFace.Normal : face.Normal;
+                                Handles.DrawLine(position, position + normal * handleSize);
+                                Handles.CircleHandleCap(controlID, position, Quaternion.LookRotation(normal), handleSize, EventType.Repaint);
 
                                 if(isSelected)
-                                    using(new Handles.DrawingScope(face.m_Color * new Color(1f, 1f, 1f, 0.1f)))
-                                    {
-                                        Handles.DrawSolidDisc(face.CenterPosition, face.Normal, handleSize);
-                                    }
-                            }
-                        }
-                        if(m_CurrentId == controlID)
-                        {
-                            using(new Handles.DrawingScope(EditorHandleDrawing.edgeSelectedColor))
-                            {
-                                if(m_CurrentTargetedFace != null)
                                 {
-                                    Handles.DrawLine(m_CurrentHandlePosition, m_CurrentHandlePosition + m_CurrentTargetedFace.Normal * handleSize);
-                                    Handles.CircleHandleCap(controlID, m_CurrentHandlePosition, Quaternion.LookRotation(m_CurrentTargetedFace.Normal), 0.8f * handleSize, EventType.Repaint);
-                                    Handles.CircleHandleCap(controlID, m_CurrentHandlePosition, Quaternion.LookRotation(m_CurrentTargetedFace.Normal), 1.2f * handleSize, EventType.Repaint);
+                                    using(new Handles.DrawingScope(face.m_Color * new Color(1f, 1f, 1f, 0.25f)))
+                                        Handles.DrawSolidDisc(position, normal, handleSize);
 
-                                    using(new Handles.DrawingScope(m_CurrentTargetedFace.m_Color *
-                                                                   new Color(1f, 1f, 1f, 0.1f)))
-                                    {
-                                        Handles.DrawAAConvexPolygon(m_CurrentTargetedFace.Points);
-                                    }
+                                    if(m_CurrentTargetedFace != null)
+                                        using(new Handles.DrawingScope(m_CurrentTargetedFace.m_Color * new Color(1f, 1f, 1f, 0.1f)))
+                                            Handles.DrawAAConvexPolygon(m_CurrentTargetedFace.Points);
                                 }
                             }
                         }
@@ -305,7 +284,7 @@ namespace UnityEditor.ProBuilder
                             m_CurrentTargetedFace = null;
                             foreach(var boundsFace in m_Faces)
                             {
-                                if(boundsFace.IsVisible && PointerIsInFace(boundsFace))
+                                if(boundsFace.IsVisible && EditorShapeUtility.PointerIsInFace(boundsFace))
                                 {
                                     UnityEngine.Plane p = new UnityEngine.Plane(boundsFace.Normal,  Handles.matrix.MultiplyPoint(boundsFace.CenterPosition));
 
@@ -326,45 +305,5 @@ namespace UnityEditor.ProBuilder
             return hasRotated;
         }
 
-        bool PointerIsInFace(EditorShapeUtility.FaceData face)
-        {
-            Vector2[] face2D = new Vector2[4];
-            for(int i = 0; i < face.Points.Length; i++)
-            {
-                face2D[i] = HandleUtility.WorldToGUIPoint(face.Points[i]);
-            }
-            return PointInQuad2D(Event.current.mousePosition, face2D);
-        }
-
-        bool PointInQuad2D(Vector2 point, Vector2[] quadPoints)
-        {
-            bool inQuad = true;
-
-            Vector2[] points = { point, quadPoints[2], quadPoints[3] };
-            inQuad &= SameSide(quadPoints[0], quadPoints[1], points);
-            points[1] =  quadPoints[0]; // { point, quadPoints[0], quadPoints[3]};
-            inQuad &= SameSide(quadPoints[1], quadPoints[2], points);
-            points[2] =  quadPoints[1]; // { point, quadPoints[0], quadPoints[1]};
-            inQuad &= SameSide(quadPoints[2], quadPoints[3], points);
-            points[1] =  quadPoints[2]; // { point, quadPoints[2], quadPoints[1]};
-            inQuad &= SameSide(quadPoints[3], quadPoints[0], points);
-
-            return inQuad;
-        }
-
-        bool SameSide(Vector2 pStart, Vector2 pEnd, Vector2[] points)
-        {
-            if(points.Length < 2)
-                return true;
-
-            var cpRef = Vector3.Cross(pEnd - pStart, points[0] - pStart);
-            for(int i = 1; i < points.Length; i++)
-            {
-                var cp = Vector3.Cross(pEnd - pStart, points[i] - pStart);
-                if(Vector3.Dot(cpRef, cp) < 0)
-                    return false;
-            }
-            return true;
-        }
     }
 }
