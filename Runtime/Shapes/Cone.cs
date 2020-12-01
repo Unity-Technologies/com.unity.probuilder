@@ -15,11 +15,6 @@ namespace UnityEngine.ProBuilder.Shapes
             var radius = System.Math.Min(size.x, size.z);
             var height = size.y;
 
-            RebuildMesh(mesh, radius, height);
-        }
-
-        public void RebuildMesh(ProBuilderMesh mesh, float radius, float height)
-        {
             var subdivAxis = m_NumberOfSides;
             // template is outer ring - radius refers to outer ring always
             Vector3[] template = new Vector3[subdivAxis];
@@ -27,7 +22,7 @@ namespace UnityEngine.ProBuilder.Shapes
             for (int i = 0; i < subdivAxis; i++)
             {
                 Vector2 ct = Math.PointInCircumference(radius, i * (360f / subdivAxis), Vector2.zero);
-                template[i] = new Vector3(ct.x, 0, ct.y);
+                template[i] = new Vector3(ct.x, -height / 2f, ct.y);
             }
 
             List<Vector3> v = new List<Vector3>();
@@ -39,12 +34,12 @@ namespace UnityEngine.ProBuilder.Shapes
                 // side face
                 v.Add(template[i]);
                 v.Add((i < subdivAxis - 1) ? template[i + 1] : template[0]);
-                v.Add(Vector3.up * height);
+                v.Add(Vector3.up * height / 2f);
 
                 // bottom face
                 v.Add(template[i]);
                 v.Add((i < subdivAxis - 1) ? template[i + 1] : template[0]);
-                v.Add(Vector3.zero);
+                v.Add(Vector3.down * height / 2f);
             }
 
             List<Face> sideFaces = new List<Face>();

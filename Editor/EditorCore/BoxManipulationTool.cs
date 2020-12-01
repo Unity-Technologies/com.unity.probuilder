@@ -6,7 +6,6 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine.ProBuilder;
 
 using FaceData = UnityEditor.ProBuilder.EditorShapeUtility.FaceData;
-using EdgeData = UnityEditor.ProBuilder.EditorShapeUtility.EdgeData;
 using BoundsState = UnityEditor.ProBuilder.EditorShapeUtility.BoundsState;
 
 namespace UnityEditor.ProBuilder
@@ -39,9 +38,9 @@ namespace UnityEditor.ProBuilder
         protected bool IsEditing => m_BoundsHandleActive;
 
         //hashset to avoid drawing twice the same edge
-        protected HashSet<EdgeData> m_EdgesToDraw = new HashSet<EdgeData>(new EditorShapeUtility.EdgeDataComparer());
-
-        Dictionary<EdgeData, SimpleTuple<EdgeData, EdgeData>> m_EdgeDataToNeighborsEdges;
+        // protected HashSet<EdgeData> m_EdgesToDraw = new HashSet<EdgeData>(new EditorShapeUtility.EdgeDataComparer());
+        //
+        // Dictionary<EdgeData, SimpleTuple<EdgeData, EdgeData>> m_EdgeDataToNeighborsEdges;
 
         public override GUIContent toolbarIcon
         {
@@ -57,7 +56,7 @@ namespace UnityEditor.ProBuilder
                 m_Faces[i] = new FaceData();
             }
             m_SnapAngleContent = new GUIContent("Rotation Snap", L10n.Tr("Defines an angle in [1,90] to snap rotation."));
-            m_EdgeDataToNeighborsEdges = new Dictionary<EdgeData, SimpleTuple<EdgeData, EdgeData>>();
+//            m_EdgeDataToNeighborsEdges = new Dictionary<EdgeData, SimpleTuple<EdgeData, EdgeData>>();
         }
 
         public override void OnToolGUI(EditorWindow window)
@@ -96,115 +95,115 @@ namespace UnityEditor.ProBuilder
 
         protected void DoRotateHandlesGUI(Object toolTarget, ProBuilderMesh mesh, Bounds bounds)
         {
-            var matrix = mesh.transform.localToWorldMatrix;
-
-            m_EdgesToDraw.Clear();
-            EditorShapeUtility.UpdateFaces(bounds, Vector3.zero, m_Faces, m_EdgeDataToNeighborsEdges);
-            using (new Handles.DrawingScope(matrix))
-            {
-                foreach(var face in m_Faces)
-                {
-                    if (face.IsVisible)
-                    {
-                        foreach (var edge in face.Edges)
-                            m_EdgesToDraw.Add(edge);
-                    }
-                }
-
-                foreach(var edgeData in m_EdgesToDraw)
-                {
-                    Quaternion rot;
-                    if(RotateEdgeHandle(edgeData, out rot))
-                        UpdateTargetRotation(toolTarget, rot);
-                }
-            }
+            // var matrix = mesh.transform.localToWorldMatrix;
+            //
+            // m_EdgesToDraw.Clear();
+            // EditorShapeUtility.UpdateFaces(bounds, Vector3.zero, m_Faces, m_EdgeDataToNeighborsEdges);
+            // using (new Handles.DrawingScope(matrix))
+            // {
+            //     foreach(var face in m_Faces)
+            //     {
+            //         if (face.IsVisible)
+            //         {
+            //             foreach (var edge in face.Edges)
+            //                 m_EdgesToDraw.Add(edge);
+            //         }
+            //     }
+            //
+            //     foreach(var edgeData in m_EdgesToDraw)
+            //     {
+            //         Quaternion rot;
+            //         if(RotateEdgeHandle(edgeData, out rot))
+            //             UpdateTargetRotation(toolTarget, rot);
+            //     }
+            // }
         }
 
-        protected bool RotateEdgeHandle(EdgeData edge, out Quaternion rotation)
-        {
-            Event evt = Event.current;
-            int controlID = GUIUtility.GetControlID(FocusType.Passive);
-            bool hasRotated = false;
-            rotation = Quaternion.identity;
-            switch (evt.GetTypeForControl(controlID))
-            {
-                case EventType.MouseDown:
-                    if (HandleUtility.nearestControl == controlID && (evt.button == 0 || evt.button == 2))
-                    {
-                        m_CurrentId = controlID;
-                        m_LastRotation = Quaternion.identity;
-                        m_StartMousePosition = Event.current.mousePosition;
-                        m_StartPosition = HandleUtility.ClosestPointToPolyLine(edge.PointA, edge.PointB);
-                        m_IsMouseDown = true;
-                        GUIUtility.hotControl = controlID;
-                        evt.Use();
-                    }
-                    break;
-                case EventType.MouseUp:
-                    if (GUIUtility.hotControl == controlID && (evt.button == 0 || evt.button == 2))
-                    {
-                        GUIUtility.hotControl = 0;
-                        evt.Use();
-                        m_IsMouseDown = false;
-                        m_CurrentId = -1;
-                    }
-                    break;
-                case EventType.MouseMove:
-                    HandleUtility.Repaint();
-                    break;
-                case EventType.Layout:
-                    HandleUtility.AddControl(controlID, HandleUtility.DistanceToLine(edge.PointA, edge.PointB));
-                    break;
-                case EventType.Repaint:
-                    bool isSelected = (HandleUtility.nearestControl == controlID && m_CurrentId == -1) || m_CurrentId == controlID;
-                    Color color = edge.Center.x == 0 ? Handles.s_XAxisColor : ( edge.Center.y == 0 ? Handles.s_YAxisColor : Handles.s_ZAxisColor );
-                    if(isSelected)
-                    {
-                        EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.RotateArrow);
-                        //Draw Arc
-                        Vector3 edgeToPrevious = m_EdgeDataToNeighborsEdges[edge].item1.Center - edge.Center;
-                        Vector3 edgeToNext = m_EdgeDataToNeighborsEdges[edge].item2.Center - edge.Center;
-                        Vector3 normal = Vector3.Cross(edgeToNext,edgeToPrevious).normalized;
-                        using(new Handles.DrawingScope(color))
-                        {
-                             Handles.DrawWireArc(Vector3.zero,
-                                 normal,
-                                 m_EdgeDataToNeighborsEdges[edge].item1.Center,
-                                 180f,
-                                 edge.Center.magnitude);
-                        }
-                    }
-
-                    using (new Handles.DrawingScope(isSelected ? Color.white : m_BoundsHandleColor))
-                    {
-                        Handles.DrawAAPolyLine(isSelected ? 10f : 3f, edge.PointA, edge.PointB);
-                    }
-                    break;
-                case EventType.MouseDrag:
-                    if (m_IsMouseDown && m_CurrentId == controlID)
-                    {
-                        Vector3 axis = edge.PointA - edge.PointB;
-                        Vector3 axisToPrevious = (m_EdgeDataToNeighborsEdges[edge].item1.Center - edge.Center);
-                        Vector3 axisToNext =  (m_EdgeDataToNeighborsEdges[edge].item2.Center - edge.Center);
-
-                        var rotDistToPrevious = HandleUtility.CalcLineTranslation(m_StartMousePosition, Event.current.mousePosition, m_StartPosition, axisToPrevious);
-                        var rotDistToNext = HandleUtility.CalcLineTranslation(m_StartMousePosition, Event.current.mousePosition, m_StartPosition, axisToNext);
-
-                        float mainRot = rotDistToNext;
-                        if(Mathf.Abs(rotDistToPrevious) > Mathf.Abs(rotDistToNext))
-                            mainRot = -rotDistToPrevious;
-
-                        mainRot = ( (int) ( mainRot * (90f / (float)m_snapAngle) )) * (float)m_snapAngle;
-                        var rot = Quaternion.AngleAxis(mainRot, axis);
-
-                        rotation = m_LastRotation * Quaternion.Inverse(rot);
-                        m_LastRotation = rot;
-
-                        hasRotated = true;
-                    }
-                    break;
-            }
-            return hasRotated;
-        }
+        // protected bool RotateEdgeHandle(EdgeData edge, out Quaternion rotation)
+        // {
+        //     Event evt = Event.current;
+        //     int controlID = GUIUtility.GetControlID(FocusType.Passive);
+        //     bool hasRotated = false;
+        //     rotation = Quaternion.identity;
+        //     switch (evt.GetTypeForControl(controlID))
+        //     {
+        //         case EventType.MouseDown:
+        //             if (HandleUtility.nearestControl == controlID && (evt.button == 0 || evt.button == 2))
+        //             {
+        //                 m_CurrentId = controlID;
+        //                 m_LastRotation = Quaternion.identity;
+        //                 m_StartMousePosition = Event.current.mousePosition;
+        //                 m_StartPosition = HandleUtility.ClosestPointToPolyLine(edge.PointA, edge.PointB);
+        //                 m_IsMouseDown = true;
+        //                 GUIUtility.hotControl = controlID;
+        //                 evt.Use();
+        //             }
+        //             break;
+        //         case EventType.MouseUp:
+        //             if (GUIUtility.hotControl == controlID && (evt.button == 0 || evt.button == 2))
+        //             {
+        //                 GUIUtility.hotControl = 0;
+        //                 evt.Use();
+        //                 m_IsMouseDown = false;
+        //                 m_CurrentId = -1;
+        //             }
+        //             break;
+        //         case EventType.MouseMove:
+        //             HandleUtility.Repaint();
+        //             break;
+        //         case EventType.Layout:
+        //             HandleUtility.AddControl(controlID, HandleUtility.DistanceToLine(edge.PointA, edge.PointB));
+        //             break;
+        //         case EventType.Repaint:
+        //             bool isSelected = (HandleUtility.nearestControl == controlID && m_CurrentId == -1) || m_CurrentId == controlID;
+        //             Color color = edge.Center.x == 0 ? Handles.s_XAxisColor : ( edge.Center.y == 0 ? Handles.s_YAxisColor : Handles.s_ZAxisColor );
+        //             if(isSelected)
+        //             {
+        //                 EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.RotateArrow);
+        //                 //Draw Arc
+        //                 Vector3 edgeToPrevious = m_EdgeDataToNeighborsEdges[edge].item1.Center - edge.Center;
+        //                 Vector3 edgeToNext = m_EdgeDataToNeighborsEdges[edge].item2.Center - edge.Center;
+        //                 Vector3 normal = Vector3.Cross(edgeToNext,edgeToPrevious).normalized;
+        //                 using(new Handles.DrawingScope(color))
+        //                 {
+        //                      Handles.DrawWireArc(Vector3.zero,
+        //                          normal,
+        //                          m_EdgeDataToNeighborsEdges[edge].item1.Center,
+        //                          180f,
+        //                          edge.Center.magnitude);
+        //                 }
+        //             }
+        //
+        //             using (new Handles.DrawingScope(isSelected ? Color.white : m_BoundsHandleColor))
+        //             {
+        //                 Handles.DrawAAPolyLine(isSelected ? 10f : 3f, edge.PointA, edge.PointB);
+        //             }
+        //             break;
+        //         case EventType.MouseDrag:
+        //             if (m_IsMouseDown && m_CurrentId == controlID)
+        //             {
+        //                 Vector3 axis = edge.PointA - edge.PointB;
+        //                 Vector3 axisToPrevious = (m_EdgeDataToNeighborsEdges[edge].item1.Center - edge.Center);
+        //                 Vector3 axisToNext =  (m_EdgeDataToNeighborsEdges[edge].item2.Center - edge.Center);
+        //
+        //                 var rotDistToPrevious = HandleUtility.CalcLineTranslation(m_StartMousePosition, Event.current.mousePosition, m_StartPosition, axisToPrevious);
+        //                 var rotDistToNext = HandleUtility.CalcLineTranslation(m_StartMousePosition, Event.current.mousePosition, m_StartPosition, axisToNext);
+        //
+        //                 float mainRot = rotDistToNext;
+        //                 if(Mathf.Abs(rotDistToPrevious) > Mathf.Abs(rotDistToNext))
+        //                     mainRot = -rotDistToPrevious;
+        //
+        //                 mainRot = ( (int) ( mainRot * (90f / (float)m_snapAngle) )) * (float)m_snapAngle;
+        //                 var rot = Quaternion.AngleAxis(mainRot, axis);
+        //
+        //                 rotation = m_LastRotation * Quaternion.Inverse(rot);
+        //                 m_LastRotation = rot;
+        //
+        //                 hasRotated = true;
+        //             }
+        //             break;
+        //     }
+        //     return hasRotated;
+        // }
     }
 }

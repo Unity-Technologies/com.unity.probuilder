@@ -55,7 +55,7 @@ namespace UnityEditor.ProBuilder
         static Color wireframeColor { get { return s_UseUnityColors ? k_WireframeDefault : s_WireframeColorPref; } }
         static Color faceSelectedColor { get { return s_UseUnityColors ? Handles.selectedColor : s_SelectedFaceColorPref; } }
         static Color preselectionColor { get { return s_UseUnityColors ? Handles.preselectionColor : s_PreselectionColorPref; } }
-        static Color edgeSelectedColor { get { return s_UseUnityColors ? Handles.selectedColor : s_SelectedEdgeColorPref; } }
+        internal static Color edgeSelectedColor { get { return s_UseUnityColors ? Handles.selectedColor : s_SelectedEdgeColorPref; } }
         static Color edgeUnselectedColor { get { return s_UseUnityColors ? k_WireframeDefault : s_UnselectedEdgeColorPref; } }
         static Color vertexSelectedColor { get { return s_UseUnityColors ? Handles.selectedColor : s_SelectedVertexColorPref; } }
         static Color vertexUnselectedColor { get { return s_UseUnityColors ? k_VertexUnselectedDefault : s_UnselectedVertexColorPref; } }

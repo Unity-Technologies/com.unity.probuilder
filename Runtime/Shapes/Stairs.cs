@@ -434,6 +434,14 @@ namespace UnityEngine.ProBuilder.Shapes
 
         const bool k_ToggleOnLabelClick = true;
 
+        static readonly GUIContent k_StepGenerationContent = new GUIContent("Steps Generation", L10n.Tr("Should the stairs generation use a step number or step height."));
+        static readonly GUIContent k_StepsCountContent = new GUIContent("Steps Count", L10n.Tr("Number of steps in the stair."));
+        static readonly GUIContent k_StepsHeightContent = new GUIContent("Steps Height", L10n.Tr("Height of each step of the generated stairs."));
+        static readonly GUIContent k_HomogeneousStepsContent = new GUIContent("Homogeneous Steps", L10n.Tr("Should step height be rounded to generate homogeneous stairs."));
+        static readonly GUIContent k_CircumferenceContent = new GUIContent("Circumference", L10n.Tr("Circumference of the stairs, negate to rotate in opposite direction"));
+        static readonly GUIContent k_SidesContent = new GUIContent("Sides", L10n.Tr("Does sides need to be generated as well."));
+
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             EditorGUI.BeginProperty(position, label, property);
@@ -445,17 +453,17 @@ namespace UnityEngine.ProBuilder.Shapes
             if(s_foldoutEnabled)
             {
                 var typePpty = property.FindPropertyRelative("m_StepGenerationType");
-                EditorGUILayout.PropertyField(typePpty, new GUIContent("Steps Generation", L10n.Tr("Should the stairs generation use a step number or step height.")));
+                EditorGUILayout.PropertyField(typePpty, k_StepGenerationContent);
                 if(typePpty.enumValueIndex == (int)Stairs.StepGenerationType.Count)
-                    EditorGUILayout.PropertyField(property.FindPropertyRelative("m_StepsCount"), new GUIContent("Steps Count", L10n.Tr("Number of steps in the stair.")));
+                    EditorGUILayout.PropertyField(property.FindPropertyRelative("m_StepsCount"), k_StepsCountContent);
                 else
                 {
-                    EditorGUILayout.PropertyField(property.FindPropertyRelative("m_StepsHeight"), new GUIContent("Steps Height", L10n.Tr("Height of each step of the generated stairs.")));
-                    EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HomogeneousSteps"), new GUIContent("Homogeneous Steps", L10n.Tr("Should step height be rounded to generate homogeneous stairs.")));
+                    EditorGUILayout.PropertyField(property.FindPropertyRelative("m_StepsHeight"), k_StepsHeightContent);
+                    EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HomogeneousSteps"), k_HomogeneousStepsContent);
                 }
 
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Circumference"), new GUIContent("Circumference", L10n.Tr("Circumference of the stairs, negate to rotate in opposite direction")));
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Sides"), new GUIContent("Sides", L10n.Tr("Does sides need to be generated as well.")));
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Circumference"), k_CircumferenceContent);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Sides"), k_SidesContent);
             }
 
             EditorGUI.indentLevel--;

@@ -105,7 +105,8 @@ namespace UnityEditor.ProBuilder
         {
             public Vector3 CenterPosition;
             public Vector3 Normal;
-            public EdgeData[] Edges;
+            public Vector3[] Points;
+            public Color m_Color = Color.white;
 
             public bool IsVisible
             {
@@ -123,44 +124,9 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            public Vector3 PlacementPosition
-            {
-                get
-                {
-                    float minDist = Single.PositiveInfinity;
-                    Vector3 closestEdgeCorner = Vector3.zero;
-                    foreach(var edge in Edges)
-                    {
-                        float dist1 = Vector3.Distance(Camera.current.transform.position, Handles.matrix.MultiplyPoint(edge.PointA));
-                        float dist2 = Vector3.Distance(Camera.current.transform.position, Handles.matrix.MultiplyPoint(edge.PointB));
-                        if(dist1 < dist2 && dist1 < minDist)
-                        {
-                            minDist = dist1;
-                            closestEdgeCorner = edge.PointA;
-                        }
-                        else if(dist2 < dist1 && dist2 < minDist)
-                        {
-                            minDist = dist2;
-                            closestEdgeCorner = edge.PointB;
-                        }
-                    }
-
-                    if(minDist < Single.PositiveInfinity)
-                    {
-                        return ( CenterPosition + closestEdgeCorner ) / 2f;
-                    }
-
-                    return CenterPosition;
-                }
-            }
-
-            public string m_Label = "None";
-            public Color m_Color = Color.white;
-            public GUIStyle m_Style = new GUIStyle(EditorStyles.label);
-
             public FaceData()
             {
-                Edges = new EdgeData[4];
+                Points = new Vector3[4];
             }
 
             public void SetData(Vector3 centerPosition, Vector3 normal)
@@ -168,70 +134,13 @@ namespace UnityEditor.ProBuilder
                 CenterPosition = centerPosition;
                 Normal = normal;
 
-                if(Normal == Vector3.up)
-                {
+                if(Normal == Vector3.up || Normal == Vector3.down)
                     m_Color = Color.green;
-                    m_Label = "Top";
-                }
-                else if(Normal == Vector3.down)
-                {
-                    m_Color = Color.green;
-                    m_Label = "Down";
-                }
-                else if(Normal == Vector3.right)
-                {
+                else if(Normal == Vector3.right || Normal == Vector3.left)
                     m_Color = Color.red;
-                    m_Label = "Right";
-                }
-                else if(Normal == Vector3.left)
-                {
-                    m_Color = Color.red;
-                    m_Label = "Left";
-                }
-                else if(Normal == Vector3.forward)
-                {
+                else if(Normal == Vector3.forward || Normal == Vector3.back)
                     m_Color = Color.blue;
-                    m_Label = "Forward";
-                }
-                else if(Normal == Vector3.back)
-                {
-                    m_Color = Color.blue;
-                    m_Label = "Back";
-                }
-
-                m_Style.normal.textColor = m_Color;
             }
-        }
-
-        public struct EdgeData
-        {
-            public Vector3 PointA;
-            public Vector3 PointB;
-
-            public Vector3 Center
-            {
-                get => ( (PointA + PointB) / 2.0f );
-            }
-
-            public EdgeData(Vector3 pointA, Vector3 pointB)
-            {
-                PointA = pointA;
-                PointB = pointB;
-            }
-        }
-
-        //Comparer for the edgesToDraw hashset
-        public class EdgeDataComparer : IEqualityComparer<EdgeData>
-        {
-            public bool Equals(EdgeData edge1, EdgeData edge2)
-            {
-                bool result = edge1.PointA == edge2.PointA && edge1.PointB == edge2.PointB;
-                result |= edge1.PointA == edge2.PointB && edge1.PointB == edge2.PointA;
-                return result;
-            }
-
-            //Don't wan't to compare hashcode, only using equals
-            public int GetHashCode(EdgeData edge) {return 0;}
         }
 
         public class BoundsState
@@ -275,138 +184,70 @@ namespace UnityEditor.ProBuilder
             activeBoundsState.boundsHandleValue = new Bounds(center, snappedHandleSize);
         }
 
-        public static void UpdateFaces(Bounds bounds, Vector3 center, FaceData[] faces,
-            Dictionary<EdgeData, SimpleTuple<EdgeData, EdgeData>> edgeToNeighborsEdges)
+        public static void UpdateFaces(Bounds bounds, Vector3 center, FaceData[] faces)
         {
             if(faces.Length != 6)
                 faces = new FaceData[6];
 
             Vector3 extents = bounds.extents;
 
-            EdgeData edgeX1 = new EdgeData(new Vector3(extents.x, extents.y, extents.z),
-                                new Vector3(-extents.x, extents.y, extents.z));
-            EdgeData edgeX2 = new EdgeData(new Vector3(extents.x, -extents.y, extents.z),
-                                new Vector3(-extents.x, -extents.y, extents.z));
-            EdgeData edgeX3 = new EdgeData(new Vector3(extents.x, extents.y, -extents.z),
-                                new Vector3(-extents.x, extents.y, -extents.z));
-            EdgeData edgeX4 = new EdgeData(new Vector3(extents.x, -extents.y, -extents.z),
-                                new Vector3(-extents.x, -extents.y, -extents.z));
-
-            EdgeData edgeY1 = new EdgeData(new Vector3(extents.x, extents.y, extents.z),
-                                new Vector3(extents.x, -extents.y, extents.z) );
-            EdgeData edgeY2 = new EdgeData(new Vector3(-extents.x, extents.y, extents.z),
-                                new Vector3(-extents.x, -extents.y, extents.z));
-            EdgeData edgeY3 = new EdgeData(new Vector3(extents.x, extents.y, -extents.z),
-                                new Vector3(extents.x, -extents.y, -extents.z));
-            EdgeData edgeY4 = new EdgeData(new Vector3(-extents.x, extents.y, -extents.z),
-                                new Vector3(-extents.x, -extents.y, -extents.z));
-
-            EdgeData edgeZ1 = new EdgeData(new Vector3(extents.x, extents.y, extents.z),
-                                new Vector3(extents.x, extents.y, -extents.z));
-            EdgeData edgeZ2 = new EdgeData(new Vector3(-extents.x, extents.y, extents.z),
-                                new Vector3(-extents.x, extents.y, -extents.z));
-            EdgeData edgeZ3 = new EdgeData(new Vector3(extents.x, -extents.y, extents.z),
-                                new Vector3(extents.x, -extents.y, -extents.z));
-            EdgeData edgeZ4 = new EdgeData(new Vector3(-extents.x, -extents.y, extents.z),
-                                new Vector3(-extents.x, -extents.y, -extents.z));
+            Vector3 pointX0Y0Z0 = new Vector3(-extents.x, -extents.y, -extents.z);
+            Vector3 pointX1Y0Z0 = new Vector3(extents.x, -extents.y, -extents.z);
+            Vector3 pointX0Y1Z0 = new Vector3(-extents.x, extents.y, -extents.z);
+            Vector3 pointX0Y0Z1 = new Vector3(-extents.x, -extents.y, extents.z);
+            Vector3 pointX1Y1Z0 = new Vector3(extents.x, extents.y, -extents.z);
+            Vector3 pointX1Y0Z1 = new Vector3(extents.x, -extents.y, extents.z);
+            Vector3 pointX0Y1Z1 = new Vector3(-extents.x, extents.y, extents.z);
+            Vector3 pointX1Y1Z1 = new Vector3(extents.x, extents.y, extents.z);
 
             // -X
-            var pos =  - new Vector3(extents.x, 0, 0);
+            var pos = -new Vector3(extents.x, 0, 0);
             faces[0].SetData(pos, -Vector3.right);
-            faces[0].Edges[0] = edgeY2;
-            faces[0].Edges[1] = edgeZ2;
-            faces[0].Edges[2] = edgeZ4;
-            faces[0].Edges[3] = edgeY4;
+            faces[0].Points[0] = pointX0Y1Z1;
+            faces[0].Points[1] = pointX0Y0Z1;
+            faces[0].Points[2] = pointX0Y0Z0;
+            faces[0].Points[3] = pointX0Y1Z0;
 
             // +X
             pos = new Vector3(extents.x, 0, 0);
             faces[1].SetData(pos, Vector3.right);
-            faces[1].Edges[0] = edgeY1;
-            faces[1].Edges[1] = edgeZ1;
-            faces[1].Edges[2] = edgeZ3;
-            faces[1].Edges[3] = edgeY3;
+            faces[1].Points[0] = pointX1Y1Z1;
+            faces[1].Points[1] = pointX1Y0Z1;
+            faces[1].Points[2] = pointX1Y0Z0;
+            faces[1].Points[3] = pointX1Y1Z0;
 
             // -Y
-            pos = - new Vector3(0, extents.y, 0);
+            pos = -new Vector3(0, extents.y, 0);
             faces[2].SetData(pos, -Vector3.up);
-            faces[2].Edges[0] = edgeX2;
-            faces[2].Edges[1] = edgeZ3;
-            faces[2].Edges[2] = edgeZ4;
-            faces[2].Edges[3] = edgeX4;
+            faces[2].Points[0] = pointX1Y0Z1;
+            faces[2].Points[1] = pointX0Y0Z1;
+            faces[2].Points[2] = pointX0Y0Z0;
+            faces[2].Points[3] = pointX1Y0Z0;
 
             // +Y
             pos = new Vector3(0, extents.y, 0);
             faces[3].SetData(pos, Vector3.up);
-            faces[3].Edges[0] = edgeX1;
-            faces[3].Edges[1] = edgeZ1;
-            faces[3].Edges[2] = edgeZ2;
-            faces[3].Edges[3] = edgeX3;
+            faces[3].Points[0] = pointX1Y1Z1;
+            faces[3].Points[1] = pointX0Y1Z1;
+            faces[3].Points[2] = pointX0Y1Z0;
+            faces[3].Points[3] = pointX1Y1Z0;
 
             // -Z
             pos = - new Vector3(0, 0, extents.z);
             faces[4].SetData(pos, -Vector3.forward);
-            faces[4].Edges[0] = edgeX3;
-            faces[4].Edges[1] = edgeY3;
-            faces[4].Edges[2] = edgeY4;
-            faces[4].Edges[3] = edgeX4;
+            faces[4].Points[0] = pointX1Y1Z0;
+            faces[4].Points[1] = pointX1Y0Z0;
+            faces[4].Points[2] = pointX0Y0Z0;
+            faces[4].Points[3] = pointX0Y1Z0;
 
             // +Z
             pos = new Vector3(0, 0, extents.z);
             faces[5].SetData(pos, Vector3.forward);
-            faces[5].Edges[0] = edgeX1;
-            faces[5].Edges[1] = edgeY1;
-            faces[5].Edges[2] = edgeY2;
-            faces[5].Edges[3] = edgeX2;
+            faces[5].Points[0] = pointX1Y1Z1;
+            faces[5].Points[1] = pointX1Y0Z1;
+            faces[5].Points[2] = pointX0Y0Z1;
+            faces[5].Points[3] = pointX0Y1Z1;
 
-            if(edgeToNeighborsEdges == null)
-                return;
-
-            if(edgeToNeighborsEdges.Count ==0)
-            {
-                if(!edgeToNeighborsEdges.ContainsKey(edgeX1))
-                    edgeToNeighborsEdges.Add(edgeX1, new SimpleTuple<EdgeData, EdgeData>(edgeX2, edgeX3));
-                if(!edgeToNeighborsEdges.ContainsKey(edgeX2))
-                    edgeToNeighborsEdges.Add(edgeX2, new SimpleTuple<EdgeData, EdgeData>(edgeX4, edgeX1));
-                if(!edgeToNeighborsEdges.ContainsKey(edgeX3))
-                    edgeToNeighborsEdges.Add(edgeX3, new SimpleTuple<EdgeData, EdgeData>(edgeX1, edgeX4));
-                if(!edgeToNeighborsEdges.ContainsKey(edgeX4))
-                    edgeToNeighborsEdges.Add(edgeX4, new SimpleTuple<EdgeData, EdgeData>(edgeX3, edgeX2));
-
-                if(!edgeToNeighborsEdges.ContainsKey(edgeY1))
-                    edgeToNeighborsEdges.Add(edgeY1, new SimpleTuple<EdgeData, EdgeData>(edgeY3, edgeY2));
-                if(!edgeToNeighborsEdges.ContainsKey(edgeY2))
-                    edgeToNeighborsEdges.Add(edgeY2, new SimpleTuple<EdgeData, EdgeData>(edgeY1, edgeY4));
-                if(!edgeToNeighborsEdges.ContainsKey(edgeY3))
-                    edgeToNeighborsEdges.Add(edgeY3, new SimpleTuple<EdgeData, EdgeData>(edgeY4, edgeY1));
-                if(!edgeToNeighborsEdges.ContainsKey(edgeY4))
-                    edgeToNeighborsEdges.Add(edgeY4, new SimpleTuple<EdgeData, EdgeData>(edgeY2, edgeY3));
-
-                if(!edgeToNeighborsEdges.ContainsKey(edgeZ1))
-                    edgeToNeighborsEdges.Add(edgeZ1, new SimpleTuple<EdgeData, EdgeData>(edgeZ2, edgeZ3));
-                if(!edgeToNeighborsEdges.ContainsKey(edgeZ2))
-                    edgeToNeighborsEdges.Add(edgeZ2, new SimpleTuple<EdgeData, EdgeData>(edgeZ4, edgeZ1));
-                if(!edgeToNeighborsEdges.ContainsKey(edgeZ3))
-                    edgeToNeighborsEdges.Add(edgeZ3, new SimpleTuple<EdgeData, EdgeData>(edgeZ1, edgeZ4));
-                if(!edgeToNeighborsEdges.ContainsKey(edgeZ4))
-                    edgeToNeighborsEdges.Add(edgeZ4, new SimpleTuple<EdgeData, EdgeData>(edgeZ3, edgeZ2));
-            }
-            else
-            {
-                edgeToNeighborsEdges[edgeX1]= new SimpleTuple<EdgeData, EdgeData>(edgeX2, edgeX3);
-                edgeToNeighborsEdges[edgeX2]= new SimpleTuple<EdgeData, EdgeData>(edgeX4, edgeX1);
-                edgeToNeighborsEdges[edgeX3]= new SimpleTuple<EdgeData, EdgeData>(edgeX1, edgeX4);
-                edgeToNeighborsEdges[edgeX4]= new SimpleTuple<EdgeData, EdgeData>(edgeX3, edgeX2);
-
-                edgeToNeighborsEdges[edgeY1]= new SimpleTuple<EdgeData, EdgeData>(edgeY3, edgeY2);
-                edgeToNeighborsEdges[edgeY2]= new SimpleTuple<EdgeData, EdgeData>(edgeY1, edgeY4);
-                edgeToNeighborsEdges[edgeY3]= new SimpleTuple<EdgeData, EdgeData>(edgeY4, edgeY1);
-                edgeToNeighborsEdges[edgeY4]= new SimpleTuple<EdgeData, EdgeData>(edgeY2, edgeY3);
-
-                edgeToNeighborsEdges[edgeZ1]= new SimpleTuple<EdgeData, EdgeData>(edgeZ2, edgeZ3);
-                edgeToNeighborsEdges[edgeZ2]= new SimpleTuple<EdgeData, EdgeData>(edgeZ4, edgeZ1);
-                edgeToNeighborsEdges[edgeZ3]= new SimpleTuple<EdgeData, EdgeData>(edgeZ1, edgeZ4);
-                edgeToNeighborsEdges[edgeZ4]= new SimpleTuple<EdgeData, EdgeData>(edgeZ3, edgeZ2);
-            }
         }
 
     }
