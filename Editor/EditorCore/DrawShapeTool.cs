@@ -98,13 +98,24 @@ namespace UnityEditor.ProBuilder
 
             Undo.undoRedoPerformed += HandleUndoRedoPerformed;
             MeshSelection.objectSelectionChanged += OnSelectionChanged;
+            ToolManager.activeToolChanged += OnActiveToolChanged;
         }
+
 
         void OnDestroy()
         {
             MeshSelection.objectSelectionChanged -= OnSelectionChanged;
         }
 
+        void OnActiveToolChanged()
+        {
+            if(ToolManager.IsActiveTool(this))
+            {
+                var type = EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex];
+                currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type));
+                SetBounds(currentShapeInOverlay.size);
+            }
+        }
         void HandleUndoRedoPerformed()
         {
             if(ToolManager.IsActiveTool(this))
@@ -293,7 +304,7 @@ namespace UnityEditor.ProBuilder
 
             EditorGUI.BeginChangeCheck();
 
-            s_ActiveShapeIndex.value = Mathf.Max(-1, Array.IndexOf(EditorShapeUtility.availableShapeTypes, shape.GetType()));
+            s_ActiveShapeIndex.value = shape == null ? -1 : Mathf.Max(-1, Array.IndexOf(EditorShapeUtility.availableShapeTypes, shape.GetType()));
             s_ActiveShapeIndex.value = EditorGUILayout.Popup(s_ActiveShapeIndex, EditorShapeUtility.shapeTypes);
 
             if(EditorGUI.EndChangeCheck())
@@ -306,6 +317,8 @@ namespace UnityEditor.ProBuilder
 
                     UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
                     currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type));
+                    SetBounds(currentShapeInOverlay.size);
+
                     ProBuilderEditor.Refresh();
                 }
             }

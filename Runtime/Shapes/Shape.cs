@@ -4,7 +4,25 @@ namespace UnityEngine.ProBuilder.Shapes
     public abstract class Shape
     {
         [SerializeField]
+        Vector3 m_Size = Vector3.one;
+
+        [SerializeField]
+        Quaternion m_Rotation = Quaternion.identity;
+
+        [SerializeField]
         protected Bounds m_ShapeBox = new Bounds();
+
+        public Vector3 size
+        {
+            get => m_Size;
+            set => m_Size = value;
+        }
+
+        public Quaternion rotation
+        {
+            get => m_Rotation;
+            set => m_Rotation = value;
+        }
 
         public Bounds shapeBox
         {

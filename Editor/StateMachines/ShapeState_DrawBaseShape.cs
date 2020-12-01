@@ -101,7 +101,7 @@ namespace UnityEditor.ProBuilder
             shape.shape = EditorShapeUtility.GetLastParams(shape.shape.GetType());;
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
 
-            shape.SetInnerBoundsRotation(DrawShapeTool.s_LastShapeRotation);
+            shape.SetInnerBoundsRotation(shape.rotation);
             shape.Rebuild(tool.m_Bounds, tool.m_PlaneRotation);
             ProBuilderEditor.Refresh(false);
 

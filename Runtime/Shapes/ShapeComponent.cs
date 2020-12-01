@@ -13,8 +13,6 @@ namespace UnityEngine.ProBuilder.Shapes
             internal float m_Length ;
             [SerializeField]
             internal float m_Height ;
-            [SerializeField]
-            internal Vector3 m_Rotation = Vector3.zero;
         }
 
         [SerializeReference]
@@ -26,13 +24,7 @@ namespace UnityEngine.ProBuilder.Shapes
         ProBuilderMesh m_Mesh;
 
         [SerializeField]
-        Vector3 m_Size;
-
-        [SerializeField]
         Vector3[] m_MeshOriginalVertices;
-
-        [SerializeField]
-        Quaternion m_Rotation = Quaternion.identity;
 
         [SerializeField]
         bool m_Edited = false;
@@ -43,16 +35,16 @@ namespace UnityEngine.ProBuilder.Shapes
             set { m_Shape = value; }
         }
 
-        public Quaternion rotation
-        {
-            get { return m_Rotation; }
-            set { m_Rotation = value; }
-        }
-
         public Vector3 size
         {
-            get { return m_Size; }
-            set { m_Size = value; }
+            get { return m_Shape.size; }
+            set { m_Shape.size = value; }
+        }
+
+        public Quaternion rotation
+        {
+            get { return m_Shape.rotation; }
+            set { m_Shape.rotation = value; }
         }
 
         public bool edited
@@ -67,7 +59,7 @@ namespace UnityEngine.ProBuilder.Shapes
             get
             {
                 m_EditionBounds.center = Vector3.zero;
-                m_EditionBounds.size = m_Size;
+                m_EditionBounds.size = m_Shape.size;
                 return m_EditionBounds;
             }
         }
@@ -100,25 +92,21 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public void UpdateProperties()
         {
-            m_Properties.m_Width = m_Size.x;
-            m_Properties.m_Height = m_Size.y;
-            m_Properties.m_Length = m_Size.z;
-            m_Properties.m_Rotation = m_Rotation.eulerAngles;
+            m_Properties.m_Width = size.x;
+            m_Properties.m_Height = size.y;
+            m_Properties.m_Length = size.z;
         }
 
         public void UpdateComponent()
         {
-            m_Size = new Vector3(m_Properties.m_Width, m_Properties.m_Height, m_Properties.m_Length);
-            m_Rotation = Quaternion.Euler(m_Properties.m_Rotation);
-
-            SetInnerBoundsRotation(m_Rotation);
-
+            size = new Vector3(m_Properties.m_Width, m_Properties.m_Height, m_Properties.m_Length);
+            SetInnerBoundsRotation(rotation);
             Rebuild();
         }
 
         public void Rebuild(Bounds bounds, Quaternion rotation)
         {
-            m_Size = Math.Abs(bounds.size);
+            size = Math.Abs(bounds.size);
             transform.position = bounds.center;
             transform.rotation = rotation;
 
@@ -130,17 +118,17 @@ namespace UnityEngine.ProBuilder.Shapes
             if( gameObject== null ||gameObject.hideFlags != HideFlags.None )
                 return;
 
-            m_Shape.RebuildMesh(mesh, m_Size);
+            m_Shape.RebuildMesh(mesh, size);
 
             m_Edited = false;
 
             m_MeshOriginalVertices = new Vector3[mesh.vertexCount];
             Array.Copy(mesh.positionsInternal,m_MeshOriginalVertices, mesh.vertexCount);
 
-            Quaternion rotation = resetRotation ? Quaternion.identity : m_Rotation;
-            ApplyRotation(rotation, true);
+            Quaternion rot = resetRotation ? Quaternion.identity : rotation;
+            ApplyRotation(rot, true);
 
-            MeshUtility.FitToSize(mesh, GetRotatedBounds(), m_Size);
+            MeshUtility.FitToSize(mesh, GetRotatedBounds(), size);
         }
 
         public void SetShape(Shape shape)
@@ -152,7 +140,7 @@ namespace UnityEngine.ProBuilder.Shapes
         Bounds GetRotatedBounds()
         {
             Bounds bounds = m_Shape.shapeBox;
-            var size = m_Rotation * m_Shape.shapeBox.size;
+            var size = rotation * m_Shape.shapeBox.size;
             size.x = Mathf.Abs(size.x);
             size.y = Mathf.Abs(size.y);
             size.z = Mathf.Abs(size.z);
@@ -167,7 +155,7 @@ namespace UnityEngine.ProBuilder.Shapes
         public void SetInnerBoundsRotation(Quaternion angles)
         {
             ApplyRotation(angles);
-            MeshUtility.FitToSize(mesh, GetRotatedBounds(), m_Size);
+            MeshUtility.FitToSize(mesh, GetRotatedBounds(), size);
         }
 
         /// <summary>
@@ -176,17 +164,17 @@ namespace UnityEngine.ProBuilder.Shapes
         /// <param name="rotation">The angles to rotate by</param>
         public void RotateInsideBounds(Quaternion deltaRotation)
         {
-            Quaternion rotation = deltaRotation * m_Rotation;
-            ApplyRotation(rotation);
-            MeshUtility.FitToSize(mesh, GetRotatedBounds(), m_Size);
+            Quaternion rot = deltaRotation * rotation;
+            ApplyRotation(rot);
+            MeshUtility.FitToSize(mesh, GetRotatedBounds(), size);
         }
 
-        void ApplyRotation(Quaternion rotation, bool forceRotation = false)
+        void ApplyRotation(Quaternion rot, bool forceRotation = false)
         {
-            if ( !forceRotation && rotation.Equals(m_Rotation) )
+            if ( !forceRotation && rot.Equals(rotation) )
                 return;
 
-            m_Rotation = rotation;
+            rotation = rot;
             m_Edited = false;
 
             if(m_MeshOriginalVertices == null || m_MeshOriginalVertices.Length == 0)
