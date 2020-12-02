@@ -188,122 +188,248 @@ namespace UnityEditor.ProBuilder
 
                 foreach(var face in m_Faces)
                 {
-                    if(DoOrientationHandle(face))
-                    {
-                        UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Rotate Shape");
-                        shapeComponent.RotateInsideBounds(m_ShapeRotation);
-                        DrawShapeTool.s_LastShapeRotation = shapeComponent.rotation;
-                        ProBuilderEditor.Refresh();
-                    }
+                    DoFaceGUI(face);
+                    // if(DoOrientationHandle(face))
+                    // {
+                    //     UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Rotate Shape");
+                    //     shapeComponent.RotateInsideBounds(m_ShapeRotation);
+                    //     DrawShapeTool.s_LastShapeRotation = shapeComponent.rotation;
+                    //     ProBuilderEditor.Refresh();
+                    // }
+                }
+
+                if(DoOrientationHandle())
+                {
+                    UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Rotate Shape");
+                    shapeComponent.RotateInsideBounds(m_ShapeRotation);
+                    DrawShapeTool.s_LastShapeRotation = shapeComponent.rotation;
+                    ProBuilderEditor.Refresh();
                 }
             }
         }
 
-        bool DoOrientationHandle(EditorShapeUtility.FaceData face)
+        void DoFaceGUI(EditorShapeUtility.FaceData face)
+        {
+            if(Event.current.type == EventType.Repaint)
+            {
+                using(new Handles.DrawingScope(DrawShapeTool.k_BoundsColor))
+                {
+                    int pointsCount = face.Points.Length;
+                    for(int i = 0; i < pointsCount; i++)
+                        Handles.DrawLine(face.Points[i], face.Points[( i + 1 ) % pointsCount]);
+                }
+
+                var faceColor = (m_CurrentTargetedFace!= null && m_CurrentTargetedFace == face) ?
+                    ( m_CurrentId != -1 ? EditorHandleDrawing.faceSelectedColor : EditorHandleDrawing.preselectionColor ) :
+                    DrawShapeTool.k_BoundsColor;
+                using(new Handles.DrawingScope(faceColor * new Color(1f, 1f, 1f, 0.2f)))
+                    Handles.DrawAAConvexPolygon(face.Points);
+            }
+        }
+
+
+        bool DoOrientationHandle()
         {
             Event evt = Event.current;
             int controlID = GUIUtility.GetControlID(FocusType.Passive);
-            bool hasRotated = false;
 
-            float handleSize = HandleUtility.GetHandleSize(face.CenterPosition) * 0.25f;
-            if(face.IsVisible)
+            var previousFace = m_CurrentTargetedFace;
+            if(evt.type == EventType.MouseMove || evt.type == EventType.MouseDrag)
             {
-                switch(evt.GetTypeForControl(controlID))
+                m_CurrentTargetedFace = null;
+                foreach(var face in m_Faces)
                 {
-                    case EventType.MouseDown:
-                        if (HandleUtility.nearestControl == controlID && (evt.button == 0 || evt.button == 2))
+                    if(face.IsVisible && EditorShapeUtility.PointerIsInFace(face))
+                    {
+                        UnityEngine.Plane p = new UnityEngine.Plane(face.Normal,
+                            Handles.matrix.MultiplyPoint(face.CenterPosition));
+
+                        Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
+                        float dist;
+                        if(p.Raycast(ray, out dist))
                         {
-                            m_CurrentId = controlID;
-                            m_CurrentTargetedFace = null;
-                            m_CurrentHandlePosition = Vector3.zero;
-                            GUIUtility.hotControl = controlID;
-                            evt.Use();
+                            m_CurrentHandlePosition = Handles.inverseMatrix.MultiplyPoint(ray.GetPoint(dist));
+                            m_CurrentTargetedFace = face;
+                            m_IsMouseOver = true;
                         }
-                        break;
-                    case EventType.MouseUp:
-                        if (GUIUtility.hotControl == controlID && (evt.button == 0 || evt.button == 2))
-                        {
-                            GUIUtility.hotControl = 0;
-                            evt.Use();
-                            m_CurrentId = -1;
-
-                            if(m_CurrentTargetedFace != null && m_CurrentTargetedFace != face)
-                            {
-                                Vector3 rotationAxis = Vector3.Cross(face.Normal, m_CurrentTargetedFace.Normal);
-                                m_ShapeRotation = Quaternion.AngleAxis(Vector3.SignedAngle(face.Normal, m_CurrentTargetedFace.Normal,rotationAxis),rotationAxis);
-                                hasRotated = true;
-                            }
-
-                            m_CurrentTargetedFace = null;
-                            m_CurrentHandlePosition = Vector3.zero;
-                        }
-                        break;
-                    case EventType.MouseMove:
-                        HandleUtility.Repaint();
-                        break;
-                    case EventType.Layout:
-                        HandleUtility.AddControl(controlID, HandleUtility.DistanceToDisc(face.CenterPosition, face.Normal, handleSize / 2f) * 0.5f);
-                        break;
-                    case EventType.Repaint:
-                        bool isSelected = (HandleUtility.nearestControl == controlID && m_CurrentId == -1) || m_CurrentId == controlID;
-                        m_IsMouseOver |= isSelected;
-
-                        using(new Handles.DrawingScope(DrawShapeTool.k_BoundsColor))
-                        {
-                            int pointsCount = face.Points.Length;
-                            for(int i = 0; i < pointsCount; i++)
-                                Handles.DrawLine(face.Points[i], face.Points[( i + 1 ) % pointsCount]);
-                        }
-
-                        if(m_CurrentId == -1 || m_CurrentId == controlID)
-                        {
-                            using(new Handles.DrawingScope(isSelected
-                                ? EditorHandleDrawing.edgeSelectedColor
-                                : face.m_Color))
-                            {
-                                var position = isSelected && m_CurrentHandlePosition != Vector3.zero ? m_CurrentHandlePosition : face.CenterPosition;
-                                var normal = isSelected && m_CurrentTargetedFace != null ? m_CurrentTargetedFace.Normal : face.Normal;
-                                Handles.DrawLine(position, position + normal * handleSize);
-                                Handles.CircleHandleCap(controlID, position, Quaternion.LookRotation(normal), handleSize, EventType.Repaint);
-
-                                if(isSelected)
-                                {
-                                    using(new Handles.DrawingScope(face.m_Color * new Color(1f, 1f, 1f, 0.25f)))
-                                        Handles.DrawSolidDisc(position, normal, handleSize);
-
-                                    if(m_CurrentTargetedFace != null)
-                                        using(new Handles.DrawingScope(m_CurrentTargetedFace.m_Color * new Color(1f, 1f, 1f, 0.1f)))
-                                            Handles.DrawAAConvexPolygon(m_CurrentTargetedFace.Points);
-                                }
-                            }
-                        }
-                        break;
-                    case EventType.MouseDrag:
-                        if(m_CurrentId == controlID)
-                        {
-                            m_CurrentTargetedFace = null;
-                            foreach(var boundsFace in m_Faces)
-                            {
-                                if(boundsFace.IsVisible && EditorShapeUtility.PointerIsInFace(boundsFace))
-                                {
-                                    UnityEngine.Plane p = new UnityEngine.Plane(boundsFace.Normal,  Handles.matrix.MultiplyPoint(boundsFace.CenterPosition));
-
-                                    Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
-                                    float dist;
-                                    if(p.Raycast(ray, out dist))
-                                    {
-                                        m_CurrentHandlePosition = Handles.inverseMatrix.MultiplyPoint(ray.GetPoint(dist));
-                                        m_CurrentTargetedFace = boundsFace;
-                                    }
-                                }
-                            }
-                        }
-                        break;
+                    }
                 }
             }
 
-            return hasRotated;
+            if(m_CurrentTargetedFace == null)
+                return false;
+
+            bool hasRotated = false;
+
+            float handleSize = HandleUtility.GetHandleSize(m_CurrentHandlePosition) * 0.25f;
+            switch(evt.GetTypeForControl(controlID))
+            {
+                case EventType.MouseDown:
+                    if (HandleUtility.nearestControl == controlID && (evt.button == 0 || evt.button == 2))
+                    {
+                        m_CurrentId = controlID;
+                        GUIUtility.hotControl = controlID;
+                        evt.Use();
+                    }
+                    break;
+                case EventType.MouseUp:
+                    if (GUIUtility.hotControl == controlID && (evt.button == 0 || evt.button == 2))
+                    {
+                        GUIUtility.hotControl = 0;
+                        evt.Use();
+                        m_CurrentId = -1;
+                    }
+                break;
+                case EventType.MouseMove:
+                    HandleUtility.Repaint();
+                    break;
+                case EventType.Layout:
+                    HandleUtility.AddControl(controlID, m_CurrentTargetedFace != null ? 0 : Mathf.Infinity);
+                    break;
+                case EventType.Repaint:
+                    if(m_CurrentTargetedFace != null)
+                    {
+                        var faceColor = m_CurrentId != -1
+                            ? EditorHandleDrawing.edgeSelectedColor
+                            : EditorHandleDrawing.preselectionColor;
+
+                        using(new Handles.DrawingScope(faceColor))
+                        {
+                            var position = m_CurrentHandlePosition;
+                            var normal = m_CurrentTargetedFace.Normal;
+                            Handles.RectangleHandleCap(controlID, position, Quaternion.LookRotation(normal), handleSize, EventType.Repaint);
+                        }
+                    }
+
+                    break;
+                case EventType.MouseDrag:
+                    if(m_CurrentId == controlID)
+                    {
+                        if(m_CurrentTargetedFace != previousFace)
+                        {
+                            //Rotate face
+                            Vector3 rotationAxis = Vector3.Cross(previousFace.Normal, m_CurrentTargetedFace.Normal);
+                            m_ShapeRotation = Quaternion.AngleAxis(
+                                Vector3.SignedAngle(previousFace.Normal, m_CurrentTargetedFace.Normal, rotationAxis),
+                                rotationAxis);
+                            hasRotated = true;
+                        }
+                    }
+                    break;
+                }
+
+             return hasRotated;
         }
+
+        // bool DoOrientationHandle(EditorShapeUtility.FaceData face)
+        // {
+        //     Event evt = Event.current;
+        //     int controlID = GUIUtility.GetControlID(FocusType.Passive);
+        //     bool hasRotated = false;
+        //
+        //     float handleSize = HandleUtility.GetHandleSize(face.CenterPosition) * 0.25f;
+        //     if(face.IsVisible)
+        //     {
+        //         switch(evt.GetTypeForControl(controlID))
+        //         {
+        //             case EventType.MouseDown:
+        //                 if (HandleUtility.nearestControl == controlID && (evt.button == 0 || evt.button == 2))
+        //                 {
+        //                     m_CurrentId = controlID;
+        //                     m_CurrentTargetedFace = null;
+        //                     m_CurrentHandlePosition = Vector3.zero;
+        //                     GUIUtility.hotControl = controlID;
+        //                     evt.Use();
+        //                 }
+        //                 break;
+        //             case EventType.MouseUp:
+        //                 if (GUIUtility.hotControl == controlID && (evt.button == 0 || evt.button == 2))
+        //                 {
+        //                     GUIUtility.hotControl = 0;
+        //                     evt.Use();
+        //                     m_CurrentId = -1;
+        //
+        //                     if(m_CurrentTargetedFace != null && m_CurrentTargetedFace != face)
+        //                     {
+        //                         Vector3 rotationAxis = Vector3.Cross(face.Normal, m_CurrentTargetedFace.Normal);
+        //                         m_ShapeRotation = Quaternion.AngleAxis(Vector3.SignedAngle(face.Normal, m_CurrentTargetedFace.Normal,rotationAxis),rotationAxis);
+        //                         hasRotated = true;
+        //                     }
+        //
+        //                     m_CurrentTargetedFace = null;
+        //                     m_CurrentHandlePosition = Vector3.zero;
+        //                 }
+        //                 break;
+        //             case EventType.MouseMove:
+        //                 HandleUtility.Repaint();
+        //                 break;
+        //             case EventType.Layout:
+        //                 HandleUtility.AddControl(controlID, HandleUtility.DistanceToDisc(face.CenterPosition, face.Normal, handleSize / 2f) * 0.5f);
+        //                 break;
+        //             case EventType.Repaint:
+        //                 bool isSelected = (HandleUtility.nearestControl == controlID && m_CurrentId == -1) || m_CurrentId == controlID;
+        //                 m_IsMouseOver |= isSelected;
+        //
+        //                 using(new Handles.DrawingScope(DrawShapeTool.k_BoundsColor))
+        //                 {
+        //                     int pointsCount = face.Points.Length;
+        //                     for(int i = 0; i < pointsCount; i++)
+        //                         Handles.DrawLine(face.Points[i], face.Points[( i + 1 ) % pointsCount]);
+        //                 }
+        //
+        //                 var faceColor = m_CurrentTargetedFace == face ? EditorHandleDrawing.faceSelectedColor : DrawShapeTool.k_BoundsColor;
+        //                 using(new Handles.DrawingScope(faceColor * new Color(1f, 1f, 1f, 0.2f)))
+        //                     Handles.DrawAAConvexPolygon(m_CurrentTargetedFace.Points);
+        //
+        //                 if(m_CurrentId == -1 || m_CurrentId == controlID)
+        //                 {
+        //                     using(new Handles.DrawingScope(isSelected
+        //                         ? EditorHandleDrawing.edgeSelectedColor
+        //                         : face.m_Color))
+        //                     {
+        //                         var position = isSelected && m_CurrentHandlePosition != Vector3.zero ? m_CurrentHandlePosition : face.CenterPosition;
+        //                         var normal = isSelected && m_CurrentTargetedFace != null ? m_CurrentTargetedFace.Normal : face.Normal;
+        //                         Handles.DrawLine(position, position + normal * handleSize);
+        //                         Handles.CircleHandleCap(controlID, position, Quaternion.LookRotation(normal), handleSize, EventType.Repaint);
+        //
+        //                         if(isSelected)
+        //                         {
+        //                             using(new Handles.DrawingScope(face.m_Color * new Color(1f, 1f, 1f, 0.25f)))
+        //                                 Handles.DrawSolidDisc(position, normal, handleSize);
+        //
+        //                             if(m_CurrentTargetedFace != null)
+        //                                 using(new Handles.DrawingScope(m_CurrentTargetedFace.m_Color * new Color(1f, 1f, 1f, 0.1f)))
+        //                                     Handles.DrawAAConvexPolygon(m_CurrentTargetedFace.Points);
+        //                         }
+        //                     }
+        //                 }
+        //                 break;
+        //             case EventType.MouseDrag:
+        //                 if(m_CurrentId == controlID)
+        //                 {
+        //                     m_CurrentTargetedFace = null;
+        //                     foreach(var boundsFace in m_Faces)
+        //                     {
+        //                         if(boundsFace.IsVisible && EditorShapeUtility.PointerIsInFace(boundsFace))
+        //                         {
+        //                             UnityEngine.Plane p = new UnityEngine.Plane(boundsFace.Normal,  Handles.matrix.MultiplyPoint(boundsFace.CenterPosition));
+        //
+        //                             Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
+        //                             float dist;
+        //                             if(p.Raycast(ray, out dist))
+        //                             {
+        //                                 m_CurrentHandlePosition = Handles.inverseMatrix.MultiplyPoint(ray.GetPoint(dist));
+        //                                 m_CurrentTargetedFace = boundsFace;
+        //                             }
+        //                         }
+        //                     }
+        //                 }
+        //                 break;
+        //         }
+        //     }
+        //
+        //     return hasRotated;
+        // }
 
     }
 }
