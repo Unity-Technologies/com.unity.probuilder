@@ -183,20 +183,8 @@ namespace UnityEditor.ProBuilder
             EditorShapeUtility.UpdateFaces(bounds, Vector3.zero, m_Faces);
             using (new Handles.DrawingScope(matrix))
             {
-                if(Event.current.type == EventType.Repaint)
-                    m_IsMouseOver = false;
-
                 foreach(var face in m_Faces)
-                {
                     DoFaceGUI(face);
-                    // if(DoOrientationHandle(face))
-                    // {
-                    //     UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Rotate Shape");
-                    //     shapeComponent.RotateInsideBounds(m_ShapeRotation);
-                    //     DrawShapeTool.s_LastShapeRotation = shapeComponent.rotation;
-                    //     ProBuilderEditor.Refresh();
-                    // }
-                }
 
                 if(DoOrientationHandle())
                 {
@@ -210,7 +198,7 @@ namespace UnityEditor.ProBuilder
 
         void DoFaceGUI(EditorShapeUtility.FaceData face)
         {
-            if(Event.current.type == EventType.Repaint)
+            if(Event.current.type == EventType.Repaint && face.IsVisible)
             {
                 using(new Handles.DrawingScope(DrawShapeTool.k_BoundsColor))
                 {
@@ -236,6 +224,7 @@ namespace UnityEditor.ProBuilder
             var previousFace = m_CurrentTargetedFace;
             if(evt.type == EventType.MouseMove || evt.type == EventType.MouseDrag)
             {
+                m_IsMouseOver = false;
                 m_CurrentTargetedFace = null;
                 foreach(var face in m_Faces)
                 {
