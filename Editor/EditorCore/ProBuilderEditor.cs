@@ -190,8 +190,8 @@ namespace UnityEditor.ProBuilder
 
             set
             {
-                toolManager?.SetSelectMode(value);
-                Refresh();
+                if(toolManager != null && toolManager.SetSelectMode(value))
+                    Refresh();
             }
         }
 

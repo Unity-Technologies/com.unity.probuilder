@@ -109,10 +109,10 @@ namespace UnityEditor.ProBuilder
 #endif
         }
 
-        public void SetSelectMode(SelectMode mode)
+        public bool SetSelectMode(SelectMode mode)
         {
             if (mode == selectMode)
-                return;
+                return false;
 
             selectMode = mode;
 
@@ -135,6 +135,7 @@ namespace UnityEditor.ProBuilder
             else if (mode == SelectMode.Object && GetBuiltinToolType(ToolManager.activeToolType, out Type builtin))
                 ToolManager.SetActiveTool(builtin);
 #endif
+            return true;
         }
 
         public void ResetToLastSelectMode()
