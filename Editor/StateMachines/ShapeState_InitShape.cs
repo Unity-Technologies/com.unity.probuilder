@@ -397,7 +397,7 @@ namespace UnityEditor.ProBuilder
                             Handles.SphereHandleCap(controlID, m_CurrentHandlePosition, Quaternion.identity, handleSize, EventType.Repaint);
                         }
 
-                        if(isSelected)
+                        if(isSelected && m_CurrentTargetedFace != null)
                         {
                             Color color = DrawShapeTool.k_BoundsColor;
                             color.a *= 0.25f;

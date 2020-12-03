@@ -18,6 +18,11 @@ namespace UnityEditor.ProBuilder
     {
         protected EditorTool m_Tool;
 
+        public EditorTool Tool
+        {
+            get => m_Tool;
+        }
+
         protected MenuToolToggle()
         {
             iconMode = ProBuilderEditor.s_IsIconGui;

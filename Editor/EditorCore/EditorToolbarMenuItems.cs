@@ -9,6 +9,12 @@ using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.Actions;
 using UnityEditor.ShortcutManagement;
 
+#if !UNITY_2020_2_OR_NEWER
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+#else
+using ToolManager = UnityEditor.EditorTools.ToolManager;
+#endif
+
 namespace UnityEditor.ProBuilder
 {
     static class EditorToolbarMenuItem
@@ -42,8 +48,11 @@ namespace UnityEditor.ProBuilder
 		static void MenuPerform_NewPolyShape()
 		{
 			var instance = EditorToolbarLoader.GetInstance<NewPolyShapeToggle>();
-			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+            if(instance != null && instance.enabled)
+            {
+                var result = ToolManager.IsActiveTool(instance.Tool) ? instance.EndActivation() : instance.StartActivation();
+                EditorUtility.ShowNotification(result.notification);
+            }
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/Open Lightmap UV Editor", true, PreferenceKeys.menuEditor + 1)]
