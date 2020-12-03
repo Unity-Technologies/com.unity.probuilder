@@ -2,7 +2,7 @@
 //#define PB_ANALYTICS_LOGGING
 
 // Will allow data to be send if using a dev build
-//#define PB_ANALYTICS_ALLOW_DEVBUILD
+#define PB_ANALYTICS_ALLOW_DEVBUILD
 
 // Will allow data to be send from automated tests or scripts
 //#define PB_ANALYTICS_ALLOW_AUTOMATION
@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder
         // Holds the type of data we want to send to the database
         enum EventName
         {
-            probuilderAction
+            ProbuilderAction
         }
 
         // Triggered type is from where the action was performed
@@ -56,11 +56,11 @@ namespace UnityEditor.ProBuilder
         }
 
         // This will register all the Event type at once
-        private static bool RegisterEvents()
+        static bool RegisterEvents()
         {
             if (!EditorAnalytics.enabled)
             {
-                Console.WriteLine("[PB] Editor analytics are disabled");
+                DumpLogInfo("[PB] Editor analytics are disabled");
                 return false;
             }
 
@@ -79,16 +79,14 @@ namespace UnityEditor.ProBuilder
         }
 
 
-        private static bool RegisterEvent(string eventName)
+        static bool RegisterEvent(string eventName)
         {
             var result = EditorAnalytics.RegisterEventWithLimit(eventName, k_MaxEventsPerHour, k_MaxNumberOfElements, k_VendorKey);
             switch (result)
             {
                 case AnalyticsResult.Ok:
                 {
-                    #if PB_ANALYTICS_LOGGING
                     DumpLogInfo($"ProBuilder: Registered event: {eventName}");
-                    #endif
                     return true;
                 }
 
@@ -98,7 +96,7 @@ namespace UnityEditor.ProBuilder
                 
                 default:
                 {
-                    Console.WriteLine($"[PB] Failed to register analytics event '{eventName}'. Result: '{result}'");
+                    DumpLogInfo($"[PB] Failed to register analytics event '{eventName}'. Result: '{result}'");
                     return false;
                 }
             }
@@ -114,20 +112,16 @@ namespace UnityEditor.ProBuilder
             data.subLevelId = (int)ProBuilderToolManager.selectMode;
             data.triggeredFrom = triggerType.ToString();
             
-            Send(EventName.probuilderAction, data);
+            Send(EventName.ProbuilderAction, data);
         }
 
-        private static void Send(EventName eventName, object eventData)
+        static void Send(EventName eventName, object eventData)
         {
-            #if !PB_ANALYTICS_DONTSEND
-            s_EventRegistered = RegisterEvents();
-            #endif
-
             // Don't send analytics when editor is used by an automated system
             #if !PB_ANALYTICS_ALLOW_AUTOMATION
             if (!InternalEditorUtility.isHumanControllingUs || InternalEditorUtility.inBatchMode)
             {
-                Console.WriteLine($"[PB] Analytics deactivated, ProBuilder is currently used in Batch mode or run by automated system.");
+                DumpLogInfo($"[PB] Analytics deactivated, ProBuilder is currently used in Batch mode or run by automated system.");
                 return;
             }
             #endif
@@ -136,16 +130,18 @@ namespace UnityEditor.ProBuilder
             #if !PB_ANALYTICS_ALLOW_DEVBUILD
             if (Directory.Exists($"Packages/{packageName}/.git"))
             {
-                Console.WriteLine($"[PB] Analytics deactivated, Dev build of ProBuilder is currently used.");
+                DumpLogInfo($"[PB] Analytics deactivated, Dev build of ProBuilder is currently used.");
                 return;
             }
             #endif
 
+            #if !PB_ANALYTICS_DONTSEND
+            s_EventRegistered = RegisterEvents();
+            #endif
+
             if (!s_EventRegistered)
             {
-                #if PB_ANALYTICS_LOGGING
                 DumpLogInfo($"[PB] Analytics disabled: event='{eventName}', time='{DateTime.Now:HH:mm:ss}', payload={EditorJsonUtility.ToJson(eventData, true)}");
-                #endif
                 return;
             }
 
@@ -156,13 +152,11 @@ namespace UnityEditor.ProBuilder
                 var sendResult = EditorAnalytics.SendEventWithLimit(eventName.ToString(), eventData);
                 if (sendResult == AnalyticsResult.Ok)
                 {
-                    #if PB_ANALYTICS_LOGGING
                     DumpLogInfo($"[PB] Event='{eventName}', time='{DateTime.Now:HH:mm:ss}', payload={EditorJsonUtility.ToJson(eventData, true)}");
-                    #endif
                 }
                 else
                 {
-                    Console.WriteLine($"[PB] Failed to send event {eventName}. Result: {sendResult}");
+                    DumpLogInfo($"[PB] Failed to send event {eventName}. Result: {sendResult}");
                 }
                 #else
                 DumpLogInfo($"[PB] Event='{eventName}', time='{DateTime.Now:HH:mm:ss}', payload={EditorJsonUtility.ToJson(eventData, true)}");
@@ -170,14 +164,19 @@ namespace UnityEditor.ProBuilder
             }
             catch(Exception e)
             {
-                Console.WriteLine($"[PB] Exception --> {e}, Something went wrong while trying to send Event='{eventName}', time='{DateTime.Now:HH:mm:ss}', payload={EditorJsonUtility.ToJson(eventData, true)}");
+                DumpLogInfo($"[PB] Exception --> {e}, Something went wrong while trying to send Event='{eventName}', time='{DateTime.Now:HH:mm:ss}', payload={EditorJsonUtility.ToJson(eventData, true)}");
             }
         }
 
-        private static void DumpLogInfo(string message)
+        static void DumpLogInfo(string message)
         {
+            #if PB_ANALYTICS_LOGGING
             Debug.Log(message);
             Console.WriteLine(message);
+            #else
+            if(Unsupported.IsSourceBuild())
+                Console.WriteLine(message);
+            #endif
         }
     }
 }
