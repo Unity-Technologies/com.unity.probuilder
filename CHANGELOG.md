@@ -24,7 +24,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - MergeElements.Merge moved to public API
 
 ### Bug Fixes
-
+ 
+- [case: 1296520] Fixing `New Poly Shape` menu entry not working
 - [case: 1254339] Correct offset when rendering UVs and correct export when UV Editor is docked.
 - Fixed PolyShape in Prefab mode: PolyShapeMode was not serialized when exiting prefab mode. Update point insertion visualization.
 - [case: 1259845] Fixed dimension overlay being hidden on playmode or reboot of the editor.
