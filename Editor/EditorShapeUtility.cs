@@ -149,40 +149,40 @@ namespace UnityEditor.ProBuilder
             public Bounds boundsHandleValue;
         }
 
-        public static void CopyColliderPropertiesToHandle(Transform transform, Bounds bounds, BoxBoundsHandle targetBoxBoundsHandle, bool isEditing, BoundsState activeBoundsState)
-        {
-            // when editing a shape, we don't bother doing the conversion from handle space bounds to model for the
-            // active handle
-            if (isEditing)
-            {
-                targetBoxBoundsHandle.center = activeBoundsState.boundsHandleValue.center;
-                targetBoxBoundsHandle.size = activeBoundsState.boundsHandleValue.size;
-                return;
-            }
-
-            var localToWorld = transform.localToWorldMatrix;
-            var lossyScale = transform.lossyScale;
-
-            targetBoxBoundsHandle.center = Handles.inverseMatrix * (localToWorld * bounds.center);
-            targetBoxBoundsHandle.size = Vector3.Scale(bounds.size, lossyScale);
-        }
-
-        public static void CopyHandlePropertiesToCollider(BoxBoundsHandle boxBoundsHandle, BoundsState activeBoundsState)
-        {
-            Vector3 snappedHandleSize =
-                ProBuilderSnapping.Snap(boxBoundsHandle.size, EditorSnapping.activeMoveSnapValue);
-            //Find the scaling direction
-            Vector3 centerDiffSign =
-                ( boxBoundsHandle.center - activeBoundsState.boundsHandleValue.center ).normalized;
-            Vector3 sizeDiffSign = ( boxBoundsHandle.size - activeBoundsState.boundsHandleValue.size ).normalized;
-            Vector3 globalSign = Vector3.Scale(centerDiffSign, sizeDiffSign);
-            //Set the center to the right position
-            Vector3 center = activeBoundsState.boundsHandleValue.center +
-                             Vector3.Scale(( snappedHandleSize - activeBoundsState.boundsHandleValue.size ) / 2f,
-                                 globalSign);
-            //Set new Bounding box value
-            activeBoundsState.boundsHandleValue = new Bounds(center, snappedHandleSize);
-        }
+        // public static void CopyColliderPropertiesToHandle(Transform transform, Bounds bounds, BoxBoundsHandle targetBoxBoundsHandle, bool isEditing, BoundsState activeBoundsState)
+        // {
+        //     // when editing a shape, we don't bother doing the conversion from handle space bounds to model for the
+        //     // active handle
+        //     if (isEditing)
+        //     {
+        //         targetBoxBoundsHandle.center = activeBoundsState.boundsHandleValue.center;
+        //         targetBoxBoundsHandle.size = activeBoundsState.boundsHandleValue.size;
+        //         return;
+        //     }
+        //
+        //     var localToWorld = transform.localToWorldMatrix;
+        //     var lossyScale = transform.lossyScale;
+        //
+        //     targetBoxBoundsHandle.center = Handles.inverseMatrix * (localToWorld * bounds.center);
+        //     targetBoxBoundsHandle.size = Vector3.Scale(bounds.size, lossyScale);
+        // }
+        //
+        // public static void CopyHandlePropertiesToCollider(BoxBoundsHandle boxBoundsHandle, BoundsState activeBoundsState)
+        // {
+        //     Vector3 snappedHandleSize =
+        //         ProBuilderSnapping.Snap(boxBoundsHandle.size, EditorSnapping.activeMoveSnapValue);
+        //     //Find the scaling direction
+        //     Vector3 centerDiffSign =
+        //         ( boxBoundsHandle.center - activeBoundsState.boundsHandleValue.center ).normalized;
+        //     Vector3 sizeDiffSign = ( boxBoundsHandle.size - activeBoundsState.boundsHandleValue.size ).normalized;
+        //     Vector3 globalSign = Vector3.Scale(centerDiffSign, sizeDiffSign);
+        //     //Set the center to the right position
+        //     Vector3 center = activeBoundsState.boundsHandleValue.center +
+        //                      Vector3.Scale(( snappedHandleSize - activeBoundsState.boundsHandleValue.size ) / 2f,
+        //                          globalSign);
+        //     //Set new Bounding box value
+        //     activeBoundsState.boundsHandleValue = new Bounds(center, snappedHandleSize);
+        // }
 
         public static void UpdateFaces(Bounds bounds, Vector3 center, FaceData[] faces)
         {

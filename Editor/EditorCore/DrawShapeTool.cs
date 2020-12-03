@@ -89,7 +89,7 @@ namespace UnityEditor.ProBuilder
 
             m_IconContent = new GUIContent()
             {
-                image = EditorGUIUtility.LoadIconRequired("CustomTool"),
+                image = IconUtility.GetIcon("Tools/ShapeTool/Arch"),
                 text = "Draw Shape Tool",
                 tooltip = "Draw Shape Tool"
             };

@@ -62,36 +62,36 @@ namespace UnityEditor.ProBuilder
 
         protected override void DoManipulationGUI(Object toolTarget)
         {
-            ShapeComponent shapeComponent = toolTarget as ShapeComponent;
-            if(shapeComponent == null)
-                return;
-
-            var matrix = IsEditing
-                ? m_ActiveBoundsState.positionAndRotationMatrix
-                : Matrix4x4.TRS(shapeComponent.transform.position, shapeComponent.transform.rotation, Vector3.one);
-
-            using (new Handles.DrawingScope(matrix))
-            {
-                m_BoundsHandle.SetColor(m_BoundsHandleColor);
-
-                EditorShapeUtility.CopyColliderPropertiesToHandle(
-                    shapeComponent.transform, shapeComponent.mesh.mesh.bounds,
-                    m_BoundsHandle, IsEditing, m_ActiveBoundsState);
-
-                EditorGUI.BeginChangeCheck();
-
-                m_BoundsHandle.DrawHandle();
-
-                if (EditorGUI.EndChangeCheck())
-                {
-                    BeginBoundsEditing(shapeComponent.mesh);
-                    UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Scale Shape");
-                    EditorShapeUtility.CopyHandlePropertiesToCollider(m_BoundsHandle, m_ActiveBoundsState);
-                    ApplyProperties(shapeComponent, m_ActiveBoundsState);
-                }
-
-                DoRotateHandlesGUI(toolTarget, shapeComponent.mesh, shapeComponent.meshFilterBounds);
-            }
+            // ShapeComponent shapeComponent = toolTarget as ShapeComponent;
+            // if(shapeComponent == null)
+            //     return;
+            //
+            // var matrix = IsEditing
+            //     ? m_ActiveBoundsState.positionAndRotationMatrix
+            //     : Matrix4x4.TRS(shapeComponent.transform.position, shapeComponent.transform.rotation, Vector3.one);
+            //
+            // using (new Handles.DrawingScope(matrix))
+            // {
+            //     m_BoundsHandle.SetColor(m_BoundsHandleColor);
+            //
+            //     EditorShapeUtility.CopyColliderPropertiesToHandle(
+            //         shapeComponent.transform, shapeComponent.mesh.mesh.bounds,
+            //         m_BoundsHandle, IsEditing, m_ActiveBoundsState);
+            //
+            //     EditorGUI.BeginChangeCheck();
+            //
+            //     m_BoundsHandle.DrawHandle();
+            //
+            //     if (EditorGUI.EndChangeCheck())
+            //     {
+            //         BeginBoundsEditing(shapeComponent.mesh);
+            //         UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Scale Shape");
+            //         EditorShapeUtility.CopyHandlePropertiesToCollider(m_BoundsHandle, m_ActiveBoundsState);
+            //         ApplyProperties(shapeComponent, m_ActiveBoundsState);
+            //     }
+            //
+            //     DoRotateHandlesGUI(toolTarget, shapeComponent.mesh, shapeComponent.meshFilterBounds);
+            // }
         }
 
         protected override void UpdateTargetRotation(Object toolTarget, Quaternion rotation)
@@ -115,6 +115,20 @@ namespace UnityEditor.ProBuilder
 
             shape.Rebuild(bounds, shape.transform.rotation);
             shape.mesh.SetPivot(shape.transform.position);
+            ProBuilderEditor.Refresh(false);
+        }
+
+        public static void ApplyProperties(ShapeComponent shape, Vector3 centerOffset, Vector3 size)
+        {
+            var trs = shape.transform;
+
+            var bounds = new Bounds();
+            bounds.center = centerOffset;
+            bounds.size = size;
+
+            shape.Rebuild(bounds, trs.rotation);
+            shape.mesh.SetPivot(trs.position);
+
             ProBuilderEditor.Refresh(false);
         }
 
