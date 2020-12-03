@@ -179,7 +179,10 @@ namespace UnityEditor.ProBuilder
             // *Important* The `instance.enabled` check is redundant for MenuItems, but not for ShortcutManager
             // shortcuts, which atm only have the context of what EditorWindow is active.
             sb.AppendLine( "\t\t\tif(instance != null && instance.enabled)");
+            sb.AppendLine( "\t\t\t{");
             sb.AppendLine( "\t\t\t\tEditorUtility.ShowNotification(instance.DoAction().notification);");
+            sb.AppendLine( "\t\t\t\tProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);");
+            sb.AppendLine( "\t\t\t}");
             sb.AppendLine( "\t\t}");
         }
 

@@ -307,6 +307,7 @@ namespace UnityEditor.ProBuilder
                     {
                         ActionResult result = DoAction();
                         EditorUtility.ShowNotification(result.notification);
+                        ProBuilderAnalytics.SendActionEvent(this, ProBuilderAnalytics.TriggerType.ProBuilderUI);
                     }
                 }
 
@@ -340,6 +341,7 @@ namespace UnityEditor.ProBuilder
                 {
                     ActionResult res = DoAction();
                     EditorUtility.ShowNotification(res.notification);
+                    ProBuilderAnalytics.SendActionEvent(this, ProBuilderAnalytics.TriggerType.ProBuilderUI);
                 }
                 MenuActionState altState = optionsMenuState;
 
