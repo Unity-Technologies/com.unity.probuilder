@@ -37,6 +37,50 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        static int s_MaxContentPerGroup = 6;
+
+        public static int MaxContentPerGroup
+        {
+            get => s_MaxContentPerGroup;
+        }
+
+        static List<GUIContent[]> s_ShapeTypesGUILists;
+
+        public static List<GUIContent[]> shapeTypesGUI
+        {
+            get
+            {
+                if(s_ShapeTypesGUILists == null)
+                {
+                    s_ShapeTypesGUILists = new List<GUIContent[]>();
+                    string[] shapeTypeNames = availableShapeTypes.Select(x => ((ShapeAttribute)System.Attribute.GetCustomAttribute(x, typeof(ShapeAttribute))).name).ToArray();
+                    GUIContent[] shapeTypesGUI = null;
+
+                    int i;
+                    for(i = 0; i < shapeTypeNames.Length; i++)
+                    {
+                        if(i % s_MaxContentPerGroup == 0)
+                        {
+                            if(shapeTypesGUI != null) s_ShapeTypesGUILists.Add(shapeTypesGUI);
+                            int maxLength = Mathf.Min(s_MaxContentPerGroup, ( shapeTypeNames.Length - i ));
+                            shapeTypesGUI = new GUIContent[maxLength];
+                        }
+                        var name = shapeTypeNames[i];
+                        var texture = IconUtility.GetIcon("Tools/ShapeTool/" + name);
+                        if(texture != null)
+                            shapeTypesGUI[i % s_MaxContentPerGroup] = new GUIContent(texture, name);
+                        else
+                            shapeTypesGUI[i % s_MaxContentPerGroup] = new GUIContent(name, name);
+                    }
+
+                    if(shapeTypesGUI != null) s_ShapeTypesGUILists.Add(shapeTypesGUI);
+
+                }
+                return s_ShapeTypesGUILists;
+            }
+        }
+
+
         static EditorShapeUtility()
         {
             var types = TypeCache.GetTypesDerivedFrom<Shape>();

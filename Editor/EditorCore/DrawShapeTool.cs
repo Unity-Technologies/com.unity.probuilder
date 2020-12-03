@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -50,6 +51,14 @@ namespace UnityEditor.ProBuilder
         internal static Pref<Vector3> s_Size = new Pref<Vector3>("ShapeBuilder.Size", Vector3.zero);
         internal static Pref<bool> s_SettingsEnabled = new Pref<bool>("ShapeBuilder.SettingsEnabled", false);
 
+        //Styling
+        static class Styles
+        {
+            public static GUIStyle command = "command";
+        }
+        GUIStyle m_BoldCenteredStyle = null;
+
+        //EditorTools
         GUIContent m_IconContent;
         public override GUIContent toolbarIcon
         {
@@ -300,28 +309,42 @@ namespace UnityEditor.ProBuilder
 
         void DrawShapeGUI()
         {
+            if(m_BoldCenteredStyle == null)
+                m_BoldCenteredStyle = new GUIStyle("BoldLabel") { alignment = TextAnchor.MiddleCenter };
+
+            EditorGUILayout.LabelField(EditorShapeUtility.shapeTypes[s_ActiveShapeIndex.value], m_BoldCenteredStyle, GUILayout.ExpandWidth(true));
+
             var shape = currentShapeInOverlay.shape;
 
-            EditorGUI.BeginChangeCheck();
-
-            s_ActiveShapeIndex.value = shape == null ? -1 : Mathf.Max(-1, Array.IndexOf(EditorShapeUtility.availableShapeTypes, shape.GetType()));
-            s_ActiveShapeIndex.value = EditorGUILayout.Popup(s_ActiveShapeIndex, EditorShapeUtility.shapeTypes);
-
-            if(EditorGUI.EndChangeCheck())
+            int groupCount = EditorShapeUtility.shapeTypesGUI.Count;
+            for(int i = 0; i < groupCount; i++)
             {
-                var type = EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex];
-                if(shape.GetType() != type)
+                EditorGUI.BeginChangeCheck();
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.FlexibleSpace();
+                int index = GUILayout.Toolbar(s_ActiveShapeIndex.value - + i * EditorShapeUtility.MaxContentPerGroup, EditorShapeUtility.shapeTypesGUI[i], Styles.command);
+                GUILayout.FlexibleSpace();
+                EditorGUILayout.EndHorizontal();
+                if (EditorGUI.EndChangeCheck())
                 {
-                    if(currentShapeInOverlay == m_LastShapeCreated)
-                        m_LastShapeCreated = null;
+                    s_ActiveShapeIndex.value = index + i * EditorShapeUtility.MaxContentPerGroup;
 
-                    UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
-                    currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type));
-                    SetBounds(currentShapeInOverlay.size);
+                    var type = EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex];
+                    if(shape.GetType() != type)
+                    {
+                        if(currentShapeInOverlay == m_LastShapeCreated)
+                            m_LastShapeCreated = null;
 
-                    ProBuilderEditor.Refresh();
+                        UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
+                        currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type));
+                        SetBounds(currentShapeInOverlay.size);
+
+                        ProBuilderEditor.Refresh();
+                    }
                 }
             }
+
+            //EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         }
     }
 }
