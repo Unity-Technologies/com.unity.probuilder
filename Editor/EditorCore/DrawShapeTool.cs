@@ -14,7 +14,7 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 
 namespace UnityEditor.ProBuilder
 {
-    internal class DrawShapeTool : EditorTool
+    class DrawShapeTool : EditorTool
     {
         ShapeState m_CurrentState;
 
@@ -50,6 +50,10 @@ namespace UnityEditor.ProBuilder
         internal static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
         internal static Pref<Vector3> s_Size = new Pref<Vector3>("ShapeBuilder.Size", Vector3.zero);
         internal static Pref<bool> s_SettingsEnabled = new Pref<bool>("ShapeBuilder.SettingsEnabled", false);
+
+        int m_ControlID;
+        // ideally this would be owned by the state machine
+        public int controlID => m_ControlID;
 
         //Styling
         static class Styles
@@ -109,7 +113,6 @@ namespace UnityEditor.ProBuilder
             MeshSelection.objectSelectionChanged += OnSelectionChanged;
             ToolManager.activeToolChanged += OnActiveToolChanged;
         }
-
 
         void OnDestroy()
         {
@@ -263,8 +266,8 @@ namespace UnityEditor.ProBuilder
             if (EditorHandleUtility.SceneViewInUse(evt))
                 return;
 
-            int controlID = GUIUtility.GetControlID(FocusType.Passive);
-            HandleUtility.AddDefaultControl(controlID);
+            m_ControlID = GUIUtility.GetControlID(FocusType.Passive);
+            HandleUtility.AddDefaultControl(m_ControlID);
 
             m_CurrentState = m_CurrentState.DoState(evt);
         }

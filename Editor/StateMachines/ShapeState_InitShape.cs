@@ -42,7 +42,7 @@ namespace UnityEditor.ProBuilder
             if(tool.m_LastShapeCreated != null)
                 EditShapeTool.DoEditingGUI(tool.m_LastShapeCreated, true);
 
-            if(evt.isMouse)
+            if(evt.isMouse && HandleUtility.nearestControl == tool.controlID)
             {
                 var res = EditorHandleUtility.FindBestPlaneAndBitangent(evt.mousePosition);
 

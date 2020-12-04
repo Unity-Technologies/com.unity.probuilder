@@ -73,7 +73,7 @@ namespace UnityEditor.ProBuilder
             m_OverlayTitle = new GUIContent("Edit Shape Tool");
         }
 
-        protected void InitTool()
+        internal void InitTool()
         {
             m_SnapAngleContent = new GUIContent("Rotation Snap", L10n.Tr("Defines an angle in [1,90] to snap rotation."));
         }

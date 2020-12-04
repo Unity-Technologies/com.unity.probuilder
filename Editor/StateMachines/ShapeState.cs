@@ -4,12 +4,10 @@ using UnityEngine;
 namespace UnityEditor.ProBuilder
 {
     [Serializable]
-    internal abstract class ShapeState
+    abstract class ShapeState
     {
         public static ShapeState s_defaultState;
-
         public ShapeState m_nextState = null;
-
         public static DrawShapeTool tool;
 
         public static ShapeState StartStateMachine()
