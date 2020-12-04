@@ -60,9 +60,6 @@ namespace UnityEditor.ProBuilder
             if(tool.m_LastShapeCreated != null)
                 DoEditingGUI(tool.m_LastShapeCreated);
 
-            if(GUIUtility.hotControl != 0)
-                return this;
-
             if(evt.isMouse)
             {
                 var res = EditorHandleUtility.FindBestPlaneAndBitangent(evt.mousePosition);
@@ -112,10 +109,10 @@ namespace UnityEditor.ProBuilder
                         tool.SetBoundsOrigin(ray.GetPoint(hit));
                     }
                 }
-
-                if(evt.shift)
-                    tool.DrawBoundingBox();
             }
+
+            if(evt.shift && evt.type == EventType.Repaint)
+                tool.DrawBoundingBox();
 
             return this;
         }

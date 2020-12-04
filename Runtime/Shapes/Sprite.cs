@@ -18,48 +18,39 @@ namespace UnityEngine.ProBuilder.Shapes
 
             var width = size.x;
             var height = size.y;
-            int w = 1;
-            int h = 1;
 
-            Vector2[] p = new Vector2[(w * h) * 4];
-            Vector3[] v = new Vector3[(w * h) * 4];
-            Face[] f = new Face[w * h];
+            Vector2[] p = new Vector2[4];
+            Vector3[] v = new Vector3[4];
+            Face[] f = new Face[1];
 
-            int i = 0, j = 0;
-            for (int y = 0; y < h; y++)
+            float x0 = -(width / 2f);
+            float x1 = (width / 2f);
+
+            float y0 = -(height / 2f);
+            float y1 = (height / 2f);
+
+            p[0] = new Vector2(x0, y0);
+            p[1] = new Vector2(x1, y0);
+            p[2] = new Vector2(x0, y1);
+            p[3] = new Vector2(x1, y1);
+
+            f[0] = new Face(new int[6]
             {
-                for (int x = 0; x < w; x++)
-                {
-                    float x0 = x * (width / w) - (width / 2f);
-                    float x1 = (x + 1) * (width / w) - (width / 2f);
+                    0,
+                    1,
+                    2,
+                    1,
+                    3,
+                    2
+            });
 
-                    float y0 = y * (height / h) - (height / 2f);
-                    float y1 = (y + 1) * (height / h) - (height / 2f);
-
-                    p[i + 0] = new Vector2(x0, y0);
-                    p[i + 1] = new Vector2(x1, y0);
-                    p[i + 2] = new Vector2(x0, y1);
-                    p[i + 3] = new Vector2(x1, y1);
-
-                    f[j++] = new Face(new int[6]
-                    {
-                            i + 0,
-                            i + 1,
-                            i + 2,
-                            i + 1,
-                            i + 3,
-                            i + 2
-                    });
-
-                    i += 4;
-                }
-            }
-
-            for (i = 0; i < v.Length; i++)
-                v[i] = new Vector3(p[i].y, 0f, p[i].x);
+            for (int i = 0; i < v.Length; i++)
+                v[i] = new Vector3(p[i].x, p[i].y, 0);
 
             mesh.RebuildWithPositionsAndFaces(v, f);
             mesh.SetPivot(PivotLocation.Center);
+
+            m_ShapeBox = mesh.mesh.bounds;
         }
     }
 
