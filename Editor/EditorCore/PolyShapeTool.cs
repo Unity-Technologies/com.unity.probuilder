@@ -84,15 +84,11 @@ namespace UnityEditor.ProBuilder
         {
             m_OverlayTitle = new GUIContent("Poly Shape Tool");
 
-            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
-            MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
             Undo.undoRedoPerformed += UndoRedoPerformed;
         }
 
         void OnDisable()
         {
-            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
-            MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
             Undo.undoRedoPerformed -= UndoRedoPerformed;
         }
 
@@ -254,7 +250,7 @@ namespace UnityEditor.ProBuilder
                 // Entering edit mode after the shape has been finalized once before, which means
                 // possibly reverting manual changes.  Store undo state so that if this was
                 // not intentional user can revert.
-                if (polygon.polyEditMode == PolyShape.PolyEditMode.None && polygon.m_Points.Count > 2)
+                if (old == PolyShape.PolyEditMode.None && polygon.m_Points.Count > 2)
                 {
                     if (ProBuilderEditor.instance != null)
                         ProBuilderEditor.instance.ClearElementSelection();
@@ -281,9 +277,7 @@ namespace UnityEditor.ProBuilder
                 UnityEditor.EditorUtility.SetDirty(polygon);
 
                 if(mode == PolyShape.PolyEditMode.None)
-                {
                     DestroyImmediate(this);
-                }
             }
         }
 
@@ -784,33 +778,6 @@ namespace UnityEditor.ProBuilder
         {
             float dot = Vector3.Dot(SceneView.lastActiveSceneView.camera.transform.forward, polygon.transform.up);
             return Mathf.Abs(Mathf.Abs(dot) - 1f) < .01f;
-        }
-
-        void OnSelectModeChanged(SelectMode selectMode)
-        {
-            // User changed select mode manually, remove InputTool flag
-            if (polygon != null
-                && polygon.polyEditMode != PolyShape.PolyEditMode.None
-                && !selectMode.ContainsFlag(SelectMode.InputTool))
-            {
-                SetPolyEditMode(PolyShape.PolyEditMode.None);
-            }
-        }
-
-        private void OnObjectSelectionChanged()
-        {
-            if(polygon == null)
-                return;
-
-            if(MeshSelection.activeMesh)
-            {
-                PolyShape shape = MeshSelection.activeMesh.GetComponent<PolyShape>();
-                if(shape != null && shape != polygon)
-                {
-                    //Quit Polygon edit mode and deactivate the tool
-                    SetPolyEditMode(PolyShape.PolyEditMode.None);
-                }
-            }
         }
 
         void OnBeginVertexMovement()

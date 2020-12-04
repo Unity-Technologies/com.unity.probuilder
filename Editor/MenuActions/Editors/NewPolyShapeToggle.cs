@@ -99,6 +99,8 @@ namespace UnityEditor.ProBuilder.Actions
             ToolManager.activeToolChanging += LeaveTool;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
+            MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
+
             return new ActionResult(ActionResult.Status.Success,"Create Poly Shape");
         }
 
@@ -107,10 +109,18 @@ namespace UnityEditor.ProBuilder.Actions
             ToolManager.activeToolChanging -= LeaveTool;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
 
+            MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
+
             ((PolyShapeTool)m_Tool).End();
             UObject.DestroyImmediate(m_Tool);
 
             return new ActionResult(ActionResult.Status.Success,"End Poly Shape");
+        }
+
+        void OnObjectSelectionChanged()
+        {
+            if(MeshSelection.activeMesh != ( (PolyShapeTool) m_Tool ).polygon.mesh)
+                EditorApplication.delayCall += () => LeaveTool();
         }
 
         void OnSelectModeChanged(SelectMode obj)
