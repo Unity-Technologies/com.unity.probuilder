@@ -6,7 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-- Fixed the insertion of new points on a Poly Shape being unreliable. 
+- Fixed the insertion of new points on a Poly Shape being unreliable.
+- [case: 1294866] Fix annotation warning on InitializeOnLoad call. 
 
 ## [4.4.1] - 2020-11-10
 
