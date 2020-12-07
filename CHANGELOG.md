@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - MergeElements.Merge moved to public API
 
 ### Bug Fixes
+- [case: 1296104] Fixing freeze transform with negative scales.
 - [case: 1296494] Fixing audio visualizer sample.
 - [case: 1296428] Cleaning Polyshape tool when leaving the EditorTool.
 - [case: 1296427] Removing NullRef Exception on Undo/redo with CutTool.  
