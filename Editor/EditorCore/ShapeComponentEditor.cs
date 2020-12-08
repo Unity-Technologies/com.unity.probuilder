@@ -57,9 +57,9 @@ namespace UnityEditor.ProBuilder
         {
             // the `==` comparison is necessary because `is` does not handle native object lifetime. this is apparent
             // when performing an undo / redo in tests and the editor tracker invokes callbacks with null native objects.
-            foreach(var component in targets)
-                if(component is ShapeComponent shape && shape != null)
-                    shape.Rebuild();
+            // foreach(var component in targets)
+            //     if(component is ShapeComponent shape && shape != null)
+            //         shape.Rebuild();
         }
 
         public override void OnInspectorGUI()
