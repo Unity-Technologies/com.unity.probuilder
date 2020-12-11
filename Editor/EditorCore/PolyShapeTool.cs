@@ -269,7 +269,7 @@ namespace UnityEditor.ProBuilder
                 // Entering edit mode after the shape has been finalized once before, which means
                 // possibly reverting manual changes.  Store undo state so that if this was
                 // not intentional user can revert.
-                if (polygon.polyEditMode == PolyShape.PolyEditMode.None && polygon.m_Points.Count > 2)
+                if (old == PolyShape.PolyEditMode.None && polygon.m_Points.Count > 2)
                 {
                     if (ProBuilderEditor.instance != null)
                         ProBuilderEditor.instance.ClearElementSelection();
@@ -297,9 +297,7 @@ namespace UnityEditor.ProBuilder
                     UnityEditor.EditorUtility.SetDirty(polygon);
 
                 if(mode == PolyShape.PolyEditMode.None)
-                {
                     DestroyImmediate(this);
-                }
             }
         }
 
@@ -810,6 +808,24 @@ namespace UnityEditor.ProBuilder
             return Mathf.Abs(Mathf.Abs(dot) - 1f) < .01f;
         }
 
+        void OnBeginVertexMovement()
+        {
+            if (!m_IsModifyingVertices)
+                m_IsModifyingVertices = true;
+        }
+
+        void OnFinishVertexMovement()
+        {
+            m_IsModifyingVertices = false;
+            RebuildPolyShapeMesh(polygon);
+        }
+
+        void UndoRedoPerformed()
+        {
+            if (polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None)
+                RebuildPolyShapeMesh(polygon);
+        }
+
         void OnSelectModeChanged(SelectMode selectMode)
         {
             // User changed select mode manually, remove InputTool flag
@@ -835,24 +851,6 @@ namespace UnityEditor.ProBuilder
                     SetPolyEditMode(PolyShape.PolyEditMode.None);
                 }
             }
-        }
-
-        void OnBeginVertexMovement()
-        {
-            if (!m_IsModifyingVertices)
-                m_IsModifyingVertices = true;
-        }
-
-        void OnFinishVertexMovement()
-        {
-            m_IsModifyingVertices = false;
-            RebuildPolyShapeMesh(polygon);
-        }
-
-        void UndoRedoPerformed()
-        {
-            if (polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None)
-                RebuildPolyShapeMesh(polygon);
         }
     }
 }

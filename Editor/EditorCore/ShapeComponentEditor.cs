@@ -59,7 +59,7 @@ namespace UnityEditor.ProBuilder
             // when performing an undo / redo in tests and the editor tracker invokes callbacks with null native objects.
             foreach(var component in targets)
                 if(component is ShapeComponent shape && shape != null)
-                    shape.Rebuild();
+                    shape.RebuildIfNeeded();
         }
 
         public override void OnInspectorGUI()
@@ -139,11 +139,6 @@ namespace UnityEditor.ProBuilder
                 return;
 
             serializedObject.Update ();
-
-            foreach(var comp in targets)
-            {
-                ((ShapeComponent)comp).UpdateProperties();
-            }
 
             EditorGUILayout.PropertyField(m_ShapePropertiesProperty, new GUIContent("Editing Box Properties"), true);
 

@@ -346,8 +346,6 @@ namespace UnityEditor.ProBuilder
                     }
                 }
             }
-
-            //EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         }
     }
 }

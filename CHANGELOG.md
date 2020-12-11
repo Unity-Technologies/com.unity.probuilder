@@ -24,7 +24,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - MergeElements.Merge moved to public API
 
 ### Bug Fixes
- 
+- [case: 1296104] Fixing freeze transform with negative scales.
+- [case: 1296494] Fixing audio visualizer sample.
+- [case: 1296428] Cleaning Polyshape tool when leaving the EditorTool.
+- [case: 1296427] Removing NullRef Exception on Undo/redo with CutTool.  
+- [case: 1296422] Closing MenuToolToggles actions when closing ProBuilder window.
 - [case: 1296520] Fixing `New Poly Shape` menu entry not working
 - [case: 1254339] Correct offset when rendering UVs and correct export when UV Editor is docked.
 - Fixed PolyShape in Prefab mode: PolyShapeMode was not serialized when exiting prefab mode. Update point insertion visualization.

@@ -35,6 +35,13 @@ namespace UnityEditor.ProBuilder.Actions
             get { return base.enabled && MeshSelection.selectedObjectCount > 0; }
         }
 
+        public bool ShouldFlipFaces(Vector3 scale)
+        {
+            int numberOfInversions = (int)Mathf.Sign(scale.x) + (int)Mathf.Sign(scale.y) + (int)Mathf.Sign(scale.z);
+            //If the scale is negative once (-1 + 1 + 1) or three times( -1 + -1 + -1), faces should be inverted
+            return ( numberOfInversions == 1 || numberOfInversions == -3 );
+        }
+
         public override ActionResult DoAction()
         {
             if (MeshSelection.selectedObjectCount < 1)
@@ -51,13 +58,18 @@ namespace UnityEditor.ProBuilder.Actions
             for (int i = 0, c = selection.Count; i < c; i++)
             {
                 ProBuilderMesh pb = selection[i];
+                bool flipFaces = ShouldFlipFaces(pb.transform.localScale);
 
                 pb.transform.position = Vector3.zero;
                 pb.transform.rotation = Quaternion.identity;
                 pb.transform.localScale = Vector3.one;
 
-                foreach (Face face in pb.facesInternal)
+                foreach(Face face in pb.facesInternal)
+                {
                     face.manualUV = true;
+                    if(flipFaces)
+                        face.Reverse();
+                }
 
                 pb.positions = positions[i];
 

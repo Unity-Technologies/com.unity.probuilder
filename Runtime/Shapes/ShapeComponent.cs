@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -90,7 +91,7 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
-        public void UpdateProperties()
+        void UpdateProperties()
         {
             m_Properties.m_Width = size.x;
             m_Properties.m_Height = size.y;
@@ -102,6 +103,12 @@ namespace UnityEngine.ProBuilder.Shapes
             size = new Vector3(m_Properties.m_Width, m_Properties.m_Height, m_Properties.m_Length);
             SetInnerBoundsRotation(rotation);
             Rebuild();
+        }
+
+        internal void RebuildIfNeeded()
+        {
+            if(!edited)
+                Rebuild();
         }
 
         public void Rebuild(Bounds bounds, Quaternion rotation)
@@ -129,6 +136,8 @@ namespace UnityEngine.ProBuilder.Shapes
             ApplyRotation(rot, true);
 
             MeshUtility.FitToSize(mesh, GetRotatedBounds(), size);
+
+            UpdateProperties();
         }
 
         public void SetShape(Shape shape)
