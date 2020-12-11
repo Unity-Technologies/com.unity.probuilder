@@ -193,7 +193,7 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         private void UndoRedoPerformed()
         {
-            if(m_CutPath.Count == 0)
+            if(m_CutPath.Count == 0 && m_Mesh != null)
             {
                 m_TargetFace = null;
 
