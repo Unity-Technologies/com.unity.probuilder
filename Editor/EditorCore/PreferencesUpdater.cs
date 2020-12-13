@@ -260,6 +260,8 @@ namespace UnityEditor.ProBuilder
             PreferencesInternal.DeleteKey("pbPlyApplyTransform");
             PreferencesInternal.DeleteKey("pbPlyQuads");
             PreferencesInternal.DeleteKey("pbPlyNGons");
+
+            PreferencesInternal.DeleteKey("editor.lastActiveSelectMode");
 #pragma warning restore 612, 618
         }
     }
