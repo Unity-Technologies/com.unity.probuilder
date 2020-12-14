@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using UnityEngine.ProBuilder.Shapes;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -240,19 +239,6 @@ namespace UnityEngine.ProBuilder
             m_Faces = f;
             m_SharedVertices = SharedVertex.GetSharedVerticesWithPositions(points);
             InvalidateCaches();
-            ToMesh();
-            Refresh();
-        }
-
-        /// <summary>
-        /// Rebuilds the mesh with different vertices positions but same faces
-        /// </summary>
-        /// <param name="points">New vertices positions</param>
-        internal void ReplaceVertices(Vector3[] points)
-        {
-            positions = points;
-            m_SharedVertices = SharedVertex.GetSharedVerticesWithPositions(points);
-            InvalidateSharedVertexLookup();
             ToMesh();
             Refresh();
         }

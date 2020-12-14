@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -32,7 +33,7 @@ namespace UnityEngine.ProBuilder.Shapes
             };
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size, PivotLocation pivotLocation)
         {
             var radialCuts = m_NumberOfSides;
             var angle = m_ArchDegrees;
@@ -118,6 +119,7 @@ namespace UnityEngine.ProBuilder.Shapes
             }
 
             mesh.GeometryWithPoints(v.ToArray());
+            mesh.SetPivot(pivotLocation);
 
             m_ShapeBox = mesh.mesh.bounds;
         }

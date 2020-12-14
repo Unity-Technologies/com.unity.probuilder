@@ -2,6 +2,7 @@ using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using System;
 using System.Reflection;
+using UnityEditor;
 
 namespace UnityEngine.ProBuilder
 {
@@ -69,7 +70,7 @@ namespace UnityEngine.ProBuilder
 
             var shapeComponent = new GameObject("Shape").AddComponent<ShapeComponent>();
             shapeComponent.size = Vector3.one;
-            shapeComponent.SetShape(shape);
+            shapeComponent.SetShape(shape, pivotType);
             ProBuilderMesh pb = shapeComponent.mesh;
             pb.renderer.sharedMaterial = BuiltinMaterials.defaultMaterial;
 

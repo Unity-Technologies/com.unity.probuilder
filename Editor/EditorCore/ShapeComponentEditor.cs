@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.UIElements;
 
@@ -59,7 +60,7 @@ namespace UnityEditor.ProBuilder
             // when performing an undo / redo in tests and the editor tracker invokes callbacks with null native objects.
             foreach(var component in targets)
                 if(component is ShapeComponent shape && shape != null)
-                    shape.RebuildIfNeeded();
+                    shape.RebuildIfNeeded(EditorUtility.newShapePivotLocation);
         }
 
         public override void OnInspectorGUI()
@@ -93,7 +94,7 @@ namespace UnityEditor.ProBuilder
                         if(tool != null)
                             DrawShapeTool.s_ActiveShapeIndex.value = m_ActiveShapeIndex;
                         UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Change Shape");
-                        shapeComponent.SetShape(EditorShapeUtility.CreateShape(type));
+                        shapeComponent.SetShape(EditorShapeUtility.CreateShape(type),EditorUtility.newShapePivotLocation);
                         ProBuilderEditor.Refresh();
                     }
                 }
@@ -120,7 +121,7 @@ namespace UnityEditor.ProBuilder
                         if( shapeComponent.edited )
                         {
                             shapeComponent.edited = false;
-                            shapeComponent.Rebuild();
+                            shapeComponent.Rebuild(EditorUtility.newShapePivotLocation);
                         }
                     }
                 }
@@ -152,7 +153,7 @@ namespace UnityEditor.ProBuilder
                     var shapeComponent = comp as ShapeComponent;
                     if(!shapeComponent.edited)
                     {
-                        shapeComponent.UpdateComponent();
+                        shapeComponent.UpdateComponent(EditorUtility.newShapePivotLocation);
                         if(tool != null)
                             tool.SetBounds(shapeComponent.size);
                         EditorShapeUtility.SaveParams(shapeComponent.shape);

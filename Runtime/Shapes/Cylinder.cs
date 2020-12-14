@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -17,7 +18,7 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_Smoothing = -1;
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size, PivotLocation pivotLocation)
         {
             var radius = Mathf.Min(size.x, size.z) * .5f;
             var height = size.y;
@@ -133,6 +134,7 @@ namespace UnityEngine.ProBuilder.Shapes
             }
 
             mesh.RebuildWithPositionsAndFaces(verts, faces);
+            mesh.SetPivot(pivotLocation);
 
             m_ShapeBox = mesh.mesh.bounds;
             Vector3 boxSize = m_ShapeBox.size;

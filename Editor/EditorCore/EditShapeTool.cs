@@ -115,11 +115,11 @@ namespace UnityEditor.ProBuilder
 
             s_UpdateDrawShapeTool = updateDrawShapeTool;
 
-            var matrix = Matrix4x4.TRS(shapeComponent.transform.position, shapeComponent.transform.rotation, Vector3.one);
+            var matrix = Matrix4x4.TRS(shapeComponent.transform.position + shapeComponent.shape.shapeBox.center, shapeComponent.transform.rotation, Vector3.one);
 
             using (new Handles.DrawingScope(matrix))
             {
-                EditorShapeUtility.UpdateFaces(shapeComponent.editionBounds, Vector3.zero, Faces);
+                EditorShapeUtility.UpdateFaces(shapeComponent.editionBounds, Faces);
                 DoOrientationHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
                 DoSizeHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
             }
@@ -127,8 +127,8 @@ namespace UnityEditor.ProBuilder
 
         static void DoSizeHandlesGUI(ShapeComponent shapeComponent, ProBuilderMesh mesh, Bounds bounds)
         {
-            var matrix = mesh.transform.localToWorldMatrix;
-            using (new Handles.DrawingScope(matrix))
+            //var matrix = mesh.transform.localToWorldMatrix;
+            //using (new Handles.DrawingScope(matrix))
             {
                 int faceCount = s_Faces.Length;
 
@@ -156,7 +156,7 @@ namespace UnityEditor.ProBuilder
                         {
                             s_InitSizeInteraction = true;
                             s_OriginalSize = shapeComponent.size;
-                            s_OriginalCenter = shapeComponent.transform.position;
+                            s_OriginalCenter = shapeComponent.transform.position + shapeComponent.shape.shapeBox.center;
                         }
 
                         float modifier = 1f;
@@ -250,18 +250,18 @@ namespace UnityEditor.ProBuilder
 
         static void DoOrientationHandlesGUI(ShapeComponent shapeComponent, ProBuilderMesh mesh, Bounds bounds)
         {
-            var matrix = mesh.transform.localToWorldMatrix;
+            //var matrix = mesh.transform.localToWorldMatrix;
 
-            EditorShapeUtility.UpdateFaces(bounds, Vector3.zero, Faces);
+            EditorShapeUtility.UpdateFaces(bounds, Faces);
 
-            using (new Handles.DrawingScope(matrix))
+            //using (new Handles.DrawingScope(matrix))
             {
                 DoCentralHandle();
 
                 if(DoOrientationHandle(shapeComponent))
                 {
                     UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Rotate Shape");
-                    shapeComponent.RotateInsideBounds(s_ShapeRotation);
+                    shapeComponent.RotateInsideBounds(s_ShapeRotation, EditorUtility.newShapePivotLocation);
 
                     //Only Updating Draw shape tool when using this tool
                     if(s_UpdateDrawShapeTool)
@@ -462,8 +462,7 @@ namespace UnityEditor.ProBuilder
             bounds.center = centerOffset;
             bounds.size = size;
 
-            shape.Rebuild(bounds, trs.rotation);
-            shape.mesh.SetPivot(trs.position);
+            shape.Rebuild(bounds, trs.rotation, EditorUtility.newShapePivotLocation);
 
             ProBuilderEditor.Refresh(false);
         }

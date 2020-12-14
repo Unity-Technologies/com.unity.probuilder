@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -10,7 +11,7 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         internal int m_NumberOfSides = 6;
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size, PivotLocation pivotLocation)
         {
             var radius = System.Math.Min(size.x, size.z);
             var height = size.y;
@@ -52,6 +53,7 @@ namespace UnityEngine.ProBuilder.Shapes
             }
 
             mesh.RebuildWithPositionsAndFaces(v, f);
+            mesh.SetPivot(pivotLocation);
 
             mesh.unwrapParameters = new UnwrapParameters()
             {

@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -44,15 +45,15 @@ namespace UnityEngine.ProBuilder.Shapes
             set { m_Sides = value; }
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size, PivotLocation pivotLocation)
         {
             if (m_Circumference > 0)
-                BuildCurvedStairs(mesh, size);
+                BuildCurvedStairs(mesh, size, pivotLocation);
             else
-                BuildStairs(mesh, size);
+                BuildStairs(mesh, size, pivotLocation);
         }
 
-        private void BuildStairs(ProBuilderMesh mesh, Vector3 size)
+        void BuildStairs(ProBuilderMesh mesh, Vector3 size, PivotLocation pivotLocation)
         {
             bool useStepHeight = m_StepGenerationType == StepGenerationType.Height;
             var stepsHeight = m_StepsHeight;
@@ -199,11 +200,12 @@ namespace UnityEngine.ProBuilder.Shapes
                 vertices[i] = new Vector3(-vertices[i].z, vertices[i].y, vertices[i].x);
 
             mesh.RebuildWithPositionsAndFaces(vertices, faces);
+            mesh.SetPivot(pivotLocation);
 
             m_ShapeBox = mesh.mesh.bounds;
         }
 
-        private void BuildCurvedStairs(ProBuilderMesh mesh, Vector3 size)
+        private void BuildCurvedStairs(ProBuilderMesh mesh, Vector3 size, PivotLocation pivotLocation)
         {
             var buildSides = m_Sides;
             var innerRadius = size.z;
@@ -422,6 +424,7 @@ namespace UnityEngine.ProBuilder.Shapes
                 positions[i] = new Vector3(-positions[i].z, positions[i].y, positions[i].x);
 
             mesh.RebuildWithPositionsAndFaces(positions, faces);
+            mesh.SetPivot(pivotLocation);
 
             m_ShapeBox = mesh.mesh.bounds;
         }

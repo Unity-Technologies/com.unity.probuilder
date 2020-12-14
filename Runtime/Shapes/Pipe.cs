@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -18,7 +19,7 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_HeightSegments = 1;
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size, PivotLocation pivotLocation)
         {
             var height = size.y;
             var xRadius = size.x / 2f;
@@ -107,6 +108,7 @@ namespace UnityEngine.ProBuilder.Shapes
                 v.AddRange(tpt);
             }
             mesh.GeometryWithPoints(v.ToArray());
+            mesh.SetPivot(pivotLocation, 1);
 
             m_ShapeBox = mesh.mesh.bounds;
         }

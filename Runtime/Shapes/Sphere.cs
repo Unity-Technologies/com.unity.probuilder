@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEditor;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -55,7 +56,7 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_Subdivisions = 3;
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size, PivotLocation pivotLocation)
         {
             var radius = System.Math.Min(System.Math.Min(size.x, size.y), size.z);
             //avoid to create a degenerated sphere with a radius set to 0
@@ -107,6 +108,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
 
             mesh.RebuildWithPositionsAndFaces(v, f);
+            mesh.SetPivot(pivotLocation, bottomMostVertexIndex);
 
             m_ShapeBox = mesh.mesh.bounds;
             Vector3 boxSize = m_ShapeBox.size;

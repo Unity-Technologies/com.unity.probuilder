@@ -1,3 +1,5 @@
+using UnityEngine.ProBuilder.MeshOperations;
+
 namespace UnityEngine.ProBuilder.Shapes
 {
     [System.Serializable]
@@ -30,7 +32,7 @@ namespace UnityEngine.ProBuilder.Shapes
             set => m_ShapeBox = value;
         }
 
-        public abstract void RebuildMesh(ProBuilderMesh mesh, Vector3 size);
+        public abstract void RebuildMesh(ProBuilderMesh mesh, Vector3 size, PivotLocation pivotLocation);
     }
 
     [System.AttributeUsage(System.AttributeTargets.Class)]

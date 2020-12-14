@@ -578,6 +578,7 @@ namespace UnityEngine.ProBuilder
             {
                 positions[i] -= currentSize.center;
                 positions[i].Scale(scale);
+                positions[i] += currentSize.center;
             }
 
             mesh.Rebuild();
