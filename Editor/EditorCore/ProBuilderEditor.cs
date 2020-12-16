@@ -308,6 +308,7 @@ namespace UnityEditor.ProBuilder
             m_Toolbar.Dispose();
             if(m_ToolManager != null)
                 m_ToolManager.Dispose();
+            OnSelectModeChanged();
             ProBuilderToolManager.selectModeChanged -= OnSelectModeChanged;
 
             SceneView.RepaintAll();
