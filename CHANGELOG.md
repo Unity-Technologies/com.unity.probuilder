@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Fixed the insertion of new points on a Poly Shape being unreliable. 
 - [case: 1281254] Fixed shader warning in URP for UNITY_PASS_FORWARDBASE macro redefinition.
+- [case: 1294866] Fix annotation warning on InitializeOnLoad call. 
 
 ## [4.4.1] - 2020-11-10
 
