@@ -58,7 +58,7 @@ namespace UnityEditor.ProBuilder
 
                         DrawShapeTool.s_LastShapeRotation = m_currentShapeRotation;
                         return NextState();
-                        
+
                         break;
                     }
                 }

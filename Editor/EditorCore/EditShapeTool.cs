@@ -45,10 +45,8 @@ namespace UnityEditor.ProBuilder
         //Handle Manipulation
         static int s_CurrentId = -1;
         static ShapeComponent s_CurrentShape = null;
-
-        //Manage orientation and size interop
-        static bool s_IsManipulatingSize = false;
-        static bool s_IsManipulatingOrientation = false;
+        static int m_OrientationControlID;
+        static int[] m_FaceControlIDs;
 
         //Size Handle management
         static bool s_InitSizeInteraction = true;
@@ -120,62 +118,68 @@ namespace UnityEditor.ProBuilder
             using (new Handles.DrawingScope(matrix))
             {
                 EditorShapeUtility.UpdateFaces(shapeComponent.editionBounds, Faces);
-                DoOrientationHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
-                DoSizeHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
+
+                m_OrientationControlID = GUIUtility.GetControlID(FocusType.Passive);
+                m_FaceControlIDs = new int[Faces.Length];
+                for(int i = 0; i <Faces.Length; ++i)
+                    m_FaceControlIDs[i] = GUIUtility.GetControlID(FocusType.Passive);
+
+                if((GUIUtility.hotControl == 0
+                   || GUIUtility.hotControl == m_OrientationControlID)
+                   && !m_FaceControlIDs.Contains(HandleUtility.nearestControl))
+                    DoOrientationHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
+
+                if((GUIUtility.hotControl == 0
+                   || m_FaceControlIDs.Contains(GUIUtility.hotControl))
+                   && HandleUtility.nearestControl != m_OrientationControlID)
+                    DoSizeHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
+
             }
         }
 
         static void DoSizeHandlesGUI(ShapeComponent shapeComponent, ProBuilderMesh mesh, Bounds bounds)
         {
-            //var matrix = mesh.transform.localToWorldMatrix;
-            //using (new Handles.DrawingScope(matrix))
+            int faceCount = s_Faces.Length;
+
+            for(int i = 0; i < faceCount; i++)
             {
-                int faceCount = s_Faces.Length;
-
                 if(Event.current.type == EventType.Repaint)
-                    s_IsManipulatingSize = false;
-
-                for(int i = 0; i < faceCount; i++)
                 {
-                    if(Event.current.type == EventType.Repaint)
-                    {
-                        Color color = k_BoundsHandleColor;
-                        color.a *= Faces[i].IsVisible ? 1f : 0.5f;
+                    Color color = k_BoundsHandleColor;
+                    color.a *= Faces[i].IsVisible ? 1f : 0.5f;
 
-                        using(new Handles.DrawingScope(color))
-                        {
-                            int pointsCount = Faces[i].Points.Length;
-                            for(int k = 0; k < pointsCount; k++)
-                                Handles.DrawLine(Faces[i].Points[k], Faces[i].Points[( k + 1 ) % pointsCount]);
-                        }
+                    using(new Handles.DrawingScope(color))
+                    {
+                        int pointsCount = Faces[i].Points.Length;
+                        for(int k = 0; k < pointsCount; k++)
+                            Handles.DrawLine(Faces[i].Points[k], Faces[i].Points[( k + 1 ) % pointsCount]);
+                    }
+                }
+
+                if(DoFaceSizeHandle(shapeComponent, Faces[i], m_FaceControlIDs[i]))
+                {
+                    if(!s_InitSizeInteraction)
+                    {
+                        s_InitSizeInteraction = true;
+                        s_OriginalSize = shapeComponent.size;
+                        s_OriginalCenter = shapeComponent.transform.position + shapeComponent.shape.shapeBox.center;
                     }
 
-                    if(DoFaceSizeHandle(shapeComponent, Faces[i]))
-                    {
-                        if(!s_InitSizeInteraction)
-                        {
-                            s_InitSizeInteraction = true;
-                            s_OriginalSize = shapeComponent.size;
-                            s_OriginalCenter = shapeComponent.transform.position + shapeComponent.shape.shapeBox.center;
-                        }
+                    float modifier = 1f;
+                    if(Event.current.alt)
+                        modifier = 2f;
 
-                        float modifier = 1f;
-                        if(Event.current.alt)
-                            modifier = 2f;
+                    var sizeOffset = ProBuilderSnapping.Snap(modifier * s_SizeDelta * Math.Abs(s_Faces[i].Normal), EditorSnapping.activeMoveSnapValue);
+                    var center = Event.current.alt ? Vector3.zero : Mathf.Sign(s_SizeDelta)*(sizeOffset.magnitude / 2f) * s_Faces[i].Normal;
 
-                        var sizeOffset = ProBuilderSnapping.Snap(modifier * s_SizeDelta * Math.Abs(s_Faces[i].Normal), EditorSnapping.activeMoveSnapValue);
-                        var center = Event.current.alt ? Vector3.zero : Mathf.Sign(s_SizeDelta)*(sizeOffset.magnitude / 2f) * s_Faces[i].Normal;
-
-                        ApplyProperties(shapeComponent, s_OriginalCenter + center, s_OriginalSize + sizeOffset);
-                    }
+                    ApplyProperties(shapeComponent, s_OriginalCenter + center, s_OriginalSize + sizeOffset);
                 }
             }
         }
 
-        static bool DoFaceSizeHandle(ShapeComponent shapeComponent, FaceData face)
+        static bool DoFaceSizeHandle(ShapeComponent shapeComponent, FaceData face, int controlID)
         {
             Event evt = Event.current;
-            int controlID = GUIUtility.GetControlID(FocusType.Passive);
             float handleSize = HandleUtility.GetHandleSize(face.CenterPosition) * 0.75f;
 
             Vector3 startPos = face.CenterPosition + 0.25f * handleSize * face.Normal;
@@ -183,13 +187,7 @@ namespace UnityEditor.ProBuilder
 
             bool isSelected = (HandleUtility.nearestControl == controlID && s_CurrentId == -1) || s_CurrentId == controlID;
 
-            if(evt.type == EventType.Repaint)
-                s_IsManipulatingSize |= isSelected;
-
-            if(s_IsManipulatingOrientation)
-                return false;
-
-            if(s_IsManipulatingSize)
+            if(isSelected)
                 s_CurrentShape = shapeComponent;
             else if(s_CurrentShape == shapeComponent)
                 s_CurrentShape = null;
@@ -250,25 +248,18 @@ namespace UnityEditor.ProBuilder
 
         static void DoOrientationHandlesGUI(ShapeComponent shapeComponent, ProBuilderMesh mesh, Bounds bounds)
         {
-            //var matrix = mesh.transform.localToWorldMatrix;
-
             EditorShapeUtility.UpdateFaces(bounds, Faces);
-
-            //using (new Handles.DrawingScope(matrix))
+            DoCentralHandle();
+            if(DoOrientationHandle(shapeComponent))
             {
-                DoCentralHandle();
+                UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Rotate Shape");
+                shapeComponent.RotateInsideBounds(s_ShapeRotation, EditorUtility.newShapePivotLocation);
 
-                if(DoOrientationHandle(shapeComponent))
-                {
-                    UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Rotate Shape");
-                    shapeComponent.RotateInsideBounds(s_ShapeRotation, EditorUtility.newShapePivotLocation);
+                //Only Updating Draw shape tool when using this tool
+                if(s_UpdateDrawShapeTool)
+                    DrawShapeTool.s_LastShapeRotation = shapeComponent.rotation;
 
-                    //Only Updating Draw shape tool when using this tool
-                    if(s_UpdateDrawShapeTool)
-                        DrawShapeTool.s_LastShapeRotation = shapeComponent.rotation;
-
-                    ProBuilderEditor.Refresh();
-                }
+                ProBuilderEditor.Refresh();
             }
         }
 
@@ -276,7 +267,7 @@ namespace UnityEditor.ProBuilder
         {
             if(Event.current.type == EventType.Repaint)
             {
-                if(s_IsManipulatingSize)
+                if(GUIUtility.hotControl != 0 && GUIUtility.hotControl != m_OrientationControlID)
                     return;
 
                 int faceCount = Faces.Length;
@@ -332,34 +323,27 @@ namespace UnityEditor.ProBuilder
         static bool DoOrientationHandle(ShapeComponent shapeComponent)
         {
             Event evt = Event.current;
-            int controlID = GUIUtility.GetControlID(FocusType.Passive);
             bool hasRotated = false;
 
             float handleSize = HandleUtility.GetHandleSize(s_CurrentHandlePosition) * 0.1f;
 
-            bool isSelected = (HandleUtility.nearestControl == controlID && s_CurrentId == -1) || s_CurrentId == controlID;
+            bool isSelected = (HandleUtility.nearestControl == m_OrientationControlID && s_CurrentId == -1) || s_CurrentId == m_OrientationControlID;
 
-            if(evt.type == EventType.Repaint)
-                s_IsManipulatingOrientation = isSelected;
-
-            if(s_IsManipulatingSize)
-                return false;
-
-            if(s_IsManipulatingOrientation)
+            if(isSelected)
                 s_CurrentShape = shapeComponent;
             else if(s_CurrentShape == shapeComponent)
                 s_CurrentShape = null;
 
 
-            switch(evt.GetTypeForControl(controlID))
+            switch(evt.GetTypeForControl(m_OrientationControlID))
             {
                 case EventType.MouseDown:
-                    if (HandleUtility.nearestControl == controlID && (evt.button == 0 || evt.button == 2))
+                    if (HandleUtility.nearestControl == m_OrientationControlID && (evt.button == 0 || evt.button == 2))
                     {
-                        s_CurrentId = controlID;
+                        s_CurrentId = m_OrientationControlID;
                         s_CurrentTargetedFace = null;
                         s_CurrentHandlePosition = Vector3.zero;
-                        GUIUtility.hotControl = controlID;
+                        GUIUtility.hotControl = m_OrientationControlID;
 
                         s_CurrentTargetedFace = null;
                         foreach(var boundsFace in Faces)
@@ -382,7 +366,7 @@ namespace UnityEditor.ProBuilder
                     }
                     break;
                 case EventType.MouseUp:
-                    if (GUIUtility.hotControl == controlID && (evt.button == 0 || evt.button == 2))
+                    if (GUIUtility.hotControl == m_OrientationControlID && (evt.button == 0 || evt.button == 2))
                     {
                         GUIUtility.hotControl = 0;
                         evt.Use();
@@ -393,7 +377,7 @@ namespace UnityEditor.ProBuilder
                     break;
                 case EventType.Layout:
                     foreach(var face in Faces)
-                        HandleUtility.AddControl(controlID, HandleUtility.DistanceToCircle(face.CenterPosition, handleSize / 2.0f));
+                        HandleUtility.AddControl(m_OrientationControlID, HandleUtility.DistanceToCircle(face.CenterPosition, handleSize / 2.0f));
                     break;
                 case EventType.Repaint:
                     if(isSelected)
@@ -401,7 +385,7 @@ namespace UnityEditor.ProBuilder
                         using(new Handles.DrawingScope(EditorHandleDrawing.edgeSelectedColor))
                         {
                             Handles.DrawLine(Vector3.zero, s_CurrentHandlePosition);
-                            Handles.SphereHandleCap(controlID, s_CurrentHandlePosition, Quaternion.identity, handleSize, EventType.Repaint);
+                            Handles.SphereHandleCap(m_OrientationControlID, s_CurrentHandlePosition, Quaternion.identity, handleSize, EventType.Repaint);
                         }
 
                         if(isSelected && s_CurrentTargetedFace != null)
@@ -418,7 +402,7 @@ namespace UnityEditor.ProBuilder
                 case EventType.MouseMove:
                 case EventType.MouseDrag:
                     bool hit = false;
-                    if((HandleUtility.nearestControl == controlID && s_CurrentId == -1) || s_CurrentId == controlID)
+                    if((HandleUtility.nearestControl == m_OrientationControlID && s_CurrentId == -1) || s_CurrentId == m_OrientationControlID)
                     {
                         var previousFace = s_CurrentTargetedFace;
                         s_CurrentTargetedFace = null;
@@ -432,7 +416,7 @@ namespace UnityEditor.ProBuilder
                                 float dist;
                                 if(p.Raycast(ray, out dist))
                                 {
-                                    s_CurrentHandlePosition = s_CurrentId == controlID ? Handles.inverseMatrix.MultiplyPoint(ray.GetPoint(dist)) : boundsFace.CenterPosition;
+                                    s_CurrentHandlePosition = s_CurrentId == m_OrientationControlID ? Handles.inverseMatrix.MultiplyPoint(ray.GetPoint(dist)) : boundsFace.CenterPosition;
                                     s_CurrentTargetedFace = boundsFace;
                                     hit = true;
                                 }
