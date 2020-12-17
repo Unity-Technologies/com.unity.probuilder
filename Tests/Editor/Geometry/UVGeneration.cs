@@ -22,7 +22,8 @@ public class UVGeneration
         ProBuilderMesh pb = ShapeFactory.Instantiate(typeof(Cone), pivotType);
         Cone cone = pb.GetComponent<ShapeComponent>().shape as Cone;
         cone.m_NumberOfSides = subdivAxis;
-        cone.RebuildMesh(pb, new Vector3(radius, height, radius), PivotLocation.FirstVertex);
+        cone.RebuildMesh(pb, new Vector3(radius, height, radius));
+        cone.UpdatePivot(pb, PivotLocation.FirstVertex);
         pb.RefreshUV(pb.faces);
         return pb;
     }

@@ -69,7 +69,6 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentNullException("shape", "Cannot instantiate a null shape.");
 
             var shapeComponent = new GameObject("Shape").AddComponent<ShapeComponent>();
-            shapeComponent.size = Vector3.one;
             shapeComponent.SetShape(shape, pivotType);
             ProBuilderMesh pb = shapeComponent.mesh;
             pb.renderer.sharedMaterial = BuiltinMaterials.defaultMaterial;

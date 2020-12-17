@@ -11,7 +11,17 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         internal int m_NumberOfSides = 6;
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size, PivotLocation pivotLocation)
+        public virtual void UpdatePivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
+        {
+            mesh.SetPivot(pivotLocation);
+
+            m_ShapeBox = mesh.mesh.bounds;
+            Vector3 boxSize = m_ShapeBox.size;
+            boxSize.x = boxSize.z = Mathf.Max(boxSize.x, boxSize.z);
+            m_ShapeBox.size = boxSize;
+        }
+
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
             var radius = System.Math.Min(size.x, size.z);
             var height = size.y;
@@ -53,7 +63,6 @@ namespace UnityEngine.ProBuilder.Shapes
             }
 
             mesh.RebuildWithPositionsAndFaces(v, f);
-            mesh.SetPivot(pivotLocation);
 
             mesh.unwrapParameters = new UnwrapParameters()
             {

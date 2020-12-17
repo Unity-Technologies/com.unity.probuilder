@@ -56,7 +56,19 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_Subdivisions = 3;
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size, PivotLocation pivotLocation)
+        int m_BottomMostVertexIndex = 0;
+
+        public override void UpdatePivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
+        {
+            mesh.SetPivot(pivotLocation, m_BottomMostVertexIndex);
+
+            m_ShapeBox = mesh.mesh.bounds;
+            Vector3 boxSize = m_ShapeBox.size;
+            boxSize.x = boxSize.y = boxSize.z = Mathf.Max(boxSize.x, Mathf.Max(boxSize.y, boxSize.z));
+            m_ShapeBox.size = boxSize;
+        }
+
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
             var radius = System.Math.Min(System.Math.Min(size.x, size.y), size.z);
             //avoid to create a degenerated sphere with a radius set to 0
@@ -82,7 +94,6 @@ namespace UnityEngine.ProBuilder.Shapes
             Face[] f = new Face[v.Length / 3];
 
             Vector3 bottomMostVertexPosition = Vector3.positiveInfinity;
-            int bottomMostVertexIndex = -1;
 
             for (int i = 0; i < v.Length; i += 3)
             {
@@ -97,7 +108,7 @@ namespace UnityEngine.ProBuilder.Shapes
                     if (v[index].y < bottomMostVertexPosition.y)
                     {
                         bottomMostVertexPosition = v[index];
-                        bottomMostVertexIndex = index;
+                        m_BottomMostVertexIndex = index;
                     }
                 }
             }
@@ -106,16 +117,13 @@ namespace UnityEngine.ProBuilder.Shapes
                 packMargin = 30f
             };
 
-
             mesh.RebuildWithPositionsAndFaces(v, f);
-            mesh.SetPivot(pivotLocation, bottomMostVertexIndex);
 
             m_ShapeBox = mesh.mesh.bounds;
             Vector3 boxSize = m_ShapeBox.size;
             boxSize.x = boxSize.y = boxSize.z = Mathf.Max(boxSize.x, Mathf.Max(boxSize.y, boxSize.z));
             m_ShapeBox.size = boxSize;
         }
-
 
         // Subdivides a set of vertices (wound as individual triangles) on an icosphere.
         //

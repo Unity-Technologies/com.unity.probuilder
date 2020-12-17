@@ -19,7 +19,13 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_HeightSegments = 1;
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size, PivotLocation pivotLocation)
+        public override void UpdatePivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
+        {
+            mesh.SetPivot(pivotLocation, 1);
+            m_ShapeBox = mesh.mesh.bounds;
+        }
+
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
             var height = size.y;
             var xRadius = size.x / 2f;
@@ -108,7 +114,6 @@ namespace UnityEngine.ProBuilder.Shapes
                 v.AddRange(tpt);
             }
             mesh.GeometryWithPoints(v.ToArray());
-            mesh.SetPivot(pivotLocation, 1);
 
             m_ShapeBox = mesh.mesh.bounds;
         }

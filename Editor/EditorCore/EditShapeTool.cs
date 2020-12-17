@@ -113,7 +113,8 @@ namespace UnityEditor.ProBuilder
 
             s_UpdateDrawShapeTool = updateDrawShapeTool;
 
-            var matrix = Matrix4x4.TRS(shapeComponent.transform.position + shapeComponent.shape.shapeBox.center, shapeComponent.transform.rotation, Vector3.one);
+            var position = shapeComponent.transform.position + shapeComponent.transform.TransformDirection(shapeComponent.shape.shapeBox.center);
+            var matrix = Matrix4x4.TRS(position, shapeComponent.transform.rotation, Vector3.one);
 
             using (new Handles.DrawingScope(matrix))
             {
@@ -161,7 +162,7 @@ namespace UnityEditor.ProBuilder
                     if(!s_InitSizeInteraction)
                     {
                         s_InitSizeInteraction = true;
-                        s_OriginalSize = shapeComponent.size;
+                        s_OriginalSize = shapeComponent.Size;
                         s_OriginalCenter = shapeComponent.transform.position + shapeComponent.shape.shapeBox.center;
                     }
 
@@ -446,6 +447,7 @@ namespace UnityEditor.ProBuilder
             bounds.center = centerOffset;
             bounds.size = size;
 
+            UndoUtility.RecordComponents<Transform, ProBuilderMesh, ShapeComponent>(shape.GetComponents(typeof(Component)),"Resize Shape");
             shape.Rebuild(bounds, trs.rotation, EditorUtility.newShapePivotLocation);
 
             ProBuilderEditor.Refresh(false);

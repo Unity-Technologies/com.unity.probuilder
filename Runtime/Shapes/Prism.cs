@@ -6,7 +6,7 @@ namespace UnityEngine.ProBuilder.Shapes
     [Shape("Prism")]
     public class Prism : Shape
     {
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size, PivotLocation pivotLocation)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
             var baseY = new Vector3(0, size.y / 2f, 0);
             size.y *= 2f;
@@ -57,7 +57,6 @@ namespace UnityEngine.ProBuilder.Shapes
             };
 
             mesh.RebuildWithPositionsAndFaces(v, f);
-            mesh.SetPivot(pivotLocation);
 
             m_ShapeBox = mesh.mesh.bounds;
         }

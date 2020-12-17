@@ -33,7 +33,7 @@ namespace UnityEngine.ProBuilder.Shapes
             };
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size, PivotLocation pivotLocation)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
             var radialCuts = m_NumberOfSides;
             var angle = m_ArchDegrees;
@@ -84,8 +84,6 @@ namespace UnityEngine.ProBuilder.Shapes
                     if (n == radialCuts - 2)
                         v.AddRange(GetFace(templateIn[n+1], templateOut[n+1], depth));
                 }
-
-
             }
 
             // build front and back faces
@@ -119,7 +117,6 @@ namespace UnityEngine.ProBuilder.Shapes
             }
 
             mesh.GeometryWithPoints(v.ToArray());
-            mesh.SetPivot(pivotLocation);
 
             m_ShapeBox = mesh.mesh.bounds;
         }

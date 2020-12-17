@@ -30,7 +30,7 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         bool m_Smooth = true;
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size, PivotLocation pivotLocation)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
             var xOuterRadius = Mathf.Clamp(size.x /2f ,.01f, 2048f);
             var yOuterRadius = Mathf.Clamp(size.z /2f ,.01f, 2048f);
@@ -91,7 +91,6 @@ namespace UnityEngine.ProBuilder.Shapes
             }
 
             mesh.RebuildWithPositionsAndFaces(vertices, faces);
-            mesh.SetPivot(pivotLocation);
 
             m_ShapeBox = mesh.mesh.bounds;
         }

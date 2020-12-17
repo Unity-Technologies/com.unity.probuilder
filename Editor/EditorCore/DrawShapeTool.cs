@@ -125,7 +125,7 @@ namespace UnityEditor.ProBuilder
             {
                 var type = EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex];
                 currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type),EditorUtility.newShapePivotLocation);
-                SetBounds(currentShapeInOverlay.size);
+                SetBounds(currentShapeInOverlay.Size);
             }
         }
         void HandleUndoRedoPerformed()
@@ -339,7 +339,7 @@ namespace UnityEditor.ProBuilder
 
                         UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
                         currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type), EditorUtility.newShapePivotLocation);
-                        SetBounds(currentShapeInOverlay.size);
+                        SetBounds(currentShapeInOverlay.Size);
 
                         ProBuilderEditor.Refresh();
                     }

@@ -31,7 +31,7 @@ namespace UnityEngine.ProBuilder.Shapes
             0, 1, 4, 5, 1, 2, 5, 6, 2, 3, 6, 7, 3, 0, 7, 4, 4, 5, 7, 6, 3, 2, 0, 1
         };
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size, PivotLocation pivotLocation)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
             mesh.Clear();
 
@@ -41,7 +41,6 @@ namespace UnityEngine.ProBuilder.Shapes
                 points[i] = Vector3.Scale(k_CubeVertices[k_CubeTriangles[i]], size);
 
             mesh.GeometryWithPoints(points);
-            mesh.SetPivot(pivotLocation);
 
             m_ShapeBox = mesh.mesh.bounds;
         }

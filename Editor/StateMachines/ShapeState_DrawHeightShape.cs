@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder
 
         private ShapeState ValidateShape()
         {
-            DrawShapeTool.s_Size.value = tool.m_ShapeComponent.size;
+            DrawShapeTool.s_Size.value = tool.m_ShapeComponent.Size;
             DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes,tool.m_ShapeComponent.shape.GetType());
 
             EditorShapeUtility.SaveParams(tool.m_ShapeComponent.shape);

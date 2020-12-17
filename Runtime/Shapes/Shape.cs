@@ -32,7 +32,16 @@ namespace UnityEngine.ProBuilder.Shapes
             set => m_ShapeBox = value;
         }
 
-        public abstract void RebuildMesh(ProBuilderMesh mesh, Vector3 size, PivotLocation pivotLocation);
+        public virtual void UpdatePivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
+        {
+            if(mesh != null && mesh.mesh != null)
+            {
+                mesh.SetPivot(pivotLocation);
+                m_ShapeBox = mesh.mesh.bounds;
+            }
+        }
+
+        public abstract void RebuildMesh(ProBuilderMesh mesh, Vector3 size);
     }
 
     [System.AttributeUsage(System.AttributeTargets.Class)]

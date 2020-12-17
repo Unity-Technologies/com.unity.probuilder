@@ -6,7 +6,13 @@ namespace UnityEngine.ProBuilder.Shapes
     [Shape("Sprite")]
     public class Sprite : Shape
     {
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size, PivotLocation pivotLocation)
+        public override void UpdatePivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
+        {
+            mesh.SetPivot(PivotLocation.Center);
+            m_ShapeBox = mesh.mesh.bounds;
+        }
+
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
             if(size.y < float.Epsilon)
             {
@@ -48,7 +54,6 @@ namespace UnityEngine.ProBuilder.Shapes
                 v[i] = new Vector3(p[i].x, p[i].y, 0);
 
             mesh.RebuildWithPositionsAndFaces(v, f);
-            mesh.SetPivot(PivotLocation.Center);
 
             m_ShapeBox = mesh.mesh.bounds;
         }

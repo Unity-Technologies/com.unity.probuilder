@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.UIElements;
@@ -50,17 +51,6 @@ namespace UnityEditor.ProBuilder
         {
             m_ShapeProperty = serializedObject.FindProperty("m_Shape");
             m_ShapePropertiesProperty = serializedObject.FindProperty("m_Properties");
-
-            Undo.undoRedoPerformed += UndoRedoPerformedOnShapeEditor;
-        }
-
-        void UndoRedoPerformedOnShapeEditor()
-        {
-            // the `==` comparison is necessary because `is` does not handle native object lifetime. this is apparent
-            // when performing an undo / redo in tests and the editor tracker invokes callbacks with null native objects.
-            foreach(var component in targets)
-                if(component is ShapeComponent shape && shape != null)
-                    shape.RebuildIfNeeded(EditorUtility.newShapePivotLocation);
         }
 
         public override void OnInspectorGUI()
@@ -153,9 +143,10 @@ namespace UnityEditor.ProBuilder
                     var shapeComponent = comp as ShapeComponent;
                     if(!shapeComponent.edited)
                     {
+                        UndoUtility.RecordComponents<Transform, ProBuilderMesh, ShapeComponent>(shapeComponent.GetComponents(typeof(Component)),"Resize Shape");
                         shapeComponent.UpdateComponent(EditorUtility.newShapePivotLocation);
                         if(tool != null)
-                            tool.SetBounds(shapeComponent.size);
+                            tool.SetBounds(shapeComponent.Size);
                         EditorShapeUtility.SaveParams(shapeComponent.shape);
                         ProBuilderEditor.Refresh();
                     }

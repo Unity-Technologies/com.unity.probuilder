@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -35,11 +36,13 @@ namespace UnityEngine.ProBuilder.Shapes
             set { m_Shape = value; }
         }
 
-        public Vector3 size
+        private Vector3 m_Size
         {
             get { return m_Shape.size; }
             set { m_Shape.size = value; }
         }
+
+        public Vector3 Size => m_Size;
 
         public Quaternion rotation
         {
@@ -92,29 +95,22 @@ namespace UnityEngine.ProBuilder.Shapes
 
         void UpdateProperties()
         {
-            m_Properties.m_Width = size.x;
-            m_Properties.m_Height = size.y;
-            m_Properties.m_Length = size.z;
+            m_Properties.m_Width = m_Size.x;
+            m_Properties.m_Height = m_Size.y;
+            m_Properties.m_Length = m_Size.z;
         }
 
         public void UpdateComponent(PivotLocation pivotLocation)
         {
-            size = new Vector3(m_Properties.m_Width, m_Properties.m_Height, m_Properties.m_Length);
+            m_Size = new Vector3(m_Properties.m_Width, m_Properties.m_Height, m_Properties.m_Length);
             //Recenter shape
-            transform.position += m_Shape.shapeBox.center;
-            Rebuild(pivotLocation);
-        }
-
-        internal void RebuildIfNeeded(PivotLocation pivotLocation)
-        {
-            //Recenter shape
-            transform.position += m_Shape.shapeBox.center;
+            m_Shape.UpdatePivot(mesh, PivotLocation.Center);
             Rebuild(pivotLocation);
         }
 
         public void Rebuild(Bounds bounds, Quaternion rotation, PivotLocation pivotLocation)
         {
-            size = Math.Abs(bounds.size);
+            m_Size = Math.Abs(bounds.size);
             transform.position = bounds.center;
             transform.rotation = rotation;
 
@@ -126,7 +122,7 @@ namespace UnityEngine.ProBuilder.Shapes
             if( gameObject== null ||gameObject.hideFlags != HideFlags.None )
                 return;
 
-            m_Shape.RebuildMesh(mesh, size, pivotLocation);
+            m_Shape.RebuildMesh(mesh, m_Size);
             m_Edited = false;
 
             m_MeshOriginalVertices = new Vector3[mesh.vertexCount];
@@ -135,7 +131,8 @@ namespace UnityEngine.ProBuilder.Shapes
             Quaternion rot = resetRotation ? Quaternion.identity : rotation;
             ApplyRotation(rot, true);
 
-            MeshUtility.FitToSize(mesh, GetRotatedBounds(), size);
+            MeshUtility.FitToSize(mesh, GetRotatedBounds(), m_Size);
+            m_Shape.UpdatePivot(mesh, pivotLocation);
 
             UpdateProperties();
         }
@@ -159,8 +156,7 @@ namespace UnityEngine.ProBuilder.Shapes
         /// <param name="angles">The angles to rotate by</param>
         public void SetInnerBoundsRotation(Quaternion angles, PivotLocation pivotLocation)
         {
-            ApplyRotation(angles);
-            MeshUtility.FitToSize(mesh, GetRotatedBounds(), size);
+            rotation = angles;
         }
 
         /// <summary>
@@ -169,9 +165,9 @@ namespace UnityEngine.ProBuilder.Shapes
         /// <param name="rotation">The angles to rotate by</param>
         public void RotateInsideBounds(Quaternion deltaRotation, PivotLocation pivotLocation)
         {
-            Quaternion rot = deltaRotation * rotation;
-            ApplyRotation(rot);
-            MeshUtility.FitToSize(mesh, GetRotatedBounds(), size);
+            m_Shape.UpdatePivot(mesh, PivotLocation.Center);
+            rotation = deltaRotation * rotation;
+            Rebuild(pivotLocation);
         }
 
         void ApplyRotation(Quaternion rot, bool forceRotation = false)
@@ -190,12 +186,9 @@ namespace UnityEngine.ProBuilder.Shapes
 
             for(int i = 0; i < origVerts.Length; ++i)
             {
-                origVerts[i] -= m_Shape.shapeBox.center;
                 origVerts[i] = rotation * origVerts[i];
-                origVerts[i] += m_Shape.shapeBox.center;
             }
 
-            mesh.mesh.vertices = origVerts;
             mesh.positions = origVerts;
             mesh.ToMesh();
             mesh.Refresh();
