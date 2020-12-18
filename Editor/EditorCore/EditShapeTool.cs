@@ -163,15 +163,16 @@ namespace UnityEditor.ProBuilder
                     {
                         s_InitSizeInteraction = true;
                         s_OriginalSize = shapeComponent.Size;
-                        s_OriginalCenter = shapeComponent.transform.position + shapeComponent.shape.shapeBox.center;
+                        s_OriginalCenter = shapeComponent.transform.position + shapeComponent.transform.TransformDirection(shapeComponent.shape.shapeBox.center);
                     }
 
                     float modifier = 1f;
                     if(Event.current.alt)
                         modifier = 2f;
 
+                    var faceNormal = shapeComponent.transform.TransformVector(s_Faces[i].Normal);
                     var sizeOffset = ProBuilderSnapping.Snap(modifier * s_SizeDelta * Math.Abs(s_Faces[i].Normal), EditorSnapping.activeMoveSnapValue);
-                    var center = Event.current.alt ? Vector3.zero : Mathf.Sign(s_SizeDelta)*(sizeOffset.magnitude / 2f) * s_Faces[i].Normal;
+                    var center = Event.current.alt ? Vector3.zero : Mathf.Sign(s_SizeDelta)*(sizeOffset.magnitude / 2f) * faceNormal;
 
                     ApplyProperties(shapeComponent, s_OriginalCenter + center, s_OriginalSize + sizeOffset);
                 }
