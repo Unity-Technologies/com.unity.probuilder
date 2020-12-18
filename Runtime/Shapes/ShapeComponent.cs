@@ -134,6 +134,7 @@ namespace UnityEngine.ProBuilder.Shapes
         public void SetShape(Shape shape, PivotLocation pivotLocation)
         {
             m_Shape = shape;
+            m_Shape.ResetPivot(mesh);
             Rebuild(pivotLocation);
         }
 

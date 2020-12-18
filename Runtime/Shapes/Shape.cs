@@ -32,6 +32,13 @@ namespace UnityEngine.ProBuilder.Shapes
             set => m_ShapeBox = value;
         }
 
+        public void CopyShapeParameters(Shape sourceShape)
+        {
+            m_Size = sourceShape.m_Size;
+            m_Rotation = sourceShape.m_Rotation;
+            m_ShapeBox = sourceShape.m_ShapeBox;
+        }
+
         public virtual void ResetPivot(ProBuilderMesh mesh)
         {
             if(mesh != null && mesh.mesh != null)

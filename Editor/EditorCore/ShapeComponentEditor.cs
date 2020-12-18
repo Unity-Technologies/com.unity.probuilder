@@ -84,7 +84,7 @@ namespace UnityEditor.ProBuilder
                         if(tool != null)
                             DrawShapeTool.s_ActiveShapeIndex.value = m_ActiveShapeIndex;
                         UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Change Shape");
-                        shapeComponent.SetShape(EditorShapeUtility.CreateShape(type),EditorUtility.newShapePivotLocation);
+                        shapeComponent.SetShape(EditorShapeUtility.CreateShape(type,shape),EditorUtility.newShapePivotLocation);
                         ProBuilderEditor.Refresh();
                     }
                 }

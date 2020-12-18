@@ -130,7 +130,7 @@ namespace UnityEditor.ProBuilder
             return default;
         }
 
-        public static Shape CreateShape(Type type)
+        public static Shape CreateShape(Type type, Shape refShape = null)
         {
             Shape shape = null;
             try
@@ -141,7 +141,15 @@ namespace UnityEditor.ProBuilder
             {
                 Debug.LogError($"Cannot create shape of type { type.ToString() } because it doesn't have a default constructor.");
             }
-            shape = GetLastParams(shape.GetType());
+
+            if(shape == null)
+                return null;
+
+            if(refShape == null)
+                shape = GetLastParams(shape.GetType());
+            else
+                shape.CopyShapeParameters(refShape);
+
             return shape;
         }
 
