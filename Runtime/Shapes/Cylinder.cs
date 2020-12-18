@@ -18,10 +18,8 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_Smoothing = -1;
 
-        public virtual void UpdatePivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
+        public override void UpdateBounds(ProBuilderMesh mesh)
         {
-            mesh.SetPivot(pivotLocation);
-
             m_ShapeBox = mesh.mesh.bounds;
             Vector3 boxSize = m_ShapeBox.size;
             boxSize.x = boxSize.z = Mathf.Max(boxSize.x, boxSize.z);

@@ -9,7 +9,6 @@ namespace UnityEngine.ProBuilder.Shapes
         public override void UpdatePivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
         {
             mesh.SetPivot(PivotLocation.Center);
-            m_ShapeBox = mesh.mesh.bounds;
         }
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)

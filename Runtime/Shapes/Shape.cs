@@ -32,13 +32,31 @@ namespace UnityEngine.ProBuilder.Shapes
             set => m_ShapeBox = value;
         }
 
+        public virtual void ResetPivot(ProBuilderMesh mesh)
+        {
+            if(mesh != null && mesh.mesh != null)
+            {
+                var bbCenter = mesh.transform.TransformPoint(m_ShapeBox.center);
+                mesh.SetPivot(bbCenter);
+                UpdateBounds(mesh);
+            }
+        }
+
         public virtual void UpdatePivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
         {
             if(mesh != null && mesh.mesh != null)
             {
+                var bbCenter = mesh.transform.TransformPoint(m_ShapeBox.center);
                 mesh.SetPivot(pivotLocation);
-                m_ShapeBox = mesh.mesh.bounds;
+                m_ShapeBox.center = mesh.transform.InverseTransformPoint(bbCenter);
+
+                UpdateBounds(mesh);
             }
+        }
+
+        public virtual void UpdateBounds(ProBuilderMesh mesh)
+        {
+            m_ShapeBox = mesh.mesh.bounds;
         }
 
         public abstract void RebuildMesh(ProBuilderMesh mesh, Vector3 size);

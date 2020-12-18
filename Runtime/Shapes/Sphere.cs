@@ -61,7 +61,11 @@ namespace UnityEngine.ProBuilder.Shapes
         public override void UpdatePivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
         {
             mesh.SetPivot(pivotLocation, m_BottomMostVertexIndex);
+            UpdateBounds(mesh);
+        }
 
+        public override void UpdateBounds(ProBuilderMesh mesh)
+        {
             m_ShapeBox = mesh.mesh.bounds;
             Vector3 boxSize = m_ShapeBox.size;
             boxSize.x = boxSize.y = boxSize.z = Mathf.Max(boxSize.x, Mathf.Max(boxSize.y, boxSize.z));

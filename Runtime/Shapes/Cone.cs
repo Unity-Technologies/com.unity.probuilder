@@ -11,19 +11,18 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         internal int m_NumberOfSides = 6;
 
-        public virtual void UpdatePivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
-        {
-            mesh.SetPivot(pivotLocation);
+        float m_Radius = 0;
 
-            m_ShapeBox = mesh.mesh.bounds;
-            Vector3 boxSize = m_ShapeBox.size;
-            boxSize.x = boxSize.z = Mathf.Max(boxSize.x, boxSize.z);
+        public override void UpdateBounds(ProBuilderMesh mesh)
+        {
+            Vector3 boxSize = mesh.mesh.bounds.size;
+            boxSize.x = boxSize.z = m_Radius * 2f;
             m_ShapeBox.size = boxSize;
         }
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
-            var radius = System.Math.Min(size.x, size.z);
+            m_Radius = System.Math.Min(size.x, size.z);
             var height = size.y;
 
             var subdivAxis = m_NumberOfSides;
@@ -32,7 +31,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
             for (int i = 0; i < subdivAxis; i++)
             {
-                Vector2 ct = Math.PointInCircumference(radius, i * (360f / subdivAxis), Vector2.zero);
+                Vector2 ct = Math.PointInCircumference(m_Radius, i * (360f / subdivAxis), Vector2.zero);
                 template[i] = new Vector3(ct.x, -height / 2f, ct.y);
             }
 
@@ -87,9 +86,9 @@ namespace UnityEngine.ProBuilder.Shapes
             }
             mesh.RefreshUV(sideFaces);
 
-            m_ShapeBox = mesh.mesh.bounds;
-            Vector3 boxSize = m_ShapeBox.size;
-            boxSize.x = boxSize.z = Mathf.Max(boxSize.x, boxSize.z);
+            m_ShapeBox.center = Vector3.zero;
+            Vector3 boxSize = mesh.mesh.bounds.size;
+            boxSize.x = boxSize.z = m_Radius * 2f;
             m_ShapeBox.size = boxSize;
         }
     }

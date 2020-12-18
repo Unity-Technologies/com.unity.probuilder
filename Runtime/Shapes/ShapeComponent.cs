@@ -25,9 +25,6 @@ namespace UnityEngine.ProBuilder.Shapes
         ProBuilderMesh m_Mesh;
 
         [SerializeField]
-        Vector3[] m_MeshOriginalVertices;
-
-        [SerializeField]
         bool m_Edited = false;
 
         public Shape shape
@@ -102,9 +99,9 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public void UpdateComponent(PivotLocation pivotLocation)
         {
-            m_Size = new Vector3(m_Properties.m_Width, m_Properties.m_Height, m_Properties.m_Length);
             //Recenter shape
-            m_Shape.UpdatePivot(mesh, PivotLocation.Center);
+            m_Shape.ResetPivot(mesh);
+            m_Size = new Vector3(m_Properties.m_Width, m_Properties.m_Height, m_Properties.m_Length);
             Rebuild(pivotLocation);
         }
 
@@ -124,9 +121,6 @@ namespace UnityEngine.ProBuilder.Shapes
 
             m_Shape.RebuildMesh(mesh, m_Size);
             m_Edited = false;
-
-            m_MeshOriginalVertices = new Vector3[mesh.vertexCount];
-            Array.Copy(mesh.positionsInternal,m_MeshOriginalVertices, mesh.vertexCount);
 
             Quaternion rot = resetRotation ? Quaternion.identity : rotation;
             ApplyRotation(rot, true);
@@ -165,7 +159,7 @@ namespace UnityEngine.ProBuilder.Shapes
         /// <param name="rotation">The angles to rotate by</param>
         public void RotateInsideBounds(Quaternion deltaRotation, PivotLocation pivotLocation)
         {
-            m_Shape.UpdatePivot(mesh, PivotLocation.Center);
+            m_Shape.ResetPivot(mesh);
             rotation = deltaRotation * rotation;
             Rebuild(pivotLocation);
         }
@@ -178,11 +172,7 @@ namespace UnityEngine.ProBuilder.Shapes
             rotation = rot;
             m_Edited = false;
 
-            if(m_MeshOriginalVertices == null || m_MeshOriginalVertices.Length == 0)
-                return;
-
-            var origVerts = new Vector3[m_MeshOriginalVertices.Length];
-            Array.Copy(m_MeshOriginalVertices, origVerts, m_MeshOriginalVertices.Length);
+            var origVerts = mesh.positionsInternal;
 
             for(int i = 0; i < origVerts.Length; ++i)
             {
