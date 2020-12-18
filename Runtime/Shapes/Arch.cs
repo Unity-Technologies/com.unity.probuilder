@@ -26,9 +26,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public override void UpdateBounds(ProBuilderMesh mesh)
         {
-            Vector3 boxSize = mesh.mesh.bounds.size;
-            boxSize.y = m_Radius;
-            m_ShapeBox.size = boxSize;
+            m_ShapeBox.size = mesh.mesh.bounds.size;
         }
 
         Vector3[] GetFace(Vector2 vertex1, Vector2 vertex2, float depth)
@@ -54,8 +52,8 @@ namespace UnityEngine.ProBuilder.Shapes
 
             for (int i = 0; i < radialCuts; i++)
             {
-                templateOut[i] = Math.PointInCircumference(m_Radius, i * ( angle / ( radialCuts - 1 ) ), Vector2.zero) + new Vector2(0, -m_Radius/2f);
-                templateIn[i] = Math.PointInCircumference(m_Radius - width, i * ( angle / ( radialCuts - 1 ) ), Vector2.zero) + new Vector2(0, -m_Radius/2f);
+                templateOut[i] = Math.PointInCircumference(m_Radius, i * ( angle / ( radialCuts - 1 ) ), Vector2.zero);
+                templateIn[i] = Math.PointInCircumference(m_Radius - width, i * ( angle / ( radialCuts - 1 ) ), Vector2.zero);
             }
 
             List<Vector3> v = new List<Vector3>();
@@ -127,10 +125,10 @@ namespace UnityEngine.ProBuilder.Shapes
 
             mesh.GeometryWithPoints(v.ToArray());
 
+            mesh.TranslateVerticesInWorldSpace(mesh.mesh.triangles, mesh.transform.TransformDirection(-mesh.mesh.bounds.center));
             m_ShapeBox.center = Vector3.zero;
-            Vector3 boxSize = mesh.mesh.bounds.size;
-            boxSize.y = m_Radius;
-            m_ShapeBox.size = boxSize;
+
+            UpdateBounds(mesh);
         }
     }
 
