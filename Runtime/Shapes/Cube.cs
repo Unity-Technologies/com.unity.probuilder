@@ -49,17 +49,8 @@ namespace UnityEngine.ProBuilder.Shapes
     [CustomPropertyDrawer(typeof(Cube))]
     public class CubeDrawer : PropertyDrawer
     {
-        static bool s_foldoutEnabled = false;
-
-        const bool k_ToggleOnLabelClick = true;
-
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            EditorGUI.BeginProperty(position, label, property);
-
-            s_foldoutEnabled = EditorGUI.Foldout(position, s_foldoutEnabled, "Cube Settings", k_ToggleOnLabelClick);
-
-            EditorGUI.EndProperty();
         }
     }
 }

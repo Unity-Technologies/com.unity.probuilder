@@ -425,11 +425,18 @@ namespace UnityEditor.ProBuilder
                             }
                         }
 
-                        if(s_CurrentTargetedFace != null && previousFace != null && s_CurrentTargetedFace != previousFace)
+                        if(s_CurrentId == m_OrientationControlID)
                         {
-                            Vector3 rotationAxis = Vector3.Cross(previousFace.Normal, s_CurrentTargetedFace.Normal);
-                            s_ShapeRotation = Quaternion.AngleAxis(Vector3.SignedAngle(previousFace.Normal, s_CurrentTargetedFace.Normal,rotationAxis),rotationAxis);
-                            hasRotated = true;
+                            if(s_CurrentTargetedFace != null &&
+                               previousFace != null &&
+                               s_CurrentTargetedFace != previousFace)
+                            {
+                                Vector3 rotationAxis = Vector3.Cross(previousFace.Normal, s_CurrentTargetedFace.Normal);
+                                s_ShapeRotation = Quaternion.AngleAxis(
+                                    Vector3.SignedAngle(previousFace.Normal, s_CurrentTargetedFace.Normal,
+                                        rotationAxis), rotationAxis);
+                                hasRotated = true;
+                            }
                         }
                     }
                     if(!hit)

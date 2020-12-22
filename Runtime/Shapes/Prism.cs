@@ -65,17 +65,8 @@ namespace UnityEngine.ProBuilder.Shapes
     [CustomPropertyDrawer(typeof(Prism))]
     public class PrismDrawer : PropertyDrawer
     {
-        static bool s_foldoutEnabled = false;
-
-        const bool k_ToggleOnLabelClick = true;
-
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            EditorGUI.BeginProperty(position, label, property);
-
-            s_foldoutEnabled = EditorGUI.Foldout(position, s_foldoutEnabled, "Prism Settings", k_ToggleOnLabelClick);
-
-            EditorGUI.EndProperty();
         }
     }
 }

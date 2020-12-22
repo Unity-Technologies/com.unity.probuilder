@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEditor;
 using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
@@ -33,7 +34,7 @@ namespace UnityEngine.ProBuilder.Shapes
             set { m_Shape = value; }
         }
 
-        private Vector3 m_Size
+        Vector3 m_Size
         {
             get { return m_Shape.size; }
             set { m_Shape.size = value; }
@@ -77,16 +78,6 @@ namespace UnityEngine.ProBuilder.Shapes
                     m_Mesh = gameObject.AddComponent<ProBuilderMesh>();
 
                 return m_Mesh;
-            }
-        }
-
-        // Bounds where center is in world space, size is mesh.bounds.size
-        internal Bounds meshFilterBounds
-        {
-            get
-            {
-                var mb = mesh.mesh.bounds;
-                return new Bounds(transform.TransformPoint(mb.center), mb.size);
             }
         }
 
@@ -184,6 +175,5 @@ namespace UnityEngine.ProBuilder.Shapes
             mesh.ToMesh();
             mesh.Refresh();
         }
-
     }
 }

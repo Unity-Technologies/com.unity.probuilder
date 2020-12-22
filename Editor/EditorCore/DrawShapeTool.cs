@@ -45,11 +45,9 @@ namespace UnityEditor.ProBuilder
         [SerializeField]
         protected int m_snapAngle = 15;
 
-        public float snapAngle => (float)m_snapAngle;
-
         internal static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
         internal static Pref<Vector3> s_Size = new Pref<Vector3>("ShapeBuilder.Size", Vector3.zero);
-        internal static Pref<bool> s_SettingsEnabled = new Pref<bool>("ShapeBuilder.SettingsEnabled", false);
+        public static Pref<bool> s_SettingsEnabled = new Pref<bool>("ShapeComponent.SettingsEnabled", false);
 
         int m_ControlID;
         // ideally this would be owned by the state machine
@@ -293,7 +291,7 @@ namespace UnityEditor.ProBuilder
         void OnOverlayGUI(UObject overlayTarget, SceneView view)
         {
             EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.ArrowPlus);
-            EditorGUILayout.HelpBox(L10n.Tr("Drag & drop for custom shape creation. Shift + Clic to duplicate last shape."), MessageType.Info);
+            EditorGUILayout.HelpBox(L10n.Tr("Click and drag to place and scale the shape, or SHIFT+click once to duplicate last size settings."), MessageType.Info);
 
             DrawShapeGUI();
 
@@ -310,13 +308,8 @@ namespace UnityEditor.ProBuilder
 
             using(new EditorGUILayout.VerticalScope(style))
             {
-                s_SettingsEnabled.value = EditorGUILayout.Foldout(s_SettingsEnabled.value, foldoutName);
-                if(s_SettingsEnabled)
-                {
-                    EditorGUI.indentLevel++;
-                    ( (ShapeComponentEditor) m_ShapeEditor ).DrawShapeParametersGUI(this);
-                    EditorGUI.indentLevel--;
-                }
+                ( (ShapeComponentEditor) m_ShapeEditor ).m_ShapePropertyLabel.text = foldoutName;
+                ( (ShapeComponentEditor) m_ShapeEditor ).DrawShapeParametersGUI(this);
             }
         }
 

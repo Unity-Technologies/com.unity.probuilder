@@ -104,10 +104,13 @@ namespace UnityEditor.ProBuilder
 
             if(evt.type == EventType.Repaint)
             {
-                using (new Handles.DrawingScope(EditorHandleDrawing.vertexSelectedColor))
+                if(GUIUtility.hotControl == 0 && HandleUtility.nearestControl == tool.controlID)
                 {
-                    Handles.DotHandleCap(-1, m_HitPosition, Quaternion.identity,
-                        HandleUtility.GetHandleSize(m_HitPosition) * 0.05f, EventType.Repaint);
+                    using(new Handles.DrawingScope(EditorHandleDrawing.vertexSelectedColor))
+                    {
+                        Handles.DotHandleCap(-1, m_HitPosition, Quaternion.identity,
+                            HandleUtility.GetHandleSize(m_HitPosition) * 0.05f, EventType.Repaint);
+                    }
                 }
 
                 if(evt.shift)

@@ -21,9 +21,19 @@ namespace UnityEditor.ProBuilder
         IMGUIContainer m_ShapeField;
 
         SerializedProperty m_ShapeProperty;
-        SerializedProperty m_ShapePropertiesProperty;
+        SerializedProperty m_ShapeWidthProperty;
+        SerializedProperty m_ShapeLengthProperty;
+        SerializedProperty m_ShapeHeightProperty;
 
         int m_ActiveShapeIndex = 0;
+
+        static bool s_foldoutEnabled = true;
+
+        public GUIContent m_ShapePropertyLabel = new GUIContent("Shape Properties");
+        readonly GUIContent k_ShapeTypeLabel = new GUIContent("Shape");
+        readonly GUIContent k_ShapeWidthLabel = new GUIContent("Width");
+        readonly GUIContent k_ShapeLengthLabel = new GUIContent("Length");
+        readonly GUIContent k_ShapeHeightLabel = new GUIContent("Height");
 
         const string k_dialogTitle = "Shape reset";
         const string k_dialogText = "The current shape has been edited, you will loose all modifications.";
@@ -50,7 +60,9 @@ namespace UnityEditor.ProBuilder
         void OnEnable()
         {
             m_ShapeProperty = serializedObject.FindProperty("m_Shape");
-            m_ShapePropertiesProperty = serializedObject.FindProperty("m_Properties");
+            m_ShapeWidthProperty = serializedObject.FindProperty("m_Properties.m_Width");
+            m_ShapeLengthProperty = serializedObject.FindProperty("m_Properties.m_Length");
+            m_ShapeHeightProperty = serializedObject.FindProperty("m_Properties.m_Height");
         }
 
         public override void OnInspectorGUI()
@@ -66,31 +78,6 @@ namespace UnityEditor.ProBuilder
 
             serializedObject.Update();
 
-            EditorGUI.BeginChangeCheck();
-
-            m_ActiveShapeIndex = HasMultipleShapeTypes ? -1 : Mathf.Max(-1, Array.IndexOf(EditorShapeUtility.availableShapeTypes, m_CurrentShapeType));
-
-            m_ActiveShapeIndex = EditorGUILayout.Popup(m_ActiveShapeIndex, EditorShapeUtility.shapeTypes);
-
-            if(EditorGUI.EndChangeCheck())
-            {
-                var type = EditorShapeUtility.availableShapeTypes[m_ActiveShapeIndex];
-                foreach(var comp in targets)
-                {
-                    ShapeComponent shapeComponent = ( (ShapeComponent) comp );
-                    Shape shape = shapeComponent.shape;
-                    if(shape.GetType() != type)
-                    {
-                        if(tool != null)
-                            DrawShapeTool.s_ActiveShapeIndex.value = m_ActiveShapeIndex;
-                        UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Change Shape");
-                        shapeComponent.SetShape(EditorShapeUtility.CreateShape(type,shape),EditorUtility.newShapePivotLocation);
-                        ProBuilderEditor.Refresh();
-                    }
-                }
-            }
-
-            //bool edited = false;
             int editedShapesCount = 0;
             foreach(var comp in targets)
                 editedShapesCount += ( (ShapeComponent) comp ).edited ? 1 : 0;
@@ -131,7 +118,49 @@ namespace UnityEditor.ProBuilder
 
             serializedObject.Update ();
 
-            EditorGUILayout.PropertyField(m_ShapePropertiesProperty, new GUIContent("Editing Box Properties"), true);
+            var foldoutEnabled = tool == null ? s_foldoutEnabled : DrawShapeTool.s_SettingsEnabled.value;
+            foldoutEnabled = EditorGUILayout.Foldout(foldoutEnabled, m_ShapePropertyLabel, true);
+
+            if(tool == null)
+                s_foldoutEnabled = foldoutEnabled;
+            else
+                DrawShapeTool.s_SettingsEnabled.value = foldoutEnabled;
+
+            if(foldoutEnabled)
+            {
+                EditorGUI.indentLevel++;
+
+                EditorGUI.BeginChangeCheck();
+                m_ActiveShapeIndex = HasMultipleShapeTypes
+                    ? -1
+                    : Mathf.Max(-1, Array.IndexOf(EditorShapeUtility.availableShapeTypes, m_CurrentShapeType));
+                m_ActiveShapeIndex = EditorGUILayout.Popup(m_ActiveShapeIndex, EditorShapeUtility.shapeTypes);
+
+                if(EditorGUI.EndChangeCheck())
+                {
+                    var type = EditorShapeUtility.availableShapeTypes[m_ActiveShapeIndex];
+                    foreach(var comp in targets)
+                    {
+                        ShapeComponent shapeComponent = ( (ShapeComponent) comp );
+                        Shape shape = shapeComponent.shape;
+                        if(shape.GetType() != type)
+                        {
+                            if(tool != null)
+                                DrawShapeTool.s_ActiveShapeIndex.value = m_ActiveShapeIndex;
+                            UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Change Shape");
+                            shapeComponent.SetShape(EditorShapeUtility.CreateShape(type, shape),
+                                EditorUtility.newShapePivotLocation);
+                            ProBuilderEditor.Refresh();
+                        }
+                    }
+                }
+
+                EditorGUILayout.PropertyField(m_ShapeWidthProperty, k_ShapeWidthLabel, true);
+                EditorGUILayout.PropertyField(m_ShapeLengthProperty, k_ShapeLengthLabel, true);
+                EditorGUILayout.PropertyField(m_ShapeHeightProperty, k_ShapeHeightLabel, true);
+
+                EditorGUI.indentLevel--;
+            }
 
             if(!HasMultipleShapeTypes)
                 EditorGUILayout.PropertyField(m_ShapeProperty, new GUIContent("Shape Properties"), true);
