@@ -97,7 +97,6 @@ namespace UnityEngine.ProBuilder.Shapes
 
             mesh.RebuildWithPositionsAndFaces(vertices, faces);
 
-            //m_ShapeBox = mesh.mesh.bounds;
             mesh.TranslateVerticesInWorldSpace(mesh.mesh.triangles, mesh.transform.TransformDirection(-mesh.mesh.bounds.center));
             m_ShapeBox.center = Vector3.zero;
 

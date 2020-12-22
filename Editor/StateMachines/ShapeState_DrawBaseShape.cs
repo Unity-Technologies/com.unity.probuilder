@@ -18,7 +18,8 @@ namespace UnityEditor.ProBuilder
 
         public override ShapeState DoState(Event evt)
         {
-            tool.DrawBoundingBox();
+            if(evt.type == EventType.Repaint && m_IsDragging)
+                tool.DrawBoundingBox();
 
             if(evt.type == EventType.KeyDown)
             {
@@ -47,7 +48,7 @@ namespace UnityEditor.ProBuilder
 
                     case EventType.MouseUp:
                     {
-                        if(!m_IsDragging)
+                        if(!m_IsDragging && evt.shift)
                         {
                             CreateLastShape();
                             return ResetState();

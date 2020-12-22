@@ -282,7 +282,7 @@ namespace UnityEditor.ProBuilder
         void OnOverlayGUI(UObject overlayTarget, SceneView view)
         {
             EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.ArrowPlus);
-            EditorGUILayout.HelpBox(L10n.Tr("Hold Shift to preview shape. Click to create. Drag & drop for custom creation."), MessageType.Info);
+            EditorGUILayout.HelpBox(L10n.Tr("Drag & drop for custom shape creation. Shift + Clic to duplicate last shape."), MessageType.Info);
 
             DrawShapeGUI();
 
