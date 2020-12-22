@@ -2,8 +2,15 @@
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+
 using Math = UnityEngine.ProBuilder.Math;
 using UObject = UnityEngine.Object;
+
+#if !UNITY_2020_2_OR_NEWER
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+#else
+using ToolManager = UnityEditor.EditorTools.ToolManager;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -97,6 +104,9 @@ namespace UnityEditor.ProBuilder
                 tooltip = "Create PolyShape"
             };
 
+#if !UNITY_2020_2_OR_NEWER
+            ToolManager.activeToolChanged += OnToolChanged;
+#endif
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
             Undo.undoRedoPerformed += UndoRedoPerformed;
@@ -104,18 +114,35 @@ namespace UnityEditor.ProBuilder
 
         void OnDisable()
         {
+#if !UNITY_2020_2_OR_NEWER
+            ToolManager.activeToolChanged -= OnToolChanged;
+#endif
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
             Undo.undoRedoPerformed -= UndoRedoPerformed;
         }
 
-        public void End()
+#if !UNITY_2020_2_OR_NEWER
+        void End()
+#else
+        public override void OnWillBeDeactivated()
+#endif
         {
             if(polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None)
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
-            else
-                DestroyImmediate(this);
+
+            DestroyImmediate(this);
         }
+
+#if !UNITY_2020_2_OR_NEWER
+        void OnToolChanged()
+        {
+            if(!ToolManager.IsActiveTool(this))
+                End();
+            else
+                SetPolyEditMode(PolyShape.PolyEditMode.Edit);
+        }
+#endif
 
         /// <summary>
         /// Main GUI update for the tool, calls every secondary methods to place points, update lines and compute the cut

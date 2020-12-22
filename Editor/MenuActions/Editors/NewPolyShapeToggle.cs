@@ -3,8 +3,6 @@ using UnityEngine.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
 
-
-using UObject = UnityEngine.Object;
 #if !UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.EditorTools;
 #else
@@ -110,9 +108,6 @@ namespace UnityEditor.ProBuilder.Actions
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
 
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
-
-            ((PolyShapeTool)m_Tool).End();
-            UObject.DestroyImmediate(m_Tool);
 
             return new ActionResult(ActionResult.Status.Success,"End Poly Shape");
         }
