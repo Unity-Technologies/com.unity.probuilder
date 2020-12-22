@@ -21,7 +21,11 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public override void UpdatePivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
         {
-            mesh.SetPivot(pivotLocation, 1);
+            if(mesh != null && mesh.mesh != null)
+            {
+                mesh.SetPivot(pivotLocation, 1);
+                UpdateBounds(mesh);
+            }
         }
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
@@ -100,7 +104,7 @@ namespace UnityEngine.ProBuilder.Shapes
                     new Vector3(tmp3.x, height-baseY, tmp3.y)
                 };
 
-                // top
+                // bottom
                 Vector3[] tpb = new Vector3[4]
                 {
                     new Vector3(tmp.x, -baseY, tmp.y),

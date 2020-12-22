@@ -30,6 +30,11 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         bool m_Smooth = true;
 
+        public override void UpdateBounds(ProBuilderMesh mesh)
+        {
+            m_ShapeBox.size = mesh.mesh.bounds.size;
+        }
+
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
         {
             var xOuterRadius = Mathf.Clamp(size.x /2f ,.01f, 2048f);
@@ -92,7 +97,11 @@ namespace UnityEngine.ProBuilder.Shapes
 
             mesh.RebuildWithPositionsAndFaces(vertices, faces);
 
-            m_ShapeBox = mesh.mesh.bounds;
+            //m_ShapeBox = mesh.mesh.bounds;
+            mesh.TranslateVerticesInWorldSpace(mesh.mesh.triangles, mesh.transform.TransformDirection(-mesh.mesh.bounds.center));
+            m_ShapeBox.center = Vector3.zero;
+
+            UpdateBounds(mesh);
         }
 
 
