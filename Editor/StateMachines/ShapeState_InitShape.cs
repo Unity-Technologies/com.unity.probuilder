@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder
             }
 
             if(tool.m_LastShapeCreated != null)
-                EditShapeTool.DoEditingGUI(tool.m_LastShapeCreated, true);
+                EditShapeTool.DoEditingGUI(tool.m_LastShapeCreated);
 
             if(evt.isMouse && HandleUtility.nearestControl == tool.controlID)
             {
