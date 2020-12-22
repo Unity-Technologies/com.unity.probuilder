@@ -558,7 +558,7 @@ namespace UnityEditor.ProBuilder
                 m_SelectedIndex = -1;
             }
 
-            if(evt.type == EventType.Repaint)
+            if(evt.type == EventType.Repaint && polygon.polyEditMode == PolyShape.PolyEditMode.Path)
             {
                 Vector3 currentPos = polygon.transform.TransformPoint(m_CurrentPosition);
                 Handles.color = k_HandleColor;

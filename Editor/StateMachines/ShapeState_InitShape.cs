@@ -4,6 +4,7 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
+using ColorUtility = UnityEngine.ProBuilder.ColorUtility;
 using Math = UnityEngine.ProBuilder.Math;
 #if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
@@ -18,6 +19,8 @@ namespace UnityEditor.ProBuilder
         //NOTE: All class attributes are used for handle display
         EditorShapeUtility.FaceData[] m_Faces;
 
+        Vector3 m_HitPosition = Vector3.positiveInfinity;
+
         protected override void InitState()
         {
             tool.m_IsShapeInit = false;
@@ -25,6 +28,8 @@ namespace UnityEditor.ProBuilder
             m_Faces = new EditorShapeUtility.FaceData[6];
             for (int i = 0; i < m_Faces.Length; i++)
                 m_Faces[i] = new EditorShapeUtility.FaceData();
+
+            m_HitPosition = Vector3.positiveInfinity;
         }
 
         public override ShapeState DoState(Event evt)
@@ -76,25 +81,38 @@ namespace UnityEditor.ProBuilder
                         tool.m_IsOnGrid = false;
                     }
 
+                    m_HitPosition = tool.GetPoint(ray.GetPoint(hit));
+
                     //Click has been done => Define a plane for the tool
                     if(evt.type == EventType.MouseDown)
                     {
                         //BB init
-                        tool.m_BB_Origin = tool.GetPoint(ray.GetPoint(hit));
+                        tool.m_BB_Origin = m_HitPosition;
                         tool.m_BB_HeightCorner = tool.m_BB_Origin;
                         tool.m_BB_OppositeCorner = tool.m_BB_Origin;
 
+
                         return NextState();
                     }
-                    else
+                    else if(evt.shift)
                     {
-                        tool.SetBoundsOrigin(ray.GetPoint(hit));
+                        m_HitPosition = ray.GetPoint(hit);
+                        tool.SetBoundsOrigin(m_HitPosition);
                     }
                 }
             }
 
-            if(evt.shift && evt.type == EventType.Repaint)
-                tool.DrawBoundingBox();
+            if(evt.type == EventType.Repaint)
+            {
+                using (new Handles.DrawingScope(EditorHandleDrawing.vertexSelectedColor))
+                {
+                    Handles.DotHandleCap(-1, m_HitPosition, Quaternion.identity,
+                        HandleUtility.GetHandleSize(m_HitPosition) * 0.05f, EventType.Repaint);
+                }
+
+                if(evt.shift)
+                    tool.DrawBoundingBox();
+            }
 
             return this;
         }

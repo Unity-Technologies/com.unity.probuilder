@@ -277,6 +277,17 @@ namespace UnityEditor.ProBuilder
             {
                 Handles.DrawWireCube(Vector3.zero, m_Bounds.size);
             }
+
+            using (new Handles.DrawingScope(Color.white))
+            {
+                Handles.DotHandleCap(-1, m_BB_Origin, Quaternion.identity, HandleUtility.GetHandleSize(m_BB_Origin) * 0.05f, EventType.Repaint);
+                Handles.DotHandleCap(-1, m_BB_OppositeCorner, Quaternion.identity, HandleUtility.GetHandleSize(m_BB_OppositeCorner) * 0.05f, EventType.Repaint);
+            }
+
+            using (new Handles.DrawingScope(EditorHandleDrawing.vertexSelectedColor))
+            {
+                Handles.DotHandleCap(-1, m_BB_HeightCorner, Quaternion.identity, HandleUtility.GetHandleSize(m_BB_HeightCorner) * 0.05f, EventType.Repaint);
+            }
         }
 
         void OnOverlayGUI(UObject overlayTarget, SceneView view)

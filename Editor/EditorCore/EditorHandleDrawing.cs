@@ -57,7 +57,7 @@ namespace UnityEditor.ProBuilder
         internal static Color preselectionColor { get { return s_UseUnityColors ? Handles.preselectionColor : s_PreselectionColorPref; } }
         internal static Color edgeSelectedColor { get { return s_UseUnityColors ? Handles.selectedColor : s_SelectedEdgeColorPref; } }
         static Color edgeUnselectedColor { get { return s_UseUnityColors ? k_WireframeDefault : s_UnselectedEdgeColorPref; } }
-        static Color vertexSelectedColor { get { return s_UseUnityColors ? Handles.selectedColor : s_SelectedVertexColorPref; } }
+        internal static Color vertexSelectedColor { get { return s_UseUnityColors ? Handles.selectedColor : s_SelectedVertexColorPref; } }
         static Color vertexUnselectedColor { get { return s_UseUnityColors ? k_VertexUnselectedDefault : s_UnselectedVertexColorPref; } }
 
         // Force line rendering to use GL.LINE without geometry shader billboards. This is set by the
