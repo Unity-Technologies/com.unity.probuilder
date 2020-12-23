@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1296104] Fixing freeze transform with negative scales.
 - [case: 1296494] Fixing audio visualizer sample.
 - [case: 1296428] Cleaning Polyshape tool when leaving the EditorTool.
-- [case: 1296427] Removing NullRef Exception on Undo/redo with CutTool.  
+- [case: 1296427] Removing NullRef Exception on Undo/redo with CutTool.
 - [case: 1296422] Closing MenuToolToggles actions when closing ProBuilder window.
 - [case: 1254339] Correct offset when rendering UVs and correct export when UV Editor is docked.
 - Fixed PolyShape in Prefab mode: PolyShapeMode was not serialized when exiting prefab mode. Update point insertion visualization.
@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1283167] Fixed `Mesh Collider` mesh value not updating with modifications.
 - [case: 1285651] Fixed tooltip going out of screen when screen display is scale up
 - [case: 1286045] Fixed selection cleaning problem after scene restart.
+- [case: 1266769] Fixed tooltip window not rendering correctly on Linux.
 
 ### Changes
 
