@@ -40,13 +40,8 @@ Shader "Hidden/ProBuilder/FaceHighlight"
             v2f vert (appdata v)
             {
                 v2f o;
-
-                // https://www.opengl.org/discussion_boards/showthread.php/166719-Clean-Wireframe-Over-Solid-Mesh
-                o.pos = float4(UnityObjectToViewPos(v.vertex.xyz), 1);
-                o.pos.xyz *= .99;
-                o.pos = mul(UNITY_MATRIX_P, o.pos);
-
-                o.pos = o.pos * (1.0f - unity_OrthoParams.w) + UnityObjectToClipPos(v.vertex.xyz) * unity_OrthoParams.w;
+                //This simplification seems to be working and avoiding Z-fighting for Unity 2019.4 and above
+                o.pos = UnityObjectToClipPos(v.vertex.xyz);
 
                 return o;
             }
