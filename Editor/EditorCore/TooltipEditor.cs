@@ -85,14 +85,17 @@ namespace UnityEditor.ProBuilder
 
             minSize = size;
             maxSize = size;
+            var newPosition = new Rect(
+                p.x,
+                p.y,
+                size.x,
+                size.y);
 
-            position = new Rect(
-                    p.x,
-                    p.y,
-                    size.x,
-                    size.y);
-
-            s_WindowRect = new Rect(0, 0, size.x, size.y);
+            if (position != newPosition)
+            {
+                position = newPosition;
+                s_WindowRect = new Rect(0, 0, size.x, size.y);
+            }
         }
 
         public TooltipContent content = null;
