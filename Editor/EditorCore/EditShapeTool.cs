@@ -162,7 +162,7 @@ namespace UnityEditor.ProBuilder
                     if(!s_InitSizeInteraction)
                     {
                         s_InitSizeInteraction = true;
-                        s_OriginalSize = shapeComponent.Size;
+                        s_OriginalSize = shapeComponent.size;
                         s_OriginalCenter = shapeComponent.transform.position + shapeComponent.transform.TransformDirection(shapeComponent.shape.shapeBox.center);
                     }
 
@@ -255,7 +255,7 @@ namespace UnityEditor.ProBuilder
             if(DoOrientationHandle(shapeComponent))
             {
                 UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Rotate Shape");
-                shapeComponent.RotateInsideBounds(s_ShapeRotation, EditorUtility.newShapePivotLocation);
+                shapeComponent.RotateInsideBounds(s_ShapeRotation);
 
                 //Only Updating Draw shape tool when using this tool
                 if(s_UpdateDrawShapeTool)
@@ -456,7 +456,7 @@ namespace UnityEditor.ProBuilder
             bounds.size = size;
 
             UndoUtility.RecordComponents<Transform, ProBuilderMesh, ShapeComponent>(shape.GetComponents(typeof(Component)),"Resize Shape");
-            shape.Rebuild(bounds, trs.rotation, EditorUtility.newShapePivotLocation);
+            shape.Rebuild(bounds, trs.rotation);
 
             ProBuilderEditor.Refresh(false);
         }

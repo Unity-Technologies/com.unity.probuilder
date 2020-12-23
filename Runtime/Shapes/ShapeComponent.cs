@@ -23,6 +23,9 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         ShapeBoxProperties m_Properties = new ShapeBoxProperties();
 
+        [SerializeField]
+        PivotLocation m_PivotLocation;
+
         ProBuilderMesh m_Mesh;
 
         [SerializeField]
@@ -30,22 +33,30 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public Shape shape
         {
-            get { return m_Shape; }
-            set { m_Shape = value; }
+            get => m_Shape;
+            set => m_Shape = value;
         }
 
-        Vector3 m_Size
+        public PivotLocation pivotLocation
         {
-            get { return m_Shape.size; }
-            set { m_Shape.size = value; }
+            get => m_PivotLocation;
+            set
+            {
+                m_PivotLocation = value;
+                Rebuild();
+            }
         }
 
-        public Vector3 Size => m_Size;
+        public Vector3 size
+        {
+            get => m_Shape.size;
+            set => m_Shape.size = value;
+        }
 
         public Quaternion rotation
         {
-            get { return m_Shape.rotation; }
-            set { m_Shape.rotation = value; }
+            get => m_Shape.rotation;
+            set => m_Shape.rotation = value;
         }
 
         public bool edited
@@ -83,50 +94,50 @@ namespace UnityEngine.ProBuilder.Shapes
 
         void UpdateProperties()
         {
-            m_Properties.m_Width = m_Size.x;
-            m_Properties.m_Height = m_Size.y;
-            m_Properties.m_Length = m_Size.z;
+            m_Properties.m_Width = size.x;
+            m_Properties.m_Height = size.y;
+            m_Properties.m_Length = size.z;
         }
 
         public void UpdateComponent(PivotLocation pivotLocation)
         {
             //Recenter shape
             m_Shape.ResetPivot(mesh);
-            m_Size = new Vector3(m_Properties.m_Width, m_Properties.m_Height, m_Properties.m_Length);
-            Rebuild(pivotLocation);
+            size = new Vector3(m_Properties.m_Width, m_Properties.m_Height, m_Properties.m_Length);
+            Rebuild();
         }
 
-        public void Rebuild(Bounds bounds, Quaternion rotation, PivotLocation pivotLocation)
+        public void Rebuild(Bounds bounds, Quaternion rotation)
         {
-            m_Size = Math.Abs(bounds.size);
+            size = Math.Abs(bounds.size);
             transform.position = bounds.center;
             transform.rotation = rotation;
 
-            Rebuild(pivotLocation);
+            Rebuild();
         }
 
-        public void Rebuild(PivotLocation pivotLocation, bool resetRotation = false)
+        public void Rebuild(bool resetRotation = false)
         {
             if( gameObject== null ||gameObject.hideFlags != HideFlags.None )
                 return;
 
-            m_Shape.RebuildMesh(mesh, m_Size);
+            m_Shape.RebuildMesh(mesh, size);
             m_Edited = false;
 
             Quaternion rot = resetRotation ? Quaternion.identity : rotation;
             ApplyRotation(rot, true);
 
-            MeshUtility.FitToSize(mesh, GetRotatedBounds(), m_Size);
+            MeshUtility.FitToSize(mesh, GetRotatedBounds(), size);
             m_Shape.UpdatePivot(mesh, pivotLocation);
 
             UpdateProperties();
         }
 
-        public void SetShape(Shape shape, PivotLocation pivotLocation)
+        public void SetShape(Shape shape)
         {
             m_Shape = shape;
             m_Shape.ResetPivot(mesh);
-            Rebuild(pivotLocation);
+            Rebuild();
         }
 
         Bounds GetRotatedBounds()
@@ -149,11 +160,11 @@ namespace UnityEngine.ProBuilder.Shapes
         /// Rotates the Shape by a given quaternion while respecting the bounds
         /// </summary>
         /// <param name="rotation">The angles to rotate by</param>
-        public void RotateInsideBounds(Quaternion deltaRotation, PivotLocation pivotLocation)
+        public void RotateInsideBounds(Quaternion deltaRotation)
         {
             m_Shape.ResetPivot(mesh);
             rotation = deltaRotation * rotation;
-            Rebuild(pivotLocation);
+            Rebuild();
         }
 
         void ApplyRotation(Quaternion rot, bool forceRotation = false)

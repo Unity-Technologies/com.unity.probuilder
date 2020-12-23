@@ -56,14 +56,15 @@ namespace UnityEngine.ProBuilder.Shapes
         void BuildStairs(ProBuilderMesh mesh, Vector3 size)
         {
             bool useStepHeight = m_StepGenerationType == StepGenerationType.Height;
-            var stepsHeight = m_StepsHeight;
+
+            var stepsHeight = Mathf.Min(m_StepsHeight, size.y);
             if(useStepHeight)
             {
-                steps = (int) ( size.y / m_StepsHeight );
+                steps = (int) ( size.y / stepsHeight );
                 if(m_HomogeneousSteps)
                     stepsHeight = size.y / steps;
                 else
-                    steps += ( ( size.y / m_StepsHeight ) - steps ) > 0.001f ? 1 : 0;
+                    steps += ( ( size.y / stepsHeight ) - steps ) > 0.001f ? 1 : 0;
             }
 
             // 4 vertices per quad, 2 quads per step.
@@ -214,7 +215,7 @@ namespace UnityEngine.ProBuilder.Shapes
             bool noInnerSide = innerRadius < Mathf.Epsilon;
             bool useStepHeight = m_StepGenerationType == StepGenerationType.Height;
 
-            var stepsHeight = m_StepsHeight;
+            var stepsHeight = Mathf.Min(m_StepsHeight, size.y);
             if(useStepHeight)
             {
                 steps = (int) ( height / m_StepsHeight );

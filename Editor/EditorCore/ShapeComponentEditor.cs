@@ -21,6 +21,7 @@ namespace UnityEditor.ProBuilder
         IMGUIContainer m_ShapeField;
 
         SerializedProperty m_ShapeProperty;
+        SerializedProperty m_ShapePivotProperty;
         SerializedProperty m_ShapeWidthProperty;
         SerializedProperty m_ShapeLengthProperty;
         SerializedProperty m_ShapeHeightProperty;
@@ -30,7 +31,7 @@ namespace UnityEditor.ProBuilder
         static bool s_foldoutEnabled = true;
 
         public GUIContent m_ShapePropertyLabel = new GUIContent("Shape Properties");
-        readonly GUIContent k_ShapeTypeLabel = new GUIContent("Shape");
+        readonly GUIContent k_ShapePivotLabel = new GUIContent("Pivot");
         readonly GUIContent k_ShapeWidthLabel = new GUIContent("Width");
         readonly GUIContent k_ShapeLengthLabel = new GUIContent("Length");
         readonly GUIContent k_ShapeHeightLabel = new GUIContent("Height");
@@ -60,6 +61,7 @@ namespace UnityEditor.ProBuilder
         void OnEnable()
         {
             m_ShapeProperty = serializedObject.FindProperty("m_Shape");
+            m_ShapePivotProperty = serializedObject.FindProperty("m_PivotLocation");
             m_ShapeWidthProperty = serializedObject.FindProperty("m_Properties.m_Width");
             m_ShapeLengthProperty = serializedObject.FindProperty("m_Properties.m_Length");
             m_ShapeHeightProperty = serializedObject.FindProperty("m_Properties.m_Height");
@@ -98,7 +100,7 @@ namespace UnityEditor.ProBuilder
                         if( shapeComponent.edited )
                         {
                             shapeComponent.edited = false;
-                            shapeComponent.Rebuild(EditorUtility.newShapePivotLocation);
+                            shapeComponent.Rebuild();
                         }
                     }
                 }
@@ -148,16 +150,17 @@ namespace UnityEditor.ProBuilder
                             if(tool != null)
                                 DrawShapeTool.s_ActiveShapeIndex.value = m_ActiveShapeIndex;
                             UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Change Shape");
-                            shapeComponent.SetShape(EditorShapeUtility.CreateShape(type, shape),
-                                EditorUtility.newShapePivotLocation);
+                            shapeComponent.SetShape(EditorShapeUtility.CreateShape(type, shape));
                             ProBuilderEditor.Refresh();
                         }
                     }
                 }
 
-                EditorGUILayout.PropertyField(m_ShapeWidthProperty, k_ShapeWidthLabel, true);
-                EditorGUILayout.PropertyField(m_ShapeLengthProperty, k_ShapeLengthLabel, true);
-                EditorGUILayout.PropertyField(m_ShapeHeightProperty, k_ShapeHeightLabel, true);
+                EditorGUILayout.PropertyField(m_ShapePivotProperty, k_ShapePivotLabel);
+
+                EditorGUILayout.PropertyField(m_ShapeWidthProperty, k_ShapeWidthLabel);
+                EditorGUILayout.PropertyField(m_ShapeLengthProperty, k_ShapeLengthLabel);
+                EditorGUILayout.PropertyField(m_ShapeHeightProperty, k_ShapeHeightLabel);
 
                 EditorGUI.indentLevel--;
             }
@@ -175,7 +178,7 @@ namespace UnityEditor.ProBuilder
                         UndoUtility.RecordComponents<Transform, ProBuilderMesh, ShapeComponent>(shapeComponent.GetComponents(typeof(Component)),"Resize Shape");
                         shapeComponent.UpdateComponent(EditorUtility.newShapePivotLocation);
                         if(tool != null)
-                            tool.SetBounds(shapeComponent.Size);
+                            tool.SetBounds(shapeComponent.size);
                         EditorShapeUtility.SaveParams(shapeComponent.shape);
                         ProBuilderEditor.Refresh();
                     }

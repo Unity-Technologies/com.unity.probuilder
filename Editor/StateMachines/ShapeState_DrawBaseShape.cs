@@ -96,7 +96,7 @@ namespace UnityEditor.ProBuilder
 
             shape.shape = EditorShapeUtility.GetLastParams(shape.shape.GetType());
             EditorUtility.InitObject(shape.mesh);
-            shape.Rebuild(tool.m_Bounds, tool.m_PlaneRotation, EditorUtility.newShapePivotLocation);
+            shape.Rebuild(tool.m_Bounds, tool.m_PlaneRotation);
             ProBuilderEditor.Refresh(false);
             tool.m_LastShapeCreated = shape;
         }

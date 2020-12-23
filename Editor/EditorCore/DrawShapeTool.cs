@@ -84,7 +84,8 @@ namespace UnityEditor.ProBuilder
                     m_ShapeComponent = new GameObject("Shape", typeof(ShapeComponent)).GetComponent<ShapeComponent>();
                     m_ShapeComponent.gameObject.hideFlags = HideFlags.HideAndDontSave;
                     m_ShapeComponent.hideFlags = HideFlags.None;
-                    m_ShapeComponent.SetShape(EditorShapeUtility.CreateShape(activeShapeType), EditorUtility.newShapePivotLocation);
+                    m_ShapeComponent.pivotLocation = EditorUtility.newShapePivotLocation;
+                    m_ShapeComponent.SetShape(EditorShapeUtility.CreateShape(activeShapeType));
                 }
                 return m_ShapeComponent;
             }
@@ -122,10 +123,12 @@ namespace UnityEditor.ProBuilder
             if(ToolManager.IsActiveTool(this))
             {
                 var type = EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex];
-                currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type),EditorUtility.newShapePivotLocation);
-                SetBounds(currentShapeInOverlay.Size);
+                currentShapeInOverlay.pivotLocation = EditorUtility.newShapePivotLocation;
+                currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type));
+                SetBounds(currentShapeInOverlay.size);
             }
         }
+
         void HandleUndoRedoPerformed()
         {
             if(ToolManager.IsActiveTool(this))
@@ -242,7 +245,7 @@ namespace UnityEditor.ProBuilder
                 UndoUtility.RegisterCreatedObjectUndo(m_ShapeComponent.gameObject, "Draw Shape");
             }
 ;
-            m_ShapeComponent.Rebuild(m_Bounds, m_PlaneRotation, EditorUtility.newShapePivotLocation);
+            m_ShapeComponent.Rebuild(m_Bounds, m_PlaneRotation);
             ProBuilderEditor.Refresh(false);
 
             if (!m_IsShapeInit)
@@ -342,8 +345,8 @@ namespace UnityEditor.ProBuilder
                             m_LastShapeCreated = null;
 
                         UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
-                        currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type), EditorUtility.newShapePivotLocation);
-                        SetBounds(currentShapeInOverlay.Size);
+                        currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type));
+                        SetBounds(currentShapeInOverlay.size);
 
                         ProBuilderEditor.Refresh();
                     }
