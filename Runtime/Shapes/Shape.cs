@@ -66,7 +66,7 @@ namespace UnityEngine.ProBuilder.Shapes
             m_ShapeBox = mesh.mesh.bounds;
         }
 
-        public abstract void RebuildMesh(ProBuilderMesh mesh, Vector3 size);
+        public abstract void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize);
     }
 
     [System.AttributeUsage(System.AttributeTargets.Class)]

@@ -35,12 +35,12 @@ namespace UnityEngine.ProBuilder.Shapes
             m_ShapeBox.size = mesh.mesh.bounds.size;
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize)
         {
-            var xOuterRadius = Mathf.Clamp(size.x /2f ,.01f, 2048f);
-            var yOuterRadius = Mathf.Clamp(size.z /2f ,.01f, 2048f);
-            int clampedRows = (int)Mathf.Clamp(m_Rows + 1, 4, 128);
-            int clampedColumns = (int)Mathf.Clamp(m_Columns + 1, 4, 128);
+            var xOuterRadius = Mathf.Clamp(meshSize.x /2f ,.01f, 2048f);
+            var yOuterRadius = Mathf.Clamp(meshSize.z /2f ,.01f, 2048f);
+            int clampedRows = Mathf.Clamp(m_Rows + 1, 4, 128);
+            int clampedColumns = Mathf.Clamp(m_Columns + 1, 4, 128);
             float clampedTubeRadius = Mathf.Clamp(m_TubeRadius, .01f, Mathf.Min(xOuterRadius, yOuterRadius) - .001f);
 
             xOuterRadius -= clampedTubeRadius;
@@ -66,10 +66,10 @@ namespace UnityEngine.ProBuilder.Shapes
 
                 //Compute the tangent direction to know how to orient the current slice
                 var tangent = new Vector2( -ellipseCoord.y / (yOuterRadius * yOuterRadius), ellipseCoord.x / (xOuterRadius * xOuterRadius));
-                Quaternion rotation =  Quaternion.Euler(Vector3.up * Vector2.SignedAngle(Vector2.up, tangent.normalized));
+                Quaternion rot =  Quaternion.Euler(Vector3.up * Vector2.SignedAngle(Vector2.up, tangent.normalized));
 
                 //Get the slice/circle that must be placed at this position
-                cir = GetCirclePoints(clampedRows, clampedTubeRadius, clampedVerticalCircumference, rotation, new Vector3(ellipseCoord.x, 0, -ellipseCoord.y));
+                cir = GetCirclePoints(clampedRows, clampedTubeRadius, clampedVerticalCircumference, rot, new Vector3(ellipseCoord.x, 0, -ellipseCoord.y));
                 vertices.AddRange(cir);
             }
 
@@ -164,6 +164,8 @@ namespace UnityEngine.ProBuilder.Shapes
 
         const bool k_ToggleOnLabelClick = true;
 
+        static GUIContent m_Content = new GUIContent();
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             EditorGUI.BeginProperty(position, label, property);
@@ -174,12 +176,18 @@ namespace UnityEngine.ProBuilder.Shapes
 
             if(s_foldoutEnabled)
             {
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Rows"), new GUIContent("Rows"));
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Columns"), new GUIContent("Columns"));
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_TubeRadius"), new GUIContent("Tube Radius"));
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HorizontalCircumference"), new GUIContent("Horizontal Circumference"));
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_VerticalCircumference"), new GUIContent("Vertical Circumference"));
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smooth"), new GUIContent("Smooth"));
+                m_Content.text = "Rows";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Rows"), m_Content);
+                m_Content.text = "Columns";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Columns"), m_Content);
+                m_Content.text = "Tube Radius";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_TubeRadius"), m_Content);
+                m_Content.text = "Horizontal Circumference";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HorizontalCircumference"), m_Content);
+                m_Content.text = "Vertical Circumference";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_VerticalCircumference"), m_Content);
+                m_Content.text = "Smooth";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smooth"), m_Content);
             }
 
             EditorGUI.indentLevel--;

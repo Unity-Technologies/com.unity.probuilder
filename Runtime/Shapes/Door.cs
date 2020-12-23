@@ -15,11 +15,11 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         float m_LegWidth = .75f;
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize)
         {
-            float totalWidth = size.x;
-            float totalHeight = size.y;
-            float depth = size.z;
+            float totalWidth = meshSize.x;
+            float totalHeight = meshSize.y;
+            float depth = meshSize.z;
 
             float xLegCoord = totalWidth / 2f;
             var legWidth = xLegCoord - m_LegWidth;
@@ -116,6 +116,8 @@ namespace UnityEngine.ProBuilder.Shapes
 
         const bool k_ToggleOnLabelClick = true;
 
+        static GUIContent m_Content = new GUIContent();
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             EditorGUI.BeginProperty(position, label, property);
@@ -126,8 +128,10 @@ namespace UnityEngine.ProBuilder.Shapes
 
             if(s_foldoutEnabled)
             {
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_DoorHeight"), new GUIContent("Pediment Height"));
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_LegWidth"), new GUIContent("Side Width"));
+                m_Content.text = "Pediment Height";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_DoorHeight"), m_Content);
+                m_Content.text = "Side Width";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_LegWidth"), m_Content);
             }
 
             EditorGUI.indentLevel--;

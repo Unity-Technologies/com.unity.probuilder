@@ -26,10 +26,10 @@ namespace UnityEngine.ProBuilder.Shapes
             m_ShapeBox.size = boxSize;
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize)
         {
-            var radius = Mathf.Min(size.x, size.z) * .5f;
-            var height = size.y;
+            var radius = Mathf.Min(meshSize.x, meshSize.z) * .5f;
+            var height = meshSize.y;
 
             if (m_AxisDivisions % 2 != 0)
                 m_AxisDivisions++;
@@ -157,6 +157,8 @@ namespace UnityEngine.ProBuilder.Shapes
 
         const bool k_ToggleOnLabelClick = true;
 
+        static GUIContent m_Content = new GUIContent();
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             EditorGUI.BeginProperty(position, label, property);
@@ -167,9 +169,12 @@ namespace UnityEngine.ProBuilder.Shapes
 
             if(s_foldoutEnabled)
             {
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_AxisDivisions"), new GUIContent("Sides Count"));
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HeightCuts"), new GUIContent("Height Cuts"));
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smoothing"), new GUIContent("Smoothing Group"));
+                m_Content.text = "Sides Count";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_AxisDivisions"), m_Content);
+                m_Content.text = "Height Cuts";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HeightCuts"), m_Content);
+                m_Content.text = "Smoothing Group";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smoothing"), m_Content);
             }
 
             EditorGUI.indentLevel--;

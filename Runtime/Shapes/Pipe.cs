@@ -28,11 +28,11 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize)
         {
-            var height = size.y;
-            var xRadius = size.x / 2f;
-            var zRadius = size.z / 2f;
+            var height = meshSize.y;
+            var xRadius = meshSize.x / 2f;
+            var zRadius = meshSize.z / 2f;
             // template is outer ring - radius refers to outer ring always
             Vector2[] templateOut = new Vector2[m_NumberOfSides];
             Vector2[] templateIn = new Vector2[m_NumberOfSides];
@@ -129,6 +129,8 @@ namespace UnityEngine.ProBuilder.Shapes
 
         const bool k_ToggleOnLabelClick = true;
 
+        static GUIContent m_Content = new GUIContent();
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             EditorGUI.BeginProperty(position, label, property);
@@ -139,9 +141,12 @@ namespace UnityEngine.ProBuilder.Shapes
 
             if(s_foldoutEnabled)
             {
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Thickness"), new GUIContent("Thickness"));
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_NumberOfSides"), new GUIContent("Sides Count"));
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HeightSegments"), new GUIContent("Height Subdivisions"));
+                m_Content.text = "Thickness";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Thickness"), m_Content);
+                m_Content.text = "Thickness";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_NumberOfSides"), m_Content);
+                m_Content.text = "Thickness";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HeightSegments"), m_Content);
             }
 
             EditorGUI.indentLevel--;

@@ -10,7 +10,7 @@ namespace UnityEngine.ProBuilder.Shapes
         {
             Height,
             Count
-        };
+        }
 
         [SerializeField]
         StepGenerationType m_StepGenerationType = StepGenerationType.Count;
@@ -35,27 +35,27 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public int steps
         {
-            get { return m_StepsCount; }
-            set { m_StepsCount = value; }
+            get => m_StepsCount;
+            set => m_StepsCount = value;
         }
 
         public bool sides
         {
-            get { return m_Sides; }
-            set { m_Sides = value; }
+            get => m_Sides;
+            set => m_Sides = value;
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize)
         {
             if (m_Circumference > 0)
-                BuildCurvedStairs(mesh, size);
+                BuildCurvedStairs(mesh, meshSize);
             else
-                BuildStairs(mesh, size);
+                BuildStairs(mesh, meshSize);
         }
 
         void BuildStairs(ProBuilderMesh mesh, Vector3 size)
         {
-            bool useStepHeight = m_StepGenerationType == StepGenerationType.Height;
+            var useStepHeight = m_StepGenerationType == StepGenerationType.Height;
 
             var stepsHeight = Mathf.Min(m_StepsHeight, size.y);
             if(useStepHeight)
@@ -68,8 +68,8 @@ namespace UnityEngine.ProBuilder.Shapes
             }
 
             // 4 vertices per quad, 2 quads per step.
-            Vector3[] vertices = new Vector3[4 * steps * 2];
-            Face[] faces = new Face[steps * 2];
+            var vertices = new Vector3[4 * steps * 2];
+            var faces = new Face[steps * 2];
             Vector3 extents = size * .5f;
 
             // vertex index, face index
@@ -454,9 +454,9 @@ namespace UnityEngine.ProBuilder.Shapes
 
             if(s_foldoutEnabled)
             {
-                var typePpty = property.FindPropertyRelative("m_StepGenerationType");
-                EditorGUILayout.PropertyField(typePpty, k_StepGenerationContent);
-                if(typePpty.enumValueIndex == (int)Stairs.StepGenerationType.Count)
+                var typeProperty = property.FindPropertyRelative("m_StepGenerationType");
+                EditorGUILayout.PropertyField(typeProperty, k_StepGenerationContent);
+                if(typeProperty.enumValueIndex == (int)Stairs.StepGenerationType.Count)
                     EditorGUILayout.PropertyField(property.FindPropertyRelative("m_StepsCount"), k_StepsCountContent);
                 else
                 {

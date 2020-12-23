@@ -14,7 +14,7 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_WidthSegments = 1;
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize)
         {
             int w = m_WidthSegments + 1;
             int h = m_HeightSegments + 1;
@@ -61,6 +61,8 @@ namespace UnityEngine.ProBuilder.Shapes
 
         const bool k_ToggleOnLabelClick = true;
 
+        static GUIContent m_Content = new GUIContent();
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             EditorGUI.BeginProperty(position, label, property);
@@ -71,8 +73,10 @@ namespace UnityEngine.ProBuilder.Shapes
 
             if(s_foldoutEnabled)
             {
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HeightSegments"), new GUIContent("Height Segments"));
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_WidthSegments"), new GUIContent("Width Segments"));
+                m_Content.text = "Height Segments";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HeightSegments"), m_Content);
+                m_Content.text = "Width Segments";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_WidthSegments"), m_Content);
             }
 
             EditorGUI.indentLevel--;

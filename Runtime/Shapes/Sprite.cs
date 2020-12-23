@@ -11,9 +11,9 @@ namespace UnityEngine.ProBuilder.Shapes
             mesh.SetPivot(PivotLocation.Center);
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize)
         {
-            if(size.y < float.Epsilon)
+            if(meshSize.y < float.Epsilon)
             {
                 mesh.Clear();
                 if(mesh.mesh != null)
@@ -21,8 +21,8 @@ namespace UnityEngine.ProBuilder.Shapes
                 return;
             }
 
-            var width = size.x;
-            var height = size.y;
+            var width = meshSize.x;
+            var height = meshSize.y;
 
             Vector2[] p = new Vector2[4];
             Vector3[] v = new Vector3[4];
@@ -61,24 +61,8 @@ namespace UnityEngine.ProBuilder.Shapes
     [CustomPropertyDrawer(typeof(Sprite))]
     public class SpriteDrawer : PropertyDrawer
     {
-        static bool s_foldoutEnabled = true;
-
-        const bool k_ToggleOnLabelClick = true;
-
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            EditorGUI.BeginProperty(position, label, property);
-
-            s_foldoutEnabled = EditorGUI.Foldout(position, s_foldoutEnabled, "Sprite Settings", k_ToggleOnLabelClick);
-
-            EditorGUI.indentLevel++;
-
-            if(s_foldoutEnabled)
-            {
-            }
-
-            EditorGUI.indentLevel--;
-            EditorGUI.EndProperty();
         }
     }
 

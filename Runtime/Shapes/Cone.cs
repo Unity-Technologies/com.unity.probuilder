@@ -20,10 +20,10 @@ namespace UnityEngine.ProBuilder.Shapes
             m_ShapeBox.size = boxSize;
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize)
         {
-            m_Radius = System.Math.Min(size.x, size.z);
-            var height = size.y;
+            m_Radius = System.Math.Min(meshSize.x, meshSize.z);
+            var height = meshSize.y;
 
             var subdivAxis = m_NumberOfSides;
             // template is outer ring - radius refers to outer ring always
@@ -100,6 +100,8 @@ namespace UnityEngine.ProBuilder.Shapes
 
         const bool k_ToggleOnLabelClick = true;
 
+        readonly GUIContent m_Content = new GUIContent("Sides Count");
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             EditorGUI.BeginProperty(position, label, property);
@@ -110,7 +112,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
             if(s_foldoutEnabled)
             {
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_NumberOfSides"), new GUIContent("Sides Count"));
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_NumberOfSides"), m_Content);
             }
 
             EditorGUI.indentLevel--;

@@ -72,9 +72,9 @@ namespace UnityEngine.ProBuilder.Shapes
             m_ShapeBox.size = boxSize;
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 size)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize)
         {
-            var radius = System.Math.Min(System.Math.Min(size.x, size.y), size.z);
+            var radius = System.Math.Min(System.Math.Min(meshSize.x, meshSize.y), meshSize.z);
             //avoid to create a degenerated sphere with a radius set to 0
             radius = radius < 0.001f ? 0.001f : radius;
 
@@ -185,6 +185,8 @@ namespace UnityEngine.ProBuilder.Shapes
 
         const bool k_ToggleOnLabelClick = true;
 
+        readonly GUIContent m_Content = new GUIContent("Subdivisions");
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             EditorGUI.BeginProperty(position, label, property);
@@ -194,9 +196,7 @@ namespace UnityEngine.ProBuilder.Shapes
             EditorGUI.indentLevel++;
 
             if(s_foldoutEnabled)
-            {
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Subdivisions"), new GUIContent("Subdivisions"));
-            }
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Subdivisions"), m_Content);
 
             EditorGUI.indentLevel--;
             EditorGUI.EndProperty();
