@@ -45,8 +45,8 @@ namespace UnityEditor.ProBuilder
         //Handle Manipulation
         static int s_CurrentId = -1;
         static ShapeComponent s_CurrentShape = null;
-        static int m_OrientationControlID;
-        static int[] m_FaceControlIDs;
+        static int s_OrientationControlID;
+        static int[] s_FaceControlIDs;
 
         //Size Handle management
         static bool s_InitSizeInteraction = true;
@@ -120,19 +120,19 @@ namespace UnityEditor.ProBuilder
             {
                 EditorShapeUtility.UpdateFaces(shapeComponent.editionBounds, Faces);
 
-                m_OrientationControlID = GUIUtility.GetControlID(FocusType.Passive);
-                m_FaceControlIDs = new int[Faces.Length];
+                s_OrientationControlID = GUIUtility.GetControlID(FocusType.Passive);
+                s_FaceControlIDs = new int[Faces.Length];
                 for(int i = 0; i <Faces.Length; ++i)
-                    m_FaceControlIDs[i] = GUIUtility.GetControlID(FocusType.Passive);
+                    s_FaceControlIDs[i] = GUIUtility.GetControlID(FocusType.Passive);
 
                 if((GUIUtility.hotControl == 0
-                   || GUIUtility.hotControl == m_OrientationControlID)
-                   && !m_FaceControlIDs.Contains(HandleUtility.nearestControl))
+                   || GUIUtility.hotControl == s_OrientationControlID)
+                   && !s_FaceControlIDs.Contains(HandleUtility.nearestControl))
                     DoOrientationHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
 
                 if((GUIUtility.hotControl == 0
-                   || m_FaceControlIDs.Contains(GUIUtility.hotControl))
-                   && HandleUtility.nearestControl != m_OrientationControlID)
+                   || s_FaceControlIDs.Contains(GUIUtility.hotControl))
+                   && HandleUtility.nearestControl != s_OrientationControlID)
                     DoSizeHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
 
             }
@@ -157,7 +157,7 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
-                if(DoFaceSizeHandle(shapeComponent, Faces[i], m_FaceControlIDs[i]))
+                if(DoFaceSizeHandle(shapeComponent, Faces[i], s_FaceControlIDs[i]))
                 {
                     if(!s_InitSizeInteraction)
                     {
@@ -269,7 +269,7 @@ namespace UnityEditor.ProBuilder
         {
             if(Event.current.type == EventType.Repaint)
             {
-                if(GUIUtility.hotControl != 0 && GUIUtility.hotControl != m_OrientationControlID)
+                if(GUIUtility.hotControl != 0 && GUIUtility.hotControl != s_OrientationControlID)
                     return;
 
                 int faceCount = Faces.Length;
@@ -329,7 +329,7 @@ namespace UnityEditor.ProBuilder
 
             float handleSize = HandleUtility.GetHandleSize(s_CurrentHandlePosition) * 0.1f;
 
-            bool isSelected = (HandleUtility.nearestControl == m_OrientationControlID && s_CurrentId == -1) || s_CurrentId == m_OrientationControlID;
+            bool isSelected = (HandleUtility.nearestControl == s_OrientationControlID && s_CurrentId == -1) || s_CurrentId == s_OrientationControlID;
 
             if(isSelected)
                 s_CurrentShape = shapeComponent;
@@ -337,15 +337,15 @@ namespace UnityEditor.ProBuilder
                 s_CurrentShape = null;
 
 
-            switch(evt.GetTypeForControl(m_OrientationControlID))
+            switch(evt.GetTypeForControl(s_OrientationControlID))
             {
                 case EventType.MouseDown:
-                    if (HandleUtility.nearestControl == m_OrientationControlID && (evt.button == 0 || evt.button == 2))
+                    if (HandleUtility.nearestControl == s_OrientationControlID && (evt.button == 0 || evt.button == 2))
                     {
-                        s_CurrentId = m_OrientationControlID;
+                        s_CurrentId = s_OrientationControlID;
                         s_CurrentTargetedFace = null;
                         s_CurrentHandlePosition = Vector3.zero;
-                        GUIUtility.hotControl = m_OrientationControlID;
+                        GUIUtility.hotControl = s_OrientationControlID;
 
                         s_CurrentTargetedFace = null;
                         foreach(var boundsFace in Faces)
@@ -368,7 +368,7 @@ namespace UnityEditor.ProBuilder
                     }
                     break;
                 case EventType.MouseUp:
-                    if (GUIUtility.hotControl == m_OrientationControlID && (evt.button == 0 || evt.button == 2))
+                    if (GUIUtility.hotControl == s_OrientationControlID && (evt.button == 0 || evt.button == 2))
                     {
                         GUIUtility.hotControl = 0;
                         evt.Use();
@@ -379,7 +379,7 @@ namespace UnityEditor.ProBuilder
                     break;
                 case EventType.Layout:
                     foreach(var face in Faces)
-                        HandleUtility.AddControl(m_OrientationControlID, HandleUtility.DistanceToCircle(face.CenterPosition, handleSize / 2.0f));
+                        HandleUtility.AddControl(s_OrientationControlID, HandleUtility.DistanceToCircle(face.CenterPosition, handleSize / 2.0f));
                     break;
                 case EventType.Repaint:
                     if(isSelected)
@@ -387,7 +387,7 @@ namespace UnityEditor.ProBuilder
                         using(new Handles.DrawingScope(EditorHandleDrawing.edgeSelectedColor))
                         {
                             Handles.DrawLine(Vector3.zero, s_CurrentHandlePosition);
-                            Handles.SphereHandleCap(m_OrientationControlID, s_CurrentHandlePosition, Quaternion.identity, handleSize, EventType.Repaint);
+                            Handles.SphereHandleCap(s_OrientationControlID, s_CurrentHandlePosition, Quaternion.identity, handleSize, EventType.Repaint);
                         }
 
                         if(isSelected && s_CurrentTargetedFace != null)
@@ -404,7 +404,7 @@ namespace UnityEditor.ProBuilder
                 case EventType.MouseMove:
                 case EventType.MouseDrag:
                     bool hit = false;
-                    if((HandleUtility.nearestControl == m_OrientationControlID && s_CurrentId == -1) || s_CurrentId == m_OrientationControlID)
+                    if((HandleUtility.nearestControl == s_OrientationControlID && s_CurrentId == -1) || s_CurrentId == s_OrientationControlID)
                     {
                         var previousFace = s_CurrentTargetedFace;
                         s_CurrentTargetedFace = null;
@@ -418,14 +418,14 @@ namespace UnityEditor.ProBuilder
                                 float dist;
                                 if(p.Raycast(ray, out dist))
                                 {
-                                    s_CurrentHandlePosition = s_CurrentId == m_OrientationControlID ? Handles.inverseMatrix.MultiplyPoint(ray.GetPoint(dist)) : boundsFace.CenterPosition;
+                                    s_CurrentHandlePosition = s_CurrentId == s_OrientationControlID ? Handles.inverseMatrix.MultiplyPoint(ray.GetPoint(dist)) : boundsFace.CenterPosition;
                                     s_CurrentTargetedFace = boundsFace;
                                     hit = true;
                                 }
                             }
                         }
 
-                        if(s_CurrentId == m_OrientationControlID)
+                        if(s_CurrentId == s_OrientationControlID)
                         {
                             if(s_CurrentTargetedFace != null &&
                                previousFace != null &&
