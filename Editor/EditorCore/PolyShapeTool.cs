@@ -541,7 +541,7 @@ namespace UnityEditor.ProBuilder
 
         void SetupInputPlane(Vector2 mousePosition)
         {
-            plane = EditorHandleUtility.FindBestPlane(mousePosition);
+            plane = EditorHandleUtility.FindBestPlane(mousePosition, true);
 
             var planeNormal = plane.normal;
             var planeCenter = plane.normal * -plane.distance;

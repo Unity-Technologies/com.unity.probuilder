@@ -519,14 +519,15 @@ namespace UnityEditor.ProBuilder
         /// Get a plane suitable for mouse input in a scene view.
         /// </summary>
         /// <param name="mousePosition"></param>
+        /// <param name="alignOnGrid"></param>
         /// <returns></returns>
-        internal static Plane FindBestPlane(Vector2 mousePosition)
+        internal static Plane FindBestPlane(Vector2 mousePosition, bool alignOnGrid = false)
         {
-            var res = FindBestPlaneAndBitangent(mousePosition);
+            var res = FindBestPlaneAndBitangent(mousePosition, alignOnGrid);
             return res.item1;
         }
 
-        internal static SimpleTuple<Plane, Vector3> FindBestPlaneAndBitangent(Vector2 mousePosition)
+        internal static SimpleTuple<Plane, Vector3> FindBestPlaneAndBitangent(Vector2 mousePosition, bool alignOnGrid = false)
         {
             // Priority in finding the "best" plane for input from a mouse position:
             // 1. Take the plane from the first hit mesh.
@@ -540,7 +541,7 @@ namespace UnityEditor.ProBuilder
                 return new SimpleTuple<Plane, Vector3>(plane, bitangent);
 
             if (!GetPlaneFromProGridsAxis(mousePosition, out plane))
-                plane = GetPlaneFromSceneView();
+                plane = GetPlaneFromSceneView(alignOnGrid);
 
             bitangent = GetBitangent(plane.normal);
 
@@ -670,11 +671,11 @@ namespace UnityEditor.ProBuilder
             return true;
         }
 
-        static Plane GetPlaneFromSceneView()
+        static Plane GetPlaneFromSceneView(bool alignOnGrid)
         {
             Plane plane;
             Vector3 normal = Vector3.up;
-            if(EditorSnapSettings.gridSnapEnabled)
+            if(EditorSnapSettings.gridSnapEnabled || alignOnGrid && SceneView.lastActiveSceneView.showGrid)
             {
                 var sceneView = SceneView.lastActiveSceneView;
                 var cameraTransform = sceneView.camera.transform;
