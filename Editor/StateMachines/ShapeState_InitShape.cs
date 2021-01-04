@@ -49,7 +49,10 @@ namespace UnityEditor.ProBuilder
 
             if(evt.isMouse && HandleUtility.nearestControl == tool.controlID)
             {
+                bool snapEnabledOld = EditorSnapSettings.gridSnapEnabled;
+                EditorSnapSettings.gridSnapEnabled = true;
                 var res = EditorHandleUtility.FindBestPlaneAndBitangent(evt.mousePosition);
+                EditorSnapSettings.gridSnapEnabled = snapEnabledOld;
 
                 Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
                 float hit;
