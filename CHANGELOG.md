@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - MergeElements.Merge moved to public API
 
 ### Bug Fixes
+
 - [case: 1299638] Fixed missing dependency on com.unity.modules.physics.
 - [case: 1296104] Fixing freeze transform with negative scales.
 - [case: 1296494] Fixing audio visualizer sample.
@@ -58,6 +59,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Modified the AppendVerticesToEdge to handle edges split for non-convex faces.
 - Removed unused "About" images.
 - Removed unused HDRP shader variants.
+- Added `CombineMeshes.Combine(IEnumerable<ProBuilderMesh> meshes)` overload to combine `meshes` to a new `ProBuilderMesh` without requiring the calling code to create a target mesh.
 
 ## [4.4.0] - 2020-08-12
 

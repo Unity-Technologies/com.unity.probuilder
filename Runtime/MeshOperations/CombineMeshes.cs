@@ -13,12 +13,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// Merge a collection of <see cref="ProBuilderMesh"/> objects to as few meshes as possible. This may result in
         /// more than one mesh due to a max vertex count limit of 65535.
         /// </summary>
-        /// <param name="meshes">A collection of meshes to be merged.</param>
+        /// <param name="meshes">A collection of meshes to be merged to a new mesh (or multiple, if vertex count is
+        /// greater than ushort.MaxValue).</param>
         /// <returns>
         /// A list of merged meshes. In most cases this will be a single mesh. However it can be multiple in cases
         /// where the resulting vertex count exceeds the maximum allowable value.
         /// </returns>
-        [Obsolete("Combine(IEnumerable<ProBuilderMesh> meshes) is deprecated. Plase use Combine(IEnumerable<ProBuilderMesh> meshes, ProBuilderMesh meshTarget).")]
         public static List<ProBuilderMesh> Combine(IEnumerable<ProBuilderMesh> meshes)
         {
             return CombineToNewMeshes(meshes);
