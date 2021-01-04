@@ -13,7 +13,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize)
         {
-            if(meshSize.y < float.Epsilon)
+            if(meshSize.x < float.Epsilon || meshSize.z < float.Epsilon)
             {
                 mesh.Clear();
                 if(mesh.mesh != null)
@@ -22,7 +22,7 @@ namespace UnityEngine.ProBuilder.Shapes
             }
 
             var width = meshSize.x;
-            var height = meshSize.y;
+            var height = meshSize.z;
 
             Vector2[] p = new Vector2[4];
             Vector3[] v = new Vector3[4];
@@ -50,7 +50,7 @@ namespace UnityEngine.ProBuilder.Shapes
             });
 
             for (int i = 0; i < v.Length; i++)
-                v[i] = new Vector3(p[i].x, p[i].y, 0);
+                v[i] = new Vector3(p[i].y, 0, p[i].x);
 
             mesh.RebuildWithPositionsAndFaces(v, f);
 

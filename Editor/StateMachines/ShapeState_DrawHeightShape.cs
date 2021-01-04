@@ -26,7 +26,8 @@ namespace UnityEditor.ProBuilder
 
         public override ShapeState DoState(Event evt)
         {
-            if(tool.m_ShapeComponent.shape is Plane)
+            if((tool.m_ShapeComponent.shape is Plane)
+                || (tool.m_ShapeComponent.shape is UnityEngine.ProBuilder.Shapes.Sprite))
             {
                 //Skip Height definition for plane
                 return NextState();
