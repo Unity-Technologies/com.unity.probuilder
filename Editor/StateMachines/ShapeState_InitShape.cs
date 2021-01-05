@@ -49,7 +49,7 @@ namespace UnityEditor.ProBuilder
 
             if(evt.isMouse && HandleUtility.nearestControl == tool.controlID)
             {
-                var res = EditorHandleUtility.FindBestPlaneAndBitangent(evt.mousePosition, true);
+                var res = EditorHandleUtility.FindBestPlaneAndBitangent(evt.mousePosition);
 
                 Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
                 float hit;
