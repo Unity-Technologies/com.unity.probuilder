@@ -56,6 +56,8 @@ namespace UnityEditor.ProBuilder
         static GUIContent s_gc = new GUIContent("", "");
 
         //Orientation Handle Manipulation
+        static float s_CurrentAngle = 0;
+        static int s_CurrentArrowHovered = -1;
         static Quaternion s_ShapeRotation = Quaternion.identity;
         static Vector3[][] s_ArrowsLines = new Vector3[4][];
 
@@ -177,6 +179,10 @@ namespace UnityEditor.ProBuilder
 
         static bool DoFaceSizeHandle(ShapeComponent shapeComponent, FaceData face, int controlID)
         {
+
+            if( s_OrientationControlIDs.Contains(HandleUtility.nearestControl) && !EditorShapeUtility.PointerIsInFace(face) )
+                return false;
+
             Event evt = Event.current;
             float handleSize = HandleUtility.GetHandleSize(face.CenterPosition) * 0.05f;
 
@@ -270,12 +276,7 @@ namespace UnityEditor.ProBuilder
             {
                 if(f.IsVisible && EditorShapeUtility.PointerIsInFace(f))
                 {
-                    Color color = k_BoundsHandleColor;
-                    color.a = 0.25f;
-                    using(new Handles.DrawingScope(color))
-                        Handles.DrawAAConvexPolygon(f.Points);
-
-                    if(DoOrientationHandle(shapeComponent, f))
+                    if(DoOrientationHandle(f))
                     {
                         UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Rotate Shape");
                         shapeComponent.RotateInsideBounds(s_ShapeRotation, EditorUtility.newShapePivotLocation);
@@ -291,7 +292,7 @@ namespace UnityEditor.ProBuilder
 
         }
 
-        static bool DoOrientationHandle(ShapeComponent shapeComponent, FaceData face)
+        static bool DoOrientationHandle(FaceData face)
         {
             Event evt = Event.current;
             bool hasRotated = false;
@@ -327,9 +328,10 @@ namespace UnityEditor.ProBuilder
                             }
 
                             Vector3 rotationAxis = Vector3.Cross(face.Normal, targetedNormal);
-                            s_ShapeRotation = Quaternion.AngleAxis(
-                                                Vector3.SignedAngle(face.Normal, targetedNormal, rotationAxis),
-                                                rotationAxis);
+                            var angle = Vector3.SignedAngle(face.Normal, targetedNormal, rotationAxis);
+                            s_ShapeRotation = Quaternion.AngleAxis(angle, rotationAxis);
+                            s_CurrentAngle = (s_CurrentAngle + angle) % 360;
+
                             hasRotated = true;
                         }
                         s_CurrentId = -1;
@@ -344,20 +346,24 @@ namespace UnityEditor.ProBuilder
                         }
                         break;
                    case EventType.Repaint:
+                        if(s_CurrentArrowHovered != HandleUtility.nearestControl)
+                           s_CurrentAngle = 0f;
+
                        int pointsCount = face.Points.Length;
                        Vector3 sideDirection;
-                       Vector3 topDirection;
+                       Vector3 arrowDirection;
+                       s_CurrentArrowHovered = -1;
                        for(int i = 0; i < pointsCount; i++)
                        {
                            sideDirection = ( face.Points[( i + 1 ) % pointsCount] - face.Points[i] ).normalized;
-                           topDirection = Vector3.Cross(face.Normal.normalized, sideDirection).normalized;
-                           var top = face.CenterPosition + 0.5f * handleSize * topDirection;
-                           var A = (  0.5f * handleSize * topDirection ).magnitude;
+                           arrowDirection = Vector3.Cross(face.Normal.normalized, sideDirection).normalized;
+                           var top = face.CenterPosition + 0.5f * handleSize * arrowDirection;
+                           var A = (  0.5f * handleSize * arrowDirection ).magnitude;
                            var a = 0.4f * Mathf.Sqrt(2f * A * A);
                            var h = 0.5f * Mathf.Sqrt(2f * a * a);
-                           s_ArrowsLines[i][0] = top - ( h * topDirection + h * sideDirection );
+                           s_ArrowsLines[i][0] = top - ( h * arrowDirection + h * sideDirection );
                            s_ArrowsLines[i][1] = top;
-                           s_ArrowsLines[i][2] = top - ( h * topDirection - h * sideDirection );
+                           s_ArrowsLines[i][2] = top - ( h * arrowDirection - h * sideDirection );
 
                            bool selected = HandleUtility.nearestControl == s_OrientationControlIDs[i];
                            Color color = selected
@@ -365,35 +371,47 @@ namespace UnityEditor.ProBuilder
                                : k_BoundsHandleColor;
                            color.a = 1.0f;
 
+                           var targetedNormal = (s_ArrowsLines[i][1] - face.CenterPosition).normalized;
+                           Vector3 rotationAxis = Vector3.Cross(face.Normal, targetedNormal);
+
+                           var middlePoint = ( face.Points[( i + 1 ) % pointsCount] + face.Points[i] ) / 2f;
+                           float length = ( middlePoint - face.CenterPosition ).magnitude;
+
                            using(new Handles.DrawingScope(color))
                            {
-                               Handles.DrawAAPolyLine(10f, s_ArrowsLines[i]);
-
+                               Handles.DrawAAPolyLine(5f, s_ArrowsLines[i]);
                                if(selected)
                                {
-                                   Handles.SphereHandleCap(-1, Vector3.zero, Quaternion.identity, handleSize * 0.1f, EventType.Repaint);
-                                   Handles.DrawLine(Vector3.zero, face.CenterPosition);
-                                   var middlePoint = (face.Points[( i + 1 ) % pointsCount] + face.Points[i]) / 2f;
-                                   float length = ( middlePoint - face.CenterPosition ).magnitude;
-                                   Handles.DrawLine(Vector3.zero, length * topDirection);
+                                   s_CurrentArrowHovered = HandleUtility.nearestControl;
 
-                                   var targetedNormal = (s_ArrowsLines[i][1] - face.CenterPosition).normalized;
-                                   Vector3 rotationAxis = Vector3.Cross(face.Normal, targetedNormal);
-                                   var angle = Vector3.SignedAngle(face.Normal, targetedNormal, rotationAxis);
+                                   var result = Quaternion.AngleAxis(s_CurrentAngle, rotationAxis) * face.CenterPosition;
+                                   if(Mathf.Abs(Vector3.Dot(result, arrowDirection)) > 0.01f)
+                                       result = length * result.normalized;
+
+                                   Handles.DrawAAPolyLine(5f, new Vector3[]{Vector3.zero, result});
+
+                                   var innerRadius = 0.1f * handleSize;
                                    var radius = 0.5f * handleSize;
                                    color.a = 0.25f;
                                    using(new Handles.DrawingScope(color))
                                    {
-                                       Handles.DrawSolidArc(Vector3.zero, rotationAxis, face.Normal, angle, radius);
+                                       var angleOffset = 45f;
+                                       while(angleOffset < s_CurrentAngle)
+                                       {
+                                           var origin = Quaternion.AngleAxis(angleOffset - 45f, rotationAxis) * face.Normal;
+                                           var center = Quaternion.AngleAxis(angleOffset, rotationAxis) * face.Normal;
+                                           center *= innerRadius;
+                                           Handles.DrawSolidArc(center, rotationAxis, origin, 90f, radius);
+
+                                           angleOffset += 90f;
+                                       }
                                    }
-                                   Handles.DrawWireArc(Vector3.zero, rotationAxis,face.Normal, angle, radius);
 
-                                   // var coneRotation = Quaternion.FromToRotation(Vector3.forward,-face.CenterPosition.normalized);
-                                   // var coneSize = 0.2f * handleSize;
-                                   // Handles.ConeHandleCap(-1, radius * targetedNormal, coneRotation, coneSize, EventType.Repaint);
-
-                                   Handles.DrawWireCube(length * topDirection, 0.15f * handleSize * Vector3.one);
-                                   Handles.CubeHandleCap(-1,face.CenterPosition, Quaternion.identity, 0.15f * handleSize, EventType.Repaint);
+                                   using(new Handles.DrawingScope(Color.grey))
+                                   {
+                                       Handles.DrawAAPolyLine(5f, new Vector3[]{length * arrowDirection, -length * arrowDirection});
+                                       Handles.DrawAAPolyLine(5f, new Vector3[]{face.CenterPosition, -face.CenterPosition});
+                                   }
                                }
                            }
                        }
