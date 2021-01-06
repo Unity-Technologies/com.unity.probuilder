@@ -354,33 +354,18 @@ namespace UnityEditor.ProBuilder
 
                                    Handles.DrawAAPolyLine(5f, new Vector3[]{Vector3.zero, result});
 
-                                   var innerRadius = 0.1f ;
-                                   var outterRadius = 0.4f ;
+                                   var globalRadius = 0.5f * handleSize;
+                                   Handles.DrawSolidArc(Vector3.zero, rotationAxis, face.Normal, 360f,0.15f * globalRadius);
+                                   Handles.DrawLine(0.75f * globalRadius * arrowDirection.normalized, globalRadius * arrowDirection.normalized);
+                                   Handles.DrawLine(-0.75f * globalRadius * arrowDirection.normalized, -globalRadius * arrowDirection.normalized);
+                                   Handles.DrawLine(-0.75f * globalRadius * face.Normal, -globalRadius * face.Normal);
+                                   Handles.DrawLine(Vector3.zero, globalRadius * face.Normal);
+                                   Handles.DrawWireArc(Vector3.zero, rotationAxis, face.Normal, 360f, globalRadius);
+
                                    color.a = 0.25f;
                                    using(new Handles.DrawingScope(color))
-                                   {
-                                       var angleOffset = 45f;
-                                       while(angleOffset < s_CurrentAngle)
-                                       {
-                                           var origin = Quaternion.AngleAxis(angleOffset - 45f, rotationAxis) * face.Normal;
-                                           var center = Quaternion.AngleAxis(angleOffset, rotationAxis) * face.Normal;
-                                           center *= innerRadius * handleSize;
-                                           Handles.DrawSolidArc(center, rotationAxis, origin, 90f, outterRadius * handleSize);
+                                       Handles.DrawSolidArc(Vector3.zero, rotationAxis, face.Normal, s_CurrentAngle,globalRadius);
 
-                                           angleOffset += 90f;
-                                       }
-                                   }
-
-                                   using(new Handles.DrawingScope(Color.grey))
-                                   {
-                                       Handles.DrawAAPolyLine(5f, new Vector3[]{length * arrowDirection, -length * arrowDirection});
-                                       Handles.DrawAAPolyLine(5f, new Vector3[]{face.CenterPosition, -face.CenterPosition});
-                                   }
-
-                                   var globalRadius = ( innerRadius + outterRadius ) * handleSize;
-                                   Handles.DrawLine(Vector3.zero, globalRadius * face.Normal);
-                                   Handles.DrawLine(Vector3.zero, globalRadius * (Quaternion.AngleAxis(s_CurrentAngle, rotationAxis) * face.Normal));
-                                   Handles.DrawWireArc(Vector3.zero, rotationAxis, face.Normal, 360f, globalRadius);
                                }
                            }
                        }
