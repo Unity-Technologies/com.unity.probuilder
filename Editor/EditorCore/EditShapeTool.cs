@@ -241,7 +241,7 @@ namespace UnityEditor.ProBuilder
                     if(DoOrientationHandle(f))
                     {
                         UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Rotate Shape");
-                        shapeComponent.RotateInsideBounds(s_ShapeRotation, EditorUtility.newShapePivotLocation);
+                        shapeComponent.RotateInsideBounds(s_ShapeRotation);
 
                         //Only Updating Draw shape tool when using this tool
                         if(s_UpdateDrawShapeTool)
