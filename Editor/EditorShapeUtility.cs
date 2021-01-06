@@ -263,6 +263,9 @@ namespace UnityEditor.ProBuilder
 
         internal static bool PointerIsInFace(FaceData face)
         {
+            if(!face.IsVisible)
+                return false;
+
             Vector2[] face2D = new Vector2[4];
             for(int i = 0; i < face.Points.Length; i++)
             {

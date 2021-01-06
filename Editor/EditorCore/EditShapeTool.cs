@@ -20,8 +20,6 @@ namespace UnityEditor.ProBuilder
 
         static readonly Color k_BoundsHandleColor = new Color(.2f, .4f, .8f, 1f);
 
-        GUIContent m_SnapAngleContent;
-
         GUIContent m_OverlayTitle;
 
         static FaceData[] s_Faces;
@@ -44,9 +42,9 @@ namespace UnityEditor.ProBuilder
 
         //Handle Manipulation
         static int s_CurrentId = -1;
-        static ShapeComponent s_CurrentShape = null;
-        static int s_OrientationControlID;
-        static int[] s_FaceControlIDs;
+        static FaceData s_CurrentFace = null;
+        static int[] s_OrientationControlIDs = new int[4];
+        static int[] s_FaceControlIDs = new int[6];
 
         //Size Handle management
         static bool s_InitSizeInteraction = true;
@@ -56,9 +54,10 @@ namespace UnityEditor.ProBuilder
         static float s_SizeDelta;
 
         //Orientation Handle Manipulation
+        static float s_CurrentAngle = 0;
+        static int s_CurrentArrowHovered = -1;
         static Quaternion s_ShapeRotation = Quaternion.identity;
-        static Vector3 s_CurrentHandlePosition = Vector3.zero;
-        static FaceData s_CurrentTargetedFace = null;
+        static Vector3[][] s_ArrowsLines = new Vector3[4][];
 
         public override GUIContent toolbarIcon
         {
@@ -67,13 +66,9 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            InitTool();
             m_OverlayTitle = new GUIContent("Edit Shape Tool");
-        }
-
-        internal void InitTool()
-        {
-            m_SnapAngleContent = new GUIContent("Rotation Snap", L10n.Tr("Defines an angle in [1,90] to snap rotation."));
+            for(int i = 0; i < s_ArrowsLines.Length; i++)
+                s_ArrowsLines[i] = new Vector3[3];
         }
 
         void OnDisable()
@@ -91,9 +86,7 @@ namespace UnityEditor.ProBuilder
                 var shape = obj as ShapeComponent;
 
                 if (shape != null && !shape.edited)
-                {
                     DoEditingGUI(shape);
-                }
             }
         }
 
@@ -108,7 +101,7 @@ namespace UnityEditor.ProBuilder
 
         internal static void DoEditingGUI(ShapeComponent shapeComponent, bool updateDrawShapeTool = false)
         {
-            if(shapeComponent == null || (s_CurrentShape != null && shapeComponent != s_CurrentShape) )
+            if(shapeComponent == null)
                 return;
 
             s_UpdateDrawShapeTool = updateDrawShapeTool;
@@ -120,21 +113,13 @@ namespace UnityEditor.ProBuilder
             {
                 EditorShapeUtility.UpdateFaces(shapeComponent.editionBounds, Faces);
 
-                s_OrientationControlID = GUIUtility.GetControlID(FocusType.Passive);
-                s_FaceControlIDs = new int[Faces.Length];
+                for(int i = 0; i <4; ++i)
+                    s_OrientationControlIDs[i] = GUIUtility.GetControlID(FocusType.Passive);
                 for(int i = 0; i <Faces.Length; ++i)
                     s_FaceControlIDs[i] = GUIUtility.GetControlID(FocusType.Passive);
 
-                if((GUIUtility.hotControl == 0
-                   || GUIUtility.hotControl == s_OrientationControlID)
-                   && !s_FaceControlIDs.Contains(HandleUtility.nearestControl))
-                    DoOrientationHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
-
-                if((GUIUtility.hotControl == 0
-                   || s_FaceControlIDs.Contains(GUIUtility.hotControl))
-                   && HandleUtility.nearestControl != s_OrientationControlID)
-                    DoSizeHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
-
+                DoOrientationHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
+                DoSizeHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
             }
         }
 
@@ -142,22 +127,24 @@ namespace UnityEditor.ProBuilder
         {
             int faceCount = s_Faces.Length;
 
+            var drawFacesHandle = GUIUtility.hotControl == 0 || s_FaceControlIDs.Contains(GUIUtility.hotControl);
+
             for(int i = 0; i < faceCount; i++)
             {
+                var face = Faces[i];
                 if(Event.current.type == EventType.Repaint)
                 {
                     Color color = k_BoundsHandleColor;
-                    color.a *= Faces[i].IsVisible ? 1f : 0.5f;
-
+                    color.a *= face.IsVisible ? 1f : 0.5f;
                     using(new Handles.DrawingScope(color))
                     {
-                        int pointsCount = Faces[i].Points.Length;
+                        int pointsCount = face.Points.Length;
                         for(int k = 0; k < pointsCount; k++)
-                            Handles.DrawLine(Faces[i].Points[k], Faces[i].Points[( k + 1 ) % pointsCount]);
+                            Handles.DrawLine(face.Points[k], face.Points[( k + 1 ) % pointsCount]);
                     }
                 }
 
-                if(DoFaceSizeHandle(shapeComponent, Faces[i], s_FaceControlIDs[i]))
+                if((drawFacesHandle || s_CurrentFace == face) && DoFaceSizeHandle(face, s_FaceControlIDs[i]))
                 {
                     if(!s_InitSizeInteraction)
                     {
@@ -172,6 +159,12 @@ namespace UnityEditor.ProBuilder
 
                     var faceNormal = shapeComponent.transform.TransformVector(s_Faces[i].Normal);
                     var sizeOffset = ProBuilderSnapping.Snap(modifier * s_SizeDelta * Math.Abs(s_Faces[i].Normal), EditorSnapping.activeMoveSnapValue);
+
+                    var sizeDelta = s_OriginalSize + sizeOffset;
+                    sizeOffset.x = sizeDelta.x < 0.001f ? -s_OriginalSize.x + 0.001f : sizeOffset.x;
+                    sizeOffset.y = sizeDelta.y < 0.001f ? -s_OriginalSize.y + 0.001f : sizeOffset.y;
+                    sizeOffset.z = sizeDelta.z < 0.001f ? -s_OriginalSize.z + 0.001f : sizeOffset.z;
+
                     var center = Event.current.alt ? Vector3.zero : Mathf.Sign(s_SizeDelta)*(sizeOffset.magnitude / 2f) * faceNormal;
 
                     ApplyProperties(shapeComponent, s_OriginalCenter + center, s_OriginalSize + sizeOffset);
@@ -179,20 +172,17 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        static bool DoFaceSizeHandle(ShapeComponent shapeComponent, FaceData face, int controlID)
+        static bool DoFaceSizeHandle(FaceData face, int controlID)
         {
-            Event evt = Event.current;
-            float handleSize = HandleUtility.GetHandleSize(face.CenterPosition) * 0.75f;
+            if( s_OrientationControlIDs.Contains(HandleUtility.nearestControl) && !EditorShapeUtility.PointerIsInFace(face) )
+                return false;
 
-            Vector3 startPos = face.CenterPosition + 0.25f * handleSize * face.Normal;
-            Vector3 endPos = startPos + handleSize * face.Normal;
+            Event evt = Event.current;
+            float handleSize = HandleUtility.GetHandleSize(face.CenterPosition) * 0.05f;
+
+            Vector3 currentPos = face.CenterPosition;
 
             bool isSelected = (HandleUtility.nearestControl == controlID && s_CurrentId == -1) || s_CurrentId == controlID;
-
-            if(isSelected)
-                s_CurrentShape = shapeComponent;
-            else if(s_CurrentShape == shapeComponent)
-                s_CurrentShape = null;
 
             switch(evt.GetTypeForControl(controlID))
             {
@@ -215,26 +205,13 @@ namespace UnityEditor.ProBuilder
                     }
                     break;
                 case EventType.Layout:
-                    HandleUtility.AddControl(controlID, HandleUtility.DistanceToLine(startPos, endPos));
+                    HandleUtility.AddControl(controlID, HandleUtility.DistanceToLine(currentPos, currentPos) / 2f);
                     break;
                 case EventType.Repaint:
-                    Color color = isSelected ? EditorHandleDrawing.edgeSelectedColor : face.m_Color;
+                    Color color = isSelected ? EditorHandleDrawing.edgeSelectedColor : k_BoundsHandleColor;
                     color.a *= face.IsVisible ? 1f : 0.25f;
                     using(new Handles.DrawingScope(color))
-                        Handles.ArrowHandleCap(controlID, startPos , Quaternion.LookRotation(face.Normal), handleSize, EventType.Repaint);
-
-                    if(isSelected)
-                    {
-                        color = k_BoundsHandleColor;
-                        color.a *= 0.25f;
-
-                        using(new Handles.DrawingScope(color))
-                            Handles.DrawAAConvexPolygon(face.Points);
-                    }
-
-                    break;
-                case EventType.MouseMove:
-
+                        Handles.DotHandleCap(controlID, currentPos , Quaternion.identity, handleSize, EventType.Repaint);
                     break;
                 case EventType.MouseDrag:
                     if((HandleUtility.nearestControl == controlID && s_CurrentId == -1) || s_CurrentId == controlID)
@@ -250,201 +227,168 @@ namespace UnityEditor.ProBuilder
 
         static void DoOrientationHandlesGUI(ShapeComponent shapeComponent, ProBuilderMesh mesh, Bounds bounds)
         {
-            EditorShapeUtility.UpdateFaces(bounds, Faces);
-            DoCentralHandle();
-            if(DoOrientationHandle(shapeComponent))
+            if( GUIUtility.hotControl != 0
+                && !s_OrientationControlIDs.Contains(GUIUtility.hotControl)
+                || s_FaceControlIDs.Contains(HandleUtility.nearestControl))
+                return;
+
+            s_CurrentFace = null;
+            foreach(var f in Faces)
             {
-                UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Rotate Shape");
-                shapeComponent.RotateInsideBounds(s_ShapeRotation);
-
-                //Only Updating Draw shape tool when using this tool
-                if(s_UpdateDrawShapeTool)
-                    DrawShapeTool.s_LastShapeRotation = shapeComponent.rotation;
-
-                ProBuilderEditor.Refresh();
-            }
-        }
-
-        static void DoCentralHandle()
-        {
-            if(Event.current.type == EventType.Repaint)
-            {
-                if(GUIUtility.hotControl != 0 && GUIUtility.hotControl != s_OrientationControlID)
-                    return;
-
-                int faceCount = Faces.Length;
-                for(int i = 0; i < faceCount; i++)
+                if(f.IsVisible && EditorShapeUtility.PointerIsInFace(f))
                 {
-                    if(Faces[i].IsVisible)
+                    s_CurrentFace = f;
+                    if(DoOrientationHandle(f))
                     {
-                        float handleSize = HandleUtility.GetHandleSize(Vector3.zero) * 0.1f;
+                        UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Rotate Shape");
+                        shapeComponent.RotateInsideBounds(s_ShapeRotation, EditorUtility.newShapePivotLocation);
 
-                        Color color = k_BoundsHandleColor;
-                        color.a *= ( s_CurrentTargetedFace == null || s_CurrentTargetedFace == Faces[i] )
-                            ? 1f
-                            : 0.5f;
+                        //Only Updating Draw shape tool when using this tool
+                        if(s_UpdateDrawShapeTool)
+                            DrawShapeTool.s_LastShapeRotation = shapeComponent.rotation;
 
-                        using(new Handles.DrawingScope(color))
-                        {
-                            int pointsCount = Faces[i].Points.Length;
-                            for(int k = 0; k < pointsCount; k++)
-                                Handles.DrawLine(Faces[i].Points[k], Faces[i].Points[( k + 1 ) % pointsCount]);
-
-                            Handles.DrawLine(Vector3.zero, Faces[i].CenterPosition);
-                            Handles.SphereHandleCap(-1, Faces[i].CenterPosition, Quaternion.identity, handleSize, EventType.Repaint);
-                        }
-
-                        if(s_CurrentTargetedFace != null)
-                        {
-                            handleSize = HandleUtility.GetHandleSize(Vector3.zero) * 0.5f;
-                            for(int j = i + 1; j < faceCount; j++)
-                            {
-                                if(Faces[j].IsVisible)
-                                {
-                                    var normal = Vector3.Cross(Faces[i].Normal, Faces[j].Normal);
-                                    var angle = Vector3.SignedAngle(Faces[i].Normal, Faces[j].Normal, normal);
-
-                                    color = Color.blue;
-                                    if(normal == Vector3.up || normal == Vector3.down)
-                                        color = Color.green;
-                                    else if(normal == Vector3.right || normal == Vector3.left)
-                                        color = Color.red;
-
-                                    using(new Handles.DrawingScope(color))
-                                    {
-                                        Handles.DrawWireArc(Vector3.zero, normal, Faces[i].Normal, angle, handleSize);
-                                    }
-                                }
-                            }
-                        }
+                        ProBuilderEditor.Refresh();
                     }
                 }
             }
+
         }
 
-        static bool DoOrientationHandle(ShapeComponent shapeComponent)
+        static bool DoOrientationHandle(FaceData face)
         {
             Event evt = Event.current;
             bool hasRotated = false;
 
-            float handleSize = HandleUtility.GetHandleSize(s_CurrentHandlePosition) * 0.1f;
+            float handleSize = HandleUtility.GetHandleSize(Vector3.zero);
 
-            bool isSelected = (HandleUtility.nearestControl == s_OrientationControlID && s_CurrentId == -1) || s_CurrentId == s_OrientationControlID;
-
-            if(isSelected)
-                s_CurrentShape = shapeComponent;
-            else if(s_CurrentShape == shapeComponent)
-                s_CurrentShape = null;
-
-
-            switch(evt.GetTypeForControl(s_OrientationControlID))
+            switch(evt.type)
             {
                 case EventType.MouseDown:
-                    if (HandleUtility.nearestControl == s_OrientationControlID && (evt.button == 0 || evt.button == 2))
+                    if ( s_OrientationControlIDs.Contains(HandleUtility.nearestControl) && evt.button == 0 )
                     {
-                        s_CurrentId = s_OrientationControlID;
-                        s_CurrentTargetedFace = null;
-                        s_CurrentHandlePosition = Vector3.zero;
-                        GUIUtility.hotControl = s_OrientationControlID;
-
-                        s_CurrentTargetedFace = null;
-                        foreach(var boundsFace in Faces)
-                        {
-                            if(boundsFace.IsVisible && EditorShapeUtility.PointerIsInFace(boundsFace))
-                            {
-                                UnityEngine.Plane p = new UnityEngine.Plane(boundsFace.Normal,  Handles.matrix.MultiplyPoint(boundsFace.CenterPosition));
-
-                                Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
-                                float dist;
-                                if(p.Raycast(ray, out dist))
-                                {
-                                    s_CurrentHandlePosition = Handles.inverseMatrix.MultiplyPoint(ray.GetPoint(dist));
-                                    s_CurrentTargetedFace = boundsFace;
-                                }
-                            }
-                        }
-
+                        s_CurrentId = HandleUtility.nearestControl;
+                        GUIUtility.hotControl = s_CurrentId;
                         evt.Use();
                     }
-                    break;
+                   break;
                 case EventType.MouseUp:
-                    if (GUIUtility.hotControl == s_OrientationControlID && (evt.button == 0 || evt.button == 2))
+                    if (s_OrientationControlIDs.Contains(HandleUtility.nearestControl) && evt.button == 0 )
                     {
                         GUIUtility.hotControl = 0;
                         evt.Use();
-                        s_CurrentId = -1;
-                        s_CurrentTargetedFace = null;
-                        s_CurrentHandlePosition = Vector3.zero;
-                    }
-                    break;
-                case EventType.Layout:
-                    foreach(var face in Faces)
-                        HandleUtility.AddControl(s_OrientationControlID, HandleUtility.DistanceToCircle(face.CenterPosition, handleSize / 2.0f));
-                    break;
-                case EventType.Repaint:
-                    if(isSelected)
-                    {
-                        using(new Handles.DrawingScope(EditorHandleDrawing.edgeSelectedColor))
+                        if(s_CurrentId == HandleUtility.nearestControl)
                         {
-                            Handles.DrawLine(Vector3.zero, s_CurrentHandlePosition);
-                            Handles.SphereHandleCap(s_OrientationControlID, s_CurrentHandlePosition, Quaternion.identity, handleSize, EventType.Repaint);
-                        }
-
-                        if(isSelected && s_CurrentTargetedFace != null)
-                        {
-                            Color color = k_BoundsHandleColor;
-                            color.a *= 0.25f;
-
-                            using(new Handles.DrawingScope(color))
-                                Handles.DrawAAConvexPolygon(s_CurrentTargetedFace.Points);
-                        }
-
-                    }
-                    break;
-                case EventType.MouseMove:
-                case EventType.MouseDrag:
-                    bool hit = false;
-                    if((HandleUtility.nearestControl == s_OrientationControlID && s_CurrentId == -1) || s_CurrentId == s_OrientationControlID)
-                    {
-                        var previousFace = s_CurrentTargetedFace;
-                        s_CurrentTargetedFace = null;
-                        foreach(var boundsFace in s_Faces)
-                        {
-                            if(boundsFace.IsVisible && EditorShapeUtility.PointerIsInFace(boundsFace))
+                            //Execute rotation
+                            Vector3 targetedNormal = Vector3.zero;
+                            for(int i = 0; i < s_OrientationControlIDs.Length; i++)
                             {
-                                UnityEngine.Plane p = new UnityEngine.Plane(boundsFace.Normal,  Handles.matrix.MultiplyPoint(boundsFace.CenterPosition));
-
-                                Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
-                                float dist;
-                                if(p.Raycast(ray, out dist))
+                                if(s_OrientationControlIDs[i] == s_CurrentId)
                                 {
-                                    s_CurrentHandlePosition = s_CurrentId == s_OrientationControlID ? Handles.inverseMatrix.MultiplyPoint(ray.GetPoint(dist)) : boundsFace.CenterPosition;
-                                    s_CurrentTargetedFace = boundsFace;
-                                    hit = true;
+                                    targetedNormal = (s_ArrowsLines[i][1] - face.CenterPosition).normalized;
+                                    break;
                                 }
                             }
-                        }
 
-                        if(s_CurrentId == s_OrientationControlID)
-                        {
-                            if(s_CurrentTargetedFace != null &&
-                               previousFace != null &&
-                               s_CurrentTargetedFace != previousFace)
-                            {
-                                Vector3 rotationAxis = Vector3.Cross(previousFace.Normal, s_CurrentTargetedFace.Normal);
-                                s_ShapeRotation = Quaternion.AngleAxis(
-                                    Vector3.SignedAngle(previousFace.Normal, s_CurrentTargetedFace.Normal,
-                                        rotationAxis), rotationAxis);
-                                hasRotated = true;
-                            }
+                            Vector3 rotationAxis = Vector3.Cross(face.Normal, targetedNormal);
+                            var angle = Vector3.SignedAngle(face.Normal, targetedNormal, rotationAxis);
+                            s_ShapeRotation = Quaternion.AngleAxis(angle, rotationAxis);
+                            s_CurrentAngle = (s_CurrentAngle + angle) % 360;
+
+                            hasRotated = true;
                         }
+                        s_CurrentId = -1;
                     }
-                    if(!hit)
-                        s_CurrentTargetedFace = null;
-
                     break;
-            }
-            return hasRotated;
+                    case EventType.Layout:
+                        for(int i = 0; i < 4; i++)
+                        {
+                            float dist1 = HandleUtility.DistanceToLine(s_ArrowsLines[i][0], s_ArrowsLines[i][1]);
+                            float dist2 = HandleUtility.DistanceToLine(s_ArrowsLines[i][1], s_ArrowsLines[i][2]);
+                            HandleUtility.AddControl(s_OrientationControlIDs[i], Mathf.Min(dist1,dist2) / 2f);
+                        }
+                        break;
+                   case EventType.Repaint:
+                        if(s_CurrentArrowHovered != HandleUtility.nearestControl)
+                           s_CurrentAngle = 0f;
+
+                       int pointsCount = face.Points.Length;
+                       s_CurrentArrowHovered = -1;
+                       for(int i = 0; i < pointsCount; i++)
+                       {
+                           var sideDirection = ( face.Points[( i + 1 ) % pointsCount] - face.Points[i] ).normalized;
+                           var arrowDirection = Vector3.Cross(face.Normal.normalized, sideDirection).normalized;
+                           var top = face.CenterPosition + 0.5f * handleSize * arrowDirection;
+                           var A = (  0.5f * handleSize * arrowDirection ).magnitude;
+                           var a = 0.4f * Mathf.Sqrt(2f * A * A);
+                           var h = 0.5f * Mathf.Sqrt(2f * a * a);
+                           s_ArrowsLines[i][0] = top - ( h * arrowDirection + h * sideDirection );
+                           s_ArrowsLines[i][1] = top;
+                           s_ArrowsLines[i][2] = top - ( h * arrowDirection - h * sideDirection );
+
+                           bool selected = HandleUtility.nearestControl == s_OrientationControlIDs[i];
+
+                           if(selected)
+                               EditorGUIUtility.AddCursorRect(new Rect(0,0,Screen.width, Screen.height), MouseCursor.RotateArrow);
+
+                           Color color = selected
+                               ? EditorHandleDrawing.edgeSelectedColor
+                               : k_BoundsHandleColor;
+                           color.a = 1.0f;
+
+                           var targetedNormal = (s_ArrowsLines[i][1] - face.CenterPosition).normalized;
+                           Vector3 rotationAxis = Vector3.Cross(face.Normal, targetedNormal);
+
+                           var middlePoint = ( face.Points[( i + 1 ) % pointsCount] + face.Points[i] ) / 2f;
+                           float length = ( middlePoint - face.CenterPosition ).magnitude;
+
+                           using(new Handles.DrawingScope(color))
+                           {
+                               Handles.DrawAAPolyLine(5f, s_ArrowsLines[i]);
+                               if(selected)
+                               {
+                                   s_CurrentArrowHovered = HandleUtility.nearestControl;
+
+                                   var result = Quaternion.AngleAxis(s_CurrentAngle, rotationAxis) * face.CenterPosition;
+                                   if(Mathf.Abs(Vector3.Dot(result, arrowDirection)) > 0.01f)
+                                       result = length * result.normalized;
+
+                                   Handles.DrawAAPolyLine(5f, new Vector3[]{Vector3.zero, result});
+
+                                   var innerRadius = 0.1f * handleSize;
+                                   var radius = 0.5f * handleSize;
+                                   color.a = 0.25f;
+                                   using(new Handles.DrawingScope(color))
+                                   {
+                                       var angleOffset = 45f;
+                                       while(angleOffset < s_CurrentAngle)
+                                       {
+                                           var origin = Quaternion.AngleAxis(angleOffset - 45f, rotationAxis) * face.Normal;
+                                           var center = Quaternion.AngleAxis(angleOffset, rotationAxis) * face.Normal;
+                                           center *= innerRadius;
+                                           Handles.DrawSolidArc(center, rotationAxis, origin, 90f, radius);
+
+                                           angleOffset += 90f;
+                                       }
+                                   }
+
+                                   using(new Handles.DrawingScope(Color.grey))
+                                   {
+                                       Handles.DrawAAPolyLine(5f, new Vector3[]{length * arrowDirection, -length * arrowDirection});
+                                       Handles.DrawAAPolyLine(5f, new Vector3[]{face.CenterPosition, -face.CenterPosition});
+                                   }
+                               }
+                           }
+                       }
+                        break;
+                case EventType.MouseDrag:
+                    if(s_OrientationControlIDs.Contains(s_CurrentId) && HandleUtility.nearestControl != s_CurrentId)
+                    {
+                        GUIUtility.hotControl = 0;
+                        s_CurrentId = -1;
+                    }
+                    break;
+             }
+             return hasRotated;
         }
 
         public static void ApplyProperties(ShapeComponent shape, Vector3 centerOffset, Vector3 size)
