@@ -326,6 +326,10 @@ namespace UnityEditor.ProBuilder
                            s_ArrowsLines[i][2] = top - ( h * arrowDirection - h * sideDirection );
 
                            bool selected = HandleUtility.nearestControl == s_OrientationControlIDs[i];
+
+                           if(selected)
+                               EditorGUIUtility.AddCursorRect(new Rect(0,0,Screen.width, Screen.height), MouseCursor.RotateArrow);
+
                            Color color = selected
                                ? EditorHandleDrawing.edgeSelectedColor
                                : k_BoundsHandleColor;
