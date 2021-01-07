@@ -225,12 +225,9 @@ namespace UnityEditor.ProBuilder
                 var b1 = ProBuilderEditor.instance != null;
                 var b2 = ProBuilderEditor.selectMode.ContainsFlag(validSelectModes);
                 var b3 = !ProBuilderEditor.selectMode.ContainsFlag(SelectMode.InputTool);
-                var b4 = typeof(VertexManipulationTool).IsAssignableFrom(ToolManager.activeToolType);
-                //Disable the menu action whenever a custom EditorTool is enabled
                 return b1
                        && b2
-                       && b3
-                       && b4;
+                       && b3;
             }
         }
 

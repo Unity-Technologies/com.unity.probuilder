@@ -99,7 +99,7 @@ namespace UnityEngine.ProBuilder.Shapes
             m_Properties.m_Length = size.z;
         }
 
-        public void UpdateComponent(PivotLocation pivotLocation)
+        public void UpdateComponent()
         {
             //Recenter shape
             m_Shape.ResetPivot(mesh);
@@ -118,8 +118,11 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public void Rebuild(bool resetRotation = false)
         {
-            if( gameObject== null ||gameObject.hideFlags != HideFlags.None )
+            if(gameObject == null || gameObject.hideFlags != HideFlags.None)
+            {
+                UpdateProperties();
                 return;
+            }
 
             m_Shape.RebuildMesh(mesh, size);
             m_Edited = false;

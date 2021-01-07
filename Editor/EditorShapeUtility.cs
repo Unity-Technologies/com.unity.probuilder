@@ -158,7 +158,6 @@ namespace UnityEditor.ProBuilder
             public Vector3 CenterPosition;
             public Vector3 Normal;
             public Vector3[] Points;
-            public Color m_Color = Color.white;
 
             public bool IsVisible
             {
@@ -185,75 +184,68 @@ namespace UnityEditor.ProBuilder
             {
                 CenterPosition = centerPosition;
                 Normal = normal;
-
-                if(Normal == Vector3.up || Normal == Vector3.down)
-                    m_Color = Color.green;
-                else if(Normal == Vector3.right || Normal == Vector3.left)
-                    m_Color = Color.red;
-                else if(Normal == Vector3.forward || Normal == Vector3.back)
-                    m_Color = Color.blue;
             }
         }
 
-        public static void UpdateFaces(Bounds bounds, FaceData[] faces)
+        public static void UpdateFaces(Bounds bounds, Vector3 scale, FaceData[] faces)
         {
             if(faces.Length != 6)
                 faces = new FaceData[6];
 
             Vector3 extents = bounds.extents;
 
-            Vector3 pointX0Y0Z0 = new Vector3(-extents.x, -extents.y, -extents.z);
-            Vector3 pointX1Y0Z0 = new Vector3(extents.x, -extents.y, -extents.z);
-            Vector3 pointX0Y1Z0 = new Vector3(-extents.x, extents.y, -extents.z);
-            Vector3 pointX0Y0Z1 = new Vector3(-extents.x, -extents.y, extents.z);
-            Vector3 pointX1Y1Z0 = new Vector3(extents.x, extents.y, -extents.z);
-            Vector3 pointX1Y0Z1 = new Vector3(extents.x, -extents.y, extents.z);
-            Vector3 pointX0Y1Z1 = new Vector3(-extents.x, extents.y, extents.z);
-            Vector3 pointX1Y1Z1 = new Vector3(extents.x, extents.y, extents.z);
+            Vector3 pointX0Y0Z0 = Vector3.Scale(new Vector3(-extents.x, -extents.y, -extents.z), scale);
+            Vector3 pointX1Y0Z0 = Vector3.Scale(new Vector3(extents.x, -extents.y, -extents.z), scale);
+            Vector3 pointX0Y1Z0 = Vector3.Scale(new Vector3(-extents.x, extents.y, -extents.z), scale);
+            Vector3 pointX0Y0Z1 = Vector3.Scale(new Vector3(-extents.x, -extents.y, extents.z), scale);
+            Vector3 pointX1Y1Z0 = Vector3.Scale(new Vector3(extents.x, extents.y, -extents.z), scale);
+            Vector3 pointX1Y0Z1 = Vector3.Scale(new Vector3(extents.x, -extents.y, extents.z), scale);
+            Vector3 pointX0Y1Z1 = Vector3.Scale(new Vector3(-extents.x, extents.y, extents.z), scale);
+            Vector3 pointX1Y1Z1 = Vector3.Scale(new Vector3(extents.x, extents.y, extents.z), scale);
 
             // -X
-            var pos = -new Vector3(extents.x, 0, 0);
-            faces[0].SetData(pos, -Vector3.right);
+            var pos = -new Vector3(extents.x * scale.x, 0, 0);
+            faces[0].SetData(pos, -(scale.x * Vector3.right).normalized);
             faces[0].Points[0] = pointX0Y1Z1;
             faces[0].Points[1] = pointX0Y0Z1;
             faces[0].Points[2] = pointX0Y0Z0;
             faces[0].Points[3] = pointX0Y1Z0;
 
             // +X
-            pos = new Vector3(extents.x, 0, 0);
-            faces[1].SetData(pos, Vector3.right);
+            pos = new Vector3(extents.x * scale.x, 0, 0);
+            faces[1].SetData(pos, (scale.x * Vector3.right).normalized);
             faces[1].Points[0] = pointX1Y1Z1;
             faces[1].Points[1] = pointX1Y0Z1;
             faces[1].Points[2] = pointX1Y0Z0;
             faces[1].Points[3] = pointX1Y1Z0;
 
             // -Y
-            pos = -new Vector3(0, extents.y, 0);
-            faces[2].SetData(pos, -Vector3.up);
+            pos = -new Vector3(0, extents.y * scale.y, 0);
+            faces[2].SetData(pos, -(scale.y * Vector3.up).normalized);
             faces[2].Points[0] = pointX1Y0Z1;
             faces[2].Points[1] = pointX0Y0Z1;
             faces[2].Points[2] = pointX0Y0Z0;
             faces[2].Points[3] = pointX1Y0Z0;
 
             // +Y
-            pos = new Vector3(0, extents.y, 0);
-            faces[3].SetData(pos, Vector3.up);
+            pos = new Vector3(0, extents.y * scale.y, 0);
+            faces[3].SetData(pos, (scale.y *Vector3.up).normalized);
             faces[3].Points[0] = pointX1Y1Z1;
             faces[3].Points[1] = pointX0Y1Z1;
             faces[3].Points[2] = pointX0Y1Z0;
             faces[3].Points[3] = pointX1Y1Z0;
 
             // -Z
-            pos = - new Vector3(0, 0, extents.z);
-            faces[4].SetData(pos, -Vector3.forward);
+            pos = -new Vector3(0, 0, extents.z * scale.z);
+            faces[4].SetData(pos, -(scale.z * Vector3.forward).normalized);
             faces[4].Points[0] = pointX1Y1Z0;
             faces[4].Points[1] = pointX1Y0Z0;
             faces[4].Points[2] = pointX0Y0Z0;
             faces[4].Points[3] = pointX0Y1Z0;
 
             // +Z
-            pos = new Vector3(0, 0, extents.z);
-            faces[5].SetData(pos, Vector3.forward);
+            pos = new Vector3(0, 0, extents.z * scale.z);
+            faces[5].SetData(pos, (scale.z * Vector3.forward).normalized);
             faces[5].Points[0] = pointX1Y1Z1;
             faces[5].Points[1] = pointX1Y0Z1;
             faces[5].Points[2] = pointX0Y0Z1;

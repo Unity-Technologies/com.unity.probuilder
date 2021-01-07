@@ -97,10 +97,12 @@ namespace UnityEditor.ProBuilder
                     foreach(var comp in targets)
                     {
                         var shapeComponent = comp as ShapeComponent;
+                        UndoUtility.RecordComponents<Transform, ProBuilderMesh, ShapeComponent>(shapeComponent.GetComponents(typeof(Component)),"Reset Shape");
                         if( shapeComponent.edited )
                         {
                             shapeComponent.edited = false;
-                            shapeComponent.Rebuild();
+                            shapeComponent.UpdateComponent();
+                            ProBuilderEditor.Refresh();
                         }
                     }
                 }
@@ -149,7 +151,7 @@ namespace UnityEditor.ProBuilder
                         {
                             if(tool != null)
                                 DrawShapeTool.s_ActiveShapeIndex.value = m_ActiveShapeIndex;
-                            UndoUtility.RegisterCompleteObjectUndo(shapeComponent, "Change Shape");
+                            UndoUtility.RecordComponents<Transform, ProBuilderMesh, ShapeComponent>(shapeComponent.GetComponents(typeof(Component)),"Change Shape");
                             shapeComponent.SetShape(EditorShapeUtility.CreateShape(type, shape));
                             ProBuilderEditor.Refresh();
                         }
@@ -176,7 +178,7 @@ namespace UnityEditor.ProBuilder
                     if(!shapeComponent.edited)
                     {
                         UndoUtility.RecordComponents<Transform, ProBuilderMesh, ShapeComponent>(shapeComponent.GetComponents(typeof(Component)),"Resize Shape");
-                        shapeComponent.UpdateComponent(EditorUtility.newShapePivotLocation);
+                        shapeComponent.UpdateComponent();
                         if(tool != null)
                             tool.SetBounds(shapeComponent.size);
                         EditorShapeUtility.SaveParams(shapeComponent.shape);

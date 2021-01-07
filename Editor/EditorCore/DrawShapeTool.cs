@@ -39,11 +39,6 @@ namespace UnityEditor.ProBuilder
         internal static readonly Color k_BoundsColor = new Color(.2f, .4f, .8f, 1f);
 
         readonly GUIContent k_ShapeTitle = new GUIContent("Draw Shape");
-        GUIContent m_SnapAngleContent;
-
-        [Range(1,90)]
-        [SerializeField]
-        protected int m_snapAngle = 15;
 
         internal static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
         internal static Pref<Vector3> s_Size = new Pref<Vector3>("ShapeBuilder.Size", Vector3.zero);
@@ -105,8 +100,6 @@ namespace UnityEditor.ProBuilder
                 text = "Draw Shape Tool",
                 tooltip = "Draw Shape Tool"
             };
-
-            m_SnapAngleContent = new GUIContent("Rotation Snap", L10n.Tr("Defines an angle in [1,90] to snap rotation."));
 
             Undo.undoRedoPerformed += HandleUndoRedoPerformed;
             MeshSelection.objectSelectionChanged += OnSelectionChanged;
@@ -299,10 +292,9 @@ namespace UnityEditor.ProBuilder
             DrawShapeGUI();
 
             EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snapping", EditorSnapSettings.gridSnapEnabled);
-            m_snapAngle = EditorGUILayout.IntSlider(m_SnapAngleContent, m_snapAngle, 1, 90);
 
             string foldoutName = "New Shape Settings";
-            if(currentShapeInOverlay != null &&  currentShapeInOverlay == m_LastShapeCreated)
+            if(currentShapeInOverlay == m_LastShapeCreated)
                 foldoutName = "Settings (" + m_LastShapeCreated.name + ")";
 
             Editor.CreateCachedEditor(currentShapeInOverlay, typeof(ShapeComponentEditor), ref m_ShapeEditor);
