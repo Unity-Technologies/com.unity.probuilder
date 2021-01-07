@@ -102,6 +102,10 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
+            // Repaint to visualize the placement preview dot
+            if (evt.type == EventType.MouseMove && HandleUtility.nearestControl == tool.controlID)
+                HandleUtility.Repaint();
+
             if(evt.type == EventType.Repaint)
             {
                 if(GUIUtility.hotControl == 0 && HandleUtility.nearestControl == tool.controlID)
