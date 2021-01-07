@@ -143,9 +143,9 @@ namespace UnityEngine.ProBuilder.Shapes
             {
                 m_Content.text = "Thickness";
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Thickness"), m_Content);
-                m_Content.text = "Thickness";
+                m_Content.text = "Sides Count";
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("m_NumberOfSides"), m_Content);
-                m_Content.text = "Thickness";
+                m_Content.text = "Height Segments";
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HeightSegments"), m_Content);
             }
 

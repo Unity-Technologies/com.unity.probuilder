@@ -70,7 +70,10 @@ namespace UnityEditor.ProBuilder
 
         void UpdateShapeBase(Ray ray, float distance)
         {
-            tool.m_BB_OppositeCorner = tool.GetPoint(ray.GetPoint(distance));
+            var deltaPoint = ray.GetPoint(distance) - tool.m_BB_Origin;
+            deltaPoint = Quaternion.Inverse(tool.m_PlaneRotation) * deltaPoint;
+            deltaPoint = tool.GetPoint(deltaPoint, Event.current.control);
+            tool.m_BB_OppositeCorner = tool.m_PlaneRotation * deltaPoint + tool.m_BB_Origin;
             tool.m_BB_HeightCorner = tool.m_BB_OppositeCorner;
 
             var dragDirection = tool.m_BB_OppositeCorner - tool.m_BB_Origin;

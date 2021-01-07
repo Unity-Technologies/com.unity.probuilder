@@ -324,6 +324,7 @@ namespace UnityEditor.ProBuilder
             Refresh();
             if (selectModeChanged != null)
                 selectModeChanged(ProBuilderToolManager.selectMode);
+            Repaint();
         }
 
         void BeforeMeshModification(IEnumerable<ProBuilderMesh> meshes)
@@ -370,7 +371,7 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         public static void Refresh(bool vertexCountChanged = true)
         {
-            if (instance != null)
+            if(instance != null)
                 instance.UpdateSelection(vertexCountChanged);
         }
 

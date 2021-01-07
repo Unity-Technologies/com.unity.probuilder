@@ -160,13 +160,14 @@ namespace UnityEditor.ProBuilder
         }
 
         // Returns a local space point,
-        public Vector3 GetPoint(Vector3 point)
+        public Vector3 GetPoint(Vector3 point, bool useIncrementSnap = false)
         {
+            if(useIncrementSnap)
+                return ProBuilderSnapping.Snap(point, EditorSnapping.incrementalSnapMoveValue);
+
             if (m_IsOnGrid)
-            {
-                Vector3 snapMask = ProBuilderSnapping.GetSnappingMaskBasedOnNormalVector(m_Plane.normal);
-                return ProBuilderSnapping.Snap(point, Vector3.Scale(EditorSnapping.activeMoveSnapValue, snapMask));
-            }
+                return ProBuilderSnapping.Snap(point, EditorSnapping.activeMoveSnapValue);
+
             return point;
         }
 

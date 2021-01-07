@@ -55,7 +55,11 @@ namespace UnityEditor.ProBuilder
                         Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
                         Vector3 heightPoint = Math.GetNearestPointRayRay(tool.m_BB_OppositeCorner, tool.m_Plane.normal,
                             ray.origin, ray.direction);
-                        tool.m_BB_HeightCorner = EditorSnapping.MoveSnap(heightPoint);
+
+                        var deltaPoint = heightPoint - tool.m_BB_OppositeCorner;
+                        deltaPoint = Quaternion.Inverse(tool.m_PlaneRotation) * deltaPoint;
+                        deltaPoint = tool.GetPoint(deltaPoint, evt.control);
+                        tool.m_BB_HeightCorner = tool.m_PlaneRotation * deltaPoint + tool.m_BB_OppositeCorner;
                         tool.RebuildShape();
                         break;
 
