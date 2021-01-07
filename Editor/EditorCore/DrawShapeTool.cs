@@ -86,10 +86,6 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        static DrawShapeTool()
-        {
-        }
-
         void OnEnable()
         {
             m_CurrentState = InitStateMachine();
@@ -238,7 +234,7 @@ namespace UnityEditor.ProBuilder
                 m_ShapeComponent.gameObject.hideFlags = HideFlags.None;
                 UndoUtility.RegisterCreatedObjectUndo(m_ShapeComponent.gameObject, "Draw Shape");
             }
-;
+
             m_ShapeComponent.Rebuild(m_Bounds, m_PlaneRotation);
             ProBuilderEditor.Refresh(false);
 
