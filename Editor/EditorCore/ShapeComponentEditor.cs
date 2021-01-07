@@ -5,7 +5,8 @@ using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.UIElements;
-
+using Plane = UnityEngine.ProBuilder.Shapes.Plane;
+using Sprite = UnityEngine.ProBuilder.Shapes.Sprite;
 #if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
 #else
@@ -162,7 +163,8 @@ namespace UnityEditor.ProBuilder
 
                 EditorGUILayout.PropertyField(m_ShapeWidthProperty, k_ShapeWidthLabel);
                 EditorGUILayout.PropertyField(m_ShapeLengthProperty, k_ShapeLengthLabel);
-                EditorGUILayout.PropertyField(m_ShapeHeightProperty, k_ShapeHeightLabel);
+                if(HasMultipleShapeTypes || (m_CurrentShapeType != typeof(Plane) &&  m_CurrentShapeType != typeof(Sprite)))
+                    EditorGUILayout.PropertyField(m_ShapeHeightProperty, k_ShapeHeightLabel);
 
                 EditorGUI.indentLevel--;
             }

@@ -120,12 +120,16 @@ namespace UnityEditor.ProBuilder
                 for(int i = 0; i <Faces.Length; ++i)
                     s_FaceControlIDs[i] = GUIUtility.GetControlID(FocusType.Passive);
 
-                DoOrientationHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
-                DoSizeHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
+                if(shapeComponent.editionBounds.size.x > Mathf.Epsilon
+                   && shapeComponent.editionBounds.size.y > Mathf.Epsilon
+                   && shapeComponent.editionBounds.size.z > Mathf.Epsilon )
+                    DoOrientationHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
+
+                DoSizeHandlesGUI(shapeComponent);
             }
         }
 
-        static void DoSizeHandlesGUI(ShapeComponent shapeComponent, ProBuilderMesh mesh, Bounds bounds)
+        static void DoSizeHandlesGUI(ShapeComponent shapeComponent)
         {
             int faceCount = s_Faces.Length;
 
@@ -136,6 +140,9 @@ namespace UnityEditor.ProBuilder
             for(int i = 0; i < faceCount; i++)
             {
                 var face = Faces[i];
+                if(!face.IsValid)
+                    continue;
+
                 if(Event.current.type == EventType.Repaint)
                 {
                     Color color = k_BoundsHandleColor;
@@ -167,17 +174,13 @@ namespace UnityEditor.ProBuilder
                     if(Event.current.alt)
                         modifier = 2f;
 
+                    var scaleSigns = new Vector3(Mathf.Sign(scale.x), Mathf.Sign(scale.y), Mathf.Sign(scale.z));
                     var scaleInverse = new Vector3(1f/scale.x, 1f/scale.y, 1f/scale.z);
-                    var delta = Vector3.Scale(s_SizeDelta * Math.Abs(s_Faces[i].Normal), scaleInverse);
-                    var faceNormal = shapeComponent.transform.TransformVector(s_Faces[i].Normal);
+                    var delta = Vector3.Scale(Vector3.Scale(s_SizeDelta * Math.Abs(s_Faces[i].Normal), scaleInverse) , scaleSigns);
                     var sizeOffset = ProBuilderSnapping.Snap(modifier * delta, EditorSnapping.activeMoveSnapValue);
 
-                    var sizeDelta = s_OriginalSize + sizeOffset;
-                    sizeOffset.x = sizeDelta.x < 0.001f ? -s_OriginalSize.x + 0.001f : sizeOffset.x;
-                    sizeOffset.y = sizeDelta.y < 0.001f ? -s_OriginalSize.y + 0.001f : sizeOffset.y;
-                    sizeOffset.z = sizeDelta.z < 0.001f ? -s_OriginalSize.z + 0.001f : sizeOffset.z;
-
-                    var center = Event.current.alt ? Vector3.zero : Mathf.Sign(s_SizeDelta)*(sizeOffset.magnitude / 2f) * faceNormal;
+                    var faceNormal = shapeComponent.transform.TransformVector(s_Faces[i].Normal);
+                    var center = Event.current.alt ? Vector3.zero : Vector3.Scale(Mathf.Sign(s_SizeDelta)*(sizeOffset.magnitude / 2f) * faceNormal , scaleSigns);
 
                     ApplyProperties(shapeComponent, s_OriginalCenter + center, s_OriginalSize + sizeOffset);
                 }

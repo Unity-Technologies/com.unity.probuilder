@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
+using Math = System.Math;
 
 namespace UnityEditor.ProBuilder
 {
@@ -158,6 +160,7 @@ namespace UnityEditor.ProBuilder
             public Vector3 CenterPosition;
             public Vector3 Normal;
             public Vector3[] Points;
+            public bool IsValid = true;
 
             public bool IsVisible
             {
@@ -219,21 +222,31 @@ namespace UnityEditor.ProBuilder
             faces[1].Points[2] = pointX1Y0Z0;
             faces[1].Points[3] = pointX1Y1Z0;
 
-            // -Y
-            pos = -new Vector3(0, extents.y * scale.y, 0);
-            faces[2].SetData(pos, -(scale.y * Vector3.up).normalized);
-            faces[2].Points[0] = pointX1Y0Z1;
-            faces[2].Points[1] = pointX0Y0Z1;
-            faces[2].Points[2] = pointX0Y0Z0;
-            faces[2].Points[3] = pointX1Y0Z0;
+            if(extents.y > Mathf.Epsilon)
+            {
+                // -Y
+                pos = -new Vector3(0, extents.y * scale.y, 0);
+                faces[2].SetData(pos, -( scale.y * Vector3.up ).normalized);
+                faces[2].Points[0] = pointX1Y0Z1;
+                faces[2].Points[1] = pointX0Y0Z1;
+                faces[2].Points[2] = pointX0Y0Z0;
+                faces[2].Points[3] = pointX1Y0Z0;
+                faces[2].IsValid = true;
 
-            // +Y
-            pos = new Vector3(0, extents.y * scale.y, 0);
-            faces[3].SetData(pos, (scale.y *Vector3.up).normalized);
-            faces[3].Points[0] = pointX1Y1Z1;
-            faces[3].Points[1] = pointX0Y1Z1;
-            faces[3].Points[2] = pointX0Y1Z0;
-            faces[3].Points[3] = pointX1Y1Z0;
+                // +Y
+                pos = new Vector3(0, extents.y * scale.y, 0);
+                faces[3].SetData(pos, ( scale.y * Vector3.up ).normalized);
+                faces[3].Points[0] = pointX1Y1Z1;
+                faces[3].Points[1] = pointX0Y1Z1;
+                faces[3].Points[2] = pointX0Y1Z0;
+                faces[3].Points[3] = pointX1Y1Z0;
+                faces[3].IsValid = true;
+            }
+            else
+            {
+                faces[2].IsValid = false;
+                faces[3].IsValid = false;
+            }
 
             // -Z
             pos = -new Vector3(0, 0, extents.z * scale.z);
@@ -250,7 +263,6 @@ namespace UnityEditor.ProBuilder
             faces[5].Points[1] = pointX1Y0Z1;
             faces[5].Points[2] = pointX0Y0Z1;
             faces[5].Points[3] = pointX0Y1Z1;
-
         }
 
         internal static bool PointerIsInFace(FaceData face)
