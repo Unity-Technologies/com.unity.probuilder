@@ -3,15 +3,15 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    public enum StepGenerationType
+    {
+        Height,
+        Count
+    }
+
     [Shape("Stairs")]
     public class Stairs : Shape
     {
-        public enum StepGenerationType
-        {
-            Height,
-            Count
-        }
-
         [SerializeField]
         StepGenerationType m_StepGenerationType = StepGenerationType.Count;
 
@@ -60,11 +60,16 @@ namespace UnityEngine.ProBuilder.Shapes
             var stepsHeight = Mathf.Min(m_StepsHeight, size.y);
             if(useStepHeight)
             {
-                steps = (int) ( size.y / stepsHeight );
-                if(m_HomogeneousSteps)
-                    stepsHeight = size.y / steps;
+                if(size.y > 0)
+                {
+                    steps = (int) ( size.y / stepsHeight );
+                    if(m_HomogeneousSteps)
+                        stepsHeight = size.y / steps;
+                    else
+                        steps += ( ( size.y / stepsHeight ) - steps ) > 0.001f ? 1 : 0;
+                }
                 else
-                    steps += ( ( size.y / stepsHeight ) - steps ) > 0.001f ? 1 : 0;
+                    steps = 1;
             }
 
             // 4 vertices per quad, 2 quads per step.
@@ -455,13 +460,21 @@ namespace UnityEngine.ProBuilder.Shapes
             if(s_foldoutEnabled)
             {
                 var typeProperty = property.FindPropertyRelative("m_StepGenerationType");
-                EditorGUILayout.PropertyField(typeProperty, k_StepGenerationContent);
-                if(typeProperty.enumValueIndex == (int)Stairs.StepGenerationType.Count)
-                    EditorGUILayout.PropertyField(property.FindPropertyRelative("m_StepsCount"), k_StepsCountContent);
+                StepGenerationType typeEnum = (StepGenerationType)(typeProperty.intValue);
+                EditorGUI.BeginChangeCheck();
+                typeEnum = (StepGenerationType)EditorGUILayout.EnumPopup(k_StepGenerationContent, typeEnum);
+                if(EditorGUI.EndChangeCheck())
+                    typeProperty.enumValueIndex = (int)typeEnum;
+
+                if(typeEnum == StepGenerationType.Count)
+                    EditorGUILayout.PropertyField(property.FindPropertyRelative("m_StepsCount"),
+                        k_StepsCountContent);
                 else
                 {
-                    EditorGUILayout.PropertyField(property.FindPropertyRelative("m_StepsHeight"), k_StepsHeightContent);
-                    EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HomogeneousSteps"), k_HomogeneousStepsContent);
+                    EditorGUILayout.PropertyField(property.FindPropertyRelative("m_StepsHeight"),
+                        k_StepsHeightContent);
+                    EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HomogeneousSteps"),
+                        k_HomogeneousStepsContent);
                 }
 
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Circumference"), k_CircumferenceContent);
