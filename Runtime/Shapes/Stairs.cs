@@ -61,7 +61,7 @@ namespace UnityEngine.ProBuilder.Shapes
             var stepsHeight = Mathf.Min(m_StepsHeight, stairsHeight);
             if(useStepHeight)
             {
-                if(size.y > 0)
+                if(stairsHeight > 0)
                 {
                     steps = (int) ( stairsHeight / stepsHeight );
                     if(m_HomogeneousSteps)
@@ -231,11 +231,23 @@ namespace UnityEngine.ProBuilder.Shapes
             var stepsHeight = Mathf.Min(m_StepsHeight, size.y);
             if(useStepHeight)
             {
-                steps = (int) ( height / m_StepsHeight );
-                if(m_HomogeneousSteps)
-                    stepsHeight = height / steps;
+                if(height > 0)
+                {
+                    steps = (int) ( height / m_StepsHeight );
+                    if(m_HomogeneousSteps)
+                        stepsHeight = height / steps;
+                    else
+                        steps += ( ( height / m_StepsHeight ) - steps ) > 0.001f ? 1 : 0;
+                }
                 else
-                    steps += ( ( height / m_StepsHeight ) - steps ) > 0.001f ? 1 : 0;
+                    steps = 1;
+            }
+
+            //Clamping max steps number
+            if(steps > 256)
+            {
+                steps = 256;
+                stepsHeight = height / steps;
             }
 
             // 4 vertices per quad, vertical step first, then floor step can be 3 or 4 verts depending on
@@ -438,7 +450,9 @@ namespace UnityEngine.ProBuilder.Shapes
 
             mesh.RebuildWithPositionsAndFaces(positions, faces);
 
-            m_ShapeBox = mesh.mesh.bounds;
+            mesh.TranslateVerticesInWorldSpace(mesh.mesh.triangles, mesh.transform.TransformDirection(-mesh.mesh.bounds.center));
+            m_ShapeBox.center = Vector3.zero;
+            m_ShapeBox.size = mesh.mesh.bounds.size;
         }
     }
 
