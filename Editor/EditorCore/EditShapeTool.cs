@@ -1,15 +1,21 @@
-using System;
 using System.Linq;
 using UnityEngine;
 using UnityEditor.EditorTools;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using Math = UnityEngine.ProBuilder.Math;
 using Object = UnityEngine.Object;
 
 using FaceData = UnityEditor.ProBuilder.EditorShapeUtility.FaceData;
+using Plane = UnityEngine.ProBuilder.Shapes.Plane;
+using Sprite = UnityEngine.ProBuilder.Shapes.Sprite;
+
+#if !UNITY_2020_2_OR_NEWER
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+#else
+using ToolManager = UnityEditor.EditorTools.ToolManager;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -69,12 +75,48 @@ namespace UnityEditor.ProBuilder
             m_OverlayTitle = new GUIContent("Edit Shape Tool");
             for(int i = 0; i < s_ArrowsLines.Length; i++)
                 s_ArrowsLines[i] = new Vector3[3];
+
+#if !UNITY_2020_2_OR_NEWER
+            ToolManager.activeToolChanging += ActiveToolChanging;
+#endif
+            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+
         }
 
         void OnDisable()
         {
+#if !UNITY_2020_2_OR_NEWER
+            ToolManager.activeToolChanging -= ActiveToolChanging;
+#endif
+            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
             if(m_ShapeEditor != null)
                 DestroyImmediate(m_ShapeEditor);
+        }
+
+#if !UNITY_2020_2_OR_NEWER
+        public void ActiveToolChanging()
+        {
+            if(ToolManager.IsActiveTool(this))
+                EditorApplication.delayCall += () => ProBuilderEditor.selectMode = SelectMode.Object;
+        }
+#else
+        public override void OnActivated()
+        {
+            base.OnActivated();
+            EditorApplication.delayCall += () => ProBuilderEditor.selectMode = SelectMode.Object;
+        }
+
+        public override void OnWillBeDeactivated()
+        {
+            base.OnWillBeDeactivated();
+            EditorApplication.delayCall += () => ProBuilderEditor.ResetToLastSelectMode();
+        }
+#endif
+
+        public void OnSelectModeChanged(SelectMode selectMode)
+        {
+            if(ToolManager.IsActiveTool(this) && selectMode != SelectMode.Object)
+                ToolManager.RestorePreviousTool();
         }
 
         public override void OnToolGUI(EditorWindow window)
@@ -136,10 +178,11 @@ namespace UnityEditor.ProBuilder
 
             var evt = Event.current;
 
+            var is2D = shapeComponent.shape is Plane || shapeComponent.shape is Sprite;
             for(int i = 0; i < faceCount; i++)
             {
                 var face = Faces[i];
-                if(!face.IsValid)
+                if(is2D && !face.IsValid)
                     continue;
 
                 if(Event.current.type == EventType.Repaint)

@@ -73,6 +73,9 @@ namespace UnityEngine.ProBuilder.Shapes
             {
                 m_EditionBounds.center = m_Shape.shapeBox.center;
                 m_EditionBounds.size = m_Shape.size;
+                if(Mathf.Abs(m_Shape.shapeBox.size.y) < Mathf.Epsilon)
+                    m_EditionBounds.size = new Vector3(m_Shape.size.x, 0f, m_Shape.size.z);
+
                 return m_EditionBounds;
             }
         }
@@ -110,7 +113,6 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public void Rebuild(Bounds bounds, Quaternion rotation)
         {
-            //size = Math.Abs(bounds.size);
             size = bounds.size;
             transform.position = bounds.center;
             transform.rotation = rotation;
@@ -148,6 +150,20 @@ namespace UnityEngine.ProBuilder.Shapes
                 var newSize = bounds.size;
                 newCenter.y = 0;
                 newSize.y = 0;
+                bounds.center = newCenter;
+                bounds.size = newSize;
+                m_Shape.shapeBox = bounds;
+            }
+            //Else if coming from a 2D-state and being back to a 3D shape
+            //No changes is pivot is centered
+            else if(pivotLocation == PivotLocation.FirstVertex
+                    && m_Shape.shapeBox.size.y == 0 && size.y != 0)
+            {
+                Bounds bounds = m_Shape.shapeBox;
+                var newCenter = bounds.center;
+                var newSize = bounds.size;
+                newCenter.y += size.y / 2f;
+                newSize.y = size.y;
                 bounds.center = newCenter;
                 bounds.size = newSize;
                 m_Shape.shapeBox = bounds;
