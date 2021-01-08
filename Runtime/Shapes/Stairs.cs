@@ -19,7 +19,7 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         float m_StepsHeight = .2f;
 
-        [Min(1)]
+        [Range(1, 256)]
         [SerializeField]
         int m_StepsCount = 10;
 
@@ -57,19 +57,27 @@ namespace UnityEngine.ProBuilder.Shapes
         {
             var useStepHeight = m_StepGenerationType == StepGenerationType.Height;
 
-            var stepsHeight = Mathf.Min(m_StepsHeight, size.y);
+            var stairsHeight = size.y;
+            var stepsHeight = Mathf.Min(m_StepsHeight, stairsHeight);
             if(useStepHeight)
             {
                 if(size.y > 0)
                 {
-                    steps = (int) ( size.y / stepsHeight );
+                    steps = (int) ( stairsHeight / stepsHeight );
                     if(m_HomogeneousSteps)
-                        stepsHeight = size.y / steps;
+                        stepsHeight = stairsHeight / steps;
                     else
-                        steps += ( ( size.y / stepsHeight ) - steps ) > 0.001f ? 1 : 0;
+                        steps += ( ( stairsHeight / stepsHeight ) - steps ) > 0.001f ? 1 : 0;
                 }
                 else
                     steps = 1;
+            }
+
+            //Clamping max steps number
+            if(steps > 256)
+            {
+                steps = 256;
+                stepsHeight = stairsHeight / steps;
             }
 
             // 4 vertices per quad, 2 quads per step.
