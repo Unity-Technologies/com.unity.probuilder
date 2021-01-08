@@ -1205,6 +1205,11 @@ namespace UnityEngine.ProBuilder
             return new Vector3(Mathf.Abs(v.x), Mathf.Abs(v.y), Mathf.Abs(v.z));
         }
 
+        internal static Vector3 Sign(this Vector3 v)
+        {
+            return new Vector3(Mathf.Sign(v.x), Mathf.Sign(v.y), Mathf.Sign(v.z));
+        }
+
         internal static float Sum(this Vector3 v)
         {
             return Mathf.Abs(v.x) + Mathf.Abs(v.y) + Mathf.Abs(v.z);

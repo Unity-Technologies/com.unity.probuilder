@@ -581,6 +581,14 @@ namespace UnityEngine.ProBuilder
                 positions[i] += currentSize.center;
             }
 
+            var mirroring = Math.Sign(sizeToFit);
+            bool flipFaces = (mirroring.x * mirroring.y * mirroring.z) < 0;
+            if(flipFaces)
+            {
+                foreach(Face face in mesh.facesInternal)
+                    face.Reverse();
+            }
+
             mesh.Rebuild();
         }
 

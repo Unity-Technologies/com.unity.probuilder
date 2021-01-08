@@ -91,7 +91,6 @@ namespace UnityEditor.ProBuilder
                         tool.m_BB_HeightCorner = tool.m_BB_Origin;
                         tool.m_BB_OppositeCorner = tool.m_BB_Origin;
 
-
                         return NextState();
                     }
                     else if(evt.shift)

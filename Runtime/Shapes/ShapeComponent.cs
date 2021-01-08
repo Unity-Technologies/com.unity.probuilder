@@ -1,4 +1,5 @@
 ﻿using System;
+using Unity.Collections;
 using UnityEditor;
 using UnityEngine.ProBuilder.MeshOperations;
 
@@ -109,7 +110,8 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public void Rebuild(Bounds bounds, Quaternion rotation)
         {
-            size = Math.Abs(bounds.size);
+            //size = Math.Abs(bounds.size);
+            size = bounds.size;
             transform.position = bounds.center;
             transform.rotation = rotation;
 
@@ -124,7 +126,7 @@ namespace UnityEngine.ProBuilder.Shapes
                 return;
             }
 
-            m_Shape.RebuildMesh(mesh, size);
+            m_Shape.RebuildMesh(mesh, Math.Abs(size));
             m_Edited = false;
 
             Quaternion rot = resetRotation ? Quaternion.identity : rotation;
@@ -139,6 +141,17 @@ namespace UnityEngine.ProBuilder.Shapes
         public void SetShape(Shape shape)
         {
             m_Shape = shape;
+            if(m_Shape is Plane || m_Shape is Sprite)
+            {
+                Bounds bounds = m_Shape.shapeBox;
+                var newCenter = bounds.center;
+                var newSize = bounds.size;
+                newCenter.y = 0;
+                newSize.y = 0;
+                bounds.center = newCenter;
+                bounds.size = newSize;
+                m_Shape.shapeBox = bounds;
+            }
             m_Shape.ResetPivot(mesh);
             Rebuild();
         }

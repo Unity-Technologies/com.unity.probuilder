@@ -197,12 +197,10 @@ namespace UnityEditor.ProBuilder
             var right = HandleUtility.PointOnLineParameter(m_BB_OppositeCorner, m_BB_Origin, m_PlaneRight);
 
             var heightDirection = m_BB_HeightCorner - m_BB_OppositeCorner;
-            if(Mathf.Sign(Vector3.Dot(m_Plane.normal, heightDirection)) < 0)
-                m_Plane.Flip();
-            var height = heightDirection.magnitude;
+            var height = heightDirection.y;
 
             m_Bounds.size = forward * Vector3.forward + right * Vector3.right + height * Vector3.up;
-            m_Bounds.center = m_BB_Origin + 0.5f * ( m_BB_OppositeCorner - m_BB_Origin ) + m_Plane.normal * (height * .5f);
+            m_Bounds.center = m_BB_Origin + 0.5f * ( m_BB_OppositeCorner - m_BB_Origin ) + 0.5f * (m_BB_HeightCorner - m_BB_OppositeCorner);
 
             //Prevent Z-fighting with the drawing surface
             if(Mathf.Abs(m_Bounds.center.y) < 0.0001f)
@@ -214,19 +212,6 @@ namespace UnityEditor.ProBuilder
         internal void RebuildShape()
         {
             RecalculateBounds();
-
-            if(m_Bounds.size.sqrMagnitude < .01f
-               || Mathf.Abs(m_Bounds.extents.x) < 0.001f
-               || Mathf.Abs(m_Bounds.extents.z) < 0.001f)
-            {
-                if(m_ShapeComponent.mesh.vertexCount > 0)
-                {
-                    m_ShapeComponent.mesh.Clear();
-                    m_ShapeComponent.mesh.Rebuild();
-                    ProBuilderEditor.Refresh(true);
-                }
-                return;
-            }
 
             if (!m_IsShapeInit)
             {
