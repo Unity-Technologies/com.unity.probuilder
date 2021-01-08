@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- Fixed the insertion of new points on a Poly Shape being unreliable. 
+- Fixed the insertion of new points on a Poly Shape being unreliable.
+- Fixed rect selection not working with Universal Render Pipeline.
 - [case: 1281254] Fixed shader warning in URP for UNITY_PASS_FORWARDBASE macro redefinition.
 - [case: 1294866] Fix annotation warning on InitializeOnLoad call. 
 
