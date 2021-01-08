@@ -16,7 +16,10 @@ namespace UnityEditor.ProBuilder
 
         static bool s_Initialized;
 
-        static Material s_SrpDefaultMaterial;
+        static Material s_EditorDefaultMaterial;
+        static Material s_ShapePreviewMaterial;
+
+        internal static readonly Color previewColor = new Color(.5f, .9f, 1f, .56f);
 
         [UserSetting("Mesh Settings", "Material", "The default material to be applied to newly created shapes.")]
         static Pref<Material> s_DefaultMaterial = new Pref<Material>("mesh.userMaterial", null);
@@ -27,26 +30,36 @@ namespace UnityEditor.ProBuilder
                 return;
 
             s_Initialized = true;
+            s_EditorDefaultMaterial = null;
 
-            s_SrpDefaultMaterial = null;
-
-            for (int i = 0, c = k_StandardRenderPipelineDefaultMaterials.Length; i < c && s_SrpDefaultMaterial == null; i++)
+            for (int i = 0, c = k_StandardRenderPipelineDefaultMaterials.Length; i < c && s_EditorDefaultMaterial == null; i++)
             {
                 string search = k_StandardRenderPipelineDefaultMaterials[i] + " t:Material";
                 string[] materials = AssetDatabase.FindAssets(search, new[] { "Assets", "Packages" });
 
                 foreach (var asset in materials)
                 {
-                    s_SrpDefaultMaterial = AssetDatabase.LoadAssetAtPath<Material>(AssetDatabase.GUIDToAssetPath(asset));
+                    var mat = AssetDatabase.LoadAssetAtPath<Material>(AssetDatabase.GUIDToAssetPath(asset));
 
-                    if (s_SrpDefaultMaterial != null
-                        && s_SrpDefaultMaterial.shader != null
-                        && s_SrpDefaultMaterial.shader.isSupported)
+                    if (mat != null && mat.shader != null && mat.shader.isSupported)
+                    {
+                        s_EditorDefaultMaterial = mat;
                         break;
-
-                    s_SrpDefaultMaterial = null;
+                    }
                 }
             }
+
+            if (s_EditorDefaultMaterial == null)
+                s_EditorDefaultMaterial = BuiltinMaterials.defaultMaterial;
+
+            s_ShapePreviewMaterial = new Material(s_EditorDefaultMaterial.shader);
+            s_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
+
+            if (s_ShapePreviewMaterial.HasProperty("_MainTex"))
+                s_ShapePreviewMaterial.mainTexture = (Texture2D)Resources.Load("Textures/GridBox_Default");
+
+            if (s_ShapePreviewMaterial.HasProperty("_Color"))
+                s_ShapePreviewMaterial.SetColor("_Color", previewColor);
         }
 
         internal static Texture2D GetPreviewTexture(Material material)
@@ -108,17 +121,19 @@ namespace UnityEditor.ProBuilder
             var mat = (Material)s_DefaultMaterial;
             if (mat != null)
                 return mat;
-            return GetDefaultMaterial();
+            return GetSrpDefaultMaterial();
         }
 
-        internal static Material GetDefaultMaterial()
+        internal static Material GetSrpDefaultMaterial()
         {
             Init();
+            return s_EditorDefaultMaterial;
+        }
 
-            if (s_SrpDefaultMaterial != null)
-                return s_SrpDefaultMaterial;
-
-            return BuiltinMaterials.defaultMaterial;
+        internal static Material GetShapePreviewMaterial()
+        {
+            Init();
+            return s_ShapePreviewMaterial;
         }
     }
 }

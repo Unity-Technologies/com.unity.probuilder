@@ -39,11 +39,6 @@ namespace UnityEditor.ProBuilder
                 {
                     if(fi.GetValue(this) is IUserSetting setting)
                         setting.Reset();
-                    // if(fi.FieldType.BaseType?.GetGenericTypeDefinition() == typeof(UserSetting<>))
-                    // {
-                    //     var setting = fi.GetValue(this) as IUserSetting;
-                    //     Debug.Log($"Name: {fi.Name}\nType: {fi.FieldType}\nValue {fi.GetValue(this)}");
-                    // }
                 }
             }
         }
@@ -294,7 +289,7 @@ namespace UnityEditor.ProBuilder
                 m_PreviewObject.name += "-preview";
             }
 
-            m_PreviewObject.GetComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.ShapePreviewMaterial;
+            m_PreviewObject.GetComponent<MeshRenderer>().sharedMaterial = EditorMaterialUtility.GetShapePreviewMaterial();
             EditorUtility.MoveToActiveScene(m_PreviewObject.gameObject);
         }
 
