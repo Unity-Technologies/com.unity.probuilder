@@ -54,7 +54,7 @@ namespace UnityEditor.ProBuilder
         {
             array = new Material[10]
             {
-                BuiltinMaterials.defaultMaterial,
+                EditorMaterialUtility.GetUserMaterial(),
                 null,
                 null,
                 null,
