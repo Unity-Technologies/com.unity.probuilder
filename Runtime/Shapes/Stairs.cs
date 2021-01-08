@@ -33,12 +33,6 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         bool m_Sides = true;
 
-        public int steps
-        {
-            get => m_StepsCount;
-            set => m_StepsCount = value;
-        }
-
         public bool sides
         {
             get => m_Sides;
@@ -59,6 +53,8 @@ namespace UnityEngine.ProBuilder.Shapes
 
             var stairsHeight = size.y;
             var stepsHeight = Mathf.Min(m_StepsHeight, stairsHeight);
+
+            var steps = m_StepsCount;
             if(useStepHeight)
             {
                 if(stairsHeight > 0)
@@ -223,18 +219,19 @@ namespace UnityEngine.ProBuilder.Shapes
             var buildSides = m_Sides;
             var innerRadius = size.z;
             var stairWidth = size.x;
-            var height = size.y;
+            var height = Mathf.Abs(size.y);
             var circumference = m_Circumference;
             bool noInnerSide = innerRadius < Mathf.Epsilon;
             bool useStepHeight = m_StepGenerationType == StepGenerationType.Height;
 
-            var stepsHeight = Mathf.Min(m_StepsHeight, size.y);
-            if(useStepHeight)
+            var stepsHeight = Mathf.Min(m_StepsHeight, height);
+            var steps = m_StepsCount;
+            if(useStepHeight && stepsHeight > 0.01f * m_StepsHeight)
             {
                 if(height > 0)
                 {
                     steps = (int) ( height / m_StepsHeight );
-                    if(m_HomogeneousSteps)
+                    if(m_HomogeneousSteps && steps > 0)
                         stepsHeight = height / steps;
                     else
                         steps += ( ( height / m_StepsHeight ) - steps ) > 0.001f ? 1 : 0;
