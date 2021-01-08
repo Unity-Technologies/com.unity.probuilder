@@ -196,8 +196,8 @@ namespace UnityEditor.ProBuilder
             var forward = HandleUtility.PointOnLineParameter(m_BB_OppositeCorner, m_BB_Origin, m_PlaneForward);
             var right = HandleUtility.PointOnLineParameter(m_BB_OppositeCorner, m_BB_Origin, m_PlaneRight);
 
-            var heightDirection = m_BB_HeightCorner - m_BB_OppositeCorner;
-            var height = heightDirection.y;
+            var localHeight = Quaternion.Inverse(m_PlaneRotation) * (m_BB_HeightCorner - m_BB_OppositeCorner);
+            var height = localHeight.y;
 
             m_Bounds.size = forward * Vector3.forward + right * Vector3.right + height * Vector3.up;
             m_Bounds.center = m_BB_Origin + 0.5f * ( m_BB_OppositeCorner - m_BB_Origin ) + 0.5f * (m_BB_HeightCorner - m_BB_OppositeCorner);
