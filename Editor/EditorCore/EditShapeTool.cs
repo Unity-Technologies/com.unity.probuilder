@@ -53,11 +53,9 @@ namespace UnityEditor.ProBuilder
         static int[] s_FaceControlIDs = new int[6];
 
         //Size Handle management
-        static bool s_InitSizeInteraction = true;
-        static Vector3 s_OriginalSize;
-        static Vector3 s_OriginalCenter;
-        static Vector2 s_MouseStartPosition;
+        static Vector2 s_LastMousePosition;
         static float s_SizeDelta;
+        static Vector3 s_SizeLeftOver;
 
         //Orientation Handle Manipulation
         static float s_CurrentAngle = 0;
@@ -201,29 +199,25 @@ namespace UnityEditor.ProBuilder
 
                 if( (drawFacesHandle || drawFaceOnRepaint) && DoFaceSizeHandle(face, s_FaceControlIDs[i]))
                 {
-                    var scale = shapeComponent.transform.lossyScale;
-                    if(!s_InitSizeInteraction)
-                    {
-                        s_InitSizeInteraction = true;
-                        s_OriginalSize = shapeComponent.size;
-                        s_OriginalCenter = shapeComponent.transform.position
-                                            + Vector3.Scale(shapeComponent.transform.TransformDirection(shapeComponent.shape.shapeBox.center),scale);
-                    }
-
                     float modifier = 1f;
                     if(Event.current.alt)
                         modifier = 2f;
 
                     var shapeSizeSigns = Math.Sign(shapeComponent.size);
+
+                    var scale = shapeComponent.transform.lossyScale;
                     var scaleSigns = Math.Sign(scale);
                     var scaleInverse = new Vector3(1f/scale.x, 1f/scale.y, 1f/scale.z);
+
                     var delta = Vector3.Scale(Vector3.Scale(s_SizeDelta * Math.Abs(s_Faces[i].Normal), scaleInverse) , Vector3.Scale(scale,shapeSizeSigns));
-                    var sizeOffset = ProBuilderSnapping.Snap(modifier * delta, EditorSnapping.activeMoveSnapValue);
+                    delta += s_SizeLeftOver;
+                    var sizeOffset = ProBuilderSnapping.Snap(modifier * delta, evt.shift? EditorSnapping.incrementalSnapMoveValue : Vector3.zero);
+                    s_SizeLeftOver = modifier * delta - sizeOffset;
 
                     var faceNormal = shapeComponent.transform.TransformVector(s_Faces[i].Normal);
                     var center = Event.current.alt ? Vector3.zero : Vector3.Scale(Mathf.Sign(s_SizeDelta)*(sizeOffset.magnitude / 2f) * faceNormal , scaleSigns);
-
-                    ApplyProperties(shapeComponent, s_OriginalCenter + center, s_OriginalSize + sizeOffset);
+                    var currentCenter = shapeComponent.transform.position + Vector3.Scale(shapeComponent.transform.TransformVector(shapeComponent.shape.shapeBox.center),scale);
+                    ApplyProperties(shapeComponent, currentCenter + center, shapeComponent.size + sizeOffset);
                 }
             }
         }
@@ -245,9 +239,9 @@ namespace UnityEditor.ProBuilder
                     {
                         s_CurrentId = controlID;
                         GUIUtility.hotControl = controlID;
-                        s_MouseStartPosition = evt.mousePosition;
-                        s_InitSizeInteraction = false;
+                        s_LastMousePosition = evt.mousePosition;
                         evt.Use();
+                        SceneView.RepaintAll();
                     }
                     break;
                 case EventType.MouseUp:
@@ -270,10 +264,10 @@ namespace UnityEditor.ProBuilder
                 case EventType.MouseDrag:
                     if(s_CurrentId == controlID)
                     {
-                        s_SizeDelta = HandleUtility.CalcLineTranslation(s_MouseStartPosition, Event.current.mousePosition, face.CenterPosition, face.Normal);
+                        s_SizeDelta = HandleUtility.CalcLineTranslation(s_LastMousePosition, evt.mousePosition, face.CenterPosition, face.Normal);
+                        s_LastMousePosition = evt.mousePosition;
                         return true;
                     }
-
                     break;
             }
             return false;
@@ -282,8 +276,8 @@ namespace UnityEditor.ProBuilder
         static void DoOrientationHandlesGUI(ShapeComponent shapeComponent, ProBuilderMesh mesh, Bounds bounds)
         {
             var evt = Event.current;
-            if( GUIUtility.hotControl != 0
-                && !s_OrientationControlIDs.Contains(GUIUtility.hotControl)
+            if( (GUIUtility.hotControl != 0
+                && !s_OrientationControlIDs.Contains(GUIUtility.hotControl))
                 || s_FaceControlIDs.Contains(HandleUtility.nearestControl))
                 return;
 
