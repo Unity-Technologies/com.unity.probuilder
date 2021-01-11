@@ -67,7 +67,7 @@ namespace UnityEditor.ProBuilder
             get { return s_ActiveShapeIndex < 0 ? typeof(Cube) : EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex]; }
         }
 
-        ShapeComponent currentShapeInOverlay
+        internal ShapeComponent currentShapeInOverlay
         {
             get
             {
@@ -129,7 +129,10 @@ namespace UnityEditor.ProBuilder
             if(ToolManager.IsActiveTool(this))
             {
                 if(m_ShapeComponent != null && MeshSelection.activeMesh != m_ShapeComponent.mesh)
+                {
                     m_CurrentState = ShapeState.ResetState();
+                    ToolManager.RestorePreviousTool();
+                }
             }
         }
 
@@ -180,19 +183,41 @@ namespace UnityEditor.ProBuilder
             s_Size.value = size;
         }
 
-        internal void SetBoundsOrigin(Vector3 position)
+        internal void UpdateBounds(Vector3 position)
         {
+            var pivotLocation = EditorUtility.newShapePivotLocation;
+            if(currentShapeInOverlay != null)
+                pivotLocation = currentShapeInOverlay.pivotLocation;
+
             Vector3 size = s_Size.value;
             m_Bounds.size = size;
-            var cornerPosition = position - size / 2f;
-            cornerPosition.y = position.y;
-            cornerPosition = GetPoint(cornerPosition);
-            m_Bounds.center = cornerPosition + new Vector3(size.x/2f,0, size.z/2f) + (size.y / 2f) * m_Plane.normal;
-            m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
 
-            m_BB_Origin = m_Bounds.center - m_PlaneRotation * (size / 2f);
-            m_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);
-            m_BB_OppositeCorner = m_BB_HeightCorner - m_PlaneRotation * new Vector3(0, size.y, 0);
+            Vector3 cornerPosition;
+            switch(pivotLocation)
+            {
+                case PivotLocation.FirstVertex:
+                    cornerPosition = GetPoint(position);
+                    m_Bounds.center = cornerPosition + new Vector3(size.x/2f,0, size.z/2f) + (size.y / 2f) * m_Plane.normal;
+                    m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
+
+                    m_BB_Origin = cornerPosition;
+                    m_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);
+                    m_BB_OppositeCorner = m_BB_HeightCorner - m_PlaneRotation * new Vector3(0, size.y, 0);
+                    break;
+
+                case PivotLocation.Center:
+                default:
+                    cornerPosition = position - size / 2f;
+                    cornerPosition.y = position.y;
+                    cornerPosition = GetPoint(cornerPosition);
+                    m_Bounds.center = cornerPosition + new Vector3(size.x/2f,0, size.z/2f) + (size.y / 2f) * m_Plane.normal;
+                    m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
+
+                    m_BB_Origin = m_Bounds.center - m_PlaneRotation * (size / 2f);
+                    m_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);
+                    m_BB_OppositeCorner = m_BB_HeightCorner - m_PlaneRotation * new Vector3(0, size.y, 0);
+                    break;
+            }
         }
 
         void RecalculateBounds()

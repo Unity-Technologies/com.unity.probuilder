@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEditor.IMGUI.Controls;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.Shapes;
-using ColorUtility = UnityEngine.ProBuilder.ColorUtility;
 using Math = UnityEngine.ProBuilder.Math;
 #if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
@@ -96,7 +91,7 @@ namespace UnityEditor.ProBuilder
                     else if(evt.shift)
                     {
                         m_HitPosition = ray.GetPoint(hit);
-                        tool.SetBoundsOrigin(m_HitPosition);
+                        tool.UpdateBounds(m_HitPosition);
                     }
                 }
             }

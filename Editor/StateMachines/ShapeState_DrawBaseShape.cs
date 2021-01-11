@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 
 namespace UnityEditor.ProBuilder
@@ -93,7 +92,7 @@ namespace UnityEditor.ProBuilder
 
         public void CreateLastShape()
         {
-            var shape = ShapeFactory.Instantiate(DrawShapeTool.activeShapeType).GetComponent<ShapeComponent>();
+            var shape = ShapeFactory.Instantiate(DrawShapeTool.activeShapeType, tool.currentShapeInOverlay.pivotLocation).GetComponent<ShapeComponent>();
 
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
 
