@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEngine.Animations;
 using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
@@ -39,19 +40,20 @@ namespace UnityEngine.ProBuilder.Shapes
             set => m_Sides = value;
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
         {
             if (m_Circumference > 0)
-                BuildCurvedStairs(mesh, meshSize);
+                BuildCurvedStairs(mesh, meshSize, rotation);
             else
-                BuildStairs(mesh, meshSize);
+                BuildStairs(mesh, meshSize, rotation);
         }
 
-        void BuildStairs(ProBuilderMesh mesh, Vector3 size)
+        void BuildStairs(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
         {
-            var useStepHeight = m_StepGenerationType == StepGenerationType.Height;
+            meshSize = Math.Abs(meshSize);
 
-            var stairsHeight = size.y;
+            var useStepHeight = m_StepGenerationType == StepGenerationType.Height;
+            var stairsHeight = meshSize.y;
             var stepsHeight = Mathf.Min(m_StepsHeight, stairsHeight);
 
             var steps = m_StepsCount;
@@ -79,7 +81,7 @@ namespace UnityEngine.ProBuilder.Shapes
             // 4 vertices per quad, 2 quads per step.
             var vertices = new Vector3[4 * steps * 2];
             var faces = new Face[steps * 2];
-            Vector3 extents = size * .5f;
+            Vector3 extents = meshSize * .5f;
 
             // vertex index, face index
             int v = 0, t = 0;
@@ -89,16 +91,16 @@ namespace UnityEngine.ProBuilder.Shapes
             for (int i = 0; i < steps; i++)
             {
                 heightInc0 = i * stepsHeight;
-                heightInc1 = i != steps -1 ? (i + 1) * stepsHeight : size.y;
+                heightInc1 = i != steps -1 ? (i + 1) * stepsHeight : meshSize.y;
                 inc0 = i / (float)steps;
                 inc1 = (i + 1) / (float)steps;
 
-                x0 = size.x - extents.x;
+                x0 = meshSize.x - extents.x;
                 x1 = 0 - extents.x;
-                y0 = (useStepHeight ? heightInc0 : size.y * inc0) - extents.y;
-                y1 = (useStepHeight ? heightInc1 : size.y * inc1) - extents.y;
-                z0 = size.z * inc0 - extents.z;
-                z1 = size.z * inc1 - extents.z;
+                y0 = (useStepHeight ? heightInc0 : meshSize.y * inc0) - extents.y;
+                y1 = (useStepHeight ? heightInc1 : meshSize.y * inc1) - extents.y;
+                z0 = meshSize.z * inc0 - extents.z;
+                z1 = meshSize.z * inc1 - extents.z;
 
                 vertices[v + 0] = new Vector3(x0, y0, z0);
                 vertices[v + 1] = new Vector3(x1, y0, z0);
@@ -145,17 +147,17 @@ namespace UnityEngine.ProBuilder.Shapes
                     for (int i = 0; i < steps; i++)
                     {
                         heightInc0 = Mathf.Max(i, 1) * stepsHeight;
-                        heightInc1 = i != steps-1 ? (i + 1) * stepsHeight : size.y;
+                        heightInc1 = i != steps-1 ? (i + 1) * stepsHeight : meshSize.y;
                         inc0 = Mathf.Max(i, 1) / (float)steps;
                         inc1 = (i + 1) / (float)steps;
 
-                        y0 = useStepHeight ? heightInc0 : inc0 * size.y;
-                        y1 = useStepHeight ? heightInc1 : inc1 * size.y;
+                        y0 = useStepHeight ? heightInc0 : inc0 * meshSize.y;
+                        y1 = useStepHeight ? heightInc1 : inc1 * meshSize.y;
 
                         inc0 = i / (float)steps;
 
-                        z0 = inc0 * size.z;
-                        z1 = inc1 * size.z;
+                        z0 = inc0 * meshSize.z;
+                        z1 = inc1 * meshSize.z;
 
                         sides_v[sv + 0] = new Vector3(x, 0f, z0) - extents;
                         sides_v[sv + 1] = new Vector3(x, 0f, z1) - extents;
@@ -192,34 +194,39 @@ namespace UnityEngine.ProBuilder.Shapes
                     vertices = vertices.Concat(sides_v);
                     faces = faces.Concat(sides_f);
 
-                    x += size.x;
+                    x += meshSize.x;
                 }
 
                 // add that last back face
                 vertices = vertices.Concat(new Vector3[] {
-                    new Vector3(0f, 0f, size.z) - extents,
-                    new Vector3(size.x, 0f, size.z) - extents,
-                    new Vector3(0f, size.y, size.z) - extents,
-                    new Vector3(size.x, size.y, size.z) - extents
+                    new Vector3(0f, 0f, meshSize.z) - extents,
+                    new Vector3(meshSize.x, 0f, meshSize.z) - extents,
+                    new Vector3(0f, meshSize.y, meshSize.z) - extents,
+                    new Vector3(meshSize.x, meshSize.y, meshSize.z) - extents
                 });
 
                 faces = faces.Add(new Face(new int[] { v + 0, v + 1, v + 2, v + 1, v + 3, v + 2 }));
             }
 
             for(int i = 0; i < vertices.Length; i++)
+            {
                 vertices[i] = new Vector3(-vertices[i].z, vertices[i].y, vertices[i].x);
+                vertices[i] = rotation * vertices[i];
+            }
 
             mesh.RebuildWithPositionsAndFaces(vertices, faces);
 
             m_ShapeBox = mesh.mesh.bounds;
         }
 
-        private void BuildCurvedStairs(ProBuilderMesh mesh, Vector3 size)
+        private void BuildCurvedStairs(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
         {
+            meshSize = Math.Abs(meshSize);
+
             var buildSides = m_Sides;
-            var innerRadius = size.z;
-            var stairWidth = size.x;
-            var height = Mathf.Abs(size.y);
+            var innerRadius = meshSize.z;
+            var stairWidth = meshSize.x;
+            var height = Mathf.Abs(meshSize.y);
             var circumference = m_Circumference;
             bool noInnerSide = innerRadius < Mathf.Epsilon;
             bool useStepHeight = m_StepGenerationType == StepGenerationType.Height;
@@ -364,7 +371,7 @@ namespace UnityEngine.ProBuilder.Shapes
                         float inc1 = ((i + 1) / (float)steps) * cir;
 
                         float h0 = useStepHeight ? Mathf.Max(i, 1) * stepsHeight : ((Mathf.Max(i, 1) / (float)steps) * height);
-                        float h1 = useStepHeight ? (i != steps-1 ? (i + 1) * stepsHeight : size.y) : (((i + 1) / (float)steps) * height);
+                        float h1 = useStepHeight ? (i != steps-1 ? (i + 1) * stepsHeight : meshSize.y) : (((i + 1) / (float)steps) * height);
 
                         Vector3 v0 = new Vector3(-Mathf.Cos(inc0), 0f, Mathf.Sin(inc0)) * x;
                         Vector3 v1 = new Vector3(-Mathf.Cos(inc1), 0f, Mathf.Sin(inc1)) * x;
@@ -443,7 +450,10 @@ namespace UnityEngine.ProBuilder.Shapes
             }
 
             for(int i = 0; i < positions.Length; i++)
+            {
                 positions[i] = new Vector3(-positions[i].z, positions[i].y, positions[i].x);
+                positions[i] = rotation * positions[i];
+            }
 
             mesh.RebuildWithPositionsAndFaces(positions, faces);
 

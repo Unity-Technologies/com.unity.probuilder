@@ -120,7 +120,7 @@ namespace UnityEngine.ProBuilder.Shapes
             Rebuild();
         }
 
-        public void Rebuild(bool resetRotation = false)
+        public void Rebuild()
         {
             if(gameObject == null || gameObject.hideFlags != HideFlags.None)
             {
@@ -128,13 +128,13 @@ namespace UnityEngine.ProBuilder.Shapes
                 return;
             }
 
-            m_Shape.RebuildMesh(mesh, Math.Abs(size));
+            m_Shape.RebuildMesh(mesh, size, rotation);
             m_Edited = false;
 
-            Quaternion rot = resetRotation ? Quaternion.identity : rotation;
-            ApplyRotation(rot, true);
+            Bounds bounds = m_Shape.shapeBox;
+            bounds.size = Math.Abs(m_Shape.shapeBox.size);
+            MeshUtility.FitToSize(mesh, bounds, size);
 
-            MeshUtility.FitToSize(mesh, GetRotatedBounds(), size);
             m_Shape.UpdatePivot(mesh, pivotLocation);
 
             UpdateProperties();
@@ -172,22 +172,6 @@ namespace UnityEngine.ProBuilder.Shapes
             Rebuild();
         }
 
-        Bounds GetRotatedBounds()
-        {
-            Bounds bounds = m_Shape.shapeBox;
-            bounds.size = Math.Abs(rotation * m_Shape.shapeBox.size);
-            return bounds;
-        }
-
-        /// <summary>
-        /// Set the rotation of the Shape to a given quaternion, then rotates it while respecting the bounds
-        /// </summary>
-        /// <param name="angles">The angles to rotate by</param>
-        public void SetInnerBoundsRotation(Quaternion angles, PivotLocation pivotLocation)
-        {
-            rotation = angles;
-        }
-
         /// <summary>
         /// Rotates the Shape by a given quaternion while respecting the bounds
         /// </summary>
@@ -197,26 +181,6 @@ namespace UnityEngine.ProBuilder.Shapes
             m_Shape.ResetPivot(mesh);
             rotation = deltaRotation * rotation;
             Rebuild();
-        }
-
-        void ApplyRotation(Quaternion rot, bool forceRotation = false)
-        {
-            if ( !forceRotation && rot.Equals(rotation) )
-                return;
-
-            rotation = rot;
-            m_Edited = false;
-
-            var origVerts = mesh.positionsInternal;
-
-            for(int i = 0; i < origVerts.Length; ++i)
-            {
-                origVerts[i] = rotation * origVerts[i];
-            }
-
-            mesh.positions = origVerts;
-            mesh.ToMesh();
-            mesh.Refresh();
         }
     }
 }

@@ -14,7 +14,7 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_WidthSegments = 1;
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
         {
             int w = m_WidthSegments + 1;
             int h = m_HeightSegments + 1;
@@ -45,8 +45,8 @@ namespace UnityEngine.ProBuilder.Shapes
                 }
             }
 
-            for (i = 0; i < v.Length; i++)
-                v[i] = new Vector3(p[i].y, 0f, p[i].x);
+            for(i = 0; i < v.Length; i++)
+                v[i] = rotation * new Vector3(p[i].y, 0f, p[i].x);
 
             mesh.GeometryWithPoints(v);
 

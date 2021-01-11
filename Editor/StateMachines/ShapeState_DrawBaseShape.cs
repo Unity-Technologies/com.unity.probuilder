@@ -87,7 +87,7 @@ namespace UnityEditor.ProBuilder
             else if(dragDotForward > 0 && dragDotRight > 0)
                 m_currentShapeRotation = Quaternion.Euler(0, 90, 0);
 
-            tool.m_ShapeComponent.SetInnerBoundsRotation(m_currentShapeRotation, EditorUtility.newShapePivotLocation);
+            tool.m_ShapeComponent.rotation = m_currentShapeRotation;
             tool.RebuildShape();
         }
 

@@ -35,8 +35,10 @@ namespace UnityEngine.ProBuilder.Shapes
             m_ShapeBox.size = mesh.mesh.bounds.size;
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
         {
+            meshSize = Math.Abs(rotation * meshSize);
+
             var xOuterRadius = Mathf.Clamp(meshSize.x /2f ,.01f, 2048f);
             var yOuterRadius = Mathf.Clamp(meshSize.z /2f ,.01f, 2048f);
             int clampedRows = Mathf.Clamp(m_Rows + 1, 4, 128);
@@ -94,6 +96,9 @@ namespace UnityEngine.ProBuilder.Shapes
                     fc++;
                 }
             }
+
+            for(int i = 0; i < vertices.Count; ++i)
+               vertices[i] = rotation * vertices[i];
 
             mesh.RebuildWithPositionsAndFaces(vertices, faces);
 

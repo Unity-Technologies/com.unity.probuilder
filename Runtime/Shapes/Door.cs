@@ -15,15 +15,16 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         float m_LegWidth = .75f;
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
         {
+            meshSize = Math.Abs(rotation * meshSize);
             float totalWidth = meshSize.x;
             float totalHeight = meshSize.y;
             float depth = meshSize.z;
 
             float xLegCoord = totalWidth / 2f;
-            var legWidth = xLegCoord - m_LegWidth;
-            var ledgeHeight = totalHeight - m_DoorHeight*2f;
+            var legWidth = xLegCoord - m_LegWidth > 0 ? xLegCoord - m_LegWidth : 0.001f;
+            var ledgeHeight = (totalHeight - m_DoorHeight * 2f) > 0 ? totalHeight - m_DoorHeight * 2f : 0.001f;
 
             var baseY = -totalHeight;
             var front = depth / 2f;
@@ -101,6 +102,10 @@ namespace UnityEngine.ProBuilder.Shapes
             points.Add(template[1] - Vector3.forward * depth);
             points.Add(template[5]);
             points.Add(template[5] - Vector3.forward * depth);
+
+
+            for(int i = 0; i < points.Count; i++)
+                 points[i] = rotation * points[i];
 
             mesh.GeometryWithPoints(points.ToArray());
 

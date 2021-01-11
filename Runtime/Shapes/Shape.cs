@@ -66,7 +66,7 @@ namespace UnityEngine.ProBuilder.Shapes
             m_ShapeBox = mesh.mesh.bounds;
         }
 
-        public abstract void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize);
+        public abstract void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation);
     }
 
     [System.AttributeUsage(System.AttributeTargets.Class)]

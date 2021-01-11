@@ -72,9 +72,9 @@ namespace UnityEngine.ProBuilder.Shapes
             m_ShapeBox.size = boxSize;
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
         {
-            var radius = System.Math.Min(System.Math.Min(meshSize.x, meshSize.y), meshSize.z);
+            var radius = System.Math.Min(System.Math.Min(Mathf.Abs(meshSize.x), Mathf.Abs(meshSize.y)), Mathf.Abs(meshSize.z));
             //avoid to create a degenerated sphere with a radius set to 0
             radius = radius < 0.001f ? 0.001f : radius;
 

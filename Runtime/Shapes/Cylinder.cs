@@ -26,8 +26,9 @@ namespace UnityEngine.ProBuilder.Shapes
             m_ShapeBox.size = boxSize;
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
         {
+            meshSize = Math.Abs(meshSize);
             var radius = Mathf.Min(meshSize.x, meshSize.z) * .5f;
             var height = meshSize.y;
 
@@ -51,7 +52,7 @@ namespace UnityEngine.ProBuilder.Shapes
             }
 
             // add two because end caps
-            Vector3[] verts = new Vector3[(m_AxisDivisions * (m_HeightCuts + 1) * 4) + (m_AxisDivisions * 6)];
+            Vector3[] vertices = new Vector3[(m_AxisDivisions * (m_HeightCuts + 1) * 4) + (m_AxisDivisions * 6)];
             Face[] faces = new Face[m_AxisDivisions * (m_HeightCuts + 1) + (m_AxisDivisions * 2)];
 
             // build vertex array
@@ -65,18 +66,18 @@ namespace UnityEngine.ProBuilder.Shapes
 
                 for (int n = 0; n < m_AxisDivisions; n++)
                 {
-                    verts[it + 0] = new Vector3(circle[n + 0].x, Y, circle[n + 0].z);
-                    verts[it + 1] = new Vector3(circle[n + 0].x, Y2, circle[n + 0].z);
+                    vertices[it + 0] = new Vector3(circle[n + 0].x, Y, circle[n + 0].z);
+                    vertices[it + 1] = new Vector3(circle[n + 0].x, Y2, circle[n + 0].z);
 
                     if (n != m_AxisDivisions - 1)
                     {
-                        verts[it + 2] = new Vector3(circle[n + 1].x, Y, circle[n + 1].z);
-                        verts[it + 3] = new Vector3(circle[n + 1].x, Y2, circle[n + 1].z);
+                        vertices[it + 2] = new Vector3(circle[n + 1].x, Y, circle[n + 1].z);
+                        vertices[it + 3] = new Vector3(circle[n + 1].x, Y2, circle[n + 1].z);
                     }
                     else
                     {
-                        verts[it + 2] = new Vector3(circle[0].x, Y, circle[0].z);
-                        verts[it + 3] = new Vector3(circle[0].x, Y2, circle[0].z);
+                        vertices[it + 2] = new Vector3(circle[0].x, Y, circle[0].z);
+                        vertices[it + 3] = new Vector3(circle[0].x, Y2, circle[0].z);
                     }
 
                     it += 4;
@@ -114,14 +115,14 @@ namespace UnityEngine.ProBuilder.Shapes
             {
                 // bottom faces
                 var bottomCapHeight = -height * .5f;
-                verts[ind + 0] = new Vector3(circle[n].x, bottomCapHeight, circle[n].z);
+                vertices[ind + 0] = new Vector3(circle[n].x, bottomCapHeight, circle[n].z);
 
-                verts[ind + 1] = new Vector3(0f, bottomCapHeight, 0f);
+                vertices[ind + 1] = new Vector3(0f, bottomCapHeight, 0f);
 
                 if (n != m_AxisDivisions - 1)
-                    verts[ind + 2] = new Vector3(circle[n + 1].x, bottomCapHeight, circle[n + 1].z);
+                    vertices[ind + 2] = new Vector3(circle[n + 1].x, bottomCapHeight, circle[n + 1].z);
                 else
-                    verts[ind + 2] = new Vector3(circle[000].x, bottomCapHeight, circle[000].z);
+                    vertices[ind + 2] = new Vector3(circle[000].x, bottomCapHeight, circle[000].z);
 
                 faces[f_ind + n] = new Face(new int[3] { ind + 2, ind + 1, ind + 0 });
 
@@ -129,19 +130,22 @@ namespace UnityEngine.ProBuilder.Shapes
 
                 // top faces
                 var topCapHeight = height * .5f;
-                verts[ind + 0] = new Vector3(circle[n].x, topCapHeight, circle[n].z);
-                verts[ind + 1] = new Vector3(0f, topCapHeight, 0f);
+                vertices[ind + 0] = new Vector3(circle[n].x, topCapHeight, circle[n].z);
+                vertices[ind + 1] = new Vector3(0f, topCapHeight, 0f);
                 if (n != m_AxisDivisions - 1)
-                    verts[ind + 2] = new Vector3(circle[n + 1].x, topCapHeight, circle[n + 1].z);
+                    vertices[ind + 2] = new Vector3(circle[n + 1].x, topCapHeight, circle[n + 1].z);
                 else
-                    verts[ind + 2] = new Vector3(circle[000].x, topCapHeight, circle[000].z);
+                    vertices[ind + 2] = new Vector3(circle[000].x, topCapHeight, circle[000].z);
 
                 faces[f_ind + (n + m_AxisDivisions)] = new Face(new int[3] { ind + 0, ind + 1, ind + 2 });
 
                 ind += 3;
             }
 
-            mesh.RebuildWithPositionsAndFaces(verts, faces);
+            for(int i = 0; i < vertices.Length; i++)
+                vertices[i] = rotation * vertices[i];
+
+            mesh.RebuildWithPositionsAndFaces(vertices, faces);
 
             m_ShapeBox = mesh.mesh.bounds;
             Vector3 boxSize = m_ShapeBox.size;

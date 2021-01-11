@@ -28,8 +28,10 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
         {
+            meshSize = Math.Abs(rotation * meshSize);
+
             var height = meshSize.y;
             var xRadius = meshSize.x / 2f;
             var zRadius = meshSize.z / 2f;
@@ -116,6 +118,10 @@ namespace UnityEngine.ProBuilder.Shapes
                 v.AddRange(tpb);
                 v.AddRange(tpt);
             }
+
+            for(int i = 0; i < v.Count; i++)
+                v[i] = rotation * v[i];
+
             mesh.GeometryWithPoints(v.ToArray());
 
             m_ShapeBox = mesh.mesh.bounds;

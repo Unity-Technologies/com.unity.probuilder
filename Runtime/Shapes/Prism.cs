@@ -6,8 +6,10 @@ namespace UnityEngine.ProBuilder.Shapes
     [Shape("Prism")]
     public class Prism : Shape
     {
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
         {
+            meshSize = Math.Abs(meshSize);
+            meshSize.y = meshSize.y == 0 ? 2f * Mathf.Epsilon : meshSize.y;
             var baseY = new Vector3(0, meshSize.y / 2f, 0);
             meshSize.y *= 2f;
 
@@ -55,6 +57,10 @@ namespace UnityEngine.ProBuilder.Shapes
                 new Face(new int[6] {12, 11, 10, 12, 13, 11}),
                 new Face(new int[6] {14, 15, 16, 15, 17, 16})
             };
+
+
+            for(int i = 0; i < v.Length; i++)
+                v[i] = rotation * v[i];
 
             mesh.RebuildWithPositionsAndFaces(v, f);
 

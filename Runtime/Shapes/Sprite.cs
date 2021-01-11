@@ -11,8 +11,10 @@ namespace UnityEngine.ProBuilder.Shapes
             mesh.SetPivot(PivotLocation.Center);
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize)
+        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
         {
+            meshSize = Math.Abs(meshSize);
+
             if(meshSize.x < float.Epsilon || meshSize.z < float.Epsilon)
             {
                 mesh.Clear();
@@ -50,7 +52,7 @@ namespace UnityEngine.ProBuilder.Shapes
             });
 
             for (int i = 0; i < v.Length; i++)
-                v[i] = new Vector3(p[i].y, 0, p[i].x);
+                v[i] = rotation * new Vector3(p[i].y, 0, p[i].x);
 
             mesh.RebuildWithPositionsAndFaces(v, f);
 
