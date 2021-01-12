@@ -790,9 +790,9 @@ namespace UnityEditor.ProBuilder
                 if (selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
                 {
                     if (e.shift)
-                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeRing>().DoAction());
+                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeRing>().PerformAction());
                     else
-                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeLoop>().DoAction());
+                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeLoop>().PerformAction());
                 }
                 else if (selectMode.ContainsFlag(SelectMode.Face | SelectMode.TextureFace))
                 {
@@ -800,9 +800,9 @@ namespace UnityEditor.ProBuilder
                         (EventModifiers.Control | EventModifiers.Shift))
                         Actions.SelectFaceRing.MenuRingAndLoopFaces(MeshSelection.topInternal);
                     else if (e.control)
-                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectFaceRing>().DoAction());
+                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectFaceRing>().PerformAction());
                     else if (e.shift)
-                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectFaceLoop>().DoAction());
+                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectFaceLoop>().PerformAction());
                     else
                         mesh.SetSelectedFaces(mesh.facesInternal);
                 }

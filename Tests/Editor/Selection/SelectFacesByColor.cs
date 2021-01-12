@@ -79,7 +79,7 @@ class SelectFacesByColor
         }
 
         UnityEditor.ProBuilder.Actions.SelectVertexColor selectColorAction = new UnityEditor.ProBuilder.Actions.SelectVertexColor();
-        selectColorAction.DoAction();
+        selectColorAction.PerformAction();
 
         foreach (var currObject in selectables)
         {
@@ -109,7 +109,7 @@ class SelectFacesByColor
         Assert.AreEqual(selectables[1].selectedFacesInternal.Length, 0);
 
         UnityEditor.ProBuilder.Actions.SelectVertexColor selectColorAction = new UnityEditor.ProBuilder.Actions.SelectVertexColor();
-        selectColorAction.DoAction();
+        selectColorAction.PerformAction();
 
         //Validate that after a face is selected on both cube
         Color[] colors0 = selectables[0].colorsInternal;

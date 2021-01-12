@@ -28,7 +28,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return true; }
         }
 
-        internal override ActionResult StartActivation()
+        protected override ActionResult PerformActionImplementation()
         {
             ProBuilderEditor.selectMode = SelectMode.Object;
 
@@ -37,6 +37,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             Undo.RegisterCreatedObjectUndo(m_Tool, "Open Draw Shape Tool");
 
+            MenuAction.onPerformAction += ActionPerformed;
             ToolManager.activeToolChanging += LeaveTool;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
@@ -45,6 +46,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         internal override ActionResult EndActivation()
         {
+            MenuAction.onPerformAction -= ActionPerformed;
             ToolManager.activeToolChanging -= LeaveTool;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
 
@@ -52,6 +54,13 @@ namespace UnityEditor.ProBuilder.Actions
 
             SceneView.RepaintAll();
             return new ActionResult(ActionResult.Status.Success,"Draw Shape Tool Ends");
+        }
+
+        void ActionPerformed(MenuAction newActionPerformed)
+        {
+            Debug.Log("Action Performed while in Shape Tool");
+            if(ToolManager.IsActiveTool(m_Tool) && newActionPerformed.GetType() != this.GetType())
+                LeaveTool();
         }
 
         void OnSelectModeChanged(SelectMode obj)

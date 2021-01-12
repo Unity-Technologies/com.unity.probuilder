@@ -91,12 +91,12 @@ namespace UnityEditor.ProBuilder.Actions
             GUI.enabled = enabled;
 
             if (GUILayout.Button("ProBuilderize"))
-                EditorUtility.ShowNotification(DoAction().notification);
+                EditorUtility.ShowNotification(PerformAction().notification);
 
             GUI.enabled = true;
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             IEnumerable<MeshFilter> top = Selection.transforms.Select(x => x.GetComponent<MeshFilter>()).Where(y => y != null);
             IEnumerable<MeshFilter> all = Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Where(x => x != null);

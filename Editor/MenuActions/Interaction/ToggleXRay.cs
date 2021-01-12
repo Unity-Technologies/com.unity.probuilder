@@ -56,7 +56,7 @@ namespace UnityEditor.ProBuilder.Actions
             };
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             EditorHandleDrawing.xRay = !EditorHandleDrawing.xRay;
             SceneView.RepaintAll();

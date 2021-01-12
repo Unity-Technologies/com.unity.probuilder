@@ -78,10 +78,10 @@ namespace UnityEditor.ProBuilder.Actions
             GUILayout.FlexibleSpace();
 
             if (GUILayout.Button("Subdivide Edges"))
-                DoAction();
+                PerformAction();
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             if (MeshSelection.selectedObjectCount < 1)
                 return ActionResult.NoSelection;

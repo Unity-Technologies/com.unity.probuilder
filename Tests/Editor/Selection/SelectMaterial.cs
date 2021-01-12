@@ -68,7 +68,7 @@ class SelectMaterial
         UnityEditor.ProBuilder.Actions.SelectMaterial selectMaterial = new UnityEditor.ProBuilder.Actions.SelectMaterial();
         var oldValue = selectMaterial.m_RestrictToSelectedObjects.value;
         selectMaterial.m_RestrictToSelectedObjects.value = false;
-        selectMaterial.DoAction();
+        selectMaterial.PerformAction();
         selectMaterial.m_RestrictToSelectedObjects.value = oldValue;
 
         //We need to force the object selection change here to ensure that MeshSelection reflect the result
@@ -98,7 +98,7 @@ class SelectMaterial
         UnityEditor.ProBuilder.Actions.SelectMaterial selectMaterial = new UnityEditor.ProBuilder.Actions.SelectMaterial();
         var oldValue = selectMaterial.m_RestrictToSelectedObjects.value;
         selectMaterial.m_RestrictToSelectedObjects.value = false;
-        selectMaterial.DoAction();
+        selectMaterial.PerformAction();
         selectMaterial.m_RestrictToSelectedObjects.value = oldValue;
 
         //We need to force the object selection change here to ensure that MeshSelection reflect the result

@@ -50,7 +50,7 @@ namespace UnityEditor.ProBuilder.Actions
             get => MeshSelection.selectedObjectCount > 0;
         }
 
-        internal override ActionResult StartActivation()
+        protected override ActionResult PerformActionImplementation()
         {
             ProBuilderEditor.selectMode = SelectMode.Object;
 
@@ -59,6 +59,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             Undo.RegisterCreatedObjectUndo(m_Tool, "Open Cut Tool");
 
+            MenuAction.onPerformAction += ActionPerformed;
             ToolManager.activeToolChanging += LeaveTool;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
@@ -70,12 +71,20 @@ namespace UnityEditor.ProBuilder.Actions
 
         internal override ActionResult EndActivation()
         {
+            MenuAction.onPerformAction -= ActionPerformed;
             ToolManager.activeToolChanging -= LeaveTool;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
 
             Object.DestroyImmediate(m_Tool);
 
             return new ActionResult(ActionResult.Status.Success,"Cut Tool Ends");
+        }
+
+        void ActionPerformed(MenuAction newActionPerformed)
+        {
+            Debug.Log("Action Performed while in Cut Tool");
+            if(ToolManager.IsActiveTool(m_Tool) && newActionPerformed.GetType() != this.GetType())
+                LeaveTool();
         }
 
         void OnSelectModeChanged(SelectMode obj)

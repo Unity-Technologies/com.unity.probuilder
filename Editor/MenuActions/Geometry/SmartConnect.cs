@@ -40,15 +40,15 @@ namespace UnityEditor.ProBuilder.Actions
             get { return true; }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             switch (ProBuilderEditor.selectMode)
             {
                 case SelectMode.Vertex:
-                    return EditorToolbarLoader.GetInstance<ConnectVertices>().DoAction();
+                    return EditorToolbarLoader.GetInstance<ConnectVertices>().PerformAction();
 
                 default:
-                    return EditorToolbarLoader.GetInstance<ConnectEdges>().DoAction();
+                    return EditorToolbarLoader.GetInstance<ConnectEdges>().PerformAction();
             }
         }
     }

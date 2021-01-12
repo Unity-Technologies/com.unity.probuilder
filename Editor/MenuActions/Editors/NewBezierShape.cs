@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return true; }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             GameObject go = new GameObject();
             var bezier = go.AddComponent<BezierShape>();

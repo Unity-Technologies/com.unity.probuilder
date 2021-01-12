@@ -29,17 +29,16 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Not used for MenuToggle.
-        /// </summary>
-        /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
-        public override ActionResult DoAction() {return ActionResult.Success;}
-
-
-        /// <summary>
         /// Perform whatever action this menu item is supposed to do when starting. You are responsible for implementing Undo.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
-        internal abstract ActionResult StartActivation();
+
+        internal ActionResult StartActivation()
+        {
+            if(onPerformAction != null)
+                onPerformAction(this);
+            return PerformActionImplementation();
+        }
 
         /// <summary>
         /// Perform whatever action this menu item is supposed to do when ending. You are responsible for implementing Undo.

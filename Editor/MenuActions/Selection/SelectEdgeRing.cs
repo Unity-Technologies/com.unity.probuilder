@@ -65,7 +65,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return base.enabled && MeshSelection.selectedEdgeCount > 0; }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             if (MeshSelection.selectedObjectCount < 1)
                 return ActionResult.NoSelection;
@@ -117,7 +117,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             if (GUILayout.Button("Select Edge Ring"))
             {
-                DoAction();
+                PerformAction();
                 SceneView.RepaintAll();
             }
         }

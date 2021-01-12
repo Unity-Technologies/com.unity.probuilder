@@ -88,10 +88,10 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
             GUILayout.FlexibleSpace();
 
             if (GUILayout.Button("Grow Selection"))
-                DoAction();
+                PerformAction();
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             if (MeshSelection.selectedObjectCount < 1)
                 return ActionResult.NoSelection;

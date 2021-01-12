@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return true; }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             EditorWindow.GetWindow<LightmapUVEditor>(true, "Lightmap UV Editor", true).position = LightmapUVEditor.desiredPosition;
             return new ActionResult(ActionResult.Status.Success, "Open Lightmap UV Editor Window");
