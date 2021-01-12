@@ -49,7 +49,6 @@ namespace UnityEditor.ProBuilder
         static ProBuilderToolManager toolManager => s_Instance != null ? s_Instance.m_ToolManager : null;
         internal EditorToolbar toolbar => m_Toolbar; // used by unit tests
         static ProBuilderEditor s_Instance;
-        static Pref<SelectMode> s_LastActiveSelectMode = new Pref<SelectMode>("editor.lastActiveSelectMode", SelectMode.Face);
 
         GUIContent[] m_EditModeIcons;
         GUIStyle VertexTranslationInfoStyle;
@@ -285,8 +284,6 @@ namespace UnityEditor.ProBuilder
             InitGUI();
             EditorApplication.delayCall += () => UpdateSelection();
             SetOverrideWireframe(true);
-
-            selectMode = s_LastActiveSelectMode;
         }
 
         void OnDisable()

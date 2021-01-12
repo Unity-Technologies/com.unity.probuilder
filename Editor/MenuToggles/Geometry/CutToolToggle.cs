@@ -15,7 +15,7 @@ namespace UnityEditor.ProBuilder.Actions
     {
         public override ToolbarGroup group
         {
-            get { return ToolbarGroup.Geometry; }
+            get { return ToolbarGroup.Object; }
         }
 
         public override Texture2D icon
