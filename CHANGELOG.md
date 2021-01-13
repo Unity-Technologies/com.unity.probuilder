@@ -5,13 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.4.2] - 2021-01-08
+## [4.5.0-pre.1] - 2021-01-08
+
+### Bug Fixes
 
 - Fixed the insertion of new points on a Poly Shape being unreliable.
 - Fixed rect selection not working with Universal Render Pipeline.
 - [case: 1281254] Fixed shader warning in URP for UNITY_PASS_FORWARDBASE macro redefinition.
 - [case: 1294866] Fix annotation warning on InitializeOnLoad call.
 - [case: 1304561] Fix `Shape Preview` not rendering with the blue preview tint.
+
+### Changes
+
+- Drop support for Unity 2018.3. This was necessary for optional assembly references.
 
 ## [4.4.1] - 2020-11-10
 
