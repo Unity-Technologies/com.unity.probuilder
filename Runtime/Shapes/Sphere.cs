@@ -58,11 +58,11 @@ namespace UnityEngine.ProBuilder.Shapes
 
         int m_BottomMostVertexIndex = 0;
 
-        public override void UpdatePivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
-        {
-            mesh.SetPivot(pivotLocation, m_BottomMostVertexIndex);
-            UpdateBounds(mesh);
-        }
+        // public override void SetPivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
+        // {
+        //     mesh.SetPivot(pivotLocation, m_BottomMostVertexIndex);
+        //     UpdateBounds(mesh);
+        // }
 
         public override void UpdateBounds(ProBuilderMesh mesh)
         {
@@ -72,9 +72,9 @@ namespace UnityEngine.ProBuilder.Shapes
             m_ShapeBox.size = boxSize;
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
+        public override void RebuildMesh(ProBuilderMesh mesh)
         {
-            var radius = System.Math.Min(System.Math.Min(Mathf.Abs(meshSize.x), Mathf.Abs(meshSize.y)), Mathf.Abs(meshSize.z));
+            var radius = System.Math.Min(System.Math.Min(Mathf.Abs(size.x), Mathf.Abs(size.y)), Mathf.Abs(size.z));
             //avoid to create a degenerated sphere with a radius set to 0
             radius = radius < 0.001f ? 0.001f : radius;
 

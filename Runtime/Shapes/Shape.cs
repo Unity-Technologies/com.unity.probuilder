@@ -6,6 +6,12 @@ namespace UnityEngine.ProBuilder.Shapes
     public abstract class Shape
     {
         [SerializeField]
+        PivotLocation m_PivotLocation;
+
+        [SerializeField]
+        Vector3 m_PivotPosition;
+
+        [SerializeField]
         Vector3 m_Size = Vector3.one;
 
         [SerializeField]
@@ -32,6 +38,18 @@ namespace UnityEngine.ProBuilder.Shapes
             set => m_ShapeBox = value;
         }
 
+        public PivotLocation pivotLocation
+        {
+            get => m_PivotLocation;
+            set => m_PivotLocation = value;
+        }
+
+        public Vector3 pivotLocalPosition
+        {
+            get => m_PivotPosition;
+            set => m_PivotPosition = value;
+        }
+
         public void CopyShapeParameters(Shape sourceShape)
         {
             m_Size = sourceShape.m_Size;
@@ -44,19 +62,22 @@ namespace UnityEngine.ProBuilder.Shapes
             if(mesh != null && mesh.mesh != null)
             {
                 var bbCenter = mesh.transform.TransformPoint(m_ShapeBox.center);
+                var pivotWorldPos = mesh.transform.TransformPoint(m_PivotPosition);
                 mesh.SetPivot(bbCenter);
+                m_PivotPosition = mesh.transform.InverseTransformPoint(pivotWorldPos);
                 UpdateBounds(mesh);
             }
         }
 
-        public virtual void UpdatePivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
+        public virtual void RebuildPivot(ProBuilderMesh mesh)
         {
             if(mesh != null && mesh.mesh != null)
             {
                 var bbCenter = mesh.transform.TransformPoint(m_ShapeBox.center);
-                mesh.SetPivot(pivotLocation);
+                var pivotWorldPos = mesh.transform.TransformPoint(m_PivotPosition);
+                mesh.SetPivot(m_PivotLocation, pivotWorldPos);
                 m_ShapeBox.center = mesh.transform.InverseTransformPoint(bbCenter);
-
+                m_PivotPosition = mesh.transform.InverseTransformPoint(pivotWorldPos);
                 UpdateBounds(mesh);
             }
         }
@@ -66,7 +87,13 @@ namespace UnityEngine.ProBuilder.Shapes
             m_ShapeBox = mesh.mesh.bounds;
         }
 
-        public abstract void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation);
+        public void Rebuild(ProBuilderMesh mesh)
+        {
+            RebuildMesh(mesh);
+            RebuildPivot(mesh);
+        }
+
+        public abstract void RebuildMesh(ProBuilderMesh mesh);
     }
 
     [System.AttributeUsage(System.AttributeTargets.Class)]

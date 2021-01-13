@@ -40,9 +40,9 @@ namespace UnityEngine.ProBuilder.Shapes
             };
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
+        public override void RebuildMesh(ProBuilderMesh mesh)
         {
-            meshSize = Math.Abs(meshSize);
+            var meshSize = Math.Abs(size);
 
             var radialCuts = m_NumberOfSides;
             var angle = m_ArchDegrees;

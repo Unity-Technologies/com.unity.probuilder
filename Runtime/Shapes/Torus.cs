@@ -35,9 +35,9 @@ namespace UnityEngine.ProBuilder.Shapes
             m_ShapeBox.size = mesh.mesh.bounds.size;
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
+        public override void RebuildMesh(ProBuilderMesh mesh)
         {
-            meshSize = Math.Abs(rotation * meshSize);
+            var meshSize = Math.Abs(rotation * size);
 
             var xOuterRadius = Mathf.Clamp(meshSize.x /2f ,.01f, 2048f);
             var yOuterRadius = Mathf.Clamp(meshSize.z /2f ,.01f, 2048f);

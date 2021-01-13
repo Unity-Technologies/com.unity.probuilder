@@ -1,6 +1,7 @@
 ﻿using System;
 using Unity.Collections;
 using UnityEditor;
+using UnityEngine.Experimental.Playables;
 using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
@@ -11,11 +12,11 @@ namespace UnityEngine.ProBuilder.Shapes
         class ShapeBoxProperties
         {
             [SerializeField]
-            internal float m_Width ;
+            internal float m_SizeX ;
             [SerializeField]
-            internal float m_Length ;
+            internal float m_SizeZ ;
             [SerializeField]
-            internal float m_Height ;
+            internal float m_SizeY ;
         }
 
         [SerializeReference]
@@ -24,10 +25,10 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         ShapeBoxProperties m_Properties = new ShapeBoxProperties();
 
+        ProBuilderMesh m_Mesh;
+
         [SerializeField]
         PivotLocation m_PivotLocation;
-
-        ProBuilderMesh m_Mesh;
 
         [SerializeField]
         bool m_Edited = false;
@@ -41,11 +42,6 @@ namespace UnityEngine.ProBuilder.Shapes
         public PivotLocation pivotLocation
         {
             get => m_PivotLocation;
-            set
-            {
-                m_PivotLocation = value;
-                Rebuild();
-            }
         }
 
         public Vector3 size
@@ -96,18 +92,55 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
+        public void SetPivotPosition(Vector3 position)
+        {
+            m_Shape.pivotLocalPosition = m_Mesh.transform.InverseTransformPoint(position);
+        }
+
         void UpdateProperties()
         {
-            m_Properties.m_Width = size.x;
-            m_Properties.m_Height = size.y;
-            m_Properties.m_Length = size.z;
+            m_Properties.m_SizeX = size.x;
+            m_Properties.m_SizeY = size.y;
+            m_Properties.m_SizeZ = size.z;
         }
 
         public void UpdateComponent()
         {
+            if(m_Shape.pivotLocation != m_PivotLocation)
+            {
+                m_Shape.pivotLocation = m_PivotLocation;
+                m_Shape.RebuildPivot(mesh);
+            }else
+            //If pivot is located at first corner, then take this position as a reference when changing size properties
+            if(m_Shape.pivotLocation == PivotLocation.FirstCorner)
+            {
+                var center = m_Shape.size / 2f;
+                var newCenter = new Vector3(
+                                        m_Properties.m_SizeX / 2f,
+                                        m_Properties.m_SizeY / 2f,
+                                        m_Properties.m_SizeZ / 2f);
+
+                Bounds shapeBB = m_Shape.shapeBox;
+                shapeBB.center += (newCenter - center);
+                m_Shape.shapeBox = shapeBB;
+            }
+
             //Recenter shape
             m_Shape.ResetPivot(mesh);
-            size = new Vector3(m_Properties.m_Width, m_Properties.m_Height, m_Properties.m_Length);
+            size = new Vector3(m_Properties.m_SizeX, m_Properties.m_SizeY, m_Properties.m_SizeZ);
+            Rebuild();
+        }
+
+        public void UpdateBounds(Bounds bounds)
+        {
+            var centerLocalPos = m_Mesh.transform.InverseTransformPoint(bounds.center);
+            Bounds shapeBB = m_Shape.shapeBox;
+            shapeBB.center = centerLocalPos;
+            m_Shape.shapeBox = shapeBB;
+
+            //Recenter shape
+            m_Shape.ResetPivot(m_Mesh);
+            size = bounds.size;
             Rebuild();
         }
 
@@ -128,21 +161,21 @@ namespace UnityEngine.ProBuilder.Shapes
                 return;
             }
 
-            m_Shape.RebuildMesh(mesh, size, rotation);
+            m_Shape.Rebuild(mesh);
             m_Edited = false;
 
             Bounds bounds = m_Shape.shapeBox;
             bounds.size = Math.Abs(m_Shape.shapeBox.size);
             MeshUtility.FitToSize(mesh, bounds, size);
 
-            m_Shape.UpdatePivot(mesh, pivotLocation);
-
             UpdateProperties();
         }
 
-        public void SetShape(Shape shape)
+        public void SetShape(Shape shape, PivotLocation location)
         {
             m_Shape = shape;
+            m_PivotLocation = location;
+            m_Shape.pivotLocation = m_PivotLocation;
             if(m_Shape is Plane || m_Shape is Sprite)
             {
                 Bounds bounds = m_Shape.shapeBox;
@@ -156,7 +189,7 @@ namespace UnityEngine.ProBuilder.Shapes
             }
             //Else if coming from a 2D-state and being back to a 3D shape
             //No changes is pivot is centered
-            else if(pivotLocation == PivotLocation.FirstVertex
+            else if(pivotLocation == PivotLocation.FirstCorner
                     && m_Shape.shapeBox.size.y == 0 && size.y != 0)
             {
                 Bounds bounds = m_Shape.shapeBox;

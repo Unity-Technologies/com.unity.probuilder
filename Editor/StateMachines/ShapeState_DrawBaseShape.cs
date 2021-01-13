@@ -97,8 +97,8 @@ namespace UnityEditor.ProBuilder
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
 
             shape.shape = EditorShapeUtility.GetLastParams(shape.shape.GetType());
-            EditorUtility.InitObject(shape.mesh);
             shape.Rebuild(tool.m_Bounds, tool.m_PlaneRotation);
+            shape.SetPivotPosition(tool.m_BB_Origin);
             ProBuilderEditor.Refresh(false);
             tool.m_LastShapeCreated = shape;
         }

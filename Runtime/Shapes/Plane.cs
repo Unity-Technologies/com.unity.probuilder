@@ -14,7 +14,7 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_WidthSegments = 1;
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
+        public override void RebuildMesh(ProBuilderMesh mesh)
         {
             int w = m_WidthSegments + 1;
             int h = m_HeightSegments + 1;

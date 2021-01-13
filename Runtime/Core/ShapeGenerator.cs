@@ -1118,7 +1118,11 @@ namespace UnityEngine.ProBuilder
             ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(v.ToArray());
 
             pb.gameObject.name = "Pipe";
-            pb.SetPivot(pivotType, 1);
+            //Keep backward compatibility
+            if(pivotType == PivotLocation.Center)
+                pb.SetPivot(pivotType);
+            else
+                pb.CenterPivot(new int[1] { 1 });
 
             return pb;
         }
@@ -1431,7 +1435,11 @@ namespace UnityEngine.ProBuilder
             pb.ToMesh();
             pb.Refresh();
             pb.gameObject.name = "Icosphere";
-            pb.SetPivot(pivotType, bottomMostVertexIndex);
+            //Keep backward compatibility
+            if(pivotType == PivotLocation.Center)
+                pb.SetPivot(pivotType);
+            else
+                pb.CenterPivot(new int[1]{bottomMostVertexIndex});
 
             pb.unwrapParameters = new UnwrapParameters()
             {

@@ -14,8 +14,10 @@ namespace UnityEditor.ProBuilder
             tool.m_ShapeComponent = null;
         }
 
-        private ShapeState ValidateShape()
+        ShapeState ValidateShape()
         {
+            tool.RebuildShape();
+            tool.m_ShapeComponent.SetPivotPosition(tool.m_BB_Origin);
             DrawShapeTool.s_Size.value = tool.m_ShapeComponent.size;
             DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes,tool.m_ShapeComponent.shape.GetType());
 

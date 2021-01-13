@@ -23,9 +23,9 @@ namespace UnityEditor.ProBuilder
 
         SerializedProperty m_ShapeProperty;
         SerializedProperty m_ShapePivotProperty;
-        SerializedProperty m_ShapeWidthProperty;
-        SerializedProperty m_ShapeLengthProperty;
-        SerializedProperty m_ShapeHeightProperty;
+        SerializedProperty m_ShapeSizeXProperty;
+        SerializedProperty m_ShapeSizeYProperty;
+        SerializedProperty m_ShapeSizeZProperty;
 
         int m_ActiveShapeIndex = 0;
 
@@ -33,9 +33,9 @@ namespace UnityEditor.ProBuilder
 
         public GUIContent m_ShapePropertyLabel = new GUIContent("Shape Properties");
         readonly GUIContent k_ShapePivotLabel = new GUIContent("Pivot");
-        readonly GUIContent k_ShapeWidthLabel = new GUIContent("Width");
-        readonly GUIContent k_ShapeLengthLabel = new GUIContent("Length");
-        readonly GUIContent k_ShapeHeightLabel = new GUIContent("Height");
+        readonly GUIContent k_ShapeSizeXLabel = new GUIContent("Size X");
+        readonly GUIContent k_ShapeSizeYLabel = new GUIContent("Size Y");
+        readonly GUIContent k_ShapeSizeZLabel = new GUIContent("Size Z");
 
         const string k_dialogTitle = "Shape reset";
         const string k_dialogText = "The current shape has been edited, you will loose all modifications.";
@@ -63,9 +63,9 @@ namespace UnityEditor.ProBuilder
         {
             m_ShapeProperty = serializedObject.FindProperty("m_Shape");
             m_ShapePivotProperty = serializedObject.FindProperty("m_PivotLocation");
-            m_ShapeWidthProperty = serializedObject.FindProperty("m_Properties.m_Width");
-            m_ShapeLengthProperty = serializedObject.FindProperty("m_Properties.m_Length");
-            m_ShapeHeightProperty = serializedObject.FindProperty("m_Properties.m_Height");
+            m_ShapeSizeXProperty = serializedObject.FindProperty("m_Properties.m_SizeX");
+            m_ShapeSizeZProperty = serializedObject.FindProperty("m_Properties.m_SizeZ");
+            m_ShapeSizeYProperty = serializedObject.FindProperty("m_Properties.m_SizeY");
         }
 
         public override void OnInspectorGUI()
@@ -153,7 +153,7 @@ namespace UnityEditor.ProBuilder
                             if(tool != null)
                                 DrawShapeTool.s_ActiveShapeIndex.value = m_ActiveShapeIndex;
                             UndoUtility.RecordComponents<Transform, ProBuilderMesh, ShapeComponent>(shapeComponent.GetComponents(typeof(Component)),"Change Shape");
-                            shapeComponent.SetShape(EditorShapeUtility.CreateShape(type, shape));
+                            shapeComponent.SetShape(EditorShapeUtility.CreateShape(type, shape), shapeComponent.pivotLocation);
                             ProBuilderEditor.Refresh();
                         }
                     }
@@ -161,10 +161,10 @@ namespace UnityEditor.ProBuilder
 
                 EditorGUILayout.PropertyField(m_ShapePivotProperty, k_ShapePivotLabel);
 
-                EditorGUILayout.PropertyField(m_ShapeWidthProperty, k_ShapeWidthLabel);
-                EditorGUILayout.PropertyField(m_ShapeLengthProperty, k_ShapeLengthLabel);
+                EditorGUILayout.PropertyField(m_ShapeSizeXProperty, k_ShapeSizeXLabel);
+                EditorGUILayout.PropertyField(m_ShapeSizeZProperty, k_ShapeSizeZLabel);
                 if(HasMultipleShapeTypes || (m_CurrentShapeType != typeof(Plane) &&  m_CurrentShapeType != typeof(Sprite)))
-                    EditorGUILayout.PropertyField(m_ShapeHeightProperty, k_ShapeHeightLabel);
+                    EditorGUILayout.PropertyField(m_ShapeSizeYProperty, k_ShapeSizeYLabel);
 
                 EditorGUI.indentLevel--;
             }

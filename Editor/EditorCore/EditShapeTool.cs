@@ -162,7 +162,7 @@ namespace UnityEditor.ProBuilder
 
                 var absSize = Math.Abs(shapeComponent.editionBounds.size);
                 if(absSize.x > Mathf.Epsilon && absSize.y > Mathf.Epsilon && absSize.z > Mathf.Epsilon )
-                    DoOrientationHandlesGUI(shapeComponent, shapeComponent.mesh, shapeComponent.editionBounds);
+                    DoOrientationHandlesGUI(shapeComponent);
 
                 DoSizeHandlesGUI(shapeComponent);
             }
@@ -273,7 +273,7 @@ namespace UnityEditor.ProBuilder
             return false;
         }
 
-        static void DoOrientationHandlesGUI(ShapeComponent shapeComponent, ProBuilderMesh mesh, Bounds bounds)
+        static void DoOrientationHandlesGUI(ShapeComponent shapeComponent)
         {
             var evt = Event.current;
             if( (GUIUtility.hotControl != 0
@@ -288,7 +288,7 @@ namespace UnityEditor.ProBuilder
                 {
                     if(s_OrientationControlIDs.Contains(HandleUtility.nearestControl))
                         s_CurrentFace = f;
-                    if(DoOrientationHandle(f))
+                    if(DoOrientationHandle(f, Math.Sign(shapeComponent.size)))
                     {
                         UndoUtility.RecordComponents<Transform, ProBuilderMesh, ShapeComponent>(shapeComponent.GetComponents(typeof(Component)),"Rotate Shape");
                         shapeComponent.RotateInsideBounds(s_ShapeRotation);
@@ -304,7 +304,7 @@ namespace UnityEditor.ProBuilder
 
         }
 
-        static bool DoOrientationHandle(FaceData face)
+        static bool DoOrientationHandle(FaceData face, Vector3 scaleModifier)
         {
             Event evt = Event.current;
             bool hasRotated = false;
@@ -339,8 +339,10 @@ namespace UnityEditor.ProBuilder
                                 }
                             }
 
-                            Vector3 rotationAxis = Vector3.Cross(face.Normal, targetedNormal);
-                            var angle = Vector3.SignedAngle(face.Normal, targetedNormal, rotationAxis);
+                            targetedNormal = Vector3.Scale(targetedNormal, scaleModifier);
+                            var currentNormal = Vector3.Scale(face.Normal, scaleModifier);
+                            Vector3 rotationAxis = Vector3.Cross(currentNormal,targetedNormal);
+                            var angle = Vector3.SignedAngle(currentNormal, targetedNormal, rotationAxis);
                             s_ShapeRotation = Quaternion.AngleAxis(angle, rotationAxis);
                             s_CurrentAngle = (s_CurrentAngle + angle) % 360;
 
@@ -430,16 +432,14 @@ namespace UnityEditor.ProBuilder
              return hasRotated;
         }
 
-        public static void ApplyProperties(ShapeComponent shape, Vector3 centerOffset, Vector3 size)
+        public static void ApplyProperties(ShapeComponent shape, Vector3 newCenterPosition, Vector3 newSize)
         {
-            var trs = shape.transform;
-
             var bounds = new Bounds();
-            bounds.center = centerOffset;
-            bounds.size = size;
+            bounds.center = newCenterPosition;
+            bounds.size = newSize;
 
             UndoUtility.RecordComponents<Transform, ProBuilderMesh, ShapeComponent>(shape.GetComponents(typeof(Component)),"Resize Shape");
-            shape.Rebuild(bounds, trs.rotation);
+            shape.UpdateBounds(bounds);
 
             ProBuilderEditor.Refresh(false);
         }

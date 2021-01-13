@@ -79,8 +79,7 @@ namespace UnityEditor.ProBuilder
                     m_ShapeComponent = new GameObject("Shape", typeof(ShapeComponent)).GetComponent<ShapeComponent>();
                     m_ShapeComponent.gameObject.hideFlags = HideFlags.HideAndDontSave;
                     m_ShapeComponent.hideFlags = HideFlags.None;
-                    m_ShapeComponent.pivotLocation = EditorUtility.newShapePivotLocation;
-                    m_ShapeComponent.SetShape(EditorShapeUtility.CreateShape(activeShapeType));
+                    m_ShapeComponent.SetShape(EditorShapeUtility.CreateShape(activeShapeType),EditorUtility.newShapePivotLocation);
                 }
                 return m_ShapeComponent;
             }
@@ -112,8 +111,7 @@ namespace UnityEditor.ProBuilder
             if(ToolManager.IsActiveTool(this))
             {
                 var type = EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex];
-                currentShapeInOverlay.pivotLocation = EditorUtility.newShapePivotLocation;
-                currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type));
+                currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type),EditorUtility.newShapePivotLocation);
                 SetBounds(currentShapeInOverlay.size);
             }
         }
@@ -195,7 +193,7 @@ namespace UnityEditor.ProBuilder
             Vector3 cornerPosition;
             switch(pivotLocation)
             {
-                case PivotLocation.FirstVertex:
+                case PivotLocation.FirstCorner:
                     cornerPosition = GetPoint(position);
                     m_Bounds.center = cornerPosition + new Vector3(size.x/2f,0, size.z/2f) + (size.y / 2f) * m_Plane.normal;
                     m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
@@ -241,10 +239,24 @@ namespace UnityEditor.ProBuilder
         internal void RebuildShape()
         {
             RecalculateBounds();
+            
+            if(m_Bounds.size.sqrMagnitude < .01f
+               || Mathf.Abs(m_Bounds.extents.x) < 0.001f
+               || Mathf.Abs(m_Bounds.extents.z) < 0.001f)
+            {
+                if(m_ShapeComponent.mesh.vertexCount > 0)
+                {
+                    m_ShapeComponent.mesh.Clear();
+                    m_ShapeComponent.mesh.Rebuild();
+                    ProBuilderEditor.Refresh(true);
+                }
+                return;
+            }
 
             if (!m_IsShapeInit)
             {
                 m_ShapeComponent.shape = EditorShapeUtility.GetLastParams(m_ShapeComponent.shape.GetType());
+                m_ShapeComponent.shape.pivotLocation = m_ShapeComponent.pivotLocation;
                 m_ShapeComponent.gameObject.hideFlags = HideFlags.None;
                 UndoUtility.RegisterCreatedObjectUndo(m_ShapeComponent.gameObject, "Draw Shape");
             }
@@ -348,7 +360,7 @@ namespace UnityEditor.ProBuilder
                             m_LastShapeCreated = null;
 
                         UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
-                        currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type));
+                        currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type), currentShapeInOverlay.pivotLocation);
                         SetBounds(currentShapeInOverlay.size);
 
                         ProBuilderEditor.Refresh();

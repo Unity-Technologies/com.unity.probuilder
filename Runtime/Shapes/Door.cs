@@ -15,9 +15,9 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         float m_LegWidth = .75f;
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
+        public override void RebuildMesh(ProBuilderMesh mesh)
         {
-            meshSize = Math.Abs(rotation * meshSize);
+            var meshSize = Math.Abs(rotation * size);
             float totalWidth = meshSize.x;
             float totalHeight = meshSize.y;
             float depth = meshSize.z;

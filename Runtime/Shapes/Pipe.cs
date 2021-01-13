@@ -19,18 +19,28 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_HeightSegments = 1;
 
-        public override void UpdatePivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
-        {
-            if(mesh != null && mesh.mesh != null)
-            {
-                mesh.SetPivot(pivotLocation, 1);
-                UpdateBounds(mesh);
-            }
-        }
+        // public override void UpdateBounds(ProBuilderMesh mesh)
+        // {
+        //     m_ShapeBox = mesh.mesh.bounds;
+        //     Vector3 boxSize = m_ShapeBox.size;
+        //     boxSize = Math.Abs(rotation * Vector3.right) * size.x
+        //               + Math.Abs(rotation * Vector3.up) * size.y
+        //               + Math.Abs(rotation * Vector3.forward) * size.z;
+        //     m_ShapeBox.size = boxSize;
+        // }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
+        // public override void UpdatePivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
+        // {
+        //     if(mesh != null && mesh.mesh != null)
+        //     {
+        //         //mesh.SetPivot(pivotLocation, 1);
+        //         UpdateBounds(mesh);
+        //     }
+        // }
+
+        public override void RebuildMesh(ProBuilderMesh mesh)
         {
-            meshSize = Math.Abs(rotation * meshSize);
+            var meshSize = Math.Abs(rotation * size);
 
             var height = meshSize.y;
             var xRadius = meshSize.x / 2f;
@@ -123,8 +133,13 @@ namespace UnityEngine.ProBuilder.Shapes
                 v[i] = rotation * v[i];
 
             mesh.GeometryWithPoints(v.ToArray());
-
+            //UpdateBounds(mesh);
             m_ShapeBox = mesh.mesh.bounds;
+            Vector3 boxSize = m_ShapeBox.size;
+            boxSize = Math.Abs(rotation * Vector3.right) * meshSize.x
+                      + Math.Abs(rotation * Vector3.up) * meshSize.y
+                      + Math.Abs(rotation * Vector3.forward) * meshSize.z;
+            m_ShapeBox.size = boxSize;
         }
     }
 

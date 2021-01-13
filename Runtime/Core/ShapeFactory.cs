@@ -12,7 +12,7 @@ namespace UnityEngine.ProBuilder
     public enum PivotLocation
     {
         Center,
-        FirstVertex
+        FirstCorner
     }
 
     public static class ShapeFactory
@@ -69,8 +69,7 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentNullException("shape", "Cannot instantiate a null shape.");
 
             var shapeComponent = new GameObject("Shape").AddComponent<ShapeComponent>();
-            shapeComponent.pivotLocation = pivotType;
-            shapeComponent.SetShape(shape);
+            shapeComponent.SetShape(shape, pivotType);
             ProBuilderMesh pb = shapeComponent.mesh;
             pb.renderer.sharedMaterial = BuiltinMaterials.defaultMaterial;
 

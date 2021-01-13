@@ -6,14 +6,14 @@ namespace UnityEngine.ProBuilder.Shapes
     [Shape("Sprite")]
     public class Sprite : Shape
     {
-        public override void UpdatePivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
-        {
-            mesh.SetPivot(PivotLocation.Center);
-        }
+        // public override void SetPivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
+        // {
+        //     mesh.SetPivot(PivotLocation.Center);
+        // }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
+        public override void RebuildMesh(ProBuilderMesh mesh)
         {
-            meshSize = Math.Abs(meshSize);
+            var meshSize = Math.Abs(size);
 
             if(meshSize.x < float.Epsilon || meshSize.z < float.Epsilon)
             {

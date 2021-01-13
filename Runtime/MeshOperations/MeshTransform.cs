@@ -5,7 +5,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
     /// </summary>
     public static class MeshTransform
     {
-        internal static void SetPivot(this ProBuilderMesh mesh, PivotLocation pivotType, int firstVertexIndex = 0)
+        internal static void SetPivot(this ProBuilderMesh mesh, PivotLocation pivotType, Vector3? pivotPosition = null)
         {
             if(mesh.vertexCount == 0)
                 return;
@@ -16,8 +16,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
                     mesh.CenterPivot(null);
                     break;
 
-                case PivotLocation.FirstVertex:
-                    mesh.CenterPivot(new int[1] { firstVertexIndex });
+                case PivotLocation.FirstCorner:
+                    mesh.SetPivot(pivotPosition == null ? Vector3.zero : (Vector3)pivotPosition);
                     break;
             }
         }

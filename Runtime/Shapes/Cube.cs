@@ -31,14 +31,14 @@ namespace UnityEngine.ProBuilder.Shapes
             0, 1, 4, 5, 1, 2, 5, 6, 2, 3, 6, 7, 3, 0, 7, 4, 4, 5, 7, 6, 3, 2, 0, 1
         };
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
+        public override void RebuildMesh(ProBuilderMesh mesh)
         {
             mesh.Clear();
 
             Vector3[] points = new Vector3[k_CubeTriangles.Length];
 
             for (int i = 0; i < k_CubeTriangles.Length; i++)
-                points[i] = rotation * Vector3.Scale(k_CubeVertices[k_CubeTriangles[i]], Math.Abs(meshSize));
+                points[i] = rotation * Vector3.Scale(k_CubeVertices[k_CubeTriangles[i]], Math.Abs(size));
 
             mesh.GeometryWithPoints(points);
 

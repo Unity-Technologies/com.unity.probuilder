@@ -40,17 +40,17 @@ namespace UnityEngine.ProBuilder.Shapes
             set => m_Sides = value;
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
+        public override void RebuildMesh(ProBuilderMesh mesh)
         {
             if (m_Circumference > 0)
-                BuildCurvedStairs(mesh, meshSize, rotation);
+                BuildCurvedStairs(mesh);
             else
-                BuildStairs(mesh, meshSize, rotation);
+                BuildStairs(mesh);
         }
 
-        void BuildStairs(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
+        void BuildStairs(ProBuilderMesh mesh)
         {
-            meshSize = Math.Abs(meshSize);
+            var meshSize = Math.Abs(size);
 
             var useStepHeight = m_StepGenerationType == StepGenerationType.Height;
             var stairsHeight = meshSize.y;
@@ -219,9 +219,9 @@ namespace UnityEngine.ProBuilder.Shapes
             m_ShapeBox = mesh.mesh.bounds;
         }
 
-        private void BuildCurvedStairs(ProBuilderMesh mesh, Vector3 meshSize, Quaternion rotation)
+        void BuildCurvedStairs(ProBuilderMesh mesh)
         {
-            meshSize = Math.Abs(meshSize);
+            var meshSize = Math.Abs(size);
 
             var buildSides = m_Sides;
             var innerRadius = meshSize.z;
