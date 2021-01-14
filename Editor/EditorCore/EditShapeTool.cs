@@ -121,6 +121,12 @@ namespace UnityEditor.ProBuilder
         {
             SceneViewOverlay.Window( m_OverlayTitle, OnOverlayGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle );
 
+            if(Event.current.type == EventType.MouseMove)
+            {
+                SceneView.RepaintAll();
+                return;
+            }
+
             foreach(var obj in targets)
             {
                 var shape = obj as ShapeComponent;
