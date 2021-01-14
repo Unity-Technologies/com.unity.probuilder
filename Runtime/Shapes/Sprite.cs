@@ -52,7 +52,7 @@ namespace UnityEngine.ProBuilder.Shapes
             });
 
             for (int i = 0; i < v.Length; i++)
-                v[i] = rotation * new Vector3(p[i].y, 0, p[i].x);
+                v[i] = new Vector3(p[i].y, 0, p[i].x);
 
             mesh.RebuildWithPositionsAndFaces(v, f);
 

@@ -46,7 +46,7 @@ namespace UnityEngine.ProBuilder.Shapes
             }
 
             for(i = 0; i < v.Length; i++)
-                v[i] = rotation * new Vector3(p[i].y, 0f, p[i].x);
+                v[i] = new Vector3(p[i].y, 0f, p[i].x);
 
             mesh.GeometryWithPoints(v);
 

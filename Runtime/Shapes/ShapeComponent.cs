@@ -173,9 +173,11 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public void SetShape(Shape shape, PivotLocation location)
         {
-            m_Shape = shape;
             m_PivotLocation = location;
-            m_Shape.pivotLocation = m_PivotLocation;
+            shape.pivotLocalPosition = m_Shape.pivotLocalPosition;
+            shape.pivotLocation = location;
+
+            m_Shape = shape;
             if(m_Shape is Plane || m_Shape is Sprite)
             {
                 Bounds bounds = m_Shape.shapeBox;
