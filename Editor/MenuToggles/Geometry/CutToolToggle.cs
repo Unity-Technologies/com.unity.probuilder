@@ -15,7 +15,7 @@ namespace UnityEditor.ProBuilder.Actions
     {
         public override ToolbarGroup group
         {
-            get { return ToolbarGroup.Object; }
+            get { return ToolbarGroup.Geometry; }
         }
 
         public override Texture2D icon
@@ -30,7 +30,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override SelectMode validSelectModes
         {
-            get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face | SelectMode.Object; }
+            get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face; }
         }
 
         protected override bool hasFileMenuEntry
@@ -52,8 +52,6 @@ namespace UnityEditor.ProBuilder.Actions
 
         protected override ActionResult PerformActionImplementation()
         {
-            ProBuilderEditor.selectMode = SelectMode.Object;
-
             m_Tool = ScriptableObject.CreateInstance<CutTool>();
             ToolManager.SetActiveTool(m_Tool);
 
@@ -77,12 +75,13 @@ namespace UnityEditor.ProBuilder.Actions
 
             Object.DestroyImmediate(m_Tool);
 
+            ProBuilderEditor.instance.Repaint();
+
             return new ActionResult(ActionResult.Status.Success,"Cut Tool Ends");
         }
 
         void ActionPerformed(MenuAction newActionPerformed)
         {
-            Debug.Log("Action Performed while in Cut Tool");
             if(ToolManager.IsActiveTool(m_Tool) && newActionPerformed.GetType() != this.GetType())
                 LeaveTool();
         }

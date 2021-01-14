@@ -52,13 +52,14 @@ namespace UnityEditor.ProBuilder.Actions
 
             Object.DestroyImmediate(m_Tool);
 
+            ProBuilderEditor.instance.Repaint();
+
             SceneView.RepaintAll();
             return new ActionResult(ActionResult.Status.Success,"Draw Shape Tool Ends");
         }
 
         void ActionPerformed(MenuAction newActionPerformed)
         {
-            Debug.Log("Action Performed while in Shape Tool");
             if(ToolManager.IsActiveTool(m_Tool) && newActionPerformed.GetType() != this.GetType())
                 LeaveTool();
         }

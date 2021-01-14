@@ -968,6 +968,7 @@ namespace UnityEditor.ProBuilder
             m_Hovering.Clear();
             UpdateSelection();
             SetOverrideWireframe(true);
+            Repaint();
         }
 
         /// <summary>

@@ -113,12 +113,13 @@ namespace UnityEditor.ProBuilder.Actions
 
             Object.DestroyImmediate(m_Tool);
 
+            ProBuilderEditor.instance.Repaint();
+
             return new ActionResult(ActionResult.Status.Success,"End Poly Shape");
         }
 
         void ActionPerformed(MenuAction newActionPerformed)
         {
-            Debug.Log("Action Performed while in PolyShape Tool");
             if(ToolManager.IsActiveTool(m_Tool) && newActionPerformed.GetType() != this.GetType())
                 LeaveTool();
         }
@@ -136,7 +137,6 @@ namespace UnityEditor.ProBuilder.Actions
 
         void LeaveTool()
         {
-            Debug.Log("Leaving PolyShape Tool");
             ActionResult result = EndActivation();
             EditorUtility.ShowNotification(result.notification);
         }
