@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net.Configuration;
 using UnityEditor;
 using UnityEngine.ProBuilder.MeshOperations;
 
@@ -19,32 +20,21 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_HeightSegments = 1;
 
-        // public override void UpdateBounds(ProBuilderMesh mesh)
-        // {
-        //     m_ShapeBox = mesh.mesh.bounds;
-        //     Vector3 boxSize = m_ShapeBox.size;
-        //     boxSize = Math.Abs(rotation * Vector3.right) * size.x
-        //               + Math.Abs(rotation * Vector3.up) * size.y
-        //               + Math.Abs(rotation * Vector3.forward) * size.z;
-        //     m_ShapeBox.size = boxSize;
-        // }
-
-        // public override void UpdatePivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
-        // {
-        //     if(mesh != null && mesh.mesh != null)
-        //     {
-        //         //mesh.SetPivot(pivotLocation, 1);
-        //         UpdateBounds(mesh);
-        //     }
-        // }
+        public override void UpdateBounds(ProBuilderMesh mesh)
+        {
+            m_ShapeBox.size = size;
+        }
 
         public override void RebuildMesh(ProBuilderMesh mesh)
         {
-            var meshSize = Math.Abs(rotation * size);
+            var upDir = Vector3.Scale(rotation * Vector3.up, size) ;
+            var rightDir = Vector3.Scale(rotation * Vector3.right, size) ;
+            var forwardDir = Vector3.Scale(rotation * Vector3.forward, size) ;
 
-            var height = meshSize.y;
-            var xRadius = meshSize.x / 2f;
-            var zRadius = meshSize.z / 2f;
+            var height = upDir.magnitude;
+            var xRadius = rightDir.magnitude / 2f;
+            var zRadius = forwardDir.magnitude / 2f;
+
             // template is outer ring - radius refers to outer ring always
             Vector2[] templateOut = new Vector2[m_NumberOfSides];
             Vector2[] templateIn = new Vector2[m_NumberOfSides];
@@ -130,16 +120,12 @@ namespace UnityEngine.ProBuilder.Shapes
             }
 
             for(int i = 0; i < v.Count; i++)
-                v[i] = rotation * v[i];
+                 v[i] = rotation * v[i];
 
             mesh.GeometryWithPoints(v.ToArray());
-            //UpdateBounds(mesh);
-            m_ShapeBox = mesh.mesh.bounds;
-            Vector3 boxSize = m_ShapeBox.size;
-            boxSize = Math.Abs(rotation * Vector3.right) * meshSize.x
-                      + Math.Abs(rotation * Vector3.up) * meshSize.y
-                      + Math.Abs(rotation * Vector3.forward) * meshSize.z;
-            m_ShapeBox.size = boxSize;
+
+            m_ShapeBox.center = Vector3.zero;
+            UpdateBounds(mesh);
         }
     }
 

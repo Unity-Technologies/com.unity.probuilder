@@ -239,7 +239,7 @@ namespace UnityEditor.ProBuilder
         internal void RebuildShape()
         {
             RecalculateBounds();
-            
+
             if(m_Bounds.size.sqrMagnitude < .01f
                || Mathf.Abs(m_Bounds.extents.x) < 0.001f
                || Mathf.Abs(m_Bounds.extents.z) < 0.001f)

@@ -22,8 +22,6 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         bool m_EndCaps = true;
 
-        float m_Radius = 0f;
-
         public override void UpdateBounds(ProBuilderMesh mesh)
         {
             m_ShapeBox.size = mesh.mesh.bounds.size;
@@ -42,20 +40,32 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public override void RebuildMesh(ProBuilderMesh mesh)
         {
-            var meshSize = Math.Abs(size);
+            var upDir = Vector3.Scale(rotation * Vector3.up, size) ;
+            var rightDir = Vector3.Scale(rotation * Vector3.right, size) ;
+            var forwardDir = Vector3.Scale(rotation * Vector3.forward, size) ;
+
+            var xRadius = rightDir.magnitude / 2f;
+            var yRadius = upDir.magnitude;
+            var depth = forwardDir.magnitude / 2f;
 
             var radialCuts = m_NumberOfSides;
             var angle = m_ArchDegrees;
-            var width = m_Thickness;
-            m_Radius = meshSize.y;
-            var depth = meshSize.z;
             var templateOut = new Vector2[radialCuts];
             var templateIn = new Vector2[radialCuts];
 
+            if(angle < 90f)
+                xRadius *= 2f;
+            else if(angle < 180f)
+                xRadius *= 1f+ Mathf.Lerp(1f, 0f, Mathf.Abs(Mathf.Cos(angle * Mathf.Deg2Rad)));
+            else if(angle > 180f)
+                yRadius /= 1f+ Mathf.Lerp(0f, 1f, (angle - 180f)/90f);
+
             for (int i = 0; i < radialCuts; i++)
             {
-                templateOut[i] = Math.PointInCircumference(m_Radius, i * ( angle / ( radialCuts - 1 ) ), Vector2.zero);
-                templateIn[i] = Math.PointInCircumference(m_Radius - width, i * ( angle / ( radialCuts - 1 ) ), Vector2.zero);
+                var currentAngle = i * ( angle / ( radialCuts - 1 ) );
+                Vector2 tangent;
+                templateOut[i] = Math.PointInEllipseCircumference(xRadius, yRadius, currentAngle, Vector2.zero, out tangent);
+                templateIn[i] = Math.PointInEllipseCircumference(xRadius - m_Thickness, yRadius - m_Thickness, currentAngle, Vector2.zero, out tangent);
             }
 
             List<Vector3> v = new List<Vector3>();
