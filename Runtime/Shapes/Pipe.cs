@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Net.Configuration;
 using UnityEditor;
-using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
