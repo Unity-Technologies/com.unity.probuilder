@@ -40,17 +40,17 @@ namespace UnityEngine.ProBuilder.Shapes
             set => m_Sides = value;
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh)
+        public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             if (m_Circumference > 0)
-                BuildCurvedStairs(mesh);
+                return BuildCurvedStairs(mesh, size, rotation);
             else
-                BuildStairs(mesh);
+                return BuildStairs(mesh, size, rotation);
         }
 
-        void BuildStairs(ProBuilderMesh mesh)
+        Bounds BuildStairs(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
-            var meshSize = Math.Abs(size);
+            var meshSize = size;
 
             var useStepHeight = m_StepGenerationType == StepGenerationType.Height;
             var stairsHeight = meshSize.y;
@@ -210,16 +210,22 @@ namespace UnityEngine.ProBuilder.Shapes
 
             for(int i = 0; i < vertices.Length; i++)
             {
-                vertices[i] = new Vector3(-vertices[i].z, vertices[i].y, vertices[i].x);
                 vertices[i] = rotation * vertices[i];
+            }
+
+            var sizeSigns = Mathf.Sign(size.x) * Mathf.Sign(size.y) * Mathf.Sign(size.z);
+            if(sizeSigns < 0)
+            {
+                foreach(var face in faces)
+                    face.Reverse();
             }
 
             mesh.RebuildWithPositionsAndFaces(vertices, faces);
 
-            m_ShapeBox = mesh.mesh.bounds;
+            return mesh.mesh.bounds;
         }
 
-        void BuildCurvedStairs(ProBuilderMesh mesh)
+        Bounds BuildCurvedStairs(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var meshSize = Math.Abs(size);
 
@@ -451,15 +457,16 @@ namespace UnityEngine.ProBuilder.Shapes
 
             for(int i = 0; i < positions.Length; i++)
             {
-                positions[i] = new Vector3(-positions[i].z, positions[i].y, positions[i].x);
+                //positions[i] = new Vector3(-positions[i].z, positions[i].y, positions[i].x);
+                positions[i] = new Vector3(-positions[i].x, positions[i].y, -positions[i].z);
                 positions[i] = rotation * positions[i];
             }
 
             mesh.RebuildWithPositionsAndFaces(positions, faces);
 
             mesh.TranslateVerticesInWorldSpace(mesh.mesh.triangles, mesh.transform.TransformDirection(-mesh.mesh.bounds.center));
-            m_ShapeBox.center = Vector3.zero;
-            m_ShapeBox.size = mesh.mesh.bounds.size;
+
+            return new Bounds(Vector3.zero,mesh.mesh.bounds.size);
         }
     }
 

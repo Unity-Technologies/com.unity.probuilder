@@ -58,21 +58,16 @@ namespace UnityEngine.ProBuilder.Shapes
 
         int m_BottomMostVertexIndex = 0;
 
-        // public override void SetPivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
-        // {
-        //     mesh.SetPivot(pivotLocation, m_BottomMostVertexIndex);
-        //     UpdateBounds(mesh);
-        // }
-
-        public override void UpdateBounds(ProBuilderMesh mesh)
+        public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
-            m_ShapeBox = mesh.mesh.bounds;
-            Vector3 boxSize = m_ShapeBox.size;
+            bounds = mesh.mesh.bounds;
+            Vector3 boxSize = bounds.size;
             boxSize.x = boxSize.y = boxSize.z = Mathf.Max(boxSize.x, Mathf.Max(boxSize.y, boxSize.z));
-            m_ShapeBox.size = boxSize;
+            bounds.size = boxSize;
+            return bounds;
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh)
+        public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var radius = System.Math.Min(System.Math.Min(Mathf.Abs(size.x), Mathf.Abs(size.y)), Mathf.Abs(size.z));
             //avoid to create a degenerated sphere with a radius set to 0
@@ -123,10 +118,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
             mesh.RebuildWithPositionsAndFaces(v, f);
 
-            m_ShapeBox = mesh.mesh.bounds;
-            Vector3 boxSize = m_ShapeBox.size;
-            boxSize.x = boxSize.y = boxSize.z = Mathf.Max(boxSize.x, Mathf.Max(boxSize.y, boxSize.z));
-            m_ShapeBox.size = boxSize;
+            return UpdateBounds(mesh, size, rotation, new Bounds());
         }
 
         // Subdivides a set of vertices (wound as individual triangles) on an icosphere.

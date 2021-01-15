@@ -79,11 +79,12 @@ namespace UnityEditor.ProBuilder
             float dragDotForward = Vector3.Dot(dragDirection, tool.m_PlaneForward);
             float dragDotRight = Vector3.Dot(dragDirection, tool.m_PlaneRight);
             m_currentShapeRotation = Quaternion.identity;
+
             if(dragDotForward < 0 && dragDotRight > 0)
-                m_currentShapeRotation = Quaternion.Euler(0, 180, 0);
-            else if(dragDotForward < 0 && dragDotRight < 0)
                 m_currentShapeRotation = Quaternion.Euler(0, -90, 0);
-            else if(dragDotForward > 0 && dragDotRight > 0)
+            else if(dragDotForward < 0 && dragDotRight < 0)
+                m_currentShapeRotation = Quaternion.Euler(0, 180, 0);
+            else if(dragDotForward > 0 && dragDotRight < 0)
                 m_currentShapeRotation = Quaternion.Euler(0, 90, 0);
 
             tool.m_ShapeComponent.rotation = m_currentShapeRotation;

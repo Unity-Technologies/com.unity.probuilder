@@ -22,9 +22,10 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         bool m_EndCaps = true;
 
-        public override void UpdateBounds(ProBuilderMesh mesh)
+        public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
-            m_ShapeBox.size = mesh.mesh.bounds.size;
+            bounds.size = mesh.mesh.bounds.size;
+            return bounds;
         }
 
         Vector3[] GetFace(Vector2 vertex1, Vector2 vertex2, float depth)
@@ -38,7 +39,7 @@ namespace UnityEngine.ProBuilder.Shapes
             };
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh)
+        public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var upDir = Vector3.Scale(rotation * Vector3.up, size) ;
             var rightDir = Vector3.Scale(rotation * Vector3.right, size) ;
@@ -141,9 +142,8 @@ namespace UnityEngine.ProBuilder.Shapes
             mesh.GeometryWithPoints(v.ToArray());
 
             mesh.TranslateVerticesInWorldSpace(mesh.mesh.triangles, mesh.transform.TransformDirection(-mesh.mesh.bounds.center));
-            m_ShapeBox.center = Vector3.zero;
 
-            UpdateBounds(mesh);
+            return UpdateBounds(mesh, size, rotation, new Bounds());
         }
     }
 

@@ -31,7 +31,7 @@ namespace UnityEngine.ProBuilder.Shapes
             0, 1, 4, 5, 1, 2, 5, 6, 2, 3, 6, 7, 3, 0, 7, 4, 4, 5, 7, 6, 3, 2, 0, 1
         };
 
-        public override void RebuildMesh(ProBuilderMesh mesh)
+        public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             mesh.Clear();
 
@@ -42,7 +42,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
             mesh.GeometryWithPoints(points);
 
-            m_ShapeBox = mesh.mesh.bounds;
+            return mesh.mesh.bounds;
         }
     }
 

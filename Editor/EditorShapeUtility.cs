@@ -149,8 +149,6 @@ namespace UnityEditor.ProBuilder
 
             if(refShape == null)
                 shape = GetLastParams(shape.GetType());
-            else
-                shape.CopyShapeParameters(refShape);
 
             return shape;
         }

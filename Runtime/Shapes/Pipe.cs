@@ -18,12 +18,13 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_HeightSegments = 1;
 
-        public override void UpdateBounds(ProBuilderMesh mesh)
+        public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
-            m_ShapeBox.size = size;
+            bounds.size = size;
+            return bounds;
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh)
+        public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var upDir = Vector3.Scale(rotation * Vector3.up, size) ;
             var rightDir = Vector3.Scale(rotation * Vector3.right, size) ;
@@ -122,8 +123,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
             mesh.GeometryWithPoints(v.ToArray());
 
-            m_ShapeBox.center = Vector3.zero;
-            UpdateBounds(mesh);
+            return UpdateBounds(mesh, size, rotation, new Bounds());
         }
     }
 

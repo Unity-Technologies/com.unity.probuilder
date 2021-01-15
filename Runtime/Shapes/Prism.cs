@@ -6,7 +6,7 @@ namespace UnityEngine.ProBuilder.Shapes
     [Shape("Prism")]
     public class Prism : Shape
     {
-        public override void RebuildMesh(ProBuilderMesh mesh)
+        public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var meshSize = Math.Abs(size);
             meshSize.y = meshSize.y == 0 ? 2f * Mathf.Epsilon : meshSize.y;
@@ -64,7 +64,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
             mesh.RebuildWithPositionsAndFaces(v, f);
 
-            m_ShapeBox = mesh.mesh.bounds;
+            return mesh.mesh.bounds;
         }
     }
 

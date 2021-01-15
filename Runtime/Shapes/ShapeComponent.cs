@@ -23,12 +23,21 @@ namespace UnityEngine.ProBuilder.Shapes
         Shape m_Shape = new Cube();
 
         [SerializeField]
+        Vector3 m_Size = Vector3.one;
+
+        [SerializeField]
+        Quaternion m_Rotation;
+
+        [SerializeField]
         ShapeBoxProperties m_Properties = new ShapeBoxProperties();
 
         ProBuilderMesh m_Mesh;
 
         [SerializeField]
         PivotLocation m_PivotLocation;
+
+        [SerializeField]
+        Vector3 m_PivotPosition;
 
         [SerializeField]
         bool m_Edited = false;
@@ -42,18 +51,25 @@ namespace UnityEngine.ProBuilder.Shapes
         public PivotLocation pivotLocation
         {
             get => m_PivotLocation;
+            set => m_PivotLocation = value;
+        }
+
+        public Vector3 pivotLocalPosition
+        {
+            get => m_PivotPosition;
+            set => m_PivotPosition = value;
         }
 
         public Vector3 size
         {
-            get => m_Shape.size;
-            set => m_Shape.size = value;
+            get => m_Size;
+            set => m_Size = value;
         }
 
         public Quaternion rotation
         {
-            get => m_Shape.rotation;
-            set => m_Shape.rotation = value;
+            get => m_Rotation;
+            set => m_Rotation = value;
         }
 
         public bool edited
@@ -67,13 +83,20 @@ namespace UnityEngine.ProBuilder.Shapes
         {
             get
             {
-                m_EditionBounds.center = m_Shape.shapeBox.center;
-                m_EditionBounds.size = m_Shape.size;
-                if(Mathf.Abs(m_Shape.shapeBox.size.y) < Mathf.Epsilon)
-                    m_EditionBounds.size = new Vector3(m_Shape.size.x, 0f, m_Shape.size.z);
+                m_EditionBounds.center = m_ShapeBox.center;
+                m_EditionBounds.size = m_Size;
+                if(Mathf.Abs(m_ShapeBox.size.y) < Mathf.Epsilon)
+                    m_EditionBounds.size = new Vector3(m_Size.x, 0f, m_Size.z);
 
                 return m_EditionBounds;
             }
+        }
+
+        Bounds m_ShapeBox;
+        public Bounds shapeBox
+        {
+            get => m_ShapeBox;
+            set => m_ShapeBox = value;
         }
 
         /// <summary>
@@ -94,7 +117,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public void SetPivotPosition(Vector3 position)
         {
-            m_Shape.pivotLocalPosition = m_Mesh.transform.InverseTransformPoint(position);
+            pivotLocalPosition = mesh.transform.InverseTransformPoint(position);
         }
 
         void UpdateProperties()
@@ -106,40 +129,40 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public void UpdateComponent()
         {
-            if(m_Shape.pivotLocation != m_PivotLocation)
-            {
-                m_Shape.pivotLocation = m_PivotLocation;
-                m_Shape.RebuildPivot(mesh);
-            }else
+            // if(pivotLocation != m_PivotLocation)
+            // {
+            //     m_Shape.pivotLocation = m_PivotLocation;
+            //     RebuildPivot(mesh, size, rotation);
+            // }else
             //If pivot is located at first corner, then take this position as a reference when changing size properties
-            if(m_Shape.pivotLocation == PivotLocation.FirstCorner)
+            if(m_PivotLocation == PivotLocation.FirstCorner)
             {
-                var center = m_Shape.size / 2f;
+                var center = m_Size / 2f;
                 var newCenter = new Vector3(
                                         m_Properties.m_SizeX / 2f,
                                         m_Properties.m_SizeY / 2f,
                                         m_Properties.m_SizeZ / 2f);
 
-                Bounds shapeBB = m_Shape.shapeBox;
+                Bounds shapeBB = m_ShapeBox;
                 shapeBB.center += (newCenter - center);
-                m_Shape.shapeBox = shapeBB;
+                m_ShapeBox = shapeBB;
             }
 
             //Recenter shape
-            m_Shape.ResetPivot(mesh);
+            ResetPivot(mesh, size, rotation);
             size = new Vector3(m_Properties.m_SizeX, m_Properties.m_SizeY, m_Properties.m_SizeZ);
             Rebuild();
         }
 
         public void UpdateBounds(Bounds bounds)
         {
-            var centerLocalPos = m_Mesh.transform.InverseTransformPoint(bounds.center);
-            Bounds shapeBB = m_Shape.shapeBox;
+            var centerLocalPos = mesh.transform.InverseTransformPoint(bounds.center);
+            Bounds shapeBB = m_ShapeBox;
             shapeBB.center = centerLocalPos;
-            m_Shape.shapeBox = shapeBB;
+            m_ShapeBox = shapeBB;
 
             //Recenter shape
-            m_Shape.ResetPivot(m_Mesh);
+            ResetPivot(mesh, m_Size, m_Rotation);
             size = bounds.size;
             Rebuild();
         }
@@ -161,11 +184,12 @@ namespace UnityEngine.ProBuilder.Shapes
                 return;
             }
 
-            m_Shape.Rebuild(mesh);
+            m_ShapeBox = m_Shape.RebuildMesh(mesh, size, rotation);
+            RebuildPivot(mesh, size, rotation);
             m_Edited = false;
 
-            Bounds bounds = m_Shape.shapeBox;
-            bounds.size = Math.Abs(m_Shape.shapeBox.size);
+            Bounds bounds = m_ShapeBox;
+            bounds.size = Math.Abs(m_ShapeBox.size);
             MeshUtility.FitToSize(mesh, bounds, size);
 
             UpdateProperties();
@@ -174,36 +198,36 @@ namespace UnityEngine.ProBuilder.Shapes
         public void SetShape(Shape shape, PivotLocation location)
         {
             m_PivotLocation = location;
-            shape.pivotLocalPosition = m_Shape.pivotLocalPosition;
-            shape.pivotLocation = location;
+            // shape.pivotLocalPosition = m_Shape.pivotLocalPosition;
+            // shape.pivotLocation = location;
 
             m_Shape = shape;
             if(m_Shape is Plane || m_Shape is Sprite)
             {
-                Bounds bounds = m_Shape.shapeBox;
+                Bounds bounds = m_ShapeBox;
                 var newCenter = bounds.center;
                 var newSize = bounds.size;
                 newCenter.y = 0;
                 newSize.y = 0;
                 bounds.center = newCenter;
                 bounds.size = newSize;
-                m_Shape.shapeBox = bounds;
+                m_ShapeBox = bounds;
             }
             //Else if coming from a 2D-state and being back to a 3D shape
             //No changes is pivot is centered
             else if(pivotLocation == PivotLocation.FirstCorner
-                    && m_Shape.shapeBox.size.y == 0 && size.y != 0)
+                    && m_ShapeBox.size.y == 0 && size.y != 0)
             {
-                Bounds bounds = m_Shape.shapeBox;
+                Bounds bounds = m_ShapeBox;
                 var newCenter = bounds.center;
                 var newSize = bounds.size;
                 newCenter.y += size.y / 2f;
                 newSize.y = size.y;
                 bounds.center = newCenter;
                 bounds.size = newSize;
-                m_Shape.shapeBox = bounds;
+                m_ShapeBox = bounds;
             }
-            m_Shape.ResetPivot(mesh);
+            ResetPivot(mesh, size, rotation);
             Rebuild();
         }
 
@@ -213,9 +237,34 @@ namespace UnityEngine.ProBuilder.Shapes
         /// <param name="rotation">The angles to rotate by</param>
         public void RotateInsideBounds(Quaternion deltaRotation)
         {
-            m_Shape.ResetPivot(mesh);
+            ResetPivot(mesh, size, rotation);
             rotation = deltaRotation * rotation;
             Rebuild();
+        }
+
+        public void ResetPivot(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
+        {
+            if(mesh != null && mesh.mesh != null)
+            {
+                var bbCenter = mesh.transform.TransformPoint(m_ShapeBox.center);
+                var pivotWorldPos = mesh.transform.TransformPoint(m_PivotPosition);
+                mesh.SetPivot(bbCenter);
+                m_PivotPosition = mesh.transform.InverseTransformPoint(pivotWorldPos);
+                m_ShapeBox = m_Shape.UpdateBounds(mesh, size, rotation, m_ShapeBox);
+            }
+        }
+
+        public void RebuildPivot(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
+        {
+            if(mesh != null && mesh.mesh != null)
+            {
+                var bbCenter = mesh.transform.TransformPoint(m_ShapeBox.center);
+                var pivotWorldPos = mesh.transform.TransformPoint(m_PivotPosition);
+                mesh.SetPivot(m_PivotLocation, pivotWorldPos);
+                m_ShapeBox.center = mesh.transform.InverseTransformPoint(bbCenter);
+                m_PivotPosition = mesh.transform.InverseTransformPoint(pivotWorldPos);
+                m_ShapeBox = m_Shape.UpdateBounds(mesh, size, rotation, m_ShapeBox);
+            }
         }
     }
 }

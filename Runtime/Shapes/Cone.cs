@@ -13,7 +13,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
         float m_Radius = 0;
 
-        public override void UpdateBounds(ProBuilderMesh mesh)
+        public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
             var upLocalAxis = rotation * Vector3.up;
             upLocalAxis = Math.Abs(upLocalAxis);
@@ -22,10 +22,12 @@ namespace UnityEngine.ProBuilder.Shapes
             boxSize.x = Mathf.Lerp(m_Radius * 2f, boxSize.x, upLocalAxis.x);
             boxSize.y = Mathf.Lerp(m_Radius * 2f, boxSize.y, upLocalAxis.y);
             boxSize.z = Mathf.Lerp(m_Radius * 2f, boxSize.z, upLocalAxis.z);
-            m_ShapeBox.size = boxSize;
+            bounds.size = boxSize;
+
+            return bounds;
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh)
+        public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var meshSize = Math.Abs(size);
 
@@ -96,8 +98,7 @@ namespace UnityEngine.ProBuilder.Shapes
             }
             mesh.RefreshUV(sideFaces);
 
-            m_ShapeBox.center = Vector3.zero;
-            UpdateBounds(mesh);
+            return UpdateBounds(mesh, size, rotation, new Bounds());
         }
     }
 

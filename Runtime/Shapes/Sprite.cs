@@ -6,12 +6,7 @@ namespace UnityEngine.ProBuilder.Shapes
     [Shape("Sprite")]
     public class Sprite : Shape
     {
-        // public override void SetPivot(ProBuilderMesh mesh, PivotLocation pivotLocation)
-        // {
-        //     mesh.SetPivot(PivotLocation.Center);
-        // }
-
-        public override void RebuildMesh(ProBuilderMesh mesh)
+        public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var meshSize = Math.Abs(size);
 
@@ -20,7 +15,7 @@ namespace UnityEngine.ProBuilder.Shapes
                 mesh.Clear();
                 if(mesh.mesh != null)
                     mesh.mesh.Clear();
-                return;
+                return new Bounds();
             }
 
             var width = meshSize.x;
@@ -56,7 +51,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
             mesh.RebuildWithPositionsAndFaces(v, f);
 
-            m_ShapeBox = mesh.mesh.bounds;
+            return mesh.mesh.bounds;
         }
     }
 

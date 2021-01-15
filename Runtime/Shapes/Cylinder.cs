@@ -18,13 +18,13 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_Smoothing = -1;
 
-        public override void UpdateBounds(ProBuilderMesh mesh)
+        public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
             var upLocalAxis = rotation * Vector3.up;
             upLocalAxis = Math.Abs(upLocalAxis);
 
-            m_ShapeBox = mesh.mesh.bounds;
-            Vector3 boxSize = m_ShapeBox.size;
+            bounds = mesh.mesh.bounds;
+            Vector3 boxSize = bounds.size;
             var maxAxis = Mathf.Max(Mathf.Max(
                     (1f - upLocalAxis.x)*boxSize.x,
                     (1f - upLocalAxis.y)*boxSize.y),
@@ -32,10 +32,12 @@ namespace UnityEngine.ProBuilder.Shapes
             boxSize.x = Mathf.Lerp(maxAxis, boxSize.x, upLocalAxis.x);
             boxSize.y = Mathf.Lerp(maxAxis, boxSize.y, upLocalAxis.y);
             boxSize.z = Mathf.Lerp(maxAxis, boxSize.z, upLocalAxis.z);
-            m_ShapeBox.size = boxSize;
+            bounds.size = boxSize;
+
+            return bounds;
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh)
+        public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var meshSize = Math.Abs(size);
             var radius = Mathf.Min(meshSize.x, meshSize.z) * .5f;
@@ -155,7 +157,8 @@ namespace UnityEngine.ProBuilder.Shapes
                 vertices[i] = rotation * vertices[i];
 
             mesh.RebuildWithPositionsAndFaces(vertices, faces);
-            UpdateBounds(mesh);
+
+            return UpdateBounds(mesh, size, rotation, new Bounds());
         }
     }
 

@@ -30,12 +30,13 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         bool m_Smooth = true;
 
-        public override void UpdateBounds(ProBuilderMesh mesh)
+        public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
-            m_ShapeBox.size = mesh.mesh.bounds.size;
+            bounds.size = mesh.mesh.bounds.size;
+            return bounds;
         }
 
-        public override void RebuildMesh(ProBuilderMesh mesh)
+        public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var meshSize = Math.Abs(rotation * size);
 
@@ -103,9 +104,8 @@ namespace UnityEngine.ProBuilder.Shapes
             mesh.RebuildWithPositionsAndFaces(vertices, faces);
 
             mesh.TranslateVerticesInWorldSpace(mesh.mesh.triangles, mesh.transform.TransformDirection(-mesh.mesh.bounds.center));
-            m_ShapeBox.center = Vector3.zero;
 
-            UpdateBounds(mesh);
+            return UpdateBounds(mesh, size, rotation, new Bounds());
         }
 
 

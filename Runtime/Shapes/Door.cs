@@ -15,7 +15,7 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         float m_LegWidth = .75f;
 
-        public override void RebuildMesh(ProBuilderMesh mesh)
+        public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var meshSize = Math.Abs(rotation * size);
             float totalWidth = meshSize.x;
@@ -109,7 +109,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
             mesh.GeometryWithPoints(points.ToArray());
 
-            m_ShapeBox = mesh.mesh.bounds;
+            return mesh.mesh.bounds;
         }
     }
 
