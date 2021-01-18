@@ -114,6 +114,7 @@ namespace UnityEditor.ProBuilder
 
         void OnDisable()
         {
+            SetPolyEditMode(PolyShape.PolyEditMode.None);
 #if !UNITY_2020_2_OR_NEWER
             ToolManager.activeToolChanged -= OnToolChanged;
 #endif
@@ -246,8 +247,11 @@ namespace UnityEditor.ProBuilder
 
                 case PolyShape.PolyEditMode.Edit:
                 {
-                    if (GUILayout.Button("Quit Editing", UI.EditorGUIUtility.GetActiveStyle("Button")))
+                    if(GUILayout.Button("Quit Editing", UI.EditorGUIUtility.GetActiveStyle("Button")))
+                    {
                         SetPolyEditMode(PolyShape.PolyEditMode.None);
+                        DestroyImmediate(this);
+                    }
                     EditorGUILayout.HelpBox("Move Poly Shape points to update the shape\nPress 'Enter' or 'Space' to Finalize", MessageType.Info);
                     break;
                 }
@@ -322,9 +326,6 @@ namespace UnityEditor.ProBuilder
                 //Dirty the polygon for serialization (fix for transition between prefab and scene mode)
                 if(polygon != null)
                     UnityEditor.EditorUtility.SetDirty(polygon);
-
-                if(mode == PolyShape.PolyEditMode.None)
-                    DestroyImmediate(this);
             }
         }
 
