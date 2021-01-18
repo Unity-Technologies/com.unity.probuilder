@@ -81,11 +81,11 @@ namespace UnityEditor.ProBuilder
             m_currentShapeRotation = Quaternion.identity;
 
             if(dragDotForward < 0 && dragDotRight > 0)
-                m_currentShapeRotation = Quaternion.Euler(0, -90, 0);
+                m_currentShapeRotation = Quaternion.Euler(0, 90, 0);
             else if(dragDotForward < 0 && dragDotRight < 0)
                 m_currentShapeRotation = Quaternion.Euler(0, 180, 0);
             else if(dragDotForward > 0 && dragDotRight < 0)
-                m_currentShapeRotation = Quaternion.Euler(0, 90, 0);
+                m_currentShapeRotation = Quaternion.Euler(0, -90, 0);
 
             tool.m_ShapeComponent.rotation = m_currentShapeRotation;
             tool.RebuildShape();
@@ -97,7 +97,7 @@ namespace UnityEditor.ProBuilder
 
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
 
-            shape.shape = EditorShapeUtility.GetLastParams(shape.shape.GetType());
+            EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
             shape.Rebuild(tool.m_Bounds, tool.m_PlaneRotation);
             shape.SetPivotPosition(tool.m_BB_Origin);
             ProBuilderEditor.Refresh(false);

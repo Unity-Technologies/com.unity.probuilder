@@ -18,6 +18,16 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_Smoothing = -1;
 
+        public override void CopyShape(Shape shape)
+        {
+            if(shape is Cylinder)
+            {
+                m_AxisDivisions = ((Cylinder)shape).m_AxisDivisions;
+                m_HeightCuts = ((Cylinder)shape).m_HeightCuts;
+                m_Smoothing = ((Cylinder)shape).m_Smoothing;
+            }
+        }
+
         public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
             var upLocalAxis = rotation * Vector3.up;

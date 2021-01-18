@@ -15,6 +15,15 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         float m_LegWidth = .75f;
 
+        public override void CopyShape(Shape shape)
+        {
+            if(shape is Door)
+            {
+                m_DoorHeight = ( (Door) shape ).m_DoorHeight;
+                m_LegWidth = ( (Door) shape ).m_LegWidth;
+            }
+        }
+
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var meshSize = Math.Abs(rotation * size);
@@ -103,11 +112,19 @@ namespace UnityEngine.ProBuilder.Shapes
             points.Add(template[5]);
             points.Add(template[5] - Vector3.forward * depth);
 
-
+            var sizeSigns = Math.Sign(size);
             for(int i = 0; i < points.Count; i++)
-                 points[i] = rotation * points[i];
+                 points[i] = Vector3.Scale(rotation * points[i], sizeSigns);
 
             mesh.GeometryWithPoints(points.ToArray());
+
+            var sizeSign = sizeSigns.x * sizeSigns.y * sizeSigns.z;
+            if(sizeSign < 0)
+            {
+                var faces = mesh.facesInternal;
+                foreach(var face in faces)
+                    face.Reverse();
+            }
 
             return mesh.mesh.bounds;
         }

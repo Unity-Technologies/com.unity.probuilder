@@ -6,6 +6,8 @@ namespace UnityEngine.ProBuilder.Shapes
     [Shape("Prism")]
     public class Prism : Shape
     {
+        public override void CopyShape(Shape shape) {}
+
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var meshSize = Math.Abs(size);
@@ -58,10 +60,17 @@ namespace UnityEngine.ProBuilder.Shapes
                 new Face(new int[6] {14, 15, 16, 15, 17, 16})
             };
 
-
+            var sizeSigns = Math.Sign(size);
             for(int i = 0; i < v.Length; i++)
-                v[i] = rotation * v[i];
+                v[i] = Vector3.Scale(rotation * v[i], sizeSigns);
 
+            var sizeSign = Mathf.Sign(size.x) * Mathf.Sign(size.y) * Mathf.Sign(size.z);
+            if(sizeSign < 0)
+            {
+                foreach(var face in f)
+                    face.Reverse();
+            }
+   
             mesh.RebuildWithPositionsAndFaces(v, f);
 
             return mesh.mesh.bounds;

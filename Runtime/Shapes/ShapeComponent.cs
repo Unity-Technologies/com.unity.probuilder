@@ -92,6 +92,7 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
+        [SerializeField]
         Bounds m_ShapeBox;
         public Bounds shapeBox
         {
@@ -188,9 +189,7 @@ namespace UnityEngine.ProBuilder.Shapes
             RebuildPivot(mesh, size, rotation);
             m_Edited = false;
 
-            Bounds bounds = m_ShapeBox;
-            bounds.size = Math.Abs(m_ShapeBox.size);
-            MeshUtility.FitToSize(mesh, bounds, size);
+            MeshUtility.FitToSize(mesh, m_ShapeBox, size);
 
             UpdateProperties();
         }
@@ -198,8 +197,6 @@ namespace UnityEngine.ProBuilder.Shapes
         public void SetShape(Shape shape, PivotLocation location)
         {
             m_PivotLocation = location;
-            // shape.pivotLocalPosition = m_Shape.pivotLocalPosition;
-            // shape.pivotLocation = location;
 
             m_Shape = shape;
             if(m_Shape is Plane || m_Shape is Sprite)

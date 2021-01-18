@@ -40,6 +40,20 @@ namespace UnityEngine.ProBuilder.Shapes
             set => m_Sides = value;
         }
 
+        public override void CopyShape(Shape shape)
+        {
+            if(shape is Stairs)
+            {
+                Stairs stairs = (Stairs) shape;
+                m_StepGenerationType = stairs.m_StepGenerationType;
+                m_StepsHeight = stairs.m_StepsHeight;
+                m_StepsCount = stairs.m_StepsCount;
+                m_HomogeneousSteps = stairs.m_HomogeneousSteps;
+                m_Circumference = stairs.m_Circumference;
+                m_Sides = stairs.m_Sides;
+            }
+        }
+
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             if (m_Circumference > 0)
@@ -48,9 +62,29 @@ namespace UnityEngine.ProBuilder.Shapes
                 return BuildStairs(mesh, size, rotation);
         }
 
+        public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
+        {
+            if (m_Circumference > 0)
+            {
+                bounds.center = mesh.mesh.bounds.center;
+                bounds.size = Vector3.Scale(Math.Sign(size),mesh.mesh.bounds.size);
+            }
+            else
+            {
+                bounds = mesh.mesh.bounds;
+                bounds.size = size;
+            }
+
+            return bounds;
+        }
+
         Bounds BuildStairs(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
-            var meshSize = size;
+            var upDir = Vector3.Scale(rotation * Vector3.up, size) ;
+            var rightDir = Vector3.Scale(rotation * Vector3.right, size) ;
+            var forwardDir = Vector3.Scale(rotation * Vector3.forward, size) ;
+
+            var meshSize = new Vector3(rightDir.magnitude, upDir.magnitude, forwardDir.magnitude);
 
             var useStepHeight = m_StepGenerationType == StepGenerationType.Height;
             var stairsHeight = meshSize.y;
@@ -213,16 +247,10 @@ namespace UnityEngine.ProBuilder.Shapes
                 vertices[i] = rotation * vertices[i];
             }
 
-            var sizeSigns = Mathf.Sign(size.x) * Mathf.Sign(size.y) * Mathf.Sign(size.z);
-            if(sizeSigns < 0)
-            {
-                foreach(var face in faces)
-                    face.Reverse();
-            }
-
             mesh.RebuildWithPositionsAndFaces(vertices, faces);
 
-            return mesh.mesh.bounds;
+            return UpdateBounds(mesh, size, rotation, new Bounds());
+            //return mesh.mesh.bounds;
         }
 
         Bounds BuildCurvedStairs(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
@@ -456,17 +484,21 @@ namespace UnityEngine.ProBuilder.Shapes
             }
 
             for(int i = 0; i < positions.Length; i++)
-            {
-                //positions[i] = new Vector3(-positions[i].z, positions[i].y, positions[i].x);
-                positions[i] = new Vector3(-positions[i].x, positions[i].y, -positions[i].z);
                 positions[i] = rotation * positions[i];
+
+            var sizeSign = Mathf.Sign(size.x) * Mathf.Sign(size.y) * Mathf.Sign(size.z);
+            if(sizeSign < 0)
+            {
+                foreach(var face in faces)
+                    face.Reverse();
             }
 
             mesh.RebuildWithPositionsAndFaces(positions, faces);
 
             mesh.TranslateVerticesInWorldSpace(mesh.mesh.triangles, mesh.transform.TransformDirection(-mesh.mesh.bounds.center));
+            mesh.Refresh();
 
-            return new Bounds(Vector3.zero,mesh.mesh.bounds.size);
+            return UpdateBounds(mesh, size, rotation, new Bounds());
         }
     }
 

@@ -255,7 +255,7 @@ namespace UnityEditor.ProBuilder
 
             if (!m_IsShapeInit)
             {
-                m_ShapeComponent.shape = EditorShapeUtility.GetLastParams(m_ShapeComponent.shape.GetType());
+                EditorShapeUtility.CopyLastParams(m_ShapeComponent.shape, m_ShapeComponent.shape.GetType());
                 m_ShapeComponent.gameObject.hideFlags = HideFlags.None;
                 UndoUtility.RegisterCreatedObjectUndo(m_ShapeComponent.gameObject, "Draw Shape");
             }

@@ -8,11 +8,12 @@ namespace UnityEngine.ProBuilder.Shapes
     {
         public virtual Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
-            bounds = mesh.mesh.bounds;
-            return bounds;
+            return mesh.mesh.bounds;
         }
 
         public abstract Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation);
+
+        public abstract void CopyShape(Shape shape);
     }
 
     [System.AttributeUsage(System.AttributeTargets.Class)]

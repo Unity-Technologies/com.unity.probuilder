@@ -58,6 +58,15 @@ namespace UnityEngine.ProBuilder.Shapes
 
         int m_BottomMostVertexIndex = 0;
 
+        public override void CopyShape(Shape shape)
+        {
+            if(shape is Sphere)
+            {
+                m_Subdivisions = ( (Sphere) shape ).m_Subdivisions;
+                m_BottomMostVertexIndex = ( (Sphere) shape ).m_BottomMostVertexIndex;
+            }
+        }
+
         public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
             bounds = mesh.mesh.bounds;

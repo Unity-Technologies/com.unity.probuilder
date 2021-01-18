@@ -88,13 +88,15 @@ namespace UnityEditor.ProBuilder
 
                         return NextState();
                     }
-                    else if(evt.shift)
-                    {
-                        m_HitPosition = ray.GetPoint(hit);
-                        tool.UpdateBounds(m_HitPosition);
-                    }
+                }
+                else
+                {
+                    m_HitPosition = Vector3.negativeInfinity;
                 }
             }
+
+            if(evt.shift)
+                tool.UpdateBounds(m_HitPosition);
 
             // Repaint to visualize the placement preview dot
             if (evt.type == EventType.MouseMove && HandleUtility.nearestControl == tool.controlID)

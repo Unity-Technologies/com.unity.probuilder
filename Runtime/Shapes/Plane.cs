@@ -14,6 +14,15 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_WidthSegments = 1;
 
+        public override void CopyShape(Shape shape)
+        {
+            if(shape is Plane)
+            {
+                m_HeightSegments = ((Plane)shape).m_HeightSegments;
+                m_WidthSegments = ((Plane)shape).m_WidthSegments;
+            }
+        }
+
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             int w = m_WidthSegments + 1;

@@ -326,8 +326,7 @@ namespace UnityEditor.ProBuilder
                                 }
                             }
 
-                            targetedNormal = Vector3.Scale(targetedNormal, scaleModifier);
-                            var currentNormal = Vector3.Scale(face.Normal, scaleModifier);
+                            var currentNormal = face.Normal;
                             Vector3 rotationAxis = Vector3.Cross(currentNormal,targetedNormal);
                             var angle = Vector3.SignedAngle(currentNormal, targetedNormal, rotationAxis);
                             s_ShapeRotation = Quaternion.AngleAxis(angle, rotationAxis);
@@ -387,9 +386,9 @@ namespace UnityEditor.ProBuilder
                                    Handles.DrawAAPolyLine(3f,
                                        new Vector3[]
                                        {
-                                           Vector3.Scale(shapeComponent.rotation * Vector3.up, shapeComponent.size / 2f),
+                                           Vector3.Scale(shapeComponent.rotation * Vector3.up, Math.Abs(shapeComponent.size) / 2f),
                                            Vector3.zero,
-                                           Vector3.Scale(shapeComponent.rotation * Vector3.forward, shapeComponent.size / 2f)
+                                           Vector3.Scale(shapeComponent.rotation * Vector3.forward, Math.Abs(shapeComponent.size) / 2f)
                                        });
                                }
                            }

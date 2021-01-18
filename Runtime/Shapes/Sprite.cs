@@ -6,6 +6,8 @@ namespace UnityEngine.ProBuilder.Shapes
     [Shape("Sprite")]
     public class Sprite : Shape
     {
+        public override void CopyShape(Shape shape) {}
+
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var meshSize = Math.Abs(size);

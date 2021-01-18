@@ -13,6 +13,15 @@ namespace UnityEngine.ProBuilder.Shapes
 
         float m_Radius = 0;
 
+        public override void CopyShape(Shape shape)
+        {
+            if(shape is Cone)
+            {
+                m_NumberOfSides = ((Cone)shape).m_NumberOfSides;
+                m_Radius = ((Cone)shape).m_Radius;
+            }
+        }
+
         public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
             var upLocalAxis = rotation * Vector3.up;
@@ -70,8 +79,16 @@ namespace UnityEngine.ProBuilder.Shapes
                 f.Add(new Face(new int[3] { i + 3, i + 4, i + 5 }));
             }
 
+            var sizeSigns = Math.Sign(size);
             for(int i = 0; i < v.Count; i++)
-                v[i] = rotation * v[i];
+                v[i] = Vector3.Scale(rotation * v[i], sizeSigns);
+
+            var sizeSign = Mathf.Sign(size.x) * Mathf.Sign(size.y) * Mathf.Sign(size.z);
+            if(sizeSign < 0)
+            {
+                foreach(var face in f)
+                    face.Reverse();
+            }
 
             mesh.RebuildWithPositionsAndFaces(v, f);
 

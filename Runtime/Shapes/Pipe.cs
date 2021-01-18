@@ -18,6 +18,17 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_HeightSegments = 1;
 
+        public override void CopyShape(Shape shape)
+        {
+            if(shape is Pipe)
+            {
+                Pipe pipe = (Pipe) shape;
+                m_Thickness = pipe.m_Thickness;
+                m_NumberOfSides = pipe.m_NumberOfSides;
+                m_HeightSegments = pipe.m_HeightSegments;
+            }
+        }
+
         public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
             bounds.size = size;

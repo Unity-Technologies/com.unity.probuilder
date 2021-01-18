@@ -22,10 +22,15 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         bool m_EndCaps = true;
 
-        public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
+        public override void CopyShape(Shape shape)
         {
-            bounds.size = mesh.mesh.bounds.size;
-            return bounds;
+            if(shape is Arch)
+            {
+                m_Thickness = ((Arch)shape).m_Thickness;
+                m_NumberOfSides = ((Arch)shape).m_NumberOfSides;
+                m_ArchDegrees = ((Arch)shape).m_ArchDegrees;
+                m_EndCaps = ((Arch)shape).m_EndCaps;
+            }
         }
 
         Vector3[] GetFace(Vector2 vertex1, Vector2 vertex2, float depth)
@@ -136,12 +141,22 @@ namespace UnityEngine.ProBuilder.Shapes
                 v.AddRange(tpt);
             }
 
+            var sizeSigns = Math.Sign(size);
             for(int i = 0; i < v.Count; i++)
-                v[i] = rotation * v[i];
+                v[i] = Vector3.Scale(rotation * v[i], sizeSigns);
 
             mesh.GeometryWithPoints(v.ToArray());
 
+            var sizeSign = sizeSigns.x * sizeSigns.y * sizeSigns.z;
+            if(sizeSign < 0)
+            {
+                var faces = mesh.facesInternal;
+                foreach(var face in faces)
+                    face.Reverse();
+            }
+
             mesh.TranslateVerticesInWorldSpace(mesh.mesh.triangles, mesh.transform.TransformDirection(-mesh.mesh.bounds.center));
+            mesh.Refresh();
 
             return UpdateBounds(mesh, size, rotation, new Bounds());
         }

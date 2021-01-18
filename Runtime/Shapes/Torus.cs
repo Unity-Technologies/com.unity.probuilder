@@ -30,6 +30,20 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         bool m_Smooth = true;
 
+        public override void CopyShape(Shape shape)
+        {
+            if(shape is Torus)
+            {
+                Torus torus = (Torus) shape;
+                m_Rows = torus.m_Rows;
+                m_Columns = torus.m_Columns;
+                m_TubeRadius = torus.m_TubeRadius;
+                m_HorizontalCircumference = torus.m_HorizontalCircumference;
+                m_VerticalCircumference = torus.m_VerticalCircumference;
+                m_Smooth = torus.m_Smooth;
+            }
+        }
+
         public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
             bounds.size = mesh.mesh.bounds.size;
@@ -104,6 +118,7 @@ namespace UnityEngine.ProBuilder.Shapes
             mesh.RebuildWithPositionsAndFaces(vertices, faces);
 
             mesh.TranslateVerticesInWorldSpace(mesh.mesh.triangles, mesh.transform.TransformDirection(-mesh.mesh.bounds.center));
+            mesh.Refresh();
 
             return UpdateBounds(mesh, size, rotation, new Bounds());
         }
