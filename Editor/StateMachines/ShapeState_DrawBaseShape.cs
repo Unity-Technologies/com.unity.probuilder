@@ -93,7 +93,8 @@ namespace UnityEditor.ProBuilder
 
         public void CreateLastShape()
         {
-            var shape = ShapeFactory.Instantiate(DrawShapeTool.activeShapeType, tool.m_LastShapeCreated.pivotLocation).GetComponent<ShapeComponent>();
+            var lastShape = tool.m_LastShapeCreated != null ? tool.m_LastShapeCreated : tool.currentShapeInOverlay;
+            var shape = ShapeFactory.Instantiate(DrawShapeTool.activeShapeType, lastShape.pivotLocation).GetComponent<ShapeComponent>();
 
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
 
