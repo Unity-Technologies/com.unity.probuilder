@@ -71,8 +71,11 @@ namespace UnityEditor.ProBuilder
         {
             get
             {
-                if(( m_CurrentState is ShapeState_InitShape ) && m_LastShapeCreated != null)
+                if(m_CurrentState is ShapeState_InitShape  && m_LastShapeCreated != null)
                     return m_LastShapeCreated;
+
+                if(m_CurrentState is ShapeState_DrawBaseShape && m_DuplicateGO != null)
+                    return m_DuplicateGO.GetComponent<ShapeComponent>();
 
                 if(m_ShapeComponent == null)
                 {
@@ -110,8 +113,6 @@ namespace UnityEditor.ProBuilder
         {
             if(ToolManager.IsActiveTool(this))
             {
-                var type = EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex];
-                currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type),EditorUtility.newShapePivotLocation);
                 SetBounds(currentShapeInOverlay.size);
             }
         }
@@ -181,16 +182,21 @@ namespace UnityEditor.ProBuilder
             s_Size.value = size;
         }
 
-        internal void UpdateBounds(Vector3 position)
+        internal GameObject m_DuplicateGO = null;
+        internal void DuplicatePreview(Vector3 position)
         {
+            if(position.Equals(Vector3.positiveInfinity))
+                return;
+
             var pivotLocation = EditorUtility.newShapePivotLocation;
-            if(currentShapeInOverlay != null)
-                pivotLocation = currentShapeInOverlay.pivotLocation;
+            if(m_LastShapeCreated != null)
+                pivotLocation = m_LastShapeCreated.pivotLocation;
 
             Vector3 size = s_Size.value;
             m_Bounds.size = size;
 
             Vector3 cornerPosition;
+            Vector3 duplicatePos;
             switch(pivotLocation)
             {
                 case PivotLocation.FirstCorner:
@@ -201,6 +207,8 @@ namespace UnityEditor.ProBuilder
                     m_BB_Origin = cornerPosition;
                     m_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);
                     m_BB_OppositeCorner = m_BB_HeightCorner - m_PlaneRotation * new Vector3(0, size.y, 0);
+
+                    duplicatePos = cornerPosition;
                     break;
 
                 case PivotLocation.Center:
@@ -214,8 +222,27 @@ namespace UnityEditor.ProBuilder
                     m_BB_Origin = m_Bounds.center - m_PlaneRotation * (size / 2f);
                     m_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);
                     m_BB_OppositeCorner = m_BB_HeightCorner - m_PlaneRotation * new Vector3(0, size.y, 0);
+
+                    duplicatePos = m_Bounds.center;
                     break;
             }
+
+
+            var lastShape = m_LastShapeCreated != null ? m_LastShapeCreated : currentShapeInOverlay;
+            ShapeComponent shape;
+            if(m_DuplicateGO == null)
+            {
+                shape = ShapeFactory.Instantiate(activeShapeType, lastShape.pivotLocation)
+                    .GetComponent<ShapeComponent>();
+                m_DuplicateGO = shape.gameObject;
+                m_DuplicateGO.hideFlags = HideFlags.HideAndDontSave;
+            }
+            else
+                shape = m_DuplicateGO.GetComponent<ShapeComponent>();
+
+            EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
+            shape.Rebuild(m_Bounds, m_PlaneRotation);
+            ProBuilderEditor.Refresh(false);
         }
 
         void RecalculateBounds()

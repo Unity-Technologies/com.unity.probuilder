@@ -1,6 +1,4 @@
 using UnityEditor;
-using UnityEngine.Animations;
-using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
 {

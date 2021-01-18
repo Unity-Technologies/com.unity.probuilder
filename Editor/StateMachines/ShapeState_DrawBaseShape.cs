@@ -95,6 +95,7 @@ namespace UnityEditor.ProBuilder
         {
             var lastShape = tool.m_LastShapeCreated != null ? tool.m_LastShapeCreated : tool.currentShapeInOverlay;
             var shape = ShapeFactory.Instantiate(DrawShapeTool.activeShapeType, lastShape.pivotLocation).GetComponent<ShapeComponent>();
+            shape.gameObject.name = shape.gameObject.name + "-Copy";
 
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
 
@@ -104,6 +105,9 @@ namespace UnityEditor.ProBuilder
 
             tool.m_ShapeComponent = null;
             tool.m_LastShapeCreated = shape;
+
+            if(tool.m_DuplicateGO != null)
+                GameObject.DestroyImmediate(tool.m_DuplicateGO);
 
             MeshSelection.SetSelection(shape.gameObject);
         }

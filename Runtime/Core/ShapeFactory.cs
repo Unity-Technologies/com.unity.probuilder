@@ -73,10 +73,6 @@ namespace UnityEngine.ProBuilder
             ProBuilderMesh pb = shapeComponent.mesh;
             pb.renderer.sharedMaterial = BuiltinMaterials.defaultMaterial;
 
-            // Torus shape should implement this itself
-            if (shape.GetType() == typeof(Torus))
-                UVEditing.ProjectFacesBox(pb, pb.facesInternal);
-
             var attribute = Attribute.GetCustomAttribute(shape.GetType(), typeof(ShapeAttribute));
 
             if(attribute is ShapeAttribute shapeAttrib)

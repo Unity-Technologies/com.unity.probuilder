@@ -179,12 +179,6 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public void Rebuild()
         {
-            if(gameObject == null || gameObject.hideFlags != HideFlags.None)
-            {
-                UpdateProperties();
-                return;
-            }
-
             m_ShapeBox = m_Shape.RebuildMesh(mesh, size, rotation);
             RebuildPivot(mesh, size, rotation);
             m_Edited = false;
@@ -225,7 +219,7 @@ namespace UnityEngine.ProBuilder.Shapes
                 m_ShapeBox = bounds;
             }
             ResetPivot(mesh, size, rotation);
-            Rebuild();
+            UpdateProperties();
         }
 
         /// <summary>

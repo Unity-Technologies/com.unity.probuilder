@@ -25,6 +25,9 @@ namespace UnityEditor.ProBuilder
                 m_Faces[i] = new EditorShapeUtility.FaceData();
 
             m_HitPosition = Vector3.positiveInfinity;
+
+            if(tool.m_DuplicateGO != null)
+                GameObject.DestroyImmediate(tool.m_DuplicateGO);
         }
 
         public override ShapeState DoState(Event evt)
@@ -96,7 +99,9 @@ namespace UnityEditor.ProBuilder
             }
 
             if(evt.shift)
-                tool.UpdateBounds(m_HitPosition);
+                tool.DuplicatePreview(m_HitPosition);
+            else if(tool.m_DuplicateGO != null)
+                GameObject.DestroyImmediate(tool.m_DuplicateGO);
 
             // Repaint to visualize the placement preview dot
             if (evt.type == EventType.MouseMove && HandleUtility.nearestControl == tool.controlID)
