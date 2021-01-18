@@ -116,6 +116,14 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
+        public void CopyComponent(ShapeComponent shapeComponent)
+        {
+            rotation = shapeComponent.rotation;
+            size = shapeComponent.size;
+            pivotLocation = shapeComponent.pivotLocation;
+            pivotLocalPosition = shapeComponent.pivotLocalPosition;
+        }
+
         public void SetPivotPosition(Vector3 position)
         {
             pivotLocalPosition = mesh.transform.InverseTransformPoint(position);
@@ -179,6 +187,10 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public void Rebuild()
         {
+            if(gameObject == null
+            || gameObject.hideFlags == HideFlags.HideAndDontSave)
+                return;
+
             m_ShapeBox = m_Shape.RebuildMesh(mesh, size, rotation);
             RebuildPivot(mesh, size, rotation);
             m_Edited = false;
@@ -220,6 +232,7 @@ namespace UnityEngine.ProBuilder.Shapes
             }
             ResetPivot(mesh, size, rotation);
             UpdateProperties();
+            Rebuild();
         }
 
         /// <summary>

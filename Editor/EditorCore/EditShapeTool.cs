@@ -279,10 +279,6 @@ namespace UnityEditor.ProBuilder
                         UndoUtility.RecordComponents<Transform, ProBuilderMesh, ShapeComponent>(shapeComponent.GetComponents(typeof(Component)),"Rotate Shape");
                         shapeComponent.RotateInsideBounds(s_ShapeRotation);
 
-                        //Only Updating Draw shape tool when using this tool
-                        if(s_UpdateDrawShapeTool)
-                            DrawShapeTool.s_LastShapeRotation = shapeComponent.rotation;
-
                         ProBuilderEditor.Refresh();
                     }
                 }
@@ -294,9 +290,6 @@ namespace UnityEditor.ProBuilder
         {
             Event evt = Event.current;
             bool hasRotated = false;
-
-            float handleSize = HandleUtility.GetHandleSize(Vector3.zero);
-            var scaleModifier = Math.Sign(shapeComponent.size);
 
             switch(evt.type)
             {

@@ -19,10 +19,11 @@ namespace UnityEditor.ProBuilder
         ShapeState m_CurrentState;
 
         internal ShapeComponent m_LastShapeCreated = null;
-        internal static Quaternion s_LastShapeRotation = Quaternion.identity;
 
         internal ShapeComponent m_ShapeComponent;
         internal bool m_IsShapeInit;
+
+        internal GameObject m_DuplicateGO = null;
 
         Editor m_ShapeEditor;
 
@@ -41,7 +42,6 @@ namespace UnityEditor.ProBuilder
         readonly GUIContent k_ShapeTitle = new GUIContent("Draw Shape");
 
         internal static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
-        internal static Pref<Vector3> s_Size = new Pref<Vector3>("ShapeBuilder.Size", Vector3.zero);
         public static Pref<bool> s_SettingsEnabled = new Pref<bool>("ShapeComponent.SettingsEnabled", false);
 
         int m_ControlID;
@@ -178,25 +178,21 @@ namespace UnityEditor.ProBuilder
 
             m_BB_OppositeCorner = m_BB_Origin + new Vector3(x, 0, z);
             m_BB_HeightCorner = m_BB_Origin + size;
-
-            s_Size.value = size;
         }
 
-        internal GameObject m_DuplicateGO = null;
         internal void DuplicatePreview(Vector3 position)
         {
             if(position.Equals(Vector3.positiveInfinity))
                 return;
 
             var pivotLocation = EditorUtility.newShapePivotLocation;
+            var size = currentShapeInOverlay.size;
             if(m_LastShapeCreated != null)
                 pivotLocation = m_LastShapeCreated.pivotLocation;
 
-            Vector3 size = s_Size.value;
             m_Bounds.size = size;
 
             Vector3 cornerPosition;
-            Vector3 duplicatePos;
             switch(pivotLocation)
             {
                 case PivotLocation.FirstCorner:
@@ -207,8 +203,6 @@ namespace UnityEditor.ProBuilder
                     m_BB_Origin = cornerPosition;
                     m_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);
                     m_BB_OppositeCorner = m_BB_HeightCorner - m_PlaneRotation * new Vector3(0, size.y, 0);
-
-                    duplicatePos = cornerPosition;
                     break;
 
                 case PivotLocation.Center:
@@ -222,8 +216,6 @@ namespace UnityEditor.ProBuilder
                     m_BB_Origin = m_Bounds.center - m_PlaneRotation * (size / 2f);
                     m_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);
                     m_BB_OppositeCorner = m_BB_HeightCorner - m_PlaneRotation * new Vector3(0, size.y, 0);
-
-                    duplicatePos = m_Bounds.center;
                     break;
             }
 
@@ -235,7 +227,8 @@ namespace UnityEditor.ProBuilder
                 shape = ShapeFactory.Instantiate(activeShapeType, lastShape.pivotLocation)
                     .GetComponent<ShapeComponent>();
                 m_DuplicateGO = shape.gameObject;
-                m_DuplicateGO.hideFlags = HideFlags.HideAndDontSave;
+                m_DuplicateGO.hideFlags = HideFlags.DontSave | HideFlags.HideInHierarchy;
+                shape.CopyComponent(lastShape);
             }
             else
                 shape = m_DuplicateGO.GetComponent<ShapeComponent>();
