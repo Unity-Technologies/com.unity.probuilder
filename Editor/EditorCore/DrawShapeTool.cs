@@ -195,8 +195,8 @@ namespace UnityEditor.ProBuilder
             {
                 case PivotLocation.FirstCorner:
                     cornerPosition = GetPoint(position);
-                    m_Bounds.center = cornerPosition + new Vector3(size.x/2f,0, size.z/2f) + (size.y / 2f) * m_Plane.normal;
                     m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
+                    m_Bounds.center = cornerPosition + m_PlaneRotation * size / 2f;
 
                     m_BB_Origin = cornerPosition;
                     m_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);

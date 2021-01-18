@@ -70,7 +70,7 @@ namespace UnityEngine.ProBuilder.Shapes
                 foreach(var face in f)
                     face.Reverse();
             }
-   
+
             mesh.RebuildWithPositionsAndFaces(v, f);
 
             return mesh.mesh.bounds;
