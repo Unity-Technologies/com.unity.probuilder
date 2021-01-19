@@ -44,22 +44,29 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        static bool s_UpdateDrawShapeTool = false;
-
         //Handle Manipulation
         static int s_CurrentId = -1;
         static int[] s_OrientationControlIDs = new int[4];
 
         //Size Handle management
-        static Vector2 s_LastMousePosition;
-        static Vector3 s_SizeDelta;
-        static Vector3 s_SizeLeftOver;
+        static Vector3 s_StartSize;
+        static Vector3 s_StartPosition;
+        static Vector3 s_StartNormal;
+        static Vector3 s_StartCenter;
+        static Vector3 s_TargetSize;
+        static Vector3 s_SizeSigns;
+        static bool s_sizeManipulationInit;
+
+        static Vector3 s_LastDelta;
+        static float s_DefaultMidpointHandleSize = 0.03f;
+        static float s_DefaultMidpointSquareSize = 0.15f;
 
         //Orientation Handle Manipulation
         static float s_CurrentAngle = 0;
         static int s_CurrentArrowHovered = -1;
         static Quaternion s_ShapeRotation = Quaternion.identity;
         static Vector3[][] s_ArrowsLines = new Vector3[4][];
+
 
         public override GUIContent toolbarIcon
         {
@@ -143,12 +150,10 @@ namespace UnityEditor.ProBuilder
             EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snap To Grid", EditorSnapSettings.gridSnapEnabled);
         }
 
-        internal static void DoEditingGUI(ShapeComponent shapeComponent, bool updateDrawShapeTool = false)
+        internal static void DoEditingGUI(ShapeComponent shapeComponent)
         {
             if(shapeComponent == null)
                 return;
-
-            s_UpdateDrawShapeTool = updateDrawShapeTool;
 
             var scale = shapeComponent.transform.lossyScale;
             var position = shapeComponent.transform.position
@@ -195,39 +200,38 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
-                if( DoFaceSizeHandle(face))
+                if( DoFaceSizeHandle(face) )
                 {
                     float modifier = 1f;
                     if(Event.current.alt)
                         modifier = 2f;
 
-                    var shapeSizeSigns = Math.Sign(shapeComponent.size);
+                    if(!s_sizeManipulationInit)
+                    {
+                        s_StartCenter = shapeComponent.transform.position + shapeComponent.transform.TransformVector(shapeComponent.shapeBox.center);
+                        s_StartPosition = face.CenterPosition;
+                        s_StartNormal = face.Normal;
+                        s_StartSize = shapeComponent.size;
+                        s_sizeManipulationInit = true;
+                        s_SizeSigns = Math.Sign(s_StartSize);
+                    }
 
-                    var scale = shapeComponent.transform.lossyScale;
-                    var scaleSigns = Math.Sign(scale);
-                    var scaleInverse = new Vector3(1f/scale.x, 1f/scale.y, 1f/scale.z);
+                    //var sizeOffset = ProBuilderSnapping.Snap(modifier * delta, evt.shift? EditorSnapping.incrementalSnapMoveValue : Vector3.zero);
 
-                    var delta = s_SizeDelta - s_LastDelta;
-                    var sizeDelta = delta.x + delta.y + delta.z;
+                    var targetDelta = s_TargetSize - s_StartPosition;
+                    targetDelta.Scale(s_StartNormal);
 
-                    delta = Vector3.Scale(Vector3.Scale(sizeDelta * Math.Abs(s_Faces[i].Normal), scaleInverse) , Vector3.Scale(scale,shapeSizeSigns));
-                    delta += s_SizeLeftOver;
+                    var center = Event.current.alt ?
+                                        Vector3.zero :
+                                        shapeComponent.transform.TransformVector(Vector3.Scale(targetDelta, s_StartNormal / 2f));
 
-                    var sizeOffset = ProBuilderSnapping.Snap(modifier * delta, evt.shift? EditorSnapping.incrementalSnapMoveValue : Vector3.zero);
-                    s_SizeLeftOver = modifier * delta - sizeOffset;
+                    targetDelta.Scale(s_SizeSigns);
 
-                    var faceNormal = shapeComponent.transform.TransformVector(s_Faces[i].Normal);
-                    var center = Event.current.alt ? Vector3.zero : Vector3.Scale(Mathf.Sign(sizeDelta)*(sizeOffset.magnitude / 2f) * faceNormal , scaleSigns);
-                    var currentCenter = shapeComponent.transform.position + Vector3.Scale(shapeComponent.transform.TransformVector(shapeComponent.shapeBox.center),scale);
+                    ApplyProperties(shapeComponent, s_StartCenter + center, s_StartSize + targetDelta);
 
-                    ApplyProperties(shapeComponent, currentCenter + center, shapeComponent.size + sizeOffset);
                 }
             }
         }
-
-        static Vector3 s_LastDelta;
-        static float s_DefaultMidpointHandleSize = 0.03f;
-        static float s_DefaultMidpointSquareSize = 0.15f;
 
         static bool DoFaceSizeHandle(FaceData face)
         {
@@ -242,25 +246,17 @@ namespace UnityEditor.ProBuilder
 
             Color color = k_BoundsHandleColor;
             color.a *= face.IsVisible ? 1f : 0.25f;
-            Vector3 newTargetPosition;
             using(new Handles.DrawingScope(color))
-                newTargetPosition = Handles.Slider(face.CenterPosition, face.Normal, handleSize, Handles.DotHandleCap, snap);
+                s_TargetSize = Handles.Slider(face.CenterPosition, face.Normal, handleSize, Handles.DotHandleCap, snap);
 
             if (EditorGUI.EndChangeCheck())
-            {
-                if(s_LastDelta.Equals(Vector3.negativeInfinity))
-                    s_LastDelta = Vector3.Scale(face.CenterPosition, face.Normal);
-                else
-                    s_LastDelta = s_SizeDelta;
-
-                s_SizeDelta = Vector3.Scale(newTargetPosition, face.Normal);
-                s_LastDelta *= Vector3.Dot(s_LastDelta.normalized, s_SizeDelta.normalized);
-
                 return true;
-            }
 
             if(GUIUtility.hotControl == 0)
+            {
+                s_sizeManipulationInit = false;
                 s_LastDelta = Vector3.negativeInfinity;
+            }
 
             return false;
         }
