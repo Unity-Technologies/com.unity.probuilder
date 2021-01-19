@@ -26,7 +26,7 @@ namespace UnityEngine.ProBuilder.Shapes
         Vector3 m_Size = Vector3.one;
 
         [SerializeField]
-        Quaternion m_Rotation;
+        Quaternion m_Rotation = Quaternion.identity;
 
         [SerializeField]
         ShapeBoxProperties m_Properties = new ShapeBoxProperties();
@@ -195,7 +195,9 @@ namespace UnityEngine.ProBuilder.Shapes
             RebuildPivot(mesh, size, rotation);
             m_Edited = false;
 
-            MeshUtility.FitToSize(mesh, m_ShapeBox, size);
+            Bounds bounds = m_ShapeBox;
+            bounds.size = Math.Abs(m_ShapeBox.size);
+            MeshUtility.FitToSize(mesh, bounds, size);
 
             UpdateProperties();
         }

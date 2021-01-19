@@ -26,10 +26,13 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
-            var meshSize = Math.Abs(rotation * size);
-            float totalWidth = meshSize.x;
-            float totalHeight = meshSize.y;
-            float depth = meshSize.z;
+            var upDir = Vector3.Scale(rotation * Vector3.up, size) ;
+            var rightDir = Vector3.Scale(rotation * Vector3.right, size) ;
+            var forwardDir = Vector3.Scale(rotation * Vector3.forward, size) ;
+
+            float totalWidth = rightDir.magnitude;
+            float totalHeight = upDir.magnitude;
+            float depth = forwardDir.magnitude;
 
             float xLegCoord = totalWidth / 2f;
             var legWidth = xLegCoord - m_LegWidth > 0 ? xLegCoord - m_LegWidth : 0.001f;

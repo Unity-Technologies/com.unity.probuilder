@@ -561,7 +561,7 @@ namespace UnityEngine.ProBuilder
             if (mesh.vertexCount < 1)
                 return;
 
-            var scale = sizeToFit.DivideBy(currentSize.size);
+            var scale = Math.Abs(sizeToFit).DivideBy(currentSize.size);
             if (scale == Vector3.one || scale == Vector3.zero)
                 return;
 
@@ -579,14 +579,6 @@ namespace UnityEngine.ProBuilder
                 positions[i] -= currentSize.center;
                 positions[i].Scale(scale);
                 positions[i] += currentSize.center;
-            }
-
-            var mirroring = Math.Sign(sizeToFit);
-            bool flipFaces = (mirroring.x * mirroring.y * mirroring.z) < 0;
-            if(flipFaces)
-            {
-                foreach(Face face in mesh.facesInternal)
-                    face.Reverse();
             }
 
             mesh.Rebuild();

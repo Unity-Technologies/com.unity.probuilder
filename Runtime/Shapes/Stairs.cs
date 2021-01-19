@@ -240,9 +240,18 @@ namespace UnityEngine.ProBuilder.Shapes
                 faces = faces.Add(new Face(new int[] { v + 0, v + 1, v + 2, v + 1, v + 3, v + 2 }));
             }
 
+            var sizeSigns = Math.Sign(size);
             for(int i = 0; i < vertices.Length; i++)
             {
                 vertices[i] = rotation * vertices[i];
+                vertices[i].Scale(sizeSigns);
+            }
+
+            var sizeSign = sizeSigns.x * sizeSigns.y * sizeSigns.z;
+            if(sizeSign < 0)
+            {
+                foreach(var face in faces)
+                    face.Reverse();
             }
 
             mesh.RebuildWithPositionsAndFaces(vertices, faces);
@@ -481,10 +490,17 @@ namespace UnityEngine.ProBuilder.Shapes
                     f.Reverse();
             }
 
+            var sizeSigns = Math.Sign(size);
             for(int i = 0; i < positions.Length; i++)
+            {
                 positions[i] = rotation * positions[i];
+                positions[i].Scale(sizeSigns);
+            }
 
-            var sizeSign = Mathf.Sign(size.x) * Mathf.Sign(size.y) * Mathf.Sign(size.z);
+            // for(int i = 0; i < positions.Length; i++)
+            //     positions[i] = rotation * positions[i];
+
+            var sizeSign = sizeSigns.x * sizeSigns.y * sizeSigns.z;
             if(sizeSign < 0)
             {
                 foreach(var face in faces)
