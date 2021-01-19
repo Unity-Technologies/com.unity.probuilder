@@ -24,6 +24,8 @@ namespace UnityEditor.ProBuilder
         internal bool m_IsShapeInit;
 
         internal GameObject m_DuplicateGO = null;
+        Material m_ShapePreviewMaterial;
+        static readonly Color previewColor = new Color(.5f, .9f, 1f, .56f);
 
         Editor m_ShapeEditor;
 
@@ -102,11 +104,23 @@ namespace UnityEditor.ProBuilder
             Undo.undoRedoPerformed += HandleUndoRedoPerformed;
             MeshSelection.objectSelectionChanged += OnSelectionChanged;
             ToolManager.activeToolChanged += OnActiveToolChanged;
+
+            m_ShapePreviewMaterial = new Material(BuiltinMaterials.defaultMaterial.shader);
+            m_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
+
+            if (m_ShapePreviewMaterial.HasProperty("_MainTex"))
+                m_ShapePreviewMaterial.mainTexture = (Texture2D)Resources.Load("Textures/GridBox_Default");
+
+            if (m_ShapePreviewMaterial.HasProperty("_Color"))
+                m_ShapePreviewMaterial.SetColor("_Color", previewColor);
+
         }
 
         void OnDestroy()
         {
             MeshSelection.objectSelectionChanged -= OnSelectionChanged;
+            if(m_ShapePreviewMaterial)
+                DestroyImmediate(m_ShapePreviewMaterial);
         }
 
         void OnActiveToolChanged()
@@ -229,6 +243,7 @@ namespace UnityEditor.ProBuilder
                 m_DuplicateGO = shape.gameObject;
                 m_DuplicateGO.hideFlags = HideFlags.DontSave | HideFlags.HideInHierarchy;
                 shape.CopyComponent(lastShape);
+                shape.GetComponent<MeshRenderer>().sharedMaterial = m_ShapePreviewMaterial;
             }
             else
                 shape = m_DuplicateGO.GetComponent<ShapeComponent>();

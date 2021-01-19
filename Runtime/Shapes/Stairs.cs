@@ -257,7 +257,6 @@ namespace UnityEngine.ProBuilder.Shapes
             mesh.RebuildWithPositionsAndFaces(vertices, faces);
 
             return UpdateBounds(mesh, size, rotation, new Bounds());
-            //return mesh.mesh.bounds;
         }
 
         Bounds BuildCurvedStairs(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
@@ -496,9 +495,6 @@ namespace UnityEngine.ProBuilder.Shapes
                 positions[i] = rotation * positions[i];
                 positions[i].Scale(sizeSigns);
             }
-
-            // for(int i = 0; i < positions.Length; i++)
-            //     positions[i] = rotation * positions[i];
 
             var sizeSign = sizeSigns.x * sizeSigns.y * sizeSigns.z;
             if(sizeSign < 0)
