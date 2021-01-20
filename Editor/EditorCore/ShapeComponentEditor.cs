@@ -83,7 +83,7 @@ namespace UnityEditor.ProBuilder
 
             int editedShapesCount = 0;
             foreach(var comp in targets)
-                editedShapesCount += ( (ShapeComponent) comp ).edited ? 1 : 0;
+                editedShapesCount += ( (ShapeComponent) comp ).isEditable ? 0 : 1;
 
             if(editedShapesCount > 0)
             {
@@ -99,12 +99,8 @@ namespace UnityEditor.ProBuilder
                     {
                         var shapeComponent = comp as ShapeComponent;
                         UndoUtility.RecordComponents<Transform, ProBuilderMesh, ShapeComponent>(shapeComponent.GetComponents(typeof(Component)),"Reset Shape");
-                        if( shapeComponent.edited )
-                        {
-                            shapeComponent.edited = false;
-                            shapeComponent.UpdateComponent();
-                            ProBuilderEditor.Refresh();
-                        }
+                        shapeComponent.UpdateComponent();
+                        ProBuilderEditor.Refresh();
                     }
                 }
 
@@ -177,7 +173,7 @@ namespace UnityEditor.ProBuilder
                 foreach(var comp in targets)
                 {
                     var shapeComponent = comp as ShapeComponent;
-                    if(!shapeComponent.edited)
+                    if(shapeComponent.isEditable)
                     {
                         UndoUtility.RecordComponents<Transform, ProBuilderMesh, ShapeComponent>(shapeComponent.GetComponents(typeof(Component)),"Resize Shape");
                         shapeComponent.UpdateComponent();

@@ -268,10 +268,6 @@ namespace UnityEditor.ProBuilder
 
             foreach (var mesh in selection)
             {
-                ShapeComponent shape;
-                if(mesh.gameObject.TryGetComponent(out shape))
-                    shape.edited = true;
-
                 mesh.ToMesh();
                 mesh.Refresh();
             }

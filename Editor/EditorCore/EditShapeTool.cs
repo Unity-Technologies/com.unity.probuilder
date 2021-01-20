@@ -136,7 +136,7 @@ namespace UnityEditor.ProBuilder
             {
                 var shape = obj as ShapeComponent;
 
-                if (shape != null && !shape.edited)
+                if (shape != null && shape.isEditable)
                     DoEditingGUI(shape);
             }
         }

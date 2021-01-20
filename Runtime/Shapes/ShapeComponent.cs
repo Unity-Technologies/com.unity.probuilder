@@ -39,8 +39,7 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         Vector3 m_PivotPosition;
 
-        [SerializeField]
-        bool m_Edited = false;
+        [SerializeField] int m_Hash;
 
         public Shape shape
         {
@@ -72,12 +71,6 @@ namespace UnityEngine.ProBuilder.Shapes
             set => m_Rotation = value;
         }
 
-        public bool edited
-        {
-            get => m_Edited;
-            set => m_Edited = value;
-        }
-
         Bounds m_EditionBounds;
         public Bounds editionBounds
         {
@@ -94,10 +87,19 @@ namespace UnityEngine.ProBuilder.Shapes
 
         [SerializeField]
         Bounds m_ShapeBox;
-        public Bounds shapeBox
+        public Bounds shapeBox => m_ShapeBox;
+
+        bool m_isEditable = true;
+        public bool isEditable
         {
-            get => m_ShapeBox;
-            set => m_ShapeBox = value;
+            get
+            {
+                if(!m_isEditable)
+                    return false;
+                else
+                    m_isEditable = m_Hash == GetCurrentHash();
+                return m_isEditable;
+            }
         }
 
         /// <summary>
@@ -129,6 +131,15 @@ namespace UnityEngine.ProBuilder.Shapes
             pivotLocalPosition = mesh.transform.InverseTransformPoint(position);
         }
 
+        int GetCurrentHash()
+        {
+            int hash = 0;
+            for(int i = 0; i < mesh.vertexCount; i++)
+                hash += mesh.positionsInternal[i].GetHashCode();
+
+            return hash;
+        }
+
         void UpdateProperties()
         {
             m_Properties.m_SizeX = size.x;
@@ -138,11 +149,6 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public void UpdateComponent()
         {
-            // if(pivotLocation != m_PivotLocation)
-            // {
-            //     m_Shape.pivotLocation = m_PivotLocation;
-            //     RebuildPivot(mesh, size, rotation);
-            // }else
             //If pivot is located at first corner, then take this position as a reference when changing size properties
             if(m_PivotLocation == PivotLocation.FirstCorner)
             {
@@ -193,12 +199,13 @@ namespace UnityEngine.ProBuilder.Shapes
 
             m_ShapeBox = m_Shape.RebuildMesh(mesh, size, rotation);
             RebuildPivot(mesh, size, rotation);
-            m_Edited = false;
 
             Bounds bounds = m_ShapeBox;
             bounds.size = Math.Abs(m_ShapeBox.size);
             MeshUtility.FitToSize(mesh, bounds, size);
 
+            m_Hash = GetCurrentHash();
+            m_isEditable = true;
             UpdateProperties();
         }
 
