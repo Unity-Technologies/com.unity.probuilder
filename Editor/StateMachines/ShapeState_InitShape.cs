@@ -98,7 +98,7 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            if(evt.shift)
+            if(GUIUtility.hotControl == 0 && evt.shift)
                 tool.DuplicatePreview(m_HitPosition);
             else if(tool.m_DuplicateGO != null)
                 GameObject.DestroyImmediate(tool.m_DuplicateGO);
@@ -119,7 +119,7 @@ namespace UnityEditor.ProBuilder
                 }
 
                 if(evt.shift)
-                    tool.DrawBoundingBox();
+                    tool.DrawBoundingBox(false);
             }
 
             return this;

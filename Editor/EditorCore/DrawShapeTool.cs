@@ -321,19 +321,21 @@ namespace UnityEditor.ProBuilder
             m_CurrentState = m_CurrentState.DoState(evt);
         }
 
-        internal void DrawBoundingBox()
+        internal void DrawBoundingBox(bool drawCorners = true)
         {
             using (new Handles.DrawingScope(k_BoundsColor, Matrix4x4.TRS(m_Bounds.center, m_PlaneRotation.normalized, Vector3.one)))
             {
                 Handles.DrawWireCube(Vector3.zero, m_Bounds.size);
             }
 
+            if(!drawCorners)
+                return;
+
             using (new Handles.DrawingScope(Color.white))
             {
                 Handles.DotHandleCap(-1, m_BB_Origin, Quaternion.identity, HandleUtility.GetHandleSize(m_BB_Origin) * 0.05f, EventType.Repaint);
                 Handles.DotHandleCap(-1, m_BB_OppositeCorner, Quaternion.identity, HandleUtility.GetHandleSize(m_BB_OppositeCorner) * 0.05f, EventType.Repaint);
             }
-
             using (new Handles.DrawingScope(EditorHandleDrawing.vertexSelectedColor))
             {
                 Handles.DotHandleCap(-1, m_BB_HeightCorner, Quaternion.identity, HandleUtility.GetHandleSize(m_BB_HeightCorner) * 0.05f, EventType.Repaint);
