@@ -207,7 +207,7 @@ namespace UnityEditor.ProBuilder
                 if( DoFaceSizeHandle(face) )
                 {
                     float modifier = 1f;
-                    if(Event.current.alt)
+                    if(evt.alt)
                         modifier = 2f;
 
                     if(!s_sizeManipulationInit)
@@ -220,7 +220,8 @@ namespace UnityEditor.ProBuilder
                         s_SizeSigns = Math.Sign(s_StartSize);
                     }
 
-                    var targetDelta = s_TargetSize - s_StartPosition;
+
+                    var targetDelta = modifier * (s_TargetSize - s_StartPosition);
                     targetDelta.Scale(s_StartNormal);
 
                     var snap = Math.IsCardinalAxis(shapeComponent.transform.up) && EditorSnapSettings.gridSnapEnabled ?
@@ -228,11 +229,17 @@ namespace UnityEditor.ProBuilder
                     snap = evt.shift ? EditorSnapping.incrementalSnapMoveValue : snap;
                     targetDelta = ProBuilderSnapping.Snap(targetDelta, snap);
 
-                    var center = Event.current.alt ?
-                                        Vector3.zero :
-                                        shapeComponent.transform.TransformVector(Vector3.Scale(targetDelta, s_StartNormal / 2f));
+                    var center = Vector3.zero;
+
+                    if(!evt.alt)
+                    {
+                        center = Vector3.Scale(targetDelta, s_StartNormal / 2f);
+                        center = Vector3.Scale(center, Math.Sign(shapeComponent.transform.lossyScale));
+                        center = shapeComponent.transform.TransformVector(center);
+                    }
 
                     targetDelta.Scale(s_SizeSigns);
+
 
                     ApplyProperties(shapeComponent, s_StartCenter + center, s_StartSize + targetDelta);
 
