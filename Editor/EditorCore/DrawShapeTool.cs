@@ -113,7 +113,6 @@ namespace UnityEditor.ProBuilder
 
             if (m_ShapePreviewMaterial.HasProperty("_Color"))
                 m_ShapePreviewMaterial.SetColor("_Color", previewColor);
-
         }
 
         void OnDestroy()
@@ -126,9 +125,7 @@ namespace UnityEditor.ProBuilder
         void OnActiveToolChanged()
         {
             if(ToolManager.IsActiveTool(this))
-            {
                 SetBounds(currentShapeInOverlay.size);
-            }
         }
 
         void HandleUndoRedoPerformed()
@@ -356,9 +353,7 @@ namespace UnityEditor.ProBuilder
 
             Editor.CreateCachedEditor(currentShapeInOverlay, typeof(ShapeComponentEditor), ref m_ShapeEditor);
 
-            GUIStyle style = new GUIStyle(EditorStyles.frameBox);
-
-            using(new EditorGUILayout.VerticalScope(style))
+            using(new EditorGUILayout.VerticalScope(new GUIStyle(EditorStyles.frameBox)))
             {
                 ( (ShapeComponentEditor) m_ShapeEditor ).m_ShapePropertyLabel.text = foldoutName;
                 ( (ShapeComponentEditor) m_ShapeEditor ).DrawShapeParametersGUI(this);

@@ -143,11 +143,15 @@ namespace UnityEditor.ProBuilder
 
         void OnOverlayGUI(Object obj, SceneView view)
         {
-            Editor.CreateCachedEditor(targets.ToArray(), typeof(ShapeComponentEditor), ref m_ShapeEditor);
-            ( (ShapeComponentEditor) m_ShapeEditor ).DrawShapeGUI(null);
-            ( (ShapeComponentEditor) m_ShapeEditor ).DrawShapeParametersGUI(null);
+            EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snapping", EditorSnapSettings.gridSnapEnabled);
 
-            EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snap To Grid", EditorSnapSettings.gridSnapEnabled);
+            Editor.CreateCachedEditor(targets.ToArray(), typeof(ShapeComponentEditor), ref m_ShapeEditor);
+
+            using(new EditorGUILayout.VerticalScope(new GUIStyle(EditorStyles.frameBox)))
+            {
+                ( (ShapeComponentEditor) m_ShapeEditor ).DrawShapeGUI(null);
+                ( (ShapeComponentEditor) m_ShapeEditor ).DrawShapeParametersGUI(null);
+            }
         }
 
         internal static void DoEditingGUI(ShapeComponent shapeComponent)
@@ -216,10 +220,13 @@ namespace UnityEditor.ProBuilder
                         s_SizeSigns = Math.Sign(s_StartSize);
                     }
 
-                    //var sizeOffset = ProBuilderSnapping.Snap(modifier * delta, evt.shift? EditorSnapping.incrementalSnapMoveValue : Vector3.zero);
-
                     var targetDelta = s_TargetSize - s_StartPosition;
                     targetDelta.Scale(s_StartNormal);
+
+                    var snap = Math.IsCardinalAxis(shapeComponent.transform.up) && EditorSnapSettings.gridSnapEnabled ?
+                                            EditorSnapping.activeMoveSnapValue : Vector3.zero;
+                    snap = evt.shift ? EditorSnapping.incrementalSnapMoveValue : snap;
+                    targetDelta = ProBuilderSnapping.Snap(targetDelta, snap);
 
                     var center = Event.current.alt ?
                                         Vector3.zero :
