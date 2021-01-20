@@ -97,11 +97,17 @@ namespace UnityEditor.ProBuilder
         }
 
 #if !UNITY_2020_2_OR_NEWER
-        public void ActiveToolChanging()
+        void ActiveToolChanging()
+        {
+            EditorApplication.delayCall += () => ChangeToObjectMode();
+        }
+
+        void ChangeToObjectMode()
         {
             if(ToolManager.IsActiveTool(this))
-                EditorApplication.delayCall += () => ProBuilderEditor.selectMode = SelectMode.Object;
+                ProBuilderEditor.selectMode = SelectMode.Object;
         }
+
 #else
         public override void OnActivated()
         {
@@ -219,7 +225,6 @@ namespace UnityEditor.ProBuilder
                         s_sizeManipulationInit = true;
                         s_SizeSigns = Math.Sign(s_StartSize);
                     }
-
 
                     var targetDelta = modifier * (s_TargetSize - s_StartPosition);
                     targetDelta.Scale(s_StartNormal);
