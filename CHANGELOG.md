@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - MergeElements.Merge moved to public API
 
 ### Bug Fixes
+- [case: 1304442] Update package description for SRPs : warning to users to add samples projects.
 - [case: 1299638] Fixed missing dependency on com.unity.modules.physics.
 - [case: 1296104] Fixing freeze transform with negative scales.
 - [case: 1296494] Fixing audio visualizer sample.
