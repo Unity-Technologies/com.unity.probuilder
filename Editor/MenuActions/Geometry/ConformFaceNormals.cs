@@ -10,7 +10,7 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class ConformFaceNormals : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_ConformNormals", IconSkin.Pro); } }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/ConformFaceNormals", IconSkin.Pro); } }
         public override TooltipContent tooltip { get { return s_TooltipContent; } }
         public override string menuTitle { get { return "Conform Normals"; } }
 
