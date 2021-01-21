@@ -15,7 +15,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            get { return IconUtility.GetIcon("Toolbar/Object_FlipNormals", IconSkin.Pro); }
+            get { return IconUtility.GetIcon("Toolbar/FlipObjectNormals", IconSkin.Pro); }
         }
 
         public override TooltipContent tooltip

@@ -12,7 +12,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            get { return IconUtility.GetIcon("Toolbar/Object_ConformNormals", IconSkin.Pro); }
+            get { return IconUtility.GetIcon("Toolbar/ConformObjectNormals", IconSkin.Pro); }
         }
 
         public override TooltipContent tooltip
