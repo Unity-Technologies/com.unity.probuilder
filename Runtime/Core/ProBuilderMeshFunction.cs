@@ -62,10 +62,14 @@ namespace UnityEngine.ProBuilder
             //Ensure no element is selected at awake
             ClearSelection();
 
-            if (vertexCount > 0
-                && faceCount > 0
-                && meshSyncState == MeshSyncState.Null)
+            if(vertexCount > 0
+               && faceCount > 0
+               && meshSyncState == MeshSyncState.Null)
+            {
+                var version = m_VersionID;
                 Rebuild();
+                m_VersionID = version;
+            }
         }
 
         void Reset()
@@ -399,7 +403,6 @@ namespace UnityEngine.ProBuilder
                 mesh.RecalculateBounds();
 
             m_VersionID++;
-
         }
 
         internal void EnsureMeshColliderIsAssigned()
