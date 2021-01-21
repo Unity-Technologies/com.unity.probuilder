@@ -111,25 +111,6 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public void UpdateComponent()
         {
-            // //If pivot is located at first corner, then take this position as a reference when changing size properties
-            // if(m_PivotLocation == PivotLocation.FirstCorner)
-            // {
-            //     //var center = m_Size / 2f;
-            //     // var newCenter = new Vector3(
-            //     //                         m_Properties.m_SizeX / 2f,
-            //     //                         m_Properties.m_SizeY / 2f,
-            //     //                         m_Properties.m_SizeZ / 2f);
-            //     // var newCenter = new Vector3(
-            //     //     m_Properties.m_SizeX / 2f,
-            //     //     m_Properties.m_SizeY / 2f,
-            //     //     m_Properties.m_SizeZ / 2f);
-            //     var newCenter = m_Size / 2f;
-            //
-            //     Bounds shapeBB = m_ShapeBox;
-            //     shapeBB.center += (newCenter - shapeBB.center);
-            //     m_ShapeBox = shapeBB;
-            // }
-
             //Recenter shape
             ResetPivot(mesh, size, rotation);
             Rebuild();

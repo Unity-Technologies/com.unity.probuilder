@@ -180,7 +180,7 @@ namespace UnityEditor.ProBuilder
                         if(tool != null)
                         {
                             tool.SetBounds(shapeComponent.size);
-                            EditorShapeUtility.SaveParams(shapeComponent.shape);
+                            DrawShapeTool.SaveShapeParams(shapeComponent);
                         }
                         ProBuilderEditor.Refresh();
                     }

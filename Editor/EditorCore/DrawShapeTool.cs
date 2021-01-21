@@ -46,6 +46,11 @@ namespace UnityEditor.ProBuilder
         internal static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
         public static Pref<bool> s_SettingsEnabled = new Pref<bool>("ShapeComponent.SettingsEnabled", false);
 
+        internal static Pref<int> s_LastPivotLocation = new Pref<int>("ShapeBuilder.LastPivotLocation", (int)PivotLocation.FirstCorner);
+        internal static Pref<Vector3> s_LastPivotPosition = new Pref<Vector3>("ShapeBuilder.LastPivotPosition", Vector3.zero);
+        internal static Pref<Vector3> s_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize", Vector3.one);
+        internal static Pref<Quaternion> s_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation", Quaternion.identity);
+
         int m_ControlID;
         // ideally this would be owned by the state machine
         public int controlID => m_ControlID;
@@ -85,6 +90,10 @@ namespace UnityEditor.ProBuilder
                     m_ShapeComponent.gameObject.hideFlags = HideFlags.HideAndDontSave;
                     m_ShapeComponent.hideFlags = HideFlags.None;
                     m_ShapeComponent.SetShape(EditorShapeUtility.CreateShape(activeShapeType),EditorUtility.newShapePivotLocation);
+                    m_ShapeComponent.pivotLocation = (PivotLocation)s_LastPivotLocation.value;
+                    m_ShapeComponent.pivotLocalPosition = s_LastPivotPosition.value;
+                    m_ShapeComponent.size = s_LastSize.value;
+                    m_ShapeComponent.rotation = s_LastRotation.value;
                 }
                 return m_ShapeComponent;
             }
@@ -168,6 +177,16 @@ namespace UnityEditor.ProBuilder
                 DestroyImmediate(m_ShapeEditor);
             if (m_ShapeComponent != null && m_ShapeComponent.gameObject.hideFlags == HideFlags.HideAndDontSave)
                 DestroyImmediate(m_ShapeComponent.gameObject);
+        }
+
+        internal static void SaveShapeParams(ShapeComponent shapeComponent)
+        {
+            s_LastPivotLocation.value = (int)shapeComponent.pivotLocation;
+            s_LastPivotPosition.value = shapeComponent.pivotLocalPosition;
+            s_LastSize.value = shapeComponent.size;
+            s_LastRotation.value = shapeComponent.rotation;
+
+            EditorShapeUtility.SaveParams(shapeComponent.shape);
         }
 
         // Returns a local space point,
@@ -389,8 +408,13 @@ namespace UnityEditor.ProBuilder
                     var type = EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex];
                     if(shape.GetType() != type)
                     {
-                        if(currentShapeInOverlay == m_LastShapeCreated)
-                            m_LastShapeCreated = null;
+                        //if(currentShapeInOverlay == m_LastShapeCreated)
+                        // {
+                        //     var lastShape = m_LastShapeCreated;
+                            if(currentShapeInOverlay == m_LastShapeCreated)
+                             m_LastShapeCreated = null;
+                        //     currentShapeInOverlay.CopyComponent(lastShape);
+                        // }
 
                         UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
                         currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type), currentShapeInOverlay.pivotLocation);

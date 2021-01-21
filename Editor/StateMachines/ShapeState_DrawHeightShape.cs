@@ -20,7 +20,7 @@ namespace UnityEditor.ProBuilder
             tool.m_ShapeComponent.SetPivotPosition(tool.m_BB_Origin);
             DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes,tool.m_ShapeComponent.shape.GetType());
 
-            EditorShapeUtility.SaveParams(tool.m_ShapeComponent.shape);
+            DrawShapeTool.SaveShapeParams(tool.m_ShapeComponent);
 
             return NextState();
         }

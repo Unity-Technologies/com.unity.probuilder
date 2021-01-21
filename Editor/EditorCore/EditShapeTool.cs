@@ -160,7 +160,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        internal static void DoEditingGUI(ShapeComponent shapeComponent)
+        internal static void DoEditingGUI(ShapeComponent shapeComponent, bool updatePrefs = false)
         {
             if(shapeComponent == null)
                 return;
@@ -179,13 +179,13 @@ namespace UnityEditor.ProBuilder
 
                 var absSize = Math.Abs(shapeComponent.editionBounds.size);
                 if(absSize.x > Mathf.Epsilon && absSize.y > Mathf.Epsilon && absSize.z > Mathf.Epsilon )
-                    DoOrientationHandlesGUI(shapeComponent);
+                    DoOrientationHandlesGUI(shapeComponent, updatePrefs);
 
-                DoSizeHandlesGUI(shapeComponent);
+                DoSizeHandlesGUI(shapeComponent, updatePrefs);
             }
         }
 
-        static void DoSizeHandlesGUI(ShapeComponent shapeComponent)
+        static void DoSizeHandlesGUI(ShapeComponent shapeComponent, bool updatePrefs)
         {
             int faceCount = s_Faces.Length;
 
@@ -231,32 +231,32 @@ namespace UnityEditor.ProBuilder
 
                     var snap = Math.IsCardinalAxis(shapeComponent.transform.up) && EditorSnapSettings.gridSnapEnabled ?
                                             EditorSnapping.activeMoveSnapValue : Vector3.zero;
-                    snap = evt.shift ? EditorSnapping.incrementalSnapMoveValue : snap;
-                    targetDelta = ProBuilderSnapping.Snap(targetDelta, snap);
+                    //targetDelta = ProBuilderSnapping.Snap(targetDelta, snap);
+
+                    targetDelta.Scale(s_SizeSigns);
+                    var targetSize = s_StartSize + targetDelta;
+                    targetSize = ProBuilderSnapping.Snap(targetSize, snap);
 
                     var center = Vector3.zero;
-
                     if(!evt.alt)
                     {
-                        center = Vector3.Scale(targetDelta, s_StartNormal / 2f);
+                        center = (targetSize - s_StartSize) / 2f;
+                        //center = Vector3.Scale(targetDelta, s_StartNormal / 2f);
                         center = Vector3.Scale(center, Math.Sign(shapeComponent.transform.lossyScale));
                         center = shapeComponent.transform.TransformVector(center);
                     }
 
-                    targetDelta.Scale(s_SizeSigns);
 
+                    ApplyProperties(shapeComponent, s_StartCenter + center, targetSize);
 
-                    ApplyProperties(shapeComponent, s_StartCenter + center, s_StartSize + targetDelta);
-
+                    if(updatePrefs)
+                        DrawShapeTool.SaveShapeParams(shapeComponent);
                 }
             }
         }
 
         static bool DoFaceSizeHandle(FaceData face)
         {
-            if( s_OrientationControlIDs.Contains(HandleUtility.nearestControl) && !EditorShapeUtility.PointerIsInFace(face) )
-                return false;
-
             float handleSize = HandleUtility.GetHandleSize(face.CenterPosition) * s_DefaultMidpointHandleSize;
 
             var snap = Vector3.Scale(EditorSnapping.incrementalSnapMoveValue, face.Normal).magnitude;
@@ -280,7 +280,7 @@ namespace UnityEditor.ProBuilder
             return false;
         }
 
-        static void DoOrientationHandlesGUI(ShapeComponent shapeComponent)
+        static void DoOrientationHandlesGUI(ShapeComponent shapeComponent, bool updatePrefs)
         {
             if( GUIUtility.hotControl != 0 && !s_OrientationControlIDs.Contains(GUIUtility.hotControl) )
                 return;
@@ -295,6 +295,9 @@ namespace UnityEditor.ProBuilder
                         shapeComponent.RotateInsideBounds(s_ShapeRotation);
 
                         ProBuilderEditor.Refresh();
+
+                        if(updatePrefs)
+                            DrawShapeTool.SaveShapeParams(shapeComponent);
                     }
                 }
             }
