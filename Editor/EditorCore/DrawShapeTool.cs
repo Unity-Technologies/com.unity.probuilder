@@ -147,9 +147,8 @@ namespace UnityEditor.ProBuilder
         {
             if(ToolManager.IsActiveTool(this))
             {
-                if(MeshSelection.activeMesh != null
-                   && m_ShapeComponent != null
-                   && MeshSelection.activeMesh != m_ShapeComponent.mesh)
+                if(Selection.activeGameObject != null
+                   && MeshSelection.activeMesh != currentShapeInOverlay.mesh)
                 {
                     m_CurrentState = ShapeState.ResetState();
                     ToolManager.RestorePreviousTool();
@@ -371,7 +370,14 @@ namespace UnityEditor.ProBuilder
 
             DrawShapeGUI();
 
-            EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snapping", EditorSnapSettings.gridSnapEnabled);
+            var snapEnabled = Tools.pivotRotation != PivotRotation.Global;
+            using(new EditorGUI.DisabledScope(snapEnabled))
+            {
+                if(snapEnabled)
+                    EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snapping", EditorSnapSettings.gridSnapEnabled);
+                else
+                    EditorGUILayout.Toggle("Snapping", false);
+            }
 
             string foldoutName = "New Shape Settings";
             if(currentShapeInOverlay == m_LastShapeCreated)
@@ -411,13 +417,8 @@ namespace UnityEditor.ProBuilder
                     var type = EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex];
                     if(shape.GetType() != type)
                     {
-                        //if(currentShapeInOverlay == m_LastShapeCreated)
-                        // {
-                        //     var lastShape = m_LastShapeCreated;
-                            if(currentShapeInOverlay == m_LastShapeCreated)
-                             m_LastShapeCreated = null;
-                        //     currentShapeInOverlay.CopyComponent(lastShape);
-                        // }
+                        if(currentShapeInOverlay == m_LastShapeCreated)
+                            m_LastShapeCreated = null;
 
                         UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
                         currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type), currentShapeInOverlay.pivotLocation);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using Unity.Collections;
 using UnityEditor;
 using UnityEngine.Experimental.Playables;
@@ -48,7 +49,12 @@ namespace UnityEngine.ProBuilder.Shapes
         public Vector3 size
         {
             get => m_Size;
-            set => m_Size = value;
+            set
+            {
+                m_Size.x = System.Math.Abs(value.x) == 0 ? Mathf.Sign(m_Size.x) * 0.001f: value.x;
+                m_Size.y = value.y;
+                m_Size.z = System.Math.Abs(value.z) == 0 ? Mathf.Sign(m_Size.z) * 0.001f: value.z;
+            }
         }
 
         public Quaternion rotation
@@ -96,6 +102,13 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
+        void OnValidate()
+        {
+            m_Size.x = System.Math.Abs(m_Size.x) == 0 ? 0.001f: m_Size.x;
+            m_Size.y = m_Size.y;
+            m_Size.z = System.Math.Abs(m_Size.z) == 0 ? 0.001f: m_Size.z;
+        }
+
         public void SetPivotPosition(Vector3 position)
         {
             pivotLocalPosition = mesh.transform.InverseTransformPoint(position);
@@ -136,12 +149,18 @@ namespace UnityEngine.ProBuilder.Shapes
             || gameObject.hideFlags == HideFlags.HideAndDontSave)
                 return;
 
-            m_ShapeBox = m_Shape.RebuildMesh(mesh, size, rotation);
-            RebuildPivot(mesh, size, rotation);
+            try
+            {
+                m_ShapeBox = m_Shape.RebuildMesh(mesh, size, rotation);
+                RebuildPivot(mesh, size, rotation);
 
-            Bounds bounds = m_ShapeBox;
-            bounds.size = Math.Abs(m_ShapeBox.size);
-            MeshUtility.FitToSize(mesh, bounds, size);
+                Bounds bounds = m_ShapeBox;
+                bounds.size = Math.Abs(m_ShapeBox.size);
+                MeshUtility.FitToSize(mesh, bounds, size);
+            }catch(Exception e)
+            {
+                Debug.Log("oops");
+            }
 
             m_Hash = currentHash;
         }

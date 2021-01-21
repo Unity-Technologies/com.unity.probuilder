@@ -155,7 +155,8 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
-                EditorGUILayout.PropertyField(m_ShapePivotProperty, k_ShapePivotLabel);
+                if(tool)
+                    EditorGUILayout.PropertyField(m_ShapePivotProperty, k_ShapePivotLabel);
 
                 EditorGUILayout.PropertyField(m_ShapeSizeXProperty, k_ShapeSizeXLabel);
                 if(HasMultipleShapeTypes || (m_CurrentShapeType != typeof(Plane) &&  m_CurrentShapeType != typeof(Sprite)))

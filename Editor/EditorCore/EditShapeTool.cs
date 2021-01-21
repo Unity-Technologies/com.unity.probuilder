@@ -51,13 +51,11 @@ namespace UnityEditor.ProBuilder
         //Size Handle management
         static Vector3 s_StartSize;
         static Vector3 s_StartPosition;
-        static Vector3 s_StartNormal;
         static Vector3 s_StartCenter;
         static Vector3 s_TargetSize;
-        static Vector3 s_SizeSigns;
+        static Vector3 s_Scaling;
         static bool s_sizeManipulationInit;
 
-        static Vector3 s_LastDelta;
         static float s_DefaultMidpointHandleSize = 0.03f;
         static float s_DefaultMidpointSquareSize = 0.15f;
 
@@ -220,16 +218,15 @@ namespace UnityEditor.ProBuilder
                     {
                         s_StartCenter = shapeComponent.transform.position + shapeComponent.transform.TransformVector(shapeComponent.shapeBox.center);
                         s_StartPosition = face.CenterPosition;
-                        s_StartNormal = face.Normal;
                         s_StartSize = shapeComponent.size;
                         s_sizeManipulationInit = true;
-                        s_SizeSigns = Math.Sign(s_StartSize);
+
+                        s_Scaling = Vector3.Scale(face.Normal, Math.Sign(s_StartSize));
                     }
 
                     var targetDelta = modifier * (s_TargetSize - s_StartPosition);
-                    targetDelta.Scale(s_StartNormal);
+                    targetDelta.Scale(s_Scaling);
 
-                    targetDelta.Scale(s_SizeSigns);
                     var targetSize = s_StartSize + targetDelta;
 
                     var snap = Math.IsCardinalAxis(shapeComponent.transform.up) && EditorSnapSettings.gridSnapEnabled ?
@@ -240,7 +237,7 @@ namespace UnityEditor.ProBuilder
                     var center = Vector3.zero;
                     if(!evt.alt)
                     {
-                        center = (targetSize - s_StartSize) / 2f;
+                        center = Vector3.Scale((targetSize - s_StartSize) / 2f, s_Scaling);
                         center = Vector3.Scale(center, Math.Sign(shapeComponent.transform.lossyScale));
                         center = shapeComponent.transform.TransformVector(center);
                     }
@@ -270,10 +267,7 @@ namespace UnityEditor.ProBuilder
                 return true;
 
             if(GUIUtility.hotControl == 0)
-            {
                 s_sizeManipulationInit = false;
-                s_LastDelta = Vector3.negativeInfinity;
-            }
 
             return false;
         }
