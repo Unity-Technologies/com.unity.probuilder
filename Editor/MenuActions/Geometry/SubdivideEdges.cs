@@ -21,7 +21,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            get { return IconUtility.GetIcon("Toolbar/Edge_Subdivide", IconSkin.Pro); }
+            get { return IconUtility.GetIcon("Toolbar/SubdivideEdge", IconSkin.Pro); }
         }
 
         public override TooltipContent tooltip

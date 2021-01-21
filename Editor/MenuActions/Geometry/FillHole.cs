@@ -23,7 +23,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            get { return IconUtility.GetIcon("Toolbar/Edge_FillHole", IconSkin.Pro); }
+            get { return IconUtility.GetIcon("Toolbar/FillHole", IconSkin.Pro); }
         }
 
         public override TooltipContent tooltip
