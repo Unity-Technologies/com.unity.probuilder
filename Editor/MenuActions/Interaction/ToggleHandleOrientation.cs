@@ -64,9 +64,9 @@ namespace UnityEditor.ProBuilder.Actions
         {
             m_Icons = new Texture2D[]
             {
-                IconUtility.GetIcon("Toolbar/HandleAlign_World", IconSkin.Pro),
-                IconUtility.GetIcon("Toolbar/HandleAlign_Local", IconSkin.Pro),
-                IconUtility.GetIcon("Toolbar/HandleAlign_Plane", IconSkin.Pro),
+                IconUtility.GetIcon("Toolbar/AlignHandleToWorld", IconSkin.Pro),
+                IconUtility.GetIcon("Toolbar/AlignHandleToObject", IconSkin.Pro),
+                IconUtility.GetIcon("Toolbar/AlignHandleToSurface", IconSkin.Pro),
             };
         }
 
